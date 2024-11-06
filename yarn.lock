@@ -27204,7 +27204,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"parcel-optimizer-strict-mode@workspace:packages/dev/parcel-optimizer-strict-mode":
+"parcel-optimizer-strict-mode@workspace:^, parcel-optimizer-strict-mode@workspace:packages/dev/parcel-optimizer-strict-mode":
   version: 0.0.0-use.local
   resolution: "parcel-optimizer-strict-mode@workspace:packages/dev/parcel-optimizer-strict-mode"
   dependencies:
@@ -29396,6 +29396,7 @@ __metadata:
     nyc: "npm:^10.2.0"
     p-queue: "npm:^6.2.1"
     parcel: "npm:2.0.0-dev.1599"
+    parcel-optimizer-strict-mode: "workspace:^"
     parcel-resolver-storybook: "https://gitpkg.vercel.app/mischnic/storybook-parcel/packages/parcel-resolver-storybook?master"
     patch-package: "npm:^6.2.0"
     playwright: "npm:^1.45.3"
