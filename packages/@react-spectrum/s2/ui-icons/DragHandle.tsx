@@ -10,22 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import CornerTriangle_L from './S2_CornerTriangleSize200.svg';
-import CornerTriangle_M from './S2_CornerTriangleSize100.svg';
-import CornerTriangle_S from './S2_CornerTriangleSize75.svg';
-import CornerTriangle_XL from './S2_CornerTriangleSize300.svg';
+import DragHandle_L from './S2_DragHandleSize200.svg';
+import DragHandle_M from './S2_DragHandleSize100.svg';
+import DragHandle_S from './S2_DragHandleSize75.svg';
+import DragHandle_XL from './S2_DragHandleSize300.svg';
 import {SVGProps} from 'react';
 
-export default function CornerTriangle(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'S'}) {
+export default function DragHandle(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'S'}) {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':
-      return <CornerTriangle_M {...otherProps} />;
+      return <DragHandle_M {...otherProps} />;
     case 'L':
-      return <CornerTriangle_L {...otherProps} />;
+      return <DragHandle_L {...otherProps} />;
     case 'XL':
-      return <CornerTriangle_XL {...otherProps} />;
+      return <DragHandle_XL {...otherProps} />;
     case 'S':
-      return <CornerTriangle_S {...otherProps} />;
+      return <DragHandle_S {...otherProps} />;
   }
 }

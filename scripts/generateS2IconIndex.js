@@ -42,7 +42,7 @@ function generate(dir) {
     let ext = path.extname(file);
     if (ext === '.tsx') {
       fs.rmSync(file);
-    } else if (ext === '.svg') {
+    } else if (ext === '.svg' && !file.includes('S2_MoveHorizontalTableWidget')) {
       let match = file.match(/S2_(?:lin|fill)_(.+?)_(?:generic\d_)?(\d+)\.svg/) || file.match(/S2_(.+)Size(\d+)\.svg/);
       if (!match) {
         throw new Error('Unexpected file ' + file);

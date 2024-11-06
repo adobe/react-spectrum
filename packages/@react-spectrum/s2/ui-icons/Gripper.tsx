@@ -10,22 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import CornerTriangle_L from './S2_CornerTriangleSize200.svg';
-import CornerTriangle_M from './S2_CornerTriangleSize100.svg';
-import CornerTriangle_S from './S2_CornerTriangleSize75.svg';
-import CornerTriangle_XL from './S2_CornerTriangleSize300.svg';
+import Gripper_M from './S2_GripperSize100.svg';
 import {SVGProps} from 'react';
 
-export default function CornerTriangle(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'S'}) {
+export default function Gripper(props: SVGProps<SVGSVGElement> & {size?: 'M'}) {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':
-      return <CornerTriangle_M {...otherProps} />;
-    case 'L':
-      return <CornerTriangle_L {...otherProps} />;
-    case 'XL':
-      return <CornerTriangle_XL {...otherProps} />;
-    case 'S':
-      return <CornerTriangle_S {...otherProps} />;
+      return <Gripper_M {...otherProps} />;
   }
 }
