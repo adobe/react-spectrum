@@ -230,9 +230,11 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
               state.selectionManager.setFocusedKey(null);
             }
             break;
+          case ' ':
           case 'Escape':
             // If hitting Escape, don't dispatch any events since useAutocomplete will handle whether or not
-            // to continuePropagation to the overlay depending on the inputValue
+            // to continuePropagation to the overlay depending on the inputValue.
+            // Space shouldn't trigger onAction so early return.
             return;
         }
 

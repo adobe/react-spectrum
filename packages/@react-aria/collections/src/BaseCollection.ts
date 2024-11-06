@@ -224,7 +224,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
         let clonedSection: Mutable<CollectionNode<T>> = (node as CollectionNode<T>).clone();
         let lastChildInSection: Mutable<CollectionNode<T>> | null = null;
         for (let child of this.getChildren(node.key)) {
-          if (filterFn(child.textValue)) {
+          if (filterFn(child.textValue) || child.type === 'header') {
             let clonedChild: Mutable<CollectionNode<T>> = (child as CollectionNode<T>).clone();
             // eslint-disable-next-line max-depth
             if (lastChildInSection == null) {
@@ -250,22 +250,31 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
           }
         }
 
-        if (lastChildInSection && lastChildInSection.type !== 'header') {
-          clonedSection.lastChildKey = lastChildInSection.key;
+        // Add newly filtered section to collection if it has any valid child nodes, otherwise remove it and its header if any
+        if (lastChildInSection) {
+          if (lastChildInSection.type !== 'header') {
+            clonedSection.lastChildKey = lastChildInSection.key;
 
-          // If the old prev section was filtered out, will need to attach to whatever came before
-          if (lastNode == null) {
-            clonedSection.prevKey = null;
-          } else if (lastNode.type === 'section' || lastNode.type === 'separator') {
-            lastNode.nextKey = clonedSection.key;
-            clonedSection.prevKey = lastNode.key;
+            // If the old prev section was filtered out, will need to attach to whatever came before
+            if (lastNode == null) {
+              clonedSection.prevKey = null;
+            } else if (lastNode.type === 'section' || lastNode.type === 'separator') {
+              lastNode.nextKey = clonedSection.key;
+              clonedSection.prevKey = lastNode.key;
+            }
+            clonedSection.nextKey = null;
+            lastNode = clonedSection;
+            newCollection.addNode(clonedSection);
+          } else {
+            if (newCollection.firstKey === clonedSection.key) {
+              newCollection.firstKey = null;
+            }
+            newCollection.removeNode(lastChildInSection.key);
           }
-          clonedSection.nextKey = null;
-          lastNode = clonedSection;
-          newCollection.addNode(clonedSection);
         }
       } else if (node.type === 'separator') {
-        // will need to check if previous section key exists, if it does then we add. After the full collection is created we'll need to remove it
+        // will need to check if previous section key exists, if it does then we add the separator to the collection.
+        // After the full collection is created we'll need to remove it it is the last node in the section (aka no following section after the separator)
         let clonedSeparator: Mutable<CollectionNode<T>> = (node as CollectionNode<T>).clone();
         clonedSeparator.nextKey = null;
         if (lastNode?.type === 'section') {
