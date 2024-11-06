@@ -153,10 +153,6 @@ export const iconMap = new Map([
     'Channel'
   ],
   [
-    'ChatAdd',
-    'Channel'
-  ],
-  [
     'Checkmark',
     'CheckmarkSize300'
   ],
@@ -709,8 +705,20 @@ export const iconMap = new Map([
     'Pause'
   ],
   [
+    'PauseCircle',
+    'PauseCircle'
+  ],
+  [
     'Pending',
     'ClockPending'
+  ],
+  [
+    'PinOff',
+    'PinOff'
+  ],
+  [
+    'PinOn',
+    'PinOn'
   ],
   [
     'Play',
@@ -987,6 +995,10 @@ export const iconMap = new Map([
   [
     'TextBulleted',
     'ListBulleted'
+  ],
+  [
+    'TextIncrease',
+    'TextIncrease'
   ],
   [
     'TextItalic',
