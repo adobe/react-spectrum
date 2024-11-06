@@ -19,7 +19,6 @@ import {
 } from 'react';
 import {AriaLabelingProps, DOMAttributes, Orientation, RefObject} from '@react-types/shared';
 import {AriaToggleButtonGroupItemProps} from '@react-types/button';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {ToggleButtonAria, useToggleButton} from './useToggleButton';
 import {ToggleGroupProps, ToggleGroupState, ToggleState} from '@react-stately/toggle';
 import {useToolbar} from '@react-aria/toolbar';
@@ -44,10 +43,11 @@ export function useToggleButtonGroup(props: AriaToggleButtonGroupProps, state: T
   let {toolbarProps} = useToolbar(props, ref);
 
   return {
-    groupProps: mergeProps(toolbarProps, filterDOMProps(props, {labelable: true}), {
+    groupProps: {
+      ...toolbarProps,
       role: state.selectionMode === 'single' ? 'radiogroup' : toolbarProps.role,
       'aria-disabled': isDisabled
-    })
+    }
   };
 }
 

@@ -12,8 +12,8 @@
 
 import {AriaLabelingProps, Orientation, RefObject} from '@react-types/shared';
 import {createFocusManager} from '@react-aria/focus';
+import {filterDOMProps, useLayoutEffect} from '@react-aria/utils';
 import {HTMLAttributes, KeyboardEventHandler, useRef, useState} from 'react';
-import {useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
 export interface AriaToolbarProps extends AriaLabelingProps {
@@ -118,6 +118,7 @@ export function useToolbar(props: AriaToolbarProps, ref: RefObject<HTMLElement |
 
   return {
     toolbarProps: {
+      ...filterDOMProps(props, {labelable: true}),
       role: !isInToolbar ? 'toolbar' : 'group',
       'aria-orientation': orientation,
       'aria-label': ariaLabel,
