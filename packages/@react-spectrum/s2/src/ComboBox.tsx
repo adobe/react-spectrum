@@ -13,8 +13,8 @@
 import {
   ComboBox as AriaComboBox,
   ComboBoxProps as AriaComboBoxProps,
+  ListBoxSection as AriaListBoxSection,
   PopoverProps as AriaPopoverProps,
-  Section as AriaSection,
   Button,
   ContextValue,
   InputContext,
@@ -384,11 +384,11 @@ export interface ComboBoxSectionProps<T extends object> extends SectionProps<T> 
 export function ComboBoxSection<T extends object>(props: ComboBoxSectionProps<T>) {
   return (
     <>
-      <AriaSection
+      <AriaListBoxSection
         {...props}
         className={section}>
         {props.children}
-      </AriaSection>
+      </AriaListBoxSection>
       <Divider />
     </>
   );

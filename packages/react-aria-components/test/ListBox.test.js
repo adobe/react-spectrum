@@ -19,9 +19,9 @@ import {
   ListBox,
   ListBoxContext,
   ListBoxItem,
+  ListBoxSection,
   UNSTABLE_ListLayout as ListLayout,
   Modal,
-  Section,
   Text,
   useDragAndDrop,
   UNSTABLE_Virtualizer as Virtualizer
@@ -81,12 +81,12 @@ describe('ListBox', () => {
         <ListBoxItem id="cat">Cat</ListBoxItem>
         <ListBoxItem id="dog">Dog</ListBoxItem>
         <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
-        <Section>
+        <ListBoxSection>
           <Header>Fish</Header>
           <ListBoxItem id="salmon">Salmon</ListBoxItem>
           <ListBoxItem id="tuna">Tuna</ListBoxItem>
           <ListBoxItem id="cod">Cod</ListBoxItem>
-        </Section>
+        </ListBoxSection>
       </ListBox>
     );
     let menu = getByRole('listbox');
@@ -157,9 +157,9 @@ describe('ListBox', () => {
     let itemRef = React.createRef();
     render(
       <ListBox aria-label="Test" ref={listBoxRef}>
-        <Section ref={sectionRef}>
+        <ListBoxSection ref={sectionRef}>
           <ListBoxItem ref={itemRef}>Cat</ListBoxItem>
-        </Section>
+        </ListBoxSection>
       </ListBox>
     );
     expect(listBoxRef.current).toBeInstanceOf(HTMLElement);
@@ -187,25 +187,25 @@ describe('ListBox', () => {
   it('should support sections', () => {
     let {getAllByRole} = render(
       <ListBox aria-label="Sandwich contents" selectionMode="multiple">
-        <Section data-test-prop="test-section-1">
+        <ListBoxSection data-test-prop="test-section-1">
           <Header>Veggies</Header>
           <ListBoxItem id="lettuce">Lettuce</ListBoxItem>
           <ListBoxItem id="tomato">Tomato</ListBoxItem>
           <ListBoxItem id="onion">Onion</ListBoxItem>
-        </Section>
-        <Section data-test-prop="test-section-2" aria-label="Protein">
+        </ListBoxSection>
+        <ListBoxSection data-test-prop="test-section-2" aria-label="Protein">
           <ListBoxItem id="ham">Ham</ListBoxItem>
           <ListBoxItem id="tuna">Tuna</ListBoxItem>
           <ListBoxItem id="tofu">Tofu</ListBoxItem>
-        </Section>
+        </ListBoxSection>
       </ListBox>
     );
 
     let groups = getAllByRole('group');
     expect(groups).toHaveLength(2);
 
-    expect(groups[0]).toHaveClass('react-aria-Section');
-    expect(groups[1]).toHaveClass('react-aria-Section');
+    expect(groups[0]).toHaveClass('react-aria-ListBoxSection');
+    expect(groups[1]).toHaveClass('react-aria-ListBoxSection');
 
     expect(groups[0]).toHaveAttribute('aria-labelledby');
     expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Veggies');

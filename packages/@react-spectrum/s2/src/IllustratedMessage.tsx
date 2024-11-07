@@ -114,9 +114,7 @@ const illustration = style<IllustratedMessageStyleProps & {isInDropZone?: boolea
   '--iconPrimary': {
     type: 'color',
     value: {
-      // TODO: ask design about what the color should be. Says gray-800 in the designs file, neutral in token spec, but different neutral in dropzone spec
-      default: 'gray-800',
-      isInDropZone: 'gray-500', // neutral doesn't seem to match the color in designs, opted for gray-500 instead
+      default: 'neutral',
       isDropTarget: 'accent'
     }
   }
