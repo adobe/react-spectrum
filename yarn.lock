@@ -70,6 +70,7 @@ __metadata:
     "@react-aria/ssr": "npm:^3.9.6"
     "@react-aria/utils": "npm:^3.25.3"
     "@react-aria/visually-hidden": "npm:^3.8.17"
+    "@react-spectrum/accordion": "npm:^3.0.0-alpha.35"
     "@react-spectrum/actionbar": "npm:^3.6.1"
     "@react-spectrum/actiongroup": "npm:^3.10.9"
     "@react-spectrum/avatar": "npm:^3.0.16"
@@ -5626,7 +5627,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-aria/accordion@npm:3.0.0-alpha.35, @react-aria/accordion@workspace:packages/@react-aria/accordion":
+"@react-aria/accordion@npm:3.0.0-alpha.35, @react-aria/accordion@npm:^3.0.0-alpha.35, @react-aria/accordion@workspace:packages/@react-aria/accordion":
   version: 0.0.0-use.local
   resolution: "@react-aria/accordion@workspace:packages/@react-aria/accordion"
   dependencies:
@@ -5712,6 +5713,7 @@ __metadata:
   dependencies:
     "@react-aria/focus": "npm:^3.18.4"
     "@react-aria/interactions": "npm:^3.22.4"
+    "@react-aria/toolbar": "npm:3.0.0-beta.10"
     "@react-aria/utils": "npm:^3.25.3"
     "@react-stately/toggle": "npm:^3.7.8"
     "@react-types/button": "npm:^3.10.0"
@@ -5869,7 +5871,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/disclosure@npm:3.0.0-alpha.1, @react-aria/disclosure@workspace:packages/@react-aria/disclosure":
+"@react-aria/disclosure@npm:3.0.0-alpha.1, @react-aria/disclosure@npm:^3.0.0-alpha.1, @react-aria/disclosure@workspace:packages/@react-aria/disclosure":
   version: 0.0.0-use.local
   resolution: "@react-aria/disclosure@workspace:packages/@react-aria/disclosure"
   dependencies:
@@ -6096,6 +6098,7 @@ __metadata:
     "@react-aria/utils": "npm:^3.25.3"
     "@react-stately/collections": "npm:^3.11.0"
     "@react-stately/menu": "npm:^3.8.3"
+    "@react-stately/selection": "npm:^3.17.0"
     "@react-stately/tree": "npm:^3.8.5"
     "@react-types/button": "npm:^3.10.0"
     "@react-types/menu": "npm:^3.9.12"
@@ -6600,7 +6603,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/accordion@workspace:packages/@react-spectrum/accordion":
+"@react-spectrum/accordion@npm:^3.0.0-alpha.35, @react-spectrum/accordion@workspace:packages/@react-spectrum/accordion":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/accordion@workspace:packages/@react-spectrum/accordion"
   dependencies:
@@ -8537,6 +8540,7 @@ __metadata:
   dependencies:
     "@react-stately/utils": "npm:^3.10.4"
     "@react-types/checkbox": "npm:^3.8.4"
+    "@react-types/shared": "npm:^3.25.0"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
@@ -27200,6 +27204,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"parcel-optimizer-strict-mode@workspace:packages/dev/parcel-optimizer-strict-mode":
+  version: 0.0.0-use.local
+  resolution: "parcel-optimizer-strict-mode@workspace:packages/dev/parcel-optimizer-strict-mode"
+  dependencies:
+    "@parcel/plugin": "npm:2.0.0"
+  languageName: unknown
+  linkType: soft
+
 "parcel-packager-docs@workspace:packages/dev/parcel-packager-docs":
   version: 0.0.0-use.local
   resolution: "parcel-packager-docs@workspace:packages/dev/parcel-packager-docs"
@@ -29001,6 +29013,7 @@ __metadata:
     "@react-stately/disclosure": "npm:3.0.0-alpha.0"
     "@react-stately/layout": "npm:^4.0.3"
     "@react-stately/menu": "npm:^3.8.3"
+    "@react-stately/selection": "npm:^3.17.0"
     "@react-stately/table": "npm:^3.12.3"
     "@react-stately/utils": "npm:^3.10.4"
     "@react-stately/virtualizer": "npm:^4.1.0"
@@ -29027,6 +29040,7 @@ __metadata:
     "@babel/cli": "npm:^7.24.1"
     "@babel/core": "npm:^7.24.3"
     "@internationalized/string": "npm:^3.2.4"
+    "@react-aria/accordion": "npm:^3.0.0-alpha.35"
     "@react-aria/breadcrumbs": "npm:^3.5.18"
     "@react-aria/button": "npm:^3.10.1"
     "@react-aria/calendar": "npm:^3.5.13"
@@ -29035,6 +29049,7 @@ __metadata:
     "@react-aria/combobox": "npm:^3.10.5"
     "@react-aria/datepicker": "npm:^3.11.4"
     "@react-aria/dialog": "npm:^3.5.19"
+    "@react-aria/disclosure": "npm:^3.0.0-alpha.1"
     "@react-aria/dnd": "npm:^3.7.4"
     "@react-aria/focus": "npm:^3.18.4"
     "@react-aria/gridlist": "npm:^3.9.5"

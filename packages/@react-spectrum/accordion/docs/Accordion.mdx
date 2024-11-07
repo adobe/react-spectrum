@@ -13,7 +13,6 @@ export default Layout;
 import docs from 'docs:@react-spectrum/accordion';
 import {HeaderInfo, PropTable, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/accordion/package.json';
-import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
 ---
 category: Navigation
@@ -39,13 +38,13 @@ import {Accordion, Disclosure, DisclosureHeader, DisclosurePanel} from '@react-s
   <Disclosure id="personal">
     <DisclosureHeader>Personal Information</DisclosureHeader>
     <DisclosurePanel>
-      <p>Personal information form here.</p>
+      Personal information form here.
     </DisclosurePanel>
   </Disclosure>
   <Disclosure id="billing">
     <DisclosureHeader>Billing Address</DisclosureHeader>
     <DisclosurePanel>
-      <p>Billing address form here.</p>
+      Billing address form here.
     </DisclosurePanel>
   </Disclosure>
 </Accordion>
@@ -75,13 +74,13 @@ function ControlledExpansion() {
         <Disclosure id="personal">
           <DisclosureHeader>Personal Information</DisclosureHeader>
           <DisclosurePanel>
-            <p>Personal information form here.</p>
+            Personal information form here.
           </DisclosurePanel>
         </Disclosure>
         <Disclosure id="billing">
           <DisclosureHeader>Billing Address</DisclosureHeader>
           <DisclosurePanel>
-            <p>Billing address form here.</p>
+            Billing address form here.
           </DisclosurePanel>
         </Disclosure>
       </Accordion>
@@ -100,30 +99,34 @@ By default, only one disclosure will be expanded at a time. To expand multiple d
   <Disclosure id="personal">
     <DisclosureHeader>Personal Information</DisclosureHeader>
     <DisclosurePanel>
-      <p>Personal information form here.</p>
+      Personal information form here.
     </DisclosurePanel>
   </Disclosure>
   <Disclosure id="billing">
     <DisclosureHeader>Billing Address</DisclosureHeader>
     <DisclosurePanel>
-      <p>Billing address form here.</p>
+      Billing address form here.
     </DisclosurePanel>
   </Disclosure>
 </Accordion>
 ```
 ## Props
 
-### Disclosure
+### Accordion
 
 <PropTable component={docs.exports.Accordion} links={docs.links} />
 
-### Disclosure Panel
+### Disclosure
 
-<PropTable component={docs.exports.DisclosurePanel} links={docs.links} />
+<PropTable component={docs.exports.Disclosure} links={docs.links} />
 
 ### Disclosure Header
 
 <PropTable component={docs.exports.DisclosureHeader} links={docs.links} />
+
+### Disclosure Panel
+
+<PropTable component={docs.exports.DisclosurePanel} links={docs.links} />
 
 ## Visual Options
 
@@ -134,13 +137,13 @@ By default, only one disclosure will be expanded at a time. To expand multiple d
   <Disclosure id="personal">
     <DisclosureHeader>Personal Information</DisclosureHeader>
     <DisclosurePanel>
-      <p>Personal information form here.</p>
+      Personal information form here.
     </DisclosurePanel>
   </Disclosure>
   <Disclosure id="billing">
     <DisclosureHeader>Billing Address</DisclosureHeader>
     <DisclosurePanel>
-      <p>Billing address form here.</p>
+      Billing address form here.
     </DisclosurePanel>
   </Disclosure>
 </Accordion>
@@ -153,13 +156,13 @@ By default, only one disclosure will be expanded at a time. To expand multiple d
   <Disclosure id="personal">
     <DisclosureHeader>Personal Information</DisclosureHeader>
     <DisclosurePanel>
-      <p>Personal information form here.</p>
+      Personal information form here.
     </DisclosurePanel>
   </Disclosure>
   <Disclosure id="billing">
     <DisclosureHeader>Billing Address</DisclosureHeader>
     <DisclosurePanel>
-      <p>Billing address form here.</p>
+      Billing address form here.
     </DisclosurePanel>
   </Disclosure>
 </Accordion>

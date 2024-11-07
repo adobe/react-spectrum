@@ -17,6 +17,7 @@ import 'client-only';
 export {ActionGroup} from '@react-spectrum/actiongroup';
 export {Badge} from '@react-spectrum/badge';
 export {Breadcrumbs} from '@react-spectrum/breadcrumbs';
+export {Accordion, Disclosure, DisclosurePanel, DisclosureHeader} from '@react-spectrum/accordion';
 export {ActionBar, ActionBarContainer} from '@react-spectrum/actionbar';
 export {ActionButton, Button, LogicButton, ToggleButton} from '@react-spectrum/button';
 export {Avatar} from '@react-spectrum/avatar';
@@ -122,3 +123,4 @@ export type {DateFormatter, DateFormatterOptions, Filter, FormatMessage, Locale,
 export type {SSRProviderProps} from '@react-aria/ssr';
 export type {DirectoryDropItem, DragAndDropHooks, DragAndDropOptions, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-spectrum/dnd';
 export type {Key, Selection, ItemProps, SectionProps, RouterConfig} from '@react-types/shared';
+export type {SpectrumAccordionProps, SpectrumDisclosureProps, SpectrumDisclosurePanelProps, SpectrumDisclosureHeaderProps} from '@react-spectrum/accordion';
