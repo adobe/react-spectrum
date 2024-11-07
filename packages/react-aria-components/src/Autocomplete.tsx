@@ -75,6 +75,7 @@ function Autocomplete(props: AutocompleteProps, ref: ForwardedRef<HTMLInputEleme
     values: renderValues
   });
 
+  // TODO this is RAC specific logic but maybe defaultFilter should move into the hooks?
   let filterFn = useCallback((nodeTextValue: string) => {
     if (defaultFilter) {
       return defaultFilter(nodeTextValue, state.inputValue);

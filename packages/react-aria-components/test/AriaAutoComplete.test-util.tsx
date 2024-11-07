@@ -42,7 +42,8 @@ interface AriaAutocompleteTestProps extends AriaBaseTestProps {
     // needs at least two sections, each with three items
     sections?: (args: RendererArgs) => ReturnType<typeof render>,
     // needs a item with a link
-    links?: (args: RendererArgs) => ReturnType<typeof render>
+    links?: (args: RendererArgs) => ReturnType<typeof render>,
+    controlled?: (args: RendererArgs) => ReturnType<typeof render>
     // TODO, add tests for this when we support it
     // submenus?: (props?: {name: string}) => ReturnType<typeof render>
   }
@@ -74,12 +75,12 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix}: AriaAutocomple
       expect(input).toHaveAttribute('spellCheck', 'false');
 
       let menu = getByRole('menu');
-      expect(menu).toHaveAttribute('id', input.getAttribute('aria-controls'));
+      expect(menu).toHaveAttribute('id', input.getAttribute('aria-controls')!);
 
-      let label = document.getElementById(input.getAttribute('aria-labelledby'));
+      let label = document.getElementById(input.getAttribute('aria-labelledby')!);
       expect(label).toHaveTextContent('Test');
 
-      let description = document.getElementById(input.getAttribute('aria-describedby'));
+      let description = document.getElementById(input.getAttribute('aria-describedby')!);
       expect(description).toHaveTextContent('Please select an option below');
     });
 
@@ -93,50 +94,6 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix}: AriaAutocomple
       let {getByRole} = renderers.standard({autocompleteProps: {isReadOnly: true}});
       let input = getByRole('searchbox');
       expect(input).toHaveAttribute('readonly');
-    });
-
-    it('should support filtering', async function () {
-      let {getByRole} = renderers.standard({});
-      let input = getByRole('searchbox');
-      expect(input).toHaveValue('');
-      let menu = getByRole('menu');
-      let options = within(menu).getAllByRole('menuitem');
-      expect(options).toHaveLength(3);
-
-      await user.tab();
-      expect(document.activeElement).toBe(input);
-      await user.keyboard('F');
-      act(() => jest.runAllTimers());
-      options = within(menu).getAllByRole('menuitem');
-      expect(options).toHaveLength(1);
-      expect(options[0]).toHaveTextContent('Foo');
-
-      expect(input).toHaveValue('F');
-      expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
-      expect(document.activeElement).toBe(input);
-
-      await user.keyboard('{Backspace}');
-      options = within(menu).getAllByRole('menuitem');
-      expect(options).toHaveLength(3);
-      expect(input).not.toHaveAttribute('aria-activedescendant');
-      expect(document.activeElement).toBe(input);
-    });
-
-    it('should support custom filtering', async function () {
-      let {getByRole} = renderers.standard({autocompleteProps: {defaultFilter: () => true}});
-      let input = getByRole('searchbox');
-      expect(input).toHaveValue('');
-      let menu = getByRole('menu');
-      let options = within(menu).getAllByRole('menuitem');
-      expect(options).toHaveLength(3);
-
-      await user.tab();
-      expect(document.activeElement).toBe(input);
-      await user.keyboard('F');
-      act(() => jest.runAllTimers());
-      options = within(menu).getAllByRole('menuitem');
-      expect(options).toHaveLength(3);
-      expect(options[0]).toHaveTextContent('Foo');
     });
 
     it('should support default value', async function () {
@@ -315,10 +272,67 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix}: AriaAutocomple
       expect(input.selectionStart).toBe(2);
     });
 
+    let filterTests = (renderer) => {
+      describe('text filtering', function () {
+        it('should support filtering', async function () {
+          let {getByRole} = renderer({});
+          let input = getByRole('searchbox');
+          expect(input).toHaveValue('');
+          let menu = getByRole('menu');
+          let options = within(menu).getAllByRole('menuitem');
+          expect(options).toHaveLength(3);
+
+          await user.tab();
+          expect(document.activeElement).toBe(input);
+          await user.keyboard('F');
+          act(() => jest.runAllTimers());
+          options = within(menu).getAllByRole('menuitem');
+          expect(options).toHaveLength(1);
+          expect(options[0]).toHaveTextContent('Foo');
+
+          expect(input).toHaveValue('F');
+          expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+          expect(document.activeElement).toBe(input);
+
+          await user.keyboard('{Backspace}');
+          options = within(menu).getAllByRole('menuitem');
+          expect(options).toHaveLength(3);
+          expect(input).not.toHaveAttribute('aria-activedescendant');
+          expect(document.activeElement).toBe(input);
+        });
+
+        // TODO this is RAC specific logic but maybe defaultFilter should move into the hooks?
+        it('should support custom filtering', async function () {
+          let {getByRole} = renderer({autocompleteProps: {defaultFilter: () => true}});
+          let input = getByRole('searchbox');
+          expect(input).toHaveValue('');
+          let menu = getByRole('menu');
+          let options = within(menu).getAllByRole('menuitem');
+          expect(options).toHaveLength(3);
+
+          await user.tab();
+          expect(document.activeElement).toBe(input);
+          await user.keyboard('F');
+          act(() => jest.runAllTimers());
+          options = within(menu).getAllByRole('menuitem');
+          expect(options).toHaveLength(3);
+          expect(options[0]).toHaveTextContent('Foo');
+        });
+      });
+    };
+
+    filterTests(renderers.standard);
+
+    if (renderers.controlled) {
+      describe('controlled', function () {
+        filterTests(renderers.controlled);
+      });
+    }
+
     if (renderers.links) {
       describe('with links', function () {
         it('should trigger the link option when hitting Enter', async function () {
-          let {getByRole} = renderers.links({menuProps: {onAction}});
+          let {getByRole} = (renderers.links!)({menuProps: {onAction}});
           let input = getByRole('searchbox');
           let menu = getByRole('menu');
           expect(input).not.toHaveAttribute('aria-activedescendant');
@@ -347,8 +361,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix}: AriaAutocomple
     if (renderers.sections) {
       describe('with sections', function () {
         it('should properly skip over sections when keyboard navigating', async function () {
-          let {getByRole, debug} = renderers.sections({});
-          debug()
+          let {getByRole} = (renderers.sections!)({});
           let input = getByRole('searchbox');
           let menu = getByRole('menu');
           let sections = within(menu).getAllByRole('group');
@@ -374,7 +387,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix}: AriaAutocomple
         });
 
         it('should omit section titles and dividers when filtering', async function () {
-          let {getByRole} = renderers.sections({});
+          let {getByRole} = (renderers.sections!)({});
           let input = getByRole('searchbox');
           let menu = getByRole('menu');
           let sections = within(menu).getAllByRole('group');
@@ -399,7 +412,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix}: AriaAutocomple
           expect(divider).toHaveLength(0);
           await user.keyboard('{ArrowDown}');
           expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
-          expect(options[0]).toHaveTextContent('Foo')
+          expect(options[0]).toHaveTextContent('Foo');
 
           // Return to unfiltered view
           await user.keyboard('{Backspace}');
@@ -413,7 +426,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix}: AriaAutocomple
           expect(input).not.toHaveAttribute('aria-activedescendant');
           await user.keyboard('{ArrowDown}');
           expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
-          expect(options[0]).toHaveTextContent('Foo')
+          expect(options[0]).toHaveTextContent('Foo');
 
           // This should just have the second section
           await user.keyboard('e');
@@ -428,7 +441,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix}: AriaAutocomple
           expect(divider).toHaveLength(0);
           await user.keyboard('{ArrowDown}');
           expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
-          expect(options[0]).toHaveTextContent('Paste')
+          expect(options[0]).toHaveTextContent('Paste');
 
           await user.keyboard('{Backspace}');
           act(() => jest.runAllTimers());
@@ -446,13 +459,13 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix}: AriaAutocomple
           let secondSecOpts = within(sections[1]).getAllByRole('menuitem');
           expect(secondSecOpts).toHaveLength(1);
           expect(input).toHaveAttribute('aria-activedescendant', firstSecOpts[0].id);
-          expect(firstSecOpts[0]).toHaveTextContent('Bar')
+          expect(firstSecOpts[0]).toHaveTextContent('Bar');
           await user.keyboard('{ArrowDown}');
           expect(input).toHaveAttribute('aria-activedescendant', firstSecOpts[1].id);
-          expect(firstSecOpts[1]).toHaveTextContent('Baz')
+          expect(firstSecOpts[1]).toHaveTextContent('Baz');
           await user.keyboard('{ArrowDown}');
           expect(input).toHaveAttribute('aria-activedescendant', secondSecOpts[0].id);
-          expect(secondSecOpts[0]).toHaveTextContent('Paste')
+          expect(secondSecOpts[0]).toHaveTextContent('Paste');
           await user.keyboard('{ArrowDown}');
           expect(input).toHaveAttribute('aria-activedescendant', firstSecOpts[0].id);
         });

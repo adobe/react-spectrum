@@ -41,25 +41,39 @@ export default {
 export const AutocompleteExample = {
   render: ({onAction, isDisabled, isReadOnly}) => {
     return (
-      <Autocomplete isReadOnly={isReadOnly} isDisabled={isDisabled} name="autocomplete-example" data-testid="autocomplete-example">
+      <Autocomplete isReadOnly={isReadOnly} isDisabled={isDisabled} defaultInputValue="Ba" name="autocomplete-example" data-testid="autocomplete-example">
         <div>
           <Label style={{display: 'block'}}>Test</Label>
           <Input />
           <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
           <Menu className={styles.menu} onAction={onAction}>
-          <Section id="sec1">
-        <Header>Section 1</Header>
-        <MyMenuItem id="1">Foo</MyMenuItem>
-        <MyMenuItem id="2">Bar</MyMenuItem>
-        <MyMenuItem id="3">Baz</MyMenuItem>
-      </Section>
-      <Separator />
-      <Section id="sec2">
-        <Header>Section 2</Header>
-        <MyMenuItem id="4">Copy</MyMenuItem>
-        <MyMenuItem id="5">Cut</MyMenuItem>
-        <MyMenuItem id="6">Paste</MyMenuItem>
-      </Section>
+            <Section className={styles.group} aria-label={'Section 1'}>
+              <MyMenuItem>Foo</MyMenuItem>
+              <MyMenuItem>Bar</MyMenuItem>
+              <MyMenuItem>Baz</MyMenuItem>
+              <MyMenuItem href="http://google.com">Google</MyMenuItem>
+              <MyMenuItem>Option</MyMenuItem>
+              <MyMenuItem>Option with a space</MyMenuItem>
+            </Section>
+            <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
+            <Section className={styles.group}>
+              <Header style={{fontSize: '1.2em'}}>Section 2</Header>
+              <MyMenuItem textValue="Copy">
+                <Text slot="label">Copy</Text>
+                <Text slot="description">Description</Text>
+                <Keyboard>⌘C</Keyboard>
+              </MyMenuItem>
+              <MyMenuItem textValue="Cut">
+                <Text slot="label">Cut</Text>
+                <Text slot="description">Description</Text>
+                <Keyboard>⌘X</Keyboard>
+              </MyMenuItem>
+              <MyMenuItem textValue="Paste">
+                <Text slot="label">Paste</Text>
+                <Text slot="description">Description</Text>
+                <Keyboard>⌘V</Keyboard>
+              </MyMenuItem>
+            </Section>
           </Menu>
         </div>
       </Autocomplete>

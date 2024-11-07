@@ -10,54 +10,36 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {act, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaAutocompleteTests} from './AriaAutoComplete.test-util';
-import {Autocomplete, Header, Input, Keyboard, Label, Menu, MenuItem, Section, Separator, Text} from '..';
+import {Autocomplete, Header, Input, Label, Menu, MenuItem, Section, Separator, Text} from '..';
 import React from 'react';
-import userEvent from '@testing-library/user-event';
+interface AutocompleteItem {
+  id: string,
+  name: string
+}
 
-let TestAutocomplete = ({autocompleteProps = {}, menuProps = {}}: {autocompleteProps?: any, menuProps?: any}) => (
-  <Autocomplete data-testid="autocomplete-example" {...autocompleteProps}>
-    <Label>Test</Label>
-    <Input />
-    <Text slot="description">Please select an option below.</Text>
-    <Menu {...menuProps}>
-      <Section aria-label={'Section 1'}>
-        <MenuItem>Foo</MenuItem>
-        <MenuItem>Bar</MenuItem>
-        <MenuItem>Baz</MenuItem>
-        <MenuItem href="https://google.com">Google</MenuItem>
-      </Section>
-      <Separator />
-      <Section>
-        <Header>Section 2</Header>
-        <MenuItem textValue="Copy">
-          <Text slot="label">Copy</Text>
-          <Text slot="description">Description</Text>
-          <Keyboard>⌘C</Keyboard>
-        </MenuItem>
-        <MenuItem textValue="Cut">
-          <Text slot="label">Cut</Text>
-          <Text slot="description">Description</Text>
-          <Keyboard>⌘X</Keyboard>
-        </MenuItem>
-        <MenuItem textValue="Paste">
-          <Text slot="label">Paste</Text>
-          <Text slot="description">Description</Text>
-          <Keyboard>⌘V</Keyboard>
-        </MenuItem>
-      </Section>
-    </Menu>
+let items: AutocompleteItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'}, {id: '3', name: 'Baz'}];
+
+let TestAutocompleteRenderProps = ({autocompleteProps = {}, menuProps = {}}: {autocompleteProps?: any, menuProps?: any}) => (
+  <Autocomplete {...autocompleteProps}>
+    {({isDisabled}) => (
+      <div>
+        <Label style={{display: 'block'}}>Test</Label>
+        <Input />
+        <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+        <Menu {...menuProps} items={isDisabled ? [] : items} >
+          {(item: AutocompleteItem) => <MenuItem id={item.id}>{item.name}</MenuItem>}
+        </Menu>
+      </div>
+    )}
   </Autocomplete>
 );
 
-let renderAutoComplete = (autocompleteProps = {}, menuProps = {}) => render(<TestAutocomplete {...{autocompleteProps, menuProps}} />);
+let renderAutoComplete = (autocompleteProps = {}, menuProps = {}) => render(<TestAutocompleteRenderProps {...{autocompleteProps, menuProps}} />);
 
-describe('Menu', () => {
-  let user;
-
+describe('Autocomplete', () => {
   beforeAll(() => {
-    user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
   });
 
@@ -65,16 +47,23 @@ describe('Menu', () => {
     act(() => {jest.runAllTimers();});
   });
 
-  it('dummy test for now', async function () {
-    renderAutoComplete();
-    await user.tab();
-  });
+  it('provides isDisabled as a renderProp', async function () {
+    let {getByRole, queryByRole, rerender} = renderAutoComplete();
+    let input = getByRole('searchbox');
+    expect(input).not.toHaveAttribute('disabled');
+    let menu = getByRole('menu');
+    let options = within(menu).getAllByRole('menuitem');
+    expect(options).toHaveLength(3);
 
-  // TODO: RAC specific tests go here (renderProps, data attributes, etc)
+    rerender(<TestAutocompleteRenderProps autocompleteProps={{isDisabled: true}} />);
+    input = getByRole('searchbox');
+    expect(input).toHaveAttribute('disabled');
+    expect(queryByRole('menu')).toBeFalsy();
+  });
 });
 
 let StaticAutocomplete = ({autocompleteProps = {}, menuProps = {}}: {autocompleteProps?: any, menuProps?: any}) => (
-  <Autocomplete data-testid="autocomplete-example" {...autocompleteProps}>
+  <Autocomplete {...autocompleteProps}>
     <Label>Test</Label>
     <Input />
     <Text slot="description">Please select an option below.</Text>
@@ -85,12 +74,6 @@ let StaticAutocomplete = ({autocompleteProps = {}, menuProps = {}}: {autocomplet
     </Menu>
   </Autocomplete>
 );
-
-interface AutocompleteItem {
-  id: string,
-  name: string
-}
-let items: AutocompleteItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'}, {id: '3', name: 'Baz'}];
 
 let DynamicAutoComplete = ({autocompleteProps = {}, menuProps = {}}: {autocompleteProps?: any, menuProps?: any}) => (
   <Autocomplete {...autocompleteProps}>
@@ -124,8 +107,10 @@ let ControlledAutocomplete = ({autocompleteProps = {}, menuProps = {}}: {autocom
       <Label>Test</Label>
       <Input />
       <Text slot="description">Please select an option below.</Text>
-      <Menu {...menuProps} items={items}>
-        {(item: AutocompleteItem) => <MenuItem id={item.id}>{item.name}</MenuItem>}
+      <Menu {...menuProps}>
+        <MenuItem id="1">Foo</MenuItem>
+        <MenuItem id="2">Bar</MenuItem>
+        <MenuItem id="3">Baz</MenuItem>
       </Menu>
     </Autocomplete>
   );
@@ -166,6 +151,9 @@ AriaAutocompleteTests({
     sections: ({autocompleteProps, menuProps}) => render(
       <SectionsAutocomplete autocompleteProps={autocompleteProps} menuProps={menuProps} />
     ),
+    controlled: ({autocompleteProps, menuProps}) => render(
+      <ControlledAutocomplete autocompleteProps={autocompleteProps} menuProps={menuProps} />
+    )
   }
 });
 
@@ -177,14 +165,3 @@ AriaAutocompleteTests({
     )
   }
 });
-
-// TODO: maybe a bit overkill to run all the tests just for a controlled configuration, ideally would just have a
-// subset of filter specific tests
-// AriaAutocompleteTests({
-//   prefix: 'rac-controlled',
-//   renderers: {
-//     standard: ({autocompleteProps, menuProps}) => render(
-//       <ControlledAutocomplete autocompleteProps={autocompleteProps} menuProps={menuProps} />
-//     )
-//   }
-// });
