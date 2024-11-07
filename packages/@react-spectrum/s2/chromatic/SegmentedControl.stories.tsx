@@ -68,7 +68,7 @@ OnlyIcons.args = {
 };
 
 export const CustomWidth = (args: any) => (
-  <SegmentedControl {...args} styles={style({width: '[400px]'})}>
+  <SegmentedControl {...args}>
     <SegmentedControlItem id="overview">Overview</SegmentedControlItem>
     <SegmentedControlItem id="specs">Specs</SegmentedControlItem>
     <SegmentedControlItem id="guidelines">Guidelines</SegmentedControlItem>
@@ -78,4 +78,18 @@ export const CustomWidth = (args: any) => (
 
 CustomWidth.args = {
   'aria-label': 'Getting started'
+};
+
+export const Justified = (args: any) => (
+  <SegmentedControl {...args} styles={style({width: '[400px]'})}>
+    <SegmentedControlItem id="overview">Overview</SegmentedControlItem>
+    <SegmentedControlItem id="specs">Specs</SegmentedControlItem>
+    <SegmentedControlItem id="guidelines">Guidelines</SegmentedControlItem>
+    <SegmentedControlItem id="accessibility">Accessibility</SegmentedControlItem>
+  </SegmentedControl>
+);
+
+Justified.args = {
+  'aria-label': 'Getting started',
+  isJustified: true
 };
