@@ -67,20 +67,7 @@ OnlyIcons.args = {
   'aria-label': 'Text alignment'
 };
 
-export const CustomWidth = (args: any) => (
-  <SegmentedControl {...args}>
-    <SegmentedControlItem id="overview">Overview</SegmentedControlItem>
-    <SegmentedControlItem id="specs">Specs</SegmentedControlItem>
-    <SegmentedControlItem id="guidelines">Guidelines</SegmentedControlItem>
-    <SegmentedControlItem id="accessibility">Accessibility</SegmentedControlItem>
-  </SegmentedControl>
-);
-
-CustomWidth.args = {
-  'aria-label': 'Getting started'
-};
-
-export const Justified = (args: any) => (
+export const CustomWidthJustified = (args: any) => (
   <SegmentedControl {...args} styles={style({width: '[400px]'})}>
     <SegmentedControlItem id="overview">Overview</SegmentedControlItem>
     <SegmentedControlItem id="specs">Specs</SegmentedControlItem>
@@ -89,7 +76,7 @@ export const Justified = (args: any) => (
   </SegmentedControl>
 );
 
-Justified.args = {
+CustomWidthJustified.args = {
   'aria-label': 'Getting started',
   isJustified: true
 };
