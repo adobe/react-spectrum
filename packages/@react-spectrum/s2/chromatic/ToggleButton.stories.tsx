@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {categorizeArgTypes, StaticColorDecorator} from '../stories/utils';
+import {categorizeArgTypes, StaticColorDecorator, StaticColorProvider} from '../stories/utils';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta, StoryFn} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {shortName} from './utils';
-import {StaticColorProvider} from '../stories/utils';
 import {style} from '../style' with { type: 'macro' };
 import {Text, ToggleButton} from '../src';
 
