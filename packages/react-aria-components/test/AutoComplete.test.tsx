@@ -12,7 +12,7 @@
 
 import {act, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaAutocompleteTests} from './AriaAutoComplete.test-util';
-import {Autocomplete, Header, Input, Label, Menu, MenuItem, Section, Separator, Text} from '..';
+import {Autocomplete, Header, Input, Label, Menu, MenuItem, MenuSection, Separator, Text} from '..';
 import React from 'react';
 interface AutocompleteItem {
   id: string,
@@ -116,25 +116,25 @@ let ControlledAutocomplete = ({autocompleteProps = {}, menuProps = {}}: {autocom
   );
 };
 
-let SectionsAutocomplete = ({autocompleteProps = {}, menuProps = {}}: {autocompleteProps?: any, menuProps?: any}) => (
+let MenuSectionsAutocomplete = ({autocompleteProps = {}, menuProps = {}}: {autocompleteProps?: any, menuProps?: any}) => (
   <Autocomplete {...autocompleteProps}>
     <Label>Test</Label>
     <Input />
     <Text slot="description">Please select an option below.</Text>
     <Menu {...menuProps}>
-      <Section id="sec1">
-        <Header>Section 1</Header>
+      <MenuSection id="sec1">
+        <Header>MenuSection 1</Header>
         <MenuItem id="1">Foo</MenuItem>
         <MenuItem id="2">Bar</MenuItem>
         <MenuItem id="3">Baz</MenuItem>
-      </Section>
+      </MenuSection>
       <Separator />
-      <Section id="sec2">
-        <Header>Section 2</Header>
+      <MenuSection id="sec2">
+        <Header>MenuSection 2</Header>
         <MenuItem id="4">Copy</MenuItem>
         <MenuItem id="5">Cut</MenuItem>
         <MenuItem id="6">Paste</MenuItem>
-      </Section>
+      </MenuSection>
     </Menu>
   </Autocomplete>
 );
@@ -149,7 +149,7 @@ AriaAutocompleteTests({
       <WithLinks autocompleteProps={autocompleteProps} menuProps={menuProps} />
     ),
     sections: ({autocompleteProps, menuProps}) => render(
-      <SectionsAutocomplete autocompleteProps={autocompleteProps} menuProps={menuProps} />
+      <MenuSectionsAutocomplete autocompleteProps={autocompleteProps} menuProps={menuProps} />
     ),
     controlled: ({autocompleteProps, menuProps}) => render(
       <ControlledAutocomplete autocompleteProps={autocompleteProps} menuProps={menuProps} />

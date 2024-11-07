@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Autocomplete, Button, Dialog, Header, Input, Keyboard, Label, Menu, MenuTrigger, Popover, Section, Separator, Text} from 'react-aria-components';
+import {Autocomplete, Button, Dialog, Header, Input, Keyboard, Label, Menu, MenuSection, MenuTrigger, Popover, Separator, Text} from 'react-aria-components';
 import {MyMenuItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
@@ -47,16 +47,16 @@ export const AutocompleteExample = {
           <Input />
           <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
           <Menu className={styles.menu} onAction={onAction}>
-            <Section className={styles.group} aria-label={'Section 1'}>
+            <MenuSection className={styles.group} aria-label={'Section 1'}>
               <MyMenuItem>Foo</MyMenuItem>
               <MyMenuItem>Bar</MyMenuItem>
               <MyMenuItem>Baz</MyMenuItem>
               <MyMenuItem href="http://google.com">Google</MyMenuItem>
               <MyMenuItem>Option</MyMenuItem>
               <MyMenuItem>Option with a space</MyMenuItem>
-            </Section>
+            </MenuSection>
             <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
-            <Section className={styles.group}>
+            <MenuSection className={styles.group}>
               <Header style={{fontSize: '1.2em'}}>Section 2</Header>
               <MyMenuItem textValue="Copy">
                 <Text slot="label">Copy</Text>
@@ -73,7 +73,7 @@ export const AutocompleteExample = {
                 <Text slot="description">Description</Text>
                 <Keyboard>⌘V</Keyboard>
               </MyMenuItem>
-            </Section>
+            </MenuSection>
           </Menu>
         </div>
       </Autocomplete>
