@@ -250,6 +250,8 @@ function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElem
   props = useFormProps(props as any);
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
+  let ctx = useSlottedContext(ActionButtonGroupContext);
+  let isInGroup = !!ctx;
   let {
     density = 'regular',
     isJustified,
@@ -258,8 +260,7 @@ function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElem
     isQuiet = props.isQuiet,
     size = props.size || 'M',
     isDisabled = props.isDisabled
-  } = useSlottedContext(ActionButtonGroupContext) || {};
-  let ctx = !!useContext(ActionButtonGroupContext);
+  } = ctx || {};
 
   return (
     <RACButton
@@ -277,7 +278,7 @@ function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElem
         density,
         isJustified,
         orientation,
-        isInGroup: ctx
+        isInGroup
       }, props.styles)}>
       <Provider
         values={[

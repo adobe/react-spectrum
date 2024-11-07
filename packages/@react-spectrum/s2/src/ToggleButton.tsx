@@ -13,7 +13,7 @@
 import {ActionButtonStyleProps, btnStyles} from './ActionButton';
 import {centerBaseline} from './CenterBaseline';
 import {ContextValue, Provider, ToggleButton as RACToggleButton, ToggleButtonProps as RACToggleButtonProps, useSlottedContext} from 'react-aria-components';
-import {createContext, forwardRef, ReactNode, useContext} from 'react';
+import {createContext, forwardRef, ReactNode} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {fontRelative, style} from '../style' with {type: 'macro'};
 import {IconContext} from './Icon';
@@ -39,6 +39,8 @@ function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElem
   [props, ref] = useSpectrumContextProps(props, ref, ToggleButtonContext);
   props = useFormProps(props as any);
   let domRef = useFocusableRef(ref);
+  let ctx = useSlottedContext(ToggleButtonGroupContext);
+  let isInGroup = !!ctx;
   let {
     density = 'regular',
     isJustified,
@@ -48,8 +50,7 @@ function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElem
     isEmphasized = props.isEmphasized,
     size = props.size || 'M',
     isDisabled = props.isDisabled
-  } = useSlottedContext(ToggleButtonGroupContext) || {};
-  let ctx = !!useContext(ToggleButtonGroupContext);
+  } = ctx || {};
 
   return (
     <RACToggleButton
@@ -67,7 +68,7 @@ function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElem
         density,
         isJustified,
         orientation,
-        isInGroup: ctx
+        isInGroup
       }, props.styles)}>
       <Provider
         values={[
