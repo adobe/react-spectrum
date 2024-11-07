@@ -13,7 +13,7 @@
 import {ActionButtonStyleProps, btnStyles} from './ActionButton';
 import {centerBaseline} from './CenterBaseline';
 import {ContextValue, Provider, ToggleButton as RACToggleButton, ToggleButtonProps as RACToggleButtonProps, useSlottedContext} from 'react-aria-components';
-import {createContext, forwardRef, ReactNode} from 'react';
+import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {fontRelative, style} from '../style' with {type: 'macro'};
 import {IconContext} from './Icon';
@@ -49,6 +49,7 @@ function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElem
     size = props.size || 'M',
     isDisabled = props.isDisabled
   } = useSlottedContext(ToggleButtonGroupContext) || {};
+  let ctx = !!useContext(ToggleButtonGroupContext);
 
   return (
     <RACToggleButton
@@ -65,7 +66,8 @@ function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElem
         isPending: false,
         density,
         isJustified,
-        orientation
+        orientation,
+        isInGroup: ctx
       }, props.styles)}>
       <Provider
         values={[

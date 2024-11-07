@@ -90,9 +90,10 @@ export const IconOnly = {
 
 export const Truncate: StoryFn<typeof ToggleButton> = (args) => {
   return (
-    <div style={{display: 'flex', gap: 8}}>
-      <ToggleButton {...args} styles={style({width: 40})}>Press me</ToggleButton>
-      <ToggleButton {...args} styles={style({width: 64})}><NewIcon /><Text>Press me</Text></ToggleButton>
+    <div style={{display: 'flex', gap: 8, width: 160}}>
+      <ToggleButton aria-label="Press me" {...args}><NewIcon /></ToggleButton>
+      <ToggleButton {...args}>Press me</ToggleButton>
+      <ToggleButton {...args}><NewIcon /><Text>Press me</Text></ToggleButton>
     </div>
   );
 };
