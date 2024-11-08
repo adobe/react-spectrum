@@ -130,6 +130,10 @@ const treeRow = style<TreeRowRenderProps>({
     isFocusVisibleWithin: '[var(--spectrum-table-row-background-color-hover)]',
     isPressed: '[var(--spectrum-table-row-background-color-down)]',
     isSelected: '[var(--spectrum-table-row-background-color-selected)]'
+  },
+  '--indent': {
+    type: 'width',
+    value: 16
   }
 });
 
@@ -137,10 +141,10 @@ const treeCellGrid = style({
   display: 'grid',
   width: 'full',
   alignItems: 'center',
-  gridTemplateColumns: ['minmax(0, auto)', 'minmax(0, auto)', 'minmax(0, auto)', 10, 'minmax(0, auto)', '1fr', 'minmax(0, auto)', 'auto'],
+  gridTemplateColumns: ['minmax(0, auto)', 'minmax(0, auto)', 'minmax(0, auto)', 40, 'minmax(0, auto)', '1fr'],
   gridTemplateRows: '1fr',
   gridTemplateAreas: [
-    'drag-handle checkbox level-padding expand-button icon content actions actionmenu'
+    'drag-handle checkbox level-padding expand-button icon content'
   ],
   color: {
     isDisabled: {
@@ -150,17 +154,16 @@ const treeCellGrid = style({
   }
 });
 
-// TODO: These styles lose against the spectrum class names, so I've did unsafe for the ones that get overridden
 const treeCheckbox = style({
   gridArea: 'checkbox',
-  transitionDuration: '160ms',
   marginStart: 12,
-  marginEnd: 0
+  marginEnd: 0,
+  paddingEnd: 0
 });
 
 const treeIcon = style({
   gridArea: 'icon',
-  marginEnd: 2
+  marginEnd: 'text-to-visual'
 });
 
 const treeContent = style<Pick<TreeItemContentRenderProps, 'isDisabled'>>({
@@ -168,19 +171,6 @@ const treeContent = style<Pick<TreeItemContentRenderProps, 'isDisabled'>>({
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
   overflow: 'hidden'
-});
-
-const treeActions = style({
-  gridArea: 'actions',
-  flexGrow: 0,
-  flexShrink: 0,
-  marginStart: 2,
-  marginEnd: 2
-});
-
-const treeActionMenu = style({
-  gridArea: 'actionmenu',
-  width: 8
 });
 
 const treeRowOutline = style({
@@ -252,19 +242,23 @@ export const TreeViewItem = <T extends object>(props: SpectrumTreeViewItemProps<
           <div className={treeCellGrid({isDisabled})}>
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               // TODO: add transition?
-              <Checkbox
-                isEmphasized
-                UNSAFE_className={treeCheckbox}
-                UNSAFE_style={{paddingInlineEnd: '0px'}}
-                slot="selection" />
+              <div className={treeCheckbox}>
+                <Checkbox
+                  isEmphasized
+                  slot="selection" />
+              </div>
             )}
-            <div style={{gridArea: 'level-padding', marginInlineEnd: `calc(${level - 1} * var(--spectrum-global-dimension-size-200))`}} />
+            <div
+              className={style({
+                gridArea: 'level-padding',
+                width: `[calc(calc(var(--tree-item-level, 0) - 1) * var(--indent))]`
+              })} />
             {/* TODO: revisit when we do async loading, at the moment hasChildItems will only cause the chevron to be rendered, no aria/data attributes indicating the row's expandability are added */}
             {(hasChildRows || hasChildItems) && <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} />}
             <Provider
               values={[
-                [TextContext, {className: treeContent}],
-                [IconContext, {className: treeIcon, size: 'S'}],
+                [TextContext, {styles: treeContent}],
+                [IconContext, {styles: treeIcon, size: 'S'}],
               ]}>
               {content}
             </Provider>
@@ -298,7 +292,7 @@ const expandButton = style<ExpandableRowChevronProps>({
       isRTL: 'rotate(-90deg)'
     }
   },
-  transition: '[transform ease var(--spectrum-global-animation-duration-100)]'
+  transition: 'default'
 });
 
 function ExpandableRowChevron(props: ExpandableRowChevronProps) {
@@ -321,11 +315,15 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
       tabIndex={isAndroid() && !isDisabled ? -1 : undefined}
       className={expandButton({isExpanded, isDisabled, isRTL: direction === 'rtl'})}>
       <Chevron className={style({
-        rotate: {
+        scale: {
           direction: {
-            ltr: '90deg',
-            rtl: '-90deg'
+            ltr: '1',
+            rtl: '-1'
           }
+        },
+        '--iconPrimary': {
+          type: 'fill',
+          value: 'currentColor'
         }
       })({direction})} />
     </span>
