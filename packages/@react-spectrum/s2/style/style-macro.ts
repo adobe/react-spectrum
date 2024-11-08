@@ -399,17 +399,13 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
   }
 
   function compileRule(property: string, themeProperty: string, value: Value, priority: number, conditions: Set<string>, skipConditions: Set<string>): [number, Rule[]] {
-    // Generate selector. This consists of three parts:
-    // 1. Property. For custom properties we use a hash. For theme properties, we use the index within the theme.
-    // 2. Conditions. This uses the index within the theme.
-    // 3. Value. The index in the theme, or a hash for arbitrary values.
-    let prelude = '.';
-    if (property.startsWith('--')) {
-      // Include both custom property name and theme property in case the same var is reused between multiple theme properties.
-      prelude += generateArbitraryValueSelector(property, true) + '_' + themePropertyMap.get(themeProperty) + '-';
-    } else {
-      prelude += themePropertyMap.get(themeProperty);
-    }
+    let propertyPrefix = property.startsWith('--') ? generateName(themePropertyMap.get(themeProperty)!.length, true) : themePropertyMap.get(themeProperty)!;
+    let conditionsString = Array.from(conditions).sort().join(',');
+    let valueString = typeof value === 'string' ? value : JSON.stringify(value);
+    let hashInput = `${conditionsString}-${valueString}`;
+    let hashValue = hash(hashInput).toString(36);
+    let className = `${propertyPrefix}-${hashValue}`;
+    let prelude = `.${className}`;
 
     let propertyFunction = propertyFunctions.get(themeProperty);
     if (propertyFunction) {
