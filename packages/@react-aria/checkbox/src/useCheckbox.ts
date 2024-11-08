@@ -11,13 +11,14 @@
  */
 
 import {AriaCheckboxProps} from '@react-types/checkbox';
-import {chain} from '@react-aria/utils';
+import {chain, mergeProps} from '@react-aria/utils';
 import {InputHTMLAttributes, LabelHTMLAttributes, useCallback, useEffect} from 'react';
 import {privateValidationStateProp, useFormValidationState} from '@react-stately/form';
 import {RefObject, ValidationResult} from '@react-types/shared';
 import {ToggleState} from '@react-stately/toggle';
 import {useFormValidation} from '@react-aria/form';
 import {useToggle} from '@react-aria/toggle';
+import { usePress } from '@react-aria/interactions';
 
 export interface CheckboxAria extends ValidationResult {
   /** Props for the label wrapper element. */
@@ -62,20 +63,22 @@ export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputR
     }
   });
 
-  // Reset validation state on label click for checkbox with a hidden input.
-  state.toggle = chain(useCallback(state.toggle, [isSelected]), () => {
-    // @ts-expect-error
-    let {[privateValidationStateProp]: groupValidationState} = props;
-
-    let {commitValidation} = groupValidationState
-    ? groupValidationState
-    : validationState;
-    
-    commitValidation();
+  // Reset validation state on label press for checkbox with a hidden input.
+  let {pressProps} = usePress({
+    onPress() {
+      // @ts-expect-error
+      let {[privateValidationStateProp]: groupValidationState} = props;
+  
+      let {commitValidation} = groupValidationState
+      ? groupValidationState
+      : validationState;
+      
+      commitValidation();
+    }
   });
 
   return {
-    labelProps,
+    labelProps: mergeProps(labelProps, pressProps),
     inputProps: {
       ...inputProps,
       checked: isSelected,
