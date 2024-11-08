@@ -82,11 +82,11 @@ const fillStyles = style<MeterStyleProps>({
   borderStyle: 'none',
   borderRadius: 'full',
   backgroundColor: {
-    default: 'informative',
+    default: 'informative-visual',
     variant: {
-      positive: 'positive',
-      notice: 'notice',
-      negative: 'negative'
+      positive: 'positive-visual',
+      notice: 'notice-visual',
+      negative: 'negative-visual'
     },
     staticColor: {
       white: {

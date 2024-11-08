@@ -28,7 +28,7 @@ export type {MultipleSelectionManager, MultipleSelectionState, SingleSelectionSt
 export type {NumberFieldState, NumberFieldStateOptions} from '@react-stately/numberfield';
 export type {TableState, TableStateProps, TableHeaderProps, TableBodyProps, ColumnProps, RowProps, CellProps, TableColumnResizeState, TableColumnResizeStateProps} from '@react-stately/table';
 export type {TabListProps, TabListState} from '@react-stately/tabs';
-export type {ToggleProps, ToggleState} from '@react-stately/toggle';
+export type {ToggleProps, ToggleState, ToggleGroupProps, ToggleGroupState} from '@react-stately/toggle';
 export type {TooltipTriggerProps, TooltipTriggerState} from '@react-stately/tooltip';
 export type {TreeProps, TreeState} from '@react-stately/tree';
 export type {ItemProps, Key, SectionProps, Collection, Node, Orientation, DisabledBehavior, Selection, SelectionBehavior, SelectionMode, SortDescriptor, SortDirection, ValidationState} from '@react-types/shared';
@@ -52,7 +52,7 @@ export {useSliderState} from '@react-stately/slider';
 export {useMultipleSelectionState} from '@react-stately/selection';
 export {useTableState, TableHeader, TableBody, Column, Row, Cell, useTableColumnResizeState} from '@react-stately/table';
 export {useTabListState} from '@react-stately/tabs';
-export {useToggleState} from '@react-stately/toggle';
+export {useToggleState, useToggleGroupState} from '@react-stately/toggle';
 export {useTooltipTriggerState} from '@react-stately/tooltip';
 export {useTreeState} from '@react-stately/tree';
 export {FormValidationContext} from '@react-stately/form';
