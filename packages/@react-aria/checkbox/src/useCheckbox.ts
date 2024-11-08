@@ -65,6 +65,7 @@ export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputR
 
   // Reset validation state on label press for checkbox with a hidden input.
   let {pressProps} = usePress({
+    isDisabled: isDisabled || isReadOnly,
     onPress() {
       // @ts-expect-error
       let {[privateValidationStateProp]: groupValidationState} = props;
