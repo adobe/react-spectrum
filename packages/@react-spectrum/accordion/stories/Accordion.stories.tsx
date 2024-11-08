@@ -38,7 +38,7 @@ export const Default: AccordionStory = {
           Files
         </DisclosureHeader>
         <DisclosurePanel>
-          <p>Files content</p>
+          Files content
         </DisclosurePanel>
       </Disclosure>
       <Disclosure id="people">
@@ -46,7 +46,7 @@ export const Default: AccordionStory = {
           People
         </DisclosureHeader>
         <DisclosurePanel>
-          <p>People content</p>
+          People content
         </DisclosurePanel>
       </Disclosure>
     </Accordion>

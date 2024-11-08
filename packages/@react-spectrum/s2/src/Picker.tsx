@@ -11,8 +11,8 @@
  */
 
 import {
+  ListBoxSection as AriaListBoxSection,
   PopoverProps as AriaPopoverProps,
-  Section as AriaSection,
   Select as AriaSelect,
   SelectProps as AriaSelectProps,
   SelectRenderProps as AriaSelectRenderProps,
@@ -122,7 +122,16 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   font: 'control',
   display: 'flex',
   textAlign: 'start',
-  borderStyle: 'none',
+  borderStyle: {
+    default: 'none',
+    forcedColors: 'solid'
+  },
+  borderColor: {
+    forcedColors: {
+      default: 'ButtonText',
+      isDisabled: 'GrayText'
+    }
+  },
   borderRadius: 'control',
   alignItems: 'center',
   height: 'control',
@@ -460,11 +469,11 @@ export interface PickerSectionProps<T extends object> extends SectionProps<T> {}
 export function PickerSection<T extends object>(props: PickerSectionProps<T>) {
   return (
     <>
-      <AriaSection
+      <AriaListBoxSection
         {...props}
         className={section}>
         {props.children}
-      </AriaSection>
+      </AriaListBoxSection>
       <Divider />
     </>
   );

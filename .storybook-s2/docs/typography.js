@@ -46,7 +46,7 @@ export function H4({children}) {
 }
 
 export function P({children}) {
-  return <p className={style({font: 'body-lg', marginTop: 0, marginBottom: 24})}>{children}</p>
+  return <p className={style({font: 'body-lg', marginTop: 24, marginBottom: 24})}>{children}</p>
 }
 
 export function Code({children}) {

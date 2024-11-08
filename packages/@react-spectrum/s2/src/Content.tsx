@@ -120,7 +120,8 @@ function Text(props: ContentProps, ref: DOMRef) {
       inert={isSkeleton ? 'true' : undefined}
       className={UNSAFE_className + styles}
       style={UNSAFE_style}
-      slot={slot || undefined}>
+      slot={slot || undefined}
+      data-rsp-slot="text">
       {children}
     </TextAria>
   );

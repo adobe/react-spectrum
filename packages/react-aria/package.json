@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "@internationalized/string": "^3.2.4",
+    "@react-aria/accordion": "^3.0.0-alpha.35",
     "@react-aria/breadcrumbs": "^3.5.18",
     "@react-aria/button": "^3.10.1",
     "@react-aria/calendar": "^3.5.13",
@@ -46,6 +47,7 @@
     "@react-aria/combobox": "^3.10.5",
     "@react-aria/datepicker": "^3.11.4",
     "@react-aria/dialog": "^3.5.19",
+    "@react-aria/disclosure": "^3.0.0-alpha.1",
     "@react-aria/dnd": "^3.7.4",
     "@react-aria/focus": "^3.18.4",
     "@react-aria/gridlist": "^3.9.5",

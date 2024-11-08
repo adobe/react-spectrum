@@ -138,7 +138,7 @@ export function Docs() {
         <Pre>yarn add unplugin-parcel-macros --dev</Pre>
         <P>Then, configure your bundler according to the steps documented in the <Link href="https://github.com/devongovett/unplugin-parcel-macros#setup" target="_blank">readme</Link>. Note that plugin order is important: <Code>unplugin-parcel-macros</Code> must run before other plugins like Babel.</P>
         <P>You may also need to configure other tools such as TypeScript, Babel, ESLint, and Jest to support parsing import attributes. See <Link href="https://parceljs.org/features/macros/#usage-with-other-tools" target="_blank">these docs</Link> for details.</P>
-        <P>See the <Link href="https://github.com/adobe/react-spectrum/tree/main/examples" target="_blank">examples folder</Link> in our repo for working setups with various build tools.</P>
+        <P>See the <Link href="https://github.com/adobe/react-spectrum/tree/main/examples" target="_blank">examples folder</Link> in our repo for working setups with various build tools. For details on optimizing the output CSS, see the <Link href="?path=/docs/style-macro--docs#css-optimization" target="_top">style macro docs</Link>.</P>
         <H2>Setting up your app</H2>
         <P>Unlike React Spectrum v3, a <Code>Provider</Code> is not required. Instead, import <Code>@react-spectrum/s2/page.css</Code> in the entry component of your app to apply the background color and color scheme to the <Code>{'<html>'}</Code> element. This ensures that the entire page has the proper styles even before your JavaScript runs.</P>
         <Pre>{highlight(`import '@react-spectrum/s2/page.css';

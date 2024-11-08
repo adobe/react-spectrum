@@ -37,7 +37,7 @@ export const Default: DisclosureStory = {
         Files
       </DisclosureHeader>
       <DisclosurePanel>
-        <p>Files content</p>
+        Files content
       </DisclosurePanel>
     </Disclosure>
   )

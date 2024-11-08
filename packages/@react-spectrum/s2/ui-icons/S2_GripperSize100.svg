@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="b" data-name="ICONS" xmlns="http://www.w3.org/2000/svg" width="24" height="4" viewBox="0 0 24 4">
+  <path d="M22,4H2c-1.10449,0-2-.89551-2-2S.89551,0,2,0h20c1.10449,0,2,.89551,2,2s-.89551,2-2,2Z" fill="var(--iconPrimary, #222)" stroke-width="0"/>
+</svg>
