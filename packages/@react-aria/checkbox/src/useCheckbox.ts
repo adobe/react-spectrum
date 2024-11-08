@@ -17,7 +17,7 @@ import {privateValidationStateProp, useFormValidationState} from '@react-stately
 import {RefObject, ValidationResult} from '@react-types/shared';
 import {ToggleState} from '@react-stately/toggle';
 import {useFormValidation} from '@react-aria/form';
-import { usePress } from '@react-aria/interactions';
+import {usePress} from '@react-aria/interactions';
 import {useToggle} from '@react-aria/toggle';
 
 export interface CheckboxAria extends ValidationResult {
