@@ -11,8 +11,8 @@
  */
 
 import {AriaCheckboxProps} from '@react-types/checkbox';
-import {chain, mergeProps} from '@react-aria/utils';
-import {InputHTMLAttributes, LabelHTMLAttributes, useCallback, useEffect} from 'react';
+import {mergeProps} from '@react-aria/utils';
+import {InputHTMLAttributes, LabelHTMLAttributes, useEffect} from 'react';
 import {privateValidationStateProp, useFormValidationState} from '@react-stately/form';
 import {RefObject, ValidationResult} from '@react-types/shared';
 import {ToggleState} from '@react-stately/toggle';
