@@ -2,7 +2,7 @@
  * Copyright 2020 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
- * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software distributed under
  * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
@@ -11,29 +11,30 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {
-  // ActionMenu,
-  // MenuItem,
-  Content,
-  Heading,
-  Text,
-  IllustratedMessage,
-  Link,
-  TreeView,
-  TreeViewItem} from '../src';
+import {categorizeArgTypes} from './utils';
+import FileTxt from '../s2wf-icons/S2_Icon_FileText_20_N.svg';
 // import Add from '../s2wf-icons/S2_Icon_Add_20_N.svg';
 // import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
 // import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
-import FileTxt from '../s2wf-icons/S2_Icon_FileText_20_N.svg';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
+import type {Meta} from '@storybook/react';
 import React from 'react';
+import {
+  // ActionMenu,
+  // MenuItem,
+  // Content,
+  // Heading,
+  Text,
+  // IllustratedMessage,
+  // Link,
+  TreeView,
+  TreeViewItem
+} from '../src';
 
 let onActionFunc = action('onAction');
 let noOnAction = null;
 const onActionOptions = {onActionFunc, noOnAction};
 
-import {categorizeArgTypes} from './utils';
-import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof TreeView> = {
   component: TreeView,
@@ -65,7 +66,6 @@ const meta: Meta<typeof TreeView> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof TreeView>;
 
 const TreeExampleStatic = (args) => (
   <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>

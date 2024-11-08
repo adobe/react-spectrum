@@ -11,17 +11,27 @@
  */
 
 import {AriaTreeGridListProps} from '@react-aria/tree';
-import {ButtonContext, Collection, TreeItemContentRenderProps, TreeItemProps, TreeItemRenderProps, TreeRenderProps, UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeItemContent, useContextProps} from 'react-aria-components';
+import {
+  ButtonContext,
+  Collection,
+  Provider,
+  TreeItemProps,
+  TreeItemRenderProps,
+  TreeRenderProps,
+  UNSTABLE_Tree,
+  UNSTABLE_TreeItem,
+  UNSTABLE_TreeItemContent,
+  useContextProps
+} from 'react-aria-components';
 import {Checkbox, IconContext, Text, TextContext} from '@react-spectrum/s2';
 import Chevron from '../ui-icons/Chevron';
 import {DOMRef, Expandable, Key, SelectionBehavior, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {focusRing, style} from '../style' with {type: 'macro'};
 import {isAndroid} from '@react-aria/utils';
 import React, {createContext, isValidElement, JSX, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
-import {useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {focusRing, style} from '../style' with {type: 'macro'};
 import {useButton} from '@react-aria/button';
+import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale} from '@react-aria/i18n';
-import {Provider} from 'react-aria-components';
 
 export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>, StyleProps, SpectrumSelectionProps, Expandable {
   /** Provides content to display when there are no items in the tree. */
@@ -94,13 +104,12 @@ function TreeView<T extends object>(props: SpectrumTreeViewProps<T>, ref: DOMRef
     renderer = children;
   }
 
-  let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
   let selectionBehavior = selectionStyle === 'highlight' ? 'replace' : 'toggle';
 
   return (
     <TreeRendererContext.Provider value={{renderer}}>
-      <UNSTABLE_Tree {...props} {...styleProps} className={({isEmpty}) => tree({isEmpty})} selectionBehavior={selectionBehavior as SelectionBehavior} ref={domRef}>
+      <UNSTABLE_Tree {...props} className={({isEmpty}) => tree({isEmpty})} selectionBehavior={selectionBehavior as SelectionBehavior} ref={domRef}>
         {props.children}
       </UNSTABLE_Tree>
     </TreeRendererContext.Provider>
@@ -166,7 +175,7 @@ const treeIcon = style({
   marginEnd: 'text-to-visual'
 });
 
-const treeContent = style<Pick<TreeItemContentRenderProps, 'isDisabled'>>({
+const treeContent = style({
   gridArea: 'content',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
@@ -190,7 +199,7 @@ const treeRowOutline = style({
   },
   bottom: 0,
   pointerEvents: 'none',
-  forcedColorAdjust: 'none',
+  forcedColorAdjust: 'none'
 });
 
 export const TreeViewItem = <T extends object>(props: SpectrumTreeViewItemProps<T>) => {
@@ -238,7 +247,7 @@ export const TreeViewItem = <T extends object>(props: SpectrumTreeViewItemProps<
         isLink: !!href
       })}>
       <UNSTABLE_TreeItemContent>
-        {({isExpanded, hasChildRows, level, selectionMode, selectionBehavior, isDisabled, isSelected, isFocusVisible}) => (
+        {({isExpanded, hasChildRows, selectionMode, selectionBehavior, isDisabled, isSelected, isFocusVisible}) => (
           <div className={treeCellGrid({isDisabled})}>
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               // TODO: add transition?
@@ -251,14 +260,14 @@ export const TreeViewItem = <T extends object>(props: SpectrumTreeViewItemProps<
             <div
               className={style({
                 gridArea: 'level-padding',
-                width: `[calc(calc(var(--tree-item-level, 0) - 1) * var(--indent))]`
+                width: '[calc(calc(var(--tree-item-level, 0) - 1) * var(--indent))]'
               })} />
             {/* TODO: revisit when we do async loading, at the moment hasChildItems will only cause the chevron to be rendered, no aria/data attributes indicating the row's expandability are added */}
             {(hasChildRows || hasChildItems) && <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} />}
             <Provider
               values={[
                 [TextContext, {styles: treeContent}],
-                [IconContext, {styles: treeIcon, size: 'S'}],
+                [IconContext, {styles: treeIcon}]
               ]}>
               {content}
             </Provider>
@@ -297,6 +306,7 @@ const expandButton = style<ExpandableRowChevronProps>({
 
 function ExpandableRowChevron(props: ExpandableRowChevronProps) {
   let expandButtonRef = useRef<HTMLSpanElement>(null);
+  // @ts-ignore - check back on this
   let [fullProps, ref] = useContextProps({...props, slot: 'chevron'}, expandButtonRef, ButtonContext);
   let {isExpanded, isDisabled} = fullProps;
   let {direction} = useLocale();
@@ -314,18 +324,19 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
       // Override tabindex so that grid keyboard nav skips over it. Needs -1 so android talkback can actually "focus" it
       tabIndex={isAndroid() && !isDisabled ? -1 : undefined}
       className={expandButton({isExpanded, isDisabled, isRTL: direction === 'rtl'})}>
-      <Chevron className={style({
-        scale: {
-          direction: {
-            ltr: '1',
-            rtl: '-1'
+      <Chevron
+        className={style({
+          scale: {
+            direction: {
+              ltr: '1',
+              rtl: '-1'
+            }
+          },
+          '--iconPrimary': {
+            type: 'fill',
+            value: 'currentColor'
           }
-        },
-        '--iconPrimary': {
-          type: 'fill',
-          value: 'currentColor'
-        }
-      })({direction})} />
+        })({direction})} />
     </span>
   );
 }

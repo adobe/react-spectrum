@@ -124,9 +124,11 @@
     "@react-aria/test-utils": "1.0.0-alpha.1"
   },
   "dependencies": {
+    "@react-aria/button": "^3.10.1",
     "@react-aria/collections": "3.0.0-alpha.5",
     "@react-aria/i18n": "^3.12.3",
     "@react-aria/interactions": "^3.22.4",
+    "@react-aria/tree": "3.0.0-beta.1",
     "@react-aria/utils": "^3.25.3",
     "@react-spectrum/utils": "^3.11.11",
     "@react-stately/layout": "^4.0.3",
