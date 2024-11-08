@@ -10,7 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {commonDeclarations} from './commonDeclarations';
 import type {Condition, CSSProperties, CSSValue, CustomValue, PropertyFunction, PropertyValueDefinition, PropertyValueMap, RenderProps, ShorthandProperty, StyleFunction, StyleValue, Theme, ThemeProperties, Value} from './types';
+
+const commonDeclarationMap = new Map<string, string>();
+commonDeclarations.forEach((declaration, index) => {
+  commonDeclarationMap.set(declaration, generateName(index, true));
+});
 
 let defaultArbitraryProperty = <T extends Value>(value: T, property: string) => ({[property]: value} as CSSProperties);
 export function createArbitraryProperty<T extends Value>(fn: (value: T, property: string) => CSSProperties = defaultArbitraryProperty): PropertyFunction<T> {
@@ -400,11 +406,20 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
 
   function compileRule(property: string, themeProperty: string, value: Value, priority: number, conditions: Set<string>, skipConditions: Set<string>): [number, Rule[]] {
     let propertyPrefix = property.startsWith('--') ? generateName(themePropertyMap.get(themeProperty)!.length, true) : themePropertyMap.get(themeProperty)!;
-    let conditionsString = Array.from(conditions).sort().join(',');
-    let valueString = typeof value === 'string' ? value : JSON.stringify(value);
-    let hashInput = `${conditionsString}-${valueString}`;
-    let hashValue = hash(hashInput).toString(36);
-    let className = `${propertyPrefix}-${hashValue}`;
+
+    let declaration = `${property}:${value}`;
+    let className: string;
+
+    if (commonDeclarationMap.has(declaration)) {
+      let compactClassName = commonDeclarationMap.get(declaration);
+      className = `${propertyPrefix}-${compactClassName}`;
+    } else {
+      let conditionsString = Array.from(conditions).sort().join(',');
+      let valueString = typeof value === 'string' ? value : JSON.stringify(value);
+      let hashInput = `${conditionsString}-${valueString}`;
+      let hashValue = hash(hashInput).toString(36);
+      className = `${propertyPrefix}-${hashValue}`;
+    }
     let prelude = `.${className}`;
 
     let propertyFunction = propertyFunctions.get(themeProperty);
