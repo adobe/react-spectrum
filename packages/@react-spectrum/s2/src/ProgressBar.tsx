@@ -24,6 +24,7 @@ import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {mergeStyles} from '../style/runtime';
 import {size, style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
+import {useLocale} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface ProgressBarStyleProps {
@@ -56,12 +57,21 @@ export interface ProgressBarProps extends Omit<AriaProgressBarProps, 'children' 
 
 export const ProgressBarContext = createContext<ContextValue<ProgressBarProps, DOMRefValue<HTMLDivElement>>>(null);
 
-const indeterminate = keyframes(`
+const indeterminateLTR = keyframes(`
   0% {
     transform:  translateX(-70%) scaleX(0.7);
   }
   100% {
     transform:  translateX(100%) scaleX(0.7);
+  }
+`);
+
+const indeterminateRTL = keyframes(`
+  0% {
+    transform:  translateX(100%) scaleX(0.7);
+  }
+  100% {
+    transform:  translateX(-70%) scaleX(0.7);
   }
 `);
 
@@ -151,7 +161,12 @@ const fill = style<ProgressBarStyleProps>({
 });
 
 const indeterminateAnimation = style({
-  animation: indeterminate,
+  animation: {
+    direction: {
+      ltr: indeterminateLTR,
+      rtl: indeterminateRTL
+    }
+  },
   animationDuration: 1000,
   animationIterationCount: 'infinite',
   animationTimingFunction: 'in-out',
@@ -170,6 +185,8 @@ function ProgressBar(props: ProgressBarProps, ref: DOMRef<HTMLDivElement>) {
     UNSAFE_className = ''
   } = props;
   let domRef = useDOMRef(ref);
+  let {direction} = useLocale();
+
   return (
     <AriaProgressBar
       {...props}
@@ -182,7 +199,7 @@ function ProgressBar(props: ProgressBarProps, ref: DOMRef<HTMLDivElement>) {
           {label && !isIndeterminate && <span className={valueStyles({size, labelAlign: 'end', staticColor})}>{valueText}</span>}
           <div className={trackStyles({...props})}>
             <div
-              className={mergeStyles(fill({...props, staticColor}), (isIndeterminate ? indeterminateAnimation : null))}
+              className={mergeStyles(fill({...props, staticColor}), (isIndeterminate ? indeterminateAnimation({direction}) : null))}
               style={{width: isIndeterminate ? undefined : percentage + '%'}} />
           </div>
         </>

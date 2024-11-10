@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {baseColor, focusRing, fontRelative, style} from '../style' with { type: 'macro' };
-import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext, Provider, Button as RACButton} from 'react-aria-components';
+import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext, Provider, Button as RACButton, useSlottedContext} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
@@ -44,18 +45,35 @@ interface ToggleButtonStyleProps {
   isEmphasized?: boolean
 }
 
+interface ActionGroupItemStyleProps {
+  density?: 'regular' | 'compact',
+  orientation?: 'horizontal' | 'vertical',
+  isJustified?: boolean
+}
+
 export interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'isPending'>, StyleProps, ActionButtonStyleProps {
   /** The content to display in the ActionButton. */
   children?: ReactNode
 }
 
 // These styles handle both ActionButton and ToggleButton
-export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleButtonStyleProps>({
+const iconOnly = ':has([slot=icon]):not(:has([data-rsp-slot=text]))';
+export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleButtonStyleProps & ActionGroupItemStyleProps & {isInGroup: boolean}>({
   ...focusRing(),
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   columnGap: 'text-to-visual',
+  flexShrink: {
+    default: 1,
+    isInGroup: 0
+  },
+  flexGrow: {
+    isJustified: 1
+  },
+  flexBasis: {
+    isJustified: 0
+  },
   font: 'control',
   fontWeight: 'medium',
   userSelect: 'none',
@@ -159,16 +177,68 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
   borderStyle: 'none',
   paddingX: {
     default: 'edge-to-text',
-    ':has([slot=icon]:only-child)': 0
+    [iconOnly]: 0
   },
   paddingY: 0,
-  borderRadius: 'control',
+  borderTopStartRadius: {
+    default: 'control',
+    density: {
+      compact: {
+        default: 'none',
+        ':first-child': 'control'
+      }
+    }
+  },
+  borderTopEndRadius: {
+    default: 'control',
+    density: {
+      compact: {
+        default: 'none',
+        orientation: {
+          horizontal: {
+            ':last-child': 'control'
+          },
+          vertical: {
+            ':first-child': 'control'
+          }
+        }
+      }
+    }
+  },
+  borderBottomStartRadius: {
+    default: 'control',
+    density: {
+      compact: {
+        default: 'none',
+        orientation: {
+          horizontal: {
+            ':first-child': 'control'
+          },
+          vertical: {
+            ':last-child': 'control'
+          }
+        }
+      }
+    }
+  },
+  borderBottomEndRadius: {
+    default: 'control',
+    density: {
+      compact: {
+        default: 'none',
+        ':last-child': 'control'
+      }
+    }
+  },
   '--iconMargin': {
     type: 'marginTop',
     value: {
       default: fontRelative(-2),
-      ':has([slot=icon]:only-child)': 0
+      [iconOnly]: 0
     }
+  },
+  zIndex: {
+    isFocusVisible: 2
   },
   disableTapHighlight: true
 }, getAllowedOverrides());
@@ -180,19 +250,35 @@ function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElem
   props = useFormProps(props as any);
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
+  let ctx = useSlottedContext(ActionButtonGroupContext);
+  let isInGroup = !!ctx;
+  let {
+    density = 'regular',
+    isJustified,
+    orientation = 'horizontal',
+    staticColor = props.staticColor,
+    isQuiet = props.isQuiet,
+    size = props.size || 'M',
+    isDisabled = props.isDisabled
+  } = ctx || {};
 
   return (
     <RACButton
       {...props}
+      isDisabled={isDisabled}
       ref={domRef}
       style={pressScale(domRef, props.UNSAFE_style)}
       className={renderProps => (props.UNSAFE_className || '') + btnStyles({
         ...renderProps,
         // Retain hover styles when an overlay is open.
         isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
-        staticColor: props.staticColor,
-        size: props.size || 'M',
-        isQuiet: props.isQuiet
+        staticColor,
+        size,
+        isQuiet,
+        density,
+        isJustified,
+        orientation,
+        isInGroup
       }, props.styles)}>
       <Provider
         values={[
