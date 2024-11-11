@@ -122,6 +122,8 @@ governing permissions and limitations under the License.
     > .spectrum-Accordion-itemHeading {
       > .spectrum-Accordion-itemHeader {
         > .spectrum-Accordion-itemIndicator {
+          box-sizing: content-box;
+
           [dir='ltr'] & {
             transform: rotate(90deg);
           }
