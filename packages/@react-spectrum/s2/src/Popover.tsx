@@ -153,6 +153,10 @@ let popover = style({
         isEntering: `${slideLeftKeyframes}, ${fadeKeyframes}`,
         isExiting: `${slideLeftKeyframes}, ${fadeKeyframes}`
       }
+    },
+    isSubmenu: {
+      isEntering: fadeKeyframes,
+      isExiting: fadeKeyframes
     }
   },
   animationDuration: {
@@ -232,7 +236,7 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
         // Override default z-index from useOverlayPosition. We use isolation: isolate instead.
         zIndex: undefined
       }}
-      className={(renderProps) => UNSAFE_className + mergeStyles(popover({...renderProps, size, isArrowShown: !hideArrow, colorScheme}), styles)}>
+      className={(renderProps) => UNSAFE_className + mergeStyles(popover({...renderProps, size, isArrowShown: !hideArrow, colorScheme, isSubmenu: renderProps.trigger === 'SubmenuTrigger'}), styles)}>
       {composeRenderProps(props.children, (children, renderProps) => (
         <>
           {!hideArrow && (

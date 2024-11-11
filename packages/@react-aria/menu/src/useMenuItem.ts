@@ -285,7 +285,8 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     menuItemProps: {
       ...ariaProps,
       ...mergeProps(domProps, linkProps, isTrigger ? {onFocus: itemProps.onFocus, 'data-key': itemProps['data-key']} : itemProps, pressProps, hoverProps, keyboardProps, focusProps),
-      tabIndex: itemProps.tabIndex != null ? -1 : undefined
+      // If a submenu is expanded, set the tabIndex to -1 so that shift tabbing goes out of the menu instead of the parent menu item.
+      tabIndex: itemProps.tabIndex != null && isTrigger && props['aria-expanded'] === 'true' ? -1 : itemProps.tabIndex
     },
     labelProps: {
       id: labelId
