@@ -693,7 +693,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[] | null>, restoreFocus?: b
         && nodeToRestore
         && (
           // eslint-disable-next-line react-hooks/exhaustive-deps
-          (isElementInChildScope(ownerDocument.activeElement, scopeRef) || (ownerDocument.activeElement === ownerDocument.body && shouldRestoreFocus(scopeRef)))
+          ((ownerDocument.activeElement && isElementInChildScope(ownerDocument.activeElement, scopeRef)) || (ownerDocument.activeElement === ownerDocument.body && shouldRestoreFocus(scopeRef)))
         )
       ) {
         // freeze the focusScopeTree so it persists after the raf, otherwise during unmount nodes are removed from it

@@ -217,7 +217,7 @@ function Image(props: ImageProps, domRef: ForwardedRef<HTMLDivElement>) {
   return useMemo(() => hidden ? null : (
     <div
       ref={domRef}
-      slot={slot}
+      slot={slot || undefined}
       style={UNSAFE_style}
       className={UNSAFE_className + mergeStyles(wrapperStyles, styles) + ' '  + (isAnimating ? loadingStyle : '')}>
       {errorState}

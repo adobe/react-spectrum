@@ -310,7 +310,7 @@ let descriptor = style({
 });
 
 let InternalMenuContext = createContext<{size: 'S' | 'M' | 'L' | 'XL', isSubmenu: boolean}>({size: 'M', isSubmenu: false});
-let InternalMenuTriggerContext = createContext<Omit<MenuTriggerProps, 'children'>>(null);
+let InternalMenuTriggerContext = createContext<Omit<MenuTriggerProps, 'children'> | null>(null);
 
 function Menu<T extends object>(props: MenuProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, MenuContext);
