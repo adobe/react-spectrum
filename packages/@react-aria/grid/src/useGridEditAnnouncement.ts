@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {announce} from '@react-aria/live-announcer';
 import {GridCollection} from '@react-types/grid';
 import {GridState} from '@react-stately/grid';
 // @ts-ignore
@@ -35,10 +36,14 @@ export function useGridEditAnnouncement<T>(props: GridEditAnnouncementProps, sta
   let formatter = useLocalizedStringFormatter(intlMessages, '@react-aria/grid');
 
   useUpdateEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // TODO: announce properly once we have translations
+    if (!state.selectionManager.isEditing) {
+      // announce(formatter.format('edited'), 'assertive', 500);
+      return;
+    }
+
     let textValue = getEditText(state.selectionManager.editKey);
 
-    // TODO: announce entering & exiting once we have translations
-    // announce(textValue);
+    announce(textValue, 'assertive', 500);
   }, [state.selectionManager.editKey]);
 }

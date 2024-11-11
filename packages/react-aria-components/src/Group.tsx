@@ -16,7 +16,7 @@ import {FieldErrorContext} from './FieldError';
 import {GroupStateContext, useGroupState} from 'react-stately';
 import {HoverProps, mergeProps, useFocusRing, useHover} from 'react-aria';
 import {LabelContext} from './Label';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, useContext} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 import {TextContext} from './Text';
 import {useGroup} from '@react-aria/group';
 
@@ -73,11 +73,10 @@ export interface GroupProps extends AriaLabelingProps, Omit<HTMLAttributes<HTMLE
 export const GroupContext = createContext<ContextValue<GroupProps, HTMLDivElement>>({});
 
 function Group(props: GroupProps, ref: ForwardedRef<HTMLDivElement>) {
-  let groupState = useContext(GroupStateContext);
   [props, ref] = useContextProps(props, ref, GroupContext);
   let {onHoverStart, onHoverChange, onHoverEnd, ...otherProps} = props;
 
-  let state = useGroupState({...groupState, ...props});
+  let state = useGroupState(props);
   let {isDisabled, isReadOnly, ...validation} = state;
 
   let [labelRef, label] = useSlot();

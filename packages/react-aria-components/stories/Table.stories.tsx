@@ -176,7 +176,7 @@ export const TableExample = () => {
 };
 
 let columns = [
-  {name: 'Name', id: 'name', isRowHeader: true},
+  {name: 'Name', id: 'name', isRowHeader: true, isDisabled: true},
   {name: 'Type', id: 'type', isEditable: true, isDisabled: true},
   {name: 'Date Modified', id: 'date'}
 ];
@@ -893,7 +893,7 @@ export const OnLoadMoreTableVirtualizedResizeWrapperStory  = {
 
 export const TableEditModeExample = () => {
   return (
-    <Table aria-label="Files">
+    <Table aria-label="Files" keyboardNavigationBehavior="tab">
       <TableHeader columns={columns}>
         {(column) => (
           <Column isRowHeader={column.isRowHeader} isEditable={column.isEditable}>{column.name}</Column>
@@ -935,7 +935,7 @@ export const TableEditModeSelectionExample = () => {
   });
 
   return (
-    <Table aria-label="Files" defaultSelectedKeys={[3]} selectionMode="single" dragAndDropHooks={dragAndDropHooks} keyboardNavigationBehavior="tab">
+    <Table aria-label="Files" defaultSelectedKeys={[3]} selectionMode="single" dragAndDropHooks={dragAndDropHooks}>
       <TableHeader>
         <Column />
         <Column ><MyCheckbox slot="selection" /></Column>
@@ -964,16 +964,18 @@ export const TableEditModeSelectionExample = () => {
 
 export const TableEditModeDisabledExample = () => {
   return (
-    <Table aria-label="Files" disabledKeys={[2]}>
+    <Table aria-label="Files" disabledKeys={[2, `${columns[0].id}-${rows[2].id}`]}>
       <TableHeader columns={columns}>
-        {(column) => (
-          <Column isRowHeader={column.isRowHeader} isEditable={column.id === 'type'}>{column.name}</Column>
-        )}
+        <Column>Id</Column>
+        <Column isRowHeader>Name</Column>
+        <Column isDisabled>Type</Column>
+        <Column>Date</Column>
       </TableHeader>
       <TableBody items={rows}>
         {(item) => (
           <Row columns={columns}>
-            <Cell>{item.name}</Cell>
+            <Cell>{item.id}</Cell>
+            <Cell id={`${columns[0].id}-${item.id}`}>{item.name}</Cell>
             <Cell>
               <Button>Action1</Button>
               <TextField defaultValue={item.type}>

@@ -70,6 +70,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   // let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/gridlist');
   let {direction} = useLocale();
   let {id, onAction, linkBehavior, keyboardNavigationBehavior} = listMap.get(state);
+  let isArrowKeyNavigation = keyboardNavigationBehavior === 'arrow';
   let descriptionId = useSlotId();
 
   // We need to track the key of the item at the time it was last focused so that we force
@@ -124,7 +125,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
       return;
     }
 
-    let walker = getFocusableTreeWalker(ref.current);
+    let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
     walker.currentNode = document.activeElement;
 
     if ('expandedKeys' in state && document.activeElement === ref.current) {
@@ -139,70 +140,70 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
       }
     }
 
-    let isFocused = ref.current === document.activeElement;
-    let isNavigation = NAVIGATION_KEYS.has(e.key) || (e.altKey && e.key === 'Tab');
-
-    if (keyboardNavigationBehavior === 'tab' && isNavigation && !isFocused) {
-      e.preventDefault();
+    if (!isArrowKeyNavigation && ref.current !== e.target && (NAVIGATION_KEYS.has(e.key) || (e.altKey && e.key === 'Tab'))) {
       e.stopPropagation();
     }
 
     switch (e.key) {
       case 'ArrowLeft': {
-        if (keyboardNavigationBehavior === 'arrow') {
-          // Find the next focusable element within the row.
-          let focusable = direction === 'rtl'
-            ? walker.nextNode() as FocusableElement
-            : walker.previousNode() as FocusableElement;
+        if (!isArrowKeyNavigation) {
+          break;
+        };
 
-          if (focusable) {
-            e.preventDefault();
-            e.stopPropagation();
-            focusSafely(focusable);
-            scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
+        // Find the next focusable element within the row.
+        let focusable = direction === 'rtl'
+          ? walker.nextNode() as FocusableElement
+          : walker.previousNode() as FocusableElement;
+
+        if (focusable) {
+          e.preventDefault();
+          e.stopPropagation();
+          focusSafely(focusable);
+          scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
+        } else {
+          // If there is no next focusable child, then return focus back to the row
+          e.preventDefault();
+          e.stopPropagation();
+          if (direction === 'rtl') {
+            focusSafely(ref.current);
+            scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
           } else {
-            // If there is no next focusable child, then return focus back to the row
-            e.preventDefault();
-            e.stopPropagation();
-            if (direction === 'rtl') {
-              focusSafely(ref.current);
-              scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
-            } else {
-              walker.currentNode = ref.current;
-              let lastElement = last(walker);
-              if (lastElement) {
-                focusSafely(lastElement);
-                scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
-              }
+            walker.currentNode = ref.current;
+            let lastElement = last(walker);
+            if (lastElement) {
+              focusSafely(lastElement);
+              scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
             }
           }
         }
         break;
       }
       case 'ArrowRight': {
-        if (keyboardNavigationBehavior === 'arrow') {
-          let focusable = direction === 'rtl'
-            ? walker.previousNode() as FocusableElement
-            : walker.nextNode() as FocusableElement;
+        if (!isArrowKeyNavigation) {
+          break;
+        };
 
-          if (focusable) {
-            e.preventDefault();
-            e.stopPropagation();
-            focusSafely(focusable);
-            scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
+        let focusable = direction === 'rtl'
+          ? walker.previousNode() as FocusableElement
+          : walker.nextNode() as FocusableElement;
+
+        if (focusable) {
+          e.preventDefault();
+          e.stopPropagation();
+          focusSafely(focusable);
+          scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
+        } else {
+          e.preventDefault();
+          e.stopPropagation();
+          if (direction === 'ltr') {
+            focusSafely(ref.current);
+            scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
           } else {
-            e.preventDefault();
-            e.stopPropagation();
-            if (direction === 'ltr') {
-              focusSafely(ref.current);
-              scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
-            } else {
-              walker.currentNode = ref.current;
-              let lastElement = last(walker);
-              if (lastElement) {
-                focusSafely(lastElement);
-                scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
-              }
+            walker.currentNode = ref.current;
+            let lastElement = last(walker);
+            if (lastElement) {
+              focusSafely(lastElement);
+              scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
             }
           }
         }
@@ -213,7 +214,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
         // Prevent this event from reaching row children, e.g. menu buttons. We want arrow keys to navigate
         // to the row above/below instead. We need to re-dispatch the event from a higher parent so it still
         // bubbles and gets handled by useSelectableCollection.
-        if (keyboardNavigationBehavior === 'arrow' && !e.altKey && ref.current.contains(e.target as Element)) {
+        if (isArrowKeyNavigation && !e.altKey && ref.current.contains(e.target as Element)) {
           e.stopPropagation();
           e.preventDefault();
           ref.current.parentElement.dispatchEvent(
@@ -222,13 +223,13 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
         }
         break;
       case 'Escape': {
-        if (keyboardNavigationBehavior === 'tab') {
+        if (!isArrowKeyNavigation) {
           focusSafely(ref.current);
         }
         break;
       }
       case 'Tab': {
-        if (keyboardNavigationBehavior === 'tab') {
+        if (!isArrowKeyNavigation) {
           // If there is another focusable element within this item, stop propagation so the tab key
           // is handled by the browser and not by useSelectableCollection (which would take us out of the list).
           let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
@@ -258,7 +259,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     }
 
     requestAnimationFrame(() => {
-      if (e.relatedTarget && keyboardNavigationBehavior === 'tab') {
+      if (e.relatedTarget && !isArrowKeyNavigation) {
         let comparedPosition = ref.current.compareDocumentPosition(e.relatedTarget);
 
         let isFocusWithin = Boolean(comparedPosition & Node.DOCUMENT_POSITION_CONTAINED_BY);
@@ -266,7 +267,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
         let isSibling = e.relatedTarget.getAttribute('role') === 'row' && e.relatedTarget.id.startsWith(id);
 
         if (isShiftTab && !isFocusWithin && !isSibling) {
-          let walker = getFocusableTreeWalker(ref.current);
+          let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
           walker.currentNode = ref.current;
 
           let focusable = last(walker);
@@ -293,8 +294,8 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
   let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
-    onKeyDown: keyboardNavigationBehavior === 'tab' ? onKeyDown : undefined,
-    onKeyDownCapture: keyboardNavigationBehavior === 'tab' ? undefined : onKeyDown,
+    onKeyDown: isArrowKeyNavigation ? undefined : onKeyDown,
+    onKeyDownCapture: isArrowKeyNavigation ? onKeyDown : undefined,
     onFocus,
     // 'aria-label': [(node.textValue || undefined), rowAnnouncement].filter(Boolean).join(', '),
     'aria-label': node.textValue || undefined,

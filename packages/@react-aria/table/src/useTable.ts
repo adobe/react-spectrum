@@ -89,6 +89,7 @@ export function useTable<T>(props: AriaTableProps, state: TableState<T> | TreeGr
     ...props,
     id,
     getEditText,
+    isDisabled: props.isDisabled || state.collection.columns.every(c => state.selectionManager.isDisabled(c.key)),
     keyboardDelegate: delegate
   }, state, ref);
 

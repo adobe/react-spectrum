@@ -21,7 +21,7 @@ export class GridManager extends SelectionManager {
   }
 
   protected isCell(node?: GridNode<unknown>) {
-    return node?.type === 'cell';
+    return node?.type === 'cell' || node?.type === 'rowheader' || node?.type === 'column';
   }
 
   protected isRow(node?: GridNode<unknown>) {
@@ -40,10 +40,6 @@ export class GridManager extends SelectionManager {
    */
   get isEditing(): boolean {
     return this.editKey !== null;
-  }
-
-  get isKeyboardNavigationDisabled(): boolean {
-    return this.editState.isKeyboardNavigationDisabled;
   }
 
   canEditItem = (key: Key) => {
@@ -70,13 +66,17 @@ export class GridManager extends SelectionManager {
     this.editState.setEditKey(key);
   };
 
-  enableKeyboardNavigation = () => {
-    this.editState.setKeyboardNavigationDisabled(false);
-  };
+  get keyboardNavigationBehavior() {
+    return this.editState.keyboardNavigationBehavior;
+  }
 
-  disableKeyboardNavigation = () => {
-    this.editState.setKeyboardNavigationDisabled(true);
-  };
+  enableKeyboardNavigation() {
+    return this.editState.setKeyboardNavigationBehavior('arrow');
+  }
+
+  disableKeyboardNavigation() {
+    return this.editState.setKeyboardNavigationBehavior('tab');
+  }
 
   isReadOnly(key: Key) {
     let item = this.collection.getItem(key) as GridNode<unknown>;
@@ -84,11 +84,16 @@ export class GridManager extends SelectionManager {
   }
 
   isDisabled(key: Key) {
+    let item = this.collection.getItem(key) as GridNode<unknown>;
+
     if (super.isDisabled(key)) {
       return true;
     }
 
-    let item = this.collection.getItem(key) as GridNode<unknown>;
-    return this.isCell(item) && super.isDisabled(item.parentKey) || (item.column && super.isDisabled(item.column?.key));
+    if (key === item?.column?.key) {
+      return false;
+    }
+
+    return this.isCell(item) && (this.isDisabled(item.parentKey) || this.isDisabled(item.column?.key));
   }
 }

@@ -73,14 +73,15 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   } = props;
 
   let {direction} = useLocale();
-  let {id, keyboardDelegate, keyboardNavigationBehavior, actions: {onCellAction}} = gridMap.get(state);
+  let {id, keyboardDelegate, actions: {onCellAction}} = gridMap.get(state);
 
   let isEditing = state.selectionManager.editKey === node.key;
   let isEditable = state.selectionManager.canEditItem(node.key);
   let isReadOnly = state.selectionManager.isReadOnly(node.key);
   let isDisabled = state.selectionManager.isDisabled(node.key) || state.collection.size === 0;
+  let isArrowKeyNavigation = state.selectionManager.keyboardNavigationBehavior === 'arrow';
 
-  focusMode ??= isEditable || keyboardNavigationBehavior === 'tab' ? 'cell' : 'child';
+  focusMode ??= isEditable || !isArrowKeyNavigation ? 'cell' : 'child';
 
   // We need to track the key of the item at the time it was last focused so that we force
   // focus to go to the item when the DOM node is reused for a different item in a virtualizer.
@@ -89,7 +90,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   // Handles focusing the cell. If there is a focusable child,
   // it is focused, otherwise the cell itself is focused.
   let focus = () => {
-    let treeWalker = getFocusableTreeWalker(ref.current);
+    let treeWalker = getFocusableTreeWalker(ref.current, {tabbable: true});
     if (focusMode === 'child') {
       // If focus is already on a focusable child within the cell, early return so we don't shift focus
       if (ref.current.contains(document.activeElement) && ref.current !== document.activeElement) {
@@ -125,24 +126,20 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   });
 
   let onKeyDown = (e: ReactKeyboardEvent) => {
-    if (!e.currentTarget.contains(e.target as Element) || (NAVIGATION_KEYS.has(e.key) && state.selectionManager.isKeyboardNavigationDisabled)) {
+    if (!e.currentTarget.contains(e.target as Element)) {
       return;
     }
 
-    let walker = getFocusableTreeWalker(ref.current);
-    walker.currentNode = document.activeElement;
-
-    let isFocused = ref.current === document.activeElement;
-    let isNavigation = NAVIGATION_KEYS.has(e.key) || (e.altKey && e.key === 'Tab');
-
-    if (keyboardNavigationBehavior === 'tab' && isNavigation && !isFocused) {
-      e.preventDefault();
+    if (!isArrowKeyNavigation && ref.current !== e.target && (NAVIGATION_KEYS.has(e.key) || (e.altKey && e.key === 'Tab'))) {
       e.stopPropagation();
     }
+
+    let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
+    walker.currentNode = e.target as FocusableElement;
     
     switch (e.key) {
       case 'ArrowLeft': {
-        if (keyboardNavigationBehavior === 'tab') {
+        if (!isArrowKeyNavigation) {
           break;
         };
 
@@ -160,7 +157,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
         e.preventDefault();
         e.stopPropagation();
-        if ((focusable || isEditing) && !(isEditable && document.activeElement === ref.current)) {
+        if ((focusable || isEditing) && !(isEditable && e.target === ref.current)) {
           let [, end] = wrap(walker);
 
           focusSafely(isCellFocusable && isEditing ? end : focusable);
@@ -199,7 +196,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
         break;
       }
       case 'ArrowRight': {
-        if (keyboardNavigationBehavior === 'tab') {
+        if (!isArrowKeyNavigation) {
           break;
         };
 
@@ -213,7 +210,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
         e.preventDefault();
         e.stopPropagation();
-        if ((focusable || isEditing) && !(isEditable && document.activeElement === ref.current)) {
+        if ((focusable || isEditing) && !(isEditable && e.target === ref.current)) {
           let [start] = wrap(walker);
 
           focusSafely(focusable ?? start);
@@ -248,14 +245,10 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       }
       case 'ArrowUp':
       case 'ArrowDown': {
-        if (keyboardNavigationBehavior === 'tab') {
-          break;
-        };
-
         // Prevent this event from reaching cell children, e.g. menu buttons. We want arrow keys to navigate
         // to the cell above/below instead. We need to re-dispatch the event from a higher parent so it still
         // bubbles and gets handled by useSelectableCollection.
-        if (keyboardNavigationBehavior === 'arrow' && !e.altKey && ref.current.contains(e.target as Element)) {
+        if (isArrowKeyNavigation && !e.altKey && ref.current.contains(e.target as Element)) {
           e.stopPropagation();
           e.preventDefault();
 
@@ -268,7 +261,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       }
       case 'F2':
       case 'Enter': {
-        if (isEditing && (isSingleLineTextInput(document.activeElement) || e.key === 'F2')) {
+        if (isEditing && (isSingleLineTextInput(e.target as Element) || e.key === 'F2')) {
           focusSafely(ref.current);
           return;
         }
@@ -276,40 +269,34 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
         if (isEditable) {
           let focusable = walker.nextNode() as FocusableElement;
 
-          if (focusable && document.activeElement === ref.current) {
+          if (focusable && e.target === ref.current) {
             focusSafely(focusable);
           }
         }
         break;
       }
       case 'Escape': {
-        if (isEditing || keyboardNavigationBehavior === 'tab') {
+        if (isEditing || !isArrowKeyNavigation) {
           focusSafely(ref.current);
         }
         break;
       }
       case 'Tab': {
-        if (isEditing || keyboardNavigationBehavior === 'tab') {
+        if (isEditing || !isArrowKeyNavigation) {
           // If there is another focusable element within this item, stop propagation so the tab key
           // is handled by the browser and not by useSelectableCollection (which would take us out of the list).
-          let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
-          walker.currentNode = document.activeElement;
+          walker.currentNode = e.target as FocusableElement;
           let next = e.shiftKey ? walker.previousNode() : walker.nextNode();
 
           if (isEditing || next) {
             e.stopPropagation();
+          }
 
-            let [start, end] = wrap(walker);
+          let [start, end] = wrap(walker);
 
-            if (isEditing && !e.shiftKey && document.activeElement === end) {
-              e.preventDefault();
-              focusSafely(start);
-            }
-
-            if (isEditing && e.shiftKey && document.activeElement === start) {
-              e.preventDefault();
-              focusSafely(end);
-            }
+          if (isEditing && ((e.target === end && !e.shiftKey) || (e.target === start && e.shiftKey))) {
+            e.preventDefault();
+            focusSafely(e.shiftKey ? end : start);
           }
         }
         break;
@@ -328,14 +315,15 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   };
 
   let onBlur = (e) => {
-    if (isEditing) {
-      let comparedPosition = ref.current.compareDocumentPosition(e.relatedTarget ?? ref.current);
-      let isFocusWithin = Boolean(comparedPosition & Node.DOCUMENT_POSITION_CONTAINED_BY);
-      
-      if (!isFocusWithin) {
-        state.selectionManager.setEditKey(null);
-        state.selectionManager.enableKeyboardNavigation();
-      }
+    let comparedPosition = ref.current.compareDocumentPosition(e.relatedTarget ?? ref.current);
+    let isFocusWithin = Boolean(comparedPosition & Node.DOCUMENT_POSITION_CONTAINED_BY);
+
+    if (!isFocusWithin) {
+      state.selectionManager.setEditKey(null);
+    }
+
+    if (isSingleLineTextInputCell(ref.current)) {
+      state.selectionManager.enableKeyboardNavigation();
     }
   };
 
@@ -354,21 +342,13 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
         state.selectionManager.setFocusedKey(node.key);
       }
 
-      requestAnimationFrame(() => {
-        if (isEditable) {
-          let walker = getFocusableTreeWalker(e.target as HTMLElement);
-          let comparedPosition = ref.current.compareDocumentPosition(document.activeElement);
-          let isFocusWithin = Boolean(comparedPosition & Node.DOCUMENT_POSITION_CONTAINED_BY);
-  
-          if (isFocusWithin) {
-            state.selectionManager.setEditKey(node.key);
-          }
+      if (isEditable && ref.current.contains(e.target)) {
+        state.selectionManager.setEditKey(node.key);
+      }
 
-          if (!walker.nextNode()) {
-            state.selectionManager.disableKeyboardNavigation();
-          }
-        }
-      });
+      if (isEditable && !isEditing && isSingleLineTextInputCell(ref.current)) {
+        state.selectionManager.disableKeyboardNavigation();
+      }
 
       return;
     }
@@ -376,18 +356,16 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     // If the cell itself is focused, wait a frame so that focus finishes propagatating
     // up to the tree, and move focus to a focusable child if possible.
     requestAnimationFrame(() => {
-      if (e.relatedTarget && keyboardNavigationBehavior === 'tab') {
+      if (e.relatedTarget && !isArrowKeyNavigation) {
         let ariaRole = e.relatedTarget.getAttribute('role');
         let comparedPosition = ref.current.compareDocumentPosition(e.relatedTarget);
   
         let isFocusWithin = Boolean(comparedPosition & Node.DOCUMENT_POSITION_CONTAINED_BY);
         let isShiftTab = isFocusVisible() && Boolean(comparedPosition & Node.DOCUMENT_POSITION_FOLLOWING);
-        let isSibling = ariaRole === 'gridcell' || ariaRole === 'rowheader' && e.relatedTarget.id.startsWith(id);
+        let isSibling = (ariaRole === 'gridcell' || ariaRole === 'rowheader' || ariaRole === 'columnheader') && e.relatedTarget.id.startsWith(id);
   
         if (isShiftTab && !isFocusWithin && !isSibling) {
-          let walker = getFocusableTreeWalker(ref.current);
-          walker.currentNode = ref.current;
-  
+          let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
           let focusable = last(walker);
           
           if (focusable) {
@@ -420,7 +398,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       let comparedPosition = ref.current.compareDocumentPosition(e.target);
       let isTargetWithin = Boolean(comparedPosition & Node.DOCUMENT_POSITION_CONTAINED_BY);
 
-      if (isTargetWithin) {
+      if (isEditable && isTargetWithin) {
         e.nativeEvent.shouldStopPropagation = true;
         focusSafely(e.target);
       }
@@ -429,9 +407,10 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
   let gridCellProps: DOMAttributes = mergeProps(itemProps, selectProps, {
     role: 'gridcell',
-    onKeyDown: keyboardNavigationBehavior === 'tab' ? onKeyDown : undefined,
-    onKeyDownCapture: keyboardNavigationBehavior === 'tab' ?  undefined : onKeyDown,
-    onBlur,
+    tabIndex: node.key === state.selectionManager.focusedKey && !isDisabled ? 0 : -1,
+    onKeyDown: isArrowKeyNavigation ? undefined : onKeyDown,
+    onKeyDownCapture: isArrowKeyNavigation ? onKeyDown : undefined,
+    onBlur: isEditing ? onBlur : undefined,
     onFocus,
     // 'aria-label': node.textValue || undefined,
     // 'aria-selected': itemStates.allowsSelection ? itemStates.isSelected : undefined,
@@ -501,4 +480,13 @@ function wrap(walker: TreeWalker) {
 function isSingleLineTextInput(element: Element) {
   let type = element.getAttribute('type');
   return element.tagName === 'INPUT' && type && INPUT_TYPES.has(type);
+}
+
+function isSingleLineTextInputCell(element: Element) {
+  let walker = getFocusableTreeWalker(element, {tabbable: true});
+  let node = walker.nextNode() as FocusableElement;
+  if (!node || !isSingleLineTextInput(node)) {
+    return false;
+  }
+  return walker.nextNode() === null;
 }

@@ -16,11 +16,6 @@ import {Key, Node} from '@react-types/shared';
 import {TableCollection} from '@react-types/table';
 
 export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableCollection<T>> {
-
-  protected isCell(node: Node<T>) {
-    return node.type === 'cell' || node.type === 'rowheader' || node.type === 'column';
-  }
-
   getKeyBelow(key: Key) {
     let startItem = this.collection.getItem(key);
     if (!startItem) {
@@ -71,7 +66,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
 
     // If no item was found, and focus was on a cell, then focus the
     // corresponding column header.
-    if (this.isCell(startItem)) {
+    if (super.isCell(startItem)) {
       return this.collection.columns[startItem.index].key;
     }
 

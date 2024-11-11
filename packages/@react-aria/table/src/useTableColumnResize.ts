@@ -68,7 +68,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   let isResizingRef = useRef(isResizing);
   let lastSize = useRef(null);
   let wasFocusedOnResizeStart = useRef(false);
-  let isKeyboardNavigationDisabled = state.tableState.selectionManager.isKeyboardNavigationDisabled;
+  let isKeyboardNavigationDisabled = state.tableState.selectionManager.keyboardNavigationBehavior === 'tab';
 
   let {direction} = useLocale();
   let {keyboardProps} = useKeyboard({

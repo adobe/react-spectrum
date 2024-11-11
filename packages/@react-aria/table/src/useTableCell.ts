@@ -35,12 +35,8 @@ export interface AriaTableCellProps {
 export interface TableCellAria extends SelectableItemStates {
   /** Props for the table cell element. */
   gridCellProps: DOMAttributes,
-  /** Whether the cell is currently in a pressed state. */
-  isPressed: boolean,
   /** Whether the cell content is being edited. */
   isEditing: boolean,
-  /** Whether the cell is disabled. */
-  isDisabled: boolean,
   /** Whether the cell is read only. */
   isReadOnly: boolean
 }

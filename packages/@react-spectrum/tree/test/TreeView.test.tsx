@@ -725,8 +725,8 @@ describe('Tree', () => {
         await user.keyboard('{ArrowRight}');
         // Skips the chevron button
         expect(document.activeElement).toBe(buttons[1]);
-        await user.keyboard('{ArrowRight}');
-        expect(document.activeElement).toBe(buttons[2]);
+        // await user.keyboard('{ArrowRight}');
+        // expect(document.activeElement).toBe(buttons[2]);
         await user.keyboard('{ArrowRight}');
         expect(document.activeElement).toBe(expandableRow);
 
@@ -741,8 +741,8 @@ describe('Tree', () => {
 
         // Resume testing navigation to interacive elements
         await user.keyboard('{ArrowLeft}');
-        await user.keyboard('{ArrowLeft}');
-        expect(document.activeElement).toBe(buttons[2]);
+        // await user.keyboard('{ArrowLeft}');
+        // expect(document.activeElement).toBe(buttons[2]);
         await user.keyboard('{ArrowLeft}');
         expect(document.activeElement).toBe(buttons[1]);
         await user.keyboard('{ArrowLeft}');

@@ -18,13 +18,13 @@ export interface GridState<T, C extends GridCollection<T>> {
    */
   selectionManager: GridManager,
   /** 
-   * Whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell. 
-   * @deprecated Use `gridManager.isKeyboardNavigationDisabled` instead.
+   * Whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell.
+   * @deprecated Use `gridManager.keyboardNavigationBehavior === 'tab'` instead.
    */
   isKeyboardNavigationDisabled: boolean,
   /** 
    * Set whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell. 
-   * @deprecated Use `gridManager.setKeyboardNavigationDisabled` instead.
+   * @deprecated Use `gridManager.enableKeyboardNavigation` and `gridManager.disableKeyboardNavigation` instead.
    */
   setKeyboardNavigationDisabled: (val: boolean) => void
 }
@@ -130,7 +130,7 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
     disabledKeys,
     gridManager,
     selectionManager: gridManager,
-    isKeyboardNavigationDisabled: editState.isKeyboardNavigationDisabled,
-    setKeyboardNavigationDisabled: editState.setKeyboardNavigationDisabled
+    isKeyboardNavigationDisabled: editState.keyboardNavigationBehavior === 'tab',
+    setKeyboardNavigationDisabled: () => editState.setKeyboardNavigationBehavior('tab')
   };
 }

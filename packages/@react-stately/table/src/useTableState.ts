@@ -80,7 +80,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     useCallback((nodes) => new TableCollection(nodes, null, context), [context]),
     context
   );
-  let {disabledKeys, gridManager, setKeyboardNavigationDisabled} = useGridState({
+  let {disabledKeys, gridManager, isKeyboardNavigationDisabled, setKeyboardNavigationDisabled} = useGridState({
     ...props,
     collection,
     disabledBehavior: props.disabledBehavior || 'selection'
@@ -93,7 +93,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     selectionManager: gridManager,
     showSelectionCheckboxes: props.showSelectionCheckboxes || false,
     sortDescriptor: props.sortDescriptor,
-    isKeyboardNavigationDisabled: collection.size === 0 || gridManager.isKeyboardNavigationDisabled,
+    isKeyboardNavigationDisabled: collection.size === 0 || isKeyboardNavigationDisabled,
     setKeyboardNavigationDisabled: setKeyboardNavigationDisabled,
     sort(columnKey: Key, direction?: 'ascending' | 'descending') {
       props.onSortChange({
