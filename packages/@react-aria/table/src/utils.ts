@@ -15,19 +15,6 @@ import {TableState} from '@react-stately/table';
 
 export const gridIds = new WeakMap<TableState<unknown>, string>();
 
-function normalizeKey<T>(state: TableState<T>, key: Key): string {
-  let gridId = gridIds.get(state);
-  if (!gridId) {
-    throw new Error('Unknown grid');
-  }
-
-  if (typeof key === 'string') {
-    return key.replace(/\s*/g, '').replace(gridId, '');
-  }
-
-  return '' + key;
-}
-
 export function getColumnHeaderId<T>(state: TableState<T>, columnKey: Key): string {
   let gridId = gridIds.get(state);
   if (!gridId) {
@@ -51,4 +38,17 @@ export function getRowLabelledBy<T>(state: TableState<T>, rowKey: Key): string {
   return [...state.collection.rowHeaderColumnKeys].map(columnKey =>
     getCellId(state, rowKey, columnKey)
   ).join(' ');
+}
+
+function normalizeKey<T>(state: TableState<T>, key: Key): Key {
+  let gridId = gridIds.get(state);
+  if (!gridId) {
+    throw new Error('Unknown grid');
+  }
+
+  if (typeof key === 'string') {
+    return key.replace(/\s*/g, '').replace(gridId, '');
+  }
+
+  return key;
 }

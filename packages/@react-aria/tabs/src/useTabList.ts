@@ -50,6 +50,7 @@ export function useTabList<T>(props: AriaTabListOptions<T>, state: TabListState<
 
   let {collectionProps} = useSelectableCollection({
     ref,
+    // isDisabled: state.isDisabled || props.isDisabled,
     selectionManager: manager,
     keyboardDelegate: delegate,
     selectOnFocus: keyboardActivation === 'automatic',

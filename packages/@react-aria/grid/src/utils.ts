@@ -47,7 +47,7 @@ export function getCellId<T, C extends GridCollection<T>>(state: GridState<T, C>
   return `${id}-${normalizeKey(state, rowKey)}-${normalizeKey(state, columnKey)}`;
 }
 
-export function normalizeKey<T, C extends GridCollection<T>>(state: GridState<T, C>, key: Key): string {
+export function normalizeKey<T, C extends GridCollection<T>>(state: GridState<T, C>, key: Key): Key {
   let {id} = gridMap.get(state);
   if (!id) {
     throw new Error('Unknown grid');
@@ -57,5 +57,5 @@ export function normalizeKey<T, C extends GridCollection<T>>(state: GridState<T,
     return key.replace(/\s*/g, '').replace(id, '');
   }
 
-  return '' + key;
+  return key;
 }

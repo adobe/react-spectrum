@@ -293,11 +293,6 @@ export interface TableRenderProps {
    */
   isDropTarget: boolean,
   /**
-   * Whether the table is read only.
-   * @selector [data-readonly]
-   */
-  isReadOnly: boolean,
-  /**
    * State of the table.
    */
   state: TableState<unknown>
@@ -318,10 +313,10 @@ export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, Sty
   disabledBehavior?: DisabledBehavior,
   /** Handler that is called when a user performs an action on the row. */
   onRowAction?: (key: Key) => void,
+  /** Handler that is called when the editing key changes. */
+  onEditChange?: (key: Key | null) => void,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the Table. */
   dragAndDropHooks?: DragAndDropHooks,
-  /** Whether the content can be selected but not changed by the user. */
-  isReadOnly?: boolean,
   /**
    * Whether keyboard navigation to focusable elements within the cell is
    * via the left/right arrow keys or the tab key.
@@ -450,7 +445,6 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
       isDropTarget: isRootDropTarget,
       isFocused,
       isFocusVisible,
-      isReadOnly: state.isReadOnly,
       state
     }
   });
@@ -494,8 +488,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
           data-allows-dragging={isListDraggable || undefined}
           data-drop-target={isRootDropTarget || undefined}
           data-focused={isFocused || undefined}
-          data-focus-visible={isFocusVisible || undefined}
-          data-readonly={state.isReadOnly || undefined}>
+          data-focus-visible={isFocusVisible || undefined}>
           <CollectionRoot
             collection={collection}
             scrollRef={tableContainerContext?.scrollRef ?? ref}
@@ -679,6 +672,12 @@ export interface ColumnProps extends RenderProps<ColumnRenderProps> {
   id?: Key,
   /** Whether the column allows sorting. */
   allowsSorting?: boolean,
+  /** Whether the column is editable. */
+  isEditable?: boolean,
+  /** Whether the column is disabled. */
+  isDisabled?: boolean,
+  /** Whether the content can be selected but not changed by the user. */
+  isReadOnly?: boolean,
   /** Whether a column is a [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and should be announced by assistive technology during row navigation. */
   isRowHeader?: boolean,
   /** A string representation of the column's contents, used for accessibility announcements. */
@@ -737,7 +736,7 @@ export const Column = /*#__PURE__*/ createLeafComponent('column', (props: Column
       startResize: () => {
         if (layoutState) {
           layoutState.startResize(column.key);
-          state.setKeyboardNavigationDisabled(true);
+          state.selectionManager.disableKeyboardNavigation();
         } else {
           throw new Error('Wrap your <Table> in a <ResizableTableContainer> to enable column resizing');
         }
@@ -1199,6 +1198,11 @@ export interface CellRenderProps {
    */
   isHovered: boolean,
   /**
+   * Whether the cell is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean,
+  /**
    * Whether the cell is read only.
    * @selector [data-readonly]
    */
@@ -1206,10 +1210,14 @@ export interface CellRenderProps {
 }
 
 export interface CellProps extends RenderProps<CellRenderProps> {
+  /** The unique id of the cell. */
+  id?: Key,
   /** A string representation of the cell's contents, used for features like typeahead. */
   textValue?: string,
   /** Whether the cell is editable. */
   isEditable?: boolean,
+  /** Whether the row is disabled. */
+  isDisabled?: boolean,
   /** Whether the content can be selected but not changed by the user. */
   isReadOnly?: boolean
 }
@@ -1226,15 +1234,13 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
   // @ts-ignore
   cell.column = state.collection.columns[cell.index];
 
-  let {gridCellProps, isPressed, isEditing, isReadOnly} = useTableCell({
+  let {gridCellProps, isPressed, isEditing, isReadOnly, isDisabled} = useTableCell({
     node: cell,
     shouldSelectOnPressUp: !!dragState,
-    isVirtualized,
-    isEditable: props.isEditable,
-    isReadOnly: props.isReadOnly
+    isVirtualized
   }, state, ref);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
-  let {hoverProps, isHovered} = useHover({});
+  let {hoverProps, isHovered} = useHover({isDisabled});
 
   let renderProps = useRenderProps({
     ...props,
@@ -1243,6 +1249,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
     values: {
       isFocused,
       isFocusVisible,
+      isDisabled,
       isPressed,
       isHovered,
       isEditing,
@@ -1251,7 +1258,11 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
   });
 
   let TD = useElementType('td');
-  let groupState = useMemo(() => ({isReadOnly}), [isReadOnly]);
+
+  let groupState = useMemo(() => ({
+    isDisabled: isDisabled || undefined, 
+    isReadOnly: isReadOnly || undefined
+  }), [isDisabled, isReadOnly]);
 
   return (
     <TD
@@ -1261,6 +1272,8 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
       data-editing={isEditing || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
+      data-disabled={isDisabled || undefined}
+      data-hovered={isHovered || undefined}
       data-pressed={isPressed || undefined}
       data-readonly={isReadOnly || undefined}>
       <Provider values={[[GroupStateContext, groupState], [CollectionRendererContext, DefaultCollectionRenderer]]}>

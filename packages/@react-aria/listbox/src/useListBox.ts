@@ -13,7 +13,7 @@
 import {AriaListBoxProps} from '@react-types/listbox';
 import {DOMAttributes, KeyboardDelegate, LayoutDelegate, RefObject} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {listData} from './utils';
+import {listMap} from './utils';
 import {ListState} from '@react-stately/list';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useLabel} from '@react-aria/label';
@@ -99,7 +99,7 @@ export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>,
 
   // Share list id and some props with child options.
   let id = useId(props.id);
-  listData.set(state, {
+  listMap.set(state, {
     id,
     shouldUseVirtualFocus: props.shouldUseVirtualFocus,
     shouldSelectOnPressUp: props.shouldSelectOnPressUp,

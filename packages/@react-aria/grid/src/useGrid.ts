@@ -18,6 +18,7 @@ import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
 import {useCallback, useMemo} from 'react';
 import {useCollator, useLocale} from '@react-aria/i18n';
+import {useGridEditAnnouncement} from './useGridEditAnnouncement';
 import {useGridSelectionAnnouncement} from './useGridSelectionAnnouncement';
 import {useHasTabbableChild} from '@react-aria/focus';
 import {useHighlightSelectionDescription} from './useHighlightSelectionDescription';
@@ -26,6 +27,11 @@ import {useSelectableCollection} from '@react-aria/selection';
 export interface GridProps extends DOMProps, AriaLabelingProps {
   /** Whether the grid uses virtual scrolling. */
   isVirtualized?: boolean,
+  /**
+   * Whether focus should wrap around when the end/start is reached.
+   * @default false
+   */
+  shouldFocusWrap?: boolean,
   /**
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
@@ -41,6 +47,11 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
    * @default (key) => state.collection.getItem(key)?.textValue
    */
   getRowText?: (key: Key) => string,
+  /**
+   * A function that returns the text that should be announced by assistive technology when a cell is edited.
+   * @default (key) => state.collection.getItem(key)?.textValue
+   */
+  getEditText?: (key: Key) => string,
   /**
    * Whether keyboard navigation to focusable elements within the grid is
    * via the left/right arrow keys or the tab key.
@@ -72,10 +83,12 @@ export interface GridAria {
 export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<T>>, ref: RefObject<HTMLElement | null>): GridAria {
   let {
     isVirtualized,
+    shouldFocusWrap,
     keyboardDelegate,
     focusMode,
     scrollRef,
     getRowText,
+    getEditText,
     onRowAction,
     onCellAction,
     keyboardNavigationBehavior = 'arrow'
@@ -103,6 +116,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
 
   let {collectionProps} = useSelectableCollection({
     ref,
+    shouldFocusWrap,
     selectionManager: manager,
     keyboardDelegate: delegate,
     isVirtualized,
@@ -154,9 +168,9 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
       id,
       'aria-multiselectable': manager.selectionMode === 'multiple' ? 'true' : undefined
     },
-    state.isKeyboardNavigationDisabled ? navDisabledHandlers : collectionProps,
+    state.selectionManager.isKeyboardNavigationDisabled ? navDisabledHandlers : collectionProps,
     // If collection is empty, make sure the grid is tabbable unless there is a child tabbable element.
-    state.collection.size === 0 && {tabIndex: hasTabbableChild ? -1 : 0},
+    state.collection.size === 0 ? {tabIndex: hasTabbableChild ? -1 : 0} : {},
     descriptionProps
   );
 
@@ -165,6 +179,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     gridProps['aria-colcount'] = state.collection.columnCount;
   }
 
+  useGridEditAnnouncement({getEditText}, state);
   useGridSelectionAnnouncement({getRowText}, state);
   return {
     gridProps

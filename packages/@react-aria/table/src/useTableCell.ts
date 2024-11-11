@@ -13,6 +13,7 @@
 import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 import {getCellId} from './utils';
 import {GridNode} from '@react-types/grid';
+import {SelectableItemStates} from '@react-aria/selection';
 import {TableState} from '@react-stately/table';
 import {useGridCell} from '@react-aria/grid';
 
@@ -21,10 +22,6 @@ export interface AriaTableCellProps {
   node: GridNode<unknown>,
   /** Whether the cell is contained in a virtual scroller. */
   isVirtualized?: boolean,
-  /** Whether the cell content is editable. */
-  isEditable?: boolean,
-  /** Whether the content can be selected but not changed by the user. */
-  isReadOnly?: boolean,
   /** Whether selection should occur on press up instead of press down. */
   shouldSelectOnPressUp?: boolean,
   /**
@@ -35,13 +32,15 @@ export interface AriaTableCellProps {
   onAction?: () => void
 }
 
-export interface TableCellAria {
+export interface TableCellAria extends SelectableItemStates {
   /** Props for the table cell element. */
   gridCellProps: DOMAttributes,
   /** Whether the cell is currently in a pressed state. */
   isPressed: boolean,
   /** Whether the cell content is being edited. */
   isEditing: boolean,
+  /** Whether the cell is disabled. */
+  isDisabled: boolean,
   /** Whether the cell is read only. */
   isReadOnly: boolean
 }
@@ -53,7 +52,7 @@ export interface TableCellAria {
  * @param ref - The ref attached to the cell element.
  */
 export function useTableCell<T>(props: AriaTableCellProps, state: TableState<T>, ref: RefObject<FocusableElement | null>): TableCellAria {
-  let {gridCellProps, isPressed, isEditing, isReadOnly} = useGridCell(props, state, ref);
+  let {gridCellProps, ...itemStates} = useGridCell(props, state, ref);
   let columnKey = props.node.column.key;
   if (state.collection.rowHeaderColumnKeys.has(columnKey)) {
     gridCellProps.role = 'rowheader';
@@ -62,8 +61,6 @@ export function useTableCell<T>(props: AriaTableCellProps, state: TableState<T>,
 
   return {
     gridCellProps,
-    isPressed,
-    isEditing,
-    isReadOnly
+    ...itemStates
   };
 }

@@ -16,13 +16,8 @@ import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Nod
 import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {ContextValue, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
-<<<<<<< HEAD
 import {filterDOMProps, useId, useObjectRef, useResizeObserver} from '@react-aria/utils';
-import {forwardRefType, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
-=======
-import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {FocusStrategy, forwardRefType, HoverEvents, Key, LinkDOMProps, MultipleSelection} from '@react-types/shared';
->>>>>>> spectrum
 import {HeaderContext} from './Header';
 import {KeyboardContext} from './Keyboard';
 import {MultipleSelectionState, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';

@@ -229,6 +229,69 @@ export function MultiTabGridList() {
   );
 }
 
+export function MultiTabGridListDisabled() {
+  return (
+    <GridList
+      disabledKeys={['1-1']}
+      selectionMode="multiple"
+      keyboardNavigationBehavior="tab"
+      className={styles.menu}
+      aria-label="Grid list with multiple tab stops"
+      style={{
+        width: 300,
+        height: 300
+      }}>
+      <MyGridListItem>
+        1,1
+        <Button>Action1</Button>
+        <Button>Action2</Button>
+      </MyGridListItem>
+      <MyGridListItem>
+        1,2
+        <Button>Action1</Button>
+        <Button>Action2</Button>
+      </MyGridListItem>
+      <MyGridListItem>
+        1,3
+        <Button>Action1</Button>
+        <Button>Action2</Button>
+      </MyGridListItem>
+    </GridList>
+  );
+}
+
+export function MultiTabGridListSelection() {
+  return (
+    <GridList
+      id="gridlist"
+      defaultSelectedKeys="all"
+      selectionMode="multiple"
+      keyboardNavigationBehavior="tab"
+      className={styles.menu}
+      aria-label="Grid list with multiple tab stops"
+      style={{
+        width: 300,
+        height: 300
+      }}>
+      <MyGridListItem id="1-1">
+        1,1
+        <Button>Action1</Button>
+        <Button>Action2</Button>
+      </MyGridListItem>
+      <MyGridListItem id="1-2">
+        1,2
+        <Button>Action1</Button>
+        <Button>Action2</Button>
+      </MyGridListItem>
+      <MyGridListItem id="1-3">
+        1,3
+        <Button>Action1</Button>
+        <Button>Action2</Button>
+      </MyGridListItem>
+    </GridList>
+  );
+}
+
 export function MultiTabGridListWithNestedGrid() {
   return (
     <GridList

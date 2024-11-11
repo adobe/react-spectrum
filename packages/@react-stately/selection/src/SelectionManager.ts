@@ -49,6 +49,10 @@ export class SelectionManager implements MultipleSelectionManager {
     this.layoutDelegate = options?.layoutDelegate || null;
   }
 
+  protected isItem(node?: Node<unknown>) {
+    return node?.type === 'item';
+  }
+
   /**
    * The type of selection that is allowed in the collection.
    */
@@ -265,7 +269,7 @@ export class SelectionManager implements MultipleSelectionManager {
     let key = from;
     while (key != null) {
       let item = this.collection.getItem(key);
-      if (item && item.type === 'item' || (item.type === 'cell' && this.allowsCellSelection)) {
+      if (this.isItem(item) || (item.type === 'cell' && this.allowsCellSelection)) {
         keys.push(key);
       }
 
@@ -292,11 +296,11 @@ export class SelectionManager implements MultipleSelectionManager {
     }
 
     // Find a parent item to select
-    while (item.type !== 'item' && item.parentKey != null) {
+    while (!this.isItem(item) && item.parentKey != null) {
       item = this.collection.getItem(item.parentKey);
     }
 
-    if (!item || item.type !== 'item') {
+    if (!this.isItem(item)) {
       return null;
     }
 
@@ -387,12 +391,12 @@ export class SelectionManager implements MultipleSelectionManager {
       while (key != null) {
         if (this.canSelectItem(key)) {
           let item = this.collection.getItem(key);
-          if (item.type === 'item') {
+          if (this.isItem(item)) {
             keys.push(key);
           }
 
           // Add child keys. If cell selection is allowed, then include item children too.
-          if (item.hasChildNodes && (this.allowsCellSelection || item.type !== 'item')) {
+          if (item.hasChildNodes && (this.allowsCellSelection || !this.isItem(item))) {
             addKeys(getFirstItem(getChildNodes(item, this.collection)).key);
           }
         }

@@ -21,8 +21,6 @@ import {useCollection} from '@react-stately/collections';
 export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   /** A collection of rows and columns in the table. */
   collection: ITableCollection<T>,
-  /** Whether the content can be selected but not changed by the user. */
-  isReadOnly: boolean,
   /** Whether the row selection checkboxes should be displayed. */
   showSelectionCheckboxes: boolean,
   /** The current sorted column and direction. */
@@ -43,8 +41,8 @@ export interface TableStateProps<T> extends MultipleSelectionStateProps, Sortabl
   children?: [ReactElement<TableHeaderProps<T>>, ReactElement<TableBodyProps<T>>],
   /** A list of row keys to disable. */
   disabledKeys?: Iterable<Key>,
-  /** Whether the content can be selected but not changed by the user. */
-  isReadOnly?: boolean,
+  /** Handler that is called when the editing key changes. */
+  onEditChange?: (key: Key | null) => void,
   /** A pre-constructed collection to use instead of building one from items and children. */
   collection?: ITableCollection<T>,
   /** Whether the row selection checkboxes should be displayed. */
@@ -82,7 +80,7 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     useCallback((nodes) => new TableCollection(nodes, null, context), [context]),
     context
   );
-  let {disabledKeys, selectionManager, isReadOnly, editingKey, setEditingKey, isKeyboardNavigationDisabled, setKeyboardNavigationDisabled} = useGridState({
+  let {disabledKeys, gridManager, setKeyboardNavigationDisabled} = useGridState({
     ...props,
     collection,
     disabledBehavior: props.disabledBehavior || 'selection'
@@ -91,14 +89,12 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
   return {
     collection,
     disabledKeys,
-    isReadOnly,
-    editingKey,
-    setEditingKey,
-    selectionManager,
+    gridManager,
+    selectionManager: gridManager,
     showSelectionCheckboxes: props.showSelectionCheckboxes || false,
     sortDescriptor: props.sortDescriptor,
-    isKeyboardNavigationDisabled: collection.size === 0 || isKeyboardNavigationDisabled,
-    setKeyboardNavigationDisabled,
+    isKeyboardNavigationDisabled: collection.size === 0 || gridManager.isKeyboardNavigationDisabled,
+    setKeyboardNavigationDisabled: setKeyboardNavigationDisabled,
     sort(columnKey: Key, direction?: 'ascending' | 'descending') {
       props.onSortChange({
         column: columnKey,

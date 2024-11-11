@@ -177,12 +177,12 @@ export const TableExample = () => {
 
 let columns = [
   {name: 'Name', id: 'name', isRowHeader: true},
-  {name: 'Type', id: 'type'},
+  {name: 'Type', id: 'type', isEditable: true, isDisabled: true},
   {name: 'Date Modified', id: 'date'}
 ];
 
 let rows = [
-  {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
+  {id: 1, name: 'Games', date: '6/7/2020', type: 'Game file'},
   {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
   {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
   {id: 4, name: 'log.txt', date: '1/18/20167', type: 'Text Document'}
@@ -896,18 +896,87 @@ export const TableEditModeExample = () => {
     <Table aria-label="Files">
       <TableHeader columns={columns}>
         {(column) => (
-          <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
+          <Column isRowHeader={column.isRowHeader} isEditable={column.isEditable}>{column.name}</Column>
         )}
       </TableHeader>
       <TableBody items={rows}>
         {(item) => (
           <Row columns={columns}>
             <Cell>{item.name}</Cell>
-            <Cell isEditable>
+            <Cell>
               <TextField defaultValue={item.type}>
                 <Input />
               </TextField>
-              <TextField defaultValue={'test'}>
+            </Cell>
+            <Cell>{item.date}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+};
+
+export const TableEditModeSelectionExample = () => {
+  let list = useListData({
+    initialItems: rows
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => ({
+      'text/plain': list.getItem(key).name
+    })),
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    }
+  });
+
+  return (
+    <Table aria-label="Files" defaultSelectedKeys={[3]} selectionMode="single" dragAndDropHooks={dragAndDropHooks} keyboardNavigationBehavior="tab">
+      <TableHeader>
+        <Column />
+        <Column ><MyCheckbox slot="selection" /></Column>
+        <Column isRowHeader>Name</Column>
+        <Column isEditable>Type</Column>
+        <Column>Date</Column>
+      </TableHeader>
+      <TableBody items={list.items}>
+        {(item) => (
+          <Row>
+            <Cell><Button slot="drag">≡</Button></Cell>
+            <Cell><MyCheckbox slot="selection" /></Cell>
+            <Cell>{item.name}</Cell>
+            <Cell>
+              <TextField defaultValue={item.type}>
+                <Input />
+              </TextField>
+            </Cell>
+            <Cell>{item.date}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+};
+
+export const TableEditModeDisabledExample = () => {
+  return (
+    <Table aria-label="Files" disabledKeys={[2]}>
+      <TableHeader columns={columns}>
+        {(column) => (
+          <Column isRowHeader={column.isRowHeader} isEditable={column.id === 'type'}>{column.name}</Column>
+        )}
+      </TableHeader>
+      <TableBody items={rows}>
+        {(item) => (
+          <Row columns={columns}>
+            <Cell>{item.name}</Cell>
+            <Cell>
+              <Button>Action1</Button>
+              <TextField defaultValue={item.type}>
                 <Input />
               </TextField>
             </Cell>

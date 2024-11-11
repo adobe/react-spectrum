@@ -5957,6 +5957,7 @@ __metadata:
     "@react-aria/utils": "npm:^3.25.3"
     "@react-stately/collections": "npm:^3.11.0"
     "@react-stately/grid": "npm:^3.9.3"
+    "@react-stately/group": "npm:3.0.0-alpha.1"
     "@react-stately/selection": "npm:^3.17.0"
     "@react-types/checkbox": "npm:^3.8.4"
     "@react-types/grid": "npm:^3.2.9"
@@ -5994,6 +5995,7 @@ __metadata:
   resolution: "@react-aria/group@workspace:packages/@react-aria/group"
   dependencies:
     "@react-aria/label": "npm:^3.7.12"
+    "@react-stately/group": "npm:3.0.0-alpha.1"
     "@react-types/shared": "npm:^3.25.0"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
@@ -8334,6 +8336,7 @@ __metadata:
   dependencies:
     "@react-stately/collections": "npm:^3.11.0"
     "@react-stately/selection": "npm:^3.17.0"
+    "@react-stately/utils": "npm:^3.10.4"
     "@react-types/grid": "npm:^3.2.9"
     "@react-types/shared": "npm:^3.25.0"
     "@swc/helpers": "npm:^0.5.0"
@@ -8346,6 +8349,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/group@workspace:packages/@react-stately/group"
   dependencies:
+    "@react-stately/form": "npm:^3.0.6"
     "@react-stately/utils": "npm:^3.0.0"
     "@react-types/shared": "npm:^3.25.0"
     "@swc/helpers": "npm:^0.5.0"
@@ -29036,6 +29040,7 @@ __metadata:
     "@react-aria/virtualizer": "npm:^4.0.4"
     "@react-stately/color": "npm:^3.8.0"
     "@react-stately/disclosure": "npm:3.0.0-alpha.0"
+    "@react-stately/group": "npm:3.0.0-alpha.1"
     "@react-stately/layout": "npm:^4.0.3"
     "@react-stately/menu": "npm:^3.8.3"
     "@react-stately/selection": "npm:^3.17.0"

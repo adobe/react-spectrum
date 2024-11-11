@@ -13,7 +13,7 @@
 import {Direction, DisabledBehavior, Key, KeyboardDelegate, LayoutDelegate, Node, Rect, RefObject, Size} from '@react-types/shared';
 import {DOMLayoutDelegate} from '@react-aria/selection';
 import {getChildNodes, getFirstItem, getLastItem, getNthItem} from '@react-stately/collections';
-import {GridCollection} from '@react-types/grid';
+import {GridCollection, GridNode} from '@react-types/grid';
 
 export interface GridKeyboardDelegateOptions<C> {
   collection: C,
@@ -55,8 +55,8 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return node.type === 'row' || node.type === 'item';
   }
 
-  private isDisabled(item: Node<unknown>) {
-    return this.disabledBehavior === 'all' && (item.props?.isDisabled || this.disabledKeys.has(item.key));
+  private isDisabled(node: Node<unknown>) {
+    return this.disabledBehavior === 'all' && (node.props?.isDisabled || (node as GridNode<unknown>).column?.props?.isDisabled || this.disabledKeys.has(node.key));
   }
 
   protected findPreviousKey(fromKey?: Key, pred?: (item: Node<T>) => boolean) {

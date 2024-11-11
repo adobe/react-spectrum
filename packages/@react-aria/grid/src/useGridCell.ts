@@ -18,8 +18,8 @@ import {GridCollection, GridNode} from '@react-types/grid';
 import {GridState} from '@react-stately/grid';
 import {isFocusVisible} from '@react-aria/interactions';
 import {KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
+import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
 import {useLocale} from '@react-aria/i18n';
-import {useSelectableItem} from '@react-aria/selection';
 
 export interface GridCellProps {
   /** An object representing the grid cell. Contains all the relevant information that makes up the grid cell. */
@@ -28,10 +28,6 @@ export interface GridCellProps {
   isVirtualized?: boolean,
   /** Whether the cell or its first focusable child element should be focused when the grid cell is focused. */
   focusMode?: 'child' | 'cell',
-  /** Whether the cell is editable. */
-  isEditable?: boolean,
-  /** Whether the cell is read-only. */
-  isReadOnly?: boolean,
   /**
    * Whether keyboard navigation to focusable elements within the grid cell is
    * via the left/right arrow keys or the tab key.
@@ -48,17 +44,18 @@ export interface GridCellProps {
   onAction?: () => void
 }
 
-export interface GridCellAria {
+export interface GridCellAria extends SelectableItemStates {
   /** Props for the grid cell element. */
   gridCellProps: DOMAttributes,
-  /** Whether the cell is currently in a pressed state. */
-  isPressed: boolean,
   /** Whether the cell content is being edited. */
   isEditing: boolean,
+  /** Whether the cell is disabled. */
+  isDisabled: boolean,
   /** Whether the cell is read only. */
   isReadOnly: boolean
 }
 
+const INPUT_TYPES = new Set(['color', 'date', 'datetime', 'datetime-local', 'email', 'month', 'number', 'password', 'range', 'search', 'tel', 'text', 'time', 'url', 'week']);
 const NAVIGATION_KEYS = new Set(['Home', 'End', 'PageUp', 'PageDown', 'ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown']);
 
 /**
@@ -71,7 +68,6 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     node,
     focusMode,
     isVirtualized,
-    isEditable = false,
     shouldSelectOnPressUp,
     onAction
   } = props;
@@ -79,8 +75,10 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   let {direction} = useLocale();
   let {id, keyboardDelegate, keyboardNavigationBehavior, actions: {onCellAction}} = gridMap.get(state);
 
-  let isEditing = state.editingKey === node.key;
-  let isReadOnly = state.isReadOnly || props.isReadOnly;
+  let isEditing = state.selectionManager.editKey === node.key;
+  let isEditable = state.selectionManager.canEditItem(node.key);
+  let isReadOnly = state.selectionManager.isReadOnly(node.key);
+  let isDisabled = state.selectionManager.isDisabled(node.key) || state.collection.size === 0;
 
   focusMode ??= isEditable || keyboardNavigationBehavior === 'tab' ? 'cell' : 'child';
 
@@ -115,7 +113,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     }
   };
 
-  let {itemProps, isPressed} = useSelectableItem({
+  let {itemProps, ...itemStates} = useSelectableItem({
     selectionManager: state.selectionManager,
     key: node.key,
     ref,
@@ -123,11 +121,11 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     focus,
     shouldSelectOnPressUp,
     onAction: onCellAction ? () => onCellAction(node.key) : onAction,
-    isDisabled: state.collection.size === 0
+    isDisabled: isDisabled || isEditable
   });
 
   let onKeyDown = (e: ReactKeyboardEvent) => {
-    if (!e.currentTarget.contains(e.target as Element) || (!isEditing && state.isKeyboardNavigationDisabled)) {
+    if (!e.currentTarget.contains(e.target as Element) || (NAVIGATION_KEYS.has(e.key) && state.selectionManager.isKeyboardNavigationDisabled)) {
       return;
     }
 
@@ -261,56 +259,45 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           e.stopPropagation();
           e.preventDefault();
 
-          if (isEditing) {
-            ref.current.dispatchEvent(
-              new KeyboardEvent(e.nativeEvent.type, {...e.nativeEvent, key: e.key === 'ArrowUp' ? 'ArrowLeft' : 'ArrowRight'})
-            );
-          } else {
-            ref.current.parentElement.dispatchEvent(
-              new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
-            );
-          }
+          let key = e.key === 'ArrowUp' ? 'ArrowLeft' : 'ArrowRight';
+          let target = isEditing ? ref.current : ref.current.parentElement;
+          
+          target.dispatchEvent(new KeyboardEvent(e.nativeEvent.type, isEditing ? {...e.nativeEvent, key} : e.nativeEvent));
         }
         break;
       }
       case 'F2':
       case 'Enter': {
+        if (isEditing && (isSingleLineTextInput(document.activeElement) || e.key === 'F2')) {
+          focusSafely(ref.current);
+          return;
+        }
+
         if (isEditable) {
           let focusable = walker.nextNode() as FocusableElement;
 
           if (focusable && document.activeElement === ref.current) {
-            state.setEditingKey(node.key);
             focusSafely(focusable);
           }
-        }
-
-        if (isEditable && state.editingKey && (isSingleLineTextInput(document.activeElement) || e.key === 'F2')) {
-          state.setEditingKey(null);
-          focusSafely(ref.current);
         }
         break;
       }
       case 'Escape': {
-        if (state.editingKey || keyboardNavigationBehavior === 'tab') {
-          state.setEditingKey(null);
+        if (isEditing || keyboardNavigationBehavior === 'tab') {
           focusSafely(ref.current);
         }
         break;
       }
       case 'Tab': {
-        if (keyboardNavigationBehavior === 'tab') {
+        if (isEditing || keyboardNavigationBehavior === 'tab') {
           // If there is another focusable element within this item, stop propagation so the tab key
           // is handled by the browser and not by useSelectableCollection (which would take us out of the list).
           let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
           walker.currentNode = document.activeElement;
           let next = e.shiftKey ? walker.previousNode() : walker.nextNode();
 
-          if (next || isEditing) {
+          if (isEditing || next) {
             e.stopPropagation();
-
-            if (isEditable && document.activeElement === ref.current) {
-              state.setEditingKey(node.key); // Do we want this?
-            }
 
             let [start, end] = wrap(walker);
 
@@ -328,11 +315,10 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
         break;
       }
       default: {
-        if (document.activeElement === ref.current && /^[a-zA-Z0-9]$/.test(e.key)) {
+        if (!isReadOnly && e.target === ref.current && /^[a-zA-Z0-9]$/.test(e.key)) {
           let focusable = first(walker);
 
           if (focusable) {
-            state.setEditingKey(node.key);
             focusSafely(focusable);
           }
         }
@@ -342,8 +328,14 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   };
 
   let onBlur = (e) => {
-    if (!ref.current.contains(e.relatedTarget)) {
-      state.setEditingKey(null);
+    if (isEditing) {
+      let comparedPosition = ref.current.compareDocumentPosition(e.relatedTarget ?? ref.current);
+      let isFocusWithin = Boolean(comparedPosition & Node.DOCUMENT_POSITION_CONTAINED_BY);
+      
+      if (!isFocusWithin) {
+        state.selectionManager.setEditKey(null);
+        state.selectionManager.enableKeyboardNavigation();
+      }
     }
   };
 
@@ -361,6 +353,23 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       if (!isFocusVisible()) {
         state.selectionManager.setFocusedKey(node.key);
       }
+
+      requestAnimationFrame(() => {
+        if (isEditable) {
+          let walker = getFocusableTreeWalker(e.target as HTMLElement);
+          let comparedPosition = ref.current.compareDocumentPosition(document.activeElement);
+          let isFocusWithin = Boolean(comparedPosition & Node.DOCUMENT_POSITION_CONTAINED_BY);
+  
+          if (isFocusWithin) {
+            state.selectionManager.setEditKey(node.key);
+          }
+
+          if (!walker.nextNode()) {
+            state.selectionManager.disableKeyboardNavigation();
+          }
+        }
+      });
+
       return;
     }
 
@@ -389,13 +398,45 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     });
   };
 
-  let gridCellProps: DOMAttributes = mergeProps(itemProps, {
+  // We need to prevent rows from receiving the bubbled select event when editable.
+  // This flags select key and pointer events and attempts to catch them on their way up.
+  let selectProps = {
+    onKeyDown(e) {
+      if (e.nativeEvent.shouldStopPropagation) {
+        e.stopPropagation();
+      }
+    },
+    onKeyDownCapture(e) {
+      if (isEditable && (e.key === 'Enter' || e.key === 'Escape')) {
+        e.nativeEvent.shouldStopPropagation = true;
+      }
+    },
+    onPointerDown(e) {
+      if (e.nativeEvent.shouldStopPropagation) {
+        e.stopPropagation();
+      }
+    },
+    onPointerDownCapture(e) {
+      let comparedPosition = ref.current.compareDocumentPosition(e.target);
+      let isTargetWithin = Boolean(comparedPosition & Node.DOCUMENT_POSITION_CONTAINED_BY);
+
+      if (isTargetWithin) {
+        e.nativeEvent.shouldStopPropagation = true;
+        focusSafely(e.target);
+      }
+    }
+  };
+
+  let gridCellProps: DOMAttributes = mergeProps(itemProps, selectProps, {
     role: 'gridcell',
-    onKeyDownCapture: keyboardNavigationBehavior === 'tab' ?  undefined : onKeyDown,
     onKeyDown: keyboardNavigationBehavior === 'tab' ? onKeyDown : undefined,
+    onKeyDownCapture: keyboardNavigationBehavior === 'tab' ?  undefined : onKeyDown,
     onBlur,
     onFocus,
-    'aria-readonly': (isEditable && isReadOnly) || undefined,
+    // 'aria-label': node.textValue || undefined,
+    // 'aria-selected': itemStates.allowsSelection ? itemStates.isSelected : undefined,
+    'aria-readonly': isReadOnly || undefined,
+    'aria-disabled': isDisabled || undefined,
     id: getCellId(state, node.parentKey, node.key)
   });
 
@@ -420,9 +461,10 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
   return {
     gridCellProps,
-    isPressed,
+    ...itemStates,
     isEditing,
-    isReadOnly
+    isReadOnly,
+    isDisabled
   };
 }
 
@@ -457,5 +499,6 @@ function wrap(walker: TreeWalker) {
 }
 
 function isSingleLineTextInput(element: Element) {
-  return element.tagName === 'INPUT' && element.getAttribute('type') === 'text';
+  let type = element.getAttribute('type');
+  return element.tagName === 'INPUT' && type && INPUT_TYPES.has(type);
 }

@@ -57,7 +57,14 @@ export function useTable<T>(props: AriaTableProps, state: TableState<T> | TreeGr
     keyboardDelegate,
     isVirtualized,
     layoutDelegate,
-    layout
+    layout,
+    getEditText = (key: Key | null) => {
+      if (key) {
+        let index = state.collection.getItem(key)?.index;
+        let column = state.collection.columns.find(c => c.index === index);
+        return state.collection.getTextValue?.(column.key) ?? state.collection.getItem(key)?.textValue;
+      }
+    }
   } = props;
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
@@ -81,6 +88,7 @@ export function useTable<T>(props: AriaTableProps, state: TableState<T> | TreeGr
   let {gridProps} = useGrid({
     ...props,
     id,
+    getEditText,
     keyboardDelegate: delegate
   }, state, ref);
 

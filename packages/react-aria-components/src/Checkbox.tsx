@@ -11,7 +11,7 @@
  */
 import {AriaCheckboxGroupProps, AriaCheckboxProps, HoverEvents, mergeProps, useCheckbox, useCheckboxGroup, useCheckboxGroupItem, useFocusRing, useHover, VisuallyHidden} from 'react-aria';
 import {CheckboxContext} from './RSPContexts';
-import {CheckboxGroupState, useCheckboxGroupState, useToggleState} from 'react-stately';
+import {CheckboxGroupState, GroupStateContext, useCheckboxGroupState, useToggleState} from 'react-stately';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
@@ -113,7 +113,9 @@ export const CheckboxGroupContext = createContext<ContextValue<CheckboxGroupProp
 export const CheckboxGroupStateContext = createContext<CheckboxGroupState | null>(null);
 
 function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+  let groupState = useContext(GroupStateContext);
   [props, ref] = useContextProps(props, ref, CheckboxGroupContext);
+  props = mergeProps(props, groupState);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let state = useCheckboxGroupState({

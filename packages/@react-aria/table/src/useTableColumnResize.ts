@@ -68,12 +68,12 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   let isResizingRef = useRef(isResizing);
   let lastSize = useRef(null);
   let wasFocusedOnResizeStart = useRef(false);
-  let editModeEnabled = state.tableState.isKeyboardNavigationDisabled;
+  let isKeyboardNavigationDisabled = state.tableState.selectionManager.isKeyboardNavigationDisabled;
 
   let {direction} = useLocale();
   let {keyboardProps} = useKeyboard({
     onKeyDown: (e) => {
-      if (editModeEnabled) {
+      if (isKeyboardNavigationDisabled) {
         if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ' || e.key === 'Tab') {
           e.preventDefault();
           endResize(item);
@@ -93,7 +93,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
     if (!isResizingRef.current) {
       lastSize.current = state.updateResizedColumns(item.key, state.getColumnWidth(item.key));
       state.startResize(item.key);
-      state.tableState.setKeyboardNavigationDisabled(true);
+      state.tableState.selectionManager.disableKeyboardNavigation();
       onResizeStart?.(lastSize.current);
     }
     isResizingRef.current = true;
@@ -112,7 +112,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
       }
 
       state.endResize();
-      state.tableState.setKeyboardNavigationDisabled(false);
+      state.tableState.selectionManager.enableKeyboardNavigation();
       onResizeEnd?.(lastSize.current);
       isResizingRef.current = false;
 
@@ -157,10 +157,10 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   });
 
   let onKeyDown = useCallback((e) => {
-    if (editModeEnabled) {
+    if (isKeyboardNavigationDisabled) {
       moveProps.onKeyDown(e);
     }
-  }, [editModeEnabled, moveProps]);
+  }, [isKeyboardNavigationDisabled, moveProps]);
 
 
   let min = Math.floor(state.getColumnMinWidth(item.key));

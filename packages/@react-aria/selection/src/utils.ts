@@ -11,6 +11,7 @@
  */
 
 import {isAppleDevice, isMac} from '@react-aria/utils';
+import {Key} from '@react-types/shared';
 
 interface Event {
   altKey: boolean,
@@ -30,4 +31,9 @@ export function isCtrlKeyPressed(e: Event) {
   }
 
   return e.ctrlKey;
+}
+
+export function getElementByKey(key: Key, currentTarget?: Element) {
+  let target = currentTarget ?? document;
+  return target.querySelector(`[data-key="${CSS.escape(key.toString())}"]`) as HTMLElement | null;
 }

@@ -12,5 +12,7 @@
 
 export {useGridState} from './useGridState';
 export {GridCollection} from './GridCollection';
-
+export {GridManager} from './GridManager';
+export {useGridEditState} from './useGridEditState';
+export type {GridEditStateOptions, GridEditState} from './useGridEditState';
 export type {GridStateOptions, GridState} from './useGridState';
