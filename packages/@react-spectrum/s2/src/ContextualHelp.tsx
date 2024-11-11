@@ -3,7 +3,8 @@ import {AriaLabelingProps, DOMProps, FocusableRef, FocusableRefValue} from '@rea
 import {ContentContext, FooterContext, HeadingContext} from './Content';
 import {ContextValue, DEFAULT_SLOT, Provider, Dialog as RACDialog, TextContext} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode} from 'react';
-import {dialogInner} from './Dialog';
+import {dialogInner} from './StandardDialog';
+import {DialogProps} from './Dialog';
 import {DialogTrigger, DialogTriggerProps} from './DialogTrigger';
 import {filterDOMProps, mergeProps, useLabels} from '@react-aria/utils';
 import HelpIcon from '../s2wf-icons/S2_Icon_HelpCircle_20_N.svg';
@@ -26,7 +27,8 @@ export interface ContextualHelpStyleProps {
   variant?: 'info' | 'help'
 }
 export interface ContextualHelpProps extends
-  Pick<DialogTriggerProps, 'isOpen' | 'defaultOpen' | 'onOpenChange' | 'shouldFlip' | 'offset' | 'crossOffset' | 'placement'>,
+  Pick<DialogTriggerProps, 'isOpen' | 'defaultOpen' | 'onOpenChange'>,
+  Pick<DialogProps, 'shouldFlip' | 'offset' | 'crossOffset' | 'placement'>,
   Pick<PopoverProps, 'containerPadding'>,
   ContextualHelpStyleProps, StyleProps, DOMProps, AriaLabelingProps {
   /** Contents of the Contextual Help popover. */

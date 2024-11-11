@@ -10,128 +10,127 @@
  * governing permissions and limitations under the License.
  */
 
-import {PopoverProps as AriaPopoverProps, composeRenderProps, OverlayTriggerStateContext, Provider, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
-import {ButtonGroupContext} from './ButtonGroup';
-import {CloseButton} from './CloseButton';
-import {ContentContext, FooterContext, HeaderContext, HeadingContext} from './Content';
-import {createContext, forwardRef, RefObject, useContext} from 'react';
+import {PopoverProps as AriaPopoverProps, composeRenderProps, OverlayTriggerStateContext, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
+import {CloseButtonContext} from './CloseButton';
 import {DOMRef} from '@react-types/shared';
-import {ImageContext} from './Image';
+import {forwardRef} from 'react';
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Modal} from './Modal';
 import {Popover} from './Popover';
 import {style} from '../style' with {type: 'macro'};
-import {StyleProps} from './style-utils';
-import {useDOMRef, useMediaQuery} from '@react-spectrum/utils';
+import {useDOMRef, useIsMobileDevice} from '@react-spectrum/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
-// TODO: what style overrides should be allowed?
-export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style'>, StyleProps {
+export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style'>, Pick<AriaPopoverProps, 'placement' | 'shouldFlip' | 'isKeyboardDismissDisabled' | 'containerPadding' | 'offset' | 'crossOffset'>, StyleProps {
+  /**
+   * The type of Dialog that should be rendered. 
+   * 
+   * @default 'modal'
+   */
+  type?: 'modal' | 'popover' | 'fullscreen' | 'fullscreenTakeover', // TODO: add tray back in
+  /** The type of Dialog that should be rendered when on a mobile device. */
+  mobileType?: 'popover' | 'fullscreen' | 'fullscreenTakeover', // TODO: add tray back in
+  /**
+   * The size of the Dialog.
+   */
+  size?: 'S' | 'M' | 'L',
   /**
    * Whether the Dialog is dismissable.
    */
   isDismissable?: boolean,
-  /**
-   * The size of the Dialog.
-   *
-   * @default 'M'
-   */
-  size?: 'S' | 'M' | 'L'
-}
-
-const image = style({
-  width: 'full',
-  height: '[140px]',
-  objectFit: 'cover'
-});
-
-const heading = style({
-  flexGrow: 1,
-  marginY: 0,
-  font: 'heading'
-});
-
-const header = style({
-  font: 'body-lg'
-});
-
-const content =  style({
-  flexGrow: 1,
-  overflowY: {
-    default: 'auto',
-    // Make the whole dialog scroll rather than only the content when the height it small.
-    '@media (height < 400)': 'visible',
-    type: {
-      popover: 'visible'
-    }
-  },
-  font: 'body',
-  // TODO: adjust margin on mobile?
-  marginX: {
-    default: 32
-  }
-});
-
-const footer = style({
-  flexGrow: 1,
-  font: 'body'
-});
-
-const buttonGroup = style({
-  marginStart: 'auto',
-  maxWidth: 'full'
-});
-
-interface DialogContextValue extends Pick<AriaPopoverProps, 'placement' | 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset'> {
-  /**
-   * The type of Dialog that should be rendered.
-   */
-  type?: 'modal' | 'popover' | 'fullscreen' | 'fullscreenTakeover', // TODO: add tray back in
-  /**
-   * Whether a modal type Dialog should be dismissable.
-   */
-  isDismissable?: boolean,
+  /** Whether pressing the escape key to close the dialog should be disabled. */
+  isKeyboardDismissDisabled?: boolean,
   /**
    * Whether a popover type Dialog's arrow should be hidden.
    */
   hideArrow?: boolean,
-  /**
-   * Whether pressing the escape key to close the dialog should be disabled.
-   */
-  isKeyboardDismissDisabled?: boolean
+  /** Whether the content of the Dialog should extend edge-to-edge, without any padding. */
+  isFullBleed?: boolean
 }
 
-export const DialogContext = createContext<DialogContextValue>({
-  type: 'modal',
-  isDismissable: false,
-  hideArrow: false,
-  shouldFlip: true,
-  isKeyboardDismissDisabled: false
-});
+const modalPadding = {
+  default: 24,
+  sm: 32
+} as const;
+
+const dialogStyle = style({
+  padding: {
+    type: {
+      modal: modalPadding,
+      popover: 8,
+      fullscreen: modalPadding,
+      fullscreenTakeover: modalPadding
+    },
+    isFullBleed: 0
+  },
+  boxSizing: 'border-box',
+  outlineStyle: 'none',
+  borderRadius: '[inherit]',
+  overflow: 'auto',
+  position: 'relative',
+  size: 'full',
+  maxSize: 'full'
+}, getAllowedOverrides({height: true}));
 
 function Dialog(props: DialogProps, ref: DOMRef) {
-  let ctx = useContext(DialogContext);
-  let isDismissable = ctx.isDismissable || props.isDismissable;
-  let isKeyboardDismissDisabled = ctx.isKeyboardDismissDisabled;
+  let {
+    type = 'modal',
+    mobileType = type === 'popover' ? 'modal' : type,
+    size,
+    isDismissable,
+    isKeyboardDismissDisabled,
+    isFullBleed
+  } = props;
   let domRef = useDOMRef(ref);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
-  switch (ctx.type) {
+  let dialog = (
+    <RACDialog
+      {...props}
+      ref={domRef}
+      style={props.UNSAFE_style}
+      className={(props.UNSAFE_className || '') + dialogStyle({type, isFullBleed}, props.styles)}>
+      {composeRenderProps(props.children, (children) => (
+        // Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state.
+        <OverlayTriggerStateContext.Provider value={null}>
+          {children}
+        </OverlayTriggerStateContext.Provider>
+      ))}
+    </RACDialog>
+  );
+
+  // On small devices, show a modal or tray instead of a popover.
+  // NOTE: this is done _after_ creating the dialog. The mobile type should not affect the padding.
+  let isMobile = useIsMobileDevice();
+  if (isMobile) {
+    if (type === 'popover') {
+      isDismissable = true;
+    }
+
+    type = mobileType;
+  }
+
+  switch (type) {
     case 'modal':
     case 'fullscreen':
     case 'fullscreenTakeover': {
-      let size = ctx.type === 'modal' ? props.size : ctx.type;
+      let size = type === 'modal' ? props.size : type;
       return (
         <Modal size={size} isDismissable={isDismissable} isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
-          <DialogInner {...props} {...ctx} dialogRef={domRef} isDismissable={isDismissable} />
+          <CloseButtonContext.Provider value={{'aria-label': stringFormatter.format('dialog.dismiss')}}>
+            {dialog}
+          </CloseButtonContext.Provider>
         </Modal>
       );
     }
     case 'popover':
-      // get hideArrow from dialog instead?
       return (
-        <Popover size={props.size || 'M'} hideArrow={ctx.hideArrow} placement={ctx.placement} shouldFlip={ctx.shouldFlip} containerPadding={ctx.containerPadding} offset={ctx.offset} crossOffset={ctx.crossOffset}>
-          <DialogInner {...props} {...ctx} dialogRef={domRef} isDismissable={isDismissable} />
+        <Popover size={size} hideArrow={props.hideArrow} placement={props.placement} shouldFlip={props.shouldFlip} containerPadding={props.containerPadding} offset={props.offset} crossOffset={props.crossOffset}>
+          <CloseButtonContext.Provider value={{UNSAFE_style: {display: 'none'}}}>
+            {dialog}
+          </CloseButtonContext.Provider>
         </Popover>
       );
 
@@ -144,170 +143,7 @@ function Dialog(props: DialogProps, ref: DOMRef) {
 }
 
 /**
- * Dialogs are windows containing contextual information, tasks, or workflows that appear over the user interface.
- * Depending on the kind of Dialog, further interactions may be blocked until the Dialog is acknowledged.
+ * A Dialog is a floating window, such as a modal or popover, with a custom layout.
  */
 let _Dialog = forwardRef(Dialog);
 export {_Dialog as Dialog};
-
-export const dialogInner = style({
-  display: 'flex',
-  flexDirection: 'column',
-  flexGrow: 1,
-  maxHeight: '[inherit]',
-  boxSizing: 'border-box',
-  outlineStyle: 'none',
-  fontFamily: 'sans',
-  borderRadius: '[inherit]',
-  overflow: 'auto'
-});
-
-function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefObject<HTMLElement | null>}) {
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
-  // The button group in fullscreen dialogs usually goes at the top, but
-  // when the window is small, it moves to the bottom. We could do this in
-  // pure CSS with display: none, but then the ref would go to two places.
-  // With JS we can actually unmount on of them to ensure there is only one at a time.
-  // Hopefully apps don't SSR render a dialog that's already open, because this means
-  // we don't evaluate the media query until JS loads.
-  let isSmall = useMediaQuery('(max-width: 640px)');
-  let buttonGroupPlacement = 'bottom';
-  if (props.type === 'fullscreen' || props.type === 'fullscreenTakeover') {
-    buttonGroupPlacement = isSmall ? 'bottom' : 'top';
-  }
-
-  if (props.isDismissable) {
-    buttonGroupPlacement = 'none';
-  }
-
-  // TODO: manage focus when the button group placement changes and focus was on one of the buttons?
-
-  return (
-    <RACDialog
-      {...props}
-      ref={props.dialogRef}
-      style={props.UNSAFE_style}
-      className={(props.UNSAFE_className || '') + dialogInner}>
-      {composeRenderProps(props.children, (children, {close}) => (
-        // Render the children multiple times inside the wrappers we need to implement the layout.
-        // Each instance hides certain children so that they are all rendered in the correct locations.
-        // Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state.
-        <OverlayTriggerStateContext.Provider value={null}>
-          {/* Hero image */}
-          <Provider
-            values={[
-              [ImageContext, {styles: image}],
-              [HeadingContext, {isHidden: true}],
-              [HeaderContext, {isHidden: true}],
-              [ContentContext, {isHidden: true}],
-              [FooterContext, {isHidden: true}],
-              [ButtonGroupContext, {isHidden: true}]
-            ]}>
-            {children}
-          </Provider>
-          {/* Top header: heading, header, dismiss button, and button group (in fullscreen dialogs). */}
-          <div
-            className={style({
-              // Wrapper that creates the margin for the dismiss button.
-              display: 'flex',
-              alignItems: 'start',
-              columnGap: 12,
-              marginStart: {
-                default: 32
-              },
-              marginEnd: {
-                default: 32,
-                isDismissable: 12
-              },
-              marginTop: {
-                default: 12 // margin to dismiss button
-              }
-            })({isDismissable: props.isDismissable, type: props.type})}>
-            <div
-              className={style({
-                // Wrapper for heading, header, and button group.
-                // This swaps orientation from horizontal to vertical at small screen sizes.
-                display: 'flex',
-                flexGrow: 1,
-                marginTop: {
-                  default: 20, // 32 - 12 (handled above)
-                  ':empty': 0
-                },
-                marginBottom: {
-                  default: 16,
-                  ':empty': 0
-                },
-                columnGap: 24,
-                rowGap: 8,
-                flexDirection: {
-                  default: 'column',
-                  sm: 'row'
-                },
-                alignItems: {
-                  default: 'start',
-                  sm: 'center'
-                }
-              })}>
-              <Provider
-                values={[
-                  [ImageContext, {hidden: true}],
-                  [HeadingContext, {styles: heading}],
-                  [HeaderContext, {styles: header}],
-                  [ContentContext, {isHidden: true}],
-                  [FooterContext, {isHidden: true}],
-                  [ButtonGroupContext, {isHidden: buttonGroupPlacement !== 'top'}]
-                ]}>
-                {children}
-              </Provider>
-            </div>
-            {props.isDismissable &&
-            <CloseButton aria-label={stringFormatter.format('dialog.dismiss')} onPress={close} styles={style({marginBottom: 12})} />
-          }
-          </div>
-          {/* Main content */}
-          <Provider
-            values={[
-              [ImageContext, {hidden: true}],
-              [HeadingContext, {isHidden: true}],
-              [HeaderContext, {isHidden: true}],
-              [ContentContext, {styles: content({type: props.type})}],
-              [FooterContext, {isHidden: true}],
-              [ButtonGroupContext, {isHidden: true}]
-            ]}>
-            {children}
-          </Provider>
-          {/* Footer and button group */}
-          <div
-            className={style({
-              display: 'flex',
-              paddingX: {
-                default: 32
-              },
-              paddingBottom: {
-                default: 32
-              },
-              paddingTop: {
-                default: 32,
-                ':empty': 0
-              },
-              gap: 24,
-              alignItems: 'center',
-              flexWrap: 'wrap'
-            })}>
-            <Provider
-              values={[
-                [ImageContext, {hidden: true}],
-                [HeadingContext, {isHidden: true}],
-                [HeaderContext, {isHidden: true}],
-                [ContentContext, {isHidden: true}],
-                [FooterContext, {styles: footer}],
-                [ButtonGroupContext, {isHidden: buttonGroupPlacement !== 'bottom', styles: buttonGroup, align: 'end'}]
-              ]}>
-              {children}
-            </Provider>
-          </div>
-        </OverlayTriggerStateContext.Provider>
-      ))}
-    </RACDialog>
-  );
-}

@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import {AriaDialogProps, useDialog, useId, useOverlayTrigger} from 'react-aria';
+import {ButtonContext} from './Button';
 import {ContextValue, DEFAULT_SLOT, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {forwardRefType} from '@react-types/shared';
@@ -113,6 +114,14 @@ function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
             slots: {
               [DEFAULT_SLOT]: {},
               title: {...titleProps, level: 2}
+            }
+          }],
+          [ButtonContext, {
+            slots: {
+              [DEFAULT_SLOT]: {},
+              close: {
+                onPress: () => state?.close()
+              }
             }
           }]
         ]}>

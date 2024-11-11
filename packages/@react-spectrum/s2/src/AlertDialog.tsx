@@ -16,7 +16,7 @@ import {ButtonGroup} from './ButtonGroup';
 import {CenterBaseline} from './CenterBaseline';
 import {chain} from '@react-aria/utils';
 import {Content, Heading} from './Content';
-import {Dialog} from './Dialog';
+import {StandardDialog} from './StandardDialog';
 import {DOMProps, DOMRef} from '@react-types/shared';
 import {forwardRef, ReactNode} from 'react';
 import {IconContext} from './Icon';
@@ -99,7 +99,7 @@ function AlertDialog(props: AlertDialogProps, ref: DOMRef) {
   }
 
   return (
-    <Dialog
+    <StandardDialog
       role="alertdialog"
       ref={ref}
       size={props.size}
@@ -150,7 +150,7 @@ function AlertDialog(props: AlertDialogProps, ref: DOMRef) {
           </ButtonGroup>
         </>
       )}
-    </Dialog>
+    </StandardDialog>
   );
 }
 
