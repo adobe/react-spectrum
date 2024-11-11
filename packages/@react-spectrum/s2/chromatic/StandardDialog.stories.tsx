@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Dialog} from '../src';
-import {DialogContainerExample, DialogTriggerExample, Example} from '../stories/Dialog.stories';
+import {DialogContainerExample, DialogTriggerExample, Example} from '../stories/StandardDialog.stories';
 import type {Meta, StoryObj} from '@storybook/react';
+import {StandardDialog} from '../src';
 import {userEvent, within} from '@storybook/testing-library';
 
-const meta: Meta<typeof Dialog> = {
-  component: Dialog,
+const meta: Meta<typeof StandardDialog> = {
+  component: StandardDialog,
   parameters: {
     chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true}
   },
