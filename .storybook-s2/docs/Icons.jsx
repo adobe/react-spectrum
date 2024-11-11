@@ -17,7 +17,7 @@ export function Icons() {
         <div className={style({display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 48})}>
           {Object.keys(icons).map(icon => {
             let Icon = icons[icon].default;
-            let name = icon.replace(/^S2_Icon_(.*?)_2.*/, '$1');
+            let name = icon.replace(/^S2_Icon_(.*?)(Size\d+)?_2.*/, '$1');
             let importName = name.replace(/^(\d)/, '_$1');
             return (
               <ActionButton

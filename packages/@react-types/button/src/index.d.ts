@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, FocusableDOMProps, FocusableProps, PressEvents, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, FocusableDOMProps, FocusableProps, Key, PressEvents, StyleProps} from '@react-types/shared';
 import {ElementType, JSXElementConstructor, ReactNode} from 'react';
 
 interface ButtonProps extends PressEvents, FocusableProps {
@@ -71,6 +71,10 @@ interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
 
 export interface AriaButtonProps<T extends ElementType = 'button'> extends ButtonProps, LinkButtonProps<T>, AriaBaseButtonProps {}
 export interface AriaToggleButtonProps<T extends ElementType = 'button'> extends ToggleButtonProps, AriaBaseButtonProps, AriaButtonElementTypeProps<T> {}
+export interface AriaToggleButtonGroupItemProps<E extends ElementType = 'button'> extends Omit<AriaToggleButtonProps<E>, 'id' | 'isSelected' | 'defaultSelected' | 'onChange'> {
+  /** An identifier for the item in the `selectedKeys` of a ToggleButtonGroup. */
+  id: Key
+}
 
 /** @deprecated */
 type LegacyButtonVariant = 'cta' | 'overBackground';

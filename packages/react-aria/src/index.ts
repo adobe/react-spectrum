@@ -12,7 +12,7 @@
 
 export {useAccordionItem, useAccordion} from '@react-aria/accordion';
 export {useBreadcrumbItem, useBreadcrumbs} from '@react-aria/breadcrumbs';
-export {useButton, useToggleButton} from '@react-aria/button';
+export {useButton, useToggleButton, useToggleButtonGroup, useToggleButtonGroupItem} from '@react-aria/button';
 export {useCalendar, useCalendarCell, useCalendarGrid, useRangeCalendar} from '@react-aria/calendar';
 export {useCheckbox, useCheckboxGroup, useCheckboxGroupItem} from '@react-aria/checkbox';
 export {useColorArea, useColorChannelField, useColorField, useColorSlider, useColorSwatch, useColorWheel} from '@react-aria/color';
@@ -51,7 +51,7 @@ export {VisuallyHidden, useVisuallyHidden} from '@react-aria/visually-hidden';
 
 export type {AriaAccordionProps, AccordionAria, AccordionItemAria, AccordionItemAriaProps} from '@react-aria/accordion';
 export type {AriaBreadcrumbItemProps, AriaBreadcrumbsProps, BreadcrumbItemAria, BreadcrumbsAria} from '@react-aria/breadcrumbs';
-export type {AriaButtonOptions, AriaButtonProps, AriaToggleButtonProps, ButtonAria} from '@react-aria/button';
+export type {AriaButtonOptions, AriaButtonProps, AriaToggleButtonProps, ButtonAria, AriaToggleButtonGroupProps, ToggleButtonGroupAria} from '@react-aria/button';
 export type {AriaCalendarCellProps, AriaCalendarGridProps, AriaCalendarProps, AriaRangeCalendarProps, CalendarAria, CalendarCellAria, CalendarGridAria, CalendarProps, RangeCalendarProps} from '@react-aria/calendar';
 export type {AriaCheckboxGroupItemProps, AriaCheckboxGroupProps, AriaCheckboxProps, CheckboxAria, CheckboxGroupAria} from '@react-aria/checkbox';
 export type {AriaColorAreaOptions, AriaColorChannelFieldProps, AriaColorFieldProps, AriaColorSliderOptions, AriaColorSwatchProps, AriaColorWheelOptions, ColorAreaAria, ColorChannelFieldAria, ColorFieldAria, ColorSliderAria, ColorSwatchAria, ColorWheelAria} from '@react-aria/color';
