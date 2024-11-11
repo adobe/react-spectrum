@@ -268,9 +268,11 @@ In most cases, your data will come from and be sent to a server as an [ISO 8601]
 ```tsx example
 import {parseZonedDateTime} from '@internationalized/date';
 
+<div lang="he-IL" dir="rtl">
 <MyTimeField
   label="Event time"
   defaultValue={parseZonedDateTime('2022-11-07T00:45[America/Los_Angeles]')} />
+</div>
 ```
 
 `TimeField` displays times in the time zone included in the `ZonedDateTime` object. The above example is always displayed in Pacific Standard Time because the `America/Los_Angeles` time zone identifier is provided. [@internationalized/date](../internationalized/date/) includes functions for converting dates between time zones, or parsing a date directly into a specific time zone or the user's local time zone, as shown below.
