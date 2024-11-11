@@ -40,6 +40,10 @@ export interface FormProps extends AriaLabelingProps {
    */
   target?: '_blank' | '_self' | '_parent' | '_top',
   /**
+   * Triggered when a user modifies an element's value inside the form.
+   */
+  onChange?: (event: FormEvent<HTMLFormElement>) => void,
+  /**
    * Triggered when a user submits the form.
    */
   onSubmit?: (event: FormEvent<HTMLFormElement>) => void,
@@ -57,7 +61,7 @@ export interface FormProps extends AriaLabelingProps {
    */
   autoComplete?: 'off' | 'on',
   /**
-   * Controls whether inputted text is automatically capitalized and, if so, in what manner. 
+   * Controls whether inputted text is automatically capitalized and, if so, in what manner.
    * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/autocapitalize).
    */
   autoCapitalize?: 'off' | 'none' | 'on' | 'sentences' | 'words' | 'characters',
