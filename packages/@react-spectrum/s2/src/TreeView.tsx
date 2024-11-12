@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTreeGridListProps} from '@react-aria/tree';
 import {
   ButtonContext,
   Collection,
   Provider,
-  TreeItemProps,
+  TreeItemProps as RACTreeItemProps,
+  TreeProps as RACTreeProps,
   TreeItemRenderProps,
   TreeRenderProps,
   UNSTABLE_Tree,
@@ -25,31 +25,26 @@ import {
 } from 'react-aria-components';
 import {Checkbox, IconContext, Text, TextContext} from '@react-spectrum/s2';
 import Chevron from '../ui-icons/Chevron';
-import {DOMRef, Expandable, Key, SelectionBehavior, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {DOMRef, Key} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {isAndroid} from '@react-aria/utils';
-import React, {createContext, isValidElement, JSX, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
+import React, {createContext, isValidElement, JSXElementConstructor, ReactElement, useContext, useRef} from 'react';
+import {StylesPropWithHeight, UnsafeStyles} from './style-utils';
 import {useButton} from '@react-aria/button';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale} from '@react-aria/i18n';
 
-export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>, StyleProps, SpectrumSelectionProps, Expandable {
-  /** Provides content to display when there are no items in the tree. */
-  renderEmptyState?: () => JSX.Element,
-  /**
-   * Handler that is called when a user performs an action on an item. The exact user event depends on
-   * the collection's `selectionStyle` prop and the interaction modality.
-   */
-  onAction?: (key: Key) => void,
-  /**
-   * The contents of the tree.
-   */
-  children?: ReactNode | ((item: T) => ReactNode)
+interface S2TreeProps {
+  isDetached?: boolean,
+  onAction?: (key: Key) => void
 }
 
-export interface SpectrumTreeViewItemProps<T extends object = object> extends Omit<TreeItemProps, 'className' | 'style' | 'value' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'> {
-  /** Rendered contents of the tree item or child items. */
-  children: ReactNode,
+export interface TreeViewProps<T> extends Omit<RACTreeProps<T>, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks'>, UnsafeStyles, S2TreeProps {
+  /** Spectrum-defined styles, returned by the `style()` macro. */
+  styles?: StylesPropWithHeight
+}
+
+export interface TreeViewItemProps<T extends object = object> extends Omit<RACTreeItemProps, 'className' | 'style'> {
   /** Whether this item has children, even if not loaded yet. */
   hasChildItems?: boolean,
   /** A list of child tree item objects used when dynamically rendering the tree item children. */
@@ -64,6 +59,10 @@ const TreeRendererContext = createContext<TreeRendererContextValue>({});
 function useTreeRendererContext(): TreeRendererContextValue {
   return useContext(TreeRendererContext)!;
 }
+
+
+let InternalTreeContext = createContext({});
+
 
 // TODO: add animations for rows appearing and disappearing
 
@@ -96,8 +95,8 @@ const tree = style<Pick<TreeRenderProps, 'isEmpty'>>({
   }
 });
 
-function TreeView<T extends object>(props: SpectrumTreeViewProps<T>, ref: DOMRef<HTMLDivElement>) {
-  let {children, selectionStyle} = props;
+function TreeView<T extends object>(props: TreeViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+  let {children, isDetached} = props;
 
   let renderer;
   if (typeof children === 'function') {
@@ -105,13 +104,14 @@ function TreeView<T extends object>(props: SpectrumTreeViewProps<T>, ref: DOMRef
   }
 
   let domRef = useDOMRef(ref);
-  let selectionBehavior = selectionStyle === 'highlight' ? 'replace' : 'toggle';
 
   return (
     <TreeRendererContext.Provider value={{renderer}}>
-      <UNSTABLE_Tree {...props} className={({isEmpty}) => tree({isEmpty})} selectionBehavior={selectionBehavior as SelectionBehavior} ref={domRef}>
-        {props.children}
-      </UNSTABLE_Tree>
+      <InternalTreeContext.Provider value={{isDetached}}>
+        <UNSTABLE_Tree {...props} className={({isEmpty}) => tree({isEmpty})} selectionBehavior="toggle" ref={domRef}>
+          {props.children}
+        </UNSTABLE_Tree>
+      </InternalTreeContext.Provider>
     </TreeRendererContext.Provider>
   );
 }
@@ -125,6 +125,7 @@ const treeRow = style<TreeRowRenderProps>({
   display: 'flex',
   height: 40,
   width: 'full',
+  minWidth: 240, // do we really want this restriction?
   boxSizing: 'border-box',
   font: 'ui',
   color: 'body',
@@ -187,22 +188,22 @@ const treeRowOutline = style({
   content: '',
   display: 'block',
   position: 'absolute',
-  insetStart: 0,
-  insetEnd: 0,
+  insetStart: '[8px]',
+  insetEnd: '[8px]',
   top: {
-    default: 0,
-    isFocusVisible: '[-2px]',
+    default: '[8px]',
+    isFocusVisible: '[8px]',
     isSelected: {
-      default: '[-1px]',
-      isFocusVisible: '[-2px]'
+      default: '[1px]',
+      isFocusVisible: '[8px]'
     }
   },
-  bottom: 0,
+  bottom: '[8px]',
   pointerEvents: 'none',
   forcedColorAdjust: 'none'
 });
 
-export const TreeViewItem = <T extends object>(props: SpectrumTreeViewItemProps<T>) => {
+export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
   let {
     children,
     childItems,
@@ -344,5 +345,5 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
 /**
  * A tree view provides users with a way to navigate nested hierarchical information.
  */
-const _TreeView = React.forwardRef(TreeView) as <T>(props: SpectrumTreeViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
+const _TreeView = React.forwardRef(TreeView) as <T>(props: TreeViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_TreeView as TreeView};

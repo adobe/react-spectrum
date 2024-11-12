@@ -135,5 +135,5 @@ export type {TextFieldProps, TextAreaProps} from './TextField';
 export type {ToggleButtonProps} from './ToggleButton';
 export type {ToggleButtonGroupProps} from './ToggleButtonGroup';
 export type {TooltipProps} from './Tooltip';
-export type {SpectrumTreeViewProps, SpectrumTreeViewItemProps} from './TreeView';
+export type {TreeViewProps, TreeViewItemProps} from './TreeView';
 export type {FileTriggerProps, TooltipTriggerComponentProps as TooltipTriggerProps} from 'react-aria-components';

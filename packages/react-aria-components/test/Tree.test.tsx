@@ -11,6 +11,7 @@
  */
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {AriaTreeTests} from './AriaTree.test-util';
 import {Button, Checkbox, Collection, UNSTABLE_ListLayout as ListLayout, Text, UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeItemContent, UNSTABLE_Virtualizer as Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
 import React from 'react';
@@ -187,20 +188,14 @@ describe('Tree', () => {
     expect(tree).toHaveAttribute('style', expect.stringContaining('width: 200px'));
   });
 
-  it('should have the base set of aria and data attributes', () => {
+  it('should have the base set of data attributes', () => {
     let {getByRole, getAllByRole} = render(<StaticTree treeProps={{defaultExpandedKeys: 'none'}} />);
     let tree = getByRole('treegrid');
-    expect(tree).toHaveAttribute('data-rac');
-    expect(tree).toHaveAttribute('aria-label', 'test tree');
     expect(tree).not.toHaveAttribute('data-empty');
     expect(tree).not.toHaveAttribute('data-focused');
     expect(tree).not.toHaveAttribute('data-focus-visible');
 
     for (let row of getAllByRole('row')) {
-      expect(row).toHaveAttribute('aria-level');
-      expect(row).toHaveAttribute('data-level');
-      expect(row).toHaveAttribute('aria-posinset');
-      expect(row).toHaveAttribute('aria-setsize');
       expect(row).toHaveAttribute('data-rac');
       expect(row).not.toHaveAttribute('data-selected');
       expect(row).not.toHaveAttribute('data-disabled');
@@ -1325,4 +1320,14 @@ describe('Tree', () => {
       expect(rows[0]).toHaveTextContent('Nothing in tree');
     });
   });
+});
+
+
+AriaTreeTests({
+  prefix: 'rac-static',
+  renderers: {
+    standard: () => render(
+      <StaticTree treeProps={{defaultExpandedKeys: 'none'}} />
+    )
+  }
 });
