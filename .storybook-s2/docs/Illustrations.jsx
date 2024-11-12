@@ -1,5 +1,5 @@
 import linearIllustrations from '@react-spectrum/s2/spectrum-illustrations/linear/*.tsx';
-import gradientIllustrations from 'illustration:@react-spectrum/s2/spectrum-illustrations/gradient/*.svg';
+import gradientIllustrations from '@react-spectrum/s2/spectrum-illustrations/gradient/*/*.tsx';
 import Paste from '@react-spectrum/s2/s2wf-icons/S2_Icon_Paste_20_N.svg';
 import { style } from '../../packages/@react-spectrum/s2/style/spectrum-theme' with {type: 'macro'};
 import {ActionButton, Text} from '@react-spectrum/s2';
@@ -25,25 +25,18 @@ export function Illustrations() {
           <Radio value="generic2">Generic 2</Radio>
         </RadioGroup>
         <div className={style({display: 'grid', gridTemplateColumns: 'repeat(auto-fit, 164px)', gap: 20, justifyContent: 'space-between', marginTop: 32})}>
-          {Object.keys(gradientIllustrations).filter(name => name.includes(gradientStyle)).map(icon => {
-            let Illustration = gradientIllustrations[icon].default;
-            let name = icon.replace(/^S2_(fill|lin)_(.+)_(generic\d)_(\d+)$/, (m, type, name) => {
-              return name[0].toUpperCase() + name.slice(1).replace(/_/g, '');
-            });
-            let importPath = icon.replace(/^S2_(fill|lin)_(.+)_(generic\d)_(\d+)$/, (m, type, name, style) => {
-              name = name[0].toUpperCase() + name.slice(1).replace(/_/g, '');
-              return 'gradient/' + style + '/' + name;
-            });
+          {Object.keys(gradientIllustrations[gradientStyle]).map(icon => {
+            let Illustration = gradientIllustrations[gradientStyle][icon].default;
             return (
               <div key={icon} className={style({display: 'flex', flexDirection: 'column', rowGap: 8, alignItems: 'center', padding: 16, borderRadius: 'lg', boxShadow: 'elevated', backgroundColor: 'layer-2'})}>
-                <Illustration UNSAFE_style={{width: 96, height: 96}} />
+                <Illustration />
                 <span className={style({font: 'ui', display: 'flex', gap: 8, alignItems: 'center', maxWidth: 'full'})}>
-                  <span className={style({truncate: true})}>{name}</span>
+                  <span className={style({truncate: true})}>{icon}</span>
                   <ActionButton
                     size="XS"
                     isQuiet
                     aria-label="Copy"
-                    onPress={() => navigator.clipboard.writeText(`import ${name} from '@react-spectrum/s2/illustrations/${importPath}';`)}>
+                    onPress={() => navigator.clipboard.writeText(`import ${name} from '@react-spectrum/s2/illustrations/${gradientStyle}/${icon}';`)}>
                     <Paste />
                   </ActionButton>
                 </span>

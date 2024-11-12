@@ -41,7 +41,8 @@
       "import": "./illustrations/*.mjs",
       "require": "./illustrations/*.cjs"
     },
-    "./illustrations/linear/internal/*": null
+    "./illustrations/linear/internal/*": null,
+    "./illustrations/gradient/*/internal/*": null
   },
   "targets": {
     "module": {},
@@ -82,7 +83,7 @@
     },
     "illustrations-module": {
       "source": [
-        "spectrum-illustrations/gradient/*.svg",
+        "spectrum-illustrations/gradient/*/*.tsx",
         "spectrum-illustrations/linear/*.tsx"
       ],
       "distDir": "illustrations",
@@ -92,7 +93,7 @@
     },
     "illustrations-main": {
       "source": [
-        "spectrum-illustrations/gradient/*.svg",
+        "spectrum-illustrations/gradient/*/*.tsx",
         "spectrum-illustrations/linear/*.tsx"
       ],
       "distDir": "illustrations",
