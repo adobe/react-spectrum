@@ -89,7 +89,7 @@
 }
 
 .react-spectrum-Datepicker-segments {
-  display: block;
+  display: inline;
   align-items: center;
 }
 
