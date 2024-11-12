@@ -23,7 +23,7 @@ interface Symbols {
 }
 
 const CURRENCY_SIGN_REGEX = new RegExp('^.*\\(.*\\).*$');
-const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec'];
+const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec', 'deva', 'beng'];
 
 /**
  * A NumberParser can be used to perform locale-aware parsing of numbers from Unicode strings,
