@@ -58,13 +58,16 @@ export interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'styl
 
 // These styles handle both ActionButton and ToggleButton
 const iconOnly = ':has([slot=icon]):not(:has([data-rsp-slot=text]))';
-export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleButtonStyleProps & ActionGroupItemStyleProps>({
+export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleButtonStyleProps & ActionGroupItemStyleProps & {isInGroup: boolean}>({
   ...focusRing(),
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   columnGap: 'text-to-visual',
-  flexShrink: 0,
+  flexShrink: {
+    default: 1,
+    isInGroup: 0
+  },
   flexGrow: {
     isJustified: 1
   },
@@ -247,6 +250,8 @@ function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElem
   props = useFormProps(props as any);
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
+  let ctx = useSlottedContext(ActionButtonGroupContext);
+  let isInGroup = !!ctx;
   let {
     density = 'regular',
     isJustified,
@@ -255,7 +260,7 @@ function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElem
     isQuiet = props.isQuiet,
     size = props.size || 'M',
     isDisabled = props.isDisabled
-  } = useSlottedContext(ActionButtonGroupContext) || {};
+  } = ctx || {};
 
   return (
     <RACButton
@@ -272,7 +277,8 @@ function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElem
         isQuiet,
         density,
         isJustified,
-        orientation
+        orientation,
+        isInGroup
       }, props.styles)}>
       <Provider
         values={[
