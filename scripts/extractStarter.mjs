@@ -484,16 +484,6 @@ function generateWrapper(name) {
     generic = '<T>';
   }
 
-  if (name === 'Disclosure' || name === 'DisclosureGroup' || name === 'DisclosurePanel') {
-    return `import {UNSTABLE_${name} as RAC${name}, ${typeName}} from 'react-aria-components';
-import './${name}.css';
-
-export function ${name}${typeParams}(props: ${typeName}${generic}) {
-  return <RAC${name} {...props} />;
-}
-`
-  }
-
   return `import {${name} as RAC${name}, ${typeName}} from 'react-aria-components';
 import './${name}.css';
 

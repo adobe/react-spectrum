@@ -12,6 +12,7 @@
 
 export {Accordion, AccordionContext} from './Accordion';
 export {ActionButton, ActionButtonContext} from './ActionButton';
+export {ActionButtonGroup, ActionButtonGroupContext} from './ActionButtonGroup';
 export {ActionMenu, ActionMenuContext} from './ActionMenu';
 export {AlertDialog} from './AlertDialog';
 export {Avatar, AvatarContext} from './Avatar';
@@ -68,6 +69,7 @@ export {Tabs, TabList, Tab, TabPanel, TabsContext} from './Tabs';
 export {TagGroup, Tag, TagGroupContext} from './TagGroup';
 export {TextArea, TextField, TextAreaContext, TextFieldContext} from './TextField';
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';
+export {ToggleButtonGroup, ToggleButtonGroupContext} from './ToggleButtonGroup';
 export {Tooltip, TooltipTrigger} from './Tooltip';
 
 export {pressScale} from './pressScale';
@@ -77,6 +79,7 @@ export {FileTrigger} from 'react-aria-components';
 
 export type {AccordionProps} from './Accordion';
 export type {ActionButtonProps} from './ActionButton';
+export type {ActionButtonGroupProps} from './ActionButtonGroup';
 export type {ActionMenuProps} from './ActionMenu';
 export type {AlertDialogProps} from './AlertDialog';
 export type {AvatarProps} from './Avatar';
@@ -129,5 +132,6 @@ export type {TabsProps, TabProps, TabListProps, TabPanelProps} from './Tabs';
 export type {TagGroupProps, TagProps} from './TagGroup';
 export type {TextFieldProps, TextAreaProps} from './TextField';
 export type {ToggleButtonProps} from './ToggleButton';
+export type {ToggleButtonGroupProps} from './ToggleButtonGroup';
 export type {TooltipProps} from './Tooltip';
 export type {FileTriggerProps, TooltipTriggerComponentProps as TooltipTriggerProps} from 'react-aria-components';

@@ -61,7 +61,7 @@ let supportedLocales: string[] = [
 ];
 
 const CURRENCY_SIGN_REGEX = new RegExp('^.*\\(.*\\).*$');
-const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec'];
+const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec', 'deva', 'beng'];
 const MINUS_SIGN_SYMBOLS = '\u002D\u2212';
 const MINUS_SIGN_REGEX = new RegExp(`[${MINUS_SIGN_SYMBOLS}]`, 'g');
 const AMBIGUOUS_SYMBOLS = ',.';
