@@ -77,7 +77,7 @@
 }
 
 .react-spectrum-Datepicker-inputSized {
-  display: flex;
+  display: block;
   height: 100%;
   align-items: center;
 }
@@ -89,7 +89,7 @@
 }
 
 .react-spectrum-Datepicker-segments {
-  display: flex;
+  display: block;
   align-items: center;
 }
 
