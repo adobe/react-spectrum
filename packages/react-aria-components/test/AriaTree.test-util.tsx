@@ -11,7 +11,6 @@
  */
 
 import {act, render} from '@testing-library/react';
-import {User} from '@react-aria/test-utils';
 
 let describeInteractions = ((name, tests) => describe.each`
   interactionType
