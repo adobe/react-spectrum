@@ -12,7 +12,7 @@
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {CalendarDate} from '@internationalized/date';
-import {Example} from '../stories/Example';
+import {Example, ExampleCustomFirstDay} from '../stories/Example';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -60,6 +60,13 @@ describe('useCalendar', () => {
       jest.runAllTimers();
     });
 
+    unmount();
+  }
+
+  async function testFirstDayOfWeek(defaultValue, firstDayOfWeek, expectedFirstDay) {
+    let {getAllByRole, unmount} = render(<ExampleCustomFirstDay defaultValue={defaultValue} firstDayOfWeek={firstDayOfWeek} />);
+    let cells = getAllByRole('gridcell');
+    expect(cells[0].children[0]).toHaveAttribute('aria-label', expectedFirstDay);
     unmount();
   }
 
@@ -225,6 +232,22 @@ describe('useCalendar', () => {
     ${'day going backward five'} | ${new CalendarDate(2019, 1, 1)} | ${'December 30, 2018 to January 3, 2019'} | ${'December 26 to 30, 2018'} | ${'Previous'} | ${4} | ${{days: 5}} | ${'single'}
     `('should use pageBehavior single $Name', async ({defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior}) => {
       await testPagination(defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior);
+    });
+  });
+
+  describe('firstDayOfWeek', () => {
+    it.each`
+    Name | defaultValue | firstDayOfWeek | expectedFirstDay
+    ${'default'} | ${new CalendarDate(2024, 1, 1)} | ${undefined} | ${'Sunday, December 31, 2023'}
+    ${'Sunday'} | ${new CalendarDate(2024, 1, 1)} | ${0} | ${'Sunday, December 31, 2023'}
+    ${'Monday'} | ${new CalendarDate(2024, 1, 1)} | ${1} | ${'Monday, January 1, 2024 selected'}
+    ${'Tuesday'} | ${new CalendarDate(2024, 1, 1)} | ${2} | ${'Tuesday, December 26, 2023'}
+    ${'Wednesday'} | ${new CalendarDate(2024, 1, 1)} | ${3} | ${'Wednesday, December 27, 2023'}
+    ${'Thursday'} | ${new CalendarDate(2024, 1, 1)} | ${4} | ${'Thursday, December 28, 2023'}
+    ${'Friday'} | ${new CalendarDate(2024, 1, 1)} | ${5} | ${'Friday, December 29, 2023'}
+    ${'Saturday'} | ${new CalendarDate(2024, 1, 1)} | ${6} | ${'Saturday, December 30, 2023'}
+    `('should use firstDayOfWeek $Name', async ({defaultValue, firstDayOfWeek, expectedFirstDay}) => {
+      await testFirstDayOfWeek(defaultValue, firstDayOfWeek, expectedFirstDay);
     });
   });
 });
