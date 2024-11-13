@@ -243,11 +243,11 @@ function computePosition(
   if (crossPlacement === 'center') {
     //  + (button size / 2) - (overlay size / 2)
     // at this point the overlay center should match the button center
-    position[crossAxis]! += ((childOffset[crossSize]) - (overlaySize[crossSize])) / 2;
+    position[crossAxis] += (childOffset[crossSize] - (overlaySize[crossSize])) / 2;
   } else if (crossPlacement !== crossAxis) {
     //  + (button size) - (overlay size)
     // at this point the overlay bottom should match the button bottom
-    position[crossAxis]! += (childOffset[crossSize]) - (overlaySize[crossSize]);
+    position[crossAxis] += (childOffset[crossSize] - overlaySize[crossSize]);
   }/* else {
     the overlay top should match the button top
   } */
@@ -298,7 +298,7 @@ function getMaxHeight(
     // We want the distance between the bottom of the overlay to the top of the boundary
     : Math.max(0,
       (overlayTop + overlayHeight) // this is the bottom of the overlay
-      - (boundaryDimensions.top + (boundaryDimensions.scroll.top)) // this is the top of the boundary
+      - (boundaryDimensions.top + boundaryDimensions.scroll.top) // this is the top of the boundary
       - (margins.top + margins.bottom + padding) // save additional space for margin and padding
     );
   return Math.min(boundaryDimensions.height - (padding * 2), maxHeight);
@@ -409,8 +409,8 @@ export function calculatePositionInternal(
   overlaySize.height = Math.min(overlaySize.height, maxHeight);
 
   position = computePosition(childOffset, boundaryDimensions, overlaySize, placementInfo, normalizedOffset, crossOffset, containerOffsetWithBoundary, isContainerPositioned, arrowSize, arrowBoundaryOffset);
-  delta = getDelta(crossAxis, position[crossAxis]!, overlaySize[crossSize], boundaryDimensions, containerDimensions, padding, containerOffsetWithBoundary);
-  position[crossAxis]! += delta;
+  delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, containerDimensions, padding, containerOffsetWithBoundary);
+  position[crossAxis] += delta;
 
   let arrowPosition: Position = {left: 0, top: 0, right: 0, bottom: 0};
 
