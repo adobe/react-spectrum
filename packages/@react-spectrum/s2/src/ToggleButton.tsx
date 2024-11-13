@@ -39,6 +39,8 @@ function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElem
   [props, ref] = useSpectrumContextProps(props, ref, ToggleButtonContext);
   props = useFormProps(props as any);
   let domRef = useFocusableRef(ref);
+  let ctx = useSlottedContext(ToggleButtonGroupContext);
+  let isInGroup = !!ctx;
   let {
     density = 'regular',
     isJustified,
@@ -48,7 +50,7 @@ function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElem
     isEmphasized = props.isEmphasized,
     size = props.size || 'M',
     isDisabled = props.isDisabled
-  } = useSlottedContext(ToggleButtonGroupContext) || {};
+  } = ctx || {};
 
   return (
     <RACToggleButton
@@ -65,7 +67,8 @@ function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElem
         isPending: false,
         density,
         isJustified,
-        orientation
+        orientation,
+        isInGroup
       }, props.styles)}>
       <Provider
         values={[
