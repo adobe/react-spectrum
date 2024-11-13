@@ -177,8 +177,8 @@ export function useSliderState<T extends number | number[]>(props: SliderStateOp
   }, [step, maxValue, minValue]);
 
   let restrictValues = useCallback((values: number[]) => values?.map((val, idx) => {
-    let min = idx === 0 ? minValue : val[idx - 1];
-    let max = idx === values.length - 1 ? maxValue : val[idx + 1];
+    let min = idx === 0 ? minValue : values[idx - 1];
+    let max = idx === values.length - 1 ? maxValue : values[idx + 1];
     return snapValueToStep(val, min, max, step);
   }), [minValue, maxValue, step]);
 
