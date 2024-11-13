@@ -243,7 +243,7 @@ function computePosition(
   if (crossPlacement === 'center') {
     //  + (button size / 2) - (overlay size / 2)
     // at this point the overlay center should match the button center
-    position[crossAxis] += (childOffset[crossSize] - (overlaySize[crossSize])) / 2;
+    position[crossAxis] += (childOffset[crossSize] - overlaySize[crossSize]) / 2;
   } else if (crossPlacement !== crossAxis) {
     //  + (button size) - (overlay size)
     // at this point the overlay bottom should match the button bottom
