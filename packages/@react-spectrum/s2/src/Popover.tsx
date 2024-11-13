@@ -16,6 +16,7 @@ import {
   composeRenderProps,
   Dialog,
   DialogProps,
+  ModalRenderProps,
   OverlayArrow,
   OverlayTriggerStateContext,
   useLocale
@@ -30,6 +31,7 @@ import {Modal} from './Modal';
 import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types' with {type: 'macro'};
 import {useDOMRef, useIsMobileDevice} from '@react-spectrum/utils';
+import { DismissButton } from 'react-aria';
 
 export interface PopoverProps extends UnsafeStyles, Omit<AriaPopoverProps, 'arrowSize' | 'isNonModal' | 'arrowBoundaryOffset' | 'isKeyboardDismissDisabled' | 'shouldCloseOnInteractOutside' | 'shouldUpdatePosition'> {
   styles?: StyleString,
@@ -239,11 +241,19 @@ function PopoverBase(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
   // On small devices, show a modal (or eventually a tray) instead of a popover.
   let isMobile = useIsMobileDevice();
   if (isMobile && process.env.NODE_ENV !== 'test') {
+    let mappedChildren = typeof children === 'function'
+      ? (renderProps: ModalRenderProps) => children({...renderProps, defaultChildren: null, trigger, placement: 'bottom'})
+      : children;
+
     return (
       <Modal size={size} isDismissable>
-        {typeof children === 'function'
-          ? renderProps => children({...renderProps, trigger, placement: 'bottom'})
-          : children}
+        {composeRenderProps(mappedChildren, (children, {state}) => (
+          <>
+            {children}
+            {/* Add additional dismiss button at the end to match popovers. */}
+            <DismissButton onDismiss={state.close} />
+          </>
+        ))}
       </Modal>
     );
   }

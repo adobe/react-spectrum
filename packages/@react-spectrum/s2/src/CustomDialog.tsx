@@ -10,17 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {CloseButtonContext} from './CloseButton';
 import {composeRenderProps, OverlayTriggerStateContext, Dialog as RACDialog, DialogProps as RACDialogProps} from 'react-aria-components';
 import {DOMRef} from '@react-types/shared';
 import {forwardRef} from 'react';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-// @ts-ignore
-import intlMessages from '../intl/*.json';
 import {Modal} from './Modal';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface CustomDialogProps extends Omit<RACDialogProps, 'className' | 'style'>, StyleProps {
   /**
@@ -62,24 +58,21 @@ function CustomDialog(props: CustomDialogProps, ref: DOMRef) {
     isFullBleed
   } = props;
   let domRef = useDOMRef(ref);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
   return (
     <Modal size={size} isDismissable={isDismissable} isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
-      <CloseButtonContext.Provider value={{'aria-label': stringFormatter.format('dialog.dismiss')}}>
-        <RACDialog
-          {...props}
-          ref={domRef}
-          style={props.UNSAFE_style}
-          className={(props.UNSAFE_className || '') + dialogStyle({isFullBleed}, props.styles)}>
-          {composeRenderProps(props.children, (children) => (
-            // Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state.
-            <OverlayTriggerStateContext.Provider value={null}>
-              {children}
-            </OverlayTriggerStateContext.Provider>
-          ))}
-        </RACDialog>
-      </CloseButtonContext.Provider>
+      <RACDialog
+        {...props}
+        ref={domRef}
+        style={props.UNSAFE_style}
+        className={(props.UNSAFE_className || '') + dialogStyle({isFullBleed}, props.styles)}>
+        {composeRenderProps(props.children, (children) => (
+          // Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state.
+          <OverlayTriggerStateContext.Provider value={null}>
+            {children}
+          </OverlayTriggerStateContext.Provider>
+        ))}
+      </RACDialog>
     </Modal>
   );
 }

@@ -101,7 +101,7 @@ function Dialog(props: DialogProps, ref: DOMRef) {
         ref={domRef}
         style={props.UNSAFE_style}
         className={(props.UNSAFE_className || '') + dialogInner}>
-        {composeRenderProps(props.children, (children, {close}) => (
+        {composeRenderProps(props.children, (children) => (
           // Render the children multiple times inside the wrappers we need to implement the layout.
           // Each instance hides certain children so that they are all rendered in the correct locations.
           // Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state.
@@ -174,7 +174,7 @@ function Dialog(props: DialogProps, ref: DOMRef) {
                 </Provider>
               </div>
               {props.isDismissable && 
-                <CloseButton onPress={close} styles={style({marginBottom: 12})} />
+                <CloseButton styles={style({marginBottom: 12})} />
               }
             </div>
             {/* Main content */}
