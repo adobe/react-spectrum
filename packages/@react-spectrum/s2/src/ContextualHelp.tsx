@@ -3,8 +3,7 @@ import {AriaLabelingProps, DOMProps, FocusableRef, FocusableRefValue} from '@rea
 import {ContentContext, FooterContext, HeadingContext} from './Content';
 import {ContextValue, DEFAULT_SLOT, Provider, Dialog as RACDialog, TextContext} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode} from 'react';
-import {dialogInner} from './StandardDialog';
-import {DialogProps} from './Dialog';
+import {dialogInner} from './Dialog';
 import {DialogTrigger, DialogTriggerProps} from './DialogTrigger';
 import {filterDOMProps, mergeProps, useLabels} from '@react-aria/utils';
 import HelpIcon from '../s2wf-icons/S2_Icon_HelpCircle_20_N.svg';
@@ -12,7 +11,7 @@ import InfoIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeStyles} from '../style/runtime';
-import {Popover, PopoverProps} from './Popover';
+import {PopoverBase, PopoverDialogProps} from './Popover';
 import {style, size as styleSize} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils' with { type: 'macro' };
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -28,8 +27,7 @@ export interface ContextualHelpStyleProps {
 }
 export interface ContextualHelpProps extends
   Pick<DialogTriggerProps, 'isOpen' | 'defaultOpen' | 'onOpenChange'>,
-  Pick<DialogProps, 'shouldFlip' | 'offset' | 'crossOffset' | 'placement'>,
-  Pick<PopoverProps, 'containerPadding'>,
+  Pick<PopoverDialogProps, 'shouldFlip' | 'offset' | 'crossOffset' | 'placement' | 'containerPadding'>,
   ContextualHelpStyleProps, StyleProps, DOMProps, AriaLabelingProps {
   /** Contents of the Contextual Help popover. */
   children?: ReactNode,
@@ -95,7 +93,7 @@ function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButton
         isQuiet>
         {variant === 'info' ? <InfoIcon /> : <HelpIcon />}
       </ActionButton>
-      <Popover
+      <PopoverBase
         placement={placement}
         shouldFlip={shouldFlip}
         // not working => containerPadding={containerPadding}
@@ -127,7 +125,7 @@ function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButton
             {children}
           </Provider>
         </RACDialog>
-      </Popover>
+      </PopoverBase>
     </DialogTrigger>
   );
 }

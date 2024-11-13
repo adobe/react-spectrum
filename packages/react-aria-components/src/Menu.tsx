@@ -119,7 +119,6 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
   let submenuTriggerState = useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
   let submenuRef = useRef<HTMLDivElement>(null);
   let itemRef = useObjectRef(ref);
-  let popoverContext = useSlottedContext(PopoverContext)!;
   let {parentMenuRef} = useContext(SubmenuTriggerContext)!;
   let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger({
     parentMenuRef,
@@ -138,7 +137,6 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
           trigger: 'SubmenuTrigger',
           triggerRef: itemRef,
           placement: 'end top',
-          UNSTABLE_portalContainer: popoverContext.UNSTABLE_portalContainer || undefined,
           // Prevent parent popover from hiding submenu.
           // @ts-ignore
           'data-react-aria-top-layer': true,

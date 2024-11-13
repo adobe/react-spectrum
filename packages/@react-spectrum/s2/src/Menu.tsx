@@ -42,7 +42,7 @@ import {ImageContext} from './Image';
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {mergeStyles} from '../style/runtime';
 import {Placement, useLocale} from 'react-aria';
-import {Popover} from './Popover';
+import {PopoverBase} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -367,7 +367,7 @@ function Menu<T extends object>(props: MenuProps<T>, ref: DOMRef<HTMLDivElement>
 
   if (ctx || isSubmenu) {
     return (
-      <Popover
+      <PopoverBase
         ref={ref}
         hideArrow
         placement={initialPlacement}
@@ -381,7 +381,7 @@ function Menu<T extends object>(props: MenuProps<T>, ref: DOMRef<HTMLDivElement>
         UNSAFE_className={UNSAFE_className}
         styles={styles}>
         {content}
-      </Popover>
+      </PopoverBase>
     );
   }
 

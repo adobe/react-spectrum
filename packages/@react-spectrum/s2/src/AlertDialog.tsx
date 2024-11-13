@@ -16,6 +16,7 @@ import {ButtonGroup} from './ButtonGroup';
 import {CenterBaseline} from './CenterBaseline';
 import {chain} from '@react-aria/utils';
 import {Content, Heading} from './Content';
+import {Dialog} from './Dialog';
 import {DOMProps, DOMRef} from '@react-types/shared';
 import {forwardRef, ReactNode} from 'react';
 import {IconContext} from './Icon';
@@ -23,7 +24,6 @@ import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import NoticeSquare from '../s2wf-icons/S2_Icon_AlertDiamond_20_N.svg';
 import {Provider} from 'react-aria-components';
-import {StandardDialog} from './StandardDialog';
 import {style} from '../style' with {type: 'macro'};
 import {UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -99,7 +99,7 @@ function AlertDialog(props: AlertDialogProps, ref: DOMRef) {
   }
 
   return (
-    <StandardDialog
+    <Dialog
       role="alertdialog"
       ref={ref}
       size={props.size}
@@ -150,7 +150,7 @@ function AlertDialog(props: AlertDialogProps, ref: DOMRef) {
           </ButtonGroup>
         </>
       )}
-    </StandardDialog>
+    </Dialog>
   );
 }
 
