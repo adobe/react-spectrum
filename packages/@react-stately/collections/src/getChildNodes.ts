@@ -42,7 +42,7 @@ export function getNthItem<T>(iterable: Iterable<T>, index: number): T | undefin
 }
 
 export function getLastItem<T>(iterable: Iterable<T>): T | undefined {
-  let lastItem = undefined;
+  let lastItem: T | undefined = undefined;
   for (let value of iterable) {
     lastItem = value;
   }

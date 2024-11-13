@@ -338,7 +338,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     manager.setFocused(true);
 
     if (manager.focusedKey == null) {
-      let navigateToFirstKey = (key: Key | undefined) => {
+      let navigateToFirstKey = (key: Key | undefined | null) => {
         if (key != null) {
           manager.setFocusedKey(key);
           if (selectOnFocus) {
@@ -351,9 +351,9 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       // and either focus the first or last item accordingly.
       let relatedTarget = e.relatedTarget as Element;
       if (relatedTarget && (e.currentTarget.compareDocumentPosition(relatedTarget) & Node.DOCUMENT_POSITION_FOLLOWING)) {
-        navigateToFirstKey(manager.lastSelectedKey ?? delegate.getLastKey?.() ?? undefined);
+        navigateToFirstKey(manager.lastSelectedKey ?? delegate.getLastKey?.());
       } else {
-        navigateToFirstKey(manager.firstSelectedKey ?? delegate.getFirstKey?.() ?? undefined);
+        navigateToFirstKey(manager.firstSelectedKey ?? delegate.getFirstKey?.());
       }
     } else if (!isVirtualized && scrollRef.current) {
       // Restore the scroll position to what it was before.
@@ -372,7 +372,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
         let modality = getInteractionModality();
         if (modality === 'keyboard') {
-          scrollIntoViewport(element, {containingElement: ref.current ?? undefined});
+          scrollIntoViewport(element, {containingElement: ref.current});
         }
       }
     }

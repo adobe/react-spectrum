@@ -14,10 +14,10 @@ import {Axis, Placement, PlacementAxis, SizeAxis} from '@react-types/overlays';
 import {clamp, isWebKit} from '@react-aria/utils';
 
 interface Position {
-  top?: number,
-  left?: number,
-  bottom?: number,
-  right?: number
+  top: number,
+  left: number,
+  bottom: number,
+  right: number
 }
 
 interface Dimensions {
@@ -64,10 +64,10 @@ interface PositionOpts {
 type HeightGrowthDirection = 'top' | 'bottom';
 
 export interface PositionResult {
-  position?: Position,
-  arrowOffsetLeft?: number,
-  arrowOffsetTop?: number,
-  maxHeight?: number,
+  position: Position,
+  arrowOffsetLeft: number,
+  arrowOffsetTop: number,
+  maxHeight: number,
   placement: PlacementAxis
 }
 
@@ -102,12 +102,11 @@ const TOTAL_SIZE = {
 
 const PARSED_PLACEMENT_CACHE = {};
 
-// @ts-ignore
 let visualViewport = typeof document !== 'undefined' ? window.visualViewport : null;
 
 function getContainerDimensions(containerNode: Element): Dimensions {
   let width = 0, height = 0, totalWidth = 0, totalHeight = 0, top = 0, left = 0;
-  let scroll: Position = {};
+  let scroll: Position = {left: 0, top: 0, right: 0, bottom: 0};
   let isPinchZoomedIn = (visualViewport?.scale ?? 1) > 1;
 
   if (containerNode.tagName === 'BODY') {
@@ -174,7 +173,7 @@ function getDelta(
   padding: number,
   containerOffsetWithBoundary: Offset
 ) {
-  let containerScroll = containerDimensions.scroll[axis] ?? 0;
+  let containerScroll = containerDimensions.scroll[axis];
   // The height/width of the boundary. Matches the axis along which we are adjusting the overlay position
   let boundarySize = boundaryDimensions[AXIS_SIZE[axis]];
   // Calculate the edges of the boundary (accomodating for the boundary padding) and the edges of the overlay.
@@ -237,29 +236,29 @@ function computePosition(
   arrowBoundaryOffset: number
 ) {
   let {placement, crossPlacement, axis, crossAxis, size, crossSize} = placementInfo;
-  let position: Position = {};
+  let position: Position = {left: 0, top: 0, right: 0, bottom: 0};
 
   // button position
-  position[crossAxis] = childOffset[crossAxis] ?? 0;
+  position[crossAxis] = childOffset[crossAxis];
   if (crossPlacement === 'center') {
     //  + (button size / 2) - (overlay size / 2)
     // at this point the overlay center should match the button center
-    position[crossAxis]! += ((childOffset[crossSize] ?? 0) - (overlaySize[crossSize] ?? 0)) / 2;
+    position[crossAxis]! += ((childOffset[crossSize]) - (overlaySize[crossSize])) / 2;
   } else if (crossPlacement !== crossAxis) {
     //  + (button size) - (overlay size)
     // at this point the overlay bottom should match the button bottom
-    position[crossAxis]! += (childOffset[crossSize] ?? 0) - (overlaySize[crossSize] ?? 0);
+    position[crossAxis]! += (childOffset[crossSize]) - (overlaySize[crossSize]);
   }/* else {
     the overlay top should match the button top
   } */
 
-  position[crossAxis]! += crossOffset;
+  position[crossAxis] += crossOffset;
 
   // overlay top overlapping arrow with button bottom
   const minPosition = childOffset[crossAxis] - overlaySize[crossSize] + arrowSize + arrowBoundaryOffset;
   // overlay bottom overlapping arrow with button top
   const maxPosition = childOffset[crossAxis] + childOffset[crossSize] - arrowSize - arrowBoundaryOffset;
-  position[crossAxis] = clamp(position[crossAxis]!, minPosition, maxPosition);
+  position[crossAxis] = clamp(position[crossAxis], minPosition, maxPosition);
 
   // Floor these so the position isn't placed on a partial pixel, only whole pixels. Shouldn't matter if it was floored or ceiled, so chose one.
   if (placement === axis) {
@@ -288,19 +287,19 @@ function getMaxHeight(
   const containerHeight = (isContainerPositioned ? containerOffsetWithBoundary.height : boundaryDimensions[TOTAL_SIZE.height]);
   // For cases where position is set via "bottom" instead of "top", we need to calculate the true overlay top with respect to the boundary. Reverse calculate this with the same method
   // used in computePosition.
-  let overlayTop = position.top != null ? containerOffsetWithBoundary.top + position.top : containerOffsetWithBoundary.top + (containerHeight - (position.bottom ?? 0) - overlayHeight);
+  let overlayTop = position.top != null ? containerOffsetWithBoundary.top + position.top : containerOffsetWithBoundary.top + (containerHeight - position.bottom - overlayHeight);
   let maxHeight = heightGrowthDirection !== 'top' ?
     // We want the distance between the top of the overlay to the bottom of the boundary
     Math.max(0,
-      (boundaryDimensions.height + boundaryDimensions.top + (boundaryDimensions.scroll.top ?? 0)) // this is the bottom of the boundary
+      (boundaryDimensions.height + boundaryDimensions.top + boundaryDimensions.scroll.top) // this is the bottom of the boundary
       - overlayTop // this is the top of the overlay
-      - ((margins.top ?? 0) + (margins.bottom ?? 0) + padding) // save additional space for margin and padding
+      - (margins.top + margins.bottom + padding) // save additional space for margin and padding
     )
     // We want the distance between the bottom of the overlay to the top of the boundary
     : Math.max(0,
       (overlayTop + overlayHeight) // this is the bottom of the overlay
-      - (boundaryDimensions.top + (boundaryDimensions.scroll.top ?? 0)) // this is the top of the boundary
-      - ((margins.top ?? 0) + (margins.bottom ?? 0) + padding) // save additional space for margin and padding
+      - (boundaryDimensions.top + (boundaryDimensions.scroll.top)) // this is the top of the boundary
+      - (margins.top + margins.bottom + padding) // save additional space for margin and padding
     );
   return Math.min(boundaryDimensions.height - (padding * 2), maxHeight);
 }
@@ -315,10 +314,10 @@ function getAvailableSpace(
 ) {
   let {placement, axis, size} = placementInfo;
   if (placement === axis) {
-    return Math.max(0, childOffset[axis] - boundaryDimensions[axis] - (boundaryDimensions.scroll[axis] ?? 0) + containerOffsetWithBoundary[axis] - (margins[axis] ?? 0) - margins[FLIPPED_DIRECTION[axis]] - padding);
+    return Math.max(0, childOffset[axis] - boundaryDimensions[axis] - boundaryDimensions.scroll[axis] + containerOffsetWithBoundary[axis] - margins[axis] - margins[FLIPPED_DIRECTION[axis]] - padding);
   }
 
-  return Math.max(0, boundaryDimensions[size] + boundaryDimensions[axis] + boundaryDimensions.scroll[axis] - containerOffsetWithBoundary[axis] - childOffset[axis] - childOffset[size] - (margins[axis] ?? 0) - margins[FLIPPED_DIRECTION[axis]] - padding);
+  return Math.max(0, boundaryDimensions[size] + boundaryDimensions[axis] + boundaryDimensions.scroll[axis] - containerOffsetWithBoundary[axis] - childOffset[axis] - childOffset[size] - margins[axis] - margins[FLIPPED_DIRECTION[axis]] - padding);
 }
 
 export function calculatePositionInternal(
@@ -389,8 +388,8 @@ export function calculatePositionInternal(
     }
   }
 
-  let delta = getDelta(crossAxis, position[crossAxis]!, overlaySize[crossSize], boundaryDimensions, containerDimensions, padding, containerOffsetWithBoundary);
-  position[crossAxis]! += delta;
+  let delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, containerDimensions, padding, containerOffsetWithBoundary);
+  position[crossAxis] += delta;
 
   let maxHeight = getMaxHeight(
     position,
@@ -413,19 +412,19 @@ export function calculatePositionInternal(
   delta = getDelta(crossAxis, position[crossAxis]!, overlaySize[crossSize], boundaryDimensions, containerDimensions, padding, containerOffsetWithBoundary);
   position[crossAxis]! += delta;
 
-  let arrowPosition: Position = {};
+  let arrowPosition: Position = {left: 0, top: 0, right: 0, bottom: 0};
 
   // All values are transformed so that 0 is at the top/left of the overlay depending on the orientation
   // Prefer the arrow being in the center of the trigger/overlay anchor element
   // childOffset[crossAxis] + .5 * childOffset[crossSize] = absolute position with respect to the trigger's coordinate system that would place the arrow in the center of the trigger
   // position[crossAxis] - margins[AXIS[crossAxis]] = value use to transform the position to a value with respect to the overlay's coordinate system. A child element's (aka arrow) position absolute's "0"
   // is positioned after the margin of its parent (aka overlay) so we need to subtract it to get the proper coordinate transform
-  let preferredArrowPosition = childOffset[crossAxis] + .5 * childOffset[crossSize] - position[crossAxis]! - margins[AXIS[crossAxis]];
+  let preferredArrowPosition = childOffset[crossAxis] + .5 * childOffset[crossSize] - position[crossAxis] - margins[AXIS[crossAxis]];
 
   // Min/Max position limits for the arrow with respect to the overlay
   const arrowMinPosition = arrowSize / 2 + arrowBoundaryOffset;
   // overlaySize[crossSize] - margins = true size of the overlay
-  const overlayMargin = AXIS[crossAxis] === 'left' ? (margins.left ?? 0) + (margins.right ?? 0) : (margins.top ?? 0) + (margins.bottom ?? 0);
+  const overlayMargin = AXIS[crossAxis] === 'left' ? margins.left + margins.right : margins.top + margins.bottom;
   const arrowMaxPosition = overlaySize[crossSize] - overlayMargin - (arrowSize / 2) - arrowBoundaryOffset;
 
   // Min/Max position limits for the arrow with respect to the trigger/overlay anchor element
@@ -479,8 +478,8 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
 
   let overlaySize: Offset = getOffset(overlayNode);
   let margins = getMargins(overlayNode);
-  overlaySize.width += (margins.left ?? 0) + (margins.right ?? 0);
-  overlaySize.height += (margins.top ?? 0) + (margins.bottom ?? 0);
+  overlaySize.width += margins.left + margins.right;
+  overlaySize.height += margins.top + margins.bottom;
 
   let scrollSize = getScroll(scrollNode);
   let boundaryDimensions = getContainerDimensions(boundaryElement);

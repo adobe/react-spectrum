@@ -67,7 +67,7 @@ export interface PositionAria {
   /** Props for the overlay tip arrow if any. */
   arrowProps: DOMAttributes,
   /** Placement of the overlay with respect to the overlay trigger. */
-  placement?: PlacementAxis,
+  placement: PlacementAxis | null,
   /** Updates the position of the overlay. */
   updatePosition(): void
 }
@@ -77,7 +77,6 @@ interface ScrollAnchor {
   offset: number
 }
 
-// @ts-ignore
 let visualViewport = typeof document !== 'undefined' ? window.visualViewport : null;
 
 /**
@@ -103,13 +102,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     maxHeight,
     arrowBoundaryOffset = 0
   } = props;
-  let [position, setPosition] = useState<Partial<PositionResult>>({
-    position: {},
-    arrowOffsetLeft: undefined,
-    arrowOffsetTop: undefined,
-    maxHeight: undefined,
-    placement: undefined
-  });
+  let [position, setPosition] = useState<PositionResult | null>(null);
 
   let deps = [
     shouldUpdatePosition,
@@ -289,17 +282,17 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       style: {
         position: 'absolute',
         zIndex: 100000, // should match the z-index in ModalTrigger
-        ...position.position,
-        maxHeight: position.maxHeight ?? '100vh'
+        ...position?.position,
+        maxHeight: position?.maxHeight ?? '100vh'
       }
     },
-    placement: position.placement,
+    placement: position?.placement ?? null,
     arrowProps: {
       'aria-hidden': 'true',
       role: 'presentation',
       style: {
-        left: position.arrowOffsetLeft,
-        top: position.arrowOffsetTop
+        left: position?.arrowOffsetLeft,
+        top: position?.arrowOffsetTop
       }
     },
     updatePosition

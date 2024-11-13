@@ -152,7 +152,10 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
     observer.disconnect();
 
     for (let node of hiddenNodes) {
-      let count = refCountMap.get(node) ?? 0;
+      let count = refCountMap.get(node);
+      if (count == null) {
+        continue;
+      }
       if (count === 1) {
         node.removeAttribute('aria-hidden');
         refCountMap.delete(node);

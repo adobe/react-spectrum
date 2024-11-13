@@ -17,7 +17,6 @@ interface PreventScrollOptions {
   isDisabled?: boolean
 }
 
-// @ts-ignore
 const visualViewport = typeof document !== 'undefined' && window.visualViewport;
 
 // HTML input types that do not cause the software keyboard to appear.
@@ -254,9 +253,9 @@ function setStyle(element: HTMLElement, style: string, value: string) {
 
 // Adds an event listener to an element, and returns a function to remove it.
 function addEvent<K extends keyof GlobalEventHandlersEventMap>(
-  target: EventTarget,
+  target: Document | Window,
   event: K,
-  handler: (this: Document, ev: GlobalEventHandlersEventMap[K]) => any,
+  handler: (this: Document | Window, ev: GlobalEventHandlersEventMap[K]) => any,
   options?: boolean | AddEventListenerOptions
 ) {
   // @ts-ignore

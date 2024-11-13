@@ -206,7 +206,7 @@ export interface Node<T> {
   /** An accessibility label for this node. */
   'aria-label'?: string,
   /** The index of this node within its parent. */
-  index?: number,
+  index: number,
   /** A function that should be called to wrap the rendered node. */
   wrapper?: (element: ReactElement) => ReactElement,
   /** The key of the parent node. */
