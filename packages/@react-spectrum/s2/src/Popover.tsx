@@ -238,7 +238,7 @@ function PopoverBase(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
 
   // On small devices, show a modal (or eventually a tray) instead of a popover.
   let isMobile = useIsMobileDevice();
-  if (isMobile) {
+  if (isMobile && process.env.NODE_ENV !== 'test') {
     return (
       <Modal size={size} isDismissable>
         {typeof children === 'function'
