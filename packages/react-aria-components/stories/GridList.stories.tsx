@@ -22,27 +22,31 @@ export default {
 };
 
 export const GridListExample = (args) => (
-  <GridList
-    {...args}
-    className={styles.menu}
-    aria-label="test gridlist"
-    style={{
-      width: 300,
-      height: 300,
-      display: 'grid',
-      gridTemplate: args.layout === 'grid' ? 'repeat(3, 1fr) / repeat(3, 1fr)' : 'auto / 1fr',
-      gridAutoFlow: 'row'
-    }}>
-    <MyGridListItem>1,1 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>1,2 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>1,3 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>2,1 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>2,2 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>2,3 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>3,1 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>3,2 <Button>Actions</Button></MyGridListItem>
-    <MyGridListItem>3,3 <Button>Actions</Button></MyGridListItem>
-  </GridList>
+  <>
+    <input />
+    <GridList
+      {...args}
+      className={styles.menu}
+      aria-label="test gridlist"
+      style={{
+        width: 300,
+        height: 300,
+        display: 'grid',
+        gridTemplate: args.layout === 'grid' ? 'repeat(3, 1fr) / repeat(3, 1fr)' : 'auto / 1fr',
+        gridAutoFlow: 'row'
+      }}>
+      <MyGridListItem>1,1 <input /></MyGridListItem>
+      <MyGridListItem>1,2 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>1,3 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>2,1 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>2,2 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>2,3 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>3,1 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>3,2 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>3,3 <Button>Actions</Button></MyGridListItem>
+    </GridList>
+    <input />
+  </>
 );
 
 const MyGridListItem = (props: GridListItemProps) => {

@@ -361,7 +361,17 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       if (element) {
         // This prevents a flash of focus on the first/last element in the collection, or the collection itself.
         if (!element.contains(document.activeElement)) {
-          focusWithoutScrolling(element);
+          if (e.relatedTarget != null && ref.current.compareDocumentPosition(e.relatedTarget as Node) & Node.DOCUMENT_POSITION_FOLLOWING) {
+            let treeWalker = getFocusableTreeWalker(element);
+            let lastCellChild = last(treeWalker);
+            if (lastCellChild != null) {
+              focusWithoutScrolling(lastCellChild);
+            } else {
+              focusWithoutScrolling(element);
+            }
+          } else {
+            focusWithoutScrolling(element);
+          }
         }
 
         let modality = getInteractionModality();
@@ -487,4 +497,16 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       tabIndex
     }
   };
+}
+
+function last(walker: TreeWalker) {
+  let next: FocusableElement;
+  let last: FocusableElement;
+  do {
+    last = walker.lastChild() as FocusableElement;
+    if (last) {
+      next = last;
+    }
+  } while (last);
+  return next;
 }

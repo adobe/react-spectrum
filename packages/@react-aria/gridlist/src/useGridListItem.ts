@@ -117,6 +117,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     linkBehavior
   });
 
+  const INPUT_TYPES = new Set(['color', 'date', 'datetime', 'datetime-local', 'email', 'month', 'number', 'password', 'range', 'search', 'tel', 'text', 'time', 'url', 'week', 'video', 'audio', 'contenteditable']);
   let onKeyDown = (e: ReactKeyboardEvent) => {
     if (!e.currentTarget.contains(e.target as Element)) {
       return;
@@ -166,6 +167,8 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
               }
             }
           }
+        } else if (e.target instanceof HTMLInputElement && INPUT_TYPES.has(e.target.type)) {
+          e.stopPropagation();
         }
         break;
       }
@@ -195,15 +198,19 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
               }
             }
           }
+        } else if (e.target instanceof HTMLInputElement && INPUT_TYPES.has(e.target.type)) {
+          e.stopPropagation();
         }
         break;
       }
       case 'ArrowUp':
       case 'ArrowDown':
-        // Prevent this event from reaching row children, e.g. menu buttons. We want arrow keys to navigate
-        // to the row above/below instead. We need to re-dispatch the event from a higher parent so it still
-        // bubbles and gets handled by useSelectableCollection.
-        if (!e.altKey && ref.current.contains(e.target as Element)) {
+        if ((keyboardNavigationBehavior === 'tab' && e.target instanceof HTMLInputElement && INPUT_TYPES.has(e.target.type))) {
+          e.stopPropagation();
+        } else if ((!e.altKey && ref.current.contains(e.target as Element))) {
+          // Prevent this event from reaching row children, e.g. menu buttons. We want arrow keys to navigate
+          // to the row above/below instead. We need to re-dispatch the event from a higher parent so it still
+          // bubbles and gets handled by useSelectableCollection.
           e.stopPropagation();
           e.preventDefault();
           ref.current.parentElement.dispatchEvent(
@@ -226,7 +233,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     }
   };
 
-  let onFocus = (e) => {
+  let onFocus = (e: FocusEvent) => {
     keyWhenFocused.current = node.key;
     if (e.target !== ref.current) {
       // useSelectableItem only handles setting the focused key when
@@ -256,7 +263,8 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
   let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
-    onKeyDownCapture: onKeyDown,
+    onKeyDownCapture: keyboardNavigationBehavior === 'arrow' ? onKeyDown : undefined,
+    onKeyDown: keyboardNavigationBehavior === 'tab' ? onKeyDown : undefined,
     onFocus,
     // 'aria-label': [(node.textValue || undefined), rowAnnouncement].filter(Boolean).join(', '),
     'aria-label': node.textValue || undefined,
