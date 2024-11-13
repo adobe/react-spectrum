@@ -77,7 +77,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   private findNextNonDisabled(key: Key | null, getNext: (key: Key) => Key | null): Key | null {
     let nextKey = key;
     while (nextKey != null) {
-      let item = this.collection.getItem(key!);
+      let item = this.collection.getItem(nextKey);
       if (item?.type === 'item' && !this.isDisabled(item)) {
         return nextKey;
       }
