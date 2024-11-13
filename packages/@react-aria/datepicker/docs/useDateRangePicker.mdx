@@ -113,7 +113,7 @@ function DateRangePicker(props) {
       {state.isOpen &&
         <Popover state={state} triggerRef={ref} placement="bottom start">
           <Dialog {...dialogProps}>
-            <RangeCalendar {...calendarProps} />
+            <RangeCalendar {...calendarProps} firstDayOfWeek={props.firstDayOfWeek} />
           </Dialog>
         </Popover>
       }
@@ -359,7 +359,7 @@ function RangeCalendar(props) {
         <Button {...prevButtonProps}>&lt;</Button>
         <Button {...nextButtonProps}>&gt;</Button>
       </div>
-      <CalendarGrid state={state} />
+      <CalendarGrid state={state} firstDayOfWeek={props.firstDayOfWeek} />
     </div>
   );
 }
@@ -754,4 +754,12 @@ By default, `useDateRangePicker` displays times in either 12 or 24 hour hour for
   label="Date range"
   granularity="minute"
   hourCycle={24} />
+```
+
+### Custom first day of week
+
+By default, the first day of the week is Sunday. This can be changed by setting the `firstDayOfWeek` prop to a number between 0 (Sunday) and 6 (Saturday).
+
+```tsx example
+<DateRangePicker label="Date range" firstDayOfWeek={1} />
 ```

@@ -511,6 +511,14 @@ The `isReadOnly` boolean prop makes the Calendar's value immutable. Unlike `isDi
 <MyCalendar aria-label="Event date" value={today(getLocalTimeZone())} isReadOnly />
 ```
 
+## Custom first day of week
+
+By default, the first day of the week is Sunday. This can be changed by setting the `firstDayOfWeek` prop to a number between 0 (Sunday) and 6 (Saturday).
+
+```tsx example
+<MyCalendar aria-label="Event date" value={today(getLocalTimeZone())} firstDayOfWeek={1} />
+```
+
 ## Labeling
 
 An aria-label must be provided to the `Calendar` for accessibility. If it is labeled by a separate element, an `aria-labelledby` prop must be provided using the `id` of the labeling element instead.

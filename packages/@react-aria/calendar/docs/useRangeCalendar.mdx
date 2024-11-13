@@ -129,7 +129,7 @@ function RangeCalendar(props) {
         <Button {...prevButtonProps}>&lt;</Button>
         <Button {...nextButtonProps}>&gt;</Button>
       </div>
-      <CalendarGrid state={state} />
+      <CalendarGrid state={state} firstDayOfWeek={props.firstDayOfWeek} />
     </div>
   );
 }
@@ -475,6 +475,14 @@ The `isReadOnly` boolean prop makes the RangeCalendar's value immutable. Unlike 
 
 ```tsx example
 <RangeCalendar aria-label="Trip dates" value={{start: today(getLocalTimeZone()), end: today(getLocalTimeZone()).add({ weeks: 1 })}} isReadOnly />
+```
+
+### Custom first day of week
+
+By default, the first day of the week is Sunday. This can be changed by setting the `firstDayOfWeek` prop to a number between 0 (Sunday) and 6 (Saturday).
+
+```tsx example
+<RangeCalendar aria-label="Trip dates" firstDayOfWeek={1} />
 ```
 
 ### Labeling

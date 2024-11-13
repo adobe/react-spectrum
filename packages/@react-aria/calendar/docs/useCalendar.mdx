@@ -129,7 +129,7 @@ function Calendar(props) {
         <Button {...prevButtonProps}>&lt;</Button>
         <Button {...nextButtonProps}>&gt;</Button>
       </div>
-      <CalendarGrid state={state} />
+      <CalendarGrid state={state} firstDayOfWeek={props.firstDayOfWeek} />
     </div>
   );
 }
@@ -456,6 +456,14 @@ The `isReadOnly` boolean prop makes the Calendar's value immutable. Unlike `isDi
 
 ```tsx example
 <Calendar aria-label="Event date" value={today(getLocalTimeZone())} isReadOnly />
+```
+
+### Custom first day of week
+
+By default, the first day of the week is Sunday. This can be changed by setting the `firstDayOfWeek` prop to a number between 0 (Sunday) and 6 (Saturday).
+
+```tsx example
+<Calendar aria-label="Event date" value={today(getLocalTimeZone())} firstDayOfWeek={1} />
 ```
 
 ### Labeling
