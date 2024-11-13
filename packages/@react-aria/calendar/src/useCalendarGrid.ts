@@ -12,10 +12,10 @@
 
 import {CalendarDate, startOfWeek, today} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
+import {clamp, mergeProps, useLabels} from '@react-aria/utils';
 import {DOMAttributes} from '@react-types/shared';
 import {hookData, useVisibleRangeDescription} from './utils';
 import {KeyboardEvent, useMemo} from 'react';
-import {mergeProps, useLabels} from '@react-aria/utils';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
 
 export interface AriaCalendarGridProps {
@@ -36,7 +36,12 @@ export interface AriaCalendarGridProps {
    * e.g. single letter, abbreviation, or full day name.
    * @default "narrow"
    */
-  weekdayStyle?: 'narrow' | 'short' | 'long'
+  weekdayStyle?: 'narrow' | 'short' | 'long',
+  /**
+   * The day that starts the week, 0-6 (Sunday-Saturday).
+   * @default 0
+   */
+  firstDayOfWeek?: 0 | 1 | 2 | 3 | 4 | 5 | 6
 }
 
 export interface CalendarGridAria {
@@ -137,13 +142,14 @@ export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarSta
   let dayFormatter = useDateFormatter({weekday: props.weekdayStyle || 'narrow', timeZone: state.timeZone});
   let {locale} = useLocale();
   let weekDays = useMemo(() => {
-    let weekStart = startOfWeek(today(state.timeZone), locale);
+    let firstDayOfWeek = clamp(props.firstDayOfWeek ?? 0, 0, 6);
+    let weekStart = startOfWeek(today(state.timeZone), locale).add({days: firstDayOfWeek});
     return [...new Array(7).keys()].map((index) => {
       let date = weekStart.add({days: index});
       let dateDay = date.toDate(state.timeZone);
       return dayFormatter.format(dateDay);
     });
-  }, [locale, state.timeZone, dayFormatter]);
+  }, [locale, state.timeZone, dayFormatter, props.firstDayOfWeek]);
 
   return {
     gridProps: mergeProps(labelProps, {

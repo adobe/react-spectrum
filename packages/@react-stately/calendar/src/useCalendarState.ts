@@ -29,7 +29,7 @@ import {
 } from '@internationalized/date';
 import {CalendarProps, DateValue, MappedDateValue} from '@react-types/calendar';
 import {CalendarState} from './types';
-import {useControlledState} from '@react-stately/utils';
+import {clamp, useControlledState} from '@react-stately/utils';
 import {useMemo, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
@@ -328,11 +328,14 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
       let date = from.add({weeks: weekIndex});
       let dates: (CalendarDate | null)[] = [];
 
-      date = startOfWeek(date, locale);
+      let currentDayOfWeek = getDayOfWeek(date, locale);
+      let firstDayOfWeek = clamp(props.firstDayOfWeek ?? 0, 0, 6);
+      let daysToSubtract = (currentDayOfWeek - firstDayOfWeek + 7) % 7;
+      date = date.subtract({days: daysToSubtract});
 
       // startOfWeek will clamp dates within the calendar system's valid range, which may
       // start in the middle of a week. In this case, add null placeholders.
-      let dayOfWeek = getDayOfWeek(date, locale);
+      let dayOfWeek = (getDayOfWeek(date, locale) - firstDayOfWeek + 7) % 7;
       for (let i = 0; i < dayOfWeek; i++) {
         dates.push(null);
       }
