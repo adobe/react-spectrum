@@ -182,6 +182,9 @@ export default {
     },
     isOpen: {
       control: 'boolean'
+    },
+    firstDayOfWeek: {
+      control: 'number'
     }
   }
 } as ComponentMeta<typeof DatePicker>;

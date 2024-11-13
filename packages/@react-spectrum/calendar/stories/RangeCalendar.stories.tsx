@@ -74,6 +74,9 @@ export default {
       control: 'select',
       options: [null, 'single', 'visible']
     },
+    firstDayOfWeek: {
+      control: 'number'
+    },
     isInvalid: {
       control: 'boolean'
     },
