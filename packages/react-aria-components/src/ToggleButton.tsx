@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaToggleButtonProps, HoverEvents, mergeProps, useFocusRing, useHover, useToggleButton} from 'react-aria';
+import {AriaToggleButtonProps, HoverEvents, mergeProps, useFocusRing, useHover, useToggleButton, useToggleButtonGroupItem} from 'react-aria';
 import {ButtonRenderProps} from './Button';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {forwardRefType} from '@react-types/shared';
-import React, {createContext, ForwardedRef, forwardRef} from 'react';
+import {forwardRefType, Key} from '@react-types/shared';
+import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
+import {ToggleGroupStateContext} from './ToggleButtonGroup';
 import {ToggleState, useToggleState} from 'react-stately';
 
 export interface ToggleButtonRenderProps extends Omit<ButtonRenderProps, 'isPending'> {
@@ -29,19 +30,35 @@ export interface ToggleButtonRenderProps extends Omit<ButtonRenderProps, 'isPend
   state: ToggleState
 }
 
-export interface ToggleButtonProps extends Omit<AriaToggleButtonProps, 'children' | 'elementType'>, HoverEvents, SlotProps, RenderProps<ToggleButtonRenderProps> {}
+export interface ToggleButtonProps extends Omit<AriaToggleButtonProps, 'children' | 'elementType' | 'id'>, HoverEvents, SlotProps, RenderProps<ToggleButtonRenderProps> {
+  /** When used in a ToggleButtonGroup, an identifier for the item in `selectedKeys`. When used standalone, a DOM id. */
+  id?: Key
+}
 
 export const ToggleButtonContext = createContext<ContextValue<ToggleButtonProps, HTMLButtonElement>>({});
 
 function ToggleButton(props: ToggleButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   [props, ref] = useContextProps(props, ref, ToggleButtonContext);
-  let state = useToggleState(props);
-  let {buttonProps, isPressed} = useToggleButton(props, state, ref);
+  let groupState = useContext(ToggleGroupStateContext);
+  let state = useToggleState(groupState && props.id != null ? {
+    isSelected: groupState.selectedKeys.has(props.id),
+    onChange(isSelected) {
+      groupState.setSelected(props.id!, isSelected);
+    }
+  } : props);
+
+  let {buttonProps, isPressed, isSelected, isDisabled} = groupState && props.id != null
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    ? useToggleButtonGroupItem({...props, id: props.id}, groupState, ref)
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    : useToggleButton({...props, id: props.id != null ? String(props.id) : undefined}, state, ref);
+
   let {focusProps, isFocused, isFocusVisible} = useFocusRing(props);
   let {hoverProps, isHovered} = useHover(props);
   let renderProps = useRenderProps({
     ...props,
-    values: {isHovered, isPressed, isFocused, isSelected: state.isSelected, isFocusVisible, isDisabled: props.isDisabled || false, state},
+    id: undefined,
+    values: {isHovered, isPressed, isFocused, isSelected: state.isSelected, isFocusVisible, isDisabled, state},
     defaultClassName: 'react-aria-ToggleButton'
   });
 
@@ -52,9 +69,9 @@ function ToggleButton(props: ToggleButtonProps, ref: ForwardedRef<HTMLButtonElem
       ref={ref}
       slot={props.slot || undefined}
       data-focused={isFocused || undefined}
-      data-disabled={props.isDisabled || undefined}
+      data-disabled={isDisabled || undefined}
       data-pressed={isPressed || undefined}
-      data-selected={state.isSelected || undefined}
+      data-selected={isSelected || undefined}
       data-hovered={isHovered || undefined}
       data-focus-visible={isFocusVisible || undefined} />
   );

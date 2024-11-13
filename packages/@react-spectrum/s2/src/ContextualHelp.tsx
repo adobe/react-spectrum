@@ -101,7 +101,7 @@ function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButton
         crossOffset={crossOffset}
         hideArrow
         UNSAFE_className={popover}>
-        <RACDialog className={mergeStyles(dialogInner, style({borderRadius: 'none'}))}>
+        <RACDialog className={mergeStyles(dialogInner, style({borderRadius: 'none', margin: -24, padding: 24}))}>
           <Provider
             values={[
               [TextContext, {

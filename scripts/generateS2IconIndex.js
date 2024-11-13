@@ -13,9 +13,11 @@
 const fs = require('fs');
 const path = require('path');
 
-// This script generates the "index" wrapper components for UI icons and linear illustrations that have multiple sizes.
+// This script generates the "index" wrapper components for UI icons and illustrations that have multiple sizes.
 generate('packages/@react-spectrum/s2/ui-icons');
 generate('packages/@react-spectrum/s2/spectrum-illustrations/linear');
+generate('packages/@react-spectrum/s2/spectrum-illustrations/gradient/generic1');
+generate('packages/@react-spectrum/s2/spectrum-illustrations/gradient/generic2');
 
 function generate(dir) {
   let icons = new Map();
@@ -40,8 +42,8 @@ function generate(dir) {
     let ext = path.extname(file);
     if (ext === '.tsx') {
       fs.rmSync(file);
-    } else if (ext === '.svg') {
-      let match = file.match(/S2_lin_(.+)_(\d+)\.svg/) || file.match(/S2_(.+)Size(\d+)\.svg/);
+    } else if (ext === '.svg' && !file.includes('S2_MoveHorizontalTableWidget')) {
+      let match = file.match(/S2_(?:lin|fill)_(.+?)_(?:generic\d_)?(\d+)\.svg/) || file.match(/S2_(.+)Size(\d+)\.svg/);
       if (!match) {
         throw new Error('Unexpected file ' + file);
       }

@@ -15,14 +15,6 @@ governing permissions and limitations under the License.
   --spectrum-accordion-background-color-down: var(--spectrum-global-color-gray-300);
 }
 
-.spectrum-Accordion-item {
-  border-color: var(--spectrum-accordion-border-color);
-
-  &:first-of-type {
-    border-top-color: var(--spectrum-accordion-border-color);
-  }
-}
-
 .spectrum-Accordion-itemHeader {
   color: var(--spectrum-alias-text-color);
 

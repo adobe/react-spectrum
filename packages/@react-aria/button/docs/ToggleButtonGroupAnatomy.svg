@@ -1,0 +1,55 @@
+<svg style="max-height: 138px; background: var(--anatomy-gray-100); padding: 32px; margin-bottom: 16px; width: calc(100% - 64px); border-radius: 4px;" viewBox="0 0 214 138">
+  <g id="Group_151250" data-name="Group 151250" transform="translate(-57 -40)">
+    <g id="Group_151239" data-name="Group 151239" transform="translate(12 69)">
+      <g id="Group_151237" data-name="Group 151237" transform="translate(18 -41)">
+        <g id="Group_3981" data-name="Group 3981" transform="translate(93 1)">
+          <g id="Background" transform="translate(50 59)" fill="var(--anatomy-gray-75)">
+            <path d="M 91.66056060791016 47.25 L 5.339449882507324 47.25 C 2.808812618255615 47.25 0.75 44.89486312866211 0.75 42 L 0.75 6 C 0.75 3.105137586593628 2.808812618255615 0.75 5.339449882507324 0.75 L 91.66056060791016 0.75 C 94.19118499755859 0.75 96.25 3.105137586593628 96.25 6 L 96.25 42 C 96.25 44.89486312866211 94.19118499755859 47.25 91.66056060791016 47.25 Z" stroke="none"/>
+            <path d="M 5.339439392089844 1.5 C 3.222358703613281 1.5 1.5 3.518692016601562 1.5 6 L 1.5 42 C 1.5 44.48130798339844 3.222358703613281 46.5 5.339439392089844 46.5 L 91.66056060791016 46.5 C 93.77764129638672 46.5 95.5 44.48130798339844 95.5 42 L 95.5 6 C 95.5 3.518692016601562 93.77764129638672 1.5 91.66056060791016 1.5 L 5.339439392089844 1.5 M 5.339439392089844 0 L 91.66056060791016 0 C 94.60944366455078 0 97 2.686294555664062 97 6 L 97 42 C 97 45.31370544433594 94.60944366455078 48 91.66056060791016 48 L 5.339439392089844 48 C 2.390556335449219 48 0 45.31370544433594 0 42 L 0 6 C 0 2.686294555664062 2.390556335449219 0 5.339439392089844 0 Z" stroke="none" fill="var(--anatomy-gray-400)"/>
+          </g>
+          <text id="Document_Setup" data-name="Document Setup" transform="translate(104 89)" fill="var(--anatomy-gray-700)" font-size="21" font-family="Adobe-Clean"><tspan x="0" y="0">List</tspan></text>
+        </g>
+      </g>
+      <g id="Group_151238" data-name="Group 151238" transform="translate(-98 -41)">
+        <g id="Group_3981-2" data-name="Group 3981" transform="translate(93 1)">
+          <g id="Background-2" data-name="Background" transform="translate(50 59)" fill="var(--anatomy-gray-600)">
+            <path d="M 98.27523040771484 47.25 L 5.724773406982422 47.25 C 2.981679916381836 47.25 0.75 44.89485168457031 0.75 42 L 0.75 6 C 0.75 3.105146646499634 2.981679916381836 0.75 5.724773406982422 0.75 L 98.27523040771484 0.75 C 101.0183181762695 0.75 103.25 3.105146646499634 103.25 6 L 103.25 42 C 103.25 44.89485168457031 101.0183181762695 47.25 98.27523040771484 47.25 Z" stroke="none"/>
+            <path d="M 5.724769592285156 1.5 C 3.395225524902344 1.5 1.5 3.518684387207031 1.5 6 L 1.5 42 C 1.5 44.48131561279297 3.395225524902344 46.5 5.724769592285156 46.5 L 98.27523040771484 46.5 C 100.6047744750977 46.5 102.5 44.48131561279297 102.5 42 L 102.5 6 C 102.5 3.518684387207031 100.6047744750977 1.5 98.27523040771484 1.5 L 5.724769592285156 1.5 M 5.724769592285156 0 L 98.27523040771484 0 C 101.4369277954102 0 104 2.686286926269531 104 6 L 104 42 C 104 45.31371307373047 101.4369277954102 48 98.27523040771484 48 L 5.724769592285156 48 C 2.563056945800781 48 0 45.31371307373047 0 42 L 0 6 C 0 2.686286926269531 2.563056945800781 0 5.724769592285156 0 Z" stroke="none" fill="var(--anatomy-gray-600)"/>
+          </g>
+          <text id="Document_Setup-2" data-name="Document Setup" transform="translate(104 89)" fill="var(--anatomy-gray-50)" font-size="21" font-family="Adobe-Clean"><tspan x="0" y="0">Grid</tspan></text>
+        </g>
+      </g>
+    </g>
+    <g id="Group_3982" data-name="Group 3982" transform="translate(17.001 26)">
+      <text id="Group" transform="translate(146.999 149)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-15.854" y="0">Group</tspan></text>
+      <path id="Union_42" data-name="Union 42" d="M0,8V0H.979V7H213.022V0H214V8Z" transform="translate(39.999 126)" fill="var(--anatomy-gray-500)"/>
+    </g>
+    <g id="Group_3984" data-name="Group 3984" transform="translate(-311 401)">
+      <text id="Toggle_button" data-name="Toggle button" transform="translate(403 -348)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-34.775" y="0">Toggle button</tspan></text>
+      <path id="Union_43" data-name="Union 43" d="M0,37.5a2.5,2.5,0,0,1,2-2.45V8H3v27.05A2.5,2.5,0,1,1,0,37.5Z" transform="translate(399.5 -350.006)" fill="var(--anatomy-gray-500)"/>
+    </g>
+    <g id="Decorative_icon" data-name="Decorative icon" transform="translate(16 20)">
+      <g id="Icon" transform="translate(56 78.5)">
+        <path id="Path_127746" data-name="Path 127746" d="M7.523,7.523H2V2.614A.614.614,0,0,1,2.614,2H7.523Z" transform="translate(0.455 0.455)" fill="var(--anatomy-gray-50)"/>
+        <rect id="Rectangle_3848" data-name="Rectangle 3848" width="5.523" height="5.523" transform="translate(10.432 2.455)" fill="var(--anatomy-gray-50)"/>
+        <path id="Path_127747" data-name="Path 127747" d="M20.523,7.523H15V2h4.909a.614.614,0,0,1,.614.614Z" transform="translate(3.409 0.455)" fill="var(--anatomy-gray-50)"/>
+        <rect id="Rectangle_3849" data-name="Rectangle 3849" width="5.523" height="5.523" transform="translate(2.455 10.432)" fill="var(--anatomy-gray-50)"/>
+        <rect id="Rectangle_3850" data-name="Rectangle 3850" width="5.523" height="5.523" transform="translate(10.432 10.432)" fill="var(--anatomy-gray-50)"/>
+        <rect id="Rectangle_3851" data-name="Rectangle 3851" width="5.523" height="5.523" transform="translate(18.409 10.432)" fill="var(--anatomy-gray-50)"/>
+        <path id="Path_127748" data-name="Path 127748" d="M7.523,20.523H2.614A.614.614,0,0,1,2,19.909V15H7.523Z" transform="translate(0.455 3.409)" fill="var(--anatomy-gray-50)"/>
+        <rect id="Rectangle_3852" data-name="Rectangle 3852" width="5.523" height="5.523" transform="translate(10.432 18.409)" fill="var(--anatomy-gray-50)"/>
+        <path id="Path_127749" data-name="Path 127749" d="M19.909,20.523H15V15h5.523v4.909A.614.614,0,0,1,19.909,20.523Z" transform="translate(3.409 3.409)" fill="var(--anatomy-gray-50)"/>
+      </g>
+    </g>
+    <g id="Decorative_icon-2" data-name="Decorative icon" transform="translate(188 98.5)">
+      <g id="Icon-2" data-name="Icon">
+        <rect id="Rectangle_3853" data-name="Rectangle 3853" width="5.523" height="5.523" rx="0.5" transform="translate(2.455 2.455)" fill="var(--anatomy-gray-700)"/>
+        <rect id="Rectangle_3854" data-name="Rectangle 3854" width="14.114" height="2.455" rx="0.25" transform="translate(9.818 4.295)" fill="var(--anatomy-gray-700)"/>
+        <rect id="Rectangle_3855" data-name="Rectangle 3855" width="14.114" height="2.455" rx="0.25" transform="translate(9.818 12.273)" fill="var(--anatomy-gray-700)"/>
+        <rect id="Rectangle_3856" data-name="Rectangle 3856" width="14.114" height="2.455" rx="0.25" transform="translate(9.818 20.25)" fill="var(--anatomy-gray-700)"/>
+        <rect id="Rectangle_3857" data-name="Rectangle 3857" width="5.523" height="5.523" rx="0.5" transform="translate(2.455 10.432)" fill="var(--anatomy-gray-700)"/>
+        <rect id="Rectangle_3858" data-name="Rectangle 3858" width="5.523" height="5.523" rx="0.5" transform="translate(2.455 18.409)" fill="var(--anatomy-gray-700)"/>
+      </g>
+    </g>
+  </g>
+</svg>

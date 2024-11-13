@@ -39,6 +39,9 @@ export function shortName(key, value) {
     case 'isRequired':
       returnVal = 'req';
       break;
+    case 'isSelected':
+      returnVal = 'selec';
+      break;
     case 'orientation':
       returnVal = `orien: ${value}`;
       break;

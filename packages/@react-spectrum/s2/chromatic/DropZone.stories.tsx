@@ -12,7 +12,7 @@
 
 import {Button, ButtonGroup, Content, DropZone, FileTrigger, Heading, IllustratedMessage} from '../src';
 import Cloud from '../spectrum-illustrations/linear/Cloud';
-import CloudUpload from 'illustration:../spectrum-illustrations/gradient/S2_fill_cloudUpload_generic1_160.svg';
+import CloudUpload from '../spectrum-illustrations/gradient/generic1/CloudUpload';
 import DropToUpload from '../spectrum-illustrations/linear/DropToUpload';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
 import type {Meta} from '@storybook/react';
