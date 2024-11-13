@@ -214,6 +214,7 @@ function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
         <meta property="og:image" content={heroUrl} />
         <meta property="og:description" content={description} />
         <meta property="og:locale" content="en_US" />
+        <link rel="canonical" href={`https://${TLD}${currentPage.url}`} />
         <meta data-github-src={githubLink} />
         <script
           type="application/ld+json"

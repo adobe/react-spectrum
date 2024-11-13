@@ -102,6 +102,8 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     focusedKey = focusedItem.parentKey;
   }
 
+  let persistedKeys = useMemo(() => focusedKey != null ? new Set([focusedKey]) : null, [focusedKey]);
+
   // TODO: does aria-row count and aria-col count need to be modified? Perhaps aria-col count needs to be omitted
   return (
     <CardViewContext.Provider value={{state, isQuiet, layout: cardViewLayout, cardOrientation, renderEmptyState}}>
@@ -110,7 +112,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
         {...styleProps}
         className={classNames(styles, 'spectrum-CardView')}
         ref={domRef}
-        focusedKey={focusedKey}
+        persistedKeys={persistedKeys}
         scrollDirection="vertical"
         layout={cardViewLayout}
         collection={gridCollection}
@@ -187,8 +189,8 @@ function InternalCard(props) {
   let {state, cardOrientation, isQuiet, layout} = useCardViewContext();
 
   let layoutType = layout.layoutType;
-  let rowRef = useRef();
-  let cellRef = useRef<DOMRefValue<HTMLDivElement>>();
+  let rowRef = useRef(undefined);
+  let cellRef = useRef<DOMRefValue<HTMLDivElement>>(undefined);
   let unwrappedRef = useUnwrapDOMRef(cellRef);
 
   let {rowProps: gridRowProps} = useGridRow({

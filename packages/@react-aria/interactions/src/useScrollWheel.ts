@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {RefObject, useCallback} from 'react';
-import {ScrollEvents} from '@react-types/shared';
+import {RefObject, ScrollEvents} from '@react-types/shared';
+import {useCallback} from 'react';
 import {useEvent} from '@react-aria/utils';
 
 export interface ScrollWheelProps extends ScrollEvents {
@@ -20,7 +20,7 @@ export interface ScrollWheelProps extends ScrollEvents {
 }
 
 // scroll wheel needs to be added not passively so it's cancelable, small helper hook to remember that
-export function useScrollWheel(props: ScrollWheelProps, ref: RefObject<HTMLElement>): void {
+export function useScrollWheel(props: ScrollWheelProps, ref: RefObject<HTMLElement | null>): void {
   let {onScroll, isDisabled} = props;
   let onScrollHandler = useCallback((e) => {
     // If the ctrlKey is pressed, this is a zoom event, do nothing.

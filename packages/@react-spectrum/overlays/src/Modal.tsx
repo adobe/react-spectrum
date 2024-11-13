@@ -12,13 +12,13 @@
 
 import {AriaModalOverlayProps, useModalOverlay} from '@react-aria/overlays';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, StyleProps} from '@react-types/shared';
+import {DOMRef, RefObject, StyleProps} from '@react-types/shared';
 import modalStyles from '@adobe/spectrum-css-temp/components/modal/vars.css';
 import {Overlay} from './Overlay';
 import {OverlayProps} from '@react-types/overlays';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import overrideStyles from './overlays.css';
-import React, {forwardRef, MutableRefObject, ReactNode, RefObject, useRef} from 'react';
+import React, {forwardRef, MutableRefObject, ReactNode, useRef} from 'react';
 import {Underlay} from './Underlay';
 import {useViewportSize} from '@react-aria/utils';
 
@@ -52,7 +52,7 @@ let typeMap = {
   fullscreenTakeover: 'fullscreenTakeover'
 };
 
-let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject<HTMLDivElement>) {
+let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject<HTMLDivElement | null>) {
   let {type, children, state, isOpen, wrapperRef} = props;
   let typeVariant = typeMap[type];
   let {styleProps} = useStyleProps(props);

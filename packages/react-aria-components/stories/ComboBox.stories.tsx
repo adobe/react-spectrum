@@ -21,7 +21,7 @@ export default {
 };
 
 export const ComboBoxExample = () => (
-  <ComboBox data-testid="combo-box-example">
+  <ComboBox name="combo-box-example" data-testid="combo-box-example">
     <Label style={{display: 'block'}}>Test</Label>
     <div style={{display: 'flex'}}>
       <Input />

@@ -13,7 +13,6 @@
 import {Collection, Key} from '@react-types/shared';
 import {Layout} from './Layout';
 import {Rect} from './Rect';
-import {ReusableView} from './ReusableView';
 
 export interface InvalidationContext<O = any> {
   contentChanged?: boolean,
@@ -23,15 +22,9 @@ export interface InvalidationContext<O = any> {
   layoutOptions?: O
 }
 
-export interface VirtualizerDelegate<T extends object, V, W> {
+export interface VirtualizerDelegate<T extends object, V> {
   setVisibleRect(rect: Rect): void,
   renderView(type: string, content: T): V,
-  renderWrapper(
-    parent: ReusableView<T, V> | null,
-    reusableView: ReusableView<T, V>,
-    children: ReusableView<T, V>[],
-    renderChildren: (views: ReusableView<T, V>[]) => W[]
-  ): W,
   invalidate(ctx: InvalidationContext): void
 }
 

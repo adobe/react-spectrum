@@ -12,7 +12,7 @@
 
 import {DraggableCollectionState} from '@react-stately/dnd';
 import {globalDndState, setDraggingCollectionRef} from './utils';
-import {RefObject} from 'react';
+import {RefObject} from '@react-types/shared';
 
 export interface DraggableCollectionOptions {}
 
@@ -20,7 +20,7 @@ export interface DraggableCollectionOptions {}
  * Handles drag interactions for a collection component, with support for traditional mouse and touch
  * based drag and drop, in addition to full parity for keyboard and screen reader users.
  */
-export function useDraggableCollection(props: DraggableCollectionOptions, state: DraggableCollectionState, ref: RefObject<HTMLElement>): void {
+export function useDraggableCollection(props: DraggableCollectionOptions, state: DraggableCollectionState, ref: RefObject<HTMLElement | null>): void {
   // Update global DnD state if this keys within this collection are dragged
   let {draggingCollectionRef} = globalDndState;
   if  (state.draggingKeys.size > 0 && draggingCollectionRef?.current !== ref.current) {

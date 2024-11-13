@@ -53,8 +53,8 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     loadingState
   } = useContext(ListViewContext);
   let {direction} = useLocale();
-  let rowRef = useRef<HTMLDivElement>();
-  let checkboxWrapperRef = useRef<HTMLDivElement>();
+  let rowRef = useRef<HTMLDivElement>(undefined);
+  let checkboxWrapperRef = useRef<HTMLDivElement>(undefined);
   let {
     isFocusVisible: isFocusVisibleWithin,
     focusProps: focusWithinProps
@@ -82,7 +82,7 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
 
   let draggableItem: DraggableItemResult;
   if (isListDraggable) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
+     
     draggableItem = dragAndDropHooks.useDraggableItem({key: item.key, hasDragButton: true}, dragState);
     if (isDisabled) {
       draggableItem = null;
@@ -91,15 +91,15 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
   let droppableItem: DroppableItemResult;
   let isDropTarget: boolean;
   let dropIndicator: DropIndicatorAria;
-  let dropIndicatorRef = useRef();
+  let dropIndicatorRef = useRef(undefined);
   if (isListDroppable) {
     let target = {type: 'item', key: item.key, dropPosition: 'on'} as DropTarget;
     isDropTarget = dropState.isDropTarget(target);
-    // eslint-disable-next-line react-hooks/rules-of-hooks
+     
     dropIndicator = dragAndDropHooks.useDropIndicator({target}, dropState, dropIndicatorRef);
   }
 
-  let dragButtonRef = React.useRef();
+  let dragButtonRef = React.useRef(undefined);
   let {buttonProps} = useButton({
     ...draggableItem?.dragButtonProps,
     elementType: 'div'

@@ -82,9 +82,9 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
   // Only the first one will actually render.
   // We use a ref to do this, since it will have a stable identity
   // over the lifetime of the component.
-  let ref = useRef();
+  let ref = useRef(undefined);
 
-  // eslint-disable-next-line arrow-body-style
+   
   useEffect(() => {
     toastProviders.add(ref);
     triggerSubscriptions();

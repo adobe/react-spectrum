@@ -1,6 +1,6 @@
 {
   "name": "@spectrum-icons/workflow",
-  "version": "4.2.12",
+  "version": "4.2.15",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "repository": {
@@ -19,19 +19,20 @@
     "build-esm": "cross-env BUILD_ENV=production babel src -d . --extensions '.ts,.tsx' --out-file-extension '.module.mjs' --config-file '../../../babel-esm.config.json'",
     "generate-types": "tsc --project ./tsconfig.types.json",
     "build-icons": "yarn build-cjs && yarn build-esm",
-    "make-icons": "babel-node --extensions '.cjs,.js' --presets @babel/env ./scripts/generateIcons.cjs -i '[]' && yarn generate-types"
+    "make-icons": "babel-node --presets @babel/env ./scripts/generateIcons.cjs -i '[]' && yarn generate-types"
   },
   "dependencies": {
-    "@adobe/react-spectrum-workflow": "2.3.4",
-    "@react-spectrum/icon": "^3.7.13",
+    "@adobe/react-spectrum-workflow": "2.3.5",
+    "@react-spectrum/icon": "^3.7.16",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {
-    "@spectrum-icons/build-tools": "3.0.0-alpha.1"
+    "@spectrum-icons/build-tools": "3.0.0-alpha.1",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
   },
   "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0",
-    "@react-spectrum/provider": "^3.0.0"
+    "@react-spectrum/provider": "^3.0.0",
+    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
   },
   "publishConfig": {
     "access": "public"

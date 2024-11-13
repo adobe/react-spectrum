@@ -12,11 +12,11 @@
 
 import {act, fireEvent, installMouseEvent, installPointerEvent, render, waitFor} from '@react-spectrum/test-utils-internal';
 import {ActionButton} from '@react-spectrum/button';
+import {createPortal} from 'react-dom';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {render as ReactDOMRender} from 'react-dom';
 import {theme} from '@react-spectrum/theme-default';
 import {usePress} from '../';
 
@@ -821,6 +821,61 @@ describe('usePress', function () {
       expect(el).toHaveStyle('user-select: none');
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse'}));
       expect(el).not.toHaveStyle('user-select: none');
+    });
+
+    it('should preventDefault on touchend to prevent click events on the wrong element', function () {
+      let res = render(<Example />);
+
+      let el = res.getByText('test');
+      el.ontouchend = () => {}; // So that 'ontouchend' in target works
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'touch'}));
+      let browserDefault = fireEvent.touchEnd(el);
+      expect(browserDefault).toBe(false);
+    });
+
+    it('should not preventDefault on touchend when element is a submit button', function () {
+      let res = render(<Example elementType="button" type="submit" />);
+
+      let el = res.getByText('test');
+      el.ontouchend = () => {}; // So that 'ontouchend' in target works
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'touch'}));
+      let browserDefault = fireEvent.touchEnd(el);
+      expect(browserDefault).toBe(true);
+    });
+
+    it('should not preventDefault on touchend when element is an <input type="submit">', function () {
+      let res = render(<Example elementType="input" type="submit" />);
+
+      let el = res.getByRole('button');
+      el.ontouchend = () => {}; // So that 'ontouchend' in target works
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'touch'}));
+      let browserDefault = fireEvent.touchEnd(el);
+      expect(browserDefault).toBe(true);
+    });
+
+    it('should not preventDefault on touchend when element is an <input type="checkbox">', function () {
+      let res = render(<Example elementType="input" type="checkbox" />);
+
+      let el = res.getByRole('checkbox');
+      el.ontouchend = () => {}; // So that 'ontouchend' in target works
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'touch'}));
+      let browserDefault = fireEvent.touchEnd(el);
+      expect(browserDefault).toBe(true);
+    });
+
+    it('should not preventDefault on touchend when element is a link', function () {
+      let res = render(<Example elementType="a" href="http://google.com" />);
+
+      let el = res.getByText('test');
+      el.ontouchend = () => {}; // So that 'ontouchend' in target works
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'touch'}));
+      let browserDefault = fireEvent.touchEnd(el);
+      expect(browserDefault).toBe(true);
     });
   });
 
@@ -3268,13 +3323,9 @@ describe('usePress', function () {
     });
 
     const IframeExample = (props) => {
-      React.useEffect(() => {
-        ReactDOMRender(<Example
-          {...props}
-          data-testid="example" />, iframeRoot);
-      }, [props]);
-
-      return null;
+      return createPortal(<Example
+        {...props}
+        data-testid="example" />, iframeRoot);
     };
 
     describe('Pointer events', () => {

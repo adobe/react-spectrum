@@ -317,6 +317,14 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
     return this.getItem(keys[idx]);
   }
 
+  getChildren(key: Key): Iterable<GridNode<T>> {
+    if (key === this.body.key) {
+      return this.body.childNodes;
+    }
+
+    return super.getChildren(key);
+  }
+
   getTextValue(key: Key): string {
     let row = this.getItem(key);
     if (!row) {

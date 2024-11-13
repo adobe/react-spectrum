@@ -1,11 +1,13 @@
-import {RefObject, useEffect} from 'react';
+
+import {RefObject} from '@react-types/shared';
+import {useEffect} from 'react';
 
 function hasResizeObserver() {
   return typeof window.ResizeObserver !== 'undefined';
 }
 
 type useResizeObserverOptionsType<T> = {
-  ref: RefObject<T | undefined> | undefined,
+  ref: RefObject<T | undefined | null> | undefined,
   box?: ResizeObserverBoxOptions,
   onResize: () => void
 }

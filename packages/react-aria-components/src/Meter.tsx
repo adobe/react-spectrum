@@ -12,7 +12,8 @@
 
 import {AriaMeterProps, useMeter} from 'react-aria';
 import {clamp} from '@react-stately/utils';
-import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {forwardRefType} from '@react-types/shared';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 

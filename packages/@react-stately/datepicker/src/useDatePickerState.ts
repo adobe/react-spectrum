@@ -12,7 +12,7 @@
 
 import {CalendarDate, DateFormatter, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DatePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
-import {FieldOptions, getFormatOptions, getPlaceholderTime, getValidationResult, useDefaultProps} from './utils';
+import {FieldOptions, FormatterOptions, getFormatOptions, getPlaceholderTime, getValidationResult, useDefaultProps} from './utils';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {useControlledState} from '@react-stately/utils';
@@ -38,7 +38,7 @@ export interface DatePickerState extends OverlayTriggerState, FormValidationStat
    */
   dateValue: DateValue,
   /** Sets the date portion of the value. */
-  setDateValue(value: CalendarDate): void,
+  setDateValue(value: DateValue): void,
   /**
    * The time portion of the value. This may be set prior to `value` if the user has
    * selected a time but has not yet selected a date.
@@ -62,7 +62,9 @@ export interface DatePickerState extends OverlayTriggerState, FormValidationStat
   /** Whether the date picker is invalid, based on the `isInvalid`, `minValue`, and `maxValue` props. */
   isInvalid: boolean,
   /** Formats the selected value using the given options. */
-  formatValue(locale: string, fieldOptions: FieldOptions): string
+  formatValue(locale: string, fieldOptions: FieldOptions): string,
+  /** Gets a formatter based on state's props. */
+  getDateFormatter(locale: string, formatOptions: FormatterOptions): DateFormatter
 }
 
 /**
@@ -134,7 +136,7 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
     let shouldClose = typeof shouldCloseOnSelect === 'function' ? shouldCloseOnSelect() : shouldCloseOnSelect;
     if (hasTime) {
       if (selectedTime || shouldClose) {
-        commitValue(newValue, selectedTime || getPlaceholderTime(props.placeholderValue));
+        commitValue(newValue, selectedTime || getPlaceholderTime(props.defaultValue || props.placeholderValue));
       } else {
         setSelectedDate(newValue);
       }
@@ -172,7 +174,7 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
       // If only the time was set and not the date, don't commit. The state will be preserved until
       // the user opens the popover again.
       if (!isOpen && !value && selectedDate && hasTime) {
-        commitValue(selectedDate, selectedTime || getPlaceholderTime(props.placeholderValue));
+        commitValue(selectedDate, selectedTime || getPlaceholderTime(props.defaultValue || props.placeholderValue));
       }
 
       overlayState.setOpen(isOpen);
@@ -187,6 +189,11 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
       let formatOptions = getFormatOptions(fieldOptions, formatOpts);
       let formatter = new DateFormatter(locale, formatOptions);
       return formatter.format(dateValue);
+    },
+    getDateFormatter(locale, formatOptions: FormatterOptions) {
+      let newOptions = {...formatOpts, ...formatOptions};
+      let newFormatOptions = getFormatOptions({}, newOptions);
+      return new DateFormatter(locale, newFormatOptions);
     }
   };
 }

@@ -39,7 +39,7 @@ export interface SpinbuttonAria {
 export function useSpinButton(
   props: SpinButtonProps
 ): SpinbuttonAria {
-  const _async = useRef<number>();
+  const _async = useRef<number>(undefined);
   let {
     value,
     textValue,
@@ -59,7 +59,7 @@ export function useSpinButton(
 
   const clearAsync = () => clearTimeout(_async.current);
 
-  // eslint-disable-next-line arrow-body-style
+   
   useEffect(() => {
     return () => clearAsync();
   }, []);

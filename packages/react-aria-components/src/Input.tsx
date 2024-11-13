@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue, createHideableComponent, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {createHideableComponent} from '@react-aria/collections';
 import {HoverEvents, mergeProps, useFocusRing, useHover} from 'react-aria';
 import React, {createContext, ForwardedRef, InputHTMLAttributes} from 'react';
 

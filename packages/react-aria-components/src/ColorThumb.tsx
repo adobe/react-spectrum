@@ -1,8 +1,8 @@
 import {Color} from '@react-types/color';
 import {filterDOMProps} from '@react-aria/utils';
-import {HoverEvents} from '@react-types/shared';
+import {HoverEvents, RefObject} from '@react-types/shared';
 import {mergeProps} from 'react-aria';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, InputHTMLAttributes, RefObject, useContext} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, InputHTMLAttributes, useContext} from 'react';
 import {RenderProps, useRenderProps} from './utils';
 import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
@@ -15,8 +15,8 @@ interface ColorState {
 interface InternalColorThumbContextValue {
   state: ColorState,
   thumbProps: HTMLAttributes<HTMLElement>,
-  inputXRef: RefObject<HTMLInputElement>,
-  inputYRef?: RefObject<HTMLInputElement>,
+  inputXRef: RefObject<HTMLInputElement | null>,
+  inputYRef?: RefObject<HTMLInputElement | null>,
   xInputProps: InputHTMLAttributes<HTMLInputElement>,
   yInputProps?: InputHTMLAttributes<HTMLInputElement>,
   isDisabled?: boolean

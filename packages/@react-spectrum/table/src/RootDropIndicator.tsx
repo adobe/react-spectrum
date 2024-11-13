@@ -16,7 +16,7 @@ import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 export function RootDropIndicator() {
   let {dropState, dragAndDropHooks, state} = useTableContext();
-  let ref = useRef();
+  let ref = useRef(undefined);
   let {dropIndicatorProps} = dragAndDropHooks.useDropIndicator({
     target: {type: 'root'}
   }, dropState, ref);

@@ -91,7 +91,7 @@ function matchLocale(defaultLocale: string) {
   let parsed: Intl.Locale;
   try {
     parsed = new Intl.Locale(defaultLocale);
-  } catch (err) {
+  } catch {
     return 'en-US';
   }
 
@@ -186,6 +186,8 @@ export function I18n() {
           <SelectItem id="latn">Latin</SelectItem>
           <SelectItem id="arab">Arabic</SelectItem>
           <SelectItem id="hanidec">Hanidec</SelectItem>
+          <SelectItem id="deva">Devanagari</SelectItem>
+          <SelectItem id="beng">Bengali</SelectItem>
         </Select>
         <Select label="Number Format" selectedKey={numberFormat} onSelectionChange={updateNumberFormat}>
           <SelectItem id="decimal">Decimal</SelectItem>

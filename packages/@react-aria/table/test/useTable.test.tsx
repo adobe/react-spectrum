@@ -48,8 +48,8 @@ function Table(props) {
     ...props,
     showSelectionCheckboxes: props.selectionMode === 'multiple'
   });
-  let ref = useRef();
-  let bodyRef = useRef();
+  let ref = useRef(undefined);
+  let bodyRef = useRef(undefined);
   let {collection} = state;
   let {gridProps} = useTable(
     {

@@ -49,7 +49,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
   let {styleProps} = useStyleProps(props);
   let {cardProps, titleProps, contentProps} = useCard(props);
   let domRef = useDOMRef(ref);
-  let gridRef = useRef<HTMLDivElement>();
+  let gridRef = useRef<HTMLDivElement>(undefined);
   let checkboxRef = useRef(null);
 
   // cards are only interactive if there is a selection manager and it allows selection

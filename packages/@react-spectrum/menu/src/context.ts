@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, FocusStrategy, HoverEvents, KeyboardEvents, PressEvents} from '@react-types/shared';
-import React, {HTMLAttributes, MutableRefObject, RefObject, useContext} from 'react';
+import {DOMProps, FocusStrategy, HoverEvents, KeyboardEvents, PressEvents, RefObject} from '@react-types/shared';
+import React, {HTMLAttributes, MutableRefObject, useContext} from 'react';
 import {RootMenuTriggerState} from '@react-stately/menu';
 import {TreeState} from '@react-stately/tree';
 
@@ -50,9 +50,9 @@ export function useSubmenuTriggerContext(): SubmenuTriggerContextValue {
 export interface MenuStateContextValue<T> {
   state?: TreeState<T>,
   popoverContainer?: HTMLElement,
-  trayContainerRef?: RefObject<HTMLElement>,
-  menu?: RefObject<HTMLDivElement>,
-  submenu?: RefObject<HTMLDivElement>,
+  trayContainerRef?: RefObject<HTMLElement | null>,
+  menu?: RefObject<HTMLDivElement | null>,
+  submenu?: RefObject<HTMLDivElement | null>,
   rootMenuTriggerState?: RootMenuTriggerState
 }
 

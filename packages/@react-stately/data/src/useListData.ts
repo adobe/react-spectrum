@@ -140,7 +140,7 @@ export function useListData<T>(options: ListOptions<T>): ListData<T> {
   let {
     initialItems = [],
     initialSelectedKeys,
-    getKey = (item: any) => item.id || item.key,
+    getKey = (item: any) => item.id ?? item.key,
     filter,
     initialFilterText = ''
   } = options;

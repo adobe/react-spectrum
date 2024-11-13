@@ -17,9 +17,9 @@
 
 import {chain, focusWithoutScrolling, getOwnerDocument, getOwnerWindow, isMac, isVirtualClick, isVirtualPointerEvent, mergeProps, openLink, useEffectEvent, useGlobalListeners, useSyncRef} from '@react-aria/utils';
 import {disableTextSelection, restoreTextSelection} from './textSelection';
-import {DOMAttributes, FocusableElement, PressEvent as IPressEvent, PointerType, PressEvents} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, PressEvent as IPressEvent, PointerType, PressEvents, RefObject} from '@react-types/shared';
 import {PressResponderContext} from './context';
-import {RefObject, TouchEvent as RTouchEvent, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {TouchEvent as RTouchEvent, useContext, useEffect, useMemo, useRef, useState} from 'react';
 
 export interface PressProps extends PressEvents {
   /** Whether the target is in a controlled press state (e.g. an overlay it triggers is open). */
@@ -41,7 +41,7 @@ export interface PressProps extends PressEvents {
 
 export interface PressHookProps extends PressProps {
   /** A ref to the target element. */
-  ref?: RefObject<Element>
+  ref?: RefObject<Element | null>
 }
 
 interface PressState {
@@ -410,7 +410,7 @@ export function usePress(props: PressHookProps): PressResult {
 
         // Due to browser inconsistencies, especially on mobile browsers, we prevent
         // default on pointer down and handle focusing the pressable element ourselves.
-        if (shouldPreventDefault(e.currentTarget as Element)) {
+        if (shouldPreventDefaultDown(e.currentTarget as Element)) {
           e.preventDefault();
         }
 
@@ -452,7 +452,7 @@ export function usePress(props: PressHookProps): PressResult {
           // Chrome and Firefox on touch Windows devices require mouse down events
           // to be canceled in addition to pointer events, or an extra asynchronous
           // focus event will be fired.
-          if (shouldPreventDefault(e.currentTarget as Element)) {
+          if (shouldPreventDefaultDown(e.currentTarget as Element)) {
             e.preventDefault();
           }
 
@@ -510,6 +510,25 @@ export function usePress(props: PressHookProps): PressResult {
           if (!allowTextSelectionOnPress) {
             restoreTextSelection(state.target);
           }
+
+          // Prevent subsequent touchend event from triggering onClick on unrelated elements on Android. See below.
+          // Both 'touch' and 'pen' pointerTypes trigger onTouchEnd, but 'mouse' does not.
+          if ('ontouchend' in state.target && e.pointerType !== 'mouse') {
+            addGlobalListener(state.target, 'touchend', onTouchEnd, {once: true});
+          }
+        }
+      };
+
+      // This is a workaround for an Android Chrome/Firefox issue where click events are fired on an incorrect element
+      // if the original target is removed during onPointerUp (before onClick).
+      // https://github.com/adobe/react-spectrum/issues/1513
+      // https://issues.chromium.org/issues/40732224
+      // Note: this event must be registered directly on the element, not via React props in order to work.
+      // https://github.com/facebook/react/issues/9809
+      let onTouchEnd = (e: TouchEvent) => {
+        // Don't preventDefault if we actually want the default (e.g. submit/link click).
+        if (shouldPreventDefaultUp(e.currentTarget as Element)) {
+          e.preventDefault();
         }
       };
 
@@ -534,7 +553,7 @@ export function usePress(props: PressHookProps): PressResult {
 
         // Due to browser inconsistencies, especially on mobile browsers, we prevent
         // default on mouse down and handle focusing the pressable element ourselves.
-        if (shouldPreventDefault(e.currentTarget)) {
+        if (shouldPreventDefaultDown(e.currentTarget)) {
           e.preventDefault();
         }
 
@@ -768,7 +787,7 @@ export function usePress(props: PressHookProps): PressResult {
   ]);
 
   // Remove user-select: none in case component unmounts immediately after pressStart
-  // eslint-disable-next-line arrow-body-style
+   
   useEffect(() => {
     return () => {
       if (!allowTextSelectionOnPress) {
@@ -914,14 +933,14 @@ function isOverTarget(point: EventPoint, target: Element) {
   return areRectanglesOverlapping(rect, pointRect);
 }
 
-function shouldPreventDefault(target: Element) {
+function shouldPreventDefaultDown(target: Element) {
   // We cannot prevent default if the target is a draggable element.
   return !(target instanceof HTMLElement) || !target.hasAttribute('draggable');
 }
 
-function shouldPreventDefaultKeyboard(target: Element, key: string) {
+function shouldPreventDefaultUp(target: Element) {
   if (target instanceof HTMLInputElement) {
-    return !isValidInputKey(target, key);
+    return false;
   }
 
   if (target instanceof HTMLButtonElement) {
@@ -933,6 +952,14 @@ function shouldPreventDefaultKeyboard(target: Element, key: string) {
   }
 
   return true;
+}
+
+function shouldPreventDefaultKeyboard(target: Element, key: string) {
+  if (target instanceof HTMLInputElement) {
+    return !isValidInputKey(target, key);
+  }
+
+  return shouldPreventDefaultUp(target);
 }
 
 const nonTextInputTypes = new Set([

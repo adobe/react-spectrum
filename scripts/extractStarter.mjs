@@ -29,7 +29,7 @@ fs.mkdirSync(`starters/docs/src`, {recursive: true});
 fs.mkdirSync(`starters/docs/stories`, {recursive: true});
 
 for (let file of glob.sync('packages/react-aria-components/docs/*.mdx')) {
-  if (!/^[A-Z]/.test(basename(file))) {
+  if (!/^[A-Z]/.test(basename(file)) || /^Tree/.test(basename(file))) {
     continue;
   }
 
@@ -281,7 +281,7 @@ function generateStory(filename, imports, code, skipImports = false) {
 
   let name = basename(filename, '.mdx');
   code = imports + `
-import type { Meta } from '@storybook/react';
+import type {Meta} from '@storybook/react';
 
 const meta: Meta<typeof ${name}> = {
   component: ${name},

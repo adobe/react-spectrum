@@ -55,7 +55,7 @@ export function DroppableGridExample(props) {
     if (e.target.type === 'root' || e.target.dropPosition !== 'on') {
       let items: ListItem[] = [];
       for (let item of e.items) {
-        let type: string;
+        let type: string | undefined;
         if (item.kind === 'text') {
           if (item.types.has('folder')) {
             type = 'folder';
@@ -122,7 +122,7 @@ const DroppableGrid = React.forwardRef(function (props: any, ref) {
     focusMode: 'cell',
     selectedKeys: props.selectedKeys,
     onSelectionChange: props.onSelectionChange,
-    collection: new GridCollection({
+    collection: React.useMemo(() => new GridCollection<object>({
       columnCount: 1,
       items: [...state.collection].map(item => ({
         ...item,
@@ -138,7 +138,7 @@ const DroppableGrid = React.forwardRef(function (props: any, ref) {
           childNodes: []
         }]
       }))
-    })
+    }), [state.collection])
   });
 
   React.useImperativeHandle(ref, () => ({
@@ -183,7 +183,7 @@ const DroppableGrid = React.forwardRef(function (props: any, ref) {
   }, gridState, domRef);
 
   let isDropTarget = dropState.isDropTarget({type: 'root'});
-  let dropRef = React.useRef();
+  let dropRef = React.useRef<HTMLDivElement | null>(null);
   let {dropIndicatorProps} = useDropIndicator({
     target: {type: 'root'}
   }, dropState, dropRef);
@@ -233,8 +233,8 @@ const DroppableGrid = React.forwardRef(function (props: any, ref) {
 });
 
 function CollectionItem({item, state, dropState, onPaste}) {
-  let rowRef = React.useRef();
-  let cellRef = React.useRef();
+  let rowRef = React.useRef<HTMLDivElement | null>(null);
+  let cellRef = React.useRef<HTMLDivElement | null>(null);
   let cellNode = [...item.childNodes][0];
 
   let {rowProps} = useGridRow({node: item}, state, rowRef);
@@ -243,7 +243,7 @@ function CollectionItem({item, state, dropState, onPaste}) {
     focusMode: 'cell'
   }, state, cellRef);
 
-  let dropIndicatorRef = React.useRef();
+  let dropIndicatorRef = React.useRef<HTMLDivElement | null>(null);
   let {dropIndicatorProps} = useDropIndicator({
     target: {type: 'item', key: item.key, dropPosition: 'on'}
   }, dropState, dropIndicatorRef);
@@ -274,7 +274,7 @@ function CollectionItem({item, state, dropState, onPaste}) {
 }
 
 function InsertionIndicator(props) {
-  let ref = React.useRef();
+  let ref = React.useRef<HTMLDivElement | null>(null);
   let {dropIndicatorProps} = useDropIndicator(props, props.dropState, ref);
   let {visuallyHiddenProps} = useVisuallyHidden();
 
@@ -292,7 +292,7 @@ function InsertionIndicator(props) {
         aria-selected="false"
         className={props.dropState.isDropTarget(props.target)
         ? classNames(dropIndicatorStyles, 'spectrum-DropIndicator', 'spectrum-DropIndicator--horizontal')
-        : null
+        : undefined
       }
         style={{
           width: '100%',

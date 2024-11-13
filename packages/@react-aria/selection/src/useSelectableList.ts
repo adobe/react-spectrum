@@ -11,7 +11,7 @@
  */
 
 import {AriaSelectableCollectionOptions, useSelectableCollection} from './useSelectableCollection';
-import {Collection, DOMAttributes, Key, KeyboardDelegate, Node} from '@react-types/shared';
+import {Collection, DOMAttributes, Key, KeyboardDelegate, LayoutDelegate, Node} from '@react-types/shared';
 import {ListKeyboardDelegate} from './ListKeyboardDelegate';
 import {useCollator} from '@react-aria/i18n';
 import {useMemo} from 'react';
@@ -25,6 +25,12 @@ export interface AriaSelectableListOptions extends Omit<AriaSelectableCollection
    * A delegate object that implements behavior for keyboard focus movement.
    */
   keyboardDelegate?: KeyboardDelegate,
+  /**
+   * A delegate object that provides layout information for items in the collection.
+   * By default this uses the DOM, but this can be overridden to implement things like
+   * virtualized scrolling.
+   */
+  layoutDelegate?: LayoutDelegate,
   /**
    * The item keys that are disabled. These items cannot be selected, focused, or otherwise interacted with.
    */
@@ -47,7 +53,8 @@ export function useSelectableList(props: AriaSelectableListOptions): SelectableL
     collection,
     disabledKeys,
     ref,
-    keyboardDelegate
+    keyboardDelegate,
+    layoutDelegate
   } = props;
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
@@ -60,9 +67,10 @@ export function useSelectableList(props: AriaSelectableListOptions): SelectableL
       disabledKeys,
       disabledBehavior,
       ref,
-      collator
+      collator,
+      layoutDelegate
     })
-  ), [keyboardDelegate, collection, disabledKeys, ref, collator, disabledBehavior]);
+  ), [keyboardDelegate, layoutDelegate, collection, disabledKeys, ref, collator, disabledBehavior]);
 
   let {collectionProps} = useSelectableCollection({
     ...props,

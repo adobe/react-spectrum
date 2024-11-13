@@ -42,7 +42,7 @@ export function useGlobalListeners(): GlobalListeners {
     });
   }, [removeGlobalListener]);
 
-  // eslint-disable-next-line arrow-body-style
+   
   useEffect(() => {
     return removeAllGlobalListeners;
   }, [removeAllGlobalListeners]);

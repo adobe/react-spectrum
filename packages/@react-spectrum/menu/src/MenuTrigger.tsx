@@ -23,10 +23,10 @@ import {useMenuTrigger} from '@react-aria/menu';
 import {useMenuTriggerState} from '@react-stately/menu';
 
 function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) {
-  let triggerRef = useRef<HTMLElement>();
+  let triggerRef = useRef<HTMLElement>(undefined);
   let domRef = useDOMRef(ref);
   let menuTriggerRef = domRef || triggerRef;
-  let menuRef = useRef<HTMLDivElement>();
+  let menuRef = useRef<HTMLDivElement>(undefined);
   let {
     children,
     align = 'start',

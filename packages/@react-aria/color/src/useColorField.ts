@@ -44,7 +44,7 @@ export interface ColorFieldAria extends ValidationResult {
 export function useColorField(
   props: AriaColorFieldProps,
   state: ColorFieldState,
-  ref: RefObject<HTMLInputElement>
+  ref: RefObject<HTMLInputElement | null>
 ): ColorFieldAria {
   let {
     isDisabled,

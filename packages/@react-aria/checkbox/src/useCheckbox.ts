@@ -11,12 +11,12 @@
  */
 
 import {AriaCheckboxProps} from '@react-types/checkbox';
-import {InputHTMLAttributes, LabelHTMLAttributes, RefObject, useEffect} from 'react';
+import {InputHTMLAttributes, LabelHTMLAttributes, useEffect} from 'react';
+import {RefObject, ValidationResult} from '@react-types/shared';
 import {ToggleState} from '@react-stately/toggle';
 import {useFormValidation} from '@react-aria/form';
 import {useFormValidationState} from '@react-stately/form';
 import {useToggle} from '@react-aria/toggle';
-import {ValidationResult} from '@react-types/shared';
 
 export interface CheckboxAria extends ValidationResult {
   /** Props for the label wrapper element. */
@@ -41,7 +41,7 @@ export interface CheckboxAria extends ValidationResult {
  * @param state - State for the checkbox, as returned by `useToggleState`.
  * @param inputRef - A ref for the HTML input element.
  */
-export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputRef: RefObject<HTMLInputElement>): CheckboxAria {
+export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputRef: RefObject<HTMLInputElement | null>): CheckboxAria {
   // Create validation state here because it doesn't make sense to add to general useToggleState.
   let validationState = useFormValidationState({...props, value: state.isSelected});
   let {isInvalid, validationErrors, validationDetails} = validationState.displayValidation;

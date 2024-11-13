@@ -12,6 +12,7 @@
 
 export type {CalendarState, CalendarStateOptions, RangeCalendarState, RangeCalendarStateOptions} from '@react-stately/calendar';
 export type {CheckboxGroupProps, CheckboxGroupState} from '@react-stately/checkbox';
+export type {Color, ColorAreaProps, ColorAreaState, ColorChannelFieldProps, ColorChannelFieldState, ColorChannelFieldStateOptions, ColorFieldProps, ColorFieldState, ColorPickerProps, ColorPickerState, ColorSliderState, ColorSliderStateOptions, ColorWheelProps, ColorWheelState} from '@react-stately/color';
 export type {ComboBoxState, ComboBoxStateOptions} from '@react-stately/combobox';
 export type {DateFieldState, DateFieldStateOptions, DatePickerState, DatePickerStateOptions, DateRangePickerState, DateRangePickerStateOptions, DateSegment, SegmentType as DateSegmentType, TimeFieldStateOptions, TimeFieldState} from '@react-stately/datepicker';
 export type {DraggableCollectionStateOptions, DraggableCollectionState, DroppableCollectionStateOptions, DroppableCollectionState} from '@react-stately/dnd';
@@ -27,13 +28,14 @@ export type {MultipleSelectionManager, MultipleSelectionState, SingleSelectionSt
 export type {NumberFieldState, NumberFieldStateOptions} from '@react-stately/numberfield';
 export type {TableState, TableStateProps, TableHeaderProps, TableBodyProps, ColumnProps, RowProps, CellProps, TableColumnResizeState, TableColumnResizeStateProps} from '@react-stately/table';
 export type {TabListProps, TabListState} from '@react-stately/tabs';
-export type {ToggleProps, ToggleState} from '@react-stately/toggle';
+export type {ToggleProps, ToggleState, ToggleGroupProps, ToggleGroupState} from '@react-stately/toggle';
 export type {TooltipTriggerProps, TooltipTriggerState} from '@react-stately/tooltip';
 export type {TreeProps, TreeState} from '@react-stately/tree';
 export type {ItemProps, Key, SectionProps, Collection, Node, Orientation, DisabledBehavior, Selection, SelectionBehavior, SelectionMode, SortDescriptor, SortDirection, ValidationState} from '@react-types/shared';
 
 export {useCalendarState, useRangeCalendarState} from '@react-stately/calendar';
 export {useCheckboxGroupState} from '@react-stately/checkbox';
+export {getColorChannels, parseColor, useColorAreaState, useColorChannelFieldState, useColorFieldState, useColorPickerState, useColorSliderState, useColorWheelState} from '@react-stately/color';
 export {useComboBoxState} from '@react-stately/combobox';
 export {useDateFieldState, useDatePickerState, useDateRangePickerState, useTimeFieldState} from '@react-stately/datepicker';
 export {useDraggableCollectionState, useDroppableCollectionState} from '@react-stately/dnd';
@@ -50,7 +52,7 @@ export {useSliderState} from '@react-stately/slider';
 export {useMultipleSelectionState} from '@react-stately/selection';
 export {useTableState, TableHeader, TableBody, Column, Row, Cell, useTableColumnResizeState} from '@react-stately/table';
 export {useTabListState} from '@react-stately/tabs';
-export {useToggleState} from '@react-stately/toggle';
+export {useToggleState, useToggleGroupState} from '@react-stately/toggle';
 export {useTooltipTriggerState} from '@react-stately/tooltip';
 export {useTreeState} from '@react-stately/tree';
 export {FormValidationContext} from '@react-stately/form';

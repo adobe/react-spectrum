@@ -3,9 +3,13 @@
     // we can explicitly declare `any`, but we don't want to infer `any`
     "noImplicitAny": false,
     // maybe bump to 'esNext'?
-    "target": "es6",
+    "target": "es2018",
     // allows react jsx in tsx files
-    "jsx": "react",
+    // this is set to preserve so that different packages can use different JSX runtimes
+    // depending on the React version they support. ESLint will ensure that React is imported
+    // in packages using the old JSX runtime. Parcel will compile JSX according to the React
+    // version specified in the package.json of each package.
+    "jsx": "preserve",
     // Eventually turn off, one we have no more assumed default exports.
     // Allow default imports from modules with no default export.
     "allowSyntheticDefaultImports": true,
@@ -32,16 +36,18 @@
     "strict": false,
     "plugins": [
       {
+        "name": "@react-spectrum/ts-plugin"
+      },
+      {
         "name": "typescript-strict-plugin",
         "paths": [
           "./packages/@internationalized",
           "./packages/@react-aria/a",
           "./packages/@react-aria/b",
-          "./packages/@react-aria/checkbox",
+          "./packages/@react-aria/c",
+          "./packages/@react-aria/d",
           "./packages/@react-aria/l",
-          "./packages/@react-aria/meter",
-          "./packages/@react-aria/color",
-          "./packages/@react-aria/dialog",
+          "./packages/@react-aria/disclosure",
           "./packages/@react-aria/e",
           "./packages/@react-aria/f",
           "./packages/@react-aria/h",
@@ -63,6 +69,7 @@
           "./packages/@react-aria/switch",
           "./packages/@react-aria/tabs",
           "./packages/@react-aria/tag",
+          "./packages/@react-aria/test-utils",
           "./packages/@react-aria/toggle",
           "./packages/@react-aria/u",
           "./packages/@react-aria/visually-hidden",
@@ -90,29 +97,35 @@
           "./packages/@react-spectrum/numberfield",
           "./packages/@react-spectrum/progress",
           "./packages/@react-spectrum/radio",
+          "./packages/@react-spectrum/s2",
           "./packages/@react-spectrum/searchfield",
           "./packages/@react-spectrum/searchwithin",
           "./packages/@react-spectrum/statuslight",
           "./packages/@react-spectrum/steplist",
           "./packages/@react-spectrum/story-utils",
           "./packages/@react-spectrum/switch",
+          "./packages/@react-spectrum/tabs",
           "./packages/@react-spectrum/tag",
           "./packages/@react-spectrum/text",
           "./packages/@react-spectrum/textfield",
           "./packages/@react-spectrum/theme-dark",
           "./packages/@react-spectrum/theme-default",
           "./packages/@react-spectrum/theme-light",
+          "./packages/@react-spectrum/codemods",
           "./packages/@react-spectrum/view",
           "./packages/@react-spectrum/well",
           "./packages/@react-stately/calendar",
           "./packages/@react-stately/checkbox",
           "./packages/@react-stately/color",
+          "./packages/@react-stately/combobox",
+          "./packages/@react-stately/disclosure",
+          "./packages/@react-stately/list",
           "./packages/@react-stately/numberfield",
           "./packages/@react-stately/overlays",
           "./packages/@react-stately/pagination",
+          "./packages/@react-stately/radio",
           "./packages/@react-stately/searchfield",
           "./packages/@react-stately/steplist",
-          "./packages/@react-stately/radio",
           "./packages/@react-stately/toggle",
           "./packages/@react-stately/utils",
           "./packages/@react-types/a",
@@ -145,10 +158,13 @@
     }
   },
   "include": [
-    "packages"
+    "packages",
+    "lib/svg.d.ts"
   ],
   "exclude": [
     "**/node_modules",
-    "packages/dev/optimize-locales-plugin"
+    "packages/dev/optimize-locales-plugin",
+    "packages/@react-spectrum/s2/s2wf-icons",
+    "packages/@react-spectrum/s2/icon.d.ts"
   ]
 }

@@ -12,18 +12,18 @@
 
 import {CalendarDate, toCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegment} from '@react-stately/datepicker';
-import {DOMAttributes} from '@react-types/shared';
 import {getScrollParent, isIOS, isMac, mergeProps, scrollIntoViewport, useEvent, useId, useLabels, useLayoutEffect} from '@react-aria/utils';
 import {hookData} from './useDateField';
 import {NumberParser} from '@internationalized/number';
-import React, {RefObject, useMemo, useRef} from 'react';
+import React, {useMemo, useRef} from 'react';
+import {RefObject} from '@react-types/shared';
 import {useDateFormatter, useFilter, useLocale} from '@react-aria/i18n';
 import {useDisplayNames} from './useDisplayNames';
 import {useSpinButton} from '@react-aria/spinbutton';
 
 export interface DateSegmentAria {
   /** Props for the segment element. */
-  segmentProps: DOMAttributes
+  segmentProps: React.HTMLAttributes<HTMLDivElement>
 }
 
 /**
@@ -31,11 +31,11 @@ export interface DateSegmentAria {
  * A date segment displays an individual unit of a date and time, and allows users to edit
  * the value by typing or using the arrow keys to increment and decrement.
  */
-export function useDateSegment(segment: DateSegment, state: DateFieldState, ref: RefObject<HTMLElement>): DateSegmentAria {
+export function useDateSegment(segment: DateSegment, state: DateFieldState, ref: RefObject<HTMLElement | null>): DateSegmentAria {
   let enteredKeys = useRef('');
   let {locale} = useLocale();
   let displayNames = useDisplayNames();
-  let {ariaLabel, ariaLabelledBy, ariaDescribedBy, focusManager} = hookData.get(state);
+  let {ariaLabel, ariaLabelledBy, ariaDescribedBy, focusManager} = hookData.get(state)!;
 
   let textValue = segment.isPlaceholder ? '' : segment.text;
   let options = useMemo(() => state.dateFormatter.resolvedOptions(), [state.dateFormatter]);
@@ -82,11 +82,15 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     },
     onIncrementToMax: () => {
       enteredKeys.current = '';
-      state.setSegment(segment.type, segment.maxValue);
+      if (segment.maxValue !== undefined) {
+        state.setSegment(segment.type, segment.maxValue);
+      }
     },
     onDecrementToMin: () => {
       enteredKeys.current = '';
-      state.setSegment(segment.type, segment.minValue);
+      if (segment.minValue !== undefined) {
+        state.setSegment(segment.type, segment.minValue);
+      }
     }
   });
 
@@ -140,13 +144,13 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   let am = useMemo(() => {
     let date = new Date();
     date.setHours(0);
-    return amPmFormatter.formatToParts(date).find(part => part.type === 'dayPeriod').value;
+    return amPmFormatter.formatToParts(date).find(part => part.type === 'dayPeriod')!.value;
   }, [amPmFormatter]);
 
   let pm = useMemo(() => {
     let date = new Date();
     date.setHours(12);
-    return amPmFormatter.formatToParts(date).find(part => part.type === 'dayPeriod').value;
+    return amPmFormatter.formatToParts(date).find(part => part.type === 'dayPeriod')!.value;
   }, [amPmFormatter]);
 
   // Get a list of formatted era names so users can type the first character to choose one.
@@ -160,7 +164,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     let eras = state.calendar.getEras().map(era => {
       let eraDate = date.set({year: 1, month: 1, day: 1, era}).toDate('UTC');
       let parts = eraFormatter.formatToParts(eraDate);
-      let formatted = parts.find(p => p.type === 'era').value;
+      let formatted = parts.find(p => p.type === 'era')!.value;
       return {era, formatted};
     });
 
@@ -231,10 +235,10 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
               break;
           }
 
-          if (segment.value >= 12 && numberValue > 1) {
+          if (segment.value !== undefined && segment.value >= 12 && numberValue > 1) {
             numberValue += 12;
           }
-        } else if (numberValue > segment.maxValue) {
+        } else if (segment.maxValue !== undefined && numberValue > segment.maxValue) {
           segmentValue = parser.parse(key);
         }
 
@@ -247,7 +251,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
           state.setSegment(segment.type, segmentValue);
         }
 
-        if (Number(numberValue + '0') > segment.maxValue || newValue.length >= String(segment.maxValue).length) {
+        if (segment.maxValue !== undefined && (Number(numberValue + '0') > segment.maxValue || newValue.length >= String(segment.maxValue).length)) {
           enteredKeys.current = '';
           if (shouldSetValue) {
             focusManager.focusNext();
@@ -262,16 +266,31 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
 
   let onFocus = () => {
     enteredKeys.current = '';
-    scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
+    if (ref.current) {
+      scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
+    }
 
     // Collapse selection to start or Chrome won't fire input events.
     let selection = window.getSelection();
-    selection.collapse(ref.current);
+    selection?.collapse(ref.current);
   };
 
-  let compositionRef = useRef('');
-  // @ts-ignore - TODO: possibly old TS version? doesn't fail in my editor...
+  let documentRef = useRef(typeof document !== 'undefined' ? document : null);
+  useEvent(documentRef, 'selectionchange', () => {
+    // Enforce that the selection is collapsed when inside a date segment.
+    // Otherwise, when tapping on a segment in Android Chrome and then entering text,
+    // composition events will be fired that break the DOM structure and crash the page.
+    let selection = window.getSelection();
+    if (selection?.anchorNode && ref.current?.contains(selection?.anchorNode)) {
+      selection.collapse(ref.current);
+    }
+  });
+
+  let compositionRef = useRef<string | null>('');
   useEvent(ref, 'beforeinput', e => {
+    if (!ref.current) {
+      return;
+    }
     e.preventDefault();
 
     switch (e.inputType) {
@@ -298,16 +317,18 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     }
   });
 
-  useEvent(ref, 'input', (e: InputEvent) => {
-    let {inputType, data} = e;
+  useEvent(ref, 'input', e => {
+    let {inputType, data} = e as InputEvent;
     switch (inputType) {
       case 'insertCompositionText':
         // Reset the DOM to how it was in the beforeinput event.
-        ref.current.textContent = compositionRef.current;
+        if (ref.current) {
+          ref.current.textContent = compositionRef.current;
+        }
 
         // Android sometimes fires key presses of letters as composition events. Need to handle am/pm keys here too.
         // Can also happen e.g. with Pinyin keyboard on iOS.
-        if (startsWith(am, data) || startsWith(pm, data)) {
+        if (data != null && (startsWith(am, data) || startsWith(pm, data))) {
           onInput(data);
         }
         break;
@@ -375,7 +396,6 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
       contentEditable: isEditable,
       suppressContentEditableWarning: isEditable,
       spellCheck: isEditable ? 'false' : undefined,
-      autoCapitalize: isEditable ? 'off' : undefined,
       autoCorrect: isEditable ? 'off' : undefined,
       // Capitalization was changed in React 17...
       [parseInt(React.version, 10) >= 17 ? 'enterKeyHint' : 'enterkeyhint']: isEditable ? 'next' : undefined,

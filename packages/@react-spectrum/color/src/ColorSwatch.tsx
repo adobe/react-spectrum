@@ -61,7 +61,7 @@ function ColorSwatch(props: SpectrumColorSwatchProps, ref: DOMRef<HTMLDivElement
           // Red slash to indicate there is no selected color.
           : 'linear-gradient(to bottom right, transparent calc(50% - 2px), var(--spectrum-red-900) calc(50% - 2px) calc(50% + 2px), transparent calc(50% + 2px)) no-repeat'
       }}
-      className={style({
+      className={styleProps.className + style({
         size: {
           size: {
             XS: 4,

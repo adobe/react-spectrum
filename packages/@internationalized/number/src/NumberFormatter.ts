@@ -17,14 +17,14 @@ try {
   // @ts-ignore
   supportsSignDisplay = (new Intl.NumberFormat('de-DE', {signDisplay: 'exceptZero'})).resolvedOptions().signDisplay === 'exceptZero';
   // eslint-disable-next-line no-empty
-} catch (e) {}
+} catch {}
 
 let supportsUnit = false;
 try {
   // @ts-ignore
   supportsUnit = (new Intl.NumberFormat('de-DE', {style: 'unit', unit: 'degree'})).resolvedOptions().style === 'unit';
   // eslint-disable-next-line no-empty
-} catch (e) {}
+} catch {}
 
 // Polyfill for units since Safari doesn't support them yet. See https://bugs.webkit.org/show_bug.cgi?id=215438.
 // Currently only polyfilling the unit degree in narrow format for ColorSlider in our supported locales.

@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, RefObject} from '@react-types/shared';
 import {GridRowProps} from '@react-aria/grid';
-import {RefObject} from 'react';
 import {tableNestedRows} from '@react-stately/flags';
 import {TableState} from '@react-stately/table';
 
@@ -27,7 +26,7 @@ export interface TableHeaderRowAria {
  * @param state - State of the table, as returned by `useTableState`.
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function useTableHeaderRow<T>(props: GridRowProps<T>, state: TableState<T>, ref: RefObject<Element>): TableHeaderRowAria {
+export function useTableHeaderRow<T>(props: GridRowProps<T>, state: TableState<T>, ref: RefObject<Element | null>): TableHeaderRowAria {
   let {node, isVirtualized} = props;
   let rowProps = {
     role: 'row'

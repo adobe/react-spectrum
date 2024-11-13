@@ -1,4 +1,4 @@
 {
   "close": "إغلاق",
-  "notifications": "{count, plural, one {# notification} other {# notifications}}."
+  "notifications": "{count, plural, one {# إشعار} other {# إشعارات}}."
 }

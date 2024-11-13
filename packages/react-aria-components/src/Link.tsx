@@ -11,7 +11,8 @@
  */
 
 import {AriaLinkOptions, HoverEvents, mergeProps, useFocusRing, useHover, useLink} from 'react-aria';
-import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {forwardRefType} from '@react-types/shared';
 import React, {createContext, ElementType, ForwardedRef, forwardRef} from 'react';
 
 export interface LinkProps extends Omit<AriaLinkOptions, 'elementType'>, HoverEvents, RenderProps<LinkRenderProps>, SlotProps {}
@@ -54,7 +55,7 @@ export const LinkContext = createContext<ContextValue<LinkProps, HTMLAnchorEleme
 function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
   [props, ref] = useContextProps(props, ref, LinkContext);
 
-  let ElementType: ElementType = props.href ? 'a' : 'span';
+  let ElementType: ElementType = props.href && !props.isDisabled ? 'a' : 'span';
   let {linkProps, isPressed} = useLink({...props, elementType: ElementType}, ref);
 
   let {hoverProps, isHovered} = useHover(props);

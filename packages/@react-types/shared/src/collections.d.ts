@@ -87,9 +87,9 @@ export interface Sortable {
 
 export interface SortDescriptor {
   /** The key of the column to sort by. */
-  column?: Key,
+  column: Key,
   /** The direction to sort by. */
-  direction?: SortDirection
+  direction: SortDirection
 }
 
 export type SortDirection = 'ascending' | 'descending';
@@ -121,6 +121,30 @@ export interface KeyboardDelegate {
 
   /** Returns the next key after `fromKey` that matches the given search string, or `null` for none. */
   getKeyForSearch?(search: string, fromKey?: Key): Key | null
+}
+
+export interface Rect {
+  x: number,
+  y: number,
+  width: number,
+  height: number
+}
+
+export interface Size {
+  width: number,
+  height: number
+}
+
+/** A LayoutDelegate provides layout information for collection items. */
+export interface LayoutDelegate {
+  /** Returns a rectangle for the item with the given key. */
+  getItemRect(key: Key): Rect | null,
+  /** Returns the visible rectangle of the collection. */
+  getVisibleRect(): Rect,
+  /** Returns the size of the scrollable content in the collection. */
+  getContentSize(): Size,
+  /** Returns a list of keys between `from` and `to`. */
+  getKeyRange?(from: Key, to: Key): Key[]
 }
 
 /**

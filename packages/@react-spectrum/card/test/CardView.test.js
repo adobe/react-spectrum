@@ -1186,6 +1186,7 @@ describe('CardView', function () {
       ${'Grid layout'}      | ${GridLayout}
       ${'Gallery layout'}   | ${GalleryLayout}
     `('$Name CardView should call loadMore when scrolling to the bottom', async function ({layout}) {
+      let scrollHeightMock = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 3000);
       let onLoadMore = jest.fn();
       let tree = render(<DynamicCardView layout={layout} onLoadMore={onLoadMore} />);
 
@@ -1200,6 +1201,7 @@ describe('CardView', function () {
       grid.scrollTop = 3000;
       fireEvent.scroll(grid);
       expect(onLoadMore).toHaveBeenCalledTimes(1);
+      scrollHeightMock.mockReset();
     });
 
     it.each`

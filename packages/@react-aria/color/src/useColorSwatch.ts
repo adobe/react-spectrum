@@ -21,7 +21,7 @@ import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface AriaColorSwatchProps extends AriaLabelingProps, DOMProps {
   /** The color value to display in the swatch. */
-  color?: string | Color | null,
+  color?: string | Color,
   /** 
    * A localized accessible name for the color.
    * By default, a description is generated from the color value,
