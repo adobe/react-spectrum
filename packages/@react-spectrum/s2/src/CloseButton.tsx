@@ -23,7 +23,7 @@ import {useFocusableRef} from '@react-spectrum/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface CloseButtonProps extends Omit<ButtonProps, 'className' | 'style' | 'children'>, StyleProps {
+export interface CloseButtonProps extends Pick<ButtonProps, 'isDisabled'>, StyleProps {
   /**
    * The size of the CloseButton.
    *
