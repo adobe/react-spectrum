@@ -10,7 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render} from '@testing-library/react';
+import {act, render, within} from '@testing-library/react';
+import {
+  pointerMap
+} from '@react-spectrum/test-utils-internal';
+import {User} from '@react-aria/test-utils';
+import userEvent from '@testing-library/user-event';
 
 let describeInteractions = ((name, tests) => describe.each`
   interactionType
@@ -41,16 +46,26 @@ interface AriaBaseTestProps {
 }
 interface AriaTreeTestProps extends AriaBaseTestProps {
   renderers: {
-    // must have label "test tree"
-    standard: (props?: {name: string}) => ReturnType<typeof render>
+    // must have an aria-label
+    standard: (props?: {name: string}) => ReturnType<typeof render>,
+    // must have an aria-label
+    singleSelection?: (props?: {name: string}) => ReturnType<typeof render>,
+    // must have an aria-label
+    allInteractionsDisabled?: (props?: {name: string}) => ReturnType<typeof render>
   }
 }
 export const AriaTreeTests = ({renderers, setup, prefix}: AriaTreeTestProps) => {
   describe(prefix ? prefix + 'AriaTree' : 'AriaTree', function () {
+    let user;
+    let testUtilUser = new User();
     setup?.();
 
     beforeAll(function () {
       jest.useFakeTimers();
+    });
+
+    beforeEach(function () {
+      user = userEvent.setup({delay: null, pointerMap});
     });
 
     afterEach(() => {
@@ -58,46 +73,153 @@ export const AriaTreeTests = ({renderers, setup, prefix}: AriaTreeTestProps) => 
     });
 
     it('should have the base set of aria and data attributes', () => {
-      let {getByRole, getAllByRole} = (renderers.standard!)();
-      let tree = getByRole('treegrid');
-      expect(tree).toHaveAttribute('aria-label', 'test tree');
+      let root = (renderers.standard!)();
+      let treeTester = testUtilUser.createTester('Tree', {user, root: root.container});
+      let tree = treeTester.tree;
+      expect(tree).toHaveAttribute('aria-label');
 
-      for (let row of getAllByRole('row')) {
+      for (let row of treeTester.rows) {
         expect(row).toHaveAttribute('aria-level');
         expect(row).toHaveAttribute('aria-posinset');
         expect(row).toHaveAttribute('aria-setsize');
       }
+      expect(treeTester.rows[0]).not.toHaveAttribute('aria-expanded');
+      expect(treeTester.rows[1]).toHaveAttribute('aria-expanded', 'false');
     });
 
-    // if (renderers.singleSelection) {
-    //   describe('single selection', function () {
-    //     it('selects an option via mouse', async function () {
-    //       let tree = (renderers.singleSelection!)();
-    //       let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
-    //       let triggerButton = menuTester.trigger!;
+    describeInteractions('interaction', function ({interactionType}) {
+      it('should have the expected attributes on the rows', async () => {
+        let tree = (renderers.standard!)();
+        let treeTester = testUtilUser.createTester('Tree', {user, root: tree.container, interactionType});
+        await treeTester.expandItem({index: 1});
+        await treeTester.expandItem({index: 2});
 
-    //       await menuTester.open();
-    //       act(() => {jest.runAllTimers();});
+        let rows = treeTester.rows;
+        let rowNoChild = rows[0];
+        expect(rowNoChild).toHaveAttribute('aria-label');
+        expect(rowNoChild).not.toHaveAttribute('aria-expanded');
+        expect(rowNoChild).toHaveAttribute('aria-level', '1');
+        expect(rowNoChild).toHaveAttribute('aria-posinset', '1');
+        expect(rowNoChild).toHaveAttribute('aria-setsize', '3');
 
-    //       let menu = menuTester.menu;
-    //       expect(menu).toBeTruthy();
-    //       expect(menu).toHaveAttribute('aria-labelledby', triggerButton.id);
+        let rowWithChildren = rows[1];
+        // Row has action since it is expandable but not selectable.
+        expect(rowWithChildren).toHaveAttribute('aria-expanded', 'true');
+        expect(rowWithChildren).toHaveAttribute('aria-level', '1');
+        expect(rowWithChildren).toHaveAttribute('aria-posinset', '2');
+        expect(rowWithChildren).toHaveAttribute('aria-setsize', '3');
 
-    //       let options = menuTester.options;
+        let level2ChildRow = rows[2];
+        expect(level2ChildRow).toHaveAttribute('aria-expanded', 'true');
+        expect(level2ChildRow).toHaveAttribute('data-expanded', 'true');
+        expect(level2ChildRow).toHaveAttribute('aria-level', '2');
+        expect(level2ChildRow).toHaveAttribute('aria-posinset', '1');
+        expect(level2ChildRow).toHaveAttribute('aria-setsize', '3');
 
-    //       await menuTester.selectOption({option: options[1], menuSelectionMode: 'single'});
+        let level3ChildRow = rows[3];
+        expect(level3ChildRow).not.toHaveAttribute('aria-expanded');
+        expect(level3ChildRow).toHaveAttribute('aria-level', '3');
+        expect(level3ChildRow).toHaveAttribute('aria-posinset', '1');
+        expect(level3ChildRow).toHaveAttribute('aria-setsize', '1');
 
-    //       act(() => {jest.runAllTimers();});
-    //       expect(menu).not.toBeInTheDocument();
+        let level2ChildRow2 = rows[4];
+        expect(level2ChildRow2).not.toHaveAttribute('aria-expanded');
+        expect(level2ChildRow2).toHaveAttribute('aria-level', '2');
+        expect(level2ChildRow2).toHaveAttribute('aria-posinset', '2');
+        expect(level2ChildRow2).toHaveAttribute('aria-setsize', '3');
 
-    //       await menuTester.open();
-    //       act(() => {jest.runAllTimers();});
+        let level2ChildRow3 = rows[5];
+        expect(level2ChildRow3).not.toHaveAttribute('aria-expanded');
+        expect(level2ChildRow3).toHaveAttribute('aria-level', '2');
+        expect(level2ChildRow3).toHaveAttribute('aria-posinset', '3');
+        expect(level2ChildRow3).toHaveAttribute('aria-setsize', '3');
 
-    //       options = menuTester.options;
-    //       expect(options[0]).toHaveAttribute('aria-checked', 'false');
-    //       expect(options[1]).toHaveAttribute('aria-checked', 'true');
-    //     });
-    //   });
-    // }
+        // Collapse the first row and make sure it's collpased and that the inner rows are gone
+        await treeTester.collapseItem({index: 1});
+        expect(rowWithChildren).toHaveAttribute('aria-expanded', 'false');
+        expect(level2ChildRow).not.toBeInTheDocument();
+      });
+    });
+
+    if (renderers.singleSelection) {
+      describe('single selection', function () {
+        describeInteractions('interaction', function ({interactionType}) {
+          // todo add test for using Space on the row to select it
+          it('can select items', async () => {
+            let tree = (renderers.singleSelection!)();
+            let treeTester = testUtilUser.createTester('Tree', {user, root: tree.container, interactionType});
+
+            let rows = treeTester.rows;
+            expect(rows[0]).toHaveAttribute('aria-selected', 'false');
+            expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+            // disabled rows should not be selectable
+            expect(rows[2]).not.toHaveAttribute('aria-selected');
+            expect(within(rows[2]).getByRole('checkbox')).toHaveAttribute('disabled');
+
+            await treeTester.toggleRowSelection({index: 0});
+            expect(rows[0]).toHaveAttribute('aria-selected', 'true');
+            expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+
+            await treeTester.toggleRowSelection({index: 1});
+            expect(rows[0]).toHaveAttribute('aria-selected', 'false');
+            expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+
+            await treeTester.toggleRowSelection({index: 2});
+            expect(rows[0]).toHaveAttribute('aria-selected', 'false');
+            expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+            expect(rows[2]).not.toHaveAttribute('aria-selected');
+
+            await treeTester.expandItem({index: 1});
+            rows = treeTester.rows;
+            // row 2 is now the subrow of row 1 because we expanded it
+            expect(rows[2]).toHaveAttribute('aria-selected', 'false');
+
+            await treeTester.toggleRowSelection({index: 2});
+            expect(rows[0]).toHaveAttribute('aria-selected', 'false');
+            expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+            expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+
+            // collapse and re-expand to make sure the selection persists
+            await treeTester.collapseItem({index: 1});
+            await treeTester.expandItem({index: 1});
+            rows = treeTester.rows;
+            expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+
+            await treeTester.toggleRowSelection({index: 2});
+            expect(rows[0]).toHaveAttribute('aria-selected', 'false');
+            expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+            expect(rows[2]).toHaveAttribute('aria-selected', 'false');
+
+            await treeTester.collapseItem({index: 1});
+            // items inside a disabled item can be selected
+            await treeTester.expandItem({index: 2});
+            rows = treeTester.rows;
+
+            await treeTester.toggleRowSelection({index: 3});
+            expect(rows[3]).toHaveAttribute('aria-selected', 'true');
+          });
+        });
+      });
+    }
+
+    if (renderers.allInteractionsDisabled) {
+      describe('all interactions disabled', function () {
+        describeInteractions('interaction', function ({interactionType}) {
+          it('should not be able to interact with the tree', async () => {
+            let tree = (renderers.allInteractionsDisabled!)();
+            let treeTester = testUtilUser.createTester('Tree', {user, root: tree.container, interactionType});
+
+            let rows = treeTester.rows;
+            expect(rows[2]).toHaveAttribute('aria-expanded', 'false');
+
+            await treeTester.expandItem({index: 2});
+            expect(rows[2]).toHaveAttribute('aria-expanded', 'false');
+
+            await treeTester.toggleRowSelection({index: 2});
+            expect(rows[2]).not.toHaveAttribute('aria-selected');
+          });
+        });
+      });
+    }
   });
 };

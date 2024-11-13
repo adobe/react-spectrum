@@ -28,7 +28,7 @@ import Chevron from '../ui-icons/Chevron';
 import {DOMRef, Key} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {isAndroid} from '@react-aria/utils';
-import React, {createContext, isValidElement, JSXElementConstructor, ReactElement, useContext, useRef} from 'react';
+import React, {createContext, forwardRef, isValidElement, JSXElementConstructor, ReactElement, useContext, useRef} from 'react';
 import {StylesPropWithHeight, UnsafeStyles} from './style-utils';
 import {useButton} from '@react-aria/button';
 import {useDOMRef} from '@react-spectrum/utils';
@@ -39,7 +39,8 @@ interface S2TreeProps {
   onAction?: (key: Key) => void
 }
 
-export interface TreeViewProps<T> extends Omit<RACTreeProps<T>, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks'>, UnsafeStyles, S2TreeProps {
+// should we remove disabledBehavior?
+export interface TreeViewProps extends Omit<RACTreeProps<any>, 'style' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks'>, UnsafeStyles, S2TreeProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight
 }
@@ -95,7 +96,7 @@ const tree = style<Pick<TreeRenderProps, 'isEmpty'>>({
   }
 });
 
-function TreeView<T extends object>(props: TreeViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
   let {children, isDetached} = props;
 
   let renderer;
@@ -345,5 +346,5 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
 /**
  * A tree view provides users with a way to navigate nested hierarchical information.
  */
-const _TreeView = React.forwardRef(TreeView) as <T>(props: TreeViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
+const _TreeView = forwardRef(TreeView);
 export {_TreeView as TreeView};
