@@ -47,7 +47,8 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
     isDisabled,
     placeholderValue,
     maxVisibleMonths = 1,
-    pageBehavior
+    pageBehavior,
+    firstDayOfWeek = 0
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let targetRef = useRef<HTMLDivElement>(undefined);
@@ -168,6 +169,7 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
                   {...calendarProps}
                   visibleMonths={visibleMonths}
                   pageBehavior={pageBehavior}
+                  firstDayOfWeek={firstDayOfWeek}
                   UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-calendar', {'is-invalid': isInvalid})} />
                 {showTimeField &&
                   <div className={classNames(datepickerStyles, 'react-spectrum-Datepicker-timeFields')}>
