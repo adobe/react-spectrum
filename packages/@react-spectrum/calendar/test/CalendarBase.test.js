@@ -789,5 +789,35 @@ describe('CalendarBase', () => {
       await user.keyboard('{ArrowRight}');
       expect(document.activeElement).toBe(selected);
     });
+
+    it.each`
+      Name                   | Calendar         | props
+      ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2024, 1, 1)}}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2024, 1, 1), end: new CalendarDate(2024, 1, 1)}}}
+    `('$Name should override start of week with firstDayOfWeek={1}', ({Calendar, props}) => {
+      let {getAllByRole, getByRole} = render(<Calendar {...props} firstDayOfWeek={1} />);
+
+      let grid = getByRole('grid');
+      let headers = getAllByRole('columnheader', {hidden: true});
+      expect(headers.map(h => h.textContent)).toEqual(['M', 'T', 'W', 'T', 'F', 'S', 'S']);
+
+      let cells = within(grid).getAllByRole('gridcell');
+      expect(cells[0]).toHaveTextContent('1');
+    });
+
+    it.each`
+      Name                   | Calendar         | props
+      ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2024, 1, 1)}}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2024, 1, 1), end: new CalendarDate(2024, 1, 1)}}}
+    `('$Name should override start of week with firstDayOfWeek={6}', ({Calendar, props}) => {
+      let {getAllByRole, getByRole} = render(<Calendar {...props} firstDayOfWeek={6} />);
+
+      let grid = getByRole('grid');
+      let headers = getAllByRole('columnheader', {hidden: true});
+      expect(headers.map(h => h.textContent)).toEqual(['S', 'S', 'M', 'T', 'W', 'T', 'F']);
+
+      let cells = within(grid).getAllByRole('gridcell');
+      expect(cells[2]).toHaveTextContent('1');
+    });
   });
 });
