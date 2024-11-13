@@ -64,10 +64,10 @@ interface PositionOpts {
 type HeightGrowthDirection = 'top' | 'bottom';
 
 export interface PositionResult {
-  position?: Position,
+  position: Position,
   arrowOffsetLeft?: number,
   arrowOffsetTop?: number,
-  maxHeight?: number,
+  maxHeight: number,
   placement: PlacementAxis
 }
 
