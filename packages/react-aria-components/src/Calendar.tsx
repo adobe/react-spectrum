@@ -26,7 +26,7 @@ import {
 import {ButtonContext} from './Button';
 import {CalendarDate, createCalendar, DateDuration, endOfMonth, getWeeksInMonth, isSameDay, isSameMonth} from '@internationalized/date';
 import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState} from 'react-stately';
-import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {DOMAttributes, FocusableElement, forwardRefType, HoverEvents} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {HeadingContext} from './RSPContexts';
@@ -77,6 +77,8 @@ export const CalendarContext = createContext<ContextValue<CalendarProps<any>, HT
 export const RangeCalendarContext = createContext<ContextValue<RangeCalendarProps<any>, HTMLDivElement>>({});
 export const CalendarStateContext = createContext<CalendarState | null>(null);
 export const RangeCalendarStateContext = createContext<RangeCalendarState | null>(null);
+const InternalCalendarContext = createContext<CalendarProps<any> | null>(null);
+const InternalRangeCalendarContext = createContext<RangeCalendarProps<any> | null>(null);
 
 function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, CalendarContext);
@@ -117,6 +119,7 @@ function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRe
           }],
           [HeadingContext, {'aria-hidden': true, level: 2, children: title}],
           [CalendarStateContext, state],
+          [InternalCalendarContext, props],
           [TextContext, {
             slots: {
               errorMessage: errorMessageProps
@@ -196,6 +199,7 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: F
           }],
           [HeadingContext, {'aria-hidden': true, level: 2, children: title}],
           [RangeCalendarStateContext, state],
+          [InternalRangeCalendarContext, props],
           [TextContext, {
             slots: {
               errorMessage: errorMessageProps
@@ -340,6 +344,8 @@ const InternalCalendarGridContext = createContext<InternalCalendarGridContextVal
 function CalendarGrid(props: CalendarGridProps, ref: ForwardedRef<HTMLTableElement>) {
   let calendarState = useContext(CalendarStateContext);
   let rangeCalendarState = useContext(RangeCalendarStateContext);
+  let calenderProps = useContext(InternalCalendarContext)!;
+  let rangeCalenderProps = useContext(InternalRangeCalendarContext)!;
   let state = calendarState ?? rangeCalendarState!;
   let startDate = state.visibleRange.start;
   if (props.offset) {
@@ -349,7 +355,8 @@ function CalendarGrid(props: CalendarGridProps, ref: ForwardedRef<HTMLTableEleme
   let {gridProps, headerProps, weekDays} = useCalendarGrid({
     startDate,
     endDate: endOfMonth(startDate),
-    weekdayStyle: props.weekdayStyle
+    weekdayStyle: props.weekdayStyle,
+    firstDayOfWeek: calenderProps?.firstDayOfWeek ?? rangeCalenderProps?.firstDayOfWeek
   }, state);
 
   return (
