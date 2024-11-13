@@ -195,7 +195,7 @@ function preventScrollMobileSafari() {
     }
   };
 
-  let restoreStyles = null;
+  let restoreStyles: null | (() => void) = null;
   let setupStyles = () => {
     if (restoreStyles) {
       return;
@@ -259,26 +259,29 @@ function addEvent<K extends keyof GlobalEventHandlersEventMap>(
   handler: (this: Document, ev: GlobalEventHandlersEventMap[K]) => any,
   options?: boolean | AddEventListenerOptions
 ) {
+  // @ts-ignore
   target.addEventListener(event, handler, options);
   return () => {
+    // @ts-ignore
     target.removeEventListener(event, handler, options);
   };
 }
 
 function scrollIntoView(target: Element) {
   let root = document.scrollingElement || document.documentElement;
-  while (target && target !== root) {
+  let nextTarget: Element | null = target;
+  while (nextTarget && nextTarget !== root) {
     // Find the parent scrollable element and adjust the scroll position if the target is not already in view.
-    let scrollable = getScrollParent(target);
-    if (scrollable !== document.documentElement && scrollable !== document.body && scrollable !== target) {
+    let scrollable = getScrollParent(nextTarget);
+    if (scrollable !== document.documentElement && scrollable !== document.body && scrollable !== nextTarget) {
       let scrollableTop = scrollable.getBoundingClientRect().top;
-      let targetTop = target.getBoundingClientRect().top;
-      if (targetTop > scrollableTop + target.clientHeight) {
+      let targetTop = nextTarget.getBoundingClientRect().top;
+      if (targetTop > scrollableTop + nextTarget.clientHeight) {
         scrollable.scrollTop += targetTop - scrollableTop;
       }
     }
 
-    target = scrollable.parentElement;
+    nextTarget = scrollable.parentElement;
   }
 }
 
