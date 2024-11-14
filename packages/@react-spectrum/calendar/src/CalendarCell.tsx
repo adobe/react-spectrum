@@ -23,10 +23,11 @@ import {useLocale} from '@react-aria/i18n';
 
 interface CalendarCellProps extends AriaCalendarCellProps {
   state: CalendarState | RangeCalendarState,
-  currentMonth: CalendarDate
+  currentMonth: CalendarDate,
+  firstDayOfWeek: 0 | 1 | 2 | 3 | 4 | 5 | 6
 }
 
-export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps) {
+export function CalendarCell({state, currentMonth, firstDayOfWeek, ...props}: CalendarCellProps) {
   let ref = useRef<HTMLElement>(null);
   let {
     cellProps,
@@ -49,8 +50,8 @@ export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps)
   let isSelectionEnd = isSelected && highlightedRange && isSameDay(props.date, highlightedRange.end);
   let {locale} = useLocale();
   let dayOfWeek = getDayOfWeek(props.date, locale);
-  let isRangeStart = isSelected && (isFirstSelectedAfterDisabled || dayOfWeek === 0 || props.date.day === 1);
-  let isRangeEnd = isSelected && (isLastSelectedBeforeDisabled || dayOfWeek === 6 || props.date.day === currentMonth.calendar.getDaysInMonth(currentMonth));
+  let isRangeStart = isSelected && (isFirstSelectedAfterDisabled || dayOfWeek === firstDayOfWeek || props.date.day === 1);
+  let isRangeEnd = isSelected && (isLastSelectedBeforeDisabled || ((dayOfWeek - firstDayOfWeek + 7) % 7) === 6 || props.date.day === currentMonth.calendar.getDaysInMonth(currentMonth));
   let {focusProps, isFocusVisible} = useFocusRing();
   let {hoverProps, isHovered} = useHover({isDisabled: isDisabled || isUnavailable || state.isReadOnly});
 
