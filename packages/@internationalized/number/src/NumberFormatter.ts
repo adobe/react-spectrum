@@ -85,15 +85,12 @@ export class NumberFormatter implements Intl.NumberFormat {
   /** Formats a number to an array of parts such as separators, digits, punctuation, and more. */
   formatToParts(value: number): Intl.NumberFormatPart[] {
     // TODO: implement signDisplay for formatToParts
-    // @ts-ignore
     return this.numberFormatter.formatToParts(value);
   }
 
   /** Formats a number range as a string. */
   formatRange(start: number, end: number): string {
-    // @ts-ignore
     if (typeof this.numberFormatter.formatRange === 'function') {
-      // @ts-ignore
       return this.numberFormatter.formatRange(start, end);
     }
 
@@ -107,9 +104,7 @@ export class NumberFormatter implements Intl.NumberFormat {
 
   /** Formats a number range as an array of parts. */
   formatRangeToParts(start: number, end: number): NumberRangeFormatPart[] {
-    // @ts-ignore
     if (typeof this.numberFormatter.formatRangeToParts === 'function') {
-      // @ts-ignore
       return this.numberFormatter.formatRangeToParts(start, end);
     }
 
