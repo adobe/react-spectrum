@@ -81,11 +81,14 @@ export function compareNodeOrder<T>(collection: Collection<Node<T>>, a: Node<T>,
 }
 
 function getAncestors<T>(collection: Collection<Node<T>>, node: Node<T>): Node<T>[] {
-  let parents = [];
+  let parents: Node<T>[] = [];
 
-  while (node?.parentKey != null) {
-    node = collection.getItem(node.parentKey);
-    parents.unshift(node);
+  let currNode: Node<T> | null = node;
+  while (currNode?.parentKey != null) {
+    currNode = collection.getItem(currNode.parentKey);
+    if (currNode) {
+      parents.unshift(currNode);
+    }
   }
 
   return parents;
