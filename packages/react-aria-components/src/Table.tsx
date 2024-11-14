@@ -73,7 +73,6 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
       }
     };
 
-    console.log(this)
     for (let node of this.getChildren(this.head.key)) {
       visit(node);
     }
