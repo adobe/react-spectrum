@@ -114,13 +114,13 @@ export interface KeyboardDelegate {
   getKeyPageAbove?(key: Key): Key | null,
 
   /** Returns the first key, or `null` for none. */
-  getFirstKey?(key?: Key, global?: boolean): Key | null,
+  getFirstKey?(key?: Key | null, global?: boolean): Key | null,
 
   /** Returns the last key, or `null` for none. */
-  getLastKey?(key?: Key, global?: boolean): Key | null,
+  getLastKey?(key?: Key | null, global?: boolean): Key | null,
 
   /** Returns the next key after `fromKey` that matches the given search string, or `null` for none. */
-  getKeyForSearch?(search: string, fromKey?: Key): Key | null
+  getKeyForSearch?(search: string, fromKey?: Key | null): Key | null
 }
 
 export interface Rect {
