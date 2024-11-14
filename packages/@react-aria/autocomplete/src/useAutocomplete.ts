@@ -91,7 +91,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
           e.continuePropagation();
         }
 
-        break;
+        return;
       case 'Home':
       case 'End':
       case 'ArrowUp':
@@ -146,13 +146,22 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
     // }
   };
 
-
+  // When typing forward, we want to delay the setting of active descendant to not interrupt the native screen reader announcement
+  // of the letter you just typed. If we recieve another UPDATE_ACTIVEDESCENDANT call then we clear the queued update
+  let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   useEffect(() => {
     let collection = collectionRef.current;
-    console.log('collection ref', collection)
-    let updateActiveDescendant = (id) => {
-      console.log('updating id', id)
-      state.setFocusedNodeId(id);
+    let updateActiveDescendant = (e) => {
+      let {detail} = e;
+      clearTimeout(timeout.current);
+
+      if (detail?.delay != null) {
+        timeout.current = setTimeout(() => {
+          state.setFocusedNodeId(detail?.id);
+        }, detail?.delay);
+      } else {
+        state.setFocusedNodeId(detail?.id);
+      }
     };
     collection?.addEventListener(UPDATE_ACTIVEDESCENDANT, updateActiveDescendant);
 
@@ -169,7 +178,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
         focusStrategy: 'first'
       }
     });
-    console.log('dispatching focus first')
+
     collectionRef.current?.dispatchEvent(focusFirstEvent);
   });
 
@@ -179,7 +188,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
       cancelable: true,
       bubbles: true
     });
-    console.log('dispatching cleaar focus')
+
     collectionRef.current?.dispatchEvent(clearFocusEvent);
   });
 
@@ -197,8 +206,6 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
     }
   }, [state.inputValue, focusFirstItem, clearVirtualFocus]);
 
-
-  // node.addEventListener(RESTORE_FOCUS_EVENT, stopPropagation);
 
   let {labelProps, inputProps, descriptionProps} = useTextField({
     ...props as any,
@@ -236,12 +243,12 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
     menuProps: mergeProps(menuProps, {
       shouldUseVirtualFocus: true,
       // TODO: remove this and instead have onHover in useMenuItem fire an event that we listen for here
-      onHoverStart: (e) => {
-        state.setFocusedNodeId(e.target.id);
-      },
+      // onHoverStart: (e) => {
+      //   state.setFocusedNodeId(e.target.id);
+      // },
       disallowTypeAhead: true
     }),
-    descriptionProps,
+    descriptionProps
     // register
   };
 }

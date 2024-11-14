@@ -11,7 +11,7 @@
  */
 
 import {AriaMenuProps} from '@react-types/menu';
-import {DOMAttributes, HoverEvent, KeyboardDelegate, KeyboardEvents, RefObject} from '@react-types/shared';
+import {DOMAttributes, KeyboardDelegate, KeyboardEvents, RefObject} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {menuData} from './utils';
 import {TreeState} from '@react-stately/tree';
@@ -33,11 +33,7 @@ export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'>, 
   /**
    * Whether the menu items should use virtual focus instead of being focused directly.
    */
-  shouldUseVirtualFocus?: boolean,
-  /**
-   * Handler that is called when a hover interaction starts on a menu item.
-   */
-  onHoverStart?: (e: HoverEvent) => void
+  shouldUseVirtualFocus?: boolean
 }
 
 /**
@@ -51,7 +47,6 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
     shouldFocusWrap = true,
     onKeyDown,
     onKeyUp,
-    onHoverStart,
     ...otherProps
   } = props;
 
@@ -75,7 +70,6 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
     onClose: props.onClose,
     onAction: props.onAction,
     shouldUseVirtualFocus: props.shouldUseVirtualFocus,
-    onHoverStart,
     id
   });
 

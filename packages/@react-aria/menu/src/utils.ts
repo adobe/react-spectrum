@@ -10,19 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {HoverEvent, Key} from '@react-types/shared';
+import {Key} from '@react-types/shared';
 import {TreeState} from '@react-stately/tree';
 
 interface MenuData {
   onClose?: () => void,
   onAction?: (key: Key) => void,
-  onHoverStart?: (e: HoverEvent) => void,
   shouldUseVirtualFocus?: boolean,
   id: string
 }
 
 export const menuData = new WeakMap<TreeState<unknown>, MenuData>();
 
+// TODO: Will need to see about perhaps moving this into useSelectableCollection so we have
+// dispatch the custom event to set the active descendant upwards which needs the id
 function normalizeKey(key: Key): string {
   if (typeof key === 'string') {
     return key.replace(/\s*/g, '');

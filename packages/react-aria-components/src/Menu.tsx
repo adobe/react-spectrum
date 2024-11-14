@@ -214,8 +214,6 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
     }
   }, [leftOffset, popoverContainer]);
 
-
-  let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   let focusFirstItem = useEffectEvent((e) => {
     if (e.detail.focusStrategy === 'first') {
       e.stopPropagation();
@@ -232,23 +230,18 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
           key = state.collection.getKeyAfter(key);
         }
 
-        clearTimeout(timeout.current);
         state.selectionManager.setFocusedKey(key);
-        timeout.current = setTimeout(() => {
-          // setFocusedNodeId && setFocusedNodeId(key == null ? null : getItemId(state, key));
-          let updateActiveDescendant = new CustomEvent(UPDATE_ACTIVEDESCENDANT, {
-            cancelable: true,
-            bubbles: true,
-            detail: {
-              id: getItemId(state, key)
-            }
-          });
-          console.log('dispatching updated active descendant', getItemId(state, key));
-          ref.current?.dispatchEvent(updateActiveDescendant);
-        }, 500);
+        let updateActiveDescendant = new CustomEvent(UPDATE_ACTIVEDESCENDANT, {
+          cancelable: true,
+          bubbles: true,
+          detail: {
+            id: getItemId(state, key),
+            delay: 500
+          }
+        });
+        ref.current?.dispatchEvent(updateActiveDescendant);
       }
     }
-
   });
 
   let clearVirtualFocus = useEffectEvent((e) => {
