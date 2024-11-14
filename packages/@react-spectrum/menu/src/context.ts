@@ -43,7 +43,7 @@ export interface SubmenuTriggerContextValue extends DOMProps, Pick<PressEvents, 
 
 export const SubmenuTriggerContext = React.createContext<SubmenuTriggerContextValue | undefined>(undefined);
 
-export function useSubmenuTriggerContext(): SubmenuTriggerContextValue {
+export function useSubmenuTriggerContext() {
   return useContext(SubmenuTriggerContext);
 }
 
@@ -56,8 +56,8 @@ export interface MenuStateContextValue<T> {
   rootMenuTriggerState?: RootMenuTriggerState
 }
 
-export const MenuStateContext = React.createContext<MenuStateContextValue<any>>(undefined);
+export const MenuStateContext = React.createContext<MenuStateContextValue<any> | undefined>(undefined);
 
-export function useMenuStateContext<T>(): MenuStateContextValue<T> {
+export function useMenuStateContext() {
   return useContext(MenuStateContext);
 }

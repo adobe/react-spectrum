@@ -24,9 +24,9 @@ export interface SubmenuTriggerState extends OverlayTriggerState {
   /** Whether the submenu is currently open. */
   isOpen: boolean,
   /** Controls which item will be auto focused when the submenu opens. */
-  focusStrategy: FocusStrategy | null,
+  focusStrategy?: FocusStrategy,
   /** Opens the submenu. */
-  open: (focusStrategy?: FocusStrategy | null) => void,
+  open: (focusStrategy?: FocusStrategy) => void,
   /** Closes the submenu. */
   close: () => void,
   /** Closes all menus and submenus in the menu tree. */
@@ -34,7 +34,7 @@ export interface SubmenuTriggerState extends OverlayTriggerState {
   /** The level of the submenu. */
   submenuLevel: number,
   /** Toggles the submenu. */
-  toggle: (focusStrategy?: FocusStrategy | null) => void,
+  toggle: (focusStrategy?: FocusStrategy) => void,
   /** @private */
   setOpen: () => void
 }
@@ -48,19 +48,19 @@ export function useSubmenuTriggerState(props: SubmenuTriggerProps, state: RootMe
   let {expandedKeysStack, openSubmenu, closeSubmenu, close: closeAll} = state;
   let [submenuLevel] = useState(expandedKeysStack?.length);
   let isOpen = useMemo(() => expandedKeysStack[submenuLevel] === triggerKey, [expandedKeysStack, triggerKey, submenuLevel]);
-  let [focusStrategy, setFocusStrategy] = useState<FocusStrategy>(null);
+  let [focusStrategy, setFocusStrategy] = useState<FocusStrategy | undefined>(undefined);
 
-  let open = useCallback((focusStrategy: FocusStrategy = null) => {
+  let open = useCallback((focusStrategy?: FocusStrategy) => {
     setFocusStrategy(focusStrategy);
     openSubmenu(triggerKey, submenuLevel);
   }, [openSubmenu, submenuLevel, triggerKey]);
 
   let close = useCallback(() => {
-    setFocusStrategy(null);
+    setFocusStrategy(undefined);
     closeSubmenu(triggerKey, submenuLevel);
   }, [closeSubmenu, submenuLevel, triggerKey]);
 
-  let toggle = useCallback((focusStrategy: FocusStrategy = null) => {
+  let toggle = useCallback((focusStrategy?: FocusStrategy) => {
     setFocusStrategy(focusStrategy);
     if (isOpen) {
       close();
