@@ -199,7 +199,7 @@ export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
     // TableLayout's buildCollection always sets the body width to the max width between the header width, but
     // we want the body to be sticky and only as wide as the table so it is always in view if loading/empty
     if (children?.length === 0) {
-      layoutInfo.rect.width = this.virtualizer.visibleRect.width - 80;
+      layoutInfo.rect.width = this.virtualizer!.visibleRect.width - 80;
     }
 
     return [
@@ -212,7 +212,7 @@ export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
     let layoutNode = super.buildLoader(node, x, y);
     let {layoutInfo} = layoutNode;
     layoutInfo.allowOverflow = true;
-    layoutInfo.rect.width = this.virtualizer.visibleRect.width;
+    layoutInfo.rect.width = this.virtualizer!.visibleRect.width;
     layoutInfo.isSticky = true;
     return layoutNode;
   }
@@ -224,7 +224,7 @@ export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
     layoutInfo.allowOverflow = true;
     // If loading or empty, we'll want the body to be sticky and centered
     if (children?.length === 0) {
-      layoutInfo.rect = new Rect(40, 40, this.virtualizer.visibleRect.width - 80, this.virtualizer.visibleRect.height - 80);
+      layoutInfo.rect = new Rect(40, 40, this.virtualizer!.visibleRect.width - 80, this.virtualizer!.visibleRect.height - 80);
       layoutInfo.isSticky = true;
     }
 
