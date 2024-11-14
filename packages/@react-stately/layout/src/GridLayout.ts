@@ -47,10 +47,10 @@ export class GridLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
   protected minSpace: Size;
   protected maxColumns: number;
   protected dropIndicatorThickness: number;
-  protected itemSize: Size;
-  protected numColumns: number;
-  protected horizontalSpacing: number;
-  protected layoutInfos: LayoutInfo[];
+  protected itemSize: Size = new Size();
+  protected numColumns: number = 0;
+  protected horizontalSpacing: number = 0;
+  protected layoutInfos: LayoutInfo[] = [];
 
   constructor(options: GridLayoutOptions) {
     super();
@@ -62,7 +62,7 @@ export class GridLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
   }
 
   update(): void {
-    let visibleWidth = this.virtualizer.visibleRect.width;
+    let visibleWidth = this.virtualizer!.visibleRect.width;
 
     // The max item width is always the entire viewport.
     // If the max item height is infinity, scale in proportion to the max width.
@@ -92,7 +92,7 @@ export class GridLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     this.horizontalSpacing = Math.floor((visibleWidth - this.numColumns * this.itemSize.width) / (this.numColumns + 1));
 
     this.layoutInfos = [];
-    for (let node of this.virtualizer.collection) {
+    for (let node of this.virtualizer!.collection) {
       this.layoutInfos.push(this.getLayoutInfoForNode(node));
     }
   }
@@ -102,8 +102,8 @@ export class GridLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     let lastVisibleItem = this.getIndexAtPoint(rect.maxX, rect.maxY);
     let result = this.layoutInfos.slice(firstVisibleItem, lastVisibleItem + 1);
     let persistedIndices: number[] = [];
-    for (let key of this.virtualizer.persistedKeys) {
-      let item = this.virtualizer.collection.getItem(key);
+    for (let key of this.virtualizer!.persistedKeys) {
+      let item = this.virtualizer!.collection.getItem(key);
       if (item?.index != null) {
         persistedIndices.push(item.index);
       }
@@ -127,14 +127,14 @@ export class GridLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     let itemWidth = this.itemSize.width + this.horizontalSpacing;
     return Math.max(0,
       Math.min(
-        this.virtualizer.collection.size - 1,
+        this.virtualizer!.collection.size - 1,
         Math.floor(y / itemHeight) * this.numColumns + Math.floor((x - this.horizontalSpacing) / itemWidth)
       )
     );
   }
 
   getLayoutInfo(key: Key): LayoutInfo | null {
-    let node = this.virtualizer.collection.getItem(key);
+    let node = this.virtualizer!.collection.getItem(key);
     return node ? this.layoutInfos[node.index] : null;
   }
 
@@ -149,9 +149,9 @@ export class GridLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
   }
 
   getContentSize(): Size {
-    let numRows = Math.ceil(this.virtualizer.collection.size / this.numColumns);
+    let numRows = Math.ceil(this.virtualizer!.collection.size / this.numColumns);
     let contentHeight = this.minSpace.height + numRows * (this.itemSize.height + this.minSpace.height);  
-    return new Size(this.virtualizer.visibleRect.width, contentHeight);
+    return new Size(this.virtualizer!.visibleRect.width, contentHeight);
   }
 
   getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget {
@@ -159,8 +159,8 @@ export class GridLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
       return {type: 'root'};
     }
 
-    x += this.virtualizer.visibleRect.x;
-    y += this.virtualizer.visibleRect.y;
+    x += this.virtualizer!.visibleRect.x;
+    y += this.virtualizer!.visibleRect.y;
     let index = this.getIndexAtPoint(x, y);
 
     let layoutInfo = this.layoutInfos[index];
@@ -195,7 +195,7 @@ export class GridLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
   }
 
   getDropTargetLayoutInfo(target: ItemDropTarget): LayoutInfo {
-    let layoutInfo = this.getLayoutInfo(target.key);
+    let layoutInfo = this.getLayoutInfo(target.key)!;
     let rect: Rect;
     if (this.numColumns === 1) {
       // Flip from vertical to horizontal if only one column is visible.
