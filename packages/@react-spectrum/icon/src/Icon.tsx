@@ -12,10 +12,10 @@
 
 import {AriaLabelingProps, DOMProps, IconColorValue, StyleProps} from '@react-types/shared';
 import {baseStyleProps, classNames, StyleHandlers, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {Context} from '@react-spectrum/provider';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {ReactElement, useContext} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
-import {Context} from '@react-spectrum/provider';
 
 export interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
   /**

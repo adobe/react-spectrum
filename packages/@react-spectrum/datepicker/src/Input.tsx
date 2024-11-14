@@ -15,12 +15,12 @@ import Checkmark from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, useValueEffect} from '@react-spectrum/utils';
 import datepickerStyles from './styles.css';
 import {mergeProps, mergeRefs, useEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
-import React, {useCallback, useRef} from 'react';
+import React, {ReactElement, useCallback, useRef} from 'react';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useFocusRing} from '@react-aria/focus';
 
 function Input(props, ref) {
-  let inputRef = useRef(null);
+  let inputRef = useRef<HTMLInputElement | null>(null);
   let {
     isDisabled,
     isQuiet,
@@ -38,7 +38,7 @@ function Input(props, ref) {
   // not cause a layout shift.
   let [reservePadding, setReservePadding] = useValueEffect(false);
   let onResize = useCallback(() => setReservePadding(function *(reservePadding) {
-    if (inputRef.current) {
+    if (inputRef.current && inputRef.current.parentElement) {
       if (reservePadding) {
         // Try to collapse padding if the content is clipped.
         if (inputRef.current.scrollWidth > inputRef.current.offsetWidth) {
@@ -114,7 +114,7 @@ function Input(props, ref) {
     'spectrum-Textfield-validationIcon'
   );
 
-  let validationIcon = null;
+  let validationIcon: ReactElement | null = null;
   if (validationState === 'invalid' && !isDisabled) {
     validationIcon = <Alert data-testid="invalid-icon" UNSAFE_className={iconClass} />;
   } else if (validationState === 'valid' && !isDisabled) {

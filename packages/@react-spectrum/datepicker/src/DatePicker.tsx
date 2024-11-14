@@ -50,7 +50,7 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
     pageBehavior
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
-  let targetRef = useRef<HTMLDivElement>(undefined);
+  let targetRef = useRef<HTMLDivElement | null>(null);
   let state = useDatePickerState({
     ...props,
     shouldCloseOnSelect: () => !state.hasTime
@@ -99,10 +99,10 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
   // The format help text is unnecessary for screen reader users because each segment already has a label.
   let description = useFormatHelpText(props);
   if (description && !props.description) {
-    descriptionProps.id = null;
+    descriptionProps.id = undefined;
   }
 
-  let placeholder: DateValue = placeholderValue;
+  let placeholder: DateValue | null | undefined = placeholderValue;
   let timePlaceholder = placeholder && 'hour' in placeholder ? placeholder : null;
   let timeMinValue = props.minValue && 'hour' in props.minValue ? props.minValue : null;
   let timeMaxValue = props.maxValue && 'hour' in props.maxValue ? props.maxValue : null;

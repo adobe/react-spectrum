@@ -12,7 +12,7 @@
 import {Calendar} from 'tailwind-starter/Calendar';
 import {DateField} from 'tailwind-starter/DateField';
 import {DateValue, I18nProvider, useLocale} from 'react-aria-components';
-import {getLocalTimeZone, now} from '@internationalized/date';
+import {getLocalTimeZone, now, ZonedDateTime} from '@internationalized/date';
 import {NumberField} from 'tailwind-starter/NumberField';
 import React from 'react';
 import {Select, SelectItem, SelectSection} from 'tailwind-starter/Select';
@@ -150,8 +150,8 @@ export function I18n() {
     numberingSystem = 'arab';
   }
 
-  let [date, setDate] = React.useState(() => now(getLocalTimeZone()));
-  let [focusedDate, setFocusedDate] = React.useState<DateValue>(date);
+  let [date, setDate] = React.useState<ZonedDateTime | null>(() => now(getLocalTimeZone()));
+  let [focusedDate, setFocusedDate] = React.useState<DateValue | null>(date);
   let [number, setNumber] = React.useState(1234);
   let updateNumberFormat = format => {
     setNumberFormat(format);
