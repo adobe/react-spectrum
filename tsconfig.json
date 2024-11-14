@@ -34,6 +34,11 @@
     ],
     "skipLibCheck": false,
     "strict": true,
+    "plugins": [
+      {
+        "name": "@react-spectrum/ts-plugin"
+      }
+    ],
     "paths": {
       "tailwind-starter/*": ["./starters/tailwind/src/*"]
     }
