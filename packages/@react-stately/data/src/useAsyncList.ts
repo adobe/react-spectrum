@@ -29,10 +29,10 @@ export interface AsyncListOptions<T, C> {
    * An optional function that performs sorting. If not provided,
    * then `sortDescriptor` is passed to the `load` function.
    */
-  sort?: AsyncListLoadFunction<T, C>
+  sort?: AsyncListLoadFunction<T, C, AsyncListLoadOptions<T, C> & {sortDescriptor: SortDescriptor}>
 }
 
-type AsyncListLoadFunction<T, C> = (state: AsyncListLoadOptions<T, C>) => AsyncListStateUpdate<T, C> | Promise<AsyncListStateUpdate<T, C>>;
+type AsyncListLoadFunction<T, C, S extends AsyncListLoadOptions<T, C> = AsyncListLoadOptions<T, C>> = (state: S) => AsyncListStateUpdate<T, C> | Promise<AsyncListStateUpdate<T, C>>;
 
 interface AsyncListLoadOptions<T, C> {
   /** The items currently in the list. */
@@ -345,7 +345,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
       dispatchFetch({type: 'loadingMore'}, load);
     },
     sort(sortDescriptor: SortDescriptor) {
-      dispatchFetch({type: 'sorting', sortDescriptor}, sort || load);
+      dispatchFetch({type: 'sorting', sortDescriptor}, (sort || load) as AsyncListLoadFunction<T, C>);
     },
     ...createListActions({...options, getKey, cursor: data.cursor}, fn => {
       dispatch({type: 'update', updater: fn});
