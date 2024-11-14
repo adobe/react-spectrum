@@ -16,7 +16,7 @@ import {BaseCollection, Collection, CollectionBuilder, createBranchComponent, cr
 import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {ContextValue, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
-import {filterDOMProps, useEffectEvent, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, mergeRefs, useEffectEvent, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {FocusStrategy, forwardRefType, HoverEvents, Key, LinkDOMProps, MultipleSelection} from '@react-types/shared';
 import {getItemId, useSubmenuTrigger} from '@react-aria/menu';
 import {HeaderContext} from './Header';
@@ -164,6 +164,11 @@ function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivEl
   );
 }
 
+// TODO: import these from somewhere common
+const CLEAR_FOCUS_EVENT = 'react-aria-autocomplete-clear-focus';
+const FOCUS_EVENT = 'react-aria-autocomplete-focus';
+const UPDATE_ACTIVEDESCENDANT = 'react-aria-autocomplete-update-activedescendant';
+
 interface MenuInnerProps<T> {
   props: MenuProps<T>,
   collection: BaseCollection<object>,
@@ -171,10 +176,11 @@ interface MenuInnerProps<T> {
 }
 
 function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
-  let {register, filterFn, inputValue, menuProps: autocompleteMenuProps} = useContext(InternalAutocompleteContext) || {};
+  let {filterFn, menuProps: autocompleteMenuProps, collectionRef} = useContext(InternalAutocompleteContext) || {};
   // TODO: Since menu only has `items` and not `defaultItems`, this means the user can't have completly controlled items like in ComboBox,
   // we always perform the filtering for them.
-  let {setFocusedNodeId} = useContext(AutocompleteStateContext) || {};
+  ref = useObjectRef(mergeRefs(ref, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null));
+  // let {setFocusedNodeId} = useContext(AutocompleteStateContext) || {};
   let filteredCollection = useMemo(() => filterFn ? collection.filter(filterFn) : collection, [collection, filterFn]);
   let state = useTreeState({
     ...props,
@@ -208,104 +214,160 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
     }
   }, [leftOffset, popoverContainer]);
 
-  let {id: menuId} = menuProps;
-  useEffect(() => {
-    if (register) {
-      register((e: ReactKeyboardEvent) => {
-        switch (e.key) {
-          case 'ArrowDown':
-          case 'ArrowUp':
-          case 'Home':
-          case 'End':
-          case 'PageDown':
-          case 'PageUp':
-            if (!state.selectionManager.isFocused) {
-              state.selectionManager.setFocused(true);
-            }
-            break;
-          case 'ArrowLeft':
-          case 'ArrowRight':
-            // TODO: will need to special case this so it doesn't clear the focused key if we are currently
-            // focused on a submenutrigger
-            if (state.selectionManager.isFocused) {
-              state.selectionManager.setFocused(false);
-              state.selectionManager.setFocusedKey(null);
-            }
-            break;
-          case ' ':
-          case 'Escape':
-            // If hitting Escape, don't dispatch any events since useAutocomplete will handle whether or not
-            // to continuePropagation to the overlay depending on the inputValue.
-            // Space shouldn't trigger onAction so early return.
-            return;
-        }
-
-        let focusedId;
-        if (state.selectionManager.focusedKey == null) {
-          // TODO: calling menuProps.onKeyDown as an alternative to this doesn't quite work because of the check we do to prevent events from bubbling down. Perhaps
-          // dispatch the event as well to the menu since I don't think we want tot change the check in useSelectableCollection
-          // since we wouldn't want events to bubble through to the table
-          ref.current?.dispatchEvent(
-            new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
-          );
-        } else {
-          // If there is a focused key, dispatch an event to the menu item in question. This allows us to excute any existing onAction or link navigations
-          // that would have happen in a non-virtual focus case.
-          focusedId = getItemId(state, state.selectionManager.focusedKey);
-          let item = ref.current?.querySelector(`#${CSS.escape(focusedId)}`);
-          item?.dispatchEvent(
-            new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
-          );
-        }
-        focusedId = state.selectionManager.focusedKey ? getItemId(state, state.selectionManager.focusedKey) : null;
-        return focusedId;
-      });
-    }
-  }, [register, state, menuId, ref]);
 
   let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  // Update the focused key to be the first item in the menu only if the input value changes (aka match spotlight/other implementations).
-  let focusFirstItem = useEffectEvent(() => {
-    // TODO: the below is pretty much what the listkeyboard delegate would do when finding the first key
-    state.selectionManager.setFocused(true);
-    let focusedNode = state.collection.getItem(state.selectionManager.focusedKey);
-    if (focusedNode == null || focusedNode.prevKey != null) {
-      let key = state.collection.getFirstKey();
-      while (key != null) {
-        let item = state.collection.getItem(key);
-        if (item?.type === 'item' && !state.selectionManager.isDisabled(key)) {
-          break;
+  let focusFirstItem = useEffectEvent((e) => {
+    if (e.detail.focusStrategy === 'first') {
+      e.stopPropagation();
+      state.selectionManager.setFocused(true);
+      // TODO: below can perhaps be moved into useSelectableCollection? Will need
+      let focusedNode = state.collection.getItem(state.selectionManager.focusedKey);
+      if (focusedNode == null || focusedNode.prevKey != null) {
+        let key = state.collection.getFirstKey();
+        while (key != null) {
+          let item = state.collection.getItem(key);
+          if (item?.type === 'item' && !state.selectionManager.isDisabled(key)) {
+            break;
+          }
+          key = state.collection.getKeyAfter(key);
         }
-        key = state.collection.getKeyAfter(key);
-      }
 
-      clearTimeout(timeout.current);
-      state.selectionManager.setFocusedKey(key);
-      timeout.current = setTimeout(() => {
-        setFocusedNodeId && setFocusedNodeId(key == null ? null : getItemId(state, key));
-      }, 500);
+        clearTimeout(timeout.current);
+        state.selectionManager.setFocusedKey(key);
+        timeout.current = setTimeout(() => {
+          // setFocusedNodeId && setFocusedNodeId(key == null ? null : getItemId(state, key));
+          let updateActiveDescendant = new CustomEvent(UPDATE_ACTIVEDESCENDANT, {
+            cancelable: true,
+            bubbles: true,
+            detail: {
+              id: getItemId(state, key)
+            }
+          });
+          console.log('dispatching updated active descendant', getItemId(state, key));
+          ref.current?.dispatchEvent(updateActiveDescendant);
+        }, 500);
+      }
     }
+
   });
 
-  let clearVirtualFocus = useEffectEvent(() => {
+  let clearVirtualFocus = useEffectEvent((e) => {
+    e.stopPropagation();
     state.selectionManager.setFocused(false);
     state.selectionManager.setFocusedKey(null);
-    setFocusedNodeId && setFocusedNodeId(null);
   });
 
-  let lastInputValue = useRef<string | null>(null);
   useEffect(() => {
-    // inputValue will always be at least "" if menu is in a Autocomplete, null is not an accepted value for inputValue
-    if (inputValue != null) {
-      if (lastInputValue.current != null && lastInputValue.current !== inputValue && lastInputValue.current?.length <= inputValue.length) {
-        focusFirstItem();
-      } else {
-        clearVirtualFocus();
-      }
+    let menu = ref.current;
+    menu.addEventListener(FOCUS_EVENT, focusFirstItem);
+    menu.addEventListener(CLEAR_FOCUS_EVENT, clearVirtualFocus);
 
-      lastInputValue.current = inputValue;
-    }
-  }, [inputValue, focusFirstItem, clearVirtualFocus]);
+    return () => {
+      menu?.removeEventListener(FOCUS_EVENT, focusFirstItem);
+      menu?.addEventListener(CLEAR_FOCUS_EVENT, clearVirtualFocus);
+    };
+  }, [ref, clearVirtualFocus, focusFirstItem]);
+
+
+
+  let {id: menuId} = menuProps;
+  // useEffect(() => {
+  //   if (register) {
+  //     register((e: ReactKeyboardEvent) => {
+  //       switch (e.key) {
+  //         case 'ArrowDown':
+  //         case 'ArrowUp':
+  //         case 'Home':
+  //         case 'End':
+  //         case 'PageDown':
+  //         case 'PageUp':
+  //           if (!state.selectionManager.isFocused) {
+  //             state.selectionManager.setFocused(true);
+  //           }
+  //           break;
+  //         case 'ArrowLeft':
+  //         case 'ArrowRight':
+  //           // TODO: will need to special case this so it doesn't clear the focused key if we are currently
+  //           // focused on a submenutrigger
+  //           if (state.selectionManager.isFocused) {
+  //             state.selectionManager.setFocused(false);
+  //             state.selectionManager.setFocusedKey(null);
+  //           }
+  //           break;
+  //         case ' ':
+  //         case 'Escape':
+  //           // If hitting Escape, don't dispatch any events since useAutocomplete will handle whether or not
+  //           // to continuePropagation to the overlay depending on the inputValue.
+  //           // Space shouldn't trigger onAction so early return.
+  //           return;
+  //       }
+
+  //       let focusedId;
+  //       if (state.selectionManager.focusedKey == null) {
+  //         // TODO: calling menuProps.onKeyDown as an alternative to this doesn't quite work because of the check we do to prevent events from bubbling down. Perhaps
+  //         // dispatch the event as well to the menu since I don't think we want tot change the check in useSelectableCollection
+  //         // since we wouldn't want events to bubble through to the table
+  //         ref.current?.dispatchEvent(
+  //           new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
+  //         );
+  //       } else {
+  //         // If there is a focused key, dispatch an event to the menu item in question. This allows us to excute any existing onAction or link navigations
+  //         // that would have happen in a non-virtual focus case.
+  //         focusedId = getItemId(state, state.selectionManager.focusedKey);
+  //         let item = ref.current?.querySelector(`#${CSS.escape(focusedId)}`);
+  //         item?.dispatchEvent(
+  //           new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
+  //         );
+  //       }
+  //       focusedId = state.selectionManager.focusedKey ? getItemId(state, state.selectionManager.focusedKey) : null;
+  //       return focusedId;
+  //     });
+  //   }
+  // }, [register, state, menuId, ref]);
+
+  // let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  // // Update the focused key to be the first item in the menu only if the input value changes (aka match spotlight/other implementations).
+  // let focusFirstItem = useEffectEvent(() => {
+  //   // TODO: the below is pretty much what the listkeyboard delegate would do when finding the first key
+  //   state.selectionManager.setFocused(true);
+  //   let focusedNode = state.collection.getItem(state.selectionManager.focusedKey);
+  //   if (focusedNode == null || focusedNode.prevKey != null) {
+  //     let key = state.collection.getFirstKey();
+  //     while (key != null) {
+  //       let item = state.collection.getItem(key);
+  //       if (item?.type === 'item' && !state.selectionManager.isDisabled(key)) {
+  //         break;
+  //       }
+  //       key = state.collection.getKeyAfter(key);
+  //     }
+
+  //     clearTimeout(timeout.current);
+  //     state.selectionManager.setFocusedKey(key);
+  //     timeout.current = setTimeout(() => {
+  //       setFocusedNodeId && setFocusedNodeId(key == null ? null : getItemId(state, key));
+  //     }, 500);
+  //   }
+  // });
+
+  // let clearVirtualFocus = useEffectEvent(() => {
+  //   state.selectionManager.setFocused(false);
+  //   state.selectionManager.setFocusedKey(null);
+  //   setFocusedNodeId && setFocusedNodeId(null);
+  // });
+
+  // let lastInputValue = useRef<string | null>(null);
+  // useEffect(() => {
+  //   // inputValue will always be at least "" if menu is in a Autocomplete, null is not an accepted value for inputValue
+  //   if (inputValue != null) {
+  //     if (lastInputValue.current != null && lastInputValue.current !== inputValue && lastInputValue.current?.length <= inputValue.length) {
+  //       focusFirstItem();
+  //     } else {
+  //       clearVirtualFocus();
+  //     }
+
+  //     lastInputValue.current = inputValue;
+  //   }
+  // }, [inputValue, focusFirstItem, clearVirtualFocus]);
 
   let renderProps = useRenderProps({
     defaultClassName: 'react-aria-Menu',
