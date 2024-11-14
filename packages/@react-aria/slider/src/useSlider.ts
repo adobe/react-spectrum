@@ -108,7 +108,7 @@ export function useSlider<T extends number | number[]>(
   });
 
   let currentPointer = useRef<number | null | undefined>(undefined);
-  let onDownTrack = (e: React.UIEvent, id: number, clientX: number, clientY: number) => {
+  let onDownTrack = (e: React.UIEvent, id: number | undefined, clientX: number, clientY: number) => {
     // We only trigger track-dragging if the user clicks on the track itself and nothing is currently being dragged.
     if (trackRef.current && !props.isDisabled && state.values.every((_, i) => !state.isThumbDragging(i))) {
       let {height, width, top, left} = trackRef.current.getBoundingClientRect();
