@@ -11,7 +11,7 @@
  */
 
 import {DOMProps, FocusStrategy, HoverEvents, KeyboardEvents, PressEvents, RefObject} from '@react-types/shared';
-import React, {HTMLAttributes, MutableRefObject, useContext} from 'react';
+import React, {HTMLAttributes, MutableRefObject, Ref, useContext} from 'react';
 import {RootMenuTriggerState} from '@react-stately/menu';
 import {TreeState} from '@react-stately/tree';
 
@@ -20,7 +20,7 @@ export interface MenuContextValue extends Omit<HTMLAttributes<HTMLElement>, 'aut
   closeOnSelect?: boolean,
   shouldFocusWrap?: boolean,
   autoFocus?: boolean | FocusStrategy,
-  ref?: MutableRefObject<HTMLDivElement>,
+  ref?: RefObject<HTMLDivElement | null>,
   state?: RootMenuTriggerState,
   onBackButtonPress?: () => void,
   submenuLevel?: number
@@ -34,7 +34,7 @@ export function useMenuContext(): MenuContextValue {
 
 export interface SubmenuTriggerContextValue extends DOMProps, Pick<PressEvents, 'onPressStart' | 'onPress'>, Pick<HoverEvents, 'onHoverChange'>, Pick<KeyboardEvents, 'onKeyDown'> {
   isUnavailable?: boolean,
-  triggerRef?: MutableRefObject<HTMLElement>,
+  triggerRef?: RefObject<HTMLElement | null>,
   'aria-expanded'?: boolean | 'true' | 'false',
   'aria-controls'?: string,
   'aria-haspopup'?: 'dialog' | 'menu',
@@ -48,11 +48,11 @@ export function useSubmenuTriggerContext() {
 }
 
 export interface MenuStateContextValue<T> {
-  state?: TreeState<T>,
-  popoverContainer?: HTMLElement,
-  trayContainerRef?: RefObject<HTMLElement | null>,
-  menu?: RefObject<HTMLDivElement | null>,
-  submenu?: RefObject<HTMLDivElement | null>,
+  state: TreeState<T>,
+  popoverContainer: HTMLElement | null,
+  trayContainerRef: RefObject<HTMLElement | null>,
+  menu: RefObject<HTMLDivElement | null>,
+  submenu: RefObject<HTMLDivElement | null>,
   rootMenuTriggerState?: RootMenuTriggerState
 }
 

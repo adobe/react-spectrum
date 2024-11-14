@@ -12,7 +12,7 @@
 
 import {classNames, SlotProvider, useDOMRef, useIsMobileDevice} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {MenuContext} from './context';
+import {MenuContext, MenuContextValue} from './context';
 import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder} from '@react-aria/interactions';
@@ -23,10 +23,10 @@ import {useMenuTrigger} from '@react-aria/menu';
 import {useMenuTriggerState} from '@react-stately/menu';
 
 function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) {
-  let triggerRef = useRef<HTMLElement>(undefined);
+  let triggerRef = useRef<HTMLElement>(null);
   let domRef = useDOMRef(ref);
   let menuTriggerRef = domRef || triggerRef;
-  let menuRef = useRef<HTMLDivElement>(undefined);
+  let menuRef = useRef<HTMLDivElement>(null);
   let {
     children,
     align = 'start',

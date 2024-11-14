@@ -42,8 +42,8 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
 
   let triggerRef = useRef<HTMLLIElement>(null);
   let popoverRef = useRef(null);
-  let {popoverContainer, trayContainerRef, rootMenuTriggerState, menu: parentMenuRef, state} = useMenuStateContext();
-  let submenuTriggerState = useSubmenuTriggerState({triggerKey: targetKey}, {...rootMenuTriggerState, ...state});
+  let {popoverContainer, trayContainerRef, rootMenuTriggerState, menu: parentMenuRef, state} = useMenuStateContext()!;
+  let submenuTriggerState = useSubmenuTriggerState({triggerKey: targetKey}, {...rootMenuTriggerState!, ...state});
   let submenuRef = unwrapDOMRef(popoverRef);
   let {submenuTriggerProps, popoverProps} = useSubmenuTrigger({
     parentMenuRef,
@@ -85,7 +85,8 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   let [, content] = props.children as [ReactElement, ReactElement];
 
   let onBlurWithin = (e) => {
-    if (e.relatedTarget && popoverRef.current && (!popoverRef?.current?.UNSAFE_getDOMNode()?.contains(e.relatedTarget) && !(e.relatedTarget === triggerRef.current && getInteractionModality() === 'pointer'))) {
+    // @ts-ignore - TODO refs strike again
+    if (e.relatedTarget && popoverRef.current && (!popoverRef.current.UNSAFE_getDOMNode().contains(e.relatedTarget) && !(e.relatedTarget === triggerRef.current && getInteractionModality() === 'pointer'))) {
       if (submenuTriggerState.isOpen) {
         submenuTriggerState.close();
       }
@@ -143,7 +144,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
         UNSAFE_className={classNames(styles, 'spectrum-Submenu-popover')}
         onDismissButtonPress={onDismissButtonPress}
         onBlurWithin={onBlurWithin}
-        container={popoverContainer}
+        container={popoverContainer!}
         state={submenuTriggerState}
         ref={popoverRef}
         triggerRef={triggerRef}
@@ -189,5 +190,5 @@ ContextualHelpTrigger.getCollectionNode = function* getCollectionNode<T>(props: 
   };
 };
 
-let _Item = ContextualHelpTrigger as (props: SpectrumMenuDialogTriggerProps) => JSX.Element;
+let _Item = ContextualHelpTrigger as unknown as (props: SpectrumMenuDialogTriggerProps) => JSX.Element;
 export {_Item as ContextualHelpTrigger};
