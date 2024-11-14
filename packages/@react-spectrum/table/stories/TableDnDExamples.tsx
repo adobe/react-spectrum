@@ -229,7 +229,7 @@ export function DragOntoRowExample(props) {
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
 
   let onMove = (keys: Key[], target: ItemDropTarget) => {
-    let folderItem = list.getItem(target.key);
+    let folderItem = list.getItem(target.key)!;
     let draggedItems = keys.map((key) => list.getItem(key));
     list.update(target.key, {...folderItem, childNodes: [...(folderItem.childNodes || []), ...draggedItems]});
     list.remove(...keys);
