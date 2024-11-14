@@ -64,10 +64,10 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let state = useSelectState(props);
   let domRef = useDOMRef(ref);
 
-  let popoverRef = useRef<DOMRefValue<HTMLDivElement>>(undefined);
-  let triggerRef = useRef<FocusableRefValue<HTMLElement>>(undefined);
+  let popoverRef = useRef<DOMRefValue<HTMLDivElement>>(null);
+  let triggerRef = useRef<FocusableRefValue<HTMLElement>>(null);
   let unwrappedTriggerRef = useUnwrapDOMRef(triggerRef);
-  let listboxRef = useRef(undefined);
+  let listboxRef = useRef(null);
 
   let isLoadingInitial = props.isLoading && state.collection.size === 0;
   let isLoadingMore = props.isLoading && state.collection.size > 0;
@@ -105,7 +105,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   );
 
   // Measure the width of the button to inform the width of the menu (below).
-  let [buttonWidth, setButtonWidth] = useState(null);
+  let [buttonWidth, setButtonWidth] = useState<number | undefined>(undefined);
   let {scale} = useProvider();
 
   let onResize = useCallback(() => {
@@ -133,7 +133,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     // If quiet, use the default width, otherwise match the width of the button. This can be overridden by the menuWidth prop.
     // Always have a minimum width of the button width. When quiet, there is an extra offset to add.
     // Not using style props for this because they don't support `calc`.
-    let width = isQuiet ? null : buttonWidth;
+    let width = isQuiet ? undefined : buttonWidth;
     let style = {
       width: menuWidth ? dimensionValue(menuWidth) : width,
       minWidth: isQuiet ? `calc(${buttonWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : buttonWidth
