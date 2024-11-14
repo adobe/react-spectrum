@@ -15,9 +15,9 @@ import React, {useRef} from 'react';
 import {useOverlayPosition} from '../';
 
 function Example({triggerTop = 250, ...props}) {
-  let targetRef = useRef(undefined);
-  let containerRef = useRef(undefined);
-  let overlayRef = useRef(undefined);
+  let targetRef = useRef(null);
+  let containerRef = useRef(null);
+  let overlayRef = useRef(null);
   let {overlayProps, placement, arrowProps} = useOverlayPosition({targetRef, overlayRef, arrowSize: 8, ...props});
   let style = {width: 300, height: 200, ...overlayProps.style};
   return (
@@ -213,7 +213,7 @@ describe('useOverlayPosition', function () {
 });
 
 describe('useOverlayPosition with positioned container', () => {
-  let stubs = [];
+  let stubs: jest.SpyInstance<any, any>[] = [];
   let realGetBoundingClientRect = window.HTMLElement.prototype.getBoundingClientRect;
   let realGetComputedStyle = window.getComputedStyle;
   beforeEach(() => {
@@ -222,6 +222,7 @@ describe('useOverlayPosition with positioned container', () => {
     stubs.push(
       jest.spyOn(window.HTMLElement.prototype, 'offsetParent', 'get').mockImplementation(function () {
         // Make sure container is is the offsetParent of overlay
+        // @ts-ignore
         if (this.attributes.getNamedItem('data-testid')?.value === 'overlay') {
           return document.querySelector('[data-testid="container"]');
         } else {
@@ -229,15 +230,20 @@ describe('useOverlayPosition with positioned container', () => {
         }
       }),
       jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+        // @ts-ignore
         if (this.attributes.getNamedItem('data-testid')?.value === 'container') {
           // Say, overlay is positioned somewhere
+          // @ts-ignore
+          let real = realGetBoundingClientRect.apply(this);
           return {
+            ...real,
             top: 150,
             left: 0,
             width: 400,
             height: 400
           };
         } else {
+          // @ts-ignore
           return realGetBoundingClientRect.apply(this);
         }
       }),
