@@ -218,7 +218,7 @@ export interface Node<T> {
   /** Additional properties specific to a particular node type. */
   props?: any,
   /** @private */
-  shouldInvalidate?: (context: unknown) => boolean,
+  shouldInvalidate?: (context: any) => boolean,
   /** A function that renders this node to a React Element in the DOM. */
   render?: (node: Node<any>) => ReactElement
 }

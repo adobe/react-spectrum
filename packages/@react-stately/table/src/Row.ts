@@ -12,10 +12,10 @@
 
 import {CollectionBuilderContext} from './useTableState';
 import {PartialNode} from '@react-stately/collections';
-import React, {JSX, ReactElement} from 'react';
+import React, {JSX} from 'react';
 import {RowProps} from '@react-types/table';
 
-function Row<T>(props: RowProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
+function Row<T>(props: RowProps<T>): JSX.Element | null { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;
 }
 

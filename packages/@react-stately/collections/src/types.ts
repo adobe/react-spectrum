@@ -27,5 +27,5 @@ export interface PartialNode<T> {
   hasChildNodes?: boolean,
   childNodes?: () => IterableIterator<PartialNode<T>>,
   props?: any,
-  shouldInvalidate?: (context: unknown) => boolean
+  shouldInvalidate?: (context: any) => boolean
 }

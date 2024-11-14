@@ -24,7 +24,7 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   /** Whether the row selection checkboxes should be displayed. */
   showSelectionCheckboxes: boolean,
   /** The current sorted column and direction. */
-  sortDescriptor: SortDescriptor,
+  sortDescriptor: SortDescriptor | null,
   /** Calls the provided onSortChange handler with the provided column key and sort direction. */
   sort(columnKey: Key, direction?: 'ascending' | 'descending'): void,
   /** Whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell. */
@@ -94,11 +94,11 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     disabledKeys,
     selectionManager,
     showSelectionCheckboxes: props.showSelectionCheckboxes || false,
-    sortDescriptor: props.sortDescriptor,
+    sortDescriptor: props.sortDescriptor ?? null,
     isKeyboardNavigationDisabled: collection.size === 0 || isKeyboardNavigationDisabled,
     setKeyboardNavigationDisabled,
     sort(columnKey: Key, direction?: 'ascending' | 'descending') {
-      props.onSortChange({
+      props.onSortChange?.({
         column: columnKey,
         direction: direction ?? (props.sortDescriptor?.column === columnKey
           ? OPPOSITE_SORT_DIRECTION[props.sortDescriptor.direction]
