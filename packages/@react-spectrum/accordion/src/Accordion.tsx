@@ -140,7 +140,7 @@ export {_Accordion as Accordion};
 const _Disclosure = forwardRef(Disclosure) as (props: SpectrumDisclosureProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof Disclosure>;
 export {_Disclosure as Disclosure};
 
-/** The panel that contains the content of an disclosure. */
+/** The panel that contains the content of the disclosure. */
 const _DisclosurePanel = forwardRef(DisclosurePanel) as (props: SpectrumDisclosurePanelProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof DisclosurePanel>;
 export {_DisclosurePanel as DisclosurePanel};
 
