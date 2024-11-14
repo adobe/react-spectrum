@@ -13,6 +13,7 @@
 import {Grid, repeat} from '@react-spectrum/layout';
 import React from 'react';
 import {View} from '@react-spectrum/view';
+import { BackgroundColorValue, Responsive as TResponsive } from '@react-types/shared';
 
 let baseColors = [
   'celery',
@@ -28,10 +29,10 @@ let baseColors = [
   'green',
   'blue'
 ];
-let colors = [];
+let colors: Array<TResponsive<BackgroundColorValue> | undefined> = [];
 for (let color of baseColors) {
   for (let i = 4; i <= 7; i++) {
-    colors.push(`${color}-${i}00`);
+    colors.push(`${color}-${i}00` as TResponsive<BackgroundColorValue>);
   }
 }
 
@@ -74,7 +75,7 @@ export const ImplicitGrid = () => (
     width="80%"
     gap="size-100">
     {colors.map((color) => (
-      <View key={color} backgroundColor={color} />
+      <View key={String(color)} backgroundColor={color} />
     ))}
   </Grid>
 );
@@ -95,7 +96,7 @@ export const Responsive = () => (
     width="80%"
     gap={{base: 'size-100', M: 'size-250', L: 'size-350'}}>
     {colors.map((color) => (
-      <View key={color} backgroundColor={color} />
+      <View key={String(color)} backgroundColor={color} />
     ))}
   </Grid>
 );
