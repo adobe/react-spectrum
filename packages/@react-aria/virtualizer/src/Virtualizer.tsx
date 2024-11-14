@@ -107,7 +107,7 @@ function defaultRenderWrapper<T extends object, V extends ReactNode>(
   return (
     <VirtualizerItem
       key={reusableView.key}
-      layoutInfo={reusableView.layoutInfo}
+      layoutInfo={reusableView.layoutInfo!}
       virtualizer={reusableView.virtualizer}
       parent={parent?.layoutInfo}>
       {reusableView.rendered}

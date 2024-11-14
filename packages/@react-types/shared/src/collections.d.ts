@@ -29,7 +29,7 @@ export interface ItemProps<T> extends LinkDOMProps {
   hasChildItems?: boolean
 }
 
-export type ItemElement<T> = ReactElement<ItemProps<T>>;
+export type ItemElement<T> = ReactElement<ItemProps<T>> | null;
 export type ItemRenderer<T> = (item: T) => ItemElement<T>;
 export type LoadingState = 'loading' | 'sorting' | 'loadingMore' | 'error' | 'idle' | 'filtering';
 
@@ -51,7 +51,7 @@ export interface SectionProps<T> {
   items?: Iterable<T>
 }
 
-export type SectionElement<T> = ReactElement<SectionProps<T>>;
+export type SectionElement<T> = ReactElement<SectionProps<T>> | null;
 
 export type CollectionElement<T> = SectionElement<T> | ItemElement<T>;
 export type CollectionChildren<T> = CollectionElement<T> | CollectionElement<T>[] | ((item: T) => CollectionElement<T>);
