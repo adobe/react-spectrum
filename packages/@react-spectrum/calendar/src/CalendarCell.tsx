@@ -27,7 +27,7 @@ interface CalendarCellProps extends AriaCalendarCellProps {
   firstDayOfWeek?: 0 | 1 | 2 | 3 | 4 | 5 | 6
 }
 
-export function CalendarCell({state, currentMonth, firstDayOfWeek, ...props}: CalendarCellProps) {
+export function CalendarCell({state, currentMonth, firstDayOfWeek = 0, ...props}: CalendarCellProps) {
   let ref = useRef<HTMLElement>(null);
   let {
     cellProps,
