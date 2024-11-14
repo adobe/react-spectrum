@@ -1355,8 +1355,7 @@ describe('Table', () => {
         );
       }
 
-      expect(() => render(<StaticRowDynamicCell />)).toThrow();
-      expect(consoleWarnSpy).toHaveBeenCalledWith('No id detected for the Row element. The Row element requires a id to be provided to it when the cells are rendered dynamically.');
+      expect(() => render(<StaticRowDynamicCell />)).toThrow('No id detected for the Row element. The Row element requires a id to be provided to it when the cells are rendered dynamically.');
     });
   });
 
