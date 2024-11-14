@@ -37,7 +37,7 @@ interface TreeNode<T extends object> {
 
 export interface TreeData<T extends object> {
   /** The root nodes in the tree. */
-  items: (TreeNode<T> | null)[],
+  items: TreeNode<T>[],
 
   /** The keys of the currently selected items in the tree. */
   selectedKeys: Set<Key>,
@@ -128,7 +128,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
   } = options;
 
   // We only want to compute this on initial render.
-  let [tree, setItems] = useState<{items: (TreeNode<T> | null)[], nodeMap: Map<Key, TreeNode<T>>}>(() => buildTree(initialItems, new Map()));
+  let [tree, setItems] = useState<{items: TreeNode<T>[], nodeMap: Map<Key, TreeNode<T>>}>(() => buildTree(initialItems, new Map()));
   let {items, nodeMap} = tree;
 
   let [selectedKeys, setSelectedKeys] = useState(new Set<Key>(initialSelectedKeys || []));
@@ -154,7 +154,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     };
   }
 
-  function updateTree(items: (TreeNode<T> | null)[], key: Key, update: (node: TreeNode<T>) => TreeNode<T> | null, originalMap: Map<Key, TreeNode<T>>) {
+  function updateTree(items: TreeNode<T>[], key: Key, update: (node: TreeNode<T>) => TreeNode<T> | null, originalMap: Map<Key, TreeNode<T>>) {
     let node = originalMap.get(key);
     if (!node) {
       return {items, nodeMap: originalMap};
@@ -206,7 +206,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     return {
       items: items.map(item => {
         if (item === node) {
-          return newNode;
+          return newNode!;
         }
 
         return item;
