@@ -93,7 +93,7 @@ const ROW_HEIGHTS = {
 };
 
 function useListLayout<T>(state: ListState<T>, density: SpectrumListViewProps<T>['density'], overflowMode: SpectrumListViewProps<T>['overflowMode']) {
-  let {scale} = useProvider();
+  let {scale} = useProvider()!;
   let layout = useMemo(() =>
     new ListViewLayout<T>({
       estimatedRowHeight: ROW_HEIGHTS[density || 'regular'][scale]

@@ -116,7 +116,7 @@ function ForwardSearchAutocompleteBase<T extends object>(props: SpectrumSearchAu
 
   // Measure the width of the inputfield to inform the width of the menu (below).
   let [menuWidth, setMenuWidth] = useState<number>(0);
-  let {scale} = useProvider();
+  let {scale} = useProvider()!;
 
   let onResize = useCallback(() => {
     if (inputRef.current) {

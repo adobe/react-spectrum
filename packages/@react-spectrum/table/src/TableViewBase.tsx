@@ -170,7 +170,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   }, [isTableDraggable, isTableDroppable, state]);
 
   let {styleProps} = useStyleProps(props);
-  let {scale} = useProvider();
+  let {scale} = useProvider()!;
 
   // Starts when the user selects resize from the menu, ends when resizing ends
   // used to control the visibility of the resizer Nubbin
@@ -201,7 +201,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
       : undefined
   }),
     // don't recompute when state.collection changes, only used for initial value
-     
+
     [props.overflowMode, scale, density]
   );
 
@@ -538,7 +538,7 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let onLoadMore = collection.body.props.onLoadMore;
   let [tableWidth, setTableWidth] = useState(0);
-  let {scale} = useProvider();
+  let {scale} = useProvider()!;
 
   const getDefaultWidth = useCallback(({props: {hideHeader, isSelectionCell, showDivider, isDragButtonCell}}: GridNode<T>): ColumnSize | null | undefined => {
     if (hideHeader) {
@@ -1178,7 +1178,7 @@ function TableRow({item, children, layoutInfo, parent, ...otherProps}: {item: Gr
   if (isTableDroppable && dragAndDropHooks && dropState) {
     let target = {type: 'item', key: item.key, dropPosition: 'on'} as DropTarget;
     isDropTarget = dropState.isDropTarget(target);
-     
+
     dropIndicator = dragAndDropHooks.useDropIndicator!({target}, dropState, dropIndicatorRef);
   }
 
@@ -1355,7 +1355,7 @@ function TableCheckboxCell({cell}) {
 }
 
 function TableCell({cell}) {
-  let {scale} = useProvider();
+  let {scale} = useProvider()!;
   let {state} = useTableContext();
   let isExpandableTable = 'expandedKeys' in state;
   let ref = useRef<HTMLDivElement | null>(null);

@@ -21,6 +21,7 @@ import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
 import {useBreakpoint} from '@react-spectrum/utils';
 import userEvent from '@testing-library/user-event';
+import { Breakpoints } from '@react-types/provider';
 
 let theme = {
   global: {},
@@ -254,9 +255,9 @@ describe('Provider', () => {
 
     it('only renders once for multiple resizes in the same range', function () {
       function Component(props) {
-        let {matchedBreakpoints} = useBreakpoint();
+        let {matchedBreakpoints} = useBreakpoint()!;
         let {onBreakpointChange, ...otherProps} = props;
-        let prevBreakpoint = useRef(null);
+        let prevBreakpoint = useRef<string>(null);
         let breakpoint = matchedBreakpoints[0];
         useLayoutEffect(() => {
           if (!Object.is(prevBreakpoint.current, breakpoint)) {

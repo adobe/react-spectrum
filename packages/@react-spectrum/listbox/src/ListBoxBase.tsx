@@ -49,7 +49,7 @@ interface ListBoxBaseProps<T> extends AriaListBoxOptions<T>, DOMProps, AriaLabel
 
 /** @private */
 export function useListBoxLayout<T>(): ListBoxLayout<T> {
-  let {scale} = useProvider();
+  let {scale} = useProvider()!;
   let layout = useMemo(() =>
     new ListBoxLayout<T>({
       estimatedRowHeight: scale === 'large' ? 48 : 32,

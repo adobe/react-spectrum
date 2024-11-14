@@ -32,7 +32,7 @@ interface StepButtonProps extends AriaButtonProps {
 
 function StepButton(props: StepButtonProps, ref: FocusableRef<HTMLDivElement>) {
   props = useProviderProps(props);
-  let {scale} = useProvider();
+  let {scale} = useProvider()!;
   let {direction, isDisabled, isQuiet} = props;
   let domRef = useFocusableRef(ref);
   /**

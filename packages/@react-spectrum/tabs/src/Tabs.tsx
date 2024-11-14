@@ -217,7 +217,7 @@ function TabLine(props: TabLineProps) {
   } = props;
 
   let {direction} = useLocale();
-  let {scale} = useProvider();
+  let {scale} = useProvider()!;
   let {tabLineState} = useContext(TabContext)!;
 
   let [style, setStyle] = useState<CSSProperties>({

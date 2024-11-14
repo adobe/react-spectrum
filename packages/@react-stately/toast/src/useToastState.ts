@@ -42,7 +42,7 @@ export interface QueuedToast<T> extends ToastOptions {
   /** A timer for the toast, if a timeout was set. */
   timer?: Timer,
   /** The current animation state for the toast. */
-  animation?: 'entering' | 'queued' | 'exiting'
+  animation?: 'entering' | 'queued' | 'exiting' | null
 }
 
 export interface ToastState<T> {

@@ -75,7 +75,7 @@ DarkLarge.parameters = {
 };
 
 export function AllStates() {
-  let {scale} = useProvider();
+  let {scale} = useProvider()!;
   let size = scale === 'medium' ? 40 : 50;
   return (
     <Grid columns={repeat(10, scale === 'medium' ? 100 : 120)}>

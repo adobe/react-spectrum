@@ -14,7 +14,7 @@ import {AriaToastRegionProps} from '@react-aria/toast';
 import {classNames} from '@react-spectrum/utils';
 import {DOMProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import React, {ReactElement, useEffect, useRef} from 'react';
+import React, {ReactElement, ReactNode, useEffect, useRef} from 'react';
 import {SpectrumToastValue, Toast} from './Toast';
 import toastContainerStyles from './toastContainer.css';
 import {Toaster} from './Toaster';
@@ -77,14 +77,14 @@ function useActiveToastContainer() {
  * A ToastContainer renders the queued toasts in an application. It should be placed
  * at the root of the app.
  */
-export function ToastContainer(props: SpectrumToastContainerProps): ReactElement {
+export function ToastContainer(props: SpectrumToastContainerProps): ReactNode {
   // Track all toast provider instances in a set.
   // Only the first one will actually render.
   // We use a ref to do this, since it will have a stable identity
   // over the lifetime of the component.
-  let ref = useRef(undefined);
+  let ref = useRef(null);
 
-   
+
   useEffect(() => {
     toastProviders.add(ref);
     triggerSubscriptions();
@@ -144,7 +144,7 @@ function addToast(children: string, variant: SpectrumToastValue['variant'], opti
 
     let shouldContinue = window.dispatchEvent(event);
     if (!shouldContinue) {
-      return;
+      return null;
     }
   }
 
@@ -160,7 +160,7 @@ function addToast(children: string, variant: SpectrumToastValue['variant'], opti
   // Minimum time of 5s from https://spectrum.adobe.com/page/toast/#Auto-dismissible
   // Actionable toasts cannot be auto dismissed. That would fail WCAG SC 2.2.1.
   // It is debatable whether non-actionable toasts would also fail.
-  let timeout = options.timeout && !options.onAction ? Math.max(options.timeout, 5000) : null;
+  let timeout = options.timeout && !options.onAction ? Math.max(options.timeout, 5000) : undefined;
   let queue = getGlobalToastQueue();
   let key = queue.add(value, {timeout, onClose: options.onClose});
   return () => queue.close(key);
@@ -168,19 +168,19 @@ function addToast(children: string, variant: SpectrumToastValue['variant'], opti
 
 const SpectrumToastQueue = {
   /** Queues a neutral toast. */
-  neutral(children: string, options: SpectrumToastOptions = {}): CloseFunction {
+  neutral(children: string, options: SpectrumToastOptions = {}): CloseFunction | null {
     return addToast(children, 'neutral', options);
   },
   /** Queues a positive toast. */
-  positive(children: string, options: SpectrumToastOptions = {}): CloseFunction {
+  positive(children: string, options: SpectrumToastOptions = {}): CloseFunction | null {
     return addToast(children, 'positive', options);
   },
   /** Queues a negative toast. */
-  negative(children: string, options: SpectrumToastOptions = {}): CloseFunction {
+  negative(children: string, options: SpectrumToastOptions = {}): CloseFunction | null {
     return addToast(children, 'negative', options);
   },
   /** Queues an informational toast. */
-  info(children: string, options: SpectrumToastOptions = {}): CloseFunction {
+  info(children: string, options: SpectrumToastOptions = {}): CloseFunction | null {
     return addToast(children, 'info', options);
   }
 };
