@@ -126,7 +126,7 @@ export function ExampleCustomFirstDay(props) {
   );
 }
 
-function ExampleFirstDayCalendarGrid({state, firstDayOfWeek}: {state: CalendarState | RangeCalendarState, firstDayOfWeek: 0 | 1 | 2 | 3 | 4 | 5 | 6}) {
+function ExampleFirstDayCalendarGrid({state, firstDayOfWeek}: {state: CalendarState | RangeCalendarState, firstDayOfWeek: number}) {
   let {locale} = useLocale();
   let {gridProps} = useCalendarGrid({firstDayOfWeek}, state);
   let startDate = state.visibleRange.start;

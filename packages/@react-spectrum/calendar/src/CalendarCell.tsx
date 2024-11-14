@@ -24,7 +24,7 @@ import {useLocale} from '@react-aria/i18n';
 interface CalendarCellProps extends AriaCalendarCellProps {
   state: CalendarState | RangeCalendarState,
   currentMonth: CalendarDate,
-  firstDayOfWeek?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  firstDayOfWeek?: number
 }
 
 export function CalendarCell({state, currentMonth, firstDayOfWeek = 0, ...props}: CalendarCellProps) {

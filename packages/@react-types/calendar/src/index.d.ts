@@ -67,7 +67,7 @@ export interface CalendarPropsBase {
    * The day that starts the week, 0-6 (Sunday-Saturday).
    * @default 0
    */
-  firstDayOfWeek?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  firstDayOfWeek?: number
 }
 
 export type DateRange = RangeValue<DateValue> | null;
