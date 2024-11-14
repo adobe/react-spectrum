@@ -11,10 +11,10 @@
  */
 
 import {CellProps} from '@react-types/table';
-import {JSX, ReactElement} from 'react';
+import {JSX} from 'react';
 import {PartialNode} from '@react-stately/collections';
 
-function Cell(props: CellProps): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
+function Cell(props: CellProps): JSX.Element | null { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;
 }
 

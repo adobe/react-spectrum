@@ -54,7 +54,7 @@ export class TableColumnLayout<T> {
       if (uncontrolledColumns.has(col.key)) {
         return [col.key, uncontrolledWidths.get(col.key)];
       } else {
-        return [col.key, controlledColumns.get(col.key).props.width];
+        return [col.key, controlledColumns.get(col.key)!.props.width];
       }
     }));
   }
@@ -91,7 +91,7 @@ export class TableColumnLayout<T> {
         freeze = false;
       } else if (freeze) {
         // freeze columns to the left to their previous pixel value
-        newWidths.set(column.key, prevColumnWidths.get(column.key));
+        newWidths.set(column.key, prevColumnWidths.get(column.key) ?? 0);
       } else {
         newWidths.set(column.key, column.props.width ?? uncontrolledWidths.get(column.key));
       }

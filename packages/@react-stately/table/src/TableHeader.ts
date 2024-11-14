@@ -12,10 +12,10 @@
 
 import {CollectionBuilderContext} from './useTableState';
 import {PartialNode} from '@react-stately/collections';
-import React, {JSX, ReactElement} from 'react';
+import React, {JSX} from 'react';
 import {TableHeaderProps} from '@react-types/table';
 
-function TableHeader<T>(props: TableHeaderProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
+function TableHeader<T>(props: TableHeaderProps<T>): JSX.Element | null { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;
 }
 
