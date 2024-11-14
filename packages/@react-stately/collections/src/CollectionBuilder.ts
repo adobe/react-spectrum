@@ -15,7 +15,7 @@ import {PartialNode} from './types';
 import React, {ReactElement} from 'react';
 
 interface CollectionBuilderState {
-  renderer?: (value: any) => ReactElement
+  renderer?: (value: any) => ReactElement | null
 }
 
 interface CollectReactElement<T> extends ReactElement {
@@ -75,7 +75,7 @@ export class CollectionBuilder<T extends object> {
     }
   }
 
-  private getKey(item: CollectionElement<T>, partialNode: PartialNode<T>, state: CollectionBuilderState, parentKey?: Key | null): Key {
+  private getKey(item: NonNullable<CollectionElement<T>>, partialNode: PartialNode<T>, state: CollectionBuilderState, parentKey?: Key | null): Key {
     if (item.key != null) {
       return item.key;
     }
@@ -157,7 +157,7 @@ export class CollectionBuilder<T extends object> {
 
         let nodeKey = childNode.key ?? null;
         if (nodeKey == null) {
-          nodeKey = childNode.element ? null : this.getKey(element as CollectionElement<T>, partialNode, state, parentKey);
+          nodeKey = childNode.element ? null : this.getKey(element as NonNullable<CollectionElement<T>>, partialNode, state, parentKey);
         }
 
         let nodes = this.getFullNode({

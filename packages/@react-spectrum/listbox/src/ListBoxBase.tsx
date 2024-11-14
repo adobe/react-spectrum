@@ -93,7 +93,7 @@ function ListBoxBase<T extends object>(props: ListBoxBaseProps<T>, ref: Forwarde
     return (
       <VirtualizerItem
         key={reusableView.key}
-        layoutInfo={reusableView.layoutInfo}
+        layoutInfo={reusableView.layoutInfo!}
         virtualizer={reusableView.virtualizer}
         parent={parent?.layoutInfo}>
         {reusableView.rendered}

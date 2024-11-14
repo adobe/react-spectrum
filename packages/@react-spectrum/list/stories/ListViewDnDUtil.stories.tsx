@@ -74,7 +74,7 @@ export const DragWithin: ListViewStory = {
   name: 'Drag within list (Reorder}'
 };
 
-let manyItems = [];
+let manyItems: {identifier: string, type: string, name: string}[] = [];
 for (let i = 0; i < 100; i++) {
   manyItems.push({identifier: 'item' + i, type: 'item', name: 'Item ' + i});
 }

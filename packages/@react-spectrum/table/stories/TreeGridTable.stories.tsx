@@ -162,7 +162,7 @@ export const UserSetRowHeader: TableStory = {
   }
 };
 
-let manyRows = [];
+let manyRows: Record<typeof columns[number]['key'], string>[] = [];
 function generateRow(lvlIndex, lvlLimit, rowIndex) {
   let row = {key: `Row ${rowIndex} Lvl ${lvlIndex}`};
   for (let col of columns) {
