@@ -5989,7 +5989,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/i18n@npm:^3.1.0, @react-aria/i18n@npm:^3.12.3, @react-aria/i18n@npm:^3.6.3, @react-aria/i18n@workspace:packages/@react-aria/i18n":
+"@react-aria/i18n@npm:^3.12.3, @react-aria/i18n@npm:^3.6.3, @react-aria/i18n@workspace:packages/@react-aria/i18n":
   version: 0.0.0-use.local
   resolution: "@react-aria/i18n@workspace:packages/@react-aria/i18n"
   dependencies:
@@ -6170,18 +6170,6 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
-  languageName: unknown
-  linkType: soft
-
-"@react-aria/pagination@npm:3.0.0-alpha.1, @react-aria/pagination@workspace:packages/@react-aria/pagination":
-  version: 0.0.0-use.local
-  resolution: "@react-aria/pagination@workspace:packages/@react-aria/pagination"
-  dependencies:
-    "@react-aria/i18n": "npm:^3.1.0"
-    "@react-stately/pagination": "npm:3.0.0-alpha.1"
-    "@swc/helpers": "npm:^0.5.0"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -7510,26 +7498,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/pagination@workspace:packages/@react-spectrum/pagination":
-  version: 0.0.0-use.local
-  resolution: "@react-spectrum/pagination@workspace:packages/@react-spectrum/pagination"
-  dependencies:
-    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
-    "@react-aria/i18n": "npm:^3.1.0"
-    "@react-aria/pagination": "npm:3.0.0-alpha.1"
-    "@react-spectrum/button": "npm:^3.1.0"
-    "@react-spectrum/textfield": "npm:^3.1.0"
-    "@react-spectrum/utils": "npm:^3.1.0"
-    "@react-stately/pagination": "npm:3.0.0-alpha.1"
-    "@react-types/pagination": "npm:3.0.0-alpha.1"
-    "@spectrum-icons/ui": "npm:^3.1.0"
-    "@swc/helpers": "npm:^0.5.0"
-  peerDependencies:
-    "@react-spectrum/provider": ^3.0.0
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
-  languageName: unknown
-  linkType: soft
-
 "@react-spectrum/parcel-transformer-s2-icon@npm:^0.1.2, @react-spectrum/parcel-transformer-s2-icon@workspace:packages/dev/parcel-transformer-s2-icon":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/parcel-transformer-s2-icon@workspace:packages/dev/parcel-transformer-s2-icon"
@@ -7970,7 +7938,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/textfield@npm:^3.1.0, @react-spectrum/textfield@npm:^3.12.6, @react-spectrum/textfield@workspace:packages/@react-spectrum/textfield":
+"@react-spectrum/textfield@npm:^3.12.6, @react-spectrum/textfield@workspace:packages/@react-spectrum/textfield":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/textfield@workspace:packages/@react-spectrum/textfield"
   dependencies:
@@ -8123,7 +8091,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/utils@npm:^3.1.0, @react-spectrum/utils@npm:^3.11.11, @react-spectrum/utils@npm:^3.8.1, @react-spectrum/utils@workspace:packages/@react-spectrum/utils":
+"@react-spectrum/utils@npm:^3.11.11, @react-spectrum/utils@npm:^3.8.1, @react-spectrum/utils@workspace:packages/@react-spectrum/utils":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/utils@workspace:packages/@react-spectrum/utils"
   dependencies:
@@ -8399,18 +8367,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-stately/pagination@npm:3.0.0-alpha.1, @react-stately/pagination@workspace:packages/@react-stately/pagination":
-  version: 0.0.0-use.local
-  resolution: "@react-stately/pagination@workspace:packages/@react-stately/pagination"
-  dependencies:
-    "@react-stately/utils": "npm:^3.1.0"
-    "@react-types/pagination": "npm:3.0.0-alpha.1"
-    "@swc/helpers": "npm:^0.5.0"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
-  languageName: unknown
-  linkType: soft
-
 "@react-stately/radio@npm:^3.10.8, @react-stately/radio@workspace:packages/@react-stately/radio":
   version: 0.0.0-use.local
   resolution: "@react-stately/radio@workspace:packages/@react-stately/radio"
@@ -8573,7 +8529,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-stately/utils@npm:^3.1.0, @react-stately/utils@npm:^3.10.4, @react-stately/utils@workspace:packages/@react-stately/utils":
+"@react-stately/utils@npm:^3.10.4, @react-stately/utils@workspace:packages/@react-stately/utils":
   version: 0.0.0-use.local
   resolution: "@react-stately/utils@workspace:packages/@react-stately/utils"
   dependencies:
@@ -8916,16 +8872,6 @@ __metadata:
   resolution: "@react-types/overlays@workspace:packages/@react-types/overlays"
   dependencies:
     "@react-types/shared": "npm:^3.25.0"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
-  languageName: unknown
-  linkType: soft
-
-"@react-types/pagination@npm:3.0.0-alpha.1, @react-types/pagination@workspace:packages/@react-types/pagination":
-  version: 0.0.0-use.local
-  resolution: "@react-types/pagination@workspace:packages/@react-types/pagination"
-  dependencies:
-    "@react-types/shared": "npm:^3.1.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
