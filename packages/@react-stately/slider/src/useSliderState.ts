@@ -176,14 +176,14 @@ export function useSliderState<T extends number | number[]>(props: SliderStateOp
     return Math.max(calcPageSize, step);
   }, [step, maxValue, minValue]);
 
-  let restrictValues = useCallback((values: number[]) => values?.map((val, idx) => {
+  let restrictValues = useCallback((values: number[] | undefined) => values?.map((val, idx) => {
     let min = idx === 0 ? minValue : values[idx - 1];
     let max = idx === values.length - 1 ? maxValue : values[idx + 1];
     return snapValueToStep(val, min, max, step);
   }), [minValue, maxValue, step]);
 
   let value = useMemo(() => restrictValues(convertValue(props.value)), [props.value]);
-  let defaultValue = useMemo(() => restrictValues(convertValue(props.defaultValue) ?? [minValue]), [props.defaultValue, minValue]);
+  let defaultValue = useMemo(() => restrictValues(convertValue(props.defaultValue) ?? [minValue])!, [props.defaultValue, minValue]);
   let onChange = createOnChange(props.value, props.defaultValue, props.onChange);
   let onChangeEnd = createOnChange(props.value, props.defaultValue, props.onChangeEnd);
 
@@ -321,7 +321,7 @@ function replaceIndex<T>(array: T[], index: number, value: T) {
   return [...array.slice(0, index), value, ...array.slice(index + 1)];
 }
 
-function convertValue(value: number | number[]) {
+function convertValue(value?: number | number[]) {
   if (value == null) {
     return undefined;
   }
