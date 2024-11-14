@@ -121,7 +121,8 @@ export function I18n() {
   }, [langDisplay, regionDisplay]);
 
   let pref = preferences.find(p => p.value === locale);
-  let preferredCalendars = React.useMemo(() => pref ? (pref.ordering || 'gregory').split(' ').map(p => calendars.find(c => c.key === p)).filter(Boolean) : [calendars[0]], [pref]);
+  // @ts-ignore there cannot be any undefined values in the array
+  let preferredCalendars: Array<{key: string, name: string}> = React.useMemo(() => pref ? (pref.ordering || 'gregory').split(' ').map(p => calendars.find(c => c.key === p)).filter(Boolean) : [calendars[0]], [pref]);
   let otherCalendars = React.useMemo(() => calendars.filter(c => !preferredCalendars.some(p => p?.key === c.key)), [preferredCalendars]);
 
   let updateLocale = locale => {
@@ -176,10 +177,10 @@ export function I18n() {
         </Select>
         <Select label="Calendar" selectedKey={calendar} onSelectionChange={updateCalendar}>
           <SelectSection title="Preferred" items={preferredCalendars}>
-            {item => <SelectItem>{item.name}</SelectItem>}
+            {(item: { key: string, name: string }) => <SelectItem>{item.name}</SelectItem>}
           </SelectSection>
           <SelectSection title="Other" items={otherCalendars}>
-            {item => <SelectItem>{item.name}</SelectItem>}
+            {(item: { key: string, name: string }) => <SelectItem>{item.name}</SelectItem>}
           </SelectSection>
         </Select>
         <Select label="Numbering System" selectedKey={numberingSystem} onSelectionChange={setNumberingSystem}>
