@@ -11,7 +11,7 @@
  */
 
 import {DOMProps, FocusStrategy, HoverEvents, KeyboardEvents, PressEvents, RefObject} from '@react-types/shared';
-import React, {HTMLAttributes, MutableRefObject, Ref, useContext} from 'react';
+import React, {HTMLAttributes, useContext} from 'react';
 import {RootMenuTriggerState} from '@react-stately/menu';
 import {TreeState} from '@react-stately/tree';
 

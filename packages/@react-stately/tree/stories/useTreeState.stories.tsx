@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Item} from '@react-stately/collections';
 import {Collection, Key, Node} from '@react-types/shared';
+import {Item} from '@react-stately/collections';
 import React, {useMemo, useRef} from 'react';
 import {TreeCollection} from '../src/TreeCollection';
 import {usePress} from '@react-aria/interactions';

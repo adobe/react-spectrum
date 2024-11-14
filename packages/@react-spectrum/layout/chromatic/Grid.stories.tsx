@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {BackgroundColorValue, Responsive} from '@react-types/shared';
 import {Grid, repeat} from '@react-spectrum/layout';
 import React from 'react';
 import {View} from '@react-spectrum/view';
-import { BackgroundColorValue, Responsive } from '@react-types/shared';
 
 let baseColors = [
   'celery',

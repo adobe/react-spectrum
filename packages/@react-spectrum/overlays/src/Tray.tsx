@@ -17,7 +17,7 @@ import {Overlay} from './Overlay';
 import {OverlayProps} from '@react-types/overlays';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import overrideStyles from './overlays.css';
-import React, {ForwardedRef, forwardRef, MutableRefObject, ReactNode, useRef} from 'react';
+import React, {ForwardedRef, forwardRef, ReactNode, useRef} from 'react';
 import trayStyles from '@adobe/spectrum-css-temp/components/tray/vars.css';
 import {Underlay} from './Underlay';
 import {useObjectRef, useViewportSize} from '@react-aria/utils';

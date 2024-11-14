@@ -18,7 +18,7 @@ import {Overlay} from './Overlay';
 import {OverlayProps} from '@react-types/overlays';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import overrideStyles from './overlays.css';
-import React, {ForwardedRef, forwardRef, MutableRefObject, ReactNode, useRef} from 'react';
+import React, {ForwardedRef, forwardRef, ReactNode, useRef} from 'react';
 import {Underlay} from './Underlay';
 import {useObjectRef, useViewportSize} from '@react-aria/utils';
 
@@ -53,7 +53,7 @@ let typeMap = {
   fullscreenTakeover: 'fullscreenTakeover'
 };
 
-let _ModalWrapper = (props: ModalWrapperProps, ref: ForwardedRef<HTMLDivElement | null>) => {
+let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: ForwardedRef<HTMLDivElement | null>) {
   let {type, children, state, isOpen, wrapperRef} = props;
   let typeVariant = type != null ? typeMap[type] : undefined;
   let {styleProps} = useStyleProps(props);
@@ -106,8 +106,7 @@ let _ModalWrapper = (props: ModalWrapperProps, ref: ForwardedRef<HTMLDivElement 
       </div>
     </div>
   );
-};
-let ModalWrapper = forwardRef(_ModalWrapper);
+});
 
 let _Modal = forwardRef(Modal);
 export {_Modal as Modal};

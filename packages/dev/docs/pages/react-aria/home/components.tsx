@@ -11,7 +11,6 @@
  */
 import {ArrowRight} from 'lucide-react';
 import React, {ForwardedRef, HTMLAttributes, ReactNode} from 'react';
-import {RefObject} from '@react-types/shared';
 
 export function Window({children, className = '', isBackground = false, toolbar}) {
   return (

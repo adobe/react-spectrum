@@ -14,14 +14,14 @@ import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-int
 import {ActionButton, Button} from '@react-spectrum/button';
 import {Checkbox} from '@react-spectrum/checkbox';
 import MatchMediaMock from 'jest-matchmedia-mock';
+
 import {Provider} from '../';
-// eslint-disable-next-line rulesdir/useLayoutEffectRule
-import React, {useLayoutEffect, useRef} from 'react';
+import React, {useRef} from 'react';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
 import {useBreakpoint} from '@react-spectrum/utils';
+import {useLayoutEffect} from '@react-aria/utils';
 import userEvent from '@testing-library/user-event';
-import { Breakpoints } from '@react-types/provider';
 
 let theme = {
   global: {},

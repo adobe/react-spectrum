@@ -13,7 +13,7 @@
 import {clamp} from '@react-aria/utils';
 import {classNames} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
-import React, { ReactNode } from 'react';
+import React, {ReactNode} from 'react';
 import {SliderBase, SliderBaseChildArguments, SliderBaseProps} from './SliderBase';
 import {SliderThumb} from './SliderThumb';
 import {SpectrumSliderProps} from '@react-types/slider';

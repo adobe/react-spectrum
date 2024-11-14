@@ -14,7 +14,7 @@ import {AriaToastRegionProps} from '@react-aria/toast';
 import {classNames} from '@react-spectrum/utils';
 import {DOMProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import React, {ReactElement, ReactNode, useEffect, useRef} from 'react';
+import React, {ReactNode, useEffect, useRef} from 'react';
 import {SpectrumToastValue, Toast} from './Toast';
 import toastContainerStyles from './toastContainer.css';
 import {Toaster} from './Toaster';

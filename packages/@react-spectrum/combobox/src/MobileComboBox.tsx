@@ -15,13 +15,13 @@ import {AriaButtonProps} from '@react-types/button';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {classNames, unwrapDOMRef, useDOMRef, useFocusableRef} from '@react-spectrum/utils';
+import {classNames, unwrapDOMRef, useFocusableRef} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import {ComboBoxState, useComboBoxState} from '@react-stately/combobox';
 import comboboxStyles from './combobox.css';
 import {DismissButton, useOverlayTrigger} from '@react-aria/overlays';
 import {Field} from '@react-spectrum/label';
-import {FocusableRef, FocusableRefValue, RefObject, ValidationState} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue, ValidationState} from '@react-types/shared';
 import {FocusRing, focusSafely, FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -166,7 +166,7 @@ interface ComboBoxButtonProps extends AriaButtonProps {
   className?: string
 }
 
-function _ComboBoxButton(props: ComboBoxButtonProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxButtonProps, ref: ForwardedRef<HTMLDivElement>) {
   let {
     isQuiet,
     isDisabled,
@@ -306,9 +306,7 @@ function _ComboBoxButton(props: ComboBoxButtonProps, ref: ForwardedRef<HTMLDivEl
       </div>
     </FocusRing>)
   );
-};
-
-const ComboBoxButton = React.forwardRef(_ComboBoxButton);
+});
 
 interface ComboBoxTrayProps extends SpectrumComboBoxProps<any> {
   state: ComboBoxState<any>,

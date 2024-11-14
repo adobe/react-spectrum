@@ -12,7 +12,7 @@
 
 import {classNames, SlotProvider, useDOMRef, useIsMobileDevice} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {MenuContext, MenuContextValue} from './context';
+import {MenuContext} from './context';
 import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder} from '@react-aria/interactions';
