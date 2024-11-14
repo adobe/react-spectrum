@@ -54,7 +54,7 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
 
   // Measure the width of the field to inform the width of the menu.
   let [menuWidth, setMenuWidth] = useState<number | null>(null);
-  let {scale} = useProvider()!;
+  let {scale} = useProvider();
 
   let onResize = useCallback(() => {
     let shouldUseGroup = !!label;

@@ -34,7 +34,7 @@ import {version} from '../package.json';
 const DEFAULT_BREAKPOINTS = {S: 640, M: 768, L: 1024, XL: 1280, XXL: 1536};
 
 function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
-  let prevContext = useProvider();
+  let prevContext = useContext(Context);
   let prevColorScheme = prevContext && prevContext.colorScheme;
   let prevBreakpoints = prevContext && prevContext.breakpoints;
   let {
@@ -133,7 +133,7 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: Provide
     ...otherProps
   } = props;
   let {locale, direction} = useLocale();
-  let {theme, colorScheme, scale} = useProvider()!;
+  let {theme, colorScheme, scale} = useProvider();
   let {modalProviderProps} = useModalProvider();
   let {styleProps} = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
@@ -196,11 +196,15 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: Provide
  * Properties explicitly set by the nearest parent Provider override those provided by preceeding Providers.
  */
 export function useProvider() {
-  return useContext(Context);
+  let context = useContext(Context);
+  if (!context) {
+    throw new Error('No root provider found.');
+  }
+  return context;
 }
 
 export function useProviderProps<T>(props: T) : T {
-  let context = useProvider();
+  let context = useContext(Context);
   if (!context) {
     return props;
   }

@@ -31,7 +31,7 @@ import {useProvider, useProviderProps} from '@react-spectrum/provider';
 function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
-  let provider = useProvider()!;
+  let provider = useProvider();
   let {
     isQuiet,
     isReadOnly,

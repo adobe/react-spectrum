@@ -126,7 +126,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase(props: SpectrumCombo
 
   // Measure the width of the inputfield and the button to inform the width of the menu (below).
   let [menuWidth, setMenuWidth] = useState<number | undefined>(undefined);
-  let {scale} = useProvider()!;
+  let {scale} = useProvider();
 
   let onResize = useCallback(() => {
     if (unwrappedButtonRef.current && inputRef.current) {

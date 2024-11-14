@@ -26,7 +26,7 @@ import {SpectrumButtonGroupProps} from '@react-types/buttongroup';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
 
 function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
-  let {scale} = useProvider()!;
+  let {scale} = useProvider();
   props = useProviderProps(props);
   props = useSlotProps(props, 'buttonGroup');
 

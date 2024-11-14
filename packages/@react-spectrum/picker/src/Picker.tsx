@@ -106,7 +106,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
 
   // Measure the width of the button to inform the width of the menu (below).
   let [buttonWidth, setButtonWidth] = useState<number | undefined>(undefined);
-  let {scale} = useProvider()!;
+  let {scale} = useProvider();
 
   let onResize = useCallback(() => {
     if (!isMobile && unwrappedTriggerRef.current) {
