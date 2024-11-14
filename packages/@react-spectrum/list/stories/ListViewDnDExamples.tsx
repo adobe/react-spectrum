@@ -197,7 +197,7 @@ export function DragIntoItemExample(props) {
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
 
   let onMove = (keys: Key[], target: ItemDropTarget) => {
-    let folderItem = list.getItem(target.key);
+    let folderItem = list.getItem(target.key)!;
     let draggedItems = keys.map((key) => list.getItem(key));
     list.update(target.key, {...folderItem, childNodes: [...(folderItem.childNodes || []), ...draggedItems]});
     list.remove(...keys);
@@ -243,7 +243,7 @@ export function DragIntoItemExample(props) {
       }
     },
     getDropOperation(target) {
-      if (target.type === 'root' || target.dropPosition !== 'on' || !list.getItem(target.key).childNodes || disabledKeys.includes(target.key)) {
+      if (target.type === 'root' || target.dropPosition !== 'on' || !list.getItem(target.key)!.childNodes || disabledKeys.includes(target.key)) {
         return 'cancel';
       }
 
