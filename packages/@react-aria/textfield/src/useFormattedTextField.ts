@@ -25,7 +25,6 @@ interface FormattedTextFieldState {
 function supportsNativeBeforeInputEvent() {
   return typeof window !== 'undefined' &&
     window.InputEvent &&
-    // @ts-ignore
     typeof InputEvent.prototype.getTargetRanges === 'function';
 }
 

@@ -258,6 +258,7 @@ function addEvent<K extends keyof GlobalEventHandlersEventMap>(
   handler: (this: Document | Window, ev: GlobalEventHandlersEventMap[K]) => any,
   options?: boolean | AddEventListenerOptions
 ) {
+  // internal function, so it's ok to ignore the difficult to fix type error
   // @ts-ignore
   target.addEventListener(event, handler, options);
   return () => {

@@ -1455,7 +1455,6 @@ describe('TableView with expandable rows', function () {
         checkSelection(onSelectionChange, ['Row 1 Lvl 3']);
         expect(onAction).not.toHaveBeenCalled();
         onSelectionChange.mockReset();
-        // @ts-ignore
         await user.dblClick(cell);
         act(() => jest.runAllTimers());
         expect(announce).toHaveBeenCalledTimes(1);

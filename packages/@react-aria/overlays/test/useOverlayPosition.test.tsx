@@ -33,9 +33,11 @@ function Example({triggerTop = 250, ...props}) {
   );
 }
 
-// @ts-ignore
+let original = window.HTMLElement.prototype.getBoundingClientRect;
 HTMLElement.prototype.getBoundingClientRect = function () {
+  let rect = original.apply(this);
   return {
+    ...rect,
     left: parseInt(this.style.left, 10) || 0,
     top: parseInt(this.style.top, 10) || 0,
     right: parseInt(this.style.right, 10) || 0,
@@ -220,20 +222,17 @@ describe('useOverlayPosition with positioned container', () => {
     Object.defineProperty(HTMLElement.prototype, 'clientHeight', {configurable: true, value: 768});
     Object.defineProperty(HTMLElement.prototype, 'clientWidth', {configurable: true, value: 500});
     stubs.push(
-      jest.spyOn(window.HTMLElement.prototype, 'offsetParent', 'get').mockImplementation(function () {
+      jest.spyOn(window.HTMLElement.prototype, 'offsetParent', 'get').mockImplementation(function (this: HTMLElement) {
         // Make sure container is is the offsetParent of overlay
-        // @ts-ignore
         if (this.attributes.getNamedItem('data-testid')?.value === 'overlay') {
           return document.querySelector('[data-testid="container"]');
         } else {
           return null;
         }
       }),
-      jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
-        // @ts-ignore
+      jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
         if (this.attributes.getNamedItem('data-testid')?.value === 'container') {
           // Say, overlay is positioned somewhere
-          // @ts-ignore
           let real = realGetBoundingClientRect.apply(this);
           return {
             ...real,
@@ -243,7 +242,6 @@ describe('useOverlayPosition with positioned container', () => {
             height: 400
           };
         } else {
-          // @ts-ignore
           return realGetBoundingClientRect.apply(this);
         }
       }),

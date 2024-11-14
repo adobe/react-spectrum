@@ -57,12 +57,10 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
       if (!('signDisplay' in formatOptions)) {
         formatOptions = {
           ...formatOptions,
-          // @ts-ignore
           signDisplay: 'exceptZero'
         };
       }
     } else {
-      // @ts-ignore
       formatOptions = {signDisplay: 'exceptZero'};
     }
   }

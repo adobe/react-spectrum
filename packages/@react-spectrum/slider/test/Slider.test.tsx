@@ -393,8 +393,11 @@ describe('Slider', function () {
 
   describe('mouse interactions', () => {
     beforeAll(() => {
-      // @ts-ignore
-      jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({top: 0, left: 0, width: 100, height: 100}));
+      let originalGetBoundingClientRect = window.HTMLElement.prototype.getBoundingClientRect;
+      jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
+        let rect = originalGetBoundingClientRect.call(this);
+        return {...rect, top: 0, left: 0, width: 100, height: 100};
+      });
     });
 
     installMouseEvent();
@@ -459,8 +462,7 @@ describe('Slider', function () {
 
       let slider = getByRole('slider');
       let thumb = slider.parentElement!.parentElement!;
-      // @ts-ignore
-      let [leftTrack, rightTrack] = [...thumb.parentElement.children].filter(c => c !== thumb);
+      let [leftTrack, rightTrack] = [...thumb.parentElement!.children].filter(c => c !== thumb);
 
       // left track
       fireEvent.mouseDown(leftTrack, {clientX: 20, pageX: 20});
@@ -492,8 +494,7 @@ describe('Slider', function () {
 
       let slider = getByRole('slider');
       let thumb = slider.parentElement!.parentElement!;
-      // @ts-ignore
-      let [leftTrack, rightTrack] = [...thumb.parentElement.children].filter(c => c !== thumb);
+      let [leftTrack, rightTrack] = [...thumb.parentElement!.children].filter(c => c !== thumb);
 
       // left track
       fireEvent.mouseDown(leftTrack, {clientX: 20, pageX: 20});
@@ -541,8 +542,7 @@ describe('Slider', function () {
 
       let slider = getByRole('slider');
       let thumb = slider.parentElement!.parentElement!;
-      // @ts-ignore
-      let [, rightTrack] = [...thumb.parentElement.children].filter(c => c !== thumb);
+      let [, rightTrack] = [...thumb.parentElement!.children].filter(c => c !== thumb);
 
       fireEvent.touchStart(thumb, {changedTouches: [{identifier: 1, clientX: 50, pageX: 50}]});
       expect(onChangeSpy).toHaveBeenCalledTimes(0);

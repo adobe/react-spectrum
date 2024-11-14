@@ -32,7 +32,6 @@ export function createMappedProperty<T extends CSSValue>(fn: (value: string, pro
       return {default: [fn(v[0], property), v[1]]};
     }
 
-    // @ts-ignore
     let val = Array.isArray(values) ? value : values[String(value)];
     return mapConditionalValue(val, value => {
       return [fn(value, property), valueMap.get(value)!];
@@ -54,7 +53,6 @@ export function createColorProperty<C extends string>(colors: PropertyValueMap<C
     }
 
     let [color, opacity] = value.split('/');
-    // @ts-ignore
     let c = colors[color];
     return mapConditionalValue(c, value => {
       let css = opacity ? `rgb(from ${value} r g b / ${opacity}%)` : value;

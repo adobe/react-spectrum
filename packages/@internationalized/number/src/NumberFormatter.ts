@@ -14,14 +14,12 @@ let formatterCache = new Map<string, Intl.NumberFormat>();
 
 let supportsSignDisplay = false;
 try {
-  // @ts-ignore
   supportsSignDisplay = (new Intl.NumberFormat('de-DE', {signDisplay: 'exceptZero'})).resolvedOptions().signDisplay === 'exceptZero';
   // eslint-disable-next-line no-empty
 } catch {}
 
 let supportsUnit = false;
 try {
-  // @ts-ignore
   supportsUnit = (new Intl.NumberFormat('de-DE', {style: 'unit', unit: 'degree'})).resolvedOptions().style === 'unit';
   // eslint-disable-next-line no-empty
 } catch {}

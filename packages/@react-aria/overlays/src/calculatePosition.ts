@@ -102,7 +102,6 @@ const TOTAL_SIZE = {
 
 const PARSED_PLACEMENT_CACHE = {};
 
-// @ts-ignore
 let visualViewport = typeof document !== 'undefined' ? window.visualViewport : null;
 
 function getContainerDimensions(containerNode: Element): Dimensions {
@@ -590,9 +589,7 @@ function isContainingBlock(node: Element): boolean {
     /transform|perspective/.test(style.willChange) ||
     style.filter !== 'none' ||
     style.contain === 'paint' ||
-    // @ts-ignore
     ('backdropFilter' in style && style.backdropFilter !== 'none') ||
-    // @ts-ignore
     ('WebkitBackdropFilter' in style && style.WebkitBackdropFilter !== 'none')
   );
 }
