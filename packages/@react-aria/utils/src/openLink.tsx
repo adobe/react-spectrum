@@ -171,7 +171,7 @@ export function getSyntheticLinkProps(props: LinkDOMProps) {
   };
 }
 
-export function useLinkProps(props: LinkDOMProps) {
+export function useLinkProps(props?: LinkDOMProps) {
   let router = useRouter();
   const href = router.useHref(props?.href ?? '');
   return {
