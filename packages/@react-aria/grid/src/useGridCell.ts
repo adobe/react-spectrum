@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getScrollParent, mergeProps, scrollIntoViewport} from '@react-aria/utils';
 import {GridCollection, GridNode} from '@react-types/grid';
@@ -64,7 +64,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
   // We need to track the key of the item at the time it was last focused so that we force
   // focus to go to the item when the DOM node is reused for a different item in a virtualizer.
-  let keyWhenFocused = useRef(null);
+  let keyWhenFocused = useRef<Key | null>(null);
 
   // Handles focusing the cell. If there is a focusable child,
   // it is focused, otherwise the cell itself is focused.
@@ -268,7 +268,9 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
       let tabindex = el.getAttribute('tabindex');
       el.removeAttribute('tabindex');
       requestAnimationFrame(() => {
-        el.setAttribute('tabindex', tabindex);
+        if (tabindex != null) {
+          el.setAttribute('tabindex', tabindex);
+        }
       });
     };
   }
@@ -280,10 +282,10 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 }
 
 function last(walker: TreeWalker) {
-  let next: FocusableElement;
-  let last: FocusableElement;
+  let next: FocusableElement | null = null;
+  let last: FocusableElement | null = null;
   do {
-    last = walker.lastChild() as FocusableElement;
+    last = walker.lastChild() as FocusableElement | null;
     if (last) {
       next = last;
     }
