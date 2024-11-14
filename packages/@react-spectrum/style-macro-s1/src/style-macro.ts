@@ -94,8 +94,8 @@ interface MacroContext {
 }
 
 export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemeProperties<T>, 'default' | Extract<keyof T['conditions'], string>> {
-  let themePropertyMap = createValueLookup(Object.keys(theme.properties), true);
-  let themeConditionMap = createValueLookup(Object.keys(theme.conditions), true);
+  let themePropertyMap = createValueLookup(Object.keys(theme.properties));
+  let themeConditionMap = createValueLookup(Object.keys(theme.conditions));
   let propertyFunctions = new Map(Object.entries(theme.properties).map(([k, v]) => {
     if (typeof v === 'function') {
       return [k, v];
