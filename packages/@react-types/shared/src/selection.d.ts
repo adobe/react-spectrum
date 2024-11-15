@@ -18,7 +18,7 @@ export interface SingleSelection {
   /** The currently selected key in the collection (controlled). */
   selectedKey?: Key | null,
   /** The initial selected key in the collection (uncontrolled). */
-  defaultSelectedKey?: Key | null,
+  defaultSelectedKey?: Key,
   /** Handler that is called when the selection changes. */
   onSelectionChange?: (key: Key) => void
 }
