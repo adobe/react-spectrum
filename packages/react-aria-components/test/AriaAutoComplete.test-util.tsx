@@ -147,6 +147,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix}: AriaAutocomple
       expect(document.activeElement).toBe(input);
 
       await user.keyboard('Foo');
+      act(() => jest.runAllTimers());
       let options = within(menu).getAllByRole('menuitem');
       expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
       await user.keyboard('{ArrowRight}');
@@ -235,6 +236,8 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix}: AriaAutocomple
 
       await user.tab();
       expect(document.activeElement).toBe(input);
+      // Need to press to set a modality
+      await user.click(input);
       await user.hover(options[1]);
       act(() => jest.runAllTimers());
       expect(input).toHaveAttribute('aria-activedescendant', options[1].id);

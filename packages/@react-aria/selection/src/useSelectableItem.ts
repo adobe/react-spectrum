@@ -168,6 +168,8 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         focusSafely(ref.current);
       }
     }
+
+    // TODO: dispatch event from here when option becomes focused virtually so autocomplete can set its aria-activedescent
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ref, key, manager.focusedKey, manager.childFocusStrategy, manager.isFocused, shouldUseVirtualFocus]);
 
@@ -346,6 +348,8 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       e.preventDefault();
     }
   } : undefined;
+
+  // todo generate ID here that will then be used to fire/update the aria-activedescendant and also pass it to useMenuItem/other selectable items
 
   return {
     itemProps: mergeProps(

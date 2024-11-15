@@ -17,7 +17,7 @@ import {ContextValue, Provider, removeDataAttributes, RenderProps, SlotProps, us
 import {forwardRefType} from '@react-types/shared';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
-import React, {createContext, ForwardedRef, forwardRef, KeyboardEvent, RefObject, useCallback, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, RefObject, useCallback, useRef} from 'react';
 import {TextContext} from './Text';
 import {useObjectRef} from '@react-aria/utils';
 
@@ -36,11 +36,10 @@ export interface AutocompleteProps extends Omit<AriaAutocompleteProps, 'children
 }
 
 interface InternalAutocompleteContextValue {
-  // register: (callback: (event: KeyboardEvent) => string) => void,
   filterFn: (nodeTextValue: string) => boolean,
   inputValue: string,
   menuProps: AriaMenuOptions<any>,
-  collectionRef: RefObject<HTMLElement>
+  collectionRef: RefObject<HTMLElement | null>
 }
 
 export const AutocompleteContext = createContext<ContextValue<AutocompleteProps, HTMLInputElement>>(null);
@@ -53,15 +52,14 @@ function Autocomplete(props: AutocompleteProps, ref: ForwardedRef<HTMLInputEleme
   let {defaultFilter} = props;
   let state = useAutocompleteState(props);
   let inputRef = useObjectRef<HTMLInputElement>(ref);
-  let collectionRef = useRef(null);
+  let collectionRef = useRef<HTMLElement>(null);
   let [labelRef, label] = useSlot();
   let {contains} = useFilter({sensitivity: 'base'});
   let {
     inputProps,
     menuProps,
     labelProps,
-    descriptionProps,
-    // register
+    descriptionProps
   } = useAutocomplete({
     ...removeDataAttributes(props),
     label,
@@ -98,7 +96,6 @@ function Autocomplete(props: AutocompleteProps, ref: ForwardedRef<HTMLInputEleme
           }
         }],
         [InternalAutocompleteContext, {
-          // register,
           filterFn,
           inputValue: state.inputValue,
           menuProps,

@@ -95,9 +95,6 @@ export interface AriaMenuItemProps extends DOMProps, PressEvents, HoverEvents, K
   selectionManager?: SelectionManager
 }
 
-// TODO: import these from somewhere common
-const UPDATE_ACTIVEDESCENDANT = 'react-aria-autocomplete-update-activedescendant';
-
 /**
  * Provides the behavior and accessibility implementation for an item in a menu.
  * See `useMenu` for more details about menus.
@@ -244,15 +241,6 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       if (!isFocusVisible()) {
         selectionManager.setFocused(true);
         selectionManager.setFocusedKey(key);
-        let updateActiveDescendant = new CustomEvent(UPDATE_ACTIVEDESCENDANT, {
-          cancelable: true,
-          bubbles: true,
-          detail: {
-            id
-          }
-        });
-
-        ref.current?.dispatchEvent(updateActiveDescendant);
       }
       hoverStartProp?.(e);
     },
