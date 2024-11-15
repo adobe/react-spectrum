@@ -61,7 +61,7 @@ let rows = [
     {id: 15, name: 'ColorSwatch', children: <ColorSwatchExample />, isArrowEnabled: true}
 ];
 
-let INTERACTION_KEYS = new Set([' ', 'Enter', 'Escape']);
+let INTERACTION_KEYS = new Set([' ', 'Enter']);
 let NAVIGATION_KEYS = new Set(['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'PageUp', 'PageDown']);
 
 const EventGridItem = (props: GridListItemProps) => {
