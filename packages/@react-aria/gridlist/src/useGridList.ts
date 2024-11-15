@@ -52,6 +52,11 @@ export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'chil
   /** Whether the list uses virtual scrolling. */
   isVirtualized?: boolean,
   /**
+   * Whether typeahead navigation is disabled.
+   * @default false
+   */
+  disallowTypeAhead?: boolean,
+  /**
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
@@ -95,6 +100,7 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     keyboardDelegate,
     layoutDelegate,
     onAction,
+    disallowTypeAhead,
     linkBehavior = 'action',
     keyboardNavigationBehavior = 'arrow'
   } = props;
@@ -113,7 +119,8 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     isVirtualized,
     selectOnFocus: state.selectionManager.selectionBehavior === 'replace',
     shouldFocusWrap: props.shouldFocusWrap,
-    linkBehavior
+    linkBehavior,
+    disallowTypeAhead
   });
 
   let id = useId(props.id);

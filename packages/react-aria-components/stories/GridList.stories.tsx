@@ -195,7 +195,14 @@ export function TagGroupInsideGridList() {
         </TagGroup>
       </MyGridListItem>
       <MyGridListItem>1,2 <Button>Actions</Button></MyGridListItem>
-      <MyGridListItem>1,3 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>1,3         
+        <TagGroup aria-label="Tag group">
+          <TagList style={{display: 'flex', gap: 10}}>
+            <Tag key="1">Tag 1</Tag>
+            <Tag key="2">Tag 2</Tag>
+            <Tag key="3">Tag 3</Tag>
+          </TagList>
+        </TagGroup></MyGridListItem>
     </GridList>
   );
 }
