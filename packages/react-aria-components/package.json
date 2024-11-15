@@ -39,7 +39,6 @@
   "dependencies": {
     "@internationalized/date": "^3.5.6",
     "@internationalized/string": "^3.2.4",
-    "@react-aria/accordion": "3.0.0-alpha.35",
     "@react-aria/collections": "3.0.0-alpha.5",
     "@react-aria/color": "^3.0.1",
     "@react-aria/disclosure": "3.0.0-alpha.1",
