@@ -20,15 +20,16 @@ import userEvent from '@testing-library/user-event';
 function Checkbox({checkboxGroupState, ...props}: AriaCheckboxGroupItemProps & { checkboxGroupState: CheckboxGroupState }) {
   const ref = useRef<HTMLInputElement>(null);
   const {children} = props;
-  const {inputProps} = useCheckboxGroupItem(props, checkboxGroupState, ref);
-  return <label><input ref={ref} {...inputProps} />{children}</label>;
+  props.validationBehavior ??= 'native';
+  const {inputProps, labelProps} = useCheckboxGroupItem(props, checkboxGroupState, ref);
+  return <label {...labelProps}><input ref={ref} {...inputProps} />{children}</label>;
 }
 
 function CheckboxGroup({groupProps, checkboxProps}: {groupProps: AriaCheckboxGroupProps, checkboxProps: AriaCheckboxGroupItemProps[]}) {
   const state = useCheckboxGroupState(groupProps);
-  const {groupProps: checkboxGroupProps, labelProps} = useCheckboxGroup(groupProps, state);
+  const {groupProps: checkboxGroupProps, labelProps, isInvalid} = useCheckboxGroup(groupProps, state);
   return (
-    <div {...checkboxGroupProps}>
+    <div {...checkboxGroupProps} data-invalid={isInvalid || undefined}>
       {groupProps.label && <span {...labelProps}>{groupProps.label}</span>}
       <Checkbox checkboxGroupState={state} {...checkboxProps[0]} />
       <Checkbox checkboxGroupState={state} {...checkboxProps[1]} />
@@ -280,5 +281,32 @@ describe('useCheckboxGroup', () => {
     expect(groupOnChangeSpy).toHaveBeenCalledTimes(0);
     expect(checkboxOnChangeSpy).toHaveBeenCalledTimes(0);
     expect(checkboxes[2].checked).toBeFalsy();
+  });
+
+  it('should re-validate in realtime', async () => {
+    let {getByRole, getByLabelText} = render(
+      <CheckboxGroup
+        groupProps={{label: 'Favorite Pet', isRequired: true}}
+        checkboxProps={[
+          {value: 'dogs', children: 'Dogs'},
+          {value: 'cats', children: 'Cats'},
+          {value: 'dragons', children: 'Dragons'}
+        ]} />
+    );
+
+    let checkboxGroup = getByRole('group');
+    let dragons = getByLabelText('Dragons');
+
+    await user.click(dragons);
+
+    expect(checkboxGroup).not.toHaveAttribute('data-invalid');
+
+    await user.click(dragons);
+
+    expect(checkboxGroup).toHaveAttribute('data-invalid', 'true');
+
+    await user.click(dragons);
+
+    expect(checkboxGroup).not.toHaveAttribute('data-invalid');
   });
 });
