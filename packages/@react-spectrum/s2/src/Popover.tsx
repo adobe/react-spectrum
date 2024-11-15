@@ -23,6 +23,7 @@ import {
 } from 'react-aria-components';
 import {colorScheme, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
+import {DismissButton} from 'react-aria';
 import {DOMRef} from '@react-types/shared';
 import {forwardRef, MutableRefObject, useCallback, useContext} from 'react';
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
@@ -31,7 +32,6 @@ import {Modal} from './Modal';
 import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types' with {type: 'macro'};
 import {useDOMRef, useIsMobileDevice} from '@react-spectrum/utils';
-import { DismissButton } from 'react-aria';
 
 export interface PopoverProps extends UnsafeStyles, Omit<AriaPopoverProps, 'arrowSize' | 'isNonModal' | 'arrowBoundaryOffset' | 'isKeyboardDismissDisabled' | 'shouldCloseOnInteractOutside' | 'shouldUpdatePosition'> {
   styles?: StyleString,

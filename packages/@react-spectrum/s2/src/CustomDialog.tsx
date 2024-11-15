@@ -29,17 +29,22 @@ export interface CustomDialogProps extends Omit<RACDialogProps, 'className' | 's
   isDismissable?: boolean,
   /** Whether pressing the escape key to close the dialog should be disabled. */
   isKeyboardDismissDisabled?: boolean,
-  /** Whether the content of the Dialog should extend edge-to-edge, without any padding. */
-  isFullBleed?: boolean
+  /**
+   * The amount of padding around the contents of the dialog.
+   * @default 'default'
+   */
+  padding?: 'default' | 'none'
 }
 
 const dialogStyle = style({
   padding: {
-    default: {
-      default: 24,
-      sm: 32
-    },
-    isFullBleed: 0
+    padding: {
+      default: {
+        default: 24,
+        sm: 32
+      },
+      none: 0
+    }
   },
   boxSizing: 'border-box',
   outlineStyle: 'none',
@@ -55,7 +60,7 @@ function CustomDialog(props: CustomDialogProps, ref: DOMRef) {
     size,
     isDismissable,
     isKeyboardDismissDisabled,
-    isFullBleed
+    padding = 'default'
   } = props;
   let domRef = useDOMRef(ref);
 
@@ -65,7 +70,7 @@ function CustomDialog(props: CustomDialogProps, ref: DOMRef) {
         {...props}
         ref={domRef}
         style={props.UNSAFE_style}
-        className={(props.UNSAFE_className || '') + dialogStyle({isFullBleed}, props.styles)}>
+        className={(props.UNSAFE_className || '') + dialogStyle({padding}, props.styles)}>
         {composeRenderProps(props.children, (children) => (
           // Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state.
           <OverlayTriggerStateContext.Provider value={null}>

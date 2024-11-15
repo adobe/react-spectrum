@@ -24,7 +24,7 @@ const meta: Meta<typeof CustomDialog> = {
   tags: ['autodocs'],
   title: 'CustomDialog',
   argTypes: {
-    isFullBleed: {table: {disable: true}}
+    padding: {table: {disable: true}}
   }
 };
 
@@ -33,7 +33,7 @@ export default meta;
 export const WhatsNew = (args: any) => (
   <DialogTrigger>
     <ActionButton>Open dialog</ActionButton>
-    <CustomDialog {...args} isFullBleed isDismissable styles={style({maxWidth: {isSizeUnset: '[800px]'}})({isSizeUnset: args.size == null})}>
+    <CustomDialog padding="none" {...args} isDismissable styles={style({maxWidth: {isSizeUnset: '[800px]'}})({isSizeUnset: args.size == null})}>
       <div className={style({display: 'flex', size: 'full'})}>
         <div className={style({display: 'flex', flexDirection: 'column', rowGap: 32, padding: 32, backgroundColor: 'layer-1', width: 192, flexShrink: 0})}>
           <Heading slot="title" styles={style({font: 'title-3xl', marginY: 0})}>What's new</Heading>
@@ -81,7 +81,7 @@ ThankYou.args = {
 export const SideImage = (args: any) => (
   <DialogTrigger>
     <ActionButton>Open dialog</ActionButton>
-    <CustomDialog {...args} isFullBleed>
+    <CustomDialog padding="none" {...args}>
       <div className={style({display: 'flex', size: 'full', flexDirection: {default: 'column', sm: 'row'}})}>
         <Image 
           alt=""
