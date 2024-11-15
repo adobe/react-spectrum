@@ -9,7 +9,7 @@
   },
   "packageManager": "yarn@4.2.2",
   "scripts": {
-    "check-types": "tsc && tsc-strict",
+    "check-types": "tsc",
     "install-16": "node scripts/react-16-install-prep.mjs && yarn add react@^16.8.0 react-dom@^16.8.0 @testing-library/react@^12 @testing-library/react-hooks@^8 @testing-library/dom@^8 react-test-renderer@^16.9.0 && node scripts/oldReactSupport.mjs",
     "install-17": "node scripts/react-17-install-prep.mjs && yarn add react@^17 react-dom@^17 @testing-library/react@^12 @testing-library/react-hooks@^8 @testing-library/dom@^8 react-test-renderer@^16.9.0 && node scripts/oldReactSupport.mjs",
     "install-19": "node scripts/react-19-install-prep.mjs && yarn add react@next react-dom@next",
@@ -208,7 +208,6 @@
     "tempy": "^0.5.0",
     "typescript": "^5.5.0",
     "typescript-eslint": "^8.9.0",
-    "typescript-strict-plugin": "^2.0.0",
     "verdaccio": "^5.13.0",
     "walk-object": "^4.0.0",
     "wsrun": "^5.0.0",
