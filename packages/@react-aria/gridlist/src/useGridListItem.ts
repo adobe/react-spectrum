@@ -256,7 +256,8 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
   let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
-    onKeyDownCapture: onKeyDown,
+    onKeyDown: keyboardNavigationBehavior === 'tab' ? onKeyDown : undefined,
+    onKeyDownCapture: keyboardNavigationBehavior === 'tab' ? undefined : onKeyDown,
     onFocus,
     // 'aria-label': [(node.textValue || undefined), rowAnnouncement].filter(Boolean).join(', '),
     'aria-label': node.textValue || undefined,
