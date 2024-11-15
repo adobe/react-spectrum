@@ -268,7 +268,7 @@ function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRe
               [RACTextContext, {slots: {[DEFAULT_SLOT]: {}}}],
               [TextContext, {styles: style({order: 1, truncate: true})}]
             ]}>
-            <div ref={divRef} style={pressScale(divRef)({isPressed})} className={style({zIndex: 1, display: 'flex', gap: 'text-to-visual', transition: 'default', alignItems: 'center', minWidth: 0})}>
+            <div ref={divRef} style={pressScale(divRef)({isPressed})} className={style({display: 'flex', gap: 'text-to-visual', transition: 'default', alignItems: 'center', minWidth: 0})}>
               {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
             </div>
           </Provider>

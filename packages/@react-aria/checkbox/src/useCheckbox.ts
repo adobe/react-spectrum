@@ -12,10 +12,12 @@
 
 import {AriaCheckboxProps} from '@react-types/checkbox';
 import {InputHTMLAttributes, LabelHTMLAttributes, useEffect} from 'react';
+import {mergeProps} from '@react-aria/utils';
+import {privateValidationStateProp, useFormValidationState} from '@react-stately/form';
 import {RefObject, ValidationResult} from '@react-types/shared';
 import {ToggleState} from '@react-stately/toggle';
 import {useFormValidation} from '@react-aria/form';
-import {useFormValidationState} from '@react-stately/form';
+import {usePress} from '@react-aria/interactions';
 import {useToggle} from '@react-aria/toggle';
 
 export interface CheckboxAria extends ValidationResult {
@@ -61,8 +63,23 @@ export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputR
     }
   });
 
+  // Reset validation state on label press for checkbox with a hidden input.
+  let {pressProps} = usePress({
+    isDisabled: isDisabled || isReadOnly,
+    onPress() {
+      // @ts-expect-error
+      let {[privateValidationStateProp]: groupValidationState} = props;
+  
+      let {commitValidation} = groupValidationState
+      ? groupValidationState
+      : validationState;
+      
+      commitValidation();
+    }
+  });
+
   return {
-    labelProps,
+    labelProps: mergeProps(labelProps, pressProps),
     inputProps: {
       ...inputProps,
       checked: isSelected,
