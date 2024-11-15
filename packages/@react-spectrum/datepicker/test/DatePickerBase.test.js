@@ -478,7 +478,7 @@ describe('DatePickerBase', function () {
       let {getAllByRole} = render(<Component label="Date"isDisabled />);
       let segments = getAllByRole('spinbutton');
       for (let segment of segments) {
-        expect(segment).toHaveAttribute('tabIndex', '-1');
+        expect(segment).not.toHaveAttribute('tabIndex');
       }
     });
 

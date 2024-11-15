@@ -176,7 +176,6 @@ export function useSpinButton(
   return {
     spinButtonProps: {
       role: 'spinbutton',
-      tabIndex: isDisabled ? -1 : undefined,
       'aria-valuenow': value !== undefined && !isNaN(value) ? value : undefined,
       'aria-valuetext': ariaTextValue,
       'aria-valuemin': minValue,
