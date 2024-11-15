@@ -40,6 +40,9 @@ function Tooltip(props: SpectrumTooltipProps, ref: DOMRef) {
     showIcon,
     ...otherProps
   } = props;
+  if (placement == null) {
+    placement = 'top';
+  }
   let {styleProps} = useStyleProps(otherProps);
   let {tooltipProps} = useTooltip(props, state);
 
