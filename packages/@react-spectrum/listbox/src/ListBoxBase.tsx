@@ -130,7 +130,7 @@ function ListBoxBase<T extends object>(props: ListBoxBaseProps<T>, ref: Forwarde
           isLoading={isLoading}
           onLoadMore={props.onLoadMore}
           onScroll={onScroll}>
-          {useCallback((type, item: Node<T>) => {
+          {useCallback((type, item: Node<T>): ReactNode => {
             if (type === 'item') {
               return <ListBoxOption item={item} />;
             } else if (type === 'loader') {
