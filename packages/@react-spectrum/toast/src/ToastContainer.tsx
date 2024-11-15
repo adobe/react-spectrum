@@ -14,7 +14,7 @@ import {AriaToastRegionProps} from '@react-aria/toast';
 import {classNames} from '@react-spectrum/utils';
 import {DOMProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import React, {ReactNode, useEffect, useRef} from 'react';
+import React, {ReactElement, useEffect, useRef} from 'react';
 import {SpectrumToastValue, Toast} from './Toast';
 import toastContainerStyles from './toastContainer.css';
 import {Toaster} from './Toaster';
@@ -77,7 +77,7 @@ function useActiveToastContainer() {
  * A ToastContainer renders the queued toasts in an application. It should be placed
  * at the root of the app.
  */
-export function ToastContainer(props: SpectrumToastContainerProps): ReactNode {
+export function ToastContainer(props: SpectrumToastContainerProps): ReactElement | null {
   // Track all toast provider instances in a set.
   // Only the first one will actually render.
   // We use a ref to do this, since it will have a stable identity
