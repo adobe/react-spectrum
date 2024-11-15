@@ -30,7 +30,7 @@ export function useTabListState<T extends object>(props: TabListStateOptions<T>)
   let state = useSingleSelectListState<T>({
     ...props,
     suppressTextValueWarning: true,
-    defaultSelectedKey: props.defaultSelectedKey ?? findDefaultSelectedKey(props.collection, props.disabledKeys ? new Set(props.disabledKeys) : new Set())
+    defaultSelectedKey: props.defaultSelectedKey ?? findDefaultSelectedKey(props.collection, props.disabledKeys ? new Set(props.disabledKeys) : new Set()) ?? undefined
   });
 
   let {
