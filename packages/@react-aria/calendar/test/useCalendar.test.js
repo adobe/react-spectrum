@@ -239,13 +239,13 @@ describe('useCalendar', () => {
     it.each`
     Name | defaultValue | firstDayOfWeek | expectedFirstDay
     ${'default'} | ${new CalendarDate(2024, 1, 1)} | ${undefined} | ${'Sunday, December 31, 2023'}
-    ${'Sunday'} | ${new CalendarDate(2024, 1, 1)} | ${0} | ${'Sunday, December 31, 2023'}
-    ${'Monday'} | ${new CalendarDate(2024, 1, 1)} | ${1} | ${'Monday, January 1, 2024 selected'}
-    ${'Tuesday'} | ${new CalendarDate(2024, 1, 1)} | ${2} | ${'Tuesday, December 26, 2023'}
-    ${'Wednesday'} | ${new CalendarDate(2024, 1, 1)} | ${3} | ${'Wednesday, December 27, 2023'}
-    ${'Thursday'} | ${new CalendarDate(2024, 1, 1)} | ${4} | ${'Thursday, December 28, 2023'}
-    ${'Friday'} | ${new CalendarDate(2024, 1, 1)} | ${5} | ${'Friday, December 29, 2023'}
-    ${'Saturday'} | ${new CalendarDate(2024, 1, 1)} | ${6} | ${'Saturday, December 30, 2023'}
+    ${'Sunday'} | ${new CalendarDate(2024, 1, 1)} | ${'Sun'} | ${'Sunday, December 31, 2023'}
+    ${'Monday'} | ${new CalendarDate(2024, 1, 1)} | ${'Mon'} | ${'Monday, January 1, 2024 selected'}
+    ${'Tuesday'} | ${new CalendarDate(2024, 1, 1)} | ${'Tue'} | ${'Tuesday, December 26, 2023'}
+    ${'Wednesday'} | ${new CalendarDate(2024, 1, 1)} | ${'Wed'} | ${'Wednesday, December 27, 2023'}
+    ${'Thursday'} | ${new CalendarDate(2024, 1, 1)} | ${'Thu'} | ${'Thursday, December 28, 2023'}
+    ${'Friday'} | ${new CalendarDate(2024, 1, 1)} | ${'Fri'} | ${'Friday, December 29, 2023'}
+    ${'Saturday'} | ${new CalendarDate(2024, 1, 1)} | ${'Sat'} | ${'Saturday, December 30, 2023'}
     `('should use firstDayOfWeek $Name', async ({defaultValue, firstDayOfWeek, expectedFirstDay}) => {
       await testFirstDayOfWeek(defaultValue, firstDayOfWeek, expectedFirstDay);
     });

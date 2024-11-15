@@ -809,8 +809,8 @@ describe('CalendarBase', () => {
       Name                   | Calendar         | props
       ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2024, 1, 1)}}
       ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2024, 1, 1), end: new CalendarDate(2024, 1, 1)}}}
-    `('$Name should override start of week with firstDayOfWeek={6}', ({Calendar, props}) => {
-      let {getAllByRole, getByRole} = render(<Calendar {...props} firstDayOfWeek={6} />);
+    `('$Name should override start of week with firstDayOfWeek="Sat"', ({Calendar, props}) => {
+      let {getAllByRole, getByRole} = render(<Calendar {...props} firstDayOfWeek="Sat" />);
 
       let grid = getByRole('grid');
       let headers = getAllByRole('columnheader', {hidden: true});
