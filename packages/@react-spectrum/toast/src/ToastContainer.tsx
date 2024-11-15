@@ -144,7 +144,7 @@ function addToast(children: string, variant: SpectrumToastValue['variant'], opti
 
     let shouldContinue = window.dispatchEvent(event);
     if (!shouldContinue) {
-      return null;
+      return () => {};
     }
   }
 
@@ -168,19 +168,19 @@ function addToast(children: string, variant: SpectrumToastValue['variant'], opti
 
 const SpectrumToastQueue = {
   /** Queues a neutral toast. */
-  neutral(children: string, options: SpectrumToastOptions = {}): CloseFunction | null {
+  neutral(children: string, options: SpectrumToastOptions = {}): CloseFunction {
     return addToast(children, 'neutral', options);
   },
   /** Queues a positive toast. */
-  positive(children: string, options: SpectrumToastOptions = {}): CloseFunction | null {
+  positive(children: string, options: SpectrumToastOptions = {}): CloseFunction {
     return addToast(children, 'positive', options);
   },
   /** Queues a negative toast. */
-  negative(children: string, options: SpectrumToastOptions = {}): CloseFunction | null {
+  negative(children: string, options: SpectrumToastOptions = {}): CloseFunction {
     return addToast(children, 'negative', options);
   },
   /** Queues an informational toast. */
-  info(children: string, options: SpectrumToastOptions = {}): CloseFunction | null {
+  info(children: string, options: SpectrumToastOptions = {}): CloseFunction {
     return addToast(children, 'info', options);
   }
 };
