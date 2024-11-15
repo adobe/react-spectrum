@@ -29,9 +29,19 @@ import {
 } from '@internationalized/date';
 import {CalendarProps, DateValue, MappedDateValue} from '@react-types/calendar';
 import {CalendarState} from './types';
-import {clamp, useControlledState} from '@react-stately/utils';
+import {useControlledState} from '@react-stately/utils';
 import {useMemo, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
+
+const DAY_MAP = {
+  Sun: 0,
+  Mon: 1,
+  Tue: 2,
+  Wed: 3,
+  Thu: 4,
+  Fri: 5,
+  Sat: 6
+};
 
 export interface CalendarStateOptions<T extends DateValue = DateValue> extends CalendarProps<T> {
   /** The locale to display and edit the value according to. */
@@ -66,7 +76,8 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
     maxValue,
     selectionAlignment,
     isDateUnavailable,
-    pageBehavior = 'visible'
+    pageBehavior = 'visible',
+    firstDayOfWeek = 'Sun'
   } = props;
   let calendar = useMemo(() => createCalendar(resolvedOptions.calendar), [createCalendar, resolvedOptions.calendar]);
 
@@ -329,13 +340,12 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
       let dates: (CalendarDate | null)[] = [];
 
       let currentDayOfWeek = getDayOfWeek(date, locale);
-      let firstDayOfWeek = clamp(props.firstDayOfWeek ?? 0, 0, 6);
-      let daysToSubtract = (currentDayOfWeek - firstDayOfWeek + 7) % 7;
+      let daysToSubtract = (currentDayOfWeek - DAY_MAP[firstDayOfWeek] + 7) % 7;
       date = date.subtract({days: daysToSubtract});
 
       // startOfWeek will clamp dates within the calendar system's valid range, which may
       // start in the middle of a week. In this case, add null placeholders.
-      let dayOfWeek = (getDayOfWeek(date, locale) - firstDayOfWeek + 7) % 7;
+      let dayOfWeek = (getDayOfWeek(date, locale) - DAY_MAP[firstDayOfWeek] + 7) % 7;
       for (let i = 0; i < dayOfWeek; i++) {
         dates.push(null);
       }

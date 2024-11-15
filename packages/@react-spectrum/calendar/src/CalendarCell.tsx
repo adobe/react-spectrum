@@ -24,10 +24,10 @@ import {useLocale} from '@react-aria/i18n';
 interface CalendarCellProps extends AriaCalendarCellProps {
   state: CalendarState | RangeCalendarState,
   currentMonth: CalendarDate,
-  firstDayOfWeek?: number
+  firstDayOfWeek?: 'Sun' | 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat'
 }
 
-export function CalendarCell({state, currentMonth, firstDayOfWeek = 0, ...props}: CalendarCellProps) {
+export function CalendarCell({state, currentMonth, firstDayOfWeek = 'Sun', ...props}: CalendarCellProps) {
   let ref = useRef<HTMLElement>(null);
   let {
     cellProps,

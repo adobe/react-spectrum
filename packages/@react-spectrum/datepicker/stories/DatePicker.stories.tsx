@@ -184,7 +184,8 @@ export default {
       control: 'boolean'
     },
     firstDayOfWeek: {
-      control: 'number'
+      control: 'select',
+      options: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
     }
   }
 } as ComponentMeta<typeof DatePicker>;

@@ -12,11 +12,21 @@
 
 import {CalendarDate, startOfWeek, today} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
-import {clamp, mergeProps, useLabels} from '@react-aria/utils';
 import {DOMAttributes} from '@react-types/shared';
 import {hookData, useVisibleRangeDescription} from './utils';
 import {KeyboardEvent, useMemo} from 'react';
+import {mergeProps, useLabels} from '@react-aria/utils';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
+
+const DAY_MAP = {
+  Sun: 0,
+  Mon: 1,
+  Tue: 2,
+  Wed: 3,
+  Thu: 4,
+  Fri: 5,
+  Sat: 6
+};
 
 export interface AriaCalendarGridProps {
   /**
@@ -38,10 +48,10 @@ export interface AriaCalendarGridProps {
    */
   weekdayStyle?: 'narrow' | 'short' | 'long',
   /**
-   * The day that starts the week, 0-6 (Sunday-Saturday).
-   * @default 0
+   * The day that starts the week.
+   * @default 'Sun'
    */
-  firstDayOfWeek?: number
+  firstDayOfWeek?: 'Sun' | 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat'
 }
 
 export interface CalendarGridAria {
@@ -61,7 +71,8 @@ export interface CalendarGridAria {
 export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarState | RangeCalendarState): CalendarGridAria {
   let {
     startDate = state.visibleRange.start,
-    endDate = state.visibleRange.end
+    endDate = state.visibleRange.end,
+    firstDayOfWeek = 'Sun'
   } = props;
 
   let {direction} = useLocale();
@@ -142,14 +153,13 @@ export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarSta
   let dayFormatter = useDateFormatter({weekday: props.weekdayStyle || 'narrow', timeZone: state.timeZone});
   let {locale} = useLocale();
   let weekDays = useMemo(() => {
-    let firstDayOfWeek = clamp(props.firstDayOfWeek ?? 0, 0, 6);
-    let weekStart = startOfWeek(today(state.timeZone), locale).add({days: firstDayOfWeek});
+    let weekStart = startOfWeek(today(state.timeZone), locale).add({days: DAY_MAP[firstDayOfWeek]});
     return [...new Array(7).keys()].map((index) => {
       let date = weekStart.add({days: index});
       let dateDay = date.toDate(state.timeZone);
       return dayFormatter.format(dateDay);
     });
-  }, [locale, state.timeZone, dayFormatter, props.firstDayOfWeek]);
+  }, [locale, state.timeZone, dayFormatter, firstDayOfWeek]);
 
   return {
     gridProps: mergeProps(labelProps, {

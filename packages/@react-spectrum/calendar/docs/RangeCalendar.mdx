@@ -255,10 +255,10 @@ By default, when pressing the next or previous buttons, pagination will advance 
 
 ### Custom first day of week
 
-By default, the first day of the week is Sunday. This can be changed by setting the `firstDayOfWeek` prop to a number between 0 (Sunday) and 6 (Saturday).
+By default, the first day of the week is Sunday. This can be changed by setting the `firstDayOfWeek` prop to `'Sun'`, `'Mon'`, `'Tue'`, `'Wed'`, `'Thu'`, `'Fri'`, or `'Sat'`.
 
 ```tsx example
 <div style={{maxWidth: '100%', overflow: 'auto'}}>
-  <RangeCalendar aria-label="Trip dates" firstDayOfWeek={1} />
+  <RangeCalendar aria-label="Trip dates" firstDayOfWeek="Mon" />
 </div>
 ```
