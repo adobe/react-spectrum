@@ -332,8 +332,7 @@ const expandButton = style<ExpandableRowChevronProps>({
 });
 
 function ExpandableRowChevron(props: ExpandableRowChevronProps) {
-  let expandButtonRef = useRef<HTMLSpanElement>(null);
-  // @ts-ignore - not sure how to type this or convert to a button (it fails a test if i convert)
+  let expandButtonRef = useRef(null);
   let [fullProps, ref] = useContextProps({...props, slot: 'chevron'}, expandButtonRef, ButtonContext);
   let {isExpanded, isDisabled} = fullProps;
   let {direction} = useLocale();

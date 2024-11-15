@@ -184,14 +184,14 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
         children = children.filter(c => c !== node);
       }
 
-      // @ts-ignore what is happening here, why can newNode be null and why do we allow it?
-      copy.children = children.map(child => {
+      copy.children = children?.map(child => {
         if (child === node) {
-          return newNode;
+          // newNode cannot be null here due to the above filter.
+          return newNode!;
         }
 
         return child;
-      });
+      }) ?? null;
 
       map.set(copy.key, copy);
 
@@ -206,6 +206,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     return {
       items: items.map(item => {
         if (item === node) {
+          // newNode cannot be null here due to the above filter.
           return newNode!;
         }
 

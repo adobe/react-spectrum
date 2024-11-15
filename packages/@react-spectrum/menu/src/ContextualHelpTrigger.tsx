@@ -11,10 +11,10 @@
  */
 
 import {classNames, SlotProvider, unwrapDOMRef, useIsMobileDevice} from '@react-spectrum/utils';
+import {DOMRefValue, ItemProps, Key} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 import {getInteractionModality} from '@react-aria/interactions';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
-import {ItemProps, Key} from '@react-types/shared';
 import {Popover} from '@react-spectrum/overlays';
 import React, {JSX, ReactElement, useEffect, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
@@ -41,7 +41,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   let {isUnavailable = false, targetKey} = props;
 
   let triggerRef = useRef<HTMLLIElement>(null);
-  let popoverRef = useRef(null);
+  let popoverRef = useRef<DOMRefValue<HTMLDivElement> | null>(null);
   let {popoverContainer, trayContainerRef, rootMenuTriggerState, menu: parentMenuRef, state} = useMenuStateContext()!;
   let submenuTriggerState = useSubmenuTriggerState({triggerKey: targetKey}, {...rootMenuTriggerState!, ...state});
   let submenuRef = unwrapDOMRef(popoverRef);
@@ -85,8 +85,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   let [, content] = props.children as [ReactElement, ReactElement];
 
   let onBlurWithin = (e) => {
-    // @ts-ignore - TODO refs strike again
-    if (e.relatedTarget && popoverRef.current && (!popoverRef.current.UNSAFE_getDOMNode().contains(e.relatedTarget) && !(e.relatedTarget === triggerRef.current && getInteractionModality() === 'pointer'))) {
+    if (e.relatedTarget && popoverRef.current && (!popoverRef.current.UNSAFE_getDOMNode()?.contains(e.relatedTarget) && !(e.relatedTarget === triggerRef.current && getInteractionModality() === 'pointer'))) {
       if (submenuTriggerState.isOpen) {
         submenuTriggerState.close();
       }
