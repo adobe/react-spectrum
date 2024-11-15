@@ -23,10 +23,8 @@
   },
   "dependencies": {
     "@react-aria/combobox": "^3.10.5",
-    "@react-aria/i18n": "^3.12.3",
     "@react-aria/listbox": "^3.13.5",
     "@react-aria/searchfield": "^3.7.10",
-    "@react-aria/textfield": "^3.14.10",
     "@react-aria/utils": "^3.25.3",
     "@react-stately/combobox": "^3.10.0",
     "@react-types/autocomplete": "3.0.0-alpha.26",
