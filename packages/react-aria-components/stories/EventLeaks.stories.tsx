@@ -44,7 +44,7 @@ let TagGroupExample = () =>   (
 );
 
 let rows = [
-    {id: 1, name: 'Button', children: <Button>Press me</Button>, isArrowEnabled: true},
+    {id: 1, name: 'Button', children: <Button>Press me</Button>, isArrowEnabled: false},
     {id: 2, name: 'TextField', children: <TextfieldExample />, isArrowEnabled: true},
     {id: 3, name: 'ToggleButton', children: <ToggleButtonExample />, isArrowEnabled: false},
     {id: 4, name: 'Slider', children: <SliderExample />, isArrowEnabled: true},
