@@ -120,7 +120,7 @@
     "postpack": "git checkout -- package.json"
   },
   "devDependencies": {
-    "@adobe/spectrum-tokens": "^13.0.0-beta.48",
+    "@adobe/spectrum-tokens": "^13.0.0-beta.53",
     "@parcel/macros": "2.12.1-canary.3165",
     "@react-aria/test-utils": "1.0.0-alpha.1"
   },
