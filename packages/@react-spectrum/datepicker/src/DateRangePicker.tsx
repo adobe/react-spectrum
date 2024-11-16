@@ -48,7 +48,7 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
     placeholderValue,
     maxVisibleMonths = 1,
     pageBehavior,
-    firstDayOfWeek = 'Sun'
+    firstDayOfWeek = 'sun'
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let targetRef = useRef<HTMLDivElement>(undefined);

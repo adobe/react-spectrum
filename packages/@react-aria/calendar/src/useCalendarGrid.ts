@@ -19,13 +19,13 @@ import {mergeProps, useLabels} from '@react-aria/utils';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
 
 const DAY_MAP = {
-  Sun: 0,
-  Mon: 1,
-  Tue: 2,
-  Wed: 3,
-  Thu: 4,
-  Fri: 5,
-  Sat: 6
+  sun: 0,
+  mon: 1,
+  tue: 2,
+  wed: 3,
+  thu: 4,
+  fri: 5,
+  sat: 6
 };
 
 export interface AriaCalendarGridProps {
@@ -49,9 +49,8 @@ export interface AriaCalendarGridProps {
   weekdayStyle?: 'narrow' | 'short' | 'long',
   /**
    * The day that starts the week.
-   * @default 'Sun'
    */
-  firstDayOfWeek?: 'Sun' | 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat'
+  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'
 }
 
 export interface CalendarGridAria {
@@ -72,7 +71,7 @@ export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarSta
   let {
     startDate = state.visibleRange.start,
     endDate = state.visibleRange.end,
-    firstDayOfWeek = 'Sun'
+    firstDayOfWeek = 'sun'
   } = props;
 
   let {direction} = useLocale();

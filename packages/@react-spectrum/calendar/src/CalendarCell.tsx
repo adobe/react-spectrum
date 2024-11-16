@@ -22,22 +22,22 @@ import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 
 const DAY_MAP = {
-  Sun: 0,
-  Mon: 1,
-  Tue: 2,
-  Wed: 3,
-  Thu: 4,
-  Fri: 5,
-  Sat: 6
+  sun: 0,
+  mon: 1,
+  tue: 2,
+  wed: 3,
+  thu: 4,
+  fri: 5,
+  sat: 6
 };
 
 interface CalendarCellProps extends AriaCalendarCellProps {
   state: CalendarState | RangeCalendarState,
   currentMonth: CalendarDate,
-  firstDayOfWeek?: 'Sun' | 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat'
+  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'
 }
 
-export function CalendarCell({state, currentMonth, firstDayOfWeek = 'Sun', ...props}: CalendarCellProps) {
+export function CalendarCell({state, currentMonth, firstDayOfWeek = 'sun', ...props}: CalendarCellProps) {
   let ref = useRef<HTMLElement>(null);
   let {
     cellProps,

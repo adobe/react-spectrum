@@ -69,5 +69,5 @@ export const NonContiguousInvalid = () => {
   );
 };
 
-export const CustomWeekStartMonday = () => <RangeCalendar value={value} firstDayOfWeek="Mon" />;
-export const CustomWeekStartSaturday = () => <RangeCalendar value={value} firstDayOfWeek="Sat" />;
+export const CustomWeekStartMonday = () => <RangeCalendar value={value} firstDayOfWeek="mon" />;
+export const CustomWeekStartSaturday = () => <RangeCalendar value={value} firstDayOfWeek="sat" />;

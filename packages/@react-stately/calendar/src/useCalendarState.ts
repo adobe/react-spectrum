@@ -34,13 +34,13 @@ import {useMemo, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
 const DAY_MAP = {
-  Sun: 0,
-  Mon: 1,
-  Tue: 2,
-  Wed: 3,
-  Thu: 4,
-  Fri: 5,
-  Sat: 6
+  sun: 0,
+  mon: 1,
+  tue: 2,
+  wed: 3,
+  thu: 4,
+  fri: 5,
+  sat: 6
 };
 
 export interface CalendarStateOptions<T extends DateValue = DateValue> extends CalendarProps<T> {
@@ -77,7 +77,7 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
     selectionAlignment,
     isDateUnavailable,
     pageBehavior = 'visible',
-    firstDayOfWeek = 'Sun'
+    firstDayOfWeek = 'sun'
   } = props;
   let calendar = useMemo(() => createCalendar(resolvedOptions.calendar), [createCalendar, resolvedOptions.calendar]);
 

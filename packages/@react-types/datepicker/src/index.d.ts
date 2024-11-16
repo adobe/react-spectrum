@@ -74,9 +74,8 @@ interface DatePickerBase<T extends DateValue> extends DateFieldBase<T>, OverlayT
   pageBehavior?: PageBehavior,
   /**
    * The day that starts the week.
-   * @default 'Sun'
    */
-  firstDayOfWeek?: 'Sun' | 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat'
+  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'
 }
 export interface AriaDatePickerBaseProps<T extends DateValue> extends DatePickerBase<T>, AriaLabelingProps, DOMProps {}
 
