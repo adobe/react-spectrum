@@ -11,20 +11,25 @@
  */
 
 import {Button, GridList, GridListItem, GridListItemProps, Group, Label, Tag, TagGroup, TagList} from 'react-aria-components';
+import {CalendarExample} from './Calendar.stories';
 import {CheckboxExample} from './Checkbox.stories';
 import {CheckboxGroupExample} from './CheckboxGroup.stories';
 import {ColorSwatchExample} from './ColorSwatch.stories';
 import {ColorWheelExample} from './ColorWheel.stories';
+import {ComboBoxExample} from './ComboBox.stories';
 import {DateFieldExample} from './DateField.stories';
+import {DisclosureExample} from './Disclosure.stories';
 import {NumberFieldExample} from './NumberField.stories';
 import {RadioGroupExample} from './RadioGroup.stories';
 import React, {useEffect, useRef, useState} from 'react';
 import {SearchFieldExample} from './SearchField.stories';
+import {SelectExample} from './Select.stories';
 import {SliderExample} from './Slider.stories';
 import {SwitchExample} from './Switch.stories';
 import {TextfieldExample} from './TextField.stories';
 import {TimeFieldExample} from './TimeField.stories';
 import {ToggleButtonExample} from './ToggleButton.stories';
+import {ToolbarExample} from './Toolbar.stories';
 import {userEvent, within} from '@storybook/testing-library';
 
 export default {
@@ -44,24 +49,29 @@ let TagGroupExample = () =>   (
 );
 
 let rows = [
-    {id: 1, name: 'Button', children: <Button>Press me</Button>, isArrowEnabled: false},
-    {id: 2, name: 'TextField', children: <TextfieldExample />, isArrowEnabled: true},
-    {id: 3, name: 'ToggleButton', children: <ToggleButtonExample />, isArrowEnabled: false},
-    {id: 4, name: 'Slider', children: <SliderExample />, isArrowEnabled: true},
-    {id: 5, name: 'RadioGroup', children: <RadioGroupExample />, isArrowEnabled: true},
-    {id: 6, name: 'NumberField', children: NumberFieldExample.render({}), isArrowEnabled: true},
-    {id: 7, name: 'TimeField', children: <TimeFieldExample />, isArrowEnabled: true},
-    {id: 8, name: 'DateField', children: <DateFieldExample />, isArrowEnabled: true},
-    {id: 9, name: 'SearchField', children: <SearchFieldExample />, isArrowEnabled: false},
-    {id: 10, name: 'Checkbox', children: <CheckboxExample />, isArrowEnabled: false},
-    {id: 11, name: 'CheckboxGroup', children: <CheckboxGroupExample />, isArrowEnabled: false},
-    {id: 12, name: 'Switch', children: <SwitchExample />, isArrowEnabled: false},
-    {id: 13, name: 'TagGroup', children: <TagGroupExample />, isArrowEnabled: true},
-    {id: 14, name: 'ColorWheel', children: <ColorWheelExample />, isArrowEnabled: true},
-    {id: 15, name: 'ColorSwatch', children: <ColorSwatchExample />, isArrowEnabled: true}
+    {id: 1, name: 'Button', children: <Button>Press me</Button>, interactions: [' ', 'Enter']},
+    {id: 2, name: 'TextField', children: <TextfieldExample />, interactions: ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Escape']},
+    {id: 3, name: 'ToggleButton', children: <ToggleButtonExample />, interactions: [' ', 'Enter']},
+    {id: 4, name: 'Slider', children: <SliderExample />, interactions: ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown']},
+    {id: 5, name: 'RadioGroup', children: <RadioGroupExample />, interactions: ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown']},
+    {id: 6, name: 'NumberField', children: NumberFieldExample.render({}), interactions: ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Enter']},
+    {id: 7, name: 'TimeField', children: <TimeFieldExample />, interactions: ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Enter']},
+    {id: 8, name: 'DateField', children: <DateFieldExample />, interactions: ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Enter']},
+    {id: 9, name: 'SearchField', children: <SearchFieldExample />, interactions: [' ', 'Enter', 'Escape',]},
+    {id: 10, name: 'Checkbox', children: <CheckboxExample />, interactions: [' ']},
+    {id: 11, name: 'CheckboxGroup', children: <CheckboxGroupExample />, interactions: [' ']},
+    {id: 12, name: 'Switch', children: <SwitchExample />, interactions: [' ', 'Enter']},
+    {id: 13, name: 'TagGroup', children: <TagGroupExample />, interactions: ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', ' ', 'Enter']},
+    {id: 14, name: 'ColorWheel', children: <ColorWheelExample />, interactions: ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', ' ', 'Enter']},
+    {id: 15, name: 'ColorSwatch', children: <ColorSwatchExample />, interactions: ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', ' ', 'Enter']},
+    {id: 16, name: 'Select', children: <SelectExample />, interactions: ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', ' ', 'Enter']},
+    {id: 17, name: 'ComboBox', children: <ComboBoxExample />, interactions: ['ArrowUp', 'ArrowDown', 'ArrowRight', 'ArrowLeft', ' ', 'Enter', 'Escape']},
+    {id: 18, name: 'Disclosure', children: <DisclosureExample />, interactions: [' ', 'Enter']},
+    {id: 19, name: 'Toolbar', children: <ToolbarExample />, interactions: ['ArrowRight', 'ArrowLeft']},
+    {id: 20, name: 'Calendar', children: <CalendarExample />, interactions: ['Tab', 'Tab', 'ArrowRight', 'ArrowLeft']},
 ];
 
-let INTERACTION_KEYS = new Set([' ', 'Enter']);
+let INTERACTION_KEYS = new Set([' ', 'Enter', 'Escape']);
 let NAVIGATION_KEYS = new Set(['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'PageUp', 'PageDown']);
 
 const EventGridItem = (props: GridListItemProps) => {
@@ -111,6 +121,7 @@ const EventGridItem = (props: GridListItemProps) => {
         // @ts-expect-error
         children={children}
         onKeyDown={onLeakedKeyboardEvent}
+        onKeyDownCapture={(e) => {console.log('capturing...', e)}}
         style={{
           display: 'inline-flex',
           flex: 1,
@@ -170,9 +181,8 @@ export const EventLeakGrid = {
         continue;
       }
   
-      if (rows[index]?.isArrowEnabled) {
-        for (const key of NAVIGATION_KEYS.values()) {
-
+      if (rows[index]?.interactions) {
+        for (const key of rows[index]?.interactions) {
           await userEvent.keyboard(`{${key}}`);
           await sleep(100);
 
@@ -181,16 +191,6 @@ export const EventLeakGrid = {
           }
         }
       }
-
-      for (const key of INTERACTION_KEYS.values()) {
-        await userEvent.keyboard(`{${key}}`);
-        await sleep(100);
-        
-        if (document.activeElement === element) {
-          break;
-        }
-      }
     }
-    
   }
 };
