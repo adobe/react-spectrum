@@ -6,7 +6,7 @@
     "parcel": "^2.0.0"
   },
   "dependencies": {
-    "@adobe/spectrum-tokens": "^13.0.0-beta.48",
+    "@adobe/spectrum-tokens": "^13.0.0-beta.53",
     "@parcel/plugin": "^2.0.0",
     "@svgr/core": "^6.2.0",
     "@svgr/plugin-jsx": "^6.2.0",
