@@ -57,7 +57,7 @@ let rows = [
     {id: 6, name: 'NumberField', children: NumberFieldExample.render({}), interactions: ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Enter']},
     {id: 7, name: 'TimeField', children: <TimeFieldExample />, interactions: ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Enter']},
     {id: 8, name: 'DateField', children: <DateFieldExample />, interactions: ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Enter']},
-    {id: 9, name: 'SearchField', children: <SearchFieldExample />, interactions: [' ', 'Enter', 'Escape',]},
+    {id: 9, name: 'SearchField', children: <SearchFieldExample />, interactions: [' ', 'Enter', 'Escape']},
     {id: 10, name: 'Checkbox', children: <CheckboxExample />, interactions: [' ']},
     {id: 11, name: 'CheckboxGroup', children: <CheckboxGroupExample />, interactions: [' ']},
     {id: 12, name: 'Switch', children: <SwitchExample />, interactions: [' ', 'Enter']},
@@ -68,7 +68,7 @@ let rows = [
     {id: 17, name: 'ComboBox', children: <ComboBoxExample />, interactions: ['ArrowUp', 'ArrowDown', 'ArrowRight', 'ArrowLeft', ' ', 'Enter', 'Escape']},
     {id: 18, name: 'Disclosure', children: <DisclosureExample />, interactions: [' ', 'Enter']},
     {id: 19, name: 'Toolbar', children: <ToolbarExample />, interactions: ['ArrowRight', 'ArrowLeft']},
-    {id: 20, name: 'Calendar', children: <CalendarExample />, interactions: ['Tab', 'Tab', 'ArrowRight', 'ArrowLeft']},
+    {id: 20, name: 'Calendar', children: <CalendarExample />, interactions: ['Tab', 'Tab', 'ArrowRight', 'ArrowLeft']}
 ];
 
 let INTERACTION_KEYS = new Set([' ', 'Enter', 'Escape']);
@@ -121,7 +121,6 @@ const EventGridItem = (props: GridListItemProps) => {
         // @ts-expect-error
         children={children}
         onKeyDown={onLeakedKeyboardEvent}
-        onKeyDownCapture={(e) => {console.log('capturing...', e)}}
         style={{
           display: 'inline-flex',
           flex: 1,
@@ -181,8 +180,10 @@ export const EventLeakGrid = {
         continue;
       }
   
-      if (rows[index]?.interactions) {
-        for (const key of rows[index]?.interactions) {
+      let interactions = rows[index]?.interactions;
+
+      if (interactions) {
+        for (const key of interactions) {
           await userEvent.keyboard(`{${key}}`);
           await sleep(100);
 
