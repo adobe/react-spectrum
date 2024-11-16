@@ -11,21 +11,26 @@
  */
 
 import {Button, GridList, GridListItem, GridListItemProps, Group, Label, Tag, TagGroup, TagList} from 'react-aria-components';
-import {CalendarExample} from './Calendar.stories';
+import {CalendarExample, RangeCalendarExample} from './Calendar.stories';
 import {CheckboxExample} from './Checkbox.stories';
 import {CheckboxGroupExample} from './CheckboxGroup.stories';
-import {ColorSwatchExample} from './ColorSwatch.stories';
+import {ColorFieldExample} from './ColorField.stories';
+import {ColorSliderExample} from './ColorSlider.stories';
 import {ColorWheelExample} from './ColorWheel.stories';
 import {ComboBoxExample} from './ComboBox.stories';
 import {DateFieldExample} from './DateField.stories';
 import {DisclosureExample} from './Disclosure.stories';
+import {DropzoneExampleWithDraggableObject} from './Dropzone.stories';
+import {MenuExample} from './Menu.stories';
 import {NumberFieldExample} from './NumberField.stories';
+import {PopoverExample} from './Popover.stories';
 import {RadioGroupExample} from './RadioGroup.stories';
 import React, {useEffect, useRef, useState} from 'react';
 import {SearchFieldExample} from './SearchField.stories';
 import {SelectExample} from './Select.stories';
 import {SliderExample} from './Slider.stories';
 import {SwitchExample} from './Switch.stories';
+import {TabsExample} from './Tabs.stories';
 import {TextfieldExample} from './TextField.stories';
 import {TimeFieldExample} from './TimeField.stories';
 import {ToggleButtonExample} from './ToggleButton.stories';
@@ -62,13 +67,19 @@ let rows = [
     {id: 11, name: 'CheckboxGroup', children: <CheckboxGroupExample />, interactions: [' ']},
     {id: 12, name: 'Switch', children: <SwitchExample />, interactions: [' ', 'Enter']},
     {id: 13, name: 'TagGroup', children: <TagGroupExample />, interactions: ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', ' ', 'Enter']},
-    {id: 14, name: 'ColorWheel', children: <ColorWheelExample />, interactions: ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', ' ', 'Enter']},
-    {id: 15, name: 'ColorSwatch', children: <ColorSwatchExample />, interactions: ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', ' ', 'Enter']},
-    {id: 16, name: 'Select', children: <SelectExample />, interactions: ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', ' ', 'Enter']},
-    {id: 17, name: 'ComboBox', children: <ComboBoxExample />, interactions: ['ArrowUp', 'ArrowDown', 'ArrowRight', 'ArrowLeft', ' ', 'Enter', 'Escape']},
+    {id: 14, name: 'ColorWheel', children: <ColorWheelExample />, interactions: ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown']},
+    {id: 15, name: 'ColorField', children: <ColorFieldExample />, interactions: ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown']},
+    {id: 16, name: 'Select', children: <SelectExample />, interactions: [' ', 'ArrowDown', 'ArrowDown', 'ArrowUp', 'Enter', 'ArrowDown', 'ArrowDown', 'Enter']},
+    {id: 17, name: 'ComboBox', children: <ComboBoxExample />, interactions: [' ', 'ArrowDown', 'ArrowDown', 'ArrowUp', 'Enter', 'ArrowDown', 'ArrowDown', 'Escape']},
     {id: 18, name: 'Disclosure', children: <DisclosureExample />, interactions: [' ', 'Enter']},
     {id: 19, name: 'Toolbar', children: <ToolbarExample />, interactions: ['ArrowRight', 'ArrowLeft']},
-    {id: 20, name: 'Calendar', children: <CalendarExample />, interactions: ['Tab', 'Tab', 'ArrowRight', 'ArrowLeft']}
+    {id: 20, name: 'Calendar', children: <CalendarExample />, interactions: ['Tab', 'Tab', 'ArrowLeft', 'ArrowDown', 'ArrowUp', ' ', 'ArrowRight', 'Enter']},
+    {id: 21, name: 'RangeCalendar', children: <RangeCalendarExample />, interactions: ['Tab', 'Tab', 'ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp', ' ', 'ArrowRight', 'Enter']},
+    {id: 22, name: 'Tabs', children: <TabsExample />, interactions: ['ArrowRight', 'ArrowLeft']},
+    {id: 23, name: 'Popover', children: <PopoverExample />, interactions: [' ', 'Tab', 'Escape', ' ', 'Tab', 'ArrowRight', 'ArrowLeft']},
+    {id: 24, name: 'Menu', children: <MenuExample />, interactions: [' ', 'ArrowDown', 'ArrowUp', 'Enter', 'ArrowDown', 'Escape']},
+    {id: 26, name: 'Dropzone', children: <DropzoneExampleWithDraggableObject />, interactions: [' ', 'Enter', 'Escape', 'Enter', 'Enter']},
+    {id: 27, name: 'ColorSlider', children: <ColorSliderExample channel="hue" defaultValue="hsl(0, 100%, 50%)" />, interactions: ['ArrowRight', 'ArrowLeft']}
 ];
 
 let INTERACTION_KEYS = new Set([' ', 'Enter', 'Escape']);
@@ -169,11 +180,11 @@ export const EventLeakGrid = {
       }
 
       await userEvent.click(element);
-      await sleep(100);
+      await sleep(50);
   
       await userEvent.tab();
   
-      await sleep(100);
+      await sleep(50);
 
       if (!rows[index]) {
         console.log('No row found for index', index);
@@ -185,7 +196,7 @@ export const EventLeakGrid = {
       if (interactions) {
         for (const key of interactions) {
           await userEvent.keyboard(`{${key}}`);
-          await sleep(100);
+          await sleep(50);
 
           if (document.activeElement === element) {
             break;
