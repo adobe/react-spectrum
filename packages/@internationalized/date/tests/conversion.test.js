@@ -140,6 +140,8 @@ describe('CalendarDate conversion', function () {
     it('should convert a date from absolute in the BC era', function () {
       let date = fromAbsolute(new Date('0000-01-01T00:00:00.000Z').getTime(), 'UTC');
       expect(date).toEqual(new ZonedDateTime('BC', 1, 1, 1, 'UTC', 0, 0, 0, 0));
+      date = fromAbsolute(new Date('0001-01-01T00:00:00.000Z').getTime(), 'UTC');
+      expect(date).toEqual(new ZonedDateTime('AD', 1, 1, 1, 'UTC', 0, 0, 0, 0));
 
       date = fromAbsolute(new Date('-000009-01-01T00:00:00.000Z').getTime(), 'UTC');
       expect(date).toEqual(new ZonedDateTime('BC', 10, 1, 1, 'UTC', 0, 0, 0, 0));
