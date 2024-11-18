@@ -608,7 +608,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[] | null>, restoreFocus?: b
       }
 
       let focusedElement = ownerDocument.activeElement as FocusableElement;
-      if (!isElementInScope(focusedElement, scopeRef.current)) {
+      if (!isElementInChildScope(focusedElement, scopeRef) || !shouldRestoreFocus(scopeRef)) {
         return;
       }
       let treeNode = focusScopeTree.getTreeNode(scopeRef);
@@ -631,13 +631,13 @@ function useRestoreFocus(scopeRef: RefObject<Element[] | null>, restoreFocus?: b
 
       // If there is no next element, or it is outside the current scope, move focus to the
       // next element after the node to restore to instead.
-      if ((!nextElement || !isElementInScope(nextElement, scopeRef.current)) && nodeToRestore) {
+      if ((!nextElement || !isElementInChildScope(nextElement, scopeRef)) && nodeToRestore) {
         walker.currentNode = nodeToRestore;
 
         // Skip over elements within the scope, in case the scope immediately follows the node to restore.
         do {
           nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as FocusableElement;
-        } while (isElementInScope(nextElement, scopeRef.current));
+        } while (isElementInChildScope(nextElement, scopeRef));
 
         e.preventDefault();
         e.stopPropagation();
@@ -693,7 +693,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[] | null>, restoreFocus?: b
         && nodeToRestore
         && (
           // eslint-disable-next-line react-hooks/exhaustive-deps
-          (isElementInScope(ownerDocument.activeElement, scopeRef.current) || (ownerDocument.activeElement === ownerDocument.body && shouldRestoreFocus(scopeRef)))
+          ((ownerDocument.activeElement && isElementInChildScope(ownerDocument.activeElement, scopeRef)) || (ownerDocument.activeElement === ownerDocument.body && shouldRestoreFocus(scopeRef)))
         )
       ) {
         // freeze the focusScopeTree so it persists after the raf, otherwise during unmount nodes are removed from it

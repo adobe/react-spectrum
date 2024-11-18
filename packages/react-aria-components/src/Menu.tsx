@@ -22,8 +22,8 @@ import {HeaderContext} from './Header';
 import {KeyboardContext} from './Keyboard';
 import {MultipleSelectionState, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {OverlayTriggerStateContext} from './Dialog';
-import {PopoverContext, PopoverProps} from './Popover';
-import {PressResponder, useHover, useInteractOutside} from '@react-aria/interactions';
+import {PopoverContext} from './Popover';
+import {PressResponder, useHover} from '@react-aria/interactions';
 import React, {
   createContext,
   ForwardedRef,
@@ -33,7 +33,6 @@ import React, {
   RefObject,
   useCallback,
   useContext,
-  useEffect,
   useRef,
   useState
 } from 'react';
@@ -120,7 +119,6 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
   let submenuTriggerState = useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
   let submenuRef = useRef<HTMLDivElement>(null);
   let itemRef = useObjectRef(ref);
-  let popoverContext = useSlottedContext(PopoverContext)!;
   let {parentMenuRef} = useContext(SubmenuTriggerContext)!;
   let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger({
     parentMenuRef,
@@ -139,7 +137,9 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
           trigger: 'SubmenuTrigger',
           triggerRef: itemRef,
           placement: 'end top',
-          UNSTABLE_portalContainer: popoverContext.UNSTABLE_portalContainer || undefined,
+          // Prevent parent popover from hiding submenu.
+          // @ts-ignore
+          'data-react-aria-top-layer': true,
           ...popoverProps
         }]
       ]}>
@@ -174,33 +174,9 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
     collection,
     children: undefined
   });
-  let [popoverContainer, setPopoverContainer] = useState<HTMLDivElement | null>(null);
+  let triggerState = useContext(RootMenuTriggerStateContext);
   let {isVirtualized, CollectionRoot} = useContext(CollectionRendererContext);
-  let {menuProps} = useMenu({...props, isVirtualized}, state, ref);
-  let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
-  let popoverContext = useContext(PopoverContext)!;
-
-  let isSubmenu = (popoverContext as PopoverProps)?.trigger === 'SubmenuTrigger';
-  useInteractOutside({
-    ref,
-    onInteractOutside: (e) => {
-      if (rootMenuTriggerState && !popoverContainer?.contains(e.target as HTMLElement)) {
-        rootMenuTriggerState.close();
-      }
-    },
-    isDisabled: isSubmenu || rootMenuTriggerState?.expandedKeysStack.length === 0
-  });
-
-  let prevPopoverContainer = useRef<HTMLDivElement | null>(null) ;
-  let [leftOffset, setLeftOffset] = useState({left: 0});
-  useEffect(() => {
-    if (popoverContainer && prevPopoverContainer.current !== popoverContainer && leftOffset.left === 0) {
-      prevPopoverContainer.current = popoverContainer;
-      let {left} = popoverContainer.getBoundingClientRect();
-      setLeftOffset({left: -1 * left});
-    }
-  }, [leftOffset, popoverContainer]);
-
+  let {menuProps} = useMenu({...props, isVirtualized, onClose: props.onClose || triggerState?.close}, state, ref);
   let renderProps = useRenderProps({
     defaultClassName: 'react-aria-Menu',
     className: props.className,
@@ -221,7 +197,6 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
           values={[
             [MenuStateContext, state],
             [SeparatorContext, {elementType: 'div'}],
-            [PopoverContext, {UNSTABLE_portalContainer: popoverContainer || undefined}],
             [SectionContext, {name: 'MenuSection', render: MenuSection}],
             [SubmenuTriggerContext, {parentMenuRef: ref}],
             [MenuItemContext, null],
@@ -233,7 +208,6 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             scrollRef={ref} />
         </Provider>
       </div>
-      <div ref={setPopoverContainer} style={{width: '100vw', position: 'absolute', top: 0, ...leftOffset}} />
     </FocusScope>
   );
 }

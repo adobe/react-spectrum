@@ -11,6 +11,9 @@
  */
 import type {Condition, CSSProperties, CSSValue, CustomValue, PropertyFunction, PropertyValueDefinition, PropertyValueMap, StyleFunction, StyleValue, Theme, ThemeProperties, Value} from './types';
 
+// Prefix Spectrum 1 style macro classes to avoid name collisions with S2 style macro.
+const PREFIX = 's1-';
+
 export function createArbitraryProperty<T extends Value>(fn: (value: T, property: string) => CSSProperties): PropertyFunction<T> {
   return (value, property) => {
     let selector = Array.isArray(value) ? value.map(v => generateArbitraryValueSelector(String(v))).join('') : generateArbitraryValueSelector(String(value));
@@ -67,11 +70,11 @@ function mapConditionalValue<T, U>(value: PropertyValueDefinition<T>, fn: (value
   }
 }
 
-function createValueLookup(values: Array<CSSValue>, atStart = false) {
+function createValueLookup(values: Array<CSSValue>) {
   let map = new Map<CSSValue, string>();
   for (let value of values) {
     if (!map.has(value)) {
-      map.set(value, generateName(map.size, atStart));
+      map.set(value, `${PREFIX}${generateName(map.size)}`);
     }
   }
   return map;
@@ -91,8 +94,8 @@ interface MacroContext {
 }
 
 export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemeProperties<T>, 'default' | Extract<keyof T['conditions'], string>> {
-  let themePropertyMap = createValueLookup(Object.keys(theme.properties), true);
-  let themeConditionMap = createValueLookup(Object.keys(theme.conditions), true);
+  let themePropertyMap = createValueLookup(Object.keys(theme.properties));
+  let themeConditionMap = createValueLookup(Object.keys(theme.conditions));
   let propertyFunctions = new Map(Object.entries(theme.properties).map(([k, v]) => {
     if (typeof v === 'function') {
       return [k, v];
@@ -159,7 +162,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       } else {
         css += ', ';
       }
-      css += generateName(i, true);
+      css += `${PREFIX}${generateName(i)}`;
     }
     css += ';\n\n';
 
@@ -267,7 +270,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       let prelude = theme.conditions[condition] || condition;
       if (prelude.startsWith(':')) {
         return [{
-          prelude: `@layer ${generateName(priority, true)}`,
+          prelude: `@layer ${PREFIX}${generateName(priority)}`,
           body: rules.map(rule => ({prelude: rule.prelude, body: [{...rule, prelude: '&' + prelude}], condition: ''})),
           condition: ''
         }];
@@ -277,7 +280,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       return [{
         // Top level layer is based on the priority of the rule, not the condition.
         // Also group in a sub-layer based on the condition so that lightningcss can more effectively deduplicate rules.
-        prelude: `@layer ${generateName(priority, true)}.${themeConditionMap.get(condition) || generateArbitraryValueSelector(condition, true)}`,
+        prelude: `@layer ${PREFIX}${generateName(priority)}.${themeConditionMap.get(condition) || generateArbitraryValueSelector(condition, true)}`,
         body: [{prelude, body: rules, condition: ''}],
         condition: ''
       }];
@@ -367,7 +370,7 @@ interface Rule {
 // This maps to an alphabet containing lower case letters, upper case letters, and numbers.
 // For numbers larger than 62, an underscore is prepended.
 // This encoding allows easy parsing to enable runtime merging by property.
-function generateName(index: number, atStart = false): string {
+function generateName(index: number): string {
   if (index < 26) {
     // lower case letters
     return String.fromCharCode(index + 97);
@@ -380,11 +383,7 @@ function generateName(index: number, atStart = false): string {
 
   if (index < 62) {
     // numbers
-    let res = String.fromCharCode((index - 52) + 48);
-    if (atStart) {
-      res = '_' + res;
-    }
-    return res;
+    return String.fromCharCode((index - 52) + 48);
   }
 
   return '_' + generateName(index - 62);
