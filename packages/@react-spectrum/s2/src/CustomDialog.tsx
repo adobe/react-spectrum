@@ -24,9 +24,9 @@ export interface CustomDialogProps extends Omit<RACDialogProps, 'className' | 's
    */
   size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',
   /**
-   * Whether the Dialog is dismissable.
+   * Whether the Dialog is dismissible.
    */
-  isDismissable?: boolean,
+  isDismissible?: boolean,
   /** Whether pressing the escape key to close the dialog should be disabled. */
   isKeyboardDismissDisabled?: boolean,
   /**
@@ -58,14 +58,14 @@ const dialogStyle = style({
 function CustomDialog(props: CustomDialogProps, ref: DOMRef) {
   let {
     size,
-    isDismissable,
+    isDismissible,
     isKeyboardDismissDisabled,
     padding = 'default'
   } = props;
   let domRef = useDOMRef(ref);
 
   return (
-    <Modal size={size} isDismissable={isDismissable} isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
+    <Modal size={size} isDismissable={isDismissible} isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
       <RACDialog
         {...props}
         ref={domRef}
