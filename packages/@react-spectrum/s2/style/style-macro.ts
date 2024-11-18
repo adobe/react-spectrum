@@ -61,7 +61,7 @@ export function createSizingProperty<T extends CSSValue>(values: PropertyValueMa
     
     if (typeof value === 'number') {
       let cssValue = value === 0 ? '0px' : fn(value);
-      return {default: [{[property]: cssValue}, generateName(value)]};
+      return {default: [{[property]: cssValue}, generateName(value + valueMap.size)]};
     }
 
     throw new Error('Invalid sizing value: ' + value);
