@@ -5627,7 +5627,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-aria/accordion@npm:3.0.0-alpha.35, @react-aria/accordion@npm:^3.0.0-alpha.35, @react-aria/accordion@workspace:packages/@react-aria/accordion":
+"@react-aria/accordion@workspace:packages/@react-aria/accordion":
   version: 0.0.0-use.local
   resolution: "@react-aria/accordion@workspace:packages/@react-aria/accordion"
   dependencies:
@@ -5875,15 +5875,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/disclosure@workspace:packages/@react-aria/disclosure"
   dependencies:
-    "@react-aria/button": "npm:^3.10.1"
-    "@react-aria/selection": "npm:^3.20.1"
     "@react-aria/ssr": "npm:^3.9.6"
     "@react-aria/utils": "npm:^3.25.3"
     "@react-stately/disclosure": "npm:3.0.0-alpha.0"
-    "@react-stately/toggle": "npm:^3.7.8"
-    "@react-stately/tree": "npm:^3.8.5"
     "@react-types/button": "npm:^3.10.0"
-    "@react-types/shared": "npm:^3.25.0"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -28996,7 +28991,6 @@ __metadata:
   dependencies:
     "@internationalized/date": "npm:^3.5.6"
     "@internationalized/string": "npm:^3.2.4"
-    "@react-aria/accordion": "npm:3.0.0-alpha.35"
     "@react-aria/collections": "npm:3.0.0-alpha.5"
     "@react-aria/color": "npm:^3.0.1"
     "@react-aria/disclosure": "npm:3.0.0-alpha.1"
@@ -29040,7 +29034,6 @@ __metadata:
     "@babel/cli": "npm:^7.24.1"
     "@babel/core": "npm:^7.24.3"
     "@internationalized/string": "npm:^3.2.4"
-    "@react-aria/accordion": "npm:^3.0.0-alpha.35"
     "@react-aria/breadcrumbs": "npm:^3.5.18"
     "@react-aria/button": "npm:^3.10.1"
     "@react-aria/calendar": "npm:^3.5.13"
@@ -29448,6 +29441,7 @@ __metadata:
     "@react-stately/combobox": "npm:^3.10.0"
     "@react-stately/data": "npm:^3.11.7"
     "@react-stately/datepicker": "npm:^3.10.3"
+    "@react-stately/disclosure": "npm:3.0.0-alpha.0"
     "@react-stately/dnd": "npm:^3.4.3"
     "@react-stately/form": "npm:^3.0.6"
     "@react-stately/list": "npm:^3.11.0"

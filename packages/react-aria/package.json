@@ -38,7 +38,6 @@
   },
   "dependencies": {
     "@internationalized/string": "^3.2.4",
-    "@react-aria/accordion": "^3.0.0-alpha.35",
     "@react-aria/breadcrumbs": "^3.5.18",
     "@react-aria/button": "^3.10.1",
     "@react-aria/calendar": "^3.5.13",

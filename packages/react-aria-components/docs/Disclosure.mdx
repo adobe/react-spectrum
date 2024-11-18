@@ -21,7 +21,7 @@ import Anatomy from './DisclosureAnatomy.svg';
 
 ---
 category: Navigation
-keywords: [disclosure, collapse, expand, aria]
+keywords: [disclosure, collapse, expand, aria, accordion]
 type: component
 preRelease: alpha
 ---
@@ -103,7 +103,7 @@ import {Disclosure, Button, DisclosurePanel, Heading} from 'react-aria-component
 
 ## Features
 
-Disclosures can be built with the [&lt;details&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details) and [&lt;summary&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/summary) HTML element, but this can be difficult to style especially when adding adjacent interactive elements, like buttons, to the disclosure's heading. `Disclosure` helps achieve accessible disclosures implemented with the correct ARIA pattern while making custom styling easy. 
+Disclosures can be built with the [&lt;details&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details) and [&lt;summary&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/summary) HTML elements, but this can be difficult to style, especially when adding adjacent interactive elements, like buttons, to the disclosure's heading. `Disclosure` helps achieve accessible disclosures implemented with the correct ARIA pattern while making custom styling easy. 
 
 * **Flexible** - Structured such that it can be used standalone or combined with other disclosures to form a `DisclosureGroup`
 * **Keyboard Interaction** - When focused, a disclosure's visibility can be toggled with either the <Keyboard>Enter</Keyboard> or <Keyboard>Space</Keyboard> key, and the appropriate ARIA attributes are automatically applied.
@@ -171,7 +171,7 @@ function MyDisclosure({title, children, ...props}: MyDisclosureProps) {
 An uncontrolled Disclosure can be expanded by default using the `defaultExpanded` prop.
 
 ```tsx example
-<MyDisclosure title="Download, Install, and Set Up" defaultExpanded >
+<MyDisclosure title="Download, Install, and Set Up" defaultExpanded>
   Instructions on how to download, install, and set up
 </MyDisclosure>
 ```
@@ -183,7 +183,7 @@ function ControlledExpanded() {
   let [isExpanded, setIsExpanded] = React.useState(true);
 
   return (
-    <MyDisclosure title="Download, Install, and Set Up" isExpanded={isExpanded} onExpandedChange={setIsExpanded} >
+    <MyDisclosure title="Download, Install, and Set Up" isExpanded={isExpanded} onExpandedChange={setIsExpanded}>
       Instructions on how to download, install, and set up
     </MyDisclosure>
   )
@@ -198,7 +198,7 @@ function ControlledExpanded() {
 A Disclosure can be disabled using the `isDisabled` prop. 
 
 ```tsx example
-<MyDisclosure title="Introduction to Knitting" isDisabled >
+<MyDisclosure title="Introduction to Knitting" isDisabled>
   Details about knitting here
 </MyDisclosure>
 ```
