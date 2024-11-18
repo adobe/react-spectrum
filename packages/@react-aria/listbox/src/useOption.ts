@@ -13,7 +13,7 @@
 import {chain, filterDOMProps, isMac, isWebKit, mergeProps, useLinkProps, useSlotId} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {getItemCount} from '@react-stately/collections';
-import {getItemId, listData} from './utils';
+import {getItemId, listMap} from './utils';
 import {isFocusVisible, useHover} from '@react-aria/interactions';
 import {ListState} from '@react-stately/list';
 import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
@@ -90,7 +90,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     key
   } = props;
 
-  let data = listData.get(state);
+  let data = listMap.get(state);
 
   let isDisabled = props.isDisabled ?? state.selectionManager.isDisabled(key);
   let isSelected = props.isSelected ?? state.selectionManager.isSelected(key);

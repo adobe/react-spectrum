@@ -32,6 +32,7 @@ export function useStepList<T>(props: AriaStepListProps<T>, state: StepListState
   let {listProps} = useSelectableList({
     ...props,
     ...state,
+    isDisabled: undefined,
     allowsTabNavigation: true,
     ref
   });

@@ -15,8 +15,8 @@ import {flushSync} from 'react-dom';
 import {FocusEvent, KeyboardEvent, useEffect, useRef} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {focusWithoutScrolling, mergeProps, scrollIntoView, scrollIntoViewport, useEvent, useRouter} from '@react-aria/utils';
+import {getElementByKey, isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
 import {getInteractionModality} from '@react-aria/interactions';
-import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useLocale} from '@react-aria/i18n';
 import {useTypeSelect} from './useTypeSelect';
@@ -34,6 +34,11 @@ export interface AriaSelectableCollectionOptions {
    * The ref attached to the element representing the collection.
    */
   ref: RefObject<HTMLElement | null>,
+  /**
+   * Whether the collection is disabled.
+   * @default false
+   */
+  isDisabled?: boolean,
   /**
    * Whether the collection or one of its items should be automatically focused upon render.
    * @default false
@@ -104,6 +109,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     selectionManager: manager,
     keyboardDelegate: delegate,
     ref,
+    isDisabled = false,
     autoFocus = false,
     shouldFocusWrap = false,
     disallowEmptySelection = false,
@@ -140,7 +146,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
             manager.setFocusedKey(key, childFocus);
           });
 
-          let item = scrollRef.current.querySelector(`[data-key="${CSS.escape(key.toString())}"]`);
+          let item = getElementByKey(key, scrollRef.current);
           let itemProps = manager.getItemProps(key);
           router.open(item, e, itemProps.href, itemProps.routerOptions);
 
@@ -357,7 +363,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
     if (manager.focusedKey != null) {
       // Refocus and scroll the focused item into view if it exists within the scrollable region.
-      let element = scrollRef.current.querySelector(`[data-key="${CSS.escape(manager.focusedKey.toString())}"]`) as HTMLElement;
+      let element = getElementByKey(manager.focusedKey, scrollRef.current);
       if (element) {
         // This prevents a flash of focus on the first/last element in the collection, or the collection itself.
         if (!element.contains(document.activeElement)) {
@@ -418,7 +424,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   useEffect(() => {
     if (manager.isFocused && manager.focusedKey != null && (manager.focusedKey !== lastFocusedKey.current || autoFocusRef.current) && scrollRef?.current) {
       let modality = getInteractionModality();
-      let element = ref.current.querySelector(`[data-key="${CSS.escape(manager.focusedKey.toString())}"]`) as HTMLElement;
+      let element = getElementByKey(manager.focusedKey, ref.current);
       if (!element) {
         // If item element wasn't found, return early (don't update autoFocusRef and lastFocusedKey).
         // The collection may initially be empty (e.g. virtualizer), so wait until the element exists.
@@ -477,7 +483,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   // If using virtual focus, don't set a tabIndex at all so that VoiceOver on iOS 14 doesn't try
   // to move real DOM focus to the element anyway.
   let tabIndex: number;
-  if (!shouldUseVirtualFocus) {
+  if (!isDisabled && !shouldUseVirtualFocus) {
     tabIndex = manager.focusedKey == null ? 0 : -1;
   }
 

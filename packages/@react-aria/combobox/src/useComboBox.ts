@@ -14,7 +14,7 @@ import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
 import {AriaComboBoxProps} from '@react-types/combobox';
 import {ariaHideOutside} from '@react-aria/overlays';
-import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
+import {AriaListBoxOptions, getItemId, listMap} from '@react-aria/listbox';
 import {BaseEvent, DOMAttributes, KeyboardDelegate, LayoutDelegate, PressEvent, RefObject, RouterOptions, ValidationResult} from '@react-types/shared';
 import {chain, isAppleDevice, mergeProps, useLabels, useRouter} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
@@ -95,7 +95,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
   );
 
   // Set listbox id so it can be used when calling getItemId later
-  listData.set(state, {id: menuProps.id});
+  listMap.set(state, {id: menuProps.id});
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
   // When virtualized, the layout object will be passed in as a prop and override this.

@@ -11,9 +11,14 @@
  */
 
 import {AriaLabelingProps, DOMProps, forwardRefType} from '@react-types/shared';
-import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {FieldErrorContext} from './FieldError';
+import {GroupStateContext, useGroupState} from 'react-stately';
 import {HoverProps, mergeProps, useFocusRing, useHover} from 'react-aria';
+import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
+import {TextContext} from './Text';
+import {useGroup} from '@react-aria/group';
 
 export interface GroupRenderProps {
   /**
@@ -40,7 +45,12 @@ export interface GroupRenderProps {
    * Whether the group is invalid.
    * @selector [data-invalid]
    */
-  isInvalid: boolean
+  isInvalid: boolean,
+  /**
+   * Whether the group is read-only.
+   * @selector [data-readonly]
+   */
+  isReadOnly: boolean
 }
 
 export interface GroupProps extends AriaLabelingProps, Omit<HTMLAttributes<HTMLElement>, 'children' | 'className' | 'style' | 'role' | 'slot'>, DOMProps, HoverProps, RenderProps<GroupRenderProps>, SlotProps {
@@ -48,6 +58,8 @@ export interface GroupProps extends AriaLabelingProps, Omit<HTMLAttributes<HTMLE
   isDisabled?: boolean,
   /** Whether the group is invalid. */
   isInvalid?: boolean,
+  /** Whether the group is read-only. */
+  isReadOnly?: boolean,
   /**
    * An accessibility role for the group. By default, this is set to `'group'`.
    * Use `'region'` when the contents of the group is important enough to be
@@ -62,34 +74,53 @@ export const GroupContext = createContext<ContextValue<GroupProps, HTMLDivElemen
 
 function Group(props: GroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, GroupContext);
-  let {isDisabled, isInvalid, onHoverStart, onHoverChange, onHoverEnd, ...otherProps} = props;
+  let {onHoverStart, onHoverChange, onHoverEnd, ...otherProps} = props;
 
+  let state = useGroupState(props);
+  let {isDisabled, isReadOnly, ...validation} = state;
+
+  let [labelRef, label] = useSlot();
+  let {labelProps, groupProps, descriptionProps, errorMessageProps} = useGroup({...props, label}, state);
   let {hoverProps, isHovered} = useHover({onHoverStart, onHoverChange, onHoverEnd, isDisabled});
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({
     within: true
   });
 
-  isDisabled ??= !!props['aria-disabled'] && props['aria-disabled'] !== 'false';
-  isInvalid ??= !!props['aria-invalid'] && props['aria-invalid'] !== 'false';
   let renderProps = useRenderProps({
     ...props,
-    values: {isHovered, isFocusWithin: isFocused, isFocusVisible, isDisabled, isInvalid},
+    values: {isHovered, isFocusWithin: isFocused, isFocusVisible, isDisabled, isInvalid: validation.isInvalid, isReadOnly},
     defaultClassName: 'react-aria-Group'
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {isDisabled: _, isInvalid: __, isReadOnly: ___, ...domProps} = otherProps;
+
   return (
     <div
-      {...mergeProps(otherProps, focusProps, hoverProps)}
+      {...mergeProps(groupProps, domProps, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
-      role={props.role ?? 'group'}
       slot={props.slot ?? undefined}
       data-focus-within={isFocused || undefined}
       data-hovered={isHovered || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-disabled={isDisabled || undefined}
-      data-invalid={isInvalid || undefined}>
-      {renderProps.children}
+      data-invalid={validation.isInvalid || undefined}
+      data-readonly={isReadOnly || undefined}>
+      <Provider 
+        values={[
+          [GroupStateContext, state],
+          [LabelContext, {...labelProps, ref: labelRef}],
+          [TextContext, {
+            slots: {
+              description: descriptionProps,
+              errorMessage: errorMessageProps
+            }
+          }],
+          [FieldErrorContext, validation]
+        ]}>
+        {renderProps.children}
+      </Provider>
     </div>
   );
 }

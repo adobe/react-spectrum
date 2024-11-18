@@ -28,7 +28,7 @@ export type ColumnSize = ColumnStaticSize | ColumnDynamicSize;
 export interface TableProps<T> extends MultipleSelection, Sortable {
   /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
   children: [ReactElement<TableHeaderProps<T>>, ReactElement<TableBodyProps<T>>],
-  /** A list of row keys to disable. */
+  /** A list of row/cell keys to disable. */
   disabledKeys?: Iterable<Key>
 }
 

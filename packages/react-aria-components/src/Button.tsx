@@ -29,8 +29,9 @@ import {
 } from './utils';
 import {createHideableComponent} from '@react-aria/collections';
 import {filterDOMProps} from '@react-aria/utils';
+import {GroupStateContext} from 'react-stately';
 import {ProgressBarContext} from './ProgressBar';
-import React, {createContext, ForwardedRef, useEffect, useRef} from 'react';
+import React, {createContext, ForwardedRef, useContext, useEffect, useRef} from 'react';
 
 export interface ButtonRenderProps {
   /**
@@ -104,7 +105,9 @@ const additionalButtonHTMLAttributes = new Set(['form', 'formAction', 'formEncTy
 export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTMLButtonElement>>({});
 
 function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
+  let groupState = useContext(GroupStateContext);
   [props, ref] = useContextProps(props, ref, ButtonContext);
+  props = mergeProps(props, groupState);
   props = disablePendingProps(props);
   let ctx = props as ButtonContextValue;
   let {isPending} = ctx;

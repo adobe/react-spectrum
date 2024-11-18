@@ -23,22 +23,27 @@ interface ListData {
   linkBehavior?: 'action' | 'selection' | 'override'
 }
 
-export const listData = new WeakMap<ListState<unknown>, ListData>();
-
-function normalizeKey(key: Key): string {
-  if (typeof key === 'string') {
-    return key.replace(/\s*/g, '');
-  }
-
-  return '' + key;
-}
+export const listMap = new WeakMap<ListState<unknown>, ListData>();
 
 export function getItemId<T>(state: ListState<T>, itemKey: Key): string {
-  let data = listData.get(state);
+  let {id} = listMap.get(state);
 
-  if (!data) {
+  if (!id) {
     throw new Error('Unknown list');
   }
 
-  return `${data.id}-option-${normalizeKey(itemKey)}`;
+  return `${id}-option-${normalizeKey(state, itemKey)}`;
+}
+
+function normalizeKey<T>(state: ListState<T>, key: Key): Key {
+  let {id} = listMap.get(state);
+  if (!id) {
+    throw new Error('Unknown list');
+  }
+
+  if (typeof key === 'string') {
+    return key.replace(/\s*/g, ''); // .replace(id, '');
+  }
+
+  return key;
 }

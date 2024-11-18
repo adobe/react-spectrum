@@ -16,16 +16,24 @@ import {GridCollection} from '@react-types/grid';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
-import {useCallback, useMemo} from 'react';
 import {useCollator, useLocale} from '@react-aria/i18n';
+import {useGridEditAnnouncement} from './useGridEditAnnouncement';
 import {useGridSelectionAnnouncement} from './useGridSelectionAnnouncement';
 import {useHasTabbableChild} from '@react-aria/focus';
 import {useHighlightSelectionDescription} from './useHighlightSelectionDescription';
+import {useMemo} from 'react';
 import {useSelectableCollection} from '@react-aria/selection';
 
 export interface GridProps extends DOMProps, AriaLabelingProps {
+  /** Whether the grid is disabled. */
+  isDisabled?: boolean,
   /** Whether the grid uses virtual scrolling. */
   isVirtualized?: boolean,
+  /**
+   * Whether focus should wrap around when the end/start is reached.
+   * @default false
+   */
+  shouldFocusWrap?: boolean,
   /**
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
@@ -41,6 +49,17 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
    * @default (key) => state.collection.getItem(key)?.textValue
    */
   getRowText?: (key: Key) => string,
+  /**
+   * A function that returns the text that should be announced by assistive technology when a cell is edited.
+   * @default (key) => state.collection.getItem(key)?.textValue
+   */
+  getEditText?: (key: Key) => string,
+  /**
+   * Whether keyboard navigation to focusable elements within the grid is
+   * via the left/right arrow keys or the tab key.
+   * @default 'arrow'
+   */
+  keyboardNavigationBehavior?: 'arrow' | 'tab',
   /**
    * The ref attached to the scrollable body. Used to provided automatic scrolling on item focus for non-virtualized grids.
    */
@@ -65,11 +84,14 @@ export interface GridAria {
  */
 export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<T>>, ref: RefObject<HTMLElement | null>): GridAria {
   let {
+    isDisabled,
     isVirtualized,
+    shouldFocusWrap,
     keyboardDelegate,
     focusMode,
     scrollRef,
     getRowText,
+    getEditText,
     onRowAction,
     onCellAction
   } = props;
@@ -96,14 +118,16 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
 
   let {collectionProps} = useSelectableCollection({
     ref,
+    shouldFocusWrap,
     selectionManager: manager,
     keyboardDelegate: delegate,
     isVirtualized,
+    isDisabled,
     scrollRef
   });
 
   let id = useId(props.id);
-  gridMap.set(state, {keyboardDelegate: delegate, actions: {onRowAction, onCellAction}});
+  gridMap.set(state, {id, keyboardDelegate: delegate, actions: {onRowAction, onCellAction}});
 
   let descriptionProps = useHighlightSelectionDescription({
     selectionManager: manager,
@@ -111,30 +135,6 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   });
 
   let domProps = filterDOMProps(props, {labelable: true});
-
-  let onFocus = useCallback((e) => {
-    if (manager.isFocused) {
-      // If a focus event bubbled through a portal, reset focus state.
-      if (!e.currentTarget.contains(e.target)) {
-        manager.setFocused(false);
-      }
-
-      return;
-    }
-
-    // Focus events can bubble through portals. Ignore these events.
-    if (!e.currentTarget.contains(e.target)) {
-      return;
-    }
-
-    manager.setFocused(true);
-  }, [manager]);
-
-  // Continue to track collection focused state even if keyboard navigation is disabled
-  let navDisabledHandlers = useMemo(() => ({
-    onBlur: collectionProps.onBlur,
-    onFocus
-  }), [onFocus, collectionProps.onBlur]);
 
   let hasTabbableChild = useHasTabbableChild(ref, {
     isDisabled: state.collection.size !== 0
@@ -147,9 +147,9 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
       id,
       'aria-multiselectable': manager.selectionMode === 'multiple' ? 'true' : undefined
     },
-    state.isKeyboardNavigationDisabled ? navDisabledHandlers : collectionProps,
+    collectionProps,
     // If collection is empty, make sure the grid is tabbable unless there is a child tabbable element.
-    state.collection.size === 0 && {tabIndex: hasTabbableChild ? -1 : 0},
+    state.collection.size === 0 ? {tabIndex: hasTabbableChild ? -1 : 0} : {},
     descriptionProps
   );
 
@@ -158,6 +158,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     gridProps['aria-colcount'] = state.collection.columnCount;
   }
 
+  useGridEditAnnouncement({getEditText}, state);
   useGridSelectionAnnouncement({getRowText}, state);
   return {
     gridProps

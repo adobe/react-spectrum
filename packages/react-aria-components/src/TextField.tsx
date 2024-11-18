@@ -13,12 +13,13 @@
 import {AriaTextFieldProps, useTextField} from 'react-aria';
 import {ContextValue, DOMProps, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {FormContext} from './Form';
 import {forwardRefType} from '@react-types/shared';
+import {GroupStateContext} from '@react-stately/group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
-import React, {createContext, ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useCallback, useContext, useRef, useState} from 'react';
 import {TextAreaContext} from './TextArea';
 import {TextContext} from './Text';
 
@@ -53,7 +54,9 @@ export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'plac
 export const TextFieldContext = createContext<ContextValue<TextFieldProps, HTMLDivElement>>(null);
 
 function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
+  let groupState = useContext(GroupStateContext);
   [props, ref] = useContextProps(props, ref, TextFieldContext);
+  props = mergeProps(props, groupState);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let inputRef = useRef(null);

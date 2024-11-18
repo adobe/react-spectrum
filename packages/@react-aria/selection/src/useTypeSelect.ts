@@ -11,6 +11,7 @@
  */
 
 import {DOMAttributes, Key, KeyboardDelegate} from '@react-types/shared';
+import {getElementByKey} from './utils';
 import {KeyboardEvent, useRef} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
@@ -52,9 +53,27 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
   }).current;
 
   let onKeyDown = (e: KeyboardEvent) => {
+    let scrollRef = e.currentTarget;
+    let target = e.target as HTMLElement;
+
     let character = getStringForKey(e.key);
-    if (!character || e.ctrlKey || e.metaKey || !e.currentTarget.contains(e.target as HTMLElement)) {
+    if (!character || e.ctrlKey || e.metaKey || !scrollRef.contains(target)) {
       return;
+    }
+    
+    // When in grid edit mode, do not stop propagation.
+    if ('editKey' in selectionManager) {
+      let item = target.getAttribute('data-key');
+      let editKey = selectionManager.editKey as Key;
+
+      // @ts-expect-error
+      let isEditable = item && selectionManager.canEditItem(item);
+      let isReadOnly = item && selectionManager.getItemProps(item)?.isReadOnly;
+      let isEditing = editKey && getElementByKey(editKey, scrollRef)?.contains(target);
+
+      if (!isReadOnly && (isEditable || isEditing)) {
+        return; 
+      }
     }
 
     // Do not propagate the Spacebar event if it's meant to be part of the search.

@@ -1,20 +1,35 @@
 import {getChildNodes, getFirstItem, getLastItem} from '@react-stately/collections';
 import {GridCollection, GridNode} from '@react-types/grid';
+import {GridEditStateOptions, useGridEditState} from './useGridEditState';
+import {GridManager} from './GridManager';
 import {Key} from '@react-types/shared';
-import {MultipleSelectionState, MultipleSelectionStateProps, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
+import {MultipleSelectionState, MultipleSelectionStateProps, useMultipleSelectionState} from '@react-stately/selection';
 import {useEffect, useMemo, useRef} from 'react';
 
 export interface GridState<T, C extends GridCollection<T>> {
   collection: C,
   /** A set of keys for rows that are disabled. */
   disabledKeys: Set<Key>,
-  /** A selection manager to read and update row selection state. */
-  selectionManager: SelectionManager,
-  /** Whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell. */
-  isKeyboardNavigationDisabled: boolean
+  /** A manager to read and update row selection and cell editing state. */
+  gridManager: GridManager,
+  /** 
+   * A selection manager to read and update row selection state. 
+   * @deprecated Use `gridManager` instead.
+   */
+  selectionManager: GridManager,
+  /** 
+   * Whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell.
+   * @deprecated Use `gridManager.keyboardNavigationBehavior === 'tab'` instead.
+   */
+  isKeyboardNavigationDisabled: boolean,
+  /** 
+   * Set whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell. 
+   * @deprecated Use `gridManager.enableKeyboardNavigation` and `gridManager.disableKeyboardNavigation` instead.
+   */
+  setKeyboardNavigationDisabled: (val: boolean) => void
 }
 
-export interface GridStateOptions<T, C extends GridCollection<T>> extends MultipleSelectionStateProps {
+export interface GridStateOptions<T, C extends GridCollection<T>> extends MultipleSelectionStateProps, GridEditStateOptions {
   collection: C,
   disabledKeys?: Iterable<Key>,
   focusMode?: 'row' | 'cell',
@@ -27,6 +42,7 @@ export interface GridStateOptions<T, C extends GridCollection<T>> extends Multip
  */
 export function useGridState<T extends object, C extends GridCollection<T>>(props: GridStateOptions<T, C>): GridState<T, C> {
   let {collection, focusMode} = props;
+  let editState = useGridEditState(props);
   // eslint-disable-next-line react-hooks/rules-of-hooks
   let selectionState = props.UNSAFE_selectionState || useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
@@ -51,9 +67,10 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
     setFocusedKey(key, child);
   };
 
-  let selectionManager = useMemo(() =>
-    new SelectionManager(collection, selectionState)
-    , [collection, selectionState]
+  let gridManager = useMemo(() =>
+    // @ts-expect-error
+    new GridManager(collection, selectionState, editState)
+    , [collection, selectionState, editState]
   );
 
   // Reset focused key if that item is deleted from the collection.
@@ -77,7 +94,7 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
         rows.length - 1);
       let newRow:GridNode<T>;
       while (index >= 0) {
-        if (!selectionManager.isDisabled(rows[index].key) && rows[index].type !== 'headerrow') {
+        if (!gridManager.isDisabled(rows[index].key) && rows[index].type !== 'headerrow') {
           newRow = rows[index];
           break;
         }
@@ -106,12 +123,14 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
       }
     }
     cachedCollection.current = collection;
-  }, [collection, selectionManager, selectionState, selectionState.focusedKey]);
+  }, [collection, gridManager, selectionState, selectionState.focusedKey]);
 
   return {
     collection,
     disabledKeys,
-    isKeyboardNavigationDisabled: false,
-    selectionManager
+    gridManager,
+    selectionManager: gridManager,
+    isKeyboardNavigationDisabled: editState.keyboardNavigationBehavior === 'tab',
+    setKeyboardNavigationDisabled: () => editState.setKeyboardNavigationBehavior('tab')
   };
 }

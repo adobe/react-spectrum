@@ -186,6 +186,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       }
     };
   } else if (isDisabled) {
+    itemProps.tabIndex = -1;
     itemProps.onMouseDown = (e) => {
       // Prevent focus going to the body when clicking on a disabled item.
       e.preventDefault();
