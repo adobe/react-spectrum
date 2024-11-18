@@ -57,7 +57,7 @@ FillOffset.args = {
 
 export const FormatOptions = (args: any) => (
   <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
-    <Slider {...args} styles={style({width: '[300px]'})} />
+    <Slider {...args} styles={style({width: 300})} />
   </div>
 );
 

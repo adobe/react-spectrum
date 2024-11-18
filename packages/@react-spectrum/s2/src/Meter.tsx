@@ -20,7 +20,7 @@ import {createContext, forwardRef, ReactNode} from 'react';
 import {DOMRef, DOMRefValue, LabelPosition} from '@react-types/shared';
 import {FieldLabel} from './Field';
 import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {lightDark, size, style} from '../style' with {type: 'macro'};
+import {lightDark, style} from '../style' with {type: 'macro'};
 import {SkeletonWrapper} from './Skeleton';
 import {Text} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
@@ -67,12 +67,12 @@ const valueStyles = style({
 const trackStyles = style({
   ...track(),
   height: {
-    default: size(6),
+    default: 6,
     size: {
       S: 4, // progress-bar-thickness-small
-      M: size(6), // progress-bar-thickness-medium
+      M: 6, // progress-bar-thickness-medium
       L: 8, // progress-bar-thickness-large
-      XL: size(10) // progress-bar-thickness-extra-large
+      XL: 10 // progress-bar-thickness-extra-large
     }
   }
 });

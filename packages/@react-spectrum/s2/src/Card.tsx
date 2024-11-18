@@ -21,7 +21,7 @@ import {createContext, CSSProperties, forwardRef, ReactNode, useContext} from 'r
 import {DividerContext} from './Divider';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {focusRing, lightDark, size, style} from '../style' with {type: 'macro'};
+import {focusRing, lightDark, space, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IllustrationContext} from './Icon';
 import {ImageContext} from './Image';
@@ -128,7 +128,7 @@ let card = style({
       S: 192,
       M: 240,
       L: 320,
-      XL: size(400)
+      XL: 400
     },
     isCardView: 'full'
   },
@@ -139,7 +139,7 @@ let card = style({
       density: {
         compact: {
           size: {
-            XS: size(6),
+            XS: 6,
             S: 8,
             M: 12,
             L: 16,
@@ -316,8 +316,8 @@ let content = style({
     size: {
       XS: 4,
       S: 4,
-      M: size(6),
-      L: size(6),
+      M: space(6),
+      L: space(6),
       XL: 8
     }
   },

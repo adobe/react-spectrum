@@ -12,7 +12,7 @@ import InfoIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
 import intlMessages from '../intl/*.json';
 import {mergeStyles} from '../style/runtime';
 import {PopoverBase, PopoverDialogProps} from './Popover';
-import {style, size as styleSize} from '../style' with {type: 'macro'};
+import {space, style} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils' with { type: 'macro' };
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -41,8 +41,8 @@ export interface ContextualHelpProps extends
 
 const popover = style({
   fontFamily: 'sans',
-  minWidth: '[218px]',
-  width: '[218px]',
+  minWidth: 218,
+  width: 218,
   padding: 24
 });
 
@@ -112,7 +112,7 @@ function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButton
               [HeadingContext, {styles: style({
                 font: 'heading-xs',
                 margin: 0,
-                marginBottom: styleSize(8) // This only makes it 10px on mobile and should be 12px
+                marginBottom: space(8) // This only makes it 10px on mobile and should be 12px
               })}],
               [ContentContext, {styles: style({
                 font: 'body-sm'

@@ -21,7 +21,7 @@ import {
   Text,
   useContextProps
 } from 'react-aria-components';
-import {baseColor, size, style} from '../style' with {type: 'macro'};
+import {baseColor, space, style} from '../style' with {type: 'macro'};
 import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useMemo, useRef} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
 import Dash from '../ui-icons/Dash';
@@ -158,10 +158,10 @@ const stepperContainerStyles = style({
   },
   paddingEnd: {
     size: {
-      S: size(2),
+      S: 2,
       M: 4,
-      L: size(6),
-      XL: size(6)
+      L: space(6),
+      XL: space(6)
     }
   }
 });

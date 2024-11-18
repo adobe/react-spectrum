@@ -50,8 +50,8 @@ const illustratedMessage = style<IllustratedMessageStyleProps & {isInDropZone?: 
   fontSize: 'control',
   maxWidth: {
     orientation: {
-      vertical: '[380px]',
-      horizontal: '[33rem]' // ask design about max width for horizontal because doesn't look great when L
+      vertical: 380,
+      horizontal: 528 // ask design about max width for horizontal because doesn't look great when L
     }
   },
   gridTemplateAreas: {
