@@ -80,7 +80,6 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
   let descProps = useDescription(description);
 
   let isFocused = item.key === state.selectionManager.focusedKey;
-  // @ts-ignore - data attributes are ok but TS doesn't know about them.
   let domProps = filterDOMProps(item.props);
   let linkProps = useSyntheticLinkProps(item.props);
   return {

@@ -34,7 +34,7 @@ export function Toaster(props: ToastContainerProps): ReactElement {
     state
   } = props;
 
-  let ref = useRef(undefined);
+  let ref = useRef(null);
   let {regionProps} = useToastRegion(props, state, ref);
   let {focusProps, isFocusVisible} = useFocusRing();
   let {getContainer} = useUNSTABLE_PortalContext();

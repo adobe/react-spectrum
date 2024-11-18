@@ -63,7 +63,7 @@ export interface PopoverAria {
   /** Props to apply to the underlay element, if any. */
   underlayProps: DOMAttributes,
   /** Placement of the popover with respect to the trigger. */
-  placement: PlacementAxis
+  placement: PlacementAxis | null
 }
 
 /**
@@ -98,7 +98,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     targetRef: triggerRef,
     overlayRef: popoverRef,
     isOpen: state.isOpen,
-    onClose: isNonModal ? state.close : null
+    onClose: isNonModal ? state.close : undefined
   });
 
   usePreventScroll({

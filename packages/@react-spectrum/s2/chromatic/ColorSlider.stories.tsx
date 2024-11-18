@@ -31,7 +31,6 @@ let states = [
   {isDisabled: true},
   {label: [null, 'custom label']},
   {contextualHelp: (
-    // @ts-ignore
     <ContextualHelp>
       <Heading>What is a segment?</Heading>
       <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>

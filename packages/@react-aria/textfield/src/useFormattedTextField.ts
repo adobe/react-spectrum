@@ -25,7 +25,6 @@ interface FormattedTextFieldState {
 function supportsNativeBeforeInputEvent() {
   return typeof window !== 'undefined' &&
     window.InputEvent &&
-    // @ts-ignore
     typeof InputEvent.prototype.getTargetRanges === 'function';
 }
 
@@ -38,10 +37,13 @@ export function useFormattedTextField(props: AriaTextFieldProps, state: Formatte
   // the benefit of doing so is fairly minor, and it's going to be natively supported soon.
   let onBeforeInputFallback = useEffectEvent((e: InputEvent) => {
     let input = inputRef.current;
+    if (!input) {
+      return;
+    }
 
     // Compute the next value of the input if the event is allowed to proceed.
     // See https://www.w3.org/TR/input-events-2/#interface-InputEvent-Attributes for a full list of input types.
-    let nextValue: string;
+    let nextValue: string | null = null;
     switch (e.inputType) {
       case 'historyUndo':
       case 'historyRedo':
@@ -54,7 +56,7 @@ export function useFormattedTextField(props: AriaTextFieldProps, state: Formatte
       case 'deleteContent':
       case 'deleteByCut':
       case 'deleteByDrag':
-        nextValue = input.value.slice(0, input.selectionStart) + input.value.slice(input.selectionEnd);
+        nextValue = input.value.slice(0, input.selectionStart!) + input.value.slice(input.selectionEnd!);
         break;
       case 'deleteContentForward':
         // This is potentially incorrect, since the browser may actually delete more than a single UTF-16
@@ -62,24 +64,24 @@ export function useFormattedTextField(props: AriaTextFieldProps, state: Formatte
         // or code points may be deleted. However, in our currently supported locales, there are no such cases.
         // If we support additional locales in the future, this may need to change.
         nextValue = input.selectionEnd === input.selectionStart
-          ? input.value.slice(0, input.selectionStart) + input.value.slice(input.selectionEnd + 1)
-          : input.value.slice(0, input.selectionStart) + input.value.slice(input.selectionEnd);
+          ? input.value.slice(0, input.selectionStart!) + input.value.slice(input.selectionEnd! + 1)
+          : input.value.slice(0, input.selectionStart!) + input.value.slice(input.selectionEnd!);
         break;
       case 'deleteContentBackward':
         nextValue = input.selectionEnd === input.selectionStart
-          ? input.value.slice(0, input.selectionStart - 1) + input.value.slice(input.selectionStart)
-          : input.value.slice(0, input.selectionStart) + input.value.slice(input.selectionEnd);
+          ? input.value.slice(0, input.selectionStart! - 1) + input.value.slice(input.selectionStart!)
+          : input.value.slice(0, input.selectionStart!) + input.value.slice(input.selectionEnd!);
         break;
       case 'deleteSoftLineBackward':
       case 'deleteHardLineBackward':
-        nextValue = input.value.slice(input.selectionStart);
+        nextValue = input.value.slice(input.selectionStart!);
         break;
       default:
         if (e.data != null) {
           nextValue =
-            input.value.slice(0, input.selectionStart) +
+            input.value.slice(0, input.selectionStart!) +
             e.data +
-            input.value.slice(input.selectionEnd);
+            input.value.slice(input.selectionEnd!);
         }
         break;
     }
@@ -93,7 +95,7 @@ export function useFormattedTextField(props: AriaTextFieldProps, state: Formatte
   });
 
   useEffect(() => {
-    if (!supportsNativeBeforeInputEvent()) {
+    if (!supportsNativeBeforeInputEvent() || !inputRef.current) {
       return;
     }
 
@@ -119,7 +121,7 @@ export function useFormattedTextField(props: AriaTextFieldProps, state: Formatte
 
   let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps, ...validation} = useTextField(props, inputRef);
 
-  let compositionStartState = useRef(null);
+  let compositionStartState = useRef<{value: string, selectionStart: number | null, selectionEnd: number | null} | null>(null);
   return {
     inputProps: mergeProps(
       textFieldProps,
@@ -138,14 +140,14 @@ export function useFormattedTextField(props: AriaTextFieldProps, state: Formatte
           // Unfortunately, this messes up the undo/redo stack, but until insertFromComposition/deleteByComposition
           // are implemented, there is no other way to prevent composed input.
           // See https://bugs.chromium.org/p/chromium/issues/detail?id=1022204
-          let {value, selectionStart, selectionEnd} = inputRef.current;
+          let {value, selectionStart, selectionEnd} = inputRef.current!;
           compositionStartState.current = {value, selectionStart, selectionEnd};
         },
         onCompositionEnd() {
-          if (!state.validate(inputRef.current.value)) {
+          if (inputRef.current && !state.validate(inputRef.current.value)) {
             // Restore the input value in the DOM immediately so we can synchronously update the selection position.
             // But also update the value in React state as well so it is correct for future updates.
-            let {value, selectionStart, selectionEnd} = compositionStartState.current;
+            let {value, selectionStart, selectionEnd} = compositionStartState.current!;
             inputRef.current.value = value;
             inputRef.current.setSelectionRange(selectionStart, selectionEnd);
             state.setInputValue(value);

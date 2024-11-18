@@ -33,8 +33,8 @@ export interface TooltipTriggerState {
 let tooltips = {};
 let tooltipId = 0;
 let globalWarmedUp = false;
-let globalWarmUpTimeout = null;
-let globalCooldownTimeout = null;
+let globalWarmUpTimeout: ReturnType<typeof setTimeout> | null = null;
+let globalCooldownTimeout: ReturnType<typeof setTimeout> | null = null;
 
 /**
  * Manages state for a tooltip trigger. Tracks whether the tooltip is open, and provides
@@ -45,7 +45,7 @@ export function useTooltipTriggerState(props: TooltipTriggerProps = {}): Tooltip
   let {delay = TOOLTIP_DELAY, closeDelay = TOOLTIP_COOLDOWN} = props;
   let {isOpen, open, close} = useOverlayTriggerState(props);
   let id = useMemo(() => `${++tooltipId}`, []);
-  let closeTimeout = useRef<ReturnType<typeof setTimeout>>(undefined);
+  let closeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   let closeCallback = useRef<() => void>(close);
 
   let ensureTooltipEntry = () => {
@@ -62,7 +62,9 @@ export function useTooltipTriggerState(props: TooltipTriggerProps = {}): Tooltip
   };
 
   let showTooltip = () => {
-    clearTimeout(closeTimeout.current);
+    if (closeTimeout.current) {
+      clearTimeout(closeTimeout.current);
+    }
     closeTimeout.current = null;
     closeOpenTooltips();
     ensureTooltipEntry();
@@ -80,7 +82,9 @@ export function useTooltipTriggerState(props: TooltipTriggerProps = {}): Tooltip
 
   let hideTooltip = (immediate?: boolean) => {
     if (immediate || closeDelay <= 0) {
-      clearTimeout(closeTimeout.current);
+      if (closeTimeout.current) {
+        clearTimeout(closeTimeout.current);
+      }
       closeTimeout.current = null;
       closeCallback.current();
     } else if (!closeTimeout.current) {
@@ -124,10 +128,12 @@ export function useTooltipTriggerState(props: TooltipTriggerProps = {}): Tooltip
     closeCallback.current = close;
   }, [close]);
 
-   
+
   useEffect(() => {
     return () => {
-      clearTimeout(closeTimeout.current);
+      if (closeTimeout.current) {
+        clearTimeout(closeTimeout.current);
+      }
       let tooltip = tooltips[id];
       if (tooltip) {
         delete tooltips[id];

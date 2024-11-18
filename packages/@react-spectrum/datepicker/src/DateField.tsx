@@ -45,8 +45,8 @@ function DateField<T extends DateValue>(props: SpectrumDateFieldProps<T>, ref: F
     createCalendar
   });
 
-  let fieldRef = useRef(null);
-  let inputRef = useRef(null);
+  let fieldRef = useRef<HTMLElement | null>(null);
+  let inputRef = useRef<HTMLInputElement | null>(null);
   let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps, isInvalid, validationErrors, validationDetails} = useDateField({
     ...props,
     inputRef
@@ -56,7 +56,7 @@ function DateField<T extends DateValue>(props: SpectrumDateFieldProps<T>, ref: F
   // The format help text is unnecessary for screen reader users because each segment already has a label.
   let description = useFormatHelpText(props);
   if (description && !props.description) {
-    descriptionProps.id = null;
+    descriptionProps.id = undefined;
   }
 
   let validationState = state.validationState || (isInvalid ? 'invalid' : null);
@@ -72,7 +72,7 @@ function DateField<T extends DateValue>(props: SpectrumDateFieldProps<T>, ref: F
       labelProps={labelProps}
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
-      validationState={validationState}
+      validationState={validationState ?? undefined}
       isInvalid={isInvalid}
       validationErrors={validationErrors}
       validationDetails={validationDetails}

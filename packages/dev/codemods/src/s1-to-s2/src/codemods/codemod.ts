@@ -108,7 +108,7 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
         if (!specifier || !t.isImportDefaultSpecifier(specifier)) {return;}
 
         let localName = specifier.local.name;
-        
+
         if (iconMap.has(iconName)) {
           let newIconName = iconMap.get(iconName)!;
           iconImports.set(localName, {path, newName: newIconName});
@@ -150,7 +150,7 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
     let {path, newName} = iconInfo;
     if (newName) {
       let newImportSource = `@react-spectrum/s2/icons/${newName}`;
-      
+
       // Check if we can update local name
       let newLocalName = localName;
       if (localName === path.node.source.value.split('/').pop() && localName !== newName) {

@@ -17,10 +17,10 @@ import {Overlay} from './Overlay';
 import {OverlayProps} from '@react-types/overlays';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import overrideStyles from './overlays.css';
-import React, {forwardRef, MutableRefObject, ReactNode, useRef} from 'react';
+import React, {ForwardedRef, forwardRef, ReactNode, useRef} from 'react';
 import trayStyles from '@adobe/spectrum-css-temp/components/tray/vars.css';
 import {Underlay} from './Underlay';
-import {useViewportSize} from '@react-aria/utils';
+import {useObjectRef, useViewportSize} from '@react-aria/utils';
 
 interface TrayProps extends AriaModalOverlayProps, StyleProps, Omit<OverlayProps, 'nodeRef' | 'shouldContainFocus'> {
   children: ReactNode,
@@ -30,7 +30,7 @@ interface TrayProps extends AriaModalOverlayProps, StyleProps, Omit<OverlayProps
 
 interface TrayWrapperProps extends TrayProps {
   isOpen?: boolean,
-  wrapperRef: MutableRefObject<HTMLDivElement>
+  wrapperRef: RefObject<HTMLDivElement | null>
 }
 
 function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
@@ -47,7 +47,7 @@ function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
   );
 }
 
-let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<HTMLDivElement | null>) {
+let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: ForwardedRef<HTMLDivElement | null>) {
   let {
     children,
     isOpen,
@@ -56,11 +56,12 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
     wrapperRef
   } = props;
   let {styleProps} = useStyleProps(props);
+  let objRef = useObjectRef(ref);
 
   let {modalProps, underlayProps} = useModalOverlay({
     ...props,
     isDismissable: true
-  }, state, ref);
+  }, state, objRef);
 
   // We need to measure the window's height in JS rather than using percentages in CSS
   // so that contents (e.g. menu) can inherit the max-height properly. Using percentages
@@ -103,7 +104,7 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
           {...styleProps}
           {...modalProps}
           className={className}
-          ref={ref}
+          ref={objRef}
           data-testid="tray">
           <DismissButton onDismiss={state.close} />
           {children}

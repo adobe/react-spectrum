@@ -43,8 +43,8 @@ function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: F
     locale
   });
 
-  let fieldRef = useRef(null);
-  let inputRef = useRef(null);
+  let fieldRef = useRef<HTMLDivElement | null>(null);
+  let inputRef = useRef<HTMLInputElement | null>(null);
   let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps, isInvalid, validationErrors, validationDetails} = useTimeField({
     ...props,
     inputRef
@@ -62,7 +62,7 @@ function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: F
       labelProps={labelProps}
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
-      validationState={validationState}
+      validationState={validationState ?? undefined}
       isInvalid={isInvalid}
       validationErrors={validationErrors}
       validationDetails={validationDetails}

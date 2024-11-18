@@ -52,8 +52,8 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
     onAction
   } = props;
 
-  let {actions} = gridMap.get(state);
-  let onRowAction = actions.onRowAction ? () => actions.onRowAction(node.key) : onAction;
+  let {actions} = gridMap.get(state)!;
+  let onRowAction = actions.onRowAction ? () => actions.onRowAction?.(node.key) : onAction;
   let {itemProps, ...states} = useSelectableItem({
     selectionManager: state.selectionManager,
     key: node.key,

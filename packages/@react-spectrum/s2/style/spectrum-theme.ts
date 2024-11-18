@@ -311,7 +311,6 @@ let gridTrack = (value: GridTrack) => {
 };
 
 let gridTrackSize = (value: GridTrackSize) => {
-  // @ts-ignore
   return value in baseSpacing ? baseSpacing[value] : value;
 };
 

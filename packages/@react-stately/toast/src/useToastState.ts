@@ -42,7 +42,7 @@ export interface QueuedToast<T> extends ToastOptions {
   /** A timer for the toast, if a timeout was set. */
   timer?: Timer,
   /** The current animation state for the toast. */
-  animation?: 'entering' | 'queued' | 'exiting'
+  animation?: 'entering' | 'queued' | 'exiting' | null
 }
 
 export interface ToastState<T> {
@@ -120,7 +120,7 @@ export class ToastQueue<T> {
       ...options,
       content,
       key: toastKey,
-      timer: options.timeout ? new Timer(() => this.close(toastKey), options.timeout) : null
+      timer: options.timeout ? new Timer(() => this.close(toastKey), options.timeout) : undefined
     };
 
     let low = 0;
@@ -173,7 +173,7 @@ export class ToastQueue<T> {
       let prevToasts: QueuedToast<T>[] = this.visibleToasts
         .filter(t => !toasts.some(t2 => t.key === t2.key))
         .map(t => ({...t, animation: 'exiting'}));
-      this.visibleToasts = prevToasts.concat(toasts).sort((a, b) => b.priority - a.priority);
+      this.visibleToasts = prevToasts.concat(toasts).sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
     } else if (action === 'close' && this.hasExitAnimation) {
       // Cause a rerender to happen for exit animation
       this.visibleToasts = this.visibleToasts.map(t => {
@@ -213,7 +213,7 @@ export class ToastQueue<T> {
 
 class Timer {
   private timerId;
-  private startTime: number;
+  private startTime: number | null = null;
   private remaining: number;
   private callback: () => void;
 
@@ -234,7 +234,7 @@ class Timer {
 
     clearTimeout(this.timerId);
     this.timerId = null;
-    this.remaining -= Date.now() - this.startTime;
+    this.remaining -= Date.now() - this.startTime!;
   }
 
   resume() {

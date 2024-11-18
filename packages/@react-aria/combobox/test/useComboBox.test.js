@@ -12,7 +12,6 @@
 
 import {actHook as act, renderHook} from '@react-spectrum/test-utils-internal';
 import {Item} from '@react-stately/collections';
-import {ListLayout} from '@react-stately/layout';
 import React from 'react';
 import {useComboBox} from '../';
 import {useComboBoxState} from '@react-stately/combobox';
@@ -32,11 +31,6 @@ describe('useComboBox', function () {
   });
 
   let defaultProps = {items: [{id: 1, name: 'one'}], children: (props) => <Item>{props.name}</Item>};
-  let {result} = renderHook(() => useComboBoxState(defaultProps));
-  let mockLayout = new ListLayout({
-    rowHeight: 40
-  });
-  mockLayout.collection = result.current.collection;
 
   let props = {
     label: 'test label',
@@ -51,8 +45,7 @@ describe('useComboBox', function () {
     },
     listBoxRef: {
       current: document.createElement('div')
-    },
-    layout: mockLayout
+    }
   };
 
   afterEach(() => {
