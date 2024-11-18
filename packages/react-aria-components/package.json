@@ -39,7 +39,6 @@
   "dependencies": {
     "@internationalized/date": "^3.5.6",
     "@internationalized/string": "^3.2.4",
-    "@react-aria/accordion": "3.0.0-alpha.35",
     "@react-aria/collections": "3.0.0-alpha.5",
     "@react-aria/color": "^3.0.1",
     "@react-aria/disclosure": "3.0.0-alpha.1",
@@ -72,8 +71,8 @@
     "use-sync-external-store": "^1.2.0"
   },
   "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0",
-    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
+    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
   },
   "publishConfig": {
     "access": "public"
