@@ -20,7 +20,7 @@ import {createContext, forwardRef, ReactNode} from 'react';
 import {DOMRef, DOMRefValue, LabelPosition} from '@react-types/shared';
 import {FieldLabel} from './Field';
 import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {size, style} from '../style' with {type: 'macro'};
+import {lightDark, size, style} from '../style' with {type: 'macro'};
 import {SkeletonWrapper} from './Skeleton';
 import {Text} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
@@ -37,8 +37,8 @@ interface MeterStyleProps {
    * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL',
-  /** 
-   * The static color style to apply. Useful when the button appears over a color background. 
+  /**
+   * The static color style to apply. Useful when the button appears over a color background.
    */
   staticColor?: 'white' | 'black',
   /**
@@ -82,11 +82,11 @@ const fillStyles = style<MeterStyleProps>({
   borderStyle: 'none',
   borderRadius: 'full',
   backgroundColor: {
-    default: 'informative-visual',
+    default: lightDark('informative-800', 'informative-900'), // 'informative-visual',
     variant: {
-      positive: 'positive-visual',
-      notice: 'notice-visual',
-      negative: 'negative-visual'
+      positive: lightDark('positive-800', 'positive-900'), // 'positive-visual',
+      notice: lightDark('notice-800', 'notice-900'), // 'notice-visual',
+      negative: lightDark('negative-800', 'negative-900') // 'negative-visual'
     },
     staticColor: {
       white: {

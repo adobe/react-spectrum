@@ -10,14 +10,14 @@
     "transform-icons": "index.js"
   },
   "dependencies": {
-    "@parcel/bundler-library": "2.11.1-dev.3224",
-    "@parcel/compressor-raw": "2.12.1-dev.3224",
-    "@parcel/core": "2.0.0-dev.1599",
-    "@parcel/namer-default": "2.0.0-dev.1601",
-    "@parcel/packager-raw": "2.0.0-dev.1601",
-    "@parcel/reporter-cli": "2.0.0-dev.1601",
-    "@parcel/resolver-default": "2.0.0-dev.1601",
-    "@parcel/transformer-raw": "2.0.0-dev.1601",
+    "@parcel/bundler-library": "2.12.0",
+    "@parcel/compressor-raw": "^2.13.0",
+    "@parcel/core": "^2.13.0",
+    "@parcel/namer-default": "^2.13.0",
+    "@parcel/packager-raw": "^2.13.0",
+    "@parcel/reporter-cli": "^2.13.0",
+    "@parcel/resolver-default": "^2.13.0",
+    "@parcel/transformer-raw": "^2.13.0",
     "@react-spectrum/parcel-transformer-s2-icon": "^0.1.2"
   },
   "files": [

@@ -34,6 +34,16 @@ export function Migrating() {
           <li className={style({font: 'body', marginY: 8})}>Update <Link href="https://react-spectrum.adobe.com/react-spectrum/styling.html#style-props">style props</Link> to use the <Link href="?path=/docs/style-macro--docs">style macro</Link> instead. See the 'Style props' section below</li>
         </ul>
 
+        <H3>Accordion</H3>
+        <ul className="sb-unstyled">
+          <li className={style({font: 'body', marginY: 8})}>Update <Code>Item</Code> to be <Code>Disclosure</Code>. <Code>Disclosure</Code> should now consist of two children: <Code>DisclosureTitle</Code> and <Code>DisclosurePanel</Code>. Note that you can now add interactive elements inside the header and adjacent to the title by using the <Code>DisclosureHeader</Code> component with the <Code>DisclosureTitle</Code> and interactive elements inside.</li>
+          <li className={style({font: 'body', marginY: 8})}>Update <Code>Item</Code>'s title prop to be a child of <Code>DisclosureTitle</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Update children of <Code>Item</Code> to be children of <Code>DisclosurePanel</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Update <Code>key</Code> to be <Code>id</Code> (and keep <Code>key</Code> if rendered inside <Code>array.map</Code>)</li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>disabledKeys</Code> and add <Code>isDisabled</Code> to individual <Code>Disclosure</Code> components</li>
+          <li className={style({font: 'body', marginY: 8})}>Add <Code>allowsMultipleExpanded</Code> to allow multiple <Code>Disclosure</Code> components to be expanded at once (previously default behavior)</li>
+        </ul>
+
         <H3>ActionButton</H3>
         <P>No updates needed.</P>
 

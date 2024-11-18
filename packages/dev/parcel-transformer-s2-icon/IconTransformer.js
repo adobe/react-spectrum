@@ -38,16 +38,22 @@ module.exports = new Transformer({
                     onlyMatchedOnce: false,
                     removeMatchedSelectors: true
                   },
-                  cleanupIDs: {
-                    prefix
-                  },
                   convertPathData: {
                     makeArcs: false
                   }
                 }
-              },
-              removeAttrs: {
-                attrs: ['id', 'data.*'] // data attribute removal not working
+              }
+            },
+            {
+              name: 'prefixIds',
+              params: {
+                prefix
+              }
+            },
+            {
+              name: 'removeAttrs',
+              params: {
+                attrs: ['data.*']
               }
             }
           ]

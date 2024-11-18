@@ -82,7 +82,8 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
 
   let {overlayProps, underlayProps} = useOverlay(
     {
-      isOpen: state.isOpen,
+      // If popover is in the top layer, it should not prevent other popovers from being dismissed.
+      isOpen: state.isOpen && !otherProps['data-react-aria-top-layer'],
       onClose: state.close,
       shouldCloseOnBlur: true,
       isDismissable: !isNonModal,

@@ -450,7 +450,6 @@ export const style = createTheme({
         isPressed: colorToken('neutral-subdued-content-color-down')
         // isSelected: colorToken('neutral-subdued-content-color-selected'),
       },
-      'neutral-visual': weirdColorToken('neutral-visual-color'),
       negative: {
         default: colorToken('negative-content-color-default'),
         isHovered: colorToken('negative-content-color-hover'),
@@ -495,7 +494,6 @@ export const style = createTheme({
         isFocusVisible: weirdColorToken('negative-background-color-key-focus'),
         isPressed: weirdColorToken('negative-background-color-down')
       },
-      'negative-visual': weirdColorToken('negative-visual-color'),
       'negative-subtle': weirdColorToken('negative-subtle-background-color-default'),
       informative: {
         default: weirdColorToken('informative-background-color-default'),
@@ -503,7 +501,6 @@ export const style = createTheme({
         isFocusVisible: weirdColorToken('informative-background-color-key-focus'),
         isPressed: weirdColorToken('informative-background-color-down')
       },
-      'informative-visual': weirdColorToken('informative-visual-color'),
       'informative-subtle': weirdColorToken('informative-subtle-background-color-default'),
       positive: {
         default: weirdColorToken('positive-background-color-default'),
@@ -511,10 +508,8 @@ export const style = createTheme({
         isFocusVisible: weirdColorToken('positive-background-color-key-focus'),
         isPressed: weirdColorToken('positive-background-color-down')
       },
-      'positive-visual': weirdColorToken('positive-visual-color'),
       'positive-subtle': weirdColorToken('positive-subtle-background-color-default'),
       notice: weirdColorToken('notice-background-color-default'),
-      'notice-visual': weirdColorToken('notice-visual-color'),
       'notice-subtle': weirdColorToken('notice-subtle-background-color-default'),
       gray: weirdColorToken('gray-background-color-default'),
       'gray-subtle': weirdColorToken('gray-subtle-background-color-default'),

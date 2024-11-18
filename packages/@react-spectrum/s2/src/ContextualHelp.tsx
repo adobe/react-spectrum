@@ -11,7 +11,7 @@ import InfoIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeStyles} from '../style/runtime';
-import {Popover, PopoverProps} from './Popover';
+import {PopoverBase, PopoverDialogProps} from './Popover';
 import {style, size as styleSize} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils' with { type: 'macro' };
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -26,8 +26,8 @@ export interface ContextualHelpStyleProps {
   variant?: 'info' | 'help'
 }
 export interface ContextualHelpProps extends
-  Pick<DialogTriggerProps, 'isOpen' | 'defaultOpen' | 'onOpenChange' | 'shouldFlip' | 'offset' | 'crossOffset' | 'placement'>,
-  Pick<PopoverProps, 'containerPadding'>,
+  Pick<DialogTriggerProps, 'isOpen' | 'defaultOpen' | 'onOpenChange'>,
+  Pick<PopoverDialogProps, 'shouldFlip' | 'offset' | 'crossOffset' | 'placement' | 'containerPadding'>,
   ContextualHelpStyleProps, StyleProps, DOMProps, AriaLabelingProps {
   /** Contents of the Contextual Help popover. */
   children?: ReactNode,
@@ -93,7 +93,7 @@ function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButton
         isQuiet>
         {variant === 'info' ? <InfoIcon /> : <HelpIcon />}
       </ActionButton>
-      <Popover
+      <PopoverBase
         placement={placement}
         shouldFlip={shouldFlip}
         // not working => containerPadding={containerPadding}
@@ -125,7 +125,7 @@ function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButton
             {children}
           </Provider>
         </RACDialog>
-      </Popover>
+      </PopoverBase>
     </DialogTrigger>
   );
 }

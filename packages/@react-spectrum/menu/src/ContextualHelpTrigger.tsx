@@ -151,7 +151,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
         containerPadding={0}
         hideArrow
         enableBothDismissButtons>
-        <FocusScope restoreFocus>
+        <FocusScope restoreFocus contain>
           {content}
         </FocusScope>
       </Popover>

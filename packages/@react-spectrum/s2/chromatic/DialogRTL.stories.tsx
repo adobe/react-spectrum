@@ -11,7 +11,6 @@
  */
 
 import {Dialog} from '../src';
-
 import type {Meta} from '@storybook/react';
 
 const meta: Meta<typeof Dialog> = {
