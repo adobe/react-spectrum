@@ -121,7 +121,7 @@
   },
   "devDependencies": {
     "@adobe/spectrum-tokens": "^13.0.0-beta.53",
-    "@parcel/macros": "2.12.1-canary.3165",
+    "@parcel/macros": "^2.13.0",
     "@react-aria/test-utils": "1.0.0-alpha.1"
   },
   "dependencies": {
