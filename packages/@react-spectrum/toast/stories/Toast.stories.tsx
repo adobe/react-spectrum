@@ -263,15 +263,13 @@ function IframeExample() {
     let document = window.document;
 
     // Catch toasts inside the iframe and redirect them outside.
-    window.addEventListener('react-spectrum-toast', (e) => {
+    window.addEventListener('react-spectrum-toast', (e: CustomEvent) => {
       e.preventDefault();
-      if (e instanceof CustomEvent) {
-        ToastQueue[e.detail.variant](e.detail.children, e.detail.options);
-      }
+      ToastQueue[e.detail.variant](e.detail.children, e.detail.options);
     });
 
     let prevFocusedElement: HTMLElement | null = null;
-    window.addEventListener('react-aria-landmark-navigation', (e) => {
+    window.addEventListener('react-aria-landmark-navigation', (e: CustomEvent) => {
       e.preventDefault();
       let el = document.activeElement;
       if (el !== document.body) {
@@ -283,7 +281,7 @@ function IframeExample() {
 
       window.parent.postMessage({
         type: 'landmark-navigation',
-        direction: e instanceof CustomEvent ? e.detail.direction : undefined
+        direction: e.detail.direction
       });
 
       setTimeout(() => {
