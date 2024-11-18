@@ -4,10 +4,10 @@
   "main": "S2Namer.js",
   "private": true,
   "engines": {
-    "parcel": "2.0.0-dev.1599"
+    "parcel": "^2.0.0"
   },
   "dependencies": {
-    "@parcel/plugin": "2.0.0-dev.1601"
+    "@parcel/plugin": "^2.0.0"
   },
   "rsp": {
     "type": "cli"
