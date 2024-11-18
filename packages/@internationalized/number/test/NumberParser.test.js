@@ -174,7 +174,7 @@ describe('NumberParser', function () {
     });
 
     describe('round trips', function () {
-      fc.configureGlobal({ numRuns: 200 });
+      fc.configureGlobal({numRuns: 200});
       // Locales have to include: 'de-DE', 'ar-EG', 'fr-FR' and possibly others
       // But for the moment they are not properly supported
       const localesArb = fc.constantFrom(...locales);
