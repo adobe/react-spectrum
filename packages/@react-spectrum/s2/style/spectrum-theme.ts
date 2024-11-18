@@ -222,13 +222,13 @@ const spacing = {
 };
 
 export function size(this: MacroContext | void, px: number) {
-  return {default: arbitrary(this, pxToRem(px)), touch: arbitrary(this, pxToRem(px * 1.25))};
+  return arbitrary(this, `calc(${pxToRem(px)} * var(--s2-scale))`);
 }
 
-const scaledSpacing: {[key in keyof typeof baseSpacing]: {default: string, touch: string}} =
+const scaledSpacing: {[key in keyof typeof baseSpacing]: string} =
   Object.fromEntries(Object.entries(baseSpacing).map(([k, v]) =>
-    [k, {default: v, touch: parseFloat(v) * 1.25 + v.match(/[^0-9.]+/)![0]}])
-  ) as any;
+    [k, `calc(${v} * var(--s2-scale))`]
+  )) as any;
 
 const sizing = {
   ...scaledSpacing,

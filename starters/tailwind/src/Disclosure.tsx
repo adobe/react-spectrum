@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
 import {
-  UNSTABLE_Disclosure as AriaDisclosure,
-  UNSTABLE_DisclosureGroup as AriaDisclosureGroup,
+  Disclosure as AriaDisclosure,
+  DisclosureGroup as AriaDisclosureGroup,
   DisclosureProps as AriaDisclosureProps,
   DisclosureGroupProps as AriaDisclosureGroupProps,
-  UNSTABLE_DisclosurePanel as AriaDisclosurePanel,
+  DisclosurePanel as AriaDisclosurePanel,
   DisclosurePanelProps as AriaDisclosurePanelProps,
   composeRenderProps,
   Heading,

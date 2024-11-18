@@ -32,8 +32,12 @@ const meta: Meta<typeof SegmentedControl> = {
 
 export default meta;
 
+const justifiedStyle = style({
+  width: '[400px]'
+});
+
 export const Example = (args: any) => (
-  <SegmentedControl {...args} styles={style({width: '[250px]'})}>
+  <SegmentedControl {...args} styles={args.isJustified ? justifiedStyle : undefined}>
     <SegmentedControlItem id="day">Day</SegmentedControlItem>
     <SegmentedControlItem id="week">Week</SegmentedControlItem>
     <SegmentedControlItem id="month">Month</SegmentedControlItem>
@@ -46,7 +50,7 @@ Example.args = {
 };
 
 export const WithIcons = (args: any) => (
-  <SegmentedControl {...args} styles={style({width: '[400px]'})}>
+  <SegmentedControl {...args} styles={args.isJustified ? justifiedStyle : undefined}>
     <SegmentedControlItem id="unordered"><ListBulleted /><Text>Unordered</Text></SegmentedControlItem>
     <SegmentedControlItem id="ordered"><ListNumbered /><Text>Ordered</Text></SegmentedControlItem>
     <SegmentedControlItem id="task list"><ListMultiSelect /><Text>Task List</Text></SegmentedControlItem>
@@ -58,7 +62,7 @@ WithIcons.args = {
 };
 
 export const OnlyIcons = (args: any) => (
-  <SegmentedControl {...args}>
+  <SegmentedControl {...args} styles={args.isJustified ? justifiedStyle : undefined}>
     <SegmentedControlItem aria-label="Align bottom" id="align bottom"><AlignBottom /></SegmentedControlItem>
     <SegmentedControlItem aria-label="Align center" id="align center"><AlignCenter /></SegmentedControlItem>
     <SegmentedControlItem aria-label="Align left" id="align left"><AlignLeft /></SegmentedControlItem>
@@ -67,17 +71,4 @@ export const OnlyIcons = (args: any) => (
 
 OnlyIcons.args = {
   'aria-label': 'Text alignment'
-};
-
-export const CustomWidth = (args: any) => (
-  <SegmentedControl {...args} styles={style({width: '[400px]'})}>
-    <SegmentedControlItem id="overview">Overview</SegmentedControlItem>
-    <SegmentedControlItem id="specs">Specs</SegmentedControlItem>
-    <SegmentedControlItem id="guidelines">Guidelines</SegmentedControlItem>
-    <SegmentedControlItem id="accessibility">Accessibility</SegmentedControlItem>
-  </SegmentedControl>
-);
-
-CustomWidth.args = {
-  'aria-label': 'Getting started'
 };

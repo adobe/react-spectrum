@@ -31,7 +31,7 @@ const meta: Meta<typeof SegmentedControl> = {
 export default meta;
 
 export const Example = (args: any) => (
-  <SegmentedControl {...args} styles={style({width: '[250px]'})}>
+  <SegmentedControl {...args}>
     <SegmentedControlItem id="day">Day</SegmentedControlItem>
     <SegmentedControlItem id="week">Week</SegmentedControlItem>
     <SegmentedControlItem id="month">Month</SegmentedControlItem>
@@ -44,7 +44,7 @@ Example.args = {
 };
 
 export const WithIcons = (args: any) => (
-  <SegmentedControl {...args} styles={style({width: '[400px]'})}>
+  <SegmentedControl {...args}>
     <SegmentedControlItem id="unordered"><ListBulleted /><Text>Unordered</Text></SegmentedControlItem>
     <SegmentedControlItem id="ordered"><ListNumbered /><Text>Ordered</Text></SegmentedControlItem>
     <SegmentedControlItem id="task list"><ListMultiSelect /><Text>Task List</Text></SegmentedControlItem>
@@ -56,7 +56,7 @@ WithIcons.args = {
 };
 
 export const OnlyIcons = (args: any) => (
-  <SegmentedControl styles={style({maxWidth: 'fit'})} {...args}>
+  <SegmentedControl {...args}>
     <SegmentedControlItem id="align bottom"><AlignBottom /></SegmentedControlItem>
     <SegmentedControlItem id="align center"><AlignCenter /></SegmentedControlItem>
     <SegmentedControlItem id="align left"><AlignLeft /></SegmentedControlItem>
@@ -67,7 +67,7 @@ OnlyIcons.args = {
   'aria-label': 'Text alignment'
 };
 
-export const CustomWidth = (args: any) => (
+export const CustomWidthJustified = (args: any) => (
   <SegmentedControl {...args} styles={style({width: '[400px]'})}>
     <SegmentedControlItem id="overview">Overview</SegmentedControlItem>
     <SegmentedControlItem id="specs">Specs</SegmentedControlItem>
@@ -76,6 +76,7 @@ export const CustomWidth = (args: any) => (
   </SegmentedControl>
 );
 
-CustomWidth.args = {
-  'aria-label': 'Getting started'
+CustomWidthJustified.args = {
+  'aria-label': 'Getting started',
+  isJustified: true
 };

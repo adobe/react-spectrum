@@ -11,7 +11,7 @@
  */
 
 import {CardView, CardViewProps, Content, Heading, IllustratedMessage} from '../src';
-import EmptyIcon from 'illustration:../spectrum-illustrations/gradient/S2_fill_image_generic1_160.svg';
+import EmptyIcon from '../spectrum-illustrations/gradient/generic1/Image';
 import type {Meta} from '@storybook/react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 

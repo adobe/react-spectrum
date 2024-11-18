@@ -12,7 +12,7 @@
 
 import {ActionMenu, AssetCard, Avatar, Badge, Button, Card, CardPreview, CardProps, CollectionCardPreview, Content, Divider, Footer, Image, MenuItem, Meter, ProductCard, StatusLight, Text, UserCard} from '../src';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
-import FolderGradient from 'illustration:../spectrum-illustrations/gradient/S2_fill_folderClose_generic2_160.svg';
+import FolderGradient from '../spectrum-illustrations/gradient/generic2/FolderClose';
 import type {Meta} from '@storybook/react';
 import Project from '../s2wf-icons/S2_Icon_Project_20_N.svg';
 import Select from '../s2wf-icons/S2_Icon_Select_20_N.svg';

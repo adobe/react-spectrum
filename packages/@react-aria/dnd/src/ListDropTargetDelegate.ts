@@ -72,11 +72,11 @@ export class ListDropTargetDelegate implements DropTargetDelegate {
   }
 
   getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget {
-    if (this.collection[Symbol.iterator]().next().done) {
+    if (this.collection[Symbol.iterator]().next().done || !this.ref.current) {
       return {type: 'root'};
     }
 
-    let rect = this.ref.current.getBoundingClientRect();
+    let rect: DOMRect | undefined = this.ref.current.getBoundingClientRect();
     let primary = this.orientation === 'horizontal' ? x : y;
     let secondary = this.orientation === 'horizontal' ? y : x;
     primary += this.getPrimaryStart(rect);
@@ -90,7 +90,7 @@ export class ListDropTargetDelegate implements DropTargetDelegate {
     let elements = this.ref.current.querySelectorAll('[data-key]');
     let elementMap = new Map<string, HTMLElement>();
     for (let item of elements) {
-      if (item instanceof HTMLElement) {
+      if (item instanceof HTMLElement && item.dataset.key != null) {
         elementMap.set(item.dataset.key, item);
       }
     }
@@ -106,6 +106,9 @@ export class ListDropTargetDelegate implements DropTargetDelegate {
       let mid = Math.floor((low + high) / 2);
       let item = items[mid];
       let element = elementMap.get(String(item.key));
+      if (!element) {
+        break;
+      }
       let rect = element.getBoundingClientRect();
       let update = (isGreater: boolean) => {
         if (isGreater) {
@@ -154,9 +157,9 @@ export class ListDropTargetDelegate implements DropTargetDelegate {
 
     let item = items[Math.min(low, items.length - 1)];
     let element = elementMap.get(String(item.key));
-    rect = element.getBoundingClientRect();
+    rect = element?.getBoundingClientRect();
 
-    if (primary < this.getPrimaryStart(rect) || Math.abs(flow - this.getFlowStart(rect)) < Math.abs(flow - this.getFlowEnd(rect))) {
+    if (rect && (primary < this.getPrimaryStart(rect) || Math.abs(flow - this.getFlowStart(rect)) < Math.abs(flow - this.getFlowEnd(rect)))) {
       return {
         type: 'item',
         key: item.key,
