@@ -191,12 +191,8 @@ const negativeSpacing = generateSpacing([
   -384
 ] as const);
 
-function arbitrary(ctx: MacroContext | void, value: string): `[${string}]` {
-  return ctx ? `[${value}]` : value as any;
-}
-
 export function fontRelative(this: MacroContext | void, base: number, baseFontSize = 14) {
-  return arbitrary(this, (base / baseFontSize) + 'em');
+  return (base / baseFontSize) + 'em';
 }
 
 export function edgeToText(this: MacroContext | void, height: keyof typeof baseSpacing) {
@@ -204,7 +200,7 @@ export function edgeToText(this: MacroContext | void, height: keyof typeof baseS
 }
 
 export function space(this: MacroContext | void, px: number) {
-  return arbitrary(this, pxToRem(px));
+  return pxToRem(px);
 }
 
 const spacing = {
@@ -222,7 +218,7 @@ const spacing = {
 };
 
 export function size(this: MacroContext | void, px: number) {
-  return arbitrary(this, `calc(${pxToRem(px)} * var(--s2-scale))`);
+  return `calc(${pxToRem(px)} * var(--s2-scale))`;
 }
 
 const sizing = {

@@ -17,7 +17,7 @@ import {CenterBaseline} from './CenterBaseline';
 import {centerPadding, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import Chevron from '../ui-icons/Chevron';
 import {filterDOMProps} from '@react-aria/utils';
-import {focusRing, lightDark, size as sizeValue, style} from '../style' with { type: 'macro' };
+import {focusRing, lightDark, style} from '../style' with { type: 'macro' };
 import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -62,7 +62,7 @@ const disclosure = style({
   borderEndWidth: 0,
   borderStyle: 'solid',
   borderColor: 'gray-200',
-  minWidth: sizeValue(200)
+  minWidth: 200
 }, getAllowedOverrides());
 
 function Disclosure(props: DisclosureProps, ref: DOMRef<HTMLDivElement>) {
@@ -319,9 +319,9 @@ const panelStyles = style({
     isExpanded: {
       size: {
         S: 8,
-        M: sizeValue(9),
+        M: 9,
         L: 12,
-        XL: sizeValue(15)
+        XL: 15
       }
     }
   }
