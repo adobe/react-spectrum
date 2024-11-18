@@ -40,7 +40,7 @@ export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style'>
 
 const image = style({
   width: 'full',
-  height: '[140px]',
+  height: 140,
   objectFit: 'cover'
 });
 

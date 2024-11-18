@@ -45,7 +45,7 @@ import {
 import {centerPadding, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
-import {colorMix, fontRelative, lightDark, size, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {colorMix, fontRelative, lightDark, space, style} from '../style' with {type: 'macro'};
 import {ColumnSize} from '@react-types/table';
 import {DOMRef, DOMRefValue, forwardRefType, LoadingState, Node} from '@react-types/shared';
 import {GridNode} from '@react-types/grid';
@@ -147,7 +147,7 @@ const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boo
   },
   outlineStyle: 'solid',
   borderRadius: {
-    default: size(6),
+    default: '[6px]',
     isQuiet: 'none'
   },
   // Multiple browser bugs from scrollIntoView and scrollPadding:
@@ -438,7 +438,7 @@ const cellFocus = {
   outlineOffset: -2,
   outlineWidth: 2,
   outlineColor: 'focus-ring',
-  borderRadius: size(6)
+  borderRadius: '[6px]'
 } as const;
 
 function CellFocusRing() {
@@ -620,7 +620,7 @@ const resizerHandleContainer = style({
   height: 'full',
   position: 'absolute',
   top: 0,
-  insetEnd: size(-6),
+  insetEnd: space(-6),
   cursor: {
     default: 'none',
     resizableDirection: {
@@ -649,11 +649,11 @@ const resizerHandle = style({
     isResizing: 'screen'
   },
   width: {
-    default: size(1),
-    isResizing: size(2)
+    default: 1,
+    isResizing: 2
   },
   position: 'absolute',
-  insetStart: size(6)
+  insetStart: space(6)
 });
 
 const columnHeaderText = style({
@@ -679,7 +679,7 @@ const chevronIcon = style({
 const nubbin = style({
   position: 'absolute',
   top: 0,
-  insetStart: size(-1),
+  insetStart: space(-1),
   size: fontRelative(16),
   fill: {
     default: lightDark('informative-900', 'informative-700'), // --spectrum-informative-background-color-default, can't use `informative` because that won't be the background color value

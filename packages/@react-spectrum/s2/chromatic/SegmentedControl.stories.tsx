@@ -68,7 +68,7 @@ OnlyIcons.args = {
 };
 
 export const CustomWidthJustified = (args: any) => (
-  <SegmentedControl {...args} styles={style({width: '[400px]'})}>
+  <SegmentedControl {...args} styles={style({width: 400})}>
     <SegmentedControlItem id="overview">Overview</SegmentedControlItem>
     <SegmentedControlItem id="specs">Specs</SegmentedControlItem>
     <SegmentedControlItem id="guidelines">Guidelines</SegmentedControlItem>

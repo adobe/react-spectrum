@@ -44,6 +44,30 @@ export function createRenamedProperty<T extends CSSValue>(name: string, values: 
   return createMappedProperty((value, property) => ({[property.startsWith('--') ? property : name]: value}), values);
 }
 
+export function createSizingProperty<T extends CSSValue>(values: PropertyValueMap<T>, fn: (value: number) => string): PropertyFunction<T | (number & {})> {
+  let valueMap = createValueLookup(Array.isArray(values) ? values : recursiveValues(values));
+  return (value, property) => {
+    let v = parseArbitraryValue(value);
+    if (v) {
+      return {default: [{[property]: v[0]}, v[1]]};
+    }
+
+    let val = values[String(value)];
+    if (val != null) {
+      return mapConditionalValue(val, value => {
+        return [{[property]: value}, valueMap.get(value)!];
+      });
+    }
+    
+    if (typeof value === 'number') {
+      let cssValue = value === 0 ? '0px' : fn(value);
+      return {default: [{[property]: cssValue}, generateName(value + valueMap.size)]};
+    }
+
+    throw new Error('Invalid sizing value: ' + value);
+  };
+}
+
 export type Color<C extends string> = C | `${string}/${number}`;
 export function createColorProperty<C extends string>(colors: PropertyValueMap<C>, property?: keyof CSSProperties): PropertyFunction<Color<C>> {
   let valueMap = createValueLookup(Object.values(colors).flatMap((v: any) => typeof v === 'object' ? Object.values(v) : [v]));

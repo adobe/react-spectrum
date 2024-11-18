@@ -36,7 +36,7 @@ const cardViewStyles = style({
   height: {
     default: 'screen',
     viewMode: {
-      docs: '[600px]'
+      docs: 600
     }
   }
 });
