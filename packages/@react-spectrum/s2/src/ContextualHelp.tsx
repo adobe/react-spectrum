@@ -41,8 +41,8 @@ export interface ContextualHelpProps extends
 
 const popover = style({
   fontFamily: 'sans',
-  minWidth: '[218px]',
-  width: '[218px]',
+  minWidth: 218,
+  width: 218,
   padding: 24
 });
 

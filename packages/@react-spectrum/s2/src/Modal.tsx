@@ -106,9 +106,9 @@ function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
           width: {
             size: {
               // Copied from designs, not sure if correct.
-              S: '[21rem]',
-              M: '[26rem]',
-              L: '[36rem]',
+              S: 336,
+              M: 416,
+              L: 576,
               fullscreen: '[calc(100% - 40px)]',
               fullscreenTakeover: 'full'
             }

@@ -33,7 +33,7 @@ const meta: Meta<typeof SegmentedControl> = {
 export default meta;
 
 const justifiedStyle = style({
-  width: '[400px]'
+  width: 400
 });
 
 export const Example = (args: any) => (

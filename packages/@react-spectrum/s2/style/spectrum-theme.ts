@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ArbitraryValue} from './types';
-import {Color, createArbitraryProperty, createColorProperty, createMappedProperty, createRenamedProperty, createTheme, parseArbitraryValue} from './style-macro';
+import {ArbitraryValue, CSSValue, PropertyValueMap} from './types';
+import {Color, createArbitraryProperty, createColorProperty, createMappedProperty, createRenamedProperty, createSizingProperty, createTheme, parseArbitraryValue} from './style-macro';
 import {colorScale, colorToken, fontSizeToken, getToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
 import type * as CSS from 'csstype';
 
@@ -225,13 +225,7 @@ export function size(this: MacroContext | void, px: number) {
   return arbitrary(this, `calc(${pxToRem(px)} * var(--s2-scale))`);
 }
 
-const scaledSpacing: {[key in keyof typeof baseSpacing]: string} =
-  Object.fromEntries(Object.entries(baseSpacing).map(([k, v]) =>
-    [k, `calc(${v} * var(--s2-scale))`]
-  )) as any;
-
 const sizing = {
-  ...scaledSpacing,
   auto: 'auto',
   full: '100%',
   min: 'min-content',
@@ -268,6 +262,10 @@ const width = {
   ...sizing,
   screen: '100vw'
 };
+
+function createSpectrumSizingProperty<T extends CSSValue>(values: PropertyValueMap<T>) {
+  return createSizingProperty(values, px => `calc(${pxToRem(px)} * var(--s2-scale))`);
+}
 
 const margin = {
   ...spacing,
@@ -624,20 +622,20 @@ export const style = createTheme({
     },
     rowGap: spacing,
     columnGap: spacing,
-    height,
-    width,
-    containIntrinsicWidth: width,
-    containIntrinsicHeight: height,
-    minHeight: height,
-    maxHeight: {
+    height: createSpectrumSizingProperty(height),
+    width: createSpectrumSizingProperty(width),
+    containIntrinsicWidth: createSpectrumSizingProperty(width),
+    containIntrinsicHeight: createSpectrumSizingProperty(height),
+    minHeight: createSpectrumSizingProperty(height),
+    maxHeight: createSpectrumSizingProperty({
       ...height,
       none: 'none'
-    },
-    minWidth: width,
-    maxWidth: {
+    }),
+    minWidth: createSpectrumSizingProperty(width),
+    maxWidth: createSpectrumSizingProperty({
       ...width,
       none: 'none'
-    },
+    }),
     borderStartWidth: createRenamedProperty('borderInlineStartWidth', borderWidth),
     borderEndWidth: createRenamedProperty('borderInlineEndWidth', borderWidth),
     borderTopWidth: borderWidth,
