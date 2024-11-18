@@ -147,7 +147,8 @@ function Image(props: ImageProps, domRef: ForwardedRef<HTMLDivElement>) {
     crossOrigin,
     decoding,
     loading,
-    referrerPolicy
+    referrerPolicy,
+    slot
   } = props;
   let hidden = (props as ImageContextValue).hidden;
   
@@ -216,6 +217,7 @@ function Image(props: ImageProps, domRef: ForwardedRef<HTMLDivElement>) {
   return useMemo(() => hidden ? null : (
     <div
       ref={domRef}
+      slot={slot || undefined}
       style={UNSAFE_style}
       className={UNSAFE_className + mergeStyles(wrapperStyles, styles) + ' '  + (isAnimating ? loadingStyle : '')}>
       {errorState}
@@ -233,7 +235,7 @@ function Image(props: ImageProps, domRef: ForwardedRef<HTMLDivElement>) {
           className={imgStyles({isRevealed, isTransitioning})} />
         )}
     </div>
-  ), [hidden, domRef, UNSAFE_style, UNSAFE_className, styles, isAnimating, errorState, src, alt, crossOrigin, decoding, loading, referrerPolicy, onLoad, onError, isRevealed, isTransitioning]);
+  ), [slot, hidden, domRef, UNSAFE_style, UNSAFE_className, styles, isAnimating, errorState, src, alt, crossOrigin, decoding, loading, referrerPolicy, onLoad, onError, isRevealed, isTransitioning]);
 }
 
 const _Image = forwardRef(Image);

@@ -125,6 +125,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   } = props;
 
   let isTrigger = !!hasPopup;
+  let isTriggerExpanded = isTrigger && props['aria-expanded'] === 'true';
   let isDisabled = props.isDisabled ?? selectionManager.isDisabled(key);
   let isSelected = props.isSelected ?? selectionManager.isSelected(key);
   let data = menuData.get(state);
@@ -233,7 +234,8 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let {hoverProps} = useHover({
     isDisabled,
     onHoverStart(e) {
-      if (!isFocusVisible()) {
+      // Hovering over an already expanded sub dialog trigger should keep focus in the dialog.
+      if (!isFocusVisible() && !(isTriggerExpanded && hasPopup === 'dialog')) {
         selectionManager.setFocused(true);
         selectionManager.setFocusedKey(key);
       }
@@ -285,7 +287,8 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     menuItemProps: {
       ...ariaProps,
       ...mergeProps(domProps, linkProps, isTrigger ? {onFocus: itemProps.onFocus, 'data-key': itemProps['data-key']} : itemProps, pressProps, hoverProps, keyboardProps, focusProps),
-      tabIndex: itemProps.tabIndex != null ? -1 : undefined
+      // If a submenu is expanded, set the tabIndex to -1 so that shift tabbing goes out of the menu instead of the parent menu item.
+      tabIndex: itemProps.tabIndex != null && isTriggerExpanded ? -1 : itemProps.tabIndex
     },
     labelProps: {
       id: labelId
