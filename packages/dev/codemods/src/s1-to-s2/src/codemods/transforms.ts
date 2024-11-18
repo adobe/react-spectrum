@@ -775,7 +775,7 @@ function convertDimensionValueToPx(
   if (attrPath && t.isJSXAttribute(attrPath.node) && attrPath.node.name.name === propToConvertValue) {
     if (t.isStringLiteral(attrPath.node.value)) {
       try {
-        let value = convertDimension(attrPath.node.value.value);
+        let value = convertDimension(attrPath.node.value.value, 'size');
         if (value && typeof value === 'number') {
           attrPath.node.value = t.jsxExpressionContainer(t.numericLiteral(value));
         } else if (value && typeof value === 'string') {
