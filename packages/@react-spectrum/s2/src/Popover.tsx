@@ -41,9 +41,9 @@ export interface PopoverProps extends UnsafeStyles, Omit<AriaPopoverProps, 'arro
   /**
    * The size of the Popover. If not specified, the popover fits its contents.
    */
-  size?: 'S' | 'M' | 'L',
+  size?: 'S' | 'M' | 'L'
   /** The type of overlay that should be rendered when on a mobile device. */
-  mobileType?: 'modal' | 'fullscreen' | 'fullscreenTakeover' // TODO: add tray back in
+  // mobileType?: 'modal' | 'fullscreen' | 'fullscreenTakeover' // TODO: add tray back in
 }
 
 const fadeKeyframes = keyframes(`
@@ -288,7 +288,7 @@ function PopoverBase(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
 let _PopoverBase = forwardRef(PopoverBase);
 export {_PopoverBase as PopoverBase};
 
-export interface PopoverDialogProps extends Pick<PopoverProps, 'size' | 'hideArrow' | 'mobileType' | 'placement' | 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset'>, Omit<DialogProps, 'className' | 'style'>, StyleProps {}
+export interface PopoverDialogProps extends Pick<PopoverProps, 'size' | 'hideArrow'| 'placement' | 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset'>, Omit<DialogProps, 'className' | 'style'>, StyleProps {}
 
 const dialogStyle = style({
   padding: 8,
