@@ -16,22 +16,19 @@ import {
   composeRenderProps,
   Dialog,
   DialogProps,
-  ModalRenderProps,
   OverlayArrow,
   OverlayTriggerStateContext,
   useLocale
 } from 'react-aria-components';
 import {colorScheme, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
-import {DismissButton} from 'react-aria';
 import {DOMRef} from '@react-types/shared';
 import {forwardRef, MutableRefObject, useCallback, useContext} from 'react';
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {mergeStyles} from '../style/runtime';
-import {Modal} from './Modal';
 import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types' with {type: 'macro'};
-import {useDOMRef, useIsMobileDevice} from '@react-spectrum/utils';
+import {useDOMRef} from '@react-spectrum/utils';
 
 export interface PopoverProps extends UnsafeStyles, Omit<AriaPopoverProps, 'arrowSize' | 'isNonModal' | 'arrowBoundaryOffset' | 'isKeyboardDismissDisabled' | 'shouldCloseOnInteractOutside' | 'shouldUpdatePosition'> {
   styles?: StyleString,
@@ -126,6 +123,9 @@ let popover = style({
       L: 576
     }
   },
+  // Don't be larger than full screen minus 2 * containerPadding
+  maxWidth: '[calc(100vw - 24px)]',
+  boxSizing: 'border-box',
   translateY: {
     placement: {
       bottom: {
@@ -221,9 +221,7 @@ function PopoverBase(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
     UNSAFE_className = '',
     UNSAFE_style,
     styles,
-    size,
-    children,
-    trigger = null
+    size
   } = props;
   let domRef = useDOMRef(ref);
   let colorScheme = useContext(ColorSchemeContext);
@@ -239,24 +237,25 @@ function PopoverBase(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
   }, [locale, direction, domRef]);
 
   // On small devices, show a modal (or eventually a tray) instead of a popover.
-  let isMobile = useIsMobileDevice();
-  if (isMobile && process.env.NODE_ENV !== 'test') {
-    let mappedChildren = typeof children === 'function'
-      ? (renderProps: ModalRenderProps) => children({...renderProps, defaultChildren: null, trigger, placement: 'bottom'})
-      : children;
+  // TODO: reverted this until we have trays.
+  // let isMobile = useIsMobileDevice();
+  // if (isMobile && process.env.NODE_ENV !== 'test') {
+  //   let mappedChildren = typeof children === 'function'
+  //     ? (renderProps: ModalRenderProps) => children({...renderProps, defaultChildren: null, trigger, placement: 'bottom'})
+  //     : children;
 
-    return (
-      <Modal size={size} isDismissable>
-        {composeRenderProps(mappedChildren, (children, {state}) => (
-          <>
-            {children}
-            {/* Add additional dismiss button at the end to match popovers. */}
-            <DismissButton onDismiss={state.close} />
-          </>
-        ))}
-      </Modal>
-    );
-  }
+  //   return (
+  //     <Modal size={size} isDismissable>
+  //       {composeRenderProps(mappedChildren, (children, {state}) => (
+  //         <>
+  //           {children}
+  //           {/* Add additional dismiss button at the end to match popovers. */}
+  //           <DismissButton onDismiss={state.close} />
+  //         </>
+  //       ))}
+  //     </Modal>
+  //   );
+  // }
 
   // TODO: this still isn't the final popover 'tip', copying various ones out of the designs files yields different results
   // containerPadding not working as expected
