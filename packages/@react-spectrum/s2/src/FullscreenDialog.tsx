@@ -72,6 +72,7 @@ export const dialogInner = style({
       'header',
       '.',
       'content',
+      '.',
       'buttons'
     ],
     sm: [
@@ -90,6 +91,7 @@ export const dialogInner = style({
       'auto',
       24,
       '1fr',
+      24,
       'auto'
     ],
     sm: [

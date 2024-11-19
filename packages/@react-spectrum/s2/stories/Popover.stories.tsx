@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Avatar, Button, Card, CardPreview, Content, DialogTrigger, Divider, DropZone, Form, Image, Menu, MenuItem, MenuSection, Popover, SearchField, SubmenuTrigger, Switch, Tab, TabList, TabPanel, Tabs, Text, TextField} from '../src';
+import {ActionButton, Avatar, Button, Card, CardPreview, Content, DialogTrigger, Divider, Form, Image, Menu, MenuItem, MenuSection, Popover, SearchField, SubmenuTrigger, Switch, Tab, TabList, TabPanel, Tabs, Text, TextField} from '../src';
 import Cloud from '../s2wf-icons/S2_Icon_Cloud_20_N.svg';
 import Education from '../s2wf-icons/S2_Icon_Education_20_N.svg';
 import File from '../s2wf-icons/S2_Icon_File_20_N.svg';
@@ -97,7 +97,6 @@ export const HelpCenter = (args: any) => (
           <Form>
             <TextField label="Subject" />
             <TextField label="Description" isRequired />
-            <DropZone />
             <Switch>Adobe can contact me for further questions concerning this feedback</Switch>
             <Button styles={style({marginStart: 'auto'})}>Submit</Button>
           </Form>
@@ -159,3 +158,8 @@ export const AccountMenu = (args: any) => (
     </Popover>
   </DialogTrigger>
 );
+
+AccountMenu.argTypes = {
+  hideArrow: {table: {disable: true}},
+  placement: {table: {disable: true}}
+};
