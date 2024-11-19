@@ -61,7 +61,7 @@ export function useSliderThumb(
   let {direction} = useLocale();
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
-  let data = sliderData.get(state);
+  let data = sliderData.get(state)!;
   const {labelProps, fieldProps} = useLabel({
     ...opts,
     id: getSliderThumbId(state, index),
@@ -139,6 +139,9 @@ export function useSliderThumb(
         step,
         pageSize
       } = state;
+      if (!trackRef.current) {
+        return;
+      }
       let {width, height} = trackRef.current.getBoundingClientRect();
       let size = isVertical ? height : width;
 

@@ -35,7 +35,7 @@ export interface DisclosureProps extends Omit<RACDisclosureProps, 'className' | 
   density?: 'compact' | 'regular' | 'spacious',
   /** Whether the disclosure should be displayed with a quiet style. */
   isQuiet?: boolean,
-  /** The contents of the disclosure, consisting of an DisclosureHeader and DisclosurePanel. */
+  /** The contents of the disclosure, consisting of a DisclosureTitle and DisclosurePanel. */
   children: ReactNode
 }
 

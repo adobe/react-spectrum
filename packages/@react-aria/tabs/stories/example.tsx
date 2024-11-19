@@ -10,11 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaTabListProps, useTab, useTabList, useTabPanel} from '@react-aria/tabs';
 import React from 'react';
-import {useTab, useTabList, useTabPanel} from '@react-aria/tabs';
 import {useTabListState} from '@react-stately/tabs';
 
-export function Tabs({shouldSelectOnPressUp, ...props}) {
+interface TabProps extends AriaTabListProps<any> {
+  shouldSelectOnPressUp?: boolean
+}
+
+export function Tabs({shouldSelectOnPressUp, ...props}: TabProps) {
   let state = useTabListState(props);
   let ref = React.useRef(null);
   let {tabListProps} = useTabList(props, state, ref);

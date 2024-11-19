@@ -21,18 +21,19 @@ export function getItemCount<T>(collection: Collection<Node<T>>): number {
     return count;
   }
 
-  count = 0;
+  // TS isn't smart enough to know we've ensured count is a number, so use a new variable
+  let counter = 0;
   let countItems = (items: Iterable<Node<T>>) => {
     for (let item of items) {
       if (item.type === 'section') {
         countItems(getChildNodes(item, collection));
       } else {
-        count++;
+        counter++;
       }
     }
   };
 
   countItems(collection);
-  cache.set(collection, count);
-  return count;
+  cache.set(collection, counter);
+  return counter;
 }

@@ -30,12 +30,12 @@ export function StorySlider(props: StorySliderProps) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const origin = props.origin ?? props.minValue ?? 0;
 
-  const multiProps: AriaSliderProps = {
+  const multiProps: AriaSliderProps<number[]> = {
     ...props,
     value: props.value == null ? undefined :  [props.value],
     defaultValue: props.defaultValue == null ? undefined : [props.defaultValue],
-    onChange: props.onChange == null ? undefined : (vals: number[]) => props.onChange(vals[0]),
-    onChangeEnd: props.onChangeEnd == null ? undefined : (vals: number[]) => props.onChangeEnd(vals[0])
+    onChange: props.onChange == null ? undefined : (vals: number[]) => props.onChange?.(vals[0]),
+    onChangeEnd: props.onChangeEnd == null ? undefined : (vals: number[]) => props.onChangeEnd?.(vals[0])
   };
   const formatter = useNumberFormatter(props.formatOptions);
   const state = useSliderState({...multiProps, numberFormatter: formatter});

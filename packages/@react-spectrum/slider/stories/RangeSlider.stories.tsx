@@ -77,7 +77,7 @@ FormatOptionsPercent.story = {
   name: 'formatOptions percent'
 };
 
-export const FormatOptionsCentimeter = (args) => // @ts-ignore TODO why is "unit" even missing? How well is it supported?
+export const FormatOptionsCentimeter = (args) =>
   render({...args, maxValue: 1000, formatOptions: {style: 'unit', unit: 'centimeter'}});
 
 FormatOptionsCentimeter.story = {

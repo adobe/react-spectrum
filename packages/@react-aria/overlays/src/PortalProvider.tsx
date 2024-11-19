@@ -23,7 +23,7 @@ export function UNSTABLE_PortalProvider(props: PortalProviderProps & {children: 
   let {getContainer} = props;
   let {getContainer: ctxGetContainer} = useUNSTABLE_PortalContext();
   return (
-    <PortalContext.Provider value={{getContainer: getContainer === null ? null : getContainer ?? ctxGetContainer}}>
+    <PortalContext.Provider value={{getContainer: getContainer === null ? undefined : getContainer ?? ctxGetContainer}}>
       {props.children}
     </PortalContext.Provider>
   );

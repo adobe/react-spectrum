@@ -23,7 +23,7 @@ import {DOMRef} from '@react-types/shared';
 import {filterDOMProps, RouterProvider} from '@react-aria/utils';
 import {I18nProvider, useLocale} from '@react-aria/i18n';
 import {ModalProvider, useModalProvider} from '@react-aria/overlays';
-import {ProviderContext, ProviderProps} from '@react-types/provider';
+import {ProviderProps} from '@react-types/provider';
 import React, {useContext, useEffect, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/page/vars.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/index.css';
@@ -34,7 +34,7 @@ import {version} from '../package.json';
 const DEFAULT_BREAKPOINTS = {S: 640, M: 768, L: 1024, XL: 1280, XXL: 1536};
 
 function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
-  let prevContext = useProvider();
+  let prevContext = useContext(Context);
   let prevColorScheme = prevContext && prevContext.colorScheme;
   let prevBreakpoints = prevContext && prevContext.breakpoints;
   let {
@@ -45,17 +45,17 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     throw new Error('theme not found, the parent provider must have a theme provided');
   }
   // Hooks must always be called.
-  let autoColorScheme = useColorScheme(theme, defaultColorScheme);
+  let autoColorScheme = useColorScheme(theme, defaultColorScheme || 'light');
   let autoScale = useScale(theme);
   let {locale: prevLocale} = useLocale();
   // if the new theme doesn't support the prevColorScheme, we must resort to the auto
-  let usePrevColorScheme = !!theme[prevColorScheme];
+  let usePrevColorScheme = prevColorScheme ? !!theme[prevColorScheme] : false;
 
   // importance of color scheme props > parent > auto:(OS > default > omitted)
   let {
     colorScheme = usePrevColorScheme ? prevColorScheme : autoColorScheme,
     scale = prevContext ? prevContext.scale : autoScale,
-    locale = prevContext ? prevLocale : null,
+    locale = prevContext ? prevLocale : undefined,
     breakpoints = prevContext ? prevBreakpoints : DEFAULT_BREAKPOINTS,
     children,
     isQuiet,
@@ -83,7 +83,7 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     validationState
   };
 
-  let matchedBreakpoints = useMatchedBreakpoints(breakpoints);
+  let matchedBreakpoints = useMatchedBreakpoints(breakpoints!);
   let filteredProps = {};
   Object.entries(currentProps).forEach(([key, value]) => value !== undefined && (filteredProps[key] = value));
 
@@ -94,7 +94,7 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let contents = children;
   let domProps = filterDOMProps(otherProps);
   let {styleProps} = useStyleProps(otherProps, undefined, {matchedBreakpoints});
-  if (!prevContext || props.locale || theme !== prevContext.theme || colorScheme !== prevContext.colorScheme || scale !== prevContext.scale || Object.keys(domProps).length > 0 || otherProps.UNSAFE_className || Object.keys(styleProps.style).length > 0) {
+  if (!prevContext || props.locale || theme !== prevContext.theme || colorScheme !== prevContext.colorScheme || scale !== prevContext.scale || Object.keys(domProps).length > 0 || otherProps.UNSAFE_className || (styleProps.style && Object.keys(styleProps.style).length > 0)) {
     contents = (
       <ProviderWrapper {...props} UNSAFE_style={{isolation: !prevContext ? 'isolate' : undefined, ...styleProps.style}} ref={ref}>
         {contents}
@@ -138,15 +138,15 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: Provide
   let {styleProps} = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
 
-  let themeKey = Object.keys(theme[colorScheme])[0];
-  let scaleKey = Object.keys(theme[scale])[0];
+  let themeKey = Object.keys(theme[colorScheme]!)[0];
+  let scaleKey = Object.keys(theme[scale]!)[0];
 
   let className = clsx(
     styleProps.className,
     styles['spectrum'],
     typographyStyles['spectrum'],
-    Object.values(theme[colorScheme]),
-    Object.values(theme[scale]),
+    Object.values(theme[colorScheme]!),
+    Object.values(theme[scale]!),
     theme.global ? Object.values(theme.global) : null,
     {
       'react-spectrum-provider': shouldKeepSpectrumClassNames,
@@ -166,7 +166,7 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: Provide
   let hasWarned = useRef(false);
   useEffect(() => {
     if (direction && domRef.current) {
-      let closestDir = domRef.current.parentElement.closest('[dir]');
+      let closestDir = domRef.current?.parentElement?.closest('[dir]');
       let dir = closestDir && closestDir.getAttribute('dir');
       if (dir && dir !== direction && !hasWarned.current) {
         console.warn(`Language directions cannot be nested. ${direction} inside ${dir}.`);
@@ -195,12 +195,16 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: Provide
  * Returns the various settings and styles applied by the nearest parent Provider.
  * Properties explicitly set by the nearest parent Provider override those provided by preceeding Providers.
  */
-export function useProvider(): ProviderContext {
-  return useContext(Context);
+export function useProvider() {
+  let context = useContext(Context);
+  if (!context) {
+    throw new Error('No root provider found.');
+  }
+  return context;
 }
 
 export function useProviderProps<T>(props: T) : T {
-  let context = useProvider();
+  let context = useContext(Context);
   if (!context) {
     return props;
   }

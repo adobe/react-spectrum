@@ -1,4 +1,4 @@
-import {Accordion, Disclosure, DisclosureHeader, DisclosurePanel, Flex, Divider, Breadcrumbs, Item, Link, Tabs, TabList, TabPanels} from '@adobe/react-spectrum';
+import {Accordion, Disclosure, DisclosureTitle, DisclosurePanel, Flex, Divider, Breadcrumbs, Item, Link, Tabs, TabList, TabPanels} from '@adobe/react-spectrum';
 
 export default function NavigationExamples() {
   return (
@@ -35,17 +35,17 @@ export default function NavigationExamples() {
         <h3>Accordion</h3>
         <Accordion maxWidth="size-3600">
           <Disclosure id="files">
-            <DisclosureHeader>
+            <DisclosureTitle>
               Files
-            </DisclosureHeader>
+            </DisclosureTitle>
             <DisclosurePanel>
               <p>Files content</p>
             </DisclosurePanel>
           </Disclosure>
           <Disclosure id="people">
-            <DisclosureHeader>
+            <DisclosureTitle>
               People
-            </DisclosureHeader>
+            </DisclosureTitle>
             <DisclosurePanel>
               <p>People content</p>
             </DisclosurePanel>
@@ -53,7 +53,7 @@ export default function NavigationExamples() {
         </Accordion>
         <h3>Disclosure</h3>
         <Disclosure>
-          <DisclosureHeader>System Requirements</DisclosureHeader>
+          <DisclosureTitle>System Requirements</DisclosureTitle>
           <DisclosurePanel>
             <p>Details about system requirements here.</p>
           </DisclosurePanel>

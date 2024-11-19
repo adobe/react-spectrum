@@ -55,7 +55,7 @@ export function useSlider<T extends number | number[]>(
 
   // Attach id of the label to the state so it can be accessed by useSliderThumb.
   sliderData.set(state, {
-    id: labelProps.id ?? fieldProps.id,
+    id: (labelProps.id ?? fieldProps.id)!,
     'aria-describedby': props['aria-describedby'],
     'aria-details': props['aria-details']
   });
@@ -71,16 +71,19 @@ export function useSlider<T extends number | number[]>(
   const realTimeTrackDraggingIndex = useRef<number | null>(null);
 
   const reverseX = direction === 'rtl';
-  const currentPosition = useRef<number>(null);
+  const currentPosition = useRef<number | null>(null);
   const {moveProps} = useMove({
     onMoveStart() {
       currentPosition.current = null;
     },
     onMove({deltaX, deltaY}) {
+      if (!trackRef.current) {
+        return;
+      }
       let {height, width} = trackRef.current.getBoundingClientRect();
       let size = isVertical ? height : width;
 
-      if (currentPosition.current == null) {
+      if (currentPosition.current == null && realTimeTrackDraggingIndex.current != null) {
         currentPosition.current = state.getThumbPercent(realTimeTrackDraggingIndex.current) * size;
       }
 
@@ -89,10 +92,10 @@ export function useSlider<T extends number | number[]>(
         delta = -delta;
       }
 
-      currentPosition.current += delta;
+      currentPosition.current! += delta;
 
       if (realTimeTrackDraggingIndex.current != null && trackRef.current) {
-        const percent = clamp(currentPosition.current / size, 0, 1);
+        const percent = clamp(currentPosition.current! / size, 0, 1);
         state.setThumbPercent(realTimeTrackDraggingIndex.current, percent);
       }
     },
@@ -105,7 +108,7 @@ export function useSlider<T extends number | number[]>(
   });
 
   let currentPointer = useRef<number | null | undefined>(undefined);
-  let onDownTrack = (e: React.UIEvent, id: number, clientX: number, clientY: number) => {
+  let onDownTrack = (e: React.UIEvent, id: number | undefined, clientX: number, clientY: number) => {
     // We only trigger track-dragging if the user clicks on the track itself and nothing is currently being dragged.
     if (trackRef.current && !props.isDisabled && state.values.every((_, i) => !state.isThumbDragging(i))) {
       let {height, width, top, left} = trackRef.current.getBoundingClientRect();
@@ -147,7 +150,7 @@ export function useSlider<T extends number | number[]>(
         state.setFocusedThumb(closestThumb);
         currentPointer.current = id;
 
-        state.setThumbDragging(realTimeTrackDraggingIndex.current, true);
+        state.setThumbDragging(realTimeTrackDraggingIndex.current!, true);
         state.setThumbValue(closestThumb, value);
 
         addGlobalListener(window, 'mouseup', onUpTrack, false);

@@ -46,7 +46,7 @@ export interface ListData<T> {
    * Gets an item from the list by key.
    * @param key - The key of the item to retrieve.
    */
-  getItem(key: Key): T,
+  getItem(key: Key): T | undefined,
 
   /**
    * Inserts items into the list at the given index.
@@ -186,7 +186,7 @@ export function createListActions<T, C>(opts: CreateListOptions<T, C>, dispatch:
     },
     insertBefore(key: Key, ...values: T[]) {
       dispatch(state => {
-        let index = state.items.findIndex(item => getKey(item) === key);
+        let index = state.items.findIndex(item => getKey?.(item) === key);
         if (index === -1) {
           if (state.items.length === 0) {
             index = 0;
@@ -200,7 +200,7 @@ export function createListActions<T, C>(opts: CreateListOptions<T, C>, dispatch:
     },
     insertAfter(key: Key, ...values: T[]) {
       dispatch(state => {
-        let index = state.items.findIndex(item => getKey(item) === key);
+        let index = state.items.findIndex(item => getKey?.(item) === key);
         if (index === -1) {
           if (state.items.length === 0) {
             index = 0;
@@ -221,7 +221,7 @@ export function createListActions<T, C>(opts: CreateListOptions<T, C>, dispatch:
     remove(...keys: Key[]) {
       dispatch(state => {
         let keySet = new Set(keys);
-        let items = state.items.filter(item => !keySet.has(getKey(item)));
+        let items = state.items.filter(item => !keySet.has(getKey!(item)));
 
         let selection: Selection = 'all';
         if (state.selectedKeys !== 'all') {
@@ -252,7 +252,7 @@ export function createListActions<T, C>(opts: CreateListOptions<T, C>, dispatch:
         }
 
         let selectedKeys = state.selectedKeys;
-        let items = state.items.filter(item => !selectedKeys.has(getKey(item)));
+        let items = state.items.filter(item => !selectedKeys.has(getKey!(item)));
         return {
           ...state,
           items,
@@ -262,7 +262,7 @@ export function createListActions<T, C>(opts: CreateListOptions<T, C>, dispatch:
     },
     move(key: Key, toIndex: number) {
       dispatch(state => {
-        let index = state.items.findIndex(item => getKey(item) === key);
+        let index = state.items.findIndex(item => getKey!(item) === key);
         if (index === -1) {
           return state;
         }
@@ -278,32 +278,32 @@ export function createListActions<T, C>(opts: CreateListOptions<T, C>, dispatch:
     },
     moveBefore(key: Key, keys: Iterable<Key>) {
       dispatch(state => {
-        let toIndex = state.items.findIndex(item => getKey(item) === key);
+        let toIndex = state.items.findIndex(item => getKey!(item) === key);
         if (toIndex === -1) {
           return state;
         }
 
         // Find indices of keys to move. Sort them so that the order in the list is retained.
         let keyArray = Array.isArray(keys) ? keys : [...keys];
-        let indices = keyArray.map(key => state.items.findIndex(item => getKey(item) === key)).sort((a, b) => a - b);
+        let indices = keyArray.map(key => state.items.findIndex(item => getKey!(item) === key)).sort((a, b) => a - b);
         return move(state, indices, toIndex);
       });
     },
     moveAfter(key: Key, keys: Iterable<Key>) {
       dispatch(state => {
-        let toIndex = state.items.findIndex(item => getKey(item) === key);
+        let toIndex = state.items.findIndex(item => getKey!(item) === key);
         if (toIndex === -1) {
           return state;
         }
 
         let keyArray = Array.isArray(keys) ? keys : [...keys];
-        let indices = keyArray.map(key => state.items.findIndex(item => getKey(item) === key)).sort((a, b) => a - b);
+        let indices = keyArray.map(key => state.items.findIndex(item => getKey!(item) === key)).sort((a, b) => a - b);
         return move(state, indices, toIndex + 1);
       });
     },
     update(key: Key, newValue: T) {
       dispatch(state => {
-        let index = state.items.findIndex(item => getKey(item) === key);
+        let index = state.items.findIndex(item => getKey!(item) === key);
         if (index === -1) {
           return state;
         }

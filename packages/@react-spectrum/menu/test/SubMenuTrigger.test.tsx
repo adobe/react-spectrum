@@ -802,7 +802,7 @@ describe('Submenu', function () {
       expect(trayDialog).toBeTruthy();
       let backButton = within(trayDialog).getByRole('button');
       expect(backButton).toHaveAttribute('aria-label', `Return to ${submenuTrigger1.textContent}`);
-      let menuHeader = within(trayDialog).getAllByText(submenuTrigger1.textContent)[0];
+      let menuHeader = within(trayDialog).getAllByText(submenuTrigger1.textContent!)[0];
       expect(menuHeader).toBeVisible();
       expect(menuHeader.tagName).toBe('H1');
       let submenuTrigger2 = submenu1Items[2];
@@ -825,7 +825,7 @@ describe('Submenu', function () {
       trayDialog = within(tray).getByRole('dialog');
       backButton = within(trayDialog).getByRole('button');
       expect(backButton).toHaveAttribute('aria-label', `Return to ${submenuTrigger2.textContent}`);
-      menuHeader = within(tray).getAllByText(submenuTrigger2.textContent)[0];
+      menuHeader = within(tray).getAllByText(submenuTrigger2.textContent!)[0];
       expect(menuHeader).toBeVisible();
       expect(menuHeader.tagName).toBe('H1');
     });
