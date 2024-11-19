@@ -264,15 +264,15 @@ function IframeExample() {
 
     // Catch toasts inside the iframe and redirect them outside.
     window.addEventListener('react-spectrum-toast', (e) => {
-      e.preventDefault();
-      if (e instanceof CustomEvent) {
-        ToastQueue[e.detail.variant](e.detail.children, e.detail.options);
-      }
+      let evt = e as CustomEvent;
+      evt.preventDefault();
+      ToastQueue[evt.detail.variant](evt.detail.children, evt.detail.options);
     });
 
     let prevFocusedElement: HTMLElement | null = null;
     window.addEventListener('react-aria-landmark-navigation', (e) => {
-      e.preventDefault();
+      let evt = e as CustomEvent;
+      evt.preventDefault();
       let el = document.activeElement;
       if (el !== document.body) {
         prevFocusedElement = el as HTMLElement;
@@ -283,7 +283,7 @@ function IframeExample() {
 
       window.parent.postMessage({
         type: 'landmark-navigation',
-        direction: e instanceof CustomEvent ? e.detail.direction : undefined
+        direction: evt.detail.direction
       });
 
       setTimeout(() => {

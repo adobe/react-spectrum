@@ -20,7 +20,7 @@ keywords: [disclosure, accordion, collapse, expand]
 ---
 
 ```jsx import
-import {Disclosure, DisclosureHeader, DisclosurePanel} from '@react-spectrum/accordion';
+import {Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/accordion';
 ```
 
 # Disclosure
@@ -29,13 +29,13 @@ import {Disclosure, DisclosureHeader, DisclosurePanel} from '@react-spectrum/acc
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Disclosure', 'DisclosureHeader', 'DisclosurePanel']} />
+  componentNames={['Disclosure', 'DisclosureTitle', 'DisclosurePanel']} />
 
 ## Example
 
 ```tsx example
 <Disclosure>
-  <DisclosureHeader>System Requirements</DisclosureHeader>
+  <DisclosureTitle>System Requirements</DisclosureTitle>
   <DisclosurePanel>
     Details about system requirements here.
   </DisclosurePanel>
@@ -44,7 +44,7 @@ import {Disclosure, DisclosureHeader, DisclosurePanel} from '@react-spectrum/acc
 
 ## Content
 
-Disclosure follows the [ARIA Disclosure pattern](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/) and consists of two children: `DisclosureHeader` and `DisclosurePanel`. The `DisclosureHeader` controls the expansion of the `DisclosurePanel` and the contents inside. 
+Disclosure follows the [ARIA Disclosure pattern](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/) and consists of two children: `DisclosureTitle` and `DisclosurePanel`. The `DisclosureTitle` controls the expansion of the `DisclosurePanel` and the contents inside. 
 
 Disclosure can be used as a standalone collapsible section of content. However, multiple discosures can be combined to form an [Accordion](Accordion.html).
 
@@ -63,7 +63,7 @@ function ControlledExpansion() {
   return (
     <>
       <Disclosure isExpanded={isExpanded} onExpandedChange={setIsExpanded}>
-        <DisclosureHeader>System Requirements</DisclosureHeader>
+        <DisclosureTitle>System Requirements</DisclosureTitle>
         <DisclosurePanel>
           Details about system requirements here.
         </DisclosurePanel>
@@ -80,9 +80,9 @@ function ControlledExpansion() {
 
 <PropTable component={docs.exports.Disclosure} links={docs.links} />
 
-### DisclosureHeader
+### DisclosureTitle
 
-<PropTable component={docs.exports.DisclosureHeader} links={docs.links} />
+<PropTable component={docs.exports.DisclosureTitle} links={docs.links} />
 
 ### DisclosurePanel
 
@@ -95,7 +95,7 @@ function ControlledExpansion() {
 
 ```tsx example
 <Disclosure isDisabled>
-  <DisclosureHeader>System Requirements</DisclosureHeader>
+  <DisclosureTitle>System Requirements</DisclosureTitle>
   <DisclosurePanel>
     Details about system requirements here.
   </DisclosurePanel>
@@ -106,7 +106,7 @@ function ControlledExpansion() {
 
 ```tsx example
 <Disclosure defaultExpanded>
-  <DisclosureHeader>System Requirements</DisclosureHeader>
+  <DisclosureTitle>System Requirements</DisclosureTitle>
   <DisclosurePanel>
     Details about system requirements here.
   </DisclosurePanel>
@@ -117,7 +117,7 @@ function ControlledExpansion() {
 
 ```tsx example
 <Disclosure isQuiet>
-  <DisclosureHeader>System Requirements</DisclosureHeader>
+  <DisclosureTitle>System Requirements</DisclosureTitle>
   <DisclosurePanel>
     Details about system requirements here.
   </DisclosurePanel>

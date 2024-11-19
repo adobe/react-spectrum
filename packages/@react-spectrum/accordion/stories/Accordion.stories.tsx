@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, Disclosure, DisclosureHeader, DisclosurePanel, SpectrumAccordionProps} from '../src';
+import {Accordion, Disclosure, DisclosurePanel, DisclosureTitle, SpectrumAccordionProps} from '../src';
 import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
@@ -34,17 +34,17 @@ export const Default: AccordionStory = {
   render: (args) => (
     <Accordion {...args}>
       <Disclosure id="files">
-        <DisclosureHeader>
+        <DisclosureTitle>
           Files
-        </DisclosureHeader>
+        </DisclosureTitle>
         <DisclosurePanel>
           Files content
         </DisclosurePanel>
       </Disclosure>
       <Disclosure id="people">
-        <DisclosureHeader>
+        <DisclosureTitle>
           People
-        </DisclosureHeader>
+        </DisclosureTitle>
         <DisclosurePanel>
           People content
         </DisclosurePanel>
@@ -62,25 +62,25 @@ export const WithDisabledDisclosure: AccordionStory = {
   render: (args) => (
     <Accordion {...args}>
       <Disclosure id="files">
-        <DisclosureHeader>
+        <DisclosureTitle>
           Your files
-        </DisclosureHeader>
+        </DisclosureTitle>
         <DisclosurePanel>
           files
         </DisclosurePanel>
       </Disclosure>
       <Disclosure id="shared">
-        <DisclosureHeader>
+        <DisclosureTitle>
           Shared with you
-        </DisclosureHeader>
+        </DisclosureTitle>
         <DisclosurePanel>
           shared
         </DisclosurePanel>
       </Disclosure>
       <Disclosure id="last" isDisabled>
-        <DisclosureHeader>
+        <DisclosureTitle>
           Last item
-        </DisclosureHeader>
+        </DisclosureTitle>
         <DisclosurePanel>
           last
         </DisclosurePanel>
