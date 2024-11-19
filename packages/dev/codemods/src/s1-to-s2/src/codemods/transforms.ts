@@ -974,7 +974,7 @@ function updateDialogChild(
   let typePath = path.get('openingElement').get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === 'type') as NodePath<t.JSXAttribute> | undefined;
   let type = typePath?.node.value?.type === 'StringLiteral' ? typePath.node.value?.value : 'modal';
   let newComponent = 'Dialog';
-  let props = [];
+  let props: t.JSXAttribute[] = [];
   if (type === 'popover') {
     newComponent = 'Popover';
   } else if (type === 'fullscreen' || type === 'fullscreenTakeover') {
@@ -985,7 +985,7 @@ function updateDialogChild(
   }
 
   for (let prop of ['isDismissible', 'mobileType', 'hideArrow', 'placement', 'shouldFlip', 'isKeyboardDismissDisabled', 'containerPadding', 'offset', 'crossOffset']) {
-    let attr = path.get('openingElement').get('attributes').find(attr => attr.isJSXAttribute() && attr.node.name.name === prop);
+    let attr = path.get('openingElement').get('attributes').find(attr => attr.isJSXAttribute() && attr.node.name.name === prop) as NodePath<t.JSXAttribute> | undefined;
     if (attr) {
       props.push(attr.node);
       attr.remove();
