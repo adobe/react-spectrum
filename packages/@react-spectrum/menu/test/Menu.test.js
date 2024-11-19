@@ -158,7 +158,7 @@ describe('Menu', function () {
       let selectedItem = menuItems[3];
       expect(selectedItem).toBe(document.activeElement);
       expect(selectedItem).toHaveAttribute('aria-checked', 'true');
-      expect(selectedItem).toHaveAttribute('tabindex', '-1');
+      expect(selectedItem).toHaveAttribute('tabindex', '0');
       let itemText = within(selectedItem).getByText('Blah');
       expect(itemText).toBeTruthy();
       let checkmark = within(selectedItem).getByRole('img', {hidden: true});
@@ -193,7 +193,7 @@ describe('Menu', function () {
       let selectedItem = menuItems[3];
       expect(selectedItem).toBe(document.activeElement);
       expect(selectedItem).toHaveAttribute('aria-checked', 'true');
-      expect(selectedItem).toHaveAttribute('tabindex', '-1');
+      expect(selectedItem).toHaveAttribute('tabindex', '0');
       let itemText = within(selectedItem).getByText('Blah');
       expect(itemText).toBeTruthy();
       let checkmark = within(selectedItem).getByRole('img', {hidden: true});

@@ -396,11 +396,11 @@ function ActionBarExample(props?) {
 
 let i = 0;
 function EmptyTest() {
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState<{key: number, name: string}[]>([]);
   const [divProps, setDivProps] = useState({});
 
   useEffect(() => {
-    let newItems = [];
+    let newItems: typeof items = [];
     for (i = 0; i < 20; i++) {
       newItems.push({key: i, name: `Item ${i}`});
     }
@@ -418,7 +418,7 @@ function EmptyTest() {
     <div>
       <Flex direction="row">
         <div {...divProps}>
-          <ListView aria-label="render empty state ListView" items={items} width="250px" height={hasDivProps ? null : '500px'} renderEmptyState={renderEmpty}>
+          <ListView aria-label="render empty state ListView" items={items} width="250px" height={hasDivProps ? undefined : '500px'} renderEmptyState={renderEmpty}>
             {
               item => (
                 <Item key={item.key}>
@@ -508,7 +508,7 @@ function Demo(props) {
   );
 }
 
-const manyItems = [];
+const manyItems: {key: number, name: string}[] = [];
 for (let i = 0; i < 500; i++) {manyItems.push({key: i, name: `item ${i}`});}
 
 function DisplayNoneComponent(args) {
@@ -517,7 +517,7 @@ function DisplayNoneComponent(args) {
   return (
     <>
       <Button variant="primary" onPress={() => setIsDisplay(prev => !prev)}>Toggle ListView display</Button>
-      <div style={!isDisplay ? {display: 'none'} : null}>
+      <div style={!isDisplay ? {display: 'none'} : undefined}>
         <ListView aria-label="Many items" items={manyItems} width="300px" height="200px" {...args}>
           {(item: any) => (
             <Item key={item.key} textValue={item.name}>

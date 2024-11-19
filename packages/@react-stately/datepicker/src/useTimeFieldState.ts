@@ -11,7 +11,7 @@
  */
 
 import {DateFieldState, useDateFieldState} from '.';
-import {DateValue, TimePickerProps, TimeValue} from '@react-types/datepicker';
+import {DateValue, MappedTimeValue, TimePickerProps, TimeValue} from '@react-types/datepicker';
 import {getLocalTimeZone, GregorianCalendar, Time, toCalendarDateTime, today, toTime, toZoned} from '@internationalized/date';
 import {useCallback, useMemo} from 'react';
 import {useControlledState} from '@react-stately/utils';
@@ -40,9 +40,9 @@ export function useTimeFieldState<T extends TimeValue = TimeValue>(props: TimeFi
     validate
   } = props;
 
-  let [value, setValue] = useControlledState<TimeValue>(
+  let [value, setValue] = useControlledState<TimeValue | null, MappedTimeValue<T> | null>(
     props.value,
-    props.defaultValue,
+    props.defaultValue ?? null,
     props.onChange
   );
 
@@ -52,7 +52,7 @@ export function useTimeFieldState<T extends TimeValue = TimeValue>(props: TimeFi
   let placeholderDate = useMemo(() => {
     let valueTimeZone = v && 'timeZone' in v ? v.timeZone : undefined;
 
-    return (valueTimeZone || defaultValueTimeZone) && placeholderValue ? toZoned(convertValue(placeholderValue), valueTimeZone || defaultValueTimeZone) : convertValue(placeholderValue);
+    return (valueTimeZone || defaultValueTimeZone) && placeholderValue ? toZoned(convertValue(placeholderValue)!, valueTimeZone || defaultValueTimeZone!) : convertValue(placeholderValue);
   }, [placeholderValue, v, defaultValueTimeZone]);
   let minDate = useMemo(() => convertValue(minValue, day), [minValue, day]);
   let maxDate = useMemo(() => convertValue(maxValue, day), [maxValue, day]);
@@ -72,7 +72,7 @@ export function useTimeFieldState<T extends TimeValue = TimeValue>(props: TimeFi
     onChange,
     granularity: granularity || 'minute',
     maxGranularity: 'hour',
-    placeholderValue: placeholderDate,
+    placeholderValue: placeholderDate ?? undefined,
     // Calendar should not matter for time fields.
     createCalendar: () => new GregorianCalendar(),
     validate: useCallback(() => validate?.(value as any), [validate, value])
@@ -84,7 +84,7 @@ export function useTimeFieldState<T extends TimeValue = TimeValue>(props: TimeFi
   };
 }
 
-function convertValue(value: TimeValue, date: DateValue = today(getLocalTimeZone())) {
+function convertValue(value: TimeValue | null | undefined, date: DateValue = today(getLocalTimeZone())) {
   if (!value) {
     return null;
   }

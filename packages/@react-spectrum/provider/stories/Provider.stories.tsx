@@ -144,7 +144,7 @@ ResponsiveStyleProps.story = {
 
 export const CustomResponsiveStyleProps = () => {
   let Breakpoint = () => {
-    let {matchedBreakpoints} = useBreakpoint();
+    let {matchedBreakpoints} = useBreakpoint()!;
     let breakpoint = matchedBreakpoints[0];
     let width = {
       base: 'size-1600',
@@ -177,7 +177,7 @@ CustomResponsiveStyleProps.story = {
 
 export const BreakpointOmitted = () => {
   let Breakpoint = () => {
-    let {matchedBreakpoints} = useBreakpoint();
+    let {matchedBreakpoints} = useBreakpoint()!;
     let breakpoint = matchedBreakpoints[0];
     let width = {base: 'size-1600', S: 'size-2400', L: 'size-3400'};
     return (

@@ -12,7 +12,7 @@
 
 
 import {DateFormatter, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
-import {DateRange, DateRangePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
+import {DateRange, DateRangePickerProps, DateValue, Granularity, MappedDateValue, TimeValue} from '@react-types/datepicker';
 import {FieldOptions, FormatterOptions, getFormatOptions, getPlaceholderTime, getRangeValidationResult, useDefaultProps} from './utils';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
@@ -31,29 +31,29 @@ export interface DateRangePickerStateOptions<T extends DateValue = DateValue> ex
 type TimeRange = RangeValue<TimeValue>;
 export interface DateRangePickerState extends OverlayTriggerState, FormValidationState {
   /** The currently selected date range. */
-  value: DateRange | null,
+  value: RangeValue<DateValue | null>,
   /** Sets the selected date range. */
   setValue(value: DateRange | null): void,
   /**
    * The date portion of the selected range. This may be set prior to `value` if the user has
    * selected a date range but has not yet selected a time range.
    */
-  dateRange: DateRange | null,
+  dateRange: RangeValue<DateValue | null> | null,
   /** Sets the date portion of the selected range. */
-  setDateRange(value: DateRange | null): void,
+  setDateRange(value: DateRange): void,
   /**
    * The time portion of the selected range. This may be set prior to `value` if the user has
    * selected a time range but has not yet selected a date range.
    */
-  timeRange: TimeRange | null,
+  timeRange: RangeValue<TimeValue | null> | null,
   /** Sets the time portion of the selected range. */
   setTimeRange(value: TimeRange): void,
   /** Sets the date portion of either the start or end of the selected range. */
-  setDate(part: 'start' | 'end', value: DateValue): void,
+  setDate(part: 'start' | 'end', value: DateValue | null): void,
   /** Sets the time portion of either the start or end of the selected range. */
-  setTime(part: 'start' | 'end', value: TimeValue): void,
+  setTime(part: 'start' | 'end', value: TimeValue | null): void,
   /** Sets the date and time of either the start or end of the selected range. */
-  setDateTime(part: 'start' | 'end', value: DateValue): void,
+  setDateTime(part: 'start' | 'end', value: DateValue | null): void,
   /** The granularity for the field, based on the `granularity` prop and current value. */
   granularity: Granularity,
   /** Whether the date range picker supports selecting times, according to the `granularity` prop and current value. */
@@ -66,11 +66,11 @@ export interface DateRangePickerState extends OverlayTriggerState, FormValidatio
    * The current validation state of the date range picker, based on the `validationState`, `minValue`, and `maxValue` props.
    * @deprecated Use `isInvalid` instead.
    */
-  validationState: ValidationState,
+  validationState: ValidationState | null,
   /** Whether the date range picker is invalid, based on the `isInvalid`, `minValue`, and `maxValue` props. */
   isInvalid: boolean,
   /** Formats the selected range using the given options. */
-  formatValue(locale: string, fieldOptions: FieldOptions): {start: string, end: string},
+  formatValue(locale: string, fieldOptions: FieldOptions): {start: string, end: string} | null,
   /** Gets a formatter based on state's props. */
   getDateFormatter(locale: string, formatOptions: FormatterOptions): DateFormatter
 }
@@ -82,8 +82,8 @@ export interface DateRangePickerState extends OverlayTriggerState, FormValidatio
  */
 export function useDateRangePickerState<T extends DateValue = DateValue>(props: DateRangePickerStateOptions<T>): DateRangePickerState {
   let overlayState = useOverlayTriggerState(props);
-  let [controlledValue, setControlledValue] = useControlledState<DateRange>(props.value, props.defaultValue || null, props.onChange);
-  let [placeholderValue, setPlaceholderValue] = useState(() => controlledValue || {start: null, end: null});
+  let [controlledValue, setControlledValue] = useControlledState<DateRange | null, RangeValue<MappedDateValue<T>> | null>(props.value, props.defaultValue || null, props.onChange);
+  let [placeholderValue, setPlaceholderValue] = useState<RangeValue<DateValue | null>>(() => controlledValue || {start: null, end: null});
 
   // Reset the placeholder if the value prop is set to null.
   if (controlledValue == null && placeholderValue.start && placeholderValue.end) {
@@ -93,24 +93,24 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
 
   let value = controlledValue || placeholderValue;
 
-  let setValue = (value: DateRange) => {
+  let setValue = (value: RangeValue<DateValue | null> | null) => {
     setPlaceholderValue(value || {start: null, end: null});
-    if (value?.start && value.end) {
+    if (isCompleteRange(value)) {
       setControlledValue(value);
     } else {
       setControlledValue(null);
     }
   };
 
-  let v = (value?.start || value?.end || props.placeholderValue);
+  let v = (value?.start || value?.end || props.placeholderValue || null);
   let [granularity, defaultTimeZone] = useDefaultProps(v, props.granularity);
   let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second';
   let shouldCloseOnSelect = props.shouldCloseOnSelect ?? true;
 
-  let [dateRange, setSelectedDateRange] = useState<DateRange>(null);
-  let [timeRange, setSelectedTimeRange] = useState<TimeRange>(null);
+  let [dateRange, setSelectedDateRange] = useState<RangeValue<DateValue | null> | null>(null);
+  let [timeRange, setSelectedTimeRange] = useState<RangeValue<TimeValue | null> | null>(null);
 
-  if (value && value.start && value.end) {
+  if (value && isCompleteRange(value)) {
     dateRange = value;
     if ('hour' in value.start) {
       timeRange = value as TimeRange;
@@ -128,10 +128,10 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
   };
 
   // Intercept setValue to make sure the Time section is not changed by date selection in Calendar
-  let setDateRange = (range: DateRange) => {
+  let setDateRange = (range: RangeValue<DateValue | null>) => {
     let shouldClose = typeof shouldCloseOnSelect === 'function' ? shouldCloseOnSelect() : shouldCloseOnSelect;
     if (hasTime) {
-      if (shouldClose || (range.start && range.end && timeRange?.start && timeRange?.end)) {
+      if (isCompleteRange(range) && timeRange?.start && timeRange?.end) {
         commitValue(range, {
           start: timeRange?.start || getPlaceholderTime(props.placeholderValue),
           end: timeRange?.end || getPlaceholderTime(props.placeholderValue)
@@ -139,7 +139,7 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
       } else {
         setSelectedDateRange(range);
       }
-    } else if (range.start && range.end) {
+    } else if (isCompleteRange(range)) {
       setValue(range);
       validation.commitValidation();
     } else {
@@ -151,8 +151,8 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
     }
   };
 
-  let setTimeRange = (range: TimeRange) => {
-    if (dateRange?.start && dateRange?.end && range.start && range.end) {
+  let setTimeRange = (range: RangeValue<TimeValue | null>) => {
+    if (isCompleteRange(dateRange) && isCompleteRange(range)) {
       commitValue(dateRange, range);
     } else {
       setSelectedTimeRange(range);
@@ -180,13 +180,13 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
 
   let validation = useFormValidationState({
     ...props,
-    value: controlledValue,
-    name: useMemo(() => [props.startName, props.endName], [props.startName, props.endName]),
+    value: controlledValue as RangeValue<MappedDateValue<T>> | null,
+    name: useMemo(() => [props.startName, props.endName].filter(n => n != null), [props.startName, props.endName]),
     builtinValidation
   });
 
   let isValueInvalid = validation.displayValidation.isInvalid;
-  let validationState: ValidationState = props.validationState || (isValueInvalid ? 'invalid' : null);
+  let validationState: ValidationState | null = props.validationState || (isValueInvalid ? 'invalid' : null);
 
   return {
     ...validation,
@@ -197,13 +197,25 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
     granularity,
     hasTime,
     setDate(part, date) {
-      setDateRange({...dateRange, [part]: date});
+      if (part === 'start') {
+        setDateRange({start: date, end: dateRange?.end ?? null});
+      } else {
+        setDateRange({start: dateRange?.start ?? null, end: date});
+      }
     },
     setTime(part, time) {
-      setTimeRange({...timeRange, [part]: time});
+      if (part === 'start') {
+        setTimeRange({start: time, end: timeRange?.end ?? null});
+      } else {
+        setTimeRange({start: timeRange?.start ?? null, end: time});
+      }
     },
     setDateTime(part, dateTime) {
-      setValue({...value, [part]: dateTime});
+      if (part === 'start') {
+        setValue({start: dateTime, end: value?.end ?? null});
+      } else {
+        setValue({start: value?.start ?? null, end: dateTime});
+      }
     },
     setDateRange,
     setTimeRange,
@@ -212,7 +224,7 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
       // Commit the selected date range when the calendar is closed. Use a placeholder time if one wasn't set.
       // If only the time range was set and not the date range, don't commit. The state will be preserved until
       // the user opens the popover again.
-      if (!isOpen && !(value?.start && value?.end) && dateRange?.start && dateRange?.end && hasTime) {
+      if (!isOpen && !(value?.start && value?.end) && isCompleteRange(dateRange) && hasTime) {
         commitValue(dateRange, {
           start: timeRange?.start || getPlaceholderTime(props.placeholderValue),
           end: timeRange?.end || getPlaceholderTime(props.placeholderValue)
@@ -305,4 +317,8 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
       return new DateFormatter(locale, newFormatOptions);
     }
   };
+}
+
+function isCompleteRange<T>(value: RangeValue<T | null> | null): value is RangeValue<T> {
+  return value?.start != null && value.end != null;
 }

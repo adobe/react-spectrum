@@ -873,8 +873,8 @@ describe('Table', () => {
     );
 
     let rows = getAllByRole('row');
-    expect(rows).toHaveLength(8);
-    expect(rows.map(r => r.textContent)).toEqual(['FooBar', 'Foo 0Bar 0', 'Foo 1Bar 1', 'Foo 2Bar 2', 'Foo 3Bar 3', 'Foo 4Bar 4', 'Foo 5Bar 5', 'Foo 6Bar 6']);
+    expect(rows).toHaveLength(7);
+    expect(rows.map(r => r.textContent)).toEqual(['FooBar', 'Foo 0Bar 0', 'Foo 1Bar 1', 'Foo 2Bar 2', 'Foo 3Bar 3', 'Foo 4Bar 4', 'Foo 5Bar 5']);
     for (let row of rows) {
       expect(row).toHaveAttribute('aria-rowindex');
     }
@@ -885,14 +885,14 @@ describe('Table', () => {
 
     rows = getAllByRole('row');
     expect(rows).toHaveLength(8);
-    expect(rows.map(r => r.textContent)).toEqual(['FooBar', 'Foo 8Bar 8', 'Foo 9Bar 9', 'Foo 10Bar 10', 'Foo 11Bar 11', 'Foo 12Bar 12', 'Foo 13Bar 13', 'Foo 14Bar 14']);
+    expect(rows.map(r => r.textContent)).toEqual(['FooBar', 'Foo 7Bar 7', 'Foo 8Bar 8', 'Foo 9Bar 9', 'Foo 10Bar 10', 'Foo 11Bar 11', 'Foo 12Bar 12', 'Foo 13Bar 13']);
 
     await user.tab();
     await user.keyboard('{End}');
 
     rows = getAllByRole('row');
     expect(rows).toHaveLength(9);
-    expect(rows.map(r => r.textContent)).toEqual(['FooBar', 'Foo 8Bar 8', 'Foo 9Bar 9', 'Foo 10Bar 10', 'Foo 11Bar 11', 'Foo 12Bar 12', 'Foo 13Bar 13', 'Foo 14Bar 14', 'Foo 49Bar 49']);
+    expect(rows.map(r => r.textContent)).toEqual(['FooBar', 'Foo 7Bar 7', 'Foo 8Bar 8', 'Foo 9Bar 9', 'Foo 10Bar 10', 'Foo 11Bar 11', 'Foo 12Bar 12', 'Foo 13Bar 13', 'Foo 49Bar 49']);
   });
 
   describe('drag and drop', () => {
@@ -1355,8 +1355,7 @@ describe('Table', () => {
         );
       }
 
-      expect(() => render(<StaticRowDynamicCell />)).toThrow();
-      expect(consoleWarnSpy).toHaveBeenCalledWith('No id detected for the Row element. The Row element requires a id to be provided to it when the cells are rendered dynamically.');
+      expect(() => render(<StaticRowDynamicCell />)).toThrow('No id detected for the Row element. The Row element requires a id to be provided to it when the cells are rendered dynamically.');
     });
   });
 

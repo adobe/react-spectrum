@@ -41,15 +41,15 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
     ...mergeProps(contextProps, props)
   };
   let domRef = useDOMRef(ref);
-  let [popoverContainer, setPopoverContainer] = useState(null);
-  let trayContainerRef = useRef(null);
+  let [popoverContainer, setPopoverContainer] = useState<HTMLElement | null>(null);
+  let trayContainerRef = useRef<HTMLDivElement | null>(null);
   let state = useTreeState(completeProps);
   let submenuRef = useRef<HTMLDivElement>(null);
   let {menuProps} = useMenu(completeProps, state, domRef);
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);
   let [leftOffset, setLeftOffset] = useState({left: 0});
-  let prevPopoverContainer = useRef(null);
+  let prevPopoverContainer = useRef<HTMLElement | null>(null);
   useEffect(() => {
     if (popoverContainer && prevPopoverContainer.current !== popoverContainer && leftOffset.left === 0) {
       prevPopoverContainer.current = popoverContainer;
@@ -59,12 +59,17 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   }, [leftOffset, popoverContainer]);
 
   let menuLevel = contextProps.submenuLevel ?? -1;
-  let hasOpenSubmenu = state.collection.getItem(rootMenuTriggerState?.expandedKeysStack[menuLevel + 1]) != null;
+  let nextMenuLevelKey = rootMenuTriggerState?.expandedKeysStack[menuLevel + 1];
+  let hasOpenSubmenu = false;
+  if (nextMenuLevelKey != null) {
+    let nextMenuLevel = state.collection.getItem(nextMenuLevelKey);
+    hasOpenSubmenu = nextMenuLevel != null;
+  }
   useInteractOutside({
     ref: domRef,
     onInteractOutside: (e) => {
-      if (!popoverContainer?.contains(e.target) && !trayContainerRef.current?.contains(e.target)) {
-        rootMenuTriggerState.close();
+      if (!popoverContainer?.contains(e.target as Node) && !trayContainerRef.current?.contains(e.target as Node)) {
+        rootMenuTriggerState?.close();
       }
     },
     isDisabled: isSubmenu || !hasOpenSubmenu
@@ -141,7 +146,7 @@ export function TrayHeaderWrapper(props) {
     }
   }, [hasOpenSubmenu, isMobile]);
 
-  let timeoutRef = useRef(null);
+  let timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   let handleBackButtonPress = () => {
     setTraySubmenuAnimation('spectrum-TraySubmenu-exit');
     timeoutRef.current = setTimeout(() => {
@@ -159,7 +164,7 @@ export function TrayHeaderWrapper(props) {
 
   // When opening submenu in tray, focus the first item in the submenu after animation completes
   // This fixes an issue with iOS VO where the closed submenu was getting focus
-  let focusTimeoutRef = useRef(null);
+  let focusTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
     if (isMobile && isSubmenu && !hasOpenSubmenu && traySubmenuAnimation === 'spectrum-TraySubmenu-enter') {
       focusTimeoutRef.current = setTimeout(() => {

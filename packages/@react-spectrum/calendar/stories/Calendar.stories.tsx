@@ -239,8 +239,8 @@ function Example(props) {
 }
 
 function CalendarWithTime(props) {
-  let [value, setValue] = useState(new CalendarDateTime(2019, 6, 5, 8));
-  let onChange = (v: CalendarDateTime) => {
+  let [value, setValue] = useState<CalendarDateTime | null>(new CalendarDateTime(2019, 6, 5, 8));
+  let onChange = (v: CalendarDateTime | null) => {
     setValue(v);
     props?.onChange?.(v);
   };
@@ -254,8 +254,8 @@ function CalendarWithTime(props) {
 }
 
 function CalendarWithZonedTime(props) {
-  let [value, setValue] = useState(parseZonedDateTime('2021-03-14T00:45-08:00[America/Los_Angeles]'));
-  let onChange = (v: ZonedDateTime) => {
+  let [value, setValue] = useState<ZonedDateTime | null>(parseZonedDateTime('2021-03-14T00:45-08:00[America/Los_Angeles]'));
+  let onChange = (v: ZonedDateTime | null) => {
     setValue(v);
     props?.onChange?.(v);
   };

@@ -74,7 +74,7 @@ class FlexibleGridLayout<T extends object> extends Layout<Node<T>, GridLayoutOpt
       minSpace = new Size(18, 18),
       maxColumns = Infinity
     } = invalidationContext.layoutOptions || {};
-    let visibleWidth = this.virtualizer.visibleRect.width;
+    let visibleWidth = this.virtualizer!.visibleRect.width;
 
     // The max item width is always the entire viewport.
     // If the max item height is infinity, scale in proportion to the max width.
@@ -102,8 +102,8 @@ class FlexibleGridLayout<T extends object> extends Layout<Node<T>, GridLayoutOpt
     // Compute the horizontal spacing and content height
     let horizontalSpacing = Math.floor((visibleWidth - numColumns * itemWidth) / (numColumns + 1));
 
-    let rows = Math.ceil(this.virtualizer.collection.size / numColumns);
-    let iterator = this.virtualizer.collection[Symbol.iterator]();
+    let rows = Math.ceil(this.virtualizer!.collection.size / numColumns);
+    let iterator = this.virtualizer!.collection[Symbol.iterator]();
     let y = rows > 0 ? minSpace.height : 0;
     let newLayoutInfos = new Map();
     let skeleton: Node<T> | null = null;
@@ -151,13 +151,13 @@ class FlexibleGridLayout<T extends object> extends Layout<Node<T>, GridLayoutOpt
       y += maxHeight + minSpace.height;
 
       // Keep adding skeleton rows until we fill the viewport
-      if (skeleton && row === rows - 1 && y < this.virtualizer.visibleRect.height) {
+      if (skeleton && row === rows - 1 && y < this.virtualizer!.visibleRect.height) {
         rows++;
       }
     }
 
     this.layoutInfos = newLayoutInfos;
-    this.contentSize = new Size(this.virtualizer.visibleRect.width, y);
+    this.contentSize = new Size(this.virtualizer!.visibleRect.width, y);
   }
 
   getLayoutInfo(key: Key): LayoutInfo {
@@ -171,7 +171,7 @@ class FlexibleGridLayout<T extends object> extends Layout<Node<T>, GridLayoutOpt
   getVisibleLayoutInfos(rect: Rect): LayoutInfo[] {
     let layoutInfos: LayoutInfo[] = [];
     for (let layoutInfo of this.layoutInfos.values()) {
-      if (layoutInfo.rect.intersects(rect) || this.virtualizer.isPersistedKey(layoutInfo.key)) {
+      if (layoutInfo.rect.intersects(rect) || this.virtualizer!.isPersistedKey(layoutInfo.key)) {
         layoutInfos.push(layoutInfo);
       }
     }
@@ -218,7 +218,7 @@ class WaterfallLayout<T extends object> extends Layout<Node<T>, GridLayoutOption
       minSpace = new Size(18, 18),
       maxColumns = Infinity
     } = invalidationContext.layoutOptions || {};
-    let visibleWidth = this.virtualizer.visibleRect.width;
+    let visibleWidth = this.virtualizer!.visibleRect.width;
 
     // The max item width is always the entire viewport.
     // If the max item height is infinity, scale in proportion to the max width.
@@ -277,13 +277,13 @@ class WaterfallLayout<T extends object> extends Layout<Node<T>, GridLayoutOption
     };
 
     let skeletonCount = 0;
-    for (let node of this.virtualizer.collection) {
+    for (let node of this.virtualizer!.collection) {
       if (node.type === 'skeleton') {
         // Add skeleton cards until every column has at least one, and we fill the viewport.
         let startingHeights = [...columnHeights];
         while (
           !columnHeights.every((h, i) => h !== startingHeights[i]) ||
-          Math.min(...columnHeights) < this.virtualizer.visibleRect.height
+          Math.min(...columnHeights) < this.virtualizer!.visibleRect.height
         ) {
           let key = `${node.key}-${skeletonCount++}`;
           let content = this.layoutInfos.get(key)?.content || {...node};
@@ -297,7 +297,7 @@ class WaterfallLayout<T extends object> extends Layout<Node<T>, GridLayoutOption
 
     // Reset all columns to the maximum for the next section
     let maxHeight = Math.max(...columnHeights);
-    this.contentSize = new Size(this.virtualizer.visibleRect.width, maxHeight);
+    this.contentSize = new Size(this.virtualizer!.visibleRect.width, maxHeight);
     this.layoutInfos = newLayoutInfos;
     this.numColumns = numColumns;
   }
@@ -313,7 +313,7 @@ class WaterfallLayout<T extends object> extends Layout<Node<T>, GridLayoutOption
   getVisibleLayoutInfos(rect: Rect): LayoutInfo[] {
     let layoutInfos: LayoutInfo[] = [];
     for (let layoutInfo of this.layoutInfos.values()) {
-      if (layoutInfo.rect.intersects(rect) || this.virtualizer.isPersistedKey(layoutInfo.key)) {
+      if (layoutInfo.rect.intersects(rect) || this.virtualizer!.isPersistedKey(layoutInfo.key)) {
         layoutInfos.push(layoutInfo);
       }
     }
@@ -344,7 +344,7 @@ class WaterfallLayout<T extends object> extends Layout<Node<T>, GridLayoutOption
       return null;
     }
 
-    let rect = new Rect(layoutInfo.rect.maxX, layoutInfo.rect.y, this.virtualizer.visibleRect.maxX - layoutInfo.rect.maxX, layoutInfo.rect.height);
+    let rect = new Rect(layoutInfo.rect.maxX, layoutInfo.rect.y, this.virtualizer!.visibleRect.maxX - layoutInfo.rect.maxX, layoutInfo.rect.height);
     let layoutInfos = this.getVisibleLayoutInfos(rect);
     let bestKey: Key | null = null;
     let bestDistance = Infinity;

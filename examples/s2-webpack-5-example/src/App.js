@@ -124,7 +124,7 @@ function App() {
             {item => <PickerItem id={item.id}>{item.label}</PickerItem>}
           </Picker>
           <CardViewExample {...cardViewState} />
-          <Divider styles={style({maxWidth: 320, width: '100%', marginX: 'auto'})} />
+          <Divider styles={style({maxWidth: 320, width: 'full', marginX: 'auto'})} />
           <CollectionCardsExample loadingState={cardViewState.loadingState} />
           <MenuTrigger>
             <ActionButton>Menu</ActionButton>

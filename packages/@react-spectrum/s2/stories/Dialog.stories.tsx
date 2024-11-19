@@ -16,18 +16,11 @@ import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useState} from 'react';
 
 const meta: Meta<typeof Dialog> = {
-  component: Dialog as any,
+  component: Dialog,
   parameters: {
     layout: 'centered',
     docs: {
       controls: {exclude: ['showHero', 'showHeading', 'showHeader', 'showFooter', 'showButtons', 'paragraphs', 'title']}
-    }
-  },
-  argTypes: {
-    // @ts-ignore
-    type: {
-      control: 'radio',
-      options: ['popover', 'modal', 'fullscreen', 'fullscreenTakeover']
     }
   },
   tags: ['autodocs'],

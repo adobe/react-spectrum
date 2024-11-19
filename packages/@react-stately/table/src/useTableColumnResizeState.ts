@@ -108,7 +108,7 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
 
   let updateResizedColumns = useCallback((key: Key, width: number): Map<Key, ColumnSize> => {
     let newSizes = columnLayout.resizeColumnWidth(state.collection, uncontrolledWidths, key, width);
-    let map = new Map(Array.from(uncontrolledColumns).map(([key]) => [key, newSizes.get(key)]));
+    let map = new Map(Array.from(uncontrolledColumns).map(([key]) => [key, newSizes.get(key)!]));
     map.set(key, width);
     setUncontrolledWidths(map);
     return newSizes;

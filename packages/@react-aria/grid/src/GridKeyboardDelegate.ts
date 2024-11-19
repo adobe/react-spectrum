@@ -33,7 +33,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
   protected disabledKeys: Set<Key>;
   protected disabledBehavior: DisabledBehavior;
   protected direction: Direction;
-  protected collator: Intl.Collator;
+  protected collator: Intl.Collator | undefined;
   protected layoutDelegate: LayoutDelegate;
   protected focusMode;
 
@@ -43,7 +43,10 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     this.disabledBehavior = options.disabledBehavior || 'all';
     this.direction = options.direction;
     this.collator = options.collator;
-    this.layoutDelegate = options.layoutDelegate || (options.layout ? new DeprecatedLayoutDelegate(options.layout) : new DOMLayoutDelegate(options.ref));
+    if (!options.layout && !options.ref) {
+      throw new Error('Either a layout or a ref must be specified.');
+    }
+    this.layoutDelegate = options.layoutDelegate || (options.layout ? new DeprecatedLayoutDelegate(options.layout) : new DOMLayoutDelegate(options.ref!));
     this.focusMode = options.focusMode || 'row';
   }
 
@@ -66,12 +69,16 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
 
     while (key != null) {
       let item = this.collection.getItem(key);
+      if (!item) {
+        return null;
+      }
       if (!this.isDisabled(item) && (!pred || pred(item))) {
         return key;
       }
 
       key = this.collection.getKeyBefore(key);
     }
+    return null;
   }
 
   protected findNextKey(fromKey?: Key, pred?: (item: Node<T>) => boolean) {
@@ -81,23 +88,34 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
 
     while (key != null) {
       let item = this.collection.getItem(key);
+      if (!item) {
+        return null;
+      }
       if (!this.isDisabled(item) && (!pred || pred(item))) {
         return key;
       }
 
       key = this.collection.getKeyAfter(key);
+      if (key == null) {
+        return null;
+      }
     }
+    return null;
   }
 
-  getKeyBelow(key: Key) {
+  getKeyBelow(fromKey: Key) {
+    let key: Key | null = fromKey;
     let startItem = this.collection.getItem(key);
     if (!startItem) {
-      return;
+      return null;
     }
 
     // If focus was on a cell, start searching from the parent row
     if (this.isCell(startItem)) {
-      key = startItem.parentKey;
+      key = startItem.parentKey ?? null;
+    }
+    if (key == null) {
+      return null;
     }
 
     // Find the next item
@@ -106,7 +124,10 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
       // If focus was on a cell, focus the cell with the same index in the next row.
       if (this.isCell(startItem)) {
         let item = this.collection.getItem(key);
-        return getNthItem(getChildNodes(item, this.collection), startItem.index).key;
+        if (!item) {
+          return null;
+        }
+        return getNthItem(getChildNodes(item, this.collection), startItem.index ?? 0)?.key ?? null;
       }
 
       // Otherwise, focus the next row
@@ -114,17 +135,22 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
         return key;
       }
     }
+    return null;
   }
 
-  getKeyAbove(key: Key) {
+  getKeyAbove(fromKey: Key) {
+    let key: Key | null = fromKey;
     let startItem = this.collection.getItem(key);
     if (!startItem) {
-      return;
+      return null;
     }
 
     // If focus is on a cell, start searching from the parent row
     if (this.isCell(startItem)) {
-      key = startItem.parentKey;
+      key = startItem.parentKey ?? null;
+    }
+    if (key == null) {
+      return null;
     }
 
     // Find the previous item
@@ -133,7 +159,10 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
       // If focus was on a cell, focus the cell with the same index in the previous row.
       if (this.isCell(startItem)) {
         let item = this.collection.getItem(key);
-        return getNthItem(getChildNodes(item, this.collection), startItem.index).key;
+        if (!item) {
+          return null;
+        }
+        return getNthItem(getChildNodes(item, this.collection), startItem.index ?? 0)?.key || null;
       }
 
       // Otherwise, focus the previous row
@@ -141,141 +170,165 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
         return key;
       }
     }
+    return null;
   }
 
   getKeyRightOf(key: Key) {
     let item = this.collection.getItem(key);
     if (!item) {
-      return;
+      return null;
     }
 
     // If focus is on a row, focus the first child cell.
     if (this.isRow(item)) {
       let children = getChildNodes(item, this.collection);
-      return this.direction === 'rtl'
-        ? getLastItem(children).key
-        : getFirstItem(children).key;
+      return (this.direction === 'rtl'
+        ? getLastItem(children)?.key
+        : getFirstItem(children)?.key) ?? null;
     }
 
     // If focus is on a cell, focus the next cell if any,
     // otherwise focus the parent row.
-    if (this.isCell(item)) {
+    if (this.isCell(item) && item.parentKey != null) {
       let parent = this.collection.getItem(item.parentKey);
+      if (!parent) {
+        return null;
+      }
       let children = getChildNodes(parent, this.collection);
-      let next = this.direction === 'rtl'
+      let next = (this.direction === 'rtl'
         ? getNthItem(children, item.index - 1)
-        : getNthItem(children, item.index + 1);
+        : getNthItem(children, item.index + 1)) ?? null;
 
       if (next) {
-        return next.key;
+        return next.key ?? null;
       }
 
       // focus row only if focusMode is set to row
       if (this.focusMode === 'row') {
-        return item.parentKey;
+        return item.parentKey ?? null;
       }
 
-      return this.direction === 'rtl' ? this.getFirstKey(key) : this.getLastKey(key);
+      return (this.direction === 'rtl' ? this.getFirstKey(key) : this.getLastKey(key)) ?? null;
     }
+    return null;
   }
 
   getKeyLeftOf(key: Key) {
     let item = this.collection.getItem(key);
     if (!item) {
-      return;
+      return null;
     }
 
     // If focus is on a row, focus the last child cell.
     if (this.isRow(item)) {
       let children = getChildNodes(item, this.collection);
-      return this.direction === 'rtl'
-        ? getFirstItem(children).key
-        : getLastItem(children).key;
+      return (this.direction === 'rtl'
+        ? getFirstItem(children)?.key
+        : getLastItem(children)?.key) ?? null;
     }
 
     // If focus is on a cell, focus the previous cell if any,
     // otherwise focus the parent row.
-    if (this.isCell(item)) {
+    if (this.isCell(item) && item.parentKey != null) {
       let parent = this.collection.getItem(item.parentKey);
+      if (!parent) {
+        return null;
+      }
       let children = getChildNodes(parent, this.collection);
-      let prev = this.direction === 'rtl'
+      let prev = (this.direction === 'rtl'
         ? getNthItem(children, item.index + 1)
-        : getNthItem(children, item.index - 1);
+        : getNthItem(children, item.index - 1)) ?? null;
 
       if (prev) {
-        return prev.key;
+        return prev.key ?? null;
       }
 
       // focus row only if focusMode is set to row
       if (this.focusMode === 'row') {
-        return item.parentKey;
+        return item.parentKey ?? null;
       }
 
-      return this.direction === 'rtl' ? this.getLastKey(key) : this.getFirstKey(key);
+      return (this.direction === 'rtl' ? this.getLastKey(key) : this.getFirstKey(key)) ?? null;
     }
+    return null;
   }
 
-  getFirstKey(key?: Key, global?: boolean) {
-    let item: Node<T>;
+  getFirstKey(fromKey?: Key, global?: boolean) {
+    let key: Key | null = fromKey ?? null;
+    let item: Node<T> | undefined | null;
     if (key != null) {
       item = this.collection.getItem(key);
       if (!item) {
-        return;
+        return null;
       }
 
       // If global flag is not set, and a cell is currently focused,
       // move focus to the first cell in the parent row.
-      if (this.isCell(item) && !global) {
+      if (this.isCell(item) && !global && item.parentKey != null) {
         let parent = this.collection.getItem(item.parentKey);
-        return getFirstItem(getChildNodes(parent, this.collection)).key;
+        if (!parent) {
+          return null;
+        }
+        return getFirstItem(getChildNodes(parent, this.collection))?.key ?? null;
       }
     }
 
     // Find the first row
-    key = this.findNextKey(null, item => item.type === 'item');
+    key = this.findNextKey(undefined, item => item.type === 'item');
 
     // If global flag is set (or if focus mode is cell), focus the first cell in the first row.
-    if ((key != null && item && this.isCell(item) && global) || this.focusMode === 'cell') {
+    if (key != null && ((item && this.isCell(item) && global) || this.focusMode === 'cell')) {
       let item = this.collection.getItem(key);
-      key = getFirstItem(getChildNodes(item, this.collection)).key;
+      if (!item) {
+        return null;
+      }
+      key = getFirstItem(getChildNodes(item, this.collection))?.key ?? null;
     }
 
     // Otherwise, focus the row itself.
     return key;
   }
 
-  getLastKey(key?: Key, global?: boolean) {
-    let item: Node<T>;
+  getLastKey(fromKey?: Key, global?: boolean) {
+    let key: Key | null = fromKey ?? null;
+    let item: Node<T> | undefined | null;
     if (key != null) {
       item = this.collection.getItem(key);
       if (!item) {
-        return;
+        return null;
       }
 
       // If global flag is not set, and a cell is currently focused,
       // move focus to the last cell in the parent row.
-      if (this.isCell(item) && !global) {
+      if (this.isCell(item) && !global && item.parentKey != null) {
         let parent = this.collection.getItem(item.parentKey);
+        if (!parent) {
+          return null;
+        }
         let children = getChildNodes(parent, this.collection);
-        return getLastItem(children).key;
+        return getLastItem(children)?.key ?? null;
       }
     }
 
     // Find the last row
-    key = this.findPreviousKey(null, item => item.type === 'item');
+    key = this.findPreviousKey(undefined, item => item.type === 'item');
 
     // If global flag is set (or if focus mode is cell), focus the last cell in the last row.
-    if ((key != null && item && this.isCell(item) && global) || this.focusMode === 'cell') {
+    if (key != null && ((item && this.isCell(item) && global) || this.focusMode === 'cell')) {
       let item = this.collection.getItem(key);
+      if (!item) {
+        return null;
+      }
       let children = getChildNodes(item, this.collection);
-      key = getLastItem(children).key;
+      key = getLastItem(children)?.key ?? null;
     }
 
     // Otherwise, focus the row itself.
     return key;
   }
 
-  getKeyPageAbove(key: Key) {
+  getKeyPageAbove(fromKey: Key) {
+    let key: Key | null = fromKey;
     let itemRect = this.layoutDelegate.getItemRect(key);
     if (!itemRect) {
       return null;
@@ -283,15 +336,19 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
 
     let pageY = Math.max(0, itemRect.y + itemRect.height - this.layoutDelegate.getVisibleRect().height);
 
-    while (itemRect && itemRect.y > pageY) {
-      key = this.getKeyAbove(key);
+    while (itemRect && itemRect.y > pageY && key != null) {
+      key = this.getKeyAbove(key) ?? null;
+      if (key == null) {
+        break;
+      }
       itemRect = this.layoutDelegate.getItemRect(key);
     }
 
     return key;
   }
 
-  getKeyPageBelow(key: Key) {
+  getKeyPageBelow(fromKey: Key) {
+    let key: Key | null = fromKey;
     let itemRect = this.layoutDelegate.getItemRect(key);
 
     if (!itemRect) {
@@ -316,29 +373,39 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
   }
 
   getKeyForSearch(search: string, fromKey?: Key) {
+    let key: Key | null = fromKey ?? null;
     if (!this.collator) {
       return null;
     }
 
     let collection = this.collection;
-    let key = fromKey ?? this.getFirstKey();
+    key = fromKey ?? this.getFirstKey();
+    if (key == null) {
+      return null;
+    }
 
     // If the starting key is a cell, search from its parent row.
     let startItem = collection.getItem(key);
+    if (!startItem) {
+      return null;
+    }
     if (startItem.type === 'cell') {
-      key = startItem.parentKey;
+      key = startItem.parentKey ?? null;
     }
 
     let hasWrapped = false;
     while (key != null) {
       let item = collection.getItem(key);
+      if (!item) {
+        return null;
+      }
 
       // check row text value for match
       if (item.textValue) {
         let substring = item.textValue.slice(0, search.length);
         if (this.collator.compare(substring, search) === 0) {
           if (this.isRow(item) && this.focusMode === 'cell') {
-            return getFirstItem(getChildNodes(item, this.collection)).key;
+            return getFirstItem(getChildNodes(item, this.collection))?.key ?? null;
           }
 
           return item.key;

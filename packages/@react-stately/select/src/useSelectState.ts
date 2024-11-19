@@ -43,7 +43,7 @@ export interface SelectState<T> extends SingleSelectListState<T>, OverlayTrigger
  */
 export function useSelectState<T extends object>(props: SelectStateOptions<T>): SelectState<T>  {
   let triggerState = useOverlayTriggerState(props);
-  let [focusStrategy, setFocusStrategy] = useState<FocusStrategy>(null);
+  let [focusStrategy, setFocusStrategy] = useState<FocusStrategy | null>(null);
   let listState = useSingleSelectListState({
     ...props,
     onSelectionChange: (key) => {
@@ -68,14 +68,14 @@ export function useSelectState<T extends object>(props: SelectStateOptions<T>): 
     ...listState,
     ...triggerState,
     focusStrategy,
-    open(focusStrategy: FocusStrategy = null) {
+    open(focusStrategy: FocusStrategy | null = null) {
       // Don't open if the collection is empty.
       if (listState.collection.size !== 0) {
         setFocusStrategy(focusStrategy);
         triggerState.open();
       }
     },
-    toggle(focusStrategy: FocusStrategy = null) {
+    toggle(focusStrategy: FocusStrategy | null = null) {
       if (listState.collection.size !== 0) {
         setFocusStrategy(focusStrategy);
         triggerState.toggle();

@@ -10,8 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-export {baseColor, edgeToText, fontRelative, lightDark, size, space, style} from './spectrum-theme';
+import {fontRelative as internalFontRelative, size as internalSize, space as internalSpace} from './spectrum-theme';
+export {baseColor, edgeToText, lightDark, colorMix, style} from './spectrum-theme';
 export type {StyleString} from './types';
+
+// Wrap these functions in arbitrary value syntax when called from the outside.
+export function size(px: number): `[${string}]` {
+  return `[${internalSize(px)}]`;
+}
+
+export function space(px: number): `[${string}]` {
+  return `[${internalSpace(px)}]`;
+}
+
+export function fontRelative(base: number, baseFontSize?: number): `[${string}]` {
+  return `[${internalFontRelative(base, baseFontSize)}]`;
+}
 
 export const focusRing = () => ({
   outlineStyle: {

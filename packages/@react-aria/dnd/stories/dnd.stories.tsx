@@ -387,7 +387,7 @@ function DraggableCollectionExample(props) {
 function DraggableCollection(props) {
   let {isDisabled} = props;
   let ref = React.useRef<HTMLDivElement>(null);
-  let state = useListState(props);
+  let state = useListState<ItemValue>(props);
   let gridState = useGridState({
     ...props,
     selectionMode: 'multiple',
