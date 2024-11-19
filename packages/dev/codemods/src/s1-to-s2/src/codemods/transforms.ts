@@ -1098,9 +1098,7 @@ function updateActionGroup(
                 t.callExpression(
                   t.memberExpression(
                     disabledKeys,
-                    t.identifier('has'),
-                    false,
-                    true
+                    t.identifier('has')
                   ),
                   [keyValue]
                 )

@@ -34,15 +34,15 @@ function Example({disabledKeys}) {
       <ActionButton
         key="add"
         onPress={() => onAction("add")}
-        isDisabled={_disabledKeys?.has("add")}>Add</Item>
+        isDisabled={_disabledKeys.has("add")}>Add</Item>
       <ActionButton
         key="delete"
         onPress={() => onAction("delete")}
-        isDisabled={_disabledKeys?.has("delete")}>Delete</Item>
+        isDisabled={_disabledKeys.has("delete")}>Delete</Item>
       <ActionButton
         key="edit"
         onPress={() => onAction("edit")}
-        isDisabled={_disabledKeys?.has("edit")}>Edit</Item>
+        isDisabled={_disabledKeys.has("edit")}>Edit</Item>
     </ActionButtonGroup>)
   );
 }"
@@ -86,9 +86,9 @@ function Example({disabledKeys}) {
   let _disabledKeys = new Set(disabledKeys);
   return (
     (<ToggleButtonGroup selectionMode="single" onSelectionChange={onSelectionChange}>
-      <ToggleButton id="add" isDisabled={_disabledKeys?.has("add")}>Add</Item>
-      <ToggleButton id="delete" isDisabled={_disabledKeys?.has("delete")}>Delete</Item>
-      <ToggleButton id="edit" isDisabled={_disabledKeys?.has("edit")}>Edit</Item>
+      <ToggleButton id="add" isDisabled={_disabledKeys.has("add")}>Add</Item>
+      <ToggleButton id="delete" isDisabled={_disabledKeys.has("delete")}>Delete</Item>
+      <ToggleButton id="edit" isDisabled={_disabledKeys.has("edit")}>Edit</Item>
     </ToggleButtonGroup>)
   );
 }"
