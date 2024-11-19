@@ -26,6 +26,9 @@ availableComponents.add('Section');
 // Don't update v3 Provider
 availableComponents.delete('Provider');
 
+// Replaced by ActionButtonGroup and ToggleButtonGroup
+availableComponents.add('ActionGroup');
+
 
 interface Options {
   /** Comma separated list of components to transform. If not specified, all available components will be transformed. */
