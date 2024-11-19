@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, Disclosure, DisclosureHeader, DisclosurePanel} from '../src';
+import {Accordion, Disclosure, DisclosurePanel, DisclosureTitle} from '../src';
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -29,7 +29,7 @@ function renderComponent(props) {
       <Accordion {...props}>
         {items.map(item => (
           <Disclosure key={item.id} id={item.id}>
-            <DisclosureHeader>{item.title}</DisclosureHeader>
+            <DisclosureTitle>{item.title}</DisclosureTitle>
             <DisclosurePanel>{item.children}</DisclosurePanel>
           </Disclosure>
         ))}
@@ -163,7 +163,7 @@ describe('Accordion', function () {
         <Accordion>
           {items.map(item => (
             <Disclosure key={item.id} id={item.id} isDisabled={item.id === 'two'}>
-              <DisclosureHeader>{item.title}</DisclosureHeader>
+              <DisclosureTitle>{item.title}</DisclosureTitle>
               <DisclosurePanel>{item.children}</DisclosurePanel>
             </Disclosure>
           ))}
