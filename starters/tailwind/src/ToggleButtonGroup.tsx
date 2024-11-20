@@ -1,5 +1,5 @@
 import React from 'react';
-import { ToggleButtonGroup as RACToggleButtonGroup, ToggleButtonGroupProps } from 'react-aria-components';
+import { composeRenderProps, ToggleButtonGroup as RACToggleButtonGroup, ToggleButtonGroupProps } from 'react-aria-components';
 import { tv } from 'tailwind-variants';
 
 const styles = tv({
@@ -16,6 +16,6 @@ export function ToggleButtonGroup(props: ToggleButtonGroupProps) {
   return (
     <RACToggleButtonGroup
       {...props}
-      className={styles({orientation: props.orientation || 'horizontal', className: props.className})} />
+      className={composeRenderProps(props.className, (className) => styles({orientation: props.orientation || 'horizontal', className}))} />
   );
 }
