@@ -3,7 +3,7 @@ import spawn from 'cross-spawn';
 
 // setting the version to 'next' won't work due to a yarn 1 bug
 let results = JSON.parse(await run('npm', ['view', 'react@next', '--json']));
-let version = results['dist-tags']['next'];
+let version = results['dist-tags']['rc'];
 let data = fs.readFileSync('./packages/dev/docs/package.json');
 let pkg = JSON.parse(data);
 pkg.dependencies['react'] = version;
