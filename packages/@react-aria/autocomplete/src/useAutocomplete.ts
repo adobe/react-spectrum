@@ -13,8 +13,8 @@
 import {AriaLabelingProps, BaseEvent, DOMAttributes, DOMProps, InputDOMProps, RefObject} from '@react-types/shared';
 import type {AriaMenuOptions} from '@react-aria/menu';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
-import {chain, mergeProps, useId, useLabels} from '@react-aria/utils';
-import {InputHTMLAttributes, KeyboardEvent, ReactNode, useRef} from 'react';
+import {chain, CLEAR_FOCUS_EVENT, DELAY_UPDATE, FOCUS_EVENT, mergeProps, UPDATE_ACTIVEDESCENDANT, useEffectEvent, useId, useLabels} from '@react-aria/utils';
+import {InputHTMLAttributes, KeyboardEvent as ReactKeyboardEvent, ReactNode, useEffect, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -28,7 +28,9 @@ export interface AriaAutocompleteProps extends AutocompleteProps, DOMProps, Inpu
 // Update all instances of "menu" then
 export interface AriaAutocompleteOptions extends Omit<AriaAutocompleteProps, 'children'> {
   /** The ref for the input element. */
-  inputRef: RefObject<HTMLInputElement | null>
+  inputRef: RefObject<HTMLInputElement | null>,
+  /** The ref for the wrapped collection element. */
+  collectionRef: RefObject<HTMLElement | null>
 }
 export interface AutocompleteAria<T> {
   /** Props for the label element. */
@@ -38,11 +40,7 @@ export interface AutocompleteAria<T> {
   /** Props for the menu, to be passed to [useMenu](useMenu.html). */
   menuProps: AriaMenuOptions<T>,
   /** Props for the autocomplete description element, if any. */
-  descriptionProps: DOMAttributes,
-  // TODO: fairly non-standard thing to return from a hook, discuss how best to share this with hook only users
-  // This is for the user to register a callback that upon recieving a keyboard event key returns the expected virtually focused node id
-  /** Register function that expects a callback function that returns the newlly virtually focused menu option when provided with the keyboard action that occurs in the input field. */
-  register: (callback: (e: KeyboardEvent) => string | null) => void
+  descriptionProps: DOMAttributes
 }
 
 /**
@@ -54,27 +52,98 @@ export interface AutocompleteAria<T> {
 export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: AutocompleteState): AutocompleteAria<T> {
   let {
     inputRef,
-    isReadOnly
+    isReadOnly,
+    collectionRef
   } = props;
 
   let menuId = useId();
+  let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  let keyToDelay = useRef<{key: string | null, delay: number | null}>({key: null, delay: null});
+  // Create listeners for updateActiveDescendant events that will be fired by wrapped collection whenever the focused key changes
+  // so we can update the tracked active descendant for virtual focus
+  useEffect(() => {
+    let collection = collectionRef.current;
+    // When typing forward, we want to delay the setting of active descendant to not interrupt the native screen reader announcement
+    // of the letter you just typed. If we recieve another UPDATE_ACTIVEDESCENDANT call then we clear the queued update and
+    let setUpDelay = (e) => {
+      let {detail} = e;
+      keyToDelay.current = {key: detail?.key, delay: detail?.delay};
+    };
 
-  // TODO: may need to move this into Autocomplete? Kinda odd to return this from the hook? Maybe the callback should be considered
-  // external to the hook, and the onus is on the user to pass in a onKeydown to this hook that updates state.focusedNodeId in response to a key
-  // stroke
-  let callbackRef = useRef<(e: KeyboardEvent) => string>(null);
-  let register = (callback) => {
-    callbackRef.current = callback;
-  };
+    let updateActiveDescendant = (e) => {
+      let {detail} = e;
+      clearTimeout(timeout.current);
+      e.stopPropagation();
+
+      if (detail?.id != null) {
+        if (detail?.key === keyToDelay.current.key && keyToDelay.current.delay != null) {
+          timeout.current = setTimeout(() => {
+            state.setFocusedNodeId(detail.id);
+          }, keyToDelay.current.delay);
+        } else {
+          state.setFocusedNodeId(detail.id);
+        }
+      } else {
+        state.setFocusedNodeId(null);
+      }
+
+      keyToDelay.current = {key: null, delay: null};
+    };
+
+    collection?.addEventListener(UPDATE_ACTIVEDESCENDANT, updateActiveDescendant);
+    collection?.addEventListener(DELAY_UPDATE, setUpDelay);
+    return () => {
+      collection?.removeEventListener(UPDATE_ACTIVEDESCENDANT, updateActiveDescendant);
+      collection?.removeEventListener(DELAY_UPDATE, setUpDelay);
+    };
+  }, [state, collectionRef]);
+
+  let focusFirstItem = useEffectEvent(() => {
+    let focusFirstEvent = new CustomEvent(FOCUS_EVENT, {
+      cancelable: true,
+      bubbles: true,
+      detail: {
+        focusStrategy: 'first'
+      }
+    });
+
+    collectionRef.current?.dispatchEvent(focusFirstEvent);
+  });
+
+  let clearVirtualFocus = useEffectEvent(() => {
+    state.setFocusedNodeId(null);
+    let clearFocusEvent = new CustomEvent(CLEAR_FOCUS_EVENT, {
+      cancelable: true,
+      bubbles: true
+    });
+    clearTimeout(timeout.current);
+    keyToDelay.current = {key: null, delay: null};
+
+    collectionRef.current?.dispatchEvent(clearFocusEvent);
+  });
+
+  // Tell wrapped collection to focus the first element in the list when typing forward and to clear focused key when deleting text
+  // for screen reader announcements
+  let lastInputValue = useRef<string | null>(null);
+  useEffect(() => {
+    // inputValue will always be at least "" if menu is in a Autocomplete, null is not an accepted value for inputValue
+    if (state.inputValue != null) {
+      if (lastInputValue.current != null && lastInputValue.current !== state.inputValue && lastInputValue.current?.length <= state.inputValue.length) {
+        focusFirstItem();
+      } else {
+        clearVirtualFocus();
+      }
+
+      lastInputValue.current = state.inputValue;
+    }
+  }, [state.inputValue, focusFirstItem, clearVirtualFocus]);
 
   // For textfield specific keydown operations
-  let onKeyDown = (e: BaseEvent<KeyboardEvent<any>>) => {
+  let onKeyDown = (e: BaseEvent<ReactKeyboardEvent<any>>) => {
     if (e.nativeEvent.isComposing) {
       return;
     }
 
-    // TODO: how best to trigger the focused element's action? Currently having the registered callback handle dispatching a
-    // keyboard event
     switch (e.key) {
       case 'Escape':
         if (state.inputValue !== '' && !isReadOnly) {
@@ -83,19 +152,47 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
           e.continuePropagation();
         }
 
-        break;
+        return;
+      case ' ':
+        // Space shouldn't trigger onAction so early return.
+        return;
       case 'Home':
       case 'End':
+      case 'PageDown':
+      case 'PageUp':
       case 'ArrowUp':
-      case 'ArrowDown':
+      case 'ArrowDown': {
         // Prevent these keys from moving the text cursor in the input
         e.preventDefault();
+        // Move virtual focus into the wrapped collection
+        let focusCollection = new CustomEvent(FOCUS_EVENT, {
+          cancelable: true,
+          bubbles: true
+        });
+
+        collectionRef.current?.dispatchEvent(focusCollection);
+        break;
+      }
+      case 'ArrowLeft':
+      case 'ArrowRight':
+        // TODO: will need to special case this so it doesn't clear the focused key if we are currently
+        // focused on a submenutrigger? May not need to since focus would
+        // But what about wrapped grids where ArrowLeft and ArrowRight should navigate left/right
+        clearVirtualFocus();
         break;
     }
 
-    if (callbackRef.current) {
-      let focusedNodeId = callbackRef.current(e);
-      state.setFocusedNodeId(focusedNodeId);
+    // Emulate the keyboard events that happen in the input field in the wrapped collection. This is for triggering things like onAction via Enter
+    // or moving focus from one item to another
+    if (state.focusedNodeId == null) {
+      collectionRef.current?.dispatchEvent(
+        new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
+      );
+    } else {
+      let item = collectionRef.current?.querySelector(`#${CSS.escape(state.focusedNodeId)}`);
+      item?.dispatchEvent(
+        new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
+      );
     }
   };
 
@@ -134,14 +231,8 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
     }),
     menuProps: mergeProps(menuProps, {
       shouldUseVirtualFocus: true,
-      onHoverStart: (e) => {
-        // TODO: another thing to think about, what is the best way to past this to menu/wrapped collection component so that hovering on
-        // a item also updates the focusedNode. Perhaps we should just pass down setFocusedNodeId instead
-        state.setFocusedNodeId(e.target.id);
-      },
       disallowTypeAhead: true
     }),
-    descriptionProps,
-    register
+    descriptionProps
   };
 }

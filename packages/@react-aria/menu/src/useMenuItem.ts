@@ -214,6 +214,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   };
 
   let {itemProps, isFocused} = useSelectableItem({
+    id,
     selectionManager: selectionManager,
     key,
     ref,
@@ -243,10 +244,6 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
         selectionManager.setFocusedKey(key);
       }
       hoverStartProp?.(e);
-
-      if (data.onHoverStart) {
-        data.onHoverStart(e);
-      }
     },
     onHoverChange,
     onHoverEnd
