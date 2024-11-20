@@ -62,8 +62,8 @@ export function Migrating() {
           <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>buttonLabelBehavior</Code> (it has not been implemented yet)</li>
           <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>summaryIcon</Code> (it has not been implemented yet)</li>
           <li className={style({font: 'body', marginY: 8})}>Update root level <Code>onAction</Code> to called via <Code>onPress</Code> on each <Code>ActionButton</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>Apply <Code>isDisabled</Code> directly on each <Code>ActionButton</Code> instead of root level <Code>disabledKeys</Code></li>
-          <li className={style({font: 'body', marginY: 8})}>Convert <Code>key</Code> to <Code>id</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Apply <Code>isDisabled</Code> directly on each <Code>ActionButton</Code> or <Code>ToggleButton</Code> instead of root level <Code>disabledKeys</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Update <Code>key</Code> to be <Code>id</Code> (and keep <Code>key</Code> if rendered inside <Code>array.map</Code>)</li>
           <li className={style({font: 'body', marginY: 8})}>Convert dynamic collections render function to <Code>items.map</Code></li>
         </ul>
 
