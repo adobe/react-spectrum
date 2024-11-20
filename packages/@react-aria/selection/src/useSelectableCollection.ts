@@ -128,7 +128,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
     // Keyboard events bubble through portals. Don't handle keyboard events
     // for elements outside the collection (e.g. menus).
-    if (!ref.current.contains(e.target as Element)) {
+    if (!ref.current?.contains(e.target as Element)) {
       return;
     }
 
@@ -140,9 +140,11 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
             manager.setFocusedKey(key, childFocus);
           });
 
-          let item = scrollRef.current.querySelector(`[data-key="${CSS.escape(key.toString())}"]`);
+          let item = scrollRef.current?.querySelector(`[data-key="${CSS.escape(key.toString())}"]`);
           let itemProps = manager.getItemProps(key);
-          router.open(item, e, itemProps.href, itemProps.routerOptions);
+          if (item) {
+            router.open(item, e, itemProps.href, itemProps.routerOptions);
+          }
 
           return;
         }
@@ -194,7 +196,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       }
       case 'ArrowLeft': {
         if (delegate.getKeyLeftOf) {
-          let nextKey = delegate.getKeyLeftOf?.(manager.focusedKey);
+          let nextKey: Key | undefined | null = manager.focusedKey != null ? delegate.getKeyLeftOf?.(manager.focusedKey) : null;
           if (nextKey == null && shouldFocusWrap) {
             nextKey = direction === 'rtl' ? delegate.getFirstKey?.(manager.focusedKey) : delegate.getLastKey?.(manager.focusedKey);
           }
@@ -207,7 +209,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       }
       case 'ArrowRight': {
         if (delegate.getKeyRightOf) {
-          let nextKey = delegate.getKeyRightOf?.(manager.focusedKey);
+          let nextKey: Key | undefined | null = manager.focusedKey != null ? delegate.getKeyRightOf?.(manager.focusedKey) : null;
           if (nextKey == null && shouldFocusWrap) {
             nextKey = direction === 'rtl' ? delegate.getLastKey?.(manager.focusedKey) : delegate.getFirstKey?.(manager.focusedKey);
           }
@@ -221,12 +223,14 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       case 'Home':
         if (delegate.getFirstKey) {
           e.preventDefault();
-          let firstKey = delegate.getFirstKey(manager.focusedKey, isCtrlKeyPressed(e));
+          let firstKey: Key | null = delegate.getFirstKey(manager.focusedKey, isCtrlKeyPressed(e));
           manager.setFocusedKey(firstKey);
-          if (isCtrlKeyPressed(e) && e.shiftKey && manager.selectionMode === 'multiple') {
-            manager.extendSelection(firstKey);
-          } else if (selectOnFocus) {
-            manager.replaceSelection(firstKey);
+          if (firstKey != null) {
+            if (isCtrlKeyPressed(e) && e.shiftKey && manager.selectionMode === 'multiple') {
+              manager.extendSelection(firstKey);
+            } else if (selectOnFocus) {
+              manager.replaceSelection(firstKey);
+            }
           }
         }
         break;
@@ -235,15 +239,17 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
           e.preventDefault();
           let lastKey = delegate.getLastKey(manager.focusedKey, isCtrlKeyPressed(e));
           manager.setFocusedKey(lastKey);
-          if (isCtrlKeyPressed(e) && e.shiftKey && manager.selectionMode === 'multiple') {
-            manager.extendSelection(lastKey);
-          } else if (selectOnFocus) {
-            manager.replaceSelection(lastKey);
+          if (lastKey != null) {
+            if (isCtrlKeyPressed(e) && e.shiftKey && manager.selectionMode === 'multiple') {
+              manager.extendSelection(lastKey);
+            } else if (selectOnFocus) {
+              manager.replaceSelection(lastKey);
+            }
           }
         }
         break;
       case 'PageDown':
-        if (delegate.getKeyPageBelow) {
+        if (delegate.getKeyPageBelow && manager.focusedKey != null) {
           let nextKey = delegate.getKeyPageBelow(manager.focusedKey);
           if (nextKey != null) {
             e.preventDefault();
@@ -252,7 +258,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         }
         break;
       case 'PageUp':
-        if (delegate.getKeyPageAbove) {
+        if (delegate.getKeyPageAbove && manager.focusedKey != null) {
           let nextKey = delegate.getKeyPageAbove(manager.focusedKey);
           if (nextKey != null) {
             e.preventDefault();
@@ -285,7 +291,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
             ref.current.focus();
           } else {
             let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
-            let next: FocusableElement;
+            let next: FocusableElement | undefined = undefined;
             let last: FocusableElement;
             do {
               last = walker.lastChild() as FocusableElement;
@@ -307,10 +313,10 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   // Store the scroll position so we can restore it later.
   /// TODO: should this happen all the time??
   let scrollPos = useRef({top: 0, left: 0});
-  useEvent(scrollRef, 'scroll', isVirtualized ? null : () => {
+  useEvent(scrollRef, 'scroll', isVirtualized ? undefined : () => {
     scrollPos.current = {
-      top: scrollRef.current.scrollTop,
-      left: scrollRef.current.scrollLeft
+      top: scrollRef.current?.scrollTop ?? 0,
+      left: scrollRef.current?.scrollLeft ?? 0
     };
   });
 
@@ -332,7 +338,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     manager.setFocused(true);
 
     if (manager.focusedKey == null) {
-      let navigateToFirstKey = (key: Key | undefined) => {
+      let navigateToFirstKey = (key: Key | undefined | null) => {
         if (key != null) {
           manager.setFocusedKey(key);
           if (selectOnFocus) {
@@ -345,17 +351,17 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       // and either focus the first or last item accordingly.
       let relatedTarget = e.relatedTarget as Element;
       if (relatedTarget && (e.currentTarget.compareDocumentPosition(relatedTarget) & Node.DOCUMENT_POSITION_FOLLOWING)) {
-        navigateToFirstKey(manager.lastSelectedKey ?? delegate.getLastKey());
+        navigateToFirstKey(manager.lastSelectedKey ?? delegate.getLastKey?.());
       } else {
-        navigateToFirstKey(manager.firstSelectedKey ?? delegate.getFirstKey());
+        navigateToFirstKey(manager.firstSelectedKey ?? delegate.getFirstKey?.());
       }
-    } else if (!isVirtualized) {
+    } else if (!isVirtualized && scrollRef.current) {
       // Restore the scroll position to what it was before.
       scrollRef.current.scrollTop = scrollPos.current.top;
       scrollRef.current.scrollLeft = scrollPos.current.left;
     }
 
-    if (manager.focusedKey != null) {
+    if (manager.focusedKey != null && scrollRef.current) {
       // Refocus and scroll the focused item into view if it exists within the scrollable region.
       let element = scrollRef.current.querySelector(`[data-key="${CSS.escape(manager.focusedKey.toString())}"]`) as HTMLElement;
       if (element) {
@@ -382,13 +388,13 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   const autoFocusRef = useRef(autoFocus);
   useEffect(() => {
     if (autoFocusRef.current) {
-      let focusedKey = null;
+      let focusedKey: Key | null = null;
 
       // Check focus strategy to determine which item to focus
       if (autoFocus === 'first') {
-        focusedKey = delegate.getFirstKey();
+        focusedKey = delegate.getFirstKey?.() ?? null;
       } if (autoFocus === 'last') {
-        focusedKey = delegate.getLastKey();
+        focusedKey = delegate.getLastKey?.() ?? null;
       }
 
       // If there are any selected keys, make the first one the new focus target
@@ -406,7 +412,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       manager.setFocusedKey(focusedKey);
 
       // If no default focus key is selected, focus the collection itself.
-      if (focusedKey == null && !shouldUseVirtualFocus) {
+      if (focusedKey == null && !shouldUseVirtualFocus && ref.current) {
         focusSafely(ref.current);
       }
     }
@@ -416,7 +422,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   // Scroll the focused element into view when the focusedKey changes.
   let lastFocusedKey = useRef(manager.focusedKey);
   useEffect(() => {
-    if (manager.isFocused && manager.focusedKey != null && (manager.focusedKey !== lastFocusedKey.current || autoFocusRef.current) && scrollRef?.current) {
+    if (manager.isFocused && manager.focusedKey != null && (manager.focusedKey !== lastFocusedKey.current || autoFocusRef.current) && scrollRef.current && ref.current) {
       let modality = getInteractionModality();
       let element = ref.current.querySelector(`[data-key="${CSS.escape(manager.focusedKey.toString())}"]`) as HTMLElement;
       if (!element) {
@@ -436,7 +442,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     }
 
     // If the focused key becomes null (e.g. the last item is deleted), focus the whole collection.
-    if (!shouldUseVirtualFocus && manager.isFocused && manager.focusedKey == null && lastFocusedKey.current != null) {
+    if (!shouldUseVirtualFocus && manager.isFocused && manager.focusedKey == null && lastFocusedKey.current != null && ref.current) {
       focusSafely(ref.current);
     }
 
@@ -476,7 +482,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   // This will be marshalled to either the first or last item depending on where focus came from.
   // If using virtual focus, don't set a tabIndex at all so that VoiceOver on iOS 14 doesn't try
   // to move real DOM focus to the element anyway.
-  let tabIndex: number;
+  let tabIndex: number | undefined = undefined;
   if (!shouldUseVirtualFocus) {
     tabIndex = manager.focusedKey == null ? 0 : -1;
   }

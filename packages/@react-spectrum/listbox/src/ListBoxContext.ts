@@ -20,4 +20,4 @@ interface ListBoxContextValue {
   shouldUseVirtualFocus: boolean
 }
 
-export const ListBoxContext = React.createContext<ListBoxContextValue>(null);
+export const ListBoxContext = React.createContext<ListBoxContextValue | null>(null);

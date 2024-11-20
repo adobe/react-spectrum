@@ -22,7 +22,7 @@ export default function ReorderableListView() {
         // Setup the drag types and associated info for each dragged item.
         return {
           "custom-app-type-reorder": JSON.stringify(item),
-          "text/plain": item.name,
+          "text/plain": item?.name ?? '',
         };
       });
     },

@@ -91,9 +91,9 @@ let itemsWithFalsyId = [
   ]}
 ];
 
-let lotsOfSections: any[] = [];
+let lotsOfSections: {name: string, children: {name: string}[]}[] = [];
 for (let i = 0; i < 50; i++) {
-  let children = [];
+  let children: {name: string}[] = [];
   for (let j = 0; j < 50; j++) {
     children.push({name: `Section ${i}, Item ${j}`});
   }
@@ -736,7 +736,7 @@ export const WithSemanticElementsGenerativeMultipleSelection = {
 
 export const IsLoading = {
   render: () => (
-    <ListBox flexGrow={1} aria-labelledby="label" items={[]} isLoading>
+    <ListBox flexGrow={1} aria-labelledby="label" items={[] as any[]} isLoading>
       {(item) => <Item>{item.name}</Item>}
     </ListBox>
   ),
@@ -939,18 +939,19 @@ export function FocusExample(args = {}) {
   let tree = useTreeData({
     initialItems: withSection,
     getKey: (item) => item.name,
-    getChildren: (item:{name:string, children?:{name:string, children?:{name:string}[]}[]}) => item.children
+    getChildren: (item: {name:string, children?:{name:string, children?:{name:string}[]}[]}) => item.children ?? []
   });
 
-  let [dialog, setDialog] = useState(null);
+  let [dialog, setDialog] = useState<{action: Key} | null>(null);
   let ref = useRef(null);
 
   return (
     <FocusScope>
       <Flex direction={'column'}>
         <ActionGroup marginBottom={8} onAction={action => setDialog({action})}>
-          {(tree.selectedKeys.size > 0) &&
-            <Item key="bulk-delete" aria-label="Delete selected items"><Delete /></Item>
+          {(tree.selectedKeys.size > 0)
+            ? <Item key="bulk-delete" aria-label="Delete selected items"><Delete /></Item>
+            : null
           }
         </ActionGroup>
         <div style={{display: 'flex', flexDirection: 'column'}}>
@@ -970,11 +971,11 @@ export function FocusExample(args = {}) {
                 }}
                 selectionMode="multiple"
                 {...args}>
-                {item => item.children.length && (
+                {item => item?.children?.length ? (
                   <Section key={item.value.name} items={item.children} title={item.value.name}>
                     {item => <Item key={item.value.name}>{item.value.name}</Item>}
                   </Section>
-                )}
+                ) : null}
               </ListBox>
             }
           </div>
@@ -1107,7 +1108,7 @@ export function WithTreeData() {
         }
       }}>
       {node => (
-        <Section title={node.value.name} items={node.children}>
+        <Section title={node.value.name} items={node.children ?? []}>
           {node => <Item>{node.value.name}</Item>}
         </Section>
       )}

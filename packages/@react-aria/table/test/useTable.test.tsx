@@ -48,8 +48,8 @@ function Table(props) {
     ...props,
     showSelectionCheckboxes: props.selectionMode === 'multiple'
   });
-  let ref = useRef(undefined);
-  let bodyRef = useRef(undefined);
+  let ref = useRef<HTMLTableElement | null>(null);
+  let bodyRef = useRef<HTMLElement | null>(null);
   let {collection} = state;
   let {gridProps} = useTable(
     {
@@ -66,7 +66,7 @@ function Table(props) {
       <TableRowGroup type="thead" style={{borderBottom: '2px solid gray', display: 'block'}}>
         {collection.headerRows.map(headerRow => (
           <TableHeaderRow key={headerRow.key} item={headerRow} state={state}>
-            {[...state.collection.getChildren(headerRow.key)].map(column =>
+            {[...state.collection.getChildren!(headerRow.key)].map(column =>
               column.props.isSelectionCell
                 ? <TableSelectAllCell key={column.key} column={column} state={state} />
                 : <TableColumnHeader key={column.key} column={column} state={state} />
@@ -77,7 +77,7 @@ function Table(props) {
       <TableRowGroup ref={bodyRef} type="tbody" style={{display: 'block', overflow: 'auto', maxHeight: '200px'}}>
         {[...collection].map(row => (
           <TableRow key={row.key} item={row} state={state}>
-            {[...state.collection.getChildren(row.key)].map(cell =>
+            {[...state.collection.getChildren!(row.key)].map(cell =>
               cell.props.isSelectionCell
                 ? <TableCheckboxCell key={cell.key} cell={cell} state={state} />
                 : <TableCell key={cell.key} cell={cell} state={state} />

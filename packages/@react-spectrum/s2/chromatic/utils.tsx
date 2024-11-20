@@ -39,6 +39,9 @@ export function shortName(key, value) {
     case 'isRequired':
       returnVal = 'req';
       break;
+    case 'isSelected':
+      returnVal = 'selec';
+      break;
     case 'orientation':
       returnVal = `orien: ${value}`;
       break;
@@ -76,11 +79,9 @@ export function shortName(key, value) {
 export function generateComboChunks(opts: {states: Array<object>, exclude?: (merged: any) => boolean, numChunks: number}) {
   let {states, exclude, numChunks} = opts;
   let combos = generatePowerset(states, exclude);
-  let chunks = [];
+  let chunks: any[] = [];
   let chunkSize =  Math.ceil(combos.length / numChunks);
   for (let i = 0; i < numChunks; i++) {
-    // Not exactly sure why it is complaining about type never
-    // @ts-ignore
     chunks.push(combos.slice(i * chunkSize, (i + 1) * chunkSize));
   }
 

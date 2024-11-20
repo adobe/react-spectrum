@@ -106,9 +106,9 @@ function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
           width: {
             size: {
               // Copied from designs, not sure if correct.
-              S: '[21rem]',
-              M: '[26rem]',
-              L: '[36rem]',
+              S: 336,
+              M: 416,
+              L: 576,
               fullscreen: '[calc(100% - 40px)]',
               fullscreenTakeover: 'full'
             }
@@ -120,17 +120,17 @@ function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
             }
           },
           maxWidth: {
+            default: '[90vw]',
             size: {
-              S: '[90vw]',
-              M: '[90vw]',
-              L: '[90vw]'
+              fullscreen: 'none',
+              fullscreenTakeover: 'none'
             }
           },
           maxHeight: {
+            default: '[90vh]',
             size: {
-              S: '[90vh]',
-              M: '[90vh]',
-              L: '[90vh]'
+              fullscreen: 'none',
+              fullscreenTakeover: 'none'
             }
           },
           '--s2-container-bg': {
@@ -159,7 +159,7 @@ function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
           outlineStyle: 'solid',
           outlineWidth: 1,
           outlineColor: 'transparent'
-        })({...renderProps, size: props.size || 'M'})} />
+        })({...renderProps, size: props.size})} />
     </ModalOverlay>
   );
 }

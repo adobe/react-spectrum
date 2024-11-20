@@ -88,7 +88,6 @@ function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivEle
       style={{
         ...styleProps.style,
         // Workaround around https://github.com/adobe/spectrum-css/issues/1032
-        // @ts-ignore
         'width': size,
         'height': size
       }}>

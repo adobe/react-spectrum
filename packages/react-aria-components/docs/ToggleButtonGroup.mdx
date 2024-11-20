@@ -1,0 +1,370 @@
+{/* Copyright 2024 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import statelyDocs from 'docs:@react-stately/toggle';
+import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import packageData from 'react-aria-components/package.json';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {Divider} from '@react-spectrum/divider';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {Keyboard} from '@react-spectrum/text';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
+import ToggleButton from '@react-spectrum/docs/pages/assets/component-illustrations/ToggleButton.svg';
+import Anatomy from '@react-aria/button/docs/ToggleButtonGroupAnatomy.svg';
+
+---
+category: Buttons
+keywords: [button, toggle button, aria, form]
+type: component
+---
+
+# ToggleButtonGroup
+
+<PageDescription>{docs.exports.ToggleButtonGroup.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['ToggleButtonGroup']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/'}
+  ]} />
+
+## Example
+
+```tsx example
+import {ToggleButtonGroup, ToggleButton} from 'react-aria-components';
+
+<ToggleButtonGroup>
+  <ToggleButton id="left">Left</ToggleButton>
+  <ToggleButton id="center">Center</ToggleButton>
+  <ToggleButton id="right">Right</ToggleButton>
+</ToggleButtonGroup>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css hidden
+@import "@react-aria/example-theme";
+@import './Button.mdx' layer(button);
+@import './ToggleButton.mdx' layer(togglebutton);
+```
+
+```css
+.react-aria-ToggleButtonGroup {
+  display: flex;
+
+  > button {
+    border-radius: 0;
+    z-index: 1;
+
+    &[data-disabled] {
+      z-index: 0;
+    }
+
+    &[data-selected],
+    &[data-focus-visible] {
+      z-index: 2;
+    }
+  }
+}
+
+.react-aria-ToggleButtonGroup[data-orientation=horizontal] {
+  flex-direction: row;
+
+  > button {
+    margin-inline-start: -1px;
+    
+    &:first-child {
+      border-radius: 4px 0 0 4px;
+      margin-inline-start: 0;
+    }
+
+    &:last-child {
+      border-radius: 0 4px 4px 0;
+    }
+  }
+}
+```
+
+</details>
+
+## Features
+
+There is no built in element for toggle button groups in HTML. `ToggleButtonGroup` helps achieve accessible toggle button groups that can be styled as needed.
+
+* **Accessible** – Represented as an ARIA [radiogroup](https://www.w3.org/WAI/ARIA/apg/patterns/radio/) when using single selection, or a [toolbar](https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/) when using multiple selection.
+* **Keyboard navigation** – Users can navigate between buttons with the arrow keys. Selection can be toggled using the <Keyboard>Enter</Keyboard> or <Keyboard>Space</Keyboard> keys.
+* **Styleable** – Hover, press, keyboard focus, and selection states are provided for easy styling.
+
+## Anatomy
+
+<Anatomy />
+
+A toggle button group consists of a set of toggle buttons, and coordinates the selection state between them. Users can navigate between buttons with the arrow keys in either horizontal or vertical orientations.
+
+```tsx
+import {ToggleButtonGroup, ToggleButton} from 'react-aria-components';
+
+<ToggleButtonGroup>
+  <ToggleButton />
+</ToggleButtonGroup>
+```
+
+### Composed Components
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="ToggleButton.html"
+  title="ToggleButton"
+  description="A toggle button allows a user to toggle between two states.">
+  <ToggleButton />
+</ExampleCard>
+
+</section>
+
+## Selection
+
+ToggleButtonGroup supports both single and multiple selection modes. Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `id` prop of the items.
+
+### Single selection
+
+By default, the `selectionMode` of a `ToggleButtonGroup` is `"single"`.
+
+```tsx example
+<ToggleButtonGroup defaultSelectedKeys={['list']}>
+  <ToggleButton id="grid">Grid view</ToggleButton>
+  <ToggleButton id="list">List view</ToggleButton>
+  <ToggleButton id="gallery">Gallery view</ToggleButton>
+</ToggleButtonGroup>
+```
+
+### Multiple selection
+
+Set `selectionMode` prop to `multiple` to allow more than one selection.
+
+```tsx example
+<ToggleButtonGroup selectionMode="multiple">
+  <ToggleButton id="bold">Bold</ToggleButton>
+  <ToggleButton id="italic">Italic</ToggleButton>
+  <ToggleButton id="underline">Underline</ToggleButton>
+</ToggleButtonGroup>
+```
+
+### Controlled selection
+
+The `selectedKeys` prop can be used to make the selected state controlled.
+
+```tsx example
+import type {Key} from 'react-aria-components';
+
+function Example() {
+  let [selected, setSelected] = React.useState(new Set<Key>(['bold']));
+
+  return (
+    <>
+      <ToggleButtonGroup selectionMode="multiple" selectedKeys={selected} onSelectionChange={setSelected}>
+        <ToggleButton id="bold">Bold</ToggleButton>
+        <ToggleButton id="italic">Italic</ToggleButton>
+        <ToggleButton id="underline">Underline</ToggleButton>
+      </ToggleButtonGroup>
+      <p>Current selections (controlled): {[...selected].join(', ')}</p>
+    </>
+  );
+}
+```
+
+## Disabled
+
+All buttons within a `ToggleButtonGroup` can be disabled using the `isDisabled` prop.
+
+```tsx example
+<ToggleButtonGroup isDisabled>
+  <ToggleButton id="grid">Grid view</ToggleButton>
+  <ToggleButton id="list">List view</ToggleButton>
+  <ToggleButton id="gallery">Gallery view</ToggleButton>
+</ToggleButtonGroup>
+```
+
+Individual items can be disabled using the `isDisabled` prop on each `ToggleButton`.
+
+```tsx example
+<ToggleButtonGroup>
+  <ToggleButton id="grid">Grid view</ToggleButton>
+  <ToggleButton id="list" isDisabled>List view</ToggleButton>
+  <ToggleButton id="gallery">Gallery view</ToggleButton>
+</ToggleButtonGroup>
+```
+
+## Orientation
+
+By default, toggle button groups are horizontally oriented. The orientation prop can be set to "vertical" to change the arrow key navigation behavior.
+
+```tsx example
+<ToggleButtonGroup orientation="vertical">
+  <ToggleButton id="grid">Grid</ToggleButton>
+  <ToggleButton id="list">List</ToggleButton>
+  <ToggleButton id="gallery">Gallery</ToggleButton>
+</ToggleButtonGroup>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ToggleButtonGroup[data-orientation=vertical] {
+  flex-direction: column;
+  width: fit-content;
+
+  > button {
+    margin-block-start: -1px;
+    
+    &:first-child {
+      border-radius: 4px 4px 0 0;
+      margin-block-start: 0;
+    }
+
+    &:last-child {
+      border-radius: 0 0 4px 4px;
+    }
+  }
+}
+```
+
+</details>
+
+## Accessiblity
+
+A `ToggleButtonGroup` can be labeled using the `aria-label` or `aria-labelledby` props.
+
+```tsx example
+<ToggleButtonGroup aria-label="Text style">
+  <ToggleButton id="bold">Bold</ToggleButton>
+  <ToggleButton id="italic">Italic</ToggleButton>
+  <ToggleButton id="underline">Underline</ToggleButton>
+</ToggleButtonGroup>
+```
+
+## Props
+
+### ToggleButtonGroup
+
+<PropTable component={docs.exports.ToggleButtonGroup} links={docs.links} />
+
+### ToggleButton
+
+<PropTable component={docs.exports.ToggleButton} links={docs.links} />
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-ToggleButtonGroup {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<ToggleButtonGroup className="my-toggle-group">
+  {/* ... */}
+</ToggleButtonGroup>
+```
+
+In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
+
+```css
+.react-aria-ToggleButton[data-selected] {
+  /* ... */
+}
+```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<ToggleButtonGroup className={({isDisabled}) => isDisabled ? 'bg-gray-100' : 'bg-gray-600'} />
+```
+
+Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could swap an icon depending on the selection state.
+
+```jsx
+<ToggleButton>
+  {({isSelected}) => (
+    <>
+      {isSelected ? <PinnedIcon /> : <UnpinnedIcon />}
+      Pin
+    </>
+  )}
+</ToggleButton>
+```
+
+The states, selectors, and render props for each component used in a `ToggleButtonGroup` are documented below.
+
+### ToggleButtonGroup
+
+A `ToggleButtonGroup` can be targeted with the `.react-aria-ToggleButtonGroup` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.ToggleButtonGroupRenderProps.properties} />
+
+### ToggleButton
+
+A `ToggleButton` can be targeted with the `.react-aria-ToggleButton` CSS selector, or by overriding with a custom `className`.
+
+<StateTable properties={docs.exports.ToggleButtonRenderProps.properties} />
+
+## Advanced customization
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['ToggleButtonGroup', 'ToggleButton']} docs={docs} />
+
+### State
+
+ToggleButtonGroup provides an <TypeLink links={statelyDocs.links} type={statelyDocs.exports.ToggleGroupState} /> object to its children via `ToggleGroupStateContext`. This can be used to access and manipulate the toggle button group's state.
+
+This example shows a `ClearButton` component that can be placed within a `ToggleButtonGroup` to allow the user to clear the selected item.
+
+```tsx example
+import {ToggleGroupStateContext, Button} from 'react-aria-components';
+
+function ClearButton() {
+  /*- begin highlight -*/
+  let state = React.useContext(ToggleGroupStateContext);
+  /*- end highlight -*/
+  return (
+    <Button onPress={() => state?.setSelectedKeys(new Set())}>
+      Clear
+    </Button>
+  );
+}
+
+<ToggleButtonGroup selectionMode="multiple" defaultSelectedKeys={['bold', 'italic']}>
+  <ToggleButton id="bold">Bold</ToggleButton>
+  <ToggleButton id="italic">Italic</ToggleButton>
+  <ToggleButton id="underline">Underline</ToggleButton>
+  {/*- begin highlight -*/}
+  <ClearButton />
+  {/*- end highlight -*/}
+</ToggleButtonGroup>
+```
+
+### Hooks
+
+If you need to customize things even further, such as accessing internal state, intercepting events, or customizing the DOM structure, you can drop down to the lower level Hook-based API. See [useToggleButtonGroup](useToggleButtonGroup.html) for more details.

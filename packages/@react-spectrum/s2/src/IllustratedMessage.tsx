@@ -50,8 +50,8 @@ const illustratedMessage = style<IllustratedMessageStyleProps & {isInDropZone?: 
   fontSize: 'control',
   maxWidth: {
     orientation: {
-      vertical: '[380px]',
-      horizontal: '[33rem]' // ask design about max width for horizontal because doesn't look great when L
+      vertical: 380,
+      horizontal: 528 // ask design about max width for horizontal because doesn't look great when L
     }
   },
   gridTemplateAreas: {
@@ -114,9 +114,7 @@ const illustration = style<IllustratedMessageStyleProps & {isInDropZone?: boolea
   '--iconPrimary': {
     type: 'color',
     value: {
-      // TODO: ask design about what the color should be. Says gray-800 in the designs file, neutral in token spec, but different neutral in dropzone spec
-      default: 'gray-800',
-      isInDropZone: 'gray-500', // neutral doesn't seem to match the color in designs, opted for gray-500 instead
+      default: 'neutral',
       isDropTarget: 'accent'
     }
   }

@@ -90,8 +90,8 @@ export function useDragAndDrop(options: DragAndDropOptions): DragAndDropHooks {
 
     let hooks = {} as DragHooks & DropHooks & {isVirtualDragging?: () => boolean, renderPreview?: (keys: Set<Key>, draggedKey: Key) => JSX.Element};
     if (isDraggable) {
-      hooks.useDraggableCollectionState = function useDraggableCollectionStateOverride(props: DraggableCollectionStateOptions) {
-        return useDraggableCollectionState({...props, ...options});
+      hooks.useDraggableCollectionState = function useDraggableCollectionStateOverride(props: DraggableCollectionStateOpts) {
+        return useDraggableCollectionState({...props, ...options, getItems: options.getItems!});
       };
       hooks.useDraggableCollection = useDraggableCollection;
       hooks.useDraggableItem = useDraggableItem;

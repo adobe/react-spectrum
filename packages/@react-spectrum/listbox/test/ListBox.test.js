@@ -936,7 +936,6 @@ describe('ListBox', function () {
       let maxHeight = 300;
       jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => maxHeight);
       offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(function () {
-        // @ts-ignore
         if (this.getAttribute('role') === 'listbox') {
           // First load should match the clientHeight since the number of items doesn't exceed the listbox height
           return 300;
@@ -959,7 +958,6 @@ describe('ListBox', function () {
       }).mockImplementationOnce(() => {
         onLoadMore();
         offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(function () {
-          // @ts-ignore
           if (this.getAttribute('role') === 'listbox') {
             // Second load we need to update the height of the scrollable body otherwise we will keep calling loading more
             return 600;

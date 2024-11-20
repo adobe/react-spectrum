@@ -44,7 +44,7 @@ function ScrollView(props: ScrollViewProps, ref: ForwardedRef<HTMLDivElement | n
 
   return (
     <div role="presentation" {...scrollViewProps} ref={ref}>
-      <div role="presentation" {...contentProps}>
+      <div {...contentProps}>
         {props.children}
       </div>
     </div>
@@ -69,7 +69,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
     scrollTop: 0,
     scrollLeft: 0,
     scrollEndTime: 0,
-    scrollTimeout: null,
+    scrollTimeout: null as ReturnType<typeof setTimeout> | null,
     width: 0,
     height: 0,
     isScrolling: false
@@ -114,7 +114,10 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
       if (state.scrollEndTime <= now + 50) {
         state.scrollEndTime = now + 300;
 
-        clearTimeout(state.scrollTimeout);
+        if (state.scrollTimeout != null) {
+          clearTimeout(state.scrollTimeout);
+        }
+
         state.scrollTimeout = setTimeout(() => {
           state.isScrolling = false;
           setScrolling(false);
@@ -135,7 +138,10 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
    
   useEffect(() => {
     return () => {
-      clearTimeout(state.scrollTimeout);
+      if (state.scrollTimeout != null) {
+        clearTimeout(state.scrollTimeout);
+      }
+
       if (state.isScrolling) {
         window.dispatchEvent(new Event('tk.connect-observer'));
       }
@@ -146,7 +152,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
   let isUpdatingSize = useRef(false);
   let updateSize = useEffectEvent((flush: typeof flushSync) => {
     let dom = ref.current;
-    if (!dom && !isUpdatingSize.current) {
+    if (!dom || isUpdatingSize.current) {
       return;
     }
 

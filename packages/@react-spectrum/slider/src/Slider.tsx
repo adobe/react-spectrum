@@ -13,7 +13,7 @@
 import {clamp} from '@react-aria/utils';
 import {classNames} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
-import React from 'react';
+import React, {ReactNode} from 'react';
 import {SliderBase, SliderBaseChildArguments, SliderBaseProps} from './SliderBase';
 import {SliderThumb} from './SliderThumb';
 import {SpectrumSliderProps} from '@react-types/slider';
@@ -80,7 +80,7 @@ function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
             }} />
         );
 
-        let filledTrack = null;
+        let filledTrack: ReactNode = null;
         if (isFilled && fillOffset != null) {
           let width = state.getThumbPercent(0) - state.getValuePercent(fillOffset);
           let isRightOfOffset = width > 0;

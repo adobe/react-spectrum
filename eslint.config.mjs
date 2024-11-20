@@ -53,6 +53,7 @@ export default [{
         "examples/**/*",
         "starters/**/*",
         "packages/@react-spectrum/s2/icon.d.ts",
+        "packages/@react-spectrum/s2/spectrum-illustrations"
     ],
 }, ...compat.extends("eslint:recommended"), {
     plugins: {
