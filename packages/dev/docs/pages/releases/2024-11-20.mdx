@@ -1,0 +1,103 @@
+{/* Copyright 2024 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+
+description: TODO
+
+date: 2024-011-20
+---
+
+# November 20, 2024 Release
+
+TODO
+
+## Enhancements
+
+- Accordion
+  - Support `hidden="until-found"` in `DisclosureGroup` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7199)
+- Dialog
+  - Add `<Button slot="close">` support - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7405)
+- Menu
+  - Add Section-level selection groups in `Menu` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7254)
+  - Support nesting `Menu` inside `Dialog` popovers with additional interactive content - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7402)
+- ToggleButtonGroup
+  - Add `ToggleButtonGroup` component to RAC - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7264)
+- Misc
+  - Support Devanagari & Bengali decimal numbering systems - [@Rocss](https://github.com/Rocss) - [PR](https://github.com/adobe/react-spectrum/pull/6715)
+  - Update `NumberParser` to support `roundingIncrement` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7186)
+  - Add `expanded` state to RAC Tailwind plugin - [@neefrehman](https://github.com/neefrehman) - [PR](https://github.com/adobe/react-spectrum/pull/7152)
+  - Add `pending` state to RAC Tailwind plugin - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7231)
+
+## Fixes
+
+- Accordion
+  - Fix `Accordion` borders - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7284)
+  - Add `box-sizing: content-box` to `Accordion` chevron - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7354)
+- Button
+  - Fix `useButton` `href` condition - [@mehm8128](https://github.com/mehm8128) - [PR](https://github.com/adobe/react-spectrum/pull/7239)
+- Checkbox
+  - Fix `Checkbox` validation reset not working - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/7268)
+  - Fix `ToggleProps` validate function type - [@joshuajaco](https://github.com/joshuajaco) - [PR](https://github.com/adobe/react-spectrum/pull/7347)
+  - Add `Checkbox` default slot to `GridList` and `Table` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7188)
+- Date and time
+  - Fix `DatePicker` with `defaultValue` to persist time zone - [@boutahlilsoufiane](https://github.com/boutahlilsoufiane) - [PR](https://github.com/adobe/react-spectrum/pull/7069)
+  - Fix BC era timestamps in `fromAbsolute` - [@KimPeeters](https://github.com/KimPeeters) - [PR](https://github.com/adobe/react-spectrum/pull/6542)
+- Dialog
+  - Add `data-rac` attribute to `Dialog`  - amitdahan - [PR](https://github.com/adobe/react-spectrum/pull/7189)
+- Select
+  - Remove iOS `HiddenSelect` workaround - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7200)
+  - Set default value for type parameter in `SelectProps` - [@kp047i](https://github.com/kp047i) - [PR](https://github.com/adobe/react-spectrum/pull/7014)
+- Slider
+  - Update `restrictValues` in `useSliderState` - [@Danji-ya](https://github.com/Danji-ya) - [PR](https://github.com/adobe/react-spectrum/pull/7338)
+- Tooltip
+  - Fix RAC `Tooltip` getting stuck on screen when scrolling - [@acr92](https://github.com/acr92) - [PR](https://github.com/adobe/react-spectrum/pull/7227)
+- Misc
+  - Support React 19 prerelease - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7383)
+  - Add `"use strict";` to style macro CommonJS build output - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7271)
+  - Add prefix to style macro class names - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7365)
+  - Fix Typescript Strict Mode remaining issues - [@snowystinger](https://github.com/snowystinger) and [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7368), [PR](https://github.com/adobe/react-spectrum/pull/6761)
+  - Add optional property types - [@alecmev](https://github.com/alecmev) - [PR](https://github.com/adobe/react-spectrum/pull/6872)
+
+## Docs
+
+- Add ARIA APG grid link to `useTagGroup` docs - [@mehm8128](https://github.com/mehm8128) - [PR](https://github.com/adobe/react-spectrum/pull/7367)
+- Update CodeSandbox templates in `useDatePicker` and `useDateRangePicker` - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7342)
+- Fix `DisclosureGroup` anatomy diagram SVG clipping on mobile - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7323)
+- Update contribution guide - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7253)
+- Update `Accordion` and `DisclosureGroup` docs - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7273)
+- Add Tailwind starter for `Disclosure` and `DisclosureGroup` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7166)
+- Update `Accordion`, `Disclosure`, `DisclosureGroup` docs - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7165)
+- Fix typo on `ProgressBar` docs - [@mehm8128](https://github.com/mehm8128) - [PR](https://github.com/adobe/react-spectrum/pull/7373)
+- Add `Disclosure` hook docs - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7178)
+- Add Q&A section to contribution guide - [@unional](https://github.com/unional) - [PR](https://github.com/adobe/react-spectrum/pull/6951)
+- Fix Tailwind starter `Submenu` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7251)
+- Add `Accordion` to example apps - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7296)
+- Fix disabled `Tag` styles in RAC Tailwind starter - [@steveoh](https://github.com/steveoh) - [PR](https://github.com/adobe/react-spectrum/pull/7247)
+
+## Under Construction
+
+TODO
+
+### Accordion updates
+
+We have made improvements to the Accordion component, which includes moving away from the Collection API in favor of wrapping `Disclosure` components, which can be used standalone. This includes a few breaking changes.
+- `Item` has been replaced with the `Disclosure` component, which consists of two children: `DisclosureTitle` and `DisclosurePanel`
+- `title` on `Item` is now a child of `DisclosureTitle`
+- Children of `Item` is now children of `DisclosurePanel`
+- `key` on `Item` is now `id` on `Disclosure`
+- `disabledKeys` has been removed in favor of adding `isDisabled` on individual `Disclosure` components
+- `allowsMultipleExpanded` can be added to allow multiple Disclosure components to be expanded at once (previously default behavior)
+
+## Released packages
+
+TODO
