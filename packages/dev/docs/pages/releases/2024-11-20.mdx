@@ -19,7 +19,27 @@ date: 2024-11-20
 
 # November 20, 2024 Release
 
-TODO
+We’re excited to announce that our Accordion and Disclosure components are now generally available! This includes [Disclosure](/react-aria/Disclosure.html) and [DisclosureGroup](/react-aria/DisclosureGroup.html) in React Aria, as well as [Disclosure](/react-spectrum/Disclosure.html) and [Accordion](/react-spectrum/Accordion.html) in React Spectrum.
+
+We are also excited to introduce the [ToggleButtonGroup](/react-aria/ToggleButtonGroup.html) component, as well as [Section-level selection groups](/react-aria/Menu.html#section-level-selection) in Menu.
+
+Additionally, we are excited to announce that React Spectrum and React Aria are now [Typescript Strict](https://www.typescriptlang.org/tsconfig/#strict) compliant.
+
+As always, thanks to everyone in our community for your feedback and contributions! ❤️
+
+**Typescript Strict notice**
+
+React Spectrum and React Aria are now [Typescript Strict](https://www.typescriptlang.org/tsconfig/#strict) compliant. This has been an extremely large, multi-year effort. We thank you for your patience and for you understanding when it comes to how this affects your applications. The benefit is that our code will now run more predictably and places we were making assumptions about `null` vs `undefined` are now spelled out.
+
+**Accordion API updates**
+
+With the GA release of our Accordion component, we have moved away from the Collection API in favor of wrapping `Disclosure` components, which can be used standalone. This includes a few breaking changes.
+- `Item` has been replaced with the `Disclosure` component, which consists of two children: `DisclosureTitle` and `DisclosurePanel`
+- `title` on `Item` is now a child of `DisclosureTitle`
+- Children of `Item` is now children of `DisclosurePanel`
+- `key` on `Item` is now `id` on `Disclosure`
+- `disabledKeys` has been removed in favor of adding `isDisabled` on individual `Disclosure` components
+- `allowsMultipleExpanded` can be added to allow multiple `Disclosure` components to be expanded at once (previously default behavior)
 
 ## Enhancements
 
@@ -87,16 +107,6 @@ TODO
 ## Under Construction
 
 TODO
-
-### Accordion updates
-
-We have made improvements to the Accordion component, which includes moving away from the Collection API in favor of wrapping `Disclosure` components, which can be used standalone. This includes a few breaking changes.
-- `Item` has been replaced with the `Disclosure` component, which consists of two children: `DisclosureTitle` and `DisclosurePanel`
-- `title` on `Item` is now a child of `DisclosureTitle`
-- Children of `Item` is now children of `DisclosurePanel`
-- `key` on `Item` is now `id` on `Disclosure`
-- `disabledKeys` has been removed in favor of adding `isDisabled` on individual `Disclosure` components
-- `allowsMultipleExpanded` can be added to allow multiple Disclosure components to be expanded at once (previously default behavior)
 
 ## Released packages
 
