@@ -28,23 +28,25 @@ export class ReusableView<T extends object, V> {
   layoutInfo: LayoutInfo | null;
 
   /** The content currently being displayed by this view, set by the virtualizer. */
-  content: T;
+  content: T | null;
 
-  rendered: V;
+  rendered: V | null;
 
   viewType: string;
   key: Key;
 
-  parent: ReusableView<T, V> | null;
-  children: Set<ReusableView<T, V>>;
-  reusableViews: Map<string, ReusableView<T, V>[]>;
+  children: Set<ChildView<T, V>>;
+  reusableViews: Map<string, ChildView<T, V>[]>;
 
-  constructor(virtualizer: Virtualizer<T, V>) {
+  constructor(virtualizer: Virtualizer<T, V>, viewType: string) {
     this.virtualizer = virtualizer;
     this.key = ++KEY;
-    this.parent = null;
+    this.viewType = viewType;
     this.children = new Set();
     this.reusableViews = new Map();
+    this.layoutInfo = null;
+    this.content = null;
+    this.rendered = null;
   }
 
   /**
@@ -62,16 +64,14 @@ export class ReusableView<T extends object, V> {
     // The cells within a row are removed from their parent in order. If the row is reused, the cells
     // should be reused in the new row in the same order they were before.
     let reusable = this.reusableViews.get(reuseType);
-    let view = reusable?.length > 0
-      ? reusable.shift()
-      : new ReusableView<T, V>(this.virtualizer);
+    let view = reusable && reusable.length > 0
+      ? reusable.shift()!
+      : new ChildView<T, V>(this.virtualizer, this, reuseType);
 
-    view.viewType = reuseType;
-    view.parent = this;
     return view;
   }
 
-  reuseChild(child: ReusableView<T, V>) {
+  reuseChild(child: ChildView<T, V>) {
     child.prepareForReuse();
     let reusable = this.reusableViews.get(child.viewType);
     if (!reusable) {
@@ -79,5 +79,20 @@ export class ReusableView<T extends object, V> {
       this.reusableViews.set(child.viewType, reusable);
     }
     reusable.push(child);
+  }
+}
+
+export class RootView<T extends object, V> extends ReusableView<T, V> {
+  constructor(virtualizer: Virtualizer<T, V>) {
+    super(virtualizer, 'root');
+  }
+}
+
+export class ChildView<T extends object, V> extends ReusableView<T, V> {
+  parent: ReusableView<T, V>;
+
+  constructor(virtualizer: Virtualizer<T, V>, parent: ReusableView<T, V>, viewType: string) {
+    super(virtualizer, viewType);
+    this.parent = parent;
   }
 }

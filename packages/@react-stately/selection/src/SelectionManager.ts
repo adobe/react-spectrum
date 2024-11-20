@@ -38,7 +38,7 @@ export class SelectionManager implements MultipleSelectionManager {
   collection: Collection<Node<unknown>>;
   private state: MultipleSelectionState;
   private allowsCellSelection: boolean;
-  private _isSelectAll: boolean;
+  private _isSelectAll: boolean | null;
   private layoutDelegate: LayoutDelegate | null;
 
   constructor(collection: Collection<Node<unknown>>, state: MultipleSelectionState, options?: SelectionManagerOptions) {
@@ -94,12 +94,12 @@ export class SelectionManager implements MultipleSelectionManager {
   /**
    * The current focused key in the collection.
    */
-  get focusedKey(): Key {
+  get focusedKey(): Key | null {
     return this.state.focusedKey;
   }
 
   /** Whether the first or last child of the focused key should receive focus. */
-  get childFocusStrategy(): FocusStrategy {
+  get childFocusStrategy(): FocusStrategy | null {
     return this.state.childFocusStrategy;
   }
 
@@ -137,10 +137,13 @@ export class SelectionManager implements MultipleSelectionManager {
       return false;
     }
 
-    key = this.getKey(key);
+    let mappedKey = this.getKey(key);
+    if (mappedKey == null) {
+      return false;
+    }
     return this.state.selectedKeys === 'all'
-      ? this.canSelectItem(key)
-      : this.state.selectedKeys.has(key);
+      ? this.canSelectItem(mappedKey)
+      : this.state.selectedKeys.has(mappedKey);
   }
 
   /**
@@ -181,7 +184,7 @@ export class SelectionManager implements MultipleSelectionManager {
       }
     }
 
-    return first?.key;
+    return first?.key ?? null;
   }
 
   get lastSelectedKey(): Key | null {
@@ -193,7 +196,7 @@ export class SelectionManager implements MultipleSelectionManager {
       }
     }
 
-    return last?.key;
+    return last?.key ?? null;
   }
 
   get disabledKeys(): Set<Key> {
@@ -217,22 +220,25 @@ export class SelectionManager implements MultipleSelectionManager {
       return;
     }
 
-    toKey = this.getKey(toKey);
+    let mappedToKey = this.getKey(toKey);
+    if (mappedToKey == null) {
+      return;
+    }
 
     let selection: Selection;
 
     // Only select the one key if coming from a select all.
     if (this.state.selectedKeys === 'all') {
-      selection = new Selection([toKey], toKey, toKey);
+      selection = new Selection([mappedToKey], mappedToKey, mappedToKey);
     } else {
       let selectedKeys = this.state.selectedKeys as Selection;
-      let anchorKey = selectedKeys.anchorKey ?? toKey;
-      selection = new Selection(selectedKeys, anchorKey, toKey);
-      for (let key of this.getKeyRange(anchorKey, selectedKeys.currentKey ?? toKey)) {
+      let anchorKey = selectedKeys.anchorKey ?? mappedToKey;
+      selection = new Selection(selectedKeys, anchorKey, mappedToKey);
+      for (let key of this.getKeyRange(anchorKey, selectedKeys.currentKey ?? mappedToKey)) {
         selection.delete(key);
       }
 
-      for (let key of this.getKeyRange(toKey, anchorKey)) {
+      for (let key of this.getKeyRange(mappedToKey, anchorKey)) {
         if (this.canSelectItem(key)) {
           selection.add(key);
         }
@@ -262,10 +268,10 @@ export class SelectionManager implements MultipleSelectionManager {
     }
 
     let keys: Key[] = [];
-    let key = from;
+    let key: Key | null = from;
     while (key != null) {
       let item = this.collection.getItem(key);
-      if (item && item.type === 'item' || (item.type === 'cell' && this.allowsCellSelection)) {
+      if (item && (item.type === 'item' || (item.type === 'cell' && this.allowsCellSelection))) {
         keys.push(key);
       }
 
@@ -292,7 +298,7 @@ export class SelectionManager implements MultipleSelectionManager {
     }
 
     // Find a parent item to select
-    while (item.type !== 'item' && item.parentKey != null) {
+    while (item && item.type !== 'item' && item.parentKey != null) {
       item = this.collection.getItem(item.parentKey);
     }
 
@@ -316,20 +322,20 @@ export class SelectionManager implements MultipleSelectionManager {
       return;
     }
 
-    key = this.getKey(key);
-    if (key == null) {
+    let mappedKey = this.getKey(key);
+    if (mappedKey == null) {
       return;
     }
 
     let keys = new Selection(this.state.selectedKeys === 'all' ? this.getSelectAllKeys() : this.state.selectedKeys);
-    if (keys.has(key)) {
-      keys.delete(key);
+    if (keys.has(mappedKey)) {
+      keys.delete(mappedKey);
       // TODO: move anchor to last selected key...
       // Does `current` need to move here too?
-    } else if (this.canSelectItem(key)) {
-      keys.add(key);
-      keys.anchorKey = key;
-      keys.currentKey = key;
+    } else if (this.canSelectItem(mappedKey)) {
+      keys.add(mappedKey);
+      keys.anchorKey = mappedKey;
+      keys.currentKey = mappedKey;
     }
 
     if (this.disallowEmptySelection && keys.size === 0) {
@@ -347,13 +353,13 @@ export class SelectionManager implements MultipleSelectionManager {
       return;
     }
 
-    key = this.getKey(key);
-    if (key == null) {
+    let mappedKey = this.getKey(key);
+    if (mappedKey == null) {
       return;
     }
 
-    let selection = this.canSelectItem(key)
-      ? new Selection([key], key, key)
+    let selection = this.canSelectItem(mappedKey)
+      ? new Selection([mappedKey], mappedKey, mappedKey)
       : new Selection();
 
     this.state.setSelectedKeys(selection);
@@ -369,9 +375,9 @@ export class SelectionManager implements MultipleSelectionManager {
 
     let selection = new Selection();
     for (let key of keys) {
-      key = this.getKey(key);
-      if (key != null) {
-        selection.add(key);
+      let mappedKey = this.getKey(key);
+      if (mappedKey != null) {
+        selection.add(mappedKey);
         if (this.selectionMode === 'single') {
           break;
         }
@@ -383,17 +389,17 @@ export class SelectionManager implements MultipleSelectionManager {
 
   private getSelectAllKeys() {
     let keys: Key[] = [];
-    let addKeys = (key: Key) => {
+    let addKeys = (key: Key | null) => {
       while (key != null) {
         if (this.canSelectItem(key)) {
           let item = this.collection.getItem(key);
-          if (item.type === 'item') {
+          if (item?.type === 'item') {
             keys.push(key);
           }
 
           // Add child keys. If cell selection is allowed, then include item children too.
-          if (item.hasChildNodes && (this.allowsCellSelection || item.type !== 'item')) {
-            addKeys(getFirstItem(getChildNodes(item, this.collection)).key);
+          if (item?.hasChildNodes && (this.allowsCellSelection || item.type !== 'item')) {
+            addKeys(getFirstItem(getChildNodes(item, this.collection))?.key ?? null);
           }
         }
 

@@ -101,7 +101,7 @@ export const DragWithinScroll: ListViewStory = {
   name: 'Drag within list scrolling (Reorder)'
 };
 
-let manyItems = [];
+let manyItems: {id: string, type: string, textValue: string}[] = [];
 for (let i = 0; i < 100; i++) {
   manyItems.push({id: 'item' + i, type: 'item', textValue: 'Item ' + i});
 }

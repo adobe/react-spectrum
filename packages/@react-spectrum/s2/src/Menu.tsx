@@ -42,7 +42,7 @@ import {ImageContext} from './Image';
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {mergeStyles} from '../style/runtime';
 import {Placement, useLocale} from 'react-aria';
-import {Popover} from './Popover';
+import {PopoverBase} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -98,12 +98,18 @@ export let menu = style({
   },
   boxSizing: 'border-box',
   maxHeight: '[inherit]',
-  maxWidth: 320,
-  overflow: 'auto',
-  padding: 8,
+  overflow: {
+    isPopover: 'auto'
+  },
+  maxWidth: {
+    isPopover: 320
+  },
+  padding: {
+    isPopover: 8
+  },
   fontFamily: 'sans',
   fontSize: 'control'
-});
+}, getAllowedOverrides());
 
 export let section = style({
   gridColumnStart: 1,
@@ -304,7 +310,7 @@ let descriptor = style({
 });
 
 let InternalMenuContext = createContext<{size: 'S' | 'M' | 'L' | 'XL', isSubmenu: boolean}>({size: 'M', isSubmenu: false});
-let InternalMenuTriggerContext = createContext<Omit<MenuTriggerProps, 'children'>>({});
+let InternalMenuTriggerContext = createContext<Omit<MenuTriggerProps, 'children'> | null>(null);
 
 function Menu<T extends object>(props: MenuProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, MenuContext);
@@ -316,7 +322,8 @@ function Menu<T extends object>(props: MenuProps<T>, ref: DOMRef<HTMLDivElement>
     UNSAFE_className,
     styles
   } = props;
-  let {align = 'start', direction = 'bottom', shouldFlip} = useContext(InternalMenuTriggerContext);
+  let ctx = useContext(InternalMenuTriggerContext);
+  let {align = 'start', direction = 'bottom', shouldFlip} = ctx ?? {};
 
   // TODO: change offset/crossoffset based on size? scale?
   // actual values?
@@ -337,40 +344,48 @@ function Menu<T extends object>(props: MenuProps<T>, ref: DOMRef<HTMLDivElement>
     initialPlacement = 'end top' as Placement;
   }
 
-  return (
-    <Popover
-      ref={ref}
-      hideArrow
-      placement={initialPlacement}
-      shouldFlip={shouldFlip}
-      // For submenus, the offset from the edge of the popover should be 10px.
-      // Subtract 8px for the padding around the parent menu.
-      offset={isSubmenu ? -2 : 8}
-      // Offset by padding + border so that the first item in a submenu lines up with the parent menu item.
-      crossOffset={isSubmenu ? -9 : 0}
-      UNSAFE_style={UNSAFE_style}
-      UNSAFE_className={UNSAFE_className}
-      styles={styles}>
-      <InternalMenuContext.Provider value={{size, isSubmenu: true}}>
-        <Provider
-          values={[
-            [HeaderContext, {styles: sectionHeader({size})}],
-            [HeadingContext, {styles: sectionHeading}],
-            [TextContext, {
-              slots: {
-                'description': {styles: description({size})}
-              }
-            }]
-          ]}>
-          <AriaMenu
-            {...props}
-            className={menu({size})}>
-            {children}
-          </AriaMenu>
-        </Provider>
-      </InternalMenuContext.Provider>
-    </Popover>
+  let content = (
+    <InternalMenuContext.Provider value={{size, isSubmenu: true}}>
+      <Provider
+        values={[
+          [HeaderContext, {styles: sectionHeader({size})}],
+          [HeadingContext, {styles: sectionHeading}],
+          [TextContext, {
+            slots: {
+              'description': {styles: description({size})}
+            }
+          }]
+        ]}>
+        <AriaMenu
+          {...props}
+          className={menu({size, isPopover: !!ctx || isSubmenu}, ctx ? null : styles)}>
+          {children}
+        </AriaMenu>
+      </Provider>
+    </InternalMenuContext.Provider>
   );
+
+  if (ctx || isSubmenu) {
+    return (
+      <PopoverBase
+        ref={ref}
+        hideArrow
+        placement={initialPlacement}
+        shouldFlip={shouldFlip}
+        // For submenus, the offset from the edge of the popover should be 10px.
+        // Subtract 8px for the padding around the parent menu.
+        offset={isSubmenu ? -2 : 8}
+        // Offset by padding + border so that the first item in a submenu lines up with the parent menu item.
+        crossOffset={isSubmenu ? -9 : 0}
+        UNSAFE_style={UNSAFE_style}
+        UNSAFE_className={UNSAFE_className}
+        styles={styles}>
+        {content}
+      </PopoverBase>
+    );
+  }
+
+  return content;
 }
 
 /**

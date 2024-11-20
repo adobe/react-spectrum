@@ -13,7 +13,11 @@
 // Keeps a ref count of all hidden elements. Added to when hiding an element, and
 // subtracted from when showing it again. When it reaches zero, aria-hidden is removed.
 let refCountMap = new WeakMap<Element, number>();
-let observerStack = [];
+interface ObserverWrapper {
+  observe: () => void,
+  disconnect: () => void
+}
+let observerStack: Array<ObserverWrapper> = [];
 
 /**
  * Hides all elements in the DOM outside the given targets from screen readers using aria-hidden,
@@ -40,7 +44,7 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
       // For that case we want to hide the cells inside as well (https://bugs.webkit.org/show_bug.cgi?id=222623).
       if (
         visibleNodes.has(node) ||
-        (hiddenNodes.has(node.parentElement) && node.parentElement.getAttribute('role') !== 'row')
+        (node.parentElement && hiddenNodes.has(node.parentElement) && node.parentElement.getAttribute('role') !== 'row')
       ) {
         return NodeFilter.FILTER_REJECT;
       }
@@ -133,7 +137,7 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
 
   observer.observe(root, {childList: true, subtree: true});
 
-  let observerWrapper = {
+  let observerWrapper: ObserverWrapper = {
     observe() {
       observer.observe(root, {childList: true, subtree: true});
     },
@@ -149,6 +153,9 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
 
     for (let node of hiddenNodes) {
       let count = refCountMap.get(node);
+      if (count == null) {
+        continue;
+      }
       if (count === 1) {
         node.removeAttribute('aria-hidden');
         refCountMap.delete(node);

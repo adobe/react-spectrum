@@ -66,7 +66,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   let id = useId();
   let isResizing = state.resizingColumn === item.key;
   let isResizingRef = useRef(isResizing);
-  let lastSize = useRef(null);
+  let lastSize = useRef<Map<Key, ColumnSize> | null>(null);
   let wasFocusedOnResizeStart = useRef(false);
   let editModeEnabled = state.tableState.isKeyboardNavigationDisabled;
 
@@ -158,7 +158,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
 
   let onKeyDown = useCallback((e) => {
     if (editModeEnabled) {
-      moveProps.onKeyDown(e);
+      moveProps.onKeyDown?.(e);
     }
   }, [editModeEnabled, moveProps]);
 
@@ -169,7 +169,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
     max = Number.MAX_SAFE_INTEGER;
   }
   let value = Math.floor(state.getColumnWidth(item.key));
-  let modality: string = useInteractionModality();
+  let modality: string | null = useInteractionModality();
   if (modality === 'virtual' &&  (typeof window !== 'undefined' && 'ontouchstart' in window)) {
     modality = 'touch';
   }
@@ -194,7 +194,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   }, [ref]);
 
   let resizingColumn = state.resizingColumn;
-  let prevResizingColumn = useRef(null);
+  let prevResizingColumn = useRef<Key | null>(null);
   useEffect(() => {
     if (prevResizingColumn.current !== resizingColumn && resizingColumn != null && resizingColumn === item.key) {
       wasFocusedOnResizeStart.current = document.activeElement === ref.current;

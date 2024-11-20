@@ -62,7 +62,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
     renderEmptyState = () => stringFormatter.format('noTags')
   } = props;
   let domRef = useDOMRef(ref);
-  let containerRef = useRef(null);
+  let containerRef = useRef<HTMLDivElement>(null);
   let tagsRef = useRef<HTMLDivElement | null>(null);
   let {direction} = useLocale();
   let {scale} = useProvider();
@@ -85,7 +85,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   delete props.onAction;
   let {gridProps, labelProps, descriptionProps, errorMessageProps} = useTagGroup({...props, keyboardDelegate}, state, tagsRef);
   let actionsId = useId();
-  let actionsRef = useRef(null);
+  let actionsRef = useRef<HTMLDivElement>(null);
 
   let updateVisibleTagCount = useCallback(() => {
     if (maxRows && maxRows > 0) {
@@ -124,7 +124,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
 
         // Remove tags until there is space for the collapse button and action button (if present) on the last row.
         let buttons = [...currActionsRef.children];
-        if (maxRows && buttons.length > 0 && rowCount >= maxRows) {
+        if (maxRows && buttons.length > 0 && rowCount >= maxRows && currContainerRef.parentElement) {
           let buttonsWidth = buttons.reduce((acc, curr) => acc += curr.getBoundingClientRect().width, 0);
           buttonsWidth += TAG_STYLES[scale].margin * 2 * buttons.length;
           let end = direction === 'ltr' ? 'right' : 'left';
@@ -134,7 +134,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
           let availableWidth = containerEnd - lastTagEnd;
 
           while (availableWidth < buttonsWidth && index > 0) {
-            availableWidth += tagWidths.pop();
+            availableWidth += tagWidths.pop()!;
             index--;
           }
         }

@@ -29,10 +29,10 @@ export interface AsyncListOptions<T, C> {
    * An optional function that performs sorting. If not provided,
    * then `sortDescriptor` is passed to the `load` function.
    */
-  sort?: AsyncListLoadFunction<T, C>
+  sort?: AsyncListLoadFunction<T, C, AsyncListLoadOptions<T, C> & {sortDescriptor: SortDescriptor}>
 }
 
-type AsyncListLoadFunction<T, C> = (state: AsyncListLoadOptions<T, C>) => AsyncListStateUpdate<T, C> | Promise<AsyncListStateUpdate<T, C>>;
+type AsyncListLoadFunction<T, C, S extends AsyncListLoadOptions<T, C> = AsyncListLoadOptions<T, C>> = (state: S) => AsyncListStateUpdate<T, C> | Promise<AsyncListStateUpdate<T, C>>;
 
 interface AsyncListLoadOptions<T, C> {
   /** The items currently in the list. */
@@ -40,7 +40,7 @@ interface AsyncListLoadOptions<T, C> {
   /** The keys of the currently selected items in the list. */
   selectedKeys: Selection,
   /** The current sort descriptor for the list. */
-  sortDescriptor: SortDescriptor,
+  sortDescriptor?: SortDescriptor,
   /** An abort signal used to notify the load function that the request has been aborted. */
   signal: AbortSignal,
   /** The pagination cursor returned from the last page load. */
@@ -133,7 +133,7 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
         case 'update':
           return {
             ...data,
-            ...action.updater(data)
+            ...action.updater?.(data)
           };
         case 'success':
         case 'error':
@@ -158,10 +158,10 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
             ...data,
             filterText: action.filterText ?? data.filterText,
             state: 'idle',
-            items: [...action.items],
+            items: [...(action.items) ?? []],
             selectedKeys: selectedKeys === 'all' ? 'all' : new Set(selectedKeys),
             sortDescriptor: action.sortDescriptor ?? data.sortDescriptor,
-            abortController: null,
+            abortController: undefined,
             cursor: action.cursor
           };
         case 'error':
@@ -173,7 +173,7 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
             ...data,
             state: 'error',
             error: action.error,
-            abortController: null
+            abortController: undefined
           };
         case 'loading':
         case 'loadingMore':
@@ -181,7 +181,7 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
         case 'filtering':
           // We're already loading, and another load was triggered at the same time.
           // We need to abort the previous load and start a new one.
-          data.abortController.abort();
+          data.abortController?.abort();
           return {
             ...data,
             filterText: action.filterText ?? data.filterText,
@@ -195,7 +195,7 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
           // Update data but don't abort previous load.
           return {
             ...data,
-            ...action.updater(data)
+            ...action.updater?.(data)
           };
         default:
           throw new Error(`Invalid action "${action.type}" in state "${data.state}"`);
@@ -210,10 +210,10 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
           return {
             ...data,
             state: 'idle',
-            items: [...data.items, ...action.items],
+            items: [...data.items, ...(action.items ?? [])],
             selectedKeys,
             sortDescriptor: action.sortDescriptor ?? data.sortDescriptor,
-            abortController: null,
+            abortController: undefined,
             cursor: action.cursor
           };
         case 'error':
@@ -231,7 +231,7 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
         case 'filtering':
           // We're already loading more, and another load was triggered at the same time.
           // We need to abort the previous load more and start a new one.
-          data.abortController.abort();
+          data.abortController?.abort();
           return {
             ...data,
             filterText: action.filterText ?? data.filterText,
@@ -244,7 +244,7 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
           // If already loading more and another loading more is triggered, abort the new load more since
           // it is a duplicate request since the cursor hasn't been updated.
           // Do not overwrite the data.abortController
-          action.abortController.abort();
+          action.abortController?.abort();
 
           return data;
         case 'update':
@@ -252,7 +252,7 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
           // Update data but don't abort previous load.
           return {
             ...data,
-            ...action.updater(data)
+            ...action.updater?.(data)
           };
         default:
           throw new Error(`Invalid action "${action.type}" in state "${data.state}"`);
@@ -278,7 +278,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
 
   let [data, dispatch] = useReducer<AsyncListState<T, C>, [Action<T, C>]>(reducer, {
     state: 'idle',
-    error: null,
+    error: undefined,
     items: [],
     selectedKeys: initialSelectedKeys === 'all' ? 'all' : new Set(initialSelectedKeys),
     sortDescriptor: initialSortDescriptor,
@@ -296,7 +296,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
         selectedKeys: data.selectedKeys,
         sortDescriptor: action.sortDescriptor ?? data.sortDescriptor,
         signal: abortController.signal,
-        cursor: action.type === 'loadingMore' ? data.cursor : null,
+        cursor: action.type === 'loadingMore' ? data.cursor : undefined,
         filterText: previousFilterText
       });
 
@@ -309,7 +309,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
         dispatchFetch({type: 'filtering', filterText}, load);
       }
     } catch (e) {
-      dispatch({type: 'error', error: e, abortController});
+      dispatch({type: 'error', error: e as Error, abortController});
     }
   };
 
@@ -345,7 +345,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
       dispatchFetch({type: 'loadingMore'}, load);
     },
     sort(sortDescriptor: SortDescriptor) {
-      dispatchFetch({type: 'sorting', sortDescriptor}, sort || load);
+      dispatchFetch({type: 'sorting', sortDescriptor}, (sort || load) as AsyncListLoadFunction<T, C>);
     },
     ...createListActions({...options, getKey, cursor: data.cursor}, fn => {
       dispatch({type: 'update', updater: fn});

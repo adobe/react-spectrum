@@ -20,7 +20,7 @@ keywords: [disclosure, accordion, collapse, expand]
 ---
 
 ```jsx import
-import {Accordion, Disclosure, DisclosureHeader, DisclosurePanel} from '@react-spectrum/accordion';
+import {Accordion, Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/accordion';
 ```
 
 # Accordion
@@ -29,20 +29,20 @@ import {Accordion, Disclosure, DisclosureHeader, DisclosurePanel} from '@react-s
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Accordion', 'Disclosure', 'DisclosureHeader', 'DisclosurePanel']} />
+  componentNames={['Accordion', 'Disclosure', 'DisclosureTitle', 'DisclosurePanel']} />
 
 ## Example
 
 ```tsx example
 <Accordion defaultExpandedKeys={['personal']}>
   <Disclosure id="personal">
-    <DisclosureHeader>Personal Information</DisclosureHeader>
+    <DisclosureTitle>Personal Information</DisclosureTitle>
     <DisclosurePanel>
       Personal information form here.
     </DisclosurePanel>
   </Disclosure>
   <Disclosure id="billing">
-    <DisclosureHeader>Billing Address</DisclosureHeader>
+    <DisclosureTitle>Billing Address</DisclosureTitle>
     <DisclosurePanel>
       Billing address form here.
     </DisclosurePanel>
@@ -72,13 +72,13 @@ function ControlledExpansion() {
     <>
       <Accordion expandedKeys={expandedKeys} onExpandedChange={setExpandedKeys}>
         <Disclosure id="personal">
-          <DisclosureHeader>Personal Information</DisclosureHeader>
+          <DisclosureTitle>Personal Information</DisclosureTitle>
           <DisclosurePanel>
             Personal information form here.
           </DisclosurePanel>
         </Disclosure>
         <Disclosure id="billing">
-          <DisclosureHeader>Billing Address</DisclosureHeader>
+          <DisclosureTitle>Billing Address</DisclosureTitle>
           <DisclosurePanel>
             Billing address form here.
           </DisclosurePanel>
@@ -97,13 +97,13 @@ By default, only one disclosure will be expanded at a time. To expand multiple d
 ```tsx example
 <Accordion allowsMultipleExpanded defaultExpandedKeys={['personal', 'billing']}>
   <Disclosure id="personal">
-    <DisclosureHeader>Personal Information</DisclosureHeader>
+    <DisclosureTitle>Personal Information</DisclosureTitle>
     <DisclosurePanel>
       Personal information form here.
     </DisclosurePanel>
   </Disclosure>
   <Disclosure id="billing">
-    <DisclosureHeader>Billing Address</DisclosureHeader>
+    <DisclosureTitle>Billing Address</DisclosureTitle>
     <DisclosurePanel>
       Billing address form here.
     </DisclosurePanel>
@@ -120,9 +120,9 @@ By default, only one disclosure will be expanded at a time. To expand multiple d
 
 <PropTable component={docs.exports.Disclosure} links={docs.links} />
 
-### Disclosure Header
+### Disclosure Title
 
-<PropTable component={docs.exports.DisclosureHeader} links={docs.links} />
+<PropTable component={docs.exports.DisclosureTitle} links={docs.links} />
 
 ### Disclosure Panel
 
@@ -135,13 +135,13 @@ By default, only one disclosure will be expanded at a time. To expand multiple d
 ```tsx example
 <Accordion isDisabled>
   <Disclosure id="personal">
-    <DisclosureHeader>Personal Information</DisclosureHeader>
+    <DisclosureTitle>Personal Information</DisclosureTitle>
     <DisclosurePanel>
       Personal information form here.
     </DisclosurePanel>
   </Disclosure>
   <Disclosure id="billing">
-    <DisclosureHeader>Billing Address</DisclosureHeader>
+    <DisclosureTitle>Billing Address</DisclosureTitle>
     <DisclosurePanel>
       Billing address form here.
     </DisclosurePanel>
@@ -154,13 +154,13 @@ By default, only one disclosure will be expanded at a time. To expand multiple d
 ```tsx example
 <Accordion isQuiet>
   <Disclosure id="personal">
-    <DisclosureHeader>Personal Information</DisclosureHeader>
+    <DisclosureTitle>Personal Information</DisclosureTitle>
     <DisclosurePanel>
       Personal information form here.
     </DisclosurePanel>
   </Disclosure>
   <Disclosure id="billing">
-    <DisclosureHeader>Billing Address</DisclosureHeader>
+    <DisclosureTitle>Billing Address</DisclosureTitle>
     <DisclosurePanel>
       Billing address form here.
     </DisclosurePanel>

@@ -35,7 +35,7 @@ export const bar = () => ({
   alignItems: 'baseline',
   isolation: 'isolate',
   minWidth: 48, // progress-bar-minimum-width
-  maxWidth: '[768px]', // progress-bar-maximum-width
+  maxWidth: 768, // progress-bar-maximum-width
   '--field-height': {
     type: 'height',
     value: 'control'

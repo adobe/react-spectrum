@@ -187,7 +187,7 @@ export function fromAbsolute(ms: number, timeZone: string): ZonedDateTime {
   let second = date.getUTCSeconds();
   let millisecond = date.getUTCMilliseconds();
 
-  return new ZonedDateTime(year, month, day, timeZone, offset, hour, minute, second, millisecond);
+  return new ZonedDateTime(year < 1 ? 'BC' : 'AD', year < 1 ? -year + 1 : year, month, day, timeZone, offset, hour, minute, second, millisecond);
 }
 
 /**

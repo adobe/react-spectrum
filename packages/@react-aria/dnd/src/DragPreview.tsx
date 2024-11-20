@@ -15,7 +15,7 @@ import {flushSync} from 'react-dom';
 import React, {ForwardedRef, JSX, useEffect, useImperativeHandle, useRef, useState} from 'react';
 
 export interface DragPreviewProps {
-  children: (items: DragItem[]) => JSX.Element
+  children: (items: DragItem[]) => JSX.Element | null
 }
 
 function DragPreview(props: DragPreviewProps, ref: ForwardedRef<DragPreviewRenderer | null>) {

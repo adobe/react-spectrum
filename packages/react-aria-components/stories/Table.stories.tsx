@@ -30,10 +30,10 @@ const ReorderableTable = ({initialItems}: {initialItems: {id: string, name: stri
 
   const {dragAndDropHooks} = useDragAndDrop({
     getItems: keys => {
-      return [...keys].map(k => {
+      return [...keys].filter(k => !!list.getItem(k)).map(k => {
         const item = list.getItem(k);
         return {
-          'text/plain': item.id,
+          'text/plain': item!.id,
           item: JSON.stringify(item)
         };
       });
@@ -254,11 +254,11 @@ export const DndTable = (props: DndTableProps) => {
     isDisabled: props.isDisabled,
     // Provide drag data in a custom format as well as plain text.
     getItems(keys) {
-      return [...keys].map((key) => {
+      return [...keys].filter(k => !!list.getItem(k)).map((key) => {
         let item = list.getItem(key);
         return {
           'custom-app-type': JSON.stringify(item),
-          'text/plain': item.name
+          'text/plain': item!.name
         };
       });
     },
@@ -629,7 +629,7 @@ export function VirtualizedTable() {
 
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => {
-      return [...keys].map(key => ({'text/plain': list.getItem(key).foo}));
+      return [...keys].filter(k => !!list.getItem(k)).map(key => ({'text/plain': list.getItem(key)!.foo}));
     },
     onReorder(e) {
       if (e.target.dropPosition === 'before') {

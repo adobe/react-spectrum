@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, DOMProps, FocusableElement, Key, LongPressEvent, PressEvent, RefObject} from '@react-types/shared';
+import {DOMAttributes, DOMProps, FocusableElement, Key, LongPressEvent, PointerType, PressEvent, RefObject} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
 import {mergeProps, openLink, UPDATE_ACTIVEDESCENDANT, useId, useRouter} from '@react-aria/utils';
@@ -131,7 +131,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       }
 
       if (manager.isLink(key)) {
-        if (linkBehavior === 'selection') {
+        if (linkBehavior === 'selection' && ref.current) {
           let itemProps = manager.getItemProps(key);
           router.open(ref.current, e, itemProps.href, itemProps.routerOptions);
           // Always set selected keys back to what they were so that select and combobox close.
@@ -166,7 +166,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       if (!shouldUseVirtualFocus) {
         if (focus) {
           focus();
-        } else if (document.activeElement !== ref.current) {
+        } else if (document.activeElement !== ref.current && ref.current) {
           focusSafely(ref.current);
         }
       } else {
@@ -221,7 +221,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   );
   let hasSecondaryAction = allowsActions && allowsSelection && manager.selectionBehavior === 'replace';
   let hasAction = hasPrimaryAction || hasSecondaryAction;
-  let modality = useRef(null);
+  let modality = useRef<PointerType | null>(null);
 
   let longPressEnabled = hasAction && allowsSelection;
   let longPressEnabledOnPressStart = useRef(false);
@@ -232,7 +232,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       onAction();
     }
 
-    if (hasLinkAction) {
+    if (hasLinkAction && ref.current) {
       let itemProps = manager.getItemProps(key);
       router.open(ref.current, e, itemProps.href, itemProps.routerOptions);
     }
@@ -270,13 +270,13 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         }
       };
     } else {
-      itemPressProps.onPressUp = hasPrimaryAction ? null : (e) => {
+      itemPressProps.onPressUp = hasPrimaryAction ? undefined : (e) => {
         if (e.pointerType !== 'keyboard' && allowsSelection) {
           onSelect(e);
         }
       };
 
-      itemPressProps.onPress = hasPrimaryAction ? performAction : null;
+      itemPressProps.onPress = hasPrimaryAction ? performAction : undefined;
     }
   } else {
     itemPressProps.onPressStart = (e) => {

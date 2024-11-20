@@ -12,8 +12,8 @@
 
 import {Collection, Key, RefObject} from '@react-types/shared';
 import {Layout, Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
-import {mergeProps, useLoadMore} from '@react-aria/utils';
-import React, {HTMLAttributes, ReactElement, ReactNode, useCallback, useRef} from 'react';
+import {mergeProps, useLoadMore, useObjectRef} from '@react-aria/utils';
+import React, {ForwardedRef, HTMLAttributes, ReactElement, ReactNode, useCallback} from 'react';
 import {ScrollView} from './ScrollView';
 import {VirtualizerItem} from './VirtualizerItem';
 
@@ -22,7 +22,7 @@ type RenderWrapper<T extends object, V> = (
   reusableView: ReusableView<T, V>,
   children: ReusableView<T, V>[],
   renderChildren: (views: ReusableView<T, V>[]) => ReactElement[]
-) => ReactElement;
+) => ReactElement | null;
 
 interface VirtualizerProps<T extends object, V, O> extends Omit<HTMLAttributes<HTMLElement>, 'children'> {
   children: (type: string, content: T) => V,
@@ -36,32 +36,31 @@ interface VirtualizerProps<T extends object, V, O> extends Omit<HTMLAttributes<H
   layoutOptions?: O
 }
 
-function Virtualizer<T extends object, V extends ReactNode, O>(props: VirtualizerProps<T, V, O>, ref: RefObject<HTMLDivElement | null>) {
+function Virtualizer<T extends object, V extends ReactNode, O>(props: VirtualizerProps<T, V, O>, forwardedRef: ForwardedRef<HTMLDivElement | null>) {
   let {
     children: renderView,
     renderWrapper,
     layout,
     collection,
     scrollDirection,
-     
     isLoading,
-     
     onLoadMore,
     persistedKeys,
     layoutOptions,
     ...otherProps
   } = props;
 
-  let fallbackRef = useRef<HTMLDivElement>(undefined);
-  ref = ref || fallbackRef;
+  let ref = useObjectRef(forwardedRef);
 
   let state = useVirtualizerState({
     layout,
     collection,
     renderView,
     onVisibleRectChange(rect) {
-      ref.current.scrollLeft = rect.x;
-      ref.current.scrollTop = rect.y;
+      if (ref.current) {
+        ref.current.scrollLeft = rect.x;
+        ref.current.scrollTop = rect.y;
+      }
     },
     persistedKeys,
     layoutOptions
@@ -108,7 +107,7 @@ function defaultRenderWrapper<T extends object, V extends ReactNode>(
   return (
     <VirtualizerItem
       key={reusableView.key}
-      layoutInfo={reusableView.layoutInfo}
+      layoutInfo={reusableView.layoutInfo!}
       virtualizer={reusableView.virtualizer}
       parent={parent?.layoutInfo}>
       {reusableView.rendered}

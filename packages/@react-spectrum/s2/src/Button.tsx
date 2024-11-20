@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, focusRing, fontRelative, size as sizeValue, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
 import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -378,8 +378,8 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
               styles={style({
                 size: {
                   size: {
-                    S: sizeValue(14),
-                    M: sizeValue(18),
+                    S: 14,
+                    M: 18,
                     L: 20,
                     XL: 24
                   }

@@ -46,10 +46,10 @@ export interface TableCellAria {
  */
 export function useTableCell<T>(props: AriaTableCellProps, state: TableState<T>, ref: RefObject<FocusableElement | null>): TableCellAria {
   let {gridCellProps, isPressed} = useGridCell(props, state, ref);
-  let columnKey = props.node.column.key;
-  if (state.collection.rowHeaderColumnKeys.has(columnKey)) {
+  let columnKey = props.node.column?.key;
+  if (columnKey != null && state.collection.rowHeaderColumnKeys.has(columnKey)) {
     gridCellProps.role = 'rowheader';
-    gridCellProps.id = getCellId(state, props.node.parentKey, columnKey);
+    gridCellProps.id = getCellId(state, props.node.parentKey!, columnKey);
   }
 
   return {

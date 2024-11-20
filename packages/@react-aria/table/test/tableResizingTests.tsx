@@ -31,7 +31,7 @@ let rows = [
 
 function getColumnWidths(tree) {
   let rows = tree.getAllByRole('row') as HTMLElement[];
-  return Array.from(rows[0].childNodes).map((cell: HTMLElement) => Number(cell.style.width.replace('px', '')));
+  return Array.from(rows[0].children).map(cell => Number((cell as HTMLElement).style.width.replace('px', '')));
 }
 
 export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol, resizeTable) => {

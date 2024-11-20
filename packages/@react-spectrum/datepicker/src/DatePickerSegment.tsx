@@ -50,7 +50,7 @@ function LiteralSegment({segment}: LiteralSegmentProps) {
 }
 
 function EditableSegment({segment, state}: DatePickerSegmentProps) {
-  let ref = useRef(undefined);
+  let ref = useRef<HTMLDivElement | null>(null);
   let {segmentProps} = useDateSegment(segment, state, ref);
 
   return (
