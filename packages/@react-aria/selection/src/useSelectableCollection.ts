@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CLEAR_FOCUS_EVENT, DELAY_UPDATE, FOCUS_EVENT, focusWithoutScrolling,  mergeProps, scrollIntoView, scrollIntoViewport, UPDATE_ACTIVEDESCENDANT, useEffectEvent, useEvent, useRouter} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, DELAY_UPDATE, FOCUS_EVENT, focusWithoutScrolling,  mergeProps, scrollIntoView, scrollIntoViewport, UPDATE_ACTIVEDESCENDANT, useEvent, useRouter} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, FocusStrategy, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {flushSync} from 'react-dom';
 import {FocusEvent, KeyboardEvent, useEffect, useRef} from 'react';
@@ -372,7 +372,16 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     }
   };
 
-  let focusCollection = useEffectEvent((e) => {
+  let onBlur = (e) => {
+    // Don't set blurred and then focused again if moving focus within the collection.
+    if (!e.currentTarget.contains(e.relatedTarget as HTMLElement)) {
+      manager.setFocused(false);
+    }
+  };
+
+  // Add event listeners for custom virtual events. These handle updating the focused key in response to various keyboard events
+  // at the autocomplete level
+  useEvent(ref, FOCUS_EVENT, (e: CustomEvent) => {
     if (shouldUseVirtualFocus) {
       let {detail} = e;
       e.stopPropagation();
@@ -414,31 +423,13 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     }
   });
 
-  let onBlur = (e) => {
-    // Don't set blurred and then focused again if moving focus within the collection.
-    if (!e.currentTarget.contains(e.relatedTarget as HTMLElement)) {
-      manager.setFocused(false);
-    }
-  };
-
-  let clearVirtualFocus = useEffectEvent((e) => {
+  useEvent(ref, CLEAR_FOCUS_EVENT, (e) => {
     if (shouldUseVirtualFocus) {
       e.stopPropagation();
       manager.setFocused(false);
       manager.setFocusedKey(null);
     }
   });
-
-  // TODO: replace with useEvent?
-  useEffect(() => {
-    let collection = ref.current;
-    collection?.addEventListener(FOCUS_EVENT, focusCollection);
-    collection?.addEventListener(CLEAR_FOCUS_EVENT, clearVirtualFocus);
-    return () => {
-      collection?.removeEventListener(FOCUS_EVENT, focusCollection);
-      collection?.removeEventListener(CLEAR_FOCUS_EVENT, clearVirtualFocus);
-    };
-  }, [ref, focusCollection, clearVirtualFocus]);
 
   const autoFocusRef = useRef(autoFocus);
   useEffect(() => {
