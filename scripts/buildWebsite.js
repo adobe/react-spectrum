@@ -167,7 +167,7 @@ async function build() {
   fs.writeFileSync(p, JSON.stringify(json, false, 2));
 
   // Build the website
-  await run('yarn', ['build'], {cwd: dir, stdio: 'inherit'});
+  await run('YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn', ['build'], {cwd: dir, stdio: 'inherit'});
 
   // Copy the build back into dist, and delete the temp dir.
   fs.copySync(path.join(dir, 'dist'), path.join(__dirname, '..', 'dist', 'production', 'docs'));
