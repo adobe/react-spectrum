@@ -56,7 +56,7 @@ jobs:
       - run:
           name: build
           command: |
-            yarn install --immutable && yarn install-19
+            yarn install-19
 
       - save_cache:
           paths:
