@@ -152,13 +152,14 @@ export function Migrating() {
           <li className={style({font: 'body', marginY: 8})}>If you are trying to create a fullscreen dialog use <Code>FullscreenDialog</Code></li>
           <li className={style({font: 'body', marginY: 8})}>If you are trying to create a popover dialog use <Code>Popover</Code></li>
           <li className={style({font: 'body', marginY: 8})}>Supports <Code>isKeyboardDismissDisabled</Code> in place of <Code>DialogTrigger</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Supports <Code>isDismissible</Code> in place of <Code>DialogTrigger</Code>. Note the fixed spelling from previous <Code>isDismissible</Code> prop.</li>
           <li className={style({font: 'body', marginY: 8})}>Supports <Code>role: "dialog" | "alertdialog"</Code></li>
         </ul>
 
         <H3>DialogContainer</H3>
         <ul className="sb-unstyled">
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>type</Code>, this is dependent on the dialog level child that you use (e.g. <Code>Dialog</Code>, <Code>FullscreenDialog</Code>, <Code>Popover</Code>)</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isDismissable</Code>, prop now exists on the dialog level component</li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isDismissable</Code>, prop now exists on the dialog level component as <Code>isDismissible</Code></li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>isKeyboardDismissDisabled</Code>, prop now exists on the dialog level component</li>
         </ul>
 
@@ -171,7 +172,7 @@ export function Migrating() {
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>containerPadding</Code>, prop now exists on the <Code>Popover</Code> component</li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>crossOffset</Code>, prop now exists on the <Code>Popover</Code> component</li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>hideArrow</Code>, prop now exists on the <Code>Popover</Code> component</li>
-          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isDismissable</Code>, prop now exists on the dialog level component</li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isDismissable</Code>, prop now exists on the dialog level component as <Code>isDismissible</Code></li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>isKeyboardDismissDisabled</Code>, prop now exists on the dialog level component</li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>offset</Code>, prop now exists on the <Code>Popover</Code> component</li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>placement</Code>, prop now exists on the <Code>Popover</Code> component</li>
