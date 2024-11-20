@@ -4,6 +4,45 @@ export default MDXLayout;
 
 # Release Notes
 
+## v0.5.0
+
+This version includes a major update to the way Dialogs are created. Previously, the Dialog API largely followed S1's Dialog's API
+where the DialogTrigger was responsible for rendering both modal and popover type dialogs. However, this limited the ability for end users
+to fully customize the internal layout and contents of their dialogs. To support this use case, S2 Dialog has been split into four components:
+* [Dialog](?path=/docs/dialog--docs) - Only renders modal dialogs and comes with the standard layout previously supported (hero image, heading, content, etc).
+* [FullscreenDialog](?path=/docs/fullscreendialog--docs) - Render a fullscreen or takeover modal. Has the standard padding built in but this can be removed to allow for edge-to-edge content.
+* [CustomDialog](?path=/docs/customdialog--docs) - Supports completely custom dialog layouts. Also supports the standard padding by default or edge-to-edge content.
+* [Popover](?path=/docs/popover--docs) - Only way to create popover dialogs now. The layout of its contents can be freely customized but always has 8px of padding.
+
+Note that many of the props that previously existed on DialogTrigger and DialogContainer (e.g. `isKeyboardDismissDisabled`, `placement`, etc) have now been shifted to the dialogs now as a part of this change.
+
+### New components
+
+* [ActionButtonGroup](?path=/docs/actionbuttongroup--docs)
+* [CloseButton](?path=/docs/customdialog--docs)
+* [CustomDialog](?path=/docs/customdialog--docs)
+* [FullscreenDialog](?path=/docs/fullscreendialog--docs)
+* [Popover](?path=/docs/popover--docs)
+* [ToggleButtonGroup](?path=/docs/togglebuttongroup--docs)
+
+### Updates
+
+* [Accordion](?path=/docs/accordion--docs): Add support for adjacent sibling elements in header
+* [ActionButton](?path=/docs/actionbutton--docs): Add support for Avatars in ActionButtons
+* [Dialog](?path=/docs/dialog--docs): Due to the overall dialogs refactor, Dialog now are responsibly for rendering modals only now. See above for a summary of the changes to other Dialog adjacent components.
+* [Disclosure](?path=/docs/disclosure--docs): Add support for adjacent sibling elements in header
+* [DropZone](?path=/docs/dropzone--docs): Add tshirt sizing
+* [Menu](?path=/docs/menu--docs): Add support for separate user defined selection modes per MenuSection
+* [Meter](?path=/docs/meter--docs): Add label positioning support
+* Update Spectrum Tokens to v53
+* Allow arbitrary pixel sizes for style macro sizing properties (e.g. width, height)
+
+### Codemods
+
+* Support Dialog updates
+* Support arbitrary pixel sizing for style macro sizing properties
+* Update S1 to S2 icon mapping
+
 ## v0.4.0
 
 ### New components
