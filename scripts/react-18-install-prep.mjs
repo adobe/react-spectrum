@@ -2,8 +2,8 @@ import fs from 'node:fs';
 import spawn from 'cross-spawn';
 
 // setting the version to 'next' won't work due to a yarn 1 bug
-let results = JSON.parse(await run('npm', ['view', 'react@next', '--json']));
-let version = results['dist-tags']['rc'];
+let results = JSON.parse(await run('npm', ['view', 'react@latest', '--json']));
+let version = results['dist-tags']['latest'];
 let data = fs.readFileSync('./packages/dev/docs/package.json');
 let pkg = JSON.parse(data);
 pkg.dependencies['react'] = version;
@@ -18,10 +18,6 @@ let rootpkg = JSON.parse(content);
 rootpkg.resolutions['react'] = version;
 rootpkg.resolutions['react-dom'] = version;
 fs.writeFileSync('./package.json', JSON.stringify(rootpkg, null, 2));
-
-let patch = fs.readFileSync('./node_modules/@mdx-js/react/lib/index.d.ts', 'utf8');
-patch = patch.replaceAll("import {JSX} from 'react';", '\n');
-fs.writeFileSync('./node_modules/@mdx-js/react/lib/index.d.ts', patch);
 
 
 function run(cmd, args, opts) {
