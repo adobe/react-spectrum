@@ -58,6 +58,13 @@ export function Migrating() {
         <ul className="sb-unstyled">
           <li className={style({font: 'body', marginY: 8})}>Use <Code>ActionButtonGroup</Code> if you are migrating from an <Code>ActionGroup</Code> that didn't allow for selection. <Code>ActionButtonGroup</Code> takes <Code>ActionButtons</Code> as children. </li>
           <li className={style({font: 'body', marginY: 8})}>Use <Code>ToggleButtonGroup</Code> if you are migrating from an <Code>ActionGroup</Code> that used single or multiple selection. <Code>ToggleButtonGroup</Code> takes <Code>ToggleButtons</Code> as children. </li>
+          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>overflowMode</Code> (it has not been implemented yet)</li>
+          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>buttonLabelBehavior</Code> (it has not been implemented yet)</li>
+          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>summaryIcon</Code> (it has not been implemented yet)</li>
+          <li className={style({font: 'body', marginY: 8})}>Update root level <Code>onAction</Code> to called via <Code>onPress</Code> on each <Code>ActionButton</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Apply <Code>isDisabled</Code> directly on each <Code>ActionButton</Code> instead of root level <Code>disabledKeys</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Convert <Code>key</Code> to <Code>id</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Convert dynamic collections render function to <Code>items.map</Code></li>
         </ul>
 
         <H3>AlertDialog</H3>
