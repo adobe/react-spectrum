@@ -14,7 +14,7 @@ import {ModalContext, useSlottedContext} from 'react-aria-components';
 import React, {ReactElement, useState} from 'react';
 import {SpectrumDialogContainerProps} from '@react-types/dialog';
 
-export interface DialogContainerProps extends Omit<SpectrumDialogContainerProps, 'type'> {}
+export interface DialogContainerProps extends Omit<SpectrumDialogContainerProps, 'type' | 'isDismissable' | 'isKeyboardDismissDisabled'> {}
 
 /**
  * A DialogContainer accepts a single Dialog as a child, and manages showing and hiding
@@ -24,9 +24,7 @@ export interface DialogContainerProps extends Omit<SpectrumDialogContainerProps,
 export function DialogContainer(props: DialogContainerProps) {
   let {
     children,
-    onDismiss,
-    isDismissable = false,
-    isKeyboardDismissDisabled
+    onDismiss
   } = props;
 
   let childArray = React.Children.toArray(children);
@@ -56,7 +54,7 @@ export function DialogContainer(props: DialogContainerProps) {
   };
 
   return (
-    <ModalContext.Provider value={{isOpen: !!child, onOpenChange, isDismissable, isKeyboardDismissDisabled}}>
+    <ModalContext.Provider value={{isOpen: !!child, onOpenChange}}>
       {lastChild}
     </ModalContext.Provider>
   );
