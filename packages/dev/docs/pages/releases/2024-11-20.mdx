@@ -31,15 +31,14 @@ As always, thanks to everyone in our community for your feedback and contributio
 
 React Spectrum and React Aria are now [Typescript Strict](https://www.typescriptlang.org/tsconfig/#strict) compliant. This has been an extremely large, multi-year effort. We thank you for your patience and for you understanding when it comes to how this affects your applications. The benefit is that our code will now run more predictably and places we were making assumptions about `null` vs `undefined` are now spelled out.
 
-**Accordion API updates**
+**Accordion changes**
 
-With the GA release of our Accordion component, we have moved away from the Collection API in favor of wrapping `Disclosure` components, which can be used standalone. This includes a few breaking changes.
-- `Item` has been replaced with the `Disclosure` component, which consists of two children: `DisclosureTitle` and `DisclosurePanel`
-- `title` on `Item` is now a child of `DisclosureTitle`
-- Children of `Item` is now children of `DisclosurePanel`
-- `key` on `Item` is now `id` on `Disclosure`
-- `disabledKeys` has been removed in favor of adding `isDisabled` on individual `Disclosure` components
-- `allowsMultipleExpanded` can be added to allow multiple `Disclosure` components to be expanded at once (previously default behavior)
+With the GA release of Accordion and Disclosure, take note of the following changes:
+
+- `useAccordion` and `useAccordionItem` from `@react-aria/accordion` have been deprecated in favor of `useDisclosure` from `@react-aria/disclosure`
+- `DisclosureHeader` from `@react-spectrum/accordion` has been updated to be `DisclosureTitle`
+
+If you're using an older pre-release version of Accordion, see the [previous release notes](/releases/2024-09-30.html#accordion-updates) for instructions on how to migrate to the released API.
 
 ## Enhancements
 
