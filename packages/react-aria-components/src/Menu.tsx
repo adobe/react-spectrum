@@ -15,9 +15,8 @@ import {BaseCollection, Collection, CollectionBuilder, createBranchComponent, cr
 import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {ContextValue, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
-import {filterDOMProps, mergeRefs, useEffectEvent, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, mergeRefs, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {FocusStrategy, forwardRefType, HoverEvents, Key, LinkDOMProps, MultipleSelection} from '@react-types/shared';
-import {getItemId, useSubmenuTrigger} from '@react-aria/menu';
 import {HeaderContext} from './Header';
 import {InternalAutocompleteContext} from './Autocomplete';
 import {KeyboardContext} from './Keyboard';
@@ -42,6 +41,7 @@ import React, {
 import {RootMenuTriggerState, useSubmenuTriggerState} from '@react-stately/menu';
 import {SeparatorContext} from './Separator';
 import {TextContext} from './Text';
+import {useSubmenuTrigger} from '@react-aria/menu';
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 export const MenuStateContext = createContext<TreeState<any> | null>(null);
@@ -163,11 +163,6 @@ function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivEl
   );
 }
 
-// TODO: import these from somewhere common, will need to see which one I will actually need after final refactor
-const CLEAR_FOCUS_EVENT = 'react-aria-autocomplete-clear-focus';
-const FOCUS_EVENT = 'react-aria-autocomplete-focus';
-const UPDATE_ACTIVEDESCENDANT = 'react-aria-autocomplete-update-activedescendant';
-
 interface MenuInnerProps<T> {
   props: MenuProps<T>,
   collection: BaseCollection<object>,
@@ -211,90 +206,6 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
       setLeftOffset({left: -1 * left});
     }
   }, [leftOffset, popoverContainer]);
-
-  // TODO: will refactor all of the below so that useSelectableItem is responsible for setting the id of the menu item (and other collection components)
-  // and firing the custom event upwards to change the activedescendant. This "focus" would probably be shifted to useMenu or useSelectableCollection and would handle
-  // specifically just setting state.selectionManager.setFocused(true) and intercepting the useSelectableItem specifically for the case where we
-  // are autofocusing as a result of typing forward, then redispatching it with the appropriate "delay" added
-  let focusToDelay = useRef<Key | null>(null);
-  let focus = useEffectEvent((e) => {
-    let {detail} = e;
-    let updateActiveDescendant;
-    e.stopPropagation();
-    state.selectionManager.setFocused(true);
-    // TODO: this first flow is specifically covering typing in the field and autofocusing the first item.
-    // It is not in response to the other keyboard events like ArrowUp/Down/etc. Will need to think if focusStrategy is really pertinent or should just be some other
-    // identifier
-    if (detail?.focusStrategy === 'first') {
-      state.selectionManager.setFocused(true);
-
-      let focusedNode = state.collection.getItem(state.selectionManager.focusedKey);
-      if (focusedNode == null || focusedNode.prevKey != null) {
-        let key = state.collection.getFirstKey();
-        while (key != null) {
-          let item = state.collection.getItem(key);
-          if (item?.type === 'item' && !state.selectionManager.isDisabled(key)) {
-            break;
-          }
-          key = state.collection.getKeyAfter(key);
-        }
-
-        state.selectionManager.setFocusedKey(key);
-        focusToDelay.current = key;
-        updateActiveDescendant = new CustomEvent(UPDATE_ACTIVEDESCENDANT, {
-          cancelable: true,
-          bubbles: true,
-          detail: {
-            id: key ? getItemId(state, key) : null,
-            delay: 500
-          }
-        });
-        ref.current?.dispatchEvent(updateActiveDescendant);
-      }
-    }
-  });
-
-  let clearVirtualFocus = useEffectEvent((e) => {
-    e.stopPropagation();
-    state.selectionManager.setFocused(false);
-    state.selectionManager.setFocusedKey(null);
-  });
-
-  useEffect(() => {
-    let menu = ref.current;
-    menu?.addEventListener(FOCUS_EVENT, focus);
-    menu?.addEventListener(CLEAR_FOCUS_EVENT, clearVirtualFocus);
-
-    return () => {
-      menu?.removeEventListener(FOCUS_EVENT, focus);
-      menu?.addEventListener(CLEAR_FOCUS_EVENT, clearVirtualFocus);
-    };
-  }, [ref, clearVirtualFocus, focus]);
-
-
-  // On focused key change send custom event for setting activeDescendant upwards to the autocomplete
-  let lastFocusedKey = useRef(state.selectionManager.focusedKey);
-  useEffect(() => {
-    if (lastFocusedKey.current !== state.selectionManager.focusedKey) {
-      if (focusToDelay.current === state.selectionManager.focusedKey) {
-        // We don't want to dispatch another updateActiveDescendant event since we've already done so via "focus" since that would
-        // bypass the delay
-        focusToDelay.current = null;
-      } else {
-        let updateActiveDescendant = new CustomEvent(UPDATE_ACTIVEDESCENDANT, {
-          cancelable: true,
-          bubbles: true,
-          detail: {
-            id: state.selectionManager.focusedKey ? getItemId(state, state.selectionManager.focusedKey) : null
-          }
-        });
-
-        ref.current?.dispatchEvent(updateActiveDescendant);
-      }
-    }
-
-    lastFocusedKey.current = state.selectionManager.focusedKey;
-  }, [state, ref]);
 
   let renderProps = useRenderProps({
     defaultClassName: 'react-aria-Menu',

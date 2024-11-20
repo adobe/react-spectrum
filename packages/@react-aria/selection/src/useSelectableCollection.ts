@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {CLEAR_FOCUS_EVENT, DELAY_UPDATE, FOCUS_EVENT, focusWithoutScrolling,  mergeProps, scrollIntoView, scrollIntoViewport, UPDATE_ACTIVEDESCENDANT, useEffectEvent, useEvent, useRouter} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, FocusStrategy, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {flushSync} from 'react-dom';
 import {FocusEvent, KeyboardEvent, useEffect, useRef} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
-import {focusWithoutScrolling, mergeProps, scrollIntoView, scrollIntoViewport, useEvent, useRouter} from '@react-aria/utils';
 import {getInteractionModality} from '@react-aria/interactions';
 import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
@@ -372,12 +372,73 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     }
   };
 
+  let focusCollection = useEffectEvent((e) => {
+    if (shouldUseVirtualFocus) {
+      let {detail} = e;
+      e.stopPropagation();
+      manager.setFocused(true);
+
+      // If the user is typing forwards, autofocus the first option in the list.
+      if (detail?.focusStrategy === 'first') {
+        let keyToFocus = delegate.getFirstKey();
+        // If no focusable items exist in the list, make sure to clear any activedescendant that may still exist
+        if (keyToFocus == null) {
+          ref.current?.dispatchEvent(
+            new CustomEvent(UPDATE_ACTIVEDESCENDANT, {
+              cancelable: true,
+              bubbles: true,
+              detail: {
+                id: null
+              }
+            })
+          );
+        } else {
+          // TODO: this feels gross, ideally would've wanted to intercept/redispatch the event that the focused items
+          // dispatches on focusedKey change, but that didn't work well due to issues with the even listeners
+          // alternative would be to generate the full focused option id in useSelectableCollection and dispatch that upwards
+          ref.current?.dispatchEvent(
+            new CustomEvent(DELAY_UPDATE, {
+              cancelable: true,
+              bubbles: true,
+              detail: {
+                // Tell autocomplete what key to look out for
+                key: keyToFocus,
+                delay: 500
+              }
+            })
+          );
+        }
+
+        manager.setFocusedKey(keyToFocus);
+      }
+    }
+  });
+
   let onBlur = (e) => {
     // Don't set blurred and then focused again if moving focus within the collection.
     if (!e.currentTarget.contains(e.relatedTarget as HTMLElement)) {
       manager.setFocused(false);
     }
   };
+
+  let clearVirtualFocus = useEffectEvent((e) => {
+    if (shouldUseVirtualFocus) {
+      e.stopPropagation();
+      manager.setFocused(false);
+      manager.setFocusedKey(null);
+    }
+  });
+
+  // TODO: replace with useEvent?
+  useEffect(() => {
+    let collection = ref.current;
+    collection?.addEventListener(FOCUS_EVENT, focusCollection);
+    collection?.addEventListener(CLEAR_FOCUS_EVENT, clearVirtualFocus);
+    return () => {
+      collection?.removeEventListener(FOCUS_EVENT, focusCollection);
+      collection?.removeEventListener(CLEAR_FOCUS_EVENT, clearVirtualFocus);
+    };
+  }, [ref, focusCollection, clearVirtualFocus]);
 
   const autoFocusRef = useRef(autoFocus);
   useEffect(() => {

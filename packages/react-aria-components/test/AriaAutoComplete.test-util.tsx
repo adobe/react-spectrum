@@ -244,6 +244,39 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix}: AriaAutocomple
       expect(document.activeElement).toBe(input);
     });
 
+    it('should delay the aria-activedescendant being set when autofocusing the first option', async function () {
+      let {getByRole} = renderers.standard({});
+      let input = getByRole('searchbox');
+      let menu = getByRole('menu');
+      expect(input).not.toHaveAttribute('aria-activedescendant');
+
+      await user.tab();
+      expect(document.activeElement).toBe(input);
+
+      await user.keyboard('a');
+      let options = within(menu).getAllByRole('menuitem');
+      expect(input).not.toHaveAttribute('aria-activedescendant');
+      act(() => jest.advanceTimersByTime(500));
+      expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+    });
+
+    it('should maintain the newest focused item as the activescendant if set after autofocusing the first option', async function () {
+      let {getByRole} = renderers.standard({});
+      let input = getByRole('searchbox');
+      let menu = getByRole('menu');
+      expect(input).not.toHaveAttribute('aria-activedescendant');
+
+      await user.tab();
+      expect(document.activeElement).toBe(input);
+
+      await user.keyboard('a');
+      let options = within(menu).getAllByRole('menuitem');
+      expect(input).not.toHaveAttribute('aria-activedescendant');
+      await user.keyboard('{ArrowDown}');
+      act(() => jest.runAllTimers());
+      expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
+    });
+
     it('should not move the text input cursor when using Home/End/ArrowUp/ArrowDown', async function () {
       let {getByRole} = renderers.standard({});
       let input = getByRole('searchbox') as HTMLInputElement;

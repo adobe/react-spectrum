@@ -214,6 +214,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   };
 
   let {itemProps, isFocused} = useSelectableItem({
+    id,
     selectionManager: selectionManager,
     key,
     ref,

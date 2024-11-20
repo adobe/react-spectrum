@@ -13,7 +13,7 @@
 import {AriaLabelingProps, BaseEvent, DOMAttributes, DOMProps, InputDOMProps, RefObject} from '@react-types/shared';
 import type {AriaMenuOptions} from '@react-aria/menu';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
-import {chain, mergeProps, useEffectEvent, useId, useLabels} from '@react-aria/utils';
+import {chain, CLEAR_FOCUS_EVENT, DELAY_UPDATE, FOCUS_EVENT, mergeProps, UPDATE_ACTIVEDESCENDANT, useEffectEvent, useId, useLabels} from '@react-aria/utils';
 import {InputHTMLAttributes, KeyboardEvent as ReactKeyboardEvent, ReactNode, useEffect, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -43,11 +43,6 @@ export interface AutocompleteAria<T> {
   descriptionProps: DOMAttributes
 }
 
-// TODO: move these out and make them generic to react-aria/utils or selection?
-const CLEAR_FOCUS_EVENT = 'react-aria-autocomplete-clear-focus';
-const FOCUS_EVENT = 'react-aria-autocomplete-focus';
-const UPDATE_ACTIVEDESCENDANT = 'react-aria-autocomplete-update-activedescendant';
-
 /**
  * Provides the behavior and accessibility implementation for a autocomplete component.
  * A autocomplete combines a text input with a menu, allowing users to filter a list of options to items matching a query.
@@ -62,35 +57,44 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
   } = props;
 
   let menuId = useId();
-
   let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  let keyToDelay = useRef<{key: string | null, delay: number | null}>({key: null, delay: null});
   // Create listeners for updateActiveDescendant events that will be fired by wrapped collection whenever the focused key changes
   // so we can update the tracked active descendant for virtual focus
   useEffect(() => {
     let collection = collectionRef.current;
-      // When typing forward, we want to delay the setting of active descendant to not interrupt the native screen reader announcement
-    // of the letter you just typed. If we recieve another UPDATE_ACTIVEDESCENDANT call then we clear the queued update
+    // When typing forward, we want to delay the setting of active descendant to not interrupt the native screen reader announcement
+    // of the letter you just typed. If we recieve another UPDATE_ACTIVEDESCENDANT call then we clear the queued update and
+    let setUpDelay = (e) => {
+      let {detail} = e;
+      keyToDelay.current = {key: detail?.key, delay: detail?.delay};
+    };
+
     let updateActiveDescendant = (e) => {
       let {detail} = e;
       clearTimeout(timeout.current);
       e.stopPropagation();
 
       if (detail?.id != null) {
-        if (detail?.delay != null) {
+        if (detail?.key === keyToDelay.current.key && keyToDelay.current.delay != null) {
           timeout.current = setTimeout(() => {
-            state.setFocusedNodeId(detail?.id);
-          }, detail?.delay);
+            state.setFocusedNodeId(detail.id);
+          }, keyToDelay.current.delay);
         } else {
-          state.setFocusedNodeId(detail?.id);
+          state.setFocusedNodeId(detail.id);
         }
       } else {
         state.setFocusedNodeId(null);
       }
-    };
-    collection?.addEventListener(UPDATE_ACTIVEDESCENDANT, updateActiveDescendant);
 
+      keyToDelay.current = {key: null, delay: null};
+    };
+
+    collection?.addEventListener(UPDATE_ACTIVEDESCENDANT, updateActiveDescendant);
+    collection?.addEventListener(DELAY_UPDATE, setUpDelay);
     return () => {
       collection?.removeEventListener(UPDATE_ACTIVEDESCENDANT, updateActiveDescendant);
+      collection?.removeEventListener(DELAY_UPDATE, setUpDelay);
     };
   }, [state, collectionRef]);
 
@@ -112,6 +116,8 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
       cancelable: true,
       bubbles: true
     });
+    clearTimeout(timeout.current);
+    keyToDelay.current = {key: null, delay: null};
 
     collectionRef.current?.dispatchEvent(clearFocusEvent);
   });
