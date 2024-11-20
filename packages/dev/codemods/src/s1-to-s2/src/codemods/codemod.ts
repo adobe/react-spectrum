@@ -229,7 +229,7 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
   if (importedComponents.size) {
     // Add imports to existing @react-spectrum/s2 import if it exists, otherwise add a new one.
     let importSpecifiers = new Set([...importedComponents]
-      .filter(([c]) => c !== 'Flex' && c !== 'Grid' && c !== 'View' && c !== 'Item' && c !== 'Section')
+      .filter(([c]) => c !== 'Flex' && c !== 'Grid' && c !== 'View' && c !== 'Item' && c !== 'Section' && c !== 'ActionGroup')
       .map(([, specifier]) => specifier));
 
     let existingImport = root.find(j.ImportDeclaration, {

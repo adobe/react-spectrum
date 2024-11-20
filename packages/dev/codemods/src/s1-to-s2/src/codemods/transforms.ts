@@ -1090,13 +1090,14 @@ function updateActionGroup(
     JSXElement(child) {
       if (t.isJSXIdentifier(child.node.openingElement.name) && child.node.openingElement.name.name === 'Item') {
         // Replace Item with ActionButton or ToggleButton.
-        child.node.openingElement.name = t.jsxIdentifier(localChildName);
-        if (path.node.closingElement) {
-          path.node.closingElement.name = t.jsxIdentifier(localChildName);
+        let childNode = t.cloneNode(child.node);
+        childNode.openingElement.name = t.jsxIdentifier(localChildName);
+        if (childNode.closingElement) {
+          childNode.closingElement.name = t.jsxIdentifier(localChildName);
         }
 
         // If there is no key prop and we are using dynamic collections, add a default computed from item.key ?? item.id.
-        let key = child.node.openingElement.attributes.find(attr => t.isJSXAttribute(attr) && attr.name.name === 'key') as t.JSXAttribute | undefined;
+        let key = childNode.openingElement.attributes.find(attr => t.isJSXAttribute(attr) && attr.name.name === 'key') as t.JSXAttribute | undefined;
         if (!key && itemArg) {
           let id = t.jsxExpressionContainer(
             t.logicalExpression(
@@ -1111,14 +1112,14 @@ function updateActionGroup(
             id
           );
 
-          child.node.openingElement.attributes.push(key);
+          childNode.openingElement.attributes.push(key);
         }
 
         // If this is a ToggleButtonGroup, add an id prop in addition to key when needed.
         if (key && newComponent === 'ToggleButtonGroup') {
           // If we are in an array.map we need both key and id. Otherwise, we only need id.
           if (itemArg) {
-            child.node.openingElement.attributes.push(t.jsxAttribute(t.jsxIdentifier('id'), key.value));
+            childNode.openingElement.attributes.push(t.jsxAttribute(t.jsxIdentifier('id'), key.value));
           } else {
             key.name.name = 'id';
           }
@@ -1133,7 +1134,7 @@ function updateActionGroup(
 
         // Add an onPress to each item that calls the previous onAction, passing in the key.
         if (onAction && t.isJSXExpressionContainer(onAction.node.value) && t.isExpression(onAction.node.value.expression)) {
-          child.node.openingElement.attributes.push(
+          childNode.openingElement.attributes.push(
             t.jsxAttribute(
               t.jsxIdentifier('onPress'),
               t.jsxExpressionContainer(
@@ -1147,7 +1148,7 @@ function updateActionGroup(
 
         // Add an isDisabled prop to each item, testing whether it is in disabledKeys.
         if (disabledKeys && keyValue) {
-          child.node.openingElement.attributes.push(
+          childNode.openingElement.attributes.push(
             t.jsxAttribute(
               t.jsxIdentifier('isDisabled'),
               t.jsxExpressionContainer(
@@ -1162,6 +1163,8 @@ function updateActionGroup(
             )
           );
         }
+
+        child.replaceWith(childNode);
       }
     }
   });
