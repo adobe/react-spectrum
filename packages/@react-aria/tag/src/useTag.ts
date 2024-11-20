@@ -10,44 +10,34 @@
  * governing permissions and limitations under the License.
  */
 
-import { AriaButtonProps } from "@react-types/button";
-import {
-  DOMAttributes,
-  FocusableElement,
-  Node,
-  RefObject,
-} from "@react-types/shared";
-import {
-  filterDOMProps,
-  mergeProps,
-  useDescription,
-  useId,
-  useSyntheticLinkProps,
-} from "@react-aria/utils";
-import { hookData } from "./useTagGroup";
+import {AriaButtonProps} from '@react-types/button';
+import {DOMAttributes, FocusableElement, Node, RefObject} from '@react-types/shared';
+import {filterDOMProps, mergeProps, useDescription, useId, useSyntheticLinkProps} from '@react-aria/utils';
+import {hookData} from './useTagGroup';
 // @ts-ignore
-import intlMessages from "../intl/*.json";
-import { KeyboardEvent } from "react";
-import type { ListState } from "@react-stately/list";
-import { SelectableItemStates } from "@react-aria/selection";
-import { useGridListItem } from "@react-aria/gridlist";
-import { useInteractionModality } from "@react-aria/interactions";
-import { useLocalizedStringFormatter } from "@react-aria/i18n";
+import intlMessages from '../intl/*.json';
+import {KeyboardEvent} from 'react';
+import type {ListState} from '@react-stately/list';
+import {SelectableItemStates} from '@react-aria/selection';
+import {useGridListItem} from '@react-aria/gridlist';
+import {useInteractionModality} from '@react-aria/interactions';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
-export interface TagAria extends Omit<SelectableItemStates, "hasAction"> {
+
+export interface TagAria extends Omit<SelectableItemStates, 'hasAction'> {
   /** Props for the tag row element. */
-  rowProps: DOMAttributes;
+  rowProps: DOMAttributes,
   /** Props for the tag cell element. */
-  gridCellProps: DOMAttributes;
+  gridCellProps: DOMAttributes,
   /** Props for the tag remove button. */
-  removeButtonProps: AriaButtonProps;
+  removeButtonProps: AriaButtonProps,
   /** Whether the tag can be removed. */
-  allowsRemoving: boolean;
+  allowsRemoving: boolean
 }
 
 export interface AriaTagProps<T> {
   /** An object representing the tag. Contains all the relevant information that makes up the tag. */
-  item: Node<T>;
+  item: Node<T>
 }
 
 /**
@@ -56,39 +46,23 @@ export interface AriaTagProps<T> {
  * @param state - State for the tag group, as returned by `useListState`.
  * @param ref - A ref to a DOM element for the tag.
  */
-export function useTag<T>(
-  props: AriaTagProps<T>,
-  state: ListState<T>,
-  ref: RefObject<FocusableElement | null>
-): TagAria {
-  let { item } = props;
-  let stringFormatter = useLocalizedStringFormatter(
-    intlMessages,
-    "@react-aria/tag"
-  );
+export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefObject<FocusableElement | null>): TagAria {
+  let {item} = props;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/tag');
   let buttonId = useId();
 
-  let { onRemove } = hookData.get(state) || {};
-  let { rowProps, gridCellProps, ...states } = useGridListItem(
-    {
-      node: item,
-    },
-    state,
-    ref
-  );
+  let {onRemove} = hookData.get(state) || {};
+  let {rowProps, gridCellProps, ...states} = useGridListItem({
+    node: item
+  }, state, ref);
 
   // We want the group to handle keyboard navigation between tags.
   delete rowProps.onKeyDownCapture;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let { descriptionProps: _, ...stateWithoutDescription } = states;
+  let {descriptionProps: _, ...stateWithoutDescription} = states;
 
-  let isDisabled = state.disabledKeys.has(item.key) || item.props.isDisabled;
   let onKeyDown = (e: KeyboardEvent) => {
-    if (isDisabled) {
-      return;
-    }
-
-    if (e.key === "Delete" || e.key === "Backspace") {
+    if (e.key === 'Delete' || e.key === 'Backspace') {
       e.preventDefault();
       if (state.selectionManager.isSelected(item.key)) {
         onRemove?.(new Set(state.selectionManager.selectedKeys));
@@ -99,53 +73,34 @@ export function useTag<T>(
   };
 
   let modality = useInteractionModality();
-  if (
-    modality === "virtual" &&
-    typeof window !== "undefined" &&
-    "ontouchstart" in window
-  ) {
-    modality = "pointer";
+  if (modality === 'virtual' &&  (typeof window !== 'undefined' && 'ontouchstart' in window)) {
+    modality = 'pointer';
   }
-  let description =
-    onRemove && (modality === "keyboard" || modality === "virtual")
-      ? stringFormatter.format("removeDescription")
-      : "";
+  let description = onRemove && (modality === 'keyboard' || modality === 'virtual') ? stringFormatter.format('removeDescription') : '';
   let descProps = useDescription(description);
 
   let isFocused = item.key === state.selectionManager.focusedKey;
-  let isNonFocused = state.selectionManager.focusedKey == null;
-  function getTabIndex(
-    isDisabled: boolean,
-    isFocused: boolean,
-    isNonFocused: boolean
-  ) {
-    if (isDisabled) {
-      return -1;
-    }
-    return isFocused || isNonFocused ? 0 : -1;
-  }
-
   let domProps = filterDOMProps(item.props);
   let linkProps = useSyntheticLinkProps(item.props);
   return {
     removeButtonProps: {
-      "aria-label": stringFormatter.format("removeButtonLabel"),
-      "aria-labelledby": `${buttonId} ${rowProps.id}`,
-      isDisabled,
+      'aria-label': stringFormatter.format('removeButtonLabel'),
+      'aria-labelledby': `${buttonId} ${rowProps.id}`,
+      isDisabled: state.disabledKeys.has(item.key) || item.props.isDisabled,
       id: buttonId,
-      onPress: () => (onRemove ? onRemove(new Set([item.key])) : null),
-      excludeFromTabOrder: true,
+      onPress: () => onRemove ? onRemove(new Set([item.key])) : null,
+      excludeFromTabOrder: true
     },
     rowProps: mergeProps(rowProps, domProps, linkProps, {
-      tabIndex: getTabIndex(isDisabled, isFocused, isNonFocused),
+      tabIndex: (isFocused || state.selectionManager.focusedKey == null) ? 0 : -1,
       onKeyDown: onRemove ? onKeyDown : undefined,
-      "aria-describedby": descProps["aria-describedby"],
+      'aria-describedby': descProps['aria-describedby']
     }),
     gridCellProps: mergeProps(gridCellProps, {
-      "aria-errormessage": props["aria-errormessage"],
-      "aria-label": props["aria-label"],
+      'aria-errormessage': props['aria-errormessage'],
+      'aria-label': props['aria-label']
     }),
     ...stateWithoutDescription,
-    allowsRemoving: !!onRemove,
+    allowsRemoving: !!onRemove
   };
 }
