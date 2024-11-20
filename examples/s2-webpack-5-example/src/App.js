@@ -14,6 +14,7 @@ import React, { useState } from "react";
 import "@react-spectrum/s2/page.css";
 import {
   ActionButton,
+  ActionButtonGroup,
   ActionMenu,
   Button,
   ButtonGroup,
@@ -34,6 +35,7 @@ import {
   TableView,
   Text,
   ToggleButton,
+  ToggleButtonGroup
 } from "@react-spectrum/s2";
 import Edit from "@react-spectrum/s2/icons/Edit";
 import Section from "./components/Section";
@@ -100,6 +102,16 @@ function App() {
             >
               Link Button
             </LinkButton>
+            <ActionButtonGroup density="compact">
+              <ActionButton>Cut</ActionButton>
+              <ActionButton>Copy</ActionButton>
+              <ActionButton>Paste</ActionButton>
+            </ActionButtonGroup>
+            <ToggleButtonGroup density="compact" selectionMode="multiple">
+              <ToggleButton id="bold">Bold</ToggleButton>
+              <ToggleButton id="italic">Italic</ToggleButton>
+              <ToggleButton id="underline">Underline</ToggleButton>
+            </ToggleButtonGroup>
           </ButtonGroup>
         </Section>
 
