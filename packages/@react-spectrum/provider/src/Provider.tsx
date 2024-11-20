@@ -198,7 +198,10 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: Provide
 export function useProvider() {
   let context = useContext(Context);
   if (!context) {
-    throw new Error('No root provider found.');
+    throw new Error(
+      'No root provider found, please make sure your app is wrapped within a <Provider>. ' +
+      'Alternatively, this issue may be caused by duplicate packages, see https://github.com/adobe/react-spectrum/wiki/Frequently-Asked-Questions-(FAQs)#why-are-there-errors-after-upgrading-a-react-spectrum-package for more information.'
+    );
   }
   return context;
 }
