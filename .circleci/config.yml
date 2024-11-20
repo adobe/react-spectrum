@@ -56,7 +56,7 @@ jobs:
       - run:
           name: build
           command: |
-            yarn --immutable
+            yarn install --immutable && yarn install-19
 
       - save_cache:
           paths:
@@ -647,9 +647,6 @@ workflows:
           requires:
             - install
       - docs-verdaccio:
-          filters:
-            branches:
-              only: main
           requires:
             - install
       - deploy:
