@@ -19,6 +19,10 @@ rootpkg.resolutions['react'] = version;
 rootpkg.resolutions['react-dom'] = version;
 fs.writeFileSync('./package.json', JSON.stringify(rootpkg, null, 2));
 
+let patch = fs.readFileSync('./node_modules/@mdx-js/react/lib/index.d.ts', 'utf8');
+patch = patch.replaceAll("import {JSX} from 'react';", '\n');
+fs.writeFileSync('./node_modules/@mdx-js/react/lib/index.d.ts', patch);
+
 
 function run(cmd, args, opts) {
   return new Promise((resolve, reject) => {
