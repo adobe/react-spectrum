@@ -24,6 +24,7 @@ import {Form} from '@react-spectrum/form';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
+import {Key} from '@react-types/shared';
 import More from '@spectrum-icons/workflow/More';
 import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
 import React, {useState} from 'react';
@@ -38,7 +39,7 @@ export function CRUDExample(props) {
     ]
   });
 
-  let [dialog, setDialog] = useState(null);
+  let [dialog, setDialog] = useState<{action: Key, item?: any} | null>(null);
   let createItem = (item) => {
     list.prepend({...item, id: Date.now()});
   };
@@ -49,8 +50,9 @@ export function CRUDExample(props) {
     <Flex direction="column">
       <ActionGroup marginBottom={8} onAction={action => setDialog({action})}>
         <Item key="add" aria-label="Add item"><Add /></Item>
-        {selectedCount > 0 &&
-          <Item key="bulk-delete" aria-label="Delete selected items"><Delete /></Item>
+        {selectedCount > 0 
+          ? <Item key="bulk-delete" aria-label="Delete selected items"><Delete /></Item>
+          : null
         }
       </ActionGroup>
       <TableView

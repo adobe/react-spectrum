@@ -30,16 +30,20 @@ let iconMap = {
 
 function Tooltip(props: SpectrumTooltipProps, ref: DOMRef) {
   let {ref: overlayRef, arrowProps, state, arrowRef, ...tooltipProviderProps} = useContext(TooltipContext);
-  let defaultRef = useRef(undefined);
+  let defaultRef = useRef(null);
   overlayRef = overlayRef || defaultRef;
+  let backupPlacement = props.placement;
   props = mergeProps(props, tooltipProviderProps);
   let {
     variant = 'neutral',
-    placement = 'top',
+    placement,
     isOpen,
     showIcon,
     ...otherProps
   } = props;
+  if (placement == null) {
+    placement = backupPlacement ?? 'top';
+  }
   let {styleProps} = useStyleProps(otherProps);
   let {tooltipProps} = useTooltip(props, state);
 

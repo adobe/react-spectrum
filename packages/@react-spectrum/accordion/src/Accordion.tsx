@@ -93,7 +93,7 @@ function DisclosurePanel(props: SpectrumDisclosurePanelProps, ref: DOMRef<HTMLDi
   );
 }
 
-export interface SpectrumDisclosureHeaderProps extends DOMProps, AriaLabelingProps, StyleProps {
+export interface SpectrumDisclosureTitleProps extends DOMProps, AriaLabelingProps, StyleProps {
   /**
    * The heading level of the disclosure header.
    * @default 3
@@ -103,7 +103,7 @@ export interface SpectrumDisclosureHeaderProps extends DOMProps, AriaLabelingPro
   children: React.ReactNode
 }
 
-function DisclosureHeader(props: SpectrumDisclosureHeaderProps, ref: DOMRef<HTMLHeadingElement>) {
+function DisclosureTitle(props: SpectrumDisclosureTitleProps, ref: DOMRef<HTMLHeadingElement>) {
   let {styleProps} = useStyleProps(props);
   let {level = 3} = props;
   let {direction} = useLocale();
@@ -140,10 +140,10 @@ export {_Accordion as Accordion};
 const _Disclosure = forwardRef(Disclosure) as (props: SpectrumDisclosureProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof Disclosure>;
 export {_Disclosure as Disclosure};
 
-/** The panel that contains the content of an disclosure. */
+/** The panel that contains the content of the disclosure. */
 const _DisclosurePanel = forwardRef(DisclosurePanel) as (props: SpectrumDisclosurePanelProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof DisclosurePanel>;
 export {_DisclosurePanel as DisclosurePanel};
 
 /** The heading of the disclosure. */
-const _DisclosureHeader = forwardRef(DisclosureHeader) as (props: SpectrumDisclosureHeaderProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof DisclosureHeader>;
-export {_DisclosureHeader as DisclosureHeader};
+const _DisclosureTitle = forwardRef(DisclosureTitle) as (props: SpectrumDisclosureTitleProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof DisclosureTitle>;
+export {_DisclosureTitle as DisclosureTitle};

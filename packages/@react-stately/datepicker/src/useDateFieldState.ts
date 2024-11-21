@@ -12,7 +12,7 @@
 
 import {Calendar, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, toCalendar} from '@internationalized/date';
 import {convertValue, createPlaceholderDate, FieldOptions, FormatterOptions, getFormatOptions, getValidationResult, useDefaultProps} from './utils';
-import {DatePickerProps, DateValue, Granularity} from '@react-types/datepicker';
+import {DatePickerProps, DateValue, Granularity, MappedDateValue} from '@react-types/datepicker';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {getPlaceholder} from './placeholders';
 import {useControlledState} from '@react-stately/utils';
@@ -41,13 +41,13 @@ export interface DateSegment {
 
 export interface DateFieldState extends FormValidationState {
   /** The current field value. */
-  value: DateValue,
+  value: DateValue | null,
   /** The current value, converted to a native JavaScript `Date` object.  */
   dateValue: Date,
   /** The calendar system currently in use. */
   calendar: Calendar,
   /** Sets the field's value. */
-  setValue(value: DateValue): void,
+  setValue(value: DateValue | null): void,
   /** A list of segments for the current value. */
   segments: DateSegment[],
   /** A date formatter configured for the current locale and format. */
@@ -56,7 +56,7 @@ export interface DateFieldState extends FormValidationState {
    * The current validation state of the date field, based on the `validationState`, `minValue`, and `maxValue` props.
    * @deprecated Use `isInvalid` instead.
    */
-  validationState: ValidationState,
+  validationState: ValidationState | null,
   /** Whether the date field is invalid, based on the `isInvalid`, `minValue`, and `maxValue` props. */
   isInvalid: boolean,
   /** The granularity for the field, based on the `granularity` prop and current value. */
@@ -150,15 +150,15 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     locale,
     createCalendar,
     hideTimeZone,
-    isDisabled,
-    isReadOnly,
-    isRequired,
+    isDisabled = false,
+    isReadOnly = false,
+    isRequired = false,
     minValue,
     maxValue,
     isDateUnavailable
   } = props;
 
-  let v: DateValue = (props.value || props.defaultValue || props.placeholderValue);
+  let v: DateValue | null = props.value || props.defaultValue || props.placeholderValue || null;
   let [granularity, defaultTimeZone] = useDefaultProps(v, props.granularity);
   let timeZone = defaultTimeZone || 'UTC';
 
@@ -170,13 +170,13 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   let defaultFormatter = useMemo(() => new DateFormatter(locale), [locale]);
   let calendar = useMemo(() => createCalendar(defaultFormatter.resolvedOptions().calendar), [createCalendar, defaultFormatter]);
 
-  let [value, setDate] = useControlledState<DateValue>(
+  let [value, setDate] = useControlledState<DateValue | null, MappedDateValue<T> | null>(
     props.value,
-    props.defaultValue,
+    props.defaultValue ?? null,
     props.onChange
   );
 
-  let calendarValue = useMemo(() => convertValue(value, calendar), [value, calendar]);
+  let calendarValue = useMemo(() => convertValue(value, calendar) ?? null, [value, calendar]);
 
   // We keep track of the placeholder date separately in state so that onChange is not called
   // until all segments are set. If the value === null (not undefined), then assume the component
@@ -214,7 +214,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     () => props.value || props.defaultValue ? {...allSegments} : {}
   );
 
-  let clearedSegment = useRef<string>(undefined);
+  let clearedSegment = useRef<string | null>(null);
 
   // Reset placeholder when calendar changes
   let lastCalendarIdentifier = useRef(calendar.identifier);
@@ -330,12 +330,12 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
 
   let validation = useFormValidationState({
     ...props,
-    value,
+    value: value as MappedDateValue<T> | null,
     builtinValidation
   });
 
   let isValueInvalid = validation.displayValidation.isInvalid;
-  let validationState: ValidationState = props.validationState || (isValueInvalid ? 'invalid' : null);
+  let validationState: ValidationState | null = props.validationState || (isValueInvalid ? 'invalid' : null);
 
   return {
     ...validation,
@@ -519,6 +519,8 @@ function addSegment(value: DateValue, part: string, amount: number, options: Int
         });
     }
   }
+
+  throw new Error('Unknown segment: ' + part);
 }
 
 function setSegment(value: DateValue, part: string, segmentValue: number | string, options: Intl.ResolvedDateTimeFormatOptions) {
@@ -559,4 +561,6 @@ function setSegment(value: DateValue, part: string, segmentValue: number | strin
         return value.set({[part]: segmentValue});
     }
   }
+
+  throw new Error('Unknown segment: ' + part);
 }

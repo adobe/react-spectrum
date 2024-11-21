@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {Collection, Key, Node} from '@react-types/shared';
 import {Item} from '@react-stately/collections';
-import {Key, Node} from '@react-types/shared';
 import React, {useMemo, useRef} from 'react';
 import {TreeCollection} from '../src/TreeCollection';
 import {usePress} from '@react-aria/interactions';
@@ -51,7 +51,7 @@ function TreeExample(props = {}) {
 
 function Tree(props) {
   let state = useTreeState(props);
-  let ref = useRef(undefined);
+  let ref = useRef(null);
 
   let keyboardDelegate = useMemo(() => new TreeKeyboardDelegate(state.collection, state.disabledKeys), [state.collection, state.disabledKeys]);
 
@@ -71,8 +71,8 @@ function Tree(props) {
   );
 }
 
-function TreeNodes({nodes, state}) {
-  return Array.from(nodes).map((node: Node<object>) => (
+function TreeNodes({nodes, state}: {nodes: Collection<Node<object>>, state: any}) {
+  return Array.from(nodes).map(node => (
     <TreeItem
       node={node}
       key={node.key}
@@ -81,7 +81,7 @@ function TreeNodes({nodes, state}) {
 }
 
 function TreeItem({node, state}) {
-  let ref = useRef(undefined);
+  let ref = useRef(null);
 
   let {itemProps} = useSelectableItem({
     key: node.key,

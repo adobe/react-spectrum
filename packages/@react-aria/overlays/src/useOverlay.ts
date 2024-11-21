@@ -120,7 +120,7 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
   };
 
   // Handle clicking outside the overlay to close it
-  useInteractOutside({ref, onInteractOutside: isDismissable && isOpen ? onInteractOutside : null, onInteractOutsideStart});
+  useInteractOutside({ref, onInteractOutside: isDismissable && isOpen ? onInteractOutside : undefined, onInteractOutsideStart});
 
   let {focusWithinProps} = useFocusWithin({
     isDisabled: !shouldCloseOnBlur,
@@ -139,7 +139,7 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
       }
 
       if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.relatedTarget as Element)) {
-        onClose();
+        onClose?.();
       }
     }
   });

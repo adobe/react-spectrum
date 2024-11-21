@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Text} from '../src';
+import {ActionButton, Avatar, Text} from '../src';
 import {categorizeArgTypes, StaticColorDecorator} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
@@ -185,5 +185,17 @@ export const UnsafeClassName: Story = {
     docs: {
       disable: true
     }
+  }
+};
+
+export const Avatars: Story = {
+  render: (args) => {
+    return (
+      <div style={{display: 'flex', gap: 8, padding: 8, justifyContent: 'center', overflow: 'auto'}}>
+        <ActionButton aria-label="Press me" {...args}><Avatar src="https://i.imgur.com/xIe7Wlb.png" /></ActionButton>
+        <ActionButton {...args}><Avatar src="https://i.imgur.com/xIe7Wlb.png" /><Text>Press me</Text></ActionButton>
+        <ActionButton {...args}><Text>Press me</Text><Avatar src="https://i.imgur.com/xIe7Wlb.png" /></ActionButton>
+      </div>
+    );
   }
 };

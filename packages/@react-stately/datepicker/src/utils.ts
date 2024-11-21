@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Calendar, DateFormatter, now, Time, toCalendar, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
+import {Calendar, DateFormatter, getLocalTimeZone, now, Time, toCalendar, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DatePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
 // @ts-ignore
 import i18nMessages from '../intl/*.json';
@@ -29,17 +29,17 @@ function getLocale() {
 }
 
 export function getValidationResult(
-  value: DateValue,
-  minValue: DateValue,
-  maxValue: DateValue,
-  isDateUnavailable: (v: DateValue) => boolean,
+  value: DateValue | null,
+  minValue: DateValue | null | undefined,
+  maxValue: DateValue | null | undefined,
+  isDateUnavailable: ((v: DateValue) => boolean) | undefined,
   options: FormatterOptions
 ): ValidationResult {
   let rangeOverflow = value != null && maxValue != null && value.compare(maxValue) > 0;
   let rangeUnderflow = value != null && minValue != null && value.compare(minValue) < 0;
   let isUnavailable = (value != null && isDateUnavailable?.(value)) || false;
   let isInvalid = rangeOverflow || rangeUnderflow || isUnavailable;
-  let errors = [];
+  let errors: string[] = [];
 
   if (isInvalid) {
     let locale = getLocale();
@@ -48,11 +48,11 @@ export function getValidationResult(
     let dateFormatter = new DateFormatter(locale, getFormatOptions({}, options));
     let timeZone = dateFormatter.resolvedOptions().timeZone;
 
-    if (rangeUnderflow) {
+    if (rangeUnderflow && minValue != null) {
       errors.push(formatter.format('rangeUnderflow', {minValue: dateFormatter.format(minValue.toDate(timeZone))}));
     }
 
-    if (rangeOverflow) {
+    if (rangeOverflow && maxValue != null) {
       errors.push(formatter.format('rangeOverflow', {maxValue: dateFormatter.format(maxValue.toDate(timeZone))}));
     }
 
@@ -81,14 +81,14 @@ export function getValidationResult(
 }
 
 export function getRangeValidationResult(
-  value: RangeValue<DateValue>,
-  minValue: DateValue,
-  maxValue: DateValue,
-  isDateUnavailable: (v: DateValue) => boolean,
+  value: RangeValue<DateValue | null> | null,
+  minValue: DateValue | null | undefined,
+  maxValue: DateValue | null | undefined,
+  isDateUnavailable: ((v: DateValue) => boolean) | undefined,
   options: FormatterOptions
 ) {
   let startValidation = getValidationResult(
-    value?.start,
+    value?.start ?? null,
     minValue,
     maxValue,
     isDateUnavailable,
@@ -96,7 +96,7 @@ export function getRangeValidationResult(
   );
 
   let endValidation = getValidationResult(
-    value?.end,
+    value?.end ?? null,
     minValue,
     maxValue,
     isDateUnavailable,
@@ -104,7 +104,7 @@ export function getRangeValidationResult(
   );
 
   let result = mergeValidation(startValidation, endValidation);
-  if (value.end != null && value.start != null && value.end.compare(value.start) < 0) {
+  if (value?.end != null && value.start != null && value.end.compare(value.start) < 0) {
     let strings = LocalizedStringDictionary.getGlobalDictionaryForPackage('@react-stately/datepicker') || dictionary;
     result = mergeValidation(result, {
       isInvalid: true,
@@ -195,7 +195,7 @@ export function getFormatOptions(
   return opts;
 }
 
-export function getPlaceholderTime(placeholderValue: DateValue): TimeValue {
+export function getPlaceholderTime(placeholderValue: DateValue | null | undefined): TimeValue {
   if (placeholderValue && 'hour' in placeholderValue) {
     return placeholderValue;
   }
@@ -203,7 +203,7 @@ export function getPlaceholderTime(placeholderValue: DateValue): TimeValue {
   return new Time();
 }
 
-export function convertValue(value: DateValue, calendar: Calendar): DateValue {
+export function convertValue(value: DateValue | null | undefined, calendar: Calendar): DateValue | null | undefined {
   if (value === null) {
     return null;
   }
@@ -216,12 +216,12 @@ export function convertValue(value: DateValue, calendar: Calendar): DateValue {
 }
 
 
-export function createPlaceholderDate(placeholderValue: DateValue, granularity: string, calendar: Calendar, timeZone: string) {
+export function createPlaceholderDate(placeholderValue: DateValue | null | undefined, granularity: string, calendar: Calendar, timeZone: string | undefined): DateValue {
   if (placeholderValue) {
-    return convertValue(placeholderValue, calendar);
+    return convertValue(placeholderValue, calendar)!;
   }
 
-  let date = toCalendar(now(timeZone).set({
+  let date = toCalendar(now(timeZone ?? getLocalTimeZone()).set({
     hour: 0,
     minute: 0,
     second: 0,
@@ -239,7 +239,7 @@ export function createPlaceholderDate(placeholderValue: DateValue, granularity: 
   return date;
 }
 
-export function useDefaultProps(v: DateValue, granularity: Granularity): [Granularity, string] {
+export function useDefaultProps(v: DateValue | null, granularity: Granularity | undefined): [Granularity, string | undefined] {
   // Compute default granularity and time zone from the value. If the value becomes null, keep the last values.
   let defaultTimeZone = (v && 'timeZone' in v ? v.timeZone : undefined);
   let defaultGranularity: Granularity = (v && 'minute' in v ? 'minute' : 'day');
@@ -249,7 +249,7 @@ export function useDefaultProps(v: DateValue, granularity: Granularity): [Granul
     throw new Error('Invalid granularity ' + granularity + ' for value ' + v.toString());
   }
 
-  let [lastValue, setLastValue] = useState<[Granularity, string]>([defaultGranularity, defaultTimeZone]);
+  let [lastValue, setLastValue] = useState<[Granularity, string | undefined]>([defaultGranularity, defaultTimeZone]);
 
   // If the granularity or time zone changed, update the last value.
   if (v && (lastValue[0] !== defaultGranularity || lastValue[1] !== defaultTimeZone)) {

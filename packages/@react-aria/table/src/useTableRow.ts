@@ -66,10 +66,10 @@ export function useTableRow<T>(props: GridRowProps<T>, state: TableState<T> | Tr
         },
         'aria-expanded': hasChildRows ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key) : undefined,
         'aria-level': treeNode.level,
-        'aria-posinset': treeNode.indexOfType + 1,
+        'aria-posinset': (treeNode.indexOfType ?? 0) + 1,
         'aria-setsize': treeNode.level > 1 ?
-          (getLastItem(state.keyMap.get(treeNode?.parentKey).childNodes) as GridNode<T>).indexOfType + 1 :
-          (getLastItem(state.keyMap.get(state.collection.body.key).childNodes) as GridNode<T>).indexOfType + 1
+          ((getLastItem(state.keyMap.get(treeNode.parentKey!)?.childNodes ?? []) as GridNode<T>)?.indexOfType ?? 0) + 1 :
+          ((getLastItem(state.collection.body.childNodes) as GridNode<T>)?.indexOfType ?? 0) + 1
       };
     }
   }

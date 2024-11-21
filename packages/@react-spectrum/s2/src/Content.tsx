@@ -111,8 +111,7 @@ function Text(props: ContentProps, ref: DOMRef) {
     return null;
   }
 
-  slot = slot && racContext && 'slots' in racContext && !racContext.slots?.[slot] ? undefined : slot;
-  return (
+  let text = (
     <TextAria
       {...otherProps}
       ref={domRef}
@@ -125,6 +124,12 @@ function Text(props: ContentProps, ref: DOMRef) {
       {children}
     </TextAria>
   );
+
+  if (slot && racContext && 'slots' in racContext && !racContext.slots?.[slot]) {
+    return <RACTextContext.Provider value={null}>{text}</RACTextContext.Provider>;
+  }
+
+  return text;
 }
 
 const _Text = forwardRef(Text);

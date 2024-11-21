@@ -649,13 +649,11 @@ describe('MenuTrigger', function () {
 
         await user.tab();
         act(() => {jest.runAllTimers();});
-        expect(dialog).not.toBeInTheDocument();
-        expect(menu).not.toBeInTheDocument();
-        let input = tree.getByTestId('next');
-        expect(document.activeElement).toBe(input);
+        expect(dialog).toBeInTheDocument();
+        expect(document.activeElement).toBe(link);
       });
 
-      it('will close everything if the user shift tabs out of the subdialog', async function () {
+      it('will contain focus when shift tabbing in the subdialog', async function () {
         renderTree();
         let menu = await openMenu();
         let menuItems = within(menu).getAllByRole('menuitem');
@@ -673,9 +671,8 @@ describe('MenuTrigger', function () {
         await user.tab({shift: true});
         act(() => {jest.runAllTimers();});
         act(() => {jest.runAllTimers();});
-        expect(dialog).not.toBeInTheDocument();
-        let input = tree.getByTestId('previous');
-        expect(document.activeElement).toBe(input);
+        expect(dialog).toBeInTheDocument();
+        expect(document.activeElement).toBe(within(dialog).getByRole('link'));
       });
 
       it('will close everything if the user shift tabs out of the subdialog', async function () {

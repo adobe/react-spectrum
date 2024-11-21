@@ -332,7 +332,7 @@ const expandButton = style<ExpandableRowChevronProps>({
 });
 
 function ExpandableRowChevron(props: ExpandableRowChevronProps) {
-  let expandButtonRef = useRef<HTMLSpanElement>(null);
+  let expandButtonRef = useRef(null);
   let [fullProps, ref] = useContextProps({...props, slot: 'chevron'}, expandButtonRef, ButtonContext);
   let {isExpanded, isDisabled} = fullProps;
   let {direction} = useLocale();

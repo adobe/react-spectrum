@@ -1,3 +1,4 @@
+// @ts-nocheck
 
 let images = [
   {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg'},

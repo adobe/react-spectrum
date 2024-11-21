@@ -91,7 +91,7 @@ export const DragWithinTable: TableStory = {
   name: 'Drag within table (Reorder)'
 };
 
-let manyItems = [];
+let manyItems: typeof items = [];
 for (let i = 0; i < 100; i++) {
   manyItems.push({...items[i % 10], id: `${i}`});
 }

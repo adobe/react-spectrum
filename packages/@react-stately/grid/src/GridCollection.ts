@@ -24,7 +24,7 @@ export class GridCollection<T> implements IGridCollection<T> {
   columnCount: number;
   rows: GridNode<T>[];
 
-  constructor(opts?: GridCollectionOptions<T>) {
+  constructor(opts: GridCollectionOptions<T>) {
     this.keyMap = new Map();
     this.columnCount = opts?.columnCount;
     this.rows = [];
@@ -41,7 +41,7 @@ export class GridCollection<T> implements IGridCollection<T> {
       this.keyMap.set(node.key, node);
 
       let childKeys = new Set();
-      let last: GridNode<T>;
+      let last: GridNode<T> | null = null;
       for (let child of node.childNodes) {
         if (child.type === 'cell' && child.parentKey == null) {
           // if child is a cell parent key isn't already established by the collection, match child node to parent row
@@ -83,19 +83,20 @@ export class GridCollection<T> implements IGridCollection<T> {
       }
     };
 
-    let last: GridNode<T>;
-    opts.items.forEach((node, i) => {
-      let rowNode = {
-        level: 0,
-        key: 'row-' + i,
-        type: 'row',
-        value: undefined,
+    let last: GridNode<T> | null = null;
+    for (let [i, node] of opts.items.entries()) {
+      let rowNode: GridNode<T> = {
+        ...node,
+        level: node.level ?? 0,
+        key: node.key ?? 'row-' + i,
+        type: node.type ?? 'row',
+        value: node.value ?? null,
         hasChildNodes: true,
         childNodes: [...node.childNodes],
-        rendered: undefined,
-        textValue: undefined,
-        ...node
-      } as GridNode<T>;
+        rendered: node.rendered,
+        textValue: node.textValue ?? '',
+        index: node.index ?? i
+      };
 
       if (last) {
         last.nextKey = rowNode.key;
@@ -108,7 +109,7 @@ export class GridCollection<T> implements IGridCollection<T> {
       visit(rowNode);
 
       last = rowNode;
-    });
+    }
 
     if (last) {
       last.nextKey = null;
@@ -137,11 +138,11 @@ export class GridCollection<T> implements IGridCollection<T> {
     return node ? node.nextKey ?? null : null;
   }
 
-  getFirstKey() {
+  getFirstKey(): Key | null {
     return [...this.rows][0]?.key;
   }
 
-  getLastKey() {
+  getLastKey(): Key | null {
     let rows = [...this.rows];
     return rows[rows.length - 1]?.key;
   }

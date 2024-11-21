@@ -14,7 +14,7 @@ import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, ClearSlots, SlotProvider, useHasChild} from '@react-spectrum/utils';
 import {CSSTransition} from 'react-transition-group';
-import type {DraggableItemResult, DropIndicatorAria, DroppableItemResult} from '@react-aria/dnd';
+import type {DraggableItemResult, DropIndicatorAria} from '@react-aria/dnd';
 import {DropTarget, Node} from '@react-types/shared';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
@@ -51,10 +51,10 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     layout,
     dragAndDropHooks,
     loadingState
-  } = useContext(ListViewContext);
+  } = useContext(ListViewContext)!;
   let {direction} = useLocale();
-  let rowRef = useRef<HTMLDivElement>(undefined);
-  let checkboxWrapperRef = useRef<HTMLDivElement>(undefined);
+  let rowRef = useRef<HTMLDivElement | null>(null);
+  let checkboxWrapperRef = useRef<HTMLDivElement | null>(null);
   let {
     isFocusVisible: isFocusVisibleWithin,
     focusProps: focusWithinProps
@@ -74,32 +74,30 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
     isVirtualized: true,
     shouldSelectOnPressUp: isListDraggable
   }, state, rowRef);
-  let isDroppable = isListDroppable && !isDisabled;
   let {hoverProps, isHovered} = useHover({isDisabled: !allowsSelection && !hasAction});
 
   let {checkboxProps} = useGridListSelectionCheckbox({key: item.key}, state);
   let hasDescription = useHasChild(`.${listStyles['react-spectrum-ListViewItem-description']}`, rowRef);
 
-  let draggableItem: DraggableItemResult;
-  if (isListDraggable) {
+  let draggableItem: DraggableItemResult | null = null;
+  if (isListDraggable && dragAndDropHooks && dragState) {
      
-    draggableItem = dragAndDropHooks.useDraggableItem({key: item.key, hasDragButton: true}, dragState);
+    draggableItem = dragAndDropHooks.useDraggableItem!({key: item.key, hasDragButton: true}, dragState);
     if (isDisabled) {
       draggableItem = null;
     }
   }
-  let droppableItem: DroppableItemResult;
-  let isDropTarget: boolean;
-  let dropIndicator: DropIndicatorAria;
-  let dropIndicatorRef = useRef(undefined);
-  if (isListDroppable) {
+  let isDropTarget = false;
+  let dropIndicator: DropIndicatorAria | null = null;
+  let dropIndicatorRef = useRef<HTMLDivElement | null>(null);
+  if (isListDroppable && dragAndDropHooks && dropState) {
     let target = {type: 'item', key: item.key, dropPosition: 'on'} as DropTarget;
     isDropTarget = dropState.isDropTarget(target);
      
-    dropIndicator = dragAndDropHooks.useDropIndicator({target}, dropState, dropIndicatorRef);
+    dropIndicator = dragAndDropHooks.useDropIndicator!({target}, dropState, dropIndicatorRef);
   }
 
-  let dragButtonRef = React.useRef(undefined);
+  let dragButtonRef = React.useRef<HTMLDivElement | null>(null);
   let {buttonProps} = useButton({
     ...draggableItem?.dragButtonProps,
     elementType: 'div'
@@ -138,18 +136,19 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
   let showCheckbox = state.selectionManager.selectionMode !== 'none' && state.selectionManager.selectionBehavior === 'toggle';
   let {visuallyHiddenProps} = useVisuallyHidden();
 
-  let dropProps = isDroppable ? droppableItem?.dropProps : {'aria-hidden': droppableItem?.dropProps['aria-hidden']};
   const mergedProps = mergeProps(
     rowProps,
     draggableItem?.dragProps,
-    dropProps,
     hoverProps,
     focusWithinProps,
-    focusProps,
-    // Remove tab index from list row if performing a screenreader drag. This prevents TalkBack from focusing the row,
-    // allowing for single swipe navigation between row drop indicator
-    dragAndDropHooks?.isVirtualDragging() && {tabIndex: null}
+    focusProps
   );
+  
+  // Remove tab index from list row if performing a screenreader drag. This prevents TalkBack from focusing the row,
+  // allowing for single swipe navigation between row drop indicator
+  if (dragAndDropHooks?.isVirtualDragging?.()) {
+    mergedProps.tabIndex = undefined;
+  }
 
   let isFirstRow = item.prevKey == null;
   let isLastRow = item.nextKey == null;
@@ -158,15 +157,15 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
   // with bottom border
   let isFlushWithContainerBottom = false;
   if (isLastRow && loadingState !== 'loadingMore') {
-    if (layout.getContentSize()?.height >= layout.virtualizer?.visibleRect.height) {
+    if (layout.getContentSize()?.height >= (layout.virtualizer?.visibleRect.height ?? 0)) {
       isFlushWithContainerBottom = true;
     }
   }
   // previous item isn't selected
   // and the previous item isn't focused or, if it is focused, then if focus globally isn't visible or just focus isn't in the listview
-  let roundTops = (!state.selectionManager.isSelected(item.prevKey)
+  let roundTops = (!(item.prevKey != null && state.selectionManager.isSelected(item.prevKey))
     && (state.selectionManager.focusedKey !== item.prevKey || !(isGlobalFocusVisible() && state.selectionManager.isFocused)));
-  let roundBottoms = (!state.selectionManager.isSelected(item.nextKey)
+  let roundBottoms = (!(item.nextKey != null && state.selectionManager.isSelected(item.nextKey))
     && (state.selectionManager.focusedKey !== item.nextKey || !(isGlobalFocusVisible() && state.selectionManager.isFocused)));
 
   let content = typeof item.rendered === 'string' ? <Text>{item.rendered}</Text> : item.rendered;
@@ -204,9 +203,9 @@ export function ListViewItem<T>(props: ListViewItemProps<T>) {
               'is-hovered': isHovered,
               'is-selected': isSelected,
               'is-disabled': isDisabled,
-              'is-prev-selected': state.selectionManager.isSelected(item.prevKey),
-              'is-next-selected': state.selectionManager.isSelected(item.nextKey),
-              'react-spectrum-ListViewItem--highlightSelection': state.selectionManager.selectionBehavior === 'replace' && (isSelected || state.selectionManager.isSelected(item.nextKey)),
+              'is-prev-selected': item.prevKey != null && state.selectionManager.isSelected(item.prevKey),
+              'is-next-selected': item.nextKey != null && state.selectionManager.isSelected(item.nextKey),
+              'react-spectrum-ListViewItem--highlightSelection': state.selectionManager.selectionBehavior === 'replace' && (isSelected || (item.nextKey != null && state.selectionManager.isSelected(item.nextKey))),
               'react-spectrum-ListViewItem--dropTarget': !!isDropTarget,
               'react-spectrum-ListViewItem--firstRow': isFirstRow,
               'react-spectrum-ListViewItem--lastRow': isLastRow,

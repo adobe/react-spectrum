@@ -1143,7 +1143,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
   },
   props => {
     if (props.id == null && typeof props.children === 'function') {
-      console.warn('No id detected for the Row element. The Row element requires a id to be provided to it when the cells are rendered dynamically.');
+      throw new Error('No id detected for the Row element. The Row element requires a id to be provided to it when the cells are rendered dynamically.');
     }
 
     let dependencies = [props.value].concat(props.dependencies);
@@ -1194,7 +1194,6 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
   let {dragState} = useContext(DragAndDropContext);
   let {isVirtualized} = useContext(CollectionRendererContext);
 
-  // @ts-ignore
   cell.column = state.collection.columns[cell.index];
 
   let {gridCellProps, isPressed} = useTableCell({

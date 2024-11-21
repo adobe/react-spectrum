@@ -63,7 +63,7 @@ function DisclosureGroup(props: DisclosureGroupProps, ref: ForwardedRef<HTMLDivE
 }
 
 /**
- * A DisclosureGroup is a grouping of related disclosures, sometimes called an Accordion.
+ * A DisclosureGroup is a grouping of related disclosures, sometimes called an accordion.
  * It supports both single and multiple expanded items.
  */
 const _DisclosureGroup = forwardRef(DisclosureGroup);

@@ -44,9 +44,9 @@ export interface CalendarPropsBase {
    */
   autoFocus?: boolean,
   /** Controls the currently focused date within the calendar. */
-  focusedValue?: DateValue,
+  focusedValue?: DateValue | null,
   /** The date that is focused when the calendar first mounts (uncountrolled). */
-  defaultFocusedValue?: DateValue,
+  defaultFocusedValue?: DateValue | null,
   /** Handler that is called when the focused date changes. */
   onFocusChange?: (date: CalendarDate) => void,
   /**
@@ -66,8 +66,8 @@ export interface CalendarPropsBase {
 }
 
 export type DateRange = RangeValue<DateValue> | null;
-export interface CalendarProps<T extends DateValue | null> extends CalendarPropsBase, ValueBase<T | null, MappedDateValue<T>> {}
-export interface RangeCalendarProps<T extends DateValue | null> extends CalendarPropsBase, ValueBase<RangeValue<T> | null> {
+export interface CalendarProps<T extends DateValue> extends CalendarPropsBase, ValueBase<T | null, MappedDateValue<T>> {}
+export interface RangeCalendarProps<T extends DateValue> extends CalendarPropsBase, ValueBase<RangeValue<T> | null, RangeValue<MappedDateValue<T>>> {
   /**
    * When combined with `isDateUnavailable`, determines whether non-contiguous ranges,
    * i.e. ranges containing unavailable dates, may be selected.
