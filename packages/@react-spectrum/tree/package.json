@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/tree",
-  "version": "3.0.0-beta.1",
+  "version": "3.0.0-beta.2",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -36,17 +36,17 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/button": "^3.10.1",
-    "@react-aria/i18n": "^3.12.3",
-    "@react-aria/tree": "3.0.0-beta.1",
-    "@react-aria/utils": "^3.25.3",
-    "@react-spectrum/checkbox": "^3.9.10",
-    "@react-spectrum/text": "^3.5.9",
-    "@react-spectrum/utils": "^3.11.11",
-    "@react-types/shared": "^3.25.0",
-    "@spectrum-icons/ui": "^3.6.10",
+    "@react-aria/button": "^3.11.0",
+    "@react-aria/i18n": "^3.12.4",
+    "@react-aria/tree": "3.0.0-beta.2",
+    "@react-aria/utils": "^3.26.0",
+    "@react-spectrum/checkbox": "^3.9.11",
+    "@react-spectrum/text": "^3.5.10",
+    "@react-spectrum/utils": "^3.12.0",
+    "@react-types/shared": "^3.26.0",
+    "@spectrum-icons/ui": "^3.6.11",
     "@swc/helpers": "^0.5.0",
-    "react-aria-components": "^1.4.1"
+    "react-aria-components": "^1.5.0"
   },
   "peerDependencies": {
     "@react-spectrum/provider": "^3.0.0",
