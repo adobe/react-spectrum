@@ -10,20 +10,29 @@
  * governing permissions and limitations under the License.
  */
 
+import AlignLeft from '../s2wf-icons/S2_Icon_TextAlignLeft_20_N.svg';
+import AlignMiddle from '../s2wf-icons/S2_Icon_TextAlignCenter_20_N.svg';
+import AlignRight from '../s2wf-icons/S2_Icon_TextAlignRight_20_N.svg';
+import Bold from '../s2wf-icons/S2_Icon_TextBold_20_N.svg';
 import {Button, Header, Heading, Image, Keyboard, Menu, MenuItem, MenuSection, MenuTrigger, SubmenuTrigger, Text} from '../src';
 import {categorizeArgTypes} from './utils';
 import ClockPendingIcon from '../s2wf-icons/S2_Icon_ClockPending_20_N.svg';
 import {CombinedMenu} from '../src/Menu';
 import CommentTextIcon from '../s2wf-icons/S2_Icon_CommentText_20_N.svg';
 import CommunityIcon from '../s2wf-icons/S2_Icon_Community_20_N.svg';
-import CopyIcon from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
+import Copy from '../s2wf-icons/S2_Icon_Copy_20_N.svg';
+import Cut from '../s2wf-icons/S2_Icon_Cut_20_N.svg';
 import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
 import ImgIcon from '../s2wf-icons/S2_Icon_Image_20_N.svg';
+import Italic from '../s2wf-icons/S2_Icon_TextItalic_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import More from '../s2wf-icons/S2_Icon_More_20_N.svg';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
+import Paste from '../s2wf-icons/S2_Icon_Paste_20_N.svg';
 import {Selection} from 'react-aria-components';
+import TextIcon from '../s2wf-icons/S2_Icon_Text_20_N.svg';
+import Underline from '../s2wf-icons/S2_Icon_TextUnderline_20_N.svg';
 import {useState} from 'react';
 
 const meta: Meta<typeof CombinedMenu> = {
@@ -177,7 +186,7 @@ export const PublishAndExport: Story = {
             </MenuItem>
             <SubmenuTrigger>
               <MenuItem id="open-in" textValue="open a copy">
-                <CopyIcon />
+                <Copy />
                 <Text slot="label">Open a copy</Text>
                 <Text slot="description">Illustrator for iPad or desktop</Text>
               </MenuItem>
@@ -482,32 +491,64 @@ export const SelectionGroups = (args) => {
   let [group2, setGroup2] = useState<Selection>(new Set());
   return (
     <MenuTrigger {...triggerProps}>
-      <Button aria-label="Actions for selected resource"><NewIcon /></Button>
+      <Button aria-label="Text actions"><TextIcon /></Button>
       <Menu {...menuProps}>
         <MenuSection>
           <Header>
-            <Heading>Actions</Heading>
+            <Heading>Clipboard</Heading>
           </Header>
-          <MenuItem>Action 1</MenuItem>
-          <MenuItem>Action 2</MenuItem>
+          <MenuItem>
+            <Cut />
+            <Text slot="label">Cut</Text>
+          </MenuItem>
+          <MenuItem>
+            <Copy />
+            <Text slot="label">Copy</Text>
+          </MenuItem>
+          <MenuItem>
+            <Paste />
+            <Text slot="label">Paste</Text>
+          </MenuItem>
         </MenuSection>
         <MenuSection selectionMode="single" selectedKeys={group1} onSelectionChange={setGroup1}>
           <Header>
-            <Heading>Single-select</Heading>
+            <Heading>Text Alignment</Heading>
           </Header>
-          <MenuItem id={1}>One</MenuItem>
-          <MenuItem id={2}>Two</MenuItem>
-          <MenuItem id={3}>Three</MenuItem>
+          <MenuItem id={1}>
+            <AlignLeft />
+            <Text slot="label">Left</Text>
+          </MenuItem>
+          <MenuItem id={2}>
+            <AlignMiddle />
+            <Text slot="label">Center</Text>
+          </MenuItem>
+          <MenuItem id={3}>
+            <AlignRight />
+            <Text slot="label">Right</Text>
+          </MenuItem>
         </MenuSection>
         <MenuSection selectionMode="multiple" selectedKeys={group2} onSelectionChange={setGroup2}>
           <Header>
-            <Heading>Multi-select</Heading>
+            <Heading>Font Style</Heading>
           </Header>
-          <MenuItem id={4}>Four</MenuItem>
-          <MenuItem id={5}>Five</MenuItem>
-          <MenuItem id={6}>Siz</MenuItem>
+          <MenuItem id={4}>
+            <Bold />
+            <Text slot="label">Bold</Text>
+          </MenuItem>
+          <MenuItem id={5}>
+            <Italic />
+            <Text slot="label">Italic</Text>
+          </MenuItem>
+          <MenuItem id={6}>
+            <Underline />
+            <Text slot="label">Underline</Text>
+          </MenuItem>
         </MenuSection>
       </Menu>
     </MenuTrigger>
   );
+};
+
+SelectionGroups.parameters = {
+  layout: 'padded'
 };
