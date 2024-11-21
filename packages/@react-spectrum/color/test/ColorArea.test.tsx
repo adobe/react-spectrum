@@ -12,10 +12,8 @@
 
 import {ColorArea} from '../';
 import {composeStories} from '@storybook/react';
-import {defaultTheme} from '@adobe/react-spectrum';
-import {fireEvent, installMouseEvent, installPointerEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {fireEvent, installMouseEvent, installPointerEvent, pointerMap, renderv3 as render} from '@react-spectrum/test-utils-internal';
 import {parseColor} from '@react-stately/color';
-import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import * as stories from '../stories/ColorArea.stories';
 import userEvent from '@testing-library/user-event';
@@ -207,13 +205,11 @@ describe('ColorArea', () => {
           ${'home/end'}             | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'End'}), backward: (elem) => pressKey(elem, {key: 'Home'})}}                                             | ${parseColor('#df00f0')}
         `('$Name RTL', async ({props, actions: {forward, backward}, result}) => {
           let {getAllByRole} = render(
-            <Provider locale="ar-AE" theme={defaultTheme}>
-              <Component
-                {...props}
-                onChange={onChangeSpy}
-                onChangeEnd={onChangeEndSpy} />
-            </Provider>
-          );
+            <Component
+              {...props}
+              onChange={onChangeSpy}
+              onChangeEnd={onChangeEndSpy} />
+          , undefined, {locale: 'ar-AE'});
           let [xSlider, ySlider] = getAllByRole('slider', {hidden: true});
 
           expect(xSlider.getAttribute('aria-valuetext')).toBe([

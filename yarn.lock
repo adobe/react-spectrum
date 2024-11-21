@@ -8073,6 +8073,7 @@ __metadata:
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-aria/ssr": "npm:^3.0.0"
     "@react-spectrum/test-utils": "npm:1.0.0-alpha.2"
+    "@react-spectrum/theme-default": "npm:^3.5.13"
     "@swc/helpers": "npm:^0.5.0"
     "@testing-library/dom": "npm:^10.1.0"
     "@testing-library/jest-dom": "npm:^5.16.4"
@@ -8081,6 +8082,7 @@ __metadata:
     jest: "npm:^29.5.0"
     resolve: "npm:^1.17.0"
   peerDependencies:
+    "@react-spectrum/provider": ^3.9.12
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
