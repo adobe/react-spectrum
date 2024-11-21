@@ -144,7 +144,7 @@ const tablist = style({
             compact: 16,
             regular: 24
           }
-        },
+        }
       }
     }
   },
