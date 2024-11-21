@@ -69,7 +69,12 @@ export default meta;
 
 const TreeExampleStatic = (args) => (
   <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>
-    <TreeView {...args} disabledKeys={['projects-1']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+    <TreeView
+      {...args}
+      disabledKeys={['projects-1']}
+      aria-label="test static tree"
+      onExpandedChange={action('onExpandedChange')}
+      onSelectionChange={action('onSelectionChange')}>
       <TreeViewItem id="Photos" textValue="Photos">
         <Text>Photos</Text>
         <Folder />
