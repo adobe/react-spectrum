@@ -23,7 +23,7 @@ import {DOMRef} from '@react-types/shared';
 import {filterDOMProps, RouterProvider} from '@react-aria/utils';
 import {I18nProvider, useLocale} from '@react-aria/i18n';
 import {ModalProvider, useModalProvider} from '@react-aria/overlays';
-import {ProviderProps} from '@react-types/provider';
+import {ProviderContext, ProviderProps} from '@react-types/provider';
 import React, {useContext, useEffect, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/page/vars.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/index.css';
@@ -195,7 +195,7 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: Provide
  * Returns the various settings and styles applied by the nearest parent Provider.
  * Properties explicitly set by the nearest parent Provider override those provided by preceeding Providers.
  */
-export function useProvider() {
+export function useProvider(): ProviderContext {
   let context = useContext(Context);
   if (!context) {
     throw new Error(
