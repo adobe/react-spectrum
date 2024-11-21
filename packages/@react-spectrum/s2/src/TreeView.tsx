@@ -65,9 +65,6 @@ function useTreeRendererContext(): TreeRendererContextValue {
 
 let InternalTreeContext = createContext<{isDetached?: boolean}>({});
 
-
-// TODO: add animations for rows appearing and disappearing
-
 // TODO: the below is needed so the borders of the top and bottom row isn't cut off if the TreeView is wrapped within a container by always reserving the 2px needed for the
 // keyboard focus ring. Perhaps find a different way of rendering the outlines since the top of the item doesn't
 // scroll into view due to how the ring is offset. Alternatively, have the tree render the top/bottom outline like it does in Listview

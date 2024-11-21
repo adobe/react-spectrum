@@ -20,16 +20,17 @@ import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import type {Meta} from '@storybook/react';
 import React from 'react';
 import {
+  Content,
+  Heading,
+  IllustratedMessage,
+  Link,
   // ActionMenu,
   // MenuItem,
-  // Content,
-  // Heading,
   Text,
-  // IllustratedMessage,
-  // Link,
   TreeView,
   TreeViewItem
 } from '../src';
+import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 
 let onActionFunc = action('onAction');
 let noOnAction = null;
@@ -230,3 +231,25 @@ export const Dynamic = {
     disabledKeys: ['Foo 5']
   }
 };
+
+function renderEmptyState() {
+  return (
+    <IllustratedMessage>
+      <FolderOpen />
+      <Heading>
+        No results
+      </Heading>
+      <Content>
+        <Content>No results found, press <Link href="https://adobe.com" onPress={action('linkPress')}>here</Link> for more info.</Content>
+      </Content>
+    </IllustratedMessage>
+  );
+}
+
+export const Empty = {
+  render: TreeExampleDynamic,
+  args: {
+    renderEmptyState,
+    items: []
+  }
+}
