@@ -63,7 +63,7 @@ function DateField<T extends DateValue>(props: SpectrumDateFieldProps<T>, ref: F
 
   let approximateWidth = useFormattedDateWidth(state) + 'ch';
 
-  let timeValue = ['hour', 'minute', "second"];
+  let timeValue = ['hour', 'minute', 'second'];
   let timeSegments = state.segments.filter((segment) => timeValue.includes(segment.type) || (segment.type === 'literal' && segment.text === ':'));
   let otherSegments = state.segments.filter((segment) => !timeValue.includes(segment.type) && !(segment.type === 'literal' && segment.text === ':'));
 
@@ -77,15 +77,11 @@ function DateField<T extends DateValue>(props: SpectrumDateFieldProps<T>, ref: F
           state={state}
           isDisabled={isDisabled}
           isReadOnly={isReadOnly}
-          isRequired={isRequired}
-        
-        />
+          isRequired={isRequired} />
       ))
       }
     </bdo>
   );
-
-  // console.log(time);
 
   let other = (
     <bdo dir="ltr" style={{display: 'flex'}}>
@@ -96,9 +92,7 @@ function DateField<T extends DateValue>(props: SpectrumDateFieldProps<T>, ref: F
           state={state}
           isDisabled={isDisabled}
           isReadOnly={isReadOnly}
-          isRequired={isRequired}
-        
-        />
+          isRequired={isRequired} />
       ))
       }
     </bdo>

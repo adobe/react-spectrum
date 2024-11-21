@@ -67,24 +67,20 @@ function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: F
           state={state}
           isDisabled={isDisabled}
           isReadOnly={isReadOnly}
-          isRequired={isRequired}
-        
-        />
+          isRequired={isRequired} />
       ))
       }
     </bdo>
   );
 
   let other = otherSegments.map((segment, i) => (
-      <DatePickerSegment
-        key={i}
-        segment={segment}
-        state={state}
-        isDisabled={isDisabled}
-        isReadOnly={isReadOnly}
-        isRequired={isRequired}
-      
-      />
+    <DatePickerSegment
+      key={i}
+      segment={segment}
+      state={state}
+      isDisabled={isDisabled}
+      isReadOnly={isReadOnly}
+      isRequired={isRequired} />
   ));
 
   return (
@@ -109,17 +105,17 @@ function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: F
         validationState={validationState}
         minWidth={approximateWidth}
         className={classNames(datepickerStyles, 'react-spectrum-TimeField')}>
-          {/* {state.segments.map((segment, i) =>
-            (<DatePickerSegment
-              key={i}
-              segment={segment}
-              state={state}
-              isDisabled={isDisabled}
-              isReadOnly={isReadOnly}
-              isRequired={isRequired} />)
-          )} */}
-          {time}
-          {other}
+        {/* {state.segments.map((segment, i) =>
+          (<DatePickerSegment
+            key={i}
+            segment={segment}
+            state={state}
+            isDisabled={isDisabled}
+            isReadOnly={isReadOnly}
+            isRequired={isRequired} />)
+        )} */}
+        {time}
+        {other}
         <input {...inputProps} ref={inputRef} />
       </Input>
     </Field>
