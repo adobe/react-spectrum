@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Provider, theme} from '@react-spectrum/provider';
+import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {render} from '@testing-library/react';
 import {StrictModeWrapper} from './StrictModeWrapper';
+import {theme} from '@react-spectrum/theme-default';
 
 let reactTestingLibrary = require('@testing-library/react');
 
