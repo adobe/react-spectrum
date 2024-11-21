@@ -22,10 +22,7 @@ const meta: Meta<typeof CustomDialog> = {
     layout: 'centered'
   },
   tags: ['autodocs'],
-  title: 'CustomDialog',
-  argTypes: {
-    padding: {table: {disable: true}}
-  }
+  title: 'CustomDialog'
 };
 
 export default meta;
@@ -59,7 +56,12 @@ export const EdgeToEdge = (args: any) => (
   </DialogTrigger>
 );
 
+EdgeToEdge.args = {
+  padding: 'none'
+};
+
 export const Illustration = (args: any) => (
+
   <DialogTrigger>
     <ActionButton>Open dialog</ActionButton>
     <CustomDialog {...args}>
@@ -82,7 +84,7 @@ export const SideImage = (args: any) => (
     <ActionButton>Open dialog</ActionButton>
     <CustomDialog padding="none" {...args}>
       <div className={style({display: 'flex', size: 'full', flexDirection: {default: 'column', sm: 'row'}})}>
-        <Image 
+        <Image
           alt=""
           src={new URL('./assets/preview.png', import.meta.url).toString()}
           styles={style({
