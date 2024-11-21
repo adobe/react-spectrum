@@ -54,6 +54,39 @@ function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: F
 
   let approximateWidth = useFormattedDateWidth(state) + 'ch';
 
+  let timeValue = ['hour', 'minute', 'second', 'literal'];
+  let timeSegments = state.segments.filter((segment) => timeValue.includes(segment.type));
+  let otherSegments = state.segments.filter((segment) => !timeValue.includes(segment.type));
+
+  let time = (
+    <bdo dir="ltr" style={{display: 'flex'}}>
+      {timeSegments.map((segment, i) => (
+        <DatePickerSegment
+          key={i}
+          segment={segment} 
+          state={state}
+          isDisabled={isDisabled}
+          isReadOnly={isReadOnly}
+          isRequired={isRequired}
+        
+        />
+      ))
+      }
+    </bdo>
+  );
+
+  let other = otherSegments.map((segment, i) => (
+      <DatePickerSegment
+        key={i}
+        segment={segment}
+        state={state}
+        isDisabled={isDisabled}
+        isReadOnly={isReadOnly}
+        isRequired={isRequired}
+      
+      />
+  ));
+
   return (
     <Field
       {...props}
@@ -76,15 +109,17 @@ function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: F
         validationState={validationState}
         minWidth={approximateWidth}
         className={classNames(datepickerStyles, 'react-spectrum-TimeField')}>
-        {state.segments.map((segment, i) =>
-          (<DatePickerSegment
-            key={i}
-            segment={segment}
-            state={state}
-            isDisabled={isDisabled}
-            isReadOnly={isReadOnly}
-            isRequired={isRequired} />)
-        )}
+          {/* {state.segments.map((segment, i) =>
+            (<DatePickerSegment
+              key={i}
+              segment={segment}
+              state={state}
+              isDisabled={isDisabled}
+              isReadOnly={isReadOnly}
+              isRequired={isRequired} />)
+          )} */}
+          {time}
+          {other}
         <input {...inputProps} ref={inputRef} />
       </Input>
     </Field>

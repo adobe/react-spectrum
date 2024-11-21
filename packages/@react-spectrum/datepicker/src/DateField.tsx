@@ -63,6 +63,47 @@ function DateField<T extends DateValue>(props: SpectrumDateFieldProps<T>, ref: F
 
   let approximateWidth = useFormattedDateWidth(state) + 'ch';
 
+  let timeValue = ['hour', 'minute', "second"];
+  let timeSegments = state.segments.filter((segment) => timeValue.includes(segment.type) || (segment.type === 'literal' && segment.text === ':'));
+  let otherSegments = state.segments.filter((segment) => !timeValue.includes(segment.type) && !(segment.type === 'literal' && segment.text === ':'));
+
+  let timeSegmentsReverse = timeSegments.reverse();
+  let time = (
+    <bdo style={{display: 'flex'}}>
+      {timeSegmentsReverse.map((segment, i) => (
+        <DatePickerSegment
+          key={i}
+          segment={segment}
+          state={state}
+          isDisabled={isDisabled}
+          isReadOnly={isReadOnly}
+          isRequired={isRequired}
+        
+        />
+      ))
+      }
+    </bdo>
+  );
+
+  // console.log(time);
+
+  let other = (
+    <bdo dir="ltr" style={{display: 'flex'}}>
+      {otherSegments.map((segment, i) => (
+        <DatePickerSegment
+          key={i}
+          segment={segment}
+          state={state}
+          isDisabled={isDisabled}
+          isReadOnly={isReadOnly}
+          isRequired={isRequired}
+        
+        />
+      ))
+      }
+    </bdo>
+  );
+
   return (
     <Field
       {...props}
@@ -86,7 +127,7 @@ function DateField<T extends DateValue>(props: SpectrumDateFieldProps<T>, ref: F
         validationState={validationState}
         minWidth={approximateWidth}
         className={classNames(datepickerStyles, 'react-spectrum-DateField')}>
-        {state.segments.map((segment, i) =>
+        {/* {state.segments.map((segment, i) =>
           (<DatePickerSegment
             key={i}
             segment={segment}
@@ -94,7 +135,9 @@ function DateField<T extends DateValue>(props: SpectrumDateFieldProps<T>, ref: F
             isDisabled={isDisabled}
             isReadOnly={isReadOnly}
             isRequired={isRequired} />)
-        )}
+        )} */}
+        {time}
+        {other}
         <input {...inputProps} ref={inputRef} />
       </Input>
     </Field>
