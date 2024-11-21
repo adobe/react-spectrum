@@ -150,7 +150,7 @@ const rowBackgroundColor = {
   }
 } as const;
 
-const treeRow = style<TreeRowRenderProps>({
+const treeRow = style({
   position: 'relative',
   display: 'flex',
   height: 40,
@@ -159,6 +159,9 @@ const treeRow = style<TreeRowRenderProps>({
   boxSizing: 'border-box',
   font: 'ui',
   color: 'body',
+  borderRadius: { // odd behaviour, if this is the last property, then bottom right isn't rounded
+    isDetached: 'default'
+  },
   outlineStyle: 'none',
   cursor: {
     default: 'default',
@@ -219,6 +222,17 @@ const treeContent = style({
   overflow: 'hidden'
 });
 
+const cellFocus = {
+  outlineStyle: {
+    default: 'none',
+    isFocusVisible: 'solid'
+  },
+  outlineOffset: -2,
+  outlineWidth: 2,
+  outlineColor: 'focus-ring',
+  borderRadius: '[6px]'
+} as const;
+
 export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
   let {
     children,
@@ -230,7 +244,7 @@ export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
   let content;
   let nestedRows;
   let {renderer} = useTreeRendererContext();
-  // let {isDetached} = useContext(InternalTreeContext);
+  let {isDetached} = useContext(InternalTreeContext);
   // TODO alternative api is that we have a separate prop for the TreeItems contents and expect the child to then be
   // a nested tree item
 
@@ -262,10 +276,11 @@ export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
       {...props}
       className={renderProps => treeRow({
         ...renderProps,
+        isDetached,
         isLink: !!href
-      }) + (renderProps.isFocusVisible && ' ' + raw('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)'))}>
+      }) + (renderProps.isFocusVisible && !isDetached && ' ' + raw('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)'))}>
       <UNSTABLE_TreeItemContent>
-        {({isExpanded, hasChildRows, selectionMode, selectionBehavior, isDisabled}) => (
+        {({isExpanded, hasChildRows, selectionMode, selectionBehavior, isDisabled, isFocusVisible}) => (
           <div className={treeCellGrid({isDisabled})}>
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               // TODO: add transition?
@@ -289,6 +304,7 @@ export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
               ]}>
               {content}
             </Provider>
+            {isFocusVisible && isDetached && <div role="presentation" className={style({...cellFocus, position: 'absolute', inset: 0})({isFocusVisible: true})} />}
           </div>
         )}
       </UNSTABLE_TreeItemContent>
