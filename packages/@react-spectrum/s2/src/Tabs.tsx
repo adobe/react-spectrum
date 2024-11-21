@@ -138,7 +138,13 @@ const tablist = style({
         density: {
           compact: 24,
           regular: 32
-        }
+        },
+        isIconOnly: {
+          density: {
+            compact: 16,
+            regular: 24
+          }
+        },
       }
     }
   },
@@ -162,7 +168,7 @@ const tablist = style({
 });
 
 export function TabList<T extends object>(props: TabListProps<T>) {
-  let {density, isDisabled, disabledKeys, orientation} = useContext(InternalTabsContext) ?? {};
+  let {density, isDisabled, disabledKeys, orientation, iconOnly} = useContext(InternalTabsContext) ?? {};
   let {showItems} = useContext(CollapseContext) ?? {};
   let state = useContext(TabListStateContext);
   let [selectedTab, setSelectedTab] = useState<HTMLElement | undefined>(undefined);
@@ -192,7 +198,7 @@ export function TabList<T extends object>(props: TabListProps<T>) {
       <RACTabList
         {...props}
         ref={tablistRef}
-        className={renderProps => tablist({...renderProps, density})} />
+        className={renderProps => tablist({...renderProps, isIconOnly: iconOnly, density})} />
       {orientation === 'horizontal' &&
         <TabLine showItems={showItems} disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} density={density} />}
     </div>

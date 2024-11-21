@@ -29,7 +29,8 @@ import {Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/acco
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Disclosure', 'DisclosureTitle', 'DisclosurePanel']} />
+  componentNames={['Disclosure', 'DisclosureTitle', 'DisclosurePanel']}
+  since="3.38.0" />
 
 ## Example
 
@@ -44,7 +45,7 @@ import {Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/acco
 
 ## Content
 
-Disclosure follows the [ARIA Disclosure pattern](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/) and consists of two children: `DisclosureTitle` and `DisclosurePanel`. The `DisclosureTitle` controls the expansion of the `DisclosurePanel` and the contents inside. 
+Disclosure follows the [ARIA Disclosure pattern](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/) and consists of two children: `DisclosureTitle` and `DisclosurePanel`. The `DisclosureTitle` controls the expansion of the `DisclosurePanel` and the contents inside.
 
 Disclosure can be used as a standalone collapsible section of content. However, multiple discosures can be combined to form an [Accordion](Accordion.html).
 
@@ -59,7 +60,7 @@ Disclosure accepts an `onExpandedChange` prop which is triggered when it is expa
 ```tsx example
 function ControlledExpansion() {
   let [isExpanded, setIsExpanded] = React.useState<boolean>(false);
-  
+
   return (
     <>
       <Disclosure isExpanded={isExpanded} onExpandedChange={setIsExpanded}>

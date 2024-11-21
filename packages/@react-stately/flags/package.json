@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/flags",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",

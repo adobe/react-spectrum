@@ -1,0 +1,106 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Comments out unsupported props 1`] = `
+"import { ActionButtonGroup, ActionButton } from "@react-spectrum/s2";
+// TODO(S2-upgrade): overflowMode has not been implemented yet.
+// TODO(S2-upgrade): buttonLabelBehavior has not been implemented yet.
+// TODO(S2-upgrade): summaryIcon has not been implemented yet.
+<ActionButtonGroup>
+  <ActionButton key="add">Add</ActionButton>
+  <ActionButton key="delete">Delete</ActionButton>
+  <ActionButton key="edit">Edit</ActionButton>
+</ActionButtonGroup>"
+`;
+
+exports[`Converts ActionGroup to ActionButtonGroup 1`] = `
+"import { ActionButtonGroup, ActionButton } from "@react-spectrum/s2";
+<ActionButtonGroup>
+  <ActionButton key="add" onPress={() => onAction("add")}>Add</ActionButton>
+  <ActionButton key="delete" onPress={() => onAction("delete")}>Delete</ActionButton>
+  <ActionButton key="edit" onPress={() => onAction("edit")}>Edit</ActionButton>
+</ActionButtonGroup>"
+`;
+
+exports[`Converts ActionGroup to ActionButtonGroup with disabledKeys 1`] = `
+"import { ActionButtonGroup, ActionButton } from "@react-spectrum/s2";
+
+function Example({disabledKeys}) {
+  let _disabledKeys = new Set(disabledKeys);
+  return (
+    (<ActionButtonGroup>
+      <ActionButton
+        key="add"
+        onPress={() => onAction("add")}
+        isDisabled={_disabledKeys.has("add")}>Add</ActionButton>
+      <ActionButton
+        key="delete"
+        onPress={() => onAction("delete")}
+        isDisabled={_disabledKeys.has("delete")}>Delete</ActionButton>
+      <ActionButton
+        key="edit"
+        onPress={() => onAction("edit")}
+        isDisabled={_disabledKeys.has("edit")}>Edit</ActionButton>
+    </ActionButtonGroup>)
+  );
+}"
+`;
+
+exports[`Converts ActionGroup to ActionButtonGroup with dynamic collections 1`] = `
+"import { ActionButtonGroup, ActionButton } from "@react-spectrum/s2";
+<ActionButtonGroup>
+  {items.map(
+    item => <ActionButton key={item.key ?? item.id} onPress={() => onAction(item.key ?? item.id)}>{item.name}</ActionButton>
+  )}
+</ActionButtonGroup>"
+`;
+
+exports[`Converts ActionGroup to ActionButtonGroup with dynamic collections and custom key 1`] = `
+"import { ActionButtonGroup, ActionButton } from "@react-spectrum/s2";
+<ActionButtonGroup>
+  {items.map(
+    item => <ActionButton key={item._id} onPress={() => onAction(item._id)}>{item.name}</ActionButton>
+  )}
+</ActionButtonGroup>"
+`;
+
+exports[`Converts ActionGroup to ToggleButtonGroup 1`] = `
+"import { ToggleButtonGroup, ToggleButton } from "@react-spectrum/s2";
+<ToggleButtonGroup selectionMode="single" onSelectionChange={onSelectionChange}>
+  <ToggleButton id="add">Add</ToggleButton>
+  <ToggleButton id="delete">Delete</ToggleButton>
+  <ToggleButton id="edit">Edit</ToggleButton>
+</ToggleButtonGroup>"
+`;
+
+exports[`Converts ActionGroup to ToggleButtonGroup with disabledKeys 1`] = `
+"import { ToggleButtonGroup, ToggleButton } from "@react-spectrum/s2";
+
+function Example({disabledKeys}) {
+  let _disabledKeys = new Set(disabledKeys);
+  return (
+    (<ToggleButtonGroup selectionMode="single" onSelectionChange={onSelectionChange}>
+      <ToggleButton id="add" isDisabled={_disabledKeys.has("add")}>Add</ToggleButton>
+      <ToggleButton id="delete" isDisabled={_disabledKeys.has("delete")}>Delete</ToggleButton>
+      <ToggleButton id="edit" isDisabled={_disabledKeys.has("edit")}>Edit</ToggleButton>
+    </ToggleButtonGroup>)
+  );
+}"
+`;
+
+exports[`Converts ActionGroup to ToggleButtonGroup with dynamic collections 1`] = `
+"import { ToggleButtonGroup, ToggleButton } from "@react-spectrum/s2";
+<ToggleButtonGroup selectionMode="single" onSelectionChange={onSelectionChange}>
+  {items.map(
+    item => <ToggleButton key={item.key ?? item.id} id={item.key ?? item.id}>{item.name}</ToggleButton>
+  )}
+</ToggleButtonGroup>"
+`;
+
+exports[`Converts ActionGroup to ToggleButtonGroup with dynamic collections and custom key 1`] = `
+"import { ToggleButtonGroup, ToggleButton } from "@react-spectrum/s2";
+<ToggleButtonGroup selectionMode="single" onSelectionChange={onSelectionChange}>
+  {items.map(
+    item => <ToggleButton key={item._id} id={item._id}>{item.name}</ToggleButton>
+  )}
+</ToggleButtonGroup>"
+`;
