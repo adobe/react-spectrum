@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaAutocompleteProps, useAutocomplete} from '@react-aria/autocomplete';
-import {AriaMenuOptions, useFilter} from 'react-aria';
+import {AriaAutocompleteProps, CollectionOptions, useAutocomplete} from '@react-aria/autocomplete';
 import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomplete';
 import {ContextValue, Provider, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {forwardRefType} from '@react-types/shared';
@@ -19,6 +18,7 @@ import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, RefObject, useCallback, useRef} from 'react';
 import {TextContext} from './Text';
+import {useFilter} from 'react-aria';
 import {useObjectRef} from '@react-aria/utils';
 
 // TODO: I've kept isDisabled because it might be useful to a user for changing what the menu renders if the autocomplete is disabled,
@@ -38,7 +38,7 @@ export interface AutocompleteProps extends Omit<AriaAutocompleteProps, 'children
 interface InternalAutocompleteContextValue {
   filterFn: (nodeTextValue: string) => boolean,
   inputValue: string,
-  menuProps: AriaMenuOptions<any>,
+  collectionProps: CollectionOptions,
   collectionRef: RefObject<HTMLElement | null>
 }
 
@@ -57,7 +57,7 @@ function Autocomplete(props: AutocompleteProps, ref: ForwardedRef<HTMLInputEleme
   let {contains} = useFilter({sensitivity: 'base'});
   let {
     inputProps,
-    menuProps,
+    collectionProps,
     labelProps,
     descriptionProps
   } = useAutocomplete({
@@ -98,7 +98,7 @@ function Autocomplete(props: AutocompleteProps, ref: ForwardedRef<HTMLInputEleme
         [InternalAutocompleteContext, {
           filterFn,
           inputValue: state.inputValue,
-          menuProps,
+          collectionProps,
           collectionRef
         }]
       ]}>

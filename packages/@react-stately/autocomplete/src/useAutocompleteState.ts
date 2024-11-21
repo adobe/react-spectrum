@@ -53,7 +53,7 @@ export function useAutocompleteState(props: AutocompleteStateOptions): Autocompl
     }
   };
 
-  let [focusedNodeId, setFocusedNodeId] = useState(null);
+  let [focusedNodeId, setFocusedNodeId] = useState<string | null>(null);
   let [inputValue, setInputValue] = useControlledState(
     propsInputValue,
     propsDefaultInputValue!,

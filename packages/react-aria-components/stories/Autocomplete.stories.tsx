@@ -11,8 +11,9 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Autocomplete, Button, Dialog, Header, Input, Keyboard, Label, Menu, MenuSection, MenuTrigger, Popover, Separator, Text} from 'react-aria-components';
-import {MyMenuItem} from './utils';
+import {Autocomplete, Button, Dialog, GridList, Header, Input, Keyboard, Label, ListBox, ListBoxSection, Menu, MenuSection, MenuTrigger, Popover, Separator, Text} from 'react-aria-components';
+import {MyGridListItem} from './GridList.stories';
+import {MyListBoxItem, MyMenuItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
 import {useAsyncList} from 'react-stately';
@@ -275,3 +276,84 @@ export const AutocompleteInPopover = {
   },
   name: 'Autocomplete in popover'
 };
+
+export const AutocompleteWithListbox = {
+  render: ({onAction, isDisabled, isReadOnly}) => {
+    return (
+      <Autocomplete isReadOnly={isReadOnly} isDisabled={isDisabled} defaultInputValue="Ba" name="autocomplete-example" data-testid="autocomplete-example">
+        <div>
+          <Label style={{display: 'block'}}>Test</Label>
+          <Input />
+          <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+          <ListBox className={styles.menu} onAction={onAction} aria-label="test listbox with section">
+            <ListBoxSection className={styles.group}>
+              <Header style={{fontSize: '1.2em'}}>Section 1</Header>
+              <MyListBoxItem>Foo</MyListBoxItem>
+              <MyListBoxItem>Bar</MyListBoxItem>
+              <MyListBoxItem>Baz</MyListBoxItem>
+            </ListBoxSection>
+            <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
+            <ListBoxSection className={styles.group} aria-label="Section 2">
+              <MyListBoxItem>Foo</MyListBoxItem>
+              <MyListBoxItem>Bar</MyListBoxItem>
+              <MyListBoxItem>Baz</MyListBoxItem>
+            </ListBoxSection>
+          </ListBox>
+        </div>
+      </Autocomplete>
+    );
+  },
+  name: 'Autocomplete with ListBox'
+};
+
+
+export const AutocompleteWithGridList = {
+  render: ({onAction, isDisabled, isReadOnly}) => {
+    return (
+      <Autocomplete isReadOnly={isReadOnly} isDisabled={isDisabled} defaultInputValue="Ba" name="autocomplete-example" data-testid="autocomplete-example">
+        <div>
+          <Label style={{display: 'block'}}>Test</Label>
+          <Input />
+          <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+          <GridList
+            onAction={onAction}
+            className={styles.menu}
+            aria-label="test gridlist"
+            style={{
+              width: 300,
+              height: 300,
+              display: 'grid',
+              gridTemplate: 'auto / 1fr',
+              gridAutoFlow: 'row'
+            }}>
+            <MyGridListItem>1,1 <Button>Actions</Button></MyGridListItem>
+            <MyGridListItem>1,2 <Button>Actions</Button></MyGridListItem>
+            <MyGridListItem>1,3 <Button>Actions</Button></MyGridListItem>
+            <MyGridListItem>2,1 <Button>Actions</Button></MyGridListItem>
+            <MyGridListItem>2,2 <Button>Actions</Button></MyGridListItem>
+            <MyGridListItem>2,3 <Button>Actions</Button></MyGridListItem>
+            <MyGridListItem>3,1 <Button>Actions</Button></MyGridListItem>
+            <MyGridListItem>3,2 <Button>Actions</Button></MyGridListItem>
+            <MyGridListItem>3,3 <Button>Actions</Button></MyGridListItem>
+          </GridList>
+        </div>
+      </Autocomplete>
+    );
+  },
+  name: 'Autocomplete with GridList'
+};
+
+// export const AutocompleteWithTable = {
+//   render: ({onAction, isDisabled, isReadOnly}) => {
+//     return (
+//       <Autocomplete isReadOnly={isReadOnly} isDisabled={isDisabled} defaultInputValue="Ba" name="autocomplete-example" data-testid="autocomplete-example">
+//         <div>
+//           <Label style={{display: 'block'}}>Test</Label>
+//           <Input />
+//           <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+//         </div>
+//       </Autocomplete>
+//     );
+//   },
+//   name: 'Autocomplete with GridList'
+// };

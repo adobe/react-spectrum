@@ -33,7 +33,6 @@ import React, {
   RefObject,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useRef,
   useState
@@ -171,7 +170,7 @@ interface MenuInnerProps<T> {
 }
 
 function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
-  let {filterFn, menuProps: autocompleteMenuProps, collectionRef} = useContext(InternalAutocompleteContext) || {};
+  let {filterFn, collectionProps: autocompleteMenuProps, collectionRef} = useContext(InternalAutocompleteContext) || {};
   // TODO: Since menu only has `items` and not `defaultItems`, this means the user can't have completly controlled items like in ComboBox,
   // we always perform the filtering for them.
   ref = useObjectRef(mergeRefs(ref, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null));

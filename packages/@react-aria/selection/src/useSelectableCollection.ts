@@ -387,7 +387,8 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
   // Add event listeners for custom virtual events. These handle updating the focused key in response to various keyboard events
   // at the autocomplete level
-  useEvent(ref, FOCUS_EVENT, (e: CustomEvent) => {
+  // TODO: fix type later
+  useEvent(ref, FOCUS_EVENT, (e: any) => {
     if (shouldUseVirtualFocus) {
       let {detail} = e;
       e.stopPropagation();
@@ -395,7 +396,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
       // If the user is typing forwards, autofocus the first option in the list.
       if (detail?.focusStrategy === 'first') {
-        let keyToFocus = delegate.getFirstKey();
+        let keyToFocus = delegate.getFirstKey?.() ?? null;
         // If no focusable items exist in the list, make sure to clear any activedescendant that may still exist
         if (keyToFocus == null) {
           ref.current?.dispatchEvent(

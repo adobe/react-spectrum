@@ -45,7 +45,7 @@ export const GridListExample = (args) => (
   </GridList>
 );
 
-const MyGridListItem = (props: GridListItemProps) => {
+export const MyGridListItem = (props: GridListItemProps) => {
   return (
     <GridListItem
       {...props}

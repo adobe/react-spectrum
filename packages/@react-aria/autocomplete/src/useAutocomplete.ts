@@ -11,7 +11,6 @@
  */
 
 import {AriaLabelingProps, BaseEvent, DOMAttributes, DOMProps, InputDOMProps, RefObject} from '@react-types/shared';
-import type {AriaMenuOptions} from '@react-aria/menu';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
 import {chain, CLEAR_FOCUS_EVENT, DELAY_UPDATE, FOCUS_EVENT, mergeProps, UPDATE_ACTIVEDESCENDANT, useEffectEvent, useId, useLabels} from '@react-aria/utils';
 import {InputHTMLAttributes, KeyboardEvent as ReactKeyboardEvent, ReactNode, useEffect, useRef} from 'react';
@@ -20,43 +19,45 @@ import intlMessages from '../intl/*.json';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
 
+export interface CollectionOptions extends DOMProps, AriaLabelingProps {
+  shouldUseVirtualFocus: boolean,
+  disallowTypeAhead: boolean
+}
 export interface AriaAutocompleteProps extends AutocompleteProps, DOMProps, InputDOMProps, AriaLabelingProps {
   children: ReactNode
 }
 
-// TODO: all of this is menu specific but will need to eventually be agnostic to what collection element is inside
-// Update all instances of "menu" then
 export interface AriaAutocompleteOptions extends Omit<AriaAutocompleteProps, 'children'> {
   /** The ref for the input element. */
   inputRef: RefObject<HTMLInputElement | null>,
   /** The ref for the wrapped collection element. */
   collectionRef: RefObject<HTMLElement | null>
 }
-export interface AutocompleteAria<T> {
+export interface AutocompleteAria {
   /** Props for the label element. */
   labelProps: DOMAttributes,
   /** Props for the autocomplete input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
-  /** Props for the menu, to be passed to [useMenu](useMenu.html). */
-  menuProps: AriaMenuOptions<T>,
+  /** Props for the collection, to be passed to collection's respective aria hook (e.g. useMenu). */
+  collectionProps: CollectionOptions,
   /** Props for the autocomplete description element, if any. */
   descriptionProps: DOMAttributes
 }
 
 /**
  * Provides the behavior and accessibility implementation for a autocomplete component.
- * A autocomplete combines a text input with a menu, allowing users to filter a list of options to items matching a query.
+ * A autocomplete combines a text input with a collection, allowing users to filter the collection's contents match a query.
  * @param props - Props for the autocomplete.
  * @param state - State for the autocomplete, as returned by `useAutocompleteState`.
  */
-export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: AutocompleteState): AutocompleteAria<T> {
+export function useAutocomplete(props: AriaAutocompleteOptions, state: AutocompleteState): AutocompleteAria {
   let {
     inputRef,
     isReadOnly,
     collectionRef
   } = props;
 
-  let menuId = useId();
+  let collectionId = useId();
   let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   let keyToDelay = useRef<{key: string | null, delay: number | null}>({key: null, delay: null});
   // Create listeners for updateActiveDescendant events that will be fired by wrapped collection whenever the focused key changes
@@ -205,9 +206,9 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
   }, inputRef);
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/autocomplete');
-  let menuProps = useLabels({
-    id: menuId,
-    'aria-label': stringFormatter.format('menuLabel'),
+  let collectionProps = useLabels({
+    id: collectionId,
+    'aria-label': stringFormatter.format('collectionLabel'),
     'aria-labelledby': props['aria-labelledby'] || labelProps.id
   });
 
@@ -215,7 +216,7 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
     labelProps,
     inputProps: mergeProps(inputProps, {
       'aria-haspopup': 'listbox',
-      'aria-controls': menuId,
+      'aria-controls': collectionId,
       // TODO: readd proper logic for completionMode = complete (aria-autocomplete: both)
       'aria-autocomplete': 'list',
       'aria-activedescendant': state.focusedNodeId ?? undefined,
@@ -229,7 +230,8 @@ export function useAutocomplete<T>(props: AriaAutocompleteOptions, state: Autoco
       // This disable's the macOS Safari spell check auto corrections.
       spellCheck: 'false'
     }),
-    menuProps: mergeProps(menuProps, {
+    collectionProps: mergeProps(collectionProps, {
+      // TODO: shouldFocusOnHover?
       shouldUseVirtualFocus: true,
       disallowTypeAhead: true
     }),

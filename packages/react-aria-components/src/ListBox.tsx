@@ -17,9 +17,10 @@ import {ContextValue, Provider, RenderProps, ScrollableProps, SlotProps, StyleRe
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, useListState} from 'react-stately';
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {HeaderContext} from './Header';
+import {InternalAutocompleteContext} from './Autocomplete';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {SeparatorContext} from './Separator';
 import {TextContext} from './Text';
@@ -103,8 +104,13 @@ function ListBox<T extends object>(props: ListBoxProps<T>, ref: ForwardedRef<HTM
 function StandaloneListBox({props, listBoxRef, collection}) {
   props = {...props, collection, children: null, items: null};
   let {layoutDelegate} = useContext(CollectionRendererContext);
-  let state = useListState({...props, layoutDelegate});
-  return <ListBoxInner state={state} props={props} listBoxRef={listBoxRef} />;
+  let {filterFn, collectionProps, collectionRef} = useContext(InternalAutocompleteContext) || {};
+
+  // TODO: for some reason this breaks the listbox test for virtualization but locally it seems to work fine...
+  listBoxRef = useObjectRef(mergeRefs(listBoxRef, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null));
+  let filteredCollection = useMemo(() => filterFn ? collection.filter(filterFn) : collection, [collection, filterFn]);
+  let state = useListState({...props, collection: filteredCollection, layoutDelegate});
+  return <ListBoxInner state={state} props={{...props, ...collectionProps}} listBoxRef={listBoxRef} />;
 }
 
 /**
