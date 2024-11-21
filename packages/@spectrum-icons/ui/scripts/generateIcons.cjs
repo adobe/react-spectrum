@@ -38,15 +38,20 @@ function template(iconName) {
     return (
 `import {${iconName} as IconComponent} from '@adobe/react-spectrum-ui/dist/${iconName}.js';
 import {UIIcon, UIIconPropsWithoutChildren} from '@react-spectrum/icon';
-import {Context} from '@react-spectrum/provider';
-import React, {useContext} from 'react';
+import {useProvider} from '@react-spectrum/provider';
+import React from 'react';
 
 ${jsx}
 
 ExpressIcon.displayName = IconComponent.displayName;
 
 export default function ${iconName}(props: UIIconPropsWithoutChildren) {
-  let provider = useContext(Context);
+  let provider;
+  try {
+    provider = useProvider();
+  } catch {
+    // ignore
+  }
   return <UIIcon {...props}>{provider?.theme?.global?.express ? <ExpressIcon /> : <IconComponent />}</UIIcon>;
 }
 `

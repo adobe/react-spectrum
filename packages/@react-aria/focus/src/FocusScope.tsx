@@ -692,7 +692,6 @@ function useRestoreFocus(scopeRef: RefObject<Element[] | null>, restoreFocus?: b
         restoreFocus
         && nodeToRestore
         && (
-          // eslint-disable-next-line react-hooks/exhaustive-deps
           ((ownerDocument.activeElement && isElementInChildScope(ownerDocument.activeElement, scopeRef)) || (ownerDocument.activeElement === ownerDocument.body && shouldRestoreFocus(scopeRef)))
         )
       ) {
