@@ -17,7 +17,6 @@ import {
   TreeItemProps as RACTreeItemProps,
   TreeProps as RACTreeProps,
   TreeItemRenderProps,
-  TreeRenderProps,
   UNSTABLE_Tree,
   UNSTABLE_TreeItem,
   UNSTABLE_TreeItemContent,
@@ -25,15 +24,15 @@ import {
 } from 'react-aria-components';
 import {Checkbox, IconContext, Text, TextContext} from '@react-spectrum/s2';
 import Chevron from '../ui-icons/Chevron';
+import {colorMix, lightDark, style} from '../style' with {type: 'macro'};
 import {DOMRef, Key} from '@react-types/shared';
-import {colorMix, focusRing, lightDark, style} from '../style' with {type: 'macro'};
 import {isAndroid} from '@react-aria/utils';
+import {raw} from '../style/style-macro';
 import React, {createContext, forwardRef, isValidElement, JSXElementConstructor, ReactElement, useContext, useRef} from 'react';
 import {StylesPropWithHeight, UnsafeStyles} from './style-utils';
 import {useButton} from '@react-aria/button';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale} from '@react-aria/i18n';
-import { raw } from '../style/style-macro';
 
 interface S2TreeProps {
   isDetached?: boolean,
@@ -231,7 +230,7 @@ export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
   let content;
   let nestedRows;
   let {renderer} = useTreeRendererContext();
-  let {isDetached} = useContext(InternalTreeContext);
+  // let {isDetached} = useContext(InternalTreeContext);
   // TODO alternative api is that we have a separate prop for the TreeItems contents and expect the child to then be
   // a nested tree item
 
@@ -266,7 +265,7 @@ export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
         isLink: !!href
       }) + (renderProps.isFocusVisible && ' ' + raw('&:before { content: ""; display: inline-block; position: sticky; inset-inline-start: 0; width: 3px; height: 100%; margin-inline-end: -3px; margin-block-end: 1px;  z-index: 3; background-color: var(--rowFocusIndicatorColor)'))}>
       <UNSTABLE_TreeItemContent>
-        {({isExpanded, hasChildRows, selectionMode, selectionBehavior, isDisabled, isSelected, isFocusVisible}) => (
+        {({isExpanded, hasChildRows, selectionMode, selectionBehavior, isDisabled}) => (
           <div className={treeCellGrid({isDisabled})}>
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               // TODO: add transition?

@@ -12,13 +12,6 @@
 
 import {action} from '@storybook/addon-actions';
 import {categorizeArgTypes} from './utils';
-import FileTxt from '../s2wf-icons/S2_Icon_FileText_20_N.svg';
-// import Add from '../s2wf-icons/S2_Icon_Add_20_N.svg';
-// import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
-// import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
-import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
-import type {Meta} from '@storybook/react';
-import React from 'react';
 import {
   Content,
   Heading,
@@ -30,7 +23,14 @@ import {
   TreeView,
   TreeViewItem
 } from '../src';
+// import Add from '../s2wf-icons/S2_Icon_Add_20_N.svg';
+// import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
+// import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
+import FileTxt from '../s2wf-icons/S2_Icon_FileText_20_N.svg';
+import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
+import type {Meta} from '@storybook/react';
+import React from 'react';
 
 let onActionFunc = action('onAction');
 let noOnAction = null;
@@ -252,4 +252,4 @@ export const Empty = {
     renderEmptyState,
     items: []
   }
-}
+};
