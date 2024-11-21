@@ -122,6 +122,14 @@ describe('string conversion', function () {
       let date = new CalendarDate(123, 2, 3);
       expect(date.toString()).toBe('0123-02-03');
     });
+
+    it('should stringify a BC date', function () {
+      let date = new CalendarDate('BC', 1, 1, 1);
+      expect(date.toString()).toBe('0000-01-01');
+
+      date = new CalendarDate('BC', 2, 1, 1);
+      expect(date.toString()).toBe('-000001-01-01');
+    });
   });
 
   describe('parseDateTime', function () {
@@ -152,6 +160,16 @@ describe('string conversion', function () {
     it('should parse a date with only hours, minutes, and seconds', function () {
       let date = parseDateTime('2020-02-03T12:24:45');
       let expected = new CalendarDateTime(2020, 2, 3, 12, 24, 45, 0);
+      expect(date).toEqual(expected);
+    });
+
+    it('should parse BC dates', function () {
+      let date = parseDateTime('0000-01-01');
+      let expected = new CalendarDateTime('BC', 1, 1, 1);
+      expect(date).toEqual(expected);
+
+      date = parseDateTime('-000002-01-01');
+      expected = new CalendarDateTime('BC', 3, 1, 1);
       expect(date).toEqual(expected);
     });
 
@@ -192,6 +210,14 @@ describe('string conversion', function () {
     it('should stringify a date with a time and milliseconds', function () {
       let date = new CalendarDateTime(2020, 2, 3, 12, 23, 45, 120);
       expect(date.toString()).toBe('2020-02-03T12:23:45.12');
+    });
+
+    it('should stringify a BC date', function () {
+      let date = new CalendarDateTime('BC', 1, 1, 1);
+      expect(date.toString()).toBe('0000-01-01T00:00:00');
+
+      date = new CalendarDateTime('BC', 2, 1, 1);
+      expect(date.toString()).toBe('-000001-01-01T00:00:00');
     });
   });
 
@@ -274,6 +300,16 @@ describe('string conversion', function () {
       expect(date).toEqual(expected);
     });
 
+    it('should parse BC dates', function () {
+      let date = parseZonedDateTime('0000-01-01T01:00[America/Los_Angeles]');
+      let expected = new ZonedDateTime('BC', 1, 1, 1, 'America/Los_Angeles', -28378000, 1, 0, 0);
+      expect(date).toEqual(expected);
+
+      date = parseZonedDateTime('-000002-01-01T01:00[America/Los_Angeles]');
+      expected = new ZonedDateTime('BC', 3, 1, 1, 'America/Los_Angeles', -28378000, 1, 0, 0);
+      expect(date).toEqual(expected);
+    });
+
     it('should error if parsing a date with an invalid offset', function () {
       expect(() => parseZonedDateTime('2020-02-03T12:24:45.12-04:00[America/Los_Angeles]')).toThrow();
       expect(() => parseZonedDateTime('2020-02-03T12:24:45.12-08:24[America/Los_Angeles]')).toThrow();
@@ -301,6 +337,14 @@ describe('string conversion', function () {
     it('should stringify a date with milliseconds', function () {
       let date = new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000, 12, 24, 45, 120);
       expect(date.toString()).toBe('2020-02-03T12:24:45.12-08:00[America/Los_Angeles]');
+    });
+
+    it('should stringify a BC date', function () {
+      let date = new ZonedDateTime('BC', 1, 1, 1, 'UTC', 0, 1, 0, 0);
+      expect(date.toString()).toBe('0000-01-01T01:00:00+00:00[UTC]');
+
+      date = new ZonedDateTime('BC', 2, 1, 1, 'UTC', 0, 1, 0, 0);
+      expect(date.toString()).toBe('-000001-01-01T01:00:00+00:00[UTC]');
     });
   });
 
@@ -355,6 +399,16 @@ describe('string conversion', function () {
       expect(date).toEqual(expected);
     });
 
+    it('should parse BC dates', function () {
+      let date = parseAbsolute('0000-01-01T01:00Z', 'UTC');
+      let expected =  new ZonedDateTime('BC', 1, 1, 1, 'UTC', 0, 1, 0, 0);
+      expect(date).toEqual(expected);
+
+      date = parseAbsolute('-000002-01-01T01:00Z', 'UTC');
+      expected = new ZonedDateTime('BC', 3, 1, 1, 'UTC', 0, 1, 0, 0);
+      expect(date).toEqual(expected);
+    });
+
     it('should error if missing offset or Z', function () {
       expect(() => parseAbsolute('2020-02-03')).toThrow();
     });
@@ -374,6 +428,14 @@ describe('string conversion', function () {
     it('should stringify a date', function () {
       let date = new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000, 14, 32, 45);
       expect(date.toAbsoluteString()).toBe('2020-02-03T22:32:45.000Z');
+    });
+
+    it('should stringify a BC date', function () {
+      let date = new ZonedDateTime('BC', 1, 1, 1, 'UTC', 0, 1, 0, 0);
+      expect(date.toAbsoluteString()).toBe('0000-01-01T01:00:00.000Z');
+
+      date = new ZonedDateTime('BC', 2, 1, 1, 'UTC', 0, 1, 0, 0);
+      expect(date.toAbsoluteString()).toBe('-000001-01-01T01:00:00.000Z');
     });
   });
 
