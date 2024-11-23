@@ -33,6 +33,7 @@ interface AriaBaseTestProps {
 
 interface RendererArgs {
   autocompleteProps?: any,
+  inputProps?: any,
   menuProps?: any
 }
 interface AriaAutocompleteTestProps extends AriaBaseTestProps {
@@ -51,6 +52,7 @@ interface AriaAutocompleteTestProps extends AriaBaseTestProps {
 export const AriaAutocompleteTests = ({renderers, setup, prefix}: AriaAutocompleteTestProps) => {
   describe(prefix ? prefix + 'AriaAutocomplete' : 'AriaAutocomplete', function () {
     let onAction = jest.fn();
+    let onSelectionChange = jest.fn();
     let user;
     setup?.();
 
@@ -67,7 +69,6 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix}: AriaAutocomple
     it('has default behavior (input field renders with expected attributes)', async function () {
       let {getByRole} = renderers.standard({});
       let input = getByRole('searchbox');
-      expect(input).toHaveAttribute('type', 'text');
       expect(input).toHaveAttribute('aria-controls');
       expect(input).toHaveAttribute('aria-haspopup', 'listbox');
       expect(input).toHaveAttribute('aria-autocomplete', 'list');
@@ -85,13 +86,13 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix}: AriaAutocomple
     });
 
     it('should support disabling the field', async function () {
-      let {getByRole} = renderers.standard({autocompleteProps: {isDisabled: true}});
+      let {getByRole} = renderers.standard({inputProps: {isDisabled: true}});
       let input = getByRole('searchbox');
       expect(input).toHaveAttribute('disabled');
     });
 
     it('should support making the field read only', async function () {
-      let {getByRole} = renderers.standard({autocompleteProps: {isReadOnly: true}});
+      let {getByRole} = renderers.standard({inputProps: {isReadOnly: true}});
       let input = getByRole('searchbox');
       expect(input).toHaveAttribute('readonly');
     });
@@ -198,6 +199,33 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix}: AriaAutocomple
       expect(onAction).toHaveBeenCalledTimes(0);
       options = within(menu).queryAllByRole('menuitem');
       expect(options).toHaveLength(0);
+    });
+
+    it('should trigger the wrapped element\'s onSelectionChange when hitting Enter', async function () {
+      let {getByRole} = renderers.standard({menuProps: {onSelectionChange, selectionMode: 'multiple'}});
+      let input = getByRole('searchbox');
+      let menu = getByRole('menu');
+      expect(input).not.toHaveAttribute('aria-activedescendant');
+
+      await user.tab();
+      expect(document.activeElement).toBe(input);
+
+      await user.keyboard('{ArrowDown}');
+      let options = within(menu).getAllByRole('menuitemcheckbox');
+      expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+      await user.keyboard('{Enter}');
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['1']));
+
+      await user.keyboard('{ArrowDown}');
+      await user.keyboard('{Enter}');
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
+      expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['1', '2']));
+
+      await user.keyboard('{ArrowUp}');
+      await user.keyboard('{Enter}');
+      expect(onSelectionChange).toHaveBeenCalledTimes(3);
+      expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set(['2']));
     });
 
     it('should properly skip over disabled keys', async function () {
@@ -337,7 +365,6 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix}: AriaAutocomple
           expect(document.activeElement).toBe(input);
         });
 
-        // TODO this is RAC specific logic but maybe defaultFilter should move into the hooks?
         it('should support custom filtering', async function () {
           let {getByRole} = renderer({autocompleteProps: {defaultFilter: () => true}});
           let input = getByRole('searchbox');

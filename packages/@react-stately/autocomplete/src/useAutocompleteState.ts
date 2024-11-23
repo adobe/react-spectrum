@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusableProps, HelpTextProps, InputBase, LabelableProps, TextInputBase} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
 
@@ -25,7 +24,7 @@ export interface AutocompleteState {
   setFocusedNodeId(value: string | null): void
 }
 
-export interface AutocompleteProps extends InputBase, TextInputBase, FocusableProps<HTMLInputElement>, LabelableProps, HelpTextProps {
+export interface AutocompleteProps {
   /** The value of the autocomplete input (controlled). */
   inputValue?: string,
   /** The default value of the autocomplete input (uncontrolled). */

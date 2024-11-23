@@ -14,4 +14,3 @@
 export const CLEAR_FOCUS_EVENT = 'react-aria-clear-focus';
 export const FOCUS_EVENT = 'react-aria-focus';
 export const UPDATE_ACTIVEDESCENDANT = 'react-aria-update-activedescendant';
-export const DELAY_UPDATE = 'react-aria-delay-update';

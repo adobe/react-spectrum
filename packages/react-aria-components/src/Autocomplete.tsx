@@ -12,32 +12,15 @@
 
 import {AriaAutocompleteProps, CollectionOptions, useAutocomplete} from '@react-aria/autocomplete';
 import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomplete';
-import {ContextValue, Provider, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, Provider, removeDataAttributes, SlotProps, useContextProps} from './utils';
 import {forwardRefType} from '@react-types/shared';
 import {InputContext} from './Input';
-import {LabelContext} from './Label';
-import React, {createContext, ForwardedRef, forwardRef, RefObject, useCallback, useRef} from 'react';
-import {TextContext} from './Text';
-import {useFilter} from 'react-aria';
-import {useObjectRef} from '@react-aria/utils';
+import React, {createContext, ForwardedRef, forwardRef, RefObject, useRef} from 'react';
 
-// TODO: I've kept isDisabled because it might be useful to a user for changing what the menu renders if the autocomplete is disabled,
-// but what about isReadOnly. TBH is isReadOnly useful in the first place? What would a readonly Autocomplete do?
-export interface AutocompleteRenderProps {
-  /**
-   * Whether the autocomplete is disabled.
-   */
-  isDisabled: boolean
-}
-
-export interface AutocompleteProps extends Omit<AriaAutocompleteProps, 'children' | 'placeholder' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>,  RenderProps<AutocompleteRenderProps>, SlotProps {
-  /** The filter function used to determine if a option should be included in the autocomplete list. */
-  defaultFilter?: (textValue: string, inputValue: string) => boolean
-}
+export interface AutocompleteProps extends AriaAutocompleteProps, SlotProps {}
 
 interface InternalAutocompleteContextValue {
   filterFn: (nodeTextValue: string) => boolean,
-  inputValue: string,
   collectionProps: CollectionOptions,
   collectionRef: RefObject<HTMLElement | null>
 }
@@ -51,58 +34,31 @@ function Autocomplete(props: AutocompleteProps, ref: ForwardedRef<HTMLInputEleme
   [props, ref] = useContextProps(props, ref, AutocompleteContext);
   let {defaultFilter} = props;
   let state = useAutocompleteState(props);
-  let inputRef = useObjectRef<HTMLInputElement>(ref);
   let collectionRef = useRef<HTMLElement>(null);
-  let [labelRef, label] = useSlot();
-  let {contains} = useFilter({sensitivity: 'base'});
+
   let {
     inputProps,
     collectionProps,
-    labelProps,
-    descriptionProps
+    collectionRef: mergedCollectionRef,
+    filterFn
   } = useAutocomplete({
     ...removeDataAttributes(props),
-    label,
-    inputRef,
+    defaultFilter,
     collectionRef
   }, state);
-
-  let renderValues = {
-    isDisabled: props.isDisabled || false
-  };
-
-  let renderProps = useRenderProps({
-    ...props,
-    values: renderValues
-  });
-
-  // TODO this is RAC specific logic but maybe defaultFilter should move into the hooks?
-  let filterFn = useCallback((nodeTextValue: string) => {
-    if (defaultFilter) {
-      return defaultFilter(nodeTextValue, state.inputValue);
-    }
-    return contains(nodeTextValue, state.inputValue);
-  }, [state.inputValue, defaultFilter, contains]) ;
 
   return (
     <Provider
       values={[
         [AutocompleteStateContext, state],
-        [LabelContext, {...labelProps, ref: labelRef}],
-        [InputContext, {...inputProps, ref: inputRef}],
-        [TextContext, {
-          slots: {
-            description: descriptionProps
-          }
-        }],
+        [InputContext, {...inputProps}],
         [InternalAutocompleteContext, {
           filterFn,
-          inputValue: state.inputValue,
           collectionProps,
-          collectionRef
+          collectionRef: mergedCollectionRef
         }]
       ]}>
-      {renderProps.children}
+      {props.children}
     </Provider>
   );
 }

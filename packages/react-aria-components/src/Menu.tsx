@@ -173,7 +173,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   let {filterFn, collectionProps: autocompleteMenuProps, collectionRef} = useContext(InternalAutocompleteContext) || {};
   // TODO: Since menu only has `items` and not `defaultItems`, this means the user can't have completly controlled items like in ComboBox,
   // we always perform the filtering for them.
-  ref = useObjectRef(mergeRefs(ref, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null));
+  ref = useObjectRef(useMemo(() => mergeRefs(ref, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null), [collectionRef, ref]));
   let filteredCollection = useMemo(() => filterFn ? collection.filter(filterFn) : collection, [collection, filterFn]);
   let state = useTreeState({
     ...props,

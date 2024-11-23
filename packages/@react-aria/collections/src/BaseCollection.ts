@@ -256,6 +256,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
             clonedSection.lastChildKey = lastChildInSection.key;
 
             // If the old prev section was filtered out, will need to attach to whatever came before
+            // eslint-disable-next-line max-depth
             if (lastNode == null) {
               clonedSection.prevKey = null;
             } else if (lastNode.type === 'section' || lastNode.type === 'separator') {

@@ -10,38 +10,44 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, BaseEvent, DOMAttributes, DOMProps, InputDOMProps, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, BaseEvent, DOMProps, RefObject} from '@react-types/shared';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
-import {chain, CLEAR_FOCUS_EVENT, DELAY_UPDATE, FOCUS_EVENT, mergeProps, UPDATE_ACTIVEDESCENDANT, useEffectEvent, useId, useLabels} from '@react-aria/utils';
-import {InputHTMLAttributes, KeyboardEvent as ReactKeyboardEvent, ReactNode, useEffect, useRef} from 'react';
+import {ChangeEvent, InputHTMLAttributes, KeyboardEvent as ReactKeyboardEvent, ReactNode, useCallback, useEffect, useMemo, useRef} from 'react';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, mergeProps, mergeRefs, UPDATE_ACTIVEDESCENDANT, useEffectEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useTextField} from '@react-aria/textfield';
+import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface CollectionOptions extends DOMProps, AriaLabelingProps {
+  /** Whether the collection items should use virtual focus instead of being focused directly. */
   shouldUseVirtualFocus: boolean,
+  /** Whether typeahead is disabled. */
   disallowTypeAhead: boolean
 }
-export interface AriaAutocompleteProps extends AutocompleteProps, DOMProps, InputDOMProps, AriaLabelingProps {
-  children: ReactNode
+export interface AriaAutocompleteProps extends AutocompleteProps {
+  /** The children wrapped by the autocomplete. Consists of at least an input element and a collection element to filter. */
+  children: ReactNode,
+  /**
+   * The filter function used to determine if a option should be included in the autocomplete list.
+   * @default contains
+   */
+  defaultFilter?: (textValue: string, inputValue: string) => boolean
 }
 
 export interface AriaAutocompleteOptions extends Omit<AriaAutocompleteProps, 'children'> {
-  /** The ref for the input element. */
-  inputRef: RefObject<HTMLInputElement | null>,
   /** The ref for the wrapped collection element. */
   collectionRef: RefObject<HTMLElement | null>
 }
+
 export interface AutocompleteAria {
-  /** Props for the label element. */
-  labelProps: DOMAttributes,
   /** Props for the autocomplete input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the collection, to be passed to collection's respective aria hook (e.g. useMenu). */
   collectionProps: CollectionOptions,
-  /** Props for the autocomplete description element, if any. */
-  descriptionProps: DOMAttributes
+  /** Ref to attach to the wrapped collection. */
+  collectionRef: RefObject<HTMLElement | null>,
+  /** A filter function that returns if the provided collection node should be filtered out of the collection. */
+  filterFn: (nodeTextValue: string) => boolean
 }
 
 /**
@@ -52,35 +58,26 @@ export interface AutocompleteAria {
  */
 export function useAutocomplete(props: AriaAutocompleteOptions, state: AutocompleteState): AutocompleteAria {
   let {
-    inputRef,
-    isReadOnly,
-    collectionRef
+    collectionRef,
+    defaultFilter
   } = props;
 
   let collectionId = useId();
   let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  let keyToDelay = useRef<{key: string | null, delay: number | null}>({key: null, delay: null});
-  // Create listeners for updateActiveDescendant events that will be fired by wrapped collection whenever the focused key changes
-  // so we can update the tracked active descendant for virtual focus
-  useEffect(() => {
-    let collection = collectionRef.current;
+  let delayNextActiveDescendant = useRef(false);
+  let callbackRef = useEffectEvent((collectionNode) => {
     // When typing forward, we want to delay the setting of active descendant to not interrupt the native screen reader announcement
-    // of the letter you just typed. If we recieve another UPDATE_ACTIVEDESCENDANT call then we clear the queued update and
-    let setUpDelay = (e) => {
-      let {detail} = e;
-      keyToDelay.current = {key: detail?.key, delay: detail?.delay};
-    };
-
+    // of the letter you just typed. If we recieve another UPDATE_ACTIVEDESCENDANT call then we clear the queued update
     let updateActiveDescendant = (e) => {
       let {detail} = e;
       clearTimeout(timeout.current);
       e.stopPropagation();
 
       if (detail?.id != null) {
-        if (detail?.key === keyToDelay.current.key && keyToDelay.current.delay != null) {
+        if (delayNextActiveDescendant.current) {
           timeout.current = setTimeout(() => {
             state.setFocusedNodeId(detail.id);
-          }, keyToDelay.current.delay);
+          }, 500);
         } else {
           state.setFocusedNodeId(detail.id);
         }
@@ -88,16 +85,17 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
         state.setFocusedNodeId(null);
       }
 
-      keyToDelay.current = {key: null, delay: null};
+      delayNextActiveDescendant.current = false;
     };
 
-    collection?.addEventListener(UPDATE_ACTIVEDESCENDANT, updateActiveDescendant);
-    collection?.addEventListener(DELAY_UPDATE, setUpDelay);
-    return () => {
-      collection?.removeEventListener(UPDATE_ACTIVEDESCENDANT, updateActiveDescendant);
-      collection?.removeEventListener(DELAY_UPDATE, setUpDelay);
-    };
-  }, [state, collectionRef]);
+    collectionNode?.addEventListener(UPDATE_ACTIVEDESCENDANT, updateActiveDescendant);
+
+    // TODO: ideally would clean up the event listeners but since this is callback ref it will return null for collectionNode
+    // on cleanup and the collectionRef will also be null at that point...
+  });
+  // Make sure to memo so that React doesn't keep registering a new event listeners on every rerender of the wrapped collection,
+  // especially since callback refs's node parameter is null when they cleanup so we can't even clean up properly
+  let mergedCollectionRef = useObjectRef(useMemo(() => mergeRefs(collectionRef, callbackRef), [collectionRef, callbackRef]));
 
   let focusFirstItem = useEffectEvent(() => {
     let focusFirstEvent = new CustomEvent(FOCUS_EVENT, {
@@ -109,6 +107,7 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
     });
 
     collectionRef.current?.dispatchEvent(focusFirstEvent);
+    delayNextActiveDescendant.current = true;
   });
 
   let clearVirtualFocus = useEffectEvent(() => {
@@ -118,8 +117,7 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
       bubbles: true
     });
     clearTimeout(timeout.current);
-    keyToDelay.current = {key: null, delay: null};
-
+    delayNextActiveDescendant.current = false;
     collectionRef.current?.dispatchEvent(clearFocusEvent);
   });
 
@@ -127,7 +125,6 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
   // for screen reader announcements
   let lastInputValue = useRef<string | null>(null);
   useEffect(() => {
-    // inputValue will always be at least "" if menu is in a Autocomplete, null is not an accepted value for inputValue
     if (state.inputValue != null) {
       if (lastInputValue.current != null && lastInputValue.current !== state.inputValue && lastInputValue.current?.length <= state.inputValue.length) {
         focusFirstItem();
@@ -147,15 +144,16 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
 
     switch (e.key) {
       case 'Escape':
-        if (state.inputValue !== '' && !isReadOnly) {
-          state.setInputValue('');
-        } else {
-          e.continuePropagation();
+        // Early return for Escape here so it doesn't leak the Escape event from the simulated collection event below and
+        // close the dialog prematurely. Ideally that should be up to the discretion of the input element hence the check
+        // for isPropagationStopped
+        if (e.isPropagationStopped()) {
+          return;
         }
-
-        return;
+        break;
       case ' ':
         // Space shouldn't trigger onAction so early return.
+
         return;
       case 'Home':
       case 'End':
@@ -197,44 +195,43 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
     }
   };
 
-  let {labelProps, inputProps, descriptionProps} = useTextField({
-    ...props as any,
-    onChange: state.setInputValue,
-    onKeyDown: chain(onKeyDown, props.onKeyDown),
-    value: state.inputValue,
-    autoComplete: 'off'
-  }, inputRef);
-
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/autocomplete');
   let collectionProps = useLabels({
     id: collectionId,
-    'aria-label': stringFormatter.format('collectionLabel'),
-    'aria-labelledby': props['aria-labelledby'] || labelProps.id
+    'aria-label': stringFormatter.format('collectionLabel')
   });
 
+  let {contains} = useFilter({sensitivity: 'base'});
+  let filterFn = useCallback((nodeTextValue: string) => {
+    if (defaultFilter) {
+      return defaultFilter(nodeTextValue, state.inputValue);
+    }
+
+    return contains(nodeTextValue, state.inputValue);
+  }, [state.inputValue, defaultFilter, contains]) ;
+
   return {
-    labelProps,
-    inputProps: mergeProps(inputProps, {
+    inputProps: {
+      value: state.inputValue,
+      onChange: (e: ChangeEvent<HTMLInputElement>) => state.setInputValue(e.target.value),
+      onKeyDown,
+      autoComplete: 'off',
       'aria-haspopup': 'listbox',
       'aria-controls': collectionId,
       // TODO: readd proper logic for completionMode = complete (aria-autocomplete: both)
       'aria-autocomplete': 'list',
       'aria-activedescendant': state.focusedNodeId ?? undefined,
-      // TODO: note that the searchbox role causes newly typed letters to interrupt the announcement of the number of available options in Safari.
-      // I tested on iPad/Android/etc and the combobox role doesn't seem to do that but it will announce that there is a listbox which isn't true
-      // and it will say press Control Option Space to display a list of options which is also incorrect. To be fair though, our combobox doesn't open with
-      // that combination of buttons
-      role: 'searchbox',
       // This disable's iOS's autocorrect suggestions, since the autocomplete provides its own suggestions.
       autoCorrect: 'off',
       // This disable's the macOS Safari spell check auto corrections.
       spellCheck: 'false'
-    }),
+    },
     collectionProps: mergeProps(collectionProps, {
       // TODO: shouldFocusOnHover?
       shouldUseVirtualFocus: true,
       disallowTypeAhead: true
     }),
-    descriptionProps
+    collectionRef: mergedCollectionRef,
+    filterFn
   };
 }

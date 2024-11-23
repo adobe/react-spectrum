@@ -11,18 +11,22 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Autocomplete, Button, Dialog, GridList, Header, Input, Keyboard, Label, ListBox, ListBoxSection, Menu, MenuSection, MenuTrigger, Popover, Separator, Text} from 'react-aria-components';
-import {MyGridListItem} from './GridList.stories';
+import {Autocomplete, Button, Dialog, DialogTrigger, Header, Input, Keyboard, Label, ListBox, ListBoxSection, Menu, MenuSection, MenuTrigger, Popover, SearchField, Separator, Text, TextField} from 'react-aria-components';
+import {chain, useFilter} from 'react-aria';
 import {MyListBoxItem, MyMenuItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
 import {useAsyncList} from 'react-stately';
-import {useFilter} from 'react-aria';
 
 export default {
   title: 'React Aria Components',
   argTypes: {
     onAction: {
+      table: {
+        disable: true
+      }
+    },
+    onSelectionChange: {
       table: {
         disable: true
       }
@@ -39,64 +43,90 @@ export default {
   }
 };
 
+let StaticMenu = (props) => (
+  <Menu className={styles.menu} {...props}>
+    <MenuSection className={styles.group} aria-label={'Section 1'}>
+      <MyMenuItem>Foo</MyMenuItem>
+      <MyMenuItem>Bar</MyMenuItem>
+      <MyMenuItem>Baz</MyMenuItem>
+      <MyMenuItem href="http://google.com">Google</MyMenuItem>
+      <MyMenuItem>Option</MyMenuItem>
+      <MyMenuItem>Option with a space</MyMenuItem>
+    </MenuSection>
+    <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
+    <MenuSection className={styles.group}>
+      <Header style={{fontSize: '1.2em'}}>Section 2</Header>
+      <MyMenuItem textValue="Copy">
+        <Text slot="label">Copy</Text>
+        <Text slot="description">Description</Text>
+        <Keyboard>⌘C</Keyboard>
+      </MyMenuItem>
+      <MyMenuItem textValue="Cut">
+        <Text slot="label">Cut</Text>
+        <Text slot="description">Description</Text>
+        <Keyboard>⌘X</Keyboard>
+      </MyMenuItem>
+      <MyMenuItem textValue="Paste">
+        <Text slot="label">Paste</Text>
+        <Text slot="description">Description</Text>
+        <Keyboard>⌘V</Keyboard>
+      </MyMenuItem>
+    </MenuSection>
+  </Menu>
+);
+
 export const AutocompleteExample = {
-  render: ({onAction, isDisabled, isReadOnly}) => {
+  render: ({onAction, isDisabled, isReadOnly, onSelectionChange}) => {
     return (
-      <Autocomplete isReadOnly={isReadOnly} isDisabled={isDisabled} defaultInputValue="Ba" name="autocomplete-example" data-testid="autocomplete-example">
+      <Autocomplete defaultInputValue="Ba">
         <div>
-          <Label style={{display: 'block'}}>Test</Label>
-          <Input />
-          <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
-          <Menu className={styles.menu} onAction={onAction}>
-            <MenuSection className={styles.group} aria-label={'Section 1'}>
-              <MyMenuItem>Foo</MyMenuItem>
-              <MyMenuItem>Bar</MyMenuItem>
-              <MyMenuItem>Baz</MyMenuItem>
-              <MyMenuItem href="http://google.com">Google</MyMenuItem>
-              <MyMenuItem>Option</MyMenuItem>
-              <MyMenuItem>Option with a space</MyMenuItem>
-            </MenuSection>
-            <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
-            <MenuSection className={styles.group}>
-              <Header style={{fontSize: '1.2em'}}>Section 2</Header>
-              <MyMenuItem textValue="Copy">
-                <Text slot="label">Copy</Text>
-                <Text slot="description">Description</Text>
-                <Keyboard>⌘C</Keyboard>
-              </MyMenuItem>
-              <MyMenuItem textValue="Cut">
-                <Text slot="label">Cut</Text>
-                <Text slot="description">Description</Text>
-                <Keyboard>⌘X</Keyboard>
-              </MyMenuItem>
-              <MyMenuItem textValue="Paste">
-                <Text slot="label">Paste</Text>
-                <Text slot="description">Description</Text>
-                <Keyboard>⌘V</Keyboard>
-              </MyMenuItem>
-            </MenuSection>
-          </Menu>
+          <TextField autoFocus isReadOnly={isReadOnly} isDisabled={isDisabled} data-testid="autocomplete-example">
+            <Label style={{display: 'block'}}>Test</Label>
+            <Input />
+            <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+          </TextField>
+          <StaticMenu onAction={onAction} onSelectionChange={onSelectionChange} selectionMode="single" />
         </div>
       </Autocomplete>
     );
   },
-  name: 'Autocomplete complex static'
+  name: 'Autocomplete complex static with textfield'
 };
+
+export const AutocompleteSearchfield = {
+  render: ({onAction, isDisabled, isReadOnly, onSelectionChange}) => {
+    return (
+      <Autocomplete defaultInputValue="Ba">
+        <div>
+          <SearchField autoFocus isReadOnly={isReadOnly} isDisabled={isDisabled} data-testid="autocomplete-example">
+            <Label style={{display: 'block'}}>Test</Label>
+            <Input />
+            <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+          </SearchField>
+          <StaticMenu onAction={onAction} onSelectionChange={onSelectionChange} selectionMode="single" />
+        </div>
+      </Autocomplete>
+    );
+  },
+  name: 'Autocomplete complex static with searchfield'
+};
+
 interface AutocompleteItem {
   id: string,
   name: string
 }
 
 let items: AutocompleteItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'}, {id: '3', name: 'Baz'}];
-
 export const AutocompleteMenuDynamic = {
   render: ({onAction, isDisabled, isReadOnly}) => {
     return (
-      <Autocomplete isReadOnly={isReadOnly} isDisabled={isDisabled}>
+      <Autocomplete>
         <div>
-          <Label style={{display: 'block'}}>Test</Label>
-          <Input />
-          <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+          <SearchField autoFocus isReadOnly={isReadOnly} isDisabled={isDisabled}>
+            <Label style={{display: 'block'}}>Test</Label>
+            <Input />
+            <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+          </SearchField>
           <Menu className={styles.menu} items={items} onAction={onAction}>
             {item => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
           </Menu>
@@ -107,34 +137,16 @@ export const AutocompleteMenuDynamic = {
   name: 'Autocomplete, dynamic menu'
 };
 
-export const AutocompleteRenderPropsIsDisabled = {
-  render: ({onAction, isDisabled, isReadOnly}) => {
-    return (
-      <Autocomplete isReadOnly={isReadOnly} isDisabled={isDisabled}>
-        {({isDisabled}) => (
-          <div>
-            <Label style={{display: 'block'}}>Test</Label>
-            <Input />
-            <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
-            <Menu className={styles.menu} items={isDisabled ? [] : items} onAction={onAction}>
-              {item => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
-            </Menu>
-          </div>
-        )}
-      </Autocomplete>
-    );
-  },
-  name: 'Autocomplete, render props, custom menu isDisabled behavior'
-};
-
 export const AutocompleteOnActionOnMenuItems = {
   render: ({isDisabled, isReadOnly}) => {
     return (
-      <Autocomplete isDisabled={isDisabled} isReadOnly={isReadOnly}>
+      <Autocomplete>
         <div>
-          <Label style={{display: 'block'}}>Test</Label>
-          <Input />
-          <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+          <SearchField autoFocus isDisabled={isDisabled} isReadOnly={isReadOnly}>
+            <Label style={{display: 'block'}}>Test</Label>
+            <Input />
+            <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+          </SearchField>
           <Menu className={styles.menu}>
             <MyMenuItem onAction={action('Foo action')}>Foo</MyMenuItem>
             <MyMenuItem onAction={action('Bar action')}>Bar</MyMenuItem>
@@ -150,11 +162,13 @@ export const AutocompleteOnActionOnMenuItems = {
 export const AutocompleteDisabledKeys = {
   render: ({onAction, isDisabled, isReadOnly}) => {
     return (
-      <Autocomplete isDisabled={isDisabled} isReadOnly={isReadOnly}>
+      <Autocomplete>
         <div>
-          <Label style={{display: 'block'}}>Test</Label>
-          <Input />
-          <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+          <SearchField autoFocus isDisabled={isDisabled} isReadOnly={isReadOnly}>
+            <Label style={{display: 'block'}}>Test</Label>
+            <Input />
+            <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+          </SearchField>
           <Menu className={styles.menu} items={items} onAction={onAction} disabledKeys={['2']}>
             {item => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
           </Menu>
@@ -190,11 +204,13 @@ const AsyncExample = ({onAction, isDisabled, isReadOnly}) => {
   });
 
   return (
-    <Autocomplete isDisabled={isDisabled} isReadOnly={isReadOnly} inputValue={list.filterText} onInputChange={list.setFilterText}>
+    <Autocomplete inputValue={list.filterText} onInputChange={list.setFilterText}>
       <div>
-        <Label style={{display: 'block'}}>Test</Label>
-        <Input />
-        <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+        <SearchField autoFocus isDisabled={isDisabled} isReadOnly={isReadOnly}>
+          <Label style={{display: 'block'}}>Test</Label>
+          <Input />
+          <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+        </SearchField>
         <Menu<AutocompleteItem>
           items={items}
           className={styles.menu}
@@ -213,18 +229,19 @@ export const AutocompleteAsyncLoadingExample = {
   name: 'Autocomplete, useAsync level filtering'
 };
 
-
 const CaseSensitiveFilter = ({onAction, isDisabled, isReadOnly}) => {
   let {contains} = useFilter({
     sensitivity: 'case'
   });
   let defaultFilter = (itemText, input) => contains(itemText, input);
   return (
-    <Autocomplete isDisabled={isDisabled} isReadOnly={isReadOnly} defaultFilter={defaultFilter}>
+    <Autocomplete defaultFilter={defaultFilter}>
       <div>
-        <Label style={{display: 'block'}}>Test</Label>
-        <Input />
-        <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+        <SearchField autoFocus isDisabled={isDisabled} isReadOnly={isReadOnly}>
+          <Label style={{display: 'block'}}>Test</Label>
+          <Input />
+          <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+        </SearchField>
         <Menu className={styles.menu} items={items} onAction={onAction}>
           {item => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
         </Menu>
@@ -240,8 +257,6 @@ export const AutocompleteCaseSensitive = {
   name: 'Autocomplete, case sensitive filter'
 };
 
-// TODO: how would we handle this for a DialogTrigger? I guess we could automatically grab the overlaytrigger state from context and send a onAction that gets chained by the one provided
-// to Menu
 export const AutocompleteInPopover = {
   render: ({onAction, isDisabled, isReadOnly}) => {
     return (
@@ -257,13 +272,15 @@ export const AutocompleteInPopover = {
             border: '1px solid gray',
             padding: 20
           }}>
-          <Dialog>
-            <Autocomplete isReadOnly={isReadOnly} isDisabled={isDisabled}>
+          <Dialog aria-label="dialog with autocomplete">
+            <Autocomplete>
               <div>
-                <Label style={{display: 'block'}}>Test</Label>
-                <Input autoFocus />
-                <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
-                <Menu className={styles.menu} items={items} onAction={onAction}>
+                <SearchField autoFocus isReadOnly={isReadOnly} isDisabled={isDisabled}>
+                  <Label style={{display: 'block'}}>Test</Label>
+                  <Input />
+                  <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+                </SearchField>
+                <Menu className={styles.menu} items={items} onAction={onAction} autoFocus={false}>
                   {item => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
                 </Menu>
               </div>
@@ -271,21 +288,61 @@ export const AutocompleteInPopover = {
           </Dialog>
         </Popover>
       </MenuTrigger>
+    );
+  },
+  name: 'Autocomplete in popover (menu trigger)'
+};
+
+export const AutocompleteInPopoverDialogTrigger = {
+  render: ({onAction, isDisabled, isReadOnly}) => {
+    return (
+      <DialogTrigger>
+        <Button>
+          Open popover
+        </Button>
+        <Popover
+          placement="bottom start"
+          style={{
+            background: 'Canvas',
+            color: 'CanvasText',
+            border: '1px solid gray',
+            padding: 20
+          }}>
+          <Dialog aria-label="dialog with autocomplete">
+            {({close}) => (
+              <Autocomplete>
+                <div>
+                  <SearchField autoFocus isReadOnly={isReadOnly} isDisabled={isDisabled}>
+                    <Label style={{display: 'block'}}>Test</Label>
+                    <Input />
+                    <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+                  </SearchField>
+                  <Menu className={styles.menu} items={items} onAction={chain(onAction, close)} autoFocus={false}>
+                    {item => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
+                  </Menu>
+                </div>
+              </Autocomplete>
+            )}
+          </Dialog>
+        </Popover>
+      </DialogTrigger>
 
     );
   },
-  name: 'Autocomplete in popover'
+  name: 'Autocomplete in popover (dialog trigger)'
 };
 
 export const AutocompleteWithListbox = {
-  render: ({onAction, isDisabled, isReadOnly}) => {
+  render: ({isDisabled, isReadOnly, onSelectionChange}) => {
     return (
-      <Autocomplete isReadOnly={isReadOnly} isDisabled={isDisabled} defaultInputValue="Ba" name="autocomplete-example" data-testid="autocomplete-example">
+      <Autocomplete defaultInputValue="Ba">
         <div>
-          <Label style={{display: 'block'}}>Test</Label>
-          <Input />
-          <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
-          <ListBox className={styles.menu} onAction={onAction} aria-label="test listbox with section">
+          <SearchField autoFocus isReadOnly={isReadOnly} isDisabled={isDisabled}>
+            <Label style={{display: 'block'}}>Test</Label>
+            <Input />
+            <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+          </SearchField>
+          <ListBox className={styles.menu} onSelectionChange={onSelectionChange} selectionMode="single" aria-label="test listbox with section">
             <ListBoxSection className={styles.group}>
               <Header style={{fontSize: '1.2em'}}>Section 1</Header>
               <MyListBoxItem>Foo</MyListBoxItem>
@@ -294,9 +351,9 @@ export const AutocompleteWithListbox = {
             </ListBoxSection>
             <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
             <ListBoxSection className={styles.group} aria-label="Section 2">
-              <MyListBoxItem>Foo</MyListBoxItem>
-              <MyListBoxItem>Bar</MyListBoxItem>
-              <MyListBoxItem>Baz</MyListBoxItem>
+              <MyListBoxItem>Copy</MyListBoxItem>
+              <MyListBoxItem>Paste</MyListBoxItem>
+              <MyListBoxItem>Cut</MyListBoxItem>
             </ListBoxSection>
           </ListBox>
         </div>
@@ -305,55 +362,3 @@ export const AutocompleteWithListbox = {
   },
   name: 'Autocomplete with ListBox'
 };
-
-
-export const AutocompleteWithGridList = {
-  render: ({onAction, isDisabled, isReadOnly}) => {
-    return (
-      <Autocomplete isReadOnly={isReadOnly} isDisabled={isDisabled} defaultInputValue="Ba" name="autocomplete-example" data-testid="autocomplete-example">
-        <div>
-          <Label style={{display: 'block'}}>Test</Label>
-          <Input />
-          <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
-          <GridList
-            onAction={onAction}
-            className={styles.menu}
-            aria-label="test gridlist"
-            style={{
-              width: 300,
-              height: 300,
-              display: 'grid',
-              gridTemplate: 'auto / 1fr',
-              gridAutoFlow: 'row'
-            }}>
-            <MyGridListItem>1,1 <Button>Actions</Button></MyGridListItem>
-            <MyGridListItem>1,2 <Button>Actions</Button></MyGridListItem>
-            <MyGridListItem>1,3 <Button>Actions</Button></MyGridListItem>
-            <MyGridListItem>2,1 <Button>Actions</Button></MyGridListItem>
-            <MyGridListItem>2,2 <Button>Actions</Button></MyGridListItem>
-            <MyGridListItem>2,3 <Button>Actions</Button></MyGridListItem>
-            <MyGridListItem>3,1 <Button>Actions</Button></MyGridListItem>
-            <MyGridListItem>3,2 <Button>Actions</Button></MyGridListItem>
-            <MyGridListItem>3,3 <Button>Actions</Button></MyGridListItem>
-          </GridList>
-        </div>
-      </Autocomplete>
-    );
-  },
-  name: 'Autocomplete with GridList'
-};
-
-// export const AutocompleteWithTable = {
-//   render: ({onAction, isDisabled, isReadOnly}) => {
-//     return (
-//       <Autocomplete isReadOnly={isReadOnly} isDisabled={isDisabled} defaultInputValue="Ba" name="autocomplete-example" data-testid="autocomplete-example">
-//         <div>
-//           <Label style={{display: 'block'}}>Test</Label>
-//           <Input />
-//           <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
-//         </div>
-//       </Autocomplete>
-//     );
-//   },
-//   name: 'Autocomplete with GridList'
-// };

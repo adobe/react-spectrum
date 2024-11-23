@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaAutocompleteTests} from './AriaAutoComplete.test-util';
-import {Autocomplete, Header, Input, Label, Menu, MenuItem, MenuSection, Separator, Text} from '..';
+import {Autocomplete, Header, Input, Label, Menu, MenuItem, MenuSection, SearchField, Separator, Text} from '..';
 import React from 'react';
+import {render} from '@react-spectrum/test-utils-internal';
+
 interface AutocompleteItem {
   id: string,
   name: string
@@ -21,52 +22,13 @@ interface AutocompleteItem {
 
 let items: AutocompleteItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'}, {id: '3', name: 'Baz'}];
 
-let TestAutocompleteRenderProps = ({autocompleteProps = {}, menuProps = {}}: {autocompleteProps?: any, menuProps?: any}) => (
+let StaticAutocomplete = ({autocompleteProps = {}, inputProps = {}, menuProps = {}}: {autocompleteProps?: any, inputProps?: any, menuProps?: any}) => (
   <Autocomplete {...autocompleteProps}>
-    {({isDisabled}) => (
-      <div>
-        <Label style={{display: 'block'}}>Test</Label>
-        <Input />
-        <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
-        <Menu {...menuProps} items={isDisabled ? [] : items} >
-          {(item: AutocompleteItem) => <MenuItem id={item.id}>{item.name}</MenuItem>}
-        </Menu>
-      </div>
-    )}
-  </Autocomplete>
-);
-
-let renderAutoComplete = (autocompleteProps = {}, menuProps = {}) => render(<TestAutocompleteRenderProps {...{autocompleteProps, menuProps}} />);
-
-describe('Autocomplete', () => {
-  beforeAll(() => {
-    jest.useFakeTimers();
-  });
-
-  afterEach(() => {
-    act(() => {jest.runAllTimers();});
-  });
-
-  it('provides isDisabled as a renderProp', async function () {
-    let {getByRole, queryByRole, rerender} = renderAutoComplete();
-    let input = getByRole('searchbox');
-    expect(input).not.toHaveAttribute('disabled');
-    let menu = getByRole('menu');
-    let options = within(menu).getAllByRole('menuitem');
-    expect(options).toHaveLength(3);
-
-    rerender(<TestAutocompleteRenderProps autocompleteProps={{isDisabled: true}} />);
-    input = getByRole('searchbox');
-    expect(input).toHaveAttribute('disabled');
-    expect(queryByRole('menu')).toBeFalsy();
-  });
-});
-
-let StaticAutocomplete = ({autocompleteProps = {}, menuProps = {}}: {autocompleteProps?: any, menuProps?: any}) => (
-  <Autocomplete {...autocompleteProps}>
-    <Label>Test</Label>
-    <Input />
-    <Text slot="description">Please select an option below.</Text>
+    <SearchField {...inputProps}>
+      <Label style={{display: 'block'}}>Test</Label>
+      <Input />
+      <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+    </SearchField>
     <Menu {...menuProps}>
       <MenuItem id="1">Foo</MenuItem>
       <MenuItem id="2">Bar</MenuItem>
@@ -75,22 +37,26 @@ let StaticAutocomplete = ({autocompleteProps = {}, menuProps = {}}: {autocomplet
   </Autocomplete>
 );
 
-let DynamicAutoComplete = ({autocompleteProps = {}, menuProps = {}}: {autocompleteProps?: any, menuProps?: any}) => (
+let DynamicAutoComplete = ({autocompleteProps = {}, inputProps = {}, menuProps = {}}: {autocompleteProps?: any, inputProps?: any, menuProps?: any}) => (
   <Autocomplete {...autocompleteProps}>
-    <Label>Test</Label>
-    <Input />
-    <Text slot="description">Please select an option below.</Text>
+    <SearchField {...inputProps}>
+      <Label style={{display: 'block'}}>Test</Label>
+      <Input />
+      <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+    </SearchField>
     <Menu {...menuProps} items={items}>
       {(item: AutocompleteItem) => <MenuItem id={item.id}>{item.name}</MenuItem>}
     </Menu>
   </Autocomplete>
 );
 
-let WithLinks = ({autocompleteProps = {}, menuProps = {}}: {autocompleteProps?: any, menuProps?: any}) => (
+let WithLinks = ({autocompleteProps = {}, inputProps = {}, menuProps = {}}: {autocompleteProps?: any, inputProps?: any, menuProps?: any}) => (
   <Autocomplete {...autocompleteProps}>
-    <Label>Test</Label>
-    <Input />
-    <Text slot="description">Please select an option below.</Text>
+    <SearchField {...inputProps}>
+      <Label style={{display: 'block'}}>Test</Label>
+      <Input />
+      <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+    </SearchField>
     <Menu {...menuProps}>
       <MenuItem id="1">Foo</MenuItem>
       <MenuItem id="2">Bar</MenuItem>
@@ -99,14 +65,16 @@ let WithLinks = ({autocompleteProps = {}, menuProps = {}}: {autocompleteProps?: 
   </Autocomplete>
 );
 
-let ControlledAutocomplete = ({autocompleteProps = {}, menuProps = {}}: {autocompleteProps?: any, menuProps?: any}) => {
+let ControlledAutocomplete = ({autocompleteProps = {}, inputProps = {}, menuProps = {}}: {autocompleteProps?: any, inputProps?: any, menuProps?: any}) => {
   let [inputValue, setInputValue] = React.useState('');
 
   return (
     <Autocomplete inputValue={inputValue} onInputChange={setInputValue} {...autocompleteProps}>
-      <Label>Test</Label>
-      <Input />
-      <Text slot="description">Please select an option below.</Text>
+      <SearchField {...inputProps}>
+        <Label style={{display: 'block'}}>Test</Label>
+        <Input />
+        <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+      </SearchField>
       <Menu {...menuProps}>
         <MenuItem id="1">Foo</MenuItem>
         <MenuItem id="2">Bar</MenuItem>
@@ -116,11 +84,13 @@ let ControlledAutocomplete = ({autocompleteProps = {}, menuProps = {}}: {autocom
   );
 };
 
-let MenuSectionsAutocomplete = ({autocompleteProps = {}, menuProps = {}}: {autocompleteProps?: any, menuProps?: any}) => (
+let MenuSectionsAutocomplete = ({autocompleteProps = {}, inputProps = {}, menuProps = {}}: {autocompleteProps?: any, inputProps?: any, menuProps?: any}) => (
   <Autocomplete {...autocompleteProps}>
-    <Label>Test</Label>
-    <Input />
-    <Text slot="description">Please select an option below.</Text>
+    <SearchField {...inputProps}>
+      <Label style={{display: 'block'}}>Test</Label>
+      <Input />
+      <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+    </SearchField>
     <Menu {...menuProps}>
       <MenuSection id="sec1">
         <Header>MenuSection 1</Header>
@@ -142,17 +112,17 @@ let MenuSectionsAutocomplete = ({autocompleteProps = {}, menuProps = {}}: {autoc
 AriaAutocompleteTests({
   prefix: 'rac-static',
   renderers: {
-    standard: ({autocompleteProps, menuProps}) => render(
-      <StaticAutocomplete autocompleteProps={autocompleteProps} menuProps={menuProps} />
+    standard: ({autocompleteProps, inputProps, menuProps}) => render(
+      <StaticAutocomplete autocompleteProps={autocompleteProps} inputProps={inputProps} menuProps={menuProps} />
     ),
-    links: ({autocompleteProps, menuProps}) => render(
-      <WithLinks autocompleteProps={autocompleteProps} menuProps={menuProps} />
+    links: ({autocompleteProps, inputProps, menuProps}) => render(
+      <WithLinks autocompleteProps={autocompleteProps} inputProps={inputProps} menuProps={menuProps} />
     ),
-    sections: ({autocompleteProps, menuProps}) => render(
-      <MenuSectionsAutocomplete autocompleteProps={autocompleteProps} menuProps={menuProps} />
+    sections: ({autocompleteProps, inputProps, menuProps}) => render(
+      <MenuSectionsAutocomplete autocompleteProps={autocompleteProps} inputProps={inputProps} menuProps={menuProps} />
     ),
-    controlled: ({autocompleteProps, menuProps}) => render(
-      <ControlledAutocomplete autocompleteProps={autocompleteProps} menuProps={menuProps} />
+    controlled: ({autocompleteProps, inputProps, menuProps}) => render(
+      <ControlledAutocomplete autocompleteProps={autocompleteProps} inputProps={inputProps} menuProps={menuProps} />
     )
   }
 });
@@ -160,8 +130,8 @@ AriaAutocompleteTests({
 AriaAutocompleteTests({
   prefix: 'rac-dynamic',
   renderers: {
-    standard: ({autocompleteProps, menuProps}) => render(
-      <DynamicAutoComplete autocompleteProps={autocompleteProps} menuProps={menuProps} />
+    standard: ({autocompleteProps, inputProps, menuProps}) => render(
+      <DynamicAutoComplete autocompleteProps={autocompleteProps} inputProps={inputProps} menuProps={menuProps} />
     )
   }
 });
