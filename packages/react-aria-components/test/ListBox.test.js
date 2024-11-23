@@ -708,8 +708,7 @@ describe('ListBox', () => {
     expect(onScroll).toHaveBeenCalled();
   });
 
-  // TODO: debug why this test fails when merging refs
-  it.skip('should support virtualizer', async () => {
+  it('should support virtualizer', async () => {
     let layout = new ListLayout({
       rowHeight: 25
     });

@@ -105,9 +105,8 @@ function StandaloneListBox({props, listBoxRef, collection}) {
   props = {...props, collection, children: null, items: null};
   let {layoutDelegate} = useContext(CollectionRendererContext);
   let {filterFn, collectionProps, collectionRef} = useContext(InternalAutocompleteContext) || {};
-
-  // TODO: for some reason this breaks the listbox test for virtualization but locally it seems to work fine...
-  listBoxRef = useObjectRef(mergeRefs(listBoxRef, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null));
+  // Memoed so that useAutocomplete callback ref is properly only called once on mount and not everytime a rerender happens
+  listBoxRef = useObjectRef(useMemo(() => mergeRefs(listBoxRef, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null), [collectionRef, listBoxRef]));
   let filteredCollection = useMemo(() => filterFn ? collection.filter(filterFn) : collection, [collection, filterFn]);
   let state = useListState({...props, collection: filteredCollection, layoutDelegate});
   return <ListBoxInner state={state} props={{...props, ...collectionProps}} listBoxRef={listBoxRef} />;
