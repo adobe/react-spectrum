@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {ReactNode, useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
-import {useState} from 'react';
 
 export interface AutocompleteState {
   /** The current value of the autocomplete input. */
@@ -30,7 +30,9 @@ export interface AutocompleteProps {
   /** The default value of the autocomplete input (uncontrolled). */
   defaultInputValue?: string,
   /** Handler that is called when the autocomplete input value changes. */
-  onInputChange?: (value: string) => void
+  onInputChange?: (value: string) => void,
+  /** The children wrapped by the autocomplete. Consists of at least an input element and a collection element to filter. */
+  children: ReactNode
 }
 
 // Emulate our other stately hooks which accept all "base" props even if not used

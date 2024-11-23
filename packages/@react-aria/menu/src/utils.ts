@@ -22,8 +22,6 @@ interface MenuData {
 
 export const menuData = new WeakMap<TreeState<unknown>, MenuData>();
 
-// TODO: Will need to see about perhaps moving this into useSelectableCollection so we have
-// dispatch the custom event to set the active descendant upwards which needs the id
 function normalizeKey(key: Key): string {
   if (typeof key === 'string') {
     return key.replace(/\s*/g, '');

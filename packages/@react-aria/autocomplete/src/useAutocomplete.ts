@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, BaseEvent, DOMProps, RefObject} from '@react-types/shared';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
-import {ChangeEvent, InputHTMLAttributes, KeyboardEvent as ReactKeyboardEvent, ReactNode, useCallback, useEffect, useMemo, useRef} from 'react';
+import {ChangeEvent, InputHTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef} from 'react';
 import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, mergeProps, mergeRefs, UPDATE_ACTIVEDESCENDANT, useEffectEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -25,8 +25,7 @@ export interface CollectionOptions extends DOMProps, AriaLabelingProps {
   disallowTypeAhead: boolean
 }
 export interface AriaAutocompleteProps extends AutocompleteProps {
-  /** The children wrapped by the autocomplete. Consists of at least an input element and a collection element to filter. */
-  children: ReactNode,
+
   /**
    * The filter function used to determine if a option should be included in the autocomplete list.
    * @default contains

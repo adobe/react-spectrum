@@ -361,8 +361,6 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     }
   } : undefined;
 
-  // todo generate ID here that will then be used to fire/update the aria-activedescendant and also pass it to useMenuItem/other selectable items
-
   return {
     itemProps: mergeProps(
       itemProps,

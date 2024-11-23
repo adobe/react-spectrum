@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-// TODO: Custom event names for updating the autocomplete's aria-activedecendant.
+// Custom event names for updating the autocomplete's aria-activedecendant.
 export const CLEAR_FOCUS_EVENT = 'react-aria-clear-focus';
 export const FOCUS_EVENT = 'react-aria-focus';
 export const UPDATE_ACTIVEDESCENDANT = 'react-aria-update-activedescendant';

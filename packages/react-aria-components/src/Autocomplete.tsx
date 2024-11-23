@@ -13,7 +13,6 @@
 import {AriaAutocompleteProps, CollectionOptions, useAutocomplete} from '@react-aria/autocomplete';
 import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomplete';
 import {ContextValue, Provider, removeDataAttributes, SlotProps, useContextProps} from './utils';
-import {forwardRefType} from '@react-types/shared';
 import {InputContext} from './Input';
 import React, {createContext, ForwardedRef, forwardRef, RefObject, useRef} from 'react';
 
@@ -66,5 +65,5 @@ function Autocomplete(props: AutocompleteProps, ref: ForwardedRef<HTMLInputEleme
 /**
  * A autocomplete combines a text input with a menu, allowing users to filter a list of options to items matching a query.
  */
-const _Autocomplete = /*#__PURE__*/ (forwardRef as forwardRefType)(Autocomplete);
+const _Autocomplete = forwardRef(Autocomplete);
 export {_Autocomplete as Autocomplete};
