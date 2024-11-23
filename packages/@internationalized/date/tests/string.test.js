@@ -596,29 +596,16 @@ describe('string conversion', function () {
       });
     });
 
-    it('parses an ISO 8601 duration string that contains years, months, hours, and seconds including hours exceeding 23 and returns a DateTimeDuration object', function () {
-      const duration = parseDuration('P18Y7MT30H15S');
+    it('parses an ISO 8601 duration string with values exceeding normal calendar constraints', function () {
+      const duration = parseDuration('P99Y99M99W99DT99H99M99S');
       expect(duration).toStrictEqual({
-        years: 18,
-        months: 7,
-        weeks: 0,
-        days: 0,
-        hours: 30,
-        minutes: 0,
-        seconds: 15
-      });
-    });
-
-    it('parses an ISO 8601 duration string that contains years, months, hours, and seconds including hours exceeding 23 and returns a DateTimeDuration object', function () {
-      const duration = parseDuration('PT36H');
-      expect(duration).toStrictEqual({
-        years: 0,
-        months: 0,
-        weeks: 0,
-        days: 0,
-        hours: 36,
-        minutes: 0,
-        seconds: 0
+        years: 99,
+        months: 99,
+        weeks: 99,
+        days: 99,
+        hours: 99,
+        minutes: 99,
+        seconds: 99
       });
     });
 
