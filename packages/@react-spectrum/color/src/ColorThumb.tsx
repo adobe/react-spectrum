@@ -12,13 +12,13 @@
 
 import {classNames} from '@react-spectrum/utils';
 import {Color} from '@react-types/color';
-import {Context} from '@react-spectrum/provider';
 import {DOMProps, RefObject} from '@react-types/shared';
 import {Overlay} from '@react-spectrum/overlays';
-import React, {CSSProperties, ReactElement, useContext, useRef, useState} from 'react';
+import React, {CSSProperties, ReactElement, useRef, useState} from 'react';
 import stylesHandle from '@adobe/spectrum-css-temp/components/colorhandle/vars.css';
 import stylesLoupe from '@adobe/spectrum-css-temp/components/colorloupe/vars.css';
 import {useId, useLayoutEffect} from '@react-aria/utils';
+import {useProvider} from '@react-spectrum/provider';
 
 interface ColorThumbProps extends DOMProps {
   value: Color,
@@ -36,7 +36,7 @@ function ColorThumb(props: ColorThumbProps) {
 
   let valueCSS = value.toString('css');
   let loupeRef = useRef<HTMLElement | null>(null);
-  let provider = useContext(Context);
+  let provider = useProvider();
 
   return (
     <div className={classNames(stylesHandle, 'spectrum-ColorHandle', {'is-focused': isFocused, 'is-disabled': isDisabled}) + ' ' + className} style={style} {...otherProps}>

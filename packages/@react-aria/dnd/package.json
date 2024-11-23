@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/dnd",
-  "version": "3.7.4",
+  "version": "3.8.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -22,15 +22,15 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@internationalized/string": "^3.2.4",
-    "@react-aria/i18n": "^3.12.3",
-    "@react-aria/interactions": "^3.22.4",
-    "@react-aria/live-announcer": "^3.4.0",
-    "@react-aria/overlays": "^3.23.4",
-    "@react-aria/utils": "^3.25.3",
-    "@react-stately/dnd": "^3.4.3",
-    "@react-types/button": "^3.10.0",
-    "@react-types/shared": "^3.25.0",
+    "@internationalized/string": "^3.2.5",
+    "@react-aria/i18n": "^3.12.4",
+    "@react-aria/interactions": "^3.22.5",
+    "@react-aria/live-announcer": "^3.4.1",
+    "@react-aria/overlays": "^3.24.0",
+    "@react-aria/utils": "^3.26.0",
+    "@react-stately/dnd": "^3.5.0",
+    "@react-types/button": "^3.10.1",
+    "@react-types/shared": "^3.26.0",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {
