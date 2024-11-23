@@ -59,7 +59,7 @@ export interface AriaMenuItemProps extends DOMProps, PressEvents, HoverEvents, K
   'aria-label'?: string,
 
   /** The unique key for the menu item. */
-  key?: Key,
+  key: Key,
 
   /**
    * Handler that is called when the menu should close after selecting an item.
@@ -125,9 +125,10 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   } = props;
 
   let isTrigger = !!hasPopup;
+  let isTriggerExpanded = isTrigger && props['aria-expanded'] === 'true';
   let isDisabled = props.isDisabled ?? selectionManager.isDisabled(key);
   let isSelected = props.isSelected ?? selectionManager.isSelected(key);
-  let data = menuData.get(state);
+  let data = menuData.get(state)!;
   let item = state.collection.getItem(key);
   let onClose = props.onClose || data.onClose;
   let router = useRouter();
@@ -148,7 +149,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       onAction(key);
     }
 
-    if (e.target instanceof HTMLAnchorElement) {
+    if (e.target instanceof HTMLAnchorElement && item) {
       router.open(e.target, e, item.props.href, item.props.routerOptions as RouterOptions);
     }
   };
@@ -233,7 +234,8 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let {hoverProps} = useHover({
     isDisabled,
     onHoverStart(e) {
-      if (!isFocusVisible()) {
+      // Hovering over an already expanded sub dialog trigger should keep focus in the dialog.
+      if (!isFocusVisible() && !(isTriggerExpanded && hasPopup === 'dialog')) {
         selectionManager.setFocused(true);
         selectionManager.setFocusedKey(key);
       }
@@ -277,15 +279,16 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   });
 
   let {focusProps} = useFocus({onBlur, onFocus, onFocusChange});
-  let domProps = filterDOMProps(item.props);
+  let domProps = filterDOMProps(item?.props);
   delete domProps.id;
-  let linkProps = useLinkProps(item.props);
+  let linkProps = useLinkProps(item?.props);
 
   return {
     menuItemProps: {
       ...ariaProps,
       ...mergeProps(domProps, linkProps, isTrigger ? {onFocus: itemProps.onFocus, 'data-key': itemProps['data-key']} : itemProps, pressProps, hoverProps, keyboardProps, focusProps),
-      tabIndex: itemProps.tabIndex != null ? -1 : undefined
+      // If a submenu is expanded, set the tabIndex to -1 so that shift tabbing goes out of the menu instead of the parent menu item.
+      tabIndex: itemProps.tabIndex != null && isTriggerExpanded ? -1 : itemProps.tabIndex
     },
     labelProps: {
       id: labelId

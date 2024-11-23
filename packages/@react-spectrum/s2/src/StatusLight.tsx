@@ -16,7 +16,7 @@ import {ContextValue, SlotProps} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode} from 'react';
 import {filterDOMProps} from '@react-aria/utils';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {size, style} from '../style' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {Text} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useIsSkeleton} from './Skeleton';
@@ -70,9 +70,9 @@ const light = style<StatusLightStyleProps & {isSkeleton: boolean}>({
   size: {
     size: {
       S: 8,
-      M: size(10),
+      M: 10,
       L: 12,
-      XL: size(14)
+      XL: 14
     }
   },
   fill: {

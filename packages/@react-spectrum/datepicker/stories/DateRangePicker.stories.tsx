@@ -14,6 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {CalendarDate, getLocalTimeZone, isWeekend, parseDate, today, toZoned} from '@internationalized/date';
 import {chain} from '@react-aria/utils';
+import {DateRange} from '@react-types/datepicker';
 import {DateRangePicker} from '../';
 import {DateValue} from '@react-types/calendar';
 import {Flex} from '@react-spectrum/layout';
@@ -129,7 +130,7 @@ MinDate201011MaxDate202011.story = {
 
 export const IsDateUnavailable = () => {
   const disabledRanges = [[today(getLocalTimeZone()), today(getLocalTimeZone()).add({weeks: 1})], [today(getLocalTimeZone()).add({weeks: 2}), today(getLocalTimeZone()).add({weeks: 3})]];
-  let [value, setValue] = React.useState(null);
+  let [value, setValue] = React.useState<DateRange | null>(null);
   let isInvalid = value && disabledRanges.some(interval => value.end.compare(interval[0]) >= 0 && value.start.compare(interval[1]) <= 0);
   let isDateUnavailable = (date) => disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
   return render({
@@ -238,12 +239,12 @@ function Example(props) {
   let {locale: defaultLocale} = useLocale();
 
   let pref = preferences.find(p => p.locale === locale);
-  let preferredCalendars = React.useMemo(() => pref ? pref.ordering.split(' ').map(p => calendars.find(c => c.key === p)).filter(Boolean) : [calendars[0]], [pref]);
+  let preferredCalendars = React.useMemo(() => pref ? pref.ordering.split(' ').map(p => calendars.find(c => c.key === p)).filter(v => v != null) : [calendars[0]], [pref]);
   let otherCalendars = React.useMemo(() => calendars.filter(c => !preferredCalendars.some(p => p.key === c.key)), [preferredCalendars]);
 
   let updateLocale = locale => {
     setLocale(locale);
-    let pref = preferences.find(p => p.locale === locale);
+    let pref = preferences.find(p => p.locale === locale)!;
     setCalendar(pref.ordering.split(' ')[0]);
   };
 
@@ -270,7 +271,7 @@ function Example(props) {
 }
 
 function ControlledExample(props) {
-  let [value, setValue] = React.useState(null);
+  let [value, setValue] = React.useState<DateRange | null>(null);
 
   return (
     <Flex direction="column" alignItems="center" gap="size-150">

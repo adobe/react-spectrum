@@ -57,12 +57,10 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
       if (!('signDisplay' in formatOptions)) {
         formatOptions = {
           ...formatOptions,
-          // @ts-ignore
           signDisplay: 'exceptZero'
         };
       }
     } else {
-      // @ts-ignore
       formatOptions = {signDisplay: 'exceptZero'};
     }
   }
@@ -74,7 +72,7 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
     minValue,
     maxValue
   });
-  let trackRef = useRef(undefined);
+  let trackRef = useRef<HTMLDivElement | null>(null);
   let {
     groupProps,
     trackProps,
@@ -82,11 +80,11 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
     outputProps
   } = useSlider(props, state, trackRef);
 
-  let inputRef = useRef(undefined);
+  let inputRef = useRef<HTMLInputElement | null>(null);
   let domRef = useFocusableRef(ref, inputRef);
 
   let displayValue = '';
-  let maxLabelLength = undefined;
+  let maxLabelLength: number | null = null;
 
   if (typeof getValueLabel === 'function') {
     displayValue = getValueLabel(state.values);
@@ -142,7 +140,7 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
     <output
       {...outputProps}
       className={classNames(styles, 'spectrum-Slider-value')}
-      style={maxLabelLength && {width: `${maxLabelLength}ch`, minWidth: `${maxLabelLength}ch`}}>
+      style={maxLabelLength != null ? {width: `${maxLabelLength}ch`, minWidth: `${maxLabelLength}ch`} : undefined}>
       {displayValue}
     </output>
   );

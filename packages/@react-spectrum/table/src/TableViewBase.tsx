@@ -26,9 +26,9 @@ import {ColumnSize, SpectrumColumnProps, TableCollection} from '@react-types/tab
 import {DOMRef, DropTarget, FocusableElement, FocusableRef, Key, RefObject} from '@react-types/shared';
 import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
-import type {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult, DroppableItemResult} from '@react-aria/dnd';
+import type {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult} from '@react-aria/dnd';
 import {FocusRing, FocusScope, useFocusRing} from '@react-aria/focus';
-import {getInteractionModality, isFocusVisible, useHover, usePress} from '@react-aria/interactions';
+import {getInteractionModality, HoverProps, isFocusVisible, useHover, usePress} from '@react-aria/interactions';
 import {GridNode} from '@react-types/grid';
 import {InsertionIndicator} from './InsertionIndicator';
 // @ts-ignore
@@ -108,9 +108,9 @@ const LEVEL_OFFSET_WIDTH = {
 
 export interface TableContextValue<T> {
   state: TableState<T> | TreeGridState<T>,
-  dragState: DraggableCollectionState,
-  dropState: DroppableCollectionState,
-  dragAndDropHooks: DragAndDropHooks['dragAndDropHooks'],
+  dragState: DraggableCollectionState | null,
+  dropState: DroppableCollectionState | null,
+  dragAndDropHooks?: DragAndDropHooks['dragAndDropHooks'],
   isTableDraggable: boolean,
   isTableDroppable: boolean,
   layout: TableViewLayout<T>,
@@ -119,20 +119,20 @@ export interface TableContextValue<T> {
   setIsInResizeMode: (val: boolean) => void,
   isEmpty: boolean,
   onFocusedResizer: () => void,
-  onResizeStart: (widths: Map<Key, ColumnSize>) => void,
-  onResize: (widths: Map<Key, ColumnSize>) => void,
-  onResizeEnd: (widths: Map<Key, ColumnSize>) => void,
+  onResizeStart?: (widths: Map<Key, ColumnSize>) => void,
+  onResize?: (widths: Map<Key, ColumnSize>) => void,
+  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void,
   headerMenuOpen: boolean,
   setHeaderMenuOpen: (val: boolean) => void,
   renderEmptyState?: () => ReactElement
 }
 
-export const TableContext = React.createContext<TableContextValue<unknown>>(null);
+export const TableContext = React.createContext<TableContextValue<unknown> | null>(null);
 export function useTableContext() {
-  return useContext(TableContext);
+  return useContext(TableContext)!;
 }
 
-export const VirtualizerContext = React.createContext(null);
+export const VirtualizerContext = React.createContext<{width: number, key: Key | null} | null>(null);
 export function useVirtualizerContext() {
   return useContext(VirtualizerContext);
 }
@@ -181,51 +181,51 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   let [, setIsResizing] = useState(false);
 
   let domRef = useDOMRef(ref);
-  let headerRef = useRef<HTMLDivElement>(undefined);
-  let bodyRef = useRef<HTMLDivElement>(undefined);
+  let headerRef = useRef<HTMLDivElement | null>(null);
+  let bodyRef = useRef<HTMLDivElement | null>(null);
 
   let density = props.density || 'regular';
-  let layout = useMemo(() => new TableViewLayout({
+  let layout = useMemo(() => new TableViewLayout<T>({
     // If props.rowHeight is auto, then use estimated heights based on scale, otherwise use fixed heights.
     rowHeight: props.overflowMode === 'wrap'
-      ? null
+      ? undefined
       : ROW_HEIGHTS[density][scale],
     estimatedRowHeight: props.overflowMode === 'wrap'
       ? ROW_HEIGHTS[density][scale]
-      : null,
+      : undefined,
     headingHeight: props.overflowMode === 'wrap'
-      ? null
+      ? undefined
       : DEFAULT_HEADER_HEIGHT[scale],
     estimatedHeadingHeight: props.overflowMode === 'wrap'
       ? DEFAULT_HEADER_HEIGHT[scale]
-      : null
+      : undefined
   }),
     // don't recompute when state.collection changes, only used for initial value
-     
+
     [props.overflowMode, scale, density]
   );
 
-  let dragState: DraggableCollectionState;
+  let dragState: DraggableCollectionState | null = null;
   let preview = useRef(null);
-  if (isTableDraggable) {
-    dragState = dragAndDropHooks.useDraggableCollectionState({
+  if (isTableDraggable && dragAndDropHooks) {
+    dragState = dragAndDropHooks.useDraggableCollectionState!({
       collection: state.collection,
       selectionManager: state.selectionManager,
       preview
     });
-    dragAndDropHooks.useDraggableCollection({}, dragState, domRef);
+    dragAndDropHooks.useDraggableCollection!({}, dragState, domRef);
   }
 
   let DragPreview = dragAndDropHooks?.DragPreview;
-  let dropState: DroppableCollectionState;
-  let droppableCollection: DroppableCollectionResult;
-  let isRootDropTarget: boolean;
-  if (isTableDroppable) {
-    dropState = dragAndDropHooks.useDroppableCollectionState({
+  let dropState: DroppableCollectionState | null = null;
+  let droppableCollection: DroppableCollectionResult | null = null;
+  let isRootDropTarget = false;
+  if (isTableDroppable && dragAndDropHooks) {
+    dropState = dragAndDropHooks.useDroppableCollectionState!({
       collection: state.collection,
       selectionManager: state.selectionManager
     });
-    droppableCollection = dragAndDropHooks.useDroppableCollection({
+    droppableCollection = dragAndDropHooks.useDroppableCollection!({
       keyboardDelegate: new ListKeyboardDelegate({
         collection: state.collection,
         disabledKeys: state.selectionManager.disabledKeys,
@@ -249,13 +249,13 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   let [headerRowHovered, setHeaderRowHovered] = useState(false);
 
   // This overrides collection view's renderWrapper to support DOM hierarchy.
-  let renderWrapper = useCallback((parent: View, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]) => {
+  let renderWrapper = useCallback((parent: View | null, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]): ReactElement => {
     if (reusableView.viewType === 'rowgroup') {
       return (
         <TableRowGroup
           key={reusableView.key}
-          layoutInfo={reusableView.layoutInfo}
-          parent={parent?.layoutInfo}
+          layoutInfo={reusableView.layoutInfo!}
+          parent={parent?.layoutInfo ?? null}
           // Override the default role="rowgroup" with role="presentation",
           // in favor or adding role="rowgroup" to the ScrollView with
           // ref={bodyRef} in the TableVirtualizer below.
@@ -269,8 +269,8 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
       return (
         <TableHeader
           key={reusableView.key}
-          layoutInfo={reusableView.layoutInfo}
-          parent={parent?.layoutInfo}>
+          layoutInfo={reusableView.layoutInfo!}
+          parent={parent?.layoutInfo ?? null}>
           {renderChildren(children)}
         </TableHeader>
       );
@@ -280,9 +280,9 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
       return (
         <TableRow
           key={reusableView.key}
-          item={reusableView.content}
-          layoutInfo={reusableView.layoutInfo}
-          parent={parent?.layoutInfo}>
+          item={reusableView.content!}
+          layoutInfo={reusableView.layoutInfo!}
+          parent={parent?.layoutInfo ?? null}>
           {renderChildren(children)}
         </TableRow>
       );
@@ -293,9 +293,9 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
         <TableHeaderRow
           onHoverChange={setHeaderRowHovered}
           key={reusableView.key}
-          layoutInfo={reusableView.layoutInfo}
-          parent={parent?.layoutInfo}
-          item={reusableView.content}>
+          layoutInfo={reusableView.layoutInfo!}
+          parent={parent?.layoutInfo ?? null}
+          item={reusableView.content!}>
           {renderChildren(children)}
         </TableHeaderRow>
       );
@@ -304,9 +304,9 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
     return (
       <TableCellWrapper
         key={reusableView.key}
-        layoutInfo={reusableView.layoutInfo}
+        layoutInfo={reusableView.layoutInfo!}
         virtualizer={reusableView.virtualizer}
-        parent={parent}>
+        parent={parent!}>
         {reusableView.rendered}
       </TableCellWrapper>
     );
@@ -337,7 +337,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
           <div
             role="gridcell"
             aria-colindex={item.index + 1}
-            aria-colspan={item.colspan > 1 ? item.colspan : null} />
+            aria-colspan={item.colspan != null && item.colspan > 1 ? item.colspan : undefined} />
         );
       case 'column':
         if (item.props.isSelectionCell) {
@@ -371,6 +371,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
         return <EmptyState />;
       }
     }
+    return null;
   }, []);
 
   let [isVerticalScrollbarVisible, setVerticalScollbarVisible] = useState(false);
@@ -390,7 +391,9 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   let isEmpty = state.collection.size === 0;
 
   let onFocusedResizer = () => {
-    bodyRef.current.scrollLeft = headerRef.current.scrollLeft;
+    if (bodyRef.current && headerRef.current) {
+      bodyRef.current.scrollLeft = headerRef.current.scrollLeft;
+    }
   };
 
   let onResizeStart = useCallback((widths) => {
@@ -419,11 +422,14 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   }, [focusedKey, dropTargetKey]);
 
   let mergedProps = mergeProps(
-    isTableDroppable && droppableCollection?.collectionProps,
+    isTableDroppable ? droppableCollection?.collectionProps : null,
     gridProps,
-    focusProps,
-    dragAndDropHooks?.isVirtualDragging() && {tabIndex: null}
+    focusProps
   );
+
+  if (dragAndDropHooks?.isVirtualDragging?.()) {
+    mergedProps.tabIndex = undefined;
+  }
 
   return (
     <TableContext.Provider
@@ -480,18 +486,21 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
         headerRef={headerRef}
         bodyRef={bodyRef}
         isFocusVisible={isFocusVisible}
-        isVirtualDragging={dragAndDropHooks?.isVirtualDragging()}
+        isVirtualDragging={dragAndDropHooks?.isVirtualDragging?.() || false}
         isRootDropTarget={isRootDropTarget} />
-      {DragPreview && isTableDraggable &&
+      {DragPreview && isTableDraggable && dragAndDropHooks && dragState &&
         <DragPreview ref={preview}>
           {() => {
+            if (dragState.draggedKey == null) {
+              return null;
+            }
             if (dragAndDropHooks.renderPreview) {
               return dragAndDropHooks.renderPreview(dragState.draggingKeys, dragState.draggedKey);
             }
             let itemCount = dragState.draggingKeys.size;
-            let maxWidth = bodyRef.current.getBoundingClientRect().width;
+            let maxWidth = bodyRef.current!.getBoundingClientRect().width;
             let height = ROW_HEIGHTS[density][scale];
-            let itemText = state.collection.getTextValue(dragState.draggedKey);
+            let itemText = state.collection.getTextValue!(dragState.draggedKey);
             return <SpectrumDragPreview itemText={itemText} itemCount={itemCount} height={height} maxWidth={maxWidth} />;
           }}
         </DragPreview>
@@ -505,16 +514,16 @@ interface TableVirtualizerProps<T> extends HTMLAttributes<HTMLElement> {
   layout: TableViewLayout<T>,
   collection: TableCollection<T>,
   persistedKeys: Set<Key> | null,
-  renderView: (type: string, content: GridNode<T>) => ReactElement,
-  renderWrapper?: (
+  renderView: (type: string, content: GridNode<T>) => ReactElement | null,
+  renderWrapper: (
     parent: View | null,
     reusableView: View,
     children: View[],
     renderChildren: (views: View[]) => ReactElement[]
-  ) => ReactElement,
-  domRef: RefObject<HTMLDivElement>,
-  bodyRef: RefObject<HTMLDivElement>,
-  headerRef: RefObject<HTMLDivElement>,
+  ) => ReactElement | null,
+  domRef: RefObject<HTMLDivElement | null>,
+  bodyRef: RefObject<HTMLDivElement | null>,
+  headerRef: RefObject<HTMLDivElement | null>,
   onVisibleRectChange: (rect: Rect) => void,
   isFocusVisible: boolean,
   isVirtualDragging: boolean,
@@ -565,8 +574,10 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
     collection,
     renderView,
     onVisibleRectChange(rect) {
-      bodyRef.current.scrollTop = rect.y;
-      setScrollLeft(bodyRef.current, direction, rect.x);
+      if (bodyRef.current) {
+        bodyRef.current.scrollTop = rect.y;
+        setScrollLeft(bodyRef.current, direction, rect.x);
+      }
     },
     persistedKeys,
     layoutOptions: useMemo(() => ({
@@ -589,7 +600,7 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
   // only that it changes in a resize, and when that happens, we want to sync the body to the
   // header scroll position
   useEffect(() => {
-    if (getInteractionModality() === 'keyboard' && headerRef.current.contains(document.activeElement)) {
+    if (getInteractionModality() === 'keyboard' && headerRef.current?.contains(document.activeElement) && bodyRef.current) {
       scrollIntoView(headerRef.current, document.activeElement as HTMLElement);
       scrollIntoViewport(document.activeElement, {containingElement: domRef.current});
       bodyRef.current.scrollLeft = headerRef.current.scrollLeft;
@@ -600,10 +611,12 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
 
   // Sync the scroll position from the table body to the header container.
   let onScroll = useCallback(() => {
-    headerRef.current.scrollLeft = bodyRef.current.scrollLeft;
+    if (headerRef.current && bodyRef.current) {
+      headerRef.current.scrollLeft = bodyRef.current.scrollLeft;
+    }
   }, [bodyRef, headerRef]);
 
-  let resizerPosition = columnResizeState.resizingColumn != null ? layout.getLayoutInfo(columnResizeState.resizingColumn).rect.maxX - 2 : 0;
+  let resizerPosition = columnResizeState.resizingColumn != null ? layout.getLayoutInfo(columnResizeState.resizingColumn)!.rect.maxX - 2 : 0;
 
   let resizerAtEdge = resizerPosition > Math.max(state.virtualizer.contentSize.width, state.virtualizer.visibleRect.width) - 3;
   // this should be fine, every movement of the resizer causes a rerender
@@ -617,10 +630,10 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
     width: resizingColumnWidth,
     key: columnResizeState.resizingColumn
   }), [resizingColumnWidth, columnResizeState.resizingColumn]);
-  let mergedProps = mergeProps(
-    otherProps,
-    isVirtualDragging && {tabIndex: null}
-  );
+
+  if (isVirtualDragging) {
+    otherProps.tabIndex = undefined;
+  }
 
   let firstColumn = collection.columns[0];
   let scrollPadding = 0;
@@ -634,7 +647,7 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
     <VirtualizerContext.Provider value={resizingColumn}>
       <FocusScope>
         <div
-          {...mergedProps}
+          {...otherProps}
           ref={domRef}>
           <div
             role="presentation"
@@ -674,7 +687,7 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
             //  Using tabIndex={-1} prevents the ScrollView from being tabbable, and using role="rowgroup"
             //  here and role="presentation" on the table body content fixes the table structure.
             role="rowgroup"
-            tabIndex={isVirtualDragging ? null : -1}
+            tabIndex={isVirtualDragging ? undefined : -1}
             style={{
               flex: 1,
               scrollPaddingInlineStart: scrollPadding
@@ -697,7 +710,7 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
   );
 }
 
-function renderChildren<T extends object>(parent: View | null, views: View[], renderWrapper: TableVirtualizerProps<T>['renderWrapper']) {
+function renderChildren<T extends object>(parent: View | null, views: View[], renderWrapper: NonNullable<TableVirtualizerProps<T>['renderWrapper']>) {
   return views.map(view => {
     return renderWrapper(
       parent,
@@ -717,7 +730,7 @@ function useStyle(layoutInfo: LayoutInfo, parent: LayoutInfo | null) {
   return style;
 }
 
-function TableHeader({children, layoutInfo, parent, ...otherProps}) {
+function TableHeader({children, layoutInfo, parent, ...otherProps}: {children: ReactNode, layoutInfo: LayoutInfo, parent: LayoutInfo | null}) {
   let {rowGroupProps} = useTableRowGroup();
   let style = useStyle(layoutInfo, parent);
 
@@ -845,7 +858,7 @@ function ResizableTableColumnHeader(props) {
     headerMenuOpen,
     setHeaderMenuOpen
   } = useTableContext();
-  let columnResizeState = useContext(ResizeStateContext);
+  let columnResizeState = useContext(ResizeStateContext)!;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/table');
   let {pressProps, isPressed} = usePress({isDisabled: isEmpty});
   let {columnHeaderProps} = useTableColumnHeader({
@@ -878,20 +891,21 @@ function ResizableTableColumnHeader(props) {
   };
   let allowsSorting = column.props?.allowsSorting;
   let items = useMemo(() => {
-    let options = [
-      allowsSorting ? {
+    let options: {label: string, id: string}[] = [];
+    if (allowsSorting) {
+      options.push({
         label: stringFormatter.format('sortAscending'),
         id: 'sort-asc'
-      } : undefined,
-      allowsSorting ? {
+      });
+      options.push({
         label: stringFormatter.format('sortDescending'),
         id: 'sort-desc'
-      } : undefined,
-      {
-        label: stringFormatter.format('resizeColumn'),
-        id: 'resize'
-      }
-    ];
+      });
+    }
+    options.push({
+      label: stringFormatter.format('resizeColumn'),
+      id: 'resize'
+    });
     return options;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allowsSorting]);
@@ -992,7 +1006,7 @@ function ResizableTableColumnHeader(props) {
 }
 
 function TableSelectAllCell({column}) {
-  let ref = useRef(undefined);
+  let ref = useRef<HTMLDivElement | null>(null);
   let {state} = useTableContext();
   let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
   let {columnHeaderProps} = useTableColumnHeader({
@@ -1039,7 +1053,7 @@ function TableSelectAllCell({column}) {
 }
 
 function TableDragHeaderCell({column}) {
-  let ref = useRef(undefined);
+  let ref = useRef<HTMLDivElement | null>(null);
   let {state} = useTableContext();
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
@@ -1069,9 +1083,9 @@ function TableDragHeaderCell({column}) {
   );
 }
 
-function TableRowGroup({children, layoutInfo, parent, ...otherProps}) {
+function TableRowGroup({children, layoutInfo, parent, ...otherProps}: {children: ReactNode, layoutInfo: LayoutInfo, parent: LayoutInfo | null, role: string}) {
   let {rowGroupProps} = useTableRowGroup();
-  let {isTableDroppable} = useContext(TableContext);
+  let {isTableDroppable} = useContext(TableContext)!;
   let style = useStyle(layoutInfo, parent);
 
   return (
@@ -1108,18 +1122,18 @@ function DragButton() {
 
 interface TableRowContextValue {
   dragButtonProps: React.HTMLAttributes<HTMLDivElement>,
-  dragButtonRef: React.MutableRefObject<undefined>,
+  dragButtonRef: React.RefObject<HTMLDivElement | null>,
   isFocusVisibleWithin: boolean
 }
 
 
-const TableRowContext = React.createContext<TableRowContextValue>(null);
+const TableRowContext = React.createContext<TableRowContextValue | null>(null);
 export function useTableRowContext() {
-  return useContext(TableRowContext);
+  return useContext(TableRowContext)!;
 }
 
-function TableRow({item, children, layoutInfo, parent, ...otherProps}) {
-  let ref = useRef(undefined);
+function TableRow({item, children, layoutInfo, parent, ...otherProps}: {item: GridNode<unknown>, children: ReactNode, layoutInfo: LayoutInfo, parent: LayoutInfo | null}) {
+  let ref = useRef<HTMLDivElement | null>(null);
   let {state, layout, dragAndDropHooks, isTableDraggable, isTableDroppable, dragState, dropState} = useTableContext();
   let isSelected = state.selectionManager.isSelected(item.key);
   let {rowProps, hasAction, allowsSelection} = useTableRow({
@@ -1130,7 +1144,6 @@ function TableRow({item, children, layoutInfo, parent, ...otherProps}) {
 
   let isDisabled = state.selectionManager.isDisabled(item.key);
   let isInteractive = !isDisabled && (hasAction || allowsSelection || isTableDraggable);
-  let isDroppable = isTableDroppable && !isDisabled;
   let {pressProps, isPressed} = usePress({isDisabled: !isInteractive});
 
   // The row should show the focus background style when any cell inside it is focused.
@@ -1147,31 +1160,29 @@ function TableRow({item, children, layoutInfo, parent, ...otherProps}) {
   // border corners of the last row when selected.
   let isFlushWithContainerBottom = false;
   if (isLastRow) {
-    if (layout.getContentSize()?.height >= layout.virtualizer?.visibleRect.height) {
+    if (layout.getContentSize()?.height >= (layout.virtualizer?.visibleRect.height ?? 0)) {
       isFlushWithContainerBottom = true;
     }
   }
 
-  let draggableItem: DraggableItemResult;
-  if (isTableDraggable) {
-     
-    draggableItem = dragAndDropHooks.useDraggableItem({key: item.key, hasDragButton: true}, dragState);
+  let draggableItem: DraggableItemResult | null = null;
+  if (isTableDraggable && dragAndDropHooks && dragState) {
+    draggableItem = dragAndDropHooks.useDraggableItem!({key: item.key, hasDragButton: true}, dragState);
     if (isDisabled) {
       draggableItem = null;
     }
   }
-  let droppableItem: DroppableItemResult;
-  let isDropTarget: boolean;
-  let dropIndicator: DropIndicatorAria;
-  let dropIndicatorRef = useRef(undefined);
-  if (isTableDroppable) {
+  let isDropTarget = false;
+  let dropIndicator: DropIndicatorAria | null = null;
+  let dropIndicatorRef = useRef<HTMLDivElement | null>(null);
+  if (isTableDroppable && dragAndDropHooks && dropState) {
     let target = {type: 'item', key: item.key, dropPosition: 'on'} as DropTarget;
     isDropTarget = dropState.isDropTarget(target);
-     
-    dropIndicator = dragAndDropHooks.useDropIndicator({target}, dropState, dropIndicatorRef);
+
+    dropIndicator = dragAndDropHooks.useDropIndicator!({target}, dropState, dropIndicatorRef);
   }
 
-  let dragButtonRef = React.useRef(undefined);
+  let dragButtonRef = React.useRef<HTMLDivElement | null>(null);
   let {buttonProps: dragButtonProps} = useButton({
     ...draggableItem?.dragButtonProps,
     elementType: 'div'
@@ -1190,10 +1201,9 @@ function TableRow({item, children, layoutInfo, parent, ...otherProps}) {
     draggableItem?.dragProps,
     // Remove tab index from list row if performing a screenreader drag. This prevents TalkBack from focusing the row,
     // allowing for single swipe navigation between row drop indicator
-    dragAndDropHooks?.isVirtualDragging() && {tabIndex: null}
+    dragAndDropHooks?.isVirtualDragging?.() ? {tabIndex: null} : null
   ) as HTMLAttributes<HTMLElement> & DOMAttributes<FocusableElement>;
 
-  let dropProps = isDroppable ? droppableItem?.dropProps : {'aria-hidden': droppableItem?.dropProps['aria-hidden']};
   let {visuallyHiddenProps} = useVisuallyHidden();
 
   return (
@@ -1212,7 +1222,7 @@ function TableRow({item, children, layoutInfo, parent, ...otherProps}) {
         </div>
       }
       <div
-        {...mergeProps(props, dropProps)}
+        {...props}
         ref={ref}
         className={
           classNames(
@@ -1222,7 +1232,7 @@ function TableRow({item, children, layoutInfo, parent, ...otherProps}) {
               'is-active': isPressed,
               'is-selected': isSelected,
               'spectrum-Table-row--highlightSelection': state.selectionManager.selectionBehavior === 'replace',
-              'is-next-selected': state.selectionManager.isSelected(item.nextKey),
+              'is-next-selected': item.nextKey != null && state.selectionManager.isSelected(item.nextKey),
               'is-focused': isFocusVisibleWithin,
               'focus-ring': isFocusVisible,
               'is-hovered': isHovered,
@@ -1250,9 +1260,9 @@ function TableRow({item, children, layoutInfo, parent, ...otherProps}) {
   );
 }
 
-function TableHeaderRow({item, children, layoutInfo, parent, ...props}) {
+function TableHeaderRow({item, children, layoutInfo, parent, ...props}: {item: GridNode<unknown>, children: ReactNode, layoutInfo: LayoutInfo, parent: LayoutInfo | null} & HoverProps) {
   let {state, headerMenuOpen} = useTableContext();
-  let ref = useRef(undefined);
+  let ref = useRef<HTMLDivElement | null>(null);
   let {rowProps} = useTableHeaderRow({node: item, isVirtualized: true}, state, ref);
   let {hoverProps} = useHover({...props, isDisabled: headerMenuOpen});
   let style = useStyle(layoutInfo, parent);
@@ -1265,7 +1275,7 @@ function TableHeaderRow({item, children, layoutInfo, parent, ...props}) {
 }
 
 function TableDragCell({cell}) {
-  let ref = useRef(undefined);
+  let ref = useRef<HTMLDivElement | null>(null);
   let {state, isTableDraggable} = useTableContext();
   let isDisabled = state.selectionManager.isDisabled(cell.parentKey);
   let {gridCellProps} = useTableCell({
@@ -1300,7 +1310,7 @@ function TableDragCell({cell}) {
 }
 
 function TableCheckboxCell({cell}) {
-  let ref = useRef(undefined);
+  let ref = useRef<HTMLDivElement | null>(null);
   let {state} = useTableContext();
   // The TableCheckbox should always render its disabled status if the row is disabled, regardless of disabledBehavior,
   // but the cell itself should not render its disabled styles if disabledBehavior="selection" because the row might have actions on it.
@@ -1348,7 +1358,7 @@ function TableCell({cell}) {
   let {scale} = useProvider();
   let {state} = useTableContext();
   let isExpandableTable = 'expandedKeys' in state;
-  let ref = useRef(undefined);
+  let ref = useRef<HTMLDivElement | null>(null);
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
   let isDisabled = state.selectionManager.isDisabled(cell.parentKey);
   let {gridCellProps} = useTableCell({
@@ -1412,11 +1422,11 @@ function TableCell({cell}) {
   );
 }
 
-function TableCellWrapper({layoutInfo, virtualizer, parent, children}) {
-  let {isTableDroppable, dropState} = useContext(TableContext);
-  let isDropTarget: boolean;
-  let isRootDroptarget: boolean;
-  if (isTableDroppable) {
+function TableCellWrapper({layoutInfo, virtualizer, parent, children}: {layoutInfo: LayoutInfo, virtualizer: any, parent: ReusableView<any, any>, children: ReactNode}) {
+  let {isTableDroppable, dropState} = useContext(TableContext)!;
+  let isDropTarget = false;
+  let isRootDroptarget = false;
+  if (isTableDroppable && dropState) {
     if (parent.content) {
       isDropTarget = dropState.isDropTarget({type: 'item', dropPosition: 'on', key: parent.content.key});
     }
@@ -1450,7 +1460,7 @@ function ExpandableRowChevron({cell}) {
    // TODO: move some/all of the chevron button setup into a separate hook?
   let {direction} = useLocale();
   let {state} = useTableContext();
-  let expandButtonRef = useRef(undefined);
+  let expandButtonRef = useRef<HTMLSpanElement | null>(null);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/table');
   let isExpanded;
 
@@ -1493,7 +1503,7 @@ function ExpandableRowChevron({cell}) {
 }
 
 function LoadingState() {
-  let {state} = useContext(TableContext);
+  let {state} = useContext(TableContext)!;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/table');
   return (
     <CenteredWrapper>
@@ -1505,7 +1515,7 @@ function LoadingState() {
 }
 
 function EmptyState() {
-  let {renderEmptyState} = useContext(TableContext);
+  let {renderEmptyState} = useContext(TableContext)!;
   let emptyState = renderEmptyState ? renderEmptyState() : null;
   if (emptyState == null) {
     return null;
@@ -1523,7 +1533,7 @@ function CenteredWrapper({children}) {
   let rowProps;
 
   if ('expandedKeys' in state) {
-    let topLevelRowCount = [...state.keyMap.get(state.collection.body.key).childNodes].length;
+    let topLevelRowCount = [...state.collection.body.childNodes].length;
     rowProps = {
       'aria-level': 1,
       'aria-posinset': topLevelRowCount + 1,

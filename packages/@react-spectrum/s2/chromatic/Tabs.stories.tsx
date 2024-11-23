@@ -28,7 +28,7 @@ const meta: Meta<typeof Tabs> = {
 export default meta;
 
 export const Example = (args: any) => (
-  <Tabs {...args} styles={style({width: '[450px]', height: 256})}>
+  <Tabs {...args} styles={style({width: 450, height: 256})}>
     <TabList aria-label="History of Ancient Rome">
       <Tab id="FoR"><Edit />Founding of Rome</Tab>
       <Tab id="MaR">Monarchy and Republic</Tab>
@@ -54,7 +54,7 @@ export const Example = (args: any) => (
 );
 
 export const Disabled = (args: any) => (
-  <Tabs {...args} styles={style({width: '[450px]', height: 144})} disabledKeys={['FoR', 'MaR', 'Emp']}>
+  <Tabs {...args} styles={style({width: 450, height: 144})} disabledKeys={['FoR', 'MaR', 'Emp']}>
     <TabList aria-label="History of Ancient Rome">
       <Tab id="FoR"><Edit />Founding of Rome</Tab>
       <Tab id="MaR">Monarchy and Republic</Tab>

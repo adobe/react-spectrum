@@ -174,9 +174,11 @@ describe('NumberParser', function () {
     });
 
     describe('round trips', function () {
+      fc.configureGlobal({numRuns: 200});
       // Locales have to include: 'de-DE', 'ar-EG', 'fr-FR' and possibly others
       // But for the moment they are not properly supported
       const localesArb = fc.constantFrom(...locales);
+      const numeralArb = fc.constantFrom('latn', 'arab', 'hanidec', 'deva', 'beng');
       const styleOptsArb = fc.oneof(
         {withCrossShrink: true},
         fc.record({style: fc.constant('decimal')}),
@@ -210,35 +212,35 @@ describe('NumberParser', function () {
         fc.double({next: true, noNaN: true, min: DOUBLE_MIN, max: 1 / DOUBLE_MIN})
       ).map(([sign, value]) => sign * value);
 
-      const inputsArb = fc.tuple(valueArb, localesArb, styleOptsArb, genericOptsArb)
-        .map(([d, locale, styleOpts, genericOpts]) => ({d, opts: {...styleOpts, ...genericOpts}, locale}))
+      const inputsArb = fc.tuple(valueArb, localesArb, styleOptsArb, genericOptsArb, numeralArb)
+        .map(([d, locale, styleOpts, genericOpts, numerals]) => ({d, opts: {...styleOpts, ...genericOpts}, locale, numerals}))
         .filter(({opts}) => opts.minimumFractionDigits === undefined || opts.maximumFractionDigits === undefined || opts.minimumFractionDigits <= opts.maximumFractionDigits)
         .filter(({opts}) => opts.minimumSignificantDigits === undefined || opts.maximumSignificantDigits === undefined || opts.minimumSignificantDigits <= opts.maximumSignificantDigits)
-        .map(({d, opts, locale}) => {
+        .map(({d, opts, locale, numerals}) => {
           if (opts.style === 'percent') {
             opts.minimumFractionDigits = opts.minimumFractionDigits > 18 ? 18 : opts.minimumFractionDigits;
             opts.maximumFractionDigits = opts.maximumFractionDigits > 18 ? 18 : opts.maximumFractionDigits;
           }
-          return {d, opts, locale};
+          return {d, opts, locale, numerals};
         })
-        .map(({d, opts, locale}) => {
+        .map(({d, opts, locale, numerals}) => {
           let adjustedNumberForFractions = d;
           if (Math.abs(d) < 1 && opts.minimumFractionDigits && opts.minimumFractionDigits > 1) {
             adjustedNumberForFractions = d * (10 ** (opts.minimumFractionDigits || 2));
           } else if (Math.abs(d) > 1 && opts.minimumFractionDigits && opts.minimumFractionDigits > 1) {
             adjustedNumberForFractions = d / (10 ** (opts.minimumFractionDigits || 2));
           }
-          return {adjustedNumberForFractions, opts, locale};
+          return {adjustedNumberForFractions, opts, locale, numerals};
         });
 
       // skipping until we can reliably run it, until then, it's good to run manually
       // track counter examples below
-      it.skip('should fully reverse NumberFormat', function () {
+      it('should fully reverse NumberFormat', function () {
         fc.assert(
           fc.property(
             inputsArb,
-            function ({adjustedNumberForFractions, locale, opts}) {
-              const formatter = new Intl.NumberFormat(locale, opts);
+            function ({adjustedNumberForFractions, locale, opts, numerals}) {
+              const formatter = new Intl.NumberFormat(`${locale}-u-nu-${numerals}`, opts);
               const parser = new NumberParser(locale, opts);
 
               const formattedOnce = formatter.format(adjustedNumberForFractions);
@@ -264,7 +266,7 @@ describe('NumberParser', function () {
         expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
       });
       // See Bug https://github.com/nodejs/node/issues/49919
-      it.skip('formatted units keep their number', () => {
+      it('formatted units keep their number', () => {
         let locale = 'da-DK';
         let options = {
           style: 'unit',

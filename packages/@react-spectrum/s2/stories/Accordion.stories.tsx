@@ -167,40 +167,7 @@ export const Controlled: Story = {
 
 Controlled.parameters = {
   docs: {
-    source: {
-      transform: () => {
-        return `
-function ControlledAccordion(props) {
-  let [expandedKeys, setExpandedKeys] = React.useState<Set<Key>>(new Set(['people']));
-  return (
-    <div className={style({font: 'body', display: 'flex', flexDirection: 'column', gap: 8})}>
-      <Accordion
-        onExpandedChange={setExpandedKeys}
-        expandedKeys={expandedKeys}
-        {...props}>
-        <Disclosure id="files">
-          <DisclosureTitle>
-            Files
-          </DisclosureTitle>
-          <DisclosurePanel>
-            Files content
-          </DisclosurePanel>
-        </Disclosure>
-        <Disclosure id="people">
-          <DisclosureTitle>
-            People
-          </DisclosureTitle>
-          <DisclosurePanel>
-            <TextField label="Name" />
-          </DisclosurePanel>
-        </Disclosure>
-      </Accordion>
-      <div>Expanded keys: {expandedKeys.size ? Array.from(expandedKeys).join(', ') : 'none'}</div>
-    </div>
-  );
-}`;
-      }
-    }
+    disable: true
   }
 };
 
@@ -228,6 +195,12 @@ export const ControlledOpen: Story = {
         </Disclosure>
       </Accordion>
     );
+  }
+};
+
+ControlledOpen.parameters = {
+  docs: {
+    disable: true
   }
 };
 

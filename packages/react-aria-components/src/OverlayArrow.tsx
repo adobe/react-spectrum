@@ -16,7 +16,7 @@ import {PlacementAxis} from 'react-aria';
 import React, {createContext, CSSProperties, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 
 interface OverlayArrowContextValue extends OverlayArrowProps {
-  placement: PlacementAxis
+  placement: PlacementAxis | null
 }
 
 export const OverlayArrowContext = createContext<ContextValue<OverlayArrowContextValue, HTMLDivElement>>({
@@ -30,7 +30,7 @@ export interface OverlayArrowRenderProps {
    * The placement of the overlay relative to the trigger.
    * @selector [data-placement="left | right | top | bottom"]
    */
-  placement: PlacementAxis
+  placement: PlacementAxis | null
 }
 
 function OverlayArrow(props: OverlayArrowProps, ref: ForwardedRef<HTMLDivElement>) {
@@ -38,9 +38,11 @@ function OverlayArrow(props: OverlayArrowProps, ref: ForwardedRef<HTMLDivElement
   let placement = (props as OverlayArrowContextValue).placement;
   let style: CSSProperties = {
     position: 'absolute',
-    [placement]: '100%',
     transform: placement === 'top' || placement === 'bottom' ? 'translateX(-50%)' : 'translateY(-50%)'
   };
+  if (placement != null) {
+    style[placement] = '100%';
+  }
 
   let renderProps = useRenderProps({
     ...props,

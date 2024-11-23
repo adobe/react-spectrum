@@ -120,10 +120,10 @@ export function ReorderExample(props) {
     async onDrop(e) {
       onDrop(e);
       if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
-        let keys = [];
+        let keys: Key[] = [];
         for (let item of e.items) {
           if (item.kind === 'text') {
-            let key;
+            let key: Key;
             if (item.types.has(dragType)) {
               key = JSON.parse(await item.getText(dragType));
               keys.push(key);
@@ -180,7 +180,7 @@ export function DragIntoItemExample(props) {
 
   let list = useListData({
     initialItems: [
-      {id: '0', type: 'folder', textValue: 'Folder 1', childNodes: []},
+      {id: '0', type: 'folder', textValue: 'Folder 1', childNodes: [] as any[]},
       {id: '1', type: 'item', textValue: 'One'},
       {id: '2', type: 'item', textValue: 'Two'},
       {id: '3', type: 'item', textValue: 'Three'},
@@ -197,9 +197,9 @@ export function DragIntoItemExample(props) {
   let dragType = React.useMemo(() => `keys-${Math.random().toString(36).slice(2)}`, []);
 
   let onMove = (keys: Key[], target: ItemDropTarget) => {
-    let folderItem = list.getItem(target.key);
+    let folderItem = list.getItem(target.key)!;
     let draggedItems = keys.map((key) => list.getItem(key));
-    list.update(target.key, {...folderItem, childNodes: [...folderItem.childNodes, ...draggedItems]});
+    list.update(target.key, {...folderItem, childNodes: [...(folderItem.childNodes || []), ...draggedItems]});
     list.remove(...keys);
   };
 
@@ -222,10 +222,10 @@ export function DragIntoItemExample(props) {
     onDrop: async e => {
       onDropAction(e);
       if (e.target.type !== 'root' && e.target.dropPosition === 'on') {
-        let keys = [];
+        let keys: Key[] = [];
         for (let item of e.items) {
           if (item.kind === 'text') {
-            let key;
+            let key: Key;
             if (item.types.has(dragType)) {
               key = JSON.parse(await item.getText(dragType));
               keys.push(key);
@@ -243,7 +243,7 @@ export function DragIntoItemExample(props) {
       }
     },
     getDropOperation(target) {
-      if (target.type === 'root' || target.dropPosition !== 'on' || !list.getItem(target.key).childNodes || disabledKeys.includes(target.key)) {
+      if (target.type === 'root' || target.dropPosition !== 'on' || !list.getItem(target.key)!.childNodes || disabledKeys.includes(target.key)) {
         return 'cancel';
       }
 
@@ -333,10 +333,10 @@ export function DragBetweenListsExample(props) {
     onDrop: async e => {
       onDropAction(e);
       if (e.target.type !== 'root' && e.target.dropPosition !== 'on') {
-        let keys = [];
+        let keys: Key[] = [];
         for (let item of e.items) {
           if (item.kind === 'text') {
-            let key;
+            let key: Key;
             if (item.types.has(dragType)) {
               key = JSON.parse(await item.getText(dragType));
               keys.push(key);
@@ -445,10 +445,10 @@ export function DragBetweenListsRootOnlyExample(props) {
     onDrop: async e => {
       onDropAction(e);
       if (e.target.type === 'root') {
-        let keys = [];
+        let keys: Key[] = [];
         for (let item of e.items) {
           if (item.kind === 'text') {
-            let key;
+            let key: Key;
             if (item.types.has('list2')) {
               key = JSON.parse(await item.getText('list2'));
               keys.push(key);
@@ -491,10 +491,10 @@ export function DragBetweenListsRootOnlyExample(props) {
     onDrop: async e => {
       onDropAction(e);
       if (e.target.type === 'root') {
-        let keys = [];
+        let keys: Key[] = [];
         for (let item of e.items) {
           if (item.kind === 'text') {
-            let key;
+            let key: Key;
             if (item.types.has('list1')) {
               key = JSON.parse(await item.getText('list1'));
               keys.push(key);

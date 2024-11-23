@@ -17,6 +17,7 @@ import {useLocale} from '@react-aria/i18n';
 import {useVirtualizerItem, VirtualizerItemOptions} from './useVirtualizerItem';
 
 interface VirtualizerItemProps extends Omit<VirtualizerItemOptions, 'ref'> {
+  layoutInfo: LayoutInfo,
   parent?: LayoutInfo | null,
   style?: CSSProperties,
   className?: string,
@@ -26,7 +27,7 @@ interface VirtualizerItemProps extends Omit<VirtualizerItemOptions, 'ref'> {
 export function VirtualizerItem(props: VirtualizerItemProps) {
   let {style, className, layoutInfo, virtualizer, parent, children} = props;
   let {direction} = useLocale();
-  let ref = useRef(undefined);
+  let ref = useRef<HTMLDivElement | null>(null);
   useVirtualizerItem({
     layoutInfo,
     virtualizer,
@@ -57,7 +58,7 @@ export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent
     }
   }
 
-  let rectStyles = {
+  let rectStyles: Record<string, number | undefined> = {
     // TODO: For layoutInfos that are sticky that have parents with overflow visible, their "top" will be relative to the to the nearest scrolling container
     // which WON'T be the parent since the parent has overflow visible. This means we shouldn't offset the height by the parent's position
     // Not 100% about this change here since it is quite ambigious what the scrolling container maybe and how its top is positioned with respect to the
@@ -82,7 +83,7 @@ export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent
     overflow: layoutInfo.allowOverflow ? 'visible' : 'hidden',
     opacity: layoutInfo.opacity,
     zIndex: layoutInfo.zIndex,
-    transform: layoutInfo.transform,
+    transform: layoutInfo.transform ?? undefined,
     contain: 'size layout style',
     ...rectStyles
   };

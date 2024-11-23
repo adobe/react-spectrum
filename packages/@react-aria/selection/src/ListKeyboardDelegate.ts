@@ -74,47 +74,54 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     return this.disabledBehavior === 'all' && (item.props?.isDisabled || this.disabledKeys.has(item.key));
   }
 
-  private findNextNonDisabled(key: Key, getNext: (key: Key) => Key | null): Key | null {
-    while (key != null) {
-      let item = this.collection.getItem(key);
+  private findNextNonDisabled(key: Key | null, getNext: (key: Key) => Key | null): Key | null {
+    let nextKey = key;
+    while (nextKey != null) {
+      let item = this.collection.getItem(nextKey);
       if (item?.type === 'item' && !this.isDisabled(item)) {
-        return key;
+        return nextKey;
       }
 
-      key = getNext(key);
+      nextKey = getNext(nextKey);
     }
 
     return null;
   }
 
   getNextKey(key: Key) {
-    key = this.collection.getKeyAfter(key);
-    return this.findNextNonDisabled(key, key => this.collection.getKeyAfter(key));
+    let nextKey: Key | null = key;
+    nextKey = this.collection.getKeyAfter(nextKey);
+    return this.findNextNonDisabled(nextKey, key => this.collection.getKeyAfter(key));
   }
 
   getPreviousKey(key: Key) {
-    key = this.collection.getKeyBefore(key);
-    return this.findNextNonDisabled(key, key => this.collection.getKeyBefore(key));
+    let nextKey: Key | null = key;
+    nextKey = this.collection.getKeyBefore(nextKey);
+    return this.findNextNonDisabled(nextKey, key => this.collection.getKeyBefore(key));
   }
 
   private findKey(
     key: Key,
-    nextKey: (key: Key) => Key,
+    nextKey: (key: Key) => Key | null,
     shouldSkip: (prevRect: Rect, itemRect: Rect) => boolean
   ) {
-    let itemRect = this.layoutDelegate.getItemRect(key);
-    if (!itemRect) {
+    let tempKey: Key | null = key;
+    let itemRect = this.layoutDelegate.getItemRect(tempKey);
+    if (!itemRect || tempKey == null) {
       return null;
     }
 
     // Find the item above or below in the same column.
     let prevRect = itemRect;
     do {
-      key = nextKey(key);
-      itemRect = this.layoutDelegate.getItemRect(key);
-    } while (itemRect && shouldSkip(prevRect, itemRect));
+      tempKey = nextKey(tempKey);
+      if (tempKey == null) {
+        break;
+      }
+      itemRect = this.layoutDelegate.getItemRect(tempKey);
+    } while (itemRect && shouldSkip(prevRect, itemRect) && tempKey != null);
 
-    return key;
+    return tempKey;
   }
 
   private isSameRow(prevRect: Rect, itemRect: Rect) {
@@ -145,7 +152,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     return right ? this.getPreviousKey(key) : this.getNextKey(key);
   }
 
-  getKeyRightOf(key: Key) {
+  getKeyRightOf?(key: Key) {
     // This is a temporary solution for CardView until we refactor useSelectableCollection.
     // https://github.com/orgs/adobe/projects/19/views/32?pane=issue&itemId=77825042
     let layoutDelegateMethod = this.direction === 'ltr' ? 'getKeyRightOf' : 'getKeyLeftOf';
@@ -167,7 +174,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     return null;
   }
 
-  getKeyLeftOf(key: Key) {
+  getKeyLeftOf?(key: Key) {
     let layoutDelegateMethod = this.direction === 'ltr' ? 'getKeyLeftOf' : 'getKeyRightOf';
     if (this.layoutDelegate[layoutDelegateMethod]) {
       key = this.layoutDelegate[layoutDelegateMethod](key);
@@ -204,27 +211,28 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       return null;
     }
 
-    if (!isScrollable(menu)) {
+    if (menu && !isScrollable(menu)) {
       return this.getFirstKey();
     }
 
+    let nextKey: Key | null = key;
     if (this.orientation === 'horizontal') {
       let pageX = Math.max(0, itemRect.x + itemRect.width - this.layoutDelegate.getVisibleRect().width);
 
-      while (itemRect && itemRect.x > pageX) {
-        key = this.getKeyAbove(key);
-        itemRect = key == null ? null : this.layoutDelegate.getItemRect(key);
+      while (itemRect && itemRect.x > pageX && nextKey != null) {
+        nextKey = this.getKeyAbove(nextKey);
+        itemRect = nextKey == null ? null : this.layoutDelegate.getItemRect(nextKey);
       }
     } else {
       let pageY = Math.max(0, itemRect.y + itemRect.height - this.layoutDelegate.getVisibleRect().height);
 
-      while (itemRect && itemRect.y > pageY) {
-        key = this.getKeyAbove(key);
-        itemRect = key == null ? null : this.layoutDelegate.getItemRect(key);
+      while (itemRect && itemRect.y > pageY && nextKey != null) {
+        nextKey = this.getKeyAbove(nextKey);
+        itemRect = nextKey == null ? null : this.layoutDelegate.getItemRect(nextKey);
       }
     }
 
-    return key ?? this.getFirstKey();
+    return nextKey ?? this.getFirstKey();
   }
 
   getKeyPageBelow(key: Key) {
@@ -234,27 +242,28 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       return null;
     }
 
-    if (!isScrollable(menu)) {
+    if (menu && !isScrollable(menu)) {
       return this.getLastKey();
     }
 
+    let nextKey: Key | null = key;
     if (this.orientation === 'horizontal') {
       let pageX = Math.min(this.layoutDelegate.getContentSize().width, itemRect.y - itemRect.width + this.layoutDelegate.getVisibleRect().width);
 
-      while (itemRect && itemRect.x < pageX) {
-        key = this.getKeyBelow(key);
-        itemRect = key == null ? null : this.layoutDelegate.getItemRect(key);
+      while (itemRect && itemRect.x < pageX && nextKey != null) {
+        nextKey = this.getKeyBelow(nextKey);
+        itemRect = nextKey == null ? null : this.layoutDelegate.getItemRect(nextKey);
       }
     } else {
       let pageY = Math.min(this.layoutDelegate.getContentSize().height, itemRect.y - itemRect.height + this.layoutDelegate.getVisibleRect().height);
 
-      while (itemRect && itemRect.y < pageY) {
-        key = this.getKeyBelow(key);
-        itemRect = key == null ? null : this.layoutDelegate.getItemRect(key);
+      while (itemRect && itemRect.y < pageY && nextKey != null) {
+        nextKey = this.getKeyBelow(nextKey);
+        itemRect = nextKey == null ? null : this.layoutDelegate.getItemRect(nextKey);
       }
     }
 
-    return key ?? this.getLastKey();
+    return nextKey ?? this.getLastKey();
   }
 
   getKeyForSearch(search: string, fromKey?: Key) {
@@ -266,6 +275,9 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     let key = fromKey || this.getFirstKey();
     while (key != null) {
       let item = collection.getItem(key);
+      if (!item) {
+        return null;
+      }
       let substring = item.textValue.slice(0, search.length);
       if (item.textValue && this.collator.compare(substring, search) === 0) {
         return key;

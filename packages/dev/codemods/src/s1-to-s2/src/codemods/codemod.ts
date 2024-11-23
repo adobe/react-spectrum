@@ -26,6 +26,9 @@ availableComponents.add('Section');
 // Don't update v3 Provider
 availableComponents.delete('Provider');
 
+// Replaced by ActionButtonGroup and ToggleButtonGroup
+availableComponents.add('ActionGroup');
+
 
 interface Options {
   /** Comma separated list of components to transform. If not specified, all available components will be transformed. */
@@ -108,7 +111,7 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
         if (!specifier || !t.isImportDefaultSpecifier(specifier)) {return;}
 
         let localName = specifier.local.name;
-        
+
         if (iconMap.has(iconName)) {
           let newIconName = iconMap.get(iconName)!;
           iconImports.set(localName, {path, newName: newIconName});
@@ -150,7 +153,7 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
     let {path, newName} = iconInfo;
     if (newName) {
       let newImportSource = `@react-spectrum/s2/icons/${newName}`;
-      
+
       // Check if we can update local name
       let newLocalName = localName;
       if (localName === path.node.source.value.split('/').pop() && localName !== newName) {
@@ -226,7 +229,7 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
   if (importedComponents.size) {
     // Add imports to existing @react-spectrum/s2 import if it exists, otherwise add a new one.
     let importSpecifiers = new Set([...importedComponents]
-      .filter(([c]) => c !== 'Flex' && c !== 'Grid' && c !== 'View' && c !== 'Item' && c !== 'Section')
+      .filter(([c]) => c !== 'Flex' && c !== 'Grid' && c !== 'View' && c !== 'Item' && c !== 'Section' && c !== 'ActionGroup')
       .map(([, specifier]) => specifier));
 
     let existingImport = root.find(j.ImportDeclaration, {

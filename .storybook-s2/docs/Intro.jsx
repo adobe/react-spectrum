@@ -13,7 +13,7 @@ import {H2, H3, H4, P, Pre, Code, Strong, Link} from './typography';
 
 export function Docs() {
   return (
-    <div className={style({maxWidth: 'lg', marginX: 'auto', marginY: 48})}>
+    <div className={style({marginX: 'auto', marginY: 48})}>
       <header
         style={{
           backgroundImage: `url(${new URL('wallpaper_collaborative_S2_desktop.webp', import.meta.url).toString()})`,

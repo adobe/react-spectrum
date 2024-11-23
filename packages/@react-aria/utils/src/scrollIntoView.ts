@@ -14,7 +14,7 @@ import {getScrollParents} from './getScrollParents';
 
 interface ScrollIntoViewportOpts {
   /** The optional containing element of the target to be centered in the viewport. */
-  containingElement?: Element
+  containingElement?: Element | null
 }
 
 /**

@@ -53,7 +53,7 @@ import {IconContext} from './Icon';
 import {menu} from './Picker';
 import {mergeRefs, useResizeObserver} from '@react-aria/utils';
 import {Placement} from 'react-aria';
-import {Popover} from './Popover';
+import {PopoverBase} from './Popover';
 import {pressScale} from './pressScale';
 import {TextFieldRef} from '@react-types/textfield';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -284,7 +284,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: Ref<TextFieldR
               description={descriptionMessage}>
               {errorMessage}
             </HelpText>
-            <Popover
+            <PopoverBase
               hideArrow
               triggerRef={triggerRef}
               offset={menuOffset}
@@ -315,7 +315,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: Ref<TextFieldR
                   {children}
                 </ListBox>
               </Provider>
-            </Popover>
+            </PopoverBase>
           </InternalComboboxContext.Provider>
         </>
       )}

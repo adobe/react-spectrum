@@ -80,7 +80,7 @@ import {
   ColorSwatch,
   Accordion,
   Disclosure,
-  DisclosureHeader,
+  DisclosureTitle,
   DisclosurePanel
 } from "@adobe/react-spectrum";
 import Edit from "@spectrum-icons/workflow/Edit";
@@ -324,17 +324,17 @@ export default function Home() {
             <h3>Accordion</h3>
             <Accordion>
               <Disclosure id="files">
-                <DisclosureHeader>
+                <DisclosureTitle>
                   Files
-                </DisclosureHeader>
+                </DisclosureTitle>
                 <DisclosurePanel>
                   <p>Files content</p>
                 </DisclosurePanel>
               </Disclosure>
               <Disclosure id="people">
-                <DisclosureHeader>
+                <DisclosureTitle>
                   People
-                </DisclosureHeader>
+                </DisclosureTitle>
                 <DisclosurePanel>
                   <p>People content</p>
                 </DisclosurePanel>
@@ -343,7 +343,7 @@ export default function Home() {
 
             <h3>Disclosure</h3>
             <Disclosure>
-              <DisclosureHeader>System Requirements</DisclosureHeader>
+              <DisclosureTitle>System Requirements</DisclosureTitle>
               <DisclosurePanel>
                 <p>Details about system requirements here.</p>
               </DisclosurePanel>

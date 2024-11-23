@@ -18,9 +18,9 @@ import {TooltipTriggerState} from '@react-stately/tooltip';
 interface TooltipContextProps extends StyleProps {
   state?: TooltipTriggerState,
   ref?: RefObject<HTMLDivElement | null>,
-  placement?: PlacementAxis,
+  placement: PlacementAxis | null,
   arrowProps?: HTMLAttributes<HTMLElement>,
   arrowRef?: RefObject<HTMLElement | null>
 }
 
-export const TooltipContext = React.createContext<TooltipContextProps>({});
+export const TooltipContext = React.createContext<TooltipContextProps>({placement: null});

@@ -50,22 +50,20 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
   <Button>Sign up…</Button>
   <Modal>
     <Dialog>
-      {({close}) => (
-        <form>
-          <Heading slot="title">Sign up</Heading>
-          <TextField autoFocus>
-            <Label>First Name</Label>
-            <Input />
-          </TextField>
-          <TextField>
-            <Label>Last Name</Label>
-            <Input />
-          </TextField>
-          <Button onPress={close} style={{marginTop: 8}}>
-            Submit
-          </Button>
-        </form>
-      )}
+      <form>
+        <Heading slot="title">Sign up</Heading>
+        <TextField autoFocus>
+          <Label>First Name</Label>
+          <Input />
+        </TextField>
+        <TextField>
+          <Label>Last Name</Label>
+          <Input />
+        </TextField>
+        <Button slot="close" style={{marginTop: 8}}>
+          Submit
+        </Button>
+      </form>
     </Dialog>
   </Modal>
 </DialogTrigger>
@@ -113,7 +111,7 @@ building fully accessible custom dialogs from scratch is very difficult and erro
 
 <Anatomy />
 
-A dialog consists of a container element and an optional title. It can be placed within a [Modal](Modal.html) or [Popover](Popover.html), to create modal dialogs, popovers, and other types of overlays. A `DialogTrigger` can be used to open a dialog overlay in response to a user action, e.g. clicking a button.
+A dialog consists of a container element and an optional title and close button. It can be placed within a [Modal](Modal.html) or [Popover](Popover.html), to create modal dialogs, popovers, and other types of overlays. A `DialogTrigger` can be used to open a dialog overlay in response to a user action, e.g. clicking a button.
 
 ```tsx
 import {DialogTrigger, Modal, Dialog, Button, Heading} from 'react-aria-components';
@@ -123,6 +121,7 @@ import {DialogTrigger, Modal, Dialog, Button, Heading} from 'react-aria-componen
   <Modal>
     <Dialog>
       <Heading slot="title" />
+      <Button slot="close" />
     </Dialog>
   </Modal>
 </DialogTrigger>
@@ -198,6 +197,17 @@ Alert dialogs are a special type of dialog meant to present a prompt that the us
 ### Heading
 
 A `<Heading>` accepts all HTML attributes.
+
+### Button
+
+A `<Button slot="close">` element can be placed inside a `<Dialog>` to close it when pressed.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.Button} links={docs.links} />
+
+</details>
 
 ## Styling
 

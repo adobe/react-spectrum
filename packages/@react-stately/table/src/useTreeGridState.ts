@@ -140,11 +140,11 @@ function generateTreeGridCollection<T>(nodes, opts: TreeGridCollectionOptions): 
     expandedKeys = new Set()
   } = opts;
 
-  let body: GridNode<T>;
-  let flattenedRows = [];
+  let body: GridNode<T> | null = null;
+  let flattenedRows: GridNode<T>[] = [];
   let columnCount = 0;
   let userColumnCount = 0;
-  let originalColumns = [];
+  let originalColumns: GridNode<T>[] = [];
   let keyMap = new Map();
 
   if (opts?.showSelectionCheckboxes) {
@@ -155,7 +155,7 @@ function generateTreeGridCollection<T>(nodes, opts: TreeGridCollectionOptions): 
     columnCount++;
   }
 
-  let topLevelRows = [];
+  let topLevelRows: GridNode<T>[] = [];
   let visit = (node: GridNode<T>) => {
     switch (node.type) {
       case 'body':
@@ -183,6 +183,7 @@ function generateTreeGridCollection<T>(nodes, opts: TreeGridCollectionOptions): 
     }
     visit(node);
   }
+
   columnCount += userColumnCount;
 
   // Update each grid node in the treegrid table with values specific to a treegrid structure. Also store a set of flattened row nodes for TableCollection to consume
@@ -192,7 +193,7 @@ function generateTreeGridCollection<T>(nodes, opts: TreeGridCollectionOptions): 
     // to TableCollection. Index, level, and parent keys are all changed to reflect a flattened row structure rather than the treegrid structure
     // values automatically calculated via CollectionBuilder
     if (node.type === 'item') {
-      let childNodes = [];
+      let childNodes: GridNode<T>[] = [];
       for (let child of node.childNodes) {
         if (child.type === 'cell') {
           let cellClone = {...child};
@@ -202,7 +203,7 @@ function generateTreeGridCollection<T>(nodes, opts: TreeGridCollectionOptions): 
           childNodes.push({...cellClone});
         }
       }
-      let clone = {...node, childNodes: childNodes, parentKey: body.key, level: 1, index: globalRowCount++};
+      let clone: GridNode<T> = {...node, childNodes: childNodes, parentKey: body!.key, level: 1, index: globalRowCount++};
       flattenedRows.push(clone);
     }
 
@@ -218,7 +219,7 @@ function generateTreeGridCollection<T>(nodes, opts: TreeGridCollectionOptions): 
     Object.assign(node, newProps);
     keyMap.set(node.key, node);
 
-    let lastNode: GridNode<T>;
+    let lastNode: GridNode<T> | null = null;
     let rowIndex = 0;
     for (let child of node.childNodes) {
       if (!(child.type === 'item' && expandedKeys !== 'all' && !expandedKeys.has(node.key))) {
@@ -250,8 +251,8 @@ function generateTreeGridCollection<T>(nodes, opts: TreeGridCollectionOptions): 
     }
   };
 
-  let last: GridNode<T>;
-  topLevelRows.forEach((node: GridNode<T>, i) => {
+  let last: GridNode<T> | null = null;
+  for (let [i, node] of topLevelRows.entries()) {
     visitNode(node as GridNode<T>, i);
 
     if (last) {
@@ -262,7 +263,7 @@ function generateTreeGridCollection<T>(nodes, opts: TreeGridCollectionOptions): 
     }
 
     last = node;
-  });
+  }
 
   if (last) {
     last.nextKey = null;
@@ -272,6 +273,6 @@ function generateTreeGridCollection<T>(nodes, opts: TreeGridCollectionOptions): 
     keyMap,
     userColumnCount,
     flattenedRows,
-    tableNodes: [...originalColumns, {...body, childNodes: flattenedRows}]
+    tableNodes: [...originalColumns, {...body!, childNodes: flattenedRows}]
   };
 }

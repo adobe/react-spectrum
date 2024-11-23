@@ -55,7 +55,7 @@ export interface TooltipRenderProps {
    * The placement of the tooltip relative to the trigger.
    * @selector [data-placement="left | right | top | bottom"]
    */
-  placement: PlacementAxis,
+  placement: PlacementAxis | null,
   /**
    * Whether the tooltip is currently entering. Use this to apply animations.
    * @selector [data-entering]
@@ -168,7 +168,7 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
       ref={props.tooltipRef}
       {...renderProps}
       style={{...overlayProps.style, ...renderProps.style}}
-      data-placement={placement}
+      data-placement={placement ?? undefined}
       data-entering={isEntering || undefined}
       data-exiting={props.isExiting || undefined}>
       <OverlayArrowContext.Provider value={{...arrowProps, placement, ref: arrowRef}}>

@@ -12,7 +12,7 @@
 
 import {act, fireEvent, pointerMap, render as render_, waitFor, within} from '@react-spectrum/test-utils-internal';
 import {Button} from '@react-spectrum/button';
-import {CalendarDate, CalendarDateTime, EthiopicCalendar, getLocalTimeZone, JapaneseCalendar, parseZonedDateTime, toCalendarDateTime, today} from '@internationalized/date';
+import {CalendarDate, CalendarDateTime, DateFormatter, EthiopicCalendar, getLocalTimeZone, JapaneseCalendar, parseZonedDateTime, toCalendarDateTime, today} from '@internationalized/date';
 import {DatePicker} from '../';
 import {Form} from '@react-spectrum/form';
 import {Provider} from '@react-spectrum/provider';
@@ -584,7 +584,7 @@ describe('DatePicker', function () {
       let month = parts.find(p => p.type === 'month').value;
       let day = parts.find(p => p.type === 'day').value;
       let year = parts.find(p => p.type === 'year').value;
-       
+
       expectPlaceholder(combobox, `${month}/${day}/${year}, 12:00 AM`);
 
       await user.keyboard('{ArrowRight}');
@@ -1928,7 +1928,17 @@ describe('DatePicker', function () {
       await user.tab();
       await user.keyboard('{Backspace}');
 
-      expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM PDT');
+      let timeZoneName =
+        new DateFormatter('en-US',
+          {
+            timeZone: 'America/Los_Angeles',
+            timeZoneName: 'short'
+          })
+          .formatToParts(new Date())
+          .find(p => p.type === 'timeZoneName')
+          .value;
+
+      expectPlaceholder(combobox, `mm/dd/yyyy, ––:–– AM ${timeZoneName}`);
     });
 
     it('should keep timeZone from defaultValue when date and time are cleared then set', async function () {
