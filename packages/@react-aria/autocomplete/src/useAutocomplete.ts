@@ -64,33 +64,39 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
   let collectionId = useId();
   let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   let delayNextActiveDescendant = useRef(false);
-  let callbackRef = useEffectEvent((collectionNode) => {
+  let lastCollectionNode = useRef<HTMLElement>(null);
+
+  let updateActiveDescendant = useCallback((e) => {
+    let {detail} = e;
+    clearTimeout(timeout.current);
+    e.stopPropagation();
+    if (detail?.id != null) {
+      if (delayNextActiveDescendant.current) {
+        timeout.current = setTimeout(() => {
+          state.setFocusedNodeId(detail.id);
+        }, 500);
+      } else {
+        state.setFocusedNodeId(detail.id);
+      }
+    } else {
+      state.setFocusedNodeId(null);
+    }
+
+    delayNextActiveDescendant.current = false;
+  }, [state]);
+
+  let callbackRef = useEffectEvent((collectionNode: HTMLElement | null) => {
     // When typing forward, we want to delay the setting of active descendant to not interrupt the native screen reader announcement
     // of the letter you just typed. If we recieve another UPDATE_ACTIVEDESCENDANT call then we clear the queued update
-    let updateActiveDescendant = (e) => {
-      let {detail} = e;
-      clearTimeout(timeout.current);
-      e.stopPropagation();
-
-      if (detail?.id != null) {
-        if (delayNextActiveDescendant.current) {
-          timeout.current = setTimeout(() => {
-            state.setFocusedNodeId(detail.id);
-          }, 500);
-        } else {
-          state.setFocusedNodeId(detail.id);
-        }
-      } else {
-        state.setFocusedNodeId(null);
-      }
-
-      delayNextActiveDescendant.current = false;
-    };
-
-    collectionNode?.addEventListener(UPDATE_ACTIVEDESCENDANT, updateActiveDescendant);
-
-    // TODO: ideally would clean up the event listeners but since this is callback ref it will return null for collectionNode
-    // on cleanup and the collectionRef will also be null at that point...
+    // We track lastCollectionNode to do proper cleanup since callbackRefs just pass null when unmounting. This also handles
+    // React 19's extra call of the callback ref in strict mode
+    if (collectionNode != null) {
+      lastCollectionNode.current?.removeEventListener(UPDATE_ACTIVEDESCENDANT, updateActiveDescendant);
+      lastCollectionNode.current = collectionNode;
+      collectionNode.addEventListener(UPDATE_ACTIVEDESCENDANT, updateActiveDescendant);
+    } else {
+      lastCollectionNode.current?.removeEventListener(UPDATE_ACTIVEDESCENDANT, updateActiveDescendant);
+    }
   });
   // Make sure to memo so that React doesn't keep registering a new event listeners on every rerender of the wrapped collection,
   // especially since callback refs's node parameter is null when they cleanup so we can't even clean up properly

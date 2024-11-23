@@ -31,8 +31,8 @@
     "highlight.js": "9.18.1",
     "markdown-to-jsx": "^6.11.0",
     "quicklink": "^2.3.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "19.0.0-rc-91061073-20241121",
+    "react-dom": "19.0.0-rc-91061073-20241121",
     "react-lowlight": "^2.0.0"
   },
   "alias": {

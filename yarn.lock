@@ -5859,26 +5859,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/autocomplete@npm:3.0.0-alpha.35":
-  version: 3.0.0-alpha.35
-  resolution: "@react-aria/autocomplete@npm:3.0.0-alpha.35"
-  dependencies:
-    "@react-aria/combobox": "npm:^3.10.5"
-    "@react-aria/listbox": "npm:^3.13.5"
-    "@react-aria/searchfield": "npm:^3.7.10"
-    "@react-aria/utils": "npm:^3.25.3"
-    "@react-stately/combobox": "npm:^3.10.0"
-    "@react-types/autocomplete": "npm:3.0.0-alpha.26"
-    "@react-types/button": "npm:^3.10.0"
-    "@react-types/shared": "npm:^3.25.0"
-    "@swc/helpers": "npm:^0.5.0"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/7dcbc8648b5c29afb58c982340951cb660e6c3556f22afcb06ccb9e0c4a33de7a1b2a4cea8899ee9024b45ded8c7325c40050537cef54f7cc324fa35782e6c28
-  languageName: node
-  linkType: hard
-
 "@react-aria/autocomplete@npm:3.0.0-alpha.36, @react-aria/autocomplete@workspace:packages/@react-aria/autocomplete":
   version: 0.0.0-use.local
   resolution: "@react-aria/autocomplete@workspace:packages/@react-aria/autocomplete"
@@ -6010,7 +5990,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/combobox@npm:^3.10.5, @react-aria/combobox@npm:^3.11.0, @react-aria/combobox@workspace:packages/@react-aria/combobox":
+"@react-aria/combobox@npm:^3.11.0, @react-aria/combobox@workspace:packages/@react-aria/combobox":
   version: 0.0.0-use.local
   resolution: "@react-aria/combobox@workspace:packages/@react-aria/combobox"
   dependencies:
@@ -6262,7 +6242,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/listbox@npm:^3.13.5, @react-aria/listbox@npm:^3.13.6, @react-aria/listbox@workspace:packages/@react-aria/listbox":
+"@react-aria/listbox@npm:^3.13.6, @react-aria/listbox@workspace:packages/@react-aria/listbox":
   version: 0.0.0-use.local
   resolution: "@react-aria/listbox@workspace:packages/@react-aria/listbox"
   dependencies:
@@ -6418,7 +6398,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/searchfield@npm:^3.7.10, @react-aria/searchfield@npm:^3.7.11, @react-aria/searchfield@workspace:packages/@react-aria/searchfield":
+"@react-aria/searchfield@npm:^3.7.11, @react-aria/searchfield@workspace:packages/@react-aria/searchfield":
   version: 0.0.0-use.local
   resolution: "@react-aria/searchfield@workspace:packages/@react-aria/searchfield"
   dependencies:
@@ -6751,7 +6731,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/utils@npm:^3.14.2, @react-aria/utils@npm:^3.25.3, @react-aria/utils@npm:^3.26.0, @react-aria/utils@npm:^3.8.0, @react-aria/utils@workspace:packages/@react-aria/utils":
+"@react-aria/utils@npm:^3.14.2, @react-aria/utils@npm:^3.26.0, @react-aria/utils@npm:^3.8.0, @react-aria/utils@workspace:packages/@react-aria/utils":
   version: 0.0.0-use.local
   resolution: "@react-aria/utils@workspace:packages/@react-aria/utils"
   dependencies:
@@ -7334,8 +7314,8 @@ __metadata:
     highlight.js: "npm:9.18.1"
     markdown-to-jsx: "npm:^6.11.0"
     quicklink: "npm:^2.3.0"
-    react: "npm:^18.2.0"
-    react-dom: "npm:^18.2.0"
+    react: "npm:19.0.0-rc-91061073-20241121"
+    react-dom: "npm:19.0.0-rc-91061073-20241121"
     react-lowlight: "npm:^2.0.0"
   languageName: unknown
   linkType: soft
@@ -8411,7 +8391,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-stately/combobox@npm:^3.10.0, @react-stately/combobox@npm:^3.10.1, @react-stately/combobox@workspace:packages/@react-stately/combobox":
+"@react-stately/combobox@npm:^3.10.1, @react-stately/combobox@workspace:packages/@react-stately/combobox":
   version: 0.0.0-use.local
   resolution: "@react-stately/combobox@workspace:packages/@react-stately/combobox"
   dependencies:
@@ -8797,19 +8777,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-types/autocomplete@npm:3.0.0-alpha.26":
-  version: 3.0.0-alpha.26
-  resolution: "@react-types/autocomplete@npm:3.0.0-alpha.26"
-  dependencies:
-    "@react-types/combobox": "npm:^3.13.0"
-    "@react-types/searchfield": "npm:^3.5.9"
-    "@react-types/shared": "npm:^3.25.0"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/750c88653720a5207a07c76ec829c83f58d44ad71ccddcd953983db5cb8e3db491507959a2f608ffc3d4be49ea7dc610d91c7909a088910d3316b6223d0cd442
-  languageName: node
-  linkType: hard
-
 "@react-types/autocomplete@npm:3.0.0-alpha.27, @react-types/autocomplete@workspace:packages/@react-types/autocomplete":
   version: 0.0.0-use.local
   resolution: "@react-types/autocomplete@workspace:packages/@react-types/autocomplete"
@@ -8853,7 +8820,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-types/button@npm:^3.10.0, @react-types/button@npm:^3.10.1, @react-types/button@workspace:packages/@react-types/button":
+"@react-types/button@npm:^3.10.1, @react-types/button@workspace:packages/@react-types/button":
   version: 0.0.0-use.local
   resolution: "@react-types/button@workspace:packages/@react-types/button"
   dependencies:
@@ -8917,7 +8884,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-types/combobox@npm:^3.13.0, @react-types/combobox@npm:^3.13.1, @react-types/combobox@workspace:packages/@react-types/combobox":
+"@react-types/combobox@npm:^3.13.1, @react-types/combobox@workspace:packages/@react-types/combobox":
   version: 0.0.0-use.local
   resolution: "@react-types/combobox@workspace:packages/@react-types/combobox"
   dependencies:
@@ -9136,7 +9103,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-types/searchfield@npm:^3.5.10, @react-types/searchfield@npm:^3.5.9, @react-types/searchfield@workspace:packages/@react-types/searchfield":
+"@react-types/searchfield@npm:^3.5.10, @react-types/searchfield@workspace:packages/@react-types/searchfield":
   version: 0.0.0-use.local
   resolution: "@react-types/searchfield@workspace:packages/@react-types/searchfield"
   dependencies:
@@ -9167,7 +9134,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-types/shared@npm:^3.1.0, @react-types/shared@npm:^3.16.0, @react-types/shared@npm:^3.25.0, @react-types/shared@npm:^3.26.0, @react-types/shared@workspace:packages/@react-types/shared":
+"@react-types/shared@npm:^3.1.0, @react-types/shared@npm:^3.16.0, @react-types/shared@npm:^3.26.0, @react-types/shared@workspace:packages/@react-types/shared":
   version: 0.0.0-use.local
   resolution: "@react-types/shared@workspace:packages/@react-types/shared"
   peerDependencies:
@@ -29148,7 +29115,7 @@ __metadata:
   dependencies:
     "@internationalized/date": "npm:^3.6.0"
     "@internationalized/string": "npm:^3.2.5"
-    "@react-aria/autocomplete": "npm:3.0.0-alpha.35"
+    "@react-aria/autocomplete": "npm:3.0.0-alpha.36"
     "@react-aria/collections": "npm:3.0.0-alpha.6"
     "@react-aria/color": "npm:^3.0.2"
     "@react-aria/disclosure": "npm:^3.0.0"
@@ -29291,6 +29258,17 @@ __metadata:
   peerDependencies:
     typescript: ">= 4.3.x"
   checksum: 10c0/d31a061a21b5d4b67d4af7bc742541fd9e16254bd32861cd29c52565bc2175f40421a3550d52b6a6b0d0478e7cc408558eb0060a0bdd2957b02cfceeb0ee1e88
+  languageName: node
+  linkType: hard
+
+"react-dom@npm:19.0.0-rc-91061073-20241121":
+  version: 19.0.0-rc-91061073-20241121
+  resolution: "react-dom@npm:19.0.0-rc-91061073-20241121"
+  dependencies:
+    scheduler: "npm:0.25.0-rc-91061073-20241121"
+  peerDependencies:
+    react: 19.0.0-rc-91061073-20241121
+  checksum: 10c0/a358b5e906b02850c9655b8fc3fffca2edd6f86dd903b31a15f3a3d708296ad77911f14b370c592dba5992a9cf6775682d515fbf30552f8e45b296e56ff797ed
   languageName: node
   linkType: hard
 
@@ -29664,6 +29642,13 @@ __metadata:
     react: ">=16.6.0"
     react-dom: ">=16.6.0"
   checksum: 10c0/2ba754ba748faefa15f87c96dfa700d5525054a0141de8c75763aae6734af0740e77e11261a1e8f4ffc08fd9ab78510122e05c21c2d79066c38bb6861a886c82
+  languageName: node
+  linkType: hard
+
+"react@npm:19.0.0-rc-91061073-20241121":
+  version: 19.0.0-rc-91061073-20241121
+  resolution: "react@npm:19.0.0-rc-91061073-20241121"
+  checksum: 10c0/eae0dddc092a91a89f9d975eaf4211af123f3aafac99200da66b082efec0020ed57ad35e31140823faacdcdd1e27322708e7601da5baf8ab16e3206ff3afe642
   languageName: node
   linkType: hard
 
@@ -30825,6 +30810,13 @@ __metadata:
   dependencies:
     xmlchars: "npm:^2.2.0"
   checksum: 10c0/3847b839f060ef3476eb8623d099aa502ad658f5c40fd60c105ebce86d244389b0d76fcae30f4d0c728d7705ceb2f7e9b34bb54717b6a7dbedaf5dad2d9a4b74
+  languageName: node
+  linkType: hard
+
+"scheduler@npm:0.25.0-rc-91061073-20241121":
+  version: 0.25.0-rc-91061073-20241121
+  resolution: "scheduler@npm:0.25.0-rc-91061073-20241121"
+  checksum: 10c0/f1ade45be0d76c92810c0ecb464c31781e78629085e9648c750b8d300e9a50c062960cc7e35006193d26add679942d54707b3dc24d674f505a488c1dce71d792
   languageName: node
   linkType: hard
 
