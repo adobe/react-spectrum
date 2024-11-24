@@ -86,15 +86,9 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
 
   let isFocused = item.key === state.selectionManager.focusedKey;
   let isNonFocused = state.selectionManager.focusedKey == null;
-  function getTabIndex(
-    isDisabled: boolean,
-    isFocused: boolean,
-    isNonFocused: boolean
-  ) {
-    if (isDisabled) {
-      return -1;
-    }
-    return isFocused || isNonFocused ? 0 : -1;
+  let tabIndex = -1;
+  if (!isDisabled && (isFocused || isNonFocused)) {
+    tabIndex = 0;
   }
 
   let domProps = filterDOMProps(item.props);
@@ -109,7 +103,7 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
       excludeFromTabOrder: true
     },
     rowProps: mergeProps(rowProps, domProps, linkProps, {
-      tabIndex: getTabIndex(isDisabled, isFocused, isNonFocused),
+      tabIndex,
       onKeyDown: onRemove ? onKeyDown : undefined,
       'aria-describedby': descProps['aria-describedby']
     }),
