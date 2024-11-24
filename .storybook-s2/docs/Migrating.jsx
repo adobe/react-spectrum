@@ -54,6 +54,19 @@ export function Migrating() {
           <li className={style({font: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>MenuItem</Code></li>
         </ul>
 
+        <H3>ActionGroup</H3>
+        <ul className="sb-unstyled">
+          <li className={style({font: 'body', marginY: 8})}>Use <Code>ActionButtonGroup</Code> if you are migrating from an <Code>ActionGroup</Code> that didn't allow for selection. <Code>ActionButtonGroup</Code> takes <Code>ActionButtons</Code> as children. </li>
+          <li className={style({font: 'body', marginY: 8})}>Use <Code>ToggleButtonGroup</Code> if you are migrating from an <Code>ActionGroup</Code> that used single or multiple selection. <Code>ToggleButtonGroup</Code> takes <Code>ToggleButtons</Code> as children. </li>
+          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>overflowMode</Code> (it has not been implemented yet)</li>
+          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>buttonLabelBehavior</Code> (it has not been implemented yet)</li>
+          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>summaryIcon</Code> (it has not been implemented yet)</li>
+          <li className={style({font: 'body', marginY: 8})}>Update root level <Code>onAction</Code> to called via <Code>onPress</Code> on each <Code>ActionButton</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Apply <Code>isDisabled</Code> directly on each <Code>ActionButton</Code> or <Code>ToggleButton</Code> instead of root level <Code>disabledKeys</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Update <Code>key</Code> to be <Code>id</Code> (and keep <Code>key</Code> if rendered inside <Code>array.map</Code>)</li>
+          <li className={style({font: 'body', marginY: 8})}>Convert dynamic collections render function to <Code>items.map</Code></li>
+        </ul>
+
         <H3>AlertDialog</H3>
         <P>No updates needed.</P>
 
@@ -141,14 +154,37 @@ export function Migrating() {
         <ul className="sb-unstyled">
           <li className={style({font: 'body', marginY: 8})}>Update children to move render props from being the second child of <Code>DialogTrigger</Code> to being a child of <Code>Dialog</Code></li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>onDismiss</Code> and use <Code>onOpenChange</Code> on the <Code>DialogTrigger</Code>, or <Code>onDismiss</Code> on the <Code>DialogContainer</Code> instead</li>
+          <li className={style({font: 'body', marginY: 8})}><Code>Dialog</Code> is now meant specifically for rendering modal dialogs only and follows the same preset layout as before</li>
+          <li className={style({font: 'body', marginY: 8})}>If you are trying to create a dialog with a custom layout use <Code>CustomDialog</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>If you are trying to create a fullscreen dialog use <Code>FullscreenDialog</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>If you are trying to create a popover dialog use <Code>Popover</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Supports <Code>isKeyboardDismissDisabled</Code> in place of <Code>DialogTrigger</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Supports <Code>isDismissible</Code> in place of <Code>DialogTrigger</Code>. Note the fixed spelling from previous <Code>isDismissible</Code> prop.</li>
+          <li className={style({font: 'body', marginY: 8})}>Supports <Code>role: "dialog" | "alertdialog"</Code></li>
+        </ul>
+
+        <H3>DialogContainer</H3>
+        <ul className="sb-unstyled">
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>type</Code>, this is dependent on the dialog level child that you use (e.g. <Code>Dialog</Code>, <Code>FullscreenDialog</Code>, <Code>Popover</Code>)</li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isDismissable</Code>, prop now exists on the dialog level component as <Code>isDismissible</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isKeyboardDismissDisabled</Code>, prop now exists on the dialog level component</li>
         </ul>
 
         <H3>DialogTrigger</H3>
         <ul className="sb-unstyled">
           <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>type="tray"</Code> (<Code>Tray</Code> has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>mobileType="tray"</Code> (<Code>Tray</Code> has not been implemented yet)</li>
+          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>mobileType</Code> (<Code>Tray</Code> and other types have not been implemented yet for <Code>Popover</Code>)</li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>targetRef</Code> (it is no longer supported in Spectrum 2)</li>
           <li className={style({font: 'body', marginY: 8})}>Update <Code>children</Code> to remove render props usage, and note that the <Code>close</Code> function was moved from <Code>DialogTrigger</Code> to <Code>Dialog</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>containerPadding</Code>, prop now exists on the <Code>Popover</Code> component</li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>crossOffset</Code>, prop now exists on the <Code>Popover</Code> component</li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>hideArrow</Code>, prop now exists on the <Code>Popover</Code> component</li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isDismissable</Code>, prop now exists on the dialog level component as <Code>isDismissible</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isKeyboardDismissDisabled</Code>, prop now exists on the dialog level component</li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>offset</Code>, prop now exists on the <Code>Popover</Code> component</li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>placement</Code>, prop now exists on the <Code>Popover</Code> component</li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>shouldFlip</Code>, prop now exists on the <Code>Popover</Code> component</li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>type</Code>, this is dependent on the dialog level child that you use (e.g. <Code>Dialog</Code>, <Code>FullscreenDialog</Code>, <Code>Popover</Code>)</li>
         </ul>
 
         <H3>Divider</H3>
@@ -468,7 +504,7 @@ export function Migrating() {
                 <td><Code>'large'</Code></td>
                 <td><Code>'xl'</Code></td>
               </tr>
-            </tbody>        
+            </tbody>
         </table>
 
         <H3>Dimension values</H3>

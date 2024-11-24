@@ -29,7 +29,8 @@ import {Accordion, Disclosure, DisclosureTitle, DisclosurePanel} from '@react-sp
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Accordion', 'Disclosure', 'DisclosureTitle', 'DisclosurePanel']} />
+  componentNames={['Accordion', 'Disclosure', 'DisclosureTitle', 'DisclosurePanel']}
+  since="3.38.0" />
 
 ## Example
 
@@ -67,7 +68,7 @@ import {Key} from "@react-types/shared";
 
 function ControlledExpansion() {
   let [expandedKeys, setExpandedKeys] = React.useState<Set<Key>>(new Set(['personal']))
-  
+
   return (
     <>
       <Accordion expandedKeys={expandedKeys} onExpandedChange={setExpandedKeys}>

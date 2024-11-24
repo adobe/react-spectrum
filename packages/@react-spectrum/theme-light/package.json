@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/theme-light",
-  "version": "3.4.13",
+  "version": "3.4.14",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -36,7 +36,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-types/provider": "^3.8.4",
+    "@react-types/provider": "^3.8.5",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {
