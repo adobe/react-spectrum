@@ -75,6 +75,10 @@ type FunctionInfo =
   | {
     name: 'updateLegacyLink',
     args: {}
+  }
+  | {
+    name: 'updateDialogChild',
+    args: {}
   };
 
 type Change = {
@@ -428,6 +432,30 @@ export const changes: ChangesJSON = {
           name: 'moveRenderPropsToChild',
           args: {newChildComponent: 'Dialog'}
         }
+      },
+      {
+        description: 'Rename isDismissable to isDismissible',
+        reason: 'Fixed spelling',
+        function: {name: 'updatePropName', args: {oldProp: 'isDismissable', newProp: 'isDismissible'}}
+      },
+      {
+        description: 'Update Dialog child to Popover or FullscreenDialog depending on type prop',
+        reason: 'Updated API',
+        function: {name: 'updateDialogChild', args: {}}
+      }
+    ]
+  },
+  DialogContainer: {
+    changes: [
+      {
+        description: 'Rename isDismissable to isDismissible',
+        reason: 'Fixed spelling',
+        function: {name: 'updatePropName', args: {oldProp: 'isDismissable', newProp: 'isDismissible'}}
+      },
+      {
+        description: 'Update Dialog child to Popover or FullscreenDialog depending on type prop',
+        reason: 'Updated API',
+        function: {name: 'updateDialogChild', args: {}}
       }
     ]
   },

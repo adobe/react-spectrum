@@ -25,9 +25,9 @@ import {useDOMRef} from '@react-spectrum/utils';
 // TODO: what style overrides should be allowed?
 export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style'>, StyleProps {
   /**
-   * Whether the Dialog is dismissable.
+   * Whether the Dialog is dismissible.
    */
-  isDismissable?: boolean,
+  isDismissible?: boolean,
   /**
    * The size of the Dialog.
    *
@@ -91,11 +91,11 @@ export const dialogInner = style({
 });
 
 function Dialog(props: DialogProps, ref: DOMRef) {
-  let {size = 'M', isDismissable, isKeyboardDismissDisabled} = props;
+  let {size = 'M', isDismissible, isKeyboardDismissDisabled} = props;
   let domRef = useDOMRef(ref);
 
   return (
-    <Modal size={size} isDismissable={isDismissable} isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
+    <Modal size={size} isDismissable={isDismissible} isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
       <RACDialog
         {...props}
         ref={domRef}
@@ -130,12 +130,12 @@ function Dialog(props: DialogProps, ref: DOMRef) {
                 },
                 marginEnd: {
                   default: 32,
-                  isDismissable: 12
+                  isDismissible: 12
                 },
                 marginTop: {
                   default: 12 // margin to dismiss button
                 }
-              })({isDismissable: props.isDismissable})}>
+              })({isDismissible: props.isDismissible})}>
               <div
                 className={style({
                   // Wrapper for heading, header, and button group.
@@ -173,7 +173,7 @@ function Dialog(props: DialogProps, ref: DOMRef) {
                   {children}
                 </Provider>
               </div>
-              {props.isDismissable && 
+              {props.isDismissible && 
                 <CloseButton styles={style({marginBottom: 12})} />
               }
             </div>
@@ -214,7 +214,7 @@ function Dialog(props: DialogProps, ref: DOMRef) {
                   [HeaderContext, {isHidden: true}],
                   [ContentContext, {isHidden: true}],
                   [FooterContext, {styles: footer}],
-                  [ButtonGroupContext, {isHidden: props.isDismissable, styles: buttonGroup, align: 'end'}]
+                  [ButtonGroupContext, {isHidden: props.isDismissible, styles: buttonGroup, align: 'end'}]
                 ]}>
                 {children}
               </Provider>
