@@ -2,7 +2,10 @@ import React, {useEffect, useState} from 'react';
 import {addons} from '@storybook/preview-api';
 import {makeDecorator} from '@storybook/preview-api';
 import {getQueryParams} from '@storybook/preview-api';
-import {Provider} from '@react-spectrum/s2';
+// Importing from src so that HMR works.
+// Without this, all HMR updates will bubble through the index.ts and up 
+// to the root instead of stopping at the story files.
+import {Provider} from '@react-spectrum/s2/src/Provider';
 
 document.body.style.margin = '0';
 
