@@ -85,21 +85,21 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
     delayNextActiveDescendant.current = false;
   }, [state]);
 
-  let callbackRef = useEffectEvent((collectionNode: HTMLElement | null) => {
-    // When typing forward, we want to delay the setting of active descendant to not interrupt the native screen reader announcement
-    // of the letter you just typed. If we recieve another UPDATE_ACTIVEDESCENDANT call then we clear the queued update
-    // We track lastCollectionNode to do proper cleanup since callbackRefs just pass null when unmounting. This also handles
-    // React 19's extra call of the callback ref in strict mode
+  let callbackRef = useCallback((collectionNode) => {
     if (collectionNode != null) {
+      // When typing forward, we want to delay the setting of active descendant to not interrupt the native screen reader announcement
+      // of the letter you just typed. If we recieve another UPDATE_ACTIVEDESCENDANT call then we clear the queued update
+      // We track lastCollectionNode to do proper cleanup since callbackRefs just pass null when unmounting. This also handles
+      // React 19's extra call of the callback ref in strict mode
       lastCollectionNode.current?.removeEventListener(UPDATE_ACTIVEDESCENDANT, updateActiveDescendant);
       lastCollectionNode.current = collectionNode;
       collectionNode.addEventListener(UPDATE_ACTIVEDESCENDANT, updateActiveDescendant);
     } else {
       lastCollectionNode.current?.removeEventListener(UPDATE_ACTIVEDESCENDANT, updateActiveDescendant);
     }
-  });
-  // Make sure to memo so that React doesn't keep registering a new event listeners on every rerender of the wrapped collection,
-  // especially since callback refs's node parameter is null when they cleanup so we can't even clean up properly
+  }, [updateActiveDescendant]);
+
+  // Make sure to memo so that React doesn't keep registering a new event listeners on every rerender of the wrapped collection
   let mergedCollectionRef = useObjectRef(useMemo(() => mergeRefs(collectionRef, callbackRef), [collectionRef, callbackRef]));
 
   let focusFirstItem = useEffectEvent(() => {
