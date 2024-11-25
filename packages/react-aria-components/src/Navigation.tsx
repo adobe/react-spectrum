@@ -20,7 +20,7 @@ import {Orientation} from 'react-aria';
 import React, {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode} from 'react';
 
 // TODO: Replace NavigationRenderProps with AriaNavigationProps, once it exists
-export interface NavigationProps extends NavigationRenderProps, /* RenderProps<NavigationRenderProps>, */ DOMProps, SlotProps {
+export interface NavigationProps extends NavigationRenderProps, RenderProps<NavigationRenderProps>, DOMProps, SlotProps {
   /** Whether the navigation is disabled. */
   isDisabled?: boolean,
   /** Handler that is called when a navigation item is clicked. */
@@ -29,13 +29,19 @@ export interface NavigationProps extends NavigationRenderProps, /* RenderProps<N
 
 export interface NavigationRenderProps {
   /**
+   * Whether the navigation is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled?: boolean,
+  /**
    * The orientation of the navigation.
    * @selector [data-orientation="horizontal | vertical"]
    */
   orientation: Orientation
 }
 
-export const NavigationContext = createContext<ContextValue<NavigationProps, HTMLUListElement>>(null);
+// TODO: HTMLDivElement is the wrong type
+export const NavigationContext = createContext<ContextValue<NavigationProps, HTMLDivElement>>(null);
 
 function Navigation(props: NavigationProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, NavigationContext);
@@ -43,7 +49,10 @@ function Navigation(props: NavigationProps, ref: ForwardedRef<HTMLDivElement>) {
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-Navigation',
-    values: {isDisabled: props.isDisabled}
+    values: {
+      isDisabled: props.isDisabled,
+      orientation: props.orientation || 'horizontal'
+    }
   });
 
   let domProps = filterDOMProps(props);
@@ -56,11 +65,11 @@ function Navigation(props: NavigationProps, ref: ForwardedRef<HTMLDivElement>) {
       ref={ref}
       data-disabled={props.isDisabled || undefined}>
       <NavigationContext.Provider value={props}>
-        <ul
+        <ol
           className="react-aria-NavigationList"
           data-orientation={props.orientation || 'horizontal'}>
           {renderProps.children}
-        </ul>
+        </ol>
       </NavigationContext.Provider>
     </nav>
   );
