@@ -7314,8 +7314,8 @@ __metadata:
     highlight.js: "npm:9.18.1"
     markdown-to-jsx: "npm:^6.11.0"
     quicklink: "npm:^2.3.0"
-    react: "npm:19.0.0-rc-91061073-20241121"
-    react-dom: "npm:19.0.0-rc-91061073-20241121"
+    react: "npm:^18.2.0"
+    react-dom: "npm:^18.2.0"
     react-lowlight: "npm:^2.0.0"
   languageName: unknown
   linkType: soft
@@ -14071,9 +14071,9 @@ __metadata:
   linkType: hard
 
 "caniuse-db@npm:^1.0.30000634":
-  version: 1.0.30001008
-  resolution: "caniuse-db@npm:1.0.30001008"
-  checksum: 10c0/5edcaa4b7c493bdf7739e4edc6ec0fcbdb926afe8b20d8b71a077b03396fd744c8c63fbb0d3fbe39e38b40c1fcf49410f51c320fc8b4cf3e3a43eea4e44d93cb
+  version: 1.0.30001680
+  resolution: "caniuse-db@npm:1.0.30001680"
+  checksum: 10c0/5a2d75736353b93a2da769eeb151f0062ab296f90e413f8947fca78b916e0358c75c7350026a84a3c988c2d00562df088df5c8b5a66d000130fd00367f917a0d
   languageName: node
   linkType: hard
 
@@ -29261,17 +29261,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:19.0.0-rc-91061073-20241121":
-  version: 19.0.0-rc-91061073-20241121
-  resolution: "react-dom@npm:19.0.0-rc-91061073-20241121"
-  dependencies:
-    scheduler: "npm:0.25.0-rc-91061073-20241121"
-  peerDependencies:
-    react: 19.0.0-rc-91061073-20241121
-  checksum: 10c0/a358b5e906b02850c9655b8fc3fffca2edd6f86dd903b31a15f3a3d708296ad77911f14b370c592dba5992a9cf6775682d515fbf30552f8e45b296e56ff797ed
-  languageName: node
-  linkType: hard
-
 "react-dom@npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0, react-dom@npm:^18.0.0 || ^19.0.0, react-dom@npm:^18.2.0":
   version: 18.3.1
   resolution: "react-dom@npm:18.3.1"
@@ -29642,13 +29631,6 @@ __metadata:
     react: ">=16.6.0"
     react-dom: ">=16.6.0"
   checksum: 10c0/2ba754ba748faefa15f87c96dfa700d5525054a0141de8c75763aae6734af0740e77e11261a1e8f4ffc08fd9ab78510122e05c21c2d79066c38bb6861a886c82
-  languageName: node
-  linkType: hard
-
-"react@npm:19.0.0-rc-91061073-20241121":
-  version: 19.0.0-rc-91061073-20241121
-  resolution: "react@npm:19.0.0-rc-91061073-20241121"
-  checksum: 10c0/eae0dddc092a91a89f9d975eaf4211af123f3aafac99200da66b082efec0020ed57ad35e31140823faacdcdd1e27322708e7601da5baf8ab16e3206ff3afe642
   languageName: node
   linkType: hard
 
@@ -30810,13 +30792,6 @@ __metadata:
   dependencies:
     xmlchars: "npm:^2.2.0"
   checksum: 10c0/3847b839f060ef3476eb8623d099aa502ad658f5c40fd60c105ebce86d244389b0d76fcae30f4d0c728d7705ceb2f7e9b34bb54717b6a7dbedaf5dad2d9a4b74
-  languageName: node
-  linkType: hard
-
-"scheduler@npm:0.25.0-rc-91061073-20241121":
-  version: 0.25.0-rc-91061073-20241121
-  resolution: "scheduler@npm:0.25.0-rc-91061073-20241121"
-  checksum: 10c0/f1ade45be0d76c92810c0ecb464c31781e78629085e9648c750b8d300e9a50c062960cc7e35006193d26add679942d54707b3dc24d674f505a488c1dce71d792
   languageName: node
   linkType: hard
 
