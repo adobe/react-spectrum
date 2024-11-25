@@ -16,7 +16,6 @@ import 'client-only';
 
 export {CheckboxContext, ColorAreaContext, ColorFieldContext, ColorSliderContext, ColorWheelContext, HeadingContext} from './RSPContexts';
 
-// TODO: export the respective contexts here
 export {Autocomplete, AutocompleteContext, AutocompleteStateContext, InternalAutocompleteContext} from './Autocomplete';
 export {Breadcrumbs, BreadcrumbsContext, Breadcrumb} from './Breadcrumbs';
 export {Button, ButtonContext} from './Button';

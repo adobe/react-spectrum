@@ -12,6 +12,7 @@
 
 import {act, render, within} from '@testing-library/react';
 import {
+  AriaBaseTestProps,
   mockClickDefault,
   pointerMap
 } from '@react-spectrum/test-utils-internal';
@@ -25,11 +26,6 @@ import userEvent from '@testing-library/user-event';
 //   ${'touch'}
 // `(`${name} - $interactionType`, tests));
 
-// TODO: place somewhere central?
-interface AriaBaseTestProps {
-  setup?: () => void,
-  prefix?: string
-}
 
 interface RendererArgs {
   autocompleteProps?: any,
