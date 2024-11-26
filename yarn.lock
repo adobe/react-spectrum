@@ -4354,16 +4354,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/config-storybook@npm:^0.0.1":
-  version: 0.0.1
-  resolution: "@parcel/config-storybook@npm:0.0.1"
+"@parcel/config-storybook@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "@parcel/config-storybook@npm:0.0.2"
   dependencies:
     "@parcel/config-default": "npm:^2.13.1"
     "@parcel/resolver-storybook": "npm:^0.0.0"
     "@parcel/transformer-js": "npm:^2.13.1"
     "@parcel/transformer-react-refresh-wrap": "npm:^2.13.1"
-    "@parcel/transformer-storybook": "npm:^0.0.1"
-  checksum: 10c0/b765b1ae899276739f56031b9410100f90e09742b7e0d9e1718ee169e60f324d5cb9a5f94b15de8d44a7a75b053ca0ed70ec29584139eec1883a0dceb84ddf16
+    "@parcel/transformer-storybook": "npm:^0.0.2"
+  checksum: 10c0/45ef9b2a4f9ef2fe29069cf99253e4aaa01f3075d91ee4fe9d23a528c3d56d39aa7dcd10837cac059087e8d6c84a365dcf0086fc58b84518152ef9f6d6a0ff2c
   languageName: node
   linkType: hard
 
@@ -5010,9 +5010,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/transformer-storybook@npm:^0.0.1":
-  version: 0.0.1
-  resolution: "@parcel/transformer-storybook@npm:0.0.1"
+"@parcel/transformer-storybook@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "@parcel/transformer-storybook@npm:0.0.2"
   dependencies:
     "@babel/parser": "npm:^7.23.0"
     "@babel/types": "npm:^7.23.0"
@@ -5021,7 +5021,7 @@ __metadata:
     "@storybook/docs-tools": "npm:^7"
     react-docgen-typescript: "npm:^2.2.2"
     typescript: "npm:^5.5.0"
-  checksum: 10c0/3d9261b32325224c7168a32673744457269467fea284349e96acc835cf952b1ba744bd024f7e83d1cbb54fa85ba7938fc44bfa2832496fd76d52e73658893ce6
+  checksum: 10c0/9c612e1c1965048f75a4d0404d7fbaf89a0be800642558be105721e7eb48d22a294204e3148874de594b2cafe15719c8b31ed103c92405ab059ad672ea67b3f3
   languageName: node
   linkType: hard
 
@@ -29181,7 +29181,7 @@ __metadata:
     "@octokit/rest": "npm:*"
     "@parcel/bundler-library": "npm:^2.12.1"
     "@parcel/config-default": "npm:^2.13.1"
-    "@parcel/config-storybook": "npm:^0.0.1"
+    "@parcel/config-storybook": "npm:^0.0.2"
     "@parcel/core": "npm:^2.13.1"
     "@parcel/optimizer-data-url": "npm:^2.13.1"
     "@parcel/optimizer-terser": "npm:^2.13.1"
@@ -29293,7 +29293,7 @@ __metadata:
     sinon: "npm:^7.3.1"
     storybook: "npm:^7.6.19"
     storybook-dark-mode: "npm:^3.0.3"
-    storybook-react-parcel: "npm:^0.0.0"
+    storybook-react-parcel: "npm:^0.0.1"
     tailwind-variants: "npm:^0.1.18"
     tailwindcss: "npm:^3.4.0"
     tailwindcss-animate: "npm:^1.0.7"
@@ -31575,9 +31575,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"storybook-builder-parcel@npm:^0.0.0":
-  version: 0.0.0
-  resolution: "storybook-builder-parcel@npm:0.0.0"
+"storybook-builder-parcel@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "storybook-builder-parcel@npm:0.0.1"
   dependencies:
     "@parcel/core": "npm:^2.13.1"
     "@parcel/reporter-cli": "npm:^2.13.1"
@@ -31589,7 +31589,7 @@ __metadata:
     http-proxy-middleware: "npm:^2.0.6"
   peerDependencies:
     react: "*"
-  checksum: 10c0/4477b4241f771740ce38b0a9b2905bd8476ec5c4aa28a5a31855030613ab0641a3f40903b18380992c3d69be03a0cb28c9cfce774f304222ea8ba60eb0a9baf5
+  checksum: 10c0/44b4cfbdcba38664ede775424393ca84e6fd13e6b84698f93e79527a51870855adb5b12f40657d11d62107f18ddb8ccd9c0754b3261734644db3f3ab43f73eb4
   languageName: node
   linkType: hard
 
@@ -31617,13 +31617,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"storybook-react-parcel@npm:^0.0.0":
-  version: 0.0.0
-  resolution: "storybook-react-parcel@npm:0.0.0"
+"storybook-react-parcel@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "storybook-react-parcel@npm:0.0.1"
   dependencies:
     "@storybook/react": "npm:^7.6.4"
-    storybook-builder-parcel: "npm:^0.0.0"
-  checksum: 10c0/108076877e442d78bcecd72233799ba30021fac5788b090bdaf9ebbc879a112b6ddca23a4ac1f53d8e07b122876406eadbb63eaf0e0d11bf6b272b0441cee560
+    storybook-builder-parcel: "npm:^0.0.1"
+  checksum: 10c0/20ba6df23f7113ecc16aa8362bc140cb67c2bf4d425800ea4ad14f8baf6dadaee9fb270058b05d0f55ac816fddd05b7fa03d5b9dc5769e6b48e735ffaff6b401
   languageName: node
   linkType: hard
 
