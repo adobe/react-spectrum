@@ -42,7 +42,10 @@ export interface FileTriggerProps {
   acceptDirectory?: boolean
 }
 
-function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLInputElement>) {
+/**
+ * A FileTrigger allows a user to access the file system with any pressable React Aria or React Spectrum component, or custom components built with usePress.
+ */
+export const FileTrigger = forwardRef(function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLInputElement>) {
   let {onSelect, acceptedFileTypes, allowsMultiple, defaultCamera, children, acceptDirectory, ...rest} = props;
   let inputRef = useObjectRef(ref);
   let domProps = filterDOMProps(rest);
@@ -71,10 +74,4 @@ function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLInputElement
         webkitdirectory={acceptDirectory ? '' : undefined} />
     </>
   );
-}
-
-/**
- * A FileTrigger allows a user to access the file system with any pressable React Aria or React Spectrum component, or custom components built with usePress.
- */
-const _FileTrigger = forwardRef(FileTrigger);
-export {_FileTrigger  as FileTrigger};
+});

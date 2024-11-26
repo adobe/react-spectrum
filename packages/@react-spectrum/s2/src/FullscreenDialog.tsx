@@ -117,7 +117,10 @@ export const dialogInner = style({
   overflow: 'auto'
 });
 
-function FullscreenDialog(props: FullscreenDialogProps, ref: DOMRef) {
+/**
+ * Takeover dialogs are large types of dialogs. They use the totality of the screen and should be used for modal experiences with complex workflows.
+ */
+export const FullscreenDialog = forwardRef(function FullscreenDialog(props: FullscreenDialogProps, ref: DOMRef) {
   let {variant = 'fullscreen', isKeyboardDismissDisabled} = props;
   let domRef = useDOMRef(ref);
 
@@ -145,11 +148,5 @@ function FullscreenDialog(props: FullscreenDialogProps, ref: DOMRef) {
       </RACDialog>
     </Modal>
   );
-}
-
-/**
- * Takeover dialogs are large types of dialogs. They use the totality of the screen and should be used for modal experiences with complex workflows.
- */
-let _FullscreenDialog = forwardRef(FullscreenDialog);
-export {_FullscreenDialog as FullscreenDialog};
+});
 

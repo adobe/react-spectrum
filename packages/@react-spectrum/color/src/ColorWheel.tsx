@@ -25,7 +25,10 @@ import {useResizeObserver} from '@react-aria/utils';
 
 const WHEEL_THICKNESS = 24;
 
-function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivElement>) {
+/**
+ * ColorWheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
+ */
+export const ColorWheel = React.forwardRef(function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let inputRef = useRef(null);
   let containerRef = useFocusableRef(ref, inputRef);
@@ -104,10 +107,4 @@ function ColorWheel(props: SpectrumColorWheelProps, ref: FocusableRef<HTMLDivEle
       </ColorThumb>
     </div>
   );
-}
-
-/**
- * ColorWheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
- */
-let _ColorWheel = React.forwardRef(ColorWheel);
-export {_ColorWheel as ColorWheel};
+});

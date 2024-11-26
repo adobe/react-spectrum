@@ -53,7 +53,10 @@ import {useFormProps} from '@react-spectrum/form';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
-function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: FocusableRef<HTMLElement>) {
+/**
+ * ComboBoxes combine a text entry with a picker menu, allowing users to filter longer lists to only the selections matching a query.
+ */
+export const ComboBox = React.forwardRef(function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
 
@@ -68,7 +71,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: Focusa
   } else {
     return <ComboBoxBase {...props} ref={ref} />;
   }
-}
+}) as <T>(props: SpectrumComboBoxProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
 
 const ComboBoxBase = React.forwardRef(function ComboBoxBase(props: SpectrumComboBoxProps<any>, ref: FocusableRef<HTMLElement>) {
   let {
@@ -364,9 +367,3 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
     </FocusRing>)
   );
 });
-
-/**
- * ComboBoxes combine a text entry with a picker menu, allowing users to filter longer lists to only the selections matching a query.
- */
-const _ComboBox = React.forwardRef(ComboBox) as <T>(props: SpectrumComboBoxProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
-export {_ComboBox as ComboBox};

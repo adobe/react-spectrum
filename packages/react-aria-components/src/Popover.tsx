@@ -80,7 +80,10 @@ export interface PopoverRenderProps {
 
 export const PopoverContext = createContext<ContextValue<PopoverProps, HTMLElement>>(null);
 
-function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
+/**
+ * A popover is an overlay element positioned relative to a trigger.
+ */
+export const Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, PopoverContext);
   let contextState = useContext(OverlayTriggerStateContext);
   let localState = useOverlayTriggerState(props);
@@ -116,13 +119,7 @@ function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
       popoverRef={ref}
       isExiting={isExiting} />
   );
-}
-
-/**
- * A popover is an overlay element positioned relative to a trigger.
- */
-const _Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(Popover);
-export {_Popover as Popover};
+});
 
 interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderProps>, SlotProps {
   state: OverlayTriggerState,

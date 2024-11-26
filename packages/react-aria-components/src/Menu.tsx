@@ -151,7 +151,10 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
 
 export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, CollectionProps<T>, StyleProps, SlotProps, ScrollableProps<HTMLDivElement> {}
 
-function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A menu displays a list of actions or options that a user can choose.
+ */
+export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, MenuContext);
 
   // Delay rendering the actual menu until we have the collection so that auto focus works properly.
@@ -160,7 +163,7 @@ function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivEl
       {collection => collection.size > 0 && <MenuInner props={props} collection={collection} menuRef={ref} />}
     </CollectionBuilder>
   );
-}
+});
 
 interface MenuInnerProps<T> {
   props: MenuProps<T>,
@@ -197,7 +200,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
           values={[
             [MenuStateContext, state],
             [SeparatorContext, {elementType: 'div'}],
-            [SectionContext, {name: 'MenuSection', render: MenuSection}],
+            [SectionContext, {name: 'MenuSection', render: MenuSectionInner}],
             [SubmenuTriggerContext, {parentMenuRef: ref}],
             [MenuItemContext, null],
             [SelectionManagerContext, state.selectionManager]
@@ -211,12 +214,6 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
     </FocusScope>
   );
 }
-
-/**
- * A menu displays a list of actions or options that a user can choose.
- */
-const _Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(Menu);
-export {_Menu as Menu};
 
 export interface MenuSectionProps<T> extends SectionProps<T>, MultipleSelection {}
 
@@ -251,7 +248,7 @@ class GroupSelectionManager extends SelectionManager {
   }
 }
 
-function MenuSection<T extends object>(props: MenuSectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>, className = 'react-aria-MenuSection') {
+function MenuSectionInner<T extends object>(props: MenuSectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>, className = 'react-aria-MenuSection') {
   let state = useContext(MenuStateContext)!;
   let {CollectionBranch} = useContext(CollectionRendererContext);
   let [headingRef, heading] = useSlot();
@@ -290,8 +287,7 @@ function MenuSection<T extends object>(props: MenuSectionProps<T>, ref: Forwarde
 /**
  * A MenuSection represents a section within a Menu.
  */
-const _MenuSection = /*#__PURE__*/ createBranchComponent('section', MenuSection);
-export {_MenuSection as MenuSection};
+export const MenuSection = /*#__PURE__*/ createBranchComponent('section', MenuSectionInner);
 
 export interface MenuItemRenderProps extends ItemRenderProps {
   /**

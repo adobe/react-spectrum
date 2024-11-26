@@ -25,7 +25,10 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
-function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLElement>) {
+/**
+ * A SearchWithin combines a SearchField and a Picker into a single group. This allows a user to constrain the scope of their search to a particular category, for example.
+ */
+export const SearchWithin = React.forwardRef(function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/searchwithin');
@@ -134,10 +137,4 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
       </div>
     </Field>
   );
-}
-
-/**
- * A SearchWithin combines a SearchField and a Picker into a single group. This allows a user to constrain the scope of their search to a particular category, for example.
- */
-const _SearchWithin = React.forwardRef(SearchWithin);
-export {_SearchWithin as SearchWithin};
+});

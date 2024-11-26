@@ -20,7 +20,10 @@ import {SpectrumSliderProps} from '@react-types/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {useLocale} from '@react-aria/i18n';
 
-function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
+/**
+ * Sliders allow users to quickly select a value within a range. They should be used when the upper and lower bounds to the range are invariable.
+ */
+export const Slider = React.forwardRef(function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
   let {onChange, onChangeEnd, value, defaultValue, isFilled, fillOffset, trackGradient, getValueLabel, ...otherProps} = props;
 
   let baseProps: Omit<SliderBaseProps, 'children'> = {
@@ -112,10 +115,4 @@ function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
       }}
     </SliderBase>
   );
-}
-
-/**
- * Sliders allow users to quickly select a value within a range. They should be used when the upper and lower bounds to the range are invariable.
- */
-const _Slider = React.forwardRef(Slider);
-export {_Slider as Slider};
+});

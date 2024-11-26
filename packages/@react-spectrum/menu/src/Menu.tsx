@@ -29,7 +29,12 @@ import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMenu} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
 
-function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Menus display a list of actions or options that a user can choose.
+ */
+// forwardRef doesn't support generic parameters, so cast the result to the correct type
+// https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
+export const Menu = React.forwardRef(function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDivElement>) {
   let isSubmenu = true;
   let contextProps = useContext(MenuContext);
   let parentMenuContext = useMenuStateContext();
@@ -126,7 +131,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
       </FocusScope>
     </MenuStateContext.Provider>
   );
-}
+}) as <T>(props: SpectrumMenuProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 
 export function TrayHeaderWrapper(props) {
   let {children, isSubmenu, hasOpenSubmenu, parentMenuTreeState, rootMenuTriggerState, onBackButtonPress, wrapperKeyDown, menuRef} = props;
@@ -216,11 +221,3 @@ export function TrayHeaderWrapper(props) {
     </>
   );
 }
-
-/**
- * Menus display a list of actions or options that a user can choose.
- */
-// forwardRef doesn't support generic parameters, so cast the result to the correct type
-// https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
-const _Menu = React.forwardRef(Menu) as <T>(props: SpectrumMenuProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
-export {_Menu as Menu};

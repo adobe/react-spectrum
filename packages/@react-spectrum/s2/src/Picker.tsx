@@ -228,7 +228,10 @@ const iconStyles = style({
 let InternalPickerContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({size: 'M'});
 let InsideSelectValueContext = createContext(false);
 
-function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLButtonElement>) {
+/**
+ * Pickers allow users to choose a single option from a collapsible list of options when space is limited.
+ */
+export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLButtonElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, PickerContext);
   let domRef = useFocusableRef(ref);
@@ -399,13 +402,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
       )}
     </AriaSelect>
   );
-}
-
-/**
- * Pickers allow users to choose a single option from a collapsible list of options when space is limited.
- */
-let _Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(Picker);
-export {_Picker as Picker};
+});
 
 export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {
   children: ReactNode

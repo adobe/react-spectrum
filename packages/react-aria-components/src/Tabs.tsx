@@ -118,7 +118,10 @@ export interface TabPanelRenderProps {
 export const TabsContext = createContext<ContextValue<TabsProps, HTMLDivElement>>(null);
 export const TabListStateContext = createContext<TabListState<object> | null>(null);
 
-function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * Tabs organize content into multiple sections and allow users to navigate between them.
+ */
+export const Tabs = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TabsContext);
   let {children, orientation = 'horizontal'} = props;
   children = useMemo(() => (
@@ -132,7 +135,7 @@ function Tabs(props: TabsProps, ref: ForwardedRef<HTMLDivElement>) {
       {collection => <TabsInner props={props} collection={collection} tabsRef={ref} />}
     </CollectionBuilder>
   );
-}
+});
 
 interface TabsInnerProps {
   props: TabsProps,
@@ -182,17 +185,15 @@ function TabsInner({props, tabsRef: ref, collection}: TabsInnerProps) {
 }
 
 /**
- * Tabs organize content into multiple sections and allow users to navigate between them.
+ * A TabList is used within Tabs to group tabs that a user can switch between.
+ * The ids of the items within the <TabList> must match up with a corresponding item inside the <TabPanels>.
  */
-const _Tabs = /*#__PURE__*/ (forwardRef as forwardRefType)(Tabs);
-export {_Tabs as Tabs};
-
-function TabList<T extends object>(props: TabListProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element {
+export const TabList = /*#__PURE__*/ (forwardRef as forwardRefType)(function TabList<T extends object>(props: TabListProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element {
   let state = useContext(TabListStateContext);
   return state
     ? <TabListInner props={props} forwardedRef={ref} />
     : <Collection {...props} />;
-}
+});
 
 interface TabListInnerProps<T> {
   props: TabListProps<T>,
@@ -235,13 +236,6 @@ function TabListInner<T extends object>({props, forwardedRef: ref}: TabListInner
     </div>
   );
 }
-
-/**
- * A TabList is used within Tabs to group tabs that a user can switch between.
- * The ids of the items within the <TabList> must match up with a corresponding item inside the <TabPanels>.
- */
-const _TabList = /*#__PURE__*/ (forwardRef as forwardRefType)(TabList);
-export {_TabList as TabList};
 
 /**
  * A Tab provides a title for an individual item within a TabList.
@@ -287,7 +281,10 @@ export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, f
   );
 });
 
-function TabPanel(props: TabPanelProps, forwardedRef: ForwardedRef<HTMLDivElement>) {
+/**
+ * A TabPanel provides the content for a tab.
+ */
+export const TabPanel = /*#__PURE__*/ createHideableComponent(function TabPanel(props: TabPanelProps, forwardedRef: ForwardedRef<HTMLDivElement>) {
   const state = useContext(TabListStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);
   let {tabPanelProps} = useTabPanel(props, state, ref);
@@ -334,10 +331,4 @@ function TabPanel(props: TabPanelProps, forwardedRef: ForwardedRef<HTMLDivElemen
       </Provider>
     </div>
   );
-}
-
-/**
- * A TabPanel provides the content for a tab.
- */
-const _TabPanel = /*#__PURE__*/ createHideableComponent(TabPanel);
-export {_TabPanel as TabPanel};
+});

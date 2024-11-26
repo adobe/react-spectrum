@@ -17,7 +17,14 @@ import {SpectrumListBoxProps} from '@react-types/listbox';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useListState} from '@react-stately/list';
 
-function ListBox<T extends object>(props: SpectrumListBoxProps<T>, ref: DOMRef<HTMLDivElement>) {
+// forwardRef doesn't support generic parameters, so cast the result to the correct type
+// https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
+
+
+/**
+ * A list of options that can allow selection of one or more.
+ */
+export const ListBox = React.forwardRef(function ListBox<T extends object>(props: SpectrumListBoxProps<T>, ref: DOMRef<HTMLDivElement>) {
   let state = useListState(props);
   let layout = useListBoxLayout();
   let domRef = useDOMRef(ref);
@@ -29,14 +36,4 @@ function ListBox<T extends object>(props: SpectrumListBoxProps<T>, ref: DOMRef<H
       state={state}
       layout={layout} />
   );
-}
-
-// forwardRef doesn't support generic parameters, so cast the result to the correct type
-// https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
-
-
-/**
- * A list of options that can allow selection of one or more.
- */
-const _ListBox = React.forwardRef(ListBox) as <T>(props: SpectrumListBoxProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
-export {_ListBox as ListBox};
+}) as <T>(props: SpectrumListBoxProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
