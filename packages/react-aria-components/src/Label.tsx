@@ -20,12 +20,9 @@ export interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
 
 export const LabelContext = createContext<ContextValue<LabelProps, HTMLLabelElement>>({});
 
-function Label(props: LabelProps, ref: ForwardedRef<HTMLLabelElement>) {
+export const Label = /*#__PURE__*/ createHideableComponent(function Label(props: LabelProps, ref: ForwardedRef<HTMLLabelElement>) {
   [props, ref] = useContextProps(props, ref, LabelContext);
   let {elementType: ElementType = 'label', ...labelProps} = props;
   // @ts-ignore
   return <ElementType className="react-aria-Label" {...labelProps} ref={ref} />;
-}
-
-const _Label = /*#__PURE__*/ createHideableComponent(Label);
-export {_Label as Label};
+});

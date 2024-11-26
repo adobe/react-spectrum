@@ -243,7 +243,7 @@ function ListBoxInner<T extends object>({state, props, listBoxRef}: ListBoxInner
             [DragAndDropContext, {dragAndDropHooks, dragState, dropState}],
             [SeparatorContext, {elementType: 'div'}],
             [DropIndicatorContext, {render: ListBoxDropIndicatorWrapper}],
-            [SectionContext, {name: 'ListBoxSection', render: ListBoxSection}]
+            [SectionContext, {name: 'ListBoxSection', render: ListBoxSectionInner}]
           ]}>
           <CollectionRoot
             collection={collection}
@@ -260,7 +260,7 @@ function ListBoxInner<T extends object>({state, props, listBoxRef}: ListBoxInner
 
 export interface ListBoxSectionProps<T> extends SectionProps<T> {}
 
-function ListBoxSection<T extends object>(props: ListBoxSectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>, className = 'react-aria-ListBoxSection') {
+function ListBoxSectionInner<T extends object>(props: ListBoxSectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>, className = 'react-aria-ListBoxSection') {
   let state = useContext(ListStateContext)!;
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext)!;
   let {CollectionBranch} = useContext(CollectionRendererContext);
@@ -295,8 +295,7 @@ function ListBoxSection<T extends object>(props: ListBoxSectionProps<T>, ref: Fo
 /**
  * A ListBoxSection represents a section within a ListBox.
  */
-const _ListBoxSection = /*#__PURE__*/ createBranchComponent('section', ListBoxSection);
-export {_ListBoxSection as ListBoxSection};
+export const ListBoxSection = /*#__PURE__*/ createBranchComponent('section', ListBoxSectionInner);
 
 export interface ListBoxItemRenderProps extends ItemRenderProps {}
 

@@ -281,7 +281,10 @@ export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, f
   );
 });
 
-function TabPanel(props: TabPanelProps, forwardedRef: ForwardedRef<HTMLDivElement>) {
+/**
+ * A TabPanel provides the content for a tab.
+ */
+export const TabPanel = /*#__PURE__*/ createHideableComponent(function TabPanel(props: TabPanelProps, forwardedRef: ForwardedRef<HTMLDivElement>) {
   const state = useContext(TabListStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);
   let {tabPanelProps} = useTabPanel(props, state, ref);
@@ -328,10 +331,4 @@ function TabPanel(props: TabPanelProps, forwardedRef: ForwardedRef<HTMLDivElemen
       </Provider>
     </div>
   );
-}
-
-/**
- * A TabPanel provides the content for a tab.
- */
-const _TabPanel = /*#__PURE__*/ createHideableComponent(TabPanel);
-export {_TabPanel as TabPanel};
+});

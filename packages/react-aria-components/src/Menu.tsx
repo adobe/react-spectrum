@@ -200,7 +200,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
           values={[
             [MenuStateContext, state],
             [SeparatorContext, {elementType: 'div'}],
-            [SectionContext, {name: 'MenuSection', render: MenuSection}],
+            [SectionContext, {name: 'MenuSection', render: MenuSectionInner}],
             [SubmenuTriggerContext, {parentMenuRef: ref}],
             [MenuItemContext, null],
             [SelectionManagerContext, state.selectionManager]
@@ -248,7 +248,7 @@ class GroupSelectionManager extends SelectionManager {
   }
 }
 
-function MenuSection<T extends object>(props: MenuSectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>, className = 'react-aria-MenuSection') {
+function MenuSectionInner<T extends object>(props: MenuSectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>, className = 'react-aria-MenuSection') {
   let state = useContext(MenuStateContext)!;
   let {CollectionBranch} = useContext(CollectionRendererContext);
   let [headingRef, heading] = useSlot();
@@ -287,8 +287,7 @@ function MenuSection<T extends object>(props: MenuSectionProps<T>, ref: Forwarde
 /**
  * A MenuSection represents a section within a Menu.
  */
-const _MenuSection = /*#__PURE__*/ createBranchComponent('section', MenuSection);
-export {_MenuSection as MenuSection};
+export const MenuSection = /*#__PURE__*/ createBranchComponent('section', MenuSectionInner);
 
 export interface MenuItemRenderProps extends ItemRenderProps {
   /**
