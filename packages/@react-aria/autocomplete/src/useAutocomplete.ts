@@ -197,6 +197,8 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
       item?.dispatchEvent(
         new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
       );
+      // TODO: this currently has problems making Enter trigger Listbox links. usePress catches the press up that happens but
+      // detects that the press target is different from the event target aka listbox item vs the input where the Enter event occurs...
     }
   };
 
@@ -232,7 +234,7 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
       spellCheck: 'false'
     },
     collectionProps: mergeProps(collectionProps, {
-      // TODO: shouldFocusOnHover?
+      // TODO: shouldFocusOnHover? shouldFocusWrap? Should it be up to the wrapped collection?
       shouldUseVirtualFocus: true,
       disallowTypeAhead: true
     }),

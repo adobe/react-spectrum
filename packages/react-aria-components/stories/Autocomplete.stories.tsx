@@ -348,6 +348,7 @@ export const AutocompleteWithListbox = {
               <MyListBoxItem>Foo</MyListBoxItem>
               <MyListBoxItem>Bar</MyListBoxItem>
               <MyListBoxItem>Baz</MyListBoxItem>
+              <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
             </ListBoxSection>
             <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
             <ListBoxSection className={styles.group} aria-label="Section 2">

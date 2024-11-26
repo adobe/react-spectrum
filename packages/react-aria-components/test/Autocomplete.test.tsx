@@ -11,8 +11,8 @@
  */
 
 import {AriaAutocompleteTests} from './AriaAutocomplete.test-util';
-import {Autocomplete, Header, Input, Label, Menu, MenuItem, MenuSection, SearchField, Separator, Text} from '..';
-import React from 'react';
+import {Autocomplete, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, SearchField, Separator, Text} from '..';
+import React, {ReactNode} from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 
 interface AutocompleteItem {
@@ -22,50 +22,92 @@ interface AutocompleteItem {
 
 let items: AutocompleteItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'}, {id: '3', name: 'Baz'}];
 
-let StaticAutocomplete = ({autocompleteProps = {}, inputProps = {}, menuProps = {}}: {autocompleteProps?: any, inputProps?: any, menuProps?: any}) => (
-  <Autocomplete {...autocompleteProps}>
-    <SearchField {...inputProps}>
-      <Label style={{display: 'block'}}>Test</Label>
-      <Input />
-      <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
-    </SearchField>
-    <Menu {...menuProps}>
+let StaticMenu = (props) => (
+  <Menu {...props}>
+    <MenuItem id="1">Foo</MenuItem>
+    <MenuItem id="2">Bar</MenuItem>
+    <MenuItem id="3">Baz</MenuItem>
+  </Menu>
+);
+
+let DynamicMenu = (props) => (
+  <Menu {...props} items={items}>
+    {(item: AutocompleteItem) => <MenuItem id={item.id}>{item.name}</MenuItem>}
+  </Menu>
+);
+
+let MenuWithLinks = (props) => (
+  <Menu {...props}>
+    <MenuItem id="1">Foo</MenuItem>
+    <MenuItem id="2">Bar</MenuItem>
+    <MenuItem id="3" href="https://google.com">Google</MenuItem>
+  </Menu>
+);
+
+let MenuWithSections = (props) => (
+  <Menu {...props}>
+    <MenuSection id="sec1">
+      <Header>MenuSection 1</Header>
       <MenuItem id="1">Foo</MenuItem>
       <MenuItem id="2">Bar</MenuItem>
       <MenuItem id="3">Baz</MenuItem>
-    </Menu>
-  </Autocomplete>
+    </MenuSection>
+    <Separator />
+    <MenuSection id="sec2">
+      <Header>MenuSection 2</Header>
+      <MenuItem id="4">Copy</MenuItem>
+      <MenuItem id="5">Cut</MenuItem>
+      <MenuItem id="6">Paste</MenuItem>
+    </MenuSection>
+  </Menu>
 );
 
-let DynamicAutoComplete = ({autocompleteProps = {}, inputProps = {}, menuProps = {}}: {autocompleteProps?: any, inputProps?: any, menuProps?: any}) => (
+let StaticListbox = (props) => (
+  <ListBox {...props}>
+    <ListBoxItem id="1">Foo</ListBoxItem>
+    <ListBoxItem id="2">Bar</ListBoxItem>
+    <ListBoxItem id="3">Baz</ListBoxItem>
+  </ListBox>
+);
+
+let ListBoxWithLinks = (props) => (
+  <ListBox {...props}>
+    <ListBoxItem id="1">Foo</ListBoxItem>
+    <ListBoxItem id="2">Bar</ListBoxItem>
+    <ListBoxItem id="3" href="https://google.com">Google</ListBoxItem>
+  </ListBox>
+);
+
+let ListBoxWithSections = (props) => (
+  <ListBox {...props}>
+    <ListBoxSection id="sec1">
+      <Header>ListBox Section 1</Header>
+      <ListBoxItem id="1">Foo</ListBoxItem>
+      <ListBoxItem id="2">Bar</ListBoxItem>
+      <ListBoxItem id="3">Baz</ListBoxItem>
+    </ListBoxSection>
+    <Separator />
+    <ListBoxSection id="sec2">
+      <Header>ListBox Section 2</Header>
+      <ListBoxItem id="4">Copy</ListBoxItem>
+      <ListBoxItem id="5">Cut</ListBoxItem>
+      <ListBoxItem id="6">Paste</ListBoxItem>
+    </ListBoxSection>
+  </ListBox>
+);
+
+let AutocompleteWrapper = ({autocompleteProps = {}, inputProps = {}, children}: {autocompleteProps?: any, inputProps?: any, collectionProps?: any, children?: ReactNode}) => (
   <Autocomplete {...autocompleteProps}>
     <SearchField {...inputProps}>
       <Label style={{display: 'block'}}>Test</Label>
       <Input />
       <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
     </SearchField>
-    <Menu {...menuProps} items={items}>
-      {(item: AutocompleteItem) => <MenuItem id={item.id}>{item.name}</MenuItem>}
-    </Menu>
+    {children}
   </Autocomplete>
 );
 
-let WithLinks = ({autocompleteProps = {}, inputProps = {}, menuProps = {}}: {autocompleteProps?: any, inputProps?: any, menuProps?: any}) => (
-  <Autocomplete {...autocompleteProps}>
-    <SearchField {...inputProps}>
-      <Label style={{display: 'block'}}>Test</Label>
-      <Input />
-      <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
-    </SearchField>
-    <Menu {...menuProps}>
-      <MenuItem id="1">Foo</MenuItem>
-      <MenuItem id="2">Bar</MenuItem>
-      <MenuItem id="3" href="https://google.com">Google</MenuItem>
-    </Menu>
-  </Autocomplete>
-);
-
-let ControlledAutocomplete = ({autocompleteProps = {}, inputProps = {}, menuProps = {}}: {autocompleteProps?: any, inputProps?: any, menuProps?: any}) => {
+let ControlledAutocomplete = ({autocompleteProps = {}, inputProps = {}, children}: {autocompleteProps?: any, inputProps?: any, collectionProps?: any, children?: ReactNode}) => {
   let [inputValue, setInputValue] = React.useState('');
 
   return (
@@ -75,63 +117,71 @@ let ControlledAutocomplete = ({autocompleteProps = {}, inputProps = {}, menuProp
         <Input />
         <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
       </SearchField>
-      <Menu {...menuProps}>
-        <MenuItem id="1">Foo</MenuItem>
-        <MenuItem id="2">Bar</MenuItem>
-        <MenuItem id="3">Baz</MenuItem>
-      </Menu>
+      {children}
     </Autocomplete>
   );
 };
 
-let MenuSectionsAutocomplete = ({autocompleteProps = {}, inputProps = {}, menuProps = {}}: {autocompleteProps?: any, inputProps?: any, menuProps?: any}) => (
-  <Autocomplete {...autocompleteProps}>
-    <SearchField {...inputProps}>
-      <Label style={{display: 'block'}}>Test</Label>
-      <Input />
-      <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
-    </SearchField>
-    <Menu {...menuProps}>
-      <MenuSection id="sec1">
-        <Header>MenuSection 1</Header>
-        <MenuItem id="1">Foo</MenuItem>
-        <MenuItem id="2">Bar</MenuItem>
-        <MenuItem id="3">Baz</MenuItem>
-      </MenuSection>
-      <Separator />
-      <MenuSection id="sec2">
-        <Header>MenuSection 2</Header>
-        <MenuItem id="4">Copy</MenuItem>
-        <MenuItem id="5">Cut</MenuItem>
-        <MenuItem id="6">Paste</MenuItem>
-      </MenuSection>
-    </Menu>
-  </Autocomplete>
-);
-
 AriaAutocompleteTests({
-  prefix: 'rac-static',
+  prefix: 'rac-static-menu',
   renderers: {
-    standard: ({autocompleteProps, inputProps, menuProps}) => render(
-      <StaticAutocomplete autocompleteProps={autocompleteProps} inputProps={inputProps} menuProps={menuProps} />
+    standard: ({autocompleteProps, inputProps, collectionProps}) => render(
+      <AutocompleteWrapper autocompleteProps={autocompleteProps} inputProps={inputProps}>
+        <StaticMenu {...collectionProps} />
+      </AutocompleteWrapper>
     ),
-    links: ({autocompleteProps, inputProps, menuProps}) => render(
-      <WithLinks autocompleteProps={autocompleteProps} inputProps={inputProps} menuProps={menuProps} />
+    links: ({autocompleteProps, inputProps, collectionProps}) => render(
+      <AutocompleteWrapper autocompleteProps={autocompleteProps} inputProps={inputProps}>
+        <MenuWithLinks {...collectionProps} />
+      </AutocompleteWrapper>
     ),
-    sections: ({autocompleteProps, inputProps, menuProps}) => render(
-      <MenuSectionsAutocomplete autocompleteProps={autocompleteProps} inputProps={inputProps} menuProps={menuProps} />
+    sections: ({autocompleteProps, inputProps, collectionProps}) => render(
+      <AutocompleteWrapper autocompleteProps={autocompleteProps} inputProps={inputProps}>
+        <MenuWithSections {...collectionProps} />
+      </AutocompleteWrapper>
     ),
-    controlled: ({autocompleteProps, inputProps, menuProps}) => render(
-      <ControlledAutocomplete autocompleteProps={autocompleteProps} inputProps={inputProps} menuProps={menuProps} />
+    controlled: ({autocompleteProps, inputProps, collectionProps}) => render(
+      <ControlledAutocomplete autocompleteProps={autocompleteProps} inputProps={inputProps}>
+        <StaticMenu {...collectionProps} />
+      </ControlledAutocomplete>
     )
   }
 });
 
 AriaAutocompleteTests({
-  prefix: 'rac-dynamic',
+  prefix: 'rac-dynamic-menu',
   renderers: {
-    standard: ({autocompleteProps, inputProps, menuProps}) => render(
-      <DynamicAutoComplete autocompleteProps={autocompleteProps} inputProps={inputProps} menuProps={menuProps} />
+    standard: ({autocompleteProps, inputProps, collectionProps}) => render(
+      <AutocompleteWrapper autocompleteProps={autocompleteProps} inputProps={inputProps}>
+        <DynamicMenu {...collectionProps} />
+      </AutocompleteWrapper>
     )
   }
+});
+
+AriaAutocompleteTests({
+  prefix: 'rac-static-listbox',
+  renderers: {
+    standard: ({autocompleteProps, inputProps, collectionProps}) => render(
+      <AutocompleteWrapper autocompleteProps={autocompleteProps} inputProps={inputProps}>
+        <StaticListbox {...collectionProps} />
+      </AutocompleteWrapper>
+    ),
+    links: ({autocompleteProps, inputProps, collectionProps}) => render(
+      <AutocompleteWrapper autocompleteProps={autocompleteProps} inputProps={inputProps}>
+        <ListBoxWithLinks {...collectionProps} />
+      </AutocompleteWrapper>
+    ),
+    sections: ({autocompleteProps, inputProps, collectionProps}) => render(
+      <AutocompleteWrapper autocompleteProps={autocompleteProps} inputProps={inputProps}>
+        <ListBoxWithSections {...collectionProps} />
+      </AutocompleteWrapper>
+    ),
+    controlled: ({autocompleteProps, inputProps, collectionProps}) => render(
+      <ControlledAutocomplete autocompleteProps={autocompleteProps} inputProps={inputProps}>
+        <StaticListbox {...collectionProps} />
+      </ControlledAutocomplete>
+    )
+  },
+  collectionType: 'listbox'
 });
