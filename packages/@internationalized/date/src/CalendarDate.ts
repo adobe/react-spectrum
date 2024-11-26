@@ -40,6 +40,8 @@ function shiftArgs(args: any[]) {
 /** A CalendarDate represents a date without any time components in a specific calendar system. */
 export class CalendarDate {
   // This prevents TypeScript from allowing other types with the same fields to match.
+  // i.e. a ZonedDateTime should not be be passable to a parameter that expects CalendarDate.
+  // If that behavior is desired, use the AnyCalendarDate interface instead.
   // @ts-ignore
   #type;
   /** The calendar system associated with this date, e.g. Gregorian. */
