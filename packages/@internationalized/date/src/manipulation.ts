@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AnyCalendarDate, AnyDateTime, AnyTime, CycleOptions, CycleTimeOptions, DateDuration, DateField, DateFields, DateTimeDuration, Disambiguation, TimeDuration, TimeField, TimeFields} from './types';
+import {AnyCalendarDate, AnyDateTime, AnyTime, Calendar, CycleOptions, CycleTimeOptions, DateDuration, DateField, DateFields, DateTimeDuration, Disambiguation, TimeDuration, TimeField, TimeFields} from './types';
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
 import {epochFromDate, fromAbsolute, toAbsolute, toCalendar, toCalendarDateTime} from './conversion';
 import {GregorianCalendar} from './calendars/GregorianCalendar';
@@ -125,6 +125,48 @@ export function constrain(date: Mutable<AnyCalendarDate>) {
 
   date.year = Math.max(1, Math.min(date.calendar.getYearsInEra(date), date.year));
   constrainMonthDay(date);
+}
+
+/**
+ * Normalizes date and time fields, handling overflow and underflow.
+ * For example, if hours is 25, it will be normalized to 1 and days will be incremented.
+ */
+/** Normalizes date and time fields, handling overflow and underflow. */
+export function normalize(fields: {
+  calendar: Calendar;
+  era: string;
+  year: number;
+  month: number;
+  day: number;
+  hour: number;
+  minute: number;
+  second: number;
+  millisecond: number;
+}) {
+  const mutable: Mutable<AnyTime & AnyCalendarDate> = {
+    calendar: fields.calendar,
+    era: fields.era,
+    year: fields.year,
+    month: fields.month,
+    day: fields.day,
+    hour: fields.hour,
+    minute: fields.minute,
+    second: fields.second,
+    millisecond: fields.millisecond,
+    copy() { return this; }
+  };
+  const days = balanceTime(mutable);
+  mutable.day += days;
+  balanceDay(mutable);
+  balanceYearMonth(mutable)
+  fields.year = mutable.year;
+  fields.month = mutable.month;
+  fields.day = mutable.day;
+  fields.hour = mutable.hour;
+  fields.minute = mutable.minute;
+  fields.second = mutable.second;
+  fields.millisecond = mutable.millisecond;
+  return fields;
 }
 
 export function invertDuration(duration: DateTimeDuration): DateTimeDuration {
