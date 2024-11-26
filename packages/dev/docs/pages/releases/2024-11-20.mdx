@@ -40,6 +40,10 @@ With the GA release of Accordion and Disclosure, take note of the following chan
 
 If you're using an older pre-release version of Accordion, see the [previous release notes](/releases/2024-09-30.html#accordion-updates) for instructions on how to migrate to the released API.
 
+**Section changes**
+
+`Section` in React Aria Components is deprecated in this release. It is replaced by specific components for each parent collection component, e.g. ListBoxSection and MenuSection.
+
 ## Enhancements
 
 - Accordion
@@ -72,7 +76,7 @@ If you're using an older pre-release version of Accordion, see the [previous rel
   - Fix `DatePicker` with `defaultValue` to persist time zone - [@boutahlilsoufiane](https://github.com/boutahlilsoufiane) - [PR](https://github.com/adobe/react-spectrum/pull/7069)
   - Fix BC era timestamps in `fromAbsolute` - [@KimPeeters](https://github.com/KimPeeters) and [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6542), [PR](https://github.com/adobe/react-spectrum/pull/7410)
 - Dialog
-  - Add `data-rac` attribute to `Dialog`  - amitdahan - [PR](https://github.com/adobe/react-spectrum/pull/7189)
+  - Add `data-rac` attribute to `Dialog` - [@amitdahan](https://github.com/amitdahan) - [PR](https://github.com/adobe/react-spectrum/pull/7189)
 - Select
   - Remove iOS `HiddenSelect` workaround - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7200)
   - Set default value for type parameter in `SelectProps` - [@kp047i](https://github.com/kp047i) - [PR](https://github.com/adobe/react-spectrum/pull/7014)
