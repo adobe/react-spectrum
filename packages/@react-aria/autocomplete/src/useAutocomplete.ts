@@ -17,6 +17,7 @@ import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, mergeProps, mergeRefs, UPDATE_ACTIVEDESC
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useKeyboard} from '@react-aria/interactions';
 
 export interface CollectionOptions extends DOMProps, AriaLabelingProps {
   /** Whether the collection items should use virtual focus instead of being focused directly. */
@@ -66,7 +67,7 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
   let delayNextActiveDescendant = useRef(false);
   let lastCollectionNode = useRef<HTMLElement>(null);
 
-  let updateActiveDescendant = useCallback((e) => {
+  let updateActiveDescendant = useEffectEvent((e) => {
     let {detail} = e;
     clearTimeout(timeout.current);
     e.stopPropagation();
@@ -83,7 +84,7 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
     }
 
     delayNextActiveDescendant.current = false;
-  }, [state]);
+  });
 
   let callbackRef = useCallback((collectionNode) => {
     if (collectionNode != null) {
@@ -103,16 +104,16 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
   let mergedCollectionRef = useObjectRef(useMemo(() => mergeRefs(collectionRef, callbackRef), [collectionRef, callbackRef]));
 
   let focusFirstItem = useEffectEvent(() => {
-    let focusFirstEvent = new CustomEvent(FOCUS_EVENT, {
-      cancelable: true,
-      bubbles: true,
-      detail: {
-        focusStrategy: 'first'
-      }
-    });
-
-    collectionRef.current?.dispatchEvent(focusFirstEvent);
     delayNextActiveDescendant.current = true;
+    collectionRef.current?.dispatchEvent(
+      new CustomEvent(FOCUS_EVENT, {
+        cancelable: true,
+        bubbles: true,
+        detail: {
+          focusStrategy: 'first'
+        }
+      })
+    );
   });
 
   let clearVirtualFocus = useEffectEvent(() => {
@@ -193,7 +194,7 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
         new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
       );
     } else {
-      let item = collectionRef.current?.querySelector(`#${CSS.escape(state.focusedNodeId)}`);
+      let item = document.getElementById(state.focusedNodeId);
       item?.dispatchEvent(
         new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
       );
@@ -201,6 +202,7 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
       // detects that the press target is different from the event target aka listbox item vs the input where the Enter event occurs...
     }
   };
+  let {keyboardProps} = useKeyboard({onKeyDown});
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/autocomplete');
   let collectionProps = useLabels({
@@ -221,7 +223,7 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
     inputProps: {
       value: state.inputValue,
       onChange: (e: ChangeEvent<HTMLInputElement>) => state.setInputValue(e.target.value),
-      onKeyDown,
+      ...keyboardProps,
       autoComplete: 'off',
       'aria-haspopup': 'listbox',
       'aria-controls': collectionId,

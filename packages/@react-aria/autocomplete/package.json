@@ -24,6 +24,7 @@
   "dependencies": {
     "@react-aria/combobox": "^3.11.0",
     "@react-aria/i18n": "^3.12.3",
+    "@react-aria/interactions": "^3.22.5",
     "@react-aria/listbox": "^3.13.6",
     "@react-aria/searchfield": "^3.7.11",
     "@react-aria/utils": "^3.26.0",
