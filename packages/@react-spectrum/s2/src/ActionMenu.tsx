@@ -34,7 +34,10 @@ export interface ActionMenuProps<T> extends
 
 export const ActionMenuContext = createContext<ContextValue<ActionMenuProps<any>, FocusableRefValue<HTMLButtonElement>>>(null);
 
-function ActionMenu<T extends object>(props: ActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
+/**
+ * ActionMenu combines an ActionButton with a Menu for simple "more actions" use cases.
+ */
+export const ActionMenu = /*#__PURE__*/(forwardRef as forwardRefType)(function ActionMenu<T extends object>(props: ActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, ActionMenuContext);
   let buttonProps = filterDOMProps(props, {labelable: true});
@@ -69,10 +72,4 @@ function ActionMenu<T extends object>(props: ActionMenuProps<T>, ref: FocusableR
       </Menu>
     </MenuTrigger>
   );
-}
-
-/**
- * ActionMenu combines an ActionButton with a Menu for simple "more actions" use cases.
- */
-let _ActionMenu = /*#__PURE__*/(forwardRef as forwardRefType)(ActionMenu);
-export {_ActionMenu as ActionMenu};
+});

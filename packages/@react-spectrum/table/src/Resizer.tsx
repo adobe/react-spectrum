@@ -48,7 +48,7 @@ const CURSORS = {
 
 export const ResizeStateContext = createContext<TableColumnResizeState<unknown> | null>(null);
 
-function Resizer<T>(props: ResizerProps<T>, ref: ForwardedRef<HTMLInputElement | null>) {
+export const Resizer = React.forwardRef(function Resizer<T>(props: ResizerProps<T>, ref: ForwardedRef<HTMLInputElement | null>) {
   let {column, showResizer} = props;
   let objectRef = useObjectRef(ref);
   let {isEmpty, onFocusedResizer} = useTableContext();
@@ -128,13 +128,10 @@ function Resizer<T>(props: ResizerProps<T>, ref: ForwardedRef<HTMLInputElement |
       </CursorOverlay>
     </>
   );
-}
+});
 
 function CursorOverlay(props) {
   let {show, children} = props;
   let {getContainer} = useUNSTABLE_PortalContext();
   return show ? ReactDOM.createPortal(children, getContainer?.() ?? document.body) : null;
 }
-
-const _Resizer = React.forwardRef(Resizer);
-export {_Resizer as Resizer};

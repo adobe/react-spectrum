@@ -174,7 +174,11 @@ const indeterminateAnimation = style({
   position: 'relative'
 });
 
-function ProgressBar(props: ProgressBarProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * ProgressBars show the progression of a system operation: downloading, uploading, processing, etc., in a visual way.
+ * They can represent either determinate or indeterminate progress.
+ */
+export const ProgressBar = /*#__PURE__*/ forwardRef(function ProgressBar(props: ProgressBarProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ProgressBarContext);
   let {
     label, size = 'M',
@@ -206,12 +210,5 @@ function ProgressBar(props: ProgressBarProps, ref: DOMRef<HTMLDivElement>) {
       )}
     </AriaProgressBar>
   );
-}
-
-/**
- * ProgressBars show the progression of a system operation: downloading, uploading, processing, etc., in a visual way.
- * They can represent either determinate or indeterminate progress.
- */
-const _ProgressBar = /*#__PURE__*/ forwardRef(ProgressBar);
-export {_ProgressBar as ProgressBar};
+});
 

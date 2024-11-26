@@ -157,7 +157,11 @@ interface IllustratedMessageContextProps extends Partial<S2SpectrumIllustratedMe
 
 export const IllustratedMessageContext = createContext<ContextValue<IllustratedMessageContextProps, DOMRefValue<HTMLDivElement>>>(null);
 
-function IllustratedMessage(props: S2SpectrumIllustratedMessageProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * An IllustratedMessage displays an illustration and a message, usually
+ * for an empty state or an error page.
+ */
+export const IllustratedMessage = /*#__PURE__*/ forwardRef(function IllustratedMessage(props: S2SpectrumIllustratedMessageProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, IllustratedMessageContext);
   let domRef = useDOMRef(ref);
   let {
@@ -191,11 +195,4 @@ function IllustratedMessage(props: S2SpectrumIllustratedMessageProps, ref: DOMRe
       </Provider>
     </div>
   );
-}
-
-/**
- * An IllustratedMessage displays an illustration and a message, usually
- * for an empty state or an error page.
- */
-let _IllustratedMessage = /*#__PURE__*/ forwardRef(IllustratedMessage);
-export {_IllustratedMessage as IllustratedMessage};
+});

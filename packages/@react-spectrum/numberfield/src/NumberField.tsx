@@ -28,7 +28,10 @@ import {useLocale} from '@react-aria/i18n';
 import {useNumberField} from '@react-aria/numberfield';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
-function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElement>) {
+/**
+ * NumberFields allow users to enter a number, and increment or decrement the value using stepper buttons.
+ */
+export const NumberField = React.forwardRef(function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
   let provider = useProvider();
@@ -110,7 +113,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
         validationState={validationState} />
     </Field>
   );
-}
+});
 
 
 interface NumberFieldInputProps extends SpectrumNumberFieldProps {
@@ -191,9 +194,3 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
     </FocusRing>
   );
 });
-
-/**
- * NumberFields allow users to enter a number, and increment or decrement the value using stepper buttons.
- */
-let _NumberField = React.forwardRef(NumberField);
-export {_NumberField as NumberField};

@@ -65,7 +65,10 @@ const disclosure = style({
   minWidth: 200
 }, getAllowedOverrides());
 
-function Disclosure(props: DisclosureProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A disclosure is a collapsible section of content. It is composed of a a header with a heading and trigger button, and a panel that contains the content.
+ */
+export const Disclosure = forwardRef(function Disclosure(props: DisclosureProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, DisclosureContext);
   let {
     size = 'M',
@@ -92,13 +95,7 @@ function Disclosure(props: DisclosureProps, ref: DOMRef<HTMLDivElement>) {
       </RACDisclosure>
     </Provider>
   );
-}
-
-/**
- * A disclosure is a collapsible section of content. It is composed of a a header with a heading and trigger button, and a panel that contains the content.
- */
-let _Disclosure = forwardRef(Disclosure);
-export {_Disclosure as Disclosure};
+});
 
 export interface DisclosureTitleProps extends UnsafeStyles, DOMProps {
   /** The heading level of the disclosure header.
@@ -256,7 +253,10 @@ function DisclosureHeaderWithForwardRef(props: DisclosureHeaderProps, ref: DOMRe
  */
 export const DisclosureHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(DisclosureHeaderWithForwardRef);
 
-function DisclosureTitle(props: DisclosureTitleProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A disclosure title consisting of a heading and a trigger button to expand/collapse the panel.
+ */
+export const DisclosureTitle = forwardRef(function DisclosureTitle(props: DisclosureTitleProps, ref: DOMRef<HTMLDivElement>) {
   let {
     level = 3,
     UNSAFE_style,
@@ -295,13 +295,7 @@ function DisclosureTitle(props: DisclosureTitleProps, ref: DOMRef<HTMLDivElement
       {buttonTrigger}
     </DisclosureHeader>
   );
-}
-
-/**
- * A disclosure title consisting of a heading and a trigger button to expand/collapse the panel.
- */
-let _DisclosureTitle = forwardRef(DisclosureTitle);
-export {_DisclosureTitle as DisclosureTitle};
+});
 
 export interface DisclosurePanelProps extends Omit<RACDisclosurePanelProps, 'className' | 'style' | 'children'>, UnsafeStyles, DOMProps, AriaLabelingProps {
   children: React.ReactNode
@@ -327,7 +321,10 @@ const panelStyles = style({
   }
 });
 
-function DisclosurePanel(props: DisclosurePanelProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A disclosure panel is a collapsible section of content that is hidden until the disclosure is expanded.
+ */
+export const DisclosurePanel = forwardRef(function DisclosurePanel(props: DisclosurePanelProps, ref: DOMRef<HTMLDivElement>) {
   let {
     UNSAFE_style,
     UNSAFE_className = '',
@@ -346,11 +343,5 @@ function DisclosurePanel(props: DisclosurePanelProps, ref: DOMRef<HTMLDivElement
       {props.children}
     </RACDisclosurePanel>
   );
-}
-
-/**
- * A disclosure panel is a collapsible section of content that is hidden until the disclosure is expanded.
- */
-let _DisclosurePanel = forwardRef(DisclosurePanel);
-export {_DisclosurePanel as DisclosurePanel};
+});
 

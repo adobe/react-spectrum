@@ -33,7 +33,12 @@ import {version} from '../package.json';
 
 const DEFAULT_BREAKPOINTS = {S: 640, M: 768, L: 1024, XL: 1280, XXL: 1536};
 
-function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Provider is the container for all React Spectrum applications.
+ * It defines the theme, locale, and other application level settings,
+ * and can also be used to provide common properties to a group of components.
+ */
+export const Provider = React.forwardRef(function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let prevContext = useContext(Context);
   let prevColorScheme = prevContext && prevContext.colorScheme;
   let prevBreakpoints = prevContext && prevContext.breakpoints;
@@ -117,15 +122,7 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
       </I18nProvider>
     </Context.Provider>
   );
-}
-
-/**
- * Provider is the container for all React Spectrum applications.
- * It defines the theme, locale, and other application level settings,
- * and can also be used to provide common properties to a group of components.
- */
-let _Provider = React.forwardRef(Provider);
-export {_Provider as Provider};
+});
 
 const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let {

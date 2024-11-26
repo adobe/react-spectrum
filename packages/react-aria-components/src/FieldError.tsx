@@ -21,20 +21,17 @@ export const FieldErrorContext = createContext<ValidationResult | null>(null);
 export interface FieldErrorRenderProps extends ValidationResult {}
 export interface FieldErrorProps extends RenderProps<FieldErrorRenderProps>, DOMProps {}
 
-function FieldError(props: FieldErrorProps, ref: ForwardedRef<HTMLElement>) {
+/**
+ * A FieldError displays validation errors for a form field.
+ */
+export const FieldError = forwardRef(function FieldError(props: FieldErrorProps, ref: ForwardedRef<HTMLElement>) {
   let validation = useContext(FieldErrorContext);
   if (!validation?.isInvalid) {
     return null;
   }
 
   return <FieldErrorInner {...props} ref={ref} />;
-}
-
-/**
- * A FieldError displays validation errors for a form field.
- */
-const _FieldError = forwardRef(FieldError);
-export {_FieldError as FieldError};
+});
 
 const FieldErrorInner = forwardRef((props: FieldErrorProps, ref: ForwardedRef<HTMLElement>) => {
   let validation = useContext(FieldErrorContext)!;

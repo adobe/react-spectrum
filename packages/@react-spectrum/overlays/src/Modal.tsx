@@ -34,7 +34,7 @@ interface ModalWrapperProps extends ModalProps {
   children: ReactNode
 }
 
-function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
+export const Modal = forwardRef(function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
   let {children, state, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let wrapperRef = useRef<HTMLDivElement>(null);
@@ -46,7 +46,7 @@ function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
       </ModalWrapper>
     </Overlay>
   );
-}
+});
 
 let typeMap = {
   fullscreen: 'fullscreen',
@@ -107,6 +107,3 @@ let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: Forwarded
     </div>
   );
 });
-
-let _Modal = forwardRef(Modal);
-export {_Modal as Modal};

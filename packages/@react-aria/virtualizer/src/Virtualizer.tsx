@@ -36,7 +36,9 @@ interface VirtualizerProps<T extends object, V, O> extends Omit<HTMLAttributes<H
   layoutOptions?: O
 }
 
-function Virtualizer<T extends object, V extends ReactNode, O>(props: VirtualizerProps<T, V, O>, forwardedRef: ForwardedRef<HTMLDivElement | null>) {
+// forwardRef doesn't support generic parameters, so cast the result to the correct type
+// https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
+export const Virtualizer = React.forwardRef(function Virtualizer<T extends object, V extends ReactNode, O>(props: VirtualizerProps<T, V, O>, forwardedRef: ForwardedRef<HTMLDivElement | null>) {
   let {
     children: renderView,
     renderWrapper,
@@ -82,12 +84,7 @@ function Virtualizer<T extends object, V extends ReactNode, O>(props: Virtualize
       {renderChildren(null, state.visibleViews, renderWrapper || defaultRenderWrapper)}
     </ScrollView>
   );
-}
-
-// forwardRef doesn't support generic parameters, so cast the result to the correct type
-// https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
-const _Virtualizer = React.forwardRef(Virtualizer) as <T extends object, V, O>(props: VirtualizerProps<T, V, O> & {ref?: RefObject<HTMLDivElement | null>}) => ReactElement;
-export {_Virtualizer as Virtualizer};
+}) as <T extends object, V, O>(props: VirtualizerProps<T, V, O> & {ref?: RefObject<HTMLDivElement | null>}) => ReactElement;
 
 function renderChildren<T extends object, V>(parent: ReusableView<T, V> | null, views: ReusableView<T, V>[], renderWrapper: RenderWrapper<T, V>) {
   return views.map(view => {

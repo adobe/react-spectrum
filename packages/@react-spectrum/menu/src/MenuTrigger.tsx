@@ -22,7 +22,11 @@ import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useMenuTriggerState} from '@react-stately/menu';
 
-function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) {
+/**
+ * The MenuTrigger serves as a wrapper around a Menu and its associated trigger,
+ * linking the Menu's open state with the trigger's press state.
+ */
+export const MenuTrigger = forwardRef(function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) {
   let triggerRef = useRef<HTMLElement>(null);
   let domRef = useDOMRef(ref);
   let menuTriggerRef = domRef || triggerRef;
@@ -105,11 +109,4 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
       </MenuContext.Provider>
     </Fragment>
   );
-}
-
-/**
- * The MenuTrigger serves as a wrapper around a Menu and its associated trigger,
- * linking the Menu's open state with the trigger's press state.
- */
-let _MenuTrigger = forwardRef(MenuTrigger);
-export {_MenuTrigger as MenuTrigger};
+});

@@ -134,7 +134,26 @@ Validation.args = {
 
 export const ContextualHelpExample: Story = {
   render: (args) => (
-    <ComboBox {...args}>
+    <ComboBox
+      {...args}
+      contextualHelp={
+        <ContextualHelp>
+          <Heading>What is a ice cream?</Heading>
+          <Content>
+            <Text>
+              A combination of sugar, eggs, milk, and cream is cooked to make
+              a custard base. Then, flavorings are added, and this flavored
+              mixture is carefully churned and frozen to make ice cream.
+            </Text>
+          </Content>
+          <Footer>
+            <Link
+              isStandalone
+              href="https://en.wikipedia.org/wiki/Ice_cream"
+              target="_blank">Learn more about ice cream</Link>
+          </Footer>
+        </ContextualHelp>
+      }>
       <ComboBoxItem>Chocolate</ComboBoxItem>
       <ComboBoxItem>Mint</ComboBoxItem>
       <ComboBoxItem>Strawberry</ComboBoxItem>
@@ -143,73 +162,7 @@ export const ContextualHelpExample: Story = {
     </ComboBox>
   ),
   args: {
-    label: 'Ice cream flavor',
-    contextualHelp: (
-      <ContextualHelp>
-        <Heading>What is a ice cream?</Heading>
-        <Content>
-          <Text>
-            A combination of sugar, eggs, milk, and cream is cooked to make
-            a custard base. Then, flavorings are added, and this flavored
-            mixture is carefully churned and frozen to make ice cream.
-          </Text>
-        </Content>
-        <Footer>
-          <Link
-            isStandalone
-            href="https://en.wikipedia.org/wiki/Ice_cream"
-            target="_blank">Learn more about ice cream</Link>
-        </Footer>
-      </ContextualHelp>
-    )
-  }
-};
-
-ContextualHelpExample.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `
-<ComboBox
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>
-        What is a ice cream?
-      </Heading>
-      <Content>
-        <Text>
-          A combination of sugar, eggs, milk, and cream is cooked to make a custard base. Then, flavorings are added, and this flavored mixture is carefully churned and frozen to make ice cream.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          href="https://en.wikipedia.org/wiki/Ice_cream"
-          isStandalone
-          target="_blank">
-          Learn more about ice cream
-        </Link>
-      </Footer>
-    </ContextualHelp>
-  }
-  label="Ice cream flavor">
-  <ComboBoxItem>
-    Chocolate
-  </ComboBoxItem>
-  <ComboBoxItem>
-    Mint
-  </ComboBoxItem>
-  <ComboBoxItem>
-    Strawberry
-  </ComboBoxItem>
-  <ComboBoxItem>
-    Vanilla
-  </ComboBoxItem>
-  <ComboBoxItem>
-    Chocolate Chip Cookie Dough
-  </ComboBoxItem>
-</ComboBox>`;
-      }
-    }
+    label: 'Ice cream flavor'
   }
 };
 
