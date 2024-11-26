@@ -166,7 +166,10 @@ const stepperContainerStyles = style({
   }
 });
 
-function NumberField(props: NumberFieldProps, ref: Ref<TextFieldRef>) {
+/**
+ * NumberFields allow users to input number values with a keyboard or increment/decrement with step buttons.
+ */
+export const NumberField = forwardRef(function NumberField(props: NumberFieldProps, ref: Ref<TextFieldRef>) {
   [props, ref] = useSpectrumContextProps(props, ref, NumberFieldContext);
   let {
     label,
@@ -287,7 +290,7 @@ function NumberField(props: NumberFieldProps, ref: Ref<TextFieldRef>) {
         }
     </AriaNumberField>
   );
-}
+});
 
 interface StepButtonProps extends AriaButtonProps {
 }
@@ -323,12 +326,6 @@ let StepButton = forwardRef((props: StepButtonProps, ref: ForwardedRef<HTMLDivEl
       data-focus-visible={isFocusVisible || undefined} />
   );
 });
-
-/**
- * NumberFields allow users to input number values with a keyboard or increment/decrement with step buttons.
- */
-let _NumberField = forwardRef(NumberField);
-export {_NumberField as NumberField};
 
 // replace from RAC
 function useRenderProps(props: any) {

@@ -20,7 +20,10 @@ import {Text} from '@react-spectrum/text';
 import {useProviderProps} from '@react-spectrum/provider';
 
 
-function Badge(props: SpectrumBadgeProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Badges are used for showing a small amount of color-categorized metadata, ideal for getting a user's attention.
+ */
+export const Badge = forwardRef(function Badge(props: SpectrumBadgeProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
     variant,
@@ -63,10 +66,4 @@ function Badge(props: SpectrumBadgeProps, ref: DOMRef<HTMLDivElement>) {
       </SlotProvider>
     </span>
   );
-}
-
-/**
- * Badges are used for showing a small amount of color-categorized metadata, ideal for getting a user's attention.
- */
-let _Badge = forwardRef(Badge);
-export {_Badge as Badge};
+});

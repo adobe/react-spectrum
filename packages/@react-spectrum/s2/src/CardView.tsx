@@ -529,7 +529,7 @@ const cardViewStyles = style({
 
 export const CardViewContext = createContext<ContextValue<CardViewProps<any>, DOMRefValue<HTMLDivElement>>>(null);
 
-function CardView<T extends object>(props: CardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function CardView<T extends object>(props: CardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, CardViewContext);
   let {children, layout: layoutName = 'grid', size: sizeProp = 'M', density = 'regular', variant = 'primary', selectionStyle = 'checkbox', UNSAFE_className = '', UNSAFE_style, styles, ...otherProps} = props;
   let domRef = useDOMRef(ref);
@@ -596,7 +596,4 @@ function CardView<T extends object>(props: CardViewProps<T>, ref: DOMRef<HTMLDiv
       </InternalCardViewContext.Provider>
     </UNSTABLE_Virtualizer>
   );
-}
-
-const _CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(CardView);
-export {_CardView as CardView};
+});

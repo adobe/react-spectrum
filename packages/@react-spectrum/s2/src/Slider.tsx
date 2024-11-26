@@ -389,7 +389,7 @@ export function SliderBase<T extends number | number[]>(props: SliderBaseProps<T
   );
 }
 
-function Slider(props: SliderProps, ref: FocusableRef<HTMLDivElement>) {
+export const Slider = /*#__PURE__*/ forwardRef(function Slider(props: SliderProps, ref: FocusableRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SliderContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);
@@ -443,7 +443,4 @@ function Slider(props: SliderProps, ref: FocusableRef<HTMLDivElement>) {
       </SliderTrack>
     </SliderBase>
   );
-}
-
-let _Slider = /*#__PURE__*/ forwardRef(Slider);
-export {_Slider as Slider};
+});

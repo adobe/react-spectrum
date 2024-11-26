@@ -62,7 +62,10 @@ export function useFormProps<T extends FormStyleProps>(props: T): T {
   }, [ctx, props, isSkeleton]);
 }
 
-function Form(props: FormProps, ref: DOMRef<HTMLFormElement>) {
+/**
+ * Forms allow users to enter data that can be submitted while providing alignment and styling for form fields.
+ */
+export const Form = /*#__PURE__*/ forwardRef(function Form(props: FormProps, ref: DOMRef<HTMLFormElement>) {
   let {
     labelPosition = 'top',
     labelAlign,
@@ -114,10 +117,4 @@ function Form(props: FormProps, ref: DOMRef<HTMLFormElement>) {
       </FormContext.Provider>
     </RACForm>
   );
-}
-
-/**
- * Forms allow users to enter data that can be submitted while providing alignment and styling for form fields.
- */
-let _Form = /*#__PURE__*/ forwardRef(Form);
-export {_Form as Form};
+});

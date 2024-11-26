@@ -52,7 +52,10 @@ export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoi
 
 export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDivElement>>(null);
 
-function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A drop zone is an area into which one or multiple objects can be dragged and dropped.
+ */
+export const DropZone = forwardRef(function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let {isDisabled = false} = props;
   [props, ref] = useContextProps(props, ref, DropZoneContext);
   let dropzoneRef = useObjectRef(ref);
@@ -127,10 +130,4 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
       </div>
     </Provider>
   );
-}
-
-/**
- * A drop zone is an area into which one or multiple objects can be dragged and dropped.
- */
-const _DropZone = forwardRef(DropZone);
-export {_DropZone as DropZone};
+});

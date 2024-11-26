@@ -30,7 +30,10 @@ interface StepButtonProps extends AriaButtonProps {
   direction: 'up' | 'down'
 }
 
-function StepButton(props: StepButtonProps, ref: FocusableRef<HTMLDivElement>) {
+/**
+ * Buttons for NumberField.
+ */
+export const StepButton = React.forwardRef(function StepButton(props: StepButtonProps, ref: FocusableRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {scale} = useProvider();
   let {direction, isDisabled, isQuiet} = props;
@@ -75,10 +78,4 @@ function StepButton(props: StepButtonProps, ref: FocusableRef<HTMLDivElement>) {
       </div>
     </FocusRing>
   );
-}
-
-/**
- * Buttons for NumberField.
- */
-let _StepButton = React.forwardRef(StepButton) as (props: StepButtonProps & {ref?: FocusableRef<HTMLDivElement>}) => ReactElement;
-export {_StepButton as StepButton};
+}) as (props: StepButtonProps & {ref?: FocusableRef<HTMLDivElement>}) => ReactElement;

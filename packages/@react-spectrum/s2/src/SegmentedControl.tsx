@@ -151,7 +151,10 @@ interface DefaultSelectionTrackProps {
 
 const InternalSegmentedControlContext = createContext<InternalSegmentedControlContextProps>({});
 
-function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A SegmentedControl is a mutually exclusive group of buttons used for view switching.
+ */
+export const SegmentedControl = /*#__PURE__*/ forwardRef(function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SegmentedControlContext);
   let {
     defaultSelectedKey,
@@ -190,7 +193,7 @@ function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivEleme
       </DefaultSelectionTracker>
     </ToggleButtonGroup>
   );
-}
+});
 
 function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
   let state = useContext(ToggleGroupStateContext);
@@ -214,7 +217,10 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
   );
 }
 
-function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRef<HTMLButtonElement>) {
+/**
+ * A SegmentedControlItem represents an option within a SegmentedControl.
+ */
+export const SegmentedControlItem = /*#__PURE__*/ forwardRef(function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRef<HTMLButtonElement>) {
   let domRef = useFocusableRef(ref);
   let divRef = useRef<HTMLDivElement>(null);
   let {register, prevRef, currentSelectedRef, isJustified} = useContext(InternalSegmentedControlContext);
@@ -277,16 +283,4 @@ function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRe
       }
     </ToggleButton>
   );
-}
-
-/**
- * A SegmentedControlItem represents an option within a SegmentedControl.
- */
-const _SegmentedControlItem = /*#__PURE__*/ forwardRef(SegmentedControlItem);
-export {_SegmentedControlItem as SegmentedControlItem};
-
-/**
- * A SegmentedControl is a mutually exclusive group of buttons used for view switching.
- */
-const _SegmentedControl = /*#__PURE__*/ forwardRef(SegmentedControl);
-export {_SegmentedControl as SegmentedControl};
+});

@@ -21,7 +21,11 @@ import {useProviderProps} from '@react-spectrum/provider';
 import {useSwitch} from '@react-aria/switch';
 import {useToggleState} from '@react-stately/toggle';
 
-function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>) {
+/**
+ * Switches allow users to turn an individual option on or off.
+ * They are usually used to activate or deactivate a specific setting.
+ */
+export const Switch = forwardRef(function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>) {
   props = useProviderProps(props);
   let {
     isEmphasized = false,
@@ -70,11 +74,4 @@ function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>)
       )}
     </label>
   );
-}
-
-/**
- * Switches allow users to turn an individual option on or off.
- * They are usually used to activate or deactivate a specific setting.
- */
-const _Switch = forwardRef(Switch);
-export {_Switch as Switch};
+});

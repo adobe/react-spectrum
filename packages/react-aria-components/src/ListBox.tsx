@@ -79,7 +79,10 @@ export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children' | 
 export const ListBoxContext = createContext<ContextValue<ListBoxProps<any>, HTMLDivElement>>(null);
 export const ListStateContext = createContext<ListState<any> | null>(null);
 
-function ListBox<T extends object>(props: ListBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A listbox displays a list of options and allows a user to select one or more of them.
+ */
+export const ListBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ListBox<T extends object>(props: ListBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ListBoxContext);
   let state = useContext(ListStateContext);
 
@@ -98,7 +101,7 @@ function ListBox<T extends object>(props: ListBoxProps<T>, ref: ForwardedRef<HTM
       {collection => <StandaloneListBox props={props} listBoxRef={ref} collection={collection} />}
     </CollectionBuilder>
   );
-}
+});
 
 function StandaloneListBox({props, listBoxRef, collection}) {
   props = {...props, collection, children: null, items: null};
@@ -106,12 +109,6 @@ function StandaloneListBox({props, listBoxRef, collection}) {
   let state = useListState({...props, layoutDelegate});
   return <ListBoxInner state={state} props={props} listBoxRef={listBoxRef} />;
 }
-
-/**
- * A listbox displays a list of options and allows a user to select one or more of them.
- */
-const _ListBox = /*#__PURE__*/ (forwardRef as forwardRefType)(ListBox);
-export {_ListBox as ListBox};
 
 interface ListBoxInnerProps<T> {
   state: ListState<T>,

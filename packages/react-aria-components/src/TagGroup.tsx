@@ -55,14 +55,17 @@ export interface TagListProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'
 export const TagGroupContext = createContext<ContextValue<TagGroupProps, HTMLDivElement>>(null);
 export const TagListContext = createContext<ContextValue<TagListProps<any>, HTMLDivElement>>(null);
 
-function TagGroup(props: TagGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A tag group is a focusable list of labels, categories, keywords, filters, or other items, with support for keyboard navigation, selection, and removal.
+ */
+export const TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function TagGroup(props: TagGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TagGroupContext);
   return (
     <CollectionBuilder content={props.children}>
       {collection => <TagGroupInner props={props} forwardedRef={ref} collection={collection} />}
     </CollectionBuilder>
   );
-}
+});
 
 interface TagGroupInnerProps {
   props: TagGroupProps,
@@ -119,17 +122,14 @@ function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProp
 }
 
 /**
- * A tag group is a focusable list of labels, categories, keywords, filters, or other items, with support for keyboard navigation, selection, and removal.
+ * A tag list is a container for tags within a TagGroup.
  */
-const _TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(TagGroup);
-export {_TagGroup as TagGroup};
-
-function TagList<T extends object>(props: TagListProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element {
+export const TagList = /*#__PURE__*/ (forwardRef as forwardRefType)(function TagList<T extends object>(props: TagListProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element {
   let state = useContext(ListStateContext);
   return state
     ? <TagListInner props={props} forwardedRef={ref} />
     : <Collection {...props} />;
-}
+});
 
 interface TagListInnerProps<T> {
   props: TagListProps<T>,
@@ -173,12 +173,6 @@ function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps
     </div>
   );
 }
-
-/**
- * A tag list is a container for tags within a TagGroup.
- */
-const _TagList = /*#__PURE__*/ (forwardRef as forwardRefType)(TagList);
-export {_TagList as TagList};
 
 export interface TagRenderProps extends Omit<ItemRenderProps, 'allowsDragging' | 'isDragging' | 'isDropTarget'> {
   /**
