@@ -84,10 +84,10 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
   let description = onRemove && (modality === 'keyboard' || modality === 'virtual') ? stringFormatter.format('removeDescription') : '';
   let descProps = useDescription(description);
 
-  let isFocused = item.key === state.selectionManager.focusedKey;
-  let isNonFocused = state.selectionManager.focusedKey == null;
+  let isItemFocused = item.key === state.selectionManager.focusedKey;
+  let isFocused = state.selectionManager.focusedKey != null;
   let tabIndex = -1;
-  if (!isDisabled && (isFocused || isNonFocused)) {
+  if (!isDisabled && (isItemFocused || !isFocused)) {
     tabIndex = 0;
   }
 
