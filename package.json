@@ -88,7 +88,7 @@
     "@octokit/rest": "*",
     "@parcel/bundler-library": "^2.12.1",
     "@parcel/config-default": "^2.13.1",
-    "@parcel/config-storybook": "^0.0.0",
+    "@parcel/config-storybook": "^0.0.1",
     "@parcel/core": "^2.13.1",
     "@parcel/optimizer-data-url": "^2.13.1",
     "@parcel/optimizer-terser": "^2.13.1",

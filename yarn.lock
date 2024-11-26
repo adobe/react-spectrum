@@ -4354,16 +4354,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/config-storybook@npm:^0.0.0":
-  version: 0.0.0
-  resolution: "@parcel/config-storybook@npm:0.0.0"
+"@parcel/config-storybook@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "@parcel/config-storybook@npm:0.0.1"
   dependencies:
     "@parcel/config-default": "npm:^2.13.1"
     "@parcel/resolver-storybook": "npm:^0.0.0"
     "@parcel/transformer-js": "npm:^2.13.1"
     "@parcel/transformer-react-refresh-wrap": "npm:^2.13.1"
-    "@parcel/transformer-storybook": "npm:^0.0.0"
-  checksum: 10c0/dc9493436232cffdc786ea717e37b4f88c06ef291575e33dcd6f2e4fb521575684e98256b4cc7163da19d0dca66067b7be297769cb308215c9a2e20313b0f55b
+    "@parcel/transformer-storybook": "npm:^0.0.1"
+  checksum: 10c0/b765b1ae899276739f56031b9410100f90e09742b7e0d9e1718ee169e60f324d5cb9a5f94b15de8d44a7a75b053ca0ed70ec29584139eec1883a0dceb84ddf16
   languageName: node
   linkType: hard
 
@@ -5010,9 +5010,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/transformer-storybook@npm:^0.0.0":
-  version: 0.0.0
-  resolution: "@parcel/transformer-storybook@npm:0.0.0"
+"@parcel/transformer-storybook@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "@parcel/transformer-storybook@npm:0.0.1"
   dependencies:
     "@babel/parser": "npm:^7.23.0"
     "@babel/types": "npm:^7.23.0"
@@ -5021,7 +5021,7 @@ __metadata:
     "@storybook/docs-tools": "npm:^7"
     react-docgen-typescript: "npm:^2.2.2"
     typescript: "npm:^5.5.0"
-  checksum: 10c0/b88c205ba352800cc99c7ac8f4c00d5ffe88a3c03cfec2d7a122b8ab3ad6d958bf0e0011a3b75d6698be3f3b7edc4c94b9da9dea4b004aef0f0535e0ff12ee81
+  checksum: 10c0/3d9261b32325224c7168a32673744457269467fea284349e96acc835cf952b1ba744bd024f7e83d1cbb54fa85ba7938fc44bfa2832496fd76d52e73658893ce6
   languageName: node
   linkType: hard
 
@@ -29181,7 +29181,7 @@ __metadata:
     "@octokit/rest": "npm:*"
     "@parcel/bundler-library": "npm:^2.12.1"
     "@parcel/config-default": "npm:^2.13.1"
-    "@parcel/config-storybook": "npm:^0.0.0"
+    "@parcel/config-storybook": "npm:^0.0.1"
     "@parcel/core": "npm:^2.13.1"
     "@parcel/optimizer-data-url": "npm:^2.13.1"
     "@parcel/optimizer-terser": "npm:^2.13.1"
