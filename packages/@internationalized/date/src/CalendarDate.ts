@@ -40,8 +40,6 @@ function shiftArgs(args: any[]) {
 /** A CalendarDate represents a date without any time components in a specific calendar system. */
 export class CalendarDate {
   // This prevents TypeScript from allowing other types with the same fields to match.
-  // i.e. a ZonedDateTime should not be be passable to a parameter that expects CalendarDate.
-  // If that behavior is desired, use the AnyCalendarDate interface instead.
   // @ts-ignore
   #type;
   /** The calendar system associated with this date, e.g. Gregorian. */
@@ -76,13 +74,11 @@ export class CalendarDate {
       second: 0,
       millisecond: 0
     });
-  
-    this.calendar = calendar;
+    this.calendar = normalized.calendar;
     this.era = normalized.era;
     this.year = normalized.year;
     this.month = normalized.month;
     this.day = normalized.day;
-  
     constrain(this);
   }
 
@@ -251,7 +247,7 @@ export class CalendarDateTime {
       millisecond
     });
   
-    this.calendar = calendar;
+    this.calendar = normalized.calendar;
     this.era = normalized.era;
     this.year = normalized.year;
     this.month = normalized.month;
@@ -260,7 +256,6 @@ export class CalendarDateTime {
     this.minute = normalized.minute;
     this.second = normalized.second;
     this.millisecond = normalized.millisecond;
-  
     constrain(this);
   }
 
@@ -372,7 +367,7 @@ export class ZonedDateTime {
   
     const normalized = normalize({
       calendar,
-      era: era,
+      era,
       year,
       month,
       day,
@@ -382,8 +377,8 @@ export class ZonedDateTime {
       millisecond
     });
   
-    this.calendar = calendar;
-    this.era = era;
+    this.calendar = normalized.calendar;
+    this.era = normalized.era;
     this.year = normalized.year;
     this.month = normalized.month;
     this.day = normalized.day;
@@ -393,7 +388,6 @@ export class ZonedDateTime {
     this.minute = normalized.minute;
     this.second = normalized.second;
     this.millisecond = normalized.millisecond;
-  
     constrain(this);
   }
 

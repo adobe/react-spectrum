@@ -1,4 +1,4 @@
-import {CalendarDate, CalendarDateTime, ZonedDateTime, IslamicUmalquraCalendar} from '..';
+import {CalendarDate, CalendarDateTime, IslamicUmalquraCalendar, ZonedDateTime} from '..';
 
 describe('normalize', function () {
   describe('CalendarDateTime', function () {

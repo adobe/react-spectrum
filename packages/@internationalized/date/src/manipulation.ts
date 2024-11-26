@@ -18,6 +18,10 @@ import {Mutable} from './utils';
 
 const ONE_HOUR = 3600000;
 
+export const copy = <T extends AnyCalendarDate | AnyTime | AnyDateTime>(obj: T): T => {
+  return {...obj};
+};
+
 export function add(date: CalendarDateTime, duration: DateTimeDuration): CalendarDateTime;
 export function add(date: CalendarDate, duration: DateDuration): CalendarDate;
 export function add(date: CalendarDate | CalendarDateTime, duration: DateTimeDuration): CalendarDate | CalendarDateTime;
@@ -105,7 +109,6 @@ function balanceDay(date: Mutable<AnyCalendarDate>) {
     balanceYearMonth(date);
     date.day += date.calendar.getDaysInMonth(date);
   }
-
   while (date.day > date.calendar.getDaysInMonth(date)) {
     date.day -= date.calendar.getDaysInMonth(date);
     date.month++;
@@ -127,23 +130,19 @@ export function constrain(date: Mutable<AnyCalendarDate>) {
   constrainMonthDay(date);
 }
 
-/**
- * Normalizes date and time fields, handling overflow and underflow.
- * For example, if hours is 25, it will be normalized to 1 and days will be incremented.
- */
-/** Normalizes date and time fields, handling overflow and underflow. */
 export function normalize(fields: {
-  calendar: Calendar;
-  era: string;
-  year: number;
-  month: number;
-  day: number;
-  hour: number;
-  minute: number;
-  second: number;
-  millisecond: number;
+  calendar: Calendar,
+  era: string,
+  year: number,
+  month: number,
+  day: number,
+  hour: number,
+  minute: number,
+  second: number,
+  millisecond: number
 }) {
-  const mutable: Mutable<AnyTime & AnyCalendarDate> = {
+  // Create a new object with the normalized values
+  const normalizedFields = {
     calendar: fields.calendar,
     era: fields.era,
     year: fields.year,
@@ -152,21 +151,138 @@ export function normalize(fields: {
     hour: fields.hour,
     minute: fields.minute,
     second: fields.second,
-    millisecond: fields.millisecond,
-    copy() { return this; }
+    millisecond: fields.millisecond
   };
-  const days = balanceTime(mutable);
-  mutable.day += days;
-  balanceDay(mutable);
-  balanceYearMonth(mutable)
-  fields.year = mutable.year;
-  fields.month = mutable.month;
-  fields.day = mutable.day;
-  fields.hour = mutable.hour;
-  fields.minute = mutable.minute;
-  fields.second = mutable.second;
-  fields.millisecond = mutable.millisecond;
-  return fields;
+
+  // Normalize time components
+  const {normalizedTime, extraDays} = normalizeTime({
+    hour: normalizedFields.hour,
+    minute: normalizedFields.minute,
+    second: normalizedFields.second,
+    millisecond: normalizedFields.millisecond
+  });
+
+  // Apply normalized time values
+  Object.assign(normalizedFields, normalizedTime);
+  
+  // Handle extra days from time normalization
+  if (extraDays !== 0) {
+    normalizedFields.day += extraDays;
+  }
+
+  // Normalize date components
+  const normalizedDate = normalizeDate({
+    calendar: normalizedFields.calendar,
+    era: normalizedFields.era,
+    year: normalizedFields.year,
+    month: normalizedFields.month,
+    day: normalizedFields.day
+  });
+
+  return {...normalizedFields, ...normalizedDate};
+}
+
+function normalizeTime(time: {
+  hour: number,
+  minute: number,
+  second: number,
+  millisecond: number
+}): { normalizedTime: Partial<AnyTime>, extraDays: number } {
+  let {hour, minute, second, millisecond} = time;
+  let days = 0;
+
+  // Normalize milliseconds
+  const normalizedMillisecond = nonNegativeMod(millisecond, 1000);
+  second += Math.floor(millisecond / 1000);
+
+  // Normalize seconds
+  const normalizedSecond = nonNegativeMod(second, 60);
+  minute += Math.floor(second / 60);
+
+  // Normalize minutes
+  const normalizedMinute = nonNegativeMod(minute, 60);
+  hour += Math.floor(minute / 60);
+
+  // Normalize hours
+  const normalizedHour = nonNegativeMod(hour, 24);
+  days = Math.floor(hour / 24);
+
+  return {
+    normalizedTime: {
+      hour: normalizedHour,
+      minute: normalizedMinute,
+      second: normalizedSecond,
+      millisecond: normalizedMillisecond
+    },
+    extraDays: days
+  };
+}
+
+function normalizeDate(date: {
+  calendar: Calendar,
+  era: string,
+  year: number,
+  month: number,
+  day: number
+}): Partial<AnyCalendarDate> {
+  let {calendar, era, year, month, day} = date;
+  
+  // Validate era
+  const eras = calendar.getEras();
+  if (!eras.includes(era)) {
+    era = eras[0];
+  }
+
+  // Basic normalization
+  while (month < 1) {
+    year--;
+    month += calendar.getMonthsInYear({...date, era, year});
+  }
+
+  let monthsInYear;
+  while (month > (monthsInYear = calendar.getMonthsInYear({...date, era, year}))) {
+    month -= monthsInYear;
+    year++;
+  }
+
+  while (day < 1) {
+    month--;
+    if (month < 1) {
+      year--;
+      month = calendar.getMonthsInYear({...date, era, year});
+    }
+    day += calendar.getDaysInMonth({...date, era, year, month});
+  }
+
+  while (day > calendar.getDaysInMonth({...date, era, year, month})) {
+    day -= calendar.getDaysInMonth({...date, era, year, month});
+    month++;
+    if (month > calendar.getMonthsInYear({...date, era, year})) {
+      month = 1;
+      year++;
+    }
+  }
+
+  // Let the calendar handle specific era transitions and constraints
+  if (calendar.balanceDate) {
+    let mutableDate = {calendar, era, year, month, day};
+    calendar.balanceDate(mutableDate);
+    ({era, year, month, day} = mutableDate);
+  }
+
+  // Final constraints
+  let maxYear = calendar.getYearsInEra({...date, era});
+  if (year < 1) {
+    year = 1;
+  }
+  if (year > maxYear) {
+    let isInverseEra = calendar.isInverseEra?.({...date, era});
+    year = maxYear;
+    month = isInverseEra ? 1 : calendar.getMonthsInYear({...date, era, year});
+    day = isInverseEra ? 1 : calendar.getDaysInMonth({...date, era, year, month});
+  }
+
+  return {era, year, month, day};
 }
 
 export function invertDuration(duration: DateTimeDuration): DateTimeDuration {
