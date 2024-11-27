@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, SlotProvider, useDOMRef, useIsMobileDevice} from '@react-spectrum/utils';
+import {classNames, SlotProvider, unwrapDOMRef, useDOMRef, useIsMobileDevice} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {MenuContext} from './context';
 import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
-import {PressResponder} from '@react-aria/interactions';
+import {PressResponder, useInteractOutside} from '@react-aria/interactions';
 import React, {forwardRef, Fragment, useRef} from 'react';
 import {SpectrumMenuTriggerProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
@@ -74,17 +74,29 @@ export const MenuTrigger = forwardRef(function MenuTrigger(props: SpectrumMenuTr
     state
   };
 
+  // Close when clicking outside the root menu when a submenu is open.
+  let rootOverlayRef = useRef(null);
+  let rootOverlayDomRef = unwrapDOMRef(rootOverlayRef);
+  useInteractOutside({
+    ref: rootOverlayDomRef,
+    onInteractOutside: () => {
+      state?.close();
+    },
+    isDisabled: !state.isOpen || state.expandedKeysStack.length === 0
+  });
+
   // On small screen devices, the menu is rendered in a tray, otherwise a popover.
   let overlay;
   if (isMobile) {
     overlay = (
-      <Tray state={state} isFixedHeight>
+      <Tray state={state} isFixedHeight ref={rootOverlayRef}>
         {menu}
       </Tray>
     );
   } else {
     overlay = (
       <Popover
+        ref={rootOverlayRef}
         UNSAFE_style={{clipPath: 'unset', overflow: 'visible', filter: 'unset', borderWidth: '0px'}}
         state={state}
         triggerRef={menuTriggerRef}
