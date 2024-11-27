@@ -17,7 +17,12 @@ import {useFormProps} from '@react-spectrum/form';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTextField} from '@react-aria/textfield';
 
-function TextField(props: SpectrumTextFieldProps, ref: Ref<TextFieldRef>) {
+/**
+ * TextFields are text inputs that allow users to input custom text entries
+ * with a keyboard. Various decorations can be displayed around the field to
+ * communicate the entry requirements.
+ */
+export const TextField = forwardRef(function TextField(props: SpectrumTextFieldProps, ref: Ref<TextFieldRef>) {
   props = useProviderProps(props);
   props = useFormProps(props);
 
@@ -35,12 +40,4 @@ function TextField(props: SpectrumTextFieldProps, ref: Ref<TextFieldRef>) {
       ref={ref}
       inputRef={inputRef} />
   );
-}
-
-/**
- * TextFields are text inputs that allow users to input custom text entries
- * with a keyboard. Various decorations can be displayed around the field to
- * communicate the entry requirements.
- */
-const _TextField = forwardRef(TextField);
-export {_TextField as TextField};
+});

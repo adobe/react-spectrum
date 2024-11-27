@@ -19,7 +19,12 @@ import {useFormProps} from '@react-spectrum/form';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTextField} from '@react-aria/textfield';
 
-function TextArea(props: SpectrumTextAreaProps, ref: Ref<TextFieldRef<HTMLTextAreaElement>>) {
+/**
+ * TextAreas are multiline text inputs, useful for cases where users have
+ * a sizable amount of text to enter. They allow for all customizations that
+ * are available to text fields.
+ */
+export const TextArea = React.forwardRef(function TextArea(props: SpectrumTextAreaProps, ref: Ref<TextFieldRef<HTMLTextAreaElement>>) {
   props = useProviderProps(props);
   props = useFormProps(props);
   let {
@@ -86,12 +91,4 @@ function TextArea(props: SpectrumTextAreaProps, ref: Ref<TextFieldRef<HTMLTextAr
       isReadOnly={isReadOnly}
       isRequired={isRequired} />
   );
-}
-
-/**
- * TextAreas are multiline text inputs, useful for cases where users have
- * a sizable amount of text to enter. They allow for all customizations that
- * are available to text fields.
- */
-let _TextArea = React.forwardRef(TextArea);
-export {_TextArea as TextArea};
+});

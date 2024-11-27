@@ -24,7 +24,10 @@ import React from 'react';
 import {SpectrumContextualHelpProps} from '@react-types/contextualhelp';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
-function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HTMLButtonElement>) {
+/**
+ * Contextual help shows a user extra information about the state of an adjacent component, or a total view.
+ */
+export const ContextualHelp = React.forwardRef(function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HTMLButtonElement>) {
   let {
     variant = 'help',
     placement = 'bottom start',
@@ -61,10 +64,4 @@ function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HT
       </ClearSlots>
     </DialogTrigger>
   );
-}
-
-/**
- * Contextual help shows a user extra information about the state of an adjacent component, or a total view.
- */
-let _ContextualHelp = React.forwardRef(ContextualHelp);
-export {_ContextualHelp as ContextualHelp};
+});

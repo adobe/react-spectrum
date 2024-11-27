@@ -222,6 +222,9 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       }
       case 'Home':
         if (delegate.getFirstKey) {
+          if (manager.focusedKey === null && e.shiftKey) {
+            return;
+          }
           e.preventDefault();
           let firstKey: Key | null = delegate.getFirstKey(manager.focusedKey, isCtrlKeyPressed(e));
           manager.setFocusedKey(firstKey);
@@ -236,6 +239,9 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         break;
       case 'End':
         if (delegate.getLastKey) {
+          if (manager.focusedKey === null && e.shiftKey) {
+            return;
+          }
           e.preventDefault();
           let lastKey = delegate.getLastKey(manager.focusedKey, isCtrlKeyPressed(e));
           manager.setFocusedKey(lastKey);

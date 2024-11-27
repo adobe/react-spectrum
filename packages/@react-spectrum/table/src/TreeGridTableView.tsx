@@ -18,7 +18,7 @@ import {UNSTABLE_useTreeGridState} from '@react-stately/table';
 
 export interface TreeGridTableProps<T> extends Omit<SpectrumTableProps<T>, 'UNSTABLE_allowsExpandableRows'> {}
 
-function TreeGridTableView<T extends object>(props: TreeGridTableProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const TreeGridTableView = React.forwardRef(function TreeGridTableView<T extends object>(props: TreeGridTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {
     selectionStyle,
     dragAndDropHooks
@@ -41,7 +41,4 @@ function TreeGridTableView<T extends object>(props: TreeGridTableProps<T>, ref: 
   return (
     <TableViewBase {...props} state={state} ref={ref} />
   );
-}
-
-const _TreeGridTableView = React.forwardRef(TreeGridTableView) as <T>(props: TreeGridTableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
-export {_TreeGridTableView as TreeGridTableView};
+}) as <T>(props: TreeGridTableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;

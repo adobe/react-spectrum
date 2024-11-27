@@ -70,7 +70,10 @@ export function DialogTrigger(props: DialogTriggerProps) {
   );
 }
 
-function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
+/**
+ * A dialog is an overlay shown above other content in an application.
+ */
+export const Dialog = /*#__PURE__*/ (forwardRef as forwardRefType)(function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
   let originalAriaLabelledby = props['aria-labelledby'];
   [props, ref] = useContextProps(props, ref, DialogContext);
   let {dialogProps, titleProps} = useDialog({
@@ -129,10 +132,4 @@ function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
       </Provider>
     </section>
   );
-}
-
-/**
- * A dialog is an overlay shown above other content in an application.
- */
-const _Dialog = /*#__PURE__*/ (forwardRef as forwardRefType)(Dialog);
-export {_Dialog as Dialog};
+});

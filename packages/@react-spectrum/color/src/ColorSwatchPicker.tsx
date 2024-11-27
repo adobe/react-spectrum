@@ -38,7 +38,10 @@ export interface SpectrumColorSwatchPickerProps extends ValueBase<string | Color
   rounding?: 'none' | 'default' | 'full'
 }
 
-function ColorSwatchPicker(props: SpectrumColorSwatchPickerProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A ColorSwatchPicker displays a list of color swatches and allows a user to select one of them.
+ */
+export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(props: SpectrumColorSwatchPickerProps, ref: DOMRef<HTMLDivElement>) {
   let {
     density = 'regular',
     size = 'M',
@@ -69,13 +72,7 @@ function ColorSwatchPicker(props: SpectrumColorSwatchPickerProps, ref: DOMRef<HT
       </SpectrumColorSwatchContext.Provider>
     </AriaColorSwatchPicker>
   );
-}
-
-/**
- * A ColorSwatchPicker displays a list of color swatches and allows a user to select one of them.
- */
-let _ColorSwatchPicker = forwardRef(ColorSwatchPicker);
-export {_ColorSwatchPicker as ColorSwatchPicker};
+});
 
 function useWrapper(swatch: ReactElement, color: Color, rounding: SpectrumColorSwatchProps['rounding']) {
   return (

@@ -74,7 +74,10 @@ const icon = style({
   }
 });
 
-function AlertDialog(props: AlertDialogProps, ref: DOMRef) {
+/**
+ * AlertDialogs are a specific type of Dialog. They display important information that users need to acknowledge.
+ */
+export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogProps, ref: DOMRef) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {
     autoFocusButton,
@@ -152,10 +155,4 @@ function AlertDialog(props: AlertDialogProps, ref: DOMRef) {
       )}
     </Dialog>
   );
-}
-
-/**
- * AlertDialogs are a specific type of Dialog. They display important information that users need to acknowledge.
- */
-let _AlertDialog = forwardRef(AlertDialog);
-export {_AlertDialog as AlertDialog};
+});
