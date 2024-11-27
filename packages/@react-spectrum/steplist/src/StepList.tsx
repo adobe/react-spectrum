@@ -38,7 +38,7 @@ export interface SpectrumStepListProps<T> extends AriaStepListProps<T>, StylePro
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 
-function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef<HTMLOListElement>) {
+export const StepList = React.forwardRef(function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef<HTMLOListElement>) {
   const {size = 'M', orientation = 'horizontal'} = props;
   props = useProviderProps(props);
   const {isDisabled, isEmphasized} = props;
@@ -74,7 +74,4 @@ function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef
       </StepListContext.Provider>
     </ol>
   );
-}
-
-const _StepList = React.forwardRef(StepList) as <T>(props: SpectrumStepListProps<T> & {ref?: DOMRef<HTMLOListElement>}) => ReactElement;
-export {_StepList as StepList};
+}) as <T>(props: SpectrumStepListProps<T> & {ref?: DOMRef<HTMLOListElement>}) => ReactElement;

@@ -97,7 +97,8 @@ const wrapper = style<BreadcrumbsStyleProps>({
 
 const InternalBreadcrumbsContext = createContext<BreadcrumbsProps<any>>({});
 
-function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: DOMRef<HTMLOListElement>) {
+/** Breadcrumbs show hierarchy and navigational context for a user’s location within an application. */
+export const Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: DOMRef<HTMLOListElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, BreadcrumbsContext);
   let domRef = useDOMRef(ref);
   let {
@@ -129,7 +130,7 @@ function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: DOMRef<H
       </CollapsingCollection>
     </Provider>
   );
-}
+});
 
 let BreadcrumbMenu = (props: {items: Array<Node<any>>, onAction: BreadcrumbsProps<unknown>['onAction']}) => {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
@@ -161,10 +162,6 @@ let BreadcrumbMenu = (props: {items: Array<Node<any>>, onAction: BreadcrumbsProp
     </UNSTABLE_CollectionRendererContext.Provider>
   );
 };
-
-/** Breadcrumbs show hierarchy and navigational context for a user’s location within an application. */
-let _Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(Breadcrumbs);
-export {_Breadcrumbs as Breadcrumbs};
 
 let HiddenBreadcrumbs = function (props: {listRef: RefObject<HTMLDivElement | null>, items: Array<Node<any>>, size: string}) {
   let {listRef, items, size} = props;
@@ -296,7 +293,8 @@ export interface BreadcrumbProps extends Omit<AriaBreadcrumbItemProps, 'children
   children?: ReactNode
 }
 
-function Breadcrumb({children, ...props}: BreadcrumbProps, ref: DOMRef<HTMLLIElement>) {
+/** An individual Breadcrumb for Breadcrumbs. */
+export const Breadcrumb = /*#__PURE__*/ (forwardRef as forwardRefType)(function Breadcrumb({children, ...props}: BreadcrumbProps, ref: DOMRef<HTMLLIElement>) {
   let {href, target, rel, download, ping, referrerPolicy} = props;
   let {size = 'M'} = useContext(InternalBreadcrumbsContext) ?? {};
   let domRef = useDOMRef(ref);
@@ -351,11 +349,7 @@ function Breadcrumb({children, ...props}: BreadcrumbProps, ref: DOMRef<HTMLLIEle
       }}
     </AriaBreadcrumb>
   );
-}
-
-/** An individual Breadcrumb for Breadcrumbs. */
-let _Breadcrumb = /*#__PURE__*/ (forwardRef as forwardRefType)(Breadcrumb);
-export {_Breadcrumb as Breadcrumb};
+});
 
 // Context for passing the count for the custom renderer
 let CollapseContext = createContext<{

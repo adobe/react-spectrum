@@ -22,7 +22,10 @@ export interface ColorWheelProps extends AriaColorWheelOptions, RenderProps<Colo
 
 export const ColorWheelStateContext = createContext<ColorWheelState | null>(null);
 
-function ColorWheel(props: ColorWheelProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A color wheel allows users to adjust the hue of an HSL or HSB color value on a circular track.
+ */
+export const ColorWheel = forwardRef(function ColorWheel(props: ColorWheelProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ColorWheelContext);
   let state = useColorWheelState(props);
   let inputRef = useRef(null);
@@ -60,13 +63,7 @@ function ColorWheel(props: ColorWheelProps, ref: ForwardedRef<HTMLDivElement>) {
       </Provider>
     </div>
   );
-}
-
-/**
- * A color wheel allows users to adjust the hue of an HSL or HSB color value on a circular track.
- */
-const _ColorWheel = forwardRef(ColorWheel);
-export {_ColorWheel as ColorWheel};
+});
 
 export interface ColorWheelTrackRenderProps extends ColorWheelRenderProps {}
 export interface ColorWheelTrackProps extends StyleRenderProps<ColorWheelTrackRenderProps> {}
@@ -74,7 +71,10 @@ interface ColorWheelTrackContextValue extends Omit<HTMLAttributes<HTMLElement>, 
 
 export const ColorWheelTrackContext = createContext<ContextValue<ColorWheelTrackContextValue, HTMLDivElement>>(null);
 
-function ColorWheelTrack(props: ColorWheelTrackProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A color wheel track renders a circular gradient track.
+ */
+export const ColorWheelTrack = forwardRef(function ColorWheelTrack(props: ColorWheelTrackProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ColorWheelTrackContext);
   let state = useContext(ColorWheelStateContext)!;
 
@@ -94,10 +94,4 @@ function ColorWheelTrack(props: ColorWheelTrackProps, ref: ForwardedRef<HTMLDivE
       ref={ref}
       data-disabled={state.isDisabled || undefined} />
   );
-}
-
-/**
- * A color wheel track renders a circular gradient track.
- */
-const _ColorWheelTrack = forwardRef(ColorWheelTrack);
-export {_ColorWheelTrack as ColorWheelTrack};
+});

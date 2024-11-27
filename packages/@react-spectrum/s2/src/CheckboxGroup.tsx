@@ -51,7 +51,10 @@ export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'classN
 
 export const CheckboxGroupContext = createContext<ContextValue<CheckboxGroupProps, DOMRefValue<HTMLDivElement>>>(null);
 
-function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A CheckboxGroup allows users to select one or more items from a list of choices.
+ */
+export const CheckboxGroup = forwardRef(function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, CheckboxGroupContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);
@@ -134,10 +137,4 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
       </>)}
     </AriaCheckboxGroup>
   );
-}
-
-/**
- * A CheckboxGroup allows users to select one or more items from a list of choices.
- */
-let _CheckboxGroup = forwardRef(CheckboxGroup);
-export {_CheckboxGroup as CheckboxGroup};
+});

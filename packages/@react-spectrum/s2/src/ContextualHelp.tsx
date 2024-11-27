@@ -48,7 +48,10 @@ const popover = style({
 
 export const ContextualHelpContext = createContext<ContextValue<ContextualHelpProps, FocusableRefValue<HTMLButtonElement>>>(null);
 
-function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButtonElement>) {
+/**
+ * Contextual help shows a user extra information about the state of an adjacent component, or a total view.
+ */
+export const ContextualHelp = forwardRef(function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButtonElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, ContextualHelpContext);
   let {
@@ -128,10 +131,4 @@ function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButton
       </PopoverBase>
     </DialogTrigger>
   );
-}
-
-/**
- * Contextual help shows a user extra information about the state of an adjacent component, or a total view.
- */
-let _ContextualHelp = forwardRef(ContextualHelp);
-export {_ContextualHelp as ContextualHelp};
+});

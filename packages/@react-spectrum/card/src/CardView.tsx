@@ -30,7 +30,10 @@ import {useListState} from '@react-stately/list';
 import {useProvider} from '@react-spectrum/provider';
 import {Virtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 
-function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+/**
+ * TODO: Add description of component here.
+ */
+export const CardView = React.forwardRef(function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {scale} = useProvider();
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
@@ -140,7 +143,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     </CardViewContext.Provider>
 
   );
-}
+}) as <T>(props: SpectrumCardViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 
 function LoadingState() {
   let {state} = useCardViewContext();
@@ -245,9 +248,3 @@ function InternalCard(props) {
     </div>
   );
 }
-
-/**
- * TODO: Add description of component here.
- */
-const _CardView = React.forwardRef(CardView) as <T>(props: SpectrumCardViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
-export {_CardView as CardView};

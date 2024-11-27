@@ -46,7 +46,10 @@ export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | '
 export const NumberFieldContext = createContext<ContextValue<NumberFieldProps, HTMLDivElement>>(null);
 export const NumberFieldStateContext = createContext<NumberFieldState | null>(null);
 
-function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A number field allows a user to enter a number, and increment or decrement the value using stepper buttons.
+ */
+export const NumberField = /*#__PURE__*/ (forwardRef as forwardRefType)(function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, NumberFieldContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
@@ -118,10 +121,4 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
       {props.name && <input type="hidden" name={props.name} value={isNaN(state.numberValue) ? '' : state.numberValue} />}
     </Provider>
   );
-}
-
-/**
- * A number field allows a user to enter a number, and increment or decrement the value using stepper buttons.
- */
-const _NumberField = /*#__PURE__*/ (forwardRef as forwardRefType)(NumberField);
-export {_NumberField as NumberField};
+});

@@ -35,7 +35,11 @@ export interface DisclosureGroupRenderProps {
 
 export const DisclosureGroupStateContext = createContext<DisclosureGroupState | null>(null);
 
-function DisclosureGroup(props: DisclosureGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A DisclosureGroup is a grouping of related disclosures, sometimes called an accordion.
+ * It supports both single and multiple expanded items.
+ */
+export const DisclosureGroup = forwardRef(function DisclosureGroup(props: DisclosureGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   let state = useDisclosureGroupState(props);
 
   let renderProps = useRenderProps({
@@ -60,14 +64,7 @@ function DisclosureGroup(props: DisclosureGroupProps, ref: ForwardedRef<HTMLDivE
       </DisclosureGroupStateContext.Provider>
     </div>
   );
-}
-
-/**
- * A DisclosureGroup is a grouping of related disclosures, sometimes called an accordion.
- * It supports both single and multiple expanded items.
- */
-const _DisclosureGroup = forwardRef(DisclosureGroup);
-export {_DisclosureGroup as DisclosureGroup};
+});
 
 export interface DisclosureProps extends Omit<AriaDisclosureProps, 'children'>, RenderProps<DisclosureRenderProps>, SlotProps {
   /** An id for the disclosure when used within a DisclosureGroup, matching the id used in `expandedKeys`. */
@@ -106,7 +103,10 @@ interface InternalDisclosureContextValue {
 
 const InternalDisclosureContext = createContext<InternalDisclosureContextValue | null>(null);
 
-function Disclosure(props: DisclosureProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A disclosure is a collapsible section of content. It is composed of a a header with a heading and trigger button, and a panel that contains the content.
+ */
+export const Disclosure = /*#__PURE__*/ (forwardRef as forwardRefType)(function Disclosure(props: DisclosureProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DisclosureContext);
   let groupState = useContext(DisclosureGroupStateContext)!;
   let {id, ...otherProps} = props;
@@ -179,7 +179,7 @@ function Disclosure(props: DisclosureProps, ref: ForwardedRef<HTMLDivElement>) {
       </div>
     </Provider>
   );
-}
+});
 
 export interface DisclosurePanelRenderProps {
   /**
@@ -201,7 +201,10 @@ export interface DisclosurePanelProps extends RenderProps<DisclosurePanelRenderP
   children: ReactNode
 }
 
-function DisclosurePanel(props: DisclosurePanelProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A DisclosurePanel provides the content for a disclosure.
+ */
+export const DisclosurePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(function DisclosurePanel(props: DisclosurePanelProps, ref: ForwardedRef<HTMLDivElement>) {
   let {role = 'group'} = props;
   let {panelProps, panelRef} = useContext(InternalDisclosureContext)!;
   let {
@@ -232,16 +235,4 @@ function DisclosurePanel(props: DisclosurePanelProps, ref: ForwardedRef<HTMLDivE
       </Provider>
     </div>
   );
-}
-
-/**
- * A disclosure is a collapsible section of content. It is composed of a a header with a heading and trigger button, and a panel that contains the content.
- */
-const _Disclosure = /*#__PURE__*/ (forwardRef as forwardRefType)(Disclosure);
-export {_Disclosure as Disclosure};
-
-/**
- * A DisclosurePanel provides the content for a disclosure.
- */
-const _DisclosurePanel = /*#__PURE__*/ (forwardRef as forwardRefType)(DisclosurePanel);
-export {_DisclosurePanel as DisclosurePanel};
+});

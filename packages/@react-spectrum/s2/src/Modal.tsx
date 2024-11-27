@@ -73,7 +73,10 @@ const modalOverlayStyles = style({
   }
 });
 
-function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A modal is an overlay element which blocks interaction with elements outside it.
+ */
+export const Modal = forwardRef(function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
   let domRef = useDOMRef(ref);
   let colorScheme = useContext(ColorSchemeContext);
   let {locale, direction} = useLocale();
@@ -162,10 +165,4 @@ function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
         })({...renderProps, size: props.size})} />
     </ModalOverlay>
   );
-}
-
-/**
- * A modal is an overlay element which blocks interaction with elements outside it.
- */
-let _Modal = forwardRef(Modal);
-export {_Modal as Modal};
+});

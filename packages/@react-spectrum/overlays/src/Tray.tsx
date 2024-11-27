@@ -33,7 +33,7 @@ interface TrayWrapperProps extends TrayProps {
   wrapperRef: RefObject<HTMLDivElement | null>
 }
 
-function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
+export const Tray = forwardRef(function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
   let {children, state, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let wrapperRef = useRef<HTMLDivElement>(null);
@@ -45,7 +45,7 @@ function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
       </TrayWrapper>
     </Overlay>
   );
-}
+});
 
 let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: ForwardedRef<HTMLDivElement | null>) {
   let {
@@ -114,6 +114,3 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: ForwardedRe
     </div>
   );
 });
-
-let _Tray = forwardRef(Tray);
-export {_Tray as Tray};

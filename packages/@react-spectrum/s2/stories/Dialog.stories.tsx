@@ -54,35 +54,6 @@ export const Example = (args: any) => (
   </DialogTrigger>
 );
 
-Example.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `<DialogTrigger>
-  <Button variant="primary">Open dialog</Button>
-  <Dialog>
-    {({close}) => (
-      <>
-        <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" alt="Sky over roof" />
-        <Heading slot="title">Dialog title</Heading>
-        <Header>Header</Header>
-        <Content>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in</p>
-        </Content>
-        <Footer><Checkbox>Don't show this again</Checkbox></Footer>
-        <ButtonGroup>
-          <Button onPress={close} variant="secondary">Cancel</Button>
-          <Button onPress={close} variant="accent">Save</Button>
-        </ButtonGroup>
-      </>
-    )}
-  </Dialog>
-</DialogTrigger>`;
-      }
-    }
-  }
-};
-
 export const DialogTriggerExample = (args: any) => (
   <DialogTrigger {...args}>
     <Button variant="primary">Open dialog</Button>
@@ -148,38 +119,6 @@ export function DialogContainerExample(props: any) {
 }
 
 DialogContainerExample.args = DialogTriggerExample.args;
-DialogContainerExample.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `<>
-  <Button variant="accent" onPress={() => setOpen(true)}>Open dialog</Button>
-  <DialogContainer onDismiss={() => setOpen(false)}>
-    {isOpen &&
-      <Dialog>
-        {({close}) => (
-          <>
-            <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" alt="Sky over roof" />
-            <Heading slot="title">Dialog title</Heading>
-            <Header>Header</Header>
-            <Content>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in</p>
-            </Content>
-            <Footer><Checkbox>Don't show this again</Checkbox></Footer>
-            <ButtonGroup>
-              <Button onPress={close} variant="secondary">Cancel</Button>
-              <Button onPress={close} variant="accent">Save</Button>
-            </ButtonGroup>
-          </>
-        )}
-      </Dialog>
-    }
-  </DialogContainer>
-</>`;
-      }
-    }
-  }
-};
 
 export const ColorScheme = (args: any) => (
   <Provider colorScheme="dark" background="base" styles={style({padding: 48})}>

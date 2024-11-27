@@ -45,7 +45,10 @@ const accordion = style({
 
 export const AccordionContext = createContext<ContextValue<AccordionProps, DOMRefValue<HTMLDivElement>>>(null);
 
-function Accordion(props: AccordionProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * An accordion is a container for multiple disclosures.
+ */
+export const Accordion = forwardRef(function Accordion(props: AccordionProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, AccordionContext);
   let domRef = useDOMRef(ref);
   let {
@@ -66,10 +69,4 @@ function Accordion(props: AccordionProps, ref: DOMRef<HTMLDivElement>) {
       </DisclosureGroup>
     </DisclosureContext.Provider>
   );
-}
-
-/**
- * An accordion is a container for multiple disclosures.
- */
-let _Accordion = forwardRef(Accordion);
-export {_Accordion as Accordion};
+});
