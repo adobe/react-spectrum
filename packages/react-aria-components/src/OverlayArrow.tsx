@@ -33,7 +33,11 @@ export interface OverlayArrowRenderProps {
   placement: PlacementAxis | null
 }
 
-function OverlayArrow(props: OverlayArrowProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * An OverlayArrow renders a custom arrow element relative to an overlay element
+ * such as a popover or tooltip such that it aligns with a trigger element.
+ */
+export const OverlayArrow = /*#__PURE__*/ (forwardRef as forwardRefType)(function OverlayArrow(props: OverlayArrowProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, OverlayArrowContext);
   let placement = (props as OverlayArrowContextValue).placement;
   let style: CSSProperties = {
@@ -68,11 +72,4 @@ function OverlayArrow(props: OverlayArrowProps, ref: ForwardedRef<HTMLDivElement
       ref={ref}
       data-placement={placement} />
   );
-}
-
-/**
- * An OverlayArrow renders a custom arrow element relative to an overlay element
- * such as a popover or tooltip such that it aligns with a trigger element.
- */
-const _OverlayArrow = /*#__PURE__*/ (forwardRef as forwardRefType)(OverlayArrow);
-export {_OverlayArrow as OverlayArrow};
+});

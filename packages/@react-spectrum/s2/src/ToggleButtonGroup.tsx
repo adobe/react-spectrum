@@ -22,7 +22,10 @@ export interface ToggleButtonGroupProps extends ActionButtonGroupProps, Omit<RAC
 
 export const ToggleButtonGroupContext = createContext<ContextValue<ToggleButtonGroupProps, HTMLDivElement>>(null);
 
-function ToggleButtonGroup(props: ToggleButtonGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A ToggleButtonGroup is a grouping of related ToggleButtons, with single or multiple selection.
+ */
+export const ToggleButtonGroup = forwardRef(function ToggleButtonGroup(props: ToggleButtonGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ToggleButtonGroupContext);
   let {
     density = 'regular',
@@ -46,10 +49,4 @@ function ToggleButtonGroup(props: ToggleButtonGroupProps, ref: ForwardedRef<HTML
       </ToggleButtonGroupContext.Provider>
     </RACToggleButtonGroup>
   );
-}
-
-/**
- * A ToggleButtonGroup is a grouping of related ToggleButtons, with single or multiple selection.
- */
-const _ToggleButtonGroup = forwardRef(ToggleButtonGroup);
-export {_ToggleButtonGroup as ToggleButtonGroup};
+});

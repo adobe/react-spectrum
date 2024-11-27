@@ -38,7 +38,10 @@ export interface Spectrum{{componentName}}Props extends DOMProps, StyleProps {
 }
 {{/unless}}
 
-function {{componentName}}(props: Spectrum{{componentName}}Props, ref: DOMRef<HTMLDivElement>) {
+/**
+ * TODO: Add description of component here.
+ */
+export const {{componentName}} = React.forwardRef(function {{componentName}}(props: Spectrum{{componentName}}Props, ref: DOMRef<HTMLDivElement>) {
   // Grabs specific props from the closest Provider (see https://react-spectrum.adobe.com/react-spectrum/Provider.html#property-groups). Remove if your component doesn't support any of the listed props.
   props = useProviderProps(props);
   // Handles RSP specific style options, UNSAFE_style, and UNSAFE_className props (see https://react-spectrum.adobe.com/react-spectrum/styling.html#style-props)
@@ -65,10 +68,4 @@ function {{componentName}}(props: Spectrum{{componentName}}Props, ref: DOMRef<HT
       className={styleProps.className} />
       {{/if}}
   );
-}
-
-/**
- * TODO: Add description of component here.
- */
-const _{{componentName}} = React.forwardRef({{componentName}});
-export {_{{componentName}} as {{componentName~}}};
+});

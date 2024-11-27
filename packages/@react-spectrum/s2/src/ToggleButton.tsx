@@ -35,7 +35,11 @@ export interface ToggleButtonProps extends Omit<RACToggleButtonProps, 'className
 
 export const ToggleButtonContext = createContext<ContextValue<ToggleButtonProps, FocusableRefValue<HTMLButtonElement>>>(null);
 
-function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+/**
+ * ToggleButtons allow users to toggle a selection on or off, for example
+ * switching between two states or modes.
+ */
+export const ToggleButton = forwardRef(function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ToggleButtonContext);
   props = useFormProps(props as any);
   let domRef = useFocusableRef(ref);
@@ -83,11 +87,4 @@ function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElem
       </Provider>
     </RACToggleButton>
   );
-}
-
-/**
- * ToggleButtons allow users to toggle a selection on or off, for example
- * switching between two states or modes.
- */
-let _ToggleButton = forwardRef(ToggleButton);
-export {_ToggleButton as ToggleButton};
+});

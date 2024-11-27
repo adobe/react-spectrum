@@ -255,7 +255,11 @@ const avatarSize = {
 
 export const ActionButtonContext = createContext<ContextValue<ActionButtonProps, FocusableRefValue<HTMLButtonElement>>>(null);
 
-function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+/**
+ * ActionButtons allow users to perform an action.
+ * They’re used for similar, task-based options within a workflow, and are ideal for interfaces where buttons aren’t meant to draw a lot of attention.
+ */
+export const ActionButton = forwardRef(function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ActionButtonContext);
   props = useFormProps(props as any);
   let domRef = useFocusableRef(ref);
@@ -307,11 +311,4 @@ function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElem
       </Provider>
     </RACButton>
   );
-}
-
-/**
- * ActionButtons allow users to perform an action.
- * They’re used for similar, task-based options within a workflow, and are ideal for interfaces where buttons aren’t meant to draw a lot of attention.
- */
-let _ActionButton = forwardRef(ActionButton);
-export {_ActionButton as ActionButton};
+});

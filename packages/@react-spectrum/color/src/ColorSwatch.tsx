@@ -37,7 +37,10 @@ interface SpectrumColorSwatchContextValue extends Pick<SpectrumColorSwatchProps,
 
 export const SpectrumColorSwatchContext = createContext<SpectrumColorSwatchContextValue | null>(null);
 
-function ColorSwatch(props: SpectrumColorSwatchProps, ref: DOMRef<HTMLDivElement>): JSX.Element {
+/**
+ * A ColorSwatch displays a preview of a selected color.
+ */
+export const ColorSwatch = forwardRef(function ColorSwatch(props: SpectrumColorSwatchProps, ref: DOMRef<HTMLDivElement>): JSX.Element {
   let domRef = useDOMRef(ref);
   [props, domRef] = useContextProps(props, domRef, ColorSwatchContext);
   let {colorSwatchProps, color} = useColorSwatch(props);
@@ -93,10 +96,4 @@ function ColorSwatch(props: SpectrumColorSwatchProps, ref: DOMRef<HTMLDivElement
   }
 
   return swatch;
-}
-
-/**
- * A ColorSwatch displays a preview of a selected color.
- */
-let _ColorSwatch = forwardRef(ColorSwatch);
-export {_ColorSwatch as ColorSwatch};
+});

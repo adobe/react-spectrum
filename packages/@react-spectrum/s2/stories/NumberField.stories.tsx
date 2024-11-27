@@ -68,53 +68,27 @@ CustomWidth.parameters = {
 };
 
 
-export const ContextualHelpExample = (args: any) => <NumberField {...args} />;
+export const ContextualHelpExample = (args: any) => (
+  <NumberField
+    {...args}
+    contextualHelp={
+      <ContextualHelp>
+        <Heading>Quantity</Heading>
+        <Content>
+          <Text>
+            Pick a number between negative infinity and positive infinity.
+          </Text>
+        </Content>
+        <Footer>
+          <Link
+            isStandalone
+            href="https://en.wikipedia.org/wiki/Quantity"
+            target="_blank">Learn more about quantity</Link>
+        </Footer>
+      </ContextualHelp>
+    } />
+);
 
 ContextualHelpExample.args = {
-  label: 'Quantity',
-  contextualHelp: (
-    <ContextualHelp>
-      <Heading>Quantity</Heading>
-      <Content>
-        <Text>
-          Pick a number between negative infinity and positive infinity.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Quantity"
-          target="_blank">Learn more about quantity</Link>
-      </Footer>
-    </ContextualHelp>
-  )
-};
-
-ContextualHelpExample.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `
-<NumberField
-  label="Quantity"
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>Quantity</Heading>
-      <Content>
-        <Text>
-          Pick a number between negative infinity and positive infinity.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Quantity"
-          target="_blank">Learn more about quantity</Link>
-      </Footer>
-    </ContextualHelp>
-  }
-/>`;
-      }
-    }
-  }
+  label: 'Quantity'
 };

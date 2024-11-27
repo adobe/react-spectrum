@@ -22,7 +22,10 @@ import {useCheckboxGroup} from '@react-aria/checkbox';
 import {useCheckboxGroupState} from '@react-stately/checkbox';
 import {useFormProps} from '@react-spectrum/form';
 
-function CheckboxGroup(props: SpectrumCheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A CheckboxGroup allows users to select one or more items from a list of choices.
+ */
+export const CheckboxGroup = React.forwardRef(function CheckboxGroup(props: SpectrumCheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
   let {
@@ -61,10 +64,4 @@ function CheckboxGroup(props: SpectrumCheckboxGroupProps, ref: DOMRef<HTMLDivEle
       </div>
     </Field>
   );
-}
-
-/**
- * A CheckboxGroup allows users to select one or more items from a list of choices.
- */
-const _CheckboxGroup = React.forwardRef(CheckboxGroup);
-export {_CheckboxGroup as CheckboxGroup};
+});

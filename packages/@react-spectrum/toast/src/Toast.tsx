@@ -48,7 +48,7 @@ export const ICONS = {
   positive: SuccessMedium
 };
 
-function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
+export const Toast = React.forwardRef(function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
   let {
     toast: {
       key,
@@ -142,7 +142,4 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
       </div>
     </div>
   );
-}
-
-let _Toast = React.forwardRef(Toast);
-export {_Toast as Toast};
+});

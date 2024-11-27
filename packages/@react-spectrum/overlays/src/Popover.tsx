@@ -67,7 +67,7 @@ let arrowPlacement = {
   bottom: 'bottom'
 };
 
-function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
+export const Popover = forwardRef(function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
     state,
@@ -83,7 +83,7 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
       </PopoverWrapper>
     </Overlay>
   );
-}
+});
 
 const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: ForwardedRef<HTMLDivElement | null>) => {
   let {
@@ -237,9 +237,6 @@ function Arrow(props: ArrowProps) {
     </svg>
   );
 }
-
-let _Popover = forwardRef(Popover);
-export {_Popover as Popover};
 
 /**
  * More explanation on popover tips.

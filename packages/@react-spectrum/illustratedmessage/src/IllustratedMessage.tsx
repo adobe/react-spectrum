@@ -18,7 +18,11 @@ import React, {forwardRef} from 'react';
 import {SpectrumIllustratedMessageProps} from '@react-types/illustratedmessage';
 import styles from '@adobe/spectrum-css-temp/components/illustratedmessage/vars.css';
 
-function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * An IllustratedMessage displays an illustration and a message, usually
+ * for an empty state or an error page.
+ */
+export const IllustratedMessage = forwardRef(function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<HTMLDivElement>) {
   props = useSlotProps(props, 'illustration');
   let {
     children,
@@ -52,11 +56,4 @@ function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<
       </ClearSlots>
     </Flex>
   );
-}
-
-/**
- * An IllustratedMessage displays an illustration and a message, usually
- * for an empty state or an error page.
- */
-let _IllustratedMessage = forwardRef(IllustratedMessage);
-export {_IllustratedMessage as IllustratedMessage};
+});

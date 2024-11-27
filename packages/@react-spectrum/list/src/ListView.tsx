@@ -104,7 +104,10 @@ function useListLayout<T>(state: ListState<T>, density: SpectrumListViewProps<T>
   return layout;
 }
 
-function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A ListView displays a list of interactive items, and allows a user to navigate, select, or perform an action.
+ */
+export const ListView = React.forwardRef(function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {
     density = 'regular',
     loadingState,
@@ -280,7 +283,7 @@ function ListView<T extends object>(props: SpectrumListViewProps<T>, ref: DOMRef
       }
     </ListViewContext.Provider>
   );
-}
+}) as <T>(props: SpectrumListViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 
 function Item({item}: {item: Node<unknown>}) {
   let {isListDroppable, state, onAction} = useContext(ListViewContext)!;
@@ -351,9 +354,3 @@ function CenteredWrapper({children}) {
     </div>
   );
 }
-
-/**
- * A ListView displays a list of interactive items, and allows a user to navigate, select, or perform an action.
- */
-const _ListView = React.forwardRef(ListView) as <T>(props: SpectrumListViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
-export {_ListView as ListView};
