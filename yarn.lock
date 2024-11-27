@@ -5865,6 +5865,7 @@ __metadata:
   dependencies:
     "@react-aria/combobox": "npm:^3.11.0"
     "@react-aria/i18n": "npm:^3.12.3"
+    "@react-aria/interactions": "npm:^3.22.5"
     "@react-aria/listbox": "npm:^3.13.6"
     "@react-aria/searchfield": "npm:^3.7.11"
     "@react-aria/utils": "npm:^3.26.0"
