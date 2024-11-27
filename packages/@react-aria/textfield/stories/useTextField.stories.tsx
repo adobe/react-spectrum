@@ -45,7 +45,7 @@ export const WithHTMLInputElement = {
   render: TextInputFieldTemplate,
   args: {
     label: 'Test label',
-    value: 'Test value'
+    defaultValue: 'Test value'
   }
 };
 
@@ -54,7 +54,7 @@ export const WithHTMLTextAreaElement = {
   args: {
     inputElementType: 'textarea',
     label: 'Test label',
-    value: 'Test value'
+    defaultValue: 'Test value'
   }
 };
 
