@@ -29,7 +29,12 @@ export const AutocompleteStateContext = createContext<AutocompleteState | null>(
 // This context is to pass the register and filter down to whatever collection component is wrapped by the Autocomplete
 export const InternalAutocompleteContext = createContext<InternalAutocompleteContextValue | null>(null);
 
-function Autocomplete(props: AutocompleteProps, ref: ForwardedRef<HTMLInputElement>) {
+/**
+ * A autocomplete combines a text input with a menu, allowing users to filter a list of options to items matching a query.
+ */
+
+
+export const Autocomplete = forwardRef(function Autocomplete(props: AutocompleteProps, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, AutocompleteContext);
   let {defaultFilter} = props;
   let state = useAutocompleteState(props);
@@ -60,10 +65,4 @@ function Autocomplete(props: AutocompleteProps, ref: ForwardedRef<HTMLInputEleme
       {props.children}
     </Provider>
   );
-}
-
-/**
- * A autocomplete combines a text input with a menu, allowing users to filter a list of options to items matching a query.
- */
-const _Autocomplete = forwardRef(Autocomplete);
-export {_Autocomplete as Autocomplete};
+});
