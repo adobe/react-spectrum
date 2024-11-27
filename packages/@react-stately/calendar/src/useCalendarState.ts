@@ -18,7 +18,6 @@ import {
   DateFormatter,
   endOfMonth,
   endOfWeek,
-  getDayOfWeek,
   getWeekStart,
   GregorianCalendar,
   isSameDay,
