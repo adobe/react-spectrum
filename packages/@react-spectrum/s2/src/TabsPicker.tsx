@@ -46,7 +46,7 @@ import {fieldInput, StyleProps} from './style-utils' with {type: 'macro'};
 import {
   FieldLabel
 } from './Field';
-import {FocusableRef, FocusableRefValue, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue, SpectrumLabelableProps} from '@react-types/shared';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
@@ -77,7 +77,6 @@ export interface PickerProps<T extends object> extends
   PickerStyleProps,
   StyleProps,
   SpectrumLabelableProps,
-  HelpTextProps,
   Pick<ListBoxProps<T>, 'items'>,
   Pick<AriaPopoverProps, 'shouldFlip'> {
     /** The contents of the collection. */
@@ -96,6 +95,7 @@ export interface PickerProps<T extends object> extends
     align?: 'start' | 'end',
     /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
     menuWidth?: number,
+    /** Density of the tabs, affects the height of the picker. */
     density: 'compact' | 'regular'
 }
 

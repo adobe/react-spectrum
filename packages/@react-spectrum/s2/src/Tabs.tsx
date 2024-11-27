@@ -32,12 +32,15 @@ import {createContext, forwardRef, Fragment, ReactNode, useCallback, useContext,
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {Picker, PickerItem} from './TabsPicker';
 import {Text, TextContext} from './Content';
 import {useControlledState} from '@react-stately/utils';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useEffectEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'children'>, UnsafeStyles {
@@ -454,6 +457,7 @@ let HiddenTabs = function (props: {
 };
 
 let TabsMenu = (props: {items: Array<Node<any>>, onSelectionChange: TabsProps['onSelectionChange']}) => {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {items} = props;
   let {density, onSelectionChange, selectedKey, isDisabled, disabledKeys} = useContext(InternalTabsContext);
   let state = useContext(TabListStateContext);
@@ -480,7 +484,7 @@ let TabsMenu = (props: {items: Array<Node<any>>, onSelectionChange: TabsProps['o
           disabledKeys={disabledKeys}
           selectedKey={selectedKey}
           onSelectionChange={onSelectionChange}
-          aria-label={'Tab selector'}>
+          aria-label={stringFormatter.format('tabs.selectorLabel')}>
           {(item: Node<any>) => {
             // need to determine the best way to handle icon only -> icon and text
             // good enough to aria-label the picker item?
