@@ -76,7 +76,7 @@ export default {
     },
     firstDayOfWeek: {
       control: 'select',
-      options: ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
+      options: [undefined, 'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
     },
     isInvalid: {
       control: 'boolean'

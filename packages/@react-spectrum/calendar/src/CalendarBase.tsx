@@ -46,7 +46,7 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
     errorMessageProps,
     calendarRef: ref,
     visibleMonths = 1,
-    firstDayOfWeek = 'sun'
+    firstDayOfWeek
   } = props;
   let {styleProps} = useStyleProps(props);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/calendar');

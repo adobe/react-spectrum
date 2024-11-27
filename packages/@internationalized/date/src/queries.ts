@@ -225,7 +225,7 @@ function getRegion(locale: string): string | undefined {
   return part === 'u' ? undefined : part;
 }
 
-function getWeekStart(locale: string): number {
+export function getWeekStart(locale: string): number {
   // TODO: use Intl.Locale for this once browsers support the weekInfo property
   // https://github.com/tc39/proposal-intl-locale-info
   let region = getRegion(locale);

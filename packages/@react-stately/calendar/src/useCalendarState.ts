@@ -19,6 +19,7 @@ import {
   endOfMonth,
   endOfWeek,
   getDayOfWeek,
+  getWeekStart,
   GregorianCalendar,
   isSameDay,
   startOfMonth,
@@ -77,7 +78,7 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
     selectionAlignment,
     isDateUnavailable,
     pageBehavior = 'visible',
-    firstDayOfWeek = 'sun'
+    firstDayOfWeek
   } = props;
   let calendar = useMemo(() => createCalendar(resolvedOptions.calendar), [createCalendar, resolvedOptions.calendar]);
 
@@ -335,20 +336,12 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
       return isSameDay(next, endDate) || this.isInvalid(next);
     },
     getDatesInWeek(weekIndex, from = startDate) {
-      // let date = startOfWeek(from, locale);
+      let weekStartDay = firstDayOfWeek !== undefined ? DAY_MAP[firstDayOfWeek] : getWeekStart(locale);
       let date = from.add({weeks: weekIndex});
+      let offset = (getWeekStart(locale) - weekStartDay + 7) % 7;
+      date = startOfWeek(date, locale);
+      date = date.subtract({days: offset});
       let dates: (CalendarDate | null)[] = [];
-
-      let currentDayOfWeek = getDayOfWeek(date, locale);
-      let daysToSubtract = (currentDayOfWeek - DAY_MAP[firstDayOfWeek] + 7) % 7;
-      date = date.subtract({days: daysToSubtract});
-
-      // startOfWeek will clamp dates within the calendar system's valid range, which may
-      // start in the middle of a week. In this case, add null placeholders.
-      let dayOfWeek = (getDayOfWeek(date, locale) - DAY_MAP[firstDayOfWeek] + 7) % 7;
-      for (let i = 0; i < dayOfWeek; i++) {
-        dates.push(null);
-      }
 
       while (dates.length < 7) {
         dates.push(date);
