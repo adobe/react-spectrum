@@ -21,7 +21,10 @@ import {SpectrumRangeSliderProps} from '@react-types/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
-function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivElement>) {
+/**
+ * RangeSliders allow users to quickly select a subset range. They should be used when the upper and lower bounds to the range are invariable.
+ */
+export const RangeSlider = React.forwardRef(function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivElement>) {
   let {onChange, onChangeEnd, value, defaultValue, getValueLabel, ...otherProps} = props;
 
   let baseProps: Omit<SliderBaseProps<number[]>, 'children'> = {
@@ -83,10 +86,4 @@ function RangeSlider(props: SpectrumRangeSliderProps, ref: FocusableRef<HTMLDivE
       }}
     </SliderBase>
   );
-}
-
-/**
- * RangeSliders allow users to quickly select a subset range. They should be used when the upper and lower bounds to the range are invariable.
- */
-const _RangeSlider = React.forwardRef(RangeSlider);
-export {_RangeSlider as RangeSlider};
+});

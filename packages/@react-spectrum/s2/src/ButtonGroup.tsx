@@ -101,7 +101,10 @@ const buttongroup = style<ButtonGroupStyleProps>({
   }
 }, getAllowedOverrides());
 
-function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * ButtonGroup handles overflow for a grouping of buttons whose actions are related to each other.
+ */
+export const ButtonGroup = forwardRef(function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ButtonGroupContext);
   let domRef = useDOMRef(ref);
   let {
@@ -178,10 +181,4 @@ function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
       </Provider>
     </div>
   );
-}
-
-/**
- * ButtonGroup handles overflow for a grouping of buttons whose actions are related to each other.
- */
-const _ButtonGroup = forwardRef(ButtonGroup);
-export {_ButtonGroup as ButtonGroup};
+});

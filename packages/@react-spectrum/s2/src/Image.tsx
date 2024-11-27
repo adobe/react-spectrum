@@ -77,7 +77,7 @@ function createState(src: string): State {
     startTime: Date.now(),
     loadTime: 0
   };
-} 
+}
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
@@ -130,7 +130,7 @@ const imgStyles = style({
   transitionDuration: 500
 });
 
-function Image(props: ImageProps, domRef: ForwardedRef<HTMLDivElement>) {
+export const Image = forwardRef(function Image(props: ImageProps, domRef: ForwardedRef<HTMLDivElement>) {
   [props, domRef] = useSpectrumContextProps(props, domRef, ImageContext);
 
   let {
@@ -236,7 +236,4 @@ function Image(props: ImageProps, domRef: ForwardedRef<HTMLDivElement>) {
         )}
     </div>
   ), [slot, hidden, domRef, UNSAFE_style, UNSAFE_className, styles, isAnimating, errorState, src, alt, crossOrigin, decoding, loading, referrerPolicy, onLoad, onError, isRevealed, isTransitioning]);
-}
-
-const _Image = forwardRef(Image);
-export {_Image as Image};
+});

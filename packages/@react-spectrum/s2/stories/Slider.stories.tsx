@@ -74,71 +74,30 @@ FormatOptions.args = {
 
 export const ContextualHelpExample = (args: any) => (
   <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
-    <Slider {...args} />
+    <Slider
+      {...args}
+      contextualHelp={
+        <ContextualHelp>
+          <Heading>What is a ice cream?</Heading>
+          <Content>
+            <Text>
+              A combination of sugar, eggs, milk, and cream is cooked to make
+              a custard base. Then, flavorings are added, and this flavored
+              mixture is carefully churned and frozen to make ice cream.
+            </Text>
+          </Content>
+          <Footer>
+            <Link
+              isStandalone
+              href="https://en.wikipedia.org/wiki/Ice_cream"
+              target="_blank">Learn more about ice cream</Link>
+          </Footer>
+        </ContextualHelp>
+      } />
   </div>
 );
 
 ContextualHelpExample.args = {
   label: 'Cookies',
-  defaultValue: 30,
-  contextualHelp: (
-    <ContextualHelp>
-      <Heading>What is a ice cream?</Heading>
-      <Content>
-        <Text>
-          A combination of sugar, eggs, milk, and cream is cooked to make
-          a custard base. Then, flavorings are added, and this flavored
-          mixture is carefully churned and frozen to make ice cream.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Ice_cream"
-          target="_blank">Learn more about ice cream</Link>
-      </Footer>
-    </ContextualHelp>
-  )
-};
-
-ContextualHelpExample.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `
-<div
-  style={{
-    alignItems: 'start',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 8
-  }}>
-  <Slider
-    contextualHelp={
-      <ContextualHelp>
-        <Heading>
-          What is a ice cream?
-        </Heading>
-        <Content>
-          <Text>
-            A combination of sugar, eggs, milk, and cream is cooked to make a custard base. Then, flavorings are added, and this flavored mixture is carefully churned and frozen to make ice cream.
-          </Text>
-        </Content>
-        <Footer>
-          <Link
-            href="https://en.wikipedia.org/wiki/Ice_cream"
-            isStandalone
-            target="_blank">
-            Learn more about ice cream
-          </Link>
-        </Footer>
-      </ContextualHelp>
-    }
-    defaultValue={30}
-    label="Cookies"
-  />
-</div>`;
-      }
-    }
-  }
+  defaultValue: 30
 };

@@ -68,7 +68,10 @@ export interface SwitchRenderProps {
 
 export const SwitchContext = createContext<ContextValue<SwitchProps, HTMLLabelElement>>(null);
 
-function Switch(props: SwitchProps, ref: ForwardedRef<HTMLLabelElement>) {
+/**
+ * A switch allows a user to turn a setting on or off.
+ */
+export const Switch = /*#__PURE__*/ (forwardRef as forwardRefType)(function Switch(props: SwitchProps, ref: ForwardedRef<HTMLLabelElement>) {
   let {
     inputRef: userProvidedInputRef = null,
     ...otherProps
@@ -125,10 +128,4 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLLabelElement>) {
       {renderProps.children}
     </label>
   );
-}
-
-/**
- * A switch allows a user to turn a setting on or off.
- */
-const _Switch = /*#__PURE__*/ (forwardRef as forwardRefType)(Switch);
-export {_Switch as Switch};
+});

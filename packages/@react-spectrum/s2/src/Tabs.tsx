@@ -84,7 +84,10 @@ const tabs = style({
   }
 }, getAllowedOverrides({height: true}));
 
-function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Tabs organize content into multiple sections and allow users to navigate between them. The content under the set of tabs should be related and form a coherent unit.
+ */
+export const Tabs = forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, TabsContext);
   let {
     density = 'regular',
@@ -122,13 +125,7 @@ function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
       </CollapsingCollection>
     </Provider>
   );
-}
-
-/**
- * Tabs organize content into multiple sections and allow users to navigate between them. The content under the set of tabs should be related and form a coherent unit.
- */
-const _Tabs = forwardRef(Tabs);
-export {_Tabs as Tabs};
+});
 
 const tablist = style({
   display: 'flex',

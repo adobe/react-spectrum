@@ -215,7 +215,7 @@ let arrow = style({
   }
 });
 
-function PopoverBase(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
+export const PopoverBase = forwardRef(function PopoverBase(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
   let {
     hideArrow = false,
     UNSAFE_className = '',
@@ -283,10 +283,7 @@ function PopoverBase(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
       ))}
     </AriaPopover>
   );
-}
-
-let _PopoverBase = forwardRef(PopoverBase);
-export {_PopoverBase as PopoverBase};
+});
 
 export interface PopoverDialogProps extends Pick<PopoverProps, 'size' | 'hideArrow'| 'placement' | 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset'>, Omit<DialogProps, 'className' | 'style'>, StyleProps {}
 
@@ -301,11 +298,14 @@ const dialogStyle = style({
   maxSize: '[inherit]'
 }, getAllowedOverrides({height: true}));
 
-function Popover(props: PopoverDialogProps, ref: DOMRef) {
+/**
+ * A popover is an overlay element positioned relative to a trigger.
+ */
+export const Popover = forwardRef(function Popover(props: PopoverDialogProps, ref: DOMRef) {
   let domRef = useDOMRef(ref);
 
   return (
-    <_PopoverBase size={props.size} hideArrow={props.hideArrow} placement={props.placement} shouldFlip={props.shouldFlip} containerPadding={props.containerPadding} offset={props.offset} crossOffset={props.crossOffset}>
+    <PopoverBase size={props.size} hideArrow={props.hideArrow} placement={props.placement} shouldFlip={props.shouldFlip} containerPadding={props.containerPadding} offset={props.offset} crossOffset={props.crossOffset}>
       <Dialog
         {...props}
         ref={domRef}
@@ -318,12 +318,6 @@ function Popover(props: PopoverDialogProps, ref: DOMRef) {
           </OverlayTriggerStateContext.Provider>
         ))}
       </Dialog>
-    </_PopoverBase>
+    </PopoverBase>
   );
-}
-
-/**
- * A popover is an overlay element positioned relative to a trigger.
- */
-let _Popover = forwardRef(Popover);
-export {_Popover as Popover};
+});

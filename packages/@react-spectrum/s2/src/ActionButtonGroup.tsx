@@ -73,7 +73,10 @@ export const actionGroupStyle = style({
 
 export const ActionButtonGroupContext = createContext<ContextValue<ActionButtonGroupProps, HTMLDivElement>>(null);
 
-function ActionButtonGroup(props: ActionButtonGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * An ActionButtonGroup is a grouping of related ActionButtons.
+ */
+export const ActionButtonGroup = forwardRef(function ActionButtonGroup(props: ActionButtonGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ActionButtonGroupContext);
   let {
     density = 'regular',
@@ -97,10 +100,4 @@ function ActionButtonGroup(props: ActionButtonGroupProps, ref: ForwardedRef<HTML
       </ActionButtonGroupContext.Provider>
     </Toolbar>
   );
-}
-
-/**
- * An ActionButtonGroup is a grouping of related ActionButtons.
- */
-const _ActionButtonGroup = forwardRef(ActionButtonGroup);
-export {_ActionButtonGroup as ActionButtonGroup};
+});

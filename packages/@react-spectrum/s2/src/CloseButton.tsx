@@ -88,7 +88,10 @@ const styles = style({
 
 export const CloseButtonContext = createContext<ContextValue<CloseButtonProps, FocusableRefValue<HTMLButtonElement>>>(null);
 
-function CloseButton(props: CloseButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+/**
+ * A CloseButton allows a user to dismiss a dialog.
+ */
+export const CloseButton = forwardRef(function CloseButton(props: CloseButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, CloseButtonContext);
   let {UNSAFE_style, UNSAFE_className = ''} = props;
   let domRef = useFocusableRef(ref);
@@ -104,10 +107,4 @@ function CloseButton(props: CloseButtonProps, ref: FocusableRef<HTMLButtonElemen
       <CrossIcon size={({S: 'L', M: 'XL', L: 'XXL', XL: 'XXXL'} as const)[props.size || 'M']} />
     </Button>
   );
-}
-
-/**
- * A CloseButton allows a user to dismiss a dialog.
- */
-let _CloseButton = forwardRef(CloseButton);
-export {_CloseButton as CloseButton};
+});

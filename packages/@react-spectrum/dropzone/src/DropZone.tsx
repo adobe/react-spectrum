@@ -36,7 +36,10 @@ let filterProps = (props) => {
   return otherProps;
 };
 
-function DropZone(props: SpectrumDropZoneProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A drop zone is an area into which one or multiple objects can be dragged and dropped.
+ */
+export const DropZone = React.forwardRef(function DropZone(props: SpectrumDropZoneProps, ref: DOMRef<HTMLDivElement>) {
   let {children, isFilled, replaceMessage, ...otherProps} = props;
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
@@ -86,10 +89,4 @@ function DropZone(props: SpectrumDropZoneProps, ref: DOMRef<HTMLDivElement>) {
       </RACDropZone>
     </Provider>
   );
-}
-
-/**
- * A drop zone is an area into which one or multiple objects can be dragged and dropped.
- */
-let _DropZone = React.forwardRef(DropZone);
-export {_DropZone as DropZone};
+});

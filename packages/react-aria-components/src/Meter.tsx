@@ -33,7 +33,10 @@ export interface MeterRenderProps {
 
 export const MeterContext = createContext<ContextValue<MeterProps, HTMLDivElement>>(null);
 
-function Meter(props: MeterProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A meter represents a quantity within a known range, or a fractional value.
+ */
+export const Meter = /*#__PURE__*/ (forwardRef as forwardRefType)(function Meter(props: MeterProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, MeterContext);
   let {
     value = 0,
@@ -67,10 +70,4 @@ function Meter(props: MeterProps, ref: ForwardedRef<HTMLDivElement>) {
       </LabelContext.Provider>
     </div>
   );
-}
-
-/**
- * A meter represents a quantity within a known range, or a fractional value.
- */
-const _Meter = /*#__PURE__*/ (forwardRef as forwardRefType)(Meter);
-export {_Meter as Meter};
+});

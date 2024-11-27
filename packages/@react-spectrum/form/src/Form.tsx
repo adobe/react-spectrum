@@ -44,7 +44,10 @@ const formPropNames = new Set([
   'onInvalid'
 ]);
 
-function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
+/**
+ * Forms allow users to enter data that can be submitted while providing alignment and styling for form fields.
+ */
+export const Form = React.forwardRef(function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
   props = useProviderProps(props);
   let {
     children,
@@ -104,10 +107,4 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
       </FormContext.Provider>
     </form>
   );
-}
-
-/**
- * Forms allow users to enter data that can be submitted while providing alignment and styling for form fields.
- */
-const _Form = React.forwardRef(Form);
-export {_Form as Form};
+});

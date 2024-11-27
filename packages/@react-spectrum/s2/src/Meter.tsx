@@ -101,7 +101,11 @@ const fillStyles = style<MeterStyleProps>({
   }
 });
 
-function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Meters are visual representations of a quantity or an achievement.
+ * Their progress is determined by user actions, rather than system actions.
+ */
+export const Meter = forwardRef(function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, MeterContext);
   let domRef = useDOMRef(ref);
 
@@ -141,11 +145,4 @@ function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
       )}
     </AriaMeter>
   );
-}
-
-/**
- * Meters are visual representations of a quantity or an achievement.
- * Their progress is determined by user actions, rather than system actions.
- */
-let _Meter = forwardRef(Meter);
-export {_Meter as Meter};
+});

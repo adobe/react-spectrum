@@ -37,7 +37,10 @@ export interface SpectrumColorPickerProps extends ValueBase<string | Color, Colo
   rounding?: 'default' | 'none' | 'full'
 }
 
-function ColorPicker(props: SpectrumColorPickerProps, ref: FocusableRef<HTMLButtonElement>) {
+/**
+ * A ColorPicker combines a swatch with a customizable popover for editing a color.
+ */
+export const ColorPicker = React.forwardRef(function ColorPicker(props: SpectrumColorPickerProps, ref: FocusableRef<HTMLButtonElement>) {
   let swatchRef = useRef(null);
   let domRef = useFocusableRef(ref);
   let labelId = useId();
@@ -114,10 +117,4 @@ function ColorPicker(props: SpectrumColorPickerProps, ref: FocusableRef<HTMLButt
       </DialogTrigger>
     </AriaColorPicker>
   );
-}
-
-/**
- * A ColorPicker combines a swatch with a customizable popover for editing a color.
- */
-let _ColorPicker = React.forwardRef(ColorPicker);
-export {_ColorPicker as ColorPicker};
+});

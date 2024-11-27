@@ -49,7 +49,11 @@ export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'className' |
 
 export const RadioGroupContext = createContext<ContextValue<RadioGroupProps, DOMRefValue<HTMLDivElement>>>(null);
 
-function RadioGroup(props: RadioGroupProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Radio groups allow users to select a single option from a list of mutually exclusive options.
+ * All possible options are exposed up front for users to compare.
+ */
+export const RadioGroup = /*#__PURE__*/ forwardRef(function RadioGroup(props: RadioGroupProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, RadioGroupContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);
@@ -132,11 +136,4 @@ function RadioGroup(props: RadioGroupProps, ref: DOMRef<HTMLDivElement>) {
       )}
     </AriaRadioGroup>
   );
-}
-
-/**
- * Radio groups allow users to select a single option from a list of mutually exclusive options.
- * All possible options are exposed up front for users to compare.
- */
-let _RadioGroup = /*#__PURE__*/ forwardRef(RadioGroup);
-export {_RadioGroup as RadioGroup};
+});
