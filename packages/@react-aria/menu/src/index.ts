@@ -15,7 +15,6 @@ export {useMenu} from './useMenu';
 export {useMenuItem} from './useMenuItem';
 export {useMenuSection} from './useMenuSection';
 export {useSubmenuTrigger} from './useSubmenuTrigger';
-export {getItemId, menuData} from './utils';
 
 export type {AriaMenuProps} from '@react-types/menu';
 export type {AriaMenuTriggerProps, MenuTriggerAria} from './useMenuTrigger';

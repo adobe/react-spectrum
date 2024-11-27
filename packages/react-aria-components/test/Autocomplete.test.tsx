@@ -21,6 +21,8 @@ interface AutocompleteItem {
 }
 
 let items: AutocompleteItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'}, {id: '3', name: 'Baz'}];
+let onAction = jest.fn();
+let onSelectionChange = jest.fn();
 
 let StaticMenu = (props) => (
   <Menu {...props}>
@@ -125,35 +127,62 @@ let ControlledAutocomplete = ({autocompleteProps = {}, inputProps = {}, children
 AriaAutocompleteTests({
   prefix: 'rac-static-menu',
   renderers: {
-    standard: ({autocompleteProps, inputProps, collectionProps}) => render(
-      <AutocompleteWrapper autocompleteProps={autocompleteProps} inputProps={inputProps}>
-        <StaticMenu {...collectionProps} />
+    standard: () => render(
+      <AutocompleteWrapper>
+        <StaticMenu />
       </AutocompleteWrapper>
     ),
-    links: ({autocompleteProps, inputProps, collectionProps}) => render(
-      <AutocompleteWrapper autocompleteProps={autocompleteProps} inputProps={inputProps}>
-        <MenuWithLinks {...collectionProps} />
+    links: () => render(
+      <AutocompleteWrapper>
+        <MenuWithLinks />
       </AutocompleteWrapper>
     ),
-    sections: ({autocompleteProps, inputProps, collectionProps}) => render(
-      <AutocompleteWrapper autocompleteProps={autocompleteProps} inputProps={inputProps}>
-        <MenuWithSections {...collectionProps} />
+    sections: () => render(
+      <AutocompleteWrapper>
+        <MenuWithSections />
       </AutocompleteWrapper>
     ),
-    controlled: ({autocompleteProps, inputProps, collectionProps}) => render(
-      <ControlledAutocomplete autocompleteProps={autocompleteProps} inputProps={inputProps}>
-        <StaticMenu {...collectionProps} />
+    controlled: () => render(
+      <ControlledAutocomplete>
+        <StaticMenu />
       </ControlledAutocomplete>
+    ),
+    itemActions: () => render(
+      <AutocompleteWrapper>
+        <StaticMenu onAction={onAction} />
+      </AutocompleteWrapper>
+    ),
+    multipleSelection: () => render(
+      <AutocompleteWrapper>
+        <StaticMenu selectionMode="multiple" onSelectionChange={onSelectionChange} />
+      </AutocompleteWrapper>
+    ),
+    disabledItems: () => render(
+      <AutocompleteWrapper>
+        <StaticMenu onAction={onAction} disabledKeys={['2']} />
+      </AutocompleteWrapper>
+    ),
+    defaultValue: () => render(
+      <AutocompleteWrapper autocompleteProps={{defaultInputValue: 'Ba'}}>
+        <StaticMenu />
+      </AutocompleteWrapper>
+    ),
+    customFiltering: () => render(
+      <AutocompleteWrapper autocompleteProps={{defaultFilter: () => true}}>
+        <StaticMenu />
+      </AutocompleteWrapper>
     )
-  }
+  },
+  actionListener: onAction,
+  selectionListener: onSelectionChange
 });
 
 AriaAutocompleteTests({
   prefix: 'rac-dynamic-menu',
   renderers: {
-    standard: ({autocompleteProps, inputProps, collectionProps}) => render(
-      <AutocompleteWrapper autocompleteProps={autocompleteProps} inputProps={inputProps}>
-        <DynamicMenu {...collectionProps} />
+    standard: () => render(
+      <AutocompleteWrapper>
+        <DynamicMenu />
       </AutocompleteWrapper>
     )
   }
@@ -162,26 +191,48 @@ AriaAutocompleteTests({
 AriaAutocompleteTests({
   prefix: 'rac-static-listbox',
   renderers: {
-    standard: ({autocompleteProps, inputProps, collectionProps}) => render(
-      <AutocompleteWrapper autocompleteProps={autocompleteProps} inputProps={inputProps}>
-        <StaticListbox {...collectionProps} />
+    standard: () => render(
+      <AutocompleteWrapper>
+        <StaticListbox />
       </AutocompleteWrapper>
     ),
-    links: ({autocompleteProps, inputProps, collectionProps}) => render(
-      <AutocompleteWrapper autocompleteProps={autocompleteProps} inputProps={inputProps}>
-        <ListBoxWithLinks {...collectionProps} />
+    links: () => render(
+      <AutocompleteWrapper>
+        <ListBoxWithLinks />
       </AutocompleteWrapper>
     ),
-    sections: ({autocompleteProps, inputProps, collectionProps}) => render(
-      <AutocompleteWrapper autocompleteProps={autocompleteProps} inputProps={inputProps}>
-        <ListBoxWithSections {...collectionProps} />
+    sections: () => render(
+      <AutocompleteWrapper>
+        <ListBoxWithSections />
       </AutocompleteWrapper>
     ),
-    controlled: ({autocompleteProps, inputProps, collectionProps}) => render(
-      <ControlledAutocomplete autocompleteProps={autocompleteProps} inputProps={inputProps}>
-        <StaticListbox {...collectionProps} />
+    controlled: () => render(
+      <ControlledAutocomplete>
+        <StaticListbox />
       </ControlledAutocomplete>
+    ),
+    multipleSelection: () => render(
+      <AutocompleteWrapper>
+        <StaticListbox selectionMode="multiple" onSelectionChange={onSelectionChange} />
+      </AutocompleteWrapper>
+    ),
+    disabledItems: () => render(
+      <AutocompleteWrapper>
+        <StaticListbox onAction={onAction} disabledKeys={['2']} />
+      </AutocompleteWrapper>
+    ),
+    defaultValue: () => render(
+      <AutocompleteWrapper autocompleteProps={{defaultInputValue: 'Ba'}}>
+        <StaticListbox />
+      </AutocompleteWrapper>
+    ),
+    customFiltering: () => render(
+      <AutocompleteWrapper autocompleteProps={{defaultFilter: () => true}}>
+        <StaticListbox />
+      </AutocompleteWrapper>
     )
   },
-  collectionType: 'listbox'
+  ariaPattern: 'listbox',
+  actionListener: onAction,
+  selectionListener: onSelectionChange
 });

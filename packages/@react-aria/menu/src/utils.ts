@@ -16,26 +16,7 @@ import {TreeState} from '@react-stately/tree';
 interface MenuData {
   onClose?: () => void,
   onAction?: (key: Key) => void,
-  shouldUseVirtualFocus?: boolean,
-  id: string
+  shouldUseVirtualFocus?: boolean
 }
 
 export const menuData = new WeakMap<TreeState<unknown>, MenuData>();
-
-function normalizeKey(key: Key): string {
-  if (typeof key === 'string') {
-    return key.replace(/\s*/g, '');
-  }
-
-  return '' + key;
-}
-
-export function getItemId<T>(state: TreeState<T>, itemKey: Key): string {
-  let data = menuData.get(state);
-
-  if (!data) {
-    throw new Error('Unknown menu');
-  }
-
-  return `${data.id}-option-${normalizeKey(itemKey)}`;
-}

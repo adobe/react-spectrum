@@ -12,7 +12,7 @@
 
 import {AriaMenuProps} from '@react-types/menu';
 import {DOMAttributes, KeyboardDelegate, KeyboardEvents, RefObject} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {menuData} from './utils';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableList} from '@react-aria/selection';
@@ -65,19 +65,16 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
     linkBehavior: 'override'
   });
 
-  let id = useId(props.id);
   menuData.set(state, {
     onClose: props.onClose,
     onAction: props.onAction,
-    shouldUseVirtualFocus: props.shouldUseVirtualFocus,
-    id
+    shouldUseVirtualFocus: props.shouldUseVirtualFocus
   });
 
   return {
     menuProps: mergeProps(domProps, {onKeyDown, onKeyUp}, {
       role: 'menu',
       ...listProps,
-      id,
       onKeyDown: (e) => {
         // don't clear the menu selected keys if the user is presses escape since escape closes the menu
         if (e.key !== 'Escape') {

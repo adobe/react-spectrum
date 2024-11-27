@@ -13,8 +13,8 @@
 import {DOMAttributes, DOMProps, FocusableElement, FocusEvents, HoverEvents, Key, KeyboardEvents, PressEvent, PressEvents, RefObject, RouterOptions} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useLinkProps, useRouter, useSlotId} from '@react-aria/utils';
 import {getItemCount} from '@react-stately/collections';
-import {getItemId, menuData} from './utils';
 import {isFocusVisible, useFocus, useHover, useKeyboard, usePress} from '@react-aria/interactions';
+import {menuData} from './utils';
 import {SelectionManager} from '@react-stately/selection';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableItem} from '@react-aria/selection';
@@ -166,10 +166,6 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let labelId = useSlotId();
   let descriptionId = useSlotId();
   let keyboardId = useSlotId();
-
-  if (data.shouldUseVirtualFocus) {
-    id = getItemId(state, key);
-  }
 
   let ariaProps = {
     id,
