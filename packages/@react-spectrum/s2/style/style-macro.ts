@@ -57,7 +57,7 @@ export function createSizingProperty<T extends CSSValue>(values: PropertyValueMa
         return [{[property]: value}, valueMap.get(value)!];
       });
     }
-    
+
     if (typeof value === 'number') {
       let cssValue = value === 0 ? '0px' : fn(value);
       return {default: [{[property]: cssValue}, generateName(value + valueMap.size)]};

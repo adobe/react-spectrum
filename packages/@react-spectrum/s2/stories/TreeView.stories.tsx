@@ -11,21 +11,20 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {categorizeArgTypes} from './utils';
 import {
+  ActionMenu,
   Content,
   Heading,
   IllustratedMessage,
   Link,
-  // ActionMenu,
-  // MenuItem,
+  MenuItem,
   Text,
   TreeView,
   TreeViewItem
 } from '../src';
-// import Add from '../s2wf-icons/S2_Icon_Add_20_N.svg';
-// import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
-// import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
+import {categorizeArgTypes} from './utils';
+import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
+import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import FileTxt from '../s2wf-icons/S2_Icon_FileText_20_N.svg';
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
@@ -68,6 +67,7 @@ const meta: Meta<typeof TreeView> = {
 
 export default meta;
 
+
 const TreeExampleStatic = (args) => (
   <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>
     <TreeView
@@ -79,85 +79,85 @@ const TreeExampleStatic = (args) => (
       <TreeViewItem id="Photos" textValue="Photos">
         <Text>Photos</Text>
         <Folder />
-        {/* <ActionGroup onAction={action('onActionGroup action')}>
-          <MenuItem key="edit">
+        <ActionMenu onAction={action('onActionGroup action')}>
+          <MenuItem id="edit">
             <Edit />
             <Text>Edit</Text>
           </MenuItem>
-          <MenuItem key="delete">
+          <MenuItem id="delete">
             <Delete />
             <Text>Delete</Text>
           </MenuItem>
-        </ActionGroup> */}
+        </ActionMenu>
       </TreeViewItem>
       <TreeViewItem id="projects" textValue="Projects">
         <Text>Projects</Text>
         <Folder />
-        {/* <ActionGroup onAction={action('onActionGroup action')}>
-          <MenuItem key="edit">
+        <ActionMenu onAction={action('onActionGroup action')}>
+          <MenuItem id="edit">
             <Edit />
             <Text>Edit</Text>
           </MenuItem>
-          <MenuItem key="delete">
+          <MenuItem id="delete">
             <Delete />
             <Text>Delete</Text>
           </MenuItem>
-        </ActionGroup> */}
+        </ActionMenu>
         <TreeViewItem id="projects-1" textValue="Projects-1">
           <Text>Projects-1</Text>
           <Folder />
-          {/* <ActionGroup onAction={action('onActionGroup action')}>
-            <MenuItem key="edit">
+          <ActionMenu onAction={action('onActionGroup action')}>
+            <MenuItem id="edit">
               <Edit />
               <Text>Edit</Text>
             </MenuItem>
-            <MenuItem key="delete">
+            <MenuItem id="delete">
               <Delete />
               <Text>Delete</Text>
             </MenuItem>
-          </ActionGroup> */}
+          </ActionMenu>
           <TreeViewItem id="projects-1A" textValue="Projects-1A">
             <Text>Projects-1A</Text>
             <FileTxt />
-            {/* <ActionGroup onAction={action('onActionGroup action')}>
-              <MenuItem key="edit">
+            <ActionMenu onAction={action('onActionGroup action')}>
+              <MenuItem id="edit">
                 <Edit />
                 <Text>Edit</Text>
               </MenuItem>
-              <MenuItem key="delete">
+              <MenuItem id="delete">
                 <Delete />
                 <Text>Delete</Text>
               </MenuItem>
-            </ActionGroup> */}
+            </ActionMenu>
           </TreeViewItem>
         </TreeViewItem>
         <TreeViewItem id="projects-2" textValue="Projects-2">
           <Text>Projects-2</Text>
           <FileTxt />
-          {/* <ActionGroup onAction={action('onActionGroup action')}>
-            <MenuItem key="edit">
+          <ActionMenu onAction={action('onActionGroup action')}>
+            <MenuItem id="edit">
               <Edit />
               <Text>Edit</Text>
             </MenuItem>
-            <MenuItem key="delete">
+            <MenuItem id="delete">
               <Delete />
               <Text>Delete</Text>
             </MenuItem>
-          </ActionGroup> */}
+          </ActionMenu>
         </TreeViewItem>
         <TreeViewItem id="projects-3" textValue="Projects-3">
           <Text>Projects-3</Text>
           <FileTxt />
-          {/* <ActionGroup onAction={action('onActionGroup action')}>
-            <MenuItem key="edit">
+          <ActionMenu onAction={action('onActionGroup action')}>
+            <MenuItem id="edit">
               <Edit />
               <Text>Edit</Text>
             </MenuItem>
-            <MenuItem key="delete">
+            <MenuItem id="delete">
               <Delete />
               <Text>Delete</Text>
             </MenuItem>
-          </ActionGroup> */}
+          </ActionMenu>
         </TreeViewItem>
       </TreeViewItem>
     </TreeView>
@@ -208,16 +208,16 @@ const TreeExampleDynamic = (args) => (
         <TreeViewItem childItems={item.childItems} textValue={item.name}>
           <Text>{item.name}</Text>
           {item.icon}
-          {/* <ActionGroup onAction={action('onActionGroup action')}>
-            <MenuItem key="edit">
+          <ActionMenu onAction={action('onActionGroup action')}>
+            <MenuItem id="edit">
               <Edit />
               <Text>Edit</Text>
             </MenuItem>
-            <MenuItem key="delete">
+            <MenuItem id="delete">
               <Delete />
               <Text>Delete</Text>
             </MenuItem>
-          </ActionGroup> */}
+          </ActionMenu>
         </TreeViewItem>
       )}
     </TreeView>
@@ -251,5 +251,39 @@ export const Empty = {
   args: {
     renderEmptyState,
     items: []
+  }
+};
+
+const TreeExampleWithLinks = (args) => (
+  <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>
+    <TreeView {...args} disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+      {(item) => (
+        <TreeViewItem href="https://adobe.com/" childItems={item.childItems} textValue={item.name}>
+          <Text>{item.name}</Text>
+          {item.icon}
+          <ActionMenu onAction={action('onActionGroup action')}>
+            <MenuItem id="edit">
+              <Edit />
+              <Text>Edit</Text>
+            </MenuItem>
+            <MenuItem id="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </MenuItem>
+          </ActionMenu>
+        </TreeViewItem>
+      )}
+    </TreeView>
+  </div>
+);
+
+export const WithLinks = {
+  ...Dynamic,
+  render: TreeExampleWithLinks,
+  name: 'Tree with links',
+  parameters: {
+    description: {
+      data: 'every tree item should link to adobe.com'
+    }
   }
 };

@@ -276,7 +276,11 @@ export interface TreeItemContentRenderProps extends ItemRenderProps {
   // What level the tree item has within the tree.
   level: number,
   // Whether the tree item's children have keyboard focus.
-  isFocusVisibleWithin: boolean
+  isFocusVisibleWithin: boolean,
+  // The state of the tree.
+  state: TreeState<unknown>,
+  // The unique id of the tree row.
+  id: Key
 }
 
 // The TreeItemContent is the one that accepts RenderProps because we would get much more complicated logic in TreeItem otherwise since we'd
@@ -350,8 +354,10 @@ export const UNSTABLE_TreeItem = /*#__PURE__*/ createBranchComponent('item', <T 
     level,
     selectionMode: state.selectionManager.selectionMode,
     selectionBehavior: state.selectionManager.selectionBehavior,
-    isFocusVisibleWithin
-  }), [states, isHovered, isFocusVisible, state.selectionManager, isExpanded, hasChildRows, level, isFocusVisibleWithin]);
+    isFocusVisibleWithin,
+    state,
+    id: item.key
+  }), [states, isHovered, isFocusVisible, state.selectionManager, isExpanded, hasChildRows, level, isFocusVisibleWithin, state, item.key]);
 
   let renderProps = useRenderProps({
     ...props,
