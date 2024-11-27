@@ -12,7 +12,10 @@ export interface ColorSwatchProps extends AriaColorSwatchProps, StyleRenderProps
 
 export const ColorSwatchContext = createContext<ContextValue<ColorSwatchProps, HTMLDivElement>>(null);
 
-function ColorSwatch(props: ColorSwatchProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A ColorSwatch displays a preview of a selected color.
+ */
+export const ColorSwatch = forwardRef(function ColorSwatch(props: ColorSwatchProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ColorSwatchContext);
   let {colorSwatchProps, color} = useColorSwatch(props);
   let renderProps = useRenderProps({
@@ -31,10 +34,4 @@ function ColorSwatch(props: ColorSwatchProps, ref: ForwardedRef<HTMLDivElement>)
       slot={props.slot || undefined}
       ref={ref} />
   );
-}
-
-/**
- * A ColorSwatch displays a preview of a selected color.
- */
-const _ColorSwatch = forwardRef(ColorSwatch);
-export {_ColorSwatch as ColorSwatch};
+});

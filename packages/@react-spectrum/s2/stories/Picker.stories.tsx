@@ -153,7 +153,26 @@ CustomWidth.parameters = {
 };
 
 export const ContextualHelpExample = (args: any) => (
-  <Picker {...args}>
+  <Picker
+    {...args}
+    contextualHelp={
+      <ContextualHelp>
+        <Heading>What is a ice cream?</Heading>
+        <Content>
+          <Text>
+            A combination of sugar, eggs, milk, and cream is cooked to make
+            a custard base. Then, flavorings are added, and this flavored
+            mixture is carefully churned and frozen to make ice cream.
+          </Text>
+        </Content>
+        <Footer>
+          <Link
+            isStandalone
+            href="https://en.wikipedia.org/wiki/Ice_cream"
+            target="_blank">Learn more about ice cream</Link>
+        </Footer>
+      </ContextualHelp>
+    }>
     <PickerItem>Chocolate</PickerItem>
     <PickerItem>Mint</PickerItem>
     <PickerItem>Strawberry</PickerItem>
@@ -163,60 +182,5 @@ export const ContextualHelpExample = (args: any) => (
 );
 
 ContextualHelpExample.args = {
-  label: 'Ice cream flavor',
-  contextualHelp: (
-    <ContextualHelp>
-      <Heading>What is a ice cream?</Heading>
-      <Content>
-        <Text>
-          A combination of sugar, eggs, milk, and cream is cooked to make
-          a custard base. Then, flavorings are added, and this flavored
-          mixture is carefully churned and frozen to make ice cream.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Ice_cream"
-          target="_blank">Learn more about ice cream</Link>
-      </Footer>
-    </ContextualHelp>
-  )
-};
-
-ContextualHelpExample.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `
-<Picker
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>What is a ice cream?</Heading>
-      <Content>
-        <Text>
-          A combination of sugar, eggs, milk, and cream is cooked to make
-          a custard base. Then, flavorings are added, and this flavored
-          mixture is carefully churned and frozen to make ice cream.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Ice_cream"
-          target="_blank">Learn more about ice cream</Link>
-      </Footer>
-    </ContextualHelp>
-  }
-  label="Ice cream flavor"
-/>
-  <PickerItem>Chocolate</PickerItem>
-  <PickerItem>Mint</PickerItem>
-  <PickerItem>Strawberry</PickerItem>
-  <PickerItem>Vanilla</PickerItem>
-  <PickerItem>Chocolate Chip Cookie Dough</PickerItem>
-</Picker>`;
-      }
-    }
-  }
+  label: 'Ice cream flavor'
 };

@@ -23,7 +23,11 @@ let sizeMap = {
   L: 'large'
 };
 
-function Divider(props: SpectrumDividerProps, ref: DOMRef) {
+/**
+ * Dividers bring clarity to a layout by grouping and dividing content in close proximity.
+ * They can also be used to establish rhythm and hierarchy.
+ */
+export const Divider = React.forwardRef(function Divider(props: SpectrumDividerProps, ref: DOMRef) {
   props = useSlotProps(props, 'divider');
   let {
     size = 'L',
@@ -63,11 +67,4 @@ function Divider(props: SpectrumDividerProps, ref: DOMRef) {
       ref={domRef}
       {...separatorProps} />
   );
-}
-
-/**
- * Dividers bring clarity to a layout by grouping and dividing content in close proximity.
- * They can also be used to establish rhythm and hierarchy.
- */
-let _Divider = React.forwardRef(Divider);
-export {_Divider as Divider};
+});

@@ -28,7 +28,10 @@ let iconMap = {
   negative: AlertSmall
 };
 
-function Tooltip(props: SpectrumTooltipProps, ref: DOMRef) {
+/**
+ * Display container for Tooltip content. Has a directional arrow dependent on its placement.
+ */
+export const Tooltip = React.forwardRef(function Tooltip(props: SpectrumTooltipProps, ref: DOMRef) {
   let {ref: overlayRef, arrowProps, state, arrowRef, ...tooltipProviderProps} = useContext(TooltipContext);
   let defaultRef = useRef(null);
   overlayRef = overlayRef || defaultRef;
@@ -77,10 +80,4 @@ function Tooltip(props: SpectrumTooltipProps, ref: DOMRef) {
       <span {...arrowProps} ref={arrowRef} className={classNames(styles, 'spectrum-Tooltip-tip')} />
     </div>
   );
-}
-
-/**
- * Display container for Tooltip content. Has a directional arrow dependent on its placement.
- */
-let _Tooltip = React.forwardRef(Tooltip);
-export {_Tooltip as Tooltip};
+});

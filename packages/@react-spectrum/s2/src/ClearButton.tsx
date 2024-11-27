@@ -33,7 +33,7 @@ interface ClearButtonStyleProps {
 interface ClearButtonRenderProps extends ButtonRenderProps, ClearButtonStyleProps {}
 interface ClearButtonProps extends ButtonProps, ClearButtonStyleProps {}
 
-function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+export const ClearButton = forwardRef(function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   let domRef = useFocusableRef(ref);
 
   return (
@@ -60,7 +60,4 @@ function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElemen
       <CrossIcon size={props.size || 'M'} />
     </Button>
   );
-}
-
-let _ClearButton = forwardRef(ClearButton);
-export {_ClearButton as ClearButton};
+});

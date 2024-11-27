@@ -50,7 +50,8 @@ export interface SpectrumTagGroupProps<T> extends Omit<AriaTagGroupProps<T>, 'se
   maxRows?: number
 }
 
-function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
+/** Tags allow users to categorize content. They can represent keywords or people, and are grouped to describe an item or a search request. */
+export const TagGroup = React.forwardRef(function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
   let {
@@ -274,8 +275,4 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
       </Field>
     </FocusScope>
   );
-}
-
-/** Tags allow users to categorize content. They can represent keywords or people, and are grouped to describe an item or a search request. */
-const _TagGroup = React.forwardRef(TagGroup) as <T>(props: SpectrumTagGroupProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
-export {_TagGroup as TagGroup};
+}) as <T>(props: SpectrumTagGroupProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;

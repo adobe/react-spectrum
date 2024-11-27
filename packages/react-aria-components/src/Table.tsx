@@ -214,7 +214,7 @@ export interface ResizableTableContainerProps extends DOMProps, ScrollableProps<
   onResizeEnd?: (widths: Map<Key, ColumnSize>) => void
 }
 
-function ResizableTableContainer(props: ResizableTableContainerProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ResizableTableContainer = forwardRef(function ResizableTableContainer(props: ResizableTableContainerProps, ref: ForwardedRef<HTMLDivElement>) {
   let containerRef = useObjectRef(ref);
   let tableRef = useRef<HTMLTableElement>(null);
   let scrollRef = useRef<HTMLElement | null>(null);
@@ -267,10 +267,7 @@ function ResizableTableContainer(props: ResizableTableContainerProps, ref: Forwa
       </ResizableTableContainerContext.Provider>
     </div>
   );
-}
-
-const _ResizableTableContainer = forwardRef(ResizableTableContainer);
-export {_ResizableTableContainer as ResizableTableContainer};
+});
 
 export const TableContext = createContext<ContextValue<TableProps, HTMLTableElement>>(null);
 export const TableStateContext = createContext<TableState<any> | null>(null);
@@ -317,7 +314,11 @@ export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, Sty
   dragAndDropHooks?: DragAndDropHooks
 }
 
-function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
+/**
+ * A table displays data in rows and columns and enables a user to navigate its contents via directional navigation keys,
+ * and optionally supports row selection and sorting.
+ */
+export const Table = forwardRef(function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
   [props, ref] = useContextProps(props, ref, TableContext);
 
   // Separate selection state so we have access to it from collection components via useTableOptions.
@@ -342,7 +343,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
       {collection => <TableInner props={props} forwardedRef={ref} selectionState={selectionState} collection={collection} />}
     </CollectionBuilder>
   );
-}
+});
 
 interface TableInnerProps {
   props: TableProps,
@@ -489,13 +490,6 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
     </Provider>
   );
 }
-
-/**
- * A table displays data in rows and columns and enables a user to navigate its contents via directional navigation keys,
- * and optionally supports row selection and sorting.
- */
-const _Table = forwardRef(Table);
-export {_Table as Table};
 
 function useElementType<E extends keyof JSX.IntrinsicElements>(element: E): E | 'div' {
   let {isVirtualized} = useContext(CollectionRendererContext);
@@ -802,7 +796,7 @@ interface ColumnResizerContextValue {
 
 const ColumnResizerContext = createContext<ColumnResizerContextValue | null>(null);
 
-function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ColumnResizer = forwardRef(function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivElement>) {
   let layoutState = useContext(TableColumnResizeStateContext);
   if (!layoutState) {
     throw new Error('Wrap your <Table> in a <ResizableTableContainer> to enable column resizing');
@@ -891,10 +885,7 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
       {isResizing && isMouseDown && ReactDOM.createPortal(<div style={{position: 'fixed', top: 0, left: 0, bottom: 0, right: 0, cursor}} />, document.body)}
     </div>
   );
-}
-
-const _ColumnResizer = forwardRef(ColumnResizer);
-export {_ColumnResizer as ColumnResizer};
+});
 
 export interface TableBodyRenderProps {
   /**
