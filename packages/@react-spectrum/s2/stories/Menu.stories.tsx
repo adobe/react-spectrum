@@ -52,29 +52,10 @@ type Story = StoryObj<typeof CombinedMenu>;
 
 export const Example: Story = {
   render: (args) => {
-    let {
-      trigger,
-      isOpen,
-      onOpenChange,
-      defaultOpen,
-      align,
-      direction,
-      shouldFlip,
-      ...menuProps
-    } = args;
-    let triggerProps = {
-      trigger,
-      isOpen,
-      onOpenChange,
-      defaultOpen,
-      align,
-      direction,
-      shouldFlip
-    };
     return (
-      <MenuTrigger {...triggerProps}>
+      <MenuTrigger {...args}>
         <Button aria-label="Actions for selected resource"><NewIcon /></Button>
-        <Menu {...menuProps}>
+        <Menu {...args}>
           <MenuItem>Favorite</MenuItem>
           <MenuItem>Edit</MenuItem>
           <MenuItem>Delete</MenuItem>
@@ -91,55 +72,12 @@ export const Example: Story = {
   }
 };
 
-Example.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `<MenuTrigger>
-  <Button aria-label="Actions for selected resource"><NewIcon /></Button>
-  <Menu>
-    <MenuItem>Favorite</MenuItem>
-    <MenuItem>Edit</MenuItem>
-    <MenuItem>Delete</MenuItem>
-    <SubmenuTrigger>
-      <MenuItem>Share</MenuItem>
-      <Menu>
-        <MenuItem>SMS</MenuItem>
-        <MenuItem>Email</MenuItem>
-      </Menu>
-    </SubmenuTrigger>
-  </Menu>
-</MenuTrigger>`;
-      }
-    }
-  }
-};
-
 export const KeyboardShortcuts: Story = {
   render: (args) => {
-    let {
-      trigger,
-      isOpen,
-      onOpenChange,
-      defaultOpen,
-      align,
-      direction,
-      shouldFlip,
-      ...menuProps
-    } = args;
-    let triggerProps = {
-      trigger,
-      isOpen,
-      onOpenChange,
-      defaultOpen,
-      align,
-      direction,
-      shouldFlip
-    };
     return (
-      <MenuTrigger {...triggerProps}>
+      <MenuTrigger {...args}>
         <Button aria-label="Help"><NewIcon /></Button>
-        <Menu {...menuProps} disabledKeys={['copy']}>
+        <Menu {...args} disabledKeys={['copy']}>
           <MenuItem id="cut" textValue="Cut"><Text slot="label">Cut</Text><Keyboard>⌘ Cmd + X</Keyboard></MenuItem>
           <MenuItem id="copy" textValue="Copy"><Text slot="label">Copy</Text><Keyboard>⌘ Cmd + C</Keyboard></MenuItem>
           <MenuItem id="paste" textValue="Paste"><Text slot="label">Paste</Text><Keyboard>⌘ Cmd + V</Keyboard></MenuItem>
@@ -151,29 +89,10 @@ export const KeyboardShortcuts: Story = {
 
 export const PublishAndExport: Story = {
   render: (args) => {
-    let {
-      trigger,
-      isOpen,
-      onOpenChange,
-      defaultOpen,
-      align,
-      direction,
-      shouldFlip,
-      ...menuProps
-    } = args;
-    let triggerProps = {
-      trigger,
-      isOpen,
-      onOpenChange,
-      defaultOpen,
-      align,
-      direction,
-      shouldFlip
-    };
     return (
-      <MenuTrigger {...triggerProps}>
+      <MenuTrigger {...args}>
         <Button variant="accent">Publish</Button>
-        <Menu {...menuProps}>
+        <Menu {...args}>
           <MenuSection>
             <Header>
               <Heading>Publish and export</Heading>
@@ -238,73 +157,6 @@ export const PublishAndExport: Story = {
   }
 };
 
-PublishAndExport.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `<MenuTrigger {...triggerProps}>
-  <Button aria-label="Share menu"><NewIcon /></Button>
-  <Menu>
-    <MenuSection>
-      <Header>
-        <Heading>Publish and export</Heading>
-        <Text slot="description">Social media, other formats</Text>
-      </Header>
-      <MenuItem id="quick-export" textValue="quick export">
-        <ImgIcon />
-        <Text slot="label">Quick Export</Text>
-        <Text slot="description">Share a low-res snapshot.</Text>
-      </MenuItem>
-      <SubmenuTrigger>
-        <MenuItem id="open-in" textValue="open a copy">
-          <CopyIcon />
-          <Text slot="label">Open a copy</Text>
-          <Text slot="description">Illustrator for iPad or desktop</Text>
-        </MenuItem>
-        <Menu selectionMode="single">
-          <MenuSection>
-            <Header>
-              <Heading>Open a copy in</Heading>
-            </Header>
-            <MenuItem id="ipad" textValue="illustrator for ipad">
-              <DeviceTabletIcon />
-              <Text slot="label">Illustrator for iPad</Text>
-            </MenuItem>
-            <MenuItem id="desktop" textValue="illustrator for desktop">
-              <DeviceDesktopIcon />
-              <Text slot="label">Illustrator for desktop</Text>
-            </MenuItem>
-          </MenuSection>
-        </Menu>
-      </SubmenuTrigger>
-    </MenuSection>
-    <MenuSection>
-      <Header>
-        <Heading>Menu section header</Heading>
-        <Text slot="description">Menu section description</Text>
-      </Header>
-      <MenuItem id="share" href="https://adobe.com/" target="_blank" textValue="share link">
-        <CommentTextIcon />
-        <Text slot="label">Share link</Text>
-        <Text slot="description">Enable comments and downloads</Text>
-      </MenuItem>
-      <MenuItem id="preview" textValue="preview timelapse">
-        <ClockPendingIcon />
-        <Text slot="label">Preview Timelapse</Text>
-      </MenuItem>
-      <MenuItem id="livestream" textValue="start streaming">
-        <CommunityIcon />
-        <Text slot="label">Livestream</Text>
-        <Text slot="description">Start streaming</Text>
-      </MenuItem>
-    </MenuSection>
-  </Menu>
-</MenuTrigger>`;
-      }
-    }
-  }
-};
-
 const normalUrl = new URL(
   './assets/normal.png?as=png',
   import.meta.url
@@ -322,29 +174,10 @@ const screenUrl = new URL(
 
 export const BlendModes: Story = {
   render: (args) => {
-    let {
-      trigger,
-      isOpen,
-      onOpenChange,
-      defaultOpen,
-      align,
-      direction,
-      shouldFlip,
-      ...menuProps
-    } = args;
-    let triggerProps = {
-      trigger,
-      isOpen,
-      onOpenChange,
-      defaultOpen,
-      align,
-      direction,
-      shouldFlip
-    };
     return (
-      <MenuTrigger {...triggerProps}>
+      <MenuTrigger {...args}>
         <Button aria-label="Choose blend mode"><NewIcon /></Button>
-        <Menu {...menuProps}>
+        <Menu {...args}>
           <MenuItem id="normal" textValue="normal">
             <Image src={normalUrl.href} alt="normal hot airballoon photo" />
             <Text slot="label">Normal</Text>
@@ -383,29 +216,10 @@ let items: IExampleItem[] = [
 ];
 export const DynamicExample: Story = {
   render: (args) => {
-    let {
-      trigger,
-      isOpen,
-      onOpenChange,
-      defaultOpen,
-      align,
-      direction,
-      shouldFlip,
-      ...menuProps
-    } = args;
-    let triggerProps = {
-      trigger,
-      isOpen,
-      onOpenChange,
-      defaultOpen,
-      align,
-      direction,
-      shouldFlip
-    };
     return (
-      <MenuTrigger {...triggerProps}>
+      <MenuTrigger {...args}>
         <Button aria-label="Actions"><More /></Button>
-        <Menu {...menuProps}>
+        <Menu {...args}>
           {function renderItem(arg) {
             let item = arg as IExampleItem;
             if (item.children) {
@@ -428,71 +242,13 @@ export const DynamicExample: Story = {
   }
 };
 
-DynamicExample.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `
-let items = [
-  {id: 'view', label: 'View', children: [
-    {id: 'grid', label: 'Grid'},
-    {id: 'rulers', label: 'Rulers'},
-    {id: 'tasks', label: 'Contextual task bar'},
-    {id: 'snap', label: 'Snap'}
-  ]},
-  {id: 'export', label: 'Export as...'},
-  {id: 'import', label: 'Import...'}
-];
-
-<MenuTrigger>
-  <Button aria-label="Actions"><NewIcon /></Button>
-  <Menu items={items}>
-    {function renderItem(arg) {
-      let item = arg;
-      if (item.children) {
-        return (
-          <SubmenuTrigger>
-            <MenuItem>{item.label}</MenuItem>
-            <Menu items={item.children} selectionMode="multiple">{renderItem}</Menu>
-          </SubmenuTrigger>
-        );
-      } else {
-        return <MenuItem>{item.label}</MenuItem>;
-      }
-    }}
-  </Menu>
-</MenuTrigger>`;
-      }
-    }
-  }
-};
-
 export const SelectionGroups = (args) => {
-  let {
-    trigger,
-    isOpen,
-    onOpenChange,
-    defaultOpen,
-    align,
-    direction,
-    shouldFlip,
-    ...menuProps
-  } = args;
-  let triggerProps = {
-    trigger,
-    isOpen,
-    onOpenChange,
-    defaultOpen,
-    align,
-    direction,
-    shouldFlip
-  };
   let [group1, setGroup1] = useState<Selection>(new Set([1]));
   let [group2, setGroup2] = useState<Selection>(new Set());
   return (
-    <MenuTrigger {...triggerProps}>
+    <MenuTrigger {...args}>
       <Button aria-label="Text actions"><TextIcon /></Button>
-      <Menu {...menuProps}>
+      <Menu {...args}>
         <MenuSection>
           <Header>
             <Heading>Clipboard</Heading>

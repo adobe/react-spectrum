@@ -73,39 +73,6 @@ ContextualHelpExample.args = {
   )
 };
 
-ContextualHelpExample.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `
-<TextField
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>
-        What is a segment?
-      </Heading>
-      <Content>
-        <Text>
-          Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          href="https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/administering/personalization/campaign-segmentation"
-          isStandalone
-          target="_blank">
-          Learn more about segments
-        </Link>
-      </Footer>
-    </ContextualHelp>
-  }
-  label="Segment"
-/>`;
-      }
-    }
-  }
-};
-
 export const TextAreaExample = (args: any) => <TextArea {...args} />;
 TextAreaExample.args = {
   label: 'Comment'

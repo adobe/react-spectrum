@@ -17,7 +17,10 @@ export interface SpectrumColorEditorProps {
   hideAlphaChannel?: boolean
 }
 
-function ColorEditor(props: SpectrumColorEditorProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * ColorEditor provides a default UI for editing colors within a ColorPicker.
+ */
+export const ColorEditor = React.forwardRef(function ColorEditor(props: SpectrumColorEditorProps, ref: DOMRef<HTMLDivElement>) {
   let [format, setFormat] = useState<ColorSpace | 'hex'>('hex');
   let domRef = useDOMRef(ref);
   let formatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/color');
@@ -54,10 +57,4 @@ function ColorEditor(props: SpectrumColorEditorProps, ref: DOMRef<HTMLDivElement
       </div>
     </div>
   );
-}
-
-/**
- * ColorEditor provides a default UI for editing colors within a ColorPicker.
- */
-let _ColorEditor = React.forwardRef(ColorEditor);
-export {_ColorEditor as ColorEditor};
+});

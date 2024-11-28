@@ -32,7 +32,7 @@ export interface SliderBaseProps<T = number[]> extends SpectrumBarSliderBase<T> 
   style?: CSSProperties
 }
 
-function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
+export const SliderBase = React.forwardRef(function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {
     isDisabled,
@@ -192,7 +192,4 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
       }
     </div>
   );
-}
-
-const _SliderBase = React.forwardRef(SliderBase);
-export {_SliderBase as SliderBase};
+});

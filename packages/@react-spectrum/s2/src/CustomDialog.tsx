@@ -55,7 +55,10 @@ const dialogStyle = style({
   maxSize: '[inherit]'
 }, getAllowedOverrides({height: true}));
 
-function CustomDialog(props: CustomDialogProps, ref: DOMRef) {
+/**
+ * A CustomDialog is a floating window with a custom layout.
+ */
+export const CustomDialog = forwardRef(function CustomDialog(props: CustomDialogProps, ref: DOMRef) {
   let {
     size,
     isDismissible,
@@ -80,10 +83,4 @@ function CustomDialog(props: CustomDialogProps, ref: DOMRef) {
       </RACDialog>
     </Modal>
   );
-}
-
-/**
- * A CustomDialog is a floating window with a custom layout.
- */
-let _CustomDialog = forwardRef(CustomDialog);
-export {_CustomDialog as CustomDialog};
+});

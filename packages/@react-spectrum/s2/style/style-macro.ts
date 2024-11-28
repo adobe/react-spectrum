@@ -57,7 +57,7 @@ export function createSizingProperty<T extends CSSValue>(values: PropertyValueMa
         return [{[property]: value}, valueMap.get(value)!];
       });
     }
-    
+
     if (typeof value === 'number') {
       let cssValue = value === 0 ? '0px' : fn(value);
       return {default: [{[property]: cssValue}, generateName(value + valueMap.size)]};
@@ -630,6 +630,14 @@ function getStaticClassName(rules: Rule[]): string {
 }
 
 export function raw(this: MacroContext | void, css: string, layer = '_.a') {
+  // Check if `this` is undefined, which means style was not called as a macro but as a normal function.
+  // We also check if this is globalThis, which happens in non-strict mode bundles.
+  // Also allow style to be called as a normal function in tests.
+  // @ts-ignore
+  // eslint-disable-next-line
+  if ((this == null || this === globalThis) && process.env.NODE_ENV !== 'test') {
+    throw new Error('The raw macro must be imported with {type: "macro"}.');
+  }
   let className = generateArbitraryValueSelector(css, true);
   css = `@layer ${layer} {
   .${className} {
@@ -646,6 +654,14 @@ export function raw(this: MacroContext | void, css: string, layer = '_.a') {
 }
 
 export function keyframes(this: MacroContext | void, css: string) {
+  // Check if `this` is undefined, which means style was not called as a macro but as a normal function.
+  // We also check if this is globalThis, which happens in non-strict mode bundles.
+  // Also allow style to be called as a normal function in tests.
+  // @ts-ignore
+  // eslint-disable-next-line
+  if ((this == null || this === globalThis) && process.env.NODE_ENV !== 'test') {
+    throw new Error('The keyframes macro must be imported with {type: "macro"}.');
+  }
   let name = generateArbitraryValueSelector(css, true);
   css = `@keyframes ${name} {
   ${css}

@@ -16,7 +16,10 @@ import {KeyboardProps} from '@react-types/text';
 import React, {forwardRef} from 'react';
 import {useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 
-function Keyboard(props: KeyboardProps, ref: DOMRef) {
+/**
+ * Keyboard represents text that specifies a keyboard command.
+ */
+export const Keyboard = forwardRef(function Keyboard(props: KeyboardProps, ref: DOMRef) {
   props = useSlotProps(props, 'keyboard');
   let {
     children,
@@ -30,10 +33,4 @@ function Keyboard(props: KeyboardProps, ref: DOMRef) {
       {children}
     </kbd>
   );
-}
-
-/**
- * Keyboard represents text that specifies a keyboard command.
- */
-const _Keyboard = forwardRef(Keyboard);
-export {_Keyboard as Keyboard};
+});

@@ -241,7 +241,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       }
     };
 
-    // If allowsDifferentPressOrigin, make selection happen on pressUp (e.g. open menu on press down, selection on menu item happens on press up.)
+    // If allowsDifferentPressOrigin and interacting with mouse, make selection happen on pressUp (e.g. open menu on press down, selection on menu item happens on press up.)
     // Otherwise, have selection happen onPress (prevents listview row selection when clicking on interactable elements in the row)
     if (!allowsDifferentPressOrigin) {
       itemPressProps.onPress = (e) => {
@@ -257,12 +257,16 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       };
     } else {
       itemPressProps.onPressUp = hasPrimaryAction ? undefined : (e) => {
-        if (e.pointerType !== 'keyboard' && allowsSelection) {
+        if (e.pointerType === 'mouse' && allowsSelection) {
           onSelect(e);
         }
       };
 
-      itemPressProps.onPress = hasPrimaryAction ? performAction : undefined;
+      itemPressProps.onPress = hasPrimaryAction ? performAction : (e) => {
+        if (e.pointerType !== 'keyboard' && e.pointerType !== 'mouse' && allowsSelection) {
+          onSelect(e);
+        }
+      };
     }
   } else {
     itemPressProps.onPressStart = (e) => {

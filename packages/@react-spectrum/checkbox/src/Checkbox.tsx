@@ -26,7 +26,11 @@ import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useToggleState} from '@react-stately/toggle';
 
-function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
+/**
+ * Checkboxes allow users to select multiple items from a list of individual items,
+ * or to mark one individual item as selected.
+ */
+export const Checkbox = forwardRef(function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
   let originalProps = props;
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef(ref, inputRef);
@@ -115,10 +119,4 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
       )}
     </label>
   );
-}
-/**
- * Checkboxes allow users to select multiple items from a list of individual items,
- * or to mark one individual item as selected.
- */
-let _Checkbox = forwardRef(Checkbox);
-export {_Checkbox as Checkbox};
+});

@@ -83,7 +83,11 @@ const link = style<LinkRenderProps & LinkStyleProps & {isSkeleton: boolean}>({
   disableTapHighlight: true
 }, getAllowedOverrides());
 
-function Link(props: LinkProps, ref: FocusableRef<HTMLAnchorElement>) {
+/**
+ * Links allow users to navigate to a different location.
+ * They can be presented inline inside a paragraph or as standalone text.
+ */
+export const Link = /*#__PURE__*/ forwardRef(function Link(props: LinkProps, ref: FocusableRef<HTMLAnchorElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, LinkContext);
   let {variant = 'primary', staticColor, isQuiet, isStandalone, UNSAFE_style, UNSAFE_className = '', styles, children} = props;
 
@@ -107,11 +111,4 @@ function Link(props: LinkProps, ref: FocusableRef<HTMLAnchorElement>) {
       {children}
     </RACLink>
   );
-}
-
-/**
- * Links allow users to navigate to a different location.
- * They can be presented inline inside a paragraph or as standalone text.
- */
-const _Link = /*#__PURE__*/ forwardRef(Link);
-export {_Link as Link};
+});

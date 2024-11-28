@@ -42,7 +42,10 @@ export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className'
 
 export const SearchFieldContext = createContext<ContextValue<SearchFieldProps, TextFieldRef>>(null);
 
-function SearchField(props: SearchFieldProps, ref: Ref<TextFieldRef>) {
+/**
+ * A SearchField is a text field designed for searches.
+ */
+export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(props: SearchFieldProps, ref: Ref<TextFieldRef>) {
   [props, ref] = useSpectrumContextProps(props, ref, SearchFieldContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);
@@ -151,10 +154,4 @@ function SearchField(props: SearchFieldProps, ref: Ref<TextFieldRef>) {
       </>)}
     </AriaSearchField>
   );
-}
-
-/**
- * A SearchField is a text field designed for searches.
- */
-let _SearchField = /*#__PURE__*/ forwardRef(SearchField);
-export {_SearchField as SearchField};
+});
