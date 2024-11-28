@@ -27,7 +27,7 @@ import {
   UNSTABLE_DefaultCollectionRenderer
 } from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
-import {Collection, DOMRef, DOMRefValue, Key, Node, Orientation, RefObject} from '@react-types/shared';
+import {Collection, DOMRef, DOMRefValue, FocusableRef, FocusableRefValue, Key, Node, Orientation, RefObject} from '@react-types/shared';
 import {createContext, forwardRef, Fragment, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
@@ -39,8 +39,7 @@ import {Text, TextContext} from './Content';
 import {useControlledState} from '@react-stately/utils';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useEffectEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
-import {useLocale} from '@react-aria/i18n';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'children'>, UnsafeStyles {
@@ -74,7 +73,7 @@ export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'sty
 }
 
 export const TabsContext = createContext<ContextValue<TabsProps, DOMRefValue<HTMLDivElement>>>(null);
-const InternalTabsContext = createContext<TabsProps>({});
+const InternalTabsContext = createContext<TabsProps & {onFocus:() => void, pickerRef?: FocusableRef<HTMLButtonElement>}>({onFocus: () => {}});
 
 const tabs = style({
   display: 'flex',
@@ -101,6 +100,7 @@ export const Tabs = forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLD
   } = props;
   let domRef = useDOMRef(ref);
   let [value, setValue] = useControlledState(props.selectedKey, props.defaultSelectedKey ?? null!, props.onSelectionChange);
+  let pickerRef = useRef<FocusableRefValue<HTMLButtonElement>>(null);
 
   return (
     <Provider
@@ -112,7 +112,9 @@ export const Tabs = forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLD
           disabledKeys,
           selectedKey: value,
           onSelectionChange: setValue,
-          iconOnly
+          iconOnly,
+          onFocus: () => pickerRef.current?.focus(),
+          pickerRef
         }]
       ]}>
       <CollapsingCollection containerRef={domRef}>
@@ -168,7 +170,7 @@ const tablist = style({
 });
 
 export function TabList<T extends object>(props: TabListProps<T>) {
-  let {density, isDisabled, disabledKeys, orientation, iconOnly} = useContext(InternalTabsContext) ?? {};
+  let {density, isDisabled, disabledKeys, orientation, iconOnly, onFocus} = useContext(InternalTabsContext) ?? {};
   let {showItems} = useContext(CollapseContext) ?? {};
   let state = useContext(TabListStateContext);
   let [selectedTab, setSelectedTab] = useState<HTMLElement | undefined>(undefined);
@@ -188,6 +190,14 @@ export function TabList<T extends object>(props: TabListProps<T>) {
       }
     }
   }, [tablistRef, state?.selectedItem?.key, showItems]);
+
+  let prevFocused = useRef<boolean | undefined>(false);
+  useLayoutEffect(() => {
+    if (!showItems && !prevFocused.current && state?.selectionManager.isFocused) {
+      onFocus();
+    }
+    prevFocused.current = state?.selectionManager.isFocused;
+  }, [state?.selectionManager.isFocused, state?.selectionManager.focusedKey, showItems]);
 
   return (
     <div
@@ -459,7 +469,7 @@ let HiddenTabs = function (props: {
 let TabsMenu = (props: {items: Array<Node<any>>, onSelectionChange: TabsProps['onSelectionChange']}) => {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {items} = props;
-  let {density, onSelectionChange, selectedKey, isDisabled, disabledKeys} = useContext(InternalTabsContext);
+  let {density, onSelectionChange, selectedKey, isDisabled, disabledKeys, pickerRef} = useContext(InternalTabsContext);
   let state = useContext(TabListStateContext);
   let allKeysDisabled = useMemo(() => {
     return isAllTabsDisabled(state?.collection, disabledKeys ? new Set(disabledKeys) : new Set());
@@ -478,6 +488,7 @@ let TabsMenu = (props: {items: Array<Node<any>>, onSelectionChange: TabsProps['o
             }
           }})({density})}>
         <Picker
+          ref={pickerRef ? pickerRef : undefined}
           isDisabled={isDisabled || allKeysDisabled}
           density={density!}
           items={items}
