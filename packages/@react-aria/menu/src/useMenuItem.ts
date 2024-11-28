@@ -110,7 +110,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     'aria-haspopup': hasPopup,
     onPressStart: pressStartProp,
     onPressUp: pressUpProp,
-    onPress,
+    onPress: pressProp,
     onPressChange,
     onPressEnd,
     onHoverStart: hoverStartProp,
@@ -196,18 +196,32 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     pressStartProp?.(e);
   };
 
-  let onPressUp = (e: PressEvent) => {
-    if (e.pointerType !== 'keyboard') {
-      performAction(e);
+  let maybeClose = () => {
+    // Pressing a menu item should close by default in single selection mode but not multiple
+    // selection mode, except if overridden by the closeOnSelect prop.
+    if (!isTrigger && onClose && (closeOnSelect ?? (selectionManager.selectionMode !== 'multiple' || selectionManager.isLink(key)))) {
+      onClose();
+    }
+  };
 
-      // Pressing a menu item should close by default in single selection mode but not multiple
-      // selection mode, except if overridden by the closeOnSelect prop.
-      if (!isTrigger && onClose && (closeOnSelect ?? (selectionManager.selectionMode !== 'multiple' || selectionManager.isLink(key)))) {
-        onClose();
-      }
+  let onPressUp = (e: PressEvent) => {
+    // If interacting with mouse, allow the user to mouse down on the trigger button,
+    // drag, and release over an item (matching native behavior).
+    if (e.pointerType === 'mouse') {
+      performAction(e);
+      maybeClose();
     }
 
     pressUpProp?.(e);
+  };
+
+  let onPress = (e: PressEvent) => {
+    if (e.pointerType !== 'keyboard' && e.pointerType !== 'mouse') {
+      performAction(e);
+      maybeClose();
+    }
+
+    pressProp?.(e);
   };
 
   let {itemProps, isFocused} = useSelectableItem({

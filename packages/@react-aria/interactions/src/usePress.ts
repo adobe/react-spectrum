@@ -433,7 +433,13 @@ export function usePress(props: PressHookProps): PressResult {
 
           shouldStopPropagation = triggerPressStart(e, state.pointerType);
 
-          addGlobalListener(getOwnerDocument(e.currentTarget), 'pointermove', onPointerMove, false);
+          // Release pointer capture so that touch interactions can leave the original target.
+          // This enables onPointerLeave and onPointerEnter to fire.
+          let target = e.target as Element;
+          if ('releasePointerCapture' in target) {
+            target.releasePointerCapture(e.pointerId);
+          }
+
           addGlobalListener(getOwnerDocument(e.currentTarget), 'pointerup', onPointerUp, false);
           addGlobalListener(getOwnerDocument(e.currentTarget), 'pointercancel', onPointerCancel, false);
         }
@@ -467,27 +473,20 @@ export function usePress(props: PressHookProps): PressResult {
         }
 
         // Only handle left clicks
-        // Safari on iOS sometimes fires pointerup events, even
-        // when the touch isn't over the target, so double check.
-        if (e.button === 0 && isOverTarget(e, e.currentTarget)) {
+        if (e.button === 0) {
           triggerPressUp(e, state.pointerType || e.pointerType);
         }
       };
 
-      // Safari on iOS < 13.2 does not implement pointerenter/pointerleave events correctly.
-      // Use pointer move events instead to implement our own hit testing.
-      // See https://bugs.webkit.org/show_bug.cgi?id=199803
-      let onPointerMove = (e: PointerEvent) => {
-        if (e.pointerId !== state.activePointerId) {
-          return;
+      pressProps.onPointerEnter = (e) => {
+        if (e.pointerId === state.activePointerId && state.target && !state.isOverTarget && state.pointerType != null) {
+          state.isOverTarget = true;
+          triggerPressStart(createEvent(state.target, e), state.pointerType);
         }
+      };
 
-        if (state.target && isOverTarget(e, state.target)) {
-          if (!state.isOverTarget && state.pointerType != null) {
-            state.isOverTarget = true;
-            triggerPressStart(createEvent(state.target, e), state.pointerType);
-          }
-        } else if (state.target && state.isOverTarget && state.pointerType != null) {
+      pressProps.onPointerLeave = (e) => {
+        if (e.pointerId === state.activePointerId && state.target && state.isOverTarget && state.pointerType != null) {
           state.isOverTarget = false;
           triggerPressEnd(createEvent(state.target, e), state.pointerType, false);
           cancelOnPointerExit(e);
@@ -496,7 +495,7 @@ export function usePress(props: PressHookProps): PressResult {
 
       let onPointerUp = (e: PointerEvent) => {
         if (e.pointerId === state.activePointerId && state.isPressed && e.button === 0 && state.target) {
-          if (isOverTarget(e, state.target) && state.pointerType != null) {
+          if (state.target.contains(e.target as Element) && state.pointerType != null) {
             triggerPressEnd(createEvent(state.target, e), state.pointerType);
           } else if (state.isOverTarget && state.pointerType != null) {
             triggerPressEnd(createEvent(state.target, e), state.pointerType, false);
