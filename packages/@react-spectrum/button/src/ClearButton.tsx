@@ -28,7 +28,7 @@ interface ClearButtonProps<T extends ElementType = 'button'> extends ButtonProps
   preventFocus?: boolean
 }
 
-function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+export const ClearButton = React.forwardRef(function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   let {
     children = <CrossSmall UNSAFE_className={styles['spectrum-Icon']} />,
     focusClassName,
@@ -75,7 +75,4 @@ function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElemen
       </ElementType>
     </FocusRing>
   );
-}
-
-let _ClearButton = React.forwardRef(ClearButton);
-export {_ClearButton as ClearButton};
+});

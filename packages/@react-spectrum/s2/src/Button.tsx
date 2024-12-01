@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, focusRing, fontRelative, size as sizeValue, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
 import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -281,7 +281,12 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
   disableTapHighlight: true
 }, getAllowedOverrides());
 
-function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+/**
+ * Buttons allow users to perform an action.
+ * They have multiple styles for various needs, and are ideal for calling attention to
+ * where a user needs to do something in order to move forward in a flow.
+ */
+export const Button = forwardRef(function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ButtonContext);
   props = useFormProps(props);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
@@ -378,8 +383,8 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
               styles={style({
                 size: {
                   size: {
-                    S: sizeValue(14),
-                    M: sizeValue(18),
+                    S: 14,
+                    M: 18,
                     L: 20,
                     XL: 24
                   }
@@ -390,17 +395,12 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
       </Provider>
     </RACButton>
   );
-}
+});
 
 /**
- * Buttons allow users to perform an action.
- * They have multiple styles for various needs, and are ideal for calling attention to
- * where a user needs to do something in order to move forward in a flow.
+ * A LinkButton combines the functionality of a link with the appearance of a button. Useful for allowing users to navigate to another page.
  */
-let _Button = forwardRef(Button);
-export {_Button as Button};
-
-function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>) {
+export const LinkButton = forwardRef(function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, LinkButtonContext);
   props = useFormProps(props);
   let domRef = useFocusableRef(ref);
@@ -438,10 +438,4 @@ function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>
       </Provider>
     </Link>
   );
-}
-
-/**
- * A LinkButton combines the functionality of a link with the appearance of a button. Useful for allowing users to navigate to another page.
- */
-let _LinkButton = forwardRef(LinkButton);
-export {_LinkButton as LinkButton};
+});

@@ -14,12 +14,13 @@ import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-int
 import {ActionButton, Button} from '@react-spectrum/button';
 import {Checkbox} from '@react-spectrum/checkbox';
 import MatchMediaMock from 'jest-matchmedia-mock';
+
 import {Provider} from '../';
-// eslint-disable-next-line rulesdir/useLayoutEffectRule
-import React, {useLayoutEffect, useRef} from 'react';
+import React, {useRef} from 'react';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
 import {useBreakpoint} from '@react-spectrum/utils';
+import {useLayoutEffect} from '@react-aria/utils';
 import userEvent from '@testing-library/user-event';
 
 let theme = {
@@ -254,9 +255,9 @@ describe('Provider', () => {
 
     it('only renders once for multiple resizes in the same range', function () {
       function Component(props) {
-        let {matchedBreakpoints} = useBreakpoint();
+        let {matchedBreakpoints} = useBreakpoint()!;
         let {onBreakpointChange, ...otherProps} = props;
-        let prevBreakpoint = useRef(null);
+        let prevBreakpoint = useRef<string>(null);
         let breakpoint = matchedBreakpoints[0];
         useLayoutEffect(() => {
           if (!Object.is(prevBreakpoint.current, breakpoint)) {

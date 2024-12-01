@@ -29,7 +29,11 @@ export interface ToolbarProps extends AriaToolbarProps, SlotProps, RenderProps<T
 
 export const ToolbarContext = createContext<ContextValue<ToolbarProps, HTMLDivElement>>({});
 
-function Toolbar(props: ToolbarProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A toolbar is a container for a set of interactive controls, such as buttons, dropdown menus, or checkboxes,
+ * with arrow key navigation.
+ */
+export const Toolbar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Toolbar(props: ToolbarProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ToolbarContext);
   let {toolbarProps} = useToolbar(props, ref);
   let renderProps = useRenderProps({
@@ -50,11 +54,4 @@ function Toolbar(props: ToolbarProps, ref: ForwardedRef<HTMLDivElement>) {
       {renderProps.children}
     </div>
   );
-}
-
-/**
- * A toolbar is a container for a set of interactive controls, such as buttons, dropdown menus, or checkboxes,
- * with arrow key navigation.
- */
-const _Toolbar = /*#__PURE__*/ (forwardRef as forwardRefType)(Toolbar);
-export {_Toolbar as Toolbar};
+});

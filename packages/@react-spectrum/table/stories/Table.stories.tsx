@@ -2070,13 +2070,13 @@ const allItems = [
 
 function LoadingTable() {
   const [items, setItems] = useState(allItems);
-  const [loadingState, setLoadingState] = useState(undefined);
+  const [loadingState, setLoadingState] = useState<LoadingState>('idle');
   const onSortChange = () => {
     setItems([]);
     setLoadingState('loading');
     setTimeout(() => {
       setItems(items.length > 1 ? [...items.slice(0, 1)] : []);
-      setLoadingState(undefined);
+      setLoadingState('idle');
     }, 1000);
   };
 

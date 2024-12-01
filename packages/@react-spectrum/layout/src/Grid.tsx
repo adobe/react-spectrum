@@ -40,13 +40,19 @@ const gridStyleProps: StyleHandlers = {
   alignContent: ['alignContent', passthroughStyle]
 };
 
-function Grid(props: GridProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A layout container using CSS grid. Supports Spectrum dimensions as values to
+ * ensure consistent and adaptive sizing and spacing.
+ */
+export const Grid = forwardRef(function Grid(props: GridProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps, gridStyleProps);
-  styleProps.style.display = 'grid'; // inline-grid?
+  if (styleProps.style) {
+    styleProps.style.display = 'grid'; // inline-grid?
+  }
   let domRef = useDOMRef(ref);
 
   return (
@@ -54,7 +60,7 @@ function Grid(props: GridProps, ref: DOMRef<HTMLDivElement>) {
       {children}
     </div>
   );
-}
+});
 
 /**
  * Can be used to make a repeating fragment of the columns or rows list.
@@ -104,10 +110,3 @@ function gridTemplateValue(value) {
 
   return gridDimensionValue(value);
 }
-
-/**
- * A layout container using CSS grid. Supports Spectrum dimensions as values to
- * ensure consistent and adaptive sizing and spacing.
- */
-const _Grid = forwardRef(Grid);
-export {_Grid as Grid};

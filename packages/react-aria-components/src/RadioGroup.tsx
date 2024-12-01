@@ -113,7 +113,10 @@ export const RadioGroupContext = createContext<ContextValue<RadioGroupProps, HTM
 export const RadioContext = createContext<ContextValue<Partial<RadioProps>, HTMLLabelElement>>(null);
 export const RadioGroupStateContext = createContext<RadioGroupState | null>(null);
 
-function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A radio group allows a user to select a single item from a list of mutually exclusive options.
+ */
+export const RadioGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, RadioGroupContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
@@ -169,9 +172,12 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
       </Provider>
     </div>
   );
-}
+});
 
-function Radio(props: RadioProps, ref: ForwardedRef<HTMLLabelElement>) {
+/**
+ * A radio represents an individual option within a radio group.
+ */
+export const Radio = /*#__PURE__*/ (forwardRef as forwardRefType)(function Radio(props: RadioProps, ref: ForwardedRef<HTMLLabelElement>) {
   let {
     inputRef: userProvidedInputRef = null,
     ...otherProps
@@ -230,16 +236,4 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLLabelElement>) {
       {renderProps.children}
     </label>
   );
-}
-
-/**
- * A radio group allows a user to select a single item from a list of mutually exclusive options.
- */
-const _RadioGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(RadioGroup);
-
-/**
- * A radio represents an individual option within a radio group.
- */
-const _Radio = /*#__PURE__*/ (forwardRef as forwardRefType)(Radio);
-
-export {_RadioGroup as RadioGroup, _Radio as Radio};
+});

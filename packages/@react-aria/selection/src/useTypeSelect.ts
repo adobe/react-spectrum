@@ -46,9 +46,9 @@ export interface TypeSelectAria {
  */
 export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
   let {keyboardDelegate, selectionManager, onTypeSelect} = options;
-  let state = useRef({
+  let state = useRef<{search: string, timeout: ReturnType<typeof setTimeout> | undefined}>({
     search: '',
-    timeout: null
+    timeout: undefined
   }).current;
 
   let onKeyDown = (e: KeyboardEvent) => {
@@ -70,19 +70,21 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
 
     state.search += character;
 
-    // Use the delegate to find a key to focus.
-    // Prioritize items after the currently focused item, falling back to searching the whole list.
-    let key = keyboardDelegate.getKeyForSearch(state.search, selectionManager.focusedKey);
+    if (keyboardDelegate.getKeyForSearch != null) {
+      // Use the delegate to find a key to focus.
+      // Prioritize items after the currently focused item, falling back to searching the whole list.
+      let key = keyboardDelegate.getKeyForSearch(state.search, selectionManager.focusedKey);
 
-    // If no key found, search from the top.
-    if (key == null) {
-      key = keyboardDelegate.getKeyForSearch(state.search);
-    }
+      // If no key found, search from the top.
+      if (key == null) {
+        key = keyboardDelegate.getKeyForSearch(state.search);
+      }
 
-    if (key != null) {
-      selectionManager.setFocusedKey(key);
-      if (onTypeSelect) {
-        onTypeSelect(key);
+      if (key != null) {
+        selectionManager.setFocusedKey(key);
+        if (onTypeSelect) {
+          onTypeSelect(key);
+        }
       }
     }
 
@@ -96,7 +98,7 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
     typeSelectProps: {
       // Using a capturing listener to catch the keydown event before
       // other hooks in order to handle the Spacebar event.
-      onKeyDownCapture: keyboardDelegate.getKeyForSearch ? onKeyDown : null
+      onKeyDownCapture: keyboardDelegate.getKeyForSearch ? onKeyDown : undefined
     }
   };
 }

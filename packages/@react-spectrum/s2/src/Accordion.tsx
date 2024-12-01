@@ -15,7 +15,7 @@ import {DisclosureContext} from './Disclosure';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import React, {createContext, forwardRef} from 'react';
-import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {style} from '../style' with { type: 'macro' };
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -45,7 +45,10 @@ const accordion = style({
 
 export const AccordionContext = createContext<ContextValue<AccordionProps, DOMRefValue<HTMLDivElement>>>(null);
 
-function Accordion(props: AccordionProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * An accordion is a container for multiple disclosures.
+ */
+export const Accordion = forwardRef(function Accordion(props: AccordionProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, AccordionContext);
   let domRef = useDOMRef(ref);
   let {
@@ -66,10 +69,4 @@ function Accordion(props: AccordionProps, ref: DOMRef<HTMLDivElement>) {
       </DisclosureGroup>
     </DisclosureContext.Provider>
   );
-}
-
-/**
- * An accordion is a container for multiple disclosures.
- */
-let _Accordion = forwardRef(Accordion);
-export {_Accordion as Accordion};
+});

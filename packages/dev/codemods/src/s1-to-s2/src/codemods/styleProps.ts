@@ -62,7 +62,20 @@ function getStylePropValue(prop: string, value: t.ObjectProperty['value'], eleme
     case 'maxWidth':
     case 'height':
     case 'minHeight':
-    case 'maxHeight':
+    case 'maxHeight': {
+      if (value.type === 'StringLiteral' || value.type === 'NumericLiteral') {
+        let val = convertDimension(value.value, 'size');
+        if (val != null) {
+          return {
+            macroValues: [{key: mappedProp, value: val}]
+          };
+        }
+      } else if (value.type === 'ObjectExpression') {
+        return getResponsiveValue(prop, value, element, colorVersion);
+      }
+      // return [mappedProp, customProp, [[customProp, value]]];
+      return null;
+    }
     case 'margin':
     case 'marginStart':
     case 'marginEnd':
@@ -78,7 +91,7 @@ function getStylePropValue(prop: string, value: t.ObjectProperty['value'], eleme
     case 'end':
     case 'flexBasis': {
       if (value.type === 'StringLiteral' || value.type === 'NumericLiteral') {
-        let val = convertDimension(value.value);
+        let val = convertDimension(value.value, 'space');
         if (val != null) {
           return {
             macroValues: [{key: mappedProp, value: val}]
@@ -173,7 +186,7 @@ function getStylePropValue(prop: string, value: t.ObjectProperty['value'], eleme
     case 'rowGap':
       if (element === 'Flex' || element === 'Grid') {
         if (value.type === 'StringLiteral' || value.type === 'NumericLiteral') {
-          let val = convertDimension(value.value);
+          let val = convertDimension(value.value, 'space');
           if (val != null) {
             return {
               macroValues: [{key: mappedProp, value: val}]
@@ -303,7 +316,7 @@ function getStylePropValue(prop: string, value: t.ObjectProperty['value'], eleme
     case 'paddingBottom':
       if (element === 'View') {
         if (value.type === 'StringLiteral' || value.type === 'NumericLiteral') {
-          let val = convertDimension(value.value);
+          let val = convertDimension(value.value, 'space');
           if (val != null) {
             return {
               macroValues: [{key: mappedProp, value: val}]
@@ -399,7 +412,7 @@ function getStylePropValue(prop: string, value: t.ObjectProperty['value'], eleme
       // Try to automatically convert size prop to a macro value for components that supported size.
       if (element === 'ColorArea' || element === 'ColorWheel') {
         if (value.type === 'StringLiteral' || value.type === 'NumericLiteral') {
-          let val = convertDimension(value.value);
+          let val = convertDimension(value.value, 'size');
           if (val != null) {
             return {
               macroValues: [{key: 'size', value: val}]

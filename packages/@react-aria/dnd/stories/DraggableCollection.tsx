@@ -61,7 +61,7 @@ export function DraggableCollectionExample(props) {
 
 function DraggableCollection(props) {
   let ref = React.useRef<HTMLDivElement>(null);
-  let state = useListState(props);
+  let state = useListState<ItemValue>(props);
   let gridState = useGridState({
     selectionMode: 'multiple',
     collection: React.useMemo(() => new GridCollection<ItemValue>({

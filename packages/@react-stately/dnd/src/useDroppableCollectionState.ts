@@ -43,7 +43,7 @@ export interface DroppableCollectionState {
   /** Sets the current drop target. */
   setTarget(target: DropTarget | null): void,
   /** Returns whether the given target is equivalent to the current drop target. */
-  isDropTarget(target: DropTarget): boolean,
+  isDropTarget(target: DropTarget | null): boolean,
   /** Returns the drop operation for the given parameters. */
   getDropOperation(e: DropOperationEvent): DropOperation
 }

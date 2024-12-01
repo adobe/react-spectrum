@@ -93,7 +93,11 @@ export const divider = style<DividerSpectrumProps>({
   }
 }, getAllowedOverrides());
 
-function Divider(props: DividerProps, ref: DOMRef) {
+/**
+ * Dividers bring clarity to a layout by grouping and dividing content in close proximity.
+ * They can also be used to establish rhythm and hierarchy.
+ */
+export const Divider = /*#__PURE__*/ forwardRef(function Divider(props: DividerProps, ref: DOMRef) {
   [props, ref] = useSpectrumContextProps(props, ref, DividerContext);
   let domRef = useDOMRef(ref);
 
@@ -108,11 +112,4 @@ function Divider(props: DividerProps, ref: DOMRef) {
         staticColor: props.staticColor
       }, props.styles)} />
   );
-}
-
-/**
- * Dividers bring clarity to a layout by grouping and dividing content in close proximity.
- * They can also be used to establish rhythm and hierarchy.
- */
-let _Divider = /*#__PURE__*/ forwardRef(Divider);
-export {_Divider as Divider};
+});

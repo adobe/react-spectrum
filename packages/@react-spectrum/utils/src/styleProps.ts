@@ -17,7 +17,7 @@ import {useLocale} from '@react-aria/i18n';
 
 type Breakpoint = 'base' | 'S' | 'M' | 'L' | string;
 type StyleName = string | string[] | ((dir: Direction) => string);
-type StyleHandler = (value: any, colorVersion?: number) => string;
+type StyleHandler = (value: any, colorVersion?: number) => string | undefined;
 export interface StyleHandlers {
   [key: string]: [StyleName, StyleHandler]
 }
@@ -144,8 +144,10 @@ export function dimensionValue(value: DimensionValue) {
 }
 
 export function responsiveDimensionValue(value: Responsive<DimensionValue>, matchedBreakpoints: Breakpoint[]) {
-  value = getResponsiveProp(value, matchedBreakpoints);
-  return dimensionValue(value);
+  let responsiveValue = getResponsiveProp(value, matchedBreakpoints);
+  if (responsiveValue != null) {
+    return dimensionValue(responsiveValue);
+  }
 }
 
 type ColorType = 'default' | 'background' | 'border' | 'icon' | 'status';
@@ -299,7 +301,7 @@ export function passthroughStyle(value) {
   return value;
 }
 
-export function getResponsiveProp<T>(prop: Responsive<T>, matchedBreakpoints: Breakpoint[]): T {
+export function getResponsiveProp<T>(prop: Responsive<T>, matchedBreakpoints: Breakpoint[]): T | undefined {
   if (prop && typeof prop === 'object' && !Array.isArray(prop)) {
     for (let i = 0; i < matchedBreakpoints.length; i++) {
       let breakpoint = matchedBreakpoints[i];

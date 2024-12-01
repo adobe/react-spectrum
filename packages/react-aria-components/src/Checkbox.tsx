@@ -112,7 +112,10 @@ export interface CheckboxRenderProps {
 export const CheckboxGroupContext = createContext<ContextValue<CheckboxGroupProps, HTMLDivElement>>(null);
 export const CheckboxGroupStateContext = createContext<CheckboxGroupState | null>(null);
 
-function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A checkbox group allows a user to select multiple items from a list of options.
+ */
+export const CheckboxGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, CheckboxGroupContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
@@ -165,9 +168,13 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
       </Provider>
     </div>
   );
-}
+});
 
-function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLLabelElement>) {
+/**
+ * A checkbox allows a user to select multiple items from a list of individual items, or
+ * to mark one individual item as selected.
+ */
+export const Checkbox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLLabelElement>) {
   let {
     inputRef: userProvidedInputRef = null,
     ...otherProps
@@ -244,17 +251,4 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLLabelElement>) {
       {renderProps.children}
     </label>
   );
-}
-
-/**
- * A checkbox allows a user to select multiple items from a list of individual items, or
- * to mark one individual item as selected.
- */
-const _Checkbox = /*#__PURE__*/ (forwardRef as forwardRefType)(Checkbox);
-
-/**
- * A checkbox group allows a user to select multiple items from a list of options.
- */
-const _CheckboxGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(CheckboxGroup);
-
-export {_Checkbox as Checkbox, _CheckboxGroup as CheckboxGroup};
+});

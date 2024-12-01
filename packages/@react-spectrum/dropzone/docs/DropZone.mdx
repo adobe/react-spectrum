@@ -35,6 +35,7 @@ category: Drag and drop
 <HeaderInfo
   packageData={packageData}
   componentNames={['DropZone']}
+  since="3.35.0"
 />
 
 ## Example
@@ -340,7 +341,7 @@ function Example() {
 
 A DropZone displays visual feedback to the user when a drag hovers over the drop target by passing the `getDropOperation` function. If a drop target only supports data of specific types (e.g. images, videos, text, etc.), then it should implement the `getDropOperation` prop and return `'cancel'` for types that aren't supported. This will prevent visual feedback indicating that the drop target accepts the dragged data when this is not true. [Read more about getDropOperation.](../react-aria/useDrop.html#getdropoperation)
 
-In the below example, the drop zone only supports dropping JPEG images. If a JPEG is dragged over the drop zone, it will be highlighted and the operating system will display a copy cursor. If another type is dragged over the drop zone, then there is no visual feedback, indicating that a drop is not accepted. 
+In the below example, the drop zone only supports dropping JPEG images. If a JPEG is dragged over the drop zone, it will be highlighted and the operating system will display a copy cursor. If another type is dragged over the drop zone, then there is no visual feedback, indicating that a drop is not accepted.
 
 ```tsx example
 import {FileTrigger} from '@adobe/react-spectrum';

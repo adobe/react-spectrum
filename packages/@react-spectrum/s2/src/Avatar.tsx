@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ContextValue} from 'react-aria-components';
+import {ContextValue, SlotProps} from 'react-aria-components';
 import {createContext, forwardRef} from 'react';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
@@ -20,7 +20,7 @@ import {style} from '../style' with { type: 'macro' };
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface AvatarProps extends UnsafeStyles, DOMProps {
+export interface AvatarProps extends UnsafeStyles, DOMProps, SlotProps {
   /** Text description of the avatar. */
   alt?: string,
   /** The image URL for the avatar. */
@@ -55,7 +55,10 @@ const imageStyles = style({
 
 export const AvatarContext = createContext<ContextValue<AvatarProps, DOMRefValue<HTMLImageElement>>>(null);
 
-function Avatar(props: AvatarProps, ref: DOMRef<HTMLImageElement>) {
+/**
+ * An avatar is a thumbnail representation of an entity, such as a user or an organization.
+ */
+export const Avatar = forwardRef(function Avatar(props: AvatarProps, ref: DOMRef<HTMLImageElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, AvatarContext);
   let domRef = useDOMRef(ref);
   let {
@@ -65,6 +68,7 @@ function Avatar(props: AvatarProps, ref: DOMRef<HTMLImageElement>) {
     UNSAFE_className = '',
     size = 24,
     isOverBackground,
+    slot = 'avatar',
     ...otherProps
   } = props;
   const domProps = filterDOMProps(otherProps);
@@ -75,6 +79,7 @@ function Avatar(props: AvatarProps, ref: DOMRef<HTMLImageElement>) {
     <Image
       {...domProps}
       ref={domRef}
+      slot={slot}
       alt={alt}
       UNSAFE_style={{
         ...UNSAFE_style,
@@ -85,10 +90,4 @@ function Avatar(props: AvatarProps, ref: DOMRef<HTMLImageElement>) {
       styles={imageStyles({isOverBackground, isLarge}, props.styles)}
       src={src} />
   );
-}
-
-/**
- * An avatar is a thumbnail representation of an entity, such as a user or an organization.
- */
-let _Avatar = forwardRef(Avatar);
-export {_Avatar as Avatar};
+});

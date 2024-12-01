@@ -37,7 +37,7 @@ interface TextFieldBaseProps extends Omit<SpectrumTextFieldProps, 'onChange' | '
   disableFocusRing?: boolean
 }
 
-function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef<HTMLInputElement | HTMLTextAreaElement>>) {
+export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef<HTMLInputElement | HTMLTextAreaElement>>) {
   let {
     validationState = props.isInvalid ? 'invalid' : null,
     icon,
@@ -163,7 +163,4 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef<HTMLInpu
       {textField}
     </Field>
   );
-}
-
-const _TextFieldBase = forwardRef(TextFieldBase);
-export {_TextFieldBase as TextFieldBase};
+});

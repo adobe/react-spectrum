@@ -1,6 +1,6 @@
 {
   "name": "@internationalized/string",
-  "version": "3.2.4",
+  "version": "3.2.5",
   "description": "Internationalized string formatting and locale negotiation",
   "license": "Apache-2.0",
   "main": "dist/main.js",

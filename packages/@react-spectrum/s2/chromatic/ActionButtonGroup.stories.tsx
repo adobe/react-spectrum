@@ -34,14 +34,14 @@ export default meta;
 
 let justifiedStyle = style({
   width: {
-    default: '[500px]',
+    default: 500,
     orientation: {
       vertical: 'auto'
     }
   },
   height: {
     orientation: {
-      vertical: '[500px]'
+      vertical: 500
     }
   }
 });

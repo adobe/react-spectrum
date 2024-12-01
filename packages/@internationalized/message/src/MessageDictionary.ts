@@ -76,9 +76,7 @@ function getStringsForLocale(locale: string, strings: LocalizedStrings, defaultL
 }
 
 function getLanguage(locale: string) {
-  // @ts-ignore
   if (Intl.Locale) {
-    // @ts-ignore
     return new Intl.Locale(locale).language;
   }
 

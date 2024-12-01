@@ -19,7 +19,11 @@ import styles from '@adobe/spectrum-css-temp/components/circleloader/vars.css';
 import {useProgressBar} from '@react-aria/progress';
 
 
-function ProgressCircle(props: SpectrumProgressCircleProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * ProgressCircles show the progression of a system operation such as downloading, uploading, or processing, in a visual way.
+ * They can represent determinate or indeterminate progress.
+ */
+export const ProgressCircle = React.forwardRef(function ProgressCircle(props: SpectrumProgressCircleProps, ref: DOMRef<HTMLDivElement>) {
   let {
     value = 0,
     minValue = 0,
@@ -99,11 +103,4 @@ function ProgressCircle(props: SpectrumProgressCircleProps, ref: DOMRef<HTMLDivE
       </div>
     </div>
   );
-}
-
-/**
- * ProgressCircles show the progression of a system operation such as downloading, uploading, or processing, in a visual way.
- * They can represent determinate or indeterminate progress.
- */
-let _ProgressCircle = React.forwardRef(ProgressCircle);
-export {_ProgressCircle as ProgressCircle};
+});

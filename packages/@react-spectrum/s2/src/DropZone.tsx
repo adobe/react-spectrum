@@ -89,7 +89,10 @@ const banner = style({
   padding: '[calc((self(minHeight))/1.5)]'
 });
 
-function DropZone(props: DropZoneProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A drop zone is an area into which one or multiple objects can be dragged and dropped.
+ */
+export const DropZone = /*#__PURE__*/ forwardRef(function DropZone(props: DropZoneProps, ref: DOMRef<HTMLDivElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, DropZoneContext);
   let {
@@ -119,10 +122,4 @@ function DropZone(props: DropZoneProps, ref: DOMRef<HTMLDivElement>) {
       )}
     </RACDropZone>
   );
-}
-
-/**
- * A drop zone is an area into which one or multiple objects can be dragged and dropped.
- */
-let _DropZone = /*#__PURE__*/ forwardRef(DropZone);
-export {_DropZone as DropZone};
+});
