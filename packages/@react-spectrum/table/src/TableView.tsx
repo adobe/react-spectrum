@@ -18,7 +18,7 @@ import {useTableState} from '@react-stately/table';
 
 interface TableProps<T> extends Omit<SpectrumTableProps<T>, 'UNSTABLE_allowsExpandableRows'> {}
 
-function TableView<T extends object>(props: TableProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const TableView = React.forwardRef(function TableView<T extends object>(props: TableProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {
     selectionStyle,
     dragAndDropHooks
@@ -41,7 +41,4 @@ function TableView<T extends object>(props: TableProps<T>, ref: DOMRef<HTMLDivEl
   return (
     <TableViewBase {...props} state={state} ref={ref} />
   );
-}
-
-const _TableView = React.forwardRef(TableView) as <T>(props: TableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
-export {_TableView as TableView};
+}) as <T>(props: TableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;

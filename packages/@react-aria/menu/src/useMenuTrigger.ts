@@ -47,7 +47,7 @@ export interface MenuTriggerAria<T> {
  */
 export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTriggerState, ref: RefObject<Element | null>): MenuTriggerAria<T> {
   let {
-    type = 'menu' as AriaMenuTriggerProps['type'],
+    type = 'menu',
     isDisabled,
     trigger = 'press'
   } = props;
@@ -128,6 +128,7 @@ export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTrigge
   delete triggerProps.onPress;
 
   return {
+    // @ts-ignore - TODO we pass out both DOMAttributes AND AriaButtonProps, but useButton will discard the longPress event handlers, it's only through PressResponder magic that this works for RSP and RAC. it does not work in aria examples
     menuTriggerProps: {
       ...triggerProps,
       ...(trigger === 'press' ? pressProps : longPressProps),

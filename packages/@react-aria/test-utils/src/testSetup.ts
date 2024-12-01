@@ -14,9 +14,8 @@
  * Enables reading pageX/pageY from fireEvent.mouse*(..., {pageX: ..., pageY: ...}).
  */
 export function installMouseEvent() {
+  let oldMouseEvent = MouseEvent;
   beforeAll(() => {
-    let oldMouseEvent = MouseEvent;
-    // @ts-ignore
     global.MouseEvent = class FakeMouseEvent extends MouseEvent {
       _init: {pageX: number, pageY: number};
       constructor(name, init) {
@@ -30,12 +29,9 @@ export function installMouseEvent() {
         return this._init.pageY;
       }
     };
-    // @ts-ignore
-    global.MouseEvent.oldMouseEvent = oldMouseEvent;
   });
   afterAll(() => {
-    // @ts-ignore
-    global.MouseEvent = global.MouseEvent.oldMouseEvent;
+    global.MouseEvent = oldMouseEvent;
   });
 }
 

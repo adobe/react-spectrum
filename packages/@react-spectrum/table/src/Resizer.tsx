@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/role-supports-aria-props */
+ 
 import {classNames} from '@react-spectrum/utils';
 import {ColumnSize} from '@react-types/table';
 import eCursor from 'bundle-text:./cursors/Cur_MoveToRight_9_9.svg';
@@ -7,9 +7,9 @@ import {FocusRing} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isWebKit, mergeProps} from '@react-aria/utils';
+import {isWebKit, mergeProps, useObjectRef} from '@react-aria/utils';
 import {Key, RefObject} from '@react-types/shared';
-import React, {createContext, useContext, useEffect, useState} from 'react';
+import React, {createContext, ForwardedRef, useContext, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {TableColumnResizeState} from '@react-stately/table';
@@ -35,9 +35,9 @@ interface ResizerProps<T> {
   column: GridNode<T>,
   showResizer: boolean,
   triggerRef: RefObject<HTMLDivElement | null>,
-  onResizeStart: (widths: Map<Key, ColumnSize>) => void,
-  onResize: (widths: Map<Key, ColumnSize>) => void,
-  onResizeEnd: (widths: Map<Key, ColumnSize>) => void
+  onResizeStart?: (widths: Map<Key, ColumnSize>) => void,
+  onResize?: (widths: Map<Key, ColumnSize>) => void,
+  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void
 }
 
 const CURSORS = {
@@ -48,8 +48,9 @@ const CURSORS = {
 
 export const ResizeStateContext = createContext<TableColumnResizeState<unknown> | null>(null);
 
-function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement | null>) {
+export const Resizer = React.forwardRef(function Resizer<T>(props: ResizerProps<T>, ref: ForwardedRef<HTMLInputElement | null>) {
   let {column, showResizer} = props;
+  let objectRef = useObjectRef(ref);
   let {isEmpty, onFocusedResizer} = useTableContext();
   let layout = useContext(ResizeStateContext)!;
   // Virtualizer re-renders, but these components are all cached
@@ -83,7 +84,7 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement | nu
     mergeProps(props, {
       'aria-label': stringFormatter.format('columnResizer'),
       isDisabled: isEmpty
-    }), layout, ref);
+    }), layout, objectRef);
 
   let isEResizable = layout.getColumnMinWidth(column.key) >= layout.getColumnWidth(column.key);
   let isWResizable = layout.getColumnMaxWidth(column.key) <= layout.getColumnWidth(column.key);
@@ -113,7 +114,7 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement | nu
           style={style}
           className={classNames(styles, 'spectrum-Table-columnResizer')}>
           <input
-            ref={ref}
+            ref={objectRef}
             {...mergeProps(inputProps, {onFocus: onFocusedResizer})} />
         </div>
       </FocusRing>
@@ -127,13 +128,10 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement | nu
       </CursorOverlay>
     </>
   );
-}
+});
 
 function CursorOverlay(props) {
   let {show, children} = props;
   let {getContainer} = useUNSTABLE_PortalContext();
   return show ? ReactDOM.createPortal(children, getContainer?.() ?? document.body) : null;
 }
-
-const _Resizer = React.forwardRef(Resizer);
-export {_Resizer as Resizer};

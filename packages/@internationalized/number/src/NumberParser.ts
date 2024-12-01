@@ -23,7 +23,7 @@ interface Symbols {
 }
 
 const CURRENCY_SIGN_REGEX = new RegExp('^.*\\(.*\\).*$');
-const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec'];
+const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec', 'deva', 'beng'];
 
 /**
  * A NumberParser can be used to perform locale-aware parsing of numbers from Unicode strings,
@@ -108,6 +108,19 @@ class NumberParserImpl {
 
   constructor(locale: string, options: Intl.NumberFormatOptions = {}) {
     this.locale = locale;
+    // see https://tc39.es/ecma402/#sec-setnfdigitoptions, when using roundingIncrement, the maximumFractionDigits and minimumFractionDigits must be equal
+    // by default, they are 0 and 3 respectively, so we set them to 0 if neither are set
+    if (options.roundingIncrement !== 1 && options.roundingIncrement != null) {
+      if (options.maximumFractionDigits == null && options.minimumFractionDigits == null) {
+        options.maximumFractionDigits = 0;
+        options.minimumFractionDigits = 0;
+      } else if (options.maximumFractionDigits == null) {
+        options.maximumFractionDigits = options.minimumFractionDigits;
+      } else if (options.minimumFractionDigits == null) {
+        options.minimumFractionDigits = options.maximumFractionDigits;
+      }
+      // if both are specified, let the normal Range Error be thrown
+    }
     this.formatter = new Intl.NumberFormat(locale, options);
     this.options = this.formatter.resolvedOptions();
     this.symbols = getSymbols(locale, this.formatter, this.options, options);
@@ -255,7 +268,14 @@ const pluralNumbers = [
 
 function getSymbols(locale: string, formatter: Intl.NumberFormat, intlOptions: Intl.ResolvedNumberFormatOptions, originalOptions: Intl.NumberFormatOptions): Symbols {
   // formatter needs access to all decimal places in order to generate the correct literal strings for the plural set
-  let symbolFormatter = new Intl.NumberFormat(locale, {...intlOptions, minimumSignificantDigits: 1, maximumSignificantDigits: 21});
+  let symbolFormatter = new Intl.NumberFormat(locale, {...intlOptions,
+    // Resets so we get the full range of symbols
+    minimumSignificantDigits: 1,
+    maximumSignificantDigits: 21,
+    roundingIncrement: 1,
+    roundingPriority: 'auto',
+    roundingMode: 'halfExpand'
+  });
   // Note: some locale's don't add a group symbol until there is a ten thousands place
   let allParts = symbolFormatter.formatToParts(-10000.111);
   let posAllParts = symbolFormatter.formatToParts(10000.111);
@@ -266,7 +286,6 @@ function getSymbols(locale: string, formatter: Intl.NumberFormat, intlOptions: I
 
   // Safari does not support the signDisplay option, but our number parser polyfills it.
   // If no plus sign was returned, but the original options contained signDisplay, default to the '+' character.
-  // @ts-ignore
   if (!plusSign && (originalOptions?.signDisplay === 'exceptZero' || originalOptions?.signDisplay === 'always')) {
     plusSign = '+';
   }
@@ -298,9 +317,7 @@ function getSymbols(locale: string, formatter: Intl.NumberFormat, intlOptions: I
 }
 
 function replaceAll(str: string, find: string, replace: string) {
-  // @ts-ignore
   if (str.replaceAll) {
-    // @ts-ignore
     return str.replaceAll(find, replace);
   }
 

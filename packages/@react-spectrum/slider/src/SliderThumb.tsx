@@ -33,7 +33,7 @@ export function SliderThumb(props: SliderThumbProps) {
     inputRef,
     state
   } = props;
-  let backupRef = useRef<HTMLInputElement>(undefined);
+  let backupRef = useRef<HTMLInputElement | null>(null);
   inputRef = inputRef || backupRef;
 
   let {thumbProps, inputProps, isDragging, isFocused} = useSliderThumb({

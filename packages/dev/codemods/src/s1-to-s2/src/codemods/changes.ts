@@ -75,6 +75,14 @@ type FunctionInfo =
   | {
     name: 'updateLegacyLink',
     args: {}
+  }
+  | {
+    name: 'updateDialogChild',
+    args: {}
+  }
+  | {
+    name: 'updateActionGroup',
+    args: {}
   };
 
 type Change = {
@@ -109,6 +117,39 @@ export const changes: ChangesJSON = {
           name: 'updateAvatarSize',
           args: {}
         }
+      }
+    ]
+  },
+  ActionGroup: {
+    changes: [
+      {
+        description: 'Comment out overflowMode',
+        reason: 'It has not been implemented yet',
+        function: {
+          name: 'commentOutProp',
+          args: {propToComment: 'overflowMode'}
+        }
+      },
+      {
+        description: 'Comment out buttonLabelBehavior',
+        reason: 'It has not been implemented yet',
+        function: {
+          name: 'commentOutProp',
+          args: {propToComment: 'buttonLabelBehavior'}
+        }
+      },
+      {
+        description: 'Comment out summaryIcon',
+        reason: 'It has not been implemented yet',
+        function: {
+          name: 'commentOutProp',
+          args: {propToComment: 'summaryIcon'}
+        }
+      },
+      {
+        description: 'Replace with ActionButtonGroup or ToggleButtonGroup',
+        reason: 'The API has changed',
+        function: {name: 'updateActionGroup', args: {}}
       }
     ]
   },
@@ -428,6 +469,30 @@ export const changes: ChangesJSON = {
           name: 'moveRenderPropsToChild',
           args: {newChildComponent: 'Dialog'}
         }
+      },
+      {
+        description: 'Rename isDismissable to isDismissible',
+        reason: 'Fixed spelling',
+        function: {name: 'updatePropName', args: {oldProp: 'isDismissable', newProp: 'isDismissible'}}
+      },
+      {
+        description: 'Update Dialog child to Popover or FullscreenDialog depending on type prop',
+        reason: 'Updated API',
+        function: {name: 'updateDialogChild', args: {}}
+      }
+    ]
+  },
+  DialogContainer: {
+    changes: [
+      {
+        description: 'Rename isDismissable to isDismissible',
+        reason: 'Fixed spelling',
+        function: {name: 'updatePropName', args: {oldProp: 'isDismissable', newProp: 'isDismissible'}}
+      },
+      {
+        description: 'Update Dialog child to Popover or FullscreenDialog depending on type prop',
+        reason: 'Updated API',
+        function: {name: 'updateDialogChild', args: {}}
       }
     ]
   },

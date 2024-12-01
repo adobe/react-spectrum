@@ -61,7 +61,10 @@ export interface ModalRenderProps {
   state: OverlayTriggerState
 }
 
-function Modal(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A modal is an overlay element which blocks interaction with elements outside it.
+ */
+export const Modal = /*#__PURE__*/ (forwardRef as forwardRefType)(function Modal(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
   let ctx = useContext(InternalModalContext);
 
   if (ctx) {
@@ -98,7 +101,7 @@ function Modal(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
       </ModalContent>
     </ModalOverlay>
   );
-}
+});
 
 interface ModalOverlayInnerProps extends ModalOverlayProps {
   overlayRef: RefObject<HTMLDivElement | null>,
@@ -106,12 +109,6 @@ interface ModalOverlayInnerProps extends ModalOverlayProps {
   state: OverlayTriggerState,
   isExiting: boolean
 }
-
-/**
- * A modal is an overlay element which blocks interaction with elements outside it.
- */
-const _Modal = /*#__PURE__*/ (forwardRef as forwardRefType)(Modal);
-export {_Modal as Modal};
 
 function ModalOverlayWithForwardRef(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ModalContext);

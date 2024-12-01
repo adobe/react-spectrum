@@ -50,9 +50,6 @@ describe('Picker/Select ', function () {
         </Provider>
       );
 
-      let select = getByRole('textbox', {hidden: true});
-      expect(select).not.toBeDisabled();
-
       let picker = getByRole('button');
       expect(picker).toHaveAttribute('aria-haspopup', 'listbox');
       expect(picker).toHaveAttribute('data-testid', 'test');
@@ -156,9 +153,6 @@ describe('Picker/Select ', function () {
           </Picker>
         </Provider>
       );
-
-      let select = getByRole('textbox', {hidden: true});
-      expect(select).not.toBeDisabled();
 
       let picker = getByRole('button');
       expect(picker).toHaveAttribute('aria-haspopup', 'listbox');

@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {DialogContext} from './Dialog';
 import {ModalContext, useSlottedContext} from 'react-aria-components';
-import React, {ReactElement, useContext, useState} from 'react';
+import React, {ReactElement, useState} from 'react';
 import {SpectrumDialogContainerProps} from '@react-types/dialog';
 
-export interface DialogContainerProps extends SpectrumDialogContainerProps {}
+export interface DialogContainerProps extends Omit<SpectrumDialogContainerProps, 'type' | 'isDismissable' | 'isKeyboardDismissDisabled'> {}
 
 /**
  * A DialogContainer accepts a single Dialog as a child, and manages showing and hiding
@@ -25,10 +24,7 @@ export interface DialogContainerProps extends SpectrumDialogContainerProps {}
 export function DialogContainer(props: DialogContainerProps) {
   let {
     children,
-    type = 'modal',
-    onDismiss,
-    isDismissable = false,
-    isKeyboardDismissDisabled
+    onDismiss
   } = props;
 
   let childArray = React.Children.toArray(children);
@@ -58,19 +54,13 @@ export function DialogContainer(props: DialogContainerProps) {
   };
 
   return (
-    <DialogContext.Provider value={{type, isDismissable}}>
-      <ModalContext.Provider value={{isOpen: !!child, onOpenChange, isDismissable, isKeyboardDismissDisabled}}>
-        {lastChild}
-      </ModalContext.Provider>
-    </DialogContext.Provider>
+    <ModalContext.Provider value={{isOpen: !!child, onOpenChange}}>
+      {lastChild}
+    </ModalContext.Provider>
   );
 }
 
 export interface DialogContainerValue {
-  /**
-   * The type of container the dialog is rendered in.
-   */
-  type: 'modal' | 'popover' | 'fullscreen' | 'fullscreenTakeover', // TODO: add tray back in
   /**
    * A handler to programmatically dismiss the dialog.
    */
@@ -79,13 +69,11 @@ export interface DialogContainerValue {
 
 export function useDialogContainer(): DialogContainerValue {
   let context = useSlottedContext(ModalContext);
-  let dialogContext = useContext(DialogContext);
   if (!context) {
     throw new Error('Cannot call useDialogContext outside a <DialogTrigger> or <DialogContainer>.');
   }
 
   return {
-    type: dialogContext.type || 'modal',
     dismiss() {
       context?.onOpenChange?.(false);
     }

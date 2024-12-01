@@ -157,7 +157,6 @@ function useLegacySSRSafeId(defaultId?: string): string {
 }
 
 function useModernSSRSafeId(defaultId?: string): string {
-  // @ts-ignore
   let id = React.useId();
   let [didSSR] = useState(useIsSSR());
   let prefix = didSSR || process.env.NODE_ENV === 'test' ? 'react-aria' : `react-aria${defaultContext.prefix}`;

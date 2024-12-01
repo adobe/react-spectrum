@@ -35,9 +35,8 @@ export function getDefaultLocale(): Locale {
     || 'en-US';
 
   try {
-    // @ts-ignore
     Intl.DateTimeFormat.supportedLocalesOf([locale]);
-  } catch (_err) {
+  } catch {
     locale = 'en-US';
   }
   return {

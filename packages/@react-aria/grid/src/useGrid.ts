@@ -149,7 +149,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     },
     state.isKeyboardNavigationDisabled ? navDisabledHandlers : collectionProps,
     // If collection is empty, make sure the grid is tabbable unless there is a child tabbable element.
-    state.collection.size === 0 && {tabIndex: hasTabbableChild ? -1 : 0},
+    (state.collection.size === 0 && {tabIndex: hasTabbableChild ? -1 : 0}) || undefined,
     descriptionProps
   );
 
