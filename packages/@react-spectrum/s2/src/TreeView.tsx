@@ -17,22 +17,24 @@ import {
   Provider,
   TreeItemProps as RACTreeItemProps,
   TreeProps as RACTreeProps,
+  UNSTABLE_ListLayout,
   UNSTABLE_Tree,
   UNSTABLE_TreeItem,
   UNSTABLE_TreeItemContent,
+  UNSTABLE_Virtualizer,
   useContextProps
 } from 'react-aria-components';
+import {centerBaseline} from './CenterBaseline';
 import Chevron from '../ui-icons/Chevron';
 import {colorMix, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
 import {DOMRef, Key} from '@react-types/shared';
 import {isAndroid} from '@react-aria/utils';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, forwardRef, isValidElement, JSXElementConstructor, ReactElement, useContext, useRef} from 'react';
-import {StylesPropWithHeight, UnsafeStyles} from './style-utils';
+import React, {createContext, forwardRef, isValidElement, JSXElementConstructor, ReactElement, useContext, useMemo, useRef} from 'react';
+import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {useButton} from '@react-aria/button';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale} from '@react-aria/i18n';
-import { centerBaseline } from './CenterBaseline';
 
 interface S2TreeProps {
   // Only detatched is supported right now with the current styles from Spectrum
@@ -71,15 +73,17 @@ let InternalTreeContext = createContext<{isDetached?: boolean, isEmphasized?: bo
 // keyboard focus ring. Perhaps find a different way of rendering the outlines since the top of the item doesn't
 // scroll into view due to how the ring is offset. Alternatively, have the tree render the top/bottom outline like it does in Listview
 const tree = style({
+  userSelect: 'none',
+  minHeight: 0,
+  minWidth: 0,
+  width: 'full',
+  overflow: 'auto',
   boxSizing: 'border-box',
   justifyContent: {
     isEmpty: 'center'
   },
   alignItems: {
     isEmpty: 'center'
-  },
-  width: {
-    isEmpty: 'full'
   },
   height: {
     isEmpty: 'full'
@@ -93,7 +97,7 @@ const tree = style({
     type: 'width',
     value: 16
   }
-});
+}, getAllowedOverrides({height: true}));
 
 function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
   let {children, isDetached, isEmphasized} = props;
@@ -107,18 +111,26 @@ function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
 
   let domRef = useDOMRef(ref);
 
+  let layout = useMemo(() => {
+    return new UNSTABLE_ListLayout({
+      rowHeight: 42
+    });
+  }, []);
+
   return (
-    <TreeRendererContext.Provider value={{renderer}}>
-      <InternalTreeContext.Provider value={{isDetached, isEmphasized}}>
-        <UNSTABLE_Tree
-          {...props}
-          className={({isEmpty}) => tree({isEmpty, isDetached})}
-          selectionBehavior="toggle"
-          ref={domRef}>
-          {props.children}
-        </UNSTABLE_Tree>
-      </InternalTreeContext.Provider>
-    </TreeRendererContext.Provider>
+    <UNSTABLE_Virtualizer layout={layout}>
+      <TreeRendererContext.Provider value={{renderer}}>
+        <InternalTreeContext.Provider value={{isDetached, isEmphasized}}>
+          <UNSTABLE_Tree
+            {...props}
+            className={({isEmpty}) => tree({isEmpty, isDetached}, props.styles)}
+            selectionBehavior="toggle"
+            ref={domRef}>
+            {props.children}
+          </UNSTABLE_Tree>
+        </InternalTreeContext.Provider>
+      </TreeRendererContext.Provider>
+    </UNSTABLE_Virtualizer>
   );
 }
 
