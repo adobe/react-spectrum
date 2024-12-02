@@ -12,28 +12,16 @@ import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/reac
 <TableView>
   <TableHeader>
     <Column key="test">Test</Column>
-    <Column title="Blah">
-      <Column title="Group 1">
-        <Column key="foo">Foo</Column>
-        <Column key="bar">Bar</Column>
-      </Column>
-      <Column title="Group 2">
-        <Column key="baz">Baz</Column>
-      </Column>
-    </Column>
+    <Column key="blah">Blah</Column>
   </TableHeader>
   <TableBody>
     <Row>
       <Cell>Test1</Cell>
       <Cell>One</Cell>
-      <Cell>Two</Cell>
-      <Cell>Three</Cell>
     </Row>
     <Row>
       <Cell>Test2</Cell>
       <Cell>One</Cell>
-      <Cell>Two</Cell>
-      <Cell>Three</Cell>
     </Row>
   </TableBody>
 </TableView>
