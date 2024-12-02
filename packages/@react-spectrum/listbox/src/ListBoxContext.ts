@@ -11,6 +11,13 @@
  */
 
 import {ListState} from '@react-stately/list';
-import React from 'react';
+import React, {ReactNode} from 'react';
 
-export const ListBoxContext = React.createContext<ListState<unknown>>(null);
+interface ListBoxContextValue {
+  state: ListState<unknown>,
+  renderEmptyState?: () => ReactNode,
+  shouldFocusOnHover: boolean,
+  shouldUseVirtualFocus: boolean
+}
+
+export const ListBoxContext = React.createContext<ListBoxContextValue | null>(null);

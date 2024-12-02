@@ -13,11 +13,11 @@
 import {AriaButtonProps} from '@react-types/button';
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {Field} from '@react-spectrum/label';
-import {FocusableRef} from '@react-types/shared';
+import {FocusableRef, RefObject} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import {NumberFieldState, useNumberFieldState} from '@react-stately/numberfield';
-import React, {HTMLAttributes, InputHTMLAttributes, Ref, RefObject, useRef} from 'react';
+import React, {HTMLAttributes, InputHTMLAttributes, Ref, useRef} from 'react';
 import {SpectrumNumberFieldProps} from '@react-types/numberfield';
 import {StepButton} from './StepButton';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
@@ -28,7 +28,10 @@ import {useLocale} from '@react-aria/i18n';
 import {useNumberField} from '@react-aria/numberfield';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
-function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElement>) {
+/**
+ * NumberFields allow users to enter a number, and increment or decrement the value using stepper buttons.
+ */
+export const NumberField = React.forwardRef(function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
   let provider = useProvider();
@@ -110,13 +113,13 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
         validationState={validationState} />
     </Field>
   );
-}
+});
 
 
 interface NumberFieldInputProps extends SpectrumNumberFieldProps {
   groupProps: HTMLAttributes<HTMLDivElement>,
   inputProps: InputHTMLAttributes<HTMLInputElement>,
-  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  inputRef: RefObject<HTMLInputElement | HTMLTextAreaElement | null>,
   incrementProps: AriaButtonProps,
   decrementProps: AriaButtonProps,
   className?: string,
@@ -191,9 +194,3 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
     </FocusRing>
   );
 });
-
-/**
- * NumberFields allow users to enter a number, and increment or decrement the value using stepper buttons.
- */
-let _NumberField = React.forwardRef(NumberField);
-export {_NumberField as NumberField};

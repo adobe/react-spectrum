@@ -2,7 +2,7 @@
   "colorInputLabel": "{label}、{channelLabel}",
   "colorNameAndValue": "{name}：{value}",
   "colorPicker": "拾色器",
-  "twoDimensionalSlider": "2D 滑块",
-  "colorSwatch": "color swatch",
-  "transparent": "transparent"
+  "colorSwatch": "颜色色板",
+  "transparent": "透明",
+  "twoDimensionalSlider": "2D 滑块"
 }

@@ -63,7 +63,7 @@ function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteP
   }
 }
 
-function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
+function ForwardSearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
 
   let {
@@ -100,12 +100,12 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
       validate: useCallback(v => validate?.(v.inputValue), [validate])
     }
   );
-  let layout = useListBoxLayout(state, loadingState === 'loadingMore');
+  let layout = useListBoxLayout();
 
   let {inputProps, listBoxProps, labelProps, clearButtonProps, descriptionProps, errorMessageProps, isInvalid, validationErrors, validationDetails} = useSearchAutocomplete(
     {
       ...props,
-      keyboardDelegate: layout,
+      layoutDelegate: layout,
       popoverRef: unwrappedPopoverRef,
       listBoxRef,
       inputRef,
@@ -172,13 +172,14 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
           {...listBoxProps}
           ref={listBoxRef}
           disallowEmptySelection
-          autoFocus={state.focusStrategy}
+          autoFocus={state.focusStrategy ?? undefined}
           shouldSelectOnPressUp
           focusOnPointerEnter
           layout={layout}
           state={state}
           shouldUseVirtualFocus
           isLoading={loadingState === 'loading' || loadingState === 'loadingMore'}
+          showLoadingSpinner={loadingState === 'loadingMore'}
           onLoadMore={onLoadMore}
           renderEmptyState={() => isAsync && (
             <span className={classNames(searchAutocompleteStyles, 'no-results')}>
@@ -190,12 +191,12 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
   );
 }
 
-let SearchAutocompleteBase = React.forwardRef(_SearchAutocompleteBase) as <T>(props: SpectrumSearchAutocompleteProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
+let SearchAutocompleteBase = React.forwardRef(ForwardSearchAutocompleteBase) as <T>(props: SpectrumSearchAutocompleteProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
 
 
 interface SearchAutocompleteInputProps<T> extends SpectrumSearchAutocompleteProps<T> {
   inputProps: InputHTMLAttributes<HTMLInputElement>,
-  inputRef: RefObject<HTMLInputElement>,
+  inputRef: RefObject<HTMLInputElement | null>,
   style?: React.CSSProperties,
   className?: string,
   isOpen?: boolean,
@@ -204,7 +205,7 @@ interface SearchAutocompleteInputProps<T> extends SpectrumSearchAutocompleteProp
 
 // any type is because we don't want to call useObjectRef because this is an internal component and we know
 // we are always passing an object ref
-function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref: any) {
+function ForwardSearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref: any) {
   let searchIcon = (
     <Magnifier data-testid="searchicon" />
   );
@@ -294,7 +295,7 @@ function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref
   }, [isLoading, showLoading, inputValue]);
 
   return (
-    <FocusRing
+    (<FocusRing
       within
       isTextInput
       focusClass={classNames(styles, 'is-focused')}
@@ -302,7 +303,7 @@ function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref
       autoFocus={autoFocus}>
       <div
         {...hoverProps}
-        ref={ref as RefObject<HTMLDivElement>}
+        ref={ref as RefObject<HTMLDivElement | null>}
         style={style}
         className={
           classNames(
@@ -359,15 +360,15 @@ function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref
           wrapperChildren={(inputValue !== '' || loadingState === 'filtering' || validationState != null) && !isReadOnly ? clearButton : undefined}
           disableFocusRing />
       </div>
-    </FocusRing>
+    </FocusRing>)
   );
 }
 
-let SearchAutocompleteInput = React.forwardRef(_SearchAutocompleteInput) as <T>(props: SearchAutocompleteInputProps<T> & {ref?: any}) => ReactElement;
+let SearchAutocompleteInput = React.forwardRef(ForwardSearchAutocompleteInput) as <T>(props: SearchAutocompleteInputProps<T> & {ref?: any}) => ReactElement;
 
 
 /**
  * A SearchAutocomplete is a searchfield that supports a dynamic list of suggestions.
  */
-let _SearchAutocomplete = forwardRef(SearchAutocomplete) as <T>(props: SpectrumSearchAutocompleteProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
-export {_SearchAutocomplete as SearchAutocomplete};
+let ForwardSearchAutocomplete = forwardRef(SearchAutocomplete) as <T>(props: SpectrumSearchAutocompleteProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
+export {ForwardSearchAutocomplete as SearchAutocomplete};

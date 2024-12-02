@@ -17,7 +17,7 @@ import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {DOMRef, Expandable, Key, SelectionBehavior, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {isAndroid} from '@react-aria/utils';
-import React, {createContext, isValidElement, ReactElement, ReactNode, useContext, useRef} from 'react';
+import React, {createContext, isValidElement, JSX, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
 import {SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
 import {Text} from '@react-spectrum/text';
@@ -38,15 +38,17 @@ export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeGridListProps<T>,
   children?: ReactNode | ((item: T) => ReactNode)
 }
 
-export interface SpectrumTreeViewItemProps extends Omit<TreeItemProps, 'className' | 'style' | 'value'> {
+export interface SpectrumTreeViewItemProps<T extends object = object> extends Omit<TreeItemProps, 'className' | 'style' | 'value' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'> {
   /** Rendered contents of the tree item or child items. */
   children: ReactNode,
   /** Whether this item has children, even if not loaded yet. */
-  hasChildItems?: boolean
+  hasChildItems?: boolean,
+  /** A list of child tree item objects used when dynamically rendering the tree item children. */
+  childItems?: Iterable<T>
 }
 
 interface TreeRendererContextValue {
-  renderer?: (item) => React.ReactElement<any, string | React.JSXElementConstructor<any>>
+  renderer?: (item) => ReactElement<any, string | JSXElementConstructor<any>>
 }
 const TreeRendererContext = createContext<TreeRendererContextValue>({});
 
@@ -85,7 +87,10 @@ const tree = style<Pick<TreeRenderProps, 'isEmpty'>>({
   }
 });
 
-function TreeView<T extends object>(props: SpectrumTreeViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A tree view provides users with a way to navigate nested hierarchical information.
+ */
+export const TreeView = React.forwardRef(function TreeView<T extends object>(props: SpectrumTreeViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {children, selectionStyle} = props;
 
   let renderer;
@@ -104,7 +109,7 @@ function TreeView<T extends object>(props: SpectrumTreeViewProps<T>, ref: DOMRef
       </UNSTABLE_Tree>
     </TreeRendererContext.Provider>
   );
-}
+}) as <T>(props: SpectrumTreeViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 
 interface TreeRowRenderProps extends TreeItemRenderProps {
   isLink?: boolean
@@ -138,8 +143,7 @@ const treeCellGrid = style({
   display: 'grid',
   width: 'full',
   alignItems: 'center',
-  // TODO: needed to use spectrum var since gridTemplateColumns uses baseSizing and not scaled sizing
-  gridTemplateColumns: ['minmax(0, auto)', 'minmax(0, auto)', 'minmax(0, auto)', 'var(--spectrum-global-dimension-size-500)', 'minmax(0, auto)', '1fr', 'minmax(0, auto)', 'auto'],
+  gridTemplateColumns: ['minmax(0, auto)', 'minmax(0, auto)', 'minmax(0, auto)', 10, 'minmax(0, auto)', '1fr', 'minmax(0, auto)', 'auto'],
   gridTemplateRows: '1fr',
   gridTemplateAreas: [
     'drag-handle checkbox level-padding expand-button icon content actions actionmenu'
@@ -220,7 +224,7 @@ const treeRowOutline = style({
   }
 });
 
-export const TreeViewItem = (props: SpectrumTreeViewItemProps) => {
+export const TreeViewItem = <T extends object>(props: SpectrumTreeViewItemProps<T>) => {
   let {
     children,
     childItems,
@@ -331,7 +335,7 @@ const expandButton = style<ExpandableRowChevronProps>({
 });
 
 function ExpandableRowChevron(props: ExpandableRowChevronProps) {
-  let expandButtonRef = useRef();
+  let expandButtonRef = useRef(null);
   let [fullProps, ref] = useContextProps({...props, slot: 'chevron'}, expandButtonRef, ButtonContext);
   let {isExpanded, isDisabled} = fullProps;
   let {direction} = useLocale();
@@ -353,9 +357,3 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
     </span>
   );
 }
-
-/**
- * A tree view provides users with a way to navigate nested hierarchical information.
- */
-const _TreeView = React.forwardRef(TreeView) as <T>(props: SpectrumTreeViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
-export {_TreeView as TreeView};

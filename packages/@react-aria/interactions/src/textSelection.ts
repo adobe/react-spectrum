@@ -36,7 +36,7 @@ let modifiedElementMap = new WeakMap<Element, string>();
 export function disableTextSelection(target?: Element) {
   if (isIOS()) {
     if (state === 'default') {
-      // eslint-disable-next-line no-restricted-globals
+       
       const documentObject = getOwnerDocument(target);
       savedUserSelect = documentObject.documentElement.style.webkitUserSelect;
       documentObject.documentElement.style.webkitUserSelect = 'none';
@@ -69,7 +69,7 @@ export function restoreTextSelection(target?: Element) {
       runAfterTransition(() => {
         // Avoid race conditions
         if (state === 'restoring') {
-          // eslint-disable-next-line no-restricted-globals
+           
           const documentObject = getOwnerDocument(target);
           if (documentObject.documentElement.style.webkitUserSelect === 'none') {
             documentObject.documentElement.style.webkitUserSelect = savedUserSelect || '';

@@ -13,15 +13,15 @@
 import {AriaGridListOptions, AriaGridListProps, GridListProps, useGridList} from '@react-aria/gridlist';
 import {
   DOMAttributes,
-  KeyboardDelegate
+  KeyboardDelegate,
+  RefObject
 } from '@react-types/shared';
-import {RefObject} from 'react';
 import {TreeState} from '@react-stately/tree';
 
 export interface TreeGridListProps<T> extends GridListProps<T> {}
 
-export interface AriaTreeGridListProps<T> extends AriaGridListProps<T> {}
-export interface AriaTreeGridListOptions<T> extends Omit<AriaGridListOptions<T>, 'children' | 'isVirtualized' | 'shouldFocusWrap'> {
+export interface AriaTreeGridListProps<T> extends Omit<AriaGridListProps<T>, 'keyboardNavigationBehavior'> {}
+export interface AriaTreeGridListOptions<T> extends Omit<AriaGridListOptions<T>, 'children' | 'shouldFocusWrap'> {
   /**
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
@@ -41,7 +41,7 @@ export interface TreeGridListAria {
  * @param state - State for the treegrid, as returned by `useTreeState`.
  * @param ref - The ref attached to the treegrid element.
  */
-export function useTreeGridList<T>(props: AriaTreeGridListOptions<T>, state: TreeState<T>, ref: RefObject<HTMLElement>): TreeGridListAria {
+export function useTreeGridList<T>(props: AriaTreeGridListOptions<T>, state: TreeState<T>, ref: RefObject<HTMLElement | null>): TreeGridListAria {
   let {gridProps} = useGridList(props, state, ref);
   gridProps.role = 'treegrid';
 

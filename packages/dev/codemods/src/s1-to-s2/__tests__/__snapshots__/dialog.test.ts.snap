@@ -1,0 +1,213 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Comments out if type might be "tray" 1`] = `
+"import { DialogTrigger, ActionButton, Dialog, Heading, Divider, Content, Text } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): type="tray" has not been implemented yet.
+<DialogTrigger>
+  <ActionButton>Disk Status</ActionButton>
+  <Dialog>
+    50% disk space remaining.
+  </Dialog>
+</DialogTrigger>"
+`;
+
+exports[`Comments out mobileType 1`] = `
+"import { DialogTrigger, ActionButton, Dialog, Heading, Divider, Content, Text } from "@react-spectrum/s2";
+
+<>
+  // TODO(S2-upgrade): mobileType has not been implemented yet.
+  <DialogTrigger>
+    <ActionButton>Disk Status</ActionButton>
+    <Dialog>
+      50% disk space remaining.
+    </Dialog>
+  </DialogTrigger>
+  // TODO(S2-upgrade): mobileType has not been implemented yet.
+  <DialogTrigger>
+    <ActionButton>Disk Status</ActionButton>
+    <Dialog>
+      50% disk space remaining.
+    </Dialog>
+  </DialogTrigger>
+</>"
+`;
+
+exports[`Comments out type="tray" 1`] = `
+"import { DialogTrigger, ActionButton, Dialog, Heading, Divider, Content, Text } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): type="tray" has not been implemented yet.
+<DialogTrigger>
+  <ActionButton>Disk Status</ActionButton>
+  <Dialog>
+    50% disk space remaining.
+  </Dialog>
+</DialogTrigger>"
+`;
+
+exports[`Moves close function from DialogTrigger to Dialog 1`] = `
+"import { DialogTrigger, Button, Dialog, Heading, Content, Divider } from "@react-spectrum/s2";
+
+<DialogTrigger>
+  <Button>Test</Button>
+  <Dialog>{(
+      {
+        close
+      }
+    ) => <>
+      <Heading>Test</Heading>
+
+      <Content>Content</Content>
+    </>}</Dialog>
+</DialogTrigger>"
+`;
+
+exports[`Moves isDismissable 1`] = `
+"import { DialogTrigger, Button, Dialog, Heading, Content, Divider } from "@react-spectrum/s2";
+
+<DialogTrigger>
+  <Button>Test</Button>
+  <Dialog isDismissible>
+    <Heading>Test</Heading>
+
+    <Content>Content</Content>
+  </Dialog>
+</DialogTrigger>"
+`;
+
+exports[`Moves isDismissable from DialogContainer 1`] = `
+"import { DialogContainer, Button, Dialog, Heading, Content, Divider } from "@react-spectrum/s2";
+
+<DialogContainer>
+  {showDialog1 && <Dialog isDismissible>
+    <Heading>Test</Heading>
+
+    <Content>Content</Content>
+  </Dialog>}
+  {showDialog2 && <Dialog isDismissible>
+    <Heading>Test</Heading>
+
+    <Content>Content</Content>
+  </Dialog>}
+</DialogContainer>"
+`;
+
+exports[`Removes divider 1`] = `
+"import { Dialog, Heading, Content, Divider } from "@react-spectrum/s2";
+
+<Dialog>
+  <Heading>Test</Heading>
+
+  <Content>Content</Content>
+</Dialog>"
+`;
+
+exports[`Removes onDismiss and leaves a comment 1`] = `
+"import { DialogTrigger, Button, Dialog, Heading, Content, Divider } from "@react-spectrum/s2";
+
+<DialogTrigger>
+  <Button>Test</Button>
+  // onDismiss was removed from Dialog. Use onOpenChange on the DialogTrigger, or onDismiss on the DialogContainer instead
+  <Dialog>{(
+      {
+        close
+      }
+    ) => <>
+      <Heading>Test</Heading>
+
+      <Content>Content</Content>
+    </>}</Dialog>
+</DialogTrigger>"
+`;
+
+exports[`Replaces type="fullscreen" with FullscreenDialog component 1`] = `
+"import { FullscreenDialog, DialogTrigger, Button, Dialog, Heading, Content, Divider } from "@react-spectrum/s2";
+
+<DialogTrigger>
+  <Button>Test</Button>
+  <FullscreenDialog isKeyboardDismissDisabled>
+    <Heading>Test</Heading>
+    <Divider />
+    <Content>Content</Content>
+  </FullscreenDialog>
+</DialogTrigger>"
+`;
+
+exports[`Replaces type="fullscreen" with FullscreenDialog component in DialogContainer 1`] = `
+"import {
+  FullscreenDialog,
+  DialogContainer,
+  Button,
+  Dialog,
+  Heading,
+  Content,
+  Divider,
+} from "@react-spectrum/s2";
+
+<DialogContainer>
+  {showDialog1 && <FullscreenDialog isKeyboardDismissDisabled>
+    <Heading>Test</Heading>
+    <Divider />
+    <Content>Content</Content>
+  </FullscreenDialog>}
+  {showDialog2 && <FullscreenDialog isKeyboardDismissDisabled>
+    <Heading>Test</Heading>
+    <Divider />
+    <Content>Content</Content>
+  </FullscreenDialog>}
+</DialogContainer>"
+`;
+
+exports[`Replaces type="fullscreenTakeover" with FullscreenDialog component 1`] = `
+"import { FullscreenDialog, DialogTrigger, Button, Dialog, Heading, Content, Divider } from "@react-spectrum/s2";
+
+<DialogTrigger>
+  <Button>Test</Button>
+  <FullscreenDialog variant="fullscreenTakeover">
+    <Heading>Test</Heading>
+    <Divider />
+    <Content>Content</Content>
+  </FullscreenDialog>
+</DialogTrigger>"
+`;
+
+exports[`Replaces type="fullscreenTakeover" with FullscreenDialog component and close function 1`] = `
+"import { FullscreenDialog, DialogTrigger, Button, Dialog, Heading, Content, Divider } from "@react-spectrum/s2";
+
+<DialogTrigger>
+  <Button>Test</Button>
+  <FullscreenDialog variant="fullscreenTakeover">{(
+      {
+        close
+      }
+    ) => <>
+      <Heading>Test</Heading>
+
+      <Content>Content</Content>
+    </>}</FullscreenDialog>
+</DialogTrigger>"
+`;
+
+exports[`Replaces type="popover" with Popover component 1`] = `
+"import { Popover, DialogTrigger, Button, Dialog, Heading, Content, Divider } from "@react-spectrum/s2";
+
+<DialogTrigger>
+  <Button>Test</Button>
+  <Popover hideArrow>
+    <Heading>Test</Heading>
+    <Divider />
+    <Content>Content</Content>
+  </Popover>
+</DialogTrigger>"
+`;
+
+exports[`bails when it cannot move the close function 1`] = `
+"import { DialogTrigger, Button, Dialog, Heading, Content, Divider } from "@react-spectrum/s2";
+
+<DialogTrigger>
+  <Button>Test</Button>
+  // TODO(S2-upgrade): update this dialog to move the close function inside
+  {(close) => 
+    <ReusableDialog />}
+</DialogTrigger>"
+`;

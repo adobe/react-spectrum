@@ -12,6 +12,7 @@
 
 
 jest.mock('@react-aria/live-announcer');
+jest.mock('@react-aria/utils/src/scrollIntoView');
 import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render as renderComponent, within} from '@react-spectrum/test-utils-internal';
 import {ActionButton} from '@react-spectrum/button';
 import {announce} from '@react-aria/live-announcer';
@@ -20,8 +21,10 @@ import {Item, ListView} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {renderEmptyState} from '../stories/ListView.stories';
+import {scrollIntoView} from '@react-aria/utils';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
+import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 function pointerEvent(type, opts) {
@@ -43,6 +46,7 @@ describe('ListView', function () {
   let onSelectionChange = jest.fn();
   let onAction = jest.fn();
   let user;
+  let testUtilUser = new User();
   let checkSelection = (onSelectionChange, selectedKeys) => {
     expect(onSelectionChange).toHaveBeenCalledTimes(1);
     expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(selectedKeys));
@@ -147,7 +151,7 @@ describe('ListView', function () {
   let focusRow = (tree, text) => act(() => getRow(tree, text).focus());
 
   it('renders a static listview', function () {
-    let {getByRole, getAllByRole} = render(
+    let {getByRole} = render(
       <ListView aria-label="List" data-testid="test">
         <Item>Foo</Item>
         <Item>Bar</Item>
@@ -156,19 +160,21 @@ describe('ListView', function () {
     );
 
     let grid = getByRole('grid');
+    let gridListTester = testUtilUser.createTester('GridList', {root: grid});
+
     expect(grid).toBeVisible();
     expect(grid).toHaveAttribute('aria-label', 'List');
     expect(grid).toHaveAttribute('data-testid', 'test');
     expect(grid).toHaveAttribute('aria-rowcount', '3');
     expect(grid).toHaveAttribute('aria-colcount', '1');
 
-    let rows = getAllByRole('row');
+    let rows = gridListTester.rows;
     expect(rows).toHaveLength(3);
     expect(rows[0]).toHaveAttribute('aria-rowindex', '1');
     expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
     expect(rows[2]).toHaveAttribute('aria-rowindex', '3');
 
-    let gridCells = within(rows[0]).getAllByRole('gridcell');
+    let gridCells = gridListTester.cells({element: rows[0]});
     expect(gridCells).toHaveLength(1);
     expect(gridCells[0]).toHaveTextContent('Foo');
     expect(gridCells[0]).toHaveAttribute('aria-colindex', '1');
@@ -488,6 +494,7 @@ describe('ListView', function () {
     describe('PageDown', function () {
       it('should move focus to a row a page below when focus starts on a row', async function () {
         let tree = renderListWithFocusables({items: manyItems, selectionMode: 'single'});
+        tree.getByRole('grid').style.overflow = 'auto'; // make ListKeyboardDelegate know we are scrollable
         await user.tab();
         moveFocus('PageDown');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 25'));
@@ -497,6 +504,7 @@ describe('ListView', function () {
 
       it('should move focus to a row a page below when focus starts in the row cell', async function () {
         let tree = renderListWithFocusables({items: manyItems});
+        tree.getByRole('grid').style.overflow = 'auto'; // make ListKeyboardDelegate know we are scrollable
         let focusables = within(getRow(tree, 'Foo 1')).getAllByRole('button');
         let start = focusables[0];
         await user.click(start);
@@ -831,13 +839,16 @@ describe('ListView', function () {
 
     it('should support select all and clear all via keyboard', async function () {
       let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
+      let grid = tree.getByRole('grid');
+      let gridListTester = testUtilUser.createTester('GridList', {root: grid});
+      let rows = gridListTester.rows;
 
-      let rows = tree.getAllByRole('row');
-      await user.click(rows[0]);
+      await gridListTester.toggleRowSelection({index: 0});
       checkSelection(onSelectionChange, ['foo']);
       onSelectionChange.mockClear();
       expect(announce).toHaveBeenLastCalledWith('Foo selected.');
       expect(announce).toHaveBeenCalledTimes(1);
+      expect(gridListTester.selectedRows).toHaveLength(1);
 
       fireEvent.keyDown(rows[0], {key: 'a', ctrlKey: true});
       fireEvent.keyUp(rows[0], {key: 'a', ctrlKey: true});
@@ -845,6 +856,7 @@ describe('ListView', function () {
       onSelectionChange.mockClear();
       expect(announce).toHaveBeenLastCalledWith('All items selected.');
       expect(announce).toHaveBeenCalledTimes(2);
+      expect(gridListTester.selectedRows).toHaveLength(3);
 
       fireEvent.keyDown(rows[0], {key: 'Escape'});
       fireEvent.keyUp(rows[0], {key: 'Escape'});
@@ -852,6 +864,7 @@ describe('ListView', function () {
       onSelectionChange.mockClear();
       expect(announce).toHaveBeenLastCalledWith('No items selected.');
       expect(announce).toHaveBeenCalledTimes(3);
+      expect(gridListTester.selectedRows).toHaveLength(0);
     });
 
     describe('onAction', function () {
@@ -859,20 +872,19 @@ describe('ListView', function () {
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', onAction});
+        let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
 
-        let rows = tree.getAllByRole('row');
-        await user.click(rows[1]);
+        await gridListTester.triggerRowAction({index: 1});
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(1);
         expect(onAction).toHaveBeenLastCalledWith('bar');
 
-        let checkbox = within(rows[1]).getByRole('checkbox');
-        await user.click(checkbox);
+        await gridListTester.toggleRowSelection({index: 1});
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['bar']);
 
         onSelectionChange.mockReset();
-        await user.click(rows[2]);
+        await gridListTester.toggleRowSelection({index: 2});
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['bar', 'baz']);
       });
@@ -881,20 +893,20 @@ describe('ListView', function () {
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', onAction});
+        let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
 
-        let rows = tree.getAllByRole('row');
-        await user.pointer({target: rows[1], keys: '[TouchA]'});
+        await gridListTester.triggerRowAction({index: 1});
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(1);
         expect(onAction).toHaveBeenLastCalledWith('bar');
 
-        let checkbox = within(rows[1]).getByRole('checkbox');
-        await user.click(checkbox);
+        await gridListTester.toggleRowSelection({index: 1});
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['bar']);
 
         onSelectionChange.mockReset();
-        await user.pointer({target: rows[2], keys: '[TouchA]'});
+        gridListTester.setInteractionType('touch');
+        await gridListTester.toggleRowSelection({index: 2});
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['bar', 'baz']);
       });
@@ -938,21 +950,20 @@ describe('ListView', function () {
         });
       });
 
-      it('should trigger onAction when pressing Enter', function () {
+      it('should trigger onAction when pressing Enter', async function () {
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', onAction});
-        let rows = tree.getAllByRole('row');
+        let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
+        gridListTester.setInteractionType('keyboard');
 
-        fireEvent.keyDown(rows[1], {key: 'Enter'});
-        fireEvent.keyUp(rows[1], {key: 'Enter'});
+        await gridListTester.triggerRowAction({index: 1});
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(1);
         expect(onAction).toHaveBeenLastCalledWith('bar');
 
         onAction.mockReset();
-        fireEvent.keyDown(rows[2], {key: ' '});
-        fireEvent.keyUp(rows[2], {key: ' '});
+        await gridListTester.toggleRowSelection({index: 2});
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         expect(onAction).not.toHaveBeenCalled();
         checkSelection(onSelectionChange, ['baz']);
@@ -1434,7 +1445,6 @@ describe('ListView', function () {
         jest.runAllTimers();
       });
       await user.tab();
-      expect(grid.scrollTop).toBe(0);
 
       let rows = tree.getAllByRole('row');
       let rowWrappers = rows.map(item => item.parentElement);
@@ -1446,16 +1456,28 @@ describe('ListView', function () {
 
       // scroll us down far enough that item 0 isn't in the view
       moveFocus('ArrowDown');
+      expect(scrollIntoView).toHaveBeenLastCalledWith(grid, getRow(tree, 'Item 1'));
+      grid.scrollTop = 40;
+      fireEvent.scroll(grid);
       moveFocus('ArrowDown');
+      expect(scrollIntoView).toHaveBeenLastCalledWith(grid, getRow(tree, 'Item 2'));
+      grid.scrollTop = 80;
+      fireEvent.scroll(grid);
       moveFocus('ArrowDown');
-      expect(document.activeElement).toBe(getRow(tree, 'Item 3'));
-      expect(grid.scrollTop).toBe(100);
+      expect(scrollIntoView).toHaveBeenLastCalledWith(grid, getRow(tree, 'Item 3'));
+      grid.scrollTop = 120;
+      fireEvent.scroll(grid);
 
       moveFocus('ArrowUp');
+      expect(scrollIntoView).toHaveBeenLastCalledWith(grid, getRow(tree, 'Item 2'));
+      grid.scrollTop = 80;
+      fireEvent.scroll(grid);
       moveFocus('ArrowUp');
+      expect(scrollIntoView).toHaveBeenLastCalledWith(grid, getRow(tree, 'Item 1'));
+      grid.scrollTop = 40;
+      fireEvent.scroll(grid);
       moveFocus('ArrowUp');
-      expect(document.activeElement).toBe(getRow(tree, 'Item 0'));
-      expect(grid.scrollTop).toBe(0);
+      expect(scrollIntoView).toHaveBeenLastCalledWith(grid, getRow(tree, 'Item 0'));
     });
 
     it('should scroll to a row when it is focused', function () {
@@ -1485,12 +1507,10 @@ describe('ListView', function () {
       act(() => {
         jest.runAllTimers();
       });
-      expect(grid.scrollTop).toBe(0);
 
       focusRow(tree, 'Item 1');
       expect(document.activeElement).toBe(getRow(tree, 'Item 1'));
-
-      expect(grid.scrollTop).toBe(20);
+      expect(scrollIntoView).toHaveBeenLastCalledWith(grid, document.activeElement);
     });
 
     it('should scroll to a row when it is focused off screen', function () {
@@ -1512,21 +1532,18 @@ describe('ListView', function () {
       let row = getRow(tree, 'Item 0');
       act(() => row.focus());
       expect(document.activeElement).toBe(row);
-      expect(body.scrollTop).toBe(0);
 
       // When scrolling the focused item out of view, focus should remain on the item
-      body.scrollTop = 1000;
       fireEvent.scroll(body);
 
-      expect(body.scrollTop).toBe(1000);
       expect(document.activeElement).toBe(row);
       // item isn't reused by virutalizer
       expect(tree.queryByText('Item 0')).toBe(row.firstElementChild.firstElementChild.firstElementChild);
 
       // Moving focus should scroll the new focused item into view
       moveFocus('ArrowDown');
-      expect(body.scrollTop).toBe(0);
       expect(document.activeElement).toBe(getRow(tree, 'Item 1'));
+      expect(scrollIntoView).toHaveBeenLastCalledWith(body, document.activeElement);
     });
   });
 
@@ -1654,6 +1671,30 @@ describe('ListView', function () {
         expect(navigate).not.toHaveBeenCalled();
         expect(onClick).toHaveBeenCalledTimes(1);
       });
+    });
+  });
+
+  describe('height 0', () => {
+
+    it('should render and not infinite loop', function () {
+      offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 0);
+      offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 0);
+      scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 0);
+      let tree = render(
+        <ListView
+          width="250px"
+          height="60px"
+          aria-label="List"
+          data-testid="test"
+          items={[...Array(20).keys()].map(k => ({key: k, name: `Item ${k}`}))}>
+          {item => <Item>{item.name}</Item>}
+        </ListView>
+      );
+      let grid = tree.getByRole('grid');
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(grid.firstChild).toBeEmptyDOMElement();
     });
   });
 });

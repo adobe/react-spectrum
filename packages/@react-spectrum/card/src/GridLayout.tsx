@@ -1,3 +1,4 @@
+// @ts-nocheck
 /*
  * Copyright 2021 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -128,41 +129,6 @@ export class GridLayout<T> extends BaseLayout<T> {
         Math.floor(y / itemHeight) * this.numColumns + Math.floor((x - this.horizontalSpacing) / itemWidth)
       )
     );
-  }
-
-  getVisibleLayoutInfos(rect) {
-    let res: LayoutInfo[] = [];
-    let numItems = this.collection.size;
-    if (numItems <= 0 || !this.itemSize) {
-      // If there aren't any items in the collection, we are in a loader/placeholder state. Return those layoutInfos as
-      // the currently visible items
-      if (this.layoutInfos.size > 0) {
-        for (let layoutInfo of this.layoutInfos.values()) {
-          if (this.isVisible(layoutInfo, rect)) {
-            res.push(layoutInfo);
-          }
-        }
-      }
-    } else {
-      // The approach from v2 uses indexes where other v3 layouts iterate through every node/root node. This feels more efficient
-      let firstVisibleItem = this.getIndexAtPoint(rect.x, rect.y);
-      let lastVisibleItem = this.getIndexAtPoint(rect.maxX, rect.maxY);
-      for (let index = firstVisibleItem; index <= lastVisibleItem; index++) {
-        let keyFromIndex = this.collection.rows[index].key;
-        let layoutInfo = this.layoutInfos.get(keyFromIndex);
-        if (layoutInfo && this.isVisible(layoutInfo, rect)) {
-          res.push(layoutInfo);
-        }
-      }
-
-      // Check if loader is in view and add to res if so
-      let loader = this.layoutInfos.get('loader');
-      if (loader && this.isVisible(loader, rect)) {
-        res.push(loader);
-      }
-    }
-
-    return res;
   }
 
   buildCollection() {

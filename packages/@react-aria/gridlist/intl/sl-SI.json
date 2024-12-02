@@ -1,4 +1,4 @@
 {
-  "hasActionAnnouncement": "row has action",
-  "hasLinkAnnouncement": "row has link: {link}"
+  "hasActionAnnouncement": "vrstica ima dejanje",
+  "hasLinkAnnouncement": "vrstica ima povezavo: {link}"
 }

@@ -11,13 +11,14 @@
  */
 
 import {AriaRadioGroupProps, AriaRadioProps, HoverEvents, Orientation, useFocusRing, useHover, useRadio, useRadioGroup, VisuallyHidden} from 'react-aria';
-import {ContextValue, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {FormContext} from './Form';
+import {forwardRefType, RefObject} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {RadioGroupState, useRadioGroupState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, MutableRefObject} from 'react';
+import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {TextContext} from './Text';
 
 export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<RadioGroupRenderProps>, SlotProps {}
@@ -25,7 +26,7 @@ export interface RadioProps extends Omit<AriaRadioProps, 'children'>, HoverEvent
   /**
    * A ref for the HTML input element.
    */
-  inputRef?: MutableRefObject<HTMLInputElement>
+  inputRef?: RefObject<HTMLInputElement | null>
 }
 
 export interface RadioGroupRenderProps {
@@ -112,7 +113,10 @@ export const RadioGroupContext = createContext<ContextValue<RadioGroupProps, HTM
 export const RadioContext = createContext<ContextValue<Partial<RadioProps>, HTMLLabelElement>>(null);
 export const RadioGroupStateContext = createContext<RadioGroupState | null>(null);
 
-function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A radio group allows a user to select a single item from a list of mutually exclusive options.
+ */
+export const RadioGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, RadioGroupContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
@@ -168,9 +172,12 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
       </Provider>
     </div>
   );
-}
+});
 
-function Radio(props: RadioProps, ref: ForwardedRef<HTMLLabelElement>) {
+/**
+ * A radio represents an individual option within a radio group.
+ */
+export const Radio = /*#__PURE__*/ (forwardRef as forwardRefType)(function Radio(props: RadioProps, ref: ForwardedRef<HTMLLabelElement>) {
   let {
     inputRef: userProvidedInputRef = null,
     ...otherProps
@@ -229,16 +236,4 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLLabelElement>) {
       {renderProps.children}
     </label>
   );
-}
-
-/**
- * A radio group allows a user to select a single item from a list of mutually exclusive options.
- */
-const _RadioGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(RadioGroup);
-
-/**
- * A radio represents an individual option within a radio group.
- */
-const _Radio = /*#__PURE__*/ (forwardRef as forwardRefType)(Radio);
-
-export {_RadioGroup as RadioGroup, _Radio as Radio};
+});

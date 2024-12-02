@@ -114,37 +114,27 @@ export default {
   },
   argTypes: {
     selectionMode: {
-      control: {
-        type: 'radio',
-        options: ['none', 'single', 'multiple']
-      }
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
     },
     selectionStyle: {
-      control: {
-        type: 'radio',
-        options: ['checkbox', 'highlight']
-      }
+      control: 'radio',
+      options: ['checkbox', 'highlight']
     },
     isQuiet: {
-      control: {type: 'boolean'}
+      control: 'boolean'
     },
     density: {
-      control: {
-        type: 'select',
-        options: ['compact', 'regular', 'spacious']
-      }
+      control: 'select',
+      options: ['compact', 'regular', 'spacious']
     },
     overflowMode: {
-      control: {
-        type: 'radio',
-        options: ['truncate', 'wrap']
-      }
+      control: 'radio',
+      options: ['truncate', 'wrap']
     },
     disabledBehavior: {
-      control: {
-        type: 'radio',
-        options: ['selection', 'all']
-      }
+      control: 'radio',
+      options: ['selection', 'all']
     }
   }
 } as ComponentMeta<typeof ListView>;
@@ -153,10 +143,10 @@ export type ListViewStory = ComponentStoryObj<typeof ListView>;
 
 export const Default: ListViewStory = {
   render: (args) => (
-    <ListView width="250px" aria-label="default ListView" {...args}>
-      <Item textValue="Adobe Photoshop">Adobe Photoshop</Item>
-      <Item textValue="Adobe Illustrator">Adobe Illustrator</Item>
-      <Item textValue="Adobe XD">Adobe XD</Item>
+    <ListView disabledKeys={['3']} width="250px" aria-label="default ListView" {...args}>
+      <Item key="1" textValue="Adobe Photoshop">Adobe Photoshop</Item>
+      <Item key="2" textValue="Adobe Illustrator">Adobe Illustrator</Item>
+      <Item key="3" textValue="Adobe XD">Adobe XD</Item>
     </ListView>
   ),
   name: 'default'
@@ -406,11 +396,11 @@ function ActionBarExample(props?) {
 
 let i = 0;
 function EmptyTest() {
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState<{key: number, name: string}[]>([]);
   const [divProps, setDivProps] = useState({});
 
   useEffect(() => {
-    let newItems = [];
+    let newItems: typeof items = [];
     for (i = 0; i < 20; i++) {
       newItems.push({key: i, name: `Item ${i}`});
     }
@@ -428,7 +418,7 @@ function EmptyTest() {
     <div>
       <Flex direction="row">
         <div {...divProps}>
-          <ListView aria-label="render empty state ListView" items={items} width="250px" height={hasDivProps ? null : '500px'} renderEmptyState={renderEmpty}>
+          <ListView aria-label="render empty state ListView" items={items} width="250px" height={hasDivProps ? undefined : '500px'} renderEmptyState={renderEmpty}>
             {
               item => (
                 <Item key={item.key}>
@@ -517,3 +507,32 @@ function Demo(props) {
     </ListView>
   );
 }
+
+const manyItems: {key: number, name: string}[] = [];
+for (let i = 0; i < 500; i++) {manyItems.push({key: i, name: `item ${i}`});}
+
+function DisplayNoneComponent(args) {
+  const [isDisplay, setIsDisplay] = useState(false);
+
+  return (
+    <>
+      <Button variant="primary" onPress={() => setIsDisplay(prev => !prev)}>Toggle ListView display</Button>
+      <div style={!isDisplay ? {display: 'none'} : undefined}>
+        <ListView aria-label="Many items" items={manyItems} width="300px" height="200px" {...args}>
+          {(item: any) => (
+            <Item key={item.key} textValue={item.name}>
+              <Text>
+                {item.name}
+              </Text>
+            </Item>
+          )}
+        </ListView>
+      </div>
+    </>
+  );
+}
+
+export const DisplayNone: ListViewStory = {
+  render: (args) => <DisplayNoneComponent {...args} />,
+  name: 'display: none with many items'
+};

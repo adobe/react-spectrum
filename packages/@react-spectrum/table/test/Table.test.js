@@ -11,13 +11,14 @@
  */
 
 jest.mock('@react-aria/live-announcer');
+jest.mock('@react-aria/utils/src/scrollIntoView');
 import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render as renderComponent, within} from '@react-spectrum/test-utils-internal';
 import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {announce} from '@react-aria/live-announcer';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
-import {composeStories} from '@storybook/testing-react';
+import {composeStories} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {CRUDExample} from '../stories/CRUDExample';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -29,10 +30,12 @@ import {Item, Picker} from '@react-spectrum/picker';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {scrollIntoView} from '@react-aria/utils';
 import * as stories from '../stories/Table.stories';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
+import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let {
@@ -141,6 +144,7 @@ function pointerEvent(type, opts) {
 export let tableTests = () => {
   let offsetWidth, offsetHeight;
   let user;
+  let testUtilUser = new User({advanceTimer: (time) => jest.advanceTimersByTime(time)});
 
   beforeAll(function () {
     user = userEvent.setup({delay: null, pointerMap});
@@ -1820,10 +1824,9 @@ export let tableTests = () => {
       it('should scroll to a cell when it is focused', function () {
         let tree = renderMany();
         let body = tree.getByRole('grid').childNodes[1];
-        expect(body.scrollTop).toBe(0);
 
         focusCell(tree, 'Baz 25');
-        expect(body.scrollTop).toBe(24);
+        expect(scrollIntoView).toHaveBeenLastCalledWith(body, document.activeElement);
       });
 
       it('should scroll to a cell when it is focused off screen', function () {
@@ -1840,6 +1843,7 @@ export let tableTests = () => {
         body.scrollTop = 1000;
         body.scrollLeft = 1000;
         fireEvent.scroll(body);
+        act(() => jest.runAllTimers());
 
         expect(body.scrollTop).toBe(1000);
         expect(document.activeElement).toBe(cell);
@@ -1859,8 +1863,8 @@ export let tableTests = () => {
 
         // Moving focus should scroll the new focused item into view
         moveFocus('ArrowLeft');
-        expect(body.scrollTop).toBe(164);
         expect(document.activeElement).toBe(getCell(tree, 'Foo 5 4'));
+        expect(scrollIntoView).toHaveBeenLastCalledWith(body, document.activeElement);
       });
 
       it('should not scroll when a column header receives focus', function () {
@@ -1879,7 +1883,7 @@ export let tableTests = () => {
         focusCell(tree, 'Bar');
         expect(document.activeElement).toHaveAttribute('role', 'columnheader');
         expect(document.activeElement).toHaveTextContent('Bar');
-        expect(body.scrollTop).toBe(1000);
+        expect(scrollIntoView).toHaveBeenLastCalledWith(body, document.activeElement);
       });
     });
   });
@@ -2391,14 +2395,17 @@ export let tableTests = () => {
       it('should support selecting all via the checkbox', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
+        let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
+        tableTester.setInteractionType('keyboard');
 
         checkSelectAll(tree, 'unchecked');
 
-        let rows = tree.getAllByRole('row');
+        let rows = tableTester.rows;
         checkRowSelection(rows.slice(1), false);
+        expect(tableTester.selectedRows).toHaveLength(0);
 
-        await user.click(tree.getByLabelText('Select All'));
-
+        await tableTester.toggleSelectAll();
+        expect(tableTester.selectedRows).toHaveLength(tableTester.rows.length);
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         expect(onSelectionChange.mock.calls[0][0]).toEqual('all');
         checkRowSelection(rows.slice(1), true);
@@ -2837,33 +2844,27 @@ export let tableTests = () => {
         it('should support long press to enter selection mode on touch', async function () {
           let onSelectionChange = jest.fn();
           let onAction = jest.fn();
-          let tree = renderTable({onSelectionChange, onAction});
+          let tree = renderTable({onSelectionChange, onAction, selectionStyle: 'highlight'});
+          let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
+          tableTester.setInteractionType('touch');
+
           act(() => jest.runAllTimers());
           await user.pointer({target: document.body, keys: '[TouchA]'});
 
-          let cellBaz5 = getCell(tree, 'Foo 5');
-
-          fireEvent.pointerDown(cellBaz5, {pointerType: 'touch'});
-          expect(onSelectionChange).not.toHaveBeenCalled();
-          expect(onAction).not.toHaveBeenCalled();
-
-          act(() => jest.runAllTimers());
-
+          await tableTester.toggleRowSelection({text: 'Foo 5', needsLongPress: true});
           checkSelection(onSelectionChange, ['Foo 5']);
           expect(onAction).not.toHaveBeenCalled();
-
-          fireEvent.pointerUp(cellBaz5, {pointerType: 'touch'});
-          fireEvent.click(cellBaz5, {pointerType: 'touch'});
           onSelectionChange.mockReset();
 
-          await user.pointer({target: getCell(tree, 'Foo 10'), keys: '[TouchA]'});
+          await tableTester.toggleRowSelection({text: 'Foo 10', needsLongPress: false});
           checkSelection(onSelectionChange, ['Foo 5', 'Foo 10']);
 
           // Deselect all to exit selection mode
-          await user.pointer({target: getCell(tree, 'Foo 10'), keys: '[TouchA]'});
           onSelectionChange.mockReset();
-          await user.pointer({target: cellBaz5, keys: '[TouchA]'});
-
+          await tableTester.toggleRowSelection({text: 'Foo 10', needsLongPress: false});
+          checkSelection(onSelectionChange, ['Foo 5']);
+          onSelectionChange.mockReset();
+          await tableTester.toggleRowSelection({text: 'Foo 5', needsLongPress: false});
           act(() => jest.runAllTimers());
           checkSelection(onSelectionChange, []);
           expect(onAction).not.toHaveBeenCalled();
@@ -2979,18 +2980,18 @@ export let tableTests = () => {
 
       describe('needs pointerEvents', function () {
         installPointerEvent();
-
         it('should toggle selection with touch', async function () {
           let onSelectionChange = jest.fn();
           let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
-
+          let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
+          tableTester.setInteractionType('touch');
           expect(tree.queryByLabelText('Select All')).toBeNull();
 
-          await user.pointer({target: getCell(tree, 'Baz 5'), keys: '[TouchA]'});
+          await tableTester.toggleRowSelection({text: 'Baz 5'});
           expect(announce).toHaveBeenLastCalledWith('Foo 5 selected.');
           expect(announce).toHaveBeenCalledTimes(1);
           onSelectionChange.mockReset();
-          await user.pointer({target: getCell(tree, 'Foo 10'), keys: '[TouchA]'});
+          await tableTester.toggleRowSelection({text: 'Foo 10'});
           expect(announce).toHaveBeenLastCalledWith('Foo 10 selected. 2 items selected.');
           expect(announce).toHaveBeenCalledTimes(2);
 
@@ -3014,8 +3015,9 @@ export let tableTests = () => {
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
         let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
+        let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
 
-        await user.click(getCell(tree, 'Baz 5'));
+        await tableTester.toggleRowSelection({text: 'Foo 5'});
         expect(announce).toHaveBeenLastCalledWith('Foo 5 selected.');
         expect(announce).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['Foo 5']);
@@ -3023,7 +3025,7 @@ export let tableTests = () => {
 
         announce.mockReset();
         onSelectionChange.mockReset();
-        await user.dblClick(getCell(tree, 'Baz 5'));
+        await tableTester.triggerRowAction({text: 'Foo 5', needsDoubleClick: true});
         expect(announce).not.toHaveBeenCalled();
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(1);
@@ -3130,13 +3132,17 @@ export let tableTests = () => {
             let onSelectionChange = jest.fn();
             let onAction = jest.fn();
             let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
-
             act(() => {
               jest.runAllTimers();
             });
+
+            let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
+            tableTester.setInteractionType('touch');
+
             await user.click(document.body);
 
-            fireEvent.pointerDown(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+            // TODO: Not replacing this with util for long press since it tests various things in the middle of the press
+            fireEvent.pointerDown(tableTester.findCell({text: 'Baz 5'}), {pointerType: 'touch'});
             let description = tree.getByText('Long press to enter selection mode.');
             expect(tree.getByRole('grid')).toHaveAttribute('aria-describedby', expect.stringContaining(description.id));
             expect(announce).not.toHaveBeenCalled();
@@ -3169,26 +3175,15 @@ export let tableTests = () => {
             checkSelection(onSelectionChange, ['Foo 5', 'Foo 10']);
 
             // Deselect all to exit selection mode
-            await user.click(getCell(tree, 'Foo 10'), {pointerType: 'touch'});
-            act(() => {
-              jest.runAllTimers();
-            });
+            await tableTester.toggleRowSelection({text: 'Foo 10'});
             expect(announce).toHaveBeenLastCalledWith('Foo 10 not selected. 1 item selected.');
             expect(announce).toHaveBeenCalledTimes(3);
             onSelectionChange.mockReset();
 
-            fireEvent.pointerDown(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
-            fireEvent.pointerUp(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
-            fireEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
-            act(() => {
-              jest.runAllTimers();
-            });
+            await tableTester.toggleRowSelection({text: 'Foo 5'});
             expect(announce).toHaveBeenLastCalledWith('Foo 5 not selected.');
             expect(announce).toHaveBeenCalledTimes(4);
 
-            act(() => {
-              jest.runAllTimers();
-            });
             checkSelection(onSelectionChange, []);
             expect(onAction).not.toHaveBeenCalled();
             expect(tree.queryByLabelText('Select All')).toBeNull();
@@ -3619,31 +3614,67 @@ export let tableTests = () => {
       </TableView>
     );
 
-    it('displays pressed/hover styles when row is pressed/hovered and selection mode is not "none"', function () {
+    it('displays pressed/hover styles when row is pressed/hovered and selection mode is not "none"', async function () {
       let tree = render(<TableWithBreadcrumbs selectionMode="multiple" />);
 
       let row = tree.getAllByRole('row')[1];
-      fireEvent.mouseDown(row, {detail: 1});
-      expect(row.className.includes('is-active')).toBeTruthy();
-      fireEvent.mouseEnter(row);
+      await user.hover(row);
       expect(row.className.includes('is-hovered')).toBeTruthy();
+      await user.pointer({target: row, keys: '[MouseLeft>]'});
+      expect(row.className.includes('is-active')).toBeTruthy();
+      await user.pointer({target: row, keys: '[/MouseLeft]'});
 
       rerender(tree, <TableWithBreadcrumbs selectionMode="single" />);
       row = tree.getAllByRole('row')[1];
-      fireEvent.mouseDown(row, {detail: 1});
-      expect(row.className.includes('is-active')).toBeTruthy();
-      fireEvent.mouseEnter(row);
+      await user.hover(row);
       expect(row.className.includes('is-hovered')).toBeTruthy();
+      await user.pointer({target: row, keys: '[MouseLeft>]'});
+      expect(row.className.includes('is-active')).toBeTruthy();
+      await user.pointer({target: row, keys: '[/MouseLeft]'});
     });
 
-    it('doesn\'t show pressed/hover styles when row is pressed/hovered and selection mode is "none"', function () {
-      let tree = render(<TableWithBreadcrumbs selectionMode="none" />);
+    it('doesn\'t show pressed/hover styles when row is pressed/hovered and selection mode is "none" and disabledBehavior="all"', async function () {
+      let tree = render(<TableWithBreadcrumbs disabledBehavior="all" selectionMode="none" />);
 
       let row = tree.getAllByRole('row')[1];
-      fireEvent.mouseDown(row, {detail: 1});
-      expect(row.className.includes('is-active')).toBeFalsy();
-      fireEvent.mouseEnter(row);
+      await user.hover(row);
       expect(row.className.includes('is-hovered')).toBeFalsy();
+      await user.pointer({target: row, keys: '[MouseLeft>]'});
+      expect(row.className.includes('is-active')).toBeFalsy();
+      await user.pointer({target: row, keys: '[/MouseLeft]'});
+    });
+
+    it('shows pressed/hover styles when row is pressed/hovered and selection mode is "none", disabledBehavior="selection" and has a action', async function () {
+      let tree = render(<TableWithBreadcrumbs onAction={jest.fn()} disabledBehavior="selection" selectionMode="none" />);
+
+      let row = tree.getAllByRole('row')[1];
+      await user.hover(row);
+      expect(row.className.includes('is-hovered')).toBeTruthy();
+      await user.pointer({target: row, keys: '[MouseLeft>]'});
+      expect(row.className.includes('is-active')).toBeTruthy();
+      await user.pointer({target: row, keys: '[/MouseLeft]'});
+    });
+
+    it('shows pressed/hover styles when row is pressed/hovered, disabledBehavior="selection", row is disabled and has a action', async function () {
+      let tree = render(<TableWithBreadcrumbs disabledKeys={['Foo 1']} onAction={jest.fn()} disabledBehavior="selection" selectionMode="none" />);
+
+      let row = tree.getAllByRole('row')[1];
+      await user.hover(row);
+      expect(row.className.includes('is-hovered')).toBeTruthy();
+      await user.pointer({target: row, keys: '[MouseLeft>]'});
+      expect(row.className.includes('is-active')).toBeTruthy();
+      await user.pointer({target: row, keys: '[/MouseLeft]'});
+    });
+
+    it('doesn\'t show pressed/hover styles when row is pressed/hovered, has a action, but is disabled and disabledBehavior="all"', async function () {
+      let tree = render(<TableWithBreadcrumbs disabledKeys={['Foo 1']} onAction={jest.fn()} disabledBehavior="all" selectionMode="multiple" />);
+
+      let row = tree.getAllByRole('row')[1];
+      await user.hover(row);
+      expect(row.className.includes('is-hovered')).toBeFalsy();
+      await user.pointer({target: row, keys: '[MouseLeft>]'});
+      expect(row.className.includes('is-active')).toBeFalsy();
+      await user.pointer({target: row, keys: '[/MouseLeft]'});
     });
   });
 
@@ -4165,6 +4196,7 @@ export let tableTests = () => {
     });
 
     it('should fire onLoadMore when scrolling near the bottom', function () {
+      let scrollHeightMock = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 4100);
       let items = [];
       for (let i = 1; i <= 100; i++) {
         items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
@@ -4188,10 +4220,10 @@ export let tableTests = () => {
       );
 
       let body = tree.getAllByRole('rowgroup')[1];
-      let scrollView = body.parentNode.parentNode;
+      let scrollView = body;
 
       let rows = within(body).getAllByRole('row');
-      expect(rows).toHaveLength(25); // each row is 41px tall. table is 1000px tall. 25 rows fit.
+      expect(rows).toHaveLength(34); // each row is 41px tall. table is 1000px tall. 25 rows fit. + 1/3 overscan
 
       scrollView.scrollTop = 250;
       fireEvent.scroll(scrollView);
@@ -4206,11 +4238,15 @@ export let tableTests = () => {
       act(() => {jest.runAllTimers();});
 
       expect(onLoadMore).toHaveBeenCalledTimes(1);
+      scrollHeightMock.mockReset();
     });
 
     it('should automatically fire onLoadMore if there aren\'t enough items to fill the Table', function () {
+      let scrollHeightMock = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 1000);
       let items = [{id: 1, foo: 'Foo 1', bar: 'Bar 1'}];
-      let onLoadMoreSpy = jest.fn();
+      let onLoadMore = jest.fn(() => {
+        scrollHeightMock = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 2000);
+      });
 
       let TableMock = (props) => (
         <TableView aria-label="Table">
@@ -4218,7 +4254,7 @@ export let tableTests = () => {
             <Column key="foo">Foo</Column>
             <Column key="bar">Bar</Column>
           </TableHeader>
-          <TableBody items={props.items} onLoadMore={onLoadMoreSpy}>
+          <TableBody items={props.items} onLoadMore={onLoadMore}>
             {row => (
               <Row>
                 {key => <Cell>{row[key]}</Cell>}
@@ -4230,7 +4266,8 @@ export let tableTests = () => {
 
       render(<TableMock items={items} />);
       act(() => jest.runAllTimers());
-      expect(onLoadMoreSpy).toHaveBeenCalledTimes(1);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+      scrollHeightMock.mockReset();
     });
   });
 
@@ -4331,9 +4368,9 @@ export let tableTests = () => {
     it('should add sort direction info to the column header\'s aria-describedby for Android', async function () {
       let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
       let tree = render(<ExampleSortTable />);
-
-      let table = tree.getByRole('grid');
-      let columnheaders = within(table).getAllByRole('columnheader');
+      let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
+      tableTester.setInteractionType('keyboard');
+      let columnheaders = tableTester.columns;
       expect(columnheaders).toHaveLength(3);
       expect(columnheaders[0]).not.toHaveAttribute('aria-sort');
       expect(columnheaders[1]).not.toHaveAttribute('aria-sort');
@@ -4344,7 +4381,7 @@ export let tableTests = () => {
       expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column, ascending');
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
 
-      await user.click(columnheaders[1]);
+      await tableTester.toggleSort({index: 1});
       expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column, descending');
 
       uaMock.mockRestore();

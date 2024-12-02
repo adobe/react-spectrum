@@ -1,0 +1,288 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Adds a comment to UNSAFE_className 1`] = `
+"import { Button } from "@react-spectrum/s2";
+
+<Button // TODO(S2-upgrade): check this UNSAFE_className
+UNSAFE_className="hi">
+  Test
+</Button>"
+`;
+
+exports[`Adds a comment when a spread is used 1`] = `
+"import { Button } from "@react-spectrum/s2";
+import { style } from "@react-spectrum/s2/style" with { type: "macro" };
+
+<Button
+  // TODO(S2-upgrade): check this spread for style props
+  {...otherProps}
+  styles={style({
+    marginX: 16
+  })}>Test</Button>"
+`;
+
+exports[`Adds a comment when a variable is used 1`] = `
+"import { Button } from "@react-spectrum/s2";
+
+<Button // TODO(S2-upgrade): update this style prop
+marginX={margin}>Test</Button>"
+`;
+
+exports[`Bails on UNSAFE_style if it contains a spread 1`] = `
+"<div
+  // TODO(S2-upgrade): check this UNSAFE_style
+  UNSAFE_style={{
+    color: 'var(--spectrum-gray-900)',
+    ...otherStyles
+  }}>
+  Test
+</div>"
+`;
+
+exports[`Converts UNSAFE_className to className on View 1`] = `
+"<div className="hi">
+  Test
+</div>"
+`;
+
+exports[`Handles Flex 1`] = `
+"import { style } from "@react-spectrum/s2/style" with { type: "macro" };
+
+<div
+  className={style({
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 16,
+    flexWrap: "wrap"
+  })}>Test</div>"
+`;
+
+exports[`Handles Grid 1`] = `
+"import { style } from "@react-spectrum/s2/style" with { type: "macro" };
+
+<div
+  className={style({
+    display: "grid",
+    gridTemplateAreas: ["header  header", "sidebar content", "footer  footer"],
+    gridTemplateColumns: ["1fr", "3fr"],
+    gridTemplateRows: [80, "auto", 80],
+    height: 480,
+    gap: 8
+  })}>
+  Test
+</div>"
+`;
+
+exports[`Handles UNSAFE_style 1`] = `
+"import { style } from "@react-spectrum/s2/style" with { type: "macro" };
+
+<div
+  className={style({
+    color: {
+      default: "gray-900",
+      isErrorState: "red-900"
+    },
+
+    borderWidth: {
+      default: 2,
+
+      border: {
+        thin: 1
+      }
+    },
+
+    borderRadius: {
+      default: "none",
+      isRounded: "default"
+    },
+
+    display: "flex",
+    gap: 16,
+    fontSize: "ui",
+    fontWeight: "bold",
+    gridTemplateAreas: ["foo bar", "baz qux"],
+    transitionDuration: 160
+  })({
+    isErrorState,
+    border,
+    isRounded: isRounded(props)
+  })}>
+  Test
+</div>"
+`;
+
+exports[`Handles View 1`] = `
+"import { style, lightDark } from "@react-spectrum/s2/style" with { type: "macro" };
+
+<div
+  className={style({
+    borderWidth: 1,
+    borderColor: "gray-400",
+    borderRadius: "lg",
+    padding: 20,
+    backgroundColor: lightDark("blue-1000", "blue-900"),
+    flex: 1
+  })}>
+  Test
+</div>"
+`;
+
+exports[`Handles View colorVersion={5} 1`] = `
+"import { style, lightDark } from "@react-spectrum/s2/style" with { type: "macro" };
+
+<div
+  className={style({
+    borderWidth: 1,
+    borderColor: "gray-200",
+    borderRadius: "lg",
+    padding: 20,
+    backgroundColor: lightDark("blue-1000", "blue-900")
+  })}>
+  Test
+</div>"
+`;
+
+exports[`Handles View colorVersion={6} 1`] = `
+"import { style } from "@react-spectrum/s2/style" with { type: "macro" };
+
+<div
+  className={style({
+    borderWidth: 1,
+    borderColor: "gray-200",
+    borderRadius: "lg",
+    padding: 20,
+    backgroundColor: "blue-600"
+  })}>
+  Test
+</div>"
+`;
+
+exports[`Handles dimensions 1`] = `
+"import { Button } from "@react-spectrum/s2";
+import { style } from "@react-spectrum/s2/style" with { type: "macro" };
+
+<Button
+  styles={style({
+    marginX: 16,
+    marginY: 20,
+    width: "full",
+    minWidth: "fit"
+  })}>Test</Button>"
+`;
+
+exports[`Handles responsive style props 1`] = `
+"import { TextField } from "@react-spectrum/s2";
+import { style } from "@react-spectrum/s2/style" with { type: "macro" };
+
+<TextField label="Name" styles={style({
+  width: {
+    default: 160,
+    lg: 400
+  }
+})} />"
+`;
+
+exports[`Handles responsive style props 2`] = `
+"import { TextField } from "@react-spectrum/s2";
+import { style } from "@react-spectrum/s2/style" with { type: "macro" };
+
+<TextField label="Name" styles={style({
+  width: {
+    default: 160,
+    lg: 400
+  }
+})} />"
+`;
+
+exports[`Leaves comment for invalid style props 1`] = `
+"import { TextField } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): Could not transform style prop automatically: Error: invalid dimension: 250
+<TextField label="Name" width="250" />"
+`;
+
+exports[`Merges UNSAFE_className with macro className 1`] = `
+"import { style } from "@react-spectrum/s2/style" with { type: "macro" };
+
+<div
+  className={"hi" + style({
+    marginX: 16
+  })}>
+  Test
+</div>"
+`;
+
+exports[`Should keep import aliases 1`] = `
+"import { Button as RSPButton } from "@react-spectrum/s2";
+import { style } from "@react-spectrum/s2/style" with { type: "macro" };
+
+<RSPButton
+  styles={style({
+    marginX: 16,
+    marginY: 20,
+    width: "full"
+  })}>Test</RSPButton>"
+`;
+
+exports[`Should leave existing style macros unaffected 1`] = `
+"import { TextField } from "@react-spectrum/s2";
+import { style } from "@react-spectrum/s2/style" with { type: "macro" };
+
+<TextField label="Name" styles={style({width: 160})} />"
+`;
+
+exports[`Updates left/right layout values to be start/end 1`] = `
+"import { Button } from "@react-spectrum/s2";
+import { style } from "@react-spectrum/s2/style" with { type: "macro" };
+
+<>
+  <div className={style({
+    display: "flex",
+    alignContent: "start"
+  })}>Test</div>
+  <div className={style({
+    display: "flex",
+    alignItems: "start"
+  })}>Test</div>
+  <div className={style({
+    display: "flex",
+    justifyContent: "start"
+  })}>Test</div>
+  <div
+    justifyItems="start"
+    className={style({
+      display: "flex"
+    })}>Test</div>
+  <Button styles={style({
+    alignSelf: "start"
+  })}>Test</Button>
+  <Button styles={style({
+    justifySelf: "start"
+  })}>Test</Button>
+
+  <div className={style({
+    display: "flex",
+    alignContent: "end"
+  })}>Test</div>
+  <div className={style({
+    display: "flex",
+    alignItems: "end"
+  })}>Test</div>
+  <div className={style({
+    display: "flex",
+    justifyContent: "end"
+  })}>Test</div>
+  <div
+    justifyItems="end"
+    className={style({
+      display: "flex"
+    })}>Test</div>
+  <Button styles={style({
+    alignSelf: "end"
+  })}>Test</Button>
+  <Button styles={style({
+    justifySelf: "end"
+  })}>Test</Button>
+</>"
+`;

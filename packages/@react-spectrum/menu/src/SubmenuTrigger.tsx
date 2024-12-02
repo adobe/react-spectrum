@@ -15,7 +15,7 @@ import {Key} from '@react-types/shared';
 import {MenuContext, SubmenuTriggerContext, useMenuStateContext} from './context';
 import {mergeProps} from '@react-aria/utils';
 import {Popover} from '@react-spectrum/overlays';
-import React, {ReactElement, useRef} from 'react';
+import React, {type JSX, ReactElement, useRef} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useLocale} from '@react-aria/i18n';
@@ -26,25 +26,23 @@ interface SubmenuTriggerProps {
   /**
    * The contents of the SubmenuTrigger - an Item and a Menu.
    */
-  children: ReactElement[],
+  children: ReactElement<any>[],
   targetKey: Key
 }
 
 export interface SpectrumSubmenuTriggerProps extends Omit<SubmenuTriggerProps, 'targetKey'> {}
 
 function SubmenuTrigger(props: SubmenuTriggerProps) {
-  let triggerRef = useRef<HTMLDivElement>();
+  let triggerRef = useRef<HTMLDivElement>(null);
   let {
     children,
     targetKey
   } = props;
 
   let [menuTrigger, menu] = React.Children.toArray(children);
-  let {popoverContainer, trayContainerRef, menu: parentMenuRef, submenu: menuRef, rootMenuTriggerState, state} = useMenuStateContext();
-  let triggerNode = state.collection.getItem(targetKey);
-  let submenuTriggerState = useSubmenuTriggerState({triggerKey: targetKey}, rootMenuTriggerState);
+  let {popoverContainer, trayContainerRef, menu: parentMenuRef, submenu: menuRef, rootMenuTriggerState} = useMenuStateContext()!;
+  let submenuTriggerState = useSubmenuTriggerState({triggerKey: targetKey}, rootMenuTriggerState!);
   let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger({
-    node: triggerNode,
     parentMenuRef,
     submenuRef: menuRef
   }, submenuTriggerState, triggerRef);
@@ -61,12 +59,12 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
     switch (e.key) {
       case 'ArrowLeft':
         if (direction === 'ltr') {
-          triggerRef.current.focus();
+          triggerRef.current?.focus();
         }
         break;
       case 'ArrowRight':
         if (direction === 'rtl') {
-          triggerRef.current.focus();
+          triggerRef.current?.focus();
         }
         break;
     }
@@ -92,7 +90,7 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
         {...popoverProps}
         onDismissButtonPress={onDismissButtonPress}
         UNSAFE_className={classNames(styles, 'spectrum-Submenu-popover')}
-        container={popoverContainer}
+        container={popoverContainer!}
         containerPadding={0}
         enableBothDismissButtons
         UNSAFE_style={{clipPath: 'unset', overflow: 'visible', borderWidth: '0px'}}
@@ -142,7 +140,7 @@ SubmenuTrigger.getCollectionNode = function* (props: SpectrumSubmenuTriggerProps
   let [, content] = props.children as [ReactElement, ReactElement];
 
   yield {
-    element: React.cloneElement(trigger, {...trigger.props, hasChildItems: true, isTrigger: true}),
+    element: React.cloneElement(trigger, {...trigger.props as any, hasChildItems: true, isTrigger: true}),
     wrapper: (element) => (
       <SubmenuTrigger key={element.key} targetKey={element.key} {...props}>
         {element}
@@ -152,5 +150,5 @@ SubmenuTrigger.getCollectionNode = function* (props: SpectrumSubmenuTriggerProps
   };
 };
 
-let _SubmenuTrigger = SubmenuTrigger as (props: SpectrumSubmenuTriggerProps) => JSX.Element;
+let _SubmenuTrigger = SubmenuTrigger as unknown as (props: SpectrumSubmenuTriggerProps) => JSX.Element;
 export {_SubmenuTrigger as SubmenuTrigger};

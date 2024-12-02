@@ -10,96 +10,81 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, Item} from '../src';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
-import {Key} from '@react-types/shared';
-import React, {useState} from 'react';
-import {SpectrumAccordionProps} from '@react-types/accordion';
+import {Accordion, Disclosure, DisclosurePanel, DisclosureTitle, SpectrumAccordionProps} from '../src';
+import {Meta, StoryObj} from '@storybook/react';
+import React from 'react';
 
-type ItemType = {
-  key: Key,
-  title: string
-};
-
-export default {
+const meta: Meta<SpectrumAccordionProps> = {
   title: 'Accordion',
   component: Accordion,
-  argTypes: {}
-} as ComponentMeta<typeof Accordion>;
+  argTypes: {
+    isDisabled: {
+      control: 'boolean'
+    },
+    isQuiet: {
+      control: 'boolean'
+    }
+  }
+};
 
-export type AccordionStory = ComponentStoryObj<typeof Accordion>;
+export default meta;
+type AccordionStory = StoryObj<typeof Accordion>;
 
 export const Default: AccordionStory = {
-  args: {
-    items: [
-      {key: 'files', title: 'Your files'},
-      {key: 'shared', title: 'Shared with you'},
-      {key: 'last', title: 'Last item'}
-    ]
-  },
   render: (args) => (
     <Accordion {...args}>
-      {(item) => <Item key={(item as ItemType).key} title={(item as ItemType).title}>{(item as ItemType).key}</Item>}
+      <Disclosure id="files">
+        <DisclosureTitle>
+          Files
+        </DisclosureTitle>
+        <DisclosurePanel>
+          Files content
+        </DisclosurePanel>
+      </Disclosure>
+      <Disclosure id="people">
+        <DisclosureTitle>
+          People
+        </DisclosureTitle>
+        <DisclosurePanel>
+          People content
+        </DisclosurePanel>
+      </Disclosure>
     </Accordion>
   )
 };
 
-export const DefaultExpandedKeys: AccordionStory = {
-  args: {...Default.args, defaultExpandedKeys: ['files']},
-  render: Default.render,
-  name: 'defaultExpandedKeys: files'
+export const WithExpandedKeys: AccordionStory = {
+  ...Default,
+  args: {defaultExpandedKeys: ['files']}
 };
 
-export const DisabledKeys: AccordionStory = {
-  args: {...Default.args, disabledKeys: ['files', 'shared']},
-  render: Default.render,
-  name: 'disabledKeys: files, shared'
-};
-
-export const DisabledDefaultExpandedKeys: AccordionStory = {
-  args: {...Default.args, defaultExpandedKeys: ['files'], disabledKeys: ['files', 'shared']},
-  render: Default.render,
-  name: 'defaultExpandedKeys: files, disabledKeys: files, shared'
-};
-
-export const ControlledExpandedKeys: AccordionStory = {
-  args: {...Default.args, defaultExpandedKeys: ['files']},
-  render: (args) => <ControlledAccordion {...args} />,
-  name: 'controlled ExpandedKeys'
-};
-
-export const WithInput: AccordionStory = {
-  args: {...Default.args, defaultExpandedKeys: ['step1']},
+export const WithDisabledDisclosure: AccordionStory = {
   render: (args) => (
-    <Accordion {...args} >
-      <Item key="step1" title="Shipping" hasChildItems={false}>
-        <input type="text" />
-      </Item>
-      <Item key="step2" title="Billing" hasChildItems={false}>
-        <input type="text" />
-      </Item>
-      <Item key="step3" title="Payment" hasChildItems={false}>
-        <input type="text" />
-      </Item>
+    <Accordion {...args}>
+      <Disclosure id="files">
+        <DisclosureTitle>
+          Your files
+        </DisclosureTitle>
+        <DisclosurePanel>
+          files
+        </DisclosurePanel>
+      </Disclosure>
+      <Disclosure id="shared">
+        <DisclosureTitle>
+          Shared with you
+        </DisclosureTitle>
+        <DisclosurePanel>
+          shared
+        </DisclosurePanel>
+      </Disclosure>
+      <Disclosure id="last" isDisabled>
+        <DisclosureTitle>
+          Last item
+        </DisclosureTitle>
+        <DisclosurePanel>
+          last
+        </DisclosurePanel>
+      </Disclosure>
     </Accordion>
-  ),
-  name: 'With input'
+  )
 };
-
-
-function ControlledAccordion<T>(props: SpectrumAccordionProps<T>) {
-  let [openKeys, setOpenKeys] = useState<Set<Key>>(new Set(['files']));
-  return (
-    <Accordion {...props} expandedKeys={openKeys} onExpandedChange={setOpenKeys} >
-      <Item key="files" title="Your files">
-        files
-      </Item>
-      <Item key="shared" title="Shared with you">
-        shared
-      </Item>
-      <Item key="last" title="Last item">
-        last
-      </Item>
-    </Accordion>
-  );
-}

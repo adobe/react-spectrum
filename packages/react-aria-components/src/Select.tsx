@@ -12,19 +12,21 @@
 
 import {AriaSelectProps, HiddenSelect, useFocusRing, useLocalizedStringFormatter, useSelect} from 'react-aria';
 import {ButtonContext} from './Button';
-import {CollectionDocumentContext, ItemRenderProps, useCollectionDocument} from './Collection';
-import {ContextValue, forwardRefType, Hidden, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {Collection, Node, SelectState, useSelectState} from 'react-stately';
+import {CollectionBuilder} from '@react-aria/collections';
+import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {FormContext} from './Form';
+import {forwardRefType} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {ItemRenderProps} from './Collection';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListStateContext} from './ListBox';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
-import {SelectState, useSelectState} from 'react-stately';
 import {TextContext} from './Text';
 
 export interface SelectRenderProps {
@@ -60,16 +62,47 @@ export interface SelectRenderProps {
   isRequired: boolean
 }
 
-export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior' | 'items'>, RACValidation, RenderProps<SelectRenderProps>, SlotProps {}
+export interface SelectProps<T extends object = {}> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior' | 'items'>, RACValidation, RenderProps<SelectRenderProps>, SlotProps {}
 
 export const SelectContext = createContext<ContextValue<SelectProps<any>, HTMLDivElement>>(null);
 export const SelectStateContext = createContext<SelectState<unknown> | null>(null);
 
-function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A select displays a collapsible list of options and allows a user to select one of them.
+ */
+export const Select = /*#__PURE__*/ (forwardRef as forwardRefType)(function Select<T extends object = {}>(props: SelectProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SelectContext);
+  let {children, isDisabled = false, isInvalid = false, isRequired = false} = props;
+  let content = useMemo(() => (
+    typeof children === 'function'
+      ? children({
+        isOpen: false,
+        isDisabled,
+        isInvalid,
+        isRequired,
+        isFocused: false,
+        isFocusVisible: false,
+        defaultChildren: null
+      })
+      : children
+  ), [children, isDisabled, isInvalid, isRequired]);
+
+  return (
+    <CollectionBuilder content={content}>
+      {collection => <SelectInner props={props} collection={collection} selectRef={ref} />}
+    </CollectionBuilder>
+  );
+});
+
+interface SelectInnerProps<T extends object> {
+  props: SelectProps<T>,
+  selectRef: ForwardedRef<HTMLDivElement>,
+  collection: Collection<Node<T>>
+}
+
+function SelectInner<T extends object>({props, selectRef: ref, collection}: SelectInnerProps<T>) {
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
-  let {collection, document} = useCollectionDocument();
   let state = useSelectState({
     ...props,
     collection,
@@ -128,72 +161,55 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
   let DOMProps = filterDOMProps(props);
   delete DOMProps.id;
 
+  let scrollRef = useRef(null);
+
   return (
-    <>
-      {/* Render a hidden copy of the children so that we can build the collection even when the popover is not open.
-        * This should always come before the real DOM content so we have built the collection by the time it renders during SSR. */}
-      <Hidden>
-        <Provider
-          values={[
-            [SelectContext, props],
-            [SelectStateContext, state],
-            [CollectionDocumentContext, document]
-          ]}>
-          {renderProps.children}
-        </Provider>
-      </Hidden>
-      <Provider
-        values={[
-          [SelectContext, props],
-          [SelectStateContext, state],
-          [SelectValueContext, valueProps],
-          [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
-          [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen}],
-          [OverlayTriggerStateContext, state],
-          [PopoverContext, {
-            trigger: 'Select',
-            triggerRef: buttonRef,
-            placement: 'bottom start',
-            style: {'--trigger-width': buttonWidth} as React.CSSProperties
-          }],
-          [ListBoxContext, menuProps],
-          [ListStateContext, state],
-          [TextContext, {
-            slots: {
-              description: descriptionProps,
-              errorMessage: errorMessageProps
-            }
-          }],
-          [FieldErrorContext, validation]
-        ]}>
-        <div
-          {...DOMProps}
-          {...renderProps}
-          {...focusProps}
-          ref={ref}
-          slot={props.slot || undefined}
-          data-focused={state.isFocused || undefined}
-          data-focus-visible={isFocusVisible || undefined}
-          data-open={state.isOpen || undefined}
-          data-disabled={props.isDisabled || undefined}
-          data-invalid={validation.isInvalid || undefined}
-          data-required={props.isRequired || undefined} />
-        <HiddenSelect
-          state={state}
-          triggerRef={buttonRef}
-          label={label}
-          name={props.name}
-          isDisabled={props.isDisabled} />
-      </Provider>
-    </>
+    <Provider
+      values={[
+        [SelectContext, props],
+        [SelectStateContext, state],
+        [SelectValueContext, valueProps],
+        [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
+        [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen}],
+        [OverlayTriggerStateContext, state],
+        [PopoverContext, {
+          trigger: 'Select',
+          triggerRef: buttonRef,
+          scrollRef,
+          placement: 'bottom start',
+          style: {'--trigger-width': buttonWidth} as React.CSSProperties
+        }],
+        [ListBoxContext, {...menuProps, ref: scrollRef}],
+        [ListStateContext, state],
+        [TextContext, {
+          slots: {
+            description: descriptionProps,
+            errorMessage: errorMessageProps
+          }
+        }],
+        [FieldErrorContext, validation]
+      ]}>
+      <div
+        {...DOMProps}
+        {...renderProps}
+        {...focusProps}
+        ref={ref}
+        slot={props.slot || undefined}
+        data-focused={state.isFocused || undefined}
+        data-focus-visible={isFocusVisible || undefined}
+        data-open={state.isOpen || undefined}
+        data-disabled={props.isDisabled || undefined}
+        data-invalid={validation.isInvalid || undefined}
+        data-required={props.isRequired || undefined} />
+      <HiddenSelect
+        state={state}
+        triggerRef={buttonRef}
+        label={label}
+        name={props.name}
+        isDisabled={props.isDisabled} />
+    </Provider>
   );
 }
-
-/**
- * A select displays a collapsible list of options and allows a user to select one of them.
- */
-const _Select = /*#__PURE__*/ (forwardRef as forwardRefType)(Select);
-export {_Select as Select};
 
 export interface SelectValueRenderProps<T> {
   /**
@@ -211,14 +227,18 @@ export interface SelectValueProps<T extends object> extends Omit<HTMLAttributes<
 
 export const SelectValueContext = createContext<ContextValue<SelectValueProps<any>, HTMLSpanElement>>(null);
 
-function SelectValue<T extends object>(props: SelectValueProps<T>, ref: ForwardedRef<HTMLSpanElement>) {
+/**
+ * SelectValue renders the current value of a Select, or a placeholder if no value is selected.
+ * It is usually placed within the button element.
+ */
+export const SelectValue = /*#__PURE__*/ (forwardRef as forwardRefType)(function SelectValue<T extends object>(props: SelectValueProps<T>, ref: ForwardedRef<HTMLSpanElement>) {
   [props, ref] = useContextProps(props, ref, SelectValueContext);
   let state = useContext(SelectStateContext)!;
   let {placeholder} = useSlottedContext(SelectContext)!;
   let selectedItem = state.selectedKey != null
     ? state.collection.getItem(state.selectedKey)
     : null;
-  let rendered = selectedItem?.rendered;
+  let rendered = selectedItem?.props.children;
   if (typeof rendered === 'function') {
     // If the selected item has a function as a child, we need to call it to render to React.JSX.
     let fn = rendered as (s: ItemRenderProps) => ReactNode;
@@ -238,7 +258,7 @@ function SelectValue<T extends object>(props: SelectValueProps<T>, ref: Forwarde
 
   let renderProps = useRenderProps({
     ...props,
-    defaultChildren: rendered || placeholder || stringFormatter.format('selectPlaceholder'),
+    defaultChildren: rendered ?? placeholder ?? stringFormatter.format('selectPlaceholder'),
     defaultClassName: 'react-aria-SelectValue',
     values: {
       selectedItem: state.selectedItem?.value as T ?? null,
@@ -257,11 +277,4 @@ function SelectValue<T extends object>(props: SelectValueProps<T>, ref: Forwarde
       </TextContext.Provider>
     </span>
   );
-}
-
-/**
- * SelectValue renders the current value of a Select, or a placeholder if no value is selected.
- * It is usually placed within the button element.
- */
-const _SelectValue = /*#__PURE__*/ (forwardRef as forwardRefType)(SelectValue);
-export {_SelectValue as SelectValue};
+});

@@ -134,7 +134,7 @@ function Column({list, status, itemClassName}: ColumnProps) {
     getItems(keys) {
       return [...keys].map((id) => ({
         'issue-id': String(id),
-        'text/plain': list.getItem(id).title
+        'text/plain': list.getItem(id)?.title ?? ''
       }));
     },
 
@@ -162,7 +162,7 @@ function Column({list, status, itemClassName}: ColumnProps) {
         e.items.filter(isTextDropItem).map(item => item.getText('issue-id'))
       );
       for (let id of ids) {
-        list.update(id, {...list.getItem(id), status});
+        list.update(id, {...list.getItem(id)!, status});
       }
       if (e.target.dropPosition === 'before') {
         list.moveBefore(e.target.key, ids);
@@ -177,7 +177,7 @@ function Column({list, status, itemClassName}: ColumnProps) {
         e.items.filter(isTextDropItem).map(item => item.getText('issue-id'))
       );
       for (let id of ids) {
-        list.update(id, {...list.getItem(id), status});
+        list.update(id, {...list.getItem(id)!, status});
       }
     },
 

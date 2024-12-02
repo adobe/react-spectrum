@@ -24,7 +24,7 @@ import {countries, states} from './data';
 import {DateField, DatePicker, DateRangePicker, TimeField} from '@react-spectrum/datepicker';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '../';
-import {FormTranslatedText} from './../chromatic/FormLanguages.chromatic';
+import {FormTranslatedText} from './../chromatic/FormLanguages.stories';
 import {Heading} from '@react-spectrum/text';
 import {InlineAlert} from '@react-spectrum/inlinealert';
 import {Item, Picker} from '@react-spectrum/picker';
@@ -484,7 +484,7 @@ function FormWithControls(props: any = {}) {
   let [favoritePet, setFavoritePet] = useState('cats');
   let [favoriteColor, setFavoriteColor] = useState('green' as Key);
   let [howIFeel, setHowIFeel] = useState('I feel good, o I feel so good!');
-  let [birthday, setBirthday] = useState(new CalendarDate(1732, 2, 22));
+  let [birthday, setBirthday] = useState<CalendarDate | null>(new CalendarDate(1732, 2, 22));
   let [money, setMoney] = useState(50);
   let [superSpeed, setSuperSpeed] = useState(true);
 

@@ -1,4 +1,4 @@
 {
-  "hasActionAnnouncement": "row has action",
-  "hasLinkAnnouncement": "row has link: {link}"
+  "hasActionAnnouncement": "wiersz zawiera działanie",
+  "hasLinkAnnouncement": "wiersz zawiera link: {link}"
 }

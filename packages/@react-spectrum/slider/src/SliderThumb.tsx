@@ -14,7 +14,8 @@ import {AriaSliderThumbProps} from '@react-types/slider';
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
-import React, {RefObject, useRef} from 'react';
+import React, {useRef} from 'react';
+import {RefObject} from '@react-types/shared';
 import {SliderState} from '@react-stately/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {useHover} from '@react-aria/interactions';
@@ -22,8 +23,8 @@ import {useSliderThumb} from '@react-aria/slider';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface SliderThumbProps extends AriaSliderThumbProps {
-  trackRef: RefObject<HTMLElement>,
-  inputRef?: RefObject<HTMLInputElement>,
+  trackRef: RefObject<HTMLElement | null>,
+  inputRef?: RefObject<HTMLInputElement | null>,
   state: SliderState
 }
 
@@ -32,7 +33,7 @@ export function SliderThumb(props: SliderThumbProps) {
     inputRef,
     state
   } = props;
-  let backupRef = useRef<HTMLInputElement>();
+  let backupRef = useRef<HTMLInputElement | null>(null);
   inputRef = inputRef || backupRef;
 
   let {thumbProps, inputProps, isDragging, isFocused} = useSliderThumb({

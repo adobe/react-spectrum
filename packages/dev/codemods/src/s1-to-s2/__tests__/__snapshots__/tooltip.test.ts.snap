@@ -1,0 +1,196 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Alerts users to isOpen change in wrapped tooltip 1`] = `
+"import { Tooltip } from "@react-spectrum/s2";
+
+function MyTooltip(props) {
+  return (
+    <Tooltip // TODO(S2-upgrade): check this spread for style props
+    {...props} isOpen />
+  );
+}"
+`;
+
+exports[`Alerts users to placement change in wrapped tooltip 1`] = `
+"import { Tooltip } from "@react-spectrum/s2";
+
+function MyTooltip(props) {
+  return (
+    <Tooltip // TODO(S2-upgrade): check this spread for style props
+    {...props} placement="bottom left" />
+  );
+}"
+`;
+
+exports[`Removes showIcon 1`] = `
+"import { ActionButton, TooltipTrigger, Tooltip } from "@react-spectrum/s2";
+
+let showIcon = true;
+let props = {showIcon: true};
+<div>
+  <TooltipTrigger>
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger>
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger>
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger>
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger>
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger>
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip // TODO(S2-upgrade): check this spread for style props
+    {...props}>Change Name</Tooltip>
+  </TooltipTrigger>
+</div>"
+`;
+
+exports[`Removes variant 1`] = `
+"import { ActionButton, TooltipTrigger, Tooltip } from "@react-spectrum/s2";
+
+<div>
+  <TooltipTrigger>
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger>
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger>
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+</div>"
+`;
+
+exports[`Removes variant in wrapped tooltip 1`] = `
+"import { Tooltip } from "@react-spectrum/s2";
+
+function MyTooltip(props) {
+  return (
+    <Tooltip
+      // TODO(S2-upgrade): check this spread for style props
+      {...props} />
+  );
+}"
+`;
+
+exports[`moves isOpen to trigger 1`] = `
+"import { ActionButton, TooltipTrigger, Tooltip } from "@react-spectrum/s2";
+
+let isOpen = true;
+let props = {isOpen: true};
+<div>
+  <TooltipTrigger isOpen>
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger isOpen={true}>
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger isOpen={false}>
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger isOpen={'foo' === 'foo'}>
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger isOpen={isOpen}>
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger>
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip // TODO(S2-upgrade): check this spread for style props
+    {...props}>Change Name</Tooltip>
+  </TooltipTrigger>
+</div>"
+`;
+
+exports[`moves placement to trigger and replaces with simplified placement 1`] = `
+"import { ActionButton, TooltipTrigger, Tooltip } from "@react-spectrum/s2";
+
+<div>
+  <TooltipTrigger placement="bottom">
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger placement="bottom">
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger placement="bottom">
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger placement="bottom">
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+
+  <TooltipTrigger placement="top">
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger placement="top">
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger placement="top">
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger placement="top">
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+
+  <TooltipTrigger placement="left">
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger placement="left">
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger placement="start">
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger placement="start">
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+
+  <TooltipTrigger placement="right">
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger placement="right">
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger placement="end">
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger placement="end">
+    <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
+    <Tooltip>Change Name</Tooltip>
+  </TooltipTrigger>
+</div>"
+`;

@@ -1,4 +1,4 @@
 {
   "close": "Sule",
-  "notifications": "Teated"
+  "notifications": "{count, plural, one {# teatis} other {# teatist}}."
 }

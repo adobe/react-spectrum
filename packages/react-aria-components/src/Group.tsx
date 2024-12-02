@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps} from '@react-types/shared';
-import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {AriaLabelingProps, DOMProps, forwardRefType} from '@react-types/shared';
+import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {HoverProps, mergeProps, useFocusRing, useHover} from 'react-aria';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 
@@ -60,7 +60,10 @@ export interface GroupProps extends AriaLabelingProps, Omit<HTMLAttributes<HTMLE
 
 export const GroupContext = createContext<ContextValue<GroupProps, HTMLDivElement>>({});
 
-function Group(props: GroupProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A group represents a set of related UI controls, and supports interactive states for styling.
+ */
+export const Group = /*#__PURE__*/ (forwardRef as forwardRefType)(function Group(props: GroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, GroupContext);
   let {isDisabled, isInvalid, onHoverStart, onHoverChange, onHoverEnd, ...otherProps} = props;
 
@@ -92,10 +95,4 @@ function Group(props: GroupProps, ref: ForwardedRef<HTMLDivElement>) {
       {renderProps.children}
     </div>
   );
-}
-
-/**
- * A group represents a set of related UI controls, and supports interactive states for styling.
- */
-const _Group = /*#__PURE__*/ (forwardRef as forwardRefType)(Group);
-export {_Group as Group};
+});

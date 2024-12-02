@@ -19,6 +19,7 @@ import {Provider} from '@react-spectrum/provider';
 import React, {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {Example as StorybookExample} from '../stories/FocusScope.stories';
+import {useEvent} from '@react-aria/utils';
 import userEvent from '@testing-library/user-event';
 
 
@@ -763,6 +764,70 @@ describe('FocusScope', function () {
       act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(button2);
       expect(input1).not.toBeInTheDocument();
+    });
+
+    it('should allow restoration to be overridden with a custom event', async function () {
+      function Test() {
+        let [show, setShow] = React.useState(false);
+        let ref = React.useRef(null);
+        useEvent(ref, 'react-aria-focus-scope-restore', e => {
+          e.preventDefault();
+        });
+
+        return (
+          <div ref={ref}>
+            <button onClick={() => setShow(true)}>Show</button>
+            {show && <FocusScope restoreFocus>
+              <input autoFocus onKeyDown={() => setShow(false)} />
+            </FocusScope>}
+          </div>
+        );
+      }
+
+      let {getByRole} = render(<Test />);
+      let button = getByRole('button');
+      await user.click(button);
+
+      let input = getByRole('textbox');
+      expect(document.activeElement).toBe(input);
+
+      await user.keyboard('{Escape}');
+      act(() => jest.runAllTimers());
+      expect(input).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(document.body);
+    });
+
+    it('should not bubble focus scope restoration event out of nested focus scopes', async function () {
+      function Test() {
+        let [show, setShow] = React.useState(false);
+        let ref = React.useRef(null);
+        useEvent(ref, 'react-aria-focus-scope-restore', e => {
+          e.preventDefault();
+        });
+
+        return (
+          <div ref={ref}>
+            <FocusScope>
+              <button onClick={() => setShow(true)}>Show</button>
+              {show && <FocusScope restoreFocus>
+                <input autoFocus onKeyDown={() => setShow(false)} />
+              </FocusScope>}
+            </FocusScope>
+          </div>
+        );
+      }
+
+      let {getByRole} = render(<Test />);
+      let button = getByRole('button');
+      await user.click(button);
+
+      let input = getByRole('textbox');
+      expect(document.activeElement).toBe(input);
+
+      await user.keyboard('{Escape}');
+      act(() => jest.runAllTimers());
+      expect(input).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(button);
     });
   });
 

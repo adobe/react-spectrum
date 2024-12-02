@@ -18,6 +18,7 @@ import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/datepicker/docs/daterangepicker-anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
+import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import {Keyboard} from '@react-spectrum/text';
 import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
@@ -103,6 +104,10 @@ buttons using the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys.
 If a visual label is not provided (e.g. an icon only button), then an `aria-label` or
 `aria-labelledby` prop must be passed to identify the button to assistive technology.
 
+## Examples
+
+<ExampleList tag="button" />
+
 ## Starter kits
 
 To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
@@ -149,6 +154,144 @@ A `Button` can be disabled using the `isDisabled` prop.
     border-color: var(--border-color-disabled);
     color: var(--text-color-disabled);
   }
+}
+```
+
+</details>
+
+## Pending
+
+A `Button` can be put into a pending state using the `isPending` prop.
+This is useful when an action takes a long time to complete, and you want to provide feedback to the user that the action is in progress.
+The pending state announces the state change to assistive technologies and disables interactions with the exception of focus.
+
+A [ProgressBar](ProgressBar.html) component is required to show the pending state correctly.
+Make sure to internationalize the `aria-label` you pass to the [ProgressBar](ProgressBar.html) component.
+
+```tsx example
+import {useState} from 'react';
+
+function PendingButton(props) {
+  let [isPending, setPending] = useState(false);
+
+  let handlePress = (e) => {
+    setPending(true);
+    setTimeout(() => {
+      setPending(false);
+    }, 5000);
+  };
+
+  return (
+    <Button
+      {...props}
+      isPending={isPending}
+      onPress={handlePress}>
+        {({isPending}) => (
+          <>
+            {!isPending && <span>Save</span>}
+            {isPending && (
+              // See below
+              <MyProgressCircle aria-label="Saving..." isIndeterminate />
+            )}
+          </>
+        )}
+    </Button>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> MyProgressCircle</summary>
+
+```tsx example render=false export=true
+import {ProgressBar} from 'react-aria-components';
+import type {ProgressBarProps} from 'react-aria-components';
+
+function MyProgressCircle(props: ProgressBarProps) {
+  return (
+    <ProgressBar {...props}>
+      <svg width="16" height="16" viewBox="0 0 24 24" style={{display: 'block'}}>
+        <path fill="currentColor" d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25" />
+        <path fill="currentColor" d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z">
+          <animateTransform attributeName="transform" type="rotate" dur="0.75s" values="0 12 12;360 12 12" repeatCount="indefinite"/>
+        </path>
+      </svg>
+    </ProgressBar>
+  );
+}
+```
+
+</details>
+
+### Accessibility
+
+**Note:**
+The `ProgressBar` must be in the accessibility tree as soon as the button becomes pending, even if it is not visible.
+For example, if you'd like to delay showing a spinner until a minimum amount of time passes, you could use `opacity: 0` to hide it so it is still available to screen readers.
+Do not use `visibility: hidden` or `display: none` since these remove the element from the accessibility tree.
+
+Additionally, you may choose to keep the button's contents in the DOM while the button is pending, e.g. to preserve the button's layout.
+If you hide the contents with `visibility: hidden`, the accessibility label for the button will only include the ProgressBar, so it should have a descriptive `aria-label` (e.g. "Saving").
+You can also choose to keep the button's contents in the accessibility tree by using `opacity: 0`, in which case the `ProgressBar`'s label will be combined with the contents (e.g. "Save, pending").
+
+Try the above example and the one below with a screen reader to see the difference in behavior.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show example</summary>
+
+```tsx example
+function PendingDelayed(props) {
+  let [isPending, setPending] = useState(false);
+
+  let handlePress = (e) => {
+    setPending(true);
+    setTimeout(() => {
+      setPending(false);
+    }, 5000);
+  };
+
+  return (
+    <Button
+      {...props}
+      isPending={isPending}
+      onPress={handlePress}
+      style={{position: 'relative'}}>
+        {({isPending}) => (
+          <>
+            <span className={isPending ? 'pending' : undefined}>Save</span>
+            {isPending && (
+              <MyProgressCircle aria-label="in progress" isIndeterminate className="spinner" />
+            )}
+          </>
+        )}
+    </Button>
+  );
+}
+```
+
+```css
+@keyframes toggle {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: toggle 1s steps(1);
+  opacity: 1;
+}
+
+.pending {
+  animation: toggle 1s reverse steps(1, jump-start);
+  opacity: 0;
 }
 ```
 

@@ -18,11 +18,11 @@ import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
 import ChevronRight from '@spectrum-icons/ui/ChevronRightLarge';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, StyleProps} from '@react-types/shared';
+import {DOMProps, RefObject, StyleProps} from '@react-types/shared';
 import {HelpText} from '@react-spectrum/label';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {HTMLAttributes, RefObject} from 'react';
+import React, {HTMLAttributes, JSX} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useDateFormatter, useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
@@ -34,7 +34,7 @@ interface CalendarBaseProps<T extends CalendarState | RangeCalendarState> extend
   nextButtonProps: AriaButtonProps,
   prevButtonProps: AriaButtonProps,
   errorMessageProps: HTMLAttributes<HTMLElement>,
-  calendarRef: RefObject<HTMLDivElement>
+  calendarRef: RefObject<HTMLDivElement | null>
 }
 
 export function CalendarBase<T extends CalendarState | RangeCalendarState>(props: CalendarBaseProps<T>) {
@@ -59,8 +59,8 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
     timeZone: state.timeZone
   });
 
-  let titles = [];
-  let calendars = [];
+  let titles: JSX.Element[] = [];
+  let calendars: JSX.Element[] = [];
   for (let i = 0; i < visibleMonths; i++) {
     let d = currentMonth.add({months: i});
     titles.push(

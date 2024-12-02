@@ -12,61 +12,32 @@
 
 import {Collection, Key} from '@react-types/shared';
 import {Layout} from './Layout';
-import {LayoutInfo} from './LayoutInfo';
-import {Rect, RectCorner} from './Rect';
-import {ReusableView} from './ReusableView';
-import {Size} from './Size';
-import {Transaction} from './Transaction';
+import {Rect} from './Rect';
 
-export interface InvalidationContext<T extends object, V> {
+export interface InvalidationContext<O = any> {
   contentChanged?: boolean,
   offsetChanged?: boolean,
   sizeChanged?: boolean,
-  animated?: boolean,
-  beforeLayout?(): void,
-  afterLayout?(): void,
-  afterAnimation?(): void,
-  transaction?: Transaction<T, V>
+  itemSizeChanged?: boolean,
+  layoutOptions?: O
 }
 
-export interface VirtualizerDelegate<T extends object, V, W> {
-  setVisibleViews(views: W[]): void,
-  setContentSize(size: Size): void,
+export interface VirtualizerDelegate<T extends object, V> {
   setVisibleRect(rect: Rect): void,
-  getType?(content: T): string,
-  renderView(type: string, content: T): V,
-  renderWrapper(
-    parent: ReusableView<T, V> | null,
-    reusableView: ReusableView<T, V>,
-    children: ReusableView<T, V>[],
-    renderChildren: (views: ReusableView<T, V>[]) => W[]
-  ): W,
-  beginAnimations(): void,
-  endAnimations(): void,
-  getScrollAnchor?(rect: Rect): Key
+  renderView(type: string, content: T | null): V,
+  invalidate(ctx: InvalidationContext): void
 }
 
-export interface ScrollAnchor {
-  key: Key,
-  layoutInfo: LayoutInfo,
-  corner: RectCorner,
-  offset: number
+export interface VirtualizerRenderOptions<T extends object, O = any> {
+  layout: Layout<T>,
+  collection: Collection<T>,
+  persistedKeys?: Set<Key> | null,
+  visibleRect: Rect,
+  invalidationContext: InvalidationContext,
+  isScrolling: boolean,
+  layoutOptions?: O
 }
 
-export interface ScrollToItemOptions {
-  duration?: number,
-  shouldScrollX?: boolean,
-  shouldScrollY?: boolean,
-  offsetX?: number,
-  offsetY?: number
-}
-
-export interface VirtualizerOptions<T extends object, V, W> {
-  collection?: Collection<T>,
-  layout?: Layout<T>,
-  delegate?: VirtualizerDelegate<T, V, W>,
-  transitionDuration?: number,
-  anchorScrollPosition?: boolean,
-  anchorScrollPositionAtTop?: boolean,
-  shouldOverscan?: boolean
-}
+export type Mutable<T> = {
+  -readonly[P in keyof T]: T[P]
+};

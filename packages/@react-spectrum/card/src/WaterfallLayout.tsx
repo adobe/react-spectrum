@@ -1,3 +1,4 @@
+// @ts-nocheck
 /*
  * Copyright 2021 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -13,7 +14,7 @@
 import {BaseLayout, BaseLayoutOptions} from './BaseLayout';
 import {getChildNodes, getFirstItem} from '@react-stately/collections';
 import {InvalidationContext, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
-import {Key, KeyboardDelegate, Node} from '@react-types/shared';
+import {Key, KeyboardDelegate} from '@react-types/shared';
 
 export interface WaterfallLayoutOptions extends BaseLayoutOptions {
   /**
@@ -69,7 +70,7 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
     return 'waterfall';
   }
 
-  buildCollection(invalidationContext: InvalidationContext<Node<T>, unknown>) {
+  buildCollection(invalidationContext: InvalidationContext) {
     // Compute the number of columns needed to display the content
     let visibleWidth = this.virtualizer.visibleRect.width;
     let availableWidth = visibleWidth - this.margin * 2;

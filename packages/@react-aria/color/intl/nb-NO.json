@@ -2,7 +2,7 @@
   "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
   "colorPicker": "Fargevelger",
-  "twoDimensionalSlider": "2D-glidebryter",
-  "colorSwatch": "color swatch",
-  "transparent": "transparent"
+  "colorSwatch": "fargekart",
+  "transparent": "gjennomsiktig",
+  "twoDimensionalSlider": "2D-glidebryter"
 }

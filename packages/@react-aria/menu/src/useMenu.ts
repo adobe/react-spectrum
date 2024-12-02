@@ -11,9 +11,8 @@
  */
 
 import {AriaMenuProps} from '@react-types/menu';
-import {DOMAttributes, Key, KeyboardDelegate, KeyboardEvents} from '@react-types/shared';
+import {DOMAttributes, Key, KeyboardDelegate, KeyboardEvents, RefObject} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {RefObject} from 'react';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableList} from '@react-aria/selection';
 
@@ -46,7 +45,7 @@ export const menuData = new WeakMap<TreeState<unknown>, MenuData>();
  * @param props - Props for the menu.
  * @param state - State for the menu, as returned by `useListState`.
  */
-export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: RefObject<HTMLElement>): MenuAria {
+export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: RefObject<HTMLElement | null>): MenuAria {
   let {
     shouldFocusWrap = true,
     onKeyDown,
@@ -81,7 +80,7 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
       onKeyDown: (e) => {
         // don't clear the menu selected keys if the user is presses escape since escape closes the menu
         if (e.key !== 'Escape') {
-          listProps.onKeyDown(e);
+          listProps.onKeyDown?.(e);
         }
       }
     })

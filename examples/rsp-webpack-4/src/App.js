@@ -1,10 +1,9 @@
 import './App.css';
-import {Provider, defaultTheme, Item, TagGroup, Cell, Column, Row, TableBody, TableHeader, TableView, Content, Heading} from '@adobe/react-spectrum';
+import {Provider, defaultTheme, Item, TagGroup, Cell, Column, InlineAlert, Row, TableBody, TableHeader, TableView, Content, Heading} from '@adobe/react-spectrum';
 import Lighting from './Lighting';
 import {useState} from 'react'
 import BodyContent from './BodyContent';
 import {enableTableNestedRows} from '@react-stately/flags';
-import {InlineAlert} from '@react-spectrum/inlinealert'
 
 let columns = [
   {name: 'Foo', key: 'foo'},

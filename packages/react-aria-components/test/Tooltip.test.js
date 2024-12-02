@@ -132,6 +132,41 @@ describe('Tooltip', () => {
     act(() => jest.runAllTimers());
   });
 
+  it('should hide tooltip on scroll', async () => {
+    let {getByLabelText, getByText, getByTestId} = render(
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '30px',
+          overflow: 'scroll',
+          height: '200px'
+        }}
+        data-testid="scroll-container">
+        {new Array(10).fill().map((_, idx) => (
+          <TooltipTrigger delay={0} key={idx}>
+            <Button aria-label={`trigger-${idx}`}><span aria-hidden="true">✏️</span></Button>
+            <Tooltip>{`Tooltip-${idx}`}</Tooltip>
+          </TooltipTrigger>
+        ))}
+      </div>
+    );
+
+    // Tooltip should be visible on focus
+    let button1 = getByLabelText('trigger-1');
+    fireEvent.mouseMove(document.body);
+    await user.hover(button1);
+    act(() => jest.runAllTimers());
+
+    let tooltip1 = getByText('Tooltip-1');
+    expect(tooltip1).toBeVisible();
+
+    // Tooltip should not be visible on scroll
+    let scrollContainer = getByTestId('scroll-container');
+    expect(scrollContainer).toBeInTheDocument();
+    fireEvent.scroll(scrollContainer, {target: {top: 100}});
+    expect(tooltip1).not.toBeVisible();
+  });
 
   describe('portalContainer', () => {
     function InfoTooltip(props) {

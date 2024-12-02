@@ -23,7 +23,10 @@ import {useFormProps} from '@react-spectrum/form';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
-function ColorField(props: SpectrumColorFieldProps, ref: Ref<TextFieldRef>) {
+/**
+ * A color field allows users to edit a hex color or individual color channel value.
+ */
+export const ColorField = React.forwardRef(function ColorField(props: SpectrumColorFieldProps, ref: Ref<TextFieldRef>) {
   props = useProviderProps(props);
   props = useFormProps(props);
   [props] = useContextProps(props, null, ColorFieldContext);
@@ -36,13 +39,7 @@ function ColorField(props: SpectrumColorFieldProps, ref: Ref<TextFieldRef>) {
   } else {
     return <HexColorField {...props} forwardedRef={ref} />;
   }
-}
-
-/**
- * A color field allows users to edit a hex color or individual color channel value.
- */
-const _ColorField = React.forwardRef(ColorField);
-export {_ColorField as ColorField};
+});
 
 interface ColorChannelFieldProps extends Omit<SpectrumColorFieldProps, 'channel'> {
   channel: ColorChannel,

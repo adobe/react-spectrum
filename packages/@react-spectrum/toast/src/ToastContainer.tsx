@@ -11,10 +11,12 @@
  */
 
 import {AriaToastRegionProps} from '@react-aria/toast';
+import {classNames} from '@react-spectrum/utils';
 import {DOMProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {ReactElement, useEffect, useRef} from 'react';
 import {SpectrumToastValue, Toast} from './Toast';
+import toastContainerStyles from './toastContainer.css';
 import {Toaster} from './Toaster';
 import {ToastOptions, ToastQueue, useToastQueue} from '@react-stately/toast';
 import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
@@ -75,14 +77,14 @@ function useActiveToastContainer() {
  * A ToastContainer renders the queued toasts in an application. It should be placed
  * at the root of the app.
  */
-export function ToastContainer(props: SpectrumToastContainerProps): ReactElement {
+export function ToastContainer(props: SpectrumToastContainerProps): ReactElement | null {
   // Track all toast provider instances in a set.
   // Only the first one will actually render.
   // We use a ref to do this, since it will have a stable identity
   // over the lifetime of the component.
-  let ref = useRef();
+  let ref = useRef(null);
 
-  // eslint-disable-next-line arrow-body-style
+
   useEffect(() => {
     toastProviders.add(ref);
     triggerSubscriptions();
@@ -105,15 +107,21 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
   // Only render if this is the active toast provider instance, and there are visible toasts.
   let activeToastContainer = useActiveToastContainer();
   let state = useToastQueue(getGlobalToastQueue());
+
   if (ref === activeToastContainer && state.visibleToasts.length > 0) {
     return (
       <Toaster state={state} {...props}>
-        {state.visibleToasts.map((toast) => (
-          <Toast
-            key={toast.key}
-            toast={toast}
-            state={state} />
-        ))}
+        <ol className={classNames(toastContainerStyles, 'spectrum-ToastContainer-list')}>
+          {state.visibleToasts.slice().reverse().map((toast) => (
+            <li
+              key={toast.key}
+              className={classNames(toastContainerStyles, 'spectrum-ToastContainer-listitem')}>
+              <Toast
+                toast={toast}
+                state={state} />
+            </li>
+          ))}
+        </ol>
       </Toaster>
     );
   }
@@ -136,7 +144,7 @@ function addToast(children: string, variant: SpectrumToastValue['variant'], opti
 
     let shouldContinue = window.dispatchEvent(event);
     if (!shouldContinue) {
-      return;
+      return () => {};
     }
   }
 
@@ -152,7 +160,7 @@ function addToast(children: string, variant: SpectrumToastValue['variant'], opti
   // Minimum time of 5s from https://spectrum.adobe.com/page/toast/#Auto-dismissible
   // Actionable toasts cannot be auto dismissed. That would fail WCAG SC 2.2.1.
   // It is debatable whether non-actionable toasts would also fail.
-  let timeout = options.timeout && !options.onAction ? Math.max(options.timeout, 5000) : null;
+  let timeout = options.timeout && !options.onAction ? Math.max(options.timeout, 5000) : undefined;
   let queue = getGlobalToastQueue();
   let key = queue.add(value, {timeout, onClose: options.onClose});
   return () => queue.close(key);

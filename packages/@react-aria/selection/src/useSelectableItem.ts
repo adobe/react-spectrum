@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, FocusableElement, Key, LongPressEvent, PressEvent} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, Key, LongPressEvent, PointerType, PressEvent, RefObject} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
 import {mergeProps, openLink, useRouter} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {PressProps, useLongPress, usePress} from '@react-aria/interactions';
-import {RefObject, useEffect, useRef} from 'react';
+import {useEffect, useRef} from 'react';
 
 export interface SelectableItemOptions {
   /**
@@ -30,7 +30,7 @@ export interface SelectableItemOptions {
   /**
    * Ref to the item.
    */
-  ref: RefObject<FocusableElement>,
+  ref: RefObject<FocusableElement | null>,
   /**
    * By default, selection occurs on pointer down. This can be strange if selecting an
    * item causes the UI to disappear immediately (e.g. menus).
@@ -130,7 +130,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       }
 
       if (manager.isLink(key)) {
-        if (linkBehavior === 'selection') {
+        if (linkBehavior === 'selection' && ref.current) {
           let itemProps = manager.getItemProps(key);
           router.open(ref.current, e, itemProps.href, itemProps.routerOptions);
           // Always set selected keys back to what they were so that select and combobox close.
@@ -164,7 +164,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     if (isFocused && manager.isFocused && !shouldUseVirtualFocus) {
       if (focus) {
         focus();
-      } else if (document.activeElement !== ref.current) {
+      } else if (document.activeElement !== ref.current && ref.current) {
         focusSafely(ref.current);
       }
     }
@@ -207,7 +207,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   );
   let hasSecondaryAction = allowsActions && allowsSelection && manager.selectionBehavior === 'replace';
   let hasAction = hasPrimaryAction || hasSecondaryAction;
-  let modality = useRef(null);
+  let modality = useRef<PointerType | null>(null);
 
   let longPressEnabled = hasAction && allowsSelection;
   let longPressEnabledOnPressStart = useRef(false);
@@ -218,7 +218,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       onAction();
     }
 
-    if (hasLinkAction) {
+    if (hasLinkAction && ref.current) {
       let itemProps = manager.getItemProps(key);
       router.open(ref.current, e, itemProps.href, itemProps.routerOptions);
     }
@@ -241,7 +241,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       }
     };
 
-    // If allowsDifferentPressOrigin, make selection happen on pressUp (e.g. open menu on press down, selection on menu item happens on press up.)
+    // If allowsDifferentPressOrigin and interacting with mouse, make selection happen on pressUp (e.g. open menu on press down, selection on menu item happens on press up.)
     // Otherwise, have selection happen onPress (prevents listview row selection when clicking on interactable elements in the row)
     if (!allowsDifferentPressOrigin) {
       itemPressProps.onPress = (e) => {
@@ -256,13 +256,17 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         }
       };
     } else {
-      itemPressProps.onPressUp = hasPrimaryAction ? null : (e) => {
-        if (e.pointerType !== 'keyboard' && allowsSelection) {
+      itemPressProps.onPressUp = hasPrimaryAction ? undefined : (e) => {
+        if (e.pointerType === 'mouse' && allowsSelection) {
           onSelect(e);
         }
       };
 
-      itemPressProps.onPress = hasPrimaryAction ? performAction : null;
+      itemPressProps.onPress = hasPrimaryAction ? performAction : (e) => {
+        if (e.pointerType !== 'keyboard' && e.pointerType !== 'mouse' && allowsSelection) {
+          onSelect(e);
+        }
+      };
     }
   } else {
     itemPressProps.onPressStart = (e) => {

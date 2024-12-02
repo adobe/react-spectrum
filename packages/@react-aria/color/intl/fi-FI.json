@@ -2,7 +2,7 @@
   "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
   "colorPicker": "Värimuokkain",
-  "twoDimensionalSlider": "2D-liukusäädin",
-  "colorSwatch": "color swatch",
-  "transparent": "transparent"
+  "colorSwatch": "värimalli",
+  "transparent": "läpinäkyvä",
+  "twoDimensionalSlider": "2D-liukusäädin"
 }

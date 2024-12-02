@@ -4,10 +4,11 @@
   "private": true,
   "main": "BuildResolver.js",
   "engines": {
-    "parcel": "2.0.0-canary.1563"
+    "parcel": "^2.0.0"
   },
   "dependencies": {
-    "@parcel/plugin": "2.0.0-canary.1565",
-    "@parcel/node-resolver-core": "3.3.1-canary.3188"
+    "@parcel/core": "^2.13.0",
+    "@parcel/node-resolver-core": "^3.4.0",
+    "@parcel/plugin": "^2.0.0"
   }
 }

@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, RefObject} from '@react-types/shared';
 import {mergeProps, useSyncRef} from '@react-aria/utils';
-import React, {MutableRefObject, RefObject, useContext} from 'react';
+import React, {MutableRefObject, useContext} from 'react';
 
 interface DOMPropsResponderProps extends DOMAttributes {
-  ref?: RefObject<Element>
+  ref?: RefObject<Element | null>
 }
 
 interface IDOMPropsResponderContext extends DOMAttributes {

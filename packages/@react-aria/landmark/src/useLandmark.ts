@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMAttributes, FocusableElement} from '@react-types/shared';
-import {RefObject, useCallback, useEffect, useState} from 'react';
+import {AriaLabelingProps, DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
+import {useCallback, useEffect, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 
@@ -44,7 +44,7 @@ interface LandmarkManagerApi {
 // from an older version of useLandmark against a newer version of
 // LandmarkManager does not crash.
 interface Landmark {
-  ref: RefObject<FocusableElement>,
+  ref: RefObject<FocusableElement | null>,
   role: AriaLandmarkRole,
   label?: string,
   lastFocused?: FocusableElement,
@@ -203,7 +203,7 @@ class LandmarkManager implements LandmarkManagerApi {
     }
   }
 
-  private removeLandmark(ref: RefObject<Element>) {
+  private removeLandmark(ref: RefObject<Element | null>) {
     this.landmarks = this.landmarks.filter(landmark => landmark.ref !== ref);
     this.teardownIfNeeded();
   }
@@ -477,7 +477,7 @@ export function createLandmarkController(): LandmarkController {
  * @param props - Props for the landmark.
  * @param ref - Ref to the landmark.
  */
-export function useLandmark(props: AriaLandmarkProps, ref: RefObject<FocusableElement>): LandmarkAria {
+export function useLandmark(props: AriaLandmarkProps, ref: RefObject<FocusableElement | null>): LandmarkAria {
   const {
     role,
     'aria-label': ariaLabel,

@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, RefObject} from '@react-types/shared';
 import {isElementInChildOfActiveScope} from '@react-aria/focus';
-import {RefObject, useEffect} from 'react';
+import {useEffect} from 'react';
 import {useFocusWithin, useInteractOutside} from '@react-aria/interactions';
 
 export interface AriaOverlayProps {
@@ -53,14 +53,14 @@ export interface OverlayAria {
   underlayProps: DOMAttributes
 }
 
-const visibleOverlays: RefObject<Element>[] = [];
+const visibleOverlays: RefObject<Element | null>[] = [];
 
 /**
  * Provides the behavior for overlays such as dialogs, popovers, and menus.
  * Hides the overlay when the user interacts outside it, when the Escape key is pressed,
  * or optionally, on blur. Only the top-most overlay will close at once.
  */
-export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): OverlayAria {
+export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | null>): OverlayAria {
   let {
     onClose,
     shouldCloseOnBlur,
@@ -120,7 +120,7 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
   };
 
   // Handle clicking outside the overlay to close it
-  useInteractOutside({ref, onInteractOutside: isDismissable && isOpen ? onInteractOutside : null, onInteractOutsideStart});
+  useInteractOutside({ref, onInteractOutside: isDismissable && isOpen ? onInteractOutside : undefined, onInteractOutsideStart});
 
   let {focusWithinProps} = useFocusWithin({
     isDisabled: !shouldCloseOnBlur,
@@ -139,7 +139,7 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
       }
 
       if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.relatedTarget as Element)) {
-        onClose();
+        onClose?.();
       }
     }
   });

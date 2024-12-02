@@ -1,4 +1,4 @@
 {
-  "hasActionAnnouncement": "row has action",
-  "hasLinkAnnouncement": "row has link: {link}"
+  "hasActionAnnouncement": "rij heeft actie",
+  "hasLinkAnnouncement": "rij heeft koppeling: {link}"
 }

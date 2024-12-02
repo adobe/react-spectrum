@@ -16,7 +16,10 @@ import React, {forwardRef} from 'react';
 import {TextProps} from '@react-types/text';
 import {useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 
-function Text(props: TextProps, ref: DOMRef) {
+/**
+ * Text represents text with no specific semantic meaning.
+ */
+export const Text = forwardRef(function Text(props: TextProps, ref: DOMRef) {
   props = useSlotProps(props, 'text');
   let {
     children,
@@ -26,14 +29,8 @@ function Text(props: TextProps, ref: DOMRef) {
   let domRef = useDOMRef(ref);
 
   return (
-    <span {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
+    <span role="none" {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
       {children}
     </span>
   );
-}
-
-/**
- * Text represents text with no specific semantic meaning.
- */
-const _Text = forwardRef(Text);
-export {_Text as Text};
+});

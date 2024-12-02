@@ -11,10 +11,11 @@
  */
 
 import {AriaSliderProps, AriaSliderThumbProps, HoverEvents, mergeProps, Orientation, useFocusRing, useHover, useNumberFormatter, useSlider, useSliderThumb, VisuallyHidden} from 'react-aria';
-import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
+import {forwardRefType, RefObject} from '@react-types/shared';
 import {LabelContext} from './Label';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, OutputHTMLAttributes, RefObject, useContext, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, OutputHTMLAttributes, useContext, useRef} from 'react';
 import {SliderState, useSliderState} from 'react-stately';
 
 export interface SliderProps<T = number | number[]> extends Omit<AriaSliderProps<T>, 'label'>, RenderProps<SliderRenderProps>, SlotProps {
@@ -46,7 +47,10 @@ export interface SliderRenderProps {
   state: SliderState
 }
 
-function Slider<T extends number | number[]>(props: SliderProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A slider allows a user to select one or more values within a range.
+ */
+export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slider<T extends number | number[]>(props: SliderProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SliderContext);
   let trackRef = useRef<HTMLDivElement>(null);
   let numberFormatter = useNumberFormatter(props.formatOptions);
@@ -90,18 +94,15 @@ function Slider<T extends number | number[]>(props: SliderProps<T>, ref: Forward
         data-disabled={state.isDisabled || undefined} />
     </Provider>
   );
-}
-
-/**
- * A slider allows a user to select one or more values within a range.
- */
-const _Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(Slider);
-export {_Slider as Slider};
+});
 
 export interface SliderOutputProps extends RenderProps<SliderRenderProps> {}
 interface SliderOutputContextValue extends Omit<OutputHTMLAttributes<HTMLOutputElement>, 'children' | 'className' | 'style'>, SliderOutputProps {}
 
-function SliderOutput(props: SliderOutputProps, ref: ForwardedRef<HTMLOutputElement>) {
+/**
+ * A slider output displays the current value of a slider as text.
+ */
+export const SliderOutput = /*#__PURE__*/ (forwardRef as forwardRefType)(function SliderOutput(props: SliderOutputProps, ref: ForwardedRef<HTMLOutputElement>) {
   [props, ref] = useContextProps(props, ref, SliderOutputContext);
   let {children, style, className, ...otherProps} = props;
   let state = useContext(SliderStateContext)!;
@@ -126,13 +127,7 @@ function SliderOutput(props: SliderOutputProps, ref: ForwardedRef<HTMLOutputElem
       data-orientation={state.orientation || undefined}
       data-disabled={state.isDisabled || undefined} />
   );
-}
-
-/**
- * A slider output displays the current value of a slider as text.
- */
-const _SliderOutput = /*#__PURE__*/ (forwardRef as forwardRefType)(SliderOutput);
-export {_SliderOutput as SliderOutput};
+});
 
 export interface SliderTrackRenderProps extends SliderRenderProps {
   /**
@@ -145,7 +140,10 @@ export interface SliderTrackRenderProps extends SliderRenderProps {
 export interface SliderTrackProps extends HoverEvents, RenderProps<SliderTrackRenderProps> {}
 interface SliderTrackContextValue extends Omit<HTMLAttributes<HTMLElement>, 'children' | 'className' | 'style'>, SliderTrackProps {}
 
-function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A slider track is a container for one or more slider thumbs.
+ */
+export const SliderTrack = /*#__PURE__*/ (forwardRef as forwardRefType)(function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SliderTrackContext);
   let state = useContext(SliderStateContext)!;
   let {onHoverStart, onHoverEnd, onHoverChange, ...otherProps} = props;
@@ -170,13 +168,7 @@ function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>)
       data-orientation={state.orientation || undefined}
       data-disabled={state.isDisabled || undefined} />
   );
-}
-
-/**
- * A slider track is a container for one or more slider thumbs.
- */
-const _SliderTrack = /*#__PURE__*/ (forwardRef as forwardRefType)(SliderTrack);
-export {_SliderTrack as SliderTrack};
+});
 
 export interface SliderThumbRenderProps {
   /**
@@ -210,18 +202,30 @@ export interface SliderThumbRenderProps {
   isDisabled: boolean
 }
 
-export interface SliderThumbProps extends Omit<AriaSliderThumbProps, 'label' | 'validationState'>, HoverEvents, RenderProps<SliderThumbRenderProps> {}
+export interface SliderThumbProps extends Omit<AriaSliderThumbProps, 'label' | 'validationState'>, HoverEvents, RenderProps<SliderThumbRenderProps> {
+  /**
+   * A ref for the HTML input element.
+   */
+  inputRef?: RefObject<HTMLInputElement | null>
+}
 
-function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A slider thumb represents an individual value that the user can adjust within a slider track.
+ */
+export const SliderThumb = /*#__PURE__*/ (forwardRef as forwardRefType)(function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>) {
+  let {
+    inputRef: userInputRef = null
+  } = props;
   let state = useContext(SliderStateContext)!;
   let {ref: trackRef} = useSlottedContext(SliderTrackContext)!;
   let {index = 0} = props;
-  let inputRef = useRef<HTMLInputElement>(null);
+  let defaultInputRef = useRef<HTMLInputElement>(null);
+  let inputRef = userInputRef || defaultInputRef;
   let [labelRef, label] = useSlot();
   let {thumbProps, inputProps, labelProps, isDragging, isFocused, isDisabled} = useSliderThumb({
     ...props,
     index,
-    trackRef: trackRef as RefObject<HTMLDivElement>,
+    trackRef: trackRef as RefObject<HTMLDivElement | null>,
     inputRef,
     label
   }, state);
@@ -267,10 +271,4 @@ function SliderThumb(props: SliderThumbProps, ref: ForwardedRef<HTMLDivElement>)
       </Provider>
     </div>
   );
-}
-
-/**
- * A slider thumb represents an individual value that the user can adjust within a slider track.
- */
-const _SliderThumb = /*#__PURE__*/ (forwardRef as forwardRefType)(SliderThumb);
-export {_SliderThumb as SliderThumb};
+});

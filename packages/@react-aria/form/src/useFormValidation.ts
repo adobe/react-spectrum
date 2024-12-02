@@ -11,10 +11,10 @@
  */
 
 import {FormValidationState} from '@react-stately/form';
-import {RefObject, useEffect} from 'react';
+import {RefObject, Validation, ValidationResult} from '@react-types/shared';
 import {setInteractionModality} from '@react-aria/interactions';
+import {useEffect} from 'react';
 import {useEffectEvent, useLayoutEffect} from '@react-aria/utils';
-import {Validation, ValidationResult} from '@react-types/shared';
 
 type ValidatableElement = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 
@@ -22,7 +22,7 @@ interface FormValidationProps<T> extends Validation<T> {
   focus?: () => void
 }
 
-export function useFormValidation<T>(props: FormValidationProps<T>, state: FormValidationState, ref: RefObject<ValidatableElement> | undefined) {
+export function useFormValidation<T>(props: FormValidationProps<T>, state: FormValidationState, ref: RefObject<ValidatableElement | null> | undefined) {
   let {validationBehavior, focus} = props;
 
   // This is a useLayoutEffect so that it runs before the useEffect in useFormValidationState, which commits the validation change.

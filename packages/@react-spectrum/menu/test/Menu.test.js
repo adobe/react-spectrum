@@ -158,7 +158,7 @@ describe('Menu', function () {
       let selectedItem = menuItems[3];
       expect(selectedItem).toBe(document.activeElement);
       expect(selectedItem).toHaveAttribute('aria-checked', 'true');
-      expect(selectedItem).toHaveAttribute('tabindex', '-1');
+      expect(selectedItem).toHaveAttribute('tabindex', '0');
       let itemText = within(selectedItem).getByText('Blah');
       expect(itemText).toBeTruthy();
       let checkmark = within(selectedItem).getByRole('img', {hidden: true});
@@ -193,7 +193,7 @@ describe('Menu', function () {
       let selectedItem = menuItems[3];
       expect(selectedItem).toBe(document.activeElement);
       expect(selectedItem).toHaveAttribute('aria-checked', 'true');
-      expect(selectedItem).toHaveAttribute('tabindex', '-1');
+      expect(selectedItem).toHaveAttribute('tabindex', '0');
       let itemText = within(selectedItem).getByText('Blah');
       expect(itemText).toBeTruthy();
       let checkmark = within(selectedItem).getByRole('img', {hidden: true});
@@ -683,6 +683,44 @@ describe('Menu', function () {
       await user.click(item3);
       expect(onAction).toHaveBeenCalledWith('Three');
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
+    });
+
+    it('should support onAction on menu and menu items', async () => {
+      let user = userEvent.setup({delay: null, pointerMap});
+      let onAction = jest.fn();
+      let itemAction = jest.fn();
+      let {getAllByRole} = render(
+        <Menu aria-label="Test" onAction={onAction}>
+          <Item id="cat" onAction={itemAction}>Cat</Item>
+          <Item id="dog">Dog</Item>
+          <Item id="kangaroo">Kangaroo</Item>
+        </Menu>
+      );
+
+      let items = getAllByRole('menuitem');
+      await user.click(items[0]);
+      expect(onAction).toHaveBeenCalledTimes(1);
+      expect(itemAction).toHaveBeenCalledTimes(1);
+    });
+
+    it('should support onAction on menu and menu items in sections', async () => {
+      let user = userEvent.setup({delay: null, pointerMap});
+      let onAction = jest.fn();
+      let itemAction = jest.fn();
+      let {getAllByRole} = render(
+        <Menu aria-label="Test" onAction={onAction}>
+          <Section title="Animals">
+            <Item id="cat" onAction={itemAction}>Cat</Item>
+            <Item id="dog">Dog</Item>
+            <Item id="kangaroo">Kangaroo</Item>
+          </Section>
+        </Menu>
+      );
+
+      let items = getAllByRole('menuitem');
+      await user.click(items[0]);
+      expect(onAction).toHaveBeenCalledTimes(1);
+      expect(itemAction).toHaveBeenCalledTimes(1);
     });
   });
 

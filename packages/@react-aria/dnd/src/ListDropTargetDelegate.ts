@@ -1,5 +1,4 @@
-import {Collection, Direction, DropTarget, DropTargetDelegate, Node, Orientation} from '@react-types/shared';
-import {RefObject} from 'react';
+import {Direction, DropTarget, DropTargetDelegate, Node, Orientation, RefObject} from '@react-types/shared';
 
 interface ListDropTargetDelegateOptions {
   /**
@@ -30,13 +29,13 @@ interface ListDropTargetDelegateOptions {
 //                   direction. For grids, it is the secondary direction.
 
 export class ListDropTargetDelegate implements DropTargetDelegate {
-  private collection: Collection<Node<unknown>>;
-  private ref: RefObject<HTMLElement>;
+  private collection: Iterable<Node<unknown>>;
+  private ref: RefObject<HTMLElement | null>;
   private layout: 'stack' | 'grid';
   private orientation: Orientation;
   private direction: Direction;
 
-  constructor(collection: Collection<Node<unknown>>, ref: RefObject<HTMLElement>, options?: ListDropTargetDelegateOptions) {
+  constructor(collection: Iterable<Node<unknown>>, ref: RefObject<HTMLElement | null>, options?: ListDropTargetDelegateOptions) {
     this.collection = collection;
     this.ref = ref;
     this.layout = options?.layout || 'stack';
@@ -73,11 +72,11 @@ export class ListDropTargetDelegate implements DropTargetDelegate {
   }
 
   getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget {
-    if (this.collection.size === 0) {
+    if (this.collection[Symbol.iterator]().next().done || !this.ref.current) {
       return {type: 'root'};
     }
 
-    let rect = this.ref.current.getBoundingClientRect();
+    let rect: DOMRect | undefined = this.ref.current.getBoundingClientRect();
     let primary = this.orientation === 'horizontal' ? x : y;
     let secondary = this.orientation === 'horizontal' ? y : x;
     primary += this.getPrimaryStart(rect);
@@ -91,18 +90,25 @@ export class ListDropTargetDelegate implements DropTargetDelegate {
     let elements = this.ref.current.querySelectorAll('[data-key]');
     let elementMap = new Map<string, HTMLElement>();
     for (let item of elements) {
-      if (item instanceof HTMLElement) {
+      if (item instanceof HTMLElement && item.dataset.key != null) {
         elementMap.set(item.dataset.key, item);
       }
     }
 
-    let items = [...this.collection];
+    // TODO: assume that only item type items are valid drop targets. This is to prevent a crash when dragging over the loader
+    // row since it doesn't have a data-key set on it. Will eventually need to handle the case with drag and drop and loaders located between rows aka tree.
+    // Can see https://github.com/adobe/react-spectrum/pull/4210/files#diff-21e555e0c597a28215e36137f5be076a65a1e1456c92cd0fdd60f866929aae2a for additional logic
+    // that may need to happen then
+    let items = [...this.collection].filter(item => item.type === 'item');
     let low = 0;
     let high = items.length;
     while (low < high) {
       let mid = Math.floor((low + high) / 2);
       let item = items[mid];
       let element = elementMap.get(String(item.key));
+      if (!element) {
+        break;
+      }
       let rect = element.getBoundingClientRect();
       let update = (isGreater: boolean) => {
         if (isGreater) {
@@ -151,9 +157,9 @@ export class ListDropTargetDelegate implements DropTargetDelegate {
 
     let item = items[Math.min(low, items.length - 1)];
     let element = elementMap.get(String(item.key));
-    rect = element.getBoundingClientRect();
+    rect = element?.getBoundingClientRect();
 
-    if (primary < this.getPrimaryStart(rect) || Math.abs(flow - this.getFlowStart(rect)) < Math.abs(flow - this.getFlowEnd(rect))) {
+    if (rect && (primary < this.getPrimaryStart(rect) || Math.abs(flow - this.getFlowStart(rect)) < Math.abs(flow - this.getFlowEnd(rect)))) {
       return {
         type: 'item',
         key: item.key,

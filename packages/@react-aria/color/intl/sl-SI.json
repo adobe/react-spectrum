@@ -2,7 +2,7 @@
   "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
   "colorPicker": "Izbirnik barv",
-  "twoDimensionalSlider": "2D drsnik",
-  "colorSwatch": "color swatch",
-  "transparent": "transparent"
+  "colorSwatch": "barvna paleta",
+  "transparent": "prozorno",
+  "twoDimensionalSlider": "2D drsnik"
 }

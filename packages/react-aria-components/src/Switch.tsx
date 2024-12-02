@@ -11,16 +11,17 @@
  */
 
 import {AriaSwitchProps, HoverEvents, mergeProps, useFocusRing, useHover, useSwitch, VisuallyHidden} from 'react-aria';
-import {ContextValue, forwardRefType, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
-import React, {createContext, ForwardedRef, forwardRef, MutableRefObject} from 'react';
+import {forwardRefType, RefObject} from '@react-types/shared';
+import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {ToggleState, useToggleState} from 'react-stately';
 
 export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, HoverEvents, RenderProps<SwitchRenderProps>, SlotProps {
   /**
    * A ref for the HTML input element.
    */
-  inputRef?: MutableRefObject<HTMLInputElement>
+  inputRef?: RefObject<HTMLInputElement | null>
 }
 
 export interface SwitchRenderProps {
@@ -67,7 +68,10 @@ export interface SwitchRenderProps {
 
 export const SwitchContext = createContext<ContextValue<SwitchProps, HTMLLabelElement>>(null);
 
-function Switch(props: SwitchProps, ref: ForwardedRef<HTMLLabelElement>) {
+/**
+ * A switch allows a user to turn a setting on or off.
+ */
+export const Switch = /*#__PURE__*/ (forwardRef as forwardRefType)(function Switch(props: SwitchProps, ref: ForwardedRef<HTMLLabelElement>) {
   let {
     inputRef: userProvidedInputRef = null,
     ...otherProps
@@ -124,10 +128,4 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLLabelElement>) {
       {renderProps.children}
     </label>
   );
-}
-
-/**
- * A switch allows a user to turn a setting on or off.
- */
-const _Switch = /*#__PURE__*/ (forwardRef as forwardRefType)(Switch);
-export {_Switch as Switch};
+});

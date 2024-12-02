@@ -12,10 +12,11 @@
 
 import {AriaSearchFieldProps, useSearchField} from 'react-aria';
 import {ButtonContext} from './Button';
-import {ContextValue, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from '@react-aria/utils';
 import {FormContext} from './Form';
+import {forwardRefType} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
@@ -49,7 +50,10 @@ export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'label' | '
 
 export const SearchFieldContext = createContext<ContextValue<SearchFieldProps, HTMLDivElement>>(null);
 
-function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A search field allows a user to enter and clear a search query.
+ */
+export const SearchField = /*#__PURE__*/ (forwardRef as forwardRefType)(function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SearchFieldContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
@@ -107,10 +111,4 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
       </Provider>
     </div>
   );
-}
-
-/**
- * A search field allows a user to enter and clear a search query.
- */
-const _SearchField = /*#__PURE__*/ (forwardRef as forwardRefType)(SearchField);
-export {_SearchField as SearchField};
+});

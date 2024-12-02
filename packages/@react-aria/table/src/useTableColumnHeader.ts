@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, FocusableElement} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 import {getColumnHeaderId} from './utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isAndroid, mergeProps, useDescription} from '@react-aria/utils';
-import {RefObject, useEffect} from 'react';
 import {TableState} from '@react-stately/table';
+import {useEffect} from 'react';
 import {useFocusable} from '@react-aria/focus';
 import {useGridCell} from '@react-aria/grid';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -41,7 +41,7 @@ export interface TableColumnHeaderAria {
  * @param state - State of the table, as returned by `useTableState`.
  * @param ref - The ref attached to the column header element.
  */
-export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, state: TableState<T>, ref: RefObject<FocusableElement>): TableColumnHeaderAria {
+export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, state: TableState<T>, ref: RefObject<FocusableElement | null>): TableColumnHeaderAria {
   let {node} = props;
   let allowsSorting = node.props.allowsSorting;
   // if there are no focusable children, the column header will focus the cell
@@ -60,7 +60,7 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, st
   // Needed to pick up the focusable context, enabling things like Tooltips for example
   let {focusableProps} = useFocusable({}, ref);
 
-  let ariaSort: DOMAttributes['aria-sort'] = null;
+  let ariaSort: DOMAttributes['aria-sort'] | undefined = undefined;
   let isSortedColumn = state.sortDescriptor?.column === node.key;
   let sortDirection = state.sortDescriptor?.direction;
   // aria-sort not supported in Android Talkback
@@ -95,11 +95,11 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, st
         focusableProps,
         descriptionProps,
         // If the table is empty, make all column headers untabbable
-        shouldDisableFocus && {tabIndex: -1}
+        shouldDisableFocus ? {tabIndex: -1} : null
       ),
       role: 'columnheader',
       id: getColumnHeaderId(state, node.key),
-      'aria-colspan': node.colspan && node.colspan > 1 ? node.colspan : null,
+      'aria-colspan': node.colspan && node.colspan > 1 ? node.colspan : undefined,
       'aria-sort': ariaSort
     }
   };

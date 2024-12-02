@@ -1,0 +1,8 @@
+{
+  "extends": "@parcel/config-storybook",
+  "resolvers": ["@parcel/resolver-glob", "..."],
+  "transformers": {
+    "packages/*/*/intl/*.json": ["parcel-transformer-intl"],
+    "raw:*": ["@parcel/transformer-raw"]
+  }
+}

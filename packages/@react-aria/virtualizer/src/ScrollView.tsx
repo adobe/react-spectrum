@@ -15,6 +15,7 @@ import {flushSync} from 'react-dom';
 import {getScrollLeft} from './utils';
 import React, {
   CSSProperties,
+  ForwardedRef,
   HTMLAttributes,
   ReactNode,
   RefObject,
@@ -24,42 +25,51 @@ import React, {
   useState
 } from 'react';
 import {Rect, Size} from '@react-stately/virtualizer';
-import {useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {useEffectEvent, useEvent, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
 interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
   contentSize: Size,
   onVisibleRectChange: (rect: Rect) => void,
-  children: ReactNode,
+  children?: ReactNode,
   innerStyle?: CSSProperties,
-  sizeToFit?: 'width' | 'height',
   onScrollStart?: () => void,
   onScrollEnd?: () => void,
   scrollDirection?: 'horizontal' | 'vertical' | 'both'
 }
 
-let isOldReact = React.version.startsWith('16.') || React.version.startsWith('17.');
+function ScrollView(props: ScrollViewProps, ref: ForwardedRef<HTMLDivElement | null>) {
+  ref = useObjectRef(ref);
+  let {scrollViewProps, contentProps} = useScrollView(props, ref);
 
-function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
+  return (
+    <div role="presentation" {...scrollViewProps} ref={ref}>
+      <div {...contentProps}>
+        {props.children}
+      </div>
+    </div>
+  );
+}
+
+const ScrollViewForwardRef = React.forwardRef(ScrollView);
+export {ScrollViewForwardRef as ScrollView};
+
+export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement | null>) {
   let {
     contentSize,
     onVisibleRectChange,
-    children,
     innerStyle,
-    sizeToFit,
     onScrollStart,
     onScrollEnd,
     scrollDirection = 'both',
     ...otherProps
   } = props;
 
-  let defaultRef = useRef();
-  ref = ref || defaultRef;
   let state = useRef({
     scrollTop: 0,
     scrollLeft: 0,
     scrollEndTime: 0,
-    scrollTimeout: null,
+    scrollTimeout: null as ReturnType<typeof setTimeout> | null,
     width: 0,
     height: 0,
     isScrolling: false
@@ -90,6 +100,8 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
         state.isScrolling = true;
         setScrolling(true);
 
+        // Pause typekit MutationObserver during scrolling.
+        window.dispatchEvent(new Event('tk.disconnect-observer'));
         if (onScrollStart) {
           onScrollStart();
         }
@@ -102,12 +114,16 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
       if (state.scrollEndTime <= now + 50) {
         state.scrollEndTime = now + 300;
 
-        clearTimeout(state.scrollTimeout);
+        if (state.scrollTimeout != null) {
+          clearTimeout(state.scrollTimeout);
+        }
+
         state.scrollTimeout = setTimeout(() => {
           state.isScrolling = false;
           setScrolling(false);
           state.scrollTimeout = null;
 
+          window.dispatchEvent(new Event('tk.connect-observer'));
           if (onScrollEnd) {
             onScrollEnd();
           }
@@ -116,63 +132,94 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     });
   }, [props, direction, state, contentSize, onVisibleRectChange, onScrollStart, onScrollEnd]);
 
-  // eslint-disable-next-line arrow-body-style
+  // Attach event directly to ref so RAC Virtualizer doesn't need to send props upward.
+  useEvent(ref, 'scroll', onScroll);
+
+   
   useEffect(() => {
     return () => {
-      clearTimeout(state.scrollTimeout);
+      if (state.scrollTimeout != null) {
+        clearTimeout(state.scrollTimeout);
+      }
+
+      if (state.isScrolling) {
+        window.dispatchEvent(new Event('tk.connect-observer'));
+      }
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  let updateSize = useCallback(() => {
+  let isUpdatingSize = useRef(false);
+  let updateSize = useEffectEvent((flush: typeof flushSync) => {
     let dom = ref.current;
-    if (!dom) {
+    if (!dom || isUpdatingSize.current) {
       return;
     }
+
+    // Prevent reentrancy when resize observer fires, triggers re-layout that results in
+    // content size update, causing below layout effect to fire. This avoids infinite loops.
+    isUpdatingSize.current = true;
 
     let isTestEnv = process.env.NODE_ENV === 'test' && !process.env.VIRT_ON;
     let isClientWidthMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientWidth');
     let isClientHeightMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientHeight');
-    let w = isTestEnv && !isClientWidthMocked ? Infinity : dom.clientWidth;
-    let h = isTestEnv && !isClientHeightMocked ? Infinity : dom.clientHeight;
-
-    if (sizeToFit && contentSize.width > 0 && contentSize.height > 0) {
-      if (sizeToFit === 'width') {
-        w = Math.min(w, contentSize.width);
-      } else if (sizeToFit === 'height') {
-        h = Math.min(h, contentSize.height);
-      }
-    }
+    let clientWidth = dom.clientWidth;
+    let clientHeight = dom.clientHeight;
+    let w = isTestEnv && !isClientWidthMocked ? Infinity : clientWidth;
+    let h = isTestEnv && !isClientHeightMocked ? Infinity : clientHeight;
 
     if (state.width !== w || state.height !== h) {
       state.width = w;
       state.height = h;
-      onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, w, h));
-    }
-  }, [onVisibleRectChange, ref, state, sizeToFit, contentSize]);
-
-  useLayoutEffect(() => {
-    updateSize();
-  }, [updateSize]);
-  let raf = useRef<ReturnType<typeof requestAnimationFrame> | null>();
-  let onResize = () => {
-    if (isOldReact) {
-      raf.current ??= requestAnimationFrame(() => {
-        updateSize();
-        raf.current = null;
+      flush(() => {
+        onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, w, h));
       });
-    } else {
-      updateSize();
-    }
-  };
-  useResizeObserver({ref, onResize});
-  useEffect(() => {
-    return () => {
-      if (raf.current) {
-        cancelAnimationFrame(raf.current);
+
+      // If the clientWidth or clientHeight changed, scrollbars appeared or disappeared as
+      // a result of the layout update. In this case, re-layout again to account for the
+      // adjusted space. In very specific cases this might result in the scrollbars disappearing
+      // again, resulting in extra padding. We stop after a maximum of two layout passes to avoid
+      // an infinite loop. This matches how browsers behavior with native CSS grid layout.
+      if (!isTestEnv && clientWidth !== dom.clientWidth || clientHeight !== dom.clientHeight) {
+        state.width = dom.clientWidth;
+        state.height = dom.clientHeight;
+        flush(() => {
+          onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, state.width, state.height));
+        });
       }
-    };
-  }, []);
+    }
+
+    isUpdatingSize.current = false;
+  });
+
+  // Update visible rect when the content size changes, in case scrollbars need to appear or disappear.
+  let lastContentSize = useRef<Size | null>(null);
+  useLayoutEffect(() => {
+    if (!isUpdatingSize.current && (lastContentSize.current == null || !contentSize.equals(lastContentSize.current))) {
+      // React doesn't allow flushSync inside effects, so queue a microtask.
+      // We also need to wait until all refs are set (e.g. when passing a ref down from a parent).
+      // If we are in an `act` environment, update immediately without a microtask so you don't need
+      // to mock timers in tests. In this case, the update is synchronous already.
+      // IS_REACT_ACT_ENVIRONMENT is used by React 18. Previous versions checked for the `jest` global.
+      // https://github.com/reactwg/react-18/discussions/102
+      // @ts-ignore
+      if (typeof IS_REACT_ACT_ENVIRONMENT === 'boolean' ? IS_REACT_ACT_ENVIRONMENT : typeof jest !== 'undefined') {
+        updateSize(fn => fn());
+      } else {
+        queueMicrotask(() => updateSize(flushSync));
+      }
+    }
+
+    lastContentSize.current = contentSize;
+  });
+
+  let onResize = useCallback(() => {
+    updateSize(flushSync);
+  }, [updateSize]);
+
+  // Watch border-box instead of of content-box so that we don't go into
+  // an infinite loop when scrollbars appear or disappear.
+  useResizeObserver({ref, box: 'border-box', onResize});
 
   let style: React.CSSProperties = {
     // Reset padding so that relative positioning works correctly. Padding will be done in JS layout.
@@ -201,14 +248,14 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     ...innerStyle
   };
 
-  return (
-    <div {...otherProps} style={style} ref={ref} onScroll={onScroll}>
-      <div role="presentation" style={innerStyle}>
-        {children}
-      </div>
-    </div>
-  );
+  return {
+    scrollViewProps: {
+      ...otherProps,
+      style
+    },
+    contentProps: {
+      role: 'presentation',
+      style: innerStyle
+    }
+  };
 }
-
-const ScrollViewForwardRef = React.forwardRef(ScrollView);
-export {ScrollViewForwardRef as ScrollView};

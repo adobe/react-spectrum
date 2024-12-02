@@ -11,10 +11,11 @@
  */
 
 import {AriaTextFieldProps, useTextField} from 'react-aria';
-import {ContextValue, DOMProps, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {ContextValue, DOMProps, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from '@react-aria/utils';
 import {FormContext} from './Form';
+import {forwardRefType} from '@react-types/shared';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
@@ -51,7 +52,10 @@ export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'plac
 
 export const TextFieldContext = createContext<ContextValue<TextFieldProps, HTMLDivElement>>(null);
 
-function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A text field allows a user to enter a plain text value with a keyboard.
+ */
+export const TextField = /*#__PURE__*/ (forwardRef as forwardRefType)(function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TextFieldContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
@@ -115,10 +119,4 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
       </Provider>
     </div>
   );
-}
-
-/**
- * A text field allows a user to enter a plain text value with a keyboard.
- */
-const _TextField = /*#__PURE__*/ (forwardRef as forwardRefType)(TextField);
-export {_TextField as TextField};
+});

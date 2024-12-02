@@ -12,13 +12,14 @@
 import {AriaDatePickerProps, AriaDateRangePickerProps, DateValue, useDatePicker, useDateRangePicker, useFocusRing} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CalendarContext, RangeCalendarContext} from './Calendar';
-import {ContextValue, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {DateFieldContext} from './DateField';
 import {DatePickerState, DatePickerStateOptions, DateRangePickerState, DateRangePickerStateOptions, useDatePickerState, useDateRangePickerState} from 'react-stately';
 import {DialogContext, OverlayTriggerStateContext} from './Dialog';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {FormContext} from './Form';
+import {forwardRefType} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {LabelContext} from './Label';
 import {PopoverContext} from './Popover';
@@ -71,7 +72,10 @@ export const DateRangePickerContext = createContext<ContextValue<DateRangePicker
 export const DatePickerStateContext = createContext<DatePickerState | null>(null);
 export const DateRangePickerStateContext = createContext<DateRangePickerState | null>(null);
 
-function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A date picker combines a DateField and a Calendar popover to allow users to enter or select a date and time value.
+ */
+export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DatePickerContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
@@ -166,15 +170,13 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
         data-open={state.isOpen || undefined} />
     </Provider>
   );
-}
+});
 
 /**
- * A date picker combines a DateField and a Calendar popover to allow users to enter or select a date and time value.
+ * A date range picker combines two DateFields and a RangeCalendar popover to allow
+ * users to enter or select a date and time range.
  */
-const _DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(DatePicker);
-export {_DatePicker as DatePicker};
-
-function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DateRangePickerContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
@@ -275,11 +277,4 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
         data-open={state.isOpen || undefined} />
     </Provider>
   );
-}
-
-/**
- * A date range picker combines two DateFields and a RangeCalendar popover to allow
- * users to enter or select a date and time range.
- */
-const _DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(DateRangePicker);
-export {_DateRangePicker as DateRangePicker};
+});

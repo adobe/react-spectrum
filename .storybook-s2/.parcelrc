@@ -1,0 +1,14 @@
+{
+  "extends": "@parcel/config-storybook",
+  "resolvers": ["@parcel/resolver-glob", "..."],
+  "transformers": {
+    "illustration:*.svg": ["@react-spectrum/parcel-transformer-s2-icon"],
+    "packages/@react-spectrum/s2/s2wf-icons/**/*.svg": ["@react-spectrum/parcel-transformer-s2-icon"],
+    "packages/*/*/intl/*.json": ["parcel-transformer-intl"],
+    // Disable PostCSS from running over style macro output
+    "*.css": ["@parcel/transformer-css"],
+    "*.svg": ["@parcel/transformer-svg-react"],
+    "*.{mdx,md}": ["parcel-transformer-mdx-storybook"],
+    "raw:*": ["@parcel/transformer-raw"]
+  }
+}

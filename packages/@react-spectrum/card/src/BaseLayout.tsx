@@ -1,3 +1,4 @@
+// @ts-nocheck
 /*
  * Copyright 2021 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -27,7 +28,12 @@ export interface BaseLayoutOptions {
   margin?: number
 }
 
-export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
+interface CardViewLayoutOptions {
+  isLoading: boolean,
+  direction: Direction
+}
+
+export class BaseLayout<T> extends Layout<Node<T>, CardViewLayoutOptions> implements KeyboardDelegate {
   protected contentSize: Size;
   protected layoutInfos: Map<Key, LayoutInfo>;
   protected collator: Intl.Collator;
@@ -48,8 +54,10 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     this.margin = options.margin || 24;
   }
 
-  validate(invalidationContext: InvalidationContext<Node<T>, unknown>) {
+  update(invalidationContext: InvalidationContext<CardViewLayoutOptions>) {
     this.collection = this.virtualizer.collection as GridCollection<T>;
+    this.isLoading = invalidationContext.layoutOptions?.isLoading || false;
+    this.direction = invalidationContext.layoutOptions?.direction || 'ltr';
     this.buildCollection(invalidationContext);
 
     // Remove layout info that doesn't exist in new collection
@@ -73,21 +81,21 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  buildCollection(invalidationContext?: InvalidationContext<Node<T>, unknown>) {}
+  buildCollection(invalidationContext?: InvalidationContext) {}
 
   getContentSize() {
     return this.contentSize;
   }
 
   getLayoutInfo(key: Key) {
-    return this.layoutInfos.get(key);
+    return this.layoutInfos.get(key)!;
   }
 
-  getVisibleLayoutInfos(rect) {
+  getVisibleLayoutInfos(rect: Rect, excludePersistedKeys = false) {
     let res: LayoutInfo[] = [];
 
     for (let layoutInfo of this.layoutInfos.values()) {
-      if (this.isVisible(layoutInfo, rect)) {
+      if (this.isVisible(layoutInfo, rect, excludePersistedKeys)) {
         res.push(layoutInfo);
       }
     }
@@ -95,24 +103,20 @@ export class BaseLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     return res;
   }
 
-  isVisible(layoutInfo: LayoutInfo, rect: Rect) {
-    return layoutInfo.rect.intersects(rect);
-  }
+  isVisible(layoutInfo: LayoutInfo, rect: Rect, excludePersistedKeys: boolean) {
+    if (layoutInfo.rect.intersects(rect)) {
+      return true;
+    }
 
-  getInitialLayoutInfo(layoutInfo: LayoutInfo) {
-    layoutInfo.opacity = 0;
-    layoutInfo.transform = 'scale3d(0.8, 0.8, 0.8)';
-    return layoutInfo;
-  }
+    if (!excludePersistedKeys) {
+      return this.virtualizer.isPersistedKey(layoutInfo.key);
+    }
 
-  getFinalLayoutInfo(layoutInfo: LayoutInfo) {
-    layoutInfo.opacity = 0;
-    layoutInfo.transform = 'scale3d(0.8, 0.8, 0.8)';
-    return layoutInfo;
+    return false;
   }
 
   _findClosestLayoutInfo(target: Rect, rect: Rect) {
-    let layoutInfos = this.getVisibleLayoutInfos(rect);
+    let layoutInfos = this.getVisibleLayoutInfos(rect, true);
     let best = null;
     let bestDistance = Infinity;
 

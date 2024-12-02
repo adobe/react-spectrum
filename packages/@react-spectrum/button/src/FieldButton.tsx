@@ -12,10 +12,10 @@
 
 import {ButtonProps} from '@react-types/button';
 import {classNames, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, FocusableRef, StyleProps} from '@react-types/shared';
+import {DOMProps, FocusableRef, RefObject, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
-import React, {RefObject} from 'react';
+import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';
@@ -29,7 +29,7 @@ interface FieldButtonProps extends ButtonProps, DOMProps, StyleProps {
 }
 
 // @private
-function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
+export const FieldButton = React.forwardRef(function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
   props = useSlotProps(props, 'button');
   let {
     isQuiet,
@@ -42,7 +42,7 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
     focusRingClass,
     ...otherProps
   } = props;
-  let domRef = useFocusableRef(ref) as RefObject<HTMLButtonElement>;
+  let domRef = useFocusableRef(ref) as RefObject<HTMLButtonElement | null>;
   let {buttonProps, isPressed} = useButton(props, domRef);
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {styleProps} = useStyleProps(otherProps);
@@ -78,7 +78,4 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
       </button>
     </FocusRing>
   );
-}
-
-let _FieldButton = React.forwardRef(FieldButton);
-export {_FieldButton as FieldButton};
+});

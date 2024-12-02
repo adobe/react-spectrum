@@ -1,4 +1,4 @@
 {
-  "hasActionAnnouncement": "row has action",
-  "hasLinkAnnouncement": "row has link: {link}"
+  "hasActionAnnouncement": "rivillä on toimintaa",
+  "hasLinkAnnouncement": "rivillä on linkki: {link}"
 }

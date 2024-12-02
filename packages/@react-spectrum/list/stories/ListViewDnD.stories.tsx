@@ -20,37 +20,27 @@ export default {
   },
   argTypes: {
     selectionMode: {
-      control: {
-        type: 'radio',
-        options: ['none', 'single', 'multiple']
-      }
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
     },
     selectionStyle: {
-      control: {
-        type: 'radio',
-        options: ['checkbox', 'highlight']
-      }
+      control: 'radio',
+      options: ['checkbox', 'highlight']
     },
     isQuiet: {
-      control: {type: 'boolean'}
+      control: 'boolean'
     },
     density: {
-      control: {
-        type: 'select',
-        options: ['compact', 'regular', 'spacious']
-      }
+      control: 'select',
+      options: ['compact', 'regular', 'spacious']
     },
     overflowMode: {
-      control: {
-        type: 'radio',
-        options: ['truncate', 'wrap']
-      }
+      control: 'radio',
+      options: ['truncate', 'wrap']
     },
     disabledBehavior: {
-      control: {
-        type: 'radio',
-        options: ['selection', 'all']
-      }
+      control: 'radio',
+      options: ['selection', 'all']
     }
   }
 } as ComponentMeta<typeof ListView>;
@@ -109,6 +99,20 @@ export const DragWithinScroll: ListViewStory = {
     </Flex>
   ),
   name: 'Drag within list scrolling (Reorder)'
+};
+
+let manyItems: {id: string, type: string, textValue: string}[] = [];
+for (let i = 0; i < 100; i++) {
+  manyItems.push({id: 'item' + i, type: 'item', textValue: 'Item ' + i});
+}
+
+export const DragWithinMany: ListViewStory = {
+  render: (args) => (
+    <Flex direction="row" wrap alignItems="center" height={400}>
+      <ReorderExample {...args} items={manyItems} getAllowedDropOperationsAction={getAllowedDropOperationsAction} disabledKeys={['1']} onDrop={action('drop')} onDragStart={action('dragStart')} onDragEnd={action('dragEnd')} />
+    </Flex>
+  ),
+  name: 'Drag within list with many items'
 };
 
 export const DragIntoFolder: ListViewStory = {

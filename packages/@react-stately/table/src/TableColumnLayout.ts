@@ -13,9 +13,7 @@
 import {
   calculateColumnSizes,
   getMaxWidth,
-  getMinWidth,
-  isStatic,
-  parseFractionalUnit
+  getMinWidth
 } from './TableUtils';
 import {ColumnSize, TableCollection} from '@react-types/table';
 import {GridNode} from '@react-types/grid';
@@ -56,7 +54,7 @@ export class TableColumnLayout<T> {
       if (uncontrolledColumns.has(col.key)) {
         return [col.key, uncontrolledWidths.get(col.key)];
       } else {
-        return [col.key, controlledColumns.get(col.key).props.width];
+        return [col.key, controlledColumns.get(col.key)!.props.width];
       }
     }));
   }
@@ -80,78 +78,25 @@ export class TableColumnLayout<T> {
     return this.columnMaxWidths.get(key) ?? 0;
   }
 
-  resizeColumnWidth(tableWidth: number, collection: TableCollection<T>, controlledWidths: Map<Key, ColumnSize>, uncontrolledWidths: Map<Key, ColumnSize>, col = null, width: number): Map<Key, ColumnSize> {
+  resizeColumnWidth(collection: TableCollection<T>, uncontrolledWidths: Map<Key, ColumnSize>, col: Key, width: number): Map<Key, ColumnSize> {
     let prevColumnWidths = this.columnWidths;
-    // resizing a column
-    let resizeIndex = Infinity;
-    let resizingChanged = new Map<Key, ColumnSize>([...controlledWidths, ...uncontrolledWidths]);
-    let percentKeys = new Map();
-    let frKeysToTheRight = new Map();
-    let minWidths = new Map();
-    // freeze columns to the left to their previous pixel value
-    collection.columns.forEach((column, i) => {
-      let frKey;
-      let frValue;
-      minWidths.set(column.key, this.getDefaultMinWidth(collection.columns[i]));
-      if (col !== column.key && !column.props.width && !isStatic(uncontrolledWidths.get(column.key))) {
-        // uncontrolled don't have props.width for us, so instead get from our state
-        frKey = column.key;
-        frValue = parseFractionalUnit(uncontrolledWidths.get(column.key) as string);
-      } else if (col !== column.key && !isStatic(column.props.width) && !uncontrolledWidths.get(column.key)) {
-        // controlledWidths will be the same in the collection
-        frKey = column.key;
-        frValue = parseFractionalUnit(column.props.width);
-      } else if (col !== column.key && column.props.width?.endsWith?.('%')) {
-        percentKeys.set(column.key, column.props.width);
-      }
-      // don't freeze columns to the right of the resizing one
-      if (resizeIndex < i) {
-        if (frKey) {
-          frKeysToTheRight.set(frKey, frValue);
-        }
-        return;
-      }
-      // we already know the new size of the resizing column
-      if (column.key === col) {
-        resizeIndex = i;
-        resizingChanged.set(column.key, Math.floor(width));
-        return;
-      }
-      // freeze column to previous value
-      resizingChanged.set(column.key, prevColumnWidths.get(column.key));
-    });
-
-    // predict pixels sizes for all columns based on resize
-    let columnWidths = calculateColumnSizes(
-      tableWidth,
-      collection.columns.map(col => ({...col.props, key: col.key})),
-      resizingChanged,
-      (i) => this.getDefaultWidth(collection.columns[i]),
-      (i) => this.getDefaultMinWidth(collection.columns[i])
-    );
-
-    // set all new column widths for onResize event
-    // columns going in will be the same order as the columns coming out
+    let freeze = true;
     let newWidths = new Map<Key, ColumnSize>();
-    // set all column widths based on calculateColumnSize
-    columnWidths.forEach((width, index) => {
-      let key = collection.columns[index].key;
-      newWidths.set(key, width);
-    });
 
-    // add FR's back as they were to columns to the right
-    Array.from(frKeysToTheRight).forEach(([key]) => {
-      newWidths.set(key, `${frKeysToTheRight.get(key)}fr`);
-    });
+    width = Math.max(this.getColumnMinWidth(col), Math.min(this.getColumnMaxWidth(col), Math.floor(width)));
 
-    // put back in percents
-    Array.from(percentKeys).forEach(([key, width]) => {
-      // resizing locks a column to a px width
-      if (key === col) {
-        return;
+    collection.columns.forEach(column => {
+      if (column.key === col) {
+        newWidths.set(column.key, width);
+        freeze = false;
+      } else if (freeze) {
+        // freeze columns to the left to their previous pixel value
+        newWidths.set(column.key, prevColumnWidths.get(column.key) ?? 0);
+      } else {
+        newWidths.set(column.key, column.props.width ?? uncontrolledWidths.get(column.key));
       }
-      newWidths.set(key, width);
     });
+
     return newWidths;
   }
 

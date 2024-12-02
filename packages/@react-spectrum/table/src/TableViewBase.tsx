@@ -11,7 +11,6 @@
  */
 
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
-import {chain, isAndroid, mergeProps, scrollIntoView, scrollIntoViewport} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
@@ -23,32 +22,34 @@ import {
   useStyleProps,
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
-import {ColumnSize, SpectrumColumnProps} from '@react-types/table';
-import {DOMRef, DropTarget, FocusableElement, FocusableRef, Key} from '@react-types/shared';
+import {ColumnSize, SpectrumColumnProps, TableCollection} from '@react-types/table';
+import {DOMRef, DropTarget, FocusableElement, FocusableRef, Key, RefObject} from '@react-types/shared';
 import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
-import type {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult, DroppableItemResult} from '@react-aria/dnd';
+import type {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult} from '@react-aria/dnd';
 import {FocusRing, FocusScope, useFocusRing} from '@react-aria/focus';
-import {getInteractionModality, isFocusVisible, useHover, usePress} from '@react-aria/interactions';
+import {getInteractionModality, HoverProps, isFocusVisible, useHover, usePress} from '@react-aria/interactions';
 import {GridNode} from '@react-types/grid';
 import {InsertionIndicator} from './InsertionIndicator';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {isAndroid, mergeProps, scrollIntoView, scrollIntoViewport, useLoadMore} from '@react-aria/utils';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
-import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
+import {LayoutInfo, Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
+import {layoutInfoToStyle, ScrollView, setScrollLeft, VirtualizerItem} from '@react-aria/virtualizer';
 import ListGripper from '@spectrum-icons/ui/ListGripper';
+import {ListKeyboardDelegate} from '@react-aria/selection';
 import {Nubbin} from './Nubbin';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {DOMAttributes, HTMLAttributes, ReactElement, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {Resizer} from './Resizer';
-import {ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
+import {Resizer, ResizeStateContext} from './Resizer';
 import {RootDropIndicator} from './RootDropIndicator';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
 import {SpectrumTableProps} from './TableViewWrapper';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
-import {TableColumnLayout, TableState, TreeGridState} from '@react-stately/table';
-import {TableLayout} from '@react-stately/layout';
+import {TableState, TreeGridState, useTableColumnResizeState} from '@react-stately/table';
+import {TableViewLayout} from './TableViewLayout';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useButton} from '@react-aria/button';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -107,30 +108,31 @@ const LEVEL_OFFSET_WIDTH = {
 
 export interface TableContextValue<T> {
   state: TableState<T> | TreeGridState<T>,
-  dragState: DraggableCollectionState,
-  dropState: DroppableCollectionState,
-  dragAndDropHooks: DragAndDropHooks['dragAndDropHooks'],
+  dragState: DraggableCollectionState | null,
+  dropState: DroppableCollectionState | null,
+  dragAndDropHooks?: DragAndDropHooks['dragAndDropHooks'],
   isTableDraggable: boolean,
   isTableDroppable: boolean,
-  layout: TableLayout<T> & {tableState: TableState<T> | TreeGridState<T>},
+  layout: TableViewLayout<T>,
   headerRowHovered: boolean,
   isInResizeMode: boolean,
   setIsInResizeMode: (val: boolean) => void,
   isEmpty: boolean,
   onFocusedResizer: () => void,
-  onResizeStart: (widths: Map<Key, ColumnSize>) => void,
-  onResize: (widths: Map<Key, ColumnSize>) => void,
-  onResizeEnd: (widths: Map<Key, ColumnSize>) => void,
+  onResizeStart?: (widths: Map<Key, ColumnSize>) => void,
+  onResize?: (widths: Map<Key, ColumnSize>) => void,
+  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void,
   headerMenuOpen: boolean,
-  setHeaderMenuOpen: (val: boolean) => void
+  setHeaderMenuOpen: (val: boolean) => void,
+  renderEmptyState?: () => ReactElement
 }
 
-export const TableContext = React.createContext<TableContextValue<unknown>>(null);
+export const TableContext = React.createContext<TableContextValue<unknown> | null>(null);
 export function useTableContext() {
-  return useContext(TableContext);
+  return useContext(TableContext)!;
 }
 
-export const VirtualizerContext = React.createContext(null);
+export const VirtualizerContext = React.createContext<{width: number, key: Key | null} | null>(null);
 export function useVirtualizerContext() {
   return useContext(VirtualizerContext);
 }
@@ -138,6 +140,8 @@ export function useVirtualizerContext() {
 interface TableBaseProps<T> extends SpectrumTableProps<T> {
   state: TableState<T> | TreeGridState<T>
 }
+
+type View = ReusableView<GridNode<unknown>, ReactNode>;
 
 function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
@@ -166,7 +170,374 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   }, [isTableDraggable, isTableDroppable, state]);
 
   let {styleProps} = useStyleProps(props);
+  let {scale} = useProvider();
+
+  // Starts when the user selects resize from the menu, ends when resizing ends
+  // used to control the visibility of the resizer Nubbin
+  let [isInResizeMode, setIsInResizeMode] = useState(false);
+  // Starts when the resizer is actually moved
+  // entering resizing/exiting resizing doesn't trigger a render
+  // with table layout, so we need to track it here
+  let [, setIsResizing] = useState(false);
+
+  let domRef = useDOMRef(ref);
+  let headerRef = useRef<HTMLDivElement | null>(null);
+  let bodyRef = useRef<HTMLDivElement | null>(null);
+
+  let density = props.density || 'regular';
+  let layout = useMemo(() => new TableViewLayout<T>({
+    // If props.rowHeight is auto, then use estimated heights based on scale, otherwise use fixed heights.
+    rowHeight: props.overflowMode === 'wrap'
+      ? undefined
+      : ROW_HEIGHTS[density][scale],
+    estimatedRowHeight: props.overflowMode === 'wrap'
+      ? ROW_HEIGHTS[density][scale]
+      : undefined,
+    headingHeight: props.overflowMode === 'wrap'
+      ? undefined
+      : DEFAULT_HEADER_HEIGHT[scale],
+    estimatedHeadingHeight: props.overflowMode === 'wrap'
+      ? DEFAULT_HEADER_HEIGHT[scale]
+      : undefined
+  }),
+    // don't recompute when state.collection changes, only used for initial value
+
+    [props.overflowMode, scale, density]
+  );
+
+  let dragState: DraggableCollectionState | null = null;
+  let preview = useRef(null);
+  if (isTableDraggable && dragAndDropHooks) {
+    dragState = dragAndDropHooks.useDraggableCollectionState!({
+      collection: state.collection,
+      selectionManager: state.selectionManager,
+      preview
+    });
+    dragAndDropHooks.useDraggableCollection!({}, dragState, domRef);
+  }
+
+  let DragPreview = dragAndDropHooks?.DragPreview;
+  let dropState: DroppableCollectionState | null = null;
+  let droppableCollection: DroppableCollectionResult | null = null;
+  let isRootDropTarget = false;
+  if (isTableDroppable && dragAndDropHooks) {
+    dropState = dragAndDropHooks.useDroppableCollectionState!({
+      collection: state.collection,
+      selectionManager: state.selectionManager
+    });
+    droppableCollection = dragAndDropHooks.useDroppableCollection!({
+      keyboardDelegate: new ListKeyboardDelegate({
+        collection: state.collection,
+        disabledKeys: state.selectionManager.disabledKeys,
+        ref: domRef,
+        layoutDelegate: layout
+      }),
+      dropTargetDelegate: layout
+    }, dropState, domRef);
+
+    isRootDropTarget = dropState.isDropTarget({type: 'root'});
+  }
+
+  let {gridProps} = useTable({
+    ...props,
+    isVirtualized: true,
+    layoutDelegate: layout,
+    onRowAction: onAction,
+    scrollRef: bodyRef
+  }, state, domRef);
+  let [headerMenuOpen, setHeaderMenuOpen] = useState(false);
+  let [headerRowHovered, setHeaderRowHovered] = useState(false);
+
+  // This overrides collection view's renderWrapper to support DOM hierarchy.
+  let renderWrapper = useCallback((parent: View | null, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]): ReactElement => {
+    if (reusableView.viewType === 'rowgroup') {
+      return (
+        <TableRowGroup
+          key={reusableView.key}
+          layoutInfo={reusableView.layoutInfo!}
+          parent={parent?.layoutInfo ?? null}
+          // Override the default role="rowgroup" with role="presentation",
+          // in favor or adding role="rowgroup" to the ScrollView with
+          // ref={bodyRef} in the TableVirtualizer below.
+          role="presentation">
+          {renderChildren(children)}
+        </TableRowGroup>
+      );
+    }
+
+    if (reusableView.viewType === 'header') {
+      return (
+        <TableHeader
+          key={reusableView.key}
+          layoutInfo={reusableView.layoutInfo!}
+          parent={parent?.layoutInfo ?? null}>
+          {renderChildren(children)}
+        </TableHeader>
+      );
+    }
+
+    if (reusableView.viewType === 'row') {
+      return (
+        <TableRow
+          key={reusableView.key}
+          item={reusableView.content!}
+          layoutInfo={reusableView.layoutInfo!}
+          parent={parent?.layoutInfo ?? null}>
+          {renderChildren(children)}
+        </TableRow>
+      );
+    }
+
+    if (reusableView.viewType === 'headerrow') {
+      return (
+        <TableHeaderRow
+          onHoverChange={setHeaderRowHovered}
+          key={reusableView.key}
+          layoutInfo={reusableView.layoutInfo!}
+          parent={parent?.layoutInfo ?? null}
+          item={reusableView.content!}>
+          {renderChildren(children)}
+        </TableHeaderRow>
+      );
+    }
+
+    return (
+      <TableCellWrapper
+        key={reusableView.key}
+        layoutInfo={reusableView.layoutInfo!}
+        virtualizer={reusableView.virtualizer}
+        parent={parent!}>
+        {reusableView.rendered}
+      </TableCellWrapper>
+    );
+  }, []);
+
+  let renderView = useCallback((type: string, item: GridNode<T>) => {
+    switch (type) {
+      case 'header':
+      case 'rowgroup':
+      case 'section':
+      case 'row':
+      case 'headerrow':
+        return null;
+      case 'cell': {
+        if (item.props.isSelectionCell) {
+          return <TableCheckboxCell cell={item} />;
+        }
+
+        if (item.props.isDragButtonCell) {
+          return <TableDragCell cell={item} />;
+        }
+
+        return <TableCell cell={item} />;
+      }
+      case 'placeholder':
+        // TODO: move to react-aria?
+        return (
+          <div
+            role="gridcell"
+            aria-colindex={item.index + 1}
+            aria-colspan={item.colspan != null && item.colspan > 1 ? item.colspan : undefined} />
+        );
+      case 'column':
+        if (item.props.isSelectionCell) {
+          return <TableSelectAllCell column={item} />;
+        }
+
+        if (item.props.isDragButtonCell) {
+          return <TableDragHeaderCell column={item} />;
+        }
+
+        // TODO: consider this case, what if we have hidden headers and a empty table
+        if (item.props.hideHeader) {
+          return (
+            <TooltipTrigger placement="top" trigger="focus">
+              <TableColumnHeader column={item} />
+              <Tooltip placement="top">{item.rendered}</Tooltip>
+            </TooltipTrigger>
+          );
+        }
+
+        if (item.props.allowsResizing && !item.hasChildNodes) {
+          return <ResizableTableColumnHeader column={item} />;
+        }
+
+        return (
+          <TableColumnHeader column={item} />
+        );
+      case 'loader':
+        return <LoadingState />;
+      case 'empty': {
+        return <EmptyState />;
+      }
+    }
+    return null;
+  }, []);
+
+  let [isVerticalScrollbarVisible, setVerticalScollbarVisible] = useState(false);
+  let [isHorizontalScrollbarVisible, setHorizontalScollbarVisible] = useState(false);
+  let viewport = useRef({x: 0, y: 0, width: 0, height: 0});
+  let onVisibleRectChange = useCallback((e) => {
+    if (viewport.current.width === e.width && viewport.current.height === e.height) {
+      return;
+    }
+    viewport.current = e;
+    if (bodyRef.current) {
+      setVerticalScollbarVisible(bodyRef.current.clientWidth + 2 < bodyRef.current.offsetWidth);
+      setHorizontalScollbarVisible(bodyRef.current.clientHeight + 2 < bodyRef.current.offsetHeight);
+    }
+  }, []);
+  let {isFocusVisible, focusProps} = useFocusRing();
+  let isEmpty = state.collection.size === 0;
+
+  let onFocusedResizer = () => {
+    if (bodyRef.current && headerRef.current) {
+      bodyRef.current.scrollLeft = headerRef.current.scrollLeft;
+    }
+  };
+
+  let onResizeStart = useCallback((widths) => {
+    setIsResizing(true);
+    propsOnResizeStart?.(widths);
+  }, [setIsResizing, propsOnResizeStart]);
+  let onResizeEnd = useCallback((widths) => {
+    setIsInResizeMode(false);
+    setIsResizing(false);
+    propsOnResizeEnd?.(widths);
+  }, [propsOnResizeEnd, setIsInResizeMode, setIsResizing]);
+
+  let focusedKey = state.selectionManager.focusedKey;
+  let dropTargetKey: Key | null = null;
+  if (dropState?.target?.type === 'item') {
+    dropTargetKey = dropState.target.key;
+    if (dropState.target.dropPosition === 'before' && dropTargetKey !== state.collection.getFirstKey()) {
+      // Normalize to the "after" drop position since we only render those in the DOM.
+      // The exception to this is for the first row in the table, where we also render the "before" position.
+      dropTargetKey = state.collection.getKeyBefore(dropTargetKey);
+    }
+  }
+
+  let persistedKeys = useMemo(() => {
+    return new Set([focusedKey, dropTargetKey].filter(k => k !== null));
+  }, [focusedKey, dropTargetKey]);
+
+  let mergedProps = mergeProps(
+    isTableDroppable ? droppableCollection?.collectionProps : null,
+    gridProps,
+    focusProps
+  );
+
+  if (dragAndDropHooks?.isVirtualDragging?.()) {
+    mergedProps.tabIndex = undefined;
+  }
+
+  return (
+    <TableContext.Provider
+      value={{
+        state,
+        dragState,
+        dropState,
+        dragAndDropHooks,
+        isTableDraggable,
+        isTableDroppable,
+        layout,
+        onResizeStart,
+        onResize: props.onResize,
+        onResizeEnd,
+        headerRowHovered,
+        isInResizeMode,
+        setIsInResizeMode,
+        isEmpty,
+        onFocusedResizer,
+        headerMenuOpen,
+        setHeaderMenuOpen,
+        renderEmptyState: props.renderEmptyState
+      }}>
+      <TableVirtualizer
+        {...mergedProps}
+        {...styleProps}
+        className={
+          classNames(
+            styles,
+            'spectrum-Table',
+            `spectrum-Table--${density}`,
+            {
+              'spectrum-Table--quiet': isQuiet,
+              'spectrum-Table--wrap': props.overflowMode === 'wrap',
+              'spectrum-Table--loadingMore': state.collection.body.props.loadingState === 'loadingMore',
+              'spectrum-Table--isVerticalScrollbarVisible': isVerticalScrollbarVisible,
+              'spectrum-Table--isHorizontalScrollbarVisible': isHorizontalScrollbarVisible
+            },
+            classNames(
+              stylesOverrides,
+              'react-spectrum-Table'
+            ),
+            styleProps.className
+          )
+        }
+        tableState={state}
+        layout={layout}
+        collection={state.collection}
+        persistedKeys={persistedKeys}
+        renderView={renderView}
+        renderWrapper={renderWrapper}
+        onVisibleRectChange={onVisibleRectChange}
+        domRef={domRef}
+        headerRef={headerRef}
+        bodyRef={bodyRef}
+        isFocusVisible={isFocusVisible}
+        isVirtualDragging={dragAndDropHooks?.isVirtualDragging?.() || false}
+        isRootDropTarget={isRootDropTarget} />
+      {DragPreview && isTableDraggable && dragAndDropHooks && dragState &&
+        <DragPreview ref={preview}>
+          {() => {
+            if (dragState.draggedKey == null) {
+              return null;
+            }
+            if (dragAndDropHooks.renderPreview) {
+              return dragAndDropHooks.renderPreview(dragState.draggingKeys, dragState.draggedKey);
+            }
+            let itemCount = dragState.draggingKeys.size;
+            let maxWidth = bodyRef.current!.getBoundingClientRect().width;
+            let height = ROW_HEIGHTS[density][scale];
+            let itemText = state.collection.getTextValue!(dragState.draggedKey);
+            return <SpectrumDragPreview itemText={itemText} itemCount={itemCount} height={height} maxWidth={maxWidth} />;
+          }}
+        </DragPreview>
+      }
+    </TableContext.Provider>
+  );
+}
+
+interface TableVirtualizerProps<T> extends HTMLAttributes<HTMLElement> {
+  tableState: TableState<T>,
+  layout: TableViewLayout<T>,
+  collection: TableCollection<T>,
+  persistedKeys: Set<Key> | null,
+  renderView: (type: string, content: GridNode<T>) => ReactElement | null,
+  renderWrapper: (
+    parent: View | null,
+    reusableView: View,
+    children: View[],
+    renderChildren: (views: View[]) => ReactElement[]
+  ) => ReactElement | null,
+  domRef: RefObject<HTMLDivElement | null>,
+  bodyRef: RefObject<HTMLDivElement | null>,
+  headerRef: RefObject<HTMLDivElement | null>,
+  onVisibleRectChange: (rect: Rect) => void,
+  isFocusVisible: boolean,
+  isVirtualDragging: boolean,
+  isRootDropTarget: boolean
+}
+
+// This is a custom Virtualizer that also has a header that syncs its scroll position with the body.
+function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
+  let {tableState, layout, collection, persistedKeys, renderView, renderWrapper, domRef, bodyRef, headerRef, onVisibleRectChange: onVisibleRectChangeProp, isFocusVisible, isVirtualDragging, isRootDropTarget, ...otherProps} = props;
   let {direction} = useLocale();
+  let loadingState = collection.body.props.loadingState;
+  let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
+  let onLoadMore = collection.body.props.onLoadMore;
+  let [tableWidth, setTableWidth] = useState(0);
   let {scale} = useProvider();
 
   const getDefaultWidth = useCallback(({props: {hideHeader, isSelectionCell, showDivider, isDragButtonCell}}: GridNode<T>): ColumnSize | null | undefined => {
@@ -192,419 +563,44 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
     return 75;
   }, [scale]);
 
-  // Starts when the user selects resize from the menu, ends when resizing ends
-  // used to control the visibility of the resizer Nubbin
-  let [isInResizeMode, setIsInResizeMode] = useState(false);
-  // Starts when the resizer is actually moved
-  // entering resizing/exiting resizing doesn't trigger a render
-  // with table layout, so we need to track it here
-  let [, setIsResizing] = useState(false);
+  let columnResizeState = useTableColumnResizeState({
+    tableWidth,
+    getDefaultWidth,
+    getDefaultMinWidth
+  }, tableState);
 
-  let domRef = useDOMRef(ref);
-  let headerRef = useRef<HTMLDivElement>();
-  let bodyRef = useRef<HTMLDivElement>();
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/table');
-
-  let density = props.density || 'regular';
-  let columnLayout = useMemo(
-    () => new TableColumnLayout({
-      getDefaultWidth,
-      getDefaultMinWidth
-    }),
-    [getDefaultWidth, getDefaultMinWidth]
-  );
-  let tableLayout = useMemo(() => new TableLayout({
-    // If props.rowHeight is auto, then use estimated heights based on scale, otherwise use fixed heights.
-    rowHeight: props.overflowMode === 'wrap'
-      ? null
-      : ROW_HEIGHTS[density][scale],
-    estimatedRowHeight: props.overflowMode === 'wrap'
-      ? ROW_HEIGHTS[density][scale]
-      : null,
-    headingHeight: props.overflowMode === 'wrap'
-      ? null
-      : DEFAULT_HEADER_HEIGHT[scale],
-    estimatedHeadingHeight: props.overflowMode === 'wrap'
-      ? DEFAULT_HEADER_HEIGHT[scale]
-      : null,
-    columnLayout,
-    initialCollection: state.collection
-  }),
-    // don't recompute when state.collection changes, only used for initial value
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [props.overflowMode, scale, density, columnLayout]
-  );
-
-  // Use a proxy so that a new object is created for each render so that alternate instances aren't affected by mutation.
-  // This can be thought of as equivalent to `{…tableLayout, tableState: state}`, but works with classes as well.
-  let layout = useMemo(() => {
-    let proxy = new Proxy(tableLayout, {
-      get(target, prop, receiver) {
-        return prop === 'tableState' ? state : Reflect.get(target, prop, receiver);
-      }
-    });
-    return proxy as TableLayout<T> & {tableState: TableState<T> | TreeGridState<T>};
-  }, [state, tableLayout]);
-
-  let dragState: DraggableCollectionState;
-  let preview = useRef(null);
-  if (isTableDraggable) {
-    dragState = dragAndDropHooks.useDraggableCollectionState({
-      collection: state.collection,
-      selectionManager: state.selectionManager,
-      preview
-    });
-    dragAndDropHooks.useDraggableCollection({}, dragState, domRef);
-  }
-
-  let DragPreview = dragAndDropHooks?.DragPreview;
-  let dropState: DroppableCollectionState;
-  let droppableCollection: DroppableCollectionResult;
-  let isRootDropTarget: boolean;
-  if (isTableDroppable) {
-    dropState = dragAndDropHooks.useDroppableCollectionState({
-      collection: state.collection,
-      selectionManager: state.selectionManager
-    });
-    droppableCollection = dragAndDropHooks.useDroppableCollection({
-      keyboardDelegate: layout,
-      dropTargetDelegate: layout
-    }, dropState, domRef);
-
-    isRootDropTarget = dropState.isDropTarget({type: 'root'});
-  }
-
-  let {gridProps} = useTable({
-    ...props,
-    isVirtualized: true,
-    layout,
-    onRowAction: onAction
-  }, state, domRef);
-  let [headerMenuOpen, setHeaderMenuOpen] = useState(false);
-  let [headerRowHovered, setHeaderRowHovered] = useState(false);
-
-  // This overrides collection view's renderWrapper to support DOM hierarchy.
-  type View = ReusableView<GridNode<T>, ReactNode>;
-  let renderWrapper = (parent: View, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]) => {
-    let style = layoutInfoToStyle(reusableView.layoutInfo, direction, parent && parent.layoutInfo);
-    if (style.overflow === 'hidden') {
-      style.overflow = 'visible'; // needed to support position: sticky
-    }
-
-    if (reusableView.viewType === 'rowgroup') {
-      return (
-        <TableRowGroup key={reusableView.key} style={style}>
-          {isTableDroppable &&
-            <RootDropIndicator key="root" />
-          }
-          {renderChildren(children)}
-        </TableRowGroup>
-      );
-    }
-
-    if (reusableView.viewType === 'header') {
-      return (
-        <TableHeader
-          key={reusableView.key}
-          style={style}>
-          {renderChildren(children)}
-        </TableHeader>
-      );
-    }
-
-    if (reusableView.viewType === 'row') {
-      return (
-        <TableRow
-          key={reusableView.key}
-          item={reusableView.content}
-          style={style}
-          hasActions={onAction}
-          isTableDroppable={isTableDroppable}
-          isTableDraggable={isTableDraggable}>
-          {renderChildren(children)}
-        </TableRow>
-      );
-    }
-
-    if (reusableView.viewType === 'headerrow') {
-      return (
-        <TableHeaderRow
-          onHoverChange={setHeaderRowHovered}
-          key={reusableView.key}
-          style={style}
-          item={reusableView.content}>
-          {renderChildren(children)}
-        </TableHeaderRow>
-      );
-    }
-    let isDropTarget: boolean;
-    let isRootDroptarget: boolean;
-    if (isTableDroppable) {
-      if (parent.content) {
-        isDropTarget =  dropState.isDropTarget({type: 'item', dropPosition: 'on', key: parent.content.key});
-      }
-      isRootDroptarget = dropState.isDropTarget({type: 'root'});
-    }
-
-    return (
-      <VirtualizerItem
-        key={reusableView.key}
-        layoutInfo={reusableView.layoutInfo}
-        virtualizer={reusableView.virtualizer}
-        parent={parent?.layoutInfo}
-        className={
-          classNames(
-            styles,
-            'spectrum-Table-cellWrapper',
-            classNames(
-              stylesOverrides,
-              {
-                'react-spectrum-Table-cellWrapper': !reusableView.layoutInfo.estimatedSize,
-                'react-spectrum-Table-cellWrapper--dropTarget': isDropTarget || isRootDroptarget
-              }
-            )
-          )
-        }>
-        {reusableView.rendered}
-      </VirtualizerItem>
-    );
-  };
-
-  let renderView = (type: string, item: GridNode<T>) => {
-    switch (type) {
-      case 'header':
-      case 'rowgroup':
-      case 'section':
-      case 'row':
-      case 'headerrow':
-        return null;
-      case 'cell': {
-        if (item.props.isSelectionCell) {
-          return <TableCheckboxCell cell={item} />;
-        }
-
-        if (item.props.isDragButtonCell) {
-          return <TableDragCell cell={item} />;
-        }
-
-        return <TableCell cell={item} />;
-      }
-      case 'placeholder':
-        // TODO: move to react-aria?
-        return (
-          <div
-            role="gridcell"
-            aria-colindex={item.index + 1}
-            aria-colspan={item.colspan > 1 ? item.colspan : null} />
-        );
-      case 'column':
-        if (item.props.isSelectionCell) {
-          return <TableSelectAllCell column={item} />;
-        }
-
-        if (item.props.isDragButtonCell) {
-          return <TableDragHeaderCell column={item} />;
-        }
-
-        // TODO: consider this case, what if we have hidden headers and a empty table
-        if (item.props.hideHeader) {
-          return (
-            <TooltipTrigger placement="top" trigger="focus">
-              <TableColumnHeader column={item} />
-              <Tooltip placement="top">{item.rendered}</Tooltip>
-            </TooltipTrigger>
-          );
-        }
-
-        if (item.props.allowsResizing && !item.hasChildNodes) {
-          return <ResizableTableColumnHeader tableRef={domRef} column={item} />;
-        }
-
-        return (
-          <TableColumnHeader column={item} />
-        );
-      case 'loader':
-        return (
-          <CenteredWrapper>
-            <ProgressCircle
-              isIndeterminate
-              aria-label={state.collection.size > 0 ? stringFormatter.format('loadingMore') : stringFormatter.format('loading')} />
-          </CenteredWrapper>
-        );
-      case 'empty': {
-        let emptyState = props.renderEmptyState ? props.renderEmptyState() : null;
-        if (emptyState == null) {
-          return null;
-        }
-
-        return (
-          <CenteredWrapper>
-            {emptyState}
-          </CenteredWrapper>
-        );
-      }
-    }
-  };
-
-  let [isVerticalScrollbarVisible, setVerticalScollbarVisible] = useState(false);
-  let [isHorizontalScrollbarVisible, setHorizontalScollbarVisible] = useState(false);
-  let viewport = useRef({x: 0, y: 0, width: 0, height: 0});
-  let onVisibleRectChange = useCallback((e) => {
-    if (viewport.current.width === e.width && viewport.current.height === e.height) {
-      return;
-    }
-    viewport.current = e;
-    if (bodyRef.current) {
-      setVerticalScollbarVisible(bodyRef.current.clientWidth + 2 < bodyRef.current.offsetWidth);
-      setHorizontalScollbarVisible(bodyRef.current.clientHeight + 2 < bodyRef.current.offsetHeight);
-    }
-  }, []);
-  let {isFocusVisible, focusProps} = useFocusRing();
-  let isEmpty = state.collection.size === 0;
-
-  let onFocusedResizer = () => {
-    bodyRef.current.scrollLeft = headerRef.current.scrollLeft;
-  };
-
-  let onResizeStart = useCallback((widths) => {
-    setIsResizing(true);
-    propsOnResizeStart?.(widths);
-  }, [setIsResizing, propsOnResizeStart]);
-  let onResizeEnd = useCallback((widths) => {
-    setIsInResizeMode(false);
-    setIsResizing(false);
-    propsOnResizeEnd?.(widths);
-  }, [propsOnResizeEnd, setIsInResizeMode, setIsResizing]);
-
-  let focusedKey = state.selectionManager.focusedKey;
-  if (dropState?.target?.type === 'item') {
-    focusedKey = dropState.target.key;
-  }
-
-  let mergedProps = mergeProps(
-    isTableDroppable && droppableCollection?.collectionProps,
-    gridProps,
-    focusProps,
-    dragAndDropHooks?.isVirtualDragging() && {tabIndex: null}
-  );
-
-  return (
-    <TableContext.Provider value={{state, dragState, dropState, dragAndDropHooks, isTableDraggable, isTableDroppable, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen}}>
-      <TableVirtualizer
-        {...mergedProps}
-        {...styleProps}
-        className={
-          classNames(
-            styles,
-            'spectrum-Table',
-            `spectrum-Table--${density}`,
-            {
-              'spectrum-Table--quiet': isQuiet,
-              'spectrum-Table--wrap': props.overflowMode === 'wrap',
-              'spectrum-Table--loadingMore': state.collection.body.props.loadingState === 'loadingMore',
-              'spectrum-Table--isVerticalScrollbarVisible': isVerticalScrollbarVisible,
-              'spectrum-Table--isHorizontalScrollbarVisible': isHorizontalScrollbarVisible
-            },
-            classNames(
-              stylesOverrides,
-              'react-spectrum-Table'
-            ),
-            styleProps.className
-          )
-        }
-        layout={layout}
-        collection={state.collection}
-        focusedKey={focusedKey}
-        renderView={renderView}
-        renderWrapper={renderWrapper}
-        onVisibleRectChange={onVisibleRectChange}
-        domRef={domRef}
-        headerRef={headerRef}
-        bodyRef={bodyRef}
-        isFocusVisible={isFocusVisible}
-        isVirtualDragging={dragAndDropHooks?.isVirtualDragging()}
-        isRootDropTarget={isRootDropTarget} />
-      {DragPreview && isTableDraggable &&
-        <DragPreview ref={preview}>
-          {() => {
-            if (dragAndDropHooks.renderPreview) {
-              return dragAndDropHooks.renderPreview(dragState.draggingKeys, dragState.draggedKey);
-            }
-            let itemCount = dragState.draggingKeys.size;
-            let maxWidth = bodyRef.current.getBoundingClientRect().width;
-            let height = ROW_HEIGHTS[density][scale];
-            let itemText = state.collection.getTextValue(dragState.draggedKey);
-            return <SpectrumDragPreview itemText={itemText} itemCount={itemCount} height={height} maxWidth={maxWidth} />;
-          }}
-        </DragPreview>
-      }
-    </TableContext.Provider>
-  );
-}
-
-// This is a custom Virtualizer that also has a header that syncs its scroll position with the body.
-function TableVirtualizer(props) {
-  let {layout, collection, focusedKey, renderView, renderWrapper, domRef, bodyRef, headerRef, onVisibleRectChange: onVisibleRectChangeProp, isFocusVisible, isVirtualDragging, isRootDropTarget, ...otherProps} = props;
-  let {direction} = useLocale();
-  let loadingState = collection.body.props.loadingState;
-  let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
-  let onLoadMore = collection.body.props.onLoadMore;
-  let transitionDuration = 220;
-  if (isLoading) {
-    transitionDuration = 160;
-  }
-  if (layout.resizingColumn != null) {
-    // while resizing, prop changes should not cause animations
-    transitionDuration = 0;
-  }
-  let state = useVirtualizerState<object, ReactNode, ReactNode>({
+  let state = useVirtualizerState<GridNode<unknown>, ReactNode>({
     layout,
     collection,
     renderView,
-    renderWrapper,
     onVisibleRectChange(rect) {
-      bodyRef.current.scrollTop = rect.y;
-      setScrollLeft(bodyRef.current, direction, rect.x);
+      if (bodyRef.current) {
+        bodyRef.current.scrollTop = rect.y;
+        setScrollLeft(bodyRef.current, direction, rect.x);
+      }
     },
-    transitionDuration
+    persistedKeys,
+    layoutOptions: useMemo(() => ({
+      columnWidths: columnResizeState.columnWidths
+    }), [columnResizeState.columnWidths])
   });
 
-  let scrollToItem = useCallback((key) => {
-    let item = collection.getItem(key);
-    let column = collection.columns[0];
-    let virtualizer = state.virtualizer;
+  useLoadMore({isLoading, onLoadMore, scrollOffset: 1}, bodyRef);
+  let onVisibleRectChange = useCallback((rect: Rect) => {
+    state.setVisibleRect(rect);
+  }, [state]);
 
-    virtualizer.scrollToItem(key, {
-      duration: 0,
-      // Prevent scrolling to the top when clicking on column headers.
-      shouldScrollY: item?.type !== 'column',
-      // Offset scroll position by width of selection cell
-      // (which is sticky and will overlap the cell we're scrolling to).
-      offsetX: column.props.isSelectionCell || column.props.isDragButtonCell
-        ? layout.getColumnWidth(column.key)
-        : 0
-    });
-
-    // Sync the scroll positions of the column headers and the body so scrollIntoViewport can
-    // properly decide if the column is outside the viewport or not
-    headerRef.current.scrollLeft = bodyRef.current.scrollLeft;
-  }, [collection, bodyRef, headerRef, layout, state.virtualizer]);
-
-  let memoedVirtualizerProps = useMemo(() => ({
-    tabIndex: otherProps.tabIndex,
-    focusedKey,
-    scrollToItem,
-    isLoading,
-    onLoadMore
-  }), [otherProps.tabIndex, focusedKey, scrollToItem, isLoading, onLoadMore]);
-
-  let {virtualizerProps, scrollViewProps: {onVisibleRectChange}} = useVirtualizer(memoedVirtualizerProps, state, domRef);
+  let onVisibleRectChangeMemo = useCallback(rect => {
+    setTableWidth(rect.width);
+    onVisibleRectChange(rect);
+    onVisibleRectChangeProp(rect);
+  }, [onVisibleRectChange, onVisibleRectChangeProp]);
 
   // this effect runs whenever the contentSize changes, it doesn't matter what the content size is
   // only that it changes in a resize, and when that happens, we want to sync the body to the
   // header scroll position
   useEffect(() => {
-    if (getInteractionModality() === 'keyboard' && headerRef.current.contains(document.activeElement)) {
+    if (getInteractionModality() === 'keyboard' && headerRef.current?.contains(document.activeElement) && bodyRef.current) {
       scrollIntoView(headerRef.current, document.activeElement as HTMLElement);
       scrollIntoViewport(document.activeElement, {containingElement: domRef.current});
       bodyRef.current.scrollLeft = headerRef.current.scrollLeft;
@@ -615,10 +611,12 @@ function TableVirtualizer(props) {
 
   // Sync the scroll position from the table body to the header container.
   let onScroll = useCallback(() => {
-    headerRef.current.scrollLeft = bodyRef.current.scrollLeft;
+    if (headerRef.current && bodyRef.current) {
+      headerRef.current.scrollLeft = bodyRef.current.scrollLeft;
+    }
   }, [bodyRef, headerRef]);
 
-  let resizerPosition = layout.getResizerPosition() - 2;
+  let resizerPosition = columnResizeState.resizingColumn != null ? layout.getLayoutInfo(columnResizeState.resizingColumn)!.rect.maxX - 2 : 0;
 
   let resizerAtEdge = resizerPosition > Math.max(state.virtualizer.contentSize.width, state.virtualizer.visibleRect.width) - 3;
   // this should be fine, every movement of the resizer causes a rerender
@@ -627,22 +625,29 @@ function TableVirtualizer(props) {
   let shouldHardCornerResizeCorner = resizerAtEdge && resizerInVisibleRegion;
 
   // minimize re-render caused on Resizers by memoing this
-  let resizingColumnWidth = layout.getColumnWidth(layout.resizingColumn);
+  let resizingColumnWidth = columnResizeState.resizingColumn != null ? columnResizeState.getColumnWidth(columnResizeState.resizingColumn) : 0;
   let resizingColumn = useMemo(() => ({
     width: resizingColumnWidth,
-    key: layout.resizingColumn
-  }), [resizingColumnWidth, layout.resizingColumn]);
-  let mergedProps = mergeProps(
-    otherProps,
-    virtualizerProps,
-    isVirtualDragging && {tabIndex: null}
-  );
+    key: columnResizeState.resizingColumn
+  }), [resizingColumnWidth, columnResizeState.resizingColumn]);
+
+  if (isVirtualDragging) {
+    otherProps.tabIndex = undefined;
+  }
+
+  let firstColumn = collection.columns[0];
+  let scrollPadding = 0;
+  if (firstColumn.props.isSelectionCell || firstColumn.props.isDragButtonCell) {
+    scrollPadding = columnResizeState.getColumnWidth(firstColumn.key);
+  }
+
+  let visibleViews = renderChildren(null, state.visibleViews, renderWrapper);
 
   return (
     <VirtualizerContext.Provider value={resizingColumn}>
       <FocusScope>
         <div
-          {...mergedProps}
+          {...otherProps}
           ref={domRef}>
           <div
             role="presentation"
@@ -652,13 +657,14 @@ function TableVirtualizer(props) {
               overflow: 'hidden',
               position: 'relative',
               willChange: state.isScrolling ? 'scroll-position' : undefined,
-              transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined
+              scrollPaddingInlineStart: scrollPadding
             }}
             ref={headerRef}>
-            {state.visibleViews[0]}
+            <ResizeStateContext.Provider value={columnResizeState}>
+              {visibleViews[0]}
+            </ResizeStateContext.Provider>
           </div>
           <ScrollView
-            role="presentation"
             className={
               classNames(
                 styles,
@@ -676,19 +682,27 @@ function TableVirtualizer(props) {
                 )
               )
             }
-            tabIndex={isVirtualDragging ? null : -1}
-            style={{flex: 1}}
-            innerStyle={{overflow: 'visible', transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined}}
+            //  Firefox and Chrome make generic elements using CSS overflow 'scroll' or 'auto' tabbable,
+            //  including them within the accessibility tree, which breaks the table structure in Firefox.
+            //  Using tabIndex={-1} prevents the ScrollView from being tabbable, and using role="rowgroup"
+            //  here and role="presentation" on the table body content fixes the table structure.
+            role="rowgroup"
+            tabIndex={isVirtualDragging ? undefined : -1}
+            style={{
+              flex: 1,
+              scrollPaddingInlineStart: scrollPadding
+            }}
+            innerStyle={{overflow: 'visible'}}
             ref={bodyRef}
             contentSize={state.contentSize}
-            onVisibleRectChange={chain(onVisibleRectChange, onVisibleRectChangeProp)}
+            onVisibleRectChange={onVisibleRectChangeMemo}
             onScrollStart={state.startScrolling}
             onScrollEnd={state.endScrolling}
             onScroll={onScroll}>
-            {state.visibleViews[1]}
+            {visibleViews[1]}
             <div
               className={classNames(styles, 'spectrum-Table-bodyResizeIndicator')}
-              style={{[direction === 'ltr' ? 'left' : 'right']: `${resizerPosition}px`, height: `${Math.max(state.virtualizer.contentSize.height, state.virtualizer.visibleRect.height)}px`, display: layout.resizingColumn ? 'block' : 'none'}} />
+              style={{[direction === 'ltr' ? 'left' : 'right']: `${resizerPosition}px`, height: `${Math.max(state.virtualizer.contentSize.height, state.virtualizer.visibleRect.height)}px`, display: columnResizeState.resizingColumn ? 'block' : 'none'}} />
           </ScrollView>
         </div>
       </FocusScope>
@@ -696,11 +710,32 @@ function TableVirtualizer(props) {
   );
 }
 
-function TableHeader({children, ...otherProps}) {
+function renderChildren<T extends object>(parent: View | null, views: View[], renderWrapper: NonNullable<TableVirtualizerProps<T>['renderWrapper']>) {
+  return views.map(view => {
+    return renderWrapper(
+      parent,
+      view,
+      view.children ? Array.from(view.children) : [],
+      childViews => renderChildren(view, childViews, renderWrapper)
+    );
+  });
+}
+
+function useStyle(layoutInfo: LayoutInfo, parent: LayoutInfo | null) {
+  let {direction} = useLocale();
+  let style = layoutInfoToStyle(layoutInfo, direction, parent);
+  if (style.overflow === 'hidden') {
+    style.overflow = 'visible'; // needed to support position: sticky
+  }
+  return style;
+}
+
+function TableHeader({children, layoutInfo, parent, ...otherProps}: {children: ReactNode, layoutInfo: LayoutInfo, parent: LayoutInfo | null}) {
   let {rowGroupProps} = useTableRowGroup();
+  let style = useStyle(layoutInfo, parent);
 
   return (
-    <div {...rowGroupProps} {...otherProps} className={classNames(styles, 'spectrum-Table-head')}>
+    <div {...rowGroupProps} {...otherProps} className={classNames(styles, 'spectrum-Table-head')} style={style}>
       {children}
     </div>
   );
@@ -766,7 +801,7 @@ function TableColumnHeader(props) {
   );
 }
 
-let _TableColumnHeaderButton = (props, ref: FocusableRef<HTMLDivElement>) => {
+let ForwardTableColumnHeaderButton = (props, ref: FocusableRef<HTMLDivElement>) => {
   let {focusProps, alignment, ...otherProps} = props;
   let {isEmpty} = useTableContext();
   let domRef = useFocusableRef(ref);
@@ -804,7 +839,7 @@ let _TableColumnHeaderButton = (props, ref: FocusableRef<HTMLDivElement>) => {
     </div>
   );
 };
-let TableColumnHeaderButton = React.forwardRef(_TableColumnHeaderButton);
+let TableColumnHeaderButton = React.forwardRef(ForwardTableColumnHeaderButton);
 
 function ResizableTableColumnHeader(props) {
   let {column} = props;
@@ -813,7 +848,6 @@ function ResizableTableColumnHeader(props) {
   let resizingRef = useRef(null);
   let {
     state,
-    layout,
     onResizeStart,
     onResize,
     onResizeEnd,
@@ -824,6 +858,7 @@ function ResizableTableColumnHeader(props) {
     headerMenuOpen,
     setHeaderMenuOpen
   } = useTableContext();
+  let columnResizeState = useContext(ResizeStateContext)!;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/table');
   let {pressProps, isPressed} = usePress({isDisabled: isEmpty});
   let {columnHeaderProps} = useTableColumnHeader({
@@ -848,7 +883,7 @@ function ResizableTableColumnHeader(props) {
         state.sort(column.key, 'descending');
         break;
       case 'resize':
-        layout.startResize(column.key);
+        columnResizeState.startResize(column.key);
         setIsInResizeMode(true);
         state.setKeyboardNavigationDisabled(true);
         break;
@@ -856,25 +891,26 @@ function ResizableTableColumnHeader(props) {
   };
   let allowsSorting = column.props?.allowsSorting;
   let items = useMemo(() => {
-    let options = [
-      allowsSorting ? {
+    let options: {label: string, id: string}[] = [];
+    if (allowsSorting) {
+      options.push({
         label: stringFormatter.format('sortAscending'),
         id: 'sort-asc'
-      } : undefined,
-      allowsSorting ? {
+      });
+      options.push({
         label: stringFormatter.format('sortDescending'),
         id: 'sort-desc'
-      } : undefined,
-      {
-        label: stringFormatter.format('resizeColumn'),
-        id: 'resize'
-      }
-    ];
+      });
+    }
+    options.push({
+      label: stringFormatter.format('resizeColumn'),
+      id: 'resize'
+    });
     return options;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allowsSorting]);
 
-  let resizingColumn = layout.resizingColumn;
+  let resizingColumn = columnResizeState.resizingColumn;
   let showResizer = !isEmpty && ((headerRowHovered && getInteractionModality() !== 'keyboard') || resizingColumn != null);
   let alignment = 'start';
   let menuAlign = 'start' as 'start' | 'end';
@@ -970,7 +1006,7 @@ function ResizableTableColumnHeader(props) {
 }
 
 function TableSelectAllCell({column}) {
-  let ref = useRef();
+  let ref = useRef<HTMLDivElement | null>(null);
   let {state} = useTableContext();
   let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
   let {columnHeaderProps} = useTableColumnHeader({
@@ -1017,7 +1053,7 @@ function TableSelectAllCell({column}) {
 }
 
 function TableDragHeaderCell({column}) {
-  let ref = useRef();
+  let ref = useRef<HTMLDivElement | null>(null);
   let {state} = useTableContext();
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
@@ -1047,11 +1083,16 @@ function TableDragHeaderCell({column}) {
   );
 }
 
-function TableRowGroup({children, ...otherProps}) {
+function TableRowGroup({children, layoutInfo, parent, ...otherProps}: {children: ReactNode, layoutInfo: LayoutInfo, parent: LayoutInfo | null, role: string}) {
   let {rowGroupProps} = useTableRowGroup();
+  let {isTableDroppable} = useContext(TableContext)!;
+  let style = useStyle(layoutInfo, parent);
 
   return (
-    <div {...rowGroupProps} {...otherProps}>
+    <div {...rowGroupProps} style={style} {...otherProps}>
+      {isTableDroppable &&
+        <RootDropIndicator key="root" />
+      }
       {children}
     </div>
   );
@@ -1081,30 +1122,29 @@ function DragButton() {
 
 interface TableRowContextValue {
   dragButtonProps: React.HTMLAttributes<HTMLDivElement>,
-  dragButtonRef: React.MutableRefObject<undefined>,
+  dragButtonRef: React.RefObject<HTMLDivElement | null>,
   isFocusVisibleWithin: boolean
 }
 
 
-const TableRowContext = React.createContext<TableRowContextValue>(null);
+const TableRowContext = React.createContext<TableRowContextValue | null>(null);
 export function useTableRowContext() {
-  return useContext(TableRowContext);
+  return useContext(TableRowContext)!;
 }
 
-function TableRow({item, children, hasActions, isTableDraggable, isTableDroppable, ...otherProps}) {
-  let ref = useRef();
-  let {state, layout, dragAndDropHooks, dragState, dropState} = useTableContext();
-  let allowsInteraction = state.selectionManager.selectionMode !== 'none' || hasActions;
-  let isDisabled = !allowsInteraction || state.disabledKeys.has(item.key);
-  let isDroppable = isTableDroppable && !isDisabled;
+function TableRow({item, children, layoutInfo, parent, ...otherProps}: {item: GridNode<unknown>, children: ReactNode, layoutInfo: LayoutInfo, parent: LayoutInfo | null}) {
+  let ref = useRef<HTMLDivElement | null>(null);
+  let {state, layout, dragAndDropHooks, isTableDraggable, isTableDroppable, dragState, dropState} = useTableContext();
   let isSelected = state.selectionManager.isSelected(item.key);
-  let {rowProps} = useTableRow({
+  let {rowProps, hasAction, allowsSelection} = useTableRow({
     node: item,
     isVirtualized: true,
     shouldSelectOnPressUp: isTableDraggable
   }, state, ref);
 
-  let {pressProps, isPressed} = usePress({isDisabled});
+  let isDisabled = state.selectionManager.isDisabled(item.key);
+  let isInteractive = !isDisabled && (hasAction || allowsSelection || isTableDraggable);
+  let {pressProps, isPressed} = usePress({isDisabled: !isInteractive});
 
   // The row should show the focus background style when any cell inside it is focused.
   // If the row itself is focused, then it should have a blue focus indicator on the left.
@@ -1113,46 +1153,47 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
     focusProps: focusWithinProps
   } = useFocusRing({within: true});
   let {isFocusVisible, focusProps} = useFocusRing();
-  let {hoverProps, isHovered} = useHover({isDisabled});
+  let {hoverProps, isHovered} = useHover({isDisabled: !isInteractive});
   let isFirstRow = state.collection.rows.find(row => row.level === 1)?.key === item.key;
   let isLastRow = item.nextKey == null;
   // Figure out if the TableView content is equal or greater in height to the container. If so, we'll need to round the bottom
   // border corners of the last row when selected.
   let isFlushWithContainerBottom = false;
   if (isLastRow) {
-    if (layout.getContentSize()?.height >= layout.virtualizer?.getVisibleRect().height) {
+    if (layout.getContentSize()?.height >= (layout.virtualizer?.visibleRect.height ?? 0)) {
       isFlushWithContainerBottom = true;
     }
   }
 
-  let draggableItem: DraggableItemResult;
-  if (isTableDraggable) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    draggableItem = dragAndDropHooks.useDraggableItem({key: item.key, hasDragButton: true}, dragState);
+  let draggableItem: DraggableItemResult | null = null;
+  if (isTableDraggable && dragAndDropHooks && dragState) {
+    draggableItem = dragAndDropHooks.useDraggableItem!({key: item.key, hasDragButton: true}, dragState);
     if (isDisabled) {
       draggableItem = null;
     }
   }
-  let droppableItem: DroppableItemResult;
-  let isDropTarget: boolean;
-  let dropIndicator: DropIndicatorAria;
-  let dropIndicatorRef = useRef();
-  if (isTableDroppable) {
+  let isDropTarget = false;
+  let dropIndicator: DropIndicatorAria | null = null;
+  let dropIndicatorRef = useRef<HTMLDivElement | null>(null);
+  if (isTableDroppable && dragAndDropHooks && dropState) {
     let target = {type: 'item', key: item.key, dropPosition: 'on'} as DropTarget;
     isDropTarget = dropState.isDropTarget(target);
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    dropIndicator = dragAndDropHooks.useDropIndicator({target}, dropState, dropIndicatorRef);
+
+    dropIndicator = dragAndDropHooks.useDropIndicator!({target}, dropState, dropIndicatorRef);
   }
 
-  let dragButtonRef = React.useRef();
+  let dragButtonRef = React.useRef<HTMLDivElement | null>(null);
   let {buttonProps: dragButtonProps} = useButton({
     ...draggableItem?.dragButtonProps,
     elementType: 'div'
   }, dragButtonRef);
 
+  let style = useStyle(layoutInfo, parent);
+
   let props = mergeProps(
     rowProps,
     otherProps,
+    {style},
     focusWithinProps,
     focusProps,
     hoverProps,
@@ -1160,10 +1201,9 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
     draggableItem?.dragProps,
     // Remove tab index from list row if performing a screenreader drag. This prevents TalkBack from focusing the row,
     // allowing for single swipe navigation between row drop indicator
-    dragAndDropHooks?.isVirtualDragging() && {tabIndex: null}
+    dragAndDropHooks?.isVirtualDragging?.() ? {tabIndex: null} : null
   ) as HTMLAttributes<HTMLElement> & DOMAttributes<FocusableElement>;
 
-  let dropProps = isDroppable ? droppableItem?.dropProps : {'aria-hidden': droppableItem?.dropProps['aria-hidden']};
   let {visuallyHiddenProps} = useVisuallyHidden();
 
   return (
@@ -1182,7 +1222,7 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
         </div>
       }
       <div
-        {...mergeProps(props, dropProps)}
+        {...props}
         ref={ref}
         className={
           classNames(
@@ -1192,7 +1232,7 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
               'is-active': isPressed,
               'is-selected': isSelected,
               'spectrum-Table-row--highlightSelection': state.selectionManager.selectionBehavior === 'replace',
-              'is-next-selected': state.selectionManager.isSelected(item.nextKey),
+              'is-next-selected': item.nextKey != null && state.selectionManager.isSelected(item.nextKey),
               'is-focused': isFocusVisibleWithin,
               'focus-ring': isFocusVisible,
               'is-hovered': isHovered,
@@ -1220,11 +1260,12 @@ function TableRow({item, children, hasActions, isTableDraggable, isTableDroppabl
   );
 }
 
-function TableHeaderRow({item, children, style, ...props}) {
+function TableHeaderRow({item, children, layoutInfo, parent, ...props}: {item: GridNode<unknown>, children: ReactNode, layoutInfo: LayoutInfo, parent: LayoutInfo | null} & HoverProps) {
   let {state, headerMenuOpen} = useTableContext();
-  let ref = useRef();
+  let ref = useRef<HTMLDivElement | null>(null);
   let {rowProps} = useTableHeaderRow({node: item, isVirtualized: true}, state, ref);
   let {hoverProps} = useHover({...props, isDisabled: headerMenuOpen});
+  let style = useStyle(layoutInfo, parent);
 
   return (
     <div {...mergeProps(rowProps, hoverProps)} ref={ref} style={style}>
@@ -1234,9 +1275,9 @@ function TableHeaderRow({item, children, style, ...props}) {
 }
 
 function TableDragCell({cell}) {
-  let ref = useRef();
+  let ref = useRef<HTMLDivElement | null>(null);
   let {state, isTableDraggable} = useTableContext();
-  let isDisabled = state.disabledKeys.has(cell.parentKey);
+  let isDisabled = state.selectionManager.isDisabled(cell.parentKey);
   let {gridCellProps} = useTableCell({
     node: cell,
     isVirtualized: true
@@ -1269,9 +1310,12 @@ function TableDragCell({cell}) {
 }
 
 function TableCheckboxCell({cell}) {
-  let ref = useRef();
+  let ref = useRef<HTMLDivElement | null>(null);
   let {state} = useTableContext();
-  let isDisabled = state.disabledKeys.has(cell.parentKey);
+  // The TableCheckbox should always render its disabled status if the row is disabled, regardless of disabledBehavior,
+  // but the cell itself should not render its disabled styles if disabledBehavior="selection" because the row might have actions on it.
+  let isSelectionDisabled = state.disabledKeys.has(cell.parentKey);
+  let isDisabled = state.selectionManager.isDisabled(cell.parentKey);
   let {gridCellProps} = useTableCell({
     node: cell,
     isVirtualized: true
@@ -1302,7 +1346,7 @@ function TableCheckboxCell({cell}) {
           <Checkbox
             {...checkboxProps}
             isEmphasized
-            isDisabled={isDisabled}
+            isDisabled={isSelectionDisabled}
             UNSAFE_className={classNames(styles, 'spectrum-Table-checkbox')} />
         }
       </div>
@@ -1314,9 +1358,9 @@ function TableCell({cell}) {
   let {scale} = useProvider();
   let {state} = useTableContext();
   let isExpandableTable = 'expandedKeys' in state;
-  let ref = useRef();
+  let ref = useRef<HTMLDivElement | null>(null);
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
-  let isDisabled = state.disabledKeys.has(cell.parentKey);
+  let isDisabled = state.selectionManager.isDisabled(cell.parentKey);
   let {gridCellProps} = useTableCell({
     node: cell,
     isVirtualized: true
@@ -1378,11 +1422,45 @@ function TableCell({cell}) {
   );
 }
 
+function TableCellWrapper({layoutInfo, virtualizer, parent, children}: {layoutInfo: LayoutInfo, virtualizer: any, parent: ReusableView<any, any>, children: ReactNode}) {
+  let {isTableDroppable, dropState} = useContext(TableContext)!;
+  let isDropTarget = false;
+  let isRootDroptarget = false;
+  if (isTableDroppable && dropState) {
+    if (parent.content) {
+      isDropTarget = dropState.isDropTarget({type: 'item', dropPosition: 'on', key: parent.content.key});
+    }
+    isRootDroptarget = dropState.isDropTarget({type: 'root'});
+  }
+
+  return (
+    <VirtualizerItem
+      layoutInfo={layoutInfo}
+      virtualizer={virtualizer}
+      parent={parent?.layoutInfo}
+      className={
+        useMemo(() => classNames(
+          styles,
+          'spectrum-Table-cellWrapper',
+          classNames(
+            stylesOverrides,
+            {
+              'react-spectrum-Table-cellWrapper': !layoutInfo.estimatedSize,
+              'react-spectrum-Table-cellWrapper--dropTarget': isDropTarget || isRootDroptarget
+            }
+          )
+        ), [layoutInfo.estimatedSize, isDropTarget, isRootDroptarget])
+      }>
+      {children}
+    </VirtualizerItem>
+  );
+}
+
 function ExpandableRowChevron({cell}) {
    // TODO: move some/all of the chevron button setup into a separate hook?
   let {direction} = useLocale();
   let {state} = useTableContext();
-  let expandButtonRef = useRef();
+  let expandButtonRef = useRef<HTMLSpanElement | null>(null);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/table');
   let isExpanded;
 
@@ -1424,12 +1502,38 @@ function ExpandableRowChevron({cell}) {
   );
 }
 
+function LoadingState() {
+  let {state} = useContext(TableContext)!;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/table');
+  return (
+    <CenteredWrapper>
+      <ProgressCircle
+        isIndeterminate
+        aria-label={state.collection.size > 0 ? stringFormatter.format('loadingMore') : stringFormatter.format('loading')} />
+    </CenteredWrapper>
+  );
+}
+
+function EmptyState() {
+  let {renderEmptyState} = useContext(TableContext)!;
+  let emptyState = renderEmptyState ? renderEmptyState() : null;
+  if (emptyState == null) {
+    return null;
+  }
+
+  return (
+    <CenteredWrapper>
+      {emptyState}
+    </CenteredWrapper>
+  );
+}
+
 function CenteredWrapper({children}) {
   let {state} = useTableContext();
   let rowProps;
 
   if ('expandedKeys' in state) {
-    let topLevelRowCount = [...state.keyMap.get(state.collection.body.key).childNodes].length;
+    let topLevelRowCount = [...state.collection.body.childNodes].length;
     rowProps = {
       'aria-level': 1,
       'aria-posinset': topLevelRowCount + 1,
@@ -1453,6 +1557,6 @@ function CenteredWrapper({children}) {
   );
 }
 
-const _TableViewBase = React.forwardRef(TableViewBase) as <T>(props: TableBaseProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
+const ForwardTableViewBase = React.forwardRef(TableViewBase) as <T>(props: TableBaseProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 
-export {_TableViewBase as TableViewBase};
+export {ForwardTableViewBase as TableViewBase};

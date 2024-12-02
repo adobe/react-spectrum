@@ -87,6 +87,7 @@ governing permissions and limitations under the License.
 .spectrum-Menu-checkmark {
   transform: scale(1);
   opacity: 1;
+  box-sizing: content-box;
   /*
     Renamed from padding-y to padding-height to fix docs issue where fallback var replaced this value
     (due to old spectrum-css postcss-custom-properties-custom-mapping plugin).

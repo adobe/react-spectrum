@@ -1,8 +1,8 @@
 import {Color} from '@react-types/color';
 import {filterDOMProps} from '@react-aria/utils';
-import {HoverEvents} from '@react-types/shared';
+import {HoverEvents, RefObject} from '@react-types/shared';
 import {mergeProps} from 'react-aria';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, InputHTMLAttributes, RefObject, useContext} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, InputHTMLAttributes, useContext} from 'react';
 import {RenderProps, useRenderProps} from './utils';
 import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
@@ -15,8 +15,8 @@ interface ColorState {
 interface InternalColorThumbContextValue {
   state: ColorState,
   thumbProps: HTMLAttributes<HTMLElement>,
-  inputXRef: RefObject<HTMLInputElement>,
-  inputYRef?: RefObject<HTMLInputElement>,
+  inputXRef: RefObject<HTMLInputElement | null>,
+  inputYRef?: RefObject<HTMLInputElement | null>,
   xInputProps: InputHTMLAttributes<HTMLInputElement>,
   yInputProps?: InputHTMLAttributes<HTMLInputElement>,
   isDisabled?: boolean
@@ -58,7 +58,10 @@ export interface ColorThumbRenderProps {
 
 export interface ColorThumbProps extends HoverEvents, RenderProps<ColorThumbRenderProps> {}
 
-function ColorThumb(props: ColorThumbProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A color thumb appears within a ColorArea, ColorSlider, or ColorWheel and allows a user to drag to adjust the color value.
+ */
+export const ColorThumb = forwardRef(function ColorThumb(props: ColorThumbProps, ref: ForwardedRef<HTMLDivElement>) {
   let {state, thumbProps, inputXRef, inputYRef, xInputProps, yInputProps, isDisabled = false} = useContext(InternalColorThumbContext)!;
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let {hoverProps, isHovered} = useHover(props);
@@ -98,10 +101,4 @@ function ColorThumb(props: ColorThumbProps, ref: ForwardedRef<HTMLDivElement>) {
       {renderProps.children}
     </div>
   );
-}
-
-/**
- * A color thumb appears within a ColorArea, ColorSlider, or ColorWheel and allows a user to drag to adjust the color value.
- */
-const _ColorThumb = forwardRef(ColorThumb);
-export {_ColorThumb as ColorThumb};
+});

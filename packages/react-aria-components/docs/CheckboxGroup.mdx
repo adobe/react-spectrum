@@ -194,7 +194,7 @@ function MyCheckboxGroup({
 }: MyCheckboxGroupProps) {
   return (
     <CheckboxGroup {...props}>
-      {label}
+      {label && <Label>{label}</Label>}
       {children}
       {description && <Text slot="description">{description}</Text>}
       <FieldError>{errorMessage}</FieldError>

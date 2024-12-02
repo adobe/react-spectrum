@@ -2,7 +2,7 @@
   "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
   "colorPicker": "Палитра цветов",
-  "twoDimensionalSlider": "Ползунок 2D",
-  "colorSwatch": "color swatch",
-  "transparent": "transparent"
+  "colorSwatch": "цветовой образец",
+  "transparent": "прозрачный",
+  "twoDimensionalSlider": "Ползунок 2D"
 }

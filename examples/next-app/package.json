@@ -2,6 +2,7 @@
   "name": "next-app",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "yarn@4.2.2",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

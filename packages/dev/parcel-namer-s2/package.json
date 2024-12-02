@@ -1,0 +1,23 @@
+{
+  "name": "parcel-namer-s2",
+  "version": "1.0.0",
+  "main": "S2Namer.js",
+  "private": true,
+  "engines": {
+    "parcel": "^2.0.0"
+  },
+  "dependencies": {
+    "@parcel/plugin": "^2.0.0"
+  },
+  "rsp": {
+    "type": "cli"
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

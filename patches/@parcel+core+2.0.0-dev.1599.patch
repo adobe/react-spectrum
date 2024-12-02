@@ -1,0 +1,73 @@
+diff --git a/node_modules/@parcel/core/lib/loadParcelPlugin.js b/node_modules/@parcel/core/lib/loadParcelPlugin.js
+index 2401047..2f655e3 100644
+--- a/node_modules/@parcel/core/lib/loadParcelPlugin.js
++++ b/node_modules/@parcel/core/lib/loadParcelPlugin.js
+@@ -69,25 +69,25 @@ async function loadPlugin(pluginName, configPath, keyPath, options) {
+       var _configPkg$config$par;
+       // If not in the config's dependencies, the plugin will be auto installed with
+       // the version declared in "parcelDependencies".
+-      range = (_configPkg$config$par = configPkg.config.parcelDependencies) === null || _configPkg$config$par === void 0 ? void 0 : _configPkg$config$par[pluginName];
+-      if (range == null) {
+-        let contents = await options.inputFS.readFile(configPkg.files[0].filePath, 'utf8');
+-        throw new (_diagnostic().default)({
+-          diagnostic: {
+-            message: (0, _diagnostic().md)`Could not determine version of ${pluginName} in ${_path().default.relative(process.cwd(), resolveFrom)}. Either include it in "dependencies" or "parcelDependencies".`,
+-            origin: '@parcel/core',
+-            codeFrames: configPkg.config.dependencies || configPkg.config.parcelDependencies ? [{
+-              filePath: configPkg.files[0].filePath,
+-              language: 'json5',
+-              code: contents,
+-              codeHighlights: (0, _diagnostic().generateJSONCodeHighlights)(contents, [{
+-                key: configPkg.config.parcelDependencies ? '/parcelDependencies' : '/dependencies',
+-                type: 'key'
+-              }])
+-            }] : undefined
+-          }
+-        });
+-      }
++      // range = (_configPkg$config$par = configPkg.config.parcelDependencies) === null || _configPkg$config$par === void 0 ? void 0 : _configPkg$config$par[pluginName];
++      // if (range == null) {
++      //   let contents = await options.inputFS.readFile(configPkg.files[0].filePath, 'utf8');
++      //   throw new (_diagnostic().default)({
++      //     diagnostic: {
++      //       message: (0, _diagnostic().md)`Could not determine version of ${pluginName} in ${_path().default.relative(process.cwd(), resolveFrom)}. Either include it in "dependencies" or "parcelDependencies".`,
++      //       origin: '@parcel/core',
++      //       codeFrames: configPkg.config.dependencies || configPkg.config.parcelDependencies ? [{
++      //         filePath: configPkg.files[0].filePath,
++      //         language: 'json5',
++      //         code: contents,
++      //         codeHighlights: (0, _diagnostic().generateJSONCodeHighlights)(contents, [{
++      //           key: configPkg.config.parcelDependencies ? '/parcelDependencies' : '/dependencies',
++      //           type: 'key'
++      //         }])
++      //       }] : undefined
++      //     }
++      //   });
++      // }
+ 
+       // Resolve from project root if not in the config's dependencies.
+       resolveFrom = _path().default.join(options.projectRoot, 'index');
+diff --git a/node_modules/@parcel/core/lib/requests/EntryRequest.js b/node_modules/@parcel/core/lib/requests/EntryRequest.js
+index 9254caf..069cd1c 100644
+--- a/node_modules/@parcel/core/lib/requests/EntryRequest.js
++++ b/node_modules/@parcel/core/lib/requests/EntryRequest.js
+@@ -195,8 +195,8 @@ class EntryResolver {
+                       ...(0, _diagnostic().getJSONSourceLocation)(pkg.map.pointers[keyPath], 'value')
+                     }
+                   });
+-                  i++;
+                 }
++                i++;
+               }
+             }
+           }
+@@ -228,8 +228,8 @@ class EntryResolver {
+                   ...(0, _diagnostic().getJSONSourceLocation)(pkg.map.pointers[keyPath], 'value')
+                 }
+               });
+-              i++;
+             }
++            i++;
+           }
+         }
+ 

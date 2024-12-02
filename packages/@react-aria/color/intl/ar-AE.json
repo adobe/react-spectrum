@@ -2,7 +2,7 @@
   "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
   "colorPicker": "أداة انتقاء اللون",
-  "twoDimensionalSlider": "مُنزلق 2D",
-  "colorSwatch": "color swatch",
-  "transparent": "transparent"
+  "colorSwatch": "تغيير الألوان",
+  "transparent": "شفاف",
+  "twoDimensionalSlider": "مُنزلق 2D"
 }

@@ -33,7 +33,7 @@ export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps
     isRequired,
     inputClassName
   } = props;
-  let ref = useRef();
+  let ref = useRef<HTMLDivElement | null>(null);
   let {locale} = useLocale();
   let state = useDateFieldState({
     ...props,
@@ -41,7 +41,7 @@ export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps
     createCalendar
   });
 
-  let inputRef = useRef();
+  let inputRef = useRef<HTMLInputElement | null>(null);
   let {fieldProps, inputProps} = useDateField({...props, inputRef}, state, ref);
 
   return (

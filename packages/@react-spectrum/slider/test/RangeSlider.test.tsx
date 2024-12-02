@@ -39,7 +39,7 @@ describe('RangeSlider', function () {
     let {getAllByRole, getByRole} = render(<RangeSlider label="The Label" />);
 
     let group = getByRole('group');
-    let labelId = group.getAttribute('aria-labelledby');
+    let labelId = group.getAttribute('aria-labelledby')!;
     let [leftSlider, rightSlider] = getAllByRole('slider');
     expect(leftSlider.getAttribute('aria-label')).toBe('Minimum');
     expect(rightSlider.getAttribute('aria-label')).toBe('Maximum');
@@ -131,7 +131,7 @@ describe('RangeSlider', function () {
   });
 
   it('can be controlled', function () {
-    let setValues = [];
+    let setValues: any[] = [];
 
     function Test() {
       let [value, _setValue] = useState({start: 20, end: 40});
@@ -327,12 +327,15 @@ describe('RangeSlider', function () {
 
   describe('mouse interactions', () => {
     beforeAll(() => {
-      // @ts-ignore
-      jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({top: 0, left: 0, width: 100, height: 100}));
+      let originalGetBoundingClientRect = window.HTMLElement.prototype.getBoundingClientRect;
+      jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
+        let rect = originalGetBoundingClientRect.call(this);
+        return {...rect, top: 0, left: 0, width: 100, height: 100};
+      });
     });
 
+    let oldMouseEvent = MouseEvent;
     beforeAll(() => {
-      let oldMouseEvent = MouseEvent;
       // @ts-ignore
       global.MouseEvent = class FakeMouseEvent extends MouseEvent {
         _init: {pageX: number, pageY: number};
@@ -347,12 +350,9 @@ describe('RangeSlider', function () {
           return this._init.pageY;
         }
       };
-      // @ts-ignore
-      global.MouseEvent.oldMouseEvent = oldMouseEvent;
     });
     afterAll(() => {
-      // @ts-ignore
-      global.MouseEvent = global.MouseEvent.oldMouseEvent;
+      global.MouseEvent = oldMouseEvent;
     });
 
     it('can click and drag handle', () => {
@@ -365,7 +365,7 @@ describe('RangeSlider', function () {
       );
 
       let [sliderLeft, sliderRight] = getAllByRole('slider');
-      let [thumbLeft, thumbRight] = [sliderLeft.parentElement.parentElement, sliderRight.parentElement.parentElement];
+      let [thumbLeft, thumbRight] = [sliderLeft.parentElement!.parentElement!, sliderRight.parentElement!.parentElement!];
 
       fireEvent.mouseDown(thumbLeft, {clientX: 20, pageX: 20});
       expect(onChangeSpy).not.toHaveBeenCalled();
@@ -411,7 +411,7 @@ describe('RangeSlider', function () {
       );
 
       let [sliderLeft, sliderRight] = getAllByRole('slider');
-      let [thumbLeft, thumbRight] = [sliderLeft.parentElement.parentElement, sliderRight.parentElement.parentElement];
+      let [thumbLeft, thumbRight] = [sliderLeft.parentElement!.parentElement!, sliderRight.parentElement!.parentElement!];
 
       fireEvent.mouseDown(thumbLeft, {clientX: 20, pageX: 20});
       expect(onChangeSpy).not.toHaveBeenCalled();
@@ -450,10 +450,9 @@ describe('RangeSlider', function () {
       );
 
       let [sliderLeft, sliderRight] = getAllByRole('slider');
-      let [thumbLeft, thumbRight] = [sliderLeft.parentElement.parentElement, sliderRight.parentElement.parentElement];
+      let [thumbLeft, thumbRight] = [sliderLeft.parentElement!.parentElement!, sliderRight.parentElement!.parentElement!];
 
-      // @ts-ignore
-      let [leftTrack, middleTrack, rightTrack] = [...thumbLeft.parentElement.children].filter(c => c !== thumbLeft && c !== thumbRight);
+      let [leftTrack, middleTrack, rightTrack] = [...thumbLeft.parentElement!.children].filter(c => c !== thumbLeft && c !== thumbRight);
 
       // left track
       fireEvent.mouseDown(leftTrack, {clientX: 20, pageX: 20});
@@ -502,10 +501,9 @@ describe('RangeSlider', function () {
       );
 
       let [sliderLeft, sliderRight] = getAllByRole('slider');
-      let [thumbLeft, thumbRight] = [sliderLeft.parentElement.parentElement, sliderRight.parentElement.parentElement];
+      let [thumbLeft, thumbRight] = [sliderLeft.parentElement!.parentElement!, sliderRight.parentElement!.parentElement!];
 
-      // @ts-ignore
-      let [leftTrack, middleTrack, rightTrack] = [...thumbLeft.parentElement.children].filter(c => c !== thumbLeft && c !== thumbRight);
+      let [leftTrack, middleTrack, rightTrack] = [...thumbLeft.parentElement!.children].filter(c => c !== thumbLeft && c !== thumbRight);
 
       // left track
       fireEvent.mouseDown(leftTrack, {clientX: 20, pageX: 20});

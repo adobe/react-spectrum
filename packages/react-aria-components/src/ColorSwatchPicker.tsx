@@ -10,7 +10,7 @@ import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, u
 import {useLocale, useLocalizedStringFormatter} from 'react-aria';
 
 export interface ColorSwatchPickerRenderProps extends Omit<ListBoxRenderProps, 'isDropTarget'> {}
-export interface ColorSwatchPickerProps extends ValueBase<string | Color | null, Color>, AriaLabelingProps, StyleRenderProps<ColorSwatchPickerRenderProps> {
+export interface ColorSwatchPickerProps extends ValueBase<string | Color, Color>, AriaLabelingProps, StyleRenderProps<ColorSwatchPickerRenderProps> {
   /** The children of the ColorSwatchPicker. */
   children?: ReactNode,
   /**
@@ -23,7 +23,10 @@ export interface ColorSwatchPickerProps extends ValueBase<string | Color | null,
 export const ColorSwatchPickerContext = createContext<ContextValue<ColorSwatchPickerProps, HTMLDivElement>>(null);
 const ColorMapContext = createContext<Map<string, Color> | null>(null);
 
-function ColorSwatchPicker(props: ColorSwatchPickerProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A ColorSwatchPicker displays a list of color swatches and allows a user to select one of them.
+ */
+export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(props: ColorSwatchPickerProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ColorSwatchPickerContext);
   let state = useColorPickerState(props);
   let colorMap = useMemo(() => new Map(), []);
@@ -51,13 +54,7 @@ function ColorSwatchPicker(props: ColorSwatchPickerProps, ref: ForwardedRef<HTML
       </ColorMapContext.Provider>
     </ListBox>
   );
-}
-
-/**
- * A ColorSwatchPicker displays a list of color swatches and allows a user to select one of them.
- */
-let _ColorSwatchPicker = forwardRef(ColorSwatchPicker);
-export {_ColorSwatchPicker as ColorSwatchPicker};
+});
 
 export interface ColorSwatchPickerItemRenderProps extends Omit<ListBoxItemRenderProps, 'selectionMode' | 'selectionBehavior'> {
   /** The color of the swatch. */
@@ -66,12 +63,12 @@ export interface ColorSwatchPickerItemRenderProps extends Omit<ListBoxItemRender
 
 export interface ColorSwatchPickerItemProps extends RenderProps<ColorSwatchPickerItemRenderProps>, HoverEvents {
   /** The color of the swatch. */
-  color: string | Color | null,
+  color: string | Color,
   /** Whether the color swatch is disabled. */
   isDisabled?: boolean
 }
 
-function ColorSwatchPickerItem(props: ColorSwatchPickerItemProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ColorSwatchPickerItem = forwardRef(function ColorSwatchPickerItem(props: ColorSwatchPickerItemProps, ref: ForwardedRef<HTMLDivElement>) {
   let propColor = props.color || '#0000';
   let color = useMemo(() => typeof propColor === 'string' ? parseColor(propColor) : propColor, [propColor]);
   let {locale} = useLocale();
@@ -106,7 +103,4 @@ function ColorSwatchPickerItem(props: ColorSwatchPickerItemProps, ref: Forwarded
       ))}
     </ListBoxItem>
   );
-}
-
-let _ColorSwatchPickerItem = forwardRef(ColorSwatchPickerItem);
-export {_ColorSwatchPickerItem as ColorSwatchPickerItem};
+});

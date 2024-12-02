@@ -18,10 +18,13 @@ import {
   Header, Heading,
   ListBox,
   ListBoxContext,
-  ListBoxItem, Modal,
-  Section,
+  ListBoxItem,
+  ListBoxSection,
+  UNSTABLE_ListLayout as ListLayout,
+  Modal,
   Text,
-  useDragAndDrop
+  useDragAndDrop,
+  UNSTABLE_Virtualizer as Virtualizer
 } from '../';
 import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
@@ -62,9 +65,40 @@ describe('ListBox', () => {
     jest.useFakeTimers();
   });
 
+  beforeEach(() => {
+    jest.spyOn(HTMLElement.prototype, 'scrollLeft', 'get').mockImplementation(() => 0);
+    jest.spyOn(HTMLElement.prototype, 'scrollTop', 'get').mockImplementation(() => 0);
+  });
+
   afterEach(() => {
     act(() => {jest.runAllTimers();});
     jest.restoreAllMocks();
+  });
+
+  it('should have the base set of aria and data attributes', () => {
+    let {getByRole, getAllByRole} = render(
+      <ListBox aria-label="Animals">
+        <ListBoxItem id="cat">Cat</ListBoxItem>
+        <ListBoxItem id="dog">Dog</ListBoxItem>
+        <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+        <ListBoxSection>
+          <Header>Fish</Header>
+          <ListBoxItem id="salmon">Salmon</ListBoxItem>
+          <ListBoxItem id="tuna">Tuna</ListBoxItem>
+          <ListBoxItem id="cod">Cod</ListBoxItem>
+        </ListBoxSection>
+      </ListBox>
+    );
+    let menu = getByRole('listbox');
+    expect(menu).toHaveAttribute('data-rac');
+
+    for (let group of getAllByRole('group')) {
+      expect(group).toHaveAttribute('data-rac');
+    }
+
+    for (let option of getAllByRole('option')) {
+      expect(option).toHaveAttribute('data-rac');
+    }
   });
 
   it('should render with default classes', () => {
@@ -123,9 +157,9 @@ describe('ListBox', () => {
     let itemRef = React.createRef();
     render(
       <ListBox aria-label="Test" ref={listBoxRef}>
-        <Section ref={sectionRef}>
+        <ListBoxSection ref={sectionRef}>
           <ListBoxItem ref={itemRef}>Cat</ListBoxItem>
-        </Section>
+        </ListBoxSection>
       </ListBox>
     );
     expect(listBoxRef.current).toBeInstanceOf(HTMLElement);
@@ -153,25 +187,25 @@ describe('ListBox', () => {
   it('should support sections', () => {
     let {getAllByRole} = render(
       <ListBox aria-label="Sandwich contents" selectionMode="multiple">
-        <Section data-test-prop="test-section-1">
+        <ListBoxSection data-test-prop="test-section-1">
           <Header>Veggies</Header>
           <ListBoxItem id="lettuce">Lettuce</ListBoxItem>
           <ListBoxItem id="tomato">Tomato</ListBoxItem>
           <ListBoxItem id="onion">Onion</ListBoxItem>
-        </Section>
-        <Section data-test-prop="test-section-2" aria-label="Protein">
+        </ListBoxSection>
+        <ListBoxSection data-test-prop="test-section-2" aria-label="Protein">
           <ListBoxItem id="ham">Ham</ListBoxItem>
           <ListBoxItem id="tuna">Tuna</ListBoxItem>
           <ListBoxItem id="tofu">Tofu</ListBoxItem>
-        </Section>
+        </ListBoxSection>
       </ListBox>
     );
 
     let groups = getAllByRole('group');
     expect(groups).toHaveLength(2);
 
-    expect(groups[0]).toHaveClass('react-aria-Section');
-    expect(groups[1]).toHaveClass('react-aria-Section');
+    expect(groups[0]).toHaveClass('react-aria-ListBoxSection');
+    expect(groups[1]).toHaveClass('react-aria-ListBoxSection');
 
     expect(groups[0]).toHaveAttribute('aria-labelledby');
     expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Veggies');
@@ -445,7 +479,23 @@ describe('ListBox', () => {
     );
     let items = getAllByRole('option');
     await user.click(items[0]);
-    expect(onAction).toHaveBeenCalled();
+    expect(onAction).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support onAction on list ans list items', async () => {
+    let onAction = jest.fn();
+    let itemAction = jest.fn();
+    let {getAllByRole} = render(
+      <ListBox aria-label="Test" onAction={onAction}>
+        <ListBoxItem id="cat" onAction={itemAction}>Cat</ListBoxItem>
+        <ListBoxItem id="dog">Dog</ListBoxItem>
+        <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+      </ListBox>
+    );
+    let items = getAllByRole('option');
+    await user.click(items[0]);
+    expect(onAction).toHaveBeenCalledWith('cat');
+    expect(itemAction).toHaveBeenCalledTimes(1);
   });
 
   it('should support empty state', () => {
@@ -656,6 +706,52 @@ describe('ListBox', () => {
     let listbox = getByRole('listbox');
     fireEvent.scroll(listbox);
     expect(onScroll).toHaveBeenCalled();
+  });
+
+  it('should support virtualizer', async () => {
+    let layout = new ListLayout({
+      rowHeight: 25
+    });
+
+    let items = [];
+    for (let i = 0; i < 50; i++) {
+      items.push({id: i, name: 'Item ' + i});
+    }
+
+    jest.restoreAllMocks(); // don't mock scrollTop for this test
+    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
+    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
+
+    let {getByRole, getAllByRole} = render(
+      <Virtualizer layout={layout}>
+        <ListBox aria-label="Test" items={items}>
+          {item => <ListBoxItem>{item.name}</ListBoxItem>}
+        </ListBox>
+      </Virtualizer>
+    );
+
+    let options = getAllByRole('option');
+    expect(options).toHaveLength(7);
+    expect(options.map(r => r.textContent)).toEqual(['Item 0', 'Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5', 'Item 6']);
+    for (let option of options) {
+      expect(option).toHaveAttribute('aria-setsize', '50');
+      expect(option).toHaveAttribute('aria-posinset');
+    }
+
+    let listbox = getByRole('listbox');
+    listbox.scrollTop = 200;
+    fireEvent.scroll(listbox);
+
+    options = getAllByRole('option');
+    expect(options).toHaveLength(8);
+    expect(options.map(r => r.textContent)).toEqual(['Item 7', 'Item 8', 'Item 9', 'Item 10', 'Item 11', 'Item 12', 'Item 13', 'Item 14']);
+
+    await user.tab();
+    await user.keyboard('{End}');
+
+    options = getAllByRole('option');
+    expect(options).toHaveLength(9);
+    expect(options.map(r => r.textContent)).toEqual(['Item 7', 'Item 8', 'Item 9', 'Item 10', 'Item 11', 'Item 12', 'Item 13', 'Item 14', 'Item 49']);
   });
 
   describe('drag and drop', () => {
@@ -971,6 +1067,96 @@ describe('ListBox', () => {
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+      });
+    });
+  });
+
+  const FalsyExample = () => (
+    <ListBox aria-label="Test" selectionMode="multiple" selectionBehavior="replace">
+      <ListBoxItem id="0">Item 0</ListBoxItem>
+      <ListBoxItem id="1">Item 1</ListBoxItem>
+      <ListBoxItem id="2">Item 2</ListBoxItem>
+    </ListBox>
+  );
+
+  describe('selection with falsy keys', () => {
+    describe('keyboard', () => {
+      it('should deselect item 0 when navigating back in replace selection mode', async () => {
+        let {getAllByRole} = render(<FalsyExample />);
+  
+        let items = getAllByRole('option');
+  
+        await user.click(items[1]);
+        expect(items[1]).toHaveAttribute('aria-selected', 'true');
+  
+        // Hold Shift and press ArrowUp to select item 0
+        await user.keyboard('{Shift>}{ArrowUp}{/Shift}');
+  
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+        expect(items[1]).toHaveAttribute('aria-selected', 'true');
+        expect(items[2]).toHaveAttribute('aria-selected', 'false');
+  
+        // Hold Shift and press ArrowDown to navigate back to item 1
+        await user.keyboard('{Shift>}{ArrowDown}{/Shift}');
+  
+        expect(items[0]).toHaveAttribute('aria-selected', 'false');
+        expect(items[1]).toHaveAttribute('aria-selected', 'true');
+        expect(items[2]).toHaveAttribute('aria-selected', 'false');
+      });
+  
+      it('should correctly handle starting selection at item 0 and extending to item 2', async () => {
+        let {getAllByRole} = render(<FalsyExample />);
+  
+        let items = getAllByRole('option');
+  
+        await user.click(items[0]);
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+  
+        // Hold Shift and press ArrowDown to select item 1
+        await user.keyboard('{Shift>}{ArrowDown}{/Shift}');
+  
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+        expect(items[1]).toHaveAttribute('aria-selected', 'true');
+        expect(items[2]).toHaveAttribute('aria-selected', 'false');
+  
+        // Hold Shift and press ArrowDown to select item 2
+        await user.keyboard('{Shift>}{ArrowDown}{/Shift}');
+  
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+        expect(items[1]).toHaveAttribute('aria-selected', 'true');
+        expect(items[2]).toHaveAttribute('aria-selected', 'true');
+      });
+    });
+  
+    describe('mouse', () => {
+      it('should deselect item 0 when clicking another item in replace selection mode', async () => {
+        let {getAllByRole} = render(<FalsyExample />);
+  
+        let items = getAllByRole('option');
+  
+        await user.click(items[1]);
+        expect(items[1]).toHaveAttribute('aria-selected', 'true');
+  
+        await user.click(items[0]);
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+        expect(items[1]).toHaveAttribute('aria-selected', 'false');
+  
+        await user.click(items[1]);
+        expect(items[1]).toHaveAttribute('aria-selected', 'true');
+        expect(items[0]).toHaveAttribute('aria-selected', 'false');
+      });
+  
+      it('should correctly handle mouse selection starting at item 0 and extending to item 2', async () => {
+        let {getAllByRole} = render(<FalsyExample />);
+  
+        let items = getAllByRole('option');
+  
+        await user.click(items[0]);
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+  
+        await user.click(items[2]);
+        expect(items[0]).toHaveAttribute('aria-selected', 'false');
+        expect(items[2]).toHaveAttribute('aria-selected', 'true');
       });
     });
   });

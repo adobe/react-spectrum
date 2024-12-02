@@ -1,16 +1,19 @@
-import {RefObject, useEffect} from 'react';
+
+import {RefObject} from '@react-types/shared';
+import {useEffect} from 'react';
 
 function hasResizeObserver() {
   return typeof window.ResizeObserver !== 'undefined';
 }
 
 type useResizeObserverOptionsType<T> = {
-  ref: RefObject<T | undefined> | undefined,
+  ref: RefObject<T | undefined | null> | undefined,
+  box?: ResizeObserverBoxOptions,
   onResize: () => void
 }
 
 export function useResizeObserver<T extends Element>(options: useResizeObserverOptionsType<T>) {
-  const {ref, onResize} = options;
+  const {ref, box, onResize} = options;
 
   useEffect(() => {
     let element = ref?.current;
@@ -32,7 +35,7 @@ export function useResizeObserver<T extends Element>(options: useResizeObserverO
 
         onResize();
       });
-      resizeObserverInstance.observe(element);
+      resizeObserverInstance.observe(element, {box});
 
       return () => {
         if (element) {
@@ -41,5 +44,5 @@ export function useResizeObserver<T extends Element>(options: useResizeObserverO
       };
     }
 
-  }, [onResize, ref]);
+  }, [onResize, ref, box]);
 }

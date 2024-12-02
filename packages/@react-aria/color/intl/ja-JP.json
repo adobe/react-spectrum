@@ -2,7 +2,7 @@
   "colorInputLabel": "{label}、{channelLabel}",
   "colorNameAndValue": "{name} : {value}",
   "colorPicker": "カラーピッカー",
-  "twoDimensionalSlider": "2D スライダー",
-  "colorSwatch": "color swatch",
-  "transparent": "transparent"
+  "colorSwatch": "カラースウォッチ",
+  "transparent": "透明",
+  "twoDimensionalSlider": "2D スライダー"
 }

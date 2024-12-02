@@ -12,13 +12,13 @@
 
 import {AriaNumberFieldProps, useLocale, useNumberField} from 'react-aria';
 import {ButtonContext} from './Button';
-import {ContextValue, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from '@react-aria/utils';
 import {FormContext} from './Form';
+import {forwardRefType, InputDOMProps} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
-import {InputDOMProps} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {NumberFieldState, useNumberFieldState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
@@ -46,7 +46,10 @@ export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | '
 export const NumberFieldContext = createContext<ContextValue<NumberFieldProps, HTMLDivElement>>(null);
 export const NumberFieldStateContext = createContext<NumberFieldState | null>(null);
 
-function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A number field allows a user to enter a number, and increment or decrement the value using stepper buttons.
+ */
+export const NumberField = /*#__PURE__*/ (forwardRef as forwardRefType)(function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, NumberFieldContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
@@ -118,10 +121,4 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
       {props.name && <input type="hidden" name={props.name} value={isNaN(state.numberValue) ? '' : state.numberValue} />}
     </Provider>
   );
-}
-
-/**
- * A number field allows a user to enter a number, and increment or decrement the value using stepper buttons.
- */
-const _NumberField = /*#__PURE__*/ (forwardRef as forwardRefType)(NumberField);
-export {_NumberField as NumberField};
+});

@@ -30,7 +30,6 @@ import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 category: Color
 keywords: [color field, color picker, aria]
 type: component
-preRelease: beta
 ---
 
 # ColorField
@@ -170,13 +169,13 @@ A `ColorField` uses the following components, which may also be used standalone 
 
 <ExampleList tag="colorslider" />
 
+*/}
+
 ## Starter kits
 
 To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
 
-<StarterKits component="colorslider" />
-
-*/}
+<StarterKits component="colorfield" />
 
 ## Reusable wrappers
 
@@ -217,7 +216,7 @@ A ColorField accepts either a color string or <TypeLink links={docs.links} type=
 By default, `ColorField` is uncontrolled. You can set a default value using the `defaultValue` prop.
 
 ```tsx example
-<MyColorField defaultValue="#7f007f" />
+<MyColorField label="Color" defaultValue="#7f007f" />
 ```
 
 ### Controlled
@@ -233,8 +232,8 @@ function Example() {
   let [color, setColor] = React.useState(parseColor('#7f007f'));
   return (
     <>
-      <MyColorField value={color} onChange={setColor} />
-      <p>Current color value: {color.toString('hex')}</p>
+      <MyColorField label="Color" value={color} onChange={setColor} />
+      <p>Current color value: {color?.toString('hex')}</p>
     </>
   );
 }
@@ -262,7 +261,7 @@ function Example() {
         <MyColorField label="Saturation" value={color} onChange={setColor} colorSpace="hsl" channel="saturation" />
         <MyColorField label="Lightness" value={color} onChange={setColor} colorSpace="hsl" channel="lightness" />
       </div>
-      <p>Current color value: {color.toString('hex')}</p>
+      <p>Current color value: {color?.toString('hex')}</p>
     </>
   );
 }

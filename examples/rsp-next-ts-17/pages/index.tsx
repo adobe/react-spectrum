@@ -70,21 +70,25 @@ import {
   Well,
   DialogContainer,
   Avatar,
-  TagGroup
-} from "@adobe/react-spectrum";
-import Edit from "@spectrum-icons/workflow/Edit";
-import NotFound from "@spectrum-icons/illustrations/NotFound";
-import Section from "../components/Section";
-import {
+  TagGroup,
+  InlineAlert,
   ColorArea,
   ColorField,
   ColorSlider,
   ColorWheel,
-} from "@react-spectrum/color";
+  ColorSwatchPicker,
+  ColorSwatch,
+  Accordion,
+  Disclosure,
+  DisclosureTitle,
+  DisclosurePanel
+} from "@adobe/react-spectrum";
+import Edit from "@spectrum-icons/workflow/Edit";
+import NotFound from "@spectrum-icons/illustrations/NotFound";
+import Section from "../components/Section";
 import ReorderableListView from "../components/ReorderableListView";
 import {ToastQueue} from '@react-spectrum/toast';
-import {InlineAlert} from '@react-spectrum/inlinealert'
-import { SubmenuTrigger } from "@react-spectrum/menu";
+import {SubmenuTrigger} from "@react-spectrum/menu";
 
 let nestedItems = [
   {foo: 'Lvl 1 Foo 1', bar: 'Lvl 1 Bar 1', baz: 'Lvl 1 Baz 1', childRows: [
@@ -308,6 +312,34 @@ export default function Home() {
                 <Item key="Emp">Alea jacta est.</Item>
               </TabPanels>
             </Tabs>
+
+            <h3>Accordion</h3>
+            <Accordion>
+              <Disclosure id="files">
+                <DisclosureTitle>
+                  Files
+                </DisclosureTitle>
+                <DisclosurePanel>
+                  <p>Files content</p>
+                </DisclosurePanel>
+              </Disclosure>
+              <Disclosure id="people">
+                <DisclosureTitle>
+                  People
+                </DisclosureTitle>
+                <DisclosurePanel>
+                  <p>People content</p>
+                </DisclosurePanel>
+              </Disclosure>
+            </Accordion>
+
+            <h3>Disclosure</h3>
+            <Disclosure>
+              <DisclosureTitle>System Requirements</DisclosureTitle>
+              <DisclosurePanel>
+                <p>Details about system requirements here.</p>
+              </DisclosurePanel>
+            </Disclosure>
           </Section>
 
           <Section title="Overlays">

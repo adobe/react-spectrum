@@ -79,7 +79,7 @@ export function useModalProvider(): ModalProviderAria {
   let context = useContext(Context);
   return {
     modalProviderProps: {
-      'aria-hidden': context && context.modalCount > 0 ? true : null
+      'aria-hidden': context && context.modalCount > 0 ? true : undefined
     }
   };
 }
@@ -123,7 +123,7 @@ export interface OverlayContainerProps extends ModalProviderProps {
  * nested modal is opened. Only the top-most modal or overlay should
  * be accessible at once.
  */
-export function OverlayContainer(props: OverlayContainerProps): React.ReactPortal {
+export function OverlayContainer(props: OverlayContainerProps): React.ReactPortal | null {
   let isSSR = useIsSSR();
   let {portalContainer = isSSR ? null : document.body, ...rest} = props;
 
