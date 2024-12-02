@@ -457,33 +457,7 @@ function updateComponentWithinCollection(
     ) {
       // If closest parent collection component matches parentComponent, replace with newComponent
 
-      let attributes = path.node.openingElement.attributes;
-      let keyProp = attributes.find((attr) => t.isJSXAttribute(attr) && attr.name.name === 'key');
-      if (
-        keyProp &&
-        t.isJSXAttribute(keyProp)
-      ) {
-        // Update key prop to be id
-        keyProp.name = t.jsxIdentifier('id');
-      }
-
-      if (
-        t.isArrowFunctionExpression(path.parentPath.node) &&
-        path.parentPath.parentPath &&
-        t.isCallExpression(path.parentPath.parentPath.node) &&
-        path.parentPath.parentPath.node.callee.type === 'MemberExpression' &&
-        path.parentPath.parentPath.node.callee.property.type === 'Identifier' &&
-        path.parentPath.parentPath.node.callee.property.name === 'map'
-      ) {
-        // If Array.map is used, keep the key prop
-        if (
-          keyProp &&
-          t.isJSXAttribute(keyProp)
-        ) {
-          let newKeyProp = t.jsxAttribute(t.jsxIdentifier('key'), keyProp.value);
-          attributes.push(newKeyProp);
-        }
-      }
+      updateKeyToId(path);
 
       let localName = newComponent;
       if (availableComponents.has(newComponent)) {
@@ -492,7 +466,7 @@ function updateComponentWithinCollection(
       }
 
       let newNode = t.jsxElement(
-        t.jsxOpeningElement(t.jsxIdentifier(localName), attributes),
+        t.jsxOpeningElement(t.jsxIdentifier(localName), path.node.openingElement.attributes),
         t.jsxClosingElement(t.jsxIdentifier(localName)),
         path.node.children
       );
