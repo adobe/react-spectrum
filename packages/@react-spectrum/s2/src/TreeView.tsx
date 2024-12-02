@@ -22,6 +22,7 @@ import {
   UNSTABLE_TreeItemContent,
   useContextProps
 } from 'react-aria-components';
+import {centerBaseline} from './CenterBaseline';
 import Chevron from '../ui-icons/Chevron';
 import {colorMix, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
 import {DOMRef, Key} from '@react-types/shared';
@@ -32,7 +33,6 @@ import {StylesPropWithHeight, UnsafeStyles} from './style-utils';
 import {useButton} from '@react-aria/button';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale} from '@react-aria/i18n';
-import { centerBaseline } from './CenterBaseline';
 
 interface S2TreeProps {
   // Only detatched is supported right now with the current styles from Spectrum
