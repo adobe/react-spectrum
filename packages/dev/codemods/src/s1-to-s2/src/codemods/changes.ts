@@ -87,6 +87,10 @@ type FunctionInfo =
   | {
     name: 'updateKeyToId',
     args: {}
+  }
+  | {
+    name: 'commentIfNestedColumns',
+    args: {}
   };
 
 type Change = {
@@ -1211,6 +1215,14 @@ export const changes: ChangesJSON = {
         reason: 'Rows now require a columns prop from TableHeader',
         function: {
           name: 'addColumnsPropToRow',
+          args: {}
+        }
+      },
+      {
+        description: 'Leave comment if nested columns are used',
+        reason: 'Nested columns are not supported yet',
+        function: {
+          name: 'commentIfNestedColumns',
           args: {}
         }
       }

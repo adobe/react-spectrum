@@ -83,3 +83,31 @@ test('Keep key if array.map used', `
     </TableBody>
   </TableView>
   `);
+
+  test('Leave a comment for nested columns', `
+import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/react-spectrum';
+
+<TableView>
+  <TableHeader>
+    <Column key="test">Test</Column>
+    <Column title="blah">
+      <Column key="test1">
+        Test 1
+      </Column>
+      <Column key="test2">
+        Test 2
+      </Column>
+    </Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Test1</Cell>
+      <Cell>One</Cell>
+    </Row>
+    <Row>
+      <Cell>Test2</Cell>
+      <Cell>One</Cell>
+    </Row>
+  </TableBody>
+</TableView>
+`);

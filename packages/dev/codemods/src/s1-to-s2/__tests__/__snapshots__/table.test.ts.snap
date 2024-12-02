@@ -56,6 +56,35 @@ exports[`Keep key if array.map used 1`] = `
   </TableView>"
 `;
 
+exports[`Leave a comment for nested columns 1`] = `
+"import { Cell, Column, Row, TableBody, TableHeader, TableView } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): Nested Column components are not supported yet.
+<TableView>
+  <TableHeader>
+    <Column id="test">Test</Column>
+    <Column title="blah">
+      <Column id="test1">
+        Test 1
+      </Column>
+      <Column id="test2">
+        Test 2
+      </Column>
+    </Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Test1</Cell>
+      <Cell>One</Cell>
+    </Row>
+    <Row>
+      <Cell>Test2</Cell>
+      <Cell>One</Cell>
+    </Row>
+  </TableBody>
+</TableView>"
+`;
+
 exports[`Static TableView 1`] = `
 "import { Cell, Column, Row, TableBody, TableHeader, TableView } from "@react-spectrum/s2";
 

@@ -1062,6 +1062,35 @@ function updateKeyToId(
   }
 }
 
+export function commentIfNestedColumns(
+  path: NodePath<t.JSXElement>,
+) {
+  const headerPath = path.get('children').find((child) =>
+    t.isJSXElement(child.node) &&
+    t.isJSXIdentifier(child.node.openingElement.name) &&
+    getName(child as NodePath<t.JSXElement>, child.node.openingElement.name) === 'TableHeader'
+  ) as NodePath<t.JSXElement> | undefined;
+  const columns = headerPath?.get('children') || [];
+
+  let hasNestedColumns = false;
+
+  columns.forEach(column => {
+    let columnChildren = column.get('children');
+    if (
+        columnChildren.find(child => 
+          t.isJSXElement(child.node) &&
+          t.isJSXIdentifier(child.node.openingElement.name) &&
+          getName(child as NodePath<t.JSXElement>, child.node.openingElement.name) === 'Column'
+      )   
+    ) {
+      hasNestedColumns = true;
+    }
+  });
+
+  if (hasNestedColumns) {
+    addComment(path.node, ' TODO(S2-upgrade): Nested Column components are not supported yet.');
+  }
+}
 
 export const functionMap = {
   updatePropNameAndValue,
@@ -1085,5 +1114,6 @@ export const functionMap = {
   updateLegacyLink,
   addColumnsPropToRow,
   updateRowFunctionArg,
-  updateKeyToId
+  updateKeyToId,
+  commentIfNestedColumns
 };
