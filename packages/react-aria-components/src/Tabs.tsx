@@ -253,8 +253,9 @@ export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, f
   });
 
   let renderProps = useRenderProps({
-    ...props,
+    ...props, // item.props? or is this correct and breadcrumbs are wrong?
     id: undefined,
+    children: item.rendered,
     defaultClassName: 'react-aria-Tab',
     values: {
       isSelected,
@@ -277,7 +278,9 @@ export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, f
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}
-      data-hovered={isHovered || undefined} />
+      data-hovered={isHovered || undefined}>
+      {renderProps.children}
+    </ElementType>
   );
 });
 
