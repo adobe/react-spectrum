@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionMenuContext, Checkbox, IconContext, Text, TextContext} from '@react-spectrum/s2';
+import {ActionButtonGroupContext, ActionMenuContext, Checkbox, IconContext, Text, TextContext} from '@react-spectrum/s2';
 import {
   ButtonContext,
   Collection,
@@ -23,7 +23,7 @@ import {
   useContextProps
 } from 'react-aria-components';
 import Chevron from '../ui-icons/Chevron';
-import {colorMix, lightDark, style} from '../style' with {type: 'macro'};
+import {colorMix, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
 import {DOMRef, Key} from '@react-types/shared';
 import {isAndroid} from '@react-aria/utils';
 import {raw} from '../style/style-macro' with {type: 'macro'};
@@ -32,6 +32,7 @@ import {StylesPropWithHeight, UnsafeStyles} from './style-utils';
 import {useButton} from '@react-aria/button';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale} from '@react-aria/i18n';
+import { centerBaseline } from './CenterBaseline';
 
 interface S2TreeProps {
   // Only detatched is supported right now with the current styles from Spectrum
@@ -182,10 +183,10 @@ const treeCellGrid = style({
   display: 'grid',
   width: 'full',
   alignItems: 'center',
-  gridTemplateColumns: ['minmax(0, auto)', 'minmax(0, auto)', 'minmax(0, auto)', 40, 'minmax(0, auto)', '1fr', 'minmax(0, auto)'],
+  gridTemplateColumns: ['minmax(0, auto)', 'minmax(0, auto)', 'minmax(0, auto)', 40, 'minmax(0, auto)', '1fr', 'minmax(0, auto)', 'auto'],
   gridTemplateRows: '1fr',
   gridTemplateAreas: [
-    'drag-handle checkbox level-padding expand-button icon content actions'
+    'drag-handle checkbox level-padding expand-button icon content actions actionmenu'
   ],
   backgroundColor: '--rowBackgroundColor',
   color: {
@@ -268,7 +269,11 @@ const treeCheckbox = style({
 
 const treeIcon = style({
   gridArea: 'icon',
-  marginEnd: 'text-to-visual'
+  marginEnd: 'text-to-visual',
+  '--iconPrimary': {
+    type: 'fill',
+    value: 'currentColor'
+  }
 });
 
 const treeContent = style({
@@ -285,6 +290,10 @@ const treeActions = style({
   /* TODO: I made this one up, confirm desired behavior. These paddings are to make sure the action group has enough padding for the focus ring */
   marginStart: 2,
   marginEnd: 4
+});
+
+const treeActionMenu = style({
+  gridArea: 'actionmenu'
 });
 
 const cellFocus = {
@@ -385,8 +394,12 @@ export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
               <Provider
                 values={[
                   [TextContext, {styles: treeContent}],
-                  [IconContext, {styles: treeIcon}],
-                  [ActionMenuContext, {styles: treeActions, isQuiet: true, 'aria-label': 'Actions'}]
+                  [IconContext, {
+                    render: centerBaseline({slot: 'icon', styles: treeIcon}),
+                    styles: style({size: fontRelative(20), flexShrink: 0})
+                  }],
+                  [ActionButtonGroupContext, {styles: treeActions}],
+                  [ActionMenuContext, {styles: treeActionMenu, isQuiet: true, 'aria-label': 'Actions'}]
                 ]}>
                 {content}
               </Provider>

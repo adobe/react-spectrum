@@ -71,7 +71,7 @@ export const actionGroupStyle = style({
 }, getAllowedOverrides({height: true}));
 
 
-export const ActionButtonGroupContext = createContext<ContextValue<ActionButtonGroupProps, HTMLDivElement>>(null);
+export const ActionButtonGroupContext = createContext<ContextValue<Partial<ActionButtonGroupProps>, HTMLDivElement>>(null);
 
 /**
  * An ActionButtonGroup is a grouping of related ActionButtons.

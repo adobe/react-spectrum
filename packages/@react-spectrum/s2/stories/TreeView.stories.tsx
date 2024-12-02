@@ -173,11 +173,11 @@ export const Example = {
 
 let rows = [
   {id: 'projects', name: 'Projects', icon: <Folder />, childItems: [
-    {id: 'project-1', name: 'Project 1', icon: <FileTxt />},
-    {id: 'project-2', name: 'Project 2', icon: <Folder />, childItems: [
-      {id: 'project-2A', name: 'Project 2A', icon: <FileTxt />},
-      {id: 'project-2B', name: 'Project 2B', icon: <FileTxt />},
-      {id: 'project-2C', name: 'Project 2C', icon: <FileTxt />}
+    {id: 'project-1', name: 'Project 1 Level 1', icon: <FileTxt />},
+    {id: 'project-2', name: 'Project 2 Level 1', icon: <Folder />, childItems: [
+      {id: 'project-2A', name: 'Project 2A Level 2', icon: <FileTxt />},
+      {id: 'project-2B', name: 'Project 2B Level 2', icon: <FileTxt />},
+      {id: 'project-2C', name: 'Project 2C Level 3', icon: <FileTxt />}
     ]},
     {id: 'project-3', name: 'Project 3', icon: <FileTxt />},
     {id: 'project-4', name: 'Project 4', icon: <FileTxt />},
@@ -228,7 +228,7 @@ export const Dynamic = {
   render: TreeExampleDynamic,
   args: {
     ...Example.args,
-    disabledKeys: ['Foo 5']
+    disabledKeys: ['project-2C', 'project-5']
   }
 };
 
