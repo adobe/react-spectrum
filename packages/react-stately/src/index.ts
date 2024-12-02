@@ -12,6 +12,7 @@
 
 export type {CalendarState, CalendarStateOptions, RangeCalendarState, RangeCalendarStateOptions} from '@react-stately/calendar';
 export type {CheckboxGroupProps, CheckboxGroupState} from '@react-stately/checkbox';
+export type {Color, ColorAreaProps, ColorAreaState, ColorChannelFieldProps, ColorChannelFieldState, ColorChannelFieldStateOptions, ColorFieldProps, ColorFieldState, ColorPickerProps, ColorPickerState, ColorSliderState, ColorSliderStateOptions, ColorWheelProps, ColorWheelState} from '@react-stately/color';
 export type {ComboBoxState, ComboBoxStateOptions} from '@react-stately/combobox';
 export type {DateFieldState, DateFieldStateOptions, DatePickerState, DatePickerStateOptions, DateRangePickerState, DateRangePickerStateOptions, DateSegment, SegmentType as DateSegmentType, TimeFieldStateOptions, TimeFieldState} from '@react-stately/datepicker';
 export type {DraggableCollectionStateOptions, DraggableCollectionState, DroppableCollectionStateOptions, DroppableCollectionState} from '@react-stately/dnd';
@@ -34,6 +35,7 @@ export type {ItemProps, Key, SectionProps, Collection, Node, Orientation, Disabl
 
 export {useCalendarState, useRangeCalendarState} from '@react-stately/calendar';
 export {useCheckboxGroupState} from '@react-stately/checkbox';
+export {getColorChannels, parseColor, useColorAreaState, useColorChannelFieldState, useColorFieldState, useColorPickerState, useColorSliderState, useColorWheelState} from '@react-stately/color';
 export {useComboBoxState} from '@react-stately/combobox';
 export {useDateFieldState, useDatePickerState, useDateRangePickerState, useTimeFieldState} from '@react-stately/datepicker';
 export {useDraggableCollectionState, useDroppableCollectionState} from '@react-stately/dnd';

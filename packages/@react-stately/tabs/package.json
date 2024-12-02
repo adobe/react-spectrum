@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/tabs",
-  "version": "3.6.9",
+  "version": "3.6.10",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -22,9 +22,9 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-stately/list": "^3.10.8",
-    "@react-types/shared": "^3.24.1",
-    "@react-types/tabs": "^3.3.9",
+    "@react-stately/list": "^3.11.0",
+    "@react-types/shared": "^3.25.0",
+    "@react-types/tabs": "^3.3.10",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {
