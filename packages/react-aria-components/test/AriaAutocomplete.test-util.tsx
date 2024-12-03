@@ -326,6 +326,38 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
             expect(new Set(selectionListener.mock.calls[2][0])).toEqual(new Set(['2']));
           }
         });
+
+        it('should clear the wrapped element\'s selection when hitting Escape', async function () {
+          let {getByRole} = (renderers.multipleSelection!)();
+          let input = getByRole('searchbox');
+          let menu = getByRole(collectionNodeRole);
+          expect(input).not.toHaveAttribute('aria-activedescendant');
+
+          await user.tab();
+          expect(document.activeElement).toBe(input);
+
+          await user.keyboard('{ArrowDown}');
+          let options = within(menu).getAllByRole(collectionSelectableItemRole);
+          expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+          await user.keyboard('{Enter}');
+          if (selectionListener) {
+            expect(selectionListener).toHaveBeenCalledTimes(1);
+            expect(new Set(selectionListener.mock.calls[0][0])).toEqual(new Set(['1']));
+          }
+
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{Enter}');
+          if (selectionListener) {
+            expect(selectionListener).toHaveBeenCalledTimes(2);
+            expect(new Set(selectionListener.mock.calls[1][0])).toEqual(new Set(['1', '2']));
+          }
+
+          await user.keyboard('{Escape}');
+          if (selectionListener) {
+            expect(selectionListener).toHaveBeenCalledTimes(3);
+            expect(new Set(selectionListener.mock.calls[2][0])).toEqual(new Set([]));
+          }
+        });
       });
     }
 

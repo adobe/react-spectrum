@@ -77,7 +77,7 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
       ...listProps,
       onKeyDown: (e) => {
         // don't clear the menu selected keys if the user is presses escape since escape closes the menu
-        if (e.key !== 'Escape') {
+        if (e.key !== 'Escape' || props.shouldUseVirtualFocus) {
           listProps.onKeyDown?.(e);
         }
       }

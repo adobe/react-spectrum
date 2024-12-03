@@ -167,6 +167,10 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
       case 'PageUp':
       case 'ArrowUp':
       case 'ArrowDown': {
+        if ((e.key === 'Home' || e.key === 'End') && state.focusedNodeId == null && e.shiftKey) {
+          return;
+        }
+
         // Prevent these keys from moving the text cursor in the input
         e.preventDefault();
         // Move virtual focus into the wrapped collection
