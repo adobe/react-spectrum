@@ -44,6 +44,7 @@ import {
   NumberField,
   Picker,
   PickerItem,
+  Popover,
   ProgressBar,
   ProgressCircle,
   Radio,
@@ -247,15 +248,15 @@ export default function Lazy() {
           </Dialog>
         </DialogTrigger>
 
-        <DialogTrigger type="popover">
+        <DialogTrigger>
           <ActionButton>Disk Status</ActionButton>
-          <Dialog>
-            <Heading>C://</Heading>
+          <Popover>
+            <Heading styles={style({font: 'heading', marginTop: 0, marginBottom: 20})}>C://</Heading>
 
-            <Content>
+            <Content styles={style({font: 'ui'})}>
               <Text>50% disk space remaining.</Text>
             </Content>
-          </Dialog>
+          </Popover>
         </DialogTrigger>
 
         <TooltipTrigger>
