@@ -37,7 +37,10 @@ export interface ToggleButtonProps extends Omit<AriaToggleButtonProps, 'children
 
 export const ToggleButtonContext = createContext<ContextValue<ToggleButtonProps, HTMLButtonElement>>({});
 
-function ToggleButton(props: ToggleButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
+/**
+ * A toggle button allows a user to toggle a selection on or off, for example switching between two states or modes.
+ */
+export const ToggleButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToggleButton(props: ToggleButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   [props, ref] = useContextProps(props, ref, ToggleButtonContext);
   let groupState = useContext(ToggleGroupStateContext);
   let state = useToggleState(groupState && props.id != null ? {
@@ -75,10 +78,4 @@ function ToggleButton(props: ToggleButtonProps, ref: ForwardedRef<HTMLButtonElem
       data-hovered={isHovered || undefined}
       data-focus-visible={isFocusVisible || undefined} />
   );
-}
-
-/**
- * A toggle button allows a user to toggle a selection on or off, for example switching between two states or modes.
- */
-const _ToggleButton = /*#__PURE__*/ (forwardRef as forwardRefType)(ToggleButton);
-export {_ToggleButton as ToggleButton};
+});

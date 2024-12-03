@@ -24,12 +24,16 @@ import {mergeProps, useLayoutEffect, useSlotId, useSyncRef} from '@react-aria/ut
 import React, {ReactElement, useContext, useEffect, useRef, useState} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {useInteractOutside} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMenu} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
 
-function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Menus display a list of actions or options that a user can choose.
+ */
+// forwardRef doesn't support generic parameters, so cast the result to the correct type
+// https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
+export const Menu = React.forwardRef(function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDivElement>) {
   let isSubmenu = true;
   let contextProps = useContext(MenuContext);
   let parentMenuContext = useMenuStateContext();
@@ -41,15 +45,15 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
     ...mergeProps(contextProps, props)
   };
   let domRef = useDOMRef(ref);
-  let [popoverContainer, setPopoverContainer] = useState(null);
-  let trayContainerRef = useRef(null);
+  let [popoverContainer, setPopoverContainer] = useState<HTMLElement | null>(null);
+  let trayContainerRef = useRef<HTMLDivElement | null>(null);
   let state = useTreeState(completeProps);
   let submenuRef = useRef<HTMLDivElement>(null);
   let {menuProps} = useMenu(completeProps, state, domRef);
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);
   let [leftOffset, setLeftOffset] = useState({left: 0});
-  let prevPopoverContainer = useRef(null);
+  let prevPopoverContainer = useRef<HTMLElement | null>(null);
   useEffect(() => {
     if (popoverContainer && prevPopoverContainer.current !== popoverContainer && leftOffset.left === 0) {
       prevPopoverContainer.current = popoverContainer;
@@ -59,16 +63,12 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   }, [leftOffset, popoverContainer]);
 
   let menuLevel = contextProps.submenuLevel ?? -1;
-  let hasOpenSubmenu = state.collection.getItem(rootMenuTriggerState?.expandedKeysStack[menuLevel + 1]) != null;
-  useInteractOutside({
-    ref: domRef,
-    onInteractOutside: (e) => {
-      if (!popoverContainer?.contains(e.target) && !trayContainerRef.current?.contains(e.target)) {
-        rootMenuTriggerState.close();
-      }
-    },
-    isDisabled: isSubmenu || !hasOpenSubmenu
-  });
+  let nextMenuLevelKey = rootMenuTriggerState?.expandedKeysStack[menuLevel + 1];
+  let hasOpenSubmenu = false;
+  if (nextMenuLevelKey != null) {
+    let nextMenuLevel = state.collection.getItem(nextMenuLevelKey);
+    hasOpenSubmenu = nextMenuLevel != null;
+  }
 
   return (
     <MenuStateContext.Provider value={{popoverContainer, trayContainerRef, menu: domRef, submenu: submenuRef, rootMenuTriggerState, state}}>
@@ -121,7 +121,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
       </FocusScope>
     </MenuStateContext.Provider>
   );
-}
+}) as <T>(props: SpectrumMenuProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 
 export function TrayHeaderWrapper(props) {
   let {children, isSubmenu, hasOpenSubmenu, parentMenuTreeState, rootMenuTriggerState, onBackButtonPress, wrapperKeyDown, menuRef} = props;
@@ -141,7 +141,7 @@ export function TrayHeaderWrapper(props) {
     }
   }, [hasOpenSubmenu, isMobile]);
 
-  let timeoutRef = useRef(null);
+  let timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   let handleBackButtonPress = () => {
     setTraySubmenuAnimation('spectrum-TraySubmenu-exit');
     timeoutRef.current = setTimeout(() => {
@@ -159,7 +159,7 @@ export function TrayHeaderWrapper(props) {
 
   // When opening submenu in tray, focus the first item in the submenu after animation completes
   // This fixes an issue with iOS VO where the closed submenu was getting focus
-  let focusTimeoutRef = useRef(null);
+  let focusTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
     if (isMobile && isSubmenu && !hasOpenSubmenu && traySubmenuAnimation === 'spectrum-TraySubmenu-enter') {
       focusTimeoutRef.current = setTimeout(() => {
@@ -211,11 +211,3 @@ export function TrayHeaderWrapper(props) {
     </>
   );
 }
-
-/**
- * Menus display a list of actions or options that a user can choose.
- */
-// forwardRef doesn't support generic parameters, so cast the result to the correct type
-// https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
-const _Menu = React.forwardRef(Menu) as <T>(props: SpectrumMenuProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
-export {_Menu as Menu};

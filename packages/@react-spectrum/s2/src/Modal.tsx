@@ -73,7 +73,10 @@ const modalOverlayStyles = style({
   }
 });
 
-function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A modal is an overlay element which blocks interaction with elements outside it.
+ */
+export const Modal = forwardRef(function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
   let domRef = useDOMRef(ref);
   let colorScheme = useContext(ColorSchemeContext);
   let {locale, direction} = useLocale();
@@ -106,9 +109,9 @@ function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
           width: {
             size: {
               // Copied from designs, not sure if correct.
-              S: '[21rem]',
-              M: '[26rem]',
-              L: '[36rem]',
+              S: 336,
+              M: 416,
+              L: 576,
               fullscreen: '[calc(100% - 40px)]',
               fullscreenTakeover: 'full'
             }
@@ -120,17 +123,17 @@ function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
             }
           },
           maxWidth: {
+            default: '[90vw]',
             size: {
-              S: '[90vw]',
-              M: '[90vw]',
-              L: '[90vw]'
+              fullscreen: 'none',
+              fullscreenTakeover: 'none'
             }
           },
           maxHeight: {
+            default: '[90vh]',
             size: {
-              S: '[90vh]',
-              M: '[90vh]',
-              L: '[90vh]'
+              fullscreen: 'none',
+              fullscreenTakeover: 'none'
             }
           },
           '--s2-container-bg': {
@@ -159,13 +162,7 @@ function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
           outlineStyle: 'solid',
           outlineWidth: 1,
           outlineColor: 'transparent'
-        })({...renderProps, size: props.size || 'M'})} />
+        })({...renderProps, size: props.size})} />
     </ModalOverlay>
   );
-}
-
-/**
- * A modal is an overlay element which blocks interaction with elements outside it.
- */
-let _Modal = forwardRef(Modal);
-export {_Modal as Modal};
+});

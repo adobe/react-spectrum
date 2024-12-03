@@ -11,6 +11,7 @@
  */
 
 import {ActionButtonGroupContext} from './ActionButtonGroup';
+import {AvatarContext} from './Avatar';
 import {baseColor, focusRing, fontRelative, style} from '../style' with { type: 'macro' };
 import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext, Provider, Button as RACButton, useSlottedContext} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
@@ -57,7 +58,7 @@ export interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'styl
 }
 
 // These styles handle both ActionButton and ToggleButton
-const iconOnly = ':has([slot=icon]):not(:has([data-rsp-slot=text]))';
+const iconOnly = ':has([slot=icon], [slot=avatar]):not(:has([data-rsp-slot=text]))';
 export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleButtonStyleProps & ActionGroupItemStyleProps & {isInGroup: boolean}>({
   ...focusRing(),
   display: 'flex',
@@ -243,9 +244,22 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
   disableTapHighlight: true
 }, getAllowedOverrides());
 
+// Matching icon sizes. TBD.
+const avatarSize = {
+  XS: 14,
+  S: 16,
+  M: 20,
+  L: 22,
+  X: 26
+} as const;
+
 export const ActionButtonContext = createContext<ContextValue<ActionButtonProps, FocusableRefValue<HTMLButtonElement>>>(null);
 
-function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+/**
+ * ActionButtons allow users to perform an action.
+ * They’re used for similar, task-based options within a workflow, and are ideal for interfaces where buttons aren’t meant to draw a lot of attention.
+ */
+export const ActionButton = forwardRef(function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ActionButtonContext);
   props = useFormProps(props as any);
   let domRef = useFocusableRef(ref);
@@ -287,17 +301,14 @@ function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElem
           [IconContext, {
             render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
             styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+          }],
+          [AvatarContext, {
+            size: avatarSize[size],
+            styles: style({marginStart: '--iconMargin', flexShrink: 0, order: 0})
           }]
         ]}>
         {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
       </Provider>
     </RACButton>
   );
-}
-
-/**
- * ActionButtons allow users to perform an action.
- * They’re used for similar, task-based options within a workflow, and are ideal for interfaces where buttons aren’t meant to draw a lot of attention.
- */
-let _ActionButton = forwardRef(ActionButton);
-export {_ActionButton as ActionButton};
+});

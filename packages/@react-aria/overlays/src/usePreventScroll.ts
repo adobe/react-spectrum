@@ -17,7 +17,6 @@ interface PreventScrollOptions {
   isDisabled?: boolean
 }
 
-// @ts-ignore
 const visualViewport = typeof document !== 'undefined' && window.visualViewport;
 
 // HTML input types that do not cause the software keyboard to appear.
@@ -195,7 +194,7 @@ function preventScrollMobileSafari() {
     }
   };
 
-  let restoreStyles = null;
+  let restoreStyles: null | (() => void) = null;
   let setupStyles = () => {
     if (restoreStyles) {
       return;
@@ -254,31 +253,35 @@ function setStyle(element: HTMLElement, style: string, value: string) {
 
 // Adds an event listener to an element, and returns a function to remove it.
 function addEvent<K extends keyof GlobalEventHandlersEventMap>(
-  target: EventTarget,
+  target: Document | Window,
   event: K,
-  handler: (this: Document, ev: GlobalEventHandlersEventMap[K]) => any,
+  handler: (this: Document | Window, ev: GlobalEventHandlersEventMap[K]) => any,
   options?: boolean | AddEventListenerOptions
 ) {
+  // internal function, so it's ok to ignore the difficult to fix type error
+  // @ts-ignore
   target.addEventListener(event, handler, options);
   return () => {
+    // @ts-ignore
     target.removeEventListener(event, handler, options);
   };
 }
 
 function scrollIntoView(target: Element) {
   let root = document.scrollingElement || document.documentElement;
-  while (target && target !== root) {
+  let nextTarget: Element | null = target;
+  while (nextTarget && nextTarget !== root) {
     // Find the parent scrollable element and adjust the scroll position if the target is not already in view.
-    let scrollable = getScrollParent(target);
-    if (scrollable !== document.documentElement && scrollable !== document.body && scrollable !== target) {
+    let scrollable = getScrollParent(nextTarget);
+    if (scrollable !== document.documentElement && scrollable !== document.body && scrollable !== nextTarget) {
       let scrollableTop = scrollable.getBoundingClientRect().top;
-      let targetTop = target.getBoundingClientRect().top;
-      if (targetTop > scrollableTop + target.clientHeight) {
+      let targetTop = nextTarget.getBoundingClientRect().top;
+      if (targetTop > scrollableTop + nextTarget.clientHeight) {
         scrollable.scrollTop += targetTop - scrollableTop;
       }
     }
 
-    target = scrollable.parentElement;
+    nextTarget = scrollable.parentElement;
   }
 }
 

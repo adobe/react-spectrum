@@ -126,7 +126,7 @@ function renderWrapper(
   );
 
   let {collection, layout} = reusableView.virtualizer;
-  let {key, type} = reusableView.content;
+  let {key, type} = reusableView.content!;
   if (type === 'item' && renderDropIndicator && layout.getDropTargetLayoutInfo) {
     rendered = (
       <React.Fragment key={reusableView.key}>
@@ -146,7 +146,7 @@ function renderDropIndicatorWrapper(
   dropPosition: DropPosition,
   renderDropIndicator: (target: ItemDropTarget) => ReactNode
 ) {
-  let target: DropTarget = {type: 'item', key: reusableView.content.key, dropPosition};
+  let target: DropTarget = {type: 'item', key: reusableView.content!.key, dropPosition};
   let indicator = renderDropIndicator(target);
   if (indicator) {
     let layoutInfo = reusableView.virtualizer.layout.getDropTargetLayoutInfo!(target);

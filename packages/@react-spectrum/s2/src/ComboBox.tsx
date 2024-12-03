@@ -53,7 +53,7 @@ import {IconContext} from './Icon';
 import {menu} from './Picker';
 import {mergeRefs, useResizeObserver} from '@react-aria/utils';
 import {Placement} from 'react-aria';
-import {Popover} from './Popover';
+import {PopoverBase} from './Popover';
 import {pressScale} from './pressScale';
 import {TextFieldRef} from '@react-types/textfield';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -149,7 +149,10 @@ const iconStyles = style({
 
 let InternalComboboxContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({size: 'M'});
 
-function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: Ref<TextFieldRef>) {
+/**
+ * ComboBox allow users to choose a single option from a collapsible list of options when space is limited.
+ */
+export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: Ref<TextFieldRef>) {
   [props, ref] = useSpectrumContextProps(props, ref, ComboBoxContext);
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useRef<HTMLDivElement>(null);
@@ -284,7 +287,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: Ref<TextFieldR
               description={descriptionMessage}>
               {errorMessage}
             </HelpText>
-            <Popover
+            <PopoverBase
               hideArrow
               triggerRef={triggerRef}
               offset={menuOffset}
@@ -315,19 +318,13 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: Ref<TextFieldR
                   {children}
                 </ListBox>
               </Provider>
-            </Popover>
+            </PopoverBase>
           </InternalComboboxContext.Provider>
         </>
       )}
     </AriaComboBox>
   );
-}
-
-/**
- * ComboBox allow users to choose a single option from a collapsible list of options when space is limited.
- */
-let _ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(ComboBox);
-export {_ComboBox as ComboBox};
+});
 
 
 export interface ComboBoxItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {

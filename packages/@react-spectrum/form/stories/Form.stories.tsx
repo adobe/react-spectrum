@@ -484,7 +484,7 @@ function FormWithControls(props: any = {}) {
   let [favoritePet, setFavoritePet] = useState('cats');
   let [favoriteColor, setFavoriteColor] = useState('green' as Key);
   let [howIFeel, setHowIFeel] = useState('I feel good, o I feel so good!');
-  let [birthday, setBirthday] = useState(new CalendarDate(1732, 2, 22));
+  let [birthday, setBirthday] = useState<CalendarDate | null>(new CalendarDate(1732, 2, 22));
   let [money, setMoney] = useState(50);
   let [superSpeed, setSuperSpeed] = useState(true);
 

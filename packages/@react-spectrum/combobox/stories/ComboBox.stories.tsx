@@ -54,7 +54,7 @@ let withSection = [
 
 let lotsOfSections: any[] = [];
 for (let i = 0; i < 50; i++) {
-  let children = [];
+  let children: {name: string}[] = [];
   for (let j = 0; j < 50; j++) {
     children.push({name: `Section ${i}, Item ${j}`});
   }
@@ -605,12 +605,12 @@ function AsyncLoadingExampleControlledKey(props) {
   let onSelectionChange = (key) => {
     let itemText = list.getItem(key)?.name;
     list.setSelectedKeys(new Set([key]));
-    list.setFilterText(itemText);
+    list.setFilterText(itemText ?? '');
   };
 
   let onInputChange = (value) => {
     if (value === '') {
-      list.setSelectedKeys(new Set([null]));
+      list.setSelectedKeys(new Set<Key>());
     }
     list.setFilterText(value);
   };
@@ -673,12 +673,12 @@ function AsyncLoadingExampleControlledKeyWithReset(props) {
   let onSelectionChange = (key) => {
     let itemText = list.getItem(key)?.name;
     list.setSelectedKeys(new Set([key]));
-    list.setFilterText(itemText);
+    list.setFilterText(itemText ?? '');
   };
 
   let onInputChange = (value) => {
     if (value === '') {
-      list.setSelectedKeys(new Set([null]));
+      list.setSelectedKeys(new Set<Key>());
     }
     list.setFilterText(value);
   };

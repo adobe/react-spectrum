@@ -13,14 +13,17 @@
 import {clamp} from '@react-aria/utils';
 import {classNames} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
-import React from 'react';
+import React, {ReactNode} from 'react';
 import {SliderBase, SliderBaseChildArguments, SliderBaseProps} from './SliderBase';
 import {SliderThumb} from './SliderThumb';
 import {SpectrumSliderProps} from '@react-types/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {useLocale} from '@react-aria/i18n';
 
-function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
+/**
+ * Sliders allow users to quickly select a value within a range. They should be used when the upper and lower bounds to the range are invariable.
+ */
+export const Slider = React.forwardRef(function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
   let {onChange, onChangeEnd, value, defaultValue, isFilled, fillOffset, trackGradient, getValueLabel, ...otherProps} = props;
 
   let baseProps: Omit<SliderBaseProps, 'children'> = {
@@ -80,7 +83,7 @@ function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
             }} />
         );
 
-        let filledTrack = null;
+        let filledTrack: ReactNode = null;
         if (isFilled && fillOffset != null) {
           let width = state.getThumbPercent(0) - state.getValuePercent(fillOffset);
           let isRightOfOffset = width > 0;
@@ -112,10 +115,4 @@ function Slider(props: SpectrumSliderProps, ref: FocusableRef<HTMLDivElement>) {
       }}
     </SliderBase>
   );
-}
-
-/**
- * Sliders allow users to quickly select a value within a range. They should be used when the upper and lower bounds to the range are invariable.
- */
-const _Slider = React.forwardRef(Slider);
-export {_Slider as Slider};
+});

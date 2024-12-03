@@ -41,7 +41,7 @@ export interface AriaSubmenuTriggerProps {
   delay?: number
 }
 
-interface SubmenuTriggerProps extends AriaMenuItemProps {
+interface SubmenuTriggerProps extends Omit<AriaMenuItemProps, 'key'> {
   /** Whether the submenu trigger is in an expanded state. */
   isOpen: boolean
 }
@@ -101,14 +101,14 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
         if (direction === 'ltr' && e.currentTarget.contains(e.target as Element)) {
           e.stopPropagation();
           onSubmenuClose();
-          ref.current.focus();
+          ref.current?.focus();
         }
         break;
       case 'ArrowRight':
         if (direction === 'rtl' && e.currentTarget.contains(e.target as Element)) {
           e.stopPropagation();
           onSubmenuClose();
-          ref.current.focus();
+          ref.current?.focus();
         }
         break;
       case 'Escape':
@@ -124,7 +124,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
     submenuLevel: state.submenuLevel,
     ...(type === 'menu' && {
       onClose: state.closeAll,
-      autoFocus: state.focusStrategy,
+      autoFocus: state.focusStrategy ?? undefined,
       onKeyDown: submenuKeyDown
     })
   };
@@ -205,7 +205,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
   };
 
   let onBlur = (e) => {
-    if (state.isOpen && parentMenuRef.current.contains(e.relatedTarget)) {
+    if (state.isOpen && parentMenuRef.current?.contains(e.relatedTarget)) {
       onSubmenuClose();
     }
   };

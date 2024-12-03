@@ -22,7 +22,7 @@ import {FieldLabel} from './Field';
 import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {mergeStyles} from '../style/runtime';
-import {size, style} from '../style' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -125,12 +125,12 @@ const valueStyles = style({
 const trackStyles = style({
   ...track(),
   height: {
-    default: size(6),
+    default: 6,
     size: {
       S: 4, // progress-bar-thickness-small
-      M: size(6), // progress-bar-thickness-medium
+      M: 6, // progress-bar-thickness-medium
       L: 8, // progress-bar-thickness-large
-      XL: size(10) // progress-bar-thickness-extra-large
+      XL: 10 // progress-bar-thickness-extra-large
     }
   }
 });
@@ -174,7 +174,11 @@ const indeterminateAnimation = style({
   position: 'relative'
 });
 
-function ProgressBar(props: ProgressBarProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * ProgressBars show the progression of a system operation: downloading, uploading, processing, etc., in a visual way.
+ * They can represent either determinate or indeterminate progress.
+ */
+export const ProgressBar = /*#__PURE__*/ forwardRef(function ProgressBar(props: ProgressBarProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ProgressBarContext);
   let {
     label, size = 'M',
@@ -206,12 +210,5 @@ function ProgressBar(props: ProgressBarProps, ref: DOMRef<HTMLDivElement>) {
       )}
     </AriaProgressBar>
   );
-}
-
-/**
- * ProgressBars show the progression of a system operation: downloading, uploading, processing, etc., in a visual way.
- * They can represent either determinate or indeterminate progress.
- */
-const _ProgressBar = /*#__PURE__*/ forwardRef(ProgressBar);
-export {_ProgressBar as ProgressBar};
+});
 

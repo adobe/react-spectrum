@@ -558,7 +558,7 @@ function AsyncLoadingExample(props) {
   return (
     <div>
       <ActionButton styles={style({marginBottom: 8})} onPress={() => list.remove(list.items[0].data.id)}>Remove first item</ActionButton>
-      <TableView {...props} aria-label="Reddit table" sortDescriptor={list.sortDescriptor} onSortChange={list.sort} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} loadingState={list.loadingState} onLoadMore={list.loadMore} styles={style({width: '[1000px]', height: '[400px]'})}>
+      <TableView {...props} aria-label="Reddit table" sortDescriptor={list.sortDescriptor} onSortChange={list.sort} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} loadingState={list.loadingState} onLoadMore={list.loadMore} styles={style({width: 1000, height: 400})}>
         <TableHeader columns={columns}>
           {(column) => (
             <Column {...column}>
@@ -615,7 +615,7 @@ for (let i = 0; i < 1000; i++) {
 
 export const ManyItems = {
   render: (args) => (
-    <TableView aria-label="Many items table" {...args} styles={style({width: '[800px]', height: '[400px]'})}>
+    <TableView aria-label="Many items table" {...args} styles={style({width: 800, height: 400})}>
       <TableHeader columns={manyColumns}>
         {(column) => (
           <Column width={100} minWidth={100} isRowHeader={column.name === 'Column 1'}>{column.name}</Column>
@@ -645,7 +645,7 @@ export const ManyItems = {
 
 export const FlexHeight = {
   render: (args) => (
-    <div className={style({display: 'flex', width: '[400px]', height: '[400px]', alignItems: 'stretch', flexDirection: 'column'})}>
+    <div className={style({display: 'flex', width: 400, height: 400, alignItems: 'stretch', flexDirection: 'column'})}>
       <div className={style({backgroundColor: 'blue-200'})}>Flex child 1</div>
       <TableView aria-label="Many items table" {...args}>
         <TableHeader columns={manyColumns}>
@@ -680,7 +680,7 @@ export const FlexHeight = {
 
 export const FlexWidth = {
   render: (args) => (
-    <div className={style({display: 'flex', width: '[400px]', height: '[400px]', alignItems: 'stretch'})}>
+    <div className={style({display: 'flex', width: 400, height: 400, alignItems: 'stretch'})}>
       <div className={style({backgroundColor: 'blue-200'})}>Flex child 1</div>
       <TableView aria-label="Many items table" {...args}>
         <TableHeader columns={manyColumns}>

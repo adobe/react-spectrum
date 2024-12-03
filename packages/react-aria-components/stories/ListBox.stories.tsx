@@ -134,7 +134,7 @@ export const ListBoxDnd = (props: ListBoxProps<typeof albums[0]>) => {
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key).title})),
+    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key)?.title ?? ''})),
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
         list.moveBefore(e.target.key, e.keys);
@@ -312,7 +312,7 @@ export function VirtualizedListBoxDnd() {
 
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => {
-      return [...keys].map(key => ({'text/plain': list.getItem(key).name}));
+      return [...keys].map(key => ({'text/plain': list.getItem(key)?.name ?? ''}));
     },
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
@@ -363,7 +363,7 @@ export function VirtualizedListBoxGrid({minSize, maxSize}) {
 
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => {
-      return [...keys].map(key => ({'text/plain': list.getItem(key).name}));
+      return [...keys].map(key => ({'text/plain': list.getItem(key)?.name ?? ''}));
     },
     onReorder(e) {
       if (e.target.dropPosition === 'before') {

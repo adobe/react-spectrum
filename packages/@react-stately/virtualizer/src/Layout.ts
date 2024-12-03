@@ -32,7 +32,7 @@ import {Virtualizer} from './Virtualizer';
  */
 export abstract class Layout<T extends object, O = any> implements LayoutDelegate {
   /** The Virtualizer the layout is currently attached to. */
-  virtualizer: Virtualizer<T, any>;
+  virtualizer: Virtualizer<T, any> | null = null;
 
   /**
    * Returns whether the layout should invalidate in response to
@@ -83,11 +83,11 @@ export abstract class Layout<T extends object, O = any> implements LayoutDelegat
    */
   getDropTargetLayoutInfo?(target: ItemDropTarget): LayoutInfo;
 
-  getItemRect(key: Key): Rect {
-    return this.getLayoutInfo(key)?.rect;
+  getItemRect(key: Key): Rect | null {
+    return this.getLayoutInfo(key)?.rect ?? null;
   }
 
   getVisibleRect(): Rect {
-    return this.virtualizer.visibleRect;
+    return this.virtualizer!.visibleRect;
   }
 }

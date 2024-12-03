@@ -4,17 +4,17 @@
   "private": true,
   "main": "DocsTransformer.js",
   "engines": {
-    "parcel": "2.0.0-dev.1599"
+    "parcel": "^2.0.0"
   },
   "dependencies": {
     "@babel/parser": "^7.24.0",
     "@babel/traverse": "^7.24.0",
     "@babel/types": "^7.24.0",
-    "@parcel/plugin": "2.0.0-dev.1601",
+    "@parcel/plugin": "^2.0.0",
     "doctrine": "^3.0.0"
   },
   "devDependencies": {
-    "@parcel/core": "2.0.0-dev.1599",
-    "@parcel/fs": "2.0.0-dev.1601"
+    "@parcel/core": "^2.13.0",
+    "@parcel/fs": "^2.13.0"
   }
 }

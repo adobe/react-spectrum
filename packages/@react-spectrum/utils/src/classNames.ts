@@ -24,7 +24,7 @@ export function keepSpectrumClassNames() {
 }
 
 export function classNames(cssModule: {[key: string]: string}, ...values: Array<string | Object | undefined>): string {
-  let classes = [];
+  let classes: Array<{} | undefined> = [];
   for (let value of values) {
     if (typeof value === 'object' && value) {
       let mapped = {};

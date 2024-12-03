@@ -15,8 +15,8 @@ import {Collection, Key, Node} from '@react-types/shared';
 export class TreeCollection<T> implements Collection<Node<T>> {
   private keyMap: Map<Key, Node<T>> = new Map();
   private iterable: Iterable<Node<T>>;
-  private firstKey: Key;
-  private lastKey: Key;
+  private firstKey: Key | null = null;
+  private lastKey: Key | null = null;
 
   constructor(nodes: Iterable<Node<T>>, {expandedKeys}: {expandedKeys?: Set<Key>} = {}) {
     this.iterable = nodes;
@@ -36,7 +36,7 @@ export class TreeCollection<T> implements Collection<Node<T>> {
       visit(node);
     }
 
-    let last: Node<T>;
+    let last: Node<T> | null = null;
     let index = 0;
     for (let [key, node] of this.keyMap) {
       if (last) {
@@ -58,7 +58,7 @@ export class TreeCollection<T> implements Collection<Node<T>> {
       last.nextKey = undefined;
     }
 
-    this.lastKey = last?.key;
+    this.lastKey = last?.key ?? null;
   }
 
   *[Symbol.iterator]() {
@@ -75,12 +75,12 @@ export class TreeCollection<T> implements Collection<Node<T>> {
 
   getKeyBefore(key: Key) {
     let node = this.keyMap.get(key);
-    return node ? node.prevKey : null;
+    return node ? node.prevKey ?? null : null;
   }
 
   getKeyAfter(key: Key) {
     let node = this.keyMap.get(key);
-    return node ? node.nextKey : null;
+    return node ? node.nextKey ?? null : null;
   }
 
   getFirstKey() {
@@ -92,7 +92,7 @@ export class TreeCollection<T> implements Collection<Node<T>> {
   }
 
   getItem(key: Key) {
-    return this.keyMap.get(key);
+    return this.keyMap.get(key) ?? null;
   }
 
   at(idx: number) {

@@ -37,7 +37,7 @@ export const Example = (args: any) => {
       <Draggable />
       <DropZone
         {...args}
-        className={style({width: '[320px]', height: '[280px]'})}
+        className={style({width: 320, height: 280})}
         isFilled={isFilled}
         onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>
@@ -62,7 +62,7 @@ export const ExampleWithFileTrigger = (args: any) => {
       <Draggable />
       <DropZone
         {...args}
-        className={style({width: '[380px]', height: '[280px]'})}
+        className={style({width: 380, height: 280})}
         isFilled={isFilled}
         onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>
@@ -94,7 +94,7 @@ export const LongBanner = (args: any) => {
       <DropZone
         {...args}
         replaceMessage="A really long message that will show the text wrapping hopefully"
-        className={style({width: '[320px]', height: '[280px]'})}
+        className={style({width: 320, height: 280})}
         isFilled={isFilled}
         onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>
@@ -119,7 +119,7 @@ export const Gradient = (args: any) => {
       <Draggable />
       <DropZone
         {...args}
-        className={style({width: '[320px]', height: '[280px]'})}
+        className={style({width: 320, height: 280})}
         isFilled={isFilled}
         onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>

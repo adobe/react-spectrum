@@ -22,8 +22,8 @@ import {HeaderContext} from './Header';
 import {KeyboardContext} from './Keyboard';
 import {MultipleSelectionState, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {OverlayTriggerStateContext} from './Dialog';
-import {PopoverContext, PopoverProps} from './Popover';
-import {PressResponder, useHover, useInteractOutside} from '@react-aria/interactions';
+import {PopoverContext} from './Popover';
+import {PressResponder, useHover} from '@react-aria/interactions';
 import React, {
   createContext,
   ForwardedRef,
@@ -33,7 +33,6 @@ import React, {
   RefObject,
   useCallback,
   useContext,
-  useEffect,
   useRef,
   useState
 } from 'react';
@@ -120,7 +119,6 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
   let submenuTriggerState = useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
   let submenuRef = useRef<HTMLDivElement>(null);
   let itemRef = useObjectRef(ref);
-  let popoverContext = useSlottedContext(PopoverContext)!;
   let {parentMenuRef} = useContext(SubmenuTriggerContext)!;
   let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger({
     parentMenuRef,
@@ -139,7 +137,9 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
           trigger: 'SubmenuTrigger',
           triggerRef: itemRef,
           placement: 'end top',
-          UNSTABLE_portalContainer: popoverContext.UNSTABLE_portalContainer || undefined,
+          // Prevent parent popover from hiding submenu.
+          // @ts-ignore
+          'data-react-aria-top-layer': true,
           ...popoverProps
         }]
       ]}>
@@ -151,7 +151,10 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
 
 export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, CollectionProps<T>, StyleProps, SlotProps, ScrollableProps<HTMLDivElement> {}
 
-function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A menu displays a list of actions or options that a user can choose.
+ */
+export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, MenuContext);
 
   // Delay rendering the actual menu until we have the collection so that auto focus works properly.
@@ -160,7 +163,7 @@ function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivEl
       {collection => collection.size > 0 && <MenuInner props={props} collection={collection} menuRef={ref} />}
     </CollectionBuilder>
   );
-}
+});
 
 interface MenuInnerProps<T> {
   props: MenuProps<T>,
@@ -174,33 +177,9 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
     collection,
     children: undefined
   });
-  let [popoverContainer, setPopoverContainer] = useState<HTMLDivElement | null>(null);
+  let triggerState = useContext(RootMenuTriggerStateContext);
   let {isVirtualized, CollectionRoot} = useContext(CollectionRendererContext);
-  let {menuProps} = useMenu({...props, isVirtualized}, state, ref);
-  let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
-  let popoverContext = useContext(PopoverContext)!;
-
-  let isSubmenu = (popoverContext as PopoverProps)?.trigger === 'SubmenuTrigger';
-  useInteractOutside({
-    ref,
-    onInteractOutside: (e) => {
-      if (rootMenuTriggerState && !popoverContainer?.contains(e.target as HTMLElement)) {
-        rootMenuTriggerState.close();
-      }
-    },
-    isDisabled: isSubmenu || rootMenuTriggerState?.expandedKeysStack.length === 0
-  });
-
-  let prevPopoverContainer = useRef<HTMLDivElement | null>(null) ;
-  let [leftOffset, setLeftOffset] = useState({left: 0});
-  useEffect(() => {
-    if (popoverContainer && prevPopoverContainer.current !== popoverContainer && leftOffset.left === 0) {
-      prevPopoverContainer.current = popoverContainer;
-      let {left} = popoverContainer.getBoundingClientRect();
-      setLeftOffset({left: -1 * left});
-    }
-  }, [leftOffset, popoverContainer]);
-
+  let {menuProps} = useMenu({...props, isVirtualized, onClose: props.onClose || triggerState?.close}, state, ref);
   let renderProps = useRenderProps({
     defaultClassName: 'react-aria-Menu',
     className: props.className,
@@ -221,8 +200,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
           values={[
             [MenuStateContext, state],
             [SeparatorContext, {elementType: 'div'}],
-            [PopoverContext, {UNSTABLE_portalContainer: popoverContainer || undefined}],
-            [SectionContext, {name: 'MenuSection', render: MenuSection}],
+            [SectionContext, {name: 'MenuSection', render: MenuSectionInner}],
             [SubmenuTriggerContext, {parentMenuRef: ref}],
             [MenuItemContext, null],
             [SelectionManagerContext, state.selectionManager]
@@ -233,16 +211,9 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             scrollRef={ref} />
         </Provider>
       </div>
-      <div ref={setPopoverContainer} style={{width: '100vw', position: 'absolute', top: 0, ...leftOffset}} />
     </FocusScope>
   );
 }
-
-/**
- * A menu displays a list of actions or options that a user can choose.
- */
-const _Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(Menu);
-export {_Menu as Menu};
 
 export interface MenuSectionProps<T> extends SectionProps<T>, MultipleSelection {}
 
@@ -277,7 +248,7 @@ class GroupSelectionManager extends SelectionManager {
   }
 }
 
-function MenuSection<T extends object>(props: MenuSectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>, className = 'react-aria-MenuSection') {
+function MenuSectionInner<T extends object>(props: MenuSectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>, className = 'react-aria-MenuSection') {
   let state = useContext(MenuStateContext)!;
   let {CollectionBranch} = useContext(CollectionRendererContext);
   let [headingRef, heading] = useSlot();
@@ -316,8 +287,7 @@ function MenuSection<T extends object>(props: MenuSectionProps<T>, ref: Forwarde
 /**
  * A MenuSection represents a section within a Menu.
  */
-const _MenuSection = /*#__PURE__*/ createBranchComponent('section', MenuSection);
-export {_MenuSection as MenuSection};
+export const MenuSection = /*#__PURE__*/ createBranchComponent('section', MenuSectionInner);
 
 export interface MenuItemRenderProps extends ItemRenderProps {
   /**

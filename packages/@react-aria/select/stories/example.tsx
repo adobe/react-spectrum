@@ -23,7 +23,7 @@ export function Select(props) {
   let state = useSelectState(props);
 
   // Get props for child elements from useSelect
-  let ref = React.useRef(undefined);
+  let ref = React.useRef(null);
   let {
     labelProps,
     triggerProps,
@@ -136,7 +136,7 @@ function ListBox(props) {
 }
 
 function Option({item, state}) {
-  let ref = React.useRef(undefined);
+  let ref = React.useRef(null);
   let {optionProps, isSelected, isFocused, isDisabled} = useOption({key: item.key}, state, ref);
 
   let backgroundColor;

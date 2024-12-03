@@ -142,7 +142,10 @@ const arrowStyles = style<TooltipRenderProps>({
 
 let InternalTooltipTriggerContext = createContext<TooltipTriggerProps>({});
 
-function Tooltip(props: TooltipProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Display container for Tooltip content. Has a directional arrow dependent on its placement.
+ */
+export const Tooltip = forwardRef(function Tooltip(props: TooltipProps, ref: DOMRef<HTMLDivElement>) {
   let {children, UNSAFE_style, UNSAFE_className = ''} = props;
   let domRef = useDOMRef(ref);
   let {
@@ -193,7 +196,7 @@ function Tooltip(props: TooltipProps, ref: DOMRef<HTMLDivElement>) {
       )}
     </AriaTooltip>
   );
-}
+});
 
 /**
  * TooltipTrigger wraps around a trigger element and a Tooltip. It handles opening and closing
@@ -225,13 +228,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     </AriaTooltipTrigger>
   );
 }
-
-
-/**
- * Display container for Tooltip content. Has a directional arrow dependent on its placement.
- */
-let _Tooltip = forwardRef(Tooltip);
-export {_Tooltip as Tooltip};
 
 
 // This is purely so that storybook generates the types for both Menu and MenuTrigger
