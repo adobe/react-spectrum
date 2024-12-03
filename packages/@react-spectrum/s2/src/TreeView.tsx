@@ -101,7 +101,7 @@ const tree = style({
 
 function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
   let {children, isDetached, isEmphasized} = props;
-  isEmphasized = isDetached ? false : true;
+  isEmphasized = !isDetached;
 
   let renderer;
   if (typeof children === 'function') {
@@ -256,15 +256,15 @@ const treeCellGrid = style({
   },
   borderBottomWidth: {
     default: 0,
-    isDetached: 1,
+    isDetached: 1
   },
   borderStartWidth: {
     default: 0,
-    isDetached: 1,
+    isDetached: 1
   },
   borderEndWidth: {
     default: 0,
-    isDetached: 1,
+    isDetached: 1
   },
   borderStyle: 'solid',
   borderRadius: { // odd behaviour, if this is the last property, then bottom right isn't rounded
