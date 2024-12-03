@@ -41,7 +41,6 @@ export async function pressElement(user, element: HTMLElement, interactionType: 
     // stick to simulting an actual user's keyboard operations as closely as possible
     // There are problems when using this approach though, actions like trying to trigger the select all checkbox and stuff behave oddly.
     act(() => element.focus());
-
     await user.keyboard('[Space]');
   } else if (interactionType === 'touch') {
     await user.pointer({target: element, keys: '[TouchA]'});
