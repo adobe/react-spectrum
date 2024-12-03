@@ -174,7 +174,8 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
           cancelable: true,
           bubbles: true,
           detail: {
-            id,
+            // Use the ref's id because the id here may be the id of the reused node and thus not reflective of the node's actual id
+            id: ref.current?.id ?? id,
             key
           }
         });
