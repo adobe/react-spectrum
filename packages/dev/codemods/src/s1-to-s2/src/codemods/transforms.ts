@@ -1099,7 +1099,7 @@ function updateKeyToId(
 }
 
 export function commentIfNestedColumns(
-  path: NodePath<t.JSXElement>,
+  path: NodePath<t.JSXElement>
 ) {
   const headerPath = path.get('children').find((child) =>
     t.isJSXElement(child.node) &&
