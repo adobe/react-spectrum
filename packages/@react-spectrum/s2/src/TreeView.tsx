@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButtonGroupContext, ActionMenuContext, Checkbox, IconContext, Text, TextContext} from '@react-spectrum/s2';
+import {ActionButtonGroupContext} from './ActionButtonGroup';
+import {ActionMenuContext} from './ActionMenu';
 import {
   ButtonContext,
   Collection,
@@ -23,13 +24,16 @@ import {
   useContextProps
 } from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
+import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
 import {colorMix, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
 import {DOMRef, Key} from '@react-types/shared';
+import {IconContext} from './Icon';
 import {isAndroid} from '@react-aria/utils';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, isValidElement, JSXElementConstructor, ReactElement, useContext, useRef} from 'react';
 import {StylesPropWithHeight, UnsafeStyles} from './style-utils';
+import {Text, TextContext} from './Content';
 import {useButton} from '@react-aria/button';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale} from '@react-aria/i18n';
