@@ -101,8 +101,7 @@ const tree = style({
 
 function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
   let {children, isDetached, isEmphasized} = props;
-  isDetached = true;
-  isEmphasized = false;
+  isEmphasized = isDetached ? false : true;
 
   let renderer;
   if (typeof children === 'function') {
@@ -217,7 +216,7 @@ const treeCellGrid = style({
   borderTopColor: {
     default: 'transparent',
     isSelected: {
-      isFirst: '--rowSelectedBorderColor'
+      isFirst: 'transparent'
     },
     isDetached: {
       default: 'transparent',
@@ -226,7 +225,7 @@ const treeCellGrid = style({
   },
   borderInlineEndColor: {
     default: 'transparent',
-    isSelected: '--rowSelectedBorderColor',
+    isSelected: 'transparent',
     isDetached: {
       default: 'transparent',
       isSelected: '--rowSelectedBorderColor'
@@ -234,9 +233,9 @@ const treeCellGrid = style({
   },
   borderBottomColor: {
     default: 'transparent',
-    isSelected: '--rowSelectedBorderColor',
-    isNextSelected: '--rowSelectedBorderColor',
-    isNextFocused: '--rowForcedFocusBorderColor',
+    isSelected: 'transparent',
+    isNextSelected: 'transparent',
+    isNextFocused: 'transparent',
     isDetached: {
       default: 'transparent',
       isSelected: '--rowSelectedBorderColor'
@@ -244,7 +243,7 @@ const treeCellGrid = style({
   },
   borderInlineStartColor: {
     default: 'transparent',
-    isSelected: '--rowSelectedBorderColor',
+    isSelected: 'transparent',
     isDetached: {
       default: 'transparent',
       isSelected: '--rowSelectedBorderColor'
@@ -255,9 +254,18 @@ const treeCellGrid = style({
     isFirst: 1,
     isDetached: 1
   },
-  borderBottomWidth: 1,
-  borderStartWidth: 1,
-  borderEndWidth: 1,
+  borderBottomWidth: {
+    default: 0,
+    isDetached: 1,
+  },
+  borderStartWidth: {
+    default: 0,
+    isDetached: 1,
+  },
+  borderEndWidth: {
+    default: 0,
+    isDetached: 1,
+  },
   borderStyle: 'solid',
   borderRadius: { // odd behaviour, if this is the last property, then bottom right isn't rounded
     isDetached: '[6px]'
