@@ -13,6 +13,7 @@ import {
   ButtonGroup,
   Checkbox,
   CheckboxGroup,
+  CloseButton,
   ColorArea,
   ColorField,
   ColorSlider,
@@ -23,6 +24,7 @@ import {
   ComboBoxItem,
   Content,
   ContextualHelp,
+  CustomDialog,
   Dialog,
   DialogContainer,
   DialogTrigger,
@@ -68,6 +70,7 @@ import {
   Tooltip,
   TooltipTrigger,
 } from "@react-spectrum/s2";
+import Checkmark from '@react-spectrum/s2/illustrations/gradient/generic1/Checkmark';
 import Cloud from "@react-spectrum/s2/illustrations/linear/Cloud";
 import DropToUpload from "@react-spectrum/s2/illustrations/linear/DropToUpload";
 import Edit from "@react-spectrum/s2/icons/Edit";
@@ -246,6 +249,18 @@ export default function Lazy() {
               </>
             )}
           </Dialog>
+        </DialogTrigger>
+
+        <DialogTrigger>
+          <ActionButton>Illustration</ActionButton>
+          <CustomDialog size="M">
+            <div className={style({display: 'flex', flexDirection: 'column', rowGap: 8, alignItems: 'center'})}>
+              <Checkmark />
+              <Heading slot="title" styles={style({font: 'heading-lg', textAlign: 'center', marginY: 0})}>Thank you!</Heading>
+              <p className={style({font: 'body', textAlign: 'center', marginY: 0})}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+              <CloseButton styles={style({position: 'absolute', top: 12, insetEnd: 12})} />
+            </div>
+          </CustomDialog>
         </DialogTrigger>
 
         <DialogTrigger>
