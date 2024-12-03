@@ -971,6 +971,52 @@ function updateRowFunctionArg(
     childPath.get('expression').isArrowFunctionExpression()
   );
 
+  let tablePath = path.findParent((p) =>
+    t.isJSXElement(p.node) &&
+    t.isJSXIdentifier(p.node.openingElement.name) &&
+    getName(path, p.node.openingElement.name) === 'TableView'
+  );
+
+  let tableHeaderPath = tablePath?.get('children').find((child) =>
+    t.isJSXElement(child.node) &&
+    t.isJSXIdentifier(child.node.openingElement.name) &&
+    getName(child as NodePath<t.JSXElement>, child.node.openingElement.name) === 'TableHeader'
+  ) as NodePath<t.JSXElement> | undefined;
+
+  function findColumnKeyProp(path: NodePath<t.JSXElement>) {
+    let columnKeyProp = null;
+    path.traverse({
+      JSXElement(columnPath) {
+        if (
+          t.isArrowFunctionExpression(columnPath.parentPath.node) &&
+          t.isJSXElement(columnPath.node) &&
+          t.isJSXIdentifier(columnPath.node.openingElement.name) &&
+          getName(columnPath as NodePath<t.JSXElement>, columnPath.node.openingElement.name) === 'Column'
+        ) {
+          let openingElement = columnPath.get('openingElement');
+          let keyPropPath = openingElement.get('attributes').find(attr => 
+            t.isJSXAttribute(attr.node) && 
+            (attr.node.name.name === 'key' || attr.node.name.name === 'id')
+          );
+          keyPropPath?.traverse({
+            Identifier(innerPath) {
+              if (
+                innerPath.node.name === 'column' &&
+                innerPath.parentPath.node.type === 'MemberExpression' &&
+                t.isIdentifier(innerPath.parentPath.node.property)
+              ) {
+                columnKeyProp = innerPath.parentPath.node.property.name;
+              }
+            }
+          });
+        }
+      }
+    });
+    return columnKeyProp || 'id';
+  }
+
+  let columnKey = findColumnKeyProp(tableHeaderPath as NodePath<t.JSXElement>);
+
   if (functionChild && functionChild.isJSXExpressionContainer()) {
     let arrowFuncPath = functionChild.get('expression');
     if (arrowFuncPath.isArrowFunctionExpression()) {
@@ -989,9 +1035,12 @@ function updateRowFunctionArg(
               // Ensure we're not replacing the parameter declaration
               innerPath.node !== params[0]
             ) {
-              // Replace with 'column.id'
+              // Replace with column key
               innerPath.replaceWith(
-                t.memberExpression(t.identifier('column'), t.identifier('id'))
+                t.memberExpression(
+                  t.identifier('column'),
+                  t.identifier(columnKey ?? 'id')
+                )
               );
             }
           }

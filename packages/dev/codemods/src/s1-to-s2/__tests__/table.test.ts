@@ -44,7 +44,7 @@ let items = [
 
 <TableView>
   <TableHeader columns={columns}>
-    {column => <Column>{column.name}</Column>}
+    {column => <Column key={column.name}>{column.name}</Column>}
   </TableHeader>
   <TableBody items={items}>
     {item =>

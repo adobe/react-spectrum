@@ -16,12 +16,12 @@ let items = [
 
 <TableView>
   <TableHeader columns={columns}>
-    {column => <Column>{column.name}</Column>}
+    {column => <Column id={column.name}>{column.name}</Column>}
   </TableHeader>
   <TableBody items={items}>
     {item =>
       (<Row id={item.foo} columns={columns}>
-        {column => <Cell>{item[column.id]}</Cell>}
+        {column => <Cell>{item[column.name]}</Cell>}
       </Row>)
     }
   </TableBody>
