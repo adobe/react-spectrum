@@ -28,7 +28,7 @@ function Example(props) {
 }
 
 function pointerEvent(type, opts) {
-  let evt = new Event(type, {bubbles: true, cancelable: true});
+  let evt = new Event(type, {bubbles: true, cancelable: true, composed: true});
   Object.assign(evt, {
     ctrlKey: false,
     metaKey: false,
@@ -145,11 +145,9 @@ describe('usePress', function () {
       el.releasePointerCapture = jest.fn();
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
       expect(el.releasePointerCapture).toHaveBeenCalled();
-      fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
       // react listens for pointerout and pointerover instead of pointerleave and pointerenter...
       fireEvent(el, pointerEvent('pointerout', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
       fireEvent(document, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
-      fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
       fireEvent(el, pointerEvent('pointerover', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
 
       expect(events).toEqual([
@@ -3743,11 +3741,13 @@ describe('usePress', function () {
       const shadowRoot = setupShadowDOMTest();
 
       const el = shadowRoot.getElementById('testElement');
+      el.releasePointerCapture = jest.fn();
 
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
-      fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
-      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
-      fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      expect(el.releasePointerCapture).toHaveBeenCalled();
+      // react listens for pointerout and pointerover instead of pointerleave and pointerenter...
+      fireEvent(el, pointerEvent('pointerout', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
+      fireEvent(document, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
 
       expect(events).toEqual([
         expect.objectContaining({
@@ -3782,8 +3782,9 @@ describe('usePress', function () {
 
       events = [];
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
-      fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
-      fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      // react listens for pointerout and pointerover instead of pointerleave and pointerenter...
+      fireEvent(el, pointerEvent('pointerout', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
+      fireEvent(el, pointerEvent('pointerover', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
 
       expect(events).toEqual([
@@ -3940,14 +3941,85 @@ describe('usePress', function () {
       ]);
     });
 
+    it('should clean up press state if pointerup was outside the shadow dom', function () {
+      const shadowRoot = setupShadowDOMTest({shouldCancelOnPointerExit: true});
+
+      const el = shadowRoot.getElementById('testElement');
+
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointerout', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
+      fireEvent(document.body, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(document.body, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+
+      expect(events).toEqual([
+        expect.objectContaining({
+          type: 'pressstart',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false,
+          x: 0,
+          y: 0
+        }),
+        expect.objectContaining({
+          type: 'presschange',
+          pressed: true
+        }),
+        expect.objectContaining({
+          type: 'pressend',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        }),
+        expect.objectContaining({
+          type: 'presschange',
+          pressed: false
+        }),
+        expect.objectContaining({
+          type: 'pressstart',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false,
+          x: 0,
+          y: 0
+        }),
+        expect.objectContaining({
+          type: 'presschange',
+          pressed: true
+        }),
+        expect.objectContaining({
+          type: 'pressend',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        }),
+        expect.objectContaining({
+          type: 'presschange',
+          pressed: false
+        })
+      ]);
+    });
+
     it('should cancel press when moving outside and the shouldCancelOnPointerExit option is set', function () {
       const shadowRoot = setupShadowDOMTest({shouldCancelOnPointerExit: true});
 
       const el = shadowRoot.getElementById('testElement');
 
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
-      fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
-      fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      fireEvent(el, pointerEvent('pointerout', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
+      fireEvent(el, pointerEvent('pointerover', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
 
       expect(events).toEqual([
         expect.objectContaining({
