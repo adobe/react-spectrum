@@ -997,7 +997,7 @@ function updateRowFunctionArg(
   ) as NodePath<t.JSXElement> | undefined;
 
   function findColumnKeyProp(path: NodePath<t.JSXElement>) {
-    let columnKeyProp = null;
+    let columnKeyProp = 'id';
     path.traverse({
       JSXElement(columnPath) {
         if (
