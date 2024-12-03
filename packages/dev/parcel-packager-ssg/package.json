@@ -4,11 +4,11 @@
   "private": true,
   "main": "SSGPackager.js",
   "engines": {
-    "parcel": "2.0.0-dev.1599"
+    "parcel": "^2.0.0"
   },
   "dependencies": {
-    "@parcel/plugin": "2.0.0-dev.1601",
-    "@parcel/utils": "2.0.0-dev.1601",
+    "@parcel/plugin": "^2.0.0",
+    "@parcel/utils": "^2.13.0",
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"
   }

@@ -38,7 +38,10 @@ import {useHover} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
-function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref: FocusableRef<HTMLElement>) {
+/**
+ * DatePickers combine a DateField and a Calendar popover to allow users to enter or select a date and time value.
+ */
+export const DatePicker = React.forwardRef(function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
   let {
@@ -50,7 +53,7 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
     pageBehavior
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
-  let targetRef = useRef<HTMLDivElement>(undefined);
+  let targetRef = useRef<HTMLDivElement | null>(null);
   let state = useDatePickerState({
     ...props,
     shouldCloseOnSelect: () => !state.hasTime
@@ -99,10 +102,10 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
   // The format help text is unnecessary for screen reader users because each segment already has a label.
   let description = useFormatHelpText(props);
   if (description && !props.description) {
-    descriptionProps.id = null;
+    descriptionProps.id = undefined;
   }
 
-  let placeholder: DateValue = placeholderValue;
+  let placeholder: DateValue | null | undefined = placeholderValue;
   let timePlaceholder = placeholder && 'hour' in placeholder ? placeholder : null;
   let timeMinValue = props.minValue && 'hour' in props.minValue ? props.minValue : null;
   let timeMaxValue = props.maxValue && 'hour' in props.maxValue ? props.maxValue : null;
@@ -191,10 +194,4 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
       </div>
     </Field>
   );
-}
-
-/**
- * DatePickers combine a DateField and a Calendar popover to allow users to enter or select a date and time value.
- */
-const _DatePicker = React.forwardRef(DatePicker) as <T extends DateValue>(props: SpectrumDatePickerProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
-export {_DatePicker as DatePicker};
+}) as <T extends DateValue>(props: SpectrumDatePickerProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;

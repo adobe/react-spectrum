@@ -183,9 +183,9 @@ export const TableWithResizingFRs = {
   )
 };
 
-function ControlledTableResizing(props: {columns: Array<{name: string, uid: string, width?: ColumnSize | null}>, rows, onResize}) {
+function ControlledTableResizing(props: {columns: Array<{name: string, uid: string, width?: ColumnSize | null}>, rows: typeof defaultRows[0][], onResize}) {
   let {columns, rows = defaultRows, onResize, ...otherProps} = props;
-  let [widths, _setWidths] = useState<Map<Key, ColumnSize>>(() => new Map(columns.filter(col => col.width).map((col) => [col.uid as Key, col.width])));
+  let [widths, _setWidths] = useState<Map<Key, ColumnSize | null>>(() => new Map(columns.filter(col => col.width).map((col) => [col.uid as Key, col.width ?? null])));
 
   let setWidths = useCallback((vals: Map<Key, ColumnSize>) => {
     let controlledKeys = new Set(columns.filter(col => col.width).map((col) => col.uid as Key));
@@ -300,8 +300,8 @@ export const DocExampleControlled = {
 };
 
 function ControlledDocsTable(props: {columns: Array<{name: string, uid: string, width?: ColumnSize | null}>, rows, onResize}) {
-  let {columns, ...otherProps} = props;
-  let [widths, _setWidths] = useState(() => new Map(columns.filter(col => col.width).map((col) => [col.uid as Key, col.width])));
+  let {columns, onResize, ...otherProps} = props;
+  let [widths, _setWidths] = useState(() => new Map(columns.filter(col => col.width).map((col) => [col.uid as Key, col.width ?? null])));
   let setWidths = useCallback((newWidths: Map<Key, ColumnSize>) => {
     let controlledKeys = new Set(columns.filter(col => col.width).map((col) => col.uid as Key));
     let newVals = new Map(Array.from(newWidths).filter(([key]) => controlledKeys.has(key)));
@@ -315,7 +315,7 @@ function ControlledDocsTable(props: {columns: Array<{name: string, uid: string, 
     <DocsTable
       aria-label="Table with selection"
       selectionMode="multiple"
-      onResize={setWidths}
+      onResize={onResize ?? setWidths}
       {...otherProps}>
       <TableHeader columns={cols}>
         {column => (

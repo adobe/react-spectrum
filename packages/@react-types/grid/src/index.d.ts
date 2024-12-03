@@ -19,7 +19,7 @@ export interface GridCollection<T> extends Collection<GridNode<T>> {
   rows: GridNode<T>[]
 }
 
-export interface GridRow<T> {
+export interface GridRow<T> extends Partial<GridNode<T>> {
   key?: Key,
   type: string,
   childNodes: Iterable<Node<T>>

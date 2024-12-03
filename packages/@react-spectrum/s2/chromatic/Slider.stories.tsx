@@ -57,7 +57,7 @@ FillOffset.args = {
 
 export const FormatOptions = (args: any) => (
   <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
-    <Slider {...args} styles={style({width: '[300px]'})} />
+    <Slider {...args} styles={style({width: 300})} />
   </div>
 );
 
@@ -66,6 +66,18 @@ FormatOptions.args = {
   defaultValue: 0,
   maxValue: 500,
   formatOptions: {style: 'currency', currency: 'JPY'}
+};
+
+export const MinMaxValue = (args: any) => (
+  <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
+    <Slider {...args} />
+  </div>
+);
+
+MinMaxValue.args = {
+  label: 'Size',
+  minValue: 1,
+  maxValue: 5
 };
 
 export const ContextualHelpExample = (args: any) => (

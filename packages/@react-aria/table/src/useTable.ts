@@ -96,7 +96,7 @@ export function useTable<T>(props: AriaTableProps, state: TableState<T> | TreeGr
   let {column, direction: sortDirection} = state.sortDescriptor || {};
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/table');
   let sortDescription = useMemo(() => {
-    let columnName = state.collection.columns.find(c => c.key === column)?.textValue;
+    let columnName = state.collection.columns.find(c => c.key === column)?.textValue ?? '';
     return sortDirection && column ? stringFormatter.format(`${sortDirection}Sort`, {columnName}) : undefined;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortDirection, column, state.collection.columns]);
@@ -105,7 +105,9 @@ export function useTable<T>(props: AriaTableProps, state: TableState<T> | TreeGr
 
   // Only announce after initial render, tabbing to the table will tell you the initial sort info already
   useUpdateEffect(() => {
-    announce(sortDescription, 'assertive', 500);
+    if (sortDescription) {
+      announce(sortDescription, 'assertive', 500);
+    }
   }, [sortDescription]);
 
   return {

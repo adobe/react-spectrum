@@ -33,7 +33,10 @@ export interface ColorSliderProps extends Omit<AriaColorSliderProps, 'children' 
 
 export const ColorSliderContext = createContext<ContextValue<ColorSliderProps, DOMRefValue<HTMLDivElement>>>(null);
 
-function ColorSlider(props: ColorSliderProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A ColorSlider allows users to adjust an individual channel of a color value.
+ */
+export const ColorSlider = forwardRef(function ColorSlider(props: ColorSliderProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ColorSliderContext);
   let {UNSAFE_className = '', UNSAFE_style, styles} = props;
   let containerRef = useDOMRef(ref);
@@ -138,10 +141,4 @@ function ColorSlider(props: ColorSliderProps, ref: DOMRef<HTMLDivElement>) {
       </>)}
     </AriaColorSlider>
   );
-}
-
-/**
- * A ColorSlider allows users to adjust an individual channel of a color value.
- */
-let _ColorSlider = forwardRef(ColorSlider);
-export {_ColorSlider as ColorSlider};
+});

@@ -10,35 +10,79 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, Disclosure, DisclosureHeader, DisclosurePanel} from '../src';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Accordion, Disclosure, DisclosurePanel, DisclosureTitle, SpectrumAccordionProps} from '../src';
+import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
-export default {
+const meta: Meta<SpectrumAccordionProps> = {
   title: 'Accordion',
   component: Accordion,
-  argTypes: {}
-} as ComponentMeta<typeof Accordion>;
+  argTypes: {
+    isDisabled: {
+      control: 'boolean'
+    },
+    isQuiet: {
+      control: 'boolean'
+    }
+  }
+};
 
-export type AccordionStory = ComponentStoryObj<typeof Accordion>;
+export default meta;
+type AccordionStory = StoryObj<typeof Accordion>;
 
 export const Default: AccordionStory = {
   render: (args) => (
     <Accordion {...args}>
       <Disclosure id="files">
-        <DisclosureHeader>
+        <DisclosureTitle>
           Files
-        </DisclosureHeader>
+        </DisclosureTitle>
         <DisclosurePanel>
-          <p>Files content</p>
+          Files content
         </DisclosurePanel>
       </Disclosure>
       <Disclosure id="people">
-        <DisclosureHeader>
+        <DisclosureTitle>
           People
-        </DisclosureHeader>
+        </DisclosureTitle>
         <DisclosurePanel>
-          <p>People content</p>
+          People content
+        </DisclosurePanel>
+      </Disclosure>
+    </Accordion>
+  )
+};
+
+export const WithExpandedKeys: AccordionStory = {
+  ...Default,
+  args: {defaultExpandedKeys: ['files']}
+};
+
+export const WithDisabledDisclosure: AccordionStory = {
+  render: (args) => (
+    <Accordion {...args}>
+      <Disclosure id="files">
+        <DisclosureTitle>
+          Your files
+        </DisclosureTitle>
+        <DisclosurePanel>
+          files
+        </DisclosurePanel>
+      </Disclosure>
+      <Disclosure id="shared">
+        <DisclosureTitle>
+          Shared with you
+        </DisclosureTitle>
+        <DisclosurePanel>
+          shared
+        </DisclosurePanel>
+      </Disclosure>
+      <Disclosure id="last" isDisabled>
+        <DisclosureTitle>
+          Last item
+        </DisclosureTitle>
+        <DisclosurePanel>
+          last
         </DisclosurePanel>
       </Disclosure>
     </Accordion>

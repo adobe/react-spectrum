@@ -20,20 +20,21 @@ interface IVirtualizer {
 }
 
 export interface VirtualizerItemOptions {
-  layoutInfo: LayoutInfo,
+  layoutInfo: LayoutInfo | null,
   virtualizer: IVirtualizer,
   ref: RefObject<HTMLElement | null>
 }
 
 export function useVirtualizerItem(options: VirtualizerItemOptions) {
   let {layoutInfo, virtualizer, ref} = options;
+  let key = layoutInfo?.key;
 
   let updateSize = useCallback(() => {
-    if (layoutInfo) {
+    if (key != null && ref.current) {
       let size = getSize(ref.current);
-      virtualizer.updateItemSize(layoutInfo.key, size);
+      virtualizer.updateItemSize(key, size);
     }
-  }, [virtualizer, layoutInfo?.key, ref]);
+  }, [virtualizer, key, ref]);
 
   useLayoutEffect(() => {
     if (layoutInfo?.estimatedSize) {

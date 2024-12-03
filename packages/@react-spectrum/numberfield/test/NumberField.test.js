@@ -2020,6 +2020,28 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', formatter.format(21));
   });
 
+  it.each(locales)('%s can have devanagari numerals entered', async (locale) => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD'}}, {locale});
+
+    act(() => {textField.focus();});
+    await user.keyboard('२१');
+    act(() => {textField.blur();});
+
+    let formatter = new Intl.NumberFormat(locale + '-u-nu-deva', {style: 'currency', currency: 'USD'});
+    expect(textField).toHaveAttribute('value', formatter.format(21));
+  });
+
+  it.each(locales)('%s can have bengali numerals entered', async (locale) => {
+    let {textField} = renderNumberField({onChange: onChangeSpy, formatOptions: {style: 'currency', currency: 'USD'}}, {locale});
+
+    act(() => {textField.focus();});
+    await user.keyboard('২১');
+    act(() => {textField.blur();});
+
+    let formatter = new Intl.NumberFormat(locale + '-u-nu-beng', {style: 'currency', currency: 'USD'});
+    expect(textField).toHaveAttribute('value', formatter.format(21));
+  });
+
   describe('beforeinput', () => {
     let getTargetRanges = InputEvent.prototype.getTargetRanges;
     beforeEach(() => {

@@ -25,7 +25,8 @@ const config: StorybookConfig = {
     "@storybook/addon-interactions",
     './custom-addons/provider/register',
     // "@storybook/addon-styling-webpack",
-    "storybook-dark-mode"
+    "storybook-dark-mode",
+    "@storybook/addon-a11y",
   ],
   framework: {
     name: "storybook-react-parcel",

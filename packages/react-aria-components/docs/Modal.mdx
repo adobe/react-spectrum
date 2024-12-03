@@ -49,22 +49,20 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
   <Button>Sign up…</Button>
   <Modal>
     <Dialog>
-      {({close}) => (
-        <form>
-          <Heading slot="title">Sign up</Heading>
-          <TextField autoFocus>
-            <Label>First Name: </Label>
-            <Input />
-          </TextField>
-          <TextField>
-            <Label>Last Name: </Label>
-            <Input />
-          </TextField>
-          <Button onPress={close}>
-            Submit
-          </Button>
-        </form>
-      )}
+      <form>
+        <Heading slot="title">Sign up</Heading>
+        <TextField autoFocus>
+          <Label>First Name: </Label>
+          <Input />
+        </TextField>
+        <TextField>
+          <Label>Last Name: </Label>
+          <Input />
+        </TextField>
+        <Button slot="close">
+          Submit
+        </Button>
+      </form>
     </Dialog>
   </Modal>
 </DialogTrigger>
@@ -209,11 +207,9 @@ By default, modals can be closed by pressing the <Keyboard>Escape</Keyboard> key
   <Button>Open dialog</Button>
   <Modal isKeyboardDismissDisabled>
     <Dialog>
-      {({close}) => <>
-        <Heading slot="title">Notice</Heading>
-        <p>You must close this dialog using the button below.</p>
-        <Button onPress={close}>Close</Button>
-      </>}
+      <Heading slot="title">Notice</Heading>
+      <p>You must close this dialog using the button below.</p>
+      <Button slot="close">Close</Button>
     </Dialog>
   </Modal>
 </DialogTrigger>
@@ -231,11 +227,9 @@ import {ModalOverlay} from 'react-aria-components';
   <ModalOverlay className="my-overlay">
     <Modal className="my-modal">
       <Dialog>
-        {({close}) => <>
-          <Heading slot="title">Notice</Heading>
-          <p>This is a modal with a custom modal overlay.</p>
-          <Button onPress={close}>Close</Button>
-        </>}
+        <Heading slot="title">Notice</Heading>
+        <p>This is a modal with a custom modal overlay.</p>
+        <Button slot="close">Close</Button>
       </Dialog>
     </Modal>
   </ModalOverlay>

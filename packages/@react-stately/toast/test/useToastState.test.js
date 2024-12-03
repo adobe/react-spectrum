@@ -36,7 +36,7 @@ describe('useToastState', () => {
     expect(result.current.visibleToasts[0].content).toBe(newValue[0].content);
     expect(result.current.visibleToasts[0].animation).toBe('entering');
     expect(result.current.visibleToasts[0].timeout).toBe(0);
-    expect(result.current.visibleToasts[0].timer).toBe(null);
+    expect(result.current.visibleToasts[0].timer).toBe(undefined);
     expect(result.current.visibleToasts[0]).toHaveProperty('key');
   });
 
@@ -49,7 +49,7 @@ describe('useToastState', () => {
     expect(result.current.visibleToasts[0].content).toBe('Test');
     expect(result.current.visibleToasts[0].animation).toBe('entering');
     expect(result.current.visibleToasts[0].timeout).toBe(5000);
-    expect(result.current.visibleToasts[0].timer).not.toBe(null);
+    expect(result.current.visibleToasts[0].timer).not.toBe(undefined);
     expect(result.current.visibleToasts[0]).toHaveProperty('key');
   });
 

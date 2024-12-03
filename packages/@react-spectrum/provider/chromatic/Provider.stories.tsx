@@ -114,7 +114,7 @@ const ResponsiveStyleTemplate = () => (
 
 const CustomResponsivStylePropsTemplate = () => {
   let Breakpoint = () => {
-    let {matchedBreakpoints} = useBreakpoint();
+    let {matchedBreakpoints} = useBreakpoint()!;
     let breakpoint = matchedBreakpoints[0];
     let width = {base: 'size-1600', XS: 'size-2000', S: 'size-2400', M: 'size-3000', L: 'size-3400', XL: 'size-4600', XXL: 'size-6000'};
     return (
@@ -141,7 +141,7 @@ const CustomResponsivStylePropsTemplate = () => {
 
 const BreakpointOmittedTemplate = () => {
   let Breakpoint = () => {
-    let {matchedBreakpoints} = useBreakpoint();
+    let {matchedBreakpoints} = useBreakpoint()!;
     let breakpoint = matchedBreakpoints[0];
     let width = {base: 'size-1600', S: 'size-2400', L: 'size-3400'};
     return (

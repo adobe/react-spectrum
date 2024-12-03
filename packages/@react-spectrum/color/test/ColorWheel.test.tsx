@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installMouseEvent, installPointerEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, installMouseEvent, installPointerEvent, pointerMap, renderv3 as render} from '@react-spectrum/test-utils-internal';
 import {ColorWheel} from '../';
 import {ControlledHSL} from '../stories/ColorWheel.stories';
 import {parseColor} from '@react-stately/color';
@@ -297,7 +297,7 @@ describe('ColorWheel', () => {
       let {container: _container, getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} />);
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
-      let container = _container?.firstChild?.firstChild as HTMLElement;
+      let container = _container?.firstChild?.firstChild?.firstChild as HTMLElement;
       container.getBoundingClientRect = getBoundingClientRect;
 
       expect(document.activeElement).not.toBe(slider);
@@ -320,7 +320,7 @@ describe('ColorWheel', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {container: _container, getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} isDisabled />);
       let slider = getByRole('slider');
-      let container = _container?.firstChild?.firstChild as HTMLElement;
+      let container = _container?.firstChild?.firstChild?.firstChild as HTMLElement;
       container.getBoundingClientRect = getBoundingClientRect;
 
       expect(document.activeElement).not.toBe(slider);
@@ -341,7 +341,7 @@ describe('ColorWheel', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {container: _container, getByRole} = render(<ControlledHSL defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} />);
       let slider = getByRole('slider');
-      let container = _container?.firstChild?.firstChild?.firstChild as HTMLElement;
+      let container = _container?.firstChild?.firstChild?.firstChild?.firstChild as HTMLElement;
       container.getBoundingClientRect = getBoundingClientRect;
 
       expect(document.activeElement).not.toBe(slider);
@@ -372,7 +372,7 @@ describe('ColorWheel', () => {
                ...
              input.spectrum-ColorWheel-slider
     */
-    let handleColorElement = _container?.firstChild?.firstChild?.nextSibling?.firstChild as HTMLElement;
+    let handleColorElement = _container?.firstChild?.firstChild?.firstChild?.nextSibling?.firstChild as HTMLElement;
     let thumbColor = parseColor(handleColorElement.style.backgroundColor);
     expect(defaultColor.getChannelValue('alpha')).toEqual(0.5);
     expect(thumbColor.getChannelValue('alpha')).toEqual(1);

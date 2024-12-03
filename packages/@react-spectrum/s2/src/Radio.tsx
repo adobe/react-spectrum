@@ -74,7 +74,7 @@ const circle = style<RenderProps>({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  transition: 'default', /* RSP v3 was 'all 200ms' */
+  transition: 'default',
   borderRadius: 'full',
   borderStyle: 'solid',
   boxSizing: 'border-box',
@@ -102,7 +102,11 @@ const circle = style<RenderProps>({
   }
 });
 
-function Radio(props: RadioProps, ref: FocusableRef<HTMLLabelElement>) {
+/**
+ * Radio buttons allow users to select a single option from a list of mutually exclusive options.
+ * All possible options are exposed up front for users to compare.
+ */
+export const Radio = /*#__PURE__*/ forwardRef(function Radio(props: RadioProps, ref: FocusableRef<HTMLLabelElement>) {
   let {children, UNSAFE_className = '', UNSAFE_style} = props;
   let circleRef = useRef(null);
   let inputRef = useRef<HTMLInputElement | null>(null);
@@ -138,11 +142,4 @@ function Radio(props: RadioProps, ref: FocusableRef<HTMLLabelElement>) {
       )}
     </AriaRadio>
   );
-}
-
-/**
- * Radio buttons allow users to select a single option from a list of mutually exclusive options.
- * All possible options are exposed up front for users to compare.
- */
-let _Radio = /*#__PURE__*/ forwardRef(Radio);
-export {_Radio as Radio};
+});

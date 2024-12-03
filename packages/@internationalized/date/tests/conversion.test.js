@@ -58,6 +58,11 @@ describe('CalendarDate conversion', function () {
       let date = new CalendarDate(2020, 2, 3);
       expect(toAbsolute(date, 'America/Los_Angeles')).toBe(new Date('2020-02-03T08:00Z').getTime());
     });
+
+    it('should support BC dates', function () {
+      let date = new CalendarDateTime('BC', 2, 1, 1);
+      expect(toAbsolute(date, 'UTC')).toEqual(new Date('-000001-01-01T00:00Z').getTime());
+    });
   });
 
   describe('toDate', function () {
@@ -104,6 +109,11 @@ describe('CalendarDate conversion', function () {
       let date = new CalendarDate(2020, 2, 3);
       expect(toDate(date, 'America/Los_Angeles')).toEqual(new Date('2020-02-03T08:00Z'));
     });
+
+    it('should support BC dates', function () {
+      let date = new CalendarDateTime('BC', 2, 1, 1);
+      expect(toDate(date, 'UTC')).toEqual(new Date('-000001-01-01T00:00Z'));
+    });
   });
 
   describe('possibleAbsolutes', function () {
@@ -135,6 +145,17 @@ describe('CalendarDate conversion', function () {
 
       date = fromAbsolute(new Date('2020-02-03T10:00Z').getTime(), 'America/New_York');
       expect(date).toEqual(new ZonedDateTime(2020, 2, 3, 'America/New_York', -18000000, 5));
+    });
+
+    it('should convert a date from absolute in the BC era', function () {
+      let date = fromAbsolute(new Date('0000-01-01T00:00:00.000Z').getTime(), 'UTC');
+      expect(date).toEqual(new ZonedDateTime('BC', 1, 1, 1, 'UTC', 0, 0, 0, 0));
+      date = fromAbsolute(new Date('0001-01-01T00:00:00.000Z').getTime(), 'UTC');
+      expect(date).toEqual(new ZonedDateTime('AD', 1, 1, 1, 'UTC', 0, 0, 0, 0));
+      date = fromAbsolute(new Date('-000001-01-01T00:00:00.000Z').getTime(), 'UTC');
+      expect(date).toEqual(new ZonedDateTime('BC', 2, 1, 1, 'UTC', 0, 0, 0, 0));
+      date = fromAbsolute(new Date('-000009-01-01T00:00:00.000Z').getTime(), 'UTC');
+      expect(date).toEqual(new ZonedDateTime('BC', 10, 1, 1, 'UTC', 0, 0, 0, 0));
     });
   });
 

@@ -17,10 +17,10 @@ import {
 } from 'react-aria-components';
 import {bar, track} from './bar-utils'  with {type: 'macro'};
 import {createContext, forwardRef, ReactNode} from 'react';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMRef, DOMRefValue, LabelPosition} from '@react-types/shared';
 import {FieldLabel} from './Field';
 import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {size, style} from '../style' with {type: 'macro'};
+import {lightDark, style} from '../style' with {type: 'macro'};
 import {SkeletonWrapper} from './Skeleton';
 import {Text} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
@@ -37,8 +37,15 @@ interface MeterStyleProps {
    * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL',
-  /** The static color style to apply. Useful when the button appears over a color background. */
-  staticColor?: 'white' | 'black'
+  /**
+   * The static color style to apply. Useful when the button appears over a color background.
+   */
+  staticColor?: 'white' | 'black',
+  /**
+   * The label's overall position relative to the element it is labeling.
+   * @default 'top'
+   */
+  labelPosition?: LabelPosition
 }
 
 export interface MeterProps extends Omit<AriaMeterProps, 'children' | 'className' | 'style'>, MeterStyleProps, StyleProps {
@@ -60,12 +67,12 @@ const valueStyles = style({
 const trackStyles = style({
   ...track(),
   height: {
-    default: size(6),
+    default: 6,
     size: {
       S: 4, // progress-bar-thickness-small
-      M: size(6), // progress-bar-thickness-medium
+      M: 6, // progress-bar-thickness-medium
       L: 8, // progress-bar-thickness-large
-      XL: size(10) // progress-bar-thickness-extra-large
+      XL: 10 // progress-bar-thickness-extra-large
     }
   }
 });
@@ -75,11 +82,11 @@ const fillStyles = style<MeterStyleProps>({
   borderStyle: 'none',
   borderRadius: 'full',
   backgroundColor: {
-    default: 'informative',
+    default: lightDark('informative-800', 'informative-900'), // 'informative-visual',
     variant: {
-      positive: 'positive',
-      notice: 'notice',
-      negative: 'negative'
+      positive: lightDark('positive-800', 'positive-900'), // 'positive-visual',
+      notice: lightDark('notice-800', 'notice-900'), // 'notice-visual',
+      negative: lightDark('negative-800', 'negative-900') // 'negative-visual'
     },
     staticColor: {
       white: {
@@ -94,7 +101,11 @@ const fillStyles = style<MeterStyleProps>({
   }
 });
 
-function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Meters are visual representations of a quantity or an achievement.
+ * Their progress is determined by user actions, rather than system actions.
+ */
+export const Meter = forwardRef(function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, MeterContext);
   let domRef = useDOMRef(ref);
 
@@ -106,6 +117,7 @@ function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
     UNSAFE_className = '',
     UNSAFE_style,
     variant = 'informative',
+    labelPosition = 'top',
     ...groupProps
   } = props;
 
@@ -118,11 +130,11 @@ function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
         size,
         variant,
         staticColor,
-        labelPosition: 'top'
+        labelPosition
       }, styles)}>
       {({percentage, valueText}) => (
         <>
-          {label && <FieldLabel size={size} labelAlign="start" labelPosition="top" staticColor={staticColor}>{label}</FieldLabel>}
+          {label && <FieldLabel size={size} labelAlign="start" labelPosition={labelPosition} staticColor={staticColor}>{label}</FieldLabel>}
           {label && <Text styles={valueStyles({size, labelAlign: 'end', staticColor})}>{valueText}</Text>}
           <SkeletonWrapper>
             <div className={trackStyles({staticColor, size})}>
@@ -133,11 +145,4 @@ function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
       )}
     </AriaMeter>
   );
-}
-
-/**
- * Meters are visual representations of a quantity or an achievement.
- * Their progress is determined by user actions, rather than system actions.
- */
-let _Meter = forwardRef(Meter);
-export {_Meter as Meter};
+});

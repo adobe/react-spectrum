@@ -67,7 +67,7 @@ export interface PositionAria {
   /** Props for the overlay tip arrow if any. */
   arrowProps: DOMAttributes,
   /** Placement of the overlay with respect to the overlay trigger. */
-  placement: PlacementAxis,
+  placement: PlacementAxis | null,
   /** Updates the position of the overlay. */
   updatePosition(): void
 }
@@ -77,8 +77,7 @@ interface ScrollAnchor {
   offset: number
 }
 
-// @ts-ignore
-let visualViewport = typeof document !== 'undefined' && window.visualViewport;
+let visualViewport = typeof document !== 'undefined' ? window.visualViewport : null;
 
 /**
  * Handles positioning overlays like popovers and menus relative to a trigger
@@ -103,13 +102,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     maxHeight,
     arrowBoundaryOffset = 0
   } = props;
-  let [position, setPosition] = useState<PositionResult>({
-    position: {},
-    arrowOffsetLeft: undefined,
-    arrowOffsetTop: undefined,
-    maxHeight: undefined,
-    placement: undefined
-  });
+  let [position, setPosition] = useState<PositionResult | null>(null);
 
   let deps = [
     shouldUpdatePosition,
@@ -154,17 +147,17 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     // changes, the focused element appears to stay in the same position.
     let anchor: ScrollAnchor | null = null;
     if (scrollRef.current && scrollRef.current.contains(document.activeElement)) {
-      let anchorRect = document.activeElement.getBoundingClientRect();
+      let anchorRect = document.activeElement?.getBoundingClientRect();
       let scrollRect = scrollRef.current.getBoundingClientRect();
       // Anchor from the top if the offset is in the top half of the scrollable element,
       // otherwise anchor from the bottom.
       anchor = {
         type: 'top',
-        offset: anchorRect.top - scrollRect.top
+        offset: (anchorRect?.top ?? 0) - scrollRect.top
       };
       if (anchor.offset > scrollRect.height / 2) {
         anchor.type = 'bottom';
-        anchor.offset = anchorRect.bottom - scrollRect.bottom;
+        anchor.offset = (anchorRect?.bottom ?? 0) - scrollRect.bottom;
       }
     }
 
@@ -192,6 +185,10 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       arrowBoundaryOffset
     });
 
+    if (!position.position) {
+      return;
+    }
+
     // Modify overlay styles directly so positioning happens immediately without the need of a second render
     // This is so we don't have to delay autoFocus scrolling or delay applying preventScroll for popovers
     overlay.style.top = '';
@@ -199,11 +196,11 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     overlay.style.left = '';
     overlay.style.right = '';
 
-    Object.keys(position.position).forEach(key => overlay.style[key] = position.position[key] + 'px');
-    overlay.style.maxHeight = position.maxHeight != null ?  position.maxHeight + 'px' : undefined;
+    Object.keys(position.position).forEach(key => overlay.style[key] = (position.position!)[key] + 'px');
+    overlay.style.maxHeight = position.maxHeight != null ?  position.maxHeight + 'px' : '';
 
     // Restore scroll position relative to anchor element.
-    if (anchor) {
+    if (anchor && document.activeElement && scrollRef.current) {
       let anchorRect = document.activeElement.getBoundingClientRect();
       let scrollRect = scrollRef.current.getBoundingClientRect();
       let newOffset = anchorRect[anchor.type] - scrollRect[anchor.type];
@@ -268,7 +265,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
 
   let close = useCallback(() => {
     if (!isResizing.current) {
-      onClose();
+      onClose?.();
     }
   }, [onClose, isResizing]);
 
@@ -285,17 +282,17 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       style: {
         position: 'absolute',
         zIndex: 100000, // should match the z-index in ModalTrigger
-        ...position.position,
-        maxHeight: position.maxHeight ?? '100vh'
+        ...position?.position,
+        maxHeight: position?.maxHeight ?? '100vh'
       }
     },
-    placement: position.placement,
+    placement: position?.placement ?? null,
     arrowProps: {
       'aria-hidden': 'true',
       role: 'presentation',
       style: {
-        left: position.arrowOffsetLeft,
-        top: position.arrowOffsetTop
+        left: position?.arrowOffsetLeft,
+        top: position?.arrowOffsetTop
       }
     },
     updatePosition

@@ -67,7 +67,7 @@ exports[`Handles Grid 1`] = `
     gridTemplateAreas: ["header  header", "sidebar content", "footer  footer"],
     gridTemplateColumns: ["1fr", "3fr"],
     gridTemplateRows: [80, "auto", 80],
-    height: "[480px]",
+    height: 480,
     gap: 8
   })}>
   Test
@@ -178,7 +178,7 @@ import { style } from "@react-spectrum/s2/style" with { type: "macro" };
 <TextField label="Name" styles={style({
   width: {
     default: 160,
-    lg: "[400px]"
+    lg: 400
   }
 })} />"
 `;
@@ -190,7 +190,7 @@ import { style } from "@react-spectrum/s2/style" with { type: "macro" };
 <TextField label="Name" styles={style({
   width: {
     default: 160,
-    lg: "[400px]"
+    lg: 400
   }
 })} />"
 `;

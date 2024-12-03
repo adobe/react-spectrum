@@ -66,7 +66,10 @@ export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<
 export const ComboBoxContext = createContext<ContextValue<ComboBoxProps<any>, HTMLDivElement>>(null);
 export const ComboBoxStateContext = createContext<ComboBoxState<any> | null>(null);
 
-function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A combo box combines a text input with a listbox, allowing users to filter a list of options to items matching a query.
+ */
+export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ComboBoxContext);
   let {children, isDisabled = false, isInvalid = false, isRequired = false} = props;
   let content = useMemo(() => (
@@ -88,7 +91,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
       {collection => <ComboBoxInner props={props} collection={collection} comboBoxRef={ref} />}
     </CollectionBuilder>
   );
-}
+});
 
 interface ComboBoxInnerProps<T extends object> {
   props: ComboBoxProps<T>,
@@ -219,9 +222,3 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     </Provider>
   );
 }
-
-/**
- * A combo box combines a text input with a listbox, allowing users to filter a list of options to items matching a query.
- */
-const _ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(ComboBox);
-export {_ComboBox as ComboBox};

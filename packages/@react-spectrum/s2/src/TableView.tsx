@@ -16,6 +16,7 @@ import {
   Collection,
   ColumnRenderProps,
   ColumnResizer,
+  ContextValue,
   Key,
   Provider,
   Cell as RACCell,
@@ -44,9 +45,9 @@ import {
 import {centerPadding, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
-import {colorMix, fontRelative, lightDark, size, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {colorMix, fontRelative, lightDark, space, style} from '../style' with {type: 'macro'};
 import {ColumnSize} from '@react-types/table';
-import {DOMRef, LoadingState, Node} from '@react-types/shared';
+import {DOMRef, DOMRefValue, forwardRefType, LoadingState, Node} from '@react-types/shared';
 import {GridNode} from '@react-types/grid';
 import {IconContext} from './Icon';
 // @ts-ignore
@@ -54,7 +55,7 @@ import intlMessages from '../intl/*.json';
 import {LayoutNode} from '@react-stately/layout';
 import {Menu, MenuItem, MenuTrigger} from './Menu';
 import {mergeStyles} from '../style/runtime';
-import Nubbin from '../ui-icons/S2_Icon_MoveHorizontalCircleTableWidget_16_N.svg';
+import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
 import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
@@ -65,6 +66,7 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {useLoadMore} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useScale} from './utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 import {VisuallyHidden} from 'react-aria';
 
 interface S2TableProps {
@@ -145,7 +147,7 @@ const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boo
   },
   outlineStyle: 'solid',
   borderRadius: {
-    default: size(6),
+    default: '[6px]',
     isQuiet: 'none'
   },
   // Multiple browser bugs from scrollIntoView and scrollPadding:
@@ -197,7 +199,7 @@ export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
     // TableLayout's buildCollection always sets the body width to the max width between the header width, but
     // we want the body to be sticky and only as wide as the table so it is always in view if loading/empty
     if (children?.length === 0) {
-      layoutInfo.rect.width = this.virtualizer.visibleRect.width - 80;
+      layoutInfo.rect.width = this.virtualizer!.visibleRect.width - 80;
     }
 
     return [
@@ -210,7 +212,7 @@ export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
     let layoutNode = super.buildLoader(node, x, y);
     let {layoutInfo} = layoutNode;
     layoutInfo.allowOverflow = true;
-    layoutInfo.rect.width = this.virtualizer.visibleRect.width;
+    layoutInfo.rect.width = this.virtualizer!.visibleRect.width;
     layoutInfo.isSticky = true;
     return layoutNode;
   }
@@ -222,7 +224,7 @@ export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
     layoutInfo.allowOverflow = true;
     // If loading or empty, we'll want the body to be sticky and centered
     if (children?.length === 0) {
-      layoutInfo.rect = new Rect(40, 40, this.virtualizer.visibleRect.width - 80, this.virtualizer.visibleRect.height - 80);
+      layoutInfo.rect = new Rect(40, 40, this.virtualizer!.visibleRect.width - 80, this.virtualizer!.visibleRect.height - 80);
       layoutInfo.isSticky = true;
     }
 
@@ -251,7 +253,13 @@ export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
   }
 }
 
-function TableView(props: TableViewProps, ref: DOMRef<HTMLDivElement>) {
+export const TableContext = createContext<ContextValue<TableViewProps, DOMRefValue<HTMLDivElement>>>(null);
+
+/**
+ * Tables are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
+ */
+export const TableView = forwardRef(function TableView(props: TableViewProps, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, TableContext);
   let {
     UNSAFE_style,
     UNSAFE_className,
@@ -339,7 +347,7 @@ function TableView(props: TableViewProps, ref: DOMRef<HTMLDivElement>) {
       </UNSTABLE_Virtualizer>
     </ResizableTableContainer>
   );
-}
+});
 
 const centeredWrapper = style({
   display: 'flex',
@@ -354,8 +362,9 @@ export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 
 /**
  * The body of a `<Table>`, containing the table rows.
  */
-export function TableBody<T extends object>(props: TableBodyProps<T>) {
+export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableBody<T extends object>(props: TableBodyProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {items, renderEmptyState, children} = props;
+  let domRef = useDOMRef(ref);
   let {loadingState} = useContext(InternalTableContext);
   let emptyRender;
   let renderer = children;
@@ -410,6 +419,8 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
 
   return (
     <RACTableBody
+      // @ts-ignore
+      ref={domRef}
       className={style({height: 'full'})}
       {...props}
       renderEmptyState={emptyRender}
@@ -417,7 +428,7 @@ export function TableBody<T extends object>(props: TableBodyProps<T>) {
       {renderer}
     </RACTableBody>
   );
-}
+});
 
 const cellFocus = {
   outlineStyle: {
@@ -427,7 +438,7 @@ const cellFocus = {
   outlineOffset: -2,
   outlineWidth: 2,
   outlineColor: 'focus-ring',
-  borderRadius: size(6)
+  borderRadius: '[6px]'
 } as const;
 
 function CellFocusRing() {
@@ -493,14 +504,15 @@ export interface ColumnProps extends RACColumnProps {
 /**
  * A column within a `<Table>`.
  */
-export function Column(props: ColumnProps) {
+export const Column = forwardRef(function Column(props: ColumnProps, ref: DOMRef<HTMLDivElement>) {
   let {isHeaderRowHovered} = useContext(InternalTableHeaderContext);
   let {isQuiet} = useContext(InternalTableContext);
   let {allowsResizing, children, align = 'start'} = props;
+  let domRef = useDOMRef(ref);
   let isColumnResizable = allowsResizing;
 
   return (
-    <RACColumn {...props} style={{borderInlineEndColor: 'transparent'}} className={renderProps => columnStyles({...renderProps, isColumnResizable, align, isQuiet})}>
+    <RACColumn {...props} ref={domRef} style={{borderInlineEndColor: 'transparent'}} className={renderProps => columnStyles({...renderProps, isColumnResizable, align, isQuiet})}>
       {({allowsSorting, sortDirection, isFocusVisible, sort, startResize, isHovered}) => (
         <>
           {/* Note this is mainly for column's without a dropdown menu. If there is a dropdown menu, the button is styled to have a focus ring for simplicity
@@ -522,7 +534,7 @@ export function Column(props: ColumnProps) {
       )}
     </RACColumn>
   );
-}
+});
 
 const columnContentWrapper = style({
   minWidth: 0,
@@ -608,7 +620,7 @@ const resizerHandleContainer = style({
   height: 'full',
   position: 'absolute',
   top: 0,
-  insetEnd: size(-6),
+  insetEnd: space(-6),
   cursor: {
     default: 'none',
     resizableDirection: {
@@ -616,11 +628,6 @@ const resizerHandleContainer = style({
       'right': 'w-resize',
       'both': 'ew-resize'
     }
-  },
-  // So that the user can still hover + drag the resizer even though it's hit area is partially in the adjacent column's space
-  '--focus-ring-color': {
-    type: 'outlineColor',
-    value: 'focus-ring'
   }
 });
 
@@ -628,8 +635,8 @@ const resizerHandle = style({
   backgroundColor: {
     default: 'transparent',
     isHovered: 'gray-300',
-    isFocusVisible: '--focus-ring-color',
-    isResizing: '--focus-ring-color',
+    isFocusVisible: lightDark('informative-900', 'informative-700'), // --spectrum-informative-background-color-default, can't use `informative` because that will use the focusVisible version
+    isResizing: lightDark('informative-900', 'informative-700'),
     forcedColors: {
       default: 'Background',
       isHovered: 'ButtonBorder',
@@ -642,11 +649,11 @@ const resizerHandle = style({
     isResizing: 'screen'
   },
   width: {
-    default: size(1),
-    isResizing: size(2)
+    default: 1,
+    isResizing: 2
   },
   position: 'absolute',
-  insetStart: size(6)
+  insetStart: space(6)
 });
 
 const columnHeaderText = style({
@@ -672,10 +679,10 @@ const chevronIcon = style({
 const nubbin = style({
   position: 'absolute',
   top: 0,
-  insetStart: size(-1),
+  insetStart: space(-1),
   size: fontRelative(16),
   fill: {
-    default: '--focus-ring-color',
+    default: lightDark('informative-900', 'informative-700'), // --spectrum-informative-background-color-default, can't use `informative` because that won't be the background color value
     forcedColors: 'Highlight'
   },
   '--iconPrimary': {
@@ -826,15 +833,20 @@ export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style
 /**
  * A header within a `<Table>`, containing the table columns.
  */
-export function TableHeader<T extends object>({columns, children}: TableHeaderProps<T>) {
+export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableHeader<T extends object>({columns, children}: TableHeaderProps<T>, ref: DOMRef<HTMLDivElement>) {
   let scale = useScale();
   let {selectionBehavior, selectionMode} = useTableOptions();
   let {isQuiet} = useContext(InternalTableContext);
   let [isHeaderRowHovered, setHeaderRowHovered] = useState(false);
+  let domRef = useDOMRef(ref);
 
   return (
     <InternalTableHeaderContext.Provider value={{isHeaderRowHovered}}>
-      <RACTableHeader onHoverChange={setHeaderRowHovered} className={tableHeader}>
+      <RACTableHeader
+        // @ts-ignore
+        ref={domRef}
+        onHoverChange={setHeaderRowHovered}
+        className={tableHeader}>
         {/* Add extra columns for selection. */}
         {selectionBehavior === 'toggle' && (
           // Also isSticky prop is applied just for the layout, will decide what the RAC api should be later
@@ -861,7 +873,7 @@ export function TableHeader<T extends object>({columns, children}: TableHeaderPr
       </RACTableHeader>
     </InternalTableHeaderContext.Provider>
   );
-}
+});
 
 function VisuallyHiddenSelectAllLabel() {
   let checkboxProps = useSlottedContext(RACCheckboxContext, 'selection');
@@ -972,13 +984,15 @@ export interface CellProps extends RACCellProps, Pick<ColumnProps, 'align' | 'sh
 /**
  * A cell within a table row.
  */
-export function Cell(props: CellProps) {
+export const Cell = forwardRef(function Cell(props: CellProps, ref: DOMRef<HTMLDivElement>) {
   let {children, isSticky, showDivider = false, align, textValue, ...otherProps} = props;
+  let domRef = useDOMRef(ref);
   let tableVisualOptions = useContext(InternalTableContext);
   textValue ||= typeof children === 'string' ? children : undefined;
 
   return (
     <RACCell
+      ref={domRef}
       // Also isSticky prop is applied just for the layout, will decide what the RAC api should be later
       // @ts-ignore
       isSticky={isSticky}
@@ -997,7 +1011,7 @@ export function Cell(props: CellProps) {
       )}
     </RACCell>
   );
-}
+});
 
 // Use color-mix instead of transparency so sticky cells work correctly.
 const selectedBackground = lightDark(colorMix('gray-25', 'informative-900', 10), colorMix('gray-25', 'informative-700', 10));
@@ -1005,7 +1019,7 @@ const selectedActiveBackground = lightDark(colorMix('gray-25', 'informative-900'
 const rowBackgroundColor = {
   default: {
     default: 'gray-25',
-    isQuiet: 'transparent'
+    isQuiet: '--s2-container-bg'
   },
   isFocusVisibleWithin: colorMix('gray-25', 'gray-900', 7), // table-row-hover-color
   isHovered: colorMix('gray-25', 'gray-900', 7), // table-row-hover-color
@@ -1079,12 +1093,15 @@ export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'ch
 /**
  * A row within a `<Table>`.
  */
-export function Row<T extends object>({id, columns, children, ...otherProps}: RowProps<T>) {
+export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T extends object>({id, columns, children, ...otherProps}: RowProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {selectionBehavior, selectionMode} = useTableOptions();
   let tableVisualOptions = useContext(InternalTableContext);
+  let domRef = useDOMRef(ref);
 
   return (
     <RACRow
+      // @ts-ignore
+      ref={domRef}
       id={id}
       className={renderProps => row({
         ...renderProps,
@@ -1101,10 +1118,4 @@ export function Row<T extends object>({id, columns, children, ...otherProps}: Ro
       </Collection>
     </RACRow>
   );
-}
-
-/**
- * Tables are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
- */
-const _TableView = forwardRef(TableView);
-export {_TableView as TableView};
+});

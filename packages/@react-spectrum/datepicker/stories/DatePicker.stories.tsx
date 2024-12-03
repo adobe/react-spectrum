@@ -332,12 +332,12 @@ function Example(props) {
   let {locale: defaultLocale} = useLocale();
 
   let pref = preferences.find(p => p.locale === locale);
-  let preferredCalendars = React.useMemo(() => pref ? pref.ordering.split(' ').map(p => calendars.find(c => c.key === p)).filter(Boolean) : [calendars[0]], [pref]);
+  let preferredCalendars = React.useMemo(() => pref ? pref.ordering.split(' ').map(p => calendars.find(c => c.key === p)).filter(v => v != null) : [calendars[0]], [pref]);
   let otherCalendars = React.useMemo(() => calendars.filter(c => !preferredCalendars.some(p => p.key === c.key)), [preferredCalendars]);
 
   let updateLocale = locale => {
     setLocale(locale);
-    let pref = preferences.find(p => p.locale === locale);
+    let pref = preferences.find(p => p.locale === locale)!;
     setCalendar(pref.ordering.split(' ')[0]);
   };
 
