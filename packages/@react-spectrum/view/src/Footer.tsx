@@ -16,7 +16,10 @@ import {filterDOMProps} from '@react-aria/utils';
 import {FooterProps} from '@react-types/view';
 import React, {forwardRef} from 'react';
 
-function Footer(props: FooterProps, ref: DOMRef) {
+/**
+ * Footer represents a footer within a Spectrum container.
+ */
+export const Footer = forwardRef(function Footer(props: FooterProps, ref: DOMRef) {
   props = useSlotProps(props, 'footer');
   let {
     children,
@@ -32,10 +35,4 @@ function Footer(props: FooterProps, ref: DOMRef) {
       </ClearSlots>
     </footer>
   );
-}
-
-/**
- * Footer represents a footer within a Spectrum container.
- */
-const _Footer = forwardRef(Footer);
-export {_Footer as Footer};
+});

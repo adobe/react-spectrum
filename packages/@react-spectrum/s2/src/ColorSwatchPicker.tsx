@@ -42,7 +42,10 @@ export interface ColorSwatchPickerProps extends ValueBase<string | Color, Color>
 
 export const ColorSwatchPickerContext = createContext<ContextValue<Partial<ColorSwatchPickerProps>, DOMRefValue<HTMLDivElement>>>(null);
 
-function ColorSwatchPicker(props: ColorSwatchPickerProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A ColorSwatchPicker displays a list of color swatches and allows a user to select one of them.
+ */
+export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(props: ColorSwatchPickerProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ColorSwatchPickerContext);
   let {
     density = 'regular',
@@ -72,13 +75,7 @@ function ColorSwatchPicker(props: ColorSwatchPickerProps, ref: DOMRef<HTMLDivEle
       </InternalColorSwatchContext.Provider>
     </AriaColorSwatchPicker>
   );
-}
-
-/**
- * A ColorSwatchPicker displays a list of color swatches and allows a user to select one of them.
- */
-let _ColorSwatchPicker = forwardRef(ColorSwatchPicker);
-export {_ColorSwatchPicker as ColorSwatchPicker};
+});
 
 function useWrapper(swatch: ReactElement, color: Color, rounding: ColorSwatchProps['rounding']) {
   return (

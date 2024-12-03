@@ -50,7 +50,10 @@ export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'label' | '
 
 export const SearchFieldContext = createContext<ContextValue<SearchFieldProps, HTMLDivElement>>(null);
 
-function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A search field allows a user to enter and clear a search query.
+ */
+export const SearchField = /*#__PURE__*/ (forwardRef as forwardRefType)(function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SearchFieldContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
@@ -108,10 +111,4 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
       </Provider>
     </div>
   );
-}
-
-/**
- * A search field allows a user to enter and clear a search query.
- */
-const _SearchField = /*#__PURE__*/ (forwardRef as forwardRefType)(SearchField);
-export {_SearchField as SearchField};
+});

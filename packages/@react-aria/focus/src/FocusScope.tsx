@@ -280,7 +280,7 @@ const focusableElements = [
   'embed',
   'audio[controls]',
   'video[controls]',
-  '[contenteditable]'
+  '[contenteditable]:not([contenteditable^="false"])'
 ];
 
 const FOCUSABLE_ELEMENT_SELECTOR = focusableElements.join(':not([hidden]),') + ',[tabindex]:not([disabled]):not([hidden])';
@@ -692,7 +692,6 @@ function useRestoreFocus(scopeRef: RefObject<Element[] | null>, restoreFocus?: b
         restoreFocus
         && nodeToRestore
         && (
-          // eslint-disable-next-line react-hooks/exhaustive-deps
           ((ownerDocument.activeElement && isElementInChildScope(ownerDocument.activeElement, scopeRef)) || (ownerDocument.activeElement === ownerDocument.body && shouldRestoreFocus(scopeRef)))
         )
       ) {

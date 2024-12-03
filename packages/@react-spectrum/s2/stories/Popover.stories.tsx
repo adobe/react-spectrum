@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Avatar, Button, Card, CardPreview, Content, DialogTrigger, Divider, DropZone, Form, Image, Menu, MenuItem, MenuSection, Popover, SearchField, SubmenuTrigger, Switch, Tab, TabList, TabPanel, Tabs, Text, TextField} from '../src';
+import {ActionButton, Avatar, Button, Card, CardPreview, Content, DialogTrigger, Divider, Form, Image, Menu, MenuItem, MenuSection, Popover, SearchField, SubmenuTrigger, Switch, Tab, TabList, TabPanel, Tabs, Text, TextField} from '../src';
 import Cloud from '../s2wf-icons/S2_Icon_Cloud_20_N.svg';
 import Education from '../s2wf-icons/S2_Icon_Education_20_N.svg';
 import File from '../s2wf-icons/S2_Icon_File_20_N.svg';
@@ -47,12 +47,12 @@ export const HelpCenter = (args: any) => (
           <Tab id="feedback">Feedback</Tab>
         </TabList>
         <TabPanel id="help">
-          <SearchField label="Search Experience League"  styles={style({marginTop: 12, marginX: 12})} />
+          <SearchField label="Search"  styles={style({marginTop: 12, marginX: 12})} />
           <Menu aria-label="Help" styles={style({marginTop: 12})}>
             <MenuSection>
               <MenuItem href="#">
                 <File />
-                <Text slot="label">Adobe Experience Cloud Learn & Support</Text>
+                <Text slot="label">Documentation</Text>
               </MenuItem>
             </MenuSection>
             <MenuSection>
@@ -84,10 +84,10 @@ export const HelpCenter = (args: any) => (
         <TabPanel id="support" styles={style({margin: 12})}>
           <Card size="L" styles={style({width: 'full'})}>
             <CardPreview>
-              <Image src="https://cdn.experience-stage.adobe.net/assets/support.7d96ed11.svg" />
+              <Image src="https://react-spectrum.adobe.com/ReactSpectrumHome_976x445_2x.3eedfdc2.webp" />
             </CardPreview>
             <Content>
-              <Text slot="title">Go to support at Experience League</Text>
+              <Text slot="title">Go to support</Text>
               <Text slot="description">Find support resources or submit a ticket</Text>
             </Content>
           </Card>
@@ -97,7 +97,6 @@ export const HelpCenter = (args: any) => (
           <Form>
             <TextField label="Subject" />
             <TextField label="Description" isRequired />
-            <DropZone />
             <Switch>Adobe can contact me for further questions concerning this feedback</Switch>
             <Button styles={style({marginStart: 'auto'})}>Submit</Button>
           </Form>
@@ -159,3 +158,8 @@ export const AccountMenu = (args: any) => (
     </Popover>
   </DialogTrigger>
 );
+
+AccountMenu.argTypes = {
+  hideArrow: {table: {disable: true}},
+  placement: {table: {disable: true}}
+};

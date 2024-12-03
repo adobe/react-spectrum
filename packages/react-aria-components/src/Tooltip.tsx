@@ -98,7 +98,10 @@ export function TooltipTrigger(props: TooltipTriggerComponentProps) {
   );
 }
 
-function Tooltip({UNSTABLE_portalContainer, ...props}: TooltipProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A tooltip displays a description of an element on hover or focus.
+ */
+export const Tooltip = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tooltip({UNSTABLE_portalContainer, ...props}: TooltipProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TooltipContext);
   let contextState = useContext(TooltipTriggerStateContext);
   let localState = useTooltipTriggerState(props);
@@ -113,13 +116,7 @@ function Tooltip({UNSTABLE_portalContainer, ...props}: TooltipProps, ref: Forwar
       <TooltipInner {...props} tooltipRef={ref} isExiting={isExiting} />
     </OverlayContainer>
   );
-}
-
-/**
- * A tooltip displays a description of an element on hover or focus.
- */
-const _Tooltip = /*#__PURE__*/ (forwardRef as forwardRefType)(Tooltip);
-export {_Tooltip as Tooltip};
+});
 
 function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: RefObject<HTMLDivElement | null>}) {
   let state = useContext(TooltipTriggerStateContext)!;

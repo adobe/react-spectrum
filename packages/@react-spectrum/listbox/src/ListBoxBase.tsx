@@ -62,8 +62,10 @@ export function useListBoxLayout<T>(): ListBoxLayout<T> {
   return layout;
 }
 
+// forwardRef doesn't support generic parameters, so cast the result to the correct type
+// https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
 /** @private */
-function ListBoxBase<T extends object>(props: ListBoxBaseProps<T>, ref: ForwardedRef<HTMLDivElement | null>) {
+export const ListBoxBase = React.forwardRef(function ListBoxBase<T extends object>(props: ListBoxBaseProps<T>, ref: ForwardedRef<HTMLDivElement | null>) {
   let {layout, state, shouldFocusOnHover = false, shouldUseVirtualFocus = false, domProps = {}, isLoading, showLoadingSpinner = isLoading, onScroll, renderEmptyState} = props;
   let objectRef = useObjectRef(ref);
   let {listBoxProps} = useListBox({
@@ -145,12 +147,7 @@ function ListBoxBase<T extends object>(props: ListBoxBaseProps<T>, ref: Forwarde
       </FocusScope>
     </ListBoxContext.Provider>
   );
-}
-
-// forwardRef doesn't support generic parameters, so cast the result to the correct type
-// https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
-const _ListBoxBase = React.forwardRef(ListBoxBase) as <T>(props: ListBoxBaseProps<T> & {ref?: RefObject<HTMLDivElement | null>}) => ReactElement;
-export {_ListBoxBase as ListBoxBase};
+}) as <T>(props: ListBoxBaseProps<T> & {ref?: RefObject<HTMLDivElement | null>}) => ReactElement;
 
 function LoadingState() {
   let {state} = useContext(ListBoxContext)!;

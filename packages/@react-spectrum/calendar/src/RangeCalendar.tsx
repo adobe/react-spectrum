@@ -21,7 +21,10 @@ import {useProviderProps} from '@react-spectrum/provider';
 import {useRangeCalendar} from '@react-aria/calendar';
 import {useRangeCalendarState} from '@react-stately/calendar';
 
-function RangeCalendar<T extends DateValue>(props: SpectrumRangeCalendarProps<T>, ref: FocusableRef<HTMLElement>) {
+/**
+ * RangeCalendars display a grid of days in one or more months and allow users to select a contiguous range of dates.
+ */
+export const RangeCalendar = React.forwardRef(function RangeCalendar<T extends DateValue>(props: SpectrumRangeCalendarProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   let {visibleMonths = 1} = props;
   visibleMonths = Math.max(visibleMonths, 1);
@@ -55,10 +58,4 @@ function RangeCalendar<T extends DateValue>(props: SpectrumRangeCalendarProps<T>
       nextButtonProps={nextButtonProps}
       errorMessageProps={errorMessageProps} />
   );
-}
-
-/**
- * RangeCalendars display a grid of days in one or more months and allow users to select a contiguous range of dates.
- */
-const _RangeCalendar = React.forwardRef(RangeCalendar) as <T extends DateValue>(props: SpectrumRangeCalendarProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
-export {_RangeCalendar as RangeCalendar};
+}) as <T extends DateValue>(props: SpectrumRangeCalendarProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;

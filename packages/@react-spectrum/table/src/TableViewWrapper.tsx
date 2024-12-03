@@ -89,18 +89,15 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
   UNSTABLE_onExpandedChange?: (keys: Set<Key>) => any
 }
 
-function TableViewWrapper<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Tables are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
+ */
+const TableViewWrapper = React.forwardRef(function TableViewWrapper<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {UNSTABLE_allowsExpandableRows, ...otherProps} = props;
   if (tableNestedRows() && UNSTABLE_allowsExpandableRows) {
     return <TreeGridTableView {...otherProps} ref={ref} />;
   } else {
     return <TableView {...otherProps} ref={ref} />;
   }
-}
-
-/**
- * Tables are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
- */
-const _TableViewWrapper = React.forwardRef(TableViewWrapper) as <T>(props: SpectrumTableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
-
-export {_TableViewWrapper as TableView};
+}) as <T>(props: SpectrumTableProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
+export {TableViewWrapper as TableView};

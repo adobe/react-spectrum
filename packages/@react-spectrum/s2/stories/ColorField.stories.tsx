@@ -42,54 +42,26 @@ Example.args = {
 };
 
 export const ContextualHelpExample = (args: any) => (
-  <ColorField {...args} />
+  <ColorField
+    {...args}
+    contextualHelp={
+      <ContextualHelp>
+        <Heading>Color</Heading>
+        <Content>
+          <Text>
+            Pick your favorite color.
+          </Text>
+        </Content>
+        <Footer>
+          <Link
+            isStandalone
+            href="https://en.wikipedia.org/wiki/Color"
+            target="_blank">Learn more about color</Link>
+        </Footer>
+      </ContextualHelp>
+    } />
 );
 
 ContextualHelpExample.args = {
-  label: 'Color',
-  contextualHelp: (
-    <ContextualHelp>
-      <Heading>Color</Heading>
-      <Content>
-        <Text>
-          Pick your favorite color.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Color"
-          target="_blank">Learn more about color</Link>
-      </Footer>
-    </ContextualHelp>
-  )
-};
-
-ContextualHelpExample.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `
-<ColorField
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>Color</Heading>
-      <Content>
-        <Text>
-          Pick your favorite color.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Color"
-          target="_blank">Learn more about color</Link>
-      </Footer>
-    </ContextualHelp>
-  }
-  label="Color"
-/>`;
-      }
-    }
-  }
+  label: 'Color'
 };

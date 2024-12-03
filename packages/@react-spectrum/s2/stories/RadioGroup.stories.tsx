@@ -84,7 +84,24 @@ ErrorAndDescription.parameters = {
 };
 
 export const ContextualHelpExample = (args: any) => (
-  <RadioGroup {...args}>
+  <RadioGroup
+    {...args}
+    contextualHelp={
+      <ContextualHelp>
+        <Heading>Sports</Heading>
+        <Content>
+          <Text>
+            Social games we paly to have fun and stay healthy.
+          </Text>
+        </Content>
+        <Footer>
+          <Link
+            isStandalone
+            href="https://en.wikipedia.org/wiki/Sport"
+            target="_blank">Learn more about sports</Link>
+        </Footer>
+      </ContextualHelp>
+    }>
     <Radio isDisabled value="soccer">Soccer</Radio>
     <Radio value="baseball">Baseball</Radio>
     <Radio value="football">Football</Radio>
@@ -93,55 +110,5 @@ export const ContextualHelpExample = (args: any) => (
 );
 
 ContextualHelpExample.args = {
-  label: 'Favorite sports',
-  contextualHelp: (
-    <ContextualHelp>
-      <Heading>Sports</Heading>
-      <Content>
-        <Text>
-          Social games we paly to have fun and stay healthy.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Sport"
-          target="_blank">Learn more about sports</Link>
-      </Footer>
-    </ContextualHelp>
-  )
-};
-
-ContextualHelpExample.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `
-<RadioGroup
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>Sports</Heading>
-      <Content>
-        <Text>
-          Social games we paly to have fun and stay healthy.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Sport"
-          target="_blank">Learn more about sports</Link>
-      </Footer>
-    </ContextualHelp>
-  }
-  label="Segment"
-/>
-  <Radio isDisabled value="soccer">Soccer</Radio>
-  <Radio value="baseball">Baseball</Radio>
-  <Radio value="football">Football</Radio>
-  <Radio value="basketball">Basketball</Radio>
-</RadioGroup>`;
-      }
-    }
-  }
+  label: 'Favorite sports'
 };

@@ -24,9 +24,9 @@ export interface CustomDialogProps extends Omit<RACDialogProps, 'className' | 's
    */
   size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',
   /**
-   * Whether the Dialog is dismissable.
+   * Whether the Dialog is dismissible.
    */
-  isDismissable?: boolean,
+  isDismissible?: boolean,
   /** Whether pressing the escape key to close the dialog should be disabled. */
   isKeyboardDismissDisabled?: boolean,
   /**
@@ -55,17 +55,20 @@ const dialogStyle = style({
   maxSize: '[inherit]'
 }, getAllowedOverrides({height: true}));
 
-function CustomDialog(props: CustomDialogProps, ref: DOMRef) {
+/**
+ * A CustomDialog is a floating window with a custom layout.
+ */
+export const CustomDialog = forwardRef(function CustomDialog(props: CustomDialogProps, ref: DOMRef) {
   let {
     size,
-    isDismissable,
+    isDismissible,
     isKeyboardDismissDisabled,
     padding = 'default'
   } = props;
   let domRef = useDOMRef(ref);
 
   return (
-    <Modal size={size} isDismissable={isDismissable} isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
+    <Modal size={size} isDismissable={isDismissible} isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
       <RACDialog
         {...props}
         ref={domRef}
@@ -80,10 +83,4 @@ function CustomDialog(props: CustomDialogProps, ref: DOMRef) {
       </RACDialog>
     </Modal>
   );
-}
-
-/**
- * A CustomDialog is a floating window with a custom layout.
- */
-let _CustomDialog = forwardRef(CustomDialog);
-export {_CustomDialog as CustomDialog};
+});

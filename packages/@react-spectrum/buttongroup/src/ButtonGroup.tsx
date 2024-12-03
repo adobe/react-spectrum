@@ -25,7 +25,10 @@ import React, {useCallback, useRef} from 'react';
 import {SpectrumButtonGroupProps} from '@react-types/buttongroup';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
 
-function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * ButtonGroup handles overflow for a grouping of buttons whose actions are related to each other.
+ */
+export const ButtonGroup = React.forwardRef(function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
   let {scale} = useProvider();
   props = useProviderProps(props);
   props = useSlotProps(props, 'buttonGroup');
@@ -112,10 +115,4 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
       </SlotProvider>
     </div>
   );
-}
-
-/**
- * ButtonGroup handles overflow for a grouping of buttons whose actions are related to each other.
- */
-let _ButtonGroup = React.forwardRef(ButtonGroup);
-export {_ButtonGroup as ButtonGroup};
+});

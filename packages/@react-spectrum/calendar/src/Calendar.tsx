@@ -21,7 +21,10 @@ import {useCalendarState} from '@react-stately/calendar';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
-function Calendar<T extends DateValue>(props: SpectrumCalendarProps<T>, ref: FocusableRef<HTMLElement>) {
+/**
+ * Calendars display a grid of days in one or more months and allow users to select a single date.
+ */
+export const Calendar = React.forwardRef(function Calendar<T extends DateValue>(props: SpectrumCalendarProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   let {visibleMonths = 1} = props;
   visibleMonths = Math.max(visibleMonths, 1);
@@ -55,10 +58,4 @@ function Calendar<T extends DateValue>(props: SpectrumCalendarProps<T>, ref: Foc
       nextButtonProps={nextButtonProps}
       errorMessageProps={errorMessageProps} />
   );
-}
-
-/**
- * Calendars display a grid of days in one or more months and allow users to select a single date.
- */
-const _Calendar = React.forwardRef(Calendar) as <T extends DateValue>(props: SpectrumCalendarProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
-export {_Calendar as Calendar};
+}) as <T extends DateValue>(props: SpectrumCalendarProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;

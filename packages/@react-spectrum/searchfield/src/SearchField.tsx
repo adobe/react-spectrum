@@ -23,7 +23,10 @@ import {useProviderProps} from '@react-spectrum/provider';
 import {useSearchField} from '@react-aria/searchfield';
 import {useSearchFieldState} from '@react-stately/searchfield';
 
-function SearchField(props: SpectrumSearchFieldProps, ref: Ref<TextFieldRef>) {
+/**
+ * A SearchField is a text field designed for searches.
+ */
+export const SearchField = forwardRef(function SearchField(props: SpectrumSearchFieldProps, ref: Ref<TextFieldRef>) {
   props = useSlotProps(props, 'searchfield');
   props = useProviderProps(props);
   props = useFormProps(props);
@@ -88,10 +91,4 @@ function SearchField(props: SpectrumSearchFieldProps, ref: Ref<TextFieldRef>) {
       icon={icon}
       wrapperChildren={(state.value !== '' && !props.isReadOnly) ? clearButton : undefined} />
   );
-}
-
-/**
- * A SearchField is a text field designed for searches.
- */
-let _SearchField = forwardRef(SearchField) as (props: SpectrumSearchFieldProps & {ref?: Ref<TextFieldRef>}) => ReactElement;
-export {_SearchField as SearchField};
+}) as (props: SpectrumSearchFieldProps & {ref?: Ref<TextFieldRef>}) => ReactElement;
