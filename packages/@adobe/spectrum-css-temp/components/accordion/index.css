@@ -38,6 +38,7 @@ governing permissions and limitations under the License.
   padding-inline-end: var(--spectrum-accordion-icon-gap);
 
   transition: transform ease var(--spectrum-global-animation-duration-100);
+  box-sizing: content-box;
 }
 
 .spectrum-Accordion-item {
@@ -122,8 +123,6 @@ governing permissions and limitations under the License.
     > .spectrum-Accordion-itemHeading {
       > .spectrum-Accordion-itemHeader {
         > .spectrum-Accordion-itemIndicator {
-          box-sizing: content-box;
-
           [dir='ltr'] & {
             transform: rotate(90deg);
           }
