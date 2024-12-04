@@ -11,12 +11,12 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Autocomplete, Button, Dialog, DialogTrigger, Header, Input, Keyboard, Label, ListBox, ListBoxSection, UNSTABLE_ListLayout as ListLayout, Menu, MenuSection, MenuTrigger, Popover, SearchField, Separator, Text, TextField, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
-import {chain, useFilter} from 'react-aria';
+import {Autocomplete, Button, Collection, Dialog, DialogTrigger, Header, Input, Keyboard, Label, ListBox, ListBoxSection, UNSTABLE_ListLayout as ListLayout, Menu, MenuSection, MenuTrigger, Popover, SearchField, Separator, Text, TextField, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
 import {MyListBoxItem, MyMenuItem} from './utils';
 import React, {useMemo} from 'react';
 import styles from '../example/index.css';
-import {useAsyncList, useListData} from 'react-stately';
+import {useAsyncList, useListData, useTreeData} from 'react-stately';
+import {useFilter} from 'react-aria';
 
 export default {
   title: 'React Aria Components',
@@ -267,83 +267,6 @@ export const AutocompleteCaseSensitive = {
   name: 'Autocomplete, case sensitive filter'
 };
 
-export const AutocompleteInPopover = {
-  render: (args) => {
-    let {onAction, onSelectionChange, selectionMode} = args;
-    return (
-      <MenuTrigger>
-        <Button>
-          Open popover
-        </Button>
-        <Popover
-          placement="bottom start"
-          style={{
-            background: 'Canvas',
-            color: 'CanvasText',
-            border: '1px solid gray',
-            padding: 20
-          }}>
-          <Dialog aria-label="dialog with autocomplete">
-            <Autocomplete>
-              <div>
-                <SearchField autoFocus>
-                  <Label style={{display: 'block'}}>Test</Label>
-                  <Input />
-                  <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
-                </SearchField>
-                <Menu className={styles.menu} items={items} onAction={onAction} autoFocus={false} onSelectionChange={onSelectionChange} selectionMode={selectionMode}>
-                  {item => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
-                </Menu>
-              </div>
-            </Autocomplete>
-          </Dialog>
-        </Popover>
-      </MenuTrigger>
-    );
-  },
-  name: 'Autocomplete in popover (menu trigger)'
-};
-
-export const AutocompleteInPopoverDialogTrigger = {
-  render: (args) => {
-    let {onAction, onSelectionChange, selectionMode} = args;
-    return (
-      <DialogTrigger>
-        <Button>
-          Open popover
-        </Button>
-        <Popover
-          placement="bottom start"
-          style={{
-            background: 'Canvas',
-            color: 'CanvasText',
-            border: '1px solid gray',
-            padding: 20
-          }}>
-          <Dialog aria-label="dialog with autocomplete">
-            {({close}) => (
-              <Autocomplete>
-                <div>
-                  <SearchField autoFocus>
-                    <Label style={{display: 'block'}}>Test</Label>
-                    <Input />
-                    <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
-                  </SearchField>
-                  <Menu className={styles.menu} items={items} onAction={chain(onAction, close)} autoFocus={false} onSelectionChange={onSelectionChange} selectionMode={selectionMode}>
-                    {item => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
-                  </Menu>
-                </div>
-              </Autocomplete>
-            )}
-          </Dialog>
-        </Popover>
-      </DialogTrigger>
-
-    );
-  },
-  name: 'Autocomplete in popover (dialog trigger)'
-};
-
 export const AutocompleteWithListbox = {
   render: (args) => {
     let {onSelectionChange, selectionMode} = args;
@@ -376,7 +299,6 @@ export const AutocompleteWithListbox = {
   },
   name: 'Autocomplete with ListBox'
 };
-
 
 function VirtualizedListBox(props) {
   let items: {id: number, name: string}[] = [];
@@ -428,4 +350,143 @@ export const AutocompleteWithVirtualizedListbox = {
     );
   },
   name: 'Autocomplete with ListBox, virtualized'
+};
+
+let lotsOfSections: any[] = [];
+for (let i = 0; i < 50; i++) {
+  let children: {name: string, id: string}[] = [];
+  for (let j = 0; j < 50; j++) {
+    children.push({name: `Section ${i}, Item ${j}`, id: `item_${i}${j}`});
+  }
+
+  lotsOfSections.push({name: 'Section ' + i, id: `section_${i}`, children});
+}
+lotsOfSections = [{name: 'Recently visited', id: 'recent', children: []}].concat(lotsOfSections);
+
+function ShellExample() {
+  let tree = useTreeData<any>({
+    initialItems: lotsOfSections,
+    getKey: item => item.id,
+    getChildren: item => item.children || null
+  });
+
+  let layout = useMemo(() => {
+    return new ListLayout({
+      rowHeight: 25,
+      headingHeight: 25
+    });
+  }, []);
+
+  let onSelectionChange = (keys) => {
+    tree.move([...keys][0], 'recent', 0);
+  };
+
+  return (
+    <Virtualizer layout={layout}>
+      <ListBox
+        onSelectionChange={onSelectionChange}
+        selectionMode="single"
+        className={styles.menu}
+        style={{height: 200}}
+        aria-label="virtualized listbox"
+        items={tree.items}>
+        {section => {
+          return (
+            <ListBoxSection id={section.value.id} className={styles.group}>
+              {section.value.name != null && <Header style={{fontSize: '1.2em'}}>{section.value.name}</Header>}
+              <Collection items={section.children ?? []}>
+                {item => <MyListBoxItem id={item.value.id}>{item.value.name}</MyListBoxItem>}
+              </Collection>
+            </ListBoxSection>
+          );
+        }}
+      </ListBox>
+    </Virtualizer>
+  );
+}
+
+export const AutocompleteInPopover = {
+  render: () => {
+    return (
+      <MenuTrigger>
+        <Button>
+          Open popover
+        </Button>
+        <Popover
+          placement="bottom start"
+          style={{
+            background: 'Canvas',
+            color: 'CanvasText',
+            border: '1px solid gray',
+            padding: 20,
+            height: 250
+          }}>
+          <Dialog aria-label="dialog with autocomplete">
+            <Autocomplete>
+              <div>
+                <SearchField autoFocus>
+                  <Label style={{display: 'block'}}>Test</Label>
+                  <Input />
+                  <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+                </SearchField>
+                <ShellExample />
+              </div>
+            </Autocomplete>
+          </Dialog>
+        </Popover>
+      </MenuTrigger>
+    );
+  },
+  name: 'Autocomplete in popover (menu trigger), shell example',
+  argTypes: {
+    selectionMode: {
+      table: {
+        disable: true
+      }
+    }
+  }
+};
+
+export const AutocompleteInPopoverDialogTrigger = {
+  render: () => {
+    return (
+      <DialogTrigger>
+        <Button>
+          Open popover
+        </Button>
+        <Popover
+          placement="bottom start"
+          style={{
+            background: 'Canvas',
+            color: 'CanvasText',
+            border: '1px solid gray',
+            padding: 20,
+            height: 250
+          }}>
+          <Dialog aria-label="dialog with autocomplete">
+            {() => (
+              <Autocomplete>
+                <div>
+                  <SearchField autoFocus>
+                    <Label style={{display: 'block'}}>Test</Label>
+                    <Input />
+                    <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+                  </SearchField>
+                  <ShellExample />
+                </div>
+              </Autocomplete>
+            )}
+          </Dialog>
+        </Popover>
+      </DialogTrigger>
+    );
+  },
+  name: 'Autocomplete in popover (dialog trigger), shell example',
+  argTypes: {
+    selectionMode: {
+      table: {
+        disable: true
+      }
+    }
+  }
 };
