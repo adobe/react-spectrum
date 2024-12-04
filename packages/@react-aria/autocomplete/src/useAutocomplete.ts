@@ -68,16 +68,17 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
   let lastCollectionNode = useRef<HTMLElement>(null);
 
   let updateActiveDescendant = useEffectEvent((e) => {
-    let {detail} = e;
+    let {target} = e;
     clearTimeout(timeout.current);
     e.stopPropagation();
-    if (detail?.id != null) {
+
+    if (target !== collectionRef.current) {
       if (delayNextActiveDescendant.current) {
         timeout.current = setTimeout(() => {
-          state.setFocusedNodeId(detail.id);
+          state.setFocusedNodeId(target.id);
         }, 500);
       } else {
-        state.setFocusedNodeId(detail.id);
+        state.setFocusedNodeId(target.id);
       }
     } else {
       state.setFocusedNodeId(null);

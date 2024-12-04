@@ -172,12 +172,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       } else {
         let updateActiveDescendant = new CustomEvent(UPDATE_ACTIVEDESCENDANT, {
           cancelable: true,
-          bubbles: true,
-          detail: {
-            // Use the ref's id because the id here may be the id of the reused node and thus not reflective of the node's actual id
-            id: ref.current?.id ?? id,
-            key
-          }
+          bubbles: true
         });
 
         ref.current?.dispatchEvent(updateActiveDescendant);

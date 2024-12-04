@@ -407,10 +407,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         ref.current?.dispatchEvent(
           new CustomEvent(UPDATE_ACTIVEDESCENDANT, {
             cancelable: true,
-            bubbles: true,
-            detail: {
-              id: null
-            }
+            bubbles: true
           })
         );
       }
