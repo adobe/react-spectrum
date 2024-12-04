@@ -89,7 +89,7 @@ export interface PickerProps<T extends object> extends
     /**
      * If the tab picker should only display icon and no text for the button label.
      */
-    iconOnly?: boolean
+    isIconOnly?: boolean
 }
 
 export const PickerContext = createContext<ContextValue<Partial<PickerProps<any>>, FocusableRefValue<HTMLButtonElement>>>(null);
@@ -181,6 +181,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
     items,
     placeholder = stringFormatter.format('picker.placeholder'),
     density,
+    isIconOnly,
     ...pickerProps
   } = props;
   let isQuiet = true;
@@ -216,7 +217,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                       [IconContext, {
                         slots: {
                           icon: {
-                            render: centerBaseline({slot: 'icon', styles: iconCenterWrapper({isIconOnly: props.iconOnly})}),
+                            render: centerBaseline({slot: 'icon', styles: iconCenterWrapper({isIconOnly})}),
                             styles: icon
                           }
                         }
@@ -231,7 +232,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                             },
                             flexGrow: 1,
                             truncate: true
-                          })({isIconOnly: props.iconOnly})}
+                          })({isIconOnly})}
                         }
                       }],
                       [InsideSelectValueContext, true]
