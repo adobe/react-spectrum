@@ -17,7 +17,7 @@ import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext
 import {centerBaseline} from './CenterBaseline';
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
-import {getAllowedOverrides, StyleProps} from './style-utils' with { type: 'macro' };
+import {getAllowedOverrides, staticColor, StyleProps} from './style-utils' with { type: 'macro' };
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
 import {SkeletonContext} from './Skeleton';
@@ -34,7 +34,7 @@ export interface ActionButtonStyleProps {
    */
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL',
   /** The static color style to apply. Useful when the ActionButton appears over a color background. */
-  staticColor?: 'black' | 'white',
+  staticColor?: 'black' | 'white' | 'auto',
   /** Whether the button should be displayed with a [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
   isQuiet?: boolean
 }
@@ -98,36 +98,20 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
         isQuiet: 'transparent'
       }
     },
-    staticColor: {
-      white: {
-        ...baseColor('transparent-white-100'),
-        default: {
-          default: 'transparent-white-100',
-          isQuiet: 'transparent'
-        },
-        isSelected: {
-          default: baseColor('transparent-white-800'),
-          isDisabled: {
-            default: 'transparent-white-100',
-            isQuiet: 'transparent'
-          }
-        }
+    staticColor: staticColor({
+      ...baseColor('transparent-overlay-100'),
+      default: {
+        default: 'transparent-overlay-100',
+        isQuiet: 'transparent'
       },
-      black: {
-        ...baseColor('transparent-black-100'),
-        default: {
-          default: 'transparent-black-100',
+      isSelected: {
+        default: baseColor('transparent-overlay-800'),
+        isDisabled: {
+          default: 'transparent-overlay-100',
           isQuiet: 'transparent'
-        },
-        isSelected: {
-          default: baseColor('transparent-black-800'),
-          isDisabled: {
-            default: 'transparent-black-100',
-            isQuiet: 'transparent'
-          }
         }
       }
-    },
+    }),
     forcedColors: {
       default: 'ButtonFace',
       isSelected: {
@@ -143,18 +127,11 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
       isEmphasized: 'white'
     },
     isDisabled: 'disabled',
-    staticColor: {
-      white: {
-        default: baseColor('transparent-white-800'),
-        isSelected: 'black',
-        isDisabled: 'transparent-white-400'
-      },
-      black: {
-        default: baseColor('transparent-black-800'),
-        isSelected: 'white',
-        isDisabled: 'transparent-black-400'
-      }
-    },
+    staticColor: staticColor({
+      default: baseColor('transparent-overlay-800'),
+      isSelected: 'auto',
+      isDisabled: 'transparent-overlay-400'
+    }),
     forcedColors: {
       default: 'ButtonText',
       isSelected: 'HighlightText',
@@ -169,10 +146,7 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
   },
   outlineColor: {
     default: 'focus-ring',
-    staticColor: {
-      white: 'white',
-      black: 'black'
-    },
+    staticColor: staticColor('transparent-overlay-1000'),
     forcedColors: 'Highlight'
   },
   borderStyle: 'none',

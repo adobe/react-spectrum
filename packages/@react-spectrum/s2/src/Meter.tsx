@@ -19,7 +19,7 @@ import {bar, track} from './bar-utils'  with {type: 'macro'};
 import {createContext, forwardRef, ReactNode} from 'react';
 import {DOMRef, DOMRefValue, LabelPosition} from '@react-types/shared';
 import {FieldLabel} from './Field';
-import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {fieldLabel, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
 import {lightDark, style} from '../style' with {type: 'macro'};
 import {SkeletonWrapper} from './Skeleton';
 import {Text} from './Content';
@@ -40,7 +40,7 @@ interface MeterStyleProps {
   /**
    * The static color style to apply. Useful when the button appears over a color background.
    */
-  staticColor?: 'white' | 'black',
+  staticColor?: 'white' | 'black' | 'auto',
   /**
    * The label's overall position relative to the element it is labeling.
    * @default 'top'
@@ -88,15 +88,7 @@ const fillStyles = style<MeterStyleProps>({
       notice: lightDark('notice-800', 'notice-900'), // 'notice-visual',
       negative: lightDark('negative-800', 'negative-900') // 'negative-visual'
     },
-    staticColor: {
-      white: {
-        default: 'transparent-white-900'
-      },
-      // TODO: Is there a black static color in S2?
-      black: {
-        default: 'transparent-black-900'
-      }
-    },
+    staticColor: staticColor('transparent-overlay-900'),
     forcedColors: 'ButtonText'
   }
 });

@@ -13,7 +13,7 @@
 import {ContextValue, ProgressBar as RACProgressBar, ProgressBarProps as RACProgressBarProps} from 'react-aria-components';
 import {createContext, forwardRef} from 'react';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
-import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {getAllowedOverrides, staticColor, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
@@ -27,7 +27,7 @@ export interface ProgressCircleStyleProps {
    */
   size?: 'S' | 'M' | 'L',
   /** The static color style to apply. Useful when the button appears over a color background. */
-  staticColor?: 'black' | 'white',
+  staticColor?: 'black' | 'white' | 'auto',
   /**
    * Whether presentation is indeterminate when progress isn't known.
    */
@@ -51,10 +51,7 @@ const wrapper = style<ProgressCircleStyleProps>({
 const track = style<ProgressCircleStyleProps>({
   stroke: {
     default: 'gray-300',
-    staticColor: {
-      white: 'transparent-white-300',
-      black: 'transparent-black-300'
-    },
+    staticColor: staticColor('transparent-overlay-300'),
     forcedColors: 'Background'
   }
 });
@@ -62,10 +59,7 @@ const track = style<ProgressCircleStyleProps>({
 const fill = style<ProgressCircleStyleProps>({
   stroke: {
     default: 'blue-900',
-    staticColor: {
-      white: 'transparent-white-900',
-      black: 'transparent-black-900'
-    },
+    staticColor: staticColor('transparent-overlay-900'),
     forcedColors: 'Highlight'
   },
   rotate: -90,

@@ -11,9 +11,10 @@
  */
 
 
-import {ReactNode} from 'react';
+import {ReactNode, useState} from 'react';
+import {style} from '../style' with {type: 'macro'};
 
-type StaticColor = 'black' | 'white' | undefined;
+type StaticColor = 'black' | 'white' | 'auto' | undefined;
 
 function getBackgroundColor(staticColor: StaticColor) {
   if (staticColor === 'black') {
@@ -23,8 +24,38 @@ function getBackgroundColor(staticColor: StaticColor) {
   }
   return undefined;
 }
+
 export function StaticColorProvider(props: {children: ReactNode, staticColor?: StaticColor}) {
-  return <div style={{padding: 8, background: getBackgroundColor(props.staticColor)}}>{props.children}</div>;
+  let [autoBg, setAutoBg] = useState('#5131c4');
+  return (
+    <>
+      <div
+        style={{
+          padding: 8,
+          // @ts-ignore
+          '--s2-container-bg': props.staticColor === 'auto' ? autoBg : undefined,
+          background: props.staticColor === 'auto' ? autoBg : getBackgroundColor(props.staticColor)
+        }}>
+        {props.children}
+      </div>
+      {props.staticColor === 'auto' && (
+        <label 
+          className={style({
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            marginTop: 16,
+            font: 'ui'
+          })}>
+          Background:
+          <input
+            type="color"
+            value={autoBg}
+            onChange={e => setAutoBg(e.target.value)} />
+        </label>
+      )}
+    </>
+  );
 }
 
 export const StaticColorDecorator = (Story: any, {args}: any) => (

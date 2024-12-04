@@ -83,14 +83,7 @@ export const fieldLabel = () => ({
   color: {
     default: 'neutral-subdued',
     isDisabled: 'disabled',
-    staticColor: {
-      white: {
-        default: 'transparent-white-700'
-      },
-      black: {
-        default: 'transparent-black-900'
-      }
-    },
+    staticColor: staticColor('transparent-overlay-1000'),
     forcedColors: 'ButtonText'
   }
 } as const);
@@ -130,6 +123,31 @@ export const colorScheme = () => ({
     }
   }
 } as const);
+
+/** Generates all staticColor variants from the auto definition. */
+export function staticColor<T>(auto: T): {auto: T, black: T, white: T} {
+  let process = (val: any, prefix: string) => {
+    if (typeof val === 'string' && val.startsWith('transparent-overlay-')) {
+      return prefix + val.slice('transparent-overlay-'.length);
+    }
+
+    if (typeof val === 'object' && val) {
+      let res = {};
+      for (let key in val) {
+        res[key] = process(val[key], prefix);
+      }
+      return res;
+    }
+
+    return val;
+  };
+
+  return {
+    auto,
+    black: process(auto, 'transparent-black-'),
+    white: process(auto, 'transparent-white-')
+  };
+}
 
 const allowedOverrides = [
   'margin',

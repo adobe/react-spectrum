@@ -19,7 +19,7 @@ import {bar, track} from './bar-utils'  with {type: 'macro'};
 import {createContext, forwardRef, ReactNode} from 'react';
 import {DOMRef, DOMRefValue, LabelPosition} from '@react-types/shared';
 import {FieldLabel} from './Field';
-import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {fieldLabel, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {mergeStyles} from '../style/runtime';
 import {style} from '../style' with {type: 'macro'};
@@ -41,7 +41,7 @@ interface ProgressBarStyleProps {
   /**
    * The static color style to apply. Useful when the button appears over a color background.
    */
-  staticColor?: 'white' | 'black',
+  staticColor?: 'white' | 'black' | 'auto',
   /**
    * The label's overall position relative to the element it is labeling.
    * @default 'top'
@@ -141,15 +141,7 @@ const fill = style<ProgressBarStyleProps>({
   borderRadius: 'full',
   backgroundColor: {
     default: 'accent',
-    staticColor: {
-      white: {
-        default: 'transparent-white-900'
-      },
-      // TODO: Is there a black static color in S2?
-      black: {
-        default: 'transparent-black-900'
-      }
-    },
+    staticColor: staticColor('transparent-overlay-900'),
     forcedColors: 'ButtonText'
   },
   width: {

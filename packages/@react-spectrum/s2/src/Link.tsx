@@ -14,7 +14,7 @@ import {ContextValue, LinkRenderProps, Link as RACLink, LinkProps as RACLinkProp
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
-import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
 import {SkeletonContext, useSkeletonText} from './Skeleton';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useLayoutEffect} from '@react-aria/utils';
@@ -27,7 +27,7 @@ interface LinkStyleProps {
    */
   variant?: 'primary' | 'secondary',
   /** The static color style to apply. Useful when the link appears over a color background. */
-  staticColor?: 'white' | 'black',
+  staticColor?: 'white' | 'black' | 'auto',
   /** Whether the link is on its own vs inside a longer string of text. */
   isStandalone?: boolean,
   /** Whether the link should be displayed with a quiet style. */
@@ -51,10 +51,7 @@ const link = style<LinkRenderProps & LinkStyleProps & {isSkeleton: boolean}>({
       primary: 'accent',
       secondary: 'neutral' // TODO: should there be an option to inherit from the paragraph? What about hover states?
     },
-    staticColor: {
-      white: 'white',
-      black: 'black'
-    },
+    staticColor: staticColor('transparent-overlay-1000'),
     forcedColors: 'LinkText'
   },
   transition: 'default',
@@ -74,10 +71,7 @@ const link = style<LinkRenderProps & LinkStyleProps & {isSkeleton: boolean}>({
   },
   outlineColor: {
     default: 'focus-ring',
-    staticColor: {
-      white: 'white',
-      black: 'black'
-    },
+    staticColor: staticColor('transparent-overlay-1000'),
     forcedColors: 'Highlight'
   },
   disableTapHighlight: true

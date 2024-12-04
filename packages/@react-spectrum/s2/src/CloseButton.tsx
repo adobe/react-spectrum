@@ -15,7 +15,7 @@ import {Button, ButtonProps, ContextValue} from 'react-aria-components';
 import {createContext, forwardRef} from 'react';
 import CrossIcon from '../ui-icons/Cross';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
-import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
@@ -31,15 +31,13 @@ export interface CloseButtonProps extends Pick<ButtonProps, 'isDisabled'>, Style
    */
   size?: 'S' | 'M' | 'L' | 'XL',
   /** The static color style to apply. Useful when the Button appears over a color background. */
-  staticColor?: 'white' | 'black'
+  staticColor?: 'white' | 'black' | 'auto'
 }
 
+// TODO(design): this is inconsistent with ActionButton
 const hoverBackground = {
   default: 'gray-100',
-  staticColor: {
-    white: 'transparent-white-100',
-    black: 'transparent-black-100'
-  }
+  staticColor: staticColor('transparent-overlay-100')
 } as const;
 
 const styles = style({
@@ -64,24 +62,15 @@ const styles = style({
     value: {
       default: 'neutral',
       isDisabled: 'disabled',
-      staticColor: {
-        white: {
-          default: baseColor('transparent-white-800'),
-          isDisabled: 'transparent-white-400'
-        },
-        black: {
-          default: baseColor('transparent-black-800'),
-          isDisabled: 'transparent-black-400'
-        }
-      }
+      staticColor: staticColor({
+        default: baseColor('transparent-overlay-800'),
+        isDisabled: 'transparent-overlay-400'
+      })
     }
   },
   outlineColor: {
     default: 'focus-ring',
-    staticColor: {
-      white: 'white',
-      black: 'black'
-    },
+    staticColor: staticColor('transparent-overlay-1000'),
     forcedColors: 'Highlight'
   }
 }, getAllowedOverrides());

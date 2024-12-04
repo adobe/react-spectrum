@@ -36,7 +36,7 @@ export interface ActionButtonGroupProps extends UnsafeStyles, SlotProps {
   /** Whether the buttons should divide the container width equally. */
   isJustified?: boolean,
   /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
-  staticColor?: 'white' | 'black',
+  staticColor?: 'white' | 'black' | 'auto',
   /**
    * The axis the group should align with.
    * @default 'horizontal'
