@@ -11,12 +11,13 @@
  */
 
 import Bell from '../s2wf-icons/S2_Icon_Bell_20_N.svg';
-import {Collection, Text} from '@react-spectrum/s2';
+import {Collection, Content, ContextualHelp, Picker, PickerItem, Text} from '@react-spectrum/s2';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Heart from '../s2wf-icons/S2_Icon_Heart_20_N.svg';
 import type {Meta} from '@storybook/react';
 import {style} from '../style' with { type: 'macro' };
 import {Tab, TabList, TabPanel, Tabs} from '../src/Tabs';
+import {useState} from 'react';
 
 const meta: Meta<typeof Tabs> = {
   component: Tabs,
@@ -109,20 +110,64 @@ let items: Item[] = [
   {id: 2, title: 'Keyboard settings', description: 'Customize the layout and function of your keyboard.'},
   {id: 3, title: 'Gamepad settings', description: 'Configure the buttons and triggers on your gamepad.'}
 ];
+let widthItems = [
+  {id: '1', label: '150px'},
+  {id: '2', label: '400px'},
+  {id: '3', label: '700px'}
+];
+const dynamicStyle = style({
+  width: {
+    default: 700,
+    containerWidth: {
+      1: 150,
+      2: 400,
+      3: 700
+    }
+  },
+  height: 256,
+  resize: 'horizontal',
+  overflow: 'hidden',
+  padding: 8,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 8
+});
 
-export const Dynamic = (args: any) => (
-  <div className={style({width: 700, height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
-    <Tabs {...args} styles={style({width: 'full'})} disabledKeys={new Set([2])}>
-      <TabList aria-label="History of Ancient Rome" items={items}>
-        {item => <Tab>{item.title}</Tab>}
-      </TabList>
-      <Collection items={items}>
-        {item => (
-          <TabPanel>
-            {item.description}
-          </TabPanel>
-      )}
-      </Collection>
-    </Tabs>
-  </div>
-);
+export const Dynamic = (args: any) => {
+  let [containerWidth, setContainerWidth] = useState('3');
+
+  return (
+    <div
+      className={dynamicStyle({containerWidth})}>
+      <Picker
+        styles={style({width: 150})}
+        label="Container width for mobile"
+        contextualHelp={
+          <ContextualHelp>
+            <Content>
+              <Text>
+                Select a width for the container to simulate a mobile device. If you manualy resize the container, the width will not be update by this.
+              </Text>
+            </Content>
+          </ContextualHelp>
+        }
+        selectedKey={containerWidth}
+        onSelectionChange={(key) => setContainerWidth(key as string)}
+        items={widthItems}>
+        {item => <PickerItem id={item.id} textValue={item.label}>{item.label}</PickerItem>}
+      </Picker>
+      <Tabs {...args} styles={style({width: 'full'})} disabledKeys={new Set([2])}>
+        <TabList aria-label="History of Ancient Rome" items={items}>
+          {item => <Tab>{item.title}</Tab>}
+        </TabList>
+        <Collection items={items}>
+          {item => (
+            <TabPanel>
+              {item.description}
+            </TabPanel>
+        )}
+        </Collection>
+      </Tabs>
+    </div>
+  );
+};
