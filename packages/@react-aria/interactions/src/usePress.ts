@@ -20,7 +20,6 @@ import {
   focusWithoutScrolling,
   getOwnerDocument,
   getOwnerWindow,
-  getRootNode,
   isMac,
   isVirtualClick,
   isVirtualPointerEvent,
@@ -435,7 +434,7 @@ export function usePress(props: PressHookProps): PressResult {
           state.isPressed = true;
           state.isOverTarget = true;
           state.activePointerId = e.pointerId;
-          state.target = e.nativeEvent.composedPath()[0] as FocusableElement;
+          state.target = e.currentTarget as FocusableElement;
 
           if (!isDisabled && !preventFocusOnPress) {
             focusWithoutScrolling(state.target);
@@ -1000,7 +999,7 @@ export function nodeContains(
   otherNode: Node | null | undefined
 ): boolean {
   if (!node || !otherNode) {
-      return false;
+    return false;
   }
 
   let currentNode: HTMLElement | Node | null | undefined = otherNode;
