@@ -29,7 +29,7 @@ const meta: Meta<typeof DropZone> = {
 
 export default meta;
 
-export const Example = (args: any) => {
+const ExampleRender = (args: any) => {
   let [isFilled, setIsFilled] = useState(false);
 
   return (
@@ -54,7 +54,11 @@ export const Example = (args: any) => {
   );
 };
 
-export const ExampleWithFileTrigger = (args: any) => {
+export const Example = {
+  render: (args: any) => <ExampleRender {...args} />
+};
+
+const ExampleWithFileTriggerRender = (args: any) => {
   let [isFilled, setIsFilled] = useState(false);
 
   return (
@@ -85,7 +89,11 @@ export const ExampleWithFileTrigger = (args: any) => {
   );
 };
 
-export const LongBanner = (args: any) => {
+export const ExampleWithFileTrigger = {
+  render: (args: any) => <ExampleWithFileTriggerRender {...args} />
+};
+
+const LongBannerRender = (args: any) => {
   let [isFilled, setIsFilled] = useState(false);
 
   return (
@@ -111,29 +119,8 @@ export const LongBanner = (args: any) => {
   );
 };
 
-export const Gradient = (args: any) => {
-  let [isFilled, setIsFilled] = useState(false);
-
-  return (
-    <>
-      <Draggable />
-      <DropZone
-        {...args}
-        className={style({width: 320, height: 280})}
-        isFilled={isFilled}
-        onDrop={() => setIsFilled(true)}>
-        <IllustratedMessage>
-          <CloudUpload />
-          <Heading>
-            Drag and drop your file
-          </Heading>
-          <Content>
-            Or, select a file from your computer
-          </Content>
-        </IllustratedMessage>
-      </DropZone>
-    </>
-  );
+export const LongBanner = {
+  render: (args: any) => <LongBannerRender {...args} />
 };
 
 function Draggable() {
@@ -170,3 +157,32 @@ function Draggable() {
     </FocusRing>
   );
 }
+
+const GradientExample = (args: any) => {
+  let [isFilled, setIsFilled] = useState(false);
+
+  return (
+    <>
+      <Draggable />
+      <DropZone
+        {...args}
+        className={style({width: 320, height: 280})}
+        isFilled={isFilled}
+        onDrop={() => setIsFilled(true)}>
+        <IllustratedMessage>
+          <CloudUpload />
+          <Heading>
+            Drag and drop your file
+          </Heading>
+          <Content>
+            Or, select a file from your computer
+          </Content>
+        </IllustratedMessage>
+      </DropZone>
+    </>
+  );
+};
+
+export const Gradient = {
+  render: (args: any) => <GradientExample {...args} />
+};
