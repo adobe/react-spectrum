@@ -30,6 +30,7 @@ import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import type {Meta} from '@storybook/react';
 import React from 'react';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 let onActionFunc = action('onAction');
 let noOnAction = null;
@@ -197,12 +198,13 @@ let rows = [
       {id: 'reports-1B', name: 'Reports 1B', icon: <FileTxt />},
       {id: 'reports-1C', name: 'Reports 1C', icon: <FileTxt />}
     ]},
-    {id: 'reports-2', name: 'Reports 2', icon: <FileTxt />}
+    {id: 'reports-2', name: 'Reports 2', icon: <FileTxt />},
+    ...Array.from({length: 100}, (_, i) => ({id: `reports-repeat-${i}`, name: `Reports ${i}`, icon: <FileTxt />}))
   ]}
 ];
 
 const TreeExampleDynamic = (args) => (
-  <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>
+  <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto', display: 'flex', flexDirection: 'column'}}>
     <TreeView disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')} {...args}>
       {(item: any) => (
         <TreeViewItem childItems={item.childItems} textValue={item.name}>
