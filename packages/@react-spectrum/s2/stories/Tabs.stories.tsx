@@ -33,7 +33,7 @@ export const Example = (args: any) => (
   <div className={style({width: 700, height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
     <Tabs {...args} styles={style({width: 'full'})}>
       <TabList aria-label="History of Ancient Rome">
-        <Tab id="FoR"><Edit /><Text>Founding of Rome</Text></Tab>
+        <Tab id="FoR">Founding of Rome</Tab>
         <Tab id="MaR">Monarchy and Republic</Tab>
         <Tab id="Emp">Empire</Tab>
       </TabList>
@@ -61,7 +61,7 @@ export const Disabled = (args: any) => (
   <div className={style({width: 700, height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
     <Tabs {...args} styles={style({width: 'full'})} disabledKeys={['FoR', 'MaR', 'Emp']}>
       <TabList aria-label="History of Ancient Rome">
-        <Tab id="FoR"><Edit /><Text>Founding of Rome</Text></Tab>
+        <Tab id="FoR">Founding of Rome</Tab>
         <Tab id="MaR">Monarchy and Republic</Tab>
         <Tab id="Emp">Empire</Tab>
       </TabList>
@@ -78,9 +78,9 @@ export const Disabled = (args: any) => (
   </div>
 );
 
-export const Icons = (args: any) => (
+const IconsRender = (props) => (
   <div className={style({width: 700, height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
-    <Tabs {...args} styles={style({width: 'full'})} iconOnly>
+    <Tabs {...props} styles={style({width: 'full'})}>
       <TabList aria-label="History of Ancient Rome">
         <Tab id="FoR" aria-label="Edit"><Edit /><Text>Founding of Rome</Text></Tab>
         <Tab id="MaR" aria-label="Notifications"><Bell /><Text>Monarchy and Republic</Text></Tab>
@@ -98,6 +98,10 @@ export const Icons = (args: any) => (
     </Tabs>
   </div>
 );
+
+export const Icons = {
+  render: (args) => <IconsRender {...args} />
+};
 
 interface Item {
   id: number,

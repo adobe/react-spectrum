@@ -255,7 +255,7 @@ const selectedIndicator = style({
   transitionTimingFunction: 'in-out'
 });
 
-function TabLine(props: TabLineProps) {
+function TabLine(props: TabLineProps & {iconOnly?: boolean}) {
   let {
     disabledKeys,
     isDisabled: isTabsDisabled,
@@ -295,13 +295,21 @@ function TabLine(props: TabLineProps) {
       } else {
         styleObj.height = `${selectedTab.offsetHeight}px`;
       }
+      console.log('styleObj', styleObj);
       setStyle(styleObj);
     }
   }, [direction, setStyle, selectedTab, orientation]);
 
   useLayoutEffect(() => {
     onResize();
-  }, [onResize, state?.selectedItem?.key, direction, orientation, density]);
+  }, [onResize, state?.selectedItem?.key, density]);
+
+  let ref = useRef<HTMLElement | undefined>(selectedTab);
+  // assign ref before the useResizeObserver useEffect runs
+  useLayoutEffect(() => {
+    ref.current = selectedTab;
+  });
+  useResizeObserver({ref, onResize});
 
   return (
     <div style={{...style}} className={selectedIndicator({isDisabled, orientation})} />
