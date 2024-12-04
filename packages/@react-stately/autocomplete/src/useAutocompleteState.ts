@@ -41,7 +41,7 @@ export interface AutocompleteStateOptions extends Omit<AutocompleteProps, 'child
 /**
  * Provides state management for a autocomplete component.
  */
-export function useAutocompleteState(props: AutocompleteStateOptions): AutocompleteState {
+export function UNSTABLE_useAutocompleteState(props: AutocompleteStateOptions): AutocompleteState {
   let {
     onInputChange: propsOnInputChange,
     inputValue: propsInputValue,

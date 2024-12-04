@@ -11,7 +11,7 @@
  */
 
 import {AriaAutocompleteTests} from './AriaAutocomplete.test-util';
-import {Autocomplete, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, SearchField, Separator, Text} from '..';
+import {Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, SearchField, Separator, Text, UNSTABLE_Autocomplete} from '..';
 import React, {ReactNode} from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 
@@ -99,28 +99,28 @@ let ListBoxWithSections = (props) => (
 );
 
 let AutocompleteWrapper = ({autocompleteProps = {}, inputProps = {}, children}: {autocompleteProps?: any, inputProps?: any, collectionProps?: any, children?: ReactNode}) => (
-  <Autocomplete {...autocompleteProps}>
+  <UNSTABLE_Autocomplete {...autocompleteProps}>
     <SearchField {...inputProps}>
       <Label style={{display: 'block'}}>Test</Label>
       <Input />
       <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
     </SearchField>
     {children}
-  </Autocomplete>
+  </UNSTABLE_Autocomplete>
 );
 
 let ControlledAutocomplete = ({autocompleteProps = {}, inputProps = {}, children}: {autocompleteProps?: any, inputProps?: any, collectionProps?: any, children?: ReactNode}) => {
   let [inputValue, setInputValue] = React.useState('');
 
   return (
-    <Autocomplete inputValue={inputValue} onInputChange={setInputValue} {...autocompleteProps}>
+    <UNSTABLE_Autocomplete inputValue={inputValue} onInputChange={setInputValue} {...autocompleteProps}>
       <SearchField {...inputProps}>
         <Label style={{display: 'block'}}>Test</Label>
         <Input />
         <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
       </SearchField>
       {children}
-    </Autocomplete>
+    </UNSTABLE_Autocomplete>
   );
 };
 
