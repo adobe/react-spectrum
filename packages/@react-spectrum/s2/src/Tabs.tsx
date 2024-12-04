@@ -29,7 +29,7 @@ import {
 import {centerBaseline} from './CenterBaseline';
 import {Collection, DOMRef, DOMRefValue, FocusableRef, FocusableRefValue, Key, Node, Orientation, RefObject} from '@react-types/shared';
 import {createContext, forwardRef, Fragment, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {focusRing, style} from '../style' with {type: 'macro'};
+import {focusRing, size, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 // @ts-ignore
@@ -341,7 +341,10 @@ const tab = style({
   position: 'relative',
   cursor: 'default',
   flexShrink: 0,
-  transition: 'default'
+  transition: 'default',
+  paddingX: {
+    isIconOnly: size(6)
+  }
 }, getAllowedOverrides());
 
 const icon = style({
@@ -362,7 +365,7 @@ export function Tab(props: TabProps) {
       // @ts-ignore
       originalProps={props}
       style={props.UNSAFE_style}
-      className={renderProps => (props.UNSAFE_className || '') + tab({...renderProps, density}, props.styles)}>
+      className={renderProps => (props.UNSAFE_className || '') + tab({...renderProps, density, isIconOnly: iconOnly}, props.styles)}>
       {({
           // @ts-ignore
           isMenu
