@@ -36,7 +36,9 @@ export interface DateSegment {
   /** A placeholder string for the segment. */
   placeholder: string,
   /** Whether the segment is editable. */
-  isEditable: boolean
+  isEditable: boolean,
+  /** Sets the direction to LTR. */
+  ltrIsolate?: '\u2066' | '\u2069' | undefined
 }
 
 export interface DateFieldState extends FormValidationState {
@@ -268,6 +270,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   };
 
   let dateValue = useMemo(() => displayValue.toDate(timeZone), [displayValue, timeZone]);
+  let timeValue = ['hour', 'minute', 'second'];
   let segments = useMemo(() =>
     dateFormatter.formatToParts(dateValue)
       .map(segment => {
@@ -278,16 +281,29 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
 
         let isPlaceholder = EDITABLE_SEGMENTS[segment.type] && !validSegments[segment.type];
         let placeholder = EDITABLE_SEGMENTS[segment.type] ? getPlaceholder(segment.type, segment.value, locale) : null;
+
+        let unicode;
+        if (segment.type === 'day' && locale !== 'ar-AE') {
+          unicode = '\u2066';
+        } else if (segment.type === 'hour') {
+          unicode = '\u2066';
+        } else if (segment.type === 'year' && locale !== 'ar-AE') {
+          unicode = '\u2069';
+        } else if (timeValue.includes(granularity) && segment.type === granularity) {
+          unicode = '\u2069';
+        }
+
         return {
           type: TYPE_MAPPING[segment.type] || segment.type,
           text: isPlaceholder ? placeholder : segment.value,
           ...getSegmentLimits(displayValue, segment.type, resolvedOptions),
           isPlaceholder,
-          placeholder,
-          isEditable
+          placeholder: placeholder,
+          isEditable,
+          ltrIsolate: unicode
         } as DateSegment;
       })
-  , [dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale]);
+  , [dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity, timeValue]);
 
   // When the era field appears, mark it valid if the year field is already valid.
   // If the era field disappears, remove it from the valid segments.

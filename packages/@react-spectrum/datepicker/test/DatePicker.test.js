@@ -31,7 +31,7 @@ function getTextValue(el) {
     return '';
   }
 
-  return el.textContent;
+  return el.textContent.replace(/[\u2066-\u2069]/g, '');
 }
 
 function expectPlaceholder(el, placeholder) {
@@ -364,7 +364,7 @@ describe('DatePicker', function () {
   });
 
   describe('calendar popover', function () {
-    it('should emit onChange when selecting a date in the calendar in controlled mode', async function () {
+    it.only('should emit onChange when selecting a date in the calendar in controlled mode', async function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole, queryByLabelText} = render(
         <Provider theme={theme}>

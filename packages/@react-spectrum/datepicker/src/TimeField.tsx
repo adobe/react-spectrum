@@ -54,34 +54,28 @@ function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: F
 
   let approximateWidth = useFormattedDateWidth(state) + 'ch';
 
-  let timeValue = ['hour', 'minute', 'second', 'literal'];
-  let timeSegments = state.segments.filter((segment) => timeValue.includes(segment.type));
-  let otherSegments = state.segments.filter((segment) => !timeValue.includes(segment.type));
+  // let timeValue = ['hour', 'minute', 'second'];
+  // let dateValue = ['year', 'month', 'day'];
+  // let dateLiteral = ['.', '/', '-'];
 
-  let time = (
-    <bdo dir="ltr" style={{display: 'flex'}}>
-      {timeSegments.map((segment, i) => (
-        <DatePickerSegment
-          key={i}
-          segment={segment} 
-          state={state}
-          isDisabled={isDisabled}
-          isReadOnly={isReadOnly}
-          isRequired={isRequired} />
-      ))
-      }
-    </bdo>
-  );
+  // console.log(state.segments);
+  // is there a better way to determine what the literal will look like based on locale rather than hard coding it?
+  // const groupedSegments = state.segments.reduce((acc: DateSegment[][], segment) => {
+  //   if ((timeValue.includes(segment.type) || 
+  //       (segment.type === 'literal' && segment.text === ':')) || (locale !== 'ar-AE' && (dateValue.includes(segment.type) || (segment.type === 'literal' && dateLiteral.includes(segment.text))))) {
+  //     let lastGroup = acc[acc.length - 1];
+  //     if (Array.isArray(lastGroup) && lastGroup[0].type !== 'literal') {
+  //       lastGroup.push(segment);
+  //     } else {
+  //       acc.push([segment]);
+  //     }
+  //   } else {
+  //     acc.push([segment]);
+  //   }
+  //   return acc;
+  // }, []);
 
-  let other = otherSegments.map((segment, i) => (
-    <DatePickerSegment
-      key={i}
-      segment={segment}
-      state={state}
-      isDisabled={isDisabled}
-      isReadOnly={isReadOnly}
-      isRequired={isRequired} />
-  ));
+  // let granularity = props.granularity || 'minute';
 
   return (
     <Field
@@ -114,8 +108,36 @@ function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: F
             isReadOnly={isReadOnly}
             isRequired={isRequired} />)
         )} */}
-        {time}
-        {other}
+        {/* {state.segments.map((segment, i) =>
+          (
+            <React.Fragment key={i}>
+              {segment.type === 'day' && '\u2066'}
+              {segment.type === 'hour' && '\u2066'}
+              <DatePickerSegment
+                key={i}
+                segment={segment}
+                state={state}
+                isDisabled={isDisabled}
+                isReadOnly={isReadOnly}
+                isRequired={isRequired} />
+              {segment.type === 'year' &&  '\u2069'}
+              {segment.type === granularity && '\u2069'}
+          </React.Fragment>)               
+        )} */}
+        {state.segments.map((segment, i) =>
+          (
+            <React.Fragment key={i}>
+              {segment.ltrIsolate === '\u2066' && segment.ltrIsolate}
+              <DatePickerSegment
+                key={i}
+                segment={segment}
+                state={state}
+                isDisabled={isDisabled}
+                isReadOnly={isReadOnly}
+                isRequired={isRequired} />
+              {segment.ltrIsolate === '\u2069' && segment.ltrIsolate}
+            </React.Fragment>)               
+          )}
         <input {...inputProps} ref={inputRef} />
       </Input>
     </Field>
