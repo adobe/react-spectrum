@@ -30,7 +30,7 @@ const meta: Meta<typeof Tabs> = {
 export default meta;
 
 export const Example = (args: any) => (
-  <div className={style({width: 700, height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
+  <div className={style({width: 700, maxWidth: '[calc(100vw - 60px)]', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
     <Tabs {...args} styles={style({width: 'full'})}>
       <TabList aria-label="History of Ancient Rome">
         <Tab id="FoR">Founding of Rome</Tab>
@@ -58,7 +58,7 @@ export const Example = (args: any) => (
 );
 
 export const Disabled = (args: any) => (
-  <div className={style({width: 700, height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
+  <div className={style({width: 700, maxWidth: '[calc(100vw - 60px)]', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
     <Tabs {...args} styles={style({width: 'full'})} disabledKeys={['FoR', 'MaR', 'Emp']}>
       <TabList aria-label="History of Ancient Rome">
         <Tab id="FoR">Founding of Rome</Tab>
@@ -79,7 +79,7 @@ export const Disabled = (args: any) => (
 );
 
 const IconsRender = (props) => (
-  <div className={style({width: 700, height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
+  <div className={style({width: 700, maxWidth: '[calc(100vw - 60px)]', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
     <Tabs {...props} styles={style({width: 'full'})}>
       <TabList aria-label="History of Ancient Rome">
         <Tab id="FoR" aria-label="Edit"><Edit /><Text>Founding of Rome</Text></Tab>
@@ -115,7 +115,7 @@ let items: Item[] = [
 ];
 
 export const Dynamic = (args: any) => (
-  <div className={style({width: 700, height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
+  <div className={style({width: 700, maxWidth: '[calc(100vw - 60px)]', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
     <Tabs {...args} styles={style({width: 'full'})} disabledKeys={new Set([2])}>
       <TabList aria-label="History of Ancient Rome" items={items}>
         {item => <Tab>{item.title}</Tab>}
