@@ -39,6 +39,7 @@ export const Autocomplete = forwardRef(function Autocomplete(props: Autocomplete
   let {defaultFilter} = props;
   let state = useAutocompleteState(props);
   let collectionRef = useRef<HTMLElement>(null);
+  let inputRef = useRef<HTMLInputElement>(null);
 
   let {
     inputProps,
@@ -48,14 +49,15 @@ export const Autocomplete = forwardRef(function Autocomplete(props: Autocomplete
   } = useAutocomplete({
     ...removeDataAttributes(props),
     defaultFilter,
-    collectionRef
+    collectionRef,
+    inputRef
   }, state);
 
   return (
     <Provider
       values={[
         [AutocompleteStateContext, state],
-        [InputContext, {...inputProps}],
+        [InputContext, {...inputProps, ref: inputRef}],
         [InternalAutocompleteContext, {
           filterFn,
           collectionProps,

@@ -295,13 +295,6 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       ) {
         onSelect(e);
       }
-
-      // TODO: non ideal since this makes the link action happen on press start rather than on press up like it usually
-      // does for listboxes but we never get the onPress event because the simiulated event target from useAutocomplete is different
-      // from the actual place it is triggered from (the input).
-      if (shouldUseVirtualFocus && e.pointerType === 'keyboard' && hasAction) {
-        performAction(e);
-      }
     };
 
     itemPressProps.onPress = (e) => {

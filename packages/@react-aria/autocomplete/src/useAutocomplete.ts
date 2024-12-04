@@ -26,7 +26,6 @@ export interface CollectionOptions extends DOMProps, AriaLabelingProps {
   disallowTypeAhead: boolean
 }
 export interface AriaAutocompleteProps extends AutocompleteProps {
-
   /**
    * The filter function used to determine if a option should be included in the autocomplete list.
    * @default contains
@@ -36,7 +35,9 @@ export interface AriaAutocompleteProps extends AutocompleteProps {
 
 export interface AriaAutocompleteOptions extends Omit<AriaAutocompleteProps, 'children'> {
   /** The ref for the wrapped collection element. */
-  collectionRef: RefObject<HTMLElement | null>
+  collectionRef: RefObject<HTMLElement | null>,
+  /** The ref for the wrapped input element. */
+  inputRef: RefObject<HTMLInputElement | null>
 }
 
 export interface AutocompleteAria {
@@ -59,7 +60,8 @@ export interface AutocompleteAria {
 export function useAutocomplete(props: AriaAutocompleteOptions, state: AutocompleteState): AutocompleteAria {
   let {
     collectionRef,
-    defaultFilter
+    defaultFilter,
+    inputRef
   } = props;
 
   let collectionId = useId();
@@ -203,10 +205,35 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
       item?.dispatchEvent(
         new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
       );
-      // TODO: this currently has problems making Enter trigger Listbox links. usePress catches the press up that happens but
-      // detects that the press target is different from the event target aka listbox item vs the input where the Enter event occurs...
     }
   };
+
+  let onKeyUp = useEffectEvent((e) => {
+    // Dispatch simulated key up events for things like triggering links in listbox
+    // Make sure to stop the propagation of the input keyup event so that the simulated keyup/down pair
+    // is detected by usePress instead of the original keyup originating from the input
+    if (e.target === inputRef.current) {
+      e.stopImmediatePropagation();
+      if (state.focusedNodeId == null) {
+        collectionRef.current?.dispatchEvent(
+          new KeyboardEvent(e.type, e)
+        );
+      } else {
+        let item = document.getElementById(state.focusedNodeId);
+        item?.dispatchEvent(
+          new KeyboardEvent(e.type, e)
+        );
+      }
+    }
+  });
+
+  useEffect(() => {
+    document.addEventListener('keyup', onKeyUp, true);
+    return () => {
+      document.removeEventListener('keyup', onKeyUp, true);
+    };
+  }, [inputRef, onKeyUp]);
+
   let {keyboardProps} = useKeyboard({onKeyDown});
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/autocomplete');

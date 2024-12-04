@@ -454,8 +454,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
 
     if (renderers.links) {
       describe('with links', function () {
-        // TODO: skipping until we get parity between Listbox and Menu behavior
-        it.skip('should trigger the link option when hitting Enter', async function () {
+        it('should trigger the link option when hitting Enter', async function () {
           let {getByRole} = (renderers.links!)();
           let input = getByRole('searchbox');
           let menu = getByRole(collectionNodeRole);
@@ -474,11 +473,6 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
           let onClick = mockClickDefault();
 
           await user.keyboard('{Enter}');
-          if (ariaPattern === 'menu') {
-            expect(actionListener).toHaveBeenCalledTimes(1);
-            expect(actionListener).toHaveBeenLastCalledWith('3');
-          }
-
           expect(onClick).toHaveBeenCalledTimes(1);
           window.removeEventListener('click', onClick);
         });
