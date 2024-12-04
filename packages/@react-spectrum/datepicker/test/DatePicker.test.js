@@ -364,7 +364,7 @@ describe('DatePicker', function () {
   });
 
   describe('calendar popover', function () {
-    it.only('should emit onChange when selecting a date in the calendar in controlled mode', async function () {
+    it('should emit onChange when selecting a date in the calendar in controlled mode', async function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole, queryByLabelText} = render(
         <Provider theme={theme}>
@@ -1043,7 +1043,7 @@ describe('DatePicker', function () {
       await user.keyboard('{ArrowUp}');
 
       expect(queryByTestId('era')).toBeNull();
-      expect(document.activeElement).toBe(field.firstChild);
+      expect(document.activeElement.textContent).toBe('3');
     });
 
     it('does not try to shift focus when the entire datepicker is unmounted while focused', function () {
