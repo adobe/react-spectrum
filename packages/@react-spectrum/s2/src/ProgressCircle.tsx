@@ -38,6 +38,7 @@ export const ProgressCircleContext = createContext<ContextValue<ProgressCirclePr
 
 // Double check the types passed to each style, may not need all for each
 const wrapper = style<ProgressCircleStyleProps>({
+  ...staticColor(),
   size: {
     default: 32,
     size: {
@@ -48,18 +49,18 @@ const wrapper = style<ProgressCircleStyleProps>({
   aspectRatio: 'square'
 }, getAllowedOverrides({height: true}));
 
-const track = style<ProgressCircleStyleProps>({
+const track = style({
   stroke: {
     default: 'gray-300',
-    staticColor: staticColor('transparent-overlay-300'),
+    isStaticColor: 'transparent-overlay-300',
     forcedColors: 'Background'
   }
 });
 
-const fill = style<ProgressCircleStyleProps>({
+const fill = style({
   stroke: {
     default: 'blue-900',
-    staticColor: staticColor('transparent-overlay-900'),
+    isStaticColor: 'transparent-overlay-900',
     forcedColors: 'Highlight'
   },
   rotate: -90,
@@ -115,6 +116,7 @@ export const ProgressCircle = /*#__PURE__*/ forwardRef(function ProgressCircle(p
 
   // SVG strokes are centered, so subtract half the stroke width from the radius to create an inner stroke.
   let radius = `calc(50% - ${strokeWidth / 2}px)`;
+  let isStaticColor = !!staticColor;
 
   return (
     <RACProgressBar
@@ -123,7 +125,8 @@ export const ProgressCircle = /*#__PURE__*/ forwardRef(function ProgressCircle(p
       style={UNSAFE_style}
       className={renderProps => UNSAFE_className + wrapper({
         ...renderProps,
-        size
+        size,
+        staticColor
       }, props.styles)}>
       {({percentage, isIndeterminate}) => (
         <svg
@@ -135,13 +138,13 @@ export const ProgressCircle = /*#__PURE__*/ forwardRef(function ProgressCircle(p
             cy="50%"
             r={radius}
             strokeWidth={strokeWidth}
-            className={track({staticColor})} />
+            className={track({isStaticColor})} />
           <circle
             cx="50%"
             cy="50%"
             r={radius}
             strokeWidth={strokeWidth}
-            className={fill({staticColor})}
+            className={fill({isStaticColor})}
             style={{
               // These cubic-bezier timing functions were derived from the previous animation keyframes
               // using a best fit algorithm, and then manually adjusted to approximate the original animation.

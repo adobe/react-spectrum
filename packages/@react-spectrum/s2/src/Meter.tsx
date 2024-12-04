@@ -19,7 +19,7 @@ import {bar, track} from './bar-utils'  with {type: 'macro'};
 import {createContext, forwardRef, ReactNode} from 'react';
 import {DOMRef, DOMRefValue, LabelPosition} from '@react-types/shared';
 import {FieldLabel} from './Field';
-import {fieldLabel, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
+import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {lightDark, style} from '../style' with {type: 'macro'};
 import {SkeletonWrapper} from './Skeleton';
 import {Text} from './Content';
@@ -77,7 +77,7 @@ const trackStyles = style({
   }
 });
 
-const fillStyles = style<MeterStyleProps>({
+const fillStyles = style<MeterStyleProps & {isStaticColor: boolean}>({
   height: 'full',
   borderStyle: 'none',
   borderRadius: 'full',
@@ -88,7 +88,7 @@ const fillStyles = style<MeterStyleProps>({
       notice: lightDark('notice-800', 'notice-900'), // 'notice-visual',
       negative: lightDark('negative-800', 'negative-900') // 'negative-visual'
     },
-    staticColor: staticColor('transparent-overlay-900'),
+    isStaticColor: 'transparent-overlay-900',
     forcedColors: 'ButtonText'
   }
 });
@@ -112,6 +112,7 @@ export const Meter = forwardRef(function Meter(props: MeterProps, ref: DOMRef<HT
     labelPosition = 'top',
     ...groupProps
   } = props;
+  let isStaticColor = !!staticColor;
 
   return (
     <AriaMeter
@@ -127,10 +128,10 @@ export const Meter = forwardRef(function Meter(props: MeterProps, ref: DOMRef<HT
       {({percentage, valueText}) => (
         <>
           {label && <FieldLabel size={size} labelAlign="start" labelPosition={labelPosition} staticColor={staticColor}>{label}</FieldLabel>}
-          {label && <Text styles={valueStyles({size, labelAlign: 'end', staticColor})}>{valueText}</Text>}
+          {label && <Text styles={valueStyles({size, labelAlign: 'end', isStaticColor})}>{valueText}</Text>}
           <SkeletonWrapper>
-            <div className={trackStyles({staticColor, size})}>
-              <div className={fillStyles({staticColor, variant})} style={{width: percentage + '%'}} />
+            <div className={trackStyles({isStaticColor, size})}>
+              <div className={fillStyles({isStaticColor, variant})} style={{width: percentage + '%'}} />
             </div>
           </SkeletonWrapper>
         </>

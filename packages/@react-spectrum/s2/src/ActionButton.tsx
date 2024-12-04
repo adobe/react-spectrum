@@ -59,8 +59,9 @@ export interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'styl
 
 // These styles handle both ActionButton and ToggleButton
 const iconOnly = ':has([slot=icon], [slot=avatar]):not(:has([data-rsp-slot=text]))';
-export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleButtonStyleProps & ActionGroupItemStyleProps & {isInGroup: boolean}>({
+export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleButtonStyleProps & ActionGroupItemStyleProps & {isInGroup: boolean, isStaticColor: boolean}>({
   ...focusRing(),
+  ...staticColor(),
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -98,7 +99,7 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
         isQuiet: 'transparent'
       }
     },
-    staticColor: staticColor({
+    isStaticColor: {
       ...baseColor('transparent-overlay-100'),
       default: {
         default: 'transparent-overlay-100',
@@ -111,7 +112,7 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
           isQuiet: 'transparent'
         }
       }
-    }),
+    },
     forcedColors: {
       default: 'ButtonFace',
       isSelected: {
@@ -127,11 +128,11 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
       isEmphasized: 'white'
     },
     isDisabled: 'disabled',
-    staticColor: staticColor({
+    isStaticColor: {
       default: baseColor('transparent-overlay-800'),
       isSelected: 'auto',
       isDisabled: 'transparent-overlay-400'
-    }),
+    },
     forcedColors: {
       default: 'ButtonText',
       isSelected: 'HighlightText',
@@ -146,7 +147,7 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
   },
   outlineColor: {
     default: 'focus-ring',
-    staticColor: staticColor('transparent-overlay-1000'),
+    isStaticColor: 'transparent-overlay-1000',
     forcedColors: 'Highlight'
   },
   borderStyle: 'none',
@@ -261,6 +262,7 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
         // Retain hover styles when an overlay is open.
         isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
         staticColor,
+        isStaticColor: !!staticColor,
         size,
         isQuiet,
         density,

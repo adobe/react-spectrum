@@ -37,11 +37,12 @@ export interface CloseButtonProps extends Pick<ButtonProps, 'isDisabled'>, Style
 // TODO(design): this is inconsistent with ActionButton
 const hoverBackground = {
   default: 'gray-100',
-  staticColor: staticColor('transparent-overlay-100')
+  isStaticColor: 'transparent-overlay-100'
 } as const;
 
 const styles = style({
   ...focusRing(),
+  ...staticColor(),
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -62,15 +63,15 @@ const styles = style({
     value: {
       default: 'neutral',
       isDisabled: 'disabled',
-      staticColor: staticColor({
+      isStaticColor: {
         default: baseColor('transparent-overlay-800'),
         isDisabled: 'transparent-overlay-400'
-      })
+      }
     }
   },
   outlineColor: {
     default: 'focus-ring',
-    staticColor: staticColor('transparent-overlay-1000'),
+    isStaticColor: 'transparent-overlay-1000',
     forcedColors: 'Highlight'
   }
 }, getAllowedOverrides());
@@ -92,7 +93,7 @@ export const CloseButton = forwardRef(function CloseButton(props: CloseButtonPro
       slot="close"
       aria-label={stringFormatter.format('dialog.dismiss')}
       style={pressScale(domRef, UNSAFE_style)}
-      className={renderProps => UNSAFE_className + styles({...renderProps, staticColor: props.staticColor}, props.styles)}>
+      className={renderProps => UNSAFE_className + styles({...renderProps, staticColor: props.staticColor, isStaticColor: !!props.staticColor}, props.styles)}>
       <CrossIcon size={({S: 'L', M: 'XL', L: 'XXL', XL: 'XXXL'} as const)[props.size || 'M']} />
     </Button>
   );

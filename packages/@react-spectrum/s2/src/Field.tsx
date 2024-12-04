@@ -98,7 +98,7 @@ export const FieldLabel = forwardRef(function FieldLabel(props: FieldLabelProps,
         {...labelProps}
         ref={domRef}
         style={UNSAFE_style}
-        className={UNSAFE_className + mergeStyles(style(fieldLabel())({labelPosition, isDisabled, size, staticColor}), props.styles)}>
+        className={UNSAFE_className + mergeStyles(style(fieldLabel())({labelPosition, isDisabled, size, isStaticColor: !!staticColor}), props.styles)}>
         {props.children}
         {(isRequired || necessityIndicator === 'label') && (
           <span className={style({whiteSpace: 'nowrap'})}>

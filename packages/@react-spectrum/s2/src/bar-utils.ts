@@ -13,6 +13,7 @@
 import {centerPadding, fieldInput, staticColor} from './style-utils' with {type: 'macro'};
 
 export const bar = () => ({
+  ...staticColor(),
   position: 'relative',
   display: 'grid',
   gridTemplateColumns: {
@@ -64,7 +65,7 @@ export const track = () => ({
   borderRadius: 'full',
   backgroundColor: {
     default: 'gray-300',
-    staticColor: staticColor('transparent-overlay-300'),
+    isStaticColor: 'transparent-overlay-300',
     forcedColors: 'ButtonFace'
   },
   outlineWidth: {

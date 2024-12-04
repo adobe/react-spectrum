@@ -40,8 +40,9 @@ export interface LinkProps extends Omit<RACLinkProps, 'isDisabled' | 'className'
 
 export const LinkContext = createContext<ContextValue<LinkProps, FocusableRefValue<HTMLAnchorElement>>>(null);
 
-const link = style<LinkRenderProps & LinkStyleProps & {isSkeleton: boolean}>({
+const link = style<LinkRenderProps & LinkStyleProps & {isSkeleton: boolean, isStaticColor: boolean}>({
   ...focusRing(),
+  ...staticColor(),
   borderRadius: 'sm',
   font: {
     isStandalone: 'ui'
@@ -51,7 +52,7 @@ const link = style<LinkRenderProps & LinkStyleProps & {isSkeleton: boolean}>({
       primary: 'accent',
       secondary: 'neutral' // TODO: should there be an option to inherit from the paragraph? What about hover states?
     },
-    staticColor: staticColor('transparent-overlay-1000'),
+    isStaticColor: 'transparent-overlay-1000',
     forcedColors: 'LinkText'
   },
   transition: 'default',
@@ -71,7 +72,7 @@ const link = style<LinkRenderProps & LinkStyleProps & {isSkeleton: boolean}>({
   },
   outlineColor: {
     default: 'focus-ring',
-    staticColor: staticColor('transparent-overlay-1000'),
+    isStaticColor: 'transparent-overlay-1000',
     forcedColors: 'Highlight'
   },
   disableTapHighlight: true
@@ -101,7 +102,7 @@ export const Link = /*#__PURE__*/ forwardRef(function Link(props: LinkProps, ref
       {...props}
       ref={domRef}
       style={UNSAFE_style}
-      className={renderProps => UNSAFE_className + link({...renderProps, variant, staticColor, isQuiet, isStandalone, isSkeleton}, styles)}>
+      className={renderProps => UNSAFE_className + link({...renderProps, variant, staticColor, isStaticColor: !!staticColor, isQuiet, isStandalone, isSkeleton}, styles)}>
       {children}
     </RACLink>
   );

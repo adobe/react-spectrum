@@ -65,8 +65,9 @@ export const ButtonContext = createContext<ContextValue<ButtonProps, FocusableRe
 export const LinkButtonContext = createContext<ContextValue<ButtonProps, FocusableRefValue<HTMLAnchorElement>>>(null);
 
 const iconOnly = ':has([slot=icon]):not(:has([data-rsp-slot=text]))';
-const button = style<ButtonRenderProps & ButtonStyleProps>({
+const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: boolean}>({
   ...focusRing(),
+  ...staticColor(),
   position: 'relative',
   display: 'flex',
   alignItems: {
@@ -120,13 +121,13 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
       secondary: baseColor('gray-300')
     },
     isDisabled: 'disabled',
-    staticColor: staticColor({
+    isStaticColor: {
       variant: {
         primary: baseColor('transparent-overlay-800'),
         secondary: baseColor('transparent-overlay-300')
       },
       isDisabled: 'transparent-overlay-300'
-    }),
+    },
     forcedColors: {
       default: 'ButtonBorder',
       isHovered: 'Highlight',
@@ -152,7 +153,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
         isDisabled: 'transparent'
       }
     },
-    staticColor: staticColor({
+    isStaticColor: {
       fillStyle: {
         fill: {
           variant: {
@@ -169,7 +170,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
           isDisabled: 'transparent'
         }
       }
-    }),
+    },
     forcedColors: {
       fillStyle: {
         fill: {
@@ -197,7 +198,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
         isDisabled: 'disabled'
       }
     },
-    staticColor: staticColor({
+    isStaticColor: {
       fillStyle: {
         fill: {
           variant: {
@@ -208,7 +209,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
         outline: baseColor('transparent-overlay-800')
       },
       isDisabled: 'transparent-overlay-400'
-    }),
+    },
     forcedColors: {
       fillStyle: {
         fill: {
@@ -228,7 +229,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
   },
   outlineColor: {
     default: 'focus-ring',
-    staticColor: staticColor('transparent-overlay-1000'),
+    isStaticColor: 'transparent-overlay-1000',
     forcedColors: 'Highlight'
   },
   forcedColorAdjust: 'none',
@@ -286,7 +287,8 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
         variant,
         fillStyle,
         size,
-        staticColor
+        staticColor,
+        isStaticColor: !!staticColor
       }, props.styles)}>
       <Provider
         values={[
@@ -373,6 +375,7 @@ export const LinkButton = forwardRef(function LinkButton(props: LinkButtonProps,
         fillStyle: props.fillStyle || 'fill',
         size: props.size || 'M',
         staticColor: props.staticColor,
+        isStaticColor: !!props.staticColor,
         isPending: false
       }, props.styles)}>
       <Provider

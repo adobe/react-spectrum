@@ -42,19 +42,20 @@ export interface DividerProps extends DividerSpectrumProps, Omit<RACSeparatorPro
 
 export const DividerContext = createContext<ContextValue<DividerProps, DOMRefValue>>(null);
 
-export const divider = style<DividerSpectrumProps>({
+export const divider = style<DividerSpectrumProps & {isStaticColor: boolean}>({
+  ...staticColor(),
   alignSelf: 'stretch',
   backgroundColor: {
     default: 'gray-200',
     size: {
       L: 'gray-800'
     },
-    staticColor: staticColor({
+    isStaticColor: {
       default: 'transparent-overlay-200',
       size: {
         L: 'transparent-overlay-800'
       }
-    }),
+    },
     forcedColors: 'ButtonBorder'
   },
   borderStyle: 'none',
@@ -101,7 +102,8 @@ export const Divider = /*#__PURE__*/ forwardRef(function Divider(props: DividerP
       className={(props.UNSAFE_className || '') + divider({
         size: props.size || 'M',
         orientation: props.orientation || 'horizontal',
-        staticColor: props.staticColor
+        staticColor: props.staticColor,
+        isStaticColor: !!props.staticColor
       }, props.styles)} />
   );
 });
