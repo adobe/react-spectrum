@@ -295,7 +295,6 @@ function TabLine(props: TabLineProps & {iconOnly?: boolean}) {
       } else {
         styleObj.height = `${selectedTab.offsetHeight}px`;
       }
-      console.log('styleObj', styleObj);
       setStyle(styleObj);
     }
   }, [direction, setStyle, selectedTab, orientation]);
@@ -480,7 +479,7 @@ let HiddenTabs = function (props: {
 let TabsMenu = (props: {items: Array<Node<any>>, onSelectionChange: TabsProps['onSelectionChange']}) => {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {items} = props;
-  let {density, onSelectionChange, selectedKey, isDisabled, disabledKeys, pickerRef} = useContext(InternalTabsContext);
+  let {density, onSelectionChange, selectedKey, isDisabled, disabledKeys, pickerRef, iconOnly} = useContext(InternalTabsContext);
   let state = useContext(TabListStateContext);
   let allKeysDisabled = useMemo(() => {
     return isAllTabsDisabled(state?.collection, disabledKeys ? new Set(disabledKeys) : new Set());
@@ -502,6 +501,7 @@ let TabsMenu = (props: {items: Array<Node<any>>, onSelectionChange: TabsProps['o
           ref={pickerRef ? pickerRef : undefined}
           isDisabled={isDisabled || allKeysDisabled}
           density={density!}
+          iconOnly={iconOnly}
           items={items}
           disabledKeys={disabledKeys}
           selectedKey={selectedKey}
