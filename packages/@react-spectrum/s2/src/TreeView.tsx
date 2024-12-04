@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButtonGroupContext, ActionMenuContext, Checkbox, IconContext, Text, TextContext} from '@react-spectrum/s2';
+import {ActionButtonGroupContext} from './ActionButtonGroup';
+import {ActionMenuContext} from './ActionMenu';
 import {
   ButtonContext,
   Collection,
@@ -25,13 +26,16 @@ import {
   useContextProps
 } from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
+import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
 import {colorMix, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
 import {DOMRef, Key} from '@react-types/shared';
+import {IconContext} from './Icon';
 import {isAndroid} from '@react-aria/utils';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, isValidElement, JSXElementConstructor, ReactElement, useContext, useMemo, useRef} from 'react';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {Text, TextContext} from './Content';
 import {useButton} from '@react-aria/button';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale} from '@react-aria/i18n';
@@ -88,11 +92,6 @@ const tree = style({
   height: {
     isEmpty: 'full'
   },
-  display: 'flex',
-  flexDirection: 'column',
-  gap: {
-    isDetached: 2
-  },
   '--indent': {
     type: 'width',
     value: 16
@@ -101,8 +100,7 @@ const tree = style({
 
 function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
   let {children, isDetached, isEmphasized} = props;
-  isDetached = true;
-  isEmphasized = false;
+  isEmphasized = !isDetached;
 
   let renderer;
   if (typeof children === 'function') {
@@ -225,7 +223,7 @@ const treeCellGrid = style({
   borderTopColor: {
     default: 'transparent',
     isSelected: {
-      isFirst: '--rowSelectedBorderColor'
+      isFirst: 'transparent'
     },
     isDetached: {
       default: 'transparent',
@@ -234,7 +232,7 @@ const treeCellGrid = style({
   },
   borderInlineEndColor: {
     default: 'transparent',
-    isSelected: '--rowSelectedBorderColor',
+    isSelected: 'transparent',
     isDetached: {
       default: 'transparent',
       isSelected: '--rowSelectedBorderColor'
@@ -242,9 +240,9 @@ const treeCellGrid = style({
   },
   borderBottomColor: {
     default: 'transparent',
-    isSelected: '--rowSelectedBorderColor',
-    isNextSelected: '--rowSelectedBorderColor',
-    isNextFocused: '--rowForcedFocusBorderColor',
+    isSelected: 'transparent',
+    isNextSelected: 'transparent',
+    isNextFocused: 'transparent',
     isDetached: {
       default: 'transparent',
       isSelected: '--rowSelectedBorderColor'
@@ -252,7 +250,7 @@ const treeCellGrid = style({
   },
   borderInlineStartColor: {
     default: 'transparent',
-    isSelected: '--rowSelectedBorderColor',
+    isSelected: 'transparent',
     isDetached: {
       default: 'transparent',
       isSelected: '--rowSelectedBorderColor'
@@ -263,9 +261,18 @@ const treeCellGrid = style({
     isFirst: 1,
     isDetached: 1
   },
-  borderBottomWidth: 1,
-  borderStartWidth: 1,
-  borderEndWidth: 1,
+  borderBottomWidth: {
+    default: 0,
+    isDetached: 1
+  },
+  borderStartWidth: {
+    default: 0,
+    isDetached: 1
+  },
+  borderEndWidth: {
+    default: 0,
+    isDetached: 1
+  },
   borderStyle: 'solid',
   borderRadius: { // odd behaviour, if this is the last property, then bottom right isn't rounded
     isDetached: '[6px]'

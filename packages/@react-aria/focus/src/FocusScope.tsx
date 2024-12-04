@@ -280,7 +280,7 @@ const focusableElements = [
   'embed',
   'audio[controls]',
   'video[controls]',
-  '[contenteditable]'
+  '[contenteditable]:not([contenteditable^="false"])'
 ];
 
 const FOCUSABLE_ELEMENT_SELECTOR = focusableElements.join(':not([hidden]),') + ',[tabindex]:not([disabled]):not([hidden])';

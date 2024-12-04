@@ -53,16 +53,20 @@ export class TreeTester {
       checkboxSelection = true,
       interactionType = this._interactionType
     } = opts;
+    let row = this.findRow({index, text});
+    let rowCheckbox = within(row).queryByRole('checkbox');
+    // Would be nice to get rid of this check
+    if (rowCheckbox?.getAttribute('disabled') === '') {
+      return;
+    }
 
     // this would be better than the check to do nothing in events.ts
     // also, it'd be good to be able to trigger selection on the row instead of having to go to the checkbox directly
     if (interactionType === 'keyboard' && !checkboxSelection) {
-      await this.keyboardNavigateToRow({row: this.findRow({index, text})});
-      await this.user.keyboard('[Space]');
+      await this.keyboardNavigateToRow({row});
+      await this.user.keyboard('{Space}');
       return;
     }
-    let row = this.findRow({index, text});
-    let rowCheckbox = within(row).queryByRole('checkbox');
     if (rowCheckbox) {
       await pressElement(this.user, rowCheckbox, interactionType);
     } else {
