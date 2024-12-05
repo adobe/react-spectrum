@@ -29,51 +29,53 @@ const meta: Meta<typeof Dialog> = {
 
 export default meta;
 
-export const Example = (args: any) => (
-  <DialogTrigger {...args}>
-    <Button variant="primary">Open dialog</Button>
-    <Dialog {...args}>
-      {({close}) => (
-        <>
-          {args.type !== 'popover' && <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" alt="Sky over roof" />}
-          <Heading slot="title">Dialog title</Heading>
-          <Header>Header</Header>
-          <Content>
-            {[...Array(args.paragraphs)].map((_, i) =>
-              <p key={i} style={{marginTop: i === 0 ? 0 : undefined, marginBottom: i === args.paragraphs - 1 ? 0 : undefined}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in</p>
-            )}
-          </Content>
-          <Footer><Checkbox>Don't show this again</Checkbox></Footer>
-          <ButtonGroup>
-            <Button onPress={close} variant="secondary">Cancel</Button>
-            <Button onPress={close} variant="accent">Save</Button>
-          </ButtonGroup>
-        </>
-      )}
-    </Dialog>
-  </DialogTrigger>
-);
-
-export const DialogTriggerExample = (args: any) => (
-  <DialogTrigger {...args}>
-    <Button variant="primary">Open dialog</Button>
-    <ExampleDialog {...args} />
-  </DialogTrigger>
-);
-
-DialogTriggerExample.args = {
-  showHero: true,
-  showHeading: true,
-  showHeader: true,
-  showFooter: true,
-  showButtons: true,
-  paragraphs: 1,
-  title: 'Dialog title'
+export const Example = {
+  render: (args: any) => (
+    <DialogTrigger {...args}>
+      <Button variant="primary">Open dialog</Button>
+      <Dialog {...args}>
+        {({close}) => (
+          <>
+            {args.type !== 'popover' && <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" alt="Sky over roof" />}
+            <Heading slot="title">Dialog title</Heading>
+            <Header>Header</Header>
+            <Content>
+              {[...Array(args.paragraphs)].map((_, i) =>
+                <p key={i} style={{marginTop: i === 0 ? 0 : undefined, marginBottom: i === args.paragraphs - 1 ? 0 : undefined}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in</p>
+              )}
+            </Content>
+            <Footer><Checkbox>Don't show this again</Checkbox></Footer>
+            <ButtonGroup>
+              <Button onPress={close} variant="secondary">Cancel</Button>
+              <Button onPress={close} variant="accent">Save</Button>
+            </ButtonGroup>
+          </>
+        )}
+      </Dialog>
+    </DialogTrigger>
+  )
 };
 
-DialogTriggerExample.parameters = {
-  docs: {
-    disable: true
+export const DialogTriggerExample = {
+  render: (args: any) => (
+    <DialogTrigger {...args}>
+      <Button variant="primary">Open dialog</Button>
+      <ExampleDialog {...args} />
+    </DialogTrigger>
+  ),
+  args: {
+    showHero: true,
+    showHeading: true,
+    showHeader: true,
+    showFooter: true,
+    showButtons: true,
+    paragraphs: 1,
+    title: 'Dialog title'
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };
 
@@ -103,7 +105,7 @@ function ExampleDialog(args: any) {
   );
 }
 
-export function DialogContainerExample(props: any) {
+function DialogContainerExampleRender(props: any) {
   let [isOpen, setOpen] = useState(false);
 
   return (
@@ -118,17 +120,24 @@ export function DialogContainerExample(props: any) {
   );
 }
 
-DialogContainerExample.args = DialogTriggerExample.args;
+export const DialogContainerExample = {
+  render: (args) => <DialogContainerExampleRender {...args} />,
+  args: DialogTriggerExample.args
+};
 
-export const ColorScheme = (args: any) => (
-  <Provider colorScheme="dark" background="base" styles={style({padding: 48})}>
-    <DialogTriggerExample {...args} />
-  </Provider>
-);
-
-ColorScheme.args = DialogTriggerExample.args;
-ColorScheme.parameters = {
-  docs: {
-    disable: true
+export const ColorScheme = {
+  render: (args: any) => (
+    <Provider colorScheme="dark" background="base" styles={style({padding: 48})}>
+      <DialogTrigger {...args}>
+        <Button variant="primary">Open dialog</Button>
+        <ExampleDialog {...args} />
+      </DialogTrigger>
+    </Provider>
+  ),
+  args: DialogTriggerExample.args,
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };

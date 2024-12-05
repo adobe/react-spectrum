@@ -28,84 +28,88 @@ const meta: Meta<typeof Slider> = {
 
 export default meta;
 
-export const Example = (args: any) => (
-  <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
-    <Slider {...args} />
-  </div>
-);
-
-Example.args = {
-  label: 'Cookies',
-  defaultValue: 30
+export const Example = {
+  render: (args: any) => (
+    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
+      <Slider {...args} />
+    </div>
+  ),
+  args: {
+    label: 'Cookies',
+    defaultValue: 30
+  }
 };
 
-export const FillOffset = (args: any) => (
-  <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
-    <Slider {...args} />
-  </div>
-);
-
-FillOffset.args = {
-  label: 'Exposure',
-  fillOffset: 0,
-  defaultValue: 1.83,
-  minValue: -5,
-  maxValue: 5,
-  formatOptions: {signDisplay: 'always'},
-  step: 0.01
+export const FillOffset = {
+  render: (args: any) => (
+    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
+      <Slider {...args} />
+    </div>
+  ),
+  args: {
+    label: 'Exposure',
+    fillOffset: 0,
+    defaultValue: 1.83,
+    minValue: -5,
+    maxValue: 5,
+    formatOptions: {signDisplay: 'always'},
+    step: 0.01
+  }
 };
 
-export const FormatOptions = (args: any) => (
-  <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
-    <Slider {...args} styles={style({width: 300})} />
-  </div>
-);
-
-FormatOptions.args = {
-  label: 'Currency',
-  defaultValue: 0,
-  maxValue: 500,
-  formatOptions: {style: 'currency', currency: 'JPY'}
+export const FormatOptions = {
+  render: (args: any) => (
+    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
+      <Slider {...args} styles={style({width: 300})} />
+    </div>
+  ),
+  args: {
+    label: 'Currency',
+    defaultValue: 0,
+    maxValue: 500,
+    formatOptions: {style: 'currency', currency: 'JPY'}
+  }
 };
 
-export const MinMaxValue = (args: any) => (
-  <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
-    <Slider {...args} />
-  </div>
-);
-
-MinMaxValue.args = {
-  label: 'Size',
-  minValue: 1,
-  maxValue: 5
+export const MinMaxValue = {
+  render: (args: any) => (
+    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
+      <Slider {...args} />
+    </div>
+  ),
+  args: {
+    label: 'Size',
+    minValue: 1,
+    maxValue: 5
+  }
 };
 
-export const ContextualHelpExample = (args: any) => (
-  <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
-    <Slider {...args} />
-  </div>
-);
-
-ContextualHelpExample.args = {
-  label: 'Cookies',
-  defaultValue: 30,
-  contextualHelp: (
-    <ContextualHelp>
-      <Heading>What is a ice cream?</Heading>
-      <Content>
-        <Text>
-          A combination of sugar, eggs, milk, and cream is cooked to make
-          a custard base. Then, flavorings are added, and this flavored
-          mixture is carefully churned and frozen to make ice cream.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Ice_cream"
-          target="_blank">Learn more about ice cream</Link>
-      </Footer>
-    </ContextualHelp>
-  )
+export const ContextualHelpExample = {
+  render: (args: any) => (
+    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
+      <Slider {...args} />
+    </div>
+  ),
+  args: {
+    label: 'Cookies',
+    defaultValue: 30,
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a ice cream?</Heading>
+        <Content>
+          <Text>
+            A combination of sugar, eggs, milk, and cream is cooked to make
+            a custard base. Then, flavorings are added, and this flavored
+            mixture is carefully churned and frozen to make ice cream.
+          </Text>
+        </Content>
+        <Footer>
+          <Link
+            isStandalone
+            href="https://en.wikipedia.org/wiki/Ice_cream"
+            target="_blank">Learn more about ice cream</Link>
+        </Footer>
+      </ContextualHelp>
+    )
+  }
 };
-
