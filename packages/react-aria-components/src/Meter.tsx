@@ -45,7 +45,9 @@ export const Meter = /*#__PURE__*/ (forwardRef as forwardRefType)(function Meter
   } = props;
   value = clamp(value, minValue, maxValue);
 
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let {
     meterProps,
     labelProps

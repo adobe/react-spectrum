@@ -125,7 +125,9 @@ export const RadioGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
     validationBehavior
   });
 
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let {radioGroupProps, labelProps, descriptionProps, errorMessageProps, ...validation} = useRadioGroup({
     ...props,
     label,

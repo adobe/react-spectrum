@@ -51,7 +51,9 @@ export const ProgressBar = forwardRef(function ProgressBar(props: ProgressBarPro
   } = props;
   value = clamp(value, minValue, maxValue);
 
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let {
     progressBarProps,
     labelProps
