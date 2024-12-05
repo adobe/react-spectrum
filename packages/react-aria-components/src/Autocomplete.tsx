@@ -27,6 +27,7 @@ interface InternalAutocompleteContextValue {
 export const UNSTABLE_AutocompleteContext = createContext<ContextValue<AutocompleteProps, HTMLInputElement>>(null);
 export const UNSTABLE_AutocompleteStateContext = createContext<AutocompleteState | null>(null);
 // This context is to pass the register and filter down to whatever collection component is wrapped by the Autocomplete
+// TODO: export from RAC, but rename to something more appropriate
 export const UNSTABLE_InternalAutocompleteContext = createContext<InternalAutocompleteContextValue | null>(null);
 
 /**
