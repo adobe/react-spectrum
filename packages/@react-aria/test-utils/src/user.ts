@@ -16,6 +16,7 @@ import {MenuOptions, MenuTester} from './menu';
 import {pointerMap} from './';
 import {SelectOptions, SelectTester} from './select';
 import {TableOptions, TableTester} from './table';
+import {TreeOptions, TreeTester} from './tree';
 import userEvent from '@testing-library/user-event';
 
 // https://github.com/testing-library/dom-testing-library/issues/939#issuecomment-830771708 is an interesting way of allowing users to configure the timers
@@ -33,13 +34,21 @@ export interface BaseTesterOpts {
   root: HTMLElement
 }
 
-let keyToUtil = {'Select': SelectTester, 'Table': TableTester, 'Menu': MenuTester, 'ComboBox': ComboBoxTester, 'GridList': GridListTester} as const;
+let keyToUtil = {
+  'Select': SelectTester,
+  'Table': TableTester,
+  'Tree': TreeTester,
+  'Menu': MenuTester,
+  'ComboBox': ComboBoxTester,
+  'GridList': GridListTester
+} as const;
 export type PatternNames = keyof typeof keyToUtil;
 
 // Conditional type: https://www.typescriptlang.org/docs/handbook/2/conditional-types.html
 type ObjectType<T> =
     T extends 'Select' ? SelectTester :
     T extends 'Table' ? TableTester :
+    T extends 'Tree' ? TreeTester :
     T extends 'Menu' ? MenuTester :
     T extends 'ComboBox' ? ComboBoxTester :
     T extends 'GridList' ? GridListTester :
@@ -48,6 +57,7 @@ type ObjectType<T> =
 type ObjectOptionsTypes<T> =
   T extends 'Select' ? SelectOptions :
   T extends 'Table' ? TableOptions :
+  T extends 'Tree' ? TreeOptions :
   T extends 'Menu' ? MenuOptions :
   T extends 'ComboBox' ? ComboBoxOptions :
   T extends 'GridList' ? GridListOptions :
