@@ -376,13 +376,12 @@ function useFocusContainment(scopeRef: RefObject<Element[] | null>, contain?: bo
     };
 
     let onBlur = (e) => {
-      // Firefox doesn't shift focus back to the Dialog properly without this
+      // Use raf to delay long enough that subdialogs will fully unmount and not move focus away from parent menu's hovered item that triggered the close
       if (raf.current) {
         cancelAnimationFrame(raf.current);
       }
       raf.current = requestAnimationFrame(() => {
-        // Use document.activeElement instead of e.relatedTarget so we can tell if user clicked into iframe
-        if (ownerDocument.activeElement && shouldContainFocus(scopeRef) && !isElementInChildScope(ownerDocument.activeElement, scopeRef)) {
+        if (e.relatedTarget && shouldContainFocus(scopeRef) && !isElementInChildScope(e.relatedTarget, scopeRef)) {
           activeScope = scopeRef;
           if (ownerDocument.body.contains(e.target)) {
             focusedNode.current = e.target;
