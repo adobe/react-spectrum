@@ -31,7 +31,7 @@ export default meta;
 export const Example = (args: any) => (
   <Tabs {...args} styles={style({width: 450, height: 256})}>
     <TabList aria-label="History of Ancient Rome">
-      <Tab id="FoR"><Edit /><Text>Founding of Rome</Text></Tab>
+      <Tab id="FoR">Founding of Rome</Tab>
       <Tab id="MaR">Monarchy and Republic</Tab>
       <Tab id="Emp">Empire</Tab>
     </TabList>
@@ -57,9 +57,9 @@ export const Example = (args: any) => (
 export const Disabled = (args: any) => (
   <Tabs {...args} styles={style({width: 450, height: 144})} disabledKeys={['FoR', 'MaR', 'Emp']}>
     <TabList aria-label="History of Ancient Rome">
-      <Tab id="FoR"><Edit /><Text>Founding of Rome</Text></Tab>
-      <Tab id="MaR">Monarchy and Republic</Tab>
-      <Tab id="Emp">Empire</Tab>
+      <Tab id="FoR" aria-label="Edit"><Edit /><Text>Edit</Text></Tab>
+      <Tab id="MaR" aria-label="Notifications"><Bell /><Text>Notifications</Text></Tab>
+      <Tab id="Emp" aria-label="Likes"><Heart /><Text>Likes</Text></Tab>
     </TabList>
     <TabPanel id="FoR">
       Arma virumque cano, Troiae qui primus ab oris.
@@ -74,7 +74,7 @@ export const Disabled = (args: any) => (
 );
 
 export const Icons = (args: any) => (
-  <Tabs {...args} styles={style({width: 208, height: 144})} iconOnly>
+  <Tabs {...args} styles={style({width: 208, height: 144})} isIconOnly>
     <TabList aria-label="History of Ancient Rome">
       <Tab id="FoR" aria-label="Edit"><Edit /><Text>Edit</Text></Tab>
       <Tab id="MaR" aria-label="Notifications"><Bell /><Text>Notifications</Text></Tab>
