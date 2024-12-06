@@ -288,7 +288,13 @@ export function useExitAnimation(ref: RefObject<HTMLElement | null>, isOpen: boo
 
 function useAnimation(ref: RefObject<HTMLElement | null>, isActive: boolean, onEnd: () => void) {
   useLayoutEffect(() => {
-    if (isActive && ref.current && 'getAnimations' in ref.current) {
+    if (isActive && ref.current) {
+      if (!('getAnimations' in ref.current)) {
+        // JSDOM
+        onEnd();
+        return;
+      }
+      
       let animations = ref.current.getAnimations();
       if (animations.length === 0) {
         onEnd();
