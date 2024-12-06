@@ -32,9 +32,9 @@ import {centerBaseline} from './CenterBaseline';
 import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from '../ui-icons/Chevron';
-import {createContext, forwardRef, JSX, ReactNode, useContext, useRef} from 'react';
+import {createContext, forwardRef, JSX, ReactNode, useContext, useRef, useState} from 'react';
 import {divider} from './Divider';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMRef, DOMRefValue, PressEvent} from '@react-types/shared';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, KeyboardContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon'; // chevron right removed??
@@ -45,6 +45,7 @@ import {Placement, useLocale} from 'react-aria';
 import {PopoverBase} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
+import {useGlobalListeners} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 // viewbox on LinkOut is super weird just because i copied the icon from designs...
 // need to strip id's from icons
@@ -520,6 +521,23 @@ export function MenuItem(props: MenuItemProps) {
  * linking the Menu's open state with the trigger's press state.
  */
 function MenuTrigger(props: MenuTriggerProps) {
+  // RAC sets isPressed via PressResponder when the menu is open.
+  // We don't want press scaling to appear to get "stuck", so override this.
+  // For mouse interactions, menus open on press start. When the popover underlay appears
+  // it covers the trigger button, causing onPressEnd to fire immediately and no press scaling
+  // to occur. We override this by listening for pointerup on the document ourselves.
+  let [isPressed, setPressed] = useState(false);
+  let {addGlobalListener} = useGlobalListeners();
+  let onPressStart = (e: PressEvent) => {
+    if (e.pointerType !== 'mouse') {
+      return;
+    }
+    setPressed(true);
+    addGlobalListener(document, 'pointerup', () => {
+      setPressed(false);
+    }, {once: true, capture: true});
+  };
+
   return (
     <InternalMenuTriggerContext.Provider
       value={{
@@ -528,9 +546,7 @@ function MenuTrigger(props: MenuTriggerProps) {
         shouldFlip: props.shouldFlip
       }}>
       <AriaMenuTrigger {...props}>
-        {/* RAC sets isPressed via PressResponder when the menu is open.
-            We don't want press scaling to appear to get "stuck", so override this. */}
-        <PressResponder isPressed={false}>
+        <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
           {props.children}
         </PressResponder>
       </AriaMenuTrigger>
