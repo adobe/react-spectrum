@@ -18,6 +18,7 @@ import {
   DateFormatter,
   endOfMonth,
   endOfWeek,
+  getDayOfWeek,
   getWeekStart,
   GregorianCalendar,
   isSameDay,
@@ -335,26 +336,25 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
       return isSameDay(next, endDate) || this.isInvalid(next);
     },
     getDatesInWeek(weekIndex, from = startDate) {
-      let weekStartDay = firstDayOfWeek !== undefined ? DAY_MAP[firstDayOfWeek] : getWeekStart(locale);
       let date = from.add({weeks: weekIndex});
-      let offset = (getWeekStart(locale) - weekStartDay + 7) % 7;
-      date = startOfWeek(date, locale);
-      date = date.subtract({days: offset});
-      let dates: (CalendarDate | null)[] = [];
-
-      while (dates.length < 7) {
-        dates.push(date);
-        let nextDate = date.add({days: 1});
-        if (isSameDay(date, nextDate)) {
-          // If the next day is the same, we have hit the end of the calendar system.
-          break;
-        }
-        date = nextDate;
+      if (firstDayOfWeek) {
+        let day = getDayOfWeek(date, locale);
+        let offset = (DAY_MAP[firstDayOfWeek] - getWeekStart(locale) + 7) % 7;
+        let diff = (7 + day - offset) % 7;
+        date = date.subtract({days: diff});
+      } else {
+        date = startOfWeek(date, locale);
       }
 
-      // Add null placeholders if at the end of the calendar system.
-      while (dates.length < 7) {
-        dates.push(null);
+      let dates: (CalendarDate | null)[] = [];
+
+      for (let i = 0; i < 7; i++) {
+        let current = date.add({days: i});
+        if (current.compare(startDate) < 0 || current.compare(endDate) > 0) {
+          dates.push(null);
+        } else {
+          dates.push(current);
+        }
       }
 
       return dates;
