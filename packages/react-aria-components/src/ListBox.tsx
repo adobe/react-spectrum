@@ -17,9 +17,10 @@ import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, Slot
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, useListState} from 'react-stately';
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {HeaderContext} from './Header';
+import {InternalAutocompleteContext} from './Autocomplete';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {SeparatorContext} from './Separator';
 import {TextContext} from './Text';
@@ -106,8 +107,12 @@ export const ListBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Lis
 function StandaloneListBox({props, listBoxRef, collection}) {
   props = {...props, collection, children: null, items: null};
   let {layoutDelegate} = useContext(CollectionRendererContext);
-  let state = useListState({...props, layoutDelegate});
-  return <ListBoxInner state={state} props={props} listBoxRef={listBoxRef} />;
+  let {filterFn, collectionProps, collectionRef} = useContext(InternalAutocompleteContext) || {};
+  // Memoed so that useAutocomplete callback ref is properly only called once on mount and not everytime a rerender happens
+  listBoxRef = useObjectRef(useMemo(() => mergeRefs(listBoxRef, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null), [collectionRef, listBoxRef]));
+  let filteredCollection = useMemo(() => filterFn ? collection.filter(filterFn) : collection, [collection, filterFn]);
+  let state = useListState({...props, collection: filteredCollection, layoutDelegate});
+  return <ListBoxInner state={state} props={{...props, ...collectionProps}} listBoxRef={listBoxRef} />;
 }
 
 interface ListBoxInnerProps<T> {

@@ -27,40 +27,42 @@ const meta: Meta<typeof RangeSlider> = {
 
 export default meta;
 
-export const Example = (args: any) => <RangeSlider {...args} />;
-
-Example.args = {
-  label: 'Range',
-  defaultValue: {
-    start: 30,
-    end: 60
+export const Example = {
+  render: (args: any) => <RangeSlider {...args} />,
+  args: {
+    label: 'Range',
+    defaultValue: {
+      start: 30,
+      end: 60
+    }
   }
 };
 
-export const ContextualHelpExample = (args: any) => <RangeSlider {...args} />;
-
-ContextualHelpExample.args = {
-  label: 'Range',
-  defaultValue: {
-    start: 30,
-    end: 60
-  },
-  contextualHelp: (
-    <ContextualHelp>
-      <Heading>What is a ice cream?</Heading>
-      <Content>
-        <Text>
-          A combination of sugar, eggs, milk, and cream is cooked to make
-          a custard base. Then, flavorings are added, and this flavored
-          mixture is carefully churned and frozen to make ice cream.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Ice_cream"
-          target="_blank">Learn more about ice cream</Link>
-      </Footer>
-    </ContextualHelp>
-  )
+export const ContextualHelpExample = {
+  render: (args: any) => <RangeSlider {...args} />,
+  args: {
+    label: 'Range',
+    defaultValue: {
+      start: 30,
+      end: 60
+    },
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a ice cream?</Heading>
+        <Content>
+          <Text>
+            A combination of sugar, eggs, milk, and cream is cooked to make
+            a custard base. Then, flavorings are added, and this flavored
+            mixture is carefully churned and frozen to make ice cream.
+          </Text>
+        </Content>
+        <Footer>
+          <Link
+            isStandalone
+            href="https://en.wikipedia.org/wiki/Ice_cream"
+            target="_blank">Learn more about ice cream</Link>
+        </Footer>
+      </ContextualHelp>
+    )
+  }
 };
