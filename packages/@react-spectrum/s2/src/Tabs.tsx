@@ -461,6 +461,10 @@ let HiddenTabs = function (props: {
         opacity: 0
       })}>
       {items.map((item) => {
+        if (typeof item.props.className !== 'function') {
+          console.log(item.props);
+          return null;
+        }
         // pull off individual props as an allow list, don't want refs or other props getting through
         return (
           <div
@@ -543,8 +547,9 @@ function CollapsingCollection({children, containerRef}) {
       _setShowItems(value);
     }
   }, [orientation]);
+  let ctx = useMemo(() => ({containerRef, showItems: orientation === 'vertical' ? true : showItems, setShowItems}), [containerRef, showItems, setShowItems]);
   return (
-    <CollapseContext.Provider value={{containerRef, showItems: orientation === 'vertical' ? true : showItems, setShowItems}}>
+    <CollapseContext.Provider value={ctx}>
       <UNSTABLE_CollectionRendererContext.Provider value={CollapsingCollectionRenderer}>
         {children}
       </UNSTABLE_CollectionRendererContext.Provider>
@@ -605,6 +610,8 @@ let useCollectionRender = (collection: Collection<Node<unknown>>) => {
     document.fonts?.ready.then(() => updateOverflow());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  console.log('collection renderer called')
 
   return (
     <>
