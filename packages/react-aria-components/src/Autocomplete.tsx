@@ -19,7 +19,7 @@ import React, {createContext, ForwardedRef, forwardRef, RefObject, useRef} from 
 export interface AutocompleteProps extends AriaAutocompleteProps, SlotProps {}
 
 interface InternalAutocompleteContextValue {
-  filterFn: (nodeTextValue: string) => boolean,
+  filterFn?: (nodeTextValue: string) => boolean,
   collectionProps: CollectionOptions,
   collectionRef: RefObject<HTMLElement | null>
 }
@@ -35,7 +35,7 @@ export const UNSTABLE_InternalAutocompleteContext = createContext<InternalAutoco
  */
 export const UNSTABLE_Autocomplete = forwardRef(function Autocomplete(props: AutocompleteProps, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, UNSTABLE_AutocompleteContext);
-  let {defaultFilter} = props;
+  let {filter} = props;
   let state = UNSTABLE_useAutocompleteState(props);
   let collectionRef = useRef<HTMLElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
@@ -47,7 +47,7 @@ export const UNSTABLE_Autocomplete = forwardRef(function Autocomplete(props: Aut
     filterFn
   } = UNSTABLE_useAutocomplete({
     ...removeDataAttributes(props),
-    defaultFilter,
+    filter,
     collectionRef,
     inputRef
   }, state);

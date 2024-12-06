@@ -45,8 +45,8 @@ interface AriaAutocompleteTestProps extends AriaBaseTestProps {
     disabledItems?: () => ReturnType<typeof render>,
     // should set a default value of "Ba" on the autocomplete. Uses the same collection items as the standard renderer
     defaultValue?: () => ReturnType<typeof render>,
-    // should apply a custom filter that doesnt filter the list of items at all. Uses the same collection items as the standard renderer
-    customFiltering?: () => ReturnType<typeof render>
+    // should allow the user to simply provide a list of items to the wrapped collection without a filter. Uses the same collection items as the standard renderer
+    noFilter?: () => ReturnType<typeof render>
     // TODO, add tests for this when we support it
     // submenus?: (props?: {name: string}) => ReturnType<typeof render>
   },
@@ -431,10 +431,10 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
       });
     }
 
-    if (renderers.customFiltering) {
-      describe('custom filter function', function () {
-        it('should support custom filtering', async function () {
-          let {getByRole} = (renderers.customFiltering!)();
+    if (renderers.noFilter) {
+      describe('no filter function provided', function () {
+        it('should controlled items', async function () {
+          let {getByRole} = (renderers.noFilter!)();
           let input = getByRole('searchbox');
           expect(input).toHaveValue('');
           let menu = getByRole(collectionNodeRole);

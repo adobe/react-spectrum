@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling,  mergeProps, scrollIntoView, scrollIntoViewport, UPDATE_ACTIVEDESCENDANT, useEvent, useRouter} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling,  mergeProps, scrollIntoView, scrollIntoViewport, UPDATE_ACTIVEDESCENDANT, useEffectEvent, useEvent, useRouter} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, FocusStrategy, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {flushSync} from 'react-dom';
 import {FocusEvent, KeyboardEvent, useEffect, useRef} from 'react';
@@ -391,6 +391,10 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     }
   };
 
+  // Ref to track whether the first item in the collection should be automatically focused. Specifically used for autocomplete when user types
+  // to focus the first key AFTER the collection updates.
+  // TODO: potentially expand the usage of this
+  let shouldVirtualFocusFirst = useRef(false);
   // Add event listeners for custom virtual events. These handle updating the focused key in response to various keyboard events
   // at the autocomplete level
   // TODO: fix type later
@@ -401,20 +405,41 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
     // If the user is typing forwards, autofocus the first option in the list.
     if (detail?.focusStrategy === 'first') {
-      let keyToFocus = delegate.getFirstKey?.() ?? null;
-      // If no focusable items exist in the list, make sure to clear any activedescendant that may still exist
-      if (keyToFocus == null) {
-        ref.current?.dispatchEvent(
-          new CustomEvent(UPDATE_ACTIVEDESCENDANT, {
-            cancelable: true,
-            bubbles: true
-          })
-        );
-      }
-
-      manager.setFocusedKey(keyToFocus);
+      shouldVirtualFocusFirst.current = true;
     }
   });
+
+  let updateActiveDescendant = useEffectEvent(() => {
+    let keyToFocus = delegate.getFirstKey?.() ?? null;
+    // If no focusable items exist in the list, make sure to clear any activedescendant that may still exist
+    if (keyToFocus == null) {
+      ref.current?.dispatchEvent(
+        new CustomEvent(UPDATE_ACTIVEDESCENDANT, {
+          cancelable: true,
+          bubbles: true
+        })
+      );
+    }
+
+    manager.setFocusedKey(keyToFocus);
+  });
+
+  let lastCollection = useRef(manager.collection);
+  useEffect(() => {
+    if (shouldVirtualFocusFirst.current && lastCollection !== manager.collection) {
+      updateActiveDescendant();
+      shouldVirtualFocusFirst.current = false;
+    }
+
+    lastCollection.current = manager.collection;
+  }, [manager.collection, updateActiveDescendant]);
+
+  // TODO: need to track last key
+  useEffect(() => {
+    // If user causes the focused key to change in any other way, clear shouldVirtualFocusFirst so we don't
+    // accidentally move focus from under them
+    shouldVirtualFocusFirst.current = false;
+  }, [manager.focusedKey]);
 
   useEvent(ref, CLEAR_FOCUS_EVENT, !shouldUseVirtualFocus ? undefined : (e) => {
     e.stopPropagation();
