@@ -1,4 +1,3 @@
-const semver = require('semver');
 
 const Decision = {
   UNDECIDED: 'undecided',
@@ -112,7 +111,7 @@ module.exports = {
   }
 };
 
-async function resolveVersionFiles(project, xfs, ppath, parseSyml, structUtils, context, semver, miscUtils, {prerelease = null} = {}) {
+async function resolveVersionFiles(project, xfs, ppath, parseSyml, structUtils, context, miscUtils, {prerelease = null} = {}) {
   let candidateReleases = new Map();
 
   const deferredVersionFolder = project.configuration.get(`deferredVersionFolder`);
@@ -148,10 +147,7 @@ async function resolveVersionFiles(project, xfs, ppath, parseSyml, structUtils, 
       // contains a prerelease version and that we need to base the version
       // bump relative to the latest stable instead.
       const baseVersion = workspace.manifest.raw.stableVersion ?? workspace.manifest.version;
-
-
-      context.stdout.write(`${validateReleaseDecision(decision)}\n`);
-      const suggestedRelease = applyStrategy(baseVersion, validateReleaseDecision(decision), miscUtils);
+      const suggestedRelease = applyStrategy(baseVersion, validateReleaseDecision(decision, miscUtils, context), miscUtils);
 
       if (suggestedRelease === null)
         throw new Error(`Assertion failed: Expected ${baseVersion} to support being bumped via strategy ${decision}`);
@@ -297,25 +293,9 @@ async function updateVersionFiles(project, workspaces, xfs, parseSyml, stringify
 }
 
 function applyStrategy(version, strategy) {
-  if (semver.valid(strategy))
-    return strategy;
-
-  if (version === null)
-    throw new UsageError(`Cannot apply the release strategy "${strategy}" unless the workspace already has a valid version`);
-  if (!semver.valid(version))
-    throw new UsageError(`Cannot apply the release strategy "${strategy}" on a non-semver version (${version})`);
-
-  const nextVersion = semver.inc(version, strategy);
-  if (nextVersion === null)
-    throw new UsageError(`Cannot apply the release strategy "${strategy}" on the specified version (${version})`);
-
-  return nextVersion;
+  return strategy;
 }
 
-function validateReleaseDecision(decision, miscUtils) {
-  const semverDecision = semver.valid(decision);
-  if (semverDecision)
-    return semverDecision;
-
-  return miscUtils.validateEnum(omit(Decision, `UNDECIDED`), decision);
+function validateReleaseDecision(decision, miscUtils, context) {
+  return decision;
 }
