@@ -29290,6 +29290,7 @@ __metadata:
     recursive-readdir: "npm:^2.2.2"
     regenerator-runtime: "npm:0.13.3"
     rimraf: "npm:^2.6.3"
+    semver: "npm:^7.6.3"
     sharp: "npm:^0.33.5"
     sinon: "npm:^7.3.1"
     storybook: "npm:^7.6.19"
