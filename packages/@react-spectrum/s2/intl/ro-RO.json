@@ -1,8 +1,12 @@
 {
-  "breadcrumbs.more": "Mai multe articole",
+  "actionbar.actions": "Acțiuni",
+  "actionbar.actionsAvailable": "Acțiuni disponibile.",
+  "actionbar.clearSelection": "Goliți selecția",
+  "actionbar.selected": "{count, plural, =0 {Niciunul selectat} one { # selectat} other {# selectate}}",
+  "actionbar.selectedAll": "Toate selectate",
   "button.pending": "în așteptare",
   "contextualhelp.help": "Ajutor",
-  "contextualhelp.info": "Informații",
+  "contextualhelp.info": "Informaţii",
   "dialog.alert": "Alertă",
   "dialog.dismiss": "Revocare",
   "dropzone.replaceMessage": "Plasați fișierul pentru a înlocui",
@@ -24,5 +28,6 @@
   "tag.actions": "Acțiuni",
   "tag.hideButtonLabel": "Se afișează mai puțin",
   "tag.noTags": "Niciuna",
-  "tag.showAllButtonLabel": "Se afișează tot ({tagCount, number})"
+  "tag.showAllButtonLabel": "Se afișează tot ({tagCount, number})",
+  "breadcrumbs.more": "Mai multe articole"
 }

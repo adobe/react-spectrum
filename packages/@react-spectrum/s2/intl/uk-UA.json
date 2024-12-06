@@ -1,5 +1,9 @@
 {
-  "breadcrumbs.more": "Більше елементів",
+  "actionbar.actions": "Дії",
+  "actionbar.actionsAvailable": "Доступні дії.",
+  "actionbar.clearSelection": "Очистити вибір",
+  "actionbar.selected": "Вибрано: {count}",
+  "actionbar.selectedAll": "Усе вибрано",
   "button.pending": "в очікуванні",
   "contextualhelp.help": "Довідка",
   "contextualhelp.info": "Інформація",
@@ -24,5 +28,6 @@
   "tag.actions": "Дії",
   "tag.hideButtonLabel": "Показувати менше",
   "tag.noTags": "Немає",
-  "tag.showAllButtonLabel": "Показати всі ({tagCount, number})"
+  "tag.showAllButtonLabel": "Показати всі ({tagCount, number})",
+  "breadcrumbs.more": "Більше елементів"
 }

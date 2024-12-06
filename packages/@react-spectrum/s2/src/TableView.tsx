@@ -45,7 +45,7 @@ import {
 import {centerPadding, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
-import {colorMix, fontRelative, lightDark, space, style} from '../style' with {type: 'macro'};
+import {colorMix, focusRing, fontRelative, lightDark, space, style} from '../style' with {type: 'macro'};
 import {ColumnSize} from '@react-types/table';
 import {DOMRef, DOMRefValue, forwardRefType, LoadingState, Node} from '@react-types/shared';
 import {GridNode} from '@react-types/grid';
@@ -58,10 +58,11 @@ import {mergeStyles} from '../style/runtime';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
 import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, forwardRef, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import React, {createContext, forwardRef, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {Rect} from '@react-stately/virtualizer';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
+import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLoadMore} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -103,7 +104,8 @@ interface S2TableProps {
   /** The current loading state of the table. */
   loadingState?: LoadingState,
   /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom. */
-  onLoadMore?: () => any
+  onLoadMore?: () => any,
+  renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement
 }
 
 // TODO: Note that loadMore and loadingState are now on the Table instead of on the TableBody
@@ -119,7 +121,10 @@ const tableWrapper = style({
   minWidth: 0,
   display: 'flex',
   isolation: 'isolate',
-  disableTapHighlight: true
+  disableTapHighlight: true,
+  position: 'relative',
+  // Clip ActionBar animation.
+  overflow: 'clip'
 });
 
 const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boolean}>({
@@ -135,17 +140,14 @@ const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boo
     isQuiet: 'transparent',
     forcedColors: 'Background'
   },
-  outlineColor: {
-    default: 'gray-300',
-    isFocusVisible: 'focus-ring',
-    forcedColors: 'ButtonBorder'
-  },
-  outlineWidth: {
+  borderColor: 'gray-300',
+  borderStyle: 'solid',
+  borderWidth: {
     default: 1,
-    isQuiet: 0,
-    isFocusVisible: 2
+    isQuiet: 0
   },
-  outlineStyle: 'solid',
+  ...focusRing(),
+  outlineOffset: -1, // Cover the border
   borderRadius: {
     default: '[6px]',
     isQuiet: 'none'
@@ -312,13 +314,15 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
   }), [isQuiet, density, overflowMode, loadingState, isInResizeMode, setIsInResizeMode]);
 
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
-  let scrollRef = useRef(null);
+  let scrollRef = useRef<HTMLElement | null>(null);
   let memoedLoadMoreProps = useMemo(() => ({
     isLoading: isLoading,
     onLoadMore
   }), [isLoading, onLoadMore]);
   useLoadMore(memoedLoadMoreProps, scrollRef);
   let isCheckboxSelection = props.selectionMode === 'multiple' || props.selectionMode === 'single';
+
+  let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
 
   return (
     <ResizableTableContainer
@@ -332,9 +336,15 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
       <UNSTABLE_Virtualizer layout={layout}>
         <InternalTableContext.Provider value={context}>
           <RACTable
-            ref={scrollRef}
-            // Fix webkit bug where scrollbars appear above the checkboxes/other table elements
-            style={{WebkitTransform: 'translateZ(0)'}}
+            ref={scrollRef as any}
+            style={{
+              // Fix webkit bug where scrollbars appear above the checkboxes/other table elements
+              WebkitTransform: 'translateZ(0)',
+              // Add padding at the bottom when the action bar is visible so users can scroll to the last items.
+              // Also add scroll padding so navigating with the keyboard doesn't go behind the action bar.
+              paddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0,
+              scrollPaddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0
+            }}
             className={renderProps => table({
               ...renderProps,
               isCheckboxSelection,
@@ -342,9 +352,13 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
             })}
             selectionBehavior="toggle"
             onRowAction={onAction}
-            {...otherProps} />
+            {...otherProps}
+            selectedKeys={selectedKeys}
+            defaultSelectedKeys={undefined}
+            onSelectionChange={onSelectionChange} />
         </InternalTableContext.Provider>
       </UNSTABLE_Virtualizer>
+      {actionBar}
     </ResizableTableContainer>
   );
 });

@@ -1,5 +1,9 @@
 {
-  "breadcrumbs.more": "항목 더 보기",
+  "actionbar.actions": "액션",
+  "actionbar.actionsAvailable": "사용 가능한 액션",
+  "actionbar.clearSelection": "선택 항목 지우기",
+  "actionbar.selected": "{count, plural, =0 {선택된 항목 없음} other {#개 선택됨}}",
+  "actionbar.selectedAll": "모두 선택됨",
   "button.pending": "보류 중",
   "contextualhelp.help": "도움말",
   "contextualhelp.info": "정보",
@@ -16,13 +20,14 @@
   "picker.placeholder": "선택…",
   "slider.maximum": "최대",
   "slider.minimum": "최소",
-  "table.loading": "로드 중…",
-  "table.loadingMore": "추가 로드 중…",
+  "table.loading": "로드 중",
+  "table.loadingMore": "추가 로드 중",
   "table.resizeColumn": "열 크기 조정",
   "table.sortAscending": "오름차순 정렬",
   "table.sortDescending": "내림차순 정렬",
   "tag.actions": "액션",
   "tag.hideButtonLabel": "간단히 표시",
   "tag.noTags": "없음",
-  "tag.showAllButtonLabel": "모두 표시 ({tagCount, number})"
+  "tag.showAllButtonLabel": "모두 표시 ({tagCount, number})",
+  "breadcrumbs.more": "항목 더 보기"
 }

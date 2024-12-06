@@ -1,5 +1,9 @@
 {
-  "breadcrumbs.more": "Više stavki",
+  "actionbar.actions": "Radnje",
+  "actionbar.actionsAvailable": "Dostupne radnje.",
+  "actionbar.clearSelection": "Poništi odabir",
+  "actionbar.selected": "Odabrano: { count }",
+  "actionbar.selectedAll": "Sve je odabrano",
   "button.pending": "u tijeku",
   "contextualhelp.help": "Pomoć",
   "contextualhelp.info": "Informacije",
@@ -24,5 +28,6 @@
   "tag.actions": "Radnje",
   "tag.hideButtonLabel": "Prikaži manje",
   "tag.noTags": "Nema",
-  "tag.showAllButtonLabel": "Prikaži sve ({tagCount, number})"
+  "tag.showAllButtonLabel": "Prikaži sve ({tagCount, number})",
+  "breadcrumbs.more": "Više stavki"
 }
