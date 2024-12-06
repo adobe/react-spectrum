@@ -49,7 +49,7 @@ module.exports = {
             ? typeof this.prerelease !== `boolean` ? this.prerelease : `rc.%n`
             : null;
 
-          const allReleases = await resolveVersionFiles(project, xfs, ppath, parseSyml, structUtils, this.context, {prerelease});
+          const allReleases = await resolveVersionFiles(project, xfs, ppath, parseSyml, structUtils, {prerelease});
           let filteredReleases = new Map();
 
           if (this.all) {
@@ -111,7 +111,7 @@ module.exports = {
   }
 };
 
-async function resolveVersionFiles(project, xfs, ppath, parseSyml, structUtils, context, miscUtils, {prerelease = null} = {}) {
+async function resolveVersionFiles(project, xfs, ppath, parseSyml, structUtils, miscUtils, {prerelease = null} = {}) {
   let candidateReleases = new Map();
 
   const deferredVersionFolder = project.configuration.get(`deferredVersionFolder`);
@@ -127,7 +127,6 @@ async function resolveVersionFiles(project, xfs, ppath, parseSyml, structUtils, 
     const versionPath = ppath.join(deferredVersionFolder, entry);
     const versionContent = await xfs.readFilePromise(versionPath, `utf8`);
     const versionData = parseSyml(versionContent);
-    context.stdout.write(`${JSON.stringify(versionData)}\n`);
 
 
     for (const [identStr, decision] of Object.entries(versionData.releases || {})) {
@@ -147,7 +146,7 @@ async function resolveVersionFiles(project, xfs, ppath, parseSyml, structUtils, 
       // contains a prerelease version and that we need to base the version
       // bump relative to the latest stable instead.
       const baseVersion = workspace.manifest.raw.stableVersion ?? workspace.manifest.version;
-      const suggestedRelease = applyStrategy(baseVersion, validateReleaseDecision(decision, miscUtils, context), miscUtils);
+      const suggestedRelease = applyStrategy(baseVersion, validateReleaseDecision(decision, miscUtils), miscUtils);
 
       if (suggestedRelease === null)
         throw new Error(`Assertion failed: Expected ${baseVersion} to support being bumped via strategy ${decision}`);
@@ -296,6 +295,6 @@ function applyStrategy(version, strategy) {
   return strategy;
 }
 
-function validateReleaseDecision(decision, miscUtils, context) {
+function validateReleaseDecision(decision, miscUtils) {
   return decision;
 }
