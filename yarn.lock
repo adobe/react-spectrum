@@ -5912,9 +5912,12 @@ __metadata:
   resolution: "@react-aria/autocomplete@workspace:packages/@react-aria/autocomplete"
   dependencies:
     "@react-aria/combobox": "npm:^3.11.0"
+    "@react-aria/i18n": "npm:^3.12.3"
+    "@react-aria/interactions": "npm:^3.22.5"
     "@react-aria/listbox": "npm:^3.13.6"
     "@react-aria/searchfield": "npm:^3.7.11"
     "@react-aria/utils": "npm:^3.26.0"
+    "@react-stately/autocomplete": "npm:3.0.0-alpha.1"
     "@react-stately/combobox": "npm:^3.10.1"
     "@react-types/autocomplete": "npm:3.0.0-alpha.27"
     "@react-types/button": "npm:^3.10.1"
@@ -6218,7 +6221,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/i18n@npm:^3.12.4, @react-aria/i18n@npm:^3.6.3, @react-aria/i18n@workspace:packages/@react-aria/i18n":
+"@react-aria/i18n@npm:^3.12.3, @react-aria/i18n@npm:^3.12.4, @react-aria/i18n@npm:^3.6.3, @react-aria/i18n@workspace:packages/@react-aria/i18n":
   version: 0.0.0-use.local
   resolution: "@react-aria/i18n@workspace:packages/@react-aria/i18n"
   dependencies:
@@ -8369,6 +8372,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@react-stately/autocomplete@npm:3.0.0-alpha.1, @react-stately/autocomplete@workspace:packages/@react-stately/autocomplete":
+  version: 0.0.0-use.local
+  resolution: "@react-stately/autocomplete@workspace:packages/@react-stately/autocomplete"
+  dependencies:
+    "@react-stately/utils": "npm:^3.10.4"
+    "@swc/helpers": "npm:^0.5.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+  languageName: unknown
+  linkType: soft
+
 "@react-stately/calendar@npm:^3.6.0, @react-stately/calendar@workspace:packages/@react-stately/calendar":
   version: 0.0.0-use.local
   resolution: "@react-stately/calendar@workspace:packages/@react-stately/calendar"
@@ -8761,7 +8775,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-stately/utils@npm:^3.10.5, @react-stately/utils@workspace:packages/@react-stately/utils":
+"@react-stately/utils@npm:^3.10.4, @react-stately/utils@npm:^3.10.5, @react-stately/utils@workspace:packages/@react-stately/utils":
   version: 0.0.0-use.local
   resolution: "@react-stately/utils@workspace:packages/@react-stately/utils"
   dependencies:
@@ -28890,6 +28904,7 @@ __metadata:
   dependencies:
     "@internationalized/date": "npm:^3.6.0"
     "@internationalized/string": "npm:^3.2.5"
+    "@react-aria/autocomplete": "npm:3.0.0-alpha.36"
     "@react-aria/collections": "npm:3.0.0-alpha.6"
     "@react-aria/color": "npm:^3.0.2"
     "@react-aria/disclosure": "npm:^3.0.0"
@@ -28902,6 +28917,7 @@ __metadata:
     "@react-aria/tree": "npm:3.0.0-beta.2"
     "@react-aria/utils": "npm:^3.26.0"
     "@react-aria/virtualizer": "npm:^4.1.0"
+    "@react-stately/autocomplete": "npm:3.0.0-alpha.1"
     "@react-stately/color": "npm:^3.8.1"
     "@react-stately/disclosure": "npm:^3.0.0"
     "@react-stately/layout": "npm:^4.1.0"
