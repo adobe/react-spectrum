@@ -234,8 +234,26 @@ export function useSlot(): [RefCallback<Element>, boolean] {
 
 export function useEnterAnimation(ref: RefObject<HTMLElement | null>, isReady: boolean = true) {
   let [isEntering, setEntering] = useState(true);
-  useAnimation(ref, isEntering && isReady, useCallback(() => setEntering(false), []));
-  return isEntering && isReady;
+  let isAnimationReady = isEntering && isReady;
+  
+  // There are two cases for entry animations:
+  // 1. CSS @keyframes. The `animation` property is set during the isEntering state, and it is removed after the animation finishes.
+  // 2. CSS transitions. The initial styles are applied during the isEntering state, and removed immediately, causing the transition to occur.
+  //
+  // In the second case, cancel any transitions that were triggered prior to the isEntering = false state (when the transition is supposed to start).
+  // This can happen when isReady starts as false (e.g. popovers prior to placement calculation).
+  useLayoutEffect(() => {
+    if (isAnimationReady && ref.current && 'getAnimations' in ref.current) {
+      for (let animation of ref.current.getAnimations()) {
+        if (animation instanceof CSSTransition) {
+          animation.cancel();
+        }
+      }
+    }
+  }, [ref, isAnimationReady]);
+
+  useAnimation(ref, isAnimationReady, useCallback(() => setEntering(false), []));
+  return isAnimationReady;
 }
 
 export function useExitAnimation(ref: RefObject<HTMLElement | null>, isOpen: boolean) {
@@ -269,35 +287,26 @@ export function useExitAnimation(ref: RefObject<HTMLElement | null>, isOpen: boo
 }
 
 function useAnimation(ref: RefObject<HTMLElement | null>, isActive: boolean, onEnd: () => void) {
-  let prevAnimation = useRef<string | null>(null);
-  if (isActive && ref.current) {
-    // This is ok because we only read it in the layout effect below, immediately after the commit phase.
-    // We could move this to another effect that runs every render, but this would be unnecessarily slow.
-    // We only need the computed style right before the animation becomes active.
-    // eslint-disable-next-line rulesdir/pure-render
-    prevAnimation.current = window.getComputedStyle(ref.current).animation;
-  }
-
   useLayoutEffect(() => {
-    if (isActive && ref.current) {
-      // Make sure there's actually an animation, and it wasn't there before we triggered the update.
-      let computedStyle = window.getComputedStyle(ref.current);
-      if (computedStyle.animationName && computedStyle.animationName !== 'none' && computedStyle.animation !== prevAnimation.current) {
-        let onAnimationEnd = (e: AnimationEvent) => {
-          if (e.target === ref.current) {
-            element.removeEventListener('animationend', onAnimationEnd);
-            ReactDOM.flushSync(() => {onEnd();});
-          }
-        };
-
-        let element = ref.current;
-        element.addEventListener('animationend', onAnimationEnd);
-        return () => {
-          element.removeEventListener('animationend', onAnimationEnd);
-        };
-      } else {
+    if (isActive && ref.current && 'getAnimations' in ref.current) {
+      let animations = ref.current.getAnimations();
+      if (animations.length === 0) {
         onEnd();
+        return;
       }
+
+      let canceled = false;
+      Promise.all(animations.map(a => a.finished)).then(() => {
+        if (!canceled) {
+          ReactDOM.flushSync(() => {
+            onEnd();
+          });
+        }
+      }).catch(() => {});
+      
+      return () => {
+        canceled = true;
+      };
     }
   }, [ref, isActive, onEnd]);
 }
