@@ -55,7 +55,7 @@ let items = [
 ];
 
 
-let manyItems = [];
+let manyItems: {id: number, foo: string, bar: string, baz: string}[] = [];
 for (let i = 1; i <= 100; i++) {
   manyItems.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i, baz: 'Baz ' + i});
 }
@@ -227,9 +227,9 @@ describe('TableViewSizing', function () {
 
       it('should support variable row heights with overflowMode="wrap"', function () {
         let scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
-          .mockImplementation(function () {
+          .mockImplementation(function (this: HTMLElement) {
             let row = this.closest('[role=row]');
-            return row && row.textContent.includes('Foo 1') ? 64 : 48;
+            return row && row.textContent?.includes('Foo 1') ? 64 : 48;
           });
 
         let tree = renderTable({overflowMode: 'wrap'});
@@ -257,7 +257,7 @@ describe('TableViewSizing', function () {
 
       it('should support variable column header heights with overflowMode="wrap"', function () {
         let scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
-          .mockImplementation(function () {
+          .mockImplementation(function (this: HTMLElement) {
             return this.textContent === 'Tier Two Header B' ? 48 : 34;
           });
 
@@ -1178,8 +1178,8 @@ describe('TableViewSizing', function () {
         );
 
         await user.tab();
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyDown(document.activeElement!, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement!, {key: 'ArrowUp'});
 
         let header = tree.getAllByRole('columnheader')[0];
         let resizableHeader = within(header).getByRole('button');
@@ -1194,11 +1194,11 @@ describe('TableViewSizing', function () {
           expect((row.childNodes[2] as HTMLElement).style.width).toBe('200px');
         }
 
-        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        fireEvent.keyDown(document.activeElement!, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement!, {key: 'Enter'});
 
-        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        fireEvent.keyDown(document.activeElement!, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement!, {key: 'Enter'});
         act(() => {jest.runAllTimers();});
         act(() => {jest.runAllTimers();});
 
@@ -1206,10 +1206,10 @@ describe('TableViewSizing', function () {
 
         expect(document.activeElement).toBe(resizer);
 
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+        fireEvent.keyDown(document.activeElement!, {key: 'ArrowRight'});
+        fireEvent.keyUp(document.activeElement!, {key: 'ArrowRight'});
+        fireEvent.keyDown(document.activeElement!, {key: 'ArrowRight'});
+        fireEvent.keyUp(document.activeElement!, {key: 'ArrowRight'});
 
         expect(resizer).toHaveAttribute('value', '620');
         for (let row of rows) {
@@ -1218,10 +1218,10 @@ describe('TableViewSizing', function () {
           expect((row.childNodes[2] as HTMLElement).style.width).toBe('190px');
         }
 
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
+        fireEvent.keyDown(document.activeElement!, {key: 'ArrowLeft'});
+        fireEvent.keyUp(document.activeElement!, {key: 'ArrowLeft'});
+        fireEvent.keyDown(document.activeElement!, {key: 'ArrowLeft'});
+        fireEvent.keyUp(document.activeElement!, {key: 'ArrowLeft'});
 
         expect(resizer).toHaveAttribute('value', '600');
         for (let row of rows) {
@@ -1230,8 +1230,8 @@ describe('TableViewSizing', function () {
           expect((row.childNodes[2] as HTMLElement).style.width).toBe('200px');
         }
 
-        fireEvent.keyDown(document.activeElement, {key: 'Escape'});
-        fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+        fireEvent.keyDown(document.activeElement!, {key: 'Escape'});
+        fireEvent.keyUp(document.activeElement!, {key: 'Escape'});
         expect(onResizeEnd).toHaveBeenCalledTimes(1);
         expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 600], ['bar', '1fr'], ['baz', '1fr']]));
 
@@ -1260,8 +1260,8 @@ describe('TableViewSizing', function () {
         );
 
         await user.tab();
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyDown(document.activeElement!, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement!, {key: 'ArrowUp'});
 
         let header = tree.getAllByRole('columnheader')[0];
         let resizableHeader = within(header).getByRole('button');
@@ -1269,11 +1269,11 @@ describe('TableViewSizing', function () {
         expect(tree.queryByRole('slider')).toBeNull();
 
 
-        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        fireEvent.keyDown(document.activeElement!, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement!, {key: 'Enter'});
 
-        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        fireEvent.keyDown(document.activeElement!, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement!, {key: 'Enter'});
         act(() => {jest.runAllTimers();});
         act(() => {jest.runAllTimers();});
 
@@ -1281,8 +1281,8 @@ describe('TableViewSizing', function () {
 
         expect(document.activeElement).toBe(resizer);
 
-        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        fireEvent.keyDown(document.activeElement!, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement!, {key: 'Enter'});
         expect(onResizeEnd).toHaveBeenCalledTimes(1);
         expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 600], ['bar', '1fr'], ['baz', '1fr']]));
         expect(document.activeElement).toBe(resizableHeader);
@@ -1310,19 +1310,19 @@ describe('TableViewSizing', function () {
         );
 
         await user.tab();
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyDown(document.activeElement!, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement!, {key: 'ArrowUp'});
 
         let header = tree.getAllByRole('columnheader')[0];
         let resizableHeader = within(header).getByRole('button');
         expect(document.activeElement).toBe(resizableHeader);
         expect(tree.queryByRole('slider')).toBeNull();
 
-        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        fireEvent.keyDown(document.activeElement!, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement!, {key: 'Enter'});
 
-        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        fireEvent.keyDown(document.activeElement!, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement!, {key: 'Enter'});
         act(() => {jest.runAllTimers();});
         act(() => {jest.runAllTimers();});
 
@@ -1360,8 +1360,8 @@ describe('TableViewSizing', function () {
         );
 
         await user.tab();
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyDown(document.activeElement!, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement!, {key: 'ArrowUp'});
 
         let header = tree.getAllByRole('columnheader')[0];
         let resizableHeader = within(header).getByRole('button');
@@ -1369,11 +1369,11 @@ describe('TableViewSizing', function () {
         expect(tree.queryByRole('slider')).toBeNull();
 
 
-        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        fireEvent.keyDown(document.activeElement!, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement!, {key: 'Enter'});
 
-        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        fireEvent.keyDown(document.activeElement!, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement!, {key: 'Enter'});
         act(() => {jest.runAllTimers();});
         act(() => {jest.runAllTimers();});
 
@@ -1408,7 +1408,7 @@ describe('TableViewSizing', function () {
 
       let headers = tree.getAllByRole('columnheader');
       for (let colheader of headers) {
-        if (parseInt(colheader.getAttribute('aria-colspan'), 10) > 1) {
+        if (parseInt(colheader.getAttribute('aria-colspan')!, 10) > 1) {
           expect(within(colheader).queryByRole('button')).toBeFalsy();
         }
       }

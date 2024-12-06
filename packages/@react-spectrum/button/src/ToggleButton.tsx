@@ -23,7 +23,11 @@ import {useProviderProps} from '@react-spectrum/provider';
 import {useToggleButton} from '@react-aria/button';
 import {useToggleState} from '@react-stately/toggle';
 
-function ToggleButton(props: SpectrumToggleButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+/**
+ * ToggleButtons allow users to toggle a selection on or off, for example
+ * switching between two states or modes.
+ */
+export const ToggleButton = React.forwardRef(function ToggleButton(props: SpectrumToggleButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   props = useProviderProps(props);
   let {
     isQuiet,
@@ -83,11 +87,4 @@ function ToggleButton(props: SpectrumToggleButtonProps, ref: FocusableRef<HTMLBu
       </button>
     </FocusRing>
   );
-}
-
-/**
- * ToggleButtons allow users to toggle a selection on or off, for example
- * switching between two states or modes.
- */
-let _ToggleButton = React.forwardRef(ToggleButton);
-export {_ToggleButton as ToggleButton};
+});

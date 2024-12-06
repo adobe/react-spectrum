@@ -49,7 +49,12 @@ function disablePendingProps(props) {
   return props;
 }
 
-function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>, ref: FocusableRef<HTMLElement>) {
+/**
+ * Buttons allow users to perform an action or to navigate to another page.
+ * They have multiple styles for various needs, and are ideal for calling attention to
+ * where a user needs to do something in order to move forward in a flow.
+ */
+export const Button = React.forwardRef(function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useSlotProps(props, 'button');
   props = disablePendingProps(props);
@@ -199,12 +204,4 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
       </Element>
     </FocusRing>
   );
-}
-
-/**
- * Buttons allow users to perform an action or to navigate to another page.
- * They have multiple styles for various needs, and are ideal for calling attention to
- * where a user needs to do something in order to move forward in a flow.
- */
-let _Button = React.forwardRef(Button) as <T extends ElementType = 'button'>(props: SpectrumButtonProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
-export {_Button as Button};
+}) as <T extends ElementType = 'button'>(props: SpectrumButtonProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;

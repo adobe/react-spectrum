@@ -31,7 +31,10 @@ export interface ColorSliderProps extends Omit<AriaColorSliderProps, 'label'>, R
 
 export const ColorSliderStateContext = createContext<ColorSliderState | null>(null);
 
-function ColorSlider(props: ColorSliderProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A color slider allows users to adjust an individual channel of a color value.
+ */
+export const ColorSlider = forwardRef(function ColorSlider(props: ColorSliderProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ColorSliderContext);
   let {locale} = useLocale();
   let state = useColorSliderState({...props, locale});
@@ -88,10 +91,4 @@ function ColorSlider(props: ColorSliderProps, ref: ForwardedRef<HTMLDivElement>)
         data-disabled={state.isDisabled || undefined} />
     </Provider>
   );
-}
-
-/**
- * A color slider allows users to adjust an individual channel of a color value.
- */
-const _ColorSlider = forwardRef(ColorSlider);
-export {_ColorSlider as ColorSlider};
+});

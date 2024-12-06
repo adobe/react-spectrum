@@ -45,7 +45,7 @@ export const GridListExample = (args) => (
   </GridList>
 );
 
-const MyGridListItem = (props: GridListItemProps) => {
+export const MyGridListItem = (props: GridListItemProps) => {
   return (
     <GridListItem
       {...props}
@@ -125,7 +125,7 @@ export function VirtualizedGridList() {
 
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => {
-      return [...keys].map(key => ({'text/plain': list.getItem(key).name}));
+      return [...keys].map(key => ({'text/plain': list.getItem(key)?.name ?? ''}));
     },
     onReorder(e) {
       if (e.target.dropPosition === 'before') {

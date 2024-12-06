@@ -1219,8 +1219,7 @@ describe('Tree', () => {
     let offsetHeight, scrollHeight;
     beforeAll(function () {
       scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 880);
-      offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function () {
-        // @ts-ignore
+      offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function (this: HTMLElement) {
         if (this.getAttribute('role') === 'treegrid') {
           return 880;
         }

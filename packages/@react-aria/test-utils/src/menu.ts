@@ -134,8 +134,7 @@ export class MenuTester {
     let menu = this.menu;
     if (menu) {
       if (!option && optionText) {
-        // @ts-ignore
-        option = (within(menu!).getByText(optionText).closest('[role=menuitem], [role=menuitemradio], [role=menuitemcheckbox]'))!;
+        option = (within(menu!).getByText(optionText).closest('[role=menuitem], [role=menuitemradio], [role=menuitemcheckbox]'))! as HTMLElement;
       }
       if (!option) {
         throw new Error('No option found in the menu.');

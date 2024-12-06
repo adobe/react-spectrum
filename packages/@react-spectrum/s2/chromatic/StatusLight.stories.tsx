@@ -24,14 +24,16 @@ const meta: Meta<typeof StatusLight> = {
 
 export default meta;
 
-export const Example = (args: any) => <StatusLight {...args}>Status</StatusLight>;
-
-Example.args = {
-  variant: 'positive'
+export const Example = {
+  render: (args: any) => <StatusLight {...args}>Status</StatusLight>,
+  args: {
+    variant: 'positive'
+  }
 };
 
-export const LongLabel = (args: any) => <StatusLight {...args} styles={style({maxWidth: 128})}>StatusLight with very long label so we can see wrapping</StatusLight>;
-
-LongLabel.args = {
-  variant: 'positive'
+export const LongLabel = {
+  render: (args: any) => <StatusLight {...args} styles={style({maxWidth: 128})}>StatusLight with very long label so we can see wrapping</StatusLight>,
+  args: {
+    variant: 'positive'
+  }
 };

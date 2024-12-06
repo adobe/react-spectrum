@@ -136,7 +136,11 @@ export interface TreeProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>
 export const UNSTABLE_TreeContext = createContext<ContextValue<TreeProps<any>, HTMLDivElement>>(null);
 export const UNSTABLE_TreeStateContext = createContext<TreeState<any> | null>(null);
 
-function Tree<T extends object>(props: TreeProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A tree provides users with a way to navigate nested hierarchical information, with support for keyboard navigation
+ * and selection.
+ */
+export const UNSTABLE_Tree = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tree<T extends object>(props: TreeProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   // Render the portal first so that we have the collection by the time we render the DOM in SSR.
   [props, ref] = useContextProps(props, ref, UNSTABLE_TreeContext);
 
@@ -145,7 +149,7 @@ function Tree<T extends object>(props: TreeProps<T>, ref: ForwardedRef<HTMLDivEl
       {collection => <TreeInner props={props} collection={collection} treeRef={ref} />}
     </CollectionBuilder>
   );
-}
+});
 
 interface TreeInnerProps<T extends object> {
   props: TreeProps<T>,
@@ -253,13 +257,6 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     </FocusScope>
   );
 }
-
-/**
- * A tree provides users with a way to navigate nested hierarchical information, with support for keyboard navigation
- * and selection.
- */
-const _Tree = /*#__PURE__*/ (forwardRef as forwardRefType)(Tree);
-export {_Tree as UNSTABLE_Tree};
 
 // TODO: readd the rest of the render props when tree supports them
 export interface TreeItemRenderProps extends Omit<ItemRenderProps, 'allowsDragging' | 'isDragging' | 'isDropTarget'> {

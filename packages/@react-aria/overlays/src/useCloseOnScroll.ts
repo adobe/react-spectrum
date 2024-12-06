@@ -35,7 +35,7 @@ export function useCloseOnScroll(opts: CloseOnScrollOptions) {
       return;
     }
 
-    let onScroll = (e: MouseEvent) => {
+    let onScroll = (e: Event) => {
       // Ignore if scrolling an scrollable region outside the trigger's tree.
       let target = e.target;
       // window is not a Node and doesn't have contain, but window contains everything

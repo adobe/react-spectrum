@@ -23,7 +23,10 @@ export interface ColorAreaProps extends AriaColorAreaProps, RenderProps<ColorAre
 
 export const ColorAreaStateContext = createContext<ColorAreaState | null>(null);
 
-function ColorArea(props: ColorAreaProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A color area allows users to adjust two channels of an RGB, HSL or HSB color value against a two-dimensional gradient background.
+ */
+export const ColorArea = forwardRef(function ColorArea(props: ColorAreaProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ColorAreaContext);
   let inputXRef = useRef(null);
   let inputYRef = useRef(null);
@@ -71,10 +74,4 @@ function ColorArea(props: ColorAreaProps, ref: ForwardedRef<HTMLDivElement>) {
       </Provider>
     </div>
   );
-}
-
-/**
- * A color area allows users to adjust two channels of an RGB, HSL or HSB color value against a two-dimensional gradient background.
- */
-const _ColorArea = forwardRef(ColorArea);
-export {_ColorArea as ColorArea};
+});

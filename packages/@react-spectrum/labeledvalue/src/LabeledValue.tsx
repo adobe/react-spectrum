@@ -68,7 +68,10 @@ type LabeledValueProps<T> =
 type SpectrumLabeledValueTypes = string[] | string | Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time | number | RangeValue<number> | RangeValue<DateTime>;
 export type SpectrumLabeledValueProps<T> = LabeledValueProps<T> & LabeledValueBaseProps;
 
-function LabeledValue<T extends SpectrumLabeledValueTypes>(props: SpectrumLabeledValueProps<T>, ref: DOMRef<HTMLElement>) {
+/**
+ * A LabeledValue displays a non-editable value with a label. It formats numbers, dates, times, and lists according to the user's locale.
+ */
+export const LabeledValue = React.forwardRef(function LabeledValue<T extends SpectrumLabeledValueTypes>(props: SpectrumLabeledValueProps<T>, ref: DOMRef<HTMLElement>) {
   let {
     value,
     formatOptions
@@ -105,7 +108,7 @@ function LabeledValue<T extends SpectrumLabeledValueTypes>(props: SpectrumLabele
       <span>{children}</span>
     </Field>
   );
-}
+});
 
 function FormattedStringList<T extends string[]>(props: StringListProps<T>) {
   let stringFormatter = useListFormatter(props.formatOptions);
@@ -181,9 +184,3 @@ function convertValue(value: Time) {
 
   return toCalendarDateTime(date, value);
 }
-
-/**
- * A LabeledValue displays a non-editable value with a label. It formats numbers, dates, times, and lists according to the user's locale.
- */
-let _LabeledValue = React.forwardRef(LabeledValue);
-export {_LabeledValue as LabeledValue};

@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, mockClickDefault, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button, Label, RouterProvider, Tag, TagGroup, TagList, Text} from '../';
-import {fireEvent, mockClickDefault, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {useListData} from '@react-stately/data';
 import userEvent from '@testing-library/user-event';
@@ -418,5 +418,35 @@ describe('TagGroup', () => {
     await user.tab();
     await user.keyboard('{Backspace}');
     expect(grid).toHaveFocus();
+  });
+
+  it('disabled tags should not be deletable', async () => {
+    let onRemove = jest.fn();
+    let tree = render(
+      <>
+        <TagGroup data-testid="group" onRemove={onRemove} disabledKeys={['cat', 'dog', 'kangaroo']}>
+          <Label>Test</Label>
+          <TagList>
+            <RemovableTag id="cat">Cat</RemovableTag>
+            <RemovableTag id="dog">Dog</RemovableTag>
+            <RemovableTag id="kangaroo">Kangaroo</RemovableTag>
+          </TagList>
+          <Text slot="description">Description</Text>
+          <Text slot="errorMessage">Error</Text>
+        </TagGroup>
+        <Button>Click here first</Button>
+      </>
+    );
+    let items = tree.getAllByRole('row');
+
+    act(() => items[2].focus());
+    await user.keyboard('{Backspace}');
+
+    expect(onRemove).not.toHaveBeenCalled();
+
+    await user.click(tree.getAllByRole('button')[3]);
+    await user.tab({shift: true});
+
+    expect(document.activeElement).toBe(tree.getByRole('grid'));
   });
 });

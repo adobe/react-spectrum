@@ -18,7 +18,6 @@ interface ViewportSize {
   height: number
 }
 
-// @ts-ignore
 let visualViewport = typeof document !== 'undefined' && window.visualViewport;
 
 export function useViewportSize(): ViewportSize {

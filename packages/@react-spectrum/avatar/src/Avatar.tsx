@@ -21,7 +21,10 @@ import {useProviderProps} from '@react-spectrum/provider';
 const DEFAULT_SIZE = 'avatar-size-100';
 const SIZE_RE = /^size-\d+/;
 
-function Avatar(props: SpectrumAvatarProps, ref: DOMRef<HTMLImageElement>) {
+/**
+ * An avatar is a thumbnail representation of an entity, such as a user or an organization.
+ */
+export const Avatar = forwardRef(function Avatar(props: SpectrumAvatarProps, ref: DOMRef<HTMLImageElement>) {
   props = useSlotProps(props, 'avatar');
   const {
     alt = '',
@@ -61,10 +64,4 @@ function Avatar(props: SpectrumAvatarProps, ref: DOMRef<HTMLImageElement>) {
         ...(sizeValue && {height: sizeValue, width: sizeValue})
       }} />
   );
-}
-
-/**
- * An avatar is a thumbnail representation of an entity, such as a user or an organization.
- */
-const _Avatar = forwardRef(Avatar);
-export {_Avatar as Avatar};
+});

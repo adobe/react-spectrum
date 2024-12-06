@@ -27,7 +27,7 @@ export function Table(props) {
   } = props;
 
   let state = useTableState(props);
-  let ref = useRef(undefined);
+  let ref = useRef<HTMLTableElement | null>(null);
   let {collection} = state;
   let {gridProps} = useTable(
     {
@@ -103,7 +103,7 @@ function ResizableTableRowGroup({type: Element, children, className}) {
 }
 
 function ResizableTableHeaderRow({item, state, children}) {
-  let ref = useRef(undefined);
+  let ref = useRef<HTMLTableRowElement | null>(null);
   let {rowProps} = useTableHeaderRow({node: item}, state, ref);
 
   return (
@@ -117,7 +117,7 @@ function ResizableTableHeaderRow({item, state, children}) {
 }
 
 function ResizableTableColumnHeader({column, state, layoutState, onResizeStart, onResize, onResizeEnd}) {
-  let ref = useRef(null);
+  let ref = useRef<HTMLTableHeaderCellElement | null>(null);
   let {columnHeaderProps} = useTableColumnHeader({node: column}, state, ref);
   let allowsResizing = column.props.allowsResizing;
 
@@ -151,7 +151,7 @@ function Button(props) {
 
 function Resizer(props) {
   let {column, layoutState, onResizeStart, onResize, onResizeEnd} = props;
-  let ref = useRef(undefined);
+  let ref = useRef<HTMLInputElement | null>(null);
   let {resizerProps, inputProps, isResizing} = useTableColumnResize({
     column,
     'aria-label': 'Resizer',
@@ -174,7 +174,7 @@ function Resizer(props) {
 }
 
 function ResizableTableRow({item, children, state}) {
-  let ref = useRef(undefined);
+  let ref = useRef<HTMLTableRowElement | null>(null);
   let isSelected = state.selectionManager.isSelected(item.key);
   let {rowProps, isPressed} = useTableRow({
     node: item
@@ -194,7 +194,7 @@ function ResizableTableRow({item, children, state}) {
             : item.index % 2
               ? 'var(--spectrum-alias-highlight-hover)'
               : 'none',
-        color: isSelected ? 'white' : null,
+        color: isSelected ? 'white' : undefined,
         outline: 'none',
         boxShadow: isFocusVisible ? 'inset 0 0 0 2px orange' : 'none'
       }}
@@ -206,7 +206,7 @@ function ResizableTableRow({item, children, state}) {
 }
 
 function ResizableTableCell({cell, state, layoutState}) {
-  let ref = useRef(undefined);
+  let ref = useRef<HTMLTableCellElement | null>(null);
   let {gridCellProps} = useTableCell({node: cell}, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
   let column = cell.column;

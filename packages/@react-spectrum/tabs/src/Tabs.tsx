@@ -56,7 +56,12 @@ interface TabsContext<T> {
 
 const TabContext = React.createContext<TabsContext<any> | null>(null);
 
-function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Tabs organize content into multiple sections and allow users to navigate between them. The content under the set of tabs should be related and form a coherent unit.
+ */
+// forwardRef doesn't support generic parameters, so cast the result to the correct type
+// https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
+export const Tabs = React.forwardRef(function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {
     orientation = 'horizontal' as Orientation,
@@ -145,7 +150,7 @@ function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDiv
       </div>
     </TabContext.Provider>
   );
-}
+}) as <T>(props: SpectrumTabsProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 
 interface TabProps<T> extends DOMProps {
   item: Node<T>,
@@ -454,11 +459,3 @@ function TabPicker<T>(props: TabPickerProps<T>) {
     </div>
   );
 }
-
-/**
- * Tabs organize content into multiple sections and allow users to navigate between them. The content under the set of tabs should be related and form a coherent unit.
- */
-// forwardRef doesn't support generic parameters, so cast the result to the correct type
-// https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
-const _Tabs = React.forwardRef(Tabs) as <T>(props: SpectrumTabsProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
-export {_Tabs as Tabs};

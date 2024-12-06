@@ -17,7 +17,10 @@ import {HeadingProps} from '@react-types/text';
 import React, {ElementType, forwardRef} from 'react';
 import {useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 
-function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
+/**
+ * Heading is used to create various levels of typographic hierarchies.
+ */
+export const Heading = forwardRef(function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
   let domRef = useDOMRef(ref);
   props = useSlotProps(props, 'heading');
   [props, domRef] = useContextProps(props, domRef, HeadingContext);
@@ -35,10 +38,4 @@ function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
       {children}
     </HeadingTag>
   );
-}
-
-/**
- * Heading is used to create various levels of typographic hierarchies.
- */
-const _Heading = forwardRef(Heading);
-export {_Heading as Heading};
+});

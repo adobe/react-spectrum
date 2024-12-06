@@ -166,7 +166,7 @@ describe('calculatePosition', function () {
     });
   }
 
-  function checkPosition(placement, targetDimension, expected, offset = 0, crossOffset = 0, flip = false, providerOffset = undefined, arrowSize = undefined, arrowBoundaryOffset = undefined) {
+  function checkPosition(placement, targetDimension, expected, offset = 0, crossOffset = 0, flip?: boolean, providerOffset?: number, arrowSize?: number, arrowBoundaryOffset?: number) {
     checkPositionCommon(
       'Should calculate the correct position',
       expected,

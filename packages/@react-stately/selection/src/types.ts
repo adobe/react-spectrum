@@ -19,9 +19,9 @@ export interface FocusState {
   /** Sets whether the collection is focused. */
   setFocused(isFocused: boolean): void,
   /** The current focused key in the collection. */
-  readonly focusedKey: Key,
+  readonly focusedKey: Key | null,
   /** Whether the first or last child of the focused key should receive focus. */
-  readonly childFocusStrategy: FocusStrategy,
+  readonly childFocusStrategy: FocusStrategy | null,
   /** Sets the focused key, and optionally, whether the first or last child of that key should receive focus. */
   setFocusedKey(key: Key | null, child?: FocusStrategy): void
 }

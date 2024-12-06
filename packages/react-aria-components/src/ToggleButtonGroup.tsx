@@ -32,7 +32,10 @@ export interface ToggleButtonGroupProps extends AriaToggleButtonGroupProps, Rend
 export const ToggleButtonGroupContext = createContext<ContextValue<ToggleButtonGroupProps, HTMLDivElement>>({});
 export const ToggleGroupStateContext = createContext<ToggleGroupState | null>(null);
 
-function ToggleButtonGroup(props: ToggleButtonGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A toggle button group allows a user to toggle multiple options, with single or multiple selection.
+ */
+export const ToggleButtonGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToggleButtonGroup(props: ToggleButtonGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ToggleButtonGroupContext);
   let state = useToggleGroupState(props);
   let {groupProps} = useToggleButtonGroup(props, state, ref);
@@ -59,10 +62,4 @@ function ToggleButtonGroup(props: ToggleButtonGroupProps, ref: ForwardedRef<HTML
       </ToggleGroupStateContext.Provider>
     </div>
   );
-}
-
-/**
- * A toggle button group allows a user to toggle multiple options, with single or multiple selection.
- */
-const _ToggleButtonGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(ToggleButtonGroup);
-export {_ToggleButtonGroup as ToggleButtonGroup};
+});

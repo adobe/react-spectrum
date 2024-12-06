@@ -29,7 +29,7 @@ export interface ItemProps<T> extends LinkDOMProps {
   hasChildItems?: boolean
 }
 
-export type ItemElement<T> = ReactElement<ItemProps<T>>;
+export type ItemElement<T> = ReactElement<ItemProps<T>> | null;
 export type ItemRenderer<T> = (item: T) => ItemElement<T>;
 export type LoadingState = 'loading' | 'sorting' | 'loadingMore' | 'error' | 'idle' | 'filtering';
 
@@ -51,7 +51,7 @@ export interface SectionProps<T> {
   items?: Iterable<T>
 }
 
-export type SectionElement<T> = ReactElement<SectionProps<T>>;
+export type SectionElement<T> = ReactElement<SectionProps<T>> | null;
 
 export type CollectionElement<T> = SectionElement<T> | ItemElement<T>;
 export type CollectionChildren<T> = CollectionElement<T> | CollectionElement<T>[] | ((item: T) => CollectionElement<T>);
@@ -114,13 +114,13 @@ export interface KeyboardDelegate {
   getKeyPageAbove?(key: Key): Key | null,
 
   /** Returns the first key, or `null` for none. */
-  getFirstKey?(key?: Key, global?: boolean): Key | null,
+  getFirstKey?(key?: Key | null, global?: boolean): Key | null,
 
   /** Returns the last key, or `null` for none. */
-  getLastKey?(key?: Key, global?: boolean): Key | null,
+  getLastKey?(key?: Key | null, global?: boolean): Key | null,
 
   /** Returns the next key after `fromKey` that matches the given search string, or `null` for none. */
-  getKeyForSearch?(search: string, fromKey?: Key): Key | null
+  getKeyForSearch?(search: string, fromKey?: Key | null): Key | null
 }
 
 export interface Rect {
@@ -206,7 +206,7 @@ export interface Node<T> {
   /** An accessibility label for this node. */
   'aria-label'?: string,
   /** The index of this node within its parent. */
-  index?: number,
+  index: number,
   /** A function that should be called to wrap the rendered node. */
   wrapper?: (element: ReactElement) => ReactElement,
   /** The key of the parent node. */
@@ -218,7 +218,7 @@ export interface Node<T> {
   /** Additional properties specific to a particular node type. */
   props?: any,
   /** @private */
-  shouldInvalidate?: (context: unknown) => boolean,
+  shouldInvalidate?: (context: any) => boolean,
   /** A function that renders this node to a React Element in the DOM. */
   render?: (node: Node<any>) => ReactElement
 }

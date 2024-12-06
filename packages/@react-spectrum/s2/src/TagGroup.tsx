@@ -103,7 +103,8 @@ const helpTextStyles = style({
 
 const InternalTagGroupContext = createContext<TagGroupProps<any>>({});
 
-function TagGroup<T extends object>(props: TagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
+/** Tags allow users to categorize content. They can represent keywords or people, and are grouped to describe an item or a search request. */
+export const TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function TagGroup<T extends object>(props: TagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, TagGroupContext);
   props = useFormProps(props);
   let {onRemove} = props;
@@ -114,11 +115,7 @@ function TagGroup<T extends object>(props: TagGroupProps<T>, ref: DOMRef<HTMLDiv
       </CollectionBuilder>
     </InternalTagGroupContext.Provider>
   );
-}
-
-/** Tags allow users to categorize content. They can represent keywords or people, and are grouped to describe an item or a search request. */
-let _TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(TagGroup);
-export {_TagGroup as TagGroup};
+});
 
 function TagGroupInner<T>({
   props: {
@@ -360,7 +357,7 @@ function TagGroupInner<T>({
                 minWidth: 'full',
                 font: 'ui'
               })}>
-              {item => <_Tag {...item.props} id={item.key} textValue={item.textValue} />}
+              {item => <Tag {...item.props} id={item.key} textValue={item.textValue} />}
             </TagList>
             {!isEmpty && (showCollapseToggleButton || groupActionLabel) &&
               <ActionGroup
@@ -519,7 +516,8 @@ const avatarSize = {
   L: 24
 } as const;
 
-function Tag({children, textValue, ...props}: TagProps, ref: DOMRef<HTMLDivElement>) {
+/** An individual Tag for TagGroups. */
+export const Tag = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tag({children, textValue, ...props}: TagProps, ref: DOMRef<HTMLDivElement>) {
   textValue ||= typeof children === 'string' ? children : undefined;
   let ctx = useSlottedContext(TagGroupContext);
   let isInRealDOM = Boolean(ctx?.size);
@@ -541,12 +539,7 @@ function Tag({children, textValue, ...props}: TagProps, ref: DOMRef<HTMLDivEleme
       ))}
     </AriaTag>
   );
-}
-
-
-/** An individual Tag for TagGroups. */
-let _Tag = /*#__PURE__*/ (forwardRef as forwardRefType)(Tag);
-export {_Tag as Tag};
+});
 
 function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM}) {
   let {size = 'M'} = useSlottedContext(TagGroupContext) ?? {};

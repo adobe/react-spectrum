@@ -33,7 +33,10 @@ export interface ColorWheelProps extends Omit<AriaColorWheelProps, 'children' | 
 
 export const ColorWheelContext = createContext<ContextValue<ColorWheelProps, DOMRefValue<HTMLDivElement>>>(null);
 
-function ColorWheel(props: ColorWheelProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A ColorWheel allows users to adjust the hue of an HSL or HSB color value on a circular track.
+ */
+export const ColorWheel = forwardRef(function ColorWheel(props: ColorWheelProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ColorWheelContext);
   let {UNSAFE_className = '', UNSAFE_style, styles = ''} = props;
   let containerRef = useDOMRef(ref);
@@ -101,10 +104,4 @@ function ColorWheel(props: ColorWheelProps, ref: DOMRef<HTMLDivElement>) {
       </>)}
     </AriaColorWheel>
   );
-}
-
-/**
- * A ColorWheel allows users to adjust the hue of an HSL or HSB color value on a circular track.
- */
-let _ColorWheel = forwardRef(ColorWheel);
-export {_ColorWheel as ColorWheel};
+});

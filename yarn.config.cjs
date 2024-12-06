@@ -21,9 +21,9 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
         if (dependency.workspace.ident === 'storybook-builder-parcel') {
           dependency.update('*');
         } else if (dependency.workspace.ident === '@react-spectrum/s2') {
-          dependency.update('^18.0.0 || ^19.0.0');
+          dependency.update('^18.0.0 || ^19.0.0-rc.1');
         } else {
-          dependency.update('^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0');
+          dependency.update('^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1');
         }
       }
     }

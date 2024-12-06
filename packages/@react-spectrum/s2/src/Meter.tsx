@@ -20,7 +20,7 @@ import {createContext, forwardRef, ReactNode} from 'react';
 import {DOMRef, DOMRefValue, LabelPosition} from '@react-types/shared';
 import {FieldLabel} from './Field';
 import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {lightDark, size, style} from '../style' with {type: 'macro'};
+import {lightDark, style} from '../style' with {type: 'macro'};
 import {SkeletonWrapper} from './Skeleton';
 import {Text} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
@@ -67,12 +67,12 @@ const valueStyles = style({
 const trackStyles = style({
   ...track(),
   height: {
-    default: size(6),
+    default: 6,
     size: {
       S: 4, // progress-bar-thickness-small
-      M: size(6), // progress-bar-thickness-medium
+      M: 6, // progress-bar-thickness-medium
       L: 8, // progress-bar-thickness-large
-      XL: size(10) // progress-bar-thickness-extra-large
+      XL: 10 // progress-bar-thickness-extra-large
     }
   }
 });
@@ -101,7 +101,11 @@ const fillStyles = style<MeterStyleProps>({
   }
 });
 
-function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Meters are visual representations of a quantity or an achievement.
+ * Their progress is determined by user actions, rather than system actions.
+ */
+export const Meter = forwardRef(function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, MeterContext);
   let domRef = useDOMRef(ref);
 
@@ -141,11 +145,4 @@ function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
       )}
     </AriaMeter>
   );
-}
-
-/**
- * Meters are visual representations of a quantity or an achievement.
- * Their progress is determined by user actions, rather than system actions.
- */
-let _Meter = forwardRef(Meter);
-export {_Meter as Meter};
+});
