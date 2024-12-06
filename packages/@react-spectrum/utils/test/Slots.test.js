@@ -17,7 +17,6 @@ import {useId, useSlotId} from '@react-aria/utils';
 import {usePress} from '@react-aria/interactions';
 import userEvent from '@testing-library/user-event';
 
-
 describe('Slots', function () {
   let results = {};
 
