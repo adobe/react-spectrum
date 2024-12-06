@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {pointerMap, render} from '@react-spectrum/test-utils-internal';
-import React, {useEffect, useRef} from 'react';
 import {ClearSlots, SlotProvider, useSlotProps} from '../';
+import {pointerMap, render} from '@react-spectrum/test-utils-internal';
+import React, {useRef} from 'react';
 import {useId, useSlotId} from '@react-aria/utils';
 import {usePress} from '@react-aria/interactions';
 import userEvent from '@testing-library/user-event';
@@ -191,14 +191,14 @@ describe('Slots', function () {
   });
 
 
-  it("does not rerender slots consumers when the slot provider rerenders with stable values", function () {
+  it('does not rerender slots consumers when the slot provider rerenders with stable values', function () {
     let slots = {
       slotname: {label: 'foo'}
     };
     let renderCount = 0;
 
     const TestComponent = (props) => {
-      useSlotProps(props, "slotname")
+      useSlotProps(props, 'slotname');
       React.useEffect(() => {
         renderCount++;
       });
@@ -211,7 +211,7 @@ describe('Slots', function () {
     });
 
     const FullComponentTree = () => {
-      const StableTestComponent = React.useMemo(() => <TestComponent prop1="value1" />, [])
+      const StableTestComponent = React.useMemo(() => <TestComponent prop1="value1" />, []);
 
       return (
         <SlotProvider>
@@ -220,28 +220,28 @@ describe('Slots', function () {
           </MemoizedComponent>
         </SlotProvider>
       );
-    }
+    };
 
-    const { rerender } = render(
+    const {rerender} = render(
       <FullComponentTree slots={slots} />
     );
     
     // Trigger a rerender with the same stable props
     rerender(
-     <FullComponentTree slots={slots} />
+      <FullComponentTree slots={slots} />
     );
     
     expect(renderCount).toBe(1);
   });
 
-  it("does not rerender slots consumers when <ClearSlot /> wrapper is placed between SlotProvider and Consumer", function () {
+  it('does not rerender slots consumers when <ClearSlot /> wrapper is placed between SlotProvider and Consumer', function () {
     let slots = {
       slotname: {label: 'foo'}
     };
     let renderCount = 0;
 
     const TestComponent = (props) => {
-      useSlotProps(props, "slotname")
+      useSlotProps(props, 'slotname');
       React.useEffect(() => {
         renderCount++;
       });
@@ -254,7 +254,7 @@ describe('Slots', function () {
     });
 
     const FullComponentTree = () => {
-      const StableTestComponent = React.useMemo(() => <TestComponent prop1="value1" />, [])
+      const StableTestComponent = React.useMemo(() => <TestComponent prop1="value1" />, []);
 
       return (
         <SlotProvider>
@@ -265,15 +265,15 @@ describe('Slots', function () {
           </MemoizedComponent>
         </SlotProvider>
       );
-    }
+    };
 
-    const { rerender } = render(
+    const {rerender} = render(
       <FullComponentTree slots={slots} />
     );
     
     // Trigger a rerender with the same stable props
     rerender(
-     <FullComponentTree slots={slots} />
+      <FullComponentTree slots={slots} />
     );
     
     expect(renderCount).toBe(1);
