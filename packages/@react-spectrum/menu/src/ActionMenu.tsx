@@ -23,7 +23,10 @@ import {SpectrumActionMenuProps} from '@react-types/menu';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSlotProps} from '@react-spectrum/utils';
 
-function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
+/**
+ * ActionMenu combines an ActionButton with a Menu for simple "more actions" use cases.
+ */
+export const ActionMenu = forwardRef(function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
   props = useSlotProps(props, 'actionMenu');
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/menu');
   let buttonProps = filterDOMProps(props, {labelable: true});
@@ -52,10 +55,4 @@ function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: Fo
         onAction={props.onAction} />
     </MenuTrigger>
   );
-}
-
-/**
- * ActionMenu combines an ActionButton with a Menu for simple "more actions" use cases.
- */
-const _ActionMenu = forwardRef(ActionMenu) as <T>(props: SpectrumActionMenuProps<T> & {ref?: FocusableRef<HTMLButtonElement>}) => ReactElement;
-export {_ActionMenu as ActionMenu};
+}) as <T>(props: SpectrumActionMenuProps<T> & {ref?: FocusableRef<HTMLButtonElement>}) => ReactElement;

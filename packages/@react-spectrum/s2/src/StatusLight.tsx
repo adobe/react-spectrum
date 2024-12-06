@@ -102,7 +102,11 @@ const light = style<StatusLightStyleProps & {isSkeleton: boolean}>({
   overflow: 'visible' // prevents the light from getting clipped on iOS
 });
 
-function StatusLight(props: StatusLightProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Status lights are used to color code categories and labels commonly found in data visualization.
+ * When status lights have a semantic meaning, they should use semantic variant colors.
+ */
+export const StatusLight = /*#__PURE__*/ forwardRef(function StatusLight(props: StatusLightProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, StatusLightContext);
   let {children, size = 'M', variant, role, UNSAFE_className = '', UNSAFE_style, styles} = props;
   let domRef = useDOMRef(ref);
@@ -131,11 +135,4 @@ function StatusLight(props: StatusLightProps, ref: DOMRef<HTMLDivElement>) {
       <Text>{children}</Text>
     </div>
   );
-}
-
-/**
- * Status lights are used to color code categories and labels commonly found in data visualization.
- * When status lights have a semantic meaning, they should use semantic variant colors.
- */
-let _StatusLight = /*#__PURE__*/ forwardRef(StatusLight);
-export {_StatusLight as StatusLight};
+});

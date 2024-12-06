@@ -462,6 +462,7 @@ function Example() {
         label="Adobe product (Uncontrolled)"
         defaultItems={options}
         /*- begin highlight -*/
+        defaultSelectedKey={2}
         defaultInputValue="Adobe XD">
         {/*- end highlight -*/}
         {item => <ListBoxItem>{item.name}</ListBoxItem>}
@@ -471,6 +472,7 @@ function Example() {
         label="Pick an Adobe product (Controlled)"
         defaultItems={options}
         /*- begin highlight -*/
+        defaultSelectedKey={2}
         inputValue={value}
         onInputChange={setValue}>
         {/*- end highlight -*/}

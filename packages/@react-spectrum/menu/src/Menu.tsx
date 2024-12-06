@@ -24,12 +24,16 @@ import {mergeProps, useLayoutEffect, useSlotId, useSyncRef} from '@react-aria/ut
 import React, {ReactElement, useContext, useEffect, useRef, useState} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {useInteractOutside} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMenu} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
 
-function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Menus display a list of actions or options that a user can choose.
+ */
+// forwardRef doesn't support generic parameters, so cast the result to the correct type
+// https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
+export const Menu = React.forwardRef(function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDivElement>) {
   let isSubmenu = true;
   let contextProps = useContext(MenuContext);
   let parentMenuContext = useMenuStateContext();
@@ -65,15 +69,6 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
     let nextMenuLevel = state.collection.getItem(nextMenuLevelKey);
     hasOpenSubmenu = nextMenuLevel != null;
   }
-  useInteractOutside({
-    ref: domRef,
-    onInteractOutside: (e) => {
-      if (!popoverContainer?.contains(e.target as Node) && !trayContainerRef.current?.contains(e.target as Node)) {
-        rootMenuTriggerState?.close();
-      }
-    },
-    isDisabled: isSubmenu || !hasOpenSubmenu
-  });
 
   return (
     <MenuStateContext.Provider value={{popoverContainer, trayContainerRef, menu: domRef, submenu: submenuRef, rootMenuTriggerState, state}}>
@@ -126,7 +121,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
       </FocusScope>
     </MenuStateContext.Provider>
   );
-}
+}) as <T>(props: SpectrumMenuProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 
 export function TrayHeaderWrapper(props) {
   let {children, isSubmenu, hasOpenSubmenu, parentMenuTreeState, rootMenuTriggerState, onBackButtonPress, wrapperKeyDown, menuRef} = props;
@@ -216,11 +211,3 @@ export function TrayHeaderWrapper(props) {
     </>
   );
 }
-
-/**
- * Menus display a list of actions or options that a user can choose.
- */
-// forwardRef doesn't support generic parameters, so cast the result to the correct type
-// https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
-const _Menu = React.forwardRef(Menu) as <T>(props: SpectrumMenuProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
-export {_Menu as Menu};

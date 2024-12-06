@@ -98,7 +98,11 @@ const dashoffsetAnimation = keyframes(`
   }
 `);
 
-function ProgressCircle(props: ProgressCircleProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * ProgressCircles show the progression of a system operation such as downloading, uploading, or processing, in a visual way.
+ * They can represent determinate or indeterminate progress.
+ */
+export const ProgressCircle = /*#__PURE__*/ forwardRef(function ProgressCircle(props: ProgressCircleProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ProgressCircleContext);
   let {
     size = 'M',
@@ -159,11 +163,4 @@ function ProgressCircle(props: ProgressCircleProps, ref: DOMRef<HTMLDivElement>)
       )}
     </RACProgressBar>
   );
-}
-
-/**
- * ProgressCircles show the progression of a system operation such as downloading, uploading, or processing, in a visual way.
- * They can represent determinate or indeterminate progress.
- */
-let _ProgressCircle = /*#__PURE__*/ forwardRef(ProgressCircle);
-export {_ProgressCircle as ProgressCircle};
+});

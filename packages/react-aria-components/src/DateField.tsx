@@ -47,7 +47,11 @@ export const TimeFieldContext = createContext<ContextValue<TimeFieldProps<any>, 
 export const DateFieldStateContext = createContext<DateFieldState | null>(null);
 export const TimeFieldStateContext = createContext<TimeFieldState | null>(null);
 
-function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A date field allows users to enter and edit date and time values using a keyboard.
+ * Each part of a date value is displayed in an individually editable segment.
+ */
+export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DateFieldContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
@@ -105,16 +109,13 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
         data-invalid={state.isInvalid || undefined} />
     </Provider>
   );
-}
+});
 
 /**
- * A date field allows users to enter and edit date and time values using a keyboard.
- * Each part of a date value is displayed in an individually editable segment.
+ * A time field allows users to enter and edit time values using a keyboard.
+ * Each part of a time value is displayed in an individually editable segment.
  */
-const _DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(DateField);
-export {_DateField as DateField};
-
-function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TimeFieldContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
@@ -171,14 +172,7 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
         data-invalid={state.isInvalid || undefined} />
     </Provider>
   );
-}
-
-/**
- * A time field allows users to enter and edit time values using a keyboard.
- * Each part of a time value is displayed in an individually editable segment.
- */
-const _TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(TimeField);
-export {_TimeField as TimeField};
+});
 
 export interface DateInputRenderProps {
   /**
@@ -213,7 +207,10 @@ export interface DateInputProps extends SlotProps, StyleRenderProps<DateInputRen
   children: (segment: IDateSegment) => ReactElement
 }
 
-function DateInput(props: DateInputProps, ref: ForwardedRef<HTMLDivElement>): JSX.Element {
+/**
+ * A date input groups the editable date segments within a date field.
+ */
+export const DateInput = /*#__PURE__*/ (forwardRef as forwardRefType)(function DateInput(props: DateInputProps, ref: ForwardedRef<HTMLDivElement>): JSX.Element {
   // If state is provided by DateField/TimeField, just render.
   // Otherwise (e.g. in DatePicker), we need to call hooks and create state ourselves.
   let dateFieldState = useContext(DateFieldStateContext);
@@ -221,7 +218,7 @@ function DateInput(props: DateInputProps, ref: ForwardedRef<HTMLDivElement>): JS
   return dateFieldState || timeFieldState
     ? <DateInputInner {...props} ref={ref} />
     : <DateInputStandalone {...props} ref={ref} />;
-}
+});
 
 const DateInputStandalone = forwardRef((props: DateInputProps, ref: ForwardedRef<HTMLDivElement>) => {
   let [dateFieldProps, fieldRef] = useContextProps({slot: props.slot} as DateFieldProps<any>, ref, DateFieldContext);
@@ -267,12 +264,6 @@ const DateInputInner = forwardRef((props: DateInputProps, ref: ForwardedRef<HTML
     </>
   );
 });
-
-/**
- * A date input groups the editable date segments within a date field.
- */
-const _DateInput = /*#__PURE__*/ (forwardRef as forwardRefType)(DateInput);
-export {_DateInput as DateInput};
 
 export interface DateSegmentRenderProps extends Omit<IDateSegment, 'isEditable'> {
   /**
@@ -321,7 +312,11 @@ export interface DateSegmentProps extends RenderProps<DateSegmentRenderProps>, H
   segment: IDateSegment
 }
 
-function DateSegment({segment, ...otherProps}: DateSegmentProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A date segment displays an individual unit of a date and time, and allows users to edit
+ * the value by typing or using the arrow keys to increment and decrement.
+ */
+export const DateSegment = /*#__PURE__*/ (forwardRef as forwardRefType)(function DateSegment({segment, ...otherProps}: DateSegmentProps, ref: ForwardedRef<HTMLDivElement>) {
   let dateFieldState = useContext(DateFieldStateContext);
   let timeFieldState = useContext(TimeFieldStateContext);
   let state = dateFieldState ?? timeFieldState!;
@@ -359,11 +354,4 @@ function DateSegment({segment, ...otherProps}: DateSegmentProps, ref: ForwardedR
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined} />
   );
-}
-
-/**
- * A date segment displays an individual unit of a date and time, and allows users to edit
- * the value by typing or using the arrow keys to increment and decrement.
- */
-const _DateSegment = /*#__PURE__*/ (forwardRef as forwardRefType)(DateSegment);
-export {_DateSegment as DateSegment};
+});

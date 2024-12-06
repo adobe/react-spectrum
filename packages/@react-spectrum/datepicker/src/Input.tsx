@@ -19,7 +19,7 @@ import React, {ReactElement, useCallback, useRef} from 'react';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useFocusRing} from '@react-aria/focus';
 
-function Input(props, ref) {
+export const Input = React.forwardRef(function Input(props: any, ref: any) {
   let inputRef = useRef<HTMLInputElement | null>(null);
   let {
     isDisabled,
@@ -139,7 +139,4 @@ function Input(props, ref) {
       {validationIcon}
     </div>
   );
-}
-
-const _Input = React.forwardRef(Input);
-export {_Input as Input};
+});

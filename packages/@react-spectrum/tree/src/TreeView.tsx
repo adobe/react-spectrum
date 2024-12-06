@@ -87,7 +87,10 @@ const tree = style<Pick<TreeRenderProps, 'isEmpty'>>({
   }
 });
 
-function TreeView<T extends object>(props: SpectrumTreeViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A tree view provides users with a way to navigate nested hierarchical information.
+ */
+export const TreeView = React.forwardRef(function TreeView<T extends object>(props: SpectrumTreeViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {children, selectionStyle} = props;
 
   let renderer;
@@ -106,7 +109,7 @@ function TreeView<T extends object>(props: SpectrumTreeViewProps<T>, ref: DOMRef
       </UNSTABLE_Tree>
     </TreeRendererContext.Provider>
   );
-}
+}) as <T>(props: SpectrumTreeViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 
 interface TreeRowRenderProps extends TreeItemRenderProps {
   isLink?: boolean
@@ -354,9 +357,3 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
     </span>
   );
 }
-
-/**
- * A tree view provides users with a way to navigate nested hierarchical information.
- */
-const _TreeView = React.forwardRef(TreeView) as <T>(props: SpectrumTreeViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
-export {_TreeView as TreeView};

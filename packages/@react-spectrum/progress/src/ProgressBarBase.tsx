@@ -24,7 +24,7 @@ interface ProgressBarBaseProps extends SpectrumProgressBarBaseProps, ProgressBar
 }
 
 // Base ProgressBar component shared with Meter.
-function ProgressBarBase(props: ProgressBarBaseProps, ref: DOMRef<HTMLDivElement>) {
+export const ProgressBarBase = React.forwardRef(function ProgressBarBase(props: ProgressBarBaseProps, ref: DOMRef<HTMLDivElement>) {
   let {
     value = 0,
     minValue = 0,
@@ -96,7 +96,4 @@ function ProgressBarBase(props: ProgressBarBaseProps, ref: DOMRef<HTMLDivElement
       </div>
     </div>
   );
-}
-
-let _ProgressBarBase = React.forwardRef(ProgressBarBase);
-export {_ProgressBarBase as ProgressBarBase};
+});

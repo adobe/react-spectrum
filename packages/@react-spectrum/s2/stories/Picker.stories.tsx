@@ -46,18 +46,19 @@ const meta: Meta<typeof Picker<any>> = {
 export default meta;
 type Story = StoryObj<typeof Picker<any>>;
 
-export const Example = (args: any) => (
-  <Picker {...args}>
-    <PickerItem>Chocolate</PickerItem>
-    <PickerItem>Mint</PickerItem>
-    <PickerItem>Strawberry</PickerItem>
-    <PickerItem>Vanilla</PickerItem>
-    <PickerItem>Chocolate Chip Cookie Dough</PickerItem>
-  </Picker>
-);
-
-Example.args = {
-  label: 'Ice cream flavor'
+export const Example = {
+  render: (args: any) => (
+    <Picker {...args}>
+      <PickerItem>Chocolate</PickerItem>
+      <PickerItem>Mint</PickerItem>
+      <PickerItem>Strawberry</PickerItem>
+      <PickerItem>Vanilla</PickerItem>
+      <PickerItem>Chocolate Chip Cookie Dough</PickerItem>
+    </Picker>
+  ),
+  args: {
+    label: 'Ice cream flavor'
+  }
 };
 
 export const Sections: Story = {
@@ -130,30 +131,62 @@ export const WithIcons: Story = {
   }
 };
 
-export const Validation = (args: any) => (
+const ValidationRender = (props) => (
   <Form>
-    <Picker {...args}>
+    <Picker {...props}>
       {(item) => <PickerItem id={(item as IExampleItem).id} textValue={(item as IExampleItem).label}>{(item as IExampleItem).label}</PickerItem>}
     </Picker>
     <Button type="submit" variant="primary">Submit</Button>
   </Form>
 );
 
-Validation.args = {
-  ...Dynamic.args,
-  isRequired: true
-};
-
-export const CustomWidth = (args: any) => <Example {...args} styles={style({width: 384})} />;
-CustomWidth.args = Example.args;
-CustomWidth.parameters = {
-  docs: {
-    disable: true
+export const Validation = {
+  render: (args) => <ValidationRender {...args} />,
+  args: {
+    ...Dynamic.args,
+    isRequired: true
   }
 };
 
-export const ContextualHelpExample = (args: any) => (
-  <Picker {...args}>
+export const CustomWidth = {
+  render: (args: any) => (
+    <Picker {...args} styles={style({width: 384})}>
+      <PickerItem>Chocolate</PickerItem>
+      <PickerItem>Mint</PickerItem>
+      <PickerItem>Strawberry</PickerItem>
+      <PickerItem>Vanilla</PickerItem>
+      <PickerItem>Chocolate Chip Cookie Dough</PickerItem>
+    </Picker>
+  ),
+  args: Example.args,
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
+};
+
+const ContextualHelpExampleRender = (props) => (
+  <Picker
+    {...props}
+    contextualHelp={
+      <ContextualHelp>
+        <Heading>What is a ice cream?</Heading>
+        <Content>
+          <Text>
+            A combination of sugar, eggs, milk, and cream is cooked to make
+            a custard base. Then, flavorings are added, and this flavored
+            mixture is carefully churned and frozen to make ice cream.
+          </Text>
+        </Content>
+        <Footer>
+          <Link
+            isStandalone
+            href="https://en.wikipedia.org/wiki/Ice_cream"
+            target="_blank">Learn more about ice cream</Link>
+        </Footer>
+      </ContextualHelp>
+    }>
     <PickerItem>Chocolate</PickerItem>
     <PickerItem>Mint</PickerItem>
     <PickerItem>Strawberry</PickerItem>
@@ -162,61 +195,9 @@ export const ContextualHelpExample = (args: any) => (
   </Picker>
 );
 
-ContextualHelpExample.args = {
-  label: 'Ice cream flavor',
-  contextualHelp: (
-    <ContextualHelp>
-      <Heading>What is a ice cream?</Heading>
-      <Content>
-        <Text>
-          A combination of sugar, eggs, milk, and cream is cooked to make
-          a custard base. Then, flavorings are added, and this flavored
-          mixture is carefully churned and frozen to make ice cream.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Ice_cream"
-          target="_blank">Learn more about ice cream</Link>
-      </Footer>
-    </ContextualHelp>
-  )
-};
-
-ContextualHelpExample.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `
-<Picker
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>What is a ice cream?</Heading>
-      <Content>
-        <Text>
-          A combination of sugar, eggs, milk, and cream is cooked to make
-          a custard base. Then, flavorings are added, and this flavored
-          mixture is carefully churned and frozen to make ice cream.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Ice_cream"
-          target="_blank">Learn more about ice cream</Link>
-      </Footer>
-    </ContextualHelp>
-  }
-  label="Ice cream flavor"
-/>
-  <PickerItem>Chocolate</PickerItem>
-  <PickerItem>Mint</PickerItem>
-  <PickerItem>Strawberry</PickerItem>
-  <PickerItem>Vanilla</PickerItem>
-  <PickerItem>Chocolate Chip Cookie Dough</PickerItem>
-</Picker>`;
-      }
-    }
+export const ContextualHelpExample = {
+  render: (args) => <ContextualHelpExampleRender {...args} />,
+  args: {
+    label: 'Ice cream flavor'
   }
 };

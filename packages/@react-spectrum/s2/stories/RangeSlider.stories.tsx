@@ -41,67 +41,33 @@ Example.args = {
   }
 };
 
-export const ContextualHelpExample = (args: any) => <RangeSlider {...args} />;
+export const ContextualHelpExample = (args: any) => (
+  <RangeSlider
+    {...args}
+    contextualHelp={
+      <ContextualHelp>
+        <Heading>What is a ice cream?</Heading>
+        <Content>
+          <Text>
+            A combination of sugar, eggs, milk, and cream is cooked to make
+            a custard base. Then, flavorings are added, and this flavored
+            mixture is carefully churned and frozen to make ice cream.
+          </Text>
+        </Content>
+        <Footer>
+          <Link
+            isStandalone
+            href="https://en.wikipedia.org/wiki/Ice_cream"
+            target="_blank">Learn more about ice cream</Link>
+        </Footer>
+      </ContextualHelp>
+    } />
+);
 
 ContextualHelpExample.args = {
   label: 'Range',
   defaultValue: {
     start: 30,
     end: 60
-  },
-  contextualHelp: (
-    <ContextualHelp>
-      <Heading>What is a ice cream?</Heading>
-      <Content>
-        <Text>
-          A combination of sugar, eggs, milk, and cream is cooked to make
-          a custard base. Then, flavorings are added, and this flavored
-          mixture is carefully churned and frozen to make ice cream.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Ice_cream"
-          target="_blank">Learn more about ice cream</Link>
-      </Footer>
-    </ContextualHelp>
-  )
-};
-
-ContextualHelpExample.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `
-<RangeSlider
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>
-        What is a ice cream?
-      </Heading>
-      <Content>
-        <Text>
-          A combination of sugar, eggs, milk, and cream is cooked to make a custard base. Then, flavorings are added, and this flavored mixture is carefully churned and frozen to make ice cream.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          href="https://en.wikipedia.org/wiki/Ice_cream"
-          isStandalone
-          target="_blank">
-          Learn more about ice cream
-        </Link>
-      </Footer>
-    </ContextualHelp>
-  }
-  defaultValue={{
-    end: 60,
-    start: 30
-  }}
-  label="Range"
-/>`;
-      }
-    }
   }
 };

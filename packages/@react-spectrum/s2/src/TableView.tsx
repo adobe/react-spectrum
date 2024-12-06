@@ -255,7 +255,10 @@ export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
 
 export const TableContext = createContext<ContextValue<TableViewProps, DOMRefValue<HTMLDivElement>>>(null);
 
-function TableView(props: TableViewProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Tables are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
+ */
+export const TableView = forwardRef(function TableView(props: TableViewProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, TableContext);
   let {
     UNSAFE_style,
@@ -344,7 +347,7 @@ function TableView(props: TableViewProps, ref: DOMRef<HTMLDivElement>) {
       </UNSTABLE_Virtualizer>
     </ResizableTableContainer>
   );
-}
+});
 
 const centeredWrapper = style({
   display: 'flex',
@@ -356,7 +359,10 @@ const centeredWrapper = style({
 
 export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 'className' | 'dependencies'> {}
 
-function TableBody<T extends object>(props: TableBodyProps<T>, ref: DOMRef<HTMLDivElement>) {
+/**
+ * The body of a `<Table>`, containing the table rows.
+ */
+export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableBody<T extends object>(props: TableBodyProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {items, renderEmptyState, children} = props;
   let domRef = useDOMRef(ref);
   let {loadingState} = useContext(InternalTableContext);
@@ -422,13 +428,7 @@ function TableBody<T extends object>(props: TableBodyProps<T>, ref: DOMRef<HTMLD
       {renderer}
     </RACTableBody>
   );
-}
-
-/**
- * The body of a `<Table>`, containing the table rows.
- */
-let _TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(TableBody);
-export {_TableBody as TableBody};
+});
 
 const cellFocus = {
   outlineStyle: {
@@ -830,7 +830,10 @@ let InternalTableHeaderContext = createContext<{isHeaderRowHovered?: boolean}>({
 
 export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style' | 'className' | 'dependencies' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd'> {}
 
-function TableHeader<T extends object>({columns, children}: TableHeaderProps<T>, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A header within a `<Table>`, containing the table columns.
+ */
+export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableHeader<T extends object>({columns, children}: TableHeaderProps<T>, ref: DOMRef<HTMLDivElement>) {
   let scale = useScale();
   let {selectionBehavior, selectionMode} = useTableOptions();
   let {isQuiet} = useContext(InternalTableContext);
@@ -870,13 +873,7 @@ function TableHeader<T extends object>({columns, children}: TableHeaderProps<T>,
       </RACTableHeader>
     </InternalTableHeaderContext.Provider>
   );
-}
-
-/**
- * A header within a `<Table>`, containing the table columns.
- */
-let _TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(TableHeader);
-export {_TableHeader as TableHeader};
+});
 
 function VisuallyHiddenSelectAllLabel() {
   let checkboxProps = useSlottedContext(RACCheckboxContext, 'selection');
@@ -1093,7 +1090,10 @@ const row = style<RowRenderProps & S2TableProps>({
 
 export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'children' | 'textValue'>  {}
 
-function Row<T extends object>({id, columns, children, ...otherProps}: RowProps<T>, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A row within a `<Table>`.
+ */
+export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T extends object>({id, columns, children, ...otherProps}: RowProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {selectionBehavior, selectionMode} = useTableOptions();
   let tableVisualOptions = useContext(InternalTableContext);
   let domRef = useDOMRef(ref);
@@ -1118,16 +1118,4 @@ function Row<T extends object>({id, columns, children, ...otherProps}: RowProps<
       </Collection>
     </RACRow>
   );
-}
-
-/**
- * A row within a `<Table>`.
- */
-let _Row = /*#__PURE__*/ (forwardRef as forwardRefType)(Row);
-export {_Row as Row};
-
-/**
- * Tables are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
- */
-const _TableView = forwardRef(TableView);
-export {_TableView as TableView};
+});

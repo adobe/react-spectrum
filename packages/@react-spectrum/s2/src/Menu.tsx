@@ -312,7 +312,10 @@ let descriptor = style({
 let InternalMenuContext = createContext<{size: 'S' | 'M' | 'L' | 'XL', isSubmenu: boolean}>({size: 'M', isSubmenu: false});
 let InternalMenuTriggerContext = createContext<Omit<MenuTriggerProps, 'children'> | null>(null);
 
-function Menu<T extends object>(props: MenuProps<T>, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Menus display a list of actions or options that a user can choose.
+ */
+export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T extends object>(props: MenuProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, MenuContext);
   let {isSubmenu, size: ctxSize} = useContext(InternalMenuContext);
   let {
@@ -386,13 +389,7 @@ function Menu<T extends object>(props: MenuProps<T>, ref: DOMRef<HTMLDivElement>
   }
 
   return content;
-}
-
-/**
- * Menus display a list of actions or options that a user can choose.
- */
-let _Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(Menu);
-export {_Menu as Menu};
+});
 
 export function Divider(props: SeparatorProps) {
   return (

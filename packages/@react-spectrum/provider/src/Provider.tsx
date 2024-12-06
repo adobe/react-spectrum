@@ -23,7 +23,7 @@ import {DOMRef} from '@react-types/shared';
 import {filterDOMProps, RouterProvider} from '@react-aria/utils';
 import {I18nProvider, useLocale} from '@react-aria/i18n';
 import {ModalProvider, useModalProvider} from '@react-aria/overlays';
-import {ProviderProps} from '@react-types/provider';
+import {ProviderContext, ProviderProps} from '@react-types/provider';
 import React, {useContext, useEffect, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/page/vars.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/index.css';
@@ -33,7 +33,12 @@ import {version} from '../package.json';
 
 const DEFAULT_BREAKPOINTS = {S: 640, M: 768, L: 1024, XL: 1280, XXL: 1536};
 
-function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Provider is the container for all React Spectrum applications.
+ * It defines the theme, locale, and other application level settings,
+ * and can also be used to provide common properties to a group of components.
+ */
+export const Provider = React.forwardRef(function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let prevContext = useContext(Context);
   let prevColorScheme = prevContext && prevContext.colorScheme;
   let prevBreakpoints = prevContext && prevContext.breakpoints;
@@ -117,15 +122,7 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
       </I18nProvider>
     </Context.Provider>
   );
-}
-
-/**
- * Provider is the container for all React Spectrum applications.
- * It defines the theme, locale, and other application level settings,
- * and can also be used to provide common properties to a group of components.
- */
-let _Provider = React.forwardRef(Provider);
-export {_Provider as Provider};
+});
 
 const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let {
@@ -195,7 +192,7 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: Provide
  * Returns the various settings and styles applied by the nearest parent Provider.
  * Properties explicitly set by the nearest parent Provider override those provided by preceeding Providers.
  */
-export function useProvider() {
+export function useProvider(): ProviderContext {
   let context = useContext(Context);
   if (!context) {
     throw new Error(
