@@ -230,7 +230,7 @@ describe('DatePickerBase', function () {
       for (let segment of segments) {
         if (segment.getAttribute('data-testid') !== 'year') {
           // ignore placeholder text.
-          let textContent = [...segment.childNodes].map(el => el.nodeType === 3 ? el.textContent : '').join('');
+          let textContent = [...segment.childNodes].map(el => el.nodeType === 3 ? el.textContent : '').join('').replace(/[\u2066-\u2069]/g, '');
           expect(textContent.startsWith('0')).toBeTruthy();
         }
       }

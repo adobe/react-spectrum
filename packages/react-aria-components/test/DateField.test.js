@@ -37,7 +37,7 @@ describe('DateField', () => {
     );
 
     let input = getByRole('group');
-    expect(input).toHaveTextContent('mm/dd/yyyy');
+    expect(input.textContent.replace(/[\u2066-\u2069]/g, '')).toBe('mm/dd/yyyy');
     expect(input).toHaveAttribute('class', 'react-aria-DateInput');
     expect(input).toHaveAttribute('data-bar', 'foo');
 

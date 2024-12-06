@@ -54,29 +54,6 @@ function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: F
 
   let approximateWidth = useFormattedDateWidth(state) + 'ch';
 
-  // let timeValue = ['hour', 'minute', 'second'];
-  // let dateValue = ['year', 'month', 'day'];
-  // let dateLiteral = ['.', '/', '-'];
-
-  // console.log(state.segments);
-  // is there a better way to determine what the literal will look like based on locale rather than hard coding it?
-  // const groupedSegments = state.segments.reduce((acc: DateSegment[][], segment) => {
-  //   if ((timeValue.includes(segment.type) || 
-  //       (segment.type === 'literal' && segment.text === ':')) || (locale !== 'ar-AE' && (dateValue.includes(segment.type) || (segment.type === 'literal' && dateLiteral.includes(segment.text))))) {
-  //     let lastGroup = acc[acc.length - 1];
-  //     if (Array.isArray(lastGroup) && lastGroup[0].type !== 'literal') {
-  //       lastGroup.push(segment);
-  //     } else {
-  //       acc.push([segment]);
-  //     }
-  //   } else {
-  //     acc.push([segment]);
-  //   }
-  //   return acc;
-  // }, []);
-
-  // let granularity = props.granularity || 'minute';
-
   return (
     <Field
       {...props}
@@ -99,7 +76,7 @@ function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: F
         validationState={validationState}
         minWidth={approximateWidth}
         className={classNames(datepickerStyles, 'react-spectrum-TimeField')}>
-        {/* {state.segments.map((segment, i) =>
+        {state.segments.map((segment, i) =>
           (<DatePickerSegment
             key={i}
             segment={segment}
@@ -107,37 +84,7 @@ function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: F
             isDisabled={isDisabled}
             isReadOnly={isReadOnly}
             isRequired={isRequired} />)
-        )} */}
-        {/* {state.segments.map((segment, i) =>
-          (
-            <React.Fragment key={i}>
-              {segment.type === 'day' && '\u2066'}
-              {segment.type === 'hour' && '\u2066'}
-              <DatePickerSegment
-                key={i}
-                segment={segment}
-                state={state}
-                isDisabled={isDisabled}
-                isReadOnly={isReadOnly}
-                isRequired={isRequired} />
-              {segment.type === 'year' &&  '\u2069'}
-              {segment.type === granularity && '\u2069'}
-          </React.Fragment>)               
-        )} */}
-        {state.segments.map((segment, i) =>
-          (
-            <React.Fragment key={i}>
-              {segment.ltrIsolate === '\u2066' && segment.ltrIsolate}
-              <DatePickerSegment
-                key={i}
-                segment={segment}
-                state={state}
-                isDisabled={isDisabled}
-                isReadOnly={isReadOnly}
-                isRequired={isRequired} />
-              {segment.ltrIsolate === '\u2069' && segment.ltrIsolate}
-            </React.Fragment>)               
-          )}
+        )}
         <input {...inputProps} ref={inputRef} />
       </Input>
     </Field>

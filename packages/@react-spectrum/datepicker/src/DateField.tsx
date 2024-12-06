@@ -62,30 +62,7 @@ function DateField<T extends DateValue>(props: SpectrumDateFieldProps<T>, ref: F
   let validationState = state.validationState || (isInvalid ? 'invalid' : null);
 
   let approximateWidth = useFormattedDateWidth(state) + 'ch';
-
-  // let timeValue = ['hour', 'minute', 'second'];
-  // let dateValue = ['year', 'month', 'day'];
-  // let dateLiteral = ['.', '/', '-'];
-
-  // is there a better way to determine what the literal will look like based on locale rather than hard coding it?
-  // const groupedSegments = state.segments.reduce((acc: DateSegment[][], segment) => {
-  //   if ((timeValue.includes(segment.type) || 
-  //     (segment.type === 'literal' && segment.text === ':')) || (locale !== 'ar-AE' && (dateValue.includes(segment.type) || (segment.type === 'literal' && dateLiteral.includes(segment.text))))) {
-  //     let lastGroup = acc[acc.length - 1];
-  //     if (Array.isArray(lastGroup) && lastGroup[0].type !== 'literal') {
-  //       lastGroup.push(segment);
-  //     } else {
-  //       acc.push([segment]);
-  //     }   
-  //   } else {
-  //     acc.push([segment]);
-  //   }
-  //   return acc;
-  // }, []);
-
-  // console.log(groupedSegments);
-  // let granularity = props.granularity || 'minute';
-
+  
   return (
     <Field
       {...props}
@@ -109,32 +86,7 @@ function DateField<T extends DateValue>(props: SpectrumDateFieldProps<T>, ref: F
         validationState={validationState}
         minWidth={approximateWidth}
         className={classNames(datepickerStyles, 'react-spectrum-DateField')}>        
-        {/* {groupedSegments.map((segments, index) =>
-          segments.length > 1 ? (
-            <React.Fragment key={index}>
-            {'\u202D'}
-            {segments.map((s, i) => (
-              <DatePickerSegment
-                key={`${index}-${i}`}
-                segment={s}
-                state={state}
-                isDisabled={isDisabled}
-                isReadOnly={isReadOnly}
-                isRequired={isRequired} />
-              ))}
-            {'\u202C'}
-            </React.Fragment>
-          ) : (
-            (<DatePickerSegment
-              key={index}
-              segment={segments[0]}
-              state={state}
-              isDisabled={isDisabled}
-              isReadOnly={isReadOnly}
-              isRequired={isRequired} />)
-          )
-        )} */}
-        {/* {state.segments.map((segment, i) =>
+        {state.segments.map((segment, i) =>
           (<DatePickerSegment
             key={i}
             segment={segment}
@@ -142,36 +94,6 @@ function DateField<T extends DateValue>(props: SpectrumDateFieldProps<T>, ref: F
             isDisabled={isDisabled}
             isReadOnly={isReadOnly}
             isRequired={isRequired} />)
-        )} */}
-        {/* {state.segments.map((segment, i) =>
-          (
-            <React.Fragment key={i}>
-              {segment.type === 'day' && locale !== 'ar-AE' && '\u2066'}
-              {segment.type === 'hour' && '\u2066'}
-              <DatePickerSegment
-                key={i}
-                segment={segment}
-                state={state}
-                isDisabled={isDisabled}
-                isReadOnly={isReadOnly}
-                isRequired={isRequired} />
-              {segment.type === 'year' && locale !== 'ar-AE' &&  '\u2069'}
-              {timeValue.includes(granularity) && segment.type === granularity && '\u2069'}
-          </React.Fragment>)               
-        )} */}
-        {state.segments.map((segment, i) =>
-          (
-            <React.Fragment key={i}>
-              {segment.ltrIsolate === '\u2066' && segment.ltrIsolate}
-              <DatePickerSegment
-                key={i}
-                segment={segment}
-                state={state}
-                isDisabled={isDisabled}
-                isReadOnly={isReadOnly}
-                isRequired={isRequired} />
-              {segment.ltrIsolate === '\u2069' && segment.ltrIsolate}
-            </React.Fragment>)               
         )}
         <input {...inputProps} ref={inputRef} />
       </Input>

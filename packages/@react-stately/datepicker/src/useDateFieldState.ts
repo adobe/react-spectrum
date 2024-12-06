@@ -36,9 +36,7 @@ export interface DateSegment {
   /** A placeholder string for the segment. */
   placeholder: string,
   /** Whether the segment is editable. */
-  isEditable: boolean,
-  /** Sets the direction to LTR. */
-  ltrIsolate?: '\u2066' | '\u2069' | undefined
+  isEditable: boolean
 }
 
 export interface DateFieldState extends FormValidationState {
@@ -282,25 +280,29 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
         let isPlaceholder = EDITABLE_SEGMENTS[segment.type] && !validSegments[segment.type];
         let placeholder = EDITABLE_SEGMENTS[segment.type] ? getPlaceholder(segment.type, segment.value, locale) : null;
 
-        let unicode;
+        let value = segment.value;
+        let place = placeholder;
         if (segment.type === 'day' && locale !== 'ar-AE') {
-          unicode = '\u2066';
+          value = `\u2066${value}`;
+          place = `\u2066${place}`;
         } else if (segment.type === 'hour') {
-          unicode = '\u2066';
+          value = `\u2066${value}`;
+          place = `\u2066${place}`;
         } else if (segment.type === 'year' && locale !== 'ar-AE') {
-          unicode = '\u2069';
+          value = `\u2069${value}`;
+          place = `\u2069${place}`;
         } else if (timeValue.includes(granularity) && segment.type === granularity) {
-          unicode = '\u2069';
+          value = `\u2069${value}`;
+          place = `\u2069${place}`;
         }
 
         return {
           type: TYPE_MAPPING[segment.type] || segment.type,
-          text: isPlaceholder ? placeholder : segment.value,
+          text: isPlaceholder ? place : value,
           ...getSegmentLimits(displayValue, segment.type, resolvedOptions),
           isPlaceholder,
-          placeholder: placeholder,
-          isEditable,
-          ltrIsolate: unicode
+          placeholder: place,
+          isEditable
         } as DateSegment;
       })
   , [dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity, timeValue]);

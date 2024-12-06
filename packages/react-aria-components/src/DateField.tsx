@@ -346,7 +346,7 @@ function DateSegment({segment, ...otherProps}: DateSegmentProps, ref: ForwardedR
 
 
   return (
-    <div
+    <span
       {...mergeProps(filterDOMProps(otherProps as any), segmentProps, focusProps, hoverProps)}
       {...renderProps}
       ref={domRef}

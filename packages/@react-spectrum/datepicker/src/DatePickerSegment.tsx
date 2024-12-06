@@ -62,8 +62,7 @@ function EditableSegment({segment, state}: DatePickerSegmentProps) {
         'is-read-only': !segment.isEditable
       })}
       style={segmentProps.style}
-      data-testid={segment.type}
-      dir="rtl">
+      data-testid={segment.type}>
       {segment.isPlaceholder ? <span aria-hidden="true" className={classNames(styles, 'react-spectrum-DatePicker-placeholder')}>{segment.placeholder}</span> : segment.text}
     </span>
   );

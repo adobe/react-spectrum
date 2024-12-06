@@ -1043,7 +1043,7 @@ describe('DatePicker', function () {
       await user.keyboard('{ArrowUp}');
 
       expect(queryByTestId('era')).toBeNull();
-      expect(document.activeElement.textContent).toBe('3');
+      expect(document.activeElement.textContent.replace(/[\u2066-\u2069]/g, '')).toBe('3');
     });
 
     it('does not try to shift focus when the entire datepicker is unmounted while focused', function () {

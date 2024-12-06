@@ -60,8 +60,8 @@ describe('DateRangePicker', () => {
     let group = getByRole('group');
     let inputs = group.querySelectorAll('.react-aria-DateInput');
     let button = getByRole('button');
-    expect(inputs[0]).toHaveTextContent('mm/dd/yyyy');
-    expect(inputs[0]).toHaveTextContent('mm/dd/yyyy');
+    expect(inputs[0].textContent.replace(/[\u2066-\u2069]/g, '')).toBe('mm/dd/yyyy');
+    expect(inputs[1].textContent.replace(/[\u2066-\u2069]/g, '')).toBe('mm/dd/yyyy');
     expect(button).toHaveAttribute('aria-label', 'Calendar');
 
     expect(group.closest('.react-aria-DateRangePicker')).toHaveAttribute('data-foo', 'bar');
