@@ -380,7 +380,11 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
           act(() => jest.runAllTimers());
           expect(input).toHaveAttribute('aria-activedescendant', options[2].id);
 
-          await user.keyboard('Bar');
+          await user.keyboard('B');
+          act(() => jest.runAllTimers());
+          await user.keyboard('a');
+          act(() => jest.runAllTimers());
+          await user.keyboard('r');
           act(() => jest.runAllTimers());
           options = within(menu).getAllByRole(collectionItemRole);
           expect(options).toHaveLength(1);
@@ -439,7 +443,6 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
           await act(async () => {
             jest.runAllTimers();
           });
-
 
           let input = getByRole('searchbox');
           expect(input).toHaveValue('');
