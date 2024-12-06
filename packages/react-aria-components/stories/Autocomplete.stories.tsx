@@ -218,7 +218,12 @@ const AsyncExample = (args) => {
       };
     }
   });
-  let {onAction, onSelectionChange, selectionMode} = args;
+  let {onSelectionChange, selectionMode, includeLoadState} = args;
+  let renderEmptyState;
+  if (includeLoadState) {
+    renderEmptyState = list.isLoading ? () => 'Loading' : () => 'No results found.';
+  }
+
   return (
     <Autocomplete inputValue={list.filterText} onInputChange={list.setFilterText}>
       <div>
@@ -227,14 +232,14 @@ const AsyncExample = (args) => {
           <Input />
           <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
         </SearchField>
-        <Menu<AutocompleteItem>
-          items={list.items}
+        <ListBox<AutocompleteItem>
+          renderEmptyState={renderEmptyState}
+          items={includeLoadState && list.isLoading ? [] : list.items}
           className={styles.menu}
-          onAction={onAction}
           onSelectionChange={onSelectionChange}
           selectionMode={selectionMode}>
-          {item => <MyMenuItem>{item.name}</MyMenuItem>}
-        </Menu>
+          {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+        </ListBox>
       </div>
     </Autocomplete>
   );
@@ -244,7 +249,10 @@ export const AutocompleteAsyncLoadingExample = {
   render: (args) => {
     return <AsyncExample {...args} />;
   },
-  name: 'Autocomplete, useAsync level filtering'
+  name: 'Autocomplete, useAsync level filtering with load state',
+  args: {
+    includeLoadState: true
+  }
 };
 
 const CaseSensitiveFilter = (args) => {

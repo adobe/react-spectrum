@@ -411,6 +411,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
   let updateActiveDescendant = useEffectEvent(() => {
     let keyToFocus = delegate.getFirstKey?.() ?? null;
+
     // If no focusable items exist in the list, make sure to clear any activedescendant that may still exist
     if (keyToFocus == null) {
       ref.current?.dispatchEvent(
@@ -419,27 +420,36 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
           bubbles: true
         })
       );
+    } else {
+      manager.setFocusedKey(keyToFocus);
+      // Only set shouldVirtualFocusFirst to false if we've successfully set the first key as the focused key
+      // If there wasn't a key to focus, we might be in a temporary loading state so we'll want to still focus the first key
+      // after the collection updates after load
+      shouldVirtualFocusFirst.current = false;
     }
-
-    manager.setFocusedKey(keyToFocus);
   });
 
   let lastCollection = useRef(manager.collection);
   useEffect(() => {
-    if (shouldVirtualFocusFirst.current && lastCollection !== manager.collection) {
+    if (shouldVirtualFocusFirst.current && lastCollection.current !== manager.collection) {
       updateActiveDescendant();
-      shouldVirtualFocusFirst.current = false;
     }
 
     lastCollection.current = manager.collection;
   }, [manager.collection, updateActiveDescendant]);
 
-  // TODO: need to track last key
-  useEffect(() => {
+  let resetFocusFirstFlag = useEffectEvent(() => {
     // If user causes the focused key to change in any other way, clear shouldVirtualFocusFirst so we don't
-    // accidentally move focus from under them
-    shouldVirtualFocusFirst.current = false;
-  }, [manager.focusedKey]);
+    // accidentally move focus from under them. Skip this if the collection was empty because we might be in a load
+    // state and will still want to focus the first item after load
+    if (manager.collection.size > 0) {
+      shouldVirtualFocusFirst.current = false;
+    }
+  });
+
+  useEffect(() => {
+    resetFocusFirstFlag();
+  }, [manager.focusedKey, resetFocusFirstFlag]);
 
   useEvent(ref, CLEAR_FOCUS_EVENT, !shouldUseVirtualFocus ? undefined : (e) => {
     e.stopPropagation();
