@@ -1,3 +1,4 @@
+// From https://github.com/yarnpkg/berry/blob/master/packages/plugin-version/sources/commands/version/apply.ts in accordance with the BSD license, see Notice.txt
 
 const Decision = {
   UNDECIDED: 'undecided',
