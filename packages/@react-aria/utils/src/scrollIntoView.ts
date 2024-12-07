@@ -30,24 +30,40 @@ export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement) {
   let x = scrollView.scrollLeft;
   let y = scrollView.scrollTop;
 
-  // Account for top/left border offsetting the scroll top/Left
-  let {borderTopWidth, borderLeftWidth} = getComputedStyle(scrollView);
-  let borderAdjustedX = scrollView.scrollLeft + parseInt(borderLeftWidth, 10);
-  let borderAdjustedY = scrollView.scrollTop + parseInt(borderTopWidth, 10);
+  // Account for top/left border offsetting the scroll top/Left + scroll padding
+  let {
+    borderTopWidth,
+    borderLeftWidth,
+    scrollPaddingTop,
+    scrollPaddingRight,
+    scrollPaddingBottom,
+    scrollPaddingLeft
+  } = getComputedStyle(scrollView);
+
+  let borderAdjustedX = x + parseInt(borderLeftWidth, 10);
+  let borderAdjustedY = y + parseInt(borderTopWidth, 10);
   // Ignore end/bottom border via clientHeight/Width instead of offsetHeight/Width
   let maxX = borderAdjustedX + scrollView.clientWidth;
   let maxY = borderAdjustedY + scrollView.clientHeight;
 
-  if (offsetX <= x) {
-    x = offsetX - parseInt(borderLeftWidth, 10);
-  } else if (offsetX + width > maxX) {
-    x += offsetX + width - maxX;
+  // Get scroll padding values as pixels - defaults to 0 if no scroll padding
+  // is used.
+  let scrollPaddingTopNumber = parseInt(scrollPaddingTop, 10) || 0;
+  let scrollPaddingBottomNumber = parseInt(scrollPaddingBottom, 10) || 0;
+  let scrollPaddingRightNumber = parseInt(scrollPaddingRight, 10) || 0;
+  let scrollPaddingLeftNumber = parseInt(scrollPaddingLeft, 10) || 0;
+
+  if (offsetX <= x + scrollPaddingLeftNumber) {
+    x = offsetX - parseInt(borderLeftWidth, 10) - scrollPaddingLeftNumber;
+  } else if (offsetX + width > maxX - scrollPaddingRightNumber) {
+    x += offsetX + width - maxX + scrollPaddingRightNumber;
   }
-  if (offsetY <= borderAdjustedY) {
-    y = offsetY - parseInt(borderTopWidth, 10);
-  } else if (offsetY + height > maxY) {
-    y += offsetY + height - maxY;
+  if (offsetY <= borderAdjustedY + scrollPaddingTopNumber) {
+    y = offsetY - parseInt(borderTopWidth, 10) - scrollPaddingTopNumber;
+  } else if (offsetY + height > maxY - scrollPaddingBottomNumber) {
+    y += offsetY + height - maxY + scrollPaddingBottomNumber;
   }
+
   scrollView.scrollLeft = x;
   scrollView.scrollTop = y;
 }

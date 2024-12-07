@@ -68,6 +68,54 @@ export const MenuComplex = () => (
   </MenuTrigger>
 );
 
+export const MenuScrollPaddingExample = () => (
+  <MenuTrigger>
+    <Button aria-label="Menu">☰</Button>
+    <Popover>
+      <Menu
+        className={styles.menu}
+        onAction={action('onAction')}
+        style={{
+          maxHeight: 200,
+          position: 'relative',
+          scrollPaddingTop: '25px',
+          scrollPaddingBottom: '25px',
+          paddingBottom: '25px' // needed due to absolute-positioned footer
+        }}>
+        <Header
+          style={{
+            fontSize: '1.2em',
+            position: 'sticky',
+            top: 0,
+            height: '25px',
+            background: 'lightgray',
+            borderBottom: '1px solid gray'
+          }}>
+          Section 1
+        </Header>
+        {Array.from({length: 30}).map((_, i) => (
+          <MyMenuItem key={i}>Item {i + 1}</MyMenuItem>
+        ))}
+      </Menu>
+      {/* Menu doesn't have a footer, so have to put one outside to
+        and position it absolutely to demo scroll padding bottom support. */}
+      <div
+        style={{
+          fontSize: '1.2em',
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          width: '100%',
+          height: '24px', // with the border it'll be 25px
+          borderTop: '1px solid gray',
+          background: 'lightgray'
+        }}>
+        A footer
+      </div>
+    </Popover>
+  </MenuTrigger>
+);
+
 export const SubmenuExample = (args) => (
   <MenuTrigger>
     <Button aria-label="Menu">☰</Button>
