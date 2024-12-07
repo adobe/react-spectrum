@@ -35,9 +35,10 @@ export function cssModuleToSlots(cssModule) {
 }
 
 export function SlotProvider(props) {
+  const emptyObj = useMemo(() => ({}), []);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  let parentSlots = useContext(SlotContext) || {};
-  let {slots = {}, children} = props;
+  let parentSlots = useContext(SlotContext) || emptyObj;
+  let {slots = emptyObj, children} = props;
 
   // Merge props for each slot from parent context and props
   let value = useMemo(() =>
@@ -57,14 +58,22 @@ export function SlotProvider(props) {
 
 export function ClearSlots(props) {
   let {children, ...otherProps} = props;
-  let content = children;
-  if (React.Children.toArray(children).length <= 1) {
-    if (typeof children === 'function') { // need to know if the node is a string or something else that react can render that doesn't get props
-      content = React.cloneElement(React.Children.only(children), otherProps);
+
+  const emptyObj = useMemo(() => ({}), []);
+
+  const content = useMemo(() => {
+    let content = children;
+    if (React.Children.toArray(children).length <= 1) {
+      if (typeof children === 'function') { // need to know if the node is a string or something else that react can render that doesn't get props
+        content = React.cloneElement(React.Children.only(children), otherProps);
+      }
     }
-  }
+
+    return content;
+  }, [children, otherProps]);
+
   return (
-    <SlotContext.Provider value={{}}>
+    <SlotContext.Provider value={emptyObj}>
       {content}
     </SlotContext.Provider>
   );
