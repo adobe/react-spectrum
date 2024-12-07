@@ -29,7 +29,7 @@ export function useGlobalListeners(): GlobalListeners {
       listener(...args);
     } : listener;
     globalListeners.current.set(listener, {type, eventTarget, fn, options});
-    eventTarget.addEventListener(type, listener, options);
+    eventTarget.addEventListener(type, fn, options);
   }, []);
   let removeGlobalListener = useCallback((eventTarget, type, listener, options) => {
     let fn = globalListeners.current.get(listener)?.fn || listener;
