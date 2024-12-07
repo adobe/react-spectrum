@@ -70,7 +70,7 @@ __metadata:
     "@react-aria/ssr": "npm:^3.9.7"
     "@react-aria/utils": "npm:^3.26.0"
     "@react-aria/visually-hidden": "npm:^3.8.18"
-    "@react-spectrum/accordion": "npm:^3.0.0"
+    "@react-spectrum/accordion": "npm:^3.0.1"
     "@react-spectrum/actionbar": "npm:^3.6.2"
     "@react-spectrum/actiongroup": "npm:^3.10.10"
     "@react-spectrum/avatar": "npm:^3.0.17"
@@ -6823,7 +6823,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/accordion@npm:^3.0.0, @react-spectrum/accordion@workspace:packages/@react-spectrum/accordion":
+"@react-spectrum/accordion@npm:^3.0.1, @react-spectrum/accordion@workspace:packages/@react-spectrum/accordion":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/accordion@workspace:packages/@react-spectrum/accordion"
   dependencies:
