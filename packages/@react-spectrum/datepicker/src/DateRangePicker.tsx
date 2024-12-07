@@ -225,7 +225,7 @@ export const DateRangePicker = React.forwardRef(function DateRangePicker<T exten
 
 function DateRangeDash() {
   return (
-    <div
+    <span
       aria-hidden="true"
       data-testid="date-range-dash"
       className={classNames(datepickerStyles, 'react-spectrum-Datepicker-rangeDash')} />
