@@ -208,4 +208,113 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     this.lastKey = lastKey;
     this.frozen = !isSSR;
   }
+
+  // TODO: this is pretty specific to menu, will need to check if it is generic enough
+  // Will need to handle varying levels I assume but will revisit after I get searchable menu working for base menu
+  // TODO: an alternative is to simply walk the collection and add all item nodes that match the filter and any sections/separators we encounter
+  // to an array, then walk that new array and fix all the next/Prev keys while adding them to the new collection
+  filter(filterFn: (nodeValue: string) => boolean): BaseCollection<T> {
+    let newCollection = new BaseCollection<T>();
+    // This tracks the absolute last node we've visited in the collection when filtering, used for setting up the filteredCollection's lastKey and
+    // for updating the next/prevKey for every non-filtered node.
+    let lastNode: Mutable<CollectionNode<T>> | null = null;
+
+    for (let node of this) {
+      if (node.type === 'section' && node.hasChildNodes) {
+        let clonedSection: Mutable<CollectionNode<T>> = (node as CollectionNode<T>).clone();
+        let lastChildInSection: Mutable<CollectionNode<T>> | null = null;
+        for (let child of this.getChildren(node.key)) {
+          if (filterFn(child.textValue) || child.type === 'header') {
+            let clonedChild: Mutable<CollectionNode<T>> = (child as CollectionNode<T>).clone();
+            // eslint-disable-next-line max-depth
+            if (lastChildInSection == null) {
+              clonedSection.firstChildKey = clonedChild.key;
+            }
+
+            // eslint-disable-next-line max-depth
+            if (newCollection.firstKey == null) {
+              newCollection.firstKey = clonedSection.key;
+            }
+
+            // eslint-disable-next-line max-depth
+            if (lastChildInSection && lastChildInSection.parentKey === clonedChild.parentKey) {
+              lastChildInSection.nextKey = clonedChild.key;
+              clonedChild.prevKey = lastChildInSection.key;
+            } else {
+              clonedChild.prevKey = null;
+            }
+
+            clonedChild.nextKey = null;
+            newCollection.addNode(clonedChild);
+            lastChildInSection = clonedChild;
+          }
+        }
+
+        // Add newly filtered section to collection if it has any valid child nodes, otherwise remove it and its header if any
+        if (lastChildInSection) {
+          if (lastChildInSection.type !== 'header') {
+            clonedSection.lastChildKey = lastChildInSection.key;
+
+            // If the old prev section was filtered out, will need to attach to whatever came before
+            // eslint-disable-next-line max-depth
+            if (lastNode == null) {
+              clonedSection.prevKey = null;
+            } else if (lastNode.type === 'section' || lastNode.type === 'separator') {
+              lastNode.nextKey = clonedSection.key;
+              clonedSection.prevKey = lastNode.key;
+            }
+            clonedSection.nextKey = null;
+            lastNode = clonedSection;
+            newCollection.addNode(clonedSection);
+          } else {
+            if (newCollection.firstKey === clonedSection.key) {
+              newCollection.firstKey = null;
+            }
+            newCollection.removeNode(lastChildInSection.key);
+          }
+        }
+      } else if (node.type === 'separator') {
+        // will need to check if previous section key exists, if it does then we add the separator to the collection.
+        // After the full collection is created we'll need to remove it it is the last node in the section (aka no following section after the separator)
+        let clonedSeparator: Mutable<CollectionNode<T>> = (node as CollectionNode<T>).clone();
+        clonedSeparator.nextKey = null;
+        if (lastNode?.type === 'section') {
+          lastNode.nextKey = clonedSeparator.key;
+          clonedSeparator.prevKey = lastNode.key;
+          lastNode = clonedSeparator;
+          newCollection.addNode(clonedSeparator);
+        }
+      } else if (filterFn(node.textValue)) {
+        let clonedNode: Mutable<CollectionNode<T>> = (node as CollectionNode<T>).clone();
+        if (newCollection.firstKey == null) {
+          newCollection.firstKey = clonedNode.key;
+        }
+
+        if (lastNode != null && (lastNode.type !== 'section' && lastNode.type !== 'separator') && lastNode.parentKey === clonedNode.parentKey) {
+          lastNode.nextKey = clonedNode.key;
+          clonedNode.prevKey = lastNode.key;
+        } else {
+          clonedNode.prevKey = null;
+        }
+
+        clonedNode.nextKey = null;
+        newCollection.addNode(clonedNode);
+        lastNode = clonedNode;
+      }
+    }
+
+    if (lastNode?.type === 'separator' && lastNode.nextKey === null) {
+      let lastSection;
+      if (lastNode.prevKey != null) {
+        lastSection = newCollection.getItem(lastNode.prevKey) as Mutable<CollectionNode<T>>;
+        lastSection.nextKey = null;
+      }
+      newCollection.removeNode(lastNode.key);
+      lastNode = lastSection;
+    }
+
+    newCollection.lastKey = lastNode?.key || null;
+
+    return newCollection;
+  }
 }

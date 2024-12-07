@@ -786,7 +786,7 @@ export function usePress(props: PressHookProps): PressResult {
   ]);
 
   // Remove user-select: none in case component unmounts immediately after pressStart
-   
+
   useEffect(() => {
     return () => {
       if (!allowTextSelectionOnPress) {
