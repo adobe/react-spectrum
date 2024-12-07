@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling,  mergeProps, scrollIntoView, scrollIntoViewport, UPDATE_ACTIVEDESCENDANT, useEffectEvent, useEvent, useRouter} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling,  mergeProps, scrollIntoView, scrollIntoViewport, UPDATE_ACTIVEDESCENDANT, useEffectEvent, useEvent, useRouter, useUpdateEffect} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, FocusStrategy, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {flushSync} from 'react-dom';
 import {FocusEvent, KeyboardEvent, useEffect, useRef} from 'react';
@@ -429,13 +429,11 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     }
   });
 
-  let lastCollection = useRef(manager.collection);
-  useEffect(() => {
-    if (shouldVirtualFocusFirst.current && lastCollection.current !== manager.collection) {
+  useUpdateEffect(() => {
+    if (shouldVirtualFocusFirst.current) {
       updateActiveDescendant();
     }
 
-    lastCollection.current = manager.collection;
   }, [manager.collection, updateActiveDescendant]);
 
   let resetFocusFirstFlag = useEffectEvent(() => {
@@ -447,7 +445,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     }
   });
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     resetFocusFirstFlag();
   }, [manager.focusedKey, resetFocusFirstFlag]);
 
