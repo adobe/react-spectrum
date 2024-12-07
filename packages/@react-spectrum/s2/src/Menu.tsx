@@ -399,7 +399,7 @@ export function Divider(props: SeparatorProps) {
         divider({
           size: 'M',
           orientation: 'horizontal',
-          staticColor: undefined
+          isStaticColor: false
         }), style({
           display: {
             default: 'grid',
