@@ -11,8 +11,8 @@
  */
 
 import {Button, ButtonContext, ProgressBar, Text} from '../';
-import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import React, {useState} from 'react';
+import {fireEvent, pointerMap, render, waitFor} from '@react-spectrum/test-utils-internal';
+import React, {act, useState} from 'react';
 import userEvent from '@testing-library/user-event';
 
 describe('Button', () => {
@@ -20,6 +20,10 @@ describe('Button', () => {
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
+  });
+  afterEach(() => {
+    // clear any live announcers from pending buttons
+    act(() => jest.runAllTimers());
   });
 
   it('should render a button with default class', () => {
@@ -196,5 +200,144 @@ describe('Button', () => {
     );
     let button = getByRole('button');
     expect(button).not.toHaveAttribute('href');
+  });
+
+  it('should prevent explicit mouse form submission when isPending', async function () {
+    let onSubmitSpy = jest.fn(e => e.preventDefault());
+    function TestComponent() {
+      let [pending, setPending] = useState(false);
+      return (
+        <Button
+          type='submit'
+          onPress={() => {
+            // immediately setting pending to true will remove the click handler before the form is submitted
+            setTimeout(() => {
+              setPending(true);
+            }, 0);
+          }}
+          isPending={pending}>
+          {({isPending}) => (
+            <>
+              <Text style={{opacity: isPending ? '0' : undefined}}>Test</Text>
+              <ProgressBar
+                aria-label="loading"
+                style={{opacity: isPending ? undefined : '0'}}
+                isIndeterminate>
+                loading
+              </ProgressBar>
+            </>
+          )}
+        </Button>
+      );
+    }
+    let {getByRole} = render(
+      <form onSubmit={onSubmitSpy}>
+        <TestComponent />
+      </form>
+    );
+    let button = getByRole('button');
+    expect(button).not.toHaveAttribute('aria-disabled');
+
+    await user.click(button);
+    expect(onSubmitSpy).toHaveBeenCalled();
+    onSubmitSpy.mockClear();
+
+    // run timer to set pending
+    act(() => jest.runAllTimers());
+
+    await user.click(button);
+    expect(onSubmitSpy).not.toHaveBeenCalled();
+  });
+
+  it('should prevent explicit keyboard form submission when isPending', async function () {
+    let onSubmitSpy = jest.fn(e => e.preventDefault());
+    function TestComponent() {
+      let [pending, setPending] = useState(false);
+      return (
+        <Button
+          type='submit'
+          onPress={() => {
+            // immediately setting pending to true will remove the click handler before the form is submitted
+            setTimeout(() => {
+              setPending(true);
+            }, 0);
+          }}
+          isPending={pending}>
+          {({isPending}) => (
+            <>
+              <Text style={{opacity: isPending ? '0' : undefined}}>Test</Text>
+              <ProgressBar
+                aria-label="loading"
+                style={{opacity: isPending ? undefined : '0'}}
+                isIndeterminate>
+                loading
+              </ProgressBar>
+            </>
+          )}
+        </Button>
+      );
+    }
+    render(
+      <form onSubmit={onSubmitSpy}>
+        <TestComponent />
+      </form>
+    );
+    await user.tab();
+    await user.keyboard('{Enter}');
+    expect(onSubmitSpy).toHaveBeenCalled();
+    onSubmitSpy.mockClear();
+
+    await user.keyboard('{Enter}');
+    expect(onSubmitSpy).not.toHaveBeenCalled();
+  });
+
+  it('should prevent implicit form submission when isPending', async function () {
+    let onSubmitSpy = jest.fn(e => e.preventDefault());
+    function TestComponent(props) {
+      let [pending, setPending] = useState(false);
+      return (
+        <form
+          onSubmit={(e) => {
+            // forms are submitted implicitly on keydown, so we need to wait to set pending until after to set pending
+            props.onSubmit(e)
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              // keyup could theoretically happen elsewhere if focus is moved during submission
+              document.body.addEventListener('keyup', () => {
+                setPending(true);
+              }, {capture: true, once: true});
+            }
+          }}>
+          <label htmlFor='foo'>Test</label>
+          <input id='foo' type="text" />
+          <Button
+            type='submit'
+            isPending={pending}>
+            {({isPending}) => (
+              <>
+                <Text style={{opacity: isPending ? '0' : undefined}}>Test</Text>
+                <ProgressBar
+                  aria-label="loading"
+                  style={{opacity: isPending ? undefined : '0'}}
+                  isIndeterminate>
+                  loading
+                </ProgressBar>
+              </>
+            )}
+          </Button>
+        </form>
+      );
+    }
+    render(
+      <TestComponent onSubmit={onSubmitSpy} />
+    );
+    await user.tab();
+    await user.keyboard('{Enter}');
+    expect(onSubmitSpy).toHaveBeenCalled();
+    onSubmitSpy.mockClear();
+
+    await user.keyboard('{Enter}');
+    expect(onSubmitSpy).not.toHaveBeenCalled();
   });
 });

@@ -30,7 +30,7 @@ import {
 import {createHideableComponent} from '@react-aria/collections';
 import {filterDOMProps} from '@react-aria/utils';
 import {ProgressBarContext} from './ProgressBar';
-import React, {createContext, ForwardedRef, useEffect, useRef} from 'react';
+import React, {createContext, DOMAttributes, ForwardedRef, useEffect, useMemo, useRef} from 'react';
 
 export interface ButtonRenderProps {
   /**
@@ -156,27 +156,47 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
     }
     wasPending.current = isPending;
   }, [isPending, isFocused, ariaLabelledby, buttonId]);
+  let pendingButtonProps: DOMAttributes<HTMLButtonElement> = useMemo(() => isPending ? {
+    onKeyDown: (e) => {
+      if ((e.key === 'Enter' || e.key === ' ') && e.currentTarget instanceof HTMLButtonElement) {
+        e.preventDefault();
+      }
+    },
+    onClick: (e) => {
+      if (e.currentTarget instanceof HTMLButtonElement) {
+        e.preventDefault();
+      }
+    }
+  } : {}, [isPending]);
 
+  // When the button is in a pending state, we want to stop implicit form submission (ie. when the user presses enter on a text input).
+  // We do this by rendering a hidden submit button that is disabled BEFORE the actual submit button as a form's default button is the first submit button
+  // in tree order.
+  // https://www.w3.org/TR/2018/SPSD-html5-20180327/forms.html#implicit-submission
   return (
-    <button
-      {...filterDOMProps(props, {propNames: additionalButtonHTMLAttributes})}
-      {...mergeProps(buttonProps, focusProps, hoverProps)}
-      {...renderProps}
-      id={buttonId}
-      ref={ref}
-      aria-labelledby={ariaLabelledby}
-      slot={props.slot || undefined}
-      aria-disabled={isPending ? 'true' : buttonProps['aria-disabled']}
-      data-disabled={props.isDisabled || undefined}
-      data-pressed={renderValues.isPressed || undefined}
-      data-hovered={isHovered || undefined}
-      data-focused={isFocused || undefined}
-      data-pending={isPending || undefined}
-      data-focus-visible={isFocusVisible || undefined}>
-      <ProgressBarContext.Provider value={{id: progressId}}>
-        {renderProps.children}
-      </ProgressBarContext.Provider>
-    </button>
+    <>
+      {isPending && props.type === 'submit' && <button key="blocker" type="submit" form={props.form} disabled style={{display: 'none'}}>form submission blocker</button>}
+      <button
+        {...filterDOMProps(props, {propNames: additionalButtonHTMLAttributes})}
+        {...mergeProps(buttonProps, pendingButtonProps, focusProps, hoverProps)}
+        {...renderProps}
+        key="real-button"
+        id={buttonId}
+        ref={ref}
+        aria-labelledby={ariaLabelledby}
+        slot={props.slot || undefined}
+        aria-disabled={isPending ? 'true' : buttonProps['aria-disabled']}
+        data-disabled={props.isDisabled || undefined}
+        data-pressed={renderValues.isPressed || undefined}
+        data-hovered={isHovered || undefined}
+        data-focused={isFocused || undefined}
+        data-pending={isPending || undefined}
+        data-focus-visible={isFocusVisible || undefined}>
+        <ProgressBarContext.Provider value={{id: progressId}}>
+          {renderProps.children}
+        </ProgressBarContext.Provider>
+      </button>
+    </>
   );
 });
 
