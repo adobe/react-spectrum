@@ -13,11 +13,11 @@
 import {AriaLabelingProps, BaseEvent, DOMProps, RefObject} from '@react-types/shared';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
 import {ChangeEvent, InputHTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef} from 'react';
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, mergeProps, mergeRefs, UPDATE_ACTIVEDESCENDANT, useEffectEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, isCtrlKeyPressed, mergeProps, mergeRefs, UPDATE_ACTIVEDESCENDANT, useEffectEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useKeyboard} from '@react-aria/interactions';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface CollectionOptions extends DOMProps, AriaLabelingProps {
   /** Whether the collection items should use virtual focus instead of being focused directly. */
@@ -27,10 +27,10 @@ export interface CollectionOptions extends DOMProps, AriaLabelingProps {
 }
 export interface AriaAutocompleteProps extends AutocompleteProps {
   /**
-   * The filter function used to determine if a option should be included in the autocomplete list.
-   * @default contains
+   * An optional filter function used to determine if a option should be included in the autocomplete list.
+   * Include this if the items you are providing to your wrapped collection aren't filtered by default.
    */
-  defaultFilter?: (textValue: string, inputValue: string) => boolean
+  filter?: (textValue: string, inputValue: string) => boolean
 }
 
 export interface AriaAutocompleteOptions extends Omit<AriaAutocompleteProps, 'children'> {
@@ -48,7 +48,7 @@ export interface AutocompleteAria {
   /** Ref to attach to the wrapped collection. */
   collectionRef: RefObject<HTMLElement | null>,
   /** A filter function that returns if the provided collection node should be filtered out of the collection. */
-  filterFn: (nodeTextValue: string) => boolean
+  filterFn?: (nodeTextValue: string) => boolean
 }
 
 /**
@@ -57,10 +57,10 @@ export interface AutocompleteAria {
  * @param props - Props for the autocomplete.
  * @param state - State for the autocomplete, as returned by `useAutocompleteState`.
  */
-export function useAutocomplete(props: AriaAutocompleteOptions, state: AutocompleteState): AutocompleteAria {
+export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: AutocompleteState): AutocompleteAria {
   let {
     collectionRef,
-    defaultFilter,
+    filter,
     inputRef
   } = props;
 
@@ -130,20 +130,18 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
     collectionRef.current?.dispatchEvent(clearFocusEvent);
   });
 
-  // Tell wrapped collection to focus the first element in the list when typing forward and to clear focused key when deleting text
-  // for screen reader announcements
-  let lastInputValue = useRef<string | null>(null);
-  useEffect(() => {
-    if (state.inputValue != null) {
-      if (lastInputValue.current != null && lastInputValue.current !== state.inputValue && lastInputValue.current?.length <= state.inputValue.length) {
-        focusFirstItem();
-      } else {
-        clearVirtualFocus();
-      }
-
-      lastInputValue.current = state.inputValue;
+  // TODO: update to see if we can tell what kind of event (paste vs backspace vs typing) is happening instead
+  let onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    // Tell wrapped collection to focus the first element in the list when typing forward and to clear focused key when deleting text
+    // for screen reader announcements
+    if (state.inputValue !== e.target.value && state.inputValue.length <= e.target.value.length) {
+      focusFirstItem();
+    } else {
+      clearVirtualFocus();
     }
-  }, [state.inputValue, focusFirstItem, clearVirtualFocus]);
+
+    state.setInputValue(e.target.value);
+  };
 
   // For textfield specific keydown operations
   let onKeyDown = (e: BaseEvent<ReactKeyboardEvent<any>>) => {
@@ -152,6 +150,11 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
     }
 
     switch (e.key) {
+      case 'a':
+        if (isCtrlKeyPressed(e)) {
+          return;
+        }
+        break;
       case 'Escape':
         // Early return for Escape here so it doesn't leak the Escape event from the simulated collection event below and
         // close the dialog prematurely. Ideally that should be up to the discretion of the input element hence the check
@@ -242,19 +245,18 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
     'aria-label': stringFormatter.format('collectionLabel')
   });
 
-  let {contains} = useFilter({sensitivity: 'base'});
   let filterFn = useCallback((nodeTextValue: string) => {
-    if (defaultFilter) {
-      return defaultFilter(nodeTextValue, state.inputValue);
+    if (filter) {
+      return filter(nodeTextValue, state.inputValue);
     }
 
-    return contains(nodeTextValue, state.inputValue);
-  }, [state.inputValue, defaultFilter, contains]) ;
+    return true;
+  }, [state.inputValue, filter]);
 
   return {
     inputProps: {
       value: state.inputValue,
-      onChange: (e: ChangeEvent<HTMLInputElement>) => state.setInputValue(e.target.value),
+      onChange,
       ...keyboardProps,
       autoComplete: 'off',
       'aria-haspopup': 'listbox',
@@ -273,6 +275,6 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
       disallowTypeAhead: true
     }),
     collectionRef: mergedCollectionRef,
-    filterFn
+    filterFn: filter != null ? filterFn : undefined
   };
 }
