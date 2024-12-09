@@ -11,7 +11,7 @@
  */
 
 import {Button, ButtonContext, ProgressBar, Text} from '../';
-import {fireEvent, pointerMap, render, waitFor} from '@react-spectrum/test-utils-internal';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React, {act, useState} from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -208,7 +208,7 @@ describe('Button', () => {
       let [pending, setPending] = useState(false);
       return (
         <Button
-          type='submit'
+          type="submit"
           onPress={() => {
             // immediately setting pending to true will remove the click handler before the form is submitted
             setTimeout(() => {
@@ -255,7 +255,7 @@ describe('Button', () => {
       let [pending, setPending] = useState(false);
       return (
         <Button
-          type='submit'
+          type="submit"
           onPress={() => {
             // immediately setting pending to true will remove the click handler before the form is submitted
             setTimeout(() => {
@@ -299,7 +299,7 @@ describe('Button', () => {
         <form
           onSubmit={(e) => {
             // forms are submitted implicitly on keydown, so we need to wait to set pending until after to set pending
-            props.onSubmit(e)
+            props.onSubmit(e);
           }}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
@@ -309,10 +309,10 @@ describe('Button', () => {
               }, {capture: true, once: true});
             }
           }}>
-          <label htmlFor='foo'>Test</label>
-          <input id='foo' type="text" />
+          <label htmlFor="foo">Test</label>
+          <input id="foo" type="text" />
           <Button
-            type='submit'
+            type="submit"
             isPending={pending}>
             {({isPending}) => (
               <>
