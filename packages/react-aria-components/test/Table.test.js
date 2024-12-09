@@ -214,7 +214,7 @@ describe('Table', () => {
       expect(cell).toHaveAttribute('class', 'react-aria-Cell');
     }
 
-    for (let cell of tableTester.cells) {
+    for (let cell of tableTester.cells()) {
       expect(cell).toHaveAttribute('class', 'react-aria-Cell');
     }
   });
@@ -618,7 +618,7 @@ describe('Table', () => {
     );
 
     let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
-    await tableTester.triggerRowAction({index: 0});
+    await tableTester.triggerRowAction({row: 0});
     expect(onAction).toHaveBeenCalled();
   });
 
@@ -639,7 +639,7 @@ describe('Table', () => {
     expect(columns[2]).toHaveAttribute('aria-sort', 'none');
     expect(columns[2]).not.toHaveTextContent('▲');
 
-    await tableTester.toggleSort({index: 0});
+    await tableTester.toggleSort({column: 0});
     expect(onSortChange).toHaveBeenCalledTimes(1);
     expect(onSortChange).toHaveBeenCalledWith({column: 'name', direction: 'descending'});
   });

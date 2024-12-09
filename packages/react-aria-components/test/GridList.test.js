@@ -230,12 +230,12 @@ describe('GridList', () => {
     expect(row).not.toHaveClass('selected');
     expect(within(row).getByRole('checkbox')).not.toBeChecked();
 
-    await gridListTester.toggleRowSelection({index: 0});
+    await gridListTester.toggleRowSelection({row: 0});
     expect(row).toHaveAttribute('aria-selected', 'true');
     expect(row).toHaveClass('selected');
     expect(within(row).getByRole('checkbox')).toBeChecked();
 
-    await gridListTester.toggleRowSelection({index: 0});
+    await gridListTester.toggleRowSelection({row: 0});
     expect(row).not.toHaveAttribute('aria-selected', 'true');
     expect(row).not.toHaveClass('selected');
     expect(within(row).getByRole('checkbox')).not.toBeChecked();
