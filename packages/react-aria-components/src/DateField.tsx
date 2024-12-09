@@ -341,7 +341,7 @@ export const DateSegment = /*#__PURE__*/ (forwardRef as forwardRefType)(function
 
 
   return (
-    <div
+    <span
       {...mergeProps(filterDOMProps(otherProps as any), segmentProps, focusProps, hoverProps)}
       {...renderProps}
       ref={domRef}
