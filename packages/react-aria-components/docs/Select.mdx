@@ -1264,7 +1264,7 @@ it('Select can select an option via keyboard', async function () {
   let trigger = selectTester.trigger;
   expect(trigger).toHaveTextContent('Select an item');
 
-  await selectTester.selectOption({optionText: 'Cat'});
+  await selectTester.selectOption({option: 'Cat'});
   expect(trigger).toHaveTextContent('Cat');
 });
 ```

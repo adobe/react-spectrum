@@ -1219,12 +1219,12 @@ it('ListView can select a row via keyboard', async function () {
   expect(within(row).getByRole('checkbox')).not.toBeChecked();
   expect(gridListTester.selectedRows).toHaveLength(0);
 
-  await gridListTester.toggleRowSelection({index: 0});
+  await gridListTester.toggleRowSelection({row: 0});
   expect(row).toHaveClass('selected');
   expect(within(row).getByRole('checkbox')).toBeChecked();
   expect(gridListTester.selectedRows).toHaveLength(1);
 
-  await gridListTester.toggleRowSelection({index: 0});
+  await gridListTester.toggleRowSelection({row: 0});
   expect(row).not.toHaveClass('selected');
   expect(within(row).getByRole('checkbox')).not.toBeChecked();
   expect(gridListTester.selectedRows).toHaveLength(0);

@@ -27,13 +27,9 @@ interface MenuOpenOpts {
 
 interface MenuSelectOpts extends MenuOpenOpts {
   /**
-   * The option node to select. Option nodes can be sourced via `options()`.
+   * The index, text, or node of the option to select. Option nodes can be sourced via `options()`.
    */
-  option?: HTMLElement,
-  /**
-   * The text of the node to look for when selecting a option. Alternative to `option`.
-   */
-  optionText?: string,
+  option: number | string | HTMLElement,
   /**
    * The menu's selection mode. Will affect whether or not the menu is expected to be closed upon option selection.
    * @default 'single'
@@ -139,15 +135,38 @@ export class MenuTester {
     }
   }
 
+  /**
+   * Returns a option matching the specified index or text content.
+   */
+  findOption(opts: {optionIndexOrText: number | string}): HTMLElement {
+    let {
+      optionIndexOrText
+    } = opts;
+
+    let option;
+    let options = this.options;
+    let menu = this.menu;
+
+    if (typeof optionIndexOrText === 'number') {
+      option = options[optionIndexOrText];
+    } else if (typeof optionIndexOrText === 'string' && menu != null) {
+      option = within(menu).getByText(optionIndexOrText);
+      while (option && !option.getAttribute('role')?.includes('menuitem')) {
+        option = option.parentElement;
+      }
+    }
+
+    return option;
+  }
+
   // TODO: also very similar to select, barring potential long press support
   // Close on select is also kinda specific?
   /**
    * Selects the desired menu option. Defaults to using the interaction type set on the menu tester. If necessary, will open the menu dropdown beforehand.
-   * The desired option can be targeted via the option's node or the option's text.
+   * The desired option can be targeted via the option's node, the option's text, or the option's index.
    */
   async selectOption(opts: MenuSelectOpts) {
     let {
-      optionText,
       menuSelectionMode = 'single',
       needsLongPress,
       closesOnSelect = true,
@@ -161,8 +180,8 @@ export class MenuTester {
 
     let menu = this.menu;
     if (menu) {
-      if (!option && optionText) {
-        option = within(menu).getByText(optionText);
+      if (typeof option === 'string' || typeof option === 'number') {
+        option = this.findOption({optionIndexOrText: option});
       }
 
       if (interactionType === 'keyboard') {
@@ -170,7 +189,7 @@ export class MenuTester {
           act(() => menu.focus());
         }
 
-        await this.user.keyboard(optionText);
+        // await this.user.keyboard(option);
         await this.user.keyboard('[Enter]');
       } else {
         if (interactionType === 'mouse') {

@@ -614,7 +614,7 @@ it('Picker can select an option via keyboard', async function () {
   expect(trigger).toHaveTextContent('Select an item');
   expect(trigger).not.toHaveAttribute('data-pressed');
 
-  await selectTester.selectOption({optionText: 'Cat'});
+  await selectTester.selectOption({option: 'Cat'});
   expect(trigger).toHaveTextContent('Cat');
 });
 ```

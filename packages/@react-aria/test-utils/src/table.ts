@@ -17,13 +17,9 @@ import {TableTesterOpts, UserOpts} from './types';
 // TODO: this is a bit inconsistent from combobox, perhaps should also take node or combobox should also have find row
 interface TableToggleRowOpts {
   /**
-   * The index of the row to toggle selection for.
+   * The index, text, or node of the row to toggle selection for.
    */
-  index?: number,
-  /**
-   * The text of the row to toggle selection for. Alternative to `index`.
-   */
-  text?: string,
+  row: number | string | HTMLElement,
   /**
    * Whether the row needs to be long pressed to be selected. Depends on the table's implementation.
    */
@@ -36,13 +32,9 @@ interface TableToggleRowOpts {
 
 interface TableToggleSortOpts {
   /**
-   * The index of the column to sort.
+   * The index, text, or node of the column to toggle selection for.
    */
-  index?: number,
-  /**
-   * The text of the column to sort. Alternative to `index`.
-   */
-  text?: string,
+  column: number | string | HTMLElement,
   /**
    * What interaction type to use when sorting the column. Defaults to the interaction type set on the tester.
    */
@@ -51,13 +43,9 @@ interface TableToggleSortOpts {
 
 interface TableRowActionOpts {
   /**
-   * The index of the row to trigger its action for.
+   * The index, text, or node of the row to toggle selection for.
    */
-  index?: number,
-  /**
-   * The text of the row to trigger its action for. Alternative to `index`.
-   */
-  text?: string,
+  row: number | string | HTMLElement,
   /**
    * What interaction type to use when triggering the row's action. Defaults to the interaction type set on the tester.
    */
@@ -92,15 +80,17 @@ export class TableTester {
   /**
    * Toggles the selection for the specified table row. Defaults to using the interaction type set on the table tester.
    */
-  async toggleRowSelection(opts: TableToggleRowOpts = {}) {
+  async toggleRowSelection(opts: TableToggleRowOpts) {
     let {
-      index,
-      text,
+      row,
       needsLongPress,
       interactionType = this._interactionType
     } = opts;
 
-    let row = this.findRow({index, text});
+    if (typeof row === 'string' || typeof row === 'number') {
+      row = this.findRow({rowIndexOrText: row});
+    }
+
     let rowCheckbox = within(row).queryByRole('checkbox');
     if (rowCheckbox) {
       await pressElement(this.user, rowCheckbox, interactionType);
@@ -135,21 +125,22 @@ export class TableTester {
   /**
    * Toggles the sort order for the specified table column. Defaults to using the interaction type set on the table tester.
    */
-  async toggleSort(opts: TableToggleSortOpts = {}) {
+  async toggleSort(opts: TableToggleSortOpts) {
     let {
-      index,
-      text,
+      column,
       interactionType = this._interactionType
     } = opts;
 
     let columnheader;
-    if (index != null) {
-      columnheader = this.columns[index];
-    } else if (text != null) {
-      columnheader = within(this.rowGroups[0]).getByText(text);
+    if (typeof column === 'number') {
+      columnheader = this.columns[column];
+    } else if (typeof column === 'string') {
+      columnheader = within(this.rowGroups[0]).getByText(column);
       while (columnheader && !/columnheader/.test(columnheader.getAttribute('role'))) {
         columnheader = columnheader.parentElement;
       }
+    } else {
+      columnheader = column;
     }
 
     let menuButton = within(columnheader).queryByRole('button');
@@ -226,15 +217,17 @@ export class TableTester {
   /**
    * Triggers the action for the specified table row. Defaults to using the interaction type set on the table tester.
    */
-  async triggerRowAction(opts: TableRowActionOpts = {}) {
+  async triggerRowAction(opts: TableRowActionOpts) {
     let {
-      index,
-      text,
+      row,
       needsDoubleClick,
       interactionType = this._interactionType
     } = opts;
 
-    let row = this.findRow({index, text});
+    if (typeof row === 'string' || typeof row === 'number') {
+      row = this.findRow({rowIndexOrText: row});
+    }
+
     if (row) {
       if (needsDoubleClick) {
         await this.user.dblClick(row);
@@ -271,19 +264,18 @@ export class TableTester {
   /**
    * Returns a row matching the specified index or text content.
    */
-  findRow(opts: {index?: number, text?: string} = {}) {
+  findRow(opts: {rowIndexOrText: number | string}): HTMLElement {
     let {
-      index,
-      text
+      rowIndexOrText
     } = opts;
 
     let row;
     let rows = this.rows;
     let bodyRowGroup = this.rowGroups[1];
-    if (index != null) {
-      row = rows[index];
-    } else if (text != null) {
-      row = within(bodyRowGroup).getByText(text);
+    if (typeof rowIndexOrText === 'number') {
+      row = rows[rowIndexOrText];
+    } else if (typeof rowIndexOrText === 'string') {
+      row = within(bodyRowGroup).getByText(rowIndexOrText);
       while (row && row.getAttribute('role') !== 'row') {
         row = row.parentElement;
       }

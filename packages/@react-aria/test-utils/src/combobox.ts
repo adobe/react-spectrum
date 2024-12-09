@@ -27,13 +27,9 @@ interface ComboBoxOpenOpts {
 
 interface ComboBoxSelectOpts extends ComboBoxOpenOpts {
   /**
-   * The option node to select. Option nodes can be sourced via `options()`.
+   * The index, text, or node of the option to select. Option nodes can be sourced via `options()`.
    */
-  option?: HTMLElement,
-  /**
-   * The text of the node to look for when selecting a option. Alternative to `option`.
-   */
-  optionText?: string
+  option: number | string | HTMLElement
 }
 
 export class ComboBoxTester {
@@ -123,19 +119,43 @@ export class ComboBoxTester {
   }
 
   /**
-   * Selects the desired combobox option. Defaults to using the interaction type set on the combobox tester. If necessary, will open the combobox dropdown beforehand.
-   * The desired option can be targeted via the option's node or the option's text.
+   * Returns a option matching the specified index or text content.
    */
-  async selectOption(opts: ComboBoxSelectOpts = {}) {
-    let {optionText, option, triggerBehavior, interactionType = this._interactionType} = opts;
+  findOption(opts: {optionIndexOrText: number | string}): HTMLElement {
+    let {
+      optionIndexOrText
+    } = opts;
+
+    let option;
+    let options = this.options;
+    let listbox = this.listbox;
+
+    if (typeof optionIndexOrText === 'number') {
+      option = options[optionIndexOrText];
+    } else if (typeof optionIndexOrText === 'string' && listbox != null) {
+      option = within(listbox).getByText(optionIndexOrText);
+      while (option && option.getAttribute('role') !== 'option') {
+        option = option.parentElement;
+      }
+    }
+
+    return option;
+  }
+
+  /**
+   * Selects the desired combobox option. Defaults to using the interaction type set on the combobox tester. If necessary, will open the combobox dropdown beforehand.
+   * The desired option can be targeted via the option's node, the option's text, or the option's index.
+   */
+  async selectOption(opts: ComboBoxSelectOpts) {
+    let {option, triggerBehavior, interactionType = this._interactionType} = opts;
     if (!this.combobox.getAttribute('aria-controls')) {
       await this.open({triggerBehavior});
     }
 
     let listbox = this.listbox;
     if (listbox) {
-      if (!option && optionText) {
-        option = within(listbox).getByText(optionText);
+      if (typeof option === 'string' || typeof option === 'number') {
+        option = this.findOption({optionIndexOrText: option});
       }
 
       // TODO: keyboard method of selecting the the option is a bit tricky unless I simply simulate the user pressing the down arrow

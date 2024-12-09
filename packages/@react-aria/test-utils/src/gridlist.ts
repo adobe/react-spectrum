@@ -17,32 +17,16 @@ import {pressElement} from './events';
 // TODO: this is a bit inconsistent from combobox, perhaps should also take node or combobox should also have find row
 interface GridListToggleRowOpts {
   /**
-   * The index of the row to toggle selection for.
-   */
-  index?: number,
-  /**
-   * The text of the row to toggle selection for. Alternative to `index`.
-   */
-  text?: string,
-  /**
    * What interaction type to use when toggling the row selection. Defaults to the interaction type set on the tester.
    */
-  interactionType?: UserOpts['interactionType']
+  interactionType?: UserOpts['interactionType'],
+  /**
+   * The index, text, or node of the row to toggle selection for.
+   */
+  row: number | string | HTMLElement
 }
 
-interface GridListRowActionOpts {
-  /**
-   * The index of the row to trigger its action for.
-   */
-  index?: number,
-  /**
-   * The text of the row to trigger its action for. Alternative to `index`.
-   */
-  text?: string,
-  /**
-   * What interaction type to use when triggering the row's action. Defaults to the interaction type set on the tester.
-   */
-  interactionType?: UserOpts['interactionType'],
+interface GridListRowActionOpts extends GridListToggleRowOpts {
   /**
    * Whether or not the grid list needs a double click to trigger the row action. Depends on the grid list's implementation.
    */
@@ -77,10 +61,13 @@ export class GridListTester {
   /**
    * Toggles the selection for the specified gridlist row. Defaults to using the interaction type set on the gridlist tester.
    */
-  async toggleRowSelection(opts: GridListToggleRowOpts = {}) {
-    let {index, text, interactionType = this._interactionType} = opts;
+  async toggleRowSelection(opts: GridListToggleRowOpts) {
+    let {row, interactionType = this._interactionType} = opts;
 
-    let row = this.findRow({index, text});
+    if (typeof row === 'string' || typeof row === 'number') {
+      row = this.findRow({rowIndexOrText: row});
+    }
+
     let rowCheckbox = within(row).queryByRole('checkbox');
     if (rowCheckbox) {
       await pressElement(this.user, rowCheckbox, interactionType);
@@ -95,17 +82,16 @@ export class GridListTester {
   /**
    * Returns a row matching the specified index or text content.
    */
-  findRow(opts: {index?: number, text?: string}) {
+  findRow(opts: {rowIndexOrText: number | string}): HTMLElement {
     let {
-      index,
-      text
+      rowIndexOrText
     } = opts;
 
     let row;
-    if (index != null) {
-      row = this.rows[index];
-    } else if (text != null) {
-      row = within(this?.gridlist).getByText(text);
+    if (typeof rowIndexOrText === 'number') {
+      row = this.rows[rowIndexOrText];
+    } else if (typeof rowIndexOrText === 'string') {
+      row = within(this?.gridlist).getByText(rowIndexOrText);
       while (row && row.getAttribute('role') !== 'row') {
         row = row.parentElement;
       }
@@ -121,13 +107,15 @@ export class GridListTester {
    */
   async triggerRowAction(opts: GridListRowActionOpts) {
     let {
-      index,
-      text,
+      row,
       needsDoubleClick,
       interactionType = this._interactionType
     } = opts;
 
-    let row = this.findRow({index, text});
+    if (typeof row === 'string' || typeof row === 'number') {
+      row = this.findRow({rowIndexOrText: row});
+    }
+
     if (row) {
       if (needsDoubleClick) {
         await this.user.dblClick(row);

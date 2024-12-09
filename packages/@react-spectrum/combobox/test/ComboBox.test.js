@@ -870,7 +870,7 @@ describe('ComboBox', function () {
       expect(combobox.value).toBe('Tw');
       expect(comboboxTester.options().length).toBe(1);
 
-      await comboboxTester.selectOption({optionText: 'Two'});
+      await comboboxTester.selectOption({option: 'Two'});
       expect(comboboxTester.listbox).toBeFalsy();
       expect(combobox.value).toBe('Two');
       // selectionManager.select from useSingleSelectListState always calls onSelectionChange even if the key is the same

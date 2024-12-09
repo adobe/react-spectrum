@@ -1984,7 +1984,7 @@ it('TableView can toggle row selection', async function () {
   await tableTester.toggleSelectAll();
   expect(tableTester.selectedRows).toHaveLength(10);
 
-  await tableTester.toggleRowSelection({index: 2});
+  await tableTester.toggleRowSelection({row: 2});
   expect(tableTester.selectedRows).toHaveLength(9);
   let checkbox = within(tableTester.rows[2]).getByRole('checkbox');
   expect(checkbox).not.toBeChecked();

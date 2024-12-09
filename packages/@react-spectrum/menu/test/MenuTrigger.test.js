@@ -470,7 +470,7 @@ describe('MenuTrigger', function () {
         expect(onSelect).toBeCalledTimes(0);
       }
 
-      await menuTester.selectOption({optionText: 'Foo', menuSelectionMode: 'single', closesOnSelect: false});
+      await menuTester.selectOption({option: 'Foo', menuSelectionMode: 'single', closesOnSelect: false});
 
       if (Component === MenuTrigger) {
         expect(onSelectionChange).toBeCalledTimes(1);
@@ -502,7 +502,7 @@ describe('MenuTrigger', function () {
       expect(onOpenChange).toBeCalledTimes(1);
       expect(onSelectionChange).toBeCalledTimes(0);
       menuTester.setInteractionType('keyboard');
-      await menuTester.selectOption({optionText: 'Foo', menuSelectionMode: 'single', closesOnSelect: false});
+      await menuTester.selectOption({option: 'Foo', menuSelectionMode: 'single', closesOnSelect: false});
 
       expect(menuTester.menu).toBeInTheDocument();
       expect(menuTester.trigger).toHaveAttribute('aria-expanded', 'true');

@@ -245,7 +245,7 @@ describe('Select', () => {
     expect(select).toHaveAttribute('data-invalid');
     expect(document.activeElement).toBe(trigger);
 
-    await selectTester.selectOption({optionText: 'Cat'});
+    await selectTester.selectOption({option: 'Cat'});
     expect(selectTester.trigger).not.toHaveAttribute('aria-describedby');
     expect(select).not.toHaveAttribute('data-invalid');
   });

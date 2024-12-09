@@ -22,13 +22,9 @@ interface SelectOpenOpts {
 
 interface SelectTriggerOptionOpts extends SelectOpenOpts {
   /**
-   * The option node to select. Option nodes can be sourced via `options()`.
+   * The index, text, or node of the option to select. Option nodes can be sourced via `options()`.
    */
-  option?: HTMLElement,
-  /**
-   * The text of the node to look for when selecting a option. Alternative to `option`.
-   */
-  optionText?: string
+  option: number | string | HTMLElement
 }
 
 export class SelectTester {
@@ -113,14 +109,37 @@ export class SelectTester {
     }
   }
 
+  /**
+   * Returns a option matching the specified index or text content.
+   */
+  findOption(opts: {optionIndexOrText: number | string}): HTMLElement {
+    let {
+      optionIndexOrText
+    } = opts;
+
+    let option;
+    let options = this.options;
+    let listbox = this.listbox;
+
+    if (typeof optionIndexOrText === 'number') {
+      option = options[optionIndexOrText];
+    } else if (typeof optionIndexOrText === 'string' && listbox != null) {
+      option = within(listbox).getByText(optionIndexOrText);
+      while (option && option.getAttribute('role') !== 'option') {
+        option = option.parentElement;
+      }
+    }
+
+    return option;
+  }
+
   // TODO: update this so it also can take the option node instead of just text, might already have been added in Rob's PR
   /**
    * Selects the desired select option. Defaults to using the interaction type set on the select tester. If necessary, will open the select dropdown beforehand.
-   * The desired option can be targeted via the option's text.
+   * The desired option can be targeted via the option's node, the option's text, or the option's index.
    */
   async selectOption(opts: SelectTriggerOptionOpts) {
     let {
-      optionText,
       option,
       interactionType = this._interactionType
     } = opts || {};
@@ -130,8 +149,8 @@ export class SelectTester {
     }
     let listbox = this.listbox;
     if (listbox) {
-      if (!option && optionText) {
-        option = within(listbox).getByText(optionText);
+      if (typeof option === 'string' || typeof option === 'number') {
+        option = this.findOption({optionIndexOrText: option});
       }
 
       if (interactionType === 'keyboard') {
@@ -141,7 +160,7 @@ export class SelectTester {
 
         // TODO: this simulates typeahead, do we want to add a helper util for that? Not sure if users would really need that for
         // their test
-        await this.user.keyboard(optionText);
+        // await this.user.keyboard(option);
         await this.user.keyboard('[Enter]');
       } else {
         // TODO: what if the user needs to scroll the list to find the option? What if there are multiple matches for text (hopefully the picker options are pretty unique)
