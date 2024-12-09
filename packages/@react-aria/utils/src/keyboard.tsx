@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2024 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {isAppleDevice} from '@react-aria/utils';
+import {isMac} from './platform';
 
 interface Event {
   altKey: boolean,
@@ -18,8 +18,10 @@ interface Event {
   metaKey: boolean
 }
 
-export function isNonContiguousSelectionModifier(e: Event) {
-  // Ctrl + Arrow Up/Arrow Down has a system wide meaning on macOS, so use Alt instead.
-  // On Windows and Ubuntu, Alt + Space has a system wide meaning.
-  return isAppleDevice() ? e.altKey : e.ctrlKey;
+export function isCtrlKeyPressed(e: Event) {
+  if (isMac()) {
+    return e.metaKey;
+  }
+
+  return e.ctrlKey;
 }

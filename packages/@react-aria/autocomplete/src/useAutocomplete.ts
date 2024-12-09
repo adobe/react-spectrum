@@ -13,7 +13,7 @@
 import {AriaLabelingProps, BaseEvent, DOMProps, RefObject} from '@react-types/shared';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
 import {ChangeEvent, InputHTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef} from 'react';
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, mergeProps, mergeRefs, UPDATE_ACTIVEDESCENDANT, useEffectEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, isCtrlKeyPressed, mergeProps, mergeRefs, UPDATE_ACTIVEDESCENDANT, useEffectEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useKeyboard} from '@react-aria/interactions';
@@ -150,6 +150,11 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
     }
 
     switch (e.key) {
+      case 'a':
+        if (isCtrlKeyPressed(e)) {
+          return;
+        }
+        break;
       case 'Escape':
         // Early return for Escape here so it doesn't leak the Escape event from the simulated collection event below and
         // close the dialog prematurely. Ideally that should be up to the discretion of the input element hence the check
