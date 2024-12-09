@@ -284,7 +284,7 @@ it('Menu can open its submenu via keyboard', async function () {
   let submenuTriggers = menuTester.submenuTriggers;
   expect(submenuTriggers).toHaveLength(1);
 
-  let submenuTester = await menuTester.openSubmenu({submenuTriggerText: 'Share…'});
+  let submenuTester = await menuTester.openSubmenu({submenuTrigger: 'Share…'});
   expect(submenuTester.menu).toBeInTheDocument();
 
   await submenuTester.selectOption({option: submenuUtil.options()[0]});

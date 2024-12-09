@@ -91,6 +91,10 @@ export class TableTester {
       row = this.findRow({rowIndexOrText: row});
     }
 
+    if (!row) {
+      throw new Error('Target row not found in the table.');
+    }
+
     let rowCheckbox = within(row).queryByRole('checkbox');
     if (rowCheckbox) {
       await pressElement(this.user, rowCheckbox, interactionType);
@@ -219,15 +223,17 @@ export class TableTester {
       row = this.findRow({rowIndexOrText: row});
     }
 
-    if (row) {
-      if (needsDoubleClick) {
-        await this.user.dblClick(row);
-      } else if (interactionType === 'keyboard') {
-        act(() => row.focus());
-        await this.user.keyboard('[Enter]');
-      } else {
-        await pressElement(this.user, row, interactionType);
-      }
+    if (!row) {
+      throw new Error('Target row not found in the table.');
+    }
+
+    if (needsDoubleClick) {
+      await this.user.dblClick(row);
+    } else if (interactionType === 'keyboard') {
+      act(() => row.focus());
+      await this.user.keyboard('[Enter]');
+    } else {
+      await pressElement(this.user, row, interactionType);
     }
   }
 

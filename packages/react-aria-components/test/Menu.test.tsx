@@ -1074,7 +1074,7 @@ describe('Menu', () => {
       expect(submenuTriggers).toHaveLength(1);
 
       // Open the submenu
-      let submenuUtil = (await menuTester.openSubmenu({submenuTriggerText: 'Share…'}))!;
+      let submenuUtil = (await menuTester.openSubmenu({submenuTrigger: 'Share…'}))!;
       let submenu = submenuUtil.menu;
       expect(submenu).toBeInTheDocument();
 

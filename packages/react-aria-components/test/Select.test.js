@@ -353,4 +353,19 @@ describe('Select', () => {
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
     expect(onChangeSpy).toHaveBeenLastCalledWith(null);
   });
+
+  it('select can select an option via keyboard', async function () {
+    let {getByTestId} = render(
+      <TestSelect name="select" />
+    );
+
+    let wrapper = getByTestId('select');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper, interactionType: 'keyboard'});
+    let trigger = selectTester.trigger;
+    expect(trigger).toHaveTextContent('Select an item');
+    expect(trigger).not.toHaveAttribute('data-pressed');
+
+    await selectTester.selectOption({option: 'Kangaroo'});
+    expect(trigger).toHaveTextContent('Kangaroo');
+  });
 });

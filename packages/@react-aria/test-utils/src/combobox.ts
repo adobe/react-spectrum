@@ -127,16 +127,13 @@ export class ComboBoxTester {
     } = opts;
 
     let option;
-    let options = this.options;
+    let options = this.options();
     let listbox = this.listbox;
 
     if (typeof optionIndexOrText === 'number') {
       option = options[optionIndexOrText];
     } else if (typeof optionIndexOrText === 'string' && listbox != null) {
-      option = within(listbox).getByText(optionIndexOrText);
-      while (option && option.getAttribute('role') !== 'option') {
-        option = option.parentElement;
-      }
+      option = (within(listbox!).getByText(optionIndexOrText).closest('[role=option]'))! as HTMLElement;
     }
 
     return option;
@@ -153,9 +150,17 @@ export class ComboBoxTester {
     }
 
     let listbox = this.listbox;
+    if (!listbox) {
+      throw new Error('Combobox\'s listbox not found.');
+    }
+
     if (listbox) {
       if (typeof option === 'string' || typeof option === 'number') {
         option = this.findOption({optionIndexOrText: option});
+      }
+
+      if (!option) {
+        throw new Error('Target option not found in the listbox.');
       }
 
       // TODO: keyboard method of selecting the the option is a bit tricky unless I simply simulate the user pressing the down arrow
@@ -166,7 +171,7 @@ export class ComboBoxTester {
         await this.user.pointer({target: option, keys: '[TouchA]'});
       }
 
-      if (option && option.getAttribute('href') == null) {
+      if (option.getAttribute('href') == null) {
         await waitFor(() => {
           if (document.contains(listbox)) {
             throw new Error('Expected listbox element to not be in the document after selecting an option');

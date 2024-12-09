@@ -118,20 +118,38 @@ export class SelectTester {
     } = opts;
 
     let option;
-    let options = this.options;
+    let options = this.options();
     let listbox = this.listbox;
 
     if (typeof optionIndexOrText === 'number') {
       option = options[optionIndexOrText];
     } else if (typeof optionIndexOrText === 'string' && listbox != null) {
-      option = within(listbox).getByText(optionIndexOrText);
-      while (option && option.getAttribute('role') !== 'option') {
-        option = option.parentElement;
-      }
+      option = (within(listbox!).getByText(optionIndexOrText).closest('[role=option]'))! as HTMLElement;
     }
 
     return option;
   }
+
+  private async keyboardNavigateToOption(opts: {option: HTMLElement}) {
+    let {option} = opts;
+    let options = this.options();
+    let targetIndex = options.indexOf(option);
+    if (targetIndex === -1) {
+      throw new Error('Option provided is not in the listbox');
+    }
+    if (document.activeElement === this.listbox) {
+      await this.user.keyboard('[ArrowDown]');
+    }
+    let currIndex = options.indexOf(document.activeElement as HTMLElement);
+    if (targetIndex === -1) {
+      throw new Error('ActiveElement is not in the listbox');
+    }
+    let direction = targetIndex > currIndex ? 'down' : 'up';
+
+    for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
+      await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
+    }
+  };
 
   // TODO: update this so it also can take the option node instead of just text, might already have been added in Rob's PR
   /**
@@ -148,19 +166,24 @@ export class SelectTester {
       await this.open();
     }
     let listbox = this.listbox;
+    if (!listbox) {
+      throw new Error('Select\'s listbox not found.');
+    }
+
     if (listbox) {
       if (typeof option === 'string' || typeof option === 'number') {
         option = this.findOption({optionIndexOrText: option});
+      }
+
+      if (!option) {
+        throw new Error('Target option not found in the listbox.');
       }
 
       if (interactionType === 'keyboard') {
         if (document.activeElement !== listbox || !listbox.contains(document.activeElement)) {
           act(() => listbox.focus());
         }
-
-        // TODO: this simulates typeahead, do we want to add a helper util for that? Not sure if users would really need that for
-        // their test
-        // await this.user.keyboard(option);
+        await this.keyboardNavigateToOption({option});
         await this.user.keyboard('[Enter]');
       } else {
         // TODO: what if the user needs to scroll the list to find the option? What if there are multiple matches for text (hopefully the picker options are pretty unique)

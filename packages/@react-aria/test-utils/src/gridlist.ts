@@ -91,10 +91,7 @@ export class GridListTester {
     if (typeof rowIndexOrText === 'number') {
       row = this.rows[rowIndexOrText];
     } else if (typeof rowIndexOrText === 'string') {
-      row = within(this?.gridlist).getByText(rowIndexOrText);
-      while (row && row.getAttribute('role') !== 'row') {
-        row = row.parentElement;
-      }
+      row = (within(this.gridlist!).getByText(rowIndexOrText).closest('[role=row]'))! as HTMLElement;
     }
 
     return row;
@@ -116,15 +113,17 @@ export class GridListTester {
       row = this.findRow({rowIndexOrText: row});
     }
 
-    if (row) {
-      if (needsDoubleClick) {
-        await this.user.dblClick(row);
-      } else if (interactionType === 'keyboard') {
-        act(() => row.focus());
-        await this.user.keyboard('[Enter]');
-      } else {
-        await pressElement(this.user, row, interactionType);
-      }
+    if (!row) {
+      throw new Error('Target row not found in the gridlist.');
+    }
+
+    if (needsDoubleClick) {
+      await this.user.dblClick(row);
+    } else if (interactionType === 'keyboard') {
+      act(() => row.focus());
+      await this.user.keyboard('[Enter]');
+    } else {
+      await pressElement(this.user, row, interactionType);
     }
   }
 
