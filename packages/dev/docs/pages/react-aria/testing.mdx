@@ -60,8 +60,8 @@ to be on React 18+ in order for these utilities to work.
 ### Setup
 
 Once installed, you can access the `User` that `@react-aria/test-utils` provides in your test file as shown below. This user only needs to be initialized once and accepts two options: `interactionType` and `advanceTimer`. `interactionType` will
-initialize what mode of interaction (mouse, keyboard, or touch) will be used by default. This can be overridden at the pattern tester or interaction execution level if required. `advanceTimer` accepts a function that when called should advance timers (real or fake)
-in the test by a given amount. This is required for certain interactions (e.g. long press) that some of the patterns support.
+initialize what mode of interaction (mouse, keyboard, or touch) will be used by default. This can be overridden at the pattern tester or interaction execution level if required. `advanceTimer` accepts a function that when called should advance timers (fake timers)
+or wait for the required time (real timers). This is required for certain interactions (e.g. long press) that some of the patterns support.
 
 Once the `User` is initialized, you can use its `createTester` method to initialize a specific ARIA pattern tester in your test cases. This gives you access to that pattern's specific utilities that you can then call
 within your test to query for specific subcomponents or simulate common interactions. `createTester` requires two arguments, the first being the name of the ARIA pattern tester you are creating and the second being a set of initialization options specific to that
