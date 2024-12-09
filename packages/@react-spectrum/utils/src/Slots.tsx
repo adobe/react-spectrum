@@ -67,7 +67,6 @@ export function ClearSlots(props) {
       content = React.cloneElement(React.Children.only(children), otherProps);
     }
   }
-
   return (
     <SlotContext.Provider value={emptyObj}>
       {content}
