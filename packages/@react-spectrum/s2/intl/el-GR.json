@@ -1,5 +1,9 @@
 {
-  "breadcrumbs.more": "Περισσότερα στοιχεία",
+  "actionbar.actions": "Ενέργειες",
+  "actionbar.actionsAvailable": "Υπάρχουν διαθέσιμες ενέργειες.",
+  "actionbar.clearSelection": "Εκκαθάριση επιλογής",
+  "actionbar.selected": "{count, plural, =0 {Δεν επιλέχθηκε κανένα} one {# επιλεγμένο} other {# επιλεγμένα}}",
+  "actionbar.selectedAll": "Επιλέχθηκαν όλα",
   "button.pending": "σε εκκρεμότητα",
   "contextualhelp.help": "Βοήθεια",
   "contextualhelp.info": "Πληροφορίες",
@@ -24,5 +28,6 @@
   "tag.actions": "Ενέργειες",
   "tag.hideButtonLabel": "Εμφάνιση λιγότερων",
   "tag.noTags": "Κανένα",
-  "tag.showAllButtonLabel": "Εμφάνιση όλων ({tagCount, number})"
+  "tag.showAllButtonLabel": "Εμφάνιση όλων ({tagCount, number})",
+  "breadcrumbs.more": "Περισσότερα στοιχεία"
 }

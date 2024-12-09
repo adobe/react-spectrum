@@ -1,5 +1,9 @@
 {
-  "breadcrumbs.more": "Več elementov",
+  "actionbar.actions": "Dejanja",
+  "actionbar.actionsAvailable": "Na voljo so dejanja.",
+  "actionbar.clearSelection": "Počisti izbor",
+  "actionbar.selected": "Izbrano: {count}",
+  "actionbar.selectedAll": "Vsi izbrani",
   "button.pending": "v teku",
   "contextualhelp.help": "Pomoč",
   "contextualhelp.info": "Informacije",
@@ -24,5 +28,6 @@
   "tag.actions": "Dejanja",
   "tag.hideButtonLabel": "Prikaži manj",
   "tag.noTags": "Nič",
-  "tag.showAllButtonLabel": "Prikaž vse ({tagCount, number})"
+  "tag.showAllButtonLabel": "Prikaž vse ({tagCount, number})",
+  "breadcrumbs.more": "Več elementov"
 }

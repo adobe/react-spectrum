@@ -1,5 +1,9 @@
 {
-  "breadcrumbs.more": "Veel üksusi",
+  "actionbar.actions": "Toimingud",
+  "actionbar.actionsAvailable": "Toimingud saadaval.",
+  "actionbar.clearSelection": "Puhasta valik",
+  "actionbar.selected": "{count, plural, =0 {Pole valitud} other {# valitud}}",
+  "actionbar.selectedAll": "Kõik valitud",
   "button.pending": "ootel",
   "contextualhelp.help": "Spikker",
   "contextualhelp.info": "Teave",
@@ -24,5 +28,6 @@
   "tag.actions": "Toimingud",
   "tag.hideButtonLabel": "Kuva vähem",
   "tag.noTags": "Puudub",
-  "tag.showAllButtonLabel": "Kuva kõik ({tagCount, number})"
+  "tag.showAllButtonLabel": "Kuva kõik ({tagCount, number})",
+  "breadcrumbs.more": "Veel üksusi"
 }

@@ -1,5 +1,9 @@
 {
-  "breadcrumbs.more": "Więcej elementów",
+  "actionbar.actions": "Działania",
+  "actionbar.actionsAvailable": "Dostępne działania.",
+  "actionbar.clearSelection": "Wyczyść zaznaczenie",
+  "actionbar.selected": "Zaznaczono: {count}",
+  "actionbar.selectedAll": "Wszystkie zaznaczone",
   "button.pending": "oczekujące",
   "contextualhelp.help": "Pomoc",
   "contextualhelp.info": "Informacja",
@@ -16,7 +20,7 @@
   "picker.placeholder": "Zaznacz…",
   "slider.maximum": "Maksimum",
   "slider.minimum": "Minimum",
-  "table.loading": "Wczytywanie...",
+  "table.loading": "Ładowanie...",
   "table.loadingMore": "Wczytywanie większej liczby...",
   "table.resizeColumn": "Zmień rozmiar kolumny",
   "table.sortAscending": "Sortuj rosnąco",
@@ -24,5 +28,6 @@
   "tag.actions": "Działania",
   "tag.hideButtonLabel": "Wyświetl mniej",
   "tag.noTags": "Brak",
-  "tag.showAllButtonLabel": "Pokaż wszystko ({tagCount, number})"
+  "tag.showAllButtonLabel": "Pokaż wszystko ({tagCount, number})",
+  "breadcrumbs.more": "Więcej elementów"
 }
