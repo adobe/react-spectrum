@@ -51,7 +51,7 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
   } = props.toast;
 
   useEffect(() => {
-    if (!timer) {
+    if (timer == null || timeout == null) {
       return;
     }
 

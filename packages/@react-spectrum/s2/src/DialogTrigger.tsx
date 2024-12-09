@@ -10,26 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {DialogTrigger as AriaDialogTrigger, DialogTriggerProps as AriaDialogTriggerProps, PopoverProps as AriaPopoverProps} from 'react-aria-components';
-import {DialogContext} from './Dialog';
+import {DialogTrigger as AriaDialogTrigger, DialogTriggerProps as AriaDialogTriggerProps} from 'react-aria-components';
 import {PressResponder} from '@react-aria/interactions';
 
-export interface DialogTriggerProps extends AriaDialogTriggerProps, Pick<AriaPopoverProps, 'placement' | 'shouldFlip' | 'isKeyboardDismissDisabled' | 'containerPadding' | 'offset' | 'crossOffset' > {
-  /**
-   * The type of Dialog that should be rendered. 
-   * 
-   * @default 'modal'
-   */
-  type?: 'modal' | 'popover' | 'fullscreen' | 'fullscreenTakeover', // TODO: add tray back in
-  /**
-   * Whether a popover type Dialog's arrow should be hidden.
-   */
-  hideArrow?: boolean,
-  /**
-   * Whether the Dialog is dismissable.
-   */
-  isDismissable?: boolean
-}
+export interface DialogTriggerProps extends AriaDialogTriggerProps {}
 
 /**
  * DialogTrigger serves as a wrapper around a Dialog and its associated trigger, linking the Dialog's
@@ -39,24 +23,11 @@ export interface DialogTriggerProps extends AriaDialogTriggerProps, Pick<AriaPop
 export function DialogTrigger(props: DialogTriggerProps) {
   return (
     <AriaDialogTrigger {...props}>
-      <DialogContext.Provider
-        value={{
-          type: props.type || 'modal',
-          hideArrow: props.hideArrow,
-          placement: props.placement,
-          shouldFlip: props.shouldFlip,
-          isDismissable: props.isDismissable,
-          isKeyboardDismissDisabled: props.isKeyboardDismissDisabled,
-          containerPadding: props.containerPadding,
-          offset: props.offset,
-          crossOffset: props.crossOffset
-        }}>
-        {/* RAC sets isPressed via PressResponder when the dialog is open.
-            We don't want press scaling to appear to get "stuck", so override this. */}
-        <PressResponder isPressed={false}>
-          {props.children}
-        </PressResponder>
-      </DialogContext.Provider>
+      {/* RAC sets isPressed via PressResponder when the dialog is open.
+          We don't want press scaling to appear to get "stuck", so override this. */}
+      <PressResponder isPressed={false}>
+        {props.children}
+      </PressResponder>
     </AriaDialogTrigger>
   );
 }

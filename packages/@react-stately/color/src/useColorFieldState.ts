@@ -101,7 +101,7 @@ export function useColorFieldState(
     let color;
     try {
       color = parseColor(inputValue.startsWith('#') ? inputValue : `#${inputValue}`);
-    } catch (err) {
+    } catch {
       color = null;
     }
     return color;

@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ArbitraryValue} from './types';
-import {Color, createArbitraryProperty, createColorProperty, createMappedProperty, createRenamedProperty, createTheme, parseArbitraryValue} from './style-macro';
+import {ArbitraryValue, CSSValue, PropertyValueMap} from './types';
+import {Color, createArbitraryProperty, createColorProperty, createMappedProperty, createRenamedProperty, createSizingProperty, createTheme, parseArbitraryValue} from './style-macro';
 import {colorScale, colorToken, fontSizeToken, getToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
 import type * as CSS from 'csstype';
 
@@ -191,12 +191,8 @@ const negativeSpacing = generateSpacing([
   -384
 ] as const);
 
-function arbitrary(ctx: MacroContext | void, value: string): `[${string}]` {
-  return ctx ? `[${value}]` : value as any;
-}
-
 export function fontRelative(this: MacroContext | void, base: number, baseFontSize = 14) {
-  return arbitrary(this, (base / baseFontSize) + 'em');
+  return (base / baseFontSize) + 'em';
 }
 
 export function edgeToText(this: MacroContext | void, height: keyof typeof baseSpacing) {
@@ -204,7 +200,7 @@ export function edgeToText(this: MacroContext | void, height: keyof typeof baseS
 }
 
 export function space(this: MacroContext | void, px: number) {
-  return arbitrary(this, pxToRem(px));
+  return pxToRem(px);
 }
 
 const spacing = {
@@ -222,16 +218,10 @@ const spacing = {
 };
 
 export function size(this: MacroContext | void, px: number) {
-  return {default: arbitrary(this, pxToRem(px)), touch: arbitrary(this, pxToRem(px * 1.25))};
+  return `calc(${pxToRem(px)} * var(--s2-scale))`;
 }
 
-const scaledSpacing: {[key in keyof typeof baseSpacing]: {default: string, touch: string}} =
-  Object.fromEntries(Object.entries(baseSpacing).map(([k, v]) =>
-    [k, {default: v, touch: parseFloat(v) * 1.25 + v.match(/[^0-9.]+/)![0]}])
-  ) as any;
-
 const sizing = {
-  ...scaledSpacing,
   auto: 'auto',
   full: '100%',
   min: 'min-content',
@@ -268,6 +258,10 @@ const width = {
   ...sizing,
   screen: '100vw'
 };
+
+function createSpectrumSizingProperty<T extends CSSValue>(values: PropertyValueMap<T>) {
+  return createSizingProperty(values, px => `calc(${pxToRem(px)} * var(--s2-scale))`);
+}
 
 const margin = {
   ...spacing,
@@ -317,7 +311,6 @@ let gridTrack = (value: GridTrack) => {
 };
 
 let gridTrackSize = (value: GridTrackSize) => {
-  // @ts-ignore
   return value in baseSpacing ? baseSpacing[value] : value;
 };
 
@@ -475,6 +468,7 @@ export const style = createTheme({
         isFocusVisible: weirdColorToken('accent-background-color-key-focus'),
         isPressed: weirdColorToken('accent-background-color-down')
       },
+      'accent-subtle': weirdColorToken('accent-subtle-background-color-default'),
       neutral: {
         default: colorToken('neutral-background-color-default'),
         isHovered: colorToken('neutral-background-color-hover'),
@@ -487,49 +481,68 @@ export const style = createTheme({
         isFocusVisible: weirdColorToken('neutral-subdued-background-color-key-focus'),
         isPressed: weirdColorToken('neutral-subdued-background-color-down')
       },
-      'neutral-subtle': colorToken('neutral-subtle-background-color-default'),
+      'neutral-subtle': weirdColorToken('neutral-subtle-background-color-default'),
       negative: {
         default: weirdColorToken('negative-background-color-default'),
         isHovered: weirdColorToken('negative-background-color-hover'),
         isFocusVisible: weirdColorToken('negative-background-color-key-focus'),
         isPressed: weirdColorToken('negative-background-color-down')
       },
-      'negative-subtle': colorToken('negative-subtle-background-color-default'),
+      'negative-subtle': weirdColorToken('negative-subtle-background-color-default'),
       informative: {
         default: weirdColorToken('informative-background-color-default'),
         isHovered: weirdColorToken('informative-background-color-hover'),
         isFocusVisible: weirdColorToken('informative-background-color-key-focus'),
         isPressed: weirdColorToken('informative-background-color-down')
       },
-      'informative-subtle': colorToken('informative-subtle-background-color-default'),
+      'informative-subtle': weirdColorToken('informative-subtle-background-color-default'),
       positive: {
         default: weirdColorToken('positive-background-color-default'),
         isHovered: weirdColorToken('positive-background-color-hover'),
         isFocusVisible: weirdColorToken('positive-background-color-key-focus'),
         isPressed: weirdColorToken('positive-background-color-down')
       },
-      'positive-subtle': colorToken('positive-subtle-background-color-default'),
+      'positive-subtle': weirdColorToken('positive-subtle-background-color-default'),
       notice: weirdColorToken('notice-background-color-default'),
-      'notice-subtle': colorToken('notice-subtle-background-color-default'),
+      'notice-subtle': weirdColorToken('notice-subtle-background-color-default'),
       gray: weirdColorToken('gray-background-color-default'),
+      'gray-subtle': weirdColorToken('gray-subtle-background-color-default'),
       red: weirdColorToken('red-background-color-default'),
+      'red-subtle': weirdColorToken('red-subtle-background-color-default'),
       orange: weirdColorToken('orange-background-color-default'),
+      'orange-subtle': weirdColorToken('orange-subtle-background-color-default'),
       yellow: weirdColorToken('yellow-background-color-default'),
+      'yellow-subtle': weirdColorToken('yellow-subtle-background-color-default'),
       chartreuse: weirdColorToken('chartreuse-background-color-default'),
+      'chartreuse-subtle': weirdColorToken('chartreuse-subtle-background-color-default'),
       celery: weirdColorToken('celery-background-color-default'),
+      'celery-subtle': weirdColorToken('celery-subtle-background-color-default'),
       green: weirdColorToken('green-background-color-default'),
+      'green-subtle': weirdColorToken('green-subtle-background-color-default'),
       seafoam: weirdColorToken('seafoam-background-color-default'),
+      'seafoam-subtle': weirdColorToken('seafoam-subtle-background-color-default'),
       cyan: weirdColorToken('cyan-background-color-default'),
+      'cyan-subtle': weirdColorToken('cyan-subtle-background-color-default'),
       blue: weirdColorToken('blue-background-color-default'),
+      'blue-subtle': weirdColorToken('blue-subtle-background-color-default'),
       indigo: weirdColorToken('indigo-background-color-default'),
+      'indigo-subtle': weirdColorToken('indigo-subtle-background-color-default'),
       purple: weirdColorToken('purple-background-color-default'),
+      'purple-subtle': weirdColorToken('purple-subtle-background-color-default'),
       fuchsia: weirdColorToken('fuchsia-background-color-default'),
+      'fuchsia-subtle': weirdColorToken('fuchsia-subtle-background-color-default'),
       magenta: weirdColorToken('magenta-background-color-default'),
+      'magenta-subtle': weirdColorToken('magenta-subtle-background-color-default'),
       pink: weirdColorToken('pink-background-color-default'),
+      'pink-subtle': weirdColorToken('pink-subtle-background-color-default'),
       turquoise: weirdColorToken('turquoise-background-color-default'),
+      'turquoise-subtle': weirdColorToken('turquoise-subtle-background-color-default'),
       cinnamon: weirdColorToken('cinnamon-background-color-default'),
+      'cinnamon-subtle': weirdColorToken('cinnamon-subtle-background-color-default'),
       brown: weirdColorToken('brown-background-color-default'),
+      'brown-subtle': weirdColorToken('brown-subtle-background-color-default'),
       silver: weirdColorToken('silver-background-color-default'),
+      'silver-subtle': weirdColorToken('silver-subtle-background-color-default'),
       disabled: colorToken('disabled-background-color'),
       base: colorToken('background-base-color'),
       'layer-1': colorToken('background-layer-1-color'),
@@ -604,20 +617,20 @@ export const style = createTheme({
     },
     rowGap: spacing,
     columnGap: spacing,
-    height,
-    width,
-    containIntrinsicWidth: width,
-    containIntrinsicHeight: height,
-    minHeight: height,
-    maxHeight: {
+    height: createSpectrumSizingProperty(height),
+    width: createSpectrumSizingProperty(width),
+    containIntrinsicWidth: createSpectrumSizingProperty(width),
+    containIntrinsicHeight: createSpectrumSizingProperty(height),
+    minHeight: createSpectrumSizingProperty(height),
+    maxHeight: createSpectrumSizingProperty({
       ...height,
       none: 'none'
-    },
-    minWidth: width,
-    maxWidth: {
+    }),
+    minWidth: createSpectrumSizingProperty(width),
+    maxWidth: createSpectrumSizingProperty({
       ...width,
       none: 'none'
-    },
+    }),
     borderStartWidth: createRenamedProperty('borderInlineStartWidth', borderWidth),
     borderEndWidth: createRenamedProperty('borderInlineEndWidth', borderWidth),
     borderTopWidth: borderWidth,

@@ -10,8 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButtonGroupContext} from './ActionButtonGroup';
+import {AvatarContext} from './Avatar';
 import {baseColor, focusRing, fontRelative, style} from '../style' with { type: 'macro' };
-import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext, Provider, Button as RACButton, Text} from 'react-aria-components';
+import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext, Provider, Button as RACButton, useSlottedContext} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
@@ -19,7 +21,7 @@ import {getAllowedOverrides, StyleProps} from './style-utils' with { type: 'macr
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
 import {SkeletonContext} from './Skeleton';
-import {TextContext} from './Content';
+import {Text, TextContext} from './Content';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useFormProps} from './Form';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -44,18 +46,35 @@ interface ToggleButtonStyleProps {
   isEmphasized?: boolean
 }
 
+interface ActionGroupItemStyleProps {
+  density?: 'regular' | 'compact',
+  orientation?: 'horizontal' | 'vertical',
+  isJustified?: boolean
+}
+
 export interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'isPending'>, StyleProps, ActionButtonStyleProps {
   /** The content to display in the ActionButton. */
   children?: ReactNode
 }
 
 // These styles handle both ActionButton and ToggleButton
-export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleButtonStyleProps>({
+const iconOnly = ':has([slot=icon], [slot=avatar]):not(:has([data-rsp-slot=text]))';
+export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleButtonStyleProps & ActionGroupItemStyleProps & {isInGroup: boolean}>({
   ...focusRing(),
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   columnGap: 'text-to-visual',
+  flexShrink: {
+    default: 1,
+    isInGroup: 0
+  },
+  flexGrow: {
+    isJustified: 1
+  },
+  flexBasis: {
+    isJustified: 0
+  },
   font: 'control',
   fontWeight: 'medium',
   userSelect: 'none',
@@ -159,40 +178,121 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
   borderStyle: 'none',
   paddingX: {
     default: 'edge-to-text',
-    ':has([slot=icon]:only-child)': 0
+    [iconOnly]: 0
   },
   paddingY: 0,
-  borderRadius: 'control',
+  borderTopStartRadius: {
+    default: 'control',
+    density: {
+      compact: {
+        default: 'none',
+        ':first-child': 'control'
+      }
+    }
+  },
+  borderTopEndRadius: {
+    default: 'control',
+    density: {
+      compact: {
+        default: 'none',
+        orientation: {
+          horizontal: {
+            ':last-child': 'control'
+          },
+          vertical: {
+            ':first-child': 'control'
+          }
+        }
+      }
+    }
+  },
+  borderBottomStartRadius: {
+    default: 'control',
+    density: {
+      compact: {
+        default: 'none',
+        orientation: {
+          horizontal: {
+            ':first-child': 'control'
+          },
+          vertical: {
+            ':last-child': 'control'
+          }
+        }
+      }
+    }
+  },
+  borderBottomEndRadius: {
+    default: 'control',
+    density: {
+      compact: {
+        default: 'none',
+        ':last-child': 'control'
+      }
+    }
+  },
   '--iconMargin': {
     type: 'marginTop',
     value: {
       default: fontRelative(-2),
-      ':has([slot=icon]:only-child)': 0
+      [iconOnly]: 0
     }
+  },
+  zIndex: {
+    isFocusVisible: 2
   },
   disableTapHighlight: true
 }, getAllowedOverrides());
 
+// Matching icon sizes. TBD.
+const avatarSize = {
+  XS: 14,
+  S: 16,
+  M: 20,
+  L: 22,
+  X: 26
+} as const;
+
 export const ActionButtonContext = createContext<ContextValue<ActionButtonProps, FocusableRefValue<HTMLButtonElement>>>(null);
 
-function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+/**
+ * ActionButtons allow users to perform an action.
+ * They’re used for similar, task-based options within a workflow, and are ideal for interfaces where buttons aren’t meant to draw a lot of attention.
+ */
+export const ActionButton = forwardRef(function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ActionButtonContext);
   props = useFormProps(props as any);
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
+  let ctx = useSlottedContext(ActionButtonGroupContext);
+  let isInGroup = !!ctx;
+  let {
+    density = 'regular',
+    isJustified,
+    orientation = 'horizontal',
+    staticColor = props.staticColor,
+    isQuiet = props.isQuiet,
+    size = props.size || 'M',
+    isDisabled = props.isDisabled
+  } = ctx || {};
 
   return (
     <RACButton
       {...props}
+      isDisabled={isDisabled}
       ref={domRef}
       style={pressScale(domRef, props.UNSAFE_style)}
       className={renderProps => (props.UNSAFE_className || '') + btnStyles({
         ...renderProps,
         // Retain hover styles when an overlay is open.
         isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
-        staticColor: props.staticColor,
-        size: props.size || 'M',
-        isQuiet: props.isQuiet
+        staticColor,
+        size,
+        isQuiet,
+        density,
+        isJustified,
+        orientation,
+        isInGroup
       }, props.styles)}>
       <Provider
         values={[
@@ -201,17 +301,14 @@ function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElem
           [IconContext, {
             render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
             styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+          }],
+          [AvatarContext, {
+            size: avatarSize[size],
+            styles: style({marginStart: '--iconMargin', flexShrink: 0, order: 0})
           }]
         ]}>
         {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
       </Provider>
     </RACButton>
   );
-}
-
-/**
- * ActionButtons allow users to perform an action.
- * They’re used for similar, task-based options within a workflow, and are ideal for interfaces where buttons aren’t meant to draw a lot of attention.
- */
-let _ActionButton = forwardRef(ActionButton);
-export {_ActionButton as ActionButton};
+});

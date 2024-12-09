@@ -69,7 +69,7 @@ export function useDraggableCollectionState(props: DraggableCollectionStateOptio
   } = props;
   let [, setDragging] = useState(false);
   let draggingKeys = useRef(new Set<Key>());
-  let draggedKey = useRef(null);
+  let draggedKey = useRef<Key | null>(null);
   let getKeys = (key: Key) => {
     // The clicked item is always added to the drag. If it is selected, then all of the
     // other selected items are also dragged. If it is not selected, the only the clicked

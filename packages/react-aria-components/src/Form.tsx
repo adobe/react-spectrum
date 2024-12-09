@@ -27,7 +27,11 @@ export interface FormProps extends SharedFormProps, DOMProps {
 
 export const FormContext = createContext<ContextValue<FormProps, HTMLFormElement>>(null);
 
-function Form(props: FormProps, ref: ForwardedRef<HTMLFormElement>) {
+/**
+ * A form is a group of inputs that allows users to submit data to a server,
+ * with support for providing field validation errors.
+ */
+export const Form = forwardRef(function Form(props: FormProps, ref: ForwardedRef<HTMLFormElement>) {
   [props, ref] = useContextProps(props, ref, FormContext);
   let {validationErrors, validationBehavior = 'native', children, className, ...domProps} = props;
   return (
@@ -39,11 +43,4 @@ function Form(props: FormProps, ref: ForwardedRef<HTMLFormElement>) {
       </FormContext.Provider>
     </form>
   );
-}
-
-/**
- * A form is a group of inputs that allows users to submit data to a server,
- * with support for providing field validation errors.
- */
-const _Form = forwardRef(Form);
-export {_Form as Form};
+});

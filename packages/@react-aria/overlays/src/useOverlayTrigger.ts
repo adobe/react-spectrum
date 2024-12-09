@@ -50,7 +50,7 @@ export function useOverlayTrigger(props: OverlayTriggerProps, state: OverlayTrig
   // https://www.w3.org/TR/wai-aria-1.1/#aria-haspopup
   // However, we only add it for menus for now because screen readers often
   // announce it as a menu even for other values.
-  let ariaHasPopup = undefined;
+  let ariaHasPopup: undefined | boolean | 'listbox' = undefined;
   if (type === 'menu') {
     ariaHasPopup = true;
   } else if (type === 'listbox') {
@@ -62,7 +62,7 @@ export function useOverlayTrigger(props: OverlayTriggerProps, state: OverlayTrig
     triggerProps: {
       'aria-haspopup': ariaHasPopup,
       'aria-expanded': isOpen,
-      'aria-controls': isOpen ? overlayId : null,
+      'aria-controls': isOpen ? overlayId : undefined,
       onPress: state.toggle
     },
     overlayProps: {

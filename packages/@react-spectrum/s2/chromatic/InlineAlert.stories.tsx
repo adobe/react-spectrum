@@ -24,16 +24,18 @@ const meta: Meta<typeof InlineAlert> = {
 
 export default meta;
 
-export const Example = (args: any) => (
-  <InlineAlert {...args}>
-    <Heading>Payment Information</Heading>
-    <Content>
-      There was an error processing your payment. Please check that your card information is correct, then try again.
-    </Content>
-  </InlineAlert>
-);
+export const Example = {
+  render: (args: any) => (
+    <InlineAlert {...args}>
+      <Heading>Payment Information</Heading>
+      <Content>
+        There was an error processing your payment. Please check that your card information is correct, then try again.
+      </Content>
+    </InlineAlert>
+  )
+};
 
-export const DynamicExample = (args: any) => {
+const DynamicExampleRender = (args: any) => {
   let [shown, setShown] = useState(false);
 
   return (
@@ -49,4 +51,8 @@ export const DynamicExample = (args: any) => {
       }
     </>
   );
+};
+
+export const DynamicExample = {
+  render: (args: any) => <DynamicExampleRender {...args} />
 };

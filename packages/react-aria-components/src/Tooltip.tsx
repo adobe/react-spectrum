@@ -55,7 +55,7 @@ export interface TooltipRenderProps {
    * The placement of the tooltip relative to the trigger.
    * @selector [data-placement="left | right | top | bottom"]
    */
-  placement: PlacementAxis,
+  placement: PlacementAxis | null,
   /**
    * Whether the tooltip is currently entering. Use this to apply animations.
    * @selector [data-entering]
@@ -98,7 +98,10 @@ export function TooltipTrigger(props: TooltipTriggerComponentProps) {
   );
 }
 
-function Tooltip({UNSTABLE_portalContainer, ...props}: TooltipProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A tooltip displays a description of an element on hover or focus.
+ */
+export const Tooltip = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tooltip({UNSTABLE_portalContainer, ...props}: TooltipProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TooltipContext);
   let contextState = useContext(TooltipTriggerStateContext);
   let localState = useTooltipTriggerState(props);
@@ -113,13 +116,7 @@ function Tooltip({UNSTABLE_portalContainer, ...props}: TooltipProps, ref: Forwar
       <TooltipInner {...props} tooltipRef={ref} isExiting={isExiting} />
     </OverlayContainer>
   );
-}
-
-/**
- * A tooltip displays a description of an element on hover or focus.
- */
-const _Tooltip = /*#__PURE__*/ (forwardRef as forwardRefType)(Tooltip);
-export {_Tooltip as Tooltip};
+});
 
 function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: RefObject<HTMLDivElement | null>}) {
   let state = useContext(TooltipTriggerStateContext)!;
@@ -143,7 +140,8 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
     isOpen: state.isOpen,
     arrowSize: arrowWidth,
     arrowBoundaryOffset: props.arrowBoundaryOffset,
-    shouldFlip: props.shouldFlip
+    shouldFlip: props.shouldFlip,
+    onClose: () => state.close(true)
   });
 
   let isEntering = useEnterAnimation(props.tooltipRef, !!placement) || props.isEntering || false;
@@ -167,7 +165,7 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
       ref={props.tooltipRef}
       {...renderProps}
       style={{...overlayProps.style, ...renderProps.style}}
-      data-placement={placement}
+      data-placement={placement ?? undefined}
       data-entering={isEntering || undefined}
       data-exiting={props.isExiting || undefined}>
       <OverlayArrowContext.Provider value={{...arrowProps, placement, ref: arrowRef}}>

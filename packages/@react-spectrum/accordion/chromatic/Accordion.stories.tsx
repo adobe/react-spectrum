@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, Disclosure, DisclosureHeader, DisclosurePanel} from '../';
+import {Accordion, Disclosure, DisclosurePanel, DisclosureTitle} from '../';
 import {Meta} from '@storybook/react';
 import React from 'react';
 
@@ -25,25 +25,25 @@ export default meta;
 export const Template = (args) => (
   <Accordion {...args}>
     <Disclosure id="files">
-      <DisclosureHeader>
+      <DisclosureTitle>
         Your files
-      </DisclosureHeader>
+      </DisclosureTitle>
       <DisclosurePanel>
         files
       </DisclosurePanel>
     </Disclosure>
     <Disclosure id="shared">
-      <DisclosureHeader>
+      <DisclosureTitle>
         Shared with you
-      </DisclosureHeader>
+      </DisclosureTitle>
       <DisclosurePanel>
         shared
       </DisclosurePanel>
     </Disclosure>
     <Disclosure id="last">
-      <DisclosureHeader>
+      <DisclosureTitle>
         Last item
-      </DisclosureHeader>
+      </DisclosureTitle>
       <DisclosurePanel>
         last
       </DisclosurePanel>
@@ -55,7 +55,7 @@ export const Default = {
   render: Template
 };
 
-export const WithExpanedKeys = {
+export const WithExpandedKeys = {
   render: Template,
   args: {defaultExpandedKeys: ['shared']}
 };
@@ -64,25 +64,25 @@ export const WithDisabledDisclosure = {
   render: (args) => (
     <Accordion {...args}>
       <Disclosure id="files">
-        <DisclosureHeader>
+        <DisclosureTitle>
           Your files
-        </DisclosureHeader>
+        </DisclosureTitle>
         <DisclosurePanel>
           files
         </DisclosurePanel>
       </Disclosure>
       <Disclosure id="shared">
-        <DisclosureHeader>
+        <DisclosureTitle>
           Shared with you
-        </DisclosureHeader>
+        </DisclosureTitle>
         <DisclosurePanel>
           shared
         </DisclosurePanel>
       </Disclosure>
       <Disclosure id="last" isDisabled>
-        <DisclosureHeader>
+        <DisclosureTitle>
           Last item
-        </DisclosureHeader>
+        </DisclosureTitle>
         <DisclosurePanel>
           last
         </DisclosurePanel>
@@ -90,4 +90,12 @@ export const WithDisabledDisclosure = {
     </Accordion>)
 };
 
-// TODO: more stories
+export const Disabled = {
+  render: Template,
+  args: {isDisabled: true}
+};
+
+export const Quiet = {
+  render: Template,
+  args: {isQuiet: true}
+};

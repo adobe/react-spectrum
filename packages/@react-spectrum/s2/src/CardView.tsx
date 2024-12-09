@@ -12,20 +12,22 @@
 
 import {
   GridList as AriaGridList,
+  ContextValue,
   GridLayoutOptions,
   GridListItem,
   GridListProps,
   UNSTABLE_Virtualizer
 } from 'react-aria-components';
-import {CardContext, CardViewContext} from './Card';
-import {DOMRef, forwardRefType, Key, LayoutDelegate, LoadingState, Node} from '@react-types/shared';
+import {CardContext, InternalCardViewContext} from './Card';
+import {createContext, forwardRef, useMemo, useState} from 'react';
+import {DOMRef, DOMRefValue, forwardRefType, Key, LayoutDelegate, LoadingState, Node} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
-import {forwardRef, useMemo, useState} from 'react';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ImageCoordinator} from './ImageCoordinator';
 import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useEffectEvent, useLayoutEffect, useLoadMore, useResizeObserver} from '@react-aria/utils';
+import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior' | 'className' | 'style'>, UnsafeStyles {
   /**
@@ -72,12 +74,12 @@ class FlexibleGridLayout<T extends object> extends Layout<Node<T>, GridLayoutOpt
       minSpace = new Size(18, 18),
       maxColumns = Infinity
     } = invalidationContext.layoutOptions || {};
-    let visibleWidth = this.virtualizer.visibleRect.width;
+    let visibleWidth = this.virtualizer!.visibleRect.width;
 
     // The max item width is always the entire viewport.
     // If the max item height is infinity, scale in proportion to the max width.
     let maxItemWidth = Math.min(maxItemSize.width, visibleWidth);
-    let maxItemHeight = Number.isFinite(maxItemSize.height) 
+    let maxItemHeight = Number.isFinite(maxItemSize.height)
       ? maxItemSize.height
       : Math.floor((minItemSize.height / minItemSize.width) * maxItemWidth);
 
@@ -95,13 +97,13 @@ class FlexibleGridLayout<T extends object> extends Layout<Node<T>, GridLayoutOpt
     // Compute the item height, which is proportional to the item width
     let t = ((itemWidth - minItemSize.width) / Math.max(1, maxItemWidth - minItemSize.width));
     let itemHeight = minItemSize.height +  Math.floor((maxItemHeight - minItemSize.height) * t);
-    itemHeight = Math.max(minItemSize.height, Math.min(maxItemHeight, itemHeight));    
+    itemHeight = Math.max(minItemSize.height, Math.min(maxItemHeight, itemHeight));
 
     // Compute the horizontal spacing and content height
     let horizontalSpacing = Math.floor((visibleWidth - numColumns * itemWidth) / (numColumns + 1));
 
-    let rows = Math.ceil(this.virtualizer.collection.size / numColumns);
-    let iterator = this.virtualizer.collection[Symbol.iterator]();
+    let rows = Math.ceil(this.virtualizer!.collection.size / numColumns);
+    let iterator = this.virtualizer!.collection[Symbol.iterator]();
     let y = rows > 0 ? minSpace.height : 0;
     let newLayoutInfos = new Map();
     let skeleton: Node<T> | null = null;
@@ -149,13 +151,13 @@ class FlexibleGridLayout<T extends object> extends Layout<Node<T>, GridLayoutOpt
       y += maxHeight + minSpace.height;
 
       // Keep adding skeleton rows until we fill the viewport
-      if (skeleton && row === rows - 1 && y < this.virtualizer.visibleRect.height) {
+      if (skeleton && row === rows - 1 && y < this.virtualizer!.visibleRect.height) {
         rows++;
       }
     }
 
     this.layoutInfos = newLayoutInfos;
-    this.contentSize = new Size(this.virtualizer.visibleRect.width, y);
+    this.contentSize = new Size(this.virtualizer!.visibleRect.width, y);
   }
 
   getLayoutInfo(key: Key): LayoutInfo {
@@ -169,7 +171,7 @@ class FlexibleGridLayout<T extends object> extends Layout<Node<T>, GridLayoutOpt
   getVisibleLayoutInfos(rect: Rect): LayoutInfo[] {
     let layoutInfos: LayoutInfo[] = [];
     for (let layoutInfo of this.layoutInfos.values()) {
-      if (layoutInfo.rect.intersects(rect) || this.virtualizer.isPersistedKey(layoutInfo.key)) {
+      if (layoutInfo.rect.intersects(rect) || this.virtualizer!.isPersistedKey(layoutInfo.key)) {
         layoutInfos.push(layoutInfo);
       }
     }
@@ -216,12 +218,12 @@ class WaterfallLayout<T extends object> extends Layout<Node<T>, GridLayoutOption
       minSpace = new Size(18, 18),
       maxColumns = Infinity
     } = invalidationContext.layoutOptions || {};
-    let visibleWidth = this.virtualizer.visibleRect.width;
+    let visibleWidth = this.virtualizer!.visibleRect.width;
 
     // The max item width is always the entire viewport.
     // If the max item height is infinity, scale in proportion to the max width.
     let maxItemWidth = Math.min(maxItemSize.width, visibleWidth);
-    let maxItemHeight = Number.isFinite(maxItemSize.height) 
+    let maxItemHeight = Number.isFinite(maxItemSize.height)
       ? maxItemSize.height
       : Math.floor((minItemSize.height / minItemSize.width) * maxItemWidth);
 
@@ -239,7 +241,7 @@ class WaterfallLayout<T extends object> extends Layout<Node<T>, GridLayoutOption
     // Compute the item height, which is proportional to the item width
     let t = ((itemWidth - minItemSize.width) / Math.max(1, maxItemWidth - minItemSize.width));
     let itemHeight = minItemSize.height +  Math.floor((maxItemHeight - minItemSize.height) * t);
-    itemHeight = Math.max(minItemSize.height, Math.min(maxItemHeight, itemHeight));    
+    itemHeight = Math.max(minItemSize.height, Math.min(maxItemHeight, itemHeight));
 
     // Compute the horizontal spacing and content height
     let horizontalSpacing = Math.floor((visibleWidth - numColumns * itemWidth) / (numColumns + 1));
@@ -275,13 +277,13 @@ class WaterfallLayout<T extends object> extends Layout<Node<T>, GridLayoutOption
     };
 
     let skeletonCount = 0;
-    for (let node of this.virtualizer.collection) {
+    for (let node of this.virtualizer!.collection) {
       if (node.type === 'skeleton') {
         // Add skeleton cards until every column has at least one, and we fill the viewport.
         let startingHeights = [...columnHeights];
         while (
           !columnHeights.every((h, i) => h !== startingHeights[i]) ||
-          Math.min(...columnHeights) < this.virtualizer.visibleRect.height
+          Math.min(...columnHeights) < this.virtualizer!.visibleRect.height
         ) {
           let key = `${node.key}-${skeletonCount++}`;
           let content = this.layoutInfos.get(key)?.content || {...node};
@@ -295,7 +297,7 @@ class WaterfallLayout<T extends object> extends Layout<Node<T>, GridLayoutOption
 
     // Reset all columns to the maximum for the next section
     let maxHeight = Math.max(...columnHeights);
-    this.contentSize = new Size(this.virtualizer.visibleRect.width, maxHeight);
+    this.contentSize = new Size(this.virtualizer!.visibleRect.width, maxHeight);
     this.layoutInfos = newLayoutInfos;
     this.numColumns = numColumns;
   }
@@ -311,7 +313,7 @@ class WaterfallLayout<T extends object> extends Layout<Node<T>, GridLayoutOption
   getVisibleLayoutInfos(rect: Rect): LayoutInfo[] {
     let layoutInfos: LayoutInfo[] = [];
     for (let layoutInfo of this.layoutInfos.values()) {
-      if (layoutInfo.rect.intersects(rect) || this.virtualizer.isPersistedKey(layoutInfo.key)) {
+      if (layoutInfo.rect.intersects(rect) || this.virtualizer!.isPersistedKey(layoutInfo.key)) {
         layoutInfos.push(layoutInfo);
       }
     }
@@ -342,7 +344,7 @@ class WaterfallLayout<T extends object> extends Layout<Node<T>, GridLayoutOption
       return null;
     }
 
-    let rect = new Rect(layoutInfo.rect.maxX, layoutInfo.rect.y, this.virtualizer.visibleRect.maxX - layoutInfo.rect.maxX, layoutInfo.rect.height);
+    let rect = new Rect(layoutInfo.rect.maxX, layoutInfo.rect.y, this.virtualizer!.visibleRect.maxX - layoutInfo.rect.maxX, layoutInfo.rect.height);
     let layoutInfos = this.getVisibleLayoutInfos(rect);
     let bestKey: Key | null = null;
     let bestDistance = Infinity;
@@ -401,7 +403,7 @@ class WaterfallLayout<T extends object> extends Layout<Node<T>, GridLayoutOption
       return [];
     }
 
-    // Find items where half of the area intersects the rectangle 
+    // Find items where half of the area intersects the rectangle
     // formed from the first item to the last item in the range.
     let rect = fromLayoutInfo.rect.union(toLayoutInfo.rect);
     let keys: Key[] = [];
@@ -525,13 +527,16 @@ const cardViewStyles = style({
   outlineOffset: -2
 }, getAllowedOverrides({height: true}));
 
-function CardView<T extends object>(props: CardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const CardViewContext = createContext<ContextValue<CardViewProps<any>, DOMRefValue<HTMLDivElement>>>(null);
+
+export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function CardView<T extends object>(props: CardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+  [props, ref] = useSpectrumContextProps(props, ref, CardViewContext);
   let {children, layout: layoutName = 'grid', size: sizeProp = 'M', density = 'regular', variant = 'primary', selectionStyle = 'checkbox', UNSAFE_className = '', UNSAFE_style, styles, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let layout = useMemo(() => {
     return layoutName === 'waterfall' ? new WaterfallLayout() : new FlexibleGridLayout();
   }, [layoutName]);
-  
+
   // This calculates the maximum t-shirt size where at least two columns fit in the available width.
   let [maxSizeIndex, setMaxSizeIndex] = useState(SIZES.length - 1);
   let updateSize = useEffectEvent(() => {
@@ -568,10 +573,10 @@ function CardView<T extends object>(props: CardViewProps<T>, ref: DOMRef<HTMLDiv
   }, domRef);
 
   let ctx = useMemo(() => ({size, variant}), [size, variant]);
-  
+
   return (
     <UNSTABLE_Virtualizer layout={layout} layoutOptions={options}>
-      <CardViewContext.Provider value={GridListItem}>
+      <InternalCardViewContext.Provider value={GridListItem}>
         <CardContext.Provider value={ctx}>
           <ImageCoordinator>
             <AriaGridList
@@ -588,10 +593,7 @@ function CardView<T extends object>(props: CardViewProps<T>, ref: DOMRef<HTMLDiv
             </AriaGridList>
           </ImageCoordinator>
         </CardContext.Provider>
-      </CardViewContext.Provider>
+      </InternalCardViewContext.Provider>
     </UNSTABLE_Virtualizer>
   );
-}
-
-const _CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(CardView);
-export {_CardView as CardView};
+});

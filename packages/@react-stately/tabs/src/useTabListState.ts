@@ -30,7 +30,7 @@ export function useTabListState<T extends object>(props: TabListStateOptions<T>)
   let state = useSingleSelectListState<T>({
     ...props,
     suppressTextValueWarning: true,
-    defaultSelectedKey: props.defaultSelectedKey ?? findDefaultSelectedKey(props.collection, props.disabledKeys ? new Set(props.disabledKeys) : new Set())
+    defaultSelectedKey: props.defaultSelectedKey ?? findDefaultSelectedKey(props.collection, props.disabledKeys ? new Set(props.disabledKeys) : new Set()) ?? undefined
   });
 
   let {
@@ -43,7 +43,7 @@ export function useTabListState<T extends object>(props: TabListStateOptions<T>)
   useEffect(() => {
     // Ensure a tab is always selected (in case no selected key was specified or if selected item was deleted from collection)
     let selectedKey = currentSelectedKey;
-    if (selectionManager.isEmpty || !collection.getItem(selectedKey)) {
+    if (selectionManager.isEmpty || selectedKey == null || !collection.getItem(selectedKey)) {
       selectedKey = findDefaultSelectedKey(collection, state.disabledKeys);
       if (selectedKey != null) {
         // directly set selection because replace/toggle selection won't consider disabled keys
@@ -64,16 +64,16 @@ export function useTabListState<T extends object>(props: TabListStateOptions<T>)
   };
 }
 
-function findDefaultSelectedKey<T>(collection: Collection<Node<T>> | null, disabledKeys: Set<Key>) {
-  let selectedKey = null;
+function findDefaultSelectedKey<T>(collection: Collection<Node<T>> | undefined, disabledKeys: Set<Key>) {
+  let selectedKey: Key | null = null;
   if (collection) {
     selectedKey = collection.getFirstKey();
     // loop over tabs until we find one that isn't disabled and select that
-    while ((disabledKeys.has(selectedKey) || collection.getItem(selectedKey)?.props?.isDisabled) && selectedKey !== collection.getLastKey()) {
+    while (selectedKey != null && (disabledKeys.has(selectedKey) || collection.getItem(selectedKey)?.props?.isDisabled) && selectedKey !== collection.getLastKey()) {
       selectedKey = collection.getKeyAfter(selectedKey);
     }
     // if this check is true, then every item is disabled, it makes more sense to default to the first key than the last
-    if ((disabledKeys.has(selectedKey) || collection.getItem(selectedKey)?.props?.isDisabled) && selectedKey === collection.getLastKey()) {
+    if (selectedKey != null && (disabledKeys.has(selectedKey) || collection.getItem(selectedKey)?.props?.isDisabled) && selectedKey === collection.getLastKey()) {
       selectedKey = collection.getFirstKey();
     }
   }

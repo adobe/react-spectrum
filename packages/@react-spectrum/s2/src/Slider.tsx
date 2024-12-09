@@ -23,7 +23,7 @@ import {createContext, forwardRef, ReactNode, RefObject, useContext, useRef} fro
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel} from './Field';
 import {FocusableRef, FocusableRefValue, InputDOMProps, SpectrumLabelableProps} from '@react-types/shared';
-import {focusRing, size, style} from '../style' with {type: 'macro'};
+import {focusRing, style} from '../style' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
 import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
@@ -148,7 +148,6 @@ const output = style({
 });
 
 export let track = style({
-  ...fieldInput(),
   gridArea: 'track',
   position: 'relative',
   width: 'full',
@@ -165,9 +164,9 @@ export let track = style({
 export let thumbContainer = style({
   size: {
     size: {
-      S: size(18),
+      S: 18,
       M: 20,
-      L: size(22),
+      L: 22,
       XL: 24
     }
   },
@@ -182,18 +181,18 @@ export let thumbHitArea = style({
     thumbStyle: {
       default: {
         size: {
-          S: size(18),
+          S: 18,
           M: 20,
-          L: size(22),
+          L: 22,
           XL: 24
         }
       },
       precise: {
         size: {
           S: 20,
-          M: size(22),
+          M: 22,
           L: 24,
-          XL: size(26)
+          XL: 26
         }
       }
     }
@@ -212,31 +211,31 @@ export let thumb = style({
     thumbStyle: {
       default: {
         size: {
-          S: size(18),
+          S: 18,
           M: 20,
-          L: size(22),
+          L: 22,
           XL: 24
         }
       },
-      precise: size(6)
+      precise: 6
     }
   },
   height: {
     thumbStyle: {
       default: {
         size: {
-          S: size(18),
+          S: 18,
           M: 20,
-          L: size(22),
+          L: 22,
           XL: 24
         }
       },
       precise: {
         size: {
           S: 20,
-          M: size(22),
+          M: 22,
           L: 24,
-          XL: size(26)
+          XL: 26
         }
       }
     }
@@ -379,7 +378,7 @@ export function SliderBase<T extends number | number[]>(props: SliderBaseProps<T
               </FieldLabel>
               {labelPosition === 'top' && outputValue}
             </div>
-            <div className={style({gridArea: 'input', display: 'inline-flex', alignItems: 'center', gap: {default: 16, size: {L: 20, XL: 24}}})({size})}>
+            <div className={style({...fieldInput(), display: 'inline-flex', alignItems: 'center', gap: {default: 16, size: {L: 20, XL: 24}}})({size})}>
               {props.children}
               {labelPosition === 'side' && outputValue}
             </div>
@@ -390,7 +389,7 @@ export function SliderBase<T extends number | number[]>(props: SliderBaseProps<T
   );
 }
 
-function Slider(props: SliderProps, ref: FocusableRef<HTMLDivElement>) {
+export const Slider = /*#__PURE__*/ forwardRef(function Slider(props: SliderProps, ref: FocusableRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SliderContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);
@@ -416,7 +415,7 @@ function Slider(props: SliderProps, ref: FocusableRef<HTMLDivElement>) {
         className={track({size, labelPosition, isInForm: !!formContext})}>
         {({state, isDisabled}) => {
 
-          fillOffset = fillOffset !== undefined ? clamp(fillOffset, state.getThumbMinValue(0), state.getThumbMaxValue(0)) : 0;
+          fillOffset = fillOffset !== undefined ? clamp(fillOffset, state.getThumbMinValue(0), state.getThumbMaxValue(0)) : state.getThumbMinValue(0);
 
           let fillWidth = state.getThumbPercent(0) - state.getValuePercent(fillOffset);
           let isRightOfOffset = fillWidth > 0;
@@ -444,7 +443,4 @@ function Slider(props: SliderProps, ref: FocusableRef<HTMLDivElement>) {
       </SliderTrack>
     </SliderBase>
   );
-}
-
-let _Slider = /*#__PURE__*/ forwardRef(Slider);
-export {_Slider as Slider};
+});

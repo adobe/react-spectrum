@@ -15,7 +15,7 @@ import {useEffect, useRef} from 'react';
 import {useEffectEvent} from './useEffectEvent';
 
 export function useFormReset<T>(
-  ref: RefObject<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null>,
+  ref: RefObject<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null> | undefined,
   initialValue: T,
   onReset: (value: T) => void
 ) {

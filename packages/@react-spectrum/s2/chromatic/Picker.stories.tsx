@@ -26,44 +26,45 @@ const meta: Meta<typeof Picker<any>> = {
 
 export default meta;
 
-export const Default = Example as StoryObj;
+export const Default = {
+  ...Example,
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowDown}');
+    let body = canvasElement.ownerDocument.body;
+    await within(body).findByRole('listbox');
+  }
+} as StoryObj;
 
-Default.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  await userEvent.keyboard('{ArrowDown}');
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('listbox');
+export const WithSections = {
+  ...Sections,
+  play: async (context) => await Default.play!(context)
 };
 
-export const WithSections = {...Sections};
+export const DynamicExample = {
+  ...Dynamic,
+  name: 'Dynamic',
+  play: async (context) => await Default.play!(context)
+} as StoryObj;
 
-WithSections.play = async (context) => {
-  await Default.play!(context);
+export const Icons = {
+  ...WithIcons,
+  name: 'With Icons',
+  play: async (context) => await Default.play!(context)
+} as StoryObj;
+
+export const WithCustomWidth = {
+  ...CustomWidth,
+  play: async (context) => await Default.play!(context)
+} as StoryObj;
+
+export const ContextualHelp = {
+  ...ContextualHelpExample,
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('{Enter}');
+    let body = canvasElement.ownerDocument.body;
+    await within(body).findByRole('dialog');
+  }
 };
 
-export const DynamicExample = {...Dynamic, name: 'Dynamic'} as StoryObj;
-
-DynamicExample.play = async (context) => {
-  await Default.play!(context);
-};
-
-export const Icons = {...WithIcons, name: 'With Icons'} as StoryObj;
-
-Icons.play = async (context) => {
-  await Default.play!(context);
-};
-
-export const WithCustomWidth = CustomWidth as StoryObj;
-
-WithCustomWidth.play = async (context) => {
-  await Default.play!(context);
-};
-
-export const ContextualHelp = {...ContextualHelpExample} as StoryObj;
-
-ContextualHelp.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  await userEvent.keyboard('{Enter}');
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('dialog');
-};

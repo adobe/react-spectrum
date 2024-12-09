@@ -60,7 +60,11 @@ export interface MenuTesterOpts extends UserOpts, BaseTesterOpts {
   /**
    * The trigger element for the menu.
    */
-  root: HTMLElement
+  root: HTMLElement,
+  /**
+   * Whether the current menu is a submenu.
+   */
+  isSubmenu?: boolean
 }
 
 export interface SelectTesterOpts extends UserOpts, BaseTesterOpts {

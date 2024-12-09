@@ -15,9 +15,9 @@ import React, {useRef} from 'react';
 import {useOverlayPosition} from '../';
 
 function Example({triggerTop = 250, ...props}) {
-  let targetRef = useRef(undefined);
-  let containerRef = useRef(undefined);
-  let overlayRef = useRef(undefined);
+  let targetRef = useRef(null);
+  let containerRef = useRef(null);
+  let overlayRef = useRef(null);
   let {overlayProps, placement, arrowProps} = useOverlayPosition({targetRef, overlayRef, arrowSize: 8, ...props});
   let style = {width: 300, height: 200, ...overlayProps.style};
   return (
@@ -33,9 +33,11 @@ function Example({triggerTop = 250, ...props}) {
   );
 }
 
-// @ts-ignore
+let original = window.HTMLElement.prototype.getBoundingClientRect;
 HTMLElement.prototype.getBoundingClientRect = function () {
+  let rect = original.apply(this);
   return {
+    ...rect,
     left: parseInt(this.style.left, 10) || 0,
     top: parseInt(this.style.top, 10) || 0,
     right: parseInt(this.style.right, 10) || 0,
@@ -213,14 +215,14 @@ describe('useOverlayPosition', function () {
 });
 
 describe('useOverlayPosition with positioned container', () => {
-  let stubs = [];
+  let stubs: jest.SpyInstance<any, any>[] = [];
   let realGetBoundingClientRect = window.HTMLElement.prototype.getBoundingClientRect;
   let realGetComputedStyle = window.getComputedStyle;
   beforeEach(() => {
     Object.defineProperty(HTMLElement.prototype, 'clientHeight', {configurable: true, value: 768});
     Object.defineProperty(HTMLElement.prototype, 'clientWidth', {configurable: true, value: 500});
     stubs.push(
-      jest.spyOn(window.HTMLElement.prototype, 'offsetParent', 'get').mockImplementation(function () {
+      jest.spyOn(window.HTMLElement.prototype, 'offsetParent', 'get').mockImplementation(function (this: HTMLElement) {
         // Make sure container is is the offsetParent of overlay
         if (this.attributes.getNamedItem('data-testid')?.value === 'overlay') {
           return document.querySelector('[data-testid="container"]');
@@ -228,10 +230,12 @@ describe('useOverlayPosition with positioned container', () => {
           return null;
         }
       }),
-      jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+      jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
         if (this.attributes.getNamedItem('data-testid')?.value === 'container') {
           // Say, overlay is positioned somewhere
+          let real = realGetBoundingClientRect.apply(this);
           return {
+            ...real,
             top: 150,
             left: 0,
             width: 400,

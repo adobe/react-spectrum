@@ -15,9 +15,8 @@
   "dependencies": {
     "@adobe/react-spectrum": "^3.35.0",
     "@react-aria/optimize-locales-plugin": "^1.1.0",
-    "@react-spectrum/color": "^3.0.0-beta.33",
     "@react-spectrum/provider": "^3.9.7",
-    "@react-spectrum/toast": "^3.0.0-beta.11",
+    "@react-spectrum/toast": "^3.0.0-beta.16",
     "@spectrum-icons/illustrations": "^3.6.12",
     "@spectrum-icons/workflow": "^4.2.12",
     "glob": "^10.3.12",

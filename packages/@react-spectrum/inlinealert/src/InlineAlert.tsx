@@ -48,7 +48,11 @@ let ICONS = {
   negative: AlertMedium
 };
 
-function InlineAlert(props: SpectrumInlineAlertProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Inline alerts display a non-modal message associated with objects in a view.
+ * These are often used in form validation, providing a place to aggregate feedback related to multiple fields.
+ */
+export const InlineAlert = React.forwardRef(function InlineAlert(props: SpectrumInlineAlertProps, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {
     children,
@@ -105,11 +109,4 @@ function InlineAlert(props: SpectrumInlineAlertProps, ref: DOMRef<HTMLDivElement
       </div>
     </FocusRing>
   );
-}
-
-/**
- * Inline alerts display a non-modal message associated with objects in a view.
- * These are often used in form validation, providing a place to aggregate feedback related to multiple fields.
- */
-const _InlineAlert = React.forwardRef(InlineAlert);
-export {_InlineAlert as InlineAlert};
+});

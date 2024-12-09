@@ -60,7 +60,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
 
   if (isSubmenuTrigger) {
-    isUnavailable = submenuTriggerContext.isUnavailable;
+    isUnavailable = submenuTriggerContext!.isUnavailable;
   }
 
   let isDisabled = state.disabledKeys.has(key);

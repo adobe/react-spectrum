@@ -28,6 +28,10 @@ const meta: Meta<typeof Switch> = {
 
 export default meta;
 
-export const Example = (args: any) => <Switch {...args}>Wi-Fi</Switch>;
+export const Example = {
+  render: (args: any) => <Switch {...args}>Wi-Fi</Switch>
+};
 
-export const LongLabel = (args: any) => (<Switch {...args} styles={style({maxWidth: 128})}>Switch with very long label so we can see wrapping</Switch>);
+export const LongLabel = {
+  render: (args: any) => (<Switch {...args} styles={style({maxWidth: 128})}>Switch with very long label so we can see wrapping</Switch>)
+};

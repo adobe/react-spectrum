@@ -155,6 +155,45 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(input1);
     });
 
+    it('should only skip content editable which are false', async function () {
+      let {getByTestId} = render(
+        <FocusScope contain>
+          <input data-testid="input1" />
+          <span contentEditable data-testid="input2" />
+          <span contentEditable="false" />
+          <span contentEditable={false} />
+          <span contentEditable="plaintext-only" data-testid="input3" />
+          <input data-testid="input4" />
+        </FocusScope>
+      );
+
+      let input1 = getByTestId('input1');
+      let input2 = getByTestId('input2');
+      let input3 = getByTestId('input3');
+      let input4 = getByTestId('input4');
+
+      act(() => {input1.focus();});
+      expect(document.activeElement).toBe(input1);
+
+      await user.tab();
+      expect(document.activeElement).toBe(input2);
+
+      await user.tab();
+      expect(document.activeElement).toBe(input3);
+
+      await user.tab();
+      expect(document.activeElement).toBe(input4);
+
+      await user.tab({shift: true});
+      expect(document.activeElement).toBe(input3);
+
+      await user.tab({shift: true});
+      expect(document.activeElement).toBe(input2);
+
+      await user.tab({shift: true});
+      expect(document.activeElement).toBe(input1);
+    });
+
     it('should do nothing if a modifier key is pressed', function () {
       let {getByTestId} = render(
         <FocusScope contain>

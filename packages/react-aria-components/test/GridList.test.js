@@ -14,11 +14,15 @@ import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@rea
 import {
   Button,
   Checkbox,
+  Dialog,
+  DialogTrigger,
   DropIndicator,
   GridList,
   GridListContext,
   GridListItem,
+  Label,
   UNSTABLE_ListLayout as ListLayout,
+  Modal,
   RouterProvider,
   Tag,
   TagGroup,
@@ -463,6 +467,29 @@ describe('GridList', () => {
 
     await user.tab();
     expect(document.activeElement).toBe(document.body);
+  });
+
+  it('should not propagate the checkbox context from selection into other cells', async () => {
+    let tree = render(
+      <GridList aria-label="Test" selectionMode="multiple">
+        <GridListItem id="dialog" textValue="dialog">
+          <DialogTrigger>
+            <Button>Open</Button>
+            <Modal>
+              <Dialog>
+                <Checkbox><Label>Agree</Label></Checkbox>
+              </Dialog>
+            </Modal>
+          </DialogTrigger>
+        </GridListItem>
+        <GridListItem id="dog" textValue="Dog">Dog</GridListItem>
+        <GridListItem id="kangaroo">Kangaroo</GridListItem>
+      </GridList>
+    );
+
+    await user.click(tree.getByRole('button'));
+    let checkbox = tree.getByRole('checkbox');
+    expect(checkbox).toBeInTheDocument();
   });
 
   describe('drag and drop', () => {

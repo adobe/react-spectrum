@@ -10,8 +10,8 @@ import {useListData} from '@react-stately/data';
 let onSelectionChange = action('onSelectionChange');
 
 let itemProcessor = async (items, acceptedDragTypes) => {
-  let processedItems = [];
-  let text;
+  let processedItems: any[] = [];
+  let text = '';
   for (let item of items) {
     for (let type of acceptedDragTypes) {
       if (item.kind === 'text' && item.types.has(type)) {
@@ -33,16 +33,16 @@ let itemProcessor = async (items, acceptedDragTypes) => {
 let folderList1 = [
   {identifier: '1', type: 'file', name: 'Adobe Photoshop'},
   {identifier: '2', type: 'file', name: 'Adobe XD'},
-  {identifier: '3', type: 'folder', name: 'Documents',  childNodes: []},
+  {identifier: '3', type: 'folder', name: 'Documents',  childNodes: [] as any[]},
   {identifier: '4', type: 'file', name: 'Adobe InDesign'},
-  {identifier: '5', type: 'folder', name: 'Utilities',  childNodes: []},
+  {identifier: '5', type: 'folder', name: 'Utilities',  childNodes: [] as any[]},
   {identifier: '6', type: 'file', name: 'Adobe AfterEffects'}
 ];
 
 let folderList2 = [
-  {identifier: '7', type: 'folder', name: 'Pictures',  childNodes: []},
+  {identifier: '7', type: 'folder', name: 'Pictures',  childNodes: [] as any[]},
   {identifier: '8', type: 'file', name: 'Adobe Fresco'},
-  {identifier: '9', type: 'folder', name: 'Apps',  childNodes: []},
+  {identifier: '9', type: 'folder', name: 'Apps',  childNodes: [] as any[]},
   {identifier: '10', type: 'file', name: 'Adobe Illustrator'},
   {identifier: '11', type: 'file', name: 'Adobe Lightroom'},
   {identifier: '12', type: 'file', name: 'Adobe Dreamweaver'},
@@ -65,7 +65,7 @@ export function DragExampleUtilHandlers(props) {
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
-      let item = list.getItem(key);
+      let item = list.getItem(key)!;
       return {
         [`${item.type}`]: JSON.stringify(item),
         'text/plain': JSON.stringify(item)
@@ -102,7 +102,7 @@ export function ReorderExampleUtilHandlers(props) {
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
-      let item = list.getItem(key);
+      let item = list.getItem(key)!;
       return {
         [`${item.type}`]: JSON.stringify(item),
         'text/plain': JSON.stringify(item)
@@ -116,10 +116,10 @@ export function ReorderExampleUtilHandlers(props) {
       } = e;
       action('onReorder')(e);
 
-      let itemsToCopy = [];
+      let itemsToCopy: typeof folderList1 = [];
       if (dropOperation === 'copy') {
         for (let key of keys) {
-          let item = {...list.getItem(key)};
+          let item: typeof folderList1[0] = {...list.getItem(key)!};
           item.identifier = Math.random().toString(36).slice(2);
           itemsToCopy.push(item);
         }
@@ -170,7 +170,7 @@ export function ItemDropExampleUtilHandlers(props) {
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
-      let item = list.getItem(key);
+      let item = list.getItem(key)!;
       return {
         [`${item.type}`]: JSON.stringify(item),
         'text/plain': JSON.stringify(item)
@@ -230,7 +230,7 @@ export function RootDropExampleUtilHandlers(props) {
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
   let {dragAndDropHooks: table1Hooks} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
-      let item = list1.getItem(key);
+      let item = list1.getItem(key)!;
       return {
         [`${item.type}`]: JSON.stringify(item),
         'text/plain': JSON.stringify(item)
@@ -311,7 +311,7 @@ export function InsertExampleUtilHandlers(props) {
   let acceptedDragTypes = ['file', 'folder', 'text/plain'];
   let {dragAndDropHooks: table1Hooks} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
-      let item = list1.getItem(key);
+      let item = list1.getItem(key)!;
       return {
         [`${item.type}`]: JSON.stringify(item),
         'text/plain': JSON.stringify(item)
@@ -472,7 +472,7 @@ export function DragBetweenTablesComplex(props) {
   // table 1 should allow on item drops and external drops, but disallow reordering/internal drops
   let {dragAndDropHooks: dragAndDropHooksTable1} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
-      let item = list1.getItem(key);
+      let item = list1.getItem(key)!;
       return {
         [`${item.type}`]: JSON.stringify(item),
         'text/plain': JSON.stringify(item)
@@ -507,8 +507,8 @@ export function DragBetweenTablesComplex(props) {
       } = e;
       action('onItemDropTable1')(e);
       let processedItems = await itemProcessor(items, acceptedDragTypes);
-      let targetItem = list1.getItem(target.key);
-      list1.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
+      let targetItem = list1.getItem(target.key)!;
+      list1.update(target.key, {...targetItem, childNodes: [...(targetItem.childNodes || []), ...processedItems]});
 
       if (isInternal && dropOperation === 'move') {
         // TODO test this, perhaps it would be easier to also pass the draggedKeys to onItemDrop instead?
@@ -537,7 +537,7 @@ export function DragBetweenTablesComplex(props) {
   // table 2 should allow reordering, on folder drops, and on root drops
   let {dragAndDropHooks: dragAndDropHooksTable2} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
-      let item = list2.getItem(key);
+      let item = list2.getItem(key)!;
       let dragItem = {};
       let itemString = JSON.stringify(item);
       dragItem[`${item.type}`] = itemString;
@@ -569,10 +569,10 @@ export function DragBetweenTablesComplex(props) {
       } = e;
       action('onReorderTable2')(e);
 
-      let itemsToCopy = [];
+      let itemsToCopy: typeof folderList1 = [];
       if (dropOperation === 'copy') {
         for (let key of keys) {
-          let item = {...list2.getItem(key)};
+          let item: typeof folderList1[0] = {...list2.getItem(key)!};
           item.identifier = Math.random().toString(36).slice(2);
           itemsToCopy.push(item);
         }
@@ -606,8 +606,8 @@ export function DragBetweenTablesComplex(props) {
       } = e;
       action('onItemDropTable2')(e);
       let processedItems = await itemProcessor(items, acceptedDragTypes);
-      let targetItem = list2.getItem(target.key);
-      list2.update(target.key, {...targetItem, childNodes: [...targetItem.childNodes, ...processedItems]});
+      let targetItem = list2.getItem(target.key)!;
+      list2.update(target.key, {...targetItem, childNodes: [...(targetItem.childNodes || []), ...processedItems]});
 
       if (isInternal && dropOperation === 'move') {
         let keysToRemove = processedItems.map(item => item.identifier);
@@ -623,7 +623,7 @@ export function DragBetweenTablesComplex(props) {
       } = e;
       action('onDragEndTable2')(e);
       if (dropOperation === 'move' && !isInternal) {
-        let keysToRemove = [...keys].filter(key => list2.getItem(key).type !== 'unique_type');
+        let keysToRemove = [...keys].filter(key => list2.getItem(key)!.type !== 'unique_type');
         list2.remove(...keysToRemove);
       }
     },
@@ -681,9 +681,9 @@ export function DragBetweenTablesOverride(props) {
 
   let list2 = useListData({
     initialItems: [
-      {identifier: '7', type: 'folder', name: 'Pictures',  childNodes: []},
+      {identifier: '7', type: 'folder', name: 'Pictures',  childNodes: [] as any},
       {identifier: '8', type: 'file', name: 'Adobe Fresco'},
-      {identifier: '9', type: 'folder', name: 'Apps',  childNodes: []},
+      {identifier: '9', type: 'folder', name: 'Apps',  childNodes: [] as any},
       {identifier: '10', type: 'file', name: 'Adobe Illustrator'},
       {identifier: '11', type: 'file', name: 'Adobe Lightroom'},
       {identifier: '12', type: 'file', name: 'Adobe Dreamweaver'}
@@ -693,7 +693,7 @@ export function DragBetweenTablesOverride(props) {
 
   let {dragAndDropHooks: dragAndDropHooksTable1} = useDragAndDrop({
     getItems: (keys) => [...keys].map(key => {
-      let item = list1.getItem(key);
+      let item = list1.getItem(key)!;
       let dragType = `table-1-adobe-${item.type}`;
       return {
         [`${dragType}`]: JSON.stringify(item),
@@ -721,7 +721,7 @@ export function DragBetweenTablesOverride(props) {
       let {
         items
       } = e;
-      let itemsToAdd = [];
+      let itemsToAdd: typeof folderList1 = [];
       let text;
       for (let item of items) {
         if (item.kind === 'text') {

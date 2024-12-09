@@ -18,15 +18,24 @@ import {TreeState} from '@react-stately/tree';
 import {useButton} from '@react-aria/button';
 import {useSelectableItem, useSelectableList} from '@react-aria/selection';
 
+/**
+ * @deprecated Use useDisclosure from `@react-aria/disclosure` instead.
+ */
 export interface AccordionAria {
   /** Props for the accordion container element. */
   accordionProps: DOMAttributes
 }
 
+/**
+ * @deprecated Use useDisclosure from `@react-aria/disclosure` instead.
+ */
 export interface AccordionItemAriaProps<T> {
   item: Node<T>
 }
 
+/**
+ * @deprecated Use useDisclosure from `@react-aria/disclosure` instead.
+ */
 export interface AccordionItemAria {
   /** Props for the accordion item button. */
   buttonProps: ButtonHTMLAttributes<HTMLElement>,

@@ -111,16 +111,7 @@ export class TableTester {
         await pressElement(this.user, cell, interactionType);
       }
     }
-
-    // Handle cases where the table may transition in response to the row selection/deselection
-    await act(async () => {
-      if (this._advanceTimer == null) {
-        throw new Error('No advanceTimers provided for table transition.');
-      }
-
-      await this._advanceTimer(200);
-    });
-  }
+  };
 
   /**
    * Toggles the sort order for the specified table column. Defaults to using the interaction type set on the table tester.
@@ -192,12 +183,12 @@ export class TableTester {
       }
 
       // Handle cases where the table may transition in response to the row selection/deselection
-      await act(async () => {
-        if (this._advanceTimer == null) {
-          throw new Error('No advanceTimers provided for table transition.');
-        }
+      if (!this._advanceTimer) {
+        throw new Error('No advanceTimers provided for table transition.');
+      }
 
-        await this._advanceTimer(200);
+      await act(async () => {
+        await this._advanceTimer?.(200);
       });
 
       await waitFor(() => {

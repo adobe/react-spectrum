@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {ChildView, ReusableView, RootView} from './ReusableView';
 import {Collection, Key} from '@react-types/shared';
 import {InvalidationContext, Mutable, VirtualizerDelegate, VirtualizerRenderOptions} from './types';
 import {isSetEqual} from './utils';
@@ -18,8 +19,13 @@ import {LayoutInfo} from './LayoutInfo';
 import {OverscanManager} from './OverscanManager';
 import {Point} from './Point';
 import {Rect} from './Rect';
-import {ReusableView} from './ReusableView';
 import {Size} from './Size';
+
+interface VirtualizerOptions<T extends object, V> {
+  delegate: VirtualizerDelegate<T, V>,
+  collection: Collection<T>,
+  layout: Layout<T>
+}
 
 /**
  * The Virtualizer class renders a scrollable collection of data using customizable layouts.
@@ -55,23 +61,25 @@ export class Virtualizer<T extends object, V> {
   /** The set of persisted keys that are always present in the DOM, even if not currently in view. */
   readonly persistedKeys: Set<Key>;
 
-  private _visibleViews: Map<Key, ReusableView<T, V>>;
+  private _visibleViews: Map<Key, ChildView<T, V>>;
   private _renderedContent: WeakMap<T, V>;
-  private _rootView: ReusableView<T, V>;
+  private _rootView: RootView<T, V>;
   private _isScrolling: boolean;
-  private _invalidationContext: InvalidationContext | null;
+  private _invalidationContext: InvalidationContext;
   private _overscanManager: OverscanManager;
 
-  constructor(delegate: VirtualizerDelegate<T, V>) {
-    this.delegate = delegate;
+  constructor(options: VirtualizerOptions<T, V>) {
+    this.delegate = options.delegate;
+    this.collection = options.collection;
+    this.layout = options.layout;
     this.contentSize = new Size;
     this.visibleRect = new Rect;
     this.persistedKeys = new Set();
     this._visibleViews = new Map();
     this._renderedContent = new WeakMap();
-    this._rootView = new ReusableView(this);
+    this._rootView = new RootView(this);
     this._isScrolling = false;
-    this._invalidationContext = null;
+    this._invalidationContext = {};
     this._overscanManager = new OverscanManager();
   }
 
@@ -86,7 +94,7 @@ export class Virtualizer<T extends object, V> {
     for (let k of this.persistedKeys) {
       while (k != null) {
         let layoutInfo = this.layout.getLayoutInfo(k);
-        if (!layoutInfo) {
+        if (!layoutInfo || layoutInfo.parentKey == null) {
           break;
         }
 
@@ -105,7 +113,7 @@ export class Virtualizer<T extends object, V> {
     return layoutInfo.parentKey != null ? this._visibleViews.get(layoutInfo.parentKey) : this._rootView;
   }
 
-  private getReusableView(layoutInfo: LayoutInfo): ReusableView<T, V> {
+  private getReusableView(layoutInfo: LayoutInfo): ChildView<T, V> {
     let parentView = this.getParentView(layoutInfo)!;
     let view = parentView.getReusableView(layoutInfo.type);
     view.layoutInfo = layoutInfo;
@@ -114,13 +122,15 @@ export class Virtualizer<T extends object, V> {
   }
 
   private _renderView(reusableView: ReusableView<T, V>) {
-    let {type, key, content} = reusableView.layoutInfo;
-    reusableView.content = content || this.collection.getItem(key);
-    reusableView.rendered = this._renderContent(type, reusableView.content);
+    if (reusableView.layoutInfo) {
+      let {type, key, content} = reusableView.layoutInfo;
+      reusableView.content = content || this.collection.getItem(key);
+      reusableView.rendered = this._renderContent(type, reusableView.content);
+    }
   }
 
-  private _renderContent(type: string, content: T) {
-    let cached = this._renderedContent.get(content);
+  private _renderContent(type: string, content: T | null) {
+    let cached = content != null ? this._renderedContent.get(content) : null;
     if (cached != null) {
       return cached;
     }
@@ -196,7 +206,7 @@ export class Virtualizer<T extends object, V> {
   private updateSubviews() {
     let visibleLayoutInfos = this.getVisibleLayoutInfos();
 
-    let removed = new Set<ReusableView<T, V>>();
+    let removed = new Set<ChildView<T, V>>();
     for (let [key, view] of this._visibleViews) {
       let layoutInfo = visibleLayoutInfos.get(key);
       // If a view's parent changed, treat it as a delete and re-create in the new parent.
@@ -219,7 +229,9 @@ export class Virtualizer<T extends object, V> {
 
         let item = this.collection.getItem(layoutInfo.key);
         if (view.content !== item) {
-          this._renderedContent.delete(view.content);
+          if (view.content != null) {
+            this._renderedContent.delete(view.content);
+          }
           this._renderView(view);
         }
       }
@@ -261,7 +273,7 @@ export class Virtualizer<T extends object, V> {
       needsLayout = true;
     }
 
-    if (opts.layout !== this.layout) {
+    if (opts.layout !== this.layout || this.layout.virtualizer !== this) {
       if (this.layout) {
         this.layout.virtualizer = null;
       }
