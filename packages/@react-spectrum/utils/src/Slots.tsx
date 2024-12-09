@@ -61,16 +61,12 @@ export function ClearSlots(props) {
 
   const emptyObj = useMemo(() => ({}), []);
 
-  const content = useMemo(() => {
-    let content = children;
-    if (React.Children.toArray(children).length <= 1) {
-      if (typeof children === 'function') { // need to know if the node is a string or something else that react can render that doesn't get props
-        content = React.cloneElement(React.Children.only(children), otherProps);
-      }
+  let content = children;
+  if (React.Children.toArray(children).length <= 1) {
+    if (typeof children === 'function') { // need to know if the node is a string or something else that react can render that doesn't get props
+      content = React.cloneElement(React.Children.only(children), otherProps);
     }
-
-    return content;
-  }, [children, otherProps]);
+  }
 
   return (
     <SlotContext.Provider value={emptyObj}>
