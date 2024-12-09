@@ -14,7 +14,6 @@ import {colorScheme} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
 import {DOMRef} from '@react-types/shared';
 import {forwardRef, MutableRefObject, useCallback, useContext} from 'react';
-import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {ModalOverlay, ModalOverlayProps, Modal as RACModal, useLocale} from 'react-aria-components';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
@@ -28,28 +27,6 @@ interface ModalProps extends ModalOverlayProps {
   size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover'
 }
 
-const fade = keyframes(`
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-`);
-
-const fadeAndSlide = keyframes(`
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`);
-
 const modalOverlayStyles = style({
   ...colorScheme(),
   position: 'fixed',
@@ -59,17 +36,14 @@ const modalOverlayStyles = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  animation: {
-    isEntering: fade,
-    isExiting: fade
+  opacity: {
+    isEntering: 0,
+    isExiting: 0
   },
-  animationDuration: {
-    isEntering: 250,
+  transition: 'opacity',
+  transitionDuration: {
+    default: 250,
     isExiting: 130
-  },
-  animationDirection: {
-    isEntering: 'normal',
-    isExiting: 'reverse'
   }
 });
 
@@ -141,23 +115,22 @@ export const Modal = forwardRef(function Modal(props: ModalProps, ref: DOMRef<HT
             value: 'layer-2'
           },
           backgroundColor: '--s2-container-bg',
-          animation: {
-            isEntering: fadeAndSlide,
-            isExiting: fade
-          },
-          animationDuration: {
-            isEntering: 250,
-            isExiting: 130
-          },
-          animationDelay: {
-            isEntering: 160,
+          opacity: {
+            isEntering: 0,
             isExiting: 0
           },
-          animationDirection: {
-            isEntering: 'normal',
-            isExiting: 'reverse'
+          translateY: {
+            isEntering: 20
           },
-          animationFillMode: 'both',
+          transition: '[opacity, translate]',
+          transitionDuration: {
+            default: 250,
+            isExiting: 130
+          },
+          transitionDelay: {
+            default: 160,
+            isExiting: 0
+          },
           // Transparent outline for WHCM.
           outlineStyle: 'solid',
           outlineWidth: 1,
