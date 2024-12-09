@@ -41,7 +41,7 @@ interface ProgressBarStyleProps {
   /**
    * The static color style to apply. Useful when the button appears over a color background.
    */
-  staticColor?: 'white' | 'black',
+  staticColor?: 'white' | 'black' | 'auto',
   /**
    * The label's overall position relative to the element it is labeling.
    * @default 'top'
@@ -135,21 +135,13 @@ const trackStyles = style({
   }
 });
 
-const fill = style<ProgressBarStyleProps>({
+const fill = style<ProgressBarStyleProps & {isStaticColor: boolean}>({
   height: 'full',
   borderStyle: 'none',
   borderRadius: 'full',
   backgroundColor: {
     default: 'accent',
-    staticColor: {
-      white: {
-        default: 'transparent-white-900'
-      },
-      // TODO: Is there a black static color in S2?
-      black: {
-        default: 'transparent-black-900'
-      }
-    },
+    isStaticColor: 'transparent-overlay-900',
     forcedColors: 'ButtonText'
   },
   width: {
@@ -190,20 +182,21 @@ export const ProgressBar = /*#__PURE__*/ forwardRef(function ProgressBar(props: 
   } = props;
   let domRef = useDOMRef(ref);
   let {direction} = useLocale();
+  let isStaticColor = !!staticColor;
 
   return (
     <AriaProgressBar
       {...props}
       ref={domRef}
       style={UNSAFE_style}
-      className={UNSAFE_className + wrapper({...props, size, labelPosition}, props.styles)}>
+      className={UNSAFE_className + wrapper({...props, size, labelPosition, staticColor}, props.styles)}>
       {({percentage, valueText}) => (
         <>
           {label && <FieldLabel size={size} labelAlign="start" labelPosition={labelPosition} staticColor={staticColor}>{label}</FieldLabel>}
-          {label && !isIndeterminate && <span className={valueStyles({size, labelAlign: 'end', staticColor})}>{valueText}</span>}
-          <div className={trackStyles({...props})}>
+          {label && !isIndeterminate && <span className={valueStyles({size, labelAlign: 'end', isStaticColor})}>{valueText}</span>}
+          <div className={trackStyles({isStaticColor, size})}>
             <div
-              className={mergeStyles(fill({...props, staticColor}), (isIndeterminate ? indeterminateAnimation({direction}) : null))}
+              className={mergeStyles(fill({...props, isStaticColor}), (isIndeterminate ? indeterminateAnimation({direction}) : null))}
               style={{width: isIndeterminate ? undefined : percentage + '%'}} />
           </div>
         </>

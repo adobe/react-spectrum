@@ -37,7 +37,7 @@ export const Example: Story = {
   argTypes: {
     staticColor: {
       control: 'select',
-      options: [undefined, 'white', 'black']
+      options: [undefined, 'white', 'black', 'auto']
     },
     value: {
       control: {

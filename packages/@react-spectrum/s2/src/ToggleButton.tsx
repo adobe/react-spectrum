@@ -65,6 +65,7 @@ export const ToggleButton = forwardRef(function ToggleButton(props: ToggleButton
       className={renderProps => (props.UNSAFE_className || '') + btnStyles({
         ...renderProps,
         staticColor,
+        isStaticColor: !!staticColor,
         size,
         isQuiet,
         isEmphasized,

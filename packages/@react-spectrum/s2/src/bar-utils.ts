@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {centerPadding, fieldInput} from './style-utils' with {type: 'macro'};
+import {centerPadding, fieldInput, staticColor} from './style-utils' with {type: 'macro'};
 
 export const bar = () => ({
+  ...staticColor(),
   position: 'relative',
   display: 'grid',
   gridTemplateColumns: {
@@ -64,15 +65,7 @@ export const track = () => ({
   borderRadius: 'full',
   backgroundColor: {
     default: 'gray-300',
-    staticColor: {
-      white: {
-        default: 'transparent-white-100'
-      },
-      // TODO: Is there a black static color in S2?
-      black: {
-        default: 'transparent-black-400'
-      }
-    },
+    isStaticColor: 'transparent-overlay-300',
     forcedColors: 'ButtonFace'
   },
   outlineWidth: {

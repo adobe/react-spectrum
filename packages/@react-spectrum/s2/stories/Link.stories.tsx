@@ -40,7 +40,7 @@ export const Inline = (args: any) => (
       font: 'body',
       color: {
         default: 'body',
-        staticColor: {white: 'white', black: 'black'}
+        staticColor: {white: 'white', black: 'black', auto: 'auto'}
       }
     })({staticColor: args.staticColor})}>
     Checkbox groups should use <Link {...args}>help text</Link> for error messaging and descriptions. Descriptions are valuable for giving context.
