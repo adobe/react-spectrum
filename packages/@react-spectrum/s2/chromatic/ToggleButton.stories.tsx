@@ -12,7 +12,7 @@
 
 import {categorizeArgTypes, StaticColorDecorator, StaticColorProvider} from '../stories/utils';
 import {generatePowerset} from '@react-spectrum/story-utils';
-import type {Meta, StoryFn} from '@storybook/react';
+import type {Meta} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {shortName} from './utils';
 import {style} from '../style' with { type: 'macro' };
@@ -87,12 +87,12 @@ export const IconOnly = {
   }
 };
 
-export const Truncate: StoryFn<typeof ToggleButton> = (args) => {
-  return (
+export const Truncate = {
+  render: (args) => (
     <div style={{display: 'flex', gap: 8, width: 160}}>
       <ToggleButton aria-label="Press me" {...args}><NewIcon /></ToggleButton>
       <ToggleButton {...args}>Press me</ToggleButton>
       <ToggleButton {...args}><NewIcon /><Text>Press me</Text></ToggleButton>
     </div>
-  );
+  )
 };

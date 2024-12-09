@@ -23,8 +23,9 @@ const meta: Meta<typeof ColorWheel> = {
 
 export default meta;
 
-export const Example = (args: any) => <ColorWheel {...args} onChange={undefined} />;
-
-Example.args = {
-  defaultValue: 'hsl(30, 100%, 50%)'
+export const Example = {
+  render: (args: any) => <ColorWheel {...args} onChange={undefined} />,
+  args: {
+    defaultValue: 'hsl(30, 100%, 50%)'
+  }
 };

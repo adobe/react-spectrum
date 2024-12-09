@@ -30,117 +30,127 @@ const meta: Meta<typeof TextField> = {
 
 export default meta;
 
-export const Example = (args: any) => <TextField {...args} />;
-
-Example.args = {
-  label: 'Name'
+export const Example = {
+  render: (args: any) => <TextField {...args} />,
+  args: {
+    label: 'Name'
+  }
 };
 
-export const Validation = (args: any) => (
-  <Form>
+export const Validation = {
+  render: (args: any) => (
+    <Form>
+      <TextField {...args} />
+      <Button type="submit" variant="primary">Submit</Button>
+    </Form>
+  ),
+  args: {
+    ...Example.args,
+    isRequired: true
+  }
+};
+
+export const ContextualHelpExample = {
+  render: (args: any) => (
     <TextField {...args} />
-    <Button type="submit" variant="primary">Submit</Button>
-  </Form>
-);
-
-Validation.args = {
-  ...Example.args,
-  isRequired: true
-};
-
-export const ContextualHelpExample = (args: any) => (
-  <TextField {...args} />
-);
-
-ContextualHelpExample.args = {
-  label: 'Segment',
-  contextualHelp: (
-    <ContextualHelp>
-      <Heading>What is a segment?</Heading>
-      <Content>
-        <Text>
-          Segments identify who your visitors are, what devices and services they
-          use, where they navigated from, and much more.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/administering/personalization/campaign-segmentation"
-          target="_blank">Learn more about segments</Link>
-      </Footer>
-    </ContextualHelp>
-  )
-};
-
-export const TextAreaExample = (args: any) => <TextArea {...args} />;
-TextAreaExample.args = {
-  label: 'Comment'
-};
-
-export const CustomWidth = (args: any) => <TextField {...args} styles={style({width: 384})} />;
-
-CustomWidth.args = {
-  label: 'Name'
-};
-CustomWidth.parameters = {
-  docs: {
-    disable: true
+  ),
+  args: {
+    label: 'Segment',
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>
+          <Text>
+            Segments identify who your visitors are, what devices and services they
+            use, where they navigated from, and much more.
+          </Text>
+        </Content>
+        <Footer>
+          <Link
+            isStandalone
+            href="https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/administering/personalization/campaign-segmentation"
+            target="_blank">Learn more about segments</Link>
+        </Footer>
+      </ContextualHelp>
+    )
   }
 };
 
-export const SmallWidth = (args: any) => <TextField {...args} styles={style({width: 48})} />;
-
-SmallWidth.args = {
-  label: 'Name'
-};
-SmallWidth.parameters = {
-  docs: {
-    disable: true
+export const TextAreaExample = {
+  render: (args: any) => <TextArea {...args} />,
+  args: {
+    label: 'Comment'
   }
 };
 
-export const UNSAFEWidth = (args: any) => <TextField {...args} UNSAFE_style={{width: 384}} />;
-
-UNSAFEWidth.args = {
-  label: 'Name'
-};
-UNSAFEWidth.parameters = {
-  docs: {
-    disable: true
+export const CustomWidth = {
+  render: (args: any) => <TextField {...args} styles={style({width: 384})} />,
+  args: {
+    label: 'Name'
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };
 
-export const InForm = (args: any) => (
-  <Form>
-    <TextField {...args} />
-    <Button type="submit" variant="primary">Submit</Button>
-  </Form>
-);
-
-InForm.args = {
-  ...Example.args,
-  isRequired: true
-};
-InForm.parameters = {
-  docs: {
-    disable: true
+export const SmallWidth = {
+  render: (args: any) => <TextField {...args} styles={style({width: 48})} />,
+  args: {
+    label: 'Name'
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };
 
-export const FormCustomWidth = (args: any) => (
-  <Form styles={style({width: 384})} labelPosition={args.labelPosition}>
-    <TextField {...args} />
-    <Button type="submit" variant="primary">Submit</Button>
-  </Form>
-);
-
-FormCustomWidth.args = {
-  ...Example.args,
-  isRequired: true
+export const UNSAFEWidth = {
+  render: (args: any) => <TextField {...args} UNSAFE_style={{width: 384}} />,
+  args: {
+    label: 'Name'
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
 };
-FormCustomWidth.parameters = {
-  docs: {
-    disable: true
+
+export const InForm = {
+  render: (args: any) => (
+    <Form>
+      <TextField {...args} />
+      <Button type="submit" variant="primary">Submit</Button>
+    </Form>
+  ),
+  args: {
+    ...Example.args,
+    isRequired: true
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
+};
+
+export const FormCustomWidth = {
+  render: (args: any) => (
+    <Form styles={style({width: 384})} labelPosition={args.labelPosition}>
+      <TextField {...args} />
+      <Button type="submit" variant="primary">Submit</Button>
+    </Form>
+  ),
+  args: {
+    ...Example.args,
+    isRequired: true
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };
