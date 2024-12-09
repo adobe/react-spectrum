@@ -566,6 +566,14 @@ The `isReadOnly` boolean prop makes the RangeCalendar's value immutable. Unlike 
 <MyRangeCalendar aria-label="Trip dates" value={{start: today(getLocalTimeZone()), end: today(getLocalTimeZone()).add({ weeks: 1 })}} isReadOnly />
 ```
 
+## Custom first day of week
+
+By default, the first day of the week is automatically set based on the current locale. This can be changed by setting the `firstDayOfWeek` prop to `'sun'`, `'mon'`, `'tue'`, `'wed'`, `'thu'`, `'fri'`, or `'sat'`.
+
+```tsx example
+<MyRangeCalendar aria-label="Trip dates" firstDayOfWeek="mon" />
+```
+
 ## Labeling
 
 An aria-label must be provided to the `RangeCalendar` for accessibility. If it is labeled by a separate element, an `aria-labelledby` prop must be provided using the `id` of the labeling element instead.

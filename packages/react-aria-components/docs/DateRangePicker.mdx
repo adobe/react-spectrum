@@ -326,7 +326,7 @@ interface MyDateRangePickerProps<T extends DateValue> extends DateRangePickerPro
   errorMessage?: string | ((validation: ValidationResult) => string)
 }
 
-function MyDateRangePicker<T extends DateValue>({label, description, errorMessage, ...props}: MyDateRangePickerProps<T>) {
+function MyDateRangePicker<T extends DateValue>({label, description, errorMessage, firstDayOfWeek, ...props}: MyDateRangePickerProps<T>) {
   return (
     <DateRangePicker {...props}>
       <Label>{label}</Label>
@@ -344,7 +344,7 @@ function MyDateRangePicker<T extends DateValue>({label, description, errorMessag
       <FieldError>{errorMessage}</FieldError>
       <Popover>
         <Dialog>
-          <RangeCalendar>
+          <RangeCalendar firstDayOfWeek={firstDayOfWeek}>
             <header>
               <Button slot="previous">◀</Button>
               <Heading />
@@ -798,6 +798,14 @@ By default, `DateRangePicker` displays times in either 12 or 24 hour hour format
   label="Date range"
   granularity="minute"
   hourCycle={24} />
+```
+
+### Custom first day of week
+
+By default, the first day of the week is automatically set based on the current locale. This can be changed by setting the `firstDayOfWeek` prop to `'sun'`, `'mon'`, `'tue'`, `'wed'`, `'thu'`, `'fri'`, or `'sat'`.
+
+```tsx example
+<MyDateRangePicker label="Date range" firstDayOfWeek="mon" />
 ```
 
 ## Props

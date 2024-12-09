@@ -106,7 +106,7 @@ function DatePicker(props) {
       {state.isOpen &&
         <Popover state={state} triggerRef={ref} placement="bottom start">
           <Dialog {...dialogProps}>
-            <Calendar {...calendarProps} />
+            <Calendar {...calendarProps} firstDayOfWeek={props.firstDayOfWeek} />
           </Dialog>
         </Popover>
       }
@@ -346,7 +346,7 @@ function Calendar(props) {
         <Button {...prevButtonProps}>&lt;</Button>
         <Button {...nextButtonProps}>&gt;</Button>
       </div>
-      <CalendarGrid state={state} />
+      <CalendarGrid state={state} firstDayOfWeek={props.firstDayOfWeek} />
     </div>
   );
 }
@@ -689,4 +689,12 @@ By default, `useDatePicker` displays times in either 12 or 24 hour hour format d
   label="Appointment time"
   granularity="minute"
   hourCycle={24} />
+```
+
+### Custom first day of week
+
+By default, the first day of the week is automatically set based on the current locale. This can be changed by setting the `firstDayOfWeek` prop to `'sun'`, `'mon'`, `'tue'`, `'wed'`, `'thu'`, `'fri'`, or `'sat'`.
+
+```tsx example
+<DatePicker label="Appointment time" firstDayOfWeek="mon" />
 ```
