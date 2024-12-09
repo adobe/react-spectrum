@@ -457,7 +457,7 @@ describe('ComboBox', function () {
         expect(comboboxTester.listbox).toBeFalsy();
         await comboboxTester.open();
 
-        expect(comboboxTester.listbox).toBeTruthy();
+        expect(comboboxTester.listbox).toBeInTheDocument();
         expect(document.activeElement).toBe(comboboxTester.combobox);
 
         await user.click(comboboxTester.trigger);
@@ -494,7 +494,7 @@ describe('ComboBox', function () {
         comboboxTester.setInteractionType('touch');
         await comboboxTester.open();
         expect(document.activeElement).toBe(comboboxTester.combobox);
-        expect(comboboxTester.listbox).toBeTruthy();
+        expect(comboboxTester.listbox).toBeInTheDocument();
 
         let button = comboboxTester.trigger;
         fireEvent.touchStart(button, {targetTouches: [{identifier: 1}]});

@@ -112,15 +112,15 @@ describe('MenuTrigger', function () {
     act(() => {jest.runAllTimers();});
 
     let menu = menuTester.menu;
-    expect(menu).toBeTruthy();
+    expect(menu).toBeInTheDocument();
     expect(menu).toHaveAttribute('aria-labelledby', triggerButton.id);
 
     let menuItem1 = within(menu).getByText('Foo');
     let menuItem2 = within(menu).getByText('Bar');
     let menuItem3 = within(menu).getByText('Baz');
-    expect(menuItem1).toBeTruthy();
-    expect(menuItem2).toBeTruthy();
-    expect(menuItem3).toBeTruthy();
+    expect(menuItem1).toBeInTheDocument();
+    expect(menuItem2).toBeInTheDocument();
+    expect(menuItem3).toBeInTheDocument();
 
     expect(triggerButton).toHaveAttribute('aria-expanded', 'true');
     expect(triggerButton).toHaveAttribute('aria-controls', menu.id);
@@ -153,13 +153,13 @@ describe('MenuTrigger', function () {
     let menuTester = testUtilUser.createTester('Menu', {root: tree.container});
     let triggerButton = menuTester.trigger;
 
-    expect(triggerButton).toBeTruthy();
+    expect(triggerButton).toBeInTheDocument();
     expect(triggerButton).toHaveAttribute('aria-haspopup', 'true');
 
     let buttonText = within(triggerButton).getByText(triggerText);
-    expect(buttonText).toBeTruthy();
+    expect(buttonText).toBeInTheDocument();
 
-    expect(menuTester.menu).toBeFalsy();
+    expect(menuTester.menu).not.toBeInTheDocument();
 
     expect(triggerButton).toHaveAttribute('aria-expanded', 'false');
     expect(triggerButton).toHaveAttribute('type', 'button');
@@ -226,13 +226,13 @@ describe('MenuTrigger', function () {
     expect(onOpenChange).toBeCalledTimes(0);
 
     let menu = tree.getByRole('menu');
-    expect(menu).toBeTruthy();
+    expect(menu).toBeInTheDocument();
 
     let triggerButton = tree.getByText('Menu Button');
     await user.click(triggerButton);
     act(() => {jest.runAllTimers();});
 
-    expect(menu).toBeTruthy();
+    expect(menu).toBeInTheDocument();
     expect(onOpenChange).toBeCalledTimes(1);
   });
 
@@ -246,7 +246,7 @@ describe('MenuTrigger', function () {
     expect(onOpenChange).toBeCalledTimes(0);
 
     let menu = tree.getByRole('menu');
-    expect(menu).toBeTruthy();
+    expect(menu).toBeInTheDocument();
 
     let triggerButton = tree.getByText('Menu Button');
     await user.click(triggerButton);
@@ -265,7 +265,7 @@ describe('MenuTrigger', function () {
     await menuTester.open();
     act(() => {jest.runAllTimers();});
     let menu = menuTester.menu;
-    expect(menu).toBeFalsy();
+    expect(menu).not.toBeInTheDocument();
     expect(onOpenChange).toBeCalledTimes(0);
   });
 
@@ -280,7 +280,7 @@ describe('MenuTrigger', function () {
       let button = menuTester.trigger;
       await menuTester.open();
       let menu = menuTester.menu;
-      expect(menu).toBeTruthy();
+      expect(menu).toBeInTheDocument();
       let menuItems = menuTester.options();
       let selectedItem = menuItems[1];
       expect(selectedItem).toBe(document.activeElement);
@@ -428,7 +428,7 @@ describe('MenuTrigger', function () {
 
       menu = menuTester.menu;
       expect(menuTester.options()[0]).toHaveAttribute('aria-checked', 'true');
-      expect(menu).toBeTruthy();
+      expect(menu).toBeInTheDocument();
       fireEvent.keyDown(menu, {key: 'Escape', code: 27, charCode: 27});
       expect(onSelectionChange).not.toHaveBeenCalled();
     });
@@ -443,7 +443,7 @@ describe('MenuTrigger', function () {
       act(() => {jest.runAllTimers();});
 
       let menu = tree.getByRole('menu');
-      expect(menu).toBeTruthy();
+      expect(menu).toBeInTheDocument();
       fireEvent.mouseDown(document.body);
       fireEvent.mouseUp(document.body);
       act(() => {jest.runAllTimers();}); // FocusScope useLayoutEffect cleanup
@@ -517,7 +517,7 @@ describe('MenuTrigger', function () {
       await openAndTriggerMenuItem(tree, props.role, menuProps.selectionMode, async (item) => await user.click(item));
 
       let menu = tree.getByRole('menu');
-      expect(menu).toBeTruthy();
+      expect(menu).toBeInTheDocument();
     });
 
     it.each`
@@ -559,7 +559,7 @@ describe('MenuTrigger', function () {
       await openAndTriggerMenuItem(tree, props.role, menuProps.selectionMode, (item) => fireEvent.keyDown(item, {key: ' ', code: 32, charCode: 32}));
 
       let menu = tree.queryByRole('menu');
-      expect(menu).toBeTruthy();
+      expect(menu).toBeInTheDocument();
       expect(onClose).toHaveBeenCalledTimes(0);
     });
 
@@ -587,7 +587,7 @@ describe('MenuTrigger', function () {
       act(() => {jest.runAllTimers();});
 
       let menu = tree.getByRole('menu');
-      expect(menu).toBeTruthy();
+      expect(menu).toBeInTheDocument();
       expect(onOpenChange).toBeCalledTimes(1);
       expect(button).toHaveAttribute('aria-expanded', 'true');
 
@@ -609,7 +609,7 @@ describe('MenuTrigger', function () {
       await openAndTriggerMenuItem(tree, props.role, menuProps.selectionMode, (item) => fireEvent.keyDown(item, {key: 'Enter', code: 13, charCode: 13, repeat: true}));
 
       let menu = tree.queryByRole('menu');
-      expect(menu).toBeTruthy();
+      expect(menu).toBeInTheDocument();
     });
 
     it('tabs to the next element after the trigger and closes the menu', async function () {
@@ -637,7 +637,7 @@ describe('MenuTrigger', function () {
       act(() => {jest.runAllTimers();});
 
       let menu = tree.getByRole('menu');
-      expect(menu).toBeTruthy();
+      expect(menu).toBeInTheDocument();
       expect(onOpenChange).toBeCalledTimes(1);
       expect(button).toHaveAttribute('aria-expanded', 'true');
 
@@ -674,7 +674,7 @@ describe('MenuTrigger', function () {
       act(() => jest.runAllTimers());
 
       let menu = getByRole('menu');
-      expect(menu).toBeTruthy();
+      expect(menu).toBeInTheDocument();
       expect(onOpenChange).toBeCalledTimes(1);
       expect(button).toHaveAttribute('aria-expanded', 'true');
 
@@ -804,7 +804,7 @@ describe('MenuTrigger', function () {
     const getMenuOrThrow = (tree, button) => {
       try {
         let menu = tree.getByRole('menu');
-        expect(menu).toBeTruthy();
+        expect(menu).toBeInTheDocument();
         expect(menu).toHaveAttribute('aria-labelledby', button.id);
       } catch (e) {
         throw ERROR_MENU_NOT_FOUND;
@@ -894,7 +894,7 @@ describe('MenuTrigger', function () {
         menuItemRole = 'menuitemradio';
       }
       let menu = tree.getByRole('menu');
-      expect(menu).toBeTruthy();
+      expect(menu).toBeInTheDocument();
       let menuItems = within(menu).getAllByRole(menuItemRole);
       let selectedItem = menuItems[idx < 0 ? menuItems.length + idx : idx];
       expect(selectedItem).toBe(document.activeElement);

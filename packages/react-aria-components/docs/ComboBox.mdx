@@ -1498,11 +1498,11 @@ it('ComboBox can select an option via keyboard', async function () {
   let comboboxTester = testUtilUser.createTester('ComboBox', {root: getByTestId('test-combobox'), interactionType: 'keyboard'});
 
   await comboboxTester.open();
-  expect(comboboxTester.listbox).toBeTruthy();
+  expect(comboboxTester.listbox).toBeInTheDocument();
 
   let options = comboboxTester.options();
   await comboboxTester.selectOption({option: options[0]});
   expect(comboboxTester.combobox.value).toBe('One');
-  expect(comboboxTester.listbox).toBeFalsy();
+  expect(comboboxTester.listbox).not.toBeInTheDocument();
 });
 ```

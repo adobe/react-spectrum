@@ -187,7 +187,7 @@ export class ComboBoxTester {
   }
 
   /**
-   * Returns the combobox trigger button if present.
+   * Returns the combobox trigger button.
    */
   get trigger(): HTMLElement {
     return this._trigger;
