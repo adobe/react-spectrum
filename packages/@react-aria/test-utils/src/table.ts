@@ -14,7 +14,6 @@ import {act, fireEvent, waitFor, within} from '@testing-library/react';
 import {pressElement, triggerLongPress} from './events';
 import {TableTesterOpts, UserOpts} from './types';
 
-// TODO: this is a bit inconsistent from combobox, perhaps should also take node or combobox should also have find row
 interface TableToggleRowOpts {
   /**
    * The index, text, or node of the row to toggle selection for.
