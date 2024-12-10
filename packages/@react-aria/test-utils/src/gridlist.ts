@@ -14,7 +14,6 @@ import {act, within} from '@testing-library/react';
 import {GridListTesterOpts, UserOpts} from './types';
 import {pressElement} from './events';
 
-// TODO: this is a bit inconsistent from combobox, perhaps should also take node or combobox should also have find row
 interface GridListToggleRowOpts {
   /**
    * What interaction type to use when toggling the row selection. Defaults to the interaction type set on the tester.
@@ -68,6 +67,10 @@ export class GridListTester {
       row = this.findRow({rowIndexOrText: row});
     }
 
+    if (!row) {
+      throw new Error('Target row not found in the gridlist.');
+    }
+
     let rowCheckbox = within(row).queryByRole('checkbox');
     if (rowCheckbox) {
       await pressElement(this.user, rowCheckbox, interactionType);
@@ -77,8 +80,6 @@ export class GridListTester {
     }
   }
 
-  // TODO: pretty much the same as table except it uses this.gridlist. Make common between the two by accepting an option for
-  // an element?
   /**
    * Returns a row matching the specified index or text content.
    */
@@ -127,7 +128,6 @@ export class GridListTester {
     }
   }
 
-  // TODO: do we really need this getter? Theoretically the user already has the reference to the gridlist
   /**
    * Returns the gridlist.
    */
