@@ -19,6 +19,7 @@ import {
   endOfMonth,
   endOfWeek,
   getDayOfWeek,
+  getWeekStart,
   GregorianCalendar,
   isSameDay,
   startOfMonth,
@@ -32,6 +33,16 @@ import {CalendarState} from './types';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
+
+const DAY_MAP = {
+  sun: 0,
+  mon: 1,
+  tue: 2,
+  wed: 3,
+  thu: 4,
+  fri: 5,
+  sat: 6
+};
 
 export interface CalendarStateOptions<T extends DateValue = DateValue> extends CalendarProps<T> {
   /** The locale to display and edit the value according to. */
@@ -66,7 +77,8 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
     maxValue,
     selectionAlignment,
     isDateUnavailable,
-    pageBehavior = 'visible'
+    pageBehavior = 'visible',
+    firstDayOfWeek
   } = props;
   let calendar = useMemo(() => createCalendar(resolvedOptions.calendar), [createCalendar, resolvedOptions.calendar]);
 
@@ -326,32 +338,25 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
       return isSameDay(next, endDate) || this.isInvalid(next);
     },
     getDatesInWeek(weekIndex, from = startDate) {
-      // let date = startOfWeek(from, locale);
       let date = from.add({weeks: weekIndex});
+      if (firstDayOfWeek) {
+        let day = getDayOfWeek(date, locale);
+        let offset = (DAY_MAP[firstDayOfWeek] - getWeekStart(locale) + 7) % 7;
+        let diff = (7 + day - offset) % 7;
+        date = date.subtract({days: diff});
+      } else {
+        date = startOfWeek(date, locale);
+      }
+
       let dates: (CalendarDate | null)[] = [];
 
-      date = startOfWeek(date, locale);
-
-      // startOfWeek will clamp dates within the calendar system's valid range, which may
-      // start in the middle of a week. In this case, add null placeholders.
-      let dayOfWeek = getDayOfWeek(date, locale);
-      for (let i = 0; i < dayOfWeek; i++) {
-        dates.push(null);
-      }
-
-      while (dates.length < 7) {
-        dates.push(date);
-        let nextDate = date.add({days: 1});
-        if (isSameDay(date, nextDate)) {
-          // If the next day is the same, we have hit the end of the calendar system.
-          break;
+      for (let i = 0; i < 7; i++) {
+        let current = date.add({days: i});
+        if (current.compare(startDate) < 0 || current.compare(endDate) > 0) {
+          dates.push(null);
+        } else {
+          dates.push(current);
         }
-        date = nextDate;
-      }
-
-      // Add null placeholders if at the end of the calendar system.
-      while (dates.length < 7) {
-        dates.push(null);
       }
 
       return dates;

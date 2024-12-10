@@ -441,6 +441,14 @@ By default, `DatePicker` displays times in either 12 or 24 hour hour format depe
   hourCycle={24} />
 ```
 
+### Custom first day of week
+
+By default, the first day of the week is automatically set based on the current locale. This can be changed by setting the `firstDayOfWeek` prop to `'sun'`, `'mon'`, `'tue'`, `'wed'`, `'thu'`, `'fri'`, or `'sat'`.
+
+```tsx example
+<DatePicker label="Appointment date" firstDayOfWeek="mon" />
+```
+
 ## Testing
 
 The DatePicker features an overlay that transitions in and out of the page as it is opened and closed. Depending on
