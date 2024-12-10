@@ -1,0 +1,103 @@
+{/* Copyright 2024 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+import testUtilDocs from 'docs:@react-aria/test-utils';
+import combobox from 'docs:@react-aria/test-utils/src/combobox.ts';
+import gridlist from 'docs:@react-aria/test-utils/src/gridlist.ts';
+import menu from 'docs:@react-aria/test-utils/src/menu.ts';
+import select from 'docs:@react-aria/test-utils/src/select.ts';
+import table from 'docs:@react-aria/test-utils/src/table.ts';
+import {ClassAPI, FunctionAPI, InterfaceType, TypeContext, TypeLink} from '@react-spectrum/docs';
+
+---
+category: Concepts
+---
+
+# Testing
+
+This page describes how to test an application built with React Aria. It documents the available testing utilities available
+for each aria pattern and how they can be used to simulate common user interactions.
+
+## React Aria test utils
+
+### Introduction
+
+As both the adoption of our component libraries and the complexity of the components offered has grown, various testing pain points have surfaced, both from within the maintaining team and from consumers of the library itself.
+The test writer may not be familiar with the internal structure of the component they are testing against and thus are unable to easily target/interact with the desired element within the component. Alternatively, the specifics
+of what events to simulate for various interaction modes can be onerous to figure out and adds unnecessary friction for new adopters.
+
+To address this, we've created [@react-aria/test-utils](https://www.npmjs.com/package/@react-aria/test-utils) which features a set of testing utilities that aims to make writing unit tests easier for consumers of our component libraries
+or for users who have built their own components following the respective ARIA pattern specification. By using the ARIA specification for any given component pattern as a source of truth,
+we can make assumptions about the existence of specific aria attributes that allow us to navigate the component's DOM structure. Similarly, we can also expect that the component
+permits specific interaction patterns described by the ARIA pattern specification and thus accurately simulate those interactions, using the aforementioned aria attributes to target the proper node
+within the component or to verify that the component's state has changed appropriately post-interaction. By providing utilities to simulate these standard interactions and getters that
+allow the user to easily look up the subcomponents of the component itself, we hope to simplify the overall test writing experience, leading to easier adoption.
+
+These test utilities were inspired by various issues and observations that the maintainers of this library and consumers have experienced when writing tests against our components over the years. It is still very much
+a work in progress so if you discover any issues or have any feedback please feel free to report them via [GitHub issues](https://github.com/adobe/react-spectrum/issues)! If you have implemented
+any testing utilities yourself that you feel would be a good fit, we would be happy to review any pull requests! Please read our [contributing guide](contribute.html)
+for more information.
+
+### Installation
+
+`@react-aria/test-utils` can be installed using a package manager like [npm](https://docs.npmjs.com/cli/npm) or [yarn](https://classic.yarnpkg.com/lang/en/).
+
+```
+yarn add --dev @react-aria/test-utils
+```
+
+Please note that this library uses [@testing-library/react@15](https://www.npmjs.com/package/@testing-library/react) and [@testing-library/user-event](https://www.npmjs.com/package/@testing-library/user-event/v/13.1.5). This means that you need
+to be on React 18+ in order for these utilities to work.
+
+### Setup
+
+Once installed, you can access the `User` that `@react-aria/test-utils` provides in your test file as shown below. This user only needs to be initialized once and accepts two options: `interactionType` and `advanceTimer`. `interactionType` will
+initialize what mode of interaction (mouse, keyboard, or touch) will be used by default. This can be overridden at the pattern tester or interaction execution level if required. `advanceTimer` accepts a function that when called should advance timers (fake timers)
+or wait for the required time (real timers). This is required for certain interactions (e.g. long press) that some of the patterns support.
+
+Once the `User` is initialized, you can use its `createTester` method to initialize a specific ARIA pattern tester in your test cases. This gives you access to that pattern's specific utilities that you can then call
+within your test to query for specific subcomponents or simulate common interactions. `createTester` requires two arguments, the first being the name of the ARIA pattern tester you are creating and the second being a set of initialization options specific to that
+pattern, typically including the `root` element (e.g. the menu trigger button, table, etc). See [below](#patterns) for more details on what is supported for each individual ARIA pattern tester.
+
+```ts
+// YourTest.test.ts
+import {User} from '@react-aria/test-utils';
+
+// Provide whatever method of advancing timers you use in your test, this example assumes Jest with fake timers
+let testUtilUser = new User({interactionType: 'mouse', advanceTimer: jest.advanceTimersByTime});
+// ...
+
+it('my test case', async function () {
+  // Render your test component/app and initialize the table tester
+  render();
+  let table = testUtilUser.createTester('Table', {root: screen.getByTestId('test_table')});
+  // ...
+});
+```
+
+See below for the full definition of the `User` object.
+
+<ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.User} />
+
+### Patterns
+
+Below is a list of the ARIA patterns testers currently supported by `createTester`. See the accompanying component testing docs pages for a sample of how to use
+the testers in your test suite.
+
+-  [React Aria Components ComboBox](ComboBox.html#testing) and [React Spectrum ComboBox](../react-spectrum/ComboBox.html#testing)
+
+-  [React Aria Components GridList](GridList.html#testing) and [React Spectrum ListView](../react-spectrum/ListView.html#testing)
+
+-  [React Aria Components Menu](Menu.html#testing) and [React Spectrum MenuTrigger](../react-spectrum/MenuTrigger.html#testing)
+
+-  [React Aria Components Select](Select.html#testing) and [React Spectrum Picker](../react-spectrum/Picker.html#testing)
+
+-  [React Aria Components Table](Table.html#testing) and [React Spectrum TableView](../react-spectrum/TableView.html#testing)
