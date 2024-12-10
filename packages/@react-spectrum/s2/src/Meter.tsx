@@ -40,7 +40,7 @@ interface MeterStyleProps {
   /**
    * The static color style to apply. Useful when the button appears over a color background.
    */
-  staticColor?: 'white' | 'black',
+  staticColor?: 'white' | 'black' | 'auto',
   /**
    * The label's overall position relative to the element it is labeling.
    * @default 'top'
@@ -77,7 +77,7 @@ const trackStyles = style({
   }
 });
 
-const fillStyles = style<MeterStyleProps>({
+const fillStyles = style<MeterStyleProps & {isStaticColor: boolean}>({
   height: 'full',
   borderStyle: 'none',
   borderRadius: 'full',
@@ -88,15 +88,7 @@ const fillStyles = style<MeterStyleProps>({
       notice: lightDark('notice-800', 'notice-900'), // 'notice-visual',
       negative: lightDark('negative-800', 'negative-900') // 'negative-visual'
     },
-    staticColor: {
-      white: {
-        default: 'transparent-white-900'
-      },
-      // TODO: Is there a black static color in S2?
-      black: {
-        default: 'transparent-black-900'
-      }
-    },
+    isStaticColor: 'transparent-overlay-900',
     forcedColors: 'ButtonText'
   }
 });
@@ -120,6 +112,7 @@ export const Meter = forwardRef(function Meter(props: MeterProps, ref: DOMRef<HT
     labelPosition = 'top',
     ...groupProps
   } = props;
+  let isStaticColor = !!staticColor;
 
   return (
     <AriaMeter
@@ -135,10 +128,10 @@ export const Meter = forwardRef(function Meter(props: MeterProps, ref: DOMRef<HT
       {({percentage, valueText}) => (
         <>
           {label && <FieldLabel size={size} labelAlign="start" labelPosition={labelPosition} staticColor={staticColor}>{label}</FieldLabel>}
-          {label && <Text styles={valueStyles({size, labelAlign: 'end', staticColor})}>{valueText}</Text>}
+          {label && <Text styles={valueStyles({size, labelAlign: 'end', isStaticColor})}>{valueText}</Text>}
           <SkeletonWrapper>
-            <div className={trackStyles({staticColor, size})}>
-              <div className={fillStyles({staticColor, variant})} style={{width: percentage + '%'}} />
+            <div className={trackStyles({isStaticColor, size})}>
+              <div className={fillStyles({isStaticColor, variant})} style={{width: percentage + '%'}} />
             </div>
           </SkeletonWrapper>
         </>
