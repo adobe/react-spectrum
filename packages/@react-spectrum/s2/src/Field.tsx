@@ -76,6 +76,7 @@ export const FieldLabel = forwardRef(function FieldLabel(props: FieldLabelProps,
       className={style({
         gridArea: 'label',
         display: 'inline',
+        whiteSpace: 'nowrap',
         textAlign: {
           labelAlign: {
             start: 'start',
