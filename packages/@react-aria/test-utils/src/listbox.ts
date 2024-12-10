@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, within} from '@testing-library/react';
+import {act, within} from '@testing-library/react';
 import {ListboxTesterOpts, UserOpts} from './types';
 import {pressElement, triggerLongPress} from './events';
 
-// TODO: write docs, use in tests
+// TODO: write docs
 
 interface ListboxToggleOptionOpts {
   /**
@@ -50,7 +50,7 @@ export class ListboxTester {
   private _listbox: HTMLElement;
 
   constructor(opts: ListboxTesterOpts) {
-    let {root, user, interactionType} = opts;
+    let {root, user, interactionType, advanceTimer} = opts;
     this.user = user;
     this._interactionType = interactionType || 'mouse';
     this._listbox = root;
@@ -86,6 +86,7 @@ export class ListboxTester {
   }
 
   // TODO: this is basically the same as menu except for the error message, refactor later so that they share
+  // TODO: this also doesn't support grid layout yet
   private async keyboardNavigateToOption(opts: {option: HTMLElement}) {
     let {option} = opts;
     let options = this.options();
@@ -112,7 +113,7 @@ export class ListboxTester {
    * Toggles the selection for the specified listbox option. Defaults to using the interaction type set on the listbox tester.
    */
   async toggleOptionSelection(opts: ListboxToggleOptionOpts) {
-    let {option, needsLongPress, keyboardActivation, interactionType = this._interactionType} = opts;
+    let {option, needsLongPress, keyboardActivation = 'Enter', interactionType = this._interactionType} = opts;
 
     if (typeof option === 'string' || typeof option === 'number') {
       option = this.findOption({optionIndexOrText: option});
@@ -130,16 +131,12 @@ export class ListboxTester {
       await this.keyboardNavigateToOption({option});
       await this.user.keyboard(`[${keyboardActivation}]`);
     } else {
-
       if (needsLongPress && interactionType === 'touch') {
         if (this._advanceTimer == null) {
           throw new Error('No advanceTimers provided for long press.');
         }
 
-        // Note that long press interactions with rows is strictly touch only for grid rows
         await triggerLongPress({element: option, advanceTimer: this._advanceTimer, pointerOpts: {pointerType: 'touch'}});
-        // TODO: see if we need this for listbox, was needed for table
-        await fireEvent.click(option);
       } else {
         await pressElement(this.user, option, interactionType);
       }

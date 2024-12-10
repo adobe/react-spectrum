@@ -11,21 +11,23 @@
  */
 
 import {ComboBoxTester} from './combobox';
-import {ComboBoxTesterOpts, GridListTesterOpts, MenuTesterOpts, SelectTesterOpts, TableTesterOpts, UserOpts} from './types';
+import {ComboBoxTesterOpts, GridListTesterOpts, ListboxTesterOpts, MenuTesterOpts, SelectTesterOpts, TableTesterOpts, UserOpts} from './types';
 import {GridListTester} from './gridlist';
+import {ListboxTester} from './listbox';
 import {MenuTester} from './menu';
 import {pointerMap} from './';
 import {SelectTester} from './select';
 import {TableTester} from './table';
 import userEvent from '@testing-library/user-event';
 
-let keyToUtil = {'Select': SelectTester, 'Table': TableTester, 'Menu': MenuTester, 'ComboBox': ComboBoxTester, 'GridList': GridListTester} as const;
+let keyToUtil = {'Select': SelectTester, 'Table': TableTester, 'Menu': MenuTester, 'ComboBox': ComboBoxTester, 'GridList': GridListTester, 'Listbox': ListboxTester} as const;
 export type PatternNames = keyof typeof keyToUtil;
 
 // Conditional type: https://www.typescriptlang.org/docs/handbook/2/conditional-types.html
 type Tester<T> =
   T extends 'ComboBox' ? ComboBoxTester :
   T extends 'GridList' ? GridListTester :
+  T extends 'Listbox' ? ListboxTester :
   T extends 'Menu' ? MenuTester :
   T extends 'Select' ? SelectTester :
   T extends 'Table' ? TableTester :
@@ -34,6 +36,7 @@ type Tester<T> =
 type TesterOpts<T> =
   T extends 'ComboBox' ? ComboBoxTesterOpts :
   T extends 'GridList' ? GridListTesterOpts :
+  T extends 'Listbox' ? ListboxTesterOpts :
   T extends 'Menu' ? MenuTesterOpts :
   T extends 'Select' ? SelectTesterOpts :
   T extends 'Table' ? TableTesterOpts :
