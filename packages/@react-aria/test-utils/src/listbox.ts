@@ -11,12 +11,12 @@
  */
 
 import {act, within} from '@testing-library/react';
-import {ListboxTesterOpts, UserOpts} from './types';
+import {ListBoxTesterOpts, UserOpts} from './types';
 import {pressElement, triggerLongPress} from './events';
 
 // TODO: write docs
 
-interface ListboxToggleOptionOpts {
+interface ListBoxToggleOptionOpts {
   /**
    * What interaction type to use when toggling selection for an option. Defaults to the interaction type set on the tester.
    */
@@ -36,20 +36,20 @@ interface ListboxToggleOptionOpts {
   needsLongPress?: boolean
 }
 
-interface ListboxOptionActionOpts extends Omit<ListboxToggleOptionOpts, 'keyboardActivation' | 'needsLongPress'> {
+interface ListBoxOptionActionOpts extends Omit<ListBoxToggleOptionOpts, 'keyboardActivation' | 'needsLongPress'> {
   /**
    * Whether or not the option needs a double click to trigger the option action. Depends on the listbox's implementation.
    */
   needsDoubleClick?: boolean
 }
 
-export class ListboxTester {
+export class ListBoxTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
   private _advanceTimer: UserOpts['advanceTimer'];
   private _listbox: HTMLElement;
 
-  constructor(opts: ListboxTesterOpts) {
+  constructor(opts: ListBoxTesterOpts) {
     let {root, user, interactionType, advanceTimer} = opts;
     this.user = user;
     this._interactionType = interactionType || 'mouse';
@@ -112,7 +112,7 @@ export class ListboxTester {
   /**
    * Toggles the selection for the specified listbox option. Defaults to using the interaction type set on the listbox tester.
    */
-  async toggleOptionSelection(opts: ListboxToggleOptionOpts) {
+  async toggleOptionSelection(opts: ListBoxToggleOptionOpts) {
     let {option, needsLongPress, keyboardActivation = 'Enter', interactionType = this._interactionType} = opts;
 
     if (typeof option === 'string' || typeof option === 'number') {
@@ -120,7 +120,7 @@ export class ListboxTester {
     }
 
     if (!option) {
-      throw new Error('Target option not found in the menu.');
+      throw new Error('Target option not found in the listbox.');
     }
 
     if (interactionType === 'keyboard') {
@@ -144,9 +144,9 @@ export class ListboxTester {
   }
 
   /**
-   * Triggers the action for the specified listbox option. Defaults to using the interaction type set on the menu tester.
+   * Triggers the action for the specified listbox option. Defaults to using the interaction type set on the listbox tester.
    */
-  async triggerOptionAction(opts: ListboxOptionActionOpts) {
+  async triggerOptionAction(opts: ListBoxOptionActionOpts) {
     let {
       option,
       needsDoubleClick,

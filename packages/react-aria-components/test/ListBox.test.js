@@ -93,7 +93,7 @@ describe('ListBox', () => {
       </ListBox>
     );
 
-    let listboxTester = testUtilUser.createTester('Listbox', {root: getByRole('listbox')});
+    let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
     expect(listboxTester.listbox).toHaveAttribute('data-rac');
     let sections = listboxTester.sections;
     for (let section of sections) {
@@ -435,7 +435,7 @@ describe('ListBox', () => {
   it('should support selection state', async () => {
     let {getByRole} = renderListbox({selectionMode: 'multiple'}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
 
-    let listboxTester = testUtilUser.createTester('Listbox', {root: getByRole('listbox')});
+    let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
     let option = listboxTester.options()[0];
     expect(option).not.toHaveAttribute('aria-selected', 'true');
     expect(option).not.toHaveClass('selected');
@@ -489,7 +489,7 @@ describe('ListBox', () => {
         <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
       </ListBox>
     );
-    let listboxTester = testUtilUser.createTester('Listbox', {root: getByRole('listbox')});
+    let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
 
     let options = listboxTester.options();
     await listboxTester.triggerOptionAction({option: options[0], interactionType});
@@ -505,7 +505,7 @@ describe('ListBox', () => {
         <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
       </ListBox>
     );
-    let listboxTester = testUtilUser.createTester('Listbox', {root: getByRole('listbox')});
+    let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
 
     let options = listboxTester.options();
     await listboxTester.triggerOptionAction({option: options[0]});
@@ -530,7 +530,7 @@ describe('ListBox', () => {
           <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
         </ListBox>
       );
-      let listboxTester = testUtilUser.createTester('Listbox', {root: getByRole('listbox'), advanceTimer: jest.advanceTimersByTime, interactionType: 'touch'});
+      let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox'), advanceTimer: jest.advanceTimersByTime, interactionType: 'touch'});
 
       await listboxTester.toggleOptionSelection({option: listboxTester.options()[0]});
       expect(listboxTester.selectedOptions).toHaveLength(0);

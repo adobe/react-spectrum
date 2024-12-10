@@ -11,8 +11,9 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/listbox';
-import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription, ClassAPI} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/listbox/package.json';
+import listboxUtils from 'docs:@react-aria/test-utils/src/listbox.ts';
 
 ```jsx import
 import {ListBox, Section, Item} from '@react-spectrum/listbox';
@@ -409,3 +410,30 @@ Please see the following sections in the testing docs for more information on ho
 
 Please also refer to [React Spectrum's test suite](https://github.com/adobe/react-spectrum/blob/main/packages/%40react-spectrum/listbox/test/ListBox.test.js) if you find that the above
 isn't sufficient when resolving issues in your own test cases.
+
+`@react-aria/test-utils` also offers common listbox interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
+in your tests. Below is the full definition of the listbox tester and a sample of how you could use it in your test suite.
+
+<ClassAPI links={listboxUtils.links} class={listboxUtils.exports.ListBoxTester} />
+
+```ts
+// ListBox.test.ts
+import {User} from '@react-aria/test-utils';
+
+let testUtilUser = new User({interactionType: 'mouse'});
+// ...
+
+it('ListBox can select an option via keyboard', async function () {
+  // Render your test component/app and initialize the listbox tester
+  let {getByTestId} = render(
+     <ListBox data-testid="test-listbox">
+      ...
+    </ListBox>
+  );
+  let listboxTester = testUtilUser.createTester('ListBox', {root: getByTestId('test-listbox'), interactionType: 'keyboard'});
+
+  await listboxTester.toggleOptionSelection({option: 4});
+  expect(listboxTester.options()[4]).toHaveAttribute('aria-selected', 'true');
+  expect(onSelectionChange).toBeCalledTimes(1);
+});
+```

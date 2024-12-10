@@ -91,7 +91,7 @@ describe('ListBox', function () {
 
   it('renders properly', function () {
     let tree = renderComponent();
-    let listboxTester = testUtilUser.createTester('Listbox', {root: tree.getByRole('listbox')});
+    let listboxTester = testUtilUser.createTester('ListBox', {root: tree.getByRole('listbox')});
     let listbox = listboxTester.listbox;
     expect(listbox).toBeTruthy();
     expect(listbox).toHaveAttribute('aria-labelledby', 'label');
@@ -190,7 +190,7 @@ describe('ListBox', function () {
     it('supports defaultSelectedKeys (uncontrolled)', async function () {
       // Check that correct listbox item is selected by default
       let tree = renderComponent({onSelectionChange, defaultSelectedKeys: ['Blah'], autoFocus: 'first', selectionMode: 'single'});
-      let listboxTester = testUtilUser.createTester('Listbox', {root: tree.getByRole('listbox')});
+      let listboxTester = testUtilUser.createTester('ListBox', {root: tree.getByRole('listbox')});
 
       let selectedOptions = listboxTester.selectedOptions;
       expect(selectedOptions).toHaveLength(1);
@@ -252,7 +252,7 @@ describe('ListBox', function () {
 
     it('supports using space key to change item selection', async function () {
       let tree = renderComponent({onSelectionChange, selectionMode: 'single'});
-      let listboxTester = testUtilUser.createTester('Listbox', {root: tree.getByRole('listbox')});
+      let listboxTester = testUtilUser.createTester('ListBox', {root: tree.getByRole('listbox')});
 
       // Trigger a menu item via space
       let options = listboxTester.options();

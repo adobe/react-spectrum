@@ -51,7 +51,7 @@ export interface ComboBoxTesterOpts extends BaseTesterOpts {
 
 export interface GridListTesterOpts extends BaseTesterOpts {}
 
-export interface ListboxTesterOpts extends BaseTesterOpts {
+export interface ListBoxTesterOpts extends BaseTesterOpts {
   /**
    * A function used by the test utils to advance timers during interactions.
    */
