@@ -760,16 +760,16 @@ describe('ListBox', function () {
   it('should handle when an item changes sections', function () {
     let sections = [
       {
-        id: 'foo',
-        title: 'Foo',
+        id: 'sect1',
+        title: 'Section 1',
         children: [
           {id: 'foo-1', title: 'Foo 1'},
           {id: 'foo-2', title: 'Foo 2'}
         ]
       },
       {
-        id: 'bar',
-        title: 'Bar',
+        id: 'sect2',
+        title: 'Section 2',
         children: [
           {id: 'bar-1', title: 'Bar 1'},
           {id: 'bar-2', title: 'Bar 2'}
@@ -791,9 +791,12 @@ describe('ListBox', function () {
       );
     }
 
-    let {getByText, rerender} = render(<Example sections={sections} />);
-    let item = getByText('Foo 1');
-    expect(document.getElementById(item.closest('[role=group]').getAttribute('aria-labelledby'))).toHaveTextContent('Foo');
+    let {rerender, getByRole, getByLabelText} = render(<Example sections={sections} />);
+    let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
+    let item = listboxTester.findOption({optionIndexOrText: 'Foo 1'});
+    let listboxSections = listboxTester.sections;
+    expect(listboxTester.options({element: listboxSections[0]})).toContain(item);
+    expect(listboxSections[0]).toBe(getByLabelText('Section 1'));
 
     let sections2 = [
       {
@@ -807,8 +810,11 @@ describe('ListBox', function () {
     ];
 
     rerender(<Example sections={sections2} />);
-    item = getByText('Foo 1');
-    expect(document.getElementById(item.closest('[role=group]').getAttribute('aria-labelledby'))).toHaveTextContent('Bar');
+    listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
+    item = listboxTester.findOption({optionIndexOrText: 'Foo 1'});
+    listboxSections = listboxTester.sections;
+    expect(listboxTester.options({element: listboxSections[1]})).toContain(item);
+    expect(listboxSections[1]).toBe(getByLabelText('Section 2'));
   });
 
   describe('async loading', function () {
