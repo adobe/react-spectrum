@@ -77,11 +77,26 @@ type FunctionInfo =
     args: {}
   }
   | {
+    name: 'addColumnsPropToRow',
+    args: {}
+  }
+  | {
+    name: 'updateRowFunctionArg',
+    args: {}
+  }
+  | {
+    name: 'updateKeyToId',
+    args: {}
+  }
+  | {
     name: 'updateDialogChild',
     args: {}
   }
   | {
     name: 'updateActionGroup',
+    args: {}
+  } | {
+    name: 'commentIfNestedColumns',
     args: {}
   };
 
@@ -1253,6 +1268,58 @@ export const changes: ChangesJSON = {
             propToUpdate: 'placement',
             childComponent: 'Tooltip'
           }
+        }
+      }
+    ]
+  },
+  TableView: {
+    changes: [
+      {
+        description: 'Add columns prop to Row',
+        reason: 'Rows now require a columns prop from TableHeader',
+        function: {
+          name: 'addColumnsPropToRow',
+          args: {}
+        }
+      },
+      {
+        description: 'Leave comment if nested columns are used',
+        reason: 'Nested columns are not supported yet',
+        function: {
+          name: 'commentIfNestedColumns',
+          args: {}
+        }
+      }
+    ]
+  },
+  Column: {
+    changes: [
+      {
+        description: 'Update key prop to id',
+        reason: 'Updated API',
+        function: {
+          name: 'updateKeyToId',
+          args: {}
+        }
+      }
+    ]
+  },
+  Row: {
+    changes: [
+      {
+        description: 'Update key prop to id',
+        reason: 'Updated API',
+        function: {
+          name: 'updateKeyToId',
+          args: {}
+        }
+      },
+      {
+        description: 'Update child function to receive column object instead of column key',
+        reason: 'Updated API',
+        function: {
+          name: 'updateRowFunctionArg',
+          args: {}
         }
       }
     ]
