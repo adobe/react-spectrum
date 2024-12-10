@@ -1,5 +1,9 @@
 {
-  "breadcrumbs.more": "المزيد من العناصر",
+  "actionbar.actions": "الإجراءات",
+  "actionbar.actionsAvailable": "الإجراءات المتاحة.",
+  "actionbar.clearSelection": "إزالة التحديد",
+  "actionbar.selected": "{count, plural, =0 {غير محدد} other {# محدد}}",
+  "actionbar.selectedAll": "تم تحديد الكل",
   "button.pending": "قيد الانتظار",
   "contextualhelp.help": "مساعدة",
   "contextualhelp.info": "معلومات",
@@ -24,5 +28,6 @@
   "tag.actions": "الإجراءات",
   "tag.hideButtonLabel": "إظهار أقل",
   "tag.noTags": "بدون",
-  "tag.showAllButtonLabel": "عرض الكل ({tagCount, number})"
+  "tag.showAllButtonLabel": "عرض الكل ({tagCount, number})",
+  "breadcrumbs.more": "المزيد من العناصر"
 }

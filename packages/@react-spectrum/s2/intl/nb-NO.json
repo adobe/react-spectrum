@@ -1,5 +1,9 @@
 {
-  "breadcrumbs.more": "Flere elementer",
+  "actionbar.actions": "Handlinger",
+  "actionbar.actionsAvailable": "Tilgjengelige handlinger.",
+  "actionbar.clearSelection": "Tøm utvalg",
+  "actionbar.selected": "Valde element: {count}",
+  "actionbar.selectedAll": "Alle er valgt",
   "button.pending": "avventer",
   "contextualhelp.help": "Hjelp",
   "contextualhelp.info": "Informasjon",
@@ -16,13 +20,14 @@
   "picker.placeholder": "Velg …",
   "slider.maximum": "Maksimum",
   "slider.minimum": "Minimum",
-  "table.loading": "Laster inn...",
-  "table.loadingMore": "Laster inn flere...",
+  "table.loading": "Laster inn ...",
+  "table.loadingMore": "Laster inn flere ...",
   "table.resizeColumn": "Endre størrelse på kolonne",
   "table.sortAscending": "Sorter stigende",
   "table.sortDescending": "Sorter synkende",
   "tag.actions": "Handlinger",
   "tag.hideButtonLabel": "Vis mindre",
   "tag.noTags": "Ingen",
-  "tag.showAllButtonLabel": "Vis alle ({tagCount, number})"
+  "tag.showAllButtonLabel": "Vis alle ({tagCount, number})",
+  "breadcrumbs.more": "Flere elementer"
 }

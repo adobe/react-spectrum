@@ -1,5 +1,9 @@
 {
-  "breadcrumbs.more": "更多项目",
+  "actionbar.actions": "操作",
+  "actionbar.actionsAvailable": "有可用操作。",
+  "actionbar.clearSelection": "清除选择",
+  "actionbar.selected": "{count, plural, =0 {无选择} other {已选择 # 个}}",
+  "actionbar.selectedAll": "全选",
   "button.pending": "待处理",
   "contextualhelp.help": "帮助",
   "contextualhelp.info": "信息",
@@ -24,5 +28,6 @@
   "tag.actions": "操作",
   "tag.hideButtonLabel": "显示更少",
   "tag.noTags": "无",
-  "tag.showAllButtonLabel": "全部显示 ({tagCount, number})"
+  "tag.showAllButtonLabel": "全部显示 ({tagCount, number})",
+  "breadcrumbs.more": "更多项目"
 }

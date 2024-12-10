@@ -19,12 +19,13 @@ import {
   UNSTABLE_Virtualizer
 } from 'react-aria-components';
 import {CardContext, InternalCardViewContext} from './Card';
-import {createContext, forwardRef, useMemo, useState} from 'react';
+import {createContext, forwardRef, ReactElement, useMemo, useRef, useState} from 'react';
 import {DOMRef, DOMRefValue, forwardRefType, Key, LayoutDelegate, LoadingState, Node} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ImageCoordinator} from './ImageCoordinator';
 import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
+import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useEffectEvent, useLayoutEffect, useLoadMore, useResizeObserver} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -60,7 +61,8 @@ export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'key
   /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom. */
   onLoadMore?: () => void,
   /** Spectrum-defined styles, returned by the `style()` macro. */
-  styles?: StylesPropWithHeight
+  styles?: StylesPropWithHeight,
+  renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement
 }
 
 class FlexibleGridLayout<T extends object> extends Layout<Node<T>, GridLayoutOptions> {
@@ -514,6 +516,7 @@ const cardViewStyles = style({
   display: {
     isEmpty: 'flex'
   },
+  boxSizing: 'border-box',
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
@@ -533,6 +536,8 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
   [props, ref] = useSpectrumContextProps(props, ref, CardViewContext);
   let {children, layout: layoutName = 'grid', size: sizeProp = 'M', density = 'regular', variant = 'primary', selectionStyle = 'checkbox', UNSAFE_className = '', UNSAFE_style, styles, ...otherProps} = props;
   let domRef = useDOMRef(ref);
+  let innerRef = useRef(null);
+  let scrollRef = props.renderActionBar ? innerRef : domRef;
   let layout = useMemo(() => {
     return layoutName === 'waterfall' ? new WaterfallLayout() : new FlexibleGridLayout();
   }, [layoutName]);
@@ -540,7 +545,7 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
   // This calculates the maximum t-shirt size where at least two columns fit in the available width.
   let [maxSizeIndex, setMaxSizeIndex] = useState(SIZES.length - 1);
   let updateSize = useEffectEvent(() => {
-    let w = domRef.current?.clientWidth ?? 0;
+    let w = scrollRef.current?.clientWidth ?? 0;
     let i = SIZES.length - 1;
     while (i > 0) {
       let opts = layoutOptions[SIZES[i]][density];
@@ -553,7 +558,7 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
   });
 
   useResizeObserver({
-    ref: domRef,
+    ref: scrollRef,
     box: 'border-box',
     onResize: updateSize
   });
@@ -570,23 +575,32 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
     isLoading: props.loadingState !== 'idle' && props.loadingState !== 'error',
     items: props.items, // TODO: ideally this would be the collection. items won't exist for static collections, or those using <Collection>
     onLoadMore: props.onLoadMore
-  }, domRef);
+  }, scrollRef);
 
   let ctx = useMemo(() => ({size, variant}), [size, variant]);
 
-  return (
+  let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
+
+  let cardView = (
     <UNSTABLE_Virtualizer layout={layout} layoutOptions={options}>
       <InternalCardViewContext.Provider value={GridListItem}>
         <CardContext.Provider value={ctx}>
           <ImageCoordinator>
             <AriaGridList
-              ref={domRef}
+              ref={scrollRef}
               {...otherProps}
               layout="grid"
               selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
+              selectedKeys={selectedKeys}
+              defaultSelectedKeys={undefined}
+              onSelectionChange={onSelectionChange}
               style={{
                 ...UNSAFE_style,
-                scrollPadding: options.minSpace.height
+                // Add padding at the bottom when the action bar is visible so users can scroll to the last items.
+                // Also add scroll padding so keyboard navigating preserves the padding.
+                paddingBottom: actionBarHeight > 0 ? actionBarHeight + options.minSpace.height : 0,
+                scrollPadding: options.minSpace.height,
+                scrollPaddingBottom: actionBarHeight + options.minSpace.height
               }}
               className={renderProps => UNSAFE_className + cardViewStyles({...renderProps, isLoading: props.loadingState === 'loading'}, styles)}>
               {children}
@@ -596,4 +610,17 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
       </InternalCardViewContext.Provider>
     </UNSTABLE_Virtualizer>
   );
+
+  // Add extra wrapper if there is an action bar so we can position relative to it.
+  // ActionBar cannot be inside the GridList due to ARIA and focus management requirements.
+  if (props.renderActionBar) {
+    return (
+      <div ref={domRef} className={style({position: 'relative', overflow: 'clip', size: 'fit'})}>
+        {cardView}
+        {actionBar}
+      </div>
+    );
+  }
+
+  return cardView;
 });
