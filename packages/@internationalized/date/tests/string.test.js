@@ -596,6 +596,19 @@ describe('string conversion', function () {
       });
     });
 
+    it('parses an ISO 8601 duration string with values exceeding normal calendar constraints', function () {
+      const duration = parseDuration('P99Y99M99W99DT99H99M99S');
+      expect(duration).toStrictEqual({
+        years: 99,
+        months: 99,
+        weeks: 99,
+        days: 99,
+        hours: 99,
+        minutes: 99,
+        seconds: 99
+      });
+    });
+
     it('throws an error when passed an improperly formatted ISO 8601 duration string', function () {
       expect(() => {
         parseDuration('+-P18Y7MT20H15S');
@@ -612,9 +625,6 @@ describe('string conversion', function () {
       expect(() => {
         parseDuration('P18Y7MT');
       }).toThrow('Invalid ISO 8601 Duration string: P18Y7MT');
-      expect(() => {
-        parseDuration('P18Y7MT30H15S');
-      }).toThrow('Invalid ISO 8601 Duration string: P18Y7MT30H15S');
       expect(() => {
         parseDuration('7Y6D85');
       }).toThrow('Invalid ISO 8601 Duration string: 7Y6D85');
