@@ -1,0 +1,14 @@
+{
+  "name": "rss-feed",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "createRssFeed": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "xml": "^1.0.1"
+  }
+}
