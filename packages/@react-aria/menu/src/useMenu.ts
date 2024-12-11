@@ -11,8 +11,9 @@
  */
 
 import {AriaMenuProps} from '@react-types/menu';
-import {DOMAttributes, Key, KeyboardDelegate, KeyboardEvents, RefObject} from '@react-types/shared';
+import {DOMAttributes, KeyboardDelegate, KeyboardEvents, RefObject} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {menuData} from './utils';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableList} from '@react-aria/selection';
 
@@ -24,20 +25,16 @@ export interface MenuAria {
 export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'>, KeyboardEvents {
   /** Whether the menu uses virtual scrolling. */
   isVirtualized?: boolean,
-
   /**
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
-  keyboardDelegate?: KeyboardDelegate
+  keyboardDelegate?: KeyboardDelegate,
+  /**
+   * Whether the menu items should use virtual focus instead of being focused directly.
+   */
+  shouldUseVirtualFocus?: boolean
 }
-
-interface MenuData {
-  onClose?: () => void,
-  onAction?: (key: Key) => void
-}
-
-export const menuData = new WeakMap<TreeState<unknown>, MenuData>();
 
 /**
  * Provides the behavior and accessibility implementation for a menu component.
@@ -70,7 +67,8 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
 
   menuData.set(state, {
     onClose: props.onClose,
-    onAction: props.onAction
+    onAction: props.onAction,
+    shouldUseVirtualFocus: props.shouldUseVirtualFocus
   });
 
   return {
@@ -79,7 +77,7 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
       ...listProps,
       onKeyDown: (e) => {
         // don't clear the menu selected keys if the user is presses escape since escape closes the menu
-        if (e.key !== 'Escape') {
+        if (e.key !== 'Escape' || props.shouldUseVirtualFocus) {
           listProps.onKeyDown?.(e);
         }
       }

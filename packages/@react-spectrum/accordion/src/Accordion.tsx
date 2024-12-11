@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, DOMRef, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, DOMRef, forwardRefType, StyleProps} from '@react-types/shared';
 import {Button, DisclosureGroup, DisclosureGroupProps, DisclosurePanelProps, DisclosureProps, Heading, Disclosure as RACDisclosure, DisclosurePanel as RACDisclosurePanel} from 'react-aria-components';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
@@ -29,7 +29,8 @@ export interface SpectrumAccordionProps extends Omit<DisclosureGroupProps, 'clas
 
 const InternalAccordionContext = createContext<{isQuiet: boolean} | null>(null);
 
-function Accordion(props: SpectrumAccordionProps, ref: DOMRef<HTMLDivElement>) {
+/** A group of disclosures that can be expanded and collapsed. */
+export const Accordion = /*#__PURE__*/(forwardRef as forwardRefType)(function Accordion(props: SpectrumAccordionProps, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
@@ -44,7 +45,7 @@ function Accordion(props: SpectrumAccordionProps, ref: DOMRef<HTMLDivElement>) {
       </DisclosureGroup>
     </InternalAccordionContext.Provider>
   );
-}
+});
 
 export interface SpectrumDisclosureProps extends Omit<DisclosureProps, 'className' | 'style' | 'children'>, AriaLabelingProps, StyleProps {
   /** Whether the Disclosure should be displayed with a quiet style. */
@@ -53,7 +54,8 @@ export interface SpectrumDisclosureProps extends Omit<DisclosureProps, 'classNam
   children: React.ReactNode
 }
 
-function Disclosure(props: SpectrumDisclosureProps, ref: DOMRef<HTMLDivElement>) {
+/** A collapsible section of content composed of a heading that expands and collapses a panel. */
+export const Disclosure = /*#__PURE__*/(forwardRef as forwardRefType)(function Disclosure(props: SpectrumDisclosureProps, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
@@ -72,14 +74,15 @@ function Disclosure(props: SpectrumDisclosureProps, ref: DOMRef<HTMLDivElement>)
       {props.children}
     </RACDisclosure>
   );
-}
+});
 
 export interface SpectrumDisclosurePanelProps extends Omit<DisclosurePanelProps, 'className' | 'style' | 'children'>, DOMProps, AriaLabelingProps, StyleProps {
   /** The contents of the accordion panel. */
   children: React.ReactNode
 }
 
-function DisclosurePanel(props: SpectrumDisclosurePanelProps, ref: DOMRef<HTMLDivElement>) {
+/** The panel that contains the content of the disclosure. */
+export const DisclosurePanel = /*#__PURE__*/(forwardRef as forwardRefType)(function DisclosurePanel(props: SpectrumDisclosurePanelProps, ref: DOMRef<HTMLDivElement>) {
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
   return (
@@ -91,7 +94,7 @@ function DisclosurePanel(props: SpectrumDisclosurePanelProps, ref: DOMRef<HTMLDi
       {props.children}
     </RACDisclosurePanel>
   );
-}
+});
 
 export interface SpectrumDisclosureTitleProps extends DOMProps, AriaLabelingProps, StyleProps {
   /**
@@ -103,7 +106,8 @@ export interface SpectrumDisclosureTitleProps extends DOMProps, AriaLabelingProp
   children: React.ReactNode
 }
 
-function DisclosureTitle(props: SpectrumDisclosureTitleProps, ref: DOMRef<HTMLHeadingElement>) {
+/** The heading of the disclosure. */
+export const DisclosureTitle = /*#__PURE__*/(forwardRef as forwardRefType)(function DisclosureTitle(props: SpectrumDisclosureTitleProps, ref: DOMRef<HTMLHeadingElement>) {
   let {styleProps} = useStyleProps(props);
   let {level = 3} = props;
   let {direction} = useLocale();
@@ -130,20 +134,4 @@ function DisclosureTitle(props: SpectrumDisclosureTitleProps, ref: DOMRef<HTMLHe
       </Button>
     </Heading>
   );
-}
-
-/** A group of disclosures that can be expanded and collapsed. */
-const _Accordion = forwardRef(Accordion) as (props: SpectrumAccordionProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof Accordion>;
-export {_Accordion as Accordion};
-
-/** A collapsible section of content composed of a heading that expands and collapses a panel. */
-const _Disclosure = forwardRef(Disclosure) as (props: SpectrumDisclosureProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof Disclosure>;
-export {_Disclosure as Disclosure};
-
-/** The panel that contains the content of the disclosure. */
-const _DisclosurePanel = forwardRef(DisclosurePanel) as (props: SpectrumDisclosurePanelProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof DisclosurePanel>;
-export {_DisclosurePanel as DisclosurePanel};
-
-/** The heading of the disclosure. */
-const _DisclosureTitle = forwardRef(DisclosureTitle) as (props: SpectrumDisclosureTitleProps & {ref?: DOMRef<HTMLDivElement>}) => ReturnType<typeof DisclosureTitle>;
-export {_DisclosureTitle as DisclosureTitle};
+});

@@ -21,7 +21,10 @@ import {useButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 
-function LogicButton(props: SpectrumLogicButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+/**
+ * A LogicButton displays an operator within a boolean logic sequence.
+ */
+export const LogicButton = React.forwardRef(function LogicButton(props: SpectrumLogicButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   props = useProviderProps(props);
   let {
     variant,
@@ -58,10 +61,4 @@ function LogicButton(props: SpectrumLogicButtonProps, ref: FocusableRef<HTMLButt
       </button>
     </FocusRing>
   );
-}
-
-/**
- * A LogicButton displays an operator within a boolean logic sequence.
- */
-let _LogicButton = React.forwardRef(LogicButton);
-export {_LogicButton as LogicButton};
+});

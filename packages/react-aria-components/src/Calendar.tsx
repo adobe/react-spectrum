@@ -78,7 +78,10 @@ export const RangeCalendarContext = createContext<ContextValue<RangeCalendarProp
 export const CalendarStateContext = createContext<CalendarState | null>(null);
 export const RangeCalendarStateContext = createContext<RangeCalendarState | null>(null);
 
-function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A calendar displays one or more date grids and allows users to select a single date.
+ */
+export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, CalendarContext);
   let {locale} = useLocale();
   let state = useCalendarState({
@@ -145,15 +148,12 @@ function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRe
       </Provider>
     </div>
   );
-}
+});
 
 /**
- * A calendar displays one or more date grids and allows users to select a single date.
+ * A range calendar displays one or more date grids and allows users to select a contiguous range of dates.
  */
-const _Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(Calendar);
-export {_Calendar as Calendar};
-
-function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, RangeCalendarContext);
   let {locale} = useLocale();
   let state = useRangeCalendarState({
@@ -224,13 +224,7 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: F
       </Provider>
     </div>
   );
-}
-
-/**
- * A range calendar displays one or more date grids and allows users to select a contiguous range of dates.
- */
-const _RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(RangeCalendar);
-export {_RangeCalendar as RangeCalendar};
+});
 
 export interface CalendarCellRenderProps {
   /** The date that the cell represents. */
@@ -337,7 +331,11 @@ interface InternalCalendarGridContextValue {
 
 const InternalCalendarGridContext = createContext<InternalCalendarGridContextValue | null>(null);
 
-function CalendarGrid(props: CalendarGridProps, ref: ForwardedRef<HTMLTableElement>) {
+/**
+ * A calendar grid displays a single grid of days within a calendar or range calendar which
+ * can be keyboard navigated and selected by the user.
+ */
+export const CalendarGrid = /*#__PURE__*/ (forwardRef as forwardRefType)(function CalendarGrid(props: CalendarGridProps, ref: ForwardedRef<HTMLTableElement>) {
   let calendarState = useContext(CalendarStateContext);
   let rangeCalendarState = useContext(RangeCalendarStateContext);
   let state = calendarState ?? rangeCalendarState!;
@@ -374,14 +372,7 @@ function CalendarGrid(props: CalendarGridProps, ref: ForwardedRef<HTMLTableEleme
       </table>
     </InternalCalendarGridContext.Provider>
   );
-}
-
-/**
- * A calendar grid displays a single grid of days within a calendar or range calendar which
- * can be keyboard navigated and selected by the user.
- */
-const _CalendarGrid = /*#__PURE__*/ (forwardRef as forwardRefType)(CalendarGrid);
-export {_CalendarGrid as CalendarGrid};
+});
 
 export interface CalendarGridHeaderProps extends StyleProps {
   /** A function to render a `<CalendarHeaderCell>` for a weekday name. */
@@ -477,7 +468,10 @@ export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps>,
   date: CalendarDate
 }
 
-function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRef<HTMLTableCellElement>) {
+/**
+ * A calendar cell displays a date cell within a calendar grid which can be selected by the user.
+ */
+export const CalendarCell = /*#__PURE__*/ (forwardRef as forwardRefType)(function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRef<HTMLTableCellElement>) {
   let calendarState = useContext(CalendarStateContext);
   let rangeCalendarState = useContext(RangeCalendarStateContext);
   let state = calendarState ?? rangeCalendarState!;
@@ -535,10 +529,4 @@ function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRe
       <div {...mergeProps(filterDOMProps(otherProps as any), buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={buttonRef} />
     </td>
   );
-}
-
-/**
- * A calendar cell displays a date cell within a calendar grid which can be selected by the user.
- */
-const _CalendarCell = /*#__PURE__*/ (forwardRef as forwardRefType)(CalendarCell);
-export {_CalendarCell as CalendarCell};
+});

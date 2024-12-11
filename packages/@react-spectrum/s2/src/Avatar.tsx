@@ -55,7 +55,10 @@ const imageStyles = style({
 
 export const AvatarContext = createContext<ContextValue<AvatarProps, DOMRefValue<HTMLImageElement>>>(null);
 
-function Avatar(props: AvatarProps, ref: DOMRef<HTMLImageElement>) {
+/**
+ * An avatar is a thumbnail representation of an entity, such as a user or an organization.
+ */
+export const Avatar = forwardRef(function Avatar(props: AvatarProps, ref: DOMRef<HTMLImageElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, AvatarContext);
   let domRef = useDOMRef(ref);
   let {
@@ -87,10 +90,4 @@ function Avatar(props: AvatarProps, ref: DOMRef<HTMLImageElement>) {
       styles={imageStyles({isOverBackground, isLarge}, props.styles)}
       src={src} />
   );
-}
-
-/**
- * An avatar is a thumbnail representation of an entity, such as a user or an organization.
- */
-let _Avatar = forwardRef(Avatar);
-export {_Avatar as Avatar};
+});

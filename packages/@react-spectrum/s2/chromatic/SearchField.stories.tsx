@@ -32,41 +32,44 @@ const meta: Meta<typeof SearchField> = {
 
 export default meta;
 
-export const Example = (args: any) => <SearchField {...args} />;
-
-Example.args = {
-  label: 'Search'
-};
-
-export const CustomWidth = (args: any) => <SearchField {...args} styles={style({width: 256})} />;
-
-CustomWidth.args = {
-  label: 'Search'
-};
-CustomWidth.parameters = {
-  docs: {
-    disable: true
+export const Example = {
+  render: (args: any) => <SearchField {...args} />,
+  args: {
+    label: 'Search'
   }
 };
 
-export const ContextualHelpExample = (args: any) => <SearchField {...args} />;
+export const CustomWidth = {
+  render: (args: any) => <SearchField {...args} styles={style({width: 256})} />,
+  args: {
+    label: 'Search'
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
+};
 
-ContextualHelpExample.args = {
-  label: 'Search',
-  contextualHelp: (
-    <ContextualHelp>
-      <Heading>Search tips</Heading>
-      <Content>
-        <Text>
-          You can use modifiers like "date:" and "from:" to search by specific attributes.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://react-spectrum.adobe.com/"
-          target="_blank">React Spectrum</Link>
-      </Footer>
-    </ContextualHelp>
-  )
+export const ContextualHelpExample = {
+  render: (args: any) => <SearchField {...args} />,
+  args: {
+    label: 'Search',
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>Search tips</Heading>
+        <Content>
+          <Text>
+            You can use modifiers like "date:" and "from:" to search by specific attributes.
+          </Text>
+        </Content>
+        <Footer>
+          <Link
+            isStandalone
+            href="https://react-spectrum.adobe.com/"
+            target="_blank">React Spectrum</Link>
+        </Footer>
+      </ContextualHelp>
+    )
+  }
 };

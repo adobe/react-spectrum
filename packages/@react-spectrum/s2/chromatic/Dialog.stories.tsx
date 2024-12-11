@@ -26,24 +26,23 @@ const meta: Meta<typeof Dialog> = {
 
 export default meta;
 
-export const Default = Example as StoryObj;
-
+export const Default = {
+  ...Example,
 // TODO: maybe render dialogs with different args instead (showHero/showHeader, etc)
-Default.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  await userEvent.keyboard('{Enter}');
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('dialog');
-};
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('{Enter}');
+    let body = canvasElement.ownerDocument.body;
+    await within(body).findByRole('dialog');
+  }
+} as StoryObj;
 
-export const WithDialogTrigger = DialogTriggerExample as StoryObj;
+export const WithDialogTrigger = {
+  ...DialogTriggerExample,
+  play: async (context) => await Default.play!(context)
+} as StoryObj;
 
-WithDialogTrigger.play = async (context) => {
-  await Default.play!(context);
-};
-
-export const DialogContainer = DialogContainerExample as StoryObj;
-
-DialogContainer.play = async (context) => {
-  await Default.play!(context);
-};
+export const DialogContainer = {
+  ...DialogContainerExample,
+  play: async (context) => await Default.play!(context)
+} as StoryObj;

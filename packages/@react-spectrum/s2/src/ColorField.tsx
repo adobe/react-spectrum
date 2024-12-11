@@ -36,7 +36,10 @@ export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'children' | 
 
 export const ColorFieldContext = createContext<ContextValue<ColorFieldProps, TextFieldRef>>(null);
 
-function ColorField(props: ColorFieldProps, ref: Ref<TextFieldRef>) {
+/**
+ * A color field allows users to edit a hex color or individual color channel value.
+ */
+export const ColorField = forwardRef(function ColorField(props: ColorFieldProps, ref: Ref<TextFieldRef>) {
   [props, ref] = useSpectrumContextProps(props, ref, ColorFieldContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);
@@ -103,10 +106,4 @@ function ColorField(props: ColorFieldProps, ref: Ref<TextFieldRef>) {
       </>)}
     </AriaColorField>
   );
-}
-
-/**
- * A color field allows users to edit a hex color or individual color channel value.
- */
-const _ColorField = forwardRef(ColorField);
-export {_ColorField as ColorField};
+});

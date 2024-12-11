@@ -18,7 +18,11 @@ import {SpectrumProgressBarProps} from '@react-types/progress';
 import styles from '@adobe/spectrum-css-temp/components/barloader/vars.css';
 import {useProgressBar} from '@react-aria/progress';
 
-function ProgressBar(props: SpectrumProgressBarProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * ProgressBars show the progression of a system operation: downloading, uploading, processing, etc., in a visual way.
+ * They can represent either determinate or indeterminate progress.
+ */
+export const ProgressBar = React.forwardRef(function ProgressBar(props: SpectrumProgressBarProps, ref: DOMRef<HTMLDivElement>) {
   let {staticColor, variant, ...otherProps} = props;
   const {
     progressBarProps,
@@ -42,11 +46,4 @@ function ProgressBar(props: SpectrumProgressBarProps, ref: DOMRef<HTMLDivElement
         )
       } />
   );
-}
-
-/**
- * ProgressBars show the progression of a system operation: downloading, uploading, processing, etc., in a visual way.
- * They can represent either determinate or indeterminate progress.
- */
-let _ProgressBar = React.forwardRef(ProgressBar);
-export {_ProgressBar as ProgressBar};
+});

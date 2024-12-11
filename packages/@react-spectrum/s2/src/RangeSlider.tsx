@@ -39,7 +39,7 @@ export interface RangeSliderProps extends Omit<SliderBaseProps<RangeValue<number
 
 export const RangeSliderContext = createContext<ContextValue<RangeSliderProps, FocusableRefValue<HTMLDivElement>>>(null);
 
-function RangeSlider(props: RangeSliderProps, ref: FocusableRef<HTMLDivElement>) {
+export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(props: RangeSliderProps, ref: FocusableRef<HTMLDivElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, RangeSliderContext);
   let formContext = useContext(FormContext);
@@ -124,7 +124,4 @@ function RangeSlider(props: RangeSliderProps, ref: FocusableRef<HTMLDivElement>)
       </SliderTrack>
     </SliderBase>
   );
-}
-
-let _RangeSlider = /*#__PURE__*/ forwardRef(RangeSlider);
-export {_RangeSlider as RangeSlider};
+});
