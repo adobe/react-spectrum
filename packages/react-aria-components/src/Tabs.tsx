@@ -13,7 +13,7 @@
 import {AriaLabelingProps, forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
 import {Collection, CollectionBuilder, createHideableComponent, createLeafComponent} from '@react-aria/collections';
-import {CollectionProps, CollectionRendererContext, usePersistedKeys} from './Collection';
+import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, usePersistedKeys} from './Collection';
 import {ContextValue, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {Collection as ICollection, Node, TabListState, useTabListState} from 'react-stately';
@@ -330,7 +330,9 @@ export const TabPanel = /*#__PURE__*/ createHideableComponent(function TabPanel(
           [TabsContext, null],
           [TabListStateContext, null]
         ]}>
-        {renderProps.children}
+        <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
+          {renderProps.children}
+        </CollectionRendererContext.Provider>
       </Provider>
     </div>
   );

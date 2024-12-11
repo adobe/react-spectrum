@@ -87,7 +87,7 @@ function App() {
         })}
       >
         <Section title="Buttons">
-          <ButtonGroup>
+          <ButtonGroup align="center" styles={style({maxWidth: '[100vw]'})}>
             <Button variant="primary">Primary</Button>
             <Button variant="secondary">Secondary</Button>
             <ActionButton>
