@@ -14,8 +14,6 @@ import {act, within} from '@testing-library/react';
 import {ListBoxTesterOpts, UserOpts} from './types';
 import {pressElement, triggerLongPress} from './events';
 
-// TODO: write docs
-
 interface ListBoxToggleOptionOpts {
   /**
    * What interaction type to use when toggling selection for an option. Defaults to the interaction type set on the tester.
@@ -94,11 +92,14 @@ export class ListBoxTester {
     if (targetIndex === -1) {
       throw new Error('Option provided is not in the listbox');
     }
+
+    // TODO: this assumes that the listbox implementation will shepard focus to the first available option if using arrow keys
+    // while focused on the listbox
     if (document.activeElement === this._listbox) {
       await this.user.keyboard('[ArrowDown]');
     }
     let currIndex = options.indexOf(document.activeElement as HTMLElement);
-    if (targetIndex === -1) {
+    if (currIndex === -1) {
       throw new Error('ActiveElement is not in the listbox');
     }
     let direction = targetIndex > currIndex ? 'down' : 'up';

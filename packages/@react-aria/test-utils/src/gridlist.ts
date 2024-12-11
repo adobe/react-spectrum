@@ -121,6 +121,7 @@ export class GridListTester {
     if (needsDoubleClick) {
       await this.user.dblClick(row);
     } else if (interactionType === 'keyboard') {
+      // TODO: make use of keyboardNavigateToOption
       act(() => row.focus());
       await this.user.keyboard('[Enter]');
     } else {

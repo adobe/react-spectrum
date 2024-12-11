@@ -83,3 +83,5 @@ export interface TableTesterOpts extends BaseTesterOpts {
    */
   advanceTimer: UserOpts['advanceTimer']
 }
+
+export interface TabsTesterOpts extends BaseTesterOpts {}

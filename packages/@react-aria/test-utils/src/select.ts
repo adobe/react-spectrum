@@ -141,7 +141,7 @@ export class SelectTester {
       await this.user.keyboard('[ArrowDown]');
     }
     let currIndex = options.indexOf(document.activeElement as HTMLElement);
-    if (targetIndex === -1) {
+    if (currIndex === -1) {
       throw new Error('ActiveElement is not in the listbox');
     }
     let direction = targetIndex > currIndex ? 'down' : 'up';
