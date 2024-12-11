@@ -15,7 +15,20 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {chain, focusWithoutScrolling, getOwnerDocument, getOwnerWindow, isMac, isVirtualClick, isVirtualPointerEvent, mergeProps, openLink, useEffectEvent, useGlobalListeners, useSyncRef} from '@react-aria/utils';
+import {
+  chain,
+  focusWithoutScrolling,
+  getOwnerDocument,
+  getOwnerWindow,
+  isMac,
+  isVirtualClick,
+  isVirtualPointerEvent,
+  mergeProps,
+  openLink,
+  useEffectEvent,
+  useGlobalListeners,
+  useSyncRef
+} from '@react-aria/utils';
 import {disableTextSelection, restoreTextSelection} from './textSelection';
 import {DOMAttributes, FocusableElement, PressEvent as IPressEvent, PointerType, PressEvents, RefObject} from '@react-types/shared';
 import {PressResponderContext} from './context';
@@ -279,8 +292,8 @@ export function usePress(props: PressHookProps): PressResult {
     let state = ref.current;
     let pressProps: DOMAttributes = {
       onKeyDown(e) {
-        if (isValidKeyboardEvent(e.nativeEvent, e.currentTarget) && e.currentTarget.contains(e.target as Element)) {
-          if (shouldPreventDefaultKeyboard(e.target as Element, e.key)) {
+        if (isValidKeyboardEvent(e.nativeEvent, e.currentTarget) && nodeContains(e.currentTarget, e.nativeEvent.composedPath()[0] as Element)) {
+          if (shouldPreventDefaultKeyboard(e.nativeEvent.composedPath()[0] as Element, e.key)) {
             e.preventDefault();
           }
 
@@ -298,7 +311,7 @@ export function usePress(props: PressHookProps): PressResult {
             // before stopPropagation from useKeyboard on a child element may happen and thus we can still call triggerPress for the parent element.
             let originalTarget = e.currentTarget;
             let pressUp = (e) => {
-              if (isValidKeyboardEvent(e, originalTarget) && !e.repeat && originalTarget.contains(e.target as Element) && state.target) {
+              if (isValidKeyboardEvent(e, originalTarget) && !e.repeat && nodeContains(originalTarget, e.composedPath()[0] as Element) && state.target) {
                 triggerPressUp(createEvent(state.target, e), 'keyboard');
               }
             };
@@ -325,7 +338,7 @@ export function usePress(props: PressHookProps): PressResult {
         }
       },
       onClick(e) {
-        if (e && !e.currentTarget.contains(e.target as Element)) {
+        if (e && !nodeContains(e.currentTarget, e.nativeEvent.composedPath()[0] as Element)) {
           return;
         }
 
@@ -360,18 +373,18 @@ export function usePress(props: PressHookProps): PressResult {
 
     let onKeyUp = (e: KeyboardEvent) => {
       if (state.isPressed && state.target && isValidKeyboardEvent(e, state.target)) {
-        if (shouldPreventDefaultKeyboard(e.target as Element, e.key)) {
+        if (shouldPreventDefaultKeyboard(e.composedPath()[0] as Element, e.key)) {
           e.preventDefault();
         }
 
-        let target = e.target as Element;
-        triggerPressEnd(createEvent(state.target, e), 'keyboard', state.target.contains(target));
+        let target = e.composedPath()[0] as Element;
+        triggerPressEnd(createEvent(state.target, e), 'keyboard', nodeContains(state.target, e.composedPath()[0] as Element));
         removeAllGlobalListeners();
 
         // If a link was triggered with a key other than Enter, open the URL ourselves.
         // This means the link has a role override, and the default browser behavior
         // only applies when using the Enter key.
-        if (e.key !== 'Enter' && isHTMLAnchorLink(state.target) && state.target.contains(target) && !e[LINK_CLICKED]) {
+        if (e.key !== 'Enter' && isHTMLAnchorLink(state.target) && nodeContains(state.target, target) && !e[LINK_CLICKED]) {
           // Store a hidden property on the event so we only trigger link click once,
           // even if there are multiple usePress instances attached to the element.
           e[LINK_CLICKED] = true;
@@ -395,7 +408,7 @@ export function usePress(props: PressHookProps): PressResult {
     if (typeof PointerEvent !== 'undefined') {
       pressProps.onPointerDown = (e) => {
         // Only handle left clicks, and ignore events that bubbled through portals.
-        if (e.button !== 0 || !e.currentTarget.contains(e.target as Element)) {
+        if (e.button !== 0 || !nodeContains(e.currentTarget, e.nativeEvent.composedPath()[0] as Element)) {
           return;
         }
 
@@ -421,10 +434,10 @@ export function usePress(props: PressHookProps): PressResult {
           state.isPressed = true;
           state.isOverTarget = true;
           state.activePointerId = e.pointerId;
-          state.target = e.currentTarget;
+          state.target = e.currentTarget as FocusableElement;
 
           if (!isDisabled && !preventFocusOnPress) {
-            focusWithoutScrolling(e.currentTarget);
+            focusWithoutScrolling(state.target);
           }
 
           if (!allowTextSelectionOnPress) {
@@ -435,7 +448,7 @@ export function usePress(props: PressHookProps): PressResult {
 
           // Release pointer capture so that touch interactions can leave the original target.
           // This enables onPointerLeave and onPointerEnter to fire.
-          let target = e.target as Element;
+          let target = e.nativeEvent.composedPath()[0] as Element;
           if ('releasePointerCapture' in target) {
             target.releasePointerCapture(e.pointerId);
           }
@@ -450,7 +463,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onMouseDown = (e) => {
-        if (!e.currentTarget.contains(e.target as Element)) {
+        if (!nodeContains(e.currentTarget, e.nativeEvent.composedPath()[0] as Element)) {
           return;
         }
 
@@ -468,7 +481,7 @@ export function usePress(props: PressHookProps): PressResult {
 
       pressProps.onPointerUp = (e) => {
         // iOS fires pointerup with zero width and height, so check the pointerType recorded during pointerdown.
-        if (!e.currentTarget.contains(e.target as Element) || state.pointerType === 'virtual') {
+        if (!nodeContains(e.currentTarget, e.nativeEvent.composedPath()[0] as Element) || state.pointerType === 'virtual') {
           return;
         }
 
@@ -495,7 +508,7 @@ export function usePress(props: PressHookProps): PressResult {
 
       let onPointerUp = (e: PointerEvent) => {
         if (e.pointerId === state.activePointerId && state.isPressed && e.button === 0 && state.target) {
-          if (state.target.contains(e.target as Element) && state.pointerType != null) {
+          if (nodeContains(state.target, e.composedPath()[0] as Element) && state.pointerType != null) {
             triggerPressEnd(createEvent(state.target, e), state.pointerType);
           } else if (state.isOverTarget && state.pointerType != null) {
             triggerPressEnd(createEvent(state.target, e), state.pointerType, false);
@@ -536,7 +549,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onDragStart = (e) => {
-        if (!e.currentTarget.contains(e.target as Element)) {
+        if (!nodeContains(e.currentTarget, e.nativeEvent.composedPath()[0] as Element)) {
           return;
         }
 
@@ -546,7 +559,7 @@ export function usePress(props: PressHookProps): PressResult {
     } else {
       pressProps.onMouseDown = (e) => {
         // Only handle left clicks
-        if (e.button !== 0 || !e.currentTarget.contains(e.target as Element)) {
+        if (e.button !== 0 || !nodeContains(e.currentTarget, e.nativeEvent.composedPath()[0] as Element)) {
           return;
         }
 
@@ -579,7 +592,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onMouseEnter = (e) => {
-        if (!e.currentTarget.contains(e.target as Element)) {
+        if (!nodeContains(e.currentTarget, e.nativeEvent.composedPath()[0] as Element)) {
           return;
         }
 
@@ -595,7 +608,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onMouseLeave = (e) => {
-        if (!e.currentTarget.contains(e.target as Element)) {
+        if (!nodeContains(e.currentTarget, e.nativeEvent.composedPath()[0] as Element)) {
           return;
         }
 
@@ -612,7 +625,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onMouseUp = (e) => {
-        if (!e.currentTarget.contains(e.target as Element)) {
+        if (!nodeContains(e.currentTarget, e.nativeEvent.composedPath()[0] as Element)) {
           return;
         }
 
@@ -645,7 +658,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onTouchStart = (e) => {
-        if (!e.currentTarget.contains(e.target as Element)) {
+        if (!nodeContains(e.currentTarget, e.nativeEvent.composedPath()[0] as Element)) {
           return;
         }
 
@@ -679,7 +692,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onTouchMove = (e) => {
-        if (!e.currentTarget.contains(e.target as Element)) {
+        if (!nodeContains(e.currentTarget, e.nativeEvent.composedPath()[0] as Element)) {
           return;
         }
 
@@ -707,7 +720,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onTouchEnd = (e) => {
-        if (!e.currentTarget.contains(e.target as Element)) {
+        if (!nodeContains(e.currentTarget, e.nativeEvent.composedPath()[0] as Element)) {
           return;
         }
 
@@ -740,7 +753,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onTouchCancel = (e) => {
-        if (!e.currentTarget.contains(e.target as Element)) {
+        if (!nodeContains(e.currentTarget, e.nativeEvent.composedPath()[0] as Element)) {
           return;
         }
 
@@ -751,7 +764,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       let onScroll = (e: Event) => {
-        if (state.isPressed && (e.target as Element).contains(state.target)) {
+        if (state.isPressed && nodeContains(e.composedPath()[0] as Element, state.target)) {
           cancel({
             currentTarget: state.target,
             shiftKey: false,
@@ -763,7 +776,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       pressProps.onDragStart = (e) => {
-        if (!e.currentTarget.contains(e.target as Element)) {
+        if (!nodeContains(e.currentTarget, e.nativeEvent.composedPath()[0] as Element)) {
           return;
         }
 
@@ -978,4 +991,38 @@ function isValidInputKey(target: HTMLInputElement, key: string) {
   return target.type === 'checkbox' || target.type === 'radio'
     ? key === ' '
     : nonTextInputTypes.has(target.type);
+}
+
+// https://github.com/microsoft/tabster/blob/a89fc5d7e332d48f68d03b1ca6e344489d1c3898/src/Shadowdomize/DOMFunctions.ts#L16
+export function nodeContains(
+  node: Node | null | undefined,
+  otherNode: Node | null | undefined
+): boolean {
+  if (!node || !otherNode) {
+    return false;
+  }
+
+  let currentNode: HTMLElement | Node | null | undefined = otherNode;
+
+  while (currentNode) {
+    if (currentNode === node) {
+      return true;
+    }
+
+    if (
+      typeof (currentNode as HTMLSlotElement).assignedElements !==
+        'function' &&
+      (currentNode as HTMLElement).assignedSlot?.parentNode
+    ) {
+      // Element is slotted
+      currentNode = (currentNode as HTMLElement).assignedSlot?.parentNode;
+    } else if (currentNode.nodeType === document.DOCUMENT_FRAGMENT_NODE) {
+      // Element is in shadow root
+      currentNode = (currentNode as ShadowRoot).host;
+    } else {
+      currentNode = currentNode.parentNode;
+    }
+  }
+
+  return false;
 }
