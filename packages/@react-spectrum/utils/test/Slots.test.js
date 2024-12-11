@@ -190,8 +190,6 @@ describe('Slots', function () {
     expect(getByRole('presentation')).toHaveAttribute('aria-controls', id);
   });
 
-  // tests are wrapped in strict mode so renders are double what you'd typically expect
-  const STRICT_MODE_RENDER_MULTIPLIER = 2;
   it('does not rerender slots consumers when the slot provider rerenders with stable values', function () {
     let slots = {
       slotname: {label: 'foo'}
@@ -228,13 +226,15 @@ describe('Slots', function () {
     const {rerender} = render(
       <FullComponentTree slots={slots} />
     );
+
+    let renderCountBeforeRerender = renderCount;
     
     // Trigger a rerender with the same stable props
     rerender(
       <FullComponentTree slots={slots} />
     );
     
-    expect(renderCount).toBe(1 * STRICT_MODE_RENDER_MULTIPLIER);
+    expect(renderCount).toEqual(renderCountBeforeRerender);
   });
 
   it('does not rerender slots consumers when <ClearSlot /> wrapper is placed between SlotProvider and Consumer', function () {
@@ -275,12 +275,14 @@ describe('Slots', function () {
     const {rerender} = render(
       <FullComponentTree slots={slots} />
     );
+
+    let renderCountBeforeRerender = renderCount;
     
     // Trigger a rerender with the same stable props
     rerender(
       <FullComponentTree slots={slots} />
     );
     
-    expect(renderCount).toBe(1 * STRICT_MODE_RENDER_MULTIPLIER);
+    expect(renderCount).toEqual(renderCountBeforeRerender);
   });
 });
