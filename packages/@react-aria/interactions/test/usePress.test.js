@@ -13,7 +13,7 @@
 import {act, createShadowRoot, fireEvent, installMouseEvent, installPointerEvent, render, waitFor} from '@react-spectrum/test-utils-internal';
 import {ActionButton} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
-import {getDeepActiveElement} from '@react-aria/utils';
+import {getActiveElement} from '@react-aria/utils';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -4127,7 +4127,7 @@ describe('usePress', function () {
 
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
-      const deepActiveElement = getDeepActiveElement();
+      const deepActiveElement = getActiveElement();
 
       expect(deepActiveElement).not.toBe(el);
       expect(deepActiveElement).not.toBe(shadowRoot);

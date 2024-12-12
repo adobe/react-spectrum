@@ -12,7 +12,7 @@
 
 
 import {act} from 'react-dom/test-utils';
-import {getDeepActiveElement, getOwnerWindow, getRootNode} from '../';
+import {getActiveElement, getOwnerWindow, getRootNode} from '../';
 import React, {createRef} from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 
@@ -148,17 +148,17 @@ describe('getOwnerWindow', () => {
   });
 });
 
-describe('getDeepActiveElement', () => {
+describe('getActiveElement', () => {
   it('returns the body as the active element by default', () => {
     act(() => {document.body.focus();}); // Ensure the body is focused, clearing any specific active element
-    expect(getDeepActiveElement()).toBe(document.body);
+    expect(getActiveElement()).toBe(document.body);
   });
 
   it('returns the active element in the light DOM', () => {
     const btn = document.createElement('button');
     document.body.appendChild(btn);
     act(() => {btn.focus();});
-    expect(getDeepActiveElement()).toBe(btn);
+    expect(getActiveElement()).toBe(btn);
     document.body.removeChild(btn);
   });
 
@@ -172,7 +172,7 @@ describe('getDeepActiveElement', () => {
 
     act(() => {btnInShadow.focus();});
 
-    expect(getDeepActiveElement()).toBe(btnInShadow);
+    expect(getActiveElement()).toBe(btnInShadow);
 
     document.body.removeChild(div);
   });
@@ -192,7 +192,7 @@ describe('getDeepActiveElement', () => {
 
     act(() => {input.focus();});
 
-    expect(getDeepActiveElement()).toBe(input);
+    expect(getActiveElement()).toBe(input);
 
     document.body.removeChild(outerHost);
   });
@@ -212,7 +212,7 @@ describe('getDeepActiveElement', () => {
     act(() => {shadowInput.focus();});
     act(() => {bodyInput.focus();});
 
-    expect(getDeepActiveElement()).toBe(bodyInput);
+    expect(getActiveElement()).toBe(bodyInput);
 
     document.body.removeChild(hostDiv);
     document.body.removeChild(bodyInput);
@@ -226,7 +226,7 @@ describe('getDeepActiveElement', () => {
 
     act(() => {input.focus();});
 
-    expect(getDeepActiveElement(iframe.contentWindow.document)).toBe(input);
+    expect(getActiveElement(iframe.contentWindow.document)).toBe(input);
 
     // Teardown
     iframe.remove();

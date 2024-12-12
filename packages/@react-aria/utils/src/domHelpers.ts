@@ -66,17 +66,6 @@ export const getRootBody = (root: Document | ShadowRoot): HTMLElement => {
   }
 };
 
-export const getDeepActiveElement = (doc: Document | ShadowRoot = document) => {
-  let activeElement: Element | null = doc.activeElement;
-
-  while (activeElement && 'shadowRoot' in activeElement &&
-  activeElement.shadowRoot?.activeElement) {
-    activeElement = activeElement.shadowRoot.activeElement;
-  }
-
-  return activeElement;
-};
-
 /**
  * Type guard that checks if a value is a Node. Verifies the presence and type of the nodeType property.
  */

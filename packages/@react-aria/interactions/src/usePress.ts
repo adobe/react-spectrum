@@ -24,6 +24,7 @@ import {
   isVirtualClick,
   isVirtualPointerEvent,
   mergeProps,
+  nodeContains,
   openLink,
   useEffectEvent,
   useGlobalListeners,
@@ -991,38 +992,4 @@ function isValidInputKey(target: HTMLInputElement, key: string) {
   return target.type === 'checkbox' || target.type === 'radio'
     ? key === ' '
     : nonTextInputTypes.has(target.type);
-}
-
-// https://github.com/microsoft/tabster/blob/a89fc5d7e332d48f68d03b1ca6e344489d1c3898/src/Shadowdomize/DOMFunctions.ts#L16
-export function nodeContains(
-  node: Node | null | undefined,
-  otherNode: Node | null | undefined
-): boolean {
-  if (!node || !otherNode) {
-    return false;
-  }
-
-  let currentNode: HTMLElement | Node | null | undefined = otherNode;
-
-  while (currentNode) {
-    if (currentNode === node) {
-      return true;
-    }
-
-    if (
-      typeof (currentNode as HTMLSlotElement).assignedElements !==
-        'function' &&
-      (currentNode as HTMLElement).assignedSlot?.parentNode
-    ) {
-      // Element is slotted
-      currentNode = (currentNode as HTMLElement).assignedSlot?.parentNode;
-    } else if (currentNode.nodeType === document.DOCUMENT_FRAGMENT_NODE) {
-      // Element is in shadow root
-      currentNode = (currentNode as ShadowRoot).host;
-    } else {
-      currentNode = currentNode.parentNode;
-    }
-  }
-
-  return false;
 }

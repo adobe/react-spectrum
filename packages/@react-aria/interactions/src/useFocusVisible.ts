@@ -15,7 +15,7 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {getOwnerWindow, getRootNode, isDocument, isMac, isShadowRoot, isVirtualClick} from '@react-aria/utils';
+import {getOwnerDocument, getOwnerWindow, isMac, isVirtualClick} from '@react-aria/utils';
 import {useEffect, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
 
@@ -140,7 +140,7 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
   }
 
   const windowObject = getOwnerWindow(element);
-  const documentObject = getRootNode(element);
+  const documentObject = getOwnerDocument(element);
 
   // Programmatic focus() calls shouldn't affect the current input modality.
   // However, we need to detect other cases when a focus event occurs without
@@ -152,9 +152,9 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
     focus.apply(this, arguments as unknown as [options?: FocusOptions | undefined]);
   };
 
-  documentObject?.addEventListener('keydown', createEventListener(handleKeyboardEvent), true);
-  documentObject?.addEventListener('keyup', createEventListener(handleKeyboardEvent), true);
-  documentObject?.addEventListener('click', createEventListener(handleClickEvent), true);
+  documentObject.addEventListener('keydown', createEventListener(handleKeyboardEvent), true);
+  documentObject.addEventListener('keyup', createEventListener(handleKeyboardEvent), true);
+  documentObject.addEventListener('click', createEventListener(handleClickEvent), true);
 
   // Register focus events on the window so they are sure to happen
   // before React's event listeners (registered on the document).
@@ -162,13 +162,13 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
   windowObject.addEventListener('blur', handleWindowBlur, false);
 
   if (typeof PointerEvent !== 'undefined') {
-    documentObject?.addEventListener('pointerdown', createEventListener(handlePointerEvent), true);
-    documentObject?.addEventListener('pointermove', createEventListener(handlePointerEvent), true);
-    documentObject?.addEventListener('pointerup', createEventListener(handlePointerEvent), true);
+    documentObject.addEventListener('pointerdown', createEventListener(handlePointerEvent), true);
+    documentObject.addEventListener('pointermove', createEventListener(handlePointerEvent), true);
+    documentObject.addEventListener('pointerup', createEventListener(handlePointerEvent), true);
   } else {
-    documentObject?.addEventListener('mousedown', createEventListener(handlePointerEvent), true);
-    documentObject?.addEventListener('mousemove', createEventListener(handlePointerEvent), true);
-    documentObject?.addEventListener('mouseup', createEventListener(handlePointerEvent), true);
+    documentObject.addEventListener('mousedown', createEventListener(handlePointerEvent), true);
+    documentObject.addEventListener('mousemove', createEventListener(handlePointerEvent), true);
+    documentObject.addEventListener('mouseup', createEventListener(handlePointerEvent), true);
   }
 
   // Add unmount handler
@@ -181,30 +181,30 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
 
 const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
   const windowObject = getOwnerWindow(element);
-  const documentObject = getRootNode(element);
+  const documentObject = getOwnerDocument(element);
   if (loadListener) {
-    documentObject?.removeEventListener('DOMContentLoaded', loadListener);
+    documentObject.removeEventListener('DOMContentLoaded', loadListener);
   }
   if (!hasSetupGlobalListeners.has(windowObject)) {
     return;
   }
   windowObject.HTMLElement.prototype.focus = hasSetupGlobalListeners.get(windowObject)!.focus;
 
-  documentObject?.removeEventListener('keydown', createEventListener(handleKeyboardEvent), true);
-  documentObject?.removeEventListener('keyup', createEventListener(handleKeyboardEvent), true);
-  documentObject?.removeEventListener('click', createEventListener(handleClickEvent), true);
+  documentObject.removeEventListener('keydown', createEventListener(handleKeyboardEvent), true);
+  documentObject.removeEventListener('keyup', createEventListener(handleKeyboardEvent), true);
+  documentObject.removeEventListener('click', createEventListener(handleClickEvent), true);
 
   windowObject.removeEventListener('focus', handleFocusEvent, true);
   windowObject.removeEventListener('blur', handleWindowBlur, false);
 
   if (typeof PointerEvent !== 'undefined') {
-    documentObject?.removeEventListener('pointerdown', createEventListener(handlePointerEvent), true);
-    documentObject?.removeEventListener('pointermove', createEventListener(handlePointerEvent), true);
-    documentObject?.removeEventListener('pointerup', createEventListener(handlePointerEvent), true);
+    documentObject.removeEventListener('pointerdown', createEventListener(handlePointerEvent), true);
+    documentObject.removeEventListener('pointermove', createEventListener(handlePointerEvent), true);
+    documentObject.removeEventListener('pointerup', createEventListener(handlePointerEvent), true);
   } else {
-    documentObject?.removeEventListener('mousedown', createEventListener(handlePointerEvent), true);
-    documentObject?.removeEventListener('mousemove', createEventListener(handlePointerEvent), true);
-    documentObject?.removeEventListener('mouseup', createEventListener(handlePointerEvent), true);
+    documentObject.removeEventListener('mousedown', createEventListener(handlePointerEvent), true);
+    documentObject.removeEventListener('mousemove', createEventListener(handlePointerEvent), true);
+    documentObject.removeEventListener('mouseup', createEventListener(handlePointerEvent), true);
   }
 
   hasSetupGlobalListeners.delete(windowObject);
@@ -228,24 +228,15 @@ const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
  * @returns A function to remove the event listeners and cleanup the state.
  */
 export function addWindowFocusTracking(element?: HTMLElement | null): () => void {
-  const rootNode = getRootNode(element);
+  const documentObject = getOwnerDocument(element);
   let loadListener;
-
-  const isRootNodeDocument = isDocument(rootNode);
-  const isRootNodeShadowRoot = isShadowRoot(rootNode);
-  // Use nodeType to check if it's either a Document or a ShadowRoot
-  if (
-    (isRootNodeDocument && (rootNode as Document).readyState !== 'loading') ||
-    (isRootNodeShadowRoot)
-  ) {
-    // If it's a Document that's ready or a ShadowRoot
+  if (documentObject.readyState !== 'loading') {
     setupGlobalFocusEvents(element);
-  } else if (isRootNodeDocument) {
-    // If it's a Document that's still loading
+  } else {
     loadListener = () => {
       setupGlobalFocusEvents(element);
     };
-    rootNode.addEventListener('DOMContentLoaded', loadListener);
+    documentObject.addEventListener('DOMContentLoaded', loadListener);
   }
 
   return () => tearDownWindowFocusTracking(element, loadListener);
