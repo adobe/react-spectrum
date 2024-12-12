@@ -75,12 +75,13 @@ describe('Tabs', function () {
 
   it('renders properly', function () {
     let container = renderComponent();
-    let tablist = container.getByRole('tablist');
-    expect(tablist).toBeTruthy();
+    let tabsTester = testUtilUser.createTester('Tabs', {root: container.getByRole('tablist')});
 
+    let tablist = tabsTester.tablist;
+    expect(tablist).toBeTruthy();
     expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
 
-    let tabs = within(tablist).getAllByRole('tab');
+    let tabs = tabsTester.tabs;
     expect(tabs.length).toBe(3);
 
     for (let tab of tabs) {
@@ -88,12 +89,15 @@ describe('Tabs', function () {
       expect(tab).toHaveAttribute('aria-selected');
       let isSelected = tab.getAttribute('aria-selected') === 'true';
       if (isSelected) {
+        expect(tab).toBe(tabsTester.selectedTab);
         expect(tab).toHaveAttribute('aria-controls');
         let tabpanel = document.getElementById(tab.getAttribute('aria-controls'));
         expect(tabpanel).toBeTruthy();
         expect(tabpanel).toHaveAttribute('aria-labelledby', tab.id);
         expect(tabpanel).toHaveAttribute('role', 'tabpanel');
         expect(tabpanel).toHaveTextContent(defaultItems[0].children);
+        expect(tabpanel).toBe(tabsTester.activeTabpanel);
+        expect(tabsTester.tabpanels).toHaveLength(1);
       }
     }
   });
