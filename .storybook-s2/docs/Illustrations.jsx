@@ -36,7 +36,7 @@ export function Illustrations() {
                     size="XS"
                     isQuiet
                     aria-label="Copy"
-                    onPress={() => navigator.clipboard.writeText(`import ${name} from '@react-spectrum/s2/illustrations/${gradientStyle}/${icon}';`)}>
+                    onPress={() => navigator.clipboard.writeText(`import ${name} from '@react-spectrum/s2/illustrations/gradient/${gradientStyle}/${icon}';`)}>
                     <Paste />
                   </ActionButton>
                 </span>
