@@ -12,7 +12,14 @@
 
 import {ArbitraryValue, CSSValue, PropertyValueMap} from './types';
 import {Color, createArbitraryProperty, createColorProperty, createMappedProperty, createRenamedProperty, createSizingProperty, createTheme, parseArbitraryValue} from './style-macro';
-import {colorScale, colorToken, fontSizeToken, getToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
+import {
+  colorScale,
+  colorToken,
+  fontSizeToken,
+  getToken,
+  simpleColorScale,
+  weirdColorToken
+} from './tokens' with {type: 'macro'};
 import type * as CSS from 'csstype';
 
 interface MacroContext {
@@ -108,6 +115,10 @@ export function lightDark(light: SpectrumColor, dark: SpectrumColor): `[${string
 
 export function colorMix(a: SpectrumColor, b: SpectrumColor, percent: number): `[${string}]` {
   return `[color-mix(in srgb, ${parseColor(a)}, ${parseColor(b)} ${percent}%)]`;
+}
+
+export function linearGradient(angle: string, ...tokens: [SpectrumColor, number][]): string {
+  return `linear-gradient(${angle}, ${tokens.map(([color, stop]) => `${parseColor(color)} ${stop}%`)})`;
 }
 
 function generateSpacing<K extends number[]>(px: K): {[P in K[number]]: string} {

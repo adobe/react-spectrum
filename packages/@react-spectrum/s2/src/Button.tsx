@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, fontRelative, linearGradient, style} from '../style' with {type: 'macro'};
 import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -34,7 +34,7 @@ interface ButtonStyleProps {
    *
    * @default 'primary'
    */
-  variant?: 'primary' | 'secondary' | 'accent' | 'negative',
+  variant?: 'primary' | 'secondary' | 'accent' | 'negative' | 'premium' | 'genai',
   /**
    * The background style of the Button.
    *
@@ -142,6 +142,12 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
       isDisabled: 'GrayText'
     }
   },
+  backgroundImage: {
+    variant: {
+      premium: linearGradient('96deg', ['fuchsia-900', 0], ['indigo-900', 50], ['blue-900', 100]),
+      genai: linearGradient('96deg', ['red-900', 0], ['magenta-900', 50], ['indigo-900', 100])
+    }
+  },
   backgroundColor: {
     fillStyle: {
       fill: {
@@ -217,7 +223,9 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
           primary: 'gray-25',
           secondary: 'neutral',
           accent: 'white',
-          negative: 'white'
+          negative: 'white',
+          premium: 'white',
+          genai: 'white'
         },
         isDisabled: 'disabled'
       },
@@ -232,7 +240,9 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
           fill: {
             variant: {
               primary: 'black',
-              secondary: baseColor('transparent-white-800')
+              secondary: baseColor('transparent-white-800'),
+              premium: 'white',
+              genai: 'white'
             }
           },
           outline: baseColor('transparent-white-800')
@@ -244,7 +254,9 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
           fill: {
             variant: {
               primary: 'white',
-              secondary: baseColor('transparent-black-800')
+              secondary: baseColor('transparent-black-800'),
+              premium: 'white',
+              genai: 'white'
             }
           },
           outline: baseColor('transparent-black-800')
