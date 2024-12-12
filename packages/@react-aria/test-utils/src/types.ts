@@ -10,6 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+export type Orientation = 'horizontal' | 'vertical';
+export type Direction = 'ltr' | 'rtl';
+
 // https://github.com/testing-library/dom-testing-library/issues/939#issuecomment-830771708 is an interesting way of allowing users to configure the timers
 // curent way is like https://testing-library.com/docs/user-event/options/#advancetimers,
 export interface UserOpts {
@@ -84,4 +87,10 @@ export interface TableTesterOpts extends BaseTesterOpts {
   advanceTimer: UserOpts['advanceTimer']
 }
 
-export interface TabsTesterOpts extends BaseTesterOpts {}
+export interface TabsTesterOpts extends BaseTesterOpts {
+  /**
+   * The horizontal layout direction, typically affected by locale.
+   * @default 'ltr'
+   */
+  direction?: Direction
+}

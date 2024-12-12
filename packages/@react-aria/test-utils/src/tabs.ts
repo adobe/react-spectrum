@@ -11,11 +11,8 @@
  */
 
 import {act, within} from '@testing-library/react';
-import {UserOpts, TabsTesterOpts} from './types';
-import {pressElement, triggerLongPress} from './events';
-
-type Orientation = 'horizontal' | 'vertical';
-type Direction = 'ltr' | 'rtl';
+import {Direction, Orientation, TabsTesterOpts, UserOpts} from './types';
+import {pressElement} from './events';
 
 interface TriggerTabOptions {
   /**
@@ -29,27 +26,24 @@ interface TriggerTabOptions {
   /**
    * Whether the tab needs to be activated manually rather than on focus.
    */
-  manualActivation?: boolean,
-  /**
-   * The horizontal layout direction.
-   * @default 'ltr'
-   */
-  direction: Direction
+  manualActivation?: boolean
 }
 
-export class ListBoxTester {
+export class TabsTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
   private _tablist: HTMLElement;
+  private _direction: Direction;
 
   constructor(opts: TabsTesterOpts) {
-    let {root, user, interactionType} = opts;
+    let {root, user, interactionType, direction} = opts;
     this.user = user;
     this._interactionType = interactionType || 'mouse';
+    this._direction = direction || 'ltr';
 
     this._tablist = root;
     let tablist = within(root).queryAllByRole('tablist');
-    if (tablist) {
+    if (tablist.length > 0) {
       this._tablist = tablist[0];
     }
   }
@@ -82,8 +76,8 @@ export class ListBoxTester {
   }
 
   // TODO: also quite similar across more utils albeit with orientation, refactor to make generic
-  private async keyboardNavigateToTab(opts: {tab: HTMLElement, orientation?: Orientation, direction?: Direction}) {
-    let {tab, orientation = 'vertical', direction = 'ltr'} = opts;
+  private async keyboardNavigateToTab(opts: {tab: HTMLElement, orientation?: Orientation}) {
+    let {tab, orientation = 'vertical'} = opts;
     let tabs = this.tabs;
     let targetIndex = tabs.indexOf(tab);
     if (targetIndex === -1) {
@@ -93,9 +87,9 @@ export class ListBoxTester {
     if (!this._tablist.contains(document.activeElement)) {
       let selectedTab = this.selectedTab;
       if (selectedTab != null) {
-        selectedTab.focus();
+        act(() => selectedTab.focus());
       } else {
-        tabs.find(tab => tab.getAttribute('disabled') !== 'false')?.focus();
+        act(() => tabs.find(tab => tab.getAttribute('disabled') !== 'false')?.focus());
       }
     }
 
@@ -107,7 +101,7 @@ export class ListBoxTester {
     let arrowUp = 'ArrowUp';
     let arrowDown = 'ArrowDown';
     if (orientation === 'horizontal') {
-      if (direction === 'ltr') {
+      if (this._direction === 'ltr') {
         arrowUp = 'ArrowLeft';
         arrowDown = 'ArrowRight';
       } else {
@@ -123,7 +117,11 @@ export class ListBoxTester {
   };
 
   async triggerTab(opts: TriggerTabOptions) {
-    let {tab, interactionType, manualActivation, direction = 'ltr'} = opts;
+    let {
+      tab,
+      interactionType = this._interactionType,
+      manualActivation
+    } = opts;
 
     if (typeof tab === 'string' || typeof tab === 'number') {
       tab = this.findTab({tabIndexOrText: tab});
@@ -131,6 +129,8 @@ export class ListBoxTester {
 
     if (!tab) {
       throw new Error('Target tab not found in the tablist.');
+    } else if (tab.hasAttribute('disabled')) {
+      throw new Error('Target tab is disabled.');
     }
 
     if (interactionType === 'keyboard') {
@@ -139,7 +139,7 @@ export class ListBoxTester {
       }
 
       let tabsOrientation = this._tablist.getAttribute('aria-orientation') || 'horizontal';
-      await this.keyboardNavigateToTab({tab, orientation: tabsOrientation as Orientation, direction});
+      await this.keyboardNavigateToTab({tab, orientation: tabsOrientation as Orientation});
       if (manualActivation) {
         await this.user.keyboard('[Enter]');
       }
