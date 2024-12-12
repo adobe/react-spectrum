@@ -116,6 +116,9 @@ export class TabsTester {
     }
   };
 
+  /**
+   * Triggers the specified tab. Defaults to using the interaction type set on the tabs tester.
+   */
   async triggerTab(opts: TriggerTabOptions) {
     let {
       tab,

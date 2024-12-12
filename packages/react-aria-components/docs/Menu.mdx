@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import menuUtil from 'docs:@react-aria/test-utils/src/menu.ts';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI, VersionBadge} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from './MenuAnatomy.svg';
@@ -1142,6 +1142,8 @@ By providing the above contexts, the existing `Button`, `Popover`, and `Menu` co
 ```
 
 ## Testing
+
+### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
 `@react-aria/test-utils` also offers common menu interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the menu tester and a sample of how you could use it in your test suite.

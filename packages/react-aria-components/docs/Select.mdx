@@ -13,7 +13,7 @@ export default Layout;
 import docs from 'docs:react-aria-components';
 import statelyDocs from 'docs:@react-stately/select';
 import selectUtil from 'docs:@react-aria/test-utils/src/select.ts';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI, VersionBadge} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from './SelectAnatomy.svg';
@@ -1240,6 +1240,8 @@ problematic element and references the relevant `AXE` rule. Please use this data
 from your automated accessibility tests as shown [here](./accessibility.html#false-positives).
 
 ## Testing
+
+### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
 `@react-aria/test-utils` also offers common select interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the select tester and a sample of how you could use it in your test suite.
