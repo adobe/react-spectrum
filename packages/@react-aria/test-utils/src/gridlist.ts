@@ -89,7 +89,7 @@ export class GridListTester {
     let {
       row,
       needsLongPress,
-      checkboxSelection,
+      checkboxSelection = true,
       interactionType = this._interactionType
     } = opts;
 

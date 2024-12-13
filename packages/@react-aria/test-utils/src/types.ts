@@ -120,6 +120,7 @@ export interface ToggleGridRowOpts extends BaseGridRowInteractionOpts {
   needsLongPress?: boolean,
   /**
    * Whether the checkbox should be used to select the row. If false, will attempt to select the row via press.
+   * @default 'true'
    */
   checkboxSelection?: boolean
 }

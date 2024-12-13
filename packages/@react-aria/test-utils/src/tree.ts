@@ -110,6 +110,11 @@ export class TreeTester {
 
     let rowCheckbox = within(row).queryByRole('checkbox');
 
+    // TODO: investigagte why pressElement on a disabled checkbox is still toggling row selection in single selection
+    if (rowCheckbox?.getAttribute('disabled') === '') {
+      return;
+    }
+
     // this would be better than the check to do nothing in events.ts
     // also, it'd be good to be able to trigger selection on the row instead of having to go to the checkbox directly
     if (interactionType === 'keyboard' && !checkboxSelection) {
