@@ -131,6 +131,10 @@ export class ListBoxTester {
     }
 
     if (interactionType === 'keyboard') {
+      if (option?.getAttribute('aria-disabled') === 'true') {
+        return;
+      }
+
       if (document.activeElement !== this._listbox || !this._listbox.contains(document.activeElement)) {
         act(() => this._listbox.focus());
       }
@@ -171,6 +175,10 @@ export class ListBoxTester {
     if (needsDoubleClick) {
       await this.user.dblClick(option);
     } else if (interactionType === 'keyboard') {
+      if (option?.getAttribute('aria-disabled') === 'true') {
+        return;
+      }
+
       if (document.activeElement !== this._listbox || !this._listbox.contains(document.activeElement)) {
         act(() => this._listbox.focus());
       }

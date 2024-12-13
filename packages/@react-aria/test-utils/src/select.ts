@@ -179,6 +179,10 @@ export class SelectTester {
       }
 
       if (interactionType === 'keyboard') {
+        if (option?.getAttribute('aria-disabled') === 'true') {
+          return;
+        }
+
         if (document.activeElement !== listbox || !listbox.contains(document.activeElement)) {
           act(() => listbox.focus());
         }

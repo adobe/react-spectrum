@@ -41,7 +41,7 @@ export class TreeTester {
   /**
    * Set the interaction type used by the tree tester.
    */
-  setInteractionType = (type: UserOpts['interactionType']) => {
+  setInteractionType(type: UserOpts['interactionType']) {
     this._interactionType = type;
   };
 
@@ -110,8 +110,9 @@ export class TreeTester {
 
     let rowCheckbox = within(row).queryByRole('checkbox');
 
-    // TODO: investigagte why pressElement on a disabled checkbox is still toggling row selection in single selection
-    if (rowCheckbox?.getAttribute('disabled') === '') {
+    // TODO: we early return here because the checkbox can't be keyboard navigated to if the row is disabled usually
+    // but we may to check for disabledBehavior (aka if the disable row gets skipped when keyboard navigating or not)
+    if (interactionType === 'keyboard' && (rowCheckbox?.getAttribute('disabled') === '' || row?.getAttribute('aria-disabled') === 'true')) {
       return;
     }
 
@@ -167,6 +168,10 @@ export class TreeTester {
       let rowExpander = within(row).getAllByRole('button')[0]; // what happens if the button is not first? how can we differentiate?
       await pressElement(this.user, rowExpander, interactionType);
     } else if (interactionType === 'keyboard') {
+      if (row?.getAttribute('aria-disabled') === 'true') {
+        return;
+      }
+
       await this.keyboardNavigateToRow({row});
       if (row.getAttribute('aria-expanded') === 'true') {
         await this.user.keyboard('[ArrowLeft]');
@@ -197,6 +202,10 @@ export class TreeTester {
     if (needsDoubleClick) {
       await this.user.dblClick(row);
     } else if (interactionType === 'keyboard') {
+      if (row?.getAttribute('aria-disabled') === 'true') {
+        return;
+      }
+
       if (document.activeElement !== this._tree || !this._tree.contains(document.activeElement)) {
         act(() => this._tree.focus());
       }
@@ -211,7 +220,7 @@ export class TreeTester {
   /**
    * Returns the tree.
    */
-  get tree() {
+  get tree():  HTMLElement {
     return this._tree;
   }
 

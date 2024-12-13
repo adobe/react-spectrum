@@ -209,6 +209,10 @@ export class MenuTester {
       }
 
       if (interactionType === 'keyboard') {
+        if (option?.getAttribute('aria-disabled') === 'true') {
+          return;
+        }
+
         if (document.activeElement !== menu || !menu.contains(document.activeElement)) {
           act(() => menu.focus());
         }
