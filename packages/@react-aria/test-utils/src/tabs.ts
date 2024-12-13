@@ -89,7 +89,7 @@ export class TabsTester {
       if (selectedTab != null) {
         act(() => selectedTab.focus());
       } else {
-        act(() => tabs.find(tab => tab.getAttribute('disabled') !== 'false')?.focus());
+        act(() => tabs.find(tab => !(tab.hasAttribute('disabled') || tab.getAttribute('aria-disabled') === 'true'))?.focus());
       }
     }
 

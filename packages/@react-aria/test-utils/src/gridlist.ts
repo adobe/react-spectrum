@@ -11,37 +11,23 @@
  */
 
 import {act, within} from '@testing-library/react';
-import {GridListTesterOpts, UserOpts} from './types';
-import {pressElement} from './events';
+import {GridListTesterOpts, GridRowActionOpts, ToggleGridRowOpts, UserOpts} from './types';
+import {pressElement, triggerLongPress} from './events';
 
-interface GridListToggleRowOpts {
-  /**
-   * What interaction type to use when toggling the row selection. Defaults to the interaction type set on the tester.
-   */
-  interactionType?: UserOpts['interactionType'],
-  /**
-   * The index, text, or node of the row to toggle selection for.
-   */
-  row: number | string | HTMLElement
-}
-
-interface GridListRowActionOpts extends GridListToggleRowOpts {
-  /**
-   * Whether or not the grid list needs a double click to trigger the row action. Depends on the grid list's implementation.
-   */
-  needsDoubleClick?: boolean
-}
+interface GridListToggleRowOpts extends ToggleGridRowOpts {}
+interface GridListRowActionOpts extends GridRowActionOpts {}
 
 export class GridListTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
+  private _advanceTimer: UserOpts['advanceTimer'];
   private _gridlist: HTMLElement;
 
-
   constructor(opts: GridListTesterOpts) {
-    let {root, user, interactionType} = opts;
+    let {root, user, interactionType, advanceTimer} = opts;
     this.user = user;
     this._interactionType = interactionType || 'mouse';
+    this._advanceTimer = advanceTimer;
     this._gridlist = root;
   }
 
@@ -50,34 +36,6 @@ export class GridListTester {
    */
   setInteractionType(type: UserOpts['interactionType']) {
     this._interactionType = type;
-  }
-
-  // TODO: support long press? This is also pretty much the same as table's toggleRowSelection so maybe can share
-  // For now, don't include long press, see if people need it or if we should just expose long press as a separate util if it isn't very common
-  // If the current way of passing in the user specified advance timers is ok, then I'd be find including long press
-  // Maybe also support an option to force the click to happen on a specific part of the element (checkbox or row). That way
-  // the user can test a specific type of interaction?
-  /**
-   * Toggles the selection for the specified gridlist row. Defaults to using the interaction type set on the gridlist tester.
-   */
-  async toggleRowSelection(opts: GridListToggleRowOpts) {
-    let {row, interactionType = this._interactionType} = opts;
-
-    if (typeof row === 'string' || typeof row === 'number') {
-      row = this.findRow({rowIndexOrText: row});
-    }
-
-    if (!row) {
-      throw new Error('Target row not found in the gridlist.');
-    }
-
-    let rowCheckbox = within(row).queryByRole('checkbox');
-    if (rowCheckbox) {
-      await pressElement(this.user, rowCheckbox, interactionType);
-    } else {
-      let cell = within(row).getAllByRole('gridcell')[0];
-      await pressElement(this.user, cell, interactionType);
-    }
   }
 
   /**
@@ -96,6 +54,83 @@ export class GridListTester {
     }
 
     return row;
+  }
+
+  // TODO: RTL
+  private async keyboardNavigateToRow(opts: {row: HTMLElement}) {
+    let {row} = opts;
+    let rows = this.rows;
+    let targetIndex = rows.indexOf(row);
+    if (targetIndex === -1) {
+      throw new Error('Option provided is not in the tree');
+    }
+    if (document.activeElement === this._gridlist) {
+      await this.user.keyboard('[ArrowDown]');
+    } else if (this._gridlist.contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
+      do {
+        await this.user.keyboard('[ArrowLeft]');
+      } while (document.activeElement!.getAttribute('role') !== 'row');
+    }
+    let currIndex = rows.indexOf(document.activeElement as HTMLElement);
+    if (currIndex === -1) {
+      throw new Error('ActiveElement is not in the tree');
+    }
+    let direction = targetIndex > currIndex ? 'down' : 'up';
+
+    for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
+      await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
+    }
+  };
+
+  /**
+   * Toggles the selection for the specified gridlist row. Defaults to using the interaction type set on the gridlist tester.
+   */
+  async toggleRowSelection(opts: GridListToggleRowOpts) {
+    let {
+      row,
+      needsLongPress,
+      checkboxSelection,
+      interactionType = this._interactionType
+    } = opts;
+
+    if (typeof row === 'string' || typeof row === 'number') {
+      row = this.findRow({rowIndexOrText: row});
+    }
+
+    if (!row) {
+      throw new Error('Target row not found in the gridlist.');
+    }
+
+    let rowCheckbox = within(row).queryByRole('checkbox');
+
+    // Would be nice to get rid of this check
+    if (rowCheckbox?.getAttribute('disabled') === '') {
+      return;
+    }
+
+    // this would be better than the check to do nothing in events.ts
+    // also, it'd be good to be able to trigger selection on the row instead of having to go to the checkbox directly
+    if (interactionType === 'keyboard' && !checkboxSelection) {
+      await this.keyboardNavigateToRow({row});
+      await this.user.keyboard('{Space}');
+      return;
+    }
+    if (rowCheckbox && checkboxSelection) {
+      await pressElement(this.user, rowCheckbox, interactionType);
+    } else {
+      let cell = within(row).getAllByRole('gridcell')[0];
+      if (needsLongPress && interactionType === 'touch') {
+        if (this._advanceTimer == null) {
+          throw new Error('No advanceTimers provided for long press.');
+        }
+
+        // Note that long press interactions with rows is strictly touch only for grid rows
+        await triggerLongPress({element: cell, advanceTimer: this._advanceTimer, pointerOpts: {pointerType: 'touch'}});
+
+      } else {
+        await pressElement(this.user, cell, interactionType);
+      }
+    }
   }
 
   // TODO: There is a more difficult use case where the row has/behaves as link, don't think we have a good way to determine that unless the
@@ -121,8 +156,11 @@ export class GridListTester {
     if (needsDoubleClick) {
       await this.user.dblClick(row);
     } else if (interactionType === 'keyboard') {
-      // TODO: make use of keyboardNavigateToOption
-      act(() => row.focus());
+      if (document.activeElement !== this._gridlist || !this._gridlist.contains(document.activeElement)) {
+        act(() => this._gridlist.focus());
+      }
+
+      await this.keyboardNavigateToRow({row});
       await this.user.keyboard('[Enter]');
     } else {
       await pressElement(this.user, row, interactionType);

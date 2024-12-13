@@ -101,3 +101,32 @@ export interface TreeTesterOpts extends BaseTesterOpts {
    */
   advanceTimer?: UserOpts['advanceTimer']
 }
+
+export interface BaseGridRowInteractionOpts {
+  /**
+   * The index, text, or node of the row to target.
+   */
+  row: number | string | HTMLElement,
+  /**
+   * What interaction type to use when interacting with the row. Defaults to the interaction type set on the tester.
+   */
+  interactionType?: UserOpts['interactionType']
+}
+
+export interface ToggleGridRowOpts extends BaseGridRowInteractionOpts {
+  /**
+   * Whether the row needs to be long pressed to be selected. Depends on the components implementation.
+   */
+  needsLongPress?: boolean,
+  /**
+   * Whether the checkbox should be used to select the row. If false, will attempt to select the row via press.
+   */
+  checkboxSelection?: boolean
+}
+
+export interface GridRowActionOpts extends BaseGridRowInteractionOpts {
+  /**
+   * Whether or not the row needs a double click to trigger the row action. Depends on the components implementation.
+   */
+  needsDoubleClick?: boolean
+}

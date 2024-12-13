@@ -151,7 +151,6 @@ export class SelectTester {
     }
   };
 
-  // TODO: update this so it also can take the option node instead of just text, might already have been added in Rob's PR
   /**
    * Selects the desired select option. Defaults to using the interaction type set on the select tester. If necessary, will open the select dropdown beforehand.
    * The desired option can be targeted via the option's node, the option's text, or the option's index.

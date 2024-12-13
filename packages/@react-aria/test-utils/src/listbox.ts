@@ -93,11 +93,18 @@ export class ListBoxTester {
       throw new Error('Option provided is not in the listbox');
     }
 
-    // TODO: this assumes that the listbox implementation will shepard focus to the first available option if using arrow keys
-    // while focused on the listbox
     if (document.activeElement === this._listbox) {
       await this.user.keyboard('[ArrowDown]');
     }
+
+    // TODO: not sure about doing same while loop that exists in other implementations of keyboardNavigateToOption,
+    // feels like it could break easily
+    if (document.activeElement?.getAttribute('role') !== 'option') {
+      await act(async () => {
+        option.focus();
+      });
+    }
+
     let currIndex = options.indexOf(document.activeElement as HTMLElement);
     if (currIndex === -1) {
       throw new Error('ActiveElement is not in the listbox');
@@ -109,7 +116,6 @@ export class ListBoxTester {
     }
   };
 
-  // TODO: may need to support long press for touch for certain configurations
   /**
    * Toggles the selection for the specified listbox option. Defaults to using the interaction type set on the listbox tester.
    */

@@ -10,42 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, within} from '@testing-library/react';
+import {act, within} from '@testing-library/react';
+import {BaseGridRowInteractionOpts, GridRowActionOpts, ToggleGridRowOpts, TreeTesterOpts, UserOpts} from './types';
 import {pressElement, triggerLongPress} from './events';
-import {TreeTesterOpts, UserOpts} from './types';
 
-interface BaseTreeRowInteractionOpts {
-  /**
-   * The index, text, or node of the row to target.
-   */
-  row: number | string | HTMLElement,
-  /**
-   * What interaction type to use when interacting with the row. Defaults to the interaction type set on the tester.
-   */
-  interactionType?: UserOpts['interactionType']
-}
+interface TreeToggleExpansionOpts extends BaseGridRowInteractionOpts {}
+interface TreeToggleRowOpts extends ToggleGridRowOpts {}
+interface TreeRowActionOpts extends GridRowActionOpts {}
 
-interface TreeToggleExpansionOpts extends BaseTreeRowInteractionOpts {}
-
-interface TreeToggleRowOpts extends BaseTreeRowInteractionOpts {
-  /**
-   * Whether the row needs to be long pressed to be selected. Depends on the tree's implementation.
-   */
-  needsLongPress?: boolean,
-
-  /**
-   * Whether the checkbox should be used to select the row. If false, will attempt to select the row via press.
-   */
-  checkboxSelection?: boolean
-}
-
-interface TreeRowActionOpts extends BaseTreeRowInteractionOpts {
-  /**
-   * Whether or not the grid list needs a double click to trigger the row action. Depends on the grid list's implementation.
-   */
-  needsDoubleClick?: boolean
-}
-
+// TODO: this ended up being pretty much the same as gridlist, refactor so it extends from gridlist
 export class TreeTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
@@ -60,7 +33,7 @@ export class TreeTester {
     this._tree = root;
     // TODO: should all helpers do this?
     let tree = within(root).queryByRole('treegrid');
-    if (tree) {
+    if (root.getAttribute('role') !== 'treegrid' && tree) {
       this._tree = tree;
     }
   }
@@ -100,7 +73,7 @@ export class TreeTester {
     }
     if (document.activeElement === this.tree) {
       await this.user.keyboard('[ArrowDown]');
-    } else if (document.activeElement!.getAttribute('role') !== 'row') {
+    } else if (this._tree.contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
       do {
         await this.user.keyboard('[ArrowLeft]');
       } while (document.activeElement!.getAttribute('role') !== 'row');
@@ -137,12 +110,6 @@ export class TreeTester {
 
     let rowCheckbox = within(row).queryByRole('checkbox');
 
-    // TODO: update this
-    // Would be nice to get rid of this check
-    if (rowCheckbox?.getAttribute('disabled') === '') {
-      return;
-    }
-
     // this would be better than the check to do nothing in events.ts
     // also, it'd be good to be able to trigger selection on the row instead of having to go to the checkbox directly
     if (interactionType === 'keyboard' && !checkboxSelection) {
@@ -150,7 +117,7 @@ export class TreeTester {
       await this.user.keyboard('{Space}');
       return;
     }
-    if (rowCheckbox) {
+    if (rowCheckbox && checkboxSelection) {
       await pressElement(this.user, rowCheckbox, interactionType);
     } else {
       let cell = within(row).getAllByRole('gridcell')[0];
@@ -161,7 +128,6 @@ export class TreeTester {
 
         // Note that long press interactions with rows is strictly touch only for grid rows
         await triggerLongPress({element: cell, advanceTimer: this._advanceTimer, pointerOpts: {pointerType: 'touch'}});
-        await fireEvent.click(cell);
       } else {
         await pressElement(this.user, cell, interactionType);
       }
