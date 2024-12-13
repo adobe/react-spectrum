@@ -13,12 +13,12 @@
 import {ContextValue, Keyboard as KeyboardAria, Header as RACHeader, Heading as RACHeading, TextContext as RACTextContext, SlotProps, Text as TextAria} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {inertValue} from '@react-aria/utils';
 import {StyleString} from '../style/types';
 import {UnsafeStyles} from './style-utils';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useIsSkeleton, useSkeletonText} from './Skeleton';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import { inertValue } from '@react-aria/utils';
 
 interface ContentProps extends UnsafeStyles, SlotProps {
   children?: ReactNode,
