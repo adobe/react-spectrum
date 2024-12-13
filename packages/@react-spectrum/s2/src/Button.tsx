@@ -101,6 +101,10 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
     fillStyle: {
       fill: 0,
       outline: 2
+    },
+    variant: {
+      premium: 0,
+      genai: 0
     }
   },
   '--labelPadding': {
@@ -144,9 +148,16 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
   },
   backgroundImage: {
     variant: {
-      premium: linearGradient('96deg', ['fuchsia-900', 0], ['indigo-900', 50], ['blue-900', 100]),
-      genai: linearGradient('96deg', ['red-900', 0], ['magenta-900', 50], ['indigo-900', 100])
-    }
+      premium: {
+        default: linearGradient('96deg', ['fuchsia-900', 0], ['indigo-900', 66], ['blue-900', 100]),
+        isHovered: linearGradient('96deg', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100])
+      },
+      genai: {
+        default: linearGradient('96deg', ['red-900', 0], ['magenta-900', 33], ['indigo-900', 100]),
+        isHovered: linearGradient('96deg', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100])
+      }
+    },
+    isPending: 'none'
   },
   backgroundColor: {
     fillStyle: {
@@ -167,13 +178,18 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
         isDisabled: 'transparent'
       }
     },
+    variant: {
+      premium: 'gray-100',
+      genai: 'gray-100'
+    },
     staticColor: {
       white: {
         fillStyle: {
           fill: {
             variant: {
               primary: baseColor('transparent-white-800'),
-              secondary: baseColor('transparent-white-100')
+              secondary: baseColor('transparent-white-100'),
+              genai: 'blue-500'
             },
             isDisabled: 'transparent-white-100'
           },
@@ -184,6 +200,10 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
             isFocusVisible: 'transparent-white-100',
             isDisabled: 'transparent'
           }
+        },
+        variant: {
+          premium: 'gray-800',
+          genai: 'gray-800'
         }
       },
       black: {
@@ -202,6 +222,10 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
             isFocusVisible: 'transparent-black-100',
             isDisabled: 'transparent'
           }
+        },
+        variant: {
+          premium: 'gray-100',
+          genai: 'gray-100'
         }
       }
     },
@@ -231,6 +255,10 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
       },
       outline: {
         default: 'neutral',
+        variant: {
+          premium: 'white',
+          genai: 'white'
+        },
         isDisabled: 'disabled'
       }
     },
@@ -239,7 +267,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
         fillStyle: {
           fill: {
             variant: {
-              primary: 'black',
+              primary: 'wghite',
               secondary: baseColor('transparent-white-800'),
               premium: 'white',
               genai: 'white'
