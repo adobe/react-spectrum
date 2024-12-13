@@ -21,7 +21,7 @@ import {DraggableCollectionState, DroppableCollectionState, Collection as IColle
 import {filterDOMProps, useId, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject, Selection} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useCallback, useContext, useEffect, useMemo, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface GridListRenderProps {
