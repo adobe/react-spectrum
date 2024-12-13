@@ -58,7 +58,7 @@ export function useGridSelectionAnnouncement<T>(props: GridSelectionAnnouncement
 
     // If adding or removing a single row from the selection, announce the name of that item.
     let isReplace = state.selectionManager.selectionBehavior === 'replace';
-    let messages = [];
+    let messages: string[] = [];
 
     if ((state.selectionManager.selectedKeys.size === 1 && isReplace)) {
       if (state.collection.getItem(state.selectionManager.selectedKeys.keys().next().value)) {

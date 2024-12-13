@@ -21,15 +21,15 @@ import {ComboBoxState, useComboBoxState} from '@react-stately/combobox';
 import comboboxStyles from './combobox.css';
 import {DismissButton, useOverlayTrigger} from '@react-aria/overlays';
 import {Field} from '@react-spectrum/label';
-import {FocusableRef, FocusableRefValue, RefObject, ValidationState} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue, ValidationState} from '@react-types/shared';
 import {FocusRing, focusSafely, FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
-import {mergeProps, useFormReset, useId} from '@react-aria/utils';
+import {mergeProps, useFormReset, useId, useObjectRef} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {HTMLAttributes, InputHTMLAttributes, ReactElement, ReactNode, useCallback, useEffect, useRef, useState} from 'react';
+import React, {ForwardedRef, HTMLAttributes, InputHTMLAttributes, ReactElement, ReactNode, useCallback, useEffect, useRef, useState} from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {setInteractionModality, useHover} from '@react-aria/interactions';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
@@ -45,7 +45,7 @@ import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useFormValidation} from '@react-aria/form';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: FocusableRef<HTMLElement>) {
+export const MobileComboBox = React.forwardRef(function MobileComboBox(props: SpectrumComboBoxProps<any>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
 
   let {
@@ -73,17 +73,17 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     shouldCloseOnBlur: false
   });
 
-  let buttonRef = useRef<HTMLElement>(undefined);
+  let buttonRef = useRef<HTMLDivElement>(null);
   let domRef = useFocusableRef(ref, buttonRef);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'listbox'}, state, buttonRef);
 
   let inputRef = useRef<HTMLInputElement>(null);
   useFormValidation({
     ...props,
-    focus: () => buttonRef.current.focus()
+    focus: () => buttonRef.current?.focus()
   }, state, inputRef);
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
-  let validationState = props.validationState || (isInvalid ? 'invalid' : null);
+  let validationState = props.validationState || (isInvalid ? 'invalid' : undefined);
   let errorMessage = props.errorMessage ?? validationErrors.join(' ');
 
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
@@ -96,7 +96,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
   // Focus the button and show focus ring when clicking on the label
   labelProps.onClick = () => {
     if (!props.isDisabled) {
-      buttonRef.current.focus();
+      buttonRef.current?.focus();
       setInteractionModality('keyboard');
     }
   };
@@ -104,7 +104,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
   let inputProps: InputHTMLAttributes<HTMLInputElement> = {
     type: 'hidden',
     name,
-    value: formValue === 'text' ? state.inputValue : state.selectedKey
+    value: formValue === 'text' ? state.inputValue : String(state.selectedKey)
   };
 
   if (validationBehavior === 'native') {
@@ -117,7 +117,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     inputProps.onChange = () => {};
   }
 
-  useFormReset(inputRef, inputProps.value, formValue === 'text' ? state.setInputValue : state.setSelectedKey);
+  useFormReset(inputRef, String(inputProps.value ?? ''), formValue === 'text' ? state.setInputValue : state.setSelectedKey);
 
   return (
     <>
@@ -166,7 +166,7 @@ interface ComboBoxButtonProps extends AriaButtonProps {
   className?: string
 }
 
-const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxButtonProps, ref: RefObject<HTMLElement | null>) {
+export const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxButtonProps, ref: ForwardedRef<HTMLDivElement>) {
   let {
     isQuiet,
     isDisabled,
@@ -194,6 +194,7 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
     )
   });
 
+  let objRef = useObjectRef(ref);
   let {hoverProps, isHovered} = useHover({});
   let {buttonProps, isPressed} = useButton({
     ...props,
@@ -204,7 +205,7 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
       validationState === 'invalid' ? invalidId : null
     ].filter(Boolean).join(' '),
     elementType: 'div'
-  }, ref);
+  }, objRef);
 
   return (
     (<FocusRing
@@ -213,7 +214,7 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
       <div
         {...mergeProps(hoverProps, buttonProps)}
         aria-haspopup="dialog"
-        ref={ref as RefObject<HTMLDivElement | null>}
+        ref={objRef}
         style={{...style, outline: 'none'}}
         className={
           classNames(
@@ -307,8 +308,8 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
   );
 });
 
-interface ComboBoxTrayProps extends SpectrumComboBoxProps<unknown> {
-  state: ComboBoxState<unknown>,
+interface ComboBoxTrayProps extends SpectrumComboBoxProps<any> {
+  state: ComboBoxState<any>,
   overlayProps: HTMLAttributes<HTMLElement>,
   loadingIndicator?: ReactElement,
   onClose: () => void
@@ -327,12 +328,12 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     onClose
   } = props;
 
-  let timeout = useRef(null);
+  let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   let [showLoading, setShowLoading] = useState(false);
-  let inputRef = useRef<HTMLInputElement>(undefined);
-  let buttonRef = useRef<FocusableRefValue<HTMLElement>>(undefined);
-  let popoverRef = useRef<HTMLDivElement>(undefined);
-  let listBoxRef = useRef<HTMLDivElement>(undefined);
+  let inputRef = useRef<HTMLInputElement>(null);
+  let buttonRef = useRef<FocusableRefValue<HTMLElement>>(null);
+  let popoverRef = useRef<HTMLDivElement>(null);
+  let listBoxRef = useRef<HTMLDivElement>(null);
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let layout = useListBoxLayout();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/combobox');
@@ -353,7 +354,9 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   );
 
   React.useEffect(() => {
-    focusSafely(inputRef.current);
+    if (inputRef.current) {
+      focusSafely(inputRef.current);
+    }
   }, []);
 
   React.useEffect(() => {
@@ -388,7 +391,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
       excludeFromTabOrder
       onPress={() => {
         state.setInputValue('');
-        inputRef.current.focus();
+        inputRef.current?.focus();
       }}
       UNSAFE_className={
         classNames(
@@ -431,7 +434,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
       return;
     }
 
-    popoverRef.current.focus();
+    popoverRef.current?.focus();
   }, [inputRef, popoverRef, isTouchDown]);
 
   let inputValue = inputProps.value;
@@ -454,7 +457,9 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
     } else if (loadingState !== 'filtering') {
       // If loading is no longer happening, clear any timers and hide the loading circle
       setShowLoading(false);
-      clearTimeout(timeout.current);
+      if (timeout.current) {
+        clearTimeout(timeout.current);
+      }
       timeout.current = null;
     }
 
@@ -464,9 +469,9 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   let onKeyDown = (e) => {
     // Close virtual keyboard if user hits Enter w/o any focused options
     if (e.key === 'Enter' && state.selectionManager.focusedKey == null) {
-      popoverRef.current.focus();
+      popoverRef.current?.focus();
     } else {
-      inputProps.onKeyDown(e);
+      inputProps.onKeyDown?.(e);
     }
   };
 
@@ -489,11 +494,11 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
           inputRef={inputRef}
           isDisabled={isDisabled}
           isLoading={showLoading && loadingState === 'filtering'}
-          loadingIndicator={loadingState != null && loadingCircle}
+          loadingIndicator={loadingState != null ? loadingCircle : undefined}
           validationState={validationState}
           labelAlign="start"
           labelPosition="top"
-          wrapperChildren={(state.inputValue !== '' || loadingState === 'filtering' || validationState != null) && !props.isReadOnly && clearButton}
+          wrapperChildren={(state.inputValue !== '' || loadingState === 'filtering' || validationState != null) && !props.isReadOnly ? clearButton : undefined}
           UNSAFE_className={
             classNames(
               searchStyles,

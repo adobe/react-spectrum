@@ -12,7 +12,7 @@
     "@react-spectrum/provider": "^3.9.7",
     "@spectrum-icons/illustrations": "^3.6.3",
     "@spectrum-icons/workflow": "^4.2.12",
-    "parcel": "2.0.0-dev.1599",
+    "parcel": "^2.13.0",
     "postcss": "^8.2.1",
     "react": "^18.2.0",
     "react-aria-components": "^1.0.0-alpha.4",

@@ -14,7 +14,7 @@ import {AriaLabelingProps, DOMRef, DOMRefValue, FocusableRef, Key} from '@react-
 import {centerBaseline} from './CenterBaseline';
 import {ContextValue, DEFAULT_SLOT, Provider, TextContext as RACTextContext, SlotProps, ToggleButton, ToggleButtonGroup, ToggleGroupStateContext} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode, RefObject, useCallback, useContext, useRef} from 'react';
-import {focusRing, size, style} from '../style' with {type: 'macro'};
+import {focusRing, space, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
@@ -82,7 +82,7 @@ const controlItem = style({
   // TODO: update this padding for icon-only items when we introduce the non-track style back
   paddingX: {
     default: 'edge-to-text',
-    ':has([slot=icon]):not(:has([data-rsp-slot=text]))': size(6)
+    ':has([slot=icon]):not(:has([data-rsp-slot=text]))': space(6)
   },
   height: 32,
   alignItems: 'center',
@@ -151,7 +151,10 @@ interface DefaultSelectionTrackProps {
 
 const InternalSegmentedControlContext = createContext<InternalSegmentedControlContextProps>({});
 
-function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A SegmentedControl is a mutually exclusive group of buttons used for view switching.
+ */
+export const SegmentedControl = /*#__PURE__*/ forwardRef(function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SegmentedControlContext);
   let {
     defaultSelectedKey,
@@ -190,7 +193,7 @@ function SegmentedControl(props: SegmentedControlProps, ref: DOMRef<HTMLDivEleme
       </DefaultSelectionTracker>
     </ToggleButtonGroup>
   );
-}
+});
 
 function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
   let state = useContext(ToggleGroupStateContext);
@@ -214,7 +217,10 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
   );
 }
 
-function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRef<HTMLButtonElement>) {
+/**
+ * A SegmentedControlItem represents an option within a SegmentedControl.
+ */
+export const SegmentedControlItem = /*#__PURE__*/ forwardRef(function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRef<HTMLButtonElement>) {
   let domRef = useFocusableRef(ref);
   let divRef = useRef<HTMLDivElement>(null);
   let {register, prevRef, currentSelectedRef, isJustified} = useContext(InternalSegmentedControlContext);
@@ -277,16 +283,4 @@ function SegmentedControlItem(props: SegmentedControlItemProps, ref: FocusableRe
       }
     </ToggleButton>
   );
-}
-
-/**
- * A SegmentedControlItem represents an option within a SegmentedControl.
- */
-const _SegmentedControlItem = /*#__PURE__*/ forwardRef(SegmentedControlItem);
-export {_SegmentedControlItem as SegmentedControlItem};
-
-/**
- * A SegmentedControl is a mutually exclusive group of buttons used for view switching.
- */
-const _SegmentedControl = /*#__PURE__*/ forwardRef(SegmentedControl);
-export {_SegmentedControl as SegmentedControl};
+});

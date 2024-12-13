@@ -283,7 +283,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
   let lastSection = useRef(sectionKey);
   let lastItem = useRef(itemKey);
   useEffect(() => {
-    if (isAppleDevice() && focusedItem != null && itemKey !== lastItem.current) {
+    if (isAppleDevice() && focusedItem != null && itemKey != null && itemKey !== lastItem.current) {
       let isSelected = state.selectionManager.isSelected(itemKey);
       let section = sectionKey != null ? state.collection.getItem(sectionKey) : null;
       let sectionTitle = section?.['aria-label'] || (typeof section?.rendered === 'string' ? section.rendered : '') || '';

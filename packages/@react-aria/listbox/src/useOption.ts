@@ -125,6 +125,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
   }
 
   let onAction = data?.onAction ? () => data?.onAction?.(key) : undefined;
+  let id = getItemId(state, key);
   let {itemProps, isPressed, isFocused, hasAction, allowsSelection} = useSelectableItem({
     selectionManager: state.selectionManager,
     key,
@@ -135,7 +136,8 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     shouldUseVirtualFocus,
     isDisabled,
     onAction: onAction || item?.props?.onAction ? chain(item?.props?.onAction, onAction) : undefined,
-    linkBehavior: data?.linkBehavior
+    linkBehavior: data?.linkBehavior,
+    id
   });
 
   let {hoverProps} = useHover({
@@ -156,7 +158,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     optionProps: {
       ...optionProps,
       ...mergeProps(domProps, itemProps, hoverProps, linkProps),
-      id: getItemId(state, key)
+      id
     },
     labelProps: {
       id: labelId

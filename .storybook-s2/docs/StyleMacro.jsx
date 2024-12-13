@@ -6,7 +6,7 @@ import {Colors} from './Colors';
 
 export function StyleMacro() {
   return (
-    <div className={style({maxWidth: 'lg', marginX: 'auto'})}>
+    <div className={style({marginX: 'auto'})}>
       <header
         className={style({
           paddingX: 48,
@@ -37,9 +37,17 @@ export function StyleMacro() {
         <H3>Colors</H3>
         <P>The Spectrum 2 color palette is available across all color properties. See the following sections for color values available for each property.</P>
         <Colors />
-        <H3>Spacing and sizing</H3>
-        <P>Spacing properties such as <Code>margin</Code> and <Code>padding</Code>, and sizing properties such as <Code>width</Code> and <Code>height</Code> support a limited set of values. The API is represented in pixels, however, only values conforming to a 4px grid are allowed. This helps ensure that spacing and sizing are visually consistent.</P>
-        <P>Internally, spacing and sizing values are converted from pixels to rems, which scale according to the user’s font size preference. In addition, sizing values are multiplied by 1.25x on touch screen devices to help increase the size of hit targets. Spacing values do not scale and remain fixed.</P>
+        <H3>Spacing</H3>
+        <P>Spacing properties such as <Code>margin</Code> and <Code>padding</Code> support a limited set of values. The API is represented in pixels, however, only values conforming to a 4px grid are allowed. This helps ensure that spacing and sizing are visually consistent. Spacing values are automatically converted to rems, which scale according to the user’s font size preference.</P>
+        <P>In addition to numeric values, the following spacing options are available:</P>
+        <ul className="sb-unstyled">
+          <li className={style({font: 'body-lg', marginTop: 0, marginBottom: 8})}><Code>text-to-control</Code> – The default horizontal spacing between text and a UI control, for example between a label and input. This value automatically adjusts based on the font size.</li>
+          <li className={style({font: 'body-lg', marginTop: 0, marginBottom: 8})}><Code>text-to-visual</Code> – The default horizontal spacing between text and a visual element, such as an icon. This value automatically adjusts based on the font size.</li>
+          <li className={style({font: 'body-lg', marginTop: 0, marginBottom: 8})}><Code>edge-to-text</Code> – The default horizontal spacing between the edge of a UI control and text within it. This value is calculated relative to the height of the control.</li>
+          <li className={style({font: 'body-lg', marginTop: 0, marginBottom: 8})}><Code>pill</Code> – The default horizontal spacing between the edge of a pill-shaped UI control (e.g. a fully rounded button) and text within it. This value is calculated relative to the height of the control.</li>
+        </ul>
+        <H3>Sizing</H3>
+        <P>Sizing properties such as <Code>width</Code> and <Code>height</Code> accept arbitrary pixel values. Internally, sizes are converted to rems, which scale according to the user’s font size preference. Additionally, size values are multiplied by 1.25x on touch screen devices to help increase the size of hit targets.</P>
         <H3>Typography</H3>
         <P>Spectrum 2 does not include specific components for typography. Instead, you can use the style macro to apply Spectrum typography to any HTML element or component.</P>
         <P>The <Code>font</Code> shorthand applies default values for the <Code>fontFamily</Code>, <Code>fontSize</Code>, <Code>fontWeight</Code>, <Code>lineHeight</Code>, and <Code>color</Code> properties, following Spectrum design pairings. These individual properties can also be set to override the default set by the shorthand.</P>

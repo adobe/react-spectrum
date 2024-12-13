@@ -13,14 +13,17 @@
 import {Key, LayoutDelegate, Rect, RefObject, Size} from '@react-types/shared';
 
 export class DOMLayoutDelegate implements LayoutDelegate {
-  private ref: RefObject<HTMLElement>;
+  private ref: RefObject<HTMLElement | null>;
 
-  constructor(ref: RefObject<HTMLElement>) {
+  constructor(ref: RefObject<HTMLElement | null>) {
     this.ref = ref;
   }
 
   getItemRect(key: Key): Rect | null {
     let container = this.ref.current;
+    if (!container) {
+      return null;
+    }
     let item = key != null ? container.querySelector(`[data-key="${CSS.escape(key.toString())}"]`) : null;
     if (!item) {
       return null;
@@ -40,18 +43,18 @@ export class DOMLayoutDelegate implements LayoutDelegate {
   getContentSize(): Size {
     let container = this.ref.current;
     return {
-      width: container.scrollWidth,
-      height: container.scrollHeight
+      width: container?.scrollWidth ?? 0,
+      height: container?.scrollHeight ?? 0
     };
   }
 
   getVisibleRect(): Rect {
     let container = this.ref.current;
     return {
-      x: container.scrollLeft,
-      y: container.scrollTop,
-      width: container.offsetWidth,
-      height: container.offsetHeight
+      x: container?.scrollLeft ?? 0,
+      y: container?.scrollTop ?? 0,
+      width: container?.offsetWidth ?? 0,
+      height: container?.offsetHeight ?? 0
     };
   }
 }

@@ -110,3 +110,104 @@ import {DialogTrigger, Button, Dialog, Heading, Content, Divider} from '@adobe/r
   }
 </DialogTrigger>
 `);
+
+test('Moves isDismissable', `
+import {DialogTrigger, Button, Dialog, Heading, Content, Divider} from '@adobe/react-spectrum';
+
+<DialogTrigger isDismissable>
+  <Button>Test</Button>
+  <Dialog>
+    <Heading>Test</Heading>
+    <Divider />
+    <Content>Content</Content>
+  </Dialog>
+</DialogTrigger>
+`);
+
+test('Replaces type="popover" with Popover component', `
+import {DialogTrigger, Button, Dialog, Heading, Content, Divider} from '@adobe/react-spectrum';
+
+<DialogTrigger type="popover" hideArrow>
+  <Button>Test</Button>
+  <Dialog>
+    <Heading>Test</Heading>
+    <Divider />
+    <Content>Content</Content>
+  </Dialog>
+</DialogTrigger>
+`);
+
+test('Replaces type="fullscreen" with FullscreenDialog component', `
+import {DialogTrigger, Button, Dialog, Heading, Content, Divider} from '@adobe/react-spectrum';
+
+<DialogTrigger type="fullscreen" isKeyboardDismissDisabled>
+  <Button>Test</Button>
+  <Dialog>
+    <Heading>Test</Heading>
+    <Divider />
+    <Content>Content</Content>
+  </Dialog>
+</DialogTrigger>
+`);
+
+test('Replaces type="fullscreenTakeover" with FullscreenDialog component', `
+import {DialogTrigger, Button, Dialog, Heading, Content, Divider} from '@adobe/react-spectrum';
+
+<DialogTrigger type="fullscreenTakeover">
+  <Button>Test</Button>
+  <Dialog>
+    <Heading>Test</Heading>
+    <Divider />
+    <Content>Content</Content>
+  </Dialog>
+</DialogTrigger>
+`);
+
+test('Replaces type="fullscreenTakeover" with FullscreenDialog component and close function', `
+import {DialogTrigger, Button, Dialog, Heading, Content, Divider} from '@adobe/react-spectrum';
+
+<DialogTrigger type="fullscreenTakeover">
+  <Button>Test</Button>
+  {(close) => 
+    <Dialog>
+      <Heading>Test</Heading>
+      <Divider />
+      <Content>Content</Content>
+    </Dialog>
+  }
+</DialogTrigger>
+`);
+
+test('Moves isDismissable from DialogContainer', `
+import {DialogContainer, Button, Dialog, Heading, Content, Divider} from '@adobe/react-spectrum';
+
+<DialogContainer isDismissable>
+  {showDialog1 && <Dialog>
+    <Heading>Test</Heading>
+    <Divider />
+    <Content>Content</Content>
+  </Dialog>}
+  {showDialog2 && <Dialog>
+    <Heading>Test</Heading>
+    <Divider />
+    <Content>Content</Content>
+  </Dialog>}
+</DialogContainer>
+`);
+
+test('Replaces type="fullscreen" with FullscreenDialog component in DialogContainer', `
+import {DialogContainer, Button, Dialog, Heading, Content, Divider} from '@adobe/react-spectrum';
+
+<DialogContainer type="fullscreen" isKeyboardDismissDisabled>
+  {showDialog1 && <Dialog>
+    <Heading>Test</Heading>
+    <Divider />
+    <Content>Content</Content>
+  </Dialog>}
+  {showDialog2 && <Dialog>
+    <Heading>Test</Heading>
+    <Divider />
+    <Content>Content</Content>
+  </Dialog>}
+</DialogContainer>
+`);

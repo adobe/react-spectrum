@@ -20,7 +20,11 @@ import {useHover} from '@react-aria/interactions';
 import {useRadio} from '@react-aria/radio';
 import {useRadioProvider} from './context';
 
-function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
+/**
+ * Radio buttons allow users to select a single option from a list of mutually exclusive options.
+ * All possible options are exposed up front for users to compare.
+ */
+export const Radio = forwardRef(function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
   let {
     isDisabled,
     children,
@@ -79,11 +83,4 @@ function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
       )}
     </label>
   );
-}
-
-/**
- * Radio buttons allow users to select a single option from a list of mutually exclusive options.
- * All possible options are exposed up front for users to compare.
- */
-const _Radio = forwardRef(Radio);
-export {_Radio as Radio};
+});

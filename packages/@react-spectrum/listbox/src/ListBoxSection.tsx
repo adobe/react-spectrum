@@ -20,8 +20,9 @@ import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useListBoxSection} from '@react-aria/listbox';
 import {useLocale} from '@react-aria/i18n';
 
-interface ListBoxSectionProps<T> extends Omit<VirtualizerItemOptions, 'ref'> {
-  headerLayoutInfo: LayoutInfo,
+interface ListBoxSectionProps<T> extends Omit<VirtualizerItemOptions, 'ref' | 'layoutInfo'> {
+  layoutInfo: LayoutInfo,
+  headerLayoutInfo: LayoutInfo | null,
   item: Node<T>,
   children?: ReactNode
 }
@@ -34,7 +35,7 @@ export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
     'aria-label': item['aria-label']
   });
 
-  let headerRef = useRef(undefined);
+  let headerRef = useRef<HTMLDivElement | null>(null);
   useVirtualizerItem({
     layoutInfo: headerLayoutInfo,
     virtualizer,
@@ -42,7 +43,7 @@ export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
   });
 
   let {direction} = useLocale();
-  let {state} = useContext(ListBoxContext);
+  let {state} = useContext(ListBoxContext)!;
 
   return (
     <Fragment>

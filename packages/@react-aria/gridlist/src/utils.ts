@@ -15,7 +15,7 @@ import type {ListState} from '@react-stately/list';
 
 interface ListMapShared {
   id: string,
-  onAction: (key: Key) => void,
+  onAction?: (key: Key) => void,
   linkBehavior?: 'action' | 'selection' | 'override',
   keyboardNavigationBehavior: 'arrow' | 'tab'
 }
@@ -25,7 +25,7 @@ interface ListMapShared {
 export const listMap = new WeakMap<ListState<unknown>, ListMapShared>();
 
 export function getRowId<T>(state: ListState<T>, key: Key) {
-  let {id} = listMap.get(state);
+  let {id} = listMap.get(state) ?? {};
   if (!id) {
     throw new Error('Unknown list');
   }

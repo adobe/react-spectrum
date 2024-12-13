@@ -4,6 +4,56 @@ export default MDXLayout;
 
 # Release Notes
 
+## v0.5.0
+
+In this release we have updated our Dialog and DialogTrigger APIs to improve layout flexibility for custom dialogs and popovers. Dialog has been split into four components:
+
+* [Dialog](?path=/docs/dialog--docs) – a modal dialog with a standard layout with slots for the heading, content, hero image, button group, etc. This corresponds to the previous `type="modal"` API.
+* [FullscreenDialog](?path=/docs/fullscreendialog--docs) – a fullscreen or takeover modal, similar to a Dialog but with different slots and layout. This corresponds to the previous `type="fullscreen"` and `type="fullscreenTakeover"` APIs.
+* [CustomDialog](?path=/docs/customdialog--docs) – a modal dialog with a completely custom layout. It can have default padding or go edge-to-edge. No built-in slots are provided, the layout is entirely up to you.
+* [Popover](?path=/docs/popover--docs) Popovers no longer support the previous dialog-style layout, which was rarely needed in recent apps. In addition, popover now has a reduced amount of padding by default, which was a common request.
+
+In addition, several DialogTrigger props have moved to the above children:
+
+* `type` is removed. Use one of the above components instead.
+* `isKeyboardDismissDisabled` moved to Dialog, FullscreenDialog, and CustomDialog
+* `isDismissable` was renamed to `isDismissible` (fixed spelling), and moved to Dialog and CustomDialog
+* `hideArrow`, `offset`, `crossOffset`, `containerPadding`, `placement`, and `shouldFlip` moved to Popover
+
+We've also continued to iterate on developer experience based on your feedback. Documentation on style macro usage with regards to
+[colors](?path=/docs/style-macro--docs#colors) and [typography](?path=/docs/style-macro--docs#typography) have been added to help clarify
+these common use cases. Style macro properties like `width` and `height` now allow for arbitrary pixel size values, please see the [docs](?path=/docs/style-macro--docs#sizing)
+for more information. Finally, documentation on [optimizing CSS bundling](?path=/docs/style-macro--docs#css-optimization) have also been
+added to help you generate a properly optimized output when using the bundler of your choice.
+
+### New components
+
+* [ActionButtonGroup](?path=/docs/actionbuttongroup--docs)
+* [CloseButton](?path=/docs/customdialog--docs)
+* [CustomDialog](?path=/docs/customdialog--docs)
+* [FullscreenDialog](?path=/docs/fullscreendialog--docs)
+* [Popover](?path=/docs/popover--docs)
+* [ToggleButtonGroup](?path=/docs/togglebuttongroup--docs)
+
+### Updates
+
+* [Accordion](?path=/docs/accordion--docs): Add support for adjacent sibling elements in header
+* [ActionButton](?path=/docs/actionbutton--docs): Add support for Avatars in ActionButtons
+* [Dialog](?path=/docs/dialog--docs): See above for a summary of the changes to Dialog and Dialog adjacent components.
+* [Disclosure](?path=/docs/disclosure--docs): Add support for adjacent sibling elements in header
+* [DropZone](?path=/docs/dropzone--docs): Add t-shirt sizing
+* [Menu](?path=/docs/menu--docs): Add support for separate user defined selection modes per MenuSection
+* [Meter](?path=/docs/meter--docs): Add label positioning support
+* Update Spectrum Tokens to v53
+* Allow arbitrary pixel sizes for style macro sizing properties (e.g. width, height)
+
+### Codemods
+
+* Support Dialog updates
+* Support ActionGroup -> ActionButtonGroup/ToggleButtonGroup
+* Support arbitrary pixel sizing for style macro sizing properties
+* Update S1 to S2 icon mapping
+
 ## v0.4.0
 
 ### New components

@@ -17,10 +17,11 @@ interface SlotProps {
   slot?: string
 }
 
-let SlotContext = React.createContext(null);
+let SlotContext = React.createContext<{} | null>(null);
 
 export function useSlotProps<T>(props: T & {id?: string}, defaultSlot?: string): T {
   let slot = (props as SlotProps).slot || defaultSlot;
+  // @ts-ignore TODO why is slot an object and not just string or undefined?
   let {[slot]: slotProps = {}} = useContext(SlotContext) || {};
 
   return mergeProps(props, mergeProps(slotProps, {id: props.id}));

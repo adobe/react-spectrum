@@ -32,7 +32,7 @@ export class ListBoxLayout<T> extends ListLayout<T, ListBoxLayoutProps> {
     let y = this.contentSize.height;
 
     if (this.isLoading) {
-      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, 40);
+      let rect = new Rect(0, y, this.virtualizer!.visibleRect.width, 40);
       let loader = new LayoutInfo('loader', 'loader', rect);
       let node = {
         layoutInfo: loader,
@@ -44,7 +44,7 @@ export class ListBoxLayout<T> extends ListLayout<T, ListBoxLayoutProps> {
     }
 
     if (nodes.length === 0) {
-      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, this.placeholderHeight ?? this.virtualizer.visibleRect.height);
+      let rect = new Rect(0, y, this.virtualizer!.visibleRect.width, this.placeholderHeight ?? this.virtualizer!.visibleRect.height);
       let placeholder = new LayoutInfo('placeholder', 'placeholder', rect);
       let node = {
         layoutInfo: placeholder,
@@ -67,6 +67,7 @@ export class ListBoxLayout<T> extends ListLayout<T, ListBoxLayoutProps> {
       parentKey: node.key,
       value: null,
       level: node.level,
+      index: node.index,
       hasChildNodes: false,
       childNodes: [],
       rendered: node.rendered,
@@ -81,7 +82,7 @@ export class ListBoxLayout<T> extends ListLayout<T, ListBoxLayoutProps> {
     y += header.layoutInfo.rect.height;
 
     let section = super.buildSection(node, x, y);
-    section.children.unshift(header);
+    section.children!.unshift(header);
     return section;
   }
 }

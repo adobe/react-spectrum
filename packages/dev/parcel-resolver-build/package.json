@@ -4,11 +4,11 @@
   "private": true,
   "main": "BuildResolver.js",
   "engines": {
-    "parcel": "2.0.0-dev.1599"
+    "parcel": "^2.0.0"
   },
   "dependencies": {
-    "@parcel/core": "2.0.0-dev.1599",
-    "@parcel/node-resolver-core": "3.3.1-dev.3224",
-    "@parcel/plugin": "2.0.0-dev.1601"
+    "@parcel/core": "^2.13.0",
+    "@parcel/node-resolver-core": "^3.4.0",
+    "@parcel/plugin": "^2.0.0"
   }
 }

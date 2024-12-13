@@ -235,7 +235,7 @@ let dynamicRenderItem = (item, Icon) => (
 );
 
 let dynamicRenderFuncSections = (item: ItemNode) => {
-  let Icon = iconMap[item.icon];
+  let Icon = iconMap[item.icon!];
   if (item.children) {
     if (item.isSection) {
       let key = item.name ?? item.textValue;

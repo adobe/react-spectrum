@@ -42,7 +42,7 @@ export function getNthItem<T>(iterable: Iterable<T>, index: number): T | undefin
 }
 
 export function getLastItem<T>(iterable: Iterable<T>): T | undefined {
-  let lastItem = undefined;
+  let lastItem: T | undefined = undefined;
   for (let value of iterable) {
     lastItem = value;
   }
@@ -81,11 +81,14 @@ export function compareNodeOrder<T>(collection: Collection<Node<T>>, a: Node<T>,
 }
 
 function getAncestors<T>(collection: Collection<Node<T>>, node: Node<T>): Node<T>[] {
-  let parents = [];
+  let parents: Node<T>[] = [];
 
-  while (node?.parentKey != null) {
-    node = collection.getItem(node.parentKey);
-    parents.unshift(node);
+  let currNode: Node<T> | null = node;
+  while (currNode?.parentKey != null) {
+    currNode = collection.getItem(currNode.parentKey);
+    if (currNode) {
+      parents.unshift(currNode);
+    }
   }
 
   return parents;

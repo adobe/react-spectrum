@@ -63,7 +63,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
     let submenu = submenuRef.current;
     let menu = menuRef.current;
 
-    if (isDisabled || !submenu || !isOpen || modality !== 'pointer') {
+    if (isDisabled || !submenu || !isOpen || modality !== 'pointer' || !menu) {
       reset();
       return;
     }

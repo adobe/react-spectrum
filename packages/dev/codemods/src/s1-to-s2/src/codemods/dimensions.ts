@@ -142,7 +142,7 @@ const FUNC_RE = /^\s*\w+\(/;
 // const SPECTRUM_VARIABLE_RE = /(static-)?size-\d+|single-line-(height|width)/g;
 const SIZING_RE = /auto|100vh|min-content|max-content|fit-content/;
 
-export function convertDimension(value: DimensionValue, toPixels = false) {
+export function convertDimension(value: DimensionValue, type: 'size' | 'space' | 'px') {
   let pixelValue;
   if (typeof value === 'number') {
     pixelValue = value;
@@ -168,11 +168,11 @@ export function convertDimension(value: DimensionValue, toPixels = false) {
     throw new Error('invalid dimension: ' + value);
   }
 
-  if (toPixels) {
+  if (type === 'px') {
     return `${pixelValue}px`;
   }
 
-  if (spacingValues.includes(pixelValue)) {
+  if (type === 'size' || spacingValues.includes(pixelValue)) {
     return pixelValue;
   }
 
@@ -184,18 +184,18 @@ export function convertGridTrack(value: DimensionValue, toPixels = false) {
   if (typeof value === 'string' && /^max-content|min-content|minmax|auto|fit-content|repeat|\d+fr/.test(value)) {
     return value;
   } else {
-    return convertDimension(value, toPixels);
+    return convertDimension(value, toPixels ? 'px' : 'space');
   }
 }
 
-export function convertUnsafeDimension(value: string | number) {
+export function convertUnsafeDimension(value: string | number, type: 'size' | 'space') {
   if (typeof value === 'number') {
-    return convertDimension(value);
+    return convertDimension(value, type);
   }
 
   let m = value.match(/^var\(--spectrum-global-dimension-(static-)?size-(.*)\)$/);
   if (m) {
-    return convertDimension(`${m[1] || ''}size-${m[2]}`);
+    return convertDimension(`${m[1] || ''}size-${m[2]}`, type);
   }
 
   return null;

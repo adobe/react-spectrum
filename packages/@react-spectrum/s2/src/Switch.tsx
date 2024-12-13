@@ -149,7 +149,11 @@ const transformStyle = ({isSelected}: SwitchRenderProps) => ({
     : 'perspective(calc(var(--trackHeight) - 8px)) translateZ(-4px)'
 });
 
-function Switch(props: SwitchProps, ref: FocusableRef<HTMLLabelElement>) {
+/**
+ * Switches allow users to turn an individual option on or off.
+ * They are usually used to activate or deactivate a specific setting.
+ */
+export const Switch = /*#__PURE__*/ forwardRef(function Switch(props: SwitchProps, ref: FocusableRef<HTMLLabelElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, SwitchContext);
   let {children, UNSAFE_className = '', UNSAFE_style} = props;
   let inputRef = useRef<HTMLInputElement | null>(null);
@@ -184,11 +188,4 @@ function Switch(props: SwitchProps, ref: FocusableRef<HTMLLabelElement>) {
       )}
     </AriaSwitch>
   );
-}
-
-/**
- * Switches allow users to turn an individual option on or off.
- * They are usually used to activate or deactivate a specific setting.
- */
-let _Switch = /*#__PURE__*/ forwardRef(Switch);
-export {_Switch as Switch};
+});

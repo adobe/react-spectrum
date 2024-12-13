@@ -29,7 +29,7 @@ interface FieldButtonProps extends ButtonProps, DOMProps, StyleProps {
 }
 
 // @private
-function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
+export const FieldButton = React.forwardRef(function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
   props = useSlotProps(props, 'button');
   let {
     isQuiet,
@@ -78,7 +78,4 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
       </button>
     </FocusRing>
   );
-}
-
-let _FieldButton = React.forwardRef(FieldButton);
-export {_FieldButton as FieldButton};
+});

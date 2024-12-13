@@ -32,7 +32,6 @@ export function createMappedProperty<T extends CSSValue>(fn: (value: string, pro
       return {default: [fn(v[0], property), v[1]]};
     }
 
-    // @ts-ignore
     let val = Array.isArray(values) ? value : values[String(value)];
     return mapConditionalValue(val, value => {
       return [fn(value, property), valueMap.get(value)!];
@@ -42,6 +41,30 @@ export function createMappedProperty<T extends CSSValue>(fn: (value: string, pro
 
 export function createRenamedProperty<T extends CSSValue>(name: string, values: PropertyValueMap<T> | string[]): PropertyFunction<T> {
   return createMappedProperty((value, property) => ({[property.startsWith('--') ? property : name]: value}), values);
+}
+
+export function createSizingProperty<T extends CSSValue>(values: PropertyValueMap<T>, fn: (value: number) => string): PropertyFunction<T | (number & {})> {
+  let valueMap = createValueLookup(Array.isArray(values) ? values : recursiveValues(values));
+  return (value, property) => {
+    let v = parseArbitraryValue(value);
+    if (v) {
+      return {default: [{[property]: v[0]}, v[1]]};
+    }
+
+    let val = values[String(value)];
+    if (val != null) {
+      return mapConditionalValue(val, value => {
+        return [{[property]: value}, valueMap.get(value)!];
+      });
+    }
+
+    if (typeof value === 'number') {
+      let cssValue = value === 0 ? '0px' : fn(value);
+      return {default: [{[property]: cssValue}, generateName(value + valueMap.size)]};
+    }
+
+    throw new Error('Invalid sizing value: ' + value);
+  };
 }
 
 export type Color<C extends string> = C | `${string}/${number}`;
@@ -54,7 +77,6 @@ export function createColorProperty<C extends string>(colors: PropertyValueMap<C
     }
 
     let [color, opacity] = value.split('/');
-    // @ts-ignore
     let c = colors[color];
     return mapConditionalValue(c, value => {
       let css = opacity ? `rgb(from ${value} r g b / ${opacity}%)` : value;
@@ -608,6 +630,14 @@ function getStaticClassName(rules: Rule[]): string {
 }
 
 export function raw(this: MacroContext | void, css: string, layer = '_.a') {
+  // Check if `this` is undefined, which means style was not called as a macro but as a normal function.
+  // We also check if this is globalThis, which happens in non-strict mode bundles.
+  // Also allow style to be called as a normal function in tests.
+  // @ts-ignore
+  // eslint-disable-next-line
+  if ((this == null || this === globalThis) && process.env.NODE_ENV !== 'test') {
+    throw new Error('The raw macro must be imported with {type: "macro"}.');
+  }
   let className = generateArbitraryValueSelector(css, true);
   css = `@layer ${layer} {
   .${className} {
@@ -624,6 +654,14 @@ export function raw(this: MacroContext | void, css: string, layer = '_.a') {
 }
 
 export function keyframes(this: MacroContext | void, css: string) {
+  // Check if `this` is undefined, which means style was not called as a macro but as a normal function.
+  // We also check if this is globalThis, which happens in non-strict mode bundles.
+  // Also allow style to be called as a normal function in tests.
+  // @ts-ignore
+  // eslint-disable-next-line
+  if ((this == null || this === globalThis) && process.env.NODE_ENV !== 'test') {
+    throw new Error('The keyframes macro must be imported with {type: "macro"}.');
+  }
   let name = generateArbitraryValueSelector(css, true);
   css = `@keyframes ${name} {
   ${css}
