@@ -12,13 +12,13 @@
 
 import clsx from 'clsx';
 import docStyles from '@react-spectrum/docs/src/docs.css';
+import {Flex, Link} from '@adobe/react-spectrum';
 import {getAnchorProps} from './utils';
 import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {PageContext, renderHTMLfromMarkdown, Time} from '@react-spectrum/docs';
 import React from 'react';
-import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import RSS from '@spectrum-icons/workflow/RSS';
-import {Flex, Link} from '@adobe/react-spectrum';
+import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
 export function PostListing({type}) {
   let {pages} = React.useContext(PageContext);
@@ -30,13 +30,13 @@ export function PostListing({type}) {
     <>
       {blogPages.map(page => <BlogPost key={page.name} {...page} />)}
       <div style={{display: 'flex', justifyContent: 'end'}}>
-      <Link
-        href={`../${type}/feed.rss`}
-        target="_blank">
-        <Flex gap="size-100" alignItems="center">
-          <span>RSS Link</span><RSS size="S" />
-        </Flex>
-      </Link>
+        <Link
+          href={`../${type}/feed.rss`}
+          target="_blank">
+          <Flex gap="size-100" alignItems="center">
+            <span>RSS Link</span><RSS size="S" />
+          </Flex>
+        </Link>
       </div>
     </>
   );
