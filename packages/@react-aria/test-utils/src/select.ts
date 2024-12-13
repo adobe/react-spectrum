@@ -141,7 +141,7 @@ export class SelectTester {
       await this.user.keyboard('[ArrowDown]');
     }
     let currIndex = options.indexOf(document.activeElement as HTMLElement);
-    if (targetIndex === -1) {
+    if (currIndex === -1) {
       throw new Error('ActiveElement is not in the listbox');
     }
     let direction = targetIndex > currIndex ? 'down' : 'up';
@@ -151,7 +151,6 @@ export class SelectTester {
     }
   };
 
-  // TODO: update this so it also can take the option node instead of just text, might already have been added in Rob's PR
   /**
    * Selects the desired select option. Defaults to using the interaction type set on the select tester. If necessary, will open the select dropdown beforehand.
    * The desired option can be targeted via the option's node, the option's text, or the option's index.
@@ -180,6 +179,10 @@ export class SelectTester {
       }
 
       if (interactionType === 'keyboard') {
+        if (option?.getAttribute('aria-disabled') === 'true') {
+          return;
+        }
+
         if (document.activeElement !== listbox || !listbox.contains(document.activeElement)) {
           act(() => listbox.focus());
         }

@@ -10,6 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+export type Orientation = 'horizontal' | 'vertical';
+export type Direction = 'ltr' | 'rtl';
+
 // https://github.com/testing-library/dom-testing-library/issues/939#issuecomment-830771708 is an interesting way of allowing users to configure the timers
 // curent way is like https://testing-library.com/docs/user-event/options/#advancetimers,
 export interface UserOpts {
@@ -29,14 +32,14 @@ export interface UserOpts {
   advanceTimer?: (time?: number) => void | Promise<unknown>
 }
 
-export interface BaseTesterOpts {
+export interface BaseTesterOpts extends UserOpts {
+  /** @private */
+  user: any,
   /** The base element for the given tester (e.g. the table, menu trigger button, etc). */
   root: HTMLElement
 }
 
-export interface ComboBoxTesterOpts extends UserOpts, BaseTesterOpts {
-  /** @private */
-  user: any,
+export interface ComboBoxTesterOpts extends BaseTesterOpts {
   /**
    * The base element for the combobox. If provided the wrapping element around the target combobox (as is the the case with a ref provided to RSP ComboBox),
    * will automatically search for the combobox element within.
@@ -49,14 +52,16 @@ export interface ComboBoxTesterOpts extends UserOpts, BaseTesterOpts {
   trigger?: HTMLElement
 }
 
-export interface GridListTesterOpts extends UserOpts, BaseTesterOpts {
-  /** @private */
-  user: any
+export interface GridListTesterOpts extends BaseTesterOpts {}
+
+export interface ListBoxTesterOpts extends BaseTesterOpts {
+  /**
+   * A function used by the test utils to advance timers during interactions.
+   */
+  advanceTimer?: UserOpts['advanceTimer']
 }
 
-export interface MenuTesterOpts extends UserOpts, BaseTesterOpts {
-  /** @private */
-  user: any,
+export interface MenuTesterOpts extends BaseTesterOpts {
   /**
    * The trigger element for the menu.
    */
@@ -67,9 +72,7 @@ export interface MenuTesterOpts extends UserOpts, BaseTesterOpts {
   isSubmenu?: boolean
 }
 
-export interface SelectTesterOpts extends UserOpts, BaseTesterOpts {
-  /** @private */
-  user: any,
+export interface SelectTesterOpts extends BaseTesterOpts {
   /**
    * The trigger element for the select. If provided the wrapping element around the target select (as is the case with a ref provided to RSP Select),
    * will automatically search for the select's trigger element within.
@@ -77,11 +80,54 @@ export interface SelectTesterOpts extends UserOpts, BaseTesterOpts {
   root: HTMLElement
 }
 
-export interface TableTesterOpts extends UserOpts, BaseTesterOpts {
-  /** @private */
-  user: any,
+export interface TableTesterOpts extends BaseTesterOpts {
   /**
    * A function used by the test utils to advance timers during interactions.
    */
-  advanceTimer: UserOpts['advanceTimer']
+  advanceTimer?: UserOpts['advanceTimer']
+}
+
+export interface TabsTesterOpts extends BaseTesterOpts {
+  /**
+   * The horizontal layout direction, typically affected by locale.
+   * @default 'ltr'
+   */
+  direction?: Direction
+}
+
+export interface TreeTesterOpts extends BaseTesterOpts {
+  /**
+   * A function used by the test utils to advance timers during interactions.
+   */
+  advanceTimer?: UserOpts['advanceTimer']
+}
+
+export interface BaseGridRowInteractionOpts {
+  /**
+   * The index, text, or node of the row to target.
+   */
+  row: number | string | HTMLElement,
+  /**
+   * What interaction type to use when interacting with the row. Defaults to the interaction type set on the tester.
+   */
+  interactionType?: UserOpts['interactionType']
+}
+
+export interface ToggleGridRowOpts extends BaseGridRowInteractionOpts {
+  /**
+   * Whether the row needs to be long pressed to be selected. Depends on the components implementation.
+   */
+  needsLongPress?: boolean,
+  /**
+   * Whether the checkbox should be used to select the row. If false, will attempt to select the row via press.
+   * @default 'true'
+   */
+  checkboxSelection?: boolean
+}
+
+export interface GridRowActionOpts extends BaseGridRowInteractionOpts {
+  /**
+   * Whether or not the row needs a double click to trigger the row action. Depends on the components implementation.
+   */
+  needsDoubleClick?: boolean
 }

@@ -11,32 +11,60 @@
  */
 
 import {ComboBoxTester} from './combobox';
-import {ComboBoxTesterOpts, GridListTesterOpts, MenuTesterOpts, SelectTesterOpts, TableTesterOpts, UserOpts} from './types';
+import {
+  ComboBoxTesterOpts,
+  GridListTesterOpts,
+  ListBoxTesterOpts,
+  MenuTesterOpts,
+  SelectTesterOpts,
+  TableTesterOpts,
+  TabsTesterOpts,
+  TreeTesterOpts,
+  UserOpts
+} from './types';
 import {GridListTester} from './gridlist';
+import {ListBoxTester} from './listbox';
 import {MenuTester} from './menu';
 import {pointerMap} from './';
 import {SelectTester} from './select';
 import {TableTester} from './table';
+import {TabsTester} from './tabs';
+import {TreeTester} from './tree';
 import userEvent from '@testing-library/user-event';
 
-let keyToUtil = {'Select': SelectTester, 'Table': TableTester, 'Menu': MenuTester, 'ComboBox': ComboBoxTester, 'GridList': GridListTester} as const;
+let keyToUtil = {
+  'Select': SelectTester,
+  'Table': TableTester,
+  'Menu': MenuTester,
+  'ComboBox': ComboBoxTester,
+  'GridList': GridListTester,
+  'ListBox': ListBoxTester,
+  'Tabs': TabsTester,
+  'Tree': TreeTester
+} as const;
 export type PatternNames = keyof typeof keyToUtil;
 
 // Conditional type: https://www.typescriptlang.org/docs/handbook/2/conditional-types.html
 type Tester<T> =
   T extends 'ComboBox' ? ComboBoxTester :
   T extends 'GridList' ? GridListTester :
+  T extends 'ListBox' ? ListBoxTester :
   T extends 'Menu' ? MenuTester :
   T extends 'Select' ? SelectTester :
   T extends 'Table' ? TableTester :
+  T extends 'Tabs' ? TabsTester :
+  T extends 'Tree' ? TreeTester :
   never;
 
 type TesterOpts<T> =
   T extends 'ComboBox' ? ComboBoxTesterOpts :
   T extends 'GridList' ? GridListTesterOpts :
+  T extends 'ListBox' ? ListBoxTesterOpts :
   T extends 'Menu' ? MenuTesterOpts :
   T extends 'Select' ? SelectTesterOpts :
   T extends 'Table' ? TableTesterOpts :
+  T extends 'Tabs' ? TabsTesterOpts :
+  T extends 'Tree' ? TreeTesterOpts :
   never;
 
 let defaultAdvanceTimer = async (waitTime: number | undefined) => await new Promise((resolve) => setTimeout(resolve, waitTime));

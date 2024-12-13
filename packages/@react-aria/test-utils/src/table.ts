@@ -11,25 +11,10 @@
  */
 
 import {act, fireEvent, waitFor, within} from '@testing-library/react';
+import {GridRowActionOpts, TableTesterOpts, ToggleGridRowOpts, UserOpts} from './types';
 import {pressElement, triggerLongPress} from './events';
-import {TableTesterOpts, UserOpts} from './types';
 
-// TODO: this is a bit inconsistent from combobox, perhaps should also take node or combobox should also have find row
-interface TableToggleRowOpts {
-  /**
-   * The index, text, or node of the row to toggle selection for.
-   */
-  row: number | string | HTMLElement,
-  /**
-   * Whether the row needs to be long pressed to be selected. Depends on the table's implementation.
-   */
-  needsLongPress?: boolean,
-  /**
-   * What interaction type to use when toggling the row selection. Defaults to the interaction type set on the tester.
-   */
-  interactionType?: UserOpts['interactionType']
-}
-
+interface TableToggleRowOpts extends ToggleGridRowOpts {}
 interface TableToggleSortOpts {
   /**
    * The index, text, or node of the column to toggle selection for.
@@ -40,21 +25,7 @@ interface TableToggleSortOpts {
    */
   interactionType?: UserOpts['interactionType']
 }
-
-interface TableRowActionOpts {
-  /**
-   * The index, text, or node of the row to toggle selection for.
-   */
-  row: number | string | HTMLElement,
-  /**
-   * What interaction type to use when triggering the row's action. Defaults to the interaction type set on the tester.
-   */
-  interactionType?: UserOpts['interactionType'],
-  /**
-   * Whether or not the table needs a double click to trigger the row action. Depends on the table's implementation.
-   */
-  needsDoubleClick?: boolean
-}
+interface TableRowActionOpts extends GridRowActionOpts {}
 
 export class TableTester {
   private user;
@@ -84,6 +55,7 @@ export class TableTester {
     let {
       row,
       needsLongPress,
+      checkboxSelection = true,
       interactionType = this._interactionType
     } = opts;
 
@@ -96,7 +68,16 @@ export class TableTester {
     }
 
     let rowCheckbox = within(row).queryByRole('checkbox');
-    if (rowCheckbox) {
+
+    if (interactionType === 'keyboard' && !checkboxSelection) {
+      // TODO: for now focus the row directly until I add keyboard navigation
+      await act(async () => {
+        row.focus();
+      });
+      await this.user.keyboard('{Space}');
+      return;
+    }
+    if (rowCheckbox && checkboxSelection) {
       await pressElement(this.user, rowCheckbox, interactionType);
     } else {
       let cell = within(row).getAllByRole('gridcell')[0];
@@ -206,9 +187,7 @@ export class TableTester {
       await pressElement(this.user, columnheader, interactionType);
     }
   }
-  // TODO: should there be a util for triggering a row action? Perhaps there should be but it would rely on the user teling us the config of the
-  // table. Maybe we could rely on the user knowing to trigger a press/double click? We could have the user pass in "needsDoubleClick"
-  // It is also iffy if there is any row selected because then the table is in selectionMode and the below actions will simply toggle row selection
+
   /**
    * Triggers the action for the specified table row. Defaults to using the interaction type set on the table tester.
    */
@@ -230,6 +209,7 @@ export class TableTester {
     if (needsDoubleClick) {
       await this.user.dblClick(row);
     } else if (interactionType === 'keyboard') {
+      // TODO: add keyboard navigation instead of focusing the row directly. Will need to consider if the focus in in the columns
       act(() => row.focus());
       await this.user.keyboard('[Enter]');
     } else {

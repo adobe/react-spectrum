@@ -16,6 +16,7 @@ import {Links as LinksExample} from '../stories/Tabs.stories';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
+import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let defaultItems = [
@@ -25,9 +26,9 @@ let defaultItems = [
 ];
 
 function renderComponent(props = {}, itemProps) {
-  let {items = defaultItems} = props;
+  let {items = defaultItems, providerProps} = props;
   return render(
-    <Provider theme={theme}>
+    <Provider theme={theme} {...providerProps}>
       <Tabs aria-label="Tab Sample" {...props} items={items}>
         <TabList>
           {item => (
@@ -49,6 +50,7 @@ function renderComponent(props = {}, itemProps) {
 describe('Tabs', function () {
   let onSelectionChange = jest.fn();
   let user;
+  let testUtilUser = new User();
 
   beforeAll(function () {
     user = userEvent.setup({delay: null, pointerMap});
@@ -73,12 +75,13 @@ describe('Tabs', function () {
 
   it('renders properly', function () {
     let container = renderComponent();
-    let tablist = container.getByRole('tablist');
-    expect(tablist).toBeTruthy();
+    let tabsTester = testUtilUser.createTester('Tabs', {root: container.getByRole('tablist')});
 
+    let tablist = tabsTester.tablist;
+    expect(tablist).toBeTruthy();
     expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
 
-    let tabs = within(tablist).getAllByRole('tab');
+    let tabs = tabsTester.tabs;
     expect(tabs.length).toBe(3);
 
     for (let tab of tabs) {
@@ -86,12 +89,15 @@ describe('Tabs', function () {
       expect(tab).toHaveAttribute('aria-selected');
       let isSelected = tab.getAttribute('aria-selected') === 'true';
       if (isSelected) {
+        expect(tab).toBe(tabsTester.selectedTab);
         expect(tab).toHaveAttribute('aria-controls');
         let tabpanel = document.getElementById(tab.getAttribute('aria-controls'));
         expect(tabpanel).toBeTruthy();
         expect(tabpanel).toHaveAttribute('aria-labelledby', tab.id);
         expect(tabpanel).toHaveAttribute('role', 'tabpanel');
         expect(tabpanel).toHaveTextContent(defaultItems[0].children);
+        expect(tabpanel).toBe(tabsTester.activeTabpanel);
+        expect(tabsTester.tabpanels).toHaveLength(1);
       }
     }
   });
@@ -132,6 +138,33 @@ describe('Tabs', function () {
     fireEvent(selectedItem, arrowDown);
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
     expect(arrowDown.defaultPrevented).toBe(false);
+  });
+
+  it('allows user to change tab item select via arrow keys with horizontal tabs (rtl)', async function () {
+    let onKeyDown = jest.fn();
+    let container = renderComponent({orientation: 'horizontal', providerProps: {locale: 'ar-AE'}});
+    let tabsTester = testUtilUser.createTester('Tabs', {root: container.getByRole('tablist'), interactionType: 'keyboard', direction: 'rtl'});
+    let tabs = tabsTester.tabs;
+    window.addEventListener('keydown', onKeyDown);
+
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
+
+    await tabsTester.triggerTab({tab: 1});
+    expect(tabs[0]).not.toHaveAttribute('aria-selected', 'true');
+    expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
+    // Just to double check that the util is actually pressing the expected arrow key
+    expect(onKeyDown.mock.calls[0][0].key).toBe('ArrowLeft');
+
+    await tabsTester.triggerTab({tab: 2});
+    expect(tabs[1]).not.toHaveAttribute('aria-selected', 'true');
+    expect(tabs[2]).toHaveAttribute('aria-selected', 'true');
+    expect(onKeyDown.mock.calls[1][0].key).toBe('ArrowLeft');
+
+    await tabsTester.triggerTab({tab: 1});
+    expect(tabs[2]).not.toHaveAttribute('aria-selected', 'true');
+    expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
+    expect(onKeyDown.mock.calls[2][0].key).toBe('ArrowRight');
+    window.removeEventListener('keydown', onKeyDown);
   });
 
   it('allows user to change tab item select via arrow keys with vertical tabs', function () {
