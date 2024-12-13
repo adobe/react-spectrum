@@ -29,17 +29,15 @@ export function PostListing({type}) {
   return (
     <>
       {blogPages.map(page => <BlogPost key={page.name} {...page} />)}
-      {type === 'releases' &&
-        <div style={{display: 'flex', justifyContent: 'end'}}>
-        <Link
-          href='../releases/feed.rss'
-          target="_blank">
-          <Flex gap="size-100" alignItems="center">
-            <span>RSS Link</span><RSS size="S" />
-          </Flex>
-        </Link>
-        </div>
-      }
+      <div style={{display: 'flex', justifyContent: 'end'}}>
+      <Link
+        href={`../${type}/feed.rss`}
+        target="_blank">
+        <Flex gap="size-100" alignItems="center">
+          <span>RSS Link</span><RSS size="S" />
+        </Flex>
+      </Link>
+      </div>
     </>
   );
 }

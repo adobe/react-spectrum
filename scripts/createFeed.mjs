@@ -13,9 +13,22 @@
 import glob from 'glob';
 import fs from 'fs';
 import xml from "xml";
+import process from 'process';
 
 (async function createRssFeed() {
-  let posts = getFeed();
+
+  if (process.argv.length === 2) {
+    console.error('Expected at least one argument');
+    process.exit(1);
+  }
+
+  let type = process.argv[2];
+  if (type !== 'releases' && type !== 'blog') {
+    console.error('Expected argument to be either releases or blog');
+    process.exit(1);
+  }
+
+  let posts = getFeed(type);
   const feedObject = {
     rss: [
       {_attr: {
@@ -43,13 +56,11 @@ import xml from "xml";
   };
 
   const feed = '<?xml version="1.0" encoding="UTF-8"?>' + xml(feedObject);
-  await fs.writeFile("scripts/feed.rss", feed, (err) => console.log(err === null ? 'Success' : err));
+  await fs.writeFile(`scripts/${type}-feed.rss`, feed, (err) => console.log(err === null ? 'Success' : err));
 })();
 
-function getFeed() {
-  let files = glob.sync('packages/dev/docs/pages/releases/*.mdx', {ignore: ['packages/dev/docs/pages/releases/index.mdx']});
-  files = files.slice(files.length - 5, files.length);
-
+function getFeed(type) {
+  let files = glob.sync(`packages/dev/docs/pages/${type}/*.mdx`, {ignore: [`packages/dev/docs/pages/${type}/index.mdx`]});
   let posts = [];
 
   for (let file of files) {
@@ -74,8 +85,8 @@ function getFeed() {
     posts.push(post);
   }
 
-  posts = posts.sort((a, b) => a.date < b.date ? 1 : -1);
-  return posts
+  posts = posts.sort((a, b) => a.date < b.date ? 1 : -1).slice(0, 5);
+  return posts;
 }
 
 function buildFeed(posts) {

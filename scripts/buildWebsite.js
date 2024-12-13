@@ -173,12 +173,14 @@ async function build() {
   // Build the website
   await run('yarn', ['build'], {cwd: dir, stdio: 'inherit'});
 
-  // Generate the rss file
-  await run('yarn', ['createRssFeed'], {cwd: dir, stdio: 'inherit'});
+  // Generate the rss file for the release notes and blog
+  await run('yarn', ['createRssFeed', 'releases'], {cwd: dir, stdio: 'inherit'});
+  await run('yarn', ['createRssFeed', 'blog'], {cwd: dir, stdio: 'inherit'});
 
   // Copy the build back into dist, and delete the temp dir.
   fs.copySync(path.join(dir, 'dist'), path.join(__dirname, '..', 'dist', 'production', 'docs'));
-  fs.copySync(path.join(dir, 'scripts', 'feed.rss'), path.join(__dirname, '..', 'dist', 'production', 'docs', 'releases', 'feed.rss'))
+  fs.copySync(path.join(dir, 'scripts', 'release-feed.rss'), path.join(__dirname, '..', 'dist', 'production', 'docs', 'releases', 'releases-feed.rss'))
+  fs.copySync(path.join(dir, 'scripts', 'blog-feed.rss'), path.join(__dirname, '..', 'dist', 'production', 'docs', 'blog', 'blog-feed.rss'))
   fs.removeSync(dir);
 }
 
