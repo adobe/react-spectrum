@@ -267,7 +267,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
         fillStyle: {
           fill: {
             variant: {
-              primary: 'wghite',
+              primary: 'white',
               secondary: baseColor('transparent-white-800'),
               premium: 'white',
               genai: 'white'
