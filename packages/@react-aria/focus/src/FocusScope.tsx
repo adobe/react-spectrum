@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {createShadowTreeWalker, ShadowTreeWalker} from '@react-aria/utils/src/shadowdom/ShadowTreeWalker';
+import {createShadowTreeWalker, ShadowTreeWalker} from '@react-aria/utils';
 import {FocusableElement, RefObject} from '@react-types/shared';
 import {focusSafely} from './focusSafely';
 import {

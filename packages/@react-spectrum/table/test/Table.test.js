@@ -2122,7 +2122,7 @@ export let tableTests = () => {
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
 
-        act(() => row.focus());
+        await user.tab();
         await user.keyboard(' ');
         await user.keyboard('{Enter}');
 
@@ -2156,20 +2156,18 @@ export let tableTests = () => {
           let link = within(row).getAllByRole('link')[0];
           expect(link.textContent).toBe('Foo 1');
 
-          await act(async () => {
-            link.focus();
-            await user.keyboard(' ');
-            jest.runAllTimers();
-          });
+          await user.tab();
+          await user.keyboard('{ArrowRight}');
+          await user.keyboard('{ArrowRight}');
+          expect(document.activeElement).toBe(link);
+          await user.keyboard(' ');
+          jest.runAllTimers();
 
           row = tree.getAllByRole('row')[1];
           expect(row).toHaveAttribute('aria-selected', 'true');
 
-          await act(async () => {
-            link.focus();
-            await user.keyboard(' ');
-            jest.runAllTimers();
-          });
+          await user.keyboard(' ');
+          jest.runAllTimers();
 
           row = tree.getAllByRole('row')[1];
           link = within(row).getAllByRole('link')[0];
