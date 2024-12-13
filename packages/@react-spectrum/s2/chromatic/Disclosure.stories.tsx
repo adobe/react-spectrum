@@ -58,13 +58,11 @@ export const WithLongTitle: Story = {
         </Disclosure>
       </div>
     );
-  }
-};
-
-
-WithLongTitle.parameters = {
-  docs: {
-    disable: true
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };
 
