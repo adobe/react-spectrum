@@ -159,10 +159,15 @@ export const AriaTreeTests = ({renderers, setup, prefix}: AriaTreeTestProps) => 
             await treeTester.toggleRowSelection({row: 0});
             expect(rows[0]).toHaveAttribute('aria-selected', 'true');
             expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+            expect(treeTester.selectedRows).toHaveLength(1);
+            expect(within(treeTester.rows[0]).getByRole('checkbox')).toBeChecked();
 
             await treeTester.toggleRowSelection({row: 1});
             expect(rows[0]).toHaveAttribute('aria-selected', 'false');
             expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+            expect(treeTester.selectedRows).toHaveLength(1);
+            expect(within(treeTester.rows[0]).getByRole('checkbox')).not.toBeChecked();
+            expect(within(treeTester.rows[1]).getByRole('checkbox')).toBeChecked();
 
             await treeTester.toggleRowSelection({row: 2});
             expect(rows[0]).toHaveAttribute('aria-selected', 'false');
