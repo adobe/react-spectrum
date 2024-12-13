@@ -19,9 +19,9 @@ import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPers
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, useId, useObjectRef} from '@react-aria/utils';
-import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
+import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject, Selection} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useCallback, useContext, useEffect, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface GridListRenderProps {
@@ -85,7 +85,7 @@ function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<H
   props.id = useId(props.id);
 
   return (
-    <CollectionBuilder id={props.id} content={<Collection {...props} />}>
+    <CollectionBuilder content={<Collection {...props} idScope={props.id} />}>
       {collection => <GridListInner props={props} collection={collection} gridListRef={ref} />}
     </CollectionBuilder>
   );
@@ -100,28 +100,46 @@ interface GridListInnerProps<T extends object> {
 function GridListInner<T extends object>({props, collection, gridListRef: ref}: GridListInnerProps<T>) {
   let {dragAndDropHooks, keyboardNavigationBehavior = 'arrow', layout = 'stack'} = props;
   let {CollectionRoot, isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate} = useContext(CollectionRendererContext);
+
+  // Unscope the node keys for convenient access.
+  let disabledKeys = useMemo(() => !props.disabledKeys ? props.disabledKeys : [...props.disabledKeys].map(key => `${props.id}:${key}`), [props.disabledKeys, props.id]);
+  let selectedKeys = useMemo(() => !props.selectedKeys || props.selectedKeys === 'all' ? props.selectedKeys : [...props.selectedKeys].map(key => `${props.id}:${key}`), [props.selectedKeys, props.id]);
+  let defaultSelectedKeys = useMemo(() => !props.defaultSelectedKeys || props.defaultSelectedKeys === 'all' ? props.defaultSelectedKeys : [...props.defaultSelectedKeys].map(key => `${props.id}:${key}`), [props.defaultSelectedKeys, props.id]);
+  let onSelectionChange = useCallback((keys: Selection) => {
+    props.onSelectionChange?.(new Set([...keys].map(key => typeof key === 'string' ? key.replace(`${props.id}:`, '') : key)));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.onSelectionChange, props.id]);
+  props.onAction = useCallback((key: Key) => {
+    props.onAction?.(typeof key === 'string' ? key.replace(`${props.id}:`, '') : key);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.onAction, props.id]);
+
   let state = useListState({
     ...props,
     collection,
+    selectedKeys,
+    disabledKeys,
+    onSelectionChange,
+    defaultSelectedKeys,
     children: undefined,
     layoutDelegate
   });
 
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let {disabledBehavior, disabledKeys} = state.selectionManager;
+  let {disabledBehavior} = state.selectionManager;
   let {direction} = useLocale();
   let keyboardDelegate = useMemo(() => (
     new ListKeyboardDelegate({
       collection,
       collator,
       ref,
-      disabledKeys,
+      disabledKeys: state.selectionManager.disabledKeys,
       disabledBehavior,
       layoutDelegate,
       layout,
       direction
     })
-  ), [collection, ref, layout, disabledKeys, disabledBehavior, layoutDelegate, collator, direction]);
+  ), [collection, ref, layout, state.selectionManager.disabledKeys, disabledBehavior, layoutDelegate, collator, direction]);
 
   let {gridProps} = useGridList({
     ...props,
