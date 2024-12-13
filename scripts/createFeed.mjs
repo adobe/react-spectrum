@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2024 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -43,11 +43,11 @@ import xml from "xml";
   };
 
   const feed = '<?xml version="1.0" encoding="UTF-8"?>' + xml(feedObject);
-  await fs.writeFile("feed.rss", feed, (err) => console.log(err));
+  await fs.writeFile("scripts/feed.rss", feed, (err) => console.log(err === null ? 'Success' : err));
 })();
 
 function getFeed() {
-  let files = glob.sync('../packages/dev/docs/pages/releases/*.mdx', {ignore: ['../packages/dev/docs/pages/releases/index.mdx']});
+  let files = glob.sync('packages/dev/docs/pages/releases/*.mdx', {ignore: ['packages/dev/docs/pages/releases/index.mdx']});
   files = files.slice(files.length - 5, files.length);
 
   let posts = [];
@@ -57,17 +57,20 @@ function getFeed() {
 
     let date = '';
     let description = '';
+    let title = '';
     let index = 0;
-    while (date === '' || description === '' && index < contents.length) {
+    while (date === '' || description === '' || title === '' && index < contents.length) {
       if (contents[index].startsWith('description')) {
         description = contents[index].replace('description:', '').trim();
       } else if (contents[index].startsWith('date:')) {
         date = contents[index].replace('date:', '').trim();
+      } else if (contents[index].startsWith('#')) {
+        title = contents[index].replace('#', '').trim();
       }
       index++;
     }
 
-    let post = {date: date, description: description};
+    let post = {date: date, description: description, title: title};
     posts.push(post);
   }
 
@@ -82,7 +85,7 @@ function buildFeed(posts) {
     ...posts.map(function (post) {
       const feedItem = {
         item: [
-          {title: post.date},
+          {title: post.title},
           {pubDate: new Date(post.date).toUTCString(),},
           {guid: [
               { _attr: { isPermaLink: true } },
