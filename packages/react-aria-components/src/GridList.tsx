@@ -109,11 +109,11 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   let disabledKeys = useMemo(() => !props.disabledKeys ? props.disabledKeys : [...props.disabledKeys].map(key => `${props.id}:${key}`), [props.disabledKeys, props.id]);
   let selectedKeys = useMemo(() => !props.selectedKeys || props.selectedKeys === 'all' ? props.selectedKeys : [...props.selectedKeys].map(key => `${props.id}:${key}`), [props.selectedKeys, props.id]);
   let defaultSelectedKeys = useMemo(() => !props.defaultSelectedKeys || props.defaultSelectedKeys === 'all' ? props.defaultSelectedKeys : [...props.defaultSelectedKeys].map(key => `${props.id}:${key}`), [props.defaultSelectedKeys, props.id]);
-  let onSelectionChange = useCallback((keys: Selection) => {
+  let onSelectionChange = useMemo(() => !props.onSelectionChange ? props.onSelectionChange : (keys: Selection) => {
     props.onSelectionChange?.(new Set([...keys].map(key => typeof key === 'string' ? key.replace(`${props.id}:`, '') : key)));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.onSelectionChange, props.id]);
-  props.onAction = useCallback((key: Key) => {
+  let onAction = useMemo(() => !props.onAction ? props.onAction : (key: Key) => {
     props.onAction?.(typeof key === 'string' ? key.replace(`${props.id}:`, '') : key);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.onAction, props.id]);
@@ -129,31 +129,32 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
     layoutDelegate
   });
 
+  let selectionManager = state.selectionManager;
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let {disabledBehavior} = state.selectionManager;
+  let {disabledBehavior} = selectionManager;
   let {direction} = useLocale();
   let keyboardDelegate = useMemo(() => (
     new ListKeyboardDelegate({
       collection,
       collator,
       ref,
-      disabledKeys: state.selectionManager.disabledKeys,
+      disabledKeys: selectionManager.disabledKeys,
       disabledBehavior,
       layoutDelegate,
       layout,
       direction
     })
-  ), [collection, ref, layout, state.selectionManager.disabledKeys, disabledBehavior, layoutDelegate, collator, direction]);
+  ), [collection, ref, layout, selectionManager.disabledKeys, disabledBehavior, layoutDelegate, collator, direction]);
 
   let {gridProps} = useGridList({
     ...props,
+    onAction,
     keyboardDelegate,
     // Only tab navigation is supported in grid layout.
     keyboardNavigationBehavior: layout === 'grid' ? 'tab' : keyboardNavigationBehavior,
     isVirtualized
   }, state, ref);
 
-  let selectionManager = state.selectionManager;
   let isListDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
   let isListDroppable = !!dragAndDropHooks?.useDroppableCollectionState;
   let dragHooksProvided = useRef(isListDraggable);

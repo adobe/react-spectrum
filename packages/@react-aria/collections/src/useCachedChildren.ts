@@ -64,12 +64,10 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
       }
       return res;
     } else if (typeof children !== 'function') {
-      return Children.map(children, (child: any, index) => {
-        let key = child.props.id ?? index;
+      return Children.map(children, (child: any) => {
+        if (!child || !child.props.id || !idScope) {return child;}
 
-        if (idScope) {
-          key = idScope + ':' + key;
-        }
+        let key =  `${idScope}:${child.props.id}`;
 
         return cloneElement(child, addIdAndValue ? {key, id: key} : {key});
       });
