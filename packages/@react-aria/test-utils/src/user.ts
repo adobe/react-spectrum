@@ -19,6 +19,7 @@ import {
   SelectTesterOpts,
   TableTesterOpts,
   TabsTesterOpts,
+  TreeTesterOpts,
   UserOpts
 } from './types';
 import {GridListTester} from './gridlist';
@@ -28,6 +29,7 @@ import {pointerMap} from './';
 import {SelectTester} from './select';
 import {TableTester} from './table';
 import {TabsTester} from './tabs';
+import {TreeTester} from './tree';
 import userEvent from '@testing-library/user-event';
 
 let keyToUtil = {
@@ -37,7 +39,8 @@ let keyToUtil = {
   'ComboBox': ComboBoxTester,
   'GridList': GridListTester,
   'ListBox': ListBoxTester,
-  'Tabs': TabsTester
+  'Tabs': TabsTester,
+  'Tree': TreeTester
 } as const;
 export type PatternNames = keyof typeof keyToUtil;
 
@@ -50,6 +53,7 @@ type Tester<T> =
   T extends 'Select' ? SelectTester :
   T extends 'Table' ? TableTester :
   T extends 'Tabs' ? TabsTester :
+  T extends 'Tree' ? TreeTester :
   never;
 
 type TesterOpts<T> =
@@ -60,6 +64,7 @@ type TesterOpts<T> =
   T extends 'Select' ? SelectTesterOpts :
   T extends 'Table' ? TableTesterOpts :
   T extends 'Tabs' ? TabsTesterOpts :
+  T extends 'Tree' ? TreeTesterOpts :
   never;
 
 let defaultAdvanceTimer = async (waitTime: number | undefined) => await new Promise((resolve) => setTimeout(resolve, waitTime));

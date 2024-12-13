@@ -58,7 +58,7 @@ export interface ListBoxTesterOpts extends BaseTesterOpts {
   /**
    * A function used by the test utils to advance timers during interactions.
    */
-  advanceTimer: UserOpts['advanceTimer']
+  advanceTimer?: UserOpts['advanceTimer']
 }
 
 export interface MenuTesterOpts extends BaseTesterOpts {
@@ -84,7 +84,7 @@ export interface TableTesterOpts extends BaseTesterOpts {
   /**
    * A function used by the test utils to advance timers during interactions.
    */
-  advanceTimer: UserOpts['advanceTimer']
+  advanceTimer?: UserOpts['advanceTimer']
 }
 
 export interface TabsTesterOpts extends BaseTesterOpts {
@@ -93,4 +93,11 @@ export interface TabsTesterOpts extends BaseTesterOpts {
    * @default 'ltr'
    */
   direction?: Direction
+}
+
+export interface TreeTesterOpts extends BaseTesterOpts {
+  /**
+   * A function used by the test utils to advance timers during interactions.
+   */
+  advanceTimer?: UserOpts['advanceTimer']
 }
