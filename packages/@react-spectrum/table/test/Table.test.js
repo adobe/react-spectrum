@@ -2161,13 +2161,13 @@ export let tableTests = () => {
           await user.keyboard('{ArrowRight}');
           expect(document.activeElement).toBe(link);
           await user.keyboard(' ');
-          jest.runAllTimers();
+          act(() => {jest.runAllTimers();});
 
           row = tree.getAllByRole('row')[1];
           expect(row).toHaveAttribute('aria-selected', 'true');
 
           await user.keyboard(' ');
-          jest.runAllTimers();
+          act(() => {jest.runAllTimers();});
 
           row = tree.getAllByRole('row')[1];
           link = within(row).getAllByRole('link')[0];
