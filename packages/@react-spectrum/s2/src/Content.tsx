@@ -18,6 +18,7 @@ import {UnsafeStyles} from './style-utils';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useIsSkeleton, useSkeletonText} from './Skeleton';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
+import { inertValue } from '@react-aria/utils';
 
 interface ContentProps extends UnsafeStyles, SlotProps {
   children?: ReactNode,
@@ -107,7 +108,7 @@ export const Text = forwardRef(function Text(props: ContentProps, ref: DOMRef) {
       {...otherProps}
       ref={domRef}
       // @ts-ignore - compatibility with React < 19
-      inert={isSkeleton ? 'true' : undefined}
+      inert={inertValue(isSkeleton)}
       className={UNSAFE_className + styles}
       style={UNSAFE_style}
       slot={slot || undefined}
