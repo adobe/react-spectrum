@@ -45,11 +45,11 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
           rendered = children(item);
           // @ts-ignore
           let key = rendered.props.id ?? item.key ?? item.id;
-           
+          
           if (key == null) {
             throw new Error('Could not determine key for item');
           }
-           
+          
           if (idScope) {
             key = idScope + ':' + key;
           }
@@ -64,10 +64,10 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
       }
       return res;
     } else if (typeof children !== 'function') {
-      return Children.map(children, (child: any) => {
-        if (!child || !child.props.id || !idScope) {return child;}
+      return Children.map(children, (child: any, index) => {
+        if (!child || !idScope) {return child;}
 
-        let key =  `${idScope}:${child.props.id}`;
+        let key = `${idScope}:${child.props.id ?? index + 1}`;
 
         return cloneElement(child, addIdAndValue ? {key, id: key} : {key});
       });

@@ -1137,9 +1137,11 @@ export const Row = /*#__PURE__*/ createBranchComponent(
       throw new Error('No id detected for the Row element. The Row element requires a id to be provided to it when the cells are rendered dynamically.');
     }
 
+    let scope = props.columns ? props.id : undefined;
     let dependencies = [props.value].concat(props.dependencies);
+
     return (
-      <Collection dependencies={dependencies} items={props.columns} idScope={props.id}>
+      <Collection dependencies={dependencies} items={props.columns} idScope={scope}>
         {props.children}
       </Collection>
     );
