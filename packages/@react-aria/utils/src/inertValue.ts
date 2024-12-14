@@ -1,7 +1,9 @@
-import React from 'react';
+import {version} from 'react';
 
 export function inertValue(value: any) {
-  if (typeof React['use'] === 'function') {
+  const pieces = version.split('.');
+  const major = parseInt(pieces[0], 10);
+  if (major >= 19) {
     return !!value;
   }
   // compatibility with React < 19
