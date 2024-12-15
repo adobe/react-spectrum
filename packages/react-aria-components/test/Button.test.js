@@ -286,6 +286,7 @@ describe('Button', () => {
     await user.keyboard('{Enter}');
     expect(onSubmitSpy).toHaveBeenCalled();
     onSubmitSpy.mockClear();
+    act(() => jest.runAllTimers());
 
     await user.keyboard('{Enter}');
     expect(onSubmitSpy).not.toHaveBeenCalled();
