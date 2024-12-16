@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButtonGroupContext} from './ActionButtonGroup';
+import {ActionButtonGroup} from './ActionButtonGroup';
 import {announce} from '@react-aria/live-announcer';
 import {CloseButton} from './CloseButton';
 import {ContextValue, SlotProps} from 'react-aria-components';
@@ -39,10 +39,14 @@ const slideOut = keyframes(`
 
 const actionBarStyles = style({
   borderRadius: 'lg',
-  backgroundColor: {
-    default: 'elevated',
-    isEmphasized: 'neutral'
+  '--s2-container-bg': {
+    type: 'backgroundColor',
+    value: {
+      default: 'elevated',
+      isEmphasized: 'neutral'
+    }
   },
+  backgroundColor: '--s2-container-bg',
   boxShadow: 'elevated',
   boxSizing: 'border-box',
   outlineStyle: 'solid',
@@ -82,11 +86,15 @@ const actionBarStyles = style({
 });
 
 export interface ActionBarProps extends SlotProps {
+  /** A list of ActionButtons to display. */
+  children: ReactNode,
+  /** Whether the ActionBar should be displayed with a emphasized style. */
   isEmphasized?: boolean,
+  /** The number of selected items that the ActionBar is currently linked to. If 0, the ActionBar is hidden. */
   selectedItemCount?: number | 'all',
   /** Handler that is called when the ActionBar clear button is pressed. */
   onClearSelection?: () => void,
-  children: ReactNode,
+  /** A ref to the scrollable element the ActionBar appears above. */
   scrollRef?: RefObject<HTMLElement | null>
 }
 
@@ -114,9 +122,7 @@ const ActionBarInner = forwardRef(function ActionBarInner(props: ActionBarProps 
   if ((selectedItemCount === 'all' || selectedItemCount > 0) && selectedItemCount !== lastCount) {
     setLastCount(selectedItemCount);
   }
-  
-  let staticColor = isEmphasized ? 'black' as const : undefined;
-  
+    
   // Measure the width of the collection's scrollbar and offset the action bar by that amount.
   let scrollRef = props.scrollRef;
   let [scrollbarWidth, setScrollbarWidth] = useState(0);
@@ -159,13 +165,16 @@ const ActionBarInner = forwardRef(function ActionBarInner(props: ActionBarProps 
         className={actionBarStyles({isEmphasized, isInContainer: !!scrollRef, isExiting})}
         style={{insetInlineEnd: `calc(var(--insetEnd) + ${scrollbarWidth + 'px'})`}}>
         <div className={style({order: 1, marginStart: 'auto'})}>
-          <ActionButtonGroupContext.Provider value={{staticColor, isQuiet: true, 'aria-label': stringFormatter.format('actionbar.actions')}}>
+          <ActionButtonGroup
+            staticColor={isEmphasized ? 'auto' : undefined}
+            isQuiet
+            aria-label={stringFormatter.format('actionbar.actions')}>
             {children}
-          </ActionButtonGroupContext.Provider>
+          </ActionButtonGroup>
         </div>
         <div className={style({order: 0, display: 'flex', alignItems: 'center', gap: 4})}>
           <CloseButton
-            staticColor={staticColor}
+            staticColor={isEmphasized ? 'auto' : undefined}
             aria-label={stringFormatter.format('actionbar.clearSelection')}
             onPress={() => onClearSelection?.()} />
           <span className={style({font: 'ui', color: {default: 'neutral', isEmphasized: 'gray-25'}})({isEmphasized})}>

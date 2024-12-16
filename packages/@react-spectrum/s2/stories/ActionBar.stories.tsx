@@ -13,7 +13,6 @@
 import {action} from '@storybook/addon-actions';
 import {ActionBar} from '../src/ActionBar';
 import {ActionButton} from '../src/ActionButton';
-import {ActionButtonGroup} from '../src/ActionButtonGroup';
 import {Example as CardViewExample} from './CardView.stories';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
@@ -36,11 +35,9 @@ export const Example: Story = {
   render: (args) => {
     return (
       <ActionBar {...args}>
-        <ActionButtonGroup>
-          <ActionButton>Edit</ActionButton>
-          <ActionButton>Copy</ActionButton>
-          <ActionButton>Delete</ActionButton>
-        </ActionButtonGroup>
+        <ActionButton>Edit</ActionButton>
+        <ActionButton>Copy</ActionButton>
+        <ActionButton>Delete</ActionButton>
       </ActionBar>
     );
   },
@@ -56,11 +53,9 @@ export const CardExample: Story = {
       selectionMode="multiple"
       renderActionBar={selectedKeys => (
         <ActionBar {...args}>
-          <ActionButtonGroup>
-            <ActionButton onPress={() => action('edit')([...selectedKeys])}>Edit</ActionButton>
-            <ActionButton onPress={() => action('copy')([...selectedKeys])}>Copy</ActionButton>
-            <ActionButton onPress={() => action('delete')([...selectedKeys])}>Delete</ActionButton>
-          </ActionButtonGroup>
+          <ActionButton onPress={() => action('edit')([...selectedKeys])}>Edit</ActionButton>
+          <ActionButton onPress={() => action('copy')([...selectedKeys])}>Copy</ActionButton>
+          <ActionButton onPress={() => action('delete')([...selectedKeys])}>Delete</ActionButton>
         </ActionBar>
       )} />
   ),
@@ -102,11 +97,9 @@ export const TableExample: Story = {
       selectionMode="multiple"
       renderActionBar={selectedKeys => (
         <ActionBar {...args}>
-          <ActionButtonGroup>
-            <ActionButton onPress={() => action('edit')([...selectedKeys])}>Edit</ActionButton>
-            <ActionButton onPress={() => action('copy')([...selectedKeys])}>Copy</ActionButton>
-            <ActionButton onPress={() => action('delete')([...selectedKeys])}>Delete</ActionButton>
-          </ActionButtonGroup>
+          <ActionButton onPress={() => action('edit')([...selectedKeys])}>Edit</ActionButton>
+          <ActionButton onPress={() => action('copy')([...selectedKeys])}>Copy</ActionButton>
+          <ActionButton onPress={() => action('delete')([...selectedKeys])}>Delete</ActionButton>
         </ActionBar>
       )}>
       <TableHeader columns={columns}>
