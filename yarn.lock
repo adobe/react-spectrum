@@ -7133,8 +7133,6 @@ __metadata:
     chalk: "npm:^4.0.0"
     execa: "npm:^5.1.1"
     jscodeshift: "npm:^0.15.2"
-    react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
-    react-dom: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
     recast: "npm:^0.23.9"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.5.0"
@@ -7363,9 +7361,10 @@ __metadata:
     highlight.js: "npm:9.18.1"
     markdown-to-jsx: "npm:^6.11.0"
     quicklink: "npm:^2.3.0"
-    react: "npm:^18.2.0"
-    react-dom: "npm:^18.2.0"
     react-lowlight: "npm:^2.0.0"
+  peerDependencies:
+    react: ^18.2.0 || ^19.0.0
+    react-dom: ^18.2.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -27168,8 +27167,9 @@ __metadata:
   dependencies:
     "@parcel/plugin": "npm:^2.0.0"
     "@parcel/utils": "npm:^2.13.0"
-    react: "npm:^18.0.0 || ^19.0.0"
-    react-dom: "npm:^18.0.0 || ^19.0.0"
+  peerDependencies:
+    react: ^18.0.0 || ^19.0.0
+    react-dom: ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -27235,12 +27235,13 @@ __metadata:
     dprint-node: "npm:^1.0.7"
     js-yaml: "npm:^3.13.1"
     mdast-util-toc: "npm:^6.1.0"
-    react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
     remark-frontmatter: "npm:^4.0.1"
     remark-slug: "npm:^7.0.1"
     tree-sitter-highlight: "npm:^1.0.1"
     unist-util-flatmap: "npm:^1.0.0"
     unist-util-visit: "npm:^4.0.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -27263,7 +27264,8 @@ __metadata:
     "@mdx-js/mdx": "npm:next"
     "@mdx-js/react": "npm:next"
     "@parcel/plugin": "npm:^2.0.0"
-    react: "npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -29033,7 +29035,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0, react-dom@npm:^18.0.0 || ^19.0.0, react-dom@npm:^18.2.0":
+"react-dom@npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0, react-dom@npm:^18.2.0":
   version: 18.3.1
   resolution: "react-dom@npm:18.3.1"
   dependencies:
@@ -29405,7 +29407,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0, react@npm:^18.0.0 || ^19.0.0, react@npm:^18.2.0":
+"react@npm:^18.2.0":
   version: 18.3.1
   resolution: "react@npm:18.3.1"
   dependencies:

@@ -8,7 +8,9 @@
   },
   "dependencies": {
     "@parcel/plugin": "^2.0.0",
-    "@parcel/utils": "^2.13.0",
+    "@parcel/utils": "^2.13.0"
+  },
+  "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"
   }
