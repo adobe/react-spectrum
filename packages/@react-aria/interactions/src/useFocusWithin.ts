@@ -90,7 +90,7 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
   if (isDisabled) {
     return {
       focusWithinProps: {
-        // These should not have been null, that would conflict in mergeProps
+        // These cannot be null, that would conflict in mergeProps
         onFocus: undefined,
         onBlur: undefined
       }

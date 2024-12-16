@@ -29,13 +29,13 @@ export function focusSafely(element: FocusableElement) {
   // the page before shifting focus. This avoids issues with VoiceOver on iOS
   // causing the page to scroll when moving focus if the element is transitioning
   // from off the screen.
-  const rootNode = getOwnerDocument(element);
-  const activeElement = getActiveElement(rootNode);
+  const ownerDocument = getOwnerDocument(element);
+  const activeElement = getActiveElement(ownerDocument);
   if (getInteractionModality() === 'virtual') {
     let lastFocusedElement = activeElement;
     runAfterTransition(() => {
       // If focus did not move and the element is still in the document, focus it.
-      if (getActiveElement(rootNode) === lastFocusedElement && element.isConnected) {
+      if (getActiveElement(ownerDocument) === lastFocusedElement && element.isConnected) {
         focusWithoutScrolling(element);
       }
     });

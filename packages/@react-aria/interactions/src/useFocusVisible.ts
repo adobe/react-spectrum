@@ -30,23 +30,6 @@ export interface FocusVisibleProps {
   autoFocus?: boolean
 }
 
-/**
- * This function creates a type-safe event listener wrapper that ensures consistent function references for event handling.
- * It uses a WeakMap to cache wrapped handlers, guaranteeing that the same function instance is always returned for a given handler, which is crucial for proper event listener cleanup and prevents unnecessary function creation.
- */
-const handlerCache = new WeakMap<Function, EventListener>();
-
-function createEventListener<E extends Event>(handler: (e: E) => void): EventListener {
-  if (typeof handler === 'function') {
-    if (!handlerCache.has(handler)) {
-      const wrappedHandler: EventListener = (e: Event) => handler(e as E);
-      handlerCache.set(handler, wrappedHandler);
-    }
-    return handlerCache.get(handler)!;
-  }
-  return handler;
-}
-
 export interface FocusVisibleResult {
   /** Whether keyboard focus is visible globally. */
   isFocusVisible: boolean
@@ -152,9 +135,9 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
     focus.apply(this, arguments as unknown as [options?: FocusOptions | undefined]);
   };
 
-  documentObject.addEventListener('keydown', createEventListener(handleKeyboardEvent), true);
-  documentObject.addEventListener('keyup', createEventListener(handleKeyboardEvent), true);
-  documentObject.addEventListener('click', createEventListener(handleClickEvent), true);
+  documentObject.addEventListener('keydown', handleKeyboardEvent, true);
+  documentObject.addEventListener('keyup', handleKeyboardEvent, true);
+  documentObject.addEventListener('click', handleClickEvent, true);
 
   // Register focus events on the window so they are sure to happen
   // before React's event listeners (registered on the document).
@@ -162,13 +145,13 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
   windowObject.addEventListener('blur', handleWindowBlur, false);
 
   if (typeof PointerEvent !== 'undefined') {
-    documentObject.addEventListener('pointerdown', createEventListener(handlePointerEvent), true);
-    documentObject.addEventListener('pointermove', createEventListener(handlePointerEvent), true);
-    documentObject.addEventListener('pointerup', createEventListener(handlePointerEvent), true);
+    documentObject.addEventListener('pointerdown', handlePointerEvent, true);
+    documentObject.addEventListener('pointermove', handlePointerEvent, true);
+    documentObject.addEventListener('pointerup', handlePointerEvent, true);
   } else {
-    documentObject.addEventListener('mousedown', createEventListener(handlePointerEvent), true);
-    documentObject.addEventListener('mousemove', createEventListener(handlePointerEvent), true);
-    documentObject.addEventListener('mouseup', createEventListener(handlePointerEvent), true);
+    documentObject.addEventListener('mousedown', handlePointerEvent, true);
+    documentObject.addEventListener('mousemove', handlePointerEvent, true);
+    documentObject.addEventListener('mouseup', handlePointerEvent, true);
   }
 
   // Add unmount handler
@@ -190,21 +173,21 @@ const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
   }
   windowObject.HTMLElement.prototype.focus = hasSetupGlobalListeners.get(windowObject)!.focus;
 
-  documentObject.removeEventListener('keydown', createEventListener(handleKeyboardEvent), true);
-  documentObject.removeEventListener('keyup', createEventListener(handleKeyboardEvent), true);
-  documentObject.removeEventListener('click', createEventListener(handleClickEvent), true);
+  documentObject.removeEventListener('keydown', handleKeyboardEvent, true);
+  documentObject.removeEventListener('keyup', handleKeyboardEvent, true);
+  documentObject.removeEventListener('click', handleClickEvent, true);
 
   windowObject.removeEventListener('focus', handleFocusEvent, true);
   windowObject.removeEventListener('blur', handleWindowBlur, false);
 
   if (typeof PointerEvent !== 'undefined') {
-    documentObject.removeEventListener('pointerdown', createEventListener(handlePointerEvent), true);
-    documentObject.removeEventListener('pointermove', createEventListener(handlePointerEvent), true);
-    documentObject.removeEventListener('pointerup', createEventListener(handlePointerEvent), true);
+    documentObject.removeEventListener('pointerdown', handlePointerEvent, true);
+    documentObject.removeEventListener('pointermove', handlePointerEvent, true);
+    documentObject.removeEventListener('pointerup', handlePointerEvent, true);
   } else {
-    documentObject.removeEventListener('mousedown', createEventListener(handlePointerEvent), true);
-    documentObject.removeEventListener('mousemove', createEventListener(handlePointerEvent), true);
-    documentObject.removeEventListener('mouseup', createEventListener(handlePointerEvent), true);
+    documentObject.removeEventListener('mousedown', handlePointerEvent, true);
+    documentObject.removeEventListener('mousemove', handlePointerEvent, true);
+    documentObject.removeEventListener('mouseup', handlePointerEvent, true);
   }
 
   hasSetupGlobalListeners.delete(windowObject);
