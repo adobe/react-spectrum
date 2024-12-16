@@ -77,7 +77,6 @@ const actionBarStyles = style({
   },
   marginX: 'auto',
   maxWidth: 960,
-  zIndex: 3,
   animation: {
     isInContainer: slideIn,
     isExiting: slideOut
