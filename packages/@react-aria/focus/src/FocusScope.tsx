@@ -757,7 +757,6 @@ export function getFocusableTreeWalker(root: Element, opts?: FocusManagerOptions
 
   // Determine the document to use
   let doc = getOwnerDocument(rootElement);
-  // console.log('doc', doc, root);
 
   // Create a TreeWalker, ensuring the root is an Element or Document
   let walker = createShadowTreeWalker(
