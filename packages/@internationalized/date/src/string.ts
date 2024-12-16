@@ -234,16 +234,14 @@ export function parseDuration(value: string): Required<DateTimeDuration> {
 
   const parseDurationGroup = (
     group: string | undefined,
-    isNegative: boolean,
-    min: number,
-    max: number
+    isNegative: boolean
   ): number => {
     if (!group) {
       return 0;
     }
     try {
       const sign = isNegative ? -1 : 1;
-      return sign * parseNumber(group.replace(',', '.'), min, max);
+      return sign * Number(group.replace(',', '.'));
     } catch {
       throw new Error(`Invalid ISO 8601 Duration string: ${value}`);
     }
@@ -267,13 +265,13 @@ export function parseDuration(value: string): Required<DateTimeDuration> {
   }
 
   const duration: Mutable<DateTimeDuration> = {
-    years: parseDurationGroup(match.groups?.years, isNegative, 0, 9999),
-    months: parseDurationGroup(match.groups?.months, isNegative, 0, 12),
-    weeks: parseDurationGroup(match.groups?.weeks, isNegative, 0, Infinity),
-    days: parseDurationGroup(match.groups?.days, isNegative, 0, 31),
-    hours: parseDurationGroup(match.groups?.hours, isNegative, 0, 23),
-    minutes: parseDurationGroup(match.groups?.minutes, isNegative, 0, 59),
-    seconds: parseDurationGroup(match.groups?.seconds, isNegative, 0, 59)
+    years: parseDurationGroup(match.groups?.years, isNegative),
+    months: parseDurationGroup(match.groups?.months, isNegative),
+    weeks: parseDurationGroup(match.groups?.weeks, isNegative),
+    days: parseDurationGroup(match.groups?.days, isNegative),
+    hours: parseDurationGroup(match.groups?.hours, isNegative),
+    minutes: parseDurationGroup(match.groups?.minutes, isNegative),
+    seconds: parseDurationGroup(match.groups?.seconds, isNegative)
   };
 
   if (duration.hours !== undefined && ((duration.hours % 1) !== 0) && (duration.minutes || duration.seconds)) {
