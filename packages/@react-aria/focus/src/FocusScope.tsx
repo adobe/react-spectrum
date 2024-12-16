@@ -515,7 +515,7 @@ function useAutoFocus(scopeRef: RefObject<Element[] | null>, autoFocus?: boolean
     if (autoFocusRef.current) {
       activeScope = scopeRef;
       const ownerDocument = getOwnerDocument(scopeRef.current ? scopeRef.current[0] : undefined);
-      if (!isElementInScope(ownerDocument.activeElement, activeScope.current) && scopeRef.current) {
+      if (!isElementInScope(getActiveElement(ownerDocument), activeScope.current) && scopeRef.current) {
         focusFirstInScope(scopeRef.current);
       }
     }
