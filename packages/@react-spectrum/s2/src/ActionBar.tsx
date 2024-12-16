@@ -23,10 +23,8 @@ import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {useControlledState} from '@react-stately/utils';
 import {useDOMRef} from '@react-spectrum/utils';
-// TODO: do we want to export this from RAC?
-import {useExitAnimation} from 'react-aria-components/src/utils';
+import {useExitAnimation, useResizeObserver} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useResizeObserver} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 const slideIn = keyframes(`
