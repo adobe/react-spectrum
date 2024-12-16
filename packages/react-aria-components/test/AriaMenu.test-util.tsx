@@ -12,6 +12,7 @@
 
 import {act, fireEvent, render, within} from '@testing-library/react';
 import {
+  AriaBaseTestProps,
   pointerMap
 } from '@react-spectrum/test-utils-internal';
 import {User} from '@react-aria/test-utils';
@@ -41,11 +42,6 @@ describeInteractions.skip = ((name, tests) => describe.skip.each`
 `(`${name} - $interactionType`, tests));
 
 let triggerText = 'Menu Button';
-
-interface AriaBaseTestProps {
-  setup?: () => void,
-  prefix?: string
-}
 interface AriaMenuTestProps extends AriaBaseTestProps {
   renderers: {
     // needs at least three child items, all enabled

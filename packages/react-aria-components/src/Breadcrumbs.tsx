@@ -79,6 +79,7 @@ export const Breadcrumb = /*#__PURE__*/ createLeafComponent('item', function Bre
   // Recreating useBreadcrumbItem because we want to use composition instead of having the link builtin.
   let isCurrent = node.nextKey == null;
   let {isDisabled, onAction} = useSlottedContext(BreadcrumbsContext)!;
+  // why don't we use useBreadcrumbItem?
   let linkProps = {
     'aria-current': isCurrent ? 'page' : null,
     isDisabled: isDisabled || isCurrent,

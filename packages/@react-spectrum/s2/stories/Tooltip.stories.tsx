@@ -32,7 +32,7 @@ const meta: Meta<typeof CombinedTooltip> = {
 
 export default meta;
 
-export const Example = (args: any) => {
+const ExampleRender = (args: any) => {
   let {
     trigger,
     isOpen,
@@ -80,7 +80,8 @@ export const Example = (args: any) => {
   );
 };
 
-Example.story = {
+export const Example = {
+  render: (args) => <ExampleRender {...args} />,
   argTypes: {
     isOpen: {
       control: 'select',
@@ -89,7 +90,7 @@ Example.story = {
   }
 };
 
-export const LongLabel = (args: any) => {
+const LongLabelRender = (args: any) => {
   let {
     trigger,
     isOpen,
@@ -125,7 +126,8 @@ export const LongLabel = (args: any) => {
   );
 };
 
-LongLabel.story = {
+export const LongLabel = {
+  render: (args) => <LongLabelRender {...args} />,
   argTypes: {
     isOpen: {
       control: 'select',
@@ -134,13 +136,12 @@ LongLabel.story = {
   }
 };
 
-export const ColorScheme = (args: any) => (
-  <Provider colorScheme="dark" background="base" styles={style({padding: 48})}>
-    <Example {...args} />
-  </Provider>
-);
-
-ColorScheme.story = {
+export const ColorScheme = {
+  render: (args: any) => (
+    <Provider colorScheme="dark" background="base" styles={style({padding: 48})}>
+      <ExampleRender {...args} />
+    </Provider>
+  ),
   argTypes: {
     isOpen: {
       control: 'select',
