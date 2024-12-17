@@ -67,17 +67,24 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
   let collectionId = useId();
   let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   let delayNextActiveDescendant = useRef(false);
+  let queuedActiveDescendant = useRef(null);
   let lastCollectionNode = useRef<HTMLElement>(null);
 
   let updateActiveDescendant = useEffectEvent((e) => {
     let {target} = e;
+    if (queuedActiveDescendant.current === target.id) {
+      return;
+    }
+
     clearTimeout(timeout.current);
     e.stopPropagation();
 
     if (target !== collectionRef.current) {
       if (delayNextActiveDescendant.current) {
+        queuedActiveDescendant.current = target.id;
         timeout.current = setTimeout(() => {
           state.setFocusedNodeId(target.id);
+          queuedActiveDescendant.current = null;
         }, 500);
       } else {
         state.setFocusedNodeId(target.id);

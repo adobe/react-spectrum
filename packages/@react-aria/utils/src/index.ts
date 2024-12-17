@@ -24,6 +24,7 @@ export {useGlobalListeners} from './useGlobalListeners';
 export {useLabels} from './useLabels';
 export {useObjectRef} from './useObjectRef';
 export {useUpdateEffect} from './useUpdateEffect';
+export {useUpdateLayoutEffect} from './useUpdateLayoutEffect';
 export {useLayoutEffect} from './useLayoutEffect';
 export {useResizeObserver} from './useResizeObserver';
 export {useSyncRef} from './useSyncRef';
