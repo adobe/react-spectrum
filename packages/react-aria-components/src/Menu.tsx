@@ -150,6 +150,83 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
   );
 }, props => props.children[0]);
 
+// TODO: at the moment is basically submenutrigger, except it has type: 'dialog', maybe we should expose a prop on SubmenuTrigger instead of having another component?
+export interface SubdialogTriggerProps {
+  /**
+   * The contents of the SubdialogTrigger. The first child should be an Item (the trigger) and the second child should be the Popover (for the subdialog).
+   */
+  children: ReactElement[],
+  /**
+   * The delay time in milliseconds for the subdialog to appear after hovering over the trigger.
+   * @default 200
+   */
+  delay?: number
+}
+
+/**
+ * A subdialog trigger is used to wrap a subdialog's trigger item and the subdialog itself.
+ *
+ * @version alpha
+ */
+export const SubdialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogtrigger', (props: SubdialogTriggerProps, ref: ForwardedRef<HTMLDivElement>, item) => {
+  let {CollectionBranch} = useContext(CollectionRendererContext);
+  let state = useContext(MenuStateContext)!;
+  let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
+  let submenuTriggerState = useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
+  let subdialogRef = useRef<HTMLDivElement>(null);
+  let itemRef = useObjectRef(ref);
+  // TODO: We will probably support nested sub
+  let {parentMenuRef} = useContext(SubmenuTriggerContext)!;
+  let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger({
+    parentMenuRef,
+    submenuRef: subdialogRef,
+    type: 'dialog',
+    delay: props.delay
+    // TODO: might need to have something like isUnavailable like we do for ContextualHelpTrigger
+  }, submenuTriggerState, itemRef);
+
+  // TODO this was in contextual help trigger, see what it is needed for. It was provided to the Popover along with onDismissButtonPress
+  // let onBlurWithin = (e) => {
+  //   if (e.relatedTarget && popoverRef.current && (!popoverRef.current.UNSAFE_getDOMNode()?.contains(e.relatedTarget) && !(e.relatedTarget === triggerRef.current && getInteractionModality() === 'pointer'))) {
+  //     if (submenuTriggerState.isOpen) {
+  //       submenuTriggerState.close();
+  //     }
+  //   }
+  // };
+
+  // let onDismissButtonPress = () => {
+  //   submenuTriggerState.close();
+  //   parentMenuRef.current?.focus();
+  // };
+
+  // TODO: will need to add FocusScope wrapping the children of the Popover somehow I think
+  // this is in order to have contain and restoreFocus
+
+  return (
+    <Provider
+      values={[
+        [MenuItemContext, {...submenuTriggerProps, onAction: undefined, ref: itemRef}],
+        // TODO make this dialog context? Or do we neeed submenuProps? Assume user is passing Dialog?s
+        [MenuContext, submenuProps],
+        [OverlayTriggerStateContext, submenuTriggerState],
+        [PopoverContext, {
+          ref: subdialogRef,
+          // TODO: figure out if this is important, think it is just so user can control the offset like in Popover tailwind
+          trigger: 'SubdialogTrigger',
+          triggerRef: itemRef,
+          placement: 'end top',
+          // Prevent parent popover from hiding submenu.
+          // @ts-ignore
+          'data-react-aria-top-layer': true,
+          ...popoverProps
+        }]
+      ]}>
+      <CollectionBranch collection={state.collection} parent={item} />
+      {props.children[1]}
+    </Provider>
+  );
+}, props => props.children[0]);
+
 export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, CollectionProps<T>, StyleProps, SlotProps, ScrollableProps<HTMLDivElement> {}
 
 /**
