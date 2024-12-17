@@ -373,7 +373,7 @@ let lotsOfSections: any[] = [];
 for (let i = 0; i < 50; i++) {
   let children: {name: string, id: string}[] = [];
   for (let j = 0; j < 50; j++) {
-    children.push({name: `Section ${i}, Item ${j}`, id: `item_${i}${j}`});
+    children.push({name: `Section ${i}, Item ${j}`, id: `item_${i}_${j}`});
   }
 
   lotsOfSections.push({name: 'Section ' + i, id: `section_${i}`, children});
@@ -461,6 +461,11 @@ export const AutocompleteInPopover = {
         disable: true
       }
     }
+  },
+  parameters: {
+    description: {
+      data: 'Menu is single selection so only the latest selected option will show the selected style'
+    }
   }
 };
 
@@ -504,6 +509,11 @@ export const AutocompleteInPopoverDialogTrigger = {
       table: {
         disable: true
       }
+    }
+  },
+  parameters: {
+    description: {
+      data: 'Menu is single selection so only the latest selected option will show the selected style'
     }
   }
 };
