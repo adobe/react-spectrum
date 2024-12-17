@@ -499,7 +499,7 @@ describe('Tabs', () => {
         ]);
 
         // Use functional update to ensure you're working with the most recent state
-        setSelectedTabId((prevSelectedTabId) => tabId);
+        setSelectedTabId(tabId);
       };
 
       let removeTab = () => {
