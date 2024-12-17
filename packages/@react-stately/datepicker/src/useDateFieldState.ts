@@ -288,6 +288,8 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
         } else if (segment.type === 'hour') {
           value = `\u2066${value}`;
           place = `\u2066${place}`;
+        // Ideally the unicode (\u2069) would be placed at the end but that seems to cause some issues 
+        // with the background when the rightmost character is focused in Hebrew.
         } else if (segment.type === 'year' && locale !== 'ar-AE') {
           value = `\u2069${value}`;
           place = `\u2069${place}`;
