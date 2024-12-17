@@ -49,7 +49,7 @@ import process from 'process';
           {link: "https://react-spectrum.adobe.com/"},
           {description: "A collection of libraries and tools that help you build adaptive, accessible, and robust user experiences."},
           {language: "en-US"},
-          ...buildFeed(posts)
+          ...buildFeed(type, posts)
         ],
       },
     ],
@@ -81,7 +81,10 @@ function getFeed(type) {
       index++;
     }
 
-    let post = {date: date, description: description, title: title};
+    let f = file.split('/');
+    let fileName = f[f.length - 1].replace('.mdx', '');
+
+    let post = {date: date, description: description, title: title, fileName: fileName};
     posts.push(post);
   }
 
@@ -89,7 +92,7 @@ function getFeed(type) {
   return posts;
 }
 
-function buildFeed(posts) {
+function buildFeed(type, posts) {
   const feedItems = [];
 
   feedItems.push(
@@ -100,7 +103,7 @@ function buildFeed(posts) {
           {pubDate: new Date(post.date).toUTCString(),},
           {guid: [
               { _attr: { isPermaLink: true } },
-              `https://react-spectrum.adobe.com/releases/${post.date}.html`,
+              `https://react-spectrum.adobe.com/${type}/${post.fileName}.html`,
             ],
           },
           {description: {
