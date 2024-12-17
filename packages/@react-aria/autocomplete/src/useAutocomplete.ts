@@ -159,7 +159,12 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
         // Early return for Escape here so it doesn't leak the Escape event from the simulated collection event below and
         // close the dialog prematurely. Ideally that should be up to the discretion of the input element hence the check
         // for isPropagationStopped
+        // Also set the inputValue to '' to cover Firefox case where Esc doesn't actually clear searchfields. Normally we already
+        // handle this in useSearchField, but we are directly setting the inputValue on the input element in RAC Autocomplete instead of
+        // passing it to the SearchField via props. This means that a controlled value set on the Autocomplete isn't synced up with the
+        // SearchField until the user makes a change to the field's value via typing
         if (e.isPropagationStopped()) {
+          state.setInputValue('');
           return;
         }
         break;
