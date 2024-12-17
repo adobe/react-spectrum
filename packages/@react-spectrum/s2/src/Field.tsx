@@ -132,8 +132,7 @@ export const FieldLabel = forwardRef(function FieldLabel(props: FieldLabelProps,
           <CenterBaseline
             styles={style({
               display: 'inline-flex',
-              height: 0,
-              marginStart: 4
+              height: 0
             })}>
             <ContextualHelpContext.Provider
               value={{
