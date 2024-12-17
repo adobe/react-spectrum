@@ -132,6 +132,7 @@ async function build() {
   fs.copySync(path.join(__dirname, '..', '.browserslistrc'), path.join(dir, '.browserslistrc'));
   fs.copySync(path.join(__dirname, '..', 'starters'), path.join(dir, 'starters'));
   fs.copySync(path.join(__dirname, '..', '.yarn', 'releases'), path.join(dir, '.yarn', 'releases'));
+  fs.copySync(path.join(__dirname, '..', '.yarn', 'plugins'), path.join(dir, '.yarn', 'plugins'));
   fs.copySync(path.join(__dirname, '..', '.yarnrc.yml'), path.join(dir, '.yarnrc.yml'));
 
   // Delete mdx files from dev/docs that shouldn't go out yet.
