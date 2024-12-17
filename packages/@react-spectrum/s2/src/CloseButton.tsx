@@ -34,10 +34,9 @@ export interface CloseButtonProps extends Pick<ButtonProps, 'isDisabled' | 'onPr
   staticColor?: 'white' | 'black' | 'auto'
 }
 
-// TODO(design): this is inconsistent with ActionButton
 const hoverBackground = {
-  default: 'gray-100',
-  isStaticColor: 'transparent-overlay-100'
+  default: 'gray-200',
+  isStaticColor: 'transparent-overlay-200'
 } as const;
 
 const styles = style({
