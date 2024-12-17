@@ -171,7 +171,7 @@ function renderIframe({width = 'auto', isDismissable = undefined, ...props}) {
             <Header>The Header</Header>
             <Divider />
             <Content>
-              <iframe width="100%" tabIndex={-1} title="textfield iframe" src="iframe.html?providerSwitcher-express=false&providerSwitcher-toastPosition=bottom&viewMode=story&id=textfield--default" />
+              <iframe width="100%" title="textfield iframe" src="iframe.html?providerSwitcher-express=false&providerSwitcher-toastPosition=bottom&viewMode=story&id=textfield--default" />
             </Content>
             {!isDismissable &&
               <ButtonGroup>
