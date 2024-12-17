@@ -143,6 +143,8 @@ const ActionBarInner = forwardRef(function ActionBarInner(props: ActionBarProps 
       if (e.key === 'Escape') {
         e.preventDefault();
         onClearSelection?.();
+      } else {
+        e.continuePropagation();
       }
     }
   });
@@ -162,7 +164,7 @@ const ActionBarInner = forwardRef(function ActionBarInner(props: ActionBarProps 
         ref={ref}
         {...keyboardProps}
         className={actionBarStyles({isEmphasized, isInContainer: !!scrollRef, isExiting})}
-        style={{insetInlineEnd: `calc(var(--insetEnd) + ${scrollbarWidth + 'px'})`}}>
+        style={{insetInlineEnd: `calc(var(--insetEnd) + ${scrollbarWidth}px)`}}>
         <div className={style({order: 1, marginStart: 'auto'})}>
           <ActionButtonGroup
             staticColor={isEmphasized ? 'auto' : undefined}
