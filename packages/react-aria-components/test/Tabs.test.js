@@ -11,8 +11,8 @@
  */
 
 import {act, fireEvent, pointerMap, render, waitFor, within} from '@react-spectrum/test-utils-internal';
-import React from 'react';
-import {Tab, TabList, TabPanel, Tabs} from '../';
+import React, {useState} from 'react';
+import {Button, Collection, Tab, TabList, TabPanel, Tabs} from '../';
 import {TabsExample} from '../stories/Tabs.stories';
 import userEvent from '@testing-library/user-event';
 
@@ -473,5 +473,95 @@ describe('Tabs', () => {
     expect(innerTabs).toHaveLength(2);
     expect(innerTabs[0]).toHaveTextContent('One');
     expect(innerTabs[1]).toHaveTextContent('Two');
+  });
+
+  it('can add tabs and keep the current selected key', async () => {
+    let onSelectionChange = jest.fn();
+    function Example(props) {
+      let [tabs, setTabs] = useState([
+        { id: 1, title: "Tab 1", content: "Tab body 1" },
+        { id: 2, title: "Tab 2", content: "Tab body 2" },
+        { id: 3, title: "Tab 3", content: "Tab body 3" },
+      ]);
+
+      const [selectedTabId, setSelectedTabId] = useState(tabs[0].id);
+
+      let addTab = () => {
+        const tabId = tabs.length + 1;
+
+        setTabs((prevTabs) => [
+          ...prevTabs,
+          {
+            id: tabId,
+            title: `Tab ${tabId}`,
+            content: `Tab body ${tabId}`,
+          },
+        ]);
+
+        // Use functional update to ensure you're working with the most recent state
+        setSelectedTabId((prevSelectedTabId) => tabId);
+      };
+
+      let removeTab = () => {
+        if (tabs.length > 1) {
+          setTabs((prevTabs) => {
+            const updatedTabs = prevTabs.slice(0, -1);
+            // Update selectedTabId to the last remaining tab's ID if the current selected tab is removed
+            const newSelectedTabId = updatedTabs[updatedTabs.length - 1].id;
+            setSelectedTabId(newSelectedTabId);
+            return updatedTabs;
+          });
+        }
+      };
+
+      const onSelectionChange = (value) => {
+        setSelectedTabId(value);
+        props.onSelectionChange(value);
+      };
+
+      return (
+        <Tabs selectedKey={selectedTabId} onSelectionChange={onSelectionChange}>
+          <div style={{ display: "flex" }}>
+            <TabList aria-label="Dynamic tabs" items={tabs} style={{ flex: 1 }}>
+              {(item) => (
+                <Tab>
+                  {({ isSelected }) => (
+                    <p
+                      style={{
+                        color: isSelected ? "red" : "black",
+                      }}
+                    >
+                      {item.title}
+                    </p>
+                  )}
+                </Tab>
+              )}
+            </TabList>
+            <div className="button-group">
+              <Button onPress={addTab}>Add tab</Button>
+              <Button onPress={removeTab}>Remove tab</Button>
+            </div>
+          </div>
+          <Collection items={tabs}>
+            {(item) => (
+              <TabPanel
+                style={{
+                  borderTop: "2px solid black",
+                }}
+              >
+                {item.content}
+              </TabPanel>
+            )}
+          </Collection>
+        </Tabs>
+      );
+    }
+    render(<Example onSelectionChange={onSelectionChange} />);
+    await user.tab();
+    await user.keyboard('{ArrowRight}');
+    await user.tab();
+    onSelectionChange.mockClear();
+    await user.keyboard('{Enter}');
+    expect(onSelectionChange).not.toHaveBeenCalled();
   });
 });
