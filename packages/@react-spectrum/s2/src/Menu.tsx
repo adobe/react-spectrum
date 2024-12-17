@@ -487,8 +487,8 @@ export function MenuItem(props: MenuItemProps) {
                 [KeyboardContext, {styles: keyboard({size, isDisabled: renderProps.isDisabled})}],
                 [ImageContext, {styles: image({size})}]
               ]}>
-              {renderProps.selectionMode === 'single' && !isLink && !renderProps.hasSubmenu && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
-              {renderProps.selectionMode === 'multiple' && !isLink && !renderProps.hasSubmenu && (
+              {renderProps.selectionMode === 'single' && !renderProps.hasSubmenu && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
+              {renderProps.selectionMode === 'multiple' && !renderProps.hasSubmenu && (
                 <div className={mergeStyles(checkbox, box(checkboxRenderProps))}>
                   <CheckmarkIcon size={size} className={iconStyles} />
                 </div>
