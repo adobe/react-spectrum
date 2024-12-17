@@ -11,8 +11,8 @@
  */
 
 import {act, fireEvent, pointerMap, render, waitFor, within} from '@react-spectrum/test-utils-internal';
-import React, {useState} from 'react';
 import {Button, Collection, Tab, TabList, TabPanel, Tabs} from '../';
+import React, {useState} from 'react';
 import {TabsExample} from '../stories/Tabs.stories';
 import userEvent from '@testing-library/user-event';
 
@@ -479,9 +479,9 @@ describe('Tabs', () => {
     let onSelectionChange = jest.fn();
     function Example(props) {
       let [tabs, setTabs] = useState([
-        { id: 1, title: "Tab 1", content: "Tab body 1" },
-        { id: 2, title: "Tab 2", content: "Tab body 2" },
-        { id: 3, title: "Tab 3", content: "Tab body 3" },
+        {id: 1, title: 'Tab 1', content: 'Tab body 1'},
+        {id: 2, title: 'Tab 2', content: 'Tab body 2'},
+        {id: 3, title: 'Tab 3', content: 'Tab body 3'}
       ]);
 
       const [selectedTabId, setSelectedTabId] = useState(tabs[0].id);
@@ -494,8 +494,8 @@ describe('Tabs', () => {
           {
             id: tabId,
             title: `Tab ${tabId}`,
-            content: `Tab body ${tabId}`,
-          },
+            content: `Tab body ${tabId}`
+          }
         ]);
 
         // Use functional update to ensure you're working with the most recent state
@@ -521,16 +521,15 @@ describe('Tabs', () => {
 
       return (
         <Tabs selectedKey={selectedTabId} onSelectionChange={onSelectionChange}>
-          <div style={{ display: "flex" }}>
-            <TabList aria-label="Dynamic tabs" items={tabs} style={{ flex: 1 }}>
+          <div style={{display: 'flex'}}>
+            <TabList aria-label="Dynamic tabs" items={tabs} style={{flex: 1}}>
               {(item) => (
                 <Tab>
-                  {({ isSelected }) => (
+                  {({isSelected}) => (
                     <p
                       style={{
-                        color: isSelected ? "red" : "black",
-                      }}
-                    >
+                        color: isSelected ? 'red' : 'black'
+                      }}>
                       {item.title}
                     </p>
                   )}
@@ -546,9 +545,8 @@ describe('Tabs', () => {
             {(item) => (
               <TabPanel
                 style={{
-                  borderTop: "2px solid black",
-                }}
-              >
+                  borderTop: '2px solid black'
+                }}>
                 {item.content}
               </TabPanel>
             )}
