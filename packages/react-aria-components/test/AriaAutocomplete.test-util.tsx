@@ -45,8 +45,9 @@ interface AriaAutocompleteTestProps extends AriaBaseTestProps {
     disabledItems?: () => ReturnType<typeof render>,
     // should set a default value of "Ba" on the autocomplete. Uses the same collection items as the standard renderer
     defaultValue?: () => ReturnType<typeof render>,
-    // should apply a custom filter that doesnt filter the list of items at all. Uses the same collection items as the standard renderer
-    customFiltering?: () => ReturnType<typeof render>
+    // should allow the user to filter the items themselves in a async manner. The items should be Foo, Bar, and Baz with ids 1, 2, and 3 respectively.
+    // The filtering can take any amount of time but should be standard non-case sensitive contains matching
+    asyncFiltering?: () => ReturnType<typeof render>
     // TODO, add tests for this when we support it
     // submenus?: (props?: {name: string}) => ReturnType<typeof render>
   },
@@ -379,7 +380,11 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
           act(() => jest.runAllTimers());
           expect(input).toHaveAttribute('aria-activedescendant', options[2].id);
 
-          await user.keyboard('Bar');
+          await user.keyboard('B');
+          act(() => jest.runAllTimers());
+          await user.keyboard('a');
+          act(() => jest.runAllTimers());
+          await user.keyboard('r');
           act(() => jest.runAllTimers());
           options = within(menu).getAllByRole(collectionItemRole);
           expect(options).toHaveLength(1);
@@ -431,23 +436,37 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
       });
     }
 
-    if (renderers.customFiltering) {
-      describe('custom filter function', function () {
-        it('should support custom filtering', async function () {
-          let {getByRole} = (renderers.customFiltering!)();
+    if (renderers.asyncFiltering) {
+      describe('async filtering performed outside the autocomplete', function () {
+        it('should properly filter and autofocus the first item when typing forward', async function () {
+          let {getByRole} = (renderers.asyncFiltering!)();
+          await act(async () => {
+            jest.runAllTimers();
+          });
+
           let input = getByRole('searchbox');
           expect(input).toHaveValue('');
           let menu = getByRole(collectionNodeRole);
           let options = within(menu).getAllByRole(collectionItemRole);
           expect(options).toHaveLength(3);
 
+          // Does not immediately set aria-activedescendant until the collection updates
           await user.tab();
           expect(document.activeElement).toBe(input);
           await user.keyboard('F');
-          act(() => jest.runAllTimers());
+          expect(input).not.toHaveAttribute('aria-activedescendant');
+
+          await act(async () => {
+            jest.advanceTimersToNextTimer();
+          });
           options = within(menu).getAllByRole(collectionItemRole);
-          expect(options).toHaveLength(3);
+          expect(options).toHaveLength(1);
           expect(options[0]).toHaveTextContent('Foo');
+          expect(input).not.toHaveAttribute('aria-activedescendant');
+
+          // Only sets aria-activedescendant after the collection updates and the delay passes
+          act(() => jest.advanceTimersToNextTimer());
+          expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
         });
       });
     }
