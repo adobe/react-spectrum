@@ -130,7 +130,7 @@ export function StyleMacro() {
             <li className={style({font: 'code-xl'})}>code-xl</li>
           </ul>
         </div>
-        <InlineAlert variant="notice" styles={style({maxWidth: '[600px]'})}>
+        <InlineAlert variant="notice" styles={style({maxWidth: 600})}>
           <Heading>Important Note</Heading>
           <Content>Only use <code className={style({font: 'code-xs', backgroundColor: 'layer-1', paddingX: 2, borderWidth: 1, borderColor: 'gray-100', borderStyle: 'solid', borderRadius: 'sm'})}>{'<Heading>'}</code> and <code className={style({font: 'code-xs', backgroundColor: 'layer-1', paddingX: 2, borderWidth: 1, borderColor: 'gray-100', borderStyle: 'solid', borderRadius: 'sm'})}>{'<Text>'}</code> inside other Spectrum components with predefined styles, such as <code className={style({font: 'code-xs', backgroundColor: 'layer-1', paddingX: 2, borderWidth: 1, borderColor: 'gray-100', borderStyle: 'solid', borderRadius: 'sm'})}>{'<Dialog>'}</code> and <code className={style({font: 'code-xs', backgroundColor: 'layer-1', paddingX: 2, borderWidth: 1, borderColor: 'gray-100', borderStyle: 'solid', borderRadius: 'sm'})}>{'<MenuItem>'}</code>. They do not include any styles by default, and should not be used standalone. Use HTML elements with the style macro directly instead.</Content>
         </InlineAlert>
