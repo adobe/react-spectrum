@@ -30,7 +30,7 @@ import {
 import {createHideableComponent} from '@react-aria/collections';
 import {filterDOMProps} from '@react-aria/utils';
 import {ProgressBarContext} from './ProgressBar';
-import React, {createContext, DOMAttributes, ForwardedRef, useEffect, useMemo, useRef} from 'react';
+import React, {createContext, ForwardedRef, useEffect, useRef} from 'react';
 
 export interface ButtonRenderProps {
   /**
