@@ -146,7 +146,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
     })
   ), [collection, ref, layout, selectionManager.disabledKeys, disabledBehavior, layoutDelegate, collator, direction]);
 
-  let {gridProps} = useGridList({
+  let {gridProps: {id, ...gridProps}} = useGridList({
     ...props,
     onAction,
     keyboardDelegate,
@@ -238,13 +238,13 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
       </div>
     );
   }
-
+  
   return (
     <FocusScope>
       <div
         {...filterDOMProps(props)}
         {...renderProps}
-        {...mergeProps(gridProps, focusProps, droppableCollection?.collectionProps, emptyStatePropOverrides)}
+        {...mergeProps(gridProps, focusProps, droppableCollection?.collectionProps, emptyStatePropOverrides, {id})}
         ref={ref}
         slot={props.slot || undefined}
         onScroll={props.onScroll}
