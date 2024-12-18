@@ -14,11 +14,13 @@
     "dprint-node": "^1.0.7",
     "js-yaml": "^3.13.1",
     "mdast-util-toc": "^6.1.0",
-    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0",
     "remark-frontmatter": "^4.0.1",
     "remark-slug": "^7.0.1",
     "tree-sitter-highlight": "^1.0.1",
     "unist-util-flatmap": "^1.0.0",
     "unist-util-visit": "^4.0.0"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
   }
 }
