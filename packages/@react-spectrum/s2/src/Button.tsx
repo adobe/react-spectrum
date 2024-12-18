@@ -150,11 +150,15 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
     variant: {
       premium: {
         default: linearGradient('96deg', ['fuchsia-900', 0], ['indigo-900', 66], ['blue-900', 100]),
-        isHovered: linearGradient('96deg', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100])
+        isHovered: linearGradient('96deg', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100]),
+        isPressed: linearGradient('96deg', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100]),
+        isFocusVisible: linearGradient('96deg', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100])
       },
       genai: {
         default: linearGradient('96deg', ['red-900', 0], ['magenta-900', 33], ['indigo-900', 100]),
-        isHovered: linearGradient('96deg', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100])
+        isHovered: linearGradient('96deg', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100]),
+        isPressed: linearGradient('96deg', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100]),
+        isFocusVisible: linearGradient('96deg', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100])
       }
     },
     isPending: 'none'
@@ -166,21 +170,23 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
           primary: 'neutral',
           secondary: baseColor('gray-100'),
           accent: 'accent',
-          negative: 'negative'
+          negative: 'negative',
+          premium: 'gray-100',
+          genai: 'gray-100'
         },
         isDisabled: 'disabled'
       },
       outline: {
+        variant: {
+          premium: 'gray-100',
+          genai: 'gray-100'
+        },
         default: 'transparent',
         isHovered: 'gray-100',
         isPressed: 'gray-100',
         isFocusVisible: 'gray-100',
         isDisabled: 'transparent'
       }
-    },
-    variant: {
-      premium: 'gray-100',
-      genai: 'gray-100'
     },
     staticColor: {
       white: {
@@ -273,7 +279,13 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
               genai: 'white'
             }
           },
-          outline: baseColor('transparent-white-800')
+          outline: {
+            default: baseColor('transparent-white-800'),
+            variant: {
+              premium: 'white',
+              genai: 'white'
+            }
+          }
         },
         isDisabled: 'transparent-white-400'
       },
@@ -287,7 +299,13 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
               genai: 'white'
             }
           },
-          outline: baseColor('transparent-black-800')
+          outline: {
+            default: baseColor('transparent-black-800'),
+            variant: {
+              premium: 'white',
+              genai: 'white'
+            }
+          }
         },
         isDisabled: 'transparent-black-400'
       }
