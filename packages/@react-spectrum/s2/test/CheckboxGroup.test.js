@@ -44,6 +44,7 @@ describe('CheckboxGroup', () => {
     await user.click(checkbox);
     act(() => {getByTestId('form').checkValidity();});
     expect(group).toHaveAttribute('data-invalid');
+    expect(group).toHaveAttribute('aria-describedby');
     let errorMsg = document.getElementById(group.getAttribute('aria-describedby'));
     expect(errorMsg).toHaveTextContent('Constraints not satisfied');
   });
