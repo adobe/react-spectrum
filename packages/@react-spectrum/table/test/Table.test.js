@@ -1991,7 +1991,7 @@ export let tableTests = () => {
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
         await user.tab();
-        await user.keyboard('{ArrowRight}{ArrowRigth}');
+        await user.keyboard('{ArrowRight}{ArrowRight}');
         await user.keyboard(' ');
 
         checkSelection(onSelectionChange, ['Foo 1']);

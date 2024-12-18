@@ -3076,15 +3076,18 @@ describe('TableView', function () {
       rows = within(rowgroups[1]).getAllByRole('row');
       expect(rows).toHaveLength(6);
 
-      // Select the folder and perform a drag. Drag start shouldn't include the previously selected items
+      // Select the folder and perform a drag on a different item that isn't selected. Drag start shouldn't include the previously selected items/folders
       await user.keyboard('{ArrowDown}');
       await user.keyboard('{Enter}');
       // Selection change event still has all keys
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['1', '2', '3', '8']));
 
-      draghandle = within(rows[0]).getAllByRole('button')[0];
+      draghandle = within(rows[4]).getAllByRole('button')[0];
       expect(draghandle).toBeTruthy();
       expect(draghandle).toHaveAttribute('draggable', 'true');
+
+      await user.keyboard('{ArrowUp}');
+      await user.keyboard('{ArrowUp}');
       await user.keyboard('{ArrowRight}');
       await user.keyboard('{Enter}');
       act(() => jest.runAllTimers());
@@ -3092,7 +3095,7 @@ describe('TableView', function () {
       expect(onDragStart).toHaveBeenCalledTimes(1);
       expect(onDragStart).toHaveBeenCalledWith({
         type: 'dragstart',
-        keys: new Set(['8']),
+        keys: new Set(['6']),
         x: 50,
         y: 25
       });
