@@ -153,7 +153,9 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
         isFocusVisible: linearGradient('96deg', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100])
       }
     },
-    isPending: 'none'
+    isDisabled: 'none',
+    isPending: 'none',
+    forcedColors: 'none'
   },
   backgroundColor: {
     fillStyle: {
