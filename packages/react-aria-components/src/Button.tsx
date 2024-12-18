@@ -156,19 +156,6 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
     }
     wasPending.current = isPending;
   }, [isPending, isFocused, ariaLabelledby, buttonId]);
-  let pendingButtonProps: DOMAttributes<HTMLButtonElement> = useMemo(() => isPending ? {
-    onKeyDown: (e) => {
-      if ((e.key === 'Enter' || e.key === ' ') && e.currentTarget instanceof HTMLButtonElement) {
-        e.preventDefault();
-      }
-    },
-    onClick: (e) => {
-      if (e.currentTarget instanceof HTMLButtonElement) {
-        e.preventDefault();
-      }
-    },
-    type: buttonProps.type === 'submit' ? 'button' : buttonProps.type
-  } : {}, [isPending]);
 
   // When the button is in a pending state, we want to stop implicit form submission (ie. when the user presses enter on a text input).
   // We do this by rendering a hidden submit button that is disabled BEFORE the actual submit button as a form's default button is the first submit button
@@ -178,8 +165,9 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
     <>
       <button
         {...filterDOMProps(props, {propNames: additionalButtonHTMLAttributes})}
-        {...mergeProps(buttonProps, pendingButtonProps, focusProps, hoverProps)}
+        {...mergeProps(buttonProps, focusProps, hoverProps)}
         {...renderProps}
+        type={buttonProps.type === 'submit' && isPending ? 'button' : buttonProps.type}
         id={buttonId}
         ref={ref}
         aria-labelledby={ariaLabelledby}

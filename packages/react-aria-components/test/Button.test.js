@@ -294,7 +294,7 @@ describe('Button', () => {
 
   // Note: two inputs are needed, otherwise https://www.w3.org/TR/2011/WD-html5-20110525/association-of-controls-and-forms.html#implicit-submission
   // Implicit form submission can happen if there's only one.
-  it.only('should prevent implicit form submission when isPending', async function () {
+  it('should prevent implicit form submission when isPending', async function () {
     let onSubmitSpy = jest.fn(e => e.preventDefault());
     function TestComponent(props) {
       let [pending, setPending] = useState(false);
