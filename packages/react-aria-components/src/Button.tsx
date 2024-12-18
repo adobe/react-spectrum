@@ -162,28 +162,26 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
   // in tree order.
   // https://www.w3.org/TR/2018/SPSD-html5-20180327/forms.html#implicit-submission
   return (
-    <>
-      <button
-        {...filterDOMProps(props, {propNames: additionalButtonHTMLAttributes})}
-        {...mergeProps(buttonProps, focusProps, hoverProps)}
-        {...renderProps}
-        type={buttonProps.type === 'submit' && isPending ? 'button' : buttonProps.type}
-        id={buttonId}
-        ref={ref}
-        aria-labelledby={ariaLabelledby}
-        slot={props.slot || undefined}
-        aria-disabled={isPending ? 'true' : buttonProps['aria-disabled']}
-        data-disabled={props.isDisabled || undefined}
-        data-pressed={renderValues.isPressed || undefined}
-        data-hovered={isHovered || undefined}
-        data-focused={isFocused || undefined}
-        data-pending={isPending || undefined}
-        data-focus-visible={isFocusVisible || undefined}>
-        <ProgressBarContext.Provider value={{id: progressId}}>
-          {renderProps.children}
-        </ProgressBarContext.Provider>
-      </button>
-    </>
+    <button
+      {...filterDOMProps(props, {propNames: additionalButtonHTMLAttributes})}
+      {...mergeProps(buttonProps, focusProps, hoverProps)}
+      {...renderProps}
+      type={buttonProps.type === 'submit' && isPending ? 'button' : buttonProps.type}
+      id={buttonId}
+      ref={ref}
+      aria-labelledby={ariaLabelledby}
+      slot={props.slot || undefined}
+      aria-disabled={isPending ? 'true' : buttonProps['aria-disabled']}
+      data-disabled={props.isDisabled || undefined}
+      data-pressed={renderValues.isPressed || undefined}
+      data-hovered={isHovered || undefined}
+      data-focused={isFocused || undefined}
+      data-pending={isPending || undefined}
+      data-focus-visible={isFocusVisible || undefined}>
+      <ProgressBarContext.Provider value={{id: progressId}}>
+        {renderProps.children}
+      </ProgressBarContext.Provider>
+    </button>
   );
 });
 
