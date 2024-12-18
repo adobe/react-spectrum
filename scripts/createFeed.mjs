@@ -39,14 +39,14 @@ import process from 'process';
       {channel: [
           {"atom:link": {
               _attr: {
-                href: "https://react-spectrum.adobe.com/releases/feed.rss",
+                href: `https://react-spectrum.adobe.com/${type}/${type}-feed.rss`,
                 rel: "self",
                 type: "application/rss+xml",
               },
             },
           },
-          {title: "Adobe React Spectrum Release"},
-          {link: "https://react-spectrum.adobe.com/"},
+          {title: "Adobe React Spectrum"},
+          {link: `https://react-spectrum.adobe.com/`},
           {description: "A collection of libraries and tools that help you build adaptive, accessible, and robust user experiences."},
           {language: "en-US"},
           ...buildFeed(type, posts)
