@@ -120,7 +120,7 @@ export const CheckboxGroup = forwardRef(function CheckboxGroup(props: CheckboxGr
             columnGap: 16,
             flexWrap: 'wrap'
           })({orientation})}>
-          <FormContext.Provider value={{...formContext, size}}>
+          <FormContext.Provider value={{...formContext, size, isRequired: undefined}}>
             <CheckboxContext.Provider value={{isEmphasized}}>
               {children}
             </CheckboxContext.Provider>
