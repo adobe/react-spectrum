@@ -158,9 +158,7 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
   }, [isPending, isFocused, ariaLabelledby, buttonId]);
 
   // When the button is in a pending state, we want to stop implicit form submission (ie. when the user presses enter on a text input).
-  // We do this by rendering a hidden submit button that is disabled BEFORE the actual submit button as a form's default button is the first submit button
-  // in tree order.
-  // https://www.w3.org/TR/2018/SPSD-html5-20180327/forms.html#implicit-submission
+  // We do this by changing the button's type to button.
   return (
     <button
       {...filterDOMProps(props, {propNames: additionalButtonHTMLAttributes})}
