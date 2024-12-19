@@ -107,5 +107,40 @@ describe('useSelectableCollection', () => {
       expect(options[1]).not.toHaveAttribute('aria-selected');
       expect(options[2]).toHaveAttribute('aria-selected', 'true');
     });
+
+    it("doesn't change the selection on focus in multiple selection selectOnFocus", async () => {
+      let onSelectionChange1 = jest.fn();
+      let onSelectionChange2 = jest.fn();
+      let {getByText} = render(
+        <>
+          <List
+            selectionMode="multiple"
+            selectionBehavior="replace"
+            defaultSelectedKeys={['i2', 'i3']}
+            onSelectionChange={onSelectionChange1}>
+            <Item key="i1">Paco de Lucia</Item>
+            <Item key="i2">Vicente Amigo</Item>
+            <Item key="i3">Gerardo Nunez</Item>
+          </List>
+          <button>focus stop</button>
+          <List
+            selectionMode="multiple"
+            selectionBehavior="replace"
+            defaultSelectedKeys={['i2', 'i3']}
+            onSelectionChange={onSelectionChange2}>
+            <Item key="i1">Paco de Lucia</Item>
+            <Item key="i2">Vicente Amigo</Item>
+            <Item key="i3">Gerardo Nunez</Item>
+          </List>
+        </>
+      );
+      await user.click(getByText('focus stop'));
+      await user.tab();
+      await user.click(getByText('focus stop'));
+      await user.tab({shift: true});
+
+      expect(onSelectionChange1).not.toHaveBeenCalled();
+      expect(onSelectionChange2).not.toHaveBeenCalled();
+    });
   });
 });
