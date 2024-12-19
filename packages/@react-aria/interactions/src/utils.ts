@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {FocusableElement} from '@react-types/shared';
+import {getOwnerWindow, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
 import {FocusEvent as ReactFocusEvent, useCallback, useRef} from 'react';
-import {useEffectEvent, useLayoutEffect} from '@react-aria/utils';
 
 export class SyntheticFocusEvent<Target = Element> implements ReactFocusEvent<Target> {
   nativeEvent: FocusEvent;
@@ -127,4 +128,54 @@ export function useSyntheticBlurEvent<Target = Element>(onBlur: (e: ReactFocusEv
       stateRef.current.observer.observe(target, {attributes: true, attributeFilter: ['disabled']});
     }
   }, [dispatchBlur]);
+}
+
+export let ignoreFocusEvent = false;
+
+export function preventFocus(target: FocusableElement) {
+  let window = getOwnerWindow(target);
+  let activeElement = window.document.activeElement as FocusableElement | null;
+  if (!activeElement) {
+    return;
+  }
+
+  ignoreFocusEvent = true;
+  let onBlur = (e: FocusEvent) => {
+    if (e.target === activeElement) {
+      e.stopImmediatePropagation();
+    }
+  };
+  
+  let onFocusIn = (e: FocusEvent) => {
+    if (e.target === target) {
+      e.stopImmediatePropagation();
+    }
+
+    // focusin is fired last. Cancel the raf.
+    cancelAnimationFrame(raf);
+    ignoreFocusEvent = false;
+  };
+
+  let onFocus = (e: FocusEvent) => {
+    if (e.target === target) {
+      e.stopImmediatePropagation();
+      activeElement.focus();
+    }
+  };
+
+  window.addEventListener('blur', onBlur, {once: true, capture: true});
+  window.addEventListener('focusout', onBlur, {once: true, capture: true});
+  window.addEventListener('focusin', onFocusIn, {once: true, capture: true});
+  window.addEventListener('focus', onFocus, {once: true, capture: true});
+
+  let cleanup = () => {
+    window.removeEventListener('blur', onBlur, true);
+    window.removeEventListener('focusout', onBlur, true);
+    window.removeEventListener('focusin', onFocusIn, true);
+    window.removeEventListener('focus', onFocus, true);
+    ignoreFocusEvent = false;
+  };
+
+  let raf = requestAnimationFrame(cleanup);
+  return cleanup;
 }

@@ -13,7 +13,7 @@
 
 jest.mock('@react-aria/live-announcer');
 jest.mock('@react-aria/utils/src/scrollIntoView');
-import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render as renderComponent, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render as renderComponent, triggerTouch, within} from '@react-spectrum/test-utils-internal';
 import {ActionButton} from '@react-spectrum/button';
 import {announce} from '@react-aria/live-announcer';
 import {FocusExample} from '../stories/ListViewActions.stories';
@@ -932,17 +932,13 @@ describe('ListView', function () {
           fireEvent.pointerUp(rows[1], {pointerType: 'touch'});
           onSelectionChange.mockReset();
 
-          fireEvent.pointerDown(rows[2], {pointerType: 'touch'});
-          fireEvent.pointerUp(rows[2], {pointerType: 'touch'});
-
+          triggerTouch(rows[2]);
           checkSelection(onSelectionChange, ['bar', 'baz']);
 
           // Deselect all to exit selection mode
-          fireEvent.pointerDown(rows[2], {pointerType: 'touch'});
-          fireEvent.pointerUp(rows[2], {pointerType: 'touch'});
+          triggerTouch(rows[2]);
           onSelectionChange.mockReset();
-          fireEvent.pointerDown(rows[1], {pointerType: 'touch'});
-          fireEvent.pointerUp(rows[1], {pointerType: 'touch'});
+          triggerTouch(rows[1]);
 
           act(() => jest.runAllTimers());
           checkSelection(onSelectionChange, []);
@@ -1387,6 +1383,7 @@ describe('ListView', function () {
         expect(within(rows[0]).getByRole('checkbox')).toBeTruthy();
 
         fireEvent.pointerUp(rows[0], {pointerType: 'touch'});
+        fireEvent.click(rows[0], {detail: 1});
 
         await user.pointer({target: rows[1], keys: '[TouchA]'});
         expect(announce).toHaveBeenLastCalledWith('Bar selected. 2 items selected.');

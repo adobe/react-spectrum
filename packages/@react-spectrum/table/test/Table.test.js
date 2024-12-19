@@ -3160,7 +3160,9 @@ export let tableTests = () => {
             expect(onAction).not.toHaveBeenCalled();
             expect(tree.queryByLabelText('Select All')).not.toBeNull();
 
-            fireEvent.pointerUp(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+            let cell = getCell(tree, 'Baz 5');
+            fireEvent.pointerUp(cell, {pointerType: 'touch'});
+            fireEvent.click(cell, {detail: 1});
             onSelectionChange.mockReset();
             act(() => {
               jest.runAllTimers();

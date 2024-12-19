@@ -22,14 +22,39 @@ export const DEFAULT_LONG_PRESS_TIME = 500;
  * @param opts.advanceTimer - Function that when called advances the timers in your test suite by a specific amount of time(ms).
  * @param opts.pointeropts - Options to pass to the simulated event. Defaults to mouse. See https://testing-library.com/docs/dom-testing-library/api-events/#fireevent for more info.
  */
-export async function triggerLongPress(opts: {element: HTMLElement, advanceTimer: (time?: number) => void | Promise<unknown>, pointerOpts?: {}}) {
+export async function triggerLongPress(opts: {element: HTMLElement, advanceTimer: (time?: number) => void | Promise<unknown>, pointerOpts?: Record<string, any>}) {
   // TODO: note that this only works if the code from installPointerEvent is called somewhere in the test BEFORE the
   // render. Perhaps we should rely on the user setting that up since I'm not sure there is a great way to set that up here in the
   // util before first render. Will need to document it well
   let {element, advanceTimer, pointerOpts = {}} = opts;
-  await fireEvent.pointerDown(element, {pointerType: 'mouse', ...pointerOpts});
+  let pointerType = pointerOpts.pointerType ?? 'mouse';
+  let shouldFireCompatibilityEvents = fireEvent.pointerDown(element, {pointerType, ...pointerOpts});
+  let shouldFocus = true;
+  if (shouldFireCompatibilityEvents) {
+    if (pointerType === 'touch') {
+      shouldFocus = shouldFireCompatibilityEvents = fireEvent.touchStart(element, {targetTouches: [{identifier: pointerOpts.pointerId, clientX: pointerOpts.clientX, clientY: pointerOpts.clientY}]});
+    } else if (pointerType === 'mouse') {
+      shouldFocus = fireEvent.mouseDown(element, pointerOpts);
+      if (shouldFocus) {
+        act(() => element.focus());
+      }
+    }
+  }
   await act(async () => await advanceTimer(DEFAULT_LONG_PRESS_TIME));
-  await fireEvent.pointerUp(element, {pointerType: 'mouse', ...pointerOpts});
+  fireEvent.pointerUp(element, {pointerType, ...pointerOpts});
+  if (shouldFireCompatibilityEvents) {
+    if (pointerType === 'touch') {
+      shouldFocus = fireEvent.touchEnd(element, {targetTouches: [{identifier: pointerOpts.pointerId, clientX: pointerOpts.clientX, clientY: pointerOpts.clientY}]});
+      shouldFocus = fireEvent.mouseDown(element, pointerOpts);
+      if (shouldFocus) {
+        act(() => element.focus());
+      }
+      fireEvent.mouseUp(element, pointerOpts);
+    } else if (pointerType === 'mouse') {
+      fireEvent.mouseUp(element, pointerOpts);
+    }
+  }
+  fireEvent.click(element, {detail: 1, ...pointerOpts});
 }
 
 

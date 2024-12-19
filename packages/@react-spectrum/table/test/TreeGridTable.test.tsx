@@ -1352,6 +1352,7 @@ describe('TableView with expandable rows', function () {
         checkRowSelection(rows, false);
         fireEvent.pointerDown(cell, {pointerType: 'mouse', pointerId: 1});
         fireEvent.pointerUp(cell, {pointerType: 'mouse', pointerId: 1});
+        fireEvent.click(cell, {detail: 1});
         act(() => jest.runAllTimers());
         expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 3, Foo selected.');
         expect(announce).toHaveBeenCalledTimes(1);
@@ -1362,6 +1363,7 @@ describe('TableView with expandable rows', function () {
         cell = getCell(treegrid, 'Row 1, Lvl 1, Foo');
         fireEvent.pointerDown(cell, {pointerType: 'mouse', pointerId: 1});
         fireEvent.pointerUp(cell, {pointerType: 'mouse', pointerId: 1});
+        fireEvent.click(cell, {detail: 1});
         act(() => jest.runAllTimers());
         expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 1, Foo selected.');
         expect(announce).toHaveBeenCalledTimes(2);
@@ -1449,13 +1451,14 @@ describe('TableView with expandable rows', function () {
         checkRowSelection(rows, false);
         fireEvent.pointerDown(cell, {pointerType: 'mouse', pointerId: 1});
         fireEvent.pointerUp(cell, {pointerType: 'mouse', pointerId: 1});
+        fireEvent.click(cell, {detail: 1});
         act(() => jest.runAllTimers());
         expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 3, Foo selected.');
         expect(announce).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['Row 1 Lvl 3']);
         expect(onAction).not.toHaveBeenCalled();
         onSelectionChange.mockReset();
-        await user.dblClick(cell);
+        await user.pointer({target: cell, keys: '[MouseLeft][MouseLeft]', coords: {width: 1}});
         act(() => jest.runAllTimers());
         expect(announce).toHaveBeenCalledTimes(1);
         expect(onSelectionChange).not.toHaveBeenCalled();
