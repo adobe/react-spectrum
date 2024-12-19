@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {
   Button, Dialog,
   DialogTrigger,
@@ -27,6 +27,7 @@ import {
   UNSTABLE_Virtualizer as Virtualizer
 } from '../';
 import React, {useState} from 'react';
+import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestListBox = ({listBoxProps, itemProps}) => (
@@ -60,6 +61,8 @@ let keyPress = (key) => {
 
 describe('ListBox', () => {
   let user;
+  let testUtilUser = new User();
+
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
@@ -76,7 +79,7 @@ describe('ListBox', () => {
   });
 
   it('should have the base set of aria and data attributes', () => {
-    let {getByRole, getAllByRole} = render(
+    let {getByRole} = render(
       <ListBox aria-label="Animals">
         <ListBoxItem id="cat">Cat</ListBoxItem>
         <ListBoxItem id="dog">Dog</ListBoxItem>
@@ -89,14 +92,16 @@ describe('ListBox', () => {
         </ListBoxSection>
       </ListBox>
     );
-    let menu = getByRole('listbox');
-    expect(menu).toHaveAttribute('data-rac');
 
-    for (let group of getAllByRole('group')) {
-      expect(group).toHaveAttribute('data-rac');
+    let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
+    expect(listboxTester.listbox).toHaveAttribute('data-rac');
+    let sections = listboxTester.sections;
+    for (let section of sections) {
+      expect(section).toHaveAttribute('data-rac');
     }
 
-    for (let option of getAllByRole('option')) {
+    let options = listboxTester.options();
+    for (let option of options) {
       expect(option).toHaveAttribute('data-rac');
     }
   });
@@ -428,17 +433,18 @@ describe('ListBox', () => {
   });
 
   it('should support selection state', async () => {
-    let {getAllByRole} = renderListbox({selectionMode: 'multiple'}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
-    let option = getAllByRole('option')[0];
+    let {getByRole} = renderListbox({selectionMode: 'multiple'}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
 
+    let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
+    let option = listboxTester.options()[0];
     expect(option).not.toHaveAttribute('aria-selected', 'true');
     expect(option).not.toHaveClass('selected');
 
-    await user.click(option);
+    await listboxTester.toggleOptionSelection({option});
     expect(option).toHaveAttribute('aria-selected', 'true');
     expect(option).toHaveClass('selected');
 
-    await user.click(option);
+    await listboxTester.toggleOptionSelection({option});
     expect(option).not.toHaveAttribute('aria-selected', 'true');
     expect(option).not.toHaveClass('selected');
   });
@@ -459,6 +465,7 @@ describe('ListBox', () => {
         <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
       </ListBox>
     );
+
     let items = getAllByRole('option');
     expect(items[1]).toHaveAttribute('aria-disabled', 'true');
 
@@ -468,21 +475,79 @@ describe('ListBox', () => {
     expect(document.activeElement).toBe(items[2]);
   });
 
-  it('should support onAction on items', async () => {
+  it.each`
+    interactionType
+    ${'mouse'}
+    ${'keyboard'}
+    ${'touch'}
+  `('should support onAction, interactionType: $interactionType ', async ({interactionType}) => {
     let onAction = jest.fn();
-    let {getAllByRole} = render(
+    let {getByRole} = render(
       <ListBox aria-label="Test">
         <ListBoxItem id="cat" onAction={onAction}>Cat</ListBoxItem>
         <ListBoxItem id="dog">Dog</ListBoxItem>
         <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
       </ListBox>
     );
-    let items = getAllByRole('option');
-    await user.click(items[0]);
+    let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
+
+    let options = listboxTester.options();
+    await listboxTester.triggerOptionAction({option: options[0], interactionType});
     expect(onAction).toHaveBeenCalledTimes(1);
   });
 
-  it('should support onAction on list ans list items', async () => {
+  it('should trigger onAction on double click if selectionBehavior="replace"', async () => {
+    let onAction = jest.fn();
+    let {getByRole} = render(
+      <ListBox aria-label="Test" selectionMode="multiple" selectionBehavior="replace" onAction={onAction}>
+        <ListBoxItem id="cat">Cat</ListBoxItem>
+        <ListBoxItem id="dog">Dog</ListBoxItem>
+        <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+      </ListBox>
+    );
+    let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
+
+    let options = listboxTester.options();
+    await listboxTester.triggerOptionAction({option: options[0]});
+    let selectedOptions = listboxTester.selectedOptions;
+    expect(selectedOptions).toHaveLength(1);
+    expect(onAction).not.toHaveBeenCalled();
+
+    await listboxTester.triggerOptionAction({option: options[1], needsDoubleClick: true});
+    selectedOptions = listboxTester.selectedOptions;
+    expect(selectedOptions).toHaveLength(1);
+    expect(onAction).toHaveBeenCalledTimes(1);
+  });
+
+  describe('with pointer events', () => {
+    installPointerEvent();
+    it('should trigger selection on long press if both onAction and selection exist (touch only)', async () => {
+      let onAction = jest.fn();
+      let {getByRole} = render(
+        <ListBox aria-label="Test" selectionMode="multiple" selectionBehavior="toggle" onAction={onAction}>
+          <ListBoxItem id="cat">Cat</ListBoxItem>
+          <ListBoxItem id="dog">Dog</ListBoxItem>
+          <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+        </ListBox>
+      );
+      let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox'), advanceTimer: jest.advanceTimersByTime, interactionType: 'touch'});
+
+      await listboxTester.toggleOptionSelection({option: listboxTester.options()[0]});
+      expect(listboxTester.selectedOptions).toHaveLength(0);
+      expect(onAction).toHaveBeenCalledTimes(1);
+
+      await listboxTester.toggleOptionSelection({option: listboxTester.options()[0], needsLongPress: true});
+      expect(listboxTester.selectedOptions).toHaveLength(1);
+      expect(listboxTester.selectedOptions[0]).toBe(listboxTester.options()[0]);
+      expect(onAction).toHaveBeenCalledTimes(1);
+
+      await listboxTester.toggleOptionSelection({option: listboxTester.options()[1]});
+      expect(listboxTester.selectedOptions).toHaveLength(2);
+      expect(listboxTester.selectedOptions[1]).toBe(listboxTester.options()[1]);
+    });
+  });
+
+  it('should support onAction on list and list items', async () => {
     let onAction = jest.fn();
     let itemAction = jest.fn();
     let {getAllByRole} = render(

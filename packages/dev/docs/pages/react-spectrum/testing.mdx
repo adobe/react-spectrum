@@ -18,7 +18,7 @@ category: Concepts
 
 # Testing
 
-This page describes how to test an application built with with React Spectrum, including how to
+This page describes how to test an application built with React Spectrum, including how to
 query the DOM tree for elements and simulate user interactions.
 
 ## Introduction
@@ -336,6 +336,12 @@ fireEvent.mouseDown(thumb, {clientX: 0, pageX: 0});
 fireEvent.mouseMove(thumb, {pageX: 50});
 fireEvent.mouseUp(thumb, {pageX: 50});
 ```
+
+### Test Utilities
+
+In addition to some of the test utilities mentioned above, `@react-spectrum/test-utils` re-exports the same test utils available in `@react-aria/test-utils`, including
+the ARIA pattern testers documented [here](../react-aria/testing.html#react-aria-test-utils). Those testers can be used with React Spectrum components as well and can be combined with the generalized
+testing advice above.
 
 ## Snapshot tests
 

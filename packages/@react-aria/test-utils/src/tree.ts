@@ -11,32 +11,39 @@
  */
 
 import {act, within} from '@testing-library/react';
-import {GridListTesterOpts, GridRowActionOpts, ToggleGridRowOpts, UserOpts} from './types';
+import {BaseGridRowInteractionOpts, GridRowActionOpts, ToggleGridRowOpts, TreeTesterOpts, UserOpts} from './types';
 import {pressElement, triggerLongPress} from './events';
 
-interface GridListToggleRowOpts extends ToggleGridRowOpts {}
-interface GridListRowActionOpts extends GridRowActionOpts {}
+interface TreeToggleExpansionOpts extends BaseGridRowInteractionOpts {}
+interface TreeToggleRowOpts extends ToggleGridRowOpts {}
+interface TreeRowActionOpts extends GridRowActionOpts {}
 
-export class GridListTester {
+// TODO: this ended up being pretty much the same as gridlist, refactor so it extends from gridlist
+export class TreeTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
   private _advanceTimer: UserOpts['advanceTimer'];
-  private _gridlist: HTMLElement;
+  private _tree: HTMLElement;
 
-  constructor(opts: GridListTesterOpts) {
+  constructor(opts: TreeTesterOpts) {
     let {root, user, interactionType, advanceTimer} = opts;
     this.user = user;
     this._interactionType = interactionType || 'mouse';
     this._advanceTimer = advanceTimer;
-    this._gridlist = root;
+    this._tree = root;
+    // TODO: should all helpers do this?
+    let tree = within(root).queryByRole('treegrid');
+    if (root.getAttribute('role') !== 'treegrid' && tree) {
+      this._tree = tree;
+    }
   }
 
   /**
-   * Set the interaction type used by the gridlist tester.
+   * Set the interaction type used by the tree tester.
    */
   setInteractionType(type: UserOpts['interactionType']) {
     this._interactionType = type;
-  }
+  };
 
   /**
    * Returns a row matching the specified index or text content.
@@ -50,7 +57,7 @@ export class GridListTester {
     if (typeof rowIndexOrText === 'number') {
       row = this.rows[rowIndexOrText];
     } else if (typeof rowIndexOrText === 'string') {
-      row = (within(this.gridlist!).getByText(rowIndexOrText).closest('[role=row]'))! as HTMLElement;
+      row = (within(this.tree!).getByText(rowIndexOrText).closest('[role=row]'))! as HTMLElement;
     }
 
     return row;
@@ -62,18 +69,18 @@ export class GridListTester {
     let rows = this.rows;
     let targetIndex = rows.indexOf(row);
     if (targetIndex === -1) {
-      throw new Error('Option provided is not in the gridlist');
+      throw new Error('Option provided is not in the tree');
     }
-    if (document.activeElement === this._gridlist) {
+    if (document.activeElement === this.tree) {
       await this.user.keyboard('[ArrowDown]');
-    } else if (this._gridlist.contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
+    } else if (this._tree.contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
       do {
         await this.user.keyboard('[ArrowLeft]');
       } while (document.activeElement!.getAttribute('role') !== 'row');
     }
     let currIndex = rows.indexOf(document.activeElement as HTMLElement);
     if (currIndex === -1) {
-      throw new Error('ActiveElement is not in the gridlist');
+      throw new Error('ActiveElement is not in the tree');
     }
     let direction = targetIndex > currIndex ? 'down' : 'up';
 
@@ -83,9 +90,9 @@ export class GridListTester {
   };
 
   /**
-   * Toggles the selection for the specified gridlist row. Defaults to using the interaction type set on the gridlist tester.
+   * Toggles the selection for the specified tree row. Defaults to using the interaction type set on the tree tester.
    */
-  async toggleRowSelection(opts: GridListToggleRowOpts) {
+  async toggleRowSelection(opts: TreeToggleRowOpts) {
     let {
       row,
       needsLongPress,
@@ -98,12 +105,12 @@ export class GridListTester {
     }
 
     if (!row) {
-      throw new Error('Target row not found in the gridlist.');
+      throw new Error('Target row not found in the tree.');
     }
 
     let rowCheckbox = within(row).queryByRole('checkbox');
 
-    // TODO: we early return here because the checkbox/row can't be keyboard navigated to if the row is disabled usually
+    // TODO: we early return here because the checkbox can't be keyboard navigated to if the row is disabled usually
     // but we may to check for disabledBehavior (aka if the disable row gets skipped when keyboard navigating or not)
     if (interactionType === 'keyboard' && (rowCheckbox?.getAttribute('disabled') === '' || row?.getAttribute('aria-disabled') === 'true')) {
       return;
@@ -127,19 +134,57 @@ export class GridListTester {
 
         // Note that long press interactions with rows is strictly touch only for grid rows
         await triggerLongPress({element: cell, advanceTimer: this._advanceTimer, pointerOpts: {pointerType: 'touch'}});
-
       } else {
         await pressElement(this.user, cell, interactionType);
       }
     }
-  }
+  };
 
-  // TODO: There is a more difficult use case where the row has/behaves as link, don't think we have a good way to determine that unless the
-  // user specificlly tells us
   /**
-   * Triggers the action for the specified gridlist row. Defaults to using the interaction type set on the gridlist tester.
+   * Toggles the expansion for the specified tree row. Defaults to using the interaction type set on the tree tester.
    */
-  async triggerRowAction(opts: GridListRowActionOpts) {
+  async toggleRowExpansion(opts: TreeToggleExpansionOpts) {
+    let {
+      row,
+      interactionType = this._interactionType
+    } = opts;
+    if (!this.tree.contains(document.activeElement)) {
+      await act(async () => {
+        this.tree.focus();
+      });
+    }
+
+    if (typeof row === 'string' || typeof row === 'number') {
+      row = this.findRow({rowIndexOrText: row});
+    }
+
+    if (!row) {
+      throw new Error('Target row not found in the tree.');
+    } else if (row.getAttribute('aria-expanded') == null) {
+      throw new Error('Target row is not expandable.');
+    }
+
+    if (interactionType === 'mouse' || interactionType === 'touch') {
+      let rowExpander = within(row).getAllByRole('button')[0]; // what happens if the button is not first? how can we differentiate?
+      await pressElement(this.user, rowExpander, interactionType);
+    } else if (interactionType === 'keyboard') {
+      if (row?.getAttribute('aria-disabled') === 'true') {
+        return;
+      }
+
+      await this.keyboardNavigateToRow({row});
+      if (row.getAttribute('aria-expanded') === 'true') {
+        await this.user.keyboard('[ArrowLeft]');
+      } else {
+        await this.user.keyboard('[ArrowRight]');
+      }
+    }
+  };
+
+  /**
+   * Triggers the action for the specified tree row. Defaults to using the interaction type set on the tree tester.
+   */
+  async triggerRowAction(opts: TreeRowActionOpts) {
     let {
       row,
       needsDoubleClick,
@@ -151,7 +196,7 @@ export class GridListTester {
     }
 
     if (!row) {
-      throw new Error('Target row not found in the gridlist.');
+      throw new Error('Target row not found in the tree.');
     }
 
     if (needsDoubleClick) {
@@ -161,8 +206,8 @@ export class GridListTester {
         return;
       }
 
-      if (document.activeElement !== this._gridlist || !this._gridlist.contains(document.activeElement)) {
-        act(() => this._gridlist.focus());
+      if (document.activeElement !== this._tree || !this._tree.contains(document.activeElement)) {
+        act(() => this._tree.focus());
       }
 
       await this.keyboardNavigateToRow({row});
@@ -170,34 +215,34 @@ export class GridListTester {
     } else {
       await pressElement(this.user, row, interactionType);
     }
-  }
+  };
 
   /**
-   * Returns the gridlist.
+   * Returns the tree.
    */
-  get gridlist(): HTMLElement {
-    return this._gridlist;
+  get tree():  HTMLElement {
+    return this._tree;
   }
 
   /**
-   * Returns the gridlist's rows if any.
+   * Returns the tree's rows if any.
    */
   get rows(): HTMLElement[] {
-    return within(this?.gridlist).queryAllByRole('row');
+    return within(this?.tree).queryAllByRole('row');
   }
 
   /**
-   * Returns the gridlist's selected rows if any.
+   * Returns the tree's selected rows if any.
    */
   get selectedRows(): HTMLElement[] {
     return this.rows.filter(row => row.getAttribute('aria-selected') === 'true');
   }
 
   /**
-   * Returns the gridlist's cells if any. Can be filtered against a specific row if provided via `element`.
+   * Returns the tree's cells if any. Can be filtered against a specific row if provided via `element`.
    */
   cells(opts: {element?: HTMLElement} = {}): HTMLElement[] {
-    let {element = this.gridlist} = opts;
+    let {element = this.tree} = opts;
     return within(element).queryAllByRole('gridcell');
   }
 }

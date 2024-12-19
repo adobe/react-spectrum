@@ -11,13 +11,53 @@
  */
 
 import {act, waitFor, within} from '@testing-library/react';
-import {BaseTesterOpts, UserOpts} from './user';
+import {MenuTesterOpts, UserOpts} from './types';
 import {triggerLongPress} from './events';
 
-export interface MenuOptions extends UserOpts, BaseTesterOpts {
-  user?: any,
-  isSubmenu?: boolean
+interface MenuOpenOpts {
+  /**
+   * Whether the menu needs to be long pressed to open.
+   */
+  needsLongPress?: boolean,
+  /**
+   * What interaction type to use when opening the menu. Defaults to the interaction type set on the tester.
+   */
+  interactionType?: UserOpts['interactionType'],
+  /**
+   * Whether to open the menu via ArrowUp or ArrowDown if in keyboard modality.
+   */
+  direction?: 'up' | 'down'
 }
+
+interface MenuSelectOpts extends MenuOpenOpts {
+  /**
+   * The index, text, or node of the option to select. Option nodes can be sourced via `options()`.
+   */
+  option: number | string | HTMLElement,
+  /**
+   * The menu's selection mode. Will affect whether or not the menu is expected to be closed upon option selection.
+   * @default 'single'
+   */
+  menuSelectionMode?: 'single' | 'multiple',
+  /**
+   * Whether or not the menu closes on select. Depends on menu implementation and configuration.
+   * @default true
+   */
+  closesOnSelect?: boolean,
+  /**
+   * Whether the option should be triggered by Space or Enter in keyboard modality.
+   * @default 'Enter'
+   */
+  keyboardActivation?: 'Space' | 'Enter'
+}
+
+interface MenuOpenSubmenuOpts extends MenuOpenOpts {
+  /**
+   * The text or node of the submenu trigger to open. Available submenu trigger nodes can be sourced via `submenuTriggers`.
+   */
+  submenuTrigger: string | HTMLElement
+}
+
 export class MenuTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
@@ -25,7 +65,7 @@ export class MenuTester {
   private _trigger: HTMLElement | undefined;
   private _isSubmenu: boolean = false;
 
-  constructor(opts: MenuOptions) {
+  constructor(opts: MenuTesterOpts) {
     let {root, user, interactionType, advanceTimer, isSubmenu} = opts;
     this.user = user;
     this._interactionType = interactionType || 'mouse';
@@ -47,13 +87,19 @@ export class MenuTester {
     this._isSubmenu = isSubmenu || false;
   }
 
-  setInteractionType = (type: UserOpts['interactionType']) => {
+  /**
+   * Set the interaction type used by the menu tester.
+   */
+  setInteractionType(type: UserOpts['interactionType']) {
     this._interactionType = type;
-  };
+  }
 
   // TODO: this has been common to select as well, maybe make select use it? Or make a generic method. Will need to make error messages generic
   // One difference will be that it supports long press as well
-  open = async (opts: {needsLongPress?: boolean, interactionType?: UserOpts['interactionType'], direction?: 'up' | 'down'} = {}) => {
+  /**
+   * Opens the menu. Defaults to using the interaction type set on the menu tester.
+   */
+  async open(opts: MenuOpenOpts = {}) {
     let {
       needsLongPress,
       interactionType = this._interactionType,
@@ -103,21 +149,37 @@ export class MenuTester {
         }
       });
     }
-  };
+  }
+
+  /**
+   * Returns a option matching the specified index or text content.
+   */
+  findOption(opts: {optionIndexOrText: number | string}): HTMLElement {
+    let {
+      optionIndexOrText
+    } = opts;
+
+    let option;
+    let options = this.options();
+    let menu = this.menu;
+
+    if (typeof optionIndexOrText === 'number') {
+      option = options[optionIndexOrText];
+    } else if (typeof optionIndexOrText === 'string' && menu != null) {
+      option = (within(menu!).getByText(optionIndexOrText).closest('[role=menuitem], [role=menuitemradio], [role=menuitemcheckbox]'))! as HTMLElement;
+    }
+
+    return option;
+  }
 
   // TODO: also very similar to select, barring potential long press support
   // Close on select is also kinda specific?
-  selectOption = async (opts: {
-    option?: HTMLElement,
-    optionText?: string,
-    menuSelectionMode?: 'single' | 'multiple',
-    needsLongPress?: boolean,
-    closesOnSelect?: boolean,
-    interactionType?: UserOpts['interactionType'],
-    keyboardActivation?: 'Space' | 'Enter'
-  }) => {
+  /**
+   * Selects the desired menu option. Defaults to using the interaction type set on the menu tester. If necessary, will open the menu dropdown beforehand.
+   * The desired option can be targeted via the option's node, the option's text, or the option's index.
+   */
+  async selectOption(opts: MenuSelectOpts) {
     let {
-      optionText,
       menuSelectionMode = 'single',
       needsLongPress,
       closesOnSelect = true,
@@ -132,15 +194,25 @@ export class MenuTester {
     }
 
     let menu = this.menu;
+
+    if (!menu) {
+      throw new Error('Menu not found.');
+    }
+
     if (menu) {
-      if (!option && optionText) {
-        option = (within(menu!).getByText(optionText).closest('[role=menuitem], [role=menuitemradio], [role=menuitemcheckbox]'))! as HTMLElement;
+      if (typeof option === 'string' || typeof option === 'number') {
+        option = this.findOption({optionIndexOrText: option});
       }
+
       if (!option) {
-        throw new Error('No option found in the menu.');
+        throw new Error('Target option not found in the menu.');
       }
 
       if (interactionType === 'keyboard') {
+        if (option?.getAttribute('aria-disabled') === 'true') {
+          return;
+        }
+
         if (document.activeElement !== menu || !menu.contains(document.activeElement)) {
           act(() => menu.focus());
         }
@@ -156,7 +228,7 @@ export class MenuTester {
       }
       act(() => {jest.runAllTimers();});
 
-      if (option && option.getAttribute('href') == null && option.getAttribute('aria-haspopup') == null && menuSelectionMode === 'single' && closesOnSelect && keyboardActivation !== 'Space' && !this._isSubmenu) {
+      if (option.getAttribute('href') == null && option.getAttribute('aria-haspopup') == null && menuSelectionMode === 'single' && closesOnSelect && keyboardActivation !== 'Space' && !this._isSubmenu) {
         await waitFor(() => {
           if (document.activeElement !== trigger) {
             throw new Error(`Expected the document.activeElement after selecting an option to be the menu trigger but got ${document.activeElement}`);
@@ -172,13 +244,15 @@ export class MenuTester {
     } else {
       throw new Error("Attempted to select a option in the menu, but menu wasn't found.");
     }
-  };
+  }
 
   // TODO: update this to remove needsLongPress if we wanna make the user call open first always
-  openSubmenu = async (opts: {submenuTrigger?: HTMLElement, submenuTriggerText?: string, needsLongPress?: boolean, interactionType?: UserOpts['interactionType']}): Promise<MenuTester | null> => {
+  /**
+   * Opens the submenu. Defaults to using the interaction type set on the menu tester. The submenu trigger can be targeted via the trigger's node or the trigger's text.
+   */
+  async openSubmenu(opts: MenuOpenSubmenuOpts): Promise<MenuTester | null> {
     let {
       submenuTrigger,
-      submenuTriggerText,
       needsLongPress,
       interactionType = this._interactionType
     } = opts;
@@ -191,19 +265,16 @@ export class MenuTester {
     if (!isDisabled) {
       let menu = this.menu;
       if (menu) {
-        let submenu;
-        if (submenuTrigger) {
-          submenu = submenuTrigger;
-        } else if (submenuTriggerText) {
-          submenu = within(menu).getByText(submenuTriggerText);
+        if (typeof submenuTrigger === 'string') {
+          submenuTrigger = within(menu).getByText(submenuTrigger);
         }
 
-        let submenuTriggerTester = new MenuTester({user: this.user, interactionType: this._interactionType, root: submenu, isSubmenu: true});
+        let submenuTriggerTester = new MenuTester({user: this.user, interactionType: this._interactionType, root: submenuTrigger, isSubmenu: true});
         if (interactionType === 'mouse') {
-          await this.user.pointer({target: submenu});
+          await this.user.pointer({target: submenuTrigger});
           act(() => {jest.runAllTimers();});
         } else if (interactionType === 'keyboard') {
-          await this.keyboardNavigateToOption({option: submenu});
+          await this.keyboardNavigateToOption({option: submenuTrigger});
           await this.user.keyboard('[ArrowRight]');
           act(() => {jest.runAllTimers();});
         } else {
@@ -216,11 +287,11 @@ export class MenuTester {
     }
 
     return null;
-  };
+  }
 
-  keyboardNavigateToOption = async (opts: {option: HTMLElement}) => {
+  private async keyboardNavigateToOption(opts: {option: HTMLElement}) {
     let {option} = opts;
-    let options = this.options;
+    let options = this.options();
     let targetIndex = options.indexOf(option);
     if (targetIndex === -1) {
       throw new Error('Option provided is not in the menu');
@@ -229,7 +300,7 @@ export class MenuTester {
       await this.user.keyboard('[ArrowDown]');
     }
     let currIndex = options.indexOf(document.activeElement as HTMLElement);
-    if (targetIndex === -1) {
+    if (currIndex === -1) {
       throw new Error('ActiveElement is not in the menu');
     }
     let direction = targetIndex > currIndex ? 'down' : 'up';
@@ -239,8 +310,10 @@ export class MenuTester {
     }
   };
 
-
-  close = async () => {
+  /**
+   * Closes the menu.
+   */
+  async close() {
     let menu = this.menu;
     if (menu) {
       act(() => menu.focus());
@@ -258,37 +331,31 @@ export class MenuTester {
         throw new Error('Expected the menu to not be in the document after closing it.');
       }
     }
-  };
+  }
 
-  get trigger() {
+  /**
+   * Returns the menu's trigger.
+   */
+  get trigger(): HTMLElement {
     if (!this._trigger) {
       throw new Error('No trigger element found for menu.');
     }
+
     return this._trigger;
   }
 
-  get menu() {
+  /**
+   * Returns the menu if present.
+   */
+  get menu(): HTMLElement | null {
     let menuId = this.trigger.getAttribute('aria-controls');
-    return menuId ? document.getElementById(menuId) : undefined;
+    return menuId ? document.getElementById(menuId) : null;
   }
 
-  get options(): HTMLElement[] {
-    let menu = this.menu;
-    let options: HTMLElement[] = [];
-    if (menu) {
-      options = within(menu).queryAllByRole('menuitem');
-      if (options.length === 0) {
-        options = within(menu).queryAllByRole('menuitemradio');
-        if (options.length === 0) {
-          options = within(menu).queryAllByRole('menuitemcheckbox');
-        }
-      }
-    }
-
-    return options;
-  }
-
-  get sections() {
+  /**
+   * Returns the menu's sections if any.
+   */
+  get sections(): HTMLElement[] {
     let menu = this.menu;
     if (menu) {
       return within(menu).queryAllByRole('group');
@@ -297,10 +364,32 @@ export class MenuTester {
     }
   }
 
-  get submenuTriggers() {
-    let options = this.options;
+  /**
+   * Returns the menu's options if present. Can be filtered to a subsection of the menu if provided via `element`.
+   */
+  options(opts: {element?: HTMLElement} = {}): HTMLElement[] {
+    let {element = this.menu} = opts;
+    let options: HTMLElement[] = [];
+    if (element) {
+      options = within(element).queryAllByRole('menuitem');
+      if (options.length === 0) {
+        options = within(element).queryAllByRole('menuitemradio');
+        if (options.length === 0) {
+          options = within(element).queryAllByRole('menuitemcheckbox');
+        }
+      }
+    }
+
+    return options;
+  }
+
+  /**
+   * Returns the menu's submenu triggers if any.
+   */
+  get submenuTriggers(): HTMLElement[] {
+    let options = this.options();
     if (options.length > 0) {
-      return this.options.filter(item => item.getAttribute('aria-haspopup') != null);
+      return options.filter(item => item.getAttribute('aria-haspopup') != null);
     }
 
     return [];
