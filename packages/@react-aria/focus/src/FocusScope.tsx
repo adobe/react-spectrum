@@ -12,7 +12,8 @@
 
 import {FocusableElement, RefObject} from '@react-types/shared';
 import {focusSafely} from './focusSafely';
-import {getOwnerDocument, useLayoutEffect} from '@react-aria/utils';
+import {getInteractionModality} from '@react-aria/interactions';
+import {getOwnerDocument, isAndroid, isChrome, useLayoutEffect} from '@react-aria/utils';
 import {isElementVisible} from './isElementVisible';
 import React, {ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 
@@ -376,12 +377,19 @@ function useFocusContainment(scopeRef: RefObject<Element[] | null>, contain?: bo
     };
 
     let onBlur = (e) => {
-      // Use raf to delay long enough that subdialogs will fully unmount and not move focus away from parent menu's hovered item that triggered the close
+      // Firefox doesn't shift focus back to the Dialog properly without this
       if (raf.current) {
         cancelAnimationFrame(raf.current);
       }
       raf.current = requestAnimationFrame(() => {
-        if (e.relatedTarget && shouldContainFocus(scopeRef) && !isElementInChildScope(e.relatedTarget, scopeRef)) {
+        // Patches infinite focus coersion loop for Android Talkback where the user isn't able to move the virtual cursor
+        // if within a containing focus scope. Bug filed against Chrome: https://issuetracker.google.com/issues/384844019.
+        // Note that this means focus can leave focus containing modals due to this, but it is isolated to Chrome Talkback.
+        let modality = getInteractionModality();
+        let shouldSkipFocusRestore = (modality === 'virtual' || modality === null) && isAndroid() && isChrome();
+
+        // Use document.activeElement instead of e.relatedTarget so we can tell if user clicked into iframe
+        if (!shouldSkipFocusRestore && ownerDocument.activeElement && shouldContainFocus(scopeRef) && !isElementInChildScope(ownerDocument.activeElement, scopeRef)) {
           activeScope = scopeRef;
           if (ownerDocument.body.contains(e.target)) {
             focusedNode.current = e.target;
