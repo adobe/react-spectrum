@@ -935,7 +935,7 @@ AriaMenuTests({
                   </Menu>
                 </SubmenuTrigger>
                 <Item id="sms">SMS</Item>
-                <Item id="twitter">Twitter</Item>
+                <Item id="x">X</Item>
               </Menu>
             </SubmenuTrigger>
             <Item id="delete">Delete…</Item>

@@ -79,7 +79,7 @@ export const Submenu = (args: any) => (
         <MenuItem id="share">Share</MenuItem>
         <Menu>
           <MenuItem id="sms">SMS</MenuItem>
-          <MenuItem id="twitter">Twitter</MenuItem>
+          <MenuItem id="x">X</MenuItem>
           <SubmenuTrigger>
             <MenuItem id="email">Email</MenuItem>
             <Menu>
