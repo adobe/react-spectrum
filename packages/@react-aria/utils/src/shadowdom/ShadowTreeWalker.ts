@@ -13,10 +13,10 @@ export class ShadowTreeWalker implements TreeWalker {
   private _currentSetFor: Set<TreeWalker> = new Set();
 
   constructor(
-        doc: Document,
-        root: Node,
-        whatToShow?: number,
-        filter?: NodeFilter | null
+      doc: Document,
+      root: Node,
+      whatToShow?: number,
+      filter?: NodeFilter | null
     ) {
     this._doc = doc;
     this.root = root;
@@ -25,17 +25,17 @@ export class ShadowTreeWalker implements TreeWalker {
     this._currentNode = root;
 
     this._walkerStack.unshift(
-            doc.createTreeWalker(root, whatToShow, this._acceptNode)
-        );
+      doc.createTreeWalker(root, whatToShow, this._acceptNode)
+    );
 
     const shadowRoot = (root as Element).shadowRoot;
 
     if (shadowRoot) {
       const walker = this._doc.createTreeWalker(
-                shadowRoot,
-                this.whatToShow,
-                {acceptNode: this._acceptNode}
-            );
+        shadowRoot,
+        this.whatToShow,
+        {acceptNode: this._acceptNode}
+      );
 
       this._walkerStack.unshift(walker);
     }
@@ -47,10 +47,10 @@ export class ShadowTreeWalker implements TreeWalker {
 
       if (shadowRoot) {
         const walker = this._doc.createTreeWalker(
-                    shadowRoot,
-                    this.whatToShow,
-                    {acceptNode: this._acceptNode}
-                );
+          shadowRoot,
+          this.whatToShow,
+          {acceptNode: this._acceptNode}
+        );
 
         this._walkerStack.unshift(walker);
 
@@ -76,8 +76,8 @@ export class ShadowTreeWalker implements TreeWalker {
   public set currentNode(node: Node) {
     if (!nodeContains(this.root, node)) {
       throw new Error(
-                'Cannot set currentNode to a node that is not contained by the root node.'
-            );
+        'Cannot set currentNode to a node that is not contained by the root node.'
+      );
     }
 
     const walkers: TreeWalker[] = [];
@@ -91,10 +91,10 @@ export class ShadowTreeWalker implements TreeWalker {
         const shadowRoot = curNode as ShadowRoot;
 
         const walker = this._doc.createTreeWalker(
-                    shadowRoot,
-                    this.whatToShow,
-                    {acceptNode: this._acceptNode}
-                );
+          shadowRoot,
+          this.whatToShow,
+          {acceptNode: this._acceptNode}
+        );
 
         walkers.push(walker);
 
@@ -108,9 +108,11 @@ export class ShadowTreeWalker implements TreeWalker {
       }
     }
 
-    const walker = this._doc.createTreeWalker(this.root, this.whatToShow, {
-      acceptNode: this._acceptNode
-    });
+    const walker = this._doc.createTreeWalker(
+      this.root,
+      this.whatToShow,
+      {acceptNode: this._acceptNode}
+    );
 
     walkers.push(walker);
 
@@ -126,13 +128,25 @@ export class ShadowTreeWalker implements TreeWalker {
   }
 
   public firstChild(): Node | null {
-    let walker = this._walkerStack[0];
-    return walker.firstChild();
+    let currentNode = this.currentNode;
+    let newNode = this.nextNode();
+    if (!nodeContains(currentNode, newNode)) {
+      this.currentNode = currentNode;
+      return null;
+    }
+    if (newNode) {
+      this.currentNode = newNode;
+    }
+    return newNode;
   }
 
   public lastChild(): Node | null {
     let walker = this._walkerStack[0];
-    return walker.lastChild();
+    let newNode = walker.lastChild();
+    if (newNode) {
+      this.currentNode = newNode;
+    }
+    return newNode;
   }
 
   public nextNode(): Node | null {
@@ -151,20 +165,32 @@ export class ShadowTreeWalker implements TreeWalker {
         }
 
         if (nodeResult === NodeFilter.FILTER_ACCEPT) {
+          this.currentNode = nextNode;
           return nextNode;
         }
 
-                // _acceptNode should have added new walker for this shadow,
-                // go in recursively.
-        return this.nextNode();
+        // _acceptNode should have added new walker for this shadow,
+        // go in recursively.
+        let newNode = this.nextNode();
+        if (newNode) {
+          this.currentNode = newNode;
+        }
+        return newNode;
       }
 
+      if (nextNode) {
+        this.currentNode = nextNode;
+      }
       return nextNode;
     } else {
       if (this._walkerStack.length > 1) {
         this._walkerStack.shift();
 
-        return this.nextNode();
+        let newNode = this.nextNode();
+        if (newNode) {
+          this.currentNode = newNode;
+        }
+        return newNode;
       } else {
         return null;
       }
@@ -180,7 +206,11 @@ export class ShadowTreeWalker implements TreeWalker {
 
         if (this._walkerStack.length > 1) {
           this._walkerStack.shift();
-          return this.previousNode();
+          let newNode = this.previousNode();
+          if (newNode) {
+            this.currentNode = newNode;
+          }
+          return newNode;
         } else {
           return null;
         }
@@ -204,20 +234,34 @@ export class ShadowTreeWalker implements TreeWalker {
         }
 
         if (nodeResult === NodeFilter.FILTER_ACCEPT) {
+          if (previousNode) {
+            this.currentNode = previousNode;
+          }
           return previousNode;
         }
 
-                // _acceptNode should have added new walker for this shadow,
-                // go in recursively.
-        return this.previousNode();
+        // _acceptNode should have added new walker for this shadow,
+        // go in recursively.
+        let newNode = this.lastChild();
+        if (newNode) {
+          this.currentNode = newNode;
+        }
+        return newNode;
       }
 
+      if (previousNode) {
+        this.currentNode = previousNode;
+      }
       return previousNode;
     } else {
       if (this._walkerStack.length > 1) {
         this._walkerStack.shift();
 
-        return this.previousNode();
+        let newNode = this.previousNode();
+        if (newNode) {
+          this.currentNode = newNode;
+        }
+        return newNode;
       } else {
         return null;
       }
@@ -228,9 +272,9 @@ export class ShadowTreeWalker implements TreeWalker {
      * @deprecated
      */
   public nextSibling(): Node | null {
-        // if (__DEV__) {
-        //     throw new Error("Method not implemented.");
-        // }
+    // if (__DEV__) {
+    //     throw new Error("Method not implemented.");
+    // }
 
     return null;
   }
@@ -239,9 +283,9 @@ export class ShadowTreeWalker implements TreeWalker {
      * @deprecated
      */
   public previousSibling(): Node | null {
-        // if (__DEV__) {
-        //     throw new Error("Method not implemented.");
-        // }
+    // if (__DEV__) {
+    //     throw new Error("Method not implemented.");
+    // }
 
     return null;
   }
@@ -250,9 +294,9 @@ export class ShadowTreeWalker implements TreeWalker {
      * @deprecated
      */
   public parentNode(): Node | null {
-        // if (__DEV__) {
-        //     throw new Error("Method not implemented.");
-        // }
+    // if (__DEV__) {
+    //     throw new Error("Method not implemented.");
+    // }
 
     return null;
   }

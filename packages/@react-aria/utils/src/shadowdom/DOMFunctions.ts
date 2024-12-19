@@ -1,5 +1,7 @@
 // Source: https://github.com/microsoft/tabster/blob/a89fc5d7e332d48f68d03b1ca6e344489d1c3898/src/Shadowdomize/DOMFunctions.ts#L16
 
+import {isShadowRoot} from '../domHelpers';
+
 export function nodeContains(
   node: Node | null | undefined,
   otherNode: Node | null | undefined
@@ -10,21 +12,18 @@ export function nodeContains(
 
   let currentNode: HTMLElement | Node | null | undefined = otherNode;
 
-  while (currentNode) {
+  while (currentNode !== null) {
     if (currentNode === node) {
       return true;
     }
 
-    if (
-          typeof (currentNode as HTMLSlotElement).assignedElements !==
-              'function' &&
-          (currentNode as HTMLElement).assignedSlot?.parentNode
-      ) {
-          // Element is slotted
-      currentNode = (currentNode as HTMLElement).assignedSlot?.parentNode;
-    } else if (currentNode.nodeType === document.DOCUMENT_FRAGMENT_NODE) {
-          // Element is in shadow root
-      currentNode = (currentNode as ShadowRoot).host;
+    if ((currentNode as HTMLSlotElement).tagName === 'SLOT' &&
+      (currentNode as HTMLSlotElement).assignedSlot) {
+      // Element is slotted
+      currentNode = (currentNode as HTMLSlotElement).assignedSlot!.parentNode;
+    } else if (isShadowRoot(currentNode)) {
+      // Element is in shadow root
+      currentNode = currentNode.host;
     } else {
       currentNode = currentNode.parentNode;
     }
@@ -82,4 +81,13 @@ export function getLastElementChild(
   }
 
   return child as Element | null;
+}
+
+export function getEventTarget(event): Element {
+  if (event.target.shadowRoot) {
+    if (event.composedPath) {
+      return event.composedPath()[0];
+    }
+  }
+  return event.target;
 }
