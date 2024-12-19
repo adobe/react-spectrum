@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, FocusableElement, Orientation, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, Orientation, RefObject} from '@react-types/shared';
 import {createFocusManager} from '@react-aria/focus';
 import {filterDOMProps, scrollIntoViewport, useLayoutEffect} from '@react-aria/utils';
+import {getInteractionModality} from '@react-aria/interactions';
 import {HTMLAttributes, KeyboardEventHandler, useRef, useState} from 'react';
 import {useLocale} from '@react-aria/i18n';
 
@@ -59,25 +60,22 @@ export function useToolbar(props: AriaToolbarProps, ref: RefObject<HTMLElement |
     if (!e.currentTarget.contains(e.target as HTMLElement)) {
       return;
     }
-    let focusable: FocusableElement | null;
     if (
       (orientation === 'horizontal' && e.key === 'ArrowRight')
       || (orientation === 'vertical' && e.key === 'ArrowDown')) {
       if (shouldReverse) {
-        focusable =  focusManager.focusPrevious();
+        focusManager.focusPrevious();
       } else {
-        focusable = focusManager.focusNext();
+        focusManager.focusNext();
       }
-      scrollIntoViewport(focusable, {containingElement: ref.current});
     } else if (
       (orientation === 'horizontal' && e.key === 'ArrowLeft')
       || (orientation === 'vertical' && e.key === 'ArrowUp')) {
       if (shouldReverse) {
-        focusable = focusManager.focusNext();
+        focusManager.focusNext();
       } else {
-        focusable = focusManager.focusPrevious();
+        focusManager.focusPrevious();
       }
-      scrollIntoViewport(focusable, {containingElement: ref.current});
     } else if (e.key === 'Tab') {
       // When the tab key is pressed, we want to move focus
       // out of the entire toolbar. To do this, move focus
@@ -86,11 +84,10 @@ export function useToolbar(props: AriaToolbarProps, ref: RefObject<HTMLElement |
       e.stopPropagation();
       lastFocused.current = document.activeElement as HTMLElement;
       if (e.shiftKey) {
-        focusable = focusManager.focusFirst();
+        focusManager.focusFirst();
       } else {
-        focusable = focusManager.focusLast();
+        focusManager.focusLast();
       }
-      scrollIntoViewport(focusable, {containingElement: ref.current});
       return;
     } else {
       // if we didn't handle anything, return early so we don't preventDefault
@@ -114,13 +111,14 @@ export function useToolbar(props: AriaToolbarProps, ref: RefObject<HTMLElement |
   // If the element was removed, do nothing, either the first item in the first group,
   // or the last item in the last group will be focused, depending on direction.
   const onFocus = (e) => {
-    let focusable = e.target;
+    let modality = getInteractionModality();
     if (lastFocused.current && !e.currentTarget.contains(e.relatedTarget) && ref.current?.contains(e.target)) {
       lastFocused.current?.focus();
-      focusable = lastFocused.current;
       lastFocused.current = null;
     }
-    scrollIntoViewport(focusable, {containingElement: ref.current});
+    if (modality === 'keyboard') {
+      scrollIntoViewport(document.activeElement, {containingElement: ref.current});
+    }
   };
 
   return {
