@@ -789,5 +789,81 @@ describe('CalendarBase', () => {
       await user.keyboard('{ArrowRight}');
       expect(document.activeElement).toBe(selected);
     });
+
+    it.each`
+      Name                   | Calendar         | props                                                                                       | locale
+      ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2024, 1, 1)}}                                             | ${'en-US'}}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2024, 1, 1), end: new CalendarDate(2024, 1, 1)}}} | ${'en-US'}}
+    `('$Name should override start of week with firstDayOfWeek="mon" (en-US)', ({Calendar, props, locale = 'en-US'}) => {
+      let {getAllByRole, getByRole} = render(
+        <Provider theme={theme} locale={locale}>
+          <Calendar {...props} firstDayOfWeek="mon" />
+        </Provider>
+      );
+
+      let grid = getByRole('grid');
+      let headers = getAllByRole('columnheader', {hidden: true});
+      expect(headers.map(h => h.textContent)).toEqual(['M', 'T', 'W', 'T', 'F', 'S', 'S']);
+
+      let cells = within(grid).getAllByRole('gridcell');
+      expect(cells[0]).toHaveTextContent('1');
+    });
+
+    it.each`
+      Name                   | Calendar         | props                                                                                       | locale
+      ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2024, 1, 1)}}                                             | ${'en-US'}}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2024, 1, 1), end: new CalendarDate(2024, 1, 1)}}} | ${'en-US'}}
+    `('$Name should override start of week with firstDayOfWeek="sat" (en-US)', ({Calendar, props, locale}) => {
+      let {getAllByRole, getByRole} = render(
+        <Provider theme={theme} locale={locale}>
+          <Calendar {...props} firstDayOfWeek="sat" />
+        </Provider>
+      );
+
+      let grid = getByRole('grid');
+      let headers = getAllByRole('columnheader', {hidden: true});
+      expect(headers.map(h => h.textContent)).toEqual(['S', 'S', 'M', 'T', 'W', 'T', 'F']);
+
+      let cells = within(grid).getAllByRole('gridcell');
+      expect(cells[2]).toHaveTextContent('1');
+    });
+
+    it.each`
+      Name                   | Calendar         | props                                                                                       | locale
+      ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2024, 1, 1)}}                                             | ${'fr-FR'}}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2024, 1, 1), end: new CalendarDate(2024, 1, 1)}}} | ${'fr-FR'}}
+    `('$Name should override start of week with firstDayOfWeek="mon" (fr-FR)', ({Calendar, props, locale}) => {
+      let {getAllByRole, getByRole} = render(
+        <Provider theme={theme} locale={locale}>
+          <Calendar {...props} firstDayOfWeek="mon" />
+        </Provider>
+      );
+
+      let grid = getByRole('grid');
+      let headers = getAllByRole('columnheader', {hidden: true});
+      expect(headers.map(h => h.textContent)).toEqual(['L', 'M', 'M', 'J', 'V', 'S', 'D']);
+
+      let cells = within(grid).getAllByRole('gridcell');
+      expect(cells[0]).toHaveTextContent('1');
+    });
+
+    it.each`
+      Name                   | Calendar         | props                                                                                       | locale
+      ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2024, 1, 1)}}                                             | ${'fr-FR'}}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2024, 1, 1), end: new CalendarDate(2024, 1, 1)}}} | ${'fr-FR'}}
+    `('$Name should override start of week with firstDayOfWeek="sat" (fr-FR)', ({Calendar, props, locale}) => {
+      let {getAllByRole, getByRole} = render(
+        <Provider theme={theme} locale={locale}>
+          <Calendar {...props} firstDayOfWeek="sat" />
+        </Provider>
+      );
+
+      let grid = getByRole('grid');
+      let headers = getAllByRole('columnheader', {hidden: true});
+      expect(headers.map(h => h.textContent)).toEqual(['S', 'D', 'L', 'M', 'M', 'J', 'V']);
+
+      let cells = within(grid).getAllByRole('gridcell');
+      expect(cells[2]).toHaveTextContent('1');
+    });
   });
 });
