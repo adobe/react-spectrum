@@ -111,6 +111,10 @@ export function colorMix(a: SpectrumColor, b: SpectrumColor, percent: number): `
   return `[color-mix(in srgb, ${parseColor(a)}, ${parseColor(b)} ${percent}%)]`;
 }
 
+export function linearGradient(angle: string, ...tokens: [SpectrumColor, number][]): string {
+  return `linear-gradient(${angle}, ${tokens.map(([color, stop]) => `${parseColor(color)} ${stop}%`)})`;
+}
+
 function generateSpacing<K extends number[]>(px: K): {[P in K[number]]: string} {
   let res: any = {};
   for (let p of px) {
