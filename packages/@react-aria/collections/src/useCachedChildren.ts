@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Children, cloneElement, ReactElement, ReactNode, useMemo} from 'react';
+import {cloneElement, ReactElement, ReactNode, useMemo} from 'react';
 import {Key} from '@react-types/shared';
 
 export interface CachedChildrenOptions<T> {
@@ -45,11 +45,11 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
           rendered = children(item);
           // @ts-ignore
           let key = rendered.props.id ?? item.key ?? item.id;
-          
+           
           if (key == null) {
             throw new Error('Could not determine key for item');
           }
-          
+           
           if (idScope) {
             key = idScope + ':' + key;
           }
@@ -64,13 +64,7 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
       }
       return res;
     } else if (typeof children !== 'function') {
-      return Children.map(children, (child: any, index) => {
-        if (!child || !idScope) {return child;}
-
-        let key = `${idScope}:${child.props.id ?? index + 1}`;
-
-        return cloneElement(child, addIdAndValue ? {key, id: key} : {key});
-      });
+      return children;
     }
   }, [children, items, cache, idScope, addIdAndValue]);
 }

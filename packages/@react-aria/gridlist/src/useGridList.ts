@@ -109,11 +109,15 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     console.warn('An aria-label or aria-labelledby prop is required for accessibility.');
   }
 
+  let id = useId(props.id);
+  listMap.set(state, {id, onAction, linkBehavior, keyboardNavigationBehavior});
+
   let {listProps} = useSelectableList({
     selectionManager: state.selectionManager,
     collection: state.collection,
     disabledKeys: state.disabledKeys,
     ref,
+    idScope: id,
     keyboardDelegate,
     layoutDelegate,
     isVirtualized,
@@ -123,8 +127,6 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     disallowTypeAhead
   });
 
-  let id = useId(props.id);
-  listMap.set(state, {id, onAction, linkBehavior, keyboardNavigationBehavior});
 
   let descriptionProps = useHighlightSelectionDescription({
     selectionManager: state.selectionManager,

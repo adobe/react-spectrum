@@ -274,7 +274,8 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     'aria-selected': itemStates.allowsSelection ? itemStates.isSelected : undefined,
     'aria-disabled': itemStates.isDisabled || undefined,
     'aria-labelledby': descriptionId && node.textValue ? `${getRowId(state, node.key)} ${descriptionId}` : undefined,
-    id: getRowId(state, node.key)
+    id: getRowId(state, node.key),
+    'data-key': getRowId(state, node.key)
   });
 
   if (isVirtualized) {
