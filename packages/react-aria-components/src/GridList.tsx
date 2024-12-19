@@ -18,8 +18,8 @@ import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, Slot
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
-import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
+import {filterDOMProps, useId, useObjectRef} from '@react-aria/utils';
+import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject, Selection} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
@@ -57,6 +57,11 @@ export interface GridListRenderProps {
 }
 
 export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<GridListRenderProps>, SlotProps, ScrollableProps<HTMLDivElement> {
+  /**
+   * Whether typeahead navigation is disabled.
+   * @default false
+   */
+  disallowTypeAhead?: boolean,
   /** How multiple selection should behave in the collection. */
   selectionBehavior?: SelectionBehavior,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the GridList. */
@@ -81,8 +86,10 @@ export const GridList = /*#__PURE__*/ (forwardRef as forwardRefType)(function Gr
   // Render the portal first so that we have the collection by the time we render the DOM in SSR.
   [props, ref] = useContextProps(props, ref, GridListContext);
 
+  props.id = useId(props.id);
+
   return (
-    <CollectionBuilder content={<Collection {...props} />}>
+    <CollectionBuilder content={<Collection {...props} idScope={props.id} />}>
       {collection => <GridListInner props={props} collection={collection} gridListRef={ref} />}
     </CollectionBuilder>
   );
@@ -97,38 +104,57 @@ interface GridListInnerProps<T extends object> {
 function GridListInner<T extends object>({props, collection, gridListRef: ref}: GridListInnerProps<T>) {
   let {dragAndDropHooks, keyboardNavigationBehavior = 'arrow', layout = 'stack'} = props;
   let {CollectionRoot, isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate} = useContext(CollectionRendererContext);
+
+  // Unscope the node keys for convenient access.
+  let disabledKeys = useMemo(() => !props.disabledKeys ? props.disabledKeys : [...props.disabledKeys].map(key => `${props.id}:${key}`), [props.disabledKeys, props.id]);
+  let selectedKeys = useMemo(() => !props.selectedKeys || props.selectedKeys === 'all' ? props.selectedKeys : [...props.selectedKeys].map(key => `${props.id}:${key}`), [props.selectedKeys, props.id]);
+  let defaultSelectedKeys = useMemo(() => !props.defaultSelectedKeys || props.defaultSelectedKeys === 'all' ? props.defaultSelectedKeys : [...props.defaultSelectedKeys].map(key => `${props.id}:${key}`), [props.defaultSelectedKeys, props.id]);
+  let onSelectionChange = useMemo(() => !props.onSelectionChange ? props.onSelectionChange : (keys: Selection) => {
+    props.onSelectionChange?.(new Set([...keys].map(key => typeof key === 'string' ? key.replace(`${props.id}:`, '') : key)));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.onSelectionChange, props.id]);
+  let onAction = useMemo(() => !props.onAction ? props.onAction : (key: Key) => {
+    props.onAction?.(typeof key === 'string' ? key.replace(`${props.id}:`, '') : key);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.onAction, props.id]);
+
   let state = useListState({
     ...props,
     collection,
+    selectedKeys,
+    disabledKeys,
+    onSelectionChange,
+    defaultSelectedKeys,
     children: undefined,
     layoutDelegate
   });
 
+  let selectionManager = state.selectionManager;
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let {disabledBehavior, disabledKeys} = state.selectionManager;
+  let {disabledBehavior} = selectionManager;
   let {direction} = useLocale();
   let keyboardDelegate = useMemo(() => (
     new ListKeyboardDelegate({
       collection,
       collator,
       ref,
-      disabledKeys,
+      disabledKeys: selectionManager.disabledKeys,
       disabledBehavior,
       layoutDelegate,
       layout,
       direction
     })
-  ), [collection, ref, layout, disabledKeys, disabledBehavior, layoutDelegate, collator, direction]);
+  ), [collection, ref, layout, selectionManager.disabledKeys, disabledBehavior, layoutDelegate, collator, direction]);
 
-  let {gridProps} = useGridList({
+  let {gridProps: {id, ...gridProps}} = useGridList({
     ...props,
+    onAction,
     keyboardDelegate,
     // Only tab navigation is supported in grid layout.
     keyboardNavigationBehavior: layout === 'grid' ? 'tab' : keyboardNavigationBehavior,
     isVirtualized
   }, state, ref);
 
-  let selectionManager = state.selectionManager;
   let isListDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
   let isListDroppable = !!dragAndDropHooks?.useDroppableCollectionState;
   let dragHooksProvided = useRef(isListDraggable);
@@ -212,13 +238,13 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
       </div>
     );
   }
-
+  
   return (
     <FocusScope>
       <div
         {...filterDOMProps(props)}
         {...renderProps}
-        {...mergeProps(gridProps, focusProps, droppableCollection?.collectionProps, emptyStatePropOverrides)}
+        {...mergeProps(gridProps, focusProps, droppableCollection?.collectionProps, emptyStatePropOverrides, {id})}
         ref={ref}
         slot={props.slot || undefined}
         onScroll={props.onScroll}
