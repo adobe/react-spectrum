@@ -5,11 +5,15 @@ import {
   MenuItem as AriaMenuItem,
   MenuProps as AriaMenuProps,
   MenuItemProps,
+  MenuSection as AriaMenuSection,
+  MenuSectionProps as AriaMenuSectionProps,
   Separator,
   SeparatorProps,
-  composeRenderProps
+  composeRenderProps,
+  Header,
+  Collection
 } from 'react-aria-components';
-import { DropdownSection, DropdownSectionProps, dropdownItemStyles } from './ListBox';
+import { dropdownItemStyles } from './ListBox';
 import { Popover, PopoverProps } from './Popover';
 
 interface MenuProps<T> extends AriaMenuProps<T> {
@@ -48,6 +52,18 @@ export function MenuSeparator(props: SeparatorProps) {
   return <Separator {...props} className="mx-3 my-1 border-b border-gray-300 dark:border-zinc-700" />
 }
 
-export function MenuSection<T extends object>(props: DropdownSectionProps<T>) {
-  return <DropdownSection {...props} />;
+export interface MenuSectionProps<T> extends AriaMenuSectionProps<T> {
+  title?: string
+  items?: any
+}
+
+export function MenuSection<T extends object>(props: MenuSectionProps<T>) {
+  return (
+    <AriaMenuSection className="first:-mt-[5px] after:content-[''] after:block after:h-[5px]">
+      <Header className="text-sm font-semibold text-gray-500 dark:text-zinc-300 px-4 py-1 truncate sticky -top-[5px] -mt-px -mx-1 z-10 bg-gray-100/60 dark:bg-zinc-700/60 backdrop-blur-md supports-[-moz-appearance:none]:bg-gray-100 border-y dark:border-y-zinc-700 [&+*]:mt-1">{props.title}</Header>
+      <Collection items={props.items}>
+        {props.children}
+      </Collection>
+    </AriaMenuSection>
+  )
 }
