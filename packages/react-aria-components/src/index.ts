@@ -21,6 +21,7 @@ export {Breadcrumbs, BreadcrumbsContext, Breadcrumb} from './Breadcrumbs';
 export {Button, ButtonContext} from './Button';
 export {Calendar, CalendarGrid, CalendarGridHeader, CalendarGridBody, CalendarHeaderCell, CalendarCell, RangeCalendar, CalendarContext, RangeCalendarContext, CalendarStateContext, RangeCalendarStateContext} from './Calendar';
 export {Checkbox, CheckboxGroup, CheckboxGroupContext, CheckboxGroupStateContext} from './Checkbox';
+export {CoachMark, CoachIndicator, Tour} from './CoachMark';
 export {ColorArea, ColorAreaStateContext} from './ColorArea';
 export {ColorField, ColorFieldStateContext} from './ColorField';
 export {ColorPicker, ColorPickerContext, ColorPickerStateContext} from './ColorPicker';
