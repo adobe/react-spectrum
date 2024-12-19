@@ -25,10 +25,11 @@ const meta: Meta<typeof Meter> = {
 
 export default meta;
 
-export const Example = (args: any) => <Meter {...args} />;
-
-Example.args = {
-  label: 'Storage space',
-  value: 80,
-  variant: 'informative'
+export const Example = {
+  render: (args: any) => <Meter {...args} />,
+  args: {
+    label: 'Storage space',
+    value: 80,
+    variant: 'informative'
+  }
 };

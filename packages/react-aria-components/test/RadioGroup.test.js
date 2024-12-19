@@ -453,6 +453,45 @@ describe('RadioGroup', () => {
     expect(group).not.toHaveAttribute('data-invalid');
   });
 
+  it('supports validation errors when last radio is disabled', async () => {
+    let {getByRole, getAllByRole, getByTestId} = render(
+      <form data-testid="form">
+        <RadioGroup isRequired>
+          <Label>Test</Label>
+          <Radio value="a">A</Radio>
+          <Radio value="b" isDisabled>B</Radio>
+          <FieldError />
+        </RadioGroup>
+      </form>
+    );
+
+    let group = getByRole('radiogroup');
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
+
+    let radios = getAllByRole('radio');
+    for (let input of radios) {
+      expect(input).toHaveAttribute('required');
+      expect(input).not.toHaveAttribute('aria-required');
+      expect(input.validity.valid).toBe(false);
+    }
+
+    act(() => {getByTestId('form').checkValidity();});
+
+    expect(group).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(group).toHaveAttribute('data-invalid');
+    expect(document.activeElement).toBe(radios[0]);
+
+    await user.click(radios[0]);
+    for (let input of radios) {
+      expect(input.validity.valid).toBe(true);
+    }
+
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
+  });
+
   it('should support focus events', async () => {
     let onBlur = jest.fn();
     let onFocus = jest.fn();

@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, fontRelative, linearGradient, style} from '../style' with {type: 'macro'};
 import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
-import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {centerPadding, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useEffect, useState} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {IconContext} from './Icon';
@@ -34,7 +34,7 @@ interface ButtonStyleProps {
    *
    * @default 'primary'
    */
-  variant?: 'primary' | 'secondary' | 'accent' | 'negative',
+  variant?: 'primary' | 'secondary' | 'accent' | 'negative' | 'premium' | 'genai',
   /**
    * The background style of the Button.
    *
@@ -48,7 +48,7 @@ interface ButtonStyleProps {
    */
   size?: 'S' | 'M' | 'L' | 'XL',
   /** The static color style to apply. Useful when the Button appears over a color background. */
-  staticColor?: 'white' | 'black'
+  staticColor?: 'white' | 'black' | 'auto'
 }
 
 export interface ButtonProps extends Omit<RACButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, StyleProps, ButtonStyleProps {
@@ -65,8 +65,9 @@ export const ButtonContext = createContext<ContextValue<ButtonProps, FocusableRe
 export const LinkButtonContext = createContext<ContextValue<ButtonProps, FocusableRefValue<HTMLAnchorElement>>>(null);
 
 const iconOnly = ':has([slot=icon]):not(:has([data-rsp-slot=text]))';
-const button = style<ButtonRenderProps & ButtonStyleProps>({
+const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: boolean}>({
   ...focusRing(),
+  ...staticColor(),
   position: 'relative',
   display: 'flex',
   alignItems: {
@@ -101,6 +102,10 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
     fillStyle: {
       fill: 0,
       outline: 2
+    },
+    variant: {
+      premium: 0,
+      genai: 0
     }
   },
   '--labelPadding': {
@@ -120,27 +125,37 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
       secondary: baseColor('gray-300')
     },
     isDisabled: 'disabled',
-    staticColor: {
-      white: {
-        variant: {
-          primary: baseColor('transparent-white-800'),
-          secondary: baseColor('transparent-white-300')
-        },
-        isDisabled: 'transparent-white-300'
+    isStaticColor: {
+      variant: {
+        primary: baseColor('transparent-overlay-800'),
+        secondary: baseColor('transparent-overlay-300')
       },
-      black: {
-        variant: {
-          primary: baseColor('transparent-black-800'),
-          secondary: baseColor('transparent-black-300')
-        },
-        isDisabled: 'transparent-black-300'
-      }
+      isDisabled: 'transparent-overlay-300'
     },
     forcedColors: {
       default: 'ButtonBorder',
       isHovered: 'Highlight',
       isDisabled: 'GrayText'
     }
+  },
+  backgroundImage: {
+    variant: {
+      premium: {
+        default: linearGradient('96deg', ['fuchsia-900', 0], ['indigo-900', 66], ['blue-900', 100]),
+        isHovered: linearGradient('96deg', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100]),
+        isPressed: linearGradient('96deg', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100]),
+        isFocusVisible: linearGradient('96deg', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100])
+      },
+      genai: {
+        default: linearGradient('96deg', ['red-900', 0], ['magenta-900', 33], ['indigo-900', 100]),
+        isHovered: linearGradient('96deg', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100]),
+        isPressed: linearGradient('96deg', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100]),
+        isFocusVisible: linearGradient('96deg', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100])
+      }
+    },
+    isDisabled: 'none',
+    isPending: 'none',
+    forcedColors: 'none'
   },
   backgroundColor: {
     fillStyle: {
@@ -149,11 +164,17 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
           primary: 'neutral',
           secondary: baseColor('gray-100'),
           accent: 'accent',
-          negative: 'negative'
+          negative: 'negative',
+          premium: 'gray-100',
+          genai: 'gray-100'
         },
         isDisabled: 'disabled'
       },
       outline: {
+        variant: {
+          premium: 'gray-100',
+          genai: 'gray-100'
+        },
         default: 'transparent',
         isHovered: 'gray-100',
         isPressed: 'gray-100',
@@ -161,41 +182,27 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
         isDisabled: 'transparent'
       }
     },
-    staticColor: {
-      white: {
-        fillStyle: {
-          fill: {
-            variant: {
-              primary: baseColor('transparent-white-800'),
-              secondary: baseColor('transparent-white-100')
-            },
-            isDisabled: 'transparent-white-100'
+    isStaticColor: {
+      fillStyle: {
+        fill: {
+          variant: {
+            primary: baseColor('transparent-overlay-800'),
+            secondary: baseColor('transparent-overlay-100'),
+            premium: 'gray-800',
+            genai: 'gray-800'
           },
-          outline: {
-            default: 'transparent',
-            isHovered: 'transparent-white-100',
-            isPressed: 'transparent-white-100',
-            isFocusVisible: 'transparent-white-100',
-            isDisabled: 'transparent'
-          }
-        }
-      },
-      black: {
-        fillStyle: {
-          fill: {
-            variant: {
-              primary: baseColor('transparent-black-800'),
-              secondary: baseColor('transparent-black-100')
-            },
-            isDisabled: 'transparent-black-100'
+          isDisabled: 'transparent-overlay-100'
+        },
+        outline: {
+          variant: {
+            premium: 'gray-800',
+            genai: 'gray-800'
           },
-          outline: {
-            default: 'transparent',
-            isHovered: 'transparent-black-100',
-            isPressed: 'transparent-black-100',
-            isFocusVisible: 'transparent-black-100',
-            isDisabled: 'transparent'
-          }
+          default: 'transparent',
+          isHovered: 'transparent-overlay-100',
+          isPressed: 'transparent-overlay-100',
+          isFocusVisible: 'transparent-overlay-100',
+          isDisabled: 'transparent'
         }
       }
     },
@@ -217,40 +224,40 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
           primary: 'gray-25',
           secondary: 'neutral',
           accent: 'white',
-          negative: 'white'
+          negative: 'white',
+          premium: 'white',
+          genai: 'white'
         },
         isDisabled: 'disabled'
       },
       outline: {
         default: 'neutral',
+        variant: {
+          premium: 'white',
+          genai: 'white'
+        },
         isDisabled: 'disabled'
       }
     },
-    staticColor: {
-      white: {
-        fillStyle: {
-          fill: {
-            variant: {
-              primary: 'black',
-              secondary: baseColor('transparent-white-800')
-            }
-          },
-          outline: baseColor('transparent-white-800')
+    isStaticColor: {
+      fillStyle: {
+        fill: {
+          variant: {
+            primary: 'auto',
+            secondary: baseColor('transparent-overlay-800'),
+            premium: 'white',
+            genai: 'white'
+          }
         },
-        isDisabled: 'transparent-white-400'
+        outline: {
+          variant: {
+            premium: 'white',
+            genai: 'white'
+          },
+          default: baseColor('transparent-overlay-800')
+        }
       },
-      black: {
-        fillStyle: {
-          fill: {
-            variant: {
-              primary: 'white',
-              secondary: baseColor('transparent-black-800')
-            }
-          },
-          outline: baseColor('transparent-black-800')
-        },
-        isDisabled: 'transparent-black-400'
-      }
+      isDisabled: 'transparent-overlay-400'
     },
     forcedColors: {
       fillStyle: {
@@ -271,10 +278,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
   },
   outlineColor: {
     default: 'focus-ring',
-    staticColor: {
-      white: 'white',
-      black: 'black'
-    },
+    isStaticColor: 'transparent-overlay-1000',
     forcedColors: 'Highlight'
   },
   forcedColorAdjust: 'none',
@@ -332,7 +336,8 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
         variant,
         fillStyle,
         size,
-        staticColor
+        staticColor,
+        isStaticColor: !!staticColor
       }, props.styles)}>
       <Provider
         values={[
@@ -419,6 +424,7 @@ export const LinkButton = forwardRef(function LinkButton(props: LinkButtonProps,
         fillStyle: props.fillStyle || 'fill',
         size: props.size || 'M',
         staticColor: props.staticColor,
+        isStaticColor: !!props.staticColor,
         isPending: false
       }, props.styles)}>
       <Provider

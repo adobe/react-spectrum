@@ -128,6 +128,7 @@
     "@react-aria/collections": "3.0.0-alpha.6",
     "@react-aria/i18n": "^3.12.4",
     "@react-aria/interactions": "^3.22.5",
+    "@react-aria/live-announcer": "^3.4.1",
     "@react-aria/utils": "^3.26.0",
     "@react-spectrum/utils": "^3.12.0",
     "@react-stately/layout": "^4.1.0",

@@ -11,8 +11,8 @@
  */
 
 import {ArbitraryValue, CSSValue, PropertyValueMap} from './types';
+import {autoStaticColor, colorScale, colorToken, fontSizeToken, generateOverlayColorScale, getToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
 import {Color, createArbitraryProperty, createColorProperty, createMappedProperty, createRenamedProperty, createSizingProperty, createTheme, parseArbitraryValue} from './style-macro';
-import {colorScale, colorToken, fontSizeToken, getToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
 import type * as CSS from 'csstype';
 
 interface MacroContext {
@@ -59,6 +59,7 @@ const color = {
 
   ...simpleColorScale('transparent-white'),
   ...simpleColorScale('transparent-black'),
+  ...generateOverlayColorScale(),
 
   // High contrast mode.
   Background: 'Background',
@@ -108,6 +109,10 @@ export function lightDark(light: SpectrumColor, dark: SpectrumColor): `[${string
 
 export function colorMix(a: SpectrumColor, b: SpectrumColor, percent: number): `[${string}]` {
   return `[color-mix(in srgb, ${parseColor(a)}, ${parseColor(b)} ${percent}%)]`;
+}
+
+export function linearGradient(angle: string, ...tokens: [SpectrumColor, number][]): string {
+  return `linear-gradient(${angle}, ${tokens.map(([color, stop]) => `${parseColor(color)} ${stop}%`)})`;
 }
 
 function generateSpacing<K extends number[]>(px: K): {[P in K[number]]: string} {
@@ -458,7 +463,8 @@ export const style = createTheme({
       title: colorToken('title-color'),
       body: colorToken('body-color'),
       detail: colorToken('detail-color'),
-      code: colorToken('code-color')
+      code: colorToken('code-color'),
+      auto: autoStaticColor('self(backgroundColor, var(--s2-container-bg))')
     }),
     backgroundColor: createColorProperty({
       ...color,

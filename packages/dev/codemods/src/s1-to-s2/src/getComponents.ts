@@ -8,7 +8,8 @@ import traverse from '@babel/traverse';
 const skipped = new Set([
   'Accordion',
   'Card',
-  'CardView'
+  'CardView',
+  'ActionBar'
 ]);
 
 export function getComponents(): Set<string> {

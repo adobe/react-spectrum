@@ -29,7 +29,6 @@ import {
   checkmark,
   description,
   icon,
-  iconCenterWrapper,
   label,
   menuitem,
   sectionHeader,
@@ -37,7 +36,7 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {edgeToText, focusRing, style} from '../style' with {type: 'macro'};
+import {edgeToText, focusRing, size, style} from '../style' with {type: 'macro'};
 import {fieldInput, StyleProps} from './style-utils' with {type: 'macro'};
 import {
   FieldLabel
@@ -86,7 +85,11 @@ export interface PickerProps<T extends object> extends
     /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
     menuWidth?: number,
     /** Density of the tabs, affects the height of the picker. */
-    density: 'compact' | 'regular'
+    density: 'compact' | 'regular',
+    /**
+     * If the tab picker should only display icon and no text for the button label.
+     */
+    isIconOnly?: boolean
 }
 
 export const PickerContext = createContext<ContextValue<Partial<PickerProps<any>>, FocusableRefValue<HTMLButtonElement>>>(null);
@@ -155,6 +158,14 @@ const iconStyles = style({
   }
 });
 
+const iconCenterWrapper = style({
+  display: 'flex',
+  gridArea: 'icon',
+  paddingStart: {
+    isIconOnly: size(6)
+  }
+});
+
 let InsideSelectValueContext = createContext(false);
 
 function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLButtonElement>) {
@@ -170,6 +181,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
     items,
     placeholder = stringFormatter.format('picker.placeholder'),
     density,
+    isIconOnly,
     ...pickerProps
   } = props;
   let isQuiet = true;
@@ -205,7 +217,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                       [IconContext, {
                         slots: {
                           icon: {
-                            render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
+                            render: centerBaseline({slot: 'icon', styles: iconCenterWrapper({isIconOnly})}),
                             styles: icon
                           }
                         }
@@ -214,10 +226,13 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                         slots: {
                           // Default slot is useful when converting other collections to PickerItems.
                           [DEFAULT_SLOT]: {styles: style({
-                            display: 'block',
+                            display: {
+                              default: 'block',
+                              isIconOnly: 'none'
+                            },
                             flexGrow: 1,
                             truncate: true
-                          })}
+                          })({isIconOnly})}
                         }
                       }],
                       [InsideSelectValueContext, true]
@@ -291,7 +306,7 @@ export function PickerItem(props: PickerItemProps) {
           <DefaultProvider
             context={IconContext}
             value={{slots: {
-              icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}), styles: icon}
+              icon: {render: centerBaseline({slot: 'icon', styles: iconCenterWrapper({})}), styles: icon}
             }}}>
             <DefaultProvider
               context={TextContext}

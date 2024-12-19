@@ -83,14 +83,7 @@ export const fieldLabel = () => ({
   color: {
     default: 'neutral-subdued',
     isDisabled: 'disabled',
-    staticColor: {
-      white: {
-        default: 'transparent-white-700'
-      },
-      black: {
-        default: 'transparent-black-900'
-      }
-    },
+    isStaticColor: 'transparent-overlay-1000',
     forcedColors: 'ButtonText'
   }
 } as const);
@@ -130,6 +123,20 @@ export const colorScheme = () => ({
     }
   }
 } as const);
+
+export function staticColor() {
+  return {
+    '--s2-container-bg': {
+      type: 'backgroundColor',
+      value: {
+        staticColor: {
+          black: 'white',
+          white: 'black'
+        }
+      }
+    }
+  } as const;
+}
 
 const allowedOverrides = [
   'margin',

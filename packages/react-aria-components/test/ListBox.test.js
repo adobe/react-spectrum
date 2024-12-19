@@ -1083,77 +1083,77 @@ describe('ListBox', () => {
     describe('keyboard', () => {
       it('should deselect item 0 when navigating back in replace selection mode', async () => {
         let {getAllByRole} = render(<FalsyExample />);
-  
+
         let items = getAllByRole('option');
-  
+
         await user.click(items[1]);
         expect(items[1]).toHaveAttribute('aria-selected', 'true');
-  
+
         // Hold Shift and press ArrowUp to select item 0
         await user.keyboard('{Shift>}{ArrowUp}{/Shift}');
-  
+
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
         expect(items[1]).toHaveAttribute('aria-selected', 'true');
         expect(items[2]).toHaveAttribute('aria-selected', 'false');
-  
+
         // Hold Shift and press ArrowDown to navigate back to item 1
         await user.keyboard('{Shift>}{ArrowDown}{/Shift}');
-  
+
         expect(items[0]).toHaveAttribute('aria-selected', 'false');
         expect(items[1]).toHaveAttribute('aria-selected', 'true');
         expect(items[2]).toHaveAttribute('aria-selected', 'false');
       });
-  
+
       it('should correctly handle starting selection at item 0 and extending to item 2', async () => {
         let {getAllByRole} = render(<FalsyExample />);
-  
+
         let items = getAllByRole('option');
-  
+
         await user.click(items[0]);
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
-  
+
         // Hold Shift and press ArrowDown to select item 1
         await user.keyboard('{Shift>}{ArrowDown}{/Shift}');
-  
+
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
         expect(items[1]).toHaveAttribute('aria-selected', 'true');
         expect(items[2]).toHaveAttribute('aria-selected', 'false');
-  
+
         // Hold Shift and press ArrowDown to select item 2
         await user.keyboard('{Shift>}{ArrowDown}{/Shift}');
-  
+
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
         expect(items[1]).toHaveAttribute('aria-selected', 'true');
         expect(items[2]).toHaveAttribute('aria-selected', 'true');
       });
     });
-  
+
     describe('mouse', () => {
       it('should deselect item 0 when clicking another item in replace selection mode', async () => {
         let {getAllByRole} = render(<FalsyExample />);
-  
+
         let items = getAllByRole('option');
-  
+
         await user.click(items[1]);
         expect(items[1]).toHaveAttribute('aria-selected', 'true');
-  
+
         await user.click(items[0]);
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
         expect(items[1]).toHaveAttribute('aria-selected', 'false');
-  
+
         await user.click(items[1]);
         expect(items[1]).toHaveAttribute('aria-selected', 'true');
         expect(items[0]).toHaveAttribute('aria-selected', 'false');
       });
-  
+
       it('should correctly handle mouse selection starting at item 0 and extending to item 2', async () => {
         let {getAllByRole} = render(<FalsyExample />);
-  
+
         let items = getAllByRole('option');
-  
+
         await user.click(items[0]);
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
-  
+
         await user.click(items[2]);
         expect(items[0]).toHaveAttribute('aria-selected', 'false');
         expect(items[2]).toHaveAttribute('aria-selected', 'true');

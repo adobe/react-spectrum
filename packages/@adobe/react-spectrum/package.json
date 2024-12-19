@@ -1,6 +1,6 @@
 {
   "name": "@adobe/react-spectrum",
-  "version": "3.38.0",
+  "version": "3.38.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -42,7 +42,7 @@
     "@react-aria/ssr": "^3.9.7",
     "@react-aria/utils": "^3.26.0",
     "@react-aria/visually-hidden": "^3.8.18",
-    "@react-spectrum/accordion": "^3.0.0",
+    "@react-spectrum/accordion": "^3.0.1",
     "@react-spectrum/actionbar": "^3.6.2",
     "@react-spectrum/actiongroup": "^3.10.10",
     "@react-spectrum/avatar": "^3.0.17",
