@@ -236,7 +236,8 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
     submenuProps,
     popoverProps: {
       isNonModal: true,
-      disableFocusManagement: true,
+      // TODO: does this break anything in RSP implementation?
+      disableFocusManagement: type === 'menu',
       shouldCloseOnInteractOutside
     }
   };

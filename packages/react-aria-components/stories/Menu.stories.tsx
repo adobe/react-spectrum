@@ -286,7 +286,7 @@ export const SubdialogExample = (args) => (
     <Popover>
       <Menu className={styles.menu} onAction={action('onAction')}>
         <MyMenuItem id="Foo">Foo</MyMenuItem>
-        <SubmenuTrigger {...args}>
+        <SubdialogTrigger {...args}>
           <MyMenuItem id="Bar">Bar</MyMenuItem>
           <Popover
             style={{
@@ -310,7 +310,7 @@ export const SubdialogExample = (args) => (
               </form>
             </Dialog>
           </Popover>
-        </SubmenuTrigger>
+        </SubdialogTrigger>
         <MyMenuItem id="Baz">Baz</MyMenuItem>
         <MyMenuItem id="Google" href="https://google.com">Google</MyMenuItem>
       </Menu>

@@ -175,7 +175,7 @@ export const SubdialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogt
   let submenuTriggerState = useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
   let subdialogRef = useRef<HTMLDivElement>(null);
   let itemRef = useObjectRef(ref);
-  // TODO: We will probably support nested sub
+  // TODO: We will probably support nested subdialogs
   let {parentMenuRef} = useContext(SubmenuTriggerContext)!;
   let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger({
     parentMenuRef,
@@ -199,14 +199,11 @@ export const SubdialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogt
   //   parentMenuRef.current?.focus();
   // };
 
-  // TODO: will need to add FocusScope wrapping the children of the Popover somehow I think
-  // this is in order to have contain and restoreFocus
-
   return (
     <Provider
       values={[
         [MenuItemContext, {...submenuTriggerProps, onAction: undefined, ref: itemRef}],
-        // TODO make this dialog context? Or do we neeed submenuProps? Assume user is passing Dialog?s
+        // TODO make this dialog context? Or do we neeed submenuProps? Assume user is passing Dialogs?
         [MenuContext, submenuProps],
         [OverlayTriggerStateContext, submenuTriggerState],
         [PopoverContext, {
@@ -222,6 +219,7 @@ export const SubdialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogt
         }]
       ]}>
       <CollectionBranch collection={state.collection} parent={item} />
+      {/* TODO: perhaps this should render a container or sorts? */}
       {props.children[1]}
     </Provider>
   );
