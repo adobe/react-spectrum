@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaAutocompleteProps, CollectionOptions, useAutocomplete} from '@react-aria/autocomplete';
-import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomplete';
+import {AriaAutocompleteProps, CollectionOptions, UNSTABLE_useAutocomplete} from '@react-aria/autocomplete';
+import {AutocompleteState, UNSTABLE_useAutocompleteState} from '@react-stately/autocomplete';
 import {ContextValue, Provider, removeDataAttributes, SlotProps, useContextProps} from './utils';
 import {InputContext} from './Input';
 import React, {createContext, ForwardedRef, forwardRef, RefObject, useRef} from 'react';
@@ -19,25 +19,24 @@ import React, {createContext, ForwardedRef, forwardRef, RefObject, useRef} from 
 export interface AutocompleteProps extends AriaAutocompleteProps, SlotProps {}
 
 interface InternalAutocompleteContextValue {
-  filterFn: (nodeTextValue: string) => boolean,
+  filterFn?: (nodeTextValue: string) => boolean,
   collectionProps: CollectionOptions,
   collectionRef: RefObject<HTMLElement | null>
 }
 
-export const AutocompleteContext = createContext<ContextValue<AutocompleteProps, HTMLInputElement>>(null);
-export const AutocompleteStateContext = createContext<AutocompleteState | null>(null);
+export const UNSTABLE_AutocompleteContext = createContext<ContextValue<AutocompleteProps, HTMLInputElement>>(null);
+export const UNSTABLE_AutocompleteStateContext = createContext<AutocompleteState | null>(null);
 // This context is to pass the register and filter down to whatever collection component is wrapped by the Autocomplete
-export const InternalAutocompleteContext = createContext<InternalAutocompleteContextValue | null>(null);
+// TODO: export from RAC, but rename to something more appropriate
+export const UNSTABLE_InternalAutocompleteContext = createContext<InternalAutocompleteContextValue | null>(null);
 
 /**
  * A autocomplete combines a text input with a menu, allowing users to filter a list of options to items matching a query.
  */
-
-
-export const Autocomplete = forwardRef(function Autocomplete(props: AutocompleteProps, ref: ForwardedRef<HTMLInputElement>) {
-  [props, ref] = useContextProps(props, ref, AutocompleteContext);
-  let {defaultFilter} = props;
-  let state = useAutocompleteState(props);
+export const UNSTABLE_Autocomplete = forwardRef(function Autocomplete(props: AutocompleteProps, ref: ForwardedRef<HTMLInputElement>) {
+  [props, ref] = useContextProps(props, ref, UNSTABLE_AutocompleteContext);
+  let {filter} = props;
+  let state = UNSTABLE_useAutocompleteState(props);
   let collectionRef = useRef<HTMLElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
 
@@ -46,9 +45,9 @@ export const Autocomplete = forwardRef(function Autocomplete(props: Autocomplete
     collectionProps,
     collectionRef: mergedCollectionRef,
     filterFn
-  } = useAutocomplete({
+  } = UNSTABLE_useAutocomplete({
     ...removeDataAttributes(props),
-    defaultFilter,
+    filter,
     collectionRef,
     inputRef
   }, state);
@@ -56,9 +55,9 @@ export const Autocomplete = forwardRef(function Autocomplete(props: Autocomplete
   return (
     <Provider
       values={[
-        [AutocompleteStateContext, state],
+        [UNSTABLE_AutocompleteStateContext, state],
         [InputContext, {...inputProps, ref: inputRef}],
-        [InternalAutocompleteContext, {
+        [UNSTABLE_InternalAutocompleteContext, {
           filterFn,
           collectionProps,
           collectionRef: mergedCollectionRef

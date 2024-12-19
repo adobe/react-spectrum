@@ -11,9 +11,11 @@
  */
 
 import {AriaAutocompleteTests} from './AriaAutocomplete.test-util';
-import {Autocomplete, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, SearchField, Separator, Text} from '..';
+import {Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, SearchField, Separator, Text, UNSTABLE_Autocomplete} from '..';
 import React, {ReactNode} from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
+import {useAsyncList} from 'react-stately';
+import {useFilter} from '@react-aria/i18n';
 
 interface AutocompleteItem {
   id: string,
@@ -98,29 +100,77 @@ let ListBoxWithSections = (props) => (
   </ListBox>
 );
 
-let AutocompleteWrapper = ({autocompleteProps = {}, inputProps = {}, children}: {autocompleteProps?: any, inputProps?: any, collectionProps?: any, children?: ReactNode}) => (
-  <Autocomplete {...autocompleteProps}>
-    <SearchField {...inputProps}>
-      <Label style={{display: 'block'}}>Test</Label>
-      <Input />
-      <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
-    </SearchField>
-    {children}
-  </Autocomplete>
-);
-
-let ControlledAutocomplete = ({autocompleteProps = {}, inputProps = {}, children}: {autocompleteProps?: any, inputProps?: any, collectionProps?: any, children?: ReactNode}) => {
-  let [inputValue, setInputValue] = React.useState('');
+let AutocompleteWrapper = ({autocompleteProps = {}, inputProps = {}, children}: {autocompleteProps?: any, inputProps?: any, children?: ReactNode}) => {
+  let {contains} = useFilter({sensitivity: 'base'});
+  let filter = (textValue, inputValue) => contains(textValue, inputValue);
 
   return (
-    <Autocomplete inputValue={inputValue} onInputChange={setInputValue} {...autocompleteProps}>
+    <UNSTABLE_Autocomplete filter={filter} {...autocompleteProps}>
       <SearchField {...inputProps}>
         <Label style={{display: 'block'}}>Test</Label>
         <Input />
         <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
       </SearchField>
       {children}
-    </Autocomplete>
+    </UNSTABLE_Autocomplete>
+  );
+};
+
+let ControlledAutocomplete = ({autocompleteProps = {}, inputProps = {}, children}: {autocompleteProps?: any, inputProps?: any, children?: ReactNode}) => {
+  let [inputValue, setInputValue] = React.useState('');
+  let {contains} = useFilter({sensitivity: 'base'});
+  let filter = (textValue, inputValue) => contains(textValue, inputValue);
+
+  return (
+    <UNSTABLE_Autocomplete inputValue={inputValue} onInputChange={setInputValue} filter={filter} {...autocompleteProps}>
+      <SearchField {...inputProps}>
+        <Label style={{display: 'block'}}>Test</Label>
+        <Input />
+        <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+      </SearchField>
+      {children}
+    </UNSTABLE_Autocomplete>
+  );
+};
+
+let AsyncFiltering = ({autocompleteProps = {}, inputProps = {}}: {autocompleteProps?: any, inputProps?: any, children?: ReactNode}) => {
+  let list = useAsyncList<AutocompleteItem>({
+    async load({filterText}) {
+      let json = await new Promise(resolve => {
+        setTimeout(() => {
+          resolve(filterText ? items.filter(item => {
+            let name = item.name.toLowerCase();
+            for (let filterChar of filterText.toLowerCase()) {
+              if (!name.includes(filterChar)) {
+                return false;
+              }
+              name = name.replace(filterChar, '');
+            }
+            return true;
+          }) : items);
+        }, 300);
+      }) as AutocompleteItem[];
+
+      return {
+        items: json
+      };
+    }
+  });
+
+  return (
+    <UNSTABLE_Autocomplete inputValue={list.filterText} onInputChange={list.setFilterText} {...autocompleteProps}>
+      <SearchField {...inputProps}>
+        <Label style={{display: 'block'}}>Test</Label>
+        <Input />
+        <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+      </SearchField>
+      <Menu
+        items={list.items}
+        onAction={onAction}
+        onSelectionChange={onSelectionChange}>
+        {item => <MenuItem id={item.id}>{item.name}</MenuItem>}
+      </Menu>
+    </UNSTABLE_Autocomplete>
   );
 };
 
@@ -166,11 +216,6 @@ AriaAutocompleteTests({
       <AutocompleteWrapper autocompleteProps={{defaultInputValue: 'Ba'}}>
         <StaticMenu />
       </AutocompleteWrapper>
-    ),
-    customFiltering: () => render(
-      <AutocompleteWrapper autocompleteProps={{defaultFilter: () => true}}>
-        <StaticMenu />
-      </AutocompleteWrapper>
     )
   },
   actionListener: onAction,
@@ -184,6 +229,9 @@ AriaAutocompleteTests({
       <AutocompleteWrapper>
         <DynamicMenu />
       </AutocompleteWrapper>
+    ),
+    asyncFiltering: () => render(
+      <AsyncFiltering />
     )
   }
 });
@@ -223,11 +271,6 @@ AriaAutocompleteTests({
     ),
     defaultValue: () => render(
       <AutocompleteWrapper autocompleteProps={{defaultInputValue: 'Ba'}}>
-        <StaticListbox />
-      </AutocompleteWrapper>
-    ),
-    customFiltering: () => render(
-      <AutocompleteWrapper autocompleteProps={{defaultFilter: () => true}}>
         <StaticListbox />
       </AutocompleteWrapper>
     )
