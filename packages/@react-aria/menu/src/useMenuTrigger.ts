@@ -12,9 +12,9 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaMenuOptions} from './useMenu';
-// @ts-ignore
 import {FocusableElement, RefObject} from '@react-types/shared';
 import {focusWithoutScrolling, useId} from '@react-aria/utils';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {MenuTriggerState} from '@react-stately/menu';
 import {MenuTriggerType} from '@react-types/menu';
