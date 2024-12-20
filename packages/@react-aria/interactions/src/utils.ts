@@ -132,6 +132,11 @@ export function useSyntheticBlurEvent<Target = Element>(onBlur: (e: ReactFocusEv
 
 export let ignoreFocusEvent = false;
 
+/**
+ * This function prevents the next focus event fired on `target`, without using `event.preventDefault()`.
+ * It works by waiting for the series of focus events to occur, and reverts focus back to where it was before.
+ * It also makes these events mostly non-observable by using a capturing listener on the window and stopping propagation.
+ */
 export function preventFocus(target: FocusableElement | null) {
   // The browser will focus the nearest focusable ancestor of our target.
   while (target && !isFocusable(target)) {

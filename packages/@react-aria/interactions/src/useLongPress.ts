@@ -82,7 +82,7 @@ export function useLongPress(props: LongPressProps): LongPressResult {
           // Prevent other usePress handlers from also handling this event.
           e.target.dispatchEvent(new PointerEvent('pointercancel', {bubbles: true}));
 
-          // Ensure target is focused. On touch devices, browsers typicaly focus on pointer up.
+          // Ensure target is focused. On touch devices, browsers typically focus on pointer up.
           if (getOwnerDocument(e.target).activeElement !== e.target) {
             focusWithoutScrolling(e.target as FocusableElement);
           }

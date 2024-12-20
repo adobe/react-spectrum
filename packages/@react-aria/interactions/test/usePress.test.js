@@ -68,18 +68,19 @@ describe('usePress', function () {
 
       let el = res.getByText('test');
       fireEvent(el, pointerEvent('pointerover', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+
       let shouldFireMouseEvents = fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
-      if (shouldFireMouseEvents) {
-        let shouldFocus = fireEvent.mouseDown(el);
-        if (shouldFocus) {
-          act(() => el.focus());
-        }
-      }
+      expect(shouldFireMouseEvents).toBe(true);
+
+      let shouldFocus = fireEvent.mouseDown(el);
+      expect(shouldFocus).toBe(true);
+      act(() => el.focus());
+
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
-      if (shouldFireMouseEvents) {
-        fireEvent.mouseUp(el);
-      }
-      fireEvent.click(el);
+      fireEvent.mouseUp(el);
+
+      let shouldClick = fireEvent.click(el);
+      expect(shouldClick).toBe(true);
       fireEvent(el, pointerEvent('pointerout', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
 
       // How else to get the DOM node it renders the hook to?
@@ -156,23 +157,24 @@ describe('usePress', function () {
       // mousedown and focus is delayed until after pointerup.
       let el = res.getByText('test');
       fireEvent(el, pointerEvent('pointerover', {pointerId: 1, pointerType: 'touch', clientX: 0, clientY: 0}));
+
       let shouldFireCompatibilityEvents = fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch', clientX: 0, clientY: 0}));
+      expect(shouldFireCompatibilityEvents).toBe(true);
+
       let shouldFocus = true;
-      if (shouldFireCompatibilityEvents) {
-        shouldFocus = shouldFireCompatibilityEvents = fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
-      }
+      shouldFocus = shouldFireCompatibilityEvents = fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
+      expect(shouldFireCompatibilityEvents).toBe(true);
+      expect(shouldFocus).toBe(true);
+
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
       fireEvent(el, pointerEvent('pointerout', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
-      if (shouldFireCompatibilityEvents) {
-        shouldFocus = fireEvent.touchEnd(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
-        shouldFocus = fireEvent.mouseDown(el);
-      }
-      if (shouldFocus) {
-        act(() => el.focus());
-      }
-      if (shouldFireCompatibilityEvents) {
-        fireEvent.mouseUp(el);
-      }
+
+      shouldFocus = fireEvent.touchEnd(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
+      shouldFocus = fireEvent.mouseDown(el);
+      expect(shouldFocus).toBe(true);
+      act(() => el.focus());
+
+      fireEvent.mouseUp(el);
       fireEvent.click(el);
 
       expect(events).toEqual([
@@ -245,15 +247,19 @@ describe('usePress', function () {
 
       let el = res.getByText('test');
       fireEvent(el, pointerEvent('pointerover', {pointerId: 1, pointerType: 'touch', clientX: 0, clientY: 0}));
+
       let shouldFireCompatibilityEvents = fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch', clientX: 0, clientY: 0}));
-      if (shouldFireCompatibilityEvents) {
-        shouldFireCompatibilityEvents = fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
-      }
+      expect(shouldFireCompatibilityEvents).toBe(true);
+
+      shouldFireCompatibilityEvents = fireEvent.touchStart(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
+      expect(shouldFireCompatibilityEvents).toBe(true);
+
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
       fireEvent(el, pointerEvent('pointerout', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
-      if (shouldFireCompatibilityEvents) {
-        fireEvent.touchEnd(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
-      }
+
+      let shouldFocus = fireEvent.touchEnd(el, {targetTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
+      expect(shouldFocus).toBe(true);
+
       // Mouse events are not fired in this case, and the browser does not focus the element.
       act(() => jest.advanceTimersByTime(10));
       expect(document.activeElement).toBe(el);
@@ -725,58 +731,6 @@ describe('usePress', function () {
       expect(document.activeElement).not.toBe(el);
     });
 
-    it.skip('should focus the target on click by default', function () {
-      let res = render(
-        <Example />
-      );
-
-      let el = res.getByText('test');
-      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
-      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
-      expect(document.activeElement).toBe(el);
-    });
-
-    it.skip('should prevent default on pointerdown and mousedown by default', function () {
-      let res = render(
-        <Example />
-      );
-
-      let el = res.getByText('test');
-      let allowDefault = fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
-      expect(allowDefault).toBe(false);
-
-      allowDefault = fireEvent.mouseDown(el);
-      expect(allowDefault).toBe(false);
-    });
-
-    it.skip('should still prevent default when pressing on a non draggable + pressable item in a draggable container', function () {
-      let res = render(
-        <div draggable="true">
-          <Example />
-        </div>
-      );
-
-      let el = res.getByText('test');
-      let allowDefault = fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
-      expect(allowDefault).toBe(false);
-
-      allowDefault = fireEvent.mouseDown(el);
-      expect(allowDefault).toBe(false);
-    });
-
-    it.skip('should not prevent default when pressing on a draggable item', function () {
-      let res = render(
-        <Example draggable="true" />
-      );
-
-      let el = res.getByText('test');
-      let allowDefault = fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
-      expect(allowDefault).toBe(true);
-
-      allowDefault = fireEvent.mouseDown(el);
-      expect(allowDefault).toBe(true);
-    });
-
     it('should ignore virtual pointer events', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
@@ -1024,61 +978,6 @@ describe('usePress', function () {
       fireEvent.click(el);
       expect(el).not.toHaveStyle('user-select: none');
     });
-
-    it.skip('should preventDefault on touchend to prevent click events on the wrong element', function () {
-      let res = render(<Example />);
-
-      let el = res.getByText('test');
-      el.ontouchend = () => {}; // So that 'ontouchend' in target works
-      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch'}));
-      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'touch'}));
-      let browserDefault = fireEvent.touchEnd(el);
-      expect(browserDefault).toBe(false);
-    });
-
-    it('should not preventDefault on touchend when element is a submit button', function () {
-      let res = render(<Example elementType="button" type="submit" />);
-
-      let el = res.getByText('test');
-      el.ontouchend = () => {}; // So that 'ontouchend' in target works
-      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch'}));
-      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'touch'}));
-      let browserDefault = fireEvent.touchEnd(el);
-      expect(browserDefault).toBe(true);
-    });
-
-    it('should not preventDefault on touchend when element is an <input type="submit">', function () {
-      let res = render(<Example elementType="input" type="submit" />);
-
-      let el = res.getByRole('button');
-      el.ontouchend = () => {}; // So that 'ontouchend' in target works
-      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch'}));
-      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'touch'}));
-      let browserDefault = fireEvent.touchEnd(el);
-      expect(browserDefault).toBe(true);
-    });
-
-    it('should not preventDefault on touchend when element is an <input type="checkbox">', function () {
-      let res = render(<Example elementType="input" type="checkbox" />);
-
-      let el = res.getByRole('checkbox');
-      el.ontouchend = () => {}; // So that 'ontouchend' in target works
-      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch'}));
-      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'touch'}));
-      let browserDefault = fireEvent.touchEnd(el);
-      expect(browserDefault).toBe(true);
-    });
-
-    it('should not preventDefault on touchend when element is a link', function () {
-      let res = render(<Example elementType="a" href="http://google.com" />);
-
-      let el = res.getByText('test');
-      el.ontouchend = () => {}; // So that 'ontouchend' in target works
-      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch'}));
-      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'touch'}));
-      let browserDefault = fireEvent.touchEnd(el);
-      expect(browserDefault).toBe(true);
-    });
   });
 
   describe('mouse events', function () {
@@ -1095,9 +994,12 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent.mouseDown(el, {detail: 1});
+      let shouldFocus = fireEvent.mouseDown(el, {detail: 1});
+      expect(shouldFocus).toBe(true);
+      act(() => el.focus());
       fireEvent.mouseUp(el, {detail: 1});
-      fireEvent.click(el, {detail: 1});
+      let shouldClick = fireEvent.click(el, {detail: 1});
+      expect(shouldClick).toBe(true);
 
       expect(events).toEqual([
         {
@@ -1471,39 +1373,6 @@ describe('usePress', function () {
       fireEvent.click(el);
 
       expect(document.activeElement).toBe(el);
-    });
-
-    it.skip('should prevent default on mousedown by default', function () {
-      let res = render(
-        <Example />
-      );
-
-      let el = res.getByText('test');
-      let allowDefault = fireEvent.mouseDown(el);
-      expect(allowDefault).toBe(false);
-    });
-
-    it.skip('should still prevent default when pressing on a non draggable + pressable item in a draggable container', function () {
-      let res = render(
-        <div draggable="true">
-          <Example />
-        </div>
-      );
-
-      let el = res.getByText('test');
-      let allowDefault = fireEvent.mouseDown(el);
-      expect(allowDefault).toBe(false);
-    });
-
-
-    it.skip('should not prevent default when pressing on a draggable item', function () {
-      let res = render(
-        <Example draggable="true" />
-      );
-
-      let el = res.getByText('test');
-      let allowDefault = fireEvent.mouseDown(el);
-      expect(allowDefault).toBe(true);
     });
 
     it('should cancel press on dragstart', function () {
