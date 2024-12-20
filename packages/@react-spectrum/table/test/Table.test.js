@@ -3193,22 +3193,21 @@ export let tableTests = () => {
         });
       });
 
-      it('should support Enter to perform onAction with keyboard', function () {
+      it('should support Enter to perform onAction with keyboard', async function () {
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
         let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
 
-        fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: ' '});
-        fireEvent.keyUp(getCell(tree, 'Baz 10'), {key: ' '});
+        act(() => getCell(tree, 'Baz 10').focus());
+        await user.keyboard(' ');
         checkSelection(onSelectionChange, ['Foo 10']);
-        // screen reader automatically handles this one
-        expect(announce).not.toHaveBeenCalled();
+        expect(announce).toHaveBeenCalledWith('Foo 10 selected.');
         expect(onAction).not.toHaveBeenCalled();
 
         announce.mockReset();
         onSelectionChange.mockReset();
-        fireEvent.keyDown(getCell(tree, 'Baz 5'), {key: 'Enter'});
-        fireEvent.keyUp(getCell(tree, 'Baz 5'), {key: 'Enter'});
+        act(() => getCell(tree, 'Baz 5').focus());
+        await user.keyboard('{Enter}');
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(announce).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(1);

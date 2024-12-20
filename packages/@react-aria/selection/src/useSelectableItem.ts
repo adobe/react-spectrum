@@ -293,10 +293,6 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
           (e.pointerType === 'keyboard' && (!allowsActions || isSelectionKey()))
         )
       ) {
-        if (e.pointerType === 'mouse') {
-          focusSafely(e.target as FocusableElement);
-        }
-  
         onSelect(e);
       }
     };
