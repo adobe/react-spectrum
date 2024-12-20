@@ -118,10 +118,21 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
     }
   };
 
+  let subDialogKeyDown = (e: KeyboardEvent) => {
+    switch (e.key) {
+      case 'Escape':
+        e.stopPropagation();
+        onSubmenuClose();
+        ref.current?.focus();
+        break;
+    }
+  };
+
   let submenuProps = {
     id: overlayId,
     'aria-labelledby': submenuTriggerId,
     submenuLevel: state.submenuLevel,
+    onKeyDown: type === 'dialog' ? subDialogKeyDown : undefined,
     ...(type === 'menu' && {
       onClose: state.closeAll,
       autoFocus: state.focusStrategy ?? undefined,
