@@ -348,6 +348,11 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
         date = date.subtract({days: diff});
       } else {
         date = startOfWeek(date, locale);
+
+        let dayOfWeek = getDayOfWeek(date, locale);
+        for (let i = 0; i < dayOfWeek; i++) {
+          dates.push(null);
+        }
       }
 
       while (dates.length < 7) {
