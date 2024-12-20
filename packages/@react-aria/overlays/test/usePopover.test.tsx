@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {type AriaPopoverProps, usePopover} from '../';
 import {fireEvent, render} from '@react-spectrum/test-utils-internal';
 import React, {useRef} from 'react';
 import {useOverlayTriggerState} from '@react-stately/overlays';
+import {usePopover} from '../';
 
-function Example({isNonModal}: Pick<AriaPopoverProps, 'isNonModal'>) {
+function Example() {
   const triggerRef = useRef(null);
   const popoverRef = useRef(null);
   const state = useOverlayTriggerState({isOpen: true});
-  const {popoverProps} = usePopover({triggerRef, popoverRef, isNonModal}, state);
+  const {popoverProps} = usePopover({triggerRef, popoverRef}, state);
 
   return (
     <div>
