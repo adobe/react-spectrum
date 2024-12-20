@@ -759,7 +759,7 @@ describe('CalendarBase', () => {
       );
 
       let grid = getByRole('grid');
-      let selected = getAllByRole('button').find(cell => cell.getAttribute('tabIndex') === '0');
+      let selected = getAllByRole('button').find(cell => cell.tagName === 'SPAN' && cell.getAttribute('tabIndex') === '0');
       expect(document.activeElement).toBe(selected);
 
       await user.keyboard('{ArrowLeft}');
@@ -779,7 +779,7 @@ describe('CalendarBase', () => {
       fireEvent.blur(grid);
       fireEvent.focus(grid);
 
-      selected = getAllByRole('button').find(cell => cell.getAttribute('tabIndex') === '0');
+      selected = getAllByRole('button').find(cell => cell.tagName === 'SPAN' && cell.getAttribute('tabIndex') === '0');
       expect(document.activeElement).toBe(selected);
 
       await user.keyboard('{ArrowLeft}');
