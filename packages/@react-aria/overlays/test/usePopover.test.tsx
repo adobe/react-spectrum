@@ -29,7 +29,7 @@ function Example() {
   );
 }
 
-describe('usePopover', function () {
+describe('usePopover', () => {
   it('should not add scroll listener', async () => {
     const spy = jest.spyOn(window, 'addEventListener');
     render(<Example />);
