@@ -2891,17 +2891,6 @@ describe('usePress', function () {
     expect(document.activeElement).not.toBe(el);
   });
 
-  it('should focus the target on virtual click by default', function () {
-    let {getByText} = render(
-      <Example />
-    );
-
-    let el = getByText('test');
-    fireEvent.click(el);
-
-    expect(document.activeElement).toBe(el);
-  });
-
   describe('disable text-selection when pressed', function () {
     let handler = jest.fn();
     let mockUserSelect = 'contain';
