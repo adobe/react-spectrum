@@ -188,3 +188,49 @@ export function ClickOutsideIssue() {
   );
 }
 
+export function SoftwareKeyboardIssue() {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '12px',
+        padding: '12px',
+        maxWidth: '256px',
+        height: '100vh'
+      }}>
+      <p>Focus the input to show the software keyboard, then press the buttons below.</p>
+      <input type="text" style={{fontSize: 16}} />
+
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+          marginTop: 'auto'
+        }}>
+        {/* eslint-disable-next-line */}
+        <a
+          onClick={() => {
+            alert('I told you not to click me');
+          }}
+          style={{fontSize: '64px'}}>
+          Don't click me
+        </a>
+
+        <div style={{display: 'flex', gap: '8px', marginTop: '110px'}}>
+          <Button
+            style={{height: '36px'}}
+            onPress={() => alert('Hello world, Aria!')}>
+            Aria press me
+          </Button>
+          <button
+            style={{height: '36px'}}
+            onClick={() => alert('Hello world, native!')}>
+            native press me
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
