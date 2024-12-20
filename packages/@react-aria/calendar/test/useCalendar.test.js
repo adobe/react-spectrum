@@ -245,7 +245,7 @@ describe('useCalendar', () => {
     Name | defaultValue | firstDayOfWeek | expectedFirstDay | locale
     ${'default'} | ${new CalendarDate(2024, 1, 1)} | ${undefined} | ${'Sunday, December 31, 2023'} | ${'en-US'}
     ${'Sunday'} | ${new CalendarDate(2024, 1, 1)} | ${'sun'} | ${'Sunday, December 31, 2023'} | ${'en-US'}
-    ${'Monday'} | ${new CalendarDate(2024, 1, 1)} | ${'mon'} | ${'January 1, 2024'} | ${'en-US'}
+    ${'Monday'} | ${new CalendarDate(2024, 1, 1)} | ${'mon'} | ${'Monday, January 1, 2024 selected'} | ${'en-US'}
     ${'Tuesday'} | ${new CalendarDate(2024, 1, 1)} | ${'tue'} | ${'Tuesday, December 26, 2023'} | ${'en-US'}
     ${'Wednesday'} | ${new CalendarDate(2024, 1, 1)} | ${'wed'} | ${'Wednesday, December 27, 2023'} | ${'en-US'}
     ${'Thursday'} | ${new CalendarDate(2024, 1, 1)} | ${'thu'} | ${'Thursday, December 28, 2023'} | ${'en-US'}
