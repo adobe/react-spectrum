@@ -21,6 +21,7 @@ import {DOMAttributes, FocusableElement, PressEvent as IPressEvent, PointerType,
 import {PressResponderContext} from './context';
 import {TouchEvent as RTouchEvent, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import { preventFocus } from './utils';
+import { flushSync } from 'react-dom';
 
 export interface PressProps extends PressEvents {
   /** Whether the target is in a controlled press state (e.g. an overlay it triggers is open). */
@@ -474,8 +475,8 @@ export function usePress(props: PressHookProps): PressResult {
           //   e.preventDefault();
           // }
 
-          if (preventFocusOnPress && state.target) {
-            let dispose = preventFocus(state.target);
+          if (preventFocusOnPress) {
+            let dispose = preventFocus(e.target as FocusableElement);
             if (dispose) {
               state.disposables.push(dispose);
             }
@@ -587,9 +588,9 @@ export function usePress(props: PressHookProps): PressResult {
 
         // Due to browser inconsistencies, especially on mobile browsers, we prevent
         // default on mouse down and handle focusing the pressable element ourselves.
-        if (shouldPreventDefaultDown(e.currentTarget)) {
-          e.preventDefault();
-        }
+        // if (shouldPreventDefaultDown(e.currentTarget)) {
+        //   e.preventDefault();
+        // }
 
         if (state.ignoreEmulatedMouseEvents) {
           e.stopPropagation();
@@ -601,13 +602,21 @@ export function usePress(props: PressHookProps): PressResult {
         state.target = e.currentTarget;
         state.pointerType = isVirtualClick(e.nativeEvent) ? 'virtual' : 'mouse';
 
-        if (!isDisabled && !preventFocusOnPress) {
-          focusWithoutScrolling(e.currentTarget);
-        }
+        // if (!isDisabled && !preventFocusOnPress) {
+        //   focusWithoutScrolling(e.currentTarget);
+        // }
 
-        let shouldStopPropagation = triggerPressStart(e, state.pointerType);
+        // Flush sync so that focus moved during react re-renders occurs before we yield back to the browser.
+        let shouldStopPropagation = flushSync(() => triggerPressStart(e, state.pointerType!));
         if (shouldStopPropagation) {
           e.stopPropagation();
+        }
+
+        if (preventFocusOnPress) {
+          let dispose = preventFocus(e.target as FocusableElement);
+          if (dispose) {
+            state.disposables.push(dispose);
+          }
         }
 
         addGlobalListener(getOwnerDocument(e.currentTarget), 'mouseup', onMouseUp, false);
@@ -662,18 +671,16 @@ export function usePress(props: PressHookProps): PressResult {
           return;
         }
 
-        state.isPressed = false;
-        removeAllGlobalListeners();
-
         if (state.ignoreEmulatedMouseEvents) {
           state.ignoreEmulatedMouseEvents = false;
           return;
         }
 
-        if (state.target && isOverTarget(e, state.target) && state.pointerType != null) {
-          triggerPressEnd(createEvent(state.target, e), state.pointerType);
-        } else if (state.target && state.isOverTarget && state.pointerType != null) {
-          triggerPressEnd(createEvent(state.target, e), state.pointerType, false);
+        if (state.target && state.target.contains(e.target as Element) && state.pointerType != null) {
+          // Wait for onClick to fire onPress. This avoids browser issues when the DOM
+          // is mutated between onMouseUp and onClick, and is more compatible with third party libraries.
+        } else {
+          cancel(e);
         }
 
         state.isOverTarget = false;
@@ -697,9 +704,9 @@ export function usePress(props: PressHookProps): PressResult {
 
         // Due to browser inconsistencies, especially on mobile browsers, we prevent default
         // on the emulated mouse event and handle focusing the pressable element ourselves.
-        if (!isDisabled && !preventFocusOnPress) {
-          focusWithoutScrolling(e.currentTarget);
-        }
+        // if (!isDisabled && !preventFocusOnPress) {
+        //   focusWithoutScrolling(e.currentTarget);
+        // }
 
         if (!allowTextSelectionOnPress) {
           disableTextSelection(state.target);

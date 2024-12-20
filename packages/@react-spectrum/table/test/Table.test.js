@@ -3291,28 +3291,24 @@ export let tableTests = () => {
 
         announce.mockReset();
         onSelectionChange.mockReset();
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
+        await user.keyboard('{Control>}{ArrowDown}{/Control}');
         expect(announce).not.toHaveBeenCalled();
         expect(onSelectionChange).not.toHaveBeenCalled();
-        expect(document.activeElement).toBe(getCell(tree, 'Baz 6').closest('[role="row"]'));
+        expect(document.activeElement).toBe(getCell(tree, 'Baz 6'));
 
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
+        await user.keyboard('{Control>}{ArrowDown}{/Control}');
         expect(announce).not.toHaveBeenCalled();
         expect(onSelectionChange).not.toHaveBeenCalled();
-        expect(document.activeElement).toBe(getCell(tree, 'Baz 7').closest('[role="row"]'));
+        expect(document.activeElement).toBe(getCell(tree, 'Baz 7'));
 
-        fireEvent.keyDown(document.activeElement, {key: ' ', ctrlKey: true});
-        fireEvent.keyUp(document.activeElement, {key: ' ', ctrlKey: true});
+        await user.keyboard('{Control>} {/Control}');
         expect(announce).toHaveBeenCalledWith('Foo 7 selected. 2 items selected.');
         expect(announce).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['Foo 5', 'Foo 7']);
 
         announce.mockReset();
         onSelectionChange.mockReset();
-        fireEvent.keyDown(document.activeElement, {key: ' '});
-        fireEvent.keyUp(document.activeElement, {key: ' '});
+        await user.keyboard(' ');
         expect(announce).toHaveBeenCalledWith('Foo 7 selected. 1 item selected.');
         expect(announce).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['Foo 7']);

@@ -44,3 +44,4 @@ export {useFormReset} from './useFormReset';
 export {useLoadMore} from './useLoadMore';
 export {CLEAR_FOCUS_EVENT, FOCUS_EVENT, UPDATE_ACTIVEDESCENDANT} from './constants';
 export {useEnterAnimation, useExitAnimation} from './animation';
+export {isFocusable, isTabbable} from './isFocusable';

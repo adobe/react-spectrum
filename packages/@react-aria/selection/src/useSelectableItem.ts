@@ -296,6 +296,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         if (e.pointerType === 'mouse') {
           focusSafely(e.target as FocusableElement);
         }
+  
         onSelect(e);
       }
     };

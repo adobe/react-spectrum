@@ -11,7 +11,7 @@
  */
 
 import {FocusableElement} from '@react-types/shared';
-import {getOwnerWindow, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
+import {getOwnerWindow, isFocusable, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
 import {FocusEvent as ReactFocusEvent, useCallback, useRef} from 'react';
 
 export class SyntheticFocusEvent<Target = Element> implements ReactFocusEvent<Target> {
@@ -132,48 +132,71 @@ export function useSyntheticBlurEvent<Target = Element>(onBlur: (e: ReactFocusEv
 
 export let ignoreFocusEvent = false;
 
-export function preventFocus(target: FocusableElement) {
-  let window = getOwnerWindow(target);
-  let activeElement = window.document.activeElement as FocusableElement | null;
-  if (!activeElement) {
-    return;
+export function preventFocus(target: FocusableElement | null) {
+  // The browser will focus the nearest focusable ancestor of our target.
+  while (target && !isFocusable(target)) {
+    target = target.parentElement;
   }
 
+  let window = getOwnerWindow(target);
+  let activeElement = window.document.activeElement as FocusableElement | null;
+  if (!activeElement || activeElement === target) {
+    return;
+  }
+  
   ignoreFocusEvent = true;
+  let isRefocusing = false;
   let onBlur = (e: FocusEvent) => {
-    if (e.target === activeElement) {
+    if (e.target === activeElement || isRefocusing) {
       e.stopImmediatePropagation();
+    }
+  };
+
+  let onFocusOut = (e: FocusEvent) => {
+    if (e.target === activeElement || isRefocusing) {
+      e.stopImmediatePropagation();
+
+      // If there was no focusable ancestor, we don't expect a focus event.
+      // Re-focus the original active element here.
+      if (!target && !isRefocusing) {
+        isRefocusing = true;
+        activeElement.focus();
+        cleanup();
+      }
     }
   };
   
-  let onFocusIn = (e: FocusEvent) => {
-    if (e.target === target) {
-      e.stopImmediatePropagation();
-    }
-
-    // focusin is fired last. Cancel the raf.
-    cancelAnimationFrame(raf);
-    ignoreFocusEvent = false;
-  };
-
   let onFocus = (e: FocusEvent) => {
-    if (e.target === target) {
+    if (e.target === target || isRefocusing) {
       e.stopImmediatePropagation();
-      activeElement.focus();
     }
   };
 
-  window.addEventListener('blur', onBlur, {once: true, capture: true});
-  window.addEventListener('focusout', onBlur, {once: true, capture: true});
-  window.addEventListener('focusin', onFocusIn, {once: true, capture: true});
-  window.addEventListener('focus', onFocus, {once: true, capture: true});
+  let onFocusIn = (e: FocusEvent) => {
+    if (e.target === target || isRefocusing) {
+      e.stopImmediatePropagation();
+
+      if (!isRefocusing) {
+        isRefocusing = true;
+        activeElement.focus();
+        cleanup();
+      }
+    }
+  };
+
+  window.addEventListener('blur', onBlur, true);
+  window.addEventListener('focusout', onFocusOut, true);
+  window.addEventListener('focusin', onFocusIn, true);
+  window.addEventListener('focus', onFocus, true);
 
   let cleanup = () => {
+    cancelAnimationFrame(raf);
     window.removeEventListener('blur', onBlur, true);
-    window.removeEventListener('focusout', onBlur, true);
+    window.removeEventListener('focusout', onFocusOut, true);
     window.removeEventListener('focusin', onFocusIn, true);
     window.removeEventListener('focus', onFocus, true);
     ignoreFocusEvent = false;
+    isRefocusing = false;
   };
 
   let raf = requestAnimationFrame(cleanup);
