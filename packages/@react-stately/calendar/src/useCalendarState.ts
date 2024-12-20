@@ -339,6 +339,8 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
     },
     getDatesInWeek(weekIndex, from = startDate) {
       let date = from.add({weeks: weekIndex});
+      let dates: (CalendarDate | null)[] = [];
+      
       if (firstDayOfWeek) {
         let day = getDayOfWeek(date, locale);
         let offset = (DAY_MAP[firstDayOfWeek] - getWeekStart(locale) + 7) % 7;
@@ -348,15 +350,19 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
         date = startOfWeek(date, locale);
       }
 
-      let dates: (CalendarDate | null)[] = [];
-
-      for (let i = 0; i < 7; i++) {
-        let current = date.add({days: i});
-        if (current.compare(startDate) < 0 || current.compare(endDate) > 0) {
-          dates.push(null);
-        } else {
-          dates.push(current);
+      while (dates.length < 7) {
+        dates.push(date);
+        let nextDate = date.add({days: 1});
+        if (isSameDay(date, nextDate)) {
+          // If the next day is the same, we have hit the end of the calendar system.
+          break;
         }
+        date = nextDate;
+      }
+
+      // Add null placeholders if at the end of the calendar system.
+      while (dates.length < 7) {
+        dates.push(null);
       }
 
       return dates;
