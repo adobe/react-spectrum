@@ -31,7 +31,31 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
         e.preventDefault();
         e.stopPropagation();
         if (direction === 'rtl') {
-          focusManager.focusNext();
+          let spinButtons: NodeListOf<Element> | undefined = ref.current?.querySelectorAll('span[role="spinbutton"], span[role="textbox"]');
+          let array = Array.from(spinButtons!);
+          let button = ref.current?.querySelector('button');
+          let target = e.target as FocusableElement;
+
+          let segmentArr = array.map(node => {
+            return {
+              element: node as FocusableElement,
+              rectX: node?.getBoundingClientRect().left
+            };
+          });
+
+          let arr = segmentArr.sort((a, b) => a.rectX - b.rectX).map((item => item.element));
+          let index = arr.indexOf(target);
+
+          if (index === 0) {
+            target = button || target;
+          } else {
+            target = arr[index - 1] || target;
+          }
+          
+          if (target) {
+            target.focus();
+          }
+          // focusManager.focusNext();
         } else {
           focusManager.focusPrevious();
         }
@@ -40,7 +64,26 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
         e.preventDefault();
         e.stopPropagation();
         if (direction === 'rtl') {
-          focusManager.focusPrevious();
+          let spinButtons: NodeListOf<Element> | undefined = ref.current?.querySelectorAll('span[role="spinbutton"], span[role="textbox"]');
+          let array = Array.from(spinButtons!);
+          let target = e.target as FocusableElement;
+
+          let segmentArr = array.map(node => {
+            return {
+              element: node as FocusableElement,
+              rectX: node?.getBoundingClientRect().left
+            };
+          });
+
+          let arr = segmentArr.sort((a, b) => a.rectX - b.rectX).map((item => item.element));
+          let index = arr.indexOf(target);
+
+          target = arr[index + 1] || target;
+
+          if (target) {
+            target.focus();
+          }
+          // focusManager.focusPrevious();
         } else {
           focusManager.focusNext();
         }
