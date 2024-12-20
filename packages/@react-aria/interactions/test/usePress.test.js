@@ -23,7 +23,7 @@ import {usePress} from '../';
 function Example(props) {
   let {elementType: ElementType = 'div', style, draggable, ...otherProps} = props;
   let {pressProps} = usePress(otherProps);
-  return <ElementType {...pressProps} style={style} tabIndex="0" draggable={draggable}>{ElementType !== 'input' ? 'test' : undefined}</ElementType>;
+  return <ElementType {...pressProps} style={style} tabIndex="0" draggable={draggable}>{ElementType !== 'input' ? props.children || 'test' : undefined}</ElementType>;
 }
 
 function pointerEvent(type, opts) {
@@ -316,6 +316,85 @@ describe('usePress', function () {
           altKey: false,
           x: 0,
           y: 0
+        }
+      ]);
+    });
+
+    it('should cancel press if onClick propagation is stopped', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={addEvent}>
+          {/* eslint-disable-next-line */}
+          <div data-testid="inner" onClick={e => e.stopPropagation()} />
+        </Example>
+      );
+
+      let el = res.getByTestId('inner');
+      fireEvent(el, pointerEvent('pointerover', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+
+      let shouldFireMouseEvents = fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      expect(shouldFireMouseEvents).toBe(true);
+
+      let shouldFocus = fireEvent.mouseDown(el);
+      expect(shouldFocus).toBe(true);
+      act(() => el.focus());
+
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      fireEvent.mouseUp(el);
+
+      let shouldClick = fireEvent.click(el);
+      expect(shouldClick).toBe(true);
+      fireEvent(el, pointerEvent('pointerout', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+
+      act(() => jest.advanceTimersByTime(10));
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el.parentElement,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false,
+          x: 0,
+          y: 0
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressup',
+          target: el.parentElement,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false,
+          x: 0,
+          y: 0
+        },
+        {
+          type: 'pressend',
+          target: el.parentElement,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false,
+          x: 0,
+          y: 0
+        },
+        {
+          type: 'presschange',
+          pressed: false
         }
       ]);
     });

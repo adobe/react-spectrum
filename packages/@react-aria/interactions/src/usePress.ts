@@ -256,7 +256,7 @@ export function usePress(props: PressHookProps): PressResult {
   let cancel = useEffectEvent((e: EventBase) => {
     let state = ref.current;
     if (state.isPressed && state.target) {
-      if (state.isOverTarget && state.pointerType != null) {
+      if (state.didFirePressStart && state.pointerType != null) {
         triggerPressEnd(createEvent(state.target, e), state.pointerType, false);
       }
       state.isPressed = false;
@@ -499,12 +499,20 @@ export function usePress(props: PressHookProps): PressResult {
             // We work around this by triggering a click ourselves after a timeout.
             // This timeout is canceled during the click event in case the real one fires first.
             // In testing, a 0ms delay is too short. 5ms seems long enough for the browser to fire the real events.
+            let clicked = false;
             let timeout = setTimeout(() => {
               if (state.isPressed && state.target instanceof HTMLElement) {
-                focusWithoutScrolling(state.target);
-                state.target.click();
+                if (clicked) {
+                  cancel(e);
+                } else {
+                  focusWithoutScrolling(state.target);
+                  state.target.click();
+                }
               }
             }, 5);
+            // Use a capturing listener to track if a click occurred.
+            // If stopPropagation is called it may never reach our handler.
+            addGlobalListener(e.currentTarget as Document, 'click', () => clicked = true, true);
             state.disposables.push(() => clearTimeout(timeout));
           } else {
             cancel(e);
