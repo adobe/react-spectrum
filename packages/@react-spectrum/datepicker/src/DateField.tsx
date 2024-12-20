@@ -66,7 +66,6 @@ export const DateField = React.forwardRef(function DateField<T extends DateValue
   let validationState = state.validationState || (isInvalid ? 'invalid' : null);
 
   let approximateWidth = useFormattedDateWidth(state) + 'ch';
-  
   return (
     <Field
       {...props}
@@ -89,7 +88,7 @@ export const DateField = React.forwardRef(function DateField<T extends DateValue
         autoFocus={autoFocus}
         validationState={validationState}
         minWidth={approximateWidth}
-        className={classNames(datepickerStyles, 'react-spectrum-DateField')}>        
+        className={classNames(datepickerStyles, 'react-spectrum-DateField')}>
         {state.segments.map((segment, i) =>
           (<DatePickerSegment
             key={i}

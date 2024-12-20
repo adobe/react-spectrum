@@ -43,7 +43,6 @@ export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps
 
   let inputRef = useRef<HTMLInputElement | null>(null);
   let {fieldProps, inputProps} = useDateField({...props, inputRef}, state, ref);
-  
   return (
     <span {...fieldProps} data-testid={props['data-testid']} className={classNames(datepickerStyles, 'react-spectrum-Datepicker-segments', inputClassName)} ref={ref}>
       {state.segments.map((segment, i) =>
