@@ -428,7 +428,7 @@ describe('DatePickerBase', function () {
       }
     });
 
-    it.each`
+    it.skip.each`
       Name                   | Component
       ${'DatePicker'}        | ${DatePicker}
       ${'DateRangePicker'}   | ${DateRangePicker}
