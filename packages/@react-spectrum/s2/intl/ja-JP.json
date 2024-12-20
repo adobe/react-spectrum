@@ -1,5 +1,9 @@
 {
-  "breadcrumbs.more": "項目を追加",
+  "actionbar.actions": "アクション",
+  "actionbar.actionsAvailable": "アクションを利用できます。",
+  "actionbar.clearSelection": "選択をクリア",
+  "actionbar.selected": "{count, plural, =0 {選択されていません} other {# 個を選択しました}}",
+  "actionbar.selectedAll": "すべてを選択",
   "button.pending": "保留",
   "contextualhelp.help": "ヘルプ",
   "contextualhelp.info": "情報",
@@ -24,5 +28,6 @@
   "tag.actions": "アクション",
   "tag.hideButtonLabel": "表示を減らす",
   "tag.noTags": "なし",
-  "tag.showAllButtonLabel": "すべての ({tagCount, number}) を表示"
+  "tag.showAllButtonLabel": "すべての ({tagCount, number}) を表示",
+  "breadcrumbs.more": "項目を追加"
 }

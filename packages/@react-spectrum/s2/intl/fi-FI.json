@@ -1,5 +1,9 @@
 {
-  "breadcrumbs.more": "Lisää kohteita",
+  "actionbar.actions": "Toiminnot",
+  "actionbar.actionsAvailable": "Toiminnot käytettävissä.",
+  "actionbar.clearSelection": "Poista valinta",
+  "actionbar.selected": "{count, plural, =0 {Ei mitään valittu} other {# valittu}}",
+  "actionbar.selectedAll": "Kaikki valittu",
   "button.pending": "odottaa",
   "contextualhelp.help": "Ohje",
   "contextualhelp.info": "Tiedot",
@@ -24,5 +28,6 @@
   "tag.actions": "Toiminnot",
   "tag.hideButtonLabel": "Näytä vähemmän",
   "tag.noTags": "Ei mitään",
-  "tag.showAllButtonLabel": "Näytä kaikki ({tagCount, number})"
+  "tag.showAllButtonLabel": "Näytä kaikki ({tagCount, number})",
+  "breadcrumbs.more": "Lisää kohteita"
 }

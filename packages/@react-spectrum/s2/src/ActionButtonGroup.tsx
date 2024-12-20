@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaLabelingProps} from '@react-types/shared';
 import {ContextValue, SlotProps, Toolbar} from 'react-aria-components';
 import {createContext, ForwardedRef, forwardRef, ReactNode} from 'react';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ActionButtonGroupProps extends UnsafeStyles, SlotProps {
+export interface ActionButtonGroupProps extends AriaLabelingProps, UnsafeStyles, SlotProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
   /** The children of the group. */
@@ -71,7 +72,7 @@ export const actionGroupStyle = style({
 }, getAllowedOverrides({height: true}));
 
 
-export const ActionButtonGroupContext = createContext<ContextValue<ActionButtonGroupProps, HTMLDivElement>>(null);
+export const ActionButtonGroupContext = createContext<ContextValue<Partial<ActionButtonGroupProps>, HTMLDivElement>>(null);
 
 /**
  * An ActionButtonGroup is a grouping of related ActionButtons.
