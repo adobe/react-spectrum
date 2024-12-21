@@ -11,7 +11,7 @@
  */
 
 import {FocusableElement} from '@react-types/shared';
-import {getOwnerWindow, isFocusable, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
+import {focusWithoutScrolling, getOwnerWindow, isFocusable, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
 import {FocusEvent as ReactFocusEvent, useCallback, useRef} from 'react';
 
 export class SyntheticFocusEvent<Target = Element> implements ReactFocusEvent<Target> {
@@ -165,7 +165,7 @@ export function preventFocus(target: FocusableElement | null) {
       // Re-focus the original active element here.
       if (!target && !isRefocusing) {
         isRefocusing = true;
-        activeElement.focus();
+        focusWithoutScrolling(activeElement);
         cleanup();
       }
     }
@@ -183,7 +183,7 @@ export function preventFocus(target: FocusableElement | null) {
 
       if (!isRefocusing) {
         isRefocusing = true;
-        activeElement.focus();
+        focusWithoutScrolling(activeElement);
         cleanup();
       }
     }
