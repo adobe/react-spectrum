@@ -10,23 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, getWeekStart, startOfWeek, today} from '@internationalized/date';
+import {CalendarDate, startOfWeek, today} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {DOMAttributes} from '@react-types/shared';
 import {hookData, useVisibleRangeDescription} from './utils';
 import {KeyboardEvent, useMemo} from 'react';
 import {mergeProps, useLabels} from '@react-aria/utils';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
-
-const DAY_MAP = {
-  sun: 0,
-  mon: 1,
-  tue: 2,
-  wed: 3,
-  thu: 4,
-  fri: 5,
-  sat: 6
-};
 
 export interface AriaCalendarGridProps {
   /**

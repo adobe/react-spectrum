@@ -19,7 +19,6 @@ import {
   endOfMonth,
   endOfWeek,
   getDayOfWeek,
-  getWeekStart,
   GregorianCalendar,
   isSameDay,
   startOfMonth,
@@ -33,16 +32,6 @@ import {CalendarState} from './types';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
-
-const DAY_MAP = {
-  sun: 0,
-  mon: 1,
-  tue: 2,
-  wed: 3,
-  thu: 4,
-  fri: 5,
-  sat: 6
-};
 
 export interface CalendarStateOptions<T extends DateValue = DateValue> extends CalendarProps<T> {
   /** The locale to display and edit the value according to. */
