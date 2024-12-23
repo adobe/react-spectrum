@@ -11,14 +11,15 @@
  */
 
 import {fireEvent, render} from '@react-spectrum/test-utils-internal';
+import {type OverlayTriggerProps, useOverlayTriggerState} from '@react-stately/overlays';
 import React, {useRef} from 'react';
-import {useOverlayTriggerState} from '@react-stately/overlays';
-import {usePopover} from '../';
+import {useOverlayTrigger, usePopover} from '../';
 
-function Example() {
+function Example({onOpenChange}: Pick<OverlayTriggerProps, 'onOpenChange'>) {
   const triggerRef = useRef(null);
   const popoverRef = useRef(null);
-  const state = useOverlayTriggerState({isOpen: true});
+  const state = useOverlayTriggerState({isOpen: true, onOpenChange});
+  useOverlayTrigger({type: 'listbox'}, state, triggerRef);
   const {popoverProps} = usePopover({triggerRef, popoverRef}, state);
 
   return (
@@ -30,12 +31,11 @@ function Example() {
 }
 
 describe('usePopover', () => {
-  it('should not add scroll listener', () => {
-    const spy = jest.spyOn(window, 'addEventListener');
-    render(<Example />);
+  it('should not close popover on scroll', () => {
+    const onOpenChange = jest.fn();
+    render(<Example onOpenChange={onOpenChange} />);
 
     fireEvent.scroll(document.body);
-    expect(window.addEventListener).not.toHaveBeenCalledWith('scroll', expect.any(Function), true);
-    spy.mockRestore();
+    expect(onOpenChange).not.toHaveBeenCalled();
   });
 });
