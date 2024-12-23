@@ -14,15 +14,27 @@ import glob from 'glob';
 import fs from 'fs';
 import xml from "xml";
 import process from 'process';
+import {parseArgs} from 'node:util';
+
+let options = {
+  releases: {
+    type: 'string'
+  },
+  blog: {
+    type: 'string'
+  }
+};
 
 (async function createRssFeed() {
 
-  if (process.argv.length === 2) {
+  let args = parseArgs({options, allowPositionals: true});
+
+  if (args.positionals.length < 1) {
     console.error('Expected at least one argument');
     process.exit(1);
   }
 
-  let type = process.argv[2];
+  let type = args.positionals[0];
   if (type !== 'releases' && type !== 'blog') {
     console.error('Expected argument to be either releases or blog');
     process.exit(1);
@@ -55,7 +67,7 @@ import process from 'process';
     ],
   };
 
-  const feed = '<?xml version="1.0" encoding="UTF-8"?>' + xml(feedObject);
+  const feed = xml(feedObject, {declaration: true});
   await fs.writeFile(`scripts/${type}-feed.rss`, feed, (err) => console.log(err === null ? 'Success' : err));
 })();
 
