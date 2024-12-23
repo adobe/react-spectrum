@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button, Dialog, DialogTrigger, FieldError, Label, Modal, Radio, RadioContext, RadioGroup, RadioGroupContext, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -166,18 +166,18 @@ describe('RadioGroup', () => {
     expect(label).not.toHaveClass('focus');
   });
 
-  it('should support press state', () => {
+  it('should support press state', async () => {
     let {getAllByRole} = renderGroup({}, {className: ({isPressed}) => isPressed ? 'pressed' : ''});
     let radio = getAllByRole('radio')[0].closest('label');
 
     expect(radio).not.toHaveAttribute('data-pressed');
     expect(radio).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(radio);
+    await user.pointer({target: radio, keys: '[MouseLeft>]'});
     expect(radio).toHaveAttribute('data-pressed', 'true');
     expect(radio).toHaveClass('pressed');
 
-    fireEvent.mouseUp(radio);
+    await user.pointer({target: radio, keys: '[/MouseLeft]'});
     expect(radio).not.toHaveAttribute('data-pressed');
     expect(radio).not.toHaveClass('pressed');
   });

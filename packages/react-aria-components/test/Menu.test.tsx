@@ -301,18 +301,18 @@ describe('Menu', () => {
     expect(menuitem).not.toHaveClass('focus');
   });
 
-  it('should support press state', () => {
+  it('should support press state', async () => {
     let {getAllByRole} = renderMenu({}, {className: ({isPressed}) => isPressed ? 'pressed' : ''});
     let menuitem = getAllByRole('menuitem')[0];
 
     expect(menuitem).not.toHaveAttribute('data-pressed');
     expect(menuitem).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(menuitem);
+    await user.pointer({target: menuitem, keys: '[MouseLeft>]'});
     expect(menuitem).toHaveAttribute('data-pressed', 'true');
     expect(menuitem).toHaveClass('pressed');
 
-    fireEvent.mouseUp(menuitem);
+    await user.pointer({target: menuitem, keys: '[/MouseLeft]'});
     expect(menuitem).not.toHaveAttribute('data-pressed');
     expect(menuitem).not.toHaveClass('pressed');
   });

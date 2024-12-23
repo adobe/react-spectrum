@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {ToggleButton, ToggleButtonContext} from '../';
 import userEvent from '@testing-library/user-event';
@@ -93,7 +93,7 @@ describe('ToggleButton', () => {
     expect(button).not.toHaveClass('focus');
   });
 
-  it('should support press state', () => {
+  it('should support press state', async () => {
     let onPress = jest.fn();
     let {getByRole} = render(<ToggleButton className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress}>Test</ToggleButton>);
     let button = getByRole('button');
@@ -101,11 +101,11 @@ describe('ToggleButton', () => {
     expect(button).not.toHaveAttribute('data-pressed');
     expect(button).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(button);
+    await user.pointer({target: button, keys: '[MouseLeft>]'});
     expect(button).toHaveAttribute('data-pressed', 'true');
     expect(button).toHaveClass('pressed');
 
-    fireEvent.mouseUp(button);
+    await user.pointer({target: button, keys: '[/MouseLeft]'});
     expect(button).not.toHaveAttribute('data-pressed');
     expect(button).not.toHaveClass('pressed');
 

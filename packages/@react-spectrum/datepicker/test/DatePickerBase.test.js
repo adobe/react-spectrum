@@ -73,7 +73,7 @@ describe('DatePickerBase', function () {
 
       let button = getAllByRole('button')[0];
       expect(button).toBeVisible();
-      expect(button).not.toHaveAttribute('tabindex');
+      expect(button).toHaveAttribute('tabindex', '0');
     });
 
     it.each`

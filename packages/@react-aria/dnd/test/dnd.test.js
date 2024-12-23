@@ -2466,7 +2466,7 @@ describe('useDrag and useDrop', function () {
 
       let draggable = tree.getByText('Drag me');
 
-      fireEvent.focus(draggable);
+      act(() => draggable.focus());
       fireEvent(draggable, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
       fireEvent(draggable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
       await user.click(draggable);
@@ -2496,7 +2496,7 @@ describe('useDrag and useDrop', function () {
       let draggable = tree.getByText('Drag me');
       let droppable = tree.getByText('Drop here');
 
-      fireEvent.focus(draggable);
+      act(() => draggable.focus());
       fireEvent(draggable, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
       fireEvent(draggable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
       await user.click(draggable);
@@ -2505,7 +2505,7 @@ describe('useDrag and useDrop', function () {
 
 
       // Android Talkback fires with click event of detail = 1, test that our onPointerDown listener detects that it is a virtual click
-      fireEvent.focus(droppable);
+      act(() => droppable.focus());
       fireEvent(droppable, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
       fireEvent(droppable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
       fireEvent.click(droppable, {detail: 1});
@@ -2535,7 +2535,7 @@ describe('useDrag and useDrop', function () {
 
       let draggable = tree.getByText('Drag me');
 
-      fireEvent.focus(draggable);
+      act(() => draggable.focus());
       await user.click(draggable);
       act(() => jest.runAllTimers());
 
@@ -2563,7 +2563,7 @@ describe('useDrag and useDrop', function () {
 
       expect(tree.getAllByRole('textbox')).toHaveLength(1);
 
-      fireEvent.focus(draggable);
+      act(() => draggable.focus());
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
 
@@ -2596,7 +2596,7 @@ describe('useDrag and useDrop', function () {
 
       let draggable = tree.getByText('Drag me');
 
-      fireEvent.focus(draggable);
+      act(() => draggable.focus());
       await user.click(draggable);
       act(() => jest.runAllTimers());
 
@@ -2621,7 +2621,7 @@ describe('useDrag and useDrop', function () {
 
       let draggable = tree.getByText('Drag me');
 
-      fireEvent.focus(draggable);
+      act(() => draggable.focus());
       await user.click(draggable);
       act(() => jest.runAllTimers());
 
@@ -2644,7 +2644,7 @@ describe('useDrag and useDrop', function () {
       let droppable = tree.getByText('Drop here');
       let input = tree.getByRole('textbox');
 
-      fireEvent.focus(draggable);
+      act(() => draggable.focus());
       await user.click(draggable);
       act(() => jest.runAllTimers());
 
@@ -2664,7 +2664,7 @@ describe('useDrag and useDrop', function () {
       let draggable = tree.getByText('Drag me');
       let input = tree.getByRole('textbox');
 
-      fireEvent.focus(draggable);
+      act(() => draggable.focus());
       await user.click(draggable);
       act(() => jest.runAllTimers());
 
@@ -2681,7 +2681,7 @@ describe('useDrag and useDrop', function () {
       let draggable = tree.getByText('Drag me');
       let droppable = tree.getByText('Drop here');
 
-      fireEvent.focus(draggable);
+      act(() => draggable.focus());
       await user.click(draggable);
       act(() => jest.runAllTimers());
 
@@ -2715,7 +2715,7 @@ describe('useDrag and useDrop', function () {
 
       let draggable = tree.getByText('Drag me');
 
-      fireEvent.focus(draggable);
+      act(() => draggable.focus());
       fireEvent.click(draggable, {detail: 1});
       act(() => jest.runAllTimers());
 
@@ -2731,7 +2731,7 @@ describe('useDrag and useDrop', function () {
       let draggable = tree.getByText('Drag me');
       let droppable = tree.getByText('Drop here');
 
-      fireEvent.focus(draggable);
+      act(() => draggable.focus());
       await user.click(draggable);
       act(() => jest.runAllTimers());
       expect(draggable).toHaveAttribute('data-dragging', 'true');

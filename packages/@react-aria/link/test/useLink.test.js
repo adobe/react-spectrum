@@ -23,7 +23,7 @@ describe('useLink', function () {
   it('handles defaults', function () {
     let {linkProps} = renderLinkHook({children: 'Test Link'});
     expect(linkProps.role).toBeUndefined();
-    expect(linkProps.tabIndex).toBeUndefined();
+    expect(linkProps.tabIndex).toBe(0);
     expect(typeof linkProps.onKeyDown).toBe('function');
   });
 

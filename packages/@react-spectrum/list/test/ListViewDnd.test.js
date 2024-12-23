@@ -418,6 +418,7 @@ describe('ListView', function () {
 
         let dataTransfer = new DataTransfer();
         fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        act(() => rows[1].focus());
         fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
         expect(onDragStart).toHaveBeenCalledTimes(1);
 
@@ -469,6 +470,7 @@ describe('ListView', function () {
 
         let dataTransfer = new DataTransfer();
         fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
+        act(() => rows[1].focus());
         fireEvent(cell, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
         expect(onDragStart).toHaveBeenCalledTimes(1);
 
@@ -2931,6 +2933,7 @@ describe('ListView', function () {
       expect(draggableRow).toHaveAttribute('aria-selected', 'false');
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
       fireEvent.pointerUp(draggableRow, {pointerType: 'mouse'});
+      fireEvent.click(draggableRow, {detail: 1});
       expect(draggableRow).toHaveAttribute('aria-selected', 'true');
       checkSelection(onSelectionChange, ['a']);
     });

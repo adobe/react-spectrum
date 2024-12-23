@@ -781,7 +781,8 @@ describe('useDraggableCollection', () => {
 
       let dragButton = within(cells[1]).getByRole('button');
       expect(dragButton).toHaveAttribute('aria-label', 'Drag Bar');
-      fireEvent.focus(dragButton);
+      act(() => cells[1].focus());
+      act(() => dragButton.focus());
       fireEvent.click(dragButton);
       act(() => jest.runAllTimers());
       expect(cells[0]).not.toHaveClass('is-dragging');
@@ -852,7 +853,7 @@ describe('useDraggableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(3);
 
-      fireEvent.focus(cells[0]);
+      act(() => cells[0].focus());
       fireEvent.click(cells[0]);
       expect(rows[0]).toHaveAttribute('aria-selected', 'true');
       fireEvent.click(cells[1]);
@@ -860,7 +861,7 @@ describe('useDraggableCollection', () => {
 
       let dragButton = within(cells[1]).getByRole('button');
       expect(dragButton).toHaveAttribute('aria-label', 'Drag 2 selected items');
-      fireEvent.focus(dragButton);
+      act(() => dragButton.focus());
       fireEvent.click(dragButton);
       act(() => jest.runAllTimers());
       expect(cells[0]).toHaveClass('is-dragging');
@@ -939,13 +940,13 @@ describe('useDraggableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(3);
 
-      fireEvent.focus(cells[0]);
+      act(() => cells[0].focus());
       fireEvent.click(cells[0]);
       expect(rows[0]).toHaveAttribute('aria-selected', 'true');
 
       let dragButton = within(cells[1]).getByRole('button');
       expect(dragButton).toHaveAttribute('aria-label', 'Drag Bar');
-      fireEvent.focus(dragButton);
+      act(() => dragButton.focus());
       fireEvent.click(dragButton);
       act(() => jest.runAllTimers());
       expect(cells[0]).not.toHaveClass('is-dragging');

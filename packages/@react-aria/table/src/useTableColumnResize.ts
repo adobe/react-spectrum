@@ -224,6 +224,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   };
 
   let {pressProps} = usePress({
+    preventFocusOnPress: true,
     onPressStart: (e) => {
       if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey || e.pointerType === 'keyboard') {
         return;
