@@ -11372,15 +11372,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/xml@npm:^1":
-  version: 1.0.11
-  resolution: "@types/xml@npm:1.0.11"
-  dependencies:
-    "@types/node": "npm:*"
-  checksum: 10c0/df1a27f027e9a3f8535bd43591cbe64e2dcff320d1cce528667d8e17d479efe96702eda837153471c1f6489e8129cff2a80636e0cf9d15d3d143203f6e1496ea
-  languageName: node
-  linkType: hard
-
 "@types/yargs-parser@npm:*":
   version: 13.1.0
   resolution: "@types/yargs-parser@npm:13.1.0"
@@ -29249,7 +29240,6 @@ __metadata:
     "@types/react": "npm:types-react@19.0.0-rc.0"
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.0"
     "@types/storybook__react": "npm:^4.0.2"
-    "@types/xml": "npm:^1"
     "@yarnpkg/types": "npm:^4.0.0"
     autoprefixer: "npm:^9.6.0"
     axe-core: "npm:^4.6.3"
