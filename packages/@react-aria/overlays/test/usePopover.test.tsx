@@ -15,10 +15,10 @@ import {type OverlayTriggerProps, useOverlayTriggerState} from '@react-stately/o
 import React, {useRef} from 'react';
 import {useOverlayTrigger, usePopover} from '../';
 
-function Example({onOpenChange}: Pick<OverlayTriggerProps, 'onOpenChange'>) {
+function Example(props: OverlayTriggerProps) {
   const triggerRef = useRef(null);
   const popoverRef = useRef(null);
-  const state = useOverlayTriggerState({isOpen: true, onOpenChange});
+  const state = useOverlayTriggerState(props);
   useOverlayTrigger({type: 'listbox'}, state, triggerRef);
   const {popoverProps} = usePopover({triggerRef, popoverRef}, state);
 
@@ -33,7 +33,7 @@ function Example({onOpenChange}: Pick<OverlayTriggerProps, 'onOpenChange'>) {
 describe('usePopover', () => {
   it('should not close popover on scroll', () => {
     const onOpenChange = jest.fn();
-    render(<Example onOpenChange={onOpenChange} />);
+    render(<Example isOpen onOpenChange={onOpenChange} />);
 
     fireEvent.scroll(document.body);
     expect(onOpenChange).not.toHaveBeenCalled();
