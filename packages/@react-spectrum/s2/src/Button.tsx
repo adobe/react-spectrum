@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, fontRelative, linearGradient, style} from '../style' with {type: 'macro'};
 import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
@@ -34,7 +34,7 @@ interface ButtonStyleProps {
    *
    * @default 'primary'
    */
-  variant?: 'primary' | 'secondary' | 'accent' | 'negative',
+  variant?: 'primary' | 'secondary' | 'accent' | 'negative' | 'premium' | 'genai',
   /**
    * The background style of the Button.
    *
@@ -102,6 +102,10 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
     fillStyle: {
       fill: 0,
       outline: 2
+    },
+    variant: {
+      premium: 0,
+      genai: 0
     }
   },
   '--labelPadding': {
@@ -134,6 +138,25 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
       isDisabled: 'GrayText'
     }
   },
+  backgroundImage: {
+    variant: {
+      premium: {
+        default: linearGradient('96deg', ['fuchsia-900', 0], ['indigo-900', 66], ['blue-900', 100]),
+        isHovered: linearGradient('96deg', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100]),
+        isPressed: linearGradient('96deg', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100]),
+        isFocusVisible: linearGradient('96deg', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100])
+      },
+      genai: {
+        default: linearGradient('96deg', ['red-900', 0], ['magenta-900', 33], ['indigo-900', 100]),
+        isHovered: linearGradient('96deg', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100]),
+        isPressed: linearGradient('96deg', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100]),
+        isFocusVisible: linearGradient('96deg', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100])
+      }
+    },
+    isDisabled: 'none',
+    isPending: 'none',
+    forcedColors: 'none'
+  },
   backgroundColor: {
     fillStyle: {
       fill: {
@@ -141,11 +164,17 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
           primary: 'neutral',
           secondary: baseColor('gray-100'),
           accent: 'accent',
-          negative: 'negative'
+          negative: 'negative',
+          premium: 'gray-100',
+          genai: 'gray-100'
         },
         isDisabled: 'disabled'
       },
       outline: {
+        variant: {
+          premium: 'gray-100',
+          genai: 'gray-100'
+        },
         default: 'transparent',
         isHovered: 'gray-100',
         isPressed: 'gray-100',
@@ -158,11 +187,17 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
         fill: {
           variant: {
             primary: baseColor('transparent-overlay-800'),
-            secondary: baseColor('transparent-overlay-100')
+            secondary: baseColor('transparent-overlay-100'),
+            premium: 'gray-800',
+            genai: 'gray-800'
           },
           isDisabled: 'transparent-overlay-100'
         },
         outline: {
+          variant: {
+            premium: 'gray-800',
+            genai: 'gray-800'
+          },
           default: 'transparent',
           isHovered: 'transparent-overlay-100',
           isPressed: 'transparent-overlay-100',
@@ -189,12 +224,18 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
           primary: 'gray-25',
           secondary: 'neutral',
           accent: 'white',
-          negative: 'white'
+          negative: 'white',
+          premium: 'white',
+          genai: 'white'
         },
         isDisabled: 'disabled'
       },
       outline: {
         default: 'neutral',
+        variant: {
+          premium: 'white',
+          genai: 'white'
+        },
         isDisabled: 'disabled'
       }
     },
@@ -203,10 +244,18 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
         fill: {
           variant: {
             primary: 'auto',
-            secondary: baseColor('transparent-overlay-800')
+            secondary: baseColor('transparent-overlay-800'),
+            premium: 'white',
+            genai: 'white'
           }
         },
-        outline: baseColor('transparent-overlay-800')
+        outline: {
+          variant: {
+            premium: 'white',
+            genai: 'white'
+          },
+          default: baseColor('transparent-overlay-800')
+        }
       },
       isDisabled: 'transparent-overlay-400'
     },
