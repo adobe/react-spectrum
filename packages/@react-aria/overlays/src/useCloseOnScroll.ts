@@ -23,7 +23,7 @@ export const onCloseMap: WeakMap<Element, () => void> = new WeakMap();
 interface CloseOnScrollOptions {
   triggerRef: RefObject<Element | null>,
   isOpen?: boolean,
-  onClose?: () => void
+  onClose?: (() => void) | null
 }
 
 /** @private */
