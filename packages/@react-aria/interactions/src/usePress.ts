@@ -18,6 +18,7 @@
 import {
   chain,
   focusWithoutScrolling,
+  getEventTarget,
   getOwnerDocument,
   getOwnerWindow,
   isMac,
@@ -32,7 +33,6 @@ import {
 } from '@react-aria/utils';
 import {disableTextSelection, restoreTextSelection} from './textSelection';
 import {DOMAttributes, FocusableElement, PressEvent as IPressEvent, PointerType, PressEvents, RefObject} from '@react-types/shared';
-import {getEventTarget} from '@react-aria/utils';
 import {PressResponderContext} from './context';
 import {TouchEvent as RTouchEvent, useContext, useEffect, useMemo, useRef, useState} from 'react';
 
