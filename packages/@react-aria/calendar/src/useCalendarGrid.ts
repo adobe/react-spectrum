@@ -152,8 +152,7 @@ export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarSta
   let dayFormatter = useDateFormatter({weekday: props.weekdayStyle || 'narrow', timeZone: state.timeZone});
   let {locale} = useLocale();
   let weekDays = useMemo(() => {
-    let offset = firstDayOfWeek ? (DAY_MAP[firstDayOfWeek] - getWeekStart(locale) + 7) % 7 : 0;
-    let weekStart = startOfWeek(today(state.timeZone), locale).add({days: offset});
+    let weekStart = startOfWeek(today(state.timeZone), locale, firstDayOfWeek);
     return [...new Array(7).keys()].map((index) => {
       let date = weekStart.add({days: index});
       let dateDay = date.toDate(state.timeZone);

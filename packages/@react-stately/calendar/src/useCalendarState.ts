@@ -340,15 +340,12 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
     getDatesInWeek(weekIndex, from = startDate) {
       let date = from.add({weeks: weekIndex});
       let dates: (CalendarDate | null)[] = [];
-      
-      if (firstDayOfWeek) {
-        let day = getDayOfWeek(date, locale);
-        let offset = (DAY_MAP[firstDayOfWeek] - getWeekStart(locale) + 7) % 7;
-        let diff = (7 + day - offset) % 7;
-        date = date.subtract({days: diff});
-      } else {
-        date = startOfWeek(date, locale);
 
+      date = startOfWeek(date, locale, firstDayOfWeek);
+      
+      if (!firstDayOfWeek) {
+        // startOfWeek will clamp dates within the calendar system's valid range, which may
+        // start in the middle of a week. In this case, add null placeholders.
         let dayOfWeek = getDayOfWeek(date, locale);
         for (let i = 0; i < dayOfWeek; i++) {
           dates.push(null);

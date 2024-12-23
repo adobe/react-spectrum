@@ -180,13 +180,30 @@ export function getMinimumDayInMonth(date: AnyCalendarDate) {
   return 1;
 }
 
+const DAY_MAP = {
+  sun: 0,
+  mon: 1,
+  tue: 2,
+  wed: 3,
+  thu: 4,
+  fri: 5,
+  sat: 6
+};
+
+type DayOfWeek = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
+
 /** Returns the first date of the week for the given date and locale. */
-export function startOfWeek(date: ZonedDateTime, locale: string): ZonedDateTime;
-export function startOfWeek(date: CalendarDateTime, locale: string): CalendarDateTime;
-export function startOfWeek(date: CalendarDate, locale: string): CalendarDate;
-export function startOfWeek(date: DateValue, locale: string): DateValue;
-export function startOfWeek(date: DateValue, locale: string): DateValue {
+export function startOfWeek(date: ZonedDateTime, locale: string, firstDayOfWeek?: DayOfWeek): ZonedDateTime;
+export function startOfWeek(date: CalendarDateTime, locale: string, firstDayOfWeek?: DayOfWeek): CalendarDateTime;
+export function startOfWeek(date: CalendarDate, locale: string, firstDayOfWeek?: DayOfWeek): CalendarDate;
+export function startOfWeek(date: DateValue, locale: string, firstDayOfWeek?: DayOfWeek): DateValue;
+export function startOfWeek(date: DateValue, locale: string, firstDayOfWeek?: DayOfWeek): DateValue {
   let dayOfWeek = getDayOfWeek(date, locale);
+  if (firstDayOfWeek) {
+    let offset = (DAY_MAP[firstDayOfWeek] - getWeekStart(locale) + 7) % 7;
+    let diff = (7 + dayOfWeek - offset) % 7;
+    return date.subtract({days: diff});
+  } 
   return date.subtract({days: dayOfWeek});
 }
 
