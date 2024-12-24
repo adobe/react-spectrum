@@ -29324,6 +29324,7 @@ __metadata:
     verdaccio: "npm:^5.13.0"
     walk-object: "npm:^4.0.0"
     wsrun: "npm:^5.0.0"
+    xml: "npm:^1.0.1"
     yargs: "npm:^17.2.1"
   languageName: unknown
   linkType: soft
