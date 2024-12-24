@@ -268,6 +268,9 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   };
 
   let dateValue = useMemo(() => displayValue.toDate(timeZone), [displayValue, timeZone]);
+  let timeValue = ['hour', 'minute', 'second'];
+  let dateSegments = ['day', 'month', 'year'];
+  let rtlLocale = ['ar-DZ', 'ar-AE', 'ar-EG', 'ar-SA'];
   let segments = useMemo(() =>
     dateFormatter.formatToParts(dateValue)
       .map(segment => {
@@ -278,16 +281,44 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
 
         let isPlaceholder = EDITABLE_SEGMENTS[segment.type] && !validSegments[segment.type];
         let placeholder = EDITABLE_SEGMENTS[segment.type] ? getPlaceholder(segment.type, segment.value, locale) : null;
+
+        let value = segment.value;
+        let place = placeholder;
+        if (dateSegments.length === 3 && dateSegments.includes(segment.type) && !rtlLocale.includes(locale)) {
+          value = `\u2066${value}`;
+          place = `\u2066${place}`;
+          // value = `${value}`;
+          // place = `${place}`;
+        } else if (segment.type === 'hour') {
+          value = `\u2066${value}`;
+          place = `\u2066${place}`;
+        // Ideally the unicode (\u2069) would be placed at the end but that seems to cause some issues 
+        // with the background when the rightmost character is focused in Hebrew.
+        } else if (dateSegments.length === 1 && dateSegments.includes(segment.type) && !rtlLocale.includes(locale)) {
+          // value = `${value}`;
+          // place = `${place}`;
+          value = `\u2069${value}`;
+          place = `\u2069${place}`;
+        } else if (timeValue.includes(granularity) && segment.type === granularity) {
+          value = `\u2069${value}`;
+          place = `\u2069${place}`;
+
+        }
+
+        if (dateSegments.includes(segment.type)) {
+          dateSegments = dateSegments.filter(item => item !== segment.type);
+        };
+        
         return {
           type: TYPE_MAPPING[segment.type] || segment.type,
-          text: isPlaceholder ? placeholder : segment.value,
+          text: isPlaceholder ? place : value,
           ...getSegmentLimits(displayValue, segment.type, resolvedOptions),
           isPlaceholder,
-          placeholder,
+          placeholder: place,
           isEditable
         } as DateSegment;
       })
-  , [dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale]);
+  , [dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity, timeValue]);
 
   // When the era field appears, mark it valid if the year field is already valid.
   // If the era field disappears, remove it from the valid segments.
