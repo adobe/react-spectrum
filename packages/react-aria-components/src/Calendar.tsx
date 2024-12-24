@@ -77,6 +77,8 @@ export const CalendarContext = createContext<ContextValue<CalendarProps<any>, HT
 export const RangeCalendarContext = createContext<ContextValue<RangeCalendarProps<any>, HTMLDivElement>>({});
 export const CalendarStateContext = createContext<CalendarState | null>(null);
 export const RangeCalendarStateContext = createContext<RangeCalendarState | null>(null);
+const InternalCalendarContext = createContext<CalendarProps<any> | null>(null);
+const InternalRangeCalendarContext = createContext<RangeCalendarProps<any> | null>(null);
 
 /**
  * A calendar displays one or more date grids and allows users to select a single date.
@@ -120,6 +122,7 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
           }],
           [HeadingContext, {'aria-hidden': true, level: 2, children: title}],
           [CalendarStateContext, state],
+          [InternalCalendarContext, props],
           [TextContext, {
             slots: {
               errorMessage: errorMessageProps
@@ -196,6 +199,7 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
           }],
           [HeadingContext, {'aria-hidden': true, level: 2, children: title}],
           [RangeCalendarStateContext, state],
+          [InternalRangeCalendarContext, props],
           [TextContext, {
             slots: {
               errorMessage: errorMessageProps
@@ -338,6 +342,8 @@ const InternalCalendarGridContext = createContext<InternalCalendarGridContextVal
 export const CalendarGrid = /*#__PURE__*/ (forwardRef as forwardRefType)(function CalendarGrid(props: CalendarGridProps, ref: ForwardedRef<HTMLTableElement>) {
   let calendarState = useContext(CalendarStateContext);
   let rangeCalendarState = useContext(RangeCalendarStateContext);
+  let calenderProps = useContext(InternalCalendarContext)!;
+  let rangeCalenderProps = useContext(InternalRangeCalendarContext)!;
   let state = calendarState ?? rangeCalendarState!;
   let startDate = state.visibleRange.start;
   if (props.offset) {
@@ -347,7 +353,8 @@ export const CalendarGrid = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
   let {gridProps, headerProps, weekDays} = useCalendarGrid({
     startDate,
     endDate: endOfMonth(startDate),
-    weekdayStyle: props.weekdayStyle
+    weekdayStyle: props.weekdayStyle,
+    firstDayOfWeek: calenderProps?.firstDayOfWeek ?? rangeCalenderProps?.firstDayOfWeek
   }, state);
 
   return (
