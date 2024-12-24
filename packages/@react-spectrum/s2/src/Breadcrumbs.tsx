@@ -36,7 +36,7 @@ import intlMessages from '../intl/*.json';
 import {Menu, MenuItem, MenuTrigger} from './Menu';
 import {Text} from './Content';
 import {useDOMRef, useResizeObserver} from '@react-spectrum/utils';
-import {useLayoutEffect} from '@react-aria/utils';
+import {inertValue, useLayoutEffect} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -168,7 +168,7 @@ let HiddenBreadcrumbs = function (props: {listRef: RefObject<HTMLDivElement | nu
   return (
     <div
       // @ts-ignore
-      inert="true"
+      inert={inertValue(true)}
       ref={listRef}
       className={style({
         display: '[inherit]',
