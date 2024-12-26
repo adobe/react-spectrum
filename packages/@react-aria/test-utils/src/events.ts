@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent} from '@testing-library/react';
-import {UserOpts} from './user';
+import {UserOpts} from './types';
 
 export const DEFAULT_LONG_PRESS_TIME = 500;
 
