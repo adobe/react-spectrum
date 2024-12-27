@@ -1173,7 +1173,9 @@ export interface CellProps extends RenderProps<CellRenderProps> {
   /** The unique id of the cell. */
   id?: Key,
   /** A string representation of the cell's contents, used for features like typeahead. */
-  textValue?: string
+  textValue?: string,
+  /** Indicates how many columns the data cell spans. */
+  colSpan?: number
 }
 
 /**
@@ -1186,6 +1188,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
   let {isVirtualized} = useContext(CollectionRendererContext);
 
   cell.column = state.collection.columns[cell.index];
+  cell.colspan = props.colSpan;
 
   let {gridCellProps, isPressed} = useTableCell({
     node: cell,

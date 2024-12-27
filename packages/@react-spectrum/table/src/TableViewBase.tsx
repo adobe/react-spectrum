@@ -321,6 +321,10 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
       case 'headerrow':
         return null;
       case 'cell': {
+        if (item.props.colSpan) {
+          item.colspan = item.props.colSpan;
+        }
+
         if (item.props.isSelectionCell) {
           return <TableCheckboxCell cell={item} />;
         }
