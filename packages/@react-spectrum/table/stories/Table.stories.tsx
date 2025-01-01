@@ -474,6 +474,54 @@ export const TableColSpanExample = () => {
   );
 };
 
+export const TableCellColSpanWithVariousSpans = () => {
+  return (
+    <TableView aria-label="Timetable">
+      <TableHeader>
+        <Column isRowHeader>Col 1</Column>
+        <Column >Col 2</Column>
+        <Column >Col 3</Column>
+        <Column >Col 4</Column>
+      </TableHeader>
+      <TableBody>
+        <Row>
+          <Cell>Cell</Cell>
+          <Cell colSpan={2}>Span 2</Cell>
+          <Cell>Cell</Cell>
+        </Row>
+        <Row>
+          <Cell>Cell</Cell>
+          <Cell>Cell</Cell>
+          <Cell>Cell</Cell>
+          <Cell>Cell</Cell>
+        </Row>
+        <Row>
+          <Cell colSpan={4}>Span 4</Cell>
+        </Row>
+        <Row>
+          <Cell>Cell</Cell>
+          <Cell>Cell</Cell>
+          <Cell>Cell</Cell>
+          <Cell>Cell</Cell>
+        </Row>
+        <Row>
+          <Cell colSpan={3}>Span 3</Cell>
+          <Cell>Cell</Cell>
+        </Row>
+        <Row>
+          <Cell>Cell</Cell>
+          <Cell>Cell</Cell>
+          <Cell>Cell</Cell>
+          <Cell>Cell</Cell>
+        </Row>
+        <Row>
+          <Cell>Cell</Cell>
+          <Cell colSpan={3}>Span 3</Cell>
+        </Row>
+      </TableBody>
+    </TableView>
+  );
+};
 export const FocusableCells: TableStory = {
   args: {
     'aria-label': 'TableView with focusable cells',

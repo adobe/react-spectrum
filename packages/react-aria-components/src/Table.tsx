@@ -1187,7 +1187,13 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
   let {dragState} = useContext(DragAndDropContext);
   let {isVirtualized} = useContext(CollectionRendererContext);
 
+  let prevCell = cell.prevKey ? state.collection.getItem(cell.prevKey) : null;
+
   cell.column = state.collection.columns[cell.index];
+
+  cell.colIndex = !prevCell
+    ? cell.index
+    : (prevCell.colIndex ?? prevCell.index) + (prevCell.colspan ?? 1);
   cell.colspan = props.colSpan;
 
   let {gridCellProps, isPressed} = useTableCell({

@@ -132,19 +132,6 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return null;
   }
 
-  protected findColIndex(item: GridNode<T>): number {
-    let index = 0;
-    let currItem: GridNode<T> | null = item;
-    while (currItem.prevKey) {
-      currItem = this.collection.getItem(currItem.prevKey);
-      if (!currItem) {
-        break;
-      }
-      index += currItem.colspan ?? 1;
-    }
-    return index;
-  }
-
   getKeyBelow(fromKey: Key) {
     let key: Key | null = fromKey;
     let startItem = this.collection.getItem(key);
@@ -165,8 +152,8 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     if (key != null) {
       // If focus was on a cell, focus the cell with the same index in the next row.
       if (this.isCell(startItem)) {
-        const colIndex = this.findColIndex(startItem);
-        return this.getKeyForItemInRowByIndex(key, colIndex);
+        let startIndex = startItem.colIndex ? startItem.colIndex : startItem.index;
+        return this.getKeyForItemInRowByIndex(key, startIndex);
       }
 
       // Otherwise, focus the next row
@@ -197,8 +184,8 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     if (key != null) {
       // If focus was on a cell, focus the cell with the same index in the previous row.
       if (this.isCell(startItem)) {
-        const colIndex = this.findColIndex(startItem);
-        return this.getKeyForItemInRowByIndex(key, colIndex);
+        let startIndex = startItem.colIndex ? startItem.colIndex : startItem.index;
+        return this.getKeyForItemInRowByIndex(key, startIndex);
       }
 
       // Otherwise, focus the previous row
