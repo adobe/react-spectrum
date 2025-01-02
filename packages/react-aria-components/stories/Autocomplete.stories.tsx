@@ -15,6 +15,7 @@ import {UNSTABLE_Autocomplete as Autocomplete, Button, Collection, Dialog, Dialo
 import {MyListBoxItem, MyMenuItem} from './utils';
 import React, {useMemo} from 'react';
 import styles from '../example/index.css';
+import {SubdialogTrigger} from '../src/Menu';
 import {useAsyncList, useListData, useTreeData} from 'react-stately';
 import {useFilter} from 'react-aria';
 
@@ -50,6 +51,31 @@ let StaticMenu = (props) => {
         <MyMenuItem>Bar</MyMenuItem>
         <MyMenuItem>Baz</MyMenuItem>
         <MyMenuItem href="http://google.com">Google</MyMenuItem>
+        <SubdialogTrigger>
+          <MyMenuItem>With subdialog</MyMenuItem>
+          <Popover
+            style={{
+              background: 'Canvas',
+              color: 'CanvasText',
+              border: '1px solid gray',
+              padding: 5
+            }}>
+            <Dialog>
+              <AutocompleteWrapper>
+                <TextField autoFocus>
+                  <Label style={{display: 'block'}}>Search</Label>
+                  <Input />
+                  <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+                </TextField>
+                <Menu className={styles.menu} {...props}>
+                  <MyMenuItem>Subdialog Foo</MyMenuItem>
+                  <MyMenuItem>Subdialog Bar</MyMenuItem>
+                  <MyMenuItem>Subdialog Baz</MyMenuItem>
+                </Menu>
+              </AutocompleteWrapper>
+            </Dialog>
+          </Popover>
+        </SubdialogTrigger>
         <MyMenuItem>Option</MyMenuItem>
         <MyMenuItem>Option with a space</MyMenuItem>
       </MenuSection>
@@ -89,7 +115,7 @@ export const AutocompleteExample = {
     let {onAction, onSelectionChange, selectionMode} = args;
 
     return (
-      <AutocompleteWrapper defaultInputValue="Ba">
+      <AutocompleteWrapper>
         <div>
           <TextField autoFocus data-testid="autocomplete-example">
             <Label style={{display: 'block'}}>Test</Label>
@@ -371,7 +397,7 @@ export const AutocompleteWithVirtualizedListbox = {
 
 let lotsOfSections: any[] = [];
 for (let i = 0; i < 50; i++) {
-  let children: {name: string, id: string}[] = [];
+  let children: {name: string, id: string, children?: any}[] = [];
   for (let j = 0; j < 50; j++) {
     children.push({name: `Section ${i}, Item ${j}`, id: `item_${i}_${j}`});
   }
@@ -379,6 +405,40 @@ for (let i = 0; i < 50; i++) {
   lotsOfSections.push({name: 'Section ' + i, id: `section_${i}`, children});
 }
 lotsOfSections = [{name: 'Recently visited', id: 'recent', children: []}].concat(lotsOfSections);
+
+let dynamicRenderFunc = (item, props) => {
+  if (item.value.children) {
+    console.log('aweg', item);
+    return (
+      <SubdialogTrigger>
+        <MyListBoxItem id={item.value.id}>{item.value.name}</MyListBoxItem>
+        <Popover
+          style={{
+            background: 'Canvas',
+            color: 'CanvasText',
+            border: '1px solid gray',
+            padding: 5
+          }}>
+          <Dialog>
+            <AutocompleteWrapper>
+              <TextField autoFocus>
+                <Label style={{display: 'block'}}>Search</Label>
+                <Input />
+                <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+              </TextField>
+              <ListBox items={item.value.children} className={styles.menu} {...props}>
+                {/* {(item) => dynamicRenderFunc(item, props)} */}
+                {item => <MyListBoxItem id={item.value.id}>{item.value.name}</MyListBoxItem>}
+              </ListBox>
+            </AutocompleteWrapper>
+          </Dialog>
+        </Popover>
+      </SubdialogTrigger>
+    );
+  } else {
+    return <MyListBoxItem id={item.value.id}>{item.value.name}</MyListBoxItem>;
+  }
+};
 
 function ShellExample() {
   let tree = useTreeData<any>({
@@ -412,7 +472,8 @@ function ShellExample() {
             <ListBoxSection id={section.value.id} className={styles.group}>
               {section.value.name != null && <Header style={{fontSize: '1.2em'}}>{section.value.name}</Header>}
               <Collection items={section.children ?? []}>
-                {item => <MyListBoxItem id={item.value.id}>{item.value.name}</MyListBoxItem>}
+                {(item) => dynamicRenderFunc(item, {onSelectionChange, selectionMode: 'single'})}
+                {/* {item => <MyListBoxItem id={item.value.id}>{item.value.name}</MyListBoxItem>} */}
               </Collection>
             </ListBoxSection>
           );

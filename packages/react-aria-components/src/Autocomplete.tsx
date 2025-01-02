@@ -14,7 +14,9 @@ import {AriaAutocompleteProps, CollectionOptions, UNSTABLE_useAutocomplete} from
 import {AutocompleteState, UNSTABLE_useAutocompleteState} from '@react-stately/autocomplete';
 import {ContextValue, Provider, removeDataAttributes, SlotProps, useContextProps} from './utils';
 import {InputContext} from './Input';
-import React, {createContext, ForwardedRef, forwardRef, RefObject, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useRef} from 'react';
+import {RootMenuTriggerStateContext} from './Menu';
+import {useMenuTriggerState} from 'react-stately';
 
 export interface AutocompleteProps extends AriaAutocompleteProps, SlotProps {}
 
@@ -39,7 +41,6 @@ export const UNSTABLE_Autocomplete = forwardRef(function Autocomplete(props: Aut
   let state = UNSTABLE_useAutocompleteState(props);
   let collectionRef = useRef<HTMLElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
-
   let {
     inputProps,
     collectionProps,
@@ -51,6 +52,10 @@ export const UNSTABLE_Autocomplete = forwardRef(function Autocomplete(props: Aut
     collectionRef,
     inputRef
   }, state);
+  // TODO: we need some sore of root menu state for any sub dialogs even though the autocomplete itself isn't actually a trigger
+  // Alternatively, we could assume that the Autocomplete will always be within a MenuTrigger/DialogTrigger
+  let rootMenuTriggerState = useContext(RootMenuTriggerStateContext);
+  let menuState = useMenuTriggerState({});
 
   return (
     <Provider
@@ -61,7 +66,8 @@ export const UNSTABLE_Autocomplete = forwardRef(function Autocomplete(props: Aut
           filterFn,
           collectionProps,
           collectionRef: mergedCollectionRef
-        }]
+        }],
+        [RootMenuTriggerStateContext, rootMenuTriggerState ? null : menuState]
       ]}>
       {props.children}
     </Provider>
