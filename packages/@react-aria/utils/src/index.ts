@@ -42,3 +42,5 @@ export {useEffectEvent} from './useEffectEvent';
 export {useDeepMemo} from './useDeepMemo';
 export {useFormReset} from './useFormReset';
 export {useLoadMore} from './useLoadMore';
+export {CLEAR_FOCUS_EVENT, FOCUS_EVENT, UPDATE_ACTIVEDESCENDANT} from './constants';
+export {useEnterAnimation, useExitAnimation} from './animation';

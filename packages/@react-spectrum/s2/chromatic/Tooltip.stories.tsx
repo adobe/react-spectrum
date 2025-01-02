@@ -26,16 +26,16 @@ const meta: Meta<typeof Tooltip> = {
 
 export default meta;
 
-export const Default = Example as StoryObj;
+export const Default = {
+  ...Example,
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    let body = canvasElement.ownerDocument.body;
+    await within(body).findByRole('tooltip');
+  }
+} as StoryObj;
 
-Default.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('tooltip');
-};
-
-export const WithLongLabel = LongLabel as StoryObj;
-
-WithLongLabel.play = async (context) => {
-  await Default.play!(context);
-};
+export const WithLongLabel = {
+  ...LongLabel,
+  play: async (context) => await Default.play!(context)
+} as StoryObj;
