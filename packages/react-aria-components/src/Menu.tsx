@@ -118,7 +118,7 @@ export interface SubmenuTriggerProps {
   delay?: number
 }
 
-const SubmenuTriggerContext = createContext<{parentMenuRef: RefObject<HTMLElement | null>} | null>(null);
+const SubmenuTriggerContext = createContext<{parentMenuRef: RefObject<HTMLElement | null>, isVirtualFocus?: boolean} | null>(null);
 
 /**
  * A submenu trigger is used to wrap a submenu's trigger item and the submenu itself.
@@ -132,11 +132,12 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
   let submenuTriggerState = useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
   let submenuRef = useRef<HTMLDivElement>(null);
   let itemRef = useObjectRef(ref);
-  let {parentMenuRef} = useContext(SubmenuTriggerContext)!;
+  let {parentMenuRef, isVirtualFocus} = useContext(SubmenuTriggerContext)!;
   let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger({
     parentMenuRef,
     submenuRef,
-    delay: props.delay
+    delay: props.delay,
+    isVirtualFocus
   }, submenuTriggerState, itemRef);
 
   return (
@@ -187,7 +188,6 @@ export const SubdialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogt
   let submenuTriggerState = useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
   let subdialogRef = useRef<HTMLDivElement>(null);
   let itemRef = useObjectRef(ref);
-  // TODO: We will probably support nested subdialogs so test that use case
   let {parentMenuRef} = useContext(SubmenuTriggerContext)!;
   let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger({
     parentMenuRef,
@@ -302,8 +302,9 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             [MenuStateContext, state],
             [SeparatorContext, {elementType: 'div'}],
             [SectionContext, {name: 'MenuSection', render: MenuSectionInner}],
-            [SubmenuTriggerContext, {parentMenuRef: ref}],
+            [SubmenuTriggerContext, {parentMenuRef: ref, isVirtualFocus: autocompleteMenuProps?.shouldUseVirtualFocus}],
             [MenuItemContext, null],
+            [UNSTABLE_InternalAutocompleteContext, null],
             [SelectionManagerContext, state.selectionManager]
           ]}>
           <CollectionRoot
