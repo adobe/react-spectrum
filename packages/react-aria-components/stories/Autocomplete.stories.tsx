@@ -15,7 +15,7 @@ import {UNSTABLE_Autocomplete as Autocomplete, Button, Collection, Dialog, Dialo
 import {MyListBoxItem, MyMenuItem} from './utils';
 import React, {useMemo} from 'react';
 import styles from '../example/index.css';
-import {SubdialogTrigger} from '../src/Menu';
+import {SubdialogTrigger, SubmenuTrigger} from '../src/Menu';
 import {useAsyncList, useListData, useTreeData} from 'react-stately';
 import {useFilter} from 'react-aria';
 
@@ -149,22 +149,24 @@ export const AutocompleteSearchfield = {
   name: 'Autocomplete complex static with searchfield'
 };
 
+// Note that the trigger items in this array MUST have an id, even if the underlying MenuItem might apply its own
+// id. If it is omitted, we can't build the collection node for the trigger node and an error will throw
 let dynamicAutocompleteSubdialog = [
   {name: 'Section 1', isSection: true, children: [
     {name: 'Command Palette'},
     {name: 'Open View'}
   ]},
   {name: 'Section 2', isSection: true, children: [
-    {name: 'Appearance', children: [
+    {name: 'Appearance', id: 'appearance', children: [
       {name: 'Sub Section 1', isSection: true, children: [
         {name: 'Move Primary Side Bar Right'},
-        {name: 'Activity Bar Position', children: [
+        {name: 'Activity Bar Position', id: 'activity', isMenu: true, children: [
           {name: 'Default'},
           {name: 'Top'},
           {name: 'Bottom'},
           {name: 'Hidden'}
         ]},
-        {name: 'Panel Position', children: [
+        {name: 'Panel Position', id: 'position', children: [
           {name: 'Top'},
           {name: 'Left'},
           {name: 'Right'},
@@ -172,7 +174,7 @@ let dynamicAutocompleteSubdialog = [
         ]}
       ]}
     ]},
-    {name: 'Editor Layout', children: [
+    {name: 'Editor Layout', id: 'editor', children: [
       {name: 'Sub Section 1', isSection: true, children: [
         {name: 'Split up'},
         {name: 'Split down'},
@@ -194,38 +196,53 @@ interface ItemNode {
   name?: string,
   textValue?: string,
   isSection?: boolean,
+  isMenu?: boolean,
   children?: ItemNode[]
 }
 
-let dynamicRenderTrigger = (item: ItemNode) => (
-  // TODO: not sure why this needs an id...
-  // @ts-ignore
-  <SubdialogTrigger id={Math.random()}>
-    <MyMenuItem id={item.name} textValue={item.name}>
-      {item.name}
-    </MyMenuItem>
-    <Popover
-      style={{
-        background: 'Canvas',
-        color: 'CanvasText',
-        border: '1px solid gray',
-        padding: 5
-      }}>
-      <Dialog>
-        <AutocompleteWrapper>
-          <SearchField autoFocus>
-            <Label style={{display: 'block'}}>Search</Label>
-            <Input />
-            <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
-          </SearchField>
-          <Menu className={styles.menu} items={item.children} onAction={action(`${item.name} onAction`)}>
+let dynamicRenderTrigger = (item: ItemNode) => {
+  if (item.isMenu) {
+    // TODO: will need to fix a bug here where focus isn't shifting out of the subdialog into the sub menu
+    return (
+      <SubmenuTrigger>
+        <MyMenuItem key={item.name}>{item.name}</MyMenuItem>
+        <Popover className={styles.popover}>
+          <Menu items={item.children} className={styles.menu} onAction={action(`${item.name} onAction`)}>
             {(item) => dynamicRenderFuncSections(item)}
           </Menu>
-        </AutocompleteWrapper>
-      </Dialog>
-    </Popover>
-  </SubdialogTrigger>
-);
+        </Popover>
+      </SubmenuTrigger>
+    );
+  } else {
+    return (
+      <SubdialogTrigger>
+        <MyMenuItem id={item.name} textValue={item.name}>
+          {item.name}
+        </MyMenuItem>
+        <Popover
+          style={{
+            background: 'Canvas',
+            color: 'CanvasText',
+            border: '1px solid gray',
+            padding: 5
+          }}>
+          <Dialog>
+            <AutocompleteWrapper>
+              <SearchField autoFocus>
+                <Label style={{display: 'block'}}>Search</Label>
+                <Input />
+                <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+              </SearchField>
+              <Menu className={styles.menu} items={item.children} onAction={action(`${item.name} onAction`)}>
+                {(item) => dynamicRenderFuncSections(item)}
+              </Menu>
+            </AutocompleteWrapper>
+          </Dialog>
+        </Popover>
+      </SubdialogTrigger>
+    );
+  }
+};
 
 let dynamicRenderItem = (item) => (
   <MyMenuItem id={item.name} textValue={item.name}>
