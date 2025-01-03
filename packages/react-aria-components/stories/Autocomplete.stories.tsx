@@ -149,12 +149,115 @@ export const AutocompleteSearchfield = {
   name: 'Autocomplete complex static with searchfield'
 };
 
-interface AutocompleteItem {
-  id: string,
-  name: string
+let dynamicAutocompleteSubdialog = [
+  {name: 'Section 1', isSection: true, children: [
+    {name: 'Command Palette'},
+    {name: 'Open View'}
+  ]},
+  {name: 'Section 2', isSection: true, children: [
+    {name: 'Appearance', children: [
+      {name: 'Sub Section 1', isSection: true, children: [
+        {name: 'Move Primary Side Bar Right'},
+        {name: 'Activity Bar Position', children: [
+          {name: 'Default'},
+          {name: 'Top'},
+          {name: 'Bottom'},
+          {name: 'Hidden'}
+        ]},
+        {name: 'Panel Position', children: [
+          {name: 'Top'},
+          {name: 'Left'},
+          {name: 'Right'},
+          {name: 'Bottom'}
+        ]}
+      ]}
+    ]},
+    {name: 'Editor Layout', children: [
+      {name: 'Sub Section 1', isSection: true, children: [
+        {name: 'Split up'},
+        {name: 'Split down'},
+        {name: 'Split left'},
+        {name: 'Split right'}
+      ]},
+      {name: 'Sub Section 2', isSection: true, children: [
+        {name: 'Single'},
+        {name: 'Two columns'},
+        {name: 'Three columns'},
+        {name: 'Two rows'},
+        {name: 'Three rows'}
+      ]}
+    ]}
+  ]}
+];
+
+interface ItemNode {
+  name?: string,
+  textValue?: string,
+  isSection?: boolean,
+  children?: ItemNode[]
 }
 
-let items: AutocompleteItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'}, {id: '3', name: 'Baz'}];
+let dynamicRenderTrigger = (item: ItemNode) => (
+  // TODO: not sure why this needs an id...
+  // @ts-ignore
+  <SubdialogTrigger id={Math.random()}>
+    <MyMenuItem id={item.name} textValue={item.name}>
+      {item.name}
+    </MyMenuItem>
+    <Popover
+      style={{
+        background: 'Canvas',
+        color: 'CanvasText',
+        border: '1px solid gray',
+        padding: 5
+      }}>
+      <Dialog>
+        <AutocompleteWrapper>
+          <SearchField autoFocus>
+            <Label style={{display: 'block'}}>Search</Label>
+            <Input />
+            <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+          </SearchField>
+          <Menu className={styles.menu} items={item.children} onAction={action(`${item.name} onAction`)}>
+            {(item) => dynamicRenderFuncSections(item)}
+          </Menu>
+        </AutocompleteWrapper>
+      </Dialog>
+    </Popover>
+  </SubdialogTrigger>
+);
+
+let dynamicRenderItem = (item) => (
+  <MyMenuItem id={item.name} textValue={item.name}>
+    {item.name}
+  </MyMenuItem>
+);
+
+let dynamicRenderFuncSections = (item: ItemNode) => {
+  if (item.children) {
+    if (item.isSection) {
+      return (
+        <MenuSection className={styles.group} id={item.name} items={item.children}>
+          {item.name != null && <Header style={{fontSize: '1.2em'}}>{item.name}</Header>}
+          <Collection items={item.children ?? []}>
+            {(item) => {
+              if (item.children) {
+                return dynamicRenderTrigger(item);
+              } else {
+                return dynamicRenderItem(item);
+              }
+            }}
+          </Collection>
+        </MenuSection>
+      );
+    } else {
+      return dynamicRenderTrigger(item);
+    }
+  } else {
+    return dynamicRenderItem(item);
+  }
+};
+
 export const AutocompleteMenuDynamic = {
   render: (args) => {
     let {onAction, onSelectionChange, selectionMode} = args;
@@ -167,8 +270,8 @@ export const AutocompleteMenuDynamic = {
             <Input />
             <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
           </SearchField>
-          <Menu className={styles.menu} items={items} onAction={onAction} onSelectionChange={onSelectionChange} selectionMode={selectionMode}>
-            {item => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
+          <Menu className={styles.menu} items={dynamicAutocompleteSubdialog} onAction={onAction} onSelectionChange={onSelectionChange} selectionMode={selectionMode}>
+            {item => dynamicRenderFuncSections(item)}
           </Menu>
         </div>
       </AutocompleteWrapper>
@@ -199,6 +302,13 @@ export const AutocompleteOnActionOnMenuItems = {
   },
   name: 'Autocomplete, onAction on menu items'
 };
+
+interface AutocompleteItem {
+  id: string,
+  name: string
+}
+
+let items: AutocompleteItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'}, {id: '3', name: 'Baz'}];
 
 export const AutocompleteDisabledKeys = {
   render: (args) => {
@@ -397,7 +507,7 @@ export const AutocompleteWithVirtualizedListbox = {
 
 let lotsOfSections: any[] = [];
 for (let i = 0; i < 50; i++) {
-  let children: {name: string, id: string, children?: any}[] = [];
+  let children: {name: string, id: string}[] = [];
   for (let j = 0; j < 50; j++) {
     children.push({name: `Section ${i}, Item ${j}`, id: `item_${i}_${j}`});
   }
@@ -405,40 +515,6 @@ for (let i = 0; i < 50; i++) {
   lotsOfSections.push({name: 'Section ' + i, id: `section_${i}`, children});
 }
 lotsOfSections = [{name: 'Recently visited', id: 'recent', children: []}].concat(lotsOfSections);
-
-let dynamicRenderFunc = (item, props) => {
-  if (item.value.children) {
-    console.log('aweg', item);
-    return (
-      <SubdialogTrigger>
-        <MyListBoxItem id={item.value.id}>{item.value.name}</MyListBoxItem>
-        <Popover
-          style={{
-            background: 'Canvas',
-            color: 'CanvasText',
-            border: '1px solid gray',
-            padding: 5
-          }}>
-          <Dialog>
-            <AutocompleteWrapper>
-              <TextField autoFocus>
-                <Label style={{display: 'block'}}>Search</Label>
-                <Input />
-                <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
-              </TextField>
-              <ListBox items={item.value.children} className={styles.menu} {...props}>
-                {/* {(item) => dynamicRenderFunc(item, props)} */}
-                {item => <MyListBoxItem id={item.value.id}>{item.value.name}</MyListBoxItem>}
-              </ListBox>
-            </AutocompleteWrapper>
-          </Dialog>
-        </Popover>
-      </SubdialogTrigger>
-    );
-  } else {
-    return <MyListBoxItem id={item.value.id}>{item.value.name}</MyListBoxItem>;
-  }
-};
 
 function ShellExample() {
   let tree = useTreeData<any>({
@@ -472,8 +548,7 @@ function ShellExample() {
             <ListBoxSection id={section.value.id} className={styles.group}>
               {section.value.name != null && <Header style={{fontSize: '1.2em'}}>{section.value.name}</Header>}
               <Collection items={section.children ?? []}>
-                {(item) => dynamicRenderFunc(item, {onSelectionChange, selectionMode: 'single'})}
-                {/* {item => <MyListBoxItem id={item.value.id}>{item.value.name}</MyListBoxItem>} */}
+                {item => <MyListBoxItem id={item.value.id}>{item.value.name}</MyListBoxItem>}
               </Collection>
             </ListBoxSection>
           );
@@ -575,6 +650,54 @@ export const AutocompleteInPopoverDialogTrigger = {
   parameters: {
     description: {
       data: 'Menu is single selection so only the latest selected option will show the selected style'
+    }
+  }
+};
+
+// TODO: hitting escape sometimes closes both the root menu and the leaf menu, seems to happen if you arrow key to an option in the submenu's options and then hits escape...
+export const AutocompleteMenuInPopoverDialogTrigger = {
+  render: (args) => {
+    let {onAction, onSelectionChange, selectionMode} = args;
+    return (
+      <DialogTrigger>
+        <Button>
+          Open popover
+        </Button>
+        <Popover
+          placement="bottom start"
+          style={{
+            background: 'Canvas',
+            color: 'CanvasText',
+            border: '1px solid gray',
+            padding: 20,
+            height: 250
+          }}>
+          <Dialog aria-label="dialog with autocomplete">
+            {() => (
+              <AutocompleteWrapper>
+                <div>
+                  <SearchField autoFocus>
+                    <Label style={{display: 'block'}}>Test</Label>
+                    <Input />
+                    <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+                  </SearchField>
+                  <Menu className={styles.menu} items={dynamicAutocompleteSubdialog}  onAction={onAction} onSelectionChange={onSelectionChange} selectionMode={selectionMode}>
+                    {item => dynamicRenderFuncSections(item)}
+                  </Menu>
+                </div>
+              </AutocompleteWrapper>
+            )}
+          </Dialog>
+        </Popover>
+      </DialogTrigger>
+    );
+  },
+  name: 'Autocomplete in popover (dialog trigger), rendering dynamic autocomplete menu',
+  argTypes: {
+    selectionMode: {
+      table: {
+        disable: true
+      }
     }
   }
 };

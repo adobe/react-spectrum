@@ -67,7 +67,7 @@ export const UNSTABLE_Autocomplete = forwardRef(function Autocomplete(props: Aut
           collectionProps,
           collectionRef: mergedCollectionRef
         }],
-        [RootMenuTriggerStateContext, rootMenuTriggerState ? null : menuState]
+        [RootMenuTriggerStateContext, rootMenuTriggerState ? rootMenuTriggerState : menuState]
       ]}>
       {props.children}
     </Provider>
