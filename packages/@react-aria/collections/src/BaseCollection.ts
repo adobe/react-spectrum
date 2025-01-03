@@ -323,7 +323,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
 }
 
 function shouldKeepNode<T>(node: Node<T>, filterFn: (nodeValue: string) => boolean, oldCollection: BaseCollection<T>, newCollection: BaseCollection<T>): boolean {
-  if (node.type === 'subdialogtrigger') {
+  if (node.type === 'subdialogtrigger' || node.type === 'submenutrigger') {
     // Subdialog wrapper should only have one child, if it passes the filter add it to the new collection since we don't need to
     // do any extra handling for its first/next key
     let triggerChild = [...oldCollection.getChildren(node.key)][0];
