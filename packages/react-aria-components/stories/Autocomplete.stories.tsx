@@ -671,7 +671,6 @@ export const AutocompleteInPopoverDialogTrigger = {
   }
 };
 
-// TODO: hitting escape sometimes closes both the root menu and the leaf menu, seems to happen if you arrow key to an option in the submenu's options and then hits escape...
 export const AutocompleteMenuInPopoverDialogTrigger = {
   render: (args) => {
     let {onAction, onSelectionChange, selectionMode} = args;
