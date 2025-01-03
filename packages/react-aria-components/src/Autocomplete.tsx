@@ -69,7 +69,7 @@ export function UNSTABLE_Autocomplete(props: AutocompleteProps) {
           collectionProps,
           collectionRef: mergedCollectionRef
         }],
-        [RootMenuTriggerStateContext, rootMenuTriggerState ? null : menuState]
+        [RootMenuTriggerStateContext, rootMenuTriggerState ? rootMenuTriggerState : menuState]
       ]}>
       {props.children}
     </Provider>
