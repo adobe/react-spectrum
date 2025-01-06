@@ -87,7 +87,8 @@ export class ListDropTargetDelegate implements DropTargetDelegate {
     let isSecondaryRTL = this.layout === 'grid' && this.orientation === 'vertical' && this.direction === 'rtl';
     let isFlowRTL = this.layout === 'stack' ? isPrimaryRTL : isSecondaryRTL;
 
-    let elements = this.ref.current.querySelectorAll('[data-key]');
+    let idScope = this.ref.current?.dataset['scope'];
+    let elements = this.ref.current.querySelectorAll(idScope ? `[data-key^="${CSS.escape(idScope)}"]` : '[data-key]');
     let elementMap = new Map<string, HTMLElement>();
     for (let item of elements) {
       if (item instanceof HTMLElement && item.dataset.key != null) {
@@ -105,7 +106,8 @@ export class ListDropTargetDelegate implements DropTargetDelegate {
     while (low < high) {
       let mid = Math.floor((low + high) / 2);
       let item = items[mid];
-      let element = elementMap.get(String(item.key));
+      let nodeKey = idScope ? `${idScope}-${item.key}` : item.key;
+      let element = elementMap.get(nodeKey.toString());
       if (!element) {
         break;
       }

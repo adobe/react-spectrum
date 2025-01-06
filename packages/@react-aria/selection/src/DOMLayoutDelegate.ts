@@ -24,7 +24,9 @@ export class DOMLayoutDelegate implements LayoutDelegate {
     if (!container) {
       return null;
     }
-    let item = key != null ? container.querySelector(`[data-key$="${CSS.escape(key.toString())}"]`) : null;
+    let idScope = this.ref.current?.dataset['scope'];
+    let nodeKey = idScope ? `${idScope}-${key}` : key;
+    let item = key != null ? container.querySelector(`[data-key="${CSS.escape(nodeKey.toString())}"]`) : null;
     if (!item) {
       return null;
     }

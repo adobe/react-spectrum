@@ -531,9 +531,9 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   }
 
   return {
-    collectionProps: {
-      ...handlers,
-      tabIndex
-    }
+    collectionProps: mergeProps(handlers, {
+      tabIndex,
+      'data-scope': idScope
+    })
   };
 }
