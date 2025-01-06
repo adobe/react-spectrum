@@ -1135,7 +1135,6 @@ describe('Tree', () => {
   });
 
   describe('empty state', () => {
-    // TODO
     it('should allow the user to tab to the empty tree', async () => {
       function renderEmptyState() {
         return (
