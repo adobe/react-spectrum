@@ -14,6 +14,8 @@ import {ArbitraryValue, CSSValue, PropertyValueMap} from './types';
 import {autoStaticColor, colorScale, colorToken, fontSizeToken, generateOverlayColorScale, getToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
 import {Color, createArbitraryProperty, createColorProperty, createMappedProperty, createRenamedProperty, createSizingProperty, createTheme, parseArbitraryValue} from './style-macro';
 import type * as CSS from 'csstype';
+// eslint-disable-next-line rulesdir/imports
+import * as tokens from '@adobe/spectrum-tokens/dist/json/variables.json';
 
 interface MacroContext {
   addAsset(asset: {type: string, content: string}): void
@@ -111,8 +113,8 @@ export function colorMix(a: SpectrumColor, b: SpectrumColor, percent: number): `
   return `[color-mix(in srgb, ${parseColor(a)}, ${parseColor(b)} ${percent}%)]`;
 }
 
-export function linearGradient(angle: string, ...tokens: [SpectrumColor, number][]): string {
-  return `linear-gradient(${angle}, ${tokens.map(([color, stop]) => `${parseColor(color)} ${stop}%`)})`;
+export function linearGradient(angle: string, ...gradientTokens: [(keyof typeof tokens), (keyof typeof tokens)][]): string {
+  return `linear-gradient(${angle}, ${gradientTokens.map(([color, stop]) => `${getToken(color)} ${parseFloat(getToken(stop)) * 100}%`)})`;
 }
 
 function generateSpacing<K extends number[]>(px: K): {[P in K[number]]: string} {

@@ -141,16 +141,48 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
   backgroundImage: {
     variant: {
       premium: {
-        default: linearGradient('96deg', ['fuchsia-900', 0], ['indigo-900', 66], ['blue-900', 100]),
-        isHovered: linearGradient('96deg', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100]),
-        isPressed: linearGradient('96deg', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100]),
-        isFocusVisible: linearGradient('96deg', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100])
+        default: linearGradient('96deg',
+          ['static-fuchsia-900', 'gradient-stop-1-premium'],
+          ['static-indigo-900', 'gradient-stop-2-premium'],
+          ['static-blue-900', 'gradient-stop-3-premium']
+        ),
+        isHovered: linearGradient('96deg',
+          ['static-fuchsia-1000', 'gradient-stop-1-premium'],
+          ['static-indigo-1000', 'gradient-stop-2-premium'],
+          ['static-blue-1000', 'gradient-stop-3-premium']
+        ),
+        isPressed: linearGradient('96deg',
+          ['static-fuchsia-1000', 'gradient-stop-1-premium'],
+          ['static-indigo-1000', 'gradient-stop-2-premium'],
+          ['static-blue-1000', 'gradient-stop-3-premium']
+        ),
+        isFocusVisible: linearGradient('96deg',
+          ['static-fuchsia-1000', 'gradient-stop-1-premium'],
+          ['static-indigo-1000', 'gradient-stop-2-premium'],
+          ['static-blue-1000', 'gradient-stop-3-premium']
+        )
       },
       genai: {
-        default: linearGradient('96deg', ['red-900', 0], ['magenta-900', 33], ['indigo-900', 100]),
-        isHovered: linearGradient('96deg', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100]),
-        isPressed: linearGradient('96deg', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100]),
-        isFocusVisible: linearGradient('96deg', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100])
+        default: linearGradient('96deg',
+          ['static-red-900', 'gradient-stop-1-genai'],
+          ['static-magenta-900', 'gradient-stop-2-genai'],
+          ['static-indigo-900', 'gradient-stop-3-genai']
+        ),
+        isHovered: linearGradient('96deg',
+          ['static-red-1000', 'gradient-stop-1-genai'],
+          ['static-magenta-1000', 'gradient-stop-2-genai'],
+          ['static-indigo-1000', 'gradient-stop-3-genai']
+        ),
+        isPressed: linearGradient('96deg',
+          ['static-red-1000', 'gradient-stop-1-genai'],
+          ['static-magenta-1000', 'gradient-stop-2-genai'],
+          ['static-indigo-1000', 'gradient-stop-3-genai']
+        ),
+        isFocusVisible: linearGradient('96deg',
+          ['static-red-1000', 'gradient-stop-1-genai'],
+          ['static-magenta-1000', 'gradient-stop-2-genai'],
+          ['static-indigo-1000', 'gradient-stop-3-genai']
+        )
       }
     },
     isDisabled: 'none',
