@@ -272,6 +272,11 @@ governing permissions and limitations under the License.
     }
   }
 
+  .spectrum-Menu-unavailableIcon {
+    box-sizing: content-box;
+    align-self: center;
+  }
+
   &.spectrum-Menu-wrapper--isMobile {
     width: 100%;
     border: none;
