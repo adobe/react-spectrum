@@ -40,6 +40,7 @@ let options = {
     process.exit(1);
   }
 
+  let titleType = type === 'releases' ? 'Releases' : 'Blog'
   let posts = getFeed(type);
   const feedObject = {
     rss: [
@@ -57,8 +58,8 @@ let options = {
               },
             },
           },
-          {title: "Adobe React Spectrum"},
-          {link: `https://react-spectrum.adobe.com/`},
+          {title: `Adobe React Spectrum ${titleType}`},
+          {link: `https://react-spectrum.adobe.com/${type}`},
           {description: "A collection of libraries and tools that help you build adaptive, accessible, and robust user experiences."},
           {language: "en-US"},
           ...buildFeed(type, posts)
