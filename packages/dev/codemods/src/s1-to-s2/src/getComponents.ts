@@ -14,7 +14,8 @@ const skipped = new Set([
   'Column',
   'TableBody',
   'Row',
-  'Cell'
+  'Cell',
+  'ActionBar'
 ]);
 
 export function getComponents(): Set<string> {

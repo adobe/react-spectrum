@@ -36,7 +36,7 @@ interface FieldLabelProps extends Omit<LabelProps, 'className' | 'style' | 'chil
   labelAlign?: Alignment,
   labelPosition?: 'top' | 'side',
   includeNecessityIndicatorInAccessibilityName?: boolean,
-  staticColor?: 'white' | 'black',
+  staticColor?: 'white' | 'black' | 'auto',
   contextualHelp?: ReactNode,
   isQuiet?: boolean,
   children?: ReactNode
@@ -98,7 +98,7 @@ export const FieldLabel = forwardRef(function FieldLabel(props: FieldLabelProps,
         {...labelProps}
         ref={domRef}
         style={UNSAFE_style}
-        className={UNSAFE_className + mergeStyles(style(fieldLabel())({labelPosition, isDisabled, size, staticColor}), props.styles)}>
+        className={UNSAFE_className + mergeStyles(style(fieldLabel())({labelPosition, isDisabled, size, isStaticColor: !!staticColor}), props.styles)}>
         {props.children}
         {(isRequired || necessityIndicator === 'label') && (
           <span className={style({whiteSpace: 'nowrap'})}>
@@ -127,21 +127,23 @@ export const FieldLabel = forwardRef(function FieldLabel(props: FieldLabelProps,
         )}
       </Label>
       {contextualHelp && (
-        <CenterBaseline
-          styles={style({
-            display: 'inline-flex',
-            height: 0,
-            marginStart: 4
-          })}>
-          <ContextualHelpContext.Provider
-            value={{
-              id: contextualHelpId,
-              'aria-labelledby': labelProps?.id ? `${labelProps.id} ${contextualHelpId}` : undefined,
-              size: (size === 'L' || size === 'XL') ? 'S' : 'XS'
-            }}>
-            {contextualHelp}
-          </ContextualHelpContext.Provider>
-        </CenterBaseline>
+        <span className={style({whiteSpace: 'nowrap'})}>
+          &nbsp;
+          <CenterBaseline
+            styles={style({
+              display: 'inline-flex',
+              height: 0
+            })}>
+            <ContextualHelpContext.Provider
+              value={{
+                id: contextualHelpId,
+                'aria-labelledby': labelProps?.id ? `${labelProps.id} ${contextualHelpId}` : undefined,
+                size: (size === 'L' || size === 'XL') ? 'S' : 'XS'
+              }}>
+              {contextualHelp}
+            </ContextualHelpContext.Provider>
+          </CenterBaseline>
+        </span>
       )}
     </div>
   );

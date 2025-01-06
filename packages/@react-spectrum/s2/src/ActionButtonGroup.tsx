@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaLabelingProps} from '@react-types/shared';
 import {ContextValue, SlotProps, Toolbar} from 'react-aria-components';
 import {createContext, ForwardedRef, forwardRef, ReactNode} from 'react';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface ActionButtonGroupProps extends UnsafeStyles, SlotProps {
+export interface ActionButtonGroupProps extends AriaLabelingProps, UnsafeStyles, SlotProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
   /** The children of the group. */
@@ -36,7 +37,7 @@ export interface ActionButtonGroupProps extends UnsafeStyles, SlotProps {
   /** Whether the buttons should divide the container width equally. */
   isJustified?: boolean,
   /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
-  staticColor?: 'white' | 'black',
+  staticColor?: 'white' | 'black' | 'auto',
   /**
    * The axis the group should align with.
    * @default 'horizontal'
@@ -71,7 +72,7 @@ export const actionGroupStyle = style({
 }, getAllowedOverrides({height: true}));
 
 
-export const ActionButtonGroupContext = createContext<ContextValue<ActionButtonGroupProps, HTMLDivElement>>(null);
+export const ActionButtonGroupContext = createContext<ContextValue<Partial<ActionButtonGroupProps>, HTMLDivElement>>(null);
 
 /**
  * An ActionButtonGroup is a grouping of related ActionButtons.
