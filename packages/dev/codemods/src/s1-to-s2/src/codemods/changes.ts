@@ -1289,6 +1289,54 @@ export const changes: ChangesJSON = {
           name: 'commentIfNestedColumns',
           args: {}
         }
+      },
+      {
+        description: 'Comment out dragAndDropHooks',
+        reason: 'It has not been implemented yet',
+        function: {
+          name: 'commentOutProp',
+          args: {propToComment: 'dragAndDropHooks'}
+        }
+      },
+      {
+        description: 'Comment out selectionStyle="highlight"',
+        reason: 'It has not been implemented yet',
+        function: {
+          name: 'commentOutProp',
+          args: {propToComment: 'selectionStyle'}
+        }
+      },
+      {
+        description: 'Comment out hasExpandableRows',
+        reason: 'It has not been implemented yet',
+        function: {
+          name: 'commentOutProp',
+          args: {propToComment: 'hasExpandableRows'}
+        }
+      },
+      {
+        description: 'Comment out defaultExpandedKeys',
+        reason: 'It has not been implemented yet',
+        function: {
+          name: 'commentOutProp',
+          args: {propToComment: 'defaultExpandedKeys'}
+        }
+      },
+      {
+        description: 'Comment out expandedKeys',
+        reason: 'It has not been implemented yet',
+        function: {
+          name: 'commentOutProp',
+          args: {propToComment: 'expandedKeys'}
+        }
+      },
+      {
+        description: 'Comment out onExpandedChange',
+        reason: 'It has not been implemented yet',
+        function: {
+          name: 'commentOutProp',
+          args: {propToComment: 'onExpandedChange'}
+        }
       }
     ]
   },

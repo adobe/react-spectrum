@@ -111,3 +111,129 @@ import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/reac
   </TableBody>
 </TableView>
 `);
+
+test('Leave a comment for dragAndDropHooks', `
+import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/react-spectrum';
+
+<TableView dragAndDropHooks={() => {}}>
+  <TableHeader>
+    <Column key="test">Test</Column>
+    <Column key="blah">Blah</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Test1</Cell>
+      <Cell>One</Cell>
+    </Row>
+    <Row>
+      <Cell>Test2</Cell>
+      <Cell>One</Cell>
+    </Row>
+  </TableBody>
+</TableView>
+`);
+
+test('Leave a comment for selectionStyle', `
+import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/react-spectrum';
+
+<TableView selectionStyle="highlight">
+  <TableHeader>
+    <Column key="test">Test</Column>
+    <Column key="blah">Blah</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Test1</Cell>
+      <Cell>One</Cell>
+    </Row>
+    <Row>
+      <Cell>Test2</Cell>
+      <Cell>One</Cell>
+    </Row>
+  </TableBody>
+</TableView>
+`);
+
+test('Leave a comment for hasExpandableRows', `
+import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/react-spectrum';
+
+<TableView hasExpandableRows>
+  <TableHeader>
+    <Column key="test">Test</Column>
+    <Column key="blah">Blah</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Test1</Cell>
+      <Cell>One</Cell>
+    </Row>
+    <Row>
+      <Cell>Test2</Cell>
+      <Cell>One</Cell>
+    </Row>
+  </TableBody>
+</TableView>
+`);
+
+test('Leave a comment for defaultExpandedKeys', `
+import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/react-spectrum';
+
+<TableView defaultExpandedKeys={['1', '2']}>
+  <TableHeader>
+    <Column key="test">Test</Column>
+    <Column key="blah">Blah</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Test1</Cell>
+      <Cell>One</Cell>
+    </Row>
+    <Row>
+      <Cell>Test2</Cell>
+      <Cell>One</Cell>
+    </Row>
+  </TableBody>
+</TableView>
+`);
+
+test('Leave a comment for expandedKeys', `
+import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/react-spectrum';
+
+<TableView expandedKeys={['1', '2']}>
+  <TableHeader>
+    <Column key="test">Test</Column>
+    <Column key="blah">Blah</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Test1</Cell>
+      <Cell>One</Cell>
+    </Row>
+    <Row>
+      <Cell>Test2</Cell>
+      <Cell>One</Cell>
+    </Row>
+  </TableBody>
+</TableView>
+`);
+
+test('Leave a comment for onExpandedChange', `
+import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/react-spectrum';
+
+<TableView onExpandedChange={() => {}}>
+  <TableHeader>
+    <Column key="test">Test</Column>
+    <Column key="blah">Blah</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Test1</Cell>
+      <Cell>One</Cell>
+    </Row>
+    <Row>
+      <Cell>Test2</Cell>
+      <Cell>One</Cell>
+    </Row>
+  </TableBody>
+</TableView>
+`);

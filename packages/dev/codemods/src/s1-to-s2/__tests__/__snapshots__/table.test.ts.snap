@@ -56,6 +56,94 @@ exports[`Keep key if array.map used 1`] = `
   </TableView>"
 `;
 
+exports[`Leave a comment for defaultExpandedKeys 1`] = `
+"import { Cell, Column, Row, TableBody, TableHeader, TableView } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): defaultExpandedKeys has not been implemented yet.
+<TableView>
+  <TableHeader>
+    <Column id="test">Test</Column>
+    <Column id="blah">Blah</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Test1</Cell>
+      <Cell>One</Cell>
+    </Row>
+    <Row>
+      <Cell>Test2</Cell>
+      <Cell>One</Cell>
+    </Row>
+  </TableBody>
+</TableView>"
+`;
+
+exports[`Leave a comment for dragAndDropHooks 1`] = `
+"import { Cell, Column, Row, TableBody, TableHeader, TableView } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): dragAndDropHooks has not been implemented yet.
+<TableView>
+  <TableHeader>
+    <Column id="test">Test</Column>
+    <Column id="blah">Blah</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Test1</Cell>
+      <Cell>One</Cell>
+    </Row>
+    <Row>
+      <Cell>Test2</Cell>
+      <Cell>One</Cell>
+    </Row>
+  </TableBody>
+</TableView>"
+`;
+
+exports[`Leave a comment for expandedKeys 1`] = `
+"import { Cell, Column, Row, TableBody, TableHeader, TableView } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): expandedKeys has not been implemented yet.
+<TableView>
+  <TableHeader>
+    <Column id="test">Test</Column>
+    <Column id="blah">Blah</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Test1</Cell>
+      <Cell>One</Cell>
+    </Row>
+    <Row>
+      <Cell>Test2</Cell>
+      <Cell>One</Cell>
+    </Row>
+  </TableBody>
+</TableView>"
+`;
+
+exports[`Leave a comment for hasExpandableRows 1`] = `
+"import { Cell, Column, Row, TableBody, TableHeader, TableView } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): hasExpandableRows has not been implemented yet.
+<TableView>
+  <TableHeader>
+    <Column id="test">Test</Column>
+    <Column id="blah">Blah</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Test1</Cell>
+      <Cell>One</Cell>
+    </Row>
+    <Row>
+      <Cell>Test2</Cell>
+      <Cell>One</Cell>
+    </Row>
+  </TableBody>
+</TableView>"
+`;
+
 exports[`Leave a comment for nested columns 1`] = `
 "import { Cell, Column, Row, TableBody, TableHeader, TableView } from "@react-spectrum/s2";
 
@@ -71,6 +159,50 @@ exports[`Leave a comment for nested columns 1`] = `
         Test 2
       </Column>
     </Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Test1</Cell>
+      <Cell>One</Cell>
+    </Row>
+    <Row>
+      <Cell>Test2</Cell>
+      <Cell>One</Cell>
+    </Row>
+  </TableBody>
+</TableView>"
+`;
+
+exports[`Leave a comment for onExpandedChange 1`] = `
+"import { Cell, Column, Row, TableBody, TableHeader, TableView } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): onExpandedChange has not been implemented yet.
+<TableView>
+  <TableHeader>
+    <Column id="test">Test</Column>
+    <Column id="blah">Blah</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Test1</Cell>
+      <Cell>One</Cell>
+    </Row>
+    <Row>
+      <Cell>Test2</Cell>
+      <Cell>One</Cell>
+    </Row>
+  </TableBody>
+</TableView>"
+`;
+
+exports[`Leave a comment for selectionStyle 1`] = `
+"import { Cell, Column, Row, TableBody, TableHeader, TableView } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): selectionStyle has not been implemented yet.
+<TableView>
+  <TableHeader>
+    <Column id="test">Test</Column>
+    <Column id="blah">Blah</Column>
   </TableHeader>
   <TableBody>
     <Row>
