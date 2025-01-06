@@ -250,9 +250,13 @@ export function getWeekStart(locale: string): number {
 }
 
 /** Returns the number of weeks in the given month and locale. */
-export function getWeeksInMonth(date: DateValue, locale: string): number {
-  let days = date.calendar.getDaysInMonth(date);
-  return Math.ceil((getDayOfWeek(startOfMonth(date), locale) + days) / 7);
+export function getWeeksInMonth(date: DateValue, locale: string, firstDayOfWeek?: DayOfWeek): number {
+  let monthStart = startOfMonth(date);
+  let firstVisibleDay = startOfWeek(monthStart, locale, firstDayOfWeek);
+  let monthEnd = endOfMonth(date);
+  let lastVisibleDay = startOfWeek(monthEnd, locale, firstDayOfWeek).add({days: 6});
+  let totalDays = lastVisibleDay.calendar.toJulianDay(lastVisibleDay) - firstVisibleDay.calendar.toJulianDay(firstVisibleDay) + 1;
+  return Math.ceil(totalDays / 7);
 }
 
 /** Returns the lesser of the two provider dates. */

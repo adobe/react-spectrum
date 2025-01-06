@@ -130,7 +130,7 @@ function ExampleFirstDayCalendarGrid({state, firstDayOfWeek}: {state: CalendarSt
   let {locale} = useLocale();
   let {gridProps} = useCalendarGrid({firstDayOfWeek}, state);
   let startDate = state.visibleRange.start;
-  let weeksInMonth = getWeeksInMonth(startDate, locale);
+  let weeksInMonth = getWeeksInMonth(startDate, locale, firstDayOfWeek);
   return (
     <div {...gridProps}>
       {[...new Array(weeksInMonth).keys()].map(weekIndex => (

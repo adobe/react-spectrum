@@ -330,7 +330,8 @@ export interface CalendarGridProps extends StyleProps {
 interface InternalCalendarGridContextValue {
   headerProps: DOMAttributes<FocusableElement>,
   weekDays: string[],
-  startDate: CalendarDate
+  startDate: CalendarDate,
+  firstDayOfWeek: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | undefined
 }
 
 const InternalCalendarGridContext = createContext<InternalCalendarGridContextValue | null>(null);
@@ -350,15 +351,17 @@ export const CalendarGrid = /*#__PURE__*/ (forwardRef as forwardRefType)(functio
     startDate = startDate.add(props.offset);
   }
 
+  let firstDayOfWeek = calenderProps?.firstDayOfWeek ?? rangeCalenderProps?.firstDayOfWeek;
+
   let {gridProps, headerProps, weekDays} = useCalendarGrid({
     startDate,
     endDate: endOfMonth(startDate),
     weekdayStyle: props.weekdayStyle,
-    firstDayOfWeek: calenderProps?.firstDayOfWeek ?? rangeCalenderProps?.firstDayOfWeek
+    firstDayOfWeek
   }, state);
 
   return (
-    <InternalCalendarGridContext.Provider value={{headerProps, weekDays, startDate}}>
+    <InternalCalendarGridContext.Provider value={{headerProps, weekDays, startDate, firstDayOfWeek}}>
       <table
         {...filterDOMProps(props as any)}
         {...gridProps}
@@ -441,9 +444,9 @@ function CalendarGridBody(props: CalendarGridBodyProps, ref: ForwardedRef<HTMLTa
   let calendarState = useContext(CalendarStateContext);
   let rangeCalendarState = useContext(RangeCalendarStateContext);
   let state = calendarState ?? rangeCalendarState!;
-  let {startDate} = useContext(InternalCalendarGridContext)!;
+  let {startDate, firstDayOfWeek} = useContext(InternalCalendarGridContext)!;
   let {locale} = useLocale();
-  let weeksInMonth = getWeeksInMonth(startDate, locale);
+  let weeksInMonth = getWeeksInMonth(startDate, locale, firstDayOfWeek);
 
   return (
     <tbody

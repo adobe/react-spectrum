@@ -42,7 +42,7 @@ export function CalendarMonth(props: CalendarMonthProps) {
   }, state);
 
   let {locale} = useLocale();
-  let weeksInMonth = getWeeksInMonth(startDate, locale);
+  let weeksInMonth = getWeeksInMonth(startDate, locale, firstDayOfWeek);
 
   return (
     <table

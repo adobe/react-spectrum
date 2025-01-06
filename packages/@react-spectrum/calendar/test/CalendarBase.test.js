@@ -865,5 +865,32 @@ describe('CalendarBase', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells[2]).toHaveTextContent('1');
     });
+
+    it.each`
+      Name                   | Calendar         | props
+      ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2025, 1, 1)}}
+      ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2025, 1, 1), end: new CalendarDate(2025, 1, 1)}}}
+    `('should render enough weeks to display all days in month for firstDayOfWeek', ({Calendar, props}) => {
+      let {getAllByRole, getByRole} = render(
+        <Provider theme={theme}>
+          <Calendar {...props} firstDayOfWeek="thu" />
+        </Provider>
+      );
+
+      let grid = getByRole('grid');
+      let headers = getAllByRole('columnheader', {hidden: true});
+      expect(headers.map(h => h.textContent)).toEqual(['T', 'F', 'S', 'S', 'M', 'T', 'W']);
+
+      let rows = within(grid).getAllByRole('row');
+      expect(rows).toHaveLength(6);
+
+      let cells = within(grid).getAllByRole('gridcell');
+      expect(cells).toHaveLength(42);
+
+      expect(cells[35]).toHaveTextContent('30');
+      expect(cells[36]).toHaveTextContent('31');
+      expect(cells[cells.length - 1]).toHaveAttribute('aria-disabled', 'true');
+      expect(cells[cells.length - 1]).toHaveTextContent('5');
+    });
   });
 });
