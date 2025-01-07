@@ -90,9 +90,9 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, st
   return {
     columnHeaderProps: {
       ...mergeProps(
+        focusableProps,
         gridCellProps,
         pressProps,
-        focusableProps,
         descriptionProps,
         // If the table is empty, make all column headers untabbable
         shouldDisableFocus ? {tabIndex: -1} : null

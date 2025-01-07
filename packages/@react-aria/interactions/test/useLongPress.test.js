@@ -295,6 +295,7 @@ describe('useLongPress', function () {
     fireEvent.pointerDown(el, {pointerType: 'touch'});
     act(() => jest.advanceTimersByTime(300));
     fireEvent.pointerUp(el, {pointerType: 'touch'});
+    fireEvent.click(el, {detail: 1});
 
     expect(events).toEqual([
       {

@@ -13,10 +13,9 @@
 import {AriaLabelingProps, HoverEvents} from '@react-types/shared';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {DropOptions, mergeProps, useButton, useClipboard, useDrop, useFocusRing, useHover, useLocalizedStringFormatter, VisuallyHidden} from 'react-aria';
-import {filterDOMProps, useLabels, useObjectRef, useSlotId} from '@react-aria/utils';
+import {filterDOMProps, isFocusable, useLabels, useObjectRef, useSlotId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isFocusable} from '@react-aria/focus';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 

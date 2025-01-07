@@ -74,7 +74,6 @@ export function useButton(props: AriaButtonOptions<ElementType>, ref: RefObject<
   } else {
     additionalProps = {
       role: 'button',
-      tabIndex: isDisabled ? undefined : 0,
       href: elementType === 'a' && !isDisabled ? href : undefined,
       target: elementType === 'a' ? target : undefined,
       type: elementType === 'input' ? type : undefined,

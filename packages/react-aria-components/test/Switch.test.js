@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {Switch, SwitchContext} from '../';
 import userEvent from '@testing-library/user-event';
@@ -138,18 +138,18 @@ describe('Switch', () => {
     expect(onFocusChange).toHaveBeenLastCalledWith(false);
   });
 
-  it('should support press state', () => {
+  it('should support press state', async () => {
     let {getByRole} = render(<Switch className={({isPressed}) => isPressed ? 'pressed' : ''}>Test</Switch>);
     let s = getByRole('switch').closest('label');
 
     expect(s).not.toHaveAttribute('data-pressed');
     expect(s).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(s);
+    await user.pointer({target: s, keys: '[MouseLeft>]'});
     expect(s).toHaveAttribute('data-pressed', 'true');
     expect(s).toHaveClass('pressed');
 
-    fireEvent.mouseUp(s);
+    await user.pointer({target: s, keys: '[/MouseLeft]'});
     expect(s).not.toHaveAttribute('data-pressed');
     expect(s).not.toHaveClass('pressed');
   });

@@ -1341,7 +1341,7 @@ describe('TableView with expandable rows', function () {
     describe('selectionStyle highlight', function () {
       installPointerEvent();
 
-      it('should toggle selection with mouse', function () {
+      it('should toggle selection with mouse', async function () {
         let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="highlight" disabledKeys={undefined} onAction={undefined} />);
         expect(treegrid.queryByLabelText('Select All')).toBeNull();
 
@@ -1350,8 +1350,7 @@ describe('TableView with expandable rows', function () {
         let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
 
         checkRowSelection(rows, false);
-        fireEvent.pointerDown(cell, {pointerType: 'mouse', pointerId: 1});
-        fireEvent.pointerUp(cell, {pointerType: 'mouse', pointerId: 1});
+        await user.pointer({target: cell, keys: '[MouseLeft]', coords: {width: 1}});
         act(() => jest.runAllTimers());
         expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 3, Foo selected.');
         expect(announce).toHaveBeenCalledTimes(1);
@@ -1360,8 +1359,7 @@ describe('TableView with expandable rows', function () {
         onSelectionChange.mockReset();
 
         cell = getCell(treegrid, 'Row 1, Lvl 1, Foo');
-        fireEvent.pointerDown(cell, {pointerType: 'mouse', pointerId: 1});
-        fireEvent.pointerUp(cell, {pointerType: 'mouse', pointerId: 1});
+        await user.pointer({target: cell, keys: '[MouseLeft]', coords: {width: 1}});
         act(() => jest.runAllTimers());
         expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 1, Foo selected.');
         expect(announce).toHaveBeenCalledTimes(2);
@@ -1370,7 +1368,7 @@ describe('TableView with expandable rows', function () {
         checkRowSelection(rows.slice(1), false);
       });
 
-      it('should toggle selection with touch', function () {
+      it('should toggle selection with touch', async function () {
         let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="highlight" disabledKeys={undefined} onAction={undefined} />);
         expect(treegrid.queryByLabelText('Select All')).toBeNull();
 
@@ -1379,8 +1377,7 @@ describe('TableView with expandable rows', function () {
         let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
 
         checkRowSelection(rows, false);
-        fireEvent.pointerDown(cell, {pointerType: 'touch', pointerId: 1});
-        fireEvent.pointerUp(cell, {pointerType: 'touch', pointerId: 1});
+        await user.pointer({target: cell, keys: '[TouchA]', coords: {width: 1}});
         act(() => jest.runAllTimers());
         expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 3, Foo selected.');
         expect(announce).toHaveBeenCalledTimes(1);
@@ -1389,8 +1386,7 @@ describe('TableView with expandable rows', function () {
         onSelectionChange.mockReset();
 
         cell = getCell(treegrid, 'Row 1, Lvl 1, Foo');
-        fireEvent.pointerDown(cell, {pointerType: 'touch', pointerId: 1});
-        fireEvent.pointerUp(cell, {pointerType: 'touch', pointerId: 1});
+        await user.pointer({target: cell, keys: '[TouchA]', coords: {width: 1}});
         act(() => jest.runAllTimers());
         expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 1, Foo selected. 2 items selected.');
         expect(announce).toHaveBeenCalledTimes(2);
@@ -1406,7 +1402,7 @@ describe('TableView with expandable rows', function () {
         let firstCell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
         let secondCell = getCell(treegrid, 'Row 1, Lvl 1, Foo');
 
-        fireEvent.pointerDown(firstCell, {pointerType: 'touch'});
+        await user.pointer({target: firstCell, keys: '[TouchA>]', coords: {width: 1}});
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).not.toHaveBeenCalled();
 
@@ -1416,22 +1412,19 @@ describe('TableView with expandable rows', function () {
         checkRowSelection([rows[2]], true);
         expect(onAction).not.toHaveBeenCalled();
 
-        fireEvent.pointerUp(firstCell, {pointerType: 'touch'});
+        await user.pointer({target: firstCell, keys: '[/TouchA]', coords: {width: 1}});
         onSelectionChange.mockReset();
 
-        fireEvent.pointerDown(secondCell, {pointerType: 'touch', pointerId: 1});
-        fireEvent.pointerUp(secondCell, {pointerType: 'touch', pointerId: 1});
+        await user.pointer({target: secondCell, keys: '[TouchA]', coords: {width: 1}});
         act(() => jest.runAllTimers());
         checkSelection(onSelectionChange, ['Row 1 Lvl 1', 'Row 1 Lvl 3']);
         checkRowSelection([rows[0], rows[2]], true);
 
         // Deselect all to exit selection mode
-        fireEvent.pointerDown(firstCell, {pointerType: 'touch', pointerId: 1});
-        fireEvent.pointerUp(firstCell, {pointerType: 'touch', pointerId: 1});
+        await user.pointer({target: firstCell, keys: '[TouchA]', coords: {width: 1}});
         act(() => jest.runAllTimers());
         onSelectionChange.mockReset();
-        fireEvent.pointerDown(secondCell, {pointerType: 'touch', pointerId: 1});
-        fireEvent.pointerUp(secondCell, {pointerType: 'touch', pointerId: 1});
+        await user.pointer({target: secondCell, keys: '[TouchA]', coords: {width: 1}});
         act(() => jest.runAllTimers());
         checkSelection(onSelectionChange, []);
         expect(onAction).not.toHaveBeenCalled();
@@ -1447,15 +1440,14 @@ describe('TableView with expandable rows', function () {
         let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
 
         checkRowSelection(rows, false);
-        fireEvent.pointerDown(cell, {pointerType: 'mouse', pointerId: 1});
-        fireEvent.pointerUp(cell, {pointerType: 'mouse', pointerId: 1});
+        await user.pointer({target: cell, keys: '[MouseLeft]', coords: {width: 1}});
         act(() => jest.runAllTimers());
         expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 3, Foo selected.');
         expect(announce).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['Row 1 Lvl 3']);
         expect(onAction).not.toHaveBeenCalled();
         onSelectionChange.mockReset();
-        await user.dblClick(cell);
+        await user.pointer({target: cell, keys: '[MouseLeft][MouseLeft]', coords: {width: 1}});
         act(() => jest.runAllTimers());
         expect(announce).toHaveBeenCalledTimes(1);
         expect(onSelectionChange).not.toHaveBeenCalled();

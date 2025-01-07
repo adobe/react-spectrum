@@ -477,7 +477,7 @@ describe('Table', () => {
     expect(column).toHaveClass('focus');
   });
 
-  it('should support press state', () => {
+  it('should support press state', async () => {
     let {getAllByRole} = renderTable({
       tableProps: {selectionMode: 'multiple'},
       rowProps: {className: ({isPressed}) => isPressed ? 'pressed' : ''}
@@ -488,16 +488,16 @@ describe('Table', () => {
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(row);
+    await user.pointer({target: row, keys: '[MouseLeft>]'});
     expect(row).toHaveAttribute('data-pressed', 'true');
     expect(row).toHaveClass('pressed');
 
-    fireEvent.mouseUp(row);
+    await user.pointer({target: row, keys: '[/MouseLeft]'});
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
   });
 
-  it('should not show press state when not interactive', () => {
+  it('should not show press state when not interactive', async () => {
     let {getAllByRole} = renderTable({
       rowProps: {className: ({isPressed}) => isPressed ? 'pressed' : ''}
     });
@@ -506,16 +506,16 @@ describe('Table', () => {
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(row);
+    await user.pointer({target: row, keys: '[MouseLeft>]'});
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
 
-    fireEvent.mouseUp(row);
+    await user.pointer({target: row, keys: '[/MouseLeft]'});
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
   });
 
-  it('should support row actions', () => {
+  it('should support row actions', async () => {
     let onRowAction = jest.fn();
     let {getAllByRole} = renderTable({
       tableProps: {onRowAction},
@@ -527,11 +527,11 @@ describe('Table', () => {
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(row);
+    await user.pointer({target: row, keys: '[MouseLeft>]'});
     expect(row).toHaveAttribute('data-pressed', 'true');
     expect(row).toHaveClass('pressed');
 
-    fireEvent.mouseUp(row);
+    await user.pointer({target: row, keys: '[/MouseLeft]'});
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
 
