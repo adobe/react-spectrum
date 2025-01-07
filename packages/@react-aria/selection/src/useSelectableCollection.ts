@@ -17,7 +17,7 @@ import {FocusEvent, KeyboardEvent, useEffect, useRef} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getInteractionModality} from '@react-aria/interactions';
 import {getNodeKey} from '@react-aria/collections';
-import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
+import {isNonContiguousSelectionModifier} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useLocale} from '@react-aria/i18n';
 import {useTypeSelect} from './useTypeSelect';
