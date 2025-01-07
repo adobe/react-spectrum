@@ -141,7 +141,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
                   } />
               }
               {
-                isUnavailable && <InfoOutline slot="end" size="XS" alignSelf="center" aria-label={stringFormatter.format('unavailable')}  />
+                isUnavailable && <InfoOutline slot="end" size="XS" alignSelf="center" aria-label={stringFormatter.format('unavailable')} />
               }
               {
                 isUnavailable == null && isSubmenuTrigger && (direction === 'rtl' ? <ChevronLeft slot="chevron" /> : <ChevronRight slot="chevron" />)
