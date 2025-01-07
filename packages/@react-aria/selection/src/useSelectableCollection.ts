@@ -16,6 +16,7 @@ import {flushSync} from 'react-dom';
 import {FocusEvent, KeyboardEvent, useEffect, useRef} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getInteractionModality} from '@react-aria/interactions';
+import {getNodeKey} from '@react-aria/collections';
 import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useLocale} from '@react-aria/i18n';
@@ -143,8 +144,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
             manager.setFocusedKey(key, childFocus);
           });
 
-          let nodeKey = idScope ? `${idScope}-${key.toString()}` : key.toString();
-          let item = scrollRef.current?.querySelector(`[data-key="${CSS.escape(nodeKey)}"]`);
+          let item = scrollRef.current?.querySelector(`[data-key="${CSS.escape(getNodeKey(key, idScope))}"]`);
           let itemProps = manager.getItemProps(key);
           if (item) {
             router.open(item, e, itemProps.href, itemProps.routerOptions);
@@ -373,8 +373,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
     if (manager.focusedKey != null && scrollRef.current) {
       // Refocus and scroll the focused item into view if it exists within the scrollable region.
-      let nodeKey = idScope ? `${idScope}-${manager.focusedKey.toString()}` : manager.focusedKey.toString();
-      let element = scrollRef.current.querySelector(`[data-key="${CSS.escape(nodeKey)}"]`) as HTMLElement;
+      let element = scrollRef.current.querySelector(`[data-key="${CSS.escape(getNodeKey(manager.focusedKey, idScope))}"]`) as HTMLElement;
       if (element) {
         // This prevents a flash of focus on the first/last element in the collection, or the collection itself.
         if (!element.contains(document.activeElement)) {
@@ -466,8 +465,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   useEffect(() => {
     if (manager.isFocused && manager.focusedKey != null && (manager.focusedKey !== lastFocusedKey.current || autoFocusRef.current) && scrollRef.current && ref.current) {
       let modality = getInteractionModality();
-      let nodeKey = idScope ? `${idScope}-${manager.focusedKey.toString()}` : manager.focusedKey.toString();
-      let element = ref.current.querySelector(`[data-key="${CSS.escape(nodeKey)}"]`) as HTMLElement;
+      let element = ref.current.querySelector(`[data-key="${CSS.escape(getNodeKey(manager.focusedKey, idScope))}"]`) as HTMLElement;
       if (!element) {
         // If item element wasn't found, return early (don't update autoFocusRef and lastFocusedKey).
         // The collection may initially be empty (e.g. virtualizer), so wait until the element exists.

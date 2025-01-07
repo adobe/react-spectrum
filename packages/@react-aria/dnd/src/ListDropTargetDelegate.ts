@@ -1,4 +1,5 @@
 import {Direction, DropTarget, DropTargetDelegate, Node, Orientation, RefObject} from '@react-types/shared';
+import {getNodeKey} from '@react-aria/collections';
 
 interface ListDropTargetDelegateOptions {
   /**
@@ -106,8 +107,7 @@ export class ListDropTargetDelegate implements DropTargetDelegate {
     while (low < high) {
       let mid = Math.floor((low + high) / 2);
       let item = items[mid];
-      let nodeKey = idScope ? `${idScope}-${item.key}` : item.key;
-      let element = elementMap.get(nodeKey.toString());
+      let element = elementMap.get(getNodeKey(item.key, idScope));
       if (!element) {
         break;
       }
