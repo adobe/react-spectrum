@@ -81,7 +81,9 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style
   /**
    * The contents of the collection.
    */
-  children?: ReactNode | ((item: T) => ReactNode)
+  children?: ReactNode | ((item: T) => ReactNode),
+  /** Hides the default link out icons on menu items that open links in a new tab. */
+  hideLinkOutIcon?: boolean
 }
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, DOMRefValue<HTMLDivElement>>>(null);
@@ -310,7 +312,12 @@ let descriptor = style({
   }
 });
 
-let InternalMenuContext = createContext<{size: 'S' | 'M' | 'L' | 'XL', isSubmenu: boolean}>({size: 'M', isSubmenu: false});
+let InternalMenuContext = createContext<{size: 'S' | 'M' | 'L' | 'XL', isSubmenu: boolean, hideLinkOutIcon: boolean}>({
+  size: 'M',
+  isSubmenu: false,
+  hideLinkOutIcon: false
+});
+
 let InternalMenuTriggerContext = createContext<Omit<MenuTriggerProps, 'children'> | null>(null);
 
 /**
@@ -324,7 +331,8 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
     size = ctxSize,
     UNSAFE_style,
     UNSAFE_className,
-    styles
+    styles,
+    hideLinkOutIcon = false
   } = props;
   let ctx = useContext(InternalMenuTriggerContext);
   let {align = 'start', direction = 'bottom', shouldFlip} = ctx ?? {};
@@ -349,7 +357,7 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
   }
 
   let content = (
-    <InternalMenuContext.Provider value={{size, isSubmenu: true}}>
+    <InternalMenuContext.Provider value={{size, isSubmenu: true, hideLinkOutIcon}}>
       <Provider
         values={[
           [HeaderContext, {styles: sectionHeader({size})}],
@@ -454,7 +462,7 @@ export function MenuItem(props: MenuItemProps) {
   let ref = useRef(null);
   let isLink = props.href != null;
   let isLinkOut = isLink && props.target === '_blank';
-  let {size} = useContext(InternalMenuContext);
+  let {size, hideLinkOutIcon} = useContext(InternalMenuContext);
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   let {direction} = useLocale();
   return (
@@ -494,7 +502,7 @@ export function MenuItem(props: MenuItemProps) {
                 </div>
               )}
               {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
-              {isLinkOut && (
+              {isLinkOut && !hideLinkOutIcon && (
                 <div slot="descriptor" className={descriptor}>
                   <LinkOutIcon
                     size={linkIconSize[size]}
