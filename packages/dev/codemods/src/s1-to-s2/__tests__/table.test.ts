@@ -154,10 +154,10 @@ import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/reac
 </TableView>
 `);
 
-test('Leave a comment for hasExpandableRows', `
+test('Leave a comment for UNSTABLE_defaultExpandedKeys', `
 import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/react-spectrum';
 
-<TableView hasExpandableRows>
+<TableView UNSTABLE_defaultExpandedKeys={['1', '2']}>
   <TableHeader>
     <Column key="test">Test</Column>
     <Column key="blah">Blah</Column>
@@ -175,10 +175,10 @@ import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/reac
 </TableView>
 `);
 
-test('Leave a comment for defaultExpandedKeys', `
+test('Leave a comment for UNSTABLE_expandedKeys', `
 import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/react-spectrum';
 
-<TableView defaultExpandedKeys={['1', '2']}>
+<TableView UNSTABLE_expandedKeys={['1', '2']}>
   <TableHeader>
     <Column key="test">Test</Column>
     <Column key="blah">Blah</Column>
@@ -196,10 +196,10 @@ import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/reac
 </TableView>
 `);
 
-test('Leave a comment for expandedKeys', `
+test('Leave a comment for UNSTABLE_onExpandedChange', `
 import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/react-spectrum';
 
-<TableView expandedKeys={['1', '2']}>
+<TableView UNSTABLE_onExpandedChange={() => {}}>
   <TableHeader>
     <Column key="test">Test</Column>
     <Column key="blah">Blah</Column>
@@ -217,10 +217,10 @@ import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/reac
 </TableView>
 `);
 
-test('Leave a comment for onExpandedChange', `
+test('Leave a comment for UNSTABLE_allowsExpandableRows', `
 import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/react-spectrum';
 
-<TableView onExpandedChange={() => {}}>
+<TableView UNSTABLE_allowsExpandableRows>
   <TableHeader>
     <Column key="test">Test</Column>
     <Column key="blah">Blah</Column>

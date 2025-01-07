@@ -1307,35 +1307,35 @@ export const changes: ChangesJSON = {
         }
       },
       {
-        description: 'Comment out hasExpandableRows',
+        description: 'Comment out UNSTABLE_allowsExpandableRows',
         reason: 'It has not been implemented yet',
         function: {
           name: 'commentOutProp',
-          args: {propToComment: 'hasExpandableRows'}
+          args: {propToComment: 'UNSTABLE_allowsExpandableRows'}
         }
       },
       {
-        description: 'Comment out defaultExpandedKeys',
+        description: 'Comment out UNSTABLE_defaultExpandedKeys',
         reason: 'It has not been implemented yet',
         function: {
           name: 'commentOutProp',
-          args: {propToComment: 'defaultExpandedKeys'}
+          args: {propToComment: 'UNSTABLE_defaultExpandedKeys'}
         }
       },
       {
-        description: 'Comment out expandedKeys',
+        description: 'Comment out UNSTABLE_expandedKeys',
         reason: 'It has not been implemented yet',
         function: {
           name: 'commentOutProp',
-          args: {propToComment: 'expandedKeys'}
+          args: {propToComment: 'UNSTABLE_expandedKeys'}
         }
       },
       {
-        description: 'Comment out onExpandedChange',
+        description: 'Comment out UNSTABLE_onExpandedChange',
         reason: 'It has not been implemented yet',
         function: {
           name: 'commentOutProp',
-          args: {propToComment: 'onExpandedChange'}
+          args: {propToComment: 'UNSTABLE_onExpandedChange'}
         }
       }
     ]
