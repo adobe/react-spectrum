@@ -21,7 +21,7 @@ import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeRefs, useObjectRef, useSlotId} from '@react-aria/utils';
-import React, {cloneElement, useMemo, useRef} from 'react';
+import React, {useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/text';
 import {TreeState} from '@react-stately/tree';
@@ -96,16 +96,6 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let contents = typeof rendered === 'string'
     ? <Text>{rendered}</Text>
     : rendered;
-  
-  let unavailableIcon = cloneElement(<InfoOutline />, {
-    UNSAFE_className: classNames(
-      styles,
-      'spectrum-Menu-unavailableIcon'
-    ),
-    slot: 'end',
-    size: 'XS',
-    'aria-label': stringFormatter.format('unavailable')
-  });
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -151,7 +141,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
                   } />
               }
               {
-                isUnavailable && unavailableIcon
+                isUnavailable && <InfoOutline slot="end" size="XS" alignSelf="center" aria-label={stringFormatter.format('unavailable')}  />
               }
               {
                 isUnavailable == null && isSubmenuTrigger && (direction === 'rtl' ? <ChevronLeft slot="chevron" /> : <ChevronRight slot="chevron" />)

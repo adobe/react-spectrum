@@ -222,6 +222,7 @@ governing permissions and limitations under the License.
   justify-self: end;
   align-self: flex-start;
   padding-inline-start: var(--spectrum-global-dimension-size-250);
+  box-sizing: content-box;
 }
 .spectrum-Menu-icon {
   grid-area: icon;
@@ -271,12 +272,7 @@ governing permissions and limitations under the License.
       overflow-x: hidden; /* Prevents scrollbar from appearing during submenu transition */
     }
   }
-
-  .spectrum-Menu-unavailableIcon {
-    box-sizing: content-box;
-    align-self: center;
-  }
-
+  
   &.spectrum-Menu-wrapper--isMobile {
     width: 100%;
     border: none;
