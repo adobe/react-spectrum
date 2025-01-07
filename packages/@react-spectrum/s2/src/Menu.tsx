@@ -494,13 +494,25 @@ export function MenuItem(props: MenuItemProps) {
                 </div>
               )}
               {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
-              {isLinkOut && <LinkOutIcon size={linkIconSize[size]} className={descriptor} />}
+              {isLinkOut && (
+                <div slot="descriptor" className={descriptor}>
+                  <LinkOutIcon
+                    size={linkIconSize[size]}
+                    className={style({
+                      scaleX: {
+                        direction: {
+                          rtl: -1
+                        }
+                      }
+                    })({direction})} />
+                </div>
+              )}
               {renderProps.hasSubmenu && (
                 <div slot="descriptor" className={descriptor}>
                   <ChevronRightIcon
                     size={size}
                     className={style({
-                      scale: {
+                      scaleX: {
                         direction: {
                           rtl: -1
                         }
