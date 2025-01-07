@@ -20,10 +20,10 @@ import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Ori
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {HeaderContext} from './Header';
-import {InternalAutocompleteContext} from './Autocomplete';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {SeparatorContext} from './Separator';
 import {TextContext} from './Text';
+import {UNSTABLE_InternalAutocompleteContext} from './Autocomplete';
 
 export interface ListBoxRenderProps {
   /**
@@ -107,7 +107,7 @@ export const ListBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Lis
 function StandaloneListBox({props, listBoxRef, collection}) {
   props = {...props, collection, children: null, items: null};
   let {layoutDelegate} = useContext(CollectionRendererContext);
-  let {filterFn, collectionProps, collectionRef} = useContext(InternalAutocompleteContext) || {};
+  let {filterFn, collectionProps, collectionRef} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
   // Memoed so that useAutocomplete callback ref is properly only called once on mount and not everytime a rerender happens
   listBoxRef = useObjectRef(useMemo(() => mergeRefs(listBoxRef, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null), [collectionRef, listBoxRef]));
   let filteredCollection = useMemo(() => filterFn ? collection.filter(filterFn) : collection, [collection, filterFn]);
