@@ -154,7 +154,6 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
       }
     },
     isDisabled: 'none',
-    isPending: 'none',
     forcedColors: 'none'
   },
   backgroundColor: {
@@ -179,7 +178,13 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
         isHovered: 'gray-100',
         isPressed: 'gray-100',
         isFocusVisible: 'gray-100',
-        isDisabled: 'transparent'
+        isDisabled: {
+          default: 'transparent',
+          variant: {
+            premium: 'gray-100',
+            genai: 'gray-100'
+          }
+        }
       }
     },
     isStaticColor: {
@@ -188,21 +193,27 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
           variant: {
             primary: baseColor('transparent-overlay-800'),
             secondary: baseColor('transparent-overlay-100'),
-            premium: 'gray-800',
-            genai: 'gray-800'
+            premium: 'transparent-overlay-100',
+            genai: 'transparent-overlay-100'
           },
           isDisabled: 'transparent-overlay-100'
         },
         outline: {
           variant: {
-            premium: 'gray-800',
-            genai: 'gray-800'
+            premium: 'transparent-overlay-100',
+            genai: 'transparent-overlay-100'
           },
           default: 'transparent',
           isHovered: 'transparent-overlay-100',
           isPressed: 'transparent-overlay-100',
           isFocusVisible: 'transparent-overlay-100',
-          isDisabled: 'transparent'
+          isDisabled: {
+            default: 'transparent',
+            variant: {
+              premium: 'transparent-overlay-100',
+              genai: 'transparent-overlay-100'
+            }
+          }
         }
       }
     },
