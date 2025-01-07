@@ -114,7 +114,7 @@ export function colorMix(a: SpectrumColor, b: SpectrumColor, percent: number): `
 }
 
 export function linearGradient(angle: string, ...gradientTokens: [(keyof typeof tokens), (keyof typeof tokens)][]): string {
-  return `linear-gradient(${angle}, ${gradientTokens.map(([color, stop]) => `${getToken(color)} ${parseFloat(getToken(stop)) * 100}%`)})`;
+  return `linear-gradient(${angle}, ${gradientTokens.map(([color, stop]) => `${getToken(color as keyof typeof tokens)} ${parseFloat(getToken(stop as keyof typeof tokens)) * 100}%`)})`;
 }
 
 function generateSpacing<K extends number[]>(px: K): {[P in K[number]]: string} {
