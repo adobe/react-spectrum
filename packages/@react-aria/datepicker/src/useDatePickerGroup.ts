@@ -32,6 +32,7 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
         e.stopPropagation();
         if (direction === 'rtl') {
           let spinButtons: NodeListOf<Element> | undefined = ref.current?.querySelectorAll('span[role="spinbutton"], span[role="textbox"]');
+          // TODO: figure out typescript, also change variable names to something better please
           let array = Array.from(spinButtons!);
           let button = ref.current?.querySelector('button');
           let target = e.target as FocusableElement;

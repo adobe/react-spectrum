@@ -411,7 +411,6 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
       onFocus,
       style: {
         caretColor: 'transparent',
-        unicodeBidi: 'isolate-override'
       },
       // Prevent pointer events from reaching useDatePickerGroup, and allow native browser behavior to focus the segment.
       onPointerDown(e) {
@@ -420,7 +419,6 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
       onMouseDown(e) {
         e.stopPropagation();
       },
-      dir: 'ltr'
     })
   };
 }
