@@ -88,17 +88,19 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, DOMRefValue<HTMLDivElement>>>(null);
 
+const menuItemGrid = {
+  size: {
+    S: [edgeToText(24), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(24)],
+    M: [edgeToText(32), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(32)],
+    L: [edgeToText(40), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(40)],
+    XL: [edgeToText(48), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(48)]
+  }
+} as const;
+
 export let menu = style({
   outlineStyle: 'none',
   display: 'grid',
-  gridTemplateColumns: {
-    size: {
-      S: [edgeToText(24), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(24)],
-      M: [edgeToText(32), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(32)],
-      L: [edgeToText(40), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(40)],
-      XL: [edgeToText(48), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(48)]
-    }
-  },
+  gridTemplateColumns: menuItemGrid,
   boxSizing: 'border-box',
   maxHeight: '[inherit]',
   overflow: {
@@ -123,7 +125,7 @@ export let section = style({
     '. checkmark icon label       value keyboard descriptor .',
     '. .         .    description .     .        .          .'
   ],
-  gridTemplateColumns: 'subgrid'
+  gridTemplateColumns: menuItemGrid
 });
 
 export let sectionHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
@@ -425,11 +427,12 @@ export function Divider(props: SeparatorProps) {
 export interface MenuSectionProps<T extends object> extends AriaMenuSectionProps<T> {}
 export function MenuSection<T extends object>(props: MenuSectionProps<T>) {
   // remember, context doesn't work if it's around Section nor inside
+  let {size} = useContext(InternalMenuContext);
   return (
     <>
       <AriaMenuSection
         {...props}
-        className={section}>
+        className={section({size})}>
         {props.children}
       </AriaMenuSection>
       <Divider />
