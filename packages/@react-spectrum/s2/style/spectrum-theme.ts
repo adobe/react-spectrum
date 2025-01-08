@@ -11,7 +11,7 @@
  */
 
 import {ArbitraryValue, CSSValue, PropertyValueMap} from './types';
-import {autoStaticColor, colorScale, colorToken, fontSizeToken, generateOverlayColorScale, getToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
+import {autoStaticColor, colorScale, colorToken, fontSizeToken, generateOverlayColorScale, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
 import {Color, createArbitraryProperty, createColorProperty, createMappedProperty, createRenamedProperty, createSizingProperty, createTheme, parseArbitraryValue} from './style-macro';
 import type * as CSS from 'csstype';
 // eslint-disable-next-line rulesdir/imports
@@ -111,6 +111,10 @@ export function lightDark(light: SpectrumColor, dark: SpectrumColor): `[${string
 
 export function colorMix(a: SpectrumColor, b: SpectrumColor, percent: number): `[${string}]` {
   return `[color-mix(in srgb, ${parseColor(a)}, ${parseColor(b)} ${percent}%)]`;
+}
+
+function getToken(name: keyof typeof tokens): string {
+  return (tokens[name] as any).value;
 }
 
 export function linearGradient(angle: string, ...gradientTokens: [(keyof typeof tokens), (keyof typeof tokens)][]): string {
