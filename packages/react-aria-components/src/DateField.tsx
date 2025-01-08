@@ -344,6 +344,7 @@ export const DateSegment = /*#__PURE__*/ (forwardRef as forwardRefType)(function
     <span
       {...mergeProps(filterDOMProps(otherProps as any), segmentProps, focusProps, hoverProps)}
       {...renderProps}
+      style={segmentProps.style}
       ref={domRef}
       data-placeholder={segment.isPlaceholder || undefined}
       data-invalid={state.isInvalid || undefined}

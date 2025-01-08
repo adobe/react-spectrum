@@ -268,53 +268,9 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   };
 
   let dateValue = useMemo(() => displayValue.toDate(timeZone), [displayValue, timeZone]);
-  let timeValue = ['hour', 'minute', 'second'];
-  let dateSegments = ['day', 'month', 'year'];
-  // TODO: I don't like this but not sure what to do...
-  let rtlLocale = ['ar-DZ', 'ar-AE', 'ar-EG', 'ar-SA'];
-  let segments = useMemo(() =>
-    dateFormatter.formatToParts(dateValue)
-      .map(segment => {
-        let isEditable = EDITABLE_SEGMENTS[segment.type];
-        if (segment.type === 'era' && calendar.getEras().length === 1) {
-          isEditable = false;
-        }
-
-        let isPlaceholder = EDITABLE_SEGMENTS[segment.type] && !validSegments[segment.type];
-        let placeholder = EDITABLE_SEGMENTS[segment.type] ? getPlaceholder(segment.type, segment.value, locale) : null;
-
-        let value = segment.value;
-        let place = placeholder;
-        if (dateSegments.length === 3 && dateSegments.includes(segment.type) && !rtlLocale.includes(locale)) {
-          value = `\u2066${value}`;
-          place = `\u2066${place}`;
-        } else if (segment.type === 'hour') {
-          value = `\u2066${value}`;
-          place = `\u2066${place}`;
-        // Ideally the unicode (\u2069) would be placed at the end but that seems to cause some issues 
-        // with the background when the rightmost character is focused in Hebrew.
-        } else if (dateSegments.length === 1 && dateSegments.includes(segment.type) && !rtlLocale.includes(locale)) {
-          value = `\u2069${value}`;
-          place = `\u2069${place}`;
-        } else if (timeValue.includes(granularity) && segment.type === granularity) {
-          value = `\u2069${value}`;
-          place = `\u2069${place}`;
-        }
-
-        if (dateSegments.includes(segment.type)) {
-          dateSegments = dateSegments.filter(item => item !== segment.type);
-        };
-        
-        return {
-          type: TYPE_MAPPING[segment.type] || segment.type,
-          text: isPlaceholder ? place : value,
-          ...getSegmentLimits(displayValue, segment.type, resolvedOptions),
-          isPlaceholder,
-          placeholder: place,
-          isEditable
-        } as DateSegment;
-      })
-  , [dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity, timeValue]);
+  let segments = useMemo(() => 
+    processSegments(dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity), 
+    [dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity]);
 
   // When the era field appears, mark it valid if the year field is already valid.
   // If the era field disappears, remove it from the valid segments.
@@ -448,6 +404,66 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       return new DateFormatter(locale, newFormatOptions);
     }
   };
+}
+
+function processSegments(dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity) : DateSegment[] {
+  let timeValue = ['hour', 'minute', 'second'];
+  let segments = dateFormatter.formatToParts(dateValue);
+  let processedSegments: DateSegment[] = [];
+  for (let segment of segments) {
+    let isEditable = EDITABLE_SEGMENTS[segment.type];
+    if (segment.type === 'era' && calendar.getEras().length === 1) {
+      isEditable = false;
+    }
+
+    let isPlaceholder = EDITABLE_SEGMENTS[segment.type] && !validSegments[segment.type];
+    let placeholder = EDITABLE_SEGMENTS[segment.type] ? getPlaceholder(segment.type, segment.value, locale) : null;
+
+    let dateSegment = {
+      type: TYPE_MAPPING[segment.type] || segment.type,
+      text: isPlaceholder ? placeholder : segment.value,
+      ...getSegmentLimits(displayValue, segment.type, resolvedOptions),
+      isPlaceholder,
+      placeholder,
+      isEditable
+    } as DateSegment;
+
+    if (segment.type === 'hour') {
+      processedSegments.push({
+        type: 'literal',
+        text: '\u2066',
+        ...getSegmentLimits(displayValue, 'literal', resolvedOptions),
+        isPlaceholder: false,
+        placeholder: '',
+        isEditable: false
+      });
+      processedSegments.push(dateSegment);
+      if (segment.type === granularity) {
+        processedSegments.push({
+          type: 'literal',
+          text: '\u2069',
+          ...getSegmentLimits(displayValue, 'literal', resolvedOptions),
+          isPlaceholder: false,
+          placeholder: '',
+          isEditable: false
+        });
+      }
+    } else if (timeValue.includes(granularity) && segment.type === granularity) {
+      processedSegments.push(dateSegment);
+      processedSegments.push({
+        type: 'literal',
+        text: '\u2069',
+        ...getSegmentLimits(displayValue, 'literal', resolvedOptions),
+        isPlaceholder: false,
+        placeholder: '',
+        isEditable: false
+      });
+    } else {
+      processedSegments.push(dateSegment);
+    }
+  }
+
+  return processedSegments;
 }
 
 function getSegmentLimits(date: DateValue, type: string, options: Intl.ResolvedDateTimeFormatOptions) {
