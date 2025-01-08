@@ -208,12 +208,12 @@ export function startOfWeek(date: DateValue, locale: string, firstDayOfWeek?: Da
 }
 
 /** Returns the last date of the week for the given date and locale. */
-export function endOfWeek(date: ZonedDateTime, locale: string): ZonedDateTime;
-export function endOfWeek(date: CalendarDateTime, locale: string): CalendarDateTime;
-export function endOfWeek(date: CalendarDate, locale: string): CalendarDate;
-export function endOfWeek(date: DateValue, locale: string): DateValue;
-export function endOfWeek(date: DateValue, locale: string): DateValue {
-  return startOfWeek(date, locale).add({days: 6});
+export function endOfWeek(date: ZonedDateTime, locale: string, firstDayOfWeek?: DayOfWeek): ZonedDateTime;
+export function endOfWeek(date: CalendarDateTime, locale: string, firstDayOfWeek?: DayOfWeek): CalendarDateTime;
+export function endOfWeek(date: CalendarDate, locale: string, firstDayOfWeek?: DayOfWeek): CalendarDate;
+export function endOfWeek(date: DateValue, locale: string, firstDayOfWeek?: DayOfWeek): DateValue;
+export function endOfWeek(date: DateValue, locale: string, firstDayOfWeek?: DayOfWeek): DateValue {
+  return startOfWeek(date, locale, firstDayOfWeek).add({days: 6});
 }
 
 const cachedRegions = new Map<string, string>();
@@ -254,7 +254,7 @@ export function getWeeksInMonth(date: DateValue, locale: string, firstDayOfWeek?
   let monthStart = startOfMonth(date);
   let firstVisibleDay = startOfWeek(monthStart, locale, firstDayOfWeek);
   let monthEnd = endOfMonth(date);
-  let lastVisibleDay = startOfWeek(monthEnd, locale, firstDayOfWeek).add({days: 6});
+  let lastVisibleDay = endOfWeek(monthEnd, locale, firstDayOfWeek);
   let totalDays = lastVisibleDay.calendar.toJulianDay(lastVisibleDay) - firstVisibleDay.calendar.toJulianDay(firstVisibleDay) + 1;
   return Math.ceil(totalDays / 7);
 }
