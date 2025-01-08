@@ -43,14 +43,14 @@ preRelease: alpha
 ## Example
 
 ```tsx example
-import {UNSTABLE_Autocomplete, Menu, MenuItem, useFilter} from 'react-aria-components';
+import {UNSTABLE_Autocomplete as Autocomplete, Menu, MenuItem, useFilter} from 'react-aria-components';
 import {MySearchField} from './SearchField';
 
 function Example() {
   let {contains} = useFilter({sensitivity: 'base'});
   return (
     <div className="autocomplete">
-      <UNSTABLE_Autocomplete filter={contains}>
+      <Autocomplete filter={contains}>
         <MySearchField placeholder="Search commands..." />
         <Menu>
           <MenuItem>Create new file...</MenuItem>
@@ -62,7 +62,7 @@ function Example() {
           <MenuItem>Add label...</MenuItem>
           <MenuItem>Remove label...</MenuItem>
         </Menu>
-      </UNSTABLE_Autocomplete>
+      </Autocomplete>
     </div>
   );
 }
@@ -108,12 +108,12 @@ function Example() {
 `Autocomplete` is a controller for a child text input, such as a [TextField](TextField.html) or [SearchField](SearchField), and a collection component such as a [Menu](Menu.html) or [ListBox](ListBox.html). It enables the user to filter a list of items, and navigate via the arrow keys while keeping focus on the input.
 
 ```tsx
-import {UNSTABLE_Autocomplete, SearchField, Menu} from 'react-aria-components';
+import {UNSTABLE_Autocomplete as Autocomplete, SearchField, Menu} from 'react-aria-components';
 
-<UNSTABLE_Autocomplete>
+<Autocomplete>
   <SearchField />
   <Menu />
-</UNSTABLE_Autocomplete>
+</Autocomplete>
 ```
 
 ## Props
