@@ -386,7 +386,6 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   }
 
   let dateSegments = ['day', 'month', 'year'];
-
   return {
     segmentProps: mergeProps(spinButtonProps, labelProps, {
       id,
@@ -405,12 +404,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
       tabIndex: state.isDisabled ? undefined : 0,
       onKeyDown,
       onFocus,
-      style: {
-        caretColor: 'transparent',
-        // Equivalent CSS of applying LRE (https://www.unicode.org/reports/tr9/#Explicit_Directional_Embeddings)
-        direction: dateSegments.includes(segment.type) && 'ltr',
-        unicodeBidi: (dateSegments.includes(segment.type) || segment.type === 'timeZoneName') && 'embed'
-      },
+      style: dateSegments.includes(segment.type) || segment.type === 'timeZoneName' ? {caretColor: 'transparent', direction: 'ltr', unicodeBidi: 'embed'} : {caretColor: 'transparent'},
       // Prevent pointer events from reaching useDatePickerGroup, and allow native browser behavior to focus the segment.
       onPointerDown(e) {
         e.stopPropagation();
