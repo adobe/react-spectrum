@@ -98,7 +98,10 @@ type FunctionInfo =
   } | {
     name: 'commentIfNestedColumns',
     args: {}
-  };
+  } | {
+    name: 'addRowHeader',
+    args: {}
+  }
 
 type Change = {
   description: string,
@@ -1336,6 +1339,14 @@ export const changes: ChangesJSON = {
         function: {
           name: 'commentOutProp',
           args: {propToComment: 'UNSTABLE_onExpandedChange'}
+        }
+      },
+      {
+        description: 'Add isRowHeader prop to fist Column if one doesn\'t eixst already',
+        reason: 'Updated API',
+        function: {
+          name: 'addRowHeader',
+          args: {}
         }
       }
     ]

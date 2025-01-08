@@ -16,6 +16,7 @@ let items = [
 
 <TableView>
   <TableHeader columns={columns}>
+    // TODO(S2-upgrade): You'll need to add isRowHeader to one of the columns manually.
     {column => <Column id={column.name}>{column.name}</Column>}
   </TableHeader>
   <TableBody items={items}>
@@ -44,6 +45,7 @@ exports[`Keep key if array.map used 1`] = `
   
   <TableView>
     <TableHeader columns={columns}>
+      // TODO(S2-upgrade): You'll need to add isRowHeader to one of the columns manually.
       {columns.map(column => <Column id={column.id} key={column.id}>{column.name}</Column>)}
     </TableHeader>
     <TableBody items={items}>
@@ -62,7 +64,7 @@ exports[`Leave a comment for UNSTABLE_allowsExpandableRows 1`] = `
 // TODO(S2-upgrade): UNSTABLE_allowsExpandableRows has not been implemented yet.
 <TableView>
   <TableHeader>
-    <Column id="test">Test</Column>
+    <Column id="test" isRowHeader={true}>Test</Column>
     <Column id="blah">Blah</Column>
   </TableHeader>
   <TableBody>
@@ -84,7 +86,7 @@ exports[`Leave a comment for UNSTABLE_defaultExpandedKeys 1`] = `
 // TODO(S2-upgrade): UNSTABLE_defaultExpandedKeys has not been implemented yet.
 <TableView>
   <TableHeader>
-    <Column id="test">Test</Column>
+    <Column id="test" isRowHeader={true}>Test</Column>
     <Column id="blah">Blah</Column>
   </TableHeader>
   <TableBody>
@@ -106,7 +108,7 @@ exports[`Leave a comment for UNSTABLE_expandedKeys 1`] = `
 // TODO(S2-upgrade): UNSTABLE_expandedKeys has not been implemented yet.
 <TableView>
   <TableHeader>
-    <Column id="test">Test</Column>
+    <Column id="test" isRowHeader={true}>Test</Column>
     <Column id="blah">Blah</Column>
   </TableHeader>
   <TableBody>
@@ -128,7 +130,7 @@ exports[`Leave a comment for UNSTABLE_onExpandedChange 1`] = `
 // TODO(S2-upgrade): UNSTABLE_onExpandedChange has not been implemented yet.
 <TableView>
   <TableHeader>
-    <Column id="test">Test</Column>
+    <Column id="test" isRowHeader={true}>Test</Column>
     <Column id="blah">Blah</Column>
   </TableHeader>
   <TableBody>
@@ -150,7 +152,7 @@ exports[`Leave a comment for dragAndDropHooks 1`] = `
 // TODO(S2-upgrade): dragAndDropHooks has not been implemented yet.
 <TableView>
   <TableHeader>
-    <Column id="test">Test</Column>
+    <Column id="test" isRowHeader={true}>Test</Column>
     <Column id="blah">Blah</Column>
   </TableHeader>
   <TableBody>
@@ -172,7 +174,7 @@ exports[`Leave a comment for nested columns 1`] = `
 // TODO(S2-upgrade): Nested Column components are not supported yet.
 <TableView>
   <TableHeader>
-    <Column id="test">Test</Column>
+    <Column id="test" isRowHeader={true}>Test</Column>
     <Column title="blah">
       <Column id="test1">
         Test 1
@@ -201,7 +203,7 @@ exports[`Leave a comment for selectionStyle 1`] = `
 // TODO(S2-upgrade): selectionStyle has not been implemented yet.
 <TableView>
   <TableHeader>
-    <Column id="test">Test</Column>
+    <Column id="test" isRowHeader={true}>Test</Column>
     <Column id="blah">Blah</Column>
   </TableHeader>
   <TableBody>
@@ -222,7 +224,7 @@ exports[`Static TableView 1`] = `
 
 <TableView>
   <TableHeader>
-    <Column id="test">Test</Column>
+    <Column id="test" isRowHeader={true}>Test</Column>
     <Column id="blah">Blah</Column>
   </TableHeader>
   <TableBody>

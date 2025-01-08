@@ -1345,6 +1345,71 @@ function updateActionGroup(
   }
 }
 
+/**
+ * Adds isRowHeader to the first Column in a table if there isn't already a row header.
+ * @param path 
+ */
+function addRowHeader(
+  path: NodePath<t.JSXElement>
+) {
+  let tableHeaderPath = path.get('children').find((child) =>
+    t.isJSXElement(child.node) &&
+    t.isJSXIdentifier(child.node.openingElement.name) &&
+    getName(child as NodePath<t.JSXElement>, child.node.openingElement.name) === 'TableHeader'
+  ) as NodePath<t.JSXElement> | undefined;
+
+
+  // Check if isRowHeader is already set on a Column
+  let hasRowHeader = false;
+  tableHeaderPath?.get('children').forEach((child) => {
+    if (
+      t.isJSXElement(child.node) &&
+      t.isJSXIdentifier(child.node.openingElement.name) &&
+      getName(child as NodePath<t.JSXElement>, child.node.openingElement.name) === 'Column'
+    ) {
+      let isRowHeaderProp = (child.get('openingElement') as NodePath).get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === 'isRowHeader') as NodePath<t.JSXAttribute> | undefined;
+      if (isRowHeaderProp) {
+        hasRowHeader = true;
+      }
+    }
+  });
+
+  // If there isn't already a row header, add one to the first Column if possible
+  if (!hasRowHeader) {
+    tableHeaderPath?.get('children').forEach((child) => {
+      // Add to first Column if static
+      if (
+        !hasRowHeader &&
+        t.isJSXElement(child.node) &&
+        t.isJSXIdentifier(child.node.openingElement.name) &&
+        getName(child as NodePath<t.JSXElement>, child.node.openingElement.name) === 'Column'
+      ) {
+        child.node.openingElement.attributes.push(t.jsxAttribute(t.jsxIdentifier('isRowHeader'), t.jsxExpressionContainer(t.booleanLiteral(true))));
+        hasRowHeader = true;
+      }
+
+      // If render function is used, leave a comment to update manually
+      if (
+        t.isJSXExpressionContainer(child.node) &&
+        t.isArrowFunctionExpression(child.node.expression)
+      ) {
+        addComment(child.node, ' TODO(S2-upgrade): You\'ll need to add isRowHeader to one of the columns manually.');
+      }
+
+      // If array.map is used, leave a comment to update manually
+      if (
+        t.isJSXExpressionContainer(child.node) &&
+        t.isCallExpression(child.node.expression) &&
+        t.isMemberExpression(child.node.expression.callee) &&
+        t.isIdentifier(child.node.expression.callee.property) &&
+        child.node.expression.callee.property.name === 'map'
+      ) {
+        addComment(child.node, ' TODO(S2-upgrade): You\'ll need to add isRowHeader to one of the columns manually.');
+      }
+    });
+  }
+}
+
 export const functionMap = {
   updatePropNameAndValue,
   updatePropValueAndAddNewProp,
@@ -1370,5 +1435,6 @@ export const functionMap = {
   updateDialogChild,
   updateActionGroup,
   updateKeyToId,
-  commentIfNestedColumns
+  commentIfNestedColumns,
+  addRowHeader
 };
