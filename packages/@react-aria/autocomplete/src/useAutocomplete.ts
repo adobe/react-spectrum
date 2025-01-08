@@ -223,7 +223,7 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
     }
   };
 
-  let onKeyUp = useEffectEvent((e) => {
+  let onKeyUpCapture = useEffectEvent((e) => {
     // Dispatch simulated key up events for things like triggering links in listbox
     // Make sure to stop the propagation of the input keyup event so that the simulated keyup/down pair
     // is detected by usePress instead of the original keyup originating from the input
@@ -243,11 +243,11 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
   });
 
   useEffect(() => {
-    document.addEventListener('keyup', onKeyUp, true);
+    document.addEventListener('keyup', onKeyUpCapture, true);
     return () => {
-      document.removeEventListener('keyup', onKeyUp, true);
+      document.removeEventListener('keyup', onKeyUpCapture, true);
     };
-  }, [inputRef, onKeyUp]);
+  }, [inputRef, onKeyUpCapture]);
 
   let {keyboardProps} = useKeyboard({onKeyDown});
 
@@ -284,7 +284,10 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
     collectionProps: mergeProps(collectionProps, {
       // TODO: shouldFocusOnHover? shouldFocusWrap? Should it be up to the wrapped collection?
       shouldUseVirtualFocus: true,
-      disallowTypeAhead: true
+      disallowTypeAhead: true,
+      // Prevent the emulated keyboard events that were dispatched on the wrapped collection from propagating outside of the autocomplete since techincally
+      // they've been handled by the input already
+      onKeyDown: (e) => e.stopPropagation()
     }),
     collectionRef: mergedCollectionRef,
     filterFn: filter != null ? filterFn : undefined
