@@ -332,13 +332,11 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
 
       date = startOfWeek(date, locale, firstDayOfWeek);
       
-      if (!firstDayOfWeek) {
-        // startOfWeek will clamp dates within the calendar system's valid range, which may
-        // start in the middle of a week. In this case, add null placeholders.
-        let dayOfWeek = getDayOfWeek(date, locale);
-        for (let i = 0; i < dayOfWeek; i++) {
-          dates.push(null);
-        }
+      // startOfWeek will clamp dates within the calendar system's valid range, which may
+      // start in the middle of a week. In this case, add null placeholders.
+      let dayOfWeek = getDayOfWeek(date, locale, firstDayOfWeek);
+      for (let i = 0; i < dayOfWeek; i++) {
+        dates.push(null);
       }
 
       while (dates.length < 7) {
