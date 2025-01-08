@@ -69,7 +69,7 @@ export function isToday(date: DateValue, timeZone: string): boolean {
  * where zero is the first day of the week in the given locale. For example, in the United States,
  * the first day of the week is Sunday, but in France it is Monday.
  */
-export function getDayOfWeek(date: DateValue, locale: string): number {
+export function getDayOfWeek(date: DateValue, locale: string, firstDayOfWeek?: DayOfWeek): number {
   let julian = date.calendar.toJulianDay(date);
 
   // If julian is negative, then julian % 7 will be negative, so we adjust
@@ -78,6 +78,12 @@ export function getDayOfWeek(date: DateValue, locale: string): number {
   if (dayOfWeek < 0) {
     dayOfWeek += 7;
   }
+
+  if (firstDayOfWeek) {
+    let offset = (DAY_MAP[firstDayOfWeek] - getWeekStart(locale) + 7) % 7;
+    let diff = (7 + dayOfWeek - offset) % 7;
+    dayOfWeek = diff;
+  } 
 
   return dayOfWeek;
 }
@@ -198,12 +204,7 @@ export function startOfWeek(date: CalendarDateTime, locale: string, firstDayOfWe
 export function startOfWeek(date: CalendarDate, locale: string, firstDayOfWeek?: DayOfWeek): CalendarDate;
 export function startOfWeek(date: DateValue, locale: string, firstDayOfWeek?: DayOfWeek): DateValue;
 export function startOfWeek(date: DateValue, locale: string, firstDayOfWeek?: DayOfWeek): DateValue {
-  let dayOfWeek = getDayOfWeek(date, locale);
-  if (firstDayOfWeek) {
-    let offset = (DAY_MAP[firstDayOfWeek] - getWeekStart(locale) + 7) % 7;
-    let diff = (7 + dayOfWeek - offset) % 7;
-    return date.subtract({days: diff});
-  } 
+  let dayOfWeek = getDayOfWeek(date, locale, firstDayOfWeek);
   return date.subtract({days: dayOfWeek});
 }
 
@@ -242,7 +243,7 @@ function getRegion(locale: string): string | undefined {
   return part === 'u' ? undefined : part;
 }
 
-export function getWeekStart(locale: string): number {
+function getWeekStart(locale: string): number {
   // TODO: use Intl.Locale for this once browsers support the weekInfo property
   // https://github.com/tc39/proposal-intl-locale-info
   let region = getRegion(locale);

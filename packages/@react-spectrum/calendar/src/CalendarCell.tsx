@@ -11,7 +11,7 @@
  */
 
 import {AriaCalendarCellProps, useCalendarCell} from '@react-aria/calendar';
-import {CalendarDate, getDayOfWeek, getWeekStart, isSameDay, isSameMonth, isToday} from '@internationalized/date';
+import {CalendarDate, getDayOfWeek, isSameDay, isSameMonth, isToday} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {classNames} from '@react-spectrum/utils';
 import {mergeProps} from '@react-aria/utils';
@@ -20,16 +20,6 @@ import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
-
-const DAY_MAP = {
-  sun: 0,
-  mon: 1,
-  tue: 2,
-  wed: 3,
-  thu: 4,
-  fri: 5,
-  sat: 6
-};
 
 interface CalendarCellProps extends AriaCalendarCellProps {
   state: CalendarState | RangeCalendarState,
@@ -59,12 +49,9 @@ export function CalendarCell({state, currentMonth, firstDayOfWeek, ...props}: Ca
   let isSelectionStart = isSelected && highlightedRange && isSameDay(props.date, highlightedRange.start);
   let isSelectionEnd = isSelected && highlightedRange && isSameDay(props.date, highlightedRange.end);
   let {locale} = useLocale();
-  let dayOfWeek = getDayOfWeek(props.date, locale);
-  let weekStart = firstDayOfWeek !== undefined ? DAY_MAP[firstDayOfWeek] : getWeekStart(locale);
-  let isFirstDayOfWeek = dayOfWeek + getWeekStart(locale) === weekStart;
-  let isLastDayOfWeek = ((dayOfWeek + getWeekStart(locale) - weekStart + 7) % 7) === 6;
-  let isRangeStart = isSelected && (isFirstSelectedAfterDisabled || isFirstDayOfWeek || props.date.day === 1);
-  let isRangeEnd = isSelected && (isLastSelectedBeforeDisabled || isLastDayOfWeek || props.date.day === currentMonth.calendar.getDaysInMonth(currentMonth));
+  let dayOfWeek = getDayOfWeek(props.date, locale, firstDayOfWeek);
+  let isRangeStart = isSelected && (isFirstSelectedAfterDisabled || dayOfWeek === 0 || props.date.day === 1);
+  let isRangeEnd = isSelected && (isLastSelectedBeforeDisabled || dayOfWeek === 6 || props.date.day === currentMonth.calendar.getDaysInMonth(currentMonth));
   let {focusProps, isFocusVisible} = useFocusRing();
   let {hoverProps, isHovered} = useHover({isDisabled: isDisabled || isUnavailable || state.isReadOnly});
 

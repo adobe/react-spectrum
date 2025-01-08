@@ -74,8 +74,7 @@ export {
   minDate,
   maxDate,
   isWeekend,
-  isWeekday,
-  getWeekStart
+  isWeekday
 } from './queries';
 export {
   parseDate,
