@@ -97,17 +97,11 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   let parser = useMemo(() => new NumberParser(locale, {maximumFractionDigits: 0}), [locale]);
 
   let backspace = () => {
-    let text = segment.text;
-    let placeholder = segment.placeholder;
-    text = text.replace(/[\u2066-\u2069]/g, '').trim();
-    placeholder = placeholder.replace(/[\u2066-\u2069]/g, '').trim();
-
-    if (text === placeholder) {
+    if (segment.text === segment.placeholder) {
       focusManager.focusPrevious();
     }
-
-    if (parser.isValidPartialNumber(text) && !state.isReadOnly && !segment.isPlaceholder) {
-      let newValue = text.slice(0, -1);
+    if (parser.isValidPartialNumber(segment.text) && !state.isReadOnly && !segment.isPlaceholder) {
+      let newValue = segment.text.slice(0, -1);
       let parsed = parser.parse(newValue);
       newValue = parsed === 0 ? '' : newValue;
       if (newValue.length === 0 || parsed === 0) {
@@ -391,6 +385,8 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     };
   }
 
+  let dateSegments = ['day', 'month', 'year'];
+
   return {
     segmentProps: mergeProps(spinButtonProps, labelProps, {
       id,
@@ -411,6 +407,9 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
       onFocus,
       style: {
         caretColor: 'transparent',
+        // Equivalent CSS of applying LRE (https://www.unicode.org/reports/tr9/#Explicit_Directional_Embeddings)
+        direction: dateSegments.includes(segment.type) && 'ltr',
+        unicodeBidi: (dateSegments.includes(segment.type) || segment.type === 'timeZoneName') && 'embed'
       },
       // Prevent pointer events from reaching useDatePickerGroup, and allow native browser behavior to focus the segment.
       onPointerDown(e) {
@@ -418,7 +417,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
       },
       onMouseDown(e) {
         e.stopPropagation();
-      },
+      }
     })
   };
 }
