@@ -1145,13 +1145,14 @@ By providing the above contexts, the existing `Button`, `Popover`, and `Menu` co
 
 ### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
-`@react-aria/test-utils` also offers common menu interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
+`@react-aria/test-utils` offers common menu interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the menu tester and a sample of how you could use it in your test suite.
 
 <ClassAPI links={menuUtil.links} class={menuUtil.exports.MenuTester} />
 
 ```ts
 // Menu.test.ts
+import {render} from '@testing-library/react';
 import {User} from '@react-aria/test-utils';
 
 let testUtilUser = new User({interactionType: 'mouse'});
