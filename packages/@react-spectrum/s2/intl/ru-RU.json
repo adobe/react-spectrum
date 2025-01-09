@@ -1,5 +1,9 @@
 {
-  "breadcrumbs.more": "Дополнительные элементы",
+  "actionbar.actions": "Действия",
+  "actionbar.actionsAvailable": "Возможно выполнение действий.",
+  "actionbar.clearSelection": "Очистить выбор",
+  "actionbar.selected": "Выбрано: {count}",
+  "actionbar.selectedAll": "Выбрано все",
   "button.pending": "в ожидании",
   "contextualhelp.help": "Справка",
   "contextualhelp.info": "Информация",
@@ -24,5 +28,6 @@
   "tag.actions": "Действия",
   "tag.hideButtonLabel": "Показать меньше",
   "tag.noTags": "Нет",
-  "tag.showAllButtonLabel": "Показать все ({tagCount, number})"
+  "tag.showAllButtonLabel": "Показать все ({tagCount, number})",
+  "breadcrumbs.more": "Дополнительные элементы"
 }

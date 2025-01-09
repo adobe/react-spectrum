@@ -12,8 +12,8 @@
 
 import {DOMAttributes, DOMProps, FocusableElement, Key, LongPressEvent, PointerType, PressEvent, RefObject} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
-import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
-import {mergeProps, openLink, UPDATE_ACTIVEDESCENDANT, useId, useRouter} from '@react-aria/utils';
+import {isCtrlKeyPressed, mergeProps, openLink, UPDATE_ACTIVEDESCENDANT, useId, useRouter} from '@react-aria/utils';
+import {isNonContiguousSelectionModifier} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {PressProps, useLongPress, usePress} from '@react-aria/interactions';
 import {useEffect, useRef} from 'react';
@@ -160,6 +160,9 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   };
 
   // Focus the associated DOM node when this item becomes the focusedKey
+  // TODO: can't make this useLayoutEffect bacause it breaks menus inside dialogs
+  // However, if this is a useEffect, it runs twice and dispatches two UPDATE_ACTIVEDESCENDANT and immediately sets
+  // aria-activeDescendant in useAutocomplete... I've worked around this for now
   useEffect(() => {
     let isFocused = key === manager.focusedKey;
     if (isFocused && manager.isFocused) {

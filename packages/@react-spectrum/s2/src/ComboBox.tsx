@@ -379,11 +379,12 @@ export function ComboBoxItem(props: ComboBoxItemProps) {
 
 export interface ComboBoxSectionProps<T extends object> extends SectionProps<T> {}
 export function ComboBoxSection<T extends object>(props: ComboBoxSectionProps<T>) {
+  let {size} = useContext(InternalComboboxContext);
   return (
     <>
       <AriaListBoxSection
         {...props}
-        className={section}>
+        className={section({size})}>
         {props.children}
       </AriaListBoxSection>
       <Divider />

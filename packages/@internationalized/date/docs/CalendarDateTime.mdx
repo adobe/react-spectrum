@@ -367,6 +367,12 @@ startOfWeek(date, 'en-US'); // 2022-01-30T09:45
 startOfWeek(date, 'fr-FR'); // 2022-01-31T09:45
 ```
 
+You can also provide an optional `firstDayOfWeek` argument to override the default first day of the week determined by the locale. It accepts a week day abbreviation, e.g. `sun`, `mon`, `tue`, etc.
+
+```tsx
+startOfWeek(date, 'en-US', 'mon'); // 2022-01-31T09:45
+```
+
 ### Day of week
 
 The <TypeLink links={docs.links} type={docs.exports.getDayOfWeek} /> function returns the day of the week for the given date and locale. Days are numbered from zero to six, where zero is the first day of the week in the given locale. For example, in the United States, the first day of the week is Sunday, but in France it is Monday.
@@ -378,6 +384,12 @@ let date = new CalendarDateTime(2022, 2, 6, 8, 30); // a Sunday
 
 getDayOfWeek(date, 'en-US'); // 0
 getDayOfWeek(date, 'fr-FR'); // 6
+```
+
+You can also provide an optional `firstDayOfWeek` argument to override the default first day of the week determined by the locale. It accepts a week day abbreviation, e.g. `sun`, `mon`, `tue`, etc.
+
+```tsx
+getDayOfWeek(date, 'en-US', 'mon'); // 6
 ```
 
 ### Weekdays and weekends
@@ -407,4 +419,10 @@ let date = new CalendarDateTime(2021, 1, 1, 8, 30);
 
 getWeeksInMonth(date, 'en-US'); // 6
 getWeeksInMonth(date, 'fr-FR'); // 5
+```
+
+You can also provide an optional `firstDayOfWeek` argument to override the default first day of the week determined by the locale. It accepts a week day abbreviation, e.g. `sun`, `mon`, `tue`, etc.
+
+```tsx
+getWeeksInMonth(date, 'en-US', 'mon'); // 5
 ```

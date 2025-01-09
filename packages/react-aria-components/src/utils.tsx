@@ -13,7 +13,6 @@
 import {AriaLabelingProps, RefObject,  DOMProps as SharedDOMProps} from '@react-types/shared';
 import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import React, {Context, CSSProperties, ForwardedRef, JSX, ReactNode, RefCallback, UIEvent, useCallback, useContext, useMemo, useRef, useState} from 'react';
-import ReactDOM from 'react-dom';
 
 export const DEFAULT_SLOT = Symbol('default');
 
@@ -230,91 +229,6 @@ export function useSlot(): [RefCallback<Element>, boolean] {
   }, []);
 
   return [ref, hasSlot];
-}
-
-export function useEnterAnimation(ref: RefObject<HTMLElement | null>, isReady: boolean = true) {
-  let [isEntering, setEntering] = useState(true);
-  let isAnimationReady = isEntering && isReady;
-  
-  // There are two cases for entry animations:
-  // 1. CSS @keyframes. The `animation` property is set during the isEntering state, and it is removed after the animation finishes.
-  // 2. CSS transitions. The initial styles are applied during the isEntering state, and removed immediately, causing the transition to occur.
-  //
-  // In the second case, cancel any transitions that were triggered prior to the isEntering = false state (when the transition is supposed to start).
-  // This can happen when isReady starts as false (e.g. popovers prior to placement calculation).
-  useLayoutEffect(() => {
-    if (isAnimationReady && ref.current && 'getAnimations' in ref.current) {
-      for (let animation of ref.current.getAnimations()) {
-        if (animation instanceof CSSTransition) {
-          animation.cancel();
-        }
-      }
-    }
-  }, [ref, isAnimationReady]);
-
-  useAnimation(ref, isAnimationReady, useCallback(() => setEntering(false), []));
-  return isAnimationReady;
-}
-
-export function useExitAnimation(ref: RefObject<HTMLElement | null>, isOpen: boolean) {
-  // State to trigger a re-render after animation is complete, which causes the element to be removed from the DOM.
-  // Ref to track the state we're in, so we don't immediately reset isExiting to true after the animation.
-  let [isExiting, setExiting] = useState(false);
-  let [exitState, setExitState] = useState('idle');
-
-  // If isOpen becomes false, set isExiting to true.
-  if (!isOpen && ref.current && exitState === 'idle') {
-    isExiting = true;
-    setExiting(true);
-    setExitState('exiting');
-  }
-
-  // If we exited, and the element has been removed, reset exit state to idle.
-  if (!ref.current && exitState === 'exited') {
-    setExitState('idle');
-  }
-
-  useAnimation(
-    ref,
-    isExiting,
-    useCallback(() => {
-      setExitState('exited');
-      setExiting(false);
-    }, [])
-  );
-
-  return isExiting;
-}
-
-function useAnimation(ref: RefObject<HTMLElement | null>, isActive: boolean, onEnd: () => void) {
-  useLayoutEffect(() => {
-    if (isActive && ref.current) {
-      if (!('getAnimations' in ref.current)) {
-        // JSDOM
-        onEnd();
-        return;
-      }
-      
-      let animations = ref.current.getAnimations();
-      if (animations.length === 0) {
-        onEnd();
-        return;
-      }
-
-      let canceled = false;
-      Promise.all(animations.map(a => a.finished)).then(() => {
-        if (!canceled) {
-          ReactDOM.flushSync(() => {
-            onEnd();
-          });
-        }
-      }).catch(() => {});
-      
-      return () => {
-        canceled = true;
-      };
-    }
-  }, [ref, isActive, onEnd]);
 }
 
 /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Adobe. All rights reserved.
+ * Copyright 2024 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,34 +10,35 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaAutocompleteProps, CollectionOptions, useAutocomplete} from '@react-aria/autocomplete';
-import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomplete';
-import {ContextValue, Provider, removeDataAttributes, SlotProps, useContextProps} from './utils';
+import {AriaAutocompleteProps, CollectionOptions, UNSTABLE_useAutocomplete} from '@react-aria/autocomplete';
+import {AutocompleteState, UNSTABLE_useAutocompleteState} from '@react-stately/autocomplete';
 import {InputContext} from './Input';
-import React, {createContext, ForwardedRef, forwardRef, RefObject, useRef} from 'react';
+import {mergeProps} from '@react-aria/utils';
+import {Provider, removeDataAttributes, SlotProps, SlottedContextValue, useSlottedContext} from './utils';
+import React, {createContext, RefObject, useRef} from 'react';
 
 export interface AutocompleteProps extends AriaAutocompleteProps, SlotProps {}
 
 interface InternalAutocompleteContextValue {
-  filterFn: (nodeTextValue: string) => boolean,
+  filterFn?: (nodeTextValue: string) => boolean,
   collectionProps: CollectionOptions,
   collectionRef: RefObject<HTMLElement | null>
 }
 
-export const AutocompleteContext = createContext<ContextValue<AutocompleteProps, HTMLInputElement>>(null);
-export const AutocompleteStateContext = createContext<AutocompleteState | null>(null);
+export const UNSTABLE_AutocompleteContext = createContext<SlottedContextValue<AutocompleteProps>>(null);
+export const UNSTABLE_AutocompleteStateContext = createContext<AutocompleteState | null>(null);
 // This context is to pass the register and filter down to whatever collection component is wrapped by the Autocomplete
-export const InternalAutocompleteContext = createContext<InternalAutocompleteContextValue | null>(null);
+// TODO: export from RAC, but rename to something more appropriate
+export const UNSTABLE_InternalAutocompleteContext = createContext<InternalAutocompleteContextValue | null>(null);
 
 /**
  * A autocomplete combines a text input with a menu, allowing users to filter a list of options to items matching a query.
  */
-
-
-export const Autocomplete = forwardRef(function Autocomplete(props: AutocompleteProps, ref: ForwardedRef<HTMLInputElement>) {
-  [props, ref] = useContextProps(props, ref, AutocompleteContext);
-  let {defaultFilter} = props;
-  let state = useAutocompleteState(props);
+export function UNSTABLE_Autocomplete(props: AutocompleteProps) {
+  let ctx = useSlottedContext(UNSTABLE_AutocompleteContext, props.slot);
+  props = mergeProps(ctx, props);
+  let {filter} = props;
+  let state = UNSTABLE_useAutocompleteState(props);
   let collectionRef = useRef<HTMLElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
 
@@ -46,9 +47,9 @@ export const Autocomplete = forwardRef(function Autocomplete(props: Autocomplete
     collectionProps,
     collectionRef: mergedCollectionRef,
     filterFn
-  } = useAutocomplete({
+  } = UNSTABLE_useAutocomplete({
     ...removeDataAttributes(props),
-    defaultFilter,
+    filter,
     collectionRef,
     inputRef
   }, state);
@@ -56,9 +57,9 @@ export const Autocomplete = forwardRef(function Autocomplete(props: Autocomplete
   return (
     <Provider
       values={[
-        [AutocompleteStateContext, state],
+        [UNSTABLE_AutocompleteStateContext, state],
         [InputContext, {...inputProps, ref: inputRef}],
-        [InternalAutocompleteContext, {
+        [UNSTABLE_InternalAutocompleteContext, {
           filterFn,
           collectionProps,
           collectionRef: mergedCollectionRef
@@ -67,4 +68,4 @@ export const Autocomplete = forwardRef(function Autocomplete(props: Autocomplete
       {props.children}
     </Provider>
   );
-});
+};
