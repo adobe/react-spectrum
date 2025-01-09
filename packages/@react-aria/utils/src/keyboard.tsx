@@ -10,6 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-export {UNSTABLE_useAutocompleteState} from './useAutocompleteState';
+import {isMac} from './platform';
 
-export type {AutocompleteProps, AutocompleteStateOptions, AutocompleteState} from './useAutocompleteState';
+interface Event {
+  altKey: boolean,
+  ctrlKey: boolean,
+  metaKey: boolean
+}
+
+export function isCtrlKeyPressed(e: Event) {
+  if (isMac()) {
+    return e.metaKey;
+  }
+
+  return e.ctrlKey;
+}

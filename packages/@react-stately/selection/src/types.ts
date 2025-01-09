@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DisabledBehavior, FocusStrategy, Key, LongPressEvent, PressEvent, Selection, SelectionBehavior, SelectionMode} from '@react-types/shared';
+import {Collection, DisabledBehavior, FocusStrategy, Key, LongPressEvent, Node, PressEvent, Selection, SelectionBehavior, SelectionMode} from '@react-types/shared';
 
 
 export interface FocusState {
@@ -107,5 +107,6 @@ export interface MultipleSelectionManager extends FocusState {
   /** Returns whether the given key is a hyperlink. */
   isLink(key: Key): boolean,
   /** Returns the props for the given item. */
-  getItemProps(key: Key): any
+  getItemProps(key: Key): any,
+  collection: Collection<Node<unknown>>
 }
