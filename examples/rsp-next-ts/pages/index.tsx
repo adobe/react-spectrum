@@ -83,6 +83,7 @@ import {
   DisclosureTitle,
   DisclosurePanel
 } from "@adobe/react-spectrum";
+import {AutocompleteExample} from "../components/AutocompleteExample";
 import Edit from "@spectrum-icons/workflow/Edit";
 import NotFound from "@spectrum-icons/illustrations/NotFound";
 import Section from "../components/Section";
@@ -240,6 +241,7 @@ export default function Home() {
                 }
               </TableBody>
             </TableView>
+            <AutocompleteExample />
           </Section>
 
           <Section title="Color">
