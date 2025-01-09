@@ -1,5 +1,9 @@
 {
-  "breadcrumbs.more": "更多項目",
+  "actionbar.actions": "動作",
+  "actionbar.actionsAvailable": "可執行的動作。",
+  "actionbar.clearSelection": "清除選取項目",
+  "actionbar.selected": "{count, plural, =0 {未選取任何項目} other {已選取 # 個}}",
+  "actionbar.selectedAll": "已選取所有項目",
   "button.pending": "待處理",
   "contextualhelp.help": "說明",
   "contextualhelp.info": "資訊",
@@ -24,5 +28,6 @@
   "tag.actions": "動作",
   "tag.hideButtonLabel": "顯示較少",
   "tag.noTags": "無",
-  "tag.showAllButtonLabel": "顯示全部 ({tagCount, number})"
+  "tag.showAllButtonLabel": "顯示全部 ({tagCount, number})",
+  "breadcrumbs.more": "更多項目"
 }

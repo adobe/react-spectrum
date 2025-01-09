@@ -11,6 +11,11 @@ let mapToNewKeys = {
 };
 
 let stringsToAllow = new Set([
+  'actionbar.actions',
+  'actionbar.actionsAvailable',
+  'actionbar.clearSelection',
+  'actionbar.selected',
+  'actionbar.selectedAll',
   'breadcrumbs.more',
   'button.pending',
   'menu.moreActions',

@@ -251,7 +251,7 @@ export function ExampleApp() {
                         Share
                       </MenuItem>
                       <Menu>
-                        <MenuItem href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(item.common_name)}`} target="blank" rel="noopener noreferrer" aria-label="Twitter"><Twitter aria-hidden className="w-4 h-4" /> Twitter…</MenuItem>
+                        <MenuItem href={`https://x.com/intent/tweet?text=${encodeURIComponent(item.common_name)}`} target="blank" rel="noopener noreferrer" aria-label="X"><Twitter aria-hidden className="w-4 h-4" /> X…</MenuItem>
                         <MenuItem href={`mailto:abc@example.com?subject=${encodeURIComponent(item.common_name)}`} target="blank" rel="noopener noreferrer" aria-label="Email"><Mail aria-hidden className="w-4 h-4" /> Email…</MenuItem>
                       </Menu>
                     </SubmenuTrigger>
@@ -311,7 +311,7 @@ export function ExampleApp() {
                                   Share
                                 </MenuItem>
                                 <Menu>
-                                  <MenuItem href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(item.common_name)}`} target="blank" rel="noopener noreferrer" aria-label="Twitter"><Twitter aria-hidden className="w-4 h-4" /> Twitter…</MenuItem>
+                                  <MenuItem href={`https://x.com/intent/tweet?text=${encodeURIComponent(item.common_name)}`} target="blank" rel="noopener noreferrer" aria-label="X"><Twitter aria-hidden className="w-4 h-4" /> X…</MenuItem>
                                   <MenuItem href={`mailto:abc@example.com?subject=${encodeURIComponent(item.common_name)}`} target="blank" rel="noopener noreferrer" aria-label="Email"><Mail aria-hidden className="w-4 h-4" /> Email…</MenuItem>
                                 </Menu>
                               </SubmenuTrigger>

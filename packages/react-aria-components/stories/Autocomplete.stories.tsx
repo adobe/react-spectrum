@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Autocomplete, Button, Collection, Dialog, DialogTrigger, Header, Input, Keyboard, Label, ListBox, ListBoxSection, UNSTABLE_ListLayout as ListLayout, Menu, MenuSection, MenuTrigger, Popover, SearchField, Separator, Text, TextField, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
+import {UNSTABLE_Autocomplete as Autocomplete, Button, Collection, Dialog, DialogTrigger, Header, Input, Keyboard, Label, ListBox, ListBoxSection, UNSTABLE_ListLayout as ListLayout, Menu, MenuSection, MenuTrigger, Popover, SearchField, Separator, Text, TextField, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
 import {MyListBoxItem, MyMenuItem} from './utils';
 import React, {useMemo} from 'react';
 import styles from '../example/index.css';
@@ -76,11 +76,20 @@ let StaticMenu = (props) => {
   );
 };
 
+function AutocompleteWrapper(props) {
+  let {contains} = useFilter({sensitivity: 'base'});
+  let filter = (textValue, inputValue) => contains(textValue, inputValue);
+  return (
+    <Autocomplete filter={filter} {...props} />
+  );
+}
+
 export const AutocompleteExample = {
   render: (args) => {
     let {onAction, onSelectionChange, selectionMode} = args;
+
     return (
-      <Autocomplete defaultInputValue="Ba">
+      <AutocompleteWrapper defaultInputValue="Ba">
         <div>
           <TextField autoFocus data-testid="autocomplete-example">
             <Label style={{display: 'block'}}>Test</Label>
@@ -89,7 +98,7 @@ export const AutocompleteExample = {
           </TextField>
           <StaticMenu onAction={onAction} onSelectionChange={onSelectionChange} selectionMode={selectionMode} />
         </div>
-      </Autocomplete>
+      </AutocompleteWrapper>
     );
   },
   name: 'Autocomplete complex static with textfield'
@@ -99,7 +108,7 @@ export const AutocompleteSearchfield = {
   render: (args) => {
     let {onAction, onSelectionChange, selectionMode} = args;
     return (
-      <Autocomplete defaultInputValue="Ba">
+      <AutocompleteWrapper defaultInputValue="Ba">
         <div>
           <SearchField autoFocus data-testid="autocomplete-example">
             <Label style={{display: 'block'}}>Test</Label>
@@ -108,7 +117,7 @@ export const AutocompleteSearchfield = {
           </SearchField>
           <StaticMenu onAction={onAction} onSelectionChange={onSelectionChange} selectionMode={selectionMode} />
         </div>
-      </Autocomplete>
+      </AutocompleteWrapper>
     );
   },
   name: 'Autocomplete complex static with searchfield'
@@ -125,7 +134,7 @@ export const AutocompleteMenuDynamic = {
     let {onAction, onSelectionChange, selectionMode} = args;
 
     return (
-      <Autocomplete>
+      <AutocompleteWrapper>
         <div>
           <SearchField autoFocus>
             <Label style={{display: 'block'}}>Test</Label>
@@ -136,7 +145,7 @@ export const AutocompleteMenuDynamic = {
             {item => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
           </Menu>
         </div>
-      </Autocomplete>
+      </AutocompleteWrapper>
     );
   },
   name: 'Autocomplete, dynamic menu'
@@ -146,7 +155,7 @@ export const AutocompleteOnActionOnMenuItems = {
   render: (args) => {
     let {onSelectionChange, selectionMode} = args;
     return (
-      <Autocomplete>
+      <AutocompleteWrapper>
         <div>
           <SearchField autoFocus>
             <Label style={{display: 'block'}}>Test</Label>
@@ -159,7 +168,7 @@ export const AutocompleteOnActionOnMenuItems = {
             <MyMenuItem onAction={action('Baz action')}>Baz</MyMenuItem>
           </Menu>
         </div>
-      </Autocomplete>
+      </AutocompleteWrapper>
     );
   },
   name: 'Autocomplete, onAction on menu items'
@@ -169,7 +178,7 @@ export const AutocompleteDisabledKeys = {
   render: (args) => {
     let {onAction, onSelectionChange, selectionMode} = args;
     return (
-      <Autocomplete>
+      <AutocompleteWrapper>
         <div>
           <SearchField autoFocus>
             <Label style={{display: 'block'}}>Test</Label>
@@ -180,7 +189,7 @@ export const AutocompleteDisabledKeys = {
             {item => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
           </Menu>
         </div>
-      </Autocomplete>
+      </AutocompleteWrapper>
     );
   },
   name: 'Autocomplete, disabled key'
@@ -209,7 +218,12 @@ const AsyncExample = (args) => {
       };
     }
   });
-  let {onAction, onSelectionChange, selectionMode} = args;
+  let {onSelectionChange, selectionMode, includeLoadState} = args;
+  let renderEmptyState;
+  if (includeLoadState) {
+    renderEmptyState = list.isLoading ? () => 'Loading' : () => 'No results found.';
+  }
+
   return (
     <Autocomplete inputValue={list.filterText} onInputChange={list.setFilterText}>
       <div>
@@ -218,14 +232,14 @@ const AsyncExample = (args) => {
           <Input />
           <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
         </SearchField>
-        <Menu<AutocompleteItem>
-          items={items}
+        <ListBox<AutocompleteItem>
+          renderEmptyState={renderEmptyState}
+          items={includeLoadState && list.isLoading ? [] : list.items}
           className={styles.menu}
-          onAction={onAction}
           onSelectionChange={onSelectionChange}
           selectionMode={selectionMode}>
-          {item => <MyMenuItem>{item.name}</MyMenuItem>}
-        </Menu>
+          {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+        </ListBox>
       </div>
     </Autocomplete>
   );
@@ -235,7 +249,10 @@ export const AutocompleteAsyncLoadingExample = {
   render: (args) => {
     return <AsyncExample {...args} />;
   },
-  name: 'Autocomplete, useAsync level filtering'
+  name: 'Autocomplete, useAsync level filtering with load state',
+  args: {
+    includeLoadState: true
+  }
 };
 
 const CaseSensitiveFilter = (args) => {
@@ -245,7 +262,7 @@ const CaseSensitiveFilter = (args) => {
   let defaultFilter = (itemText, input) => contains(itemText, input);
   let {onAction, onSelectionChange, selectionMode} = args;
   return (
-    <Autocomplete defaultFilter={defaultFilter}>
+    <Autocomplete filter={defaultFilter}>
       <div>
         <SearchField autoFocus>
           <Label style={{display: 'block'}}>Test</Label>
@@ -271,7 +288,7 @@ export const AutocompleteWithListbox = {
   render: (args) => {
     let {onSelectionChange, selectionMode} = args;
     return (
-      <Autocomplete defaultInputValue="Ba">
+      <AutocompleteWrapper defaultInputValue="Ba">
         <div>
           <SearchField autoFocus>
             <Label style={{display: 'block'}}>Test</Label>
@@ -294,7 +311,7 @@ export const AutocompleteWithListbox = {
             </ListBoxSection>
           </ListBox>
         </div>
-      </Autocomplete>
+      </AutocompleteWrapper>
     );
   },
   name: 'Autocomplete with ListBox'
@@ -337,7 +354,7 @@ export const AutocompleteWithVirtualizedListbox = {
   render: (args) => {
     let {onSelectionChange, selectionMode} = args;
     return (
-      <Autocomplete>
+      <AutocompleteWrapper>
         <div>
           <SearchField autoFocus>
             <Label style={{display: 'block'}}>Test</Label>
@@ -346,7 +363,7 @@ export const AutocompleteWithVirtualizedListbox = {
           </SearchField>
           <VirtualizedListBox onSelectionChange={onSelectionChange} selectionMode={selectionMode} />
         </div>
-      </Autocomplete>
+      </AutocompleteWrapper>
     );
   },
   name: 'Autocomplete with ListBox, virtualized'
@@ -356,7 +373,7 @@ let lotsOfSections: any[] = [];
 for (let i = 0; i < 50; i++) {
   let children: {name: string, id: string}[] = [];
   for (let j = 0; j < 50; j++) {
-    children.push({name: `Section ${i}, Item ${j}`, id: `item_${i}${j}`});
+    children.push({name: `Section ${i}, Item ${j}`, id: `item_${i}_${j}`});
   }
 
   lotsOfSections.push({name: 'Section ' + i, id: `section_${i}`, children});
@@ -422,7 +439,7 @@ export const AutocompleteInPopover = {
             height: 250
           }}>
           <Dialog aria-label="dialog with autocomplete">
-            <Autocomplete>
+            <AutocompleteWrapper>
               <div>
                 <SearchField autoFocus>
                   <Label style={{display: 'block'}}>Test</Label>
@@ -431,7 +448,7 @@ export const AutocompleteInPopover = {
                 </SearchField>
                 <ShellExample />
               </div>
-            </Autocomplete>
+            </AutocompleteWrapper>
           </Dialog>
         </Popover>
       </MenuTrigger>
@@ -443,6 +460,11 @@ export const AutocompleteInPopover = {
       table: {
         disable: true
       }
+    }
+  },
+  parameters: {
+    description: {
+      data: 'Menu is single selection so only the latest selected option will show the selected style'
     }
   }
 };
@@ -465,7 +487,7 @@ export const AutocompleteInPopoverDialogTrigger = {
           }}>
           <Dialog aria-label="dialog with autocomplete">
             {() => (
-              <Autocomplete>
+              <AutocompleteWrapper>
                 <div>
                   <SearchField autoFocus>
                     <Label style={{display: 'block'}}>Test</Label>
@@ -474,7 +496,7 @@ export const AutocompleteInPopoverDialogTrigger = {
                   </SearchField>
                   <ShellExample />
                 </div>
-              </Autocomplete>
+              </AutocompleteWrapper>
             )}
           </Dialog>
         </Popover>
@@ -487,6 +509,11 @@ export const AutocompleteInPopoverDialogTrigger = {
       table: {
         disable: true
       }
+    }
+  },
+  parameters: {
+    description: {
+      data: 'Menu is single selection so only the latest selected option will show the selected style'
     }
   }
 };

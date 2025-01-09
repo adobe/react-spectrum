@@ -111,6 +111,10 @@ export function colorMix(a: SpectrumColor, b: SpectrumColor, percent: number): `
   return `[color-mix(in srgb, ${parseColor(a)}, ${parseColor(b)} ${percent}%)]`;
 }
 
+export function linearGradient(angle: string, ...tokens: [SpectrumColor, number][]): string {
+  return `linear-gradient(${angle}, ${tokens.map(([color, stop]) => `${parseColor(color)} ${stop}%`)})`;
+}
+
 function generateSpacing<K extends number[]>(px: K): {[P in K[number]]: string} {
   let res: any = {};
   for (let p of px) {
@@ -669,7 +673,14 @@ export const style = createTheme({
       translate: 'var(--translateX, 0) var(--translateY, 0)'
     }), translate),
     rotate: createArbitraryProperty((value: number | `${number}deg` | `${number}rad` | `${number}grad` | `${number}turn`, property) => ({[property]: typeof value === 'number' ? `${value}deg` : value})),
-    scale: createArbitraryProperty<number>(),
+    scaleX: createArbitraryProperty<number>(value => ({
+      '--scaleX': value,
+      scale: 'var(--scaleX, 1) var(--scaleY, 1)'
+    })),
+    scaleY: createArbitraryProperty<number>(value => ({
+      '--scaleY': value,
+      scale: 'var(--scaleX, 1) var(--scaleY, 1)'
+    })),
     transform: createArbitraryProperty<string>(),
     position: ['absolute', 'fixed', 'relative', 'sticky', 'static'] as const,
     insetStart: createRenamedProperty('insetInlineStart', inset),
@@ -930,6 +941,7 @@ export const style = createTheme({
     borderStartRadius: ['borderTopStartRadius', 'borderBottomStartRadius'] as const,
     borderEndRadius: ['borderTopEndRadius', 'borderBottomEndRadius'] as const,
     translate: ['translateX', 'translateY'] as const,
+    scale: ['scaleX', 'scaleY'] as const,
     inset: ['top', 'bottom', 'insetStart', 'insetEnd'] as const,
     insetX: ['insetStart', 'insetEnd'] as const,
     insetY: ['top', 'bottom'] as const,
