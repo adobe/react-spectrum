@@ -64,6 +64,18 @@ export function isToday(date: DateValue, timeZone: string): boolean {
   return isSameDay(date, today(timeZone));
 }
 
+const DAY_MAP = {
+  sun: 0,
+  mon: 1,
+  tue: 2,
+  wed: 3,
+  thu: 4,
+  fri: 5,
+  sat: 6
+};
+
+type DayOfWeek = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
+
 /**
  * Returns the day of week for the given date and locale. Days are numbered from zero to six,
  * where zero is the first day of the week in the given locale. For example, in the United States,
@@ -74,16 +86,11 @@ export function getDayOfWeek(date: DateValue, locale: string, firstDayOfWeek?: D
 
   // If julian is negative, then julian % 7 will be negative, so we adjust
   // accordingly.  Julian day 0 is Monday.
-  let dayOfWeek = Math.ceil(julian + 1 - getWeekStart(locale)) % 7;
+  let weekStart = firstDayOfWeek ? DAY_MAP[firstDayOfWeek] : getWeekStart(locale);
+  let dayOfWeek = Math.ceil(julian + 1 - weekStart) % 7;
   if (dayOfWeek < 0) {
     dayOfWeek += 7;
   }
-
-  if (firstDayOfWeek) {
-    let offset = (DAY_MAP[firstDayOfWeek] - getWeekStart(locale) + 7) % 7;
-    let diff = (7 + dayOfWeek - offset) % 7;
-    dayOfWeek = diff;
-  } 
 
   return dayOfWeek;
 }
@@ -186,18 +193,6 @@ export function getMinimumDayInMonth(date: AnyCalendarDate) {
   return 1;
 }
 
-const DAY_MAP = {
-  sun: 0,
-  mon: 1,
-  tue: 2,
-  wed: 3,
-  thu: 4,
-  fri: 5,
-  sat: 6
-};
-
-type DayOfWeek = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
-
 /** Returns the first date of the week for the given date and locale. */
 export function startOfWeek(date: ZonedDateTime, locale: string, firstDayOfWeek?: DayOfWeek): ZonedDateTime;
 export function startOfWeek(date: CalendarDateTime, locale: string, firstDayOfWeek?: DayOfWeek): CalendarDateTime;
@@ -252,12 +247,8 @@ function getWeekStart(locale: string): number {
 
 /** Returns the number of weeks in the given month and locale. */
 export function getWeeksInMonth(date: DateValue, locale: string, firstDayOfWeek?: DayOfWeek): number {
-  let monthStart = startOfMonth(date);
-  let firstVisibleDay = startOfWeek(monthStart, locale, firstDayOfWeek);
-  let monthEnd = endOfMonth(date);
-  let lastVisibleDay = endOfWeek(monthEnd, locale, firstDayOfWeek);
-  let totalDays = lastVisibleDay.calendar.toJulianDay(lastVisibleDay) - firstVisibleDay.calendar.toJulianDay(firstVisibleDay) + 1;
-  return Math.ceil(totalDays / 7);
+  let days = date.calendar.getDaysInMonth(date);
+  return Math.ceil((getDayOfWeek(startOfMonth(date), locale, firstDayOfWeek) + days) / 7);
 }
 
 /** Returns the lesser of the two provider dates. */
