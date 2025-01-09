@@ -19,7 +19,7 @@ import {
   CoachMark,
   CoachMarkTrigger,
   Content, Footer, Image, Keyboard, MenuItem,
-  Slider, StatusLight,
+  Slider,
   Text, useTour
 } from '../src';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
