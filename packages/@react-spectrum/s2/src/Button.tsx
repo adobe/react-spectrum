@@ -369,7 +369,18 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
         isStaticColor: !!staticColor
       }, props.styles)}>
       {(renderProps) => (<>
-        {variant === 'genai' || variant === 'premium' ? <span className={gradient({...renderProps, variant})} /> : null}
+        {variant === 'genai' || variant === 'premium' 
+          ? (
+            <span
+              className={gradient({
+                ...renderProps,
+                // Retain hover styles when an overlay is open.
+                isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
+                isDisabled: renderProps.isDisabled || isProgressVisible,
+                variant
+              })} />
+             )
+          : null}
         <Provider
           values={[
             [SkeletonContext, null],
