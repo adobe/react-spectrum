@@ -1,7 +1,7 @@
 import { ArrowUpIcon, BellIcon, CheckCircleIcon, CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import { ChatBubbleOvalLeftEllipsisIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { useMemo, useState } from 'react';
-import { Button, Cell, Collection, Column, ComboBox, DateInput, DatePicker, DateSegment, Dialog, DialogTrigger, Group, Header, Heading, Input, Label, ListBox, ListBoxItem, Menu, MenuItem, MenuTrigger, Modal, ModalOverlay, OverlayArrow, Popover, ProgressBar, Radio, RadioGroup, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, Text } from 'react-aria-components';
+import { UNSTABLE_Autocomplete as Autocomplete, Button, Cell, Collection, Column, ComboBox, DateInput, DatePicker, DateSegment, Dialog, DialogTrigger, Group, Header, Heading, Input, Label, ListBox, ListBoxItem, Menu, MenuItem, MenuTrigger, Modal, ModalOverlay, OverlayArrow, Popover, ProgressBar, Radio, RadioGroup, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, Text, useFilter} from 'react-aria-components';
 import { useAsyncList } from 'react-stately';
 import { people } from './people.js';
 import stocks from './stocks.json';
@@ -29,6 +29,7 @@ export function App() {
         <ImageGridExample />
         <ComboBoxExample />
         <ProgressBarExample />
+        <AutocompleteExample />
       </div>
     </>
   );
@@ -548,4 +549,27 @@ function StockRow(props) {
 
 function StockCell(props) {
   return <Cell {...props} className={`px-4 py-2 text-sm ${props.className} data-[focus-visible]:outline data-[focus-visible]:outline-2 data-[focus-visible]:outline-slate-600 data-[focus-visible]:-outline-offset-4 group-aria-selected:data-[focus-visible]:outline-white`} />;
+}
+
+function AutocompleteExample() {
+  let {contains} = useFilter({sensitivity: 'base'});
+  return (
+    <div className="bg-gradient-to-r from-sky-400 to-cyan-400 p-8 rounded-lg flex justify-center">
+      <Autocomplete filter={contains} className="flex flex-col gap-1 w-5/6">
+        <Label className="text-sm text-black">Favorite Animal</Label>
+        <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white bg-opacity-90 focus-within:bg-opacity-100 transition text-left shadow-md [&:has([data-focus-visible])]:ring-2 [&:has([data-focus-visible])]:ring-black sm:text-sm">
+          <Input className="w-full border-none py-2 pl-3 pr-10 sm:text-sm leading-5 text-gray-900 bg-transparent outline-none" />
+        </div>
+        <Popover className="max-h-60 w-[--trigger-width] overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black ring-opacity-5 sm:text-sm data-[exiting]:animate-out data-[exiting]:fade-out fill-mode-forwards duration-100 ease-in">
+          <ListBox className="outline-none p-1 [--focus-bg:theme(colors.sky.600)]">
+            <MyListBoxItem>Aardvark</MyListBoxItem>
+            <MyListBoxItem>Cat</MyListBoxItem>
+            <MyListBoxItem>Dog</MyListBoxItem>
+            <MyListBoxItem>Kangaroo</MyListBoxItem>
+            <MyListBoxItem>Panda</MyListBoxItem>
+          </ListBox>
+        </Popover>
+      </Autocomplete>
+    </div>
+  );
 }

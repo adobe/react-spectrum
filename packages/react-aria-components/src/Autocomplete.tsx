@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Adobe. All rights reserved.
+ * Copyright 2024 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -12,9 +12,10 @@
 
 import {AriaAutocompleteProps, CollectionOptions, UNSTABLE_useAutocomplete} from '@react-aria/autocomplete';
 import {AutocompleteState, UNSTABLE_useAutocompleteState} from '@react-stately/autocomplete';
-import {ContextValue, Provider, removeDataAttributes, SlotProps, useContextProps} from './utils';
 import {InputContext} from './Input';
-import React, {createContext, ForwardedRef, forwardRef, RefObject, useRef} from 'react';
+import {mergeProps} from '@react-aria/utils';
+import {Provider, removeDataAttributes, SlotProps, SlottedContextValue, useSlottedContext} from './utils';
+import React, {createContext, RefObject, useRef} from 'react';
 
 export interface AutocompleteProps extends AriaAutocompleteProps, SlotProps {}
 
@@ -24,7 +25,7 @@ interface InternalAutocompleteContextValue {
   collectionRef: RefObject<HTMLElement | null>
 }
 
-export const UNSTABLE_AutocompleteContext = createContext<ContextValue<AutocompleteProps, HTMLInputElement>>(null);
+export const UNSTABLE_AutocompleteContext = createContext<SlottedContextValue<AutocompleteProps>>(null);
 export const UNSTABLE_AutocompleteStateContext = createContext<AutocompleteState | null>(null);
 // This context is to pass the register and filter down to whatever collection component is wrapped by the Autocomplete
 // TODO: export from RAC, but rename to something more appropriate
@@ -33,8 +34,9 @@ export const UNSTABLE_InternalAutocompleteContext = createContext<InternalAutoco
 /**
  * A autocomplete combines a text input with a menu, allowing users to filter a list of options to items matching a query.
  */
-export const UNSTABLE_Autocomplete = forwardRef(function Autocomplete(props: AutocompleteProps, ref: ForwardedRef<HTMLInputElement>) {
-  [props, ref] = useContextProps(props, ref, UNSTABLE_AutocompleteContext);
+export function UNSTABLE_Autocomplete(props: AutocompleteProps) {
+  let ctx = useSlottedContext(UNSTABLE_AutocompleteContext, props.slot);
+  props = mergeProps(ctx, props);
   let {filter} = props;
   let state = UNSTABLE_useAutocompleteState(props);
   let collectionRef = useRef<HTMLElement>(null);
@@ -66,4 +68,4 @@ export const UNSTABLE_Autocomplete = forwardRef(function Autocomplete(props: Aut
       {props.children}
     </Provider>
   );
-});
+};
