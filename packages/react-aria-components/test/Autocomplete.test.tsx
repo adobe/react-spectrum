@@ -12,10 +12,11 @@
 
 import {AriaAutocompleteTests} from './AriaAutocomplete.test-util';
 import {Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, SearchField, Separator, Text, UNSTABLE_Autocomplete} from '..';
+import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React, {ReactNode} from 'react';
-import {render} from '@react-spectrum/test-utils-internal';
 import {useAsyncList} from 'react-stately';
 import {useFilter} from '@react-aria/i18n';
+import userEvent from '@testing-library/user-event';
 
 interface AutocompleteItem {
   id: string,
@@ -173,6 +174,32 @@ let AsyncFiltering = ({autocompleteProps = {}, inputProps = {}}: {autocompletePr
     </UNSTABLE_Autocomplete>
   );
 };
+
+describe('Autocomplete', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
+  it('should prevent key presses from leaking out of the Autocomplete', async () => {
+    let onKeyDown = jest.fn();
+    let {getByRole} = render(
+      // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+      <div onKeyDown={onKeyDown}>
+        <AutocompleteWrapper>
+          <StaticMenu />
+        </AutocompleteWrapper>
+      </div>
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    await user.keyboard('{ArrowDown}');
+    expect(onKeyDown).not.toHaveBeenCalled();
+    onKeyDown.mockReset();
+  });
+});
 
 AriaAutocompleteTests({
   prefix: 'rac-static-menu',

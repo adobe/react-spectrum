@@ -395,6 +395,31 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
           expect(actionListener).toHaveBeenCalledTimes(0);
         });
       });
+
+      it('should not autofocus the first item if backspacing from a list state where there are only disabled items', async function () {
+        let {getByRole} =  (renderers.disabledItems!)();
+        let input = getByRole('searchbox');
+        let menu = getByRole(collectionNodeRole);
+        let options = within(menu).getAllByRole(collectionItemRole);
+        expect(options[1]).toHaveAttribute('aria-disabled', 'true');
+
+        await user.tab();
+        expect(document.activeElement).toBe(input);
+        await user.keyboard('r');
+        act(() => jest.runAllTimers());
+        options = within(menu).getAllByRole(collectionItemRole);
+        expect(options).toHaveLength(1);
+        expect(input).not.toHaveAttribute('aria-activedescendant');
+        expect(options[0]).toHaveAttribute('aria-disabled', 'true');
+
+        await user.keyboard('{Backspace}');
+        act(() => jest.runAllTimers());
+        options = within(menu).getAllByRole(collectionItemRole);
+        expect(input).not.toHaveAttribute('aria-activedescendant');
+        await user.keyboard('{ArrowDown}');
+        act(() => jest.runAllTimers());
+        expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+      });
     }
 
     let filterTests = (renderer) => {

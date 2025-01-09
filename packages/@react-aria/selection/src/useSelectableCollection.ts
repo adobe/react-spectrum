@@ -420,6 +420,12 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
           bubbles: true
         })
       );
+
+      // If there wasn't a focusable key but the collection had items, then that means we aren't in an intermediate load state and all keys are disabled.
+      // Reset shouldVirtualFocusFirst so that we don't erronously autofocus an item when the collection is filtered again.
+      if (manager.collection.size > 0) {
+        shouldVirtualFocusFirst.current = false;
+      }
     } else {
       manager.setFocusedKey(keyToFocus);
       // Only set shouldVirtualFocusFirst to false if we've successfully set the first key as the focused key
