@@ -12,7 +12,6 @@
  */
 import {ActionMenuContext} from './ActionMenu';
 import {
-  DialogTrigger as AriaDialogTrigger,
   DialogTriggerProps as AriaDialogTriggerProps,
   Popover as AriaPopover,
   DEFAULT_SLOT,
@@ -30,7 +29,6 @@ import {colorScheme, getAllowedOverrides} from './style-utils' with {type: 'macr
 import {ColorSchemeContext} from './Provider';
 import {ContentContext, FooterContext, KeyboardContext, TextContext} from './Content';
 import {DividerContext} from './Divider';
-import {FocusScope, useId, useOverlayTrigger} from 'react-aria';
 import {ForwardedRef, forwardRef, ReactNode, useContext, useRef, useState} from 'react';
 import {forwardRefType} from './types';
 import {ImageContext} from './Image';
@@ -40,9 +38,15 @@ import {mergeStyles} from '../style/runtime';
 import {PressResponder} from '@react-aria/interactions';
 import {SliderContext} from './Slider';
 import {space, style} from '../style' with {type: 'macro'};
+import {useId, useOverlayTrigger} from 'react-aria';
 import {useMenuTriggerState} from 'react-stately';
 
-export interface CoachMarkProps extends PopoverProps {}
+export interface CoachMarkProps extends Omit<PopoverProps, 'children'> {
+  /** The children of the coach mark. */
+  children: ReactNode | ((renderProps: { size: 'XS' | 'S' | 'M' | 'L' | 'XL' }) => ReactNode),
+
+  size: 'S' | 'M' | 'L' | 'XL'
+}
 
 const fadeKeyframes = keyframes(`
   from {
@@ -308,7 +312,7 @@ const actionButtonSize = {
 
 export function CoachMark(props: CoachMarkProps) {
   let colorScheme = useContext(ColorSchemeContext);
-  let {density = 'regular', size = 'M', variant = 'primary', UNSAFE_className = '', UNSAFE_style, styles, id, ...otherProps} = props;
+  let {size = 'M'} = props;
 
   let children = (
     <Provider
@@ -373,7 +377,7 @@ export function CoachMarkTrigger(props: CoachMarkTriggerProps) {
   // This is needed to handle submenus.
   let state = useMenuTriggerState(props);
 
-  let containerRef = useRef<HTMLElement>(null);
+  let containerRef = useRef<HTMLDivElement>(null);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, containerRef);
 
   // Label dialog by the trigger as a fallback if there is no title slot.
@@ -382,7 +386,6 @@ export function CoachMarkTrigger(props: CoachMarkTriggerProps) {
   // but when sent by context we want the title to win.
   triggerProps.id = useId();
   overlayProps['aria-labelledby'] = triggerProps.id;
-  console.log('containerRef', containerRef);
 
 
   return (
@@ -474,7 +477,7 @@ interface CoachIndicatorProps {
   children: ReactNode,
   isActive?: boolean
 }
-export const CoachIndicator = /*#__PURE__*/ (forwardRef as forwardRefType)(function CoachIndicator(props: CoachIndicatorProps, ref: ForwardedRef<HTMLElement>) {
+export const CoachIndicator = /*#__PURE__*/ (forwardRef as forwardRefType)(function CoachIndicator(props: CoachIndicatorProps, ref: ForwardedRef<HTMLDivElement>) {
 // export const CoachIndicator = forwardRef((props, ref) => {
   const {children, isActive} = props;
 
