@@ -24,6 +24,7 @@ import {
 } from '../src';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import type {Meta} from '@storybook/react';
+import {Placement} from '@react-types/overlays';
 import {style} from '../style' with {type: 'macro'};
 import TextAdd from '../s2wf-icons/S2_Icon_TextAdd_20_N.svg';
 import TextBold from '../s2wf-icons/S2_Icon_TextBold_20_N.svg';
@@ -72,7 +73,7 @@ export const CoachMarkExample = (args) => (
   </CoachMarkTrigger>
 );
 
-function CoachMarkBase({step, currentStep, totalSteps, description = '', skipTour, restartTour, advanceStep, previousStep, hasPressAction = false, placement = 'right top'}) {
+function CoachMarkBase({step, currentStep, totalSteps, description = '', skipTour, restartTour, advanceStep, previousStep, hasPressAction = false, placement = 'right top' as Placement}) {
   const onAction = actionKey => {
     if (actionKey === 'skip') {
       skipTour();

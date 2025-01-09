@@ -45,7 +45,7 @@ export interface CoachMarkProps extends Omit<PopoverProps, 'children'> {
   /** The children of the coach mark. */
   children: ReactNode | ((renderProps: { size: 'XS' | 'S' | 'M' | 'L' | 'XL' }) => ReactNode),
 
-  size: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL'
 }
 
 const fadeKeyframes = keyframes(`
