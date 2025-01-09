@@ -132,6 +132,7 @@
     "@react-aria/utils": "^3.26.0",
     "@react-spectrum/utils": "^3.12.0",
     "@react-stately/layout": "^4.1.0",
+    "@react-stately/menu": "^3.9.0",
     "@react-stately/utils": "^3.10.5",
     "@react-stately/virtualizer": "^4.2.0",
     "@react-types/color": "^3.0.1",
@@ -143,8 +144,7 @@
     "@react-types/textfield": "^3.10.0",
     "csstype": "^3.0.2",
     "react-aria": "^3.36.0",
-    "react-aria-components": "^1.5.0",
-    "react-stately": "^3.34.0"
+    "react-aria-components": "^1.5.0"
   },
   "peerDependencies": {
     "@testing-library/react": "^15.0.7",

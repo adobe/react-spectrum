@@ -39,7 +39,7 @@ import {PressResponder} from '@react-aria/interactions';
 import {SliderContext} from './Slider';
 import {space, style} from '../style' with {type: 'macro'};
 import {useId, useOverlayTrigger} from 'react-aria';
-import {useMenuTriggerState} from 'react-stately';
+import {useMenuTriggerState} from '@react-stately/menu';
 
 export interface CoachMarkProps extends Omit<PopoverProps, 'children'> {
   /** The children of the coach mark. */
