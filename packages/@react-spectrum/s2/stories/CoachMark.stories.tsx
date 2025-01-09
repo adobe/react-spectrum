@@ -15,7 +15,6 @@ import {
   Button,
   CardPreview,
   Checkbox,
-  CoachIndicator,
   CoachMark,
   CoachMarkTrigger,
   Content, Footer, Image, Keyboard, MenuItem,
