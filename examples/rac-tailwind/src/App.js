@@ -557,7 +557,7 @@ function AutocompleteExample() {
     <div className="bg-gradient-to-r from-sky-400 to-cyan-400 p-8 rounded-lg flex justify-center flex-col">
       <Autocomplete filter={contains} className="flex flex-col gap-1 w-5/6">
         <SearchField>
-          <Label className="text-sm text-black">Favorite Animal</Label>
+          <Label className="text-sm text-black">Contacts</Label>
           <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white bg-opacity-90 focus-within:bg-opacity-100 transition text-left shadow-md [&:has([data-focus-visible])]:ring-2 [&:has([data-focus-visible])]:ring-black sm:text-sm">
             <Input className="w-full border-none py-2 pl-3 pr-2 sm:text-sm leading-5 text-gray-900 bg-transparent outline-none" />
           </div>
