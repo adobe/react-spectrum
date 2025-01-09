@@ -246,6 +246,13 @@ describe('queries', function () {
     it('should return the day of week in fr', function () {
       expect(getDayOfWeek(new CalendarDate(2021, 8, 4), 'fr')).toBe(2);
     });
+
+    it('should return the day of the week with a custom firstDayOfWeek', function () {
+      expect(getDayOfWeek(new CalendarDate(2021, 8, 4), 'en-US', 'mon')).toBe(2);
+      expect(getDayOfWeek(new CalendarDate(2021, 8, 4), 'en-US', 'tue')).toBe(1);
+      expect(getDayOfWeek(new CalendarDate(2021, 8, 4), 'fr-FR', 'mon')).toBe(2);
+      expect(getDayOfWeek(new CalendarDate(2021, 8, 4), 'fr-FR', 'tue')).toBe(1);
+    });
   });
 
   describe('startOfWeek', function () {
@@ -256,15 +263,27 @@ describe('queries', function () {
     it('should return the start of week in fr-FR', function () {
       expect(startOfWeek(new CalendarDate(2021, 8, 4), 'fr-FR')).toEqual(new CalendarDate(2021, 8, 2));
     });
+
+    it('should return the start of the week with a custom firstDayOfWeek', function () {
+      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US', 'mon')).toEqual(new CalendarDate(2021, 8, 2));
+      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'en-US', 'tue')).toEqual(new CalendarDate(2021, 8, 3));
+      expect(startOfWeek(new CalendarDate(2021, 8, 4), 'fr-FR', 'sun')).toEqual(new CalendarDate(2021, 8, 1));
+    });
   });
 
   describe('endOfWeek', function () {
-    it('should return the start of week in en-US', function () {
+    it('should return the end of week in en-US', function () {
       expect(endOfWeek(new CalendarDate(2021, 8, 4), 'en-US')).toEqual(new CalendarDate(2021, 8, 7));
     });
 
-    it('should return the start of week in fr-FR', function () {
+    it('should return the end of week in fr-FR', function () {
       expect(endOfWeek(new CalendarDate(2021, 8, 4), 'fr-FR')).toEqual(new CalendarDate(2021, 8, 8));
+    });
+
+    it('should return the end of the week with a custom firstDayOfWeek', function () {
+      expect(endOfWeek(new CalendarDate(2021, 8, 4), 'en-US', 'mon')).toEqual(new CalendarDate(2021, 8, 8));
+      expect(endOfWeek(new CalendarDate(2021, 8, 4), 'en-US', 'tue')).toEqual(new CalendarDate(2021, 8, 9));
+      expect(endOfWeek(new CalendarDate(2021, 8, 4), 'fr-FR', 'sun')).toEqual(new CalendarDate(2021, 8, 7));
     });
   });
 
@@ -279,6 +298,13 @@ describe('queries', function () {
 
     it('should work for other calendars', function () {
       expect(getWeeksInMonth(new CalendarDate(new EthiopicCalendar(), 2013, 13, 4), 'en-US')).toBe(1);
+    });
+
+    it('should support custom firstDayOfWeek', function () {
+      expect(getWeeksInMonth(new CalendarDate(2021, 8, 4), 'en-US', 'sun')).toBe(5);
+      expect(getWeeksInMonth(new CalendarDate(2021, 8, 4), 'en-US', 'mon')).toBe(6);
+      expect(getWeeksInMonth(new CalendarDate(2021, 10, 4), 'en-US', 'sun')).toBe(6);
+      expect(getWeeksInMonth(new CalendarDate(2021, 10, 4), 'en-US', 'mon')).toBe(5);
     });
   });
 
