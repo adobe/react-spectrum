@@ -219,6 +219,36 @@ exports[`Leave a comment for selectionStyle 1`] = `
 </TableView>"
 `;
 
+exports[`Leave comment to add id to Row if no id in items 1`] = `
+"import { Cell, Column, Row, TableBody, TableHeader, TableView } from "@react-spectrum/s2";
+
+let columns = [
+  {name: 'Foo', id: 'foo'},
+  {name: 'Bar', id: 'bar'},
+  {name: 'Baz', id: 'baz'}
+];
+
+let items = [
+  {foo: 'Foo 1', bar: 'Bar 1', baz: 'Baz 1'},
+  {foo: 'Foo 2', bar: 'Bar 2', baz: 'Baz 2'}
+];
+
+<TableView>
+  <TableHeader columns={columns}>
+    // TODO(S2-upgrade): You'll need to add isRowHeader to one of the columns manually.
+    {column => <Column id={column.name}>{column.name}</Column>}
+  </TableHeader>
+  <TableBody items={items}>
+    {item =>
+      (// TODO(S2-upgrade): If the items do not have id properties, you'll need to add an id prop to the Row.
+    <Row columns={columns}>
+      {column => <Cell>{item[column.name]}</Cell>}
+    </Row>)
+    }
+  </TableBody>
+</TableView>"
+`;
+
 exports[`Static TableView 1`] = `
 "import { Cell, Column, Row, TableBody, TableHeader, TableView } from "@react-spectrum/s2";
 

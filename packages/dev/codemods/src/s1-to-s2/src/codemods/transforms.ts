@@ -966,6 +966,12 @@ function addColumnsPropToRow(
         ) {
           let rowPath = innerPath as NodePath<t.JSXElement>;
           rowPath.node.openingElement.attributes.push(columnsProp.node);
+
+          // If Row doesn't contain id prop, leave a comment for the user to check manually
+          let idProp = rowPath.get('openingElement').get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === 'id');
+          if (!idProp) {
+            addComment(rowPath.node, ' TODO(S2-upgrade): If the items do not have id properties, you\'ll need to add an id prop to the Row.');
+          }
         }
       }
     });

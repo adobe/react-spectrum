@@ -237,3 +237,31 @@ import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/reac
   </TableBody>
 </TableView>
 `);
+
+test('Leave comment to add id to Row if no id in items', `
+import {Cell, Column, Row, TableBody, TableHeader, TableView}  from '@adobe/react-spectrum';
+
+let columns = [
+  {name: 'Foo', id: 'foo'},
+  {name: 'Bar', id: 'bar'},
+  {name: 'Baz', id: 'baz'}
+];
+
+let items = [
+  {foo: 'Foo 1', bar: 'Bar 1', baz: 'Baz 1'},
+  {foo: 'Foo 2', bar: 'Bar 2', baz: 'Baz 2'}
+];
+
+<TableView>
+  <TableHeader columns={columns}>
+    {column => <Column key={column.name}>{column.name}</Column>}
+  </TableHeader>
+  <TableBody items={items}>
+    {item =>
+      (<Row>
+        {key => <Cell>{item[key]}</Cell>}
+      </Row>)
+    }
+  </TableBody>
+</TableView>
+`);
