@@ -389,12 +389,12 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   let segmentStyle : CSSProperties = {caretColor: 'transparent'};
   if (direction === 'rtl') {
     if (dateSegments.includes(segment.type)) {
-      segmentStyle = {caretColor: 'transparent', direction: 'ltr', unicodeBidi: 'embed'}
+      segmentStyle = {caretColor: 'transparent', direction: 'ltr', unicodeBidi: 'embed'};
     } else if (segment.type === 'timeZoneName') {
-      segmentStyle = {caretColor: 'transparent', unicodeBidi: 'embed'}
+      segmentStyle = {caretColor: 'transparent', unicodeBidi: 'embed'};
     }
   }
-  
+
   return {
     segmentProps: mergeProps(spinButtonProps, labelProps, {
       id,
