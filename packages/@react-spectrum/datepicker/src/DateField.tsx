@@ -66,6 +66,7 @@ export const DateField = React.forwardRef(function DateField<T extends DateValue
   let validationState = state.validationState || (isInvalid ? 'invalid' : null);
 
   let approximateWidth = useFormattedDateWidth(state) + 'ch';
+
   return (
     <Field
       {...props}
