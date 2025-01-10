@@ -2098,8 +2098,6 @@ If you need to customize things even further, such as accessing internal state o
 `@react-aria/test-utils` offers common listbox interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the listbox tester and a sample of how you could use it in your test suite.
 
-<ClassAPI links={listboxUtils.links} class={listboxUtils.exports.ListBoxTester} />
-
 ```ts
 // ListBox.test.ts
 import {render} from '@testing-library/react';
@@ -2122,3 +2120,5 @@ it('ListBox can select an option via keyboard', async function () {
   expect(onSelectionChange).toBeCalledTimes(1);
 });
 ```
+
+<ClassAPI links={listboxUtils.links} class={listboxUtils.exports.ListBoxTester} />

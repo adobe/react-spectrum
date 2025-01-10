@@ -639,15 +639,14 @@ Tabs features automatic tab collapse behavior and may need specific mocks to tes
 [React Spectrum's test suite](https://github.com/adobe/react-spectrum/blob/326f48154e301edab425c8198c5c3af72422462b/packages/%40react-spectrum/tabs/test/Tabs.test.js#L58-L62) if you
 run into any issues with your tests.
 
-`@react-aria/test-utils` offers common tabs interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
+`@react-spectrum/test-utils` offers common tabs interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the tabs tester and a sample of how you could use it in your test suite.
-
-<ClassAPI links={tabsUtils.links} class={tabsUtils.exports.TabsTester} />
 
 ```ts
 // Tabs.test.ts
 import {render} from '@testing-library/react';
-import {User} from '@react-aria/test-utils';
+import {theme} from '@react-spectrum/theme-default';
+import {User} from '@react-spectrum/test-utils';
 
 let testUtilUser = new User({interactionType: 'mouse'});
 // ...
@@ -655,9 +654,11 @@ let testUtilUser = new User({interactionType: 'mouse'});
 it('Tabs can change selection via keyboard', async function () {
   // Render your test component/app and initialize the listbox tester
   let {getByTestId} = render(
-     <Tabs data-testid="test-tabs">
-      ...
-    </Tabs>
+    <Provider theme={defaultTheme}>
+      <Tabs data-testid="test-tabs">
+        ...
+      </Tabs>
+    </Provider>
   );
   let tabsTester = testUtilUser.createTester('Tabs', {root: getByTestId('test-tabs'), interactionType: 'keyboard'});
 
@@ -669,3 +670,5 @@ it('Tabs can change selection via keyboard', async function () {
   expect(tabsTester.selectedTab).toBe(tabs[1]);
 });
 ```
+
+<ClassAPI links={tabsUtils.links} class={tabsUtils.exports.TabsTester} />

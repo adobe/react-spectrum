@@ -1961,15 +1961,14 @@ isn't sufficient when resolving issues in your own test cases.
 
 ### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
-`@react-aria/test-utils` offers common table interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
+`@react-spectrum/test-utils` offers common table interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the table tester and a sample of how you could use it in your test suite.
-
-<ClassAPI links={tableUtil.links} class={tableUtil.exports.TableTester} />
 
 ```ts
 // TableView.test.ts
 import {render, within} from '@testing-library/react';
-import {User} from '@react-aria/test-utils';
+import {theme} from '@react-spectrum/theme-default';
+import {User} from '@react-spectrum/test-utils';
 
 let testUtilUser = new User({interactionType: 'mouse', advanceTimer: jest.advanceTimersByTime});
 // ...
@@ -1977,9 +1976,11 @@ let testUtilUser = new User({interactionType: 'mouse', advanceTimer: jest.advanc
 it('TableView can toggle row selection', async function () {
   // Render your test component/app and initialize the table tester
   let {getByTestId} = render(
-    <TableView data-testid="test-table">
-     ...
-    </TableView>
+    <Provider theme={defaultTheme}>
+      <TableView data-testid="test-table">
+      ...
+      </TableView>
+    </Provider>
   );
   let tableTester = testUtilUser.createTester('Table', {root: getByTestId('test-table')});
   expect(tableTester.selectedRows).toHaveLength(0);
@@ -2000,3 +2001,5 @@ it('TableView can toggle row selection', async function () {
   expect(tableTester.selectedRows).toHaveLength(0);
 });
 ```
+
+<ClassAPI links={tableUtil.links} class={tableUtil.exports.TableTester} />

@@ -12,7 +12,7 @@
 
 jest.mock('@react-aria/live-announcer');
 jest.mock('@react-aria/utils/src/scrollIntoView');
-import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render as renderComponent, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render as renderComponent, User, within} from '@react-spectrum/test-utils-internal';
 import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {announce} from '@react-aria/live-announcer';
@@ -35,7 +35,6 @@ import * as stories from '../stories/Table.stories';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
-import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let {

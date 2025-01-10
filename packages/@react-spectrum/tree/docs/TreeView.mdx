@@ -460,15 +460,14 @@ isn't sufficient when resolving issues in your own test cases.
 
 ### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
-`@react-aria/test-utils` offers common tree interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
+`@react-spectrum/test-utils` offers common tree interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the tree tester and a sample of how you could use it in your test suite.
-
-<ClassAPI links={treeUtils.links} class={treeUtils.exports.TreeTester} />
 
 ```ts
 // Tree.test.ts
 import {render, within} from '@testing-library/react';
-import {User} from '@react-aria/test-utils';
+import {theme} from '@react-spectrum/theme-default';
+import {User} from '@react-spectrum/test-utils';
 
 let testUtilUser = new User({interactionType: 'mouse'});
 // ...
@@ -476,9 +475,11 @@ let testUtilUser = new User({interactionType: 'mouse'});
 it('TreeView can select a row via keyboard', async function () {
   // Render your test component/app and initialize the Tree tester
   let {getByTestId} = render(
-     <TreeView data-testid="test-tree">
-      ...
-    </TreeView>
+    <Provider theme={defaultTheme}>
+      <TreeView data-testid="test-tree">
+        ...
+      </TreeView>
+    </Provider>
   );
   let treeTester = testUtilUser.createTester('Tree', {root: getByTestId('test-tree'), interactionType: 'keyboard'});
 
@@ -495,3 +496,5 @@ it('TreeView can select a row via keyboard', async function () {
   expect(within(treeTester.rows[0]).getByRole('checkbox')).not.toBeChecked();
 });
 ```
+
+<ClassAPI links={treeUtils.links} class={treeUtils.exports.TreeTester} />

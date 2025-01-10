@@ -1483,8 +1483,6 @@ If you need to customize things even further, such as accessing internal state, 
 `@react-aria/test-utils` offers common combobox interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the combobox tester and a sample of how you could use it in your test suite.
 
-<ClassAPI links={comboboxUtils.links} class={comboboxUtils.exports.ComboBoxTester} />
-
 ```ts
 // Combobox.test.ts
 import {render} from '@testing-library/react';
@@ -1511,3 +1509,5 @@ it('ComboBox can select an option via keyboard', async function () {
   expect(comboboxTester.listbox).not.toBeInTheDocument();
 });
 ```
+
+<ClassAPI links={comboboxUtils.links} class={comboboxUtils.exports.ComboBoxTester} />

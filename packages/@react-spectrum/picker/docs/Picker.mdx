@@ -592,15 +592,14 @@ isn't sufficient when resolving issues in your own test cases.
 
 ### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
-`@react-aria/test-utils` offers common select interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
+`@react-spectrum/test-utils` offers common select interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the select tester and a sample of how you could use it in your test suite.
-
-<ClassAPI links={selectUtil.links} class={selectUtil.exports.SelectTester} />
 
 ```ts
 // Picker.test.ts
 import {render} from '@testing-library/react';
-import {User} from '@react-aria/test-utils';
+import {theme} from '@react-spectrum/theme-default';
+import {User} from '@react-spectrum/test-utils';
 
 let testUtilUser = new User({interactionType: 'mouse'});
 // ...
@@ -608,9 +607,11 @@ let testUtilUser = new User({interactionType: 'mouse'});
 it('Picker can select an option via keyboard', async function () {
   // Render your test component/app and initialize the select tester
   let {getByTestId} = render(
-    <Picker data-testid="test-select">
-     ...
-    </Picker>
+    <Provider theme={defaultTheme}>
+      <Picker data-testid="test-select">
+      ...
+      </Picker>
+    </Provider>
   );
   let selectTester = testUtilUser.createTester('Select', {root: getByTestId('test-select'), interactionType: 'keyboard'});
   let trigger = selectTester.trigger;
@@ -621,3 +622,5 @@ it('Picker can select an option via keyboard', async function () {
   expect(trigger).toHaveTextContent('Cat');
 });
 ```
+
+<ClassAPI links={selectUtil.links} class={selectUtil.exports.SelectTester} />

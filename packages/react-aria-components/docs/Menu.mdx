@@ -1148,8 +1148,6 @@ By providing the above contexts, the existing `Button`, `Popover`, and `Menu` co
 `@react-aria/test-utils` offers common menu interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the menu tester and a sample of how you could use it in your test suite.
 
-<ClassAPI links={menuUtil.links} class={menuUtil.exports.MenuTester} />
-
 ```ts
 // Menu.test.ts
 import {render} from '@testing-library/react';
@@ -1180,3 +1178,5 @@ it('Menu can open its submenu via keyboard', async function () {
   expect(menuTester.menu).toBeInTheDocument();
 });
 ```
+
+<ClassAPI links={menuUtil.links} class={menuUtil.exports.MenuTester} />

@@ -260,15 +260,14 @@ isn't sufficient when resolving issues in your own test cases.
 
 ### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
-`@react-aria/test-utils` offers common menu interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
+`@react-spectrum/test-utils` offers common menu interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the menu tester and a sample of how you could use it in your test suite.
-
-<ClassAPI links={menuUtil.links} class={menuUtil.exports.MenuTester} />
 
 ```ts
 // Menu.test.ts
 import {render} from '@testing-library/react';
-import {User} from '@react-aria/test-utils';
+import {theme} from '@react-spectrum/theme-default';
+import {User} from '@react-spectrum/test-utils';
 
 let testUtilUser = new User({interactionType: 'mouse'});
 // ...
@@ -276,9 +275,11 @@ let testUtilUser = new User({interactionType: 'mouse'});
 it('Menu can open its submenu via keyboard', async function () {
   // Render your test component/app and initialize the menu tester
   let {getByTestId} = render(
-    <MenuTrigger data-testid="test-menutrigger">
-      ...
-    </MenuTrigger>
+    <Provider theme={defaultTheme}>
+      <MenuTrigger data-testid="test-menutrigger">
+        ...
+      </MenuTrigger>
+    </Provider>
   );
   let menuTester = testUtilUser.createTester('Menu', {root: getByTestId('test-menutrigger'), interactionType: 'keyboard'});
 
@@ -295,3 +296,5 @@ it('Menu can open its submenu via keyboard', async function () {
   expect(menuTester.menu).toBeInTheDocument();
 });
 ```
+
+<ClassAPI links={menuUtil.links} class={menuUtil.exports.MenuTester} />

@@ -329,8 +329,6 @@ TreeItem also exposes a `--tree-item-level` CSS custom property, which you can u
 `@react-aria/test-utils` offers common tree interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the tree tester and a sample of how you could use it in your test suite.
 
-<ClassAPI links={treeUtils.links} class={treeUtils.exports.TreeTester} />
-
 ```ts
 // Tree.test.ts
 import {render, within} from '@testing-library/react';
@@ -361,3 +359,5 @@ it('Tree can select a row via keyboard', async function () {
   expect(within(treeTester.rows[0]).getByRole('checkbox')).not.toBeChecked();
 });
 ```
+
+<ClassAPI links={treeUtils.links} class={treeUtils.exports.TreeTester} />
