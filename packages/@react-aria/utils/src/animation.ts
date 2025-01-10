@@ -39,29 +39,32 @@ export function useEnterAnimation(ref: RefObject<HTMLElement | null>, isReady: b
 }
 
 export function useExitAnimation(ref: RefObject<HTMLElement | null>, isOpen: boolean) {
-  // State to trigger a re-render after animation is complete, which causes the element to be removed from the DOM.
-  // Ref to track the state we're in, so we don't immediately reset isExiting to true after the animation.
-  let [isExiting, setExiting] = useState(false);
-  let [exitState, setExitState] = useState('idle');
+  let [exitState, setExitState] = useState<'closed' | 'open' | 'exiting'>(isOpen ? 'open' : 'closed');
 
-  // If isOpen becomes false, set isExiting to true.
-  if (!isOpen && ref.current && exitState === 'idle') {
-    isExiting = true;
-    setExiting(true);
-    setExitState('exiting');
+  switch (exitState) {
+    case 'open':
+      // If isOpen becomes false, set isExiting to true.
+      if (!isOpen) {
+        setExitState('exiting');
+      }
+      break;
+    case 'closed':
+    case 'exiting':
+      // If we are exiting and isOpen becomes true, the animation was interrupted.
+      // Reset the exit state to idle.
+      if (isOpen) {
+        setExitState('open');
+      }
+      break;
   }
 
-  // If we exited, and the element has been removed, reset exit state to idle.
-  if (!ref.current && exitState === 'exited') {
-    setExitState('idle');
-  }
-
+  let isExiting = exitState === 'exiting';
   useAnimation(
     ref,
     isExiting,
     useCallback(() => {
-      setExitState('exited');
-      setExiting(false);
+      // Set the state to closed, which will cause the element to be unmounted.
+      setExitState(state => state === 'exiting' ? 'closed' : state);
     }, [])
   );
 
