@@ -43,7 +43,7 @@ export function useExitAnimation(ref: RefObject<HTMLElement | null>, isOpen: boo
 
   switch (exitState) {
     case 'open':
-      // If isOpen becomes false, set isExiting to true.
+      // If isOpen becomes false, set the state to exiting.
       if (!isOpen) {
         setExitState('exiting');
       }
@@ -51,7 +51,7 @@ export function useExitAnimation(ref: RefObject<HTMLElement | null>, isOpen: boo
     case 'closed':
     case 'exiting':
       // If we are exiting and isOpen becomes true, the animation was interrupted.
-      // Reset the exit state to idle.
+      // Reset the state to open.
       if (isOpen) {
         setExitState('open');
       }
