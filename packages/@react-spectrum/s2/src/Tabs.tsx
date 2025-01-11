@@ -543,13 +543,8 @@ function CollapsingCollection({children, containerRef}) {
       _setShowItems(value);
     }
   }, [orientation]);
-  let ctx = useMemo(() => ({
-    containerRef,
-    showItems: orientation === 'vertical' ? true : showItems,
-    setShowItems
-  }), [containerRef, showItems, setShowItems]);
   return (
-    <CollapseContext.Provider value={ctx}>
+    <CollapseContext.Provider value={{containerRef, showItems: orientation === 'vertical' ? true : showItems, setShowItems}}>
       <UNSTABLE_CollectionRendererContext.Provider value={CollapsingCollectionRenderer}>
         {children}
       </UNSTABLE_CollectionRendererContext.Provider>
