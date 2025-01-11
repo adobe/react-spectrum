@@ -126,6 +126,7 @@
   },
   "dependencies": {
     "@react-aria/collections": "3.0.0-alpha.6",
+    "@react-aria/focus": "^3.19.0",
     "@react-aria/i18n": "^3.12.4",
     "@react-aria/interactions": "^3.22.5",
     "@react-aria/live-announcer": "^3.4.1",
