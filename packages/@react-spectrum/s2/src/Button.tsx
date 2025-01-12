@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, focusRing, fontRelative, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, fontRelative, linearGradient, style} from '../style' with {type: 'macro'};
 import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
@@ -34,7 +34,7 @@ interface ButtonStyleProps {
    *
    * @default 'primary'
    */
-  variant?: 'primary' | 'secondary' | 'accent' | 'negative',
+  variant?: 'primary' | 'secondary' | 'accent' | 'negative' | 'premium' | 'genai',
   /**
    * The background style of the Button.
    *
@@ -102,6 +102,10 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
     fillStyle: {
       fill: 0,
       outline: 2
+    },
+    variant: {
+      premium: 0,
+      genai: 0
     }
   },
   '--labelPadding': {
@@ -141,16 +145,28 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
           primary: 'neutral',
           secondary: baseColor('gray-100'),
           accent: 'accent',
-          negative: 'negative'
+          negative: 'negative',
+          premium: 'gray-100',
+          genai: 'gray-100'
         },
         isDisabled: 'disabled'
       },
       outline: {
+        variant: {
+          premium: 'gray-100',
+          genai: 'gray-100'
+        },
         default: 'transparent',
         isHovered: 'gray-100',
         isPressed: 'gray-100',
         isFocusVisible: 'gray-100',
-        isDisabled: 'transparent'
+        isDisabled: {
+          default: 'transparent',
+          variant: {
+            premium: 'gray-100',
+            genai: 'gray-100'
+          }
+        }
       }
     },
     isStaticColor: {
@@ -158,16 +174,28 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
         fill: {
           variant: {
             primary: baseColor('transparent-overlay-800'),
-            secondary: baseColor('transparent-overlay-100')
+            secondary: baseColor('transparent-overlay-100'),
+            premium: 'transparent-overlay-100',
+            genai: 'transparent-overlay-100'
           },
           isDisabled: 'transparent-overlay-100'
         },
         outline: {
+          variant: {
+            premium: 'transparent-overlay-100',
+            genai: 'transparent-overlay-100'
+          },
           default: 'transparent',
           isHovered: 'transparent-overlay-100',
           isPressed: 'transparent-overlay-100',
           isFocusVisible: 'transparent-overlay-100',
-          isDisabled: 'transparent'
+          isDisabled: {
+            default: 'transparent',
+            variant: {
+              premium: 'transparent-overlay-100',
+              genai: 'transparent-overlay-100'
+            }
+          }
         }
       }
     },
@@ -189,12 +217,18 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
           primary: 'gray-25',
           secondary: 'neutral',
           accent: 'white',
-          negative: 'white'
+          negative: 'white',
+          premium: 'white',
+          genai: 'white'
         },
         isDisabled: 'disabled'
       },
       outline: {
         default: 'neutral',
+        variant: {
+          premium: 'white',
+          genai: 'white'
+        },
         isDisabled: 'disabled'
       }
     },
@@ -203,10 +237,18 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
         fill: {
           variant: {
             primary: 'auto',
-            secondary: baseColor('transparent-overlay-800')
+            secondary: baseColor('transparent-overlay-800'),
+            premium: 'white',
+            genai: 'white'
           }
         },
-        outline: baseColor('transparent-overlay-800')
+        outline: {
+          variant: {
+            premium: 'white',
+            genai: 'white'
+          },
+          default: baseColor('transparent-overlay-800')
+        }
       },
       isDisabled: 'transparent-overlay-400'
     },
@@ -235,6 +277,42 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
   forcedColorAdjust: 'none',
   disableTapHighlight: true
 }, getAllowedOverrides());
+
+// Put the gradient background on a separate element from the button to work around a Safari
+// bug where transitions of custom properties cause layout flickering if any properties use rems. 🤣
+// https://bugs.webkit.org/show_bug.cgi?id=285622
+const gradient = style({
+  position: 'absolute',
+  inset: 0,
+  zIndex: -1,
+  transition: 'default',
+  borderRadius: '[inherit]',
+  backgroundImage: {
+    variant: {
+      premium: {
+        default: linearGradient('to bottom right', ['fuchsia-900', 0], ['indigo-900', 66], ['blue-900', 100]),
+        isHovered: linearGradient('to bottom right', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100]),
+        isPressed: linearGradient('to bottom right', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100]),
+        isFocusVisible: linearGradient('to bottom right', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100])
+      },
+      genai: {
+        default: linearGradient('to bottom right', ['red-900', 0], ['magenta-900', 33], ['indigo-900', 100]),
+        isHovered: linearGradient('to bottom right', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100]),
+        isPressed: linearGradient('to bottom right', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100]),
+        isFocusVisible: linearGradient('to bottom right', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100])
+      }
+    },
+    isDisabled: 'none',
+    forcedColors: 'none'
+  },
+  // Force gradient colors to remain static between light and dark theme.
+  colorScheme: {
+    variant: {
+      premium: 'light',
+      genai: 'light'
+    }
+  }
+});
 
 /**
  * Buttons allow users to perform an action.
@@ -290,65 +368,79 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
         staticColor,
         isStaticColor: !!staticColor
       }, props.styles)}>
-      <Provider
-        values={[
-          [SkeletonContext, null],
-          [TextContext, {
-            styles: style({
-              paddingY: '--labelPadding',
-              order: 1,
-              opacity: {
-                default: 1,
-                isProgressVisible: 0
-              }
-            })({isProgressVisible}),
-            // @ts-ignore data-attributes allowed on all JSX elements, but adding to DOMProps has been problematic in the past
-            'data-rsp-slot': 'text'
-          }],
-          [IconContext, {
-            render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-            styles: style({
-              size: fontRelative(20),
-              marginStart: '--iconMargin',
-              flexShrink: 0,
-              opacity: {
-                default: 1,
-                isProgressVisible: 0
-              }
-            })({isProgressVisible})
-          }]
-        ]}>
-        {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
-        {isPending &&
-          <div
-            className={style({
-              position: 'absolute',
-              top: '[50%]',
-              left: '[50%]',
-              transform: 'translate(-50%, -50%)',
-              opacity: {
-                default: 0,
-                isProgressVisible: 1
-              }
-            })({isProgressVisible, isPending})}>
-            <ProgressCircle
-              isIndeterminate
-              aria-label={stringFormatter.format('button.pending')}
-              size="S"
-              staticColor={staticColor}
-              styles={style({
-                size: {
-                  size: {
-                    S: 14,
-                    M: 18,
-                    L: 20,
-                    XL: 24
-                  }
+      {(renderProps) => (<>
+        {variant === 'genai' || variant === 'premium' 
+          ? (
+            <span
+              className={gradient({
+                ...renderProps,
+                // Retain hover styles when an overlay is open.
+                isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
+                isDisabled: renderProps.isDisabled || isProgressVisible,
+                variant
+              })} />
+             )
+          : null}
+        <Provider
+          values={[
+            [SkeletonContext, null],
+            [TextContext, {
+              styles: style({
+                paddingY: '--labelPadding',
+                order: 1,
+                opacity: {
+                  default: 1,
+                  isProgressVisible: 0
                 }
-              })({size})} />
-          </div>
-        }
-      </Provider>
+              })({isProgressVisible}),
+              // @ts-ignore data-attributes allowed on all JSX elements, but adding to DOMProps has been problematic in the past
+              'data-rsp-slot': 'text'
+            }],
+            [IconContext, {
+              render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
+              styles: style({
+                size: fontRelative(20),
+                marginStart: '--iconMargin',
+                flexShrink: 0,
+                opacity: {
+                  default: 1,
+                  isProgressVisible: 0
+                }
+              })({isProgressVisible})
+            }]
+          ]}>
+          {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
+          {isPending &&
+            <div
+              className={style({
+                position: 'absolute',
+                top: '[50%]',
+                left: '[50%]',
+                transform: 'translate(-50%, -50%)',
+                opacity: {
+                  default: 0,
+                  isProgressVisible: 1
+                }
+              })({isProgressVisible, isPending})}>
+              <ProgressCircle
+                isIndeterminate
+                aria-label={stringFormatter.format('button.pending')}
+                size="S"
+                staticColor={staticColor}
+                styles={style({
+                  size: {
+                    size: {
+                      S: 14,
+                      M: 18,
+                      L: 20,
+                      XL: 24
+                    }
+                  }
+                })({size})} />
+            </div>
+          }
+        </Provider>
+      </>)}
     </RACButton>
   );
 });

@@ -1,5 +1,9 @@
 {
-  "breadcrumbs.more": "Fler alternativ",
+  "actionbar.actions": "Åtgärder",
+  "actionbar.actionsAvailable": "Åtgärder finns.",
+  "actionbar.clearSelection": "Rensa markering",
+  "actionbar.selected": "{count, plural, =0 {Inga valda} one {# vald} other {# valda}}",
+  "actionbar.selectedAll": "Alla markerade",
   "button.pending": "väntande",
   "contextualhelp.help": "Hjälp",
   "contextualhelp.info": "Information",
@@ -24,5 +28,6 @@
   "tag.actions": "Åtgärder",
   "tag.hideButtonLabel": "Visa mindre",
   "tag.noTags": "Ingen",
-  "tag.showAllButtonLabel": "Visa alla ({tagCount, number})"
+  "tag.showAllButtonLabel": "Visa alla ({tagCount, number})",
+  "breadcrumbs.more": "Fler alternativ"
 }

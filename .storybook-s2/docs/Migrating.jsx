@@ -338,6 +338,17 @@ export function Migrating() {
         <H3>Switch</H3>
         <P>No updates needed.</P>
 
+        <H3>TableView</H3>
+        <ul className="sb-unstyled">
+          <li className={style({font: 'body', marginY: 8})}>For <Code>Column</Code> and <Code>Row</Code>: Update <Code>key</Code> to be <Code>id</Code> (and keep <Code>key</Code> if rendered inside <Code>array.map</Code>)</li>
+          <li className={style({font: 'body', marginY: 8})}>For dynamic tables, pass a <Code>columns</Code> prop into <Code>Row</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>For <Code>Row</Code>: Update dynamic render function to pass in <Code>column</Code> instead of <Code>columnKey</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>UNSTABLE_allowsExpandableRows</Code> (it has not been implemented yet)</li>
+          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>UNSTABLE_onExpandedChange</Code> (it has not been implemented yet)</li>
+          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>UNSTABLE_expandedKeys</Code> (it has not been implemented yet)</li>
+          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>UNSTABLE_defaultExpandedKeys</Code> (it has not been implemented yet)</li>
+        </ul>
+
         <H3>Tabs</H3>
         <ul className="sb-unstyled">
           <li className={style({font: 'body', marginY: 8})}>Inside <Code>TabList</Code>: Update <Code>Item</Code> to be <Code>Tab</Code></li>

@@ -88,8 +88,9 @@ export interface PickerProps<T extends object> extends
     density: 'compact' | 'regular',
     /**
      * If the tab picker should only display icon and no text for the button label.
+     * @default 'show
      */
-    isIconOnly?: boolean
+    labelBehavior?: 'show' | 'hide'
 }
 
 export const PickerContext = createContext<ContextValue<Partial<PickerProps<any>>, FocusableRefValue<HTMLButtonElement>>>(null);
@@ -162,7 +163,9 @@ const iconCenterWrapper = style({
   display: 'flex',
   gridArea: 'icon',
   paddingStart: {
-    isIconOnly: size(6)
+    labelBehavior: {
+      hide: size(6)
+    }
   }
 });
 
@@ -181,7 +184,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
     items,
     placeholder = stringFormatter.format('picker.placeholder'),
     density,
-    isIconOnly,
+    labelBehavior = 'show',
     ...pickerProps
   } = props;
   let isQuiet = true;
@@ -217,7 +220,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                       [IconContext, {
                         slots: {
                           icon: {
-                            render: centerBaseline({slot: 'icon', styles: iconCenterWrapper({isIconOnly})}),
+                            render: centerBaseline({slot: 'icon', styles: iconCenterWrapper({labelBehavior})}),
                             styles: icon
                           }
                         }
@@ -228,11 +231,13 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                           [DEFAULT_SLOT]: {styles: style({
                             display: {
                               default: 'block',
-                              isIconOnly: 'none'
+                              labelBehavior: {
+                                hide: 'none'
+                              }
                             },
                             flexGrow: 1,
                             truncate: true
-                          })({isIconOnly})}
+                          })({labelBehavior})}
                         }
                       }],
                       [InsideSelectValueContext, true]
