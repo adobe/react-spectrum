@@ -119,7 +119,7 @@ export class ComboBoxTester {
   }
 
   /**
-   * Returns a option matching the specified index or text content.
+   * Returns an option matching the specified index or text content.
    */
   findOption(opts: {optionIndexOrText: number | string}): HTMLElement {
     let {

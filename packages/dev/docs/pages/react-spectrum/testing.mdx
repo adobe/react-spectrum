@@ -24,8 +24,7 @@ query the DOM tree for elements and simulate user interactions.
 ## Introduction
 
 Running automated tests on your application helps ensure that it continues to work as expected over time.
-You can use testing tools like [Enzyme](https://enzymejs.github.io/enzyme/) or
-[React Testing Library](https://testing-library.com/docs/react-testing-library/intro) along with test runners like
+You can use testing tools like [React Testing Library](https://testing-library.com/docs/react-testing-library/intro) along with test runners like
 [Jest](https://jestjs.io) or [Mocha](https://mochajs.org) to test React Spectrum applications. These generally
 work quite well out of the box but there are a few things to consider to ensure your tests are the best they
 can be.
@@ -72,18 +71,6 @@ let tree = render(<MyComponent />);
 let option = tree.getByRole('button');
 ```
 
-### Enzyme
-
-In Enzyme, you can [use CSS selectors](https://enzymejs.github.io/enzyme/docs/api/ReactWrapper/find.html) to find
-elements. You can query by role using an attribute selector:
-
-```tsx
-import {mount} from 'enzyme';
-
-let wrapper = mount(<MyComponent />);
-let option = wrapper.find('[role="option"]');
-```
-
 ## Test ids
 
 Querying by semantics covers many scenarios, but what if you have many buttons on a page? How do you find the specific button
@@ -97,7 +84,7 @@ through to their underlying DOM nodes, which allows you to use an attribute like
 a particular instance of a component. For example, you could add test ids to the two input elements
 in a login form and use them to find the username and password fields.
 
-This example uses React Testing Library, but the idea could be applied in a similar way with Enzyme or other
+This example uses React Testing Library, but the idea could be applied in a similar way with other
 testing libraries.
 
 ```tsx

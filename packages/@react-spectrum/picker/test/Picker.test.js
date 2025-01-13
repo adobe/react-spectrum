@@ -1085,8 +1085,7 @@ describe('Picker', function () {
       expect(picker).toHaveTextContent('Two');
     });
 
-    // TODO: re-enable after merge
-    it.skip('can select items with the Enter key', async function () {
+    it('can select items with the Enter key', async function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" onSelectionChange={onSelectionChange}>
