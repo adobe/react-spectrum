@@ -32,9 +32,9 @@ import {centerBaseline} from './CenterBaseline';
 import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from '../ui-icons/Chevron';
-import {createContext, forwardRef, JSX, ReactNode, useContext, useRef} from 'react';
+import {createContext, forwardRef, JSX, ReactNode, useContext, useRef, useState} from 'react';
 import {divider} from './Divider';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {DOMRef, DOMRefValue, PressEvent} from '@react-types/shared';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, KeyboardContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon'; // chevron right removed??
@@ -45,6 +45,7 @@ import {Placement, useLocale} from 'react-aria';
 import {PopoverBase} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
+import {useGlobalListeners} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 // viewbox on LinkOut is super weird just because i copied the icon from designs...
 // need to strip id's from icons
@@ -80,22 +81,26 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style
   /**
    * The contents of the collection.
    */
-  children?: ReactNode | ((item: T) => ReactNode)
+  children?: ReactNode | ((item: T) => ReactNode),
+  /** Hides the default link out icons on menu items that open links in a new tab. */
+  hideLinkOutIcon?: boolean
 }
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, DOMRefValue<HTMLDivElement>>>(null);
 
+const menuItemGrid = {
+  size: {
+    S: [edgeToText(24), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(24)],
+    M: [edgeToText(32), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(32)],
+    L: [edgeToText(40), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(40)],
+    XL: [edgeToText(48), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(48)]
+  }
+} as const;
+
 export let menu = style({
   outlineStyle: 'none',
   display: 'grid',
-  gridTemplateColumns: {
-    size: {
-      S: [edgeToText(24), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(24)],
-      M: [edgeToText(32), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(32)],
-      L: [edgeToText(40), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(40)],
-      XL: [edgeToText(48), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(48)]
-    }
-  },
+  gridTemplateColumns: menuItemGrid,
   boxSizing: 'border-box',
   maxHeight: '[inherit]',
   overflow: {
@@ -120,7 +125,7 @@ export let section = style({
     '. checkmark icon label       value keyboard descriptor .',
     '. .         .    description .     .        .          .'
   ],
-  gridTemplateColumns: 'subgrid'
+  gridTemplateColumns: menuItemGrid
 });
 
 export let sectionHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
@@ -309,7 +314,12 @@ let descriptor = style({
   }
 });
 
-let InternalMenuContext = createContext<{size: 'S' | 'M' | 'L' | 'XL', isSubmenu: boolean}>({size: 'M', isSubmenu: false});
+let InternalMenuContext = createContext<{size: 'S' | 'M' | 'L' | 'XL', isSubmenu: boolean, hideLinkOutIcon: boolean}>({
+  size: 'M',
+  isSubmenu: false,
+  hideLinkOutIcon: false
+});
+
 let InternalMenuTriggerContext = createContext<Omit<MenuTriggerProps, 'children'> | null>(null);
 
 /**
@@ -323,7 +333,8 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
     size = ctxSize,
     UNSAFE_style,
     UNSAFE_className,
-    styles
+    styles,
+    hideLinkOutIcon = false
   } = props;
   let ctx = useContext(InternalMenuTriggerContext);
   let {align = 'start', direction = 'bottom', shouldFlip} = ctx ?? {};
@@ -348,7 +359,7 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
   }
 
   let content = (
-    <InternalMenuContext.Provider value={{size, isSubmenu: true}}>
+    <InternalMenuContext.Provider value={{size, isSubmenu: true, hideLinkOutIcon}}>
       <Provider
         values={[
           [HeaderContext, {styles: sectionHeader({size})}],
@@ -399,7 +410,7 @@ export function Divider(props: SeparatorProps) {
         divider({
           size: 'M',
           orientation: 'horizontal',
-          staticColor: undefined
+          isStaticColor: false
         }), style({
           display: {
             default: 'grid',
@@ -416,11 +427,12 @@ export function Divider(props: SeparatorProps) {
 export interface MenuSectionProps<T extends object> extends AriaMenuSectionProps<T> {}
 export function MenuSection<T extends object>(props: MenuSectionProps<T>) {
   // remember, context doesn't work if it's around Section nor inside
+  let {size} = useContext(InternalMenuContext);
   return (
     <>
       <AriaMenuSection
         {...props}
-        className={section}>
+        className={section({size})}>
         {props.children}
       </AriaMenuSection>
       <Divider />
@@ -453,7 +465,7 @@ export function MenuItem(props: MenuItemProps) {
   let ref = useRef(null);
   let isLink = props.href != null;
   let isLinkOut = isLink && props.target === '_blank';
-  let {size} = useContext(InternalMenuContext);
+  let {size, hideLinkOutIcon} = useContext(InternalMenuContext);
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   let {direction} = useLocale();
   return (
@@ -486,20 +498,32 @@ export function MenuItem(props: MenuItemProps) {
                 [KeyboardContext, {styles: keyboard({size, isDisabled: renderProps.isDisabled})}],
                 [ImageContext, {styles: image({size})}]
               ]}>
-              {renderProps.selectionMode === 'single' && !isLink && !renderProps.hasSubmenu && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
-              {renderProps.selectionMode === 'multiple' && !isLink && !renderProps.hasSubmenu && (
+              {renderProps.selectionMode === 'single' && !renderProps.hasSubmenu && <CheckmarkIcon size={checkmarkIconSize[size]} className={checkmark({...renderProps, size})} />}
+              {renderProps.selectionMode === 'multiple' && !renderProps.hasSubmenu && (
                 <div className={mergeStyles(checkbox, box(checkboxRenderProps))}>
                   <CheckmarkIcon size={size} className={iconStyles} />
                 </div>
               )}
               {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
-              {isLinkOut && <LinkOutIcon size={linkIconSize[size]} className={descriptor} />}
+              {isLinkOut && !hideLinkOutIcon && (
+                <div slot="descriptor" className={descriptor}>
+                  <LinkOutIcon
+                    size={linkIconSize[size]}
+                    className={style({
+                      scaleX: {
+                        direction: {
+                          rtl: -1
+                        }
+                      }
+                    })({direction})} />
+                </div>
+              )}
               {renderProps.hasSubmenu && (
                 <div slot="descriptor" className={descriptor}>
                   <ChevronRightIcon
                     size={size}
                     className={style({
-                      scale: {
+                      scaleX: {
                         direction: {
                           rtl: -1
                         }
@@ -520,6 +544,23 @@ export function MenuItem(props: MenuItemProps) {
  * linking the Menu's open state with the trigger's press state.
  */
 function MenuTrigger(props: MenuTriggerProps) {
+  // RAC sets isPressed via PressResponder when the menu is open.
+  // We don't want press scaling to appear to get "stuck", so override this.
+  // For mouse interactions, menus open on press start. When the popover underlay appears
+  // it covers the trigger button, causing onPressEnd to fire immediately and no press scaling
+  // to occur. We override this by listening for pointerup on the document ourselves.
+  let [isPressed, setPressed] = useState(false);
+  let {addGlobalListener} = useGlobalListeners();
+  let onPressStart = (e: PressEvent) => {
+    if (e.pointerType !== 'mouse') {
+      return;
+    }
+    setPressed(true);
+    addGlobalListener(document, 'pointerup', () => {
+      setPressed(false);
+    }, {once: true, capture: true});
+  };
+
   return (
     <InternalMenuTriggerContext.Provider
       value={{
@@ -528,9 +569,7 @@ function MenuTrigger(props: MenuTriggerProps) {
         shouldFlip: props.shouldFlip
       }}>
       <AriaMenuTrigger {...props}>
-        {/* RAC sets isPressed via PressResponder when the menu is open.
-            We don't want press scaling to appear to get "stuck", so override this. */}
-        <PressResponder isPressed={false}>
+        <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
           {props.children}
         </PressResponder>
       </AriaMenuTrigger>

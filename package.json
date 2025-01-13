@@ -56,7 +56,8 @@
     "bumpVersions": "node scripts/bumpVersions.js",
     "test:parcel": "jest --testMatch '**/*.parceltest.{ts,tsx}'",
     "blc:local": "npx git+ssh://git@github.com:ktabors/rsp-blc.git -u http://localhost:1234/",
-    "blc:prod": "npx git+ssh://git@github.com:ktabors/rsp-blc.git -u https://react-spectrum.adobe.com/"
+    "blc:prod": "npx git+ssh://git@github.com:ktabors/rsp-blc.git -u https://react-spectrum.adobe.com/",
+    "createRssFeed": "node scripts/createFeed.mjs"
   },
   "workspaces": [
     "packages/react-stately",
@@ -210,6 +211,7 @@
     "verdaccio": "^5.13.0",
     "walk-object": "^4.0.0",
     "wsrun": "^5.0.0",
+    "xml": "^1.0.1",
     "yargs": "^17.2.1"
   },
   "resolutions": {

@@ -9,12 +9,7 @@ const skipped = new Set([
   'Accordion',
   'Card',
   'CardView',
-  'TableView',
-  'TableHeader',
-  'Column',
-  'TableBody',
-  'Row',
-  'Cell'
+  'ActionBar'
 ]);
 
 export function getComponents(): Set<string> {

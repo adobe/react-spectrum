@@ -1,5 +1,9 @@
 {
-  "breadcrumbs.more": "פריטים נוספים",
+  "actionbar.actions": "פעולות",
+  "actionbar.actionsAvailable": "פעולות זמינות.",
+  "actionbar.clearSelection": "נקה בחירה",
+  "actionbar.selected": "{count, plural, =0 {לא בוצעה בחירה} one { # בחר} other {# נבחרו}}\",",
+  "actionbar.selectedAll": "כל הפריטים שנבחרו",
   "button.pending": "ממתין ל",
   "contextualhelp.help": "עזרה",
   "contextualhelp.info": "מידע",
@@ -25,5 +29,6 @@
   "tag.actions": "פעולות",
   "tag.hideButtonLabel": "הצג פחות",
   "tag.noTags": "ללא",
-  "tag.showAllButtonLabel": "הצג הכל ({tagCount, number})"
+  "tag.showAllButtonLabel": "הצג הכל ({tagCount, number})",
+  "breadcrumbs.more": "פריטים נוספים"
 }
