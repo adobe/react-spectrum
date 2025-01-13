@@ -293,7 +293,7 @@ interface MyDatePickerProps<T extends DateValue> extends DatePickerProps<T> {
   errorMessage?: string | ((validation: ValidationResult) => string)
 }
 
-function MyDatePicker<T extends DateValue>({label, description, errorMessage, ...props}: MyDatePickerProps<T>) {
+function MyDatePicker<T extends DateValue>({label, description, errorMessage, firstDayOfWeek, ...props}: MyDatePickerProps<T>) {
   return (
     <DatePicker {...props}>
       <Label>{label}</Label>
@@ -307,7 +307,7 @@ function MyDatePicker<T extends DateValue>({label, description, errorMessage, ..
       <FieldError>{errorMessage}</FieldError>
       <Popover>
         <Dialog>
-          <Calendar>
+          <Calendar firstDayOfWeek={firstDayOfWeek}>
             <header>
               <Button slot="previous">◀</Button>
               <Heading />
@@ -709,6 +709,14 @@ By default, `DatePicker` displays times in either 12 or 24 hour hour format depe
   label="Appointment time"
   granularity="minute"
   hourCycle={24} />
+```
+
+## Custom first day of week
+
+By default, the first day of the week is automatically set based on the current locale. This can be changed by setting the `firstDayOfWeek` prop to `'sun'`, `'mon'`, `'tue'`, `'wed'`, `'thu'`, `'fri'`, or `'sat'`.
+
+```tsx example
+<MyDatePicker aria-label="Appointment time" firstDayOfWeek="mon" />
 ```
 
 ## Props

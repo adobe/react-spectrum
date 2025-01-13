@@ -60,7 +60,6 @@ const inlineAlert = style<InlineStylesProps & {isFocusVisible?: boolean}>({
   display: 'inline-block',
   position: 'relative',
   boxSizing: 'border-box',
-  maxWidth: 320,
   padding: 24,
   borderRadius: 'lg',
   borderStyle: 'solid',

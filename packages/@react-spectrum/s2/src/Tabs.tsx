@@ -53,9 +53,11 @@ export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | '
    */
   density?: 'compact' | 'regular',
   /**
-   * If the tabs should only display icons and no text.
+   * Defines if the text within the tabs should be hidden and only the icon should be shown.
+   * The text is always visible when the item is collapsed into a picker.
+   * @default 'show'
    */
-  isIconOnly?: boolean
+  labelBehavior?: 'show' | 'hide'
 }
 
 export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className'>, StyleProps {
@@ -96,7 +98,7 @@ export const Tabs = forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLD
     isDisabled,
     disabledKeys,
     orientation = 'horizontal',
-    isIconOnly = false
+    labelBehavior = 'show'
   } = props;
   let domRef = useDOMRef(ref);
   let [value, setValue] = useControlledState(props.selectedKey, props.defaultSelectedKey ?? null!, props.onSelectionChange);
@@ -112,7 +114,7 @@ export const Tabs = forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLD
           disabledKeys,
           selectedKey: value,
           onSelectionChange: setValue,
-          isIconOnly,
+          labelBehavior,
           onFocus: () => pickerRef.current?.focus(),
           pickerRef
         }]
@@ -141,10 +143,12 @@ const tablist = style({
           compact: 24,
           regular: 32
         },
-        isIconOnly: {
-          density: {
-            compact: 16,
-            regular: 24
+        labelBehavior: {
+          hide: {
+            density: {
+              compact: 16,
+              regular: 24
+            }
           }
         }
       }
@@ -170,7 +174,7 @@ const tablist = style({
 });
 
 export function TabList<T extends object>(props: TabListProps<T>) {
-  let {density, isDisabled, disabledKeys, orientation, isIconOnly, onFocus} = useContext(InternalTabsContext) ?? {};
+  let {density, isDisabled, disabledKeys, orientation, labelBehavior, onFocus} = useContext(InternalTabsContext) ?? {};
   let {showItems} = useContext(CollapseContext) ?? {};
   let state = useContext(TabListStateContext);
   let [selectedTab, setSelectedTab] = useState<HTMLElement | undefined>(undefined);
@@ -208,7 +212,7 @@ export function TabList<T extends object>(props: TabListProps<T>) {
       <RACTabList
         {...props}
         ref={tablistRef}
-        className={renderProps => tablist({...renderProps, isIconOnly, density})} />
+        className={renderProps => tablist({...renderProps, labelBehavior, density})} />
       {orientation === 'horizontal' &&
         <TabLine showItems={showItems} disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} density={density} />}
     </div>
@@ -255,7 +259,7 @@ const selectedIndicator = style({
   transitionTimingFunction: 'in-out'
 });
 
-function TabLine(props: TabLineProps & {isIconOnly?: boolean}) {
+function TabLine(props: TabLineProps) {
   let {
     disabledKeys,
     isDisabled: isTabsDisabled,
@@ -342,7 +346,9 @@ const tab = style({
   flexShrink: 0,
   transition: 'default',
   paddingX: {
-    isIconOnly: size(6)
+    labelBehavior: {
+      hide: size(6)
+    }
   }
 }, getAllowedOverrides());
 
@@ -356,7 +362,7 @@ const icon = style({
 });
 
 export function Tab(props: TabProps) {
-  let {density, isIconOnly} = useContext(InternalTabsContext) ?? {};
+  let {density, labelBehavior} = useContext(InternalTabsContext) ?? {};
 
   return (
     <RACTab
@@ -364,7 +370,7 @@ export function Tab(props: TabProps) {
       // @ts-ignore
       originalProps={props}
       style={props.UNSAFE_style}
-      className={renderProps => (props.UNSAFE_className || '') + tab({...renderProps, density, isIconOnly}, props.styles)}>
+      className={renderProps => (props.UNSAFE_className || '') + tab({...renderProps, density, labelBehavior}, props.styles)}>
       {({
           // @ts-ignore
           isMenu
@@ -380,9 +386,11 @@ export function Tab(props: TabProps) {
                     style({
                       order: 1,
                       display: {
-                        isIconOnly: 'none'
+                        labelBehavior: {
+                          hide: 'none'
+                        }
                       }
-                    })({isIconOnly})
+                    })({labelBehavior})
                 }],
                 [IconContext, {
                   render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
@@ -479,7 +487,7 @@ let HiddenTabs = function (props: {
 let TabsMenu = (props: {items: Array<Node<any>>, onSelectionChange: TabsProps['onSelectionChange']}) => {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {items} = props;
-  let {density, onSelectionChange, selectedKey, isDisabled, disabledKeys, pickerRef, isIconOnly} = useContext(InternalTabsContext);
+  let {density, onSelectionChange, selectedKey, isDisabled, disabledKeys, pickerRef, labelBehavior} = useContext(InternalTabsContext);
   let state = useContext(TabListStateContext);
   let allKeysDisabled = useMemo(() => {
     return isAllTabsDisabled(state?.collection, disabledKeys ? new Set(disabledKeys) : new Set());
@@ -501,7 +509,7 @@ let TabsMenu = (props: {items: Array<Node<any>>, onSelectionChange: TabsProps['o
           ref={pickerRef ? pickerRef : undefined}
           isDisabled={isDisabled || allKeysDisabled}
           density={density!}
-          isIconOnly={isIconOnly}
+          labelBehavior={labelBehavior}
           items={items}
           disabledKeys={disabledKeys}
           selectedKey={selectedKey}

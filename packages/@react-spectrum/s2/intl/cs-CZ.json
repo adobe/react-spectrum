@@ -1,5 +1,9 @@
 {
-  "breadcrumbs.more": "Více položek",
+  "actionbar.actions": "Akce",
+  "actionbar.actionsAvailable": "Dostupné akce.",
+  "actionbar.clearSelection": "Vymazat výběr",
+  "actionbar.selected": "Vybráno: { count }",
+  "actionbar.selectedAll": "Vybráno vše",
   "button.pending": "čeká na vyřízení",
   "contextualhelp.help": "Nápověda",
   "contextualhelp.info": "Informace",
@@ -24,5 +28,6 @@
   "tag.actions": "Akce",
   "tag.hideButtonLabel": "Zobrazit méně",
   "tag.noTags": "Žádný",
-  "tag.showAllButtonLabel": "Zobrazit vše ({tagCount, number})"
+  "tag.showAllButtonLabel": "Zobrazit vše ({tagCount, number})",
+  "breadcrumbs.more": "Více položek"
 }
