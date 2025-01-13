@@ -11,6 +11,7 @@
  */
 
 export {Accordion, AccordionContext} from './Accordion';
+export {ActionBar, ActionBarContext} from './ActionBar';
 export {ActionButton, ActionButtonContext} from './ActionButton';
 export {ActionButtonGroup, ActionButtonGroupContext} from './ActionButtonGroup';
 export {ActionMenu, ActionMenuContext} from './ActionMenu';
@@ -83,6 +84,7 @@ export {Collection} from 'react-aria-components';
 export {FileTrigger} from 'react-aria-components';
 
 export type {AccordionProps} from './Accordion';
+export type {ActionBarProps} from './ActionBar';
 export type {ActionButtonProps} from './ActionButton';
 export type {ActionButtonGroupProps} from './ActionButtonGroup';
 export type {ActionMenuProps} from './ActionMenu';

@@ -10,5 +10,8 @@
  * governing permissions and limitations under the License.
  */
 export {useSearchAutocomplete} from './useSearchAutocomplete';
+export {UNSTABLE_useAutocomplete} from './useAutocomplete';
+
 export type {AriaSearchAutocompleteOptions, SearchAutocompleteAria} from './useSearchAutocomplete';
 export type {AriaSearchAutocompleteProps} from '@react-types/autocomplete';
+export type {AriaAutocompleteProps, AriaAutocompleteOptions, AutocompleteAria, CollectionOptions} from './useAutocomplete';

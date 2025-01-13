@@ -91,8 +91,8 @@ export const AriaTreeTests = ({renderers, setup, prefix}: AriaTreeTestProps) => 
       it('should have the expected attributes on the rows', async () => {
         let tree = (renderers.standard!)();
         let treeTester = testUtilUser.createTester('Tree', {user, root: tree.container, interactionType});
-        await treeTester.expandItem({index: 1});
-        await treeTester.expandItem({index: 2});
+        await treeTester.toggleRowExpansion({row: 1});
+        await treeTester.toggleRowExpansion({row: 2});
 
         let rows = treeTester.rows;
         let rowNoChild = rows[0];
@@ -135,7 +135,7 @@ export const AriaTreeTests = ({renderers, setup, prefix}: AriaTreeTestProps) => 
         expect(level2ChildRow3).toHaveAttribute('aria-setsize', '3');
 
         // Collapse the first row and make sure it's collpased and that the inner rows are gone
-        await treeTester.collapseItem({index: 1});
+        await treeTester.toggleRowExpansion({row: 1});
         expect(rowWithChildren).toHaveAttribute('aria-expanded', 'false');
         expect(level2ChildRow).not.toBeInTheDocument();
       });
@@ -156,46 +156,51 @@ export const AriaTreeTests = ({renderers, setup, prefix}: AriaTreeTestProps) => 
             expect(rows[2]).not.toHaveAttribute('aria-selected');
             expect(within(rows[2]).getByRole('checkbox')).toHaveAttribute('disabled');
 
-            await treeTester.toggleRowSelection({index: 0});
+            await treeTester.toggleRowSelection({row: 0});
             expect(rows[0]).toHaveAttribute('aria-selected', 'true');
             expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+            expect(treeTester.selectedRows).toHaveLength(1);
+            expect(within(treeTester.rows[0]).getByRole('checkbox')).toBeChecked();
 
-            await treeTester.toggleRowSelection({index: 1});
+            await treeTester.toggleRowSelection({row: 1});
             expect(rows[0]).toHaveAttribute('aria-selected', 'false');
             expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+            expect(treeTester.selectedRows).toHaveLength(1);
+            expect(within(treeTester.rows[0]).getByRole('checkbox')).not.toBeChecked();
+            expect(within(treeTester.rows[1]).getByRole('checkbox')).toBeChecked();
 
-            await treeTester.toggleRowSelection({index: 2});
+            await treeTester.toggleRowSelection({row: 2});
             expect(rows[0]).toHaveAttribute('aria-selected', 'false');
             expect(rows[1]).toHaveAttribute('aria-selected', 'true');
             expect(rows[2]).not.toHaveAttribute('aria-selected');
 
-            await treeTester.expandItem({index: 1});
+            await treeTester.toggleRowExpansion({row: 1});
             rows = treeTester.rows;
             // row 2 is now the subrow of row 1 because we expanded it
             expect(rows[2]).toHaveAttribute('aria-selected', 'false');
 
-            await treeTester.toggleRowSelection({index: 2});
+            await treeTester.toggleRowSelection({row: 2});
             expect(rows[0]).toHaveAttribute('aria-selected', 'false');
             expect(rows[1]).toHaveAttribute('aria-selected', 'false');
             expect(rows[2]).toHaveAttribute('aria-selected', 'true');
 
             // collapse and re-expand to make sure the selection persists
-            await treeTester.collapseItem({index: 1});
-            await treeTester.expandItem({index: 1});
+            await treeTester.toggleRowExpansion({row: 1});
+            await treeTester.toggleRowExpansion({row: 1});
             rows = treeTester.rows;
             expect(rows[2]).toHaveAttribute('aria-selected', 'true');
 
-            await treeTester.toggleRowSelection({index: 2});
+            await treeTester.toggleRowSelection({row: 2});
             expect(rows[0]).toHaveAttribute('aria-selected', 'false');
             expect(rows[1]).toHaveAttribute('aria-selected', 'false');
             expect(rows[2]).toHaveAttribute('aria-selected', 'false');
 
-            await treeTester.collapseItem({index: 1});
+            await treeTester.toggleRowExpansion({row: 1});
             // items inside a disabled item can be selected
-            await treeTester.expandItem({index: 2});
+            await treeTester.toggleRowExpansion({row: 2});
             rows = treeTester.rows;
 
-            await treeTester.toggleRowSelection({index: 3});
+            await treeTester.toggleRowSelection({row: 3});
             expect(rows[3]).toHaveAttribute('aria-selected', 'true');
           });
         });
@@ -212,10 +217,10 @@ export const AriaTreeTests = ({renderers, setup, prefix}: AriaTreeTestProps) => 
             let rows = treeTester.rows;
             expect(rows[2]).toHaveAttribute('aria-expanded', 'false');
 
-            await treeTester.expandItem({index: 2});
+            await treeTester.toggleRowExpansion({row: 2});
             expect(rows[2]).toHaveAttribute('aria-expanded', 'false');
 
-            await treeTester.toggleRowSelection({index: 2});
+            await treeTester.toggleRowSelection({row: 2});
             expect(rows[2]).not.toHaveAttribute('aria-selected');
           });
         });

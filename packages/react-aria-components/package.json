@@ -39,6 +39,7 @@
   "dependencies": {
     "@internationalized/date": "^3.6.0",
     "@internationalized/string": "^3.2.5",
+    "@react-aria/autocomplete": "3.0.0-alpha.36",
     "@react-aria/collections": "3.0.0-alpha.6",
     "@react-aria/color": "^3.0.2",
     "@react-aria/disclosure": "^3.0.0",
@@ -51,6 +52,7 @@
     "@react-aria/tree": "3.0.0-beta.2",
     "@react-aria/utils": "^3.26.0",
     "@react-aria/virtualizer": "^4.1.0",
+    "@react-stately/autocomplete": "3.0.0-alpha.1",
     "@react-stately/color": "^3.8.1",
     "@react-stately/disclosure": "^3.0.0",
     "@react-stately/layout": "^4.1.0",

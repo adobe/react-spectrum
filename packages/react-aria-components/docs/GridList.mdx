@@ -12,7 +12,8 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import sharedDocs from 'docs:@react-types/shared';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
+import gridlistUtil from 'docs:@react-aria/test-utils/src/gridlist.ts';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI, VersionBadge} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from './GridListAnatomy.svg';
@@ -578,7 +579,7 @@ Note that you are responsible for the styling of disabled rows, however, the sel
 When `disabledBehavior` is set to `selection`, interactions such as focus, dragging, or actions can still be performed on disabled rows.
 
 ```tsx example
-<MyGridList 
+<MyGridList
   aria-label="List with disabled rows" selectionMode="multiple"
   /*- begin highlight -*/
   disabledBehavior="selection"
@@ -1865,3 +1866,46 @@ Now you can use `MyCustomCheckbox` within a `GridList`, in place of the builtin 
 ### Hooks
 
 If you need to customize things even further, such as accessing internal state, intercepting events, or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useGridList](useGridList.html) for more details.
+
+## Testing
+
+### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+`@react-aria/test-utils` offers common gridlist interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
+in your tests. Below is the full definition of the gridlist tester and a sample of how you could use it in your test suite.
+
+```ts
+// GridList.test.ts
+import {render, within} from '@testing-library/react';
+import {User} from '@react-aria/test-utils';
+
+let testUtilUser = new User({interactionType: 'mouse'});
+// ...
+
+it('GridList can select a row via keyboard', async function () {
+  // Render your test component/app and initialize the gridlist tester
+  let {getByTestId} = render(
+    <GridList data-testid="test-gridlist">
+      ...
+    </GridList>
+  );
+  let gridlistTester = testUtilUser.createTester('GridList', {root: getByTestId('test-gridlist'), interactionType: 'keyboard'});
+
+  let row = gridListTester.rows[0];
+  expect(row).not.toHaveClass('selected');
+  expect(within(row).getByRole('checkbox')).not.toBeChecked();
+  expect(gridListTester.selectedRows).toHaveLength(0);
+
+  await gridListTester.toggleRowSelection({row: 0});
+  expect(row).toHaveClass('selected');
+  expect(within(row).getByRole('checkbox')).toBeChecked();
+  expect(gridListTester.selectedRows).toHaveLength(1);
+
+  await gridListTester.toggleRowSelection({row: 0});
+  expect(row).not.toHaveClass('selected');
+  expect(within(row).getByRole('checkbox')).not.toBeChecked();
+  expect(gridListTester.selectedRows).toHaveLength(0);
+});
+```
+
+<ClassAPI links={gridlistUtil.links} class={gridlistUtil.exports.GridListTester} />

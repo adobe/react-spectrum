@@ -157,11 +157,14 @@ export const Button = /*#__PURE__*/ createHideableComponent(function Button(prop
     wasPending.current = isPending;
   }, [isPending, isFocused, ariaLabelledby, buttonId]);
 
+  // When the button is in a pending state, we want to stop implicit form submission (ie. when the user presses enter on a text input).
+  // We do this by changing the button's type to button.
   return (
     <button
       {...filterDOMProps(props, {propNames: additionalButtonHTMLAttributes})}
       {...mergeProps(buttonProps, focusProps, hoverProps)}
       {...renderProps}
+      type={buttonProps.type === 'submit' && isPending ? 'button' : buttonProps.type}
       id={buttonId}
       ref={ref}
       aria-labelledby={ariaLabelledby}

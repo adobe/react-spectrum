@@ -13,7 +13,7 @@
 import {AriaLabelingProps, forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
 import {Collection, CollectionBuilder, createHideableComponent, createLeafComponent} from '@react-aria/collections';
-import {CollectionProps, CollectionRendererContext, usePersistedKeys} from './Collection';
+import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, usePersistedKeys} from './Collection';
 import {ContextValue, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {Collection as ICollection, Node, TabListState, useTabListState} from 'react-stately';
@@ -253,9 +253,8 @@ export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, f
   });
 
   let renderProps = useRenderProps({
-    ...props, // item.props? or is this correct and breadcrumbs are wrong?
+    ...props,
     id: undefined,
-    children: item.rendered,
     defaultClassName: 'react-aria-Tab',
     values: {
       isSelected,
@@ -278,9 +277,7 @@ export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, f
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}
-      data-hovered={isHovered || undefined}>
-      {renderProps.children}
-    </ElementType>
+      data-hovered={isHovered || undefined} />
   );
 });
 
@@ -330,7 +327,9 @@ export const TabPanel = /*#__PURE__*/ createHideableComponent(function TabPanel(
           [TabsContext, null],
           [TabListStateContext, null]
         ]}>
-        {renderProps.children}
+        <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
+          {renderProps.children}
+        </CollectionRendererContext.Provider>
       </Provider>
     </div>
   );

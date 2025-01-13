@@ -11,7 +11,8 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/menu';
-import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
+import menuUtil from 'docs:@react-aria/test-utils/src/menu.ts';
+import {HeaderInfo, PropTable, PageDescription, ClassAPI, VersionBadge} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/menu/package.json';
 import {Keyboard} from '@react-spectrum/text';
 
@@ -256,3 +257,44 @@ behaviors in your test suite.
 
 Please also refer to [React Spectrum's test suite](https://github.com/adobe/react-spectrum/blob/main/packages/%40react-spectrum/menu/test/MenuTrigger.test.js) if you find that the above
 isn't sufficient when resolving issues in your own test cases.
+
+### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+`@react-spectrum/test-utils` offers common menu interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
+in your tests. Below is the full definition of the menu tester and a sample of how you could use it in your test suite.
+
+```ts
+// Menu.test.ts
+import {render} from '@testing-library/react';
+import {theme} from '@react-spectrum/theme-default';
+import {User} from '@react-spectrum/test-utils';
+
+let testUtilUser = new User({interactionType: 'mouse'});
+// ...
+
+it('Menu can open its submenu via keyboard', async function () {
+  // Render your test component/app and initialize the menu tester
+  let {getByTestId} = render(
+    <Provider theme={defaultTheme}>
+      <MenuTrigger data-testid="test-menutrigger">
+        ...
+      </MenuTrigger>
+    </Provider>
+  );
+  let menuTester = testUtilUser.createTester('Menu', {root: getByTestId('test-menutrigger'), interactionType: 'keyboard'});
+
+  await menuTester.open();
+  expect(menuTester.menu).toBeInTheDocument();
+  let submenuTriggers = menuTester.submenuTriggers;
+  expect(submenuTriggers).toHaveLength(1);
+
+  let submenuTester = await menuTester.openSubmenu({submenuTrigger: 'Share…'});
+  expect(submenuTester.menu).toBeInTheDocument();
+
+  await submenuTester.selectOption({option: submenuUtil.options()[0]});
+  expect(submenuTester.menu).toBeInTheDocument();
+  expect(menuTester.menu).toBeInTheDocument();
+});
+```
+
+<ClassAPI links={menuUtil.links} class={menuUtil.exports.MenuTester} />

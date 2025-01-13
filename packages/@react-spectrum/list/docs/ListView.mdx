@@ -14,7 +14,8 @@ import Anatomy from './anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import docs from 'docs:@react-spectrum/list';
 import dndDocs from 'docs:@react-spectrum/dnd';
-import {HeaderInfo, PropTable, PageDescription, TypeLink} from '@react-spectrum/docs';
+import gridlistUtil from 'docs:@react-aria/test-utils/src/gridlist.ts';
+import {HeaderInfo, PropTable, PageDescription, TypeLink, ClassAPI, VersionBadge} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-spectrum/list/package.json';
 
@@ -1191,3 +1192,47 @@ behaviors in your test suite.
 
 Please also refer to [React Spectrum's test suite](https://github.com/adobe/react-spectrum/blob/main/packages/%40react-spectrum/list/test/ListView.test.js) if you find that the above
 isn't sufficient when resolving issues in your own test cases.
+
+### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+`@react-spectrum/test-utils` offers common gridlist interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
+in your tests. Below is the full definition of the gridlist tester and a sample of how you could use it in your test suite.
+
+```ts
+// ListView.test.ts
+import {render, within} from '@testing-library/react';
+import {theme} from '@react-spectrum/theme-default';
+import {User} from '@react-spectrum/test-utils';
+
+let testUtilUser = new User({interactionType: 'mouse'});
+// ...
+
+it('ListView can select a row via keyboard', async function () {
+  // Render your test component/app and initialize the gridlist tester
+  let {getByTestId} = render(
+    <Provider theme={defaultTheme}>
+      <ListView data-testid="test-gridlist">
+        ...
+      </ListView>
+    </Provider>
+  );
+  let gridlistTester = testUtilUser.createTester('GridList', {root: getByTestId('test-gridlist'), interactionType: 'keyboard'});
+
+  let row = gridListTester.rows[0];
+  expect(row).not.toHaveClass('selected');
+  expect(within(row).getByRole('checkbox')).not.toBeChecked();
+  expect(gridListTester.selectedRows).toHaveLength(0);
+
+  await gridListTester.toggleRowSelection({row: 0});
+  expect(row).toHaveClass('selected');
+  expect(within(row).getByRole('checkbox')).toBeChecked();
+  expect(gridListTester.selectedRows).toHaveLength(1);
+
+  await gridListTester.toggleRowSelection({row: 0});
+  expect(row).not.toHaveClass('selected');
+  expect(within(row).getByRole('checkbox')).not.toBeChecked();
+  expect(gridListTester.selectedRows).toHaveLength(0);
+});
+```
+
+<ClassAPI links={gridlistUtil.links} class={gridlistUtil.exports.GridListTester} />

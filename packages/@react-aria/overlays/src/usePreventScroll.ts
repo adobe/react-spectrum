@@ -139,24 +139,7 @@ function preventScrollMobileSafari() {
     }
   };
 
-  let onTouchEnd = (e: TouchEvent) => {
-    let target = e.target as HTMLElement;
-
-    // Apply this change if we're not already focused on the target element
-    if (willOpenKeyboard(target) && target !== document.activeElement) {
-      e.preventDefault();
-      setupStyles();
-
-      // Apply a transform to trick Safari into thinking the input is at the top of the page
-      // so it doesn't try to scroll it into view. When tapping on an input, this needs to
-      // be done before the "focus" event, so we have to focus the element ourselves.
-      target.style.transform = 'translateY(-2000px)';
-      target.focus();
-      requestAnimationFrame(() => {
-        target.style.transform = '';
-      });
-    }
-
+  let onTouchEnd = () => {
     if (restoreScrollableStyles) {
       restoreScrollableStyles();
     }
@@ -167,10 +150,8 @@ function preventScrollMobileSafari() {
     if (willOpenKeyboard(target)) {
       setupStyles();
 
-      // Transform also needs to be applied in the focus event in cases where focus moves
-      // other than tapping on an input directly, e.g. the next/previous buttons in the
-      // software keyboard. In these cases, it seems applying the transform in the focus event
-      // is good enough, whereas when tapping an input, it must be done before the focus event. 🤷‍♂️
+      // Apply a transform to trick Safari into thinking the input is at the top of the page
+      // so it doesn't try to scroll it into view.
       target.style.transform = 'translateY(-2000px)';
       requestAnimationFrame(() => {
         target.style.transform = '';

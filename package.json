@@ -46,7 +46,7 @@
     "chromatic:forced-colors": "NODE_ENV=production CHROMATIC=1 chromatic --project-token $CHROMATIC_FC_PROJECT_TOKEN --build-script-name 'build:chromatic-fc'",
     "merge:css": "babel-node --presets @babel/env ./scripts/merge-spectrum-css.js",
     "release": "lerna publish from-package --yes",
-    "version:nightly": "yarn workspaces foreach --all --no-private -t version -d 3.0.0-nightly-$(git rev-parse --short HEAD)-$(date +'%y%m%d') && yarn version apply --all",
+    "version:nightly": "yarn workspaces foreach --all --no-private -t version -d 3.0.0-nightly-$(git rev-parse --short HEAD)-$(date +'%y%m%d') && yarn apply-nightly --all",
     "publish:nightly": "yarn workspaces foreach --all --no-private -t npm publish --tag nightly --access public",
     "build:api-published": "node scripts/buildPublishedAPI.js",
     "build:api-branch": "node scripts/buildBranchAPI.js",
@@ -56,7 +56,8 @@
     "bumpVersions": "node scripts/bumpVersions.js",
     "test:parcel": "jest --testMatch '**/*.parceltest.{ts,tsx}'",
     "blc:local": "npx git+ssh://git@github.com:ktabors/rsp-blc.git -u http://localhost:1234/",
-    "blc:prod": "npx git+ssh://git@github.com:ktabors/rsp-blc.git -u https://react-spectrum.adobe.com/"
+    "blc:prod": "npx git+ssh://git@github.com:ktabors/rsp-blc.git -u https://react-spectrum.adobe.com/",
+    "createRssFeed": "node scripts/createFeed.mjs"
   },
   "workspaces": [
     "packages/react-stately",
@@ -210,6 +211,7 @@
     "verdaccio": "^5.13.0",
     "walk-object": "^4.0.0",
     "wsrun": "^5.0.0",
+    "xml": "^1.0.1",
     "yargs": "^17.2.1"
   },
   "resolutions": {

@@ -191,6 +191,7 @@ describe('Tree', () => {
   it('should have the base set of data attributes', () => {
     let {getByRole, getAllByRole} = render(<StaticTree treeProps={{defaultExpandedKeys: 'none'}} />);
     let tree = getByRole('treegrid');
+    expect(tree).toHaveAttribute('data-rac');
     expect(tree).not.toHaveAttribute('data-empty');
     expect(tree).not.toHaveAttribute('data-focused');
     expect(tree).not.toHaveAttribute('data-focus-visible');

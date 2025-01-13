@@ -97,3 +97,49 @@ function Cell(props) {
     </div>
   );
 }
+
+export function ExampleCustomFirstDay(props) {
+  let {locale} = useLocale();
+  const {firstDayOfWeek} = props;
+
+  let state = useCalendarState({
+    ...props,
+    locale,
+    createCalendar
+  });
+
+  let {calendarProps, prevButtonProps, nextButtonProps} = useCalendar(props, state);
+
+  return (
+    <div {...calendarProps}>
+      <div style={{textAlign: 'center'}} data-testid={'range'}>
+        {calendarProps['aria-label']}
+      </div>
+      <div style={{display: 'grid', gridTemplateColumns: 'repeat(1, 1fr)', gap: '1em'}}>
+        <ExampleFirstDayCalendarGrid state={state} firstDayOfWeek={firstDayOfWeek} />
+      </div>
+      <div>
+        <Button variant={'secondary'} {...prevButtonProps}>prev</Button>
+        <Button variant={'secondary'} {...nextButtonProps}>next</Button>
+      </div>
+    </div>
+  );
+}
+
+function ExampleFirstDayCalendarGrid({state, firstDayOfWeek}: {state: CalendarState | RangeCalendarState, firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'}) {
+  let {locale} = useLocale();
+  let {gridProps} = useCalendarGrid({firstDayOfWeek}, state);
+  let startDate = state.visibleRange.start;
+  let weeksInMonth = getWeeksInMonth(startDate, locale, firstDayOfWeek);
+  return (
+    <div {...gridProps}>
+      {[...new Array(weeksInMonth).keys()].map(weekIndex => (
+        <div key={weekIndex} role="row">
+          {state.getDatesInWeek(weekIndex, startDate).map((date, i) => (
+            <Cell key={i} state={state} date={date} />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
