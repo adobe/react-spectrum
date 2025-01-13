@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, installPointerEvent, pointerMap, render, simulateDesktop, simulateMobile} from '@react-spectrum/test-utils-internal';
+import {fireEvent, installPointerEvent, pointerMap, render, simulateDesktop, simulateMobile, within} from '@react-spectrum/test-utils-internal';
 import {Item} from '@react-stately/collections';
 import {List} from '../stories/List';
 import React from 'react';
@@ -108,10 +108,10 @@ describe('useSelectableCollection', () => {
       expect(options[2]).toHaveAttribute('aria-selected', 'true');
     });
 
-    it("doesn't change the selection on focus in multiple selection selectOnFocus", async () => {
+    it('focuses first/last selected item on focus enter and does not change the selection', async () => {
       let onSelectionChange1 = jest.fn();
       let onSelectionChange2 = jest.fn();
-      let {getByText} = render(
+      let {getByText, getAllByRole} = render(
         <>
           <List
             selectionMode="multiple"
@@ -134,10 +134,13 @@ describe('useSelectableCollection', () => {
           </List>
         </>
       );
+      let [firstList, secondList] = getAllByRole('listbox');
       await user.click(getByText('focus stop'));
       await user.tab();
+      expect(document.activeElement).toBe(within(secondList).getByRole('option', {name: 'Vicente Amigo'}));
       await user.click(getByText('focus stop'));
       await user.tab({shift: true});
+      expect(document.activeElement).toBe(within(firstList).getByRole('option', {name: 'Gerardo Nunez'}));
 
       expect(onSelectionChange1).not.toHaveBeenCalled();
       expect(onSelectionChange2).not.toHaveBeenCalled();
