@@ -26,7 +26,7 @@ import {
 import {ButtonContext} from './Button';
 import {CalendarDate, createCalendar, DateDuration, endOfMonth, getWeeksInMonth, isSameDay, isSameMonth} from '@internationalized/date';
 import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState} from 'react-stately';
-import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {DOMAttributes, FocusableElement, forwardRefType, HoverEvents} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {HeadingContext} from './RSPContexts';
@@ -73,8 +73,8 @@ export interface RangeCalendarProps<T extends DateValue> extends Omit<AriaRangeC
   visibleDuration?: DateDuration
 }
 
-export const CalendarContext = createContext<ContextValue<CalendarProps<any>, HTMLDivElement>>({});
-export const RangeCalendarContext = createContext<ContextValue<RangeCalendarProps<any>, HTMLDivElement>>({});
+export const CalendarContext = createContext<ContextValue<CalendarProps<any>, HTMLDivElement>>(null);
+export const RangeCalendarContext = createContext<ContextValue<RangeCalendarProps<any>, HTMLDivElement>>(null);
 export const CalendarStateContext = createContext<CalendarState | null>(null);
 export const RangeCalendarStateContext = createContext<RangeCalendarState | null>(null);
 
@@ -120,6 +120,7 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
           }],
           [HeadingContext, {'aria-hidden': true, level: 2, children: title}],
           [CalendarStateContext, state],
+          [CalendarContext, props as CalendarProps<any>],
           [TextContext, {
             slots: {
               errorMessage: errorMessageProps
@@ -196,6 +197,7 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
           }],
           [HeadingContext, {'aria-hidden': true, level: 2, children: title}],
           [RangeCalendarStateContext, state],
+          [RangeCalendarContext, props as RangeCalendarProps<any>],
           [TextContext, {
             slots: {
               errorMessage: errorMessageProps
@@ -326,7 +328,8 @@ export interface CalendarGridProps extends StyleProps {
 interface InternalCalendarGridContextValue {
   headerProps: DOMAttributes<FocusableElement>,
   weekDays: string[],
-  startDate: CalendarDate
+  startDate: CalendarDate,
+  firstDayOfWeek: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | undefined
 }
 
 const InternalCalendarGridContext = createContext<InternalCalendarGridContextValue | null>(null);
@@ -338,20 +341,25 @@ const InternalCalendarGridContext = createContext<InternalCalendarGridContextVal
 export const CalendarGrid = /*#__PURE__*/ (forwardRef as forwardRefType)(function CalendarGrid(props: CalendarGridProps, ref: ForwardedRef<HTMLTableElement>) {
   let calendarState = useContext(CalendarStateContext);
   let rangeCalendarState = useContext(RangeCalendarStateContext);
+  let calenderProps = useSlottedContext(CalendarContext)!;
+  let rangeCalenderProps = useSlottedContext(RangeCalendarContext)!;
   let state = calendarState ?? rangeCalendarState!;
   let startDate = state.visibleRange.start;
   if (props.offset) {
     startDate = startDate.add(props.offset);
   }
 
+  let firstDayOfWeek = calenderProps?.firstDayOfWeek ?? rangeCalenderProps?.firstDayOfWeek;
+
   let {gridProps, headerProps, weekDays} = useCalendarGrid({
     startDate,
     endDate: endOfMonth(startDate),
-    weekdayStyle: props.weekdayStyle
+    weekdayStyle: props.weekdayStyle,
+    firstDayOfWeek
   }, state);
 
   return (
-    <InternalCalendarGridContext.Provider value={{headerProps, weekDays, startDate}}>
+    <InternalCalendarGridContext.Provider value={{headerProps, weekDays, startDate, firstDayOfWeek}}>
       <table
         {...filterDOMProps(props as any)}
         {...gridProps}
@@ -434,9 +442,9 @@ function CalendarGridBody(props: CalendarGridBodyProps, ref: ForwardedRef<HTMLTa
   let calendarState = useContext(CalendarStateContext);
   let rangeCalendarState = useContext(RangeCalendarStateContext);
   let state = calendarState ?? rangeCalendarState!;
-  let {startDate} = useContext(InternalCalendarGridContext)!;
+  let {startDate, firstDayOfWeek} = useContext(InternalCalendarGridContext)!;
   let {locale} = useLocale();
-  let weeksInMonth = getWeeksInMonth(startDate, locale);
+  let weeksInMonth = getWeeksInMonth(startDate, locale, firstDayOfWeek);
 
   return (
     <tbody

@@ -11,7 +11,7 @@
  */
 
 import {fontRelative as internalFontRelative, size as internalSize, space as internalSpace} from './spectrum-theme';
-export {baseColor, edgeToText, lightDark, colorMix, style} from './spectrum-theme';
+export {baseColor, edgeToText, lightDark, linearGradient, colorMix, style} from './spectrum-theme';
 export type {StyleString} from './types';
 
 // Wrap these functions in arbitrary value syntax when called from the outside.

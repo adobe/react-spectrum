@@ -23,7 +23,7 @@ import {useFocusableRef} from '@react-spectrum/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface CloseButtonProps extends Pick<ButtonProps, 'isDisabled'>, StyleProps {
+export interface CloseButtonProps extends Pick<ButtonProps, 'isDisabled' | 'onPress'>, StyleProps {
   /**
    * The size of the CloseButton.
    *
@@ -34,10 +34,9 @@ export interface CloseButtonProps extends Pick<ButtonProps, 'isDisabled'>, Style
   staticColor?: 'white' | 'black' | 'auto'
 }
 
-// TODO(design): this is inconsistent with ActionButton
 const hoverBackground = {
-  default: 'gray-100',
-  isStaticColor: 'transparent-overlay-100'
+  default: 'gray-200',
+  isStaticColor: 'transparent-overlay-200'
 } as const;
 
 const styles = style({
@@ -66,6 +65,10 @@ const styles = style({
       isStaticColor: {
         default: baseColor('transparent-overlay-800'),
         isDisabled: 'transparent-overlay-400'
+      },
+      forcedColors: {
+        default: 'ButtonText',
+        isDisabled: 'GrayText'
       }
     }
   },
@@ -91,7 +94,7 @@ export const CloseButton = forwardRef(function CloseButton(props: CloseButtonPro
       {...props}
       ref={domRef}
       slot="close"
-      aria-label={stringFormatter.format('dialog.dismiss')}
+      aria-label={props['aria-label'] || stringFormatter.format('dialog.dismiss')}
       style={pressScale(domRef, UNSAFE_style)}
       className={renderProps => UNSAFE_className + styles({...renderProps, staticColor: props.staticColor, isStaticColor: !!props.staticColor}, props.styles)}>
       <CrossIcon size={({S: 'L', M: 'XL', L: 'XXL', XL: 'XXXL'} as const)[props.size || 'M']} />

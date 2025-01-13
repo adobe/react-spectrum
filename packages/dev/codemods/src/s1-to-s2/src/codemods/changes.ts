@@ -77,13 +77,31 @@ type FunctionInfo =
     args: {}
   }
   | {
+    name: 'addColumnsPropToRow',
+    args: {}
+  }
+  | {
+    name: 'updateRowFunctionArg',
+    args: {}
+  }
+  | {
+    name: 'updateKeyToId',
+    args: {}
+  }
+  | {
     name: 'updateDialogChild',
     args: {}
   }
   | {
     name: 'updateActionGroup',
     args: {}
-  };
+  } | {
+    name: 'commentIfNestedColumns',
+    args: {}
+  } | {
+    name: 'addRowHeader',
+    args: {}
+  }
 
 type Change = {
   description: string,
@@ -1253,6 +1271,114 @@ export const changes: ChangesJSON = {
             propToUpdate: 'placement',
             childComponent: 'Tooltip'
           }
+        }
+      }
+    ]
+  },
+  TableView: {
+    changes: [
+      {
+        description: 'Add columns prop to Row',
+        reason: 'Rows now require a columns prop from TableHeader',
+        function: {
+          name: 'addColumnsPropToRow',
+          args: {}
+        }
+      },
+      {
+        description: 'Leave comment if nested columns are used',
+        reason: 'Nested columns are not supported yet',
+        function: {
+          name: 'commentIfNestedColumns',
+          args: {}
+        }
+      },
+      {
+        description: 'Comment out dragAndDropHooks',
+        reason: 'It has not been implemented yet',
+        function: {
+          name: 'commentOutProp',
+          args: {propToComment: 'dragAndDropHooks'}
+        }
+      },
+      {
+        description: 'Comment out selectionStyle="highlight"',
+        reason: 'It has not been implemented yet',
+        function: {
+          name: 'commentOutProp',
+          args: {propToComment: 'selectionStyle'}
+        }
+      },
+      {
+        description: 'Comment out UNSTABLE_allowsExpandableRows',
+        reason: 'It has not been implemented yet',
+        function: {
+          name: 'commentOutProp',
+          args: {propToComment: 'UNSTABLE_allowsExpandableRows'}
+        }
+      },
+      {
+        description: 'Comment out UNSTABLE_defaultExpandedKeys',
+        reason: 'It has not been implemented yet',
+        function: {
+          name: 'commentOutProp',
+          args: {propToComment: 'UNSTABLE_defaultExpandedKeys'}
+        }
+      },
+      {
+        description: 'Comment out UNSTABLE_expandedKeys',
+        reason: 'It has not been implemented yet',
+        function: {
+          name: 'commentOutProp',
+          args: {propToComment: 'UNSTABLE_expandedKeys'}
+        }
+      },
+      {
+        description: 'Comment out UNSTABLE_onExpandedChange',
+        reason: 'It has not been implemented yet',
+        function: {
+          name: 'commentOutProp',
+          args: {propToComment: 'UNSTABLE_onExpandedChange'}
+        }
+      },
+      {
+        description: 'Add isRowHeader prop to fist Column if one doesn\'t eixst already',
+        reason: 'Updated API',
+        function: {
+          name: 'addRowHeader',
+          args: {}
+        }
+      }
+    ]
+  },
+  Column: {
+    changes: [
+      {
+        description: 'Update key prop to id',
+        reason: 'Updated API',
+        function: {
+          name: 'updateKeyToId',
+          args: {}
+        }
+      }
+    ]
+  },
+  Row: {
+    changes: [
+      {
+        description: 'Update key prop to id',
+        reason: 'Updated API',
+        function: {
+          name: 'updateKeyToId',
+          args: {}
+        }
+      },
+      {
+        description: 'Update child function to receive column object instead of column key',
+        reason: 'Updated API',
+        function: {
+          name: 'updateRowFunctionArg',
+          args: {}
         }
       }
     ]

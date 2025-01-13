@@ -25,7 +25,7 @@ export type CSSProperties = CSS.Properties & {
   [k: CustomProperty]: CSSValue
 };
 
-export type PropertyFunction<T extends Value> = (value: T, property: string) => PropertyValueDefinition<[CSSProperties, string]>;
+export type PropertyFunction<T> = (value: T, property: string) => PropertyValueDefinition<[CSSProperties, string]>;
 
 export type ShorthandProperty<T> = (value: T) => {[name: string]: Value};
 
