@@ -11,23 +11,29 @@
  */
 
 import {act, fireEvent, waitFor, within} from '@testing-library/react';
-import {BaseTesterOpts, UserOpts} from './user';
+import {GridRowActionOpts, TableTesterOpts, ToggleGridRowOpts, UserOpts} from './types';
 import {pressElement, triggerLongPress} from './events';
-export interface TableOptions extends UserOpts, BaseTesterOpts {
-  user?: any,
-  advanceTimer: UserOpts['advanceTimer']
-}
 
-// TODO: Previously used logic like https://github.com/testing-library/react-testing-library/blame/c63b873072d62c858959c2a19e68f8e2cc0b11be/src/pure.js#L16
-// but https://github.com/testing-library/dom-testing-library/issues/987#issuecomment-891901804 indicates that it may falsely indicate that fake timers are enabled
-// when they aren't
+interface TableToggleRowOpts extends ToggleGridRowOpts {}
+interface TableToggleSortOpts {
+  /**
+   * The index, text, or node of the column to toggle selection for.
+   */
+  column: number | string | HTMLElement,
+  /**
+   * What interaction type to use when sorting the column. Defaults to the interaction type set on the tester.
+   */
+  interactionType?: UserOpts['interactionType']
+}
+interface TableRowActionOpts extends GridRowActionOpts {}
+
 export class TableTester {
   private user;
   private _interactionType: UserOpts['interactionType'];
   private _advanceTimer: UserOpts['advanceTimer'];
   private _table: HTMLElement;
 
-  constructor(opts: TableOptions) {
+  constructor(opts: TableTesterOpts) {
     let {root, user, interactionType, advanceTimer} = opts;
     this.user = user;
     this._interactionType = interactionType || 'mouse';
@@ -35,21 +41,43 @@ export class TableTester {
     this._table = root;
   }
 
-  setInteractionType = (type: UserOpts['interactionType']) => {
+  /**
+   * Set the interaction type used by the table tester.
+   */
+  setInteractionType(type: UserOpts['interactionType']) {
     this._interactionType = type;
-  };
+  }
 
-  toggleRowSelection = async (opts: {index?: number, text?: string, needsLongPress?: boolean, interactionType?: UserOpts['interactionType']} = {}) => {
+  /**
+   * Toggles the selection for the specified table row. Defaults to using the interaction type set on the table tester.
+   */
+  async toggleRowSelection(opts: TableToggleRowOpts) {
     let {
-      index,
-      text,
+      row,
       needsLongPress,
+      checkboxSelection = true,
       interactionType = this._interactionType
     } = opts;
 
-    let row = this.findRow({index, text});
+    if (typeof row === 'string' || typeof row === 'number') {
+      row = this.findRow({rowIndexOrText: row});
+    }
+
+    if (!row) {
+      throw new Error('Target row not found in the table.');
+    }
+
     let rowCheckbox = within(row).queryByRole('checkbox');
-    if (rowCheckbox) {
+
+    if (interactionType === 'keyboard' && !checkboxSelection) {
+      // TODO: for now focus the row directly until I add keyboard navigation
+      await act(async () => {
+        row.focus();
+      });
+      await this.user.keyboard('{Space}');
+      return;
+    }
+    if (rowCheckbox && checkboxSelection) {
       await pressElement(this.user, rowCheckbox, interactionType);
     } else {
       let cell = within(row).getAllByRole('gridcell')[0];
@@ -70,21 +98,25 @@ export class TableTester {
     }
   };
 
-  toggleSort = async (opts: {index?: number, text?: string, interactionType?: UserOpts['interactionType']} = {}) => {
+  /**
+   * Toggles the sort order for the specified table column. Defaults to using the interaction type set on the table tester.
+   */
+  async toggleSort(opts: TableToggleSortOpts) {
     let {
-      index,
-      text,
+      column,
       interactionType = this._interactionType
     } = opts;
 
     let columnheader;
-    if (index != null) {
-      columnheader = this.columns[index];
-    } else if (text != null) {
-      columnheader = within(this.rowGroups[0]).getByText(text);
+    if (typeof column === 'number') {
+      columnheader = this.columns[column];
+    } else if (typeof column === 'string') {
+      columnheader = within(this.rowGroups[0]).getByText(column);
       while (columnheader && !/columnheader/.test(columnheader.getAttribute('role'))) {
         columnheader = columnheader.parentElement;
       }
+    } else {
+      columnheader = column;
     }
 
     let menuButton = within(columnheader).queryByRole('button');
@@ -154,38 +186,46 @@ export class TableTester {
     } else {
       await pressElement(this.user, columnheader, interactionType);
     }
-  };
-  // TODO: should there be a util for triggering a row action? Perhaps there should be but it would rely on the user teling us the config of the
-  // table. Maybe we could rely on the user knowing to trigger a press/double click? We could have the user pass in "needsDoubleClick"
-  // It is also iffy if there is any row selected because then the table is in selectionMode and the below actions will simply toggle row selection
-  triggerRowAction = async (opts: {index?: number, text?: string, needsDoubleClick?: boolean, interactionType?: UserOpts['interactionType']} = {}) => {
+  }
+
+  /**
+   * Triggers the action for the specified table row. Defaults to using the interaction type set on the table tester.
+   */
+  async triggerRowAction(opts: TableRowActionOpts) {
     let {
-      index,
-      text,
+      row,
       needsDoubleClick,
       interactionType = this._interactionType
     } = opts;
 
-    let row = this.findRow({index, text});
-    if (row) {
-      if (needsDoubleClick) {
-        await this.user.dblClick(row);
-      } else if (interactionType === 'keyboard') {
-        act(() => row.focus());
-        await this.user.keyboard('[Enter]');
-      } else {
-        await pressElement(this.user, row, interactionType);
-      }
+    if (typeof row === 'string' || typeof row === 'number') {
+      row = this.findRow({rowIndexOrText: row});
     }
-  };
+
+    if (!row) {
+      throw new Error('Target row not found in the table.');
+    }
+
+    if (needsDoubleClick) {
+      await this.user.dblClick(row);
+    } else if (interactionType === 'keyboard') {
+      // TODO: add keyboard navigation instead of focusing the row directly. Will need to consider if the focus in in the columns
+      act(() => row.focus());
+      await this.user.keyboard('[Enter]');
+    } else {
+      await pressElement(this.user, row, interactionType);
+    }
+  }
 
   // TODO: should there be utils for drag and drop and column resizing? For column resizing, I'm not entirely convinced that users will be doing that in their tests.
   // For DnD, it might be tricky to do for keyboard DnD since we wouldn't know what valid drop zones there are... Similarly, for simulating mouse drag and drop the coordinates depend
   // on the mocks the user sets up for their row height/etc.
   // Additionally, should we also support keyboard navigation/typeahead? Those felt like they could be very easily replicated by the user via user.keyboard already and don't really
   // add much value if we provide that to them
-
-  toggleSelectAll = async (opts: {interactionType?: UserOpts['interactionType']} = {}) => {
+  /**
+   * Toggle selection for all rows in the table. Defaults to using the interaction type set on the table tester.
+   */
+  async toggleSelectAll(opts: {interactionType?: UserOpts['interactionType']} = {}) {
     let {
       interactionType = this._interactionType
     } = opts;
@@ -196,30 +236,35 @@ export class TableTester {
     } else {
       await pressElement(this.user, checkbox, interactionType);
     }
-  };
+  }
 
-  findRow = (opts: {index?: number, text?: string} = {}) => {
+  /**
+   * Returns a row matching the specified index or text content.
+   */
+  findRow(opts: {rowIndexOrText: number | string}): HTMLElement {
     let {
-      index,
-      text
+      rowIndexOrText
     } = opts;
 
     let row;
     let rows = this.rows;
     let bodyRowGroup = this.rowGroups[1];
-    if (index != null) {
-      row = rows[index];
-    } else if (text != null) {
-      row = within(bodyRowGroup).getByText(text);
+    if (typeof rowIndexOrText === 'number') {
+      row = rows[rowIndexOrText];
+    } else if (typeof rowIndexOrText === 'string') {
+      row = within(bodyRowGroup).getByText(rowIndexOrText);
       while (row && row.getAttribute('role') !== 'row') {
         row = row.parentElement;
       }
     }
 
     return row;
-  };
+  }
 
-  findCell = (opts: {text: string}) => {
+  /**
+   * Returns a cell matching the specified text content.
+   */
+  findCell(opts: {text: string}) {
     let {
       text
     } = opts;
@@ -236,38 +281,58 @@ export class TableTester {
     }
 
     return cell;
-  };
+  }
 
-  get table() {
+  /**
+   * Returns the table.
+   */
+  get table(): HTMLElement {
     return this._table;
   }
 
-  get rowGroups() {
+  /**
+   * Returns the row groups within the table.
+   */
+  get rowGroups(): HTMLElement[] {
     let table = this._table;
     return table ? within(table).queryAllByRole('rowgroup') : [];
   }
 
-  get columns() {
+  /**
+   * Returns the columns within the table.
+   */
+  get columns(): HTMLElement[] {
     let headerRowGroup = this.rowGroups[0];
     return headerRowGroup ? within(headerRowGroup).queryAllByRole('columnheader') : [];
   }
 
-  get rows() {
+  /**
+   * Returns the rows within the table if any.
+   */
+  get rows(): HTMLElement[] {
     let bodyRowGroup = this.rowGroups[1];
     return bodyRowGroup ? within(bodyRowGroup).queryAllByRole('row') : [];
   }
 
-  get selectedRows() {
+  /**
+   * Returns the currently selected rows within the table if any.
+   */
+  get selectedRows(): HTMLElement[] {
     return this.rows.filter(row => row.getAttribute('aria-selected') === 'true');
   }
 
-  get rowHeaders() {
-    let table = this.table;
-    return table ? within(table).queryAllByRole('rowheader') : [];
+  /**
+   * Returns the row headers within the table if any.
+   */
+  get rowHeaders(): HTMLElement[] {
+    return within(this.table).queryAllByRole('rowheader');
   }
 
-  get cells() {
-    let table = this.table;
-    return table ? within(table).queryAllByRole('gridcell') : [];
+  /**
+   * Returns the cells within the table if any. Can be filtered against a specific row if provided via `element`.
+   */
+  cells(opts: {element?: HTMLElement} = {}): HTMLElement[] {
+    let {element = this.table} = opts;
+    return within(element).queryAllByRole('gridcell');
   }
 }

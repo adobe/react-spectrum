@@ -152,7 +152,7 @@ export const PublishAndExport: Story = {
   },
   args: {
     selectionMode: 'none',
-    selectedKeys: ['quick-export'],
+    selectedKeys: ['share'],
     disabledKeys: ['livestream']
   }
 };

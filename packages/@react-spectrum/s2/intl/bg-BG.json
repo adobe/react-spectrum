@@ -1,5 +1,9 @@
 {
-  "breadcrumbs.more": "Още елементи",
+  "actionbar.actions": "Действия",
+  "actionbar.actionsAvailable": "Налични действия.",
+  "actionbar.clearSelection": "Изчистване на избора",
+  "actionbar.selected": "{count, plural, =0 {Няма избрани} one {# избран} other {# избрани}}",
+  "actionbar.selectedAll": "Всички избрани",
   "button.pending": "недовършено",
   "contextualhelp.help": "Помощ",
   "contextualhelp.info": "Информация",
@@ -24,5 +28,6 @@
   "tag.actions": "Действия",
   "tag.hideButtonLabel": "Показване на по-малко",
   "tag.noTags": "Нито един",
-  "tag.showAllButtonLabel": "Показване на всички ({tagCount, number})"
+  "tag.showAllButtonLabel": "Показване на всички ({tagCount, number})",
+  "breadcrumbs.more": "Още елементи"
 }

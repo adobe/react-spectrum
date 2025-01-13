@@ -66,7 +66,8 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
     maxValue,
     selectionAlignment,
     isDateUnavailable,
-    pageBehavior = 'visible'
+    pageBehavior = 'visible',
+    firstDayOfWeek
   } = props;
   let calendar = useMemo(() => createCalendar(resolvedOptions.calendar), [createCalendar, resolvedOptions.calendar]);
 
@@ -326,15 +327,14 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
       return isSameDay(next, endDate) || this.isInvalid(next);
     },
     getDatesInWeek(weekIndex, from = startDate) {
-      // let date = startOfWeek(from, locale);
       let date = from.add({weeks: weekIndex});
       let dates: (CalendarDate | null)[] = [];
 
-      date = startOfWeek(date, locale);
-
+      date = startOfWeek(date, locale, firstDayOfWeek);
+      
       // startOfWeek will clamp dates within the calendar system's valid range, which may
       // start in the middle of a week. In this case, add null placeholders.
-      let dayOfWeek = getDayOfWeek(date, locale);
+      let dayOfWeek = getDayOfWeek(date, locale, firstDayOfWeek);
       for (let i = 0; i < dayOfWeek; i++) {
         dates.push(null);
       }

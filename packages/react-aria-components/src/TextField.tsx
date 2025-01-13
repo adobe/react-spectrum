@@ -13,7 +13,7 @@
 import {AriaTextFieldProps, useTextField} from 'react-aria';
 import {ContextValue, DOMProps, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {FormContext} from './Form';
 import {forwardRefType} from '@react-types/shared';
 import {InputContext} from './Input';
@@ -60,6 +60,7 @@ export const TextField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let inputRef = useRef(null);
+  let [inputContextProps, mergedInputRef] = useContextProps({}, inputRef, InputContext);
   let [labelRef, label] = useSlot();
   let [inputElementType, setInputElementType] = useState('input');
   let {labelProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useTextField<any>({
@@ -67,16 +68,16 @@ export const TextField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
     inputElementType,
     label,
     validationBehavior
-  }, inputRef);
+  }, mergedInputRef);
 
   // Intercept setting the input ref so we can determine what kind of element we have.
   // useTextField uses this to determine what props to include.
   let inputOrTextAreaRef = useCallback((el) => {
-    inputRef.current = el;
+    mergedInputRef.current = el;
     if (el) {
       setInputElementType(el instanceof HTMLTextAreaElement ? 'textarea' : 'input');
     }
-  }, []);
+  }, [mergedInputRef]);
 
   let renderProps = useRenderProps({
     ...props,
@@ -105,7 +106,7 @@ export const TextField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],
-          [InputContext, {...inputProps, ref: inputOrTextAreaRef}],
+          [InputContext, {...mergeProps(inputProps, inputContextProps), ref: inputOrTextAreaRef}],
           [TextAreaContext, {...inputProps, ref: inputOrTextAreaRef}],
           [TextContext, {
             slots: {

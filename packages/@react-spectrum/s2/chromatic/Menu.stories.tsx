@@ -26,35 +26,32 @@ const meta: Meta<typeof Menu> = {
 
 export default meta;
 
-export const Default = {...Example};
-
-Default.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  await userEvent.keyboard('{ArrowDown}');
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('menu');
+export const Default = {
+  ...Example,
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowDown}');
+    let body = canvasElement.ownerDocument.body;
+    await within(body).findByRole('menu');
+  }
 };
 
-export const WithKeyboardShortcuts = {...KeyboardShortcuts};
-
-WithKeyboardShortcuts.play = async (context) => {
-  await Default.play!(context);
+export const WithKeyboardShortcuts = {
+  ...KeyboardShortcuts,
+  play: async (context) => await Default.play!(context)
 };
 
-export const WithIcons = {...PublishAndExport};
-
-WithIcons.play = async (context) => {
-  await Default.play!(context);
+export const WithIcons = {
+  ...PublishAndExport,
+  play: async (context) => await Default.play!(context)
 };
 
-export const WithImages = {...BlendModes};
-
-WithImages.play = async (context) => {
-  await Default.play!(context);
+export const WithImages = {
+  ...BlendModes,
+  play: async (context) => await Default.play!(context)
 };
 
-export const Dynamic = {...DynamicExample};
-
-Dynamic.play = async (context) => {
-  await Default.play!(context);
+export const Dynamic = {
+  ...DynamicExample,
+  play: async (context) => await Default.play!(context)
 };

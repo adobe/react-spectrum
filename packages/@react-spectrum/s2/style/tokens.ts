@@ -52,6 +52,36 @@ export function simpleColorScale<S extends string>(scale: S): Record<Extract<key
   return res;
 }
 
+function extractOpacity(color: string): number {
+  return Number(color.match(/^rgba\(\d+, \d+, \d+, ([.\d]+)\)$/)?.[1] ?? 1);
+}
+
+/** 
+ * This swaps between white or black based on the background color.
+ * After testing against all RGB background colors, 49.44 minimizes the number of WCAG 4.5:1 contrast failures.
+ */
+export function autoStaticColor(bg = 'var(--s2-container-bg)', alpha = 1) {
+  return `lch(from ${bg} calc((49.44 - l) * infinity) 0 0 / ${alpha})`;
+}
+
+export function generateOverlayColorScale(bg = 'var(--s2-container-bg)') {
+  return {
+    'transparent-overlay-25': autoStaticColor(bg, extractOpacity(getToken('transparent-white-25'))),
+    'transparent-overlay-50': autoStaticColor(bg, extractOpacity(getToken('transparent-white-50'))),
+    'transparent-overlay-75': autoStaticColor(bg, extractOpacity(getToken('transparent-white-75'))),
+    'transparent-overlay-100': autoStaticColor(bg, extractOpacity(getToken('transparent-white-100'))),
+    'transparent-overlay-200': autoStaticColor(bg, extractOpacity(getToken('transparent-white-200'))),
+    'transparent-overlay-300': autoStaticColor(bg, extractOpacity(getToken('transparent-white-300'))),
+    'transparent-overlay-400': autoStaticColor(bg, extractOpacity(getToken('transparent-white-400'))),
+    'transparent-overlay-500': autoStaticColor(bg, extractOpacity(getToken('transparent-white-500'))),
+    'transparent-overlay-600': autoStaticColor(bg, extractOpacity(getToken('transparent-white-600'))),
+    'transparent-overlay-700': autoStaticColor(bg, extractOpacity(getToken('transparent-white-700'))),
+    'transparent-overlay-800': autoStaticColor(bg, extractOpacity(getToken('transparent-white-800'))),
+    'transparent-overlay-900': autoStaticColor(bg, extractOpacity(getToken('transparent-white-900'))),
+    'transparent-overlay-1000': autoStaticColor(bg, extractOpacity(getToken('transparent-white-1000')))
+  };
+}
+
 function pxToRem(px: string | number) {
   if (typeof px === 'string') {
     px = parseFloat(px);

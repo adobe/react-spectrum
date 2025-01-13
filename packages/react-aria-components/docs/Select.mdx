@@ -12,7 +12,8 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import statelyDocs from 'docs:@react-stately/select';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
+import selectUtil from 'docs:@react-aria/test-utils/src/select.ts';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI, VersionBadge} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from './SelectAnatomy.svg';
@@ -1237,3 +1238,36 @@ knowing that we manage the focus in this way and thus throw this false positive.
 To facilitate the suppression of this false positive, the `data-a11y-ignore="aria-hidden-focus"` data attribute is automatically applied to the
 problematic element and references the relevant `AXE` rule. Please use this data attribute to target the problematic element and exclude it
 from your automated accessibility tests as shown [here](./accessibility.html#false-positives).
+
+## Testing
+
+### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+`@react-aria/test-utils` offers common select interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
+in your tests. Below is the full definition of the select tester and a sample of how you could use it in your test suite.
+
+```ts
+// Select.test.ts
+import {render} from '@testing-library/react';
+import {User} from '@react-aria/test-utils';
+
+let testUtilUser = new User({interactionType: 'mouse'});
+// ...
+
+it('Select can select an option via keyboard', async function () {
+  // Render your test component/app and initialize the select tester
+  let {getByTestId} = render(
+    <Select data-testid="test-select">
+     ...
+    </Select>
+  );
+  let selectTester = testUtilUser.createTester('Select', {root: getByTestId('test-select'), interactionType: 'keyboard'});
+  let trigger = selectTester.trigger;
+  expect(trigger).toHaveTextContent('Select an item');
+
+  await selectTester.selectOption({option: 'Cat'});
+  expect(trigger).toHaveTextContent('Cat');
+});
+```
+
+<ClassAPI links={selectUtil.links} class={selectUtil.exports.SelectTester} />
