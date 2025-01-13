@@ -19,6 +19,7 @@ import React from 'react';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import {useAsyncList} from '@react-stately/data';
+import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let withSection = [
@@ -69,6 +70,7 @@ function renderComponent(props) {
 describe('ListBox', function () {
   let offsetWidth, offsetHeight, scrollHeight;
   let onSelectionChange = jest.fn();
+  let testUtilUser = new User();
 
   beforeAll(function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
@@ -89,11 +91,12 @@ describe('ListBox', function () {
 
   it('renders properly', function () {
     let tree = renderComponent();
-    let listbox = tree.getByRole('listbox');
+    let listboxTester = testUtilUser.createTester('ListBox', {root: tree.getByRole('listbox')});
+    let listbox = listboxTester.listbox;
     expect(listbox).toBeTruthy();
     expect(listbox).toHaveAttribute('aria-labelledby', 'label');
 
-    let sections = within(listbox).getAllByRole('group');
+    let sections = listboxTester.sections;
     expect(sections.length).toBe(withSection.length);
 
     for (let section of sections) {
@@ -110,28 +113,22 @@ describe('ListBox', function () {
       }
     }
 
-    let items = within(listbox).getAllByRole('option');
-    expect(items.length).toBe(withSection.reduce((acc, curr) => (acc + curr.children.length), 0));
+    let options = listboxTester.options();
+    expect(options.length).toBe(withSection.reduce((acc, curr) => (acc + curr.children.length), 0));
     let i = 1;
-    for (let item of items) {
-      expect(item).toHaveAttribute('tabindex');
-      expect(item).not.toHaveAttribute('aria-selected');
-      expect(item).not.toHaveAttribute('aria-disabled');
-      expect(item).toHaveAttribute('aria-posinset', '' + i++);
-      expect(item).toHaveAttribute('aria-setsize');
+    for (let option of options) {
+      expect(option).toHaveAttribute('tabindex');
+      expect(option).not.toHaveAttribute('aria-selected');
+      expect(option).not.toHaveAttribute('aria-disabled');
+      expect(option).toHaveAttribute('aria-posinset', '' + i++);
+      expect(option).toHaveAttribute('aria-setsize');
     }
-    let item1 = within(listbox).getByText('Foo');
-    let item2 = within(listbox).getByText('Bar');
-    let item3 = within(listbox).getByText('Baz');
-    let item4 = within(listbox).getByText('Blah');
-    let item5 = within(listbox).getByText('Bleh');
 
-    expect(item1).toBeTruthy();
-    expect(item2).toBeTruthy();
-    expect(item3).toBeTruthy();
-    expect(item4).toBeTruthy();
-    expect(item5).toBeTruthy();
-    expect(item3).toBeTruthy();
+    expect(listboxTester.findOption({optionIndexOrText: 'Foo'})).toBeTruthy();
+    expect(listboxTester.findOption({optionIndexOrText: 'Bar'})).toBeTruthy();
+    expect(listboxTester.findOption({optionIndexOrText: 'Baz'})).toBeTruthy();
+    expect(listboxTester.findOption({optionIndexOrText: 'Blah'})).toBeTruthy();
+    expect(listboxTester.findOption({optionIndexOrText: 'Bleh'})).toBeTruthy();
   });
 
   it('renders with falsy id', function () {
@@ -190,30 +187,32 @@ describe('ListBox', function () {
   });
 
   describe('supports single selection', function () {
-    it('supports defaultSelectedKeys (uncontrolled)', function () {
-      // Check that correct menu item is selected by default
+    it('supports defaultSelectedKeys (uncontrolled)', async function () {
+      // Check that correct listbox item is selected by default
       let tree = renderComponent({onSelectionChange, defaultSelectedKeys: ['Blah'], autoFocus: 'first', selectionMode: 'single'});
-      let listbox = tree.getByRole('listbox');
-      let options = within(listbox).getAllByRole('option');
-      let selectedItem = options[3];
-      expect(selectedItem).toBe(document.activeElement);
-      expect(selectedItem).toHaveAttribute('aria-selected', 'true');
-      expect(selectedItem).toHaveAttribute('tabindex', '0');
-      let itemText = within(selectedItem).getByText('Blah');
+      let listboxTester = testUtilUser.createTester('ListBox', {root: tree.getByRole('listbox')});
+
+      let selectedOptions = listboxTester.selectedOptions;
+      expect(selectedOptions).toHaveLength(1);
+      expect(selectedOptions[0]).toBe(document.activeElement);
+      expect(selectedOptions[0]).toHaveAttribute('aria-selected', 'true');
+      expect(selectedOptions[0]).toHaveAttribute('tabindex', '0');
+      let itemText = within(selectedOptions[0]).getByText('Blah');
       expect(itemText).toBeTruthy();
-      let checkmark = within(selectedItem).getByRole('img', {hidden: true});
+      let checkmark = within(selectedOptions[0]).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
 
-      // Select a different menu item via enter
-      let nextSelectedItem = options[4];
-      fireEvent.keyDown(nextSelectedItem, {key: 'Enter', code: 13, charCode: 13});
-      expect(nextSelectedItem).toHaveAttribute('aria-selected', 'true');
-      itemText = within(nextSelectedItem).getByText('Bleh');
+      // Select a different listbox item via enter
+      await listboxTester.toggleOptionSelection({option: 4, interactionType: 'keyboard'});
+      selectedOptions = listboxTester.selectedOptions;
+      expect(selectedOptions[0]).toHaveAttribute('aria-selected', 'true');
+      itemText = within(selectedOptions[0]).getByText('Bleh');
       expect(itemText).toBeTruthy();
-      checkmark = within(nextSelectedItem).getByRole('img', {hidden: true});
+      checkmark = within(selectedOptions[0]).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
+      expect(selectedOptions).toHaveLength(1);
 
-      // Make sure there is only a single checkmark in the entire menu
+      // Make sure there is only a single checkmark in the entire listbox
       let checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(1);
 
@@ -251,16 +250,15 @@ describe('ListBox', function () {
       expect(onSelectionChange.mock.calls[0][0].has('Bleh')).toBeTruthy();
     });
 
-    it('supports using space key to change item selection', function () {
+    it('supports using space key to change item selection', async function () {
       let tree = renderComponent({onSelectionChange, selectionMode: 'single'});
-      let listbox = tree.getByRole('listbox');
-      let options = within(listbox).getAllByRole('option');
+      let listboxTester = testUtilUser.createTester('ListBox', {root: tree.getByRole('listbox')});
 
       // Trigger a menu item via space
-      let item = options[4];
-      fireEvent.keyDown(item, {key: ' ', code: 32, charCode: 32});
-      expect(item).toHaveAttribute('aria-selected', 'true');
-      let checkmark = within(item).getByRole('img', {hidden: true});
+      let options = listboxTester.options();
+      await listboxTester.toggleOptionSelection({option: 4, keyboardActivation: 'Space', interactionType: 'keyboard'});
+      expect(options[4]).toHaveAttribute('aria-selected', 'true');
+      let checkmark = within(options[4]).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
 
       // Make sure there is only a single checkmark in the entire menu
@@ -762,16 +760,16 @@ describe('ListBox', function () {
   it('should handle when an item changes sections', function () {
     let sections = [
       {
-        id: 'foo',
-        title: 'Foo',
+        id: 'sect1',
+        title: 'Section 1',
         children: [
           {id: 'foo-1', title: 'Foo 1'},
           {id: 'foo-2', title: 'Foo 2'}
         ]
       },
       {
-        id: 'bar',
-        title: 'Bar',
+        id: 'sect2',
+        title: 'Section 2',
         children: [
           {id: 'bar-1', title: 'Bar 1'},
           {id: 'bar-2', title: 'Bar 2'}
@@ -793,9 +791,12 @@ describe('ListBox', function () {
       );
     }
 
-    let {getByText, rerender} = render(<Example sections={sections} />);
-    let item = getByText('Foo 1');
-    expect(document.getElementById(item.closest('[role=group]').getAttribute('aria-labelledby'))).toHaveTextContent('Foo');
+    let {rerender, getByRole, getByLabelText} = render(<Example sections={sections} />);
+    let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
+    let item = listboxTester.findOption({optionIndexOrText: 'Foo 1'});
+    let listboxSections = listboxTester.sections;
+    expect(listboxTester.options({element: listboxSections[0]})).toContain(item);
+    expect(listboxSections[0]).toBe(getByLabelText('Section 1'));
 
     let sections2 = [
       {
@@ -809,8 +810,11 @@ describe('ListBox', function () {
     ];
 
     rerender(<Example sections={sections2} />);
-    item = getByText('Foo 1');
-    expect(document.getElementById(item.closest('[role=group]').getAttribute('aria-labelledby'))).toHaveTextContent('Bar');
+    listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
+    item = listboxTester.findOption({optionIndexOrText: 'Foo 1'});
+    listboxSections = listboxTester.sections;
+    expect(listboxTester.options({element: listboxSections[1]})).toContain(item);
+    expect(listboxSections[1]).toBe(getByLabelText('Section 2'));
   });
 
   describe('async loading', function () {
