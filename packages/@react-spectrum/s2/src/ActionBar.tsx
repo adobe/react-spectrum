@@ -19,23 +19,12 @@ import {DOMRef, DOMRefValue, Key} from '@react-types/shared';
 import {FocusScope, useKeyboard} from 'react-aria';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {useControlledState} from '@react-stately/utils';
 import {useDOMRef} from '@react-spectrum/utils';
-import {useExitAnimation, useResizeObserver} from '@react-aria/utils';
+import {useEnterAnimation, useExitAnimation, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-
-const slideIn = keyframes(`
-  from { transform: translateY(100%); opacity: 0 }
-  to { transform: translateY(0px); opacity: 1 }
-`);
-
-const slideOut = keyframes(`
-  from { transform: translateY(0px); opacity: 1 }
-  to { transform: translateY(100%); opacity: 0 }
-`);
 
 const actionBarStyles = style({
   borderRadius: 'lg',
@@ -77,11 +66,16 @@ const actionBarStyles = style({
   },
   marginX: 'auto',
   maxWidth: 960,
-  animation: {
-    isInContainer: slideIn,
-    isExiting: slideOut
+  transition: 'default',
+  transitionDuration: 200,
+  translateY: {
+    isEntering: 'full',
+    isExiting: 'full'
   },
-  animationDuration: 200
+  opacity: {
+    isEntering: 0,
+    isExiting: 0
+  }
 });
 
 export interface ActionBarProps extends SlotProps {
@@ -158,12 +152,15 @@ const ActionBarInner = forwardRef(function ActionBarInner(props: ActionBarProps 
     }
   }, [stringFormatter, scrollRef]);
 
+  let objectRef = useObjectRef(ref);
+  let isEntering = useEnterAnimation(objectRef, !!scrollRef);
+
   return (
     <FocusScope restoreFocus>
       <div
-        ref={ref}
+        ref={objectRef}
         {...keyboardProps}
-        className={actionBarStyles({isEmphasized, isInContainer: !!scrollRef, isExiting})}
+        className={actionBarStyles({isEmphasized, isInContainer: !!scrollRef, isEntering, isExiting})}
         style={{insetInlineEnd: `calc(var(--insetEnd) + ${scrollbarWidth}px)`}}>
         <div className={style({order: 1, marginStart: 'auto'})}>
           <ActionButtonGroup

@@ -240,11 +240,51 @@ With this configured, all states for React Aria Components can be accessed with 
 
 ## Animation
 
-React Aria Components support [CSS keyframe animations](https://developer.mozilla.org/en-US/docs/Web/CSS/@keyframes), and work with JavaScript animation libraries like [Framer Motion](https://www.framer.com/motion/).
+React Aria Components supports both [CSS transitions](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_transitions/Using_CSS_transitions) and [keyframe animations](https://developer.mozilla.org/en-US/docs/Web/CSS/@keyframes), and works with JavaScript animation libraries like [Framer Motion](https://www.framer.com/motion/).
+
+### CSS transitions
+
+Overlay components such as [Popover](Popover.html) and [Modal](Modal.html) support entry and exit animations via the `[data-entering]` and `[data-exiting]` states, or via the corresponding render prop functions.
+
+* `[data-entering]` represents the starting state of the entry animation. The component will transition from the entering state to the default state when it opens.
+* `[data-exiting]` represents the ending state of the exit animation. The component will transition from the default state to the exiting state and wait for any animations to complete before being removed from the DOM.
+
+```css render=false
+.react-aria-Popover {
+  transition: opacity 300ms;
+
+  &[data-entering],
+  &[data-exiting] {
+    opacity: 0;
+  }
+}
+```
+
+Note that the `[data-entering]` state is only applied for one frame when using CSS transitions. The transition itself should be assigned in the default state. To create a different exit animation, assign the transition in the `[data-exiting]` state.
+
+```css render=false
+.react-aria-Popover {
+  /* entry transition */
+  transition: transform 300ms, opacity 300ms;
+
+  /* starting state of the entry transition */
+  &[data-entering] {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  &[data-exiting] {
+    /* exit transition */
+    transition: opacity 150ms;
+    /* ending state of the exit transition */
+    opacity: 0;
+  }
+}
+```
 
 ### CSS animations
 
-Overlay components such as [Popover](Popover.html) and [Modal](Modal.html) support entry and exit animations via the `[data-entering]` and `[data-exiting]` states, or via the corresponding render prop functions. You can use these states to apply CSS keyframe animations. These components will automatically wait for any exit animations to complete before they are removed from the DOM.
+For more complex animations, you can also apply CSS keyframe animations using the same `[data-entering]` and `[data-exiting]` states.
 
 ```css render=false
 .react-aria-Popover[data-entering] {
@@ -267,6 +307,8 @@ Overlay components such as [Popover](Popover.html) and [Modal](Modal.html) suppo
   }
 }
 ```
+
+Note that unlike CSS transitions, keyframe animations are not interruptible. If the user opens and closes an overlay quickly, the animation may appear to jump to the ending state before the next animation starts.
 
 ### Tailwind CSS
 
