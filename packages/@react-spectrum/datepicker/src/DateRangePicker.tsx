@@ -138,6 +138,7 @@ export const DateRangePicker = React.forwardRef(function DateRangePicker<T exten
         {...mergeProps(groupProps, hoverProps, focusProps)}
         className={className}
         ref={targetRef}>
+        <div style={{overflow: 'hidden'}}>
         <Input
           isDisabled={isDisabled}
           isQuiet={isQuiet}
@@ -220,6 +221,7 @@ export const DateRangePicker = React.forwardRef(function DateRangePicker<T exten
             </Content>
           </Dialog>
         </DialogTrigger>
+        </div>
       </div>
     </Field>
   );
