@@ -605,6 +605,14 @@ let CollapsingTabs = ({collection, containerRef, ...props}: {collection: Collect
     }
   }, [collection.size, updateOverflow]);
 
+  let prevOrientation = useRef(orientation);
+  useLayoutEffect(() => {
+    if (collection.size > 0 && prevOrientation.current !== orientation) {
+      updateOverflow();
+    }
+    prevOrientation.current = orientation;
+  }, [collection.size, updateOverflow, orientation]);
+
   useEffect(() => {
     // Recalculate visible tags when fonts are loaded.
     document.fonts?.ready.then(() => updateOverflow());
