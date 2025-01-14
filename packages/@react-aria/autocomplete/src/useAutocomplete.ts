@@ -35,9 +35,7 @@ export interface AriaAutocompleteProps extends AutocompleteProps {
 
 export interface AriaAutocompleteOptions extends Omit<AriaAutocompleteProps, 'children'> {
   /** The ref for the wrapped collection element. */
-  collectionRef: RefObject<HTMLElement | null>,
-  /** The ref for the wrapped input element. */
-  inputRef: RefObject<HTMLInputElement | null>
+  collectionRef: RefObject<HTMLElement | null>
 }
 
 export interface AutocompleteAria {
@@ -60,8 +58,7 @@ export interface AutocompleteAria {
 export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: AutocompleteState): AutocompleteAria {
   let {
     collectionRef,
-    filter,
-    inputRef
+    filter
   } = props;
 
   let collectionId = useId();
@@ -150,8 +147,10 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
     state.setInputValue(value);
   };
 
+  let keyDownTarget = useRef<Element | null>(null);
   // For textfield specific keydown operations
   let onKeyDown = (e: BaseEvent<ReactKeyboardEvent<any>>) => {
+    keyDownTarget.current = e.target as Element;
     if (e.nativeEvent.isComposing) {
       return;
     }
@@ -228,7 +227,7 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
     // Dispatch simulated key up events for things like triggering links in listbox
     // Make sure to stop the propagation of the input keyup event so that the simulated keyup/down pair
     // is detected by usePress instead of the original keyup originating from the input
-    if (e.target === inputRef.current) {
+    if (e.target === keyDownTarget.current) {
       e.stopImmediatePropagation();
       if (state.focusedNodeId == null) {
         collectionRef.current?.dispatchEvent(
@@ -248,7 +247,7 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
     return () => {
       document.removeEventListener('keyup', onKeyUpCapture, true);
     };
-  }, [inputRef, onKeyUpCapture]);
+  }, [onKeyUpCapture]);
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/autocomplete');
   let collectionProps = useLabels({
