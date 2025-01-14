@@ -24,7 +24,6 @@ import {ColorScheme} from '@react-types/provider';
 import {ColorSchemeContext} from './Provider';
 import {createContext, forwardRef, MutableRefObject, ReactNode, useCallback, useContext, useState} from 'react';
 import {DOMRef} from '@react-types/shared';
-import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 
@@ -43,18 +42,6 @@ export interface TooltipProps extends Omit<AriaTooltipProps, 'children' | 'class
   /** The content of the tooltip. */
   children?: ReactNode
 }
-
-const slide = keyframes(`
-  from {
-    transform: translate(var(--originX), var(--originY));
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-`);
 
 const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | 'light dark' | null}>({
   ...colorScheme(),
@@ -82,42 +69,38 @@ const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | 'light da
   paddingX: 'edge-to-text',
   paddingY: centerPadding(),
   margin: 8,
-  animation: {
-    isEntering: slide,
-    isExiting: slide
-  },
-  animationDuration: {
-    isEntering: 200,
-    isExiting: 200
-  },
-  animationDirection: {
-    isEntering: 'normal',
-    isExiting: 'reverse'
-  },
-  animationTimingFunction: {
+  transition: 'default',
+  transitionDuration: 200,
+  transitionTimingFunction: {
     isExiting: 'in'
   },
-  '--originX': {
-    type: 'marginTop',
-    value: {
-      placement: {
-        top: 0,
-        bottom: 0,
-        left: 4,
-        right: -4
+  translateX: {
+    placement: {
+      left: {
+        isEntering: 4,
+        isExiting: 4
+      },
+      right: {
+        isEntering: -4,
+        isExiting: -4
       }
     }
   },
-  '--originY': {
-    type: 'marginTop',
-    value: {
-      placement: {
-        top: 4,
-        bottom: -4,
-        left: 0,
-        right: -0
+  translateY: {
+    placement: {
+      top: {
+        isEntering: 4,
+        isExiting: 4
+      },
+      bottom: {
+        isEntering: -4,
+        isExiting: -4
       }
     }
+  },
+  opacity: {
+    isEntering: 0,
+    isExiting: 0
   }
 });
 
