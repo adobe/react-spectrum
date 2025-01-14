@@ -42,7 +42,9 @@ export interface AriaTextFieldProps<T = HTMLInputElement> extends TextFieldProps
    */
   'aria-autocomplete'?: 'none' | 'inline' | 'list' | 'both',
   /** Indicates the availability and type of interactive popup element, such as menu or dialog, that can be triggered by an element. */
-  'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog'
+  'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog',
+  /** Identifies the element (or elements) whose contents or presence are controlled by the current element. */
+  'aria-controls'?: string
 }
 
 interface SpectrumTextFieldBaseProps {

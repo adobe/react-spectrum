@@ -14,9 +14,9 @@ import {AriaLabelingProps, BaseEvent, DOMProps, RefObject} from '@react-types/sh
 import {AriaTextFieldProps} from '@react-aria/textfield';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
 import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, isCtrlKeyPressed, mergeProps, mergeRefs, UPDATE_ACTIVEDESCENDANT, useEffectEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
-import {InputHTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef} from 'react';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface CollectionOptions extends DOMProps, AriaLabelingProps {
@@ -41,8 +41,6 @@ export interface AriaAutocompleteOptions extends Omit<AriaAutocompleteProps, 'ch
 }
 
 export interface AutocompleteAria {
-  /** Props for the autocomplete input element. */
-  inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the autocomplete textfield/searchfield element. These should be passed to the textfield/searchfield aria hooks respectively. */
   textFieldProps: AriaTextFieldProps,
   /** Props for the collection, to be passed to collection's respective aria hook (e.g. useMenu). */
@@ -261,7 +259,10 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
   }, [state.inputValue, filter]);
 
   return {
-    inputProps: {
+    textFieldProps: {
+      value: state.inputValue,
+      onChange,
+      onKeyDown,
       autoComplete: 'off',
       'aria-haspopup': 'listbox',
       'aria-controls': collectionId,
@@ -272,11 +273,6 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
       autoCorrect: 'off',
       // This disable's the macOS Safari spell check auto corrections.
       spellCheck: 'false'
-    },
-    textFieldProps: {
-      value: state.inputValue,
-      onChange,
-      onKeyDown
     },
     collectionProps: mergeProps(collectionProps, {
       // TODO: shouldFocusOnHover? shouldFocusWrap? Should it be up to the wrapped collection?

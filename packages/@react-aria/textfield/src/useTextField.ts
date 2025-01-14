@@ -174,6 +174,7 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
         'aria-activedescendant': props['aria-activedescendant'],
         'aria-autocomplete': props['aria-autocomplete'],
         'aria-haspopup': props['aria-haspopup'],
+        'aria-controls': props['aria-controls'],
         value,
         onChange: (e: ChangeEvent<HTMLInputElement>) => setValue(e.target.value),
         autoComplete: props.autoComplete,
@@ -183,6 +184,8 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
         name: props.name,
         placeholder: props.placeholder,
         inputMode: props.inputMode,
+        autoCorrect: props.autoCorrect,
+        spellCheck: props.spellCheck,
 
         // Clipboard events
         onCopy: props.onCopy,

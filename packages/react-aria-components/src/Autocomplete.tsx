@@ -45,7 +45,6 @@ export function UNSTABLE_Autocomplete(props: AutocompleteProps) {
   let inputRef = useRef<HTMLInputElement>(null);
 
   let {
-    inputProps,
     textFieldProps,
     collectionProps,
     collectionRef: mergedCollectionRef,
@@ -63,7 +62,7 @@ export function UNSTABLE_Autocomplete(props: AutocompleteProps) {
         [UNSTABLE_AutocompleteStateContext, state],
         [SearchFieldContext, {...textFieldProps}],
         [TextFieldContext, {...textFieldProps}],
-        [InputContext, {...inputProps, ref: inputRef}],
+        [InputContext, {ref: inputRef}],
         [UNSTABLE_InternalAutocompleteContext, {
           filterFn,
           collectionProps,
