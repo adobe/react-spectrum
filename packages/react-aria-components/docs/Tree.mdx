@@ -11,11 +11,12 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI, VersionBadge} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {InlineAlert, Content, Heading} from '@adobe/react-spectrum';
+import treeUtils from 'docs:@react-aria/test-utils/src/tree.ts';
 
 ---
 category: Collections
@@ -320,3 +321,43 @@ TreeItem also exposes a `--tree-item-level` CSS custom property, which you can u
   padding-left: calc((var(--tree-item-level) - 1) * 20px);
 }
 ```
+
+## Testing
+
+### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+`@react-aria/test-utils` offers common tree interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
+in your tests. Below is the full definition of the tree tester and a sample of how you could use it in your test suite.
+
+```ts
+// Tree.test.ts
+import {render, within} from '@testing-library/react';
+import {User} from '@react-aria/test-utils';
+
+let testUtilUser = new User({interactionType: 'mouse'});
+// ...
+
+it('Tree can select a row via keyboard', async function () {
+  // Render your test component/app and initialize the Tree tester
+  let {getByTestId} = render(
+     <Tree data-testid="test-tree">
+      ...
+    </Tree>
+  );
+  let treeTester = testUtilUser.createTester('Tree', {root: getByTestId('test-tree'), interactionType: 'keyboard'});
+
+  await treeTester.toggleRowSelection({row: 0});
+  expect(treeTester.selectedRows).toHaveLength(1);
+  expect(within(treeTester.rows[0]).getByRole('checkbox')).toBeChecked();
+
+  await treeTester.toggleRowSelection({row: 1});
+  expect(treeTester.selectedRows).toHaveLength(2);
+  expect(within(treeTester.rows[1]).getByRole('checkbox')).toBeChecked();
+
+  await treeTester.toggleRowSelection({row: 0});
+  expect(treeTester.selectedRows).toHaveLength(1);
+  expect(within(treeTester.rows[0]).getByRole('checkbox')).not.toBeChecked();
+});
+```
+
+<ClassAPI links={treeUtils.links} class={treeUtils.exports.TreeTester} />

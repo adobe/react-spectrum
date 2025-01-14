@@ -253,7 +253,7 @@ export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, f
   });
 
   let renderProps = useRenderProps({
-    ...props, // item.props? or is this correct and breadcrumbs are wrong?
+    ...props,
     id: undefined,
     children: item.rendered,
     defaultClassName: 'react-aria-Tab',

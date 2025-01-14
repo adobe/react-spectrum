@@ -9,7 +9,6 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
 import {
   PopoverProps as AriaPopoverProps,
   Select as AriaSelect,
@@ -56,11 +55,8 @@ import {useFocusableRef} from '@react-spectrum/utils';
 import {useFormProps} from './Form';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-
-
 export interface PickerStyleProps {
 }
-
 export interface PickerProps<T extends object> extends
   Omit<AriaSelectProps<T>, 'children' | 'style' | 'className'>,
   PickerStyleProps,
@@ -92,9 +88,7 @@ export interface PickerProps<T extends object> extends
      */
     labelBehavior?: 'show' | 'hide'
 }
-
 export const PickerContext = createContext<ContextValue<Partial<PickerProps<any>>, FocusableRefValue<HTMLButtonElement>>>(null);
-
 const inputButton = style({
   ...focusRing(),
   ...fieldInput(),
@@ -129,7 +123,6 @@ const inputButton = style({
   },
   boxSizing: 'border-box'
 });
-
 export let menu = style({
   outlineStyle: 'none',
   display: 'grid',
@@ -141,7 +134,6 @@ export let menu = style({
   fontFamily: 'sans',
   fontSize: 'control'
 });
-
 const valueStyles = style({
   flexGrow: 0,
   truncate: true,
@@ -149,7 +141,6 @@ const valueStyles = style({
   alignItems: 'center',
   height: 'full'
 });
-
 const iconStyles = style({
   flexShrink: 0,
   rotate: 90,
@@ -158,7 +149,6 @@ const iconStyles = style({
     value: 'currentColor'
   }
 });
-
 const iconCenterWrapper = style({
   display: 'flex',
   gridArea: 'icon',
@@ -168,9 +158,7 @@ const iconCenterWrapper = style({
     }
   }
 });
-
 let InsideSelectValueContext = createContext(false);
-
 function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLButtonElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, PickerContext);
@@ -188,10 +176,8 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
     ...pickerProps
   } = props;
   let isQuiet = true;
-
   const menuOffset: number = 6;
   const size = 'M';
-
   return (
     <AriaSelect
       {...pickerProps}
@@ -283,17 +269,14 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
     </AriaSelect>
   );
 }
-
 /**
  * Pickers allow users to choose a single option from a collapsible list of options when space is limited.
  */
 let _Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(Picker);
 export {_Picker as Picker};
-
 export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {
   children: ReactNode
 }
-
 export function PickerItem(props: PickerItemProps) {
   let ref = useRef(null);
   let isLink = props.href != null;
@@ -329,13 +312,11 @@ export function PickerItem(props: PickerItemProps) {
     </ListBoxItem>
   );
 }
-
 // A Context.Provider that only sets a value if not inside SelectValue.
 function DefaultProvider({context, value, children}: {context: React.Context<any>, value: any, children: any}) {
   let inSelectValue = useContext(InsideSelectValueContext);
   if (inSelectValue) {
     return children;
   }
-
   return <context.Provider value={value}>{children}</context.Provider>;
 }
