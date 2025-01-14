@@ -12,8 +12,9 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/tabs';
 import utilsDocs from 'docs:@react-aria/utils';
-import {HeaderInfo, PropTable, PageDescription, TypeLink} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription, TypeLink, ClassAPI, VersionBadge} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/tabs/package.json';
+import tabsUtils from 'docs:@react-aria/test-utils/src/tabs.ts';
 
 ```jsx import
 import {ActionGroup} from '@react-spectrum/actiongroup';
@@ -629,3 +630,45 @@ function Example() {
   </TabPanels>
 </Tabs>
 ```
+
+## Testing
+
+### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+Tabs features automatic tab collapse behavior and may need specific mocks to test said behavior. Please also refer to
+[React Spectrum's test suite](https://github.com/adobe/react-spectrum/blob/326f48154e301edab425c8198c5c3af72422462b/packages/%40react-spectrum/tabs/test/Tabs.test.js#L58-L62) if you
+run into any issues with your tests.
+
+`@react-spectrum/test-utils` offers common tabs interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
+in your tests. Below is the full definition of the tabs tester and a sample of how you could use it in your test suite.
+
+```ts
+// Tabs.test.ts
+import {render} from '@testing-library/react';
+import {theme} from '@react-spectrum/theme-default';
+import {User} from '@react-spectrum/test-utils';
+
+let testUtilUser = new User({interactionType: 'mouse'});
+// ...
+
+it('Tabs can change selection via keyboard', async function () {
+  // Render your test component/app and initialize the listbox tester
+  let {getByTestId} = render(
+    <Provider theme={defaultTheme}>
+      <Tabs data-testid="test-tabs">
+        ...
+      </Tabs>
+    </Provider>
+  );
+  let tabsTester = testUtilUser.createTester('Tabs', {root: getByTestId('test-tabs'), interactionType: 'keyboard'});
+
+  let tabs = tabsTester.tabs;
+  expect(tabsTester.selectedTab).toBe(tabs[0]);
+
+  await tabsTester.triggerTab({tab: 1});
+  expect(onSelectionChange).toBeCalledTimes(1);
+  expect(tabsTester.selectedTab).toBe(tabs[1]);
+});
+```
+
+<ClassAPI links={tabsUtils.links} class={tabsUtils.exports.TabsTester} />
