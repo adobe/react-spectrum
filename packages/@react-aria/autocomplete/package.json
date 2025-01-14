@@ -27,6 +27,7 @@
     "@react-aria/interactions": "^3.22.5",
     "@react-aria/listbox": "^3.13.6",
     "@react-aria/searchfield": "^3.7.11",
+    "@react-aria/textfield": "^3.15.0",
     "@react-aria/utils": "^3.26.0",
     "@react-stately/autocomplete": "3.0.0-alpha.1",
     "@react-stately/combobox": "^3.10.1",
