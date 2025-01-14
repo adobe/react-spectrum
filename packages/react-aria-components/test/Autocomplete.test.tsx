@@ -201,7 +201,7 @@ describe('Autocomplete', () => {
     onKeyDown.mockReset();
   });
 
-  it('should prevent clear the input field when clicking on the clear button', async () => {
+  it('should clear the input field when clicking on the clear button', async () => {
     let {getByRole} = render(
       <AutocompleteWrapper>
         <StaticMenu />
