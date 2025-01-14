@@ -129,7 +129,7 @@ function Calendar(props) {
         <Button {...prevButtonProps}>&lt;</Button>
         <Button {...nextButtonProps}>&gt;</Button>
       </div>
-      <CalendarGrid state={state} />
+      <CalendarGrid state={state} firstDayOfWeek={props.firstDayOfWeek} />
     </div>
   );
 }
@@ -152,7 +152,7 @@ function CalendarGrid({state, ...props}) {
   let {gridProps, headerProps, weekDays} = useCalendarGrid(props, state);
 
   // Get the number of weeks in the month so we can render the proper number of rows.
-  let weeksInMonth = getWeeksInMonth(state.visibleRange.start, locale);
+  let weeksInMonth = getWeeksInMonth(state.visibleRange.start, locale, props.firstDayOfWeek);
 
   return (
     <table {...gridProps}>
@@ -456,6 +456,14 @@ The `isReadOnly` boolean prop makes the Calendar's value immutable. Unlike `isDi
 
 ```tsx example
 <Calendar aria-label="Event date" value={today(getLocalTimeZone())} isReadOnly />
+```
+
+### Custom first day of week
+
+By default, the first day of the week is automatically set based on the current locale. This can be changed by setting the `firstDayOfWeek` prop to `'sun'`, `'mon'`, `'tue'`, `'wed'`, `'thu'`, `'fri'`, or `'sat'`.
+
+```tsx example
+<Calendar aria-label="Event date" value={today(getLocalTimeZone())} firstDayOfWeek="mon" />
 ```
 
 ### Labeling

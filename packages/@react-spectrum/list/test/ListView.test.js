@@ -843,7 +843,7 @@ describe('ListView', function () {
       let gridListTester = testUtilUser.createTester('GridList', {root: grid});
       let rows = gridListTester.rows;
 
-      await gridListTester.toggleRowSelection({index: 0});
+      await gridListTester.toggleRowSelection({row: 0});
       checkSelection(onSelectionChange, ['foo']);
       onSelectionChange.mockClear();
       expect(announce).toHaveBeenLastCalledWith('Foo selected.');
@@ -874,17 +874,17 @@ describe('ListView', function () {
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', onAction});
         let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
 
-        await gridListTester.triggerRowAction({index: 1});
+        await gridListTester.triggerRowAction({row: 1});
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(1);
         expect(onAction).toHaveBeenLastCalledWith('bar');
 
-        await gridListTester.toggleRowSelection({index: 1});
+        await gridListTester.toggleRowSelection({row: 1});
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['bar']);
 
         onSelectionChange.mockReset();
-        await gridListTester.toggleRowSelection({index: 2});
+        await gridListTester.toggleRowSelection({row: 2});
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['bar', 'baz']);
       });
@@ -895,18 +895,18 @@ describe('ListView', function () {
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', onAction});
         let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
 
-        await gridListTester.triggerRowAction({index: 1});
+        await gridListTester.triggerRowAction({row: 1});
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(1);
         expect(onAction).toHaveBeenLastCalledWith('bar');
 
-        await gridListTester.toggleRowSelection({index: 1});
+        await gridListTester.toggleRowSelection({row: 1});
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['bar']);
 
         onSelectionChange.mockReset();
         gridListTester.setInteractionType('touch');
-        await gridListTester.toggleRowSelection({index: 2});
+        await gridListTester.toggleRowSelection({row: 2});
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['bar', 'baz']);
       });
@@ -957,13 +957,13 @@ describe('ListView', function () {
         let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
         gridListTester.setInteractionType('keyboard');
 
-        await gridListTester.triggerRowAction({index: 1});
+        await gridListTester.triggerRowAction({row: 1});
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(1);
         expect(onAction).toHaveBeenLastCalledWith('bar');
 
         onAction.mockReset();
-        await gridListTester.toggleRowSelection({index: 2});
+        await gridListTester.toggleRowSelection({row: 2});
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         expect(onAction).not.toHaveBeenCalled();
         checkSelection(onSelectionChange, ['baz']);
