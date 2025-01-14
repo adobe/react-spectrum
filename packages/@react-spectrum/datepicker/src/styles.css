@@ -62,7 +62,7 @@
 }
 
 .react-spectrum-Datepicker-inputContents {
-  display: inline;
+  display: flex;
   align-items: center;
   height: 100%;
   overflow-x: auto;
@@ -77,8 +77,8 @@
 }
 
 .react-spectrum-Datepicker-inputSized {
-  display: block;
-  height: 100%;
+  display: inline;
+  /* height: 100%; */
   align-items: center;
 }
 
