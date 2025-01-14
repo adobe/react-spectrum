@@ -27,43 +27,41 @@ The new RAC component Autcomplete is available as an alpha with limited document
 ## Enhancements
 
 - Autocomplete
-  - RAC `Autocomplete` release preperation and fixes - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/7475), [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/7589), [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/7403), [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/7584)
-Calendar
-  - Add `firstDayOfWeek` prop - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7363)
+  - Add `Autocomplete` component - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/7181)
+- Calendar
+  - Add `firstDayOfWeek` prop to Calendar, RangeCalendar, DatePicker, and DateRangePicker - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7363)
 - Misc
   - Remove custom hit testing in `usePress` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7427)
-  - Improve React Fast Refresh in Storybook - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7435)
 
 ## Fixes
 
 - Button
-  - Disable `Form` submission when RAC `Button` `isPending` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7498)
-- Calendar
-  - Fix keyboard selection of an unavailable date should not change the current selection (RAC) - [@richardbann](https://github.com/richardbann) - [PR](https://github.com/adobe/react-spectrum/pull/7455)
-  - Remove internal contexts from RAC `Calendar` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7593)
+  - Disable form submission in `isPending` state - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7498)
 - Date and Time
-  - Remove min/max limits for all segments in `parseDuration` - [@limkhl](https://github.com/limkhl) - [PR](https://github.com/adobe/react-spectrum/pull/7064)
+  - Fix keyboard selection of an unavailable dates - [@richardbann](https://github.com/richardbann) - [PR](https://github.com/adobe/react-spectrum/pull/7455)
+  - Remove min/max limits for all segments in `@internationalized/date` `parseDuration` - [@limkhl](https://github.com/limkhl) - [PR](https://github.com/adobe/react-spectrum/pull/7064)
 - Form
-  - Disabled `Form` elements won't use native validation - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7531)
+  - Skip native validation on disabled form elements - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7531)
 - Menu
   - Fix Talkback focus cursor movement when inside dialogs - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/7478)
 - Select
-  - Passing `autoComplete` prop from RAC `Select` to underlying child component - [@nabanitabania](https://github.com/nabanitabania) - [PR](https://github.com/adobe/react-spectrum/pull/7452)
-- Tag
-  - Prevent disabled RAC `Tag` from being removed from RAC `TagGroup` with keyboard navigation - [@minzzang144](https://github.com/minzzang144) - [PR](https://github.com/adobe/react-spectrum/pull/7394)
-- Misc
+  - Fix form `autoComplete` prop - [@nabanitabania](https://github.com/nabanitabania) - [PR](https://github.com/adobe/react-spectrum/pull/7452)
+- TagGroup
+  - Prevent disabled tags from being removed with keyboard navigation - [@minzzang144](https://github.com/minzzang144) - [PR](https://github.com/adobe/react-spectrum/pull/7394)
+- Overlays
   - Prevent `Popover` from closing on scroll - [@jabrks](https://github.com/jabrks) - [PR](https://github.com/adobe/react-spectrum/pull/7541)
-  - Fix skipping elment with `contenteditable` set to false when tabbing - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/7340)
-  - Remove `onTouchEnd` handler in iOS `usePreventScroll` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7479)
-  - Include scroll padding in `scrollIntoView` caclulations - [@jeffijoe](https://github.com/jeffijoe) - [PR](https://github.com/adobe/react-spectrum/pull/7484)
-  - Make empty SlotsProvider context stable - [@mdwyer6](https://github.com/mdwyer6) - [PR](https://github.com/adobe/react-spectrum/pull/7485)
-  - Fix `optimize-locales-plugin` path resolution for empty.js for Windows - [@ohansFavour](https://github.com/ohansFavour) - [PR](https://github.com/adobe/react-spectrum/pull/7568)
+  - Fix dismissing iOS keyboard when input in dialog has focus - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7479)
+  - Include scroll padding in `scrollIntoView` caclulations inside overlays - [@jeffijoe](https://github.com/jeffijoe) - [PR](https://github.com/adobe/react-spectrum/pull/7484)
+- Misc
+  - Skip elements with `contenteditable=false` in FocusScope - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/7340)
+  - Fix `@react-aria/optimize-locales-plugin` path resolution on Windows - [@ohansFavour](https://github.com/ohansFavour) - [PR](https://github.com/adobe/react-spectrum/pull/7568)
+  - Reduce unnecessary re-renders in React Spectrum slot provider - [@mdwyer6](https://github.com/mdwyer6) - [PR](https://github.com/adobe/react-spectrum/pull/7485)
 
 ## Docs
 
 - Add initial `Autocomplete` docs - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7581)
 - Prevent `Combobox` docs example from clearing `defaultInputValue` or controlled value on blur - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7439)
-- Improve RAC `Calendar` doc's state example - [@nathanpower](https://github.com/nathanpower) - [PR](https://github.com/adobe/react-spectrum/pull/7473)
+- Improve RAC `Calendar` state example - [@nathanpower](https://github.com/nathanpower) - [PR](https://github.com/adobe/react-spectrum/pull/7473)
 - Fix broken links in docs - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/7530)
 
 ## Under Construction
