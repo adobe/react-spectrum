@@ -31,13 +31,15 @@ import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect
 import {focusRing, size, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {Picker, PickerItem} from './TabsPicker';
 import {Text, TextContext} from './Content';
 import {useControlledState} from '@react-stately/utils';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useEffectEvent, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useHasTabbableChild} from '@react-aria/focus';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'children'>, UnsafeStyles {
@@ -73,7 +75,7 @@ export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'sty
 }
 
 export const TabsContext = createContext<ContextValue<TabsProps, DOMRefValue<HTMLDivElement>>>(null);
-const InternalTabsContext = createContext<TabsProps & {onFocus:() => void, pickerRef?: FocusableRef<HTMLButtonElement>}>({onFocus: () => {}});
+const InternalTabsContext = createContext<TabsProps & {pickerRef?: FocusableRef<HTMLButtonElement>}>({});
 const CollapseContext = createContext({
   showTabs: true,
   menuId: ''
@@ -118,7 +120,6 @@ export const Tabs = forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLD
           selectedKey: value,
           onSelectionChange: setValue,
           labelBehavior,
-          onFocus: () => pickerRef.current?.focus(),
           pickerRef
         }]
       ]}>
@@ -177,6 +178,7 @@ const tablist = style({
 
 export function TabList<T extends object>(props: TabListProps<T>) {
   let {showTabs} = useContext(CollapseContext) ?? {};
+
   if (showTabs) {
     return <TabListInner {...props} />;
   }
@@ -197,14 +199,6 @@ function TabListInner<T extends object>(props: TabListProps<T>) {
       }
     }
   }, [tablistRef, state?.selectedItem?.key]);
-
-  // let prevFocused = useRef<boolean | undefined>(false);
-  // useLayoutEffect(() => {
-  //   if (!showItems && !prevFocused.current && state?.selectionManager.isFocused) {
-  //     onFocus();
-  //   }
-  //   prevFocused.current = state?.selectionManager.isFocused;
-  // }, [state?.selectionManager.isFocused, state?.selectionManager.focusedKey, showItems]);
 
   return (
     <div
@@ -410,12 +404,17 @@ export function Tab(props: TabProps) {
 }
 
 const tabPanel = style({
+  display: 'flex',
   marginTop: 4,
+  marginX: -4,
+  paddingX: 4,
   color: 'gray-800',
   flexGrow: 1,
+  flexShrink: 1,
   flexBasis: '[0%]',
   minHeight: 0,
-  minWidth: 0
+  minWidth: 0,
+  overflow: 'auto'
 }, getAllowedOverrides({height: true}));
 
 export function TabPanel(props: TabPanelProps) {
@@ -426,7 +425,7 @@ export function TabPanel(props: TabPanelProps) {
       <AriaTabPanel
         {...props}
         style={props.UNSAFE_style}
-        className={props.UNSAFE_className + tabPanel(null, props.styles)} />
+        className={(props.UNSAFE_className ?? '') + tabPanel(null, props.styles)} />
     );
   }
 
@@ -446,6 +445,7 @@ function CollapsedTabPanel(props: TabPanelProps) {
   return (
     <Group
       {...otherProps}
+      ref={ref}
       aria-labelledby={menuId}
       tabIndex={tabIndex}
       style={UNSAFE_style}
@@ -514,6 +514,7 @@ let HiddenTabs = function (props: {
 };
 
 let TabsMenu = (props: {items: Array<Node<any>>, onSelectionChange: TabsProps['onSelectionChange']} & TabsProps) => {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {id, items} = props;
   let {density, onSelectionChange, selectedKey, isDisabled, disabledKeys, pickerRef, labelBehavior} = useContext(InternalTabsContext);
   let state = useContext(TabListStateContext);
@@ -525,6 +526,7 @@ let TabsMenu = (props: {items: Array<Node<any>>, onSelectionChange: TabsProps['o
     <div
       className={style({
         display: 'flex',
+        flexShrink: 0,
         alignItems: 'center',
         height: {
           density: {
@@ -534,7 +536,7 @@ let TabsMenu = (props: {items: Array<Node<any>>, onSelectionChange: TabsProps['o
         }})({density})}>
       <Picker
         id={id}
-        aria-label={props['aria-label']}
+        aria-label={props['aria-label'] ?? stringFormatter.format('tabs.selectorLabel')}
         aria-labelledby={props['aria-labelledby']}
         aria-describedby={props['aria-describedby']}
         aria-details={props['aria-details']}
@@ -547,8 +549,6 @@ let TabsMenu = (props: {items: Array<Node<any>>, onSelectionChange: TabsProps['o
         selectedKey={selectedKey}
         onSelectionChange={onSelectionChange}>
         {(item: Node<any>) => {
-          // need to determine the best way to handle icon only -> icon and text
-          // good enough to aria-label the picker item?
           return (
             <PickerItem
               {...item.props.originalProps}
@@ -633,7 +633,7 @@ let CollapsingTabs = ({collection, containerRef, ...props}: {collection: Collect
   }
 
   return (
-    <div style={props.UNSAFE_style} className={(props.UNSAFE_className || '') + tabs({orientation})} ref={containerRef}>
+    <div style={props.UNSAFE_style} className={(props.UNSAFE_className || '') + tabs({orientation}, props.styles)} ref={containerRef}>
       <div className={tablist({orientation, labelBehavior, density})}>
         <HiddenTabs items={children} density={density} listRef={listRef} />
       </div>
