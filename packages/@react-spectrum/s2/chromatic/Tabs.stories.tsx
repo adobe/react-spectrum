@@ -79,7 +79,7 @@ export const Disabled = {
 
 export const Icons = {
   render: (args: any) => (
-    <Tabs {...args} styles={style({width: 208, height: 144})} labelBehavior='hide'>
+    <Tabs {...args} styles={style({width: 208, height: 144})} labelBehavior="hide">
       <TabList aria-label="History of Ancient Rome">
         <Tab id="FoR" aria-label="Edit"><Edit /><Text>Edit</Text></Tab>
         <Tab id="MaR" aria-label="Notifications"><Bell /><Text>Notifications</Text></Tab>
