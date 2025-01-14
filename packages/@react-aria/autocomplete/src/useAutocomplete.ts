@@ -166,7 +166,7 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
         // Early return for Escape here so it doesn't leak the Escape event from the simulated collection event below and
         // close the dialog prematurely. Ideally that should be up to the discretion of the input element hence the check
         // for isPropagationStopped
-        if (e.isPropagationStopped()) {
+        if (e.isDefaultPrevented()) {
           return;
         }
         break;
@@ -205,7 +205,13 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
     }
 
     // Emulate the keyboard events that happen in the input field in the wrapped collection. This is for triggering things like onAction via Enter
-    // or moving focus from one item to another
+    // or moving focus from one item to another. Stop propagation on the input event if it isn't already stopped so it doesn't leak out. For events
+    // like ESC, the dispatched event below will bubble out of the collection and be stopped if handled by useSelectableCollection, otherwise will bubble
+    // as expected
+    if (!e.isPropagationStopped()) {
+      e.stopPropagation();
+    }
+
     if (state.focusedNodeId == null) {
       collectionRef.current?.dispatchEvent(
         new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
@@ -277,10 +283,7 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
     collectionProps: mergeProps(collectionProps, {
       // TODO: shouldFocusOnHover? shouldFocusWrap? Should it be up to the wrapped collection?
       shouldUseVirtualFocus: true,
-      disallowTypeAhead: true,
-      // Prevent the emulated keyboard events that were dispatched on the wrapped collection from propagating outside of the autocomplete since techincally
-      // they've been handled by the input already
-      onKeyDown: (e) => e.stopPropagation()
+      disallowTypeAhead: true
     }),
     collectionRef: mergedCollectionRef,
     filterFn: filter != null ? filterFn : undefined
