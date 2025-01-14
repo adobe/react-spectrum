@@ -566,6 +566,7 @@ let TabsMenu = (props: {items: Array<Node<any>>, onSelectionChange: TabsProps['o
 let CollapsingTabs = ({collection, containerRef, ...props}: {collection: Collection<Node<unknown>>, containerRef: any} & TabsProps) => {
   let {density = 'regular', orientation = 'horizontal', labelBehavior = 'show', onSelectionChange} = props;
   let [showItems, _setShowItems] = useState(true);
+  showItems = orientation === 'vertical' ? true : showItems;
   let setShowItems = useCallback((value: boolean) => {
     if (orientation === 'vertical') {
       // if orientation is vertical, we always show the items
