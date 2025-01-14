@@ -60,8 +60,8 @@ export function UNSTABLE_Autocomplete(props: AutocompleteProps) {
     <Provider
       values={[
         [UNSTABLE_AutocompleteStateContext, state],
-        [SearchFieldContext, {...textFieldProps}],
-        [TextFieldContext, {...textFieldProps}],
+        [SearchFieldContext, textFieldProps],
+        [TextFieldContext, textFieldProps],
         [InputContext, {ref: inputRef}],
         [UNSTABLE_InternalAutocompleteContext, {
           filterFn,
