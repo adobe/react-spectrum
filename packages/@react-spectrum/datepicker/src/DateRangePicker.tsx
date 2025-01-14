@@ -139,33 +139,34 @@ export const DateRangePicker = React.forwardRef(function DateRangePicker<T exten
         className={className}
         ref={targetRef}>
         <div style={{overflow: 'hidden'}}>
-        <Input
-          isDisabled={isDisabled}
-          isQuiet={isQuiet}
-          validationState={validationState}
-          className={classNames(styles, 'spectrum-InputGroup-field')}
-          inputClassName={fieldClassName}
-          disableFocusRing
-          minWidth={approximateWidth}>
-          <DatePickerField
-            {...startFieldProps}
-            data-testid="start-date"
-            isQuiet={props.isQuiet}
-            inputClassName={classNames(datepickerStyles, 'react-spectrum-Datepicker-startField')} />
-          <DateRangeDash />
-          <DatePickerField
-            {...endFieldProps}
-            data-testid="end-date"
-            isQuiet={props.isQuiet}
-            inputClassName={classNames(
-              styles,
-              'spectrum-Datepicker-endField',
-              classNames(
-                datepickerStyles,
-                'react-spectrum-Datepicker-endField'
-              )
-            )} />
-        </Input>
+          <Input
+            isDisabled={isDisabled}
+            isQuiet={isQuiet}
+            validationState={validationState}
+            className={classNames(styles, 'spectrum-InputGroup-field')}
+            inputClassName={fieldClassName}
+            disableFocusRing
+            minWidth={approximateWidth}>
+            <DatePickerField
+              {...startFieldProps}
+              data-testid="start-date"
+              isQuiet={props.isQuiet}
+              inputClassName={classNames(datepickerStyles, 'react-spectrum-Datepicker-startField')} />
+            <DateRangeDash />
+            <DatePickerField
+              {...endFieldProps}
+              data-testid="end-date"
+              isQuiet={props.isQuiet}
+              inputClassName={classNames(
+                styles,
+                'spectrum-Datepicker-endField',
+                classNames(
+                  datepickerStyles,
+                  'react-spectrum-Datepicker-endField'
+                )
+              )} />
+          </Input>
+        </div>
         <DialogTrigger
           type="popover"
           mobileType="tray"
@@ -221,7 +222,6 @@ export const DateRangePicker = React.forwardRef(function DateRangePicker<T exten
             </Content>
           </Dialog>
         </DialogTrigger>
-        </div>
       </div>
     </Field>
   );
