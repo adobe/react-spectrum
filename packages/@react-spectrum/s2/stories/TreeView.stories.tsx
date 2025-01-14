@@ -30,7 +30,6 @@ import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import FolderOpen from '../spectrum-illustrations/linear/FolderOpen';
 import type {Meta} from '@storybook/react';
 import React from 'react';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 let onActionFunc = action('onAction');
 let noOnAction = null;
