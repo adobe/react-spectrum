@@ -31,32 +31,32 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
         e.preventDefault();
         e.stopPropagation();
         if (direction === 'rtl') {
-          let spinButtons: NodeListOf<Element> | undefined = ref.current?.querySelectorAll('span[role="spinbutton"], span[role="textbox"]');
-          // TODO: figure out typescript, also change variable names to something better please
-          let array = Array.from(spinButtons!);
-          let button = ref.current?.querySelector('button');
-          let target = e.target as FocusableElement;
+          let editableSegments: NodeListOf<Element> | undefined = ref.current?.querySelectorAll('span[role="spinbutton"], span[role="textbox"]');
+          if (editableSegments) {
+            let segments = Array.from(editableSegments);
+            let button = ref.current?.querySelector('button');
+            let target = e.target as FocusableElement;
 
-          let segmentArr = array.map(node => {
-            return {
-              element: node as FocusableElement,
-              rectX: node?.getBoundingClientRect().left
-            };
-          });
+            let segmentArr = segments.map(node => {
+              return {
+                element: node as FocusableElement,
+                rectX: node?.getBoundingClientRect().left
+              };
+            });
 
-          let arr = segmentArr.sort((a, b) => a.rectX - b.rectX).map((item => item.element));
-          let index = arr.indexOf(target);
+            let arr = segmentArr.sort((a, b) => a.rectX - b.rectX).map((item => item.element));
+            let index = arr.indexOf(target);
 
-          if (index === 0) {
-            target = button || target;
-          } else {
-            target = arr[index - 1] || target;
+            if (index === 0) {
+              target = button || target;
+            } else {
+              target = arr[index - 1] || target;
+            }
+            
+            if (target) {
+              target.focus();
+            }
           }
-          
-          if (target) {
-            target.focus();
-          }
-          // focusManager.focusNext();
         } else {
           focusManager.focusPrevious();
         }
@@ -65,26 +65,27 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
         e.preventDefault();
         e.stopPropagation();
         if (direction === 'rtl') {
-          let spinButtons: NodeListOf<Element> | undefined = ref.current?.querySelectorAll('span[role="spinbutton"], span[role="textbox"]');
-          let array = Array.from(spinButtons!);
-          let target = e.target as FocusableElement;
-
-          let segmentArr = array.map(node => {
-            return {
-              element: node as FocusableElement,
-              rectX: node?.getBoundingClientRect().left
-            };
-          });
-
-          let arr = segmentArr.sort((a, b) => a.rectX - b.rectX).map((item => item.element));
-          let index = arr.indexOf(target);
-
-          target = arr[index + 1] || target;
-
-          if (target) {
-            target.focus();
+          let editableSegments: NodeListOf<Element> | undefined = ref.current?.querySelectorAll('span[role="spinbutton"], span[role="textbox"]');
+          if (editableSegments) {
+            let segments = Array.from(editableSegments);
+            let target = e.target as FocusableElement;
+  
+            let segmentArr = segments.map(node => {
+              return {
+                element: node as FocusableElement,
+                rectX: node?.getBoundingClientRect().left
+              };
+            });
+  
+            let arr = segmentArr.sort((a, b) => a.rectX - b.rectX).map((item => item.element));
+            let index = arr.indexOf(target);
+  
+            target = arr[index + 1] || target;
+  
+            if (target) {
+              target.focus();
+            }
           }
-          // focusManager.focusPrevious();
         } else {
           focusManager.focusNext();
         }
