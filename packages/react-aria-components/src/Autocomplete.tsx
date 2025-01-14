@@ -16,6 +16,8 @@ import {InputContext} from './Input';
 import {mergeProps} from '@react-aria/utils';
 import {Provider, removeDataAttributes, SlotProps, SlottedContextValue, useSlottedContext} from './utils';
 import React, {createContext, RefObject, useRef} from 'react';
+import {SearchFieldContext} from './SearchField';
+import {TextFieldContext} from './TextField';
 
 export interface AutocompleteProps extends AriaAutocompleteProps, SlotProps {}
 
@@ -44,6 +46,7 @@ export function UNSTABLE_Autocomplete(props: AutocompleteProps) {
 
   let {
     inputProps,
+    textFieldProps,
     collectionProps,
     collectionRef: mergedCollectionRef,
     filterFn
@@ -58,6 +61,8 @@ export function UNSTABLE_Autocomplete(props: AutocompleteProps) {
     <Provider
       values={[
         [UNSTABLE_AutocompleteStateContext, state],
+        [SearchFieldContext, {...textFieldProps}],
+        [TextFieldContext, {...textFieldProps}],
         [InputContext, {...inputProps, ref: inputRef}],
         [UNSTABLE_InternalAutocompleteContext, {
           filterFn,

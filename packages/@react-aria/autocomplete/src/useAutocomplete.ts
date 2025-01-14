@@ -11,12 +11,12 @@
  */
 
 import {AriaLabelingProps, BaseEvent, DOMProps, RefObject} from '@react-types/shared';
+import {AriaTextFieldProps} from '@react-aria/textfield';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
-import {ChangeEvent, InputHTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef} from 'react';
 import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, isCtrlKeyPressed, mergeProps, mergeRefs, UPDATE_ACTIVEDESCENDANT, useEffectEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
+import {InputHTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {useKeyboard} from '@react-aria/interactions';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface CollectionOptions extends DOMProps, AriaLabelingProps {
@@ -43,6 +43,8 @@ export interface AriaAutocompleteOptions extends Omit<AriaAutocompleteProps, 'ch
 export interface AutocompleteAria {
   /** Props for the autocomplete input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
+  /** Props for the autocomplete textfield/searchfield element. These should be passed to the textfield/searchfield aria hooks respectively. */
+  textFieldProps: AriaTextFieldProps,
   /** Props for the collection, to be passed to collection's respective aria hook (e.g. useMenu). */
   collectionProps: CollectionOptions,
   /** Ref to attach to the wrapped collection. */
@@ -138,16 +140,16 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
   });
 
   // TODO: update to see if we can tell what kind of event (paste vs backspace vs typing) is happening instead
-  let onChange = (e: ChangeEvent<HTMLInputElement>) => {
+  let onChange = (value: string) => {
     // Tell wrapped collection to focus the first element in the list when typing forward and to clear focused key when deleting text
     // for screen reader announcements
-    if (state.inputValue !== e.target.value && state.inputValue.length <= e.target.value.length) {
+    if (state.inputValue !== value && state.inputValue.length <= value.length) {
       focusFirstItem();
     } else {
       clearVirtualFocus();
     }
 
-    state.setInputValue(e.target.value);
+    state.setInputValue(value);
   };
 
   // For textfield specific keydown operations
@@ -166,12 +168,7 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
         // Early return for Escape here so it doesn't leak the Escape event from the simulated collection event below and
         // close the dialog prematurely. Ideally that should be up to the discretion of the input element hence the check
         // for isPropagationStopped
-        // Also set the inputValue to '' to cover Firefox case where Esc doesn't actually clear searchfields. Normally we already
-        // handle this in useSearchField, but we are directly setting the inputValue on the input element in RAC Autocomplete instead of
-        // passing it to the SearchField via props. This means that a controlled value set on the Autocomplete isn't synced up with the
-        // SearchField until the user makes a change to the field's value via typing
         if (e.isPropagationStopped()) {
-          state.setInputValue('');
           return;
         }
         break;
@@ -249,8 +246,6 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
     };
   }, [inputRef, onKeyUpCapture]);
 
-  let {keyboardProps} = useKeyboard({onKeyDown});
-
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/autocomplete');
   let collectionProps = useLabels({
     id: collectionId,
@@ -267,9 +262,6 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
 
   return {
     inputProps: {
-      value: state.inputValue,
-      onChange,
-      ...keyboardProps,
       autoComplete: 'off',
       'aria-haspopup': 'listbox',
       'aria-controls': collectionId,
@@ -280,6 +272,11 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
       autoCorrect: 'off',
       // This disable's the macOS Safari spell check auto corrections.
       spellCheck: 'false'
+    },
+    textFieldProps: {
+      value: state.inputValue,
+      onChange,
+      onKeyDown
     },
     collectionProps: mergeProps(collectionProps, {
       // TODO: shouldFocusOnHover? shouldFocusWrap? Should it be up to the wrapped collection?
