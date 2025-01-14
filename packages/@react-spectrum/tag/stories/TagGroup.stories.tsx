@@ -122,20 +122,6 @@ export const WithIcons: TagGroupStory = {
   )
 };
 
-export const WithSomeIcons: TagGroupStory = {
-  args: {items: [{key: '1', label: 'Cool Tag 1'}, {key: '2', label: 'Cool Tag 2'}, {key: '3', label: 'Cool Tag 3'}, {key: '4', label: 'Cool Tag 4'}]},
-  render: (args) => (
-    <TagGroup aria-label="Tag group with some icons" {...args}>
-      {(item: any) => (
-        <Item key={item.key} textValue={item.label}>
-          {parseInt(item.key, 10) % 2 === 0 && <Audio />}
-          <Text>{item.label}</Text>
-        </Item>
-      )}
-    </TagGroup>
-  )
-};
-
 export const OnRemove: TagGroupStory = {
   render: (args) => <OnRemoveExample {...args} />,
   name: 'onRemove'
@@ -189,7 +175,7 @@ export const WithAvatar: TagGroupStory = {
     <TagGroup aria-label="Tag group with avatars" {...args}>
       {(item: any) => (
         <Item key={item.key} textValue={item.label}>
-          <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
+          {item.key === '1' && <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />}
           <Text>{item.label}</Text>
         </Item>
       )}

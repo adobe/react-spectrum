@@ -72,23 +72,7 @@ export const WithIcon: TagGroupStory = {
     <TagGroup {...args} aria-label="Tag group">
       {(item: any) => (
         <Item key={item.key} textValue={item.label}>
-          <Audio />
-          <Text>{item.label}</Text>
-        </Item>
-      )}
-    </TagGroup>
-  ),
-  args: {
-    items: defaultItems
-  }
-};
-
-export const WithSomeIcons: TagGroupStory = {
-  render: (args) => (
-    <TagGroup aria-label="Tag group with some icons" {...args}>
-      {(item: any) => (
-        <Item key={item.key} textValue={item.label}>
-          {parseInt(item.id, 10) % 2 === 0 && <Audio />}
+          {item.id !== 1 && <Audio />}
           <Text>{item.label}</Text>
         </Item>
       )}
