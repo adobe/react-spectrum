@@ -11,29 +11,32 @@ import {BlogPostLayout, Hero} from '@react-spectrum/docs';
 export default BlogPostLayout;
 
 ---
-
-description: TODO
-
+description: Happy New Year! Our first release of 2025 includes a new `firstDayOfWeek` prop for our calendar and date picker components, support for CSS transitions in our overlay components, a new `Autocomplete` component in alpha, and a new test utils package.
 date: 2025-01-15
-
 ---
 
-# November 20, 2024 Release
+# January 15, 2025 Release
 
-Happy New Year! We're excited to announce the first release of 2025. This release includes a number of new features, enhancements, and bug fixes. Read on for more details.
+Happy New Year! Our first release of 2025 includes a new [firstDayOfWeek](../../react-aria/Calendar.html#custom-first-day-of-week) prop for our calendar and date picker components, support for [CSS transitions](../../react-aria/styling.html#animation) in our overlay components, a new [Autocomplete](../../react-aria/Autocomplete.html) component in alpha, and a new [React Aria test utils](../../react-aria/testing#react-aria-test-utils) package.
 
-The new RAC component Autcomplete is available as an alpha with limited documentation for use. It has been...
+### firstDayOfWeek
 
-**React Aria Test Utils**
+By default, our date picker components determine the first day of the week from the locale. However, a common request was for the ability to override this for certain use cases regardless of the locale. [Calendar](../../react-aria/Calendar.html#custom-first-day-of-week), [RangeCalendar](../../react-aria/RangeCalendar.html#custom-first-day-of-week), [DatePicker](../../react-aria/DatePicker.html#custom-first-day-of-week), and [DateRangePicker](../../react-aria/DateRangePicker#custom-first-day-of-week) now support a `firstDayOfWeek` prop to enable this. In addition, our [@internationalized/date](../internationalized/date/index.html) package now includes an option to override the locale in methods such as `startOfWeek`, `endOfWeek`, `getDayOfWeek`, and `getWeeksInMonth`.
 
-We are also excited to announce the alpha release of the [@react-aria/test-utils](https://www.npmjs.com/package/@react-aria/test-utils) package! This package features a set of ARIA pattern specific utilities that
-aim to make writing tests against our components simpler and less time consuming. See the respective [React Aria](../../react-aria/testing#react-aria-test-utils) and [React Spectrum](../../react-spectrum/testing#react-spectrum-test-utils) testing pages
-for more details on how best to use these utilities. It is still very much a work in progress so if you discover any issues or have any feedback, please feel free to report them via GitHub issues!
+### CSS transitions
+
+Overlay components including `Modal`, `Popover`, and `Tooltip` now support CSS transitions for entry and exit animations, in addition to the existing support for keyframe animations. CSS transitions have the benefit of being *interruptible*. If the user opens and closes an overlay quickly, transitions will smoothly transition from their current position rather than jumping to the ending state of the animation before starting the new one. You can use CSS transitions using the existing `[data-entering]` and `[data-exiting]` states. See our [animation guide](../../react-aria/styling.html#animation) for more details.
+
+### Autocomplete
+
+The new [Autocomplete](../../react-aria/Autocomplete.html) component is now available in alpha! Similar to a [ComboBox](../../react-aria/ComboBox.html), this component provides the ability to display a list of suggestions as the user types in a text input. However, it is more flexible, supporting use cases such as command palettes and searchable menus where the text input is a sibling of the suggestion list rather than a separate popover. It supports both [TextField](../../react-aria/TextField.html) and [SearchField](../../react-aria/SearchField.html) inputs, and both [ListBox](../../react-aria/ListBox.html) and [Menu](../../react-aria/Menu.html) collections, customizable filters, and arrow key navigation while keeping focus on the input element. There are more features to come in future releases, but we'd love your feedback on this initial alpha release!
+
+### React Aria Test Utils
+
+We are also excited to announce the alpha release of the [@react-aria/test-utils](https://www.npmjs.com/package/@react-aria/test-utils) package! This package features a set of utilities that aim to make writing tests against our components much simpler and less time consuming. It includes high level methods to interact with components implementing ARIA patterns, so you don't need to figure out how to manually fire the correct sequences of events or navigate the DOM structure. See the respective [React Aria](../../react-aria/testing#react-aria-test-utils) and [React Spectrum](../../react-spectrum/testing#react-spectrum-test-utils) testing pages for more details. It is still very much a work in progress so if you discover any issues or have any feedback, please feel free to report them via GitHub issues!
 
 ## Enhancements
 
-- Autocomplete
-  - Add `Autocomplete` component - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/7181)
 - Calendar
   - Add `firstDayOfWeek` prop to Calendar, RangeCalendar, DatePicker, and DateRangePicker - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7363)
 - Overlays
@@ -67,11 +70,12 @@ for more details on how best to use these utilities. It is still very much a wor
 
 ## Docs
 
-- Add initial `Autocomplete` docs - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7581)
 - Prevent `Combobox` docs example from clearing `defaultInputValue` or controlled value on blur - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7439)
 - Improve RAC `Calendar` state example - [@nathanpower](https://github.com/nathanpower) - [PR](https://github.com/adobe/react-spectrum/pull/7473)
 - Fix broken links in docs - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/7530)
 
 ## Under Construction
+
+- Add `Autocomplete` component - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/7181)
 
 ## Released packages
