@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, usePopover, useLocale} from 'react-aria';
+import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, useLocale, usePopover} from 'react-aria';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 import {filterDOMProps, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {forwardRefType, RefObject} from '@react-types/shared';
@@ -129,7 +129,7 @@ interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderP
   isExiting: boolean,
   UNSTABLE_portalContainer?: Element,
   trigger?: string,
-  dir?: 'ltr' | 'rtl',
+  dir?: 'ltr' | 'rtl'
 }
 
 function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: PopoverInnerProps) {
