@@ -69,7 +69,7 @@ export default meta;
 
 
 const TreeExampleStatic = (args) => (
-  <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>
+  <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto'}}>
     <TreeView
       {...args}
       disabledKeys={['projects-1']}
@@ -203,7 +203,7 @@ let rows = [
 ];
 
 const TreeExampleDynamic = (args) => (
-  <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto', display: 'flex', flexDirection: 'column'}}>
+  <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto', display: 'flex', flexDirection: 'column'}}>
     <TreeView disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')} {...args}>
       {(item: any) => (
         <TreeViewItem childItems={item.childItems} textValue={item.name}>
@@ -256,7 +256,7 @@ export const Empty = {
 };
 
 const TreeExampleWithLinks = (args) => (
-  <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>
+  <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto'}}>
     <TreeView {...args} disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
       {(item) => (
         <TreeViewItem href="https://adobe.com/" childItems={item.childItems} textValue={item.name}>
