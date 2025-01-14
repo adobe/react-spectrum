@@ -175,7 +175,7 @@ export const WithAvatar: TagGroupStory = {
     <TagGroup aria-label="Tag group with avatars" {...args}>
       {(item: any) => (
         <Item key={item.key} textValue={item.label}>
-          <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
+          {item.key === '1' && <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />}
           <Text>{item.label}</Text>
         </Item>
       )}

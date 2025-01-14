@@ -5916,6 +5916,7 @@ __metadata:
     "@react-aria/interactions": "npm:^3.22.5"
     "@react-aria/listbox": "npm:^3.13.6"
     "@react-aria/searchfield": "npm:^3.7.11"
+    "@react-aria/textfield": "npm:^3.15.0"
     "@react-aria/utils": "npm:^3.26.0"
     "@react-stately/autocomplete": "npm:3.0.0-alpha.1"
     "@react-stately/combobox": "npm:^3.10.1"
