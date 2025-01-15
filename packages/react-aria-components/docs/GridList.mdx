@@ -1885,24 +1885,21 @@ let testUtilUser = new User({interactionType: 'mouse'});
 it('GridList can select a row via keyboard', async function () {
   // Render your test component/app and initialize the gridlist tester
   let {getByTestId} = render(
-    <GridList data-testid="test-gridlist">
+    <GridList data-testid="test-gridlist" selectionMode="single">
       ...
     </GridList>
   );
-  let gridlistTester = testUtilUser.createTester('GridList', {root: getByTestId('test-gridlist'), interactionType: 'keyboard'});
+  let gridListTester = testUtilUser.createTester('GridList', {root: getByTestId('test-gridlist'), interactionType: 'keyboard'});
 
   let row = gridListTester.rows[0];
-  expect(row).not.toHaveClass('selected');
   expect(within(row).getByRole('checkbox')).not.toBeChecked();
   expect(gridListTester.selectedRows).toHaveLength(0);
 
   await gridListTester.toggleRowSelection({row: 0});
-  expect(row).toHaveClass('selected');
   expect(within(row).getByRole('checkbox')).toBeChecked();
   expect(gridListTester.selectedRows).toHaveLength(1);
 
   await gridListTester.toggleRowSelection({row: 0});
-  expect(row).not.toHaveClass('selected');
   expect(within(row).getByRole('checkbox')).not.toBeChecked();
   expect(gridListTester.selectedRows).toHaveLength(0);
 });

@@ -276,7 +276,8 @@ it('Menu can open its submenu via keyboard', async function () {
   // Render your test component/app and initialize the menu tester
   let {getByTestId} = render(
     <Provider theme={defaultTheme}>
-      <MenuTrigger data-testid="test-menutrigger">
+      <MenuTrigger>
+        <Button data-testid="test-menutrigger">Menu trigger</Button>
         ...
       </MenuTrigger>
     </Provider>
@@ -291,9 +292,9 @@ it('Menu can open its submenu via keyboard', async function () {
   let submenuTester = await menuTester.openSubmenu({submenuTrigger: 'Share…'});
   expect(submenuTester.menu).toBeInTheDocument();
 
-  await submenuTester.selectOption({option: submenuUtil.options()[0]});
-  expect(submenuTester.menu).toBeInTheDocument();
-  expect(menuTester.menu).toBeInTheDocument();
+  await submenuTester.selectOption({option: submenuTester.options()[0]});
+  expect(submenuTester.menu).not.toBeInTheDocument();
+  expect(menuTester.menu).not.toBeInTheDocument();
 });
 ```
 

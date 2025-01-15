@@ -476,7 +476,7 @@ it('TreeView can select a row via keyboard', async function () {
   // Render your test component/app and initialize the Tree tester
   let {getByTestId} = render(
     <Provider theme={defaultTheme}>
-      <TreeView data-testid="test-tree">
+      <TreeView data-testid="test-tree" selectionMode="multiple">
         ...
       </TreeView>
     </Provider>
