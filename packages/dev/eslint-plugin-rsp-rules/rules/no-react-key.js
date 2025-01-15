@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-module.exports = {
+const plugin = {
   meta: {
     type: 'suggestion',
     docs: {
@@ -72,3 +72,5 @@ module.exports = {
     };
   }
 };
+
+export default plugin;

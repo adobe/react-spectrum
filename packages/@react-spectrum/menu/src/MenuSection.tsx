@@ -40,7 +40,8 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
   let firstSectionKey = state.collection.getFirstKey();
   let lastSectionKey = [...state.collection].filter(node => node.type === 'section').at(-1)?.key;
   let sectionIsFirst = firstSectionKey === item.key && state.collection.getFirstKey() === firstSectionKey;
-  let sectionIsLast = lastSectionKey === item.key && state.collection.getItem(state.collection.getLastKey()).parentKey === lastSectionKey;
+  let lastKey = state.collection.getLastKey();
+  let sectionIsLast = lastSectionKey === item.key && lastKey != null && state.collection.getItem(lastKey)!.parentKey === lastSectionKey;
 
   return (
     <Fragment>

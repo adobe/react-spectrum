@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/select",
-  "version": "3.14.9",
+  "version": "3.15.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -22,24 +22,24 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/form": "^3.0.8",
-    "@react-aria/i18n": "^3.12.2",
-    "@react-aria/interactions": "^3.22.2",
-    "@react-aria/label": "^3.7.11",
-    "@react-aria/listbox": "^3.13.3",
-    "@react-aria/menu": "^3.15.3",
-    "@react-aria/selection": "^3.19.3",
-    "@react-aria/utils": "^3.25.2",
-    "@react-aria/visually-hidden": "^3.8.15",
-    "@react-stately/select": "^3.6.7",
-    "@react-types/button": "^3.9.6",
-    "@react-types/select": "^3.9.6",
-    "@react-types/shared": "^3.24.1",
+    "@react-aria/form": "^3.0.12",
+    "@react-aria/i18n": "^3.12.5",
+    "@react-aria/interactions": "^3.23.0",
+    "@react-aria/label": "^3.7.14",
+    "@react-aria/listbox": "^3.14.0",
+    "@react-aria/menu": "^3.17.0",
+    "@react-aria/selection": "^3.22.0",
+    "@react-aria/utils": "^3.27.0",
+    "@react-aria/visually-hidden": "^3.8.19",
+    "@react-stately/select": "^3.6.10",
+    "@react-types/button": "^3.10.2",
+    "@react-types/select": "^3.9.9",
+    "@react-types/shared": "^3.27.0",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0",
-    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0"
+    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
   },
   "publishConfig": {
     "access": "public"

@@ -10,6 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './events';
-export * from './testSetup';
-export * from './userEventMaps';
+export {triggerLongPress} from './events';
+export {installMouseEvent, installPointerEvent} from './testSetup';
+export {pointerMap} from './userEventMaps';
+export {User} from './user';
+
+export type {UserOpts} from './types';

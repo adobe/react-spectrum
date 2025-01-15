@@ -1,4 +1,10 @@
 {
+  "actionbar.actions": "Veiksmai",
+  "actionbar.actionsAvailable": "Galimi veiksmai.",
+  "actionbar.clearSelection": "Išvalyti pasirinkimą",
+  "actionbar.selected": "Pasirinkta: {count}",
+  "actionbar.selectedAll": "Pasirinkta viskas",
+  "button.pending": "laukiama",
   "contextualhelp.help": "Žinynas",
   "contextualhelp.info": "Informacija",
   "dialog.alert": "Įspėjimas",
@@ -11,11 +17,17 @@
   "label.(optional)": "(pasirenkama)",
   "label.(required)": "(privaloma)",
   "menu.moreActions": "Daugiau veiksmų",
-  "picker.placeholder": "Pasirinkite parinktį...",
+  "picker.placeholder": "Pasirinkite…",
   "slider.maximum": "Daugiausia",
   "slider.minimum": "Mažiausia",
+  "table.loading": "Įkeliama...",
+  "table.loadingMore": "Įkeliama daugiau...",
+  "table.resizeColumn": "Keisti stulpelio dydį",
+  "table.sortAscending": "Rikiuoti didėjimo tvarka",
+  "table.sortDescending": "Rikiuoti mažėjimo tvarka",
   "tag.actions": "Veiksmai",
   "tag.hideButtonLabel": "Rodyti mažiau",
   "tag.noTags": "Nėra",
-  "tag.showAllButtonLabel": "Rodyti viską ({tagCount, number})"
+  "tag.showAllButtonLabel": "Rodyti viską ({tagCount, number})",
+  "breadcrumbs.more": "Daugiau elementų"
 }

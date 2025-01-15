@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {centerPadding} from './style-utils' with {type: 'macro'};
+import {centerPadding, fieldInput, staticColor} from './style-utils' with {type: 'macro'};
 
 export const bar = () => ({
+  ...staticColor(),
   position: 'relative',
   display: 'grid',
   gridTemplateColumns: {
@@ -35,7 +36,7 @@ export const bar = () => ({
   alignItems: 'baseline',
   isolation: 'isolate',
   minWidth: 48, // progress-bar-minimum-width
-  maxWidth: '[768px]', // progress-bar-maximum-width
+  maxWidth: 768, // progress-bar-maximum-width
   '--field-height': {
     type: 'height',
     value: 'control'
@@ -58,20 +59,13 @@ export const bar = () => ({
 } as const);
 
 export const track = () => ({
+  ...fieldInput(),
   gridArea: 'bar',
   overflow: 'hidden',
   borderRadius: 'full',
   backgroundColor: {
     default: 'gray-300',
-    staticColor: {
-      white: {
-        default: 'transparent-white-100'
-      },
-      // TODO: Is there a black static color in S2?
-      black: {
-        default: 'transparent-black-400'
-      }
-    },
+    isStaticColor: 'transparent-overlay-300',
     forcedColors: 'ButtonFace'
   },
   outlineWidth: {

@@ -20,19 +20,19 @@ import {Color} from '@react-types/color';
 import {createContext, forwardRef, JSX, ReactElement, useContext, useMemo} from 'react';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ColorSwatchProps extends Omit<AriaColorSwatchProps, 'className' | 'style'>, UnsafeStyles {
   /**
    * The size of the ColorSwatch.
-   * @default "M"
+   * @default 'M'
    */
   size?: 'XS' | 'S' | 'M' | 'L',
   /**
    * The corner rounding of the ColorSwatch.
-   * @default "default"
+   * @default 'default'
    */
   rounding?: 'default' | 'none' | 'full',
   /** Spectrum-defined styles, returned by the `style()` macro. */
@@ -46,7 +46,10 @@ interface SpectrumColorSwatchContextValue extends Pick<ColorSwatchProps, 'size' 
 export const ColorSwatchContext = createContext<ContextValue<ColorSwatchProps, DOMRefValue<HTMLDivElement>>>(null);
 export const InternalColorSwatchContext = createContext<SpectrumColorSwatchContextValue | null>(null);
 
-function ColorSwatch(props: ColorSwatchProps, ref: DOMRef<HTMLDivElement>): JSX.Element {
+/**
+ * A ColorSwatch displays a preview of a selected color.
+ */
+export const ColorSwatch = forwardRef(function ColorSwatch(props: ColorSwatchProps, ref: DOMRef<HTMLDivElement>): JSX.Element {
   [props, ref] = useSpectrumContextProps(props, ref, ColorSwatchContext);
   let domRef = useDOMRef(ref);
   let ctx = useContext(InternalColorSwatchContext);
@@ -104,10 +107,4 @@ function ColorSwatch(props: ColorSwatchProps, ref: DOMRef<HTMLDivElement>): JSX.
   }
 
   return swatch;
-}
-
-/**
- * A ColorSwatch displays a preview of a selected color.
- */
-let _ColorSwatch = forwardRef(ColorSwatch);
-export {_ColorSwatch as ColorSwatch};
+});

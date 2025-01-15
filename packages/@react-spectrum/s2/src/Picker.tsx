@@ -11,8 +11,8 @@
  */
 
 import {
+  ListBoxSection as AriaListBoxSection,
   PopoverProps as AriaPopoverProps,
-  Section as AriaSection,
   Select as AriaSelect,
   SelectProps as AriaSelectProps,
   SelectRenderProps as AriaSelectRenderProps,
@@ -27,7 +27,7 @@ import {
   SectionProps,
   SelectValue
 } from 'react-aria-components';
-import {baseColor, edgeToText, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {baseColor, edgeToText, focusRing, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
   checkmark,
@@ -43,7 +43,7 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {field, fieldInput, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {
   FieldErrorIcon,
   FieldLabel,
@@ -57,7 +57,7 @@ import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Placement} from 'react-aria';
-import {Popover} from './Popover';
+import {PopoverBase} from './Popover';
 import {pressScale} from './pressScale';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
@@ -93,13 +93,13 @@ export interface PickerProps<T extends object> extends
     /**
      * Direction the menu will render relative to the Picker.
      *
-     * @default "bottom"
+     * @default 'bottom'
      */
     direction?: 'bottom' | 'top',
     /**
      * Alignment of the menu relative to the input target.
      *
-     * @default "start"
+     * @default 'start'
      */
     align?: 'start' | 'end',
     /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
@@ -122,7 +122,16 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   font: 'control',
   display: 'flex',
   textAlign: 'start',
-  borderStyle: 'none',
+  borderStyle: {
+    default: 'none',
+    forcedColors: 'solid'
+  },
+  borderColor: {
+    forcedColors: {
+      default: 'ButtonText',
+      isDisabled: 'GrayText'
+    }
+  },
   borderRadius: 'control',
   alignItems: 'center',
   height: 'control',
@@ -219,7 +228,10 @@ const iconStyles = style({
 let InternalPickerContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({size: 'M'});
 let InsideSelectValueContext = createContext(false);
 
-function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLButtonElement>) {
+/**
+ * Pickers allow users to choose a single option from a collapsible list of options when space is limited.
+ */
+export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLButtonElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, PickerContext);
   let domRef = useFocusableRef(ref);
@@ -285,6 +297,9 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
             <Button
               ref={domRef}
               style={renderProps => pressScale(domRef)(renderProps)}
+              // Prevent press scale from sticking while Picker is open.
+              // @ts-ignore
+              isPressed={false}
               className={renderProps => inputButton({
                 ...renderProps,
                 size: size,
@@ -344,7 +359,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
               description={descriptionMessage}>
               {errorMessage}
             </HelpText>
-            <Popover
+            <PopoverBase
               hideArrow
               offset={menuOffset}
               placement={`${direction} ${align}` as Placement}
@@ -381,19 +396,13 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                   {children}
                 </ListBox>
               </Provider>
-            </Popover>
+            </PopoverBase>
           </InternalPickerContext.Provider>
         </>
       )}
     </AriaSelect>
   );
-}
-
-/**
- * Pickers allow users to choose a single option from a collapsible list of options when space is limited.
- */
-let _Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(Picker);
-export {_Picker as Picker};
+});
 
 export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {
   children: ReactNode
@@ -455,13 +464,14 @@ function DefaultProvider({context, value, children}: {context: React.Context<any
 
 export interface PickerSectionProps<T extends object> extends SectionProps<T> {}
 export function PickerSection<T extends object>(props: PickerSectionProps<T>) {
+  let {size} = useContext(InternalPickerContext);
   return (
     <>
-      <AriaSection
+      <AriaListBoxSection
         {...props}
-        className={section}>
+        className={section({size})}>
         {props.children}
-      </AriaSection>
+      </AriaListBoxSection>
       <Divider />
     </>
   );

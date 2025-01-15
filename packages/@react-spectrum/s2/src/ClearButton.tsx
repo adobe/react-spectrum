@@ -18,7 +18,7 @@ import {
 import CrossIcon from '../ui-icons/Cross';
 import {FocusableRef} from '@react-types/shared';
 import {forwardRef} from 'react';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {useFocusableRef} from '@react-spectrum/utils';
 
 interface ClearButtonStyleProps {
@@ -33,7 +33,7 @@ interface ClearButtonStyleProps {
 interface ClearButtonRenderProps extends ButtonRenderProps, ClearButtonStyleProps {}
 interface ClearButtonProps extends ButtonProps, ClearButtonStyleProps {}
 
-function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+export const ClearButton = forwardRef(function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   let domRef = useFocusableRef(ref);
 
   return (
@@ -60,7 +60,4 @@ function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElemen
       <CrossIcon size={props.size || 'M'} />
     </Button>
   );
-}
-
-let _ClearButton = forwardRef(ClearButton);
-export {_ClearButton as ClearButton};
+});

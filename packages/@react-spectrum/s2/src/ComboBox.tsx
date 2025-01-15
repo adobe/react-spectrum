@@ -13,8 +13,8 @@
 import {
   ComboBox as AriaComboBox,
   ComboBoxProps as AriaComboBoxProps,
+  ListBoxSection as AriaListBoxSection,
   PopoverProps as AriaPopoverProps,
-  Section as AriaSection,
   Button,
   ContextValue,
   InputContext,
@@ -25,7 +25,7 @@ import {
   Provider,
   SectionProps
 } from 'react-aria-components';
-import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {baseColor, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
   checkmark,
@@ -53,7 +53,7 @@ import {IconContext} from './Icon';
 import {menu} from './Picker';
 import {mergeRefs, useResizeObserver} from '@react-aria/utils';
 import {Placement} from 'react-aria';
-import {Popover} from './Popover';
+import {PopoverBase} from './Popover';
 import {pressScale} from './pressScale';
 import {TextFieldRef} from '@react-types/textfield';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -63,7 +63,7 @@ export interface ComboboxStyleProps {
   /**
    * The size of the Combobox.
    *
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL'
 }
@@ -80,13 +80,13 @@ export interface ComboBoxProps<T extends object> extends
     /**
      * Direction the menu will render relative to the Picker.
      *
-     * @default "bottom"
+     * @default 'bottom'
      */
     direction?: 'bottom' | 'top',
     /**
      * Alignment of the menu relative to the input target.
      *
-     * @default "start"
+     * @default 'start'
      */
     align?: 'start' | 'end',
     /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
@@ -149,7 +149,10 @@ const iconStyles = style({
 
 let InternalComboboxContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({size: 'M'});
 
-function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: Ref<TextFieldRef>) {
+/**
+ * ComboBox allow users to choose a single option from a collapsible list of options when space is limited.
+ */
+export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: Ref<TextFieldRef>) {
   [props, ref] = useSpectrumContextProps(props, ref, ComboBoxContext);
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useRef<HTMLDivElement>(null);
@@ -263,6 +266,9 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: Ref<TextFieldR
               {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
               <Button
                 ref={buttonRef}
+                // Prevent press scale from sticking while ComboBox is open.
+                // @ts-ignore
+                isPressed={false}
                 style={renderProps => pressScale(buttonRef)(renderProps)}
                 className={renderProps => inputButton({
                   ...renderProps,
@@ -281,7 +287,7 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: Ref<TextFieldR
               description={descriptionMessage}>
               {errorMessage}
             </HelpText>
-            <Popover
+            <PopoverBase
               hideArrow
               triggerRef={triggerRef}
               offset={menuOffset}
@@ -312,19 +318,13 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: Ref<TextFieldR
                   {children}
                 </ListBox>
               </Provider>
-            </Popover>
+            </PopoverBase>
           </InternalComboboxContext.Provider>
         </>
       )}
     </AriaComboBox>
   );
-}
-
-/**
- * ComboBox allow users to choose a single option from a collapsible list of options when space is limited.
- */
-let _ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(ComboBox);
-export {_ComboBox as ComboBox};
+});
 
 
 export interface ComboBoxItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {
@@ -379,13 +379,14 @@ export function ComboBoxItem(props: ComboBoxItemProps) {
 
 export interface ComboBoxSectionProps<T extends object> extends SectionProps<T> {}
 export function ComboBoxSection<T extends object>(props: ComboBoxSectionProps<T>) {
+  let {size} = useContext(InternalComboboxContext);
   return (
     <>
-      <AriaSection
+      <AriaListBoxSection
         {...props}
-        className={section}>
+        className={section({size})}>
         {props.children}
-      </AriaSection>
+      </AriaListBoxSection>
       <Divider />
     </>
   );

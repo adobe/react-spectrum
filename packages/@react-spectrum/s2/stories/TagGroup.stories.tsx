@@ -25,7 +25,7 @@ import {
 } from '../src';
 import type {Meta} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof TagGroup<any>> = {
   component: TagGroup,
@@ -42,7 +42,8 @@ const meta: Meta<typeof TagGroup<any>> = {
     },
     onSelectionChange: {table: {category: 'Events'}}
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
+  title: 'TagGroup'
 };
 
 export default meta;
@@ -213,7 +214,26 @@ export const ContextualHelpExample = {
       args.onRemove = action('remove');
     }
     return (
-      <TagGroup {...args}>
+      <TagGroup
+        {...args}
+        contextualHelp={
+          <ContextualHelp>
+            <Heading>What is a ice cream?</Heading>
+            <Content>
+              <Text>
+                A combination of sugar, eggs, milk, and cream is cooked to make
+                a custard base. Then, flavorings are added, and this flavored
+                mixture is carefully churned and frozen to make ice cream.
+              </Text>
+            </Content>
+            <Footer>
+              <Link
+                isStandalone
+                href="https://en.wikipedia.org/wiki/Ice_cream"
+                target="_blank">Learn more about ice cream</Link>
+            </Footer>
+          </ContextualHelp>
+        }>
         <Tag>Chocolate</Tag>
         <Tag>Mint</Tag>
         <Tag>Strawberry</Tag>
@@ -222,59 +242,6 @@ export const ContextualHelpExample = {
     );
   },
   args: {
-    label: 'Ice cream flavor',
-    contextualHelp: (
-      <ContextualHelp>
-        <Heading>What is a ice cream?</Heading>
-        <Content>
-          <Text>
-            A combination of sugar, eggs, milk, and cream is cooked to make
-            a custard base. Then, flavorings are added, and this flavored
-            mixture is carefully churned and frozen to make ice cream.
-          </Text>
-        </Content>
-        <Footer>
-          <Link
-            isStandalone
-            href="https://en.wikipedia.org/wiki/Ice_cream"
-            target="_blank">Learn more about ice cream</Link>
-        </Footer>
-      </ContextualHelp>
-    )
-  },
-  parameters: {
-    docs: {
-      source: {
-        transform: () => {
-          return `
-<TagGroup
-  label="Ice cream flavor"
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>What is a ice cream?</Heading>
-      <Content>
-        <Text>
-          A combination of sugar, eggs, milk, and cream is cooked to make
-          a custard base. Then, flavorings are added, and this flavored
-          mixture is carefully churned and frozen to make ice cream.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Ice_cream"
-          target="_blank">Learn more about ice cream</Link>
-      </Footer>
-    </ContextualHelp>
-  }
->
-  <Tag>Chocolate</Tag>
-  <Tag>Mint</Tag>
-  <Tag>Strawberry</Tag>
-  <Tag>Vanilla</Tag>
-</TagGroup>`;
-        }
-      }
-    }
+    label: 'Ice cream flavor'
   }
 };

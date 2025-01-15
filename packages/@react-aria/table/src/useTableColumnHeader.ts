@@ -60,7 +60,7 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, st
   // Needed to pick up the focusable context, enabling things like Tooltips for example
   let {focusableProps} = useFocusable({}, ref);
 
-  let ariaSort: DOMAttributes['aria-sort'] = null;
+  let ariaSort: DOMAttributes['aria-sort'] | undefined = undefined;
   let isSortedColumn = state.sortDescriptor?.column === node.key;
   let sortDirection = state.sortDescriptor?.direction;
   // aria-sort not supported in Android Talkback
@@ -95,11 +95,11 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, st
         focusableProps,
         descriptionProps,
         // If the table is empty, make all column headers untabbable
-        shouldDisableFocus && {tabIndex: -1}
+        shouldDisableFocus ? {tabIndex: -1} : null
       ),
       role: 'columnheader',
       id: getColumnHeaderId(state, node.key),
-      'aria-colspan': node.colspan && node.colspan > 1 ? node.colspan : null,
+      'aria-colspan': node.colspan && node.colspan > 1 ? node.colspan : undefined,
       'aria-sort': ariaSort
     }
   };

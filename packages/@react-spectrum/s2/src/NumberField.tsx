@@ -21,7 +21,7 @@ import {
   Text,
   useContextProps
 } from 'react-aria-components';
-import {baseColor, size, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {baseColor, space, style} from '../style' with {type: 'macro'};
 import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useContext, useImperativeHandle, useMemo, useRef} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
 import Dash from '../ui-icons/Dash';
@@ -49,7 +49,7 @@ export interface NumberFieldProps extends
   /**
    * The size of the NumberField.
    *
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL'
 }
@@ -158,15 +158,18 @@ const stepperContainerStyles = style({
   },
   paddingEnd: {
     size: {
-      S: size(2),
+      S: 2,
       M: 4,
-      L: size(6),
-      XL: size(6)
+      L: space(6),
+      XL: space(6)
     }
   }
 });
 
-function NumberField(props: NumberFieldProps, ref: Ref<TextFieldRef>) {
+/**
+ * NumberFields allow users to input number values with a keyboard or increment/decrement with step buttons.
+ */
+export const NumberField = forwardRef(function NumberField(props: NumberFieldProps, ref: Ref<TextFieldRef>) {
   [props, ref] = useSpectrumContextProps(props, ref, NumberFieldContext);
   let {
     label,
@@ -287,7 +290,7 @@ function NumberField(props: NumberFieldProps, ref: Ref<TextFieldRef>) {
         }
     </AriaNumberField>
   );
-}
+});
 
 interface StepButtonProps extends AriaButtonProps {
 }
@@ -323,12 +326,6 @@ let StepButton = forwardRef((props: StepButtonProps, ref: ForwardedRef<HTMLDivEl
       data-focus-visible={isFocusVisible || undefined} />
   );
 });
-
-/**
- * NumberFields allow users to input number values with a keyboard or increment/decrement with step buttons.
- */
-let _NumberField = forwardRef(NumberField);
-export {_NumberField as NumberField};
 
 // replace from RAC
 function useRenderProps(props: any) {

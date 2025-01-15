@@ -21,7 +21,7 @@ import {DOMRef, DOMRefValue, HelpTextProps, Orientation, SpectrumLabelableProps}
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel, HelpText} from './Field';
 import {FormContext, useFormProps} from './Form';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -51,7 +51,10 @@ export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'classN
 
 export const CheckboxGroupContext = createContext<ContextValue<CheckboxGroupProps, DOMRefValue<HTMLDivElement>>>(null);
 
-function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A CheckboxGroup allows users to select one or more items from a list of choices.
+ */
+export const CheckboxGroup = forwardRef(function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, CheckboxGroupContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);
@@ -117,7 +120,7 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
             columnGap: 16,
             flexWrap: 'wrap'
           })({orientation})}>
-          <FormContext.Provider value={{...formContext, size}}>
+          <FormContext.Provider value={{...formContext, size, isRequired: undefined}}>
             <CheckboxContext.Provider value={{isEmphasized}}>
               {children}
             </CheckboxContext.Provider>
@@ -134,10 +137,4 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
       </>)}
     </AriaCheckboxGroup>
   );
-}
-
-/**
- * A CheckboxGroup allows users to select one or more items from a list of choices.
- */
-let _CheckboxGroup = forwardRef(CheckboxGroup);
-export {_CheckboxGroup as CheckboxGroup};
+});

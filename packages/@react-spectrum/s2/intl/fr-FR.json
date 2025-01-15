@@ -1,4 +1,10 @@
 {
+  "actionbar.actions": "Actions",
+  "actionbar.actionsAvailable": "Actions disponibles.",
+  "actionbar.clearSelection": "Supprimer la sélection",
+  "actionbar.selected": "{count, plural, =0 {Aucun élément sélectionné} one {# sélectionné} other {# sélectionnés}}",
+  "actionbar.selectedAll": "Toute la sélection",
+  "button.pending": "En attente",
   "contextualhelp.help": "Aide",
   "contextualhelp.info": "Informations",
   "dialog.alert": "Alerte",
@@ -11,11 +17,17 @@
   "label.(optional)": "(facultatif)",
   "label.(required)": "(requis)",
   "menu.moreActions": "Autres actions",
-  "picker.placeholder": "Sélectionnez une option...",
+  "picker.placeholder": "Sélectionner…",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
+  "table.loading": "Chargement...",
+  "table.loadingMore": "Chargement supplémentaire...",
+  "table.resizeColumn": "Redimensionner la colonne",
+  "table.sortAscending": "Trier par ordre croissant",
+  "table.sortDescending": "Trier par ordre décroissant",
   "tag.actions": "Actions",
   "tag.hideButtonLabel": "Afficher moins",
   "tag.noTags": "Aucun",
-  "tag.showAllButtonLabel": "Tout afficher ({tagCount, number})"
+  "tag.showAllButtonLabel": "Tout afficher ({tagCount, number})",
+  "breadcrumbs.more": "Plus d'éléments"
 }

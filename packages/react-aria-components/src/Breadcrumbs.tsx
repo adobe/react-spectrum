@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaBreadcrumbsProps} from 'react-aria';
+import {AriaBreadcrumbsProps, useBreadcrumbs} from 'react-aria';
 import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext} from './Collection';
 import {ContextValue, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
@@ -28,16 +28,20 @@ export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledK
 
 export const BreadcrumbsContext = createContext<ContextValue<BreadcrumbsProps<any>, HTMLOListElement>>(null);
 
-function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: ForwardedRef<HTMLOListElement>) {
+/**
+ * Breadcrumbs display a hierarchy of links to the current page or resource in an application.
+ */
+export const Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: ForwardedRef<HTMLOListElement>) {
   [props, ref] = useContextProps(props, ref, BreadcrumbsContext);
   let {CollectionRoot} = useContext(CollectionRendererContext);
+  let {navProps} = useBreadcrumbs(props);
 
   return (
     <CollectionBuilder content={<Collection {...props} />}>
       {collection => (
         <ol
           ref={ref}
-          {...filterDOMProps(props, {labelable: true})}
+          {...navProps}
           slot={props.slot || undefined}
           style={props.style}
           className={props.className ?? 'react-aria-Breadcrumbs'}>
@@ -48,20 +52,19 @@ function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: Forwarde
       )}
     </CollectionBuilder>
   );
-}
-
-/**
- * Breadcrumbs display a hierarchy of links to the current page or resource in an application.
- */
-const _Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(Breadcrumbs);
-export {_Breadcrumbs as Breadcrumbs};
+});
 
 export interface BreadcrumbRenderProps {
   /**
    * Whether the breadcrumb is for the current page.
    * @selector [data-current]
    */
-  isCurrent: boolean
+  isCurrent: boolean,
+  /**
+   * Whether the breadcrumb is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean
 }
 
 export interface BreadcrumbProps extends RenderProps<BreadcrumbRenderProps>  {

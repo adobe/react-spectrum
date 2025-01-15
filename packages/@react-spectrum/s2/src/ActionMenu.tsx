@@ -26,14 +26,18 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ActionMenuProps<T> extends
   Pick<MenuTriggerProps, 'isOpen' | 'defaultOpen' | 'onOpenChange' | 'align' | 'direction' | 'shouldFlip'>,
-  Pick<MenuProps<T>, 'children' | 'items' | 'disabledKeys' | 'onAction' | 'size'>,
-  Pick<ActionButtonProps, 'isDisabled' | 'isQuiet' | 'autoFocus'>,
+  Pick<MenuProps<T>, 'children' | 'items' | 'disabledKeys' | 'onAction'>,
+  Pick<ActionButtonProps, 'isDisabled' | 'isQuiet' | 'autoFocus' | 'size'>,
   StyleProps, DOMProps, AriaLabelingProps {
-  }
+  menuSize?: 'S' | 'M' | 'L' | 'XL'
+}
 
 export const ActionMenuContext = createContext<ContextValue<ActionMenuProps<any>, FocusableRefValue<HTMLButtonElement>>>(null);
 
-function ActionMenu<T extends object>(props: ActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
+/**
+ * ActionMenu combines an ActionButton with a Menu for simple "more actions" use cases.
+ */
+export const ActionMenu = /*#__PURE__*/(forwardRef as forwardRefType)(function ActionMenu<T extends object>(props: ActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, ActionMenuContext);
   let buttonProps = filterDOMProps(props, {labelable: true});
@@ -41,7 +45,6 @@ function ActionMenu<T extends object>(props: ActionMenuProps<T>, ref: FocusableR
     buttonProps['aria-label'] = stringFormatter.format('menu.moreActions');
   }
 
-  // size independently controlled?
   return (
     <MenuTrigger
       isOpen={props.isOpen}
@@ -52,11 +55,11 @@ function ActionMenu<T extends object>(props: ActionMenuProps<T>, ref: FocusableR
       shouldFlip={props.shouldFlip}>
       <ActionButton
         ref={ref}
-        aria-label="Help"
         size={props.size}
         isDisabled={props.isDisabled}
         autoFocus={props.autoFocus}
         isQuiet={props.isQuiet}
+        styles={props.styles}
         {...buttonProps}>
         <MoreIcon />
       </ActionButton>
@@ -64,16 +67,9 @@ function ActionMenu<T extends object>(props: ActionMenuProps<T>, ref: FocusableR
         items={props.items}
         disabledKeys={props.disabledKeys}
         onAction={props.onAction}
-        size={props.size}>
-        {/* @ts-ignore TODO: fix type, right now this component is the same as Menu */}
+        size={props.menuSize}>
         {props.children}
       </Menu>
     </MenuTrigger>
   );
-}
-
-/**
- * ActionMenu combines an ActionButton with a Menu for simple "more actions" use cases.
- */
-let _ActionMenu = /*#__PURE__*/(forwardRef as forwardRefType)(ActionMenu);
-export {_ActionMenu as ActionMenu};
+});

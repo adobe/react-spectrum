@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {colorScale, colorToken, fontSizeToken, getToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
-import {createArbitraryProperty, createColorProperty, createMappedProperty, createRenamedProperty, createTheme} from './style-macro';
+import {ArbitraryValue, CSSProperties, CSSValue, PropertyValueMap} from './types';
+import {autoStaticColor, colorScale, colorToken, fontSizeToken, generateOverlayColorScale, getToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
+import {Color, createArbitraryProperty, createColorProperty, createMappedProperty, createRenamedProperty, createSizingProperty, createTheme, parseArbitraryValue} from './style-macro';
 import type * as CSS from 'csstype';
 
 interface MacroContext {
@@ -58,6 +59,7 @@ const color = {
 
   ...simpleColorScale('transparent-white'),
   ...simpleColorScale('transparent-black'),
+  ...generateOverlayColorScale(),
 
   // High contrast mode.
   Background: 'Background',
@@ -87,8 +89,57 @@ export function baseColor(base: keyof typeof color) {
   };
 }
 
-export function lightDark(light: keyof typeof color, dark: keyof typeof color): `[${string}]` {
-  return `[light-dark(${color[light]}, ${color[dark]})]`;
+type SpectrumColor = Color<keyof typeof color> | ArbitraryValue;
+function parseColor(value: SpectrumColor) {
+  let arbitrary = parseArbitraryValue(value);
+  if (arbitrary) {
+    return arbitrary[0];
+  }
+  let [colorValue, opacity] = value.split('/');
+  colorValue = color[colorValue];
+  if (opacity) {
+    colorValue = `rgb(from ${colorValue} r g b / ${opacity}%)`;
+  }
+  return colorValue;
+}
+
+export function lightDark(light: SpectrumColor, dark: SpectrumColor): `[${string}]` {
+  return `[light-dark(${parseColor(light)}, ${parseColor(dark)})]`;
+}
+
+export function colorMix(a: SpectrumColor, b: SpectrumColor, percent: number): `[${string}]` {
+  return `[color-mix(in srgb, ${parseColor(a)}, ${parseColor(b)} ${percent}%)]`;
+}
+
+interface LinearGradient {
+  type: 'linear-gradient',
+  angle: string,
+  stops: [SpectrumColor, number][]
+}
+
+export function linearGradient(this: MacroContext | void, angle: string, ...tokens: [SpectrumColor, number][]): [LinearGradient] {
+  // Generate @property rules for each gradient stop color. This allows the gradient to be animated.
+  let propertyDefinitions: string[] = [];
+  for (let i = 0; i < tokens.length; i++) {
+    propertyDefinitions.push(`@property --g${i} {
+  syntax: '<color>';
+  initial-value: #0000;
+  inherits: false;
+}`);
+  }
+
+  if (this && typeof this.addAsset === 'function') {
+    this.addAsset({
+      type: 'css',
+      content: propertyDefinitions.join('\n\n')
+    });
+  }
+
+  return [{
+    type: 'linear-gradient',
+    angle,
+    stops: tokens
+  }];
 }
 
 function generateSpacing<K extends number[]>(px: K): {[P in K[number]]: string} {
@@ -101,7 +152,7 @@ function generateSpacing<K extends number[]>(px: K): {[P in K[number]]: string} 
 
 const baseSpacing = generateSpacing([
   0,
-  // 2, // spacing-50 !! TODO: should we support this?
+  2, // spacing-50
   4, // spacing-75
   8, // spacing-100
   12, // spacing-200
@@ -172,12 +223,8 @@ const negativeSpacing = generateSpacing([
   -384
 ] as const);
 
-function arbitrary(ctx: MacroContext | void, value: string): `[${string}]` {
-  return ctx ? `[${value}]` : value as any;
-}
-
 export function fontRelative(this: MacroContext | void, base: number, baseFontSize = 14) {
-  return arbitrary(this, (base / baseFontSize) + 'em');
+  return (base / baseFontSize) + 'em';
 }
 
 export function edgeToText(this: MacroContext | void, height: keyof typeof baseSpacing) {
@@ -185,7 +232,7 @@ export function edgeToText(this: MacroContext | void, height: keyof typeof baseS
 }
 
 export function space(this: MacroContext | void, px: number) {
-  return arbitrary(this, pxToRem(px));
+  return pxToRem(px);
 }
 
 const spacing = {
@@ -203,19 +250,12 @@ const spacing = {
 };
 
 export function size(this: MacroContext | void, px: number) {
-  return {default: arbitrary(this, pxToRem(px)), touch: arbitrary(this, pxToRem(px * 1.25))};
+  return `calc(${pxToRem(px)} * var(--s2-scale))`;
 }
 
-const scaledSpacing: {[key in keyof typeof baseSpacing]: {default: string, touch: string}} =
-  Object.fromEntries(Object.entries(baseSpacing).map(([k, v]) =>
-    [k, {default: v, touch: parseFloat(v) * 1.25 + v.match(/[^0-9.]+/)![0]}])
-  ) as any;
-
 const sizing = {
-  ...scaledSpacing,
   auto: 'auto',
   full: '100%',
-  screen: '100vh',
   min: 'min-content',
   max: 'max-content',
   fit: 'fit-content',
@@ -240,6 +280,20 @@ const sizing = {
     }
   }
 };
+
+const height = {
+  ...sizing,
+  screen: '100vh'
+};
+
+const width = {
+  ...sizing,
+  screen: '100vw'
+};
+
+function createSpectrumSizingProperty<T extends CSSValue>(values: PropertyValueMap<T>) {
+  return createSizingProperty(values, px => `calc(${pxToRem(px)} * var(--s2-scale))`);
+}
 
 const margin = {
   ...spacing,
@@ -289,13 +343,14 @@ let gridTrack = (value: GridTrack) => {
 };
 
 let gridTrackSize = (value: GridTrackSize) => {
-  // @ts-ignore
   return value in baseSpacing ? baseSpacing[value] : value;
 };
 
 const transitionProperty = {
-  default: 'color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, translate, scale, rotate, filter, backdrop-filter',
-  colors: 'color, background-color, border-color, text-decoration-color, fill, stroke',
+  // var(--gp) is generated by the backgroundImage property when setting a gradient.
+  // It includes a list of all of the custom properties used for each color stop.
+  default: 'color, background-color, var(--gp), border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, translate, scale, rotate, filter, backdrop-filter',
+  colors: 'color, background-color, var(--gp), border-color, text-decoration-color, fill, stroke',
   opacity: 'opacity',
   shadow: 'box-shadow',
   transform: 'transform, translate, scale, rotate',
@@ -437,7 +492,8 @@ export const style = createTheme({
       title: colorToken('title-color'),
       body: colorToken('body-color'),
       detail: colorToken('detail-color'),
-      code: colorToken('code-color')
+      code: colorToken('code-color'),
+      auto: autoStaticColor('self(backgroundColor, var(--s2-container-bg))')
     }),
     backgroundColor: createColorProperty({
       ...color,
@@ -447,6 +503,7 @@ export const style = createTheme({
         isFocusVisible: weirdColorToken('accent-background-color-key-focus'),
         isPressed: weirdColorToken('accent-background-color-down')
       },
+      'accent-subtle': weirdColorToken('accent-subtle-background-color-default'),
       neutral: {
         default: colorToken('neutral-background-color-default'),
         isHovered: colorToken('neutral-background-color-hover'),
@@ -459,54 +516,74 @@ export const style = createTheme({
         isFocusVisible: weirdColorToken('neutral-subdued-background-color-key-focus'),
         isPressed: weirdColorToken('neutral-subdued-background-color-down')
       },
-      'neutral-subtle': colorToken('neutral-subtle-background-color-default'),
+      'neutral-subtle': weirdColorToken('neutral-subtle-background-color-default'),
       negative: {
         default: weirdColorToken('negative-background-color-default'),
         isHovered: weirdColorToken('negative-background-color-hover'),
         isFocusVisible: weirdColorToken('negative-background-color-key-focus'),
         isPressed: weirdColorToken('negative-background-color-down')
       },
-      'negative-subtle': colorToken('negative-subtle-background-color-default'),
+      'negative-subtle': weirdColorToken('negative-subtle-background-color-default'),
       informative: {
         default: weirdColorToken('informative-background-color-default'),
         isHovered: weirdColorToken('informative-background-color-hover'),
         isFocusVisible: weirdColorToken('informative-background-color-key-focus'),
         isPressed: weirdColorToken('informative-background-color-down')
       },
-      'informative-subtle': colorToken('informative-subtle-background-color-default'),
+      'informative-subtle': weirdColorToken('informative-subtle-background-color-default'),
       positive: {
         default: weirdColorToken('positive-background-color-default'),
         isHovered: weirdColorToken('positive-background-color-hover'),
         isFocusVisible: weirdColorToken('positive-background-color-key-focus'),
         isPressed: weirdColorToken('positive-background-color-down')
       },
-      'positive-subtle': colorToken('positive-subtle-background-color-default'),
+      'positive-subtle': weirdColorToken('positive-subtle-background-color-default'),
       notice: weirdColorToken('notice-background-color-default'),
-      'notice-subtle': colorToken('notice-subtle-background-color-default'),
+      'notice-subtle': weirdColorToken('notice-subtle-background-color-default'),
       gray: weirdColorToken('gray-background-color-default'),
+      'gray-subtle': weirdColorToken('gray-subtle-background-color-default'),
       red: weirdColorToken('red-background-color-default'),
+      'red-subtle': weirdColorToken('red-subtle-background-color-default'),
       orange: weirdColorToken('orange-background-color-default'),
+      'orange-subtle': weirdColorToken('orange-subtle-background-color-default'),
       yellow: weirdColorToken('yellow-background-color-default'),
+      'yellow-subtle': weirdColorToken('yellow-subtle-background-color-default'),
       chartreuse: weirdColorToken('chartreuse-background-color-default'),
+      'chartreuse-subtle': weirdColorToken('chartreuse-subtle-background-color-default'),
       celery: weirdColorToken('celery-background-color-default'),
+      'celery-subtle': weirdColorToken('celery-subtle-background-color-default'),
       green: weirdColorToken('green-background-color-default'),
+      'green-subtle': weirdColorToken('green-subtle-background-color-default'),
       seafoam: weirdColorToken('seafoam-background-color-default'),
+      'seafoam-subtle': weirdColorToken('seafoam-subtle-background-color-default'),
       cyan: weirdColorToken('cyan-background-color-default'),
+      'cyan-subtle': weirdColorToken('cyan-subtle-background-color-default'),
       blue: weirdColorToken('blue-background-color-default'),
+      'blue-subtle': weirdColorToken('blue-subtle-background-color-default'),
       indigo: weirdColorToken('indigo-background-color-default'),
+      'indigo-subtle': weirdColorToken('indigo-subtle-background-color-default'),
       purple: weirdColorToken('purple-background-color-default'),
+      'purple-subtle': weirdColorToken('purple-subtle-background-color-default'),
       fuchsia: weirdColorToken('fuchsia-background-color-default'),
+      'fuchsia-subtle': weirdColorToken('fuchsia-subtle-background-color-default'),
       magenta: weirdColorToken('magenta-background-color-default'),
+      'magenta-subtle': weirdColorToken('magenta-subtle-background-color-default'),
       pink: weirdColorToken('pink-background-color-default'),
+      'pink-subtle': weirdColorToken('pink-subtle-background-color-default'),
       turquoise: weirdColorToken('turquoise-background-color-default'),
+      'turquoise-subtle': weirdColorToken('turquoise-subtle-background-color-default'),
       cinnamon: weirdColorToken('cinnamon-background-color-default'),
+      'cinnamon-subtle': weirdColorToken('cinnamon-subtle-background-color-default'),
       brown: weirdColorToken('brown-background-color-default'),
+      'brown-subtle': weirdColorToken('brown-subtle-background-color-default'),
       silver: weirdColorToken('silver-background-color-default'),
+      'silver-subtle': weirdColorToken('silver-subtle-background-color-default'),
       disabled: colorToken('disabled-background-color'),
       base: colorToken('background-base-color'),
       'layer-1': colorToken('background-layer-1-color'),
       'layer-2': weirdColorToken('background-layer-2-color'),
-      pasteboard: weirdColorToken('background-pasteboard-color')
+      pasteboard: weirdColorToken('background-pasteboard-color'),
+      elevated: weirdColorToken('background-elevated-color')
     }),
     borderColor: createColorProperty({
       ...color,
@@ -575,20 +652,20 @@ export const style = createTheme({
     },
     rowGap: spacing,
     columnGap: spacing,
-    height: sizing,
-    width: sizing,
-    containIntrinsicWidth: sizing,
-    containIntrinsicHeight: sizing,
-    minHeight: sizing,
-    maxHeight: {
-      ...sizing,
+    height: createSpectrumSizingProperty(height),
+    width: createSpectrumSizingProperty(width),
+    containIntrinsicWidth: createSpectrumSizingProperty(width),
+    containIntrinsicHeight: createSpectrumSizingProperty(height),
+    minHeight: createSpectrumSizingProperty(height),
+    maxHeight: createSpectrumSizingProperty({
+      ...height,
       none: 'none'
-    },
-    minWidth: sizing,
-    maxWidth: {
-      ...sizing,
+    }),
+    minWidth: createSpectrumSizingProperty(width),
+    maxWidth: createSpectrumSizingProperty({
+      ...width,
       none: 'none'
-    },
+    }),
     borderStartWidth: createRenamedProperty('borderInlineStartWidth', borderWidth),
     borderEndWidth: createRenamedProperty('borderInlineEndWidth', borderWidth),
     borderTopWidth: borderWidth,
@@ -625,7 +702,14 @@ export const style = createTheme({
       translate: 'var(--translateX, 0) var(--translateY, 0)'
     }), translate),
     rotate: createArbitraryProperty((value: number | `${number}deg` | `${number}rad` | `${number}grad` | `${number}turn`, property) => ({[property]: typeof value === 'number' ? `${value}deg` : value})),
-    scale: createArbitraryProperty<number>(),
+    scaleX: createArbitraryProperty<number>(value => ({
+      '--scaleX': value,
+      scale: 'var(--scaleX, 1) var(--scaleY, 1)'
+    })),
+    scaleY: createArbitraryProperty<number>(value => ({
+      '--scaleY': value,
+      scale: 'var(--scaleX, 1) var(--scaleY, 1)'
+    })),
     transform: createArbitraryProperty<string>(),
     position: ['absolute', 'fixed', 'relative', 'sticky', 'static'] as const,
     insetStart: createRenamedProperty('insetInlineStart', inset),
@@ -747,7 +831,29 @@ export const style = createTheme({
     borderBottomEndRadius: createRenamedProperty('borderEndEndRadius', radius),
     forcedColorAdjust: ['auto', 'none'] as const,
     colorScheme: ['light', 'dark', 'light dark'] as const,
-    backgroundImage: createArbitraryProperty<string>(),
+    backgroundImage: createArbitraryProperty<string | [LinearGradient]>((value, property) => {
+      if (typeof value === 'string') {
+        return {[property]: value};
+      } else if (Array.isArray(value) && value[0]?.type === 'linear-gradient') {
+        let values: CSSProperties = {
+          [property]: `linear-gradient(${value[0].angle}, ${value[0].stops.map(([, stop], i) => `var(--g${i}) ${stop}%`)})`
+        };
+
+        // Create a CSS var for each color stop so the gradient can be transitioned.
+        // These are registered via @property in the `linearGradient` macro.
+        let properties: string[] = [];
+        value[0].stops.forEach(([color], i) => {
+          properties.push(`--g${i}`);
+          values[`--g${i}`] = parseColor(color);
+        });
+
+        // This is used by transition-property so we automatically transition all of the color stops.
+        values['--gp'] = properties.join(', ');
+        return values;
+      } else {
+        throw new Error('Unexpected backgroundImage value: ' + JSON.stringify(value));
+      }
+    }),
     // TODO: do we need separate x and y properties?
     backgroundPosition: ['bottom', 'center', 'left', 'left bottom', 'left top', 'right', 'right bottom', 'right top', 'top'] as const,
     backgroundSize: ['auto', 'cover', 'contain'] as const,
@@ -886,6 +992,7 @@ export const style = createTheme({
     borderStartRadius: ['borderTopStartRadius', 'borderBottomStartRadius'] as const,
     borderEndRadius: ['borderTopEndRadius', 'borderBottomEndRadius'] as const,
     translate: ['translateX', 'translateY'] as const,
+    scale: ['scaleX', 'scaleY'] as const,
     inset: ['top', 'bottom', 'insetStart', 'insetEnd'] as const,
     insetX: ['insetStart', 'insetEnd'] as const,
     insetY: ['top', 'bottom'] as const,

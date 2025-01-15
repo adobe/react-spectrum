@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Header, Keyboard, Menu, MenuTrigger, Popover, Section, Separator, SubmenuTrigger, Text} from 'react-aria-components';
+import {Button, Header, Keyboard, Menu, MenuSection, MenuTrigger, Popover, Separator, SubmenuTrigger, Text} from 'react-aria-components';
 import {MyMenuItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
@@ -25,19 +25,19 @@ export const MenuExample = () => (
     <Button aria-label="Menu">☰</Button>
     <Popover>
       <Menu className={styles.menu} onAction={action('onAction')}>
-        <Section className={styles.group} aria-label={'Section 1'}>
+        <MenuSection className={styles.group} aria-label={'Section 1'}>
           <MyMenuItem>Foo</MyMenuItem>
           <MyMenuItem>Bar</MyMenuItem>
           <MyMenuItem>Baz</MyMenuItem>
           <MyMenuItem href="https://google.com">Google</MyMenuItem>
-        </Section>
+        </MenuSection>
         <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
-        <Section className={styles.group}>
+        <MenuSection className={styles.group}>
           <Header style={{fontSize: '1.2em'}}>Section 2</Header>
           <MyMenuItem>Foo</MyMenuItem>
           <MyMenuItem>Bar</MyMenuItem>
           <MyMenuItem>Baz</MyMenuItem>
-        </Section>
+        </MenuSection>
       </Menu>
     </Popover>
   </MenuTrigger>
@@ -64,6 +64,54 @@ export const MenuComplex = () => (
           <Keyboard>⌘V</Keyboard>
         </MyMenuItem>
       </Menu>
+    </Popover>
+  </MenuTrigger>
+);
+
+export const MenuScrollPaddingExample = () => (
+  <MenuTrigger>
+    <Button aria-label="Menu">☰</Button>
+    <Popover>
+      <Menu
+        className={styles.menu}
+        onAction={action('onAction')}
+        style={{
+          maxHeight: 200,
+          position: 'relative',
+          scrollPaddingTop: '25px',
+          scrollPaddingBottom: '25px',
+          paddingBottom: '25px' // needed due to absolute-positioned footer
+        }}>
+        <Header
+          style={{
+            fontSize: '1.2em',
+            position: 'sticky',
+            top: 0,
+            height: '25px',
+            background: 'lightgray',
+            borderBottom: '1px solid gray'
+          }}>
+          Section 1
+        </Header>
+        {Array.from({length: 30}).map((_, i) => (
+          <MyMenuItem key={i}>Item {i + 1}</MyMenuItem>
+        ))}
+      </Menu>
+      {/* Menu doesn't have a footer, so have to put one outside to
+        and position it absolutely to demo scroll padding bottom support. */}
+      <div
+        style={{
+          fontSize: '1.2em',
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          width: '100%',
+          height: '24px', // with the border it'll be 25px
+          borderTop: '1px solid gray',
+          background: 'lightgray'
+        }}>
+        A footer
+      </div>
     </Popover>
   </MenuTrigger>
 );
@@ -192,40 +240,40 @@ export const SubmenuSectionsExample = (args) => (
     <Button aria-label="Menu">☰</Button>
     <Popover>
       <Menu className={styles.menu} onAction={action('onAction')}>
-        <Section className={styles.group}>
+        <MenuSection className={styles.group}>
           <Header style={{fontSize: '1.2em'}}>Section 1</Header>
           <MyMenuItem>Foo</MyMenuItem>
           <SubmenuTrigger {...args}>
             <MyMenuItem id="Bar">Bar</MyMenuItem>
             <Popover className={styles.popover}>
               <Menu className={styles.menu} onAction={action('onAction')}>
-                <Section className={styles.group}>
+                <MenuSection className={styles.group}>
                   <Header style={{fontSize: '1.2em'}}>Submenu Section 1</Header>
                   <MyMenuItem id="Submenu Foo">Submenu Foo</MyMenuItem>
                   <MyMenuItem id="Submenu Bar">Submenu Bar</MyMenuItem>
                   <MyMenuItem id="Submenu Baz">Submenu Baz</MyMenuItem>
                   <MyMenuItem href="https://google.com">Google</MyMenuItem>
-                </Section>
+                </MenuSection>
                 <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
-                <Section className={styles.group}>
+                <MenuSection className={styles.group}>
                   <Header style={{fontSize: '1.2em'}}>Submenu Section 2</Header>
                   <MyMenuItem id="Submenu Foo 2">Submenu Foo</MyMenuItem>
                   <MyMenuItem id="Submenu Bar 2">Submenu Bar</MyMenuItem>
                   <MyMenuItem id="Submenu Baz 2">Submenu Baz</MyMenuItem>
-                </Section>
+                </MenuSection>
               </Menu>
             </Popover>
           </SubmenuTrigger>
           <MyMenuItem>Baz</MyMenuItem>
           <MyMenuItem href="https://google.com">Google</MyMenuItem>
-        </Section>
+        </MenuSection>
         <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
-        <Section className={styles.group}>
+        <MenuSection className={styles.group}>
           <Header style={{fontSize: '1.2em'}}>Section 2</Header>
           <MyMenuItem>Foo</MyMenuItem>
           <MyMenuItem>Bar</MyMenuItem>
           <MyMenuItem>Baz</MyMenuItem>
-        </Section>
+        </MenuSection>
       </Menu>
     </Popover>
   </MenuTrigger>

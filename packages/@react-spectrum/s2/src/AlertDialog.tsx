@@ -24,7 +24,7 @@ import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import NoticeSquare from '../s2wf-icons/S2_Icon_AlertDiamond_20_N.svg';
 import {Provider} from 'react-aria-components';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -74,7 +74,10 @@ const icon = style({
   }
 });
 
-function AlertDialog(props: AlertDialogProps, ref: DOMRef) {
+/**
+ * AlertDialogs are a specific type of Dialog. They display important information that users need to acknowledge.
+ */
+export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogProps, ref: DOMRef) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {
     autoFocusButton,
@@ -152,10 +155,4 @@ function AlertDialog(props: AlertDialogProps, ref: DOMRef) {
       )}
     </Dialog>
   );
-}
-
-/**
- * AlertDialogs are a specific type of Dialog. They display important information that users need to acknowledge.
- */
-let _AlertDialog = forwardRef(AlertDialog);
-export {_AlertDialog as AlertDialog};
+});

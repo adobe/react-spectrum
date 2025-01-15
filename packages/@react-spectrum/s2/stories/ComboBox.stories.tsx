@@ -16,7 +16,7 @@ import {ComboBoxProps} from 'react-aria-components';
 import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof ComboBox<any>> = {
   component: ComboBox,
@@ -26,24 +26,26 @@ const meta: Meta<typeof ComboBox<any>> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onInputChange', 'onOpenChange', 'onSelectionChange'])
-  }
+  },
+  title: 'ComboBox'
 };
 
 export default meta;
 type Story = StoryObj<typeof ComboBox<any>>;
 
-export const Example = (args: ComboBoxProps<any>) => (
-  <ComboBox {...args}>
-    <ComboBoxItem>Chocolate</ComboBoxItem>
-    <ComboBoxItem>Mint</ComboBoxItem>
-    <ComboBoxItem>Strawberry</ComboBoxItem>
-    <ComboBoxItem>Vanilla</ComboBoxItem>
-    <ComboBoxItem>Chocolate Chip Cookie Dough</ComboBoxItem>
-  </ComboBox>
-);
-
-Example.args = {
-  label: 'Ice cream flavor'
+export const Example = {
+  render: (args: ComboBoxProps<any>) => (
+    <ComboBox {...args}>
+      <ComboBoxItem>Chocolate</ComboBoxItem>
+      <ComboBoxItem>Mint</ComboBoxItem>
+      <ComboBoxItem>Strawberry</ComboBoxItem>
+      <ComboBoxItem>Vanilla</ComboBoxItem>
+      <ComboBoxItem>Chocolate Chip Cookie Dough</ComboBoxItem>
+    </ComboBox>
+  ),
+  args: {
+    label: 'Ice cream flavor'
+  }
 };
 
 export const Sections: Story = {
@@ -72,7 +74,6 @@ export const Sections: Story = {
     label: 'Ice cream flavor'
   }
 };
-
 
 interface IExampleItem {
   id: string,
@@ -118,104 +119,69 @@ export const WithIcons: Story = {
   }
 };
 
-export const Validation = (args: any) => (
-  <Form>
-    <ComboBox {...args}>
-      {(item) => <ComboBoxItem id={(item as IExampleItem).id} textValue={(item as IExampleItem).label}>{(item as IExampleItem).label}</ComboBoxItem>}
+export const Validation = {
+  render: (args: any) => (
+    <Form>
+      <ComboBox {...args}>
+        {(item) => <ComboBoxItem id={(item as IExampleItem).id} textValue={(item as IExampleItem).label}>{(item as IExampleItem).label}</ComboBoxItem>}
+      </ComboBox>
+      <Button type="submit" variant="primary">Submit</Button>
+    </Form>
+  ),
+  args: {
+    ...Dynamic.args,
+    isRequired: true
+  }
+};
+
+export const ContextualHelpExample: Story = {
+  render: (args) => (
+    <ComboBox
+      {...args}
+      contextualHelp={
+        <ContextualHelp>
+          <Heading>What is a ice cream?</Heading>
+          <Content>
+            <Text>
+              A combination of sugar, eggs, milk, and cream is cooked to make
+              a custard base. Then, flavorings are added, and this flavored
+              mixture is carefully churned and frozen to make ice cream.
+            </Text>
+          </Content>
+          <Footer>
+            <Link
+              isStandalone
+              href="https://en.wikipedia.org/wiki/Ice_cream"
+              target="_blank">Learn more about ice cream</Link>
+          </Footer>
+        </ContextualHelp>
+      }>
+      <ComboBoxItem>Chocolate</ComboBoxItem>
+      <ComboBoxItem>Mint</ComboBoxItem>
+      <ComboBoxItem>Strawberry</ComboBoxItem>
+      <ComboBoxItem>Vanilla</ComboBoxItem>
+      <ComboBoxItem>Chocolate Chip Cookie Dough</ComboBoxItem>
     </ComboBox>
-    <Button type="submit" variant="primary">Submit</Button>
-  </Form>
-);
-
-Validation.args = {
-  ...Dynamic.args,
-  isRequired: true
-};
-
-export const ContextualHelpExample = (args: any) => (
-  <ComboBox {...args}>
-    <ComboBoxItem>Chocolate</ComboBoxItem>
-    <ComboBoxItem>Mint</ComboBoxItem>
-    <ComboBoxItem>Strawberry</ComboBoxItem>
-    <ComboBoxItem>Vanilla</ComboBoxItem>
-    <ComboBoxItem>Chocolate Chip Cookie Dough</ComboBoxItem>
-  </ComboBox>
-);
-
-ContextualHelpExample.args = {
-  label: 'Ice cream flavor',
-  contextualHelp: (
-    <ContextualHelp>
-      <Heading>What is a ice cream?</Heading>
-      <Content>
-        <Text>
-          A combination of sugar, eggs, milk, and cream is cooked to make
-          a custard base. Then, flavorings are added, and this flavored
-          mixture is carefully churned and frozen to make ice cream.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Ice_cream"
-          target="_blank">Learn more about ice cream</Link>
-      </Footer>
-    </ContextualHelp>
-  )
-};
-
-ContextualHelpExample.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `
-<ComboBox
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>
-        What is a ice cream?
-      </Heading>
-      <Content>
-        <Text>
-          A combination of sugar, eggs, milk, and cream is cooked to make a custard base. Then, flavorings are added, and this flavored mixture is carefully churned and frozen to make ice cream.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          href="https://en.wikipedia.org/wiki/Ice_cream"
-          isStandalone
-          target="_blank">
-          Learn more about ice cream
-        </Link>
-      </Footer>
-    </ContextualHelp>
+  ),
+  args: {
+    label: 'Ice cream flavor'
   }
-  label="Ice cream flavor">
-  <ComboBoxItem>
-    Chocolate
-  </ComboBoxItem>
-  <ComboBoxItem>
-    Mint
-  </ComboBoxItem>
-  <ComboBoxItem>
-    Strawberry
-  </ComboBoxItem>
-  <ComboBoxItem>
-    Vanilla
-  </ComboBoxItem>
-  <ComboBoxItem>
-    Chocolate Chip Cookie Dough
-  </ComboBoxItem>
-</ComboBox>`;
-      }
+};
+
+export const CustomWidth = {
+  render: (args) => (
+    <ComboBox {...args} styles={style({width: 384})}>
+      <ComboBoxItem>Chocolate</ComboBoxItem>
+      <ComboBoxItem>Mint</ComboBoxItem>
+      <ComboBoxItem>Strawberry</ComboBoxItem>
+      <ComboBoxItem>Vanilla</ComboBoxItem>
+      <ComboBoxItem>Chocolate Chip Cookie Dough</ComboBoxItem>
+    </ComboBox>
+  ),
+  args: Example.args,
+  parameters: {
+    docs: {
+      disable: true
     }
-  }
-};
-
-export const CustomWidth = (args: any) => <Example {...args} styles={style({width: 384})} />;
-CustomWidth.args = Example.args;
-CustomWidth.parameters = {
-  docs: {
-    disable: true
   }
 };

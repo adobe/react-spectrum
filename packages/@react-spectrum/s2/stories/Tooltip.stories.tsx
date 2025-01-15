@@ -15,8 +15,7 @@ import {CombinedTooltip} from '../src/Tooltip';
 import Crop from '../s2wf-icons/S2_Icon_Crop_20_N.svg';
 import LassoSelect from '../s2wf-icons/S2_Icon_LassoSelect_20_N.svg';
 import type {Meta} from '@storybook/react';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {userEvent, within} from '@storybook/testing-library';
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof CombinedTooltip> = {
   component: CombinedTooltip,
@@ -27,12 +26,13 @@ const meta: Meta<typeof CombinedTooltip> = {
   argTypes: {
     onOpenChange: {table: {category: 'Events'}}
   },
-  decorators: [(Story) => <div style={{height: '100px', width: '200px', display: 'flex', alignItems: 'end', justifyContent: 'center', paddingBottom: 10}}><Story /></div>]
+  decorators: [(Story) => <div style={{height: '100px', width: '200px', display: 'flex', alignItems: 'end', justifyContent: 'center', paddingBottom: 10}}><Story /></div>],
+  title: 'Tooltip'
 };
 
 export default meta;
 
-export const Example = (args: any) => {
+const ExampleRender = (args: any) => {
   let {
     trigger,
     isOpen,
@@ -80,14 +80,8 @@ export const Example = (args: any) => {
   );
 };
 
-Example.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('tooltip');
-};
-
-
-Example.story = {
+export const Example = {
+  render: (args) => <ExampleRender {...args} />,
   argTypes: {
     isOpen: {
       control: 'select',
@@ -96,7 +90,7 @@ Example.story = {
   }
 };
 
-export const LongLabel = (args: any) => {
+const LongLabelRender = (args: any) => {
   let {
     trigger,
     isOpen,
@@ -132,7 +126,8 @@ export const LongLabel = (args: any) => {
   );
 };
 
-LongLabel.story = {
+export const LongLabel = {
+  render: (args) => <LongLabelRender {...args} />,
   argTypes: {
     isOpen: {
       control: 'select',
@@ -141,29 +136,16 @@ LongLabel.story = {
   }
 };
 
-LongLabel.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('tooltip');
-};
-
-export const ColorScheme = (args: any) => (
-  <Provider colorScheme="dark" background="base" styles={style({padding: 48})}>
-    <Example {...args} />
-  </Provider>
-);
-
-ColorScheme.story = {
+export const ColorScheme = {
+  render: (args: any) => (
+    <Provider colorScheme="dark" background="base" styles={style({padding: 48})}>
+      <ExampleRender {...args} />
+    </Provider>
+  ),
   argTypes: {
     isOpen: {
       control: 'select',
       options: [true, false, undefined]
     }
   }
-};
-
-ColorScheme.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('tooltip');
 };

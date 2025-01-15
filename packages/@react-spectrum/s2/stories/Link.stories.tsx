@@ -13,7 +13,7 @@
 import {categorizeArgTypes, StaticColorDecorator} from './utils';
 import {Link} from '../src';
 import type {Meta} from '@storybook/react';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof Link> = {
   component: Link,
@@ -28,7 +28,8 @@ const meta: Meta<typeof Link> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onPress', 'onPressChange', 'onPressEnd', 'onPressStart', 'onPressUp'])
-  }
+  },
+  title: 'Link'
 };
 
 export default meta;
@@ -39,7 +40,7 @@ export const Inline = (args: any) => (
       font: 'body',
       color: {
         default: 'body',
-        staticColor: {white: 'white', black: 'black'}
+        staticColor: {white: 'white', black: 'black', auto: 'auto'}
       }
     })({staticColor: args.staticColor})}>
     Checkbox groups should use <Link {...args}>help text</Link> for error messaging and descriptions. Descriptions are valuable for giving context.

@@ -11,12 +11,14 @@
  */
 
 export {useBreadcrumbItem, useBreadcrumbs} from '@react-aria/breadcrumbs';
-export {useButton, useToggleButton} from '@react-aria/button';
+export {useButton, useToggleButton, useToggleButtonGroup, useToggleButtonGroupItem} from '@react-aria/button';
 export {useCalendar, useCalendarCell, useCalendarGrid, useRangeCalendar} from '@react-aria/calendar';
 export {useCheckbox, useCheckboxGroup, useCheckboxGroupItem} from '@react-aria/checkbox';
+export {useColorArea, useColorChannelField, useColorField, useColorSlider, useColorSwatch, useColorWheel} from '@react-aria/color';
 export {useComboBox} from '@react-aria/combobox';
 export {useDateField, useDatePicker, useDateRangePicker, useDateSegment, useTimeField} from '@react-aria/datepicker';
 export {useDialog} from '@react-aria/dialog';
+export {useDisclosure} from '@react-aria/disclosure';
 export {useDrag, useDrop, useDraggableCollection, useDroppableCollection, useDroppableItem, useDropIndicator, useDraggableItem, useClipboard, DragPreview, ListDropTargetDelegate, DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem} from '@react-aria/dnd';
 export {FocusRing, FocusScope, useFocusManager, useFocusRing, useFocusable} from '@react-aria/focus';
 export {I18nProvider, useCollator, useDateFormatter, useFilter, useLocale, useLocalizedStringFormatter, useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
@@ -47,12 +49,14 @@ export {chain, mergeProps, useId, useObjectRef, RouterProvider} from '@react-ari
 export {VisuallyHidden, useVisuallyHidden} from '@react-aria/visually-hidden';
 
 export type {AriaBreadcrumbItemProps, AriaBreadcrumbsProps, BreadcrumbItemAria, BreadcrumbsAria} from '@react-aria/breadcrumbs';
-export type {AriaButtonOptions, AriaButtonProps, AriaToggleButtonProps, ButtonAria} from '@react-aria/button';
+export type {AriaButtonOptions, AriaButtonProps, AriaToggleButtonProps, ButtonAria, AriaToggleButtonGroupProps, ToggleButtonGroupAria} from '@react-aria/button';
 export type {AriaCalendarCellProps, AriaCalendarGridProps, AriaCalendarProps, AriaRangeCalendarProps, CalendarAria, CalendarCellAria, CalendarGridAria, CalendarProps, RangeCalendarProps} from '@react-aria/calendar';
 export type {AriaCheckboxGroupItemProps, AriaCheckboxGroupProps, AriaCheckboxProps, CheckboxAria, CheckboxGroupAria} from '@react-aria/checkbox';
+export type {AriaColorAreaOptions, AriaColorChannelFieldProps, AriaColorFieldProps, AriaColorSliderOptions, AriaColorSwatchProps, AriaColorWheelOptions, ColorAreaAria, ColorChannelFieldAria, ColorFieldAria, ColorSliderAria, ColorSwatchAria, ColorWheelAria} from '@react-aria/color';
 export type {AriaComboBoxOptions, AriaComboBoxProps, ComboBoxAria} from '@react-aria/combobox';
 export type {AriaDateFieldProps, AriaDatePickerProps, AriaDateRangePickerProps, AriaTimeFieldProps, DateFieldAria, DatePickerAria, DateRangePickerAria, DateSegmentAria, DateRange, DateValue, TimeValue} from '@react-aria/datepicker';
 export type {AriaDialogProps, DialogAria} from '@react-aria/dialog';
+export type {DisclosureAria, AriaDisclosureProps} from '@react-aria/disclosure';
 export type {AriaFocusRingProps, FocusableAria, FocusableOptions, FocusManager, FocusManagerOptions, FocusRingAria, FocusRingProps, FocusScopeProps} from '@react-aria/focus';
 export type {DateFormatter, DateFormatterOptions, Filter, FormatMessage, I18nProviderProps, Locale, LocalizedStringFormatter, LocalizedStrings} from '@react-aria/i18n';
 export type {ClipboardProps, ClipboardResult, DirectoryDropItem, DragEndEvent, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionOptions, DraggableCollectionStartEvent, DraggableItemProps, DraggableItemResult, DragItem, DragMoveEvent, DragOptions, DragPreviewProps, DragPreviewRenderer, DragResult, DragStartEvent, DragTypes, DropEnterEvent, DropEvent, DropExitEvent, DropIndicatorAria, DropIndicatorProps, DropItem, DropMoveEvent, DropOperation, DropOptions, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionOptions, DroppableCollectionReorderEvent, DroppableCollectionResult, DroppableCollectionRootDropEvent, DroppableItemOptions, DroppableItemResult, DropPosition, DropResult, DropTarget, DropTargetDelegate, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-aria/dnd';

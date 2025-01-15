@@ -1,4 +1,10 @@
 {
+  "actionbar.actions": "Acțiuni",
+  "actionbar.actionsAvailable": "Acțiuni disponibile.",
+  "actionbar.clearSelection": "Goliți selecția",
+  "actionbar.selected": "{count, plural, =0 {Niciunul selectat} one { # selectat} other {# selectate}}",
+  "actionbar.selectedAll": "Toate selectate",
+  "button.pending": "în așteptare",
   "contextualhelp.help": "Ajutor",
   "contextualhelp.info": "Informaţii",
   "dialog.alert": "Alertă",
@@ -11,11 +17,17 @@
   "label.(optional)": "(opţional)",
   "label.(required)": "(obligatoriu)",
   "menu.moreActions": "Mai multe acțiuni",
-  "picker.placeholder": "Selectați o opțiune",
+  "picker.placeholder": "Selectați…",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
+  "table.loading": "Se încarcă...",
+  "table.loadingMore": "Se încarcă mai multe...",
+  "table.resizeColumn": "Redimensionați coloana",
+  "table.sortAscending": "Sortați crescător",
+  "table.sortDescending": "Sortați descrescător",
   "tag.actions": "Acțiuni",
   "tag.hideButtonLabel": "Se afișează mai puțin",
   "tag.noTags": "Niciuna",
-  "tag.showAllButtonLabel": "Se afișează tot ({tagCount, number})"
+  "tag.showAllButtonLabel": "Se afișează tot ({tagCount, number})",
+  "breadcrumbs.more": "Mai multe articole"
 }

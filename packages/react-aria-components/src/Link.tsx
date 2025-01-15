@@ -52,10 +52,14 @@ export interface LinkRenderProps {
 
 export const LinkContext = createContext<ContextValue<LinkProps, HTMLAnchorElement>>(null);
 
-function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
+/**
+ * A link allows a user to navigate to another page or resource within a web page
+ * or application.
+ */
+export const Link = /*#__PURE__*/ (forwardRef as forwardRefType)(function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
   [props, ref] = useContextProps(props, ref, LinkContext);
 
-  let ElementType: ElementType = props.href ? 'a' : 'span';
+  let ElementType: ElementType = props.href && !props.isDisabled ? 'a' : 'span';
   let {linkProps, isPressed} = useLink({...props, elementType: ElementType}, ref);
 
   let {hoverProps, isHovered} = useHover(props);
@@ -88,11 +92,4 @@ function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
       {renderProps.children}
     </ElementType>
   );
-}
-
-/**
- * A link allows a user to navigate to another page or resource within a web page
- * or application.
- */
-const _Link = /*#__PURE__*/ (forwardRef as forwardRefType)(Link);
-export {_Link as Link};
+});

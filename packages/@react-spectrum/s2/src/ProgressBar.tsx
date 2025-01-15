@@ -22,8 +22,9 @@ import {FieldLabel} from './Field';
 import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {mergeStyles} from '../style/runtime';
-import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
+import {useLocale} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface ProgressBarStyleProps {
@@ -37,10 +38,10 @@ interface ProgressBarStyleProps {
    * Whether presentation is indeterminate when progress isn't known.
    */
   isIndeterminate?: boolean,
-  /** 
+  /**
    * The static color style to apply. Useful when the button appears over a color background.
    */
-  staticColor?: 'white' | 'black',
+  staticColor?: 'white' | 'black' | 'auto',
   /**
    * The label's overall position relative to the element it is labeling.
    * @default 'top'
@@ -56,23 +57,63 @@ export interface ProgressBarProps extends Omit<AriaProgressBarProps, 'children' 
 
 export const ProgressBarContext = createContext<ContextValue<ProgressBarProps, DOMRefValue<HTMLDivElement>>>(null);
 
-// TODO:
-// var(--spectrum-global-dimension-size-1700) -> 136px
-// var(--spectrum-global-dimension-size-2400) -> 192px
-const indeterminate = keyframes(`
-  from {
-    transform: translate(calc(136px * -1));
+const indeterminateLTR = keyframes(`
+  0% {
+    transform:  translateX(-70%) scaleX(0.7);
   }
-
-  to {
-    transform: translate(192px);
+  100% {
+    transform:  translateX(100%) scaleX(0.7);
   }
 `);
 
-const wrapper = style<ProgressBarStyleProps>({
+const indeterminateRTL = keyframes(`
+  0% {
+    transform:  translateX(100%) scaleX(0.7);
+  }
+  100% {
+    transform:  translateX(-70%) scaleX(0.7);
+  }
+`);
+
+const wrapper = style({
   ...bar(),
-  width: {
-    default: 192
+  gridTemplateColumns: {
+    default: {
+      labelPosition: {
+        top: ['1fr', 'auto'],
+        side: ['auto', '1fr']
+      }
+    },
+    isIndeterminate: {
+      labelPosition: {
+        top: ['1fr'],
+        side: ['auto', '1fr']
+      }
+    }
+  },
+  gridTemplateAreas: {
+    default: {
+      labelPosition: {
+        top: [
+          'label value',
+          'bar bar'
+        ],
+        side: [
+          'label bar value'
+        ]
+      }
+    },
+    isIndeterminate: {
+      labelPosition: {
+        top: [
+          'label',
+          'bar'
+        ],
+        side: [
+          'label bar'
+        ]
+      }
+    }
   }
 }, getAllowedOverrides());
 
@@ -84,39 +125,40 @@ const valueStyles = style({
 const trackStyles = style({
   ...track(),
   height: {
-    default: size(6),
+    default: 6,
     size: {
       S: 4, // progress-bar-thickness-small
-      M: size(6), // progress-bar-thickness-medium
+      M: 6, // progress-bar-thickness-medium
       L: 8, // progress-bar-thickness-large
-      XL: size(10) // progress-bar-thickness-extra-large
+      XL: 10 // progress-bar-thickness-extra-large
     }
   }
 });
 
-const fill = style<ProgressBarStyleProps>({
+const fill = style<ProgressBarStyleProps & {isStaticColor: boolean}>({
   height: 'full',
   borderStyle: 'none',
   borderRadius: 'full',
   backgroundColor: {
     default: 'accent',
-    staticColor: {
-      white: {
-        default: 'transparent-white-900'
-      },
-      // TODO: Is there a black static color in S2?
-      black: {
-        default: 'transparent-black-900'
-      }
-    },
+    isStaticColor: 'transparent-overlay-900',
     forcedColors: 'ButtonText'
   },
-  transition: '[width]',
-  transitionDuration: 1000
+  width: {
+    isIndeterminate: 'full'
+  },
+  transformOrigin: {
+    isIndeterminate: 'left'
+  }
 });
 
 const indeterminateAnimation = style({
-  animation: indeterminate,
+  animation: {
+    direction: {
+      ltr: indeterminateLTR,
+      rtl: indeterminateRTL
+    }
+  },
   animationDuration: 1000,
   animationIterationCount: 'infinite',
   animationTimingFunction: 'in-out',
@@ -124,7 +166,11 @@ const indeterminateAnimation = style({
   position: 'relative'
 });
 
-function ProgressBar(props: ProgressBarProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * ProgressBars show the progression of a system operation: downloading, uploading, processing, etc., in a visual way.
+ * They can represent either determinate or indeterminate progress.
+ */
+export const ProgressBar = /*#__PURE__*/ forwardRef(function ProgressBar(props: ProgressBarProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ProgressBarContext);
   let {
     label, size = 'M',
@@ -135,31 +181,27 @@ function ProgressBar(props: ProgressBarProps, ref: DOMRef<HTMLDivElement>) {
     UNSAFE_className = ''
   } = props;
   let domRef = useDOMRef(ref);
+  let {direction} = useLocale();
+  let isStaticColor = !!staticColor;
+
   return (
     <AriaProgressBar
       {...props}
       ref={domRef}
       style={UNSAFE_style}
-      className={UNSAFE_className + wrapper({...props, size, labelPosition}, props.styles)}>
+      className={UNSAFE_className + wrapper({...props, size, labelPosition, staticColor}, props.styles)}>
       {({percentage, valueText}) => (
         <>
           {label && <FieldLabel size={size} labelAlign="start" labelPosition={labelPosition} staticColor={staticColor}>{label}</FieldLabel>}
-          {label && <span className={valueStyles({size, labelAlign: 'end', staticColor})}>{valueText}</span>}
-          <div className={trackStyles({...props})}>
+          {label && !isIndeterminate && <span className={valueStyles({size, labelAlign: 'end', isStaticColor})}>{valueText}</span>}
+          <div className={trackStyles({isStaticColor, size})}>
             <div
-              className={mergeStyles(fill({...props, staticColor}), (isIndeterminate ? indeterminateAnimation : null))}
-              style={{width: isIndeterminate ? `${100 * (136 / 192)}%` : percentage + '%'}} />
+              className={mergeStyles(fill({...props, isStaticColor}), (isIndeterminate ? indeterminateAnimation({direction}) : null))}
+              style={{width: isIndeterminate ? undefined : percentage + '%'}} />
           </div>
         </>
       )}
     </AriaProgressBar>
   );
-}
-
-/**
- * ProgressBars show the progression of a system operation: downloading, uploading, processing, etc., in a visual way.
- * They can represent either determinate or indeterminate progress.
- */
-const _ProgressBar = /*#__PURE__*/ forwardRef(ProgressBar);
-export {_ProgressBar as ProgressBar};
+});
 

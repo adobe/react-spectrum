@@ -11,14 +11,14 @@
  */
 
 import {Checkbox as AriaCheckbox, CheckboxProps as AriaCheckboxProps, CheckboxGroupStateContext, CheckboxRenderProps, ContextValue, useSlottedContext} from 'react-aria-components';
-import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import DashIcon from '../ui-icons/Dash';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
-import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -78,6 +78,7 @@ export const box = style<RenderProps>({
   forcedColorAdjust: 'none',
   backgroundColor: {
     default: 'gray-25',
+    forcedColors: 'Background',
     isSelected: {
       default: 'neutral',
       isEmphasized: baseColor('accent-900'),
@@ -124,7 +125,11 @@ const iconSize = {
   XL: 'L'
 } as const;
 
-function Checkbox({children, ...props}: CheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
+/**
+ * Checkboxes allow users to select multiple items from a list of individual items,
+ * or to mark one individual item as selected.
+ */
+export const Checkbox = forwardRef(function Checkbox({children, ...props}: CheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, CheckboxContext);
   let boxRef = useRef(null);
   let inputRef = useRef<HTMLInputElement | null>(null);
@@ -141,36 +146,41 @@ function Checkbox({children, ...props}: CheckboxProps, ref: FocusableRef<HTMLLab
       inputRef={inputRef}
       style={props.UNSAFE_style}
       className={renderProps => (props.UNSAFE_className || '') + wrapper({...renderProps, isInForm, size: props.size || 'M'}, props.styles)}>
-      {renderProps => (
-        <>
-          <CenterBaseline>
-            <div
-              ref={boxRef}
-              style={pressScale(boxRef)(renderProps)}
-              className={box({
-                ...renderProps,
-                isSelected: renderProps.isSelected || renderProps.isIndeterminate,
-                size: props.size || 'M',
-                isEmphasized: isInCheckboxGroup ? ctx?.isEmphasized : props.isEmphasized
-              })}>
-              {renderProps.isIndeterminate &&
-                <DashIcon size={iconSize[props.size || 'M']} className={iconStyles} />
-              }
-              {renderProps.isSelected && !renderProps.isIndeterminate &&
-                <CheckmarkIcon size={iconSize[props.size || 'M']} className={iconStyles} />
-              }
-            </div>
-          </CenterBaseline>
-          {children}
-        </>
-      )}
+      {renderProps => {
+        let checkbox = (
+          <div
+            ref={boxRef}
+            style={pressScale(boxRef)(renderProps)}
+            className={box({
+              ...renderProps,
+              isSelected: renderProps.isSelected || renderProps.isIndeterminate,
+              size: props.size || 'M',
+              isEmphasized: isInCheckboxGroup ? ctx?.isEmphasized : props.isEmphasized
+            })}>
+            {renderProps.isIndeterminate &&
+              <DashIcon size={iconSize[props.size || 'M']} className={iconStyles} />
+            }
+            {renderProps.isSelected && !renderProps.isIndeterminate &&
+              <CheckmarkIcon size={iconSize[props.size || 'M']} className={iconStyles} />
+            }
+          </div>
+        );
+
+        // Only render checkbox without center baseline if no label.
+        // This avoids expanding the checkbox height to the font's line height.
+        if (!children) {
+          return checkbox;
+        }
+
+        return (
+          <>
+            <CenterBaseline>
+              {checkbox}
+            </CenterBaseline>
+            {children}
+          </>
+        );
+      }}
     </AriaCheckbox>
   );
-}
-
-/**
- * Checkboxes allow users to select multiple items from a list of individual items,
- * or to mark one individual item as selected.
- */
-let _Checkbox = forwardRef(Checkbox);
-export {_Checkbox as Checkbox};
+});

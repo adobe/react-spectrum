@@ -15,9 +15,10 @@ import {centerBaseline} from './CenterBaseline';
 import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {ContextValue, Provider, SlotProps} from 'react-aria-components';
 import {filterDOMProps} from '@react-aria/utils';
-import {fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {fontRelative, lightDark, style} from '../style' with {type: 'macro'};
 import {IconContext} from './Icon';
 import React, {createContext, forwardRef, ReactNode} from 'react';
+import {SkeletonWrapper} from './Skeleton';
 import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -126,34 +127,34 @@ const badge = style<BadgeStyleProps>({
       },
       subtle: {
         variant: {
-          accent: 'accent-200',
+          accent: 'accent-subtle',
           informative: 'informative-subtle',
           neutral: 'neutral-subtle',
           positive: 'positive-subtle',
           notice: 'notice-subtle',
           negative: 'negative-subtle',
-          gray: 'gray-100',
-          red: 'red-200',
-          orange: 'orange-200',
-          yellow: 'yellow-200',
-          charteuse: 'chartreuse-200',
-          celery: 'celery-200',
-          green: 'green-200',
-          seafoam: 'seafoam-200',
-          cyan: 'cyan-200',
-          blue: 'blue-200',
-          indigo: 'indigo-200',
-          purple: 'purple-200',
-          fuchsia: 'fuchsia-200',
-          magenta: 'magenta-200',
-          pink: 'pink-200',
-          turquoise: 'turquoise-200',
-          brown: 'brown-200',
-          cinnamon: 'cinnamon-200',
-          silver: 'silver-200'
+          gray: 'gray-subtle',
+          red: 'red-subtle',
+          orange: 'orange-subtle',
+          yellow: 'yellow-subtle',
+          charteuse: 'chartreuse-subtle',
+          celery: 'celery-subtle',
+          green: 'green-subtle',
+          seafoam: 'seafoam-subtle',
+          cyan: 'cyan-subtle',
+          blue: 'blue-subtle',
+          indigo: 'indigo-subtle',
+          purple: 'purple-subtle',
+          fuchsia: 'fuchsia-subtle',
+          magenta: 'magenta-subtle',
+          pink: 'pink-subtle',
+          turquoise: 'turquoise-subtle',
+          brown: 'brown-subtle',
+          cinnamon: 'cinnamon-subtle',
+          silver: 'silver-subtle'
         }
       },
-      outline: 'gray-25'
+      outline: 'layer-2'
     }
   },
   borderStyle: 'solid',
@@ -164,12 +165,12 @@ const badge = style<BadgeStyleProps>({
     fillStyle: {
       outline: {
         variant: {
-          accent: 'accent-800',
-          informative: 'informative-800',
-          neutral: 'gray-700',
-          positive: 'positive-700',
-          notice: 'notice-700',
-          negative: 'negative-800'
+          accent: lightDark('accent-800', 'accent-900'), // accent-visual-color
+          informative: lightDark('informative-800', 'informative-900'), // informative-visual-color
+          neutral: lightDark('gray-500', 'gray-600'), // neutral-visual-color
+          positive: lightDark('positive-800', 'positive-900'), // positive-visual-color
+          notice: lightDark('notice-800', 'notice-900'), // notice-visual-color
+          negative: lightDark('negative-800', 'negative-900') // negative-visual-color
         }
       }
     }
@@ -180,7 +181,10 @@ const badge = style<BadgeStyleProps>({
   }
 }, getAllowedOverrides());
 
-function Badge(props: BadgeProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Badges are used for showing a small amount of color-categorized metadata, ideal for getting a user's attention.
+ */
+export const Badge = forwardRef(function Badge(props: BadgeProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, BadgeContext);
   let {
     children,
@@ -201,23 +205,20 @@ function Badge(props: BadgeProps, ref: DOMRef<HTMLDivElement>) {
           styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
         }]
       ]}>
-      <span
-        {...filterDOMProps(otherProps)}
-        role="presentation"
-        className={(props.UNSAFE_className || '') + badge({variant, size, fillStyle}, props.styles)}
-        ref={domRef}>
-        {
-          typeof children === 'string' || isTextOnly
-            ? <Text>{children}</Text>
-            : children
-        }
-      </span>
+      <SkeletonWrapper>
+        <span
+          {...filterDOMProps(otherProps)}
+          role="presentation"
+          className={(props.UNSAFE_className || '') + badge({variant, size, fillStyle}, props.styles)}
+          style={props.UNSAFE_style}
+          ref={domRef}>
+          {
+            typeof children === 'string' || isTextOnly
+              ? <Text>{children}</Text>
+              : children
+          }
+        </span>
+      </SkeletonWrapper>
     </Provider>
   );
-}
-
-/**
- * Badges are used for showing a small amount of color-categorized metadata, ideal for getting a user's attention.
- */
-let _Badge = forwardRef(Badge);
-export {_Badge as Badge};
+});

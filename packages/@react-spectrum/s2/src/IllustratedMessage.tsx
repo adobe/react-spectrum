@@ -18,7 +18,7 @@ import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IllustrationContext} from './Icon';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -50,8 +50,8 @@ const illustratedMessage = style<IllustratedMessageStyleProps & {isInDropZone?: 
   fontSize: 'control',
   maxWidth: {
     orientation: {
-      vertical: '[380px]',
-      horizontal: '[33rem]' // ask design about max width for horizontal because doesn't look great when L
+      vertical: 380,
+      horizontal: 528 // ask design about max width for horizontal because doesn't look great when L
     }
   },
   gridTemplateAreas: {
@@ -114,9 +114,7 @@ const illustration = style<IllustratedMessageStyleProps & {isInDropZone?: boolea
   '--iconPrimary': {
     type: 'color',
     value: {
-      // TODO: ask design about what the color should be. Says gray-800 in the designs file, neutral in token spec, but different neutral in dropzone spec
-      default: 'gray-800',
-      isInDropZone: 'gray-500', // neutral doesn't seem to match the color in designs, opted for gray-500 instead
+      default: 'neutral',
       isDropTarget: 'accent'
     }
   }
@@ -159,7 +157,11 @@ interface IllustratedMessageContextProps extends Partial<S2SpectrumIllustratedMe
 
 export const IllustratedMessageContext = createContext<ContextValue<IllustratedMessageContextProps, DOMRefValue<HTMLDivElement>>>(null);
 
-function IllustratedMessage(props: S2SpectrumIllustratedMessageProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * An IllustratedMessage displays an illustration and a message, usually
+ * for an empty state or an error page.
+ */
+export const IllustratedMessage = /*#__PURE__*/ forwardRef(function IllustratedMessage(props: S2SpectrumIllustratedMessageProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, IllustratedMessageContext);
   let domRef = useDOMRef(ref);
   let {
@@ -193,11 +195,4 @@ function IllustratedMessage(props: S2SpectrumIllustratedMessageProps, ref: DOMRe
       </Provider>
     </div>
   );
-}
-
-/**
- * An IllustratedMessage displays an illustration and a message, usually
- * for an empty state or an error page.
- */
-let _IllustratedMessage = /*#__PURE__*/ forwardRef(IllustratedMessage);
-export {_IllustratedMessage as IllustratedMessage};
+});

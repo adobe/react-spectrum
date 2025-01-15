@@ -10,16 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {baseColor, fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {baseColor, focusRing, fontRelative, linearGradient, style} from '../style' with {type: 'macro'};
 import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
-import {centerPadding, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef, ReactNode, useContext} from 'react';
+import {centerPadding, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
+import {createContext, forwardRef, ReactNode, useContext, useEffect, useState} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {IconContext} from './Icon';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
+import {ProgressCircle} from './ProgressCircle';
+import {SkeletonContext} from './Skeleton';
 import {Text, TextContext} from './Content';
 import {useFocusableRef} from '@react-spectrum/utils';
+import {useFormProps} from './Form';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface ButtonStyleProps {
@@ -28,7 +34,7 @@ interface ButtonStyleProps {
    *
    * @default 'primary'
    */
-  variant?: 'primary' | 'secondary' | 'accent' | 'negative',
+  variant?: 'primary' | 'secondary' | 'accent' | 'negative' | 'premium' | 'genai',
   /**
    * The background style of the Button.
    *
@@ -42,7 +48,7 @@ interface ButtonStyleProps {
    */
   size?: 'S' | 'M' | 'L' | 'XL',
   /** The static color style to apply. Useful when the Button appears over a color background. */
-  staticColor?: 'white' | 'black'
+  staticColor?: 'white' | 'black' | 'auto'
 }
 
 export interface ButtonProps extends Omit<RACButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, StyleProps, ButtonStyleProps {
@@ -58,12 +64,15 @@ export interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' |
 export const ButtonContext = createContext<ContextValue<ButtonProps, FocusableRefValue<HTMLButtonElement>>>(null);
 export const LinkButtonContext = createContext<ContextValue<ButtonProps, FocusableRefValue<HTMLAnchorElement>>>(null);
 
-const button = style<ButtonRenderProps & ButtonStyleProps>({
+const iconOnly = ':has([slot=icon]):not(:has([data-rsp-slot=text]))';
+const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: boolean}>({
   ...focusRing(),
+  ...staticColor(),
+  position: 'relative',
   display: 'flex',
   alignItems: {
     default: 'baseline',
-    ':has([slot=icon]:only-child)': 'center'
+    [iconOnly]: 'center'
   },
   justifyContent: 'center',
   textAlign: 'start',
@@ -73,7 +82,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
   userSelect: 'none',
   minHeight: 'control',
   minWidth: {
-    ':has([slot=icon]:only-child)': 'control'
+    [iconOnly]: 'control'
   },
   borderRadius: 'pill',
   boxSizing: 'border-box',
@@ -81,11 +90,11 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
   textDecoration: 'none', // for link buttons
   paddingX: {
     default: 'pill',
-    ':has([slot=icon]:only-child)': 0
+    [iconOnly]: 0
   },
   paddingY: 0,
   aspectRatio: {
-    ':has([slot=icon]:only-child)': 'square'
+    [iconOnly]: 'square'
   },
   transition: 'default',
   borderStyle: 'solid',
@@ -93,6 +102,10 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
     fillStyle: {
       fill: 0,
       outline: 2
+    },
+    variant: {
+      premium: 0,
+      genai: 0
     }
   },
   '--labelPadding': {
@@ -103,7 +116,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
     type: 'marginTop',
     value: {
       default: fontRelative(-2),
-      ':has([slot=icon]:only-child)': 0
+      [iconOnly]: 0
     }
   },
   borderColor: {
@@ -112,21 +125,12 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
       secondary: baseColor('gray-300')
     },
     isDisabled: 'disabled',
-    staticColor: {
-      white: {
-        variant: {
-          primary: baseColor('transparent-white-800'),
-          secondary: baseColor('transparent-white-300')
-        },
-        isDisabled: 'transparent-white-300'
+    isStaticColor: {
+      variant: {
+        primary: baseColor('transparent-overlay-800'),
+        secondary: baseColor('transparent-overlay-300')
       },
-      black: {
-        variant: {
-          primary: baseColor('transparent-black-800'),
-          secondary: baseColor('transparent-black-300')
-        },
-        isDisabled: 'transparent-black-300'
-      }
+      isDisabled: 'transparent-overlay-300'
     },
     forcedColors: {
       default: 'ButtonBorder',
@@ -141,49 +145,56 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
           primary: 'neutral',
           secondary: baseColor('gray-100'),
           accent: 'accent',
-          negative: 'negative'
+          negative: 'negative',
+          premium: 'gray-100',
+          genai: 'gray-100'
         },
         isDisabled: 'disabled'
       },
       outline: {
+        variant: {
+          premium: 'gray-100',
+          genai: 'gray-100'
+        },
         default: 'transparent',
         isHovered: 'gray-100',
         isPressed: 'gray-100',
-        isFocusVisible: 'gray-100'
-      }
-    },
-    staticColor: {
-      white: {
-        fillStyle: {
-          fill: {
-            variant: {
-              primary: baseColor('transparent-white-800'),
-              secondary: baseColor('transparent-white-100')
-            },
-            isDisabled: 'transparent-white-100'
-          },
-          outline: {
-            default: 'transparent',
-            isHovered: 'transparent-white-100',
-            isPressed: 'transparent-white-100',
-            isFocusVisible: 'transparent-white-100'
+        isFocusVisible: 'gray-100',
+        isDisabled: {
+          default: 'transparent',
+          variant: {
+            premium: 'gray-100',
+            genai: 'gray-100'
           }
         }
-      },
-      black: {
-        fillStyle: {
-          fill: {
-            variant: {
-              primary: baseColor('transparent-black-800'),
-              secondary: baseColor('transparent-black-100')
-            },
-            isDisabled: 'transparent-black-100'
+      }
+    },
+    isStaticColor: {
+      fillStyle: {
+        fill: {
+          variant: {
+            primary: baseColor('transparent-overlay-800'),
+            secondary: baseColor('transparent-overlay-100'),
+            premium: 'transparent-overlay-100',
+            genai: 'transparent-overlay-100'
           },
-          outline: {
+          isDisabled: 'transparent-overlay-100'
+        },
+        outline: {
+          variant: {
+            premium: 'transparent-overlay-100',
+            genai: 'transparent-overlay-100'
+          },
+          default: 'transparent',
+          isHovered: 'transparent-overlay-100',
+          isPressed: 'transparent-overlay-100',
+          isFocusVisible: 'transparent-overlay-100',
+          isDisabled: {
             default: 'transparent',
-            isHovered: 'transparent-black-100',
-            isPressed: 'transparent-black-100',
-            isFocusVisible: 'transparent-black-100'
+            variant: {
+              premium: 'transparent-overlay-100',
+              genai: 'transparent-overlay-100'
+            }
           }
         }
       }
@@ -206,40 +217,40 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
           primary: 'gray-25',
           secondary: 'neutral',
           accent: 'white',
-          negative: 'white'
+          negative: 'white',
+          premium: 'white',
+          genai: 'white'
         },
         isDisabled: 'disabled'
       },
       outline: {
         default: 'neutral',
+        variant: {
+          premium: 'white',
+          genai: 'white'
+        },
         isDisabled: 'disabled'
       }
     },
-    staticColor: {
-      white: {
-        fillStyle: {
-          fill: {
-            variant: {
-              primary: 'black',
-              secondary: baseColor('transparent-white-800')
-            }
-          },
-          outline: baseColor('transparent-white-800')
+    isStaticColor: {
+      fillStyle: {
+        fill: {
+          variant: {
+            primary: 'auto',
+            secondary: baseColor('transparent-overlay-800'),
+            premium: 'white',
+            genai: 'white'
+          }
         },
-        isDisabled: 'transparent-white-400'
+        outline: {
+          variant: {
+            premium: 'white',
+            genai: 'white'
+          },
+          default: baseColor('transparent-overlay-800')
+        }
       },
-      black: {
-        fillStyle: {
-          fill: {
-            variant: {
-              primary: 'white',
-              secondary: baseColor('transparent-black-800')
-            }
-          },
-          outline: baseColor('transparent-black-800')
-        },
-        isDisabled: 'transparent-black-400'
-      }
+      isDisabled: 'transparent-overlay-400'
     },
     forcedColors: {
       fillStyle: {
@@ -260,20 +271,86 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
   },
   outlineColor: {
     default: 'focus-ring',
-    staticColor: {
-      white: 'white',
-      black: 'black'
-    },
+    isStaticColor: 'transparent-overlay-1000',
     forcedColors: 'Highlight'
   },
   forcedColorAdjust: 'none',
   disableTapHighlight: true
 }, getAllowedOverrides());
 
-function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+// Put the gradient background on a separate element from the button to work around a Safari
+// bug where transitions of custom properties cause layout flickering if any properties use rems. 🤣
+// https://bugs.webkit.org/show_bug.cgi?id=285622
+const gradient = style({
+  position: 'absolute',
+  inset: 0,
+  zIndex: -1,
+  transition: 'default',
+  borderRadius: '[inherit]',
+  backgroundImage: {
+    variant: {
+      premium: {
+        default: linearGradient('to bottom right', ['fuchsia-900', 0], ['indigo-900', 66], ['blue-900', 100]),
+        isHovered: linearGradient('to bottom right', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100]),
+        isPressed: linearGradient('to bottom right', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100]),
+        isFocusVisible: linearGradient('to bottom right', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100])
+      },
+      genai: {
+        default: linearGradient('to bottom right', ['red-900', 0], ['magenta-900', 33], ['indigo-900', 100]),
+        isHovered: linearGradient('to bottom right', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100]),
+        isPressed: linearGradient('to bottom right', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100]),
+        isFocusVisible: linearGradient('to bottom right', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100])
+      }
+    },
+    isDisabled: 'none',
+    forcedColors: 'none'
+  },
+  // Force gradient colors to remain static between light and dark theme.
+  colorScheme: {
+    variant: {
+      premium: 'light',
+      genai: 'light'
+    }
+  }
+});
+
+/**
+ * Buttons allow users to perform an action.
+ * They have multiple styles for various needs, and are ideal for calling attention to
+ * where a user needs to do something in order to move forward in a flow.
+ */
+export const Button = forwardRef(function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ButtonContext);
+  props = useFormProps(props);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  let {
+    isPending,
+    variant = 'primary',
+    fillStyle = 'fill',
+    size = 'M',
+    staticColor
+  } = props;
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
+
+  let [isProgressVisible, setIsProgressVisible] = useState(false);
+  useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout>;
+
+    if (isPending) {
+      // Start timer when isPending is set to true.
+      timeout = setTimeout(() => {
+        setIsProgressVisible(true);
+      }, 1000);
+    } else {
+      // Exit loading state when isPending is set to false. */
+      setIsProgressVisible(false);
+    }
+    return () => {
+      // Clean up on unmount or when user removes isPending prop before entering loading state.
+      clearTimeout(timeout);
+    };
+  }, [isPending]);
 
   return (
     <RACButton
@@ -284,35 +361,96 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
         ...renderProps,
         // Retain hover styles when an overlay is open.
         isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
-        variant: props.variant || 'primary',
-        fillStyle: props.fillStyle || 'fill',
-        size: props.size || 'M',
-        staticColor: props.staticColor
+        isDisabled: renderProps.isDisabled || isProgressVisible,
+        variant,
+        fillStyle,
+        size,
+        staticColor,
+        isStaticColor: !!staticColor
       }, props.styles)}>
-      <Provider
-        values={[
-          [TextContext, {styles: style({paddingY: '--labelPadding', order: 1})}],
-          [IconContext, {
-            render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-            styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
-          }]
-        ]}>
-        {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
-      </Provider>
+      {(renderProps) => (<>
+        {variant === 'genai' || variant === 'premium' 
+          ? (
+            <span
+              className={gradient({
+                ...renderProps,
+                // Retain hover styles when an overlay is open.
+                isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
+                isDisabled: renderProps.isDisabled || isProgressVisible,
+                variant
+              })} />
+             )
+          : null}
+        <Provider
+          values={[
+            [SkeletonContext, null],
+            [TextContext, {
+              styles: style({
+                paddingY: '--labelPadding',
+                order: 1,
+                opacity: {
+                  default: 1,
+                  isProgressVisible: 0
+                }
+              })({isProgressVisible}),
+              // @ts-ignore data-attributes allowed on all JSX elements, but adding to DOMProps has been problematic in the past
+              'data-rsp-slot': 'text'
+            }],
+            [IconContext, {
+              render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
+              styles: style({
+                size: fontRelative(20),
+                marginStart: '--iconMargin',
+                flexShrink: 0,
+                opacity: {
+                  default: 1,
+                  isProgressVisible: 0
+                }
+              })({isProgressVisible})
+            }]
+          ]}>
+          {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
+          {isPending &&
+            <div
+              className={style({
+                position: 'absolute',
+                top: '[50%]',
+                left: '[50%]',
+                transform: 'translate(-50%, -50%)',
+                opacity: {
+                  default: 0,
+                  isProgressVisible: 1
+                }
+              })({isProgressVisible, isPending})}>
+              <ProgressCircle
+                isIndeterminate
+                aria-label={stringFormatter.format('button.pending')}
+                size="S"
+                staticColor={staticColor}
+                styles={style({
+                  size: {
+                    size: {
+                      S: 14,
+                      M: 18,
+                      L: 20,
+                      XL: 24
+                    }
+                  }
+                })({size})} />
+            </div>
+          }
+        </Provider>
+      </>)}
     </RACButton>
   );
-}
+});
 
 /**
- * Buttons allow users to perform an action.
- * They have multiple styles for various needs, and are ideal for calling attention to
- * where a user needs to do something in order to move forward in a flow.
+ * A LinkButton combines the functionality of a link with the appearance of a button. Useful for allowing users to navigate to another page.
  */
-let _Button = forwardRef(Button);
-export {_Button as Button};
-
-function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>) {
+export const LinkButton = forwardRef(function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, LinkButtonContext);
+  props = useFormProps(props);
   let domRef = useFocusableRef(ref);
   let overlayTriggerState = useContext(OverlayTriggerStateContext);
 
@@ -328,11 +466,18 @@ function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>
         variant: props.variant || 'primary',
         fillStyle: props.fillStyle || 'fill',
         size: props.size || 'M',
-        staticColor: props.staticColor
+        staticColor: props.staticColor,
+        isStaticColor: !!props.staticColor,
+        isPending: false
       }, props.styles)}>
       <Provider
         values={[
-          [TextContext, {styles: style({paddingY: '--labelPadding', order: 1})}],
+          [SkeletonContext, null],
+          [TextContext, {
+            styles: style({paddingY: '--labelPadding', order: 1}),
+            // @ts-ignore data-attributes allowed on all JSX elements, but adding to DOMProps has been problematic in the past
+            'data-rsp-slot': 'text'
+          }],
           [IconContext, {
             render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
             styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
@@ -342,10 +487,4 @@ function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>
       </Provider>
     </Link>
   );
-}
-
-/**
- * A LinkButton combines the functionality of a link with the appearance of a button. Useful for allowing users to navigate to another page.
- */
-let _LinkButton = forwardRef(LinkButton);
-export {_LinkButton as LinkButton};
+});

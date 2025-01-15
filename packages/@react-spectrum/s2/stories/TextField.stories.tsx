@@ -15,7 +15,7 @@ import {Content, Footer, Heading, Text} from '../src/Content';
 import {ContextualHelp} from '../src/ContextualHelp';
 import {Link} from '../src/Link';
 import type {Meta} from '@storybook/react';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof TextField> = {
   component: TextField,
@@ -25,7 +25,8 @@ const meta: Meta<typeof TextField> = {
   tags: ['autodocs'],
   argTypes: {
     onChange: {table: {category: 'Events'}}
-  }
+  },
+  title: 'TextField'
 };
 
 export default meta;
@@ -49,61 +50,29 @@ Validation.args = {
 };
 
 export const ContextualHelpExample = (args: any) => (
-  <TextField {...args} />
+  <TextField 
+    {...args}
+    contextualHelp={
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>
+          <Text>
+            Segments identify who your visitors are, what devices and services they
+            use, where they navigated from, and much more.
+          </Text>
+        </Content>
+        <Footer>
+          <Link
+            isStandalone
+            href="https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/administering/personalization/campaign-segmentation"
+            target="_blank">Learn more about segments</Link>
+        </Footer>
+      </ContextualHelp>
+    } />
 );
 
 ContextualHelpExample.args = {
-  label: 'Segment',
-  contextualHelp: (
-    <ContextualHelp>
-      <Heading>What is a segment?</Heading>
-      <Content>
-        <Text>
-          Segments identify who your visitors are, what devices and services they
-          use, where they navigated from, and much more.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/administering/personalization/campaign-segmentation"
-          target="_blank">Learn more about segments</Link>
-      </Footer>
-    </ContextualHelp>
-  )
-};
-
-ContextualHelpExample.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `
-<TextField
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>
-        What is a segment?
-      </Heading>
-      <Content>
-        <Text>
-          Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          href="https://experienceleague.adobe.com/en/docs/experience-manager-65/content/sites/administering/personalization/campaign-segmentation"
-          isStandalone
-          target="_blank">
-          Learn more about segments
-        </Link>
-      </Footer>
-    </ContextualHelp>
-  }
-  label="Segment"
-/>`;
-      }
-    }
-  }
+  label: 'Segment'
 };
 
 export const TextAreaExample = (args: any) => <TextArea {...args} />;

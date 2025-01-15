@@ -1,0 +1,12 @@
+{
+  "name": "parcel-optimizer-strict-mode",
+  "version": "1.0.0",
+  "private": true,
+  "main": "StrictModeOptimizer.ts",
+  "engines": {
+    "parcel": "^2.0.0"
+  },
+  "dependencies": {
+    "@parcel/plugin": "^2.0.0"
+  }
+}

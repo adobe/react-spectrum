@@ -44,7 +44,7 @@ function ScrollView(props: ScrollViewProps, ref: ForwardedRef<HTMLDivElement | n
 
   return (
     <div role="presentation" {...scrollViewProps} ref={ref}>
-      <div role="presentation" {...contentProps}>
+      <div {...contentProps}>
         {props.children}
       </div>
     </div>
@@ -69,7 +69,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
     scrollTop: 0,
     scrollLeft: 0,
     scrollEndTime: 0,
-    scrollTimeout: null,
+    scrollTimeout: null as ReturnType<typeof setTimeout> | null,
     width: 0,
     height: 0,
     isScrolling: false
@@ -114,7 +114,10 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
       if (state.scrollEndTime <= now + 50) {
         state.scrollEndTime = now + 300;
 
-        clearTimeout(state.scrollTimeout);
+        if (state.scrollTimeout != null) {
+          clearTimeout(state.scrollTimeout);
+        }
+
         state.scrollTimeout = setTimeout(() => {
           state.isScrolling = false;
           setScrolling(false);
@@ -132,10 +135,13 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
   // Attach event directly to ref so RAC Virtualizer doesn't need to send props upward.
   useEvent(ref, 'scroll', onScroll);
 
-  // eslint-disable-next-line arrow-body-style
+   
   useEffect(() => {
     return () => {
-      clearTimeout(state.scrollTimeout);
+      if (state.scrollTimeout != null) {
+        clearTimeout(state.scrollTimeout);
+      }
+
       if (state.isScrolling) {
         window.dispatchEvent(new Event('tk.connect-observer'));
       }
@@ -143,11 +149,16 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  let isUpdatingSize = useRef(false);
   let updateSize = useEffectEvent((flush: typeof flushSync) => {
     let dom = ref.current;
-    if (!dom) {
+    if (!dom || isUpdatingSize.current) {
       return;
     }
+
+    // Prevent reentrancy when resize observer fires, triggers re-layout that results in
+    // content size update, causing below layout effect to fire. This avoids infinite loops.
+    isUpdatingSize.current = true;
 
     let isTestEnv = process.env.NODE_ENV === 'test' && !process.env.VIRT_ON;
     let isClientWidthMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientWidth');
@@ -177,27 +188,31 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
         });
       }
     }
+
+    isUpdatingSize.current = false;
   });
 
-  let didUpdateSize = useRef(false);
+  // Update visible rect when the content size changes, in case scrollbars need to appear or disappear.
+  let lastContentSize = useRef<Size | null>(null);
   useLayoutEffect(() => {
-    // React doesn't allow flushSync inside effects, so queue a microtask.
-    // We also need to wait until all refs are set (e.g. when passing a ref down from a parent).
-    queueMicrotask(() => {
-      if (!didUpdateSize.current) {
-        didUpdateSize.current = true;
-        updateSize(flushSync);
+    if (!isUpdatingSize.current && (lastContentSize.current == null || !contentSize.equals(lastContentSize.current))) {
+      // React doesn't allow flushSync inside effects, so queue a microtask.
+      // We also need to wait until all refs are set (e.g. when passing a ref down from a parent).
+      // If we are in an `act` environment, update immediately without a microtask so you don't need
+      // to mock timers in tests. In this case, the update is synchronous already.
+      // IS_REACT_ACT_ENVIRONMENT is used by React 18. Previous versions checked for the `jest` global.
+      // https://github.com/reactwg/react-18/discussions/102
+      // @ts-ignore
+      if (typeof IS_REACT_ACT_ENVIRONMENT === 'boolean' ? IS_REACT_ACT_ENVIRONMENT : typeof jest !== 'undefined') {
+        updateSize(fn => fn());
+      } else {
+        queueMicrotask(() => updateSize(flushSync));
       }
-    });
-  }, [updateSize]);
-  useEffect(() => {
-    if (!didUpdateSize.current) {
-      // If useEffect ran before the above microtask, we are in a synchronous render (e.g. act).
-      // Update the size here so that you don't need to mock timers in tests.
-      didUpdateSize.current = true;
-      updateSize(fn => fn());
     }
-  }, [updateSize]);
+
+    lastContentSize.current = contentSize;
+  });
+
   let onResize = useCallback(() => {
     updateSize(flushSync);
   }, [updateSize]);

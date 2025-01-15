@@ -10,14 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, Item} from '../';
+import {Accordion, Disclosure, DisclosurePanel, DisclosureTitle} from '../';
 import {Meta} from '@storybook/react';
 import React from 'react';
-import {SpectrumAccordionProps} from '@react-types/accordion';
 
-const meta: Meta<SpectrumAccordionProps<object>> = {
+const meta: Meta = {
   title: 'Accordion',
-  component: Accordion,
+  component: Disclosure,
   excludeStories: ['Template']
 };
 
@@ -25,15 +24,30 @@ export default meta;
 
 export const Template = (args) => (
   <Accordion {...args}>
-    <Item key="files" title="Your files">
-      files
-    </Item>
-    <Item key="shared" title="Shared with you">
-      shared
-    </Item>
-    <Item key="last" title="Last item">
-      last
-    </Item>
+    <Disclosure id="files">
+      <DisclosureTitle>
+        Your files
+      </DisclosureTitle>
+      <DisclosurePanel>
+        files
+      </DisclosurePanel>
+    </Disclosure>
+    <Disclosure id="shared">
+      <DisclosureTitle>
+        Shared with you
+      </DisclosureTitle>
+      <DisclosurePanel>
+        shared
+      </DisclosurePanel>
+    </Disclosure>
+    <Disclosure id="last">
+      <DisclosureTitle>
+        Last item
+      </DisclosureTitle>
+      <DisclosurePanel>
+        last
+      </DisclosurePanel>
+    </Disclosure>
   </Accordion>
 );
 
@@ -41,12 +55,47 @@ export const Default = {
   render: Template
 };
 
-export const ExpandedKeys = {
+export const WithExpandedKeys = {
   render: Template,
   args: {defaultExpandedKeys: ['shared']}
 };
 
-export const DisabledKeys = {
+export const WithDisabledDisclosure = {
+  render: (args) => (
+    <Accordion {...args}>
+      <Disclosure id="files">
+        <DisclosureTitle>
+          Your files
+        </DisclosureTitle>
+        <DisclosurePanel>
+          files
+        </DisclosurePanel>
+      </Disclosure>
+      <Disclosure id="shared">
+        <DisclosureTitle>
+          Shared with you
+        </DisclosureTitle>
+        <DisclosurePanel>
+          shared
+        </DisclosurePanel>
+      </Disclosure>
+      <Disclosure id="last" isDisabled>
+        <DisclosureTitle>
+          Last item
+        </DisclosureTitle>
+        <DisclosurePanel>
+          last
+        </DisclosurePanel>
+      </Disclosure>
+    </Accordion>)
+};
+
+export const Disabled = {
   render: Template,
-  args: {disabledKeys: ['shared']}
+  args: {isDisabled: true}
+};
+
+export const Quiet = {
+  render: Template,
+  args: {isQuiet: true}
 };

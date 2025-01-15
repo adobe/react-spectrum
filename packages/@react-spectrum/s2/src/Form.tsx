@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {createContext, forwardRef, ReactNode, useContext} from 'react';
+import {createContext, forwardRef, ReactNode, useContext, useMemo} from 'react';
 import {DOMRef, SpectrumLabelableProps} from '@react-types/shared';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {Form as RACForm, FormProps as RACFormProps} from 'react-aria-components';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
+import {useIsSkeleton} from './Skeleton';
 
 interface FormStyleProps extends Omit<SpectrumLabelableProps, 'label' | 'contextualHelp'> {
   /**
@@ -36,14 +37,35 @@ export interface FormProps extends FormStyleProps, Omit<RACFormProps, 'className
 export const FormContext = createContext<FormStyleProps | null>(null);
 export function useFormProps<T extends FormStyleProps>(props: T): T {
   let ctx = useContext(FormContext);
-  if (ctx) {
-    return {...ctx, ...props};
-  }
+  let isSkeleton = useIsSkeleton();
+  return useMemo(() => {
+    let result: T = props;
+    if (ctx || isSkeleton) {
+      result = {...props};
+    }
 
-  return props;
+    if (ctx) {
+      // This is a subset of mergeProps. We just need to merge non-undefined values.
+      for (let key in ctx) {
+        if (result[key] === undefined) {
+          result[key] = ctx[key];
+        }
+      }
+    }
+
+    // Skeleton always wins over local props.
+    if (isSkeleton) {
+      result.isDisabled = true;
+    }
+
+    return result;
+  }, [ctx, props, isSkeleton]);
 }
 
-function Form(props: FormProps, ref: DOMRef<HTMLFormElement>) {
+/**
+ * Forms allow users to enter data that can be submitted while providing alignment and styling for form fields.
+ */
+export const Form = /*#__PURE__*/ forwardRef(function Form(props: FormProps, ref: DOMRef<HTMLFormElement>) {
   let {
     labelPosition = 'top',
     labelAlign,
@@ -95,10 +117,4 @@ function Form(props: FormProps, ref: DOMRef<HTMLFormElement>) {
       </FormContext.Provider>
     </RACForm>
   );
-}
-
-/**
- * Forms allow users to enter data that can be submitted while providing alignment and styling for form fields.
- */
-let _Form = /*#__PURE__*/ forwardRef(Form);
-export {_Form as Form};
+});

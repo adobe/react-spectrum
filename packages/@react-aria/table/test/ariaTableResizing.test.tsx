@@ -59,7 +59,7 @@ describe('Aria Table', () => {
   resizingTests(render, (tree, ...args) => tree.rerender(...args), Table, TableWithSomeResizingFRsControlled, resizeCol, resizeTable);
 });
 
-function Table(props: {columns: {id: Key, name: string}[], rows}) {
+function Table(props: {columns: {id: Key, name: string}[], rows: Record<string, string>[]}) {
   let {columns, rows, ...args} = props;
   return (
     <ResizingTable {...args}>

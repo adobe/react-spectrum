@@ -1,4 +1,10 @@
 {
+  "actionbar.actions": "Akcie",
+  "actionbar.actionsAvailable": "Dostupné akcie.",
+  "actionbar.clearSelection": "Vymazať výber",
+  "actionbar.selected": "Vybrané položky: {count}",
+  "actionbar.selectedAll": "Všetky vybraté položky",
+  "button.pending": "čakajúce",
   "contextualhelp.help": "Pomoc",
   "contextualhelp.info": "Informácie",
   "dialog.alert": "Upozornenie",
@@ -11,11 +17,17 @@
   "label.(optional)": "(nepovinné)",
   "label.(required)": "(povinné)",
   "menu.moreActions": "Ďalšie akcie",
-  "picker.placeholder": "Vyberte možnosť...",
+  "picker.placeholder": "Vybrať…",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
+  "table.loading": "Načítava sa...",
+  "table.loadingMore": "Načítava sa viac...",
+  "table.resizeColumn": "Zmeniť veľkosť stĺpca",
+  "table.sortAscending": "Zoradiť vzostupne",
+  "table.sortDescending": "Zoradiť zostupne",
   "tag.actions": "Akcie",
   "tag.hideButtonLabel": "Zobraziť menej",
   "tag.noTags": "Žiadne",
-  "tag.showAllButtonLabel": "Zobraziť všetko ({tagCount, number})"
+  "tag.showAllButtonLabel": "Zobraziť všetko ({tagCount, number})",
+  "breadcrumbs.more": "Ďalšie položky"
 }

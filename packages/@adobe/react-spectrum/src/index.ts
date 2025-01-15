@@ -17,12 +17,14 @@ import 'client-only';
 export {ActionGroup} from '@react-spectrum/actiongroup';
 export {Badge} from '@react-spectrum/badge';
 export {Breadcrumbs} from '@react-spectrum/breadcrumbs';
+export {Accordion, Disclosure, DisclosurePanel, DisclosureTitle} from '@react-spectrum/accordion';
 export {ActionBar, ActionBarContainer} from '@react-spectrum/actionbar';
 export {ActionButton, Button, LogicButton, ToggleButton} from '@react-spectrum/button';
 export {Avatar} from '@react-spectrum/avatar';
 export {ButtonGroup} from '@react-spectrum/buttongroup';
 export {Calendar, RangeCalendar} from '@react-spectrum/calendar';
 export {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
+export {ColorArea, ColorEditor, ColorField, ColorPicker, ColorSlider, ColorSwatch, ColorSwatchPicker, ColorWheel, parseColor, getColorChannels} from '@react-spectrum/color';
 export {ComboBox} from '@react-spectrum/combobox';
 export {ContextualHelp} from '@react-spectrum/contextualhelp';
 export {AlertDialog, Dialog, DialogTrigger, DialogContainer, useDialogContainer} from '@react-spectrum/dialog';
@@ -78,6 +80,7 @@ export type {SpectrumActionButtonProps, SpectrumButtonProps, SpectrumLogicButton
 export type {SpectrumButtonGroupProps} from '@react-spectrum/buttongroup';
 export type {SpectrumCalendarProps, SpectrumRangeCalendarProps} from '@react-spectrum/calendar';
 export type {SpectrumCheckboxGroupProps, SpectrumCheckboxProps} from '@react-spectrum/checkbox';
+export type {Color, ColorFormat, ColorSpace, SpectrumColorAreaProps, SpectrumColorEditorProps, SpectrumColorFieldProps, SpectrumColorPickerProps, SpectrumColorSliderProps, SpectrumColorSwatchPickerProps, SpectrumColorSwatchProps, SpectrumColorWheelProps} from '@react-spectrum/color';
 export type {SpectrumComboBoxProps} from '@react-spectrum/combobox';
 export type {SpectrumContextualHelpProps} from '@react-spectrum/contextualhelp';
 export type {DialogContainerValue, SpectrumAlertDialogProps, SpectrumDialogContainerProps, SpectrumDialogProps, SpectrumDialogTriggerProps} from '@react-spectrum/dialog';
@@ -120,3 +123,4 @@ export type {DateFormatter, DateFormatterOptions, Filter, FormatMessage, Locale,
 export type {SSRProviderProps} from '@react-aria/ssr';
 export type {DirectoryDropItem, DragAndDropHooks, DragAndDropOptions, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-spectrum/dnd';
 export type {Key, Selection, ItemProps, SectionProps, RouterConfig} from '@react-types/shared';
+export type {SpectrumAccordionProps, SpectrumDisclosureProps, SpectrumDisclosurePanelProps, SpectrumDisclosureTitleProps} from '@react-spectrum/accordion';

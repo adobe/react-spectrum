@@ -30,7 +30,8 @@ const meta: Meta<typeof CheckboxGroup> = {
   tags: ['autodocs'],
   argTypes: {
     onChange: {table: {category: 'Events'}}
-  }
+  },
+  title: 'CheckboxGroup'
 };
 
 export default meta;
@@ -53,7 +54,24 @@ export const Example: Story = {
 };
 
 export const ContextualHelpExample = (args: any) => (
-  <CheckboxGroup {...args}>
+  <CheckboxGroup 
+    {...args}
+    contextualHelp={
+      <ContextualHelp>
+        <Heading>Sports</Heading>
+        <Content>
+          <Text>
+            Social games we paly to have fun and stay healthy.
+          </Text>
+        </Content>
+        <Footer>
+          <Link
+            isStandalone
+            href="https://en.wikipedia.org/wiki/Sport"
+            target="_blank">Learn more about sports</Link>
+        </Footer>
+      </ContextualHelp>
+    }>
     <Checkbox isEmphasized value="soccer">Soccer</Checkbox>
     <Checkbox value="baseball">Baseball</Checkbox>
     <Checkbox value="basketball">Basketball</Checkbox>
@@ -78,37 +96,4 @@ ContextualHelpExample.args = {
       </Footer>
     </ContextualHelp>
   )
-};
-
-ContextualHelpExample.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `
-<CheckboxGroup
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>Sports</Heading>
-      <Content>
-        <Text>
-          Social games we paly to have fun and stay healthy.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Sport"
-          target="_blank">Learn more about sports</Link>
-      </Footer>
-    </ContextualHelp>
-  }
-  label="Segment"
-/>
-  <Checkbox isEmphasized value="soccer">Soccer</Checkbox>
-  <Checkbox value="baseball">Baseball</Checkbox>
-  <Checkbox value="basketball">Basketball</Checkbox>
-</CheckboxGroup>`;
-      }
-    }
-  }
 };

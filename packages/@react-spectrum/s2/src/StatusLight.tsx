@@ -16,8 +16,10 @@ import {ContextValue, SlotProps} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode} from 'react';
 import {filterDOMProps} from '@react-aria/utils';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
+import {Text} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
+import {useIsSkeleton} from './Skeleton';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface StatusLightStyleProps {
@@ -64,13 +66,13 @@ const wrapper = style<StatusLightStyleProps>({
   disableTapHighlight: true
 }, getAllowedOverrides());
 
-const light = style<StatusLightStyleProps>({
+const light = style<StatusLightStyleProps & {isSkeleton: boolean}>({
   size: {
     size: {
       S: 8,
-      M: size(10),
+      M: 10,
       L: 12,
-      XL: size(14)
+      XL: 14
     }
   },
   fill: {
@@ -94,14 +96,21 @@ const light = style<StatusLightStyleProps>({
       cinnamon: 'cinnamon',
       brown: 'brown',
       silver: 'silver'
-    }
-  }
+    },
+    isSkeleton: 'gray-200'
+  },
+  overflow: 'visible' // prevents the light from getting clipped on iOS
 });
 
-function StatusLight(props: StatusLightProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Status lights are used to color code categories and labels commonly found in data visualization.
+ * When status lights have a semantic meaning, they should use semantic variant colors.
+ */
+export const StatusLight = /*#__PURE__*/ forwardRef(function StatusLight(props: StatusLightProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, StatusLightContext);
   let {children, size = 'M', variant, role, UNSAFE_className = '', UNSAFE_style, styles} = props;
   let domRef = useDOMRef(ref);
+  let isSkeleton = useIsSkeleton();
 
   if (!children && !props['aria-label']) {
     console.warn('If no children are provided, an aria-label must be specified');
@@ -119,18 +128,11 @@ function StatusLight(props: StatusLightProps, ref: DOMRef<HTMLDivElement>) {
       style={UNSAFE_style}
       className={UNSAFE_className + wrapper({size, variant}, styles)}>
       <CenterBaseline>
-        <svg className={light({size, variant})} aria-hidden="true">
+        <svg className={light({size, variant, isSkeleton})} aria-hidden="true">
           <circle r="50%" cx="50%" cy="50%" />
         </svg>
       </CenterBaseline>
-      {children}
+      <Text>{children}</Text>
     </div>
   );
-}
-
-/**
- * Status lights are used to color code categories and labels commonly found in data visualization.
- * When status lights have a semantic meaning, they should use semantic variant colors.
- */
-let _StatusLight = /*#__PURE__*/ forwardRef(StatusLight);
-export {_StatusLight as StatusLight};
+});

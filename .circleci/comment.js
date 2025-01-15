@@ -52,6 +52,8 @@ async function run() {
       [NextJS Test App](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/next/index.html)
       [RAC Tailwind Example](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/rac-tailwind/index.html)
       [RAC Spectrum + Tailwind Example](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/rac-spectrum-tailwind/index.html)
+      [S2 Parcel Example](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/s2-parcel-example/index.html)
+      [S2 Webpack Example](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/s2-webpack-5-example/index.html)
       [CRA Test App Size](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/publish-stats/build-stats.txt)
       [NextJS App Size](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/publish-stats/next-build-stats.txt)
       [Publish stats](https://reactspectrum.blob.core.windows.net/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/publish-stats/publish.json)

@@ -32,17 +32,18 @@ import {ClearButton} from './ClearButton';
 import {Collection, CollectionBuilder} from '@react-aria/collections';
 import {createContext, forwardRef, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {DOMRef, DOMRefValue, HelpTextProps, Node, SpectrumLabelableProps} from '@react-types/shared';
-import {field, focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel} from './Field';
 import {flushSync} from 'react-dom';
-import {fontRelative, style} from '../style/spectrum-theme' with { type: 'macro' };
+import {focusRing, fontRelative, style} from '../style' with { type: 'macro' };
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {IconContext} from './Icon';
-import {ImageContext, Text, TextContext} from './Content';
+import {ImageContext} from './Image';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
+import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useEffectEvent, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -102,7 +103,8 @@ const helpTextStyles = style({
 
 const InternalTagGroupContext = createContext<TagGroupProps<any>>({});
 
-function TagGroup<T extends object>(props: TagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
+/** Tags allow users to categorize content. They can represent keywords or people, and are grouped to describe an item or a search request. */
+export const TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function TagGroup<T extends object>(props: TagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, TagGroupContext);
   props = useFormProps(props);
   let {onRemove} = props;
@@ -113,11 +115,7 @@ function TagGroup<T extends object>(props: TagGroupProps<T>, ref: DOMRef<HTMLDiv
       </CollectionBuilder>
     </InternalTagGroupContext.Provider>
   );
-}
-
-/** Tags allow users to categorize content. They can represent keywords or people, and are grouped to describe an item or a search request. */
-let _TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(TagGroup);
-export {_TagGroup as TagGroup};
+});
 
 function TagGroupInner<T>({
   props: {
@@ -338,7 +336,6 @@ function TagGroupInner<T>({
                 })}>
                 {allItems.map(item => {
                   // pull off individual props as an allow list, don't want refs or other props getting through
-                  // possibly should render a tag look alike instead though, so i don't call the hooks either or add id's to elements etc
                   return (
                     <div
                       style={item.props.UNSAFE_style}
@@ -360,7 +357,7 @@ function TagGroupInner<T>({
                 minWidth: 'full',
                 font: 'ui'
               })}>
-              {item => <_Tag {...item.props} id={item.key} textValue={item.textValue} />}
+              {item => <Tag {...item.props} id={item.key} textValue={item.textValue} />}
             </TagList>
             {!isEmpty && (showCollapseToggleButton || groupActionLabel) &&
               <ActionGroup
@@ -519,7 +516,8 @@ const avatarSize = {
   L: 24
 } as const;
 
-function Tag({children, textValue, ...props}: TagProps, ref: DOMRef<HTMLDivElement>) {
+/** An individual Tag for TagGroups. */
+export const Tag = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tag({children, textValue, ...props}: TagProps, ref: DOMRef<HTMLDivElement>) {
   textValue ||= typeof children === 'string' ? children : undefined;
   let ctx = useSlottedContext(TagGroupContext);
   let isInRealDOM = Boolean(ctx?.size);
@@ -541,12 +539,7 @@ function Tag({children, textValue, ...props}: TagProps, ref: DOMRef<HTMLDivEleme
       ))}
     </AriaTag>
   );
-}
-
-
-/** An individual Tag for TagGroups. */
-let _Tag = /*#__PURE__*/ (forwardRef as forwardRefType)(Tag);
-export {_Tag as Tag};
+});
 
 function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM}) {
   let {size = 'M'} = useSlottedContext(TagGroupContext) ?? {};
@@ -574,7 +567,7 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM}) {
               styles: style({order: 0})
             }],
             [ImageContext, {
-              className: style({
+              styles: style({
                 size: fontRelative(20),
                 flexShrink: 0,
                 order: 0,

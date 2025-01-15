@@ -13,12 +13,12 @@
 import {Button, ButtonGroup, Content, DropZone, FileTrigger, Heading, IllustratedMessage} from '../src';
 import {categorizeArgTypes} from './utils';
 import Cloud from '../spectrum-illustrations/linear/Cloud';
-import CloudUpload from 'illustration:../spectrum-illustrations/gradient/S2_fill_cloudUpload_generic1_160.svg';
+import CloudUpload from '../spectrum-illustrations/gradient/generic1/CloudUpload';
 import DropToUpload from '../spectrum-illustrations/linear/DropToUpload';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
 import type {Meta} from '@storybook/react';
 import React, {useState} from 'react';
-import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {style} from '../style' with { type: 'macro' };
 
 const meta: Meta<typeof DropZone> = {
   component: DropZone,
@@ -28,7 +28,8 @@ const meta: Meta<typeof DropZone> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onDrop', 'onDropActivate', 'onDropEnter', 'onDropExit', 'onDropMove'])
-  }
+  },
+  title: 'DropZone'
 };
 
 export default meta;
@@ -41,7 +42,7 @@ export const Example = (args: any) => {
       <Draggable />
       <DropZone
         {...args}
-        className={style({width: '[320px]', height: '[280px]'})}
+        className={style({width: 320, height: 280})}
         isFilled={isFilled}
         onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>
@@ -66,7 +67,7 @@ export const ExampleWithFileTrigger = (args: any) => {
       <Draggable />
       <DropZone
         {...args}
-        className={style({width: '[380px]', height: '[280px]'})}
+        className={style({width: 380, height: 280})}
         isFilled={isFilled}
         onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>
@@ -98,7 +99,7 @@ export const LongBanner = (args: any) => {
       <DropZone
         {...args}
         replaceMessage="A really long message that will show the text wrapping hopefully"
-        className={style({width: '[320px]', height: '[280px]'})}
+        className={style({width: 380, height: 280})}
         isFilled={isFilled}
         onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>
@@ -123,7 +124,7 @@ export const Gradient = (args: any) => {
       <Draggable />
       <DropZone
         {...args}
-        className={style({width: '[320px]', height: '[280px]'})}
+        className={style({width: 380, height: 280})}
         isFilled={isFilled}
         onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>

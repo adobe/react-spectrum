@@ -15,7 +15,7 @@ import {ContextualHelp} from '../src/ContextualHelp';
 import {Link} from '../src/Link';
 import type {Meta} from '@storybook/react';
 import {Slider} from '../src/Slider';
-import {style} from '../style/spectrum-theme' with { type: 'macro' };
+import {style} from '../style' with { type: 'macro' };
 
 const meta: Meta<typeof Slider> = {
   component: Slider,
@@ -26,7 +26,8 @@ const meta: Meta<typeof Slider> = {
   tags: ['autodocs'],
   argTypes: {
     onChangeEnd: {table: {category: 'Events'}}
-  }
+  },
+  title: 'Slider'
 };
 
 export default meta;
@@ -60,7 +61,7 @@ FillOffset.args = {
 
 export const FormatOptions = (args: any) => (
   <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
-    <Slider {...args} styles={style({width: '[300px]'})} />
+    <Slider {...args} styles={style({width: 300})} />
   </div>
 );
 
@@ -73,71 +74,30 @@ FormatOptions.args = {
 
 export const ContextualHelpExample = (args: any) => (
   <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
-    <Slider {...args} />
+    <Slider
+      {...args}
+      contextualHelp={
+        <ContextualHelp>
+          <Heading>What is a ice cream?</Heading>
+          <Content>
+            <Text>
+              A combination of sugar, eggs, milk, and cream is cooked to make
+              a custard base. Then, flavorings are added, and this flavored
+              mixture is carefully churned and frozen to make ice cream.
+            </Text>
+          </Content>
+          <Footer>
+            <Link
+              isStandalone
+              href="https://en.wikipedia.org/wiki/Ice_cream"
+              target="_blank">Learn more about ice cream</Link>
+          </Footer>
+        </ContextualHelp>
+      } />
   </div>
 );
 
 ContextualHelpExample.args = {
   label: 'Cookies',
-  defaultValue: 30,
-  contextualHelp: (
-    <ContextualHelp>
-      <Heading>What is a ice cream?</Heading>
-      <Content>
-        <Text>
-          A combination of sugar, eggs, milk, and cream is cooked to make
-          a custard base. Then, flavorings are added, and this flavored
-          mixture is carefully churned and frozen to make ice cream.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Ice_cream"
-          target="_blank">Learn more about ice cream</Link>
-      </Footer>
-    </ContextualHelp>
-  )
-};
-
-ContextualHelpExample.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `
-<div
-  style={{
-    alignItems: 'start',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 8
-  }}>
-  <Slider
-    contextualHelp={
-      <ContextualHelp>
-        <Heading>
-          What is a ice cream?
-        </Heading>
-        <Content>
-          <Text>
-            A combination of sugar, eggs, milk, and cream is cooked to make a custard base. Then, flavorings are added, and this flavored mixture is carefully churned and frozen to make ice cream.
-          </Text>
-        </Content>
-        <Footer>
-          <Link
-            href="https://en.wikipedia.org/wiki/Ice_cream"
-            isStandalone
-            target="_blank">
-            Learn more about ice cream
-          </Link>
-        </Footer>
-      </ContextualHelp>
-    }
-    defaultValue={30}
-    label="Cookies"
-  />
-</div>`;
-      }
-    }
-  }
+  defaultValue: 30
 };

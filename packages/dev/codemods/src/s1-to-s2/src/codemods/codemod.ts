@@ -5,6 +5,7 @@ import {changes as changesJSON} from './changes';
 import {functionMap} from './transforms';
 import {getComponents} from '../getComponents';
 import {iconMap} from '../iconMap';
+import {parse as recastParse} from 'recast';
 import * as t from '@babel/types';
 import {transformStyleProps} from './styleProps';
 import traverse, {Binding, NodePath} from '@babel/traverse';
@@ -25,6 +26,9 @@ availableComponents.add('Section');
 // Don't update v3 Provider
 availableComponents.delete('Provider');
 
+// Replaced by ActionButtonGroup and ToggleButtonGroup
+availableComponents.add('ActionGroup');
+
 
 interface Options {
   /** Comma separated list of components to transform. If not specified, all available components will be transformed. */
@@ -32,7 +36,13 @@ interface Options {
 }
 
 export default function transformer(file: FileInfo, api: API, options: Options) {
-  let j = api.jscodeshift;
+  let j = api.jscodeshift.withParser({
+    parse(source: string) {
+      return recastParse(source, {
+        parser: require('recast/parsers/babel')
+      });
+    }
+  });
   let root = j(file.source);
   let componentsToTransform = options.components ? new Set(options.components.split(',').filter(s => availableComponents.has(s))) : availableComponents;
 
@@ -44,7 +54,7 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
   const leadingComments = root.find(j.Program).get('body', 0).node.leadingComments;
   traverse(root.paths()[0].node, {
     ImportDeclaration(path) {
-      if (path.node.source.value === '@adobe/react-spectrum' || path.node.source.value.startsWith('@react-spectrum/')) {
+      if (path.node.source.value === '@adobe/react-spectrum' || (path.node.source.value.startsWith('@react-spectrum/') && path.node.source.value !== '@react-spectrum/s2')) {
         lastImportPath = path;
         for (let specifier of path.node.specifiers) {
           if (specifier.type === 'ImportNamespaceSpecifier') {
@@ -101,7 +111,7 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
         if (!specifier || !t.isImportDefaultSpecifier(specifier)) {return;}
 
         let localName = specifier.local.name;
-        
+
         if (iconMap.has(iconName)) {
           let newIconName = iconMap.get(iconName)!;
           iconImports.set(localName, {path, newName: newIconName});
@@ -143,7 +153,7 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
     let {path, newName} = iconInfo;
     if (newName) {
       let newImportSource = `@react-spectrum/s2/icons/${newName}`;
-      
+
       // Check if we can update local name
       let newLocalName = localName;
       if (localName === path.node.source.value.split('/').pop() && localName !== newName) {
@@ -219,7 +229,7 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
   if (importedComponents.size) {
     // Add imports to existing @react-spectrum/s2 import if it exists, otherwise add a new one.
     let importSpecifiers = new Set([...importedComponents]
-      .filter(([c]) => c !== 'Flex' && c !== 'Grid' && c !== 'View' && c !== 'Item' && c !== 'Section')
+      .filter(([c]) => c !== 'Flex' && c !== 'Grid' && c !== 'View' && c !== 'Item' && c !== 'Section' && c !== 'ActionGroup')
       .map(([, specifier]) => specifier));
 
     let existingImport = root.find(j.ImportDeclaration, {
@@ -274,7 +284,6 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
   }
 
   root.find(j.Program).get('body', 0).node.comments = leadingComments;
-  return root.toSource();
+  return root.toSource().replace(/assert\s*\{\s*type:\s*"macro"\s*\}/g, 'with { type: "macro" }');
 }
 
-transformer.parser = 'tsx';

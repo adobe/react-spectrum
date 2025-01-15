@@ -17,7 +17,7 @@ import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-u
 import {IllustratedMessageContext} from './IllustratedMessage';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -30,7 +30,13 @@ export interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'sty
   /** Whether the drop zone has been filled. */
   isFilled?: boolean,
   /** The message to replace the default banner message that is shown when the drop zone is filled. */
-  replaceMessage?: string
+  replaceMessage?: string,
+  /**
+   * The size of the DropZone.
+   *
+   * @default 'M'
+   */
+    size?: 'S' | 'M' | 'L'
 }
 
 export const DropZoneContext = createContext<ContextValue<DropZoneProps, DOMRefValue<HTMLDivElement>>>(null);
@@ -59,7 +65,7 @@ const dropzone = style<DropZoneRenderProps>({
   padding: 24
 }, getAllowedOverrides({height: true}));
 
-const banner = style<DropZoneRenderProps>({
+const banner = style({
   position: 'absolute',
   left: 0,
   right: 0,
@@ -68,7 +74,14 @@ const banner = style<DropZoneRenderProps>({
   alignItems: 'center',
   justifyContent: 'center',
   minHeight: 20,
-  maxWidth: 208,
+  width: 'fit',
+  maxWidth: {
+    default: 192,
+    size: {
+      S: 160,
+      L: 208
+    }
+  },
   backgroundColor: 'accent',
   borderRadius: 'default',
   color: 'white',
@@ -76,9 +89,15 @@ const banner = style<DropZoneRenderProps>({
   padding: '[calc((self(minHeight))/1.5)]'
 });
 
-function DropZone(props: DropZoneProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A drop zone is an area into which one or multiple objects can be dragged and dropped.
+ */
+export const DropZone = /*#__PURE__*/ forwardRef(function DropZone(props: DropZoneProps, ref: DOMRef<HTMLDivElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, DropZoneContext);
+  let {
+    size = 'M'
+  } = props;
   let domRef = useDOMRef(ref);
 
   return (
@@ -89,11 +108,11 @@ function DropZone(props: DropZoneProps, ref: DOMRef<HTMLDivElement>) {
       className={renderProps => (props.UNSAFE_className || '') + dropzone(renderProps, props.styles)}>
       {renderProps => (
         <>
-          <IllustratedMessageContext.Provider value={{isInDropZone: true, isDropTarget: renderProps.isDropTarget}}>
+          <IllustratedMessageContext.Provider value={{isInDropZone: true, isDropTarget: renderProps.isDropTarget, size}}>
             {props.children}
           </IllustratedMessageContext.Provider>
           {(renderProps.isDropTarget && props.isFilled) &&
-            <div className={banner(renderProps)}>
+            <div className={banner({size})}>
               <span>
                 {props.replaceMessage ? props.replaceMessage : stringFormatter.format('dropzone.replaceMessage')}
               </span>
@@ -103,10 +122,4 @@ function DropZone(props: DropZoneProps, ref: DOMRef<HTMLDivElement>) {
       )}
     </RACDropZone>
   );
-}
-
-/**
- * A drop zone is an area into which one or multiple objects can be dragged and dropped.
- */
-let _DropZone = /*#__PURE__*/ forwardRef(DropZone);
-export {_DropZone as DropZone};
+});

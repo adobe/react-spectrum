@@ -12,7 +12,7 @@ interface BreakpointContext {
   matchedBreakpoints: string[]
 }
 
-const Context = React.createContext<BreakpointContext>(null);
+const Context = React.createContext<BreakpointContext | null>(null);
 Context.displayName = 'BreakpointContext';
 
 interface BreakpointProviderProps {
@@ -34,12 +34,12 @@ export function BreakpointProvider(props: BreakpointProviderProps) {
 }
 
 export function useMatchedBreakpoints(breakpoints: Breakpoints): string[] {
-  let entries = Object.entries(breakpoints).sort(([, valueA], [, valueB]) => valueB - valueA);
+  let entries = Object.entries(breakpoints).sort(([, valueA], [, valueB]) => valueB! - valueA!);
   let breakpointQueries = entries.map(([, value]) => `(min-width: ${value}px)`);
 
   let supportsMatchMedia = typeof window !== 'undefined' && typeof window.matchMedia === 'function';
   let getBreakpointHandler = () => {
-    let matched = [];
+    let matched: string[] = [];
     for (let i in breakpointQueries) {
       let query = breakpointQueries[i];
       if (window.matchMedia(query).matches) {
@@ -87,6 +87,6 @@ export function useMatchedBreakpoints(breakpoints: Breakpoints): string[] {
   return isSSR ? ['base'] : breakpoint;
 }
 
-export function useBreakpoint(): BreakpointContext {
+export function useBreakpoint() {
   return useContext(Context);
 }

@@ -18,15 +18,24 @@ import {TreeState} from '@react-stately/tree';
 import {useButton} from '@react-aria/button';
 import {useSelectableItem, useSelectableList} from '@react-aria/selection';
 
+/**
+ * @deprecated Use useDisclosure from `@react-aria/disclosure` instead.
+ */
 export interface AccordionAria {
   /** Props for the accordion container element. */
   accordionProps: DOMAttributes
 }
 
+/**
+ * @deprecated Use useDisclosure from `@react-aria/disclosure` instead.
+ */
 export interface AccordionItemAriaProps<T> {
   item: Node<T>
 }
 
+/**
+ * @deprecated Use useDisclosure from `@react-aria/disclosure` instead.
+ */
 export interface AccordionItemAria {
   /** Props for the accordion item button. */
   buttonProps: ButtonHTMLAttributes<HTMLElement>,
@@ -34,6 +43,9 @@ export interface AccordionItemAria {
   regionProps: DOMAttributes
 }
 
+/**
+ * @deprecated Use useDisclosure from `@react-aria/disclosure` instead.
+ */
 export function useAccordionItem<T>(props: AccordionItemAriaProps<T>, state: TreeState<T>, ref: RefObject<HTMLButtonElement | null>): AccordionItemAria {
   let {item} = props;
   let buttonId = useId();
@@ -65,6 +77,9 @@ export function useAccordionItem<T>(props: AccordionItemAriaProps<T>, state: Tre
   };
 }
 
+/**
+ * @deprecated Use useDisclosure from `@react-aria/disclosure` instead.
+ */
 export function useAccordion<T>(props: AriaAccordionProps<T>, state: TreeState<T>, ref: RefObject<HTMLDivElement | null>): AccordionAria {
   let {listProps} = useSelectableList({
     ...props,

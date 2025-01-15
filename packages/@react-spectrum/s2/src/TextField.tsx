@@ -27,7 +27,7 @@ import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {mergeRefs} from '@react-aria/utils';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
 import {TextFieldRef} from '@react-types/textfield';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -43,33 +43,35 @@ export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'c
 
 export const TextFieldContext = createContext<ContextValue<TextFieldProps, TextFieldRef>>(null);
 
-function TextField(props: TextFieldProps, ref: Ref<TextFieldRef>) {
-  [props, ref] = useSpectrumContextProps(props, ref, TextFieldContext);
-  return (
-    <_TextFieldBase
-      {...props}
-      ref={ref}>
-      <Input />
-    </_TextFieldBase>
-  );
-}
-
 /**
  * TextFields are text inputs that allow users to input custom text entries
  * with a keyboard. Various decorations can be displayed around the field to
  * communicate the entry requirements.
  */
-let _TextField = forwardRef(TextField);
-export {_TextField as TextField};
+export const TextField = forwardRef(function TextField(props: TextFieldProps, ref: Ref<TextFieldRef>) {
+  [props, ref] = useSpectrumContextProps(props, ref, TextFieldContext);
+  return (
+    <TextFieldBase
+      {...props}
+      ref={ref}>
+      <Input />
+    </TextFieldBase>
+  );
+});
 
 export interface TextAreaProps extends Omit<TextFieldProps, 'type' | 'pattern'> {}
 
 export const TextAreaContext = createContext<ContextValue<TextAreaProps, TextFieldRef<HTMLTextAreaElement>>>(null);
 
-function TextArea(props: TextAreaProps, ref: Ref<TextFieldRef<HTMLTextAreaElement>>) {
+/**
+ * TextAreas are multiline text inputs, useful for cases where users have
+ * a sizable amount of text to enter. They allow for all customizations that
+ * are available to text fields.
+ */
+export const TextArea = forwardRef(function TextArea(props: TextAreaProps, ref: Ref<TextFieldRef<HTMLTextAreaElement>>) {
   [props, ref] = useSpectrumContextProps(props, ref, TextAreaContext);
   return (
-    <_TextFieldBase
+    <TextFieldBase
       {...props}
       ref={ref}
       fieldGroupCss={style({
@@ -77,19 +79,11 @@ function TextArea(props: TextAreaProps, ref: Ref<TextFieldRef<HTMLTextAreaElemen
         height: 'auto'
       })}>
       <TextAreaInput />
-    </_TextFieldBase>
+    </TextFieldBase>
   );
-}
+});
 
-/**
- * TextAreas are multiline text inputs, useful for cases where users have
- * a sizable amount of text to enter. They allow for all customizations that
- * are available to text fields.
- */
-let _TextArea = forwardRef(TextArea);
-export {_TextArea as TextArea};
-
-function TextFieldBase(props: TextFieldProps & {children: ReactNode, fieldGroupCss?: StyleString}, ref: Ref<TextFieldRef<HTMLInputElement | HTMLTextAreaElement>>) {
+export const TextFieldBase = forwardRef(function TextFieldBase(props: TextFieldProps & {children: ReactNode, fieldGroupCss?: StyleString}, ref: Ref<TextFieldRef<HTMLInputElement | HTMLTextAreaElement>>) {
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useRef<HTMLDivElement>(null);
   let formContext = useContext(FormContext);
@@ -162,9 +156,7 @@ function TextFieldBase(props: TextFieldProps & {children: ReactNode, fieldGroupC
       </>))}
     </AriaTextField>
   );
-}
-
-let _TextFieldBase = forwardRef(TextFieldBase);
+});
 
 function TextAreaInput() {
   // Force re-render when value changes so we update the height.

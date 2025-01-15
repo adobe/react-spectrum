@@ -13,16 +13,6 @@
 import {CSSProperties} from 'react';
 import {StyleString} from '../style/types';
 
-export const focusRing = () => ({
-  outlineStyle: {
-    default: 'none',
-    isFocusVisible: 'solid'
-  },
-  outlineColor: 'focus-ring',
-  outlineWidth: 2,
-  outlineOffset: 2
-} as const);
-
 export function centerPadding(minHeight: string = 'self(minHeight)'): `[${string}]` {
   return `[calc((${minHeight} - self(borderTopWidth, 0px) - self(borderBottomWidth, 0px) - 1lh) / 2)]`;
 }
@@ -93,14 +83,7 @@ export const fieldLabel = () => ({
   color: {
     default: 'neutral-subdued',
     isDisabled: 'disabled',
-    staticColor: {
-      white: {
-        default: 'transparent-white-700'
-      },
-      black: {
-        default: 'transparent-black-900'
-      }
-    },
+    isStaticColor: 'transparent-overlay-1000',
     forcedColors: 'ButtonText'
   }
 } as const);
@@ -140,6 +123,20 @@ export const colorScheme = () => ({
     }
   }
 } as const);
+
+export function staticColor() {
+  return {
+    '--s2-container-bg': {
+      type: 'backgroundColor',
+      value: {
+        staticColor: {
+          black: 'white',
+          white: 'black'
+        }
+      }
+    }
+  } as const;
+}
 
 const allowedOverrides = [
   'margin',
@@ -188,7 +185,7 @@ const heightProperties = [
 ] as const;
 
 export type StylesProp = StyleString<(typeof allowedOverrides)[number] | (typeof widthProperties)[number]>;
-export type StylesPropWithHeight = StyleString<(typeof allowedOverrides)[number] | (typeof heightProperties)[number]>;
+export type StylesPropWithHeight = StyleString<(typeof allowedOverrides)[number] | (typeof widthProperties)[number] | (typeof heightProperties)[number]>;
 export type StylesPropWithoutWidth = StyleString<(typeof allowedOverrides)[number]>;
 export interface UnsafeStyles {
   /** Sets the CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. Only use as a **last resort**. Use the `style` macro via the `styles` prop instead. */

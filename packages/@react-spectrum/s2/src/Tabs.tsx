@@ -27,9 +27,9 @@ import {
 import {centerBaseline} from './CenterBaseline';
 import {Collection, DOMRef, DOMRefValue, Key, Node, Orientation} from '@react-types/shared';
 import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useRef, useState} from 'react';
-import {focusRing, getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {focusRing, style} from '../style' with {type: 'macro'};
+import {getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLayoutEffect} from '@react-aria/utils';
@@ -43,7 +43,7 @@ export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | '
   children?: ReactNode,
   /**
    * The amount of space between the tabs.
-   * @default "regular"
+   * @default 'regular'
    */
   density?: 'compact' | 'regular'
 }
@@ -333,7 +333,10 @@ const tabs = style({
   }
 }, getAllowedOverrides({height: true}));
 
-function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Tabs organize content into multiple sections and allow users to navigate between them. The content under the set of tabs should be related and form a coherent unit.
+ */
+export const Tabs = forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, TabsContext);
   let {
     density = 'regular',
@@ -357,10 +360,4 @@ function Tabs(props: TabsProps, ref: DOMRef<HTMLDivElement>) {
       </Provider>
     </RACTabs>
   );
-}
-
-/**
- * Tabs organize content into multiple sections and allow users to navigate between them. The content under the set of tabs should be related and form a coherent unit.
- */
-const _Tabs = forwardRef(Tabs);
-export {_Tabs as Tabs};
+});

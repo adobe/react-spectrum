@@ -51,16 +51,15 @@ const DEFAULT_HEIGHT = 48;
  * the virtualizer itself).
  */
 export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTargetDelegate {
-  protected rowHeight: number;
-  protected estimatedRowHeight: number;
-  protected headingHeight: number;
-  protected estimatedHeadingHeight: number;
-  protected loaderHeight: number;
+  protected rowHeight: number | null;
+  protected estimatedRowHeight: number | null;
+  protected headingHeight: number | null;
+  protected estimatedHeadingHeight: number | null;
+  protected loaderHeight: number | null;
   protected dropIndicatorThickness: number;
   protected layoutNodes: Map<Key, LayoutNode>;
   protected contentSize: Size;
-  protected collection: Collection<Node<T>>;
-  private lastCollection: Collection<Node<T>>;
+  protected lastCollection: Collection<Node<T>> | null;
   private lastWidth: number;
   protected rootNodes: LayoutNode[];
   private invalidateEverything: boolean;
@@ -75,19 +74,25 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
    */
   constructor(options: ListLayoutOptions = {}) {
     super();
-    this.rowHeight = options.rowHeight;
-    this.estimatedRowHeight = options.estimatedRowHeight;
-    this.headingHeight = options.headingHeight;
-    this.estimatedHeadingHeight = options.estimatedHeadingHeight;
-    this.loaderHeight = options.loaderHeight;
+    this.rowHeight = options.rowHeight ?? null;
+    this.estimatedRowHeight = options.estimatedRowHeight ?? null;
+    this.headingHeight = options.headingHeight ?? null;
+    this.estimatedHeadingHeight = options.estimatedHeadingHeight ?? null;
+    this.loaderHeight = options.loaderHeight ?? null;
     this.dropIndicatorThickness = options.dropIndicatorThickness || 2;
     this.layoutNodes = new Map();
     this.rootNodes = [];
     this.lastWidth = 0;
     this.lastCollection = null;
+    this.invalidateEverything = false;
     this.validRect = new Rect();
     this.requestedRect = new Rect();
     this.contentSize = new Size();
+  }
+
+  // Backward compatibility for subclassing.
+  protected get collection(): Collection<Node<T>> {
+    return this.virtualizer!.collection;
   }
 
   getLayoutInfo(key: Key) {
@@ -99,7 +104,7 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     // Adjust rect to keep number of visible rows consistent.
     // (only if height > 1 for getDropTargetFromPoint)
     if (rect.height > 1) {
-      let rowHeight = (this.rowHeight ?? this.estimatedRowHeight);
+      let rowHeight = this.rowHeight ?? this.estimatedRowHeight ?? DEFAULT_HEIGHT;
       rect.y = Math.floor(rect.y / rowHeight) * rowHeight;
       rect.height = Math.ceil(rect.height / rowHeight) * rowHeight;
     }
@@ -137,7 +142,7 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     }
     
     // Ensure all of the persisted keys are available.
-    for (let key of this.virtualizer.persistedKeys) {
+    for (let key of this.virtualizer!.persistedKeys) {
       if (this.ensureLayoutInfo(key)) {
         return;
       }
@@ -159,32 +164,32 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
   }
 
   protected isVisible(node: LayoutNode, rect: Rect) {
-    return node.layoutInfo.rect.intersects(rect) || node.layoutInfo.isSticky || node.layoutInfo.type === 'header' || this.virtualizer.isPersistedKey(node.layoutInfo.key);
+    return node.layoutInfo.rect.intersects(rect) || node.layoutInfo.isSticky || node.layoutInfo.type === 'header' || this.virtualizer!.isPersistedKey(node.layoutInfo.key);
   }
 
   protected shouldInvalidateEverything(invalidationContext: InvalidationContext<O>) {
     // Invalidate cache if the size of the collection changed.
     // In this case, we need to recalculate the entire layout.
-    return invalidationContext.sizeChanged;
+    return invalidationContext.sizeChanged || false;
   }
 
   update(invalidationContext: InvalidationContext<O>) {
-    this.collection = this.virtualizer.collection;
+    let collection = this.virtualizer!.collection;
 
     // Reset valid rect if we will have to invalidate everything.
     // Otherwise we can reuse cached layout infos outside the current visible rect.
     this.invalidateEverything = this.shouldInvalidateEverything(invalidationContext);
     if (this.invalidateEverything) {
-      this.requestedRect = this.virtualizer.visibleRect.copy();
+      this.requestedRect = this.virtualizer!.visibleRect.copy();
       this.layoutNodes.clear();
     }
 
     this.rootNodes = this.buildCollection();
 
     // Remove deleted layout nodes
-    if (this.lastCollection && this.collection !== this.lastCollection) {
+    if (this.lastCollection && collection !== this.lastCollection) {
       for (let key of this.lastCollection.getKeys()) {
-        if (!this.collection.getItem(key)) {
+        if (!collection.getItem(key)) {
           let layoutNode = this.layoutNodes.get(key);
           if (layoutNode) {
             this.layoutNodes.delete(key);
@@ -193,17 +198,18 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
       }
     }
 
-    this.lastWidth = this.virtualizer.visibleRect.width;
-    this.lastCollection = this.collection;
+    this.lastWidth = this.virtualizer!.visibleRect.width;
+    this.lastCollection = collection;
     this.invalidateEverything = false;
     this.validRect = this.requestedRect.copy();
   }
 
   protected buildCollection(y = 0): LayoutNode[] {
+    let collection = this.virtualizer!.collection;
     let skipped = 0;
-    let nodes = [];
-    for (let node of this.collection) {
-      let rowHeight = this.rowHeight ?? this.estimatedRowHeight;
+    let nodes: LayoutNode[] = [];
+    for (let node of collection) {
+      let rowHeight = this.rowHeight ?? this.estimatedRowHeight ?? DEFAULT_HEIGHT;
 
       // Skip rows before the valid rectangle unless they are already cached.
       if (node.type === 'item' && y + rowHeight < this.requestedRect.y && !this.isValid(node, y)) {
@@ -217,12 +223,12 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
       nodes.push(layoutNode);
 
       if (node.type === 'item' && y > this.requestedRect.maxY) {
-        y += (this.collection.size - (nodes.length + skipped)) * rowHeight;
+        y += (collection.size - (nodes.length + skipped)) * rowHeight;
         break;
       }
     }
 
-    this.contentSize = new Size(this.virtualizer.visibleRect.width, y);
+    this.contentSize = new Size(this.virtualizer!.visibleRect.width, y);
     return nodes;
   }
 
@@ -240,7 +246,7 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
 
   protected buildChild(node: Node<T>, x: number, y: number, parentKey: Key | null): LayoutNode {
     if (this.isValid(node, y)) {
-      return this.layoutNodes.get(node.key);
+      return this.layoutNodes.get(node.key)!;
     }
 
     let layoutNode = this.buildNode(node, x, y);
@@ -260,14 +266,16 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
         return this.buildSectionHeader(node, x, y);
       case 'loader':
         return this.buildLoader(node, x, y);
+      default:
+        throw new Error('Unsupported node type: ' + node.type);
     }
   }
 
   protected buildLoader(node: Node<T>, x: number, y: number): LayoutNode {
     let rect = new Rect(x, y, 0, 0);
     let layoutInfo = new LayoutInfo('loader', node.key, rect);
-    rect.width = this.virtualizer.contentSize.width;
-    rect.height = this.loaderHeight || this.rowHeight || this.estimatedRowHeight;
+    rect.width = this.virtualizer!.contentSize.width;
+    rect.height = this.loaderHeight || this.rowHeight || this.estimatedRowHeight || DEFAULT_HEIGHT;
 
     return {
       layoutInfo,
@@ -276,15 +284,16 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
   }
 
   protected buildSection(node: Node<T>, x: number, y: number): LayoutNode {
-    let width = this.virtualizer.visibleRect.width;
+    let collection = this.virtualizer!.collection;
+    let width = this.virtualizer!.visibleRect.width;
     let rect = new Rect(0, y, width, 0);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
 
     let startY = y;
     let skipped = 0;
-    let children = [];
-    for (let child of getChildNodes(node, this.collection)) {
-      let rowHeight = (this.rowHeight ?? this.estimatedRowHeight);
+    let children: LayoutNode[] = [];
+    for (let child of getChildNodes(node, collection)) {
+      let rowHeight = (this.rowHeight ?? this.estimatedRowHeight ?? DEFAULT_HEIGHT);
 
       // Skip rows before the valid rectangle unless they are already cached.
       if (y + rowHeight < this.requestedRect.y && !this.isValid(node, y)) {
@@ -299,7 +308,7 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
 
       if (y > this.requestedRect.maxY) {
         // Estimate the remaining height for rows that we don't need to layout right now.
-        y += ([...getChildNodes(node, this.collection)].length - (children.length + skipped)) * rowHeight;
+        y += ([...getChildNodes(node, collection)].length - (children.length + skipped)) * rowHeight;
         break;
       }
     }
@@ -315,7 +324,7 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
   }
 
   protected buildSectionHeader(node: Node<T>, x: number, y: number): LayoutNode {
-    let width = this.virtualizer.visibleRect.width;
+    let width = this.virtualizer!.visibleRect.width;
     let rectHeight = this.headingHeight;
     let isEstimated = false;
 
@@ -327,7 +336,7 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
       let previousLayoutNode = this.layoutNodes.get(node.key);
       let previousLayoutInfo = previousLayoutNode?.layoutInfo;
       if (previousLayoutInfo) {
-        let curNode = this.collection.getItem(node.key);
+        let curNode = this.virtualizer!.collection.getItem(node.key);
         let lastNode = this.lastCollection ? this.lastCollection.getItem(node.key) : null;
         rectHeight = previousLayoutInfo.rect.height;
         isEstimated = width !== this.lastWidth || curNode !== lastNode || previousLayoutInfo.estimatedSize;
@@ -353,7 +362,7 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
   }
 
   protected buildItem(node: Node<T>, x: number, y: number): LayoutNode {
-    let width = this.virtualizer.visibleRect.width;
+    let width = this.virtualizer!.visibleRect.width;
     let rectHeight = this.rowHeight;
     let isEstimated = false;
 
@@ -394,6 +403,7 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
       return false;
     }
 
+    let collection = this.virtualizer!.collection;
     let layoutInfo = layoutNode.layoutInfo;
     layoutInfo.estimatedSize = false;
     if (layoutInfo.rect.height !== size.height) {
@@ -412,10 +422,10 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
       // Invalidate layout for this layout node and all parents
       this.updateLayoutNode(key, layoutInfo, newLayoutInfo);
 
-      let node = this.collection.getItem(layoutInfo.parentKey);
+      let node = layoutInfo.parentKey != null ? collection.getItem(layoutInfo.parentKey) : null;
       while (node) {
         this.updateLayoutNode(node.key, layoutInfo, newLayoutInfo);
-        node = this.collection.getItem(node.parentKey);
+        node = node.parentKey != null ? collection.getItem(node.parentKey) : null;
       }
 
       return true;
@@ -441,16 +451,20 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     return this.contentSize;
   }
 
-  getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget {
-    x += this.virtualizer.visibleRect.x;
-    y += this.virtualizer.visibleRect.y;
+  getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget | null {
+    x += this.virtualizer!.visibleRect.x;
+    y += this.virtualizer!.visibleRect.y;
 
-    let key = this.virtualizer.keyAtPoint(new Point(x, y));
-    if (key == null || this.collection.size === 0) {
+    let key = this.virtualizer!.keyAtPoint(new Point(x, y));
+    if (key == null || this.virtualizer!.collection.size === 0) {
       return {type: 'root'};
     }
 
     let layoutInfo = this.getLayoutInfo(key);
+    if (!layoutInfo) {
+      return null;
+    }
+
     let rect = layoutInfo.rect;
     let target: DropTarget = {
       type: 'item',
@@ -477,7 +491,7 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
   }
 
   getDropTargetLayoutInfo(target: ItemDropTarget): LayoutInfo {
-    let layoutInfo = this.getLayoutInfo(target.key);
+    let layoutInfo = this.getLayoutInfo(target.key)!;
     let rect: Rect;
     if (target.dropPosition === 'before') {
       rect = new Rect(layoutInfo.rect.x, layoutInfo.rect.y - this.dropIndicatorThickness / 2, layoutInfo.rect.width, this.dropIndicatorThickness);

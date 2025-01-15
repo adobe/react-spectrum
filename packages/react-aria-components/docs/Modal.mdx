@@ -49,22 +49,20 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
   <Button>Sign up…</Button>
   <Modal>
     <Dialog>
-      {({close}) => (
-        <form>
-          <Heading slot="title">Sign up</Heading>
-          <TextField autoFocus>
-            <Label>First Name: </Label>
-            <Input />
-          </TextField>
-          <TextField>
-            <Label>Last Name: </Label>
-            <Input />
-          </TextField>
-          <Button onPress={close}>
-            Submit
-          </Button>
-        </form>
-      )}
+      <form>
+        <Heading slot="title">Sign up</Heading>
+        <TextField autoFocus>
+          <Label>First Name: </Label>
+          <Input />
+        </TextField>
+        <TextField>
+          <Label>Last Name: </Label>
+          <Input />
+        </TextField>
+        <Button slot="close">
+          Submit
+        </Button>
+      </form>
     </Dialog>
   </Modal>
 </DialogTrigger>
@@ -209,11 +207,9 @@ By default, modals can be closed by pressing the <Keyboard>Escape</Keyboard> key
   <Button>Open dialog</Button>
   <Modal isKeyboardDismissDisabled>
     <Dialog>
-      {({close}) => <>
-        <Heading slot="title">Notice</Heading>
-        <p>You must close this dialog using the button below.</p>
-        <Button onPress={close}>Close</Button>
-      </>}
+      <Heading slot="title">Notice</Heading>
+      <p>You must close this dialog using the button below.</p>
+      <Button slot="close">Close</Button>
     </Dialog>
   </Modal>
 </DialogTrigger>
@@ -231,11 +227,9 @@ import {ModalOverlay} from 'react-aria-components';
   <ModalOverlay className="my-overlay">
     <Modal className="my-modal">
       <Dialog>
-        {({close}) => <>
-          <Heading slot="title">Notice</Heading>
-          <p>This is a modal with a custom modal overlay.</p>
-          <Button onPress={close}>Close</Button>
-        </>}
+        <Heading slot="title">Notice</Heading>
+        <p>This is a modal with a custom modal overlay.</p>
+        <Button slot="close">Close</Button>
       </Dialog>
     </Modal>
   </ModalOverlay>
@@ -352,7 +346,7 @@ A custom `className` can also be specified on any component. This overrides the 
 </Modal>
 ```
 
-In addition, modals support entry and exit animations, which are exposed as states using DOM attributes that you can target with CSS selectors. `Modal` and `ModalOverlay` will automatically wait for any exit animations to complete before removing the element from the DOM.
+In addition, modals support entry and exit animations, which are exposed as states using DOM attributes that you can target with CSS selectors. `Modal` and `ModalOverlay` will automatically wait for any exit animations to complete before removing the element from the DOM. See the [animation guide](styling.html#animation) for more details.
 
 ```css render=false
 .react-aria-Modal[data-entering] {

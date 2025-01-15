@@ -22,7 +22,7 @@ import {createContext, forwardRef, Ref, useContext, useImperativeHandle, useRef}
 import {createFocusableRef} from '@react-spectrum/utils';
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldGroup, FieldLabel, HelpText, Input} from './Field';
-import {fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {fontRelative, style} from '../style' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
 import {HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {IconContext} from './Icon';
@@ -42,7 +42,10 @@ export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className'
 
 export const SearchFieldContext = createContext<ContextValue<SearchFieldProps, TextFieldRef>>(null);
 
-function SearchField(props: SearchFieldProps, ref: Ref<TextFieldRef>) {
+/**
+ * A SearchField is a text field designed for searches.
+ */
+export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(props: SearchFieldProps, ref: Ref<TextFieldRef>) {
   [props, ref] = useSpectrumContextProps(props, ref, SearchFieldContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);
@@ -151,10 +154,4 @@ function SearchField(props: SearchFieldProps, ref: Ref<TextFieldRef>) {
       </>)}
     </AriaSearchField>
   );
-}
-
-/**
- * A SearchField is a text field designed for searches.
- */
-let _SearchField = /*#__PURE__*/ forwardRef(SearchField);
-export {_SearchField as SearchField};
+});

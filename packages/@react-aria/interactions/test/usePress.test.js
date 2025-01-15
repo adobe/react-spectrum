@@ -141,10 +141,15 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
+      el.releasePointerCapture = jest.fn();
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      expect(el.releasePointerCapture).toHaveBeenCalled();
       fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
-      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
+      // react listens for pointerout and pointerover instead of pointerleave and pointerenter...
+      fireEvent(el, pointerEvent('pointerout', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
+      fireEvent(document, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
       fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      fireEvent(el, pointerEvent('pointerover', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
 
       expect(events).toEqual([
         {
@@ -182,7 +187,10 @@ describe('usePress', function () {
       events = [];
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
       fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
+      // react listens for pointerout and pointerover instead of pointerleave and pointerenter...
+      fireEvent(el, pointerEvent('pointerout', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
       fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      fireEvent(el, pointerEvent('pointerover', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
 
       expect(events).toEqual([
@@ -387,7 +395,9 @@ describe('usePress', function () {
       let el = res.getByText('test');
       fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
       fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
+      fireEvent(el, pointerEvent('pointerout', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
       fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      fireEvent(el, pointerEvent('pointerover', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
 
       expect(events).toEqual([
         {
@@ -821,6 +831,61 @@ describe('usePress', function () {
       expect(el).toHaveStyle('user-select: none');
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse'}));
       expect(el).not.toHaveStyle('user-select: none');
+    });
+
+    it('should preventDefault on touchend to prevent click events on the wrong element', function () {
+      let res = render(<Example />);
+
+      let el = res.getByText('test');
+      el.ontouchend = () => {}; // So that 'ontouchend' in target works
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'touch'}));
+      let browserDefault = fireEvent.touchEnd(el);
+      expect(browserDefault).toBe(false);
+    });
+
+    it('should not preventDefault on touchend when element is a submit button', function () {
+      let res = render(<Example elementType="button" type="submit" />);
+
+      let el = res.getByText('test');
+      el.ontouchend = () => {}; // So that 'ontouchend' in target works
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'touch'}));
+      let browserDefault = fireEvent.touchEnd(el);
+      expect(browserDefault).toBe(true);
+    });
+
+    it('should not preventDefault on touchend when element is an <input type="submit">', function () {
+      let res = render(<Example elementType="input" type="submit" />);
+
+      let el = res.getByRole('button');
+      el.ontouchend = () => {}; // So that 'ontouchend' in target works
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'touch'}));
+      let browserDefault = fireEvent.touchEnd(el);
+      expect(browserDefault).toBe(true);
+    });
+
+    it('should not preventDefault on touchend when element is an <input type="checkbox">', function () {
+      let res = render(<Example elementType="input" type="checkbox" />);
+
+      let el = res.getByRole('checkbox');
+      el.ontouchend = () => {}; // So that 'ontouchend' in target works
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'touch'}));
+      let browserDefault = fireEvent.touchEnd(el);
+      expect(browserDefault).toBe(true);
+    });
+
+    it('should not preventDefault on touchend when element is a link', function () {
+      let res = render(<Example elementType="a" href="http://google.com" />);
+
+      let el = res.getByText('test');
+      el.ontouchend = () => {}; // So that 'ontouchend' in target works
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'touch'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'touch'}));
+      let browserDefault = fireEvent.touchEnd(el);
+      expect(browserDefault).toBe(true);
     });
   });
 

@@ -28,7 +28,7 @@ import {categorizeArgTypes, StaticColorDecorator} from './utils';
 import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
-import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof Picker<any>> = {
   component: Picker,
@@ -39,24 +39,26 @@ const meta: Meta<typeof Picker<any>> = {
   tags: ['autodocs'],
   argTypes: {
     ...categorizeArgTypes('Events', ['onOpenChange', 'onSelectionChange'])
-  }
+  },
+  title: 'Picker'
 };
 
 export default meta;
 type Story = StoryObj<typeof Picker<any>>;
 
-export const Example = (args: any) => (
-  <Picker {...args}>
-    <PickerItem>Chocolate</PickerItem>
-    <PickerItem>Mint</PickerItem>
-    <PickerItem>Strawberry</PickerItem>
-    <PickerItem>Vanilla</PickerItem>
-    <PickerItem>Chocolate Chip Cookie Dough</PickerItem>
-  </Picker>
-);
-
-Example.args = {
-  label: 'Ice cream flavor'
+export const Example = {
+  render: (args: any) => (
+    <Picker {...args}>
+      <PickerItem>Chocolate</PickerItem>
+      <PickerItem>Mint</PickerItem>
+      <PickerItem>Strawberry</PickerItem>
+      <PickerItem>Vanilla</PickerItem>
+      <PickerItem>Chocolate Chip Cookie Dough</PickerItem>
+    </Picker>
+  ),
+  args: {
+    label: 'Ice cream flavor'
+  }
 };
 
 export const Sections: Story = {
@@ -86,7 +88,6 @@ export const Sections: Story = {
   }
 };
 
-
 interface IExampleItem {
   id: string,
   label: string
@@ -110,7 +111,6 @@ export const Dynamic: Story = {
   }
 };
 
-
 export const WithIcons: Story = {
   render: (args) => (
     <Picker {...args}>
@@ -131,30 +131,62 @@ export const WithIcons: Story = {
   }
 };
 
-export const Validation = (args: any) => (
+const ValidationRender = (props) => (
   <Form>
-    <Picker {...args}>
+    <Picker {...props}>
       {(item) => <PickerItem id={(item as IExampleItem).id} textValue={(item as IExampleItem).label}>{(item as IExampleItem).label}</PickerItem>}
     </Picker>
     <Button type="submit" variant="primary">Submit</Button>
   </Form>
 );
 
-Validation.args = {
-  ...Dynamic.args,
-  isRequired: true
-};
-
-export const CustomWidth = (args: any) => <Example {...args} styles={style({width: 384})} />;
-CustomWidth.args = Example.args;
-CustomWidth.parameters = {
-  docs: {
-    disable: true
+export const Validation = {
+  render: (args) => <ValidationRender {...args} />,
+  args: {
+    ...Dynamic.args,
+    isRequired: true
   }
 };
 
-export const ContextualHelpExample = (args: any) => (
-  <Picker {...args}>
+export const CustomWidth = {
+  render: (args: any) => (
+    <Picker {...args} styles={style({width: 384})}>
+      <PickerItem>Chocolate</PickerItem>
+      <PickerItem>Mint</PickerItem>
+      <PickerItem>Strawberry</PickerItem>
+      <PickerItem>Vanilla</PickerItem>
+      <PickerItem>Chocolate Chip Cookie Dough</PickerItem>
+    </Picker>
+  ),
+  args: Example.args,
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
+};
+
+const ContextualHelpExampleRender = (props) => (
+  <Picker
+    {...props}
+    contextualHelp={
+      <ContextualHelp>
+        <Heading>What is a ice cream?</Heading>
+        <Content>
+          <Text>
+            A combination of sugar, eggs, milk, and cream is cooked to make
+            a custard base. Then, flavorings are added, and this flavored
+            mixture is carefully churned and frozen to make ice cream.
+          </Text>
+        </Content>
+        <Footer>
+          <Link
+            isStandalone
+            href="https://en.wikipedia.org/wiki/Ice_cream"
+            target="_blank">Learn more about ice cream</Link>
+        </Footer>
+      </ContextualHelp>
+    }>
     <PickerItem>Chocolate</PickerItem>
     <PickerItem>Mint</PickerItem>
     <PickerItem>Strawberry</PickerItem>
@@ -163,61 +195,9 @@ export const ContextualHelpExample = (args: any) => (
   </Picker>
 );
 
-ContextualHelpExample.args = {
-  label: 'Ice cream flavor',
-  contextualHelp: (
-    <ContextualHelp>
-      <Heading>What is a ice cream?</Heading>
-      <Content>
-        <Text>
-          A combination of sugar, eggs, milk, and cream is cooked to make
-          a custard base. Then, flavorings are added, and this flavored
-          mixture is carefully churned and frozen to make ice cream.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Ice_cream"
-          target="_blank">Learn more about ice cream</Link>
-      </Footer>
-    </ContextualHelp>
-  )
-};
-
-ContextualHelpExample.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `
-<Picker
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>What is a ice cream?</Heading>
-      <Content>
-        <Text>
-          A combination of sugar, eggs, milk, and cream is cooked to make
-          a custard base. Then, flavorings are added, and this flavored
-          mixture is carefully churned and frozen to make ice cream.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Ice_cream"
-          target="_blank">Learn more about ice cream</Link>
-      </Footer>
-    </ContextualHelp>
-  }
-  label="Ice cream flavor"
-/>
-  <PickerItem>Chocolate</PickerItem>
-  <PickerItem>Mint</PickerItem>
-  <PickerItem>Strawberry</PickerItem>
-  <PickerItem>Vanilla</PickerItem>
-  <PickerItem>Chocolate Chip Cookie Dough</PickerItem>
-</Picker>`;
-      }
-    }
+export const ContextualHelpExample = {
+  render: (args) => <ContextualHelpExampleRender {...args} />,
+  args: {
+    label: 'Ice cream flavor'
   }
 };

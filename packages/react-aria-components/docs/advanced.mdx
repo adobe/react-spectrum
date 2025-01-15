@@ -245,7 +245,8 @@ function CalendarValue() {
   let state = React.useContext(CalendarStateContext)!;
   /*- end highlight -*/
   let date = state.value?.toDate(getLocalTimeZone());
-  let formatted = date ? useDateFormatter().format(date) : 'None';
+  let {format} = useDateFormatter();
+  let formatted = date ? format(date) : 'None';
   return `Selected date: ${formatted}`;
 }
 ```
