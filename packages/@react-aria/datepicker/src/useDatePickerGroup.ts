@@ -9,6 +9,8 @@ import {usePress} from '@react-aria/interactions';
 export function useDatePickerGroup(state: DatePickerState | DateRangePickerState | DateFieldState, ref: RefObject<Element | null>, disableArrowNavigation?: boolean) {
   let {direction} = useLocale();
   let focusManager = useMemo(() => createFocusManager(ref), [ref]);
+  let editableSegments: NodeListOf<Element> | undefined = ref.current?.querySelectorAll('span[role="spinbutton"], span[role="textbox"]');
+  let orderedSegments = useMemo(() => orderSegments(editableSegments), [editableSegments]);
 
   // Open the popover on alt + arrow down
   let onKeyDown = (e: KeyboardEvent) => {
@@ -31,26 +33,15 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
         e.preventDefault();
         e.stopPropagation();
         if (direction === 'rtl') {
-          let editableSegments: NodeListOf<Element> | undefined = ref.current?.querySelectorAll('span[role="spinbutton"], span[role="textbox"]');
-          if (editableSegments) {
-            let segments = Array.from(editableSegments);
+          if (orderedSegments) {
             let button = ref.current?.querySelector('button');
             let target = e.target as FocusableElement;
-
-            let segmentArr = segments.map(node => {
-              return {
-                element: node as FocusableElement,
-                rectX: node?.getBoundingClientRect().left
-              };
-            });
-
-            let arr = segmentArr.sort((a, b) => a.rectX - b.rectX).map((item => item.element));
-            let index = arr.indexOf(target);
+            let index = orderedSegments.indexOf(target);
 
             if (index === 0) {
               target = button || target;
             } else {
-              target = arr[index - 1] || target;
+              target = orderedSegments[index - 1] || target;
             }
             
             if (target) {
@@ -65,22 +56,11 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
         e.preventDefault();
         e.stopPropagation();
         if (direction === 'rtl') {
-          let editableSegments: NodeListOf<Element> | undefined = ref.current?.querySelectorAll('span[role="spinbutton"], span[role="textbox"]');
-          if (editableSegments) {
-            let segments = Array.from(editableSegments);
+          if (orderedSegments) {
             let target = e.target as FocusableElement;
+            let index = orderedSegments.indexOf(target);
   
-            let segmentArr = segments.map(node => {
-              return {
-                element: node as FocusableElement,
-                rectX: node?.getBoundingClientRect().left
-              };
-            });
-  
-            let arr = segmentArr.sort((a, b) => a.rectX - b.rectX).map((item => item.element));
-            let index = arr.indexOf(target);
-  
-            target = arr[index + 1] || target;
+            target = orderedSegments[index + 1] || target;
   
             if (target) {
               target.focus();
@@ -148,4 +128,20 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
   });
 
   return mergeProps(pressProps, {onKeyDown});
+}
+
+function orderSegments(editableSegments: NodeListOf<Element> | undefined) {
+  if (editableSegments) {
+    let segments = Array.from(editableSegments);
+    let segmentArr = segments.map(node => {
+      return {
+        element: node as FocusableElement,
+        rectX: node?.getBoundingClientRect().left
+      };
+    });
+
+    return segmentArr.sort((a, b) => a.rectX - b.rectX).map((item => item.element));
+  }
+
+  return undefined;
 }
