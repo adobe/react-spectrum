@@ -49,7 +49,7 @@ let StaticTreeItem = (props) => {
 };
 
 let StaticTree = ({treeProps = {}, rowProps = {}}) => (
-  <UNSTABLE_Tree defaultExpandedKeys={new Set(['projects', 'projects-1'])} aria-label="test tree" onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
+  <UNSTABLE_Tree defaultExpandedKeys={new Set(['projects', 'projects-1'])} disabledBehavior="selection" aria-label="test tree" onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
     <StaticTreeItem id="Photos" textValue="Photos" {...rowProps}>Photos</StaticTreeItem>
     <StaticTreeItem id="projects" textValue="Projects" title="Projects" {...rowProps}>
       <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1" {...rowProps}>
@@ -1211,7 +1211,7 @@ AriaTreeTests({
       </UNSTABLE_Tree>
     ),
     singleSelection: () => render(
-      <UNSTABLE_Tree aria-label="test tree" selectionMode="single" disabledKeys={['school']}>
+      <UNSTABLE_Tree aria-label="test tree" selectionMode="single" disabledKeys={['school']} disabledBehavior="selection">
         <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
         <StaticTreeItem id="projects" textValue="Projects" title="Projects">
           <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
@@ -1341,10 +1341,10 @@ AriaTreeTests({
       <ControlledDynamicTree />
     ),
     singleSelection: () => render(
-      <ControlledDynamicTree disabledKeys={['reports']} selectionMode="single" />
+      <ControlledDynamicTree disabledKeys={['reports']} selectionMode="single" disabledBehavior="selection" />
     ),
     allInteractionsDisabled: () => render(
-      <ControlledDynamicTree disabledKeys={['reports']} selectionMode="single" disabledBehavior="all"  />
+      <ControlledDynamicTree disabledKeys={['reports']} selectionMode="single"  />
     )
   }
 });
