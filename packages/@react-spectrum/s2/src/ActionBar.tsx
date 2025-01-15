@@ -54,7 +54,7 @@ const actionBarStyles = style({
   position: {
     isInContainer: 'absolute'
   },
-  bottom: 8,
+  bottom: 0,
   insetStart: 8,
   '--insetEnd': {
     type: 'insetEnd',
@@ -66,15 +66,12 @@ const actionBarStyles = style({
   },
   marginX: 'auto',
   maxWidth: 960,
-  transition: 'default',
+  transition: 'transform',
   transitionDuration: 200,
   translateY: {
+    default: -8,
     isEntering: 'full',
     isExiting: 'full'
-  },
-  opacity: {
-    isEntering: 0,
-    isExiting: 0
   }
 });
 
