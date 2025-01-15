@@ -1159,7 +1159,8 @@ let testUtilUser = new User({interactionType: 'mouse'});
 it('Menu can open its submenu via keyboard', async function () {
   // Render your test component/app and initialize the menu tester
   let {getByTestId} = render(
-    <MenuTrigger data-testid="test-menutrigger">
+    <MenuTrigger>
+      <Button data-testid="test-menutrigger">Menu trigger</Button>
       ...
     </MenuTrigger>
   );
