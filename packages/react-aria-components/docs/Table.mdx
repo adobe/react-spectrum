@@ -2495,7 +2495,7 @@ let testUtilUser = new User({interactionType: 'mouse', advanceTimer: jest.advanc
 it('Table can toggle row selection', async function () {
   // Render your test component/app and initialize the table tester
   let {getByTestId} = render(
-    <Table data-testid="test-table">
+    <Table data-testid="test-table" selectionMode="multiple">
      ...
     </Table>
   );
