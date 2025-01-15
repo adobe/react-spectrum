@@ -266,7 +266,7 @@ export class MenuTester {
       let menu = this.menu;
       if (menu) {
         if (typeof submenuTrigger === 'string') {
-          submenuTrigger = (within(menu!).getByText(submenuTrigger).closest('[role=menuitem], [role=menuitemradio], [role=menuitemcheckbox]'))! as HTMLElement;
+          submenuTrigger = (within(menu!).getByText(submenuTrigger).closest('[role=menuitem]'))! as HTMLElement;
         }
 
         let submenuTriggerTester = new MenuTester({user: this.user, interactionType: this._interactionType, root: submenuTrigger, isSubmenu: true});
