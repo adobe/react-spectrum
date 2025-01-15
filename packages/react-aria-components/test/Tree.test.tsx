@@ -11,6 +11,7 @@
  */
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {AriaTreeTests} from './AriaTree.test-util';
 import {Button, Checkbox, Collection, UNSTABLE_ListLayout as ListLayout, Text, UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeItemContent, UNSTABLE_Virtualizer as Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
 import React from 'react';
@@ -187,20 +188,15 @@ describe('Tree', () => {
     expect(tree).toHaveAttribute('style', expect.stringContaining('width: 200px'));
   });
 
-  it('should have the base set of aria and data attributes', () => {
+  it('should have the base set of data attributes', () => {
     let {getByRole, getAllByRole} = render(<StaticTree treeProps={{defaultExpandedKeys: 'none'}} />);
     let tree = getByRole('treegrid');
     expect(tree).toHaveAttribute('data-rac');
-    expect(tree).toHaveAttribute('aria-label', 'test tree');
     expect(tree).not.toHaveAttribute('data-empty');
     expect(tree).not.toHaveAttribute('data-focused');
     expect(tree).not.toHaveAttribute('data-focus-visible');
 
     for (let row of getAllByRole('row')) {
-      expect(row).toHaveAttribute('aria-level');
-      expect(row).toHaveAttribute('data-level');
-      expect(row).toHaveAttribute('aria-posinset');
-      expect(row).toHaveAttribute('aria-setsize');
       expect(row).toHaveAttribute('data-rac');
       expect(row).not.toHaveAttribute('data-selected');
       expect(row).not.toHaveAttribute('data-disabled');
@@ -220,66 +216,43 @@ describe('Tree', () => {
     expect(rowNoChild).toHaveAttribute('aria-label', 'Photos');
     expect(rowNoChild).not.toHaveAttribute('aria-expanded');
     expect(rowNoChild).not.toHaveAttribute('data-expanded');
-    expect(rowNoChild).toHaveAttribute('aria-level', '1');
     expect(rowNoChild).toHaveAttribute('data-level', '1');
-    expect(rowNoChild).toHaveAttribute('aria-posinset', '1');
-    expect(rowNoChild).toHaveAttribute('aria-setsize', '2');
     expect(rowNoChild).not.toHaveAttribute('data-has-child-rows');
     expect(rowNoChild).toHaveAttribute('data-rac');
 
     let rowWithChildren = rows[1];
     // Row has action since it is expandable but not selectable.
     expect(rowWithChildren).toHaveAttribute('aria-label', 'Projects');
-    expect(rowWithChildren).toHaveAttribute('aria-expanded', 'true');
     expect(rowWithChildren).toHaveAttribute('data-expanded', 'true');
-    expect(rowWithChildren).toHaveAttribute('aria-level', '1');
     expect(rowWithChildren).toHaveAttribute('data-level', '1');
-    expect(rowWithChildren).toHaveAttribute('aria-posinset', '2');
-    expect(rowWithChildren).toHaveAttribute('aria-setsize', '2');
     expect(rowWithChildren).toHaveAttribute('data-has-child-rows', 'true');
     expect(rowWithChildren).toHaveAttribute('data-rac');
 
     let level2ChildRow = rows[2];
     expect(level2ChildRow).toHaveAttribute('aria-label', 'Projects-1');
-    expect(level2ChildRow).toHaveAttribute('aria-expanded', 'true');
     expect(level2ChildRow).toHaveAttribute('data-expanded', 'true');
-    expect(level2ChildRow).toHaveAttribute('aria-level', '2');
     expect(level2ChildRow).toHaveAttribute('data-level', '2');
-    expect(level2ChildRow).toHaveAttribute('aria-posinset', '1');
-    expect(level2ChildRow).toHaveAttribute('aria-setsize', '3');
     expect(level2ChildRow).toHaveAttribute('data-has-child-rows', 'true');
     expect(level2ChildRow).toHaveAttribute('data-rac');
 
     let level3ChildRow = rows[3];
     expect(level3ChildRow).toHaveAttribute('aria-label', 'Projects-1A');
-    expect(level3ChildRow).not.toHaveAttribute('aria-expanded');
     expect(level3ChildRow).not.toHaveAttribute('data-expanded');
-    expect(level3ChildRow).toHaveAttribute('aria-level', '3');
     expect(level3ChildRow).toHaveAttribute('data-level', '3');
-    expect(level3ChildRow).toHaveAttribute('aria-posinset', '1');
-    expect(level3ChildRow).toHaveAttribute('aria-setsize', '1');
     expect(level3ChildRow).not.toHaveAttribute('data-has-child-rows');
     expect(level3ChildRow).toHaveAttribute('data-rac');
 
     let level2ChildRow2 = rows[4];
     expect(level2ChildRow2).toHaveAttribute('aria-label', 'Projects-2');
-    expect(level2ChildRow2).not.toHaveAttribute('aria-expanded');
     expect(level2ChildRow2).not.toHaveAttribute('data-expanded');
-    expect(level2ChildRow2).toHaveAttribute('aria-level', '2');
     expect(level2ChildRow2).toHaveAttribute('data-level', '2');
-    expect(level2ChildRow2).toHaveAttribute('aria-posinset', '2');
-    expect(level2ChildRow2).toHaveAttribute('aria-setsize', '3');
     expect(level2ChildRow2).not.toHaveAttribute('data-has-child-rows');
     expect(level2ChildRow2).toHaveAttribute('data-rac');
 
     let level2ChildRow3 = rows[5];
     expect(level2ChildRow3).toHaveAttribute('aria-label', 'Projects-3');
-    expect(level2ChildRow3).not.toHaveAttribute('aria-expanded');
     expect(level2ChildRow3).not.toHaveAttribute('data-expanded');
-    expect(level2ChildRow3).toHaveAttribute('aria-level', '2');
     expect(level2ChildRow3).toHaveAttribute('data-level', '2');
-    expect(level2ChildRow3).toHaveAttribute('aria-posinset', '3');
-    expect(level2ChildRow3).toHaveAttribute('aria-setsize', '3');
     expect(level2ChildRow3).not.toHaveAttribute('data-has-child-rows');
     expect(level2ChildRow3).toHaveAttribute('data-rac');
   });
@@ -288,9 +261,7 @@ describe('Tree', () => {
     let {getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'single'}} />);
 
     let rows = getAllByRole('row');
-    expect(rows[1]).toHaveAttribute('aria-label', 'Projects');
     expect(rows[1]).toHaveAttribute('data-has-child-rows', 'true');
-    expect(rows[1]).toHaveAttribute('aria-selected', 'false');
   });
 
   it('should support dynamic trees', () => {
@@ -871,22 +842,14 @@ describe('Tree', () => {
 
         await user.tab();
         expect(document.activeElement).toBe(rows[0]);
-        expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
         expect(rows[0]).toHaveAttribute('data-expanded', 'true');
-        expect(rows[0]).toHaveAttribute('aria-level', '1');
-        expect(rows[0]).toHaveAttribute('aria-posinset', '1');
-        expect(rows[0]).toHaveAttribute('aria-setsize', '2');
         expect(rows[0]).toHaveAttribute('data-has-child-rows', 'true');
         expect(onExpandedChange).toHaveBeenCalledTimes(0);
 
         // Check we can open/close a top level row
         await trigger(rows[0], 'Enter');
         expect(document.activeElement).toBe(rows[0]);
-        expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
         expect(rows[0]).not.toHaveAttribute('data-expanded');
-        expect(rows[0]).toHaveAttribute('aria-level', '1');
-        expect(rows[0]).toHaveAttribute('aria-posinset', '1');
-        expect(rows[0]).toHaveAttribute('aria-setsize', '2');
         expect(rows[0]).toHaveAttribute('data-has-child-rows', 'true');
         expect(onExpandedChange).toHaveBeenCalledTimes(1);
         // Note that the children of the parent row will still be in the "expanded" array
@@ -896,11 +859,7 @@ describe('Tree', () => {
 
         await trigger(rows[0], 'Enter');
         expect(document.activeElement).toBe(rows[0]);
-        expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
         expect(rows[0]).toHaveAttribute('data-expanded', 'true');
-        expect(rows[0]).toHaveAttribute('aria-level', '1');
-        expect(rows[0]).toHaveAttribute('aria-posinset', '1');
-        expect(rows[0]).toHaveAttribute('aria-setsize', '2');
         expect(rows[0]).toHaveAttribute('data-has-child-rows', 'true');
         expect(onExpandedChange).toHaveBeenCalledTimes(2);
         expect(new Set(onExpandedChange.mock.calls[1][0])).toEqual(new Set(['projects', 'project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']));
@@ -910,27 +869,15 @@ describe('Tree', () => {
         await user.keyboard('{ArrowDown}');
         await user.keyboard('{ArrowDown}');
         expect(document.activeElement).toBe(rows[2]);
-        expect(rows[2]).toHaveAttribute('aria-expanded', 'true');
         expect(rows[2]).toHaveAttribute('data-expanded', 'true');
-        expect(rows[2]).toHaveAttribute('aria-level', '2');
-        expect(rows[2]).toHaveAttribute('aria-posinset', '2');
-        expect(rows[2]).toHaveAttribute('aria-setsize', '5');
         expect(rows[2]).toHaveAttribute('data-has-child-rows', 'true');
 
         // Check we can close a nested row and it doesn't affect the parent
         await trigger(rows[2], 'ArrowLeft');
         expect(document.activeElement).toBe(rows[2]);
-        expect(rows[2]).toHaveAttribute('aria-expanded', 'false');
         expect(rows[2]).not.toHaveAttribute('data-expanded');
-        expect(rows[2]).toHaveAttribute('aria-level', '2');
-        expect(rows[2]).toHaveAttribute('aria-posinset', '2');
-        expect(rows[2]).toHaveAttribute('aria-setsize', '5');
         expect(rows[2]).toHaveAttribute('data-has-child-rows', 'true');
-        expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
         expect(rows[0]).toHaveAttribute('data-expanded', 'true');
-        expect(rows[0]).toHaveAttribute('aria-level', '1');
-        expect(rows[0]).toHaveAttribute('aria-posinset', '1');
-        expect(rows[0]).toHaveAttribute('aria-setsize', '2');
         expect(rows[0]).toHaveAttribute('data-has-child-rows', 'true');
         expect(onExpandedChange).toHaveBeenCalledTimes(3);
         expect(new Set(onExpandedChange.mock.calls[2][0])).toEqual(new Set(['projects', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']));
@@ -954,75 +901,6 @@ describe('Tree', () => {
         expect(new Set(onExpandedChange.mock.calls[4][0])).toEqual(new Set(['projects', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']));
         rows = getAllByRole('row');
         expect(rows).toHaveLength(17);
-      });
-
-      it('should not expand/collapse if disabledBehavior is "all" and the row is disabled', async () => {
-        let {getAllByRole, rerender} = render(<DynamicTree treeProps={{disabledKeys: ['projects'], disabledBehavior: 'all', expandedKeys: new Set(['projects', 'project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB'])}} />);
-        let rows = getAllByRole('row');
-        expect(rows).toHaveLength(20);
-
-        await user.tab();
-        // Since first row is disabled, we can't keyboard focus it
-        expect(document.activeElement).toBe(rows[1]);
-        expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
-        expect(rows[0]).toHaveAttribute('data-expanded', 'true');
-        expect(rows[0]).toHaveAttribute('aria-disabled', 'true');
-        expect(rows[0]).toHaveAttribute('data-disabled', 'true');
-        expect(onExpandedChange).toHaveBeenCalledTimes(0);
-
-        // Try clicking on first row
-        await trigger(rows[0], 'Space');
-        expect(document.activeElement).toBe(rows[1]);
-        expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
-        expect(rows[0]).toHaveAttribute('data-expanded', 'true');
-        expect(onExpandedChange).toHaveBeenCalledTimes(0);
-
-        rerender(<DynamicTree treeProps={{disabledKeys: ['projects'], disabledBehavior: 'all', expandedKeys: []}} />);
-        await user.tab();
-        rows = getAllByRole('row');
-        expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
-        expect(rows[0]).not.toHaveAttribute('data-expanded');
-        expect(rows[0]).toHaveAttribute('aria-disabled', 'true');
-        expect(rows[0]).toHaveAttribute('data-disabled', 'true');
-        expect(onExpandedChange).toHaveBeenCalledTimes(0);
-
-        await trigger(rows[0], 'Space');
-        expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
-        expect(rows[0]).not.toHaveAttribute('data-expanded');
-        expect(onExpandedChange).toHaveBeenCalledTimes(0);
-      });
-
-      it('should expand/collapse if disabledBehavior is "selection" and the row is disabled', async () => {
-        let {getAllByRole} = render(<DynamicTree treeProps={{disabledKeys: ['projects'], disabledBehavior: 'selection', selectionMode: 'multiple'}} />);
-        let rows = getAllByRole('row');
-
-        await user.tab();
-        expect(document.activeElement).toBe(rows[0]);
-        expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
-        expect(rows[0]).toHaveAttribute('data-expanded', 'true');
-        expect(onExpandedChange).toHaveBeenCalledTimes(0);
-        expect(onSelectionChange).toHaveBeenCalledTimes(0);
-
-        // Since selection is enabled, we need to click the chevron even for disabled rows since it is still regarded as the primary action
-        let chevron = within(rows[0]).getAllByRole('button')[0];
-        await trigger(chevron, 'ArrowLeft');
-        // TODO: reenable this when we make it so the chevron button isn't focusable via click
-        // expect(document.activeElement).toBe(rows[0]);
-        expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
-        expect(rows[0]).not.toHaveAttribute('data-expanded');
-        expect(onExpandedChange).toHaveBeenCalledTimes(1);
-        expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set(['project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']));
-        expect(onSelectionChange).toHaveBeenCalledTimes(0);
-
-        await trigger(chevron);
-        expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
-        expect(rows[0]).toHaveAttribute('data-expanded', 'true');
-        expect(onExpandedChange).toHaveBeenCalledTimes(2);
-        expect(new Set(onExpandedChange.mock.calls[1][0])).toEqual(new Set(['projects', 'project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']));
-        expect(onSelectionChange).toHaveBeenCalledTimes(0);
-
-        let disabledCheckbox = within(rows[0]).getByRole('checkbox');
-        expect(disabledCheckbox).toHaveAttribute('disabled');
       });
 
       it('should not expand when clicking/using Enter on the row if the row is selectable', async () => {
@@ -1117,35 +995,6 @@ describe('Tree', () => {
         expect(onExpandedChange).toHaveBeenCalledTimes(1);
         expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set(['project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']));
       });
-    });
-
-    it('should support controlled expansion', async () => {
-      function ControlledTree() {
-        let [expandedKeys, setExpandedKeys] = React.useState(new Set([]));
-
-        return (
-          <DynamicTree treeProps={{expandedKeys, onExpandedChange: setExpandedKeys}} />
-        );
-      }
-
-      let {getAllByRole} = render(<ControlledTree />);
-      let rows = getAllByRole('row');
-      expect(rows).toHaveLength(2);
-
-      await user.tab();
-      expect(document.activeElement).toBe(rows[0]);
-      expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
-      expect(rows[0]).not.toHaveAttribute('data-expanded');
-
-      await user.click(rows[0]);
-      rows = getAllByRole('row');
-      expect(rows).toHaveLength(7);
-
-      await user.click(rows[0]);
-      expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
-      expect(rows[0]).not.toHaveAttribute('data-expanded');
-      rows = getAllByRole('row');
-      expect(rows).toHaveLength(2);
     });
 
     it('should apply the proper attributes to the chevron', async () => {
@@ -1324,4 +1173,178 @@ describe('Tree', () => {
       expect(rows[0]).toHaveTextContent('Nothing in tree');
     });
   });
+});
+
+
+AriaTreeTests({
+  prefix: 'rac-static',
+  renderers: {
+    standard: () => render(
+      <UNSTABLE_Tree aria-label="test tree">
+        <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
+        <StaticTreeItem id="projects" textValue="Projects" title="Projects">
+          <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
+            <StaticTreeItem id="projects-1A" textValue="Projects-1A">
+              Projects-1A
+            </StaticTreeItem>
+          </StaticTreeItem>
+          <StaticTreeItem id="projects-2" textValue="Projects-2">
+            Projects-2
+          </StaticTreeItem>
+          <StaticTreeItem id="projects-3" textValue="Projects-3">
+            Projects-3
+          </StaticTreeItem>
+        </StaticTreeItem>
+        <StaticTreeItem id="school" textValue="School" title="School">
+          <StaticTreeItem id="homework-1" textValue="Homework-1" title="Homework-1">
+            <StaticTreeItem id="homework-1A" textValue="Homework-1A">
+              Homework-1A
+            </StaticTreeItem>
+          </StaticTreeItem>
+          <StaticTreeItem id="homework-2" textValue="Homework-2">
+            Homework-2
+          </StaticTreeItem>
+          <StaticTreeItem id="homework-3" textValue="Homework-3">
+            Homework-3
+          </StaticTreeItem>
+        </StaticTreeItem>
+      </UNSTABLE_Tree>
+    ),
+    singleSelection: () => render(
+      <UNSTABLE_Tree aria-label="test tree" selectionMode="single" disabledKeys={['school']}>
+        <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
+        <StaticTreeItem id="projects" textValue="Projects" title="Projects">
+          <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
+            <StaticTreeItem id="projects-1A" textValue="Projects-1A">
+              Projects-1A
+            </StaticTreeItem>
+          </StaticTreeItem>
+          <StaticTreeItem id="projects-2" textValue="Projects-2">
+            Projects-2
+          </StaticTreeItem>
+          <StaticTreeItem id="projects-3" textValue="Projects-3">
+            Projects-3
+          </StaticTreeItem>
+        </StaticTreeItem>
+        <StaticTreeItem id="school" textValue="School" title="School">
+          <StaticTreeItem id="homework-1" textValue="Homework-1" title="Homework-1">
+            <StaticTreeItem id="homework-1A" textValue="Homework-1A">
+              Homework-1A
+            </StaticTreeItem>
+          </StaticTreeItem>
+          <StaticTreeItem id="homework-2" textValue="Homework-2">
+            Homework-2
+          </StaticTreeItem>
+          <StaticTreeItem id="homework-3" textValue="Homework-3">
+            Homework-3
+          </StaticTreeItem>
+        </StaticTreeItem>
+      </UNSTABLE_Tree>
+    ),
+    allInteractionsDisabled: () => render(
+      <UNSTABLE_Tree aria-label="test tree" selectionMode="single" disabledKeys={['school']} disabledBehavior="all">
+        <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
+        <StaticTreeItem id="projects" textValue="Projects" title="Projects">
+          <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
+            <StaticTreeItem id="projects-1A" textValue="Projects-1A">
+              Projects-1A
+            </StaticTreeItem>
+          </StaticTreeItem>
+          <StaticTreeItem id="projects-2" textValue="Projects-2">
+            Projects-2
+          </StaticTreeItem>
+          <StaticTreeItem id="projects-3" textValue="Projects-3">
+            Projects-3
+          </StaticTreeItem>
+        </StaticTreeItem>
+        <StaticTreeItem id="school" textValue="School" title="School">
+          <StaticTreeItem id="homework-1" textValue="Homework-1" title="Homework-1">
+            <StaticTreeItem id="homework-1A" textValue="Homework-1A">
+              Homework-1A
+            </StaticTreeItem>
+          </StaticTreeItem>
+          <StaticTreeItem id="homework-2" textValue="Homework-2">
+            Homework-2
+          </StaticTreeItem>
+          <StaticTreeItem id="homework-3" textValue="Homework-3">
+            Homework-3
+          </StaticTreeItem>
+        </StaticTreeItem>
+      </UNSTABLE_Tree>
+    )
+  }
+});
+
+let controlledRows = [
+  {id: 'photos', name: 'Photos 1'},
+  {id: 'projects', name: 'Projects', childItems: [
+    {id: 'project-1', name: 'Project 1', childItems: [
+      {id: 'project-1A', name: 'Project 1A'}
+    ]},
+    {id: 'project-2', name: 'Project 2'},
+    {id: 'project-3', name: 'Project 3'}
+  ]},
+  {id: 'reports', name: 'Reports', childItems: [
+    {id: 'reports-1', name: 'Reports 1', childItems: [
+      {id: 'reports-1A', name: 'Reports 1A'}
+    ]},
+    {id: 'reports-2', name: 'Reports 2'},
+    {id: 'reports-3', name: 'Reports 3'}
+  ]}
+];
+
+let ControlledDynamicTreeItem = (props) => {
+  return (
+    <UNSTABLE_TreeItem {...props}>
+      <UNSTABLE_TreeItemContent>
+        {({isExpanded, hasChildRows, selectionMode, selectionBehavior}) => (
+          <>
+            {(selectionMode !== 'none' || props.href != null) && selectionBehavior === 'toggle' && (
+              <Checkbox slot="selection" />
+            )}
+            {hasChildRows && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
+            <Text>{props.title || props.children}</Text>
+            <Button aria-label="Info">ⓘ</Button>
+            <Button aria-label="Menu">☰</Button>
+          </>
+        )}
+      </UNSTABLE_TreeItemContent>
+      <Collection items={props.childItems}>
+        {(item: any) => (
+          <ControlledDynamicTreeItem childItems={item.childItems} textValue={item.name} href={props.href}>
+            {item.name}
+          </ControlledDynamicTreeItem>
+        )}
+      </Collection>
+    </UNSTABLE_TreeItem>
+  );
+};
+
+function ControlledDynamicTree(props) {
+  let [expanded, setExpanded] = React.useState(new Set([]));
+
+  return (
+    <UNSTABLE_Tree {...props} items={controlledRows} aria-label="example dynamic tree" expandedKeys={expanded} onExpandedChange={setExpanded}>
+      {(item: any) => (
+        <ControlledDynamicTreeItem childItems={item.childItems} textValue={item.name}>
+          {item.name}
+        </ControlledDynamicTreeItem>
+    )}
+    </UNSTABLE_Tree>
+  );
+}
+
+AriaTreeTests({
+  prefix: 'rac-controlled-dynamic',
+  renderers: {
+    standard: () => render(
+      <ControlledDynamicTree />
+    ),
+    singleSelection: () => render(
+      <ControlledDynamicTree disabledKeys={['reports']} selectionMode="single" />
+    ),
+    allInteractionsDisabled: () => render(
+      <ControlledDynamicTree disabledKeys={['reports']} selectionMode="single" disabledBehavior="all"  />
+    )
+  }
 });

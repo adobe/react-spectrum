@@ -22,6 +22,7 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {TreeView, TreeViewItem} from '../';
+import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let onSelectionChange = jest.fn();
@@ -170,6 +171,7 @@ let DynamicTree = ({treeProps = {}, rowProps = {}}) => (
 
 describe('Tree', () => {
   let user;
+  let testUtilUser = new User();
 
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
@@ -320,8 +322,9 @@ describe('Tree', () => {
   });
 
   it('should support dynamic trees', () => {
-    let {getAllByRole} = render(<DynamicTree />);
-    let rows = getAllByRole('row');
+    let {getByRole} = render(<DynamicTree />);
+    let treeTester = testUtilUser.createTester('Tree', {user, root: getByRole('treegrid')});
+    let rows = treeTester.rows;
     expect(rows).toHaveLength(20);
 
     // Check the rough structure to make sure dynamic rows are rendering as expected (just checks the expandable rows and their attributes)
@@ -385,11 +388,12 @@ describe('Tree', () => {
   });
 
   it('should not render checkboxes for selection with selectionStyle=highlight', async () => {
-    let {getByRole, getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', selectionStyle: 'highlight'}} />);
-    let tree = getByRole('treegrid');
-    expect(tree).toHaveAttribute('aria-multiselectable', 'true');
+    let {getByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', selectionStyle: 'highlight'}} />);
+    let treeTester = testUtilUser.createTester('Tree', {user, root: getByRole('treegrid')});
+    expect(treeTester.tree).toHaveAttribute('aria-multiselectable', 'true');
+    let rows = treeTester.rows;
 
-    for (let row of getAllByRole('row')) {
+    for (let row of treeTester.rows) {
       let checkbox = within(row).queryByRole('checkbox');
       expect(checkbox).toBeNull();
       expect(row).toHaveAttribute('aria-selected', 'false');
@@ -397,21 +401,25 @@ describe('Tree', () => {
       expect(row).toHaveAttribute('data-selection-mode', 'multiple');
     }
 
-    let row2 = getAllByRole('row')[2];
-    await user.click(row2);
+    let row2 = rows[2];
+    await treeTester.toggleRowSelection({row: 'Projects-1'});
     expect(row2).toHaveAttribute('aria-selected', 'true');
     expect(row2).toHaveAttribute('data-selected', 'true');
     expect(onSelectionChange).toHaveBeenCalledTimes(1);
     expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Projects-1']));
+    expect(treeTester.selectedRows).toHaveLength(1);
+    expect(treeTester.selectedRows[0]).toBe(row2);
 
-    let row1 = getAllByRole('row')[1];
-    await user.click(row1);
+    let row1 = rows[1];
+    await treeTester.toggleRowSelection({row: row1});
     expect(row1).toHaveAttribute('aria-selected', 'true');
     expect(row1).toHaveAttribute('data-selected', 'true');
     expect(row2).toHaveAttribute('aria-selected', 'false');
     expect(row2).not.toHaveAttribute('data-selected');
     expect(onSelectionChange).toHaveBeenCalledTimes(2);
     expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Projects']));
+    expect(treeTester.selectedRows).toHaveLength(1);
+    expect(treeTester.selectedRows[0]).toBe(row1);
   });
 
   it('should render a chevron for an expandable row marked with hasChildRows', () => {
@@ -585,28 +593,29 @@ describe('Tree', () => {
     });
 
     it('should support actions on rows', async () => {
-      let {getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', disabledBehavior: 'all', onAction, disabledKeys: ['Projects']}}  />);
+      let {getByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', disabledBehavior: 'all', onAction, disabledKeys: ['Projects']}}  />);
+      let treeTester = testUtilUser.createTester('Tree', {user, root: getByRole('treegrid')});
 
-      let row = getAllByRole('row')[0];
-      await user.click(row);
+      let rows = treeTester.rows;
+      await treeTester.triggerRowAction({row: rows[0]});
       expect(onAction).toHaveBeenCalledTimes(1);
       expect(onAction).toHaveBeenLastCalledWith('Photos');
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
 
       // Due to disabledBehavior being set to 'all' this expandable row has its action disabled
-      let disabledRow = getAllByRole('row')[1];
+      let disabledRow = rows[1];
       expect(disabledRow).toHaveAttribute('data-disabled', 'true');
-      await user.click(disabledRow);
+      await treeTester.triggerRowAction({row: disabledRow});
       expect(onAction).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
 
-      let expandableRow = getAllByRole('row')[2];
-      await user.click(expandableRow);
+      let expandableRow = rows[2];
+      await treeTester.triggerRowAction({row: expandableRow});
       expect(onAction).toHaveBeenCalledTimes(2);
       expect(onAction).toHaveBeenLastCalledWith('Projects-1');
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
 
-      await user.keyboard('{Enter}');
+      await treeTester.triggerRowAction({row: expandableRow, interactionType: 'keyboard'});
       expect(onAction).toHaveBeenCalledTimes(3);
       expect(onAction).toHaveBeenLastCalledWith('Projects-1');
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
@@ -827,8 +836,9 @@ describe('Tree', () => {
       };
 
       it('should expand/collapse a row when clicking/using Enter on the row itself and there arent any other primary actions', async () => {
-        let {getAllByRole} = render(<DynamicTree />);
-        let rows = getAllByRole('row');
+        let {getByRole} = render(<DynamicTree />);
+        let treeTester = testUtilUser.createTester('Tree', {user, root: getByRole('treegrid')});
+        let rows = treeTester.rows;
         expect(rows).toHaveLength(20);
 
         await user.tab();
@@ -842,7 +852,7 @@ describe('Tree', () => {
         expect(onExpandedChange).toHaveBeenCalledTimes(0);
 
         // Check we can open/close a top level row
-        await trigger(rows[0], 'Enter');
+        await treeTester.toggleRowExpansion({row: rows[0], interactionType: type as 'mouse' | 'keyboard'});
         expect(document.activeElement).toBe(rows[0]);
         expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
         expect(rows[0]).not.toHaveAttribute('data-expanded');
@@ -853,10 +863,10 @@ describe('Tree', () => {
         expect(onExpandedChange).toHaveBeenCalledTimes(1);
         // Note that the children of the parent row will still be in the "expanded" array
         expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set(['Project-2', 'Project-5', 'Reports', 'Reports-1', 'Reports-1A', 'Reports-1AB']));
-        rows = getAllByRole('row');
+        rows = treeTester.rows;
         expect(rows).toHaveLength(9);
 
-        await trigger(rows[0], 'Enter');
+        await treeTester.toggleRowExpansion({row: rows[0], interactionType: type as 'mouse' | 'keyboard'});
         expect(document.activeElement).toBe(rows[0]);
         expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
         expect(rows[0]).toHaveAttribute('data-expanded', 'true');
@@ -866,7 +876,7 @@ describe('Tree', () => {
         expect(rows[0]).toHaveAttribute('data-has-child-rows', 'true');
         expect(onExpandedChange).toHaveBeenCalledTimes(2);
         expect(new Set(onExpandedChange.mock.calls[1][0])).toEqual(new Set(['Projects', 'Project-2', 'Project-5', 'Reports', 'Reports-1', 'Reports-1A', 'Reports-1AB']));
-        rows = getAllByRole('row');
+        rows = treeTester.rows;
         expect(rows).toHaveLength(20);
 
         await user.keyboard('{ArrowDown}');
@@ -880,7 +890,7 @@ describe('Tree', () => {
         expect(rows[2]).toHaveAttribute('data-has-child-rows', 'true');
 
         // Check we can close a nested row and it doesn't affect the parent
-        await trigger(rows[2], 'ArrowLeft');
+        await treeTester.toggleRowExpansion({row: rows[2], interactionType: type as 'mouse' | 'keyboard'});
         expect(document.activeElement).toBe(rows[2]);
         expect(rows[2]).toHaveAttribute('aria-expanded', 'false');
         expect(rows[2]).not.toHaveAttribute('data-expanded');
@@ -896,25 +906,25 @@ describe('Tree', () => {
         expect(rows[0]).toHaveAttribute('data-has-child-rows', 'true');
         expect(onExpandedChange).toHaveBeenCalledTimes(3);
         expect(new Set(onExpandedChange.mock.calls[2][0])).toEqual(new Set(['Projects', 'Project-5', 'Reports', 'Reports-1', 'Reports-1A', 'Reports-1AB']));
-        rows = getAllByRole('row');
+        rows = treeTester.rows;
         expect(rows).toHaveLength(17);
 
         // Check behavior of onExpandedChange when a nested row is already closed and the parent is collapsed
         await user.keyboard('{ArrowUp}');
         await user.keyboard('{ArrowUp}');
-        await trigger(rows[0], 'ArrowLeft');
+        await treeTester.toggleRowExpansion({row: rows[0], interactionType: type as 'mouse' | 'keyboard'});
         expect(document.activeElement).toBe(rows[0]);
         expect(onExpandedChange).toHaveBeenCalledTimes(4);
         expect(new Set(onExpandedChange.mock.calls[3][0])).toEqual(new Set(['Project-5', 'Reports', 'Reports-1', 'Reports-1A', 'Reports-1AB']));
-        rows = getAllByRole('row');
+        rows = treeTester.rows;
         expect(rows).toHaveLength(9);
 
         // Check that the nested collapsed row is still closed when the parent is reexpanded
-        await trigger(rows[0], 'ArrowRight');
+        await treeTester.toggleRowExpansion({row: rows[0], interactionType: type as 'mouse' | 'keyboard'});
         expect(document.activeElement).toBe(rows[0]);
         expect(onExpandedChange).toHaveBeenCalledTimes(5);
         expect(new Set(onExpandedChange.mock.calls[4][0])).toEqual(new Set(['Projects', 'Project-5', 'Reports', 'Reports-1', 'Reports-1A', 'Reports-1AB']));
-        rows = getAllByRole('row');
+        rows = treeTester.rows;
         expect(rows).toHaveLength(17);
       });
 
@@ -1138,7 +1148,7 @@ describe('Tree', () => {
         );
       }
 
-      let {getAllByRole, getByRole} = render(
+      let {getByRole} = render(
         <TreeView
           aria-label="test empty tree"
           items={[]}
@@ -1151,16 +1161,17 @@ describe('Tree', () => {
         </TreeView>
       );
 
-      let tree = getByRole('treegrid');
+      let treeTester = testUtilUser.createTester('Tree', {user, root: getByRole('treegrid')});
+      let tree = treeTester.tree;
       expect(tree).toHaveAttribute('data-empty', 'true');
       expect(tree).not.toHaveAttribute('data-focused');
       expect(tree).not.toHaveAttribute('data-focus-visible');
 
-      let row = getAllByRole('row')[0];
+      let row = treeTester.rows[0];
       expect(row).toHaveAttribute('aria-level', '1');
       expect(row).toHaveAttribute('aria-posinset', '1');
       expect(row).toHaveAttribute('aria-setsize', '1');
-      let gridCell = within(row).getByRole('gridcell');
+      let gridCell = treeTester.cells({element: row})[0];
       expect(gridCell).toHaveTextContent('No resultsNo results found.');
 
       await user.tab();

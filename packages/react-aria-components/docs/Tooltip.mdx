@@ -75,6 +75,13 @@ import {TooltipTrigger, Tooltip, OverlayArrow, Button} from 'react-aria-componen
   max-width: 150px;
   /* fixes FF gap */
   transform: translate3d(0, 0, 0);
+  transition: transform 200ms, opacity 200ms;
+
+  &[data-entering],
+  &[data-exiting] {
+    transform: var(--origin);
+    opacity: 0;
+  }
 
   &[data-placement=top] {
     margin-bottom: 8px;
@@ -108,26 +115,6 @@ import {TooltipTrigger, Tooltip, OverlayArrow, Button} from 'react-aria-componen
   & .react-aria-OverlayArrow svg {
     display: block;
     fill: var(--highlight-background);
-  }
-
-  &[data-entering] {
-    animation: slide 200ms;
-  }
-
-  &[data-exiting] {
-    animation: slide 200ms reverse ease-in;
-  }
-}
-
-@keyframes slide {
-  from {
-    transform: var(--origin);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
   }
 }
 ```
@@ -376,19 +363,16 @@ The `className` and `style` props also accept functions which receive states for
 </OverlayArrow>
 ```
 
-Tooltips also support entry and exit animations via states exposed as data attributes and render props. `Tooltip` will automatically wait for any exit animations to complete before it is removed from the DOM.
+Tooltips also support entry and exit animations via states exposed as data attributes and render props. `Tooltip` will automatically wait for any exit animations to complete before it is removed from the DOM. See the [animation guide](styling.html#animation) for more details.
 
 ```css render=false
-.react-aria-Tooltip[data-entering] {
-  animation: slide 300ms;
-}
+.react-aria-Tooltip {
+  transition: opacity 300ms;
 
-.react-aria-Tooltip[data-exiting] {
-  animation: slide 300ms reverse;
-}
-
-@keyframes slide {
-  /* ... */
+  &[data-entering],
+  &[data-exiting] {
+    opacity: 0;
+  }
 }
 ```
 
