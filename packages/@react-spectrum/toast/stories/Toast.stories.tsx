@@ -46,7 +46,7 @@ export default {
     },
     placement: {
       control: 'select',
-      options: [undefined, 'top start', 'top', 'top end', 'bottom start', 'bottom', 'bottom end']
+      options: [undefined, 'top', 'top end', 'bottom', 'bottom end']
     }
   }
 };
