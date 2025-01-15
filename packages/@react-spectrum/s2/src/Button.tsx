@@ -138,24 +138,6 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
       isDisabled: 'GrayText'
     }
   },
-  backgroundImage: {
-    variant: {
-      premium: {
-        default: linearGradient('96deg', ['fuchsia-900', 0], ['indigo-900', 66], ['blue-900', 100]),
-        isHovered: linearGradient('96deg', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100]),
-        isPressed: linearGradient('96deg', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100]),
-        isFocusVisible: linearGradient('96deg', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100])
-      },
-      genai: {
-        default: linearGradient('96deg', ['red-900', 0], ['magenta-900', 33], ['indigo-900', 100]),
-        isHovered: linearGradient('96deg', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100]),
-        isPressed: linearGradient('96deg', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100]),
-        isFocusVisible: linearGradient('96deg', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100])
-      }
-    },
-    isDisabled: 'none',
-    forcedColors: 'none'
-  },
   backgroundColor: {
     fillStyle: {
       fill: {
@@ -296,6 +278,42 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
   disableTapHighlight: true
 }, getAllowedOverrides());
 
+// Put the gradient background on a separate element from the button to work around a Safari
+// bug where transitions of custom properties cause layout flickering if any properties use rems. 🤣
+// https://bugs.webkit.org/show_bug.cgi?id=285622
+const gradient = style({
+  position: 'absolute',
+  inset: 0,
+  zIndex: -1,
+  transition: 'default',
+  borderRadius: '[inherit]',
+  backgroundImage: {
+    variant: {
+      premium: {
+        default: linearGradient('to bottom right', ['fuchsia-900', 0], ['indigo-900', 66], ['blue-900', 100]),
+        isHovered: linearGradient('to bottom right', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100]),
+        isPressed: linearGradient('to bottom right', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100]),
+        isFocusVisible: linearGradient('to bottom right', ['fuchsia-1000', 0], ['indigo-1000', 66], ['blue-1000', 100])
+      },
+      genai: {
+        default: linearGradient('to bottom right', ['red-900', 0], ['magenta-900', 33], ['indigo-900', 100]),
+        isHovered: linearGradient('to bottom right', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100]),
+        isPressed: linearGradient('to bottom right', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100]),
+        isFocusVisible: linearGradient('to bottom right', ['red-1000', 0], ['magenta-1000', 33], ['indigo-1000', 100])
+      }
+    },
+    isDisabled: 'none',
+    forcedColors: 'none'
+  },
+  // Force gradient colors to remain static between light and dark theme.
+  colorScheme: {
+    variant: {
+      premium: 'light',
+      genai: 'light'
+    }
+  }
+});
+
 /**
  * Buttons allow users to perform an action.
  * They have multiple styles for various needs, and are ideal for calling attention to
@@ -350,65 +368,79 @@ export const Button = forwardRef(function Button(props: ButtonProps, ref: Focusa
         staticColor,
         isStaticColor: !!staticColor
       }, props.styles)}>
-      <Provider
-        values={[
-          [SkeletonContext, null],
-          [TextContext, {
-            styles: style({
-              paddingY: '--labelPadding',
-              order: 1,
-              opacity: {
-                default: 1,
-                isProgressVisible: 0
-              }
-            })({isProgressVisible}),
-            // @ts-ignore data-attributes allowed on all JSX elements, but adding to DOMProps has been problematic in the past
-            'data-rsp-slot': 'text'
-          }],
-          [IconContext, {
-            render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
-            styles: style({
-              size: fontRelative(20),
-              marginStart: '--iconMargin',
-              flexShrink: 0,
-              opacity: {
-                default: 1,
-                isProgressVisible: 0
-              }
-            })({isProgressVisible})
-          }]
-        ]}>
-        {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
-        {isPending &&
-          <div
-            className={style({
-              position: 'absolute',
-              top: '[50%]',
-              left: '[50%]',
-              transform: 'translate(-50%, -50%)',
-              opacity: {
-                default: 0,
-                isProgressVisible: 1
-              }
-            })({isProgressVisible, isPending})}>
-            <ProgressCircle
-              isIndeterminate
-              aria-label={stringFormatter.format('button.pending')}
-              size="S"
-              staticColor={staticColor}
-              styles={style({
-                size: {
-                  size: {
-                    S: 14,
-                    M: 18,
-                    L: 20,
-                    XL: 24
-                  }
+      {(renderProps) => (<>
+        {variant === 'genai' || variant === 'premium' 
+          ? (
+            <span
+              className={gradient({
+                ...renderProps,
+                // Retain hover styles when an overlay is open.
+                isHovered: renderProps.isHovered || overlayTriggerState?.isOpen || false,
+                isDisabled: renderProps.isDisabled || isProgressVisible,
+                variant
+              })} />
+             )
+          : null}
+        <Provider
+          values={[
+            [SkeletonContext, null],
+            [TextContext, {
+              styles: style({
+                paddingY: '--labelPadding',
+                order: 1,
+                opacity: {
+                  default: 1,
+                  isProgressVisible: 0
                 }
-              })({size})} />
-          </div>
-        }
-      </Provider>
+              })({isProgressVisible}),
+              // @ts-ignore data-attributes allowed on all JSX elements, but adding to DOMProps has been problematic in the past
+              'data-rsp-slot': 'text'
+            }],
+            [IconContext, {
+              render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
+              styles: style({
+                size: fontRelative(20),
+                marginStart: '--iconMargin',
+                flexShrink: 0,
+                opacity: {
+                  default: 1,
+                  isProgressVisible: 0
+                }
+              })({isProgressVisible})
+            }]
+          ]}>
+          {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
+          {isPending &&
+            <div
+              className={style({
+                position: 'absolute',
+                top: '[50%]',
+                left: '[50%]',
+                transform: 'translate(-50%, -50%)',
+                opacity: {
+                  default: 0,
+                  isProgressVisible: 1
+                }
+              })({isProgressVisible, isPending})}>
+              <ProgressCircle
+                isIndeterminate
+                aria-label={stringFormatter.format('button.pending')}
+                size="S"
+                staticColor={staticColor}
+                styles={style({
+                  size: {
+                    size: {
+                      S: 14,
+                      M: 18,
+                      L: 20,
+                      XL: 24
+                    }
+                  }
+                })({size})} />
+            </div>
+          }
+        </Provider>
+      </>)}
     </RACButton>
   );
 });

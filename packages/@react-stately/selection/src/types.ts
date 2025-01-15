@@ -108,5 +108,6 @@ export interface MultipleSelectionManager extends FocusState {
   isLink(key: Key): boolean,
   /** Returns the props for the given item. */
   getItemProps(key: Key): any,
+  /** The collection of nodes that the selection manager handles. */
   collection: Collection<Node<unknown>>
 }

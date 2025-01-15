@@ -1,7 +1,7 @@
 import { ArrowUpIcon, BellIcon, CheckCircleIcon, CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import { ChatBubbleOvalLeftEllipsisIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { useMemo, useState } from 'react';
-import { Button, Cell, Collection, Column, ComboBox, DateInput, DatePicker, DateSegment, Dialog, DialogTrigger, Group, Header, Heading, Input, Label, ListBox, ListBoxItem, Menu, MenuItem, MenuTrigger, Modal, ModalOverlay, OverlayArrow, Popover, ProgressBar, Radio, RadioGroup, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, Text } from 'react-aria-components';
+import { UNSTABLE_Autocomplete as Autocomplete, Button, Cell, Collection, Column, ComboBox, DateInput, DatePicker, DateSegment, Dialog, DialogTrigger, Group, Header, Heading, Input, Label, ListBox, ListBoxItem, Menu, MenuItem, MenuTrigger, Modal, ModalOverlay, OverlayArrow, Popover, ProgressBar, Radio, RadioGroup, Row, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, Text, useFilter} from 'react-aria-components';
 import { useAsyncList } from 'react-stately';
 import { people } from './people.js';
 import stocks from './stocks.json';
@@ -29,6 +29,7 @@ export function App() {
         <ImageGridExample />
         <ComboBoxExample />
         <ProgressBarExample />
+        <AutocompleteExample />
       </div>
     </>
   );
@@ -548,4 +549,32 @@ function StockRow(props) {
 
 function StockCell(props) {
   return <Cell {...props} className={`px-4 py-2 text-sm ${props.className} data-[focus-visible]:outline data-[focus-visible]:outline-2 data-[focus-visible]:outline-slate-600 data-[focus-visible]:-outline-offset-4 group-aria-selected:data-[focus-visible]:outline-white`} />;
+}
+
+function AutocompleteExample() {
+  let {contains} = useFilter({sensitivity: 'base'});
+  return (
+    <div className="bg-gradient-to-r from-sky-400 to-cyan-400 p-8 rounded-lg flex justify-center flex-col">
+      <Autocomplete filter={contains} className="flex flex-col gap-1 w-5/6">
+        <SearchField>
+          <Label className="text-sm text-black">Contacts</Label>
+          <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white bg-opacity-90 focus-within:bg-opacity-100 transition text-left shadow-md [&:has([data-focus-visible])]:ring-2 [&:has([data-focus-visible])]:ring-black sm:text-sm">
+            <Input className="w-full border-none py-2 pl-3 pr-2 sm:text-sm leading-5 text-gray-900 bg-transparent outline-none" />
+          </div>
+        </SearchField>
+        <div className="h-[300px] py-2 rounded-lg flex justify-center">
+          <ListBox aria-label="Contacts" selectionMode="multiple" selectionBehavior="replace" className="w-72 max-h-[290px] overflow-auto outline-none bg-white text-gray-700 p-2 flex flex-col gap-2 rounded-lg shadow scroll-pb-2 scroll-pt-7">
+            <ContactSection title="Favorites">
+              <Contact id="wade" name="Tony Baldwin" handle="@tony" avatar="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" />
+              <Contact id="arelene" name="Julienne Langstrath" handle="@jlangstrath" avatar="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" />
+              <Contact id="tom" name="Roberto Gonzalez" handle="@rgonzalez" avatar="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" />
+            </ContactSection>
+            <ContactSection title="All Contacts" items={people}>
+              {item => <Contact name={item.name} handle={item.username} avatar={item.avatar} />}
+            </ContactSection>
+          </ListBox>
+        </div>
+      </Autocomplete>
+    </div>
+  );
 }

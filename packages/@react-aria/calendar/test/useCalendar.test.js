@@ -12,7 +12,8 @@
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {CalendarDate} from '@internationalized/date';
-import {Example} from '../stories/Example';
+import {Example, ExampleCustomFirstDay} from '../stories/Example';
+import {I18nProvider} from '@react-aria/i18n';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -60,6 +61,17 @@ describe('useCalendar', () => {
       jest.runAllTimers();
     });
 
+    unmount();
+  }
+
+  async function testFirstDayOfWeek(defaultValue, firstDayOfWeek, expectedFirstDay, locale = 'en-US') {
+    let {getAllByRole, unmount} = render(
+      <I18nProvider locale={locale}>
+        <ExampleCustomFirstDay defaultValue={defaultValue} firstDayOfWeek={firstDayOfWeek} />
+      </I18nProvider>
+    );
+    let cells = getAllByRole('gridcell');
+    expect(cells[0].children[0]).toHaveAttribute('aria-label', expectedFirstDay);
     unmount();
   }
 
@@ -225,6 +237,30 @@ describe('useCalendar', () => {
     ${'day going backward five'} | ${new CalendarDate(2019, 1, 1)} | ${'December 30, 2018 to January 3, 2019'} | ${'December 26 to 30, 2018'} | ${'Previous'} | ${4} | ${{days: 5}} | ${'single'}
     `('should use pageBehavior single $Name', async ({defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior}) => {
       await testPagination(defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior);
+    });
+  });
+
+  describe('firstDayOfWeek', () => {
+    it.each`
+    Name | defaultValue | firstDayOfWeek | expectedFirstDay | locale
+    ${'default'} | ${new CalendarDate(2024, 1, 1)} | ${undefined} | ${'Sunday, December 31, 2023'} | ${'en-US'}
+    ${'Sunday'} | ${new CalendarDate(2024, 1, 1)} | ${'sun'} | ${'Sunday, December 31, 2023'} | ${'en-US'}
+    ${'Monday'} | ${new CalendarDate(2024, 1, 1)} | ${'mon'} | ${'Monday, January 1, 2024 selected'} | ${'en-US'}
+    ${'Tuesday'} | ${new CalendarDate(2024, 1, 1)} | ${'tue'} | ${'Tuesday, December 26, 2023'} | ${'en-US'}
+    ${'Wednesday'} | ${new CalendarDate(2024, 1, 1)} | ${'wed'} | ${'Wednesday, December 27, 2023'} | ${'en-US'}
+    ${'Thursday'} | ${new CalendarDate(2024, 1, 1)} | ${'thu'} | ${'Thursday, December 28, 2023'} | ${'en-US'}
+    ${'Friday'} | ${new CalendarDate(2024, 1, 1)} | ${'fri'} | ${'Friday, December 29, 2023'} | ${'en-US'}
+    ${'Saturday'} | ${new CalendarDate(2024, 1, 1)} | ${'sat'} | ${'Saturday, December 30, 2023'} | ${'en-US'}
+    ${'default (fr-FR)'} | ${new CalendarDate(2024, 1, 1)} | ${undefined} | ${'lundi 1 janvier 2024 sélectionné'} | ${'fr-FR'}
+    ${'Sunday (fr-FR)'} | ${new CalendarDate(2024, 1, 1)} | ${'sun'} | ${'dimanche 31 décembre 2023'} | ${'fr-FR'}
+    ${'Monday (fr-FR)'} | ${new CalendarDate(2024, 1, 1)} | ${'mon'} | ${'lundi 1 janvier 2024 sélectionné'} | ${'fr-FR'}
+    ${'Tuesday (fr-FR)'} | ${new CalendarDate(2024, 1, 1)} | ${'tue'} | ${'mardi 26 décembre 2023'} | ${'fr-FR'}
+    ${'Wednesday (fr-FR)'} | ${new CalendarDate(2024, 1, 1)} | ${'wed'} | ${'mercredi 27 décembre 2023'} | ${'fr-FR'}
+    ${'Thursday (fr-FR)'} | ${new CalendarDate(2024, 1, 1)} | ${'thu'} | ${'jeudi 28 décembre 2023'} | ${'fr-FR'}
+    ${'Friday (fr-FR)'} | ${new CalendarDate(2024, 1, 1)} | ${'fri'} | ${'vendredi 29 décembre 2023'} | ${'fr-FR'}
+    ${'Saturday (fr-FR)'} | ${new CalendarDate(2024, 1, 1)} | ${'sat'} | ${'samedi 30 décembre 2023'} | ${'fr-FR'}
+    `('should use firstDayOfWeek $Name', async ({defaultValue, firstDayOfWeek, expectedFirstDay, locale}) => {
+      await testFirstDayOfWeek(defaultValue, firstDayOfWeek, expectedFirstDay, locale);
     });
   });
 });

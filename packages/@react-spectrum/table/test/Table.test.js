@@ -12,7 +12,7 @@
 
 jest.mock('@react-aria/live-announcer');
 jest.mock('@react-aria/utils/src/scrollIntoView');
-import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render as renderComponent, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render as renderComponent, User, within} from '@react-spectrum/test-utils-internal';
 import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {announce} from '@react-aria/live-announcer';
@@ -35,7 +35,6 @@ import * as stories from '../stories/Table.stories';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
-import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let {
@@ -2851,20 +2850,20 @@ export let tableTests = () => {
           act(() => jest.runAllTimers());
           await user.pointer({target: document.body, keys: '[TouchA]'});
 
-          await tableTester.toggleRowSelection({text: 'Foo 5', needsLongPress: true});
+          await tableTester.toggleRowSelection({row: 'Foo 5', needsLongPress: true});
           checkSelection(onSelectionChange, ['Foo 5']);
           expect(onAction).not.toHaveBeenCalled();
           onSelectionChange.mockReset();
 
-          await tableTester.toggleRowSelection({text: 'Foo 10', needsLongPress: false});
+          await tableTester.toggleRowSelection({row: 'Foo 10', needsLongPress: false});
           checkSelection(onSelectionChange, ['Foo 5', 'Foo 10']);
 
           // Deselect all to exit selection mode
           onSelectionChange.mockReset();
-          await tableTester.toggleRowSelection({text: 'Foo 10', needsLongPress: false});
+          await tableTester.toggleRowSelection({row: 'Foo 10', needsLongPress: false});
           checkSelection(onSelectionChange, ['Foo 5']);
           onSelectionChange.mockReset();
-          await tableTester.toggleRowSelection({text: 'Foo 5', needsLongPress: false});
+          await tableTester.toggleRowSelection({row: 'Foo 5', needsLongPress: false});
           act(() => jest.runAllTimers());
           checkSelection(onSelectionChange, []);
           expect(onAction).not.toHaveBeenCalled();
@@ -2987,11 +2986,11 @@ export let tableTests = () => {
           tableTester.setInteractionType('touch');
           expect(tree.queryByLabelText('Select All')).toBeNull();
 
-          await tableTester.toggleRowSelection({text: 'Baz 5'});
+          await tableTester.toggleRowSelection({row: 'Baz 5'});
           expect(announce).toHaveBeenLastCalledWith('Foo 5 selected.');
           expect(announce).toHaveBeenCalledTimes(1);
           onSelectionChange.mockReset();
-          await tableTester.toggleRowSelection({text: 'Foo 10'});
+          await tableTester.toggleRowSelection({row: 'Foo 10'});
           expect(announce).toHaveBeenLastCalledWith('Foo 10 selected. 2 items selected.');
           expect(announce).toHaveBeenCalledTimes(2);
 
@@ -3017,7 +3016,7 @@ export let tableTests = () => {
         let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
         let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
 
-        await tableTester.toggleRowSelection({text: 'Foo 5'});
+        await tableTester.toggleRowSelection({row: 'Foo 5'});
         expect(announce).toHaveBeenLastCalledWith('Foo 5 selected.');
         expect(announce).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['Foo 5']);
@@ -3025,7 +3024,7 @@ export let tableTests = () => {
 
         announce.mockReset();
         onSelectionChange.mockReset();
-        await tableTester.triggerRowAction({text: 'Foo 5', needsDoubleClick: true});
+        await tableTester.triggerRowAction({row: 'Foo 5', needsDoubleClick: true});
         expect(announce).not.toHaveBeenCalled();
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(1);
@@ -3175,12 +3174,12 @@ export let tableTests = () => {
             checkSelection(onSelectionChange, ['Foo 5', 'Foo 10']);
 
             // Deselect all to exit selection mode
-            await tableTester.toggleRowSelection({text: 'Foo 10'});
+            await tableTester.toggleRowSelection({row: 'Foo 10'});
             expect(announce).toHaveBeenLastCalledWith('Foo 10 not selected. 1 item selected.');
             expect(announce).toHaveBeenCalledTimes(3);
             onSelectionChange.mockReset();
 
-            await tableTester.toggleRowSelection({text: 'Foo 5'});
+            await tableTester.toggleRowSelection({row: 'Foo 5'});
             expect(announce).toHaveBeenLastCalledWith('Foo 5 not selected.');
             expect(announce).toHaveBeenCalledTimes(4);
 
@@ -4381,7 +4380,7 @@ export let tableTests = () => {
       expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column, ascending');
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
 
-      await tableTester.toggleSort({index: 1});
+      await tableTester.toggleSort({column: 1});
       expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column, descending');
 
       uaMock.mockRestore();

@@ -11,7 +11,8 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/tree';
-import {HeaderInfo, PropTable, PageDescription, TypeLink, VersionBadge} from '@react-spectrum/docs';
+import treeUtils from 'docs:@react-aria/test-utils/src/tree.ts';
+import {HeaderInfo, PropTable, PageDescription, TypeLink, VersionBadge, ClassAPI} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-spectrum/tree/package.json';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
@@ -219,7 +220,7 @@ function ControlledSelection() {
       aria-label="Example tree with controlled selection"
       defaultExpandedKeys={['projects', 'project-2']}
       /*- begin highlight -*/
-      selectionMode="multiple"      
+      selectionMode="multiple"
       selectedKeys={selectedKeys}
       onSelectionChange={setSelectedKeys}
       /*- end highlight -*/
@@ -456,3 +457,44 @@ behaviors in your test suite.
 
 Please also refer to [React Spectrum's test suite](https://github.com/adobe/react-spectrum/blob/main/packages/%40react-spectrum/tree/test/TreeView.test.tsx) if you find that the above
 isn't sufficient when resolving issues in your own test cases.
+
+### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+`@react-spectrum/test-utils` offers common tree interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
+in your tests. Below is the full definition of the tree tester and a sample of how you could use it in your test suite.
+
+```ts
+// Tree.test.ts
+import {render, within} from '@testing-library/react';
+import {theme} from '@react-spectrum/theme-default';
+import {User} from '@react-spectrum/test-utils';
+
+let testUtilUser = new User({interactionType: 'mouse'});
+// ...
+
+it('TreeView can select a row via keyboard', async function () {
+  // Render your test component/app and initialize the Tree tester
+  let {getByTestId} = render(
+    <Provider theme={defaultTheme}>
+      <TreeView data-testid="test-tree">
+        ...
+      </TreeView>
+    </Provider>
+  );
+  let treeTester = testUtilUser.createTester('Tree', {root: getByTestId('test-tree'), interactionType: 'keyboard'});
+
+  await treeTester.toggleRowSelection({row: 0});
+  expect(treeTester.selectedRows).toHaveLength(1);
+  expect(within(treeTester.rows[0]).getByRole('checkbox')).toBeChecked();
+
+  await treeTester.toggleRowSelection({row: 1});
+  expect(treeTester.selectedRows).toHaveLength(2);
+  expect(within(treeTester.rows[1]).getByRole('checkbox')).toBeChecked();
+
+  await treeTester.toggleRowSelection({row: 0});
+  expect(treeTester.selectedRows).toHaveLength(1);
+  expect(within(treeTester.rows[0]).getByRole('checkbox')).not.toBeChecked();
+});
+```
+
+<ClassAPI links={treeUtils.links} class={treeUtils.exports.TreeTester} />

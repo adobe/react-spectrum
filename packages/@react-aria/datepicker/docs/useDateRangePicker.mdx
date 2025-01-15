@@ -113,7 +113,7 @@ function DateRangePicker(props) {
       {state.isOpen &&
         <Popover state={state} triggerRef={ref} placement="bottom start">
           <Dialog {...dialogProps}>
-            <RangeCalendar {...calendarProps} />
+            <RangeCalendar {...calendarProps} firstDayOfWeek={props.firstDayOfWeek} />
           </Dialog>
         </Popover>
       }
@@ -359,7 +359,7 @@ function RangeCalendar(props) {
         <Button {...prevButtonProps}>&lt;</Button>
         <Button {...nextButtonProps}>&gt;</Button>
       </div>
-      <CalendarGrid state={state} />
+      <CalendarGrid state={state} firstDayOfWeek={props.firstDayOfWeek} />
     </div>
   );
 }
@@ -369,7 +369,7 @@ function CalendarGrid({state, ...props}) {
   let {gridProps, headerProps, weekDays} = useCalendarGrid(props, state);
 
   // Get the number of weeks in the month so we can render the proper number of rows.
-  let weeksInMonth = getWeeksInMonth(state.visibleRange.start, locale);
+  let weeksInMonth = getWeeksInMonth(state.visibleRange.start, locale, props.firstDayOfWeek);
 
   return (
     <table {...gridProps}>
@@ -754,4 +754,12 @@ By default, `useDateRangePicker` displays times in either 12 or 24 hour hour for
   label="Date range"
   granularity="minute"
   hourCycle={24} />
+```
+
+### Custom first day of week
+
+By default, the first day of the week is automatically set based on the current locale. This can be changed by setting the `firstDayOfWeek` prop to `'sun'`, `'mon'`, `'tue'`, `'wed'`, `'thu'`, `'fri'`, or `'sat'`.
+
+```tsx example
+<DateRangePicker label="Date range" firstDayOfWeek="mon" />
 ```
