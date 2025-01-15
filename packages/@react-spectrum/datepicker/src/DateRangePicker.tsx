@@ -138,7 +138,7 @@ export const DateRangePicker = React.forwardRef(function DateRangePicker<T exten
         {...mergeProps(groupProps, hoverProps, focusProps)}
         className={className}
         ref={targetRef}>
-        <div style={{overflow: 'hidden'}}>
+        <div style={{overflow: 'hidden', width: '100%'}}>
           <Input
             isDisabled={isDisabled}
             isQuiet={isQuiet}
