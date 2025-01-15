@@ -1211,7 +1211,7 @@ it('ListView can select a row via keyboard', async function () {
   // Render your test component/app and initialize the gridlist tester
   let {getByTestId} = render(
     <Provider theme={defaultTheme}>
-      <ListView data-testid="test-gridlist" aria-label="test-gridlist" selectionMode="single">
+      <ListView data-testid="test-gridlist" selectionMode="single">
         ...
       </ListView>
     </Provider>

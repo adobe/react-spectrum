@@ -2109,7 +2109,7 @@ let testUtilUser = new User({interactionType: 'mouse'});
 it('ListBox can select an option via keyboard', async function () {
   // Render your test component/app and initialize the listbox tester
   let {getByTestId} = render(
-     <ListBox aria-label="test-listbox" selectionMode="single" data-testid="test-listbox">
+     <ListBox selectionMode="single" data-testid="test-listbox">
       ...
     </ListBox>
   );
