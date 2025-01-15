@@ -655,7 +655,7 @@ it('Tabs can change selection via keyboard', async function () {
   // Render your test component/app and initialize the listbox tester
   let {getByTestId} = render(
     <Provider theme={defaultTheme}>
-      <Tabs data-testid="test-tabs">
+      <Tabs aria-label="test-tabs" data-testid="test-tabs">
         ...
       </Tabs>
     </Provider>
@@ -666,7 +666,6 @@ it('Tabs can change selection via keyboard', async function () {
   expect(tabsTester.selectedTab).toBe(tabs[0]);
 
   await tabsTester.triggerTab({tab: 1});
-  expect(onSelectionChange).toBeCalledTimes(1);
   expect(tabsTester.selectedTab).toBe(tabs[1]);
 });
 ```
