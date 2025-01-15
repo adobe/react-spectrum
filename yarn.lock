@@ -6132,8 +6132,9 @@ __metadata:
   resolution: "@react-aria/dnd@workspace:packages/@react-aria/dnd"
   dependencies:
     "@internationalized/string": "npm:^3.2.5"
-    "@react-aria/i18n": "npm:^3.12.5"
-    "@react-aria/interactions": "npm:^3.23.0"
+    "@react-aria/collections": "npm:3.0.0-alpha.6"
+    "@react-aria/i18n": "npm:^3.12.4"
+    "@react-aria/interactions": "npm:^3.22.5"
     "@react-aria/live-announcer": "npm:^3.4.1"
     "@react-aria/overlays": "npm:^3.25.0"
     "@react-aria/utils": "npm:^3.27.0"
@@ -6187,9 +6188,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/grid@workspace:packages/@react-aria/grid"
   dependencies:
-    "@react-aria/focus": "npm:^3.19.1"
-    "@react-aria/i18n": "npm:^3.12.5"
-    "@react-aria/interactions": "npm:^3.23.0"
+    "@react-aria/collections": "npm:3.0.0-alpha.6"
+    "@react-aria/focus": "npm:^3.19.0"
+    "@react-aria/i18n": "npm:^3.12.4"
+    "@react-aria/interactions": "npm:^3.22.5"
     "@react-aria/live-announcer": "npm:^3.4.1"
     "@react-aria/selection": "npm:^3.22.0"
     "@react-aria/utils": "npm:^3.27.0"
@@ -6210,16 +6212,17 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/gridlist@workspace:packages/@react-aria/gridlist"
   dependencies:
-    "@react-aria/focus": "npm:^3.19.1"
-    "@react-aria/grid": "npm:^3.11.1"
-    "@react-aria/i18n": "npm:^3.12.5"
-    "@react-aria/interactions": "npm:^3.23.0"
-    "@react-aria/selection": "npm:^3.22.0"
-    "@react-aria/utils": "npm:^3.27.0"
-    "@react-stately/collections": "npm:^3.12.1"
-    "@react-stately/list": "npm:^3.11.2"
-    "@react-stately/tree": "npm:^3.8.7"
-    "@react-types/shared": "npm:^3.27.0"
+    "@react-aria/collections": "npm:3.0.0-alpha.6"
+    "@react-aria/focus": "npm:^3.19.0"
+    "@react-aria/grid": "npm:^3.11.0"
+    "@react-aria/i18n": "npm:^3.12.4"
+    "@react-aria/interactions": "npm:^3.22.5"
+    "@react-aria/selection": "npm:^3.21.0"
+    "@react-aria/utils": "npm:^3.26.0"
+    "@react-stately/collections": "npm:^3.12.0"
+    "@react-stately/list": "npm:^3.11.1"
+    "@react-stately/tree": "npm:^3.8.6"
+    "@react-types/shared": "npm:^3.26.0"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -6506,12 +6509,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/selection@workspace:packages/@react-aria/selection"
   dependencies:
-    "@react-aria/focus": "npm:^3.19.1"
-    "@react-aria/i18n": "npm:^3.12.5"
-    "@react-aria/interactions": "npm:^3.23.0"
-    "@react-aria/utils": "npm:^3.27.0"
-    "@react-stately/selection": "npm:^3.19.0"
-    "@react-types/shared": "npm:^3.27.0"
+    "@react-aria/collections": "npm:3.0.0-alpha.6"
+    "@react-aria/focus": "npm:^3.19.0"
+    "@react-aria/i18n": "npm:^3.12.4"
+    "@react-aria/interactions": "npm:^3.22.5"
+    "@react-aria/utils": "npm:^3.26.0"
+    "@react-stately/selection": "npm:^3.18.0"
+    "@react-types/shared": "npm:^3.26.0"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
