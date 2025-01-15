@@ -127,7 +127,7 @@ export interface TreeProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>
   renderEmptyState?: (props: TreeEmptyStateRenderProps) => ReactNode,
   /**
    * Whether `disabledKeys` applies to all interactions, or only selection.
-   * @default 'selection'
+   * @default 'all'
    */
   disabledBehavior?: DisabledBehavior
 }
@@ -163,7 +163,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     expandedKeys: propExpandedKeys,
     defaultExpandedKeys: propDefaultExpandedKeys,
     onExpandedChange,
-    disabledBehavior = 'selection'
+    disabledBehavior = 'all'
   } = props;
   let {CollectionRoot, isVirtualized, layoutDelegate} = useContext(CollectionRendererContext);
 
