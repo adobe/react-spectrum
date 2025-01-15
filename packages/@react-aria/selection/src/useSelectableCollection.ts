@@ -455,10 +455,12 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     resetFocusFirstFlag();
   }, [manager.focusedKey, resetFocusFirstFlag]);
 
-  useEvent(ref, CLEAR_FOCUS_EVENT, !shouldUseVirtualFocus ? undefined : (e) => {
+  useEvent(ref, CLEAR_FOCUS_EVENT, !shouldUseVirtualFocus ? undefined : (e: any) => {
     e.stopPropagation();
     manager.setFocused(false);
-    manager.setFocusedKey(null);
+    if (e.detail?.clearFocusKey) {
+      manager.setFocusedKey(null);
+    }
   });
 
   const autoFocusRef = useRef(autoFocus);

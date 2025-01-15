@@ -123,11 +123,14 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
     );
   });
 
-  let clearVirtualFocus = useEffectEvent(() => {
+  let clearVirtualFocus = useEffectEvent((clearFocusKey?: boolean) => {
     state.setFocusedNodeId(null);
     let clearFocusEvent = new CustomEvent(CLEAR_FOCUS_EVENT, {
       cancelable: true,
-      bubbles: true
+      bubbles: true,
+      detail: {
+        clearFocusKey
+      }
     });
     clearTimeout(timeout.current);
     delayNextActiveDescendant.current = false;
@@ -141,7 +144,8 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
     if (state.inputValue !== value && state.inputValue.length <= value.length) {
       focusFirstItem();
     } else {
-      clearVirtualFocus();
+      // Fully clear focused key when backspacing since the list may change and thus we'd want to start fresh again
+      clearVirtualFocus(true);
     }
 
     state.setInputValue(value);
@@ -196,10 +200,11 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
       }
       case 'ArrowLeft':
       case 'ArrowRight':
-        // TODO: will need to special case this so it doesn't clear the focused key if we are currently
-        // focused on a submenutrigger? May not need to since focus would
-        // But what about wrapped grids where ArrowLeft and ArrowRight should navigate left/right
-        clearVirtualFocus();
+        // Clear the activedescendant so NVDA announcements aren't interrupted but retain the focused key in the collection so the
+        // user's keyboard navigation restarts from where they left off
+        // TODO: What about wrapped grids where ArrowLeft and ArrowRight should navigate left/right? Is it weird that the focused key will remain visible
+        // but activedescendant got cleared? If so, then we'll need to know if we are pressing Left/Right on a submenu/dialog trigger...
+        clearVirtualFocus(false);
         break;
     }
 
