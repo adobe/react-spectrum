@@ -19,37 +19,27 @@ export default {
   },
   argTypes: {
     selectionMode: {
-      control: {
-        type: 'radio',
-        options: ['none', 'single', 'multiple']
-      }
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
     },
     selectionStyle: {
-      control: {
-        type: 'radio',
-        options: ['checkbox', 'highlight']
-      }
+      control: 'radio',
+      options: ['checkbox', 'highlight']
     },
     isQuiet: {
-      control: {type: 'boolean'}
+      control: 'boolean'
     },
     density: {
-      control: {
-        type: 'select',
-        options: ['compact', 'regular', 'spacious']
-      }
+      control: 'select',
+      options: ['compact', 'regular', 'spacious']
     },
     overflowMode: {
-      control: {
-        type: 'radio',
-        options: ['truncate', 'wrap']
-      }
+      control: 'radio',
+      options: ['truncate', 'wrap']
     },
     disabledBehavior: {
-      control: {
-        type: 'radio',
-        options: ['selection', 'all']
-      }
+      control: 'radio',
+      options: ['selection', 'all']
     }
   }
 } as ComponentMeta<typeof ListView>;

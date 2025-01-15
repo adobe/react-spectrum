@@ -100,7 +100,7 @@ describe('Picker', function () {
       expect(picker).toHaveAttribute('aria-expanded', 'true');
       expect(picker).toHaveAttribute('aria-controls', listbox.id);
 
-      let items = selectTester.options;
+      let items = selectTester.options();
       expect(items.length).toBe(3);
       expect(items[0]).toHaveTextContent('One');
       expect(items[1]).toHaveTextContent('Two');
@@ -211,7 +211,7 @@ describe('Picker', function () {
       expect(picker).toHaveAttribute('aria-expanded', 'true');
       expect(picker).toHaveAttribute('aria-controls', listbox.id);
 
-      let items = selectTester.options;
+      let items = selectTester.options();
       expect(items.length).toBe(3);
       expect(items[0]).toHaveTextContent('One');
       expect(items[1]).toHaveTextContent('Two');
@@ -249,7 +249,7 @@ describe('Picker', function () {
       expect(picker).toHaveAttribute('aria-expanded', 'true');
       expect(picker).toHaveAttribute('aria-controls', listbox.id);
 
-      let items = selectTester.options;
+      let items = selectTester.options();
       expect(items.length).toBe(3);
       expect(items[0]).toHaveTextContent('One');
       expect(items[1]).toHaveTextContent('Two');
@@ -979,7 +979,7 @@ describe('Picker', function () {
       await selectTester.open();
 
       let listbox = selectTester.listbox;
-      let items = selectTester.options;
+      let items = selectTester.options();
       expect(items.length).toBe(3);
       expect(items[0]).toHaveTextContent('One');
       expect(items[1]).toHaveTextContent('Two');
@@ -987,7 +987,7 @@ describe('Picker', function () {
 
       expect(document.activeElement).toBe(listbox);
 
-      await selectTester.selectOption({optionText: 'Three'});
+      await selectTester.selectOption({option: 'Three'});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('three');
 
@@ -1011,7 +1011,7 @@ describe('Picker', function () {
       await selectTester.open();
 
       let listbox = selectTester.listbox;
-      let items = selectTester.options;
+      let items = selectTester.options();
       expect(items.length).toBe(3);
       expect(items[0]).toHaveTextContent('Empty');
       expect(items[1]).toHaveTextContent('Zero');
@@ -1019,19 +1019,19 @@ describe('Picker', function () {
 
       expect(document.activeElement).toBe(listbox);
 
-      await selectTester.selectOption({optionText: 'Empty'});
+      await selectTester.selectOption({option: 'Empty'});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('');
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Empty');
 
-      await selectTester.selectOption({optionText: 'Zero'});
+      await selectTester.selectOption({option: 'Zero'});
       expect(onSelectionChange).toHaveBeenCalledTimes(2);
       expect(onSelectionChange).toHaveBeenLastCalledWith('0');
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Zero');
 
-      await selectTester.selectOption({optionText: 'False'});
+      await selectTester.selectOption({option: 'False'});
       expect(onSelectionChange).toHaveBeenCalledTimes(3);
       expect(onSelectionChange).toHaveBeenLastCalledWith('false');
       expect(document.activeElement).toBe(picker);
@@ -1102,13 +1102,13 @@ describe('Picker', function () {
       expect(picker).toHaveTextContent('Select…');
       await selectTester.open();
 
-      let items = selectTester.options;
+      let items = selectTester.options();
       expect(items.length).toBe(3);
       expect(items[0]).toHaveTextContent('One');
       expect(items[1]).toHaveTextContent('Two');
       expect(items[2]).toHaveTextContent('Three');
 
-      await selectTester.selectOption({optionText: 'Two'});
+      await selectTester.selectOption({option: 'Two'});
 
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('two');
@@ -1184,12 +1184,12 @@ describe('Picker', function () {
       expect(listbox).toBeVisible();
       expect(listbox).toHaveAttribute('aria-labelledby', label.id);
 
-      let items = selectTester.options;
+      let items = selectTester.options();
       expect(items[0]).toHaveTextContent('One');
       expect(items[1]).toHaveTextContent('Two');
       expect(items[2]).toHaveTextContent('Three');
 
-      await selectTester.selectOption({optionText: 'Three'});
+      await selectTester.selectOption({option: 'Three'});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onOpenChangeSpy).toHaveBeenCalledTimes(2);
 
@@ -1382,7 +1382,7 @@ describe('Picker', function () {
       await selectTester.open();
 
       let listbox = selectTester.listbox;
-      let items = selectTester.options;
+      let items = selectTester.options();
       expect(items.length).toBe(6);
 
       let groups = selectTester.sections;
@@ -1434,7 +1434,7 @@ describe('Picker', function () {
       await selectTester.open();
 
       listbox = selectTester.listbox;
-      items = selectTester.options;
+      items = selectTester.options();
       expect(items.length).toBe(6);
 
       expect(document.activeElement).toBe(items[1]);
@@ -1543,10 +1543,10 @@ describe('Picker', function () {
       expect(picker).toHaveTextContent('Two');
       await selectTester.open();
 
-      let items = selectTester.options;
+      let items = selectTester.options();
       expect(document.activeElement).toBe(items[1]);
 
-      await selectTester.selectOption({optionText: 'Two'});
+      await selectTester.selectOption({option: 'Two'});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenCalledWith('two');
 
@@ -2133,7 +2133,7 @@ describe('Picker', function () {
           expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
           expect(document.activeElement).toBe(picker);
 
-          await selectTester.selectOption({optionText: 'One'});
+          await selectTester.selectOption({option: 'One'});
           expect(picker).not.toHaveAttribute('aria-describedby');
         });
 
@@ -2161,7 +2161,7 @@ describe('Picker', function () {
           expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
           expect(document.activeElement).toBe(picker);
 
-          await selectTester.selectOption({optionText: 'One'});
+          await selectTester.selectOption({option: 'One'});
           expect(picker).not.toHaveAttribute('aria-describedby');
         });
 
@@ -2201,7 +2201,7 @@ describe('Picker', function () {
           expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value.');
           expect(input.validity.valid).toBe(false);
 
-          await selectTester.selectOption({optionText: 'One'});
+          await selectTester.selectOption({option: 'One'});
           expect(picker).not.toHaveAttribute('aria-describedby');
           expect(input.validity.valid).toBe(true);
         });
@@ -2252,7 +2252,7 @@ describe('Picker', function () {
           expect(picker).toHaveAttribute('aria-describedby');
           expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
 
-          await selectTester.selectOption({optionText: 'One'});
+          await selectTester.selectOption({option: 'One'});
           expect(picker).not.toHaveAttribute('aria-describedby');
 
           await user.click(getByTestId('reset'));
@@ -2280,7 +2280,7 @@ describe('Picker', function () {
           expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
           expect(input.validity.valid).toBe(true);
 
-          await selectTester.selectOption({optionText: 'One'});
+          await selectTester.selectOption({option: 'One'});
           expect(picker).not.toHaveAttribute('aria-describedby');
         });
 
@@ -2301,7 +2301,7 @@ describe('Picker', function () {
           expect(picker).toHaveAttribute('aria-describedby');
           expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
 
-          await selectTester.selectOption({optionText: 'One'});
+          await selectTester.selectOption({option: 'One'});
           expect(picker).not.toHaveAttribute('aria-describedby');
         });
       });

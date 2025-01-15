@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/meter",
-  "version": "3.4.18",
+  "version": "3.4.19",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -22,9 +22,9 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/progress": "^3.4.18",
-    "@react-types/meter": "^3.4.5",
-    "@react-types/shared": "^3.26.0",
+    "@react-aria/progress": "^3.4.19",
+    "@react-types/meter": "^3.4.6",
+    "@react-types/shared": "^3.27.0",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {
