@@ -63,7 +63,7 @@ AriaTreeTests({
       </TreeView>
     ),
     singleSelection: () => render(
-      <TreeView aria-label="test tree" selectionMode="single" disabledKeys={['school']}>
+      <TreeView aria-label="test tree" selectionMode="single" disabledKeys={['school']} disabledBehavior="selection">
         <TreeViewItem id="Photos" textValue="Photos">
           <Text>Photos</Text>
           <Folder />
