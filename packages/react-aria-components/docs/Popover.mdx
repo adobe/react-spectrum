@@ -89,12 +89,19 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow, Heading, Switch} f
   color: var(--text-color);
   outline: none;
   max-width: 250px;
+  transition: transform 200ms, opacity 200ms;
 
   .react-aria-OverlayArrow svg {
     display: block;
     fill: var(--background-color);
     stroke: var(--border-color);
     stroke-width: 1px;
+  }
+
+  &[data-entering],
+  &[data-exiting] {
+    transform: var(--origin);
+    opacity: 0;
   }
 
   &[data-placement=top] {
@@ -139,26 +146,6 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow, Heading, Switch} f
     .react-aria-OverlayArrow svg {
       transform: rotate(-90deg);
     }
-  }
-
-  &[data-entering] {
-    animation: popover-slide 200ms;
-  }
-
-  &[data-exiting] {
-    animation: popover-slide 200ms reverse ease-in;
-  }
-}
-
-@keyframes popover-slide {
-  from {
-    transform: var(--origin);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
   }
 }
 ```
@@ -421,19 +408,16 @@ The `className` and `style` props also accept functions which receive states for
 </OverlayArrow>
 ```
 
-Popovers also support entry and exit animations via states exposed as data attributes and render props. `Popover` will automatically wait for any exit animations to complete before it is removed from the DOM.
+Popovers also support entry and exit animations via states exposed as data attributes and render props. `Popover` will automatically wait for any exit animations to complete before it is removed from the DOM. See the [animation guide](styling.html#animation) for more details.
 
 ```css render=false
-.react-aria-Popover[data-entering] {
-  animation: slide 300ms;
-}
+.react-aria-Popover {
+  transition: opacity 300ms;
 
-.react-aria-Popover[data-exiting] {
-  animation: slide 300ms reverse;
-}
-
-@keyframes slide {
-  /* ... */
+  &[data-entering],
+  &[data-exiting] {
+    opacity: 0;
+  }
 }
 ```
 

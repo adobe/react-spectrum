@@ -78,6 +78,7 @@ export function useSearchField(
       if (state.value === '' && (!inputRef.current || inputRef.current.value === '')) {
         e.continuePropagation();
       } else {
+        e.preventDefault();
         state.setValue('');
         if (onClear) {
           onClear();

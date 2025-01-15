@@ -118,14 +118,14 @@ export interface ColorFieldProps extends Omit<ValueBase<string | Color | null>, 
   onChange?: (color: Color | null) => void
 }
 
-export interface AriaColorFieldProps extends ColorFieldProps, AriaLabelingProps, FocusableDOMProps, Omit<TextInputDOMProps, 'minLength' | 'maxLength' | 'pattern' | 'type' | 'inputMode' | 'autoComplete'>, AriaValidationProps {
+export interface AriaColorFieldProps extends ColorFieldProps, AriaLabelingProps, FocusableDOMProps, Omit<TextInputDOMProps, 'minLength' | 'maxLength' | 'pattern' | 'type' | 'inputMode' | 'autoComplete' | 'autoCorrect' | 'spellCheck'>, AriaValidationProps {
   /** Enables or disables changing the value with scroll. */
   isWheelDisabled?: boolean
 }
 
 export interface SpectrumColorFieldProps extends SpectrumTextInputBase, Omit<AriaColorFieldProps, 'isInvalid' | 'validationState'>, SpectrumFieldValidation<Color | null>, SpectrumLabelableProps, StyleProps {
   /**
-   * The color channel that this field edits. If not provided, 
+   * The color channel that this field edits. If not provided,
    * the color is edited as a hex value.
    */
   channel?: ColorChannel,
@@ -160,7 +160,7 @@ export interface SpectrumColorWheelProps extends AriaColorWheelProps, Omit<Style
 }
 
 export interface ColorSliderProps extends Omit<SliderProps<string | Color>, 'minValue' | 'maxValue' | 'step' | 'pageSize' | 'onChange' | 'onChangeEnd'> {
-  /** 
+  /**
    * The color space that the slider operates in. The `channel` must be in this color space.
    * If not provided, this defaults to the color space of the `color` or `defaultColor` value.
    */
@@ -183,7 +183,7 @@ export interface SpectrumColorSliderProps extends AriaColorSliderProps, StylePro
 }
 
 export interface ColorAreaProps extends Omit<ValueBase<string | Color>, 'onChange'> {
-  /** 
+  /**
    * The color space that the color area operates in. The `xChannel` and `yChannel` must be in this color space.
    * If not provided, this defaults to the color space of the `color` or `defaultColor` value.
    */
