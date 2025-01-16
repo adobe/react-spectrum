@@ -712,7 +712,7 @@ const nubbin = style({
 });
 
 interface ResizableColumnContentProps extends Pick<ColumnRenderProps, 'allowsSorting' | 'sort' | 'sortDirection' | 'startResize' | 'isHovered'>, Pick<ColumnProps, 'align' | 'children'> {
-  isColumnResizable?: boolean
+  isColumnResizable?: boolean,
   menu?: ReactNode
 }
 
