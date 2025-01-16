@@ -16,12 +16,13 @@ import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {DatePicker} from '../';
 import {Heading} from '@react-spectrum/text';
 import React from 'react';
+import {userEvent, within} from '@storybook/testing-library';
 
 export default {
   title: 'DatePicker',
   parameters: {
     chromaticProvider: {
-      locales: ['en-US'/* , 'ar-EG', 'ja-JP' */]
+      locales: ['en-US', 'ar-EG', 'ja-JP', 'he-IL']
     }
   }
 };
@@ -54,6 +55,16 @@ export const Placeholder = () => <DatePicker label="Date" placeholderValue={date
 export const PlaceholderFocus = () => <DatePicker label="Date" placeholderValue={date} autoFocus />;
 PlaceholderFocus.parameters = focusParams;
 
+export const PlaceholderFocusRTL = () => <DatePicker label="Date" placeholderValue={date} autoFocus />;
+PlaceholderFocusRTL.parameters = {
+  chromaticProvider: {
+    locales: ['ar-EG'],
+    scales: ['medium'],
+    colorSchemes: ['light'],
+    express: false
+  }
+};
+
 export const PlaceholderFocusExpress = () => <DatePicker label="Date" placeholderValue={date} autoFocus />;
 PlaceholderFocusExpress.parameters = {
   chromaticProvider: {
@@ -68,6 +79,48 @@ export const ValueTime = () => <DatePicker label="Date" value={dateTime} />;
 export const ValueZoned = () => <DatePicker label="Date" value={zonedDateTime} />;
 export const ValueFocus = () => <DatePicker label="Date" value={date} autoFocus />;
 ValueFocus.parameters = focusParams;
+
+export const ValueLTRInteractions = () => <DatePicker label="Date" value={date} />;
+ValueLTRInteractions.parameters = {
+  chromaticProvider: {
+    locales: ['en-US'],
+    scales: ['medium'],
+    colorSchemes: ['light'],
+    express: false
+  }
+}
+
+ValueLTRInteractions.play = async ({canvasElement}) => {
+  await userEvent.tab();
+  await userEvent.keyboard('[ArrowRight]');
+  await userEvent.keyboard('[ArrowRight]');
+  await userEvent.keyboard('[ArrowRight]');
+  await userEvent.keyboard('[Enter]]');
+  let body = canvasElement.ownerDocument.body;
+  await within(body).findByRole('dialog');
+  await userEvent.keyboard('[ArrowRight]');
+}
+
+export const ValueRTLInteractions = () => <DatePicker label="Date" value={date} />;
+ValueRTLInteractions.parameters = {
+  chromaticProvider: {
+    locales: ['ar-EG'],
+    scales: ['medium'],
+    colorSchemes: ['light'],
+    express: false
+  }
+}
+
+ValueRTLInteractions.play = async ({canvasElement}) => {
+  await userEvent.tab();
+  await userEvent.keyboard('[ArrowLeft]');
+  await userEvent.keyboard('[ArrowLeft]');
+  await userEvent.keyboard('[ArrowLeft]');
+  await userEvent.keyboard('[Enter]]');
+  let body = canvasElement.ownerDocument.body;
+  await within(body).findByRole('dialog');
+  await userEvent.keyboard('[ArrowLeft]');
+}
 
 export const DisabledPlaceholder = () => <DatePicker label="Date" placeholderValue={date} isDisabled />;
 export const DisabledValue = () => <DatePicker label="Date" value={date} isDisabled />;
