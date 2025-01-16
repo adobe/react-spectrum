@@ -276,10 +276,10 @@ describe('ShadowTreeWalker', () => {
 describe.skip('speed test', () => {
   let Component = (props) => {
     if (props.depth === 0) {
-      return <div data-testid="hello">hello</div>
+      return <div data-testid="hello">hello</div>;
     }
-    return <div><Component depth={props.depth -1}/></div>
-  }
+    return <div><Component depth={props.depth - 1} /></div>;
+  };
   it.each`
   Name | createTreeWalker
   ${'native'} | ${() => document.createTreeWalker(document.body, NodeFilter.SHOW_ALL)}
@@ -312,6 +312,7 @@ describe.skip('speed test', () => {
     console.log(`Time taken for 10000 iterations: ${end - start}ms`);
   });
 });
+
 
 // describe('checking if node is contained', () => {
 //   let user;
