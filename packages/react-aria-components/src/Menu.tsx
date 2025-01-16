@@ -343,7 +343,6 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent('item', function MenuI
     selectionManager
   }, state, ref);
 
-  let {isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({
     isDisabled: states.isDisabled
   });
@@ -355,7 +354,7 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent('item', function MenuI
     values: {
       ...states,
       isHovered,
-      isFocusVisible,
+      isFocusVisible: states.isFocusVisible,
       selectionMode: selectionManager.selectionMode,
       selectionBehavior: selectionManager.selectionBehavior,
       hasSubmenu: !!props['aria-haspopup'],
@@ -367,13 +366,13 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent('item', function MenuI
 
   return (
     <ElementType
-      {...mergeProps(menuItemProps, focusProps, hoverProps)}
+      {...mergeProps(menuItemProps, hoverProps)}
       {...renderProps}
       ref={ref}
       data-disabled={states.isDisabled || undefined}
       data-hovered={isHovered || undefined}
       data-focused={states.isFocused || undefined}
-      data-focus-visible={isFocusVisible || undefined}
+      data-focus-visible={states.isFocusVisible || undefined}
       data-pressed={states.isPressed || undefined}
       data-selected={states.isSelected || undefined}
       data-selection-mode={selectionManager.selectionMode === 'none' ? undefined : selectionManager.selectionMode}
