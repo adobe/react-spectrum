@@ -151,7 +151,7 @@ const DynamicTreeItem = (props) => {
           <Text>{props.name}</Text>
           {props.icon}
         </TreeItemContent>
-        <Collection items={childItems}>
+        <Collection items={props.childItems}>
           {(item: any) => (
             <DynamicTreeItem
               id={item.id}
