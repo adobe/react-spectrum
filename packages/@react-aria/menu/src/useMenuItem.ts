@@ -17,6 +17,7 @@ import {isFocusVisible, useFocus, useHover, useKeyboard, usePress} from '@react-
 import {menuData} from './utils';
 import {SelectionManager} from '@react-stately/selection';
 import {TreeState} from '@react-stately/tree';
+import {useEffect} from 'react';
 import {useSelectableItem} from '@react-aria/selection';
 
 export interface MenuItemAria {
@@ -298,6 +299,14 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let domProps = filterDOMProps(item?.props);
   delete domProps.id;
   let linkProps = useLinkProps(item?.props);
+
+  useEffect(() => {
+    if (isTrigger && data.shouldUseVirtualFocus && isTriggerExpanded && key !== selectionManager.focusedKey) {
+      // If using virtual focus, we need to fake a blur event when virtual focus moves away from an open submenutrigger since we won't actual trigger a real
+      // blur event. This is so the submenu will close when the user hovers/keyboard navigates to another sibiling menu item
+      ref.current?.dispatchEvent(new FocusEvent('focusout', {bubbles: true}));
+    }
+  }, [data.shouldUseVirtualFocus, isTrigger, isTriggerExpanded, key, selectionManager, ref]);
 
   return {
     menuItemProps: {

@@ -66,6 +66,12 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
   let delayNextActiveDescendant = useRef(false);
   let queuedActiveDescendant = useRef(null);
   let lastCollectionNode = useRef<HTMLElement>(null);
+  // Stores the previously focused item id if it was cleared via ArrowLeft/Right. Used to dispatch keyboard events to the proper item
+  // even though we've cleared state.focusedNodeId so that things like ArrowLeft/Right will still open the submenutrigger after it is closed
+  // TODO: ideally, we'd just preserve state.focusedNodeId if the user's ArrowLeft/Right was being used to trigger the focused submenutrigger but
+  // that would involve differentiating that event from a moving the text cursor in the input. Will be a moot point if/when NVDA announces
+  // moving the text cursor when an activedescendant is set properly.
+  let clearedFocusedId = useRef<string | null>(null);
 
   let updateActiveDescendant = useEffectEvent((e) => {
     let {target} = e;
@@ -79,15 +85,18 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
     if (target !== collectionRef.current) {
       if (delayNextActiveDescendant.current) {
         queuedActiveDescendant.current = target.id;
+        clearedFocusedId.current = null;
         timeout.current = setTimeout(() => {
           state.setFocusedNodeId(target.id);
           queuedActiveDescendant.current = null;
         }, 500);
       } else {
         state.setFocusedNodeId(target.id);
+        clearedFocusedId.current = null;
       }
     } else {
       state.setFocusedNodeId(null);
+      clearedFocusedId.current = null;
     }
 
     delayNextActiveDescendant.current = false;
@@ -123,11 +132,20 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
     );
   });
 
-  let clearVirtualFocus = useEffectEvent(() => {
+  let clearVirtualFocus = useEffectEvent((clearFocusKey?: boolean) => {
+    if (clearFocusKey === false && state.focusedNodeId) {
+      clearedFocusedId.current = state.focusedNodeId;
+    } else if (clearFocusKey) {
+      clearedFocusedId.current = null;
+    }
+
     state.setFocusedNodeId(null);
     let clearFocusEvent = new CustomEvent(CLEAR_FOCUS_EVENT, {
       cancelable: true,
-      bubbles: true
+      bubbles: true,
+      detail: {
+        clearFocusKey
+      }
     });
     clearTimeout(timeout.current);
     delayNextActiveDescendant.current = false;
@@ -141,7 +159,8 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
     if (state.inputValue !== value && state.inputValue.length <= value.length) {
       focusFirstItem();
     } else {
-      clearVirtualFocus();
+      // Fully clear focused key when backspacing since the list may change and thus we'd want to start fresh again
+      clearVirtualFocus(true);
     }
 
     state.setInputValue(value);
@@ -196,10 +215,11 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
       }
       case 'ArrowLeft':
       case 'ArrowRight':
-        // TODO: will need to special case this so it doesn't clear the focused key if we are currently
-        // focused on a submenutrigger? May not need to since focus would
-        // But what about wrapped grids where ArrowLeft and ArrowRight should navigate left/right
-        clearVirtualFocus();
+        // Clear the activedescendant so NVDA announcements aren't interrupted but retain the focused key in the collection so the
+        // user's keyboard navigation restarts from where they left off
+        // TODO: What about wrapped grids where ArrowLeft and ArrowRight should navigate left/right? Is it weird that the focused key will remain visible
+        // but activedescendant got cleared? If so, then we'll need to know if we are pressing Left/Right on a submenu/dialog trigger...
+        clearVirtualFocus(false);
         break;
     }
 
@@ -211,12 +231,13 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
       e.stopPropagation();
     }
 
-    if (state.focusedNodeId == null) {
+    let focusedElementId = state.focusedNodeId ?? clearedFocusedId.current;
+    if (focusedElementId == null) {
       collectionRef.current?.dispatchEvent(
         new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
       );
     } else {
-      let item = document.getElementById(state.focusedNodeId);
+      let item = document.getElementById(focusedElementId);
       item?.dispatchEvent(
         new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
       );
