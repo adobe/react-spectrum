@@ -268,7 +268,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
 
     // Generate JS and CSS for each rule.
     let isStatic = !(hasConditions || allowedOverrides);
-    let className = ' .';
+    let className = '';
     let rulesByLayer = new Map<string, string[]>();
     for (let [property, propertyRules] of rules) {
       if (isStatic) {

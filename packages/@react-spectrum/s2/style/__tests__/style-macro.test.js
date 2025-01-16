@@ -59,7 +59,7 @@ describe('style-macro', () => {
 
       "
     `);
-    expect(js).toMatchInlineSnapshot('" . A-13alit4c A-13alit4ed"');
+    expect(js).toMatchInlineSnapshot('" A-13alit4c A-13alit4ed"');
   });
 
   it('should support self references', () => {
