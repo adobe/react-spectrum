@@ -144,10 +144,9 @@ let items: MyItem[] = [
 ];
 
 const DynamicTreeItem = (props) => {
-  let {childItems, name, icon} = props;
   return (
     <>
-      <TreeViewItem childItems={item.childItems} textValue={item.name}>
+      <TreeViewItem childItems={props.childItems} textValue={props.name}>
         <TreeItemContent>
           <Text>{props.name}</Text>
           {props.icon}
