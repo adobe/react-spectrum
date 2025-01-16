@@ -266,7 +266,7 @@ export class MenuTester {
       let menu = this.menu;
       if (menu) {
         if (typeof submenuTrigger === 'string') {
-          submenuTrigger = within(menu).getByText(submenuTrigger);
+          submenuTrigger = (within(menu!).getByText(submenuTrigger).closest('[role=menuitem]'))! as HTMLElement;
         }
 
         let submenuTriggerTester = new MenuTester({user: this.user, interactionType: this._interactionType, root: submenuTrigger, isSubmenu: true});
@@ -292,7 +292,8 @@ export class MenuTester {
   private async keyboardNavigateToOption(opts: {option: HTMLElement}) {
     let {option} = opts;
     let options = this.options();
-    let targetIndex = options.indexOf(option);
+    let targetIndex = options.findIndex(opt => (opt === option) || opt.contains(option));
+
     if (targetIndex === -1) {
       throw new Error('Option provided is not in the menu');
     }
