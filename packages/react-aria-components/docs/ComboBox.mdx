@@ -12,7 +12,8 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import statelyDocs from 'docs:@react-stately/combobox';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
+import comboboxUtils from 'docs:@react-aria/test-utils/src/combobox.ts';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI, VersionBadge} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from './ComboBoxAnatomy.svg';
@@ -1474,3 +1475,39 @@ function ComboBoxClearButton() {
 ### Hooks
 
 If you need to customize things even further, such as accessing internal state, intercepting events, or customizing the DOM structure, you can drop down to the lower level Hook-based API. See [useComboBox](useComboBox.html) for more details.
+
+## Testing
+
+### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+`@react-aria/test-utils` offers common combobox interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
+in your tests. Below is the full definition of the combobox tester and a sample of how you could use it in your test suite.
+
+```ts
+// Combobox.test.ts
+import {render} from '@testing-library/react';
+import {User} from '@react-aria/test-utils';
+
+let testUtilUser = new User({interactionType: 'mouse'});
+// ...
+
+it('ComboBox can select an option via keyboard', async function () {
+  // Render your test component/app and initialize the combobox tester
+  let {getByTestId} = render(
+    <ComboBox data-testid="test-combobox">
+      ...
+    </ComboBox>
+  );
+  let comboboxTester = testUtilUser.createTester('ComboBox', {root: getByTestId('test-combobox'), interactionType: 'keyboard'});
+
+  await comboboxTester.open();
+  expect(comboboxTester.listbox).toBeInTheDocument();
+
+  let options = comboboxTester.options();
+  await comboboxTester.selectOption({option: options[0]});
+  expect(comboboxTester.combobox.value).toBe('One');
+  expect(comboboxTester.listbox).not.toBeInTheDocument();
+});
+```
+
+<ClassAPI links={comboboxUtils.links} class={comboboxUtils.exports.ComboBoxTester} />
