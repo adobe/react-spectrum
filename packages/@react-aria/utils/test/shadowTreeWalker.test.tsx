@@ -272,3 +272,90 @@ describe('ShadowTreeWalker', () => {
     });
   });
 });
+
+describe.skip('speed test', () => {
+  let Component = (props) => {
+    if (props.depth === 0) {
+      return <div data-testid="hello">hello</div>
+    }
+    return <div><Component depth={props.depth -1}/></div>
+  }
+  it.each`
+  Name | createTreeWalker
+  ${'native'} | ${() => document.createTreeWalker(document.body, NodeFilter.SHOW_ALL)}
+  ${'shadow'} | ${() => createShadowTreeWalker(document, document.body)}
+  `('$Name', ({createTreeWalker}) => {
+    render(
+      <>
+        <div id="div-one" />
+        <Component depth={100} />
+        <input id="input-one" />
+        <div id="div-two" />
+        <Component depth={100} />
+        <input id="input-two" />
+        <div id="div-three" />
+        <Component depth={100} />
+        <input id="input-three" />
+        <div id="div-four" />
+        <Component depth={100} />
+      </>
+    );
+    let walker = createTreeWalker();
+    let start = performance.now();
+    for (let i = 0; i < 10000; i++) {
+      walker.firstChild();
+      walker.nextNode();
+      walker.previousNode();
+      walker.lastChild();
+    }
+    let end = performance.now();
+    console.log(`Time taken for 10000 iterations: ${end - start}ms`);
+  });
+});
+
+// describe('checking if node is contained', () => {
+//   let user;
+//   beforeAll(() => {
+//     user = userEvent.setup({delay: null, pointerMap});
+//   });
+//   it.only("benchmark native contains", async () => {
+//     let Component = (props) => {
+//       if (props.depth === 0) {
+//         return <div data-testid="hello">hello</div>
+//       }
+//       return <div><Component depth={props.depth -1}/></div>
+//     }
+//     let {getByTestId} = render(
+//       <Component depth={100} />
+//     );
+//     let target = getByTestId('hello');
+//     let handler = jest.fn((e) => {
+//       expect(e.currentTarget.contains(e.target)).toBe(true);
+//     });
+//     document.body.addEventListener('click', handler);
+//     for (let i = 0; i < 50; i++) {
+//       await user.click(target);
+//       expect(handler).toHaveBeenCalledTimes(i + 1);
+//     }
+//   });
+//   it.only("benchmark nodeContains", async () => {
+//     let Component = (props) => {
+//       if (props.depth === 0) {
+//         return <div data-testid="hello">hello</div>
+//       }
+//       return <div><Component depth={props.depth -1}/></div>
+//     }
+//     let {getByTestId} = render(
+//       <Component depth={100} />
+//     );
+//     let target = getByTestId('hello');
+//     let handler = jest.fn((e) => {
+//       expect(nodeContains(e.currentTarget, e.composedPath()[0])).toBe(true);
+//     });
+//     document.body.addEventListener('click', handler);
+//     for (let i = 0; i < 50; i++) {
+//       await user.click(target);
+//       expect(handler).toHaveBeenCalledTimes(i + 1);
+//     }
+//   });
+// });
