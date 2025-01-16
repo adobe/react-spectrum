@@ -619,7 +619,7 @@ const resizableMenuButtonWrapper = style({
   },
   // TODO: when align: end, the dropdown arrow is misaligned with the text, not sure how best to make the svg be flush with the end of the button other than modifying the
   // paddingEnd
-  paddingX: 0,
+  paddingX: 16,
   backgroundColor: 'transparent',
   borderStyle: 'none',
   fontSize: 'control',
