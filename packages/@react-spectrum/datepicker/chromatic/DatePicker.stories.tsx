@@ -88,7 +88,7 @@ ValueLTRInteractions.parameters = {
     colorSchemes: ['light'],
     express: false
   }
-}
+};
 
 ValueLTRInteractions.play = async ({canvasElement}) => {
   await userEvent.tab();
@@ -99,7 +99,7 @@ ValueLTRInteractions.play = async ({canvasElement}) => {
   let body = canvasElement.ownerDocument.body;
   await within(body).findByRole('dialog');
   await userEvent.keyboard('[ArrowRight]');
-}
+};
 
 export const ValueRTLInteractions = () => <DatePicker label="Date" value={date} />;
 ValueRTLInteractions.parameters = {
@@ -109,7 +109,7 @@ ValueRTLInteractions.parameters = {
     colorSchemes: ['light'],
     express: false
   }
-}
+};
 
 ValueRTLInteractions.play = async ({canvasElement}) => {
   await userEvent.tab();
@@ -120,7 +120,7 @@ ValueRTLInteractions.play = async ({canvasElement}) => {
   let body = canvasElement.ownerDocument.body;
   await within(body).findByRole('dialog');
   await userEvent.keyboard('[ArrowLeft]');
-}
+};
 
 export const DisabledPlaceholder = () => <DatePicker label="Date" placeholderValue={date} isDisabled />;
 export const DisabledValue = () => <DatePicker label="Date" value={date} isDisabled />;
