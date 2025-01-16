@@ -180,9 +180,10 @@ governing permissions and limitations under the License.
     --spectrum-textfield-border-color-key-focus: Highlight;
     --spectrum-textfield-placeholder-text-color: GrayText;
     --spectrum-textfield-placeholder-text-color-hover: GrayText;
+    --spectrum-high-contrast-focus-ring-color: Highlight;
     &.focus-ring,
     &:focus-visible {
-      outline: 2px solid Highlight;
+      outline: 2px solid var(--spectrum-high-contrast-focus-ring-color);
     }
     .spectrum-Textfield--quiet & {
       &.focus-ring,

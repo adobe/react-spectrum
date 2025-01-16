@@ -1,0 +1,268 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import colorTypes from 'docs:@react-types/color/src/index.d.ts';
+import docs from 'docs:@react-spectrum/color';
+import {HeaderInfo, PropTable, TypeLink, PageDescription} from '@react-spectrum/docs';
+import {Layout} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/color/package.json';
+import statelyDocs from 'docs:@react-stately/color';
+
+export default Layout;
+
+```jsx import
+import {ColorPicker, ColorEditor} from '@react-spectrum/color';
+import {Flex} from '@react-spectrum/layout';
+```
+
+---
+category: Color
+keywords: [color picker]
+---
+
+# ColorPicker
+
+<PageDescription>{docs.exports.ColorPicker.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['ColorPicker', 'ColorEditor']}
+  since="3.35.0" />
+
+## Example
+
+```tsx example
+<ColorPicker label="Fill" defaultValue="#5100FF">
+  <ColorEditor />
+</ColorPicker>
+```
+
+## Value
+
+A ColorArea requires either an uncontrolled default value or a controlled value, provided using the `defaultValue` or `value` props respectively. The value provided to either of these props should be a color string or <TypeLink links={colorTypes.links} type={colorTypes.exports.Color} /> object.
+
+In the example below, the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.parseColor} /> function is used to parse the initial color from a HSL string so that `value`'s type remains consistent.
+
+```tsx example
+import {ColorPicker} from '@react-spectrum/color';
+import {Flex} from '@react-spectrum/layout';
+import {parseColor} from '@react-spectrum/color';
+
+function Example() {
+  let [value, setValue] = React.useState(parseColor('hsl(25, 100%, 50%)'));
+  return (
+    <Flex gap="size-300" wrap>
+      <ColorPicker
+        label="Color Picker (uncontrolled)"
+        /*- begin highlight -*/
+        defaultValue="hsl(25, 100%, 50%)">
+        {/*- end highlight -*/}
+        <ColorEditor />
+      </ColorPicker>
+      <ColorPicker
+        label="Color Picker (controlled)"
+        /*- begin highlight -*/
+        value={value}
+        onChange={setValue}>
+        {/*- end highlight -*/}
+        <ColorEditor />
+      </ColorPicker>
+    </Flex>
+  );
+}
+```
+
+## Labeling
+
+A visual label should be provided for the ColorPicker using the `label` prop.
+
+```tsx example
+<ColorPicker label="Stroke color" defaultValue="#345">
+  <ColorEditor />
+</ColorPicker>
+```
+
+### Accessibility
+
+If a visible label isn't specified, an `aria-label` should be provided to the ColorPicker for
+accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using
+the `id` of the labeling element instead.
+
+```tsx example
+<ColorPicker aria-label="Fill color" defaultValue="#184">
+  <ColorEditor />
+</ColorPicker>
+```
+
+In addition to the visible or accessibility label, a ColorPicker also announces a description of the current color value (e.g. "dark vibrant blue") as a part of the label.
+
+### Internationalization
+
+For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the ColorPicker is automatically flipped.
+
+## Events
+
+ColorPicker accepts an `onChange` prop which is triggered whenever the value is edited by the user. It receives a <TypeLink links={colorTypes.links} type={colorTypes.exports.Color} /> object as a parameter.
+
+The example below uses `onChange` to update a separate element with the color value as a string.
+
+```tsx example
+import {parseColor} from '@react-spectrum/color';
+
+function Example() {
+  let [value, setValue] = React.useState(parseColor('hsl(50, 100%, 50%)'));
+
+  return (
+    <div>
+      <ColorPicker
+        label="Color"
+        value={value}
+        onChange={setValue}>
+        <ColorEditor />
+      </ColorPicker>
+      <p>Selected color: {value.toString('hsl')}</p>
+    </div>
+  );
+}
+```
+
+## Custom color editor
+
+`ColorEditor` provides a default color picker layout including a color area for saturation and brightness, and color sliders for hue and alpha. It also includes ColorFields to view and enter an exact color value by number.
+
+ColorPicker can be customized by providing any combination of color components as children, including [ColorArea](ColorArea.html), [ColorField](ColorField.html), [ColorSlider](ColorSlider.html), [ColorSwatchPicker](ColorSwatchPicker.html), and [ColorWheel](ColorWheel.html).
+
+```tsx example
+import {ColorWheel, ColorArea} from '@react-spectrum/color';
+
+<ColorPicker label="Fill" defaultValue="#08f">
+  <ColorWheel />
+  <ColorArea
+    colorSpace="hsb"
+    xChannel="saturation"
+    yChannel="brightness"
+    size="size-400"
+    position="absolute"
+    top="calc(50% - size-400)"
+    left="calc(50% - size-400)" />
+</ColorPicker>
+```
+
+## Props
+
+### ColorPicker
+
+<PropTable component={docs.exports.ColorPicker} links={docs.links} />
+
+### ColorEditor
+
+<PropTable component={docs.exports.ColorEditor} links={docs.links} />
+
+## Visual options
+
+### Hide alpha channel
+
+By default, `ColorEditor` includes a ColorSlider and ColorField for editing the alpha channel. This can be hidden with the `hideAlphaChannel` prop.
+
+```tsx example
+<ColorPicker label="Color" defaultValue="#f80">
+  <ColorEditor hideAlphaChannel />
+</ColorPicker>
+```
+
+### Swatches
+
+A `ColorEditor` can be combined with additional color components such as a [ColorSwatchPicker](ColorSwatchPicker.html) to choose from a list of pre-defined colors.
+
+```tsx example
+import {ColorSwatchPicker, ColorSwatch} from '@react-spectrum/color';
+
+<ColorPicker label="Color" defaultValue="#A00">
+  <Flex direction="column" gap="size-300">
+    <ColorEditor />
+    <ColorSwatchPicker>
+      <ColorSwatch color="#A00" />
+      <ColorSwatch color="#f80" />
+      <ColorSwatch color="#080" />
+      <ColorSwatch color="#08f" />
+      <ColorSwatch color="#088" />
+      <ColorSwatch color="#008" />
+    </ColorSwatchPicker>
+  </Flex>
+</ColorPicker>
+```
+
+### Channel sliders
+
+This example uses [ColorSlider](ColorSlider.html) to allow a user to adjust each channel of a color value, with a [Picker](Picker.html) to switch between color spaces.
+
+```tsx example
+import type {ColorSpace} from '@react-spectrum/color';
+import {ColorSlider, getColorChannels} from '@react-spectrum/color';
+import {Picker, Item} from '@react-spectrum/picker';
+
+function Example() {
+  let [space, setSpace] = React.useState<ColorSpace>('rgb');
+
+  return (
+    <ColorPicker label="Color" defaultValue="#184">
+      <Flex direction="column" gap="size-100">
+        <Picker aria-label="Color space" isQuiet selectedKey={space} onSelectionChange={s => setSpace(s as ColorSpace)}>
+          <Item key="rgb">RGB</Item>
+          <Item key="hsl">HSL</Item>
+          <Item key="hsb">HSB</Item>
+        </Picker>
+        {getColorChannels(space).map(channel => (
+          <ColorSlider key={channel} colorSpace={space} channel={channel} />
+        ))}
+        <ColorSlider channel="alpha" />
+      </Flex>
+    </ColorPicker>
+  );
+}
+```
+
+### Rounding
+
+The rounding of the color swatch can be controlled with the `rounding` prop.
+
+```tsx example
+<Flex direction="column" gap="size-100">
+  <ColorPicker label="None" rounding="none" defaultValue="#A00">
+    <ColorEditor />
+  </ColorPicker>
+  <ColorPicker label="Default" rounding="default" defaultValue="#080">
+    <ColorEditor />
+  </ColorPicker>
+  <ColorPicker label="Full" rounding="full" defaultValue="#00F">
+    <ColorEditor />
+  </ColorPicker>
+</Flex>
+```
+
+### Size
+
+The size of the color swatch can be controlled with the `size` prop. The default size is "S".
+
+```tsx example
+<Flex direction="column" gap="size-100">
+  <ColorPicker label="Extra small" size="XS" defaultValue="#A00">
+    <ColorEditor />
+  </ColorPicker>
+  <ColorPicker label="Small" size="S" defaultValue="#080">
+    <ColorEditor />
+  </ColorPicker>
+  <ColorPicker label="Medium" size="M" defaultValue="#FB0">
+    <ColorEditor />
+  </ColorPicker>
+  <ColorPicker label="Large" size="L" defaultValue="#00F">
+    <ColorEditor />
+  </ColorPicker>
+</Flex>
+```

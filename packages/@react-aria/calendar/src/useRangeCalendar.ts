@@ -12,16 +12,16 @@
 
 import {AriaRangeCalendarProps, DateValue} from '@react-types/calendar';
 import {CalendarAria, useCalendarBase} from './useCalendarBase';
-import {FocusableElement} from '@react-types/shared';
+import {FocusableElement, RefObject} from '@react-types/shared';
 import {RangeCalendarState} from '@react-stately/calendar';
-import {RefObject, useRef} from 'react';
 import {useEvent} from '@react-aria/utils';
+import {useRef} from 'react';
 
 /**
  * Provides the behavior and accessibility implementation for a range calendar component.
  * A range calendar displays one or more date grids and allows users to select a contiguous range of dates.
  */
-export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarProps<T>, state: RangeCalendarState, ref: RefObject<FocusableElement>): CalendarAria {
+export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarProps<T>, state: RangeCalendarState, ref: RefObject<FocusableElement | null>): CalendarAria {
   let res = useCalendarBase(props, state);
 
   // We need to ignore virtual pointer events from VoiceOver due to these bugs.
@@ -50,21 +50,22 @@ export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarPr
     }
 
     let target = e.target as Element;
-    let body = document.getElementById(res.calendarProps.id);
     if (
-      body &&
-      body.contains(document.activeElement) &&
-      (!body.contains(target) || !target.closest('button, [role="button"]'))
+      ref.current &&
+      ref.current.contains(document.activeElement) &&
+      (!ref.current.contains(target) || !target.closest('button, [role="button"]'))
     ) {
       state.selectFocusedDate();
     }
   };
 
   useEvent(windowRef, 'pointerup', endDragging);
-  useEvent(windowRef, 'pointercancel', endDragging);
 
   // Also stop range selection on blur, e.g. tabbing away from the calendar.
   res.calendarProps.onBlur = e => {
+    if (!ref.current) {
+      return;
+    }
     if ((!e.relatedTarget || !ref.current.contains(e.relatedTarget)) && state.anchorDate) {
       state.selectFocusedDate();
     }

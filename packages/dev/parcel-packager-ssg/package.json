@@ -4,12 +4,14 @@
   "private": true,
   "main": "SSGPackager.js",
   "engines": {
-    "parcel": "^2.10.2"
+    "parcel": "^2.0.0"
   },
   "dependencies": {
-    "@parcel/plugin": "^2.10.2",
-    "@parcel/utils": "^2.10.2",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "@parcel/plugin": "^2.0.0",
+    "@parcel/utils": "^2.13.0"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
   }
 }

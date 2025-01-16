@@ -47,7 +47,9 @@ export interface TableColumnResizeState<T> {
   /** Key of the currently resizing column. */
   resizingColumn: Key | null,
   /** A reference to the table state. */
-  tableState: TableState<T>
+  tableState: TableState<T>,
+  /** A map of the current column widths. */
+  columnWidths: Map<Key, number>
 }
 
 /**
@@ -105,20 +107,18 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
   }, [setResizingColumn]);
 
   let updateResizedColumns = useCallback((key: Key, width: number): Map<Key, ColumnSize> => {
-    let newControlled = new Map(Array.from(controlledColumns).map(([key, entry]) => [key, entry.props.width]));
-    let newSizes = columnLayout.resizeColumnWidth(tableWidth, state.collection, newControlled, uncontrolledWidths, key, width);
-
-    let map = new Map(Array.from(uncontrolledColumns).map(([key]) => [key, newSizes.get(key)]));
+    let newSizes = columnLayout.resizeColumnWidth(state.collection, uncontrolledWidths, key, width);
+    let map = new Map(Array.from(uncontrolledColumns).map(([key]) => [key, newSizes.get(key)!]));
     map.set(key, width);
     setUncontrolledWidths(map);
     return newSizes;
-  }, [controlledColumns, uncontrolledColumns, setUncontrolledWidths, tableWidth, columnLayout, state.collection, uncontrolledWidths]);
+  }, [uncontrolledColumns, setUncontrolledWidths, columnLayout, state.collection, uncontrolledWidths]);
 
   let endResize = useCallback(() => {
     setResizingColumn(null);
   }, [setResizingColumn]);
 
-  useMemo(() =>
+  let columnWidths = useMemo(() =>
     columnLayout.buildColumnWidths(tableWidth, state.collection, colWidths)
   , [tableWidth, state.collection, colWidths, columnLayout]);
 
@@ -133,9 +133,11 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
       columnLayout.getColumnMinWidth(key),
     getColumnMaxWidth: (key: Key) =>
       columnLayout.getColumnMaxWidth(key),
-    tableState: state
+    tableState: state,
+    columnWidths
   }), [
     columnLayout,
+    columnWidths,
     resizingColumn,
     updateResizedColumns,
     startResize,

@@ -18,7 +18,10 @@ import {SpectrumImageProps} from '@react-types/image';
 import styles from '@adobe/spectrum-css-temp/components/image/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 
-// incomplete component for show right now
+/**
+ * Image is used to insert and display an image within a component.
+ */
+export const Image = React.forwardRef(// incomplete component for show right now
 
 function Image(props: SpectrumImageProps, ref: DOMRef<HTMLDivElement>) {
   /* Slots should be able to pass an alt for default behavior, but in Images, the child may know better. */
@@ -56,13 +59,9 @@ function Image(props: SpectrumImageProps, ref: DOMRef<HTMLDivElement>) {
         src={src}
         alt={userProvidedAlt || alt}
         style={{objectFit}}
-        className={classNames(styles, 'spectrum-Image-img')} />
+        className={classNames(styles, 'spectrum-Image-img')} 
+        onError={props?.onError}
+        onLoad={props?.onLoad} />
     </div>
   );
-}
-
-/**
- * Image is used to insert and display an image within a component.
- */
-const _Image = React.forwardRef(Image);
-export {_Image as Image};
+});

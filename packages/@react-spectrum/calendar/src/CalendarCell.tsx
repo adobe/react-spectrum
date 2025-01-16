@@ -23,11 +23,12 @@ import {useLocale} from '@react-aria/i18n';
 
 interface CalendarCellProps extends AriaCalendarCellProps {
   state: CalendarState | RangeCalendarState,
-  currentMonth: CalendarDate
+  currentMonth: CalendarDate,
+  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'
 }
 
-export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps) {
-  let ref = useRef<HTMLElement>();
+export function CalendarCell({state, currentMonth, firstDayOfWeek, ...props}: CalendarCellProps) {
+  let ref = useRef<HTMLElement>(null);
   let {
     cellProps,
     buttonProps,
@@ -48,7 +49,7 @@ export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps)
   let isSelectionStart = isSelected && highlightedRange && isSameDay(props.date, highlightedRange.start);
   let isSelectionEnd = isSelected && highlightedRange && isSameDay(props.date, highlightedRange.end);
   let {locale} = useLocale();
-  let dayOfWeek = getDayOfWeek(props.date, locale);
+  let dayOfWeek = getDayOfWeek(props.date, locale, firstDayOfWeek);
   let isRangeStart = isSelected && (isFirstSelectedAfterDisabled || dayOfWeek === 0 || props.date.day === 1);
   let isRangeEnd = isSelected && (isLastSelectedBeforeDisabled || dayOfWeek === 6 || props.date.day === currentMonth.calendar.getDaysInMonth(currentMonth));
   let {focusProps, isFocusVisible} = useFocusRing();

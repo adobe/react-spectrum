@@ -1,0 +1,16 @@
+{
+  "name": "parcel-transformer-mdx-extract",
+  "version": "1.0.0",
+  "private": true,
+  "main": "MDXExtractTransformer.mjs",
+  "engines": {
+    "parcel": "^2.12.0"
+  },
+  "dependencies": {
+    "@parcel/plugin": "^2.0.0",
+    "remark-mdx": "^2.0.0-rc.2",
+    "remark-parse": "^10.0.1",
+    "unified": "^10.0.1",
+    "unist-util-visit": "^4.0.0"
+  }
+}

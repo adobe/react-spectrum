@@ -20,6 +20,8 @@ governing permissions and limitations under the License.
 
   --spectrum-accordion-item-title-padding-y: var(--spectrum-global-dimension-size-150);
   --spectrum-accordion-item-line-height: 1.3;
+
+  --spectrum-accordion-item-focus-ring-color: var(--spectrum-alias-focus-color);
 }
 
 .spectrum-Accordion {
@@ -32,10 +34,11 @@ governing permissions and limitations under the License.
 .spectrum-Accordion-itemIndicator {
   display: block;
 
-  padding-inline-start: var(--spectrum-accordion-icon-spacing);
+  padding-inline-start: var(--spectrum-accordion-icon-gap);
   padding-inline-end: var(--spectrum-accordion-icon-gap);
 
   transition: transform ease var(--spectrum-global-animation-duration-100);
+  box-sizing: content-box;
 }
 
 .spectrum-Accordion-item {
@@ -43,12 +46,23 @@ governing permissions and limitations under the License.
   position: relative;
 
   display: list-item;
+  list-style: none;
   margin: 0;
 
-  border-bottom: var(--spectrum-accordion-item-border-size) solid transparent;
+  border-bottom: var(--spectrum-accordion-item-border-size) solid var(--spectrum-accordion-border-color);
+  border-top: var(--spectrum-accordion-item-border-size) solid var(--spectrum-accordion-border-color);
 
-  &:first-of-type {
-    border-top: var(--spectrum-accordion-item-border-size) solid transparent;
+  &.in-accordion:not(:first-of-type) {
+    border-top-width: 0;
+  }
+
+  &.spectrum-Accordion-item--quiet {
+    border-bottom-width: 0;
+    border-top-width: 0;
+
+    &:first-of-type {
+      border-top-width: 0;
+    }
   }
 }
 
@@ -57,6 +71,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Accordion-itemHeader {
+  outline: none;
   position: relative;
 
   display: flex;
@@ -66,7 +81,7 @@ governing permissions and limitations under the License.
   box-sizing: border-box;
   /* left padding takes into account the icon's size as well as the focus state's left border */
   padding-block: var(--spectrum-accordion-item-title-padding-y);
-  padding-inline-start: 2px;
+  padding-inline-start: var(--spectrum-accordion-icon-gap);
   padding-inline-end: var(--spectrum-accordion-item-padding);
   margin: 0;
 
@@ -84,34 +99,27 @@ governing permissions and limitations under the License.
   -moz-appearance: none;
   appearance: none;
   background-color: inherit;
-  border: 0;
   font-family: inherit;
   text-align: start;
   width: 100%;
+  border-style: solid;
+  border-color: transparent;
 
-  &:focus {
-    outline: none;
-
-    &::after {
-      content: '';
-
-      position: absolute;
-      inset-inline-start: 0;
-      top: calc(var(--spectrum-accordion-item-border-size) * -1);
-      bottom: calc(var(--spectrum-accordion-item-border-size) * -1);
-
-      width: var(--spectrum-accordion-item-border-size-key-focus);
-    }
+  &.focus-ring {
+    border-radius: var(--spectrum-global-dimension-static-size-100);
+    outline: solid 2px var(--spectrum-accordion-item-focus-ring-color);
+    outline-offset: -2px;
   }
 }
 
-.spectrum-Accordion-itemContent {
-  padding: 0 var(--spectrum-accordion-item-content-padding) var(--spectrum-accordion-item-content-padding) var(--spectrum-accordion-item-content-padding);
-  display: none;
+.spectrum-Accordion-item.is-expanded {
+  .spectrum-Accordion-itemContent {
+    padding: 8px 9px 16px 9px;
+  }
 }
 
 .spectrum-Accordion-item {
-  &.is-open {
+  &.is-expanded {
     > .spectrum-Accordion-itemHeading {
       > .spectrum-Accordion-itemHeader {
         > .spectrum-Accordion-itemIndicator {
@@ -126,7 +134,7 @@ governing permissions and limitations under the License.
     }
 
     > .spectrum-Accordion-itemHeader::after {
-      /* No bottom border when open, so be less tall */
+      /* No bottom border when expanded, so be less tall */
       height: var(--spectrum-accordion-item-height-actual);
     }
 

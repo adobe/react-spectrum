@@ -29,7 +29,10 @@ import {useKeyboard} from '@react-aria/interactions';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
-function ActionBar<T extends object>(props: SpectrumActionBarProps<T>, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Action bars are used for single and bulk selection patterns when a user needs to perform actions on one or more items at the same time.
+ */
+export const ActionBar = React.forwardRef(function ActionBar<T extends object>(props: SpectrumActionBarProps<T>, ref: DOMRef<HTMLDivElement>) {
   let isOpen = props.selectedItemCount !== 0;
   let domRef = useDOMRef(ref);
 
@@ -42,7 +45,7 @@ function ActionBar<T extends object>(props: SpectrumActionBarProps<T>, ref: DOMR
       <ActionBarInnerWithRef {...props} ref={domRef} />
     </OpenTransition>
   );
-}
+}) as <T>(props: SpectrumActionBarProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 
 interface ActionBarInnerProps<T> extends SpectrumActionBarProps<T> {
   isOpen?: boolean
@@ -58,7 +61,9 @@ function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: Ref<HTMLDivElemen
     onClearSelection,
     selectedItemCount,
     isOpen,
-    items
+    buttonLabelBehavior = 'collapse',
+    items,
+    disabledKeys
   } = props;
 
   let {styleProps} = useStyleProps(props);
@@ -110,8 +115,9 @@ function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: Ref<HTMLDivElemen
             isQuiet
             staticColor={isEmphasized ? 'white' : undefined}
             overflowMode="collapse"
-            buttonLabelBehavior="collapse"
+            buttonLabelBehavior={buttonLabelBehavior}
             onAction={onAction}
+            disabledKeys={disabledKeys}
             UNSAFE_className={classNames(styles, 'react-spectrum-ActionBar-actionGroup')}>
             {children}
           </ActionGroup>
@@ -135,9 +141,3 @@ function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: Ref<HTMLDivElemen
 }
 
 const ActionBarInnerWithRef = React.forwardRef(ActionBarInner) as <T>(props: ActionBarInnerProps<T> & {ref?: Ref<HTMLDivElement>}) => ReactElement;
-
-/**
- * Action bars are used for single and bulk selection patterns when a user needs to perform actions on one or more items at the same time.
- */
-const _ActionBar = React.forwardRef(ActionBar) as <T>(props: SpectrumActionBarProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
-export {_ActionBar as ActionBar};

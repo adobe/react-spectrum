@@ -49,7 +49,12 @@ function disablePendingProps(props) {
   return props;
 }
 
-function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>, ref: FocusableRef<HTMLElement>) {
+/**
+ * Buttons allow users to perform an action or to navigate to another page.
+ * They have multiple styles for various needs, and are ideal for calling attention to
+ * where a user needs to do something in order to move forward in a flow.
+ */
+export const Button = React.forwardRef(function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useSlotProps(props, 'button');
   props = disablePendingProps(props);
@@ -114,11 +119,24 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
   if (isAppleDevice() && (!hasAriaLabel || isFirefox())) {
     ariaLive = 'off';
   }
+
+  let isPendingProps = isPending ? {
+    onClick: (e) => {
+      if (e.currentTarget instanceof HTMLButtonElement) {
+        e.preventDefault();
+      }
+    }
+  } : {
+    // no-op. 
+    // Not sure why, but TypeScript wouldn't allow to have an empty object `{}`.
+    onClick: () => {}
+  };
+
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <Element
         {...styleProps}
-        {...mergeProps(buttonProps, hoverProps, focusProps)}
+        {...mergeProps(buttonProps, hoverProps, focusProps, isPendingProps)}
         id={buttonId}
         ref={domRef}
         data-variant={variant}
@@ -186,12 +204,4 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
       </Element>
     </FocusRing>
   );
-}
-
-/**
- * Buttons allow users to perform an action or to navigate to another page.
- * They have multiple styles for various needs, and are ideal for calling attention to
- * where a user needs to do something in order to move forward in a flow.
- */
-let _Button = React.forwardRef(Button) as <T extends ElementType = 'button'>(props: SpectrumButtonProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
-export {_Button as Button};
+}) as <T extends ElementType = 'button'>(props: SpectrumButtonProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;

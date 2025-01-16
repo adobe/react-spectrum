@@ -1,0 +1,436 @@
+{/* Copyright 2024 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import statelyDocs from 'docs:@react-stately/color';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import packageData from 'react-aria-components/package.json';
+import Anatomy from '@react-aria/color/docs/ColorWheelAnatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {Divider} from '@react-spectrum/divider';
+import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
+import {Keyboard} from '@react-spectrum/text';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
+
+---
+category: Color
+keywords: [color wheel, color picker, aria]
+type: component
+---
+
+# ColorWheel
+
+<PageDescription>{docs.exports.ColorWheel.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['ColorWheel']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/slider/'}
+  ]} />
+
+## Example
+
+```tsx example
+import {ColorWheel, ColorWheelTrack, ColorThumb} from 'react-aria-components';
+
+<ColorWheel outerRadius={100} innerRadius={74}>
+  <ColorWheelTrack />
+  <ColorThumb />
+</ColorWheel>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ColorThumb {
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px black, inset 0 0 0 1px black;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  box-sizing: border-box;
+
+  &[data-focus-visible] {
+    width: 24px;
+    height: 24px;
+  }
+}
+```
+
+</details>
+
+## Features
+
+The [&lt;input type="color"&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/color) HTML element
+can be used to build a color picker, however it is very inconsistent across browsers and operating systems and consists
+of a complete color picker rather than only a hue color wheel. `useColorWheel` helps achieve accessible and
+touch-friendly color wheels that can be styled as needed.
+
+* **Customizable** – Support for adjusting the hue of an HSL or HSB color value, with customizable radius and track thickness.
+* **High quality interactions** – Mouse, touch, and keyboard input is supported via the [useMove](../react-aria/useMove.html) hook. Pressing the track moves the thumb to that position. Text selection and touch scrolling are prevented while dragging.
+* **Accessible** – Announces localized hue descriptions for screen reader users (e.g. "cyan blue"). Uses a visually hidden `<input>` element for mobile screen reader support and HTML form integration.
+
+## Anatomy
+
+<Anatomy
+  role="img"
+  aria-label="Color wheel anatomy diagram: Shows a color wheel component with labels pointing to its parts, including the track, and thumb elements." />
+
+A color wheel consists of a circular track and a thumb that the user can drag to change the color hue.
+A visually hidden `<input>` element is used to represent the value to assistive technologies.
+
+```tsx
+import {ColorWheel, ColorWheelTrack, ColorThumb} from 'react-aria-components';
+
+<ColorWheel>
+  <ColorWheelTrack />
+  <ColorThumb />
+</ColorWheel>
+```
+
+{/*
+
+## Examples
+
+<ExampleList tag="colorslider" />
+
+*/}
+
+## Starter kits
+
+To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
+
+<StarterKits component="colorwheel" />
+
+## Reusable wrappers
+
+If you will use a ColorWheel in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+```tsx example export=true
+import type {ColorWheelProps} from 'react-aria-components';
+
+interface MyColorWheelProps extends Omit<ColorWheelProps, 'outerRadius' | 'innerRadius'> {}
+
+export function MyColorWheel(props: MyColorWheelProps) {
+  return (
+    <ColorWheel {...props} outerRadius={100} innerRadius={74}>
+      <ColorWheelTrack />
+      <ColorThumb />
+    </ColorWheel>
+  );
+}
+
+<MyColorWheel defaultValue="hsl(30, 100%, 50%)" />
+```
+
+## Value
+
+A ColorWheel's `value` specifies the position of the ColorWheel's thumb on the track, and accepts a string or <TypeLink links={docs.links} type={docs.exports.Color} /> object.
+
+### Uncontrolled
+
+By default, `ColorWheel` is uncontrolled with a default value of red (hue = 0˚). You can change the
+default value using the `defaultValue` prop.
+
+```tsx example
+<MyColorWheel defaultValue="hsl(80, 100%, 50%)" />
+```
+
+### Controlled
+
+A `ColorWheel` can be made controlled using the `value` prop. The <TypeLink links={docs.links} type={docs.exports.parseColor} />
+function is used to parse the initial color from an HSL string, stored in state. The `onChange` prop
+is used to update the value in state when the user drags the thumb.
+
+```tsx example
+import {parseColor} from 'react-aria-components';
+
+function Example() {
+  let [color, setColor] = React.useState(parseColor('hsl(0, 100%, 50%)'));
+  return (
+    <>
+      <MyColorWheel value={color} onChange={setColor} />
+      <p>Current color value: {color.toString('hsl')}</p>
+    </>
+  );
+}
+```
+
+### HTML forms
+
+ColorWheel supports the `name` prop for integration with HTML forms. The value will be submitted as a number between 0 and 360 degrees.
+
+```tsx example
+<MyColorWheel name="hue" />
+```
+
+## Events
+
+ColorWheel supports two events: `onChange` and `onChangeEnd`. `onChange` is triggered whenever the ColorWheel's handle is dragged, and `onChangeEnd`
+is triggered when the user stops dragging the handle. Both events receive a <TypeLink links={docs.links} type={docs.exports.Color} /> object
+as a parameter.
+
+The example below uses `onChange` and `onChangeEnd` to update two separate elements with the ColorWheel's value.
+
+```tsx example
+function Example() {
+  let [currentValue, setCurrentValue] = React.useState(parseColor('hsl(50, 100%, 50%)'));
+  let [finalValue, setFinalValue] = React.useState(currentValue);
+
+  return (
+    <div>
+      <MyColorWheel
+        value={currentValue}
+        onChange={setCurrentValue}
+        onChangeEnd={setFinalValue}
+      />
+      <p>Current value: {currentValue.toString('hsl')}</p>
+      <p>Final value: {finalValue.toString('hsl')}</p>
+    </div>
+  );
+}
+```
+
+## Disabled
+
+A `ColorWheel` can be disabled using the `isDisabled` prop. This prevents the thumb from being focused or dragged. It's up to you to style your color wheel to appear disabled accordingly.
+
+```tsx example
+<MyColorWheel defaultValue="hsl(80, 100%, 50%)" isDisabled />
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ColorWheel {
+  &[data-disabled] {
+    .react-aria-ColorWheelTrack {
+      background: gray !important;
+    }
+
+    .react-aria-ColorThumb {
+      background: gray !important;
+      opacity: 0.5;
+    }
+  }
+}
+```
+
+</details>
+
+## Labeling
+
+By default, a localized string for the "hue" channel name is used as the `aria-label` for the ColorWheel. If you wish to override this with a more specific label, an `aria-label` or
+`aria-labelledby` prop may be passed to further identify the element to assistive technologies.
+
+For example, for a ColorArea that adjusts a background color you might pass the `aria-label` prop, "Background color". If you provide your own `aria-label` or `aria-labelledby`, be sure to localize the string appropriately.
+
+```tsx example
+<div style={{display: 'flex', gap: 8, alignItems: 'end', flexWrap: 'wrap'}}>
+  <MyColorWheel
+    /*- begin highlight -*/
+    aria-label="Background color"
+    /*- end highlight -*/
+    defaultValue="hsl(0, 100%, 50%)" />
+  <div>
+    {/*- begin highlight -*/}
+    <label id="hsl-aria-labelledby-id">Background color</label>
+    {/*- end highlight -*/}
+    <MyColorWheel
+      /*- begin highlight -*/
+      aria-labelledby="hsl-aria-labelledby-id"
+      /*- end highlight -*/
+      defaultValue="hsl(0, 100%, 50%)" />
+  </div>
+</div>
+```
+
+### Accessibility
+
+The `aria-valuetext` of the `<input>` element is formatted according to the user's locale automatically. It also includes a localized description of the selected color hue (e.g. "cyan blue").
+
+## Props
+
+### ColorWheel
+
+<PropTable component={docs.exports.ColorWheel} links={docs.links} />
+
+### ColorWheelTrack
+
+The `<ColorWheelTrack>` component renders a circular gradient repreresenting the colors that can be selected for the color channel.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.ColorWheelTrack} links={docs.links} />
+
+</details>
+
+### ColorThumb
+
+The `<ColorThumb>` component renders a draggable thumb with a preview of the selected color.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.ColorThumb} links={docs.links} />
+
+</details>
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-ColorWheel {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<ColorWheel className="my-color-wheel">
+  {/* ... */}
+</ColorWheel>
+```
+
+In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
+
+```css
+.react-aria-ColorThumb[data-dragging] {
+  /* ... */
+}
+
+.react-aria-ColorThumb[data-focused] {
+  /* ... */
+}
+```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<ColorThumb className={({isDragging}) => isDragging ? 'scale-150' : 'scale-100'} />
+```
+
+The states, selectors, and render props for each component used in a `ColorWheel` are documented below.
+
+### ColorWheel
+
+The `ColorWheel` component can be targeted with the `.react-aria-ColorWheel` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.ColorWheelRenderProps.properties} />
+
+### ColorWheelTrack
+
+The `ColorWheelTrack` component can be targeted with the `.react-aria-ColorWheelTrack` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.ColorWheelTrackRenderProps.properties} />
+
+### ColorThumb
+
+The `ColorThumb` component can be targeted with the `.react-aria-ColorThumb` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.ColorThumbRenderProps.properties} />
+
+## Advanced customization
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['ColorWheel']} docs={docs} />
+
+This example shows a `ColorWheelDescription` component that accepts a color wheel in its children and renders a description element below it. It uses the [useId](useId.html) hook to generate a unique id for the description, and associates it with the color wheel via the `aria-describedby` attribute passed to the `ColorWheelContext` provider.
+
+```tsx example
+import {ColorWheelContext} from 'react-aria-components';
+import {useId} from 'react-aria';
+
+interface ColorWheelDescriptionProps {
+  children?: React.ReactNode,
+  description?: string
+}
+
+function ColorWheelDescription({children, description}: ColorWheelDescriptionProps) {
+  let descriptionId = useId();
+  return (
+    <div>
+      {/*- begin highlight -*/}
+      <ColorWheelContext.Provider value={{'aria-describedby': descriptionId}}>
+      {/*- end highlight -*/}
+        {children}
+      </ColorWheelContext.Provider>
+      <small id={descriptionId}>{description}</small>
+    </div>
+  );
+}
+
+<ColorWheelDescription description="Choose a background color for your profile.">
+  <MyColorWheel />
+</ColorWheelDescription>
+```
+
+### State
+
+ColorWheel provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.ColorWheelState} /> object to its children via `ColorWheelStateContext`. This can be used to access and manipulate the color wheel's state.
+
+This example shows a `HueField` component that can be placed within a `ColorWheel` to allow the user to enter a number and update the hue.
+
+```tsx example
+import {ColorWheelStateContext, NumberField, Input, useLocale} from 'react-aria-components';
+
+function HueField() {
+  /*- begin highlight -*/
+  let state = React.useContext(ColorWheelStateContext)!;
+  /*- end highlight -*/
+  let {locale} = useLocale();
+  return (
+    <NumberField
+      aria-label={state.value.getChannelName('hue', locale)}
+      value={state.value.getChannelValue('hue')}
+      onChange={v => state.setValue(state.value.withChannelValue('hue', v))}
+      formatOptions={state.value.getChannelFormatOptions('hue')}>
+      <Input />
+    </NumberField>
+  );
+}
+
+<ColorWheel outerRadius={100} innerRadius={74}>
+  <ColorWheelTrack />
+  <ColorThumb />
+  {/*- begin highlight -*/}
+  <HueField />
+  {/*- end highlight -*/}
+</ColorWheel>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Input {
+  width: 4ch;
+}
+```
+
+</details>
+
+### Hooks
+
+If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useColorWheel](useColorWheel.html) for more details.

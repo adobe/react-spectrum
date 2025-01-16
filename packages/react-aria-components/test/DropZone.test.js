@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button, DropZone, DropZoneContext, FileTrigger, Link, Text} from '../';
 import {ClipboardEvent, DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
 import {Draggable} from '@react-aria/dnd/test/examples';
@@ -123,13 +123,12 @@ describe('DropZone', () => {
         </Text>
       </DropZone>);
     let text = getByText('Test');
-    let div = getByText('DropZone');
     let button = getByRole('button');
-    expect(button).toHaveAttribute('aria-labelledby', `${div.id} ${text.id}`);
+    expect(button).toHaveAttribute('aria-labelledby', `${button.id} ${text.id}`);
   });
 
   it('should allow custom aria-label', () => {
-    let {getByRole, getByText} = render(
+    let {getByRole} = render(
       <DropZone
         data-testid="foo"
         aria-label="test aria-label">
@@ -138,8 +137,7 @@ describe('DropZone', () => {
         </FileTrigger>
       </DropZone>);
     let button = getByRole('button');
-    let div = getByText('test aria-label');
-    expect(button).toHaveAttribute('aria-labelledby', `${div.id}`);
+    expect(button).toHaveAttribute('aria-label', 'test aria-label');
   });
 
   it('should support render props', async () => {
@@ -306,6 +304,100 @@ describe('DropZone', () => {
         expect(dropzone).not.toHaveAttribute('data-drop-target');
 
       });
+
+      it('should not trigger drag events if disabled', async () => {
+        let tree = render(
+          <>
+            <Draggable onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
+            <DropZone isDisabled data-testid="disabled" onDropEnter={onDropEnter} onDrop={onDrop} onDropMove={onDropMove}>
+              <Text slot="label">
+                Test
+              </Text>
+            </DropZone>
+          </>
+        );
+        let dropzone = tree.getByTestId('disabled');
+        expect(dropzone).toHaveAttribute('data-disabled', 'true');
+
+        let draggable = tree.getByText('Drag me');
+        expect(dropzone).toHaveClass('react-aria-DropZone');
+        expect(draggable).toHaveAttribute('draggable', 'true');
+        expect(draggable).toHaveAttribute('data-dragging', 'false');
+        expect(dropzone).not.toHaveAttribute('data-drop-target');
+
+        let dataTransfer = new DataTransfer();
+        fireEvent(draggable, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+        expect(dataTransfer.dropEffect).toBe('none');
+        expect(dataTransfer.effectAllowed).toBe('all');
+        expect([...dataTransfer.items]).toEqual([new DataTransferItem('text/plain', 'hello world')]);
+        expect(dataTransfer._dragImage).toBeUndefined();
+
+        act(() => jest.runAllTimers());
+        expect(draggable).toHaveAttribute('data-dragging', 'true');
+
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+        expect(onDragStart).toHaveBeenCalledWith({
+          type: 'dragstart',
+          x: 0,
+          y: 0
+        });
+
+        fireEvent(draggable, new DragEvent('drag', {dataTransfer, clientX: 1, clientY: 1}));
+        expect(onDragMove).toHaveBeenCalledTimes(1);
+        expect(onDragMove).toHaveBeenCalledWith({
+          type: 'dragmove',
+          x: 1,
+          y: 1
+        });
+
+        fireEvent(dropzone, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
+        expect(onDropEnter).toHaveBeenCalledTimes(0);
+
+        expect(dataTransfer.dropEffect).toBe('none');
+        expect(dropzone).not.toHaveAttribute('data-drop-target');
+
+        fireEvent(dropzone, new DragEvent('dragover', {dataTransfer, clientX: 2, clientY: 2}));
+        expect(onDropMove).toHaveBeenCalledTimes(0);
+
+        expect(dataTransfer.dropEffect).toBe('none');
+        expect(dropzone).not.toHaveAttribute('data-drop-target');
+
+        fireEvent(draggable, new DragEvent('dragend', {dataTransfer, clientX: 2, clientY: 2}));
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
+        expect(onDragEnd).toHaveBeenCalledWith({
+          type: 'dragend',
+          x: 2,
+          y: 2,
+          dropOperation: 'cancel'
+        });
+
+        expect(dropzone).not.toHaveAttribute('data-drop-target');
+      });
+
+      it('should focus the dropzone visually hidden button if click happens on a non-focusable element', async () => {
+        let {getByRole, getByTestId} = render(
+          <DropZone data-testid="dropzone">
+            <div data-testid="div">Test</div>
+          </DropZone>
+        );
+
+        let hiddenButton = getByRole('button');
+        await user.click(getByTestId('div'));
+        expect(document.activeElement).toBe(hiddenButton);
+        expect(getByTestId('dropzone')).toContainElement(document.activeElement);
+      });
+
+      it('when a focusable element in the drop zone is clicked, it should receive focus', async () => {
+        let {getByTestId} = render(
+          <DropZone data-testid="dropzone">
+            <Button data-testid="button">Test</Button>
+          </DropZone>
+        );
+
+        let button = getByTestId('button');
+        await user.click(button);
+        expect(document.activeElement).toBe(button);
+      });
     });
 
     describe('via keyboard', function () {
@@ -362,12 +454,56 @@ describe('DropZone', () => {
 
         expect(dropzone).not.toHaveAttribute('data-drop-target');
       });
+
+      it('should not allow drag and drop if disabled', async () => {
+        let tree = render(
+          <>
+            <Draggable onDragStart={onDragStart} onDragEnd={onDragEnd} />
+            <DropZone isDisabled data-testid="disabled" onDropEnter={onDropEnter} onDrop={onDrop} onDropMove={onDropMove}>
+              <Text slot="label">
+                Test
+              </Text>
+            </DropZone>
+          </>
+        );
+
+        let dropzone = tree.getByTestId('disabled');
+        let draggable = tree.getByText('Drag me');
+
+        expect(dropzone).toHaveClass('react-aria-DropZone');
+        expect(draggable).toHaveAttribute('draggable', 'true');
+
+        await user.tab();
+        fireEvent.keyDown(draggable, {key: 'Enter'});
+        fireEvent.keyUp(draggable, {key: 'Enter'});
+
+        expect(onDragStart).toHaveBeenCalledTimes(1);
+        expect(onDragStart).toHaveBeenCalledWith({
+          type: 'dragstart',
+          x: 50,
+          y: 25
+        });
+
+        act(() => jest.runAllTimers());
+        expect(document.activeElement).toBe(draggable);
+        fireEvent.keyDown(dropzone, {key: 'Enter'});
+        fireEvent.keyUp(dropzone, {key: 'Enter'});
+
+        expect(onDrop).toHaveBeenCalledTimes(0);
+
+        expect(onDragEnd).toHaveBeenCalledTimes(1);
+        expect(onDragEnd).toHaveBeenCalledWith({
+          type: 'dragend',
+          x: 50,
+          y: 25,
+          dropOperation: 'cancel'
+        });
+      });
     });
   });
-
   describe('useClipboard', () => {
+    let onDrop = jest.fn();
     it('should be able to paste items into the dropzone', async () => {
-      let onDrop = jest.fn();
 
       let tree = render(
         <>
@@ -379,6 +515,56 @@ describe('DropZone', () => {
         </>
       );
       let button = tree.getByRole('button');
+
+      let clipboardData = new DataTransfer();
+      await user.tab();
+      expect(document.activeElement).toBe(button);
+
+      clipboardData.items.add('hello world', 'text/plain');
+
+      let allowDefaultPaste = fireEvent(button, new ClipboardEvent('beforepaste', {clipboardData}));
+      expect(allowDefaultPaste).toBe(false);
+
+      fireEvent(button, new ClipboardEvent('paste', {clipboardData}));
+
+      expect(onDrop).toHaveBeenCalledTimes(1);
+      expect(onDrop).toHaveBeenCalledWith(
+        {
+          type: 'drop',
+          x: 0,
+          y: 0,
+          dropOperation: 'copy',
+          items: expect.any(Array)
+        }
+      );
+
+      expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('hello world');
+    });
+
+    it('should not allow paste into the dropzone if disabled', async () => {
+      let {rerender, getByRole} = render(
+        <>
+          <DropZone isDisabled onDrop={onDrop}>
+            <Text slot="label">
+              Cannot paste here
+            </Text>
+          </DropZone>
+        </>
+      );
+
+      let button = getByRole('button');
+      await user.tab();
+      expect(document.activeElement).not.toBe(button);
+
+      rerender(
+        <DropZone onDrop={onDrop}>
+          <Text slot="label">
+            Can paste here now
+          </Text>
+        </DropZone>
+      );
+
+      button = getByRole('button');
 
       let clipboardData = new DataTransfer();
       await user.tab();

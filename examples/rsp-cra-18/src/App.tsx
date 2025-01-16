@@ -1,5 +1,5 @@
 import './App.css';
-import {Provider, defaultTheme, Item, TagGroup, Cell, Column, Row, TableBody, TableHeader, TableView, Content} from '@adobe/react-spectrum';
+import {Provider, defaultTheme, Item, TagGroup, Cell, Column, Row, TableBody, TableHeader, TableView} from '@adobe/react-spectrum';
 import Lighting from './Lighting';
 import {useState} from 'react'
 import BodyContent from './BodyContent';
@@ -15,6 +15,7 @@ import StatusExamples from './sections/StatusExamples';
 import ContentExamples from './sections/ContentExamples';
 import PickerExamples from './sections/PickerExamples';
 import DragAndDropExamples from './sections/DragAndDropExamples';
+import {AutocompleteExample} from './AutocompleteExample';
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -61,6 +62,7 @@ function App() {
             }
           </TableBody>
         </TableView>
+        <AutocompleteExample />
         <ButtonExamples />
         <CollectionExamples />
         <ColorExamples />

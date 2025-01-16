@@ -18,8 +18,12 @@ import {SpectrumMeterProps} from '@react-types/meter';
 import styles from '@adobe/spectrum-css-temp/components/barloader/vars.css';
 import {useMeter} from '@react-aria/meter';
 
-function Meter(props: SpectrumMeterProps, ref: DOMRef<HTMLDivElement>) {
-  let {variant, ...otherProps} = props;
+/**
+ * Meters are visual representations of a quantity or an achievement.
+ * Their progress is determined by user actions, rather than system actions.
+ */
+export const Meter = React.forwardRef(function Meter(props: SpectrumMeterProps, ref: DOMRef<HTMLDivElement>) {
+  let {variant = 'informative', ...otherProps} = props;
   const {
     meterProps,
     labelProps
@@ -42,11 +46,4 @@ function Meter(props: SpectrumMeterProps, ref: DOMRef<HTMLDivElement>) {
         )
       } />
   );
-}
-
-/**
- * Meters are visual representations of a quantity or an achievement.
- * Their progress is determined by user actions, rather than system actions.
- */
-let _Meter = React.forwardRef(Meter);
-export {_Meter as Meter};
+});

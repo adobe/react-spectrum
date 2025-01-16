@@ -2,5 +2,7 @@
   "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
   "colorPicker": "Selector de color",
+  "colorSwatch": "muestra de color",
+  "transparent": "transparente",
   "twoDimensionalSlider": "Regulador 2D"
 }

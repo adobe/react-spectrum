@@ -1,3 +1,4 @@
+// @ts-nocheck
 /*
  * Copyright 2021 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -15,11 +16,11 @@ import {CardStory} from './Card.stories';
 import {classNames} from '@react-spectrum/utils';
 import {ComponentMeta} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
-import {File} from '../chromatic/Card.chromatic';
+import {File} from '../chromatic/Card.stories';
 import {getDescription, getImage} from '../stories/utils';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
-import {Quiet} from '../chromatic/QuietCard.chromatic';
+import {Quiet} from '../chromatic/QuietCard.stories';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 

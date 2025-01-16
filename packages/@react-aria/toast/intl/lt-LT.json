@@ -1,4 +1,4 @@
 {
   "close": "Uždaryti",
-  "notifications": "Pranešimai"
+  "notifications": "{count, plural, one {# pranešimas} other {# pranešimai}}."
 }

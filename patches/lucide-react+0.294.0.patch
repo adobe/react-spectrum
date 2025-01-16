@@ -1,0 +1,14 @@
+diff --git a/node_modules/lucide-react/dist/lucide-react.d.ts b/node_modules/lucide-react/dist/lucide-react.d.ts
+index f1e74c8..c518db7 100644
+--- a/node_modules/lucide-react/dist/lucide-react.d.ts
++++ b/node_modules/lucide-react/dist/lucide-react.d.ts
+@@ -1,6 +1,7 @@
+-import { ReactSVG, ForwardRefExoticComponent, RefAttributes, SVGProps } from 'react';
++import { SVGElementType, ForwardRefExoticComponent, RefAttributes, SVGProps } from 'react';
++// https://github.com/eps1lon/DefinitelyTyped/blob/3714f222ff3ab20db84a2229d5e64564e7b82932/types/react/index.d.ts#L3858C10-L3858C24
+ 
+-type IconNode = [elementName: keyof ReactSVG, attrs: Record<string, string>][];
++type IconNode = [elementName: SVGElementType, attrs: Record<string, string>][];
+ type SVGAttributes = Partial<SVGProps<SVGSVGElement>>;
+ type ComponentAttributes = RefAttributes<SVGSVGElement> & SVGAttributes;
+ interface LucideProps extends ComponentAttributes {

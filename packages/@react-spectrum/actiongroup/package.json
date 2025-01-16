@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/actiongroup",
-  "version": "3.10.1",
+  "version": "3.10.11",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -36,30 +36,30 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/actiongroup": "^3.7.1",
-    "@react-aria/focus": "^3.16.0",
-    "@react-aria/interactions": "^3.20.1",
-    "@react-aria/utils": "^3.23.0",
-    "@react-spectrum/button": "^3.16.0",
-    "@react-spectrum/menu": "^3.17.0",
-    "@react-spectrum/text": "^3.5.1",
-    "@react-spectrum/tooltip": "^3.6.3",
-    "@react-spectrum/utils": "^3.11.3",
-    "@react-stately/collections": "^3.10.4",
-    "@react-stately/list": "^3.10.2",
-    "@react-types/actiongroup": "^3.4.6",
-    "@react-types/shared": "^3.22.0",
-    "@spectrum-icons/ui": "^3.6.3",
-    "@spectrum-icons/workflow": "^4.2.8",
+    "@react-aria/actiongroup": "^3.7.12",
+    "@react-aria/focus": "^3.19.1",
+    "@react-aria/interactions": "^3.23.0",
+    "@react-aria/utils": "^3.27.0",
+    "@react-spectrum/button": "^3.16.10",
+    "@react-spectrum/menu": "^3.21.1",
+    "@react-spectrum/text": "^3.5.11",
+    "@react-spectrum/tooltip": "^3.7.1",
+    "@react-spectrum/utils": "^3.12.1",
+    "@react-stately/collections": "^3.12.1",
+    "@react-stately/list": "^3.11.2",
+    "@react-types/actiongroup": "^3.4.14",
+    "@react-types/shared": "^3.27.0",
+    "@spectrum-icons/ui": "^3.6.12",
+    "@spectrum-icons/workflow": "^4.2.17",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
   },
   "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0",
     "@react-spectrum/provider": "^3.2.0",
-    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"
+    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
   },
   "publishConfig": {
     "access": "public"

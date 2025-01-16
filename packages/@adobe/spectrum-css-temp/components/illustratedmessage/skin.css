@@ -19,11 +19,11 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-IllustratedMessage-heading {
-  color: var(--spectrum-heading-page-title-text-color);
+  color: var(--spectrum-heading-3-text-color);
 }
 
 .spectrum-IllustratedMessage-description {
-  color: var(--spectrum-body-secondary-text-color);
+  color: var(--spectrum-body-text-color);
 }
 
 @media (forced-colors: active) {

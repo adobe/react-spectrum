@@ -31,6 +31,7 @@ import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Key, LoadingState} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
 import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
+import {Picker} from '@react-spectrum/picker';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {useCallback, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
@@ -116,6 +117,10 @@ export default {
     },
     disallowEmptySelection: {
       control: 'boolean'
+    },
+    disabledBehavior: {
+      control: 'select',
+      options: ['all', 'selection']
     }
   }
 } as ComponentMeta<typeof TableView>;
@@ -450,6 +455,17 @@ export const FocusableCells: TableStory = {
             <Cell><Link><a href="https://yahoo.com" target="_blank">Yahoo</a></Link></Cell>
             <Cell>Three</Cell>
           </Row>
+          <Row>
+            <Cell><Switch aria-label="Foo" /></Cell>
+            <Cell>
+              <Picker aria-label="Search engine" placeholder="Search with:" width={'100%'} isQuiet>
+                <Item key="Yahoo">Yahoo</Item>
+                <Item key="Google">Google</Item>
+                <Item key="DuckDuckGo">DuckDuckGo</Item>
+              </Picker>
+            </Cell>
+            <Cell>Three</Cell>
+          </Row>
         </TableBody>
       </TableView>
       <label htmlFor="focus-after">Focus after</label>
@@ -459,12 +475,22 @@ export const FocusableCells: TableStory = {
   name: 'focusable cells'
 };
 
-let manyColunns = [];
+interface ItemValue {
+  name: string,
+  key: string
+}
+
+let manyColunns: Array<ItemValue> = [];
 for (let i = 0; i < 100; i++) {
   manyColunns.push({name: 'Column ' + i, key: 'C' + i});
 }
 
-let manyRows = [];
+interface RowValue {
+  key: string,
+  [key: string]: string
+}
+
+let manyRows: Array<RowValue> = [];
 for (let i = 0; i < 1000; i++) {
   let row = {key: 'R' + i};
   for (let j = 0; j < 100; j++) {
@@ -744,7 +770,7 @@ function DeletableRowsTable(props: SpectrumTableProps<unknown>) {
     ]
   });
   let onSelectionChange = useCallback((keys) => {
-    props.onSelectionChange(keys);
+    props.onSelectionChange?.(keys);
     list.setSelectedKeys(keys);
   }, [props, list]);
 
@@ -806,7 +832,7 @@ export const IsLoading: TableStory = {
           <Column minWidth={100}>{column.name}</Column>
         }
       </TableHeader>
-      <TableBody items={[]} loadingState="loading">
+      <TableBody items={[] as Array<{foo: string}>} loadingState="loading">
         {item =>
           (<Row key={item.foo}>
             {key => <Cell>{item[key]}</Cell>}
@@ -831,7 +857,7 @@ export const IsLoadingMore: TableStory = {
           <Column minWidth={100}>{column.name}</Column>
         }
       </TableHeader>
-      <TableBody items={[]} loadingState="loadingMore">
+      <TableBody items={[] as Array<{foo: string}>} loadingState="loadingMore">
         {item =>
           (<Row key={item.foo}>
             {key => <Cell>{item[key]}</Cell>}
@@ -927,7 +953,7 @@ function AsyncLoadingExample(props) {
       let url = new URL('https://www.reddit.com/r/upliftingnews.json');
       if (cursor) {
         url.searchParams.append('after', cursor);
-      }      
+      }
       let res = await fetch(url.toString(), {signal});
       let json = await res.json();
       return {items: json.data.children, cursor: json.data.after};
@@ -1075,15 +1101,15 @@ function AsyncLoadingExampleQuarryTest(props) {
     async sort({items, sortDescriptor}) {
       return {
         items: items.slice().sort((a, b) => {
-          let cmp = a[sortDescriptor.column] < b[sortDescriptor.column] ? -1 : 1;
-    
+          let cmp = a[sortDescriptor.column!] < b[sortDescriptor.column!] ? -1 : 1;
+
           if (sortDescriptor.direction === 'descending') {
             cmp *= -1;
           }
-    
+
           return cmp;
         })
-        
+
       };
     }
   });
@@ -1534,6 +1560,7 @@ function TableWithBreadcrumbs(props) {
       </Breadcrumbs>
       <TableView
         width="400px"
+        height="300px"
         aria-label="table"
         {...props}
         selectedKeys={selection}
@@ -2028,7 +2055,7 @@ export const Links = (args) => {
 
 export const ColumnHeaderFocusRingTable = {
   render: () => <LoadingTable />,
-  storyName: 'column header focus after loading',
+  name: 'column header focus after loading',
   parameters: {
     description: {
       data: 'Column header should remain focused even if the table collections empties/loading state changes to loading'
@@ -2043,13 +2070,13 @@ const allItems = [
 
 function LoadingTable() {
   const [items, setItems] = useState(allItems);
-  const [loadingState, setLoadingState] = useState(undefined);
+  const [loadingState, setLoadingState] = useState<LoadingState>('idle');
   const onSortChange = () => {
     setItems([]);
     setLoadingState('loading');
     setTimeout(() => {
       setItems(items.length > 1 ? [...items.slice(0, 1)] : []);
-      setLoadingState(undefined);
+      setLoadingState('idle');
     }, 1000);
   };
 
@@ -2070,3 +2097,5 @@ function LoadingTable() {
     </TableView>
   );
 }
+
+export {Performance} from './Performance';

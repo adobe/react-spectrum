@@ -14,7 +14,7 @@ import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import ChevronLeft from '@spectrum-icons/workflow/ChevronLeft';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
-import {DOMAttributes, Key, Node} from '@react-types/shared';
+import {DOMAttributes, Node} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
@@ -32,8 +32,7 @@ import {useMenuItem} from '@react-aria/menu';
 interface MenuItemProps<T> {
   item: Node<T>,
   state: TreeState<T>,
-  isVirtualized?: boolean,
-  onAction?: (key: Key) => void
+  isVirtualized?: boolean
 }
 
 /** @private */
@@ -41,8 +40,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let {
     item,
     state,
-    isVirtualized,
-    onAction
+    isVirtualized
   } = props;
   let {
     closeOnSelect
@@ -62,7 +60,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
 
   if (isSubmenuTrigger) {
-    isUnavailable = submenuTriggerContext.isUnavailable;
+    isUnavailable = submenuTriggerContext!.isUnavailable;
   }
 
   let isDisabled = state.disabledKeys.has(key);
@@ -83,7 +81,6 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
       key,
       closeOnSelect,
       isVirtualized,
-      onAction,
       ...submenuTriggerProps
     },
     state,

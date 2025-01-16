@@ -1,22 +1,22 @@
-/* eslint-disable jsx-a11y/role-supports-aria-props */
+ 
 import {classNames} from '@react-spectrum/utils';
 import {ColumnSize} from '@react-types/table';
-// @ts-ignore
 import eCursor from 'bundle-text:./cursors/Cur_MoveToRight_9_9.svg';
-// @ts-ignore
 import ewCursor from 'bundle-text:./cursors/Cur_MoveHorizontal_9_9.svg';
 import {FocusRing} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isWebKit, mergeProps} from '@react-aria/utils';
-import {Key} from '@react-types/shared';
-import React, {RefObject, useEffect, useState} from 'react';
+import {isWebKit, mergeProps, useObjectRef} from '@react-aria/utils';
+import {Key, RefObject} from '@react-types/shared';
+import React, {createContext, ForwardedRef, useContext, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
+import {TableColumnResizeState} from '@react-stately/table';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTableColumnResize} from '@react-aria/table';
 import {useTableContext, useVirtualizerContext} from './TableViewBase';
+import {useUNSTABLE_PortalContext} from '@react-aria/overlays';
 // @ts-ignore
 import wCursor from 'bundle-text:./cursors/Cur_MoveToLeft_9_9.svg';
 
@@ -34,10 +34,10 @@ function getCursor(svg: string, fallback: string) {
 interface ResizerProps<T> {
   column: GridNode<T>,
   showResizer: boolean,
-  triggerRef: RefObject<HTMLDivElement>,
-  onResizeStart: (widths: Map<Key, ColumnSize>) => void,
-  onResize: (widths: Map<Key, ColumnSize>) => void,
-  onResizeEnd: (widths: Map<Key, ColumnSize>) => void
+  triggerRef: RefObject<HTMLDivElement | null>,
+  onResizeStart?: (widths: Map<Key, ColumnSize>) => void,
+  onResize?: (widths: Map<Key, ColumnSize>) => void,
+  onResizeEnd?: (widths: Map<Key, ColumnSize>) => void
 }
 
 const CURSORS = {
@@ -46,9 +46,13 @@ const CURSORS = {
   e: getCursor(eCursor, 'e-resize')
 };
 
-function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
+export const ResizeStateContext = createContext<TableColumnResizeState<unknown> | null>(null);
+
+export const Resizer = React.forwardRef(function Resizer<T>(props: ResizerProps<T>, ref: ForwardedRef<HTMLInputElement | null>) {
   let {column, showResizer} = props;
-  let {isEmpty, layout, onFocusedResizer} = useTableContext();
+  let objectRef = useObjectRef(ref);
+  let {isEmpty, onFocusedResizer} = useTableContext();
+  let layout = useContext(ResizeStateContext)!;
   // Virtualizer re-renders, but these components are all cached
   // in order to get around that and cause a rerender here, we use context
   // but we don't actually need any value, they are available on the layout object
@@ -80,7 +84,7 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
     mergeProps(props, {
       'aria-label': stringFormatter.format('columnResizer'),
       isDisabled: isEmpty
-    }), layout, ref);
+    }), layout, objectRef);
 
   let isEResizable = layout.getColumnMinWidth(column.key) >= layout.getColumnWidth(column.key);
   let isWResizable = layout.getColumnMaxWidth(column.key) <= layout.getColumnWidth(column.key);
@@ -110,7 +114,7 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
           style={style}
           className={classNames(styles, 'spectrum-Table-columnResizer')}>
           <input
-            ref={ref}
+            ref={objectRef}
             {...mergeProps(inputProps, {onFocus: onFocusedResizer})} />
         </div>
       </FocusRing>
@@ -124,12 +128,10 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
       </CursorOverlay>
     </>
   );
-}
+});
 
 function CursorOverlay(props) {
   let {show, children} = props;
-  return show ? ReactDOM.createPortal(children, document.body) : null;
+  let {getContainer} = useUNSTABLE_PortalContext();
+  return show ? ReactDOM.createPortal(children, getContainer?.() ?? document.body) : null;
 }
-
-const _Resizer = React.forwardRef(Resizer);
-export {_Resizer as Resizer};

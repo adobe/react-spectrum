@@ -175,7 +175,7 @@ export const WithAvatar: TagGroupStory = {
     <TagGroup aria-label="Tag group with avatars" {...args}>
       {(item: any) => (
         <Item key={item.key} textValue={item.label}>
-          <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
+          {item.key === '1' && <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />}
           <Text>{item.label}</Text>
         </Item>
       )}
@@ -242,7 +242,7 @@ export const EmptyState: TagGroupStory = {
       {[]}
     </TagGroup>
   ),
-  storyName: 'Empty state'
+  name: 'Empty state'
 };
 
 export const CustomEmptyState: TagGroupStory = {
@@ -250,7 +250,7 @@ export const CustomEmptyState: TagGroupStory = {
   args: {
     renderEmptyState: () => <span>No tags. <Link><a href="//react-spectrum.com">Click here</a></Link> to add some.</span>
   },
-  storyName: 'Custom empty state'
+  name: 'Custom empty state'
 };
 
 function OnRemoveExample(props) {

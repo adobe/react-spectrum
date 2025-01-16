@@ -11,11 +11,9 @@
  */
 
 import {ColorArea} from '../';
-import {composeStories} from '@storybook/testing-react';
-import {defaultTheme} from '@adobe/react-spectrum';
-import {fireEvent, installMouseEvent, installPointerEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {composeStories} from '@storybook/react';
+import {fireEvent, installMouseEvent, installPointerEvent, pointerMap, renderv3 as render} from '@react-spectrum/test-utils-internal';
 import {parseColor} from '@react-stately/color';
-import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import * as stories from '../stories/ColorArea.stories';
 import userEvent from '@testing-library/user-event';
@@ -68,7 +66,7 @@ describe('ColorArea', () => {
         expect(xSlider).toHaveAttribute('min', '0');
         expect(xSlider).toHaveAttribute('max', '255');
         expect(xSlider).toHaveAttribute('step', '1');
-        expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 255, Green: 0');
+        expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 255, Green: 0, Blue: 255, light vibrant magenta');
         expect(xSlider).not.toHaveAttribute('tabindex', '0');
 
         expect(ySlider).toHaveAttribute('type', 'range');
@@ -76,7 +74,7 @@ describe('ColorArea', () => {
         expect(ySlider).toHaveAttribute('min', '0');
         expect(ySlider).toHaveAttribute('max', '255');
         expect(ySlider).toHaveAttribute('step', '1');
-        expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, Red: 255');
+        expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, Red: 255, Blue: 255, light vibrant magenta');
         expect(ySlider).toHaveAttribute('tabindex', '-1');
         expect(ySlider).toHaveAttribute('aria-hidden', 'true');
       });
@@ -156,11 +154,15 @@ describe('ColorArea', () => {
 
           expect(xSlider.getAttribute('aria-valuetext')).toBe([
             `${props.defaultValue.getChannelName('red', 'en-US')}: ${props.defaultValue.formatChannelValue('red', 'en-US')}`,
-            `${props.defaultValue.getChannelName('green', 'en-US')}: ${props.defaultValue.formatChannelValue('green', 'en-US')}`
+            `${props.defaultValue.getChannelName('green', 'en-US')}: ${props.defaultValue.formatChannelValue('green', 'en-US')}`,
+            `${props.defaultValue.getChannelName('blue', 'en-US')}: ${props.defaultValue.formatChannelValue('blue', 'en-US')}`,
+            `${props.defaultValue.getColorName('en-US')}`
           ].join(', '));
           expect(ySlider.getAttribute('aria-valuetext')).toBe([
             `${props.defaultValue.getChannelName('green', 'en-US')}: ${props.defaultValue.formatChannelValue('green', 'en-US')}`,
-            `${props.defaultValue.getChannelName('red', 'en-US')}: ${props.defaultValue.formatChannelValue('red', 'en-US')}`
+            `${props.defaultValue.getChannelName('red', 'en-US')}: ${props.defaultValue.formatChannelValue('red', 'en-US')}`,
+            `${props.defaultValue.getChannelName('blue', 'en-US')}: ${props.defaultValue.formatChannelValue('blue', 'en-US')}`,
+            `${props.defaultValue.getColorName('en-US')}`
           ].join(', '));
 
           expect(xSlider).not.toHaveAttribute('tabindex');
@@ -175,7 +177,7 @@ describe('ColorArea', () => {
           expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(result.toString('rgba'));
           expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
           expect(onChangeEndSpy.mock.calls[0][0].toString('rgba')).toBe(result.toString('rgba'));
-          expect(xSlider.getAttribute('aria-valuetext')).toBe(`${result.getChannelName('red', 'en-US')}: ${result.formatChannelValue('red', 'en-US')}`);
+          expect(xSlider.getAttribute('aria-valuetext')).toBe(`${result.getChannelName('red', 'en-US')}: ${result.formatChannelValue('red', 'en-US')}, ${result.getColorName('en-US')}`);
           expect(document.activeElement).not.toHaveAttribute('tabindex', '0');
           expect(document.activeElement).not.toHaveAttribute('aria-hidden');
           expect(document.activeElement === xSlider ? ySlider : xSlider).toHaveAttribute('tabindex', '-1');
@@ -186,7 +188,7 @@ describe('ColorArea', () => {
           expect(onChangeSpy.mock.calls[1][0].toString('rgba')).toBe(props.defaultValue.toString('rgba'));
           expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
           expect(onChangeEndSpy.mock.calls[1][0].toString('rgba')).toBe(props.defaultValue.toString('rgba'));
-          expect(ySlider.getAttribute('aria-valuetext')).toBe(`${props.defaultValue.getChannelName('green', 'en-US')}: ${props.defaultValue.formatChannelValue('green', 'en-US')}`);
+          expect(ySlider.getAttribute('aria-valuetext')).toBe(`${props.defaultValue.getChannelName('green', 'en-US')}: ${props.defaultValue.formatChannelValue('green', 'en-US')}, ${props.defaultValue.getColorName('en-US')}`);
           expect(document.activeElement).not.toHaveAttribute('tabindex', '0');
           expect(document.activeElement).not.toHaveAttribute('aria-hidden');
           expect(document.activeElement === xSlider ? ySlider : xSlider).toHaveAttribute('tabindex', '-1');
@@ -203,22 +205,24 @@ describe('ColorArea', () => {
           ${'home/end'}             | ${{defaultValue: parseColor('#f000f0')}} | ${{forward: (elem) => pressKey(elem, {key: 'End'}), backward: (elem) => pressKey(elem, {key: 'Home'})}}                                             | ${parseColor('#df00f0')}
         `('$Name RTL', async ({props, actions: {forward, backward}, result}) => {
           let {getAllByRole} = render(
-            <Provider locale="ar-AE" theme={defaultTheme}>
-              <Component
-                {...props}
-                onChange={onChangeSpy}
-                onChangeEnd={onChangeEndSpy} />
-            </Provider>
-          );
+            <Component
+              {...props}
+              onChange={onChangeSpy}
+              onChangeEnd={onChangeEndSpy} />
+          , undefined, {locale: 'ar-AE'});
           let [xSlider, ySlider] = getAllByRole('slider', {hidden: true});
 
           expect(xSlider.getAttribute('aria-valuetext')).toBe([
             `${props.defaultValue.getChannelName('red', 'ar-AE')}: ${props.defaultValue.formatChannelValue('red', 'ar-AE')}`,
-            `${props.defaultValue.getChannelName('green', 'ar-AE')}: ${props.defaultValue.formatChannelValue('green', 'ar-AE')}`
+            `${props.defaultValue.getChannelName('green', 'ar-AE')}: ${props.defaultValue.formatChannelValue('green', 'ar-AE')}`,
+            `${props.defaultValue.getChannelName('blue', 'ar-AE')}: ${props.defaultValue.formatChannelValue('blue', 'ar-AE')}`,
+            `${props.defaultValue.getColorName('ar-AE')}`
           ].join(', '));
           expect(ySlider.getAttribute('aria-valuetext')).toBe([
             `${props.defaultValue.getChannelName('green', 'ar-AE')}: ${props.defaultValue.formatChannelValue('green', 'ar-AE')}`,
-            `${props.defaultValue.getChannelName('red', 'ar-AE')}: ${props.defaultValue.formatChannelValue('red', 'ar-AE')}`
+            `${props.defaultValue.getChannelName('red', 'ar-AE')}: ${props.defaultValue.formatChannelValue('red', 'ar-AE')}`,
+            `${props.defaultValue.getChannelName('blue', 'ar-AE')}: ${props.defaultValue.formatChannelValue('blue', 'ar-AE')}`,
+            `${props.defaultValue.getColorName('ar-AE')}`
           ].join(', '));
 
           expect(xSlider).not.toHaveAttribute('tabindex');
@@ -233,7 +237,7 @@ describe('ColorArea', () => {
           expect(onChangeSpy.mock.calls[0][0].toString('rgba')).toBe(result.toString('rgba'));
           expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
           expect(onChangeEndSpy.mock.calls[0][0].toString('rgba')).toBe(result.toString('rgba'));
-          expect(xSlider.getAttribute('aria-valuetext')).toBe(`${result.getChannelName('red', 'ar-AE')}: ${result.formatChannelValue('red', 'ar-AE')}`);
+          expect(xSlider.getAttribute('aria-valuetext')).toBe(`${result.getChannelName('red', 'ar-AE')}: ${result.formatChannelValue('red', 'ar-AE')}, ${result.getColorName('ar-AE')}`);
           expect(document.activeElement).not.toHaveAttribute('tabindex');
           expect(document.activeElement).not.toHaveAttribute('aria-hidden');
           expect(document.activeElement === xSlider ? ySlider : xSlider).toHaveAttribute('tabindex', '-1');
@@ -244,7 +248,7 @@ describe('ColorArea', () => {
           expect(onChangeSpy.mock.calls[1][0].toString('rgba')).toBe(props.defaultValue.toString('rgba'));
           expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
           expect(onChangeEndSpy.mock.calls[1][0].toString('rgba')).toBe(props.defaultValue.toString('rgba'));
-          expect(ySlider.getAttribute('aria-valuetext')).toBe(`${props.defaultValue.getChannelName('green', 'ar-AE')}: ${props.defaultValue.formatChannelValue('green', 'ar-AE')}`);
+          expect(ySlider.getAttribute('aria-valuetext')).toBe(`${props.defaultValue.getChannelName('green', 'ar-AE')}: ${props.defaultValue.formatChannelValue('green', 'ar-AE')}, ${props.defaultValue.getColorName('ar-AE')}`);
           expect(document.activeElement).not.toHaveAttribute('tabindex');
           expect(document.activeElement).not.toHaveAttribute('aria-hidden');
           expect(document.activeElement === xSlider ? ySlider : xSlider).toHaveAttribute('tabindex', '-1');
@@ -458,7 +462,7 @@ describe('ColorArea', () => {
       expect(xSlider).toHaveAttribute('min', '0');
       expect(xSlider).toHaveAttribute('max', '255');
       expect(xSlider).toHaveAttribute('step', '1');
-      expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 255, Green: 255');
+      expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 255, Green: 255, Blue: 255, white');
       expect(xSlider).not.toHaveAttribute('tabindex');
       expect(xSlider).not.toHaveAttribute('aria-hidden');
 
@@ -467,7 +471,7 @@ describe('ColorArea', () => {
       expect(ySlider).toHaveAttribute('min', '0');
       expect(ySlider).toHaveAttribute('max', '255');
       expect(ySlider).toHaveAttribute('step', '1');
-      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 255, Red: 255');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 255, Red: 255, Blue: 255, white');
       expect(ySlider).toHaveAttribute('tabindex', '-1');
       expect(ySlider).toHaveAttribute('aria-hidden', 'true');
     });
@@ -486,22 +490,22 @@ describe('ColorArea', () => {
       await user.tab();
       expect(document.activeElement).toBe(xSlider);
       // focusing into ColorArea, value text for each slider will include name and value for each channel
-      expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 255, Green: 0');
-      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, Red: 255');
+      expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 255, Green: 0, Blue: 255, light vibrant magenta');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, Red: 255, Blue: 255, light vibrant magenta');
       pressKey(xSlider, {key: 'ArrowLeft'});
       // following a keyboard event that changes a value, value text for each slider will include only the name and value for that channel.
-      expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 254');
-      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0');
+      expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 254, light vibrant magenta');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, light vibrant magenta');
       await user.tab();
       expect(document.activeElement).toBe(buttonB);
       // focusing out of ColorArea, value text for each slider will include name and value for each channel
-      expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 254, Green: 0');
-      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, Red: 254');
+      expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 254, Green: 0, Blue: 255, light vibrant magenta');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, Red: 254, Blue: 255, light vibrant magenta');
       await user.tab({shift: true});
       expect(document.activeElement).toBe(xSlider);
       // focusing back into ColorArea, value text for each slider will include name and value for each channel
-      expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 254, Green: 0');
-      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, Red: 254');
+      expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 254, Green: 0, Blue: 255, light vibrant magenta');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, Red: 254, Blue: 255, light vibrant magenta');
     });
   });
   describe('full implementation controlled', () => {
@@ -517,7 +521,7 @@ describe('ColorArea', () => {
       expect(xSlider).toHaveAttribute('min', '0');
       expect(xSlider).toHaveAttribute('max', '255');
       expect(xSlider).toHaveAttribute('step', '1');
-      expect(xSlider).toHaveAttribute('aria-valuetext', 'Blue: 255, Green: 255');
+      expect(xSlider).toHaveAttribute('aria-valuetext', 'Blue: 255, Green: 255, Red: 0, very light vibrant cyan');
       expect(xSlider).not.toHaveAttribute('tabindex');
       expect(xSlider).not.toHaveAttribute('aria-hidden');
 
@@ -526,7 +530,7 @@ describe('ColorArea', () => {
       expect(ySlider).toHaveAttribute('min', '0');
       expect(ySlider).toHaveAttribute('max', '255');
       expect(ySlider).toHaveAttribute('step', '1');
-      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 255, Blue: 255');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 255, Blue: 255, Red: 0, very light vibrant cyan');
       expect(ySlider).toHaveAttribute('tabindex', '-1');
       expect(ySlider).toHaveAttribute('aria-hidden', 'true');
 
@@ -537,7 +541,7 @@ describe('ColorArea', () => {
       expect(zSlider).toHaveAttribute('min', '0');
       expect(zSlider).toHaveAttribute('max', '255');
       expect(zSlider).toHaveAttribute('step', '1');
-      expect(zSlider).toHaveAttribute('aria-valuetext', '0');
+      expect(zSlider).toHaveAttribute('aria-valuetext', '0, very light vibrant cyan');
     });
     it('sets input props hsb', () => {
       let {getAllByRole, getByLabelText} = render(<XSaturationYBrightness {...XSaturationYBrightness.args} />);
@@ -551,7 +555,7 @@ describe('ColorArea', () => {
       expect(xSlider).toHaveAttribute('min', '0');
       expect(xSlider).toHaveAttribute('max', '100');
       expect(xSlider).toHaveAttribute('step', '1');
-      expect(xSlider).toHaveAttribute('aria-valuetext', 'Saturation: 100%, Brightness: 100%');
+      expect(xSlider).toHaveAttribute('aria-valuetext', 'Saturation: 100%, Brightness: 100%, Hue: 0°, vibrant red');
       expect(xSlider).not.toHaveAttribute('tabindex');
       expect(xSlider).not.toHaveAttribute('aria-hidden');
 
@@ -560,7 +564,7 @@ describe('ColorArea', () => {
       expect(ySlider).toHaveAttribute('min', '0');
       expect(ySlider).toHaveAttribute('max', '100');
       expect(ySlider).toHaveAttribute('step', '1');
-      expect(ySlider).toHaveAttribute('aria-valuetext', 'Brightness: 100%, Saturation: 100%');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Brightness: 100%, Saturation: 100%, Hue: 0°, vibrant red');
       expect(ySlider).toHaveAttribute('tabindex', '-1');
       expect(ySlider).toHaveAttribute('aria-hidden', 'true');
 
@@ -571,7 +575,7 @@ describe('ColorArea', () => {
       expect(zSlider).toHaveAttribute('min', '0');
       expect(zSlider).toHaveAttribute('max', '360');
       expect(zSlider).toHaveAttribute('step', '1');
-      expect(zSlider).toHaveAttribute('aria-valuetext', '0°');
+      expect(zSlider).toHaveAttribute('aria-valuetext', '0°, red');
     });
     it('sets input props hsl', () => {
       let {getAllByRole, getByLabelText} = render(<XSaturationYLightness {...XSaturationYLightness.args} />);
@@ -585,7 +589,7 @@ describe('ColorArea', () => {
       expect(xSlider).toHaveAttribute('min', '0');
       expect(xSlider).toHaveAttribute('max', '100');
       expect(xSlider).toHaveAttribute('step', '1');
-      expect(xSlider).toHaveAttribute('aria-valuetext', 'Saturation: 100%, Lightness: 50%');
+      expect(xSlider).toHaveAttribute('aria-valuetext', 'Saturation: 100%, Lightness: 50%, Hue: 0°, vibrant red');
       expect(xSlider).not.toHaveAttribute('tabindex');
       expect(xSlider).not.toHaveAttribute('aria-hidden');
 
@@ -594,7 +598,7 @@ describe('ColorArea', () => {
       expect(ySlider).toHaveAttribute('min', '0');
       expect(ySlider).toHaveAttribute('max', '100');
       expect(ySlider).toHaveAttribute('step', '1');
-      expect(ySlider).toHaveAttribute('aria-valuetext', 'Lightness: 50%, Saturation: 100%');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Lightness: 50%, Saturation: 100%, Hue: 0°, vibrant red');
       expect(ySlider).toHaveAttribute('tabIndex', '-1');
       expect(ySlider).toHaveAttribute('aria-hidden', 'true');
 
@@ -605,7 +609,7 @@ describe('ColorArea', () => {
       expect(zSlider).toHaveAttribute('min', '0');
       expect(zSlider).toHaveAttribute('max', '360');
       expect(zSlider).toHaveAttribute('step', '1');
-      expect(zSlider).toHaveAttribute('aria-valuetext', '0°');
+      expect(zSlider).toHaveAttribute('aria-valuetext', '0°, red');
     });
 
     it('the slider is focusable', async () => {

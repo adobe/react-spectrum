@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render, within} from '@react-spectrum/test-utils';
+import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button} from '@react-spectrum/button';
 import {Checkbox, CheckboxGroup} from '../';
 import {Form} from '@react-spectrum/form';

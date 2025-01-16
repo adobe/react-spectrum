@@ -88,7 +88,7 @@ governing permissions and limitations under the License.
   color: var(--spectrum-global-color-gray-700);
 }
 
-.spectrum-Submenu-popover {
+.spectrum-Submenu-popover.spectrum-Submenu-popover  {
   filter: unset;
   -webkit-filter: unset;
   transition: opacity var(--spectrum-global-animation-duration-100) ease-in-out,
@@ -98,6 +98,62 @@ governing permissions and limitations under the License.
 
 .spectrum-Submenu-heading {
   color: var(--spectrum-heading-subtitle3-text-color);
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutToRight {
+  from {
+    transform: translateX(0)
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutToLeft {
+  from {
+    transform: translateX(0)
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.spectrum-TraySubmenu-enter {
+  animation-name: slideInFromRight;
+  animation-duration: var(--spectrum-global-animation-duration-400);
+  animation-fill-mode: forwards;
+  animation-timing-function: var(--spectrum-global-animation-ease-out);
+  &:dir(rtl) {
+    animation-name: slideInFromLeft;
+  }
+}
+
+.spectrum-TraySubmenu-exit {
+  animation-name: slideOutToRight;
+  animation-duration: var(--spectrum-global-animation-duration-400);
+  animation-fill-mode: forwards;
+  animation-timing-function: var(--spectrum-global-animation-ease-in);
+  &:dir(rtl) {
+    animation-name: slideOutToLeft;
+  }
 }
 
 @media (forced-colors: active) {

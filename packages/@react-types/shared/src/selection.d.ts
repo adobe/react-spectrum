@@ -20,7 +20,7 @@ export interface SingleSelection {
   /** The initial selected key in the collection (uncontrolled). */
   defaultSelectedKey?: Key,
   /** Handler that is called when the selection changes. */
-  onSelectionChange?: (key: Key) => any
+  onSelectionChange?: (key: Key) => void
 }
 
 export type SelectionMode = 'none' | 'single' | 'multiple';
@@ -36,7 +36,7 @@ export interface MultipleSelection {
   /** The initial selected keys in the collection (uncontrolled). */
   defaultSelectedKeys?: 'all' | Iterable<Key>,
   /** Handler that is called when the selection changes. */
-  onSelectionChange?: (keys: Selection) => any,
+  onSelectionChange?: (keys: Selection) => void,
   /** The currently disabled keys in the collection (controlled). */
   disabledKeys?: Iterable<Key>
 }

@@ -12,18 +12,19 @@
 
 import {DragItem, DragPreviewRenderer} from '@react-types/shared';
 import {flushSync} from 'react-dom';
-import React, {JSX, RefObject, useImperativeHandle, useRef, useState} from 'react';
+import React, {ForwardedRef, JSX, useEffect, useImperativeHandle, useRef, useState} from 'react';
 
 export interface DragPreviewProps {
-  children: (items: DragItem[]) => JSX.Element
+  children: (items: DragItem[]) => JSX.Element | null
 }
 
-function DragPreview(props: DragPreviewProps, ref: RefObject<DragPreviewRenderer>) {
+export const DragPreview = React.forwardRef(function DragPreview(props: DragPreviewProps, ref: ForwardedRef<DragPreviewRenderer | null>) {
   let render = props.children;
-  let [children, setChildren] = useState<JSX.Element>(null);
-  let domRef = useRef(null);
+  let [children, setChildren] = useState<JSX.Element | null>(null);
+  let domRef = useRef<HTMLDivElement | null>(null);
+  let raf = useRef<ReturnType<typeof requestAnimationFrame> | undefined>(undefined);
 
-  useImperativeHandle(ref, () => (items: DragItem[], callback: (node: HTMLElement) => void) => {
+  useImperativeHandle(ref, () => (items: DragItem[], callback: (node: HTMLElement | null) => void) => {
     // This will be called during the onDragStart event by useDrag. We need to render the
     // preview synchronously before this event returns so we can call event.dataTransfer.setDragImage.
     flushSync(() => {
@@ -34,10 +35,18 @@ function DragPreview(props: DragPreviewProps, ref: RefObject<DragPreviewRenderer
     callback(domRef.current);
 
     // Remove the preview from the DOM after a frame so the browser has time to paint.
-    requestAnimationFrame(() => {
+    raf.current = requestAnimationFrame(() => {
       setChildren(null);
     });
   }, [render]);
+
+  useEffect(() => {
+    return () => {
+      if (raf.current) {
+        cancelAnimationFrame(raf.current);
+      }
+    };
+  }, []);
 
   if (!children) {
     return null;
@@ -48,7 +57,4 @@ function DragPreview(props: DragPreviewProps, ref: RefObject<DragPreviewRenderer
       {children}
     </div>
   );
-}
-
-let _DragPreview = React.forwardRef(DragPreview);
-export {_DragPreview as DragPreview};
+});

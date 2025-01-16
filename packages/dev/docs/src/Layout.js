@@ -214,6 +214,7 @@ function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
         <meta property="og:image" content={heroUrl} />
         <meta property="og:description" content={description} />
         <meta property="og:locale" content="en_US" />
+        <link rel="canonical" href={`https://${TLD}${currentPage.url}`} />
         <meta data-github-src={githubLink} />
         <script
           type="application/ld+json"
@@ -473,7 +474,7 @@ function Nav({currentPageName, pages}) {
                     return (a.order || 0) - (b.order || 0);
                   }
                   return a.title < b.title ? -1 : 1;
-                }).map(p => <SideNavItem key={p.title} {...p} preRelease={section.title === 'Components' ? '' : p.preRelease} />)}
+                }).map(p => <SideNavItem key={p.title} {...p} />)}
               </ul>
             </React.Fragment>
           );
@@ -484,7 +485,6 @@ function Nav({currentPageName, pages}) {
             <details key={section.title} open={section.isActive}>
               <summary style={{fontWeight: 'bold'}}>
                 <ChevronRight size="S" /> {section.title}
-                {section.title === 'Components' && <VersionBadge version={Object.values(section.pages)[0][0].preRelease} style={{marginLeft: 'auto', fontWeight: 'normal'}} />}
               </summary>
               {contents}
             </details>

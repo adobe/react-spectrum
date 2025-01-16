@@ -1,0 +1,130 @@
+{/* Copyright 2024 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import colorTypes from 'docs:@react-types/color/src/index.d.ts';
+import docs from 'docs:@react-spectrum/color';
+import {HeaderInfo, PropTable, TypeLink, PageDescription} from '@react-spectrum/docs';
+import {Layout} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/color/package.json';
+import statelyDocs from 'docs:@react-stately/color';
+
+export default Layout;
+
+```jsx import
+import {ColorSwatch} from '@react-spectrum/color';
+import {Flex} from '@react-spectrum/layout';
+```
+
+---
+category: Color
+keywords: [color swatch]
+---
+
+# ColorSwatch
+
+<PageDescription>{docs.exports.ColorSwatch.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['ColorSwatch']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/swatch/'}
+  ]}
+  since="3.35.0" />
+
+## Example
+
+```tsx example
+<ColorSwatch color="#f00" />
+```
+
+## Value
+
+ColorSwatch accepts a value via the `color` prop. The value should be a color string or <TypeLink links={statelyDocs.links} type={statelyDocs.exports.Color} /> object.
+
+In the example below, the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.parseColor} /> function is used to parse the initial color from an HSL string. This is passed to the `value` prop of a [ColorSlider](ColorSlider.html), and the `color` prop of a `ColorSwatch` to show a preview of the selected color.
+
+```tsx example
+import {parseColor, ColorSlider} from '@react-spectrum/color';
+
+function Example() {
+  let [color, setColor] = React.useState(parseColor('hsl(0, 100%, 50%)'));
+  return (
+    <Flex direction="column" gap="size-100">
+      <ColorSlider value={color} onChange={setColor} channel="hue" />
+      <ColorSwatch color={color} />
+    </Flex>
+  );
+}
+```
+
+Fully transparent colors are displayed with a red slash through the swatch, while partially transparent colors are shown with a checkerboard background.
+
+```tsx example
+import {parseColor, ColorSlider} from '@react-spectrum/color';
+
+function Example() {
+  let [color, setColor] = React.useState(parseColor('hsla(0, 100%, 50%, 0)'));
+  return (
+    <Flex direction="column" gap="size-100">
+      <ColorSlider value={color} onChange={setColor} channel="alpha" />
+      <ColorSwatch color={color} />
+    </Flex>
+  );
+}
+```
+
+## Labeling
+
+By default, ColorSwatch includes a localized color description for screen reader users (e.g. "dark vibrant blue") as an `aria-label`. If you have a more specific color name (e.g. Pantone colors), the automatically generated color description can be overridden via the `colorName` prop. An additional label describing the context of the color swatch (e.g. "Background color") can also be provided via the `aria-label` or `aria-labelledby` props.
+
+In the example below, the full accessible name of the color swatch will be "Fire truck red, Background color".
+
+```tsx example
+<ColorSwatch color="#f00" aria-label="Background color" colorName="Fire truck red" />
+```
+
+## Props
+
+<PropTable component={docs.exports.ColorSwatch} links={docs.links} />
+
+## Visual options
+
+### Size
+
+[View guidelines](https://spectrum.adobe.com/page/swatch/#Size)
+
+```tsx example
+<Flex gap="size-100">
+  <ColorSwatch color="#ff0" size="XS" />
+  <ColorSwatch color="#ff0" size="S" />
+  <ColorSwatch color="#ff0" size="M" />
+  <ColorSwatch color="#ff0" size="L" />
+</Flex>
+```
+
+### Rounding
+
+[View guidelines](https://spectrum.adobe.com/page/swatch/#Corner-rounding)
+
+```tsx example
+<Flex gap="size-100">
+  <ColorSwatch color="#0ff" rounding="none" />
+  <ColorSwatch color="#0ff" rounding="default" />
+  <ColorSwatch color="#0ff" rounding="full" />
+</Flex>
+```
+
+### Custom width
+
+[View guidelines](https://spectrum.adobe.com/page/swatch/#Shape)
+
+```tsx example
+<ColorSwatch color="#00f" width="size-1000" />
+```

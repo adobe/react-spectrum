@@ -432,3 +432,60 @@ function Pasteable() {
 
 </details>
 
+## Disabling copy and paste
+
+If you need to temporarily disable copying and pasting, you can pass the `isDisabled` option to `useClipboard`. This will prevent copying and pasting on the element until it is re-enabled.
+
+```tsx example
+import type {TextDropItem} from '@react-aria/dnd';
+import {useClipboard} from '@react-aria/dnd';
+
+function Copyable() {
+  let {clipboardProps} = useClipboard({
+    getItems() {
+      return [{
+        'text/plain': 'Hello world'
+      }];
+    },
+    /*- begin highlight -*/
+    isDisabled: true
+    /*- end highlight -*/
+  });
+
+  return (
+    <div role="textbox" tabIndex={0} {...clipboardProps}>
+      Hello world
+      <kbd>⌘C</kbd>
+    </div>
+  );
+}
+
+function Pasteable() {
+  let [pasted, setPasted] = React.useState(null);
+  let {clipboardProps} = useClipboard({
+    async onPaste(items) {
+      let pasted = await Promise.all(
+        items
+          .filter((item) =>
+            item.kind === 'text' && item.types.has('text/plain')
+          )
+          .map((item: TextDropItem) => item.getText('text/plain'))
+      );
+      setPasted(pasted.join('\n'));
+    },
+    /*- begin highlight -*/
+    isDisabled: true
+    /*- end highlight -*/
+  });
+
+  return (
+    <div role="textbox" tabIndex={0} {...clipboardProps}>
+      {pasted || 'Paste here'}
+      <kbd>⌘V</kbd>
+    </div>
+  );
+}
+
+<Copyable />
+<Pasteable />
+```

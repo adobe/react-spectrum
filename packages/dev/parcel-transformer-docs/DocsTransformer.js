@@ -31,7 +31,7 @@ module.exports = new Transformer({
       allowReturnOutsideFunction: true,
       strictMode: false,
       sourceType: 'module',
-      plugins: ['classProperties', 'exportDefaultFrom', 'exportNamespaceFrom', 'dynamicImport', 'typescript', 'jsx', 'classPrivateProperties', 'classPrivateMethods']
+      plugins: ['classProperties', 'exportDefaultFrom', 'exportNamespaceFrom', 'dynamicImport', 'typescript', 'jsx', 'classPrivateProperties', 'classPrivateMethods', 'importAttributes']
     });
 
     let exports = {};
@@ -113,13 +113,15 @@ module.exports = new Transformer({
       }
       if (path.isVariableDeclarator()) {
         if (!path.node.init) {
+          node.id = `${asset.filePath}:${path.node.id.name}`;
+          node.name = path.node.id.name;
           return Object.assign(node, {type: 'any'});
         }
 
         let docs = getJSDocs(path.parentPath);
         processExport(path.get('init'), node);
         addDocs(node, docs);
-        if (node.type === 'interface') {
+        if (node.type === 'interface' || node.type === 'component') {
           node.id = `${asset.filePath}:${path.node.id.name}`;
           node.name = path.node.id.name;
         }
@@ -128,6 +130,10 @@ module.exports = new Transformer({
 
       if (isReactForwardRef(path)) {
         return processExport(path.get('arguments.0'), node);
+      }
+
+      if (isCollectionComponent(path)) {
+        return processExport(path.get('arguments.1'), node);
       }
 
       if (path.isClassDeclaration()) {
@@ -338,6 +344,18 @@ module.exports = new Transformer({
         });
       }
 
+      if (path.isTSMappedType()) {
+        return Object.assign(node, {
+          type: 'mapped',
+          readonly: path.node.readonly,
+          typeParameter: {
+            ...processExport(path.get('typeParameter')),
+            isMappedType: true
+          },
+          typeAnnotation: processExport(path.get('typeAnnotation'))
+        });
+      }
+
       if (path.isTSInterfaceDeclaration()) {
         let properties = {};
         for (let propertyPath of path.get('body.body')) {
@@ -491,7 +509,11 @@ module.exports = new Transformer({
       }
 
       if (path.isTSAnyKeyword()) {
-        return Object.assign(node, {type: 'any'});
+        return Object.assign(node, {
+          id: path.node.id ? `${asset.filePath}:${path.node.id.name}` : null,
+          name: path.node.id ? path.node.id.name : null,
+          type: 'any'
+        });
       }
 
       if (path.isTSNullKeyword()) {
@@ -653,6 +675,13 @@ module.exports = new Transformer({
 
     function isReactForwardRef(path) {
       return isReactCall(path, 'forwardRef') || (path.isCallExpression() && path.get('callee').isIdentifier({name: 'createHideableComponent'}));
+    }
+
+    function isCollectionComponent(path) {
+      return path.isCallExpression() && t.isIdentifier(path.node.callee) && (
+        path.node.callee.name === 'createLeafComponent' ||
+        path.node.callee.name === 'createBranchComponent'
+      );
     }
 
     function isReactCall(path, name, module = 'react') {

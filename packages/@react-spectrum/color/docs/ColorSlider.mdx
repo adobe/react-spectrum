@@ -35,7 +35,8 @@ keywords: [color slider]
   componentNames={['ColorSlider']}
   sourceData={[
     {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/color-slider/'}
-  ]} />
+  ]}
+  since="3.35.0" />
 
 ## Example
 
@@ -242,3 +243,14 @@ import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
     </ContextualHelp>
   } />
 ```
+
+## Testing
+
+The ColorSlider features a draggable handle that the user can interact with to change its color value.
+Please see the following section in the testing docs for more information on how to simulate this action in your
+test suite.
+
+[Simulating move event](./testing.html#simulating-move-event)
+
+Please also refer to [React Spectrum's test suite](https://github.com/adobe/react-spectrum/blob/main/packages/%40react-spectrum/color/test/ColorArea.test.tsx) if you find that the above
+isn't sufficient when resolving issues in your own test cases.

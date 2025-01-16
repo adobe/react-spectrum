@@ -27,7 +27,7 @@ import {
   toCalendarDate,
   today
 } from '@internationalized/date';
-import {CalendarProps, DateValue} from '@react-types/calendar';
+import {CalendarProps, DateValue, MappedDateValue} from '@react-types/calendar';
 import {CalendarState} from './types';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useState} from 'react';
@@ -51,7 +51,6 @@ export interface CalendarStateOptions<T extends DateValue = DateValue> extends C
   /** Determines how to align the initial selection relative to the visible date range. */
   selectionAlignment?: 'start' | 'center' | 'end'
 }
-
 /**
  * Provides state management for a calendar component.
  * A calendar displays one or more date grids and allows users to select a single date.
@@ -67,11 +66,12 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
     maxValue,
     selectionAlignment,
     isDateUnavailable,
-    pageBehavior = 'visible'
+    pageBehavior = 'visible',
+    firstDayOfWeek
   } = props;
   let calendar = useMemo(() => createCalendar(resolvedOptions.calendar), [createCalendar, resolvedOptions.calendar]);
 
-  let [value, setControlledValue] = useControlledState<DateValue>(props.value, props.defaultValue, props.onChange);
+  let [value, setControlledValue] = useControlledState<DateValue | null, MappedDateValue<T>>(props.value!, props.defaultValue ?? null!, props.onChange);
   let calendarDateValue = useMemo(() => value ? toCalendar(toCalendarDate(value), calendar) : null, [value, calendar]);
   let timeZone = useMemo(() => value && 'timeZone' in value ? value.timeZone : resolvedOptions.timeZone, [value, resolvedOptions.timeZone]);
   let focusedCalendarDate = useMemo(() => (
@@ -136,23 +136,28 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
     setFocusedDate(date);
   }
 
-  function setValue(newValue: CalendarDate) {
+  function setValue(newValue: CalendarDate | null) {
     if (!props.isDisabled && !props.isReadOnly) {
-      newValue = constrainValue(newValue, minValue, maxValue);
-      newValue = previousAvailableDate(newValue, startDate, isDateUnavailable);
-      if (!newValue) {
+      let localValue = newValue;
+      if (localValue === null) {
+        setControlledValue(null);
+        return;
+      }
+      localValue = constrainValue(localValue, minValue, maxValue);
+      localValue = previousAvailableDate(localValue, startDate, isDateUnavailable);
+      if (!localValue) {
         return;
       }
 
       // The display calendar should not have any effect on the emitted value.
       // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
-      newValue = toCalendar(newValue, value?.calendar || new GregorianCalendar());
+      localValue = toCalendar(localValue, value?.calendar || new GregorianCalendar());
 
       // Preserve time if the input value had one.
       if (value && 'hour' in value) {
-        setControlledValue(value.set(newValue));
+        setControlledValue(value.set(localValue));
       } else {
-        setControlledValue(newValue);
+        setControlledValue(localValue);
       }
     }
   }
@@ -169,7 +174,7 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
     return isInvalid(calendarDateValue, minValue, maxValue);
   }, [calendarDateValue, isDateUnavailable, minValue, maxValue]);
   let isValueInvalid = props.isInvalid || props.validationState === 'invalid' || isUnavailable;
-  let validationState: ValidationState = isValueInvalid ? 'invalid' : null;
+  let validationState: ValidationState | null = isValueInvalid ? 'invalid' : null;
 
   let pageDuration = useMemo(() => {
     if (pageBehavior === 'visible') {
@@ -180,8 +185,8 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
   }, [pageBehavior, visibleDuration]);
 
   return {
-    isDisabled: props.isDisabled,
-    isReadOnly: props.isReadOnly,
+    isDisabled: props.isDisabled ?? false,
+    isReadOnly: props.isReadOnly ?? false,
     value: calendarDateValue,
     setValue,
     visibleRange: {
@@ -287,7 +292,9 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
       }
     },
     selectFocusedDate() {
-      setValue(focusedDate);
+      if (!(isDateUnavailable && isDateUnavailable(focusedDate))) {
+        setValue(focusedDate);
+      }
     },
     selectDate(date) {
       setValue(date);
@@ -304,31 +311,30 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
       return isFocused && focusedDate && isSameDay(date, focusedDate);
     },
     isCellDisabled(date) {
-      return props.isDisabled || date.compare(startDate) < 0 || date.compare(endDate) > 0 || this.isInvalid(date, minValue, maxValue);
+      return props.isDisabled || date.compare(startDate) < 0 || date.compare(endDate) > 0 || this.isInvalid(date);
     },
     isCellUnavailable(date) {
-      return props.isDateUnavailable && props.isDateUnavailable(date);
+      return props.isDateUnavailable ? props.isDateUnavailable(date) : false;
     },
     isPreviousVisibleRangeInvalid() {
       let prev = startDate.subtract({days: 1});
-      return isSameDay(prev, startDate) || this.isInvalid(prev, minValue, maxValue);
+      return isSameDay(prev, startDate) || this.isInvalid(prev);
     },
     isNextVisibleRangeInvalid() {
       // Adding may return the same date if we reached the end of time
       // according to the calendar system (e.g. 9999-12-31).
       let next = endDate.add({days: 1});
-      return isSameDay(next, endDate) || this.isInvalid(next, minValue, maxValue);
+      return isSameDay(next, endDate) || this.isInvalid(next);
     },
     getDatesInWeek(weekIndex, from = startDate) {
-      // let date = startOfWeek(from, locale);
       let date = from.add({weeks: weekIndex});
-      let dates = [];
+      let dates: (CalendarDate | null)[] = [];
 
-      date = startOfWeek(date, locale);
-
+      date = startOfWeek(date, locale, firstDayOfWeek);
+      
       // startOfWeek will clamp dates within the calendar system's valid range, which may
       // start in the middle of a week. In this case, add null placeholders.
-      let dayOfWeek = getDayOfWeek(date, locale);
+      let dayOfWeek = getDayOfWeek(date, locale, firstDayOfWeek);
       for (let i = 0; i < dayOfWeek; i++) {
         dates.push(null);
       }

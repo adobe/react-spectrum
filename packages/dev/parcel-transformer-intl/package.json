@@ -4,10 +4,10 @@
   "private": true,
   "main": "IntlTransformer.js",
   "engines": {
-    "parcel": "^2.10.2"
+    "parcel": "^2.0.0"
   },
   "dependencies": {
-    "@parcel/plugin": "^2.10.2",
-    "@internationalized/string-compiler": "^3.0.0"
+    "@internationalized/string-compiler": "^3.0.0",
+    "@parcel/plugin": "^2.0.0"
   }
 }

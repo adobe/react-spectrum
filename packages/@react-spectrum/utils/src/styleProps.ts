@@ -17,7 +17,7 @@ import {useLocale} from '@react-aria/i18n';
 
 type Breakpoint = 'base' | 'S' | 'M' | 'L' | string;
 type StyleName = string | string[] | ((dir: Direction) => string);
-type StyleHandler = (value: any, colorVersion?: number) => string;
+type StyleHandler = (value: any, colorVersion?: number) => string | undefined;
 export interface StyleHandlers {
   [key: string]: [StyleName, StyleHandler]
 }
@@ -128,6 +128,10 @@ export function dimensionValue(value: DimensionValue) {
     return value + 'px';
   }
 
+  if (!value) {
+    return undefined;
+  }
+
   if (UNIT_RE.test(value)) {
     return value;
   }
@@ -140,8 +144,10 @@ export function dimensionValue(value: DimensionValue) {
 }
 
 export function responsiveDimensionValue(value: Responsive<DimensionValue>, matchedBreakpoints: Breakpoint[]) {
-  value = getResponsiveProp(value, matchedBreakpoints);
-  return dimensionValue(value);
+  let responsiveValue = getResponsiveProp(value, matchedBreakpoints);
+  if (responsiveValue != null) {
+    return dimensionValue(responsiveValue);
+  }
 }
 
 type ColorType = 'default' | 'background' | 'border' | 'icon' | 'status';
@@ -154,10 +160,18 @@ function colorValue(value: ColorValue, type: ColorType = 'default', version = 5)
 }
 
 function backgroundColorValue(value: BackgroundColorValue, version = 5) {
+  if (!value) {
+    return undefined;
+  }
+
   return `var(--spectrum-alias-background-color-${value}, ${colorValue(value as ColorValue, 'background', version)})`;
 }
 
 function borderColorValue(value: BorderColorValue, version = 5) {
+  if (!value)  {
+    return undefined;
+  }
+
   if (value === 'default') {
     return 'var(--spectrum-alias-border-color)';
   }
@@ -172,6 +186,10 @@ function borderSizeValue(value?: BorderSizeValue | null) {
 }
 
 function borderRadiusValue(value: BorderRadiusValue) {
+  if (!value) {
+    return undefined;
+  }
+
   return `var(--spectrum-alias-border-radius-${value})`;
 }
 
@@ -283,7 +301,7 @@ export function passthroughStyle(value) {
   return value;
 }
 
-export function getResponsiveProp<T>(prop: Responsive<T>, matchedBreakpoints: Breakpoint[]): T {
+export function getResponsiveProp<T>(prop: Responsive<T>, matchedBreakpoints: Breakpoint[]): T | undefined {
   if (prop && typeof prop === 'object' && !Array.isArray(prop)) {
     for (let i = 0; i < matchedBreakpoints.length; i++) {
       let breakpoint = matchedBreakpoints[i];

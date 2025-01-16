@@ -23,7 +23,7 @@ export function Select(props) {
   let state = useSelectState(props);
 
   // Get props for child elements from useSelect
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {
     labelProps,
     triggerProps,
@@ -70,7 +70,7 @@ export function Select(props) {
 }
 
 function Popover(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(undefined);
   let {
     popoverRef = ref,
     isOpen,
@@ -110,7 +110,7 @@ function Popover(props) {
 
 
 function ListBox(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(undefined);
   let {listBoxRef = ref, state} = props;
   let {listBoxProps} = useListBox(props, state, listBoxRef);
 
@@ -136,7 +136,7 @@ function ListBox(props) {
 }
 
 function Option({item, state}) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {optionProps, isSelected, isFocused, isDisabled} = useOption({key: item.key}, state, ref);
 
   let backgroundColor;

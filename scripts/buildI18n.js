@@ -10,6 +10,10 @@ function build(scope, dist = scope.slice(1)) {
     let parts = file.split('/');
     let lang = parts.at(-1).slice(0, -5);
     let pkg = parts[1].startsWith('@') ? parts.slice(1, 3).join('/') : parts[1];
+    if (pkg === '@react-spectrum/s2') {
+      continue;
+    }
+  
     let compiled = compileStrings(JSON.parse(fs.readFileSync(file, 'utf8'))).replace('module.exports = ', '');
     let pkgJson = JSON.parse(fs.readFileSync(`packages/${pkg}/package.json`, 'utf8'));
 
@@ -40,7 +44,7 @@ function build(scope, dist = scope.slice(1)) {
     serialized += '};\n';
 
     fs.writeFileSync(`packages/${dist}/i18n/${lang}.js`,  minifySync(`module.exports = ${serialized}`).code);
-    fs.writeFileSync(`packages/${dist}/i18n/${lang}.mjs`,  minifySync(`export default ${serialized}`).code);
+    fs.writeFileSync(`packages/${dist}/i18n/${lang}.mjs`,  minifySync(`export default ${serialized}`, {module: true}).code);
   }
 
   fs.writeFileSync(`packages/${dist}/i18n/lang.d.ts`, `import type {LocalizedString} from '@internationalized/string';
@@ -69,9 +73,9 @@ export default PackageLocalizedStrings;
 
     index += `});
 
-function LocalizedStringProvider({locale, dictionary: dict = dictionary}) {
+function LocalizedStringProvider({locale, dictionary: dict = dictionary, nonce}) {
   let strings = dict.getStringsForLocale(locale);
-  return createElement(PackageLocalizationProvider, {locale, strings});
+  return createElement(PackageLocalizationProvider, {locale, strings, nonce});
 }
 
 function getLocalizationScript(locale, dict = dictionary) {
@@ -126,7 +130,8 @@ import type {LocalizedStringDictionary} from '@internationalized/string';
 
 interface LocalizedStringProviderProps {
   locale: string,
-  dictionary?: LocalizedStringDictionary
+  dictionary?: LocalizedStringDictionary,
+  nonce?: string
 }
 
 export declare function LocalizedStringProvider(props: LocalizedStringProviderProps): React.JSX.Element;
@@ -136,6 +141,6 @@ export declare function createLocalizedStringDictionary(packages: string[]): Loc
 `);
 }
 
-build('{@react-aria,@react-stately,@react-spectrum}/*', '@adobe/react-spectrum');
+build('{@react-aria/*,@react-stately/*,@react-spectrum/*,react-aria-components}', '@adobe/react-spectrum');
 build('{@react-aria/*,@react-stately/*,react-aria-components}', 'react-aria-components');
 build('{@react-aria,@react-stately}/*', 'react-aria');

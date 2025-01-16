@@ -13,10 +13,9 @@
 import {AriaTextFieldProps} from '@react-types/textfield';
 import {
   ChangeEvent,
-  DOMFactory,
   HTMLAttributes,
+  type JSX,
   LabelHTMLAttributes,
-  ReactDOM,
   RefObject,
   useEffect
 } from 'react';
@@ -40,9 +39,7 @@ type IntrinsicHTMLElements = {
  * A map of HTML element names and their attribute interface types.
  * For example `'a'` -> `AnchorHTMLAttributes<HTMLAnchorElement>`.
  */
-type IntrinsicHTMLAttributes = {
-  [K in keyof ReactDOM]: ReactDOM[K] extends DOMFactory<infer T, any> ? T : never
-};
+type IntrinsicHTMLAttributes = JSX.IntrinsicElements;
 
 type DefaultElementType = 'input';
 
@@ -72,7 +69,7 @@ type TextFieldHTMLAttributesType = Pick<IntrinsicHTMLAttributes, TextFieldIntrin
  */
 type TextFieldInputProps<T extends TextFieldIntrinsicElements> = TextFieldHTMLAttributesType[T];
 
-export interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements> extends AriaTextFieldProps {
+export interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements> extends AriaTextFieldProps<TextFieldHTMLElementType[T]> {
   /**
    * The HTML element used to render the input, e.g. 'input', or 'textarea'.
    * It determines whether certain HTML attributes will be included in `inputProps`.
@@ -81,7 +78,7 @@ export interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements> exte
    */
   inputElementType?: T,
   /**
-   * Controls whether inputted text is automatically capitalized and, if so, in what manner. 
+   * Controls whether inputted text is automatically capitalized and, if so, in what manner.
    * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/autocapitalize).
    */
   autoCapitalize?: 'off' | 'none' | 'on' | 'sentences' | 'words' | 'characters'
@@ -92,7 +89,7 @@ export interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements> exte
  * intrinsic HTML element name; e.g.`RefObject<HTMLInputElement>`,
  * `RefObject<HTMLTextAreaElement>`.
  */
-type TextFieldRefObject<T extends TextFieldIntrinsicElements> = RefObject<TextFieldHTMLElementType[T]>;
+type TextFieldRefObject<T extends TextFieldIntrinsicElements> = RefObject<TextFieldHTMLElementType[T] | null>;
 
 export interface TextFieldAria<T extends TextFieldIntrinsicElements = DefaultElementType> extends ValidationResult {
   /** Props for the input element. */
@@ -121,9 +118,9 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     isReadOnly = false,
     type = 'text',
     validationBehavior = 'aria'
-  }: AriaTextFieldOptions<TextFieldIntrinsicElements> = props;
+  } = props;
   let [value, setValue] = useControlledState<string>(props.value, props.defaultValue || '', props.onChange);
-  let {focusableProps} = useFocusable(props, ref);
+  let {focusableProps} = useFocusable<TextFieldHTMLElementType[T]>(props, ref);
   let validationState = useFormValidationState({
     ...props,
     value
@@ -166,7 +163,7 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     labelProps,
     inputProps: mergeProps(
       domProps,
-      inputElementType === 'input' && inputOnlyProps,
+      inputElementType === 'input' ? inputOnlyProps : undefined,
       {
         disabled: isDisabled,
         readOnly: isReadOnly,
@@ -177,6 +174,7 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
         'aria-activedescendant': props['aria-activedescendant'],
         'aria-autocomplete': props['aria-autocomplete'],
         'aria-haspopup': props['aria-haspopup'],
+        'aria-controls': props['aria-controls'],
         value,
         onChange: (e: ChangeEvent<HTMLInputElement>) => setValue(e.target.value),
         autoComplete: props.autoComplete,
@@ -186,6 +184,8 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
         name: props.name,
         placeholder: props.placeholder,
         inputMode: props.inputMode,
+        autoCorrect: props.autoCorrect,
+        spellCheck: props.spellCheck,
 
         // Clipboard events
         onCopy: props.onCopy,

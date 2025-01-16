@@ -80,6 +80,10 @@ export default {
       control: 'select',
       options: [null, 'single', 'visible']
     },
+    firstDayOfWeek: {
+      control: 'select',
+      options: [undefined, 'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
+    },
     isInvalid: {
       control: 'boolean'
     },
@@ -202,14 +206,16 @@ function Example(props) {
   let [calendar, setCalendar] = React.useState<Key>(calendars[0].key);
   let {locale: defaultLocale} = useLocale();
 
-  let pref = preferences.find(p => p.locale === locale);
+  let pref = preferences.find(p => p.locale === locale)!;
   let preferredCalendars = React.useMemo(() => pref ? pref.ordering.split(' ').map(p => calendars.find(c => c.key === p)).filter(Boolean) : [calendars[0]], [pref]);
-  let otherCalendars = React.useMemo(() => calendars.filter(c => !preferredCalendars.some(p => p.key === c.key)), [preferredCalendars]);
+  let otherCalendars = React.useMemo(() => calendars.filter(c => !preferredCalendars.some(p => p!.key === c.key)), [preferredCalendars]);
 
   let updateLocale = locale => {
     setLocale(locale);
     let pref = preferences.find(p => p.locale === locale);
-    setCalendar(pref.ordering.split(' ')[0]);
+    if (pref) {
+      setCalendar(pref.ordering.split(' ')[0]);
+    }
   };
 
   return (
@@ -220,14 +226,14 @@ function Example(props) {
         </Picker>
         <Picker label="Calendar" selectedKey={calendar} onSelectionChange={setCalendar}>
           <Section title="Preferred" items={preferredCalendars}>
-            {item => <Item>{item.name}</Item>}
+            {item => <Item>{item!.name}</Item>}
           </Section>
           <Section title="Other" items={otherCalendars}>
             {item => <Item>{item.name}</Item>}
           </Section>
         </Picker>
       </Flex>
-      <Provider locale={(locale || defaultLocale) + (calendar && calendar !== preferredCalendars[0].key ? '-u-ca-' + calendar : '')}>
+      <Provider locale={(locale || defaultLocale) + (calendar && calendar !== preferredCalendars![0]!.key ? '-u-ca-' + calendar : '')}>
         <View maxWidth="100vw" padding="size-10" overflow="auto">
           <Calendar {...props} />
         </View>
@@ -237,8 +243,8 @@ function Example(props) {
 }
 
 function CalendarWithTime(props) {
-  let [value, setValue] = useState(new CalendarDateTime(2019, 6, 5, 8));
-  let onChange = (v: CalendarDateTime) => {
+  let [value, setValue] = useState<CalendarDateTime | null>(new CalendarDateTime(2019, 6, 5, 8));
+  let onChange = (v: CalendarDateTime | null) => {
     setValue(v);
     props?.onChange?.(v);
   };
@@ -252,8 +258,8 @@ function CalendarWithTime(props) {
 }
 
 function CalendarWithZonedTime(props) {
-  let [value, setValue] = useState(parseZonedDateTime('2021-03-14T00:45-08:00[America/Los_Angeles]'));
-  let onChange = (v: ZonedDateTime) => {
+  let [value, setValue] = useState<ZonedDateTime | null>(parseZonedDateTime('2021-03-14T00:45-08:00[America/Los_Angeles]'));
+  let onChange = (v: ZonedDateTime | null) => {
     setValue(v);
     props?.onChange?.(v);
   };

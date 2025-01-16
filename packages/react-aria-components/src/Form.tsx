@@ -10,27 +10,37 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps} from './utils';
+import {ContextValue, DOMProps, useContextProps} from './utils';
 import {FormValidationContext} from 'react-stately';
-import React, {ForwardedRef, forwardRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {FormProps as SharedFormProps} from '@react-types/form';
 
-export interface FormProps extends SharedFormProps, DOMProps {}
-
-function Form(props: FormProps, ref: ForwardedRef<HTMLFormElement>) {
-  let {validationErrors, children, className, ...domProps} = props;
-  return (
-    <form {...domProps} ref={ref} className={className || 'react-aria-Form'}>
-      <FormValidationContext.Provider value={validationErrors ?? {}}>
-        {children}
-      </FormValidationContext.Provider>
-    </form>
-  );
+export interface FormProps extends SharedFormProps, DOMProps {
+  /**
+   * Whether to use native HTML form validation to prevent form submission
+   * when a field value is missing or invalid, or mark fields as required
+   * or invalid via ARIA.
+   * @default 'native'
+   */
+  validationBehavior?: 'aria' | 'native'
 }
+
+export const FormContext = createContext<ContextValue<FormProps, HTMLFormElement>>(null);
 
 /**
  * A form is a group of inputs that allows users to submit data to a server,
  * with support for providing field validation errors.
  */
-const _Form = forwardRef(Form);
-export {_Form as Form};
+export const Form = forwardRef(function Form(props: FormProps, ref: ForwardedRef<HTMLFormElement>) {
+  [props, ref] = useContextProps(props, ref, FormContext);
+  let {validationErrors, validationBehavior = 'native', children, className, ...domProps} = props;
+  return (
+    <form noValidate={validationBehavior !== 'native'} {...domProps} ref={ref} className={className || 'react-aria-Form'}>
+      <FormContext.Provider value={{...props, validationBehavior}}>
+        <FormValidationContext.Provider value={validationErrors ?? {}}>
+          {children}
+        </FormValidationContext.Provider>
+      </FormContext.Provider>
+    </form>
+  );
+});

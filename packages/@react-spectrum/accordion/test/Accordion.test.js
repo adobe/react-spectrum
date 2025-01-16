@@ -10,28 +10,29 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, Item} from '../src';
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
+import {Accordion, Disclosure, DisclosurePanel, DisclosureTitle} from '../src';
+import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
 let items = [
-  {key: 'one', title: 'one title', children: 'one children'},
-  {key: 'two', title: 'two title', children: 'two children'},
-  {key: 'three', title: 'three title', children: 'three children'}
+  {id: 'one', title: 'one title', children: 'one children'},
+  {id: 'two', title: 'two title', children: 'two children'},
+  {id: 'three', title: 'three title', children: <input type="text" />}
 ];
 
 function renderComponent(props) {
   return render(
     <Provider theme={theme}>
-      <Accordion {...props} defaultExpandedKeys={['one']} items={items}>
-        {item => (
-          <Item key={item.key} title={item.title}>
-            {item.children}
-          </Item>
-        )}
+      <Accordion {...props}>
+        {items.map(item => (
+          <Disclosure key={item.id} id={item.id}>
+            <DisclosureTitle>{item.title}</DisclosureTitle>
+            <DisclosurePanel>{item.children}</DisclosurePanel>
+          </Disclosure>
+        ))}
       </Accordion>
     </Provider>
   );
@@ -64,50 +65,35 @@ describe('Accordion', function () {
   });
 
   it('toggle accordion on mouse click', async function () {
-    let tree = renderComponent();
+    let onExpandedChange = jest.fn();
+    let tree = renderComponent({onExpandedChange});
     let buttons = tree.getAllByRole('button');
     let selectedItem = buttons[0];
+    expect(selectedItem).toHaveAttribute('aria-expanded', 'false');
+    await user.click(selectedItem);
+    expect(onExpandedChange).toHaveBeenCalledTimes(1);
     expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
     await user.click(selectedItem);
     expect(selectedItem).toHaveAttribute('aria-expanded', 'false');
-    await user.click(selectedItem);
-    expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
+    expect(onExpandedChange).toHaveBeenCalledTimes(2);
   });
 
-  it('allows users to open and close accordion item with enter / space key', function () {
-    let tree = renderComponent();
+  it('allows users to open and close disclosure with enter / space key', async function () {
+    let onExpandedChange = jest.fn();
+    let tree = renderComponent({onExpandedChange});
     let buttons = tree.getAllByRole('button');
     let selectedItem = buttons[0];
-    expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
+    expect(selectedItem).toHaveAttribute('aria-expanded', 'false');
     act(() => {selectedItem.focus();});
     expect(document.activeElement).toBe(selectedItem);
 
-    fireEvent.keyDown(selectedItem, {key: 'Enter'});
-    fireEvent.keyUp(selectedItem, {key: 'Enter'});
-    expect(selectedItem).toHaveAttribute('aria-expanded', 'false');
-
-    fireEvent.keyDown(selectedItem, {key: 'Enter'});
-    fireEvent.keyUp(selectedItem, {key: 'Enter'});
+    await user.keyboard('{Enter}');
+    expect(onExpandedChange).toHaveBeenCalledTimes(1);
     expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
-  });
 
-  it('allows users to naviagte accordion headers through arrow keys', function () {
-    let tree = renderComponent();
-    let buttons = tree.getAllByRole('button');
-    let [firstItem, secondItem, thirdItem] = buttons;
-    act(() => {firstItem.focus();});
-
-    expect(document.activeElement).toBe(firstItem);
-    fireEvent.keyDown(firstItem, {key: 'ArrowUp'});
-    expect(document.activeElement).toBe(firstItem);
-    fireEvent.keyDown(firstItem, {key: 'ArrowDown'});
-    expect(document.activeElement).toBe(secondItem);
-    fireEvent.keyDown(secondItem, {key: 'ArrowDown'});
-    expect(document.activeElement).toBe(thirdItem);
-    fireEvent.keyDown(thirdItem, {key: 'ArrowDown'});
-    expect(document.activeElement).toBe(thirdItem);
-    fireEvent.keyDown(thirdItem, {key: 'ArrowUp'});
-    expect(document.activeElement).toBe(secondItem);
+    await user.keyboard('{Enter}');
+    expect(onExpandedChange).toHaveBeenCalledTimes(2);
+    expect(selectedItem).toHaveAttribute('aria-expanded', 'false');
   });
 
   it('allows users to navigate accordion headers through the tab key', async function () {
@@ -130,5 +116,67 @@ describe('Accordion', function () {
     expect(document.activeElement).not.toBe(thirdItem);
     await user.tab({shift: true});
     expect(document.activeElement).toBe(thirdItem);
+  });
+
+  it('allows users to type inside disclosures', async function () {
+    let tree = renderComponent();
+    let buttons = tree.getAllByRole('button');
+    let itemWithInputHeader = buttons[2];
+    act(() => itemWithInputHeader.click());
+
+    let [input] = tree.getAllByRole('textbox');
+    act(() => input.focus());
+
+    await user.type(input, 'Type example');
+    expect(input.value).toEqual('Type example');
+  });
+
+  it('supports defaultExpandedKeys', function () {
+    let tree = renderComponent({defaultExpandedKeys: ['one']});
+    let buttons = tree.getAllByRole('button');
+    let selectedItem = buttons[0];
+    expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  it('supports controlled expandedKeys', function () {
+    let onExpandedChange = jest.fn();
+    let tree = renderComponent({expandedKeys: ['one'], onExpandedChange});
+    let buttons = tree.getAllByRole('button');
+    let selectedItem = buttons[0];
+    expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
+    act(() => {selectedItem.click();});
+    expect(onExpandedChange).toHaveBeenCalledTimes(1);
+    expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  it('supports isDisabled on Accordion', function () {
+    let tree = renderComponent({isDisabled: true});
+    let buttons = tree.getAllByRole('button');
+    for (let item of buttons) {
+      expect(item).toHaveAttribute('disabled');
+    }
+  });
+
+  it('supports isDisabled on individual Disclosures', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <Accordion>
+          {items.map(item => (
+            <Disclosure key={item.id} id={item.id} isDisabled={item.id === 'two'}>
+              <DisclosureTitle>{item.title}</DisclosureTitle>
+              <DisclosurePanel>{item.children}</DisclosurePanel>
+            </Disclosure>
+          ))}
+        </Accordion>
+      </Provider>
+    );
+    let buttons = tree.getAllByRole('button');
+    for (let item of buttons) {
+      if (item.textContent === 'two title') {
+        expect(item).toHaveAttribute('disabled');
+      } else {
+        expect(item).not.toHaveAttribute('disabled');
+      }
+    }
   });
 });

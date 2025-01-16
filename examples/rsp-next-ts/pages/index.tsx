@@ -70,20 +70,25 @@ import {
   Well,
   DialogContainer,
   Avatar,
-  TagGroup
-} from "@adobe/react-spectrum";
-import Edit from "@spectrum-icons/workflow/Edit";
-import NotFound from "@spectrum-icons/illustrations/NotFound";
-import Section from "../components/Section";
-import {
+  TagGroup,
+  InlineAlert,
   ColorArea,
   ColorField,
   ColorSlider,
   ColorWheel,
-} from "@react-spectrum/color";
+  ColorSwatchPicker,
+  ColorSwatch,
+  Accordion,
+  Disclosure,
+  DisclosureTitle,
+  DisclosurePanel
+} from "@adobe/react-spectrum";
+import {AutocompleteExample} from "../components/AutocompleteExample";
+import Edit from "@spectrum-icons/workflow/Edit";
+import NotFound from "@spectrum-icons/illustrations/NotFound";
+import Section from "../components/Section";
 import ReorderableListView from "../components/ReorderableListView";
 import {ToastQueue} from '@react-spectrum/toast';
-import {InlineAlert} from '@react-spectrum/inlinealert'
 import {SubmenuTrigger} from "@react-spectrum/menu";
 
 let nestedItems = [
@@ -108,6 +113,7 @@ export default function Home() {
       <Head>
         <title>React Spectrum + NextJS</title>
         <meta name="description" content="React Spectrum + NextJS" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -183,7 +189,7 @@ export default function Home() {
             <MenuTrigger>
               <ActionButton>Menu Trigger</ActionButton>
               <Menu>
-                <Item href="/foo">Link to /foo</Item>
+                <Item href="/foo" routerOptions={{scroll: false}}>Link to /foo</Item>
                 <Item>Cut</Item>
                 <Item>Copy</Item>
                 <Item>Paste</Item>
@@ -235,12 +241,21 @@ export default function Home() {
                 }
               </TableBody>
             </TableView>
+            <AutocompleteExample />
           </Section>
 
           <Section title="Color">
-            <ColorArea defaultValue="#7f0000" />
             <ColorField label="Primary Color" />
+            <ColorSwatchPicker>
+              <ColorSwatch color="#A00" />
+              <ColorSwatch color="#f80" />
+              <ColorSwatch color="#080" />
+              <ColorSwatch color="#08f" />
+              <ColorSwatch color="#088" />
+              <ColorSwatch color="#008" />
+            </ColorSwatchPicker>
             <ColorSlider defaultValue="#7f0000" channel="red" />
+            <ColorArea defaultValue="#7f0000" />
             <ColorWheel defaultValue="hsl(30, 100%, 50%)" />
           </Section>
 
@@ -307,6 +322,34 @@ export default function Home() {
                 <Item key="Emp">Alea jacta est.</Item>
               </TabPanels>
             </Tabs>
+
+            <h3>Accordion</h3>
+            <Accordion>
+              <Disclosure id="files">
+                <DisclosureTitle>
+                  Files
+                </DisclosureTitle>
+                <DisclosurePanel>
+                  <p>Files content</p>
+                </DisclosurePanel>
+              </Disclosure>
+              <Disclosure id="people">
+                <DisclosureTitle>
+                  People
+                </DisclosureTitle>
+                <DisclosurePanel>
+                  <p>People content</p>
+                </DisclosurePanel>
+              </Disclosure>
+            </Accordion>
+
+            <h3>Disclosure</h3>
+            <Disclosure>
+              <DisclosureTitle>System Requirements</DisclosureTitle>
+              <DisclosurePanel>
+                <p>Details about system requirements here.</p>
+              </DisclosurePanel>
+            </Disclosure>
           </Section>
 
           <Section title="Overlays">

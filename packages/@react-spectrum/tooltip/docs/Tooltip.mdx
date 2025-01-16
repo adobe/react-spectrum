@@ -194,3 +194,34 @@ A TooltipTrigger can be disabled without disabling the trigger it displays on.
   <Tooltip variant="negative" showIcon>Dangerous action.</Tooltip>
 </TooltipTrigger>
 ```
+
+## Usage on disabled or non-interactive elements
+
+Tooltips need to be accessible to keyboard and screen reader users, so we ensure that they are only placed on focusable and hoverable elements. For example, plain text and disabled buttons aren't focusable, meaning keyboard and screen reader users would be unable to access the information in that tooltip.
+
+If you need to display some additional context, consider using [ContextualHelp](ContextualHelp.html).
+
+```tsx example
+import {ContextualHelp, Flex, Heading, Content} from '@adobe/react-spectrum';
+
+<Flex gap="size-100" alignItems="center">
+  <TooltipTrigger>
+    <ActionButton isDisabled>Delete resource</ActionButton>
+    <Tooltip variant="negative" showIcon>Dangerous action.</Tooltip>
+  </TooltipTrigger>
+  <ContextualHelp variant="info">
+      <Heading>Permission required</Heading>
+      <Content>Your admin must grant you permission before you can delete resources.</Content>
+  </ContextualHelp>
+</Flex>
+```
+
+## Testing
+
+The TooltipTrigger features an popover that transitions in and out of the page as it is opened and closed. It also has a warmup and cooldown
+time that you've have to account for when interacting with it. Please see the following sections in the testing docs for more information on how to handle these behaviors in your test suite.
+
+[Timers](./testing.html#timers)
+
+Please also refer to [React Spectrum's test suite](https://github.com/adobe/react-spectrum/blob/main/packages/%40react-spectrum/tooltip/test/TooltipTrigger.test.js) if you find that the above
+isn't sufficient when resolving issues in your own test cases.

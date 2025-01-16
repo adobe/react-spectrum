@@ -1,6 +1,4 @@
-import {DropZone} from '@react-spectrum/dropzone'
-import {Flex, Divider, IllustratedMessage, Heading} from '@adobe/react-spectrum';
-import {Text} from 'react-aria-components';
+import {DropZone, Flex, Divider, IllustratedMessage, Heading} from '@adobe/react-spectrum';
 import React from 'react';
 import Upload from '@spectrum-icons/illustrations/Upload';
 import {useDrag} from '@react-aria/dnd';
@@ -21,9 +19,7 @@ export default function DragAndDropExamples() {
         <IllustratedMessage>
           <Upload />
           <Heading>
-            <Text slot="label">
-              {isFilled ? 'You dropped something!' : 'Drag and drop your file'}
-            </Text>
+            {isFilled ? 'You dropped something!' : 'Drag and drop your file'}
           </Heading>
         </IllustratedMessage>
       </DropZone>

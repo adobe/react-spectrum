@@ -12,8 +12,9 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/table';
 import dndDocs from 'docs:@react-spectrum/dnd';
+import tableUtil from 'docs:@react-aria/test-utils/src/table.ts';
 import tableTypes from 'docs:@react-types/table/src/index.d.ts';
-import {HeaderInfo, PropTable, PageDescription, TypeLink, VersionBadge} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription, TypeLink, VersionBadge, ClassAPI} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-spectrum/table/package.json';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
@@ -82,7 +83,7 @@ Basic usage of TableView, seen in the example above, shows the use of a static c
 
 Columns and rows can be statically defined as children, or generated dynamically using a function based on the data passed to the `columns` or `items` prop respectively. Cells can also be statically defined as children, or generated dynamically based on the columns defined in the TableHeader.
 
-Each column and row has a unique key defined by the data. In the example below, the `uid` property of the column object is used as the `key` for the Column element within the TableHeader. The `key` of each row element is implicitly defined by the id property of the row object. See [collections](../react-stately/collections.html#unique-keys) to learn more keys in dynamic collections.
+Each column and row has a unique key defined by the data. In the example below, the `uid` property of the column object is used as the `key` for the Column element within the TableHeader. The `key` of each row element is implicitly defined by the id property of the row object. See [collections](../react-stately/collections.html#unique-keys) to learn more about keys in dynamic collections.
 
 ```tsx example
 let columns = [
@@ -1939,3 +1940,66 @@ let rows = [
   </TableBody>
 </TableView>
 ```
+
+## Testing
+
+The TableView features automatic virtualization and may need specific mocks in a test environment to enable said virtualization properly.
+It also features long press interactions on its rows depending on the row actions provided and if user is interacting with the list on
+a touch device. Please see the following sections in the testing docs for more information on how to handle these
+behaviors in your test suite.
+
+[Timers](./testing.html#timers)
+
+[Desktop vs Mobile](./testing.html#desktop-vs-mobile)
+
+[Virtualized Components](./testing.html#virtualized-components)
+
+[Long press](./testing.html#simulating-user-long-press)
+
+Please also refer to [React Spectrum's test suite](https://github.com/adobe/react-spectrum/blob/main/packages/%40react-spectrum/table/test/Table.test.js) if you find that the above
+isn't sufficient when resolving issues in your own test cases.
+
+### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+`@react-spectrum/test-utils` offers common table interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
+in your tests. Below is the full definition of the table tester and a sample of how you could use it in your test suite.
+
+```ts
+// TableView.test.ts
+import {render, within} from '@testing-library/react';
+import {theme} from '@react-spectrum/theme-default';
+import {User} from '@react-spectrum/test-utils';
+
+let testUtilUser = new User({interactionType: 'mouse', advanceTimer: jest.advanceTimersByTime});
+// ...
+
+it('TableView can toggle row selection', async function () {
+  // Render your test component/app and initialize the table tester
+  let {getByTestId} = render(
+    <Provider theme={defaultTheme}>
+      <TableView data-testid="test-table" selectionMode="multiple">
+      ...
+      </TableView>
+    </Provider>
+  );
+  let tableTester = testUtilUser.createTester('Table', {root: getByTestId('test-table')});
+  expect(tableTester.selectedRows).toHaveLength(0);
+
+  await tableTester.toggleSelectAll();
+  expect(tableTester.selectedRows).toHaveLength(10);
+
+  await tableTester.toggleRowSelection({row: 2});
+  expect(tableTester.selectedRows).toHaveLength(9);
+  let checkbox = within(tableTester.rows[2]).getByRole('checkbox');
+  expect(checkbox).not.toBeChecked();
+
+  await tableTester.toggleSelectAll();
+  expect(tableTester.selectedRows).toHaveLength(10);
+  expect(checkbox).toBeChecked();
+
+  await tableTester.toggleSelectAll();
+  expect(tableTester.selectedRows).toHaveLength(0);
+});
+```
+
+<ClassAPI links={tableUtil.links} class={tableUtil.exports.TableTester} />

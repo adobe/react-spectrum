@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installMouseEvent, installPointerEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, installMouseEvent, installPointerEvent, pointerMap, renderv3 as render} from '@react-spectrum/test-utils-internal';
 import {ColorSlider} from '../';
 import {parseColor} from '@react-stately/color';
 import React from 'react';
@@ -43,7 +43,7 @@ describe('ColorSlider', () => {
     expect(slider).toHaveAttribute('min', '0');
     expect(slider).toHaveAttribute('max', '255');
     expect(slider).toHaveAttribute('step', '1');
-    expect(slider).toHaveAttribute('aria-valuetext', '0');
+    expect(slider).toHaveAttribute('aria-valuetext', '0, black');
   });
 
   it('sets aria-valuetext to formatted value', () => {
@@ -54,7 +54,7 @@ describe('ColorSlider', () => {
     expect(slider).toHaveAttribute('min', '0');
     expect(slider).toHaveAttribute('max', '360');
     expect(slider).toHaveAttribute('step', '1');
-    expect(slider).toHaveAttribute('aria-valuetext', '10°');
+    expect(slider).toHaveAttribute('aria-valuetext', '10°, red orange');
   });
 
   describe('labeling', () => {
@@ -292,62 +292,62 @@ describe('ColorSlider', () => {
   });
 
   describe('keyboard events', () => {
-    it('works', () => {
+    it('works', async () => {
       let defaultColor = parseColor('#000000');
       let {getByRole} = render(<ColorSlider defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} channel="red" />);
       let slider = getByRole('slider');
       act(() => {slider.focus();});
 
-      fireEvent.keyDown(slider, {key: 'Right'});
+      await user.keyboard('{ArrowRight}');
       act(() => {jest.runAllTimers();});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
       expect(onChangeSpy.mock.calls[0][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 1).toString('hexa'));
       expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
       expect(onChangeEndSpy.mock.calls[0][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 1).toString('hexa'));
 
-      fireEvent.keyDown(slider, {key: 'Left'});
+      await user.keyboard('{ArrowLeft}');
       act(() => {jest.runAllTimers();});
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
       expect(onChangeSpy.mock.calls[1][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 0).toString('hexa'));
       expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
       expect(onChangeEndSpy.mock.calls[1][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 0).toString('hexa'));
 
-      fireEvent.keyDown(slider, {key: 'PageUp'});
+      await user.keyboard('{PageUp}');
       act(() => {jest.runAllTimers();});
       expect(onChangeSpy).toHaveBeenCalledTimes(3);
       expect(onChangeSpy.mock.calls[2][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 17).toString('hexa'));
       expect(onChangeEndSpy).toHaveBeenCalledTimes(3);
       expect(onChangeEndSpy.mock.calls[2][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 17).toString('hexa'));
 
-      fireEvent.keyDown(slider, {key: 'Right'});
+      await user.keyboard('{ArrowRight}');
       act(() => {jest.runAllTimers();});
       expect(onChangeSpy).toHaveBeenCalledTimes(4);
       expect(onChangeSpy.mock.calls[3][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 18).toString('hexa'));
       expect(onChangeEndSpy).toHaveBeenCalledTimes(4);
       expect(onChangeEndSpy.mock.calls[3][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 18).toString('hexa'));
 
-      fireEvent.keyDown(slider, {key: 'PageDown'});
+      await user.keyboard('{PageDown}');
       act(() => {jest.runAllTimers();});
       expect(onChangeSpy).toHaveBeenCalledTimes(5);
       expect(onChangeSpy.mock.calls[4][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 1).toString('hexa'));
       expect(onChangeEndSpy).toHaveBeenCalledTimes(5);
       expect(onChangeEndSpy.mock.calls[4][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 1).toString('hexa'));
 
-      fireEvent.keyDown(slider, {key: 'End'});
+      await user.keyboard('{End}');
       act(() => {jest.runAllTimers();});
       expect(onChangeSpy).toHaveBeenCalledTimes(6);
       expect(onChangeSpy.mock.calls[5][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 255).toString('hexa'));
       expect(onChangeEndSpy).toHaveBeenCalledTimes(6);
       expect(onChangeEndSpy.mock.calls[5][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 255).toString('hexa'));
 
-      fireEvent.keyDown(slider, {key: 'PageDown'});
+      await user.keyboard('{PageDown}');
       act(() => {jest.runAllTimers();});
       expect(onChangeSpy).toHaveBeenCalledTimes(7);
       expect(onChangeSpy.mock.calls[6][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 238).toString('hexa'));
       expect(onChangeEndSpy).toHaveBeenCalledTimes(7);
       expect(onChangeEndSpy.mock.calls[6][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 238).toString('hexa'));
 
-      fireEvent.keyDown(slider, {key: 'Home'});
+      await user.keyboard('{Home}');
       act(() => {jest.runAllTimers();});
       expect(onChangeSpy).toHaveBeenCalledTimes(8);
       expect(onChangeSpy.mock.calls[7][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 0).toString('hexa'));
@@ -355,15 +355,15 @@ describe('ColorSlider', () => {
       expect(onChangeEndSpy.mock.calls[7][0].toString('hexa')).toBe(defaultColor.withChannelValue('red', 0).toString('hexa'));
     });
 
-    it('doesn\'t work when disabled', () => {
+    it('doesn\'t work when disabled', async () => {
       let defaultColor = parseColor('#000000');
       let {getByRole} = render(<ColorSlider defaultValue={defaultColor} onChange={onChangeSpy} channel="red" isDisabled />);
       let slider = getByRole('slider');
       act(() => {slider.focus();});
 
-      fireEvent.keyDown(slider, {key: 'Right'});
+      await user.keyboard('{ArrowRight}');
       expect(onChangeSpy).toHaveBeenCalledTimes(0);
-      fireEvent.keyDown(slider, {key: 'Left'});
+      await user.keyboard('{ArrowLeft}');
       expect(onChangeSpy).toHaveBeenCalledTimes(0);
     });
   });

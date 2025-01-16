@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {CheckboxContext, useContextProps} from 'react-aria-components';
 import {CheckboxGroupContext} from './context';
 import CheckmarkSmall from '@spectrum-icons/ui/CheckmarkSmall';
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
@@ -25,8 +26,16 @@ import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useToggleState} from '@react-stately/toggle';
 
-function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
+/**
+ * Checkboxes allow users to select multiple items from a list of individual items,
+ * or to mark one individual item as selected.
+ */
+export const Checkbox = forwardRef(function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
   let originalProps = props;
+  let inputRef = useRef<HTMLInputElement>(null);
+  let domRef = useFocusableRef(ref, inputRef);
+
+  [props, domRef] = useContextProps(props, domRef, CheckboxContext);
   props = useProviderProps(props);
   props = useFormProps(props);
   let {
@@ -37,9 +46,6 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-
-  let inputRef = useRef<HTMLInputElement>(null);
-  let domRef = useFocusableRef(ref, inputRef);
 
   // Swap hooks depending on whether this checkbox is inside a CheckboxGroup.
   // This is a bit unorthodox. Typically, hooks cannot be called in a conditional,
@@ -113,10 +119,4 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
       )}
     </label>
   );
-}
-/**
- * Checkboxes allow users to select multiple items from a list of individual items,
- * or to mark one individual item as selected.
- */
-let _Checkbox = forwardRef(Checkbox);
-export {_Checkbox as Checkbox};
+});

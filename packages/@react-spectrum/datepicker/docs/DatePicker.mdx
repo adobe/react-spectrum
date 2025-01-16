@@ -440,3 +440,24 @@ By default, `DatePicker` displays times in either 12 or 24 hour hour format depe
   granularity="minute"
   hourCycle={24} />
 ```
+
+### Custom first day of week
+
+By default, the first day of the week is automatically set based on the current locale. This can be changed by setting the `firstDayOfWeek` prop to `'sun'`, `'mon'`, `'tue'`, `'wed'`, `'thu'`, `'fri'`, or `'sat'`.
+
+```tsx example
+<DatePicker label="Appointment date" firstDayOfWeek="mon" />
+```
+
+## Testing
+
+The DatePicker features an overlay that transitions in and out of the page as it is opened and closed. Depending on
+your configuration, this overlay may render as a tray or a popover. Please see the following sections in the
+testing docs for more information on how to handle these behaviors in your test suite.
+
+[Timers](./testing.html#timers)
+
+[Desktop vs Mobile](./testing.html#desktop-vs-mobile)
+
+Please also refer to [React Spectrum's test suite](https://github.com/adobe/react-spectrum/blob/main/packages/%40react-spectrum/datepicker/test/DateField.test.js) if you find that the above
+isn't sufficient when resolving issues in your own test cases.

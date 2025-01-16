@@ -52,6 +52,41 @@ export const DatePickerExample = () => (
   </DatePicker>
 );
 
+export const DatePickerTriggerWidthExample = () => (
+  <DatePicker data-testid="date-picker-example">
+    <Label style={{display: 'block'}}>Date</Label>
+    <Group style={{display: 'inline-flex', width: 300}}>
+      <DateInput className={styles.field} style={{flex: 1}}>
+        {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
+      </DateInput>
+      <Button>🗓</Button>
+    </Group>
+    <Popover
+      placement="bottom start"
+      style={{
+        background: 'Canvas',
+        color: 'CanvasText',
+        border: '1px solid gray',
+        padding: 20,
+        boxSizing: 'border-box',
+        width: 'var(--trigger-width)'
+      }}>
+      <Dialog>
+        <Calendar>
+          <div style={{display: 'flex', alignItems: 'center'}}>
+            <Button slot="previous">&lt;</Button>
+            <Heading style={{flex: 1, textAlign: 'center'}} />
+            <Button slot="next">&gt;</Button>
+          </div>
+          <CalendarGrid style={{width: '100%'}}>
+            {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
+          </CalendarGrid>
+        </Calendar>
+      </Dialog>
+    </Popover>
+  </DatePicker>
+);
+
 export const DateRangePickerExample = () => (
   <DateRangePicker data-testid="date-range-picker-example">
     <Label style={{display: 'block'}}>Date</Label>
@@ -77,6 +112,47 @@ export const DateRangePickerExample = () => (
       }}>
       <Dialog>
         <RangeCalendar style={{width: 220}}>
+          <div style={{display: 'flex', alignItems: 'center'}}>
+            <Button slot="previous">&lt;</Button>
+            <Heading style={{flex: 1, textAlign: 'center'}} />
+            <Button slot="next">&gt;</Button>
+          </div>
+          <CalendarGrid style={{width: '100%'}}>
+            {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
+          </CalendarGrid>
+        </RangeCalendar>
+      </Dialog>
+    </Popover>
+  </DateRangePicker>
+);
+
+export const DateRangePickerTriggerWidthExample = () => (
+  <DateRangePicker data-testid="date-range-picker-example">
+    <Label style={{display: 'block'}}>Date</Label>
+    <Group style={{display: 'inline-flex', width: 300}}>
+      <div className={styles.field} style={{flex: 1}}>
+        <DateInput data-testid="date-range-picker-date-input" slot="start" style={{display: 'inline-flex'}}>
+          {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
+        </DateInput>
+        <span aria-hidden="true" style={{padding: '0 4px'}}>–</span>
+        <DateInput slot="end" style={{display: 'inline-flex'}}>
+          {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
+        </DateInput>
+      </div>
+      <Button>🗓</Button>
+    </Group>
+    <Popover
+      placement="bottom start"
+      style={{
+        background: 'Canvas',
+        color: 'CanvasText',
+        border: '1px solid gray',
+        padding: 20,
+        boxSizing: 'border-box',
+        width: 'var(--trigger-width)'
+      }}>
+      <Dialog>
+        <RangeCalendar>
           <div style={{display: 'flex', alignItems: 'center'}}>
             <Button slot="previous">&lt;</Button>
             <Heading style={{flex: 1, textAlign: 'center'}} />

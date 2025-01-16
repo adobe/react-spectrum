@@ -11,8 +11,8 @@
  */
 
 import {classNames, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
-import {FocusableRef} from '@react-types/shared';
-import React, {CSSProperties, ReactNode, RefObject, useRef} from 'react';
+import {FocusableRef, RefObject} from '@react-types/shared';
+import React, {CSSProperties, ReactNode, useRef} from 'react';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import {SpectrumBarSliderBase} from '@react-types/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
@@ -21,8 +21,8 @@ import {useProviderProps} from '@react-spectrum/provider';
 import {useSlider} from '@react-aria/slider';
 
 export interface SliderBaseChildArguments {
-  inputRef: RefObject<HTMLInputElement>,
-  trackRef: RefObject<HTMLElement>,
+  inputRef: RefObject<HTMLInputElement | null>,
+  trackRef: RefObject<HTMLElement | null>,
   state: SliderState
 }
 
@@ -32,7 +32,7 @@ export interface SliderBaseProps<T = number[]> extends SpectrumBarSliderBase<T> 
   style?: CSSProperties
 }
 
-function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
+export const SliderBase = React.forwardRef(function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {
     isDisabled,
@@ -57,12 +57,10 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
       if (!('signDisplay' in formatOptions)) {
         formatOptions = {
           ...formatOptions,
-          // @ts-ignore
           signDisplay: 'exceptZero'
         };
       }
     } else {
-      // @ts-ignore
       formatOptions = {signDisplay: 'exceptZero'};
     }
   }
@@ -74,7 +72,7 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
     minValue,
     maxValue
   });
-  let trackRef = useRef();
+  let trackRef = useRef<HTMLDivElement | null>(null);
   let {
     groupProps,
     trackProps,
@@ -82,11 +80,11 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
     outputProps
   } = useSlider(props, state, trackRef);
 
-  let inputRef = useRef();
+  let inputRef = useRef<HTMLInputElement | null>(null);
   let domRef = useFocusableRef(ref, inputRef);
 
   let displayValue = '';
-  let maxLabelLength = undefined;
+  let maxLabelLength: number | null = null;
 
   if (typeof getValueLabel === 'function') {
     displayValue = getValueLabel(state.values);
@@ -142,7 +140,7 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
     <output
       {...outputProps}
       className={classNames(styles, 'spectrum-Slider-value')}
-      style={maxLabelLength && {width: `${maxLabelLength}ch`, minWidth: `${maxLabelLength}ch`}}>
+      style={maxLabelLength != null ? {width: `${maxLabelLength}ch`, minWidth: `${maxLabelLength}ch`} : undefined}>
       {displayValue}
     </output>
   );
@@ -194,7 +192,4 @@ function SliderBase(props: SliderBaseProps, ref: FocusableRef<HTMLDivElement>) {
       }
     </div>
   );
-}
-
-const _SliderBase = React.forwardRef(SliderBase);
-export {_SliderBase as SliderBase};
+});

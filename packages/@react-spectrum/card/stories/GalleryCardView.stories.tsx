@@ -1,3 +1,4 @@
+// @ts-nocheck
 /*
  * Copyright 2021 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -24,7 +25,6 @@ import {
   FalsyIds,
   FilteringGrid,
   IsLoadingHeightGrid,
-  IsLoadingNoHeightGrid,
   LoadingMoreGrid,
   StaticCards,
   StaticCardViewStory
@@ -159,14 +159,6 @@ export const SelectedKeys: ControlledCardViewStory = {
     ...ControlledCards.args,
     layout: GalleryLayout,
     items: itemsLowVariance
-  }
-};
-
-export const IsLoadingNoHeightGallery: DynamicCardViewStory = {
-  ...IsLoadingNoHeightGrid,
-  args: {
-    ...IsLoadingNoHeightGrid.args,
-    layout: GalleryLayout
   }
 };
 

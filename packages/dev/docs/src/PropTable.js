@@ -64,11 +64,10 @@ const GROUPS = {
     'textAlign',
     'verticalAlign',
     'lineHeight',
-    'letterSpacing',
-    'color'
+    'letterSpacing'
   ],
   Accessibility: [
-    'role', 'id', 'tabIndex', 'excludeFromTabOrder', /^aria-/
+    'role', 'id', 'tabIndex', 'excludeFromTabOrder', 'preventFocusOnPress', /^aria-/
   ],
   Advanced: [
     'UNSAFE_className', 'UNSAFE_style'

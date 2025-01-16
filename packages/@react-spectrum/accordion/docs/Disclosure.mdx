@@ -1,0 +1,126 @@
+{/* Copyright 2024 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/accordion';
+import {HeaderInfo, PropTable, TypeLink, PageDescription} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/accordion/package.json';
+
+---
+category: Navigation
+keywords: [disclosure, accordion, collapse, expand]
+---
+
+```jsx import
+import {Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/accordion';
+```
+
+# Disclosure
+
+<PageDescription>{docs.exports.Disclosure.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Disclosure', 'DisclosureTitle', 'DisclosurePanel']}
+  since="3.38.0" />
+
+## Example
+
+```tsx example
+<Disclosure>
+  <DisclosureTitle>System Requirements</DisclosureTitle>
+  <DisclosurePanel>
+    Details about system requirements here.
+  </DisclosurePanel>
+</Disclosure>
+```
+
+## Content
+
+Disclosure follows the [ARIA Disclosure pattern](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/) and consists of two children: `DisclosureTitle` and `DisclosurePanel`. The `DisclosureTitle` controls the expansion of the `DisclosurePanel` and the contents inside.
+
+Disclosure can be used as a standalone collapsible section of content. However, multiple discosures can be combined to form an [Accordion](Accordion.html).
+
+### Internationalization
+
+In order to internationalize a disclosure, all text content within the disclosure should be localized.
+
+## Events
+
+Disclosure accepts an `onExpandedChange` prop which is triggered when it is expanded or collapsed. The example below uses `onExpandedChange` to programmatically control disclosure expansion.
+
+```tsx example
+function ControlledExpansion() {
+  let [isExpanded, setIsExpanded] = React.useState<boolean>(false);
+
+  return (
+    <>
+      <Disclosure isExpanded={isExpanded} onExpandedChange={setIsExpanded}>
+        <DisclosureTitle>System Requirements</DisclosureTitle>
+        <DisclosurePanel>
+          Details about system requirements here.
+        </DisclosurePanel>
+      </Disclosure>
+      <div style={{marginTop: '20px'}}>{isExpanded ? 'The disclosure is expanded' : 'The disclosure is collapsed'}</div>
+    </>
+  )
+}
+```
+
+## Props
+
+### Disclosure
+
+<PropTable component={docs.exports.Disclosure} links={docs.links} />
+
+### DisclosureTitle
+
+<PropTable component={docs.exports.DisclosureTitle} links={docs.links} />
+
+### DisclosurePanel
+
+<PropTable component={docs.exports.DisclosurePanel} links={docs.links} />
+
+
+## Visual Options
+
+### Disabled
+
+```tsx example
+<Disclosure isDisabled>
+  <DisclosureTitle>System Requirements</DisclosureTitle>
+  <DisclosurePanel>
+    Details about system requirements here.
+  </DisclosurePanel>
+</Disclosure>
+```
+
+### Expanded
+
+```tsx example
+<Disclosure defaultExpanded>
+  <DisclosureTitle>System Requirements</DisclosureTitle>
+  <DisclosurePanel>
+    Details about system requirements here.
+  </DisclosurePanel>
+</Disclosure>
+```
+
+### Quiet
+
+```tsx example
+<Disclosure isQuiet>
+  <DisclosureTitle>System Requirements</DisclosureTitle>
+  <DisclosurePanel>
+    Details about system requirements here.
+  </DisclosurePanel>
+</Disclosure>
+```

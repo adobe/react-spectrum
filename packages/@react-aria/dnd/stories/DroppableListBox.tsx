@@ -29,6 +29,12 @@ import {useListData} from '@react-stately/data';
 import {useListState} from '@react-stately/list';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
+interface ItemValue {
+  id: string,
+  type: string,
+  text: string
+}
+
 export function DroppableListBoxExample(props) {
   let id = React.useRef(props.items?.length || 3);
   let list = useListData({
@@ -43,9 +49,9 @@ export function DroppableListBoxExample(props) {
 
   let onDrop = async (e: DroppableCollectionDropEvent) => {
     if (e.target.type === 'root' || e.target.dropPosition !== 'on') {
-      let items = [];
+      let items: Array<ItemValue> = [];
       for (let item of e.items) {
-        let type: string;
+        let type: string | undefined;
         if (item.kind === 'text') {
           if (item.types.has('folder')) {
             type = 'folder';
@@ -76,7 +82,7 @@ export function DroppableListBoxExample(props) {
   };
 
   return (
-    <DroppableListBox items={list.items} onDrop={onDrop} ref={ref}>
+    <DroppableListBox items={list.items} onDrop={onDrop} ref={ref} isDisabled={props.isDisabled}>
       {item => (
         <Item textValue={item.text}>
           {item.type === 'folder' && <Folder size="S" />}
@@ -104,6 +110,7 @@ export const DroppableListBox = React.forwardRef(function (props: any, ref) {
   }));
 
   let dropState = useDroppableCollectionState({
+    isDisabled: props.isDisabled,
     collection: state.collection,
     selectionManager: state.selectionManager,
     getDropOperation: (target, _, allowedOperations) => {
@@ -134,7 +141,7 @@ export const DroppableListBox = React.forwardRef(function (props: any, ref) {
   }, state, domRef);
 
   let isDropTarget = dropState.isDropTarget({type: 'root'});
-  let dropRef = React.useRef();
+  let dropRef = React.useRef<HTMLDivElement | null>(null);
   let {dropIndicatorProps} = useDropIndicator({
     target: {type: 'root'}
   }, dropState, dropRef);
@@ -179,7 +186,7 @@ export const DroppableListBox = React.forwardRef(function (props: any, ref) {
 });
 
 function CollectionItem({item, state, dropState}) {
-  let ref = React.useRef();
+  let ref = React.useRef<HTMLDivElement | null>(null);
   let {optionProps} = useOption({
     key: item.key,
     isSelected: state.selectionManager.isSelected(item.key)
@@ -205,7 +212,7 @@ function CollectionItem({item, state, dropState}) {
 }
 
 function InsertionIndicator(props) {
-  let ref = React.useRef();
+  let ref = React.useRef<HTMLDivElement | null>(null);
   let {dropIndicatorProps} = useDropIndicator(props, props.dropState, ref);
 
   // If aria-hidden, we are either not in a drag session or the drop target is invalid.
@@ -223,7 +230,7 @@ function InsertionIndicator(props) {
       ref={ref}
       className={props.dropState.isDropTarget(props.target)
         ? classNames(dropIndicatorStyles, 'spectrum-DropIndicator', 'spectrum-DropIndicator--horizontal')
-        : null
+        : undefined
       }
       style={{
         width: '100%',

@@ -13,7 +13,7 @@ export default Layout;
 import contextualHelpTriggerTypes from 'docs:@react-spectrum/menu/src/ContextualHelpTrigger.tsx';
 import submenuTriggerTypes from 'docs:@react-spectrum/menu/src/SubmenuTrigger.tsx';
 import docs from 'docs:@react-spectrum/menu';
-import {HeaderInfo, PropTable, PageDescription, VersionBadge} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/menu/package.json';
 import {Keyboard} from '@react-spectrum/text';
 
@@ -311,7 +311,7 @@ import {Keyboard, Text} from '@react-spectrum/text';
 </MenuTrigger>
 ```
 
-## Unavailable Items <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+## Unavailable Items
 
 ContextualHelpTrigger disables a menu item's action and replaces it with a popover with information on why the item is unavailable and may link users to more information elsewhere.
 
@@ -331,11 +331,9 @@ callbacks will not fire for items made unavailable by a ContextualHelpTrigger.
 
 The example below illustrates how one would setup a Menu to use ContextualHelpTrigger.
 
-```tsx example
+```tsx example keepIndividualImports
+import {Content, Dialog, Heading} from '@adobe/react-spectrum';
 import {ContextualHelpTrigger} from '@react-spectrum/menu';
-import {Dialog} from '@react-spectrum/dialog';
-import {Heading} from '@react-spectrum/text';
-import {Content} from '@react-spectrum/view';
 
 <MenuTrigger>
   <ActionButton>Edit</ActionButton>
@@ -367,14 +365,15 @@ import {Content} from '@react-spectrum/view';
 </MenuTrigger>
 ```
 
-## Submenus <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+## Submenus
 
 Submenus can be created by wrapping an item and a menu in a `SubmenuTrigger`. The `SubmenuTrigger` accepts exactly two children: the `Item` which triggers opening of the submenu, and the `Menu` itself.
 Each submenu's Menu accepts its own set of menu props, allowing you to customize its user action and selection behavior.
 
 ### Static
 
-```tsx example
+```tsx example keepIndividualImports
+
 import {SubmenuTrigger} from '@react-spectrum/menu';
 
 <MenuTrigger>
@@ -406,7 +405,7 @@ import {SubmenuTrigger} from '@react-spectrum/menu';
 
 You can define a recursive function to render the nested menu items dynamically.
 
-```tsx example
+```tsx example keepIndividualImports
 import {SubmenuTrigger} from '@react-spectrum/menu';
 
 let items = [

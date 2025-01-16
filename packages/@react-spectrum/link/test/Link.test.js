@@ -10,20 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@react-spectrum/test-utils';
+import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Link} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
-
-// Triggers a "press" event on an element.
-// TODO: import from somewhere more common
-export function triggerPress(element) {
-  fireEvent.mouseDown(element);
-  fireEvent.mouseUp(element);
-  fireEvent.click(element);
-}
+import userEvent from '@testing-library/user-event';
 
 describe('Link', function () {
   let onPressSpy = jest.fn();
@@ -34,20 +27,21 @@ describe('Link', function () {
   });
 
   afterEach(() => {
-    onOpenChange.mockClear();
-    onPressSpy.mockClear();
+    act(() => {jest.runAllTimers();});
+    jest.clearAllMocks();
   });
 
   it.each`
     Name        | Component | props
     ${'Link'}   | ${Link}   | ${{onPress: onPressSpy}}
-  `('$Name handles defaults', function ({Component, props}) {
+  `('$Name handles defaults', async function ({Component, props}) {
+    let user = userEvent.setup({delay: null, pointerMap});
     let {getByText} = render(<Component {...props} >Click me</Component>);
 
     let link = getByText('Click me');
     expect(link).not.toBeNull();
 
-    triggerPress(link);
+    await user.click(link);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -76,7 +70,8 @@ describe('Link', function () {
     expect(link.href).toBe('https://adobe.com/');
   });
 
-  it('Wraps custom child element', () => {
+  it('Wraps custom child element', async () => {
+    let user = userEvent.setup({delay: null, pointerMap});
     let ref = React.createRef();
     let {getByRole} = render(
       <Link UNSAFE_className="test-class" onPress={onPressSpy} >
@@ -89,15 +84,17 @@ describe('Link', function () {
     expect(ref.current).toBe(link);
     expect(link).toHaveAttribute('class', expect.stringContaining('test-class'));
     expect(link).toHaveAttribute('href', '#only-hash-in-jsdom');
-    triggerPress(link);
+    await user.click(link);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('Handles deprecated onClick', () => {
+  it('Handles deprecated onClick', async () => {
+    let user = userEvent.setup({delay: null, pointerMap});
     let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {getByRole} = render(<Link onClick={onPressSpy} >Click me</Link>);
     let link = getByRole('link');
-    triggerPress(link);
+    await user.click(link);
+    act(() => {jest.runAllTimers();});
     expect(onPressSpy).toHaveBeenCalledTimes(1);
     expect(spyWarn).toHaveBeenCalledWith('onClick is deprecated, please use onPress');
   });
@@ -109,15 +106,14 @@ describe('Link', function () {
   });
 
   it('supports autofocus', () => {
-    jest.useFakeTimers();
     let {getByRole} = render(<Link autoFocus>Click me</Link>);
     act(() => {jest.runAllTimers();});
     let link = getByRole('link');
     expect(document.activeElement).toBe(link);
-    jest.useRealTimers();
   });
 
-  it('supports a wrapping tooltip trigger', () => {
+  it('supports a wrapping tooltip trigger', async () => {
+    let user = userEvent.setup({delay: null, pointerMap});
     let {getByRole, queryByRole} = render(
       <Provider theme={theme}>
         <TooltipTrigger onOpenChange={onOpenChange}>
@@ -128,16 +124,11 @@ describe('Link', function () {
     );
 
     expect(queryByRole('tooltip')).toBeNull();
-    let link = getByRole('link');
-    act(() => {
-      link.focus();
-    });
+    await user.tab();
     expect(onOpenChange).toHaveBeenCalledWith(true);
     let tooltip = getByRole('tooltip');
     expect(tooltip).toBeVisible();
-    act(() => {
-      link.blur();
-    });
+    await user.tab();
     expect(onOpenChange).toHaveBeenCalledTimes(2);
     expect(onOpenChange).toHaveBeenCalledWith(false);
     act(() => {
@@ -147,11 +138,18 @@ describe('Link', function () {
     expect(tooltip).not.toBeInTheDocument();
   });
 
-  it('supports RouterProvider', () => {
+  it('supports RouterProvider', async () => {
+    let user = userEvent.setup({delay: null, pointerMap});
     let navigate = jest.fn();
-    let {getByRole} = render(<Provider theme={theme} router={{navigate}}><Link href="/foo">Click me</Link></Provider>);
+    let useHref = href => '/base' + href;
+    let {getByRole} = render(
+      <Provider theme={theme} router={{navigate, useHref}}>
+        <Link href="/foo" routerOptions={{foo: 'bar'}}>Click me</Link>
+      </Provider>
+    );
     let link = getByRole('link');
-    triggerPress(link);
-    expect(navigate).toHaveBeenCalledWith('/foo');
+    expect(link).toHaveAttribute('href', '/base/foo');
+    await user.click(link);
+    expect(navigate).toHaveBeenCalledWith('/foo', {foo: 'bar'});
   });
 });

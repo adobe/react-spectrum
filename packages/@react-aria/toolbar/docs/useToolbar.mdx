@@ -80,7 +80,7 @@ import {useRef} from 'react';
 import {Button} from 'your-component-library';
 
 function Toolbar(props) {
-  let ref = useRef(null);
+  let ref = useRef<HTMLDivElement | null>(null);
   // Get props for the toolbar element
   let {toolbarProps} = useToolbar(props, ref);
 
@@ -124,7 +124,7 @@ import {useButton} from '@react-aria/button';
 
 function Button(props) {
   let {children} = props;
-  let ref = useRef();
+  let ref = useRef<HTMLButtonElement | null>(null);
   let {buttonProps, isPressed} = useButton({
     ...props,
     elementType: 'span'

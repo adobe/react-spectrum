@@ -10,25 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, FocusableElement} from '@react-types/shared';
-import {ContextValue, forwardRefType, Provider, RenderProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
+import {AriaLabelingProps, FocusableElement, forwardRefType, RefObject} from '@react-types/shared';
+import {AriaPositionProps, mergeProps, OverlayContainer, Placement, PlacementAxis, PositionProps, useOverlayPosition, useTooltip, useTooltipTrigger} from 'react-aria';
+import {ContextValue, Provider, RenderProps, useContextProps, useRenderProps} from './utils';
 import {FocusableProvider} from '@react-aria/focus';
-import {mergeProps, OverlayContainer, PlacementAxis, PositionProps, useOverlayPosition, useTooltip, useTooltipTrigger} from 'react-aria';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerProps, TooltipTriggerProps, TooltipTriggerState, useTooltipTriggerState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef, useState} from 'react';
+import {useEnterAnimation, useExitAnimation, useLayoutEffect} from '@react-aria/utils';
 
 export interface TooltipTriggerComponentProps extends TooltipTriggerProps {
   children: ReactNode
 }
 
-export interface TooltipProps extends PositionProps, OverlayTriggerProps, AriaLabelingProps, RenderProps<TooltipRenderProps> {
+export interface TooltipProps extends PositionProps, Pick<AriaPositionProps, 'arrowBoundaryOffset'>, OverlayTriggerProps, AriaLabelingProps, RenderProps<TooltipRenderProps> {
   /**
    * The ref for the element which the tooltip positions itself with respect to.
    *
    * When used within a TooltipTrigger this is set automatically. It is only required when used standalone.
    */
-  triggerRef?: RefObject<Element>,
+  triggerRef?: RefObject<Element | null>,
   /**
    * Whether the tooltip is currently performing an entry animation.
    */
@@ -41,7 +42,12 @@ export interface TooltipProps extends PositionProps, OverlayTriggerProps, AriaLa
    * The container element in which the overlay portal will be placed. This may have unknown behavior depending on where it is portalled to.
    * @default document.body
    */
-  UNSTABLE_portalContainer?: Element
+  UNSTABLE_portalContainer?: Element,
+  /**
+   * The placement of the tooltip with respect to the trigger.
+   * @default 'top'
+   */
+  placement?: Placement
 }
 
 export interface TooltipRenderProps {
@@ -49,7 +55,7 @@ export interface TooltipRenderProps {
    * The placement of the tooltip relative to the trigger.
    * @selector [data-placement="left | right | top | bottom"]
    */
-  placement: PlacementAxis,
+  placement: PlacementAxis | null,
   /**
    * Whether the tooltip is currently entering. Use this to apply animations.
    * @selector [data-entering]
@@ -92,7 +98,10 @@ export function TooltipTrigger(props: TooltipTriggerComponentProps) {
   );
 }
 
-function Tooltip({UNSTABLE_portalContainer, ...props}: TooltipProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A tooltip displays a description of an element on hover or focus.
+ */
+export const Tooltip = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tooltip({UNSTABLE_portalContainer, ...props}: TooltipProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TooltipContext);
   let contextState = useContext(TooltipTriggerStateContext);
   let localState = useTooltipTriggerState(props);
@@ -107,16 +116,20 @@ function Tooltip({UNSTABLE_portalContainer, ...props}: TooltipProps, ref: Forwar
       <TooltipInner {...props} tooltipRef={ref} isExiting={isExiting} />
     </OverlayContainer>
   );
-}
+});
 
-/**
- * A tooltip displays a description of an element on hover or focus.
- */
-const _Tooltip = /*#__PURE__*/ (forwardRef as forwardRefType)(Tooltip);
-export {_Tooltip as Tooltip};
-
-function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: RefObject<HTMLDivElement>}) {
+function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: RefObject<HTMLDivElement | null>}) {
   let state = useContext(TooltipTriggerStateContext)!;
+
+  // Calculate the arrow size internally
+  // Referenced from: packages/@react-spectrum/tooltip/src/TooltipTrigger.tsx
+  let arrowRef = useRef<HTMLDivElement>(null);
+  let [arrowWidth, setArrowWidth] = useState(0);
+  useLayoutEffect(() => {
+    if (arrowRef.current && state.isOpen) {
+      setArrowWidth(arrowRef.current.getBoundingClientRect().width);
+    }
+  }, [state.isOpen, arrowRef]);
 
   let {overlayProps, arrowProps, placement} = useOverlayPosition({
     placement: props.placement || 'top',
@@ -124,7 +137,11 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
     overlayRef: props.tooltipRef,
     offset: props.offset,
     crossOffset: props.crossOffset,
-    isOpen: state.isOpen
+    isOpen: state.isOpen,
+    arrowSize: arrowWidth,
+    arrowBoundaryOffset: props.arrowBoundaryOffset,
+    shouldFlip: props.shouldFlip,
+    onClose: () => state.close(true)
   });
 
   let isEntering = useEnterAnimation(props.tooltipRef, !!placement) || props.isEntering || false;
@@ -148,10 +165,10 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
       ref={props.tooltipRef}
       {...renderProps}
       style={{...overlayProps.style, ...renderProps.style}}
-      data-placement={placement}
+      data-placement={placement ?? undefined}
       data-entering={isEntering || undefined}
       data-exiting={props.isExiting || undefined}>
-      <OverlayArrowContext.Provider value={{...arrowProps, placement}}>
+      <OverlayArrowContext.Provider value={{...arrowProps, placement, ref: arrowRef}}>
         {renderProps.children}
       </OverlayArrowContext.Provider>
     </div>

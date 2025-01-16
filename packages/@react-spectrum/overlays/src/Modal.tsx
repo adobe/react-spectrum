@@ -12,15 +12,15 @@
 
 import {AriaModalOverlayProps, useModalOverlay} from '@react-aria/overlays';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, StyleProps} from '@react-types/shared';
+import {DOMRef, RefObject, StyleProps} from '@react-types/shared';
 import modalStyles from '@adobe/spectrum-css-temp/components/modal/vars.css';
 import {Overlay} from './Overlay';
 import {OverlayProps} from '@react-types/overlays';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import overrideStyles from './overlays.css';
-import React, {forwardRef, MutableRefObject, ReactNode, RefObject, useRef} from 'react';
+import React, {ForwardedRef, forwardRef, ReactNode, useRef} from 'react';
 import {Underlay} from './Underlay';
-import {useViewportSize} from '@react-aria/utils';
+import {useObjectRef, useViewportSize} from '@react-aria/utils';
 
 interface ModalProps extends AriaModalOverlayProps, StyleProps, Omit<OverlayProps, 'nodeRef' | 'shouldContainFocus'> {
   children: ReactNode,
@@ -30,10 +30,11 @@ interface ModalProps extends AriaModalOverlayProps, StyleProps, Omit<OverlayProp
 
 interface ModalWrapperProps extends ModalProps {
   isOpen?: boolean,
-  wrapperRef: MutableRefObject<HTMLDivElement>
+  wrapperRef: RefObject<HTMLDivElement | null>,
+  children: ReactNode
 }
 
-function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
+export const Modal = forwardRef(function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
   let {children, state, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let wrapperRef = useRef<HTMLDivElement>(null);
@@ -45,18 +46,19 @@ function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
       </ModalWrapper>
     </Overlay>
   );
-}
+});
 
 let typeMap = {
   fullscreen: 'fullscreen',
   fullscreenTakeover: 'fullscreenTakeover'
 };
 
-let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject<HTMLDivElement>) {
+let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: ForwardedRef<HTMLDivElement | null>) {
   let {type, children, state, isOpen, wrapperRef} = props;
-  let typeVariant = typeMap[type];
+  let typeVariant = type != null ? typeMap[type] : undefined;
   let {styleProps} = useStyleProps(props);
-  let {modalProps, underlayProps} = useModalOverlay(props, state, ref);
+  let objRef = useObjectRef(ref);
+  let {modalProps, underlayProps} = useModalOverlay(props, state, objRef);
 
   let wrapperClassName = classNames(
     modalStyles,
@@ -96,7 +98,7 @@ let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject
         <div
           {...styleProps}
           {...modalProps}
-          ref={ref}
+          ref={objRef}
           className={modalClassName}
           data-testid="modal">
           {children}
@@ -105,6 +107,3 @@ let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject
     </div>
   );
 });
-
-let _Modal = forwardRef(Modal);
-export {_Modal as Modal};

@@ -10,14 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@react-spectrum/test-utils';
+import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {CalendarDate} from '@internationalized/date';
-import {Example} from '../stories/Example';
+import {Example, ExampleCustomFirstDay} from '../stories/Example';
+import {I18nProvider} from '@react-aria/i18n';
 import React from 'react';
+import userEvent from '@testing-library/user-event';
 
 describe('useCalendar', () => {
+  let user;
   beforeAll(() => {
     jest.useFakeTimers();
+    user = userEvent.setup({delay: null, pointerMap});
   });
 
   afterEach(() => {
@@ -36,8 +40,15 @@ describe('useCalendar', () => {
     expect(document.activeElement).toBe(cell);
 
     for (let i = 0; i < count; i++) {
-      fireEvent.keyDown(document.activeElement, {key, ...opts});
-      fireEvent.keyUp(document.activeElement, {key, ...opts});
+      if (opts?.shiftKey) {
+        await user.keyboard('{Shift>}');
+      }
+
+      await user.keyboard(`{${key}}`);
+
+      if (opts?.shiftKey) {
+        await user.keyboard('{/Shift}');
+      }
     }
 
     cell = getByLabelText(value, {exact: false});
@@ -50,6 +61,17 @@ describe('useCalendar', () => {
       jest.runAllTimers();
     });
 
+    unmount();
+  }
+
+  async function testFirstDayOfWeek(defaultValue, firstDayOfWeek, expectedFirstDay, locale = 'en-US') {
+    let {getAllByRole, unmount} = render(
+      <I18nProvider locale={locale}>
+        <ExampleCustomFirstDay defaultValue={defaultValue} firstDayOfWeek={firstDayOfWeek} />
+      </I18nProvider>
+    );
+    let cells = getAllByRole('gridcell');
+    expect(cells[0].children[0]).toHaveAttribute('aria-label', expectedFirstDay);
     unmount();
   }
 
@@ -142,21 +164,19 @@ describe('useCalendar', () => {
     });
   });
 
-  function testPagination(defaultValue, rangeBefore, rangeAfter, rel, count,  visibleDuration, pageBehavior) {
+  async function testPagination(defaultValue, rangeBefore, rangeAfter, rel, count,  visibleDuration, pageBehavior) {
     let {getByTestId, getByLabelText, unmount} = render(<Example defaultValue={defaultValue} autoFocus visibleDuration={visibleDuration} pageBehavior={pageBehavior} />);
     let grid = getByTestId('range');
     expect(grid).toHaveTextContent(rangeBefore);
-
     let btn = getByLabelText(rel);
 
     for (let i = 0; i < count; i++) {
-      fireEvent.click(btn);
+      await user.click(btn);
     }
 
     expect(grid).toHaveTextContent(rangeAfter);
-  
     unmount();
-  }  
+  }
 
   describe('pagination', () => {
     it.each`
@@ -165,18 +185,18 @@ describe('useCalendar', () => {
       ${'going forward two'} | ${new CalendarDate(2019, 1, 1)} | ${'January to February 2019'} | ${'May to June 2019'} | ${'Next'} | ${2} | ${{months: 2}}
       ${'going backward one'} | ${new CalendarDate(2019, 1, 1)} | ${'January to February 2019'} | ${'November to December 2018'} | ${'Previous'} | ${1} | ${{months: 2}}
       ${'going backward two'} | ${new CalendarDate(2019, 1, 1)} | ${'January to February 2019'} | ${'September to October 2018'} | ${'Previous'} | ${2} | ${{months: 2}}
-      `('should use visible as default value $Name', ({defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration}) => {
-        testPagination(defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration);
+      `('should use visible as default value $Name', async ({defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration}) => {
+        await testPagination(defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration);
       });
-      
+
     it.each`
       Name | defaultValue | rangeBefore | rangeAfter | rel | count | visibleDuration | pageBehavior
       ${'going forward one'} | ${new CalendarDate(2019, 1, 1)} | ${'January to February 2019'} | ${'February to March 2019'} | ${'Next'} | ${1} | ${{months: 2}} | ${'single'}
       ${'going forward two'} | ${new CalendarDate(2019, 1, 1)} | ${'January to February 2019'} | ${'March to April 2019'} | ${'Next'} | ${2} | ${{months: 2}} | ${'single'}
       ${'going backward one'} | ${new CalendarDate(2019, 1, 1)} | ${'January to February 2019'} | ${'December 2018 to January 2019'} | ${'Previous'} | ${1} | ${{months: 2}} | ${'single'}
       ${'going backward two'} | ${new CalendarDate(2019, 1, 1)} | ${'January to February 2019'} | ${'November to December 2018'} | ${'Previous'} | ${2} | ${{months: 2}} | ${'single'}
-      `('should use pageBehavior single $Name', ({defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior}) => {
-        testPagination(defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior);
+      `('should use pageBehavior single $Name', async ({defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior}) => {
+        await testPagination(defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior);
       });
 
     it.each`
@@ -185,8 +205,8 @@ describe('useCalendar', () => {
     ${'week going forward two'} | ${new CalendarDate(2019, 1, 1)} | ${'December 23, 2018 to January 12, 2019'} | ${'February 3 to 23, 2019'} | ${'Next'} | ${2} | ${{weeks: 3}}
     ${'week going backward one'} | ${new CalendarDate(2019, 1, 1)} | ${'December 23, 2018 to January 12, 2019'} | ${'December 2 to 22, 2018'} | ${'Previous'} | ${1} | ${{weeks: 3}}
     ${'week going backward two'} | ${new CalendarDate(2019, 1, 1)} | ${'December 23, 2018 to January 12, 2019'} | ${'November 11 to December 1, 2018'} | ${'Previous'} | ${2} | ${{weeks: 3}}
-    `('should use visible as default $Name', ({defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior}) => {
-      testPagination(defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior);
+    `('should use visible as default $Name', async ({defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior}) => {
+      await testPagination(defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior);
     });
 
     it.each`
@@ -195,8 +215,8 @@ describe('useCalendar', () => {
     ${'week going forward four'} | ${new CalendarDate(2019, 1, 1)} | ${'December 23, 2018 to January 12, 2019'} | ${'January 20 to February 9, 2019'} | ${'Next'} | ${4} | ${{weeks: 3}} | ${'single'}
     ${'week going backward one'} | ${new CalendarDate(2019, 1, 1)} | ${'December 23, 2018 to January 12, 2019'} | ${'December 16, 2018 to January 5, 2019'} | ${'Previous'} | ${1} | ${{weeks: 3}} | ${'single'}
     ${'week going backward four'} | ${new CalendarDate(2019, 1, 1)} | ${'December 23, 2018 to January 12, 2019'} | ${'November 25 to December 15, 2018'} | ${'Previous'} | ${4} | ${{weeks: 3}} | ${'single'}
-    `('should use pageBehavior single $Name', ({defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior}) => {
-      testPagination(defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior);
+    `('should use pageBehavior single $Name', async ({defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior}) => {
+      await testPagination(defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior);
     });
 
     it.each`
@@ -205,8 +225,8 @@ describe('useCalendar', () => {
     ${'day going forward two'} | ${new CalendarDate(2019, 1, 1)} | ${'December 30, 2018 to January 3, 2019'} | ${'January 9 to 13, 2019'} | ${'Next'} | ${2} | ${{days: 5}}
     ${'day going backward one'} | ${new CalendarDate(2019, 1, 1)} | ${'December 30, 2018 to January 3, 2019'} | ${'December 25 to 29, 2018'} | ${'Previous'} | ${1} | ${{days: 5}}
     ${'day going backward two'} | ${new CalendarDate(2019, 1, 1)} | ${'December 30, 2018 to January 3, 2019'} | ${'December 20 to 24, 2018'} | ${'Previous'} | ${2} | ${{days: 5}}
-    `('should use visible as default $Name', ({defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior}) => {
-      testPagination(defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior);
+    `('should use visible as default $Name', async ({defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior}) => {
+      await testPagination(defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior);
     });
 
     it.each`
@@ -215,8 +235,32 @@ describe('useCalendar', () => {
     ${'day going forward five'} | ${new CalendarDate(2019, 1, 1)} | ${'December 30, 2018 to January 3, 2019'} | ${'January 3 to 7, 2019'} | ${'Next'} | ${4} | ${{days: 5}} | ${'single'}
     ${'day going backward one'} | ${new CalendarDate(2019, 1, 1)} | ${'December 30, 2018 to January 3, 2019'} | ${'December 29, 2018 to January 2, 2019'} | ${'Previous'} | ${1} | ${{days: 5}} | ${'single'}
     ${'day going backward five'} | ${new CalendarDate(2019, 1, 1)} | ${'December 30, 2018 to January 3, 2019'} | ${'December 26 to 30, 2018'} | ${'Previous'} | ${4} | ${{days: 5}} | ${'single'}
-    `('should use pageBehavior single $Name', ({defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior}) => {
-      testPagination(defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior);
+    `('should use pageBehavior single $Name', async ({defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior}) => {
+      await testPagination(defaultValue, rangeBefore, rangeAfter, rel, count, visibleDuration, pageBehavior);
+    });
+  });
+
+  describe('firstDayOfWeek', () => {
+    it.each`
+    Name | defaultValue | firstDayOfWeek | expectedFirstDay | locale
+    ${'default'} | ${new CalendarDate(2024, 1, 1)} | ${undefined} | ${'Sunday, December 31, 2023'} | ${'en-US'}
+    ${'Sunday'} | ${new CalendarDate(2024, 1, 1)} | ${'sun'} | ${'Sunday, December 31, 2023'} | ${'en-US'}
+    ${'Monday'} | ${new CalendarDate(2024, 1, 1)} | ${'mon'} | ${'Monday, January 1, 2024 selected'} | ${'en-US'}
+    ${'Tuesday'} | ${new CalendarDate(2024, 1, 1)} | ${'tue'} | ${'Tuesday, December 26, 2023'} | ${'en-US'}
+    ${'Wednesday'} | ${new CalendarDate(2024, 1, 1)} | ${'wed'} | ${'Wednesday, December 27, 2023'} | ${'en-US'}
+    ${'Thursday'} | ${new CalendarDate(2024, 1, 1)} | ${'thu'} | ${'Thursday, December 28, 2023'} | ${'en-US'}
+    ${'Friday'} | ${new CalendarDate(2024, 1, 1)} | ${'fri'} | ${'Friday, December 29, 2023'} | ${'en-US'}
+    ${'Saturday'} | ${new CalendarDate(2024, 1, 1)} | ${'sat'} | ${'Saturday, December 30, 2023'} | ${'en-US'}
+    ${'default (fr-FR)'} | ${new CalendarDate(2024, 1, 1)} | ${undefined} | ${'lundi 1 janvier 2024 sélectionné'} | ${'fr-FR'}
+    ${'Sunday (fr-FR)'} | ${new CalendarDate(2024, 1, 1)} | ${'sun'} | ${'dimanche 31 décembre 2023'} | ${'fr-FR'}
+    ${'Monday (fr-FR)'} | ${new CalendarDate(2024, 1, 1)} | ${'mon'} | ${'lundi 1 janvier 2024 sélectionné'} | ${'fr-FR'}
+    ${'Tuesday (fr-FR)'} | ${new CalendarDate(2024, 1, 1)} | ${'tue'} | ${'mardi 26 décembre 2023'} | ${'fr-FR'}
+    ${'Wednesday (fr-FR)'} | ${new CalendarDate(2024, 1, 1)} | ${'wed'} | ${'mercredi 27 décembre 2023'} | ${'fr-FR'}
+    ${'Thursday (fr-FR)'} | ${new CalendarDate(2024, 1, 1)} | ${'thu'} | ${'jeudi 28 décembre 2023'} | ${'fr-FR'}
+    ${'Friday (fr-FR)'} | ${new CalendarDate(2024, 1, 1)} | ${'fri'} | ${'vendredi 29 décembre 2023'} | ${'fr-FR'}
+    ${'Saturday (fr-FR)'} | ${new CalendarDate(2024, 1, 1)} | ${'sat'} | ${'samedi 30 décembre 2023'} | ${'fr-FR'}
+    `('should use firstDayOfWeek $Name', async ({defaultValue, firstDayOfWeek, expectedFirstDay, locale}) => {
+      await testFirstDayOfWeek(defaultValue, firstDayOfWeek, expectedFirstDay, locale);
     });
   });
 });

@@ -11,6 +11,7 @@
  */
 
 import {classNames, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {ColorSliderContext, useContextProps} from 'react-aria-components';
 import {ColorThumb} from './ColorThumb';
 import {FocusableRef} from '@react-types/shared';
 import {Label} from '@react-spectrum/label';
@@ -23,8 +24,15 @@ import {useFocus, useFocusVisible} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
-function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivElement>) {
+/**
+ * ColorSliders allow users to adjust an individual channel of a color value.
+ */
+export const ColorSlider = React.forwardRef(function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivElement>) {
   props = useProviderProps(props);
+  let inputRef = useRef(null);
+  let trackRef = useRef(null);
+  let domRef = useFocusableRef(ref, inputRef);
+  [props, domRef] = useContextProps(props, domRef, ColorSliderContext);
 
   let {
     isDisabled,
@@ -38,10 +46,6 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
 
   let {styleProps} = useStyleProps(props);
   let {locale} = useLocale();
-
-  let inputRef = useRef(null);
-  let trackRef = useRef(null);
-  let domRef = useFocusableRef(ref, inputRef);
 
   let state = useColorSliderState({...props, locale});
 
@@ -126,6 +130,7 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
           isFocused={isFocused && isFocusVisible}
           isDisabled={isDisabled}
           isDragging={state.isThumbDragging(0)}
+          containerRef={trackRef}
           className={classNames(styles, 'spectrum-ColorSlider-handle')}
           {...thumbProps}>
           <input {...inputProps} {...focusProps} ref={inputRef} className={classNames(styles, 'spectrum-ColorSlider-slider')} />
@@ -133,10 +138,4 @@ function ColorSlider(props: SpectrumColorSliderProps, ref: FocusableRef<HTMLDivE
       </div>
     </div>
   );
-}
-
-/**
- * ColorSliders allow users to adjust an individual channel of a color value.
- */
-let _ColorSlider = React.forwardRef(ColorSlider);
-export {_ColorSlider as ColorSlider};
+});

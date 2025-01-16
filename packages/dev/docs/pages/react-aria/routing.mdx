@@ -34,16 +34,17 @@ Note that external links to different origins will not trigger client side routi
 
 ## RouterProvider
 
-The `RouterProvider` component accepts a single prop: `navigate`. This should be set to a function received from your router for performing a client side navigation programmatically. The following example shows the general pattern. Framework-specific examples are shown below.
+The `RouterProvider` component accepts two props: `navigate` and `useHref`. `navigate` should be set to a function received from your router for performing a client side navigation programmatically. `useHref` is an optional prop that converts a router-specific href to a native HTML href, e.g. prepending a base path. The following example shows the general pattern. Framework-specific examples are shown below.
 
 ```tsx
 import {RouterProvider} from 'react-aria-components';
+import {useNavigate, useHref} from 'your-router';
 
 function App() {
-  let navigate = useNavigateFromYourRouter();
+  let navigate = useNavigate();
 
   return (
-    <RouterProvider navigate={navigate}>
+    <RouterProvider navigate={navigate} useHref={useHref}>
       {/* ... */}
     </RouterProvider>
   );
@@ -52,19 +53,45 @@ function App() {
 
 Note: if you are using React Aria hooks rather than components, you can import `RouterProvider` from `react-aria` instead.
 
-### React Router
+### Router options
 
-The [useNavigate](https://reactrouter.com/en/main/hooks/use-navigate) hook from `react-router-dom` returns a `navigate` function you can pass to `RouterProvider`. Ensure that the component that calls `useNavigate` and renders `RouterProvider` is inside the router component (e.g. `BrowserRouter`) so that it has access to React Router's internal context. The React Router `<Routes>` element should also be defined inside React Aria's `<RouterProvider>` so that links inside the rendered routes have access to the router.
+All React Aria link components accept a `routerOptions` prop, which is an object that is passed through to the client side router's `navigate` function as the second argument. This can be used to control any router-specific behaviors, such as scrolling, replacing instead of pushing to the history, etc.
 
 ```tsx
-import {BrowserRouter, useNavigate} from 'react-router-dom';
+<MenuItem href="/login" routerOptions={{replace: true}}>{/* ...*/}</MenuItem>
+```
+
+When using TypeScript, you can configure the `RouterConfig` type globally so that all link components have auto complete and type safety using a type provided by your router.
+
+```tsx
+import type {RouterOptions} from 'your-router';
+
+declare module 'react-aria-components' {
+  interface RouterConfig {
+    routerOptions: RouterOptions
+  }
+}
+```
+
+### React Router
+
+The [useNavigate](https://reactrouter.com/en/main/hooks/use-navigate) hook from `react-router-dom` returns a `navigate` function you can pass to `RouterProvider`. The [useHref](https://reactrouter.com/en/main/hooks/use-href) hook can also be provided if you're using React Router's `basename` option. Ensure that the component that calls `useNavigate` and renders `RouterProvider` is inside the router component (e.g. `BrowserRouter`) so that it has access to React Router's internal context. The React Router `<Routes>` element should also be defined inside React Aria's `<RouterProvider>` so that links inside the rendered routes have access to the router.
+
+```tsx
+import {BrowserRouter, useNavigate, useHref, type NavigateOptions} from 'react-router-dom';
 import {RouterProvider} from 'react-aria-components';
+
+declare module 'react-aria-components' {
+  interface RouterConfig {
+    routerOptions: NavigateOptions
+  }
+}
 
 function App() {
   let navigate = useNavigate();
 
   return (
-    <RouterProvider navigate={navigate}>
+    <RouterProvider navigate={navigate} useHref={useHref}>
       {/* Your app here... */}
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -91,6 +118,12 @@ The [useRouter](https://nextjs.org/docs/app/api-reference/functions/use-router) 
 
 import {useRouter} from 'next/navigation';
 import {RouterProvider} from 'react-aria-components';
+
+declare module 'react-aria-components' {
+  interface RouterConfig {
+    routerOptions: NonNullable<Parameters<ReturnType<typeof useRouter>['push']>[1]>
+  }
+}
 
 export function ClientProviders({children}) {
   let router = useRouter();
@@ -120,6 +153,37 @@ export default function RootLayout({children}) {
 }
 ```
 
+If you are using the Next.js [basePath](https://nextjs.org/docs/app/api-reference/next-config-js/basePath) setting, you'll need to configure an environment variable to access it. Then, provide a custom `useHref` function to prepend it to the href for all links.
+
+```tsx
+// next.config.js
+const basePath = '...';
+const nextConfig = {
+  basePath,
+  env: {
+    BASE_PATH: basePath
+  }
+};
+```
+
+```tsx
+// app/provider.tsx
+// ...
+
+export function ClientProviders({children}) {
+  let router = useRouter();
+  /*- begin highlight -*/
+  let useHref = (href: string) => process.env.BASE_PATH + href;
+  /*- end highlight -*/
+
+  return (
+    <RouterProvider navigate={router.push} useHref={useHref}>
+      {children}
+    </RouterProvider>
+  );
+}
+```
+
 #### Pages router
 
 The [useRouter](https://nextjs.org/docs/pages/api-reference/functions/use-router) hook from `next/router` returns a router object that can be used to perform navigation. `RouterProvider` should be rendered at the root of each page that includes React Aria links, or in `pages/_app.tsx` to add it to all pages.
@@ -127,14 +191,42 @@ The [useRouter](https://nextjs.org/docs/pages/api-reference/functions/use-router
 ```tsx
 // pages/_app.tsx
 import type { AppProps } from 'next/app';
-import {useRouter} from 'next/router';
+import {useRouter, type NextRouter} from 'next/router';
 import {RouterProvider} from 'react-aria-components';
+
+declare module 'react-aria-components' {
+  interface RouterConfig {
+    routerOptions: NonNullable<Parameters<NextRouter['push']>[2]>
+  }
+}
 
 export default function MyApp({Component, pageProps}: AppProps) {
   let router = useRouter();
 
   return (
-    <RouterProvider navigate={router.push}>
+    <RouterProvider navigate={(href, opts) => router.push(href, undefined, opts)}>
+      <Component {...pageProps} />
+    </RouterProvider>
+  );
+}
+```
+
+When using the [basePath](https://nextjs.org/docs/app/api-reference/next-config-js/basePath) configuration option, provide a `useHref` prop to `RouterProvider` to prepend it to links automatically.
+
+```tsx
+// pages/_app.tsx
+// ...
+
+export default function MyApp({Component, pageProps}: AppProps) {
+  let router = useRouter();
+
+  return (
+    <RouterProvider 
+      navigate={(href, opts) => router.push(href, undefined, opts)}
+      /*- begin highlight -*/
+      useHref={(href: string) => router.basePath + href}
+      /*- end highlight -*/
+    >
       <Component {...pageProps} />
     </RouterProvider>
   );
@@ -143,12 +235,19 @@ export default function MyApp({Component, pageProps}: AppProps) {
 
 ### Remix
 
-Remix uses React Router under the hood, so the same [useNavigate](https://reactrouter.com/en/main/hooks/use-navigate) hook described above also works in Remix apps. `RouterProvider` should be rendered at the root of each page that includes React Aria links, or in `app/root.tsx` to add it to all pages. See the [Remix docs](https://remix.run/docs/en/main/file-conventions/root) for more details.
+Remix uses React Router under the hood, so the same [useNavigate](https://reactrouter.com/en/main/hooks/use-navigate) and [useHref](https://reactrouter.com/en/main/hooks/use-href) hooks described above also work in Remix apps. `RouterProvider` should be rendered at the root of each page that includes React Aria links, or in `app/root.tsx` to add it to all pages. See the [Remix docs](https://remix.run/docs/en/main/file-conventions/root) for more details.
 
 ```tsx
 // app/root.tsx
-import {useNavigate, Outlet} from '@remix-run/react';
+import {useNavigate, useHref, Outlet} from '@remix-run/react';
+import type {NavigateOptions} from 'react-router-dom';
 import {RouterProvider} from 'react-aria-components';
+
+declare module 'react-aria-components' {
+  interface RouterConfig {
+    routerOptions: NavigateOptions
+  }
+}
 
 export default function App() {
   let navigate = useNavigate();
@@ -159,12 +258,39 @@ export default function App() {
         {/* ... */}
       </head>
       <body>
-        <RouterProvider navigate={navigate}>
+        <RouterProvider navigate={navigate} useHref={useHref}>
           <Outlet />
         </RouterProvider>
         {/* ... */}
       </body>
     </html>
+  );
+}
+```
+
+### TanStack Router
+
+To use [TanStack Router](https://tanstack.com/router) with React Aria, render React Aria's `RouterProvider` inside your root route. Use `router.navigate` in the `navigate` prop, and `router.buildLocation` in the `useHref` prop. You can also configure TypeScript to get autocomplete for the `href` prop by declaring the `RouterConfig` type using the types provided by TanStack Router.
+
+```tsx
+import {useRouter, type NavigateOptions, type ToOptions} from '@tanstack/react-router';
+import {RouterProvider} from 'react-aria-components';
+
+declare module 'react-aria-components' {
+  interface RouterConfig {
+    href: ToOptions['to'];
+    routerOptions: Omit<NavigateOptions, keyof ToOptions>;
+  }
+}
+
+function RootRoute() {
+  let router = useRouter();
+  return (
+    <RouterProvider 
+      navigate={(to, options) => router.navigate({to, ...options})}
+      useHref={to => router.buildLocation({to}).href}>
+      {/* ...*/}
+    </RouterProvider>
   );
 }
 ```

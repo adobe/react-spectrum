@@ -11,12 +11,12 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {AriaLabelingProps, DOMAttributes, FocusableElement} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {QueuedToast, ToastState} from '@react-stately/toast';
-import {RefObject, useEffect, useRef} from 'react';
-import {useId, useLayoutEffect, useSlotId} from '@react-aria/utils';
+import React, {useEffect} from 'react';
+import {useId, useSlotId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface AriaToastProps<T> extends AriaLabelingProps {
@@ -25,8 +25,10 @@ export interface AriaToastProps<T> extends AriaLabelingProps {
 }
 
 export interface ToastAria {
-  /** Props for the toast container element. */
+  /** Props for the toast container, non-modal dialog element. */
   toastProps: DOMAttributes,
+  /** Props for the toast content alert message. */
+  contentProps: DOMAttributes,
   /** Props for the toast title element. */
   titleProps: DOMAttributes,
   /** Props for the toast description element, if any. */
@@ -39,7 +41,8 @@ export interface ToastAria {
  * Provides the behavior and accessibility implementation for a toast component.
  * Toasts display brief, temporary notifications of actions, errors, or other events in an application.
  */
-export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref: RefObject<FocusableElement>): ToastAria {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref: RefObject<FocusableElement | null>): ToastAria {
   let {
     key,
     timer,
@@ -48,7 +51,7 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
   } = props.toast;
 
   useEffect(() => {
-    if (!timer) {
+    if (timer == null || timeout == null) {
       return;
     }
 
@@ -58,30 +61,12 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
     };
   }, [timer, timeout]);
 
-  // Restore focus to the toast container on unmount.
-  // If there are no more toasts, the container will be unmounted
-  // and will restore focus to wherever focus was before the user
-  // focused the toast region.
-  let focusOnUnmount = useRef(null);
-  useLayoutEffect(() => {
-    let container = ref.current.closest('[role=region]') as HTMLElement;
-    return () => {
-      if (container && container.contains(document.activeElement)) {
-        // Focus must be delayed for focus ring to appear, but we can't wait
-        // until useEffect cleanup to check if focus was inside the container.
-        focusOnUnmount.current = container;
-      }
-    };
-  }, [ref]);
-
-  // eslint-disable-next-line
+  let [isEntered, setIsEntered] = React.useState(false);
   useEffect(() => {
-    return () => {
-      if (focusOnUnmount.current) {
-        focusOnUnmount.current.focus();
-      }
-    };
-  }, [ref]);
+    if (animation === 'entering' || animation === 'queued') {
+      setIsEntered(true);
+    }
+  }, [animation]);
 
   let titleId = useId();
   let descriptionId = useSlotId();
@@ -89,13 +74,22 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
 
   return {
     toastProps: {
-      role: 'alert',
+      role: 'alertdialog',
+      'aria-modal': 'false',
       'aria-label': props['aria-label'],
       'aria-labelledby': props['aria-labelledby'] || titleId,
       'aria-describedby': props['aria-describedby'] || descriptionId,
       'aria-details': props['aria-details'],
       // Hide toasts that are animating out so VoiceOver doesn't announce them.
-      'aria-hidden': animation === 'exiting' ? 'true' : undefined
+      'aria-hidden': animation === 'exiting' ? 'true' : undefined,
+      tabIndex: 0
+    },
+    contentProps: {
+      role: 'alert',
+      'aria-atomic': 'true',
+      style: {
+        visibility: isEntered || animation === null ? 'visible' : 'hidden'
+      }
     },
     titleProps: {
       id: titleId

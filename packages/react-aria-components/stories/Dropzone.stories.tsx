@@ -136,7 +136,7 @@ export const DropzoneExampleWithCopyableObject = (props) => (
   </div>
 );
 
-export const DropzoneWithRenderProps = (props) => (
+const DropzoneWithRenderPropsExample = (props) => (
   <div>
     <Draggable />
     <Copyable />
@@ -147,7 +147,7 @@ export const DropzoneWithRenderProps = (props) => (
       onDrop={action('OnDrop')}
       onDropEnter={action('OnDropEnter')}
       onDropExit={action('OnDropExit')}>
-      {({isHovered, isFocused, isFocusVisible, isDropTarget}) => (
+      {({isHovered, isFocused, isFocusVisible, isDropTarget, isDisabled}) => (
         <div>
           <Text slot="label">
             DropzoneArea
@@ -156,11 +156,24 @@ export const DropzoneWithRenderProps = (props) => (
           <div>isFocused: {isFocused ? 'true' : 'false'}</div>
           <div>isFocusVisible: {isFocusVisible ? 'true' : 'false'}</div>
           <div>isDropTarget: {isDropTarget ? 'true' : 'false'}</div>
+          <div>isDisabled: {isDisabled ? 'true' : 'false'}</div>
         </div>
       )}
     </DropZone>
   </div>
 );
+
+export const DropzoneWithRenderProps = {
+  args: {
+    isDisabled: false
+  },
+  argTypes: {
+    isDisabled: {control: 'boolean'}
+  },
+  render: (args) => (
+    <DropzoneWithRenderPropsExample {...args} />
+  )
+};
 
 const Draggable = () => {
   let buttonRef = useRef(null);

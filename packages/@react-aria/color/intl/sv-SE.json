@@ -2,5 +2,7 @@
   "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
   "colorPicker": "Färgväljaren",
+  "colorSwatch": "färgruta",
+  "transparent": "genomskinlig",
   "twoDimensionalSlider": "2D-reglage"
 }

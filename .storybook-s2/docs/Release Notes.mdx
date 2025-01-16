@@ -1,0 +1,173 @@
+import {Release030Intro} from './Release030Intro.jsx';
+import {MDXLayout} from './MDXLayout';
+export default MDXLayout;
+
+# Release Notes
+
+## v0.6.0
+
+### New Components
+
+* [ActionBar](?path=/docs/actionbar--docs)
+
+### Updates
+
+* [Button](?path=/docs/button--docs): Add `genai` and `premium` gradient variants
+* [Menu](?path=/docs/menu--docs): Add `hideLinkOutIcon` prop, update alignment of items in different sections, and show checkmark on selected items that are links.
+* Added `staticColor="auto"` option to [ActionButton](?path=/docs/actionbutton--docs), [ToggleButton](?path=/docs/togglebutton--docs), [Divider](?path=/docs/divider--docs), [Meter](?path=/docs/meter--docs), [ProgressBar](?path=/docs/progressbar--docs), and [Link](?path=/docs/link--docs)
+* [ContextualHelp](?path=/docs/contextualhelp--docs): Fix alignment with field labels
+* [InlineAlert](?path=/docs/inlinealert--docs): Remove maximum width
+* [CheckboxGroup](?path=/docs/checkboxgroup--docs): Fix `isRequired` within a Form
+
+### Codemods
+
+* Added TableView codemods
+
+## v0.5.0
+
+In this release we have updated our Dialog and DialogTrigger APIs to improve layout flexibility for custom dialogs and popovers. Dialog has been split into four components:
+
+* [Dialog](?path=/docs/dialog--docs) – a modal dialog with a standard layout with slots for the heading, content, hero image, button group, etc. This corresponds to the previous `type="modal"` API.
+* [FullscreenDialog](?path=/docs/fullscreendialog--docs) – a fullscreen or takeover modal, similar to a Dialog but with different slots and layout. This corresponds to the previous `type="fullscreen"` and `type="fullscreenTakeover"` APIs.
+* [CustomDialog](?path=/docs/customdialog--docs) – a modal dialog with a completely custom layout. It can have default padding or go edge-to-edge. No built-in slots are provided, the layout is entirely up to you.
+* [Popover](?path=/docs/popover--docs) Popovers no longer support the previous dialog-style layout, which was rarely needed in recent apps. In addition, popover now has a reduced amount of padding by default, which was a common request.
+
+In addition, several DialogTrigger props have moved to the above children:
+
+* `type` is removed. Use one of the above components instead.
+* `isKeyboardDismissDisabled` moved to Dialog, FullscreenDialog, and CustomDialog
+* `isDismissable` was renamed to `isDismissible` (fixed spelling), and moved to Dialog and CustomDialog
+* `hideArrow`, `offset`, `crossOffset`, `containerPadding`, `placement`, and `shouldFlip` moved to Popover
+
+We've also continued to iterate on developer experience based on your feedback. Documentation on style macro usage with regards to
+[colors](?path=/docs/style-macro--docs#colors) and [typography](?path=/docs/style-macro--docs#typography) have been added to help clarify
+these common use cases. Style macro properties like `width` and `height` now allow for arbitrary pixel size values, please see the [docs](?path=/docs/style-macro--docs#sizing)
+for more information. Finally, documentation on [optimizing CSS bundling](?path=/docs/style-macro--docs#css-optimization) have also been
+added to help you generate a properly optimized output when using the bundler of your choice.
+
+### New components
+
+* [ActionButtonGroup](?path=/docs/actionbuttongroup--docs)
+* [CloseButton](?path=/docs/customdialog--docs)
+* [CustomDialog](?path=/docs/customdialog--docs)
+* [FullscreenDialog](?path=/docs/fullscreendialog--docs)
+* [Popover](?path=/docs/popover--docs)
+* [ToggleButtonGroup](?path=/docs/togglebuttongroup--docs)
+
+### Updates
+
+* [Accordion](?path=/docs/accordion--docs): Add support for adjacent sibling elements in header
+* [ActionButton](?path=/docs/actionbutton--docs): Add support for Avatars in ActionButtons
+* [Dialog](?path=/docs/dialog--docs): See above for a summary of the changes to Dialog and Dialog adjacent components.
+* [Disclosure](?path=/docs/disclosure--docs): Add support for adjacent sibling elements in header
+* [DropZone](?path=/docs/dropzone--docs): Add t-shirt sizing
+* [Menu](?path=/docs/menu--docs): Add support for separate user defined selection modes per MenuSection
+* [Meter](?path=/docs/meter--docs): Add label positioning support
+* Update Spectrum Tokens to v53
+* Allow arbitrary pixel sizes for style macro sizing properties (e.g. width, height)
+
+### Codemods
+
+* Support Dialog updates
+* Support ActionGroup -> ActionButtonGroup/ToggleButtonGroup
+* Support arbitrary pixel sizing for style macro sizing properties
+* Update S1 to S2 icon mapping
+
+## v0.4.0
+
+### New components
+
+* [Accordion](?path=/docs/accordion--docs)
+* [Disclosure](?path=/docs/disclosure--docs)
+* [Card](?path=/docs/card--docs)
+* [CardView](?path=/docs/cardview--docs)
+* [SegmentedControl](?path=/docs/segmentedcontrol--docs)
+* [TableView](?path=/docs/tableview--docs)
+
+### Updates
+
+* [ProgressBar](?path=/docs/progressbar--docs): Support side label, update edges to be rounded, and support custom widths
+* [ProgressCircle]((?path=/docs/progresscircle--docs)): Update edges to be rounded
+* [Badge](?path=/docs/badge--docs): Add subtle and outline fill variants
+* [Breadcrumbs](?path=/docs/breadcrumbs--docs): Add collapse behavior
+* [Button](?path=/docs/button--docs): Add support for pending state
+* Update Spectrum Tokens to v46
+
+### Codemods
+
+* Handle legacy Link API
+* Remove Section and Items imports if not used elsewhere in file
+* Support Badge
+* Support Well
+* Support icons
+* Fix links and install step
+
+## v0.3.0
+
+<Release030Intro />
+
+### New components
+
+* [NumberField](?path=/docs/numberfield--docs)
+* [AlertDialog](?path=/docs/alertdialog--docs)
+* [Linear and gradient illustrations](?path=/docs/illustrations--docs)
+* [AvatarGroup](?path=/docs/avatargroup--docs)
+* [Tabs](?path=/docs/tabs--docs)
+
+### Updates
+
+* Add collapse and action support to TagGroup
+* Add support for new Adobe Clean variable font
+* Updated [workflow icons](?path=/docs/workflow-icons--docs) – **PLEASE NOTE**: some icons changed names in this release.
+* Add CLI and Parcel plugins to build custom icons and illustrations
+* Add translations for all components
+* Add slot contexts to all S2 components
+* Fix menu z-index
+* Fix overlay trigger press scaling and menu description color
+* Fix ComboBox and NumberField custom width
+* Fix padding on fields with no visible label
+* Add ContextualHelp Storybook stories to components missing them
+
+## v0.2.0
+
+### New components
+
+* [Breadcrumbs](?path=/docs/breadcrumbs--docs)
+* [Contextual Help](?path=/docs/contextualhelp--docs)
+* [ColorArea](?path=/docs/colorarea--docs)
+* [ColorField](?path=/docs/colorfield--docs)
+* [ColorSlider](?path=/docs/colorslider--docs)
+* [ColorSwatch](?path=/docs/colorswatch--docs)
+* [ColorSwatchPicker](?path=/docs/colorswatchpicker--docs)
+* [ColorWheel](?path=/docs/colorwheel--docs)
+* [RangeSlider](?path=/docs/rangeslider--docs)
+* [Slider](?path=/docs/slider--docs)
+
+### Updates
+
+* [ESBuild starter](https://github.com/adobe/react-spectrum/tree/main/examples/s2-esbuild-starter-app) added
+* InlineAlert iconography updated
+* ContextualHelp added to all form field components
+* Fixed custom widths for field components
+* Spectrum tokens updated
+* CSS processing updated so output size is smaller
+
+See the updated [API changelog](https://github.com/adobe/react-spectrum/blob/main/packages/@react-spectrum/s2/api-diff.md) for a full list of changes since RSP v3.
+
+## v0.1.0
+
+### New components
+
+* [Badge](?path=/docs/badge--docs)
+* [ComboBox](?path=/docs/combobox--docs)
+* [Meter](?path=/docs/meter--docs)
+* [Picker](?path=/docs/picker--docs)
+
+### Updates
+
+* [TagGroup](?path=/docs/taggroup--docs) now supports avatars, images, error message and description help text, and improved hover/focus styling
+* Updated React Aria Components to v1.2.0
+* Fixed global styles such as CSS resets from applying to Spectrum 2 elements. Note that any CSS rule referenced from an `UNSAFE_className` prop must now be wrapped in `@layer UNSAFE_overrides`. See [the docs](?path=/docs/intro--docs#unsafe-style-overrides) for more details.
+* The `style` macro will now error if it is called without importing `with {type: 'macro'}`. Previously it would fail to apply styles silently. This should help with debugging.
+
+See the updated [API changelog](https://github.com/adobe/react-spectrum/blob/main/packages/@react-spectrum/s2/api-diff.md) for a full list of changes since RSP v3.

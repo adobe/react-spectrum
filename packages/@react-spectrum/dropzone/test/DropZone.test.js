@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, render} from '@react-spectrum/test-utils-internal';
 import {Button} from '@react-spectrum/button';
 import {Content} from '@react-spectrum/view';
 import {DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';

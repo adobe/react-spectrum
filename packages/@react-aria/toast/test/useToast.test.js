@@ -10,9 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {renderHook} from '@react-spectrum/test-utils';
-import {useRef} from 'react';
+import {act, fireEvent, pointerMap, render, renderHook, within} from '@react-spectrum/test-utils-internal';
+import {composeStories} from '@storybook/react';
+import React, {useRef} from 'react';
+import * as stories from '../stories/useToast.stories';
+import userEvent from '@testing-library/user-event';
 import {useToast} from '../';
+
+let {Default} = composeStories(stories);
 
 describe('useToast', () => {
   let close = jest.fn();
@@ -27,9 +32,10 @@ describe('useToast', () => {
   };
 
   it('handles defaults', function () {
-    let {closeButtonProps, toastProps, titleProps} = renderToastHook({}, {close});
+    let {closeButtonProps, toastProps, contentProps, titleProps} = renderToastHook({}, {close});
 
-    expect(toastProps.role).toBe('alert');
+    expect(toastProps.role).toBe('alertdialog');
+    expect(contentProps.role).toBe('alert');
     expect(closeButtonProps['aria-label']).toBe('Close');
     expect(typeof closeButtonProps.onPress).toBe('function');
     expect(titleProps.id).toEqual(toastProps['aria-labelledby']);
@@ -41,5 +47,52 @@ describe('useToast', () => {
 
     expect(close).toHaveBeenCalledTimes(1);
     expect(close).toHaveBeenCalledWith(1);
+  });
+});
+
+describe('single toast at a time', () => {
+  function fireAnimationEnd(alert) {
+    let e = new Event('animationend', {bubbles: true, cancelable: false});
+    e.animationName = 'fade-out';
+    fireEvent(alert, e);
+  }
+
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    act(() => jest.runAllTimers());
+  });
+
+  it('moves focus to the next toast when it appears', async () => {
+    let tree = render(<Default />);
+    // eslint-disable-next-line
+    let [bLow, bMedium, bHigh] = tree.getAllByRole('button');
+
+    await user.click(bHigh);
+    await user.click(bLow);
+
+    let toast = tree.getByRole('alertdialog');
+    expect(toast.textContent).toContain('High');
+    let closeButton = within(toast).getByRole('button');
+    await user.click(closeButton);
+    fireAnimationEnd(toast);
+
+    toast = tree.getByRole('alertdialog');
+    expect(toast.textContent).toContain('Low');
+    expect(toast).toHaveFocus();
+
+    closeButton = within(toast).getByRole('button');
+    await user.click(closeButton);
+    fireAnimationEnd(toast);
+
+    expect(tree.queryByRole('alertdialog')).toBeNull();
+    expect(bLow).toHaveFocus();
   });
 });

@@ -1,0 +1,271 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Dynamic TableView 1`] = `
+"import { Cell, Column, Row, TableBody, TableHeader, TableView } from "@react-spectrum/s2";
+
+let columns = [
+  {name: 'Foo', id: 'foo'},
+  {name: 'Bar', id: 'bar'},
+  {name: 'Baz', id: 'baz'}
+];
+
+let items = [
+  {id: 1, foo: 'Foo 1', bar: 'Bar 1', baz: 'Baz 1'},
+  {id: 2, foo: 'Foo 2', bar: 'Bar 2', baz: 'Baz 2'}
+];
+
+<TableView>
+  <TableHeader columns={columns}>
+    // TODO(S2-upgrade): You'll need to add isRowHeader to one of the columns manually.
+    {column => <Column id={column.name}>{column.name}</Column>}
+  </TableHeader>
+  <TableBody items={items}>
+    {item =>
+      (<Row id={item.foo} columns={columns}>
+        {column => <Cell>{item[column.name]}</Cell>}
+      </Row>)
+    }
+  </TableBody>
+</TableView>"
+`;
+
+exports[`Keep key if array.map used 1`] = `
+"import { Cell, Column, Row, TableBody, TableHeader, TableView } from "@react-spectrum/s2";
+  
+  let columns = [
+    {name: 'Foo', id: 'foo'},
+    {name: 'Bar', id: 'bar'},
+    {name: 'Baz', id: 'baz'}
+  ];
+  
+  let items = [
+    {id: 1, foo: 'Foo 1', bar: 'Bar 1', baz: 'Baz 1'},
+    {id: 2, foo: 'Foo 2', bar: 'Bar 2', baz: 'Baz 2'}
+  ];
+  
+  <TableView>
+    <TableHeader columns={columns}>
+      // TODO(S2-upgrade): You'll need to add isRowHeader to one of the columns manually.
+      {columns.map(column => <Column id={column.id} key={column.id}>{column.name}</Column>)}
+    </TableHeader>
+    <TableBody items={items}>
+      {items.map(item =>
+        (<Row id={item.id} key={item.id} columns={columns}>
+          {columns.map(column => <Cell key={column.id}>{item[column.id]}</Cell>)}
+        </Row>)
+      )}
+    </TableBody>
+  </TableView>"
+`;
+
+exports[`Leave a comment for UNSTABLE_allowsExpandableRows 1`] = `
+"import { Cell, Column, Row, TableBody, TableHeader, TableView } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): UNSTABLE_allowsExpandableRows has not been implemented yet.
+<TableView>
+  <TableHeader>
+    <Column id="test" isRowHeader={true}>Test</Column>
+    <Column id="blah">Blah</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Test1</Cell>
+      <Cell>One</Cell>
+    </Row>
+    <Row>
+      <Cell>Test2</Cell>
+      <Cell>One</Cell>
+    </Row>
+  </TableBody>
+</TableView>"
+`;
+
+exports[`Leave a comment for UNSTABLE_defaultExpandedKeys 1`] = `
+"import { Cell, Column, Row, TableBody, TableHeader, TableView } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): UNSTABLE_defaultExpandedKeys has not been implemented yet.
+<TableView>
+  <TableHeader>
+    <Column id="test" isRowHeader={true}>Test</Column>
+    <Column id="blah">Blah</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Test1</Cell>
+      <Cell>One</Cell>
+    </Row>
+    <Row>
+      <Cell>Test2</Cell>
+      <Cell>One</Cell>
+    </Row>
+  </TableBody>
+</TableView>"
+`;
+
+exports[`Leave a comment for UNSTABLE_expandedKeys 1`] = `
+"import { Cell, Column, Row, TableBody, TableHeader, TableView } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): UNSTABLE_expandedKeys has not been implemented yet.
+<TableView>
+  <TableHeader>
+    <Column id="test" isRowHeader={true}>Test</Column>
+    <Column id="blah">Blah</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Test1</Cell>
+      <Cell>One</Cell>
+    </Row>
+    <Row>
+      <Cell>Test2</Cell>
+      <Cell>One</Cell>
+    </Row>
+  </TableBody>
+</TableView>"
+`;
+
+exports[`Leave a comment for UNSTABLE_onExpandedChange 1`] = `
+"import { Cell, Column, Row, TableBody, TableHeader, TableView } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): UNSTABLE_onExpandedChange has not been implemented yet.
+<TableView>
+  <TableHeader>
+    <Column id="test" isRowHeader={true}>Test</Column>
+    <Column id="blah">Blah</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Test1</Cell>
+      <Cell>One</Cell>
+    </Row>
+    <Row>
+      <Cell>Test2</Cell>
+      <Cell>One</Cell>
+    </Row>
+  </TableBody>
+</TableView>"
+`;
+
+exports[`Leave a comment for dragAndDropHooks 1`] = `
+"import { Cell, Column, Row, TableBody, TableHeader, TableView } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): dragAndDropHooks has not been implemented yet.
+<TableView>
+  <TableHeader>
+    <Column id="test" isRowHeader={true}>Test</Column>
+    <Column id="blah">Blah</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Test1</Cell>
+      <Cell>One</Cell>
+    </Row>
+    <Row>
+      <Cell>Test2</Cell>
+      <Cell>One</Cell>
+    </Row>
+  </TableBody>
+</TableView>"
+`;
+
+exports[`Leave a comment for nested columns 1`] = `
+"import { Cell, Column, Row, TableBody, TableHeader, TableView } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): Nested Column components are not supported yet.
+<TableView>
+  <TableHeader>
+    <Column id="test" isRowHeader={true}>Test</Column>
+    <Column title="blah">
+      <Column id="test1">
+        Test 1
+      </Column>
+      <Column id="test2">
+        Test 2
+      </Column>
+    </Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Test1</Cell>
+      <Cell>One</Cell>
+    </Row>
+    <Row>
+      <Cell>Test2</Cell>
+      <Cell>One</Cell>
+    </Row>
+  </TableBody>
+</TableView>"
+`;
+
+exports[`Leave a comment for selectionStyle 1`] = `
+"import { Cell, Column, Row, TableBody, TableHeader, TableView } from "@react-spectrum/s2";
+
+// TODO(S2-upgrade): selectionStyle has not been implemented yet.
+<TableView>
+  <TableHeader>
+    <Column id="test" isRowHeader={true}>Test</Column>
+    <Column id="blah">Blah</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Test1</Cell>
+      <Cell>One</Cell>
+    </Row>
+    <Row>
+      <Cell>Test2</Cell>
+      <Cell>One</Cell>
+    </Row>
+  </TableBody>
+</TableView>"
+`;
+
+exports[`Leave comment to add id to Row if no id in items 1`] = `
+"import { Cell, Column, Row, TableBody, TableHeader, TableView } from "@react-spectrum/s2";
+
+let columns = [
+  {name: 'Foo', id: 'foo'},
+  {name: 'Bar', id: 'bar'},
+  {name: 'Baz', id: 'baz'}
+];
+
+let items = [
+  {foo: 'Foo 1', bar: 'Bar 1', baz: 'Baz 1'},
+  {foo: 'Foo 2', bar: 'Bar 2', baz: 'Baz 2'}
+];
+
+<TableView>
+  <TableHeader columns={columns}>
+    // TODO(S2-upgrade): You'll need to add isRowHeader to one of the columns manually.
+    {column => <Column id={column.name}>{column.name}</Column>}
+  </TableHeader>
+  <TableBody items={items}>
+    {item =>
+      (// TODO(S2-upgrade): If the items do not have id properties, you'll need to add an id prop to the Row.
+    <Row columns={columns}>
+      {column => <Cell>{item[column.name]}</Cell>}
+    </Row>)
+    }
+  </TableBody>
+</TableView>"
+`;
+
+exports[`Static TableView 1`] = `
+"import { Cell, Column, Row, TableBody, TableHeader, TableView } from "@react-spectrum/s2";
+
+<TableView>
+  <TableHeader>
+    <Column id="test" isRowHeader={true}>Test</Column>
+    <Column id="blah">Blah</Column>
+  </TableHeader>
+  <TableBody>
+    <Row>
+      <Cell>Test1</Cell>
+      <Cell>One</Cell>
+    </Row>
+    <Row>
+      <Cell>Test2</Cell>
+      <Cell>One</Cell>
+    </Row>
+  </TableBody>
+</TableView>"
+`;

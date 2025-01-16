@@ -3,31 +3,42 @@
   "version": "0.1.0",
   "private": true,
   "homepage": ".",
+  "packageManager": "yarn@4.2.2",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "export": "next export",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest"
   },
-  "type": "module",
   "dependencies": {
-    "@adobe/react-spectrum": "^3.26.0",
-    "@react-aria/optimize-locales-plugin": "^1.0.0",
-    "@react-spectrum/color": "^3.0.0-beta.16",
-    "@react-spectrum/inlinealert": "^3.0.0-rc.0",
-    "@react-spectrum/toast": "^3.0.0-alpha.0",
-    "@spectrum-icons/illustrations": "^3.5.0",
-    "@spectrum-icons/workflow": "^4.0.3",
+    "@adobe/react-spectrum": "^3.35.0",
+    "@react-aria/optimize-locales-plugin": "^1.1.0",
+    "@react-spectrum/provider": "^3.9.7",
+    "@react-spectrum/toast": "^3.0.0-beta.16",
+    "@spectrum-icons/illustrations": "^3.6.12",
+    "@spectrum-icons/workflow": "^4.2.12",
+    "glob": "^10.3.12",
     "next": "^13.4.1",
     "react": "^18.2.0",
+    "react-aria-components": "latest",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@swc/jest": "^0.2.36",
+    "@testing-library/react": "^15.0.7",
     "@types/node": "^18.8.2",
-    "@types/react": "^18.0.21",
+    "@types/react": "^18",
     "eslint": "^8.24.0",
     "eslint-config-next": "^13.4.1",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^29.7.0",
     "typescript": "^5.1.3"
+  },
+  "resolutions": {
+    "string-width": "4.2.3",
+    "strip-ansi": "6.0.1",
+    "wrap-ansi": "7.0.0"
   }
 }

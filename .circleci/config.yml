@@ -19,14 +19,14 @@ orbs:
 executors:
   rsp:
     docker:
-      - image: cimg/node:18.17.1
+      - image: cimg/node:18.20.3
     environment:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
 
   rsp-large:
     docker:
-      - image: cimg/node:18.17.1
+      - image: cimg/node:18.20.3
     resource_class: large
     environment:
       CACHE_VERSION: v1
@@ -34,15 +34,7 @@ executors:
 
   rsp-xlarge:
     docker:
-      - image: cimg/node:18.17.1
-    resource_class: xlarge
-    environment:
-      CACHE_VERSION: v1
-    working_directory: ~/react-spectrum
-
-  rsp-xlarge-nodeupdate:
-    docker:
-      - image: cimg/node:18.17.1
+      - image: cimg/node:18.20.3
     resource_class: xlarge
     environment:
       CACHE_VERSION: v1
@@ -53,11 +45,6 @@ jobs:
     executor: rsp-large
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
-            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-
 
       - run:
           name: Write npmrc
@@ -69,12 +56,7 @@ jobs:
       - run:
           name: build
           command: |
-            yarn --pure-lockfile --cache-folder ~/.cache/yarn
-
-      - save_cache:
-         paths:
-           - ~/.cache/yarn
-         key: rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            yarn --immutable
 
       - save_cache:
           paths:
@@ -85,16 +67,18 @@ jobs:
     executor: rsp-large
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
-            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-
+
+      - run:
+          name: Write npmrc
+          command: |
+            if [ $NPM_PASSWORD ]; then
+              cp .circleci/.npmrc .npmrc
+            fi
 
       - run:
           name: build
           command: |
-            yarn install --pure-lockfile --cache-folder ~/.cache/yarn && yarn install-16 --cache-folder ~/.cache/yarn
+            yarn install --immutable && yarn install-16
 
       - save_cache:
           paths:
@@ -105,41 +89,45 @@ jobs:
     executor: rsp-large
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
-            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-
+
+      - run:
+          name: Write npmrc
+          command: |
+            if [ $NPM_PASSWORD ]; then
+              cp .circleci/.npmrc .npmrc
+            fi
 
       - run:
           name: build
           command: |
-            yarn install --pure-lockfile --cache-folder ~/.cache/yarn && yarn install-17 --cache-folder ~/.cache/yarn
+            yarn install --immutable && yarn install-17
 
       - save_cache:
           paths:
             - ~/react-spectrum
           key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
-  install-canary:
+  install-19:
     executor: rsp-large
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
-            - rsp-yarn-{{ .Environment.CACHE_VERSION }}-
+
+      - run:
+          name: Write npmrc
+          command: |
+            if [ $NPM_PASSWORD ]; then
+              cp .circleci/.npmrc .npmrc
+            fi
 
       - run:
           name: build
           command: |
-            yarn install --pure-lockfile --cache-folder ~/.cache/yarn && yarn install-canary --cache-folder ~/.cache/yarn
+            yarn install --immutable && yarn install-19
 
       - save_cache:
           paths:
             - ~/react-spectrum
-          key: react-spectrum-canary-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-19-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
   test-ssr:
     executor: rsp-xlarge
@@ -199,11 +187,11 @@ jobs:
           command: |
             yarn test:ssr
 
-  test-ssr-canary:
+  test-ssr-19:
     executor: rsp-xlarge
     steps:
       - restore_cache:
-          key: react-spectrum-canary-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-19-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: test ssr
@@ -258,12 +246,12 @@ jobs:
       - store_artifacts:
           path: ~/junit
 
-  test-canary:
+  test-19:
     parallelism: 3
     executor: rsp-xlarge
     steps:
       - restore_cache:
-          key: react-spectrum-canary-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-19-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run: mkdir ~/junit
 
@@ -272,10 +260,10 @@ jobs:
           command: |
             shopt -s globstar
             TESTFILES=$(circleci tests glob "packages/**/*.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
-            JEST_JUNIT_OUTPUT_NAME="junit-canary.xml" yarn test ${TESTFILES}
+            JEST_JUNIT_OUTPUT_NAME="junit-19.xml" yarn test ${TESTFILES}
 
       - run:
-          command: cp junit-canary.xml ~/junit/
+          command: cp junit-19.xml ~/junit/
           when: always
       - store_test_results:
           path: ~/junit
@@ -283,7 +271,7 @@ jobs:
           path: ~/junit
 
   test-esm:
-    executor: rsp-xlarge-nodeupdate
+    executor: rsp-xlarge
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -292,18 +280,19 @@ jobs:
           name: test
           command: |
             make build
-            yarn lerna run prepublishOnly
             node --loader ./scripts/esm-support/loader.mjs ./scripts/esm-support/testESM.mjs
 
   lint:
-    executor: rsp
+    executor: rsp-xlarge
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: lint
-          command: yarn lint
+          command: |
+            yarn test:lint
+            yarn lint
 
   ts-build-branch:
     executor: rsp-large
@@ -350,7 +339,7 @@ jobs:
           command: |
             yarn test:parcel
             mkdir -p dist
-            yarn --silent compare:apis --isCI --branch-api-dir="/tmp/dist/branch-api" --base-api-dir="/tmp/dist/base-api" | tee dist/ts-diff.txt
+            yarn compare:apis --isCI --branch-api-dir="/tmp/dist/branch-api" --base-api-dir="/tmp/dist/base-api" | tee dist/ts-diff.txt
 
       - persist_to_workspace:
           root: dist
@@ -412,6 +401,36 @@ jobs:
           paths:
             - '*/storybook-17/'
 
+  storybook-19:
+    executor: rsp-large
+    steps:
+      - restore_cache:
+          key: react-spectrum-19-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build storybook-19
+          command: make storybook-19
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - '*/storybook-19/'
+
+  storybook-s2:
+    executor: rsp-large
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build s2 storybook
+          command: yarn build:storybook-s2
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - '*/storybook-s2/'
+
   docs:
     executor: rsp-xlarge
     steps:
@@ -460,38 +479,61 @@ jobs:
             - '*/verdaccio/'
 
   deploy:
-    executor: azure-cli/azure-docker
+    docker:
+      - image: mcr.microsoft.com/azure-cli:2.63.0
     steps:
       - attach_workspace:
           at: /tmp/dist
       - run:
+          name: Install AzCopy
+          command: |
+            wget -O azcopy.tar.gz https://aka.ms/downloadazcopy-v10-linux
+            tar -xf azcopy.tar.gz
+            mv ./azcopy_linux_amd64_*/azcopy /usr/local/bin/
+      - run:
           name: deploy
           command: |
             if [ $AZURE_STORAGE_SAS_TOKEN ]; then
-              az storage blob upload-batch -d reactspectrum -s /tmp/dist --account-name reactspectrum
+              azcopy copy "/tmp/dist/*" "https://reactspectrum.blob.core.windows.net/reactspectrum${AZURE_STORAGE_SAS_TOKEN}" --recursive
             fi
 
   # Separate deploy workflow for the test docs built w/ verdaccio packages so it doesn't hold up the other deploy workflows
   deploy-verdaccio:
-    executor: azure-cli/azure-docker
+    docker:
+      - image: mcr.microsoft.com/azure-cli:2.63.0
     steps:
       - attach_workspace:
           at: /tmp/verdaccio_dist
       - run:
+          name: Install AzCopy
+          command: |
+            wget -O azcopy.tar.gz https://aka.ms/downloadazcopy-v10-linux
+            tar -xf azcopy.tar.gz
+            mv ./azcopy_linux_amd64_*/azcopy /usr/local/bin/
+      - run:
           name: deploy
           command: |
             if [ $AZURE_STORAGE_SAS_TOKEN ]; then
-              az storage blob upload-batch -d reactspectrum/$CIRCLE_SHA1/verdaccio -s /tmp/verdaccio_dist/*/verdaccio --account-name reactspectrum
+              for dir in /tmp/verdaccio_dist/*/verdaccio; do
+                azcopy copy "$dir/*" "https://reactspectrum.blob.core.windows.net/reactspectrum/$CIRCLE_SHA1/verdaccio${AZURE_STORAGE_SAS_TOKEN}" --recursive
+              done
             fi
 
   deploy-production:
-    executor: azure-cli/azure-docker
+    docker:
+      - image: mcr.microsoft.com/azure-cli:2.63.0
     steps:
       - attach_workspace:
           at: /tmp/dist
       - run:
+          name: Install AzCopy
+          command: |
+            wget -O azcopy.tar.gz https://aka.ms/downloadazcopy-v10-linux
+            tar -xf azcopy.tar.gz
+            mv ./azcopy_linux_amd64_*/azcopy /usr/local/bin/
+      - run:
           name: deploy
-          command: az storage blob upload-batch -d "\$web" -s /tmp/dist/production/docs --account-name reactspectrum --overwrite true
+          command: azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive
 
   comment:
     executor: rsp
@@ -520,6 +562,7 @@ jobs:
           name: Authenticate with npm
           command: |
             echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+            yarn config set npmAuthToken $NPM_TOKEN
             git update-index --skip-worktree .npmrc
       - run:
           name: Publish
@@ -532,7 +575,7 @@ workflows:
       - install
       - install-16
       - install-17
-      - install-canary
+      - install-19
       - test-ssr:
           requires:
             - install
@@ -551,12 +594,12 @@ workflows:
       - test-17:
           requires:
             - install-17
-      - test-ssr-canary:
+      - test-19:
           requires:
-            - install-canary
-      - test-canary:
+            - install-19
+      - test-ssr-19:
           requires:
-            - install-canary
+            - install-19
       - test-esm:
           requires:
             - install
@@ -594,6 +637,12 @@ workflows:
       - storybook-17:
           requires:
             - install-17
+      - storybook-19:
+          requires:
+            - install-19
+      - storybook-s2:
+          requires:
+            - install
       - docs:
           requires:
             - install
@@ -612,13 +661,12 @@ workflows:
             - test-16
             - test-ssr-17
             - test-17
-            - test-ssr-canary
-            - test-canary
-            - test-ssr-canary
             - test-esm
             - storybook
             - storybook-16
             - storybook-17
+            - storybook-19
+            - storybook-s2
             - docs
       - deploy-verdaccio:
           requires:
@@ -666,6 +714,15 @@ workflows:
             branches:
               only:
                 - main
+    jobs:
+      - install
+      - publish-nightly
+
+  nightly-manual:
+    when:
+      and:
+        - equal: [ "nightly", << pipeline.parameters.GHA_Action >> ]
+        - equal: [ "workflow_dispatch", << pipeline.parameters.GHA_Event >>]
     jobs:
       - install
       - publish-nightly

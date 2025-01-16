@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button} from '@react-spectrum/button';
+import {ActionButton, Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Content} from '@react-spectrum/view';
@@ -22,27 +22,31 @@ import {Heading} from '@react-spectrum/text';
 import React, {SyntheticEvent, useEffect, useMemo, useRef, useState} from 'react';
 import {SpectrumToastOptions} from '../src/ToastContainer';
 import {ToastContainer, ToastQueue} from '../';
+import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
 
 export default {
   title: 'Toast',
   decorators: [
-    (story, {parameters}) => (
+    (story, {parameters, args}) => (
       <>
-        {!parameters.disableToastContainer && <ToastContainer />}
+        {!parameters.disableToastContainer && <ToastContainer placement={args.placement} />}
         <MainLandmark>{story()}</MainLandmark>
       </>
     )
   ],
   args: {
     shouldCloseOnAction: false,
-    timeout: null
+    timeout: null,
+    placement: undefined
   },
   argTypes: {
     timeout: {
-      control: {
-        type: 'radio',
-        options: [null, 5000]
-      }
+      control: 'radio',
+      options: [null, 5000]
+    },
+    placement: {
+      control: 'select',
+      options: [undefined, 'top', 'top end', 'bottom', 'bottom end']
     }
   }
 };
@@ -71,6 +75,26 @@ export const WithAction = (args) => (
 
 WithAction.story = {
   name: 'With action',
+  parameters: {
+    a11y: {
+      config: {
+        rules: [
+          {id: 'landmark-main-is-top-level', enabled: false},
+          {id: 'landmark-no-duplicate-main', enabled: false},
+          {id: 'landmark-unique', enabled: false}
+        ]
+      }
+    }
+  }
+};
+
+
+export const WithTestId = (args) => (
+  <RenderProvider {...args} actionLabel="Action" onAction={action('onAction')} data-testid="hello i am a test id" />
+);
+
+WithTestId.story = {
+  name: 'With test id',
   parameters: {
     a11y: {
       config: {
@@ -193,7 +217,7 @@ function RenderProvider(options: SpectrumToastOptions) {
 }
 
 function ToastToggle(options: SpectrumToastOptions) {
-  let [close, setClose] = useState(null);
+  let [close, setClose] = useState<(() => void) | null>(null);
 
   return (
     <Button
@@ -240,21 +264,23 @@ function IframeExample() {
   useEffect(() => () => controller.dispose(), [controller]);
   let onLoad = (e: SyntheticEvent) => {
     let iframe = e.target as HTMLIFrameElement;
-    let window = iframe.contentWindow;
+    let window = iframe.contentWindow!;
     let document = window.document;
 
     // Catch toasts inside the iframe and redirect them outside.
-    window.addEventListener('react-spectrum-toast', (e: CustomEvent) => {
-      e.preventDefault();
-      ToastQueue[e.detail.variant](e.detail.children, e.detail.options);
+    window.addEventListener('react-spectrum-toast', (e) => {
+      let evt = e as CustomEvent;
+      evt.preventDefault();
+      ToastQueue[evt.detail.variant](evt.detail.children, evt.detail.options);
     });
 
-    let prevFocusedElement = null;
-    window.addEventListener('react-aria-landmark-navigation', (e: CustomEvent) => {
-      e.preventDefault();
+    let prevFocusedElement: HTMLElement | null = null;
+    window.addEventListener('react-aria-landmark-navigation', (e) => {
+      let evt = e as CustomEvent;
+      evt.preventDefault();
       let el = document.activeElement;
       if (el !== document.body) {
-        prevFocusedElement = el;
+        prevFocusedElement = el as HTMLElement;
       }
 
       // Prevent focus scope from stealing focus back when we move focus to the iframe.
@@ -262,7 +288,7 @@ function IframeExample() {
 
       window.parent.postMessage({
         type: 'landmark-navigation',
-        direction: e.detail.direction
+        direction: evt.detail.direction
       });
 
       setTimeout(() => {
@@ -289,7 +315,7 @@ function IframeExample() {
 
   useEffect(() => {
     let onMessage = (e: MessageEvent) => {
-      let iframe = ref.current;
+      let iframe = ref.current!;
       if (e.data.type === 'landmark-navigation') {
         // Move focus to the iframe so that when focus is restored there, and we can redirect it back inside (below).
         iframe.focus();
@@ -303,12 +329,12 @@ function IframeExample() {
     return () => window.removeEventListener('message', onMessage);
   }, [controller]);
 
-  let ref = useRef(null);
+  let ref = useRef<HTMLIFrameElement | null>(null);
   let {landmarkProps} = useLandmark({
     role: 'main',
     focus(direction) {
       // when iframe landmark receives focus via landmark navigation, go to first/last landmark inside iframe.
-      ref.current.contentWindow.postMessage({
+      ref.current!.contentWindow!.postMessage({
         type: 'landmark-navigation',
         direction
       });
@@ -329,7 +355,41 @@ function IframeExample() {
 }
 
 function MainLandmark(props) {
-  let ref = useRef();
+  let ref = useRef<HTMLElement | null>(null);
   let {landmarkProps} = useLandmark({...props, role: 'main'}, ref);
   return <main aria-label="Danni's unicorn corral" ref={ref} {...props} {...landmarkProps} style={{padding: 40, background: 'white'}}>{props.children}</main>;
+}
+
+export const withFullscreen = {
+  render: () => <FullscreenApp />,
+  parameters: {
+    disableToastContainer: true
+  }
+};
+
+function FullscreenApp(props) {
+  let ref = useRef<HTMLDivElement | null>(null);
+  let [isFullscreen, setFullscreen] = useState(false);
+  let fullscreenPress = () => {
+    if (!isFullscreen) {
+      ref.current!.requestFullscreen();
+    }
+  };
+  useEffect(() => {
+    let onFullscreenChange = () => {
+      setFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', onFullscreenChange);
+  }, []);
+  return (
+    <div ref={ref} style={{position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'white'}}>
+      <UNSTABLE_PortalProvider getContainer={() => ref.current}>
+        <RenderProvider {...props} />
+        <ActionButton onPress={fullscreenPress}>Enter fullscreen</ActionButton>
+        {isFullscreen && <ToastContainer key="miniapp" />}
+      </UNSTABLE_PortalProvider>
+      {!isFullscreen && <ToastContainer key="app" />}
+    </div>
+  );
 }

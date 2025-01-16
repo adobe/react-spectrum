@@ -12,7 +12,8 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import sharedDocs from 'docs:@react-types/shared';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
+import gridlistUtil from 'docs:@react-aria/test-utils/src/gridlist.ts';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI, VersionBadge} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from './GridListAnatomy.svg';
@@ -49,6 +50,7 @@ type: component
 
 ```tsx example
 import {GridList, GridListItem, Button} from 'react-aria-components';
+import {MyCheckbox} from './Checkbox';
 
 <GridList aria-label="Favorite pokemon" selectionMode="multiple">
   <GridListItem textValue="Charizard">
@@ -305,8 +307,7 @@ If you will use a GridList in multiple places in your app, you can wrap all of t
 This example wraps `GridList` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. The `GridListItem` component is also wrapped to include a custom [checkbox](Checkbox.html) component automatically when the item is multi-selectable, and a drag handle when [drag and drop](#drag-and-drop) is enabled.
 
 ```tsx example export=true
-import type {GridListProps, GridListItemProps, CheckboxProps} from 'react-aria-components';
-import {Button, Checkbox} from 'react-aria-components';
+import type {GridListProps, GridListItemProps} from 'react-aria-components';
 
 function MyGridList<T extends object>({children, ...props}: GridListProps<T>) {
   return (
@@ -327,24 +328,6 @@ function MyItem({children, ...props}: GridListItemProps) {
         {children}
       </>}
     </GridListItem>
-  );
-}
-
-function MyCheckbox({children, ...props}: CheckboxProps) {
-  return (
-    <Checkbox {...props}>
-      {({isIndeterminate}) => <>
-        <div className="checkbox">
-          <svg viewBox="0 0 18 18" aria-hidden="true">
-            {isIndeterminate
-              ? <rect x={1} y={7.5} width={15} height={3} />
-              : <polyline points="1 9 7 14 15 4" />
-            }
-          </svg>
-        </div>
-        {children}
-      </>}
-    </Checkbox>
   );
 }
 
@@ -526,6 +509,33 @@ This behavior is slightly different when `selectionBehavior="replace"`, where si
 </div>
 ```
 
+Rows may also have a row action specified by directly applying `onAction` on the `GridListItem` itself. This may be especially convenient in static collections. If `onAction` is also provided to the `GridList`, both the grid list's and the row's `onAction` are called.
+
+```tsx example
+<MyGridList aria-label="List with onAction applied on the rows directly" selectionMode="multiple">
+  {/*- begin highlight -*/}
+  <MyItem onAction={() => alert(`Opening Games`)}>
+  {/*- end highlight -*/}
+    Games
+  </MyItem>
+  {/*- begin highlight -*/}
+  <MyItem onAction={() => alert(`Opening Program Files`)}>
+  {/*- end highlight -*/}
+    Program Files
+  </MyItem>
+  {/*- begin highlight -*/}
+  <MyItem onAction={() => alert(`Opening bootmgr`)}>
+  {/*- end highlight -*/}
+    bootmgr
+  </MyItem>
+  {/*- begin highlight -*/}
+  <MyItem onAction={() => alert(`Opening log.txt`)}>
+  {/*- end highlight -*/}
+    log.txt
+  </MyItem>
+</MyGridList>
+```
+
 ### Links
 
 Items in a GridList may also be links to another page or website. This can be achieved by passing the `href` prop to the `<GridListItem>` component. Links behave the same way as described above for row actions depending on the `selectionMode` and `selectionBehavior`.
@@ -551,9 +561,41 @@ The `<GridListItem>` component works with frameworks and client side routers lik
 
 ## Disabled items
 
-You can disable specific rows by providing an array of keys to `GridList` via the `disabledKeys` prop. This will disable all interactions on disabled rows,
-unless the `disabledBehavior` prop is used to change this behavior.
+A `GridListItem` can be disabled with the `isDisabled` prop. This will disable all interactions on the row,
+unless the `disabledBehavior` prop on `GridList` is used to change this behavior.
 Note that you are responsible for the styling of disabled rows, however, the selection checkbox will be automatically disabled.
+
+```tsx example
+<MyGridList aria-label="List with disabled rows" selectionMode="multiple">
+  <MyItem>Charizard</MyItem>
+  <MyItem>Blastoise</MyItem>
+  {/*- begin highlight -*/}
+  <MyItem isDisabled>Venusaur</MyItem>
+  {/*- end highlight -*/}
+  <MyItem>Pikachu</MyItem>
+</MyGridList>
+```
+
+When `disabledBehavior` is set to `selection`, interactions such as focus, dragging, or actions can still be performed on disabled rows.
+
+```tsx example
+<MyGridList
+  aria-label="List with disabled rows" selectionMode="multiple"
+  /*- begin highlight -*/
+  disabledBehavior="selection"
+  /*- end highlight -*/
+>
+  <MyItem>Charizard</MyItem>
+  <MyItem>Blastoise</MyItem>
+  {/*- begin highlight -*/}
+  <MyItem isDisabled>Venusaur</MyItem>
+  {/*- end highlight -*/}
+  <MyItem>Pikachu</MyItem>
+</MyGridList>
+```
+
+In dynamic collections, it may be more convenient to use the `disabledKeys` prop at the `GridList` level instead of `isDisabled` on individual items.
+This accepts a list of item ids that are disabled. An item is considered disabled if its key exists in `disabledKeys` or if it has `isDisabled`.
 
 ```tsx example
 // Using the example above
@@ -562,19 +604,6 @@ Note that you are responsible for the styling of disabled rows, however, the sel
   selectionMode="multiple"
   /*- begin highlight -*/
   disabledKeys={[3]}
-  /*- end highlight -*/
-/>
-```
-
-When `disabledBehavior` is set to `selection`, interactions such as focus, dragging, or actions can still be performed on disabled rows.
-
-```tsx example
-<PokemonList
-  aria-label="List with selection disabled for disabled rows"
-  selectionMode="multiple"
-  disabledKeys={[3]}
-  /*- begin highlight -*/
-  disabledBehavior="selection"
   /*- end highlight -*/
 />
 ```
@@ -1744,7 +1773,7 @@ A `GridListItem` can be targeted with the `.react-aria-GridListItem` CSS selecto
 
 ### Composition
 
-If you need to customize one of the components within a `GridList`, such as `GridListItem` or `Section`, in many cases you can create a wrapper component. This lets you customize the props passed to the component.
+If you need to customize one of the components within a `GridList`, such as `GridListItem`, in many cases you can create a wrapper component. This lets you customize the props passed to the component.
 
 ```tsx
 function MyItem(props) {
@@ -1837,3 +1866,43 @@ Now you can use `MyCustomCheckbox` within a `GridList`, in place of the builtin 
 ### Hooks
 
 If you need to customize things even further, such as accessing internal state, intercepting events, or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useGridList](useGridList.html) for more details.
+
+## Testing
+
+### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+`@react-aria/test-utils` offers common gridlist interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
+in your tests. Below is the full definition of the gridlist tester and a sample of how you could use it in your test suite.
+
+```ts
+// GridList.test.ts
+import {render, within} from '@testing-library/react';
+import {User} from '@react-aria/test-utils';
+
+let testUtilUser = new User({interactionType: 'mouse'});
+// ...
+
+it('GridList can select a row via keyboard', async function () {
+  // Render your test component/app and initialize the gridlist tester
+  let {getByTestId} = render(
+    <GridList data-testid="test-gridlist" selectionMode="single">
+      ...
+    </GridList>
+  );
+  let gridListTester = testUtilUser.createTester('GridList', {root: getByTestId('test-gridlist'), interactionType: 'keyboard'});
+
+  let row = gridListTester.rows[0];
+  expect(within(row).getByRole('checkbox')).not.toBeChecked();
+  expect(gridListTester.selectedRows).toHaveLength(0);
+
+  await gridListTester.toggleRowSelection({row: 0});
+  expect(within(row).getByRole('checkbox')).toBeChecked();
+  expect(gridListTester.selectedRows).toHaveLength(1);
+
+  await gridListTester.toggleRowSelection({row: 0});
+  expect(within(row).getByRole('checkbox')).not.toBeChecked();
+  expect(gridListTester.selectedRows).toHaveLength(0);
+});
+```
+
+<ClassAPI links={gridlistUtil.links} class={gridlistUtil.exports.GridListTester} />

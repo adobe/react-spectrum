@@ -65,7 +65,7 @@ const MESSAGES = {
  */
 export function useDraggableItem(props: DraggableItemProps, state: DraggableCollectionState): DraggableItemResult {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/dnd');
-  let isDisabled = state.selectionManager.isDisabled(props.key);
+  let isDisabled = state.isDisabled || state.selectionManager.isDisabled(props.key);
   let {dragProps, dragButtonProps} = useDrag({
     getItems() {
       return state.getItems(props.key);
@@ -92,8 +92,8 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
   let item = state.collection.getItem(props.key);
   let numKeysForDrag = state.getKeysForDrag(props.key).size;
   let isSelected = numKeysForDrag > 1 && state.selectionManager.isSelected(props.key);
-  let dragButtonLabel: string;
-  let description: string;
+  let dragButtonLabel: string | undefined;
+  let description: string | undefined;
 
   // Override description to include selected item count.
   let modality = useDragModality();
@@ -136,13 +136,13 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
     // Require Alt key if there is a conflicting action.
     dragProps.onKeyDownCapture = e => {
       if (e.altKey) {
-        onKeyDownCapture(e);
+        onKeyDownCapture?.(e);
       }
     };
 
     dragProps.onKeyUpCapture = e => {
       if (e.altKey) {
-        onKeyUpCapture(e);
+        onKeyUpCapture?.(e);
       }
     };
   }

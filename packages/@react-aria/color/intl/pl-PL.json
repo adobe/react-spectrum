@@ -2,5 +2,7 @@
   "colorInputLabel": "{label}, {channelLabel}",
   "colorNameAndValue": "{name}: {value}",
   "colorPicker": "Próbnik kolorów",
+  "colorSwatch": "próbka koloru",
+  "transparent": "przezroczysty",
   "twoDimensionalSlider": "Suwak 2D"
 }

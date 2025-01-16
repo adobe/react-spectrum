@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button, Dialog, DialogTrigger, FieldError, Label, Modal, Radio, RadioContext, RadioGroup, RadioGroupContext, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -453,6 +453,45 @@ describe('RadioGroup', () => {
     expect(group).not.toHaveAttribute('data-invalid');
   });
 
+  it('supports validation errors when last radio is disabled', async () => {
+    let {getByRole, getAllByRole, getByTestId} = render(
+      <form data-testid="form">
+        <RadioGroup isRequired>
+          <Label>Test</Label>
+          <Radio value="a">A</Radio>
+          <Radio value="b" isDisabled>B</Radio>
+          <FieldError />
+        </RadioGroup>
+      </form>
+    );
+
+    let group = getByRole('radiogroup');
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
+
+    let radios = getAllByRole('radio');
+    for (let input of radios) {
+      expect(input).toHaveAttribute('required');
+      expect(input).not.toHaveAttribute('aria-required');
+      expect(input.validity.valid).toBe(false);
+    }
+
+    act(() => {getByTestId('form').checkValidity();});
+
+    expect(group).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(group).toHaveAttribute('data-invalid');
+    expect(document.activeElement).toBe(radios[0]);
+
+    await user.click(radios[0]);
+    for (let input of radios) {
+      expect(input.validity.valid).toBe(true);
+    }
+
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
+  });
+
   it('should support focus events', async () => {
     let onBlur = jest.fn();
     let onFocus = jest.fn();
@@ -489,5 +528,33 @@ describe('RadioGroup', () => {
     );
     expect(groupRef.current).toBe(getByRole('radiogroup'));
     expect(radioRef.current).toBe(getByRole('radio').closest('.react-aria-Radio'));
+  });
+
+  it('should support input ref', () => {
+    let inputRef = React.createRef();
+    let {getByRole} = render(
+      <RadioGroup>
+        <Label>Test</Label>
+        <Radio inputRef={inputRef} value="a">A</Radio>
+      </RadioGroup>
+    );
+    let radio = getByRole('radio');
+    expect(inputRef.current).toBe(radio);
+  });
+
+  it('should support and merge input ref on context', () => {
+    let inputRef = React.createRef();
+    let contextInputRef = React.createRef();
+    let {getByRole} = render(
+      <RadioGroup>
+        <Label>Test</Label>
+        <RadioContext.Provider value={{inputRef: contextInputRef}}>
+          <Radio inputRef={inputRef} value="a">A</Radio>
+        </RadioContext.Provider>
+      </RadioGroup>
+    );
+    let radio = getByRole('radio');
+    expect(inputRef.current).toBe(radio);
+    expect(contextInputRef.current).toBe(radio);
   });
 });

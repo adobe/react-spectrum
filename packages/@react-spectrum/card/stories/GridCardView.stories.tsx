@@ -1,3 +1,4 @@
+// @ts-nocheck
 /*
  * Copyright 2021 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -14,7 +15,7 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {Card, CardView, GridLayout} from '../';
 import {ComponentStoryObj} from '@storybook/react';
-import {Content} from '@react-spectrum/view';
+import {Content, View} from '@react-spectrum/view';
 import {Flex} from '@react-spectrum/layout';
 import {getImageFullData} from './utils';
 import {GridLayoutOptions} from '../src/GridLayout';
@@ -157,12 +158,6 @@ export const ControlledCards: ControlledCardViewStory = {
 
 export const NoCards: NoItemCardViewStory = {
   render: (args) => <NoItemCardView {...args} />
-};
-
-export const IsLoadingNoHeightGrid: DynamicCardViewStory = {
-  ...NoCards,
-  args: {...NoCards.args, width: '800px', loadingState: 'loading'},
-  name: 'loadingState = loading, no height'
 };
 
 export const IsLoadingHeightGrid: DynamicCardViewStory = {
@@ -528,5 +523,74 @@ export function CustomLayout(props: SpectrumCardViewProps<object> & LayoutOption
         </CardView>
       </Flex>
     </div>
+  );
+}
+
+export function ResizeObserverCrash() {
+  const shots = [
+    {id: 1, src: 'https://i.imgur.com/Z7AzH2c.jpg', alt: 'foo', label: 'foo'},
+    {id: 2, src: 'https://i.imgur.com/Z7AzH2c.jpg', alt: 'bar', label: 'bar'},
+    {id: 3, src: 'https://i.imgur.com/Z7AzH2c.jpg', alt: 'baz', label: 'baz'},
+    {id: 4, src: 'https://i.imgur.com/Z7AzH2c.jpg', alt: 'qux', label: 'qux'},
+    {id: 5, src: 'https://i.imgur.com/Z7AzH2c.jpg', alt: 'foobar', label: 'foobar'},
+    {id: 6, src: 'https://i.imgur.com/Z7AzH2c.jpg', alt: 'foobaz', label: 'foobaz'}
+  ];
+
+  return (
+    <View backgroundColor="gray-75" width="100vw" height="100vh">
+      <div style={{position: 'relative', height: '100%', width: '100%'}}>
+        <div
+          style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
+          <React.Fragment key="foo">
+            <Flex alignItems="center" gap="size-200" margin="size-350">
+              <Heading level={3} margin="size-0">
+                My Demo Asset
+              </Heading>
+            </Flex>
+            <CardView
+              items={shots}
+              width="100%"
+              flex
+              position="relative"
+              layout={GridLayout}
+              selectionMode="none">
+              {(shot: any) => (
+                <Card key={shot.id}>
+                  <Flex
+                    UNSAFE_style={{
+                      position: 'absolute'
+                    }}
+                    direction="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    gap="size-150"
+                    width="100%"
+                    height="calc(100% - 78px)">
+                    <Image
+                      src={shot.src}
+                      alt={shot.alt}
+                      width="200px"
+                      height="200px" />
+                  </Flex>
+                  <Flex
+                    direction="column"
+                    alignItems="start"
+                    marginTop="size-100">
+                    <Heading
+                      level={4}
+                      alignSelf="auto"
+                      UNSAFE_style={{
+                        fontWeight: 500
+                      }}>
+                      {shot.label}
+                    </Heading>
+                  </Flex>
+                </Card>
+              )}
+            </CardView>
+          </React.Fragment>
+        </div>
+      </div>
+    </View>
   );
 }

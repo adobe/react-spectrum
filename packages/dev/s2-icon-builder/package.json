@@ -1,0 +1,36 @@
+{
+  "name": "@react-spectrum/s2-icon-builder",
+  "version": "0.2.1",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "bin": {
+    "transform-icons": "index.js"
+  },
+  "dependencies": {
+    "@parcel/bundler-library": "^2.12.1",
+    "@parcel/compressor-raw": "^2.13.1",
+    "@parcel/core": "^2.13.1",
+    "@parcel/namer-default": "^2.13.1",
+    "@parcel/packager-raw": "^2.13.1",
+    "@parcel/reporter-cli": "^2.13.1",
+    "@parcel/resolver-default": "^2.13.1",
+    "@parcel/transformer-raw": "^2.13.1",
+    "@react-spectrum/parcel-transformer-s2-icon": "^0.2.0"
+  },
+  "files": [
+    "index.js",
+    ".parcelrc"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "rsp": {
+    "type": "cli"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

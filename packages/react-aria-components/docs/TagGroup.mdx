@@ -26,7 +26,7 @@ import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 
 ---
 category: Collections
-keywords: [tag, aria]
+keywords: [tag, aria, grid]
 type: component
 ---
 
@@ -369,25 +369,21 @@ The `<Tag>` component works with frameworks and client side routers like [Next.j
 
 ## Disabled tags
 
-TagGroup supports marking items as disabled using the `disabledKeys` prop. Each key in this list
-corresponds with the `id` prop passed to the `Tag` component, or automatically derived from the values passed
-to the `items` prop. Disabled items are not focusable, selectable, or keyboard navigable.
-See the [Collections](collections.html) guide for more details.
+A `Tag` can be disabled with the `isDisabled` prop. Disabled tags are not focusable, selectable, or keyboard navigable.
 
 ```tsx example
 <MyTagGroup
  label="Sandwich contents"
  selectionMode="multiple"
- ///- begin highlight -///
- disabledKeys={['tuna']}
- ///- end highlight -///
 >
-  <MyTag id="lettuce">Lettuce</MyTag>
-  <MyTag id="tomato">Tomato</MyTag>
-  <MyTag id="cheese">Cheese</MyTag>
-  <MyTag id="tuna">Tuna Salad</MyTag>
-  <MyTag id="egg">Egg Salad</MyTag>
-  <MyTag id="ham">Ham</MyTag>
+  <MyTag>Lettuce</MyTag>
+  <MyTag>Tomato</MyTag>
+  <MyTag>Cheese</MyTag>
+  {/*- begin highlight -*/}
+  <MyTag isDisabled>Tuna Salad</MyTag>
+  {/*- end highlight -*/}
+  <MyTag>Egg Salad</MyTag>
+  <MyTag>Ham</MyTag>
 </MyTagGroup>
 ```
 
@@ -406,6 +402,34 @@ See the [Collections](collections.html) guide for more details.
 ```
 
 </details>
+
+In dynamic collections, it may be more convenient to use the `disabledKeys` prop at the `TagGroup` level instead of `isDisabled` on individual tags. Each key in this list
+corresponds with the `id` prop passed to the `Tag` component, or automatically derived from the values passed
+to the `items` prop (see the [Collections](collections.html) for more details). A tag is considered disabled if its id exists in `disabledKeys` or if it has `isDisabled`.
+
+```tsx example
+function Example() {
+  let options = [
+    { id: 1, name: "News" },
+    { id: 2, name: "Travel" },
+    { id: 3, name: "Gaming" },
+    { id: 4, name: "Shopping" }
+  ];
+
+  return (
+    <MyTagGroup
+      label="Categories"
+      items={options}
+      selectionMode="multiple"
+      /*- begin highlight -*/
+      disabledKeys={[2, 4]}
+      /*- end highlight -*/
+    >
+      {(item) => <MyTag>{item.name}</MyTag>}
+    </MyTagGroup>
+  );
+}
+```
 
 ## Empty state
 
@@ -683,9 +707,9 @@ import {ListStateContext} from 'react-aria-components';
 
 function SelectionCount() {
   /*- begin highlight -*/
-  let state = React.useContext(ListStateContext)!;
+  let state = React.useContext(ListStateContext);
   /*- end highlight -*/
-  let selected = state.selectionManager.selectedKeys.size;
+  let selected = state?.selectionManager.selectedKeys.size ?? 0;
   return <small>{selected} tags selected.</small>;
 }
 

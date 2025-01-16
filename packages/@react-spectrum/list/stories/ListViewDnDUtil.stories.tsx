@@ -19,37 +19,27 @@ export default {
   },
   argTypes: {
     selectionMode: {
-      control: {
-        type: 'radio',
-        options: ['none', 'single', 'multiple']
-      }
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
     },
     selectionStyle: {
-      control: {
-        type: 'radio',
-        options: ['checkbox', 'highlight']
-      }
+      control: 'radio',
+      options: ['checkbox', 'highlight']
     },
     isQuiet: {
-      control: {type: 'boolean'}
+      control: 'boolean'
     },
     density: {
-      control: {
-        type: 'select',
-        options: ['compact', 'regular', 'spacious']
-      }
+      control: 'select',
+      options: ['compact', 'regular', 'spacious']
     },
     overflowMode: {
-      control: {
-        type: 'radio',
-        options: ['truncate', 'wrap']
-      }
+      control: 'radio',
+      options: ['truncate', 'wrap']
     },
     disabledBehavior: {
-      control: {
-        type: 'radio',
-        options: ['selection', 'all']
-      }
+      control: 'radio',
+      options: ['selection', 'all']
     }
   }
 } as ComponentMeta<typeof ListView>;
@@ -72,6 +62,18 @@ export const DragWithin: ListViewStory = {
     <ReorderExampleUtilHandlers listViewProps={args} dndOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
   ),
   name: 'Drag within list (Reorder}'
+};
+
+let manyItems: {identifier: string, type: string, name: string}[] = [];
+for (let i = 0; i < 100; i++) {
+  manyItems.push({identifier: 'item' + i, type: 'item', name: 'Item ' + i});
+}
+
+export const DragWithinMany: ListViewStory = {
+  render: (args) => (
+    <ReorderExampleUtilHandlers {...args} items={manyItems} listViewProps={{overflowMode: 'wrap', height: 400}} />
+  ),
+  name: 'Drag within list with many items'
 };
 
 export const DropOntoItem: ListViewStory = {

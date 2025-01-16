@@ -41,7 +41,12 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useSelectState} from '@react-stately/select';
 
-function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Pickers allow users to choose a single option from a collapsible list of options when space is limited.
+ */
+// forwardRef doesn't support generic parameters, so cast the result to the correct type
+// https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
+export const Picker = React.forwardRef(function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useSlotProps(props, 'picker');
   props = useProviderProps(props);
   props = useFormProps(props);
@@ -64,10 +69,10 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let state = useSelectState(props);
   let domRef = useDOMRef(ref);
 
-  let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
-  let triggerRef = useRef<FocusableRefValue<HTMLElement>>();
+  let popoverRef = useRef<DOMRefValue<HTMLDivElement>>(null);
+  let triggerRef = useRef<FocusableRefValue<HTMLElement>>(null);
   let unwrappedTriggerRef = useUnwrapDOMRef(triggerRef);
-  let listboxRef = useRef();
+  let listboxRef = useRef(null);
 
   let isLoadingInitial = props.isLoading && state.collection.size === 0;
   let isLoadingMore = props.isLoading && state.collection.size > 0;
@@ -76,11 +81,10 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   // We create the listbox layout in Picker and pass it to ListBoxBase below
   // so that the layout information can be cached even while the listbox is not mounted.
   // We also use the layout as the keyboard delegate for type to select.
-  let layout = useListBoxLayout(state, isLoadingMore);
+  let layout = useListBoxLayout();
   let {labelProps, triggerProps, valueProps, menuProps, descriptionProps, errorMessageProps, isInvalid, validationErrors, validationDetails} = useSelect({
     ...props,
-    'aria-describedby': (isLoadingInitial ? progressCircleId : undefined),
-    keyboardDelegate: layout
+    'aria-describedby': (isLoadingInitial ? progressCircleId : undefined)
   }, state, unwrappedTriggerRef);
 
   let isMobile = useIsMobileDevice();
@@ -101,11 +105,12 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
       // Set max height: inherit so Tray scrolling works
       UNSAFE_style={{maxHeight: 'inherit'}}
       isLoading={props.isLoading}
+      showLoadingSpinner={isLoadingMore}
       onLoadMore={props.onLoadMore} />
   );
 
   // Measure the width of the button to inform the width of the menu (below).
-  let [buttonWidth, setButtonWidth] = useState(null);
+  let [buttonWidth, setButtonWidth] = useState<number | undefined>(undefined);
   let {scale} = useProvider();
 
   let onResize = useCallback(() => {
@@ -133,7 +138,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     // If quiet, use the default width, otherwise match the width of the button. This can be overridden by the menuWidth prop.
     // Always have a minimum width of the button width. When quiet, there is an extra offset to add.
     // Not using style props for this because they don't support `calc`.
-    let width = isQuiet ? null : buttonWidth;
+    let width = isQuiet ? undefined : buttonWidth;
     let style = {
       width: menuWidth ? dimensionValue(menuWidth) : width,
       minWidth: isQuiet ? `calc(${buttonWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : buttonWidth
@@ -251,12 +256,4 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
       {picker}
     </Field>
   );
-}
-
-/**
- * Pickers allow users to choose a single option from a collapsible list of options when space is limited.
- */
-// forwardRef doesn't support generic parameters, so cast the result to the correct type
-// https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
-const _Picker = React.forwardRef(Picker) as <T>(props: SpectrumPickerProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
-export {_Picker as Picker};
+}) as <T>(props: SpectrumPickerProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;

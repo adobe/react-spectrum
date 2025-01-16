@@ -17,7 +17,7 @@ import {useState} from 'react';
 
 export interface MenuTriggerState extends OverlayTriggerState {
   /** Controls which item will be auto focused when the menu opens. */
-  readonly focusStrategy: FocusStrategy,
+  readonly focusStrategy: FocusStrategy | null,
 
   /** Opens the menu. */
   open(focusStrategy?: FocusStrategy | null): void,
@@ -28,15 +28,15 @@ export interface MenuTriggerState extends OverlayTriggerState {
 
 export interface RootMenuTriggerState extends MenuTriggerState {
   /** Opens a specific submenu tied to a specific menu item at a specific level. */
-  UNSTABLE_openSubmenu: (triggerKey: Key, level: number) => void,
+  openSubmenu: (triggerKey: Key, level: number) => void,
 
   /** Closes a specific submenu tied to a specific menu item at a specific level. */
-  UNSTABLE_closeSubmenu: (triggerKey: Key, level: number) => void,
+  closeSubmenu: (triggerKey: Key, level: number) => void,
 
   /** An array of open submenu trigger keys within the menu tree.
    * The index of key within array matches the submenu level in the tree.
    */
-  UNSTABLE_expandedKeysStack: Key[],
+  expandedKeysStack: Key[],
 
   /** Closes the menu and all submenus in the menu tree. */
   close: () => void
@@ -49,7 +49,7 @@ export interface RootMenuTriggerState extends MenuTriggerState {
  */
 export function useMenuTriggerState(props: MenuTriggerProps): RootMenuTriggerState  {
   let overlayTriggerState = useOverlayTriggerState(props);
-  let [focusStrategy, setFocusStrategy] = useState<FocusStrategy>(null);
+  let [focusStrategy, setFocusStrategy] = useState<FocusStrategy | null>(null);
   let [expandedKeysStack, setExpandedKeysStack] = useState<Key[]>([]);
 
   let closeAll = () => {
@@ -81,19 +81,19 @@ export function useMenuTriggerState(props: MenuTriggerProps): RootMenuTriggerSta
   return {
     focusStrategy,
     ...overlayTriggerState,
-    open(focusStrategy: FocusStrategy = null) {
+    open(focusStrategy: FocusStrategy | null = null) {
       setFocusStrategy(focusStrategy);
       overlayTriggerState.open();
     },
-    toggle(focusStrategy: FocusStrategy = null) {
+    toggle(focusStrategy: FocusStrategy | null = null) {
       setFocusStrategy(focusStrategy);
       overlayTriggerState.toggle();
     },
     close() {
       closeAll();
     },
-    UNSTABLE_expandedKeysStack: expandedKeysStack,
-    UNSTABLE_openSubmenu: openSubmenu,
-    UNSTABLE_closeSubmenu: closeSubmenu
+    expandedKeysStack,
+    openSubmenu,
+    closeSubmenu
   };
 }

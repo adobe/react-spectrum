@@ -1,0 +1,363 @@
+{/* Copyright 2024 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI, VersionBadge} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import packageData from 'react-aria-components/package.json';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {InlineAlert, Content, Heading} from '@adobe/react-spectrum';
+import treeUtils from 'docs:@react-aria/test-utils/src/tree.ts';
+
+---
+category: Collections
+keywords: [disclosure, collapse, expand, aria]
+type: component
+preRelease: beta
+---
+
+# Tree
+
+<PageDescription>{docs.exports.UNSTABLE_Tree.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['UNSTABLE_Tree']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/treegrid/'}
+  ]} />
+
+<InlineAlert variant="notice" marginTop={60}>
+  <Heading>Under construction</Heading>
+  <Content>This component is in <strong>beta</strong>. More documentation is coming soon!</Content>
+</InlineAlert>
+
+## Example
+
+```tsx example
+import {
+  UNSTABLE_Tree as Tree,
+  UNSTABLE_TreeItem as TreeItem,
+  UNSTABLE_TreeItemContent as TreeItemContent,
+  Button,
+  Collection
+} from 'react-aria-components';
+import {MyCheckbox} from './Checkbox';
+
+let items = [
+  {id: 1, title: 'Documents', children: [
+    {id: 2, title: 'Project', children: [
+      {id: 3, title: 'Weekly Report', children: []}
+    ]}
+  ]},
+  {id: 4, title: 'Photos', children: [
+    {id: 5, title: 'Image 1', children: []},
+    {id: 6, title: 'Image 2', children: []}
+  ]}
+];
+
+<Tree aria-label="Files" selectionMode="multiple" items={items}>
+  {function renderItem(item) {
+    return (
+      <TreeItem textValue={item.title}>
+        <TreeItemContent>
+          {item.children.length ? <Button slot="chevron">
+            <svg viewBox="0 0 24 24">
+              <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
+          </Button> : null}
+          <MyCheckbox slot="selection" />
+          {item.title}
+          <Button aria-label="Info">ⓘ</Button>
+        </TreeItemContent>
+        <Collection items={item.children}>
+          {renderItem}
+        </Collection>
+      </TreeItem>
+    );
+  }}
+</Tree>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css hidden
+@import "@react-aria/example-theme";
+@import './Button.mdx' layer(button);
+@import './Checkbox.mdx' layer(checkbox);
+```
+
+```css
+.react-aria-Tree {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: auto;
+  padding: 4px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--overlay-background);
+  forced-color-adjust: none;
+  outline: none;
+  width: 250px;
+  max-height: 300px;
+  box-sizing: border-box;
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -1px;
+  }
+
+  .react-aria-TreeItem {
+    display: flex;
+    align-items: center;
+    gap: 0.571rem;
+    min-height: 28px;
+    padding: 0.286rem 0.286rem 0.286rem 0.571rem;
+    --padding: 20px;
+    padding-left: calc((var(--tree-item-level) - 1) * 20px + 0.571rem + var(--padding));
+    border-radius: 6px;
+    outline: none;
+    cursor: default;
+    color: var(--text-color);
+    font-size: 1.072rem;
+    position: relative;
+    transform: translateZ(0);
+
+    &[data-has-child-rows] {
+      --padding: 0px;
+    }
+
+    .react-aria-Button[slot=chevron] {
+      all: unset;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.143rem;
+      height: 1.143rem;
+
+      svg {
+        rotate: 0deg;
+        transition: rotate 200ms;
+        width: 12px;
+        height: 12px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 3px;
+      }
+    }
+
+    &[data-expanded] .react-aria-Button[slot=chevron] svg {
+      rotate: 90deg;
+    }
+
+    &[data-focus-visible] {
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: -2px;
+    }
+
+    &[data-pressed] {
+      background: var(--gray-100);
+    }
+
+    &[data-selected] {
+      background: var(--highlight-background);
+      color: var(--highlight-foreground);
+      --focus-ring-color: var(--highlight-foreground);
+
+      &[data-focus-visible] {
+        outline-color: var(--highlight-foreground);
+        outline-offset: -4px;
+      }
+
+      .react-aria-Button {
+        color: var(--highlight-foreground);
+        --highlight-hover: rgb(255 255 255 / 0.1);
+        --highlight-pressed: rgb(255 255 255 / 0.2);
+      }
+    }
+
+    &[data-disabled] {
+      color: var(--text-color-disabled);
+    }
+
+    .react-aria-Button:not([slot]) {
+      margin-left: auto;
+      background: transparent;
+      border: none;
+      font-size: 1.2rem;
+      line-height: 1.2em;
+      padding: 0.286rem 0.429rem;
+      transition: background 200ms;
+
+      &[data-hovered] {
+        background: var(--highlight-hover);
+      }
+
+      &[data-pressed] {
+        background: var(--highlight-pressed);
+        box-shadow: none;
+      }
+    }
+  }
+
+  /* join selected items if :has selector is supported */
+  @supports selector(:has(.foo)) {
+    gap: 0;
+
+    .react-aria-TreeItem[data-selected]:has(+ [data-selected]) {
+      border-end-start-radius: 0;
+      border-end-end-radius: 0;
+    }
+
+    .react-aria-TreeItem[data-selected] + [data-selected] {
+      border-start-start-radius: 0;
+      border-start-end-radius: 0;
+    }
+  }
+
+  :where(.react-aria-TreeItem) .react-aria-Checkbox {
+    --selected-color: var(--highlight-foreground);
+    --selected-color-pressed: var(--highlight-foreground-pressed);
+    --checkmark-color: var(--highlight-background);
+    --background-color: var(--highlight-background);
+  }
+}
+```
+
+</details>
+
+## Props
+
+### Tree
+
+<PropTable component={docs.exports.UNSTABLE_Tree} links={docs.links} />
+
+### TreeItem
+
+<PropTable component={docs.exports.UNSTABLE_TreeItem} links={docs.links} />
+
+### TreeItemContent
+
+<PropTable component={docs.exports.UNSTABLE_TreeItemContent} links={docs.links} />
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-Tree {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<TreeItem className="my-tree-item">
+  {/* ... */}
+</TreeItem>
+```
+
+In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
+
+```css
+.react-aria-TreeItem[data-expanded] {
+  /* ... */
+}
+
+.react-aria-TreeItem[data-selected] {
+  /* ... */
+}
+```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<TreeItem className={({ isSelected }) => isSelected ? 'bg-blue-400' : 'bg-gray-100'} />
+```
+
+Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render a checkbox only when selection is enabled.
+
+```jsx
+<TreeItem>
+  {({selectionMode}) => (
+    <>
+      {selectionMode !== 'none' && <Checkbox />}
+      Item
+    </>
+  )}
+</TreeItem>
+```
+
+The states, selectors, and render props for each component used in a `Tree` are documented below.
+
+### Tree
+
+A `Tree` can be targeted with the `.react-aria-Tree` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.TreeRenderProps.properties} />
+
+### TreeItem
+
+A `TreeItem` can be targeted with the `.react-aria-TreeItem` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.TreeItemRenderProps.properties} showOptional />
+
+TreeItem also exposes a `--tree-item-level` CSS custom property, which you can use to adjust the indentation.
+
+```css render=false
+.react-aria-TreeItem {
+  padding-left: calc((var(--tree-item-level) - 1) * 20px);
+}
+```
+
+## Testing
+
+### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+`@react-aria/test-utils` offers common tree interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
+in your tests. Below is the full definition of the tree tester and a sample of how you could use it in your test suite.
+
+```ts
+// Tree.test.ts
+import {render, within} from '@testing-library/react';
+import {User} from '@react-aria/test-utils';
+
+let testUtilUser = new User({interactionType: 'mouse'});
+// ...
+
+it('Tree can select a row via keyboard', async function () {
+  // Render your test component/app and initialize the Tree tester
+  let {getByTestId} = render(
+     <Tree data-testid="test-tree" selectionMode="multiple">
+      ...
+    </Tree>
+  );
+  let treeTester = testUtilUser.createTester('Tree', {root: getByTestId('test-tree'), interactionType: 'keyboard'});
+
+  await treeTester.toggleRowSelection({row: 0});
+  expect(treeTester.selectedRows).toHaveLength(1);
+  expect(within(treeTester.rows[0]).getByRole('checkbox')).toBeChecked();
+
+  await treeTester.toggleRowSelection({row: 1});
+  expect(treeTester.selectedRows).toHaveLength(2);
+  expect(within(treeTester.rows[1]).getByRole('checkbox')).toBeChecked();
+
+  await treeTester.toggleRowSelection({row: 0});
+  expect(treeTester.selectedRows).toHaveLength(1);
+  expect(within(treeTester.rows[0]).getByRole('checkbox')).not.toBeChecked();
+});
+```
+
+<ClassAPI links={treeUtils.links} class={treeUtils.exports.TreeTester} />

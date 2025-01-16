@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {actHook as act, renderHook} from '@react-spectrum/test-utils';
+import {actHook as act, renderHook} from '@react-spectrum/test-utils-internal';
 import {useSliderState} from '../';
 
 describe('useSliderState', () => {
@@ -85,6 +85,54 @@ describe('useSliderState', () => {
     act(() => result.current.setThumbValue(1, 100));
     expect(result.current.values).toEqual([50, 90, 90]);
     expect(result.current.getThumbMinValue(2)).toBe(90);
+  });
+
+  it('should round values to nearest step with two thumbs', () => {
+    let result = renderHook(() => useSliderState({
+      minValue: 1,
+      maxValue: 15,
+      step: 2.5,
+      defaultValue: [1, 13],
+      numberFormatter
+    })).result;
+
+    expect(result.current.values).toEqual([1, 13.5]);
+    expect(result.current.getThumbMinValue(1)).toBe(1);
+
+    act(() => result.current.setThumbValue(0, 3));
+    expect(result.current.values).toEqual([3.5, 13.5]);
+    expect(result.current.getThumbMinValue(1)).toBe(3.5);
+    expect(result.current.getThumbMaxValue(0)).toBe(13.5);
+
+    act(() => result.current.setThumbValue(1, 5));
+    expect(result.current.values).toEqual([3.5, 6]);
+    expect(result.current.getThumbMaxValue(0)).toBe(6);
+  });
+
+  it('should round values to nearest step with three thumbs', () => {
+    let result = renderHook(() => useSliderState({
+      minValue: 1,
+      maxValue: 15,
+      step: 2.5,
+      defaultValue: [1, 6, 13],
+      numberFormatter
+    })).result;
+
+    expect(result.current.values).toEqual([1, 6, 13.5]);
+    expect(result.current.getThumbMinValue(1)).toBe(1);
+    expect(result.current.getThumbMinValue(2)).toBe(6);
+
+    act(() => result.current.setThumbValue(0, 3));
+    expect(result.current.values).toEqual([3.5, 6, 13.5]);
+    expect(result.current.getThumbMinValue(2)).toBe(6);
+    expect(result.current.getThumbMinValue(1)).toBe(3.5);
+    expect(result.current.getThumbMaxValue(0)).toBe(6);
+    expect(result.current.getThumbMaxValue(1)).toBe(13.5);
+
+    act(() => result.current.setThumbValue(2, 5));
+    expect(result.current.values).toEqual([3.5, 6, 6]);
+    expect(result.current.getThumbMaxValue(0)).toBe(6);
+    expect(result.current.getThumbMaxValue(1)).toBe(6);
   });
 
   it('should call onChange and onChangeEnd appropriately', () => {

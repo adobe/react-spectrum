@@ -24,7 +24,7 @@ import {countries, states} from './data';
 import {DateField, DatePicker, DateRangePicker, TimeField} from '@react-spectrum/datepicker';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '../';
-import {FormTranslatedText} from './../chromatic/FormLanguages.chromatic';
+import {FormTranslatedText} from './../chromatic/FormLanguages.stories';
 import {Heading} from '@react-spectrum/text';
 import {InlineAlert} from '@react-spectrum/inlinealert';
 import {Item, Picker} from '@react-spectrum/picker';
@@ -484,7 +484,7 @@ function FormWithControls(props: any = {}) {
   let [favoritePet, setFavoritePet] = useState('cats');
   let [favoriteColor, setFavoriteColor] = useState('green' as Key);
   let [howIFeel, setHowIFeel] = useState('I feel good, o I feel so good!');
-  let [birthday, setBirthday] = useState(new CalendarDate(1732, 2, 22));
+  let [birthday, setBirthday] = useState<CalendarDate | null>(new CalendarDate(1732, 2, 22));
   let [money, setMoney] = useState(50);
   let [superSpeed, setSuperSpeed] = useState(true);
 
@@ -744,4 +744,19 @@ export function ServerValidation() {
 
 ServerValidation.story = {
   parameters: {description: {data: 'This story is to test that server errors appear after submission, and are cleared when a field is modified.'}}
+};
+
+export let NumberFieldFormSubmit = {
+  render: () => {
+    return (
+      <Form
+        onSubmit={(e) => {
+          e.preventDefault();
+          action('submitted the form')();
+        }}>
+        <NumberField label="Number" name="number" />
+      </Form>
+    );
+  },
+  parameters: {description: {data: 'Try using "Enter" to submit the form from the NumberField. It should call an action in the actions panel.'}}
 };

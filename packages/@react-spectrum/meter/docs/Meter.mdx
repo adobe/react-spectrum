@@ -36,7 +36,7 @@ category: Status
 ## Example
 
 ```tsx example
-<Meter label="Storage space" variant="positive" value={35} />
+<Meter label="Storage space" value={35} />
 ```
 
 ## Value
@@ -47,8 +47,7 @@ By default, the `value` prop represents the current percentage of progress, as t
 ```tsx example
 <Meter
   label="Storage space"
-  value={25}
-  variant="positive" />
+  value={25} />
 ```
 
 Alternatively, a different scale can be used by setting the `minValue` and `maxValue` props.
@@ -58,8 +57,7 @@ Alternatively, a different scale can be used by setting the `minValue` and `maxV
   label="Widgets Used"
   minValue={50}
   maxValue={150}
-  value={100}
-  variant="positive" />
+  value={100} />
 ```
 
 Values are formatted as a percentage by default, but this can be modified by using the `formatOptions` prop to specify a different format.
@@ -69,8 +67,7 @@ Values are formatted as a percentage by default, but this can be modified by usi
 <Meter
   label="Currency"
   formatOptions={{style: 'currency', currency: 'JPY'}}
-  value={60}
-  variant="positive" />
+  value={60} />
 ```
 
 ## Labeling
@@ -145,10 +142,11 @@ Meter automatically uses the current locale to format the value label.
 ```
 
 ### Variants
-[View guidelines](https://spectrum.adobe.com/page/meter/#Semantic-colors)
+[View guidelines](https://spectrum.adobe.com/page/meter/#Options)
 
 ```tsx example
 <Flex direction="column" gap="size-300">
+  <Meter label="Space used" value={25} variant="informative" />
   <Meter label="Space used" value={25} variant="positive" />
   <Meter label="Space used" value={90} variant="critical" />
   <Meter label="Space used" value={70} variant="warning" />

@@ -37,7 +37,10 @@ import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useActionGroup, useActionGroupItem} from '@react-aria/actiongroup';
 
 
-function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
+/**
+ * An ActionGroup is a grouping of ActionButtons that are related to one another.
+ */
+export const ActionGroup = forwardRef(function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   props = useSlotProps(props, 'actionGroup');
 
@@ -255,13 +258,7 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
       </div>
     </FocusScope>
   );
-}
-
-/**
- * An ActionGroup is a grouping of ActionButtons that are related to one another.
- */
-const _ActionGroup = forwardRef(ActionGroup) as <T>(props: SpectrumActionGroupProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
-export {_ActionGroup as ActionGroup};
+}) as <T>(props: SpectrumActionGroupProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 
 interface ActionGroupItemProps<T> extends DOMProps, StyleProps {
   item: Node<T>,
@@ -308,13 +305,12 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, staticColor,
             text: {
               id: hideButtonText ? textId : null,
               isHidden: hideButtonText
-            },
-            icon: {
-              UNSAFE_className: hideButtonText ? classNames(styles, 'spectrum-ActionGroup-itemIcon') : null
             }
           }}>
           <ActionButton
             ref={ref}
+            // @ts-ignore (private)
+            hideButtonText={hideButtonText}
             UNSAFE_className={
               classNames(
                 styles,

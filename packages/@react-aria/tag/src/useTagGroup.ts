@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, CollectionBase, DOMAttributes, DOMProps, HelpTextProps, Key, KeyboardDelegate, LabelableProps, MultipleSelection, SelectionBehavior} from '@react-types/shared';
+import {AriaLabelingProps, CollectionBase, DOMAttributes, DOMProps, HelpTextProps, Key, KeyboardDelegate, LabelableProps, MultipleSelection, RefObject, SelectionBehavior} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {ListKeyboardDelegate} from '@react-aria/selection';
 import type {ListState} from '@react-stately/list';
-import {ReactNode, RefObject, useEffect, useRef, useState} from 'react';
+import {ReactNode, useEffect, useRef, useState} from 'react';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useGridList} from '@react-aria/gridlist';
@@ -61,14 +61,15 @@ export const hookData = new WeakMap<ListState<any>, HookData>();
  * @param state - State for the tag group, as returned by `useListState`.
  * @param ref - A ref to a DOM element for the tag group.
  */
-export function useTagGroup<T>(props: AriaTagGroupOptions<T>, state: ListState<T>, ref: RefObject<HTMLElement>): TagGroupAria {
+export function useTagGroup<T>(props: AriaTagGroupOptions<T>, state: ListState<T>, ref: RefObject<HTMLElement | null>): TagGroupAria {
   let {direction} = useLocale();
   let keyboardDelegate = props.keyboardDelegate || new ListKeyboardDelegate({
     collection: state.collection,
     ref,
     orientation: 'horizontal',
     direction,
-    disabledKeys: state.disabledKeys
+    disabledKeys: state.disabledKeys,
+    disabledBehavior: state.selectionManager.disabledBehavior
   });
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,

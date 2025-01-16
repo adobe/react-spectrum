@@ -30,11 +30,7 @@ import {
 } from '@react-types/shared';
 import {ReactElement, ReactNode} from 'react';
 
-export interface ToggleProps extends InputBase, Validation<boolean>, FocusableProps {
-  /**
-   * The label for the element.
-   */
-  children?: ReactNode,
+export interface ToggleStateOptions extends InputBase {
   /**
    * Whether the element should be selected (uncontrolled).
    */
@@ -46,7 +42,14 @@ export interface ToggleProps extends InputBase, Validation<boolean>, FocusablePr
   /**
    * Handler that is called when the element's selection state changes.
    */
-  onChange?: (isSelected: boolean) => void,
+  onChange?: (isSelected: boolean) => void
+}
+
+export interface ToggleProps extends ToggleStateOptions, Validation<boolean>, FocusableProps {
+  /**
+   * The label for the element.
+   */
+  children?: ReactNode,
   /**
    * The value of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefvalue).
    */
@@ -82,7 +85,13 @@ export interface SpectrumCheckboxProps extends AriaCheckboxProps, StyleProps {
   /**
    * This prop sets the emphasized style which provides visual prominence.
    */
-  isEmphasized?: boolean
+  isEmphasized?: boolean,
+  /**
+   * A slot name for the component. Slots allow the component to receive props from a parent component.
+   * An explicit `null` value indicates that the local props completely override all props received from a parent.
+   * @private
+   */
+  slot?: string | null
 }
 
 export interface SpectrumCheckboxGroupProps extends AriaCheckboxGroupProps, SpectrumLabelableProps, Validation<string[]>, StyleProps, SpectrumHelpTextProps {

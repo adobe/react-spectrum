@@ -58,7 +58,7 @@ Then, queue a toast from anywhere:
 
 Toasts are triggered using one of the methods of <TypeLink links={docs.links} type={docs.exports.ToastQueue} />. A &lt;<TypeLink links={docs.links} type={docs.exports.ToastContainer} />&gt; element must be rendered at the root of your app in order to display the queued toasts.
 
-Toasts are shown according to a priority queue, depending on their variant. Actionable toasts are prioritized over non-actionable toasts, and errors are prioritized over other types of notifications. Only one toast is displayed at a time. See the [Spectrum design docs](https://spectrum.adobe.com/page/toast/#Priority-queue) for full information on toast priorities.
+Toasts are shown according to the order they are added, with the most recent toast appearing at the bottom of the stack. Please use Toasts sparingly, see [Spectrum design docs](https://spectrum.adobe.com/page/toast/#Too-many-toasts).
 
 ```tsx example
 <ButtonGroup>
@@ -163,6 +163,14 @@ function Example() {
     </Button>
   );
 }
+```
+
+## Placement
+
+By default, toasts are displayed at the bottom center of the screen. This can be changed by setting the `placement` prop on the `ToastContainer` to `'top'`, `'top end'`, `'bottom'`, or `'bottom end'`.
+
+```tsx example render=false hidden
+<ToastContainer placement="bottom end" />
 ```
 
 ## API

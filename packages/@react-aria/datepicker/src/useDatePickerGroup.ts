@@ -1,12 +1,12 @@
 import {createFocusManager, getFocusableTreeWalker} from '@react-aria/focus';
 import {DateFieldState, DatePickerState, DateRangePickerState} from '@react-stately/datepicker';
-import {FocusableElement, KeyboardEvent} from '@react-types/shared';
+import {FocusableElement, KeyboardEvent, RefObject} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
-import {RefObject, useMemo} from 'react';
 import {useLocale} from '@react-aria/i18n';
+import {useMemo} from 'react';
 import {usePress} from '@react-aria/interactions';
 
-export function useDatePickerGroup(state: DatePickerState | DateRangePickerState | DateFieldState, ref: RefObject<Element>, disableArrowNavigation?: boolean) {
+export function useDatePickerGroup(state: DatePickerState | DateRangePickerState | DateFieldState, ref: RefObject<Element | null>, disableArrowNavigation?: boolean) {
   let {direction} = useLocale();
   let focusManager = useMemo(() => createFocusManager(ref), [ref]);
 
@@ -15,7 +15,7 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
     if (!e.currentTarget.contains(e.target)) {
       return;
     }
-    
+
     if (e.altKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp') && 'setOpen' in state) {
       e.preventDefault();
       e.stopPropagation();
@@ -50,6 +50,9 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
 
   // Focus the first placeholder segment from the end on mouse down/touch up in the field.
   let focusLast = () => {
+    if (!ref.current) {
+      return;
+    }
     // Try to find the segment prior to the element that was clicked on.
     let target = window.event?.target as FocusableElement;
     let walker = getFocusableTreeWalker(ref.current, {tabbable: true});

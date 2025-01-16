@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {ActionButton} from '@react-spectrum/button';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {Tooltip, TooltipTrigger} from '../';
+import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
 
 // Sync with useTooltipTriggerState.ts
@@ -681,6 +682,43 @@ describe('TooltipTrigger', function () {
       expect(() => getByText(helpfulText)).toThrow();
       fireEvent.mouseLeave(badButton);
     });
+
+    it('should hide tooltip on scroll', () => {
+      let {getByLabelText, getByText, getByTestId} = render(
+        <Provider theme={theme}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '30px',
+              overflow: 'scroll',
+              height: '200px'
+            }}
+            data-testid="scroll-container">
+            {new Array(10).fill().map((_, idx) => (
+              <TooltipTrigger key={idx}>
+                <ActionButton aria-label={`trigger-${idx}`} />
+                <Tooltip>{`Tooltip-${idx}`}</Tooltip>
+              </TooltipTrigger>
+            ))}
+          </div>
+        </Provider>
+      );
+
+      // Tooltip should be visible on focus
+      let button1 = getByLabelText('trigger-1');
+      act(() => {
+        button1.focus();
+      });
+      let tooltip1 = getByText('Tooltip-1');
+      expect(tooltip1).toBeVisible();
+
+      // Tooltip should not be visible on scroll
+      let scrollContainer = getByTestId('scroll-container');
+      expect(scrollContainer).toBeInTheDocument();
+      fireEvent.scroll(scrollContainer, {target: {top: 100}});
+      expect(tooltip1).not.toBeVisible();
+    });
   });
 
   it('supports a ref on the Tooltip', () => {
@@ -959,6 +997,98 @@ describe('TooltipTrigger', function () {
       fireEvent.mouseEnter(button);
       fireEvent.mouseMove(button);
       expect(queryByRole('tooltip')).toBeNull();
+    });
+  });
+
+  describe('portalContainer', () => {
+    function InfoTooltip(props) {
+      return (
+        <UNSTABLE_PortalProvider getContainer={() => props.container.current}>
+          <TooltipTrigger>
+            <ActionButton aria-label="trigger" />
+            <Tooltip>
+              <div data-testid="content">hello</div>
+            </Tooltip>
+          </TooltipTrigger>
+        </UNSTABLE_PortalProvider>
+      );
+    }
+
+    function App() {
+      let container = React.useRef(null);
+      return (
+        <>
+          <InfoTooltip container={container} />
+          <div ref={container} data-testid="custom-container" />
+        </>
+      );
+    }
+
+    it('should render the tooltip in the portal container', async () => {
+      let {getByRole, getByTestId} = render(
+        <Provider theme={theme}>
+          <App />
+        </Provider>
+      );
+
+      let button = getByRole('button');
+      act(() => {
+        button.focus();
+      });
+
+      expect(getByTestId('content').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+      act(() => {
+        button.blur();
+      });
+      act(() => {
+        jest.advanceTimersByTime(CLOSE_TIME);
+      });
+    });
+  });
+
+  describe('portalContainer overwrite', () => {
+    function InfoTooltip(props) {
+      return (
+        <UNSTABLE_PortalProvider getContainer={null}>
+          <TooltipTrigger>
+            <ActionButton aria-label="trigger" />
+            <Tooltip>
+              <div data-testid="content">hello</div>
+            </Tooltip>
+          </TooltipTrigger>
+        </UNSTABLE_PortalProvider>
+      );
+    }
+    function App() {
+      let container = React.useRef(null);
+      return (
+        <>
+          <UNSTABLE_PortalProvider getContainer={() => container.current}>
+            <InfoTooltip container={container} />
+            <div ref={container} data-testid="custom-container" />
+          </UNSTABLE_PortalProvider>
+        </>
+      );
+    }
+    it('should no longer render the tooltip in the portal container', async () => {
+      let {getByRole, getByTestId} = render(
+        <Provider theme={theme}>
+          <App />
+        </Provider>
+      );
+
+      let button = getByRole('button');
+      act(() => {
+        button.focus();
+      });
+
+      expect(getByTestId('content').closest('[data-testid="custom-container"]')).not.toBe(getByTestId('custom-container'));
+      act(() => {
+        button.blur();
+      });
+      act(() => {
+        jest.advanceTimersByTime(CLOSE_TIME);
+      });
     });
   });
 });

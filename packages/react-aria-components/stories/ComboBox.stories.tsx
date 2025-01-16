@@ -21,7 +21,7 @@ export default {
 };
 
 export const ComboBoxExample = () => (
-  <ComboBox data-testid="combo-box-example">
+  <ComboBox name="combo-box-example" data-testid="combo-box-example">
     <Label style={{display: 'block'}}>Test</Label>
     <div style={{display: 'flex'}}>
       <Input />
@@ -183,3 +183,27 @@ export const ComboBoxAsyncLoadingExample = () => {
     </ComboBox>
   );
 };
+
+export const ComboBoxImeExample = () => (
+  <ComboBox>
+    <Label style={{display: 'block'}}>IME Test</Label>
+    <div style={{display: 'flex'}}>
+      <Input />
+      <Button>
+        <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
+      </Button>
+    </div>
+    <Popover placement="bottom end">
+      <ListBox
+        data-testid="combo-box-list-box"
+        className={styles.menu}>
+        <MyListBoxItem>にほんご</MyListBoxItem>
+        <MyListBoxItem>ニホンゴ</MyListBoxItem>
+        <MyListBoxItem>ﾆﾎﾝｺﾞ</MyListBoxItem>
+        <MyListBoxItem>日本語</MyListBoxItem>
+        <MyListBoxItem>123</MyListBoxItem>
+        <MyListBoxItem>１２３</MyListBoxItem>
+      </ListBox>
+    </Popover>
+  </ComboBox>
+);

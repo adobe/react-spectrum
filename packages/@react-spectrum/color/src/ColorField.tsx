@@ -11,46 +11,96 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
+import {ColorChannel, SpectrumColorFieldProps} from '@react-types/color';
+import {ColorFieldContext, useContextProps} from 'react-aria-components';
 import React, {Ref, useRef} from 'react';
-import {SpectrumColorFieldProps} from '@react-types/color';
 import styles from './colorfield.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {TextFieldRef} from '@react-types/textfield';
-import {useColorField} from '@react-aria/color';
-import {useColorFieldState} from '@react-stately/color';
+import {useColorChannelField, useColorField} from '@react-aria/color';
+import {useColorChannelFieldState, useColorFieldState} from '@react-stately/color';
 import {useFormProps} from '@react-spectrum/form';
+import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
-function ColorField(props: SpectrumColorFieldProps, ref: Ref<TextFieldRef>) {
+/**
+ * A color field allows users to edit a hex color or individual color channel value.
+ */
+export const ColorField = React.forwardRef(function ColorField(props: SpectrumColorFieldProps, ref: Ref<TextFieldRef>) {
   props = useProviderProps(props);
   props = useFormProps(props);
+  [props] = useContextProps(props, null, ColorFieldContext);
+  if (props.placeholder) {
+    console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/ColorField.html#help-text');
+  }
+
+  if (props.channel) {
+    return <ColorChannelField {...props} channel={props.channel} forwardedRef={ref} />;
+  } else {
+    return <HexColorField {...props} forwardedRef={ref} />;
+  }
+});
+
+interface ColorChannelFieldProps extends Omit<SpectrumColorFieldProps, 'channel'> {
+  channel: ColorChannel,
+  forwardedRef: Ref<TextFieldRef>
+}
+
+function ColorChannelField(props: ColorChannelFieldProps) {
   let {
     // These disabled props are handled by the state hook
     value,          // eslint-disable-line @typescript-eslint/no-unused-vars
     defaultValue,   // eslint-disable-line @typescript-eslint/no-unused-vars
     onChange,       // eslint-disable-line @typescript-eslint/no-unused-vars
+    validate,       // eslint-disable-line @typescript-eslint/no-unused-vars
+    forwardedRef,
+    ...otherProps
+  } = props;
+  let {locale} = useLocale();
+  let state = useColorChannelFieldState({
+    ...props,
+    locale
+  });
+
+  let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>(null);
+  let result = useColorChannelField(otherProps, state, inputRef);
+
+  return (
+    <>
+      <TextFieldBase
+        {...otherProps}
+        ref={forwardedRef}
+        inputRef={inputRef}
+        {...result}
+        inputClassName={classNames(styles, 'react-spectrum-ColorField-input')} />
+      {props.name && <input type="hidden" name={props.name} value={isNaN(state.numberValue) ? '' : state.numberValue} />}
+    </>
+  );
+}
+
+interface HexColorFieldProps extends SpectrumColorFieldProps {
+  forwardedRef: Ref<TextFieldRef>
+}
+
+function HexColorField(props: HexColorFieldProps) {
+  let {
+    // These disabled props are handled by the state hook
+    value,          // eslint-disable-line @typescript-eslint/no-unused-vars
+    defaultValue,   // eslint-disable-line @typescript-eslint/no-unused-vars
+    onChange,       // eslint-disable-line @typescript-eslint/no-unused-vars
+    forwardedRef,
     ...otherProps
   } = props;
   let state = useColorFieldState(props);
   let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>(null);
   let result = useColorField(otherProps, state, inputRef);
 
-  if (props.placeholder) {
-    console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/ColorField.html#help-text');
-  }
-
   return (
     <TextFieldBase
       {...otherProps}
-      ref={ref}
+      ref={forwardedRef}
       inputRef={inputRef}
       {...result}
       inputClassName={classNames(styles, 'react-spectrum-ColorField-input')} />
   );
 }
-
-/**
- * ColorFields allow users to enter a color in #rrggbb hexadecimal format.
- */
-const _ColorField = React.forwardRef(ColorField);
-export {_ColorField as ColorField};

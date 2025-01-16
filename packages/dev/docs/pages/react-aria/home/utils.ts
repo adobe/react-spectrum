@@ -9,7 +9,9 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {RefObject, useEffect} from 'react';
+
+import {RefObject} from '@react-types/shared';
+import {useEffect} from 'react';
 
 async function *createAnimationQueue() {
   while (true) {
@@ -32,7 +34,7 @@ export function animate(steps: any[]) {
         let {promise, cancel} = sleep(step.time);
         cancelCurrentStep = cancel;
         await promise;
-      } catch (err) {
+      } catch {
         break;
       }
     }
@@ -66,7 +68,7 @@ function sleep(ms: number) {
   };
 }
 
-export function useIntersectionObserver(ref: RefObject<HTMLElement>, onIntersect: () => Function | void) {
+export function useIntersectionObserver(ref: RefObject<HTMLElement | null>, onIntersect: () => Function | void) {
   useEffect(() => {
     let element = ref.current;
     if (!element) {

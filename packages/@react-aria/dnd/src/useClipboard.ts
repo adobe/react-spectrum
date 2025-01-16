@@ -24,7 +24,9 @@ export interface ClipboardProps {
   /** Handler that is called when the user triggers a cut interaction. */
   onCut?: () => void,
   /** Handler that is called when the user triggers a paste interaction. */
-  onPaste?: (items: DropItem[]) => void
+  onPaste?: (items: DropItem[]) => void,
+  /** Whether the clipboard is disabled. */
+  isDisabled?: boolean
 }
 
 export interface ClipboardResult {
@@ -64,6 +66,7 @@ function addGlobalEventListener(event, fn) {
  * data types, and integrates with the operating system native clipboard.
  */
 export function useClipboard(options: ClipboardProps): ClipboardResult {
+  let {isDisabled} = options;
   let isFocusedRef = useRef(false);
   let {focusProps} = useFocus({
     onFocusChange: (isFocused) => {
@@ -84,8 +87,10 @@ export function useClipboard(options: ClipboardProps): ClipboardResult {
     }
 
     e.preventDefault();
-    writeToDataTransfer(e.clipboardData, options.getItems());
-    options.onCopy?.();
+    if (e.clipboardData) {
+      writeToDataTransfer(e.clipboardData, options.getItems());
+      options.onCopy?.();
+    }
   });
 
   let onBeforeCut = useEffectEvent((e: ClipboardEvent) => {
@@ -100,8 +105,10 @@ export function useClipboard(options: ClipboardProps): ClipboardResult {
     }
 
     e.preventDefault();
-    writeToDataTransfer(e.clipboardData, options.getItems());
-    options.onCut();
+    if (e.clipboardData) {
+      writeToDataTransfer(e.clipboardData, options.getItems());
+      options.onCut();
+    }
   });
 
   let onBeforePaste = useEffectEvent((e: ClipboardEvent) => {
@@ -118,11 +125,16 @@ export function useClipboard(options: ClipboardProps): ClipboardResult {
     }
 
     e.preventDefault();
-    let items = readFromDataTransfer(e.clipboardData);
-    options.onPaste(items);
+    if (e.clipboardData) {
+      let items = readFromDataTransfer(e.clipboardData);
+      options.onPaste(items);
+    }
   });
 
   useEffect(() => {
+    if (isDisabled) {
+      return;
+    }
     return chain(
       addGlobalEventListener('beforecopy', onBeforeCopy),
       addGlobalEventListener('copy', onCopy),
@@ -131,7 +143,7 @@ export function useClipboard(options: ClipboardProps): ClipboardResult {
       addGlobalEventListener('beforepaste', onBeforePaste),
       addGlobalEventListener('paste', onPaste)
     );
-  }, [onBeforeCopy, onCopy, onBeforeCut, onCut, onBeforePaste, onPaste]);
+  }, [isDisabled, onBeforeCopy, onCopy, onBeforeCut, onCut, onBeforePaste, onPaste]);
 
   return {
     clipboardProps: focusProps

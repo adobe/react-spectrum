@@ -1,0 +1,23 @@
+{
+  "extends": "@parcel/config-default",
+  "resolvers": ["@parcel/resolver-glob", "parcel-resolver-build", "..."],
+  "bundler": "@parcel/bundler-library",
+  "transformers": {
+    "style-types:*.ts": ["@parcel/transformer-typescript-types"],
+    "packages/**/intl/*.json": ["parcel-transformer-intl"],
+    "bundle-text:*.svg": ["@parcel/transformer-svg", "@parcel/transformer-inline-string"],
+    "illustration:*.svg": ["@react-spectrum/parcel-transformer-s2-icon"],
+    "packages/@react-spectrum/s2/{s2wf-icons,spectrum-illustrations}/**/*.svg": ["@react-spectrum/parcel-transformer-s2-icon"],
+    // Disable PostCSS from running over style macro output
+    "packages/@react-spectrum/s2/**/*.css": ["@parcel/transformer-css"],
+    "*.svg": ["@parcel/transformer-svg-react"],
+    "*.{js,mjs,jsm,jsx,es6,cjs,ts,tsx}": [
+      "@parcel/transformer-js",
+      "@parcel/transformer-react-refresh-wrap"
+    ]
+  },
+  "namers": ["parcel-namer-s2", "parcel-namer-intl", "..."],
+  "optimizers": {
+    "**/spectrum-theme.cjs": ["parcel-optimizer-strict-mode"]
+  }
+}

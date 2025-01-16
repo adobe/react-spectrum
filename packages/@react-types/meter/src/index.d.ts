@@ -15,6 +15,9 @@ import {AriaProgressBarBaseProps, ProgressBarBaseProps, SpectrumProgressBarBaseP
 export type MeterProps = ProgressBarBaseProps;
 export interface AriaMeterProps extends AriaProgressBarBaseProps {}
 export interface SpectrumMeterProps extends SpectrumProgressBarBaseProps {
-  /** The [visual style](https://spectrum.adobe.com/page/meter/#-Options) of the Meter. */
-  variant: 'positive' | 'warning' | 'critical'
+  /** 
+   * The [visual style](https://spectrum.adobe.com/page/meter/#Options) of the Meter. 
+   * @default 'informative'
+   */
+  variant?: 'informative' | 'positive' | 'warning' | 'critical'
 }

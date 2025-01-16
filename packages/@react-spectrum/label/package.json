@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/label",
-  "version": "3.16.2",
+  "version": "3.16.11",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -36,22 +36,23 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/i18n": "^3.10.0",
-    "@react-aria/utils": "^3.23.0",
-    "@react-spectrum/form": "^3.7.2",
-    "@react-spectrum/layout": "^3.6.1",
-    "@react-spectrum/utils": "^3.11.3",
-    "@react-types/label": "^3.9.0",
-    "@react-types/shared": "^3.22.0",
-    "@spectrum-icons/ui": "^3.6.3",
+    "@react-aria/i18n": "^3.12.5",
+    "@react-aria/utils": "^3.27.0",
+    "@react-spectrum/form": "^3.7.11",
+    "@react-spectrum/layout": "^3.6.11",
+    "@react-spectrum/utils": "^3.12.1",
+    "@react-types/label": "^3.9.8",
+    "@react-types/shared": "^3.27.0",
+    "@spectrum-icons/ui": "^3.6.12",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
   },
   "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0",
-    "@react-spectrum/provider": "^3.0.0"
+    "@react-spectrum/provider": "^3.0.0",
+    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
   },
   "publishConfig": {
     "access": "public"

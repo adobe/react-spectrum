@@ -20,7 +20,7 @@ import {
   OverlayArrow,
   Popover
 } from '../';
-import {pointerMap, render, within} from '@react-spectrum/test-utils';
+import {pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -28,6 +28,18 @@ describe('Dialog', () => {
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
+  });
+
+  it('should have a base default set of attributes', () => {
+    let {getByRole} = render(
+      <Dialog>
+        <Heading slot="title">Title</Heading>
+      </Dialog>
+    );
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toHaveClass('react-aria-Dialog');
+    expect(dialog).toHaveAttribute('data-rac');
   });
 
   it('works with modal', async () => {
@@ -155,6 +167,7 @@ describe('Dialog', () => {
     let heading = getByRole('heading');
     expect(dialog).toHaveAttribute('aria-labelledby', heading.id);
     expect(dialog).toHaveAttribute('data-test', 'dialog');
+    expect(dialog).toHaveClass('react-aria-Dialog');
 
     let popover = dialog.closest('.react-aria-Popover');
     expect(popover).toHaveStyle('position: absolute');

@@ -7,8 +7,10 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License. */}
 
-import {Layout} from '@react-spectrum/docs';
+import {Layout, VersionBadge} from '@react-spectrum/docs';
 export default Layout;
+import testUtilDocs from 'docs:@react-spectrum/test-utils';
+import {ClassAPI, TypeLink} from '@react-spectrum/docs';
 
 ---
 category: Concepts
@@ -16,14 +18,13 @@ category: Concepts
 
 # Testing
 
-This page describes how to test an application built with with React Spectrum, including how to
+This page describes how to test an application built with React Spectrum, including how to
 query the DOM tree for elements and simulate user interactions.
 
 ## Introduction
 
 Running automated tests on your application helps ensure that it continues to work as expected over time.
-You can use testing tools like [Enzyme](https://enzymejs.github.io/enzyme/) or
-[React Testing Library](https://testing-library.com/docs/react-testing-library/intro) along with test runners like
+You can use testing tools like [React Testing Library](https://testing-library.com/docs/react-testing-library/intro) along with test runners like
 [Jest](https://jestjs.io) or [Mocha](https://mochajs.org) to test React Spectrum applications. These generally
 work quite well out of the box but there are a few things to consider to ensure your tests are the best they
 can be.
@@ -70,18 +71,6 @@ let tree = render(<MyComponent />);
 let option = tree.getByRole('button');
 ```
 
-### Enzyme
-
-In Enzyme, you can [use CSS selectors](https://enzymejs.github.io/enzyme/docs/api/ReactWrapper/find.html) to find
-elements. You can query by role using an attribute selector:
-
-```tsx
-import {mount} from 'enzyme';
-
-let wrapper = mount(<MyComponent />);
-let option = wrapper.find('[role="option"]');
-```
-
 ## Test ids
 
 Querying by semantics covers many scenarios, but what if you have many buttons on a page? How do you find the specific button
@@ -95,7 +84,7 @@ through to their underlying DOM nodes, which allows you to use an attribute like
 a particular instance of a component. For example, you could add test ids to the two input elements
 in a login form and use them to find the username and password fields.
 
-This example uses React Testing Library, but the idea could be applied in a similar way with Enzyme or other
+This example uses React Testing Library, but the idea could be applied in a similar way with other
 testing libraries.
 
 ```tsx
@@ -156,3 +145,265 @@ userEvent.type(document.activeElement, 'Pas$w0rd');
 userEvent.tab();
 userEvent.click(document.activeElement);
 ```
+
+## Test setup and common gotchas
+
+### Providers
+
+When testing anything that uses a React Spectrum component, you must provide a wrapping Provider at the top level. Components rely on this wrapping provider
+to inform them of the app's theme, locale, breakpoints and more. See the [Provider page](./Provider.html#application-provider) for a list of properties
+your Provider can accept. If you see the following errors, you should check to see if you have a wrapping Provider.
+
+```
+Error: Uncaught [TypeError: Cannot destructure property 'scale' of '(0 , _provider.useProvider)(...)' as it is null.]
+```
+
+```
+TypeError: Cannot read properties of null (reading 'scale')
+```
+
+If you are using React Testing Library, you can overwrite the provided `render` function so that it automatically includes a Provider by default.
+Note the below example allows you to rerender the component with new Provider props but you'll need to requery any element you are asserting against
+to get its updated state (e.g. `button = getByRole('button)`).
+
+```tsx
+import {RenderOptions as BaseRenderOptions, render} from '@testing-library/react';
+import {Provider, defaultTheme} from '@adobe/react-spectrum';
+import React, {ReactElement} from 'react';
+
+// export everything from React Testing Library
+export * from '@testing-library/react';
+
+function ProviderWrapper(props) {
+  let {children, ...providerProps} = props;
+  return (
+    <Provider theme={defaultTheme} scale="medium" {...providerProps}>
+      {props.children}
+    </Provider>
+  );
+}
+
+interface RenderOptions extends BaseRenderOptions {
+  providerProps: Omit<ProviderProps, 'children'>
+}
+
+function customRender(ui: ReactElement, options?: RenderOptions) {
+  let rendered = render(ui, {wrapper: (props) => <ProviderWrapper {...props} {...options?.providerProps} />, ...options});
+  return {
+    ...rendered,
+    rerender: (ui, options) => providerWrapperRender(ui, {container: rendered.container, ...options})
+  };
+}
+
+// override render method
+export {customRender as render};
+```
+
+### Timers
+
+If you are using fake timers in your test suite, be aware that you may need to advance your timers whenever an animation or load is taking place.
+Historically, this most commonly happened when a modals, popovers, or trays is opened or closed as a result of a simulated user action (e.g. opening a Picker's dropdown via click).
+Additionally, we have `requestAnimationFrame` calls in various areas that you will need to also handle by advancing your timers in the tests. This happens most prominently
+in our virtualized components due to the internals of our Virtualizer. In Jest, this can be handled by calling `act(() => jest.runAllTimers());` but you may require more precise control
+depending on the other time-sensitive behavior you are testing. Please see [Jest's timer docs](https://jestjs.io/docs/timer-mocks) or the equivalent docs of your test frameworks for more information on how to do so.
+It is also a good idea to run all timers to completion after each test case to avoid any left over transitions or timeouts that a component may have setup during its lifecycle.
+
+```tsx
+afterEach(() => {
+  act(() => jest.runAllTimers());
+});
+```
+
+Consider adding a `act(() => jest.runAllTimers());` after your simulated user interaction if you run into a test failure that looks like the following:
+
+```
+TestingLibraryElementError: Unable to find an accessible element with the role "listbox"
+```
+
+If you are using real timers instead, you can await for popovers to appear or for a particular state of your app to be reached. If you are using React Testing Library, you can perform a `waitFor` query
+to wait for a dialog to appear:
+
+```tsx
+await waitFor(() => {
+  expect(getByRole('dialog')).toBeInTheDocument();
+});
+```
+
+### Desktop vs Mobile
+
+Components like ComboBox and Picker render a different experience on mobile versus desktop. If you need to test mobile vs desktop for you app or want to make sure the React Spectrum
+components are rendered only against a specific experience, you'll need to mock the window screen width accordingly. We currently use a
+[screen width of 700px](https://github.com/adobe/react-spectrum/blob/5e487532e3ca4714513fb6ab64f7a78d9d1ca281/packages/%40react-spectrum/utils/src/useIsMobileDevice.ts#L15-L23) as the breakpoint
+between mobile and desktop, so you should mock the `width` getter of `window.screen` to a value greater or less than this value accordingly. You may use <TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.simulateMobile} /> and
+<TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.simulateDesktop} /> from the [@react-spectrum/test-utils](https://www.npmjs.com/package/@react-spectrum/test-utils) package to handle this width mocking for you in Jest:
+
+The example below shows how you would set this up in Jest.
+
+```tsx
+import {simulateDesktop, simulateMobile} from '@react-spectrum/test-utils';
+
+beforeAll(() => {
+  simulateMobile();
+});
+
+afterAll(() => {
+  jest.restoreAllMocks();
+});
+```
+
+### Virtualized components
+
+Many of our collection components are virtualized out of the box and thus rely on DOM node measurement to know how large a item should be and how many items can be rendered at once.
+To properly render virtualized components in a test environment, you'll have to to mock the `clientHeight` and `clientWidth` getters of the `HTMLElement` prototype.
+`scrollHeight` and `scrollWidth` should also be mocked to set the height and width of each item. See below for an example implementation in Jest.
+
+```tsx
+beforeAll(function () {
+  // The virtualizer will now think it has a visible area of 1000px x 1000px and that the items within it are 40px x 40px
+  jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
+  jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+  jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 40);
+  jest.spyOn(window.HTMLElement.prototype, 'scrollWidth', 'get').mockImplementation(() => 40);
+});
+
+afterAll(() => {
+  jest.restoreAllMocks();
+});
+```
+
+Please note that this is greatly simplified and still won't accurately reflect the behavior of the virtualizer in browser so we highly recommended that you avoid doing the above or use a browser based automated testing framework to
+test virtualizer behavior. If you run into a test error where your collection component doesn't render any items/rows within it, try adding the above mocks.
+
+### Simulating user long press
+
+Components like ListView and TableView support long press to perform specific interactions like drag and drop or entering selection mode on mobile devices. Unfortunately, the approach of using the userEvent library to simulate a press event and running timers to hit the
+long press internal timer threshold isn't sufficient due to `useLongPress`'s usage of `PointerEvent` and our own detection of `virtual` vs `mouse`/`touch` pointer types. Mock [PointerEvent](https://github.com/adobe/react-spectrum/blob/16ff0efac57eebeb1cd601ab376ce7c58a4e4efd/packages/dev/test-utils/src/events.ts#L70-L103)
+globally and use `fireEvent` from `@testing-library/react` to properly simulate these long press events in your tests.
+If you are using Jest, you can call our <TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.installPointerEvent} /> utility to automatically set up and tear down this mock in your test.
+Additionally, you are using fake timers and don't need to control the specific timings around the long press interaction, feel free to use our <TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.triggerLongPress} /> utility as shown below.
+
+```tsx
+import {fireEvent} from '@testing-library/react';
+import {installPointerEvent, triggerLongPress} from '@react-spectrum/test-utils';
+installPointerEvent();
+
+// In test case
+let button = getByRole('button');
+
+// With fireEvent and specific timing control
+fireEvent.pointerDown(el, {pointerType: 'touch'});
+act(() => jest.advanceTimersByTime(800));
+fireEvent.up(el, {pointerType: 'touch'});
+
+// With triggerLongPress
+triggerLongPress(button);
+```
+
+### Simulating move event
+
+Components like ColorArea, ColorSlider, ColorWheel, and Slider each feature a draggable handle that a user can interact with to change the component's value. Similar to long press, the interactions offered by userEvent library aren't sufficient to trigger
+the underlying event handlers governing these drag/move operations. [Mock MouseEvent globally](https://github.com/adobe/react-spectrum/blob/16ff0efac57eebeb1cd601ab376ce7c58a4e4efd/packages/dev/test-utils/src/events.ts#L44-L68) and `fireEvent` from `@testing-library/react` to simulate these drag/move events in your tests.
+If you are using Jest, you can call our <TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.installMouseEvent} /> utility to automatically set up and tear down this mock in your test. Additionally, the track dimensions
+for the draggable handle should be mocked so that the move operation calculations can be properly computed.
+
+```tsx
+import {fireEvent} from '@testing-library/react';
+import {installMouseEvent} from '@react-spectrum/test-utils';
+installMouseEvent();
+
+beforeAll(() => {
+  jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({top: 0, left: 0, width: 100, height: 10}));
+})
+
+// In test case
+let sliderThumb = getByRole('slider').parentElement;
+
+// With fireEvent, move thumb from 0 to 50
+fireEvent.mouseDown(thumb, {clientX: 0, pageX: 0});
+fireEvent.mouseMove(thumb, {pageX: 50});
+fireEvent.mouseUp(thumb, {pageX: 50});
+```
+
+## Snapshot tests
+
+If you are using React 16 or 17, you may run into an issue where the ids generated by the React Spectrum components are changing on every snapshot. To remedy this, simply wrap your component in a [SSRProvider](../react-aria/SSRProvider.html).
+Note that you can use the SSRProvider even if your component doesn't support server side rendering, it will simply stabilize the ids generated.
+
+```tsx
+import {SSRProvider, Provider, lightTheme} from '@adobe/react-spectrum';
+
+<SSRProvider>
+  <Provider theme={lightTheme}>
+    <YourApp />
+  </Provider>
+</SSRProvider>
+```
+
+## React Spectrum test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+In addition to the test utilities mentioned above, [@react-spectrum/test-utils](https://www.npmjs.com/package/@react-spectrum/test-utils) re-exports the same test utils available in `@react-aria/test-utils`, including
+the ARIA pattern testers. These testers are set of testing utilities that aims to make writing unit tests easier for consumers of React Spectrum. By using the ARIA specification for any given component pattern as a source of truth,
+we can make assumptions about the existence of various aria attributes in a component. This allows us to navigate the component's DOM structure, simulate common interactions, and verify the resulting state of the component.
+
+### Installation
+
+`@react-spectrum/test-utils` can be installed using a package manager like [npm](https://docs.npmjs.com/cli/npm) or [yarn](https://classic.yarnpkg.com/lang/en/).
+
+```
+yarn add --dev @react-spectrum/test-utils
+```
+
+Please note that this library uses [@testing-library/react@15](https://www.npmjs.com/package/@testing-library/react) and [@testing-library/user-event](https://www.npmjs.com/package/@testing-library/user-event/v/13.1.5). This means that you need
+to be on React 18+ in order for these utilities to work.
+
+### Setup
+
+Once installed, you can access the `User` that `@react-spectrum/test-utils` provides in your test file as shown below. This user only needs to be initialized once and then can be used to generate
+specific ARIA pattern tester in your test cases. This gives you access to that pattern's specific utilities that you can then call within your test to query for specific subcomponents or simulate common interactions.
+See [below](#patterns) for what patterns are currently supported.
+
+```ts
+// YourTest.test.ts
+import {screen} from '@testing-library/react';
+import {User} from '@react-spectrum/test-utils';
+
+// Provide whatever method of advancing timers you use in your test, this example assumes Jest with fake timers.
+// 'interactionType' specifies what mode of interaction should be simulated by the tester
+// 'advanceTimer' is used by the tester to advance the timers in the tests for specific interactions (e.g. long press)
+let testUtilUser = new User({interactionType: 'mouse', advanceTimer: jest.advanceTimersByTime});
+// ...
+
+it('my test case', async function () {
+  // Render your test component/app
+  render();
+  // Initialize the table tester via providing the 'Table' pattern name and the root element of said table
+  let table = testUtilUser.createTester('Table', {root: screen.getByTestId('test_table')});
+
+  // ...
+});
+```
+
+See below for the full definition of the `User` object.
+
+<ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.User} />
+
+### Patterns
+
+Below is a list of the ARIA patterns testers currently supported by `createTester`. See the accompanying component testing docs pages for a sample of how to use
+the testers in your test suite.
+
+-  [ComboBox](ComboBox.html#test-utils)
+
+-  [ListView](ListView.html#test-utils)
+
+-  [ListBox](ListBox.html#test-utils)
+
+-  [MenuTrigger](MenuTrigger.html#test-utils)
+
+-  [Picker](Picker.html#test-utils)
+
+-  [TableView](TableView.html#test-utils)
+
+-  [Tabs](Tabs.html#test-utils)
+
+-  [TreeView](TreeView.html#test-utils)

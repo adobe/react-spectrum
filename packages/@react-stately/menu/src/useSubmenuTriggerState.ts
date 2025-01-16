@@ -43,25 +43,25 @@ export interface SubmenuTriggerState extends OverlayTriggerState {
  * Manages state for a submenu trigger. Tracks whether the submenu is currently open, the level of the submenu, and
  * controls which item will receive focus when it opens.
  */
-export function UNSTABLE_useSubmenuTriggerState(props: SubmenuTriggerProps, state: RootMenuTriggerState): SubmenuTriggerState  {
+export function useSubmenuTriggerState(props: SubmenuTriggerProps, state: RootMenuTriggerState): SubmenuTriggerState  {
   let {triggerKey} = props;
-  let {UNSTABLE_expandedKeysStack, UNSTABLE_openSubmenu, UNSTABLE_closeSubmenu, close: closeAll} = state;
-  let [submenuLevel] = useState(UNSTABLE_expandedKeysStack?.length);
-  let isOpen = useMemo(() => UNSTABLE_expandedKeysStack[submenuLevel] === triggerKey, [UNSTABLE_expandedKeysStack, triggerKey, submenuLevel]);
-  let [focusStrategy, setFocusStrategy] = useState<FocusStrategy>(null);
+  let {expandedKeysStack, openSubmenu, closeSubmenu, close: closeAll} = state;
+  let [submenuLevel] = useState(expandedKeysStack?.length);
+  let isOpen = useMemo(() => expandedKeysStack[submenuLevel] === triggerKey, [expandedKeysStack, triggerKey, submenuLevel]);
+  let [focusStrategy, setFocusStrategy] = useState<FocusStrategy | null>(null);
 
-  let open = useCallback((focusStrategy: FocusStrategy = null) => {
-    setFocusStrategy(focusStrategy);
-    UNSTABLE_openSubmenu(triggerKey, submenuLevel);
-  }, [UNSTABLE_openSubmenu, submenuLevel, triggerKey]);
+  let open = useCallback((focusStrategy?: FocusStrategy | null) => {
+    setFocusStrategy(focusStrategy ?? null);
+    openSubmenu(triggerKey, submenuLevel);
+  }, [openSubmenu, submenuLevel, triggerKey]);
 
   let close = useCallback(() => {
     setFocusStrategy(null);
-    UNSTABLE_closeSubmenu(triggerKey, submenuLevel);
-  }, [UNSTABLE_closeSubmenu, submenuLevel, triggerKey]);
+    closeSubmenu(triggerKey, submenuLevel);
+  }, [closeSubmenu, submenuLevel, triggerKey]);
 
-  let toggle = useCallback((focusStrategy: FocusStrategy = null) => {
-    setFocusStrategy(focusStrategy);
+  let toggle = useCallback((focusStrategy?: FocusStrategy | null) => {
+    setFocusStrategy(focusStrategy ?? null);
     if (isOpen) {
       close();
     } else {

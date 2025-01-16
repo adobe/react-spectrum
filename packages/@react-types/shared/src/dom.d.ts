@@ -166,13 +166,34 @@ export interface TextInputDOMProps extends DOMProps, InputDOMProps, TextInputDOM
   /**
    * Hints at the type of data that might be entered by the user while editing the element or its contents. See [MDN](https://html.spec.whatwg.org/multipage/interaction.html#input-modalities:-the-inputmode-attribute).
    */
-  inputMode?: 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search'
+  inputMode?: 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search',
+
+  /**
+   * An attribute that takes as its value a space-separated string that describes what, if any, type of autocomplete functionality the input should provide. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#autocomplete).
+   */
+  autoCorrect?: string,
+
+  /**
+   * An enumerated attribute that defines whether the element may be checked for spelling errors. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/spellcheck).
+   */
+  spellCheck?: string
 }
+
+/**
+ * This type allows configuring link props with router options and type-safe URLs via TS module augmentation.
+ * By default, this is an empty type. Extend with `href` and `routerOptions` properties to configure your router.
+ */
+export interface RouterConfig {}
+
+export type Href = RouterConfig extends {href: infer H} ? H : string;
+export type RouterOptions = RouterConfig extends {routerOptions: infer O} ? O : never;
 
 // Make sure to update filterDOMProps.ts when updating this.
 export interface LinkDOMProps {
   /** A URL to link to. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#href). */
-  href?: string,
+  href?: Href,
+  /** Hints at the human language of the linked URL. See[MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#hreflang). */
+  hrefLang?: string,
   /** The target window for the link. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#target). */
   target?: HTMLAttributeAnchorTarget,
   /** The relationship between the linked resource and the current page. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel). */
@@ -182,7 +203,9 @@ export interface LinkDOMProps {
   /** A space-separated list of URLs to ping when the link is followed. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#ping). */
   ping?: string,
   /** How much of the referrer to send when following the link. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#referrerpolicy). */
-  referrerPolicy?: HTMLAttributeReferrerPolicy
+  referrerPolicy?: HTMLAttributeReferrerPolicy,
+  /** Options for the configured client side router. */
+  routerOptions?: RouterOptions
 }
 
 /** Any focusable element, including both HTML and SVG elements. */

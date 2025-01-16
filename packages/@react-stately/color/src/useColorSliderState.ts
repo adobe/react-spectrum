@@ -14,6 +14,7 @@ import {Color, ColorSliderProps} from '@react-types/color';
 import {normalizeColor, parseColor} from './Color';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import {useControlledState} from '@react-stately/utils';
+import {useMemo} from 'react';
 
 export interface ColorSliderState extends SliderState {
   /** The current color value represented by the color slider. */
@@ -21,7 +22,9 @@ export interface ColorSliderState extends SliderState {
   /** Sets the current color value. If a string is passed, it will be parsed to a Color. */
   setValue(value: string | Color): void,
   /** Returns the color that should be displayed in the slider instead of `value` or the optional parameter. */
-  getDisplayColor(): Color
+  getDisplayColor(): Color,
+  /** Whether the color slider is currently being dragged. */
+  readonly isDragging: boolean
 }
 
 
@@ -35,16 +38,25 @@ export interface ColorSliderStateOptions extends ColorSliderProps {
  * Color sliders allow users to adjust an individual channel of a color value.
  */
 export function useColorSliderState(props: ColorSliderStateOptions): ColorSliderState {
-  let {channel, value, defaultValue, onChange, locale, ...otherProps} = props;
+  let {channel, colorSpace, value, defaultValue, onChange, locale, ...otherProps} = props;
   if (value == null && defaultValue == null) {
     throw new Error('useColorSliderState requires a value or defaultValue');
   }
 
-  let [color, setColor] = useControlledState(value && normalizeColor(value), defaultValue && normalizeColor(defaultValue), onChange);
+  if (value) {
+    value = normalizeColor(value);
+  }
+  if (defaultValue) {
+    defaultValue = normalizeColor(defaultValue);
+  }
+  // safe to cast value and defaultValue to Color, one of them will always be defined because if neither are, we throw an error
+  let [colorValue, setColor] = useControlledState<Color>(value as Color, defaultValue as Color, onChange);
+  let color = useMemo(() => colorSpace && colorValue ? colorValue.toFormat(colorSpace) : colorValue, [colorValue, colorSpace]);
   let sliderState = useSliderState({
     ...color.getChannelRange(channel),
     ...otherProps,
-    // Unused except in getThumbValueLabel, which is overridden below. null to appease TypeScript.
+    // Unused except in getThumbValueLabel, which is overridden below. null to localize the TypeScript error for ignoring.
+    // @ts-ignore
     numberFormatter: null,
     value: color.getChannelValue(channel),
     onChange(v) {
@@ -87,6 +99,7 @@ export function useColorSliderState(props: ColorSliderStateOptions): ColorSlider
       return color.formatChannelValue(channel, locale);
     },
     step,
-    pageSize
+    pageSize,
+    isDragging: sliderState.isThumbDragging(0)
   };
 }

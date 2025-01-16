@@ -13,7 +13,6 @@
 import {announce} from '@react-aria/live-announcer';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {DragEndEvent, DragItem, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropItem, DropOperation, DropTarget as DroppableCollectionTarget, FocusableElement} from '@react-types/shared';
-import {flushSync} from 'react-dom';
 import {getDragModality, getTypes} from './utils';
 import {isVirtualClick, isVirtualPointerEvent} from '@react-aria/utils';
 import type {LocalizedStringFormatter} from '@internationalized/string';
@@ -21,17 +20,18 @@ import {useEffect, useState} from 'react';
 
 let dropTargets = new Map<Element, DropTarget>();
 let dropItems = new Map<Element, DroppableItem>();
-let dragSession: DragSession = null;
+let dragSession: DragSession | null = null;
 let subscriptions = new Set<() => void>();
 
 interface DropTarget {
   element: FocusableElement,
+  preventFocusOnDrop?: boolean,
   getDropOperation?: (types: Set<string>, allowedOperations: DropOperation[]) => DropOperation,
   onDropEnter?: (e: DropEnterEvent, dragTarget: DragTarget) => void,
   onDropExit?: (e: DropExitEvent) => void,
-  onDropTargetEnter?: (target?: DroppableCollectionTarget) => void,
-  onDropActivate?: (e: DropActivateEvent, target?: DroppableCollectionTarget) => void,
-  onDrop?: (e: DropEvent, target?: DroppableCollectionTarget) => void,
+  onDropTargetEnter?: (target: DroppableCollectionTarget | null) => void,
+  onDropActivate?: (e: DropActivateEvent, target: DroppableCollectionTarget | null) => void,
+  onDrop?: (e: DropEvent, target: DroppableCollectionTarget | null) => void,
   onKeyDown?: (e: KeyboardEvent, dragTarget: DragTarget) => void
 }
 
@@ -71,9 +71,11 @@ export function beginDragging(target: DragTarget, stringFormatter: LocalizedStri
 
   dragSession = new DragSession(target, stringFormatter);
   requestAnimationFrame(() => {
-    dragSession.setup();
-    if (getDragModality() === 'keyboard') {
-      dragSession.next();
+    if (dragSession) {
+      dragSession.setup();
+      if (getDragModality() === 'keyboard') {
+        dragSession.next();
+      }
     }
   });
 
@@ -154,14 +156,14 @@ const MESSAGES = {
 
 class DragSession {
   dragTarget: DragTarget;
-  validDropTargets: DropTarget[];
-  currentDropTarget: DropTarget;
-  currentDropItem: DroppableItem;
-  dropOperation: DropOperation;
-  private mutationObserver: MutationObserver;
-  private restoreAriaHidden: () => void;
+  validDropTargets: DropTarget[] = [];
+  currentDropTarget: DropTarget | null = null;
+  currentDropItem: DroppableItem | null = null;
+  dropOperation: DropOperation | null = null;
+  private mutationObserver: MutationObserver | null = null;
+  private restoreAriaHidden: (() => void) | null = null;
   private stringFormatter: LocalizedStringFormatter;
-  private isVirtualClick: boolean;
+  private isVirtualClick: boolean = false;
   private initialFocused: boolean;
 
   constructor(target: DragTarget, stringFormatter: LocalizedStringFormatter) {
@@ -210,8 +212,8 @@ class DragSession {
       document.removeEventListener(event, this.cancelEvent, true);
     }
 
-    this.mutationObserver.disconnect();
-    this.restoreAriaHidden();
+    this.mutationObserver?.disconnect();
+    this.restoreAriaHidden?.();
   }
 
   onKeyDown(e: KeyboardEvent) {
@@ -452,7 +454,7 @@ class DragSession {
     return nearest;
   }
 
-  setCurrentDropTarget(dropTarget: DropTarget, item?: DroppableItem) {
+  setCurrentDropTarget(dropTarget: DropTarget | null, item?: DroppableItem) {
     if (dropTarget !== this.currentDropTarget) {
       if (this.currentDropTarget && typeof this.currentDropTarget.onDropExit === 'function') {
         let rect = this.currentDropTarget.element.getBoundingClientRect();
@@ -481,18 +483,21 @@ class DragSession {
       }
     }
 
-    if (item !== this.currentDropItem) {
-      if (item && typeof this.currentDropTarget.onDropTargetEnter === 'function') {
-        this.currentDropTarget.onDropTargetEnter(item?.target);
+    if (item != null && item !== this.currentDropItem) {
+      if (this.currentDropTarget && typeof this.currentDropTarget.onDropTargetEnter === 'function') {
+        this.currentDropTarget.onDropTargetEnter(item.target);
       }
 
-      item?.element.focus();
+      item.element.focus();
       this.currentDropItem = item;
 
       // Announce first drop target after drag start announcement finishes.
       // Otherwise, it will never get announced because drag start announcement is assertive.
       if (!this.initialFocused) {
-        announce(item?.element.getAttribute('aria-label'), 'polite');
+        let label = item?.element.getAttribute('aria-label');
+        if (label) {
+          announce(label, 'polite');
+        }
         this.initialFocused = true;
       }
     }
@@ -513,19 +518,11 @@ class DragSession {
       });
     }
 
-    // Blur and re-focus the drop target so that the focus ring appears.
-    if (this.currentDropTarget) {
-      // Since we cancel all focus events in drag sessions, refire blur to make sure state gets updated so drag target doesn't think it's still focused
-      // i.e. When you from one list to another during a drag session, we need the blur to fire on the first list after the drag.
-      if (!this.dragTarget.element.contains(this.currentDropTarget.element)) {
-        this.dragTarget.element.dispatchEvent(new FocusEvent('blur'));
-        this.dragTarget.element.dispatchEvent(new FocusEvent('focusout', {bubbles: true}));
-      }
-      // Re-focus the focusedKey upon reorder. This requires a React rerender between blurring and focusing.
-      flushSync(() => {
-        this.currentDropTarget.element.blur();
-      });
-      this.currentDropTarget.element.focus();
+    if (this.currentDropTarget && !this.currentDropTarget.preventFocusOnDrop) {
+      // Re-trigger focus event on active element, since it will not have received it during dragging (see cancelEvent).
+      // This corrects state such as whether focus ring should appear.
+      // useDroppableCollection handles this itself, so this is only for standalone drop zones.
+      document.activeElement?.dispatchEvent(new FocusEvent('focusin', {bubbles: true}));
     }
 
     this.setCurrentDropTarget(null);
@@ -572,7 +569,7 @@ class DragSession {
         y: rect.top + (rect.height / 2),
         items,
         dropOperation: this.dropOperation
-      }, item?.target);
+      }, item?.target ?? null);
     }
 
     this.end();
@@ -586,7 +583,7 @@ class DragSession {
         type: 'dropactivate',
         x: rect.left + (rect.width / 2),
         y: rect.top + (rect.height / 2)
-      });
+      }, null);
     }
   }
 }

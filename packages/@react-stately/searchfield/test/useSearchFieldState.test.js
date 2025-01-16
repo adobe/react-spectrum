@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {actHook as act, renderHook} from '@react-spectrum/test-utils';
+import {actHook as act, renderHook} from '@react-spectrum/test-utils-internal';
 import {useSearchFieldState} from '../';
 
 describe('useSearchFieldState', () => {

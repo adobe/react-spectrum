@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {useRef} from 'react';
-import {render, triggerPress} from '@react-spectrum/test-utils';
-import {SlotProvider, useSlotProps} from '../';
+import {ClearSlots, SlotProvider, useSlotProps} from '../';
+import {pointerMap, render} from '@react-spectrum/test-utils-internal';
+import React, {StrictMode, useRef} from 'react';
 import {useId, useSlotId} from '@react-aria/utils';
 import {usePress} from '@react-aria/interactions';
-
+import userEvent from '@testing-library/user-event';
 
 describe('Slots', function () {
   let results = {};
@@ -80,7 +80,8 @@ describe('Slots', function () {
     });
   });
 
-  it('chains functions', function () {
+  it('chains functions', async function () {
+    let user = userEvent.setup({delay: null, pointerMap});
     let onPress = jest.fn();
     let onPressUser = jest.fn();
     let slots = {
@@ -91,7 +92,7 @@ describe('Slots', function () {
         <Component label="boop" onPress={onPressUser} />
       </SlotProvider>
     );
-    triggerPress(getByRole('button'));
+    await user.click(getByRole('button'));
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onPressUser).toHaveBeenCalledTimes(1);
   });
@@ -189,4 +190,99 @@ describe('Slots', function () {
     expect(getByRole('presentation')).toHaveAttribute('aria-controls', id);
   });
 
+  it('does not rerender slots consumers when the slot provider rerenders with stable values', function () {
+    let slots = {
+      slotname: {label: 'foo'}
+    };
+    let renderCount = 0;
+
+    const TestComponent = (props) => {
+      useSlotProps(props, 'slotname');
+      React.useEffect(() => {
+        renderCount++;
+      });
+
+      return <p>test component</p>;
+    };
+
+    const MemoizedComponent = React.memo(function MemoizedComponent(props) {
+      return props.children;
+    });
+
+    const FullComponentTree = () => {
+      const StableTestComponent = React.useMemo(() => <TestComponent prop1="value1" />, []);
+
+      return (
+        <StrictMode>
+          <SlotProvider>
+            <MemoizedComponent>
+              {StableTestComponent}
+            </MemoizedComponent>
+          </SlotProvider>
+        </StrictMode>
+      );
+    };
+
+    const {rerender} = render(
+      <FullComponentTree slots={slots} />
+    );
+
+    let renderCountBeforeRerender = renderCount;
+    
+    // Trigger a rerender with the same stable props
+    rerender(
+      <FullComponentTree slots={slots} />
+    );
+    
+    expect(renderCount).toEqual(renderCountBeforeRerender);
+  });
+
+  it('does not rerender slots consumers when <ClearSlot /> wrapper is placed between SlotProvider and Consumer', function () {
+    let slots = {
+      slotname: {label: 'foo'}
+    };
+    let renderCount = 0;
+
+    const TestComponent = (props) => {
+      useSlotProps(props, 'slotname');
+      React.useEffect(() => {
+        renderCount++;
+      });
+
+      return <p>test component</p>;
+    };
+
+    const MemoizedComponent = React.memo(function MemoizedComponent(props) {
+      return props.children;
+    });
+
+    const FullComponentTree = () => {
+      const StableTestComponent = React.useMemo(() => <TestComponent prop1="value1" />, []);
+
+      return (
+        <StrictMode>
+          <SlotProvider>
+            <MemoizedComponent>
+              <ClearSlots>
+                {StableTestComponent}
+              </ClearSlots>
+            </MemoizedComponent>
+          </SlotProvider>
+        </StrictMode>
+      );
+    };
+
+    const {rerender} = render(
+      <FullComponentTree slots={slots} />
+    );
+
+    let renderCountBeforeRerender = renderCount;
+    
+    // Trigger a rerender with the same stable props
+    rerender(
+      <FullComponentTree slots={slots} />
+    );
+    
+    expect(renderCount).toEqual(renderCountBeforeRerender);
+  });
 });

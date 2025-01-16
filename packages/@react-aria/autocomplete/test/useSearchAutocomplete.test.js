@@ -11,9 +11,8 @@
  */
 
 import {Item} from '@react-stately/collections';
-import {ListLayout} from '@react-stately/layout';
 import React from 'react';
-import {renderHook} from '@react-spectrum/test-utils';
+import {renderHook} from '@react-spectrum/test-utils-internal';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useSearchAutocomplete} from '../';
 
@@ -22,16 +21,14 @@ describe('useSearchAutocomplete', function () {
   let stopPropagation = jest.fn();
   let event = (e) => ({
     ...e,
+    nativeEvent: {
+      isComposing: false
+    },
     preventDefault,
     stopPropagation
   });
 
   let defaultProps = {items: [{id: 1, name: 'one'}], children: (props) => <Item>{props.name}</Item>};
-  let {result} = renderHook(() => useComboBoxState(defaultProps));
-  let mockLayout = new ListLayout({
-    rowHeight: 40
-  });
-  mockLayout.collection = result.current.collection;
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -42,8 +39,7 @@ describe('useSearchAutocomplete', function () {
       label: 'test label',
       popoverRef: React.createRef(),
       inputRef: React.createRef(),
-      listBoxRef: React.createRef(),
-      layout: mockLayout
+      listBoxRef: React.createRef()
     };
 
     let {result} = renderHook(() => useSearchAutocomplete(props, useComboBoxState(defaultProps)));
@@ -70,8 +66,7 @@ describe('useSearchAutocomplete', function () {
       inputRef: {
         current: document.createElement('input')
       },
-      listBoxRef: React.createRef(),
-      layout: mockLayout
+      listBoxRef: React.createRef()
     };
 
     let {result: state} = renderHook((props) => useComboBoxState(props), {initialProps: props});

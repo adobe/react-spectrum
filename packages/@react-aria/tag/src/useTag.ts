@@ -11,12 +11,12 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {DOMAttributes, FocusableElement, Node} from '@react-types/shared';
-import {filterDOMProps, getSyntheticLinkProps, mergeProps, useDescription, useId} from '@react-aria/utils';
+import {DOMAttributes, FocusableElement, Node, RefObject} from '@react-types/shared';
+import {filterDOMProps, mergeProps, useDescription, useId, useSyntheticLinkProps} from '@react-aria/utils';
 import {hookData} from './useTagGroup';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {KeyboardEvent, RefObject} from 'react';
+import {KeyboardEvent} from 'react';
 import type {ListState} from '@react-stately/list';
 import {SelectableItemStates} from '@react-aria/selection';
 import {useGridListItem} from '@react-aria/gridlist';
@@ -46,7 +46,7 @@ export interface AriaTagProps<T> {
  * @param state - State for the tag group, as returned by `useListState`.
  * @param ref - A ref to a DOM element for the tag.
  */
-export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefObject<FocusableElement>): TagAria {
+export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefObject<FocusableElement | null>): TagAria {
   let {item} = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/tag');
   let buttonId = useId();
@@ -61,8 +61,13 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {descriptionProps: _, ...stateWithoutDescription} = states;
 
+  let isDisabled = state.disabledKeys.has(item.key) || item.props.isDisabled;
   let onKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Delete' || e.key === 'Backspace') {
+      if (isDisabled) {
+        return;
+      }
+
       e.preventDefault();
       if (state.selectionManager.isSelected(item.key)) {
         onRemove?.(new Set(state.selectionManager.selectedKeys));
@@ -79,20 +84,26 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
   let description = onRemove && (modality === 'keyboard' || modality === 'virtual') ? stringFormatter.format('removeDescription') : '';
   let descProps = useDescription(description);
 
-  let isFocused = item.key === state.selectionManager.focusedKey;
-  // @ts-ignore - data attributes are ok but TS doesn't know about them.
+  let isItemFocused = item.key === state.selectionManager.focusedKey;
+  let isFocused = state.selectionManager.focusedKey != null;
+  let tabIndex = -1;
+  if (!isDisabled && (isItemFocused || !isFocused)) {
+    tabIndex = 0;
+  }
+
   let domProps = filterDOMProps(item.props);
-  let linkProps = getSyntheticLinkProps(item.props);
+  let linkProps = useSyntheticLinkProps(item.props);
   return {
     removeButtonProps: {
       'aria-label': stringFormatter.format('removeButtonLabel'),
       'aria-labelledby': `${buttonId} ${rowProps.id}`,
+      isDisabled,
       id: buttonId,
       onPress: () => onRemove ? onRemove(new Set([item.key])) : null,
       excludeFromTabOrder: true
     },
     rowProps: mergeProps(rowProps, domProps, linkProps, {
-      tabIndex: (isFocused || state.selectionManager.focusedKey == null) ? 0 : -1,
+      tabIndex,
       onKeyDown: onRemove ? onKeyDown : undefined,
       'aria-describedby': descProps['aria-describedby']
     }),

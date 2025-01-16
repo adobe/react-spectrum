@@ -14,7 +14,7 @@ import {ItemElement, ItemProps} from '@react-types/shared';
 import {PartialNode} from './types';
 import React, {JSX, ReactElement} from 'react';
 
-function Item<T>(props: ItemProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
+function Item<T>(props: ItemProps<T>): ReactElement | null { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;
 }
 

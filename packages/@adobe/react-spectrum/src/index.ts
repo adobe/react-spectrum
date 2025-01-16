@@ -10,24 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-// Mark as a client only package. This will cause a build time error if you try 
+// Mark as a client only package. This will cause a build time error if you try
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
 export {ActionGroup} from '@react-spectrum/actiongroup';
 export {Badge} from '@react-spectrum/badge';
 export {Breadcrumbs} from '@react-spectrum/breadcrumbs';
+export {Accordion, Disclosure, DisclosurePanel, DisclosureTitle} from '@react-spectrum/accordion';
 export {ActionBar, ActionBarContainer} from '@react-spectrum/actionbar';
 export {ActionButton, Button, LogicButton, ToggleButton} from '@react-spectrum/button';
 export {Avatar} from '@react-spectrum/avatar';
 export {ButtonGroup} from '@react-spectrum/buttongroup';
 export {Calendar, RangeCalendar} from '@react-spectrum/calendar';
 export {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
+export {ColorArea, ColorEditor, ColorField, ColorPicker, ColorSlider, ColorSwatch, ColorSwatchPicker, ColorWheel, parseColor, getColorChannels} from '@react-spectrum/color';
 export {ComboBox} from '@react-spectrum/combobox';
 export {ContextualHelp} from '@react-spectrum/contextualhelp';
 export {AlertDialog, Dialog, DialogTrigger, DialogContainer, useDialogContainer} from '@react-spectrum/dialog';
 export {DateField, DatePicker, DateRangePicker, TimeField} from '@react-spectrum/datepicker';
 export {Divider} from '@react-spectrum/divider';
+export {DropZone} from '@react-spectrum/dropzone';
+export {FileTrigger} from '@react-spectrum/filetrigger';
 export {Form} from '@react-spectrum/form';
 export {Icon} from '@react-spectrum/icon';
 export {IllustratedMessage} from '@react-spectrum/illustratedmessage';
@@ -38,7 +42,7 @@ export {LabeledValue} from '@react-spectrum/labeledvalue';
 export {Link} from '@react-spectrum/link';
 export {ListBox} from '@react-spectrum/listbox';
 export {ListView} from '@react-spectrum/list';
-export {ActionMenu, Menu, MenuTrigger} from '@react-spectrum/menu';
+export {ActionMenu, ContextualHelpTrigger, Menu, MenuTrigger, SubmenuTrigger} from '@react-spectrum/menu';
 export {Meter} from '@react-spectrum/meter';
 export {NumberField} from '@react-spectrum/numberfield';
 export {Picker} from '@react-spectrum/picker';
@@ -76,11 +80,14 @@ export type {SpectrumActionButtonProps, SpectrumButtonProps, SpectrumLogicButton
 export type {SpectrumButtonGroupProps} from '@react-spectrum/buttongroup';
 export type {SpectrumCalendarProps, SpectrumRangeCalendarProps} from '@react-spectrum/calendar';
 export type {SpectrumCheckboxGroupProps, SpectrumCheckboxProps} from '@react-spectrum/checkbox';
+export type {Color, ColorFormat, ColorSpace, SpectrumColorAreaProps, SpectrumColorEditorProps, SpectrumColorFieldProps, SpectrumColorPickerProps, SpectrumColorSliderProps, SpectrumColorSwatchPickerProps, SpectrumColorSwatchProps, SpectrumColorWheelProps} from '@react-spectrum/color';
 export type {SpectrumComboBoxProps} from '@react-spectrum/combobox';
 export type {SpectrumContextualHelpProps} from '@react-spectrum/contextualhelp';
 export type {DialogContainerValue, SpectrumAlertDialogProps, SpectrumDialogContainerProps, SpectrumDialogProps, SpectrumDialogTriggerProps} from '@react-spectrum/dialog';
 export type {SpectrumDateFieldProps, SpectrumDatePickerProps, SpectrumDateRangePickerProps, SpectrumTimeFieldProps} from '@react-spectrum/datepicker';
 export type {SpectrumDividerProps} from '@react-spectrum/divider';
+export type {SpectrumDropZoneProps} from '@react-spectrum/dropzone';
+export type {FileTriggerProps} from '@react-spectrum/filetrigger';
 export type {SpectrumFormProps} from '@react-spectrum/form';
 export type {IconProps, IllustrationProps} from '@react-spectrum/icon';
 export type {SpectrumIllustratedMessageProps} from '@react-spectrum/illustratedmessage';
@@ -91,7 +98,7 @@ export type {SpectrumLabeledValueProps} from '@react-spectrum/labeledvalue';
 export type {SpectrumLinkProps} from '@react-spectrum/link';
 export type {SpectrumListBoxProps} from '@react-spectrum/listbox';
 export type {SpectrumListViewProps} from '@react-spectrum/list';
-export type {SpectrumActionMenuProps, SpectrumMenuProps, SpectrumMenuTriggerProps, SpectrumMenuDialogTriggerProps} from '@react-spectrum/menu';
+export type {SpectrumActionMenuProps, SpectrumMenuProps, SpectrumMenuTriggerProps, SpectrumMenuDialogTriggerProps, SpectrumSubmenuTriggerProps} from '@react-spectrum/menu';
 export type {SpectrumMeterProps} from '@react-spectrum/meter';
 export type {SpectrumNumberFieldProps} from '@react-spectrum/numberfield';
 export type {SpectrumPickerProps} from '@react-spectrum/picker';
@@ -106,7 +113,7 @@ export type {HeadingProps, KeyboardProps, TextProps} from '@react-spectrum/text'
 export type {SpectrumTableProps, SpectrumColumnProps, TableHeaderProps, TableBodyProps, RowProps, CellProps} from '@react-spectrum/table';
 export type {SpectrumTabListProps, SpectrumTabPanelsProps, SpectrumTabsProps} from '@react-spectrum/tabs';
 export type {SpectrumTagGroupProps} from '@react-spectrum/tag';
-export type {SpectrumTextFieldProps} from '@react-spectrum/textfield';
+export type {SpectrumTextFieldProps, SpectrumTextAreaProps} from '@react-spectrum/textfield';
 export type {SpectrumTooltipProps, SpectrumTooltipTriggerProps} from '@react-spectrum/tooltip';
 export type {ContentProps, FooterProps, HeaderProps, ViewProps} from '@react-spectrum/view';
 export type {SpectrumWellProps} from '@react-spectrum/well';
@@ -115,4 +122,5 @@ export type {VisuallyHiddenAria, VisuallyHiddenProps} from '@react-aria/visually
 export type {DateFormatter, DateFormatterOptions, Filter, FormatMessage, Locale, LocalizedStrings} from '@react-aria/i18n';
 export type {SSRProviderProps} from '@react-aria/ssr';
 export type {DirectoryDropItem, DragAndDropHooks, DragAndDropOptions, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-spectrum/dnd';
-export type {Key, Selection} from '@react-types/shared';
+export type {Key, Selection, ItemProps, SectionProps, RouterConfig} from '@react-types/shared';
+export type {SpectrumAccordionProps, SpectrumDisclosureProps, SpectrumDisclosurePanelProps, SpectrumDisclosureTitleProps} from '@react-spectrum/accordion';

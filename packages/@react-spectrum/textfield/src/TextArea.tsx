@@ -12,14 +12,19 @@
 
 import {chain, useLayoutEffect} from '@react-aria/utils';
 import React, {Ref, useCallback, useRef} from 'react';
-import {SpectrumTextAreaProps, TextFieldRef} from '@react-types/textfield';
+import {SpectrumTextAreaProps, SpectrumTextFieldBaseProps, TextFieldRef} from '@react-types/textfield';
 import {TextFieldBase} from './TextFieldBase';
 import {useControlledState} from '@react-stately/utils';
 import {useFormProps} from '@react-spectrum/form';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTextField} from '@react-aria/textfield';
 
-function TextArea(props: SpectrumTextAreaProps, ref: Ref<TextFieldRef>) {
+/**
+ * TextAreas are multiline text inputs, useful for cases where users have
+ * a sizable amount of text to enter. They allow for all customizations that
+ * are available to text fields.
+ */
+export const TextArea = React.forwardRef(function TextArea(props: SpectrumTextAreaProps, ref: Ref<TextFieldRef<HTMLTextAreaElement>>) {
   props = useProviderProps(props);
   props = useFormProps(props);
   let {
@@ -76,7 +81,7 @@ function TextArea(props: SpectrumTextAreaProps, ref: Ref<TextFieldRef>) {
 
   return (
     <TextFieldBase
-      {...otherProps}
+      {...otherProps as SpectrumTextFieldBaseProps}
       ref={ref}
       inputRef={inputRef}
       {...result}
@@ -86,12 +91,4 @@ function TextArea(props: SpectrumTextAreaProps, ref: Ref<TextFieldRef>) {
       isReadOnly={isReadOnly}
       isRequired={isRequired} />
   );
-}
-
-/**
- * TextAreas are multiline text inputs, useful for cases where users have
- * a sizable amount of text to enter. They allow for all customizations that
- * are available to text fields.
- */
-let _TextArea = React.forwardRef(TextArea);
-export {_TextArea as TextArea};
+});

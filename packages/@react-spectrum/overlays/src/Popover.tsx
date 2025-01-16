@@ -12,13 +12,13 @@
 
 import {AriaPopoverProps, DismissButton, PopoverAria, usePopover} from '@react-aria/overlays';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, StyleProps} from '@react-types/shared';
+import {DOMRef, RefObject, StyleProps} from '@react-types/shared';
 import {FocusWithinProps, useFocusWithin} from '@react-aria/interactions';
-import {mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {mergeProps, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import {Overlay} from './Overlay';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import overrideStyles from './overlays.css';
-import React, {forwardRef, MutableRefObject, ReactNode, RefObject, useRef, useState} from 'react';
+import React, {ForwardedRef, forwardRef, ReactNode, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
 import {Underlay} from './Underlay';
 
@@ -41,13 +41,13 @@ interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef' | 'maxHeight'
 
 interface PopoverWrapperProps extends PopoverProps, FocusWithinProps {
   isOpen?: boolean,
-  wrapperRef: MutableRefObject<HTMLDivElement>
+  wrapperRef: RefObject<HTMLDivElement | null>
 }
 
 interface ArrowProps {
   arrowProps: PopoverAria['arrowProps'],
   isLandscape: boolean,
-  arrowRef?: RefObject<SVGSVGElement>,
+  arrowRef?: RefObject<SVGSVGElement | null>,
   primary: number,
   secondary: number,
   borderDiagonal: number
@@ -67,7 +67,7 @@ let arrowPlacement = {
   bottom: 'bottom'
 };
 
-function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
+export const Popover = forwardRef(function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
     state,
@@ -83,9 +83,9 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
       </PopoverWrapper>
     </Overlay>
   );
-}
+});
 
-const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HTMLDivElement>) => {
+const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: ForwardedRef<HTMLDivElement | null>) => {
   let {
     children,
     isOpen,
@@ -97,9 +97,10 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
     onDismissButtonPress = () => state.close()
   } = props;
   let {styleProps} = useStyleProps(props);
+  let objRef = useObjectRef(ref);
 
   let {size, borderWidth, arrowRef} = useArrowSize();
-  const borderRadius = usePopoverBorderRadius(ref);
+  const borderRadius = usePopoverBorderRadius(objRef);
   let borderDiagonal = borderWidth * Math.SQRT2;
   let primary = size + borderDiagonal;
   let secondary = primary * 2;
@@ -110,8 +111,8 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
     placement
   } = usePopover({
     ...props,
-    popoverRef: ref,
-    maxHeight: null,
+    popoverRef: objRef,
+    maxHeight: undefined,
     arrowSize: hideArrow ? 0 : secondary,
     arrowBoundaryOffset: borderRadius
   }, state);
@@ -128,7 +129,7 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
           ...styleProps.style,
           ...popoverProps.style
         }}
-        ref={ref}
+        ref={objRef}
         className={
           classNames(
             styles,
@@ -154,7 +155,7 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
         {hideArrow ? null : (
           <Arrow
             arrowProps={arrowProps}
-            isLandscape={arrowPlacement[placement] === 'bottom'}
+            isLandscape={placement != null ? arrowPlacement[placement] === 'bottom' : false}
             arrowRef={arrowRef}
             primary={primary}
             secondary={secondary}
@@ -166,7 +167,7 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
   );
 });
 
-function usePopoverBorderRadius(popoverRef: RefObject<HTMLDivElement>) {
+function usePopoverBorderRadius(popoverRef: RefObject<HTMLDivElement | null>) {
   let [borderRadius, setBorderRadius] = useState(0);
   useLayoutEffect(() => {
     if (popoverRef.current) {
@@ -236,9 +237,6 @@ function Arrow(props: ArrowProps) {
     </svg>
   );
 }
-
-let _Popover = forwardRef(Popover);
-export {_Popover as Popover};
 
 /**
  * More explanation on popover tips.

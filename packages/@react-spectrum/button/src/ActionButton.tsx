@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, ClearSlots, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import CornerTriangle from '@spectrum-icons/ui/CornerTriangle';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
@@ -23,9 +23,15 @@ import {useButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 
-function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+/**
+ * ActionButtons allow users to perform an action.
+ * They’re used for similar, task-based options within a workflow, and are ideal for interfaces where buttons aren’t meant to draw a lot of attention.
+ */
+export const ActionButton = React.forwardRef(function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   props = useProviderProps(props);
   props = useSlotProps(props, 'actionButton');
+  let textProps = useSlotProps({UNSAFE_className: classNames(styles, 'spectrum-ActionButton-label')}, 'text');
+
   let {
     isQuiet,
     isDisabled,
@@ -34,6 +40,8 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLBu
     autoFocus,
     // @ts-ignore (private)
     holdAffordance,
+    // @ts-ignore (private)
+    hideButtonText,
     ...otherProps
   } = props;
 
@@ -68,28 +76,29 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLBu
         {holdAffordance &&
           <CornerTriangle UNSAFE_className={classNames(styles, 'spectrum-ActionButton-hold')} />
         }
-        <SlotProvider
-          slots={{
-            icon: {
-              size: 'S',
-              UNSAFE_className: classNames(styles, 'spectrum-Icon')
-            },
-            text: {
-              UNSAFE_className: classNames(styles, 'spectrum-ActionButton-label')
-            }
-          }}>
-          {typeof children === 'string' || isTextOnly
-            ? <Text>{children}</Text>
-            : children}
-        </SlotProvider>
+        <ClearSlots>
+          <SlotProvider
+            slots={{
+              icon: {
+                size: 'S',
+                UNSAFE_className: classNames(
+                  styles,
+                  'spectrum-Icon',
+                  {
+                    'spectrum-ActionGroup-itemIcon': hideButtonText
+                  }
+                )
+              },
+              text: {
+                ...textProps
+              }
+            }}>
+            {typeof children === 'string' || isTextOnly
+              ? <Text>{children}</Text>
+              : children}
+          </SlotProvider>
+        </ClearSlots>
       </button>
     </FocusRing>
   );
-}
-
-/**
- * ActionButtons allow users to perform an action.
- * They’re used for similar, task-based options within a workflow, and are ideal for interfaces where buttons aren’t meant to draw a lot of attention.
- */
-let _ActionButton = React.forwardRef(ActionButton);
-export {_ActionButton as ActionButton};
+});

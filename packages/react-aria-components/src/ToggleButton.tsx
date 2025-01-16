@@ -10,13 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaToggleButtonProps, mergeProps, useFocusRing, useHover, useToggleButton} from 'react-aria';
+import {AriaToggleButtonProps, HoverEvents, mergeProps, useFocusRing, useHover, useToggleButton, useToggleButtonGroupItem} from 'react-aria';
 import {ButtonRenderProps} from './Button';
-import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import React, {createContext, ForwardedRef, forwardRef} from 'react';
+import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {forwardRefType, Key} from '@react-types/shared';
+import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
+import {ToggleGroupStateContext} from './ToggleButtonGroup';
 import {ToggleState, useToggleState} from 'react-stately';
 
-export interface ToggleButtonRenderProps extends ButtonRenderProps {
+export interface ToggleButtonRenderProps extends Omit<ButtonRenderProps, 'isPending'> {
   /**
    * Whether the button is currently selected.
    * @selector [data-selected]
@@ -28,19 +30,38 @@ export interface ToggleButtonRenderProps extends ButtonRenderProps {
   state: ToggleState
 }
 
-export interface ToggleButtonProps extends Omit<AriaToggleButtonProps, 'children' | 'elementType'>, SlotProps, RenderProps<ToggleButtonRenderProps> {}
+export interface ToggleButtonProps extends Omit<AriaToggleButtonProps, 'children' | 'elementType' | 'id'>, HoverEvents, SlotProps, RenderProps<ToggleButtonRenderProps> {
+  /** When used in a ToggleButtonGroup, an identifier for the item in `selectedKeys`. When used standalone, a DOM id. */
+  id?: Key
+}
 
 export const ToggleButtonContext = createContext<ContextValue<ToggleButtonProps, HTMLButtonElement>>({});
 
-function ToggleButton(props: ToggleButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
+/**
+ * A toggle button allows a user to toggle a selection on or off, for example switching between two states or modes.
+ */
+export const ToggleButton = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToggleButton(props: ToggleButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   [props, ref] = useContextProps(props, ref, ToggleButtonContext);
-  let state = useToggleState(props);
-  let {buttonProps, isPressed} = useToggleButton(props, state, ref);
+  let groupState = useContext(ToggleGroupStateContext);
+  let state = useToggleState(groupState && props.id != null ? {
+    isSelected: groupState.selectedKeys.has(props.id),
+    onChange(isSelected) {
+      groupState.setSelected(props.id!, isSelected);
+    }
+  } : props);
+
+  let {buttonProps, isPressed, isSelected, isDisabled} = groupState && props.id != null
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    ? useToggleButtonGroupItem({...props, id: props.id}, groupState, ref)
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    : useToggleButton({...props, id: props.id != null ? String(props.id) : undefined}, state, ref);
+
   let {focusProps, isFocused, isFocusVisible} = useFocusRing(props);
   let {hoverProps, isHovered} = useHover(props);
   let renderProps = useRenderProps({
     ...props,
-    values: {isHovered, isPressed, isFocused, isSelected: state.isSelected, isFocusVisible, isDisabled: props.isDisabled || false, state},
+    id: undefined,
+    values: {isHovered, isPressed, isFocused, isSelected: state.isSelected, isFocusVisible, isDisabled, state},
     defaultClassName: 'react-aria-ToggleButton'
   });
 
@@ -51,16 +72,10 @@ function ToggleButton(props: ToggleButtonProps, ref: ForwardedRef<HTMLButtonElem
       ref={ref}
       slot={props.slot || undefined}
       data-focused={isFocused || undefined}
-      data-disabled={props.isDisabled || undefined}
+      data-disabled={isDisabled || undefined}
       data-pressed={isPressed || undefined}
-      data-selected={state.isSelected || undefined}
+      data-selected={isSelected || undefined}
       data-hovered={isHovered || undefined}
       data-focus-visible={isFocusVisible || undefined} />
   );
-}
-
-/**
- * A toggle button allows a user to toggle a selection on or off, for example switching between two states or modes.
- */
-const _ToggleButton = /*#__PURE__*/ (forwardRef as forwardRefType)(ToggleButton);
-export {_ToggleButton as ToggleButton};
+});

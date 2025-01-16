@@ -11,15 +11,15 @@
  */
 
 import {ariaHideOutside} from './ariaHideOutside';
-import {DOMAttributes} from '@react-types/shared';
+import {AriaOverlayProps, useOverlay} from './useOverlay';
+import {DOMAttributes, RefObject} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {OverlayTriggerState} from '@react-stately/overlays';
-import {RefObject, useEffect} from 'react';
-import {useOverlay} from './useOverlay';
+import {useEffect} from 'react';
 import {useOverlayFocusContain} from './Overlay';
 import {usePreventScroll} from './usePreventScroll';
 
-export interface AriaModalOverlayProps {
+export interface AriaModalOverlayProps extends Pick<AriaOverlayProps, 'shouldCloseOnInteractOutside'> {
   /**
    * Whether to close the modal when the user interacts outside it.
    * @default false
@@ -43,7 +43,7 @@ export interface ModalOverlayAria {
  * Provides the behavior and accessibility implementation for a modal component.
  * A modal is an overlay element which blocks interaction with elements outside it.
  */
-export function useModalOverlay(props: AriaModalOverlayProps, state: OverlayTriggerState, ref: RefObject<HTMLElement>): ModalOverlayAria {
+export function useModalOverlay(props: AriaModalOverlayProps, state: OverlayTriggerState, ref: RefObject<HTMLElement | null>): ModalOverlayAria {
   let {overlayProps, underlayProps} = useOverlay({
     ...props,
     isOpen: state.isOpen,
@@ -57,7 +57,7 @@ export function useModalOverlay(props: AriaModalOverlayProps, state: OverlayTrig
   useOverlayFocusContain();
 
   useEffect(() => {
-    if (state.isOpen) {
+    if (state.isOpen && ref.current) {
       return ariaHideOutside([ref.current]);
     }
   }, [state.isOpen, ref]);

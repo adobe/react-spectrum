@@ -12,7 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {classNames} from '@react-spectrum/utils';
-import React from 'react';
+import React, {useState} from 'react';
 import styles from '../example/index.css';
 import {ToggleButton} from 'react-aria-components';
 
@@ -21,7 +21,19 @@ export default {
 };
 
 export const ToggleButtonExample = () => {
+
+  const [textColor, setTextColor] = useState('black');
+
   return (
-    <ToggleButton className={classNames(styles, 'toggleButtonExample')} data-testid="toggle-button-example" onKeyUp={action('keyup')} onPress={action('press')}>Toggle</ToggleButton>
+    <ToggleButton
+      className={classNames(styles, 'toggleButtonExample')} 
+      data-testid="toggle-button-example" 
+      onKeyUp={action('keyup')} 
+      onPress={action('press')}
+      onHoverStart={() => setTextColor('red')}
+      onHoverEnd={() => setTextColor('black')}
+      style={{color: textColor}}>
+      Toggle
+    </ToggleButton>
   );
 };

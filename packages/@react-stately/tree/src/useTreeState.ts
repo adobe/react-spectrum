@@ -10,14 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionStateBase, Expandable, Key, MultipleSelection, Node} from '@react-types/shared';
+import {Collection, CollectionStateBase, DisabledBehavior, Expandable, Key, MultipleSelection, Node} from '@react-types/shared';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {TreeCollection} from './TreeCollection';
 import {useCallback, useEffect, useMemo} from 'react';
 import {useCollection} from '@react-stately/collections';
 import {useControlledState} from '@react-stately/utils';
 
-export interface TreeProps<T> extends CollectionStateBase<T>, Expandable, MultipleSelection {}
+export interface TreeProps<T> extends CollectionStateBase<T>, Expandable, MultipleSelection {
+  /** Whether `disabledKeys` applies to all interactions, or only selection. */
+  disabledBehavior?: DisabledBehavior
+}
 export interface TreeState<T> {
   /** A collection of items in the tree. */
   readonly collection: Collection<Node<T>>,
@@ -43,10 +46,14 @@ export interface TreeState<T> {
  * of items from props, item expanded state, and manages multiple selection state.
  */
 export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T> {
+  let {
+    onExpandedChange
+  } = props;
+
   let [expandedKeys, setExpandedKeys] = useControlledState(
     props.expandedKeys ? new Set(props.expandedKeys) : undefined,
     props.defaultExpandedKeys ? new Set(props.defaultExpandedKeys) : new Set(),
-    props.onExpandedChange
+    onExpandedChange
   );
 
   let selectionState = useMultipleSelectionState(props);

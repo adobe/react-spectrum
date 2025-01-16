@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ChangeEvent, RefObject, useCallback, useEffect, useRef} from 'react';
+import {ChangeEvent, useCallback, useEffect, useRef} from 'react';
 import {ColumnSize} from '@react-types/table';
-import {DOMAttributes, FocusableElement, Key} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {getColumnHeaderId} from './utils';
 import {GridNode} from '@react-types/grid';
@@ -43,7 +43,7 @@ export interface AriaTableColumnResizeProps<T> {
    * focus will be returned there when resizing is done. If it isn't provided, it is assumed that the resizer is
    * visible at all time and keyboard resizing is started via pressing Enter on the resizer and not on focus.
    * */
-  triggerRef?: RefObject<FocusableElement>,
+  triggerRef?: RefObject<FocusableElement | null>,
   /** If resizing is disabled. */
   isDisabled?: boolean,
   /** Called when resizing starts. */
@@ -60,13 +60,13 @@ export interface AriaTableColumnResizeProps<T> {
  * @param state - State for the table's resizable columns, as returned by `useTableColumnResizeState`.
  * @param ref - The ref attached to the resizer's visually hidden input element.
  */
-export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: TableColumnResizeState<T>, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
+export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: TableColumnResizeState<T>, ref: RefObject<HTMLInputElement | null>): TableColumnResizeAria {
   let {column: item, triggerRef, isDisabled, onResizeStart, onResize, onResizeEnd, 'aria-label': ariaLabel} = props;
   const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/table');
   let id = useId();
   let isResizing = state.resizingColumn === item.key;
   let isResizingRef = useRef(isResizing);
-  let lastSize = useRef(null);
+  let lastSize = useRef<Map<Key, ColumnSize> | null>(null);
   let wasFocusedOnResizeStart = useRef(false);
   let editModeEnabled = state.tableState.isKeyboardNavigationDisabled;
 
@@ -158,7 +158,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
 
   let onKeyDown = useCallback((e) => {
     if (editModeEnabled) {
-      moveProps.onKeyDown(e);
+      moveProps.onKeyDown?.(e);
     }
   }, [editModeEnabled, moveProps]);
 
@@ -169,7 +169,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
     max = Number.MAX_SAFE_INTEGER;
   }
   let value = Math.floor(state.getColumnWidth(item.key));
-  let modality: string = useInteractionModality();
+  let modality: string | null = useInteractionModality();
   if (modality === 'virtual' &&  (typeof window !== 'undefined' && 'ontouchstart' in window)) {
     modality = 'touch';
   }
@@ -194,7 +194,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   }, [ref]);
 
   let resizingColumn = state.resizingColumn;
-  let prevResizingColumn = useRef(null);
+  let prevResizingColumn = useRef<Key | null>(null);
   useEffect(() => {
     if (prevResizingColumn.current !== resizingColumn && resizingColumn != null && resizingColumn === item.key) {
       wasFocusedOnResizeStart.current = document.activeElement === ref.current;

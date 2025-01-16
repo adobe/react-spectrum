@@ -3,9 +3,13 @@
     // we can explicitly declare `any`, but we don't want to infer `any`
     "noImplicitAny": false,
     // maybe bump to 'esNext'?
-    "target": "es6",
+    "target": "es2018",
     // allows react jsx in tsx files
-    "jsx": "react",
+    // this is set to preserve so that different packages can use different JSX runtimes
+    // depending on the React version they support. ESLint will ensure that React is imported
+    // in packages using the old JSX runtime. Parcel will compile JSX according to the React
+    // version specified in the package.json of each package.
+    "jsx": "preserve",
     // Eventually turn off, one we have no more assumed default exports.
     // Allow default imports from modules with no default export.
     "allowSyntheticDefaultImports": true,
@@ -13,6 +17,7 @@
     "resolveJsonModule": true,
     // Search under node_modules for non-relative imports.
     "moduleResolution": "node",
+    "module": "esnext",
     // Process & infer types from .js files.
     "allowJs": true,
     // Don't emit; allow Babel to transform files.
@@ -28,112 +33,10 @@
       "dom.iterable"
     ],
     "skipLibCheck": false,
-    "strict": false,
+    "strict": true,
     "plugins": [
       {
-        "name": "typescript-strict-plugin",
-        "paths": [
-          "./packages/@internationalized",
-          "./packages/@react-aria/a",
-          "./packages/@react-aria/b",
-          "./packages/@react-aria/checkbox",
-          "./packages/@react-aria/l",
-          "./packages/@react-aria/meter",
-          "./packages/@react-aria/color",
-          "./packages/@react-aria/dialog",
-          "./packages/@react-aria/e",
-          "./packages/@react-aria/f",
-          "./packages/@react-aria/h",
-          "./packages/@react-aria/i",
-          "./packages/@react-aria/j",
-          "./packages/@react-aria/k",
-          "./packages/@react-aria/l",
-          "./packages/@react-aria/meter",
-          "./packages/@react-aria/numberfield",
-          "./packages/@react-aria/progress",
-          "./packages/@react-aria/q",
-          "./packages/@react-aria/radio",
-          "./packages/@react-aria/searchfield",
-          "./packages/@react-aria/separator",
-          "./packages/@react-aria/sidenav",
-          "./packages/@react-aria/spinbutton",
-          "./packages/@react-aria/ssr",
-          "./packages/@react-aria/steplist",
-          "./packages/@react-aria/switch",
-          "./packages/@react-aria/tabs",
-          "./packages/@react-aria/tag",
-          "./packages/@react-aria/toggle",
-          "./packages/@react-aria/u",
-          "./packages/@react-aria/visually-hidden",
-          "./packages/@react-aria/w",
-          "./packages/@react-aria/x",
-          "./packages/@react-aria/y",
-          "./packages/@react-aria/z",
-          "./packages/@react-spectrum/a",
-          "./packages/@react-spectrum/b",
-          "./packages/@react-spectrum/color",
-          "./packages/@react-spectrum/contextualhelp",
-          "./packages/@react-spectrum/checkbox",
-          "./packages/@react-spectrum/dialog",
-          "./packages/@react-spectrum/divider",
-          "./packages/@react-spectrum/dropzone",
-          "./packages/@react-spectrum/form",
-          "./packages/@react-spectrum/icon",
-          "./packages/@react-spectrum/illustratedmessage",
-          "./packages/@react-spectrum/inlinealert",
-          "./packages/@react-spectrum/image",
-          "./packages/@react-spectrum/label",
-          "./packages/@react-spectrum/link",
-          "./packages/@react-spectrum/meter",
-          "./packages/@react-spectrum/numberfield",
-          "./packages/@react-spectrum/progress",
-          "./packages/@react-spectrum/radio",
-          "./packages/@react-spectrum/searchfield",
-          "./packages/@react-spectrum/searchwithin",
-          "./packages/@react-spectrum/statuslight",
-          "./packages/@react-spectrum/steplist",
-          "./packages/@react-spectrum/story-utils",
-          "./packages/@react-spectrum/switch",
-          "./packages/@react-spectrum/tag",
-          "./packages/@react-spectrum/text",
-          "./packages/@react-spectrum/textfield",
-          "./packages/@react-spectrum/theme-dark",
-          "./packages/@react-spectrum/theme-default",
-          "./packages/@react-spectrum/theme-light",
-          "./packages/@react-spectrum/view",
-          "./packages/@react-spectrum/well",
-          "./packages/@react-stately/checkbox",
-          "./packages/@react-stately/numberfield",
-          "./packages/@react-stately/overlays",
-          "./packages/@react-stately/pagination",
-          "./packages/@react-stately/searchfield",
-          "./packages/@react-stately/steplist",
-          "./packages/@react-stately/radio",
-          "./packages/@react-stately/toggle",
-          "./packages/@react-stately/utils",
-          "./packages/@react-types/a",
-          "./packages/@react-types/b",
-          "./packages/@react-types/checkbox",
-          "./packages/@react-types/color",
-          "./packages/@react-types/dialog",
-          "./packages/@react-types/divider",
-          "./packages/@react-types/illustratedmessage",
-          "./packages/@react-types/image",
-          "./packages/@react-types/l",
-          "./packages/@react-types/meter",
-          "./packages/@react-types/numberfield",
-          "./packages/@react-types/progress",
-          "./packages/@react-types/searchfield",
-          "./packages/@react-types/shared",
-          "./packages/@react-types/statuslight",
-          "./packages/@react-types/tabs",
-          "./packages/@react-types/text",
-          "./packages/@react-types/tooltip",
-          "./packages/@react-types/view",
-          "./packages/@react-types/well",
-          "./packages/@spectrum-icons",
-          "./packages/react-aria-components"
-        ]
+        "name": "@react-spectrum/ts-plugin"
       }
     ],
     "paths": {
@@ -141,10 +44,13 @@
     }
   },
   "include": [
-    "packages"
+    "packages",
+    "lib/svg.d.ts"
   ],
   "exclude": [
     "**/node_modules",
-    "packages/dev/optimize-locales-plugin"
+    "packages/dev/optimize-locales-plugin",
+    "packages/@react-spectrum/s2/s2wf-icons",
+    "packages/@react-spectrum/s2/icon.d.ts"
   ]
 }

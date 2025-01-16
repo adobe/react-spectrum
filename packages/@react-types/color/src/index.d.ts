@@ -36,6 +36,8 @@ import {SliderProps} from '@react-types/slider';
 /** A list of supported color formats. */
 export type ColorFormat = 'hex' | 'hexa' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hsb' | 'hsba';
 
+export type ColorSpace = 'rgb' | 'hsl' | 'hsb';
+
 /** A list of color channels. */
 export type ColorChannel = 'hue' | 'saturation' | 'brightness' | 'lightness' | 'red' | 'green' | 'blue' | 'alpha';
 
@@ -57,7 +59,9 @@ export interface Color {
   /** Converts the color to the given color format, and returns a new Color object. */
   toFormat(format: ColorFormat): Color,
   /** Converts the color to a string in the given format. */
-  toString(format: ColorFormat | 'css'): string,
+  toString(format?: ColorFormat | 'css'): string,
+  /** Returns a duplicate of the color value. */
+  clone(): Color,
   /** Converts the color to hex, and returns an integer representation. */
   toHexInt(): number,
   /**
@@ -80,13 +84,17 @@ export interface Color {
    */
   getChannelName(channel: ColorChannel, locale: string): string,
   /**
+   * Returns the number formatting options for the given channel.
+   */
+  getChannelFormatOptions(channel: ColorChannel): Intl.NumberFormatOptions,
+  /**
    * Formats the numeric value for a given channel for display according to the provided locale.
    */
   formatChannelValue(channel: ColorChannel, locale: string): string,
   /**
    * Returns the color space, 'rgb', 'hsb' or 'hsl', for the current color.
    */
-  getColorSpace(): ColorFormat,
+  getColorSpace(): ColorSpace,
   /**
    * Returns the color space axes, xChannel, yChannel, zChannel.
    */
@@ -94,7 +102,15 @@ export interface Color {
   /**
    * Returns an array of the color channels within the current color space space.
    */
-  getColorChannels(): [ColorChannel, ColorChannel, ColorChannel]
+  getColorChannels(): [ColorChannel, ColorChannel, ColorChannel],
+  /**
+   * Returns a localized name for the color, for use in visual or accessibility labels.
+   */
+  getColorName(locale: string): string,
+  /**
+   * Returns a localized name for the hue, for use in visual or accessibility labels.
+   */
+  getHueName(locale: string): string
 }
 
 export interface ColorFieldProps extends Omit<ValueBase<string | Color | null>, 'onChange'>, InputBase, Validation<Color | null>, FocusableProps, TextInputBase, LabelableProps, HelpTextProps {
@@ -102,12 +118,22 @@ export interface ColorFieldProps extends Omit<ValueBase<string | Color | null>, 
   onChange?: (color: Color | null) => void
 }
 
-export interface AriaColorFieldProps extends ColorFieldProps, AriaLabelingProps, FocusableDOMProps, Omit<TextInputDOMProps, 'minLength' | 'maxLength' | 'pattern' | 'type' | 'inputMode' | 'autoComplete'>, AriaValidationProps {
+export interface AriaColorFieldProps extends ColorFieldProps, AriaLabelingProps, FocusableDOMProps, Omit<TextInputDOMProps, 'minLength' | 'maxLength' | 'pattern' | 'type' | 'inputMode' | 'autoComplete' | 'autoCorrect' | 'spellCheck'>, AriaValidationProps {
   /** Enables or disables changing the value with scroll. */
   isWheelDisabled?: boolean
 }
 
 export interface SpectrumColorFieldProps extends SpectrumTextInputBase, Omit<AriaColorFieldProps, 'isInvalid' | 'validationState'>, SpectrumFieldValidation<Color | null>, SpectrumLabelableProps, StyleProps {
+  /**
+   * The color channel that this field edits. If not provided,
+   * the color is edited as a hex value.
+   */
+  channel?: ColorChannel,
+  /**
+   * The color space that the color field operates in if a `channel` prop is provided.
+   * If no `channel` is provided, the color field always displays the color as an RGB hex value.
+   */
+  colorSpace?: ColorSpace,
   /** Whether the ColorField should be displayed with a quiet style. */
   isQuiet?: boolean
 }
@@ -134,6 +160,11 @@ export interface SpectrumColorWheelProps extends AriaColorWheelProps, Omit<Style
 }
 
 export interface ColorSliderProps extends Omit<SliderProps<string | Color>, 'minValue' | 'maxValue' | 'step' | 'pageSize' | 'onChange' | 'onChangeEnd'> {
+  /**
+   * The color space that the slider operates in. The `channel` must be in this color space.
+   * If not provided, this defaults to the color space of the `color` or `defaultColor` value.
+   */
+  colorSpace?: ColorSpace,
   /** The color channel that the slider manipulates. */
   channel: ColorChannel,
   /** Handler that is called when the value changes, as the user drags. */
@@ -152,6 +183,11 @@ export interface SpectrumColorSliderProps extends AriaColorSliderProps, StylePro
 }
 
 export interface ColorAreaProps extends Omit<ValueBase<string | Color>, 'onChange'> {
+  /**
+   * The color space that the color area operates in. The `xChannel` and `yChannel` must be in this color space.
+   * If not provided, this defaults to the color space of the `color` or `defaultColor` value.
+   */
+  colorSpace?: ColorSpace,
   /** Color channel for the horizontal axis. */
   xChannel?: ColorChannel,
   /** Color channel for the vertical axis. */

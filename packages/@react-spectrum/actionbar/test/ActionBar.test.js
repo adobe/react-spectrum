@@ -12,7 +12,7 @@
 
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, pointerMap, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {announce} from '@react-aria/live-announcer';
 import {Example} from '../stories/Example';
 import {getFocusableTreeWalker} from '@react-aria/focus';
@@ -34,7 +34,7 @@ describe('ActionBar', () => {
     act(() => jest.runAllTimers());
   });
 
-  it('should open when there are selected items', () => {
+  it('should open when there are selected items', async () => {
     let tree = render(<Provider theme={theme}><Example /></Provider>);
     act(() => {jest.runAllTimers();});
 
@@ -42,7 +42,7 @@ describe('ActionBar', () => {
     let rows = within(table).getAllByRole('row');
 
     expect(tree.queryByRole('toolbar')).toBeNull();
-    triggerPress(rows[1]);
+    await user.click(rows[1]);
 
     expect(announce).toHaveBeenCalledWith('Actions available.');
 
@@ -58,32 +58,32 @@ describe('ActionBar', () => {
     expect(clearButton.tagName).toBe('BUTTON');
   });
 
-  it('should update the selected count when selecting more items', () => {
+  it('should update the selected count when selecting more items', async () => {
     let tree = render(<Provider theme={theme}><Example /></Provider>);
     act(() => {jest.runAllTimers();});
 
     let table = tree.getByRole('grid');
     let rows = within(table).getAllByRole('row');
 
-    triggerPress(rows[1]);
+    await user.click(rows[1]);
 
     let selectedCount = tree.getByText('1 selected');
 
-    triggerPress(rows[2]);
+    await user.click(rows[2]);
     expect(selectedCount).toHaveTextContent('2 selected');
   });
 
-  it('should work with select all', () => {
+  it('should work with select all', async () => {
     let tree = render(<Provider theme={theme}><Example /></Provider>);
     act(() => {jest.runAllTimers();});
 
     let selectAll = tree.getByLabelText('Select All');
-    triggerPress(selectAll);
+    await user.click(selectAll);
 
     expect(tree.getByText('All selected')).toBeInTheDocument();
   });
 
-  it('should close and restore focus when pressing the clear button', () => {
+  it('should close and restore focus when pressing the clear button', async () => {
     let tree = render(<Provider theme={theme}><Example /></Provider>);
     act(() => {jest.runAllTimers();});
 
@@ -91,14 +91,14 @@ describe('ActionBar', () => {
     let rows = within(table).getAllByRole('row');
     let checkbox = within(rows[1]).getByRole('checkbox');
 
-    triggerPress(checkbox);
+    await user.click(checkbox);
     act(() => jest.runAllTimers());
     expect(document.activeElement).toBe(checkbox);
 
     let clearButton = tree.getByLabelText('Clear selection');
 
     act(() => clearButton.focus());
-    triggerPress(clearButton);
+    await user.click(clearButton);
     act(() => jest.runAllTimers());
     act(() => jest.runAllTimers());
 
@@ -106,7 +106,7 @@ describe('ActionBar', () => {
     expect(document.activeElement).toBe(checkbox);
   });
 
-  it('should close when pressing the escape key', () => {
+  it('should close when pressing the escape key', async () => {
     let tree = render(<Provider theme={theme}><Example /></Provider>);
     act(() => {jest.runAllTimers();});
 
@@ -114,15 +114,14 @@ describe('ActionBar', () => {
     let rows = within(table).getAllByRole('row');
     let checkbox = within(rows[1]).getByRole('checkbox');
 
-    triggerPress(checkbox);
+    await user.click(checkbox);
     act(() => jest.runAllTimers());
     expect(document.activeElement).toBe(checkbox);
 
     let toolbar = tree.getByRole('toolbar');
     act(() => within(toolbar).getAllByRole('button')[0].focus());
 
-    fireEvent.keyDown(document.activeElement, {key: 'Escape'});
-    fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+    await user.keyboard('{Escape}');
     act(() => jest.runAllTimers());
     act(() => jest.runAllTimers());
 
@@ -140,8 +139,7 @@ describe('ActionBar', () => {
 
     await user.tab();
     expect(document.activeElement).toBe(rows[1]);
-    fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-    fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+    await user.keyboard('{Enter}');
     expect(checkbox).toBeChecked();
     act(() => jest.runAllTimers());
 
@@ -157,8 +155,7 @@ describe('ActionBar', () => {
     fireEvent.keyUp(document.activeElement, {key: 'Tab'});
     expect(document.activeElement).toBe(within(toolbar).getAllByRole('button')[0]);
 
-    fireEvent.keyDown(document.activeElement, {key: 'Escape'});
-    fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+    await user.keyboard('{Escape}');
     // jsdom doesn't blur to body like a browser, so it was being placed on the first focusable element, conveniently our table row
     // emulate browser behavior and blur
     act(() => document.activeElement.blur());
@@ -175,12 +172,12 @@ describe('ActionBar', () => {
 
     let table = tree.getByRole('grid');
     let rows = within(table).getAllByRole('row');
+    expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Foo 1');
     let checkbox = within(rows[1]).getByRole('checkbox');
 
     await user.tab();
     expect(document.activeElement).toBe(rows[1]);
-    fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-    fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+    await user.keyboard('{Enter}');
     expect(checkbox).toBeChecked();
     act(() => jest.runAllTimers());
 
@@ -196,25 +193,22 @@ describe('ActionBar', () => {
     fireEvent.keyUp(document.activeElement, {key: 'Tab'});
     expect(document.activeElement).toBe(within(toolbar).getAllByRole('button')[0]);
 
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+    await user.keyboard('{ArrowRight}');
 
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+    await user.keyboard('{ArrowRight}');
 
     expect(document.activeElement).toBe(within(toolbar).getAllByRole('button')[2]);
 
-    fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-    fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+    await user.keyboard('{Enter}');
 
     act(() => jest.runAllTimers());
     act(() => jest.runAllTimers());
     await act(async () => Promise.resolve());
-    expect(rows[1]).not.toBeInTheDocument();
 
     rows = within(table).getAllByRole('row');
     expect(toolbar).not.toBeInTheDocument();
     expect(document.activeElement).toBe(rows[1]);
+    expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Foo 2');
   });
 
   it('should restore focus to the new first row if the row we wanted to restore to was removed via actiongroup menu', async () => {
@@ -227,8 +221,7 @@ describe('ActionBar', () => {
 
     await user.tab();
     expect(document.activeElement).toBe(rows[1]);
-    fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-    fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+    await user.keyboard('{Enter}');
     expect(checkbox).toBeChecked();
     act(() => jest.runAllTimers());
 
@@ -250,24 +243,20 @@ describe('ActionBar', () => {
     fireEvent.keyUp(document.activeElement, {key: 'Tab'});
     expect(document.activeElement).toBe(within(toolbar).getAllByRole('button')[0]);
 
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+    await user.keyboard('{ArrowRight}');
 
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+    await user.keyboard('{ArrowRight}');
 
     expect(within(toolbar).getAllByRole('button')).toHaveLength(3);
     expect(document.activeElement).toBe(within(toolbar).getAllByRole('button')[2]);
 
-    fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-    fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+    await user.keyboard('{Enter}');
 
     let listItems = tree.getAllByRole('menuitem');
     expect(document.activeElement).toBe(listItems[0]);
     expect(document.activeElement.textContent).toBe('Delete');
 
-    fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-    fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+    await user.keyboard('{Enter}');
 
     act(() => jest.runAllTimers());
     act(() => jest.runAllTimers());
@@ -281,7 +270,7 @@ describe('ActionBar', () => {
     expect(document.activeElement).toBe(rows[1]);
   });
 
-  it('should fire onAction when clicking on an action', () => {
+  it('should fire onAction when clicking on an action', async () => {
     let onAction = jest.fn();
     let tree = render(<Provider theme={theme}><Example onAction={onAction} /></Provider>);
     act(() => {jest.runAllTimers();});
@@ -289,11 +278,24 @@ describe('ActionBar', () => {
     let table = tree.getByRole('grid');
     let rows = within(table).getAllByRole('row');
 
-    triggerPress(rows[1]);
+    await user.click(rows[1]);
 
     let toolbar = tree.getByRole('toolbar');
-    triggerPress(within(toolbar).getAllByRole('button')[0]);
+    await user.click(within(toolbar).getAllByRole('button')[0]);
 
     expect(onAction).toHaveBeenCalledWith('edit');
+  });
+
+  it('should respect disabledKeys when passed in', async () => {
+    let tree = render(<Provider theme={theme}><Example disabledKeys={['edit']} /></Provider>);
+    act(() => {jest.runAllTimers();});
+
+    let table = tree.getByRole('grid');
+    let rows = within(table).getAllByRole('row');
+
+    await user.click(rows[1]);
+
+    expect(within(tree.getByRole('toolbar')).getAllByRole('button')[0]).toBeDisabled();
+    expect(within(tree.getByRole('toolbar')).getAllByRole('button')[1]).not.toBeDisabled();
   });
 });

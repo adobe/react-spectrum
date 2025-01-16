@@ -76,6 +76,12 @@
   }
 }
 
+.react-spectrum-Datepicker-inputSized {
+  display: flex;
+  height: 100%;
+  align-items: center;
+}
+
 .react-spectrum-Datepicker-rangeDash {
   &:before {
     content: '–';
@@ -111,22 +117,12 @@
   }
 }
 
-.react-spectrum-DatePicker-placeholder {
-  display: block;
-  width: 100%;
-  text-align: center;
-  font-style: italic;
-  visibility: hidden;
-  height: 0;
-  pointer-events: none;
-}
-
 .react-spectrum-DatePicker-cell.is-placeholder {
   color: var(--spectrum-gray-600);
 
   .react-spectrum-DatePicker-placeholder {
-    visibility: visible;
-    height: auto;
+    text-align: center;
+    pointer-events: none;
   }
 }
 

@@ -14,19 +14,19 @@ import {AriaButtonProps} from '@react-types/button';
 import {AriaDatePickerProps, AriaDateRangePickerProps, DateValue} from '@react-types/datepicker';
 import {AriaDialogProps} from '@react-types/dialog';
 import {createFocusManager} from '@react-aria/focus';
+import {DateRange, RangeCalendarProps} from '@react-types/calendar';
 import {DateRangePickerState} from '@react-stately/datepicker';
 import {DEFAULT_VALIDATION_RESULT, mergeValidation, privateValidationStateProp} from '@react-stately/form';
-import {DOMAttributes, GroupDOMAttributes, KeyboardEvent, ValidationResult} from '@react-types/shared';
+import {DOMAttributes, GroupDOMAttributes, KeyboardEvent, RefObject, ValidationResult} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
 import {focusManagerSymbol, roleSymbol} from './useDateField';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {RangeCalendarProps} from '@react-types/calendar';
-import {RefObject, useMemo, useRef} from 'react';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useMemo, useRef} from 'react';
 
 export interface DateRangePickerAria extends ValidationResult {
   /** Props for the date range picker's visible label element, if any. */
@@ -54,7 +54,7 @@ export interface DateRangePickerAria extends ValidationResult {
  * A date range picker combines two DateFields and a RangeCalendar popover to allow
  * users to enter or select a date and time range.
  */
-export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePickerProps<T>, state: DateRangePickerState, ref: RefObject<Element>): DateRangePickerAria {
+export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePickerProps<T>, state: DateRangePickerState, ref: RefObject<Element | null>): DateRangePickerAria {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/datepicker');
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
@@ -168,7 +168,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
     startFieldProps: {
       ...startFieldProps,
       ...commonFieldProps,
-      value: state.value?.start,
+      value: state.value?.start ?? null,
       onChange: start => state.setDateTime('start', start),
       autoFocus: props.autoFocus,
       name: props.startName,
@@ -186,7 +186,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
     endFieldProps: {
       ...endFieldProps,
       ...commonFieldProps,
-      value: state.value?.end,
+      value: state.value?.end ?? null,
       onChange: end => state.setDateTime('end', end),
       name: props.endName,
       [privateValidationStateProp]: {
@@ -204,7 +204,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
     errorMessageProps,
     calendarProps: {
       autoFocus: true,
-      value: state.dateRange,
+      value: state.dateRange?.start && state.dateRange.end ? state.dateRange as DateRange : null,
       onChange: state.setDateRange,
       minValue: props.minValue,
       maxValue: props.maxValue,

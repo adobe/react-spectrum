@@ -46,7 +46,7 @@ export const privateValidationStateProp = '__formValidationState' + Date.now();
 interface FormValidationProps<T> extends Validation<T> {
   builtinValidation?: ValidationResult,
   name?: string | string[],
-  value: T
+  value: T | null
 }
 
 export interface FormValidationState {
@@ -81,18 +81,24 @@ function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValid
     isInvalid ||= validationState === 'invalid';
   }
 
-  // If the isInvalid prop is true, update validation result in realtime (controlled).
-  let controlledError: ValidationResult | null = isInvalid ? {
-    isInvalid: true,
+  // If the isInvalid prop is controlled, update validation result in realtime.
+  let controlledError: ValidationResult | null = isInvalid !== undefined ? {
+    isInvalid,
     validationErrors: [],
     validationDetails: CUSTOM_VALIDITY_STATE
   } : null;
 
   // Perform custom client side validation.
-  let clientError: ValidationResult | null = useMemo(() => getValidationResult(runValidate(validate, value)), [validate, value]);
+  let clientError: ValidationResult | null = useMemo(() => {
+    if (!validate || value == null) {
+      return null;
+    }
+    let validateErrors = runValidate(validate, value);
+    return getValidationResult(validateErrors);
+  }, [validate, value]);
 
   if (builtinValidation?.validationDetails.valid) {
-    builtinValidation = null;
+    builtinValidation = undefined;
   }
 
   // Get relevant server errors from the form.
@@ -217,7 +223,7 @@ function isEqualValidation(a: ValidationResult | null, b: ValidationResult | nul
     return true;
   }
 
-  return a && b
+  return !!a && !!b
     && a.isInvalid === b.isInvalid
     && a.validationErrors.length === b.validationErrors.length
     && a.validationErrors.every((a, i) => a === b.validationErrors[i])

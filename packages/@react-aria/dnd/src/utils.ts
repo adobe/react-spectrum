@@ -11,21 +11,20 @@
  */
 
 import {CUSTOM_DRAG_TYPE, DROP_OPERATION, GENERIC_TYPE, NATIVE_DRAG_TYPES} from './constants';
-import {DirectoryDropItem, DragItem, DropItem, FileDropItem, DragTypes as IDragTypes, Key, TextDropItem} from '@react-types/shared';
+import {DirectoryDropItem, DragItem, DropItem, FileDropItem, DragTypes as IDragTypes, Key, RefObject, TextDropItem} from '@react-types/shared';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {getInteractionModality, useInteractionModality} from '@react-aria/interactions';
-import {RefObject} from 'react';
 
 interface DroppableCollectionMap {
   id: string,
-  ref: RefObject<HTMLElement>
+  ref: RefObject<HTMLElement | null>
 }
 
 export const droppableCollectionMap = new WeakMap<DroppableCollectionState, DroppableCollectionMap>();
 export const DIRECTORY_DRAG_TYPE = Symbol();
 
 export function getDroppableCollectionId(state: DroppableCollectionState) {
-  let {id} = droppableCollectionMap.get(state);
+  let {id} = droppableCollectionMap.get(state) || {};
   if (!id) {
     throw new Error('Droppable item outside a droppable collection');
   }
@@ -34,7 +33,7 @@ export function getDroppableCollectionId(state: DroppableCollectionState) {
 }
 
 export function getDroppableCollectionRef(state: DroppableCollectionState) {
-  let {ref} = droppableCollectionMap.get(state);
+  let {ref} = droppableCollectionMap.get(state) || {};
   if (!ref) {
     throw new Error('Droppable item outside a droppable collection');
   }
@@ -53,7 +52,7 @@ export function getTypes(items: DragItem[]): Set<string> {
   return types;
 }
 
-function mapModality(modality: string) {
+function mapModality(modality: string | null) {
   if (!modality) {
     modality = 'virtual';
   }
@@ -92,7 +91,7 @@ export function writeToDataTransfer(dataTransfer: DataTransfer, items: DragItem[
   // See e.g. https://bugs.chromium.org/p/chromium/issues/detail?id=438479.
   let groupedByType = new Map<string, string[]>();
   let needsCustomData = false;
-  let customData = [];
+  let customData: Array<{}> = [];
   for (let item of items) {
     let types = Object.keys(item);
     if (types.length > 1) {
@@ -178,6 +177,9 @@ export class DragTypes implements IDragTypes {
 
 export function readFromDataTransfer(dataTransfer: DataTransfer) {
   let items: DropItem[] = [];
+  if (!dataTransfer) {
+    return items;
+  }
 
   // If our custom drag type is available, use that. This is a JSON serialized
   // representation of all items in the drag, set when there are multiple items
@@ -196,7 +198,7 @@ export function readFromDataTransfer(dataTransfer: DataTransfer) {
       }
 
       hasCustomType = true;
-    } catch (e) {
+    } catch {
       // ignore
     }
   }
@@ -215,7 +217,7 @@ export function readFromDataTransfer(dataTransfer: DataTransfer) {
         // In the future, we may use getAsFileSystemHandle instead, but that's currently
         // only implemented in Chrome.
         if (typeof item.webkitGetAsEntry === 'function') {
-          let entry: FileSystemEntry = item.webkitGetAsEntry();
+          let entry: FileSystemEntry | null = item.webkitGetAsEntry();
           // eslint-disable-next-line max-depth
           if (!entry) {
             // For some reason, Firefox includes an item with type image/png when copy
@@ -270,7 +272,10 @@ function blobToString(blob: Blob): Promise<string> {
   });
 }
 
-function createFileItem(file: File): FileDropItem {
+function createFileItem(file: File | null): FileDropItem {
+  if (!file) {
+    throw new Error('No file provided');
+  }
   return {
     kind: 'file',
     type: file.type || GENERIC_TYPE,
@@ -332,16 +337,16 @@ export function isDirectoryDropItem(dropItem: DropItem): dropItem is DirectoryDr
 // Global DnD collection state tracker.
 export interface DnDState {
   /** A ref for the  of the drag items in the current drag session if any. */
-  draggingCollectionRef?: RefObject<HTMLElement>,
+  draggingCollectionRef?: RefObject<HTMLElement | null>,
   /** The set of currently dragged keys. */
   draggingKeys: Set<Key>,
   /** A ref for the collection that is targeted for a drop operation, if any. */
-  dropCollectionRef?: RefObject<HTMLElement>
+  dropCollectionRef?: RefObject<HTMLElement | null>
 }
 
 export let globalDndState: DnDState = {draggingKeys: new Set()};
 
-export function setDraggingCollectionRef(ref: RefObject<HTMLElement>) {
+export function setDraggingCollectionRef(ref: RefObject<HTMLElement | null>) {
   globalDndState.draggingCollectionRef = ref;
 }
 
@@ -349,7 +354,7 @@ export function setDraggingKeys(keys: Set<Key>) {
   globalDndState.draggingKeys = keys;
 }
 
-export function setDropCollectionRef(ref: RefObject<HTMLElement>) {
+export function setDropCollectionRef(ref?: RefObject<HTMLElement | null>) {
   globalDndState.dropCollectionRef = ref;
 }
 
@@ -363,14 +368,14 @@ export function setGlobalDnDState(state: DnDState) {
 
 // Util function to check if the current dragging collection ref is the same as the current targeted droppable collection ref.
 // Allows a droppable ref arg in case the global drop collection ref hasn't been set
-export function isInternalDropOperation(ref?: RefObject<HTMLElement>) {
+export function isInternalDropOperation(ref?: RefObject<HTMLElement | null>) {
   let {draggingCollectionRef, dropCollectionRef} = globalDndState;
   return draggingCollectionRef?.current != null && draggingCollectionRef.current === (ref?.current || dropCollectionRef?.current);
 }
 
 type DropEffect = 'none' | 'copy' | 'link' | 'move';
-export let globalDropEffect: DropEffect;
-export function setGlobalDropEffect(dropEffect: DropEffect) {
+export let globalDropEffect: DropEffect | undefined;
+export function setGlobalDropEffect(dropEffect: DropEffect | undefined) {
   globalDropEffect = dropEffect;
 }
 

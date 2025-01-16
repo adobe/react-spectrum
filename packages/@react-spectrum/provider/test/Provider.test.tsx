@@ -10,18 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-// needs to be imported first
-import MatchMediaMock from 'jest-matchmedia-mock';
-// eslint-disable-next-line rsp-rules/sort-imports
-import {act, fireEvent, pointerMap, render, triggerPress} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {Checkbox} from '@react-spectrum/checkbox';
+import MatchMediaMock from 'jest-matchmedia-mock';
+
 import {Provider} from '../';
-// eslint-disable-next-line rulesdir/useLayoutEffectRule
-import React, {useLayoutEffect, useRef} from 'react';
+import React, {useRef} from 'react';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
 import {useBreakpoint} from '@react-spectrum/utils';
+import {useLayoutEffect} from '@react-aria/utils';
 import userEvent from '@testing-library/user-event';
 
 let theme = {
@@ -146,7 +145,7 @@ describe('Provider', () => {
     expect(provider2.classList.contains('spectrum--light')).toBeTruthy();
   });
 
-  it('Nested providers pass props to children', () => {
+  it('Nested providers pass props to children', async () => {
     let onPressSpy = jest.fn();
     let {getByRole} = render(
       <Provider theme={theme} isDisabled>
@@ -156,7 +155,7 @@ describe('Provider', () => {
       </Provider>
     );
     let button = getByRole('button');
-    triggerPress(button);
+    await user.click(button);
     expect(onPressSpy).not.toHaveBeenCalled();
     expect(button.classList.contains('spectrum-ActionButton--quiet')).toBeTruthy();
     onPressSpy.mockClear();
@@ -256,9 +255,9 @@ describe('Provider', () => {
 
     it('only renders once for multiple resizes in the same range', function () {
       function Component(props) {
-        let {matchedBreakpoints} = useBreakpoint();
+        let {matchedBreakpoints} = useBreakpoint()!;
         let {onBreakpointChange, ...otherProps} = props;
-        let prevBreakpoint = useRef(null);
+        let prevBreakpoint = useRef<string>(null);
         let breakpoint = matchedBreakpoints[0];
         useLayoutEffect(() => {
           if (!Object.is(prevBreakpoint.current, breakpoint)) {

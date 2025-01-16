@@ -12,12 +12,18 @@
 
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
+import {HeadingContext, useContextProps} from 'react-aria-components';
 import {HeadingProps} from '@react-types/text';
 import React, {ElementType, forwardRef} from 'react';
 import {useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 
-function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
+/**
+ * Heading is used to create various levels of typographic hierarchies.
+ */
+export const Heading = forwardRef(function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
+  let domRef = useDOMRef(ref);
   props = useSlotProps(props, 'heading');
+  [props, domRef] = useContextProps(props, domRef, HeadingContext);
 
   let {
     children,
@@ -25,7 +31,6 @@ function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let domRef = useDOMRef(ref);
   let HeadingTag = `h${level}` as ElementType;
 
   return (
@@ -33,10 +38,4 @@ function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
       {children}
     </HeadingTag>
   );
-}
-
-/**
- * Heading is used to create various levels of typographic hierarchies.
- */
-const _Heading = forwardRef(Heading);
-export {_Heading as Heading};
+});

@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMAttributes, DOMProps, Key, KeyboardDelegate} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, DOMProps, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {GridCollection} from '@react-types/grid';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
-import {RefObject, useCallback, useMemo} from 'react';
+import {useCallback, useMemo} from 'react';
 import {useCollator, useLocale} from '@react-aria/i18n';
 import {useGridSelectionAnnouncement} from './useGridSelectionAnnouncement';
 import {useHasTabbableChild} from '@react-aria/focus';
@@ -44,7 +44,7 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
   /**
    * The ref attached to the scrollable body. Used to provided automatic scrolling on item focus for non-virtualized grids.
    */
-  scrollRef?: RefObject<HTMLElement>,
+  scrollRef?: RefObject<HTMLElement | null>,
   /** Handler that is called when a user performs an action on the row. */
   onRowAction?: (key: Key) => void,
   /** Handler that is called when a user performs an action on the cell. */
@@ -63,7 +63,7 @@ export interface GridAria {
  * @param state - State for the grid, as returned by `useGridState`.
  * @param ref - The ref attached to the grid element.
  */
-export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<T>>, ref: RefObject<HTMLElement>): GridAria {
+export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<T>>, ref: RefObject<HTMLElement | null>): GridAria {
   let {
     isVirtualized,
     keyboardDelegate,
@@ -86,7 +86,8 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   let disabledBehavior = state.selectionManager.disabledBehavior;
   let delegate = useMemo(() => keyboardDelegate || new GridKeyboardDelegate({
     collection: state.collection,
-    disabledKeys: disabledBehavior === 'selection' ? new Set() : state.disabledKeys,
+    disabledKeys: state.disabledKeys,
+    disabledBehavior,
     ref,
     direction,
     collator,
@@ -148,7 +149,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     },
     state.isKeyboardNavigationDisabled ? navDisabledHandlers : collectionProps,
     // If collection is empty, make sure the grid is tabbable unless there is a child tabbable element.
-    state.collection.size === 0 && {tabIndex: hasTabbableChild ? -1 : 0},
+    (state.collection.size === 0 && {tabIndex: hasTabbableChild ? -1 : 0}) || undefined,
     descriptionProps
   );
 

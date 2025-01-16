@@ -12,7 +12,8 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import sharedDocs from 'docs:@react-types/shared';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
+import tableUtil from 'docs:@react-aria/test-utils/src/table.ts';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI, VersionBadge} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from './TableAnatomy.svg';
@@ -49,6 +50,7 @@ type: component
 
 ```tsx example
 import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-components';
+import {MyCheckbox} from './Checkbox';
 
 <Table aria-label="Files" selectionMode="multiple">
   <TableHeader>
@@ -362,8 +364,8 @@ function MyColumn(props: ColumnProps) {
 The TableHeader and Row components can also be wrapped to automatically include [checkboxes](Checkbox.html) for selection, and a drag handle when [drag and drop](#drag-and-drop) is enabled, allowing consumers to avoid repeating them in each row. In this example, the select all checkbox is displayed when [multiple selection](#multiple-selection) is enabled and the [selection behavior](#selection-behavior) is "toggle". These options can be retrieved from the table using the <TypeLink links={docs.links} type={docs.exports.useTableOptions} /> hook. We also use the <TypeLink links={docs.links} type={docs.exports.Collection} /> component to generate children from either static or [dynamic collections](#dynamic-collections) the same way as the default TableHeader and Row components.
 
 ```tsx example export=true render=false
-import type {TableHeaderProps, RowProps, CheckboxProps} from 'react-aria-components';
-import {Checkbox, Collection, useTableOptions} from 'react-aria-components';
+import type {TableHeaderProps, RowProps} from 'react-aria-components';
+import {Collection, useTableOptions} from 'react-aria-components';
 
 function MyTableHeader<T extends object>({columns, children}: TableHeaderProps<T>) {
   let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
@@ -391,24 +393,6 @@ function MyRow<T extends object>({id, columns, children, ...otherProps}: RowProp
         {children}
       </Collection>
     </Row>
-  );
-}
-
-function MyCheckbox({children, ...props}: CheckboxProps) {
-  return (
-    <Checkbox {...props}>
-      {({isIndeterminate}) => <>
-        <div className="checkbox">
-          <svg viewBox="0 0 18 18" aria-hidden="true">
-            {isIndeterminate
-              ? <rect x={1} y={7.5} width={15} height={3} />
-              : <polyline points="1 9 7 14 15 4" />
-            }
-          </svg>
-        </div>
-        {children}
-      </>}
-    </Checkbox>
   );
 }
 ```
@@ -620,6 +604,48 @@ and reverts the selection behavior back to `"replace"`. Keyboard behaviors are u
 </div>
 ```
 
+Rows may also have a row action specified by directly applying `onAction` on the `Row` itself. This may be especially convenient in static collections. If `onAction` is also provided to the `Table`, both the table's and the row's `onAction` are called.
+
+```tsx example
+<Table aria-label="Table with onAction applied on the rows directly" selectionMode="multiple">
+  <MyTableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Level</Column>
+  </MyTableHeader>
+  <TableBody>
+    {/*- begin highlight -*/}
+    <MyRow onAction={() => alert(`Opening Charizard`)}>
+    {/*- end highlight -*/}
+      <Cell>Charizard</Cell>
+      <Cell>Fire, Flying</Cell>
+      <Cell>67</Cell>
+    </MyRow>
+    {/*- begin highlight -*/}
+    <MyRow onAction={() => alert(`Opening Blastoise`)}>
+    {/*- end highlight -*/}
+      <Cell>Blastoise</Cell>
+      <Cell>Water</Cell>
+      <Cell>56</Cell>
+    </MyRow>
+    {/*- begin highlight -*/}
+    <MyRow onAction={() => alert(`Opening Venusaur`)}>
+    {/*- end highlight -*/}
+      <Cell>Venusaur</Cell>
+      <Cell>Grass, Poison</Cell>
+      <Cell>83</Cell>
+    </MyRow>
+    {/*- begin highlight -*/}
+    <MyRow onAction={() => alert(`Opening Pikachu`)}>
+    {/*- end highlight -*/}
+      <Cell>Pikachu</Cell>
+      <Cell>Electric</Cell>
+      <Cell>100</Cell>
+    </MyRow>
+  </TableBody>
+</Table>
+```
+
 ### Links
 
 Table rows may also be links to another page or website. This can be achieved by passing the `href` prop to the `<Row>` component. Links behave the same way as described above for row actions depending on the `selectionMode` and `selectionBehavior`.
@@ -663,18 +689,80 @@ The `<Row>` component works with frameworks and client side routers like [Next.j
 
 ## Disabled rows
 
-You can disable specific rows by providing an array of keys to `Table` via the `disabledKeys` prop. This will prevent rows from being selectable as shown in the example below.
+A `Row` can be disabled with the `isDisabled` prop. This will disable all interactions on the row,
+unless the `disabledBehavior` prop on `Table` is used to change this behavior.
 Note that you are responsible for the styling of disabled rows, however, the selection checkbox will be automatically disabled.
 
 ```tsx example
-// Using the same table as above
-<PokemonTable selectionMode="multiple" disabledKeys={[3]} />
+<Table aria-label="Table with disabled rows" selectionMode="multiple">
+  <MyTableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Level</Column>
+  </MyTableHeader>
+  <TableBody>
+    <MyRow>
+      <Cell>Charizard</Cell>
+      <Cell>Fire, Flying</Cell>
+      <Cell>67</Cell>
+    </MyRow>
+    {/*- begin highlight -*/}
+    <MyRow isDisabled>
+    {/*- end highlight -*/}
+      <Cell>Venusaur</Cell>
+      <Cell>Grass, Poison</Cell>
+      <Cell>83</Cell>
+    </MyRow>
+    <MyRow>
+      <Cell>Pikachu</Cell>
+      <Cell>Electric</Cell>
+      <Cell>100</Cell>
+    </MyRow>
+  </TableBody>
+</Table>
 ```
 
 By default, only row selection is disabled. When `disabledBehavior` is set to `all`, all interactions such as focus, dragging, and actions are also disabled.
 
 ```tsx example
-<PokemonTable selectionMode="multiple" disabledKeys={[3]} disabledBehavior="all" />
+<Table
+  aria-label="Table with disabled rows"
+  selectionMode="multiple"
+  /*- begin highlight -*/
+  disabledBehavior="all"
+  /*- end highlight -*/
+>
+  <MyTableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>Type</Column>
+    <Column>Level</Column>
+  </MyTableHeader>
+  <TableBody>
+    <MyRow>
+      <Cell>Charizard</Cell>
+      <Cell>Fire, Flying</Cell>
+      <Cell>67</Cell>
+    </MyRow>
+    <MyRow isDisabled>
+      <Cell>Venusaur</Cell>
+      <Cell>Grass, Poison</Cell>
+      <Cell>83</Cell>
+    </MyRow>
+    <MyRow>
+      <Cell>Pikachu</Cell>
+      <Cell>Electric</Cell>
+      <Cell>100</Cell>
+    </MyRow>
+  </TableBody>
+</Table>
+```
+
+In dynamic collections, it may be more convenient to use the `disabledKeys` prop at the `Table` level instead of `isDisabled` on individual rows.
+This accepts a list of row ids that are disabled. A row is considered disabled if its key exists in `disabledKeys` or if it has `isDisabled`.
+
+```tsx example
+// Using the same table as above
+<PokemonTable selectionMode="multiple" disabledKeys={[3]} />
 ```
 
 ## Sorting
@@ -2388,3 +2476,47 @@ Now you can use `MyCustomCheckbox` within a `Table`, in place of the builtin Rea
 ### Hooks
 
 If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useTable](useTable.html) for more details.
+
+## Testing
+
+### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+`@react-aria/test-utils` offers common table interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
+in your tests. Below is the full definition of the table tester and a sample of how you could use it in your test suite.
+
+```ts
+// Table.test.ts
+import {render, within} from '@testing-library/react';
+import {User} from '@react-aria/test-utils';
+
+let testUtilUser = new User({interactionType: 'mouse', advanceTimer: jest.advanceTimersByTime});
+// ...
+
+it('Table can toggle row selection', async function () {
+  // Render your test component/app and initialize the table tester
+  let {getByTestId} = render(
+    <Table data-testid="test-table" selectionMode="multiple">
+     ...
+    </Table>
+  );
+  let tableTester = testUtilUser.createTester('Table', {root: getByTestId('test-table')});
+  expect(tableTester.selectedRows).toHaveLength(0);
+
+  await tableTester.toggleSelectAll();
+  expect(tableTester.selectedRows).toHaveLength(10);
+
+  await tableTester.toggleRowSelection({row: 2});
+  expect(tableTester.selectedRows).toHaveLength(9);
+  let checkbox = within(tableTester.rows[2]).getByRole('checkbox');
+  expect(checkbox).not.toBeChecked();
+
+  await tableTester.toggleSelectAll();
+  expect(tableTester.selectedRows).toHaveLength(10);
+  expect(checkbox).toBeChecked();
+
+  await tableTester.toggleSelectAll();
+  expect(tableTester.selectedRows).toHaveLength(0);
+});
+```
+
+<ClassAPI links={tableUtil.links} class={tableUtil.exports.TableTester} />

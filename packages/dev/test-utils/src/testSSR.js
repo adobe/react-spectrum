@@ -12,7 +12,10 @@
 
 // Can't `import` babel, have to require?
 const babel = require('@babel/core');
-import {act} from '@testing-library/react';
+let act = require('react').act;
+if (!act) {
+  act = require('@testing-library/react').act;
+}
 import {evaluate} from './ssrUtils';
 import http from 'http';
 import React from 'react';
@@ -23,7 +26,7 @@ import util from 'util';
 let ReactDOMClient;
 try {
   ReactDOMClient = require('react-dom/client');
-} catch (err) {
+} catch {
   // ignore.
 }
 

@@ -437,3 +437,40 @@ function DropTarget() {
 <Draggable />
 <DropTarget />
 ```
+
+## Disabling dropping
+
+If you need to temporarily disable dropping, you can pass the `isDisabled` option to `useDrop`. This will prevent the drop target from accepting any drops until it is re-enabled.
+
+```tsx example
+import type {TextDropItem} from '@react-aria/dnd';
+import {useDrop} from '@react-aria/dnd';
+
+function DropTarget() {
+  let [dropped, setDropped] = React.useState(null);
+  let ref = React.useRef(null);
+  let {dropProps, isDropTarget} = useDrop({
+    ref,
+    async onDrop(e) {
+      let items = await Promise.all(
+        e.items
+          .filter(item => item.kind === 'text' && item.types.has('text/plain'))
+          .map((item: TextDropItem) => item.getText('text/plain'))
+      );
+      setDropped(items.join('\n'));
+    },
+    /*- begin highlight -*/
+    isDisabled: true
+    /*- end highlight -*/
+  });
+
+  return (
+    <div {...dropProps} role="button" tabIndex={0} ref={ref} className={`droppable ${isDropTarget ? 'target' : ''}`}>
+      {dropped || 'Drop here'}
+    </div>
+  );
+}
+
+<Draggable />
+<DropTarget />
+```

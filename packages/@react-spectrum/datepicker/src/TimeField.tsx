@@ -18,14 +18,18 @@ import {FocusableRef} from '@react-types/shared';
 import {Input} from './Input';
 import React, {ReactElement, useRef} from 'react';
 import {SpectrumTimeFieldProps, TimeValue} from '@react-types/datepicker';
-import {useFocusManagerRef} from './utils';
+import {useFocusManagerRef, useFormattedDateWidth} from './utils';
 import {useFormProps} from '@react-spectrum/form';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTimeField} from '@react-aria/datepicker';
 import {useTimeFieldState} from '@react-stately/datepicker';
 
-function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: FocusableRef<HTMLElement>) {
+/**
+ * TimeFields allow users to enter and edit time values using a keyboard.
+ * Each part of the time is displayed in an individually editable segment.
+ */
+export const TimeField = React.forwardRef(function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
   let {
@@ -43,14 +47,16 @@ function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: F
     locale
   });
 
-  let fieldRef = useRef(null);
-  let inputRef = useRef(null);
+  let fieldRef = useRef<HTMLDivElement | null>(null);
+  let inputRef = useRef<HTMLInputElement | null>(null);
   let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps, isInvalid, validationErrors, validationDetails} = useTimeField({
     ...props,
     inputRef
   }, state, fieldRef);
 
   let validationState = state.validationState || (isInvalid ? 'invalid' : null);
+
+  let approximateWidth = useFormattedDateWidth(state) + 'ch';
 
   return (
     <Field
@@ -60,7 +66,7 @@ function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: F
       labelProps={labelProps}
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
-      validationState={validationState}
+      validationState={validationState ?? undefined}
       isInvalid={isInvalid}
       validationErrors={validationErrors}
       validationDetails={validationDetails}
@@ -72,6 +78,7 @@ function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: F
         isQuiet={isQuiet}
         autoFocus={autoFocus}
         validationState={validationState}
+        minWidth={approximateWidth}
         className={classNames(datepickerStyles, 'react-spectrum-TimeField')}>
         {state.segments.map((segment, i) =>
           (<DatePickerSegment
@@ -86,11 +93,4 @@ function TimeField<T extends TimeValue>(props: SpectrumTimeFieldProps<T>, ref: F
       </Input>
     </Field>
   );
-}
-
-/**
- * TimeFields allow users to enter and edit time values using a keyboard.
- * Each part of the time is displayed in an individually editable segment.
- */
-const _TimeField = React.forwardRef(TimeField) as <T extends TimeValue>(props: SpectrumTimeFieldProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
-export {_TimeField as TimeField};
+}) as <T extends TimeValue>(props: SpectrumTimeFieldProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;

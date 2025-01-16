@@ -19,7 +19,7 @@ export default {
 
 export const LinkExample = () => {
   return (
-    <Link data-testid="link-example"href="https://www.imdb.com/title/tt6348138/" target="_blank">
+    <Link data-testid="link-example" href="https://www.imdb.com/title/tt6348138/" hrefLang="en"  target="_blank">
       The missing link
     </Link>
   );

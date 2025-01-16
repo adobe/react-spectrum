@@ -11,10 +11,10 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {DOMProps} from '@react-types/shared';
+import {DOMProps, RefObject} from '@react-types/shared';
 import {onCloseMap} from './useCloseOnScroll';
 import {OverlayTriggerState} from '@react-stately/overlays';
-import {RefObject, useEffect} from 'react';
+import {useEffect} from 'react';
 import {useId} from '@react-aria/utils';
 
 export interface OverlayTriggerProps {
@@ -34,7 +34,7 @@ export interface OverlayTriggerAria {
  * Handles the behavior and accessibility for an overlay trigger, e.g. a button
  * that opens a popover, menu, or other overlay that is positioned relative to the trigger.
  */
-export function useOverlayTrigger(props: OverlayTriggerProps, state: OverlayTriggerState, ref?: RefObject<Element>): OverlayTriggerAria {
+export function useOverlayTrigger(props: OverlayTriggerProps, state: OverlayTriggerState, ref?: RefObject<Element | null>): OverlayTriggerAria {
   let {type} = props;
   let {isOpen} = state;
 
@@ -50,7 +50,7 @@ export function useOverlayTrigger(props: OverlayTriggerProps, state: OverlayTrig
   // https://www.w3.org/TR/wai-aria-1.1/#aria-haspopup
   // However, we only add it for menus for now because screen readers often
   // announce it as a menu even for other values.
-  let ariaHasPopup = undefined;
+  let ariaHasPopup: undefined | boolean | 'listbox' = undefined;
   if (type === 'menu') {
     ariaHasPopup = true;
   } else if (type === 'listbox') {
@@ -62,7 +62,7 @@ export function useOverlayTrigger(props: OverlayTriggerProps, state: OverlayTrig
     triggerProps: {
       'aria-haspopup': ariaHasPopup,
       'aria-expanded': isOpen,
-      'aria-controls': isOpen ? overlayId : null,
+      'aria-controls': isOpen ? overlayId : undefined,
       onPress: state.toggle
     },
     overlayProps: {

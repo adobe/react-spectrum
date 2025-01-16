@@ -77,7 +77,7 @@ module.exports = new Packager({
       let keyStack = [];
       let fn = (t, k) => {
         if (t && t.type === 'reference') {
-          let dep = bundleGraph.getDependencies(asset).find(d => d.specifier === t.specifier);
+          let dep = bundleGraph.getDependencies(asset).find(d => d.specifier === t.specifier && !bundleGraph.isDependencySkipped(d));
           let res = bundleGraph.getResolvedAsset(dep, bundle);
           let result = res ? processAsset(res)[t.imported] : null;
           if (result) {
@@ -140,13 +140,11 @@ module.exports = new Packager({
         }
 
         if (t && t.type === 'identifier' && t.name === 'Pick' && application) {
-          if (application[0]?.type === 'application') {
-            // this condition was necessary to prevent an unwanted side-effect for other types.
-            // For example, if you go to http://localhost:1234/react-aria/useTextField.html#anatomy
-            // and click the link 'TextFieldIntrinsicElements', the popover won't show 'Pick' anymore if it is processed by `pick()` function here.
-            // i.e., `keyof Pick<IntrinsicHTMLElements, 'input' | 'textarea'>` becomes `keyof <IntrinsicHTMLElements, 'input' | 'textarea'>`
-            return pick(application[0], application[1], nodes);
-          }
+          // NOTE: `pick()` as well as `omit()` above incur some side effects:
+          // For example, if you go to http://localhost:1234/react-aria/useTextField.html#anatomy
+          // and click the link 'TextFieldIntrinsicElements', the popover will show 'any' instead of 'Pick' if it is processed by `pick()` function here.
+          // i.e., `keyof Pick<IntrinsicHTMLElements, 'input' | 'textarea'>` becomes `keyof any<IntrinsicHTMLElements, 'input' | 'textarea'>`
+          return pick(application[0], application[1], nodes);
         }
 
         if (t && t.type === 'identifier' && params && params[t.name]) {
@@ -535,7 +533,7 @@ function omit(obj, toOmit, nodes) {
 // Exactly the same as `omit()` above except for `keys.has(key)` instead of `!keys.has(key)`.
 function pick(obj, toPick, nodes) {
   obj = resolveValue(obj, nodes);
-  
+
   if (obj.type === 'interface' || obj.type === 'object') {
     let keys = new Set();
     if (toPick.type === 'string' && toPick.value) {

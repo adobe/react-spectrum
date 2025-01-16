@@ -5,6 +5,7 @@
     "apiCheck:*.{js,ts,tsx,json}": ["parcel-transformer-docs"],
     "docs:*.{js,ts,tsx,json}": ["parcel-transformer-docs", "@parcel/transformer-inline"],
     "docs-json:*.{js,ts,tsx,json}": ["parcel-transformer-docs"],
+    "extract:*.mdx": ["parcel-transformer-mdx-extract"],
     "packages/*/*/intl/*.json": ["parcel-transformer-intl"],
     "bundle-text:*.svg": ["@parcel/transformer-svg", "@parcel/transformer-inline-string"],
     "*.{md,mdx}": ["parcel-transformer-mdx-docs"],
@@ -22,6 +23,7 @@
     "*.html": "parcel-packager-ssg"
   },
   "optimizers": {
-    "*.js": ["@parcel/optimizer-terser"]
+    "*.js": ["@parcel/optimizer-terser"],
+    "**/spectrum-theme.cjs": ["parcel-optimizer-strict-mode"]
   }
 }

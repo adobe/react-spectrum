@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import statelyDocs from 'docs:@react-stately/tabs';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI, VersionBadge} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/tabs/docs/anatomy.svg';
@@ -24,6 +24,7 @@ import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
 import Collections from '@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg';
 import Selection from '@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg';
 import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
+import tabsUtils from 'docs:@react-aria/test-utils/src/tabs.ts';
 
 ---
 category: Navigation
@@ -445,21 +446,46 @@ All tabs can be disabled using the `isDisabled` prop.
 
 ### Disabled items
 
-Individual tabs can be disabled using the `disabledKeys` prop. Each key in this list
-corresponds with the `id` prop passed to the `Tab` component, or automatically derived from the values passed
-to the `items` prop. See the [Collections](collections.html) guide for more details.
+An individual `Tab` can be disabled with the `isDisabled` prop. Disabled tabs are not focusable, selectable, or keyboard navigable.
 
 ```tsx example
-<Tabs disabledKeys={['gamepad']}>
+<Tabs>
   <TabList aria-label="Input settings">
     <Tab id="mouse">Mouse Settings</Tab>
     <Tab id="keyboard">Keyboard Settings</Tab>
-    <Tab id="gamepad">Gamepad Settings</Tab>
+    {/*- begin highlight -*/}
+    <Tab id="gamepad" isDisabled>Gamepad Settings</Tab>
+    {/*- end highlight -*/}
   </TabList>
   <TabPanel id="mouse">Mouse Settings</TabPanel>
   <TabPanel id="keyboard">Keyboard Settings</TabPanel>
   <TabPanel id="gamepad">Gamepad Settings</TabPanel>
 </Tabs>
+```
+
+In dynamic collections, it may be more convenient to use the `disabledKeys` prop at the `Tabs` level instead of `isDisabled` on individual tabs. Each key in this list
+corresponds with the `id` prop passed to the `Tab` component, or automatically derived from the values passed
+to the `items` prop (see the [Collections](collections.html) for more details). A tab is considered disabled if its id exists in `disabledKeys` or if it has `isDisabled`.
+
+```tsx example
+function Example() {
+  let tabs = [
+    {id: 1, title: 'Mouse settings'},
+    {id: 2, title: 'Keyboard settings'},
+    {id: 3, title: 'Gamepad settings'}
+  ];
+
+  return (
+    <Tabs disabledKeys={[2]}>
+      <TabList aria-label="Input settings" items={tabs}>
+        {item => <Tab>{item.title}</Tab>}
+      </TabList>
+      <Collection items={tabs}>
+        {item => <TabPanel>{item.title}</TabPanel>}
+      </Collection>
+    </Tabs>
+  );
+}
 ```
 
 ## Links
@@ -726,3 +752,37 @@ function TabNavigation() {
 ### Hooks
 
 If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useTabList](useTabList.html) for more details.
+
+## Testing
+
+### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+`@react-aria/test-utils` offers common tabs interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
+in your tests. Below is the full definition of the tabs tester and a sample of how you could use it in your test suite.
+
+```ts
+// Tabs.test.ts
+import {render} from '@testing-library/react';
+import {User} from '@react-aria/test-utils';
+
+let testUtilUser = new User({interactionType: 'mouse'});
+// ...
+
+it('Tabs can change selection via keyboard', async function () {
+  // Render your test component/app and initialize the listbox tester
+  let {getByTestId} = render(
+     <Tabs data-testid="test-tabs">
+      ...
+    </Tabs>
+  );
+  let tabsTester = testUtilUser.createTester('Tabs', {root: getByTestId('test-tabs'), interactionType: 'keyboard'});
+
+  let tabs = tabsTester.tabs;
+  expect(tabsTester.selectedTab).toBe(tabs[0]);
+
+  await tabsTester.triggerTab({tab: 1});
+  expect(tabsTester.selectedTab).toBe(tabs[1]);
+});
+```
+
+<ClassAPI links={tabsUtils.links} class={tabsUtils.exports.TabsTester} />

@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {isScrollable} from './isScrollable';
+
 export function getScrollParent(node: Element, checkForOverflow?: boolean): Element {
   let scrollableNode: Element | null = node;
   if (isScrollable(scrollableNode, checkForOverflow)) {
@@ -23,13 +25,3 @@ export function getScrollParent(node: Element, checkForOverflow?: boolean): Elem
   return scrollableNode || document.scrollingElement || document.documentElement;
 }
 
-export function isScrollable(node: Element, checkForOverflow?: boolean): boolean {
-  let style = window.getComputedStyle(node);
-  let isScrollable = /(auto|scroll)/.test(style.overflow + style.overflowX + style.overflowY);
-
-  if (isScrollable && checkForOverflow) {
-    isScrollable = node.scrollHeight !== node.clientHeight || node.scrollWidth !== node.clientWidth;
-  }
-
-  return isScrollable;
-}

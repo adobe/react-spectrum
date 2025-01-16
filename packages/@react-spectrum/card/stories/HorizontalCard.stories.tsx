@@ -1,3 +1,4 @@
+// @ts-nocheck
 /*
  * Copyright 2021 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -16,7 +17,7 @@ import {ComponentMeta} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {getImage} from '../stories/utils';
 import {Heading, Text} from '@react-spectrum/text';
-import {Horizontal} from '../chromatic/HorizontalCard.chromatic';
+import {Horizontal} from '../chromatic/HorizontalCard.stories';
 import {Image} from '@react-spectrum/image';
 import React from 'react';
 

@@ -5,10 +5,20 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useNavigate,
+  useHref
 } from '@remix-run/react';
+import type {NavigateOptions} from 'react-router-dom';
 import {Provider, defaultTheme} from '@adobe/react-spectrum';
 
+declare module '@adobe/react-spectrum' {
+  interface RouterConfig {
+    routerOptions: NavigateOptions
+  }
+}
+
 export default function App() {
+  let navigate = useNavigate();
   return (
     <html lang="en">
       <head>
@@ -18,7 +28,13 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Provider theme={defaultTheme} locale="en">
+        <Provider 
+          theme={defaultTheme}
+          locale="en"
+          router={{
+            navigate,
+            useHref
+          }}>
           <Outlet />
         </Provider>
         <ScrollRestoration />

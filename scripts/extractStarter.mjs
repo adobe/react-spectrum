@@ -29,7 +29,7 @@ fs.mkdirSync(`starters/docs/src`, {recursive: true});
 fs.mkdirSync(`starters/docs/stories`, {recursive: true});
 
 for (let file of glob.sync('packages/react-aria-components/docs/*.mdx')) {
-  if (!/^[A-Z]/.test(basename(file))) {
+  if (!/^[A-Z]/.test(basename(file)) || /^Tree|^Autocomplete/.test(basename(file))) {
     continue;
   }
 
@@ -205,7 +205,7 @@ function processJS(sourceFilename, code, usedClasses) {
       if (path.node.name.name === 'className') {
         // Remove className prop from RAC components (not DOM elements).
         // Otherwise, track used classes so we can remove unused ones from the CSS.
-        if (/^[A-Z]/.test(path.parent.name.name)) {
+        if (/^[A-Z]/.test(path.parent.name.name) && !/color-picker/.test(path.node.value?.value)) {
           path.remove();
         } else if (t.isStringLiteral(path.node.value)) {
           for (let c of path.node.value.value.split(/\s+/)) {
@@ -281,7 +281,7 @@ function generateStory(filename, imports, code, skipImports = false) {
 
   let name = basename(filename, '.mdx');
   code = imports + `
-import type { Meta } from '@storybook/react';
+import type {Meta} from '@storybook/react';
 
 const meta: Meta<typeof ${name}> = {
   component: ${name},
