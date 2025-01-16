@@ -27,6 +27,7 @@ import Edit from '@spectrum-icons/workflow/Edit';
 import Delete from '@spectrum-icons/workflow/Delete';
 import {Text} from '@react-spectrum/text';
 import {TreeView, TreeViewItem, TreeItemContent} from '@react-spectrum/tree';
+import {Collection} from 'react-aria-components';
 import {JSX} from "react";
 import {Key} from "@react-types/shared";
 import {ActionGroup, Item} from '@react-spectrum/actiongroup';
@@ -142,16 +143,42 @@ let items: MyItem[] = [
   ]}
 ];
 
+const DynamicTreeItem = (props) => {
+  let {childItems, name, icon} = props;
+  return (
+    <>
+      <TreeViewItem childItems={item.childItems} textValue={item.name}>
+        <TreeItemContent>
+          <Text>{props.name}</Text>
+          {props.icon}
+        </TreeItemContent>
+        <Collection items={childItems}>
+          {(item: any) => (
+            <DynamicTreeItem
+              id={item.id}
+              icon={item.icon}
+              childItems={item.childItems}
+              textValue={item.name}
+              name={item.name}>
+              {item.name}
+            </DynamicTreeItem>
+          )}
+        </Collection>
+      </TreeViewItem>
+    </>
+  );
+};
+
 function ExampleTree(props) {
   return (
     <TreeView aria-label="Example tree with dynamic content" height="size-3000" maxWidth="size-6000" items={items} {...props}>
       {(item: MyItem) => (
-        <TreeViewItem childItems={item.childItems} textValue={item.name}>
-          <TreeItemContent>
-            <Text>{item.name}</Text>
-            {item.icon}
-          </TreeItemContent>
-        </TreeViewItem>
+        <DynamicTreeItem
+          id={item.id}
+          icon={item.icon}
+          childItems={item.childItems}
+          textValue={item.name}
+          name={item.name} />
       )}
     </TreeView>
   );
