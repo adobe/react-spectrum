@@ -62,7 +62,11 @@ export interface CalendarPropsBase {
    * Controls the behavior of paging. Pagination either works by advancing the visible page by visibleDuration (default) or one unit of visibleDuration.
    * @default visible
    */
-  pageBehavior?: PageBehavior
+  pageBehavior?: PageBehavior,
+  /**
+   * The day that starts the week.
+   */
+  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'
 }
 
 export type DateRange = RangeValue<DateValue> | null;

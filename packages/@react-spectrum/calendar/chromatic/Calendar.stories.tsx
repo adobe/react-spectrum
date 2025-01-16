@@ -45,3 +45,5 @@ export const Invalid = () => <Calendar value={date} isInvalid />;
 export const ErrorMessage = () => <Calendar value={date} isInvalid errorMessage="Selection invalid." />;
 export const UnavailableInvalid = () => <Calendar value={date} isDateUnavailable={d => d.compare(date) === 0} />;
 export const DisabledInvalid = () => <Calendar value={date} minValue={new CalendarDate(2022, 2, 5)} />;
+export const CustomWeekStartMonday = () => <Calendar value={date} firstDayOfWeek="mon" />;
+export const CustomWeekStartSaturday = () => <Calendar value={date} firstDayOfWeek="sat" />;

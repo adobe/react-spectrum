@@ -73,9 +73,12 @@ export function useSearchField(
     }
 
     if (key === 'Escape') {
-      if (state.value === '') {
+      // Also check the inputRef value for the case where the value was set directly on the input element instead of going through
+      // the hook
+      if (state.value === '' && (!inputRef.current || inputRef.current.value === '')) {
         e.continuePropagation();
       } else {
+        e.preventDefault();
         state.setValue('');
         if (onClear) {
           onClear();

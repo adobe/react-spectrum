@@ -29,7 +29,8 @@ interface CalendarMonthProps extends CalendarPropsBase, DOMProps, StyleProps {
 export function CalendarMonth(props: CalendarMonthProps) {
   let {
     state,
-    startDate
+    startDate,
+    firstDayOfWeek
   } = props;
   let {
     gridProps,
@@ -41,7 +42,7 @@ export function CalendarMonth(props: CalendarMonthProps) {
   }, state);
 
   let {locale} = useLocale();
-  let weeksInMonth = getWeeksInMonth(startDate, locale);
+  let weeksInMonth = getWeeksInMonth(startDate, locale, firstDayOfWeek);
 
   return (
     <table
@@ -69,7 +70,8 @@ export function CalendarMonth(props: CalendarMonthProps) {
                   key={i}
                   state={state}
                   date={date}
-                  currentMonth={startDate} />
+                  currentMonth={startDate}
+                  firstDayOfWeek={firstDayOfWeek} />
               ) : <td key={i} />
             ))}
           </tr>

@@ -62,6 +62,7 @@ export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'key
   onLoadMore?: () => void,
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
+  /** Provides the ActionBar to render when cards are selected in the CardView. */
   renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement
 }
 
