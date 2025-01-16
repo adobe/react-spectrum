@@ -66,6 +66,12 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
   let delayNextActiveDescendant = useRef(false);
   let queuedActiveDescendant = useRef(null);
   let lastCollectionNode = useRef<HTMLElement>(null);
+  // Stores the previously focused item id if it was cleared via ArrowLeft/Right. Used to dispatch keyboard events to the proper item
+  // even though we've cleared state.focusedNodeId so that things like ArrowLeft/Right will still open the submenutrigger after it is closed
+  // TODO: ideally, we'd just preserve state.focusedNodeId if the user's ArrowLeft/Right was being used to trigger the focused submenutrigger but
+  // that would involve differentiating that event from a moving the text cursor in the input. Will be a moot point if/when NVDA announces
+  // moving the text cursor when an activedescendant is set properly.
+  let clearedFocusedId = useRef<string | null>(null);
 
   let updateActiveDescendant = useEffectEvent((e) => {
     let {target} = e;
@@ -79,15 +85,18 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
     if (target !== collectionRef.current) {
       if (delayNextActiveDescendant.current) {
         queuedActiveDescendant.current = target.id;
+        clearedFocusedId.current = null;
         timeout.current = setTimeout(() => {
           state.setFocusedNodeId(target.id);
           queuedActiveDescendant.current = null;
         }, 500);
       } else {
         state.setFocusedNodeId(target.id);
+        clearedFocusedId.current = null;
       }
     } else {
       state.setFocusedNodeId(null);
+      clearedFocusedId.current = null;
     }
 
     delayNextActiveDescendant.current = false;
@@ -124,6 +133,12 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
   });
 
   let clearVirtualFocus = useEffectEvent((clearFocusKey?: boolean) => {
+    if (clearFocusKey === false && state.focusedNodeId) {
+      clearedFocusedId.current = state.focusedNodeId;
+    } else if (clearFocusKey) {
+      clearedFocusedId.current = null;
+    }
+
     state.setFocusedNodeId(null);
     let clearFocusEvent = new CustomEvent(CLEAR_FOCUS_EVENT, {
       cancelable: true,
@@ -216,12 +231,13 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
       e.stopPropagation();
     }
 
-    if (state.focusedNodeId == null) {
+    let focusedElementId = state.focusedNodeId ?? clearedFocusedId.current;
+    if (focusedElementId == null) {
       collectionRef.current?.dispatchEvent(
         new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
       );
     } else {
-      let item = document.getElementById(state.focusedNodeId);
+      let item = document.getElementById(focusedElementId);
       item?.dispatchEvent(
         new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
       );
