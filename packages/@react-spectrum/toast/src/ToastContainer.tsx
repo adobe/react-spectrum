@@ -43,8 +43,7 @@ let globalToastQueue: ToastQueue<SpectrumToastValue> | null = null;
 function getGlobalToastQueue() {
   if (!globalToastQueue) {
     globalToastQueue = new ToastQueue({
-      maxVisibleToasts: Infinity,
-      hasExitAnimation: true
+      maxVisibleToasts: Infinity
     });
   }
 
@@ -94,12 +93,6 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
     triggerSubscriptions();
 
     return () => {
-      // When this toast provider unmounts, reset all animations so that
-      // when the new toast provider renders, it is seamless.
-      for (let toast of getGlobalToastQueue().visibleToasts) {
-        toast.animation = null;
-      }
-
       // Remove this toast provider, and call subscriptions.
       // This will cause all other instances to re-render,
       // and the first one to become the new active toast provider.
