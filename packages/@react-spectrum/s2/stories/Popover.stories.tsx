@@ -192,11 +192,3 @@ export const AutocompletePopover = (args: any) => (
     </DialogTrigger>
   </>
 );
-
-Autocomplete.parameters = {
-  layout: 'padded'
-};
-
-Autocomplete.args = {
-  size: 'S'
-};
