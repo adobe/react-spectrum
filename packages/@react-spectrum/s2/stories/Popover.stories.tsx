@@ -20,7 +20,7 @@ import type {Meta} from '@storybook/react';
 import Org from '../s2wf-icons/S2_Icon_Buildings_20_N.svg';
 import Settings from '../s2wf-icons/S2_Icon_Settings_20_N.svg';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {UNSTABLE_Autocomplete} from 'react-aria-components';
+import {UNSTABLE_Autocomplete, useFilter} from 'react-aria-components';
 import User from '../s2wf-icons/S2_Icon_User_20_N.svg';
 import Users from '../s2wf-icons/S2_Icon_UserGroup_20_N.svg';
 
@@ -48,7 +48,7 @@ export const HelpCenter = (args: any) => (
           <Tab id="feedback">Feedback</Tab>
         </TabList>
         <TabPanel id="help">
-          <SearchField label="Search"  styles={style({marginTop: 12, marginX: 12})} />
+          <SearchField label="Search" styles={style({marginTop: 12, marginX: 12})} />
           <Menu aria-label="Help" styles={style({marginTop: 12})}>
             <MenuSection>
               <MenuItem href="#">
@@ -166,31 +166,37 @@ AccountMenu.argTypes = {
 };
 
 
-export const Autocomplete = () => (
+function Autocomplete(props) {
+  let {contains} = useFilter({sensitivity: 'base'});
+  return (
+    <UNSTABLE_Autocomplete filter={contains} {...props} />
+  );
+}
+
+export const AutocompletePopover = (args: any) => (
   <>
-    <DialogTrigger>
+    <DialogTrigger {...args}>
       <ActionButton aria-label="Help" styles={style({marginX: 'auto'})}>
         <Help />
       </ActionButton>
-      <Popover>
-        <UNSTABLE_Autocomplete>
-          <SearchField autoFocus label="Search" />
-          <Menu aria-label="test menu">
+      <Popover {...args}>
+        <Autocomplete>
+          <SearchField autoFocus label="Search" styles={style({marginTop: 12, marginX: 12})} />
+          <Menu aria-label="test menu" styles={style({marginTop: 12})}>
             <MenuItem>Foo</MenuItem>
             <MenuItem>Bar</MenuItem>
             <MenuItem>Baz</MenuItem>
           </Menu>
-        </UNSTABLE_Autocomplete>
+        </Autocomplete>
       </Popover>
     </DialogTrigger>
-    <SearchField label="outside" />
-    <UNSTABLE_Autocomplete>
-      <SearchField autoFocus label="Search auto" />
-      <Menu aria-label="test menu">
-        <MenuItem>Foo</MenuItem>
-        <MenuItem>Bar</MenuItem>
-        <MenuItem>Baz</MenuItem>
-      </Menu>
-    </UNSTABLE_Autocomplete>
   </>
 );
+
+Autocomplete.parameters = {
+  layout: 'padded'
+};
+
+Autocomplete.args = {
+  size: 'S'
+};
