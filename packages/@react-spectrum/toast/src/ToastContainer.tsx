@@ -14,6 +14,7 @@ import {AriaToastRegionProps} from '@react-aria/toast';
 import {classNames} from '@react-spectrum/utils';
 import {DOMProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
+import {flushSync} from 'react-dom';
 import React, {ReactElement, useEffect, useRef} from 'react';
 import {SpectrumToastValue, Toast} from './Toast';
 import toastContainerStyles from './toastContainer.css';
@@ -112,7 +113,9 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
           {state.visibleToasts.slice().reverse().map((toast) => (
             <li
               key={toast.key}
-              className={classNames(toastContainerStyles, 'spectrum-ToastContainer-listitem')}>
+              className={classNames(toastContainerStyles, 'spectrum-ToastContainer-listitem')}
+              // @ts-ignore
+              style={{viewTransitionName: `item-${toast.key}`}}>
               <Toast
                 toast={toast}
                 state={state} />
@@ -159,7 +162,17 @@ function addToast(children: string, variant: SpectrumToastValue['variant'], opti
   // It is debatable whether non-actionable toasts would also fail.
   let timeout = options.timeout && !options.onAction ? Math.max(options.timeout, 5000) : undefined;
   let queue = getGlobalToastQueue();
-  let key = queue.add(value, {timeout, onClose: options.onClose});
+  let key: string;
+  let add = () => queue.add(value, {timeout, onClose: options.onClose});
+  if ('startViewTransition' in document) {
+    document.startViewTransition(() => {
+      flushSync(() => {
+        key = add();
+      });
+    });
+  } else {
+    key = add();
+  }
   return () => queue.close(key);
 }
 
