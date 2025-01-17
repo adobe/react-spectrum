@@ -190,7 +190,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
 
       let menu = menuTester.menu;
       expect(menu).toBeTruthy();
-      let options = menuTester.options;
+      let options = menuTester.options();
       expect(options[0]).toHaveFocus();
 
       await menuTester.close();
@@ -211,7 +211,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
 
       let menu = menuTester.menu;
       expect(menu).toBeTruthy();
-      let options = menuTester.options;
+      let options = menuTester.options();
       expect(options[0]).toHaveFocus();
 
       await menuTester.close();
@@ -232,7 +232,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
 
       let menu = menuTester.menu;
       expect(menu).toBeTruthy();
-      let options = menuTester.options;
+      let options = menuTester.options();
       expect(options[options.length - 1]).toHaveFocus();
 
       await menuTester.close();
@@ -255,7 +255,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
       expect(menu).toBeTruthy();
       expect(menu).toHaveAttribute('aria-labelledby', triggerButton.id);
 
-      let options = menuTester.options;
+      let options = menuTester.options();
       expect(options[0]).toHaveFocus();
 
       await user.keyboard('[ArrowUp]');
@@ -342,7 +342,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           expect(menu).toBeTruthy();
           expect(menu).toHaveAttribute('aria-labelledby', triggerButton.id);
 
-          let options = menuTester.options;
+          let options = menuTester.options();
 
           await menuTester.selectOption({option: options[1], menuSelectionMode: 'single'});
 
@@ -352,7 +352,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           await menuTester.open();
           act(() => {jest.runAllTimers();});
 
-          options = menuTester.options;
+          options = menuTester.options();
           expect(options[0]).toHaveAttribute('aria-checked', 'false');
           expect(options[1]).toHaveAttribute('aria-checked', 'true');
         });
@@ -369,7 +369,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           expect(menu).toBeTruthy();
           expect(menu).toHaveAttribute('aria-labelledby', triggerButton.id);
 
-          let options = menuTester.options;
+          let options = menuTester.options();
           expect(options[0]).toHaveFocus();
 
           await menuTester.selectOption({option: options[1], menuSelectionMode: 'single'});
@@ -380,7 +380,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           await menuTester.open();
           act(() => {jest.runAllTimers();});
 
-          options = menuTester.options;
+          options = menuTester.options();
           expect(options[0]).toHaveAttribute('aria-checked', 'false');
           expect(options[1]).toHaveAttribute('aria-checked', 'true');
           expect(options[1]).toHaveFocus();
@@ -390,7 +390,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           await menuTester.open();
           act(() => {jest.runAllTimers();});
 
-          options = menuTester.options;
+          options = menuTester.options();
           expect(options[0]).toHaveAttribute('aria-checked', 'false');
           expect(options[1]).toHaveAttribute('aria-checked', 'true');
           expect(options[1]).toHaveFocus();
@@ -409,7 +409,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           expect(menu).toBeTruthy();
           expect(menu).toHaveAttribute('aria-labelledby', triggerButton.id);
 
-          let options = menuTester.options;
+          let options = menuTester.options();
           expect(options[0]).toHaveFocus();
 
           await user.keyboard('[ArrowDown]');
@@ -434,7 +434,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           let menu = menuTester.menu;
           expect(menu).toBeInTheDocument();
           await user.keyboard('{/Enter}');
-          expect(menuTester.options.filter(option => option.getAttribute('aria-checked') === 'true').length).toBe(0);
+          expect(menuTester.options().filter(option => option.getAttribute('aria-checked') === 'true').length).toBe(0);
         });
       });
     }
@@ -449,7 +449,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           act(() => {jest.runAllTimers();});
 
           let menu = menuTester.menu;
-          let options = menuTester.options;
+          let options = menuTester.options();
 
           await menuTester.selectOption({option: options[2], menuSelectionMode: 'multiple'});
           await menuTester.selectOption({option: options[1], menuSelectionMode: 'multiple'});
@@ -468,7 +468,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           act(() => {jest.runAllTimers();});
 
           menu = menuTester.menu;
-          options = menuTester.options;
+          options = menuTester.options();
           expect(options[1]).toHaveAttribute('aria-checked', 'true');
           expect(options[2]).toHaveAttribute('aria-checked', 'true');
           expect(options[2]).toHaveFocus();
@@ -483,7 +483,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           act(() => {jest.runAllTimers();});
 
           let menu = menuTester.menu;
-          let options = menuTester.options;
+          let options = menuTester.options();
           expect(options[0]).toHaveFocus();
 
           await user.keyboard('[ArrowDown]');
@@ -505,7 +505,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           act(() => {jest.runAllTimers();});
 
           menu = menuTester.menu;
-          options = menuTester.options;
+          options = menuTester.options();
           expect(options[1]).toHaveAttribute('aria-checked', 'true');
           expect(options[2]).toHaveAttribute('aria-checked', 'true');
           expect(options[1]).toHaveFocus();
@@ -520,7 +520,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           act(() => {jest.runAllTimers();});
 
           let menu = menuTester.menu;
-          let options = menuTester.options;
+          let options = menuTester.options();
           expect(options[0]).toHaveFocus();
 
           await user.keyboard('[ArrowDown]');
@@ -533,7 +533,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           act(() => {jest.runAllTimers();});
 
           menu = menuTester.menu;
-          options = menuTester.options;
+          options = menuTester.options();
           expect(options[0]).toHaveAttribute('aria-checked', 'false');
           expect(options[1]).toHaveAttribute('aria-checked', 'true');
           expect(options[2]).toHaveAttribute('aria-checked', 'false');
@@ -552,7 +552,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           let menu = menuTester.menu;
           expect(menu).toBeInTheDocument();
           await user.keyboard('{/Enter}');
-          expect(menuTester.options.filter(option => option.getAttribute('aria-checked') === 'true').length).toBe(0);
+          expect(menuTester.options().filter(option => option.getAttribute('aria-checked') === 'true').length).toBe(0);
         });
       });
     }
@@ -637,7 +637,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           let submenu = submenuUtil.menu;
           expect(submenu).toBeInTheDocument();
 
-          await submenuUtil.selectOption({option: submenuUtil.options.filter(item => item.getAttribute('aria-haspopup') == null)[0]});
+          await submenuUtil.selectOption({option: submenuUtil.options().filter(item => item.getAttribute('aria-haspopup') == null)[0]});
           // TODO: not ideal, this runAllTimers is only needed for RSPv3, not RAC or S2
           act(() => {jest.runAllTimers();});
           expect(menu).not.toBeInTheDocument();
@@ -670,7 +670,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           let nestedSubmenu = nestedSubmenuUtil.menu;
           expect(nestedSubmenu).toBeInTheDocument();
 
-          await nestedSubmenuUtil.selectOption({option: nestedSubmenuUtil.options.filter(item => item.getAttribute('aria-haspopup') == null)[0]});
+          await nestedSubmenuUtil.selectOption({option: nestedSubmenuUtil.options().filter(item => item.getAttribute('aria-haspopup') == null)[0]});
           act(() => {jest.runAllTimers();});
           expect(menu).not.toBeInTheDocument();
           expect(submenu).not.toBeInTheDocument();

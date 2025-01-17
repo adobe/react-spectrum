@@ -10,14 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, waitFor, within} from '@react-spectrum/test-utils-internal';
+import {fireEvent, pointerMap, render, waitFor, within} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {Tab, TabList, TabPanel, Tabs} from '../';
 import {TabsExample} from '../stories/Tabs.stories';
+import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let renderTabs = (tabsProps, tablistProps, tabProps, tabpanelProps) => render(
-  <Tabs {...tabsProps}>
+  <Tabs {...tabsProps} data-testid="tabs-wrapper">
     <TabList {...tablistProps} aria-label="Test">
       <Tab {...tabProps} id="a">A</Tab>
       <Tab {...tabProps} id="b">B</Tab>
@@ -31,24 +32,26 @@ let renderTabs = (tabsProps, tablistProps, tabProps, tabpanelProps) => render(
 
 describe('Tabs', () => {
   let user;
+  let testUtilUser = new User();
+
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
 
   it('should render tabs with default classes', () => {
-    let {getByRole, getAllByRole} = renderTabs();
-    let tablist = getByRole('tablist');
-    let tabs = tablist.closest('.react-aria-Tabs');
+    let {getByTestId} = renderTabs();
+    let tabs = getByTestId('tabs-wrapper');
+    let tabsTester = testUtilUser.createTester('Tabs', {root: tabs});
+    let tablist = tabsTester.tablist;
     expect(tabs).toBeInTheDocument();
     expect(tablist).toHaveAttribute('class', 'react-aria-TabList');
     expect(tablist).toHaveAttribute('aria-label', 'Test');
 
-    for (let tab of getAllByRole('tab')) {
+    for (let tab of tabsTester.tabs) {
       expect(tab).toHaveAttribute('class', 'react-aria-Tab');
     }
 
-    let tabpanel = getByRole('tabpanel');
-    expect(tabpanel).toHaveAttribute('class', 'react-aria-TabPanel');
+    expect(tabsTester.tabpanels[0]).toHaveAttribute('class', 'react-aria-TabPanel');
   });
 
   it('should render tabs with custom classes', () => {
@@ -256,31 +259,30 @@ describe('Tabs', () => {
 
   it('selects first tab if all tabs are disabled', async () => {
     let {getByRole} = renderTabs({}, {}, {isDisabled: true});
+    let tabsTester = testUtilUser.createTester('Tabs', {root: getByRole('tablist')});
     await user.tab();
 
-    let tablist = getByRole('tablist');
-    let tabs = within(tablist).getAllByRole('tab');
-    let tabpanel = getByRole('tabpanel');
-    expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
-    expect(document.activeElement).toBe(tabpanel);
+    expect(tabsTester.selectedTab).toBe(tabsTester.tabs[0]);
+    expect(document.activeElement).toBe(tabsTester.tabpanels[0]);
   });
 
   it('should support selected state', async () => {
     let onSelectionChange = jest.fn();
-    let {getAllByRole} = renderTabs({onSelectionChange}, {}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
-    let tabs = getAllByRole('tab');
+    let {getByRole} = renderTabs({onSelectionChange}, {}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
+    let tabsTester = testUtilUser.createTester('Tabs', {root: getByRole('tablist')});
+    let tabs = tabsTester.tabs;
 
     expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
     expect(tabs[0]).toHaveClass('selected');
 
-    await user.click(tabs[1]);
+    await tabsTester.triggerTab({tab: 1});
     expect(onSelectionChange).toHaveBeenLastCalledWith('b');
     expect(tabs[0]).not.toHaveAttribute('aria-selected', 'true');
     expect(tabs[0]).not.toHaveClass('selected');
     expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
     expect(tabs[1]).toHaveClass('selected');
 
-    await user.click(tabs[0]);
+    await tabsTester.triggerTab({tab: 0});
     expect(onSelectionChange).toHaveBeenLastCalledWith('a');
     expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
     expect(tabs[0]).toHaveClass('selected');
@@ -288,7 +290,7 @@ describe('Tabs', () => {
 
   it('should update TabPanel ID when current tab is changed', async () => {
     let onSelectionChange = jest.fn();
-    let {getByRole, getAllByRole} = render(
+    let {getByRole} = render(
       <Tabs onSelectionChange={onSelectionChange}>
         <TabList>
           <Tab id="first-element">First</Tab>
@@ -301,17 +303,16 @@ describe('Tabs', () => {
       </Tabs>
     );
 
-    expect(getByRole('tabpanel').getAttribute('id')).toContain('first-element');
-    let tabs = getAllByRole('tab');
+    let tabsTester = testUtilUser.createTester('Tabs', {root: getByRole('tablist')});
+    expect(tabsTester.activeTabpanel.getAttribute('id')).toContain('first-element');
 
-    await user.click(tabs[1]);
+    await tabsTester.triggerTab({tab: 1});
     expect(onSelectionChange).toHaveBeenCalled();
-    expect(getByRole('tabpanel').getAttribute('id')).toContain('second-element');
+    expect(tabsTester.activeTabpanel.getAttribute('id')).toContain('second-element');
 
-    await user.click(tabs[2]);
+    await tabsTester.triggerTab({tab: 2});
     expect(onSelectionChange).toHaveBeenCalled();
-    expect(getByRole('tabpanel').getAttribute('id')).toContain('third-element');
-
+    expect(tabsTester.activeTabpanel.getAttribute('id')).toContain('third-element');
   });
 
   it('should support orientation', () => {
@@ -325,6 +326,33 @@ describe('Tabs', () => {
 
     expect(tabs).toHaveAttribute('data-orientation', 'vertical');
     expect(tabs).toHaveClass('vertical');
+  });
+
+  it.each`
+    interactionType
+    ${'mouse'}
+    ${'keyboard'}
+    ${'touch'}
+  `('should support changing the selected tab regardless of interaction type, interactionType: $interactionType ', async ({interactionType}) => {
+    let {getByRole} = renderTabs({orientation: 'vertical'});
+    let tabsTester = testUtilUser.createTester('Tabs', {root: getByRole('tablist'), interactionType});
+    let tabs = tabsTester.tabs;
+
+    await tabsTester.triggerTab({tab: 0});
+    expect(tabsTester.selectedTab).toBe(tabs[0]);
+    expect(tabsTester.activeTabpanel.getAttribute('aria-labelledby')).toBe(tabs[0].id);
+
+    await tabsTester.triggerTab({tab: 1});
+    expect(tabsTester.selectedTab).toBe(tabs[1]);
+    expect(tabsTester.activeTabpanel.getAttribute('aria-labelledby')).toBe(tabs[1].id);
+
+    await tabsTester.triggerTab({tab: 2});
+    expect(tabsTester.selectedTab).toBe(tabs[2]);
+    expect(tabsTester.activeTabpanel.getAttribute('aria-labelledby')).toBe(tabs[2].id);
+
+    await tabsTester.triggerTab({tab: 1});
+    expect(tabsTester.selectedTab).toBe(tabs[1]);
+    expect(tabsTester.activeTabpanel.getAttribute('aria-labelledby')).toBe(tabs[1].id);
   });
 
   it('should support refs', () => {
@@ -372,30 +400,25 @@ describe('Tabs', () => {
     console.error = consoleError;
   });
 
-  it('should support keyboardActivation=manual', () => {
+  it('should support keyboardActivation=manual', async () => {
     let onSelectionChange = jest.fn();
     let {getByRole} = renderTabs({keyboardActivation: 'manual', onSelectionChange, defaultSelectedKey: 'a'});
+    let tabsTester = testUtilUser.createTester('Tabs', {root: getByRole('tablist'), interactionType: 'keyboard'});
 
-    let tablist = getByRole('tablist');
-    let tabs = within(tablist).getAllByRole('tab');
-    let firstItem = tabs[0];
-    let secondItem = tabs[1];
-    let thirdItem = tabs[2];
-    act(() => {firstItem.focus();});
-    expect(firstItem).toHaveAttribute('aria-selected', 'true');
-    fireEvent.keyDown(firstItem, {key: 'ArrowRight', code: 39, charCode: 39});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
-    expect(secondItem).toHaveAttribute('aria-selected', 'false');
-    expect(document.activeElement).toBe(secondItem);
-    fireEvent.keyDown(secondItem, {key: 'ArrowRight', code: 39, charCode: 39});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
-    expect(thirdItem).toHaveAttribute('aria-selected', 'false');
-    expect(document.activeElement).toBe(thirdItem);
-    fireEvent.keyDown(thirdItem, {key: 'Enter', code: 13, charCode: 13});
-    fireEvent.keyUp(document.activeElement, {key: 'Enter', code: 13, charCode: 13});
-    expect(firstItem).toHaveAttribute('aria-selected', 'false');
-    expect(secondItem).toHaveAttribute('aria-selected', 'false');
-    expect(thirdItem).toHaveAttribute('aria-selected', 'true');
+    let tabs = tabsTester.tabs;
+    await tabsTester.triggerTab({tab: 0});
+
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
+    await tabsTester.triggerTab({tab: 1});
+    expect(tabs[1]).toHaveAttribute('aria-selected', 'false');
+    expect(document.activeElement).toBe(tabs[1]);
+    await tabsTester.triggerTab({tab: 2});
+    expect(tabs[2]).toHaveAttribute('aria-selected', 'false');
+    expect(document.activeElement).toBe(tabs[2]);
+    await tabsTester.triggerTab({tab: 2, manualActivation: true});
+    expect(tabs[1]).toHaveAttribute('aria-selected', 'false');
+    expect(tabs[1]).toHaveAttribute('aria-selected', 'false');
+    expect(tabs[2]).toHaveAttribute('aria-selected', 'true');
 
     expect(onSelectionChange).toBeCalledTimes(1);
   });

@@ -10,6 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-export {useAutocompleteState} from './useAutocompleteState';
+export {UNSTABLE_useAutocompleteState} from './useAutocompleteState';
 
 export type {AutocompleteProps, AutocompleteStateOptions, AutocompleteState} from './useAutocompleteState';

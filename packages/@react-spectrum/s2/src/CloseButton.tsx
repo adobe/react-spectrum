@@ -65,6 +65,10 @@ const styles = style({
       isStaticColor: {
         default: baseColor('transparent-overlay-800'),
         isDisabled: 'transparent-overlay-400'
+      },
+      forcedColors: {
+        default: 'ButtonText',
+        isDisabled: 'GrayText'
       }
     }
   },

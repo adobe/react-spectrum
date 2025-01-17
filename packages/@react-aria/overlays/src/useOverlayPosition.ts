@@ -48,7 +48,7 @@ export interface AriaPositionProps extends PositionProps {
    */
   shouldUpdatePosition?: boolean,
   /** Handler that is called when the overlay should close. */
-  onClose?: () => void,
+  onClose?: (() => void) | null,
   /**
    * The maxHeight specified for the overlay element.
    * By default, it will take all space up to the current viewport height.

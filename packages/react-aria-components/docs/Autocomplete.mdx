@@ -1,0 +1,121 @@
+{/* Copyright 2025 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import packageData from 'react-aria-components/package.json';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {InlineAlert, Content, Heading} from '@adobe/react-spectrum';
+
+---
+category: Pickers
+keywords: [autocomplete, search, menu, command palette, aria]
+type: component
+preRelease: alpha
+---
+
+# Autocomplete
+
+<PageDescription>{docs.exports.UNSTABLE_Autocomplete.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['UNSTABLE_Autocomplete']}
+  sourceData={[
+    {type: 'W3C', url: 'https://w3c.github.io/aria/#aria-autocomplete'}
+  ]} />
+
+<InlineAlert variant="notice" marginTop={60}>
+  <Heading>Under construction</Heading>
+  <Content>This component is in <strong>alpha</strong>. More documentation is coming soon!</Content>
+</InlineAlert>
+
+## Example
+
+```tsx example
+import {UNSTABLE_Autocomplete as Autocomplete, Menu, MenuItem, useFilter} from 'react-aria-components';
+import {MySearchField} from './SearchField';
+
+function Example() {
+  let {contains} = useFilter({sensitivity: 'base'});
+  return (
+    <div className="autocomplete">
+      <Autocomplete filter={contains}>
+        <MySearchField placeholder="Search commands..." />
+        <Menu>
+          <MenuItem>Create new file...</MenuItem>
+          <MenuItem>Create new folder...</MenuItem>
+          <MenuItem>Assign to...</MenuItem>
+          <MenuItem>Assign to me</MenuItem>
+          <MenuItem>Change status...</MenuItem>
+          <MenuItem>Change priority...</MenuItem>
+          <MenuItem>Add label...</MenuItem>
+          <MenuItem>Remove label...</MenuItem>
+        </Menu>
+      </Autocomplete>
+    </div>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './Menu.mdx' layer(listbox);
+@import './Button.mdx' layer(button);
+@import './SearchField.mdx' layer(searchfield);
+```
+
+```css
+@import "@react-aria/example-theme";
+
+.autocomplete {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 300px;
+  height: 180px;
+  border: 1px solid var(--border-color);
+  padding: 16px;
+  border-radius: 10px;
+  background: var(--overlay-background);
+
+  .react-aria-SearchField {
+    width: 100%;
+  }
+
+  .react-aria-Menu {
+    flex: 1;
+    overflow: auto;
+  }
+}
+```
+
+</details>
+
+## Anatomy
+
+`Autocomplete` is a controller for a child text input, such as a [TextField](TextField.html) or [SearchField](SearchField.html), and a collection component such as a [Menu](Menu.html) or [ListBox](ListBox.html). It enables the user to filter a list of items, and navigate via the arrow keys while keeping focus on the input.
+
+```tsx
+import {UNSTABLE_Autocomplete as Autocomplete, SearchField, Menu} from 'react-aria-components';
+
+<Autocomplete>
+  <SearchField />
+  <Menu />
+</Autocomplete>
+```
+
+## Props
+
+<PropTable component={docs.exports.UNSTABLE_Autocomplete} links={docs.links} />

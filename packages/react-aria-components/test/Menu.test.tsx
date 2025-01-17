@@ -540,7 +540,7 @@ describe('Menu', () => {
                   <Menu onAction={onAction}>
                     <MenuItem id="email">Email</MenuItem>
                     <MenuItem id="sms">SMS</MenuItem>
-                    <MenuItem id="twitter">Twitter</MenuItem>
+                    <MenuItem id="x">X</MenuItem>
                   </Menu>
                 </Popover>
               </SubmenuTrigger>
@@ -613,7 +613,7 @@ describe('Menu', () => {
                       </Popover>
                     </SubmenuTrigger>
                     <MenuItem id="sms">SMS</MenuItem>
-                    <MenuItem id="twitter">Twitter</MenuItem>
+                    <MenuItem id="x">X</MenuItem>
                   </Menu>
                 </Popover>
               </SubmenuTrigger>
@@ -706,7 +706,7 @@ describe('Menu', () => {
                       </Popover>
                     </SubmenuTrigger>
                     <MenuItem id="sms">SMS</MenuItem>
-                    <MenuItem id="twitter">Twitter</MenuItem>
+                    <MenuItem id="x">X</MenuItem>
                   </Menu>
                 </Popover>
               </SubmenuTrigger>
@@ -793,7 +793,7 @@ describe('Menu', () => {
                   <Menu>
                     <MenuItem id="email">Email</MenuItem>
                     <MenuItem id="sms">SMS</MenuItem>
-                    <MenuItem id="twitter">Twitter</MenuItem>
+                    <MenuItem id="x">X</MenuItem>
                   </Menu>
                 </Popover>
               </SubmenuTrigger>
@@ -870,7 +870,7 @@ describe('Menu', () => {
                       </Popover>
                     </SubmenuTrigger>
                     <MenuItem id="sms">SMS</MenuItem>
-                    <MenuItem id="twitter">Twitter</MenuItem>
+                    <MenuItem id="x">X</MenuItem>
                   </Menu>
                 </Popover>
               </SubmenuTrigger>
@@ -957,7 +957,7 @@ describe('Menu', () => {
                       </Popover>
                     </SubmenuTrigger>
                     <MenuItem id="sms">SMS</MenuItem>
-                    <MenuItem id="twitter">Twitter</MenuItem>
+                    <MenuItem id="x">X</MenuItem>
                   </Menu>
                 </Popover>
               </SubmenuTrigger>
@@ -1021,14 +1021,14 @@ describe('Menu', () => {
                         <Header>Work</Header>
                         <MenuItem id="email-work">Email</MenuItem>
                         <MenuItem id="sms-work">SMS</MenuItem>
-                        <MenuItem id="twitter-work">Twitter</MenuItem>
+                        <MenuItem id="x-work">X</MenuItem>
                       </MenuSection>
                       <Separator />
                       <MenuSection>
                         <Header>Personal</Header>
                         <MenuItem id="email-personal">Email</MenuItem>
                         <MenuItem id="sms-personal">SMS</MenuItem>
-                        <MenuItem id="twitter-personal">Twitter</MenuItem>
+                        <MenuItem id="x-personal">X</MenuItem>
                       </MenuSection>
                     </Menu>
                   </Popover>
@@ -1074,11 +1074,11 @@ describe('Menu', () => {
       expect(submenuTriggers).toHaveLength(1);
 
       // Open the submenu
-      let submenuUtil = (await menuTester.openSubmenu({submenuTriggerText: 'Share…'}))!;
+      let submenuUtil = (await menuTester.openSubmenu({submenuTrigger: 'Share…'}))!;
       let submenu = submenuUtil.menu;
       expect(submenu).toBeInTheDocument();
 
-      let submenuItems = submenuUtil.options;
+      let submenuItems = submenuUtil.options();
       expect(submenuItems).toHaveLength(6);
 
       let groupsInSubmenu = submenuUtil.sections;
@@ -1319,7 +1319,7 @@ AriaMenuTests({
                     </Popover>
                   </SubmenuTrigger>
                   <MenuItem id="sms">SMS</MenuItem>
-                  <MenuItem id="twitter">Twitter</MenuItem>
+                  <MenuItem id="x">X</MenuItem>
                 </Menu>
               </Popover>
             </SubmenuTrigger>

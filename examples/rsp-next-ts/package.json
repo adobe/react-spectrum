@@ -22,6 +22,7 @@
     "glob": "^10.3.12",
     "next": "^13.4.1",
     "react": "^18.2.0",
+    "react-aria-components": "latest",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {

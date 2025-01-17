@@ -36,7 +36,11 @@ export interface AriaCalendarGridProps {
    * e.g. single letter, abbreviation, or full day name.
    * @default "narrow"
    */
-  weekdayStyle?: 'narrow' | 'short' | 'long'
+  weekdayStyle?: 'narrow' | 'short' | 'long',
+  /**
+   * The day that starts the week.
+   */
+  firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'
 }
 
 export interface CalendarGridAria {
@@ -56,7 +60,8 @@ export interface CalendarGridAria {
 export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarState | RangeCalendarState): CalendarGridAria {
   let {
     startDate = state.visibleRange.start,
-    endDate = state.visibleRange.end
+    endDate = state.visibleRange.end,
+    firstDayOfWeek
   } = props;
 
   let {direction} = useLocale();
@@ -137,13 +142,13 @@ export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarSta
   let dayFormatter = useDateFormatter({weekday: props.weekdayStyle || 'narrow', timeZone: state.timeZone});
   let {locale} = useLocale();
   let weekDays = useMemo(() => {
-    let weekStart = startOfWeek(today(state.timeZone), locale);
+    let weekStart = startOfWeek(today(state.timeZone), locale, firstDayOfWeek);
     return [...new Array(7).keys()].map((index) => {
       let date = weekStart.add({days: index});
       let dateDay = date.toDate(state.timeZone);
       return dayFormatter.format(dateDay);
     });
-  }, [locale, state.timeZone, dayFormatter]);
+  }, [locale, state.timeZone, dayFormatter, firstDayOfWeek]);
 
   return {
     gridProps: mergeProps(labelProps, {
