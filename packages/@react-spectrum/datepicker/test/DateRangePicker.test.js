@@ -12,7 +12,7 @@
 
 import {act, fireEvent, getAllByRole as getAllByRoleInContainer, pointerMap, render as render_, waitFor, within} from '@react-spectrum/test-utils-internal';
 import {Button} from '@react-spectrum/button';
-import {CalendarDate, CalendarDateTime, getLocalTimeZone, toCalendarDateTime, today} from '@internationalized/date';
+import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseZonedDateTime, toCalendarDateTime, today} from '@internationalized/date';
 import {DateRangePicker} from '../';
 import {Form} from '@react-spectrum/form';
 import {Provider} from '@react-spectrum/provider';
@@ -1821,6 +1821,109 @@ describe('DateRangePicker', function () {
           expect(getDescription()).not.toContain('Invalid start date. Invalid end date.');
         });
       });
+    });
+  });
+
+  describe('style', () => {
+    it('should apply ltr embedding styles on placeholder values in rtl', function () {
+      let {getAllByRole} = render(
+        <Provider theme={theme} locale="ar-EG">
+          <DateRangePicker label="Date" />;
+        </Provider>);
+
+      let segments = getAllByRole('spinbutton');
+      expect(segments.length).toBe(6);
+
+      for (let segment of segments) {
+        expect(segment).toHaveStyle('unicode-bidi: embed; direction: ltr; caret-color: transparent');
+      }
+    });
+
+    it('should apply ltr embedding styles on values in rtl', function () {
+      let {getAllByRole} = render(
+        <Provider theme={theme} locale="ar-EG">
+          <DateRangePicker label="Date" value={{start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2019, 5, 6)}} />;
+        </Provider>);
+
+      let segments = getAllByRole('spinbutton');
+      expect(segments.length).toBe(6);
+
+      for (let segment of segments) {
+        expect(segment).toHaveStyle('unicode-bidi: embed; direction: ltr; caret-color: transparent');
+      }
+    });
+
+    it('should not apply ltr embedding styles on placeholder values in ltr', function () {
+      let {getAllByRole} = render(<DateRangePicker label="Date" />);
+
+      let segments = getAllByRole('spinbutton');
+      expect(segments.length).toBe(6);
+
+      for (let segment of segments) {
+        expect(segment).not.toHaveStyle('unicode-bidi: embed; direction: ltr;');
+        expect(segment).toHaveStyle('caret-color: transparent');
+      }
+    });
+
+    it('should not apply ltr embedding styles on values in ltr', function () {
+      let {getAllByRole} = render(<DateRangePicker label="Date" value={{start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2019, 5, 6)}} />);
+
+      let segments = getAllByRole('spinbutton');
+      expect(segments.length).toBe(6);
+
+      for (let segment of segments) {
+        expect(segment).not.toHaveStyle('unicode-bidi: embed; direction: ltr;');
+        expect(segment).toHaveStyle('caret-color: transparent');      
+      }
+    });
+
+    it('should apply unicode-bidi: embed to time zones in rtl', function () {
+      let {getAllByTestId} = render(
+        <Provider theme={theme} locale="ar-EG">
+          <DateRangePicker 
+            label="Date" 
+            value={{
+              start: parseZonedDateTime('2022-11-07T00:45[America/Los_Angeles]'),
+              end: parseZonedDateTime('2022-11-08T11:15[America/Los_Angeles]')}} />
+        </Provider>
+      );
+
+      let timezone = getAllByTestId('timeZoneName');
+      for (let zone of timezone) {
+        expect(zone).toHaveStyle('caret-color: transparent; unicode-bidi: embed');
+        expect(zone).not.toHaveStyle('direction: ltr');
+      }
+    });
+
+    it('should not apply unicode-bidi: embed to time zones in ltr', function () {
+      let {getAllByTestId} = render(
+        <DateRangePicker 
+          label="Date" 
+          value={{
+            start: parseZonedDateTime('2022-11-07T00:45[America/Los_Angeles]'),
+            end: parseZonedDateTime('2022-11-08T11:15[America/Los_Angeles]')}} />      
+      );
+
+      let timezone = getAllByTestId('timeZoneName');
+      for (let zone of timezone) {
+        expect(zone).toHaveStyle('caret-color: transparent');
+        expect(zone).not.toHaveStyle('unicode-bidi: embed; direction: ltr');
+      }
+    });
+
+    it('should apply unicode-bidi: isolate to each datefield', function () {
+      let {getByTestId} = render(
+        <DateRangePicker 
+          label="Date" 
+          value={{
+            start: parseZonedDateTime('2022-11-07T00:45[America/Los_Angeles]'),
+            end: parseZonedDateTime('2022-11-08T11:15[America/Los_Angeles]')}} />      
+      );
+
+      let startDate = getByTestId('start-date');
+      let endDate = getByTestId('end-date');
+      expect(startDate).toHaveStyle('unicode-bidi: isolate');
+      expect(endDate).toHaveStyle('unicode-bidi: isolate');
     });
   });
 });

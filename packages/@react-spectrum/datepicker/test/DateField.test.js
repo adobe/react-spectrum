@@ -664,4 +664,75 @@ describe('DateField', function () {
       });
     });
   });
+
+  describe('style', () => {
+    it('should apply ltr embedding styles on placeholder values in rtl', function () {
+      let {getAllByRole, getByText} = render(
+        <Provider theme={theme} locale="ar-EG">
+          <DateField label="Date" />
+        </Provider>);
+
+      let label = getByText('Date');
+
+      let combobox = getAllByRole('group')[0];
+      expect(combobox).toHaveAttribute('aria-labelledby', label.id);
+
+      let segments = getAllByRole('spinbutton');
+      for (let segment of segments) {
+        expect(segment).toHaveStyle('unicode-bidi: embed; direction: ltr; caret-color: transparent');
+      }
+    });
+
+    it('should apply ltr embedding styles on values in rtl', function () {
+      let {getAllByRole} = render(
+        <Provider theme={theme} locale="ar-EG">
+          <DateField label="Date"  value={new CalendarDate(2020, 2, 3)} />
+        </Provider>);
+
+      let segments = getAllByRole('spinbutton');
+      for (let segment of segments) {
+        expect(segment).toHaveStyle('unicode-bidi: embed; direction: ltr; caret-color: transparent');
+      }
+    });
+
+
+    it('should not apply ltr embedding styles on placeholder values in ltr', function () {
+      let {getAllByRole} = render(<DateField label="Date" />);
+
+      let segments = getAllByRole('spinbutton');
+      for (let segment of segments) {
+        expect(segment).not.toHaveStyle('unicode-bidi: embed; direction: ltr;');
+        expect(segment).toHaveStyle('caret-color: transparent');
+      }
+    });
+
+    it('should not apply ltr embedding styles on values in ltr', function () {
+      let {getAllByRole} = render(<DateField label="Date"  value={new CalendarDate(2020, 2, 3)} />);
+
+      let segments = getAllByRole('spinbutton');
+      for (let segment of segments) {
+        expect(segment).not.toHaveStyle('unicode-bidi: embed; direction: ltr;');
+        expect(segment).toHaveStyle('caret-color: transparent');      
+      }
+    });
+
+    it('should apply unicode-bidi: embed to time zones in rtl', function () {
+      let {getByTestId} = render(
+        <Provider theme={theme} locale="ar-EG">
+          <DateField label="Date" value={new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000, 12, 24, 45)} />
+        </Provider>);
+
+      let timezone = getByTestId('timeZoneName');
+      expect(timezone).toHaveStyle('caret-color: transparent; unicode-bidi: embed');
+      expect(timezone).not.toHaveStyle('direction: ltr');
+    });
+
+    it('should not apply unicode-bidi: embed to time zones in ltr', function () {
+      let {getByTestId} = render(<DateField label="Date" value={new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000, 12, 24, 45)} />);
+
+      let timezone = getByTestId('timeZoneName');
+      expect(timezone).toHaveStyle('caret-color: transparent');
+      expect(timezone).not.toHaveStyle('unicode-bidi: embed; direction: ltr');
+    });
+  });
 });

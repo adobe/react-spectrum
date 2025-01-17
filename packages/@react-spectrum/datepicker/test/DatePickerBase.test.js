@@ -427,12 +427,41 @@ describe('DatePickerBase', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
       }
     });
-    // TODO: figure out this test. probably remove it since the issues stem from not being able to actually calculate the position of each segments. still would like to find a way to test tho?
-    it.skip.each`
+    it.each`
       Name                   | Component
       ${'DatePicker'}        | ${DatePicker}
       ${'DateRangePicker'}   | ${DateRangePicker}
     `('$Name should support arrow keys to move between segments in an RTL locale', ({Component}) => {
+      jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+        let x = 0;
+        let el = this;
+
+        if (el.getAttribute('role') === 'spinbutton') {
+          if (el.parentElement.getAttribute('data-testid') === 'end-date') {
+            x = [...el.parentElement.children].indexOf(el) * -1;
+          } else {
+            x = [...el.parentElement.children].reverse().indexOf(el) * 1;
+          }
+        }
+  
+        if (el.getAttribute('role') === 'button') {
+          x = -100;
+        }
+  
+        return {
+          left: x,
+          right: x + 1,
+          top: 10,
+          bottom: 0,
+          x: x,
+          y: 0,
+          width: 1,
+          height: 10
+        };
+      });
+
+      jest.useFakeTimers();
+
       let {getAllByRole} = render(
         <Provider theme={theme} locale="ar-EG">
           <Component label="Date" value={new CalendarDate(2019, 2, 3)} />
@@ -455,6 +484,8 @@ describe('DatePickerBase', function () {
         expect(segments[i]).toHaveFocus();
         fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
       }
+
+      act(() => jest.runAllTimers());
     });
 
     it.each`
