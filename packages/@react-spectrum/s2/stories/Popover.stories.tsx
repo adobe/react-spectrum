@@ -20,6 +20,7 @@ import type {Meta} from '@storybook/react';
 import Org from '../s2wf-icons/S2_Icon_Buildings_20_N.svg';
 import Settings from '../s2wf-icons/S2_Icon_Settings_20_N.svg';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {UNSTABLE_Autocomplete} from 'react-aria-components';
 import User from '../s2wf-icons/S2_Icon_User_20_N.svg';
 import Users from '../s2wf-icons/S2_Icon_UserGroup_20_N.svg';
 
@@ -163,3 +164,33 @@ AccountMenu.argTypes = {
   hideArrow: {table: {disable: true}},
   placement: {table: {disable: true}}
 };
+
+
+export const Autocomplete = () => (
+  <>
+    <DialogTrigger>
+      <ActionButton aria-label="Help" styles={style({marginX: 'auto'})}>
+        <Help />
+      </ActionButton>
+      <Popover>
+        <UNSTABLE_Autocomplete>
+          <SearchField autoFocus label="Search" />
+          <Menu aria-label="test menu">
+            <MenuItem>Foo</MenuItem>
+            <MenuItem>Bar</MenuItem>
+            <MenuItem>Baz</MenuItem>
+          </Menu>
+        </UNSTABLE_Autocomplete>
+      </Popover>
+    </DialogTrigger>
+    <SearchField label="outside" />
+    <UNSTABLE_Autocomplete>
+      <SearchField autoFocus label="Search auto" />
+      <Menu aria-label="test menu">
+        <MenuItem>Foo</MenuItem>
+        <MenuItem>Bar</MenuItem>
+        <MenuItem>Baz</MenuItem>
+      </Menu>
+    </UNSTABLE_Autocomplete>
+  </>
+);

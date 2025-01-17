@@ -69,7 +69,8 @@ export const Group = /*#__PURE__*/ (forwardRef as forwardRefType)(function Group
 
   let {hoverProps, isHovered} = useHover({onHoverStart, onHoverChange, onHoverEnd, isDisabled});
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({
-    within: true
+    within: true,
+    isTextInput: true
   });
 
   isDisabled ??= !!props['aria-disabled'] && props['aria-disabled'] !== 'false';
