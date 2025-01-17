@@ -431,67 +431,6 @@ describe('DatePickerBase', function () {
       Name                   | Component
       ${'DatePicker'}        | ${DatePicker}
       ${'DateRangePicker'}   | ${DateRangePicker}
-    `('$Name should support arrow keys to move between segments in an RTL locale', ({Component}) => {
-      jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
-        let x = 0;
-        let el = this;
-
-        if (el.getAttribute('role') === 'spinbutton') {
-          if (el.parentElement.getAttribute('data-testid') === 'end-date') {
-            x = [...el.parentElement.children].indexOf(el) * -1;
-          } else {
-            x = [...el.parentElement.children].reverse().indexOf(el) * 1;
-          }
-        }
-  
-        if (el.getAttribute('role') === 'button') {
-          x = -100;
-        }
-  
-        return {
-          left: x,
-          right: x + 1,
-          top: 10,
-          bottom: 0,
-          x: x,
-          y: 0,
-          width: 1,
-          height: 10
-        };
-      });
-
-      jest.useFakeTimers();
-
-      let {getAllByRole} = render(
-        <Provider theme={theme} locale="ar-EG">
-          <Component label="Date" value={new CalendarDate(2019, 2, 3)} />
-        </Provider>
-      );
-
-      let segments = getAllByRole('spinbutton');
-      let button = getAllByRole('button')[0];
-      act(() => {segments[0].focus();});
-
-      for (let i = 0; i < segments.length; i++) {
-        expect(segments[i]).toHaveFocus();
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
-      }
-
-      expect(button).toHaveFocus();
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-
-      for (let i = segments.length - 1; i >= 0; i--) {
-        expect(segments[i]).toHaveFocus();
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-      }
-
-      act(() => jest.runAllTimers());
-    });
-
-    it.each`
-      Name                   | Component
-      ${'DatePicker'}        | ${DatePicker}
-      ${'DateRangePicker'}   | ${DateRangePicker}
     `('$Name should focus the previous segment on mouse down on a literal segment', ({Component}) => {
       let {getAllByRole, getAllByText} = render(<Component label="Date" />);
       let literals = getAllByText('/');
@@ -522,6 +461,74 @@ describe('DatePickerBase', function () {
 
       let segments = getAllByRole('spinbutton');
       expect(segments[0]).toHaveFocus();
+    });
+
+    describe('RTL focus management', function () { 
+      beforeEach(() => {
+        jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+          let x = 0;
+          let el = this;
+  
+          if (el.getAttribute('role') === 'spinbutton') {
+            if (el.parentElement.getAttribute('data-testid') === 'end-date') {
+              x = [...el.parentElement.children].indexOf(el) * -1;
+            } else {
+              x = [...el.parentElement.children].reverse().indexOf(el) * 1;
+            }
+          }
+    
+          if (el.getAttribute('role') === 'button') {
+            x = -100;
+          }
+    
+          return {
+            left: x,
+            right: x + 1,
+            top: 10,
+            bottom: 0,
+            x: x,
+            y: 10,
+            width: 1,
+            height: 10
+          };
+        });
+  
+        jest.useFakeTimers();
+      });
+
+      afterEach(() => {
+        act(() => jest.runAllTimers());
+      });
+
+      it.each`
+      Name                   | Component
+      ${'DatePicker'}        | ${DatePicker}
+      ${'DateRangePicker'}   | ${DateRangePicker}
+      `('$Name should support arrow keys to move between segments in an RTL locale', ({Component}) => {
+
+        let {getAllByRole} = render(
+          <Provider theme={theme} locale="ar-EG">
+            <Component label="Date" value={new CalendarDate(2019, 2, 3)} />
+          </Provider>
+        );
+
+        let segments = getAllByRole('spinbutton');
+        let button = getAllByRole('button')[0];
+        act(() => {segments[0].focus();});
+
+        for (let i = 0; i < segments.length; i++) {
+          expect(segments[i]).toHaveFocus();
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
+        }
+
+        expect(button).toHaveFocus();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+
+        for (let i = segments.length - 1; i >= 0; i--) {
+          expect(segments[i]).toHaveFocus();
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+        }
+      });
     });
   });
 

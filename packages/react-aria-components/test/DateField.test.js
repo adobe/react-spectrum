@@ -332,7 +332,7 @@ describe('DateField', () => {
     expect(input).toHaveStyle('unicode-bidi: isolate');
   });
 
-  it('should have the ltr embedding on segment values in rtl', async() => {
+  it('should have the ltr embedding on segment values in RTL', async() => {
     let {getAllByRole} = render(
       <I18nProvider locale="he-IL">
         <DateField defaultValue={new CalendarDate(2024, 12, 31)}>
@@ -349,7 +349,7 @@ describe('DateField', () => {
     }
   });
 
-  it('should have the ltr embedding on placeholder values in rtl', async() => {
+  it('should have the ltr embedding on placeholder values in RTL', async() => {
     let {getAllByRole} = render(
       <I18nProvider locale="he-IL">
         <DateField>
@@ -366,7 +366,7 @@ describe('DateField', () => {
     }
   });
 
-  it('should not have the ltr embedding on segment values in ltr', async() => {
+  it('should not have the ltr embedding on segment values in LTR', async() => {
     let {getByRole, getAllByRole} = render(
       <DateField defaultValue={new CalendarDate(2024, 12, 31)}>
         <Label>Birth date</Label>
@@ -377,14 +377,14 @@ describe('DateField', () => {
     );
 
     let input = getByRole('group');
-    expect(input).toHaveTextContent('mm/dd/yyyy');
+    expect(input).toHaveTextContent('12/31/2024');
 
     for (let segment of getAllByRole('spinbutton')) {
       expect(segment).not.toHaveStyle('unicode-bidi: embed; direction: ltr;');
     }
   });
 
-  it('should not have the ltr embedding on placeholder values in ltr', async() => {
+  it('should not have the ltr embedding on placeholder values in LTR', async() => {
     let {getByRole, getAllByRole} = render(
       <DateField>
         <Label>Birth date</Label>

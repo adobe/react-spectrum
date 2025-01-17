@@ -2336,7 +2336,7 @@ describe('DatePicker', function () {
   });
 
   describe('style', () => {
-    it('should apply ltr embedding styles on placeholder values in rtl', function () {
+    it('should apply ltr embedding styles on placeholder values in RTL', function () {
       let {getAllByRole} = render(
         <Provider theme={theme} locale="ar-EG">
           <DatePicker label="Date" />;
@@ -2348,7 +2348,7 @@ describe('DatePicker', function () {
       }
     });
 
-    it('should apply ltr embedding styles on values in rtl', function () {
+    it('should apply ltr embedding styles on values in RTL', function () {
       let {getAllByRole} = render(
         <Provider theme={theme} locale="ar-EG">
           <DatePicker label="Date" value={new CalendarDate(2019, 2, 3)} />;
@@ -2361,7 +2361,7 @@ describe('DatePicker', function () {
     });
 
 
-    it('should not apply ltr embedding styles on placeholder values in ltr', function () {
+    it('should not apply ltr embedding styles on placeholder values in LTR', function () {
       let {getAllByRole} = render(<DatePicker label="Date" />);
 
       let segments = getAllByRole('spinbutton');
@@ -2371,7 +2371,7 @@ describe('DatePicker', function () {
       }
     });
 
-    it('should not apply ltr embedding styles on values in ltr', function () {
+    it('should not apply ltr embedding styles on values in LTR', function () {
       let {getAllByRole} = render(<DatePicker label="Date" value={new CalendarDate(2019, 2, 3)} />);
 
       let segments = getAllByRole('spinbutton');
@@ -2381,7 +2381,7 @@ describe('DatePicker', function () {
       }
     });
 
-    it('should apply unicode-bidi: embed to time zones in rtl', function () {
+    it('should apply unicode-bidi: embed to time zones in RTL', function () {
       let {getByTestId} = render(
         <Provider theme={theme} locale="ar-EG">
           <DatePicker label="Date" value={parseZonedDateTime('2022-11-07T00:45[America/Los_Angeles]')} />
@@ -2392,7 +2392,7 @@ describe('DatePicker', function () {
       expect(timezone).not.toHaveStyle('direction: ltr');
     });
 
-    it('should not apply unicode-bidi: embed to time zones in ltr', function () {
+    it('should not apply unicode-bidi: embed to time zones in LTR', function () {
       let {getByTestId} = render(<DatePicker label="Date" value={parseZonedDateTime('2022-11-07T00:45[America/Los_Angeles]')} />);
 
       let timezone = getByTestId('timeZoneName');

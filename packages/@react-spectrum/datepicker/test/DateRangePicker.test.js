@@ -1825,7 +1825,7 @@ describe('DateRangePicker', function () {
   });
 
   describe('style', () => {
-    it('should apply ltr embedding styles on placeholder values in rtl', function () {
+    it('should apply ltr embedding styles on placeholder values in RTL', function () {
       let {getAllByRole} = render(
         <Provider theme={theme} locale="ar-EG">
           <DateRangePicker label="Date" />;
@@ -1839,7 +1839,7 @@ describe('DateRangePicker', function () {
       }
     });
 
-    it('should apply ltr embedding styles on values in rtl', function () {
+    it('should apply ltr embedding styles on values in RTL', function () {
       let {getAllByRole} = render(
         <Provider theme={theme} locale="ar-EG">
           <DateRangePicker label="Date" value={{start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2019, 5, 6)}} />;
@@ -1853,7 +1853,7 @@ describe('DateRangePicker', function () {
       }
     });
 
-    it('should not apply ltr embedding styles on placeholder values in ltr', function () {
+    it('should not apply ltr embedding styles on placeholder values in LTR', function () {
       let {getAllByRole} = render(<DateRangePicker label="Date" />);
 
       let segments = getAllByRole('spinbutton');
@@ -1865,7 +1865,7 @@ describe('DateRangePicker', function () {
       }
     });
 
-    it('should not apply ltr embedding styles on values in ltr', function () {
+    it('should not apply ltr embedding styles on values in LTR', function () {
       let {getAllByRole} = render(<DateRangePicker label="Date" value={{start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2019, 5, 6)}} />);
 
       let segments = getAllByRole('spinbutton');
@@ -1877,7 +1877,7 @@ describe('DateRangePicker', function () {
       }
     });
 
-    it('should apply unicode-bidi: embed to time zones in rtl', function () {
+    it('should apply unicode-bidi: embed to time zones in RTL', function () {
       let {getAllByTestId} = render(
         <Provider theme={theme} locale="ar-EG">
           <DateRangePicker 
@@ -1895,7 +1895,7 @@ describe('DateRangePicker', function () {
       }
     });
 
-    it('should not apply unicode-bidi: embed to time zones in ltr', function () {
+    it('should not apply unicode-bidi: embed to time zones in LTR', function () {
       let {getAllByTestId} = render(
         <DateRangePicker 
           label="Date" 
