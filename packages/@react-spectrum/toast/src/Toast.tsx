@@ -17,8 +17,8 @@ import CrossMedium from '@spectrum-icons/ui/CrossMedium';
 import {DOMProps, DOMRef} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {flushSync} from 'react-dom';
-// @ts-ignore
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {QueuedToast, ToastState} from '@react-stately/toast';
 import React from 'react';
@@ -92,6 +92,7 @@ export const Toast = React.forwardRef(function Toast(props: SpectrumToastProps, 
     ...closeButtonProps,
     onPress: (e) => {
       if ('startViewTransition' in document) {
+        // @ts-ignore
         document.startViewTransition(() => {
           flushSync(() => {
             closeButtonProps.onPress?.(e);
