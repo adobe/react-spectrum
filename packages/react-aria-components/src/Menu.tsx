@@ -70,20 +70,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
     ref: ref,
     onResize: onResize
   });
-
   let scrollRef = useRef(null);
-
-  // TODO: may need to do the same as below? Will need it if the subdialog shouldn't have data-react-aria-top-layer
-  // // Close when clicking outside the root menu when a submenu is open.
-  // let rootOverlayRef = useRef(null);
-  // let rootOverlayDomRef = unwrapDOMRef(rootOverlayRef);
-  // useInteractOutside({
-  //   ref: rootOverlayDomRef,
-  //   onInteractOutside: () => {
-  //     state?.close();
-  //   },
-  //   isDisabled: !state.isOpen || state.expandedKeysStack.length === 0
-  // });
 
   return (
     <Provider
@@ -188,43 +175,26 @@ export const SubdialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogt
   let submenuTriggerState = useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
   let subdialogRef = useRef<HTMLDivElement>(null);
   let itemRef = useObjectRef(ref);
-  let {parentMenuRef} = useContext(SubmenuTriggerContext)!;
+  let {parentMenuRef, isVirtualFocus} = useContext(SubmenuTriggerContext)!;
   let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger({
     parentMenuRef,
     submenuRef: subdialogRef,
     type: 'dialog',
-    delay: props.delay
+    delay: props.delay,
+    isVirtualFocus
     // TODO: might need to have something like isUnavailable like we do for ContextualHelpTrigger
   }, submenuTriggerState, itemRef);
 
-
-  // TODO this was in contextual help trigger, see what it is needed for. It was provided to the Popover along with onDismissButtonPress
-  // let onBlurWithin = (e) => {
-  //   if (e.relatedTarget && popoverRef.current && (!popoverRef.current.UNSAFE_getDOMNode()?.contains(e.relatedTarget) && !(e.relatedTarget === triggerRef.current && getInteractionModality() === 'pointer'))) {
-  //     if (submenuTriggerState.isOpen) {
-  //       submenuTriggerState.close();
-  //     }
-  //   }
-  // };
-
-  // let onDismissButtonPress = () => {
-  //   submenuTriggerState.close();
-  //   parentMenuRef.current?.focus();
-  // };
-
+  // TODO: test the dismiss button
+  // TODO: figure out why shift tabbing is closing the entire menu in the dialog
   return (
     <Provider
       values={[
         [MenuItemContext, {...submenuTriggerProps, onAction: undefined, ref: itemRef}],
-        // TODO make this dialog context? Or do we neeed submenuProps? RSP Contextual help doesn't use submenuProps at all
-        // meaning things like the id for aria-controls aren't hooked up. This might be ok since if I remember correctly that
-        // attribute doesn't do anything screenreader wise. However, currently due to data-react-aria-top-layer=true we need to handle Esc at the Dialog level
-        // Also this feels like it should cover more than Dialog?
         [DialogContext, submenuProps],
         [OverlayTriggerStateContext, submenuTriggerState],
         [PopoverContext, {
           ref: subdialogRef,
-          // TODO: figure out if this is important, think it is just so user can control the offset like in Popover tailwind
           trigger: 'SubdialogTrigger',
           triggerRef: itemRef,
           placement: 'end top',
@@ -240,7 +210,6 @@ export const SubdialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogt
         }]
       ]}>
       <CollectionBranch collection={state.collection} parent={item} />
-      {/* TODO: perhaps this should render a container or sorts? */}
       {props.children[1]}
     </Provider>
   );

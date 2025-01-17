@@ -85,10 +85,10 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
     if (target !== collectionRef.current) {
       if (delayNextActiveDescendant.current) {
         queuedActiveDescendant.current = target.id;
-        clearedFocusedId.current = null;
         timeout.current = setTimeout(() => {
           state.setFocusedNodeId(target.id);
           queuedActiveDescendant.current = null;
+          clearedFocusedId.current = null;
         }, 500);
       } else {
         state.setFocusedNodeId(target.id);
