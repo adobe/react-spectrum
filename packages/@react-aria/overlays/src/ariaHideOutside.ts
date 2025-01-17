@@ -106,7 +106,10 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
     observerStack[observerStack.length - 1].disconnect();
   }
 
+  let startTime = Date.now();
   walk(root);
+  let endTime = Date.now();
+  console.log(`walk took ${endTime - startTime}ms`);
 
   let observer = new MutationObserver(changes => {
     for (let change of changes) {
