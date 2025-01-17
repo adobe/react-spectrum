@@ -38,6 +38,7 @@ const focusParams = {
 
 const openParams = {
   chromaticProvider: {
+    locales: ['en-US'],
     colorSchemes: ['light'],
     scales: ['medium'],
     disableAnimations: true,
@@ -79,48 +80,6 @@ export const ValueTime = () => <DatePicker label="Date" value={dateTime} />;
 export const ValueZoned = () => <DatePicker label="Date" value={zonedDateTime} />;
 export const ValueFocus = () => <DatePicker label="Date" value={date} autoFocus />;
 ValueFocus.parameters = focusParams;
-
-export const ValueLTRInteractions = () => <DatePicker label="Date" value={date} />;
-ValueLTRInteractions.parameters = {
-  chromaticProvider: {
-    locales: ['en-US'],
-    scales: ['medium'],
-    colorSchemes: ['light'],
-    express: false
-  }
-};
-
-ValueLTRInteractions.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  await userEvent.keyboard('[ArrowRight]');
-  await userEvent.keyboard('[ArrowRight]');
-  await userEvent.keyboard('[ArrowRight]');
-  await userEvent.keyboard('[Enter]]');
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('dialog');
-  await userEvent.keyboard('[ArrowRight]');
-};
-
-export const ValueRTLInteractions = () => <DatePicker label="Date" value={date} />;
-ValueRTLInteractions.parameters = {
-  chromaticProvider: {
-    locales: ['ar-EG'],
-    scales: ['medium'],
-    colorSchemes: ['light'],
-    express: false
-  }
-};
-
-ValueRTLInteractions.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  await userEvent.keyboard('[ArrowLeft]');
-  await userEvent.keyboard('[ArrowLeft]');
-  await userEvent.keyboard('[ArrowLeft]');
-  await userEvent.keyboard('[Enter]]');
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('dialog');
-  await userEvent.keyboard('[ArrowLeft]');
-};
 
 export const DisabledPlaceholder = () => <DatePicker label="Date" placeholderValue={date} isDisabled />;
 export const DisabledValue = () => <DatePicker label="Date" value={date} isDisabled />;
@@ -199,6 +158,50 @@ OpenExpress.parameters = {
   }
 };
 OpenExpress.decorators = openDecorators;
+
+export const OpenLTRInteractions = () => <DatePicker label="Date" value={date} />;
+OpenLTRInteractions.parameters = {
+  chromaticProvider: {
+    locales: ['en-US'],
+    scales: ['medium'],
+    colorSchemes: ['light'],
+    express: false
+  }
+};
+OpenLTRInteractions.decorators = openDecorators;
+
+OpenLTRInteractions.play = async ({canvasElement}) => {
+  await userEvent.tab();
+  await userEvent.keyboard('[ArrowRight]');
+  await userEvent.keyboard('[ArrowRight]');
+  await userEvent.keyboard('[ArrowRight]');
+  await userEvent.keyboard('[Enter]]');
+  let body = canvasElement.ownerDocument.body;
+  await within(body).findByRole('dialog');
+  await userEvent.keyboard('[ArrowRight]');
+};
+
+export const OpenRTLInteractions = () => <DatePicker label="Date" value={date} />;
+OpenRTLInteractions.parameters = {
+  chromaticProvider: {
+    locales: ['ar-EG'],
+    scales: ['medium'],
+    colorSchemes: ['light'],
+    express: false
+  }
+};
+OpenRTLInteractions.decorators = openDecorators;
+
+OpenRTLInteractions.play = async ({canvasElement}) => {
+  await userEvent.tab();
+  await userEvent.keyboard('[ArrowLeft]');
+  await userEvent.keyboard('[ArrowLeft]');
+  await userEvent.keyboard('[ArrowLeft]');
+  await userEvent.keyboard('[Enter]]');
+  let body = canvasElement.ownerDocument.body;
+  await within(body).findByRole('dialog');
+  await userEvent.keyboard('[ArrowLeft]');
+};
 
 export const MultipleMonths = () => <DatePicker label="Date" value={date} isOpen shouldFlip={false} maxVisibleMonths={3} />;
 MultipleMonths.parameters = openParams;
