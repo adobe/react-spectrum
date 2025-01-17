@@ -46,6 +46,16 @@ const openParams = {
   }
 };
 
+const openParamsRTL = {
+  chromaticProvider: {
+    locales: ['he-IL'],
+    colorSchemes: ['light'],
+    scales: ['medium'],
+    disableAnimations: true,
+    express: false
+  }
+};
+
 const openDecorators = [Story => <div style={{height: 550}}><Story /></div>];
 
 const date = new CalendarDate(2022, 2, 3);
@@ -122,9 +132,17 @@ export const OpenPlaceholder = () => <DatePicker label="Date" placeholderValue={
 OpenPlaceholder.parameters = openParams;
 OpenPlaceholder.decorators = openDecorators;
 
+export const OpenPlaceholderRTL = () => <DatePicker label="Date" placeholderValue={date} isOpen shouldFlip={false} />;
+OpenPlaceholderRTL.parameters = openParamsRTL;
+OpenPlaceholderRTL.decorators = openDecorators;
+
 export const OpenValue = () => <DatePicker label="Date" value={date} isOpen shouldFlip={false} />;
 OpenValue.parameters = openParams;
 OpenValue.decorators = openDecorators;
+
+export const OpenValueRTL = () => <DatePicker label="Date" value={date} isOpen shouldFlip={false} />;
+OpenValueRTL.parameters = openParamsRTL;
+OpenValueRTL.decorators = openDecorators;
 
 export const OpenTime = () => <DatePicker label="Date" value={dateTime} isOpen shouldFlip={false} />;
 OpenTime.parameters = openParams;
