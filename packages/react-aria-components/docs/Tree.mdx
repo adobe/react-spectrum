@@ -340,7 +340,7 @@ let testUtilUser = new User({interactionType: 'mouse'});
 it('Tree can select a row via keyboard', async function () {
   // Render your test component/app and initialize the Tree tester
   let {getByTestId} = render(
-     <Tree data-testid="test-tree">
+     <Tree data-testid="test-tree" selectionMode="multiple">
       ...
     </Tree>
   );

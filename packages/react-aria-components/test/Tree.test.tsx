@@ -497,11 +497,11 @@ describe('Tree', () => {
       expect(row).not.toHaveAttribute('data-pressed');
       expect(row).not.toHaveClass('pressed');
 
-      fireEvent.mouseDown(row);
+      await user.pointer({target: row, keys: '[MouseLeft>]'});
       expect(row).toHaveAttribute('data-pressed', 'true');
       expect(row).toHaveClass('pressed');
 
-      fireEvent.mouseUp(row);
+      await user.pointer({target: row, keys: '[/MouseLeft]'});
       expect(row).not.toHaveAttribute('data-pressed');
       expect(row).not.toHaveClass('pressed');
 
@@ -510,36 +510,36 @@ describe('Tree', () => {
       expect(row).not.toHaveAttribute('data-pressed');
       expect(row).not.toHaveClass('pressed');
 
-      fireEvent.mouseDown(row);
+      await user.pointer({target: row, keys: '[MouseLeft>]'});
       expect(row).toHaveAttribute('data-pressed', 'true');
       expect(row).toHaveClass('pressed');
 
-      fireEvent.mouseUp(row);
+      await user.pointer({target: row, keys: '[/MouseLeft]'});
       expect(row).not.toHaveAttribute('data-pressed');
       expect(row).not.toHaveClass('pressed');
     });
 
-    it('should not update the press state if the row is not interactive', () => {
+    it('should not update the press state if the row is not interactive', async () => {
       let {getAllByRole, rerender} = render(<StaticTree treeProps={{selectionMode: 'none'}} rowProps={{className: ({isPressed}) => isPressed ? 'pressed' : ''}} />);
 
       let row = getAllByRole('row')[0];
       expect(row).not.toHaveAttribute('data-pressed');
       expect(row).not.toHaveClass('pressed');
 
-      fireEvent.mouseDown(row);
+      await user.pointer({target: row, keys: '[MouseLeft>]'});
       expect(row).not.toHaveAttribute('data-pressed');
       expect(row).not.toHaveClass('pressed');
-      fireEvent.mouseUp(row);
+      await user.pointer({target: row, keys: '[/MouseLeft]'});
 
       let expandableRow = getAllByRole('row')[1];
       expect(expandableRow).not.toHaveAttribute('data-pressed');
       expect(expandableRow).not.toHaveClass('pressed');
 
-      fireEvent.mouseDown(expandableRow);
+      await user.pointer({target: expandableRow, keys: '[MouseLeft>]'});
       expect(expandableRow).toHaveAttribute('data-pressed', 'true');
       expect(expandableRow).toHaveClass('pressed');
 
-      fireEvent.mouseUp(expandableRow);
+      await user.pointer({target: expandableRow, keys: '[/MouseLeft]'});
       expect(expandableRow).not.toHaveAttribute('data-pressed');
       expect(expandableRow).not.toHaveClass('pressed');
 
@@ -550,10 +550,10 @@ describe('Tree', () => {
       expect(expandableRow).not.toHaveAttribute('data-pressed');
       expect(expandableRow).not.toHaveClass('pressed');
 
-      fireEvent.mouseDown(expandableRow);
+      await user.pointer({target: expandableRow, keys: '[MouseLeft>]'});
       expect(expandableRow).not.toHaveAttribute('data-pressed');
       expect(expandableRow).not.toHaveClass('pressed');
-      fireEvent.mouseUp(expandableRow);
+      await user.pointer({target: expandableRow, keys: '[/MouseLeft]'});
     });
 
     it('should support focus', async () => {

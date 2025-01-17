@@ -34,7 +34,7 @@ export interface UserOpts {
 
 export interface BaseTesterOpts extends UserOpts {
   /** @private */
-  user: any,
+  user?: any,
   /** The base element for the given tester (e.g. the table, menu trigger button, etc). */
   root: HTMLElement
 }
