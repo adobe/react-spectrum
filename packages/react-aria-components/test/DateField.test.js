@@ -13,6 +13,7 @@
 import {act, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {CalendarDate} from '@internationalized/date';
 import {DateField, DateFieldContext, DateInput, DateSegment, FieldError, Label, Text} from '../';
+import {I18nProvider} from '@react-aria/i18n';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -315,5 +316,89 @@ describe('DateField', () => {
     expect(document.activeElement).toBe(segments[1]);
     await user.keyboard('{backspace}');
     expect(document.activeElement).toBe(segments[0]);
+  });
+
+  it('should have the unicode-bidi: isolate on the input group', async() => {
+    let {getByRole} = render(
+      <DateField defaultValue={new CalendarDate(2024, 12, 31)}>
+        <Label>Birth date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+
+    let input = getByRole('group');
+    expect(input).toHaveStyle('unicode-bidi: isolate');
+  });
+
+  it('should have the ltr embedding on segment values in rtl', async() => {
+    let {getAllByRole} = render(
+      <I18nProvider locale="he-IL">
+        <DateField defaultValue={new CalendarDate(2024, 12, 31)}>
+          <Label>Birth date</Label>
+          <DateInput>
+            {segment => <DateSegment segment={segment} />}
+          </DateInput>
+        </DateField>
+      </I18nProvider>
+    );
+
+    for (let segment of getAllByRole('spinbutton')) {
+      expect(segment).toHaveStyle('unicode-bidi: embed; direction: ltr;');
+    }
+  });
+
+  it('should have the ltr embedding on placeholder values in rtl', async() => {
+    let {getAllByRole} = render(
+      <I18nProvider locale="he-IL">
+        <DateField>
+          <Label>Birth date</Label>
+          <DateInput>
+            {segment => <DateSegment segment={segment} />}
+          </DateInput>
+        </DateField>
+      </I18nProvider>
+    );
+
+    for (let segment of getAllByRole('spinbutton')) {
+      expect(segment).toHaveStyle('unicode-bidi: embed; direction: ltr;');
+    }
+  });
+
+  it('should not have the ltr embedding on segment values in ltr', async() => {
+    let {getByRole, getAllByRole} = render(
+      <DateField defaultValue={new CalendarDate(2024, 12, 31)}>
+        <Label>Birth date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+
+    let input = getByRole('group');
+    expect(input).toHaveTextContent('mm/dd/yyyy');
+
+    for (let segment of getAllByRole('spinbutton')) {
+      expect(segment).not.toHaveStyle('unicode-bidi: embed; direction: ltr;');
+    }
+  });
+
+  it('should not have the ltr embedding on placeholder values in ltr', async() => {
+    let {getByRole, getAllByRole} = render(
+      <DateField>
+        <Label>Birth date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+
+    let input = getByRole('group');
+    expect(input).toHaveTextContent('mm/dd/yyyy');
+
+    for (let segment of getAllByRole('spinbutton')) {
+      expect(segment).not.toHaveStyle('unicode-bidi: embed; direction: ltr;');
+    }
   });
 });
