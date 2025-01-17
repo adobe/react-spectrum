@@ -47,3 +47,4 @@ export {inertValue} from './inertValue';
 export {CLEAR_FOCUS_EVENT, FOCUS_EVENT, UPDATE_ACTIVEDESCENDANT} from './constants';
 export {isCtrlKeyPressed} from './keyboard';
 export {useEnterAnimation, useExitAnimation} from './animation';
+export {isFocusable, isTabbable} from './isFocusable';

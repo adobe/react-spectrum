@@ -77,11 +77,17 @@ describe('useSelectableCollection', () => {
     type                     | prepare               | actions
     ${'VO Events'}           | ${installPointerEvent}| ${[
       (el) => fireEvent.pointerDown(el, {button: 0, pointerType: 'virtual'}),
-      (el) => fireEvent.pointerUp(el, {button: 0, pointerType: 'virtual'})
+      (el) => {
+        fireEvent.pointerUp(el, {button: 0, pointerType: 'virtual'});
+        fireEvent.click(el, {detail: 1});
+      }
     ]}
     ${'Touch Pointer Events'} | ${installPointerEvent}| ${[
       (el) => fireEvent.pointerDown(el, {button: 0, pointerType: 'touch', pointerId: 1}),
-      (el) => fireEvent.pointerUp(el, {button: 0, pointerType: 'touch', pointerId: 1})
+      (el) => {
+        fireEvent.pointerUp(el, {button: 0, pointerType: 'touch', pointerId: 1});
+        fireEvent.click(el, {detail: 1});
+      }
     ]}
   `('always uses toggle for $type', ({prepare, actions: [start, end]}) => {
     prepare();

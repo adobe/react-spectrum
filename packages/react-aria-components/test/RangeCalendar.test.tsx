@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button, CalendarCell, CalendarGrid, CalendarGridBody, CalendarGridHeader, CalendarHeaderCell, Heading, RangeCalendar, RangeCalendarContext} from 'react-aria-components';
 import {CalendarDate, getLocalTimeZone, startOfMonth, startOfWeek, today} from '@internationalized/date';
 import {DateValue} from '@react-types/calendar';
@@ -220,7 +220,7 @@ describe('RangeCalendar', () => {
     expect(cell).not.toHaveClass('focus');
   });
 
-  it('should support press state', () => {
+  it('should support press state', async () => {
     let {getByRole} = renderCalendar({}, {}, {className: ({isPressed}) => isPressed ? 'pressed' : ''});
     let grid = getByRole('grid');
     let cell = within(grid).getAllByRole('button')[7];
@@ -228,11 +228,11 @@ describe('RangeCalendar', () => {
     expect(cell).not.toHaveAttribute('data-pressed');
     expect(cell).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(cell);
+    await user.pointer({target: cell, keys: '[MouseLeft>]'});
     expect(cell).toHaveAttribute('data-pressed', 'true');
     expect(cell).toHaveClass('pressed');
 
-    fireEvent.mouseUp(cell);
+    await user.pointer({target: cell, keys: '[/MouseLeft]'});
     expect(cell).not.toHaveAttribute('data-pressed');
     expect(cell).not.toHaveClass('pressed');
   });
