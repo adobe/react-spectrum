@@ -190,6 +190,12 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   }
 
   let onPressStart = (e: PressEvent) => {
+    // TODO: ideally this would be done in useselectableItem but we don't apply that hooks onPress if the node is a menu trigger
+    if (data.shouldUseVirtualFocus && (e.pointerType === 'virtual' || e.pointerType === 'keyboard')) {
+      selectionManager.setFocused(true);
+      selectionManager.setFocusedKey(key);
+    }
+
     if (e.pointerType === 'keyboard') {
       performAction(e);
     }
@@ -206,6 +212,11 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   };
 
   let onPressUp = (e: PressEvent) => {
+    if (data.shouldUseVirtualFocus && (e.pointerType === 'touch' || e.pointerType === 'mouse')) {
+      selectionManager.setFocused(true);
+      selectionManager.setFocusedKey(key);
+    }
+
     // If interacting with mouse, allow the user to mouse down on the trigger button,
     // drag, and release over an item (matching native behavior).
     if (e.pointerType === 'mouse') {

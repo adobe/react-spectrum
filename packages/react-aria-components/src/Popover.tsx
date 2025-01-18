@@ -52,7 +52,13 @@ export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPo
    * anchor element.
    * @default 8
    */
-  offset?: number
+  offset?: number,
+  // TODO: perhaps should be in the hooks, up to debate if we feel this should be part of the API
+  /**
+   * Handler that is called when the Popover's dismiss button is triggered.
+   * @default () => state.close()
+   */
+  onDismissButtonPress?: () => void
 }
 
 export interface PopoverRenderProps {
@@ -126,10 +132,11 @@ interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderP
   isEntering?: boolean,
   isExiting: boolean,
   UNSTABLE_portalContainer?: Element,
-  trigger?: string
+  trigger?: string,
+  onDismissButtonPress?: () => void
 }
 
-function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: PopoverInnerProps) {
+function PopoverInner({state, isExiting, UNSTABLE_portalContainer, onDismissButtonPress, ...props}: PopoverInnerProps) {
   // Calculate the arrow size internally (and remove props.arrowSize from PopoverProps)
   // Referenced from: packages/@react-spectrum/tooltip/src/TooltipTrigger.tsx
   let arrowRef = useRef<HTMLDivElement>(null);
@@ -160,7 +167,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: Po
   });
 
   let style = {...popoverProps.style, ...renderProps.style};
-
+  let onDismiss = onDismissButtonPress ? onDismissButtonPress : state.close;
   return (
     <Overlay {...props} isExiting={isExiting} portalContainer={UNSTABLE_portalContainer}>
       {!props.isNonModal && state.isOpen && <div data-testid="underlay" {...underlayProps} style={{position: 'fixed', inset: 0}} />}
@@ -174,11 +181,11 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: Po
         data-placement={placement}
         data-entering={isEntering || undefined}
         data-exiting={isExiting || undefined}>
-        {!props.isNonModal && <DismissButton onDismiss={state.close} />}
+        {!props.isNonModal && <DismissButton onDismiss={onDismiss} />}
         <OverlayArrowContext.Provider value={{...arrowProps, placement, ref: arrowRef}}>
           {renderProps.children}
         </OverlayArrowContext.Provider>
-        <DismissButton onDismiss={state.close} />
+        <DismissButton onDismiss={onDismiss} />
       </div>
     </Overlay>
   );

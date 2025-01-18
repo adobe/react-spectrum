@@ -131,7 +131,13 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
         if (!isVirtualFocus) {
           ref.current?.focus();
         }
-        break;
+        return;
+      default:
+        // Ensure events like Tab are still handled by the FocusScope
+        if ('continuePropagation' in e) {
+          e.continuePropagation();
+        }
+
     }
   };
 
@@ -204,6 +210,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
     if (!isDisabled && (e.pointerType === 'touch' || e.pointerType === 'mouse')) {
       // For touch or on a desktop device with a small screen open on press up to possible problems with
       // press up happening on the newly opened tray items
+      console.log('2')
       onSubmenuOpen();
     }
   };
@@ -254,6 +261,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
     submenuProps,
     popoverProps: {
       isNonModal: true,
+      // TODO: maybe also include a check that we aren't in a screen reader experience? Kinda gross
       disableFocusManagement: type === 'menu' && !isVirtualFocus,
       shouldCloseOnInteractOutside
     }

@@ -185,8 +185,17 @@ export const SubdialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogt
     // TODO: might need to have something like isUnavailable like we do for ContextualHelpTrigger
   }, submenuTriggerState, itemRef);
 
+  let onDismissButtonPress = () => {
+    submenuTriggerState.close();
+    // TODO: this doesn't quite work because the items don't have a tab index. Even if they did, the FocusScope is going to restore
+    // focus to the previously focused input field of the autocomplete since we want that to happen for desktop...
+    itemRef.current?.focus();
+  };
+
+
   // TODO: test the dismiss button
-  // TODO: figure out why shift tabbing is closing the entire menu in the dialog
+  // looks like it moves focus back to the input which we want for desktop but not for mobile screen readers...
+
   return (
     <Provider
       values={[
@@ -206,6 +215,7 @@ export const SubdialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogt
           // Prevent parent popover from hiding subdialog.
           // @ts-ignore
           'data-react-aria-top-layer': true,
+          onDismissButtonPress,
           ...popoverProps
         }]
       ]}>
