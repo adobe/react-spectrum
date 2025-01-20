@@ -469,7 +469,7 @@ const columnStyles = style({
   },
   paddingX: {
     default: 16,
-    isColumnResizable: 0
+    isMenu: 0
   },
   textAlign: {
     align: {
@@ -496,7 +496,7 @@ const columnStyles = style({
   borderStartWidth: 0,
   borderEndWidth: {
     default: 0,
-    isColumnResizable: 1
+    isMenu: 1
   },
   borderStyle: 'solid',
   forcedColorAdjust: 'none'
@@ -525,20 +525,20 @@ export const Column = forwardRef(function Column(props: ColumnProps, ref: DOMRef
   let {isQuiet} = useContext(InternalTableContext);
   let {allowsResizing, children, align = 'start'} = props;
   let domRef = useDOMRef(ref);
-  let isColumnResizable = allowsResizing;
+  let isMenu = allowsResizing || !!props.menu;
 
 
   return (
-    <RACColumn {...props} ref={domRef} style={{borderInlineEndColor: 'transparent'}} className={renderProps => columnStyles({...renderProps, isColumnResizable, align, isQuiet})}>
+    <RACColumn {...props} ref={domRef} style={{borderInlineEndColor: 'transparent'}} className={renderProps => columnStyles({...renderProps, isMenu, align, isQuiet})}>
       {({allowsSorting, sortDirection, isFocusVisible, sort, startResize, isHovered}) => (
         <>
           {/* Note this is mainly for column's without a dropdown menu. If there is a dropdown menu, the button is styled to have a focus ring for simplicity
           (no need to juggle showing this focus ring if focus is on the menu button and not if it is on the resizer) */}
           {/* Separate absolutely positioned element because appyling the ring on the column directly via outline means the ring's required borderRadius will cause the bottom gray border to curve as well */}
           {isFocusVisible && <CellFocusRing />}
-          {isColumnResizable || !!props.menu ?
+          {isMenu ?
             (
-              <ResizableColumnContents isColumnResizable={isColumnResizable} menu={props.menu} allowsSorting={allowsSorting} sortDirection={sortDirection} sort={sort} startResize={startResize} isHovered={isHeaderRowHovered || isHovered} align={align}>
+              <ResizableColumnContents isColumnResizable={allowsResizing} menu={props.menu} allowsSorting={allowsSorting} sortDirection={sortDirection} sort={sort} startResize={startResize} isHovered={isHeaderRowHovered || isHovered} align={align}>
                 {children}
               </ResizableColumnContents>
             ) : (
@@ -791,11 +791,13 @@ function ResizableColumnContents(props: ResizableColumnContentProps) {
           <Chevron size="M" className={chevronIcon} />
         </Button>
         <Menu onAction={onMenuSelect} styles={style({minWidth: 128})}>
-          <MenuSection>
-            <Collection items={items}>
-              {(item) => <MenuItem>{item?.label}</MenuItem>}
-            </Collection>
-          </MenuSection>
+          {items.length > 0 && (
+            <MenuSection aria-label='Sort or resize?'>
+              <Collection items={items}>
+                {(item) => <MenuItem>{item?.label}</MenuItem>}
+              </Collection>
+            </MenuSection>
+          )}
           {menu}
         </Menu>
       </MenuTrigger>
