@@ -17,7 +17,7 @@ import Add from '@spectrum-icons/workflow/Add';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {ColumnSize} from '@react-types/table';
 import {ControllingResize} from '../stories/ControllingResize';
-import {fireEvent, installPointerEvent, pointerMap, simulateDesktop} from '@react-spectrum/test-utils-internal';
+import {fireEvent, installPointerEvent, pointerMap, simulateDesktop, triggerTouch} from '@react-spectrum/test-utils-internal';
 import {HidingColumns} from '../stories/HidingColumns';
 import {Key} from '@react-types/shared';
 import {Provider} from '@react-spectrum/provider';
@@ -978,14 +978,12 @@ describe('TableViewSizing', function () {
         let header = tree.getAllByRole('columnheader')[0];
         let resizableHeader = within(header).getByRole('button');
 
-        fireEvent.pointerDown(resizableHeader, {pointerType: 'touch', pointerId: 1});
-        fireEvent.pointerUp(resizableHeader, {pointerType: 'touch', pointerId: 1});
+        triggerTouch(resizableHeader);
         act(() => {jest.runAllTimers();});
 
         let resizeMenuItem = tree.getAllByRole('menuitem')[0];
 
-        fireEvent.pointerDown(resizeMenuItem, {pointerType: 'touch', pointerId: 1});
-        fireEvent.pointerUp(resizeMenuItem, {pointerType: 'touch', pointerId: 1});
+        triggerTouch(resizeMenuItem);
         act(() => {jest.runAllTimers();});
 
         let resizer = tree.getByRole('slider');

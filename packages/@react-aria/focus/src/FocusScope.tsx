@@ -13,7 +13,7 @@
 import {FocusableElement, RefObject} from '@react-types/shared';
 import {focusSafely} from './focusSafely';
 import {getInteractionModality} from '@react-aria/interactions';
-import {getOwnerDocument, isAndroid, isChrome, useLayoutEffect} from '@react-aria/utils';
+import {getOwnerDocument, isAndroid, isChrome, isFocusable, isTabbable, useLayoutEffect} from '@react-aria/utils';
 import {isElementVisible} from './isElementVisible';
 import React, {ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 
@@ -266,31 +266,6 @@ function createFocusManagerForScope(scopeRef: React.RefObject<Element[] | null>)
       return previousNode;
     }
   };
-}
-
-const focusableElements = [
-  'input:not([disabled]):not([type=hidden])',
-  'select:not([disabled])',
-  'textarea:not([disabled])',
-  'button:not([disabled])',
-  'a[href]',
-  'area[href]',
-  'summary',
-  'iframe',
-  'object',
-  'embed',
-  'audio[controls]',
-  'video[controls]',
-  '[contenteditable]:not([contenteditable^="false"])'
-];
-
-const FOCUSABLE_ELEMENT_SELECTOR = focusableElements.join(':not([hidden]),') + ',[tabindex]:not([disabled]):not([hidden])';
-
-focusableElements.push('[tabindex]:not([tabindex="-1"]):not([disabled])');
-const TABBABLE_ELEMENT_SELECTOR = focusableElements.join(':not([hidden]):not([tabindex="-1"]),');
-
-export function isFocusable(element: HTMLElement) {
-  return element.matches(FOCUSABLE_ELEMENT_SELECTOR);
 }
 
 function getScopeRoot(scope: Element[]) {
@@ -749,7 +724,7 @@ function restoreFocusToElement(node: FocusableElement) {
  * that matches all focusable/tabbable elements.
  */
 export function getFocusableTreeWalker(root: Element, opts?: FocusManagerOptions, scope?: Element[]) {
-  let selector = opts?.tabbable ? TABBABLE_ELEMENT_SELECTOR : FOCUSABLE_ELEMENT_SELECTOR;
+  let filter = opts?.tabbable ? isTabbable : isFocusable;
   let walker = getOwnerDocument(root).createTreeWalker(
     root,
     NodeFilter.SHOW_ELEMENT,
@@ -760,7 +735,7 @@ export function getFocusableTreeWalker(root: Element, opts?: FocusManagerOptions
           return NodeFilter.FILTER_REJECT;
         }
 
-        if ((node as Element).matches(selector)
+        if (filter(node as Element)
           && isElementVisible(node as Element)
           && (!scope || isElementInScope(node as Element, scope))
           && (!opts?.accept || opts.accept(node as Element))
