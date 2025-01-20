@@ -228,6 +228,18 @@ describe('string conversion', function () {
       expect(date).toEqual(expected);
     });
 
+    it('should parse a date with the Z offset', function () {
+      let date = parseZonedDateTime('2020-02-03Z');
+      let expected = new ZonedDateTime(2020, 2, 3, 'UTC', 0);
+      expect(date).toEqual(expected);
+    });
+
+    it('should parse a date with time with the Z offset', function () {
+      let date = parseZonedDateTime('2020-02-03T12:24:45Z');
+      let expected = new ZonedDateTime(2020, 2, 3, 'UTC', 0, 12, 24, 45);
+      expect(date).toEqual(expected);
+    });
+
     it('should parse a date with a time but no offset', function () {
       let date = parseZonedDateTime('2020-02-03T12:24:45[America/Los_Angeles]');
       let expected = new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000, 12, 24, 45);

@@ -20,7 +20,7 @@ import {Mutable} from './utils';
 const TIME_RE = /^(\d{2})(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?$/;
 const DATE_RE = /^([+-]\d{6}|\d{4})-(\d{2})-(\d{2})$/;
 const DATE_TIME_RE = /^([+-]\d{6}|\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?$/;
-const ZONED_DATE_TIME_RE = /^([+-]\d{6}|\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:([+-]\d{2})(?::?(\d{2}))?)?\[(.*?)\]$/;
+const ZONED_DATE_TIME_RE = /^([+-]\d{6}|\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:([+-]\d{2})(?::?(\d{2}))?)?(\[(.*?)\]|Z)$/;
 const ABSOLUTE_RE = /^([+-]\d{6}|\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:(?:([+-]\d{2})(?::?(\d{2}))?)|Z)$/;
 const DATE_TIME_DURATION_RE =
     /^((?<negative>-)|\+)?P((?<years>\d*)Y)?((?<months>\d*)M)?((?<weeks>\d*)W)?((?<days>\d*)D)?((?<time>T)((?<hours>\d*[.,]?\d{1,9})H)?((?<minutes>\d*[.,]?\d{1,9})M)?((?<seconds>\d*[.,]?\d{1,9})S)?)?$/;
@@ -96,6 +96,7 @@ export function parseZonedDateTime(value: string, disambiguation?: Disambiguatio
     throw new Error('Invalid ISO 8601 date time string: ' + value);
   }
 
+  let tz = m[10] === 'Z' ? 'UTC' : m[11];
   let year = parseNumber(m[1], -9999, 9999);
   let era = year < 1 ? 'BC' : 'AD';
 
@@ -104,7 +105,7 @@ export function parseZonedDateTime(value: string, disambiguation?: Disambiguatio
     year < 1 ? -year + 1 : year,
     parseNumber(m[2], 1, 12),
     1,
-    m[10],
+    tz,
     0,
     m[4] ? parseNumber(m[4], 0, 23) : 0,
     m[5] ? parseNumber(m[5], 0, 59) : 0,
@@ -194,7 +195,7 @@ export function dateToString(date: CalendarDate): string {
   let gregorianDate = toCalendar(date, new GregorianCalendar());
   let year: string;
   if (gregorianDate.era === 'BC') {
-    year = gregorianDate.year === 1 
+    year = gregorianDate.year === 1
       ? '0000'
       : '-' + String(Math.abs(1 - gregorianDate.year)).padStart(6, '00');
   } else {
