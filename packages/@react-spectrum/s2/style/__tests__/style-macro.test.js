@@ -10,30 +10,30 @@
  * governing permissions and limitations under the License.
  */
 
-import { style } from "../spectrum-theme";
+import {style} from '../spectrum-theme';
 
 function testStyle(...args) {
   let css;
   let js = style.apply(
     {
-      addAsset({ content }) {
+      addAsset({content}) {
         css = content;
-      },
+      }
     },
     args
   );
-  return { css, js };
+  return {css, js};
 }
 
-describe("style-macro", () => {
-  it("should handle nested css conditions", () => {
-    let { css, js } = testStyle({
+describe('style-macro', () => {
+  it('should handle nested css conditions', () => {
+    let {css, js} = testStyle({
       marginTop: {
-        ":first-child": {
+        ':first-child': {
           default: 4,
-          lg: 8,
-        },
-      },
+          lg: 8
+        }
+      }
     });
 
     expect(css).toMatchInlineSnapshot(`
@@ -59,14 +59,14 @@ describe("style-macro", () => {
 
       "
     `);
-    expect(js).toMatchInlineSnapshot(`" D-13alit4c D-13alit4ed"`);
+    expect(js).toMatchInlineSnapshot('" D-13alit4c D-13alit4ed"');
   });
 
-  it("should support self references", () => {
-    let { css } = testStyle({
+  it('should support self references', () => {
+    let {css} = testStyle({
       borderWidth: 2,
-      paddingX: "edge-to-text",
-      width: "[calc(200px - self(borderStartWidth) - self(paddingStart))]",
+      paddingX: 'edge-to-text',
+      width: '[calc(200px - self(borderStartWidth) - self(paddingStart))]'
     });
 
     expect(css).toMatchInlineSnapshot(`
