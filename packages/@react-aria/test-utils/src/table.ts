@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, waitFor, within} from '@testing-library/react';
+import {act, waitFor, within} from '@testing-library/react';
 import {GridRowActionOpts, TableTesterOpts, ToggleGridRowOpts, UserOpts} from './types';
 import {pressElement, triggerLongPress} from './events';
 
@@ -88,10 +88,6 @@ export class TableTester {
 
         // Note that long press interactions with rows is strictly touch only for grid rows
         await triggerLongPress({element: cell, advanceTimer: this._advanceTimer, pointerOpts: {pointerType: 'touch'}});
-        // TODO: interestingly enough, we need to do a followup click otherwise future row selections may not fire properly?
-        // To reproduce, try removing this, forcing toggleRowSelection to hit "needsLongPress ? await triggerLongPress(cell) : await action(cell);" and
-        // run Table.test's "should support long press to enter selection mode on touch" test to see what happens
-        await fireEvent.click(cell);
       } else {
         await pressElement(this.user, cell, interactionType);
       }

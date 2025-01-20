@@ -16,6 +16,7 @@
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
 import {getOwnerDocument, getOwnerWindow, isMac, isVirtualClick} from '@react-aria/utils';
+import {ignoreFocusEvent} from './utils';
 import {useEffect, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
 
@@ -92,7 +93,7 @@ function handleFocusEvent(e: FocusEvent) {
   // Firefox fires two extra focus events when the user first clicks into an iframe:
   // first on the window, then on the document. We ignore these events so they don't
   // cause keyboard focus rings to appear.
-  if (e.target === window || e.target === document) {
+  if (e.target === window || e.target === document || ignoreFocusEvent) {
     return;
   }
 
@@ -108,6 +109,10 @@ function handleFocusEvent(e: FocusEvent) {
 }
 
 function handleWindowBlur() {
+  if (ignoreFocusEvent) {
+    return;
+  }
+
   // When the window is blurred, reset state. This is necessary when tabbing out of the window,
   // for example, since a subsequent focus event won't be fired.
   hasEventBeforeFocus = false;
