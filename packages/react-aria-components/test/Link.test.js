@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Link, LinkContext, RouterProvider} from '../';
+import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -107,7 +107,7 @@ describe('Link', () => {
     expect(link).not.toHaveClass('focus');
   });
 
-  it('should support press state', () => {
+  it('should support press state', async () => {
     let onPress = jest.fn();
     let {getByRole} = render(<Link className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress}>Test</Link>);
     let link = getByRole('link');
@@ -115,11 +115,11 @@ describe('Link', () => {
     expect(link).not.toHaveAttribute('data-pressed');
     expect(link).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(link);
+    await user.pointer({target: link, keys: '[MouseLeft>]'});
     expect(link).toHaveAttribute('data-pressed', 'true');
     expect(link).toHaveClass('pressed');
 
-    fireEvent.mouseUp(link);
+    await user.pointer({target: link, keys: '[/MouseLeft]'});
     expect(link).not.toHaveAttribute('data-pressed');
     expect(link).not.toHaveClass('pressed');
 

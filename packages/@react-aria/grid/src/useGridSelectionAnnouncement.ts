@@ -15,9 +15,9 @@ import {Collection, Key, Node, Selection} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {SelectionManager} from '@react-stately/selection';
+import {useEffectEvent, useUpdateEffect} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useRef} from 'react';
-import {useUpdateEffect} from '@react-aria/utils';
 
 export interface GridSelectionAnnouncementProps {
   /**
@@ -46,8 +46,8 @@ export function useGridSelectionAnnouncement<T>(props: GridSelectionAnnouncement
   // We do this using an ARIA live region.
   let selection = state.selectionManager.rawSelection;
   let lastSelection = useRef(selection);
-  useUpdateEffect(() => {
-    if (!state.selectionManager.isFocused) {
+  let announceSelectionChange = useEffectEvent(() => {
+    if (!state.selectionManager.isFocused || selection === lastSelection.current) {
       lastSelection.current = selection;
 
       return;
@@ -96,7 +96,17 @@ export function useGridSelectionAnnouncement<T>(props: GridSelectionAnnouncement
     }
 
     lastSelection.current = selection;
-  }, [selection]);
+  });
+
+  useUpdateEffect(() => {
+    if (state.selectionManager.isFocused) {
+      announceSelectionChange();
+    } else {
+      // Wait a frame in case the collection is about to become focused (e.g. on mouse down).
+      let raf = requestAnimationFrame(announceSelectionChange);
+      return () => cancelAnimationFrame(raf);
+    }
+  }, [selection, state.selectionManager.isFocused]);
 }
 
 function diffSelection(a: Selection, b: Selection): Set<Key> {

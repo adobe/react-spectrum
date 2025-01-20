@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button, ButtonContext, ProgressBar, Text} from '../';
 import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
@@ -103,7 +103,7 @@ describe('Button', () => {
     expect(button).not.toHaveClass('focus');
   });
 
-  it('should support press state', () => {
+  it('should support press state', async () => {
     let onPress = jest.fn();
     let {getByRole} = render(<Button className={({isPressed}) => isPressed ? 'pressed' : ''} onPress={onPress}>Test</Button>);
     let button = getByRole('button');
@@ -111,11 +111,11 @@ describe('Button', () => {
     expect(button).not.toHaveAttribute('data-pressed');
     expect(button).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(button);
+    await user.pointer({target: button, keys: '[MouseLeft>]'});
     expect(button).toHaveAttribute('data-pressed', 'true');
     expect(button).toHaveClass('pressed');
 
-    fireEvent.mouseUp(button);
+    await user.pointer({target: button, keys: '[/MouseLeft]'});
     expect(button).not.toHaveAttribute('data-pressed');
     expect(button).not.toHaveClass('pressed');
 
@@ -130,16 +130,16 @@ describe('Button', () => {
     expect(button).toHaveClass('disabled');
   });
 
-  it('should support render props', () => {
+  it('should support render props', async () => {
     let {getByRole} = render(<Button>{({isPressed}) => isPressed ? 'Pressed' : 'Test'}</Button>);
     let button = getByRole('button');
 
     expect(button).toHaveTextContent('Test');
 
-    fireEvent.mouseDown(button);
+    await user.pointer({target: button, keys: '[MouseLeft>]'});
     expect(button).toHaveTextContent('Pressed');
 
-    fireEvent.mouseUp(button);
+    await user.pointer({target: button, keys: '[/MouseLeft]'});
     expect(button).toHaveTextContent('Test');
   });
 
