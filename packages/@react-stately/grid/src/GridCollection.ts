@@ -42,7 +42,23 @@ export class GridCollection<T> implements IGridCollection<T> {
 
       let childKeys = new Set();
       let last: GridNode<T> | null = null;
-      for (let child of node.childNodes) {
+      let rowHasCellWithColSpan = false;
+
+      if (node.type === 'item') {
+        for (let child of node.childNodes) {
+          if (child.props?.colSpan !== undefined) {
+            rowHasCellWithColSpan = true;
+            break;
+          }
+        }
+      }
+
+      for (let child of node.childNodes as Iterable<GridNode<T>>) {
+        if (child.type === 'cell' && rowHasCellWithColSpan) {
+          child.colspan = child.props?.colSpan;
+          child.colIndex = !last ? child.index : (last.colIndex ?? last.index) + (last.colspan ?? 1);
+        }
+
         if (child.type === 'cell' && child.parentKey == null) {
           // if child is a cell parent key isn't already established by the collection, match child node to parent row
           child.parentKey = node.key;

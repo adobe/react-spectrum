@@ -41,8 +41,37 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
 
   commit(firstKey: Key, lastKey: Key, isSSR = false) {
     this.updateColumns(isSSR);
+    this.updateRows();
     super.commit(firstKey, lastKey, isSSR);
-    this.rows = [...this.getChildren(this.body.key)];
+  }
+
+  private updateRows() {
+    this.rows = [];
+    let visit = (node: Node<T>) => {
+      if (node.hasChildNodes) {
+        let rowHasCellWithColSpan = false;
+        let childNodes: Iterable<GridNode<T>> = this.getChildren(node.key);
+        for (let child of childNodes) {
+          if (child.type === 'cell' && child.props?.colSpan !== undefined) {
+            rowHasCellWithColSpan = true;
+            break;
+          }
+        }
+
+        if (rowHasCellWithColSpan) {
+          let last: GridNode<T> | null = null;
+          for (let child of childNodes) {
+            child.colspan = child.props?.colSpan;
+            child.colIndex = !last ? child.index : (last.colIndex ?? last.index) + (last.colspan ?? 1);
+            last = child;
+          }
+        }
+      }
+      this.rows.push(node);
+    };
+    for (let child of this.getChildren(this.body.key)) {
+      visit(child);
+    }
   }
 
   private updateColumns(isSSR: boolean) {
@@ -1187,14 +1216,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
   let {dragState} = useContext(DragAndDropContext);
   let {isVirtualized} = useContext(CollectionRendererContext);
 
-  let prevCell = cell.prevKey ? state.collection.getItem(cell.prevKey) : null;
-
   cell.column = state.collection.columns[cell.index];
-
-  cell.colIndex = !prevCell
-    ? cell.index
-    : (prevCell.colIndex ?? prevCell.index) + (prevCell.colspan ?? 1);
-  cell.colspan = props.colSpan;
 
   let {gridCellProps, isPressed} = useTableCell({
     node: cell,
@@ -1222,6 +1244,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
     <TD
       {...mergeProps(filterDOMProps(props as any), gridCellProps, focusProps, hoverProps)}
       {...renderProps}
+      colSpan={cell.colspan}
       ref={ref}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}

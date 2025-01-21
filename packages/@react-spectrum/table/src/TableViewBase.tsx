@@ -321,17 +321,6 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
       case 'headerrow':
         return null;
       case 'cell': {
-        let prevCell = item.prevKey ? state.collection.getItem(item.prevKey) : null;
-
-        item.colIndex = !prevCell
-          ? item.index
-          : (prevCell.colIndex ?? prevCell.index) + (prevCell.colspan ?? 1);
-
-
-        if (item.props.colSpan) {
-          item.colspan = item.props.colSpan;
-        }
-
         if (item.props.isSelectionCell) {
           return <TableCheckboxCell cell={item} />;
         }
