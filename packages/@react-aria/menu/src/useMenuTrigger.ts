@@ -12,14 +12,14 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaMenuOptions} from './useMenu';
+import {FocusableElement, RefObject} from '@react-types/shared';
+import {focusWithoutScrolling, useId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {MenuTriggerState} from '@react-stately/menu';
 import {MenuTriggerType} from '@react-types/menu';
-import {RefObject} from '@react-types/shared';
-import {useId} from '@react-aria/utils';
+import {PressProps, useLongPress} from '@react-aria/interactions';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useLongPress} from '@react-aria/interactions';
 import {useOverlayTrigger} from '@react-aria/overlays';
 
 export interface AriaMenuTriggerProps {
@@ -47,7 +47,7 @@ export interface MenuTriggerAria<T> {
  */
 export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTriggerState, ref: RefObject<Element | null>): MenuTriggerAria<T> {
   let {
-    type = 'menu' as AriaMenuTriggerProps['type'],
+    type = 'menu',
     isDisabled,
     trigger = 'press'
   } = props;
@@ -108,10 +108,14 @@ export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTrigge
     }
   });
 
-  let pressProps =  {
+  let pressProps: PressProps =  {
+    preventFocusOnPress: true,
     onPressStart(e) {
       // For consistency with native, open the menu on mouse/key down, but touch up.
       if (e.pointerType !== 'touch' && e.pointerType !== 'keyboard' && !isDisabled) {
+        // Ensure trigger has focus before opening the menu so it can be restored by FocusScope on close.
+        focusWithoutScrolling(e.target as FocusableElement);
+
         // If opened with a screen reader, auto focus the first item.
         // Otherwise, the menu itself will be focused.
         state.open(e.pointerType === 'virtual' ? 'first' : null);
@@ -128,6 +132,7 @@ export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTrigge
   delete triggerProps.onPress;
 
   return {
+    // @ts-ignore - TODO we pass out both DOMAttributes AND AriaButtonProps, but useButton will discard the longPress event handlers, it's only through PressResponder magic that this works for RSP and RAC. it does not work in aria examples
     menuTriggerProps: {
       ...triggerProps,
       ...(trigger === 'press' ? pressProps : longPressProps),

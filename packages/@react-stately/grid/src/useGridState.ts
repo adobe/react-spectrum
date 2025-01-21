@@ -41,9 +41,9 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
       if (item?.type === 'item') {
         let children = getChildNodes(item, collection);
         if (child === 'last') {
-          key = getLastItem(children)?.key;
+          key = getLastItem(children)?.key ?? null;
         } else {
-          key = getFirstItem(children)?.key;
+          key = getFirstItem(children)?.key ?? null;
         }
       }
     }
@@ -57,14 +57,18 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
   );
 
   // Reset focused key if that item is deleted from the collection.
-  const cachedCollection = useRef(null);
+  const cachedCollection = useRef<C | null>(null);
   useEffect(() => {
-    if (selectionState.focusedKey != null && !collection.getItem(selectionState.focusedKey)) {
+    if (selectionState.focusedKey != null && cachedCollection.current && !collection.getItem(selectionState.focusedKey)) {
       const node = cachedCollection.current.getItem(selectionState.focusedKey);
       const parentNode =
-        node.parentKey != null && (node.type === 'cell' || node.type === 'rowheader' || node.type === 'column') ?
+        node?.parentKey != null && (node.type === 'cell' || node.type === 'rowheader' || node.type === 'column') ?
         cachedCollection.current.getItem(node.parentKey) :
         node;
+      if (!parentNode) {
+        selectionState.setFocusedKey(null);
+        return;
+      }
       const cachedRows = cachedCollection.current.rows;
       const rows = collection.rows;
       const diff = cachedRows.length - rows.length;
@@ -75,7 +79,7 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
           parentNode.index
         ),
         rows.length - 1);
-      let newRow:GridNode<T>;
+      let newRow: GridNode<T> | null = null;
       while (index >= 0) {
         if (!selectionManager.isDisabled(rows[index].key) && rows[index].type !== 'headerrow') {
           newRow = rows[index];
@@ -97,6 +101,7 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
         const keyToFocus =
           newRow.hasChildNodes &&
           parentNode !== node &&
+          node &&
           node.index < childNodes.length ?
           childNodes[node.index].key :
           newRow.key;

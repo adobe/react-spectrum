@@ -471,33 +471,7 @@ function updateComponentWithinCollection(
     ) {
       // If closest parent collection component matches parentComponent, replace with newComponent
 
-      let attributes = path.node.openingElement.attributes;
-      let keyProp = attributes.find((attr) => t.isJSXAttribute(attr) && attr.name.name === 'key');
-      if (
-        keyProp &&
-        t.isJSXAttribute(keyProp)
-      ) {
-        // Update key prop to be id
-        keyProp.name = t.jsxIdentifier('id');
-      }
-
-      if (
-        t.isArrowFunctionExpression(path.parentPath.node) &&
-        path.parentPath.parentPath &&
-        t.isCallExpression(path.parentPath.parentPath.node) &&
-        path.parentPath.parentPath.node.callee.type === 'MemberExpression' &&
-        path.parentPath.parentPath.node.callee.property.type === 'Identifier' &&
-        path.parentPath.parentPath.node.callee.property.name === 'map'
-      ) {
-        // If Array.map is used, keep the key prop
-        if (
-          keyProp &&
-          t.isJSXAttribute(keyProp)
-        ) {
-          let newKeyProp = t.jsxAttribute(t.jsxIdentifier('key'), keyProp.value);
-          attributes.push(newKeyProp);
-        }
-      }
+      updateKeyToId(path);
 
       let localName = newComponent;
       if (availableComponents.has(newComponent)) {
@@ -506,7 +480,7 @@ function updateComponentWithinCollection(
       }
 
       let newNode = t.jsxElement(
-        t.jsxOpeningElement(t.jsxIdentifier(localName), attributes),
+        t.jsxOpeningElement(t.jsxIdentifier(localName), path.node.openingElement.attributes),
         t.jsxClosingElement(t.jsxIdentifier(localName)),
         path.node.children
       );
@@ -523,7 +497,7 @@ function updateComponentWithinCollection(
 function commentIfParentCollectionNotDetected(
   path: NodePath<t.JSXElement>
 ) {
-  const collectionItemParents = new Set(['Menu', 'ActionMenu', 'TagGroup', 'Breadcrumbs', 'Picker', 'ComboBox', 'ListBox', 'TabList', 'TabPanels', 'ActionGroup', 'ListBox', 'ListView', 'Collection', 'SearchAutocomplete', 'Accordion', 'ActionBar', 'StepList']);
+  const collectionItemParents = new Set(['Menu', 'ActionMenu', 'TagGroup', 'Breadcrumbs', 'Picker', 'ComboBox', 'ListBox', 'TabList', 'TabPanels', 'ActionGroup', 'ActionButtonGroup', 'ToggleButtonGroup', 'ListBox', 'ListView', 'Collection', 'SearchAutocomplete', 'Accordion', 'ActionBar', 'StepList']);
   if (
     t.isJSXElement(path.node)
   ) {
@@ -775,7 +749,7 @@ function convertDimensionValueToPx(
   if (attrPath && t.isJSXAttribute(attrPath.node) && attrPath.node.name.name === propToConvertValue) {
     if (t.isStringLiteral(attrPath.node.value)) {
       try {
-        let value = convertDimension(attrPath.node.value.value);
+        let value = convertDimension(attrPath.node.value.value, 'size');
         if (value && typeof value === 'number') {
           attrPath.node.value = t.jsxExpressionContainer(t.numericLiteral(value));
         } else if (value && typeof value === 'string') {
@@ -960,6 +934,488 @@ function updateLegacyLink(
   }
 }
 
+/**
+ * Copies the columns prop from the TableHeader to the Row component.
+ */
+function addColumnsPropToRow(
+  path: NodePath<t.JSXElement>
+) {
+  const tableHeaderPath = path.get('children').find((child) =>
+      t.isJSXElement(child.node) &&
+      t.isJSXIdentifier(child.node.openingElement.name) &&
+      getName(child as NodePath<t.JSXElement>, child.node.openingElement.name) === 'TableHeader'
+    ) as NodePath<t.JSXElement> | undefined;
+
+  if (!tableHeaderPath) {
+    addComment(path.node, ' TODO(S2-upgrade): Could not find TableHeader within Table to retrieve columns prop.');
+    return;
+  }
+
+  const columnsProp = tableHeaderPath
+    .get('openingElement')
+    .get('attributes')
+    .find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === 'columns') as NodePath<t.JSXAttribute> | undefined;
+
+  if (columnsProp) {
+    path.traverse({
+      JSXElement(innerPath) {
+        if (
+          t.isJSXElement(innerPath.node) &&
+          t.isJSXIdentifier(innerPath.node.openingElement.name) &&
+          getName(innerPath as NodePath<t.JSXElement>, innerPath.node.openingElement.name) === 'Row'
+        ) {
+          let rowPath = innerPath as NodePath<t.JSXElement>;
+          rowPath.node.openingElement.attributes.push(columnsProp.node);
+
+          // If Row doesn't contain id prop, leave a comment for the user to check manually
+          let idProp = rowPath.get('openingElement').get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === 'id');
+          if (!idProp) {
+            addComment(rowPath.node, ' TODO(S2-upgrade): If the items do not have id properties, you\'ll need to add an id prop to the Row.');
+          }
+        }
+      }
+    });
+  }
+}
+
+/**
+ * Updates the function signature of the Row component.
+ */
+function updateRowFunctionArg(
+  path: NodePath<t.JSXElement>
+) {
+  // Find the function passed as a child
+  let functionChild = path.get('children').find(childPath => 
+    childPath.isJSXExpressionContainer() && 
+    childPath.get('expression').isArrowFunctionExpression()
+  );
+
+  let tablePath = path.findParent((p) =>
+    t.isJSXElement(p.node) &&
+    t.isJSXIdentifier(p.node.openingElement.name) &&
+    getName(path, p.node.openingElement.name) === 'TableView'
+  );
+
+  let tableHeaderPath = tablePath?.get('children').find((child) =>
+    t.isJSXElement(child.node) &&
+    t.isJSXIdentifier(child.node.openingElement.name) &&
+    getName(child as NodePath<t.JSXElement>, child.node.openingElement.name) === 'TableHeader'
+  ) as NodePath<t.JSXElement> | undefined;
+
+  function findColumnKeyProp(path: NodePath<t.JSXElement>) {
+    let columnKeyProp = 'id';
+    path.traverse({
+      JSXElement(columnPath) {
+        if (
+          t.isArrowFunctionExpression(columnPath.parentPath.node) &&
+          t.isJSXElement(columnPath.node) &&
+          t.isJSXIdentifier(columnPath.node.openingElement.name) &&
+          getName(columnPath as NodePath<t.JSXElement>, columnPath.node.openingElement.name) === 'Column'
+        ) {
+          let openingElement = columnPath.get('openingElement');
+          let keyPropPath = openingElement.get('attributes').find(attr => 
+            t.isJSXAttribute(attr.node) && 
+            (attr.node.name.name === 'key' || attr.node.name.name === 'id')
+          );
+          keyPropPath?.traverse({
+            Identifier(innerPath) {
+              if (
+                innerPath.node.name === 'column' &&
+                innerPath.parentPath.node.type === 'MemberExpression' &&
+                t.isIdentifier(innerPath.parentPath.node.property)
+              ) {
+                columnKeyProp = innerPath.parentPath.node.property.name;
+              }
+            }
+          });
+        }
+      }
+    });
+    return columnKeyProp || 'id';
+  }
+
+  let columnKey = findColumnKeyProp(tableHeaderPath as NodePath<t.JSXElement>);
+
+  if (functionChild && functionChild.isJSXExpressionContainer()) {
+    let arrowFuncPath = functionChild.get('expression');
+    if (arrowFuncPath.isArrowFunctionExpression()) {
+      let params = arrowFuncPath.node.params;
+      if (params.length === 1 && t.isIdentifier(params[0])) {
+        let paramName = params[0].name;
+
+        // Rename parameter to 'column'
+        params[0].name = 'column';
+
+        // Replace references to the old parameter name inside the function body
+        arrowFuncPath.get('body').traverse({
+          Identifier(innerPath) {
+            if (
+              innerPath.node.name === paramName &&
+              // Ensure we're not replacing the parameter declaration
+              innerPath.node !== params[0]
+            ) {
+              // Replace with column key
+              innerPath.replaceWith(
+                t.memberExpression(
+                  t.identifier('column'),
+                  t.identifier(columnKey ?? 'id')
+                )
+              );
+            }
+          }
+        });
+      }
+    }
+  }
+}
+
+/**
+ * Updates the key prop to id. Keeps the key prop if it's used in an array.map function.
+ */
+function updateKeyToId(
+  path: NodePath<t.JSXElement>
+) {
+  let attributes = path.node.openingElement.attributes;
+  let keyProp = attributes.find((attr) => t.isJSXAttribute(attr) && attr.name.name === 'key');
+  if (
+    keyProp &&
+    t.isJSXAttribute(keyProp)
+  ) {
+    // Update key prop to be id
+    keyProp.name = t.jsxIdentifier('id');
+  }
+
+  if (
+    t.isArrowFunctionExpression(path.parentPath.node) &&
+    path.parentPath.parentPath &&
+    t.isCallExpression(path.parentPath.parentPath.node) &&
+    path.parentPath.parentPath.node.callee.type === 'MemberExpression' &&
+    path.parentPath.parentPath.node.callee.property.type === 'Identifier' &&
+    path.parentPath.parentPath.node.callee.property.name === 'map'
+  ) {
+    // If Array.map is used, keep the key prop
+    if (
+      keyProp &&
+      t.isJSXAttribute(keyProp)
+    ) {
+      let newKeyProp = t.jsxAttribute(t.jsxIdentifier('key'), keyProp.value);
+      attributes.push(newKeyProp);
+    }
+  }
+}
+
+export function commentIfNestedColumns(
+  path: NodePath<t.JSXElement>
+) {
+  const headerPath = path.get('children').find((child) =>
+    t.isJSXElement(child.node) &&
+    t.isJSXIdentifier(child.node.openingElement.name) &&
+    getName(child as NodePath<t.JSXElement>, child.node.openingElement.name) === 'TableHeader'
+  ) as NodePath<t.JSXElement> | undefined;
+  const columns = headerPath?.get('children') || [];
+
+  let hasNestedColumns = false;
+
+  columns.forEach(column => {
+    let columnChildren = column.get('children');
+    if (
+        columnChildren.find(child => 
+          t.isJSXElement(child.node) &&
+          t.isJSXIdentifier(child.node.openingElement.name) &&
+          getName(child as NodePath<t.JSXElement>, child.node.openingElement.name) === 'Column'
+      )   
+    ) {
+      hasNestedColumns = true;
+    }
+  });
+
+  if (hasNestedColumns) {
+    addComment(path.node, ' TODO(S2-upgrade): Nested Column components are not supported yet.');
+  }
+}
+
+/**
+ * Updates DialogTrigger and DialogContainer to the new API.
+ *
+ * Example:
+ * - When `type="popover"`, replaces Dialog with `<Popover>`.
+ * - When `type="fullscreen"`, replaces Dialog with `<FullscreenDialog>`.
+ * - When `type="fullscreenTakeover"`, replaces Dialog with `<FullscreenDialog variant="fullscreenTakeover">`.
+ */
+function updateDialogChild(
+  path: NodePath<t.JSXElement>
+) {
+  let typePath = path.get('openingElement').get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === 'type') as NodePath<t.JSXAttribute> | undefined;
+  let type = typePath?.node.value?.type === 'StringLiteral' ? typePath.node.value?.value : 'modal';
+  let newComponent = 'Dialog';
+  let props: t.JSXAttribute[] = [];
+  if (type === 'popover') {
+    newComponent = 'Popover';
+  } else if (type === 'fullscreen' || type === 'fullscreenTakeover') {
+    newComponent = 'FullscreenDialog';
+    if (type === 'fullscreenTakeover') {
+      props.push(t.jsxAttribute(t.jsxIdentifier('variant'), t.stringLiteral(type)));
+    }
+  }
+
+  for (let prop of ['isDismissible', 'mobileType', 'hideArrow', 'placement', 'shouldFlip', 'isKeyboardDismissDisabled', 'containerPadding', 'offset', 'crossOffset']) {
+    let attr = path.get('openingElement').get('attributes').find(attr => attr.isJSXAttribute() && attr.node.name.name === prop) as NodePath<t.JSXAttribute> | undefined;
+    if (attr) {
+      props.push(attr.node);
+      attr.remove();
+    }
+  }
+
+  typePath?.remove();
+
+  let localName = newComponent;
+  if (newComponent !== 'Dialog' && availableComponents.has(newComponent)) {
+    let program = path.findParent((p) => t.isProgram(p.node)) as NodePath<t.Program>;
+    localName = addComponentImport(program, newComponent);
+  }
+
+  path.traverse({
+    JSXElement(dialog) {
+      if (!t.isJSXIdentifier(dialog.node.openingElement.name) || getName(dialog, dialog.node.openingElement.name) !== 'Dialog') {
+        return;
+      }
+
+      dialog.node.openingElement.name = t.jsxIdentifier(localName);
+      if (dialog.node.closingElement) {
+        dialog.node.closingElement.name = t.jsxIdentifier(localName);
+      }
+
+      dialog.node.openingElement.attributes.push(...props);
+    }
+  });
+}
+
+function updateActionGroup(
+  path: NodePath<t.JSXElement>
+) {
+  let selectionModePath = path.get('openingElement').get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === 'selectionMode') as NodePath<t.JSXAttribute> | undefined;
+  let selectionMode = t.isStringLiteral(selectionModePath?.node.value) ? selectionModePath.node.value.value : 'none';
+  let newComponent, childComponent;
+  if (selectionMode === 'none') {
+    newComponent = 'ActionButtonGroup';
+    childComponent = 'ActionButton';
+    selectionModePath?.remove();
+  } else {
+    newComponent = 'ToggleButtonGroup';
+    childComponent = 'ToggleButton';
+  }
+
+  let localName = newComponent;
+  if (availableComponents.has(newComponent)) {
+    let program = path.findParent((p) => t.isProgram(p.node)) as NodePath<t.Program>;
+    localName = addComponentImport(program, newComponent);
+  }
+
+  let localChildName = childComponent;
+  if (availableComponents.has(childComponent)) {
+    let program = path.findParent((p) => t.isProgram(p.node)) as NodePath<t.Program>;
+    localChildName = addComponentImport(program, childComponent);
+  }
+
+
+  // Convert dynamic collection to an array.map.
+  let items = path.get('openingElement').get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === 'items') as NodePath<t.JSXAttribute> | undefined;
+  let itemArg: t.Identifier | undefined;
+  if (items && t.isJSXExpressionContainer(items.node.value) && t.isExpression(items.node.value.expression)) {
+    let child = path.get('children').find(c => c.isJSXExpressionContainer());
+    if (child && child.isJSXExpressionContainer() && t.isFunction(child.node.expression)) {
+      let arg = child.node.expression.params[0];
+      if (t.isIdentifier(arg)) {
+        itemArg = arg;
+      }
+
+      child.replaceWith(
+        t.jsxExpressionContainer(
+          t.callExpression(
+            t.memberExpression(
+              items.node.value.expression,
+              t.identifier('map')
+            ),
+            [child.node.expression]
+          )
+        )
+      );
+    }
+  }
+  items?.remove();
+
+  let onAction = path.get('openingElement').get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === 'onAction') as NodePath<t.JSXAttribute> | undefined;
+
+  // Pull disabledKeys prop out into a variable, converted to a Set.
+  // Then we can check it in the isDisabled prop of each item.
+  let disabledKeysPath = path.get('openingElement').get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === 'disabledKeys') as NodePath<t.JSXAttribute> | undefined;
+  let disabledKeys: t.Identifier | undefined;
+  if (disabledKeysPath && t.isJSXExpressionContainer(disabledKeysPath.node.value) && t.isExpression(disabledKeysPath.node.value.expression)) {
+    disabledKeys = path.scope.generateUidIdentifier('disabledKeys');
+    path.scope.push({
+      id: disabledKeys,
+      init: t.newExpression(t.identifier('Set'), [disabledKeysPath.node.value.expression]),
+      kind: 'let'
+    });
+    disabledKeysPath.remove();
+  }
+
+  path.traverse({
+    JSXElement(child) {
+      if (t.isJSXIdentifier(child.node.openingElement.name) && child.node.openingElement.name.name === 'Item') {
+        // Replace Item with ActionButton or ToggleButton.
+        let childNode = t.cloneNode(child.node);
+        childNode.openingElement.name = t.jsxIdentifier(localChildName);
+        if (childNode.closingElement) {
+          childNode.closingElement.name = t.jsxIdentifier(localChildName);
+        }
+
+        // If there is no key prop and we are using dynamic collections, add a default computed from item.key ?? item.id.
+        let key = childNode.openingElement.attributes.find(attr => t.isJSXAttribute(attr) && attr.name.name === 'key') as t.JSXAttribute | undefined;
+        if (!key && itemArg) {
+          let id = t.jsxExpressionContainer(
+            t.logicalExpression(
+              '??',
+              t.memberExpression(itemArg, t.identifier('key')),
+              t.memberExpression(itemArg, t.identifier('id'))
+            )
+          );
+
+          key = t.jsxAttribute(
+            t.jsxIdentifier('key'),
+            id
+          );
+
+          childNode.openingElement.attributes.push(key);
+        }
+
+        // If this is a ToggleButtonGroup, add an id prop in addition to key when needed.
+        if (key && newComponent === 'ToggleButtonGroup') {
+          // If we are in an array.map we need both key and id. Otherwise, we only need id.
+          if (itemArg) {
+            childNode.openingElement.attributes.push(t.jsxAttribute(t.jsxIdentifier('id'), key.value));
+          } else {
+            key.name.name = 'id';
+          }
+        }
+
+        let keyValue: t.Expression | undefined = undefined;
+        if (key && t.isJSXExpressionContainer(key.value) && t.isExpression(key.value.expression)) {
+          keyValue = key.value.expression;
+        } else if (key && t.isStringLiteral(key.value)) {
+          keyValue = key.value;
+        }
+
+        // Add an onPress to each item that calls the previous onAction, passing in the key.
+        if (onAction && t.isJSXExpressionContainer(onAction.node.value) && t.isExpression(onAction.node.value.expression)) {
+          childNode.openingElement.attributes.push(
+            t.jsxAttribute(
+              t.jsxIdentifier('onPress'),
+              t.jsxExpressionContainer(
+                keyValue 
+                  ? t.arrowFunctionExpression([], t.callExpression(onAction.node.value.expression, [keyValue]))
+                  : onAction.node.value.expression
+              )
+            )
+          );
+        }
+
+        // Add an isDisabled prop to each item, testing whether it is in disabledKeys.
+        if (disabledKeys && keyValue) {
+          childNode.openingElement.attributes.push(
+            t.jsxAttribute(
+              t.jsxIdentifier('isDisabled'),
+              t.jsxExpressionContainer(
+                t.callExpression(
+                  t.memberExpression(
+                    disabledKeys,
+                    t.identifier('has')
+                  ),
+                  [keyValue]
+                )
+              )
+            )
+          );
+        }
+
+        child.replaceWith(childNode);
+      }
+    }
+  });
+
+  onAction?.remove();
+
+  path.node.openingElement.name = t.jsxIdentifier(localName);
+  if (path.node.closingElement) {
+    path.node.closingElement.name = t.jsxIdentifier(localName);
+  }
+}
+
+/**
+ * Adds isRowHeader to the first Column in a table if there isn't already a row header.
+ * @param path 
+ */
+function addRowHeader(
+  path: NodePath<t.JSXElement>
+) {
+  let tableHeaderPath = path.get('children').find((child) =>
+    t.isJSXElement(child.node) &&
+    t.isJSXIdentifier(child.node.openingElement.name) &&
+    getName(child as NodePath<t.JSXElement>, child.node.openingElement.name) === 'TableHeader'
+  ) as NodePath<t.JSXElement> | undefined;
+
+
+  // Check if isRowHeader is already set on a Column
+  let hasRowHeader = false;
+  tableHeaderPath?.get('children').forEach((child) => {
+    if (
+      t.isJSXElement(child.node) &&
+      t.isJSXIdentifier(child.node.openingElement.name) &&
+      getName(child as NodePath<t.JSXElement>, child.node.openingElement.name) === 'Column'
+    ) {
+      let isRowHeaderProp = (child.get('openingElement') as NodePath).get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === 'isRowHeader') as NodePath<t.JSXAttribute> | undefined;
+      if (isRowHeaderProp) {
+        hasRowHeader = true;
+      }
+    }
+  });
+
+  // If there isn't already a row header, add one to the first Column if possible
+  if (!hasRowHeader) {
+    tableHeaderPath?.get('children').forEach((child) => {
+      // Add to first Column if static
+      if (
+        !hasRowHeader &&
+        t.isJSXElement(child.node) &&
+        t.isJSXIdentifier(child.node.openingElement.name) &&
+        getName(child as NodePath<t.JSXElement>, child.node.openingElement.name) === 'Column'
+      ) {
+        child.node.openingElement.attributes.push(t.jsxAttribute(t.jsxIdentifier('isRowHeader'), t.jsxExpressionContainer(t.booleanLiteral(true))));
+        hasRowHeader = true;
+      }
+
+      // If render function is used, leave a comment to update manually
+      if (
+        t.isJSXExpressionContainer(child.node) &&
+        t.isArrowFunctionExpression(child.node.expression)
+      ) {
+        addComment(child.node, ' TODO(S2-upgrade): You\'ll need to add isRowHeader to one of the columns manually.');
+      }
+
+      // If array.map is used, leave a comment to update manually
+      if (
+        t.isJSXExpressionContainer(child.node) &&
+        t.isCallExpression(child.node.expression) &&
+        t.isMemberExpression(child.node.expression.callee) &&
+        t.isIdentifier(child.node.expression.callee.property) &&
+        child.node.expression.callee.property.name === 'map'
+      ) {
+        addComment(child.node, ' TODO(S2-upgrade): You\'ll need to add isRowHeader to one of the columns manually.');
+      }
+    });
+  }
+}
+
 export const functionMap = {
   updatePropNameAndValue,
   updatePropValueAndAddNewProp,
@@ -979,5 +1435,12 @@ export const functionMap = {
   updatePlacementToSingleValue,
   removeComponentIfWithinParent,
   updateAvatarSize,
-  updateLegacyLink
+  updateLegacyLink,
+  addColumnsPropToRow,
+  updateRowFunctionArg,
+  updateDialogChild,
+  updateActionGroup,
+  updateKeyToId,
+  commentIfNestedColumns,
+  addRowHeader
 };

@@ -181,7 +181,10 @@ const badge = style<BadgeStyleProps>({
   }
 }, getAllowedOverrides());
 
-function Badge(props: BadgeProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Badges are used for showing a small amount of color-categorized metadata, ideal for getting a user's attention.
+ */
+export const Badge = forwardRef(function Badge(props: BadgeProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, BadgeContext);
   let {
     children,
@@ -218,10 +221,4 @@ function Badge(props: BadgeProps, ref: DOMRef<HTMLDivElement>) {
       </SkeletonWrapper>
     </Provider>
   );
-}
-
-/**
- * Badges are used for showing a small amount of color-categorized metadata, ideal for getting a user's attention.
- */
-let _Badge = forwardRef(Badge);
-export {_Badge as Badge};
+});

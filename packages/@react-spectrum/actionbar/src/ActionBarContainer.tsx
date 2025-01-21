@@ -18,7 +18,11 @@ import {SpectrumActionBarContainerProps} from '@react-types/actionbar';
 import styles from './actionbar.css';
 import {useProviderProps} from '@react-spectrum/provider';
 
-function ActionBarContainer(props: SpectrumActionBarContainerProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * ActionBarContainer wraps around an ActionBar and a component that supports selection. It handles
+ * the ActionBar's position with respect to its linked component.
+ */
+export const ActionBarContainer = React.forwardRef(function ActionBarContainer(props: SpectrumActionBarContainerProps, ref: DOMRef<HTMLDivElement>) {
   // Grabs specific props from the closest Provider (see https://react-spectrum.adobe.com/react-spectrum/Provider.html#property-groups). Remove if your component doesn't support any of the listed props.
   props = useProviderProps(props);
 
@@ -35,11 +39,4 @@ function ActionBarContainer(props: SpectrumActionBarContainerProps, ref: DOMRef<
       {children}
     </div>
   );
-}
-
-/**
- * ActionBarContainer wraps around an ActionBar and a component that supports selection. It handles
- * the ActionBar's position with respect to its linked component.
- */
-const _ActionBarContainer = React.forwardRef(ActionBarContainer);
-export {_ActionBarContainer as ActionBarContainer};
+});

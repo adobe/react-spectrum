@@ -23,7 +23,7 @@ interface Symbols {
 }
 
 const CURRENCY_SIGN_REGEX = new RegExp('^.*\\(.*\\).*$');
-const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec'];
+const NUMBERING_SYSTEMS = ['latn', 'arab', 'hanidec', 'deva', 'beng'];
 
 /**
  * A NumberParser can be used to perform locale-aware parsing of numbers from Unicode strings,
@@ -273,7 +273,6 @@ function getSymbols(locale: string, formatter: Intl.NumberFormat, intlOptions: I
 
   // Safari does not support the signDisplay option, but our number parser polyfills it.
   // If no plus sign was returned, but the original options contained signDisplay, default to the '+' character.
-  // @ts-ignore
   if (!plusSign && (originalOptions?.signDisplay === 'exceptZero' || originalOptions?.signDisplay === 'always')) {
     plusSign = '+';
   }
@@ -305,9 +304,7 @@ function getSymbols(locale: string, formatter: Intl.NumberFormat, intlOptions: I
 }
 
 function replaceAll(str: string, find: string, replace: string) {
-  // @ts-ignore
   if (str.replaceAll) {
-    // @ts-ignore
     return str.replaceAll(find, replace);
   }
 

@@ -13,13 +13,13 @@
 import {AriaLabelingProps, FocusableElement, forwardRefType, RefObject} from '@react-types/shared';
 import {AriaPositionProps, mergeProps, OverlayContainer, Placement, PlacementAxis, PositionProps, useOverlayPosition, useTooltip, useTooltipTrigger} from 'react-aria';
 import {CollectionRendererContext} from './Collection';
-import {ContextValue, Provider, RenderProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
+import {ContextValue, Provider, RenderProps, useContextProps, useRenderProps} from './utils';
 import {createBranchComponent} from '@react-aria/collections';
+import {useEnterAnimation, useExitAnimation, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import {FocusableProvider} from '@react-aria/focus';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerProps, TooltipTriggerProps, TooltipTriggerState, useTooltipTriggerState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef, useState} from 'react';
-import {useLayoutEffect, useObjectRef} from '@react-aria/utils';
 
 export interface TooltipTriggerComponentProps extends TooltipTriggerProps {
   children: ReactNode
@@ -57,7 +57,7 @@ export interface TooltipRenderProps {
    * The placement of the tooltip relative to the trigger.
    * @selector [data-placement="left | right | top | bottom"]
    */
-  placement: PlacementAxis,
+  placement: PlacementAxis | null,
   /**
    * Whether the tooltip is currently entering. Use this to apply animations.
    * @selector [data-entering]
@@ -86,7 +86,7 @@ export const TooltipTrigger = /*#__PURE__*/createBranchComponent('tooltiptrigger
   let {CollectionBranch} = useContext(CollectionRendererContext);
   let state = useTooltipTriggerState(props);
   let triggerRef = useObjectRef(ref);
-  let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);
+  let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, triggerRef);
 
   return (
     <Provider
@@ -102,7 +102,10 @@ export const TooltipTrigger = /*#__PURE__*/createBranchComponent('tooltiptrigger
   );
 }, props => props.children[0]);
 
-function Tooltip({UNSTABLE_portalContainer, ...props}: TooltipProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A tooltip displays a description of an element on hover or focus.
+ */
+export const Tooltip = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tooltip({UNSTABLE_portalContainer, ...props}: TooltipProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TooltipContext);
   let contextState = useContext(TooltipTriggerStateContext);
   let localState = useTooltipTriggerState(props);
@@ -117,13 +120,7 @@ function Tooltip({UNSTABLE_portalContainer, ...props}: TooltipProps, ref: Forwar
       <TooltipInner {...props} tooltipRef={ref} isExiting={isExiting} />
     </OverlayContainer>
   );
-}
-
-/**
- * A tooltip displays a description of an element on hover or focus.
- */
-const _Tooltip = /*#__PURE__*/ (forwardRef as forwardRefType)(Tooltip);
-export {_Tooltip as Tooltip};
+});
 
 function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: RefObject<HTMLDivElement | null>}) {
   let state = useContext(TooltipTriggerStateContext)!;
@@ -172,7 +169,7 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
       ref={props.tooltipRef}
       {...renderProps}
       style={{...overlayProps.style, ...renderProps.style}}
-      data-placement={placement}
+      data-placement={placement ?? undefined}
       data-entering={isEntering || undefined}
       data-exiting={props.isExiting || undefined}>
       <OverlayArrowContext.Provider value={{...arrowProps, placement, ref: arrowRef}}>

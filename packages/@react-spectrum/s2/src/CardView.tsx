@@ -19,12 +19,13 @@ import {
   UNSTABLE_Virtualizer
 } from 'react-aria-components';
 import {CardContext, InternalCardViewContext} from './Card';
-import {createContext, forwardRef, useMemo, useState} from 'react';
+import {createContext, forwardRef, ReactElement, useMemo, useRef, useState} from 'react';
 import {DOMRef, DOMRefValue, forwardRefType, Key, LayoutDelegate, LoadingState, Node} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ImageCoordinator} from './ImageCoordinator';
 import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
+import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useEffectEvent, useLayoutEffect, useLoadMore, useResizeObserver} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -60,7 +61,9 @@ export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'key
   /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom. */
   onLoadMore?: () => void,
   /** Spectrum-defined styles, returned by the `style()` macro. */
-  styles?: StylesPropWithHeight
+  styles?: StylesPropWithHeight,
+  /** Provides the ActionBar to render when cards are selected in the CardView. */
+  renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement
 }
 
 class FlexibleGridLayout<T extends object> extends Layout<Node<T>, GridLayoutOptions> {
@@ -74,7 +77,7 @@ class FlexibleGridLayout<T extends object> extends Layout<Node<T>, GridLayoutOpt
       minSpace = new Size(18, 18),
       maxColumns = Infinity
     } = invalidationContext.layoutOptions || {};
-    let visibleWidth = this.virtualizer.visibleRect.width;
+    let visibleWidth = this.virtualizer!.visibleRect.width;
 
     // The max item width is always the entire viewport.
     // If the max item height is infinity, scale in proportion to the max width.
@@ -102,8 +105,8 @@ class FlexibleGridLayout<T extends object> extends Layout<Node<T>, GridLayoutOpt
     // Compute the horizontal spacing and content height
     let horizontalSpacing = Math.floor((visibleWidth - numColumns * itemWidth) / (numColumns + 1));
 
-    let rows = Math.ceil(this.virtualizer.collection.size / numColumns);
-    let iterator = this.virtualizer.collection[Symbol.iterator]();
+    let rows = Math.ceil(this.virtualizer!.collection.size / numColumns);
+    let iterator = this.virtualizer!.collection[Symbol.iterator]();
     let y = rows > 0 ? minSpace.height : 0;
     let newLayoutInfos = new Map();
     let skeleton: Node<T> | null = null;
@@ -151,13 +154,13 @@ class FlexibleGridLayout<T extends object> extends Layout<Node<T>, GridLayoutOpt
       y += maxHeight + minSpace.height;
 
       // Keep adding skeleton rows until we fill the viewport
-      if (skeleton && row === rows - 1 && y < this.virtualizer.visibleRect.height) {
+      if (skeleton && row === rows - 1 && y < this.virtualizer!.visibleRect.height) {
         rows++;
       }
     }
 
     this.layoutInfos = newLayoutInfos;
-    this.contentSize = new Size(this.virtualizer.visibleRect.width, y);
+    this.contentSize = new Size(this.virtualizer!.visibleRect.width, y);
   }
 
   getLayoutInfo(key: Key): LayoutInfo {
@@ -171,7 +174,7 @@ class FlexibleGridLayout<T extends object> extends Layout<Node<T>, GridLayoutOpt
   getVisibleLayoutInfos(rect: Rect): LayoutInfo[] {
     let layoutInfos: LayoutInfo[] = [];
     for (let layoutInfo of this.layoutInfos.values()) {
-      if (layoutInfo.rect.intersects(rect) || this.virtualizer.isPersistedKey(layoutInfo.key)) {
+      if (layoutInfo.rect.intersects(rect) || this.virtualizer!.isPersistedKey(layoutInfo.key)) {
         layoutInfos.push(layoutInfo);
       }
     }
@@ -218,7 +221,7 @@ class WaterfallLayout<T extends object> extends Layout<Node<T>, GridLayoutOption
       minSpace = new Size(18, 18),
       maxColumns = Infinity
     } = invalidationContext.layoutOptions || {};
-    let visibleWidth = this.virtualizer.visibleRect.width;
+    let visibleWidth = this.virtualizer!.visibleRect.width;
 
     // The max item width is always the entire viewport.
     // If the max item height is infinity, scale in proportion to the max width.
@@ -277,13 +280,13 @@ class WaterfallLayout<T extends object> extends Layout<Node<T>, GridLayoutOption
     };
 
     let skeletonCount = 0;
-    for (let node of this.virtualizer.collection) {
+    for (let node of this.virtualizer!.collection) {
       if (node.type === 'skeleton') {
         // Add skeleton cards until every column has at least one, and we fill the viewport.
         let startingHeights = [...columnHeights];
         while (
           !columnHeights.every((h, i) => h !== startingHeights[i]) ||
-          Math.min(...columnHeights) < this.virtualizer.visibleRect.height
+          Math.min(...columnHeights) < this.virtualizer!.visibleRect.height
         ) {
           let key = `${node.key}-${skeletonCount++}`;
           let content = this.layoutInfos.get(key)?.content || {...node};
@@ -297,7 +300,7 @@ class WaterfallLayout<T extends object> extends Layout<Node<T>, GridLayoutOption
 
     // Reset all columns to the maximum for the next section
     let maxHeight = Math.max(...columnHeights);
-    this.contentSize = new Size(this.virtualizer.visibleRect.width, maxHeight);
+    this.contentSize = new Size(this.virtualizer!.visibleRect.width, maxHeight);
     this.layoutInfos = newLayoutInfos;
     this.numColumns = numColumns;
   }
@@ -313,7 +316,7 @@ class WaterfallLayout<T extends object> extends Layout<Node<T>, GridLayoutOption
   getVisibleLayoutInfos(rect: Rect): LayoutInfo[] {
     let layoutInfos: LayoutInfo[] = [];
     for (let layoutInfo of this.layoutInfos.values()) {
-      if (layoutInfo.rect.intersects(rect) || this.virtualizer.isPersistedKey(layoutInfo.key)) {
+      if (layoutInfo.rect.intersects(rect) || this.virtualizer!.isPersistedKey(layoutInfo.key)) {
         layoutInfos.push(layoutInfo);
       }
     }
@@ -344,7 +347,7 @@ class WaterfallLayout<T extends object> extends Layout<Node<T>, GridLayoutOption
       return null;
     }
 
-    let rect = new Rect(layoutInfo.rect.maxX, layoutInfo.rect.y, this.virtualizer.visibleRect.maxX - layoutInfo.rect.maxX, layoutInfo.rect.height);
+    let rect = new Rect(layoutInfo.rect.maxX, layoutInfo.rect.y, this.virtualizer!.visibleRect.maxX - layoutInfo.rect.maxX, layoutInfo.rect.height);
     let layoutInfos = this.getVisibleLayoutInfos(rect);
     let bestKey: Key | null = null;
     let bestDistance = Infinity;
@@ -514,6 +517,7 @@ const cardViewStyles = style({
   display: {
     isEmpty: 'flex'
   },
+  boxSizing: 'border-box',
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
@@ -529,10 +533,12 @@ const cardViewStyles = style({
 
 export const CardViewContext = createContext<ContextValue<CardViewProps<any>, DOMRefValue<HTMLDivElement>>>(null);
 
-function CardView<T extends object>(props: CardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
+export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function CardView<T extends object>(props: CardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, CardViewContext);
   let {children, layout: layoutName = 'grid', size: sizeProp = 'M', density = 'regular', variant = 'primary', selectionStyle = 'checkbox', UNSAFE_className = '', UNSAFE_style, styles, ...otherProps} = props;
   let domRef = useDOMRef(ref);
+  let innerRef = useRef(null);
+  let scrollRef = props.renderActionBar ? innerRef : domRef;
   let layout = useMemo(() => {
     return layoutName === 'waterfall' ? new WaterfallLayout() : new FlexibleGridLayout();
   }, [layoutName]);
@@ -540,7 +546,7 @@ function CardView<T extends object>(props: CardViewProps<T>, ref: DOMRef<HTMLDiv
   // This calculates the maximum t-shirt size where at least two columns fit in the available width.
   let [maxSizeIndex, setMaxSizeIndex] = useState(SIZES.length - 1);
   let updateSize = useEffectEvent(() => {
-    let w = domRef.current?.clientWidth ?? 0;
+    let w = scrollRef.current?.clientWidth ?? 0;
     let i = SIZES.length - 1;
     while (i > 0) {
       let opts = layoutOptions[SIZES[i]][density];
@@ -553,7 +559,7 @@ function CardView<T extends object>(props: CardViewProps<T>, ref: DOMRef<HTMLDiv
   });
 
   useResizeObserver({
-    ref: domRef,
+    ref: scrollRef,
     box: 'border-box',
     onResize: updateSize
   });
@@ -570,23 +576,32 @@ function CardView<T extends object>(props: CardViewProps<T>, ref: DOMRef<HTMLDiv
     isLoading: props.loadingState !== 'idle' && props.loadingState !== 'error',
     items: props.items, // TODO: ideally this would be the collection. items won't exist for static collections, or those using <Collection>
     onLoadMore: props.onLoadMore
-  }, domRef);
+  }, scrollRef);
 
   let ctx = useMemo(() => ({size, variant}), [size, variant]);
 
-  return (
+  let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
+
+  let cardView = (
     <UNSTABLE_Virtualizer layout={layout} layoutOptions={options}>
       <InternalCardViewContext.Provider value={GridListItem}>
         <CardContext.Provider value={ctx}>
           <ImageCoordinator>
             <AriaGridList
-              ref={domRef}
+              ref={scrollRef}
               {...otherProps}
               layout="grid"
               selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
+              selectedKeys={selectedKeys}
+              defaultSelectedKeys={undefined}
+              onSelectionChange={onSelectionChange}
               style={{
                 ...UNSAFE_style,
-                scrollPadding: options.minSpace.height
+                // Add padding at the bottom when the action bar is visible so users can scroll to the last items.
+                // Also add scroll padding so keyboard navigating preserves the padding.
+                paddingBottom: actionBarHeight > 0 ? actionBarHeight + options.minSpace.height : 0,
+                scrollPadding: options.minSpace.height,
+                scrollPaddingBottom: actionBarHeight + options.minSpace.height
               }}
               className={renderProps => UNSAFE_className + cardViewStyles({...renderProps, isLoading: props.loadingState === 'loading'}, styles)}>
               {children}
@@ -596,7 +611,17 @@ function CardView<T extends object>(props: CardViewProps<T>, ref: DOMRef<HTMLDiv
       </InternalCardViewContext.Provider>
     </UNSTABLE_Virtualizer>
   );
-}
 
-const _CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(CardView);
-export {_CardView as CardView};
+  // Add extra wrapper if there is an action bar so we can position relative to it.
+  // ActionBar cannot be inside the GridList due to ARIA and focus management requirements.
+  if (props.renderActionBar) {
+    return (
+      <div ref={domRef} className={style({position: 'relative', overflow: 'clip', size: 'fit'})}>
+        {cardView}
+        {actionBar}
+      </div>
+    );
+  }
+
+  return cardView;
+});

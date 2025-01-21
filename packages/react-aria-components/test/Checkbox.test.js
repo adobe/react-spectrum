@@ -11,7 +11,7 @@
  */
 
 import {Checkbox, CheckboxContext} from '../';
-import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -122,18 +122,18 @@ describe('Checkbox', () => {
     expect(onFocusChange).toHaveBeenLastCalledWith(false);
   });
 
-  it('should support press state', () => {
+  it('should support press state', async () => {
     let {getByRole} = render(<Checkbox className={({isPressed}) => isPressed ? 'pressed' : ''}>Test</Checkbox>);
     let checkbox = getByRole('checkbox').closest('label');
 
     expect(checkbox).not.toHaveAttribute('data-pressed');
     expect(checkbox).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(checkbox);
+    await user.pointer({target: checkbox, keys: '[MouseLeft>]'});
     expect(checkbox).toHaveAttribute('data-pressed', 'true');
     expect(checkbox).toHaveClass('pressed');
 
-    fireEvent.mouseUp(checkbox);
+    await user.pointer({target: checkbox, keys: '[/MouseLeft]'});
     expect(checkbox).not.toHaveAttribute('data-pressed');
     expect(checkbox).not.toHaveClass('pressed');
   });

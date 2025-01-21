@@ -15,22 +15,22 @@ import {testSSR} from '@react-spectrum/test-utils-internal';
 describe('Accordion SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
-      import {Accordion, Disclosure, DisclosureHeader, DisclosurePanel} from '../';
+      import {Accordion, Disclosure, DisclosureTitle, DisclosurePanel} from '../';
       <Accordion>
         <Disclosure id="files">
-          <DisclosureHeader>
+          <DisclosureTitle>
             Files
-          </DisclosureHeader>
+          </DisclosureTitle>
           <DisclosurePanel>
-            <p>Files content</p>
+            Files content
           </DisclosurePanel>
         </Disclosure>
         <Disclosure id="people">
-          <DisclosureHeader>
+          <DisclosureTitle>
             People
-          </DisclosureHeader>
+          </DisclosureTitle>
           <DisclosurePanel>
-            <p>People content</p>
+            People content
           </DisclosurePanel>
         </Disclosure>
       </Accordion>

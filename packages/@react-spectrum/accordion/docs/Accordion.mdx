@@ -20,7 +20,7 @@ keywords: [disclosure, accordion, collapse, expand]
 ---
 
 ```jsx import
-import {Accordion, Disclosure, DisclosureHeader, DisclosurePanel} from '@react-spectrum/accordion';
+import {Accordion, Disclosure, DisclosureTitle, DisclosurePanel} from '@react-spectrum/accordion';
 ```
 
 # Accordion
@@ -29,22 +29,23 @@ import {Accordion, Disclosure, DisclosureHeader, DisclosurePanel} from '@react-s
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Accordion', 'Disclosure', 'DisclosureHeader', 'DisclosurePanel']} />
+  componentNames={['Accordion', 'Disclosure', 'DisclosureTitle', 'DisclosurePanel']}
+  since="3.38.0" />
 
 ## Example
 
 ```tsx example
 <Accordion defaultExpandedKeys={['personal']}>
   <Disclosure id="personal">
-    <DisclosureHeader>Personal Information</DisclosureHeader>
+    <DisclosureTitle>Personal Information</DisclosureTitle>
     <DisclosurePanel>
-      <p>Personal information form here.</p>
+      Personal information form here.
     </DisclosurePanel>
   </Disclosure>
   <Disclosure id="billing">
-    <DisclosureHeader>Billing Address</DisclosureHeader>
+    <DisclosureTitle>Billing Address</DisclosureTitle>
     <DisclosurePanel>
-      <p>Billing address form here.</p>
+      Billing address form here.
     </DisclosurePanel>
   </Disclosure>
 </Accordion>
@@ -67,20 +68,20 @@ import {Key} from "@react-types/shared";
 
 function ControlledExpansion() {
   let [expandedKeys, setExpandedKeys] = React.useState<Set<Key>>(new Set(['personal']))
-  
+
   return (
     <>
       <Accordion expandedKeys={expandedKeys} onExpandedChange={setExpandedKeys}>
         <Disclosure id="personal">
-          <DisclosureHeader>Personal Information</DisclosureHeader>
+          <DisclosureTitle>Personal Information</DisclosureTitle>
           <DisclosurePanel>
-            <p>Personal information form here.</p>
+            Personal information form here.
           </DisclosurePanel>
         </Disclosure>
         <Disclosure id="billing">
-          <DisclosureHeader>Billing Address</DisclosureHeader>
+          <DisclosureTitle>Billing Address</DisclosureTitle>
           <DisclosurePanel>
-            <p>Billing address form here.</p>
+            Billing address form here.
           </DisclosurePanel>
         </Disclosure>
       </Accordion>
@@ -90,29 +91,43 @@ function ControlledExpansion() {
 }
 ```
 
-## Expansion
+## Expanded
 
 By default, only one disclosure will be expanded at a time. To expand multiple disclosures, apply the `allowsMultipleExpanded` prop to Accordion.
 
 ```tsx example
 <Accordion allowsMultipleExpanded defaultExpandedKeys={['personal', 'billing']}>
   <Disclosure id="personal">
-    <DisclosureHeader>Personal Information</DisclosureHeader>
+    <DisclosureTitle>Personal Information</DisclosureTitle>
     <DisclosurePanel>
-      <p>Personal information form here.</p>
+      Personal information form here.
     </DisclosurePanel>
   </Disclosure>
   <Disclosure id="billing">
-    <DisclosureHeader>Billing Address</DisclosureHeader>
+    <DisclosureTitle>Billing Address</DisclosureTitle>
     <DisclosurePanel>
-      <p>Billing address form here.</p>
+      Billing address form here.
     </DisclosurePanel>
   </Disclosure>
 </Accordion>
 ```
 ## Props
 
+### Accordion
+
 <PropTable component={docs.exports.Accordion} links={docs.links} />
+
+### Disclosure
+
+<PropTable component={docs.exports.Disclosure} links={docs.links} />
+
+### Disclosure Title
+
+<PropTable component={docs.exports.DisclosureTitle} links={docs.links} />
+
+### Disclosure Panel
+
+<PropTable component={docs.exports.DisclosurePanel} links={docs.links} />
 
 ## Visual Options
 
@@ -121,15 +136,15 @@ By default, only one disclosure will be expanded at a time. To expand multiple d
 ```tsx example
 <Accordion isDisabled>
   <Disclosure id="personal">
-    <DisclosureHeader>Personal Information</DisclosureHeader>
+    <DisclosureTitle>Personal Information</DisclosureTitle>
     <DisclosurePanel>
-      <p>Personal information form here.</p>
+      Personal information form here.
     </DisclosurePanel>
   </Disclosure>
   <Disclosure id="billing">
-    <DisclosureHeader>Billing Address</DisclosureHeader>
+    <DisclosureTitle>Billing Address</DisclosureTitle>
     <DisclosurePanel>
-      <p>Billing address form here.</p>
+      Billing address form here.
     </DisclosurePanel>
   </Disclosure>
 </Accordion>
@@ -140,15 +155,15 @@ By default, only one disclosure will be expanded at a time. To expand multiple d
 ```tsx example
 <Accordion isQuiet>
   <Disclosure id="personal">
-    <DisclosureHeader>Personal Information</DisclosureHeader>
+    <DisclosureTitle>Personal Information</DisclosureTitle>
     <DisclosurePanel>
-      <p>Personal information form here.</p>
+      Personal information form here.
     </DisclosurePanel>
   </Disclosure>
   <Disclosure id="billing">
-    <DisclosureHeader>Billing Address</DisclosureHeader>
+    <DisclosureTitle>Billing Address</DisclosureTitle>
     <DisclosurePanel>
-      <p>Billing address form here.</p>
+      Billing address form here.
     </DisclosurePanel>
   </Disclosure>
 </Accordion>

@@ -17,10 +17,11 @@ interface SlotProps {
   slot?: string
 }
 
-let SlotContext = React.createContext(null);
+let SlotContext = React.createContext<{} | null>(null);
 
 export function useSlotProps<T>(props: T & {id?: string}, defaultSlot?: string): T {
   let slot = (props as SlotProps).slot || defaultSlot;
+  // @ts-ignore TODO why is slot an object and not just string or undefined?
   let {[slot]: slotProps = {}} = useContext(SlotContext) || {};
 
   return mergeProps(props, mergeProps(slotProps, {id: props.id}));
@@ -34,9 +35,10 @@ export function cssModuleToSlots(cssModule) {
 }
 
 export function SlotProvider(props) {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  let parentSlots = useContext(SlotContext) || {};
-  let {slots = {}, children} = props;
+  const emptyObj = useMemo(() => ({}), []);
+   
+  let parentSlots = useContext(SlotContext) || emptyObj;
+  let {slots = emptyObj, children} = props;
 
   // Merge props for each slot from parent context and props
   let value = useMemo(() =>
@@ -56,6 +58,9 @@ export function SlotProvider(props) {
 
 export function ClearSlots(props) {
   let {children, ...otherProps} = props;
+
+  const emptyObj = useMemo(() => ({}), []);
+
   let content = children;
   if (React.Children.toArray(children).length <= 1) {
     if (typeof children === 'function') { // need to know if the node is a string or something else that react can render that doesn't get props
@@ -63,7 +68,7 @@ export function ClearSlots(props) {
     }
   }
   return (
-    <SlotContext.Provider value={{}}>
+    <SlotContext.Provider value={emptyObj}>
       {content}
     </SlotContext.Provider>
   );

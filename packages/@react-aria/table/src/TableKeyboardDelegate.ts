@@ -24,7 +24,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
   getKeyBelow(key: Key) {
     let startItem = this.collection.getItem(key);
     if (!startItem) {
-      return;
+      return null;
     }
 
     // If focus was on a column, then focus the first child column if any,
@@ -37,11 +37,14 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
 
       let firstKey = this.getFirstKey();
       if (firstKey == null) {
-        return;
+        return null;
       }
 
       let firstItem = this.collection.getItem(firstKey);
-      return getNthItem(getChildNodes(firstItem, this.collection), startItem.index).key;
+      if (!firstItem) {
+        return null;
+      }
+      return getNthItem(getChildNodes(firstItem, this.collection), startItem.index)?.key ?? null;
     }
 
     return super.getKeyBelow(key);
@@ -50,22 +53,23 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
   getKeyAbove(key: Key) {
     let startItem = this.collection.getItem(key);
     if (!startItem) {
-      return;
+      return null;
     }
 
     // If focus was on a column, focus the parent column if any
     if (startItem.type === 'column') {
-      let parent = this.collection.getItem(startItem.parentKey);
+      let parent = startItem.parentKey != null ? this.collection.getItem(startItem.parentKey) : null;
       if (parent && parent.type === 'column') {
         return parent.key;
       }
 
-      return;
+      return null;
     }
 
     // only return above row key if not header row
     let superKey = super.getKeyAbove(key);
-    if (superKey != null && this.collection.getItem(superKey).type !== 'headerrow') {
+    let superItem = superKey != null ? this.collection.getItem(superKey) : null;
+    if (superItem && superItem.type !== 'headerrow') {
       return superKey;
     }
 
@@ -93,6 +97,8 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
         return item.key;
       }
     }
+
+    return null;
   }
 
   private findPreviousColumnKey(column: Node<T>) {
@@ -111,12 +117,14 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
         return item.key;
       }
     }
+
+    return null;
   }
 
   getKeyRightOf(key: Key) {
     let item = this.collection.getItem(key);
     if (!item) {
-      return;
+      return null;
     }
 
     // If focus was on a column, then focus the next column
@@ -132,7 +140,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
   getKeyLeftOf(key: Key) {
     let item = this.collection.getItem(key);
     if (!item) {
-      return;
+      return null;
     }
 
     // If focus was on a column, then focus the previous column
@@ -158,13 +166,16 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
 
     // If the starting key is a cell, search from its parent row.
     let startItem = collection.getItem(key);
-    if (startItem.type === 'cell') {
-      key = startItem.parentKey;
+    if (startItem?.type === 'cell') {
+      key = startItem.parentKey ?? null;
     }
 
     let hasWrapped = false;
     while (key != null) {
       let item = collection.getItem(key);
+      if (!item) {
+        return null;
+      }
 
       // Check each of the row header cells in this row for a match
       for (let cell of getChildNodes(item, this.collection)) {
@@ -174,7 +185,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
           if (this.collator.compare(substring, search) === 0) {
             // If we started on a cell, end on the matching cell. Otherwise, end on the row.
             let fromItem = fromKey != null ? collection.getItem(fromKey) : startItem;
-            return fromItem.type === 'cell'
+            return fromItem?.type === 'cell'
               ? cell.key
               : item.key;
           }

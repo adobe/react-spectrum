@@ -39,14 +39,14 @@ export interface DisclosureAria {
  * Provides the behavior and accessibility implementation for a disclosure component.
  * @param props - Props for the disclosure.
  * @param state - State for the disclosure, as returned by `useDisclosureState`.
- * @param ref - A ref for the disclosure content.
+ * @param ref - A ref for the disclosure panel.
  */
 export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState, ref: RefObject<Element | null>): DisclosureAria {
   let {
     isDisabled
   } = props;
   let triggerId = useId();
-  let contentId = useId();
+  let panelId = useId();
   let isSSR = useIsSSR();
   let supportsBeforeMatch = !isSSR && 'onbeforematch' in document.body;
 
@@ -95,25 +95,25 @@ export function useDisclosure(props: AriaDisclosureProps, state: DisclosureState
     buttonProps: {
       id: triggerId,
       'aria-expanded': state.isExpanded,
-      'aria-controls': contentId,
+      'aria-controls': panelId,
       onPress: (e) => {
         if (!isDisabled && e.pointerType !== 'keyboard') {
           state.toggle();
         }
       },
       isDisabled,
-      onKeyDown(e) {
-        if (!isDisabled && (e.key === 'Enter' || e.key === ' ')) {
-          e.preventDefault();
+      onPressStart(e) {
+        if (e.pointerType === 'keyboard' && !isDisabled) {
           state.toggle();
         }
       }
     },
     panelProps: {
-      id: contentId,
+      id: panelId,
       // This can be overridden at the panel element level.
       role: 'group',
       'aria-labelledby': triggerId,
+      'aria-hidden': !state.isExpanded,
       hidden: supportsBeforeMatch ? true : !state.isExpanded
     }
   };

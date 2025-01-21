@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DisabledBehavior, Key, MultipleSelection, SelectionBehavior, SelectionMode} from '@react-types/shared';
+import {DisabledBehavior, FocusStrategy, Key, MultipleSelection, SelectionBehavior, SelectionMode} from '@react-types/shared';
 import {MultipleSelectionState} from './types';
 import {Selection} from './Selection';
 import {useControlledState} from '@react-stately/utils';
@@ -45,7 +45,7 @@ export interface MultipleSelectionStateProps extends MultipleSelection {
 export function useMultipleSelectionState(props: MultipleSelectionStateProps): MultipleSelectionState {
   let {
     selectionMode = 'none' as SelectionMode,
-    disallowEmptySelection,
+    disallowEmptySelection = false,
     allowDuplicateSelectionEvents,
     selectionBehavior: selectionBehaviorProp = 'toggle',
     disabledBehavior = 'all'
@@ -55,14 +55,14 @@ export function useMultipleSelectionState(props: MultipleSelectionStateProps): M
   // But we also need to trigger a react re-render. So, we have both a ref (sync) and state (async).
   let isFocusedRef = useRef(false);
   let [, setFocused] = useState(false);
-  let focusedKeyRef = useRef(null);
-  let childFocusStrategyRef = useRef(null);
-  let [, setFocusedKey] = useState(null);
+  let focusedKeyRef = useRef<Key | null>(null);
+  let childFocusStrategyRef = useRef<FocusStrategy | null>(null);
+  let [, setFocusedKey] = useState<Key | null>(null);
   let selectedKeysProp = useMemo(() => convertSelection(props.selectedKeys), [props.selectedKeys]);
   let defaultSelectedKeys = useMemo(() => convertSelection(props.defaultSelectedKeys, new Selection()), [props.defaultSelectedKeys]);
   let [selectedKeys, setSelectedKeys] = useControlledState(
     selectedKeysProp,
-    defaultSelectedKeys,
+    defaultSelectedKeys!,
     props.onSelectionChange
   );
   let disabledKeysProp = useMemo(() =>
@@ -119,7 +119,7 @@ export function useMultipleSelectionState(props: MultipleSelectionStateProps): M
   };
 }
 
-function convertSelection(selection: 'all' | Iterable<Key>, defaultValue?: Selection): 'all' | Set<Key> {
+function convertSelection(selection: 'all' | Iterable<Key> | null | undefined, defaultValue?: Selection): 'all' | Set<Key> | undefined {
   if (!selection) {
     return defaultValue;
   }

@@ -42,7 +42,7 @@ export function useFormatHelpText(props: Pick<SpectrumDatePickerBase<any>, 'desc
 }
 
 export function useVisibleMonths(maxVisibleMonths: number) {
-  let {scale} = useProvider();
+  let {scale} = useProvider()!;
   let [visibleMonths, setVisibleMonths] = useState(getVisibleMonths(scale));
   useLayoutEffect(() => {
     let onResize = () => setVisibleMonths(getVisibleMonths(scale));
@@ -68,7 +68,7 @@ function getVisibleMonths(scale) {
 }
 
 export function useFocusManagerRef(ref: FocusableRef<HTMLElement>) {
-  let domRef = useRef(undefined);
+  let domRef = useRef<HTMLElement | null>(null);
   useImperativeHandle(ref, () => ({
     ...createDOMRef(domRef),
     focus() {

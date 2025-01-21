@@ -32,23 +32,14 @@ const preview = {
       },
       source: {
         // code: null, // Will disable code button, and show "No code available"
-        transform: (code: string) => {
-          // Replace any <_ with <
-          code = code.replace(/<\s?_/g, '<');
-          // Replace any </_ with </
-          code = code.replace(/<\/\s?_/g, '</');
-          // Remove any className prop
-          code = code.replace(/\s+className=".*"/g, '');
-          // Remove any styles prop
-          code = code.replace(/\s+styles=".*"/g, '');
-          // Remove any on* prop
-          code = code.replace(/\s+on[A-Z].*={.*}/g, '');
-          // Replace components like <{one letter} /> with <Icon />
-          code = code.replace(/<([a-z])\s?\/>/g, '<Icon />');
-          // Replace <No Display Name /> with <Cloud />
-          code = code.replace(/<No\sDisplay\sName\s\/>/g, '<Cloud />');
-          // Move any lines with just a > to the previous line
-          code = code.replace(/\n\s*>/g, '>');
+        transform: (code: string, ctx) => {
+          code = ctx.parameters.docs?.source?.originalSource ?? code;
+          code = code.replace(/ \{\.\.\.args\}/g, '');
+          if (/^(.*?) =>/.test(code)) {
+            code = code.replace(/^(.*?) => /, '');
+            code = code.replace(/^\s{2}(\s+)/gm, '$1');
+            code = code.replace(/\n\s{2}(.*)$/, '\n$1');
+          }
           return code;
         }
       }

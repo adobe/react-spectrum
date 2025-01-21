@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Disclosure, DisclosureHeader, DisclosurePanel, SpectrumDisclosureProps} from '../src';
+import {Disclosure, DisclosurePanel, DisclosureTitle, SpectrumDisclosureProps} from '../src';
 import {Meta, StoryObj} from '@storybook/react';
 import React from 'react';
 
@@ -33,11 +33,11 @@ type DisclosureStory = StoryObj<typeof Disclosure>;
 export const Default: DisclosureStory = {
   render: (args) => (
     <Disclosure {...args}>
-      <DisclosureHeader>
+      <DisclosureTitle>
         Files
-      </DisclosureHeader>
+      </DisclosureTitle>
       <DisclosurePanel>
-        <p>Files content</p>
+        Files content
       </DisclosurePanel>
     </Disclosure>
   )

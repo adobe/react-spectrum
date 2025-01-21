@@ -33,15 +33,15 @@ interface SubmenuTriggerProps {
 export interface SpectrumSubmenuTriggerProps extends Omit<SubmenuTriggerProps, 'targetKey'> {}
 
 function SubmenuTrigger(props: SubmenuTriggerProps) {
-  let triggerRef = useRef<HTMLDivElement>(undefined);
+  let triggerRef = useRef<HTMLDivElement>(null);
   let {
     children,
     targetKey
   } = props;
 
   let [menuTrigger, menu] = React.Children.toArray(children);
-  let {popoverContainer, trayContainerRef, menu: parentMenuRef, submenu: menuRef, rootMenuTriggerState} = useMenuStateContext();
-  let submenuTriggerState = useSubmenuTriggerState({triggerKey: targetKey}, rootMenuTriggerState);
+  let {popoverContainer, trayContainerRef, menu: parentMenuRef, submenu: menuRef, rootMenuTriggerState} = useMenuStateContext()!;
+  let submenuTriggerState = useSubmenuTriggerState({triggerKey: targetKey}, rootMenuTriggerState!);
   let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger({
     parentMenuRef,
     submenuRef: menuRef
@@ -59,12 +59,12 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
     switch (e.key) {
       case 'ArrowLeft':
         if (direction === 'ltr') {
-          triggerRef.current.focus();
+          triggerRef.current?.focus();
         }
         break;
       case 'ArrowRight':
         if (direction === 'rtl') {
-          triggerRef.current.focus();
+          triggerRef.current?.focus();
         }
         break;
     }
@@ -90,7 +90,7 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
         {...popoverProps}
         onDismissButtonPress={onDismissButtonPress}
         UNSAFE_className={classNames(styles, 'spectrum-Submenu-popover')}
-        container={popoverContainer}
+        container={popoverContainer!}
         containerPadding={0}
         enableBothDismissButtons
         UNSAFE_style={{clipPath: 'unset', overflow: 'visible', borderWidth: '0px'}}
@@ -150,5 +150,5 @@ SubmenuTrigger.getCollectionNode = function* (props: SpectrumSubmenuTriggerProps
   };
 };
 
-let _SubmenuTrigger = SubmenuTrigger as (props: SpectrumSubmenuTriggerProps) => JSX.Element;
+let _SubmenuTrigger = SubmenuTrigger as unknown as (props: SpectrumSubmenuTriggerProps) => JSX.Element;
 export {_SubmenuTrigger as SubmenuTrigger};

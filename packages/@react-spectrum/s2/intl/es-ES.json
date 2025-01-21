@@ -1,5 +1,9 @@
 {
-  "breadcrumbs.more": "Más elementos",
+  "actionbar.actions": "Acciones",
+  "actionbar.actionsAvailable": "Acciones disponibles.",
+  "actionbar.clearSelection": "Borrar selección",
+  "actionbar.selected": "{count, plural, =0 {Nada seleccionado} one {# seleccionado} other {# seleccionados}}",
+  "actionbar.selectedAll": "Todo seleccionado",
   "button.pending": "pendiente",
   "contextualhelp.help": "Ayuda",
   "contextualhelp.info": "Información",
@@ -24,5 +28,6 @@
   "tag.actions": "Acciones",
   "tag.hideButtonLabel": "Mostrar menos",
   "tag.noTags": "Ninguno",
-  "tag.showAllButtonLabel": "Mostrar todo ({tagCount, number})"
+  "tag.showAllButtonLabel": "Mostrar todo ({tagCount, number})",
+  "breadcrumbs.more": "Más elementos"
 }

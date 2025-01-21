@@ -3,7 +3,7 @@ import {P, Code, Pre, H3, H2, Link} from './typography';
 
 export function Migrating() {
   return (
-    <div className={style({maxWidth: 'lg', marginX: 'auto', fontFamily: 'sans'})}>
+    <div className={'sb-unstyled ' + style({marginX: 'auto', fontFamily: 'sans'})}>
       <div className={style({marginX: 48})}>
         <h1 className={style({font: 'heading-2xl', marginBottom: 48})}>
           Migrating to Spectrum 2
@@ -34,6 +34,27 @@ export function Migrating() {
           <li className={style({font: 'body', marginY: 8})}>Update <Link href="https://react-spectrum.adobe.com/react-spectrum/styling.html#style-props">style props</Link> to use the <Link href="?path=/docs/style-macro--docs">style macro</Link> instead. See the 'Style props' section below</li>
         </ul>
 
+        <H3>Accordion</H3>
+        <ul className="sb-unstyled">
+          <li className={style({font: 'body', marginY: 8})}>Update <Code>Item</Code> to be <Code>Disclosure</Code>. <Code>Disclosure</Code> should now consist of two children: <Code>DisclosureTitle</Code> and <Code>DisclosurePanel</Code>. Note that you can now add interactive elements inside the header and adjacent to the title by using the <Code>DisclosureHeader</Code> component with the <Code>DisclosureTitle</Code> and interactive elements inside.</li>
+          <li className={style({font: 'body', marginY: 8})}>Update <Code>Item</Code>'s title prop to be a child of <Code>DisclosureTitle</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Update children of <Code>Item</Code> to be children of <Code>DisclosurePanel</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Update <Code>key</Code> to be <Code>id</Code> (and keep <Code>key</Code> if rendered inside <Code>array.map</Code>)</li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>disabledKeys</Code> and add <Code>isDisabled</Code> to individual <Code>Disclosure</Code> components</li>
+          <li className={style({font: 'body', marginY: 8})}>Add <Code>allowsMultipleExpanded</Code> to allow multiple <Code>Disclosure</Code> components to be expanded at once (previously default behavior)</li>
+        </ul>
+
+        <H3>ActionBar</H3>
+        <ul className="sb-unstyled">
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>ActionBarContainer</Code> and move <Code>ActionBar</Code> to <Code>renderActionBar</Code> prop of <Code>TableView</Code> or <Code>CardView</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Update <Code>Item</Code> to <Code>ActionButton</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Update root level <Code>onAction</Code> to be called via <Code>onPress</Code> on each <Code>ActionButton</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Apply <Code>isDisabled</Code> directly on each <Code>ActionButton</Code> or <Code>ToggleButton</Code> instead of root level <Code>disabledKeys</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Update <Code>key</Code> to be <Code>id</Code> (and keep <Code>key</Code> if rendered inside <Code>array.map</Code>)</li>
+          <li className={style({font: 'body', marginY: 8})}>Convert dynamic collections render function to <Code>items.map</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>buttonLabelBehavior</Code> (it has not been implemented yet)</li>
+        </ul>
+
         <H3>ActionButton</H3>
         <P>No updates needed.</P>
 
@@ -42,6 +63,19 @@ export function Migrating() {
           <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>closeOnSelect</Code> (it has not been implemented yet)</li>
           <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>trigger</Code> (it has not been implemented yet)</li>
           <li className={style({font: 'body', marginY: 8})}>Update <Code>Item</Code> to be a <Code>MenuItem</Code></li>
+        </ul>
+
+        <H3>ActionGroup</H3>
+        <ul className="sb-unstyled">
+          <li className={style({font: 'body', marginY: 8})}>Use <Code>ActionButtonGroup</Code> if you are migrating from an <Code>ActionGroup</Code> that didn't allow for selection. <Code>ActionButtonGroup</Code> takes <Code>ActionButtons</Code> as children. </li>
+          <li className={style({font: 'body', marginY: 8})}>Use <Code>ToggleButtonGroup</Code> if you are migrating from an <Code>ActionGroup</Code> that used single or multiple selection. <Code>ToggleButtonGroup</Code> takes <Code>ToggleButtons</Code> as children. </li>
+          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>overflowMode</Code> (it has not been implemented yet)</li>
+          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>buttonLabelBehavior</Code> (it has not been implemented yet)</li>
+          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>summaryIcon</Code> (it has not been implemented yet)</li>
+          <li className={style({font: 'body', marginY: 8})}>Update root level <Code>onAction</Code> to called via <Code>onPress</Code> on each <Code>ActionButton</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Apply <Code>isDisabled</Code> directly on each <Code>ActionButton</Code> or <Code>ToggleButton</Code> instead of root level <Code>disabledKeys</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Update <Code>key</Code> to be <Code>id</Code> (and keep <Code>key</Code> if rendered inside <Code>array.map</Code>)</li>
+          <li className={style({font: 'body', marginY: 8})}>Convert dynamic collections render function to <Code>items.map</Code></li>
         </ul>
 
         <H3>AlertDialog</H3>
@@ -131,14 +165,37 @@ export function Migrating() {
         <ul className="sb-unstyled">
           <li className={style({font: 'body', marginY: 8})}>Update children to move render props from being the second child of <Code>DialogTrigger</Code> to being a child of <Code>Dialog</Code></li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>onDismiss</Code> and use <Code>onOpenChange</Code> on the <Code>DialogTrigger</Code>, or <Code>onDismiss</Code> on the <Code>DialogContainer</Code> instead</li>
+          <li className={style({font: 'body', marginY: 8})}><Code>Dialog</Code> is now meant specifically for rendering modal dialogs only and follows the same preset layout as before</li>
+          <li className={style({font: 'body', marginY: 8})}>If you are trying to create a dialog with a custom layout use <Code>CustomDialog</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>If you are trying to create a fullscreen dialog use <Code>FullscreenDialog</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>If you are trying to create a popover dialog use <Code>Popover</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Supports <Code>isKeyboardDismissDisabled</Code> in place of <Code>DialogTrigger</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Supports <Code>isDismissible</Code> in place of <Code>DialogTrigger</Code>. Note the fixed spelling from previous <Code>isDismissible</Code> prop.</li>
+          <li className={style({font: 'body', marginY: 8})}>Supports <Code>role: "dialog" | "alertdialog"</Code></li>
+        </ul>
+
+        <H3>DialogContainer</H3>
+        <ul className="sb-unstyled">
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>type</Code>, this is dependent on the dialog level child that you use (e.g. <Code>Dialog</Code>, <Code>FullscreenDialog</Code>, <Code>Popover</Code>)</li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isDismissable</Code>, prop now exists on the dialog level component as <Code>isDismissible</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isKeyboardDismissDisabled</Code>, prop now exists on the dialog level component</li>
         </ul>
 
         <H3>DialogTrigger</H3>
         <ul className="sb-unstyled">
           <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>type="tray"</Code> (<Code>Tray</Code> has not been implemented yet)</li>
-          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>mobileType="tray"</Code> (<Code>Tray</Code> has not been implemented yet)</li>
+          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>mobileType</Code> (<Code>Tray</Code> and other types have not been implemented yet for <Code>Popover</Code>)</li>
           <li className={style({font: 'body', marginY: 8})}>Remove <Code>targetRef</Code> (it is no longer supported in Spectrum 2)</li>
           <li className={style({font: 'body', marginY: 8})}>Update <Code>children</Code> to remove render props usage, and note that the <Code>close</Code> function was moved from <Code>DialogTrigger</Code> to <Code>Dialog</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>containerPadding</Code>, prop now exists on the <Code>Popover</Code> component</li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>crossOffset</Code>, prop now exists on the <Code>Popover</Code> component</li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>hideArrow</Code>, prop now exists on the <Code>Popover</Code> component</li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isDismissable</Code>, prop now exists on the dialog level component as <Code>isDismissible</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>isKeyboardDismissDisabled</Code>, prop now exists on the dialog level component</li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>offset</Code>, prop now exists on the <Code>Popover</Code> component</li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>placement</Code>, prop now exists on the <Code>Popover</Code> component</li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>shouldFlip</Code>, prop now exists on the <Code>Popover</Code> component</li>
+          <li className={style({font: 'body', marginY: 8})}>Remove <Code>type</Code>, this is dependent on the dialog level child that you use (e.g. <Code>Dialog</Code>, <Code>FullscreenDialog</Code>, <Code>Popover</Code>)</li>
         </ul>
 
         <H3>Divider</H3>
@@ -291,6 +348,17 @@ export function Migrating() {
 
         <H3>Switch</H3>
         <P>No updates needed.</P>
+
+        <H3>TableView</H3>
+        <ul className="sb-unstyled">
+          <li className={style({font: 'body', marginY: 8})}>For <Code>Column</Code> and <Code>Row</Code>: Update <Code>key</Code> to be <Code>id</Code> (and keep <Code>key</Code> if rendered inside <Code>array.map</Code>)</li>
+          <li className={style({font: 'body', marginY: 8})}>For dynamic tables, pass a <Code>columns</Code> prop into <Code>Row</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>For <Code>Row</Code>: Update dynamic render function to pass in <Code>column</Code> instead of <Code>columnKey</Code></li>
+          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>UNSTABLE_allowsExpandableRows</Code> (it has not been implemented yet)</li>
+          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>UNSTABLE_onExpandedChange</Code> (it has not been implemented yet)</li>
+          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>UNSTABLE_expandedKeys</Code> (it has not been implemented yet)</li>
+          <li className={style({font: 'body', marginY: 8})}>[PENDING] Comment out <Code>UNSTABLE_defaultExpandedKeys</Code> (it has not been implemented yet)</li>
+        </ul>
 
         <H3>Tabs</H3>
         <ul className="sb-unstyled">
@@ -458,7 +526,7 @@ export function Migrating() {
                 <td><Code>'large'</Code></td>
                 <td><Code>'xl'</Code></td>
               </tr>
-            </tbody>        
+            </tbody>
         </table>
 
         <H3>Dimension values</H3>

@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Disclosure, DisclosureHeader, DisclosurePanel} from '../';
+import {Disclosure, DisclosurePanel, DisclosureTitle} from '../';
 import {Meta} from '@storybook/react';
 import React from 'react';
 
 const meta: Meta = {
-  title: 'Accordion',
+  title: 'Disclosure',
   component: Disclosure,
   excludeStories: ['Template']
 };
@@ -24,9 +24,9 @@ export default meta;
 
 export const Template = (args) => (
   <Disclosure {...args}>
-    <DisclosureHeader>
+    <DisclosureTitle>
       Your files
-    </DisclosureHeader>
+    </DisclosureTitle>
     <DisclosurePanel>
       files
     </DisclosurePanel>

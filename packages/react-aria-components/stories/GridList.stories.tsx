@@ -125,7 +125,7 @@ export function VirtualizedGridList() {
 
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => {
-      return [...keys].map(key => ({'text/plain': list.getItem(key).name}));
+      return [...keys].map(key => ({'text/plain': list.getItem(key)?.name ?? ''}));
     },
     onReorder(e) {
       if (e.target.dropPosition === 'before') {

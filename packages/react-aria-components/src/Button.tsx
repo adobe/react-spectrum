@@ -103,7 +103,10 @@ const additionalButtonHTMLAttributes = new Set(['form', 'formAction', 'formEncTy
 
 export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTMLButtonElement>>({});
 
-function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
+/**
+ * A button allows a user to perform an action, with mouse, touch, and keyboard interactions.
+ */
+export const Button = /*#__PURE__*/ createHideableComponent(function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
   [props, ref] = useContextProps(props, ref, ButtonContext);
   props = disablePendingProps(props);
   let ctx = props as ButtonContextValue;
@@ -154,11 +157,14 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
     wasPending.current = isPending;
   }, [isPending, isFocused, ariaLabelledby, buttonId]);
 
+  // When the button is in a pending state, we want to stop implicit form submission (ie. when the user presses enter on a text input).
+  // We do this by changing the button's type to button.
   return (
     <button
       {...filterDOMProps(props, {propNames: additionalButtonHTMLAttributes})}
       {...mergeProps(buttonProps, focusProps, hoverProps)}
       {...renderProps}
+      type={buttonProps.type === 'submit' && isPending ? 'button' : buttonProps.type}
       id={buttonId}
       ref={ref}
       aria-labelledby={ariaLabelledby}
@@ -175,7 +181,7 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
       </ProgressBarContext.Provider>
     </button>
   );
-}
+});
 
 function disablePendingProps(props) {
   // Don't allow interaction while isPending is true
@@ -192,9 +198,3 @@ function disablePendingProps(props) {
   }
   return props;
 }
-
-/**
- * A button allows a user to perform an action, with mouse, touch, and keyboard interactions.
- */
-const _Button = /*#__PURE__*/ createHideableComponent(Button);
-export {_Button as Button};

@@ -165,32 +165,43 @@ export const Controlled: Story = {
   render: () => <ControlledAccordion />
 };
 
-function ControlledOpenAccordion() {
-  return (
-    <Accordion
-      expandedKeys={['people']}>
-      <Disclosure id="files">
-        <DisclosureTitle>
-          Files
-        </DisclosureTitle>
-        <DisclosurePanel>
-          Files content
-        </DisclosurePanel>
-      </Disclosure>
-      <Disclosure id="people">
-        <DisclosureTitle>
-          People
-        </DisclosureTitle>
-        <DisclosurePanel>
-          <TextField label="Name" />
-        </DisclosurePanel>
-      </Disclosure>
-    </Accordion>
-  );
-}
+Controlled.parameters = {
+  docs: {
+    disable: true
+  }
+};
 
 export const ControlledOpen: Story = {
-  render: () => <ControlledOpenAccordion />
+  render: (args) => {
+    return (
+      <Accordion
+        {...args}
+        expandedKeys={['people']}>
+        <Disclosure id="files">
+          <DisclosureTitle>
+            Files
+          </DisclosureTitle>
+          <DisclosurePanel>
+            Files content
+          </DisclosurePanel>
+        </Disclosure>
+        <Disclosure id="people">
+          <DisclosureTitle>
+            People
+          </DisclosureTitle>
+          <DisclosurePanel>
+            <TextField label="Name" />
+          </DisclosurePanel>
+        </Disclosure>
+      </Accordion>
+    );
+  }
+};
+
+ControlledOpen.parameters = {
+  docs: {
+    disable: true
+  }
 };
 
 export const WithActionButton: Story = {

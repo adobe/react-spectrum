@@ -12,8 +12,8 @@
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaMenuTests} from './AriaMenu.test-util';
-import {Button, Collection, Header, Keyboard, Menu, MenuContext, MenuItem, MenuTrigger, Popover, Section, Separator, SubmenuTrigger, Text} from '..';
-import React from 'react';
+import {Button, Collection, Header, Keyboard, Menu, MenuContext, MenuItem, MenuSection, MenuTrigger, Popover, Separator, SubmenuTrigger, Text} from '..';
+import React, {useState} from 'react';
 import {Selection, SelectionMode} from '@react-types/shared';
 import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
 import {User} from '@react-aria/test-utils';
@@ -72,12 +72,12 @@ describe('Menu', () => {
         <MenuItem id="cat">Cat</MenuItem>
         <MenuItem id="dog">Dog</MenuItem>
         <MenuItem id="kangaroo">Kangaroo</MenuItem>
-        <Section>
+        <MenuSection>
           <Header>Fish</Header>
           <MenuItem id="salmon">Salmon</MenuItem>
           <MenuItem id="tuna">Tuna</MenuItem>
           <MenuItem id="cod">Cod</MenuItem>
-        </Section>
+        </MenuSection>
       </Menu>
     );
     let menu = getByRole('menu');
@@ -140,9 +140,9 @@ describe('Menu', () => {
     let itemRef = React.createRef<HTMLDivElement>();
     render(
       <Menu aria-label="Test" ref={listBoxRef}>
-        <Section ref={sectionRef} aria-label="Felines">
+        <MenuSection ref={sectionRef} aria-label="Felines">
           <MenuItem ref={itemRef}>Cat</MenuItem>
-        </Section>
+        </MenuSection>
       </Menu>
     );
     expect(listBoxRef.current).toBeInstanceOf(HTMLElement);
@@ -243,26 +243,26 @@ describe('Menu', () => {
   it('should support sections', () => {
     let {getAllByRole} = render(
       <Menu aria-label="Sandwich contents" selectionMode="multiple">
-        <Section>
+        <MenuSection>
           <Header>Veggies</Header>
           <MenuItem id="lettuce">Lettuce</MenuItem>
           <MenuItem id="tomato">Tomato</MenuItem>
           <MenuItem id="onion">Onion</MenuItem>
-        </Section>
-        <Section>
+        </MenuSection>
+        <MenuSection>
           <Header>Protein</Header>
           <MenuItem id="ham">Ham</MenuItem>
           <MenuItem id="tuna">Tuna</MenuItem>
           <MenuItem id="tofu">Tofu</MenuItem>
-        </Section>
+        </MenuSection>
       </Menu>
     );
 
     let groups = getAllByRole('group');
     expect(groups).toHaveLength(2);
 
-    expect(groups[0]).toHaveClass('react-aria-Section');
-    expect(groups[1]).toHaveClass('react-aria-Section');
+    expect(groups[0]).toHaveClass('react-aria-MenuSection');
+    expect(groups[1]).toHaveClass('react-aria-MenuSection');
 
     expect(groups[0]).toHaveAttribute('aria-labelledby');
     expect(document.getElementById(groups[0].getAttribute('aria-labelledby')!)).toHaveTextContent('Veggies');
@@ -301,18 +301,18 @@ describe('Menu', () => {
     expect(menuitem).not.toHaveClass('focus');
   });
 
-  it('should support press state', () => {
+  it('should support press state', async () => {
     let {getAllByRole} = renderMenu({}, {className: ({isPressed}) => isPressed ? 'pressed' : ''});
     let menuitem = getAllByRole('menuitem')[0];
 
     expect(menuitem).not.toHaveAttribute('data-pressed');
     expect(menuitem).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(menuitem);
+    await user.pointer({target: menuitem, keys: '[MouseLeft>]'});
     expect(menuitem).toHaveAttribute('data-pressed', 'true');
     expect(menuitem).toHaveClass('pressed');
 
-    fireEvent.mouseUp(menuitem);
+    await user.pointer({target: menuitem, keys: '[/MouseLeft]'});
     expect(menuitem).not.toHaveAttribute('data-pressed');
     expect(menuitem).not.toHaveClass('pressed');
   });
@@ -331,6 +331,59 @@ describe('Menu', () => {
     await user.click(menuitem);
     expect(menuitem).not.toHaveAttribute('aria-checked', 'true');
     expect(menuitem).not.toHaveClass('selected');
+  });
+
+  it('should support section-level selection', async () => {
+    function Example() {
+      let [veggies, setVeggies] = useState<Selection>(new Set(['lettuce']));
+      let [protein, setProtein] = useState<Selection>(new Set(['ham']));
+      return (
+        <Menu aria-label="Sandwich contents" selectionMode="multiple">
+          <MenuSection selectionMode="multiple" selectedKeys={veggies} onSelectionChange={setVeggies}>
+            <MenuItem id="lettuce">Lettuce</MenuItem>
+            <MenuItem id="tomato">Tomato</MenuItem>
+            <MenuItem id="onion">Onion</MenuItem>
+          </MenuSection>
+          <MenuSection selectionMode="single" selectedKeys={protein} onSelectionChange={setProtein}>
+            <MenuItem id="ham">Ham</MenuItem>
+            <MenuItem id="tuna">Tuna</MenuItem>
+            <MenuItem id="tofu">Tofu</MenuItem>
+          </MenuSection>
+        </Menu>
+      );
+    }
+
+    let {getAllByRole} = render(<Example />);
+    let checkboxes = getAllByRole('menuitemcheckbox');
+
+    expect(checkboxes).toHaveLength(3);
+    expect(checkboxes[0]).toHaveAttribute('aria-checked', 'true');
+    expect(checkboxes[1]).toHaveAttribute('aria-checked', 'false');
+    expect(checkboxes[2]).toHaveAttribute('aria-checked', 'false');
+
+    await user.click(checkboxes[1]);
+    expect(checkboxes[0]).toHaveAttribute('aria-checked', 'true');
+    expect(checkboxes[1]).toHaveAttribute('aria-checked', 'true');
+    expect(checkboxes[2]).toHaveAttribute('aria-checked', 'false');
+
+    let radios = getAllByRole('menuitemradio');
+
+    expect(radios).toHaveLength(3);
+    expect(radios[0]).toHaveAttribute('aria-checked', 'true');
+    expect(radios[1]).toHaveAttribute('aria-checked', 'false');
+    expect(radios[2]).toHaveAttribute('aria-checked', 'false');
+
+    await user.click(radios[1]);
+    expect(radios[0]).toHaveAttribute('aria-checked', 'false');
+    expect(radios[1]).toHaveAttribute('aria-checked', 'true');
+    expect(radios[2]).toHaveAttribute('aria-checked', 'false');
+
+    act(() => checkboxes[0].focus());
+    let sequence = checkboxes.slice(1).concat(radios);
+    for (let item of sequence) {
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(item);
+    }
   });
 
   it('should support disabled state', () => {
@@ -487,7 +540,7 @@ describe('Menu', () => {
                   <Menu onAction={onAction}>
                     <MenuItem id="email">Email</MenuItem>
                     <MenuItem id="sms">SMS</MenuItem>
-                    <MenuItem id="twitter">Twitter</MenuItem>
+                    <MenuItem id="x">X</MenuItem>
                   </Menu>
                 </Popover>
               </SubmenuTrigger>
@@ -560,7 +613,7 @@ describe('Menu', () => {
                       </Popover>
                     </SubmenuTrigger>
                     <MenuItem id="sms">SMS</MenuItem>
-                    <MenuItem id="twitter">Twitter</MenuItem>
+                    <MenuItem id="x">X</MenuItem>
                   </Menu>
                 </Popover>
               </SubmenuTrigger>
@@ -653,7 +706,7 @@ describe('Menu', () => {
                       </Popover>
                     </SubmenuTrigger>
                     <MenuItem id="sms">SMS</MenuItem>
-                    <MenuItem id="twitter">Twitter</MenuItem>
+                    <MenuItem id="x">X</MenuItem>
                   </Menu>
                 </Popover>
               </SubmenuTrigger>
@@ -740,7 +793,7 @@ describe('Menu', () => {
                   <Menu>
                     <MenuItem id="email">Email</MenuItem>
                     <MenuItem id="sms">SMS</MenuItem>
-                    <MenuItem id="twitter">Twitter</MenuItem>
+                    <MenuItem id="x">X</MenuItem>
                   </Menu>
                 </Popover>
               </SubmenuTrigger>
@@ -817,7 +870,7 @@ describe('Menu', () => {
                       </Popover>
                     </SubmenuTrigger>
                     <MenuItem id="sms">SMS</MenuItem>
-                    <MenuItem id="twitter">Twitter</MenuItem>
+                    <MenuItem id="x">X</MenuItem>
                   </Menu>
                 </Popover>
               </SubmenuTrigger>
@@ -904,7 +957,7 @@ describe('Menu', () => {
                       </Popover>
                     </SubmenuTrigger>
                     <MenuItem id="sms">SMS</MenuItem>
-                    <MenuItem id="twitter">Twitter</MenuItem>
+                    <MenuItem id="x">X</MenuItem>
                   </Menu>
                 </Popover>
               </SubmenuTrigger>
@@ -955,7 +1008,7 @@ describe('Menu', () => {
           <Button aria-label="Menu">☰</Button>
           <Popover>
             <Menu onAction={onAction}>
-              <Section>
+              <MenuSection>
                 <Header>Actions</Header>
                 <MenuItem id="open">Open</MenuItem>
                 <MenuItem id="rename">Rename…</MenuItem>
@@ -964,30 +1017,30 @@ describe('Menu', () => {
                   <MenuItem id="share">Share…</MenuItem>
                   <Popover>
                     <Menu onAction={onAction}>
-                      <Section>
+                      <MenuSection>
                         <Header>Work</Header>
                         <MenuItem id="email-work">Email</MenuItem>
                         <MenuItem id="sms-work">SMS</MenuItem>
-                        <MenuItem id="twitter-work">Twitter</MenuItem>
-                      </Section>
+                        <MenuItem id="x-work">X</MenuItem>
+                      </MenuSection>
                       <Separator />
-                      <Section>
+                      <MenuSection>
                         <Header>Personal</Header>
                         <MenuItem id="email-personal">Email</MenuItem>
                         <MenuItem id="sms-personal">SMS</MenuItem>
-                        <MenuItem id="twitter-personal">Twitter</MenuItem>
-                      </Section>
+                        <MenuItem id="x-personal">X</MenuItem>
+                      </MenuSection>
                     </Menu>
                   </Popover>
                 </SubmenuTrigger>
                 <MenuItem id="delete">Delete…</MenuItem>
-              </Section>
+              </MenuSection>
               <Separator />
-              <Section>
+              <MenuSection>
                 <Header>Settings</Header>
                 <MenuItem id="user">User Settings</MenuItem>
                 <MenuItem id="system">System Settings</MenuItem>
-              </Section>
+              </MenuSection>
             </Menu>
           </Popover>
         </MenuTrigger>
@@ -1002,8 +1055,8 @@ describe('Menu', () => {
       let groups = menuTester.sections;
       expect(groups).toHaveLength(2);
 
-      expect(groups[0]).toHaveClass('react-aria-Section');
-      expect(groups[1]).toHaveClass('react-aria-Section');
+      expect(groups[0]).toHaveClass('react-aria-MenuSection');
+      expect(groups[1]).toHaveClass('react-aria-MenuSection');
 
       expect(groups[0]).toHaveAttribute('aria-labelledby');
       expect(document.getElementById(groups[0].getAttribute('aria-labelledby')!)).toHaveTextContent('Actions');
@@ -1021,18 +1074,18 @@ describe('Menu', () => {
       expect(submenuTriggers).toHaveLength(1);
 
       // Open the submenu
-      let submenuUtil = (await menuTester.openSubmenu({submenuTriggerText: 'Share…'}))!;
+      let submenuUtil = (await menuTester.openSubmenu({submenuTrigger: 'Share…'}))!;
       let submenu = submenuUtil.menu;
       expect(submenu).toBeInTheDocument();
 
-      let submenuItems = submenuUtil.options;
+      let submenuItems = submenuUtil.options();
       expect(submenuItems).toHaveLength(6);
 
       let groupsInSubmenu = submenuUtil.sections;
       expect(groupsInSubmenu).toHaveLength(2);
 
-      expect(groupsInSubmenu[0]).toHaveClass('react-aria-Section');
-      expect(groupsInSubmenu[1]).toHaveClass('react-aria-Section');
+      expect(groupsInSubmenu[0]).toHaveClass('react-aria-MenuSection');
+      expect(groupsInSubmenu[1]).toHaveClass('react-aria-MenuSection');
 
       expect(groupsInSubmenu[0]).toHaveAttribute('aria-labelledby');
       expect(document.getElementById(groupsInSubmenu[0].getAttribute('aria-labelledby')!)).toHaveTextContent('Work');
@@ -1116,13 +1169,13 @@ function SelectionStatic(props) {
           selectionMode={selectionMode}
           selectedKeys={selected}
           onSelectionChange={setSelected}>
-          <Section>
+          <MenuSection>
             <Header>Heading 1</Header>
             <MenuItem>Foo</MenuItem>
             <MenuItem>Bar</MenuItem>
             <MenuItem>Baz</MenuItem>
             <MenuItem>Fizz</MenuItem>
-          </Section>
+          </MenuSection>
         </Menu>
       </Popover>
     </MenuTrigger>
@@ -1143,12 +1196,12 @@ function SelectionDynamic(props) {
           selectedKeys={selected}
           onSelectionChange={setSelected}>
           {(section) => (
-            <Section>
+            <MenuSection>
               <Header>{section.name}</Header>
               <Collection items={section.children}>
                 {item => <MenuItem>{item.name}</MenuItem>}
               </Collection>
-            </Section>
+            </MenuSection>
         )}
         </Menu>
       </Popover>
@@ -1164,12 +1217,12 @@ AriaMenuTests({
         <Button>Menu Button</Button>
         <Popover>
           <Menu aria-label="Test">
-            <Section>
+            <MenuSection>
               <Header>Heading 1</Header>
               <MenuItem>Foo</MenuItem>
               <MenuItem>Bar</MenuItem>
               <MenuItem>Baz</MenuItem>
-            </Section>
+            </MenuSection>
           </Menu>
         </Popover>
       </MenuTrigger>
@@ -1179,12 +1232,12 @@ AriaMenuTests({
         <Button isDisabled>Menu Button</Button>
         <Popover>
           <Menu aria-label="Test">
-            <Section>
+            <MenuSection>
               <Header>Heading 1</Header>
               <MenuItem>Foo</MenuItem>
               <MenuItem>Bar</MenuItem>
               <MenuItem>Baz</MenuItem>
-            </Section>
+            </MenuSection>
           </Menu>
         </Popover>
       </MenuTrigger>
@@ -1202,12 +1255,12 @@ AriaMenuTests({
           <Button>Menu Button</Button>
           <Popover>
             <Menu aria-label="Test">
-              <Section>
+              <MenuSection>
                 <Header>Heading 1</Header>
                 <MenuItem>Foo</MenuItem>
                 <MenuItem>Bar</MenuItem>
                 <MenuItem>Baz</MenuItem>
-              </Section>
+              </MenuSection>
             </Menu>
           </Popover>
         </MenuTrigger>
@@ -1220,12 +1273,12 @@ AriaMenuTests({
           <Button>Menu Button1</Button>
           <Popover>
             <Menu aria-label="Test1">
-              <Section>
+              <MenuSection>
                 <Header>Heading 1</Header>
                 <MenuItem>Foo</MenuItem>
                 <MenuItem>Bar</MenuItem>
                 <MenuItem>Baz</MenuItem>
-              </Section>
+              </MenuSection>
             </Menu>
           </Popover>
         </MenuTrigger>
@@ -1233,12 +1286,12 @@ AriaMenuTests({
           <Button>Menu Button2</Button>
           <Popover>
             <Menu aria-label="Test2">
-              <Section>
+              <MenuSection>
                 <Header>Heading 1</Header>
                 <MenuItem>Foo</MenuItem>
                 <MenuItem>Bar</MenuItem>
                 <MenuItem>Baz</MenuItem>
-              </Section>
+              </MenuSection>
             </Menu>
           </Popover>
         </MenuTrigger>
@@ -1266,7 +1319,7 @@ AriaMenuTests({
                     </Popover>
                   </SubmenuTrigger>
                   <MenuItem id="sms">SMS</MenuItem>
-                  <MenuItem id="twitter">Twitter</MenuItem>
+                  <MenuItem id="x">X</MenuItem>
                 </Menu>
               </Popover>
             </SubmenuTrigger>
@@ -1287,12 +1340,12 @@ AriaMenuTests({
         <Popover>
           <Menu aria-label="Test" items={withSection}>
             {(section) => (
-              <Section>
+              <MenuSection>
                 <Header>{section.name}</Header>
                 <Collection items={section.children}>
                   {item => <MenuItem>{item.name}</MenuItem>}
                 </Collection>
-              </Section>
+              </MenuSection>
             )}
           </Menu>
         </Popover>

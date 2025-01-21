@@ -80,24 +80,25 @@ export const LabelPositionSide = {
   }
 };
 
-export const ContextualHelpExample = (args: any) => <NumberField {...args} />;
-
-ContextualHelpExample.args = {
-  label: 'Quantity',
-  contextualHelp: (
-    <ContextualHelp>
-      <Heading>Quantity</Heading>
-      <Content>
-        <Text>
-          Pick a number between negative infinity and positive infinity.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Quantity"
-          target="_blank">Learn more about quantity</Link>
-      </Footer>
-    </ContextualHelp>
-  )
+export const ContextualHelpExample = {
+  render: (args: any) => <NumberField {...args} />,
+  args: {
+    label: 'Quantity',
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>Quantity</Heading>
+        <Content>
+          <Text>
+            Pick a number between negative infinity and positive infinity.
+          </Text>
+        </Content>
+        <Footer>
+          <Link
+            isStandalone
+            href="https://en.wikipedia.org/wiki/Quantity"
+            target="_blank">Learn more about quantity</Link>
+        </Footer>
+      </ContextualHelp>
+    )
+  }
 };

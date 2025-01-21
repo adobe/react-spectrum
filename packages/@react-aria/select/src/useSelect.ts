@@ -14,7 +14,7 @@ import {AriaButtonProps} from '@react-types/button';
 import {AriaListBoxOptions} from '@react-aria/listbox';
 import {AriaSelectProps} from '@react-types/select';
 import {chain, filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {DOMAttributes, FocusableElement, KeyboardDelegate, RefObject, ValidationResult} from '@react-types/shared';
+import {DOMAttributes, KeyboardDelegate, RefObject, ValidationResult} from '@react-types/shared';
 import {FocusEvent, useMemo} from 'react';
 import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
 import {SelectState} from '@react-stately/select';
@@ -66,7 +66,7 @@ export const selectData = new WeakMap<SelectState<any>, SelectData>();
  * @param props - Props for the select.
  * @param state - State for the select, as returned by `useListState`.
  */
-export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>, ref: RefObject<FocusableElement | null>): SelectAria<T> {
+export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>, ref: RefObject<HTMLElement | null>): SelectAria<T> {
   let {
     keyboardDelegate,
     isDisabled,
@@ -78,7 +78,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
   // When virtualized, the layout object will be passed in as a prop and override this.
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let delegate = useMemo(() => keyboardDelegate || new ListKeyboardDelegate(state.collection, state.disabledKeys, null, collator), [keyboardDelegate, state.collection, state.disabledKeys, collator]);
+  let delegate = useMemo(() => keyboardDelegate || new ListKeyboardDelegate(state.collection, state.disabledKeys, ref, collator), [keyboardDelegate, state.collection, state.disabledKeys, collator]);
 
   let {menuTriggerProps, menuProps} = useMenuTrigger<T>(
     {
@@ -95,7 +95,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
         // prevent scrolling containers
         e.preventDefault();
 
-        let key = state.selectedKey != null ? delegate.getKeyAbove(state.selectedKey) : delegate.getFirstKey();
+        let key = state.selectedKey != null ? delegate.getKeyAbove?.(state.selectedKey) : delegate.getFirstKey?.();
         if (key) {
           state.setSelectedKey(key);
         }
@@ -105,7 +105,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
         // prevent scrolling containers
         e.preventDefault();
 
-        let key = state.selectedKey != null ? delegate.getKeyBelow(state.selectedKey) : delegate.getFirstKey();
+        let key = state.selectedKey != null ? delegate.getKeyBelow?.(state.selectedKey) : delegate.getFirstKey?.();
         if (key) {
           state.setSelectedKey(key);
         }
@@ -150,7 +150,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
       ...labelProps,
       onClick: () => {
         if (!props.isDisabled) {
-          ref.current.focus();
+          ref.current?.focus();
 
           // Show the focus ring so the user knows where focus went
           setInteractionModality('keyboard');

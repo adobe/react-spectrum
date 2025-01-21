@@ -60,7 +60,6 @@ const inlineAlert = style<InlineStylesProps & {isFocusVisible?: boolean}>({
   display: 'inline-block',
   position: 'relative',
   boxSizing: 'border-box',
-  maxWidth: 320,
   padding: 24,
   borderRadius: 'lg',
   borderStyle: 'solid',
@@ -209,7 +208,11 @@ const content = style({
   }
 });
 
-function InlineAlert(props: InlineAlertProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Inline alerts display a non-modal message associated with objects in a view.
+ * These are often used in form validation, providing a place to aggregate feedback related to multiple fields.
+ */
+export const InlineAlert = /*#__PURE__*/ forwardRef(function InlineAlert(props: InlineAlertProps, ref: DOMRef<HTMLDivElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, InlineAlertContext);
   let {
@@ -267,11 +270,4 @@ function InlineAlert(props: InlineAlertProps, ref: DOMRef<HTMLDivElement>) {
       </div>
     </div>
   );
-}
-
-/**
- * Inline alerts display a non-modal message associated with objects in a view.
- * These are often used in form validation, providing a place to aggregate feedback related to multiple fields.
- */
-const _InlineAlert = /*#__PURE__*/ forwardRef(InlineAlert);
-export {_InlineAlert as InlineAlert};
+});

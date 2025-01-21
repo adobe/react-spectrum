@@ -45,7 +45,7 @@ import {
 import {centerPadding, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
-import {colorMix, fontRelative, lightDark, size, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {colorMix, focusRing, fontRelative, lightDark, space, style} from '../style' with {type: 'macro'};
 import {ColumnSize} from '@react-types/table';
 import {DOMRef, DOMRefValue, forwardRefType, LoadingState, Node} from '@react-types/shared';
 import {GridNode} from '@react-types/grid';
@@ -58,10 +58,11 @@ import {mergeStyles} from '../style/runtime';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
 import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, forwardRef, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import React, {createContext, forwardRef, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {Rect} from '@react-stately/virtualizer';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
+import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLoadMore} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -103,7 +104,9 @@ interface S2TableProps {
   /** The current loading state of the table. */
   loadingState?: LoadingState,
   /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom. */
-  onLoadMore?: () => any
+  onLoadMore?: () => any,
+  /** Provides the ActionBar to display when rows are selected in the TableView. */
+  renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement
 }
 
 // TODO: Note that loadMore and loadingState are now on the Table instead of on the TableBody
@@ -119,7 +122,10 @@ const tableWrapper = style({
   minWidth: 0,
   display: 'flex',
   isolation: 'isolate',
-  disableTapHighlight: true
+  disableTapHighlight: true,
+  position: 'relative',
+  // Clip ActionBar animation.
+  overflow: 'clip'
 });
 
 const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boolean}>({
@@ -135,19 +141,16 @@ const table = style<TableRenderProps & S2TableProps & {isCheckboxSelection?: boo
     isQuiet: 'transparent',
     forcedColors: 'Background'
   },
-  outlineColor: {
-    default: 'gray-300',
-    isFocusVisible: 'focus-ring',
-    forcedColors: 'ButtonBorder'
-  },
-  outlineWidth: {
+  borderColor: 'gray-300',
+  borderStyle: 'solid',
+  borderWidth: {
     default: 1,
-    isQuiet: 0,
-    isFocusVisible: 2
+    isQuiet: 0
   },
-  outlineStyle: 'solid',
+  ...focusRing(),
+  outlineOffset: -1, // Cover the border
   borderRadius: {
-    default: size(6),
+    default: '[6px]',
     isQuiet: 'none'
   },
   // Multiple browser bugs from scrollIntoView and scrollPadding:
@@ -199,7 +202,7 @@ export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
     // TableLayout's buildCollection always sets the body width to the max width between the header width, but
     // we want the body to be sticky and only as wide as the table so it is always in view if loading/empty
     if (children?.length === 0) {
-      layoutInfo.rect.width = this.virtualizer.visibleRect.width - 80;
+      layoutInfo.rect.width = this.virtualizer!.visibleRect.width - 80;
     }
 
     return [
@@ -212,7 +215,7 @@ export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
     let layoutNode = super.buildLoader(node, x, y);
     let {layoutInfo} = layoutNode;
     layoutInfo.allowOverflow = true;
-    layoutInfo.rect.width = this.virtualizer.visibleRect.width;
+    layoutInfo.rect.width = this.virtualizer!.visibleRect.width;
     layoutInfo.isSticky = true;
     return layoutNode;
   }
@@ -224,7 +227,7 @@ export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
     layoutInfo.allowOverflow = true;
     // If loading or empty, we'll want the body to be sticky and centered
     if (children?.length === 0) {
-      layoutInfo.rect = new Rect(40, 40, this.virtualizer.visibleRect.width - 80, this.virtualizer.visibleRect.height - 80);
+      layoutInfo.rect = new Rect(40, 40, this.virtualizer!.visibleRect.width - 80, this.virtualizer!.visibleRect.height - 80);
       layoutInfo.isSticky = true;
     }
 
@@ -255,7 +258,10 @@ export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
 
 export const TableContext = createContext<ContextValue<TableViewProps, DOMRefValue<HTMLDivElement>>>(null);
 
-function TableView(props: TableViewProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Tables are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
+ */
+export const TableView = forwardRef(function TableView(props: TableViewProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, TableContext);
   let {
     UNSAFE_style,
@@ -309,13 +315,15 @@ function TableView(props: TableViewProps, ref: DOMRef<HTMLDivElement>) {
   }), [isQuiet, density, overflowMode, loadingState, isInResizeMode, setIsInResizeMode]);
 
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
-  let scrollRef = useRef(null);
+  let scrollRef = useRef<HTMLElement | null>(null);
   let memoedLoadMoreProps = useMemo(() => ({
     isLoading: isLoading,
     onLoadMore
   }), [isLoading, onLoadMore]);
   useLoadMore(memoedLoadMoreProps, scrollRef);
   let isCheckboxSelection = props.selectionMode === 'multiple' || props.selectionMode === 'single';
+
+  let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
 
   return (
     <ResizableTableContainer
@@ -329,9 +337,15 @@ function TableView(props: TableViewProps, ref: DOMRef<HTMLDivElement>) {
       <UNSTABLE_Virtualizer layout={layout}>
         <InternalTableContext.Provider value={context}>
           <RACTable
-            ref={scrollRef}
-            // Fix webkit bug where scrollbars appear above the checkboxes/other table elements
-            style={{WebkitTransform: 'translateZ(0)'}}
+            ref={scrollRef as any}
+            style={{
+              // Fix webkit bug where scrollbars appear above the checkboxes/other table elements
+              WebkitTransform: 'translateZ(0)',
+              // Add padding at the bottom when the action bar is visible so users can scroll to the last items.
+              // Also add scroll padding so navigating with the keyboard doesn't go behind the action bar.
+              paddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0,
+              scrollPaddingBottom: actionBarHeight > 0 ? actionBarHeight + 8 : 0
+            }}
             className={renderProps => table({
               ...renderProps,
               isCheckboxSelection,
@@ -339,12 +353,16 @@ function TableView(props: TableViewProps, ref: DOMRef<HTMLDivElement>) {
             })}
             selectionBehavior="toggle"
             onRowAction={onAction}
-            {...otherProps} />
+            {...otherProps}
+            selectedKeys={selectedKeys}
+            defaultSelectedKeys={undefined}
+            onSelectionChange={onSelectionChange} />
         </InternalTableContext.Provider>
       </UNSTABLE_Virtualizer>
+      {actionBar}
     </ResizableTableContainer>
   );
-}
+});
 
 const centeredWrapper = style({
   display: 'flex',
@@ -356,7 +374,10 @@ const centeredWrapper = style({
 
 export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 'className' | 'dependencies'> {}
 
-function TableBody<T extends object>(props: TableBodyProps<T>, ref: DOMRef<HTMLDivElement>) {
+/**
+ * The body of a `<Table>`, containing the table rows.
+ */
+export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableBody<T extends object>(props: TableBodyProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {items, renderEmptyState, children} = props;
   let domRef = useDOMRef(ref);
   let {loadingState} = useContext(InternalTableContext);
@@ -422,13 +443,7 @@ function TableBody<T extends object>(props: TableBodyProps<T>, ref: DOMRef<HTMLD
       {renderer}
     </RACTableBody>
   );
-}
-
-/**
- * The body of a `<Table>`, containing the table rows.
- */
-let _TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(TableBody);
-export {_TableBody as TableBody};
+});
 
 const cellFocus = {
   outlineStyle: {
@@ -438,7 +453,7 @@ const cellFocus = {
   outlineOffset: -2,
   outlineWidth: 2,
   outlineColor: 'focus-ring',
-  borderRadius: size(6)
+  borderRadius: '[6px]'
 } as const;
 
 function CellFocusRing() {
@@ -620,7 +635,7 @@ const resizerHandleContainer = style({
   height: 'full',
   position: 'absolute',
   top: 0,
-  insetEnd: size(-6),
+  insetEnd: space(-6),
   cursor: {
     default: 'none',
     resizableDirection: {
@@ -649,11 +664,11 @@ const resizerHandle = style({
     isResizing: 'screen'
   },
   width: {
-    default: size(1),
-    isResizing: size(2)
+    default: 1,
+    isResizing: 2
   },
   position: 'absolute',
-  insetStart: size(6)
+  insetStart: space(6)
 });
 
 const columnHeaderText = style({
@@ -679,7 +694,7 @@ const chevronIcon = style({
 const nubbin = style({
   position: 'absolute',
   top: 0,
-  insetStart: size(-1),
+  insetStart: space(-1),
   size: fontRelative(16),
   fill: {
     default: lightDark('informative-900', 'informative-700'), // --spectrum-informative-background-color-default, can't use `informative` because that won't be the background color value
@@ -830,7 +845,10 @@ let InternalTableHeaderContext = createContext<{isHeaderRowHovered?: boolean}>({
 
 export interface TableHeaderProps<T> extends Omit<RACTableHeaderProps<T>, 'style' | 'className' | 'dependencies' | 'onHoverChange' | 'onHoverStart' | 'onHoverEnd'> {}
 
-function TableHeader<T extends object>({columns, children}: TableHeaderProps<T>, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A header within a `<Table>`, containing the table columns.
+ */
+export const TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableHeader<T extends object>({columns, children}: TableHeaderProps<T>, ref: DOMRef<HTMLDivElement>) {
   let scale = useScale();
   let {selectionBehavior, selectionMode} = useTableOptions();
   let {isQuiet} = useContext(InternalTableContext);
@@ -870,13 +888,7 @@ function TableHeader<T extends object>({columns, children}: TableHeaderProps<T>,
       </RACTableHeader>
     </InternalTableHeaderContext.Provider>
   );
-}
-
-/**
- * A header within a `<Table>`, containing the table columns.
- */
-let _TableHeader = /*#__PURE__*/ (forwardRef as forwardRefType)(TableHeader);
-export {_TableHeader as TableHeader};
+});
 
 function VisuallyHiddenSelectAllLabel() {
   let checkboxProps = useSlottedContext(RACCheckboxContext, 'selection');
@@ -1093,7 +1105,10 @@ const row = style<RowRenderProps & S2TableProps>({
 
 export interface RowProps<T> extends Pick<RACRowProps<T>, 'id' | 'columns' | 'children' | 'textValue'>  {}
 
-function Row<T extends object>({id, columns, children, ...otherProps}: RowProps<T>, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A row within a `<Table>`.
+ */
+export const Row = /*#__PURE__*/ (forwardRef as forwardRefType)(function Row<T extends object>({id, columns, children, ...otherProps}: RowProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {selectionBehavior, selectionMode} = useTableOptions();
   let tableVisualOptions = useContext(InternalTableContext);
   let domRef = useDOMRef(ref);
@@ -1118,16 +1133,4 @@ function Row<T extends object>({id, columns, children, ...otherProps}: RowProps<
       </Collection>
     </RACRow>
   );
-}
-
-/**
- * A row within a `<Table>`.
- */
-let _Row = /*#__PURE__*/ (forwardRef as forwardRefType)(Row);
-export {_Row as Row};
-
-/**
- * Tables are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.
- */
-const _TableView = forwardRef(TableView);
-export {_TableView as TableView};
+});

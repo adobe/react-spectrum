@@ -1,4 +1,4 @@
-import {AriaLabelingProps, DOMAttributes, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 import {focusWithoutScrolling, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {getInteractionModality, useFocusWithin, useHover} from '@react-aria/interactions';
 // @ts-ignore
@@ -41,17 +41,17 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
   // If a focused containing toast is removed, move focus to the next toast, or the previous toast if there is no next toast.
   // We might be making an assumption with how this works if someone implements the priority queue differently, or
   // if they only show one toast at a time.
-  let toasts = useRef([]);
+  let toasts = useRef<FocusableElement[]>([]);
   let prevVisibleToasts = useRef(state.visibleToasts);
-  let focusedToast = useRef(null);
+  let focusedToast = useRef<number | null>(null);
   useLayoutEffect(() => {
     // If no toast has focus, then don't do anything.
-    if (focusedToast.current === -1 || state.visibleToasts.length === 0) {
+    if (focusedToast.current === -1 || state.visibleToasts.length === 0 || !ref.current) {
       toasts.current = [];
       prevVisibleToasts.current = state.visibleToasts;
       return;
     }
-    toasts.current = [...ref.current.querySelectorAll('[role="alertdialog"]')];
+    toasts.current = [...ref.current.querySelectorAll('[role="alertdialog"]')] as FocusableElement[];
     // If the visible toasts haven't changed, we don't need to do anything.
     if (prevVisibleToasts.current.length === state.visibleToasts.length
       && state.visibleToasts.every((t, i) => t.key === prevVisibleToasts.current[i].key)) {
@@ -103,11 +103,11 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
     prevVisibleToasts.current = state.visibleToasts;
   }, [state.visibleToasts, ref]);
 
-  let lastFocused = useRef(null);
+  let lastFocused = useRef<FocusableElement | null>(null);
   let {focusWithinProps} = useFocusWithin({
     onFocusWithin: (e) => {
       state.pauseAll();
-      lastFocused.current = e.relatedTarget;
+      lastFocused.current = e.relatedTarget as FocusableElement;
     },
     onBlurWithin: () => {
       state.resumeAll();

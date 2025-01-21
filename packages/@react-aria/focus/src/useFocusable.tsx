@@ -44,7 +44,7 @@ function useFocusableContext(ref: RefObject<FocusableElement | null>): Focusable
 /**
  * Provides DOM props to the nearest focusable child.
  */
-function FocusableProvider(props: FocusableProviderProps, ref: ForwardedRef<FocusableElement>) {
+export const FocusableProvider = React.forwardRef(function FocusableProvider(props: FocusableProviderProps, ref: ForwardedRef<FocusableElement>) {
   let {children, ...otherProps} = props;
   let objRef = useObjectRef(ref);
   let context = {
@@ -57,10 +57,7 @@ function FocusableProvider(props: FocusableProviderProps, ref: ForwardedRef<Focu
       {children}
     </FocusableContext.Provider>
   );
-}
-
-let _FocusableProvider = React.forwardRef(FocusableProvider);
-export {_FocusableProvider as FocusableProvider};
+});
 
 export interface FocusableAria {
   /** Props for the focusable element. */
@@ -85,11 +82,17 @@ export function useFocusable<T extends FocusableElement = FocusableElement>(prop
     autoFocusRef.current = false;
   }, [domRef]);
 
+  // Always set a tabIndex so that Safari allows focusing native buttons and inputs.
+  let tabIndex: number | undefined = props.excludeFromTabOrder ? -1 : 0;
+  if (props.isDisabled) {
+    tabIndex = undefined;
+  }
+
   return {
     focusableProps: mergeProps(
       {
         ...interactions,
-        tabIndex: props.excludeFromTabOrder && !props.isDisabled ? -1 : undefined
+        tabIndex
       },
       interactionProps
     )

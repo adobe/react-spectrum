@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 const {createUnplugin} = require('unplugin');
+const path = require('path');
 
 module.exports = createUnplugin(({locales}) => {
   locales = locales.map(l => new Intl.Locale(l));
@@ -24,7 +25,7 @@ module.exports = createUnplugin(({locales}) => {
       if (match) {
         let locale = new Intl.Locale(match[0]);
         if (!locales.some(l => localeMatches(locale, l))) {
-          return __dirname + '/empty.js';
+          return path.join(__dirname, 'empty.js');
         }
       }
 

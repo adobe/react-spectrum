@@ -20,7 +20,7 @@ import {createContext, forwardRef, ReactNode} from 'react';
 import {DOMRef, DOMRefValue, LabelPosition} from '@react-types/shared';
 import {FieldLabel} from './Field';
 import {fieldLabel, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {size, style} from '../style' with {type: 'macro'};
+import {lightDark, style} from '../style' with {type: 'macro'};
 import {SkeletonWrapper} from './Skeleton';
 import {Text} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
@@ -37,10 +37,10 @@ interface MeterStyleProps {
    * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL',
-  /** 
-   * The static color style to apply. Useful when the button appears over a color background. 
+  /**
+   * The static color style to apply. Useful when the button appears over a color background.
    */
-  staticColor?: 'white' | 'black',
+  staticColor?: 'white' | 'black' | 'auto',
   /**
    * The label's overall position relative to the element it is labeling.
    * @default 'top'
@@ -67,41 +67,37 @@ const valueStyles = style({
 const trackStyles = style({
   ...track(),
   height: {
-    default: size(6),
+    default: 6,
     size: {
       S: 4, // progress-bar-thickness-small
-      M: size(6), // progress-bar-thickness-medium
+      M: 6, // progress-bar-thickness-medium
       L: 8, // progress-bar-thickness-large
-      XL: size(10) // progress-bar-thickness-extra-large
+      XL: 10 // progress-bar-thickness-extra-large
     }
   }
 });
 
-const fillStyles = style<MeterStyleProps>({
+const fillStyles = style<MeterStyleProps & {isStaticColor: boolean}>({
   height: 'full',
   borderStyle: 'none',
   borderRadius: 'full',
   backgroundColor: {
-    default: 'informative',
+    default: lightDark('informative-800', 'informative-900'), // 'informative-visual',
     variant: {
-      positive: 'positive',
-      notice: 'notice',
-      negative: 'negative'
+      positive: lightDark('positive-800', 'positive-900'), // 'positive-visual',
+      notice: lightDark('notice-800', 'notice-900'), // 'notice-visual',
+      negative: lightDark('negative-800', 'negative-900') // 'negative-visual'
     },
-    staticColor: {
-      white: {
-        default: 'transparent-white-900'
-      },
-      // TODO: Is there a black static color in S2?
-      black: {
-        default: 'transparent-black-900'
-      }
-    },
+    isStaticColor: 'transparent-overlay-900',
     forcedColors: 'ButtonText'
   }
 });
 
-function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Meters are visual representations of a quantity or an achievement.
+ * Their progress is determined by user actions, rather than system actions.
+ */
+export const Meter = forwardRef(function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, MeterContext);
   let domRef = useDOMRef(ref);
 
@@ -116,6 +112,7 @@ function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
     labelPosition = 'top',
     ...groupProps
   } = props;
+  let isStaticColor = !!staticColor;
 
   return (
     <AriaMeter
@@ -131,21 +128,14 @@ function Meter(props: MeterProps, ref: DOMRef<HTMLDivElement>) {
       {({percentage, valueText}) => (
         <>
           {label && <FieldLabel size={size} labelAlign="start" labelPosition={labelPosition} staticColor={staticColor}>{label}</FieldLabel>}
-          {label && <Text styles={valueStyles({size, labelAlign: 'end', staticColor})}>{valueText}</Text>}
+          {label && <Text styles={valueStyles({size, labelAlign: 'end', isStaticColor})}>{valueText}</Text>}
           <SkeletonWrapper>
-            <div className={trackStyles({staticColor, size})}>
-              <div className={fillStyles({staticColor, variant})} style={{width: percentage + '%'}} />
+            <div className={trackStyles({isStaticColor, size})}>
+              <div className={fillStyles({isStaticColor, variant})} style={{width: percentage + '%'}} />
             </div>
           </SkeletonWrapper>
         </>
       )}
     </AriaMeter>
   );
-}
-
-/**
- * Meters are visual representations of a quantity or an achievement.
- * Their progress is determined by user actions, rather than system actions.
- */
-let _Meter = forwardRef(Meter);
-export {_Meter as Meter};
+});

@@ -37,9 +37,7 @@ describe('style-macro', () => {
     });
 
     expect(css).toMatchInlineSnapshot(`
-      ".\\.:not(#a#b) { all: revert-layer }
-
-      @layer _.a, _.b, _.c, UNSAFE_overrides;
+      "@layer _.a, _.b, _.c;
 
       @layer _.b {
         .A-13alit4c {
@@ -61,7 +59,7 @@ describe('style-macro', () => {
 
       "
     `);
-    expect(js).toMatchInlineSnapshot('" . A-13alit4c A-13alit4ed"');
+    expect(js).toMatchInlineSnapshot('" A-13alit4c A-13alit4ed"');
   });
 
   it('should support self references', () => {
@@ -72,9 +70,7 @@ describe('style-macro', () => {
     });
 
     expect(css).toMatchInlineSnapshot(`
-      ".\\.:not(#a#b) { all: revert-layer }
-
-      @layer _.a, _.b, UNSAFE_overrides;
+      "@layer _.a, _.b;
 
       @layer _.a {
         .uc {
