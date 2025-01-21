@@ -177,16 +177,13 @@ export function createLeafComponent<P extends object, E extends Element>(type: s
   return Result;
 }
 
-export function createBranchComponent<T extends object, P extends {children?: any}, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>) => ReactElement, useChildren?: (props: P) => ReactNode): (props: P & React.RefAttributes<T>) => ReactElement | null;
-export function createBranchComponent<T extends object, P extends {children?: any}, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement, useChildren?: (props: P) => ReactNode): (props: P & React.RefAttributes<T>) => ReactElement | null;
-export function createBranchComponent<P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node?: any) => ReactElement, useChildren: (props: P) => ReactNode = useCollectionChildren) {
+// TODO fix the override types
+export function createBranchComponent<T extends object, P extends {children?: any}, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement, useChildren: (props: P) => ReactNode = useCollectionChildren) {
   let Component = ({node}) => render(node.props, node.props.ref, node);
   let Result = (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
     let isShallow = useContext(ShallowRenderContext);
     if (!isShallow) {
-      if (render.length >= 3) {
-        throw new Error(render.name + ' cannot be rendered outside a collection.');
-      }
+      // @ts-ignore will be fixed with overrides once i figure out how
       return render(props, ref);
     }
 

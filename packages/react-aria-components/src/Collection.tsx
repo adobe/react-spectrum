@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {CollectionBase, DropTargetDelegate, ItemDropTarget, Key, LayoutDelegate, RefObject} from '@react-types/shared';
+import {Collection, CollectionBase, DropTargetDelegate, ItemDropTarget, Key, LayoutDelegate, RefObject} from '@react-types/shared';
 import {createBranchComponent, useCachedChildren} from '@react-aria/collections';
 import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, SectionProps as SharedSectionProps} from 'react-stately';
 import React, {createContext, ForwardedRef, HTMLAttributes, JSX, ReactElement, ReactNode, useContext, useMemo} from 'react';
@@ -139,7 +139,7 @@ export interface CollectionRenderer {
   CollectionBranch: React.ComponentType<CollectionBranchProps>
 }
 
-let CollectionStateContext = createContext(null);
+let CollectionStateContext = createContext<Collection<Node<unknown>> | undefined | null>(null);
 
 export const DefaultCollectionRenderer: CollectionRenderer = {
   CollectionRoot({collection, renderDropIndicator}) {
@@ -147,11 +147,15 @@ export const DefaultCollectionRenderer: CollectionRenderer = {
     return <CollectionStateContext.Provider value={collection}>{result}</CollectionStateContext.Provider>;
   },
   CollectionBranch({collection, parent, renderDropIndicator}) {
+    let thisCollection: Collection<Node<unknown>> | undefined | null = collection;
     let parentCollection = useContext(CollectionStateContext);
-    if (collection == null) {
-      collection = parentCollection;
+    if (thisCollection == null) {
+      thisCollection = parentCollection;
     }
-    return useCollectionRender(collection, parent, renderDropIndicator);
+    if (!thisCollection) {
+      throw new Error('Collection not found in context.');
+    }
+    return useCollectionRender(thisCollection, parent, renderDropIndicator);
   }
 };
 

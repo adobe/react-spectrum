@@ -35,7 +35,7 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
       : this.collection.getLastKey();
 
     while (key != null) {
-      let item = this.collection.getItem(key);
+      let item = this.collection.getItem(key)!;
       if (!this.isDisabled(item) && (!pred || pred(item))) {
         return key;
       }
@@ -52,7 +52,7 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
       : this.collection.getFirstKey();
 
     while (key != null) {
-      let item = this.collection.getItem(key);
+      let item = this.collection.getItem(key)!;
       if (!this.isDisabled(item) && (!pred || pred(item))) {
         return key;
       }
@@ -84,7 +84,7 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
   getFirstKey() {
     let key = this.collection.getFirstKey();
     if (key != null) {
-      let item = this.collection.getItem(key);
+      let item = this.collection.getItem(key)!;
       if (this.isDisabled(item) || item.type !== 'item') {
         key = this.findNextKey(key);
       }
@@ -95,7 +95,7 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
   getLastKey() {
     let key = this.collection.getLastKey();
     if (key != null) {
-      let item = this.collection.getItem(key);
+      let item = this.collection.getItem(key)!;
       if (this.isDisabled(item) || item.type !== 'item') {
         key = this.findPreviousKey(key);
       }
