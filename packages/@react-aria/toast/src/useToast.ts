@@ -15,7 +15,7 @@ import {AriaLabelingProps, DOMAttributes, FocusableElement, RefObject} from '@re
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {QueuedToast, ToastState} from '@react-stately/toast';
-import React, {useEffect} from 'react';
+import {useEffect} from 'react';
 import {useId, useSlotId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -86,7 +86,7 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
     },
     contentProps: {
       role: 'alert',
-      'aria-atomic': 'true',
+      'aria-atomic': 'true'
       // style: {
       //   visibility: isEntered || animation === null ? 'visible' : 'hidden'
       // }
@@ -99,6 +99,7 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
     },
     closeButtonProps: {
       'aria-label': stringFormatter.format('close'),
+      // @ts-ignore
       onPress: () => document.startViewTransition({
         update: () => state.close(key),
         types: ['toast-remove']

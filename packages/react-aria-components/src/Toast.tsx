@@ -10,17 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import type {AriaToastProps, AriaToastRegionProps} from '@react-aria/toast';
+import {AriaToastProps, AriaToastRegionProps, useToast, useToastRegion} from '@react-aria/toast';
 import {ButtonContext} from './Button';
-import {createPortal} from 'react-dom';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {createPortal} from 'react-dom';
 import {forwardRefType} from '@react-types/shared';
+import {mergeProps, useFocusRing} from 'react-aria';
 import {QueuedToast, ToastQueue, ToastState, useToastQueue} from '@react-stately/toast';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactElement, ReactNode, useContext, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactElement, useContext} from 'react';
 import {TextContext} from './Text';
 import {useObjectRef} from '@react-aria/utils';
-import {useToast, useToastRegion} from '@react-aria/toast';
-import { useFocusRing, mergeProps } from 'react-aria';
 
 const ToastStateContext = createContext<ToastState<any> | null>(null);
 
@@ -78,10 +77,11 @@ export const ToastRegion = /*#__PURE__*/ (forwardRef as forwardRefType)(function
     : null;
 });
 
-export const ToastList = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastList<T>(props: ToastRegionProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const ToastList = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastList<T>(props: ToastRegionProps<T>, ref: ForwardedRef<HTMLOListElement>) {
   let state = useContext(ToastStateContext)!;
   return (
-    <ol style={props.style} className={props.className}>
+    // @ts-ignore
+    <ol ref={ref} style={props.style} className={props.className}>
       {state.visibleToasts.map((toast) => (
         <li key={toast.key} style={{display: 'contents'}}>
           {props.children({toast})}
@@ -134,6 +134,7 @@ export const Toast = /*#__PURE__*/ (forwardRef as forwardRefType)(function Toast
       {...renderProps}
       {...mergeProps(toastProps, focusProps)}
       ref={objectRef}
+      // @ts-ignore
       inert={props.inert}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}>

@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from '@storybook/addon-actions';
+import {Button, ButtonGroup} from '../src';
 import type {Meta} from '@storybook/react';
-import {ToastQueue, ToastContainer, SpectrumToast} from '../src/Toast';
-import { Button, ButtonGroup } from '../src';
-import { action } from '@storybook/addon-actions';
+import {SpectrumToast, ToastContainer, ToastQueue} from '../src/Toast';
 
 const meta: Meta<typeof Example> = {
   // component: Example,

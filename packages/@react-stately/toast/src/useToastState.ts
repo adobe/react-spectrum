@@ -166,7 +166,7 @@ export class ToastQueue<T> {
     this.updateVisibleToasts({action: 'remove', key});
   }
 
-  private updateVisibleToasts(options: {action: 'add' | 'close' | 'remove' | 'expand', key?: string}) {
+  private updateVisibleToasts(options: {action: 'add' | 'close' | 'remove' | 'expand' | 'clear', key?: string}) {
     let {action, key} = options;
     if (this.queue.length === 0) {
       this.isExpanded = false;
