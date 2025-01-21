@@ -115,7 +115,7 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
               key={toast.key}
               className={classNames(toastContainerStyles, 'spectrum-ToastContainer-listitem')}
               // @ts-ignore
-              style={{viewTransitionName: `item-${toast.key}`}}>
+              style={{viewTransitionName: `item-${toast.key.slice(2)}`}}>
               <Toast
                 toast={toast}
                 state={state} />
