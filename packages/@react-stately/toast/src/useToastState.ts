@@ -101,6 +101,7 @@ export class ToastQueue<T> {
   private hasExitAnimation: boolean;
   /** The currently visible toasts. */
   visibleToasts: QueuedToast<T>[] = [];
+  isExpanded = false;
 
   constructor(options?: ToastStateProps) {
     this.maxVisibleToasts = options?.maxVisibleToasts ?? 1;
@@ -165,9 +166,12 @@ export class ToastQueue<T> {
     this.updateVisibleToasts({action: 'remove', key});
   }
 
-  private updateVisibleToasts(options: {action: 'add' | 'close' | 'remove', key?: string}) {
+  private updateVisibleToasts(options: {action: 'add' | 'close' | 'remove' | 'expand', key?: string}) {
     let {action, key} = options;
-    let toasts = this.queue.slice(0, this.maxVisibleToasts);
+    if (this.queue.length === 0) {
+      this.isExpanded = false;
+    }
+    let toasts = this.isExpanded ? this.queue.slice() : this.queue.slice(-this.maxVisibleToasts);
 
     if (action === 'add' && this.hasExitAnimation) {
       let prevToasts: QueuedToast<T>[] = this.visibleToasts
@@ -208,6 +212,16 @@ export class ToastQueue<T> {
         toast.timer.resume();
       }
     }
+  }
+
+  toggleExpandedState() {
+    this.isExpanded = !this.isExpanded;
+    this.updateVisibleToasts({action: 'expand'});
+  }
+
+  clear() {
+    this.queue = [];
+    this.updateVisibleToasts({action: 'clear'});
   }
 }
 

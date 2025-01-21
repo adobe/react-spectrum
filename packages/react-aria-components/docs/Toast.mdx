@@ -1,0 +1,170 @@
+{/* Copyright 2025 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import packageData from 'react-aria-components/package.json';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
+
+---
+category: Status
+keywords: [toast, notifications, alert, aria]
+type: component
+---
+
+# Toast
+
+<PageDescription>{docs.exports.Toast.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['ToastRegion', 'Toast']} />
+
+## Example
+
+```tsx example
+import {ToastRegion, Toast, ToastQueue, ToastContent, Button, Text} from 'react-aria-components';
+
+const queue = new ToastQueue({
+  maxVisibleToasts: 5
+});
+
+function Example() {
+  return (
+    <>
+      <ToastRegion toastQueue={queue}>
+        {({toast}) => (
+          <Toast toast={toast}>
+            <ToastContent>
+              <Text slot="title">{toast.content.title}</Text>
+              <Text slot="description">{toast.content.description}</Text>
+            </ToastContent>
+            <Button slot="close">x</Button>
+          </Toast>
+        )}
+      </ToastRegion>
+      <Button onPress={() => queue.add({title: 'Toast', description: 'Hi'})}>Toast</Button>
+    </>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css hidden
+@import './Button.mdx' layer(button);
+```
+
+```css
+@import "@react-aria/example-theme";
+
+.react-aria-ToastRegion {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-radius: 8px;
+  outline: none;
+
+  &[data-focus-visible] {
+    outline: 2px solid slateblue;
+    outline-offset: 2px;
+  }
+}
+
+.react-aria-Toast {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: slateblue;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  view-transition-class: toast;
+  outline: none;
+
+  &[data-focus-visible] {
+    outline: 2px solid slateblue;
+    outline-offset: 2px;
+  }
+
+  .react-aria-ToastContent {
+    display: flex;
+    flex-direction: column;
+
+    [slot=title] {
+      font-weight: bold;
+    }
+  }
+
+  .react-aria-Button[slot=close] {
+    background: none;
+    border: none;
+    appearance: none;
+    border-radius: 50%;
+    height: 32px;
+    width: 32px;
+    font-size: 16px;
+    border: 1px solid white;
+    color: white;
+    padding: 0;
+    outline: none;
+  
+    &[data-focus-visible] {
+      box-shadow: 0 0 0 2px slateblue, 0 0 0 4px white;
+    }
+
+    &[data-pressed] {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+@keyframes slide-out {
+  to {
+    translate: 100% 0;
+    opacity: 0;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    translate: 100% 0;
+    opacity: 0;
+  }
+}
+
+:root {
+  view-transition-name: none;
+}
+
+::view-transition-new(.toast),
+::view-transition-old(.toast) {
+  animation: none;
+}
+
+::view-transition-new(.toast):only-child {
+  animation: slide-in 400ms;
+}
+
+::view-transition-old(.toast):only-child {
+  animation: slide-out 400ms;
+}
+```
+
+</details>

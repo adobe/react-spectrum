@@ -61,12 +61,12 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
     };
   }, [timer, timeout]);
 
-  let [isEntered, setIsEntered] = React.useState(false);
-  useEffect(() => {
-    if (animation === 'entering' || animation === 'queued') {
-      setIsEntered(true);
-    }
-  }, [animation]);
+  // let [isEntered, setIsEntered] = React.useState(false);
+  // useEffect(() => {
+  //   if (animation === 'entering' || animation === 'queued') {
+  //     setIsEntered(true);
+  //   }
+  // }, [animation]);
 
   let titleId = useId();
   let descriptionId = useSlotId();
@@ -87,9 +87,9 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
     contentProps: {
       role: 'alert',
       'aria-atomic': 'true',
-      style: {
-        visibility: isEntered || animation === null ? 'visible' : 'hidden'
-      }
+      // style: {
+      //   visibility: isEntered || animation === null ? 'visible' : 'hidden'
+      // }
     },
     titleProps: {
       id: titleId
@@ -99,7 +99,10 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
     },
     closeButtonProps: {
       'aria-label': stringFormatter.format('close'),
-      onPress: () => state.close(key)
+      onPress: () => document.startViewTransition({
+        update: () => state.close(key),
+        types: ['toast-remove']
+      })
     }
   };
 }

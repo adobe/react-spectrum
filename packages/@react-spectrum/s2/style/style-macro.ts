@@ -680,3 +680,12 @@ export function keyframes(this: MacroContext | void, css: string) {
   }
   return name;
 }
+
+export function global(this: MacroContext | void, css: string) {
+  if (this && typeof this.addAsset === 'function') {
+    this.addAsset({
+      type: 'css',
+      content: css
+    });
+  }
+}
