@@ -37,7 +37,7 @@ type: component
 ```tsx example
 import {ToastRegion, Toast, ToastQueue, ToastContent, Button, Text} from 'react-aria-components';
 
-const queue = new ToastQueue({
+const queue = new ToastQueue<any>({
   maxVisibleToasts: 5
 });
 

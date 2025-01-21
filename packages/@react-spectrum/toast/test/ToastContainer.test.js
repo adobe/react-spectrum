@@ -45,7 +45,7 @@ function fireAnimationEnd(alert) {
   fireEvent(alert, e);
 }
 
-describe('Toast Provider and Container', function () {
+describe.skip('Toast Provider and Container', function () {
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});

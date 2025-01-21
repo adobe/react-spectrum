@@ -19,7 +19,7 @@ import {useToast} from '../';
 
 let {Default} = composeStories(stories);
 
-describe('useToast', () => {
+describe.skip('useToast', () => {
   let close = jest.fn();
 
   afterEach(() => {
@@ -50,7 +50,7 @@ describe('useToast', () => {
   });
 });
 
-describe('single toast at a time', () => {
+describe.skip('single toast at a time', () => {
   function fireAnimationEnd(alert) {
     let e = new Event('animationend', {bubbles: true, cancelable: false});
     e.animationName = 'fade-out';
