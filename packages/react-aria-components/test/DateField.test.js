@@ -13,7 +13,6 @@
 import {act, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {CalendarDate} from '@internationalized/date';
 import {DateField, DateFieldContext, DateInput, DateSegment, FieldError, Label, Text} from '../';
-import {I18nProvider} from '@react-aria/i18n';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 

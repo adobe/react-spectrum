@@ -12,7 +12,7 @@
 
 import {act, fireEvent, getAllByRole as getAllByRoleInContainer, pointerMap, render as render_, waitFor, within} from '@react-spectrum/test-utils-internal';
 import {Button} from '@react-spectrum/button';
-import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseZonedDateTime, toCalendarDateTime, today} from '@internationalized/date';
+import {CalendarDate, CalendarDateTime, getLocalTimeZone, toCalendarDateTime, today} from '@internationalized/date';
 import {DateRangePicker} from '../';
 import {Form} from '@react-spectrum/form';
 import {Provider} from '@react-spectrum/provider';
