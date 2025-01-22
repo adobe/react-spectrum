@@ -165,7 +165,6 @@ const treeRow = style({
   display: 'flex',
   height: 40,
   width: 'full',
-  minWidth: 240, // do we really want this restriction?
   boxSizing: 'border-box',
   font: 'ui',
   color: 'body',
@@ -191,6 +190,7 @@ const treeRow = style({
 const treeCellGrid = style({
   display: 'grid',
   width: 'full',
+  alignContent: 'center',
   alignItems: 'center',
   gridTemplateColumns: ['minmax(0, auto)', 'minmax(0, auto)', 'minmax(0, auto)', 40, 'minmax(0, auto)', '1fr', 'minmax(0, auto)', 'auto'],
   gridTemplateRows: '1fr',
@@ -198,6 +198,7 @@ const treeCellGrid = style({
     'drag-handle checkbox level-padding expand-button icon content actions actionmenu'
   ],
   backgroundColor: '--rowBackgroundColor',
+  paddingEnd: 4, // account for any focus rings on the last item in the cell
   color: {
     isDisabled: {
       default: 'gray-400',
@@ -272,10 +273,10 @@ const treeCellGrid = style({
     default: 0,
     isDetached: 1
   },
-  borderStyle: 'solid',
-  borderRadius: { // odd behaviour, if this is the last property, then bottom right isn't rounded
+  borderRadius: {
     isDetached: '[6px]'
-  }
+  },
+  borderStyle: 'solid'
 });
 
 const treeCheckbox = style({
