@@ -147,6 +147,7 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
       fireEvent.mouseLeave(triggerButton);
       fireEvent.mouseEnter(triggerButton);
       fireEvent.mouseUp(triggerButton, {detail: 1});
+      fireEvent.click(triggerButton);
 
       expect(triggerButton).toHaveAttribute('aria-expanded', 'true');
     });

@@ -1977,7 +1977,7 @@ it('TableView can toggle row selection', async function () {
   // Render your test component/app and initialize the table tester
   let {getByTestId} = render(
     <Provider theme={defaultTheme}>
-      <TableView data-testid="test-table">
+      <TableView data-testid="test-table" selectionMode="multiple">
       ...
       </TableView>
     </Provider>

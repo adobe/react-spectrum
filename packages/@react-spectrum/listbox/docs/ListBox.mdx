@@ -429,7 +429,7 @@ it('ListBox can select an option via keyboard', async function () {
   // Render your test component/app and initialize the listbox tester
   let {getByTestId} = render(
     <Provider theme={defaultTheme}>
-      <ListBox data-testid="test-listbox">
+      <ListBox selectionMode="single" data-testid="test-listbox">
         ...
       </ListBox>
     </Provider>
@@ -438,7 +438,6 @@ it('ListBox can select an option via keyboard', async function () {
 
   await listboxTester.toggleOptionSelection({option: 4});
   expect(listboxTester.options()[4]).toHaveAttribute('aria-selected', 'true');
-  expect(onSelectionChange).toBeCalledTimes(1);
 });
 ```
 
