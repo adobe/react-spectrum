@@ -31,7 +31,7 @@ import {useHasTabbableChild} from '@react-aria/focus';
 import {useSelectableList} from '@react-aria/selection';
 
 export interface GridListProps<T> extends CollectionBase<T>, MultipleSelection {
-  /** Whether to auto focus the listbox or an option. */
+  /** Whether to auto focus the gridlist or an option. */
   autoFocus?: boolean | FocusStrategy,
   /**
    * Handler that is called when a user performs an action on an item. The exact user event depends on
