@@ -2810,6 +2810,7 @@ describe('TableView', function () {
         expect(draggableRow).toHaveAttribute('aria-selected', 'false');
         expect(onSelectionChange).toHaveBeenCalledTimes(0);
         fireEvent.pointerUp(draggableRow, {pointerType: 'mouse'});
+        fireEvent.click(draggableRow);
         expect(draggableRow).toHaveAttribute('aria-selected', 'true');
         checkSelection(onSelectionChange, ['a']);
       });

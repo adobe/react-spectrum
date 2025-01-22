@@ -14,8 +14,9 @@ import {fireEvent} from '@testing-library/react';
 
 // Triggers a "touch" event on an element.
 export function triggerTouch(element, opts = {}) {
-  fireEvent.pointerDown(element, {pointerType: 'touch', ...opts});
-  fireEvent.pointerUp(element, {pointerType: 'touch', ...opts});
+  fireEvent.pointerDown(element, {pointerType: 'touch', pointerId: 1, ...opts});
+  fireEvent.pointerUp(element, {pointerType: 'touch', pointerId: 1, ...opts});
+  fireEvent.click(element, opts);
 }
 
 // Mocks and prevents the next click's default operation

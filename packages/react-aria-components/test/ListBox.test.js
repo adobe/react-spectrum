@@ -400,34 +400,34 @@ describe('ListBox', () => {
     expect(option).not.toHaveClass('focus');
   });
 
-  it('should support press state', () => {
+  it('should support press state', async () => {
     let {getAllByRole} = renderListbox({selectionMode: 'multiple'}, {className: ({isPressed}) => isPressed ? 'pressed' : ''});
     let option = getAllByRole('option')[0];
 
     expect(option).not.toHaveAttribute('data-pressed');
     expect(option).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(option);
+    await user.pointer({target: option, keys: '[MouseLeft>]'});
     expect(option).toHaveAttribute('data-pressed', 'true');
     expect(option).toHaveClass('pressed');
 
-    fireEvent.mouseUp(option);
+    await user.pointer({target: option, keys: '[/MouseLeft]'});
     expect(option).not.toHaveAttribute('data-pressed');
     expect(option).not.toHaveClass('pressed');
   });
 
-  it('should not show press state when not interactive', () => {
+  it('should not show press state when not interactive', async () => {
     let {getAllByRole} = renderListbox({}, {className: ({isPressed}) => isPressed ? 'pressed' : ''});
     let option = getAllByRole('option')[0];
 
     expect(option).not.toHaveAttribute('data-pressed');
     expect(option).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(option);
+    await user.pointer({target: option, keys: '[MouseLeft>]'});
     expect(option).not.toHaveAttribute('data-pressed');
     expect(option).not.toHaveClass('pressed');
 
-    fireEvent.mouseUp(option);
+    await user.pointer({target: option, keys: '[/MouseLeft]'});
     expect(option).not.toHaveAttribute('data-pressed');
     expect(option).not.toHaveClass('pressed');
   });

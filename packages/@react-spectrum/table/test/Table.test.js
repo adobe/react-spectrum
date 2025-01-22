@@ -3159,7 +3159,9 @@ export let tableTests = () => {
             expect(onAction).not.toHaveBeenCalled();
             expect(tree.queryByLabelText('Select All')).not.toBeNull();
 
-            fireEvent.pointerUp(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+            let cell = getCell(tree, 'Baz 5');
+            fireEvent.pointerUp(cell, {pointerType: 'touch'});
+            fireEvent.click(cell, {detail: 1});
             onSelectionChange.mockReset();
             act(() => {
               jest.runAllTimers();
@@ -3190,22 +3192,21 @@ export let tableTests = () => {
         });
       });
 
-      it('should support Enter to perform onAction with keyboard', function () {
+      it('should support Enter to perform onAction with keyboard', async function () {
         let onSelectionChange = jest.fn();
         let onAction = jest.fn();
         let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
 
-        fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: ' '});
-        fireEvent.keyUp(getCell(tree, 'Baz 10'), {key: ' '});
+        act(() => getCell(tree, 'Baz 10').focus());
+        await user.keyboard(' ');
         checkSelection(onSelectionChange, ['Foo 10']);
-        // screen reader automatically handles this one
-        expect(announce).not.toHaveBeenCalled();
+        expect(announce).toHaveBeenCalledWith('Foo 10 selected.');
         expect(onAction).not.toHaveBeenCalled();
 
         announce.mockReset();
         onSelectionChange.mockReset();
-        fireEvent.keyDown(getCell(tree, 'Baz 5'), {key: 'Enter'});
-        fireEvent.keyUp(getCell(tree, 'Baz 5'), {key: 'Enter'});
+        act(() => getCell(tree, 'Baz 5').focus());
+        await user.keyboard('{Enter}');
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(announce).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(1);
@@ -3288,28 +3289,24 @@ export let tableTests = () => {
 
         announce.mockReset();
         onSelectionChange.mockReset();
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
+        await user.keyboard('{Control>}{ArrowDown}{/Control}');
         expect(announce).not.toHaveBeenCalled();
         expect(onSelectionChange).not.toHaveBeenCalled();
-        expect(document.activeElement).toBe(getCell(tree, 'Baz 6').closest('[role="row"]'));
+        expect(document.activeElement).toBe(getCell(tree, 'Baz 6'));
 
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
+        await user.keyboard('{Control>}{ArrowDown}{/Control}');
         expect(announce).not.toHaveBeenCalled();
         expect(onSelectionChange).not.toHaveBeenCalled();
-        expect(document.activeElement).toBe(getCell(tree, 'Baz 7').closest('[role="row"]'));
+        expect(document.activeElement).toBe(getCell(tree, 'Baz 7'));
 
-        fireEvent.keyDown(document.activeElement, {key: ' ', ctrlKey: true});
-        fireEvent.keyUp(document.activeElement, {key: ' ', ctrlKey: true});
+        await user.keyboard('{Control>} {/Control}');
         expect(announce).toHaveBeenCalledWith('Foo 7 selected. 2 items selected.');
         expect(announce).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['Foo 5', 'Foo 7']);
 
         announce.mockReset();
         onSelectionChange.mockReset();
-        fireEvent.keyDown(document.activeElement, {key: ' '});
-        fireEvent.keyUp(document.activeElement, {key: ' '});
+        await user.keyboard(' ');
         expect(announce).toHaveBeenCalledWith('Foo 7 selected. 1 item selected.');
         expect(announce).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['Foo 7']);
