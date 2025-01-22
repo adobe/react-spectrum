@@ -123,7 +123,9 @@ export const Tabs = forwardRef(function Tabs(props: TabsProps, ref: DOMRef<HTMLD
           disabledKeys,
           selectedKey: value,
           onSelectionChange: setValue,
-          labelBehavior
+          labelBehavior,
+          'aria-label': props['aria-label'],
+          'aria-labelledby': props['aria-labelledby']
         }]
       ]}>
       <CollectionBuilder content={props.children}>
@@ -188,7 +190,7 @@ export function TabList<T extends object>(props: TabListProps<T>) {
 }
 
 function TabListInner<T extends object>(props: TabListProps<T>) {
-  let {density, isDisabled, disabledKeys, orientation, labelBehavior} = useContext(InternalTabsContext) ?? {};
+  let {density, isDisabled, disabledKeys, orientation, labelBehavior, "aria-label": ariaLabel, "aria-labelledby": ariaLabelledBy} = useContext(InternalTabsContext) ?? {};
   let state = useContext(TabListStateContext);
   let [selectedTab, setSelectedTab] = useState<HTMLElement | undefined>(undefined);
   let tablistRef = useRef<HTMLDivElement>(null);
@@ -211,10 +213,12 @@ function TabListInner<T extends object>(props: TabListProps<T>) {
         <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} density={density} />}
       <RACTabList
         {...props}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledBy}
         ref={tablistRef}
         className={renderProps => tablist({...renderProps, labelBehavior, density})} />
       {orientation === 'horizontal' &&
-        <TabLine showItems disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} density={density} />}
+        <TabLine disabledKeys={disabledKeys} isDisabled={isDisabled} selectedTab={selectedTab} orientation={orientation} density={density} />}
     </div>
   );
 }
@@ -224,8 +228,7 @@ interface TabLineProps {
   isDisabled: boolean | undefined,
   selectedTab: HTMLElement | undefined,
   orientation?: Orientation,
-  density?: 'compact' | 'regular',
-  showItems?: boolean
+  density?: 'compact' | 'regular'
 }
 
 const selectedIndicator = style({
@@ -640,7 +643,7 @@ let CollapsingTabs = ({collection, containerRef, ...props}: {collection: Collect
           onSelectionChange={onSelectionChange}
           aria-label={props['aria-label']}
           aria-describedby={props['aria-labelledby']} />
-        <CollapseContext.Provider value={{showTabs: false, menuId}}>
+        <CollapseContext.Provider value={{showTabs: false, menuId, valueId}}>
           {props.children}
         </CollapseContext.Provider>
       </>
