@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@swc/helpers": "^0.5.0",
-    "use-sync-external-store": "^1.2.0"
+    "use-sync-external-store": "^1.4.0"
   },
   "devDependencies": {
     "@types/use-sync-external-store": "^0.0.3"
