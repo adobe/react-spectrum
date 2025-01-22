@@ -63,7 +63,7 @@ export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'cla
   children: ReactNode
 }
 
-export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'style' | 'className'>, StyleProps {}
+export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'style' | 'className' | 'aria-label' | 'aria-labelledby'>, StyleProps {}
 
 export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className'>, UnsafeStyles {
   /** Spectrum-defined styles, returned by the `style()` macro. */
@@ -180,7 +180,6 @@ const tablist = style({
 });
 
 export function TabList<T extends object>(props: TabListProps<T>) {
-  console.log('tablist', props);
   let {showTabs} = useContext(CollapseContext) ?? {};
 
   if (showTabs) {
