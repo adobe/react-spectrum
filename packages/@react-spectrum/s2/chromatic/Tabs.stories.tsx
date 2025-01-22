@@ -30,8 +30,8 @@ export default meta;
 
 export const Example = {
   render: (args: any) => (
-    <Tabs {...args} styles={style({width: 450, height: 256})}>
-      <TabList aria-label="History of Ancient Rome">
+    <Tabs {...args} styles={style({width: 450, height: 256})} aria-label="History of Ancient Rome">
+      <TabList>
         <Tab id="FoR">Founding of Rome</Tab>
         <Tab id="MaR">Monarchy and Republic</Tab>
         <Tab id="Emp">Empire</Tab>
@@ -58,8 +58,8 @@ export const Example = {
 
 export const Disabled = {
   render: (args: any) => (
-    <Tabs {...args} styles={style({width: 450, height: 144})} disabledKeys={['FoR', 'MaR', 'Emp']}>
-      <TabList aria-label="History of Ancient Rome">
+    <Tabs {...args} aria-label="History of Ancient Rome" styles={style({width: 450, height: 144})} disabledKeys={['FoR', 'MaR', 'Emp']}>
+      <TabList>
         <Tab id="FoR" aria-label="Edit"><Edit /><Text>Edit</Text></Tab>
         <Tab id="MaR" aria-label="Notifications"><Bell /><Text>Notifications</Text></Tab>
         <Tab id="Emp" aria-label="Likes"><Heart /><Text>Likes</Text></Tab>
@@ -79,8 +79,8 @@ export const Disabled = {
 
 export const Icons = {
   render: (args: any) => (
-    <Tabs {...args} styles={style({width: 208, height: 144})} labelBehavior="hide">
-      <TabList aria-label="History of Ancient Rome">
+    <Tabs {...args} aria-label="History of Ancient Rome" styles={style({width: 208, height: 144})} labelBehavior="hide">
+      <TabList>
         <Tab id="FoR" aria-label="Edit"><Edit /><Text>Edit</Text></Tab>
         <Tab id="MaR" aria-label="Notifications"><Bell /><Text>Notifications</Text></Tab>
         <Tab id="Emp" aria-label="Likes"><Heart /><Text>Likes</Text></Tab>
