@@ -25,21 +25,19 @@ import {
   TabListStateContext
 } from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
-import {Collection, DOMRef, DOMRefValue, FocusableRef, FocusableRefValue, Key, Node, Orientation, RefObject} from '@react-types/shared';
+import {Collection, DOMRef, DOMRefValue, Key, Node, Orientation, RefObject} from '@react-types/shared';
 import {CollectionBuilder} from '@react-aria/collections';
-import {createContext, forwardRef, ReactNode, use, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {focusRing, size, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
 import {Picker, PickerItem} from './TabsPicker';
 import {Text, TextContext} from './Content';
 import {useControlledState} from '@react-stately/utils';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useEffectEvent, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useHasTabbableChild} from '@react-aria/focus';
-import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocale} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | 'children'>, UnsafeStyles {
@@ -182,6 +180,7 @@ const tablist = style({
 });
 
 export function TabList<T extends object>(props: TabListProps<T>) {
+  console.log('tablist', props);
   let {showTabs} = useContext(CollapseContext) ?? {};
 
   if (showTabs) {
@@ -190,7 +189,7 @@ export function TabList<T extends object>(props: TabListProps<T>) {
 }
 
 function TabListInner<T extends object>(props: TabListProps<T>) {
-  let {density, isDisabled, disabledKeys, orientation, labelBehavior, "aria-label": ariaLabel, "aria-labelledby": ariaLabelledBy} = useContext(InternalTabsContext) ?? {};
+  let {density, isDisabled, disabledKeys, orientation, labelBehavior, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy} = useContext(InternalTabsContext) ?? {};
   let state = useContext(TabListStateContext);
   let [selectedTab, setSelectedTab] = useState<HTMLElement | undefined>(undefined);
   let tablistRef = useRef<HTMLDivElement>(null);
@@ -452,7 +451,7 @@ function CollapsedTabPanel(props: TabPanelProps) {
       aria-labelledby={menuId + ' ' + valueId}
       tabIndex={tabIndex}
       style={UNSAFE_style}
-      className={renderProps => (props.UNSAFE_className ?? '') + tabPanel(renderProps, props.styles)} />
+      className={renderProps => props.UNSAFE_className + tabPanel(renderProps, props.styles)} />
   );
 }
 
