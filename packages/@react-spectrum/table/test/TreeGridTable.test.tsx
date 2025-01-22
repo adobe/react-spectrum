@@ -1422,7 +1422,7 @@ describe('TableView with expandable rows', function () {
         let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
 
         checkRowSelection(rows, false);
-        await user.pointer({target: cell, keys: '[MouseLeft]', coords: {width: 1}});
+        await user.pointer({target: cell, keys: '[MouseLeft]', coords: {pressure: 0.5}});
         act(() => jest.runAllTimers());
         expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 3, Foo selected.');
         expect(announce).toHaveBeenCalledTimes(1);
@@ -1431,7 +1431,7 @@ describe('TableView with expandable rows', function () {
         onSelectionChange.mockReset();
 
         cell = getCell(treegrid, 'Row 1, Lvl 1, Foo');
-        await user.pointer({target: cell, keys: '[MouseLeft]', coords: {width: 1}});
+        await user.pointer({target: cell, keys: '[MouseLeft]', coords: {pressure: 0.5}});
         act(() => jest.runAllTimers());
         expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 1, Foo selected.');
         expect(announce).toHaveBeenCalledTimes(2);
@@ -1512,14 +1512,14 @@ describe('TableView with expandable rows', function () {
         let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
 
         checkRowSelection(rows, false);
-        await user.pointer({target: cell, keys: '[MouseLeft]', coords: {width: 1}});
+        await user.pointer({target: cell, keys: '[MouseLeft]', coords: {pressure: 0.5}});
         act(() => jest.runAllTimers());
         expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 3, Foo selected.');
         expect(announce).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['Row 1 Lvl 3']);
         expect(onAction).not.toHaveBeenCalled();
         onSelectionChange.mockReset();
-        await user.pointer({target: cell, keys: '[MouseLeft][MouseLeft]', coords: {width: 1}});
+        await user.pointer({target: cell, keys: '[MouseLeft][MouseLeft]', coords: {pressure: 0.5}});
         act(() => jest.runAllTimers());
         expect(announce).toHaveBeenCalledTimes(1);
         expect(onSelectionChange).not.toHaveBeenCalled();

@@ -1099,9 +1099,9 @@ describe('ListView', function () {
         let rows = tree.getAllByRole('row');
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
         expect(rows[2]).toHaveAttribute('aria-selected', 'false');
-        await user.keyboard('[CtrlLeft>]');
+        await user.keyboard('{Control>}');
         await user.click(getRow(tree, 'Bar'));
-        await user.keyboard('[/CtrlLeft]');
+        await user.keyboard('{/Control}');
 
         checkSelection(onSelectionChange, ['bar']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'true');
@@ -1109,9 +1109,9 @@ describe('ListView', function () {
         expect(announce).toHaveBeenCalledTimes(1);
 
         onSelectionChange.mockClear();
-        await user.keyboard('[CtrlLeft>]');
+        await user.keyboard('{Control>}');
         await user.click(getRow(tree, 'Baz'));
-        await user.keyboard('[/CtrlLeft]');
+        await user.keyboard('{/Control}');
         checkSelection(onSelectionChange, ['bar', 'baz']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'true');
         expect(rows[2]).toHaveAttribute('aria-selected', 'true');
@@ -1119,9 +1119,9 @@ describe('ListView', function () {
         expect(announce).toHaveBeenCalledTimes(2);
 
         onSelectionChange.mockClear();
-        await user.keyboard('[CtrlLeft>]');
+        await user.keyboard('{Control>}');
         await user.click(getRow(tree, 'Bar'));
-        await user.keyboard('[/CtrlLeft]');
+        await user.keyboard('{/Control}');
         checkSelection(onSelectionChange, ['baz']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
         expect(rows[2]).toHaveAttribute('aria-selected', 'true');
@@ -1196,7 +1196,7 @@ describe('ListView', function () {
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
         await user.keyboard('[ControlLeft>]');
-        await user.pointer({target: getRow(tree, 'Bar'), keys: '[MouseLeft]', coords: {width: 1}});
+        await user.pointer({target: getRow(tree, 'Bar'), keys: '[MouseLeft]', coords: {pressure: 0.5}});
         await user.keyboard('[/ControlLeft]');
 
         checkSelection(onSelectionChange, ['bar']);
@@ -1313,7 +1313,7 @@ describe('ListView', function () {
         let tree = renderSelectionList({onSelectionChange, selectionStyle: 'highlight', onAction, selectionMode: 'multiple'});
 
         let rows = tree.getAllByRole('row');
-        await user.pointer({target: rows[0], keys: '[MouseLeft]', coords: {width: 1}});
+        await user.pointer({target: rows[0], keys: '[MouseLeft]', coords: {pressure: 0.5}});
         checkSelection(onSelectionChange, ['foo']);
         onSelectionChange.mockClear();
         expect(announce).toHaveBeenLastCalledWith('Foo selected.');
