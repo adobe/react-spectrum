@@ -110,7 +110,7 @@ function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
 
   let layout = useMemo(() => {
     return new UNSTABLE_ListLayout({
-      rowHeight: isDetached ? 42 : 40
+      rowHeight: isDetached ? 44 : 40
     });
   }, [isDetached]);
 
