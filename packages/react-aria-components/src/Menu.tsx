@@ -192,10 +192,6 @@ export const SubdialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogt
     itemRef.current?.focus();
   };
 
-
-  // TODO: test the dismiss button
-  // looks like it moves focus back to the input which we want for desktop but not for mobile screen readers...
-
   return (
     <Provider
       values={[
@@ -210,8 +206,9 @@ export const SubdialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogt
           // TODO: if we apply this data attribute then the dialog won't close on ESC via useOverlay due to logic in usePopover preventing it from being added
           // to the visibleOverlays list in useOverlay because isOpen is false, thus not calling onHide nor useInteractOutside. We do want this data attribute
           // because we want it to not get clipped similar to https://github.com/adobe/react-spectrum/pull/7352#discussion_r1837109265
-          // Hypothertically, if we were to get rid of this data attribute then Esc will work but not clicking outside to close because this popover
+          // Hypothetically, if we were to get rid of this data attribute then Esc will work but not clicking outside to close because this popover
           // has isNonModal = true, meaning it isn't dismissible. To resolve this we could make a custom useInteractOutside in MenuTrigger like we do in RSP
+          // I've opted to add subDialogKeyDown in useSubmenuTrigger instead and make useDialog accept onKeyDown instead
           // Prevent parent popover from hiding subdialog.
           // @ts-ignore
           'data-react-aria-top-layer': true,

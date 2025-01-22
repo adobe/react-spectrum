@@ -190,7 +190,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   }
 
   let onPressStart = (e: PressEvent) => {
-    // TODO: ideally this would be done in useselectableItem but we don't apply that hooks onPress if the node is a menu trigger
+    // TODO: ideally this would be done in useselectableItem but we don't apply that hook's item's props if the node is a menu trigger
     if (data.shouldUseVirtualFocus && (e.pointerType === 'virtual' || e.pointerType === 'keyboard')) {
       selectionManager.setFocused(true);
       selectionManager.setFocusedKey(key);

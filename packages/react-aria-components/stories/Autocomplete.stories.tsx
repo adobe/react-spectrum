@@ -202,7 +202,6 @@ interface ItemNode {
 
 let dynamicRenderTrigger = (item: ItemNode) => {
   if (item.isMenu) {
-    // TODO: will need to fix a bug here where focus isn't shifting out of the subdialog into the sub menu
     return (
       <SubmenuTrigger>
         <MyMenuItem key={item.name}>{item.name}</MyMenuItem>
@@ -280,18 +279,22 @@ export const AutocompleteMenuDynamic = {
     let {onAction, onSelectionChange, selectionMode} = args;
 
     return (
-      <AutocompleteWrapper>
-        <div>
-          <SearchField autoFocus>
-            <Label style={{display: 'block'}}>Test</Label>
-            <Input />
-            <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
-          </SearchField>
-          <Menu className={styles.menu} items={dynamicAutocompleteSubdialog} onAction={onAction} onSelectionChange={onSelectionChange} selectionMode={selectionMode}>
-            {item => dynamicRenderFuncSections(item)}
-          </Menu>
-        </div>
-      </AutocompleteWrapper>
+      <>
+        <input />
+        <AutocompleteWrapper>
+          <div>
+            <SearchField autoFocus>
+              <Label style={{display: 'block'}}>Test</Label>
+              <Input />
+              <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+            </SearchField>
+            <Menu className={styles.menu} items={dynamicAutocompleteSubdialog} onAction={onAction} onSelectionChange={onSelectionChange} selectionMode={selectionMode}>
+              {item => dynamicRenderFuncSections(item)}
+            </Menu>
+          </div>
+        </AutocompleteWrapper>
+        <input />
+      </>
     );
   },
   name: 'Autocomplete, dynamic menu'

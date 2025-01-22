@@ -18,6 +18,7 @@ import React, {createContext, RefObject, useContext, useRef} from 'react';
 import {RootMenuTriggerStateContext} from './Menu';
 import {SearchFieldContext} from './SearchField';
 import {TextFieldContext} from './TextField';
+import {useInteractOutside} from 'react-aria';
 import {useMenuTriggerState} from 'react-stately';
 
 export interface AutocompleteProps extends AriaAutocompleteProps, SlotProps {}
@@ -53,10 +54,21 @@ export function UNSTABLE_Autocomplete(props: AutocompleteProps) {
     filter,
     collectionRef
   }, state);
-  // TODO: we need some sore of root menu state for any sub dialogs even though the autocomplete itself isn't actually a trigger
-  // Alternatively, we could assume that the Autocomplete will always be within a MenuTrigger/DialogTrigger
+  // We need some sort of root menu state for subdialogs/submenus in the Autocomplete wrapped collection even though the autocomplete
+  // itself isn't actually a trigger. Only a problem for Autocomplete's that are outside a MenuTrigger/DialogTrigger
   let rootMenuTriggerState = useContext(RootMenuTriggerStateContext);
   let menuState = useMenuTriggerState({});
+
+  // If the Autocomplete is wrapped around a menu that is rendered outside a popover (aka just in the DOM as is), then we need to be able to
+  // close all submenus/dialogs when clicking on the body of the page/parent input field since those submenus/dialogs aren't dismissible and rely on the
+  // root menu/dialog handling useInteractOutside
+  useInteractOutside({
+    ref: collectionRef,
+    onInteractOutside: () => {
+      menuState?.close();
+    },
+    isDisabled: rootMenuTriggerState != null
+  });
 
   return (
     <Provider
