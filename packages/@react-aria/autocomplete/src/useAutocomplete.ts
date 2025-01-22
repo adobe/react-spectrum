@@ -189,8 +189,9 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
         }
         break;
       case ' ':
+      case 'Tab':
         // Space shouldn't trigger onAction so early return.
-
+        // Also sure not to propogate Tab down to the collection, otherwise we will try to focus the collection via useSelectableCollection's Tab handler (aka shift tab logic)
         return;
       case 'Home':
       case 'End':
