@@ -35,6 +35,8 @@ export interface MenuItemAria {
 
   /** Whether the item is currently focused. */
   isFocused: boolean,
+  /** Whether the item is keyboard focused. */
+  isFocusVisible: boolean,
   /** Whether the item is currently selected. */
   isSelected: boolean,
   /** Whether the item is currently in a pressed state. */
@@ -336,6 +338,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       id: keyboardId
     },
     isFocused,
+    isFocusVisible: isFocused && isFocusVisible(),
     isSelected,
     isPressed,
     isDisabled

@@ -180,18 +180,18 @@ describe('Tabs', () => {
     expect(tab).not.toHaveClass('focus');
   });
 
-  it('should support press state', () => {
+  it('should support press state', async () => {
     let {getAllByRole} = renderTabs({}, {}, {className: ({isPressed}) => isPressed ? 'pressed' : ''});
     let tab = getAllByRole('tab')[0];
 
     expect(tab).not.toHaveAttribute('data-pressed');
     expect(tab).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(tab);
+    await user.pointer({target: tab, keys: '[MouseLeft>]'});
     expect(tab).toHaveAttribute('data-pressed', 'true');
     expect(tab).toHaveClass('pressed');
 
-    fireEvent.mouseUp(tab);
+    await user.pointer({target: tab, keys: '[/MouseLeft]'});
     expect(tab).not.toHaveAttribute('data-pressed');
     expect(tab).not.toHaveClass('pressed');
   });

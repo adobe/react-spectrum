@@ -12,7 +12,7 @@
 
 import {AriaAutocompleteTests} from './AriaAutocomplete.test-util';
 import {Button, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, SearchField, Separator, Text, UNSTABLE_Autocomplete} from '..';
-import {pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import React, {ReactNode} from 'react';
 import {useAsyncList} from 'react-stately';
 import {useFilter} from '@react-aria/i18n';
@@ -220,6 +220,29 @@ describe('Autocomplete', () => {
     await user.click(button);
 
     expect(input).toHaveValue('');
+  });
+
+  it('should apply focusVisible/focused to virtually focused menu items when keyboard navigating', async () => {
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticMenu />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    await user.keyboard('{ArrowDown}');
+    let menu = getByRole('menu');
+    let options = within(menu).getAllByRole('menuitem');
+    expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+    expect(options[0]).toHaveAttribute('data-focus-visible');
+
+    await user.click(input);
+    await user.hover(options[1]);
+    options = within(menu).getAllByRole('menuitem');
+    expect(options[1]).toHaveAttribute('data-focused');
+    expect(options[1]).not.toHaveAttribute('data-focus-visible');
   });
 });
 

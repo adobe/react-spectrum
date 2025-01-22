@@ -1708,7 +1708,7 @@ describe('ComboBox', function () {
       expect(listbox).toBeVisible();
       let items = within(listbox).getAllByRole('option');
 
-      fireEvent.mouseDown(items[0]);
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});
       act(() => {
         jest.runAllTimers();
       });
@@ -1720,7 +1720,7 @@ describe('ComboBox', function () {
       expect(document.activeElement).toBe(combobox);
       expect(listbox).toBeVisible();
 
-      fireEvent.mouseUp(items[0]);
+      await user.pointer({target: items[0], keys: '[/MouseLeft]'});
       act(() => {
         jest.runAllTimers();
       });

@@ -9,13 +9,14 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {act, fireEvent, render, renderHook, screen, waitFor} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render, renderHook, screen, waitFor} from '@react-spectrum/test-utils-internal';
 import {addWindowFocusTracking, useFocusVisible, useFocusVisibleListener} from '../';
 import {hasSetupGlobalListeners} from '../src/useFocusVisible';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
 import {useButton} from '@react-aria/button';
 import {useFocusRing} from '@react-aria/focus';
+import userEvent from '@testing-library/user-event';
 
 function Example(props) {
   const {isFocusVisible} = useFocusVisible();
@@ -59,6 +60,11 @@ function toggleBrowserWindow() {
 }
 
 describe('useFocusVisible', function () {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+  
   beforeEach(() => {
     fireEvent.focus(document.body);
   });
@@ -306,10 +312,8 @@ describe('useFocusVisible', function () {
 
       const el = document.querySelector('iframe').contentWindow.document.body.querySelector('button[id="iframe-example"]');
 
-      fireEvent.mouseDown(el);
-      fireEvent.mouseUp(el);
-      fireEvent.keyDown(el, {key: 'Esc'});
-      fireEvent.keyUp(el, {key: 'Esc'});
+      await user.pointer({target: el, keys: '[MouseLeft]'});
+      await user.keyboard('{Esc}');
 
       expect(el.textContent).toBe('example-focusVisible');
     });
