@@ -1,16 +1,48 @@
 import {createFocusManager, getFocusableTreeWalker} from '@react-aria/focus';
 import {DateFieldState, DatePickerState, DateRangePickerState} from '@react-stately/datepicker';
 import {FocusableElement, KeyboardEvent, RefObject} from '@react-types/shared';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
-import {useMemo} from 'react';
+import {useMemo, useRef} from 'react';
 import {usePress} from '@react-aria/interactions';
 
 export function useDatePickerGroup(state: DatePickerState | DateRangePickerState | DateFieldState, ref: RefObject<Element | null>, disableArrowNavigation?: boolean) {
   let {direction} = useLocale();
   let focusManager = useMemo(() => createFocusManager(ref), [ref]);
-  let editableSegments: NodeListOf<Element> | undefined = ref.current?.querySelectorAll('span[role="spinbutton"], span[role="textbox"]');
-  let orderedSegments = useMemo(() => orderSegments(editableSegments), [editableSegments]);
+  let segments = useRef<FocusableElement[]>(undefined);
+  useLayoutEffect(() => {
+    if (ref?.current) {
+
+      let update = () => {
+        if (ref.current) {
+          // TODO: For now, just querying this list of elements. However, it's possible that either through hooks or RAC that some users may include other focusable items that they would want to able to keyboard navigate to. In that case, we might want to utilize focusableElements in isFocusable.ts
+          let editableSegments: NodeListOf<Element> | undefined = ref.current?.querySelectorAll('span[role="spinbutton"], span[role="textbox"], button');
+
+          let segmentsArr = Array.from(editableSegments as NodeListOf<Element>).filter(Boolean).map(node => {
+            return {
+              element: node as FocusableElement,
+              rectX: node.getBoundingClientRect().left
+            };
+          });
+      
+          let orderedSegments = segmentsArr.sort((a, b) => a.rectX - b.rectX).map((item => item.element));
+          segments.current = orderedSegments;
+        }
+      };
+
+      update();
+
+      let observer = new MutationObserver(update);
+      observer.observe(ref.current, {
+        subtree: true,
+        childList: true
+      });
+
+      return () => {
+        observer.disconnect();
+      };
+    }
+  }, []);
 
   // Open the popover on alt + arrow down
   let onKeyDown = (e: KeyboardEvent) => {
@@ -33,17 +65,17 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
         e.preventDefault();
         e.stopPropagation();
         if (direction === 'rtl') {
-          if (orderedSegments) {
-            let button = ref.current?.querySelector('button');
+          if (segments.current) {
+            let orderedSegments = segments.current;
             let target = e.target as FocusableElement;
             let index = orderedSegments.indexOf(target);
 
             if (index === 0) {
-              target = button || target;
+              target = orderedSegments[0] || target;
             } else {
               target = orderedSegments[index - 1] || target;
             }
-            
+
             if (target) {
               target.focus();
             }
@@ -56,9 +88,17 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
         e.preventDefault();
         e.stopPropagation();
         if (direction === 'rtl') {
-          if (orderedSegments) {
+          if (segments.current) {
+            let orderedSegments = segments.current;
             let target = e.target as FocusableElement;
             let index = orderedSegments.indexOf(target);
+
+            if (index === orderedSegments.length - 1) {
+              target = orderedSegments[orderedSegments.length - 1] || target;
+            } else {
+              target = orderedSegments[index - 1] || target;
+            }
+
   
             target = orderedSegments[index + 1] || target;
   
@@ -128,20 +168,4 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
   });
 
   return mergeProps(pressProps, {onKeyDown});
-}
-
-function orderSegments(editableSegments: NodeListOf<Element> | undefined) {
-  if (editableSegments) {
-    let segments = Array.from(editableSegments);
-    let segmentArr = segments.map(node => {
-      return {
-        element: node as FocusableElement,
-        rectX: node?.getBoundingClientRect().left
-      };
-    });
-
-    return segmentArr.sort((a, b) => a.rectX - b.rectX).map((item => item.element));
-  }
-
-  return undefined;
 }
