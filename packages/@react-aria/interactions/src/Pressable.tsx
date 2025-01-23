@@ -83,9 +83,9 @@ export const Pressable = React.forwardRef(({children, ...props}: PressableProps,
   return React.cloneElement(
     child,
     {
+      ...mergeProps(pressProps, focusableProps, child.props),
       // @ts-ignore
-      ref: mergeRefs(childRef, ref),
-      ...mergeProps(pressProps, focusableProps, child.props)
+      ref: mergeRefs(childRef, ref)
     }
   );
 });

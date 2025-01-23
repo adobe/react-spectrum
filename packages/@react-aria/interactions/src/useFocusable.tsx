@@ -173,9 +173,9 @@ export const Focusable = forwardRef(({children, ...props}: FocusableComponentPro
   return React.cloneElement(
     child,
     {
+      ...mergeProps(focusableProps, child.props),
       // @ts-ignore
-      ref: mergeRefs(childRef, ref),
-      ...mergeProps(focusableProps, child.props)
+      ref: mergeRefs(childRef, ref)
     }
   );
 });
