@@ -346,12 +346,11 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     }
 
     manager.setFocused(true);
-
     if (manager.focusedKey == null) {
-      let navigateToFirstKey = (key: Key | undefined | null) => {
+      let navigateToKey = (key: Key | undefined | null) => {
         if (key != null) {
           manager.setFocusedKey(key);
-          if (selectOnFocus) {
+          if (selectOnFocus && !manager.isSelected(key)) {
             manager.replaceSelection(key);
           }
         }
@@ -361,9 +360,9 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       // and either focus the first or last item accordingly.
       let relatedTarget = e.relatedTarget as Element;
       if (relatedTarget && (e.currentTarget.compareDocumentPosition(relatedTarget) & Node.DOCUMENT_POSITION_FOLLOWING)) {
-        navigateToFirstKey(manager.lastSelectedKey ?? delegate.getLastKey?.());
+        navigateToKey(manager.lastSelectedKey ?? delegate.getLastKey?.());
       } else {
-        navigateToFirstKey(manager.firstSelectedKey ?? delegate.getFirstKey?.());
+        navigateToKey(manager.firstSelectedKey ?? delegate.getFirstKey?.());
       }
     } else if (!isVirtualized && scrollRef.current) {
       // Restore the scroll position to what it was before.
@@ -424,6 +423,12 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
           bubbles: true
         })
       );
+
+      // If there wasn't a focusable key but the collection had items, then that means we aren't in an intermediate load state and all keys are disabled.
+      // Reset shouldVirtualFocusFirst so that we don't erronously autofocus an item when the collection is filtered again.
+      if (manager.collection.size > 0) {
+        shouldVirtualFocusFirst.current = false;
+      }
     } else {
       manager.setFocusedKey(keyToFocus);
       // Only set shouldVirtualFocusFirst to false if we've successfully set the first key as the focused key

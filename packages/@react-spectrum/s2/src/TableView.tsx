@@ -105,6 +105,7 @@ interface S2TableProps {
   loadingState?: LoadingState,
   /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom. */
   onLoadMore?: () => any,
+  /** Provides the ActionBar to display when rows are selected in the TableView. */
   renderActionBar?: (selectedKeys: 'all' | Set<Key>) => ReactElement
 }
 

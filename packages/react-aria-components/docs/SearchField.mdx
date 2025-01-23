@@ -91,6 +91,11 @@ import {SearchField, Label, Input, Button} from 'react-aria-components';
       -webkit-appearance: none;
     }
 
+    &::placeholder {
+      color: var(--text-color-placeholder);
+      opacity: 1;
+    }
+
     &[data-focused] {
       outline: 2px solid var(--focus-ring-color);
       outline-offset: -1px;
@@ -226,14 +231,15 @@ import {Text, FieldError} from 'react-aria-components';
 interface MySearchFieldProps extends SearchFieldProps {
   label?: string,
   description?: string,
-  errorMessage?: string | ((validation: ValidationResult) => string)
+  errorMessage?: string | ((validation: ValidationResult) => string),
+  placeholder?: string
 }
 
-function MySearchField({label, description, errorMessage, ...props}: MySearchFieldProps) {
+export function MySearchField({label, description, errorMessage, placeholder, ...props}: MySearchFieldProps) {
   return (
     <SearchField {...props}>
-      <Label>{label}</Label>
-      <Input />
+      {label && <Label>{label}</Label>}
+      <Input placeholder={placeholder} />
       <Button>✕</Button>
       {description && <Text slot="description">{description}</Text>}
       <FieldError>{errorMessage}</FieldError>

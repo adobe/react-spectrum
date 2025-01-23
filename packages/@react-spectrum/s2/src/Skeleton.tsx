@@ -12,7 +12,7 @@
 
 import {cloneElement, createContext, CSSProperties, ReactElement, ReactNode, Ref, useCallback, useContext, useRef} from 'react';
 import {colorToken} from '../style/tokens' with {type: 'macro'};
-import {mergeRefs} from '@react-aria/utils';
+import {inertValue, mergeRefs} from '@react-aria/utils';
 import {mergeStyles} from '../style/runtime';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
@@ -82,7 +82,7 @@ export const loadingStyle = raw(`
   * {
     visibility: hidden;
   }
-`, 'UNSAFE_overrides');
+`, 'L'); // add to a separate layer so it overrides default style macro styles
 
 export function useSkeletonText(children: ReactNode, style: CSSProperties | undefined): [ReactNode, CSSProperties | undefined] {
   let isSkeleton = useContext(SkeletonContext);
@@ -103,7 +103,7 @@ export function SkeletonText({children}) {
   return (
     <span
       // @ts-ignore - compatibility with React < 19
-      inert="true"
+      inert={inertValue(true)}
       ref={useLoadingAnimation(true)}
       className={loadingStyle + style({
         color: 'transparent',

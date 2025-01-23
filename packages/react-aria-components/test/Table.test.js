@@ -239,7 +239,7 @@ describe('Table', () => {
       expect(cell).toHaveAttribute('class', 'react-aria-Cell');
     }
 
-    for (let cell of tableTester.cells) {
+    for (let cell of tableTester.cells()) {
       expect(cell).toHaveAttribute('class', 'react-aria-Cell');
     }
   });
@@ -502,7 +502,7 @@ describe('Table', () => {
     expect(column).toHaveClass('focus');
   });
 
-  it('should support press state', () => {
+  it('should support press state', async () => {
     let {getAllByRole} = renderTable({
       tableProps: {selectionMode: 'multiple'},
       rowProps: {className: ({isPressed}) => isPressed ? 'pressed' : ''}
@@ -513,16 +513,16 @@ describe('Table', () => {
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(row);
+    await user.pointer({target: row, keys: '[MouseLeft>]'});
     expect(row).toHaveAttribute('data-pressed', 'true');
     expect(row).toHaveClass('pressed');
 
-    fireEvent.mouseUp(row);
+    await user.pointer({target: row, keys: '[/MouseLeft]'});
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
   });
 
-  it('should not show press state when not interactive', () => {
+  it('should not show press state when not interactive', async () => {
     let {getAllByRole} = renderTable({
       rowProps: {className: ({isPressed}) => isPressed ? 'pressed' : ''}
     });
@@ -531,16 +531,16 @@ describe('Table', () => {
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(row);
+    await user.pointer({target: row, keys: '[MouseLeft>]'});
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
 
-    fireEvent.mouseUp(row);
+    await user.pointer({target: row, keys: '[/MouseLeft]'});
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
   });
 
-  it('should support row actions', () => {
+  it('should support row actions', async () => {
     let onRowAction = jest.fn();
     let {getAllByRole} = renderTable({
       tableProps: {onRowAction},
@@ -552,11 +552,11 @@ describe('Table', () => {
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(row);
+    await user.pointer({target: row, keys: '[MouseLeft>]'});
     expect(row).toHaveAttribute('data-pressed', 'true');
     expect(row).toHaveClass('pressed');
 
-    fireEvent.mouseUp(row);
+    await user.pointer({target: row, keys: '[/MouseLeft]'});
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
 
@@ -643,7 +643,7 @@ describe('Table', () => {
     );
 
     let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
-    await tableTester.triggerRowAction({index: 0});
+    await tableTester.triggerRowAction({row: 0});
     expect(onAction).toHaveBeenCalled();
   });
 
@@ -664,7 +664,7 @@ describe('Table', () => {
     expect(columns[2]).toHaveAttribute('aria-sort', 'none');
     expect(columns[2]).not.toHaveTextContent('▲');
 
-    await tableTester.toggleSort({index: 0});
+    await tableTester.toggleSort({column: 0});
     expect(onSortChange).toHaveBeenCalledTimes(1);
     expect(onSortChange).toHaveBeenCalledWith({column: 'name', direction: 'descending'});
   });

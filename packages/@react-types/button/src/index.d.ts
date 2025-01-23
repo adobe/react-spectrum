@@ -55,6 +55,8 @@ interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
   'aria-controls'?: string,
   /** Indicates the current "pressed" state of toggle buttons. */
   'aria-pressed'?: boolean | 'true' | 'false' | 'mixed',
+  /** Indicates whether this element represents the current item within a container or set of related elements. */
+  'aria-current'?: boolean | 'true' | 'false' | 'page' | 'step' | 'location' | 'date' | 'time',
   /**
    * The behavior of the button when used in an HTML form.
    * @default 'button'

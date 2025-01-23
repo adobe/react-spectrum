@@ -471,33 +471,7 @@ function updateComponentWithinCollection(
     ) {
       // If closest parent collection component matches parentComponent, replace with newComponent
 
-      let attributes = path.node.openingElement.attributes;
-      let keyProp = attributes.find((attr) => t.isJSXAttribute(attr) && attr.name.name === 'key');
-      if (
-        keyProp &&
-        t.isJSXAttribute(keyProp)
-      ) {
-        // Update key prop to be id
-        keyProp.name = t.jsxIdentifier('id');
-      }
-
-      if (
-        t.isArrowFunctionExpression(path.parentPath.node) &&
-        path.parentPath.parentPath &&
-        t.isCallExpression(path.parentPath.parentPath.node) &&
-        path.parentPath.parentPath.node.callee.type === 'MemberExpression' &&
-        path.parentPath.parentPath.node.callee.property.type === 'Identifier' &&
-        path.parentPath.parentPath.node.callee.property.name === 'map'
-      ) {
-        // If Array.map is used, keep the key prop
-        if (
-          keyProp &&
-          t.isJSXAttribute(keyProp)
-        ) {
-          let newKeyProp = t.jsxAttribute(t.jsxIdentifier('key'), keyProp.value);
-          attributes.push(newKeyProp);
-        }
-      }
+      updateKeyToId(path);
 
       let localName = newComponent;
       if (availableComponents.has(newComponent)) {
@@ -506,7 +480,7 @@ function updateComponentWithinCollection(
       }
 
       let newNode = t.jsxElement(
-        t.jsxOpeningElement(t.jsxIdentifier(localName), attributes),
+        t.jsxOpeningElement(t.jsxIdentifier(localName), path.node.openingElement.attributes),
         t.jsxClosingElement(t.jsxIdentifier(localName)),
         path.node.children
       );
@@ -961,6 +935,206 @@ function updateLegacyLink(
 }
 
 /**
+ * Copies the columns prop from the TableHeader to the Row component.
+ */
+function addColumnsPropToRow(
+  path: NodePath<t.JSXElement>
+) {
+  const tableHeaderPath = path.get('children').find((child) =>
+      t.isJSXElement(child.node) &&
+      t.isJSXIdentifier(child.node.openingElement.name) &&
+      getName(child as NodePath<t.JSXElement>, child.node.openingElement.name) === 'TableHeader'
+    ) as NodePath<t.JSXElement> | undefined;
+
+  if (!tableHeaderPath) {
+    addComment(path.node, ' TODO(S2-upgrade): Could not find TableHeader within Table to retrieve columns prop.');
+    return;
+  }
+
+  const columnsProp = tableHeaderPath
+    .get('openingElement')
+    .get('attributes')
+    .find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === 'columns') as NodePath<t.JSXAttribute> | undefined;
+
+  if (columnsProp) {
+    path.traverse({
+      JSXElement(innerPath) {
+        if (
+          t.isJSXElement(innerPath.node) &&
+          t.isJSXIdentifier(innerPath.node.openingElement.name) &&
+          getName(innerPath as NodePath<t.JSXElement>, innerPath.node.openingElement.name) === 'Row'
+        ) {
+          let rowPath = innerPath as NodePath<t.JSXElement>;
+          rowPath.node.openingElement.attributes.push(columnsProp.node);
+
+          // If Row doesn't contain id prop, leave a comment for the user to check manually
+          let idProp = rowPath.get('openingElement').get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === 'id');
+          if (!idProp) {
+            addComment(rowPath.node, ' TODO(S2-upgrade): If the items do not have id properties, you\'ll need to add an id prop to the Row.');
+          }
+        }
+      }
+    });
+  }
+}
+
+/**
+ * Updates the function signature of the Row component.
+ */
+function updateRowFunctionArg(
+  path: NodePath<t.JSXElement>
+) {
+  // Find the function passed as a child
+  let functionChild = path.get('children').find(childPath => 
+    childPath.isJSXExpressionContainer() && 
+    childPath.get('expression').isArrowFunctionExpression()
+  );
+
+  let tablePath = path.findParent((p) =>
+    t.isJSXElement(p.node) &&
+    t.isJSXIdentifier(p.node.openingElement.name) &&
+    getName(path, p.node.openingElement.name) === 'TableView'
+  );
+
+  let tableHeaderPath = tablePath?.get('children').find((child) =>
+    t.isJSXElement(child.node) &&
+    t.isJSXIdentifier(child.node.openingElement.name) &&
+    getName(child as NodePath<t.JSXElement>, child.node.openingElement.name) === 'TableHeader'
+  ) as NodePath<t.JSXElement> | undefined;
+
+  function findColumnKeyProp(path: NodePath<t.JSXElement>) {
+    let columnKeyProp = 'id';
+    path.traverse({
+      JSXElement(columnPath) {
+        if (
+          t.isArrowFunctionExpression(columnPath.parentPath.node) &&
+          t.isJSXElement(columnPath.node) &&
+          t.isJSXIdentifier(columnPath.node.openingElement.name) &&
+          getName(columnPath as NodePath<t.JSXElement>, columnPath.node.openingElement.name) === 'Column'
+        ) {
+          let openingElement = columnPath.get('openingElement');
+          let keyPropPath = openingElement.get('attributes').find(attr => 
+            t.isJSXAttribute(attr.node) && 
+            (attr.node.name.name === 'key' || attr.node.name.name === 'id')
+          );
+          keyPropPath?.traverse({
+            Identifier(innerPath) {
+              if (
+                innerPath.node.name === 'column' &&
+                innerPath.parentPath.node.type === 'MemberExpression' &&
+                t.isIdentifier(innerPath.parentPath.node.property)
+              ) {
+                columnKeyProp = innerPath.parentPath.node.property.name;
+              }
+            }
+          });
+        }
+      }
+    });
+    return columnKeyProp || 'id';
+  }
+
+  let columnKey = findColumnKeyProp(tableHeaderPath as NodePath<t.JSXElement>);
+
+  if (functionChild && functionChild.isJSXExpressionContainer()) {
+    let arrowFuncPath = functionChild.get('expression');
+    if (arrowFuncPath.isArrowFunctionExpression()) {
+      let params = arrowFuncPath.node.params;
+      if (params.length === 1 && t.isIdentifier(params[0])) {
+        let paramName = params[0].name;
+
+        // Rename parameter to 'column'
+        params[0].name = 'column';
+
+        // Replace references to the old parameter name inside the function body
+        arrowFuncPath.get('body').traverse({
+          Identifier(innerPath) {
+            if (
+              innerPath.node.name === paramName &&
+              // Ensure we're not replacing the parameter declaration
+              innerPath.node !== params[0]
+            ) {
+              // Replace with column key
+              innerPath.replaceWith(
+                t.memberExpression(
+                  t.identifier('column'),
+                  t.identifier(columnKey ?? 'id')
+                )
+              );
+            }
+          }
+        });
+      }
+    }
+  }
+}
+
+/**
+ * Updates the key prop to id. Keeps the key prop if it's used in an array.map function.
+ */
+function updateKeyToId(
+  path: NodePath<t.JSXElement>
+) {
+  let attributes = path.node.openingElement.attributes;
+  let keyProp = attributes.find((attr) => t.isJSXAttribute(attr) && attr.name.name === 'key');
+  if (
+    keyProp &&
+    t.isJSXAttribute(keyProp)
+  ) {
+    // Update key prop to be id
+    keyProp.name = t.jsxIdentifier('id');
+  }
+
+  if (
+    t.isArrowFunctionExpression(path.parentPath.node) &&
+    path.parentPath.parentPath &&
+    t.isCallExpression(path.parentPath.parentPath.node) &&
+    path.parentPath.parentPath.node.callee.type === 'MemberExpression' &&
+    path.parentPath.parentPath.node.callee.property.type === 'Identifier' &&
+    path.parentPath.parentPath.node.callee.property.name === 'map'
+  ) {
+    // If Array.map is used, keep the key prop
+    if (
+      keyProp &&
+      t.isJSXAttribute(keyProp)
+    ) {
+      let newKeyProp = t.jsxAttribute(t.jsxIdentifier('key'), keyProp.value);
+      attributes.push(newKeyProp);
+    }
+  }
+}
+
+export function commentIfNestedColumns(
+  path: NodePath<t.JSXElement>
+) {
+  const headerPath = path.get('children').find((child) =>
+    t.isJSXElement(child.node) &&
+    t.isJSXIdentifier(child.node.openingElement.name) &&
+    getName(child as NodePath<t.JSXElement>, child.node.openingElement.name) === 'TableHeader'
+  ) as NodePath<t.JSXElement> | undefined;
+  const columns = headerPath?.get('children') || [];
+
+  let hasNestedColumns = false;
+
+  columns.forEach(column => {
+    let columnChildren = column.get('children');
+    if (
+        columnChildren.find(child => 
+          t.isJSXElement(child.node) &&
+          t.isJSXIdentifier(child.node.openingElement.name) &&
+          getName(child as NodePath<t.JSXElement>, child.node.openingElement.name) === 'Column'
+      )   
+    ) {
+      hasNestedColumns = true;
+    }
+  });
+
+  if (hasNestedColumns) {
+    addComment(path.node, ' TODO(S2-upgrade): Nested Column components are not supported yet.');
+  }
+}
+
+/**
  * Updates DialogTrigger and DialogContainer to the new API.
  *
  * Example:
@@ -1177,6 +1351,71 @@ function updateActionGroup(
   }
 }
 
+/**
+ * Adds isRowHeader to the first Column in a table if there isn't already a row header.
+ * @param path 
+ */
+function addRowHeader(
+  path: NodePath<t.JSXElement>
+) {
+  let tableHeaderPath = path.get('children').find((child) =>
+    t.isJSXElement(child.node) &&
+    t.isJSXIdentifier(child.node.openingElement.name) &&
+    getName(child as NodePath<t.JSXElement>, child.node.openingElement.name) === 'TableHeader'
+  ) as NodePath<t.JSXElement> | undefined;
+
+
+  // Check if isRowHeader is already set on a Column
+  let hasRowHeader = false;
+  tableHeaderPath?.get('children').forEach((child) => {
+    if (
+      t.isJSXElement(child.node) &&
+      t.isJSXIdentifier(child.node.openingElement.name) &&
+      getName(child as NodePath<t.JSXElement>, child.node.openingElement.name) === 'Column'
+    ) {
+      let isRowHeaderProp = (child.get('openingElement') as NodePath).get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === 'isRowHeader') as NodePath<t.JSXAttribute> | undefined;
+      if (isRowHeaderProp) {
+        hasRowHeader = true;
+      }
+    }
+  });
+
+  // If there isn't already a row header, add one to the first Column if possible
+  if (!hasRowHeader) {
+    tableHeaderPath?.get('children').forEach((child) => {
+      // Add to first Column if static
+      if (
+        !hasRowHeader &&
+        t.isJSXElement(child.node) &&
+        t.isJSXIdentifier(child.node.openingElement.name) &&
+        getName(child as NodePath<t.JSXElement>, child.node.openingElement.name) === 'Column'
+      ) {
+        child.node.openingElement.attributes.push(t.jsxAttribute(t.jsxIdentifier('isRowHeader'), t.jsxExpressionContainer(t.booleanLiteral(true))));
+        hasRowHeader = true;
+      }
+
+      // If render function is used, leave a comment to update manually
+      if (
+        t.isJSXExpressionContainer(child.node) &&
+        t.isArrowFunctionExpression(child.node.expression)
+      ) {
+        addComment(child.node, ' TODO(S2-upgrade): You\'ll need to add isRowHeader to one of the columns manually.');
+      }
+
+      // If array.map is used, leave a comment to update manually
+      if (
+        t.isJSXExpressionContainer(child.node) &&
+        t.isCallExpression(child.node.expression) &&
+        t.isMemberExpression(child.node.expression.callee) &&
+        t.isIdentifier(child.node.expression.callee.property) &&
+        child.node.expression.callee.property.name === 'map'
+      ) {
+        addComment(child.node, ' TODO(S2-upgrade): You\'ll need to add isRowHeader to one of the columns manually.');
+      }
+    });
+  }
+}
+
 export const functionMap = {
   updatePropNameAndValue,
   updatePropValueAndAddNewProp,
@@ -1197,6 +1436,11 @@ export const functionMap = {
   removeComponentIfWithinParent,
   updateAvatarSize,
   updateLegacyLink,
+  addColumnsPropToRow,
+  updateRowFunctionArg,
   updateDialogChild,
-  updateActionGroup
+  updateActionGroup,
+  updateKeyToId,
+  commentIfNestedColumns,
+  addRowHeader
 };

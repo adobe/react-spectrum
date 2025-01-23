@@ -11,11 +11,12 @@
  */
 
 import {AriaAutocompleteTests} from './AriaAutocomplete.test-util';
-import {Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, SearchField, Separator, Text, UNSTABLE_Autocomplete} from '..';
+import {Button, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, SearchField, Separator, Text, UNSTABLE_Autocomplete} from '..';
+import {pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import React, {ReactNode} from 'react';
-import {render} from '@react-spectrum/test-utils-internal';
 import {useAsyncList} from 'react-stately';
 import {useFilter} from '@react-aria/i18n';
+import userEvent from '@testing-library/user-event';
 
 interface AutocompleteItem {
   id: string,
@@ -109,6 +110,7 @@ let AutocompleteWrapper = ({autocompleteProps = {}, inputProps = {}, children}: 
       <SearchField {...inputProps}>
         <Label style={{display: 'block'}}>Test</Label>
         <Input />
+        <Button>✕</Button>
         <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
       </SearchField>
       {children}
@@ -173,6 +175,76 @@ let AsyncFiltering = ({autocompleteProps = {}, inputProps = {}}: {autocompletePr
     </UNSTABLE_Autocomplete>
   );
 };
+
+describe('Autocomplete', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
+  // Skipping since arrow keys will still leak out from useSelectableCollection, re-enable when that gets fixed
+  it.skip('should prevent key presses from leaking out of the Autocomplete', async () => {
+    let onKeyDown = jest.fn();
+    let {getByRole} = render(
+      // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+      <div onKeyDown={onKeyDown}>
+        <AutocompleteWrapper>
+          <StaticMenu />
+        </AutocompleteWrapper>
+      </div>
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    await user.keyboard('{ArrowDown}');
+    expect(onKeyDown).not.toHaveBeenCalled();
+    onKeyDown.mockReset();
+  });
+
+  it('should clear the input field when clicking on the clear button', async () => {
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticMenu />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    await user.keyboard('Foo');
+    expect(input).toHaveValue('Foo');
+
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-label', 'Clear search');
+    await user.click(button);
+
+    expect(input).toHaveValue('');
+  });
+
+  it('should apply focusVisible/focused to virtually focused menu items when keyboard navigating', async () => {
+    let {getByRole} = render(
+      <AutocompleteWrapper>
+        <StaticMenu />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    await user.keyboard('{ArrowDown}');
+    let menu = getByRole('menu');
+    let options = within(menu).getAllByRole('menuitem');
+    expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+    expect(options[0]).toHaveAttribute('data-focus-visible');
+
+    await user.click(input);
+    await user.hover(options[1]);
+    options = within(menu).getAllByRole('menuitem');
+    expect(options[1]).toHaveAttribute('data-focused');
+    expect(options[1]).not.toHaveAttribute('data-focus-visible');
+  });
+});
 
 AriaAutocompleteTests({
   prefix: 'rac-static-menu',
