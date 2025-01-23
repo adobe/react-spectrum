@@ -44,21 +44,18 @@ import {FocusableRef, FocusableRefValue, SpectrumLabelableProps} from '@react-ty
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
-import {Placement} from 'react-aria';
+import {Placement, useId} from 'react-aria';
 import {PopoverBase} from './Popover';
 import {pressScale} from './pressScale';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useFormProps} from './Form';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 export interface PickerStyleProps {
 }
 export interface PickerProps<T extends object> extends
-  Omit<AriaSelectProps<T>, 'children' | 'style' | 'className'>,
+  Omit<AriaSelectProps<T>, 'children' | 'style' | 'className' | 'placeholder'>,
   PickerStyleProps,
   StyleProps,
   SpectrumLabelableProps,
@@ -162,7 +159,6 @@ const iconCenterWrapper = style({
 });
 let InsideSelectValueContext = createContext(false);
 function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLButtonElement>) {
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, PickerContext);
   let domRef = useFocusableRef(ref);
   props = useFormProps(props);
@@ -172,7 +168,6 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
     shouldFlip = true,
     children,
     items,
-    placeholder = stringFormatter.format('picker.placeholder'),
     density,
     labelBehavior = 'show',
     valueId,
@@ -181,11 +176,12 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
   let isQuiet = true;
   const menuOffset: number = 6;
   const size = 'M';
+  let ariaLabelledby = props['aria-labelledby'] ?? '';
   return (
     <div>
       <AriaSelect
         {...pickerProps}
-        placeholder={placeholder}>
+        aria-labelledby={`${labelBehavior === 'hide' ? valueId : ''} ${ariaLabelledby}`}>
         {({isOpen}) => (
           <>
             <FieldLabel isQuiet={isQuiet} />
@@ -202,7 +198,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                 isQuiet,
                 density
               })}>
-              <SelectValue id={valueId} className={valueStyles + ' ' + raw('&> * {display: none;}')}>
+              <SelectValue className={valueStyles + ' ' + raw('&> * {display: none;}')}>
                 {({defaultChildren}) => {
                   return (
                     <Provider
@@ -218,16 +214,19 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                         [TextContext, {
                           slots: {
                             // Default slot is useful when converting other collections to PickerItems.
-                            [DEFAULT_SLOT]: {styles: style({
-                              display: {
-                                default: 'block',
-                                labelBehavior: {
-                                  hide: 'none'
-                                }
-                              },
-                              flexGrow: 1,
-                              truncate: true
-                            })({labelBehavior})}
+                            [DEFAULT_SLOT]: {
+                              id: valueId,
+                              styles: style({
+                                display: {
+                                  default: 'block',
+                                  labelBehavior: {
+                                    hide: 'none'
+                                  }
+                                },
+                                flexGrow: 1,
+                                truncate: true
+                              })({labelBehavior})
+                            }
                           }
                         }],
                         [InsideSelectValueContext, true]

@@ -35,7 +35,7 @@ import {Picker, PickerItem} from './TabsPicker';
 import {Text, TextContext} from './Content';
 import {useControlledState} from '@react-stately/utils';
 import {useDOMRef} from '@react-spectrum/utils';
-import {useEffectEvent, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {useEffectEvent, useId, useLabels, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useHasTabbableChild} from '@react-aria/focus';
 import {useLocale} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -361,11 +361,14 @@ const icon = style({
 export function Tab(props: TabProps) {
   let {density, labelBehavior} = useContext(InternalTabsContext) ?? {};
 
+  let contentId = useId();
+  let ariaLabelledBy = props['aria-labelledby'] || '';
   return (
     <RACTab
       {...props}
       // @ts-ignore
       originalProps={props}
+      aria-labelledby={`${labelBehavior === 'hide' ? contentId : ''} ${ariaLabelledBy}`}
       style={props.UNSAFE_style}
       className={renderProps => (props.UNSAFE_className || '') + tab({...renderProps, density, labelBehavior}, props.styles)}>
       {({
@@ -379,6 +382,7 @@ export function Tab(props: TabProps) {
             <Provider
               values={[
                 [TextContext, {
+                  id: contentId,
                   styles:
                     style({
                       order: 1,
@@ -450,7 +454,7 @@ function CollapsedTabPanel(props: TabPanelProps) {
       aria-labelledby={menuId + ' ' + valueId}
       tabIndex={tabIndex}
       style={UNSAFE_style}
-      className={renderProps => props.UNSAFE_className + tabPanel(renderProps, props.styles)} />
+      className={renderProps => (props.UNSAFE_className ?? '') + tabPanel(renderProps, props.styles)} />
   );
 }
 
@@ -521,6 +525,11 @@ let TabsMenu = (props: {valueId: string, items: Array<Node<any>>, onSelectionCha
   let allKeysDisabled = useMemo(() => {
     return isAllTabsDisabled(state?.collection, disabledKeys ? new Set(disabledKeys) : new Set());
   }, [state?.collection, disabledKeys]);
+  let labelProps = useLabels({
+    id,
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledBy
+  });
 
   return (
     <div
@@ -537,8 +546,7 @@ let TabsMenu = (props: {valueId: string, items: Array<Node<any>>, onSelectionCha
       <Picker
         id={id}
         valueId={valueId}
-        aria-label={ariaLabel}
-        aria-labelledby={ariaLabelledBy}
+        {...labelProps}
         aria-describedby={props['aria-describedby']}
         aria-details={props['aria-details']}
         isDisabled={isDisabled || allKeysDisabled}

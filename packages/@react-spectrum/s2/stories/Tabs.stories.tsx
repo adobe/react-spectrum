@@ -80,9 +80,9 @@ const IconsRender = (props) => (
   <div className={style({width: 700, maxWidth: '[calc(100vw - 60px)]', height: 256, resize: 'horizontal', overflow: 'hidden', padding: 8})}>
     <Tabs {...props} styles={tabs} aria-label="History of Ancient Rome">
       <TabList>
-        <Tab id="FoR" aria-label="Edit"><Edit /><Text>Founding of Rome</Text></Tab>
-        <Tab id="MaR" aria-label="Notifications"><Bell /><Text>Monarchy and Republic</Text></Tab>
-        <Tab id="Emp" aria-label="Likes"><Heart /><Text>Empire</Text></Tab>
+        <Tab id="FoR"><Edit /><Text>Founding of Rome</Text></Tab>
+        <Tab id="MaR"><Bell /><Text>Monarchy and Republic</Text></Tab>
+        <Tab id="Emp"><Heart /><Text>Empire</Text></Tab>
       </TabList>
       <TabPanel id="FoR">
         Arma virumque cano, Troiae qui primus ab oris.
