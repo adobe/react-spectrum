@@ -100,9 +100,9 @@ describe('mergeProps', function () {
 
     render(<Component />);
 
-    expect(Spy).toHaveBeenCalledTimes(4);
-    expect(Spy).toHaveBeenCalledWith({ id: 'id1' }, expect.toBeOneOf([expect.anything(), undefined]));
-    expect(Spy).toHaveBeenLastCalledWith({ id: 'id1' }, expect.toBeOneOf([expect.anything(), undefined]));
+    // We use stringMatching to support optional refs in React 19.
+    expect(Spy).toHaveBeenCalledWith({ id: 'id1' }, expect.not.stringMatching(/\A(?!x)x/));
+    expect(Spy).toHaveBeenLastCalledWith({ id: 'id1' }, expect.not.stringMatching(/\A(?!x)x/));
   });
 
   it('combines reoccuring ids', function () {
