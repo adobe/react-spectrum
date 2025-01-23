@@ -273,7 +273,7 @@ const treeCellGrid = style({
     isDetached: 1
   },
   borderRadius: {
-    isDetached: '[6px]'
+    isDetached: 'default'
   },
   borderStyle: 'solid'
 });
