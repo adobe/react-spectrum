@@ -12,9 +12,8 @@
 
 import clsx from 'clsx';
 import { mergeIds, useId } from '../src/useId';
-import { mergeProps } from '..';
+import { mergeProps } from '../src/mergeProps';
 import { render } from '@react-spectrum/test-utils-internal';
-
 
 describe('mergeProps', function () {
   it('handles one argument', function () {
@@ -87,21 +86,40 @@ describe('mergeProps', function () {
     expect(mergedProps.id).toBe(mergedIds);
   });
 
-  it('overrides other props', function () {
-    let id1 = 'id1';
-    let id2 = 'id2';
-    let mergedProps = mergeProps({ data: id1 }, { data: id2 });
-    expect(mergedProps.data).toBe(id2);
+  it('combines ids with aria ids', function () {
+    let Spy = jest.fn((props) => props.children);
+
+    const Component = () => {
+      let id1 = 'id1';
+      let id2 = useId('id2');
+
+      mergeProps({ id: id1 }, { id: id2 });
+
+      return <Spy id={id1} />
+    };
+
+    render(<Component />);
+
+    expect(Spy).toHaveBeenCalledTimes(4);
+    expect(Spy).toHaveBeenCalledWith({ id: 'id1' }, {});
+    expect(Spy).toHaveBeenLastCalledWith({ id: 'id1' }, {});
   });
 
-  it('supports reoccuring ids', function () {
-    const TestBench = () => {
+  it('combines reoccuring ids', function () {
+    const Component = () => {
       let id1 = useId('id1');
       let id2 = useId('id2');
 
       return <div {...mergeProps({ id: id1 }, { id: id2 }, { id: id1 })} />;
     };
 
-    expect(() => render(<TestBench />)).not.toThrow();
+    expect(() => render(<Component />)).not.toThrow();
+  });
+
+  it('overrides other props', function () {
+    let id1 = 'id1';
+    let id2 = 'id2';
+    let mergedProps = mergeProps({ data: id1 }, { data: id2 });
+    expect(mergedProps.data).toBe(id2);
   });
 });

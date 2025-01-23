@@ -40,8 +40,8 @@ export function mergeProps<T extends PropsArg[]>(...args: T): UnionToIntersectio
   for (let i = args.length - 2; i >= 0; i--) {
     let props = args[i];
     for (let key in props) {
-      let a = props[key];
-      let b = result[key];
+      let a = result[key];
+      let b = props[key];
 
       // Chain events
       if (
@@ -53,7 +53,7 @@ export function mergeProps<T extends PropsArg[]>(...args: T): UnionToIntersectio
         key.charCodeAt(2) >= /* 'A' */ 65 &&
         key.charCodeAt(2) <= /* 'Z' */ 90
       ) {
-        result[key] = chain(a, b);
+        result[key] = chain(b, a);
 
         // Merge classnames, sometimes classNames are empty string which eval to false, so we just need to do a type check
       } else if (
@@ -61,12 +61,12 @@ export function mergeProps<T extends PropsArg[]>(...args: T): UnionToIntersectio
         typeof a === 'string' &&
         typeof b === 'string'
       ) {
-        result[key] = clsx(a, b);
-      } else if (key === 'id' && a && b && a !== b) {
-        mergeIds(a, b);
+        result[key] = clsx(b, a);
+      } else if (key === 'id' && a && b) {
+        result.id = mergeIds(b, a);
         // Override others
-      } else if (b === undefined) {
-        result[key] = a;
+      } else if (a === undefined) {
+        result[key] = b;
       }
     }
   }
