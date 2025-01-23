@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/slider",
-  "version": "3.6.0",
+  "version": "3.6.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -23,8 +23,8 @@
   },
   "dependencies": {
     "@react-stately/utils": "^3.10.5",
-    "@react-types/shared": "^3.26.0",
-    "@react-types/slider": "^3.7.7",
+    "@react-types/shared": "^3.27.0",
+    "@react-types/slider": "^3.7.8",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

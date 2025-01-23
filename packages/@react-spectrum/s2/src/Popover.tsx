@@ -24,7 +24,6 @@ import {colorScheme, getAllowedOverrides, StyleProps, UnsafeStyles} from './styl
 import {ColorSchemeContext} from './Provider';
 import {DOMRef} from '@react-types/shared';
 import {forwardRef, MutableRefObject, useCallback, useContext} from 'react';
-import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {mergeStyles} from '../style/runtime';
 import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types' with {type: 'macro'};
@@ -45,52 +44,6 @@ export interface PopoverProps extends UnsafeStyles, Omit<AriaPopoverProps, 'arro
   /** The type of overlay that should be rendered when on a mobile device. */
   // mobileType?: 'modal' | 'fullscreen' | 'fullscreenTakeover' // TODO: add tray back in
 }
-
-const fadeKeyframes = keyframes(`
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-`);
-const slideUpKeyframes = keyframes(`
-  from {
-    transform: translateY(-4px);
-  }
-
-  to {
-    transform: translateY(0);
-  }
-`);
-const slideDownKeyframes = keyframes(`
-  from {
-    transform: translateY(4px);
-  }
-
-  to {
-    transform: translateY(0);
-  }
-`);
-const slideRightKeyframes = keyframes(`
-  from {
-    transform: translateX(4px);
-  }
-
-  to {
-    transform: translateX(0);
-  }
-`);
-const slideLeftKeyframes = keyframes(`
-  from {
-    transform: translateX(-4px);
-  }
-
-  to {
-    transform: translateX(0);
-  }
-`);
 
 let popover = style({
   ...colorScheme(),
@@ -126,63 +79,41 @@ let popover = style({
   // Don't be larger than full screen minus 2 * containerPadding
   maxWidth: '[calc(100vw - 24px)]',
   boxSizing: 'border-box',
+  opacity: {
+    isEntering: 0,
+    isExiting: 0
+  },
   translateY: {
     placement: {
-      bottom: {
-        isArrowShown: 8 // TODO: not defined yet should this change with font size? need boolean support for 'hideArrow' prop
-      },
       top: {
-        isArrowShown: -8
+        isEntering: 4,
+        isExiting: 4
+      },
+      bottom: {
+        isEntering: -4,
+        isExiting: -4
       }
-    }
+    },
+    isSubmenu: 0
   },
   translateX: {
     placement: {
       left: {
-        isArrowShown: -8
+        isEntering: 4,
+        isExiting: 4
       },
       right: {
-        isArrowShown: 8
-      }
-    }
-  },
-  animation: {
-    placement: {
-      top: {
-        isEntering: `${slideDownKeyframes}, ${fadeKeyframes}`,
-        isExiting: `${slideDownKeyframes}, ${fadeKeyframes}`
-      },
-      bottom: {
-        isEntering: `${slideUpKeyframes}, ${fadeKeyframes}`,
-        isExiting: `${slideUpKeyframes}, ${fadeKeyframes}`
-      },
-      left: {
-        isEntering: `${slideRightKeyframes}, ${fadeKeyframes}`,
-        isExiting: `${slideRightKeyframes}, ${fadeKeyframes}`
-      },
-      right: {
-        isEntering: `${slideLeftKeyframes}, ${fadeKeyframes}`,
-        isExiting: `${slideLeftKeyframes}, ${fadeKeyframes}`
+        isEntering: -4,
+        isExiting: -4
       }
     },
-    isSubmenu: {
-      isEntering: fadeKeyframes,
-      isExiting: fadeKeyframes
-    }
+    isSubmenu: 0
   },
-  animationDuration: {
-    isEntering: 200,
-    isExiting: 200
-  },
-  animationDirection: {
-    isEntering: 'normal',
-    isExiting: 'reverse'
-  },
-  animationTimingFunction: {
+  transition: '[opacity, translate]',
+  transitionDuration: 200,
+  transitionTimingFunction: {
     isExiting: 'in'
   },
-  transition: '[opacity, transform]',
-  willChange: '[opacity, transform]',
   isolation: 'isolate',
   pointerEvents: {
     isExiting: 'none'
@@ -262,6 +193,7 @@ export const PopoverBase = forwardRef(function PopoverBase(props: PopoverProps, 
   return (
     <AriaPopover
       {...props}
+      offset={(props.offset ?? 8) + (hideArrow ? 0 : 8)}
       ref={popoverRef}
       style={{
         ...UNSAFE_style,
