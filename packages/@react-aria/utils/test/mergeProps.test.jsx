@@ -87,7 +87,7 @@ describe('mergeProps', function () {
   });
 
   it('combines ids with aria ids', function () {
-    let Spy = jest.fn((props) => props.children);
+    let Spy = jest.fn((props) => <div {...props} />);
 
     const Component = () => {
       let id1 = 'id1';
@@ -95,13 +95,13 @@ describe('mergeProps', function () {
 
       mergeProps({ id: id1 }, { id: id2 });
 
-      return <Spy id={id1} />
+      return <Spy id={id2} />
     };
 
     render(<Component />);
 
     // We use stringMatching to support optional refs in React 19.
-    expect(Spy).toHaveBeenCalledWith({ id: 'id1' }, expect.not.stringMatching(/\A(?!x)x/));
+    expect(Spy).toHaveBeenCalledWith({ id: 'id2' }, expect.not.stringMatching(/\A(?!x)x/));
     expect(Spy).toHaveBeenLastCalledWith({ id: 'id1' }, expect.not.stringMatching(/\A(?!x)x/));
   });
 
