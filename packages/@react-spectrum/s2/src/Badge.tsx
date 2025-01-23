@@ -35,7 +35,7 @@ export interface BadgeStyleProps {
    *
    * @default 'neutral'
    */
-  variant?: 'accent' | 'informative' | 'neutral' | 'positive' | 'notice' | 'negative' | 'gray' | 'red' | 'orange' | 'yellow' | 'charteuse' | 'celery' | 'green' | 'seafoam' | 'cyan' | 'blue' | 'indigo' | 'purple' | 'fuchsia' | 'magenta' | 'pink' | 'turquoise' | 'brown' | 'cinnamon' | 'silver',
+  variant?: 'accent' | 'informative' | 'neutral' | 'positive' | 'notice' | 'negative' | 'gray' | 'red' | 'orange' | 'yellow' | 'chartreuse' | 'celery' | 'green' | 'seafoam' | 'cyan' | 'blue' | 'indigo' | 'purple' | 'fuchsia' | 'magenta' | 'pink' | 'turquoise' | 'brown' | 'cinnamon' | 'silver',
   /**
    * The fill of the badge.
    * @default 'bold'
@@ -91,7 +91,7 @@ const badge = style<BadgeStyleProps>({
           notice: 'black',
           orange: 'black',
           yellow: 'black',
-          charteuse: 'black',
+          chartreuse: 'black',
           celery: 'black'
         }
       },
@@ -113,7 +113,7 @@ const badge = style<BadgeStyleProps>({
           red: 'red',
           orange: 'orange',
           yellow: 'yellow',
-          charteuse: 'chartreuse',
+          chartreuse: 'chartreuse',
           celery: 'celery',
           green: 'green',
           seafoam: 'seafoam',
@@ -142,7 +142,7 @@ const badge = style<BadgeStyleProps>({
           red: 'red-subtle',
           orange: 'orange-subtle',
           yellow: 'yellow-subtle',
-          charteuse: 'chartreuse-subtle',
+          chartreuse: 'chartreuse-subtle',
           celery: 'celery-subtle',
           green: 'green-subtle',
           seafoam: 'seafoam-subtle',
