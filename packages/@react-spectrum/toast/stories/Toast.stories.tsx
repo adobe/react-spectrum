@@ -20,7 +20,7 @@ import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import React, {SyntheticEvent, useEffect, useMemo, useRef, useState} from 'react';
-import {SpectrumToastOptions} from '../src/ToastContainer';
+import {SpectrumToastOptions, ToastPlacement} from '../src/ToastContainer';
 import {ToastContainer, ToastQueue} from '../';
 import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
 
@@ -235,13 +235,13 @@ function ToastToggle(options: SpectrumToastOptions) {
   );
 }
 
-function Multiple(options: SpectrumToastOptions) {
+function Multiple(options: SpectrumToastOptions & {placement: ToastPlacement}) {
   let [isMounted1, setMounted1] = useState(true);
 
   return (
     <Flex direction="column">
       <Checkbox isSelected={isMounted1} onChange={setMounted1}>First mounted</Checkbox>
-      {isMounted1 && <ToastContainer />}
+      {isMounted1 && <ToastContainer placement={options.placement} />}
       <MultipleInner />
       <RenderProvider {...options} />
     </Flex>
