@@ -119,7 +119,17 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
         break;
       case 'Escape':
         e.stopPropagation();
-        state.closeAll();
+        // TODO: not sure if we actually want this tbh, but this makes it so ESC will only close the sub menu and return focus back
+        // to the parent sub dialog
+        // Alternative to this would be to have useSubmenuTrigger also track/return a stack mapping the expanded key to the type overlay aka subdialog/menu,
+        // if we want to have closeAll only to happen if all overlays are menus, then we'll need to have useSubmenuTriggerState
+        // track that
+        if (parentMenuRef.current?.closest('[role="dialog"]') != null) {
+          onSubmenuClose();
+        } else {
+          state.closeAll();
+        }
+
         break;
     }
   };
@@ -189,9 +199,6 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
             e.continuePropagation();
           }
         }
-        break;
-      case 'Escape':
-        state.closeAll();
         break;
       default:
         e.continuePropagation();
