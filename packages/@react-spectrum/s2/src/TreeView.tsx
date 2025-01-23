@@ -99,7 +99,6 @@ const tree = style({
 
 function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
   let {children, isDetached, isEmphasized} = props;
-  isEmphasized = !isDetached;
 
   let renderer;
   if (typeof children === 'function') {
@@ -354,8 +353,6 @@ export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
   let nestedRows;
   let {renderer} = useTreeRendererContext();
   let {isDetached, isEmphasized} = useContext(InternalTreeContext);
-  // TODO alternative api is that we have a separate prop for the TreeItems contents and expect the child to then be
-  // a nested tree item
 
   if (typeof children === 'string') {
     content = <Text>{children}</Text>;
@@ -380,7 +377,6 @@ export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
   }
 
   return (
-    // TODO right now all the tree rows have the various data attributes applied on their dom nodes, should they? Doesn't feel very useful
     <UNSTABLE_TreeItem
       {...props}
       className={(renderProps) => treeRow({...renderProps, isLink: !!href, isEmphasized}) + (renderProps.isFocusVisible && !isDetached ? ' ' + treeRowFocusIndicator : '')}>
