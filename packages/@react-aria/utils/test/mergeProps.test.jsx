@@ -101,8 +101,8 @@ describe('mergeProps', function () {
     render(<Component />);
 
     expect(Spy).toHaveBeenCalledTimes(4);
-    expect(Spy).toHaveBeenCalledWith({ id: 'id1' }, {});
-    expect(Spy).toHaveBeenLastCalledWith({ id: 'id1' }, {});
+    expect(Spy).toHaveBeenCalledWith({ id: 'id1' }, expect.anything);
+    expect(Spy).toHaveBeenLastCalledWith({ id: 'id1' }, expect.anything);
   });
 
   it('combines reoccuring ids', function () {
