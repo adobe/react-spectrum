@@ -51,6 +51,12 @@ describe('Button', () => {
     expect(button).toHaveAttribute('formMethod', 'post');
   });
 
+  it('should support accessibility props', () => {
+    let {getByRole} = render(<Button aria-current="page">Test</Button>);
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-current', 'page');
+  });
+
   it('should support slot', () => {
     let {getByRole} = render(
       <ButtonContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>

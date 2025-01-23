@@ -105,6 +105,11 @@ html {
   color: white;
 }
 
+.item.focusVisible{
+  outline: 3px solid black;
+  outline-offset: -2px;
+}
+
 .item.open:not(.focused) {
   background: lightslategray;
   color: white;
