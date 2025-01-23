@@ -6443,6 +6443,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/radio@workspace:packages/@react-aria/radio"
   dependencies:
+    "@react-aria/focus": "npm:^3.19.1"
     "@react-aria/form": "npm:^3.0.12"
     "@react-aria/i18n": "npm:^3.12.5"
     "@react-aria/interactions": "npm:^3.23.0"
