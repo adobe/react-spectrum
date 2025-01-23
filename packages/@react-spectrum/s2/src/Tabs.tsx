@@ -454,7 +454,7 @@ function CollapsedTabPanel(props: TabPanelProps) {
       aria-labelledby={menuId + ' ' + valueId}
       tabIndex={tabIndex}
       style={UNSAFE_style}
-      className={renderProps => (props.UNSAFE_className ?? '') + tabPanel(renderProps, props.styles)} />
+      className={renderProps => UNSAFE_className + tabPanel(renderProps, props.styles)} />
   );
 }
 
