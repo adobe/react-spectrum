@@ -577,12 +577,22 @@ describe('Tabs', () => {
         </Tabs>
       );
     }
-    render(<Example onSelectionChange={onSelectionChange} />);
+    let {getAllByRole} = render(<Example onSelectionChange={onSelectionChange} />);
+    let tabs = getAllByRole('tab');
     await user.tab();
     await user.keyboard('{ArrowRight}');
+    expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
     await user.tab();
     onSelectionChange.mockClear();
     await user.keyboard('{Enter}');
     expect(onSelectionChange).not.toHaveBeenCalled();
+    tabs = getAllByRole('tab');
+    expect(tabs[3]).toHaveAttribute('aria-selected', 'true');
+
+    await user.tab();
+    await user.keyboard('{Enter}');
+    expect(onSelectionChange).not.toHaveBeenCalled();
+    tabs = getAllByRole('tab');
+    expect(tabs[2]).toHaveAttribute('aria-selected', 'true');
   });
 });
