@@ -35,12 +35,17 @@ export interface BadgeStyleProps {
    *
    * @default 'neutral'
    */
-  variant?: 'accent' | 'informative' | 'neutral' | 'positive' | 'notice' | 'negative' | 'gray' | 'red' | 'orange' | 'yellow' | 'charteuse' | 'celery' | 'green' | 'seafoam' | 'cyan' | 'blue' | 'indigo' | 'purple' | 'fuchsia' | 'magenta' | 'pink' | 'turquoise' | 'brown' | 'cinnamon' | 'silver',
+  variant?: 'accent' | 'informative' | 'neutral' | 'positive' | 'notice' | 'negative' | 'gray' | 'red' | 'orange' | 'yellow' | 'chartreuse' | 'celery' | 'green' | 'seafoam' | 'cyan' | 'blue' | 'indigo' | 'purple' | 'fuchsia' | 'magenta' | 'pink' | 'turquoise' | 'brown' | 'cinnamon' | 'silver',
   /**
    * The fill of the badge.
    * @default 'bold'
    */
-  fillStyle?: 'bold' | 'subtle' | 'outline'
+  fillStyle?: 'bold' | 'subtle' | 'outline',
+  /**
+   * Sets the text behavior for the contents.
+   * @default 'wrap'
+   */
+  overflowMode?: 'wrap' | 'truncate'
 }
 
 export interface BadgeProps extends DOMProps, AriaLabelingProps, StyleProps, BadgeStyleProps, SlotProps {
@@ -86,7 +91,7 @@ const badge = style<BadgeStyleProps>({
           notice: 'black',
           orange: 'black',
           yellow: 'black',
-          charteuse: 'black',
+          chartreuse: 'black',
           celery: 'black'
         }
       },
@@ -108,7 +113,7 @@ const badge = style<BadgeStyleProps>({
           red: 'red',
           orange: 'orange',
           yellow: 'yellow',
-          charteuse: 'chartreuse',
+          chartreuse: 'chartreuse',
           celery: 'celery',
           green: 'green',
           seafoam: 'seafoam',
@@ -137,7 +142,7 @@ const badge = style<BadgeStyleProps>({
           red: 'red-subtle',
           orange: 'orange-subtle',
           yellow: 'yellow-subtle',
-          charteuse: 'chartreuse-subtle',
+          chartreuse: 'chartreuse-subtle',
           celery: 'celery-subtle',
           green: 'green-subtle',
           seafoam: 'seafoam-subtle',
@@ -191,6 +196,7 @@ export const Badge = forwardRef(function Badge(props: BadgeProps, ref: DOMRef<HT
     variant = 'neutral',
     size = 'S',
     fillStyle = 'bold',
+    overflowMode = 'wrap',
     ...otherProps
   } = props; // useProviderProps(props) in v3
   let domRef = useDOMRef(ref);
@@ -199,7 +205,16 @@ export const Badge = forwardRef(function Badge(props: BadgeProps, ref: DOMRef<HT
   return (
     <Provider
       values={[
-        [TextContext, {styles: style({paddingY: '--labelPadding', order: 1})}],
+        [TextContext, {
+          styles: style({
+            paddingY: '--labelPadding', 
+            order: 1, 
+            overflowX: 'hidden', 
+            overflowY: 'hidden', 
+            textOverflow: 'ellipsis', 
+            whiteSpace: {overflowMode: {truncate: 'nowrap', wrap: 'normal'}}
+          })({overflowMode})
+        }],
         [IconContext, {
           render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
           styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
