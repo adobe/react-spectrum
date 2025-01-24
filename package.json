@@ -202,7 +202,7 @@
     "storybook": "^7.6.19",
     "storybook-dark-mode": "^3.0.3",
     "storybook-react-parcel": "^0.0.1",
-    "tailwind-variants": "^0.3.1",
+    "tailwind-variants": "patch:tailwind-variants@npm%3A0.3.1#~/.yarn/patches/tailwind-variants-npm-0.3.1-48888516de.patch",
     "tailwindcss": "^4.0.0",
     "tailwindcss-animate": "^1.0.7",
     "tempy": "^0.5.0",
