@@ -64,7 +64,7 @@ function MyMenuItem(props) {
 }
 
 function OverlayButton(props) {
-  return <Button {...props} className="inline-flex items-center justify-center rounded-md bg-black bg-opacity-20 bg-clip-padding border border-white/20 px-3.5 py-2 sm:text-sm font-medium text-white data-hovered:bg-opacity-30 data-pressed:bg-opacity-40 transition-colors cursor-default outline-hidden data-focus-visible:ring-2 data-focus-visible:ring-white/75" />;
+  return <Button {...props} className="inline-flex items-center justify-center rounded-md bg-black/20 bg-clip-padding border border-white/20 px-3.5 py-2 sm:text-sm font-medium text-white data-hovered:bg-black/30 data-pressed:bg-black/40 transition-colors cursor-default outline-hidden data-focus-visible:ring-2 data-focus-visible:ring-white/75" />;
 }
 
 function SelectExample() {
@@ -72,7 +72,7 @@ function SelectExample() {
     <div className="bg-linear-to-r from-amber-500 to-rose-500 p-8 rounded-lg flex justify-center">
       <Select className="flex flex-col gap-1 w-5/6">
         <Label className="text-sm">Favorite Animal</Label>
-        <Button className="flex relative w-full cursor-default rounded-lg bg-white bg-white bg-opacity-90 data-pressed:bg-opacity-100 transition py-2 pl-3 pr-2 text-left shadow-md text-gray-700 focus:outline-hidden data-focus-visible:border-indigo-500 data-focus-visible:ring-2 data-focus-visible:ring-black sm:text-sm">
+        <Button className="flex relative w-full cursor-default rounded-lg bg-white bg-white/90 data-pressed:bg-white transition py-2 pl-3 pr-2 text-left shadow-md text-gray-700 focus:outline-hidden data-focus-visible:border-indigo-500 data-focus-visible:ring-2 data-focus-visible:ring-black sm:text-sm">
           <SelectValue className="flex-1 truncate data-placeholder:italic" />
           <ChevronUpDownIcon
             className="h-5 w-5 text-gray-500"
@@ -120,7 +120,7 @@ function ComboBoxExample() {
     <div className="bg-linear-to-r from-sky-400 to-cyan-400 p-8 rounded-lg flex justify-center">
       <ComboBox className="flex flex-col gap-1 w-5/6">
         <Label className="text-sm text-black">Favorite Animal</Label>
-        <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white bg-opacity-90 focus-within:bg-opacity-100 transition text-left shadow-md [&:has([data-focus-visible])]:ring-2 [&:has([data-focus-visible])]:ring-black sm:text-sm">
+        <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white/90 focus-within:bg-white transition text-left shadow-md [&:has([data-focus-visible])]:ring-2 [&:has([data-focus-visible])]:ring-black sm:text-sm">
           <Input className="w-full border-none py-2 pl-3 pr-10 sm:text-sm leading-5 text-gray-900 bg-transparent outline-hidden" />
           <Button className="absolute inset-y-0 right-0 flex items-center px-2 cursor-default transition border-l border-l-sky-200 data-pressed:bg-sky-100">
             <ChevronUpDownIcon
@@ -248,7 +248,7 @@ function ModalExample() {
       <DialogTrigger>
         <OverlayButton>Open dialog</OverlayButton>
         <ModalOverlay className={({isEntering, isExiting}) => `
-          fixed inset-0 z-10 overflow-y-auto bg-black bg-opacity-25 flex min-h-full items-center justify-center p-4 text-center backdrop-blur
+          fixed inset-0 z-10 overflow-y-auto bg-black/25 flex min-h-full items-center justify-center p-4 text-center backdrop-blur
           ${isEntering ? 'animate-in fade-in duration-300 ease-out fill-mode-forwards' : ''}
           ${isExiting ? 'animate-out fade-out duration-200 ease-in fill-mode-forwards' : ''}
         `}>
@@ -364,7 +364,7 @@ function SliderExample() {
         </div>
         <SliderTrack className="relative w-full h-7">
           {({state}) => <>
-            <div className="absolute h-2 top-[50%] transform translate-y-[-50%] w-full rounded-full bg-white bg-opacity-40" />
+            <div className="absolute h-2 top-[50%] transform translate-y-[-50%] w-full rounded-full bg-white/40" />
             <div className="absolute h-2 top-[50%] transform translate-y-[-50%] rounded-full bg-white" style={{width: state.getThumbPercent(0) * 100 + '%'}} />
             <SliderThumb className="h-7 w-7 top-[50%] rounded-full border border-purple-800/75 bg-white transition-colors data-dragging:bg-purple-100 outline-hidden data-focus-visible:ring-2 data-focus-visible:ring-black" />
           </>}
@@ -383,7 +383,7 @@ function ProgressBarExample() {
             <Label className="flex-1">Loading…</Label>
             <span>{valueText}</span>
           </div>
-          <div className="h-2 top-[50%] transform translate-y-[-50%] w-full rounded-full bg-white bg-opacity-40">
+          <div className="h-2 top-[50%] transform translate-y-[-50%] w-full rounded-full bg-white/40">
             <div className="absolute h-2 top-[50%] transform translate-y-[-50%] rounded-full bg-white" style={{width: percentage + '%'}} />
           </div>
         </>}
@@ -558,7 +558,7 @@ function AutocompleteExample() {
       <Autocomplete filter={contains} className="flex flex-col gap-1 w-5/6">
         <SearchField>
           <Label className="text-sm text-black">Contacts</Label>
-          <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white bg-opacity-90 focus-within:bg-opacity-100 transition text-left shadow-md [&:has([data-focus-visible])]:ring-2 [&:has([data-focus-visible])]:ring-black sm:text-sm">
+          <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white/90 focus-within:bg-white transition text-left shadow-md [&:has([data-focus-visible])]:ring-2 [&:has([data-focus-visible])]:ring-black sm:text-sm">
             <Input className="w-full border-none py-2 pl-3 pr-2 sm:text-sm leading-5 text-gray-900 bg-transparent outline-hidden" />
           </div>
         </SearchField>
