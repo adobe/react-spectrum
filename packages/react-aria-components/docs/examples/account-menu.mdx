@@ -17,6 +17,7 @@ import Dialog from '@react-spectrum/docs/pages/assets/component-illustrations/Di
 import Menu from '@react-spectrum/docs/pages/assets/component-illustrations/Menu.svg';
 import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
 ---
 keywords: [example, menu, popover, dialog, aria, accessibility, react, component]
@@ -48,7 +49,7 @@ function AccountMenuExample() {
         <Button aria-label="Account" className="inline-flex items-center justify-center rounded-md p-1.5 text-white bg-transparent border-none hover:bg-gray-200 pressed:bg-gray-300 dark:hover:bg-zinc-800 dark:pressed:bg-zinc-700 transition-colors cursor-default outline-hidden focus-visible:ring-2 focus-visible:ring-blue-600">
           <img alt="" src="https://i.imgur.com/xIe7Wlb.png" className="w-7 h-7 rounded-full" />
         </Button>
-        <Popover placement="bottom end" className="p-2 overflow-auto rounded-lg bg-white dark:bg-zinc-950 shadow-lg ring-1 ring-black dark:ring-white ring-opacity-10 dark:ring-opacity-15 entering:animate-in entering:fade-in entering:placement-bottom:slide-in-from-top-1 entering:placement-top:slide-in-from-bottom-1 exiting:animate-out exiting:fade-out exiting:placement-bottom:slide-out-to-top-1 exiting:placement-top:slide-out-to-bottom-1 fill-mode-forwards origin-top-left">
+        <Popover placement="bottom end" className="p-2 overflow-auto rounded-lg bg-white dark:bg-zinc-950 shadow-lg ring-1 ring-black/10 dark:ring-white/15 entering:animate-in entering:fade-in entering:placement-bottom:slide-in-from-top-1 entering:placement-top:slide-in-from-bottom-1 exiting:animate-out exiting:fade-out exiting:placement-bottom:slide-out-to-top-1 exiting:placement-top:slide-out-to-bottom-1 fill-mode-forwards origin-top-left">
           <Dialog className="outline-hidden">
             <div className="flex gap-2 items-center mx-3 mt-2">
               <img alt="" src="https://i.imgur.com/xIe7Wlb.png" className="w-16 h-16 rounded-full" />
@@ -100,7 +101,19 @@ This example uses the following plugins:
 * [tailwindcss-react-aria-components](../styling.html#plugin)
 * [tailwindcss-animate](https://github.com/jamiebuilds/tailwindcss-animate)
 
-Add them to your `tailwind.config.js`:
+When using Tailwind v4, add them to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+@plugin "tailwindcss-animate";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugins to your `tailwind.config.js` instead:
 
 ```tsx
 module.exports = {
@@ -111,6 +124,10 @@ module.exports = {
   ]
 };
 ```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
 
 ## Components
 

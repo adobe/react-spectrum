@@ -262,7 +262,7 @@ export function ExampleApp() {
           )}
         </GridList>
       }
-      {!isSmall && <ResizableTableContainer className="flex-1 w-full overflow-auto scroll-pt-[2.281rem] relative border dark:border-zinc-700 rounded-lg" onScroll={onScroll}>
+      {!isSmall && <ResizableTableContainer className="flex-1 w-full overflow-auto scroll-pt-[2.281rem] relative border border-gray-200 dark:border-zinc-700 rounded-lg" onScroll={onScroll}>
         <Table aria-label="My plants" selectionMode="multiple" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
           <TableHeader columns={columns}>
             {column => <Column {...column} />}

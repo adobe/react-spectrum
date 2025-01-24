@@ -15,6 +15,7 @@ import {TypeLink} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import RadioGroup from '@react-spectrum/docs/pages/assets/component-illustrations/RadioGroup.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
 ---
 keywords: [example, radio, aria, accessibility, react, component]
@@ -78,7 +79,18 @@ function ShippingOption({name, time, price}) {
 
 ### Tailwind config
 
-This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. Add it to your `tailwind.config.js`:
+This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. When using Tailwind v4, add it to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugin to your `tailwind.config.js` instead:
 
 ```tsx
 module.exports = {
@@ -88,6 +100,10 @@ module.exports = {
   ]
 };
 ```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
 
 ## Components
 

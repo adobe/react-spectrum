@@ -40,7 +40,7 @@ function MenuExample() {
     <div className="bg-linear-to-r to-blue-500 from-violet-500 p-8 rounded-lg">
       <MenuTrigger>
         <OverlayButton aria-label="Menu">☰</OverlayButton>
-        <Popover className="p-1 w-56 overflow-auto rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 data-entering:animate-in data-entering:fade-in data-entering:zoom-in-95 data-exiting:animate-out data-exiting:fade-out data-exiting:zoom-out-95 fill-mode-forwards origin-top-left">
+        <Popover className="p-1 w-56 overflow-auto rounded-md bg-white shadow-lg ring-1 ring-black/5 data-entering:animate-in data-entering:fade-in data-entering:zoom-in-95 data-exiting:animate-out data-exiting:fade-out data-exiting:zoom-out-95 fill-mode-forwards origin-top-left">
           <Menu className="outline-hidden">
             <MyMenuItem id="new">New…</MyMenuItem>
             <MyMenuItem id="open">Open…</MyMenuItem>
@@ -78,7 +78,7 @@ function SelectExample() {
             className="h-5 w-5 text-gray-500"
             aria-hidden="true" />
         </Button>
-        <Popover className="max-h-60 w-(--trigger-width) overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black ring-opacity-5 sm:text-sm data-entering:animate-in data-entering:fade-in data-exiting:animate-out data-exiting:fade-out fill-mode-forwards">
+        <Popover className="max-h-60 w-(--trigger-width) overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black/5 sm:text-sm data-entering:animate-in data-entering:fade-in data-exiting:animate-out data-exiting:fade-out fill-mode-forwards">
           <ListBox className="outline-hidden p-1 [--focus-bg:var(--color-rose-600)]">
             <MyListBoxItem>Aardvark</MyListBoxItem>
             <MyListBoxItem>Cat</MyListBoxItem>
@@ -128,7 +128,7 @@ function ComboBoxExample() {
               aria-hidden="true" />
           </Button>
         </div>
-        <Popover className="max-h-60 w-(--trigger-width) overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black ring-opacity-5 sm:text-sm data-exiting:animate-out data-exiting:fade-out fill-mode-forwards duration-100 ease-in">
+        <Popover className="max-h-60 w-(--trigger-width) overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black/5 sm:text-sm data-exiting:animate-out data-exiting:fade-out fill-mode-forwards duration-100 ease-in">
           <ListBox className="outline-hidden p-1 [--focus-bg:var(--color-sky-600)]">
             <MyListBoxItem>Aardvark</MyListBoxItem>
             <MyListBoxItem>Cat</MyListBoxItem>

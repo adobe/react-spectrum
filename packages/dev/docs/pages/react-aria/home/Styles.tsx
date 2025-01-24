@@ -49,7 +49,7 @@ export function Styles() {
                 <div className="flex flex-row px-3 lg:hidden bg-gray-200/80 backdrop-blur-md dark:bg-zinc-700/80 border-y border-gray-300 dark:border-zinc-700">
                   <FileTab>DatePicker.css</FileTab>
                 </div>
-                <Scrollable className="rounded-br-lg lg:border-l dark:border-l-zinc-600">
+                <Scrollable className="rounded-br-lg lg:border-l lg:border-l-gray-200 dark:border-l-zinc-600">
                   <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('css')!.innerHTML}} />
                 </Scrollable>
               </div>
