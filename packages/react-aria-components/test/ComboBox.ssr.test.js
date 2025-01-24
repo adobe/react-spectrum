@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, screen, testSSR} from '@react-spectrum/test-utils-internal';
+import {fireEvent, screen, testSSR} from '@react-spectrum/test-utils-internal';
 
 describe('ComboBox SSR', function () {
   it('should render text of default selected key', async function () {
@@ -45,7 +45,7 @@ describe('ComboBox SSR', function () {
     await testSSR(__filename, `
       import {ComboBox, Label, Input, Popover, ListBox, ListBoxItem} from '../';
       import {useState, useRef} from 'react';
-      import {useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+      import {useLayoutEffect} from '@react-aria/utils';
 
       function App() {
         let [trigger, setTrigger] = useState(['null']);
