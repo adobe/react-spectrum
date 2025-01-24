@@ -338,7 +338,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       id: keyboardId
     },
     isFocused,
-    isFocusVisible: isFocused && isFocusVisible() && !isTriggerExpanded,
+    isFocusVisible: isFocused && selectionManager.isFocused && isFocusVisible() && !isTriggerExpanded,
     isSelected,
     isPressed,
     isDisabled
