@@ -55,6 +55,7 @@ async function build() {
           name === 'framer-motion' ||
           name === 'tailwindcss-animate' ||
           name === 'tailwindcss' ||
+          name === '@tailwindcss/postcss' ||
           name === 'autoprefixer' ||
           name === 'lucide-react' ||
           name === 'tailwind-variants' ||
