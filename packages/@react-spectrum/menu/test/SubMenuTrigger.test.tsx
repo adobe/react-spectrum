@@ -348,7 +348,6 @@ describe('Submenu', function () {
       ${'ltr, Enter/Esc'} | ${'en-US'}  | ${[async () => await user.keyboard('[Enter]'), async () => await user.keyboard('[Escape]')]}
     `('opens/closes the submenu via keyboard ($Name)', async function ({Name, locale, actions}) {
       let tree = render(<SubmenuStatic menuTriggerProps={{onOpenChange}} />, 'medium', locale);
-      let triggerButton = tree.getByRole('button');
       await user.tab();
       await user.keyboard('[ArrowDown]');
       act(() => {jest.runAllTimers();});
