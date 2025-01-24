@@ -18,20 +18,19 @@ function run(content) {
 }
 
 test('variants', async () => {
-  return run(css`
+  let result = await run(css`
 @import "tailwindcss/utilities.css" source(none);
 @source "../fixtures/variants.html";
 @plugin "tailwindcss-react-aria-components";
 @theme {
   --color-red: red
 }
-`).then((result) => {
+`);
   expect(result.css).toMatchSnapshot();
-});
 });
 
 test('variants with prefix', async () => {
-  return run(css`
+  let result = await run(css`
 @import "tailwindcss/utilities.css" source(none);
 @source "../fixtures/prefix.html";
 @plugin "tailwindcss-react-aria-components" {
@@ -40,7 +39,6 @@ test('variants with prefix', async () => {
 @theme {
   --color-red: red
 }
-`).then((result) => {
+`);
   expect(result.css).toMatchSnapshot();
-});
 });

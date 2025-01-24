@@ -32476,7 +32476,7 @@ __metadata:
     postcss: "npm:^7.0.0"
     tailwindcss: "npm:^4.0.0"
   peerDependencies:
-    tailwindcss: "*"
+    tailwindcss: ^4.0.0
   languageName: unknown
   linkType: soft
 
