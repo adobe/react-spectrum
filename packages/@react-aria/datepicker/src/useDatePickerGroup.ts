@@ -16,7 +16,7 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
       let update = () => {
         if (ref.current) {
           // TODO: For now, just querying this list of elements. However, it's possible that either through hooks or RAC that some users may include other focusable items that they would want to able to keyboard navigate to. In that case, we might want to utilize focusableElements in isFocusable.ts
-          let editableSegments: NodeListOf<Element> | undefined = ref.current?.querySelectorAll('span[role="spinbutton"], span[role="textbox"], button');
+          let editableSegments: NodeListOf<Element> | undefined = ref.current?.querySelectorAll('span[role="spinbutton"], span[role="textbox"], button, div[role="spinbutton"], div[role="textbox"]');
 
           let segmentsArr = Array.from(editableSegments as NodeListOf<Element>).filter(Boolean).map(node => {
             return {
