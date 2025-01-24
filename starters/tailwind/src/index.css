@@ -1,6 +1,6 @@
 @import 'tailwindcss';
-
-@config '../tailwind.config.js';
+@plugin 'tailwindcss-react-aria-components';
+@plugin 'tailwindcss-animate';
 
 /* Scale up hit targets on high resolution mobile devices. */
 @media (min-resolution: 200dpi) {

@@ -32473,7 +32473,7 @@ __metadata:
   resolution: "tailwindcss-react-aria-components@workspace:packages/tailwindcss-react-aria-components"
   dependencies:
     "@tailwindcss/postcss": "npm:^4.0.0"
-    postcss: "npm:^7.0.0"
+    postcss: "npm:^8.0.0"
     tailwindcss: "npm:^4.0.0"
   peerDependencies:
     tailwindcss: ^4.0.0
