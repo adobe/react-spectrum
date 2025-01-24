@@ -14,9 +14,9 @@ import {AriaMenuItemProps} from './useMenuItem';
 import {AriaMenuOptions} from './useMenu';
 import type {AriaPopoverProps, OverlayProps} from '@react-aria/overlays';
 import {FocusableElement, FocusStrategy, KeyboardEvent, Node, PressEvent, RefObject} from '@react-types/shared';
+import {focusWithoutScrolling, useEffectEvent, useId, useLayoutEffect} from '@react-aria/utils';
 import type {SubmenuTriggerState} from '@react-stately/menu';
 import {useCallback, useRef} from 'react';
-import {useEffectEvent, useId, useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 import {useSafelyMouseToSubmenu} from './useSafelyMouseToSubmenu';
 
@@ -103,8 +103,8 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
         if (direction === 'ltr' && e.currentTarget.contains(e.target as Element)) {
           e.stopPropagation();
           onSubmenuClose();
-          if (!isVirtualFocus) {
-            ref.current?.focus();
+          if (!isVirtualFocus && ref.current) {
+            focusWithoutScrolling(ref.current);
           }
         }
         break;
@@ -112,24 +112,17 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
         if (direction === 'rtl' && e.currentTarget.contains(e.target as Element)) {
           e.stopPropagation();
           onSubmenuClose();
-          if (!isVirtualFocus) {
-            ref.current?.focus();
+          if (!isVirtualFocus && ref.current) {
+            focusWithoutScrolling(ref.current);
           }
         }
         break;
       case 'Escape':
         e.stopPropagation();
-        // TODO: not sure if we actually want this tbh, but this makes it so ESC will only close the sub menu and return focus back
-        // to the parent sub dialog
-        // Alternative to this would be to have useSubmenuTrigger also track/return a stack mapping the expanded key to the type overlay aka subdialog/menu,
-        // if we want to have closeAll only to happen if all overlays are menus, then we'll need to have useSubmenuTriggerState
-        // track that
-        if (parentMenuRef.current?.closest('[role="dialog"]') != null) {
-          onSubmenuClose();
-        } else {
-          state.closeAll();
+        onSubmenuClose();
+        if (!isVirtualFocus && ref.current) {
+          focusWithoutScrolling(ref.current);
         }
-
         break;
     }
   };
@@ -138,8 +131,8 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
     switch (e.key) {
       case 'Escape':
         onSubmenuClose();
-        if (!isVirtualFocus) {
-          ref.current?.focus();
+        if (!isVirtualFocus && ref.current) {
+          focusWithoutScrolling(ref.current);
         }
         return;
       default:
@@ -173,7 +166,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
             }
 
             if (type === 'menu' && !!submenuRef?.current && document.activeElement === ref?.current) {
-              submenuRef.current.focus();
+              focusWithoutScrolling(submenuRef.current);
             }
           } else if (state.isOpen) {
             onSubmenuClose();
@@ -191,7 +184,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
             }
 
             if (type === 'menu' && !!submenuRef?.current && document.activeElement === ref?.current) {
-              submenuRef.current.focus();
+              focusWithoutScrolling(submenuRef.current);
             }
           } else if (state.isOpen) {
             onSubmenuClose();

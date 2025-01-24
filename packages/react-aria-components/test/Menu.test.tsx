@@ -843,12 +843,12 @@ describe('Menu', () => {
       act(() => {jest.runAllTimers();});
 
       expect(submenu).not.toBeInTheDocument();
-      expect(menu).not.toBeInTheDocument();
-      expect(document.activeElement).toBe(button);
+      expect(menu).toBeInTheDocument();
+      expect(document.activeElement).toBe(triggerItem);
     });
-    it('should restore focus to menu trigger if nested submenu is closed with Escape key', async () => {
+    it('should restore focus to nested submenu trigger if nested submenu is closed with Escape key', async () => {
       document.elementFromPoint = jest.fn().mockImplementation(query => query);
-      let {getByRole, getAllByRole} = render(
+      let {getByRole} = render(
         <MenuTrigger>
           <Button aria-label="Menu">☰</Button>
           <Popover>
@@ -880,20 +880,20 @@ describe('Menu', () => {
         </MenuTrigger>
       );
 
-      let button = getByRole('button');
-      expect(button).not.toHaveAttribute('data-pressed');
+      let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button'), interactionType: 'keyboard'});
 
-      await user.click(button);
-      expect(button).toHaveAttribute('data-pressed');
+      expect(menuTester.trigger).not.toHaveAttribute('data-pressed');
+      await menuTester.open();
+      expect(menuTester.trigger).toHaveAttribute('data-pressed');
 
-      let menu = getAllByRole('menu')[0];
-      expect(getAllByRole('menuitem')).toHaveLength(5);
+      expect(menuTester.options()).toHaveLength(5);
+      expect(menuTester.menu).toBeInTheDocument();
 
-      let popover = menu.closest('.react-aria-Popover');
+      let popover = menuTester.menu?.closest('.react-aria-Popover');
       expect(popover).toBeInTheDocument();
       expect(popover).toHaveAttribute('data-trigger', 'MenuTrigger');
 
-      let triggerItem = getAllByRole('menuitem')[3];
+      let triggerItem = menuTester.submenuTriggers[0];
       expect(triggerItem).toHaveTextContent('Share…');
       expect(triggerItem).toHaveAttribute('aria-haspopup', 'menu');
       expect(triggerItem).toHaveAttribute('aria-expanded', 'false');
@@ -902,36 +902,27 @@ describe('Menu', () => {
 
       // Open the submenu
       await user.pointer({target: triggerItem});
+      let submenuTester = await menuTester.openSubmenu({submenuTrigger: triggerItem});
       act(() => {jest.runAllTimers();});
       expect(triggerItem).toHaveAttribute('data-hovered', 'true');
       expect(triggerItem).toHaveAttribute('aria-expanded', 'true');
       expect(triggerItem).toHaveAttribute('data-open', 'true');
-      let submenu = getAllByRole('menu')[1];
-      expect(submenu).toBeInTheDocument();
-
-      let submenuItems = within(submenu).getAllByRole('menuitem');
-      expect(submenuItems).toHaveLength(3);
+      expect(submenuTester?.menu).toBeInTheDocument();
+      expect(submenuTester?.options()).toHaveLength(3);
 
       // Open the nested submenu
-      await user.pointer({target: submenuItems[0]});
+      let nestedSubmenu = await submenuTester?.openSubmenu({submenuTrigger: 'Email…'});
       act(() => {jest.runAllTimers();});
-      expect(document.activeElement).toBe(submenuItems[0]);
-
-      let nestedSubmenu = getAllByRole('menu')[1];
-      expect(nestedSubmenu).toBeInTheDocument();
-
-      let nestedSubmenuItems = within(nestedSubmenu).getAllByRole('menuitem');
-      await user.pointer({target: nestedSubmenuItems[0]});
-      act(() => {jest.runAllTimers();});
-      expect(document.activeElement).toBe(nestedSubmenuItems[0]);
+      expect(nestedSubmenu?.menu).toBeInTheDocument();
+      expect(document.activeElement).toBe(nestedSubmenu?.options()[0]);
 
       await user.keyboard('{Escape}');
       act(() => {jest.runAllTimers();});
 
-      expect(nestedSubmenu).not.toBeInTheDocument();
-      expect(submenu).not.toBeInTheDocument();
-      expect(menu).not.toBeInTheDocument();
-      expect(document.activeElement).toBe(button);
+      expect(nestedSubmenu?.menu).not.toBeInTheDocument();
+      expect(submenuTester?.menu).toBeInTheDocument();
+      expect(menuTester.menu).toBeInTheDocument();
+      expect(document.activeElement).toBe(nestedSubmenu?.trigger);
     });
     it('should not close the menu when clicking on a element within the submenu tree', async () => {
       let onAction = jest.fn();

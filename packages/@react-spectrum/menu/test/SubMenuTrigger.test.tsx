@@ -376,13 +376,6 @@ describe('Submenu', function () {
       act(() => {jest.runAllTimers();});
 
       if (Name === 'ltr, Enter/Esc') {
-        // Closes all submenus + menu via Esc
-        menus = tree.queryAllByRole('menu', {hidden: true});
-        expect(menus).toHaveLength(0);
-        expect(triggerButton).toHaveAttribute('aria-expanded', 'false');
-        expect(onOpenChange).toHaveBeenCalledTimes(2);
-        expect(onOpenChange).toHaveBeenLastCalledWith(false);
-      } else {
         // Only closes the current submenu via Arrow keys
         menus = tree.getAllByRole('menu', {hidden: true});
         expect(menus).toHaveLength(1);
@@ -601,7 +594,7 @@ describe('Submenu', function () {
       await user.keyboard('[Escape]');
       act(() => {jest.runAllTimers();});
       menus = tree.queryAllByRole('menu');
-      expect(menus).toHaveLength(0);
+      expect(menus).toHaveLength(1);
       expect(onClose).not.toHaveBeenCalled();
       expect(submenuOnClose).not.toHaveBeenCalled();
     });
