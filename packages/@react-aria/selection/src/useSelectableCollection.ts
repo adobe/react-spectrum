@@ -385,7 +385,11 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
   let onBlur = (e) => {
     // Don't set blurred and then focused again if moving focus within the collection.
-    if (!e.currentTarget.contains(e.relatedTarget as HTMLElement)) {
+    // If the collection is using virtual focus, this blur can happen when attempting to focus one of the collection
+    // items that dont have a tabindex which may potentially erronously set the manager's focus state to false. Instead, rely
+    // on the element that controls the collection's virtual focus to properly update whether focus is currently in the collection
+    // via CLEAR_FOCUS_EVENT
+    if (!e.currentTarget.contains(e.relatedTarget as HTMLElement) && !shouldUseVirtualFocus) {
       manager.setFocused(false);
     }
   };

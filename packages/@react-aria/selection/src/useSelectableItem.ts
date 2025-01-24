@@ -373,10 +373,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     ),
     isPressed,
     isSelected: manager.isSelected(key),
-    // TODO: an alternative to this would be to set manager.isFocused to true in useAutocomplete in the input's onFocus when returning back to a parent autocomplete menu
-    // after closing a submenu/subdialog, but that feels more iffy because we'd need to differentiate that from cases where the user
-    // is simply returning to the autocomplete menu from elsewhere
-    isFocused: (shouldUseVirtualFocus || manager.isFocused) && manager.focusedKey === key,
+    isFocused: manager.isFocused && manager.focusedKey === key,
     isDisabled,
     allowsSelection,
     hasAction

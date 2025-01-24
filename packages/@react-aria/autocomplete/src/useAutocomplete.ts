@@ -191,8 +191,8 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
         // Space shouldn't trigger onAction so early return.
         return;
       case 'Tab':
-         // Don't propogate Tab down to the collection, otherwise we will try to focus the collection via useSelectableCollection's Tab handler (aka shift tab logic)
-         // We want FocusScope to handle Tab if one exists (aka sub dialog), so special casepropogate
+        // Don't propogate Tab down to the collection, otherwise we will try to focus the collection via useSelectableCollection's Tab handler (aka shift tab logic)
+        // We want FocusScope to handle Tab if one exists (aka sub dialog), so special casepropogate
         if ('continuePropagation' in e) {
           e.continuePropagation();
         }
