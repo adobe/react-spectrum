@@ -496,33 +496,6 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
       });
     }
 
-    if (renderers.links) {
-      describe('with links', function () {
-        it('should trigger the link option when hitting Enter', async function () {
-          let {getByRole} = (renderers.links!)();
-          let input = getByRole('searchbox');
-          let menu = getByRole(collectionNodeRole);
-          expect(input).not.toHaveAttribute('aria-activedescendant');
-
-          await user.tab();
-          expect(document.activeElement).toBe(input);
-
-          await user.keyboard('{ArrowDown}');
-          await user.keyboard('{ArrowDown}');
-          await user.keyboard('{ArrowDown}');
-
-          let options = within(menu).getAllByRole(collectionItemRole);
-          expect(options[2].tagName).toBe('A');
-          expect(options[2]).toHaveAttribute('href', 'https://google.com');
-          let onClick = mockClickDefault();
-
-          await user.keyboard('{Enter}');
-          expect(onClick).toHaveBeenCalledTimes(1);
-          window.removeEventListener('click', onClick);
-        });
-      });
-    }
-
     if (renderers.sections) {
       describe('with sections', function () {
         it('should properly skip over sections when keyboard navigating', async function () {
@@ -635,6 +608,33 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
             await user.keyboard('{ArrowDown}');
             expect(input).toHaveAttribute('aria-activedescendant', firstSecOpts[0].id);
           }
+        });
+      });
+    }
+
+    if (renderers.links) {
+      describe('with links', function () {
+        it('should trigger the link option when hitting Enter', async function () {
+          let {getByRole} = (renderers.links!)();
+          let input = getByRole('searchbox');
+          let menu = getByRole(collectionNodeRole);
+          expect(input).not.toHaveAttribute('aria-activedescendant');
+
+          await user.tab();
+          expect(document.activeElement).toBe(input);
+
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+
+          let options = within(menu).getAllByRole(collectionItemRole);
+          expect(options[2].tagName).toBe('A');
+          expect(options[2]).toHaveAttribute('href', 'https://google.com');
+          let onClick = mockClickDefault();
+
+          await user.keyboard('{Enter}');
+          expect(onClick).toHaveBeenCalledTimes(1);
+          window.removeEventListener('click', onClick);
         });
       });
     }

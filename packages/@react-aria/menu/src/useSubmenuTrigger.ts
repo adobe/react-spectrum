@@ -269,13 +269,12 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
       // TODO: this is a bit problematic since nested subdialogs won't dismiss when clicking into a parent subdialog since this makes them non-dismissible
       // Normally shouldCloseonInteractOutside above should be sufficient but all the subdialogs are also react-aria-top-layer and thus isElementInChildScope is
       // always true and thus useOverlay's useInteractOutside logic will early return
-      // Perhaps I could make subdialogs not have this prop but then screen readers wouldn't be able to navigate to the trigger...
+      // This also cause the subdialog to automatically close because the newly opened subdialog might cause a scroll due to VO focusing the input field in the subdialog
+      // Perhaps I could make subdialogs not have this prop but then screen readers wouldn't be able to navigate to the trigger and user won't be able to hover
+      // the other items in the parent menu when the subdialog is open.
       isNonModal: true,
-      // TODO: maybe also include a check that we aren't in a mobile screen reader experience? For that case we may not want FocusScope
-      // restoration back to the Autocomplete input and instead manually move focus to the submenutrigger when closing a subdialog/submenu so that the user
-      // doesn't completely lose context. Alternatively, maybe we should completely disable virtual focus for mobile screen readers instead so that focus actually
-      // lands on submenu/dialog triggers when double tapping on them?
-      disableFocusManagement: type === 'menu' && !isVirtualFocus,
+      // Only enable focusscope restore focus if we are using virtual focus, otherwise we'll be manually coercing focus back to the triggers on menu/dialog close
+      disableFocusManagement: !isVirtualFocus,
       shouldCloseOnInteractOutside
     }
   };

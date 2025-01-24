@@ -15,7 +15,7 @@ import {Button, Dialog, Header, Heading, Keyboard, Menu, MenuSection, MenuTrigge
 import {MyMenuItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
-import {SubdialogTrigger} from '../src/Menu';
+import {SubDialogTrigger} from '../src/Menu';
 
 export default {
   title: 'React Aria Components'
@@ -286,7 +286,7 @@ export const SubdialogExample = (args) => (
     <Popover>
       <Menu className={styles.menu} onAction={action('onAction')}>
         <MyMenuItem id="Foo">Foo</MyMenuItem>
-        <SubdialogTrigger {...args}>
+        <SubDialogTrigger {...args}>
           <MyMenuItem id="Bar">Bar</MyMenuItem>
           <Popover
             style={{
@@ -310,7 +310,7 @@ export const SubdialogExample = (args) => (
               </form>
             </Dialog>
           </Popover>
-        </SubdialogTrigger>
+        </SubDialogTrigger>
         <MyMenuItem id="Baz">Baz</MyMenuItem>
         <MyMenuItem id="Google" href="https://google.com">Google</MyMenuItem>
       </Menu>

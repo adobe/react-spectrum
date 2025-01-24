@@ -65,7 +65,9 @@ export function UNSTABLE_Autocomplete(props: AutocompleteProps) {
   useInteractOutside({
     ref: collectionRef,
     onInteractOutside: () => {
-      menuState?.close();
+      if (menuState.expandedKeysStack.length > 0) {
+        menuState?.close();
+      }
     },
     isDisabled: rootMenuTriggerState != null
   });

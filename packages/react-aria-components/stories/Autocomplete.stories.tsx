@@ -15,7 +15,7 @@ import {UNSTABLE_Autocomplete as Autocomplete, Button, Collection, Dialog, Dialo
 import {MyListBoxItem, MyMenuItem} from './utils';
 import React, {useMemo} from 'react';
 import styles from '../example/index.css';
-import {SubdialogTrigger, SubmenuTrigger} from '../src/Menu';
+import {SubDialogTrigger, SubmenuTrigger} from '../src/Menu';
 import {useAsyncList, useListData, useTreeData} from 'react-stately';
 import {useFilter} from 'react-aria';
 
@@ -51,7 +51,7 @@ let StaticMenu = (props) => {
         <MyMenuItem>Bar</MyMenuItem>
         <MyMenuItem>Baz</MyMenuItem>
         <MyMenuItem href="http://google.com">Google</MyMenuItem>
-        <SubdialogTrigger>
+        <SubDialogTrigger>
           <MyMenuItem>With subdialog</MyMenuItem>
           <Popover
             style={{
@@ -75,7 +75,7 @@ let StaticMenu = (props) => {
               </AutocompleteWrapper>
             </Dialog>
           </Popover>
-        </SubdialogTrigger>
+        </SubDialogTrigger>
         <MyMenuItem>Option</MyMenuItem>
         <MyMenuItem>Option with a space</MyMenuItem>
       </MenuSection>
@@ -146,7 +146,12 @@ export const AutocompleteSearchfield = {
       </AutocompleteWrapper>
     );
   },
-  name: 'Autocomplete complex static with searchfield'
+  name: 'Autocomplete complex static with searchfield',
+  parameters: {
+    description: {
+      data: 'Note that on mobile, trying to type into the subdialog inputs may cause scrolling and thus cause the subdialog to close. Please test in landscape mode.'
+    }
+  }
 };
 
 // Note that the trigger items in this array MUST have an id, even if the underlying MenuItem might apply its own
@@ -214,7 +219,7 @@ let dynamicRenderTrigger = (item: ItemNode) => {
     );
   } else {
     return (
-      <SubdialogTrigger>
+      <SubDialogTrigger>
         <MyMenuItem id={item.name} textValue={item.name}>
           {item.name}
         </MyMenuItem>
@@ -238,7 +243,7 @@ let dynamicRenderTrigger = (item: ItemNode) => {
             </AutocompleteWrapper>
           </Dialog>
         </Popover>
-      </SubdialogTrigger>
+      </SubDialogTrigger>
     );
   }
 };

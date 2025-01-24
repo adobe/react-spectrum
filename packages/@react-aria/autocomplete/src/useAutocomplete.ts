@@ -14,9 +14,10 @@ import {AriaLabelingProps, BaseEvent, DOMProps, RefObject} from '@react-types/sh
 import {AriaTextFieldProps} from '@react-aria/textfield';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
 import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, isCtrlKeyPressed, mergeProps, mergeRefs, UPDATE_ACTIVEDESCENDANT, useEffectEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
+import {getInteractionModality} from '@react-aria/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef} from 'react';
+import React, {KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef} from 'react';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface CollectionOptions extends DOMProps, AriaLabelingProps {
@@ -304,11 +305,13 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
       // This disable's iOS's autocorrect suggestions, since the autocomplete provides its own suggestions.
       autoCorrect: 'off',
       // This disable's the macOS Safari spell check auto corrections.
-      spellCheck: 'false'
+      spellCheck: 'false',
+      [parseInt(React.version, 10) >= 17 ? 'enterKeyHint' : 'enterkeyhint']: 'enter'
     },
     collectionProps: mergeProps(collectionProps, {
-      // TODO: shouldFocusOnHover? shouldFocusWrap? Should it be up to the wrapped collection?
-      shouldUseVirtualFocus: true,
+      // For mobile screen readers, we don't want virtual focus, instead opting to disable FocusScope's restoreFocus and manually
+      // moving focus back to the subtriggers
+      shouldUseVirtualFocus: getInteractionModality() !== 'virtual',
       disallowTypeAhead: true
     }),
     collectionRef: mergedCollectionRef,

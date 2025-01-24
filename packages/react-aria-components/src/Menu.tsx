@@ -127,6 +127,13 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
     isVirtualFocus
   }, submenuTriggerState, itemRef);
 
+  let onDismissButtonPress = () => {
+    submenuTriggerState.close();
+    // TODO: this works but in iOS VO, double tapping the dimiss button actually seems to trigger an "interact outside" causing all
+    // menus to close...
+    itemRef.current?.focus();
+  };
+
   return (
     <Provider
       values={[
@@ -141,6 +148,7 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
           // Prevent parent popover from hiding submenu.
           // @ts-ignore
           'data-react-aria-top-layer': true,
+          onDismissButtonPress,
           ...popoverProps
         }]
       ]}>
@@ -150,10 +158,9 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
   );
 }, props => props.children[0]);
 
-// TODO: at the moment is basically submenutrigger, except it has type: 'dialog', maybe we should expose a prop on SubmenuTrigger instead of having another component?
 export interface SubdialogTriggerProps {
   /**
-   * The contents of the SubdialogTrigger. The first child should be an Item (the trigger) and the second child should be the Popover (for the subdialog).
+   * The contents of the SubDialogTrigger. The first child should be an Item (the trigger) and the second child should be the Popover (for the subdialog).
    */
   children: ReactElement[],
   /**
@@ -168,7 +175,7 @@ export interface SubdialogTriggerProps {
  *
  * @version alpha
  */
-export const SubdialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogtrigger', (props: SubdialogTriggerProps, ref: ForwardedRef<HTMLDivElement>, item) => {
+export const SubDialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogtrigger', (props: SubdialogTriggerProps, ref: ForwardedRef<HTMLDivElement>, item) => {
   let {CollectionBranch} = useContext(CollectionRendererContext);
   let state = useContext(MenuStateContext)!;
   let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
@@ -187,8 +194,8 @@ export const SubdialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogt
 
   let onDismissButtonPress = () => {
     submenuTriggerState.close();
-    // TODO: this doesn't quite work because the items don't have a tab index. Even if they did, the FocusScope is going to restore
-    // focus to the previously focused input field of the autocomplete since we want that to happen for desktop...
+    // TODO: this works but in iOS VO, double tapping the dimiss button actually seems to trigger an "interact outside" causing all
+    // menus to close...
     itemRef.current?.focus();
   };
 
@@ -200,7 +207,7 @@ export const SubdialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogt
         [OverlayTriggerStateContext, submenuTriggerState],
         [PopoverContext, {
           ref: subdialogRef,
-          trigger: 'SubdialogTrigger',
+          trigger: 'SubDialogTrigger',
           triggerRef: itemRef,
           placement: 'end top',
           // TODO: if we apply this data attribute then the dialog won't close on ESC via useOverlay due to logic in usePopover preventing it from being added
