@@ -99,7 +99,7 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
       disabled: isDisabled,
       required: validationBehavior === 'native' && isRequired,
       name,
-      value: state.selectedKey ?? '',
+      value: state.selectedKey ?? (props.selectRef?.current?.value || ''),
       onChange: (e: React.ChangeEvent<HTMLSelectElement>) => state.setSelectedKey(e.target.value)
     }
   };
@@ -147,7 +147,7 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
         autoComplete={selectProps.autoComplete}
         name={name}
         disabled={isDisabled}
-        value={state.selectedKey ?? ''} />
+        value={state.selectedKey ?? (selectRef?.current?.value || '')} />
     );
   }
 
