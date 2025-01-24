@@ -202,7 +202,7 @@
     "storybook": "^7.6.19",
     "storybook-dark-mode": "^3.0.3",
     "storybook-react-parcel": "^0.0.1",
-    "tailwind-variants": "^0.1.18",
+    "tailwind-variants": "^0.3.1",
     "tailwindcss": "^4.0.0",
     "tailwindcss-animate": "^1.0.7",
     "tempy": "^0.5.0",

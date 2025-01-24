@@ -29525,7 +29525,7 @@ __metadata:
     storybook: "npm:^7.6.19"
     storybook-dark-mode: "npm:^3.0.3"
     storybook-react-parcel: "npm:^0.0.1"
-    tailwind-variants: "npm:^0.1.18"
+    tailwind-variants: "npm:^0.3.1"
     tailwindcss: "npm:^4.0.0"
     tailwindcss-animate: "npm:^1.0.7"
     tempy: "npm:^0.5.0"
@@ -32441,21 +32441,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwind-merge@npm:^1.14.0":
-  version: 1.14.0
-  resolution: "tailwind-merge@npm:1.14.0"
-  checksum: 10c0/a66f5ab1a2bb2b0f5a40a031867a6bc900de98eb3339b2a51759351221527a3d600eecb6cb5a038830aa89548eba72bb63aa3856cb9f31c9a3918b42eb3df350
+"tailwind-merge@npm:2.5.4":
+  version: 2.5.4
+  resolution: "tailwind-merge@npm:2.5.4"
+  checksum: 10c0/6c3d2a1d44344f373859f005e6366f0dbd7f66131d330a51dbe823dab08f71c388b2efcbb2b6a2170ca469581d27079c25cd40c234ca1356c4893ae99c2febb3
   languageName: node
   linkType: hard
 
-"tailwind-variants@npm:^0.1.18":
-  version: 0.1.18
-  resolution: "tailwind-variants@npm:0.1.18"
+"tailwind-variants@npm:^0.3.1":
+  version: 0.3.1
+  resolution: "tailwind-variants@npm:0.3.1"
   dependencies:
-    tailwind-merge: "npm:^1.14.0"
+    tailwind-merge: "npm:2.5.4"
   peerDependencies:
     tailwindcss: "*"
-  checksum: 10c0/d73fcc386b75fecd6c8f5b65e0c1106b2939421b952f1a7d41dd42a3e4e3a3b63d8c2380bf8499c069e95b2aca5538e9ccc381ba885ecd123e7b4f00cc97cf61
+  checksum: 10c0/2ad4a9282ea3d9b66443329ede844bd86b6737b98ede3f31d6b495e3d1f210677c57ba360af2dbffede00cce0026dd1105eeb1af936e825ebd14e715eb6cbc11
   languageName: node
   linkType: hard
 

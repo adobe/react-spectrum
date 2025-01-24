@@ -31,7 +31,7 @@
     "lucide-react": "^0.292.0",
     "postcss": "^8.4.31",
     "react-aria-components": "latest",
-    "tailwind-variants": "^0.1.18"
+    "tailwind-variants": "^0.3.1"
   },
   "resolutions": {
     "@types/mime": "3.0.4",
