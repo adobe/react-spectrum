@@ -29,16 +29,13 @@ export function useFormatHelpText(props: Pick<SpectrumDatePickerBase<any>, 'desc
 
     if (props.showFormatHelpText) {
       return (
-        <>
-        {formatter.formatToParts(new Date()).map(s => {
+        formatter.formatToParts(new Date()).map(s => {
             if (s.type === 'literal') {
               return <span>{s.value}</span>
             }
     
             return <span style={{unicodeBidi: 'embed', direction: 'ltr'}}>{displayNames.of(s.type)}</span>
-          })
-        }
-        </>
+        })
       )
     }
 
