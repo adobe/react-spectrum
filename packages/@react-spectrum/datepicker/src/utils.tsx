@@ -15,7 +15,7 @@ import {FocusableRef} from '@react-types/shared';
 import {SpectrumDatePickerBase} from '@react-types/datepicker';
 import {useDateFormatter, useLocale} from '@react-aria/i18n';
 import {useDisplayNames} from '@react-aria/datepicker';
-import {useImperativeHandle, useMemo, useRef, useState} from 'react';
+import React, {useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useProvider} from '@react-spectrum/provider';
 
@@ -28,13 +28,18 @@ export function useFormatHelpText(props: Pick<SpectrumDatePickerBase<any>, 'desc
     }
 
     if (props.showFormatHelpText) {
-      return formatter.formatToParts(new Date()).map(s => {
-        if (s.type === 'literal') {
-          return s.value;
+      return (
+        <>
+        {formatter.formatToParts(new Date()).map(s => {
+            if (s.type === 'literal') {
+              return <span>{s.value}</span>
+            }
+    
+            return <span style={{unicodeBidi: 'embed', direction: 'ltr'}}>{displayNames.of(s.type)}</span>
+          })
         }
-
-        return displayNames.of(s.type);
-      }).join(' ');
+        </>
+      )
     }
 
     return '';
