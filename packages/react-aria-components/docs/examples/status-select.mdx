@@ -44,15 +44,15 @@ import CheckIcon from '@spectrum-icons/workflow/Checkmark';
 
 function SelectExample() {
   return (
-    <div className="bg-gradient-to-tl from-amber-500 to-rose-700 p-8 sm:h-[250px] rounded-lg flex justify-center">
+    <div className="bg-linear-to-tl from-amber-500 to-rose-700 p-8 sm:h-[250px] rounded-lg flex justify-center">
       <Select className="flex flex-col gap-1 w-[200px]">
         <Label className="text-white cursor-default">Status</Label>
-        <Button className="flex items-center cursor-default rounded-lg border-0 bg-white bg-opacity-90 pressed:bg-opacity-100 transition py-2 pl-5 pr-2 text-base text-left leading-normal shadow-md text-gray-700 focus:outline-none focus-visible:ring-2 ring-white ring-offset-2 ring-offset-rose-700">
+        <Button className="flex items-center cursor-default rounded-lg border-0 bg-white bg-opacity-90 pressed:bg-opacity-100 transition py-2 pl-5 pr-2 text-base text-left leading-normal shadow-md text-gray-700 focus:outline-hidden focus-visible:ring-2 ring-white ring-offset-2 ring-offset-rose-700">
           <SelectValue className="flex-1 truncate placeholder-shown:italic" />
           <ChevronUpDownIcon size="XS" />
         </Button>
-        <Popover className="max-h-60 w-[--trigger-width] overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black/5 entering:animate-in entering:fade-in exiting:animate-out exiting:fade-out">
-          <ListBox className="outline-none p-1">
+        <Popover className="max-h-60 w-(--trigger-width) overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black/5 entering:animate-in entering:fade-in exiting:animate-out exiting:fade-out">
+          <ListBox className="outline-hidden p-1">
             <StatusItem textValue="Backlog">
               <Status className="bg-gray-500" />
               Backlog
@@ -84,7 +84,7 @@ function StatusItem(props: ListBoxItemProps & {children: React.ReactNode}) {
   return (
     <ListBoxItem
       {...props}
-      className="group flex items-center gap-2 cursor-default select-none py-2 px-4 outline-none rounded text-gray-900 focus:bg-rose-600 focus:text-white">
+      className="group flex items-center gap-2 cursor-default select-none py-2 px-4 outline-hidden rounded-sm text-gray-900 focus:bg-rose-600 focus:text-white">
       {({ isSelected }) => (
         <>
           <span className="flex-1 flex items-center gap-2 truncate font-normal group-selected:font-medium">{props.children}</span>

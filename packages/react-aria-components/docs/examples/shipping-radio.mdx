@@ -39,7 +39,7 @@ import CheckCircleIcon from '@spectrum-icons/workflow/CheckmarkCircle';
 
 function RadioGroupExample() {
   return (
-    <div className="bg-gradient-to-r from-blue-300 to-indigo-300 p-2 sm:p-8 rounded-lg flex justify-center">
+    <div className="bg-linear-to-r from-blue-300 to-indigo-300 p-2 sm:p-8 rounded-lg flex justify-center">
       <RadioGroup className="flex flex-col gap-2 w-full max-w-[300px]" defaultValue="Standard">
         <Label className="text-xl text-slate-900 font-semibold font-serif">Shipping</Label>
         <ShippingOption name="Standard" time="4-10 business days" price="$4.99" />
@@ -53,7 +53,7 @@ function RadioGroupExample() {
 function ShippingOption({name, time, price}) {
   return (
     <Radio value={name} className={({isFocusVisible, isSelected, isPressed}) => `
-      group relative flex cursor-default rounded-lg px-4 py-3 shadow-lg outline-none bg-clip-padding border border-solid
+      group relative flex cursor-default rounded-lg px-4 py-3 shadow-lg outline-hidden bg-clip-padding border border-solid
       ${isFocusVisible ? 'ring-2 ring-blue-600 ring-offset-1 ring-offset-white/80' : ''}
       ${isSelected ? 'bg-blue-600 border-white/30 text-white' : 'border-transparent'}
       ${isPressed && !isSelected ? 'bg-blue-50' : ''}

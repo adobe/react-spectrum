@@ -111,7 +111,7 @@ function Sheet() {
   return (
     <>
       <Button
-        className="text-blue-600 text-lg font-semibold outline-none rounded bg-transparent border-none pressed:text-blue-700 focus-visible:ring"
+        className="text-blue-600 text-lg font-semibold outline-hidden rounded-sm bg-transparent border-none pressed:text-blue-700 focus-visible:ring-3"
         onPress={() => setOpen(true)}>
         Open sheet
       </Button>
@@ -124,7 +124,7 @@ function Sheet() {
             className="fixed inset-0 z-10"
             style={{ backgroundColor: bg as any }}>
             <MotionModal
-              className="bg-[--page-background] absolute bottom-0 w-full rounded-t-xl shadow-lg will-change-transform"
+              className="bg-(--page-background) absolute bottom-0 w-full rounded-t-xl shadow-lg will-change-transform"
               initial={{ y: h }}
               animate={{ y: 0 }}
               exit={{ y: h }}
@@ -146,10 +146,10 @@ function Sheet() {
               }}>
               {/* drag affordance */}
               <div className="mx-auto w-12 mt-2 h-1.5 rounded-full bg-gray-400" />
-              <Dialog className="px-4 pb-4 outline-none">
+              <Dialog className="px-4 pb-4 outline-hidden">
                 <div className="flex justify-end">
                   <Button
-                    className="text-blue-600 text-lg font-semibold mb-8 outline-none rounded bg-transparent border-none pressed:text-blue-700 focus-visible:ring"
+                    className="text-blue-600 text-lg font-semibold mb-8 outline-hidden rounded-sm bg-transparent border-none pressed:text-blue-700 focus-visible:ring-3"
                     onPress={() => setOpen(false)}>
                     Done
                   </Button>

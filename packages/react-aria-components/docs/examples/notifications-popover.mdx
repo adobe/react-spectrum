@@ -44,9 +44,9 @@ import ChatIcon from '@spectrum-icons/workflow/Chat';
 
 function PopoverExample() {
   return (
-    <div className="bg-gradient-to-r from-orange-400 to-pink-600 p-8 rounded-lg sm:h-[300px] flex items-start justify-center">
+    <div className="bg-linear-to-r from-orange-400 to-pink-600 p-8 rounded-lg sm:h-[300px] flex items-start justify-center">
       <DialogTrigger>
-        <Button aria-label="Notifications" className="inline-flex items-center justify-center rounded-md bg-black bg-opacity-20 bg-clip-padding border border-white/20 px-3.5 py-2 font-medium text-white hover:bg-opacity-30 pressed:bg-opacity-40 transition-colors cursor-default outline-none focus-visible:ring-2 focus-visible:ring-white/75">
+        <Button aria-label="Notifications" className="inline-flex items-center justify-center rounded-md bg-black bg-opacity-20 bg-clip-padding border border-white/20 px-3.5 py-2 font-medium text-white hover:bg-opacity-30 pressed:bg-opacity-40 transition-colors cursor-default outline-hidden focus-visible:ring-2 focus-visible:ring-white/75">
           <BellIcon size="S" />
         </Button>
         <MyPopover>
@@ -55,7 +55,7 @@ function PopoverExample() {
               <path d="M0 0L6 6L12 0" />
             </svg>
           </OverlayArrow>
-          <Dialog className="p-2 outline-none text-gray-700">
+          <Dialog className="p-2 outline-hidden text-gray-700">
             <div className="flex flex-col">
               <Notification avatar="https://images.unsplash.com/photo-1569913486515-b74bf7751574?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" name="Sonja Balmann" time="2h" text="This looks great! Let's ship it." />
               <Notification avatar="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" name="Maia Pettegree" time="4h" text="Can you add a bit more pizzazz?" />
@@ -82,7 +82,7 @@ function MyPopover(props: PopoverProps) {
 
 function Notification({avatar, name, time, text}) {
   return (
-    <Link href="#" className="p-2 rounded-lg hover:bg-gray-100 grid grid-cols-[theme(width.5)_1fr_theme(width.4)] gap-x-2 text-[inherit] no-underline outline-none focus-visible:ring-2 ring-pink-800">
+    <Link href="#" className="p-2 rounded-lg hover:bg-gray-100 grid grid-cols-[theme(width.5)_1fr_theme(width.4)] gap-x-2 text-[inherit] no-underline outline-hidden focus-visible:ring-2 ring-pink-800">
       <img src={avatar} className="rounded-full w-5 h-5 row-span-3" />
       <div className="text-gray-800 font-semibold leading-5">{name}</div>
       <div className="text-gray-400"><ChatIcon size="XS" /></div>

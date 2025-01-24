@@ -169,7 +169,7 @@ function AnimatedTabs() {
       <div className="relative">
         <TabList ref={tabListRef} className="flex -mx-1" items={tabs}>
           {(tab) =>
-            <Tab className="cursor-default px-3 py-1.5 text-md transition outline-none touch-none">
+            <Tab className="cursor-default px-3 py-1.5 text-md transition outline-hidden touch-none">
               {({ isSelected, isFocusVisible }) => <>
                 {tab.label}
                 {isFocusVisible && isSelected && (
@@ -195,7 +195,7 @@ function AnimatedTabs() {
           {(tab) => (
             <TabPanel
               shouldForceMount
-              className="flex-shrink-0 w-full px-2 box-border snap-start outline-none -outline-offset-2 rounded focus-visible:outline-black">
+              className="shrink-0 w-full px-2 box-border snap-start outline-hidden -outline-offset-2 rounded-sm focus-visible:outline-black">
               <h2>{tab.label} contents...</h2>
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sit amet nisl blandit, pellentesque eros eu, scelerisque eros. Sed cursus urna at nunc lacinia dapibus.</p>
             </TabPanel>
