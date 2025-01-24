@@ -28,7 +28,7 @@ export interface RadioProps extends Omit<AriaRadioProps, 'className' | 'style' |
   /**
    * The label for the element.
    */
-  children?: ReactNode
+  children: ReactNode
 }
 
 interface ContextProps {
