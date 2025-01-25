@@ -68,6 +68,7 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
   let {autoComplete, name = data.name, isDisabled = data.isDisabled} = props;
   let {validationBehavior, isRequired} = data;
   let {visuallyHiddenProps} = useVisuallyHidden();
+  let selectRefValue = props.selectRef?.current?.value;
 
   useFormReset(props.selectRef, state.selectedKey, state.setSelectedKey);
   useFormValidation({
@@ -99,7 +100,7 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
       disabled: isDisabled,
       required: validationBehavior === 'native' && isRequired,
       name,
-      value: state.selectedKey ?? (props.selectRef?.current?.value || ''),
+      value: state.selectedKey ?? (selectRefValue || ''),
       onChange: (e: React.ChangeEvent<HTMLSelectElement>) => state.setSelectedKey(e.target.value)
     }
   };
@@ -113,6 +114,7 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
   let {state, triggerRef, label, name, isDisabled} = props;
   let selectRef = useRef(null);
   let {containerProps, selectProps} = useHiddenSelect({...props, selectRef}, state, triggerRef);
+  let selectRefValue = selectRef?.current?.value;
 
   // If used in a <form>, use a hidden input so the value can be submitted to a server.
   // If the collection isn't too big, use a hidden <select> element for this so that browser
@@ -147,7 +149,7 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
         autoComplete={selectProps.autoComplete}
         name={name}
         disabled={isDisabled}
-        value={state.selectedKey ?? (selectRef?.current?.value || '')} />
+        value={state.selectedKey ?? (selectRefValue || '')} />
     );
   }
 
