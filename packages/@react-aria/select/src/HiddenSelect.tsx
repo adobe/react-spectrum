@@ -114,7 +114,6 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
   let {state, triggerRef, label, name, isDisabled} = props;
   let selectRef = useRef(null);
   let {containerProps, selectProps} = useHiddenSelect({...props, selectRef}, state, triggerRef);
-  let selectRefValue = selectRef?.current?.value;
 
   // If used in a <form>, use a hidden input so the value can be submitted to a server.
   // If the collection isn't too big, use a hidden <select> element for this so that browser
@@ -149,7 +148,7 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
         autoComplete={selectProps.autoComplete}
         name={name}
         disabled={isDisabled}
-        value={state.selectedKey ?? (selectRefValue || '')} />
+        value={state.selectedKey ?? ''} />
     );
   }
 
