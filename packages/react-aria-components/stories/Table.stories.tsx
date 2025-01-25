@@ -260,9 +260,9 @@ export const TableCellColSpanExample = () => {
   );
 };
 
-export const TableCellColSpanWithVariousSpans = () => {
+export const TableCellColSpanWithVariousSpansExample = () => {
   return (
-    <Table aria-label="Timetable">
+    <Table aria-label="Table with various colspans">
       <TableHeader>
         <Column isRowHeader>Col 1</Column>
         <Column >Col 2</Column>

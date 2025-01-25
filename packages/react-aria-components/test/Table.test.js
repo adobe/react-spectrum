@@ -24,7 +24,8 @@ import userEvent from '@testing-library/user-event';
 
 let {
   RenderEmptyStateStory: EmptyLoadingTable,
-  TableLoadingBodyWrapperStory: LoadingMoreTable
+  TableLoadingBodyWrapperStory: LoadingMoreTable,
+  TableCellColSpanWithVariousSpansExample: TableCellColSpan
 } = composeStories(stories);
 
 function MyColumn(props) {
@@ -893,6 +894,93 @@ describe('Table', () => {
     rows = getAllByRole('row');
     expect(rows).toHaveLength(9);
     expect(rows.map(r => r.textContent)).toEqual(['FooBar', 'Foo 7Bar 7', 'Foo 8Bar 8', 'Foo 9Bar 9', 'Foo 10Bar 10', 'Foo 11Bar 11', 'Foo 12Bar 12', 'Foo 13Bar 13', 'Foo 49Bar 49']);
+  });
+
+  describe('colSpan', () => {
+    it('should render table with colSpans', () => {
+      let {getAllByRole} = render(<TableCellColSpan />);
+
+      const rows = getAllByRole('row');
+      expect(rows).toHaveLength(8);
+
+      let cells1 = [...within(rows[1]).getAllByRole('rowheader'), ...within(rows[1]).getAllByRole('gridcell')];
+      expect(cells1).toHaveLength(3);
+      expect(cells1[0]).toHaveAttribute('aria-colindex', '1');
+      expect(cells1[1]).toHaveAttribute('aria-colindex', '2');
+      expect(cells1[1]).toHaveAttribute('colspan', '2');
+      expect(cells1[2]).toHaveAttribute('aria-colindex', '4');
+
+      let cells2 = [...within(rows[2]).getAllByRole('rowheader'), ...within(rows[2]).getAllByRole('gridcell')];
+      expect(cells2).toHaveLength(4);
+      expect(cells2[0]).not.toHaveAttribute('aria-colindex', '1');
+      expect(cells2[1]).not.toHaveAttribute('aria-colindex', '2');
+      expect(cells2[2]).not.toHaveAttribute('aria-colindex', '3');
+      expect(cells2[3]).not.toHaveAttribute('aria-colindex', '4');
+
+      let cells3 = within(rows[3]).getAllByRole('rowheader');
+      expect(cells3).toHaveLength(1);
+      expect(cells3[0]).toHaveAttribute('aria-colindex', '1');
+      expect(cells3[0]).toHaveAttribute('colspan', '4');
+
+      let cells5 = [...within(rows[5]).getAllByRole('rowheader'), ...within(rows[5]).getAllByRole('gridcell')];
+      expect(cells5).toHaveLength(2);
+      expect(cells5[0]).toHaveAttribute('aria-colindex', '1');
+      expect(cells5[0]).toHaveAttribute('colspan', '3');
+      expect(cells5[1]).toHaveAttribute('aria-colindex', '4');
+    });
+
+    it('should focus to the same colIndex when moving focus up or down', async () => {
+      let {getAllByRole} = render(<TableCellColSpan />);
+      let rows = getAllByRole('row');
+      await user.tab();
+      expect(document.activeElement).toBe(rows[1]);
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(within(rows[1]).getByRole('rowheader'));
+
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(within(rows[1]).getAllByRole('gridcell')[0]);
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(within(rows[2]).getAllByRole('gridcell')[0]);
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(within(rows[3]).getByRole('rowheader'));
+
+      await user.keyboard('{ArrowDown}');
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(within(rows[4]).getAllByRole('gridcell')[0]);
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(within(rows[5]).getByRole('rowheader'));
+
+      await user.keyboard('{ArrowDown}');
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(within(rows[6]).getAllByRole('gridcell')[0]);
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(within(rows[7]).getAllByRole('gridcell')[0]);
+
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(within(rows[6]).getAllByRole('gridcell')[0]);
+
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(within(rows[5]).getAllByRole('gridcell')[0]);
+
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(within(rows[4]).getAllByRole('gridcell')[2]);
+
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(within(rows[3]).getByRole('rowheader'));
+
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(within(rows[2]).getByRole('rowheader'));
+
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(within(rows[1]).getAllByRole('gridcell')[0]);
+    });
   });
 
   describe('drag and drop', () => {
