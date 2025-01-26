@@ -65,6 +65,19 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
             child.colIndex = !last ? child.index : (last.colIndex ?? last.index) + (last.colspan ?? 1);
             last = child;
           }
+
+          let lastColIndex = last?.colIndex ?? 0 + 1; // internally colIndex is 0 based
+          let lastColSpan = last?.colspan ?? 1;
+          let numberOfCellsInRow = lastColIndex + lastColSpan;
+
+          if (numberOfCellsInRow !== this.columns.length) {
+            throw new Error(`Cell count must match column count. Found ${numberOfCellsInRow} cells and ${this.columns.length} columns.`);
+          }
+        } else {
+          let numberOfCellsInRow = [...childNodes].length;
+          if (numberOfCellsInRow !== this.columns.length) {
+            throw new Error(`Cell count must match column count. Found ${numberOfCellsInRow} cells and ${this.columns.length} columns.`);
+          }
         }
       }
       this.rows.push(node);
