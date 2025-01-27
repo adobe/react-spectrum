@@ -41,11 +41,11 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
 
   commit(firstKey: Key, lastKey: Key, isSSR = false) {
     this.updateColumns(isSSR);
-    this.updateRows();
+    this.updateRows(isSSR);
     super.commit(firstKey, lastKey, isSSR);
   }
 
-  private updateRows() {
+  private updateRows(isSSR: boolean) {
     this.rows = [];
     let visit = (node: Node<T>) => {
       if (node.hasChildNodes) {
@@ -70,12 +70,12 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
           let lastColSpan = last?.colspan ?? 1;
           let numberOfCellsInRow = lastColIndex + lastColSpan;
 
-          if (numberOfCellsInRow !== this.columns.length) {
+          if (numberOfCellsInRow !== this.columns.length && !isSSR) {
             throw new Error(`Cell count must match column count. Found ${numberOfCellsInRow} cells and ${this.columns.length} columns.`);
           }
         } else {
           let numberOfCellsInRow = [...childNodes].length;
-          if (numberOfCellsInRow !== this.columns.length) {
+          if (numberOfCellsInRow !== this.columns.length && !isSSR) {
             throw new Error(`Cell count must match column count. Found ${numberOfCellsInRow} cells and ${this.columns.length} columns.`);
           }
         }
