@@ -32,7 +32,7 @@ import {useLocale, useNumberFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface SliderBaseProps<T> extends Omit<AriaSliderProps<T>, 'children' | 'style' | 'className' | 'orientation'>, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>, StyleProps {
-  children: ReactNode,
+  children?: ReactNode,
   /**
    * The size of the Slider.
    *

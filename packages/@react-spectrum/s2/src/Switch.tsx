@@ -42,7 +42,7 @@ interface SwitchStyleProps {
 interface RenderProps extends SwitchRenderProps, SwitchStyleProps {}
 
 export interface SwitchProps extends Omit<AriaSwitchProps, 'className' | 'style' | 'children'  | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, StyleProps, SwitchStyleProps {
-  children: ReactNode
+  children?: ReactNode
 }
 
 export const SwitchContext = createContext<ContextValue<Partial<SwitchProps>, FocusableRefValue<HTMLLabelElement>>>(null);
