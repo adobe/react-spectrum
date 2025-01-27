@@ -174,6 +174,15 @@ function addToast(children: string, variant: SpectrumToastValue['variant'], opti
   } else {
     key = add();
   }
+
+  if ('startViewTransition' in document) {
+    // @ts-ignore
+    return () => document.startViewTransition(() => {
+      flushSync(() => {
+        queue.close(key);
+      });
+    });
+  }
   return () => queue.close(key);
 }
 
