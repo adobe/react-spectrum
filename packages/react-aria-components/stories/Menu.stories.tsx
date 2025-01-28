@@ -310,7 +310,7 @@ export const SubdialogExample = (args) => (
                   </TextField>
                   <Menu>
                     <SubmenuTrigger {...args}>
-                      <MyMenuItem id="A">A</MyMenuItem>
+                      <MyMenuItem>SubMenu</MyMenuItem>
                       <Popover
                         style={{
                           background: 'Canvas',
@@ -326,7 +326,7 @@ export const SubdialogExample = (args) => (
                       </Popover>
                     </SubmenuTrigger>
                     <SubDialogTrigger {...args}>
-                      <MyMenuItem id="B">B</MyMenuItem>
+                      <MyMenuItem>SubDialog</MyMenuItem>
                       <Popover
                         style={{
                           background: 'Canvas',
@@ -337,7 +337,7 @@ export const SubdialogExample = (args) => (
                         <Dialog>
                           {({close}) => (
                             <form style={{display: 'flex', flexDirection: 'column'}}>
-                              <Heading slot="title">Sign up</Heading>
+                              <Heading slot="title">Contact</Heading>
                               <TextField autoFocus>
                                 <Label>Email: </Label>
                                 <Input />
@@ -354,7 +354,7 @@ export const SubdialogExample = (args) => (
                         </Dialog>
                       </Popover>
                     </SubDialogTrigger>
-                    <MyMenuItem id="C">C</MyMenuItem>
+                    <MyMenuItem>C</MyMenuItem>
                   </Menu>
                   <Button onPress={close} style={{marginTop: 10}}>
                     Submit

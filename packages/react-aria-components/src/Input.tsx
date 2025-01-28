@@ -67,11 +67,7 @@ export const Input = /*#__PURE__*/ createHideableComponent(function Input(props:
 
   // If the input has activedescendant, then we are in a virtual focus component. We only want the focus ring to appear on the field
   // if none of the items are virtually focused.
-  // TODO: kinda gross that I need to query the activeDescendant but there is a case when we return to the field where the active
-  // descendant is still defined and useful to let the user know what item is focused and thus we need prevent the input from getting the
-  // focus visible style
-  let activeDescendant = props['aria-activedescendant'] != null ? document.getElementById(props['aria-activedescendant']) : null;
-  isFocusVisible = isFocusVisible && activeDescendant == null;
+  isFocusVisible = isFocusVisible && props['aria-activedescendant'] == null;
 
   let isInvalid = !!props['aria-invalid'] && props['aria-invalid'] !== 'false';
   let renderProps = useRenderProps({
