@@ -110,17 +110,24 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
     return (
       <Toaster state={state} {...props}>
         <ol className={classNames(toastContainerStyles, 'spectrum-ToastContainer-list')}>
-          {state.visibleToasts.slice().reverse().map((toast) => (
-            <li
-              key={toast.key}
-              className={classNames(toastContainerStyles, 'spectrum-ToastContainer-listitem')}
-              // @ts-ignore
-              style={{viewTransitionName: `item-${toast.key.slice(2)}`}}>
-              <Toast
-                toast={toast}
-                state={state} />
-            </li>
-          ))}
+          {state.visibleToasts.slice().reverse().map((toast) => {
+            let placements = props.placement?.split(' ');
+            let placement = placements?.[placements.length - 1] || 'bottom';
+            return (
+              <li
+                key={toast.key}
+                className={classNames(toastContainerStyles, 'spectrum-ToastContainer-listitem')}
+                style={{
+                  // @ts-ignore
+                  viewTransitionName: `_${toast.key.slice(2)}`,
+                  viewTransitionClass: classNames(toastContainerStyles, 'toast', placement)
+                }}>
+                <Toast
+                  toast={toast}
+                  state={state} />
+              </li>
+            );
+          })} 
         </ol>
       </Toaster>
     );

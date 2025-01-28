@@ -94,38 +94,51 @@
 
 .spectrum-ToastContainer-listitem {
   display: inline-block;
-  view-transition-class: item;
-}
-
-@keyframes fade-out {
-  to {
-    opacity: 0;
-  }
+  view-transition-class: toast;
 }
 
 @keyframes slide-in {
   from {
-    transform: var(--slide-from);
+    translate: var(--slideX) var(--slideY);
+    opacity: 0;
   }
 }
 
-:root {
-  view-transition-name: none;
+@keyframes slide-out {
+  to {
+    translate: var(--slideX) var(--slideY);
+    opacity: 0;
+  }
 }
 
-::view-transition {
-  pointer-events: none;
-}
-
-::view-transition-group(.item) {
+::view-transition-group(.toast) {
   animation-duration: 300ms;
 }
 
-::view-transition-new(.item) {
+::view-transition-group(.toast.bottom) {
+  --slideX: 0;
+  --slideY: calc(100% + 12px);
+}
+
+::view-transition-group(.toast.top) {
+  --slideX: 0;
+  --slideY: calc(-100% - 12px);
+}
+
+::view-transition-group(.toast.start) {
+  --slideX: calc(-100% - 12px);
+  --slideY: 0;
+}
+
+::view-transition-group(.toast.end) {
+  --slideX: calc(100% + 12px);
+  --slideY: 0;
+}
+
+::view-transition-new(.toast):only-child {
   animation-name: slide-in;
 }
 
-::view-transition-old(.item) {
-  animation-name: fade-out;
+::view-transition-old(.toast):only-child {
+  animation-name: slide-out;
 }
-
