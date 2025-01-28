@@ -47,9 +47,14 @@ interface AriaAutocompleteTestProps extends AriaBaseTestProps {
     defaultValue?: () => ReturnType<typeof render>,
     // should allow the user to filter the items themselves in a async manner. The items should be Foo, Bar, and Baz with ids 1, 2, and 3 respectively.
     // The filtering can take any amount of time but should be standard non-case sensitive contains matching
-    asyncFiltering?: () => ReturnType<typeof render>
-    // TODO, add tests for this when we support it
-    // submenus?: (props?: {name: string}) => ReturnType<typeof render>
+    asyncFiltering?: () => ReturnType<typeof render>,
+    // Should have a menu with three items, and two levels of submenus. Tree should be roughly: Foo Bar Baz -> (branch off Bar) Lvl 1 Bar 1, Lvl 1 Bar 2, Lvl 1 Bar 3 ->
+    // (branch off Lvl 1 Bar 2) ->  Lvl 2 Bar 1, Lvl 2 Bar 2, Lvl 2 Bar 3
+    submenus?: () => ReturnType<typeof render>,
+    // Should have a menu with three items, and two levels of subdialog. Tree should be roughly: Foo Bar Baz -> (branch off Bar) Lvl 1 Bar 1, Lvl 1 Bar 2, Lvl 1 Bar 3 ->
+    // (branch off Lvl 1 Bar 2) ->  Lvl 2 Bar 1, Lvl 2 Bar 2, Lvl 2 Bar 3
+    subdialogs?: () => ReturnType<typeof render>
+    // TODO: mix of the two above
   },
   ariaPattern?: 'menu' | 'listbox',
   selectionListener?: jest.Mock<any, any>,
@@ -119,7 +124,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
         expect(document.activeElement).toBe(input);
       });
 
-      it('should clear the focused key when using ArrowLeft and ArrowRight', async function () {
+      it('should clear the focused key when using ArrowLeft and ArrowRight but preserves it internally for future keyboard operations', async function () {
         let {getByRole} = renderers.standard();
         let input = getByRole('searchbox');
         let menu = getByRole(collectionNodeRole);
@@ -128,17 +133,45 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
         await user.tab();
         expect(document.activeElement).toBe(input);
 
-        await user.keyboard('Foo');
-        act(() => jest.runAllTimers());
+        await user.keyboard('{ArrowDown}');
         let options = within(menu).getAllByRole(collectionItemRole);
         expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
         await user.keyboard('{ArrowRight}');
         expect(input).not.toHaveAttribute('aria-activedescendant');
+        // Old focused key was options[0] so should move one down
         await user.keyboard('{ArrowDown}');
-        expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+        expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
         await user.keyboard('{ArrowLeft}');
         expect(input).not.toHaveAttribute('aria-activedescendant');
         expect(document.activeElement).toBe(input);
+        await user.keyboard('{ArrowUp}');
+        expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+      });
+
+      it('should completely clear the focused key when Backspacing', async function () {
+        let {getByRole} = renderers.standard();
+        let input = getByRole('searchbox');
+        let menu = getByRole(collectionNodeRole);
+        expect(input).not.toHaveAttribute('aria-activedescendant');
+
+        await user.tab();
+        expect(document.activeElement).toBe(input);
+
+        await user.keyboard('B');
+        act(() => jest.runAllTimers());
+        let options = within(menu).getAllByRole(collectionItemRole);
+        let firstActiveDescendant = options[0].id;
+        expect(input).toHaveAttribute('aria-activedescendant', firstActiveDescendant);
+        expect(options[0]).toHaveTextContent('Bar');
+        await user.keyboard('{Backspace}');
+        act(() => jest.runAllTimers());
+        expect(input).not.toHaveAttribute('aria-activedescendant');
+
+        options = within(menu).getAllByRole(collectionItemRole);
+        await user.keyboard('{ArrowDown}');
+        expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+        expect(firstActiveDescendant).not.toEqual(options[0].id);
+        expect(options[0]).toHaveTextContent('Foo');
       });
 
       it('should delay the aria-activedescendant being set when autofocusing the first option', async function () {
@@ -637,6 +670,18 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
           window.removeEventListener('click', onClick);
         });
       });
+    }
+
+    if (renderers.submenus) {
+      // TODO test the following
+      // - that submenu and sub dialog can render
+      // - that focus scope works with subdialog
+      // - that arrowRight doesn't clear focus if on submenu trigger (test that it isn't visibly focus and that going back shows focus on the trigger)
+      // - that escape only closes a single level and coerces focus (virtual focus)
+      // - that tapping on submenu/dialog opens the menu
+      // - that hovering an adjacent menu item closes the menu
+      // - that clicking outside (the body) closes all menus/subdialogs
+      // - that dismiss button closes the current level and moves focus back to the parent menu/subdialog
     }
   });
 };

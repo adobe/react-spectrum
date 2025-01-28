@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaAutocompleteTests} from './AriaAutocomplete.test-util';
 import {Button, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, SearchField, Separator, Text, UNSTABLE_Autocomplete} from '..';
-import {pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import React, {ReactNode} from 'react';
 import {useAsyncList} from 'react-stately';
 import {useFilter} from '@react-aria/i18n';
@@ -66,6 +66,23 @@ let MenuWithSections = (props) => (
     </MenuSection>
   </Menu>
 );
+
+// TODO: add tests for nested submenus and subdialogs
+// let SubMenus = (props) => (
+//   <Menu {...props}>
+//     <MenuItem id="1">Foo</MenuItem>
+//     <MenuItem id="2">Bar</MenuItem>
+//     <MenuItem id="3">Baz</MenuItem>
+//   </Menu>
+// );
+
+// let SubDialogs = (props) => (
+//   <Menu {...props}>
+//     <MenuItem id="1">Foo</MenuItem>
+//     <MenuItem id="2">Bar</MenuItem>
+//     <MenuItem id="3">Baz</MenuItem>
+//   </Menu>
+// );
 
 let StaticListbox = (props) => (
   <ListBox {...props}>
@@ -180,6 +197,11 @@ describe('Autocomplete', () => {
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    act(() => jest.runAllTimers());
   });
 
   // Skipping since arrow keys will still leak out from useSelectableCollection, re-enable when that gets fixed
@@ -232,17 +254,97 @@ describe('Autocomplete', () => {
     let input = getByRole('searchbox');
     await user.tab();
     expect(document.activeElement).toBe(input);
+    // Focus ring should be on input when no aria-activeelement
+    expect(input).toHaveAttribute('data-focus-visible');
+
+    // Focus ring should be on option when it is the active descendant and keyboard modality
     await user.keyboard('{ArrowDown}');
     let menu = getByRole('menu');
     let options = within(menu).getAllByRole('menuitem');
     expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
     expect(options[0]).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focus-visible');
+    expect(input).toHaveAttribute('data-focused');
 
+    // Focus ring should not be on either input or option when hovering (aka mouse modality)
     await user.click(input);
     await user.hover(options[1]);
     options = within(menu).getAllByRole('menuitem');
     expect(options[1]).toHaveAttribute('data-focused');
     expect(options[1]).not.toHaveAttribute('data-focus-visible');
+    expect(input).toHaveAttribute('data-focused');
+
+    // Reset focus visible on input so that isTextInput in useFocusRing doesn't prevent the focus ring
+    // from appearing on the input
+    await user.tab();
+    await user.tab({shift: true});
+
+    // Focus ring should be on option after typing and option is autofocused
+    await user.keyboard('Bar');
+    act(() => jest.runAllTimers());
+    options = within(menu).getAllByRole('menuitem');
+    expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+    expect(options[0]).toHaveAttribute('data-focus-visible');
+    expect(input).toHaveAttribute('data-focused');
+
+    // Focus ring should be on input after clearing focus via ArrowLeft
+    await user.keyboard('{ArrowLeft}');
+    act(() => jest.runAllTimers());
+    options = within(menu).getAllByRole('menuitem');
+    input = getByRole('searchbox');
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+    expect(input).toHaveAttribute('data-focus-visible');
+
+    // Focus ring should be on input after clearing focus via Backspace
+    await user.keyboard('{ArrowDown}');
+    act(() => jest.runAllTimers());
+    expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+    expect(options[0]).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focus-visible');
+    expect(input).toHaveAttribute('data-focused');
+    await user.keyboard('{Backspace}');
+    act(() => jest.runAllTimers());
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+    expect(input).toHaveAttribute('data-focus-visible');
+  });
+
+  it('should not display focus in the virtually focused menu if focus isn\'t in the autocomplete input', async function () {
+    let {getByRole} = render(
+      <>
+        <input />
+        <AutocompleteWrapper>
+          <StaticMenu />
+        </AutocompleteWrapper>
+        <input />
+      </>
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+    expect(input).toHaveAttribute('data-focus-visible');
+    await user.keyboard('{ArrowDown}');
+    let menu = getByRole('menu');
+    let options = within(menu).getAllByRole('menuitem');
+    expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+    expect(options[0]).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focus-visible');
+    expect(input).toHaveAttribute('data-focused');
+
+    await user.tab();
+    expect(document.activeElement).not.toBe(input);
+    expect(options[0]).not.toHaveAttribute('data-focused');
+    expect(options[0]).not.toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focused');
+
+    await user.tab({shift: true});
+    expect(document.activeElement).toBe(input);
+    expect(options[0]).toHaveAttribute('data-focused');
+    expect(options[0]).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute('data-focus-visible');
+    expect(input).toHaveAttribute('data-focused');
   });
 });
 

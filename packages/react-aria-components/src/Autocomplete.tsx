@@ -54,6 +54,8 @@ export function UNSTABLE_Autocomplete(props: AutocompleteProps) {
     filter,
     collectionRef
   }, state);
+
+  // TODO: perhaps the below should be moved into the hooks but it is a bit specific to submenus/subdialogs
   // We need some sort of root menu state for subdialogs/submenus in the Autocomplete wrapped collection even though the autocomplete
   // itself isn't actually a trigger. Only a problem for Autocomplete's that are outside a MenuTrigger/DialogTrigger
   let rootMenuTriggerState = useContext(RootMenuTriggerStateContext);
