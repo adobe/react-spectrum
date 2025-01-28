@@ -17,7 +17,7 @@
 
 import {DOMAttributes} from '@react-types/shared';
 import {FocusEvent, useCallback, useRef} from 'react';
-import {getActiveElement, getOwnerDocument} from '@react-aria/utils';
+import {getActiveElement, getEventTarget, getOwnerDocument} from '@react-aria/utils';
 import {useSyntheticBlurEvent} from './utils';
 
 export interface FocusWithinProps {
@@ -73,7 +73,7 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
     // focus handler already moved focus somewhere else.
     const ownerDocument = getOwnerDocument(e.target);
     const activeElement = getActiveElement(ownerDocument);
-    if (!state.current.isFocusWithin && activeElement === e.target) {
+    if (!state.current.isFocusWithin && activeElement === getEventTarget(e.nativeEvent)) {
       if (onFocusWithin) {
         onFocusWithin(e);
       }

@@ -1,11 +1,19 @@
 // Source: https://github.com/microsoft/tabster/blob/a89fc5d7e332d48f68d03b1ca6e344489d1c3898/src/Shadowdomize/DOMFunctions.ts#L16
 
 import {isShadowRoot} from '../domHelpers';
+import {shadowDOM} from '@react-stately/flags';
 
+/**
+ * ShadowDOM safe version of Node.contains.
+ */
 export function nodeContains(
   node: Node | null | undefined,
   otherNode: Node | null | undefined
 ): boolean {
+  if (!shadowDOM()) {
+    return otherNode && node ? node.contains(otherNode) : false;
+  }
+
   if (!node || !otherNode) {
     return false;
   }
@@ -32,7 +40,13 @@ export function nodeContains(
   return false;
 }
 
+/**
+ * ShadowDOM safe version of document.activeElement.
+ */
 export const getActiveElement = (doc: Document = document) => {
+  if (!shadowDOM()) {
+    return doc.activeElement;
+  }
   let activeElement: Element | null = doc.activeElement;
 
   while (activeElement && 'shadowRoot' in activeElement &&
@@ -43,48 +57,11 @@ export const getActiveElement = (doc: Document = document) => {
   return activeElement;
 };
 
-export function getLastChild(node: Node | null | undefined): ChildNode | null {
-  if (!node) {
-    return null;
-  }
-
-  if (!node.lastChild && (node as Element).shadowRoot) {
-    return getLastChild((node as Element).shadowRoot);
-  }
-
-  return node.lastChild;
-}
-
-export function getPreviousSibling(
-  node: Node | null | undefined
-): ChildNode | null {
-  if (!node) {
-    return null;
-  }
-
-  let sibling = node.previousSibling;
-
-  if (!sibling && node.parentElement?.shadowRoot) {
-    sibling = getLastChild(node.parentElement.shadowRoot);
-  }
-
-  return sibling;
-}
-
-export function getLastElementChild(
-  element: Element | null | undefined
-): Element | null {
-  let child = getLastChild(element);
-
-  while (child && child.nodeType !== Node.ELEMENT_NODE) {
-    child = getPreviousSibling(child);
-  }
-
-  return child as Element | null;
-}
-
+/**
+ * ShadowDOM safe version of event.target.
+ */
 export function getEventTarget(event): Element {
-  if (event.target.shadowRoot) {
+  if (shadowDOM() && event.target.shadowRoot) {
     if (event.composedPath) {
       return event.composedPath()[0];
     }

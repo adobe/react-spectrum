@@ -12,10 +12,14 @@
 
 import {createShadowRoot, render} from '@react-spectrum/test-utils-internal';
 import {createShadowTreeWalker} from '../src';
+import {enableShadowDOM} from '@react-stately/flags';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
 describe('ShadowTreeWalker', () => {
+  beforeAll(() => {
+    enableShadowDOM();
+  });
   describe('Shadow free', () => {
     it('walks through the dom', () => {
       render(

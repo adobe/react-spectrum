@@ -13,6 +13,7 @@
 import {act, createShadowRoot, fireEvent, pointerMap, render, waitFor} from '@react-spectrum/test-utils-internal';
 import {defaultTheme} from '@adobe/react-spectrum';
 import {DialogContainer} from '@react-spectrum/dialog';
+import {enableShadowDOM} from '@react-stately/flags';
 import {FocusScope, useFocusManager} from '../';
 import {focusScopeTree} from '../src/FocusScope';
 import {Provider} from '@react-spectrum/provider';
@@ -1723,6 +1724,7 @@ describe('FocusScope with Shadow DOM', function () {
   let user;
 
   beforeAll(() => {
+    enableShadowDOM();
     user = userEvent.setup({delay: null, pointerMap});
   });
 

@@ -12,9 +12,13 @@
 
 
 import {act} from 'react-dom/test-utils';
+import {enableShadowDOM} from '@react-stately/flags';
 import {getActiveElement, getOwnerWindow} from '../';
 
 describe('getOwnerWindow', () => {
+  beforeAll(() => {
+    enableShadowDOM();
+  });
   test.each([null, undefined])('returns the window if the argument is %p', (value) => {
     expect(getOwnerWindow(value)).toBe(window);
   });
@@ -43,6 +47,9 @@ describe('getOwnerWindow', () => {
 });
 
 describe('getActiveElement', () => {
+  beforeAll(() => {
+    enableShadowDOM();
+  });
   it('returns the body as the active element by default', () => {
     act(() => {document.body.focus();}); // Ensure the body is focused, clearing any specific active element
     expect(getActiveElement()).toBe(document.body);

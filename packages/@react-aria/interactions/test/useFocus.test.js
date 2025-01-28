@@ -11,6 +11,7 @@
  */
 
 import {act, createShadowRoot, render, waitFor} from '@react-spectrum/test-utils-internal';
+import {enableShadowDOM} from '@react-stately/flags';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {useFocus} from '../';
@@ -156,6 +157,9 @@ describe('useFocus', function () {
   });
 
   describe('useFocus with Shadow DOM', function () {
+    beforeAll(() => {
+      enableShadowDOM();
+    });
     it('handles focus events', function () {
       const {shadowRoot, shadowHost} = createShadowRoot();
       const events = [];
