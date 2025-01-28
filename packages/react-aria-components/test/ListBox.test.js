@@ -337,6 +337,12 @@ describe('ListBox', () => {
     expect(getAllByRole('option').map(o => o.textContent)).toEqual(['Hi']);
   });
 
+  it('should support autoFocus', () => {
+    let {getByRole} = renderListbox({autoFocus: true});
+    let listbox = getByRole('listbox');
+    expect(document.activeElement).toBe(listbox);
+  });
+
   it('should support hover', async () => {
     let hoverStartSpy = jest.fn();
     let hoverChangeSpy = jest.fn();

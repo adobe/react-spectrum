@@ -128,6 +128,13 @@ describe('GridList', () => {
     expect(itemRef.current).toBeInstanceOf(HTMLElement);
   });
 
+  it('should support autoFocus', () => {
+    let {getByRole} = renderGridList({autoFocus: true});
+    let gridList = getByRole('grid');
+
+    expect(document.activeElement).toBe(gridList);
+  });
+
   it('should support hover', async () => {
     let onHoverStart = jest.fn();
     let onHoverChange = jest.fn();
