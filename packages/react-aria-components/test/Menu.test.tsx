@@ -1136,20 +1136,18 @@ describe('Menu', () => {
         </MenuTrigger>
       );
 
-      let button = getByRole('button');
-      expect(button).not.toHaveAttribute('data-pressed');
+      let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button')});
+      expect(menuTester.trigger).not.toHaveAttribute('data-pressed');
 
-      await user.click(button);
-      expect(button).toHaveAttribute('data-pressed');
+      await menuTester.open();
+      expect(menuTester.trigger).toHaveAttribute('data-pressed');
+      expect(menuTester.options()).toHaveLength(5);
 
-      let menu = getAllByRole('menu')[0];
-      expect(getAllByRole('menuitem')).toHaveLength(5);
-
-      let popover = menu.closest('.react-aria-Popover');
+      let popover = menuTester.menu?.closest('.react-aria-Popover');
       expect(popover).toBeInTheDocument();
       expect(popover).toHaveAttribute('data-trigger', 'MenuTrigger');
 
-      let triggerItem = getAllByRole('menuitem')[3];
+      let triggerItem = menuTester.submenuTriggers[0];
       expect(triggerItem).toHaveTextContent('Share…');
       expect(triggerItem).toHaveAttribute('aria-haspopup', 'dialog');
       expect(triggerItem).toHaveAttribute('aria-expanded', 'false');
@@ -1158,7 +1156,7 @@ describe('Menu', () => {
       expect(triggerItem).not.toHaveAttribute('data-open');
 
       // Open the subdialog
-      await user.pointer({target: triggerItem});
+      await menuTester.openSubmenu({submenuTrigger: triggerItem});
       act(() => {jest.runAllTimers();});
       expect(triggerItem).toHaveAttribute('data-hovered', 'true');
       expect(triggerItem).toHaveAttribute('aria-expanded', 'true');
@@ -1182,9 +1180,180 @@ describe('Menu', () => {
       expect(document.activeElement).toBe(inputs[0]);
     });
 
-    // TODO: add more tests
-    // nested subdialogs
-    // test ESC
+    it('should support nested subdialogs', async () => {
+      let onAction = jest.fn();
+      let {getByRole, getAllByRole, queryAllByRole} = render(
+        <MenuTrigger>
+          <Button aria-label="Menu">☰</Button>
+          <Popover>
+            <Menu onAction={onAction}>
+              <MenuItem id="open">Open</MenuItem>
+              <MenuItem id="rename">Rename…</MenuItem>
+              <MenuItem id="duplicate">Duplicate</MenuItem>
+              <SubDialogTrigger>
+                <MenuItem id="share">Share…</MenuItem>
+                <Popover>
+                  <Dialog>
+                    {({close}) => (
+                      <>
+                        <Menu>
+                          <SubDialogTrigger>
+                            <MenuItem>Nested Subdialog</MenuItem>
+                            <Popover>
+                              <Dialog>
+                                {({close}) => (
+                                  <form>
+                                    <Heading slot="title">Contact</Heading>
+                                    <TextField autoFocus>
+                                      <Label>Email: </Label>
+                                      <Input />
+                                    </TextField>
+                                    <TextField>
+                                      <Label>Contact number: </Label>
+                                      <Input />
+                                    </TextField>
+                                    <Button onPress={close}>
+                                      Submit
+                                    </Button>
+                                  </form>
+                                )}
+                              </Dialog>
+                            </Popover>
+                          </SubDialogTrigger>
+                          <MenuItem>B</MenuItem>
+                          <MenuItem>C</MenuItem>
+                        </Menu>
+                        <Button onPress={close}>
+                          Close
+                        </Button>
+                      </>
+                    )}
+                  </Dialog>
+                </Popover>
+              </SubDialogTrigger>
+              <MenuItem id="delete">Delete…</MenuItem>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      );
+
+      let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button')});
+      await menuTester.open();
+
+      let triggerItem = menuTester.submenuTriggers[0];
+      expect(triggerItem).toHaveTextContent('Share…');
+      expect(triggerItem).toHaveAttribute('aria-haspopup', 'dialog');
+
+      // Open the subdialog
+      let subDialogTester = await menuTester.openSubmenu({submenuTrigger: triggerItem});
+      act(() => {jest.runAllTimers();});
+      expect(subDialogTester?.menu).toBeInTheDocument();
+
+      let subDialogTriggerItem = subDialogTester?.submenuTriggers[0];
+      expect(subDialogTriggerItem).toHaveTextContent('Nested Subdialog');
+      expect(subDialogTriggerItem).toHaveAttribute('aria-haspopup', 'dialog');
+
+      // Open the nested subdialog
+      await subDialogTester?.openSubmenu({submenuTrigger: subDialogTriggerItem!});
+      act(() => {jest.runAllTimers();});
+      let subdialogs = getAllByRole('dialog');
+      expect(subdialogs).toHaveLength(2);
+
+      await user.keyboard('{Escape}');
+      act(() => {jest.runAllTimers();});
+      subdialogs = getAllByRole('dialog');
+      expect(subdialogs).toHaveLength(1);
+      expect(document.activeElement).toBe(subDialogTriggerItem);
+
+      await user.keyboard('{Escape}');
+      act(() => {jest.runAllTimers();});
+      subdialogs = queryAllByRole('dialog');
+      expect(subdialogs).toHaveLength(0);
+      expect(document.activeElement).toBe(triggerItem);
+    });
+
+    it('should close all subdialogs if interacting outside the root menu', async () => {
+      let onAction = jest.fn();
+      let {getByRole, getAllByRole, queryAllByRole} = render(
+        <MenuTrigger>
+          <Button aria-label="Menu">☰</Button>
+          <Popover>
+            <Menu onAction={onAction}>
+              <MenuItem id="open">Open</MenuItem>
+              <MenuItem id="rename">Rename…</MenuItem>
+              <MenuItem id="duplicate">Duplicate</MenuItem>
+              <SubDialogTrigger>
+                <MenuItem id="share">Share…</MenuItem>
+                <Popover>
+                  <Dialog>
+                    {({close}) => (
+                      <>
+                        <Menu>
+                          <SubDialogTrigger>
+                            <MenuItem>Nested Subdialog</MenuItem>
+                            <Popover>
+                              <Dialog>
+                                {({close}) => (
+                                  <form>
+                                    <Heading slot="title">Contact</Heading>
+                                    <TextField autoFocus>
+                                      <Label>Email: </Label>
+                                      <Input />
+                                    </TextField>
+                                    <TextField>
+                                      <Label>Contact number: </Label>
+                                      <Input />
+                                    </TextField>
+                                    <Button onPress={close}>
+                                      Submit
+                                    </Button>
+                                  </form>
+                                )}
+                              </Dialog>
+                            </Popover>
+                          </SubDialogTrigger>
+                          <MenuItem>B</MenuItem>
+                          <MenuItem>C</MenuItem>
+                        </Menu>
+                        <Button onPress={close}>
+                          Close
+                        </Button>
+                      </>
+                    )}
+                  </Dialog>
+                </Popover>
+              </SubDialogTrigger>
+              <MenuItem id="delete">Delete…</MenuItem>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      );
+
+      let menuTester = testUtilUser.createTester('Menu', {root: getByRole('button')});
+      await menuTester.open();
+
+      // Open the subdialog
+      let triggerItem = menuTester.submenuTriggers[0];
+
+      let subDialogTester = await menuTester.openSubmenu({submenuTrigger: triggerItem});
+      act(() => {jest.runAllTimers();});
+      expect(subDialogTester?.menu).toBeInTheDocument();
+
+      // Open the nested subdialog
+      let subDialogTriggerItem = subDialogTester?.submenuTriggers[0];
+      await subDialogTester?.openSubmenu({submenuTrigger: subDialogTriggerItem!});
+      act(() => {jest.runAllTimers();});
+      let subdialogs = getAllByRole('dialog');
+      expect(subdialogs).toHaveLength(2);
+
+      await user.click(document.body);
+      act(() => {jest.runAllTimers();});
+      subdialogs = queryAllByRole('dialog');
+      expect(subdialogs).toHaveLength(0);
+      expect(menuTester.menu).not.toBeInTheDocument();
+    });
+
+    // TODO: add test where clicking in a parent subdialog should close the nested subdialog when we fix that use case
   });
 
   describe('portalContainer', () => {

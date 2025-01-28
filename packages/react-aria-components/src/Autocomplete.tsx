@@ -64,6 +64,8 @@ export function UNSTABLE_Autocomplete(props: AutocompleteProps) {
   // If the Autocomplete is wrapped around a menu that is rendered outside a popover (aka just in the DOM as is), then we need to be able to
   // close all submenus/dialogs when clicking on the body of the page/parent input field since those submenus/dialogs aren't dismissible and rely on the
   // root menu/dialog handling useInteractOutside
+  // TODO: If we fix the usage of due to data-react-aria-top-layer however, we will need to check if the event occurs within the tree, otherwise clicking
+  // in a subdialog will be treated as a useInteractOutside. At that point we could perhaps get rid of this anyways?
   useInteractOutside({
     ref: collectionRef,
     onInteractOutside: () => {

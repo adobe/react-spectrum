@@ -200,6 +200,17 @@ export const SubDialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogt
     itemRef.current?.focus();
   };
 
+  // TODO: if we can get this to work, perhaps should be in hook
+  // However, due to data-react-aria-top-layer, it won't trigger at all
+  // useInteractOutside({
+  //   ref: subdialogRef,
+  //   onInteractOutside: (e) => {
+  //     if (e.target !== itemRef.current) {
+  //       submenuTriggerState.close();
+  //     }
+  //   }
+  // });
+
   return (
     <Provider
       values={[
