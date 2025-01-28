@@ -15,6 +15,7 @@ import {AriaMenuOptions} from './useMenu';
 import type {AriaPopoverProps, OverlayProps} from '@react-aria/overlays';
 import {FocusableElement, FocusStrategy, KeyboardEvent, Node, PressEvent, RefObject} from '@react-types/shared';
 import {focusWithoutScrolling, useEffectEvent, useId, useLayoutEffect} from '@react-aria/utils';
+import {getInteractionModality} from '@react-aria/interactions';
 import type {SubmenuTriggerState} from '@react-stately/menu';
 import {useCallback, useRef} from 'react';
 import {useLocale} from '@react-aria/i18n';
@@ -266,8 +267,10 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
       // Perhaps I could make subdialogs not have this prop but then screen readers wouldn't be able to navigate to the trigger and user won't be able to hover
       // the other items in the parent menu when the subdialog is open.
       isNonModal: true,
-      // Only enable focusscope restore focus if we are using virtual focus, otherwise we'll be manually coercing focus back to the triggers on menu/dialog close
-      disableFocusManagement: !isVirtualFocus,
+      // We will manually coerce focus back to the triggers for mobile screen readers and non virtual focus use cases (aka submenus outside of autocomplete) so turn off
+      // FocusScope then. For virtual focus use cases (Autocomplete subdialogs/menu) and subdialogs we want to keep FocusScope restoreFocus to automatically
+      // send focus to parent subdialog input fields and/or tab containment
+      disableFocusManagement: !isVirtualFocus && (getInteractionModality() === 'virtual' || type === 'menu'),
       shouldCloseOnInteractOutside
     }
   };

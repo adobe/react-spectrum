@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Dialog, Header, Heading, Keyboard, Menu, MenuSection, MenuTrigger, Popover, Separator, SubmenuTrigger, Text} from 'react-aria-components';
+import {Button, Dialog, Header, Heading, Input, Keyboard, Label, Menu, MenuSection, MenuTrigger, Popover, Separator, SubmenuTrigger, Text, TextField} from 'react-aria-components';
 import {MyMenuItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
@@ -280,6 +280,7 @@ export const SubmenuSectionsExample = (args) => (
   </MenuTrigger>
 );
 
+// TODO: figure out why it is autofocusing the Menu in the SubDialog
 export const SubdialogExample = (args) => (
   <MenuTrigger>
     <Button aria-label="Menu">☰</Button>
@@ -296,18 +297,70 @@ export const SubdialogExample = (args) => (
               padding: 5
             }}>
             <Dialog>
-              <form style={{display: 'flex', flexDirection: 'column'}}>
-                <Heading slot="title">Sign up</Heading>
-                <label>
-                  First Name: <input placeholder="John" />
-                </label>
-                <label>
-                  Last Name: <input placeholder="Smith" />
-                </label>
-                <Button onPress={close} style={{marginTop: 10}}>
-                  Submit
-                </Button>
-              </form>
+              {({close}) => (
+                <form style={{display: 'flex', flexDirection: 'column'}}>
+                  <Heading slot="title">Sign up</Heading>
+                  <TextField autoFocus>
+                    <Label>First Name: </Label>
+                    <Input />
+                  </TextField>
+                  <TextField>
+                    <Label>Last Name: </Label>
+                    <Input />
+                  </TextField>
+                  <Menu>
+                    <SubmenuTrigger {...args}>
+                      <MyMenuItem id="A">A</MyMenuItem>
+                      <Popover
+                        style={{
+                          background: 'Canvas',
+                          color: 'CanvasText',
+                          border: '1px solid gray',
+                          padding: 5
+                        }}>
+                        <Menu>
+                          <MyMenuItem>1</MyMenuItem>
+                          <MyMenuItem>2</MyMenuItem>
+                          <MyMenuItem>3</MyMenuItem>
+                        </Menu>
+                      </Popover>
+                    </SubmenuTrigger>
+                    <SubDialogTrigger {...args}>
+                      <MyMenuItem id="B">B</MyMenuItem>
+                      <Popover
+                        style={{
+                          background: 'Canvas',
+                          color: 'CanvasText',
+                          border: '1px solid gray',
+                          padding: 5
+                        }}>
+                        <Dialog>
+                          {({close}) => (
+                            <form style={{display: 'flex', flexDirection: 'column'}}>
+                              <Heading slot="title">Sign up</Heading>
+                              <TextField autoFocus>
+                                <Label>Email: </Label>
+                                <Input />
+                              </TextField>
+                              <TextField>
+                                <Label>Contact number: </Label>
+                                <Input />
+                              </TextField>
+                              <Button onPress={close} style={{marginTop: 10}}>
+                                Submit
+                              </Button>
+                            </form>
+                          )}
+                        </Dialog>
+                      </Popover>
+                    </SubDialogTrigger>
+                    <MyMenuItem id="C">C</MyMenuItem>
+                  </Menu>
+                  <Button onPress={close} style={{marginTop: 10}}>
+                    Submit
+                  </Button>
+                </form>
+              )}
             </Dialog>
           </Popover>
         </SubDialogTrigger>

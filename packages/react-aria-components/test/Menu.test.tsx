@@ -12,9 +12,10 @@
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaMenuTests} from './AriaMenu.test-util';
-import {Button, Collection, Header, Keyboard, Menu, MenuContext, MenuItem, MenuSection, MenuTrigger, Popover, Separator, SubmenuTrigger, Text} from '..';
+import {Button, Collection, Dialog, Header, Heading, Input, Keyboard, Label, Menu, MenuContext, MenuItem, MenuSection, MenuTrigger, Popover, Separator, SubmenuTrigger, Text, TextField} from '..';
 import React, {useState} from 'react';
 import {Selection, SelectionMode} from '@react-types/shared';
+import {SubDialogTrigger} from '../src/Menu';
 import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
@@ -1093,6 +1094,97 @@ describe('Menu', () => {
       expect(submenu).not.toBeInTheDocument();
       expect(menu).not.toBeInTheDocument();
     });
+  });
+
+  describe('Subdialog', function () {
+    it('should contain focus for subdialogs', async () => {
+      let onAction = jest.fn();
+      let {getByRole, getAllByRole} = render(
+        <MenuTrigger>
+          <Button aria-label="Menu">☰</Button>
+          <Popover>
+            <Menu onAction={onAction}>
+              <MenuItem id="open">Open</MenuItem>
+              <MenuItem id="rename">Rename…</MenuItem>
+              <MenuItem id="duplicate">Duplicate</MenuItem>
+              <SubDialogTrigger>
+                <MenuItem id="share">Share…</MenuItem>
+                <Popover>
+                  <Dialog>
+                    {({close}) => (
+                      <form style={{display: 'flex', flexDirection: 'column'}}>
+                        <Heading slot="title">Sign up</Heading>
+                        <TextField>
+                          <Label>First Name: </Label>
+                          <Input />
+                        </TextField>
+                        <TextField>
+                          <Label>Last Name: </Label>
+                          <Input />
+                        </TextField>
+                        <Button onPress={close}>
+                          Submit
+                        </Button>
+                      </form>
+                    )}
+                  </Dialog>
+                </Popover>
+              </SubDialogTrigger>
+              <MenuItem id="delete">Delete…</MenuItem>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      );
+
+      let button = getByRole('button');
+      expect(button).not.toHaveAttribute('data-pressed');
+
+      await user.click(button);
+      expect(button).toHaveAttribute('data-pressed');
+
+      let menu = getAllByRole('menu')[0];
+      expect(getAllByRole('menuitem')).toHaveLength(5);
+
+      let popover = menu.closest('.react-aria-Popover');
+      expect(popover).toBeInTheDocument();
+      expect(popover).toHaveAttribute('data-trigger', 'MenuTrigger');
+
+      let triggerItem = getAllByRole('menuitem')[3];
+      expect(triggerItem).toHaveTextContent('Share…');
+      expect(triggerItem).toHaveAttribute('aria-haspopup', 'dialog');
+      expect(triggerItem).toHaveAttribute('aria-expanded', 'false');
+      // TODO: should this have a different data attribute aka has-subdialog?
+      expect(triggerItem).toHaveAttribute('data-has-submenu', 'true');
+      expect(triggerItem).not.toHaveAttribute('data-open');
+
+      // Open the subdialog
+      await user.pointer({target: triggerItem});
+      act(() => {jest.runAllTimers();});
+      expect(triggerItem).toHaveAttribute('data-hovered', 'true');
+      expect(triggerItem).toHaveAttribute('aria-expanded', 'true');
+      expect(triggerItem).toHaveAttribute('data-open', 'true');
+      let subdialog = getAllByRole('dialog')[0];
+      expect(subdialog).toBeInTheDocument();
+
+      let subdialogPopover = subdialog.closest('.react-aria-Popover') as HTMLElement;
+      expect(subdialogPopover).toBeInTheDocument();
+      expect(subdialogPopover).toHaveAttribute('data-trigger', 'SubDialogTrigger');
+
+      let inputs = within(subdialogPopover).getAllByRole('textbox');
+      let buttons = within(subdialogPopover).getAllByRole('button');
+      await user.click(inputs[0]);
+      expect(document.activeElement).toBe(inputs[0]);
+      await user.tab();
+      expect(document.activeElement).toBe(inputs[1]);
+      await user.tab();
+      expect(document.activeElement).toBe(buttons[0]);
+      await user.tab();
+      expect(document.activeElement).toBe(inputs[0]);
+    });
+
+    // TODO: add more tests
+    // nested subdialogs
+    // test ESC
   });
 
   describe('portalContainer', () => {

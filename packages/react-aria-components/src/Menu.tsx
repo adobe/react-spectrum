@@ -158,6 +158,7 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
   );
 }, props => props.children[0]);
 
+// TODO: make SubdialogTrigger unstable
 export interface SubdialogTriggerProps {
   /**
    * The contents of the SubDialogTrigger. The first child should be an Item (the trigger) and the second child should be the Popover (for the subdialog).
