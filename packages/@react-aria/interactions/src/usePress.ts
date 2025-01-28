@@ -498,7 +498,9 @@ export function usePress(props: PressHookProps): PressResult {
             // However, iOS and Android do not focus or fire onClick after a long press.
             // We work around this by triggering a click ourselves after a timeout.
             // This timeout is canceled during the click event in case the real one fires first.
-            // In testing, a 0ms delay is too short. 5ms seems long enough for the browser to fire the real events.
+            // The timeout must be at least 32ms, because Safari on iOS delays the click event on
+            // non-form elements without certain ARIA roles (for hover emulation).
+            // https://github.com/WebKit/WebKit/blob/dccfae42bb29bd4bdef052e469f604a9387241c0/Source/WebKit/WebProcess/WebPage/ios/WebPageIOS.mm#L875-L892
             let clicked = false;
             let timeout = setTimeout(() => {
               if (state.isPressed && state.target instanceof HTMLElement) {
@@ -509,7 +511,7 @@ export function usePress(props: PressHookProps): PressResult {
                   state.target.click();
                 }
               }
-            }, 5);
+            }, 40);
             // Use a capturing listener to track if a click occurred.
             // If stopPropagation is called it may never reach our handler.
             addGlobalListener(e.currentTarget as Document, 'click', () => clicked = true, true);
