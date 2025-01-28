@@ -17,6 +17,7 @@ import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Heading} from '@react-spectrum/text';
 import {LabeledValue} from '..';
 import React from 'react';
+import { Link } from "@react-spectrum/link";
 
 type LabeledValueStory = ComponentStoryObj<typeof LabeledValue>;
 
@@ -118,6 +119,15 @@ export let Number: LabeledValueStory = {
 export let NumberRange: LabeledValueStory = {
   args: {label: 'Test', value: {start: 10, end: 20}},
   name: 'RangeValue<Number>'
+};
+
+
+export let CustomComponent: LabeledValueStory = {
+  args: {
+    label: "Test",
+    value: <Link href="https://www.adobe.com">Adobe</Link>,
+  },
+  name: "CustomComponent",
 };
 
 export let WithContextualHelp: LabeledValueStory = {

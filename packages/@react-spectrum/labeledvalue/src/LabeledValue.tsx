@@ -78,6 +78,15 @@ export const LabeledValue = React.forwardRef(function LabeledValue<T extends Spe
   } = props;
   let domRef = useDOMRef(ref);
 
+  // todo(sanmalik) - fix this
+  if (
+    domRef?.current &&
+    domRef.current.querySelectorAll("input, [contenteditable], textarea")
+      .length > 0
+  ) {
+    throw new Error("LabeledValue cannot contain an editable element.");
+  }
+
   let children;
   if (Array.isArray(value)) {
     children = <FormattedStringList value={value} formatOptions={formatOptions as Intl.ListFormatOptions} />;
@@ -100,6 +109,10 @@ export const LabeledValue = React.forwardRef(function LabeledValue<T extends Spe
   }
 
   if (typeof value === 'string') {
+    children = value;
+  }
+
+  if (React.isValidElement(value)) {
     children = value;
   }
 
