@@ -68,7 +68,6 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
   let {autoComplete, name = data.name, isDisabled = data.isDisabled} = props;
   let {validationBehavior, isRequired} = data;
   let {visuallyHiddenProps} = useVisuallyHidden();
-  let selectRefValue = props.selectRef?.current?.value;
 
   useFormReset(props.selectRef, state.selectedKey, state.setSelectedKey);
   useFormValidation({
