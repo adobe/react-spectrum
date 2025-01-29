@@ -14,9 +14,10 @@ import {AriaMenuItemProps} from './useMenuItem';
 import {AriaMenuOptions} from './useMenu';
 import type {AriaPopoverProps, OverlayProps} from '@react-aria/overlays';
 import {FocusableElement, FocusStrategy, KeyboardEvent, Node, PressEvent, RefObject} from '@react-types/shared';
+import {focusWithoutScrolling, useEffectEvent, useId, useLayoutEffect} from '@react-aria/utils';
+import {getInteractionModality} from '@react-aria/interactions';
 import type {SubmenuTriggerState} from '@react-stately/menu';
 import {useCallback, useRef} from 'react';
-import {useEffectEvent, useId, useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 import {useSafelyMouseToSubmenu} from './useSafelyMouseToSubmenu';
 
@@ -38,7 +39,9 @@ export interface AriaSubmenuTriggerProps {
    * The delay time in milliseconds for the submenu to appear after hovering over the trigger.
    * @default 200
    */
-  delay?: number
+  delay?: number,
+  /** Whether the submenu trigger uses virtual focus. */
+  isVirtualFocus?: boolean
 }
 
 interface SubmenuTriggerProps extends Omit<AriaMenuItemProps, 'key'> {
@@ -67,7 +70,7 @@ export interface SubmenuTriggerAria<T> {
  * @param ref - Ref to the submenu trigger element.
  */
 export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: SubmenuTriggerState, ref: RefObject<FocusableElement | null>): SubmenuTriggerAria<T> {
-  let {parentMenuRef, submenuRef, type = 'menu', isDisabled, delay = 200} = props;
+  let {parentMenuRef, submenuRef, type = 'menu', isDisabled, delay = 200, isVirtualFocus} = props;
   let submenuTriggerId = useId();
   let overlayId = useId();
   let {direction} = useLocale();
@@ -101,20 +104,47 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
         if (direction === 'ltr' && e.currentTarget.contains(e.target as Element)) {
           e.stopPropagation();
           onSubmenuClose();
-          ref.current?.focus();
+          if (!isVirtualFocus && ref.current) {
+            focusWithoutScrolling(ref.current);
+          }
         }
         break;
       case 'ArrowRight':
         if (direction === 'rtl' && e.currentTarget.contains(e.target as Element)) {
           e.stopPropagation();
           onSubmenuClose();
-          ref.current?.focus();
+          if (!isVirtualFocus && ref.current) {
+            focusWithoutScrolling(ref.current);
+          }
         }
         break;
       case 'Escape':
-        e.stopPropagation();
-        state.closeAll();
+        // TODO: can remove this when we fix collection event leaks
+        if (submenuRef.current?.contains(e.target as Element)) {
+          e.stopPropagation();
+          onSubmenuClose();
+          if (!isVirtualFocus && ref.current) {
+            focusWithoutScrolling(ref.current);
+          }
+        }
         break;
+    }
+  };
+
+  let subDialogKeyDown = (e: KeyboardEvent) => {
+    switch (e.key) {
+      case 'Escape':
+        onSubmenuClose();
+        if (!isVirtualFocus && ref.current) {
+          focusWithoutScrolling(ref.current);
+        }
+        return;
+      default:
+        // Ensure events like Tab are still handled by the FocusScope
+        if ('continuePropagation' in e) {
+          e.continuePropagation();
+        }
+
     }
   };
 
@@ -122,6 +152,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
     id: overlayId,
     'aria-labelledby': submenuTriggerId,
     submenuLevel: state.submenuLevel,
+    onKeyDown: type === 'dialog' ? subDialogKeyDown : undefined,
     ...(type === 'menu' && {
       onClose: state.closeAll,
       autoFocus: state.focusStrategy ?? undefined,
@@ -139,7 +170,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
             }
 
             if (type === 'menu' && !!submenuRef?.current && document.activeElement === ref?.current) {
-              submenuRef.current.focus();
+              focusWithoutScrolling(submenuRef.current);
             }
           } else if (state.isOpen) {
             onSubmenuClose();
@@ -157,7 +188,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
             }
 
             if (type === 'menu' && !!submenuRef?.current && document.activeElement === ref?.current) {
-              submenuRef.current.focus();
+              focusWithoutScrolling(submenuRef.current);
             }
           } else if (state.isOpen) {
             onSubmenuClose();
@@ -165,9 +196,6 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
             e.continuePropagation();
           }
         }
-        break;
-      case 'Escape':
-        state.closeAll();
         break;
       default:
         e.continuePropagation();
@@ -205,7 +233,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
   };
 
   let onBlur = (e) => {
-    if (state.isOpen && parentMenuRef.current?.contains(e.relatedTarget)) {
+    if (state.isOpen && (parentMenuRef.current?.contains(e.relatedTarget) || isVirtualFocus)) {
       onSubmenuClose();
     }
   };
@@ -235,8 +263,17 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
     },
     submenuProps,
     popoverProps: {
+      // TODO: this is a bit problematic since nested subdialogs won't dismiss when clicking into a parent subdialog since this makes them non-dismissible
+      // Normally shouldCloseonInteractOutside above should be sufficient but all the subdialogs are also react-aria-top-layer and thus isElementInChildScope is
+      // always true and thus useOverlay's useInteractOutside logic will early return
+      // This also cause the subdialog to automatically close because the newly opened subdialog might cause a scroll due to VO focusing the input field in the subdialog
+      // Perhaps I could make subdialogs not have this prop but then screen readers wouldn't be able to navigate to the trigger and user won't be able to hover
+      // the other items in the parent menu when the subdialog is open.
       isNonModal: true,
-      disableFocusManagement: true,
+      // We will manually coerce focus back to the triggers for mobile screen readers and non virtual focus use cases (aka submenus outside of autocomplete) so turn off
+      // FocusScope then. For virtual focus use cases (Autocomplete subdialogs/menu) and subdialogs we want to keep FocusScope restoreFocus to automatically
+      // send focus to parent subdialog input fields and/or tab containment
+      disableFocusManagement: !isVirtualFocus && (getInteractionModality() === 'virtual' || type === 'menu'),
       shouldCloseOnInteractOutside
     }
   };

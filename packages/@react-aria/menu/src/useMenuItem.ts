@@ -17,6 +17,7 @@ import {isFocusVisible, useFocus, useHover, useKeyboard, usePress} from '@react-
 import {menuData} from './utils';
 import {SelectionManager} from '@react-stately/selection';
 import {TreeState} from '@react-stately/tree';
+import {useEffect} from 'react';
 import {useSelectableItem} from '@react-aria/selection';
 
 export interface MenuItemAria {
@@ -191,6 +192,12 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   }
 
   let onPressStart = (e: PressEvent) => {
+    // TODO: ideally this would be done in useselectableItem but we don't apply that hook's item's props if the node is a menu trigger
+    if (data.shouldUseVirtualFocus && (e.pointerType === 'virtual' || e.pointerType === 'keyboard')) {
+      selectionManager.setFocused(true);
+      selectionManager.setFocusedKey(key);
+    }
+
     if (e.pointerType === 'keyboard') {
       performAction(e);
     }
@@ -207,6 +214,11 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   };
 
   let onPressUp = (e: PressEvent) => {
+    if (data.shouldUseVirtualFocus && (e.pointerType === 'touch' || e.pointerType === 'mouse')) {
+      selectionManager.setFocused(true);
+      selectionManager.setFocusedKey(key);
+    }
+
     // If interacting with mouse, allow the user to mouse down on the trigger button,
     // drag, and release over an item (matching native behavior).
     if (e.pointerType === 'mouse') {
@@ -301,6 +313,15 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   delete domProps.id;
   let linkProps = useLinkProps(item?.props);
 
+  useEffect(() => {
+    if (isTrigger && data.shouldUseVirtualFocus && isTriggerExpanded && key !== selectionManager.focusedKey) {
+      // If using virtual focus, we need to fake a blur event when virtual focus moves away from an open submenutrigger since we won't actual trigger a real
+      // blur event. This is so the submenu will close when the user hovers/keyboard navigates to another sibiling menu item
+      ref.current?.dispatchEvent(new FocusEvent('focusout', {bubbles: true}));
+      ref.current?.dispatchEvent(new Event('blur'));
+    }
+  }, [data.shouldUseVirtualFocus, isTrigger, isTriggerExpanded, key, selectionManager, ref]);
+
   return {
     menuItemProps: {
       ...ariaProps,
@@ -318,7 +339,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       id: keyboardId
     },
     isFocused,
-    isFocusVisible: isFocused && isFocusVisible(),
+    isFocusVisible: isFocused && selectionManager.isFocused && isFocusVisible() && !isTriggerExpanded,
     isSelected,
     isPressed,
     isDisabled

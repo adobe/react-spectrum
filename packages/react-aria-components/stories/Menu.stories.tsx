@@ -11,10 +11,11 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Header, Keyboard, Menu, MenuSection, MenuTrigger, Popover, Separator, SubmenuTrigger, Text} from 'react-aria-components';
+import {Button, Dialog, Header, Heading, Input, Keyboard, Label, Menu, MenuSection, MenuTrigger, Popover, Separator, SubmenuTrigger, Text, TextField} from 'react-aria-components';
 import {MyMenuItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
+import {SubDialogTrigger} from '../src/Menu';
 
 export default {
   title: 'React Aria Components'
@@ -279,6 +280,97 @@ export const SubmenuSectionsExample = (args) => (
   </MenuTrigger>
 );
 
+// TODO: figure out why it is autofocusing the Menu in the SubDialog
+export const SubdialogExample = (args) => (
+  <MenuTrigger>
+    <Button aria-label="Menu">☰</Button>
+    <Popover>
+      <Menu className={styles.menu} onAction={action('onAction')}>
+        <MyMenuItem id="Foo">Foo</MyMenuItem>
+        <SubDialogTrigger {...args}>
+          <MyMenuItem id="Bar">Bar</MyMenuItem>
+          <Popover
+            style={{
+              background: 'Canvas',
+              color: 'CanvasText',
+              border: '1px solid gray',
+              padding: 5
+            }}>
+            <Dialog>
+              {({close}) => (
+                <form style={{display: 'flex', flexDirection: 'column'}}>
+                  <Heading slot="title">Sign up</Heading>
+                  <TextField autoFocus>
+                    <Label>First Name: </Label>
+                    <Input />
+                  </TextField>
+                  <TextField>
+                    <Label>Last Name: </Label>
+                    <Input />
+                  </TextField>
+                  <Menu>
+                    <SubmenuTrigger {...args}>
+                      <MyMenuItem>SubMenu</MyMenuItem>
+                      <Popover
+                        style={{
+                          background: 'Canvas',
+                          color: 'CanvasText',
+                          border: '1px solid gray',
+                          padding: 5
+                        }}>
+                        <Menu>
+                          <MyMenuItem>1</MyMenuItem>
+                          <MyMenuItem>2</MyMenuItem>
+                          <MyMenuItem>3</MyMenuItem>
+                        </Menu>
+                      </Popover>
+                    </SubmenuTrigger>
+                    <SubDialogTrigger {...args}>
+                      <MyMenuItem>SubDialog</MyMenuItem>
+                      <Popover
+                        style={{
+                          background: 'Canvas',
+                          color: 'CanvasText',
+                          border: '1px solid gray',
+                          padding: 5
+                        }}>
+                        <Dialog>
+                          {({close}) => (
+                            <form style={{display: 'flex', flexDirection: 'column'}}>
+                              <Heading slot="title">Contact</Heading>
+                              <TextField autoFocus>
+                                <Label>Email: </Label>
+                                <Input />
+                              </TextField>
+                              <TextField>
+                                <Label>Contact number: </Label>
+                                <Input />
+                              </TextField>
+                              <Button onPress={close} style={{marginTop: 10}}>
+                                Submit
+                              </Button>
+                            </form>
+                          )}
+                        </Dialog>
+                      </Popover>
+                    </SubDialogTrigger>
+                    <MyMenuItem>C</MyMenuItem>
+                  </Menu>
+                  <Button onPress={close} style={{marginTop: 10}}>
+                    Submit
+                  </Button>
+                </form>
+              )}
+            </Dialog>
+          </Popover>
+        </SubDialogTrigger>
+        <MyMenuItem id="Baz">Baz</MyMenuItem>
+        <MyMenuItem id="Google" href="https://google.com">Google</MyMenuItem>
+      </Menu>
+    </Popover>
+  </MenuTrigger>
+);
+
 let submenuArgs = {
   args: {
     delay: 200
@@ -294,3 +386,4 @@ SubmenuExample.story = {...submenuArgs};
 SubmenuNestedExample.story = {...submenuArgs};
 SubmenuManyItemsExample.story = {...submenuArgs};
 SubmenuDisabledExample.story = {...submenuArgs};
+SubdialogExample.story = {...submenuArgs};
