@@ -52,7 +52,7 @@ keywords: [tree, grid]
 ## Example
 
 ```tsx example
-<TreeView aria-label="Example tree with static contents" defaultExpandedKeys={new Set(['documents', 'photos'])} height="size-4600" maxWidth="size-6000">
+<TreeView aria-label="Example tree with static contents" defaultExpandedKeys={['documents', 'photos']} height="size-4600" maxWidth="size-6000">
   <TreeViewItem id="documents" textValue="Documents">
     <TreeItemContent>
       <Text>Documents</Text>
@@ -470,6 +470,10 @@ The `<TreeViewItem>` component works with frameworks and client side routers lik
 ### TreeView props
 
 <PropTable component={docs.exports.TreeView} links={docs.links} style={{marginBottom: '40px'}} />
+
+### TreeItemContent props
+
+<PropTable component={docs.exports.TreeItemContent} links={docs.links} style={{marginBottom: '40px'}} />
 
 ### TreeViewItem props
 
