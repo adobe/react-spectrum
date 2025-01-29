@@ -275,34 +275,31 @@ describe('LabeledValue', function () {
     expect(staticField).toHaveTextContent('10 – 20');
   });
 
-  it("renders correctly with ReactNode value", function () {
-    let { getByTestId } = render(
+  it('renders correctly with ReactNode value', function () {
+    let {getByTestId} = render(
       <LabeledValue
         data-testid="test-id"
         label="Field label"
-        value={<a href="https://test.com">test</a>}
-      />
+        value={<a href="https://test.com">test</a>} />
     );
 
-    let staticField = getByTestId("test-id");
+    let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent("test");
+    expect(staticField).toHaveTextContent('test');
     expect(
-      within(staticField).getByRole("link", { name: "test" })
+      within(staticField).getByRole('link', {name: 'test'})
     ).toBeInTheDocument();
   });
 
-  it("throws when an editable value is provided", function () {
+  it('throws when an editable value is provided', function () {
     expect(() => {
       render(
         <LabeledValue
           data-testid="test-id"
           label={<input />}
-          value="test"
-          isEditable
-        />
+          value="test" />
       );
-    }).toThrow("LabeledValue cannot contain an editable element.");
+    }).toThrow('LabeledValue cannot contain an editable element.');
   });
 
   it('attaches a user provided ref to the outer div', function () {

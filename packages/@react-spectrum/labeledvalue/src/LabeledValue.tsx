@@ -65,7 +65,7 @@ type LabeledValueProps<T> =
   T extends string ? StringProps<T> :
   never;
 
-type SpectrumLabeledValueTypes = string[] | string | Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time | number | RangeValue<number> | RangeValue<DateTime>;
+type SpectrumLabeledValueTypes = string[] | string | Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time | number | RangeValue<number> | RangeValue<DateTime> | ReactNode;
 export type SpectrumLabeledValueProps<T> = LabeledValueProps<T> & LabeledValueBaseProps;
 
 /**
@@ -82,12 +82,12 @@ export const LabeledValue = React.forwardRef(function LabeledValue<T extends Spe
   useEffect(() => {
     if (
       domRef?.current &&
-      domRef.current.querySelectorAll("input, [contenteditable], textarea")
+      domRef.current.querySelectorAll('input, [contenteditable], textarea')
         .length > 0
     ) {
-      throw new Error("LabeledValue cannot contain an editable element.");
+      throw new Error('LabeledValue cannot contain an editable element.');
     }
-  }, [domRef])
+  }, [domRef]);
   
 
   let children;
