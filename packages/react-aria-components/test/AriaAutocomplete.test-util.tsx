@@ -16,7 +16,6 @@ import {
   mockClickDefault,
   pointerMap
 } from '@react-spectrum/test-utils-internal';
-import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 // TODO: bring this in when a test util is written so that we can have proper testing for all interaction modalities
