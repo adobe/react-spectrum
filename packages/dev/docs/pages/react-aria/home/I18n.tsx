@@ -171,7 +171,7 @@ export function I18n() {
 
   return (
     <div className="grid items-center justify-items-center py-10 px-0 md:p-10 lg:p-0 gap-10 lg:gap-0 lg:grid-cols-[auto_1fr_1fr] mt-10 card-shadow rounded-2xl bg-white dark:bg-zinc-800/90 overflow-hidden">
-      <div className="grid md:grid-cols-2 lg:grid-cols-1 flex-col gap-4 lg:p-10 lg:mr-10 lg:border-r dark:border-r-zinc-300/10">
+      <div className="grid md:grid-cols-2 lg:grid-cols-1 flex-col gap-4 lg:p-10 lg:mr-10 lg:border-r border-r-gray-200 dark:border-r-zinc-300/10">
         <Select label="Locale" items={locales} selectedKey={locale} onSelectionChange={updateLocale}>
           {item => <SelectItem id={item.value}>{item.label}</SelectItem>}
         </Select>

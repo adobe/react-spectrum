@@ -29,7 +29,7 @@ export function SelectBox({ name, icon, description }: SelectBoxProps) {
   return (
     <Radio
       value={name}
-      className="flex justify-center bg-white border rounded dark:bg-black p-160 m-160 h-2000 w-2000 focus:outline-none focus-visible:ring-half focus-visible:ring-offset-0 selected:bg-accent-100 selected:border-accent-700"
+      className="flex justify-center bg-white border rounded dark:bg-black p-160 m-160 h-2000 w-2000 focus:outline-hidden focus-visible:ring-half focus-visible:ring-offset-0 selected:bg-accent-100 selected:border-accent-700"
     >
       {({ isSelected }) => (
         <div className="relative flex flex-col items-center justify-center w-full h-full gap-150">
