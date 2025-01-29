@@ -345,7 +345,7 @@ The following example includes a custom Column component with a sort indicator. 
 ```tsx example export=true render=false
 import type {ColumnProps} from 'react-aria-components';
 
-function MyColumn(props: ColumnProps) {
+export function MyColumn(props: ColumnProps) {
   return (
     <Column {...props}>
       {({allowsSorting, sortDirection}) => <>
@@ -367,7 +367,7 @@ The TableHeader and Row components can also be wrapped to automatically include 
 import type {TableHeaderProps, RowProps} from 'react-aria-components';
 import {Collection, useTableOptions} from 'react-aria-components';
 
-function MyTableHeader<T extends object>({columns, children}: TableHeaderProps<T>) {
+export function MyTableHeader<T extends object>({columns, children}: TableHeaderProps<T>) {
   let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
 
   return (
@@ -382,7 +382,7 @@ function MyTableHeader<T extends object>({columns, children}: TableHeaderProps<T
   );
 }
 
-function MyRow<T extends object>({id, columns, children, ...otherProps}: RowProps<T>) {
+export function MyRow<T extends object>({id, columns, children, ...otherProps}: RowProps<T>) {
   let {selectionBehavior, allowsDragging} = useTableOptions();
 
   return (

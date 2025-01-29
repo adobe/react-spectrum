@@ -309,7 +309,7 @@ This example wraps `GridList` and all of its children together into a single com
 ```tsx example export=true
 import type {GridListProps, GridListItemProps} from 'react-aria-components';
 
-function MyGridList<T extends object>({children, ...props}: GridListProps<T>) {
+export function MyGridList<T extends object>({children, ...props}: GridListProps<T>) {
   return (
     <GridList {...props}>
       {children}
@@ -317,7 +317,7 @@ function MyGridList<T extends object>({children, ...props}: GridListProps<T>) {
   );
 }
 
-function MyItem({children, ...props}: GridListItemProps) {
+export function MyItem({children, ...props}: GridListItemProps) {
   let textValue = typeof children === 'string' ? children : undefined;
   return (
     <GridListItem textValue={textValue} {...props}>

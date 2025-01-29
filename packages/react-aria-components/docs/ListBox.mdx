@@ -630,22 +630,11 @@ let albums = [
       max-width: 150px;
       margin-bottom: 4px;
       border-radius: 4px;
-      transition: box-shadow 200ms;
-    }
-
-    &[data-hovered] {
-      & img {
-        box-shadow: 0 0 8px rgb(from slateblue r g b / 0.5);
-      }
     }
 
     &[data-selected] {
       background: none;
       color: inherit;
-
-      & img {
-        box-shadow: 0 0 12px rgb(from slateblue r g b / 0.8);
-      }
 
       &:after {
         content: '✓';
@@ -668,6 +657,11 @@ let albums = [
         justify-content: center;
         box-shadow: 0 0 8px rgb(0 0 0 / .5);
       }
+    }
+
+    &[data-focus-visible] {
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: -2px;
     }
   }
 }

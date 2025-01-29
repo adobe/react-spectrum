@@ -18,21 +18,37 @@ import {Size} from './Size';
 import {Virtualizer} from './Virtualizer';
 
 /**
- * [Virtualizer]{@link Virtualizer} supports arbitrary layout objects, which compute what views are visible, and how
- * to position and style them. However, layouts do not create the views themselves directly. Instead,
- * layouts produce lightweight {@link LayoutInfo} objects which describe various properties of a view,
- * such as its position and size. The {@link Virtualizer} is then responsible for creating the actual
+ * Virtualizer supports arbitrary layout objects, which compute what items are visible, and how
+ * to position and style them. However, layouts do not render items directly. Instead,
+ * layouts produce lightweight LayoutInfo objects which describe various properties of an item,
+ * such as its position and size. The Virtualizer is then responsible for creating the actual
  * views as needed, based on this layout information.
  *
- * Every layout extends from the {@link Layout} abstract base class. Layouts must implement a minimum of the
- * two methods listed below. All other methods can be optionally overridden to implement custom behavior.
- *
- * @see {@link getVisibleLayoutInfos}
- * @see {@link getLayoutInfo}
+ * Every layout extends from the Layout abstract base class. Layouts must implement the `getVisibleLayoutInfos`,
+ * `getLayoutInfo`, and `getContentSize` methods. All other methods can be optionally overridden to implement custom behavior.
  */
 export abstract class Layout<T extends object, O = any> implements LayoutDelegate {
   /** The Virtualizer the layout is currently attached to. */
   virtualizer: Virtualizer<T, any> | null = null;
+
+  /**
+   * Returns an array of {@link LayoutInfo} objects which are inside the given rectangle.
+   * Should be implemented by subclasses.
+   * @param rect The rectangle that should contain the returned LayoutInfo objects.
+   */
+  abstract getVisibleLayoutInfos(rect: Rect): LayoutInfo[];
+
+  /**
+   * Returns a {@link LayoutInfo} for the given key.
+   * Should be implemented by subclasses.
+   * @param key The key of the LayoutInfo to retrieve.
+   */
+  abstract getLayoutInfo(key: Key): LayoutInfo | null;
+
+  /**
+   * Returns size of the content. By default, it returns collectionView's size.
+   */
+  abstract getContentSize(): Size;  
 
   /**
    * Returns whether the layout should invalidate in response to
@@ -54,25 +70,6 @@ export abstract class Layout<T extends object, O = any> implements LayoutDelegat
    */
   update(invalidationContext: InvalidationContext<O>) {} // eslint-disable-line @typescript-eslint/no-unused-vars
 
-  /**
-   * Returns an array of {@link LayoutInfo} objects which are inside the given rectangle.
-   * Should be implemented by subclasses.
-   * @param rect The rectangle that should contain the returned LayoutInfo objects.
-   */
-  abstract getVisibleLayoutInfos(rect: Rect): LayoutInfo[];
-
-  /**
-   * Returns a {@link LayoutInfo} for the given key.
-   * Should be implemented by subclasses.
-   * @param key The key of the LayoutInfo to retrieve.
-   */
-  abstract getLayoutInfo(key: Key): LayoutInfo | null;
-
-  /**
-   * Returns size of the content. By default, it returns collectionView's size.
-   */
-  abstract getContentSize(): Size;
-
   /** 
    * Updates the size of the given item.
    */
@@ -83,10 +80,12 @@ export abstract class Layout<T extends object, O = any> implements LayoutDelegat
    */
   getDropTargetLayoutInfo?(target: ItemDropTarget): LayoutInfo;
 
+  /* @private */
   getItemRect(key: Key): Rect | null {
     return this.getLayoutInfo(key)?.rect ?? null;
   }
 
+  /** @private */
   getVisibleRect(): Rect {
     return this.virtualizer!.visibleRect;
   }

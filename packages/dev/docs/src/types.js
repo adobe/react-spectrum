@@ -524,6 +524,8 @@ export function InterfaceType({description, properties: props, typeParameters, s
               <tr key={index} className={clsx(tableStyles['spectrum-Table-row'], styles.tableRow)}>
                 <td role="rowheader" className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="Name">
                   <code className={`${typographyStyles['spectrum-Code4']}`}>
+                    {prop.static && <span className="token hljs-keyword">static </span>}
+                    {prop.abstract && <span className="token hljs-keyword">abstract </span>}
                     <span className="token hljs-function">{prop.name}</span>
                     <TypeParameters typeParameters={prop.value.typeParameters} />
                     <Indent params={prop.value.parameters} open="(" close=")">
