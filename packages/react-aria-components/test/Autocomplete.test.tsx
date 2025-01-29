@@ -12,8 +12,9 @@
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaAutocompleteTests} from './AriaAutocomplete.test-util';
-import {Button, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, Popover, SearchField, Separator, SubmenuTrigger, Text, UNSTABLE_Autocomplete} from '..';
+import {Button, Dialog, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, Popover, SearchField, Separator, SubmenuTrigger, Text, UNSTABLE_Autocomplete} from '..';
 import React, {ReactNode} from 'react';
+import {SubDialogTrigger} from '../src/Menu';
 import {useAsyncList} from 'react-stately';
 import {useFilter} from '@react-aria/i18n';
 import userEvent from '@testing-library/user-event';
@@ -94,13 +95,82 @@ let SubMenus = (props) => (
   </Menu>
 );
 
-// let SubDialogs = (props) => (
-//   <Menu {...props}>
-//     <MenuItem id="1">Foo</MenuItem>
-//     <MenuItem id="2">Bar</MenuItem>
-//     <MenuItem id="3">Baz</MenuItem>
-//   </Menu>
-// );
+let SubDialogs = (props) => (
+  <Menu {...props}>
+    <MenuItem>Foo</MenuItem>
+    <SubDialogTrigger>
+      <MenuItem>Bar</MenuItem>
+      <Popover>
+        <Dialog>
+          <AutocompleteWrapper inputProps={{autoFocus: true}}>
+            <Menu {...props}>
+              <MenuItem>Lvl 1 Bar 1</MenuItem>
+              <SubDialogTrigger>
+                <MenuItem>Lvl 1 Bar 2</MenuItem>
+                <Popover>
+                  <Dialog>
+                    <AutocompleteWrapper inputProps={{autoFocus: true}}>
+                      <Menu {...props}>
+                        <MenuItem>Lvl 2 Bar 1</MenuItem>
+                        <MenuItem>Lvl 2 Bar 2</MenuItem>
+                        <MenuItem>Lvl 2 Bar 3</MenuItem>
+                      </Menu>
+                    </AutocompleteWrapper>
+                  </Dialog>
+                </Popover>
+              </SubDialogTrigger>
+              <MenuItem >Lvl 1 Bar 3</MenuItem>
+            </Menu>
+          </AutocompleteWrapper>
+        </Dialog>
+      </Popover>
+    </SubDialogTrigger>
+    <MenuItem id="3">Baz</MenuItem>
+  </Menu>
+);
+
+let SubDialogAndMenu = (props) => (
+  <Menu {...props}>
+    <MenuItem>Foo</MenuItem>
+    <SubDialogTrigger>
+      <MenuItem>Bar</MenuItem>
+      <Popover>
+        <Dialog>
+          <AutocompleteWrapper inputProps={{autoFocus: true}}>
+            <Menu {...props}>
+              <MenuItem>Lvl 1 Bar 1</MenuItem>
+              <SubmenuTrigger>
+                <MenuItem>Lvl 1 Bar 2</MenuItem>
+                <Popover>
+                  <Menu {...props}>
+                    <MenuItem>Lvl 2 Bar 1</MenuItem>
+                    <SubDialogTrigger>
+                      <MenuItem>Lvl 2 Bar 2</MenuItem>
+                      <Popover>
+                        <Dialog>
+                          <AutocompleteWrapper inputProps={{autoFocus: true}}>
+                            <Menu {...props}>
+                              <MenuItem>Lvl 3 Bar 1</MenuItem>
+                              <MenuItem>Lvl 3 Bar 2</MenuItem>
+                              <MenuItem>Lvl 3 Bar 3</MenuItem>
+                            </Menu>
+                          </AutocompleteWrapper>
+                        </Dialog>
+                      </Popover>
+                    </SubDialogTrigger>
+                    <MenuItem>Lvl 2 Bar 3</MenuItem>
+                  </Menu>
+                </Popover>
+              </SubmenuTrigger>
+              <MenuItem >Lvl 1 Bar 3</MenuItem>
+            </Menu>
+          </AutocompleteWrapper>
+        </Dialog>
+      </Popover>
+    </SubDialogTrigger>
+    <MenuItem id="3">Baz</MenuItem>
+  </Menu>
+);
 
 let StaticListbox = (props) => (
   <ListBox {...props}>
@@ -412,6 +482,16 @@ AriaAutocompleteTests({
     submenus: () => render(
       <AutocompleteWrapper>
         <SubMenus />
+      </AutocompleteWrapper>
+    ),
+    subdialogs: () => render(
+      <AutocompleteWrapper>
+        <SubDialogs />
+      </AutocompleteWrapper>
+    ),
+    subdialogAndMenu: () => render(
+      <AutocompleteWrapper>
+        <SubDialogAndMenu />
       </AutocompleteWrapper>
     )
   },

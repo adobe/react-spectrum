@@ -169,7 +169,19 @@ let dynamicAutocompleteSubdialog = [
           {name: 'Default'},
           {name: 'Top'},
           {name: 'Bottom'},
-          {name: 'Hidden'}
+          {name: 'Hidden'},
+          {name: 'Subdialog test', id: 'sub', children: [
+            {name: 'A'},
+            {name: 'B'},
+            {name: 'C'},
+            {name: 'D'}
+          ]},
+          {name: 'Submenu test', id: 'sub2', isMenu: true, children: [
+            {name: 'A'},
+            {name: 'B'},
+            {name: 'C'},
+            {name: 'D'}
+          ]}
         ]},
         {name: 'Panel Position', id: 'position', children: [
           {name: 'Top'},

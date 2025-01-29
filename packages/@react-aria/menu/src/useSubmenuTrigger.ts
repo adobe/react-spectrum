@@ -119,10 +119,13 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
         }
         break;
       case 'Escape':
-        e.stopPropagation();
-        onSubmenuClose();
-        if (!isVirtualFocus && ref.current) {
-          focusWithoutScrolling(ref.current);
+        // TODO: can remove this when we fix collection event leaks
+        if (submenuRef.current?.contains(e.target as Element)) {
+          e.stopPropagation();
+          onSubmenuClose();
+          if (!isVirtualFocus && ref.current) {
+            focusWithoutScrolling(ref.current);
+          }
         }
         break;
     }
