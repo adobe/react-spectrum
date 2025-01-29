@@ -318,6 +318,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       // If using virtual focus, we need to fake a blur event when virtual focus moves away from an open submenutrigger since we won't actual trigger a real
       // blur event. This is so the submenu will close when the user hovers/keyboard navigates to another sibiling menu item
       ref.current?.dispatchEvent(new FocusEvent('focusout', {bubbles: true}));
+      ref.current?.dispatchEvent(new Event('blur'));
     }
   }, [data.shouldUseVirtualFocus, isTrigger, isTriggerExpanded, key, selectionManager, ref]);
 

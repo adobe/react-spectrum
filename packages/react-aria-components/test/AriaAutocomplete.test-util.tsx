@@ -694,11 +694,6 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
         });
 
         it('should close the menu when hovering an adjacent menu item in the virtual focus list', async function () {
-          // TODO: for some reason issuing a focus out doesn't trigger the onBlur handler in JSDOM
-          // Confirmed this works in browser with react 16 though...
-          if (parseInt(React.version, 10) < 17) {
-            return;
-          }
           let {getByRole, getAllByRole} = (renderers.submenus!)();
           let menu = getByRole('menu');
           let options = within(menu).getAllByRole('menuitem');
@@ -884,12 +879,6 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
         });
 
         it('should close the subdialog when hovering an adjacent menu item in the virtual focus list', async function () {
-          // TODO: for some reason issuing a focus out doesn't trigger the onBlur handler in JSDOM
-          // Confirmed this works in browser with react 16 though...
-          if (parseInt(React.version, 10) < 17) {
-            return;
-          }
-
           document.elementFromPoint = jest.fn().mockImplementation(query => query);
           let {getByRole, getAllByRole} = (renderers.subdialogs!)();
           let menu = getByRole('menu');
