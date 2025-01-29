@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, usePopover} from 'react-aria';
+import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, useLocale, usePopover} from 'react-aria';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps, mergeProps, useEnterAnimation, useExitAnimation, useLayoutEffect} from '@react-aria/utils';
 import {forwardRefType, RefObject} from '@react-types/shared';
@@ -96,6 +96,7 @@ export const Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pop
   let state = props.isOpen != null || props.defaultOpen != null || !contextState ? localState : contextState;
   let isExiting = useExitAnimation(ref, state.isOpen) || props.isExiting || false;
   let isHidden = useIsHidden();
+  let {direction} = useLocale();
 
   // If we are in a hidden tree, we still need to preserve our children.
   if (isHidden) {
@@ -123,7 +124,8 @@ export const Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pop
       triggerRef={props.triggerRef!}
       state={state}
       popoverRef={ref}
-      isExiting={isExiting} />
+      isExiting={isExiting}
+      dir={direction} />
   );
 });
 
@@ -133,6 +135,7 @@ interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderP
   isExiting: boolean,
   UNSTABLE_portalContainer?: Element,
   trigger?: string,
+  dir?: 'ltr' | 'rtl',
   onDismissButtonPress?: () => void
 }
 
@@ -177,6 +180,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, onDismissButt
         ref={ref}
         slot={props.slot || undefined}
         style={style}
+        dir={props.dir}
         data-trigger={props.trigger}
         data-placement={placement}
         data-entering={isEntering || undefined}

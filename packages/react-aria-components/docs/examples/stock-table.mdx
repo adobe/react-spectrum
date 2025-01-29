@@ -15,6 +15,7 @@ import {TypeLink} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import Table from '@react-spectrum/docs/pages/assets/component-illustrations/Table.svg';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
 ---
 keywords: [example, table, aria, accessibility, react, component]
@@ -105,8 +106,8 @@ function StockTableExample() {
   }, [sortDescriptor]);
 
   return (
-    <div className="bg-gradient-to-r from-indigo-500 to-violet-500 p-8 rounded-lg flex items-center justify-center md:col-span-2">
-      <ResizableTableContainer className="max-h-[280px] w-full overflow-auto scroll-pt-[2.321rem] relative bg-white rounded-lg shadow text-gray-600">
+    <div className="bg-linear-to-r from-indigo-500 to-violet-500 p-8 rounded-lg flex items-center justify-center md:col-span-2">
+      <ResizableTableContainer className="max-h-[280px] w-full overflow-auto scroll-pt-[2.321rem] relative bg-white rounded-lg shadow-sm text-gray-600">
         <Table aria-label="Stocks" selectionMode="multiple" selectionBehavior="replace" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor} className="border-separate border-spacing-0">
           <TableHeader>
             <StockColumn id="symbol" allowsSorting>Symbol</StockColumn>
@@ -118,7 +119,7 @@ function StockTableExample() {
           <TableBody items={sortedItems}>
             {item => (
               <StockRow>
-                <StockCell><span className="font-mono bg-slate-100 border border-slate-200 rounded px-1 group-selected:bg-slate-700 group-selected:border-slate-800">${item.symbol}</span></StockCell>
+                <StockCell><span className="font-mono bg-slate-100 border border-slate-200 rounded-sm px-1 group-selected:bg-slate-700 group-selected:border-slate-800">${item.symbol}</span></StockCell>
                 <StockCell className="font-semibold">{item.name}</StockCell>
                 <StockCell>{item.marketCap}</StockCell>
                 <StockCell>{item.sector}</StockCell>
@@ -134,10 +135,10 @@ function StockTableExample() {
 
 function StockColumn(props: ColumnProps & {children: React.ReactNode}) {
   return (
-    <Column {...props} className="sticky top-0 p-0 border-0 border-b border-solid border-slate-300 bg-slate-200 font-bold text-left cursor-default first:rounded-tl-lg last:rounded-tr-lg whitespace-nowrap outline-none">
+    <Column {...props} className="sticky top-0 p-0 border-0 border-b border-solid border-slate-300 bg-slate-200 font-bold text-left cursor-default first:rounded-tl-lg last:rounded-tr-lg whitespace-nowrap outline-hidden">
       {({allowsSorting, sortDirection}) => (
         <div className="flex items-center pl-4 py-1">
-          <Group role="presentation" tabIndex={-1} className="flex flex-1 items-center overflow-hidden outline-none rounded focus-visible:ring-2 ring-slate-600">
+          <Group role="presentation" tabIndex={-1} className="flex flex-1 items-center overflow-hidden outline-hidden rounded-sm focus-visible:ring-2 ring-slate-600">
             <span className="flex-1 truncate">{props.children}</span>
             {allowsSorting && (
               <span className={`ml-1 w-4 h-4 flex items-center justify-center transition ${sortDirection === 'descending' ? 'rotate-180' : ''}`}>
@@ -145,7 +146,7 @@ function StockColumn(props: ColumnProps & {children: React.ReactNode}) {
               </span>
             )}
           </Group>
-          <ColumnResizer className="w-px px-[8px] py-1 h-5 bg-clip-content bg-slate-400 cursor-col-resize rounded resizing:bg-slate-800 resizing:w-[2px] resizing:pl-[7px] focus-visible:ring-2 ring-slate-600 ring-inset" />
+          <ColumnResizer className="w-px px-[8px] py-1 h-5 bg-clip-content bg-slate-400 cursor-col-resize rounded-sm resizing:bg-slate-800 resizing:w-[2px] resizing:pl-[7px] focus-visible:ring-2 ring-slate-600 ring-inset" />
         </div>
       )}
     </Column>
@@ -153,7 +154,7 @@ function StockColumn(props: ColumnProps & {children: React.ReactNode}) {
 }
 
 function StockRow<T extends object>(props: RowProps<T>) {
-  return <Row {...props} className="even:bg-slate-100 selected:bg-slate-600 selected:text-white cursor-default group outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-600 focus-visible:-outline-offset-4 selected:focus-visible:outline-white" />;
+  return <Row {...props} className="even:bg-slate-100 selected:bg-slate-600 selected:text-white cursor-default group outline-hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-600 focus-visible:-outline-offset-4 selected:focus-visible:outline-white" />;
 }
 
 function StockCell(props: CellProps) {
@@ -163,7 +164,18 @@ function StockCell(props: CellProps) {
 
 ### Tailwind config
 
-This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. Add it to your `tailwind.config.js`:
+This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. When using Tailwind v4, add it to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugin to your `tailwind.config.js` instead:
 
 ```tsx
 module.exports = {
@@ -173,6 +185,10 @@ module.exports = {
   ]
 };
 ```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
 
 ## Components
 

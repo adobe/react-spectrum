@@ -15,6 +15,7 @@ import {TypeLink} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import ListBox from '@react-spectrum/docs/pages/assets/component-illustrations/ListBox.svg';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
 ---
 keywords: [example, listbox, aria, accessibility, react, component]
@@ -111,8 +112,8 @@ import {ListBox, ListBoxItem, ListBoxSection, Header, Collection, Text} from 're
 
 function ContactListExample() {
   return (
-    <div className="bg-gradient-to-r from-blue-500 to-sky-500 p-8 rounded-lg flex justify-center">
-      <ListBox aria-label="Contacts" selectionMode="multiple" selectionBehavior="replace" className="w-72 max-h-[290px] overflow-auto outline-none bg-white text-gray-700 p-2 flex flex-col gap-2 rounded-lg shadow scroll-pb-2 scroll-pt-7">
+    <div className="bg-linear-to-r from-blue-500 to-sky-500 p-8 rounded-lg flex justify-center">
+      <ListBox aria-label="Contacts" selectionMode="multiple" selectionBehavior="replace" className="w-72 max-h-[290px] overflow-auto outline-hidden bg-white text-gray-700 p-2 flex flex-col gap-2 rounded-lg shadow-sm scroll-pb-2 scroll-pt-7">
         <ContactSection title="Favorites" items={favorites}>
           {item => <Contact item={item} />}
         </ContactSection>
@@ -137,7 +138,7 @@ function ContactSection({title, children, items}) {
 
 function Contact({item}) {
   return (
-    <ListBoxItem id={item.id} textValue={item.name} className="group relative py-1 px-2 outline-none cursor-default grid grid-rows-2 grid-flow-col auto-cols-max gap-x-3 rounded selected:bg-blue-500 text-slate-700 selected:text-white selected:[&:has(+[data-selected])]:rounded-b-none [&[data-selected]+[data-selected]]:rounded-t-none focus-visible:ring-2 ring-offset-2 ring-blue-500">
+    <ListBoxItem id={item.id} textValue={item.name} className="group relative py-1 px-2 outline-hidden cursor-default grid grid-rows-2 grid-flow-col auto-cols-max gap-x-3 rounded-sm selected:bg-blue-500 text-slate-700 selected:text-white [&:has(+[data-selected])]:selected:rounded-b-none [&[data-selected]+[data-selected]]:rounded-t-none focus-visible:ring-2 ring-offset-2 ring-blue-500">
       <img src={item.avatar} alt="" className="row-span-2 place-self-center h-8 w-8 rounded-full" />
       <Text slot="label" className="font-semibold truncate">{item.name}</Text>
       <Text slot="description" className="truncate text-sm text-slate-600 group-selected:text-white">{item.username}</Text>
@@ -149,7 +150,18 @@ function Contact({item}) {
 
 ### Tailwind config
 
-This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. Add it to your `tailwind.config.js`:
+This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. When using Tailwind v4, add it to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugin to your `tailwind.config.js` instead:
 
 ```tsx
 module.exports = {
@@ -159,6 +171,10 @@ module.exports = {
   ]
 };
 ```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
 
 ## Components
 
