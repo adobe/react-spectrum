@@ -13,6 +13,7 @@
 import {ActionButtonGroupContext} from './ActionButtonGroup';
 import {ActionMenuContext} from './ActionMenu';
 import {
+  Button,
   ButtonContext,
   Collection,
   Provider,
@@ -36,9 +37,8 @@ import {isAndroid} from '@react-aria/utils';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, isValidElement, JSXElementConstructor, ReactElement, useContext, useMemo, useRef} from 'react';
 import {Text, TextContext} from './Content';
-import {useButton} from '@react-aria/button';
+import {useLocale} from 'react-aria';
 import {useDOMRef} from '@react-spectrum/utils';
-import {useLocale} from '@react-aria/i18n';
 
 interface S2TreeProps {
   // Only detatched is supported right now with the current styles from Spectrum
@@ -109,7 +109,7 @@ function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
 
   let layout = useMemo(() => {
     return new UNSTABLE_ListLayout({
-      rowHeight: isDetached ? 44 : 40
+      rowHeight: isDetached ? 42 : 40
     });
   }, [isDetached]);
 
@@ -257,7 +257,10 @@ const treeCellGrid = style({
   },
   borderTopWidth: {
     default: 0,
-    isFirst: 1,
+    isFirst: {
+      default: 1,
+      forcedColors: 0
+    },
     isDetached: 1
   },
   borderBottomWidth: {
@@ -414,7 +417,7 @@ export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
                     styles: style({size: fontRelative(20), flexShrink: 0})
                   }],
                   [ActionButtonGroupContext, {styles: treeActions}],
-                  [ActionMenuContext, {styles: treeActionMenu, isQuiet: true, 'aria-label': 'Actions'}]
+                  [ActionMenuContext, {styles: treeActionMenu, isQuiet: true}]
                 ]}>
                 {content}
               </Provider>
@@ -450,29 +453,26 @@ const expandButton = style<ExpandableRowChevronProps>({
       isRTL: 'rotate(-90deg)'
     }
   },
-  transition: 'default'
+  transition: 'default',
+  backgroundColor: 'transparent',
+  borderStyle: 'none'
 });
 
 function ExpandableRowChevron(props: ExpandableRowChevronProps) {
-  let expandButtonRef = useRef<HTMLSpanElement>(null);
-  // @ts-ignore - check back on this
+  let expandButtonRef = useRef<HTMLButtonElement>(null);
   let [fullProps, ref] = useContextProps({...props, slot: 'chevron'}, expandButtonRef, ButtonContext);
   let {isExpanded, isDisabled} = fullProps;
   let {direction} = useLocale();
 
-  // Will need to keep the chevron as a button for iOS VO at all times since VO doesn't focus the cell. Also keep as button if cellAction is defined by the user in the future
-  let {buttonProps} = useButton({
-    ...fullProps,
-    elementType: 'span'
-  }, ref);
-
   return (
-    <span
-      {...buttonProps}
+    <Button
+      {...props}
       ref={ref}
+      slot="chevron"
       // Override tabindex so that grid keyboard nav skips over it. Needs -1 so android talkback can actually "focus" it
-      tabIndex={isAndroid() && !isDisabled ? -1 : undefined}
-      className={expandButton({isExpanded, isDisabled, isRTL: direction === 'rtl'})}>
+      excludeFromTabOrder={isAndroid() && !isDisabled}
+      preventFocusOnPress
+      className={renderProps => expandButton({...renderProps, isExpanded, isRTL: direction === 'rtl'})}>
       <Chevron
         className={style({
           scale: {
@@ -486,7 +486,7 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
             value: 'currentColor'
           }
         })({direction})} />
-    </span>
+    </Button>
   );
 }
 
