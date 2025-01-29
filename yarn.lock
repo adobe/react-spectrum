@@ -7899,6 +7899,7 @@ __metadata:
     "@react-aria/interactions": "npm:^3.23.0"
     "@react-aria/live-announcer": "npm:^3.4.1"
     "@react-aria/test-utils": "npm:1.0.0-alpha.3"
+    "@react-aria/tree": "npm:3.0.0-beta.3"
     "@react-aria/utils": "npm:^3.27.0"
     "@react-spectrum/utils": "npm:^3.12.1"
     "@react-stately/layout": "npm:^4.1.1"

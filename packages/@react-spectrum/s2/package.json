@@ -133,6 +133,7 @@
     "@react-aria/i18n": "^3.12.5",
     "@react-aria/interactions": "^3.23.0",
     "@react-aria/live-announcer": "^3.4.1",
+    "@react-aria/tree": "3.0.0-beta.3",
     "@react-aria/utils": "^3.27.0",
     "@react-spectrum/utils": "^3.12.1",
     "@react-stately/layout": "^4.1.1",
