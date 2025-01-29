@@ -85,7 +85,7 @@ export const LabeledValue = React.forwardRef(function LabeledValue<T extends Spe
       domRef.current.querySelectorAll('input, [contenteditable], textarea')
         .length > 0
     ) {
-      throw new Error('LabeledValue cannot contain an editable element.');
+      throw new Error('LabeledValue cannot contain an editable value.');
     }
   }, [domRef]);
   

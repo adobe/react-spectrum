@@ -13,7 +13,7 @@
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from '@internationalized/date';
 import {LabeledValue} from '../src';
 import React from 'react';
-import {render, within} from '@react-spectrum/test-utils-internal';
+import {render, waitFor, within} from '@react-spectrum/test-utils-internal';
 
 describe('LabeledValue', function () {
   it('renders a label', function () {
@@ -291,15 +291,15 @@ describe('LabeledValue', function () {
     ).toBeInTheDocument();
   });
 
-  it('throws when an editable value is provided', function () {
-    expect(() => {
-      render(
+  it('throws when an editable value is provided', async function () {
+    await waitFor(() => { 
+      expect(() => render(
         <LabeledValue
           data-testid="test-id"
-          label={<input />}
-          value="test" />
-      );
-    }).toThrow('LabeledValue cannot contain an editable element.');
+          label="Field label"
+          value={<input />} />
+      )).toThrowError('LabeledValue cannot contain an editable value.');
+    });
   });
 
   it('attaches a user provided ref to the outer div', function () {
