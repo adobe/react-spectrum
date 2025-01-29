@@ -37,8 +37,8 @@ import {isAndroid} from '@react-aria/utils';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, isValidElement, JSXElementConstructor, ReactElement, useContext, useMemo, useRef} from 'react';
 import {Text, TextContext} from './Content';
-import {useLocale} from 'react-aria';
 import {useDOMRef} from '@react-spectrum/utils';
+import {useLocale} from 'react-aria';
 
 interface S2TreeProps {
   // Only detatched is supported right now with the current styles from Spectrum
