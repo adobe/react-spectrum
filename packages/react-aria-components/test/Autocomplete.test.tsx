@@ -12,7 +12,7 @@
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaAutocompleteTests} from './AriaAutocomplete.test-util';
-import {Button, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, SearchField, Separator, Text, UNSTABLE_Autocomplete} from '..';
+import {Button, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, Popover, SearchField, Separator, SubmenuTrigger, Text, UNSTABLE_Autocomplete} from '..';
 import React, {ReactNode} from 'react';
 import {useAsyncList} from 'react-stately';
 import {useFilter} from '@react-aria/i18n';
@@ -68,13 +68,31 @@ let MenuWithSections = (props) => (
 );
 
 // TODO: add tests for nested submenus and subdialogs
-// let SubMenus = (props) => (
-//   <Menu {...props}>
-//     <MenuItem id="1">Foo</MenuItem>
-//     <MenuItem id="2">Bar</MenuItem>
-//     <MenuItem id="3">Baz</MenuItem>
-//   </Menu>
-// );
+let SubMenus = (props) => (
+  <Menu {...props}>
+    <MenuItem>Foo</MenuItem>
+    <SubmenuTrigger>
+      <MenuItem>Bar</MenuItem>
+      <Popover>
+        <Menu {...props}>
+          <MenuItem>Lvl 1 Bar 1</MenuItem>
+          <SubmenuTrigger>
+            <MenuItem>Lvl 1 Bar 2</MenuItem>
+            <Popover>
+              <Menu {...props}>
+                <MenuItem>Lvl 2 Bar 1</MenuItem>
+                <MenuItem>Lvl 2 Bar 2</MenuItem>
+                <MenuItem>Lvl 2 Bar 3</MenuItem>
+              </Menu>
+            </Popover>
+          </SubmenuTrigger>
+          <MenuItem >Lvl 1 Bar 3</MenuItem>
+        </Menu>
+      </Popover>
+    </SubmenuTrigger>
+    <MenuItem id="3">Baz</MenuItem>
+  </Menu>
+);
 
 // let SubDialogs = (props) => (
 //   <Menu {...props}>
@@ -389,6 +407,11 @@ AriaAutocompleteTests({
     defaultValue: () => render(
       <AutocompleteWrapper autocompleteProps={{defaultInputValue: 'Ba'}}>
         <StaticMenu />
+      </AutocompleteWrapper>
+    ),
+    submenus: () => render(
+      <AutocompleteWrapper>
+        <SubMenus />
       </AutocompleteWrapper>
     )
   },
