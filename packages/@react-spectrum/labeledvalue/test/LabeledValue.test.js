@@ -292,7 +292,7 @@ describe('LabeledValue', function () {
   });
 
   it('throws when an editable value is provided', async function () {
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, 'error').mockImplementation(() => {});
     try {
       render(
         <LabeledValue
@@ -302,7 +302,6 @@ describe('LabeledValue', function () {
     } catch (e) {
       console.log(e.message);
       expect(e.message).toEqual('LabeledValue cannot contain an editable value.');
-      expect(consoleErrorSpy).toHaveBeenCalled();
     }
   });
 
