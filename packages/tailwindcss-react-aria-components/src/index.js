@@ -79,14 +79,14 @@ const nativeMergeSelectors = new Map([
 ]);
 
 // If no prefix is specified, we want to avoid overriding native variants on non-RAC components, so we only target elements with the data-rac attribute for those variants.
-let getSelector = (prefix, attributeName, attributeValue, hoverOnlyWhenSupported) => {
+let getSelector = (prefix, attributeName, attributeValue) => {
   let baseSelector = attributeValue ? `[data-${attributeName}="${attributeValue}"]` : `[data-${attributeName}]`;
   let nativeSelector = nativeVariantSelectors.get(attributeName);
   if (prefix === '' && nativeSelector) {
     let wrappedNativeSelector = `&:where(:not([data-rac]))${nativeSelector}`;
     let nativeSelectorGenerator = wrappedNativeSelector;
-    if (nativeSelector === ':hover' && hoverOnlyWhenSupported) {
-      nativeSelectorGenerator = wrap => `@media (hover: hover) and (pointer: fine) { ${wrap(wrappedNativeSelector)} }`;
+    if (nativeSelector === ':hover') {
+      nativeSelectorGenerator = wrap => `@media (hover: hover) { ${wrap(wrappedNativeSelector)} }`;
     }
     return [`&:where([data-rac])${baseSelector}`, nativeSelectorGenerator];
   } else if (prefix === '' && nativeMergeSelectors.has(attributeName)) {
@@ -112,48 +112,30 @@ let wrapSelector = (selector, wrap) => {
   }
 };
 
-let addVariants = (variantName, selectors, addVariant, matchVariant) => {
+let addVariants = (variantName, selectors, addVariant) => {
   addVariant(variantName, mapSelector(selectors, selector => wrapSelector(selector, s => s)));
-  matchVariant(
-    'group',
-    (_, {modifier}) =>
-      modifier
-        ? mapSelector(selectors, selector => wrapSelector(selector, s => `:merge(.group\\/${modifier})${s.slice(1)} &`))
-        : mapSelector(selectors, selector => wrapSelector(selector, s => `:merge(.group)${s.slice(1)} &`)),
-    {values: {[variantName]: variantName}}
-  );
-  matchVariant(
-    'peer',
-    (_, {modifier}) =>
-      modifier
-        ? mapSelector(selectors, selector => wrapSelector(selector, s => `:merge(.peer\\/${modifier})${s.slice(1)} ~ &`))
-        : mapSelector(selectors, selector => wrapSelector(selector, s => `:merge(.peer)${s.slice(1)} ~ &`)),
-    {values: {[variantName]: variantName}}
-  );
 };
 
-module.exports = plugin.withOptions((options) => (({addVariant, matchVariant, config}) => {
+module.exports = plugin.withOptions((options) => (({addVariant}) => {
   let prefix = options?.prefix ? `${options.prefix}-` : '';
-  let future = config().future;
-  let hoverOnlyWhenSupported = future === 'all' || future?.hoverOnlyWhenSupported;
 
   // Enum attributes go first because currently they are all non-interactive states.
   Object.keys(attributes.enum).forEach((attributeName) => {
     attributes.enum[attributeName].forEach(
-      (attributeValue) => {
+      (attributeValue, i) => {
         let name = shortNames[attributeName] || attributeName;
         let variantName = `${prefix}${name}-${attributeValue}`;
-        let selectors = getSelector(prefix, attributeName, attributeValue, hoverOnlyWhenSupported);
-        addVariants(variantName, selectors, addVariant, matchVariant);
+        let selectors = getSelector(prefix, attributeName, attributeValue);
+        addVariants(variantName, selectors, addVariant, i);
       }
     );
   });
 
-  attributes.boolean.forEach((attribute) => {
+  attributes.boolean.forEach((attribute, i) => {
     let variantName = Array.isArray(attribute) ? attribute[0] : attribute;
     variantName = `${prefix}${variantName}`;
     let attributeName = Array.isArray(attribute) ? attribute[1] : attribute;
-    let selectors = getSelector(prefix, attributeName, null, hoverOnlyWhenSupported);
-    addVariants(variantName, selectors, addVariant, matchVariant);
+    let selectors = getSelector(prefix, attributeName, null);
+    addVariants(variantName, selectors, addVariant, i);
   });
 }));

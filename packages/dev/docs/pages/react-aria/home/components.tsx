@@ -37,7 +37,7 @@ export function AddressBar({children}) {
 }
 
 export function GradientText({children}) {
-  return <span className="text-transparent bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900 dark:from-white dark:to-zinc-400">{children}</span>;
+  return <span className="text-transparent bg-clip-text bg-linear-to-b from-slate-600 to-slate-900 dark:from-white dark:to-zinc-400">{children}</span>;
 }
 
 export function Card({className, ...otherProps}) {
@@ -71,13 +71,13 @@ export function Arrow({href, children, textX, x1, x2, points, y, marker = 'marke
         ? <polyline points={points} {...markerProps} className="stroke-slate-800 dark:stroke-white fill-none" />
         : <line x1={x1} y1={y} x2={x2} y2={y} {...markerProps} className="stroke-slate-800 dark:stroke-white" />
       }
-      <a href={href} target="_blank" className="pointer-events-auto outline-none rounded-sm focus:outline-blue-600 dark:focus:outline-blue-500 outline-offset-2"><text x={textX} y={y + 3} className="text-xs fill-slate-900 dark:fill-white underline">{children}</text></a>
+      <a href={href} target="_blank" className="pointer-events-auto outline-hidden rounded-xs focus:outline-blue-600 dark:focus:outline-blue-500 outline-offset-2"><text x={textX} y={y + 3} className="text-xs fill-slate-900 dark:fill-white underline">{children}</text></a>
     </>
   );
 }
 
 export const Finger = React.forwardRef((props: HTMLAttributes<HTMLDivElement>, ref: ForwardedRef<HTMLDivElement | null>) => {
-  return <div ref={ref} className="z-10 pointer-events-none absolute w-10 h-10 rounded-full border border-black/80 bg-black/80 dark:border-white/80 dark:bg-white/80 dark:mix-blend-difference opacity-0 [--hover-opacity:0.15] [--pressed-opacity:0.3] forced-colors:[--hover-opacity:0.5] forced-colors:[--pressed-opacity:1] forced-colors:!bg-[Highlight] forced-colors:!mix-blend-normal" {...props} />;
+  return <div ref={ref} className="z-10 pointer-events-none absolute w-10 h-10 rounded-full border border-black/80 bg-black/80 dark:border-white/80 dark:bg-white/80 dark:mix-blend-difference opacity-0 [--hover-opacity:0.15] [--pressed-opacity:0.3] forced-colors:[--hover-opacity:0.5] forced-colors:[--pressed-opacity:1] forced-colors:bg-[Highlight]! forced-colors:mix-blend-normal!" {...props} />;
 });
 
 export function LearnMoreLink({href, className}) {
