@@ -20,6 +20,7 @@ import {Meta} from '@storybook/react';
 import React from 'react';
 
 const meta: Meta<typeof LabeledValue> = {
+  title: 'LabeledValue',
   component: LabeledValue,
   argTypes: {
     labelPosition: {
