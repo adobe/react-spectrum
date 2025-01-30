@@ -106,16 +106,19 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
   let activeToastContainer = useActiveToastContainer();
   let state = useToastQueue(getGlobalToastQueue());
 
-  let placement = useMemo(() => {
-    let placements = props.placement?.split(' ');
-    return placements?.[placements.length - 1] || 'bottom';
+  let {placement, isCentered} = useMemo(() => {
+    let placements = (props.placement ?? 'bottom').split(' ');
+    let placement = placements[placements.length - 1];
+    let isCentered = placements.length === 1;
+    return {placement, isCentered};
   }, [props.placement]);
 
   if (ref === activeToastContainer && state.visibleToasts.length > 0) {
     return (
       <Toaster state={state} {...props}>
         <ol className={classNames(toastContainerStyles, 'spectrum-ToastContainer-list')}>
-          {state.visibleToasts.slice().reverse().map((toast) => {
+          {state.visibleToasts.slice().reverse().map((toast, index) => {
+            let shouldFade = isCentered && index !== 0;
             return (
               <li
                 key={toast.key}
@@ -123,7 +126,12 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
                 style={{
                   // @ts-expect-error
                   viewTransitionName: `_${toast.key.slice(2)}`,
-                  viewTransitionClass: classNames(toastContainerStyles, 'toast', placement)
+                  viewTransitionClass: classNames(
+                    toastContainerStyles,
+                    'toast',
+                    placement,
+                    {'fadeOnly': shouldFade}
+                  )
                 }}>
                 <Toast
                   toast={toast}

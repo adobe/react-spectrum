@@ -111,6 +111,12 @@
   }
 }
 
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
 ::view-transition-group(.toast) {
   animation-duration: 300ms;
 }
@@ -141,4 +147,8 @@
 
 ::view-transition-old(.toast):only-child {
   animation-name: slide-out;
+}
+
+::view-transition-old(.toast.fadeOnly):only-child {
+  animation-name: fade-out;
 }
