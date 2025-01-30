@@ -300,7 +300,6 @@ describe('LabeledValue', function () {
           value={<input />} />
       );
     } catch (e) {
-      console.log(e.message);
       expect(e.message).toEqual('LabeledValue cannot contain an editable value.');
     }
   });
