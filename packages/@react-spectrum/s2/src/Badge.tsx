@@ -61,7 +61,7 @@ const badge = style<BadgeStyleProps>({
   display: 'flex',
   font: 'control',
   justifyContent: 'center',
-  alignItems: 'center',
+  alignItems: 'baseline',
   borderRadius: 'control',
   minHeight: 'control',
   paddingX: {
