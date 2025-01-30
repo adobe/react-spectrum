@@ -57,9 +57,10 @@ interface StringListProps<T extends string[]> {
   /** Formatting options for the value. */
   formatOptions?: Intl.ListFormatOptions
 }
+
 interface ReactNodeProps<T extends ReactNode> {
   /** The value to display. */
-  value: T
+  value: T,
   /** Formatting options for the value. */
   formatOptions?: never
 }
