@@ -92,7 +92,6 @@ export const Toast = React.forwardRef(function Toast(props: SpectrumToastProps, 
     ...closeButtonProps,
     onPress: (e) => {
       if ('startViewTransition' in document) {
-        // @ts-ignore
         document.startViewTransition(() => {
           flushSync(() => {
             closeButtonProps.onPress?.(e);

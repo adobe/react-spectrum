@@ -118,7 +118,7 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
                 key={toast.key}
                 className={classNames(toastContainerStyles, 'spectrum-ToastContainer-listitem')}
                 style={{
-                  // @ts-ignore
+                  // @ts-expect-error
                   viewTransitionName: `_${toast.key.slice(2)}`,
                   viewTransitionClass: classNames(toastContainerStyles, 'toast', placement)
                 }}>
@@ -172,7 +172,6 @@ function addToast(children: string, variant: SpectrumToastValue['variant'], opti
   let key: string;
   let add = () => queue.add(value, {timeout, onClose: options.onClose});
   if ('startViewTransition' in document) {
-    // @ts-ignore
     document.startViewTransition(() => {
       flushSync(() => {
         key = add();
@@ -183,7 +182,6 @@ function addToast(children: string, variant: SpectrumToastValue['variant'], opti
   }
 
   if ('startViewTransition' in document) {
-    // @ts-ignore
     return () => document.startViewTransition(() => {
       flushSync(() => {
         queue.close(key);
