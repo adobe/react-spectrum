@@ -709,7 +709,7 @@ describe('useTreeData', function () {
     expect(result.current.items.length).toEqual(2);
   });
 
-  it.only('should move an item to a different level after the target', function () {
+  it('should move an item to a different level after the target', function () {
     const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
     let {result} = renderHook(() =>
       useTreeData({initialItems, getChildren, getKey})
@@ -727,7 +727,7 @@ describe('useTreeData', function () {
     expect(result.current.items.length).toEqual(2);
   });
 
-  it.only('should move an item to a different level at the end when the index is greater than the node list length', function () {
+  it('should move an item to a different level at the end when the index is greater than the node list length', function () {
     const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
     console.log('initialItems', initialItems[0]);
     let {result} = renderHook(() =>
