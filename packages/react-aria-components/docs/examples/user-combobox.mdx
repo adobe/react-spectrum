@@ -18,6 +18,7 @@ import Button from '@react-spectrum/docs/pages/assets/component-illustrations/Ac
 import Popover from '@react-spectrum/docs/pages/assets/component-illustrations/Popover.svg';
 import ListBox from '@react-spectrum/docs/pages/assets/component-illustrations/ListBox.svg';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
 ---
 keywords: [example, combobox, aria, accessibility, react, component]
@@ -96,17 +97,17 @@ import CheckIcon from '@spectrum-icons/workflow/Checkmark';
 
 function ComboBoxExample() {
   return (
-    <div className="bg-gradient-to-r from-sky-300 to-cyan-300 p-8 sm:h-[300px] rounded-lg flex justify-center">
+    <div className="bg-linear-to-r from-sky-300 to-cyan-300 p-8 sm:h-[300px] rounded-lg flex justify-center">
       <ComboBox className="group flex flex-col gap-1 w-[200px]">
         <Label className="text-black cursor-default">Assignee</Label>
-        <Group className="flex rounded-lg bg-white bg-opacity-90 focus-within:bg-opacity-100 transition shadow-md ring-1 ring-black/10 focus-visible:ring-2 focus-visible:ring-black">
-          <Input className="flex-1 w-full border-none py-2 px-3 leading-5 text-gray-900 bg-transparent outline-none text-base" />
+        <Group className="flex rounded-lg bg-white/90 focus-within:bg-white transition shadow-md ring-1 ring-black/10 focus-visible:ring-2 focus-visible:ring-black">
+          <Input className="flex-1 w-full border-none py-2 px-3 leading-5 text-gray-900 bg-transparent outline-hidden text-base" />
           <Button className="px-3 flex items-center text-gray-700 transition border-0 border-solid border-l border-l-sky-200 bg-transparent rounded-r-lg pressed:bg-sky-100">
             <ChevronUpDownIcon size="XS" />
           </Button>
         </Group>
-        <Popover className="max-h-60 w-[--trigger-width] overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black/5 entering:animate-in entering:fade-in exiting:animate-out exiting:fade-out">
-          <ListBox className="outline-none p-1" items={people}>
+        <Popover className="max-h-60 w-(--trigger-width) overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black/5 entering:animate-in entering:fade-in exiting:animate-out exiting:fade-out">
+          <ListBox className="outline-hidden p-1" items={people}>
             {item => (
               <UserItem textValue={item.name}>
                 <img alt="" src={item.avatar} className="w-6 h-6 rounded-full" />
@@ -124,7 +125,7 @@ function UserItem(props: ListBoxItemProps & {children: React.ReactNode}) {
   return (
     <ListBoxItem
       {...props}
-      className="group flex items-center gap-2 cursor-default select-none py-2 pl-2 pr-4 outline-none rounded text-gray-900 focus:bg-sky-600 focus:text-white">
+      className="group flex items-center gap-2 cursor-default select-none py-2 pl-2 pr-4 outline-hidden rounded-sm text-gray-900 focus:bg-sky-600 focus:text-white">
       {({ isSelected }) => (
         <>
           <span className="flex-1 flex items-center gap-3 truncate font-normal group-selected:font-medium">{props.children}</span>
@@ -147,7 +148,19 @@ This example uses the following plugins:
 * [tailwindcss-react-aria-components](../styling.html#plugin)
 * [tailwindcss-animate](https://github.com/jamiebuilds/tailwindcss-animate)
 
-Add them to your `tailwind.config.js`:
+When using Tailwind v4, add them to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+@plugin "tailwindcss-animate";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugins to your `tailwind.config.js` instead:
 
 ```tsx
 module.exports = {
@@ -158,6 +171,10 @@ module.exports = {
   ]
 };
 ```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
 
 ## Components
 

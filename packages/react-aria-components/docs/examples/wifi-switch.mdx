@@ -15,6 +15,7 @@ import {TypeLink} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import Switch from '@react-spectrum/docs/pages/assets/component-illustrations/Switch.svg';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
 ---
 keywords: [example, switch, aria, accessibility, react, component]
@@ -36,10 +37,10 @@ import './tailwind.global.css';
 ```tsx example standalone
 import {Switch} from 'react-aria-components';
 
-<div className="bg-gradient-to-r from-yellow-300 to-orange-300 p-12 rounded-lg flex justify-center">
+<div className="bg-linear-to-r from-yellow-300 to-orange-300 p-12 rounded-lg flex justify-center">
   <Switch className="group flex gap-2 items-center text-black font-semibold text-lg">
-    <div className="flex h-[26px] w-[44px] shrink-0 cursor-default rounded-full shadow-inner bg-clip-padding border border-solid border-white/30 p-[3px] box-border transition duration-200 ease-in-out bg-yellow-600 group-pressed:bg-yellow-700 group-selected:bg-amber-800 group-selected:group-pressed:bg-amber-900 outline-none group-focus-visible:ring-2 ring-black">
-      <span className="h-[18px] w-[18px] transform rounded-full bg-white shadow transition duration-200 ease-in-out translate-x-0 group-selected:translate-x-[100%]" />
+    <div className="flex h-[26px] w-[44px] shrink-0 cursor-default rounded-full shadow-inner bg-clip-padding border border-solid border-white/30 p-[3px] box-border transition duration-200 ease-in-out bg-yellow-600 group-pressed:bg-yellow-700 group-selected:bg-amber-800 group-selected:group-pressed:bg-amber-900 outline-hidden group-focus-visible:ring-2 ring-black">
+      <span className="h-[18px] w-[18px] transform rounded-full bg-white shadow-sm transition duration-200 ease-in-out translate-x-0 group-selected:translate-x-[100%]" />
     </div>
     Wi-Fi
   </Switch>
@@ -48,7 +49,18 @@ import {Switch} from 'react-aria-components';
 
 ### Tailwind config
 
-This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. Add it to your `tailwind.config.js`:
+This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. When using Tailwind v4, add it to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugin to your `tailwind.config.js` instead:
 
 ```tsx
 module.exports = {
@@ -58,6 +70,10 @@ module.exports = {
   ]
 };
 ```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
 
 ## Components
 
