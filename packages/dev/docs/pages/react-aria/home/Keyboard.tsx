@@ -13,7 +13,7 @@ import React from 'react';
 
 export function Keyboard() {
   return (
-    <svg className="flex-1 stroke-slate-400 dark:stroke-slate-500 forced-colors:!stroke-[ButtonBorder] [--press-fill:theme(colors.slate.300)] dark:[--press-fill:theme(colors.slate.700)] forced-colors:![--press-fill:Highlight]" viewBox="0 0 192 81" fill="none" aria-hidden="true" id="keyboard">
+    <svg className="flex-1 stroke-slate-400 dark:stroke-slate-500 forced-colors:stroke-[ButtonBorder]! [--press-fill:var(--color-slate-300)] dark:[--press-fill:var(--color-slate-700)] forced-colors:[--press-fill:Highlight]!" viewBox="0 0 192 81" fill="none" aria-hidden="true" id="keyboard">
       <g>
         <style>
           {

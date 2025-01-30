@@ -21,7 +21,7 @@ export default {
   title: 'DateField',
   parameters: {
     chromaticProvider: {
-      locales: ['en-US', 'ar-EG', 'ja-JP']
+      locales: ['en-US', 'ar-EG', 'ja-JP', 'he-IL']
     }
   }
 };
@@ -35,6 +35,16 @@ export const PlaceholderFocus = () => <DateField label="Date" placeholderValue={
 PlaceholderFocus.parameters = {
   chromaticProvider: {
     locales: ['en-US'],
+    scales: ['medium'],
+    colorSchemes: ['light'],
+    express: false
+  }
+};
+
+export const PlaceholderFocusRTL = () => <DateField label="Date" placeholderValue={date} autoFocus />;
+PlaceholderFocusRTL.parameters = {
+  chromaticProvider: {
+    locales: ['he-IL'],
     scales: ['medium'],
     colorSchemes: ['light'],
     express: false

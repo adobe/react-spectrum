@@ -21,6 +21,7 @@ import DateField from '@react-spectrum/docs/pages/assets/component-illustrations
 import Calendar from '@react-spectrum/docs/pages/assets/component-illustrations/Calendar.svg';
 import Dialog from '@react-spectrum/docs/pages/assets/component-illustrations/Dialog.svg';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
 ---
 keywords: [example, datepicker, aria, accessibility, react, component]
@@ -48,14 +49,14 @@ import ChevronRightIcon from '@spectrum-icons/workflow/ChevronRight';
 
 function DatePickerExample() {
   return (
-    <div className="bg-gradient-to-r from-violet-500 to-fuchsia-600 p-12 sm:h-[400px] rounded-lg flex items-start justify-center">
+    <div className="bg-linear-to-r from-violet-500 to-fuchsia-600 p-12 sm:h-[400px] rounded-lg flex items-start justify-center">
       <DatePicker className="group flex flex-col gap-1 w-[200px]">
         <Label className="text-white cursor-default">Date</Label>
         <Group className="flex rounded-lg bg-white/90 focus-within:bg-white group-open:bg-white transition pl-3 shadow-md text-gray-700 focus-visible:ring-2 ring-black">
           <DateInput className="flex flex-1 py-2">
-            {(segment) => <DateSegment segment={segment} className="px-0.5 tabular-nums outline-none rounded-sm focus:bg-violet-700 focus:text-white caret-transparent placeholder-shown:italic" />}
+            {(segment) => <DateSegment segment={segment} className="px-0.5 tabular-nums outline-hidden rounded-xs focus:bg-violet-700 focus:text-white caret-transparent placeholder-shown:italic" />}
           </DateInput>
-          <Button className="outline-none px-3 flex items-center text-gray-700 transition border-0 border-solid border-l border-l-purple-200 bg-transparent rounded-r-lg pressed:bg-purple-100 focus-visible:ring-2 ring-black">
+          <Button className="outline-hidden px-3 flex items-center text-gray-700 transition border-0 border-solid border-l border-l-purple-200 bg-transparent rounded-r-lg pressed:bg-purple-100 focus-visible:ring-2 ring-black">
             <ChevronUpDownIcon size="XS" />
           </Button>
         </Group>
@@ -72,7 +73,7 @@ function DatePickerExample() {
                   {day => <CalendarHeaderCell className="text-xs text-gray-500 font-semibold">{day}</CalendarHeaderCell>}
                 </CalendarGridHeader>
                 <CalendarGridBody>
-                  {date => <CalendarCell date={date} className="w-9 h-9 outline-none cursor-default rounded-full flex items-center justify-center outside-month:text-gray-300 hover:bg-gray-100 pressed:bg-gray-200 selected:bg-violet-700 selected:text-white focus-visible:ring ring-violet-600/70 ring-offset-2" />}
+                  {date => <CalendarCell date={date} className="w-9 h-9 outline-hidden cursor-default rounded-full flex items-center justify-center outside-month:text-gray-300 hover:bg-gray-100 pressed:bg-gray-200 selected:bg-violet-700 selected:text-white focus-visible:ring-3 ring-violet-600/70 ring-offset-2" />}
                 </CalendarGridBody>
               </CalendarGrid>
             </Calendar>
@@ -84,7 +85,7 @@ function DatePickerExample() {
 }
 
 function RoundButton(props: ButtonProps) {
-  return <Button {...props} className="w-9 h-9 outline-none cursor-default bg-transparent text-gray-600 border-0 rounded-full flex items-center justify-center hover:bg-gray-100 pressed:bg-gray-200 focus-visible:ring ring-violet-600/70 ring-offset-2" />;
+  return <Button {...props} className="w-9 h-9 outline-hidden cursor-default bg-transparent text-gray-600 border-0 rounded-full flex items-center justify-center hover:bg-gray-100 pressed:bg-gray-200 focus-visible:ring-3 ring-violet-600/70 ring-offset-2" />;
 }
 
 function MyPopover(props: PopoverProps) {
@@ -107,7 +108,19 @@ This example uses the following plugins:
 * [tailwindcss-react-aria-components](../styling.html#plugin)
 * [tailwindcss-animate](https://github.com/jamiebuilds/tailwindcss-animate)
 
-Add them to your `tailwind.config.js`:
+When using Tailwind v4, add them to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+@plugin "tailwindcss-animate";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugins to your `tailwind.config.js` instead:
 
 ```tsx
 module.exports = {
@@ -118,6 +131,10 @@ module.exports = {
   ]
 };
 ```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
 
 ## Components
 
