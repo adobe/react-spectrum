@@ -13,7 +13,7 @@
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from '@internationalized/date';
 import {LabeledValue} from '../src';
 import React from 'react';
-import {render, waitFor, within} from '@react-spectrum/test-utils-internal';
+import {render, within} from '@react-spectrum/test-utils-internal';
 
 describe('LabeledValue', function () {
   it('renders a label', function () {
@@ -301,7 +301,7 @@ describe('LabeledValue', function () {
       );
     } catch (e) {
       console.log(e.message);
-      expect(e.message).toEqual("LabeledValue cannot contain an editable value.");
+      expect(e.message).toEqual('LabeledValue cannot contain an editable value.');
       expect(consoleErrorSpy).toHaveBeenCalled();
     }
   });
