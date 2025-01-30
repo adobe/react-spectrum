@@ -15,7 +15,7 @@ import {classNames} from '@react-spectrum/utils';
 import {DOMProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {flushSync} from 'react-dom';
-import React, {ReactElement, useEffect, useRef} from 'react';
+import React, {ReactElement, useEffect, useMemo, useRef} from 'react';
 import {SpectrumToastValue, Toast} from './Toast';
 import toastContainerStyles from './toastContainer.css';
 import {Toaster} from './Toaster';
@@ -106,13 +106,16 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
   let activeToastContainer = useActiveToastContainer();
   let state = useToastQueue(getGlobalToastQueue());
 
+  let placement = useMemo(() => {
+    let placements = props.placement?.split(' ');
+    return placements?.[placements.length - 1] || 'bottom';
+  }, [props.placement]);
+
   if (ref === activeToastContainer && state.visibleToasts.length > 0) {
     return (
       <Toaster state={state} {...props}>
         <ol className={classNames(toastContainerStyles, 'spectrum-ToastContainer-list')}>
           {state.visibleToasts.slice().reverse().map((toast) => {
-            let placements = props.placement?.split(' ');
-            let placement = placements?.[placements.length - 1] || 'bottom';
             return (
               <li
                 key={toast.key}
