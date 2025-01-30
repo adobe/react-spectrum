@@ -15,12 +15,12 @@ governing permissions and limitations under the License. -->
 
 ## Summary
 
-This RFC outlines a plan to incorporate Shadow DOM support in React Aria, React Aria Components, and React Spectrum S2.
+This RFC outlines a plan for progressive enhancement of Shadow DOM support in React Aria, React Aria Components, and React Spectrum S2.
 Shadow DOM support can mean many things; open root vs closed root, single containing shadow root, or multitude of individual components.
-As a result, this RFC aims to specifically support single containing shadow root, with some improvements to closed root individual components. It is also intended to ensure we continue support into the future.
+We can improve across all of these.
+
 
 ## Motivation
-
 
 As Web Components have become more prominent and more libraries and applications use them, we have encountered friction for people trying to adopt or use our libraries alongside others.
 
@@ -39,7 +39,7 @@ We have also had a contribution to solve some of the issues. While this is usefu
 
 As mentioned earlier, there are proposed parts to this initiative:
 
-1. Custom React Testing Library renderer
+1. Custom React Testing Library Renderer
 
 Much like our custom renderer to test React.StrictMode, we should create a custom React Testing Library renderer for our unit tests which can wrap each test's rendered dom in a shadow root.
 
@@ -47,15 +47,15 @@ This will give us a baseline to develop against and it will also hold us account
 
 I expect many tests will fail in the beginning. We make use of a lot of DOM API's and have not generally thought of the ShadowDOM while developing.
 
-2. Rework code not to need to dive into Shadow Roots.
+2. Avoid DOM Traversal/Manipulation
 
 This is most prominent in Focus Scope where we traverse the DOM in order to assign focus, such as in Collections, and contain focus such as in Dialogs.
 
 One proposal to avoid this traversal is to create focusable sentinels in order to trap focus.
 
-This will have the side benefit of theoretically working with closed root
+This will have the side benefit of theoretically working with closed root shadow doms as well, such as the aforementioned native video players inside a Dialog.
 
-3. Education
+3. In-team Education
 
 Writing code that can handle the prescence of Shadow DOM can be tricky. As a result, there will be a learning curve for the team.
 
@@ -87,13 +87,15 @@ We will want to expand this to also shield those users from code size increases.
 
 We also need to communicate, through documentation, what the specifics are of our Shadow DOM support since we likely will not be able to support everything, and certainly not much for a while.
 
+For example, some of our support may require open root Shadow DOMs. Or someone using our FocusScope's focus manager may need to know about different traversal methods to avoid the same issues we are trying to avoid.
+
 ## Drawbacks
 
-One concern is ongoing support. Our current use cases do not call for Shadow DOM support, so knowledge on the team is currently thin. It will take time for people to ramp up on skills. Not only that, but it isn't part of our weekly testing and I have no plans for it to be at this time, which means we must rely on unit tests as much as possible.
+One concern is on-going support. Our current use cases do not call for Shadow DOM support, so knowledge on the team is currently thin. It will take time for people to ramp up on skills. Not only that, but it isn't part of our weekly testing and we have no plans for it to be at this time, which means we must rely on unit tests as much as possible.
 
-In addition, contributions may occur for a little while until those teams have their needs met, but leave the code base in an unfinished state for complete support aligning with scope of goals as outlined here.
+In addition, contributions may occur for a little while until those teams have their needs met. However, it should be assumed that there will be further work to complete the goals as outlined here.
 
-Another concern is that the current approach is, for lack of a better word, hacky. This is because we are accessing and manipulating the Shadow DOM in ways that it wasn't really intended. If we were to rewrite our library today, there are other ways we'd solve these issues which would respect more of the concept of the Shadow DOM and its purpose. What we do here and now may complicate a future where we had different APIs to support this vision of what support would ideally look like.
+Another concern is that the current approach is, for lack of a better word, hacky. This is because we are accessing and manipulating the Shadow DOM in ways that it wasn't really intended. If we were to rewrite our library today, there are other ways we'd solve these issues which would respect more of the concept of the Shadow DOM and its purpose. What we do here and now may complicate a future where we have different APIs to support this vision of what support would ideally look like.
 
 
 ## Backwards Compatibility Analysis
@@ -106,14 +108,20 @@ Unknown, haven't done research here yet.
 
 ## Open Questions
 
-* How to actually define the limitations of our support?
-*
+* How to actually define the limitations of our support? See Introduction, it's missing a final sentence with this information.
 
 ## Help Needed
 
 The biggest help we can receive is tests, either in the form of unit tests or in the form of examples of real life applications/setups that we can turn into unit tests. The more tests we have, the less likely we will break anything moving forward after the initial effort is complete.
 
 ## Frequently Asked Questions
+
+* How much can we count on contributor support? will the code just rot after the initial push?
+  * We should expect that we'll take ownership of any code that comes in, we should not count on external support.
+* Is there any benefit to our selves or other people not using Shadow DOM?
+  * Yes, see some of the issues listed above, specifically native video players breaking FocusScopes in Dialogs.
+  * Users may be unaware that they are using Shadow DOM as it may be an implementation detail of a 3rd party component.
+
 
 ## Related Discussions
 
