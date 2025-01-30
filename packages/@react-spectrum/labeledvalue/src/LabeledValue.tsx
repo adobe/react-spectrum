@@ -57,12 +57,19 @@ interface StringListProps<T extends string[]> {
   /** Formatting options for the value. */
   formatOptions?: Intl.ListFormatOptions
 }
+interface ReactNodeProps<T extends ReactNode> {
+  /** The value to display. */
+  value: T
+  /** Formatting options for the value. */
+  formatOptions?: never
+}
 
 type LabeledValueProps<T> =
   T extends NumberValue ? NumberProps<T> :
   T extends DateTimeValue ? DateProps<T> :
   T extends string[] ? StringListProps<T> :
   T extends string ? StringProps<T> :
+  T extends ReactNode ? ReactNodeProps<T> :
   never;
 
 type SpectrumLabeledValueTypes = string[] | string | Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time | number | RangeValue<number> | RangeValue<DateTime> | ReactNode;
