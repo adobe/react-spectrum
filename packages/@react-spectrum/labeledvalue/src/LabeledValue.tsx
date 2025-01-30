@@ -78,7 +78,6 @@ export const LabeledValue = React.forwardRef(function LabeledValue<T extends Spe
   } = props;
   let domRef = useDOMRef(ref);
 
-  // todo(sanmalik) - fix this
   useEffect(() => {
     if (
       domRef?.current &&
