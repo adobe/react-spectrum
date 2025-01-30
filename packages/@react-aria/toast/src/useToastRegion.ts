@@ -51,11 +51,13 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
     let onPointerMove = (e: PointerEvent) => {
       pointerPosition.current = {x: e.clientX, y: e.clientY};
     };
-    document.addEventListener('pointermove', onPointerMove);
+    if (state.visibleToasts.length > 1) {
+      document.addEventListener('pointermove', onPointerMove);
+    }
     return () => {
       document.removeEventListener('pointermove', onPointerMove);
     };
-  }, []);
+  }, [state.visibleToasts.length]);
 
   let {hoverProps} = useHover({
     onHoverStart: () => {
@@ -82,6 +84,7 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
         state.resumeAll();
       }
     }
+    prevToastCount.current = currentCount;
   }, [ref, state]);
 
   // Manage focus within the toast region.
