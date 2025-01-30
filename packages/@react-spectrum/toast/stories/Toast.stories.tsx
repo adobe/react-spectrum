@@ -361,7 +361,7 @@ function MainLandmark(props) {
 }
 
 export const withFullscreen = {
-  render: () => <FullscreenApp />,
+  render: (args) => <FullscreenApp {...args} />,
   parameters: {
     disableToastContainer: true
   }
@@ -387,9 +387,9 @@ function FullscreenApp(props) {
       <UNSTABLE_PortalProvider getContainer={() => ref.current}>
         <RenderProvider {...props} />
         <ActionButton onPress={fullscreenPress}>Enter fullscreen</ActionButton>
-        {isFullscreen && <ToastContainer key="miniapp" />}
+        {isFullscreen && <ToastContainer key="miniapp" placement={props.placement} />}
       </UNSTABLE_PortalProvider>
-      {!isFullscreen && <ToastContainer key="app" />}
+      {!isFullscreen && <ToastContainer key="app" placement={props.placement} />}
     </div>
   );
 }
