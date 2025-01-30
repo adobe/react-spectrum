@@ -178,7 +178,7 @@ export function ExampleApp() {
         <SearchField aria-label="Search" value={search} onChange={setSearch} className="col-span-3 sm:col-span-1" />
         <DialogTrigger>
           <TooltipTrigger>
-            <Button aria-label="Filters" variant="secondary" className="w-9 h-9 flex-shrink-0 p-0 relative">
+            <Button aria-label="Filters" variant="secondary" className="w-9 h-9 shrink-0 p-0 relative">
               <FilterIcon aria-hidden className="inline w-5 h-5" />
               {filters > 0 && <div className="absolute -top-2 -right-2 rounded-full h-4 aspect-square text-white text-xs bg-blue-600">{filters}</div>}
             </Button>
@@ -191,8 +191,8 @@ export function ExampleApp() {
               <div className="flex flex-col gap-4">
                 <Checkbox isSelected={favorite} onChange={setFavorite}>Favorite</Checkbox>
                 <TagGroup label="Cycle" selectionMode="multiple" selectedKeys={cycles} onSelectionChange={setCycles}>
-                  <Tag id="Annual" color="green" textValue="Annual"><RefreshCw className="w-4 h-4 flex-shrink-0" /> Annual</Tag>
-                  <Tag id="Perennial" color="green" textValue="Perennial"><RefreshCw className="w-4 h-4 flex-shrink-0" /> Perennial</Tag>
+                  <Tag id="Annual" color="green" textValue="Annual"><RefreshCw className="w-4 h-4 shrink-0" /> Annual</Tag>
+                  <Tag id="Perennial" color="green" textValue="Perennial"><RefreshCw className="w-4 h-4 shrink-0" /> Perennial</Tag>
                 </TagGroup>
                 <TagGroup label="Sunlight" selectionMode="multiple" selectedKeys={sunlight} onSelectionChange={setSunlight}>
                   <Tag id="full sun" color="yellow" textValue="Full Sun">{sunIcons['full sun']} Full Sun</Tag>
@@ -210,7 +210,7 @@ export function ExampleApp() {
         </DialogTrigger>
         <MenuTrigger>
           <TooltipTrigger>
-            <Button aria-label="Columns" variant="secondary" className="w-9 h-9 flex-shrink-0 p-0 hidden sm:block">
+            <Button aria-label="Columns" variant="secondary" className="w-9 h-9 shrink-0 p-0 hidden sm:block">
               <SlidersIcon aria-hidden className="inline w-5 h-5" />
             </Button>
             <Tooltip>Columns</Tooltip>
@@ -223,7 +223,7 @@ export function ExampleApp() {
           </Menu>
         </MenuTrigger>
         <DialogTrigger>
-          <Button aria-label="Add plant" variant="secondary" className="w-9 h-9 flex-shrink-0 p-0 col-start-5">
+          <Button aria-label="Add plant" variant="secondary" className="w-9 h-9 shrink-0 p-0 col-start-5">
             <PlusIcon aria-hidden className="inline w-5 h-5" />
           </Button>
           <PlantModal>
@@ -236,7 +236,7 @@ export function ExampleApp() {
           {item => (
             <GridListItem textValue={item.common_name}>
               <div className="grid grid-cols-[40px_1fr_auto] gap-x-2 w-full">
-                <img alt="" src={item.default_image?.thumbnail} className="inline rounded row-span-3 object-contain h-[40px]" />
+                <img alt="" src={item.default_image?.thumbnail} className="inline rounded-sm row-span-3 object-contain h-[40px]" />
                 <span className="truncate capitalize">{item.common_name}</span>
                 <span className="truncate text-xs text-gray-600 dark:text-zinc-400 col-start-2 row-start-2">{item.scientific_name}</span>
                 <MenuTrigger>
@@ -262,7 +262,7 @@ export function ExampleApp() {
           )}
         </GridList>
       }
-      {!isSmall && <ResizableTableContainer className="flex-1 w-full overflow-auto scroll-pt-[2.281rem] relative border dark:border-zinc-700 rounded-lg" onScroll={onScroll}>
+      {!isSmall && <ResizableTableContainer className="flex-1 w-full overflow-auto scroll-pt-[2.281rem] relative border border-gray-200 dark:border-zinc-700 rounded-lg" onScroll={onScroll}>
         <Table aria-label="My plants" selectionMode="multiple" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
           <TableHeader columns={columns}>
             {column => <Column {...column} />}
@@ -282,7 +282,7 @@ export function ExampleApp() {
                       return (
                         <Cell textValue={item.common_name}>
                           <div className="grid grid-cols-[40px_1fr] gap-x-2">
-                            <img alt="" src={item.default_image?.thumbnail} className="inline rounded row-span-2 object-contain h-[40px]" />
+                            <img alt="" src={item.default_image?.thumbnail} className="inline rounded-sm row-span-2 object-contain h-[40px]" />
                             <span className="truncate capitalize">{item.common_name}</span>
                             <span className="truncate text-xs text-gray-600 dark:text-zinc-400">{item.scientific_name}</span>
                           </div>
@@ -351,15 +351,15 @@ function Label({color, icon, children}: {color: keyof typeof labelStyles, icon: 
   return <span className={`${labelStyles[color]} text-xs rounded-full border px-2 flex items-center max-w-fit gap-1`}>{icon} <span className="truncate capitalize">{children}</span></span>;
 }
 
-const cycleIcon = <RefreshCw aria-hidden="true" className="w-4 h-4 flex-shrink-0" />;
+const cycleIcon = <RefreshCw aria-hidden="true" className="w-4 h-4 shrink-0" />;
 function CycleLabel({cycle}: {cycle: string}) {
   return <Label color="green" icon={cycleIcon}>{cycle}</Label>;
 }
 
 const sunIcons: Record<string, ReactElement> = {
-  'full sun': <Sun aria-hidden="true" className="w-4 h-4 flex-shrink-0" />,
-  'part sun': <SunDim aria-hidden="true" className="w-4 h-4 flex-shrink-0" />,
-  'part shade': <CloudSun aria-hidden="true" className="w-4 h-4 flex-shrink-0" />
+  'full sun': <Sun aria-hidden="true" className="w-4 h-4 shrink-0" />,
+  'part sun': <SunDim aria-hidden="true" className="w-4 h-4 shrink-0" />,
+  'part shade': <CloudSun aria-hidden="true" className="w-4 h-4 shrink-0" />
 };
 
 const sunColors: Record<string, keyof typeof labelStyles> = {
@@ -377,9 +377,9 @@ function getSunlight(item: Plant) {
 }
 
 const wateringIcons: Record<string, ReactElement> = {
-  'Frequent': <Droplets aria-hidden="true" className="w-4 h-4 flex-shrink-0" />,
-  'Average': <Droplet aria-hidden="true" className="w-4 h-4 flex-shrink-0" />,
-  'Minimum': <Dessert aria-hidden="true" className="w-4 h-4 flex-shrink-0" />
+  'Frequent': <Droplets aria-hidden="true" className="w-4 h-4 shrink-0" />,
+  'Average': <Droplet aria-hidden="true" className="w-4 h-4 shrink-0" />,
+  'Minimum': <Dessert aria-hidden="true" className="w-4 h-4 shrink-0" />
 };
 
 const wateringColors: Record<string, keyof typeof labelStyles> = {
@@ -425,7 +425,7 @@ function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant)
                     setDroppedImage(URL.createObjectURL(await item.getFile()));
                   }
                 }}
-                className="w-24 sm:w-32 p-2 flex items-center justify-center flex-shrink-0 border-2 border-gray-400 border-dashed rounded-xl text-gray-500 dark:text-gray-300 focus-visible:border-blue-600 forced-colors:focus-visible:border-[Highlight] focus-visible:border-solid drop-target:border-blue-600 forced-colors:drop-target:border-[Highlight] drop-target:border-solid drop-target:bg-blue-200 dark:drop-target:bg-blue-800/60 drop-target:text-blue-600 dark:drop-target:text-blue-300">
+                className="w-24 sm:w-32 p-2 flex items-center justify-center shrink-0 border-2 border-gray-400 border-dashed rounded-xl text-gray-500 dark:text-gray-300 focus-visible:border-blue-600 forced-colors:focus-visible:border-[Highlight] focus-visible:border-solid drop-target:border-blue-600 forced-colors:drop-target:border-[Highlight] drop-target:border-solid drop-target:bg-blue-200 dark:drop-target:bg-blue-800/60 drop-target:text-blue-600 dark:drop-target:text-blue-300">
                 {droppedImage
                   ? <img alt="" src={droppedImage} className="w-full h-full object-contain aspect-square" />
                   : <Text slot="label" className="italic text-sm text-center">Drop or paste image here</Text>
@@ -505,7 +505,7 @@ function PlantModal(props: ModalOverlayProps) {
     <ModalOverlay
       {...props}
       className={({isEntering, isExiting}) => `
-      fixed top-0 left-0 w-full h-[--visual-viewport-height] isolate z-20 bg-black/[15%] flex items-center justify-center p-4 text-center backdrop-blur-lg
+      fixed top-0 left-0 w-full h-(--visual-viewport-height) isolate z-20 bg-black/[15%] flex items-center justify-center p-4 text-center backdrop-blur-lg
       ${isEntering ? 'animate-in fade-in duration-200 ease-out' : ''}
       ${isExiting ? 'animate-out fade-out duration-200 ease-in' : ''}
     `}>
@@ -513,7 +513,7 @@ function PlantModal(props: ModalOverlayProps) {
         {!isResized &&
           <div
             data-react-aria-top-layer="true"
-            className={`fixed top-0 left-0 w-full h-[--visual-viewport-height] z-30 hidden sm:flex items-center justify-center pointer-events-none [filter:drop-shadow(0_0_3px_white)] dark:filter-none
+            className={`fixed top-0 left-0 w-full h-(--visual-viewport-height) z-30 hidden sm:flex items-center justify-center pointer-events-none [filter:drop-shadow(0_0_3px_white)] dark:filter-none
               ${isEntering ? 'animate-in zoom-in-105 ease-out duration-200' : ''}
               ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}
             `}>
@@ -543,7 +543,7 @@ function PlantModal(props: ModalOverlayProps) {
 
 const favoriteButtonStyles = tv({
   extend: focusRing,
-  base: 'group cursor-default align-middle rounded',
+  base: 'group cursor-default align-middle rounded-sm',
   variants: {
     isSelected: {
       false: 'text-gray-500 dark:text-zinc-400 pressed:text-gray-600 dark:pressed:text-zinc-300',

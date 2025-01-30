@@ -427,36 +427,6 @@ describe('DatePickerBase', function () {
         fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
       }
     });
-
-    it.each`
-      Name                   | Component
-      ${'DatePicker'}        | ${DatePicker}
-      ${'DateRangePicker'}   | ${DateRangePicker}
-    `('$Name should support arrow keys to move between segments in an RTL locale', ({Component}) => {
-      let {getAllByRole} = render(
-        <Provider theme={theme} locale="ar-EG">
-          <Component label="Date" value={new CalendarDate(2019, 2, 3)} />
-        </Provider>
-      );
-
-      let segments = getAllByRole('spinbutton');
-      let button = getAllByRole('button')[0];
-      act(() => {segments[0].focus();});
-
-      for (let i = 0; i < segments.length; i++) {
-        expect(segments[i]).toHaveFocus();
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
-      }
-
-      expect(button).toHaveFocus();
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-
-      for (let i = segments.length - 1; i >= 0; i--) {
-        expect(segments[i]).toHaveFocus();
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-      }
-    });
-
     it.each`
       Name                   | Component
       ${'DatePicker'}        | ${DatePicker}
@@ -491,6 +461,130 @@ describe('DatePickerBase', function () {
 
       let segments = getAllByRole('spinbutton');
       expect(segments[0]).toHaveFocus();
+    });
+
+    describe('RTL focus management', function () { 
+      beforeEach(() => {
+        jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+          let x = 0;
+          let el = this;
+  
+          if (el.getAttribute('role') === 'spinbutton') {
+            let dataType = el.getAttribute('data-testid');
+            if (el.parentElement.getAttribute('data-testid') === 'end-date') {
+              if (dataType === 'day') {
+                x = 60;
+              } else if (dataType === 'month') {
+                x = 50;
+              } else if (dataType === 'year') {
+                x = 40;
+              } else if (dataType === 'hour') {
+                x = 20;
+              } else if (dataType === 'minute') {
+                x = 30;
+              } else if (dataType === 'dayPeriod') {
+                x = 10;
+              }
+            } else {
+              if (dataType === 'day') {
+                x = 120;
+              } else if (dataType === 'month') {
+                x = 110;
+              } else if (dataType === 'year') {
+                x = 100;
+              } else if (dataType === 'hour') {
+                x = 80;
+              } else if (dataType === 'minute') {
+                x = 90;
+              } else if (dataType === 'dayPeriod') {
+                x = 70;
+              }
+            }
+          }
+    
+          if (el.getAttribute('role') === 'button') {
+            x = 0;
+          }
+    
+          return {
+            left: x,
+            right: x + 10,
+            top: 10,
+            bottom: 0,
+            x: x,
+            y: 10,
+            width: 10,
+            height: 10
+          };
+        });
+  
+        jest.useFakeTimers();
+      });
+
+      afterEach(() => {
+        act(() => jest.runAllTimers());
+      });
+
+      it('DatePicker should support arrow keys to move between segments in an RTL locale', () => {
+        let {getAllByRole} = render(
+          <Provider theme={theme} locale="ar-EG">
+            <DatePicker label="Date" granularity="minute" />
+          </Provider>
+        );
+
+        let segments = getAllByRole('spinbutton');
+        let button = getAllByRole('button')[0];
+        act(() => {segments[0].focus();});
+
+        // Segment order corresponds to the following: [day, month, year, minute, hour, dayPeriod]
+        // In arabic, the absolute position of the segments in a DateField is: DayPeriod Hour:Minute Year/Month/Day
+        let segmentOrder = [0, 1, 2, 4, 3, 5];
+
+        for (let i = 0 ; i < segments.length; i++) {
+          let index = segmentOrder[i];
+          expect(segments[index]).toHaveFocus();
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
+        }
+
+        expect(button).toHaveFocus();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+
+        for (let i = segments.length - 1; i >= 0; i--) {
+          let index = segmentOrder[i];
+          expect(segments[index]).toHaveFocus();
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+        }
+      });
+
+      it('DateRangePicker should support arrow keys to move between segments in an RTL locale', () => {
+        let {getAllByRole} = render(
+          <Provider theme={theme} locale="ar-EG">
+            <DateRangePicker label="Date" granularity="minute" />
+          </Provider>
+        );
+
+        let segments = getAllByRole('spinbutton');
+        let button = getAllByRole('button')[0];
+        act(() => {segments[0].focus();});
+
+        // In arabic, the absolute position of the segments in a DateField is: DayPeriod Hour:Minute Year/Month/Day
+        let segmentOrder = [0, 1, 2, 4, 3, 5, 6, 7, 8, 10, 9, 11];
+
+        for (let i = 0 ; i < segments.length; i++) {
+          let index = segmentOrder[i];
+          expect(segments[index]).toHaveFocus();
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
+        }
+
+        expect(button).toHaveFocus();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+
+        for (let i = segments.length - 1; i >= 0; i--) {
+          let index = segmentOrder[i];
+          expect(segments[index]).toHaveFocus();
+          fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+        }
+      });
     });
   });
 
