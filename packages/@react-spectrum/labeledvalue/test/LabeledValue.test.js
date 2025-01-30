@@ -275,7 +275,7 @@ describe('LabeledValue', function () {
     expect(staticField).toHaveTextContent('10 – 20');
   });
 
-  it('renders correctly with ReactNode value', function () {
+  it('renders correctly with ReactElement value', function () {
     let {getByTestId} = render(
       <LabeledValue
         data-testid="test-id"
