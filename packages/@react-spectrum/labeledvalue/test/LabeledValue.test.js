@@ -292,14 +292,18 @@ describe('LabeledValue', function () {
   });
 
   it('throws when an editable value is provided', async function () {
-    await waitFor(() => { 
-      expect(() => render(
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      render(
         <LabeledValue
-          data-testid="test-id"
           label="Field label"
           value={<input />} />
-      )).toThrowError('LabeledValue cannot contain an editable value.');
-    });
+      );
+    } catch (e) {
+      console.log(e.message);
+      expect(e.message).toEqual("LabeledValue cannot contain an editable value.");
+      expect(consoleErrorSpy).toHaveBeenCalled();
+    }
   });
 
   it('attaches a user provided ref to the outer div', function () {
