@@ -183,6 +183,7 @@ function addToast(children: string, variant: SpectrumToastValue['variant'], opti
   let key: string;
   let add = () => queue.add(value, {timeout, onClose: options.onClose});
   if ('startViewTransition' in document) {
+    // @ts-expect-error
     document.startViewTransition(() => {
       flushSync(() => {
         key = add();
@@ -193,6 +194,7 @@ function addToast(children: string, variant: SpectrumToastValue['variant'], opti
   }
 
   if ('startViewTransition' in document) {
+    // @ts-expect-error
     return () => document.startViewTransition(() => {
       flushSync(() => {
         queue.close(key);
