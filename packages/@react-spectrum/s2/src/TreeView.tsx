@@ -215,66 +215,21 @@ const treeCellGrid = style({
       forcedColors: 'Highlight'
     }
   },
-  borderTopColor: {
-    default: 'transparent',
-    isSelected: {
-      isFirst: 'transparent'
-    },
+  borderColor: {
     isDetached: {
       default: 'transparent',
       isSelected: '--rowSelectedBorderColor'
     }
   },
-  borderInlineEndColor: {
-    default: 'transparent',
-    isSelected: 'transparent',
-    isDetached: {
-      default: 'transparent',
-      isSelected: '--rowSelectedBorderColor'
-    }
-  },
-  borderBottomColor: {
-    default: 'transparent',
-    isSelected: 'transparent',
-    isNextSelected: 'transparent',
-    isNextFocused: 'transparent',
-    isDetached: {
-      default: 'transparent',
-      isSelected: '--rowSelectedBorderColor'
-    }
-  },
-  borderInlineStartColor: {
-    default: 'transparent',
-    isSelected: 'transparent',
-    isDetached: {
-      default: 'transparent',
-      isSelected: '--rowSelectedBorderColor'
-    }
-  },
-  borderTopWidth: {
-    default: 0,
-    isFirst: {
-      default: 1,
-      forcedColors: 0
-    },
-    isDetached: 1
-  },
-  borderBottomWidth: {
-    default: 0,
-    isDetached: 1
-  },
-  borderStartWidth: {
-    default: 0,
-    isDetached: 1
-  },
-  borderEndWidth: {
-    default: 0,
+  borderWidth: {
     isDetached: 1
   },
   borderRadius: {
     isDetached: 'default'
   },
-  borderStyle: 'solid'
+  borderStyle: {
+    isDetached: 'solid'
+  }
 });
 
 const treeCheckbox = style({
