@@ -116,7 +116,7 @@ export interface TreeData<T extends object> {
   moveBefore(key: Key, toParentKey: Key | null, index: number): void,
 
   /**
-   * Moves an item after ia node within the tree.
+   * Moves an item after a node within the tree.
    * @param key - The key of the item to move.
    * @param toParentKey - The key of the new parent to insert into. `null` for the root.
    * @param index - The index within the new parent to insert after.
@@ -419,7 +419,6 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
 
         // Otherwise, update the parent node and its ancestors.
         return updateTree(newItems, toParentKey, parentNode => {
-          console.log('parent node children ', parentNode.children);
           const c = [
             ...parentNode.children!.slice(0, afterIndex),
             movedNode,
