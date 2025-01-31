@@ -732,7 +732,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
           // Open submenu
           await user.keyboard('{ArrowRight}');
           act(() => jest.runAllTimers());
-          expect(input).not.toHaveAttribute('aria-activedescendant');
+          expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
           expect(options[1]).not.toHaveAttribute('data-focused');
           expect(options[1]).not.toHaveAttribute('data-focus-visible');
           let menus = getAllByRole('menu');

@@ -14,11 +14,12 @@ import {AriaLabelingProps, BaseEvent, DOMProps, RefObject} from '@react-types/sh
 import {AriaTextFieldProps} from '@react-aria/textfield';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
 import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, isCtrlKeyPressed, mergeProps, mergeRefs, UPDATE_ACTIVEDESCENDANT, useEffectEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
-import {getInteractionModality} from '@react-aria/interactions';
+import {getInteractionModality, isFocusVisible} from '@react-aria/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef} from 'react';
+import React, {KeyboardEvent as ReactKeyboardEvent, FocusEvent as ReactFocusEvent, useCallback, useEffect, useMemo, useRef} from 'react';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import { dispatchVirtualBlur, dispatchVirtualFocus, moveVirtualFocus } from '@react-aria/focus';
 
 export interface CollectionOptions extends DOMProps, AriaLabelingProps {
   /** Whether the collection items should use virtual focus instead of being focused directly. */
@@ -66,36 +67,30 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
   let collectionId = useId();
   let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   let delayNextActiveDescendant = useRef(false);
-  let queuedActiveDescendant = useRef(null);
+  let queuedActiveDescendant = useRef<string | null>(null);
   let lastCollectionNode = useRef<HTMLElement>(null);
-  // Stores the previously focused item id if it was cleared via ArrowLeft/Right. This is so the user can still keyboard navigate from their last focused key
-  // after using ArrowLeft/Right to move the cursor. If we completely reset the focused key, then the user would have to restart all the way from the first key
-  // which feels excessive if they aren't actually modifying text in the field
-  let clearedFocusedId = useRef<string | null>(null);
 
-  let updateActiveDescendant = useEffectEvent((e) => {
-    let {target} = e;
-    if (queuedActiveDescendant.current === target.id) {
+  let updateActiveDescendant = useEffectEvent((e: Event) => {
+    let target = e.target as Element | null;
+    if (e.isTrusted || !target || queuedActiveDescendant.current === target.id) {
       return;
     }
-
+    
+    console.log(target.id)
     clearTimeout(timeout.current);
-    e.stopPropagation();
+    // e.stopPropagation();
     if (target !== collectionRef.current) {
       if (delayNextActiveDescendant.current) {
         queuedActiveDescendant.current = target.id;
         timeout.current = setTimeout(() => {
           state.setFocusedNodeId(target.id);
           queuedActiveDescendant.current = null;
-          clearedFocusedId.current = null;
         }, 500);
       } else {
         state.setFocusedNodeId(target.id);
-        clearedFocusedId.current = null;
       }
     } else {
       state.setFocusedNodeId(null);
-      clearedFocusedId.current = null;
     }
 
     delayNextActiveDescendant.current = false;
@@ -107,11 +102,11 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
       // of the letter you just typed. If we recieve another UPDATE_ACTIVEDESCENDANT call then we clear the queued update
       // We track lastCollectionNode to do proper cleanup since callbackRefs just pass null when unmounting. This also handles
       // React 19's extra call of the callback ref in strict mode
-      lastCollectionNode.current?.removeEventListener(UPDATE_ACTIVEDESCENDANT, updateActiveDescendant);
+      lastCollectionNode.current?.removeEventListener('focusin', updateActiveDescendant);
       lastCollectionNode.current = collectionNode;
-      collectionNode.addEventListener(UPDATE_ACTIVEDESCENDANT, updateActiveDescendant);
+      collectionNode.addEventListener('focusin', updateActiveDescendant);
     } else {
-      lastCollectionNode.current?.removeEventListener(UPDATE_ACTIVEDESCENDANT, updateActiveDescendant);
+      lastCollectionNode.current?.removeEventListener('focusin', updateActiveDescendant);
     }
   }, [updateActiveDescendant]);
 
@@ -132,12 +127,7 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
   });
 
   let clearVirtualFocus = useEffectEvent((clearFocusKey?: boolean) => {
-    if (clearFocusKey == null && state.focusedNodeId) {
-      clearedFocusedId.current = state.focusedNodeId;
-    } else if (clearFocusKey) {
-      clearedFocusedId.current = null;
-    }
-
+    moveVirtualFocus(document.activeElement);
     state.setFocusedNodeId(null);
     let clearFocusEvent = new CustomEvent(CLEAR_FOCUS_EVENT, {
       cancelable: true,
@@ -227,7 +217,7 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
           (item && item.hasAttribute('aria-expanded') && !item.hasAttribute('aria-disabled')) &&
           ((direction === 'ltr' && e.key === 'ArrowRight') || (direction === 'rtl' && e.key === 'ArrowLeft'))) {
           // Don't move the cursor in the field and don't clear virtual focus if the ArrowLeft/Right would trigger a submenu to be opened
-          e.preventDefault();
+          // e.preventDefault();
         } else {
           // Clear the activedescendant so NVDA announcements aren't interrupted but retain the focused key in the collection so the
           // user's keyboard navigation restarts from where they left off
@@ -246,13 +236,12 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
       e.stopPropagation();
     }
 
-    let focusedElementId = state.focusedNodeId ?? clearedFocusedId.current;
-    if (focusedElementId == null) {
+    if (state.focusedNodeId == null) {
       collectionRef.current?.dispatchEvent(
         new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
       );
     } else {
-      let item = document.getElementById(focusedElementId);
+      let item = document.getElementById(state.focusedNodeId);
       item?.dispatchEvent(
         new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
       );
@@ -301,20 +290,54 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
 
   // Be sure to clear/restore the virtual + collection focus when blurring/refocusing the field so we only show the
   // focus ring on the virtually focused collection when are actually interacting with the Autocomplete
-  let onBlur = () => {
-    clearVirtualFocus();
-  };
+  let onBlur = (e: ReactFocusEvent) => {
+    if (!e.isTrusted) {
+      return;
+    }
 
-  let onFocus = () => {
-    if (clearedFocusedId.current) {
-      let focusCollection = new CustomEvent(FOCUS_EVENT, {
-        cancelable: true,
-        bubbles: true
-      });
-
-      collectionRef.current?.dispatchEvent(focusCollection);
+    // console.log('blur')
+    let lastFocusedNode = state.focusedNodeId ? document.getElementById(state.focusedNodeId) : null;
+    if (lastFocusedNode) {
+      dispatchVirtualBlur(lastFocusedNode, e.relatedTarget);
     }
   };
+
+  let onFocus = (e: ReactFocusEvent) => {
+    if (!e.isTrusted) {
+      return;
+    }
+
+    // if (getInteractionModality() === 'pointer') {
+    //   return;
+    // }
+
+    let curFocusedNode = state.focusedNodeId ? document.getElementById(state.focusedNodeId) : null;
+    if (curFocusedNode) {
+      queueMicrotask(() => {
+        // moveVirtualFocus(e.target, curFocusedNode);
+      dispatchVirtualBlur(e.target, curFocusedNode);
+      dispatchVirtualFocus(curFocusedNode, e.target);
+      });
+    }
+    // let focusCollection = new CustomEvent(FOCUS_EVENT, {
+    //   cancelable: true,
+    //   bubbles: true
+    // });
+
+    // collectionRef.current?.dispatchEvent(focusCollection);
+  };
+
+  // let lastFocusedId = useRef<string | null>(null);
+  // useEffect(() => {
+  //   if (state.focusedNodeId !== lastFocusedId.current && isFocusVisible()) {
+  //     let lastFocusedNode = lastFocusedId.current ? document.getElementById(lastFocusedId.current) : document.activeElement;
+  //     let curFocusedNode = state.focusedNodeId ? document.getElementById(state.focusedNodeId) : document.activeElement;
+
+  //     lastFocusedId.current = state.focusedNodeId;
+
+  //     moveFocus(lastFocusedNode, curFocusedNode);
+  //   }
+  // }, [state.focusedNodeId]);
 
   return {
     textFieldProps: {

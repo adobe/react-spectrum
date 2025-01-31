@@ -14,7 +14,7 @@ import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, isCtrlKeyPressed,
 import {DOMAttributes, FocusableElement, FocusStrategy, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {flushSync} from 'react-dom';
 import {FocusEvent, KeyboardEvent, useEffect, useRef} from 'react';
-import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
+import {focusSafely, getFocusableTreeWalker, moveVirtualFocus} from '@react-aria/focus';
 import {getInteractionModality} from '@react-aria/interactions';
 import {isNonContiguousSelectionModifier} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
@@ -149,7 +149,9 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
           return;
         }
 
-        manager.setFocusedKey(key, childFocus);
+        flushSync(() => {
+          manager.setFocusedKey(key, childFocus);
+        });
 
         if (manager.isLink(key) && linkBehavior === 'override') {
           return;
@@ -371,7 +373,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       let element = scrollRef.current.querySelector(`[data-key="${CSS.escape(manager.focusedKey.toString())}"]`) as HTMLElement;
       if (element) {
         // This prevents a flash of focus on the first/last element in the collection, or the collection itself.
-        if (!element.contains(document.activeElement)) {
+        if (!element.contains(document.activeElement) && !shouldUseVirtualFocus) {
           focusWithoutScrolling(element);
         }
 
@@ -385,11 +387,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
   let onBlur = (e) => {
     // Don't set blurred and then focused again if moving focus within the collection.
-    // If the collection is using virtual focus, this blur can happen when attempting to focus one of the collection
-    // items that dont have a tabindex which may potentially erronously set the manager's focus state to false. Instead, rely
-    // on the element that controls the collection's virtual focus to properly update whether focus is currently in the collection
-    // via CLEAR_FOCUS_EVENT
-    if (!e.currentTarget.contains(e.relatedTarget as HTMLElement) && !shouldUseVirtualFocus) {
+    if (!e.currentTarget.contains(e.relatedTarget as HTMLElement)) {
       manager.setFocused(false);
     }
   };
@@ -417,12 +415,13 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
     // If no focusable items exist in the list, make sure to clear any activedescendant that may still exist
     if (keyToFocus == null) {
-      ref.current?.dispatchEvent(
-        new CustomEvent(UPDATE_ACTIVEDESCENDANT, {
-          cancelable: true,
-          bubbles: true
-        })
-      );
+      // ref.current?.dispatchEvent(
+      //   new CustomEvent(UPDATE_ACTIVEDESCENDANT, {
+      //     cancelable: true,
+      //     bubbles: true
+      //   })
+      // );
+      moveVirtualFocus(ref.current);
 
       // If there wasn't a focusable key but the collection had items, then that means we aren't in an intermediate load state and all keys are disabled.
       // Reset shouldVirtualFocusFirst so that we don't erronously autofocus an item when the collection is filtered again.

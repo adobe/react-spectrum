@@ -78,19 +78,19 @@ export const Group = /*#__PURE__*/ (forwardRef as forwardRefType)(function Group
   // TODO: we don't want to style the group with a focusRing if there is an element within that has aria-activeDescendant
   // because the virtually focused item should display the focus ring instead. Alternative is to have the internal Autocomplet context
   // pass hasActiveDescendant instead, but that makes it more scoped. Perhaps use a mutation observer (feels a bit overkill)?
-  let [showFocusRing, setShowFocusRing] = useState(isFocusVisible);
+  // let [showFocusRing, setShowFocusRing] = useState(isFocusVisible);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useLayoutEffect(() => {
-    if (isFocusVisible && !ref.current?.querySelector('[aria-activeDescendant]')) {
-      setShowFocusRing(true);
-    } else {
-      setShowFocusRing(false);
-    }
-  });
+  // useLayoutEffect(() => {
+  //   if (isFocusVisible && !ref.current?.querySelector('[aria-activeDescendant]')) {
+  //     setShowFocusRing(true);
+  //   } else {
+  //     setShowFocusRing(false);
+  //   }
+  // });
 
   let renderProps = useRenderProps({
     ...props,
-    values: {isHovered, isFocusWithin: isFocused, isFocusVisible: showFocusRing, isDisabled, isInvalid},
+    values: {isHovered, isFocusWithin: isFocused, isFocusVisible, isDisabled, isInvalid},
     defaultClassName: 'react-aria-Group'
   });
 
@@ -103,7 +103,7 @@ export const Group = /*#__PURE__*/ (forwardRef as forwardRefType)(function Group
       slot={props.slot ?? undefined}
       data-focus-within={isFocused || undefined}
       data-hovered={isHovered || undefined}
-      data-focus-visible={showFocusRing || undefined}
+      data-focus-visible={isFocusVisible || undefined}
       data-disabled={isDisabled || undefined}
       data-invalid={isInvalid || undefined}>
       {renderProps.children}

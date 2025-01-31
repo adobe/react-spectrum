@@ -233,7 +233,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
   };
 
   let onBlur = (e) => {
-    if (state.isOpen && (parentMenuRef.current?.contains(e.relatedTarget) || isVirtualFocus)) {
+    if (state.isOpen && (parentMenuRef.current?.contains(e.relatedTarget))) {
       onSubmenuClose();
     }
   };

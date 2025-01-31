@@ -11,7 +11,7 @@
  */
 
 import {DOMAttributes, DOMProps, FocusableElement, Key, LongPressEvent, PointerType, PressEvent, RefObject} from '@react-types/shared';
-import {focusSafely} from '@react-aria/focus';
+import {focusSafely, getVirtuallyFocusedElement, moveVirtualFocus} from '@react-aria/focus';
 import {isCtrlKeyPressed, mergeProps, openLink, UPDATE_ACTIVEDESCENDANT, useId, useRouter} from '@react-aria/utils';
 import {isNonContiguousSelectionModifier} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
@@ -173,12 +173,16 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
           focusSafely(ref.current);
         }
       } else {
-        let updateActiveDescendant = new CustomEvent(UPDATE_ACTIVEDESCENDANT, {
-          cancelable: true,
-          bubbles: true
-        });
+        // let updateActiveDescendant = new CustomEvent(UPDATE_ACTIVEDESCENDANT, {
+        //   cancelable: true,
+        //   bubbles: true
+        // });
 
-        ref.current?.dispatchEvent(updateActiveDescendant);
+        // ref.current?.dispatchEvent(updateActiveDescendant);
+        // let lastFocused = getVirtuallyFocusedElement();
+        // console.trace(lastFocused?.outerHTML, ref.current?.outerHTML)
+        moveVirtualFocus(ref.current);
+        // console.log('AFTER')
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
