@@ -43,7 +43,7 @@ interface SpectrumColorSwatchContextValue extends Pick<ColorSwatchProps, 'size' 
   useWrapper: (swatch: ReactElement, color: Color, rounding: ColorSwatchProps['rounding']) => JSX.Element
 }
 
-export const ColorSwatchContext = createContext<ContextValue<ColorSwatchProps, DOMRefValue<HTMLDivElement>>>(null);
+export const ColorSwatchContext = createContext<ContextValue<Partial<ColorSwatchProps>, DOMRefValue<HTMLDivElement>>>(null);
 export const InternalColorSwatchContext = createContext<SpectrumColorSwatchContextValue | null>(null);
 
 /**

@@ -79,7 +79,7 @@ const styles = style({
   }
 }, getAllowedOverrides());
 
-export const CloseButtonContext = createContext<ContextValue<CloseButtonProps, FocusableRefValue<HTMLButtonElement>>>(null);
+export const CloseButtonContext = createContext<ContextValue<Partial<CloseButtonProps>, FocusableRefValue<HTMLButtonElement>>>(null);
 
 /**
  * A CloseButton allows a user to dismiss a dialog.

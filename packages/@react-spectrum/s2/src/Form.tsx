@@ -31,10 +31,10 @@ interface FormStyleProps extends Omit<SpectrumLabelableProps, 'label' | 'context
 }
 
 export interface FormProps extends FormStyleProps, Omit<RACFormProps, 'className' | 'style' | 'children'>, StyleProps {
-  children?: ReactNode
+  children: ReactNode
 }
 
-export const FormContext = createContext<FormStyleProps | null>(null);
+export const FormContext = createContext<Partial<FormStyleProps | null>>(null);
 export function useFormProps<T extends FormStyleProps>(props: T): T {
   let ctx = useContext(FormContext);
   let isSkeleton = useIsSkeleton();

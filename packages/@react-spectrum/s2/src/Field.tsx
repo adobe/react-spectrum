@@ -39,7 +39,7 @@ interface FieldLabelProps extends Omit<LabelProps, 'className' | 'style' | 'chil
   staticColor?: 'white' | 'black' | 'auto',
   contextualHelp?: ReactNode,
   isQuiet?: boolean,
-  children?: ReactNode
+  children: ReactNode
 }
 
 export const FieldLabel = forwardRef(function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
@@ -151,7 +151,7 @@ export const FieldLabel = forwardRef(function FieldLabel(props: FieldLabelProps,
 
 interface FieldGroupProps extends Omit<GroupProps, 'className' | 'style' | 'children'>, UnsafeStyles {
   size?: 'S' | 'M' | 'L' | 'XL',
-  children?: ReactNode,
+  children: ReactNode,
   styles?: StyleString
 }
 

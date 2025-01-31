@@ -40,7 +40,7 @@ export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | '
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
   /** The content to display in the tabs. */
-  children?: ReactNode,
+  children: ReactNode,
   /**
    * The amount of space between the tabs.
    * @default 'regular'
@@ -50,22 +50,22 @@ export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | '
 
 export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'className'>, StyleProps {
   /** The content to display in the tab. */
-  children?: ReactNode
+  children: ReactNode
 }
 
 export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'children' | 'style' | 'className'>, StyleProps {
   /** The content to display in the tablist. */
-  children?: ReactNode
+  children: ReactNode
 }
 
 export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className'>, UnsafeStyles {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
   /** The content to display in the tab panels. */
-  children?: ReactNode
+  children: ReactNode
 }
 
-export const TabsContext = createContext<ContextValue<TabsProps, DOMRefValue<HTMLDivElement>>>(null);
+export const TabsContext = createContext<ContextValue<Partial<TabsProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const tabPanel = style({
   marginTop: 4,

@@ -52,7 +52,7 @@ export interface SegmentedControlItemProps extends AriaLabelingProps, StyleProps
   isDisabled?: boolean
 }
 
-export const SegmentedControlContext = createContext<ContextValue<SegmentedControlProps, DOMRefValue<HTMLDivElement>>>(null);
+export const SegmentedControlContext = createContext<ContextValue<Partial<SegmentedControlProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const segmentedControl = style({
   display: 'flex',
@@ -143,7 +143,7 @@ interface InternalSegmentedControlContextProps {
 interface DefaultSelectionTrackProps {
   defaultValue?: Key | null,
   value?: Key | null,
-  children?: ReactNode,
+  children: ReactNode,
   prevRef: RefObject<DOMRect | null>,
   currentSelectedRef: RefObject<HTMLDivElement | null>,
   isJustified?: boolean

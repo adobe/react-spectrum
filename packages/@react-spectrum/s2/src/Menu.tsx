@@ -82,12 +82,12 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style
   /**
    * The contents of the collection.
    */
-  children?: ReactNode | ((item: T) => ReactNode),
+  children: ReactNode | ((item: T) => ReactNode),
   /** Hides the default link out icons on menu items that open links in a new tab. */
   hideLinkOutIcon?: boolean
 }
 
-export const MenuContext = createContext<ContextValue<MenuProps<any>, DOMRefValue<HTMLDivElement>>>(null);
+export const MenuContext = createContext<ContextValue<Partial<MenuProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
 const menuItemGrid = {
   size: {
