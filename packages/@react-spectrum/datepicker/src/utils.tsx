@@ -31,7 +31,7 @@ export function useFormatHelpText(props: Pick<SpectrumDatePickerBase<any>, 'desc
       return (
         formatter.formatToParts(new Date()).map((s, i) => {
           if (s.type === 'literal') {
-            return <span key={i}>{s.value}</span>;
+            return <span key={i}>{` ${s.value} `}</span>;
           }
 
           return <span key={i} style={{unicodeBidi: 'embed', direction: 'ltr'}}>{displayNames.of(s.type)}</span>;
