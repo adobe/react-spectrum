@@ -262,6 +262,12 @@ export const TreeExampleDynamicDragNDrop = (
         return;
       }
 
+      // you shouldn't be able to drop a parent into a child
+      const dragNode = list.getItem(k);
+      const childTreeKeys = list.getDescendantKeys(dragNode);
+      if (childTreeKeys.includes(e.target.key)) {
+        return null;
+      }
       // node list index...
       let i = 0;
       if (parent) {
