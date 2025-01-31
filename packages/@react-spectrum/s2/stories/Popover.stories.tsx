@@ -41,7 +41,7 @@ export const HelpCenter = (args: any) => (
       <Help />
     </ActionButton>
     <Popover {...args}>
-      <Tabs density="compact">
+      <Tabs density="compact" aria-label="Support and assistance tabs">
         <TabList styles={style({marginX: 12})}>
           <Tab id="help">Help</Tab>
           <Tab id="support">Support</Tab>
