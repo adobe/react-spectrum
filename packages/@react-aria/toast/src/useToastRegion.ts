@@ -47,18 +47,6 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
   let isHovered = useRef(false);
   let pointerPosition = useRef({x: 0, y: 0});
 
-  useEffect(() => {
-    let onPointerMove = (e: PointerEvent) => {
-      pointerPosition.current = {x: e.clientX, y: e.clientY};
-    };
-    if (state.visibleToasts.length > 1) {
-      document.addEventListener('pointermove', onPointerMove);
-    }
-    return () => {
-      document.removeEventListener('pointermove', onPointerMove);
-    };
-  }, [state.visibleToasts.length]);
-
   let {hoverProps} = useHover({
     onHoverStart: () => {
       isHovered.current = true;
@@ -86,6 +74,20 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
     }
     prevToastCount.current = currentCount;
   }, [ref, state]);
+
+  useEffect(() => {
+    let onPointerMove = (e: PointerEvent) => {
+      pointerPosition.current = {x: e.clientX, y: e.clientY};
+    };
+    if (prevToastCount.current === 1 && state.visibleToasts.length === 2) {
+      document.addEventListener('pointermove', onPointerMove);
+    } else if (prevToastCount.current === 2 && state.visibleToasts.length === 1) {
+      document.removeEventListener('pointermove', onPointerMove);
+    }
+    return () => {
+      document.removeEventListener('pointermove', onPointerMove);
+    };
+  }, [state.visibleToasts]);
 
   // Manage focus within the toast region.
   // If a focused containing toast is removed, move focus to the next toast, or the previous toast if there is no next toast.
