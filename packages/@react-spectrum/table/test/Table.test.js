@@ -669,6 +669,54 @@ export let tableTests = () => {
     expect(cells5[1]).toHaveAttribute('aria-colspan', '3');
   });
 
+  it('should throw error if number of cells do not match column count', () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      render(
+        <TableView aria-label="Col Span Table with wrong number of cells">
+          <TableHeader>
+            <Column isRowHeader>Col 1</Column>
+            <Column >Col 2</Column>
+            <Column >Col 3</Column>
+            <Column >Col 4</Column>
+          </TableHeader>
+          <TableBody>
+            <Row>
+              <Cell>Cell 11</Cell>
+              <Cell colSpan={2}>Cell 12</Cell>
+              <Cell>Cell 14</Cell>
+            </Row>
+            <Row>
+              <Cell>Cell 21</Cell>
+              <Cell colSpan={2}>Cell 22</Cell>
+              <Cell>Cell 24</Cell>
+              <Cell>Cell 25</Cell>
+            </Row>
+          </TableBody>
+        </TableView>
+        );
+    } catch (e) {
+      expect(e.message).toEqual('Cell count must match column count. Found 5 cells and 4 columns.');
+    }
+    try {
+      render(
+        <TableView aria-label="Col Span Table with wrong number of cells">
+          <TableHeader>
+            <Column isRowHeader>Col 1</Column>
+            <Column >Col 2</Column>
+          </TableHeader>
+          <TableBody>
+            <Row>
+              <Cell>Cell</Cell>
+            </Row>
+          </TableBody>
+        </TableView>
+      );
+    } catch (e) {
+      expect(e.message).toEqual('Cell count must match column count. Found 1 cells and 2 columns.');
+    }
+  });
+
   it('renders a static table with nested columns', function () {
     let {getByRole} = render(
       <TableView aria-label="Table" selectionMode="multiple">
