@@ -24,6 +24,10 @@ export interface TableLayoutProps {
 
 const DEFAULT_ROW_HEIGHT = 48;
 
+/**
+ * TableLayout is a virtualizer Layout implementation that arranges
+ * items in rows and columns.
+ */
 export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> extends ListLayout<T, O> {
   protected lastCollection: TableCollection<T> | null = null;
   private columnWidths: Map<Key, number> = new Map();

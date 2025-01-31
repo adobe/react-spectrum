@@ -64,12 +64,9 @@ export interface LayoutNode {
 const DEFAULT_HEIGHT = 48;
 
 /**
- * The ListLayout class is an implementation of a virtualizer {@link Layout}.
- * To configure a ListLayout, you can use the properties to define the
- * layouts and/or use the method for defining indentation.
- * The {@link ListKeyboardDelegate} extends the existing virtualizer
- * delegate with an additional method to do this (it uses the same delegate object as
- * the virtualizer itself).
+ * ListLayout is a virtualizer Layout implementation
+ * that arranges its items in a vertical stack. It supports both fixed
+ * and variable height items.
  */
 export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTargetDelegate {
   protected rowHeight: number | null;
