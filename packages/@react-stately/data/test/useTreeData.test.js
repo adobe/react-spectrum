@@ -797,6 +797,4 @@ describe('useTreeData', function () {
     });
     expect(descendants).toEqual([]);
   });
-
-
 });
