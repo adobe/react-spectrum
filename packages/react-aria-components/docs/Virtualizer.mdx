@@ -23,6 +23,7 @@ import {Keyboard} from '@react-spectrum/text';
 import Collections from '@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg';
 import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 import listboxUtils from 'docs:@react-aria/test-utils/src/listbox.ts';
+import {InlineAlert, Content, Heading} from '@adobe/react-spectrum';
 
 ---
 category: Collections
@@ -32,7 +33,7 @@ type: component
 
 # Virtualizer
 
-<PageDescription>{docs.exports.UNSTABLE_Virtualizer.description}</PageDescription>
+<PageDescription>{docs.exports.Virtualizer.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
@@ -55,21 +56,13 @@ type: component
   width: 250px;
 }
 
-.react-aria-ListBoxItem {
-  margin: 0;
-  padding-block: 0;
-  min-height: 32px;
-  display: flex;
-  justify-content: center;
-}
-
 .react-aria-Table {
   padding: 0;
 }
 ```
 
 ```tsx example
-import {UNSTABLE_Virtualizer as Virtualizer, UNSTABLE_ListLayout as ListLayout, ListBox, ListBoxItem} from 'react-aria-components';
+import {Virtualizer, ListLayout, ListBox, ListBoxItem} from 'react-aria-components';
 
 let items = [];
 for (let i = 0; i < 5000; i++) {
@@ -85,13 +78,47 @@ function Example() {
 
   return (
     <Virtualizer layout={layout}>
-      <ListBox aria-label="Favorite animal" selectionMode="multiple" items={items}>
+      <ListBox aria-label="Virtualized ListBox" selectionMode="multiple" items={items}>
         {item => <ListBoxItem>{item.name}</ListBoxItem>}
       </ListBox>
     </Virtualizer>
   );
 }
 ```
+
+## Features
+
+Virtualized scrolling is a performance optimization for large lists. Instead of rendering all items to the DOM at once, it only renders the visible items, reusing them as the user scrolls. This results in a small number of DOM elements being rendered, reducing memory usage and improving browser layout and rendering performance.
+
+* **Integrated** – Works with React Aria [ListBox](ListBox.html), [GridList](GridList.html), and [Table](Table.html) components. Integrated with React Aria's [drag and drop](dnd.html), [selection](selection.html), and [table column resizing](Table.html#column-resizing) implementations.
+* **Custom layouts** – Support for list, grid, and table layouts out of the box, with fixed or variable size items. Create a <TypeLink links={docs.links} type={docs.exports.Layout} /> subclass to build your own custom layout.
+* **Accessible** – Persists the focused element in the DOM even when out of view, ensuring keyboard navigation always works. Adds ARIA attributes like `aria-rowindex` to give screen reader users context.
+
+## Anatomy
+
+Collection components such as [ListBox](ListBox.html), [GridList](GridList.html), and [Table](Table.html) can be virtualized by wrapping them in a &lt;<TypeLink links={docs.links} type={docs.exports.Virtualizer} />&gt;, and providing a <TypeLink links={docs.links} type={docs.exports.Layout} /> object such as <TypeLink links={docs.links} type={docs.exports.ListLayout} /> or <TypeLink links={docs.links} type={docs.exports.GridLayout} />. Layouts are responsible for determining the position of each item in the collection, and providing the list of visible items. When using a Virtualizer, all items are positioned by the `Layout` object, and CSS layout properties such as flexbox and grid do not apply.
+
+```tsx
+import {Virtualizer, ListLayout} from 'react-aria-components';
+
+let layout = useMemo(() => new ListLayout(), []);
+
+<Virtualizer layout={layout}>
+  <ListBox>
+    {/* ... */}
+  </ListBox>
+</Virtualizer>
+```
+
+<InlineAlert variant="notice" maxWidth={600}>
+  <Heading>Important Requirements</Heading>
+  <Content>
+    <ol style={{margin: 0, paddingLeft: '1em'}}>
+      <li><strong>Layout objects must be memoized.</strong> Layouts store cached data that must not be reset on every React render.</li>
+      <li><strong>Virtualized components must have a defined size.</strong> This may be an explicit CSS `width` and `height`, or an implicit size (e.g. percentage or `flex`) bounded by an ancestor element. Without a bounded size, all items will be rendered to the DOM, negating the performance benefits of virtualized scrolling.</li>
+    </ol>
+  </Content>
+</InlineAlert>
 
 ## Layouts
 
@@ -116,7 +143,7 @@ for (let i = 0; i < 5000; i++) {
 ```
 
 ```tsx example
-import {UNSTABLE_Virtualizer as Virtualizer, UNSTABLE_ListLayout as ListLayout} from 'react-aria-components';
+import {Virtualizer, ListLayout} from 'react-aria-components';
 import {MyGridList, MyItem} from './GridList';
 
 function Example() {
@@ -130,7 +157,7 @@ function Example() {
 
   return (
     <Virtualizer layout={layout}>
-      <MyGridList aria-label="Favorite animal" selectionMode="multiple" items={items}>
+      <MyGridList aria-label="Virtualized GridList" selectionMode="multiple" items={items}>
         {item => <MyItem>{item.name}</MyItem>}
       </MyGridList>
     </Virtualizer>
@@ -187,7 +214,7 @@ for (let i = 0; i < 1000; i++) {
 ```
 
 ```tsx example
-import {UNSTABLE_GridLayout as GridLayout, Size, Text} from 'react-aria-components';
+import {GridLayout, Size, Text} from 'react-aria-components';
 
 function Example() {
   /*- begin highlight -*/
@@ -204,7 +231,7 @@ function Example() {
         /*- begin highlight -*/
         layout="grid"
         /*- end highlight -*/
-        aria-label="Favorite animal"
+        aria-label="Virtualized grid layout"
         selectionMode="multiple"
         items={albums}>
         {item => (
@@ -249,7 +276,7 @@ function Example() {
 </TypeContext.Provider>
 
 ```tsx example
-import {UNSTABLE_TableLayout as TableLayout, Table, TableHeader, Column, TableBody, Row, Cell} from 'react-aria-components';
+import {TableLayout, Table, TableHeader, Column, TableBody, Row, Cell} from 'react-aria-components';
 import {MyCheckbox} from './Checkbox';
 
 let rows = [];
@@ -259,19 +286,18 @@ for (let i = 0; i < 1000; i++) {
 
 function Example() {
   /*- begin highlight -*/
-  let layout = React.useMemo(() => {
-    return new TableLayout({
+  let layout = React.useMemo(() => new TableLayout({
       rowHeight: 32,
       headingHeight: 32,
       padding: 4,
       gap: 4
-    });
-  }, []);
+    })
+  , []);
   /*- end highlight -*/
 
   return (
     <Virtualizer layout={layout}>
-      <Table aria-label="virtualized table" selectionMode="multiple">
+      <Table aria-label="Virtualized Table" selectionMode="multiple">
         <TableHeader>
           <Column width={40} minWidth={0}><MyCheckbox slot="selection" /></Column>
           <Column isRowHeader>Foo</Column>
@@ -319,13 +345,23 @@ function Example() {
 }
 ```
 
-### Advanced: Custom layouts
+## Advanced: Custom layouts
 
 Custom Virtualizer layouts can be created by extending the `Layout` abstract base class. At a minimum, the `getVisibleLayoutInfos`, `getLayoutInfo`, and `getContentSize` methods must be implemented. You can override the other methods to customize their default behavior.
 
 <TypeContext.Provider value={docs.links}>
-  <InterfaceType {...docs.exports.Layout} />
+  <InterfaceType {...docs.exports.Layout} hideProperties />
 </TypeContext.Provider>
+
+### LayoutInfo
+
+Layouts produce `LayoutInfo` objects describing the position, size, and other properties of each item in a collection. Virtualizer requests this information when needed, and uses it to create DOM nodes to display.
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType {...docs.exports.LayoutInfo} hideMethods />
+</TypeContext.Provider>
+
+### Example
 
 This example implements a horizontally scrolling layout with fixed size items.
 
@@ -333,8 +369,8 @@ This example implements a horizontally scrolling layout with fixed size items.
 import {Layout, LayoutInfo, Rect, Size, Key} from 'react-aria-components';
 
 class HorizontalLayout extends Layout {
+  // Determine which items are visible within the given rectangle.
   getVisibleLayoutInfos(rect: Rect): LayoutInfo[] {
-    // Determine which range of indices are visible within the given rectangle.
     let keys = Array.from(this.virtualizer!.collection.getKeys());
     let startIndex = Math.max(0, Math.floor(rect.x / 100));
     let endIndex = Math.min(keys.length - 1, Math.ceil(rect.maxX / 100));
@@ -345,6 +381,7 @@ class HorizontalLayout extends Layout {
     return layoutInfos;
   }
 
+  // Provide a LayoutInfo for a specific item.
   getLayoutInfo(key: Key): LayoutInfo | null {
     let node = this.virtualizer!.collection.getItem(key);
     if (!node) {
@@ -355,6 +392,7 @@ class HorizontalLayout extends Layout {
     return new LayoutInfo(node.type, node.key, rect);
   }
 
+  // Provide the total size of all items.
   getContentSize(): Size {
     let numItems = this.virtualizer!.collection.size;
     return new Size(numItems * 100, 100);
@@ -371,7 +409,7 @@ function Example() {
 
   return (
     <Virtualizer layout={layout}>
-      <ListBox aria-label="Favorite animal" selectionMode="multiple" items={items} style={{height: 102}}>
+      <ListBox aria-label="Favorite animal" items={items} style={{height: 102}}>
         {item => <ListBoxItem className="item">{item.name}</ListBoxItem>}
       </ListBox>
     </Virtualizer>
