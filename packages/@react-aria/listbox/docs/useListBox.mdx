@@ -126,24 +126,14 @@ For each item in the collection in state, either an `Option` or `ListBoxSection`
 is rendered according to the item's `type` property.
 
 ```tsx example export=true
-import type {AriaListBoxProps} from 'react-aria';
-import type {ListState, Node} from 'react-stately';
-import {useListBox, useOption, useFocusRing, mergeProps, useObjectRef} from 'react-aria';
-import {useListState} from 'react-stately';
-import {CollectionBuilder, Collection, createLeafComponent} from '@react-aria/collections';
-
-// Context to pass state from ListBox to items.
-const ListStateContext = React.createContext<ListState | null>(null);
+import type {AriaListBoxProps} from '@react-aria/listbox';
+import {useListBox, useOption} from '@react-aria/listbox';
+import {useListState} from '@react-stately/list';
+import {Item} from '@react-stately/collections';
+import {useFocusRing} from '@react-aria/focus';
+import {mergeProps} from '@react-aria/utils';
 
 function ListBox<T extends object>(props: AriaListBoxProps<T>) {
-  return (
-    <CollectionBuilder content={<Collection {...props} />}>
-      {collection => <ListBoxInner {...props} collection={collection} />}
-    </CollectionBuilder>
-  );
-}
-
-function ListBoxInner<T extends object>(props: AriaListBoxProps<T>) {
   // Create state based on the incoming props
   let state = useListState(props);
 
@@ -152,24 +142,22 @@ function ListBoxInner<T extends object>(props: AriaListBoxProps<T>) {
   let {listBoxProps, labelProps} = useListBox(props, state, ref);
 
   return (
-    <ListStateContext.Provider value={state}>
+    <>
       <div {...labelProps}>{props.label}</div>
       <ul {...listBoxProps} ref={ref}>
-        {[...state.collection].map(item => item.render(item))}
+        {[...state.collection].map(item => (
+          item.type === 'section'
+            ? <ListBoxSection key={item.key} section={item} state={state} />
+            : <Option key={item.key} item={item} state={state} />
+        ))}
       </ul>
-    </ListStateContext.Provider>
+    </>
   );
 }
 
-interface OptionProps {
-  id?: React.Key,
-  children: React.ReactNode
-}
-
-const Option = createLeafComponent('item', function Option(props: OptionProps, forwardedRef: ForwardedRef<HTMLElement>, item: Node<any>) {
+function Option({item, state}) {
   // Get props for the option element
-  let state = React.useContext(ListStateContext);
-  let ref = useObjectRef(forwardedRef);
+  let ref = React.useRef(null);
   let {optionProps} = useOption({key: item.key}, state, ref);
 
   // Determine whether we should show a keyboard
@@ -181,15 +169,15 @@ const Option = createLeafComponent('item', function Option(props: OptionProps, f
       {...mergeProps(optionProps, focusProps)}
       ref={ref}
       data-focus-visible={isFocusVisible}>
-      {props.children}
+      {item.rendered}
     </li>
   );
-});
+}
 
 <ListBox label="Alignment" selectionMode="single">
-  <Option>Left</Option>
-  <Option>Middle</Option>
-  <Option>Right</Option>
+  <Item>Left</Item>
+  <Item>Middle</Item>
+  <Item>Right</Item>
 </ListBox>
 ```
 
@@ -257,7 +245,7 @@ function Example() {
 
   return (
     <ListBox label="Animals" items={options} selectionMode="single">
-      {(item) => <Option>{item.name}</Option>}
+      {(item) => <Item>{item.name}</Item>}
     </ListBox>
   );
 }
@@ -278,12 +266,12 @@ function Example() {
   return (
     <>
       <ListBox label="Choose sandwich contents" selectionMode="multiple" selectedKeys={selected} onSelectionChange={setSelected}>
-        <Option key="lettuce">Lettuce</Option>
-        <Option key="tomato">Tomato</Option>
-        <Option key="cheese">Cheese</Option>
-        <Option key="tuna">Tuna Salad</Option>
-        <Option key="egg">Egg Salad</Option>
-        <Option key="ham">Ham</Option>
+        <Item key="lettuce">Lettuce</Item>
+        <Item key="tomato">Tomato</Item>
+        <Item key="cheese">Cheese</Item>
+        <Item key="tuna">Tuna Salad</Item>
+        <Item key="egg">Egg Salad</Item>
+        <Item key="ham">Ham</Item>
       </ListBox>
       <p>Current selection (controlled): {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
     </>
@@ -301,12 +289,12 @@ These selection behaviors are defined in [Aria Practices](https://www.w3.org/WAI
 
 ```tsx example
 <ListBox label="Choose sandwich contents" selectionMode="multiple" selectionBehavior="replace">
-  <Option key="lettuce">Lettuce</Option>
-  <Option key="tomato">Tomato</Option>
-  <Option key="cheese">Cheese</Option>
-  <Option key="tuna">Tuna Salad</Option>
-  <Option key="egg">Egg Salad</Option>
-  <Option key="ham">Ham</Option>
+  <Item key="lettuce">Lettuce</Item>
+  <Item key="tomato">Tomato</Item>
+  <Item key="cheese">Cheese</Item>
+  <Item key="tuna">Tuna Salad</Item>
+  <Item key="egg">Egg Salad</Item>
+  <Item key="ham">Ham</Item>
 </ListBox>
 ```
 
@@ -321,10 +309,8 @@ are correct.
 
 ```tsx example export=true render=false
 import {useListBoxSection} from '@react-aria/listbox';
-import {createBranchComponent} from '@react-aria/collections';
 
-const ListBoxSection = createBranchComponent('section', function ListBoxSection(props, ref, section) {
-  let state = React.useContext(ListStateContext);
+function ListBoxSection({section, state}) {
   let {itemProps, headingProps, groupProps} = useListBoxSection({
     heading: section.rendered,
     'aria-label': section['aria-label']
@@ -343,7 +329,7 @@ const ListBoxSection = createBranchComponent('section', function ListBoxSection(
         }} />
     }
     <li {...itemProps}>
-      {props.title &&
+      {section.rendered &&
         <span
           {...headingProps}
           style={{
@@ -351,7 +337,7 @@ const ListBoxSection = createBranchComponent('section', function ListBoxSection(
             fontSize: '1.1em',
             padding: '2px 5px',
           }}>
-          {props.title}
+          {section.rendered}
         </span>
       }
       <ul
@@ -360,11 +346,16 @@ const ListBoxSection = createBranchComponent('section', function ListBoxSection(
           padding: 0,
           listStyle: 'none'
         }}>
-        {[...state.collection.getChildren(section.key)].map(item => item.render(item))}
+        {[...section.childNodes].map(node =>
+          <Option
+            key={node.key}
+            item={node}
+            state={state} />
+        )}
       </ul>
     </li>
   </>;
-});
+}
 ```
 
 ### Static items
@@ -372,29 +363,31 @@ const ListBoxSection = createBranchComponent('section', function ListBoxSection(
 With this in place, we can now render a static ListBox with multiple sections:
 
 ```tsx example
+import {Section} from '@react-stately/collections';
+
 <ListBox label="Choose sandwich contents" selectionMode="multiple">
-  <ListBoxSection title="Veggies">
-    <Option id="lettuce">Lettuce</Option>
-    <Option id="tomato">Tomato</Option>
-    <Option id="onion">Onion</Option>
-  </ListBoxSection>
-  <ListBoxSection title="Protein">
-    <Option id="ham">Ham</Option>
-    <Option id="tuna">Tuna</Option>
-    <Option id="tofu">Tofu</Option>
-  </ListBoxSection>
-  <ListBoxSection title="Condiments">
-    <Option id="mayo">Mayonaise</Option>
-    <Option id="mustard">Mustard</Option>
-    <Option id="ranch">Ranch</Option>
-  </ListBoxSection>
+  <Section title="Veggies">
+    <Item key="lettuce">Lettuce</Item>
+    <Item key="tomato">Tomato</Item>
+    <Item key="onion">Onion</Item>
+  </Section>
+  <Section title="Protein">
+    <Item key="ham">Ham</Item>
+    <Item key="tuna">Tuna</Item>
+    <Item key="tofu">Tofu</Item>
+  </Section>
+  <Section title="Condiments">
+    <Item key="mayo">Mayonaise</Item>
+    <Item key="mustard">Mustard</Item>
+    <Item key="ranch">Ranch</Item>
+  </Section>
 </ListBox>
 ```
 
 ### Dynamic items
 
 The above example shows sections with static items. Sections can also be populated from a hierarchical data structure.
-Similarly to the props on ListBox, `<ListBoxSection>` takes an array of data using the `items` prop.
+Similarly to the props on ListBox, `<Section>` takes an array of data using the `items` prop.
 
 ```tsx example
 import type {Selection} from 'react-stately';
@@ -422,9 +415,9 @@ function Example() {
       selectionMode="single"
       onSelectionChange={setSelected}>
       {item => (
-        <ListBoxSection id={item.name} items={item.children} title={item.name}>
-          {item => <Option>{item.name}</Option>}
-        </ListBoxSection>
+        <Section key={item.name} items={item.children} title={item.name}>
+          {item => <Item>{item.name}</Item>}
+        </Section>
       )}
     </ListBox>
   );
@@ -495,18 +488,18 @@ function Option({item, state}) {
 }
 
 <ListBox label="Text alignment" selectionMode="single">
-  <Option textValue="Align Left">
+  <Item textValue="Align Left">
     <div><strong>Align Left</strong></div>
     <div>Align the selected text to the left</div>
-  </Option>
-  <Option textValue="Align Center">
+  </Item>
+  <Item textValue="Align Center">
     <div><strong>Align Center</strong></div>
     <div>Align the selected text center</div>
-  </Option>
-  <Option textValue="Align Right">
+  </Item>
+  <Item textValue="Align Right">
     <div><strong>Align Right</strong></div>
     <div>Align the selected text to the right</div>
-  </Option>
+  </Item>
 </ListBox>
 ```
 
@@ -540,7 +533,7 @@ function AsyncLoadingExample() {
 
   return (
     <ListBox label="Pick a Pokemon" items={list.items} selectionMode="single">
-      {(item) => <Option key={item.name}>{item.name}</Option>}
+      {(item) => <Item key={item.name}>{item.name}</Item>}
     </ListBox>
   );
 }
@@ -548,7 +541,7 @@ function AsyncLoadingExample() {
 
 ## Links
 
-By default, interacting with an item in a ListBox triggers `onSelectionChange`. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<Option>` component.
+By default, interacting with an item in a ListBox triggers `onSelectionChange`. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component.
 
 This example shows how to update the `Option` component with support for rendering an `<a>` element if an `href` prop is passed to the item. Note that you'll also need to render the `ListBox` as a `<div>` instead of a `<ul>`, since an `<a>` inside a `<ul>` is not valid HTML.
 
@@ -593,10 +586,10 @@ function Option({item, state}) {
 }
 
 <ListBox aria-label="Links">
-  <Option href="https://adobe.com/" target="_blank">Adobe</Option>
-  <Option href="https://apple.com/" target="_blank">Apple</Option>
-  <Option href="https://google.com/" target="_blank">Google</Option>
-  <Option href="https://microsoft.com/" target="_blank">Microsoft</Option>
+  <Item href="https://adobe.com/" target="_blank">Adobe</Item>
+  <Item href="https://apple.com/" target="_blank">Apple</Item>
+  <Item href="https://google.com/" target="_blank">Google</Item>
+  <Item href="https://microsoft.com/" target="_blank">Microsoft</Item>
 </ListBox>
 ```
 
@@ -649,16 +642,16 @@ function Option({item, state}) {
 ///- end collapse -///
 
 <ListBox aria-label="Links" selectionMode="multiple" selectionBehavior="replace">
-  <Option href="https://adobe.com/" target="_blank">Adobe</Option>
-  <Option href="https://apple.com/" target="_blank">Apple</Option>
-  <Option href="https://google.com/" target="_blank">Google</Option>
-  <Option href="https://microsoft.com/" target="_blank">Microsoft</Option>
+  <Item href="https://adobe.com/" target="_blank">Adobe</Item>
+  <Item href="https://apple.com/" target="_blank">Apple</Item>
+  <Item href="https://google.com/" target="_blank">Google</Item>
+  <Item href="https://microsoft.com/" target="_blank">Microsoft</Item>
 </ListBox>
 ```
 
 ### Client side routing
 
-The `<Option>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
 ## Disabled items
 
@@ -671,12 +664,12 @@ Disabled items are not focusable, selectable, or keyboard navigable. The `isDisa
 
 ```tsx example
 <ListBox label="Choose sandwich contents" selectionMode="multiple" disabledKeys={['tuna']}>
-  <Option key="lettuce">Lettuce</Option>
-  <Option key="tomato">Tomato</Option>
-  <Option key="cheese">Cheese</Option>
-  <Option key="tuna">Tuna Salad</Option>
-  <Option key="egg">Egg Salad</Option>
-  <Option key="ham">Ham</Option>
+  <Item key="lettuce">Lettuce</Item>
+  <Item key="tomato">Tomato</Item>
+  <Item key="cheese">Cheese</Item>
+  <Item key="tuna">Tuna Salad</Item>
+  <Item key="egg">Egg Salad</Item>
+  <Item key="ham">Ham</Item>
 </ListBox>
 ```
 
