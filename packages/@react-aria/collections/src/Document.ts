@@ -257,7 +257,18 @@ export class ElementNode<T> extends BaseNode<T> {
     node.parentKey = this.parentNode instanceof ElementNode ? this.parentNode.node.key : null;
     node.prevKey = this.previousSibling?.node.key ?? null;
     node.nextKey = this.nextSibling?.node.key ?? null;
-    node.hasChildNodes = !!this.firstChild;
+
+    // Check if this node has any child nodes, but specifically any that are items.
+    let child = this.firstChild;
+    let hasChildNodes = false;
+    while (!hasChildNodes && child && child?.nextSibling) {
+      child = child.nextSibling;
+      if (child.node.type === 'item') {
+        hasChildNodes = true;
+      }
+    }
+
+    node.hasChildNodes = hasChildNodes;
     node.firstChildKey = this.firstChild?.node.key ?? null;
     node.lastChildKey = this.lastChild?.node.key ?? null;
   }
