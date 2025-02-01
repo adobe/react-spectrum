@@ -96,7 +96,7 @@ Virtualized scrolling is a performance optimization for large lists. Instead of 
 
 ## Anatomy
 
-Collection components such as [ListBox](ListBox.html), [GridList](GridList.html), and [Table](Table.html) can be virtualized by wrapping them in a &lt;<TypeLink links={docs.links} type={docs.exports.Virtualizer} />&gt;, and providing a <TypeLink links={docs.links} type={docs.exports.Layout} /> object such as <TypeLink links={docs.links} type={docs.exports.ListLayout} /> or <TypeLink links={docs.links} type={docs.exports.GridLayout} />. Layouts are responsible for determining the position of each item in the collection, and providing the list of visible items. When using a Virtualizer, all items are positioned by the `Layout` object, and CSS layout properties such as flexbox and grid do not apply.
+Collection components such as [ListBox](ListBox.html), [GridList](GridList.html), and [Table](Table.html) can be virtualized by wrapping them in a &lt;<TypeLink links={docs.links} type={docs.exports.Virtualizer} />&gt;, and providing a <TypeLink links={docs.links} type={docs.exports.Layout} /> object such as <TypeLink links={docs.links} type={docs.exports.ListLayout} /> or <TypeLink links={docs.links} type={docs.exports.GridLayout} />. See below for examples of each layout.
 
 ```tsx
 import {Virtualizer, ListLayout} from 'react-aria-components';
@@ -121,6 +121,8 @@ let layout = useMemo(() => new ListLayout(), []);
 </InlineAlert>
 
 ## Layouts
+
+Virtualizer uses <TypeLink links={docs.links} type={docs.exports.Layout} /> objects to determine the position and size of each item, and provide the list of currently visible items. When using a Virtualizer, all items are positioned by the `Layout`, and CSS layout properties such as flexbox and grid do not apply.
 
 ### ListLayout
 
