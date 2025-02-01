@@ -16,15 +16,15 @@ import {
   Button,
   ButtonContext,
   Collection,
+  ListLayout,
   Provider,
   TreeItemProps as RACTreeItemProps,
   TreeProps as RACTreeProps,
-  ListLayout,
   UNSTABLE_Tree,
   UNSTABLE_TreeItem,
   UNSTABLE_TreeItemContent,
-  Virtualizer,
-  useContextProps
+  useContextProps,
+  Virtualizer
 } from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';

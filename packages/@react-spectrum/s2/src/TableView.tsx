@@ -35,12 +35,12 @@ import {
   ResizableTableContainer,
   RowRenderProps,
   TableBodyRenderProps,
-  TableRenderProps,
   TableLayout,
+  TableRenderProps,
   UNSTABLE_TableLoadingIndicator,
-  Virtualizer,
   useSlottedContext,
-  useTableOptions
+  useTableOptions,
+  Virtualizer
 } from 'react-aria-components';
 import {centerPadding, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Checkbox} from './Checkbox';
