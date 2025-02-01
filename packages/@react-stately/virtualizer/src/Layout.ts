@@ -11,7 +11,7 @@
  */
 
 import {InvalidationContext} from './types';
-import {ItemDropTarget, Key, LayoutDelegate} from '@react-types/shared';
+import {ItemDropTarget, Key, LayoutDelegate, Node} from '@react-types/shared';
 import {LayoutInfo} from './LayoutInfo';
 import {Rect} from './Rect';
 import {Size} from './Size';
@@ -27,7 +27,7 @@ import {Virtualizer} from './Virtualizer';
  * Every layout extends from the Layout abstract base class. Layouts must implement the `getVisibleLayoutInfos`,
  * `getLayoutInfo`, and `getContentSize` methods. All other methods can be optionally overridden to implement custom behavior.
  */
-export abstract class Layout<T extends object, O = any> implements LayoutDelegate {
+export abstract class Layout<T extends object = Node<any>, O = any> implements LayoutDelegate {
   /** The Virtualizer the layout is currently attached to. */
   virtualizer: Virtualizer<T, any> | null = null;
 
