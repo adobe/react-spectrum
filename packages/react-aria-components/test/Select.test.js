@@ -73,7 +73,7 @@ describe('Select', () => {
     expect(listbox.closest('.react-aria-Popover')).toBeInTheDocument();
     expect(listbox.closest('.react-aria-Popover')).toHaveAttribute('data-trigger', 'Select');
 
-    let options = selectTester.options;
+    let options = selectTester.options();
     expect(options).toHaveLength(3);
 
     await user.click(options[1]);
@@ -245,7 +245,7 @@ describe('Select', () => {
     expect(select).toHaveAttribute('data-invalid');
     expect(document.activeElement).toBe(trigger);
 
-    await selectTester.selectOption({optionText: 'Cat'});
+    await selectTester.selectOption({option: 'Cat'});
     expect(selectTester.trigger).not.toHaveAttribute('aria-describedby');
     expect(select).not.toHaveAttribute('data-invalid');
   });
@@ -344,7 +344,7 @@ describe('Select', () => {
     expect(document.activeElement).toBe(beforeInput);
 
     await user.tab();
-    await selectTester.selectOption({optionText: 'Dog'});
+    await selectTester.selectOption({option: 'Dog'});
 
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenLastCalledWith('dog');
@@ -352,5 +352,20 @@ describe('Select', () => {
     await user.click(clearButton);
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
     expect(onChangeSpy).toHaveBeenLastCalledWith(null);
+  });
+
+  it('select can select an option via keyboard', async function () {
+    let {getByTestId} = render(
+      <TestSelect name="select" />
+    );
+
+    let wrapper = getByTestId('select');
+    let selectTester = testUtilUser.createTester('Select', {root: wrapper, interactionType: 'keyboard'});
+    let trigger = selectTester.trigger;
+    expect(trigger).toHaveTextContent('Select an item');
+    expect(trigger).not.toHaveAttribute('data-pressed');
+
+    await selectTester.selectOption({option: 'Kangaroo'});
+    expect(trigger).toHaveTextContent('Kangaroo');
   });
 });

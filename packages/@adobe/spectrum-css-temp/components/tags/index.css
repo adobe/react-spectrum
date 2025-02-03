@@ -46,6 +46,7 @@ governing permissions and limitations under the License.
 
   display: inline-grid;
   align-items: center;
+  vertical-align: middle;
   box-sizing: border-box;
   position: relative;
   cursor: default;

@@ -9,7 +9,6 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
 import {
   PopoverProps as AriaPopoverProps,
   Select as AriaSelect,
@@ -45,8 +44,6 @@ import {FocusableRef, FocusableRefValue, SpectrumLabelableProps} from '@react-ty
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
 import {Placement} from 'react-aria';
 import {PopoverBase} from './Popover';
 import {pressScale} from './pressScale';
@@ -54,15 +51,11 @@ import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useFormProps} from './Form';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-
-
 export interface PickerStyleProps {
 }
-
 export interface PickerProps<T extends object> extends
-  Omit<AriaSelectProps<T>, 'children' | 'style' | 'className'>,
+  Omit<AriaSelectProps<T>, 'children' | 'style' | 'className' | 'placeholder'>,
   PickerStyleProps,
   StyleProps,
   SpectrumLabelableProps,
@@ -90,11 +83,11 @@ export interface PickerProps<T extends object> extends
      * If the tab picker should only display icon and no text for the button label.
      * @default 'show
      */
-    labelBehavior?: 'show' | 'hide'
+    labelBehavior?: 'show' | 'hide',
+    /** Id for the SelectedValue so we can label using it. */
+    valueId?: string
 }
-
 export const PickerContext = createContext<ContextValue<Partial<PickerProps<any>>, FocusableRefValue<HTMLButtonElement>>>(null);
-
 const inputButton = style({
   ...focusRing(),
   ...fieldInput(),
@@ -129,7 +122,6 @@ const inputButton = style({
   },
   boxSizing: 'border-box'
 });
-
 export let menu = style({
   outlineStyle: 'none',
   display: 'grid',
@@ -141,7 +133,6 @@ export let menu = style({
   fontFamily: 'sans',
   fontSize: 'control'
 });
-
 const valueStyles = style({
   flexGrow: 0,
   truncate: true,
@@ -149,7 +140,6 @@ const valueStyles = style({
   alignItems: 'center',
   height: 'full'
 });
-
 const iconStyles = style({
   flexShrink: 0,
   rotate: 90,
@@ -158,7 +148,6 @@ const iconStyles = style({
     value: 'currentColor'
   }
 });
-
 const iconCenterWrapper = style({
   display: 'flex',
   gridArea: 'icon',
@@ -168,11 +157,8 @@ const iconCenterWrapper = style({
     }
   }
 });
-
 let InsideSelectValueContext = createContext(false);
-
 function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLButtonElement>) {
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, PickerContext);
   let domRef = useFocusableRef(ref);
   props = useFormProps(props);
@@ -182,118 +168,143 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
     shouldFlip = true,
     children,
     items,
-    placeholder = stringFormatter.format('picker.placeholder'),
     density,
     labelBehavior = 'show',
+    valueId,
     ...pickerProps
   } = props;
   let isQuiet = true;
-
   const menuOffset: number = 6;
   const size = 'M';
-
+  let ariaLabelledby = props['aria-labelledby'] ?? '';
   return (
-    <AriaSelect
-      {...pickerProps}
-      placeholder={placeholder}>
-      {({isOpen}) => (
-        <>
-          <FieldLabel isQuiet={isQuiet} />
-          <Button
-            ref={domRef}
-            style={renderProps => pressScale(domRef)(renderProps)}
-            // Prevent press scale from sticking while Picker is open.
-            // @ts-ignore
-            isPressed={false}
-            className={renderProps => inputButton({
-              ...renderProps,
-              size: 'M',
-              isOpen,
-              isQuiet,
-              density
-            })}>
-            <SelectValue className={valueStyles + ' ' + raw('&> * {display: none;}')}>
-              {({defaultChildren}) => {
-                return (
-                  <Provider
-                    values={[
-                      [IconContext, {
-                        slots: {
-                          icon: {
-                            render: centerBaseline({slot: 'icon', styles: iconCenterWrapper({labelBehavior})}),
-                            styles: icon
+    <div>
+      <AriaSelect
+        {...pickerProps}
+        aria-labelledby={`${labelBehavior === 'hide' ? valueId : ''} ${ariaLabelledby}`}>
+        {({isOpen}) => (
+          <>
+            <FieldLabel isQuiet={isQuiet} />
+            <Button
+              ref={domRef}
+              style={renderProps => pressScale(domRef)(renderProps)}
+              // Prevent press scale from sticking while Picker is open.
+              // @ts-ignore
+              isPressed={false}
+              className={renderProps => inputButton({
+                ...renderProps,
+                size: 'M',
+                isOpen,
+                isQuiet,
+                density
+              })}>
+              <SelectValue className={valueStyles + ' ' + raw('&> * {display: none;}')}>
+                {({defaultChildren}) => {
+                  return (
+                    <Provider
+                      values={[
+                        [IconContext, {
+                          slots: {
+                            icon: {
+                              render: centerBaseline({slot: 'icon', styles: iconCenterWrapper({labelBehavior})}),
+                              styles: icon
+                            }
                           }
-                        }
-                      }],
-                      [TextContext, {
-                        slots: {
-                          // Default slot is useful when converting other collections to PickerItems.
-                          [DEFAULT_SLOT]: {styles: style({
-                            display: {
-                              default: 'block',
-                              labelBehavior: {
-                                hide: 'none'
-                              }
-                            },
-                            flexGrow: 1,
-                            truncate: true
-                          })({labelBehavior})}
-                        }
-                      }],
-                      [InsideSelectValueContext, true]
-                    ]}>
-                    {defaultChildren}
-                  </Provider>
-                );
-              }}
-            </SelectValue>
-            <ChevronIcon
-              size={size}
-              className={iconStyles} />
-          </Button>
-          <PopoverBase
-            hideArrow
-            offset={menuOffset}
-            placement={`${direction} ${align}` as Placement}
-            shouldFlip={shouldFlip}
-            styles={style({
-              marginStart: -12,
-              minWidth: 192,
-              width: '[calc(var(--trigger-width) + (-2 * self(marginStart)))]'
-            })}>
-            <Provider
-              values={[
-                [HeaderContext, {styles: sectionHeader({size})}],
-                [HeadingContext, {styles: sectionHeading}],
-                [TextContext, {
-                  slots: {
-                    description: {styles: description({size})}
-                  }
-                }]
-              ]}>
-              <ListBox
-                items={items}
-                className={menu}>
-                {children}
-              </ListBox>
-            </Provider>
-          </PopoverBase>
-        </>
-      )}
-    </AriaSelect>
+                        }],
+                        [TextContext, {
+                          slots: {
+                            // Default slot is useful when converting other collections to PickerItems.
+                            [DEFAULT_SLOT]: {
+                              id: valueId,
+                              styles: style({
+                                display: {
+                                  default: 'block',
+                                  labelBehavior: {
+                                    hide: 'none'
+                                  }
+                                },
+                                flexGrow: 1,
+                                truncate: true
+                              })({labelBehavior})
+                            }
+                          }
+                        }],
+                        [InsideSelectValueContext, true]
+                      ]}>
+                      {defaultChildren}
+                    </Provider>
+                  );
+                }}
+              </SelectValue>
+              <ChevronIcon
+                size={size}
+                className={iconStyles} />
+            </Button>
+            <PopoverBase
+              hideArrow
+              offset={menuOffset}
+              placement={`${direction} ${align}` as Placement}
+              shouldFlip={shouldFlip}
+              styles={style({
+                marginStart: -12,
+                minWidth: 192,
+                width: '[calc(var(--trigger-width) + (-2 * self(marginStart)))]'
+              })}>
+              <Provider
+                values={[
+                  [HeaderContext, {styles: sectionHeader({size})}],
+                  [HeadingContext, {styles: sectionHeading}],
+                  [TextContext, {
+                    slots: {
+                      description: {styles: description({size})}
+                    }
+                  }]
+                ]}>
+                <ListBox
+                  items={items}
+                  className={menu}>
+                  {children}
+                </ListBox>
+              </Provider>
+            </PopoverBase>
+          </>
+        )}
+      </AriaSelect>
+      <TabLine isDisabled={props.isDisabled} />
+    </div>
   );
 }
-
 /**
  * Pickers allow users to choose a single option from a collapsible list of options when space is limited.
  */
 let _Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(Picker);
 export {_Picker as Picker};
 
+
+const selectedIndicator = style({
+  backgroundColor: {
+    default: 'neutral',
+    isDisabled: 'disabled',
+    forcedColors: {
+      default: 'Highlight',
+      isDisabled: 'GrayText'
+    }
+  },
+  height: '[2px]',
+  borderStyle: 'none',
+  borderRadius: 'full',
+  marginTop: '[-2px]',
+  transitionDuration: 130,
+  transitionTimingFunction: 'in-out'
+});
+function TabLine(props) {
+  return <div className={selectedIndicator(props)} />;
+}
+
+
 export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {
   children: ReactNode
 }
-
 export function PickerItem(props: PickerItemProps) {
   let ref = useRef(null);
   let isLink = props.href != null;
@@ -329,13 +340,11 @@ export function PickerItem(props: PickerItemProps) {
     </ListBoxItem>
   );
 }
-
 // A Context.Provider that only sets a value if not inside SelectValue.
 function DefaultProvider({context, value, children}: {context: React.Context<any>, value: any, children: any}) {
   let inSelectValue = useContext(InsideSelectValueContext);
   if (inSelectValue) {
     return children;
   }
-
   return <context.Provider value={value}>{children}</context.Provider>;
 }

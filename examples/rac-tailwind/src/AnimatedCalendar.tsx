@@ -34,7 +34,7 @@ export function AnimatedCalendar() {
                 state.focusPreviousPage();
                 setPageOffset(pageOffset - 1);
               }}
-              className="w-12 h-12 sm:w-9 sm:h-9 ml-4 outline-none cursor-default rounded-full flex items-center justify-center data-[hovered]:bg-gray-100 data-[pressed]:bg-gray-200 data-[focus-visible]:ring data-[focus-visible]:ring-black data-[focus-visible]:ring-offset-2">
+              className="w-12 h-12 sm:w-9 sm:h-9 ml-4 outline-hidden cursor-default rounded-full flex items-center justify-center data-hovered:bg-gray-100 data-pressed:bg-gray-200 data-focus-visible:ring-3 data-focus-visible:ring-black data-focus-visible:ring-offset-2">
               <ChevronLeftIcon className="h-6 w-6" />
             </Button>
             <Button
@@ -43,7 +43,7 @@ export function AnimatedCalendar() {
                 state.focusNextPage();
                 setPageOffset(pageOffset + 1);
               }}
-              className="w-12 h-12 sm:w-9 sm:h-9 outline-none cursor-default rounded-full flex items-center justify-center data-[hovered]:bg-gray-100 data-[pressed]:bg-gray-200 data-[focus-visible]:ring data-[focus-visible]:ring-black data-[focus-visible]:ring-offset-2">
+              className="w-12 h-12 sm:w-9 sm:h-9 outline-hidden cursor-default rounded-full flex items-center justify-center data-hovered:bg-gray-100 data-pressed:bg-gray-200 data-focus-visible:ring-3 data-focus-visible:ring-black data-focus-visible:ring-offset-2">
               <ChevronRightIcon className="h-6 w-6" />
             </Button>
           </header>
@@ -81,7 +81,7 @@ function Month({offset}: { offset: number }) {
         {(date) => (
           <CalendarCell
             date={date}
-            className="w-12 h-12 sm:w-9 sm:h-9 outline-none cursor-default rounded-full text-md sm:text-sm flex items-center justify-center data-[outside-month]:text-gray-300 data-[hovered]:bg-gray-100 data-[pressed]:bg-gray-200 data-[selected]:data-[hovered]:bg-black data-[selected]:bg-black data-[selected]:text-white data-[focus-visible]:ring data-[focus-visible]:ring-black data-[focus-visible]:ring-offset-2" />
+            className="w-12 h-12 sm:w-9 sm:h-9 outline-hidden cursor-default rounded-full text-md sm:text-sm flex items-center justify-center data-outside-month:text-gray-300 data-hovered:bg-gray-100 data-pressed:bg-gray-200 data-selected:data-hovered:bg-black data-selected:bg-black data-selected:text-white data-focus-visible:ring-3 data-focus-visible:ring-black data-focus-visible:ring-offset-2" />
         )}
       </CalendarGridBody>
     </CalendarGrid>

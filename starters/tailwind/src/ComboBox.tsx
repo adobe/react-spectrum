@@ -28,13 +28,13 @@ export function ComboBox<T extends object>(
       <Label>{label}</Label>
       <FieldGroup>
         <Input />
-        <Button variant="icon" className="w-6 mr-1 rounded outline-offset-0 ">
+        <Button variant="icon" className="w-6 mr-1 rounded-xs outline-offset-0 ">
           <ChevronDown aria-hidden className="w-4 h-4" />
         </Button>
       </FieldGroup>
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
-      <Popover className="w-[--trigger-width]">
+      <Popover className="w-(--trigger-width)">
         <ListBox items={items} className="outline-0 p-1 max-h-[inherit] overflow-auto [clip-path:inset(0_0_0_0_round_.75rem)]">
           {children}
         </ListBox>

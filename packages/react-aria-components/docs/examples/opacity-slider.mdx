@@ -15,6 +15,7 @@ import {TypeLink} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import Slider from '@react-spectrum/docs/pages/assets/component-illustrations/Slider.svg';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
 ---
 keywords: [example, slider, aria, accessibility, react, component]
@@ -36,7 +37,7 @@ import './tailwind.global.css';
 ```tsx example standalone
 import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-components';
 
-<div className="bg-gradient-to-r from-purple-600 to-pink-600 p-12 rounded-lg flex justify-center">
+<div className="bg-linear-to-r from-purple-600 to-pink-600 p-12 rounded-lg flex justify-center">
   <Slider defaultValue={30} className="w-[250px]">
     <div className="flex text-white">
       <Label className="flex-1">Opacity</Label>
@@ -48,7 +49,7 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
         <div className="absolute h-2 top-[50%] translate-y-[-50%] w-full rounded-full bg-white/40" />
         {/* fill */}
         <div className="absolute h-2 top-[50%] translate-y-[-50%] rounded-full bg-white" style={{width: state.getThumbPercent(0) * 100 + '%'}} />
-        <SliderThumb className="h-7 w-7 top-[50%] rounded-full border border-solid border-purple-800/75 bg-white transition dragging:bg-purple-100 outline-none focus-visible:ring-2 ring-black" />
+        <SliderThumb className="h-7 w-7 top-[50%] rounded-full border border-solid border-purple-800/75 bg-white transition dragging:bg-purple-100 outline-hidden focus-visible:ring-2 ring-black" />
       </>}
     </SliderTrack>
   </Slider>
@@ -57,7 +58,18 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
 
 ### Tailwind config
 
-This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. Add it to your `tailwind.config.js`:
+This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. When using Tailwind v4, add it to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugin to your `tailwind.config.js` instead:
 
 ```tsx
 module.exports = {
@@ -67,6 +79,10 @@ module.exports = {
   ]
 };
 ```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
 
 ## Components
 

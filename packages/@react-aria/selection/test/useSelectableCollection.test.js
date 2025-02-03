@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, installPointerEvent, pointerMap, render, simulateDesktop, simulateMobile} from '@react-spectrum/test-utils-internal';
+import {fireEvent, installPointerEvent, pointerMap, render, simulateDesktop, simulateMobile, within} from '@react-spectrum/test-utils-internal';
 import {Item} from '@react-stately/collections';
 import {List} from '../stories/List';
 import React from 'react';
@@ -77,11 +77,17 @@ describe('useSelectableCollection', () => {
     type                     | prepare               | actions
     ${'VO Events'}           | ${installPointerEvent}| ${[
       (el) => fireEvent.pointerDown(el, {button: 0, pointerType: 'virtual'}),
-      (el) => fireEvent.pointerUp(el, {button: 0, pointerType: 'virtual'})
+      (el) => {
+        fireEvent.pointerUp(el, {button: 0, pointerType: 'virtual'});
+        fireEvent.click(el, {detail: 1});
+      }
     ]}
     ${'Touch Pointer Events'} | ${installPointerEvent}| ${[
       (el) => fireEvent.pointerDown(el, {button: 0, pointerType: 'touch', pointerId: 1}),
-      (el) => fireEvent.pointerUp(el, {button: 0, pointerType: 'touch', pointerId: 1})
+      (el) => {
+        fireEvent.pointerUp(el, {button: 0, pointerType: 'touch', pointerId: 1});
+        fireEvent.click(el, {detail: 1});
+      }
     ]}
   `('always uses toggle for $type', ({prepare, actions: [start, end]}) => {
     prepare();
@@ -106,6 +112,44 @@ describe('useSelectableCollection', () => {
       expect(options[0]).toHaveAttribute('aria-selected', 'true');
       expect(options[1]).not.toHaveAttribute('aria-selected');
       expect(options[2]).toHaveAttribute('aria-selected', 'true');
+    });
+
+    it('focuses first/last selected item on focus enter and does not change the selection', async () => {
+      let onSelectionChange1 = jest.fn();
+      let onSelectionChange2 = jest.fn();
+      let {getByText, getAllByRole} = render(
+        <>
+          <List
+            selectionMode="multiple"
+            selectionBehavior="replace"
+            defaultSelectedKeys={['i2', 'i3']}
+            onSelectionChange={onSelectionChange1}>
+            <Item key="i1">Paco de Lucia</Item>
+            <Item key="i2">Vicente Amigo</Item>
+            <Item key="i3">Gerardo Nunez</Item>
+          </List>
+          <button>focus stop</button>
+          <List
+            selectionMode="multiple"
+            selectionBehavior="replace"
+            defaultSelectedKeys={['i2', 'i3']}
+            onSelectionChange={onSelectionChange2}>
+            <Item key="i1">Paco de Lucia</Item>
+            <Item key="i2">Vicente Amigo</Item>
+            <Item key="i3">Gerardo Nunez</Item>
+          </List>
+        </>
+      );
+      let [firstList, secondList] = getAllByRole('listbox');
+      await user.click(getByText('focus stop'));
+      await user.tab();
+      expect(document.activeElement).toBe(within(secondList).getByRole('option', {name: 'Vicente Amigo'}));
+      await user.click(getByText('focus stop'));
+      await user.tab({shift: true});
+      expect(document.activeElement).toBe(within(firstList).getByRole('option', {name: 'Gerardo Nunez'}));
+
+      expect(onSelectionChange1).not.toHaveBeenCalled();
+      expect(onSelectionChange2).not.toHaveBeenCalled();
     });
   });
 });
