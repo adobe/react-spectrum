@@ -21,7 +21,7 @@ import React, {ReactNode, Ref} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
 import {useFormProps} from '@react-spectrum/form';
 
-function Field(props: SpectrumFieldProps, ref: Ref<HTMLElement>) {
+export const Field = React.forwardRef(function Field(props: SpectrumFieldProps, ref: Ref<HTMLElement>) {
   let formProps = useFormProps(props);
   let isInForm = formProps !== props;
   props = formProps;
@@ -174,7 +174,4 @@ function Field(props: SpectrumFieldProps, ref: Ref<HTMLElement>) {
       {renderChildren()}
     </div>)
   );
-}
-
-let _Field = React.forwardRef(Field);
-export {_Field as Field};
+});

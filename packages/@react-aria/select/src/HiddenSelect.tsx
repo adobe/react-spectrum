@@ -72,7 +72,7 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
   useFormReset(props.selectRef, state.selectedKey, state.setSelectedKey);
   useFormValidation({
     validationBehavior,
-    focus: () => triggerRef.current.focus()
+    focus: () => triggerRef.current?.focus()
   }, state, props.selectRef);
 
   // In Safari, the <select> cannot have `display: none` or `hidden` for autofill to work.
@@ -99,7 +99,7 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
       disabled: isDisabled,
       required: validationBehavior === 'native' && isRequired,
       name,
-      value: state.selectedKey ?? '',
+      value: state.selectedKey ?? undefined,
       onChange: (e: React.ChangeEvent<HTMLSelectElement>) => state.setSelectedKey(e.target.value)
     }
   };
@@ -126,7 +126,7 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
             <option />
             {[...state.collection.getKeys()].map(key => {
               let item = state.collection.getItem(key);
-              if (item.type === 'item') {
+              if (item && item.type === 'item') {
                 return (
                   <option
                     key={item.key}

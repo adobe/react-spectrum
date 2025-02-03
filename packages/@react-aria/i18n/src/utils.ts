@@ -19,7 +19,6 @@ const RTL_LANGS = new Set(['ae', 'ar', 'arc', 'bcc', 'bqi', 'ckb', 'dv', 'fa', '
  */
 export function isRTL(localeString: string) {
   // If the Intl.Locale API is available, use it to get the locale's text direction.
-  // @ts-ignore
   if (Intl.Locale) {
     let locale = new Intl.Locale(localeString).maximize();
 

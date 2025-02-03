@@ -9,7 +9,7 @@ interface TextFieldProps {
 
 const TextInputField = (props: TextFieldProps) => {
   const {label} = props;
-  const ref = useRef<HTMLInputElement>(undefined);
+  const ref = useRef<HTMLInputElement>(null);
   const {labelProps, inputProps} = useTextField(props, ref);
 
   return (
@@ -22,7 +22,7 @@ const TextInputField = (props: TextFieldProps) => {
 
 const TextAreaField = (props: TextFieldProps) => {
   const {label} = props;
-  const ref = useRef<HTMLTextAreaElement>(undefined);
+  const ref = useRef<HTMLTextAreaElement>(null);
   const {labelProps, inputProps} = useTextField({...props, inputElementType: 'textarea'}, ref);
 
   return (

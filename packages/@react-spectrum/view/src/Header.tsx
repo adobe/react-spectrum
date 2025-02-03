@@ -16,7 +16,10 @@ import {filterDOMProps} from '@react-aria/utils';
 import {HeaderProps} from '@react-types/view';
 import React, {forwardRef} from 'react';
 
-function Header(props: HeaderProps, ref: DOMRef) {
+/**
+ * Header represents a header within a Spectrum container.
+ */
+export const Header = forwardRef(function Header(props: HeaderProps, ref: DOMRef) {
   props = useSlotProps(props, 'header');
   let {
     children,
@@ -32,10 +35,4 @@ function Header(props: HeaderProps, ref: DOMRef) {
       </ClearSlots>
     </header>
   );
-}
-
-/**
- * Header represents a header within a Spectrum container.
- */
-const _Header = forwardRef(Header);
-export {_Header as Header};
+});

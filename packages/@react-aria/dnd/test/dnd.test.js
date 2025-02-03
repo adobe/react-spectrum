@@ -2306,7 +2306,7 @@ describe('useDrag and useDrop', function () {
       expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Click to start dragging');
       expect(draggable).toHaveAttribute('data-dragging', 'false');
 
-      await user.click(draggable);
+      await user.pointer({target: draggable, keys: '[MouseLeft]', coords: {width: 0, height: 0}});
       act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(draggable);
       expect(draggable).toHaveAttribute('aria-describedby');
@@ -2425,7 +2425,7 @@ describe('useDrag and useDrop', function () {
       let buttons = tree.getAllByRole('button');
       expect(buttons).toHaveLength(4);
 
-      await user.click(draggable);
+      await user.pointer({target: draggable, keys: '[MouseLeft]', coords: {width: 0, height: 0}});
       act(() => jest.runAllTimers());
 
       buttons = tree.getAllByRole('button');
@@ -2466,10 +2466,10 @@ describe('useDrag and useDrop', function () {
 
       let draggable = tree.getByText('Drag me');
 
-      fireEvent.focus(draggable);
+      act(() => draggable.focus());
       fireEvent(draggable, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
       fireEvent(draggable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
-      await user.click(draggable);
+      await user.pointer({target: draggable, keys: '[MouseLeft]', coords: {width: 0, height: 0}});
       act(() => jest.runAllTimers());
       expect(draggable).toHaveAttribute('data-dragging', 'true');
       expect(draggable).toHaveAttribute('aria-describedby');
@@ -2496,16 +2496,16 @@ describe('useDrag and useDrop', function () {
       let draggable = tree.getByText('Drag me');
       let droppable = tree.getByText('Drop here');
 
-      fireEvent.focus(draggable);
+      act(() => draggable.focus());
       fireEvent(draggable, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
       fireEvent(draggable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0}));
-      await user.click(draggable);
+      await user.pointer({target: draggable, keys: '[MouseLeft]', coords: {width: 0, height: 0}});
       act(() => jest.runAllTimers());
       expect(draggable).toHaveAttribute('data-dragging', 'true');
 
 
       // Android Talkback fires with click event of detail = 1, test that our onPointerDown listener detects that it is a virtual click
-      fireEvent.focus(droppable);
+      act(() => droppable.focus());
       fireEvent(droppable, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
       fireEvent(droppable, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
       fireEvent.click(droppable, {detail: 1});
@@ -2535,8 +2535,8 @@ describe('useDrag and useDrop', function () {
 
       let draggable = tree.getByText('Drag me');
 
-      fireEvent.focus(draggable);
-      await user.click(draggable);
+      act(() => draggable.focus());
+      await user.pointer({target: draggable, keys: '[MouseLeft]', coords: {width: 0, height: 0}});
       act(() => jest.runAllTimers());
 
       expect(tree.getAllByRole('button')).toHaveLength(2);
@@ -2563,7 +2563,7 @@ describe('useDrag and useDrop', function () {
 
       expect(tree.getAllByRole('textbox')).toHaveLength(1);
 
-      fireEvent.focus(draggable);
+      act(() => draggable.focus());
       fireEvent.click(draggable);
       act(() => jest.runAllTimers());
 
@@ -2596,8 +2596,8 @@ describe('useDrag and useDrop', function () {
 
       let draggable = tree.getByText('Drag me');
 
-      fireEvent.focus(draggable);
-      await user.click(draggable);
+      act(() => draggable.focus());
+      await user.pointer({target: draggable, keys: '[MouseLeft]', coords: {width: 0, height: 0}});
       act(() => jest.runAllTimers());
 
       expect(tree.getAllByRole('button')).toHaveLength(3);
@@ -2621,8 +2621,8 @@ describe('useDrag and useDrop', function () {
 
       let draggable = tree.getByText('Drag me');
 
-      fireEvent.focus(draggable);
-      await user.click(draggable);
+      act(() => draggable.focus());
+      await user.pointer({target: draggable, keys: '[MouseLeft]', coords: {width: 0, height: 0}});
       act(() => jest.runAllTimers());
 
       expect(tree.getAllByRole('button')).toHaveLength(3);
@@ -2644,8 +2644,8 @@ describe('useDrag and useDrop', function () {
       let droppable = tree.getByText('Drop here');
       let input = tree.getByRole('textbox');
 
-      fireEvent.focus(draggable);
-      await user.click(draggable);
+      act(() => draggable.focus());
+      await user.pointer({target: draggable, keys: '[MouseLeft]', coords: {width: 0, height: 0}});
       act(() => jest.runAllTimers());
 
       act(() => droppable.focus());
@@ -2664,8 +2664,8 @@ describe('useDrag and useDrop', function () {
       let draggable = tree.getByText('Drag me');
       let input = tree.getByRole('textbox');
 
-      fireEvent.focus(draggable);
-      await user.click(draggable);
+      act(() => draggable.focus());
+      await user.pointer({target: draggable, keys: '[MouseLeft]', coords: {width: 0, height: 0}});
       act(() => jest.runAllTimers());
 
       act(() => input.focus());
@@ -2681,8 +2681,8 @@ describe('useDrag and useDrop', function () {
       let draggable = tree.getByText('Drag me');
       let droppable = tree.getByText('Drop here');
 
-      fireEvent.focus(draggable);
-      await user.click(draggable);
+      act(() => draggable.focus());
+      await user.pointer({target: draggable, keys: '[MouseLeft]', coords: {width: 0, height: 0}});
       act(() => jest.runAllTimers());
 
       act(() => droppable.focus());
@@ -2700,7 +2700,7 @@ describe('useDrag and useDrop', function () {
       let draggable = tree.getByText('Drag me');
 
       act(() => draggable.focus());
-      await user.click(draggable);
+      await user.pointer({target: draggable, keys: '[MouseLeft]', coords: {width: 0, height: 0}});
       act(() => jest.runAllTimers());
 
       act(() => draggable.blur());
@@ -2715,7 +2715,7 @@ describe('useDrag and useDrop', function () {
 
       let draggable = tree.getByText('Drag me');
 
-      fireEvent.focus(draggable);
+      act(() => draggable.focus());
       fireEvent.click(draggable, {detail: 1});
       act(() => jest.runAllTimers());
 
@@ -2731,8 +2731,8 @@ describe('useDrag and useDrop', function () {
       let draggable = tree.getByText('Drag me');
       let droppable = tree.getByText('Drop here');
 
-      fireEvent.focus(draggable);
-      await user.click(draggable);
+      act(() => draggable.focus());
+      await user.pointer({target: draggable, keys: '[MouseLeft]', coords: {width: 0, height: 0}});
       act(() => jest.runAllTimers());
       expect(draggable).toHaveAttribute('data-dragging', 'true');
 
@@ -2757,7 +2757,7 @@ describe('useDrag and useDrop', function () {
       expect(draggable).toHaveAttribute('aria-describedby');
       expect(document.getElementById(draggable.getAttribute('aria-describedby'))).toHaveTextContent('Double tap to start dragging');
 
-      await user.click(draggable);
+      await user.pointer({target: draggable, keys: '[MouseLeft]', coords: {width: 0, height: 0}});
       act(() => jest.runAllTimers());
       expect(document.activeElement).toBe(draggable);
       expect(draggable).toHaveAttribute('aria-describedby');

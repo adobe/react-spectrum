@@ -12,10 +12,10 @@
 
 import type {Condition, CSSProperties, CSSValue, CustomValue, PropertyFunction, PropertyValueDefinition, PropertyValueMap, RenderProps, ShorthandProperty, StyleFunction, StyleValue, Theme, ThemeProperties, Value} from './types';
 
-let defaultArbitraryProperty = <T extends Value>(value: T, property: string) => ({[property]: value} as CSSProperties);
-export function createArbitraryProperty<T extends Value>(fn: (value: T, property: string) => CSSProperties = defaultArbitraryProperty): PropertyFunction<T> {
+let defaultArbitraryProperty = <T>(value: T, property: string) => ({[property]: value} as CSSProperties);
+export function createArbitraryProperty<T>(fn: (value: T, property: string) => CSSProperties = defaultArbitraryProperty): PropertyFunction<T> {
   return (value, property) => {
-    let selector = Array.isArray(value) ? generateArbitraryValueSelector(value.map(v => String(v)).join('')) : generateArbitraryValueSelector(String(value));
+    let selector = Array.isArray(value) ? generateArbitraryValueSelector(value.map(v => JSON.stringify(v)).join('')) : generateArbitraryValueSelector(JSON.stringify(value));
     return {default: [fn(value, property), selector]};
   };
 }
@@ -32,7 +32,6 @@ export function createMappedProperty<T extends CSSValue>(fn: (value: string, pro
       return {default: [fn(v[0], property), v[1]]};
     }
 
-    // @ts-ignore
     let val = Array.isArray(values) ? value : values[String(value)];
     return mapConditionalValue(val, value => {
       return [fn(value, property), valueMap.get(value)!];
@@ -42,6 +41,30 @@ export function createMappedProperty<T extends CSSValue>(fn: (value: string, pro
 
 export function createRenamedProperty<T extends CSSValue>(name: string, values: PropertyValueMap<T> | string[]): PropertyFunction<T> {
   return createMappedProperty((value, property) => ({[property.startsWith('--') ? property : name]: value}), values);
+}
+
+export function createSizingProperty<T extends CSSValue>(values: PropertyValueMap<T>, fn: (value: number) => string): PropertyFunction<T | (number & {})> {
+  let valueMap = createValueLookup(Array.isArray(values) ? values : recursiveValues(values));
+  return (value, property) => {
+    let v = parseArbitraryValue(value);
+    if (v) {
+      return {default: [{[property]: v[0]}, v[1]]};
+    }
+
+    let val = values[String(value)];
+    if (val != null) {
+      return mapConditionalValue(val, value => {
+        return [{[property]: value}, valueMap.get(value)!];
+      });
+    }
+
+    if (typeof value === 'number') {
+      let cssValue = value === 0 ? '0px' : fn(value);
+      return {default: [{[property]: cssValue}, generateName(value + valueMap.size)]};
+    }
+
+    throw new Error('Invalid sizing value: ' + value);
+  };
 }
 
 export type Color<C extends string> = C | `${string}/${number}`;
@@ -54,7 +77,6 @@ export function createColorProperty<C extends string>(colors: PropertyValueMap<C
     }
 
     let [color, opacity] = value.split('/');
-    // @ts-ignore
     let c = colors[color];
     return mapConditionalValue(c, value => {
       let css = opacity ? `rgb(from ${value} r g b / ${opacity}%)` : value;
@@ -200,7 +222,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     // The :not(#a#b) raises the specificity of the selector by 2 ids,
     // which can never occur on a real element, and will win over other
     // selectors such as class and element selectors.
-    let css = '.\\.:not(#a#b) { all: revert-layer }\n\n';
+    let css = '';
 
     // Declare layers for each priority ahead of time so the order is always correct.
     css += '@layer ';
@@ -213,7 +235,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       }
       css += layerName(generateName(i, true));
     }
-    css += ', UNSAFE_overrides;\n\n';
+    css += ';\n\n';
 
     // If allowed overrides are provided, generate code to match the input override string and include only allowed classes.
     // Also generate a variable for each overridable property that overlaps with the style definition. If those are defined,
@@ -246,7 +268,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
 
     // Generate JS and CSS for each rule.
     let isStatic = !(hasConditions || allowedOverrides);
-    let className = ' .';
+    let className = '';
     let rulesByLayer = new Map<string, string[]>();
     for (let [property, propertyRules] of rules) {
       if (isStatic) {
@@ -608,12 +630,26 @@ function getStaticClassName(rules: Rule[]): string {
 }
 
 export function raw(this: MacroContext | void, css: string, layer = '_.a') {
+  // Check if `this` is undefined, which means style was not called as a macro but as a normal function.
+  // We also check if this is globalThis, which happens in non-strict mode bundles.
+  // Also allow style to be called as a normal function in tests.
+  // @ts-ignore
+  // eslint-disable-next-line
+  if ((this == null || this === globalThis) && process.env.NODE_ENV !== 'test') {
+    throw new Error('The raw macro must be imported with {type: "macro"}.');
+  }
   let className = generateArbitraryValueSelector(css, true);
   css = `@layer ${layer} {
   .${className} {
   ${css}
   }
 }`;
+
+  // Ensure layer is always declared after the _ layer used by style macro.
+  if (!layer.startsWith('_.')) {
+    css = `@layer _, ${layer};\n` + css;
+  }
+
   if (this && typeof this.addAsset === 'function') {
     this.addAsset({
       type: 'css',
@@ -624,6 +660,14 @@ export function raw(this: MacroContext | void, css: string, layer = '_.a') {
 }
 
 export function keyframes(this: MacroContext | void, css: string) {
+  // Check if `this` is undefined, which means style was not called as a macro but as a normal function.
+  // We also check if this is globalThis, which happens in non-strict mode bundles.
+  // Also allow style to be called as a normal function in tests.
+  // @ts-ignore
+  // eslint-disable-next-line
+  if ((this == null || this === globalThis) && process.env.NODE_ENV !== 'test') {
+    throw new Error('The keyframes macro must be imported with {type: "macro"}.');
+  }
   let name = generateArbitraryValueSelector(css, true);
   css = `@keyframes ${name} {
   ${css}

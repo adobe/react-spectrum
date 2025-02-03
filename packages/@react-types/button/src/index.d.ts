@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, FocusableDOMProps, FocusableProps, PressEvents, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, FocusableDOMProps, FocusableProps, Key, PressEvents, StyleProps} from '@react-types/shared';
 import {ElementType, JSXElementConstructor, ReactNode} from 'react';
 
 interface ButtonProps extends PressEvents, FocusableProps {
@@ -55,6 +55,8 @@ interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
   'aria-controls'?: string,
   /** Indicates the current "pressed" state of toggle buttons. */
   'aria-pressed'?: boolean | 'true' | 'false' | 'mixed',
+  /** Indicates whether this element represents the current item within a container or set of related elements. */
+  'aria-current'?: boolean | 'true' | 'false' | 'page' | 'step' | 'location' | 'date' | 'time',
   /**
    * The behavior of the button when used in an HTML form.
    * @default 'button'
@@ -71,6 +73,10 @@ interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
 
 export interface AriaButtonProps<T extends ElementType = 'button'> extends ButtonProps, LinkButtonProps<T>, AriaBaseButtonProps {}
 export interface AriaToggleButtonProps<T extends ElementType = 'button'> extends ToggleButtonProps, AriaBaseButtonProps, AriaButtonElementTypeProps<T> {}
+export interface AriaToggleButtonGroupItemProps<E extends ElementType = 'button'> extends Omit<AriaToggleButtonProps<E>, 'id' | 'isSelected' | 'defaultSelected' | 'onChange'> {
+  /** An identifier for the item in the `selectedKeys` of a ToggleButtonGroup. */
+  id: Key
+}
 
 /** @deprecated */
 type LegacyButtonVariant = 'cta' | 'overBackground';

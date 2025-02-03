@@ -18,7 +18,7 @@ export interface HeadingProps extends HTMLAttributes<HTMLElement> {
   level?: number
 }
 
-function Heading(props: HeadingProps, ref: ForwardedRef<HTMLHeadingElement>) {
+export const Heading = forwardRef(function Heading(props: HeadingProps, ref: ForwardedRef<HTMLHeadingElement>) {
   [props, ref] = useContextProps(props, ref, HeadingContext);
   let {children, level = 3, className, ...domProps} = props;
   let Element = `h${level}` as ElementType;
@@ -28,7 +28,4 @@ function Heading(props: HeadingProps, ref: ForwardedRef<HTMLHeadingElement>) {
       {children}
     </Element>
   );
-}
-
-const _Heading = forwardRef(Heading);
-export {_Heading as Heading};
+});

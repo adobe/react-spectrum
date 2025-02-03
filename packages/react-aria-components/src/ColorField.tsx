@@ -61,20 +61,17 @@ export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'label' | 'pl
 
 export const ColorFieldStateContext = createContext<ColorFieldState | null>(null);
 
-function ColorField(props: ColorFieldProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A color field allows users to edit a hex color or individual color channel value.
+ */
+export const ColorField = forwardRef(function ColorField(props: ColorFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ColorFieldContext);
   if (props.channel) {
     return <ColorChannelField {...props} channel={props.channel} forwardedRef={ref} />;
   } else {
     return <HexColorField {...props} forwardedRef={ref} />;
   }
-}
-
-/**
- * A color field allows users to edit a hex color or individual color channel value.
- */
-const _ColorField = forwardRef(ColorField);
-export {_ColorField as ColorField};
+});
 
 interface ColorChannelFieldProps extends Omit<ColorFieldProps, 'channel'> {
   channel: ColorChannel,

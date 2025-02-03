@@ -12,7 +12,7 @@
 
 import {act, fireEvent, pointerMap, render as render_, waitFor, within} from '@react-spectrum/test-utils-internal';
 import {Button} from '@react-spectrum/button';
-import {CalendarDate, CalendarDateTime, EthiopicCalendar, getLocalTimeZone, JapaneseCalendar, parseZonedDateTime, toCalendarDateTime, today} from '@internationalized/date';
+import {CalendarDate, CalendarDateTime, DateFormatter, EthiopicCalendar, getLocalTimeZone, JapaneseCalendar, parseZonedDateTime, toCalendarDateTime, today} from '@internationalized/date';
 import {DatePicker} from '../';
 import {Form} from '@react-spectrum/form';
 import {Provider} from '@react-spectrum/provider';
@@ -31,7 +31,7 @@ function getTextValue(el) {
     return '';
   }
 
-  return el.textContent;
+  return el.textContent.replace(/[\u2066-\u2069]/g, '');
 }
 
 function expectPlaceholder(el, placeholder) {
@@ -584,7 +584,7 @@ describe('DatePicker', function () {
       let month = parts.find(p => p.type === 'month').value;
       let day = parts.find(p => p.type === 'day').value;
       let year = parts.find(p => p.type === 'year').value;
-       
+
       expectPlaceholder(combobox, `${month}/${day}/${year}, 12:00 AM`);
 
       await user.keyboard('{ArrowRight}');
@@ -955,15 +955,13 @@ describe('DatePicker', function () {
     });
 
     it('should support format help text', function () {
-      let {getAllByRole, getByText, getByRole, getByTestId} = render(<DatePicker label="Date" showFormatHelpText />);
+      let {getAllByRole, getByRole, getByTestId} = render(<DatePicker label="Date" showFormatHelpText />);
 
       // Not needed in aria-described by because each segment has a label already, so this would be duplicative.
       let group = getByRole('group');
       let field = getByTestId('date-field');
       expect(group).not.toHaveAttribute('aria-describedby');
       expect(field).not.toHaveAttribute('aria-describedby');
-
-      expect(getByText('month / day / year')).toBeVisible();
 
       let segments = getAllByRole('spinbutton');
       for (let segment of segments) {
@@ -1043,7 +1041,7 @@ describe('DatePicker', function () {
       await user.keyboard('{ArrowUp}');
 
       expect(queryByTestId('era')).toBeNull();
-      expect(document.activeElement).toBe(field.firstChild);
+      expect(document.activeElement.textContent.replace(/[\u2066-\u2069]/g, '')).toBe('3');
     });
 
     it('does not try to shift focus when the entire datepicker is unmounted while focused', function () {
@@ -1928,7 +1926,17 @@ describe('DatePicker', function () {
       await user.tab();
       await user.keyboard('{Backspace}');
 
-      expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM PDT');
+      let timeZoneName =
+        new DateFormatter('en-US',
+          {
+            timeZone: 'America/Los_Angeles',
+            timeZoneName: 'short'
+          })
+          .formatToParts(new Date())
+          .find(p => p.type === 'timeZoneName')
+          .value;
+
+      expectPlaceholder(combobox, `mm/dd/yyyy, ––:–– AM ${timeZoneName}`);
     });
 
     it('should keep timeZone from defaultValue when date and time are cleared then set', async function () {

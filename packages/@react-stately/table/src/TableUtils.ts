@@ -44,7 +44,7 @@ export function parseStaticWidth(width: number | string, tableWidth: number): nu
 }
 
 
-export function getMaxWidth(maxWidth: number | string, tableWidth: number): number {
+export function getMaxWidth(maxWidth: number | string | null | undefined, tableWidth: number): number {
   return maxWidth != null
     ? parseStaticWidth(maxWidth, tableWidth)
     : Number.MAX_SAFE_INTEGER;
@@ -63,7 +63,18 @@ export interface IColumn {
   maxWidth?: number | string,
   width?: number | string,
   defaultWidth?: number | string,
-  key?: Key
+  key: Key
+}
+
+interface FlexItem {
+  frozen: boolean,
+  baseSize: number,
+  hypotheticalMainSize: number,
+  min: number,
+  max: number,
+  flex: number,
+  targetMainSize: number,
+  violation: number
 }
 
 /**
@@ -93,12 +104,12 @@ export interface IColumn {
  */
 export function calculateColumnSizes(availableWidth: number, columns: IColumn[], changedColumns: Map<Key, ColumnSize>, getDefaultWidth, getDefaultMinWidth) {
   let hasNonFrozenItems = false;
-  let flexItems = columns.map((column, index) => {
+  let flexItems: FlexItem[] = columns.map((column, index) => {
     let width = changedColumns.get(column.key) != null ? changedColumns.get(column.key) : column.width ?? column.defaultWidth ?? getDefaultWidth?.(index) ?? '1fr';
     let frozen = false;
     let baseSize = 0;
     let flex = 0;
-    let targetMainSize = null;
+    let targetMainSize = 0;
     if (isStatic(width)) {
       baseSize = parseStaticWidth(width, availableWidth);
       frozen = true;
@@ -232,7 +243,7 @@ export function calculateColumnSizes(availableWidth: number, columns: IColumn[],
   return cascadeRounding(flexItems);
 }
 
-function cascadeRounding(flexItems): number[] {
+function cascadeRounding(flexItems: FlexItem[]): number[] {
   /*
   Given an array of floats that sum to an integer, this rounds the floats
   and returns an array of integers with the same sum.
@@ -240,7 +251,7 @@ function cascadeRounding(flexItems): number[] {
 
   let fpTotal = 0;
   let intTotal = 0;
-  let roundedArray = [];
+  let roundedArray: number[] = [];
   flexItems.forEach(function (item) {
     let float = item.targetMainSize;
     let integer = Math.round(float + fpTotal) - intTotal;

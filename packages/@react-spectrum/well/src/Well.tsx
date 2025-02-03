@@ -17,7 +17,11 @@ import React, {forwardRef} from 'react';
 import {SpectrumWellProps} from '@react-types/well';
 import styles from '@adobe/spectrum-css-temp/components/well/vars.css';
 
-function Well(props: SpectrumWellProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A Well is a content container that displays non-editable content separate from other content on the screen.
+ * Often this is used to display preformatted text, such as code/markup examples on a documentation page.
+ */
+export const Well = forwardRef(function Well(props: SpectrumWellProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
     role,
@@ -44,11 +48,4 @@ function Well(props: SpectrumWellProps, ref: DOMRef<HTMLDivElement>) {
       {children}
     </div>
   );
-}
-
-/**
- * A Well is a content container that displays non-editable content separate from other content on the screen.
- * Often this is used to display preformatted text, such as code/markup examples on a documentation page.
- */
-const _Well = forwardRef(Well);
-export {_Well as Well};
+});

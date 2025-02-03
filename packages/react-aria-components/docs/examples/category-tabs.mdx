@@ -16,6 +16,7 @@ import styles from '@react-spectrum/docs/src/docs.css';
 import Tabs from '@react-spectrum/docs/pages/assets/component-illustrations/Tabs.svg';
 import Link from '@react-spectrum/docs/pages/assets/component-illustrations/Link.svg';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
 ---
 keywords: [example, tabs, aria, accessibility, react, component]
@@ -46,7 +47,7 @@ import type {TabProps, TabPanelProps} from 'react-aria-components';
 
 function TabsExample() {
   return (
-    <div className="bg-gradient-to-r from-lime-600 to-emerald-600 py-8 px-2 sm:px-8 rounded-lg flex justify-center">
+    <div className="bg-linear-to-r from-lime-600 to-emerald-600 py-8 px-2 sm:px-8 rounded-lg flex justify-center">
       <Tabs className="w-full max-w-[300px]">
         <TabList aria-label="Feeds" className="flex space-x-1 rounded-full bg-green-900/40 bg-clip-padding p-1 border border-solid border-white/30">
           <MyTab id="blog">Blog</MyTab>
@@ -84,19 +85,19 @@ function MyTab(props: TabProps) {
     <Tab
       {...props}
       className={({isSelected}) => `
-        w-full rounded-full py-2.5 font-medium text-[1.1em] text-center cursor-default ring-black outline-none transition-colors focus-visible:ring-2
-        ${isSelected ? 'text-emerald-700 bg-white shadow' : 'text-white hover:bg-white/10 pressed:bg-white/10'}
+        w-full rounded-full py-2.5 font-medium text-[1.1em] text-center cursor-default ring-black outline-hidden transition-colors focus-visible:ring-2
+        ${isSelected ? 'text-emerald-700 bg-white shadow-sm' : 'text-white hover:bg-white/10 pressed:bg-white/10'}
       `} />
   );
 }
 
 function MyTabPanel(props: TabPanelProps) {
-  return <TabPanel {...props} className="mt-2 text-gray-700 font-serif rounded-2xl bg-white p-2 shadow ring-black outline-none focus-visible:ring-2" />;
+  return <TabPanel {...props} className="mt-2 text-gray-700 font-serif rounded-2xl bg-white p-2 shadow-sm ring-black outline-hidden focus-visible:ring-2" />;
 }
 
 function Article({title, summary}: {title: string, summary: string}) {
   return (
-    <Link href="#" className="p-2 rounded-lg hover:bg-gray-100 pressed:bg-gray-100 text-[inherit] no-underline outline-none focus-visible:ring-2 ring-emerald-500">
+    <Link href="#" className="p-2 rounded-lg hover:bg-gray-100 pressed:bg-gray-100 text-[inherit] no-underline outline-hidden focus-visible:ring-2 ring-emerald-500">
       <h3 className="text-base mt-0 mb-0.5 font-semibold overflow-hidden text-ellipsis whitespace-nowrap">{title}</h3>
       <p className="text-sm m-0 overflow-hidden text-ellipsis line-clamp-2">{summary}</p>
     </Link>
@@ -106,7 +107,18 @@ function Article({title, summary}: {title: string, summary: string}) {
 
 ### Tailwind config
 
-This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. Add it to your `tailwind.config.js`:
+This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. When using Tailwind v4, add it to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugin to your `tailwind.config.js` instead:
 
 ```tsx
 module.exports = {
@@ -116,6 +128,10 @@ module.exports = {
   ]
 };
 ```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
 
 ## Components
 

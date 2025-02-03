@@ -25,7 +25,10 @@ import {useProviderProps} from '@react-spectrum/provider';
 const MIN_VISIBLE_ITEMS = 1;
 const MAX_VISIBLE_ITEMS = 4;
 
-function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
+/**
+ * Breadcrumbs show hierarchy and navigational context for a user’s location within an application.
+ */
+export const Breadcrumbs = React.forwardRef(function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
   props = useProviderProps(props);
   let {
     size = 'L',
@@ -242,10 +245,4 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
       </ul>
     </nav>
   );
-}
-
-/**
- * Breadcrumbs show hierarchy and navigational context for a user’s location within an application.
- */
-let _Breadcrumbs = React.forwardRef(Breadcrumbs);
-export {_Breadcrumbs as Breadcrumbs};
+});

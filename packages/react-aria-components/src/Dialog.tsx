@@ -10,14 +10,16 @@
  * governing permissions and limitations under the License.
  */
 import {AriaDialogProps, useDialog, useId, useOverlayTrigger} from 'react-aria';
+import {ButtonContext} from './Button';
 import {ContextValue, DEFAULT_SLOT, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {forwardRefType} from '@react-types/shared';
 import {HeadingContext} from './RSPContexts';
-import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
+import {OverlayTriggerProps, OverlayTriggerState, useMenuTriggerState} from 'react-stately';
 import {PopoverContext} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef} from 'react';
+import {RootMenuTriggerStateContext} from './Menu';
 
 export interface DialogTriggerProps extends OverlayTriggerProps {
   children: ReactNode
@@ -39,7 +41,9 @@ export const OverlayTriggerStateContext = createContext<OverlayTriggerState | nu
  * A DialogTrigger opens a dialog when a trigger element is pressed.
  */
 export function DialogTrigger(props: DialogTriggerProps) {
-  let state = useOverlayTriggerState(props);
+  // Use useMenuTriggerState instead of useOverlayTriggerState in case a menu is embedded in the dialog.
+  // This is needed to handle submenus.
+  let state = useMenuTriggerState(props);
 
   let buttonRef = useRef<HTMLButtonElement>(null);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, buttonRef);
@@ -55,6 +59,7 @@ export function DialogTrigger(props: DialogTriggerProps) {
     <Provider
       values={[
         [OverlayTriggerStateContext, state],
+        [RootMenuTriggerStateContext, state],
         [DialogContext, overlayProps],
         [PopoverContext, {trigger: 'DialogTrigger', triggerRef: buttonRef}]
       ]}>
@@ -65,7 +70,10 @@ export function DialogTrigger(props: DialogTriggerProps) {
   );
 }
 
-function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
+/**
+ * A dialog is an overlay shown above other content in an application.
+ */
+export const Dialog = /*#__PURE__*/ (forwardRef as forwardRefType)(function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
   let originalAriaLabelledby = props['aria-labelledby'];
   [props, ref] = useContextProps(props, ref, DialogContext);
   let {dialogProps, titleProps} = useDialog({
@@ -110,16 +118,18 @@ function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
               [DEFAULT_SLOT]: {},
               title: {...titleProps, level: 2}
             }
+          }],
+          [ButtonContext, {
+            slots: {
+              [DEFAULT_SLOT]: {},
+              close: {
+                onPress: () => state?.close()
+              }
+            }
           }]
         ]}>
         {renderProps.children}
       </Provider>
     </section>
   );
-}
-
-/**
- * A dialog is an overlay shown above other content in an application.
- */
-const _Dialog = /*#__PURE__*/ (forwardRef as forwardRefType)(Dialog);
-export {_Dialog as Dialog};
+});

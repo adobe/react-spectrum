@@ -36,13 +36,13 @@ interface FieldLabelProps extends Omit<LabelProps, 'className' | 'style' | 'chil
   labelAlign?: Alignment,
   labelPosition?: 'top' | 'side',
   includeNecessityIndicatorInAccessibilityName?: boolean,
-  staticColor?: 'white' | 'black',
+  staticColor?: 'white' | 'black' | 'auto',
   contextualHelp?: ReactNode,
   isQuiet?: boolean,
   children?: ReactNode
 }
 
-function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
+export const FieldLabel = forwardRef(function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let {
     isDisabled,
@@ -98,7 +98,7 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
         {...labelProps}
         ref={domRef}
         style={UNSAFE_style}
-        className={UNSAFE_className + mergeStyles(style(fieldLabel())({labelPosition, isDisabled, size, staticColor}), props.styles)}>
+        className={UNSAFE_className + mergeStyles(style(fieldLabel())({labelPosition, isDisabled, size, isStaticColor: !!staticColor}), props.styles)}>
         {props.children}
         {(isRequired || necessityIndicator === 'label') && (
           <span className={style({whiteSpace: 'nowrap'})}>
@@ -127,28 +127,27 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
         )}
       </Label>
       {contextualHelp && (
-        <CenterBaseline
-          styles={style({
-            display: 'inline-flex',
-            height: 0,
-            marginStart: 4
-          })}>
-          <ContextualHelpContext.Provider
-            value={{
-              id: contextualHelpId,
-              'aria-labelledby': labelProps?.id ? `${labelProps.id} ${contextualHelpId}` : undefined,
-              size: (size === 'L' || size === 'XL') ? 'S' : 'XS'
-            }}>
-            {contextualHelp}
-          </ContextualHelpContext.Provider>
-        </CenterBaseline>
+        <span className={style({whiteSpace: 'nowrap'})}>
+          &nbsp;
+          <CenterBaseline
+            styles={style({
+              display: 'inline-flex',
+              height: 0
+            })}>
+            <ContextualHelpContext.Provider
+              value={{
+                id: contextualHelpId,
+                'aria-labelledby': labelProps?.id ? `${labelProps.id} ${contextualHelpId}` : undefined,
+                size: (size === 'L' || size === 'XL') ? 'S' : 'XS'
+              }}>
+              {contextualHelp}
+            </ContextualHelpContext.Provider>
+          </CenterBaseline>
+        </span>
       )}
     </div>
   );
-}
-
-let _FieldLabel = forwardRef(FieldLabel);
-export {_FieldLabel as FieldLabel};
+});
 
 interface FieldGroupProps extends Omit<GroupProps, 'className' | 'style' | 'children'>, UnsafeStyles {
   size?: 'S' | 'M' | 'L' | 'XL',
@@ -193,7 +192,7 @@ const fieldGroupStyles = style({
   }
 });
 
-function FieldGroup(props: FieldGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+export const FieldGroup = forwardRef(function FieldGroup(props: FieldGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   return (
     <Group
       ref={ref}
@@ -217,14 +216,11 @@ function FieldGroup(props: FieldGroupProps, ref: ForwardedRef<HTMLDivElement>) {
         props.styles
       )} />
   );
-}
-
-let _FieldGroup = forwardRef(FieldGroup);
-export {_FieldGroup as FieldGroup};
+});
 
 export interface InputProps extends Omit<RACInputProps, 'className' | 'style'>, StyleProps {}
 
-function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
+export const Input = forwardRef(function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
   let {UNSAFE_className = '', UNSAFE_style, styles, ...otherProps} = props;
   return (
     <RACInput
@@ -247,10 +243,7 @@ function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
         truncate: true
       }), styles)} />
   );
-}
-
-let _Input = forwardRef(Input);
-export {_Input as Input};
+});
 
 interface HelpTextProps extends FieldErrorProps {
   size?: 'S' | 'M' | 'L' | 'XL',

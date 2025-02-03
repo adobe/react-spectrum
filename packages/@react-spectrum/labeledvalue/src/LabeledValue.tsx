@@ -16,7 +16,7 @@ import type {DOMProps, DOMRef, RangeValue, SpectrumLabelableProps, StyleProps} f
 import {Field} from '@react-spectrum/label';
 import {filterDOMProps} from '@react-aria/utils';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
-import React, {ReactNode} from 'react';
+import React, {ReactElement, ReactNode, useEffect} from 'react';
 import {useDateFormatter, useListFormatter, useNumberFormatter} from '@react-aria/i18n';
 
 // NOTE: the types here need to be synchronized with the ones in docs/types.ts, which are simpler so the documentation generator can handle them.
@@ -58,22 +58,44 @@ interface StringListProps<T extends string[]> {
   formatOptions?: Intl.ListFormatOptions
 }
 
+interface ReactElementProps<T extends ReactElement> {
+  /** The value to display. */
+  value: T,
+  /** Formatting options for the value. */
+  formatOptions?: never
+}
+
 type LabeledValueProps<T> =
   T extends NumberValue ? NumberProps<T> :
   T extends DateTimeValue ? DateProps<T> :
   T extends string[] ? StringListProps<T> :
   T extends string ? StringProps<T> :
+  T extends ReactElement ? ReactElementProps<T> :
   never;
 
-type SpectrumLabeledValueTypes = string[] | string | Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time | number | RangeValue<number> | RangeValue<DateTime>;
+type SpectrumLabeledValueTypes = string[] | string | Date | CalendarDate | CalendarDateTime | ZonedDateTime | Time | number | RangeValue<number> | RangeValue<DateTime> | ReactElement;
 export type SpectrumLabeledValueProps<T> = LabeledValueProps<T> & LabeledValueBaseProps;
 
-function LabeledValue<T extends SpectrumLabeledValueTypes>(props: SpectrumLabeledValueProps<T>, ref: DOMRef<HTMLElement>) {
+/**
+ * A LabeledValue displays a non-editable value with a label. It formats numbers, dates, times, and lists according to the user's locale.
+ */
+export const LabeledValue = React.forwardRef(function LabeledValue<T extends SpectrumLabeledValueTypes>(props: SpectrumLabeledValueProps<T>, ref: DOMRef<HTMLElement>) {
   let {
     value,
     formatOptions
   } = props;
   let domRef = useDOMRef(ref);
+
+  useEffect(() => {
+    if (
+      domRef?.current &&
+      domRef.current.querySelectorAll('input, [contenteditable], textarea')
+        .length > 0
+    ) {
+      throw new Error('LabeledValue cannot contain an editable value.');
+    }
+  }, [domRef]);
+  
 
   let children;
   if (Array.isArray(value)) {
@@ -100,12 +122,16 @@ function LabeledValue<T extends SpectrumLabeledValueTypes>(props: SpectrumLabele
     children = value;
   }
 
+  if (React.isValidElement(value)) {
+    children = value;
+  }
+
   return (
     <Field {...props as any} wrapperProps={filterDOMProps(props as any)} ref={domRef} elementType="span" wrapperClassName={classNames(labelStyles, 'spectrum-LabeledValue')}>
       <span>{children}</span>
     </Field>
   );
-}
+});
 
 function FormattedStringList<T extends string[]>(props: StringListProps<T>) {
   let stringFormatter = useListFormatter(props.formatOptions);
@@ -181,9 +207,3 @@ function convertValue(value: Time) {
 
   return toCalendarDateTime(date, value);
 }
-
-/**
- * A LabeledValue displays a non-editable value with a label. It formats numbers, dates, times, and lists according to the user's locale.
- */
-let _LabeledValue = React.forwardRef(LabeledValue);
-export {_LabeledValue as LabeledValue};

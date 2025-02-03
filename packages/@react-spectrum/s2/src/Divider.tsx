@@ -13,7 +13,7 @@
 import {ContextValue, Separator as RACSeparator, SeparatorProps as RACSeparatorProps} from 'react-aria-components';
 import {createContext, forwardRef} from 'react';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
-import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -34,7 +34,7 @@ interface DividerSpectrumProps {
    */
   orientation?: 'horizontal' | 'vertical',
   /** The static color style to apply. Useful when the Divider appears over a color background. */
-  staticColor?: 'white' | 'black'
+  staticColor?: 'white' | 'black' | 'auto'
 }
 
 // TODO: allow overriding height (only when orientation is vertical)??
@@ -42,25 +42,18 @@ export interface DividerProps extends DividerSpectrumProps, Omit<RACSeparatorPro
 
 export const DividerContext = createContext<ContextValue<DividerProps, DOMRefValue>>(null);
 
-export const divider = style<DividerSpectrumProps>({
+export const divider = style<DividerSpectrumProps & {isStaticColor: boolean}>({
+  ...staticColor(),
   alignSelf: 'stretch',
   backgroundColor: {
     default: 'gray-200',
     size: {
       L: 'gray-800'
     },
-    staticColor: {
-      white: {
-        default: 'transparent-white-200',
-        size: {
-          L: 'transparent-white-800'
-        }
-      },
-      black: {
-        default: 'transparent-black-200',
-        size: {
-          L: 'transparent-black-800'
-        }
+    isStaticColor: {
+      default: 'transparent-overlay-200',
+      size: {
+        L: 'transparent-overlay-800'
       }
     },
     forcedColors: 'ButtonBorder'
@@ -93,7 +86,11 @@ export const divider = style<DividerSpectrumProps>({
   }
 }, getAllowedOverrides());
 
-function Divider(props: DividerProps, ref: DOMRef) {
+/**
+ * Dividers bring clarity to a layout by grouping and dividing content in close proximity.
+ * They can also be used to establish rhythm and hierarchy.
+ */
+export const Divider = /*#__PURE__*/ forwardRef(function Divider(props: DividerProps, ref: DOMRef) {
   [props, ref] = useSpectrumContextProps(props, ref, DividerContext);
   let domRef = useDOMRef(ref);
 
@@ -105,14 +102,8 @@ function Divider(props: DividerProps, ref: DOMRef) {
       className={(props.UNSAFE_className || '') + divider({
         size: props.size || 'M',
         orientation: props.orientation || 'horizontal',
-        staticColor: props.staticColor
+        staticColor: props.staticColor,
+        isStaticColor: !!props.staticColor
       }, props.styles)} />
   );
-}
-
-/**
- * Dividers bring clarity to a layout by grouping and dividing content in close proximity.
- * They can also be used to establish rhythm and hierarchy.
- */
-let _Divider = /*#__PURE__*/ forwardRef(Divider);
-export {_Divider as Divider};
+});

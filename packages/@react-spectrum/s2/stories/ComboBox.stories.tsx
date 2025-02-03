@@ -33,18 +33,19 @@ const meta: Meta<typeof ComboBox<any>> = {
 export default meta;
 type Story = StoryObj<typeof ComboBox<any>>;
 
-export const Example = (args: ComboBoxProps<any>) => (
-  <ComboBox {...args}>
-    <ComboBoxItem>Chocolate</ComboBoxItem>
-    <ComboBoxItem>Mint</ComboBoxItem>
-    <ComboBoxItem>Strawberry</ComboBoxItem>
-    <ComboBoxItem>Vanilla</ComboBoxItem>
-    <ComboBoxItem>Chocolate Chip Cookie Dough</ComboBoxItem>
-  </ComboBox>
-);
-
-Example.args = {
-  label: 'Ice cream flavor'
+export const Example = {
+  render: (args: ComboBoxProps<any>) => (
+    <ComboBox {...args}>
+      <ComboBoxItem>Chocolate</ComboBoxItem>
+      <ComboBoxItem>Mint</ComboBoxItem>
+      <ComboBoxItem>Strawberry</ComboBoxItem>
+      <ComboBoxItem>Vanilla</ComboBoxItem>
+      <ComboBoxItem>Chocolate Chip Cookie Dough</ComboBoxItem>
+    </ComboBox>
+  ),
+  args: {
+    label: 'Ice cream flavor'
+  }
 };
 
 export const Sections: Story = {
@@ -118,23 +119,43 @@ export const WithIcons: Story = {
   }
 };
 
-export const Validation = (args: any) => (
-  <Form>
-    <ComboBox {...args}>
-      {(item) => <ComboBoxItem id={(item as IExampleItem).id} textValue={(item as IExampleItem).label}>{(item as IExampleItem).label}</ComboBoxItem>}
-    </ComboBox>
-    <Button type="submit" variant="primary">Submit</Button>
-  </Form>
-);
-
-Validation.args = {
-  ...Dynamic.args,
-  isRequired: true
+export const Validation = {
+  render: (args: any) => (
+    <Form>
+      <ComboBox {...args}>
+        {(item) => <ComboBoxItem id={(item as IExampleItem).id} textValue={(item as IExampleItem).label}>{(item as IExampleItem).label}</ComboBoxItem>}
+      </ComboBox>
+      <Button type="submit" variant="primary">Submit</Button>
+    </Form>
+  ),
+  args: {
+    ...Dynamic.args,
+    isRequired: true
+  }
 };
 
 export const ContextualHelpExample: Story = {
   render: (args) => (
-    <ComboBox {...args}>
+    <ComboBox
+      {...args}
+      contextualHelp={
+        <ContextualHelp>
+          <Heading>What is a ice cream?</Heading>
+          <Content>
+            <Text>
+              A combination of sugar, eggs, milk, and cream is cooked to make
+              a custard base. Then, flavorings are added, and this flavored
+              mixture is carefully churned and frozen to make ice cream.
+            </Text>
+          </Content>
+          <Footer>
+            <Link
+              isStandalone
+              href="https://en.wikipedia.org/wiki/Ice_cream"
+              target="_blank">Learn more about ice cream</Link>
+          </Footer>
+        </ContextualHelp>
+      }>
       <ComboBoxItem>Chocolate</ComboBoxItem>
       <ComboBoxItem>Mint</ComboBoxItem>
       <ComboBoxItem>Strawberry</ComboBoxItem>
@@ -143,80 +164,24 @@ export const ContextualHelpExample: Story = {
     </ComboBox>
   ),
   args: {
-    label: 'Ice cream flavor',
-    contextualHelp: (
-      <ContextualHelp>
-        <Heading>What is a ice cream?</Heading>
-        <Content>
-          <Text>
-            A combination of sugar, eggs, milk, and cream is cooked to make
-            a custard base. Then, flavorings are added, and this flavored
-            mixture is carefully churned and frozen to make ice cream.
-          </Text>
-        </Content>
-        <Footer>
-          <Link
-            isStandalone
-            href="https://en.wikipedia.org/wiki/Ice_cream"
-            target="_blank">Learn more about ice cream</Link>
-        </Footer>
-      </ContextualHelp>
-    )
+    label: 'Ice cream flavor'
   }
 };
 
-ContextualHelpExample.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `
-<ComboBox
-  contextualHelp={
-    <ContextualHelp>
-      <Heading>
-        What is a ice cream?
-      </Heading>
-      <Content>
-        <Text>
-          A combination of sugar, eggs, milk, and cream is cooked to make a custard base. Then, flavorings are added, and this flavored mixture is carefully churned and frozen to make ice cream.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          href="https://en.wikipedia.org/wiki/Ice_cream"
-          isStandalone
-          target="_blank">
-          Learn more about ice cream
-        </Link>
-      </Footer>
-    </ContextualHelp>
-  }
-  label="Ice cream flavor">
-  <ComboBoxItem>
-    Chocolate
-  </ComboBoxItem>
-  <ComboBoxItem>
-    Mint
-  </ComboBoxItem>
-  <ComboBoxItem>
-    Strawberry
-  </ComboBoxItem>
-  <ComboBoxItem>
-    Vanilla
-  </ComboBoxItem>
-  <ComboBoxItem>
-    Chocolate Chip Cookie Dough
-  </ComboBoxItem>
-</ComboBox>`;
-      }
+export const CustomWidth = {
+  render: (args) => (
+    <ComboBox {...args} styles={style({width: 384})}>
+      <ComboBoxItem>Chocolate</ComboBoxItem>
+      <ComboBoxItem>Mint</ComboBoxItem>
+      <ComboBoxItem>Strawberry</ComboBoxItem>
+      <ComboBoxItem>Vanilla</ComboBoxItem>
+      <ComboBoxItem>Chocolate Chip Cookie Dough</ComboBoxItem>
+    </ComboBox>
+  ),
+  args: Example.args,
+  parameters: {
+    docs: {
+      disable: true
     }
-  }
-};
-
-export const CustomWidth = (args: any) => <Example {...args} styles={style({width: 384})} />;
-CustomWidth.args = Example.args;
-CustomWidth.parameters = {
-  docs: {
-    disable: true
   }
 };

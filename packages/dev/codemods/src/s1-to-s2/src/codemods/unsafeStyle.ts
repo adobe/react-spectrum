@@ -162,7 +162,12 @@ function handleProperty(element: string, property: string, value: t.ObjectProper
     case 'maxWidth':
     case 'height':
     case 'minHeight':
-    case 'maxHeight':
+    case 'maxHeight': {
+      if (value.type === 'NumericLiteral' || value.type === 'StringLiteral') {
+        return convertUnsafeDimension(value.value, 'size');
+      }
+      break;
+    }
     case 'margin':
     case 'marginInlineStart':
     case 'marginInlineEnd':
@@ -180,7 +185,7 @@ function handleProperty(element: string, property: string, value: t.ObjectProper
     case 'insetInlineEnd':
     case 'flexBasis': {
       if (value.type === 'NumericLiteral' || value.type === 'StringLiteral') {
-        return convertUnsafeDimension(value.value);
+        return convertUnsafeDimension(value.value, 'space');
       }
       break;
     }
@@ -198,7 +203,7 @@ function handleProperty(element: string, property: string, value: t.ObjectProper
     case 'columnGap': {
       if (element === 'View' || element === 'Flex' || element === 'Grid') {
         if (value.type === 'NumericLiteral' || value.type === 'StringLiteral') {
-          return convertUnsafeDimension(value.value);
+          return convertUnsafeDimension(value.value, 'space');
         }
       }
       break;

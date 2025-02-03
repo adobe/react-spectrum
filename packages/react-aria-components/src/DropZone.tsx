@@ -13,10 +13,9 @@
 import {AriaLabelingProps, HoverEvents} from '@react-types/shared';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {DropOptions, mergeProps, useButton, useClipboard, useDrop, useFocusRing, useHover, useLocalizedStringFormatter, VisuallyHidden} from 'react-aria';
-import {filterDOMProps, useLabels, useObjectRef, useSlotId} from '@react-aria/utils';
+import {filterDOMProps, isFocusable, useLabels, useObjectRef, useSlotId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isFocusable} from '@react-aria/focus';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 
@@ -52,7 +51,10 @@ export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoi
 
 export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDivElement>>(null);
 
-function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A drop zone is an area into which one or multiple objects can be dragged and dropped.
+ */
+export const DropZone = forwardRef(function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let {isDisabled = false} = props;
   [props, ref] = useContextProps(props, ref, DropZoneContext);
   let dropzoneRef = useObjectRef(ref);
@@ -127,10 +129,4 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
       </div>
     </Provider>
   );
-}
-
-/**
- * A drop zone is an area into which one or multiple objects can be dragged and dropped.
- */
-const _DropZone = forwardRef(DropZone);
-export {_DropZone as DropZone};
+});

@@ -13,7 +13,10 @@ let filterHoverProps = (props: TextAreaProps) => {
   return otherProps;
 };
 
-function TextArea(props: TextAreaProps, ref: ForwardedRef<HTMLTextAreaElement>) {
+/**
+ * A textarea allows a user to input mult-line text.
+ */
+export const TextArea = forwardRef(function TextArea(props: TextAreaProps, ref: ForwardedRef<HTMLTextAreaElement>) {
   [props, ref] = useContextProps(props, ref, TextAreaContext);
 
   let {hoverProps, isHovered} = useHover(props);
@@ -46,9 +49,4 @@ function TextArea(props: TextAreaProps, ref: ForwardedRef<HTMLTextAreaElement>) 
       data-focus-visible={isFocusVisible || undefined}
       data-invalid={isInvalid || undefined} />
   );
-}
-/**
- * A textarea allows a user to input mult-line text.
- */
-const _TextArea = forwardRef(TextArea);
-export {_TextArea as TextArea};
+});

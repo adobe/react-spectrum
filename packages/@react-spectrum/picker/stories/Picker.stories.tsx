@@ -287,7 +287,7 @@ export const LabelledBy: LabelledByStory = {
   render: (args) => (
     <>
       <div id="test">Test label</div>
-      <Picker {...args} aria-labelledby={args['aria-labelledby'] ? 'test' : null} items={flatOptions}>
+      <Picker {...args} aria-labelledby={args['aria-labelledby'] ? 'test' : undefined} items={flatOptions}>
         {(item: any) => <Item>{item.name}</Item>}
       </Picker>
     </>

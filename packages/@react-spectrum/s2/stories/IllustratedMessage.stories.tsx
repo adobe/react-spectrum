@@ -12,7 +12,7 @@
 
 import {Button, ButtonGroup, Content, Heading, IllustratedMessage} from '../src';
 import Cloud from '../spectrum-illustrations/linear/Cloud';
-import Folder from 'illustration:../spectrum-illustrations/gradient/S2_fill_folderOpen_generic2_160.svg';
+import Folder from '../spectrum-illustrations/gradient/generic2/FolderOpen';
 import type {Meta} from '@storybook/react';
 
 const meta: Meta<typeof IllustratedMessage> = {

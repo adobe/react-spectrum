@@ -44,7 +44,7 @@ describe('useBreadcrumbItem', function () {
 
   it('handles descendant link with href', function () {
     let {itemProps} = renderLinkHook({children: <a href="https://example.com">Breadcrumb Item</a>});
-    expect(itemProps.tabIndex).toBeUndefined();
+    expect(itemProps.tabIndex).toBe(0);
     expect(itemProps.role).toBeUndefined();
     expect(itemProps['aria-disabled']).toBeUndefined();
     expect(typeof itemProps.onKeyDown).toBe('function');

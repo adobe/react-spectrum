@@ -33,7 +33,7 @@ export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps
     isRequired,
     inputClassName
   } = props;
-  let ref = useRef(undefined);
+  let ref = useRef<HTMLDivElement | null>(null);
   let {locale} = useLocale();
   let state = useDateFieldState({
     ...props,
@@ -41,11 +41,11 @@ export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps
     createCalendar
   });
 
-  let inputRef = useRef(undefined);
+  let inputRef = useRef<HTMLInputElement | null>(null);
   let {fieldProps, inputProps} = useDateField({...props, inputRef}, state, ref);
 
   return (
-    <div {...fieldProps} data-testid={props['data-testid']} className={classNames(datepickerStyles, 'react-spectrum-Datepicker-segments', inputClassName)} ref={ref}>
+    <span {...fieldProps} data-testid={props['data-testid']} className={classNames(datepickerStyles, 'react-spectrum-Datepicker-segments', inputClassName)} ref={ref}>
       {state.segments.map((segment, i) =>
         (<DatePickerSegment
           key={i}
@@ -56,6 +56,6 @@ export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps
           isRequired={isRequired} />)
       )}
       <input {...inputProps} ref={inputRef} />
-    </div>
+    </span>
   );
 }

@@ -33,77 +33,81 @@ const meta: Meta<typeof RadioGroup> = {
 
 export default meta;
 
-export const Example = (args: any) => (
-  <RadioGroup {...args}>
-    <Radio value="soccer">Soccer</Radio>
-    <Radio value="baseball">Baseball</Radio>
-    <Radio value="football" isDisabled>Football</Radio>
-    <Radio value="basketball">Basketball</Radio>
-  </RadioGroup>
-);
-
-Example.args = {
-  label: 'Favorite sport'
-};
-
-export const LongLabel = (args: any) => (
-  <RadioGroup styles={style({maxWidth: 128})} {...args}>
-    <Radio value="longLabel">Radio with very long label so we can see wrapping</Radio>
-  </RadioGroup>
-);
-
-LongLabel.parameters = {
-  docs: {
-    disable: true
+export const Example = {
+  render: (args: any) => (
+    <RadioGroup {...args}>
+      <Radio value="soccer">Soccer</Radio>
+      <Radio value="baseball">Baseball</Radio>
+      <Radio value="football" isDisabled>Football</Radio>
+      <Radio value="basketball">Basketball</Radio>
+    </RadioGroup>
+  ),
+  args: {
+    label: 'Favorite sport'
   }
 };
 
-export const ErrorAndDescription = (args: any) => (
-  <RadioGroup {...args}>
-    <Radio value="soccer">Soccer</Radio>
-    <Radio value="baseball">Baseball</Radio>
-    <Radio value="football" isDisabled>Football</Radio>
-    <Radio value="basketball">Basketball</Radio>
-  </RadioGroup>
-);
 
-ErrorAndDescription.args = {
-  label: 'Favorite sport',
-  description: 'A long description to test help text wrapping.',
-  errorMessage: 'A long error message to test help text wrapping. Only shows when invalid is set which makes it red too!'
-};
-
-ErrorAndDescription.parameters = {
-  docs: {
-    disable: true
+export const LongLabel = {
+  render: (args: any) => (
+    <RadioGroup styles={style({maxWidth: 128})} {...args}>
+      <Radio value="longLabel">Radio with very long label so we can see wrapping</Radio>
+    </RadioGroup>
+  ),
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };
 
-export const ContextualHelpExample = (args: any) => (
-  <RadioGroup {...args}>
-    <Radio isDisabled value="soccer">Soccer</Radio>
-    <Radio value="baseball">Baseball</Radio>
-    <Radio value="football">Football</Radio>
-    <Radio value="basketball">Basketball</Radio>
-  </RadioGroup>
-);
+export const ErrorAndDescription = {
+  render: (args: any) => (
+    <RadioGroup {...args}>
+      <Radio value="soccer">Soccer</Radio>
+      <Radio value="baseball">Baseball</Radio>
+      <Radio value="football" isDisabled>Football</Radio>
+      <Radio value="basketball">Basketball</Radio>
+    </RadioGroup>
+  ),
+  args: {
+    label: 'Favorite sport',
+    description: 'A long description to test help text wrapping.',
+    errorMessage: 'A long error message to test help text wrapping. Only shows when invalid is set which makes it red too!'
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
+};
 
-ContextualHelpExample.args = {
-  label: 'Favorite sports',
-  contextualHelp: (
-    <ContextualHelp>
-      <Heading>Sports</Heading>
-      <Content>
-        <Text>
-          Social games we paly to have fun and stay healthy.
-        </Text>
-      </Content>
-      <Footer>
-        <Link
-          isStandalone
-          href="https://en.wikipedia.org/wiki/Sport"
-          target="_blank">Learn more about sports</Link>
-      </Footer>
-    </ContextualHelp>
-  )
+export const ContextualHelpExample = {
+  render: (args: any) => (
+    <RadioGroup {...args}>
+      <Radio isDisabled value="soccer">Soccer</Radio>
+      <Radio value="baseball">Baseball</Radio>
+      <Radio value="football">Football</Radio>
+      <Radio value="basketball">Basketball</Radio>
+    </RadioGroup>
+  ),
+  args: {
+    label: 'Favorite sports',
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>Sports</Heading>
+        <Content>
+          <Text>
+            Social games we play to have fun and stay healthy.
+          </Text>
+        </Content>
+        <Footer>
+          <Link
+            isStandalone
+            href="https://en.wikipedia.org/wiki/Sport"
+            target="_blank">Learn more about sports</Link>
+        </Footer>
+      </ContextualHelp>
+    )
+  }
 };

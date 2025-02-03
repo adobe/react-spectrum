@@ -26,44 +26,46 @@ const meta: Meta<typeof ComboBox<any>> = {
 
 export default meta;
 
-export const Static = Example as StoryObj;
+export const Static = {
+  ...Example,
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowDown}');
+    let body = canvasElement.ownerDocument.body;
+    await within(body).findByRole('listbox');
+  }
+} as StoryObj;
 
-Static.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  await userEvent.keyboard('{ArrowDown}');
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('listbox');
+export const WithSections = {
+  ...Sections,
+  name: 'Sections',
+  play: async (context) => await Static.play!(context)
 };
 
-export const WithSections = {...Sections, name: 'Sections'};
-
-WithSections.play = async (context) => {
-  await Static.play!(context);
+export const WithDynamic = {
+  ...Dynamic,
+  name: 'Dynamic',
+  args: {...Dynamic.args, selectedKey: 'chocolate'},
+  play: async (context) => await Static.play!(context)
 };
 
-export const WithDynamic = {...Dynamic, name: 'Dynamic',  args: {...Dynamic.args, selectedKey: 'chocolate'}};
-
-WithDynamic.play = async (context) => {
-  await Static.play!(context);
+export const Icons = {
+  ...WithIcons,
+  name: 'With Icons',
+  play: async (context) => await Static.play!(context)
 };
 
-export const Icons = {...WithIcons, name: 'With Icons'};
-
-Icons.play = async (context) => {
-  await Static.play!(context);
+export const ContextualHelp = {
+  ...ContextualHelpExample,
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('{Enter}');
+    let body = canvasElement.ownerDocument.body;
+    await within(body).findByRole('dialog');
+  }
 };
 
-export const ContextualHelp = {...ContextualHelpExample};
-
-ContextualHelp.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  await userEvent.keyboard('{Enter}');
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('dialog');
-};
-
-export const WithCustomWidth = CustomWidth as StoryObj;
-
-WithCustomWidth.play = async (context) => {
-  await Static.play!(context);
-};
+export const WithCustomWidth = {
+  ...CustomWidth,
+  play: async (context) => await Static.play!(context)
+} as StoryObj;

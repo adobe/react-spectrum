@@ -15,7 +15,7 @@ import {CollectionBuilder} from './CollectionBuilder';
 import {ReactElement, useMemo} from 'react';
 
 interface CollectionOptions<T, C extends Collection<Node<T>>> extends Omit<CollectionStateBase<T, C>, 'children'> {
-  children?: ReactElement<any> | ReactElement<any>[] | ((item: T) => ReactElement<any>)
+  children?: ReactElement<any> | null | (ReactElement<any> | null)[] | ((item: T) => ReactElement<any> | null)
 }
 
 type CollectionFactory<T, C extends Collection<Node<T>>> = (node: Iterable<Node<T>>) => C;

@@ -21,7 +21,7 @@ import {useLayoutEffect} from '@react-aria/utils';
 import {Virtualizer} from './Virtualizer';
 
 interface VirtualizerProps<T extends object, V, O> {
-  renderView(type: string, content: T): V,
+  renderView(type: string, content: T | null): V,
   layout: Layout<T>,
   collection: Collection<T>,
   onVisibleRectChange(rect: Rect): void,
@@ -45,13 +45,17 @@ export function useVirtualizerState<T extends object, V, O = any>(opts: Virtuali
   let [invalidationContext, setInvalidationContext] = useState<InvalidationContext>({});
   let visibleRectChanged = useRef(false);
   let [virtualizer] = useState(() => new Virtualizer<T, V>({
-    setVisibleRect(rect) {
-      setVisibleRect(rect);
-      visibleRectChanged.current = true;
-    },
-    // TODO: should changing these invalidate the entire cache?
-    renderView: opts.renderView,
-    invalidate: setInvalidationContext
+    collection: opts.collection,
+    layout: opts.layout,
+    delegate: {
+      setVisibleRect(rect) {
+        setVisibleRect(rect);
+        visibleRectChanged.current = true;
+      },
+      // TODO: should changing these invalidate the entire cache?
+      renderView: opts.renderView,
+      invalidate: setInvalidationContext
+    }
   }));
 
   // onVisibleRectChange must be called from an effect, not during render.

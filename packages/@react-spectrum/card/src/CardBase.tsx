@@ -1,3 +1,4 @@
+// @ts-nocheck
 /*
  * Copyright 2021 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -27,7 +28,10 @@ interface CardBaseProps<T> extends SpectrumCardProps {
   item?: Node<T>
 }
 
-function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDivElement>) {
+/**
+ * TODO: Add description of component here.
+ */
+export const CardBase = React.forwardRef(function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let context = useCardViewContext() || {}; // we can call again here, won't change from Card.tsx
   let {state} = context;
@@ -150,7 +154,7 @@ function CardBase<T extends object>(props: CardBaseProps<T>, ref: DOMRef<HTMLDiv
       </article>
     </FocusRing>
   );
-}
+});
 
 interface AriaCardOptions extends AriaCardProps {
 }
@@ -182,9 +186,3 @@ function useCard(props: AriaCardOptions): CardAria {
     contentProps
   };
 }
-
-/**
- * TODO: Add description of component here.
- */
-const _CardBase = React.forwardRef(CardBase);
-export {_CardBase as CardBase};

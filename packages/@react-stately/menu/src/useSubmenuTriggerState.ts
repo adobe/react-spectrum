@@ -48,10 +48,10 @@ export function useSubmenuTriggerState(props: SubmenuTriggerProps, state: RootMe
   let {expandedKeysStack, openSubmenu, closeSubmenu, close: closeAll} = state;
   let [submenuLevel] = useState(expandedKeysStack?.length);
   let isOpen = useMemo(() => expandedKeysStack[submenuLevel] === triggerKey, [expandedKeysStack, triggerKey, submenuLevel]);
-  let [focusStrategy, setFocusStrategy] = useState<FocusStrategy>(null);
+  let [focusStrategy, setFocusStrategy] = useState<FocusStrategy | null>(null);
 
-  let open = useCallback((focusStrategy: FocusStrategy = null) => {
-    setFocusStrategy(focusStrategy);
+  let open = useCallback((focusStrategy?: FocusStrategy | null) => {
+    setFocusStrategy(focusStrategy ?? null);
     openSubmenu(triggerKey, submenuLevel);
   }, [openSubmenu, submenuLevel, triggerKey]);
 
@@ -60,8 +60,8 @@ export function useSubmenuTriggerState(props: SubmenuTriggerProps, state: RootMe
     closeSubmenu(triggerKey, submenuLevel);
   }, [closeSubmenu, submenuLevel, triggerKey]);
 
-  let toggle = useCallback((focusStrategy: FocusStrategy = null) => {
-    setFocusStrategy(focusStrategy);
+  let toggle = useCallback((focusStrategy?: FocusStrategy | null) => {
+    setFocusStrategy(focusStrategy ?? null);
     if (isOpen) {
       close();
     } else {

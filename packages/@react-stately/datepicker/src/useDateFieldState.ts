@@ -12,7 +12,7 @@
 
 import {Calendar, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, toCalendar} from '@internationalized/date';
 import {convertValue, createPlaceholderDate, FieldOptions, FormatterOptions, getFormatOptions, getValidationResult, useDefaultProps} from './utils';
-import {DatePickerProps, DateValue, Granularity} from '@react-types/datepicker';
+import {DatePickerProps, DateValue, Granularity, MappedDateValue} from '@react-types/datepicker';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {getPlaceholder} from './placeholders';
 import {useControlledState} from '@react-stately/utils';
@@ -41,13 +41,13 @@ export interface DateSegment {
 
 export interface DateFieldState extends FormValidationState {
   /** The current field value. */
-  value: DateValue,
+  value: DateValue | null,
   /** The current value, converted to a native JavaScript `Date` object.  */
   dateValue: Date,
   /** The calendar system currently in use. */
   calendar: Calendar,
   /** Sets the field's value. */
-  setValue(value: DateValue): void,
+  setValue(value: DateValue | null): void,
   /** A list of segments for the current value. */
   segments: DateSegment[],
   /** A date formatter configured for the current locale and format. */
@@ -56,7 +56,7 @@ export interface DateFieldState extends FormValidationState {
    * The current validation state of the date field, based on the `validationState`, `minValue`, and `maxValue` props.
    * @deprecated Use `isInvalid` instead.
    */
-  validationState: ValidationState,
+  validationState: ValidationState | null,
   /** Whether the date field is invalid, based on the `isInvalid`, `minValue`, and `maxValue` props. */
   isInvalid: boolean,
   /** The granularity for the field, based on the `granularity` prop and current value. */
@@ -150,15 +150,15 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     locale,
     createCalendar,
     hideTimeZone,
-    isDisabled,
-    isReadOnly,
-    isRequired,
+    isDisabled = false,
+    isReadOnly = false,
+    isRequired = false,
     minValue,
     maxValue,
     isDateUnavailable
   } = props;
 
-  let v: DateValue = (props.value || props.defaultValue || props.placeholderValue);
+  let v: DateValue | null = props.value || props.defaultValue || props.placeholderValue || null;
   let [granularity, defaultTimeZone] = useDefaultProps(v, props.granularity);
   let timeZone = defaultTimeZone || 'UTC';
 
@@ -170,13 +170,13 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   let defaultFormatter = useMemo(() => new DateFormatter(locale), [locale]);
   let calendar = useMemo(() => createCalendar(defaultFormatter.resolvedOptions().calendar), [createCalendar, defaultFormatter]);
 
-  let [value, setDate] = useControlledState<DateValue>(
+  let [value, setDate] = useControlledState<DateValue | null, MappedDateValue<T> | null>(
     props.value,
-    props.defaultValue,
+    props.defaultValue ?? null,
     props.onChange
   );
 
-  let calendarValue = useMemo(() => convertValue(value, calendar), [value, calendar]);
+  let calendarValue = useMemo(() => convertValue(value, calendar) ?? null, [value, calendar]);
 
   // We keep track of the placeholder date separately in state so that onChange is not called
   // until all segments are set. If the value === null (not undefined), then assume the component
@@ -214,7 +214,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     () => props.value || props.defaultValue ? {...allSegments} : {}
   );
 
-  let clearedSegment = useRef<string>(undefined);
+  let clearedSegment = useRef<string | null>(null);
 
   // Reset placeholder when calendar changes
   let lastCalendarIdentifier = useRef(calendar.identifier);
@@ -268,26 +268,9 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   };
 
   let dateValue = useMemo(() => displayValue.toDate(timeZone), [displayValue, timeZone]);
-  let segments = useMemo(() =>
-    dateFormatter.formatToParts(dateValue)
-      .map(segment => {
-        let isEditable = EDITABLE_SEGMENTS[segment.type];
-        if (segment.type === 'era' && calendar.getEras().length === 1) {
-          isEditable = false;
-        }
-
-        let isPlaceholder = EDITABLE_SEGMENTS[segment.type] && !validSegments[segment.type];
-        let placeholder = EDITABLE_SEGMENTS[segment.type] ? getPlaceholder(segment.type, segment.value, locale) : null;
-        return {
-          type: TYPE_MAPPING[segment.type] || segment.type,
-          text: isPlaceholder ? placeholder : segment.value,
-          ...getSegmentLimits(displayValue, segment.type, resolvedOptions),
-          isPlaceholder,
-          placeholder,
-          isEditable
-        } as DateSegment;
-      })
-  , [dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale]);
+  let segments = useMemo(() => 
+    processSegments(dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity), 
+    [dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity]);
 
   // When the era field appears, mark it valid if the year field is already valid.
   // If the era field disappears, remove it from the valid segments.
@@ -330,12 +313,12 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
 
   let validation = useFormValidationState({
     ...props,
-    value,
+    value: value as MappedDateValue<T> | null,
     builtinValidation
   });
 
   let isValueInvalid = validation.displayValidation.isInvalid;
-  let validationState: ValidationState = props.validationState || (isValueInvalid ? 'invalid' : null);
+  let validationState: ValidationState | null = props.validationState || (isValueInvalid ? 'invalid' : null);
 
   return {
     ...validation,
@@ -399,6 +382,8 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
         } else if (!isPM && shouldBePM) {
           value = displayValue.set({hour: displayValue.hour + 12});
         }
+      } else if (part === 'hour' && 'hour' in displayValue && displayValue.hour >= 12 && validSegments.dayPeriod) {
+        value = displayValue.set({hour: placeholder['hour'] + 12});
       } else if (part in displayValue) {
         value = displayValue.set({[part]: placeholder[part]});
       }
@@ -421,6 +406,73 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       return new DateFormatter(locale, newFormatOptions);
     }
   };
+}
+
+function processSegments(dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity) : DateSegment[] {
+  let timeValue = ['hour', 'minute', 'second'];
+  let segments = dateFormatter.formatToParts(dateValue);
+  let processedSegments: DateSegment[] = [];
+  for (let segment of segments) {
+    let isEditable = EDITABLE_SEGMENTS[segment.type];
+    if (segment.type === 'era' && calendar.getEras().length === 1) {
+      isEditable = false;
+    }
+
+    let isPlaceholder = EDITABLE_SEGMENTS[segment.type] && !validSegments[segment.type];
+    let placeholder = EDITABLE_SEGMENTS[segment.type] ? getPlaceholder(segment.type, segment.value, locale) : null;
+
+    let dateSegment = {
+      type: TYPE_MAPPING[segment.type] || segment.type,
+      text: isPlaceholder ? placeholder : segment.value,
+      ...getSegmentLimits(displayValue, segment.type, resolvedOptions),
+      isPlaceholder,
+      placeholder,
+      isEditable
+    } as DateSegment;
+
+    // There is an issue in RTL languages where time fields render (minute:hour) instead of (hour:minute).
+    // To force an LTR direction on the time field since, we wrap the time segments in LRI (left-to-right) isolate unicode. See https://www.w3.org/International/questions/qa-bidi-unicode-controls.
+    // These unicode characters will be added to the array of processed segments as literals and will mark the start and end of the embedded direction change. 
+    if (segment.type === 'hour') {
+      // This marks the start of the embedded direction change. 
+      processedSegments.push({
+        type: 'literal',
+        text: '\u2066',
+        ...getSegmentLimits(displayValue, 'literal', resolvedOptions),
+        isPlaceholder: false,
+        placeholder: '',
+        isEditable: false
+      });
+      processedSegments.push(dateSegment);
+      // This marks the end of the embedded direction change in the case that the granularity it set to "hour".
+      if (segment.type === granularity) {
+        processedSegments.push({
+          type: 'literal',
+          text: '\u2069',
+          ...getSegmentLimits(displayValue, 'literal', resolvedOptions),
+          isPlaceholder: false,
+          placeholder: '',
+          isEditable: false
+        });
+      }
+    } else if (timeValue.includes(segment.type) && segment.type === granularity) {
+      processedSegments.push(dateSegment);
+      // This marks the end of the embedded direction change.
+      processedSegments.push({
+        type: 'literal',
+        text: '\u2069',
+        ...getSegmentLimits(displayValue, 'literal', resolvedOptions),
+        isPlaceholder: false,
+        placeholder: '',
+        isEditable: false
+      });
+    } else {
+      // We only want to "wrap" the unicode around segments that are hour, minute, or second. If they aren't, just process as normal. 
+      processedSegments.push(dateSegment);
+    }
+  }
+
+  return processedSegments;
 }
 
 function getSegmentLimits(date: DateValue, type: string, options: Intl.ResolvedDateTimeFormatOptions) {
@@ -519,6 +571,8 @@ function addSegment(value: DateValue, part: string, amount: number, options: Int
         });
     }
   }
+
+  throw new Error('Unknown segment: ' + part);
 }
 
 function setSegment(value: DateValue, part: string, segmentValue: number | string, options: Intl.ResolvedDateTimeFormatOptions) {
@@ -559,4 +613,6 @@ function setSegment(value: DateValue, part: string, segmentValue: number | strin
         return value.set({[part]: segmentValue});
     }
   }
+
+  throw new Error('Unknown segment: ' + part);
 }

@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {BackgroundColorValue, Responsive} from '@react-types/shared';
 import {Grid, repeat} from '@react-spectrum/layout';
 import React from 'react';
 import {View} from '@react-spectrum/view';
@@ -28,10 +29,10 @@ let baseColors = [
   'green',
   'blue'
 ];
-let colors = [];
+let colors: Array<Responsive<BackgroundColorValue> | undefined> = [];
 for (let color of baseColors) {
   for (let i = 4; i <= 7; i++) {
-    colors.push(`${color}-${i}00`);
+    colors.push(`${color}-${i}00` as Responsive<BackgroundColorValue>);
   }
 }
 
@@ -78,7 +79,7 @@ export const ImplicitGrid = () => (
     width="80%"
     gap="size-100">
     {colors.map((color) => (
-      <View key={color} backgroundColor={color} />
+      <View key={String(color)} backgroundColor={color} />
     ))}
   </Grid>
 );

@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ArbitraryValue} from './types';
-import {Color, createArbitraryProperty, createColorProperty, createMappedProperty, createRenamedProperty, createTheme, parseArbitraryValue} from './style-macro';
-import {colorScale, colorToken, fontSizeToken, getToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
+import {ArbitraryValue, CSSProperties, CSSValue, PropertyValueMap} from './types';
+import {autoStaticColor, colorScale, colorToken, fontSizeToken, generateOverlayColorScale, getToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
+import {Color, createArbitraryProperty, createColorProperty, createMappedProperty, createRenamedProperty, createSizingProperty, createTheme, parseArbitraryValue} from './style-macro';
 import type * as CSS from 'csstype';
 
 interface MacroContext {
@@ -59,6 +59,7 @@ const color = {
 
   ...simpleColorScale('transparent-white'),
   ...simpleColorScale('transparent-black'),
+  ...generateOverlayColorScale(),
 
   // High contrast mode.
   Background: 'Background',
@@ -108,6 +109,37 @@ export function lightDark(light: SpectrumColor, dark: SpectrumColor): `[${string
 
 export function colorMix(a: SpectrumColor, b: SpectrumColor, percent: number): `[${string}]` {
   return `[color-mix(in srgb, ${parseColor(a)}, ${parseColor(b)} ${percent}%)]`;
+}
+
+interface LinearGradient {
+  type: 'linear-gradient',
+  angle: string,
+  stops: [SpectrumColor, number][]
+}
+
+export function linearGradient(this: MacroContext | void, angle: string, ...tokens: [SpectrumColor, number][]): [LinearGradient] {
+  // Generate @property rules for each gradient stop color. This allows the gradient to be animated.
+  let propertyDefinitions: string[] = [];
+  for (let i = 0; i < tokens.length; i++) {
+    propertyDefinitions.push(`@property --g${i} {
+  syntax: '<color>';
+  initial-value: #0000;
+  inherits: false;
+}`);
+  }
+
+  if (this && typeof this.addAsset === 'function') {
+    this.addAsset({
+      type: 'css',
+      content: propertyDefinitions.join('\n\n')
+    });
+  }
+
+  return [{
+    type: 'linear-gradient',
+    angle,
+    stops: tokens
+  }];
 }
 
 function generateSpacing<K extends number[]>(px: K): {[P in K[number]]: string} {
@@ -191,12 +223,8 @@ const negativeSpacing = generateSpacing([
   -384
 ] as const);
 
-function arbitrary(ctx: MacroContext | void, value: string): `[${string}]` {
-  return ctx ? `[${value}]` : value as any;
-}
-
 export function fontRelative(this: MacroContext | void, base: number, baseFontSize = 14) {
-  return arbitrary(this, (base / baseFontSize) + 'em');
+  return (base / baseFontSize) + 'em';
 }
 
 export function edgeToText(this: MacroContext | void, height: keyof typeof baseSpacing) {
@@ -204,7 +232,7 @@ export function edgeToText(this: MacroContext | void, height: keyof typeof baseS
 }
 
 export function space(this: MacroContext | void, px: number) {
-  return arbitrary(this, pxToRem(px));
+  return pxToRem(px);
 }
 
 const spacing = {
@@ -222,16 +250,10 @@ const spacing = {
 };
 
 export function size(this: MacroContext | void, px: number) {
-  return arbitrary(this, `calc(${pxToRem(px)} * var(--s2-scale))`);
+  return `calc(${pxToRem(px)} * var(--s2-scale))`;
 }
 
-const scaledSpacing: {[key in keyof typeof baseSpacing]: string} =
-  Object.fromEntries(Object.entries(baseSpacing).map(([k, v]) =>
-    [k, `calc(${v} * var(--s2-scale))`]
-  )) as any;
-
 const sizing = {
-  ...scaledSpacing,
   auto: 'auto',
   full: '100%',
   min: 'min-content',
@@ -269,6 +291,10 @@ const width = {
   screen: '100vw'
 };
 
+function createSpectrumSizingProperty<T extends CSSValue>(values: PropertyValueMap<T>) {
+  return createSizingProperty(values, px => `calc(${pxToRem(px)} * var(--s2-scale))`);
+}
+
 const margin = {
   ...spacing,
   ...negativeSpacing,
@@ -294,6 +320,19 @@ const borderWidth = {
   4: getToken('border-width-400')
 };
 
+const borderColor = createColorProperty({
+  ...color,
+  negative: {
+    default: colorToken('negative-border-color-default'),
+    isHovered: colorToken('negative-border-color-hover'),
+    isFocusVisible: colorToken('negative-border-color-key-focus'),
+    isPressed: colorToken('negative-border-color-down')
+  },
+  disabled: colorToken('disabled-border-color')
+    // forcedColors: 'GrayText'
+
+});
+
 const radius = {
   none: getToken('corner-radius-none'), // 0px
   sm: pxToRem(getToken('corner-radius-small-default')), // 4px
@@ -317,13 +356,14 @@ let gridTrack = (value: GridTrack) => {
 };
 
 let gridTrackSize = (value: GridTrackSize) => {
-  // @ts-ignore
   return value in baseSpacing ? baseSpacing[value] : value;
 };
 
 const transitionProperty = {
-  default: 'color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, translate, scale, rotate, filter, backdrop-filter',
-  colors: 'color, background-color, border-color, text-decoration-color, fill, stroke',
+  // var(--gp) is generated by the backgroundImage property when setting a gradient.
+  // It includes a list of all of the custom properties used for each color stop.
+  default: 'color, background-color, var(--gp), border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, translate, scale, rotate, filter, backdrop-filter',
+  colors: 'color, background-color, var(--gp), border-color, text-decoration-color, fill, stroke',
   opacity: 'opacity',
   shadow: 'box-shadow',
   transform: 'transform, translate, scale, rotate',
@@ -465,7 +505,8 @@ export const style = createTheme({
       title: colorToken('title-color'),
       body: colorToken('body-color'),
       detail: colorToken('detail-color'),
-      code: colorToken('code-color')
+      code: colorToken('code-color'),
+      auto: autoStaticColor('self(backgroundColor, var(--s2-container-bg))')
     }),
     backgroundColor: createColorProperty({
       ...color,
@@ -557,18 +598,7 @@ export const style = createTheme({
       pasteboard: weirdColorToken('background-pasteboard-color'),
       elevated: weirdColorToken('background-elevated-color')
     }),
-    borderColor: createColorProperty({
-      ...color,
-      negative: {
-        default: colorToken('negative-border-color-default'),
-        isHovered: colorToken('negative-border-color-hover'),
-        isFocusVisible: colorToken('negative-border-color-key-focus'),
-        isPressed: colorToken('negative-border-color-down')
-      },
-      disabled: colorToken('disabled-border-color')
-        // forcedColors: 'GrayText'
 
-    }),
     outlineColor: createColorProperty({
       ...color,
       'focus-ring': {
@@ -624,24 +654,28 @@ export const style = createTheme({
     },
     rowGap: spacing,
     columnGap: spacing,
-    height,
-    width,
-    containIntrinsicWidth: width,
-    containIntrinsicHeight: height,
-    minHeight: height,
-    maxHeight: {
+    height: createSpectrumSizingProperty(height),
+    width: createSpectrumSizingProperty(width),
+    containIntrinsicWidth: createSpectrumSizingProperty(width),
+    containIntrinsicHeight: createSpectrumSizingProperty(height),
+    minHeight: createSpectrumSizingProperty(height),
+    maxHeight: createSpectrumSizingProperty({
       ...height,
       none: 'none'
-    },
-    minWidth: width,
-    maxWidth: {
+    }),
+    minWidth: createSpectrumSizingProperty(width),
+    maxWidth: createSpectrumSizingProperty({
       ...width,
       none: 'none'
-    },
+    }),
     borderStartWidth: createRenamedProperty('borderInlineStartWidth', borderWidth),
     borderEndWidth: createRenamedProperty('borderInlineEndWidth', borderWidth),
     borderTopWidth: borderWidth,
     borderBottomWidth: borderWidth,
+    borderInlineStartColor: borderColor, // don't know why i can't use renamed
+    borderInlineEndColor: borderColor,
+    borderTopColor: borderColor,
+    borderBottomColor: borderColor,
     borderStyle: ['solid', 'dashed', 'dotted', 'double', 'hidden', 'none'] as const,
     strokeWidth: {
       0: '0',
@@ -674,7 +708,14 @@ export const style = createTheme({
       translate: 'var(--translateX, 0) var(--translateY, 0)'
     }), translate),
     rotate: createArbitraryProperty((value: number | `${number}deg` | `${number}rad` | `${number}grad` | `${number}turn`, property) => ({[property]: typeof value === 'number' ? `${value}deg` : value})),
-    scale: createArbitraryProperty<number>(),
+    scaleX: createArbitraryProperty<number>(value => ({
+      '--scaleX': value,
+      scale: 'var(--scaleX, 1) var(--scaleY, 1)'
+    })),
+    scaleY: createArbitraryProperty<number>(value => ({
+      '--scaleY': value,
+      scale: 'var(--scaleX, 1) var(--scaleY, 1)'
+    })),
     transform: createArbitraryProperty<string>(),
     position: ['absolute', 'fixed', 'relative', 'sticky', 'static'] as const,
     insetStart: createRenamedProperty('insetInlineStart', inset),
@@ -796,7 +837,29 @@ export const style = createTheme({
     borderBottomEndRadius: createRenamedProperty('borderEndEndRadius', radius),
     forcedColorAdjust: ['auto', 'none'] as const,
     colorScheme: ['light', 'dark', 'light dark'] as const,
-    backgroundImage: createArbitraryProperty<string>(),
+    backgroundImage: createArbitraryProperty<string | [LinearGradient]>((value, property) => {
+      if (typeof value === 'string') {
+        return {[property]: value};
+      } else if (Array.isArray(value) && value[0]?.type === 'linear-gradient') {
+        let values: CSSProperties = {
+          [property]: `linear-gradient(${value[0].angle}, ${value[0].stops.map(([, stop], i) => `var(--g${i}) ${stop}%`)})`
+        };
+
+        // Create a CSS var for each color stop so the gradient can be transitioned.
+        // These are registered via @property in the `linearGradient` macro.
+        let properties: string[] = [];
+        value[0].stops.forEach(([color], i) => {
+          properties.push(`--g${i}`);
+          values[`--g${i}`] = parseColor(color);
+        });
+
+        // This is used by transition-property so we automatically transition all of the color stops.
+        values['--gp'] = properties.join(', ');
+        return values;
+      } else {
+        throw new Error('Unexpected backgroundImage value: ' + JSON.stringify(value));
+      }
+    }),
     // TODO: do we need separate x and y properties?
     backgroundPosition: ['bottom', 'center', 'left', 'left bottom', 'left top', 'right', 'right bottom', 'right top', 'top'] as const,
     backgroundSize: ['auto', 'cover', 'contain'] as const,
@@ -927,6 +990,7 @@ export const style = createTheme({
     scrollMarginX: ['scrollMarginStart', 'scrollMarginEnd'] as const,
     scrollMarginY: ['scrollMarginTop', 'scrollMarginBottom'] as const,
     borderWidth: ['borderTopWidth', 'borderBottomWidth', 'borderStartWidth', 'borderEndWidth'] as const,
+    borderColor: ['borderTopColor', 'borderBottomColor', 'borderInlineStartColor', 'borderInlineEndColor'] as const,
     borderXWidth: ['borderStartWidth', 'borderEndWidth'] as const,
     borderYWidth: ['borderTopWidth', 'borderBottomWidth'] as const,
     borderRadius: ['borderTopStartRadius', 'borderTopEndRadius', 'borderBottomStartRadius', 'borderBottomEndRadius'] as const,
@@ -935,6 +999,7 @@ export const style = createTheme({
     borderStartRadius: ['borderTopStartRadius', 'borderBottomStartRadius'] as const,
     borderEndRadius: ['borderTopEndRadius', 'borderBottomEndRadius'] as const,
     translate: ['translateX', 'translateY'] as const,
+    scale: ['scaleX', 'scaleY'] as const,
     inset: ['top', 'bottom', 'insetStart', 'insetEnd'] as const,
     insetX: ['insetStart', 'insetEnd'] as const,
     insetY: ['top', 'bottom'] as const,

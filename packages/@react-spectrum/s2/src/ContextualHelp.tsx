@@ -11,8 +11,8 @@ import InfoIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeStyles} from '../style/runtime';
-import {Popover, PopoverProps} from './Popover';
-import {style, size as styleSize} from '../style' with {type: 'macro'};
+import {PopoverBase, PopoverDialogProps} from './Popover';
+import {space, style} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils' with { type: 'macro' };
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -26,8 +26,8 @@ export interface ContextualHelpStyleProps {
   variant?: 'info' | 'help'
 }
 export interface ContextualHelpProps extends
-  Pick<DialogTriggerProps, 'isOpen' | 'defaultOpen' | 'onOpenChange' | 'shouldFlip' | 'offset' | 'crossOffset' | 'placement'>,
-  Pick<PopoverProps, 'containerPadding'>,
+  Pick<DialogTriggerProps, 'isOpen' | 'defaultOpen' | 'onOpenChange'>,
+  Pick<PopoverDialogProps, 'shouldFlip' | 'offset' | 'crossOffset' | 'placement' | 'containerPadding'>,
   ContextualHelpStyleProps, StyleProps, DOMProps, AriaLabelingProps {
   /** Contents of the Contextual Help popover. */
   children?: ReactNode,
@@ -41,14 +41,17 @@ export interface ContextualHelpProps extends
 
 const popover = style({
   fontFamily: 'sans',
-  minWidth: '[218px]',
-  width: '[218px]',
+  minWidth: 218,
+  width: 218,
   padding: 24
 });
 
 export const ContextualHelpContext = createContext<ContextValue<ContextualHelpProps, FocusableRefValue<HTMLButtonElement>>>(null);
 
-function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButtonElement>) {
+/**
+ * Contextual help shows a user extra information about the state of an adjacent component, or a total view.
+ */
+export const ContextualHelp = forwardRef(function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButtonElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, ContextualHelpContext);
   let {
@@ -93,7 +96,7 @@ function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButton
         isQuiet>
         {variant === 'info' ? <InfoIcon /> : <HelpIcon />}
       </ActionButton>
-      <Popover
+      <PopoverBase
         placement={placement}
         shouldFlip={shouldFlip}
         // not working => containerPadding={containerPadding}
@@ -101,7 +104,7 @@ function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButton
         crossOffset={crossOffset}
         hideArrow
         UNSAFE_className={popover}>
-        <RACDialog className={mergeStyles(dialogInner, style({borderRadius: 'none'}))}>
+        <RACDialog className={mergeStyles(dialogInner, style({borderRadius: 'none', margin: -24, padding: 24}))}>
           <Provider
             values={[
               [TextContext, {
@@ -112,7 +115,7 @@ function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButton
               [HeadingContext, {styles: style({
                 font: 'heading-xs',
                 margin: 0,
-                marginBottom: styleSize(8) // This only makes it 10px on mobile and should be 12px
+                marginBottom: space(8) // This only makes it 10px on mobile and should be 12px
               })}],
               [ContentContext, {styles: style({
                 font: 'body-sm'
@@ -125,13 +128,7 @@ function ContextualHelp(props: ContextualHelpProps, ref: FocusableRef<HTMLButton
             {children}
           </Provider>
         </RACDialog>
-      </Popover>
+      </PopoverBase>
     </DialogTrigger>
   );
-}
-
-/**
- * Contextual help shows a user extra information about the state of an adjacent component, or a total view.
- */
-let _ContextualHelp = forwardRef(ContextualHelp);
-export {_ContextualHelp as ContextualHelp};
+});

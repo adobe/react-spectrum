@@ -37,16 +37,13 @@ interface DropIndicatorContextValue {
   render: (props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) => ReactNode
 }
 
-function DropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>): JSX.Element {
-  let {render} = useContext(DropIndicatorContext)!;
-  return <>{render(props, ref)}</>;
-}
-
 /**
  * A DropIndicator is rendered between items in a collection to indicate where dropped data will be inserted.
  */
-const _DropIndicator = forwardRef(DropIndicator);
-export {_DropIndicator as DropIndicator};
+export const DropIndicator = forwardRef(function DropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>): JSX.Element {
+  let {render} = useContext(DropIndicatorContext)!;
+  return <>{render(props, ref)}</>;
+});
 
 export function useRenderDropIndicator(dragAndDropHooks?: DragAndDropHooks, dropState?: DroppableCollectionState) {
   let renderDropIndicator = dragAndDropHooks?.renderDropIndicator;
@@ -54,7 +51,7 @@ export function useRenderDropIndicator(dragAndDropHooks?: DragAndDropHooks, drop
   let fn = useCallback((target: ItemDropTarget) => {
     // Only show drop indicators when virtual dragging or this is the current drop target.
     if (isVirtualDragging || dropState?.isDropTarget(target)) {
-      return renderDropIndicator ? renderDropIndicator(target) : <_DropIndicator target={target} />;
+      return renderDropIndicator ? renderDropIndicator(target) : <DropIndicator target={target} />;
     }
     // We invalidate whenever the target changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps

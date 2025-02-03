@@ -160,7 +160,6 @@ export const ContextualHelpStories = {
     containerStyle: style({display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '[100vw]'}),
     orientation: 'horizontal',
     contextualHelp: (
-      // @ts-ignore
       <ContextualHelp>
         <Heading>What is a segment?</Heading>
         <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>

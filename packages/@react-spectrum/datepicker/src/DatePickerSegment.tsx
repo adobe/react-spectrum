@@ -50,11 +50,11 @@ function LiteralSegment({segment}: LiteralSegmentProps) {
 }
 
 function EditableSegment({segment, state}: DatePickerSegmentProps) {
-  let ref = useRef(undefined);
+  let ref = useRef<HTMLDivElement | null>(null);
   let {segmentProps} = useDateSegment(segment, state, ref);
 
   return (
-    <div
+    <span
       {...segmentProps}
       ref={ref}
       className={classNames(styles, 'react-spectrum-DatePicker-cell', {
@@ -64,6 +64,6 @@ function EditableSegment({segment, state}: DatePickerSegmentProps) {
       style={segmentProps.style}
       data-testid={segment.type}>
       {segment.isPlaceholder ? <span aria-hidden="true" className={classNames(styles, 'react-spectrum-DatePicker-placeholder')}>{segment.placeholder}</span> : segment.text}
-    </div>
+    </span>
   );
 }

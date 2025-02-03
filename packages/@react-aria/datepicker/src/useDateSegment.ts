@@ -15,7 +15,7 @@ import {DateFieldState, DateSegment} from '@react-stately/datepicker';
 import {getScrollParent, isIOS, isMac, mergeProps, scrollIntoViewport, useEvent, useId, useLabels, useLayoutEffect} from '@react-aria/utils';
 import {hookData} from './useDateField';
 import {NumberParser} from '@internationalized/number';
-import React, {useMemo, useRef} from 'react';
+import React, {CSSProperties, useMemo, useRef} from 'react';
 import {RefObject} from '@react-types/shared';
 import {useDateFormatter, useFilter, useLocale} from '@react-aria/i18n';
 import {useDisplayNames} from './useDisplayNames';
@@ -33,7 +33,7 @@ export interface DateSegmentAria {
  */
 export function useDateSegment(segment: DateSegment, state: DateFieldState, ref: RefObject<HTMLElement | null>): DateSegmentAria {
   let enteredKeys = useRef('');
-  let {locale} = useLocale();
+  let {locale, direction} = useLocale();
   let displayNames = useDisplayNames();
   let {ariaLabel, ariaLabelledBy, ariaDescribedBy, focusManager} = hookData.get(state)!;
 
@@ -385,6 +385,21 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     };
   }
 
+  let dateSegments = ['day', 'month', 'year'];
+  let segmentStyle : CSSProperties = {caretColor: 'transparent'};
+  if (direction === 'rtl') {
+    // While the bidirectional algorithm seems to work properly on inline elements with actual values, it returns different results for placeholder strings. 
+    // To ensure placeholder render in correct format, we apply the CSS equivalent of LRE (left-to-right embedding). See https://www.unicode.org/reports/tr9/#Explicit_Directional_Embeddings.
+    // However, we apply this to both placeholders and date segments with an actual value because the date segments will shift around when deleting otherwise. 
+    if (dateSegments.includes(segment.type)) {
+      segmentStyle = {caretColor: 'transparent', direction: 'ltr', unicodeBidi: 'embed'};
+    } else if (segment.type === 'timeZoneName') {
+      // This is needed so that the time zone renders on the left side of the time segments (hour:minute).
+      // Otherwise, it will render on the right side which is incorrect. 
+      segmentStyle = {caretColor: 'transparent', unicodeBidi: 'embed'};
+    }
+  }
+
   return {
     segmentProps: mergeProps(spinButtonProps, labelProps, {
       id,
@@ -403,9 +418,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
       tabIndex: state.isDisabled ? undefined : 0,
       onKeyDown,
       onFocus,
-      style: {
-        caretColor: 'transparent'
-      },
+      style: segmentStyle,
       // Prevent pointer events from reaching useDatePickerGroup, and allow native browser behavior to focus the segment.
       onPointerDown(e) {
         e.stopPropagation();

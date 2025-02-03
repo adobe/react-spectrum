@@ -21,7 +21,11 @@ import {Toaster} from './Toaster';
 import {ToastOptions, ToastQueue, useToastQueue} from '@react-stately/toast';
 import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 
-export interface SpectrumToastContainerProps extends AriaToastRegionProps {}
+export type ToastPlacement = 'top' | 'top end' | 'bottom' | 'bottom end';
+
+export interface SpectrumToastContainerProps extends AriaToastRegionProps {
+  placement?: ToastPlacement
+}
 
 export interface SpectrumToastOptions extends Omit<ToastOptions, 'priority'>, DOMProps {
   /** A label for the action button within the toast. */
@@ -77,14 +81,14 @@ function useActiveToastContainer() {
  * A ToastContainer renders the queued toasts in an application. It should be placed
  * at the root of the app.
  */
-export function ToastContainer(props: SpectrumToastContainerProps): ReactElement {
+export function ToastContainer(props: SpectrumToastContainerProps): ReactElement | null {
   // Track all toast provider instances in a set.
   // Only the first one will actually render.
   // We use a ref to do this, since it will have a stable identity
   // over the lifetime of the component.
-  let ref = useRef(undefined);
+  let ref = useRef(null);
 
-   
+
   useEffect(() => {
     toastProviders.add(ref);
     triggerSubscriptions();
@@ -144,7 +148,7 @@ function addToast(children: string, variant: SpectrumToastValue['variant'], opti
 
     let shouldContinue = window.dispatchEvent(event);
     if (!shouldContinue) {
-      return;
+      return () => {};
     }
   }
 
@@ -160,7 +164,7 @@ function addToast(children: string, variant: SpectrumToastValue['variant'], opti
   // Minimum time of 5s from https://spectrum.adobe.com/page/toast/#Auto-dismissible
   // Actionable toasts cannot be auto dismissed. That would fail WCAG SC 2.2.1.
   // It is debatable whether non-actionable toasts would also fail.
-  let timeout = options.timeout && !options.onAction ? Math.max(options.timeout, 5000) : null;
+  let timeout = options.timeout && !options.onAction ? Math.max(options.timeout, 5000) : undefined;
   let queue = getGlobalToastQueue();
   let key = queue.add(value, {timeout, onClose: options.onClose});
   return () => queue.close(key);

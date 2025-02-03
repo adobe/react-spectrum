@@ -511,6 +511,14 @@ The `isReadOnly` boolean prop makes the Calendar's value immutable. Unlike `isDi
 <MyCalendar aria-label="Event date" value={today(getLocalTimeZone())} isReadOnly />
 ```
 
+## Custom first day of week
+
+By default, the first day of the week is automatically set based on the current locale. This can be changed by setting the `firstDayOfWeek` prop to `'sun'`, `'mon'`, `'tue'`, `'wed'`, `'thu'`, `'fri'`, or `'sat'`.
+
+```tsx example
+<MyCalendar aria-label="Event date" value={today(getLocalTimeZone())} firstDayOfWeek="mon" />
+```
+
 ## Labeling
 
 An aria-label must be provided to the `Calendar` for accessibility. If it is labeled by a separate element, an `aria-labelledby` prop must be provided using the `id` of the labeling element instead.
@@ -840,7 +848,8 @@ function CalendarValue() {
   let state = React.useContext(CalendarStateContext)!;
   /*- end highlight -*/
   let date = state.value?.toDate(getLocalTimeZone());
-  let formatted = date ? useDateFormatter().format(date) : 'None';
+  let {format} = useDateFormatter();
+  let formatted = date ? format(date) : 'None';
   return <small>Selected date: {formatted}</small>;
 }
 

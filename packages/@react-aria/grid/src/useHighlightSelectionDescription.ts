@@ -39,7 +39,7 @@ export function useHighlightSelectionDescription(props: HighlightSelectionDescri
     let selectionMode = props.selectionManager.selectionMode;
     let selectionBehavior = props.selectionManager.selectionBehavior;
 
-    let message = undefined;
+    let message: string | undefined;
     if (shouldLongPress) {
       message = stringFormatter.format('longPressToSelect');
     }

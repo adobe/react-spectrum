@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {BackgroundColorValue, Responsive as TResponsive} from '@react-types/shared';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {View} from '@react-spectrum/view';
@@ -28,10 +29,10 @@ let baseColors = [
   'green',
   'blue'
 ];
-let colors = [];
+let colors: Array<TResponsive<BackgroundColorValue> | undefined> = [];
 for (let color of baseColors) {
   for (let i = 4; i <= 7; i++) {
-    colors.push(`${color}-${i}00`);
+    colors.push(`${color}-${i}00` as TResponsive<BackgroundColorValue>);
   }
 }
 
@@ -67,7 +68,7 @@ export const WrappingWithGap = () => (
   <View maxWidth="80%" borderWidth="thin" borderColor="dark">
     <Flex direction="row" gap="size-100" wrap>
       {colors.map((color) => (
-        <View key={color} backgroundColor={color} width="size-800" height="size-800" />
+        <View key={String(color)} backgroundColor={color} width="size-800" height="size-800" />
       ))}
     </Flex>
   </View>

@@ -1,0 +1,164 @@
+{/* Copyright 2024 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {ExampleLayout} from '@react-spectrum/docs';
+export default ExampleLayout;
+
+import docs from 'docs:react-aria-components';
+import styles from '@react-spectrum/docs/src/docs.css';
+import Popover from '@react-spectrum/docs/pages/assets/component-illustrations/Popover.svg';
+import Dialog from '@react-spectrum/docs/pages/assets/component-illustrations/Dialog.svg';
+import Menu from '@react-spectrum/docs/pages/assets/component-illustrations/Menu.svg';
+import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+
+---
+keywords: [example, menu, popover, dialog, aria, accessibility, react, component]
+type: component
+image: account-menu.png
+description: A Menu with an interactive header, built with a Dialog and Popover.
+---
+
+# Account Menu
+
+A [Menu](../Menu.html) with an interactive header, built with a [Dialog](../Dialog.html) and [Popover](../Popover.html).
+
+## Example
+
+For accessibility reasons, standalone Menus cannot contain any children other than menu items (optionally grouped into sections). To build patterns that include such elements, place the Menu into a Dialog with additional interactive elements as siblings.
+
+```tsx import
+import './tailwind.global.css';
+```
+
+```tsx example standalone
+import {DialogTrigger, Button, Popover, Dialog, Menu, MenuItem, Separator, Switch, composeRenderProps} from 'react-aria-components';
+import type {MenuItemProps, SwitchProps} from 'react-aria-components';
+
+function AccountMenuExample() {
+  return (
+    <div className="p-8 bg-gray-50 dark:bg-zinc-900 rounded-lg flex items-start justify-center">
+      <DialogTrigger>
+        <Button aria-label="Account" className="inline-flex items-center justify-center rounded-md p-1.5 text-white bg-transparent border-none hover:bg-gray-200 pressed:bg-gray-300 dark:hover:bg-zinc-800 dark:pressed:bg-zinc-700 transition-colors cursor-default outline-hidden focus-visible:ring-2 focus-visible:ring-blue-600">
+          <img alt="" src="https://i.imgur.com/xIe7Wlb.png" className="w-7 h-7 rounded-full" />
+        </Button>
+        <Popover placement="bottom end" className="p-2 overflow-auto rounded-lg bg-white dark:bg-zinc-950 shadow-lg ring-1 ring-black/10 dark:ring-white/15 entering:animate-in entering:fade-in entering:placement-bottom:slide-in-from-top-1 entering:placement-top:slide-in-from-bottom-1 exiting:animate-out exiting:fade-out exiting:placement-bottom:slide-out-to-top-1 exiting:placement-top:slide-out-to-bottom-1 fill-mode-forwards origin-top-left">
+          <Dialog className="outline-hidden">
+            <div className="flex gap-2 items-center mx-3 mt-2">
+              <img alt="" src="https://i.imgur.com/xIe7Wlb.png" className="w-16 h-16 rounded-full" />
+              <div className="flex flex-col gap-1">
+                <div className="text-[15px] font-bold text-gray-900 dark:text-gray-100 leading-none">Marissa Whitaker</div>
+                <div className="text-base text-gray-900 dark:text-gray-100 leading-none mb-1">user@example.com</div>
+                <MySwitch>Dark Mode</MySwitch>
+              </div>
+            </div>
+            <Separator className="border-none bg-gray-300 dark:bg-zinc-600 h-[1px] mx-3 mt-4 mb-2" />
+            <Menu className="outline-hidden">
+              <MyMenuItem id="new">Account Settings</MyMenuItem>
+              <MyMenuItem id="open">Support</MyMenuItem>
+              <Separator className="bg-gray-300 dark:bg-zinc-600 h-[1px] mx-3 my-2" />
+              <MyMenuItem id="save">Legal notices</MyMenuItem>
+              <MyMenuItem id="save-as">About</MyMenuItem>
+              <Separator className="bg-gray-300 dark:bg-zinc-600 h-[1px] mx-3 my-2" />
+              <MyMenuItem id="print">Sign out</MyMenuItem>
+            </Menu>
+          </Dialog>
+        </Popover>
+      </DialogTrigger>
+    </div>
+  );
+}
+
+function MyMenuItem(props: MenuItemProps) {
+  return <MenuItem {...props} className="group flex w-full items-center rounded-md px-3 py-2 box-border outline-hidden cursor-default text-gray-900 dark:text-gray-100 focus:bg-blue-500 focus:text-white" />;
+}
+
+function MySwitch(props: SwitchProps) {
+  return (
+    <Switch className="group flex gap-2 items-center text-gray-800 dark:text-zinc-200 text-base transition">
+      {composeRenderProps(props.children, children => <>
+        <div className="flex h-3 w-6 p-[2px] items-center shrink-0 cursor-default rounded-full transition duration-200 ease-in-out shadow-inner border border-transparent bg-gray-400 dark:bg-zinc-400 group-pressed:bg-gray-500 dark:group-pressed:bg-zinc-300 group-selected:bg-gray-700 group-selected:dark:bg-zinc-300 group-selected:forced-colors:bg-[Highlight]! group-selected:group-pressed:bg-gray-800 group-selected:dark:group-pressed:bg-zinc-200 outline outline-0 outline-blue-600 dark:outline-blue-500 forced-colors:outline-[Highlight] outline-offset-2 group-focus-visible:outline-2">
+          <div className="h-3 w-3 transform rounded-full bg-white dark:bg-zinc-900 outline outline-1 -outline-offset-1 outline-transparent shadow-sm transition duration-200 ease-in-out translate-x-0 group-selected:translate-x-[100%]" />
+        </div>
+        {children}
+      </>)}
+    </Switch>
+  );
+}
+```
+
+### Tailwind config
+
+This example uses the following plugins:
+
+* [tailwindcss-react-aria-components](../styling.html#plugin)
+* [tailwindcss-animate](https://github.com/jamiebuilds/tailwindcss-animate)
+
+When using Tailwind v4, add them to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+@plugin "tailwindcss-animate";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugins to your `tailwind.config.js` instead:
+
+```tsx
+module.exports = {
+  // ...
+  plugins: [
+    require('tailwindcss-react-aria-components'),
+    require('tailwindcss-animate')
+  ]
+};
+```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
+
+## Components
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="../Menu.html"
+  title="Menu"
+  description="A menu displays a list of actions or options that a user can choose.">
+  <Menu style={{background: 'var(--anatomy-gray-100)', width: 'calc(100% - 20px)', padding: 10, maxHeight: 132}} />
+</ExampleCard>
+
+<ExampleCard
+  url="../Button.html"
+  title="Button"
+  description="A button allows a user to perform an action.">
+  <Button />
+</ExampleCard>
+
+<ExampleCard
+  url="../Popover.html"
+  title="Popover"
+  description="A popover displays content in context with a trigger element.">
+  <Popover />
+</ExampleCard>
+
+<ExampleCard
+  url="../Dialog.html"
+  title="Dialog"
+  description="A dialog is an overlay shown above other content in an application.">
+  <Dialog />
+</ExampleCard>
+
+</section>

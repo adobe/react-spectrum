@@ -56,7 +56,7 @@ export interface DroppableCollectionResult {
 
 interface DroppingState {
   collection: Collection<Node<unknown>>,
-  focusedKey: Key,
+  focusedKey: Key | null,
   selectedKeys: Set<Key>,
   target: DropTarget,
   draggingKeys: Set<Key | null | undefined>,
@@ -273,6 +273,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
           }
         }
       } else if (
+        prevFocusedKey != null &&
         state.selectionManager.focusedKey === prevFocusedKey &&
         isInternal &&
         target.type === 'item' &&
@@ -293,7 +294,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         // Also show the focus ring if the focused key is not selected, e.g. in case of a reorder.
         state.selectionManager.setFocusedKey(target.key);
         setInteractionModality('keyboard');
-      } else if (!state.selectionManager.isSelected(state.selectionManager.focusedKey)) {
+      } else if (state.selectionManager.focusedKey != null && !state.selectionManager.isSelected(state.selectionManager.focusedKey)) {
         setInteractionModality('keyboard');
       }
 
@@ -533,7 +534,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
 
         // If the focused key is a cell, get the parent item instead.
         // For now, we assume that individual cells cannot be dropped on.
-        let item = localState.state.collection.getItem(key);
+        let item = key != null ? localState.state.collection.getItem(key) : null;
         if (item?.type === 'cell') {
           key = item.parentKey;
         }

@@ -13,7 +13,7 @@
 import {ReactElement, Ref, RefAttributes} from 'react';
 
 export interface DOMRefValue<T extends HTMLElement = HTMLElement> {
-  UNSAFE_getDOMNode(): T
+  UNSAFE_getDOMNode(): T | null
 }
 
 export interface FocusableRefValue<T extends HTMLElement = HTMLElement, D extends HTMLElement = T> extends DOMRefValue<D> {

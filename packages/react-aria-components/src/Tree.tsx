@@ -127,7 +127,7 @@ export interface TreeProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>
   renderEmptyState?: (props: TreeEmptyStateRenderProps) => ReactNode,
   /**
    * Whether `disabledKeys` applies to all interactions, or only selection.
-   * @default 'selection'
+   * @default 'all'
    */
   disabledBehavior?: DisabledBehavior
 }
@@ -136,7 +136,11 @@ export interface TreeProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>
 export const UNSTABLE_TreeContext = createContext<ContextValue<TreeProps<any>, HTMLDivElement>>(null);
 export const UNSTABLE_TreeStateContext = createContext<TreeState<any> | null>(null);
 
-function Tree<T extends object>(props: TreeProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A tree provides users with a way to navigate nested hierarchical information, with support for keyboard navigation
+ * and selection.
+ */
+export const UNSTABLE_Tree = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tree<T extends object>(props: TreeProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   // Render the portal first so that we have the collection by the time we render the DOM in SSR.
   [props, ref] = useContextProps(props, ref, UNSTABLE_TreeContext);
 
@@ -145,7 +149,7 @@ function Tree<T extends object>(props: TreeProps<T>, ref: ForwardedRef<HTMLDivEl
       {collection => <TreeInner props={props} collection={collection} treeRef={ref} />}
     </CollectionBuilder>
   );
-}
+});
 
 interface TreeInnerProps<T extends object> {
   props: TreeProps<T>,
@@ -159,7 +163,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     expandedKeys: propExpandedKeys,
     defaultExpandedKeys: propDefaultExpandedKeys,
     onExpandedChange,
-    disabledBehavior = 'selection'
+    disabledBehavior = 'all'
   } = props;
   let {CollectionRoot, isVirtualized, layoutDelegate} = useContext(CollectionRendererContext);
 
@@ -254,13 +258,6 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   );
 }
 
-/**
- * A tree provides users with a way to navigate nested hierarchical information, with support for keyboard navigation
- * and selection.
- */
-const _Tree = /*#__PURE__*/ (forwardRef as forwardRefType)(Tree);
-export {_Tree as UNSTABLE_Tree};
-
 // TODO: readd the rest of the render props when tree supports them
 export interface TreeItemRenderProps extends Omit<ItemRenderProps, 'allowsDragging' | 'isDragging' | 'isDropTarget'> {
   /** Whether the tree item is expanded. */
@@ -279,7 +276,11 @@ export interface TreeItemContentRenderProps extends ItemRenderProps {
   // What level the tree item has within the tree.
   level: number,
   // Whether the tree item's children have keyboard focus.
-  isFocusVisibleWithin: boolean
+  isFocusVisibleWithin: boolean,
+  // The state of the tree.
+  state: TreeState<unknown>,
+  // The unique id of the tree row.
+  id: Key
 }
 
 // The TreeItemContent is the one that accepts RenderProps because we would get much more complicated logic in TreeItem otherwise since we'd
@@ -353,8 +354,10 @@ export const UNSTABLE_TreeItem = /*#__PURE__*/ createBranchComponent('item', <T 
     level,
     selectionMode: state.selectionManager.selectionMode,
     selectionBehavior: state.selectionManager.selectionBehavior,
-    isFocusVisibleWithin
-  }), [states, isHovered, isFocusVisible, state.selectionManager, isExpanded, hasChildRows, level, isFocusVisibleWithin]);
+    isFocusVisibleWithin,
+    state,
+    id: item.key
+  }), [states, isHovered, isFocusVisible, state.selectionManager, isExpanded, hasChildRows, level, isFocusVisibleWithin, state, item.key]);
 
   let renderProps = useRenderProps({
     ...props,

@@ -10,8 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {Provider} from '@react-spectrum/provider';
+import React from 'react';
 import {render} from '@testing-library/react';
 import {StrictModeWrapper} from './StrictModeWrapper';
+import {theme} from '@react-spectrum/theme-default';
 
 let reactTestingLibrary = require('@testing-library/react');
 
@@ -34,3 +37,7 @@ function customRender(ui, options) {
 
 // override render method with
 export {customRender as render};
+
+export function renderv3(ui, options, providerProps) {
+  return render(ui, {wrapper: (props) => <Provider theme={theme} {...providerProps}><StrictModeWrapper {...props} /></Provider>, ...options});
+}

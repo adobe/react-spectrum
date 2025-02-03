@@ -13,16 +13,17 @@
 import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
 import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps} from './Collection';
-import {ContextValue, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, useListState} from 'react-stately';
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {SeparatorContext} from './Separator';
 import {TextContext} from './Text';
+import {UNSTABLE_InternalAutocompleteContext} from './Autocomplete';
 
 export interface ListBoxRenderProps {
   /**
@@ -79,7 +80,10 @@ export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children' | 
 export const ListBoxContext = createContext<ContextValue<ListBoxProps<any>, HTMLDivElement>>(null);
 export const ListStateContext = createContext<ListState<any> | null>(null);
 
-function ListBox<T extends object>(props: ListBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A listbox displays a list of options and allows a user to select one or more of them.
+ */
+export const ListBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ListBox<T extends object>(props: ListBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ListBoxContext);
   let state = useContext(ListStateContext);
 
@@ -98,20 +102,18 @@ function ListBox<T extends object>(props: ListBoxProps<T>, ref: ForwardedRef<HTM
       {collection => <StandaloneListBox props={props} listBoxRef={ref} collection={collection} />}
     </CollectionBuilder>
   );
-}
+});
 
 function StandaloneListBox({props, listBoxRef, collection}) {
   props = {...props, collection, children: null, items: null};
   let {layoutDelegate} = useContext(CollectionRendererContext);
-  let state = useListState({...props, layoutDelegate});
-  return <ListBoxInner state={state} props={props} listBoxRef={listBoxRef} />;
+  let {filterFn, collectionProps, collectionRef} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
+  // Memoed so that useAutocomplete callback ref is properly only called once on mount and not everytime a rerender happens
+  listBoxRef = useObjectRef(useMemo(() => mergeRefs(listBoxRef, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null), [collectionRef, listBoxRef]));
+  let filteredCollection = useMemo(() => filterFn ? collection.filter(filterFn) : collection, [collection, filterFn]);
+  let state = useListState({...props, collection: filteredCollection, layoutDelegate});
+  return <ListBoxInner state={state} props={{...props, ...collectionProps}} listBoxRef={listBoxRef} />;
 }
-
-/**
- * A listbox displays a list of options and allows a user to select one or more of them.
- */
-const _ListBox = /*#__PURE__*/ (forwardRef as forwardRefType)(ListBox);
-export {_ListBox as ListBox};
 
 interface ListBoxInnerProps<T> {
   state: ListState<T>,
@@ -246,7 +248,7 @@ function ListBoxInner<T extends object>({state, props, listBoxRef}: ListBoxInner
             [DragAndDropContext, {dragAndDropHooks, dragState, dropState}],
             [SeparatorContext, {elementType: 'div'}],
             [DropIndicatorContext, {render: ListBoxDropIndicatorWrapper}],
-            [SectionContext, {name: 'ListBoxSection', render: ListBoxSection}]
+            [SectionContext, {name: 'ListBoxSection', render: ListBoxSectionInner}]
           ]}>
           <CollectionRoot
             collection={collection}
@@ -263,7 +265,7 @@ function ListBoxInner<T extends object>({state, props, listBoxRef}: ListBoxInner
 
 export interface ListBoxSectionProps<T> extends SectionProps<T> {}
 
-function ListBoxSection<T extends object>(props: ListBoxSectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>, className = 'react-aria-ListBoxSection') {
+function ListBoxSectionInner<T extends object>(props: ListBoxSectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>, className = 'react-aria-ListBoxSection') {
   let state = useContext(ListStateContext)!;
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext)!;
   let {CollectionBranch} = useContext(CollectionRendererContext);
@@ -298,8 +300,7 @@ function ListBoxSection<T extends object>(props: ListBoxSectionProps<T>, ref: Fo
 /**
  * A ListBoxSection represents a section within a ListBox.
  */
-const _ListBoxSection = /*#__PURE__*/ createBranchComponent('section', ListBoxSection);
-export {_ListBoxSection as ListBoxSection};
+export const ListBoxSection = /*#__PURE__*/ createBranchComponent('section', ListBoxSectionInner);
 
 export interface ListBoxItemRenderProps extends ItemRenderProps {}
 
@@ -397,6 +398,7 @@ export const ListBoxItem = /*#__PURE__*/ createLeafComponent('item', function Li
         values={[
           [TextContext, {
             slots: {
+              [DEFAULT_SLOT]: labelProps,
               label: labelProps,
               description: descriptionProps
             }

@@ -12,7 +12,8 @@
 
 import {FocusableElement, RefObject} from '@react-types/shared';
 import {focusSafely} from './focusSafely';
-import {getOwnerDocument, useLayoutEffect} from '@react-aria/utils';
+import {getInteractionModality} from '@react-aria/interactions';
+import {getOwnerDocument, isAndroid, isChrome, isFocusable, isTabbable, useLayoutEffect} from '@react-aria/utils';
 import {isElementVisible} from './isElementVisible';
 import React, {ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 
@@ -267,31 +268,6 @@ function createFocusManagerForScope(scopeRef: React.RefObject<Element[] | null>)
   };
 }
 
-const focusableElements = [
-  'input:not([disabled]):not([type=hidden])',
-  'select:not([disabled])',
-  'textarea:not([disabled])',
-  'button:not([disabled])',
-  'a[href]',
-  'area[href]',
-  'summary',
-  'iframe',
-  'object',
-  'embed',
-  'audio[controls]',
-  'video[controls]',
-  '[contenteditable]'
-];
-
-const FOCUSABLE_ELEMENT_SELECTOR = focusableElements.join(':not([hidden]),') + ',[tabindex]:not([disabled]):not([hidden])';
-
-focusableElements.push('[tabindex]:not([tabindex="-1"]):not([disabled])');
-const TABBABLE_ELEMENT_SELECTOR = focusableElements.join(':not([hidden]):not([tabindex="-1"]),');
-
-export function isFocusable(element: HTMLElement) {
-  return element.matches(FOCUSABLE_ELEMENT_SELECTOR);
-}
-
 function getScopeRoot(scope: Element[]) {
   return scope[0].parentElement!;
 }
@@ -381,8 +357,14 @@ function useFocusContainment(scopeRef: RefObject<Element[] | null>, contain?: bo
         cancelAnimationFrame(raf.current);
       }
       raf.current = requestAnimationFrame(() => {
+        // Patches infinite focus coersion loop for Android Talkback where the user isn't able to move the virtual cursor
+        // if within a containing focus scope. Bug filed against Chrome: https://issuetracker.google.com/issues/384844019.
+        // Note that this means focus can leave focus containing modals due to this, but it is isolated to Chrome Talkback.
+        let modality = getInteractionModality();
+        let shouldSkipFocusRestore = (modality === 'virtual' || modality === null) && isAndroid() && isChrome();
+
         // Use document.activeElement instead of e.relatedTarget so we can tell if user clicked into iframe
-        if (ownerDocument.activeElement && shouldContainFocus(scopeRef) && !isElementInChildScope(ownerDocument.activeElement, scopeRef)) {
+        if (!shouldSkipFocusRestore && ownerDocument.activeElement && shouldContainFocus(scopeRef) && !isElementInChildScope(ownerDocument.activeElement, scopeRef)) {
           activeScope = scopeRef;
           if (ownerDocument.body.contains(e.target)) {
             focusedNode.current = e.target;
@@ -608,7 +590,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[] | null>, restoreFocus?: b
       }
 
       let focusedElement = ownerDocument.activeElement as FocusableElement;
-      if (!isElementInScope(focusedElement, scopeRef.current)) {
+      if (!isElementInChildScope(focusedElement, scopeRef) || !shouldRestoreFocus(scopeRef)) {
         return;
       }
       let treeNode = focusScopeTree.getTreeNode(scopeRef);
@@ -631,13 +613,13 @@ function useRestoreFocus(scopeRef: RefObject<Element[] | null>, restoreFocus?: b
 
       // If there is no next element, or it is outside the current scope, move focus to the
       // next element after the node to restore to instead.
-      if ((!nextElement || !isElementInScope(nextElement, scopeRef.current)) && nodeToRestore) {
+      if ((!nextElement || !isElementInChildScope(nextElement, scopeRef)) && nodeToRestore) {
         walker.currentNode = nodeToRestore;
 
         // Skip over elements within the scope, in case the scope immediately follows the node to restore.
         do {
           nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as FocusableElement;
-        } while (isElementInScope(nextElement, scopeRef.current));
+        } while (isElementInChildScope(nextElement, scopeRef));
 
         e.preventDefault();
         e.stopPropagation();
@@ -692,8 +674,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[] | null>, restoreFocus?: b
         restoreFocus
         && nodeToRestore
         && (
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-          (isElementInScope(ownerDocument.activeElement, scopeRef.current) || (ownerDocument.activeElement === ownerDocument.body && shouldRestoreFocus(scopeRef)))
+          ((ownerDocument.activeElement && isElementInChildScope(ownerDocument.activeElement, scopeRef)) || (ownerDocument.activeElement === ownerDocument.body && shouldRestoreFocus(scopeRef)))
         )
       ) {
         // freeze the focusScopeTree so it persists after the raf, otherwise during unmount nodes are removed from it
@@ -743,7 +724,7 @@ function restoreFocusToElement(node: FocusableElement) {
  * that matches all focusable/tabbable elements.
  */
 export function getFocusableTreeWalker(root: Element, opts?: FocusManagerOptions, scope?: Element[]) {
-  let selector = opts?.tabbable ? TABBABLE_ELEMENT_SELECTOR : FOCUSABLE_ELEMENT_SELECTOR;
+  let filter = opts?.tabbable ? isTabbable : isFocusable;
   let walker = getOwnerDocument(root).createTreeWalker(
     root,
     NodeFilter.SHOW_ELEMENT,
@@ -754,7 +735,7 @@ export function getFocusableTreeWalker(root: Element, opts?: FocusManagerOptions
           return NodeFilter.FILTER_REJECT;
         }
 
-        if ((node as Element).matches(selector)
+        if (filter(node as Element)
           && isElementVisible(node as Element)
           && (!scope || isElementInScope(node as Element, scope))
           && (!opts?.accept || opts.accept(node as Element))

@@ -485,7 +485,6 @@ function Nav({currentPageName, pages}) {
             <details key={section.title} open={section.isActive}>
               <summary style={{fontWeight: 'bold'}}>
                 <ChevronRight size="S" /> {section.title}
-                {section.title === 'Components' && <VersionBadge version={Object.values(section.pages)[0][0].preRelease} style={{marginLeft: 'auto', fontWeight: 'normal'}} />}
               </summary>
               {contents}
             </details>

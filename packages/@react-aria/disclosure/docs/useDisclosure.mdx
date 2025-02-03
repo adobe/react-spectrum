@@ -22,7 +22,6 @@ import Anatomy from './anatomy.svg';
 ---
 category: Navigation
 keywords: [disclosure, collapse, expand, aria]
-preRelease: alpha
 ---
 
 # useDisclosure
@@ -141,6 +140,10 @@ function Disclosure(props) {
 
     &[aria-expanded="true"] svg {
       rotate: 90deg;
+    }
+
+    &:disabled {
+      color: var(--gray-300);
     }
   }
 }
