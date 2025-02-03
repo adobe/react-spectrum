@@ -293,6 +293,7 @@ describe('LabeledValue', function () {
 
   it('throws when an editable value is provided', async function () {
     jest.spyOn(console, 'error').mockImplementation(() => {});
+    let errorMessage;
     try {
       render(
         <LabeledValue
@@ -300,8 +301,9 @@ describe('LabeledValue', function () {
           value={<input />} />
       );
     } catch (e) {
-      expect(e.message).toEqual('LabeledValue cannot contain an editable value.');
+      errorMessage = e.message;
     }
+    expect(errorMessage).toEqual('LabeledValue cannot contain an editable value.');
   });
 
   it('attaches a user provided ref to the outer div', function () {
