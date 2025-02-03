@@ -16,6 +16,7 @@ import styles from '@react-spectrum/docs/src/docs.css';
 import Dialog from '@react-spectrum/docs/pages/assets/component-illustrations/Dialog.svg';
 import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
 ---
 keywords: [example, modal, dialog, aria, accessibility, react, component]
@@ -111,7 +112,7 @@ function Sheet() {
   return (
     <>
       <Button
-        className="text-blue-600 text-lg font-semibold outline-none rounded bg-transparent border-none pressed:text-blue-700 focus-visible:ring"
+        className="text-blue-600 text-lg font-semibold outline-hidden rounded-sm bg-transparent border-none pressed:text-blue-700 focus-visible:ring-3"
         onPress={() => setOpen(true)}>
         Open sheet
       </Button>
@@ -124,7 +125,7 @@ function Sheet() {
             className="fixed inset-0 z-10"
             style={{ backgroundColor: bg as any }}>
             <MotionModal
-              className="bg-[--page-background] absolute bottom-0 w-full rounded-t-xl shadow-lg will-change-transform"
+              className="bg-(--page-background) absolute bottom-0 w-full rounded-t-xl shadow-lg will-change-transform"
               initial={{ y: h }}
               animate={{ y: 0 }}
               exit={{ y: h }}
@@ -146,10 +147,10 @@ function Sheet() {
               }}>
               {/* drag affordance */}
               <div className="mx-auto w-12 mt-2 h-1.5 rounded-full bg-gray-400" />
-              <Dialog className="px-4 pb-4 outline-none">
+              <Dialog className="px-4 pb-4 outline-hidden">
                 <div className="flex justify-end">
                   <Button
-                    className="text-blue-600 text-lg font-semibold mb-8 outline-none rounded bg-transparent border-none pressed:text-blue-700 focus-visible:ring"
+                    className="text-blue-600 text-lg font-semibold mb-8 outline-hidden rounded-sm bg-transparent border-none pressed:text-blue-700 focus-visible:ring-3"
                     onPress={() => setOpen(false)}>
                     Done
                   </Button>
@@ -175,7 +176,18 @@ function Sheet() {
 
 ### Tailwind config
 
-This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. Add it to your `tailwind.config.js`:
+This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. When using Tailwind v4, add it to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugin to your `tailwind.config.js` instead:
 
 ```tsx
 module.exports = {
@@ -185,6 +197,10 @@ module.exports = {
   ]
 };
 ```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
 
 ## Components
 

@@ -49,7 +49,7 @@ export function Styles() {
                 <div className="flex flex-row px-3 lg:hidden bg-gray-200/80 backdrop-blur-md dark:bg-zinc-700/80 border-y border-gray-300 dark:border-zinc-700">
                   <FileTab>DatePicker.css</FileTab>
                 </div>
-                <Scrollable className="rounded-br-lg lg:border-l dark:border-l-zinc-600">
+                <Scrollable className="rounded-br-lg lg:border-l lg:border-l-gray-200 dark:border-l-zinc-600">
                   <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('css')!.innerHTML}} />
                 </Scrollable>
               </div>
@@ -260,13 +260,13 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
       <div className="relative overflow-x-auto no-scrollbar dark:isolate p-2 sm:-m-2" ref={tabListScrollRef}>
         <TabList ref={tabListRef} className="flex px-2 y-2 md:px-0" items={tabs}>
           {(tab) =>
-            (<Tab className="flex-shrink-0 cursor-default px-3 py-1.5 text-sm sm:text-base text-black dark:text-white transition outline outline-0 forced-colors:selected:!text-[HighlightText] forced-color-adjust-none">
+            (<Tab className="shrink-0 cursor-default px-3 py-1.5 text-sm sm:text-base text-black dark:text-white transition outline outline-0 forced-colors:selected:text-[HighlightText]! forced-color-adjust-none">
               {({isSelected, isFocusVisible}) => (<>
                 {tab.label}
                 {isFocusVisible && isSelected && (
                   // Focus ring.
                   <motion.span
-                    className="absolute inset-y-2 inset-x-0 z-10 rounded-full outline outline-2 outline-black dark:outline-white forced-colors:!outline-[Highlight] outline-offset-2"
+                    className="absolute inset-y-2 inset-x-0 z-10 rounded-full outline outline-2 outline-black dark:outline-white forced-colors:outline-[Highlight]! outline-offset-2"
                     style={{x, width}} />
                 )}
               </>)}
@@ -285,7 +285,7 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
           {(tab) => (
             <TabPanel
               shouldForceMount
-              className="flex-shrink-0 w-full px-4 box-border snap-start snap-always outline outline-0 -outline-offset-2 rounded focus-visible:outline-black">
+              className="shrink-0 w-full px-4 box-border snap-start snap-always outline outline-0 -outline-offset-2 rounded-sm focus-visible:outline-black">
               {tab.content}
             </TabPanel>
           )}

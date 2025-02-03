@@ -21,7 +21,7 @@ export function ColorSwatchPicker(
 
 const itemStyles = tv({
   extend: focusRing,
-  base: 'relative rounded'
+  base: 'relative rounded-xs'
 });
 
 export function ColorSwatchPickerItem(props: ColorSwatchPickerItemProps) {
@@ -29,7 +29,7 @@ export function ColorSwatchPickerItem(props: ColorSwatchPickerItemProps) {
     <AriaColorSwatchPickerItem {...props} className={itemStyles}>
       {({isSelected}) => <>
         <ColorSwatch />
-        {isSelected && <div className="absolute top-0 left-0 w-full h-full border border-2 border-black dark:border-white outline outline-2 outline-white dark:outline-black -outline-offset-4 rounded forced-color-adjust-none" />}
+        {isSelected && <div className="absolute top-0 left-0 w-full h-full border border-2 border-black dark:border-white outline outline-2 outline-white dark:outline-black -outline-offset-4 rounded-xs forced-color-adjust-none" />}
       </>}
     </AriaColorSwatchPickerItem>
   );

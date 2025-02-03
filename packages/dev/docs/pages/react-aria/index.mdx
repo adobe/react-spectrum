@@ -62,7 +62,7 @@ image: ../assets/ReactAriaOpenGraph.webp
     <p className="text-slate-800 dark:text-slate-300 text-center text-lg md:text-2xl max-w-3xl mx-auto [text-wrap:balance]">Over 40 components with built-in behavior, adaptive interactions, top-tier accessibility, and internationalization out of the box, ready for your styles.</p>
 
     <div className="flex flex-col md:flex-row items-center gap-4 my-10 justify-center">
-      <a href="getting-started.html" className="bg-gradient-to-r from-blue-600 to-indigo-600 border border-blue-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] text-base md:text-lg font-bold text-white px-8 py-3 rounded-full transition focus-ring  dark:outline-white outline-offset-2 active:scale-95">Get Started</a>
+      <a href="getting-started.html" className="bg-linear-to-r from-blue-600 to-indigo-600 border border-blue-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] text-base md:text-lg font-bold text-white px-8 py-3 rounded-full transition focus-ring  dark:outline-white outline-offset-2 active:scale-95">Get Started</a>
       <a href="components.html" className="bg-white/50 border border-black/10 bg-clip-padding text-base md:text-lg font-bold text-slate-800 px-8 py-3 rounded-full backdrop-saturate-150 backdrop-brightness-125 transition hover:bg-white/60 focus-ring  dark:outline-white outline-offset-2 active:scale-95">Explore Components</a>
     </div>
 
@@ -111,7 +111,7 @@ ReactDOM.createRoot(document.getElementById('example-app')).render(<ExampleApp /
 <main className="max-w-6xl mx-auto">
 
 <Section className="pink-gradient-background">
-  <h2><GradientText>Bring your own</GradientText> <span className="bg-clip-text bg-gradient-to-t from-fuchsia-600 to-pink-600">styles</span><GradientText>.</GradientText></h2>
+  <h2><GradientText>Bring your own</GradientText> <span className="bg-clip-text bg-linear-to-t from-fuchsia-600 to-pink-600">styles</span><GradientText>.</GradientText></h2>
   <p>React Aria is style-free out of the box, allowing you to build custom designs to fit your application or design system using any styling and animation solution. Each component is broken down into individual parts with built-in states, render props, and slots that make styling a breeze.</p>
   <LearnMoreLink href="styling.html" className="text-fuchsia-600 dark:text-fuchsia-500 hover:bg-fuchsia-400/[15%]" />
 
@@ -183,7 +183,7 @@ ReactDOM.createRoot(document.getElementById('example-app')).render(<ExampleApp /
     </Button>
   </Group>
   {/* Built-in entry and exit animation states. */}
-  <Popover className="w-[--trigger-width] ... entering:animate-in entering:fade-in exiting:animate-out exiting:fade-out">
+  <Popover className="w-(--trigger-width) ... entering:animate-in entering:fade-in exiting:animate-out exiting:fade-out">
     <ListBox items={people}>
       {item => (
         <ListBoxItem textValue={item.name} className="group text-gray-900 ... focus:bg-blue-600 focus:text-white">
@@ -280,7 +280,7 @@ import {Styles} from './home/Styles';
 </Section>
 
 <Section className="red-gradient-background">
-  <h2><span className="bg-clip-text bg-gradient-to-b from-pink-600 to-rose-600">Advanced features</span> <GradientText>for ambitious apps.</GradientText></h2>
+  <h2><span className="bg-clip-text bg-linear-to-b from-pink-600 to-rose-600">Advanced features</span> <GradientText>for ambitious apps.</GradientText></h2>
   <p>Make your web app feel native with rich interactions that adapt to the device, platform, and user. React Aria supports advanced features like accessible drag and drop, keyboard multi-selection, built-in form validation, table column resizing, and a ton more.</p>
   <LearnMoreLink href="dnd.html" className="text-rose-700 dark:text-rose-500 hover:bg-rose-400/[15%]" />
 
@@ -293,7 +293,7 @@ import {KanbanBoard} from './home/KanbanExample';
 </Section>
 
 <Section className="cyan-gradient-background">
-  <h2><GradientText>High quality</GradientText> <span className="bg-clip-text bg-gradient-to-t from-cyan-600 to-green-600">interactions</span> <GradientText>on all devices.</GradientText></h2>
+  <h2><GradientText>High quality</GradientText> <span className="bg-clip-text bg-linear-to-t from-cyan-600 to-green-600">interactions</span> <GradientText>on all devices.</GradientText></h2>
   <p>React Aria ensures a great experience for users, no matter their device. All components are optimized for mouse, touch, keyboard, and screen reader interactions, with a meticulous attention to detail that makes your app feel responsive and natural on every platform.</p>
   <LearnMoreLink href="interactions.html" className="text-cyan-700 dark:text-cyan-600 hover:bg-cyan-400/[15%]" />
 
@@ -378,13 +378,13 @@ import {Pagination} from './home/Pagination';
 </Section>
 
 <Section className="blue-gradient-background">
-  <h2><span className="bg-clip-text bg-gradient-to-b from-sky-500 to-indigo-600">Accessibility</span> <GradientText>that's truly first-class.</GradientText></h2>
+  <h2><span className="bg-clip-text bg-linear-to-b from-sky-500 to-indigo-600">Accessibility</span> <GradientText>that's truly first-class.</GradientText></h2>
   <p>React Aria is designed with accessibility as a top priority, and battle tested in production applications. All components are built to work across a wide variety of devices and assistive technologies to ensure the best experience possible for all users.</p>
   <LearnMoreLink href="accessibility.html" className="text-blue-600 dark:text-blue-500 hover:bg-blue-400/[15%]" />
 
   <div className="grid gap-y-6 gap-x-20 md:grid-cols-[min-content_auto] md:grid-flow-col place-items-center">
-    <div className="w-full max-w-xs md:w-auto md:max-w-none md:row-span-3 md:h-full aspect-[1/2] iphone-frame md:order-4">
-      <div className="w-full h-full bg-white dark:bg-zinc-900 p-[8%] pb-[11%] iphone-mask [&>*]:h-full">
+    <div className="w-full max-w-xs md:w-auto md:max-w-none md:row-span-3 md:h-full aspect-1/2 iphone-frame md:order-4">
+      <div className="w-full h-full bg-white dark:bg-zinc-900 p-[8%] pb-[11%] iphone-mask *:h-full">
 
 ```tsx snippet
 import {A11y} from './home/A11y';
@@ -413,7 +413,7 @@ import {A11y} from './home/A11y';
 </Section>
 
 <Section className="orange-gradient-background">
-  <h2><GradientText>Ready for an</GradientText> <span className="bg-clip-text bg-gradient-to-b from-yellow-500 to-orange-600">international</span> <GradientText>audience.</GradientText></h2>
+  <h2><GradientText>Ready for an</GradientText> <span className="bg-clip-text bg-linear-to-b from-yellow-500 to-orange-600">international</span> <GradientText>audience.</GradientText></h2>
   <p>React Aria is engineered for internationalization out of the box, including translations in over 30 languages, localized date and number formatting and parsing, support for 13 calendar systems, 5 numbering systems, right-to-left layout, and more.</p>
   <LearnMoreLink href="internationalization.html" className="text-orange-700 dark:text-orange-600 hover:bg-orange-400/[15%]" />
 
@@ -426,7 +426,7 @@ import {I18n} from './home/I18n';
 </Section>
 
 <Section className="green-gradient-background">
-  <h2><span className="bg-clip-text bg-gradient-to-b from-lime-600 to-green-600">Customizable</span> <GradientText>to the max.</GradientText></h2>
+  <h2><span className="bg-clip-text bg-linear-to-b from-lime-600 to-green-600">Customizable</span> <GradientText>to the max.</GradientText></h2>
   <p>React Aria offers a flexible and scalable API that lets you dive as deep into the details as you like. Start with high-level components with a built-in DOM structure and simple styling API, compose custom patterns with contexts, and for the ultimate control, drop down to the low-level Hook-based API. Mix and match as needed.</p>
   <LearnMoreLink href="advanced.html" className="text-green-700 dark:text-green-600 hover:bg-green-400/[15%]" />
 
@@ -437,7 +437,7 @@ import {I18n} from './home/I18n';
 
     <Scrollable className="relative flex-1 -mx-6 -mb-6 mt-6 [&_.source]:px-6 [&_.source]:text-[15px] [&_.source]:leading-snug lg:[&_.source]:text-sm isolate rounded-b-2xl">
 
-<div className="highlight-tags [--delay:2.5s] h-full [&>*]:h-full cross-fade [--fade-from:1] [--fade-to:0]">
+<div className="highlight-tags [--delay:2.5s] h-full *:h-full cross-fade [--fade-from:1] [--fade-to:0]">
 
 ```tsx
 <Select>
@@ -484,7 +484,7 @@ import {I18n} from './home/I18n';
     <CardTitle>Build custom patterns.</CardTitle>
     <CardDescription>Use the exported contexts for each component to build your own custom patterns with compositional APIs just like React Aria's built-in components.</CardDescription>
 
-    <Scrollable className="flex-1 -mx-6 -mb-6 mt-6 [&>*]:h-full [&_.source]:pl-6 lg:[&_.source]:text-[13px] rounded-b-2xl">
+    <Scrollable className="flex-1 -mx-6 -mb-6 mt-6 *:h-full [&_.source]:pl-6 lg:[&_.source]:text-[13px] rounded-b-2xl">
 
 ```tsx format=false
 // A Stepper component with customizable buttons.
@@ -519,7 +519,7 @@ function Stepper({children}) {
     <CardTitle>Customize component parts.</CardTitle>
     <CardDescription>React Aria's contexts let you extend components with new features, or even replace individual parts with totally custom implementations.</CardDescription>
 
-    <Scrollable className="flex-1 -mx-6 -mb-6 mt-6 max-h-[30rem] lg:max-h-none [--code-padding:theme(spacing.6)] [&_.source]:px-6 lg:[&_.source]:text-[13px] code-mask rounded-b-2xl">
+    <Scrollable className="flex-1 -mx-6 -mb-6 mt-6 max-h-[30rem] lg:max-h-none [--code-padding:--spacing(6)] [&_.source]:px-6 lg:[&_.source]:text-[13px] code-mask rounded-b-2xl">
 
 ```tsx format=false
 // Add a clear button to a DatePicker.
@@ -573,7 +573,7 @@ function DatePickerClearButton() {
     <CardTitle>Get complete control with hooks.</CardTitle>
     <CardDescription>Drop down to the low-level Hook-based API to intercept events, override behavior, customize DOM elements, and much more. Mix and match components and hooks as needed.</CardDescription>
 
-    <Scrollable className="flex-1 -mx-6 -mb-6 mt-6 [&>*]:h-full [--code-padding:theme(spacing.6)] [&_.source]:px-6 lg:[&_.source]:text-[13px] rounded-b-2xl">
+    <Scrollable className="flex-1 -mx-6 -mb-6 mt-6 *:h-full [--code-padding:--spacing(6)] [&_.source]:px-6 lg:[&_.source]:text-[13px] rounded-b-2xl">
 
 ```tsx format=false
 import {useCalendarGrid} from 'react-aria';

@@ -78,5 +78,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.0"
   }
 }
