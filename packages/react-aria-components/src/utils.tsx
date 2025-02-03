@@ -211,7 +211,8 @@ export function useContextProps<T, U extends SlotProps, E extends Element>(props
 }
 
 export function useSlot(initialState: boolean | (() => boolean) = true): [RefCallback<Element>, boolean] {
-  // Assume we do have the slot in the initial render.
+  // Initial state is typically based on the parent having an aria-label or aria-labelledby.
+  // If it does, this value should be false so that we don't update the state and cause a rerender when we go through the layoutEffect
   let [hasSlot, setHasSlot] = useState(initialState);
   let hasRun = useRef(false);
 
