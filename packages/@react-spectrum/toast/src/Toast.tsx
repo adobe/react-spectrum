@@ -16,7 +16,6 @@ import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import CrossMedium from '@spectrum-icons/ui/CrossMedium';
 import {DOMProps, DOMRef} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {flushSync} from 'react-dom';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -88,22 +87,6 @@ export const Toast = React.forwardRef(function Toast(props: SpectrumToastProps, 
     }
   };
 
-  let wrappedCloseButtonProps = {
-    ...closeButtonProps,
-    onPress: (e) => {
-      if ('startViewTransition' in document) {
-        // @ts-expect-error
-        document.startViewTransition(() => {
-          flushSync(() => {
-            closeButtonProps.onPress?.(e);
-          });
-        });
-      } else {
-        closeButtonProps.onPress?.(e);
-      }
-    }
-  };
-
   return (
     <div
       {...styleProps}
@@ -146,7 +129,7 @@ export const Toast = React.forwardRef(function Toast(props: SpectrumToastProps, 
         </div>
       </div>
       <div className={classNames(styles, 'spectrum-Toast-buttons')}>
-        <ClearButton {...wrappedCloseButtonProps} variant="overBackground">
+        <ClearButton {...closeButtonProps} variant="overBackground">
           <CrossMedium />
         </ClearButton>
       </div>

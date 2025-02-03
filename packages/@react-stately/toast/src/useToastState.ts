@@ -16,7 +16,9 @@ import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
 
 export interface ToastStateProps {
   /** The maximum number of toasts to display at a time. */
-  maxVisibleToasts?: number
+  maxVisibleToasts?: number,
+  /** Function to wrap updates in (i.e. document.startViewTransition()). */
+  wrapUpdate?: <R>(fn: () => R) => R
 }
 
 export interface ToastOptions {
@@ -86,11 +88,21 @@ export class ToastQueue<T> {
   private queue: QueuedToast<T>[] = [];
   private subscriptions: Set<() => void> = new Set();
   private maxVisibleToasts: number;
+  private wrapUpdate?: <R>(fn: () => R) => R;
   /** The currently visible toasts. */
   visibleToasts: QueuedToast<T>[] = [];
 
   constructor(options?: ToastStateProps) {
     this.maxVisibleToasts = options?.maxVisibleToasts ?? 1;
+    this.wrapUpdate = options?.wrapUpdate;
+  }
+
+  private runWithWrapUpdate<R>(fn: () => R): R {
+    if (this.wrapUpdate) {
+      return this.wrapUpdate(fn);
+    } else {
+      return fn();
+    }
   }
 
   /** Subscribes to updates to the visible toasts. */
@@ -101,42 +113,46 @@ export class ToastQueue<T> {
 
   /** Adds a new toast to the queue. */
   add(content: T, options: ToastOptions = {}) {
-    let toastKey = Math.random().toString(36);
-    let toast: QueuedToast<T> = {
-      ...options,
-      content,
-      key: toastKey,
-      timer: options.timeout ? new Timer(() => this.close(toastKey), options.timeout) : undefined
-    };
+    return this.runWithWrapUpdate(() => {
+      let toastKey = Math.random().toString(36);
+      let toast: QueuedToast<T> = {
+        ...options,
+        content,
+        key: toastKey,
+        timer: options.timeout ? new Timer(() => this.close(toastKey), options.timeout) : undefined
+      };
 
-    let low = 0;
-    let high = this.queue.length;
-    while (low < high) {
-      let mid = Math.floor((low + high) / 2);
-      if ((toast.priority || 0) > (this.queue[mid].priority || 0)) {
-        high = mid;
-      } else {
-        low = mid + 1;
+      let low = 0;
+      let high = this.queue.length;
+      while (low < high) {
+        let mid = Math.floor((low + high) / 2);
+        if ((toast.priority || 0) > (this.queue[mid].priority || 0)) {
+          high = mid;
+        } else {
+          low = mid + 1;
+        }
       }
-    }
 
-    this.queue.splice(low, 0, toast);
+      this.queue.splice(low, 0, toast);
 
-    this.updateVisibleToasts();
-    return toastKey;
+      this.updateVisibleToasts();
+      return toastKey;
+    });
   }
 
   /**
    * Closes a toast.
    */
   close(key: string) {
-    let index = this.queue.findIndex(t => t.key === key);
-    if (index >= 0) {
-      this.queue[index].onClose?.();
-      this.queue.splice(index, 1);
-    }
+    return this.runWithWrapUpdate(() => {
+      let index = this.queue.findIndex(t => t.key === key);
+      if (index >= 0) {
+        this.queue[index].onClose?.();
+        this.queue.splice(index, 1);
+      }
 
-    this.updateVisibleToasts();
+      this.updateVisibleToasts();
+    });
   }
 
   private updateVisibleToasts() {

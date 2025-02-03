@@ -39,12 +39,29 @@ export interface SpectrumToastOptions extends Omit<ToastOptions, 'priority'>, DO
 
 type CloseFunction = () => void;
 
+function wrapInViewTransition<R>(fn: () => R): R {
+  if ('startViewTransition' in document) {
+    let result: R;
+    // @ts-expect-error
+    document.startViewTransition(() => {
+      flushSync(() => {
+        result = fn();
+      });
+    });
+    // @ts-ignore
+    return result;
+  } else {
+    return fn();
+  }
+}
+
 // There is a single global toast queue instance for the whole app, initialized lazily.
 let globalToastQueue: ToastQueue<SpectrumToastValue> | null = null;
 function getGlobalToastQueue() {
   if (!globalToastQueue) {
     globalToastQueue = new ToastQueue({
-      maxVisibleToasts: Infinity
+      maxVisibleToasts: Infinity,
+      wrapUpdate: wrapInViewTransition
     });
   }
 
@@ -180,27 +197,7 @@ function addToast(children: string, variant: SpectrumToastValue['variant'], opti
   // It is debatable whether non-actionable toasts would also fail.
   let timeout = options.timeout && !options.onAction ? Math.max(options.timeout, 5000) : undefined;
   let queue = getGlobalToastQueue();
-  let key: string;
-  let add = () => queue.add(value, {timeout, onClose: options.onClose});
-  if ('startViewTransition' in document) {
-    // @ts-expect-error
-    document.startViewTransition(() => {
-      flushSync(() => {
-        key = add();
-      });
-    });
-  } else {
-    key = add();
-  }
-
-  if ('startViewTransition' in document) {
-    // @ts-expect-error
-    return () => document.startViewTransition(() => {
-      flushSync(() => {
-        queue.close(key);
-      });
-    });
-  }
+  let key = queue.add(value, {timeout, onClose: options.onClose});
   return () => queue.close(key);
 }
 
