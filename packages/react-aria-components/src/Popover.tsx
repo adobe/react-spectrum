@@ -17,7 +17,7 @@ import {forwardRefType, RefObject} from '@react-types/shared';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import {OverlayTriggerStateContext} from './Dialog';
-import React, {createContext, ForwardedRef, forwardRef, useContext, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useContext, useMemo, useRef, useState} from 'react';
 import {useIsHidden} from '@react-aria/collections';
 
 export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef' | 'offset' | 'arrowSize'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, SlotProps {
@@ -91,6 +91,22 @@ export const Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pop
   let isExiting = useExitAnimation(ref, state.isOpen) || props.isExiting || false;
   let isHidden = useIsHidden();
 
+  // To force a menu width lower than the triggerWidth, use CSS variables.
+  let style = useMemo(() => {
+    let triggerWidth = props.style?.['--trigger-width']?.replace('px', '');
+    
+    if (props.triggerRef?.current && !isNaN(Number(triggerWidth))) {
+      let triggerRect = props.triggerRef.current.getBoundingClientRect();
+      let menuWidth = triggerRect.right - triggerRect.left;
+
+      if (menuWidth > Number.parseFloat(triggerWidth)) { 
+        return {...props.style, '--trigger-width': menuWidth + 'px'}; 
+      }
+    }
+
+    return props.style;
+  }, [props.triggerRef, props.style]);
+
   // If we are in a hidden tree, we still need to preserve our children.
   if (isHidden) {
     let children = props.children;
@@ -114,6 +130,7 @@ export const Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pop
   return (
     <PopoverInner
       {...props}
+      style={style}
       triggerRef={props.triggerRef!}
       state={state}
       popoverRef={ref}

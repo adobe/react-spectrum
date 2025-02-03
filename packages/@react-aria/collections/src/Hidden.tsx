@@ -12,7 +12,7 @@
 
 import {createPortal} from 'react-dom';
 import {forwardRefType} from '@react-types/shared';
-import React, {createContext, forwardRef, ReactElement, ReactNode, useContext} from 'react';
+import React, {createContext, forwardRef, ReactElement, ReactNode, useContext, useMemo} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
 
 // React doesn't understand the <template> element, which doesn't have children like a normal element.
@@ -43,6 +43,8 @@ const hiddenFragment = typeof DocumentFragment !== 'undefined' ? new DocumentFra
 export function Hidden(props: {children: ReactNode}) {
   let isHidden = useContext(HiddenContext);
   let isSSR = useIsSSR();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  let wasSSR = useMemo(() => isSSR, []);
   if (isHidden) {
     // Don't hide again if we are already hidden.
     return <>{props.children}</>;
@@ -57,7 +59,7 @@ export function Hidden(props: {children: ReactNode}) {
   // In SSR, portals are not supported by React. Instead, render into a <template>
   // element, which the browser will never display to the user. In addition, the
   // content is not part of the DOM tree, so it won't affect ids or other accessibility attributes.
-  return isSSR
+  return wasSSR
     ? <template data-react-aria-hidden>{children}</template>
     : createPortal(children, hiddenFragment!);
 }
