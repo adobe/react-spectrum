@@ -346,7 +346,8 @@ const tab = style({
     labelBehavior: {
       hide: size(6)
     }
-  }
+  },
+  disableTapHighlight: true
 }, getAllowedOverrides());
 
 const icon = style({
@@ -608,7 +609,8 @@ let CollapsingTabs = ({collection, containerRef, ...props}: {collection: Collect
     }
   }, [collection.size, updateOverflow]);
 
-  let prevOrientation = useRef(orientation);
+  // start with null so that the first render won't have a flicker
+  let prevOrientation = useRef<Orientation | null>(null);
   useLayoutEffect(() => {
     if (collection.size > 0 && prevOrientation.current !== orientation) {
       updateOverflow();

@@ -39,6 +39,7 @@ import React, {createContext, forwardRef, isValidElement, JSXElementConstructor,
 import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale} from 'react-aria';
+import { useScale } from './utils';
 
 interface S2TreeProps {
   // Only detatched is supported right now with the current styles from Spectrum
@@ -99,6 +100,7 @@ const tree = style({
 
 function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
   let {children, isDetached, isEmphasized} = props;
+  let scale = useScale();
 
   let renderer;
   if (typeof children === 'function') {
@@ -109,7 +111,7 @@ function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
 
   let layout = useMemo(() => {
     return new UNSTABLE_ListLayout({
-      rowHeight: isDetached ? 42 : 40
+      estimatedRowHeight: scale === 'medium' ? (isDetached ? 42 : 40) : (isDetached ? 52 : 50),
     });
   }, [isDetached]);
 
