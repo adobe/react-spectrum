@@ -28,7 +28,7 @@ export const ComboBoxReproductionExample = () => {
         <Input style={{backgroundColor: 'white'}} />
         <Button style={{backgroundColor: 'white', borderColor: 'lightgrey'}}>▼</Button>
       </div>
-      <Popover triggerRef={ref} style={{backgroundColor: 'darkgrey'}} isOpen>
+      <Popover triggerRef={ref} style={{backgroundColor: 'darkgrey'}}>
         <ListBox>
           <ListBoxItem>Aardvark</ListBoxItem>
           <ListBoxItem>Cat</ListBoxItem>

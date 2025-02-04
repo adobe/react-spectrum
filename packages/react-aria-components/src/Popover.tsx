@@ -12,12 +12,12 @@
 
 import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, usePopover} from 'react-aria';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {filterDOMProps, mergeProps, useEnterAnimation, useExitAnimation, useLayoutEffect} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useEnterAnimation, useExitAnimation, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {forwardRefType, RefObject} from '@react-types/shared';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import {OverlayTriggerStateContext} from './Dialog';
-import React, {createContext, ForwardedRef, forwardRef, useContext, useMemo, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {useIsHidden} from '@react-aria/collections';
 
 export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef' | 'offset' | 'arrowSize'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, SlotProps {
@@ -95,12 +95,17 @@ export const Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pop
   let triggerWidth = Number.parseFloat(props.style?.['--trigger-width']);
   let [menuWidth, setMenuWidth] = useState(triggerWidth || 0);
 
-  useLayoutEffect(() => {
+  let onResize = useCallback(() => {
     if (props.triggerRef?.current) {
       let triggerRect = props.triggerRef.current.getBoundingClientRect();
       setMenuWidth(triggerRect.right - triggerRect.left);
     }
   }, [props.triggerRef]);
+
+  useResizeObserver({
+    ref: props.triggerRef,
+    onResize: onResize
+  });
 
   let style = useMemo(() => ({
     minWidth: menuWidth + 'px', 
