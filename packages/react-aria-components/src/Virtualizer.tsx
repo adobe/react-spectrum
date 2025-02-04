@@ -37,7 +37,7 @@ const VirtualizerContext = createContext<VirtualizerState<any, any> | null>(null
 const LayoutContext = createContext<Pick<VirtualizerProps<any>, 'layout' | 'layoutOptions'> | null>(null);
 
 /**
- * A Virtualizer renders renders a scrollable collection of data using customizable layouts.
+ * A Virtualizer renders a scrollable collection of data using customizable layouts.
  * It supports very large collections by only rendering visible items to the DOM, reusing
  * them as the user scrolls.
  */
