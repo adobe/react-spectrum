@@ -17,7 +17,7 @@ import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {DOMRef, Expandable, Key, SelectionBehavior, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {isAndroid} from '@react-aria/utils';
-import React, {createContext, JSX, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
+import React, {createContext, JSX, JSXElementConstructor, ReactElement, ReactNode, useRef} from 'react';
 import {SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
 import {useButton} from '@react-aria/button';
@@ -40,8 +40,6 @@ export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeGridListProps<T>,
 export interface SpectrumTreeViewItemProps<T extends object = object> extends Omit<TreeItemProps, 'className' | 'style' | 'value' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'> {
   /** Rendered contents of the tree item or child items. */
   children: ReactNode,
-  /** Whether this item has children, even if not loaded yet. */
-  hasChildItems?: boolean,
   /** A list of child tree item objects used when dynamically rendering the tree item children. */
   childItems?: Iterable<T>
 }
@@ -219,23 +217,18 @@ const treeRowOutline = style({
   }
 });
 
-let TreeItemContext = createContext<{hasChildItems?: boolean}>({});
-
 export const TreeViewItem = <T extends object>(props: SpectrumTreeViewItemProps<T>) => {
   let {
     href
   } = props;
 
   return (
-    // TODO right now all the tree rows have the various data attributes applied on their dom nodes, should they? Doesn't feel very useful
-    <TreeItemContext.Provider value={{hasChildItems: !!props.childItems || props.hasChildItems}}>
-      <UNSTABLE_TreeItem
-        {...props}
-        className={renderProps => treeRow({
-          ...renderProps,
-          isLink: !!href
-        })} />
-    </TreeItemContext.Provider>
+    <UNSTABLE_TreeItem
+      {...props}
+      className={renderProps => treeRow({
+        ...renderProps,
+        isLink: !!href
+      })} />
   );
 };
 
@@ -244,7 +237,6 @@ export const TreeItemContent = (props: Omit<TreeItemContentProps, 'children'> & 
   let {
     children
   } = props;
-  let {hasChildItems} = useContext(TreeItemContext);
 
   return (
     <UNSTABLE_TreeItemContent>
@@ -260,7 +252,7 @@ export const TreeItemContent = (props: Omit<TreeItemContentProps, 'children'> & 
             )}
           <div style={{gridArea: 'level-padding', marginInlineEnd: `calc(${level - 1} * var(--spectrum-global-dimension-size-200))`}} />
           {/* TODO: revisit when we do async loading, at the moment hasChildItems will only cause the chevron to be rendered, no aria/data attributes indicating the row's expandability are added */}
-          {(hasChildRows || hasChildItems) && <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} />}
+          {hasChildRows && <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} />}
           <SlotProvider
             slots={{
               text: {UNSAFE_className: treeContent({isDisabled})},
@@ -278,9 +270,7 @@ export const TreeItemContent = (props: Omit<TreeItemContentProps, 'children'> & 
               },
               actionMenu: {UNSAFE_className: treeActionMenu(), UNSAFE_style: {marginInlineEnd: '.5rem'}, isQuiet: true}
             }}>
-            <TreeItemContext.Provider value={{}}>
-              {children}
-            </TreeItemContext.Provider>
+            {children}
           </SlotProvider>
           <div className={treeRowOutline({isFocusVisible, isSelected})} />
         </div>

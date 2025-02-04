@@ -668,10 +668,8 @@ describe('Table', () => {
 
     let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
     await user.tab();
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{ArrowRight}');
 
     let gridRows = tableTester.rows;
     expect(gridRows).toHaveLength(4);

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTreeGridListProps, useTreeGridList, useTreeGridListItem} from '@react-aria/tree';
+import {AriaTreeGridListItemOptions, AriaTreeGridListProps, useTreeGridList, useTreeGridListItem} from '@react-aria/tree';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
@@ -302,7 +302,7 @@ export const UNSTABLE_TreeItemContent = /*#__PURE__*/ createLeafComponent('conte
 
 export const TreeItemContentContext = createContext<TreeItemContentRenderProps | null>(null);
 
-export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRenderProps>, LinkDOMProps, HoverEvents {
+export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRenderProps>, LinkDOMProps, HoverEvents, Pick<AriaTreeGridListItemOptions, 'hasChildItems'> {
   /** The unique id of the tree row. */
   id?: Key,
   /** The object value that this tree item represents. When using dynamic collections, this is set automatically. */
@@ -325,7 +325,7 @@ export const UNSTABLE_TreeItem = /*#__PURE__*/ createBranchComponent('item', <T 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {rowProps, gridCellProps, expandButtonProps, descriptionProps, ...states} = useTreeGridListItem({node: item}, state, ref);
   let isExpanded = rowProps['aria-expanded'] === true;
-  let hasChildRows = [...state.collection.getChildren!(item.key)]?.length > 1;
+  let hasChildRows = props.hasChildItems || item.hasChildNodes;
   let level = rowProps['aria-level'] || 1;
 
   let {hoverProps, isHovered} = useHover({

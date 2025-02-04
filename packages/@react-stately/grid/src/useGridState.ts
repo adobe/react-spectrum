@@ -97,9 +97,10 @@ export function useGridState<T extends object, C extends GridCollection<T>>(prop
         }
       }
       if (newRow) {
-        const childNodes = newRow.hasChildNodes ? [...getChildNodes(newRow, collection)] : [];
+        let hasChildNodes = newRow.firstChildKey === undefined ? newRow.hasChildNodes : newRow.firstChildKey != null;
+        const childNodes = hasChildNodes ? [...getChildNodes(newRow, collection)] : [];
         const keyToFocus =
-          newRow.hasChildNodes &&
+          hasChildNodes &&
           parentNode !== node &&
           node &&
           node.index < childNodes.length ?

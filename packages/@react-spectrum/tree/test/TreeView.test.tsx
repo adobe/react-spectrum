@@ -480,7 +480,7 @@ describe('Tree', () => {
     expect(rows[0]).toHaveAttribute('aria-label', 'Test');
     // Until the row gets children, don't mark it with the aria/data attributes.
     expect(rows[0]).not.toHaveAttribute('aria-expanded');
-    expect(rows[0]).not.toHaveAttribute('data-has-child-rows');
+    expect(rows[0]).toHaveAttribute('data-has-child-rows');
     expect(chevron).toBeTruthy();
   });
 
