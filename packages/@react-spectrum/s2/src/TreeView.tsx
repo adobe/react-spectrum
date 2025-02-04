@@ -162,7 +162,7 @@ const rowBackgroundColor = {
 const treeRow = style({
   position: 'relative',
   display: 'flex',
-  height: 40,
+  height: 'full',
   width: 'full',
   boxSizing: 'border-box',
   font: 'ui',
@@ -189,9 +189,10 @@ const treeRow = style({
 const treeCellGrid = style({
   display: 'grid',
   width: 'full',
+  height: 'full',
   alignContent: 'center',
   alignItems: 'center',
-  gridTemplateColumns: ['minmax(0, auto)', 'minmax(0, auto)', 'minmax(0, auto)', 40, 'minmax(0, auto)', '1fr', 'minmax(0, auto)', 'auto'],
+  gridTemplateColumns: ['auto', 'auto', 'auto', 40, 'auto', '1fr', 'minmax(0, auto)', 'auto'],
   gridTemplateRows: '1fr',
   gridTemplateAreas: [
     'drag-handle checkbox level-padding expand-button icon content actions actionmenu'
@@ -306,8 +307,6 @@ const treeContent = style({
 
 const treeActions = style({
   gridArea: 'actions',
-  flexGrow: 0,
-  flexShrink: 0,
   /* TODO: I made this one up, confirm desired behavior. These paddings are to make sure the action group has enough padding for the focus ring */
   marginStart: 2,
   marginEnd: 4
@@ -439,6 +438,13 @@ interface ExpandableRowChevronProps {
 
 const expandButton = style<ExpandableRowChevronProps>({
   gridArea: 'expand-button',
+  color: {
+    default: '[inherit]',
+    isDisabled: {
+      default: 'disabled',
+      forcedColors: 'GrayText'
+    }
+  },
   height: 'full',
   aspectRatio: 'square',
   display: 'flex',
