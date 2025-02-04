@@ -12,12 +12,12 @@
 
 import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, usePopover} from 'react-aria';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {filterDOMProps, mergeProps, useEnterAnimation, useExitAnimation, useLayoutEffect} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useEnterAnimation, useExitAnimation, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {forwardRefType, RefObject} from '@react-types/shared';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import {OverlayTriggerStateContext} from './Dialog';
-import React, {createContext, ForwardedRef, forwardRef, useContext, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {useIsHidden} from '@react-aria/collections';
 
 export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef' | 'offset' | 'arrowSize'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, SlotProps {
@@ -91,6 +91,27 @@ export const Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pop
   let isExiting = useExitAnimation(ref, state.isOpen) || props.isExiting || false;
   let isHidden = useIsHidden();
 
+  // We can set minWidth to the trigger width as a courtesy for custom trigger elements.
+  let triggerWidth = Number.parseFloat(props.style?.['--trigger-width']);
+  let [menuWidth, setMenuWidth] = useState(triggerWidth || 0);
+
+  let onResize = useCallback(() => {
+    if (props.triggerRef?.current) {
+      let triggerRect = props.triggerRef.current.getBoundingClientRect();
+      setMenuWidth(triggerRect.right - triggerRect.left);
+    }
+  }, [props.triggerRef]);
+
+  useResizeObserver({
+    ref: props.triggerRef,
+    onResize: onResize
+  });
+
+  let style = useMemo(() => ({
+    minWidth: menuWidth + 'px', 
+    ...props.style
+  }), [menuWidth, props.style]);
+
   // If we are in a hidden tree, we still need to preserve our children.
   if (isHidden) {
     let children = props.children;
@@ -114,6 +135,7 @@ export const Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pop
   return (
     <PopoverInner
       {...props}
+      style={style}
       triggerRef={props.triggerRef!}
       state={state}
       popoverRef={ref}
