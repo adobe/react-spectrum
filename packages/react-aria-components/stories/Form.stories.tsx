@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, FileTrigger, Form, Input, Label, ListBox, ListBoxItem, Link, Popover, Select, SelectValue, TextField} from 'react-aria-components';
+import {Button, FileTrigger, Form, Group, Input, Label, ListBox, ListBoxItem, Link, NumberField, Popover, Select, SelectValue, TextField} from 'react-aria-components';
 import React from 'react';
 
 export default {
@@ -28,9 +28,13 @@ export const FormExample = () => {
     }}>
       <TextField data-testid="textfield-example">
         <Label>First name</Label>
-        <Input type="text" id="firstName" autoComplete='given-name'/>
+        <Input name="firstName" type="text" id="firstName" autoComplete='given-name'/>
       </TextField>
-      <Select id="favoriteAnimal" autoComplete='on'>
+      <TextField data-testid="textfield-example">
+        <Label>Width</Label>
+        <Input name="width" type="text" id="width" autoComplete='on'/>
+      </TextField>
+      <Select name="favoriteAnimal" id="favoriteAnimal" autoComplete='animal'>
         <Label>Favorite Animal</Label>
         <Button>
           <SelectValue />
@@ -47,6 +51,15 @@ export const FormExample = () => {
           </ListBox>
         </Popover>
       </Select>
+      <NumberField name="width" id="width" minValue={0}>
+        <Label>Width</Label>
+        <Group>
+          <Button slot="decrement">-</Button>
+          <Input autoComplete='on'/>
+          <Button slot="increment">+</Button>
+        </Group>
+      </NumberField>
+      <input type="date" id="bday" name="bday" autoComplete="bday"/>
       <Button type="submit">Submit</Button>
     </Form>
   );
