@@ -18,7 +18,7 @@ import React, {createContext, DOMAttributes, ReactNode, useContext, useMemo} fro
 interface Router {
   isNative: boolean,
   open: (target: Element, modifiers: Modifiers, href: Href, routerOptions: RouterOptions | undefined) => void,
-  useHref: (href: Href) => string
+  useHref: (href: Href, routerOptions: RouterOptions | undefined) => string
 }
 
 const RouterContext = createContext<Router>({
@@ -29,7 +29,7 @@ const RouterContext = createContext<Router>({
 
 interface RouterProviderProps {
   navigate: (path: Href, routerOptions: RouterOptions | undefined) => void,
-  useHref?: (href: Href) => string,
+  useHref?: (href: Href, routerOptions: RouterOptions | undefined) => string,
   children: ReactNode
 }
 
@@ -148,7 +148,7 @@ function openSyntheticLink(target: Element, modifiers: Modifiers) {
 
 export function useSyntheticLinkProps(props: LinkDOMProps): DOMAttributes<HTMLElement> {
   let router = useRouter();
-  const href = router.useHref(props.href ?? '');
+  const href = router.useHref(props.href ?? '', props?.routerOptions);
   return {
     'data-href': props.href ? href : undefined,
     'data-target': props.target,
@@ -173,7 +173,7 @@ export function getSyntheticLinkProps(props: LinkDOMProps): DOMAttributes<HTMLEl
 
 export function useLinkProps(props?: LinkDOMProps): LinkDOMProps {
   let router = useRouter();
-  const href = router.useHref(props?.href ?? '');
+  const href = router.useHref(props?.href ?? '', props?.routerOptions);
   return {
     href: props?.href ? href : undefined,
     target: props?.target,
