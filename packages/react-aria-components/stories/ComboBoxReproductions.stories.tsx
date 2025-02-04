@@ -11,29 +11,33 @@
  */
 
 import {Button, ComboBox, Input, Label, ListBox, ListBoxItem, Popover} from 'react-aria-components';
-import React from 'react';
+import React, {useRef} from 'react';
 import './combobox-reproductions.css';
 
 export default {
   title: 'React Aria Components'
 };
 
-export const ComboBoxReproductionExample = () => (
-  <ComboBox>
-    <Label>Favorite Animal</Label>
-    <div>
-      <Input />
-      <Button>▼</Button>
-    </div>
-    <Popover>
-      <ListBox>
-        <ListBoxItem>Aardvark</ListBoxItem>
-        <ListBoxItem>Cat</ListBoxItem>
-        <ListBoxItem>Dooooooooooooooooooooooooooooooooog</ListBoxItem>
-        <ListBoxItem>Kangaroo</ListBoxItem>
-        <ListBoxItem>Panda</ListBoxItem>
-        <ListBoxItem>Snake</ListBoxItem>
-      </ListBox>
-    </Popover>
-  </ComboBox>
-);
+export const ComboBoxReproductionExample = () => {
+  const ref = useRef<HTMLDivElement>(null);
+  return (
+    <ComboBox>
+      <Label>Favorite Animal</Label>
+      <div ref={ref} style={{display: 'flex', backgroundColor: 'white'}}>
+        <span role="img" aria-label="Checkmark" >✅</span>
+        <Input style={{backgroundColor: 'white'}} />
+        <Button style={{backgroundColor: 'white', borderColor: 'lightgrey'}}>▼</Button>
+      </div>
+      <Popover triggerRef={ref} style={{backgroundColor: 'darkgrey'}} isOpen>
+        <ListBox>
+          <ListBoxItem>Aardvark</ListBoxItem>
+          <ListBoxItem>Cat</ListBoxItem>
+          <ListBoxItem>Dooooooooooooooooooooooooooooooooog</ListBoxItem>
+          <ListBoxItem>Kangaroo</ListBoxItem>
+          <ListBoxItem>Panda</ListBoxItem>
+          <ListBoxItem>Snake</ListBoxItem>
+        </ListBox>
+      </Popover>
+    </ComboBox>
+  );
+};

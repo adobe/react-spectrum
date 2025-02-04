@@ -91,19 +91,21 @@ export const Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pop
   let isExiting = useExitAnimation(ref, state.isOpen) || props.isExiting || false;
   let isHidden = useIsHidden();
 
-  let triggerWidth = Number.parseFloat(props.style?.['--trigger-width']?.replace('px', ''));
-  let [width, setWidth] = useState(triggerWidth);
+  // We can set minWidth to the trigger width as a courtesy for custom trigger elements.
+  let triggerWidth = Number.parseFloat(props.style?.['--trigger-width']);
+  let [menuWidth, setMenuWidth] = useState(triggerWidth || 0);
 
   useLayoutEffect(() => {
     if (props.triggerRef?.current) {
       let triggerRect = props.triggerRef.current.getBoundingClientRect();
-      let menuWidth = triggerRect.right - triggerRect.left;
-
-      setWidth(menuWidth > triggerWidth ? menuWidth : triggerWidth);
+      setMenuWidth(triggerRect.right - triggerRect.left);
     }
-  }, [triggerWidth, props.triggerRef]);
+  }, [props.triggerRef]);
 
-  let style = useMemo(() => ({...props.style, '--trigger-width': width + 'px'}), [width, props.style]);
+  let style = useMemo(() => ({
+    minWidth: menuWidth + 'px', 
+    ...props.style
+  }), [menuWidth, props.style]);
 
   // If we are in a hidden tree, we still need to preserve our children.
   if (isHidden) {
