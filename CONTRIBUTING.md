@@ -218,7 +218,7 @@ It may also just be a stale cache, you can try deleting the `.parcel-cache`
 
 ## From Contributor To Committer
 
-We love contributions from our community! If you'd like to go a step beyond contributor and become a committer with full write access and a say in the project, you must be invited to the project. The existing committers employ an internal nomination process that must reach lazy consensus (silence is approval) before invitations are issued. If you feel you are qualified and want to get more deeply involved, feel free to reach out to existing committers to have a conversation about that.
+We love contributions from our community! At this time, we are not accepting new committers. We thank you for your understanding.
 
 ## Security Issues
 
