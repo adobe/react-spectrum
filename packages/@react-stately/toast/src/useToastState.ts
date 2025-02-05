@@ -113,53 +113,49 @@ export class ToastQueue<T> {
 
   /** Adds a new toast to the queue. */
   add(content: T, options: ToastOptions = {}) {
-    return this.runWithWrapUpdate(() => {
-      let toastKey = Math.random().toString(36);
-      let toast: QueuedToast<T> = {
-        ...options,
-        content,
-        key: toastKey,
-        timer: options.timeout ? new Timer(() => this.close(toastKey), options.timeout) : undefined
-      };
+    let toastKey = Math.random().toString(36);
+    let toast: QueuedToast<T> = {
+      ...options,
+      content,
+      key: toastKey,
+      timer: options.timeout ? new Timer(() => this.close(toastKey), options.timeout) : undefined
+    };
 
-      let low = 0;
-      let high = this.queue.length;
-      while (low < high) {
-        let mid = Math.floor((low + high) / 2);
-        if ((toast.priority || 0) > (this.queue[mid].priority || 0)) {
-          high = mid;
-        } else {
-          low = mid + 1;
-        }
+    let low = 0;
+    let high = this.queue.length;
+    while (low < high) {
+      let mid = Math.floor((low + high) / 2);
+      if ((toast.priority || 0) > (this.queue[mid].priority || 0)) {
+        high = mid;
+      } else {
+        low = mid + 1;
       }
+    }
 
-      this.queue.splice(low, 0, toast);
+    this.queue.splice(low, 0, toast);
 
-      this.updateVisibleToasts();
-      return toastKey;
-    });
+    this.updateVisibleToasts();
+    return toastKey;
   }
 
   /**
    * Closes a toast.
    */
   close(key: string) {
-    return this.runWithWrapUpdate(() => {
-      let index = this.queue.findIndex(t => t.key === key);
-      if (index >= 0) {
-        this.queue[index].onClose?.();
-        this.queue.splice(index, 1);
-      }
+    let index = this.queue.findIndex(t => t.key === key);
+    if (index >= 0) {
+      this.queue[index].onClose?.();
+      this.queue.splice(index, 1);
+    }
 
-      this.updateVisibleToasts();
-    });
+    this.updateVisibleToasts();
   }
 
   private updateVisibleToasts() {
     this.visibleToasts = this.queue.slice(0, this.maxVisibleToasts);
 
     for (let fn of this.subscriptions) {
-      fn();
+      this.runWithWrapUpdate(() => fn());
     }
   }
 
