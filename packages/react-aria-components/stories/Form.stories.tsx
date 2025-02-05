@@ -22,44 +22,44 @@ export default {
 export const FormExample = () => {
   return (
     <Form
+      aria-label="Shipping information"
       onSubmit={e => {
         action('onSubmit')(Object.fromEntries(new FormData(e.target as HTMLFormElement).entries()));
         e.preventDefault();
     }}>
-      <TextField data-testid="textfield-example">
-        <Label>First name</Label>
-        <Input name="firstName" type="text" id="firstName" autoComplete='given-name'/>
+      <TextField>
+        <Label>Address</Label>
+        <Input name="streetAddress" type="text" id="streetAddress" autoComplete='shipping street-address'/>
       </TextField>
-      <TextField data-testid="textfield-example">
-        <Label>Width</Label>
-        <Input name="width" type="text" id="width" autoComplete='on'/>
+      <TextField>
+        <Label>City</Label>
+        <Input name="city" type="text" id="city" autoComplete='shipping address-level2'/>
       </TextField>
-      <Select name="favoriteAnimal" id="favoriteAnimal" autoComplete='animal'>
-        <Label>Favorite Animal</Label>
+      <TextField>
+        <Label>State</Label>
+        <Input name="state" type="text" id="state" autoComplete='shipping address-level1'/>
+      </TextField>
+      <TextField>
+        <Label>Zip</Label>
+        <Input name="city" type="text" id="city" autoComplete='shipping postal-code'/>
+      </TextField>
+      <Select name="country" id="country" autoComplete='shipping country'>
+        <Label>Country</Label>
         <Button>
           <SelectValue />
           <span aria-hidden="true">▼</span>
         </Button>
         <Popover>
           <ListBox>
-            <ListBoxItem>Aardvark</ListBoxItem>
-            <ListBoxItem>Cat</ListBoxItem>
-            <ListBoxItem>Dog</ListBoxItem>
-            <ListBoxItem>Kangaroo</ListBoxItem>
-            <ListBoxItem>Panda</ListBoxItem>
-            <ListBoxItem>Snake</ListBoxItem>
+            <ListBoxItem>Greece</ListBoxItem>
+            <ListBoxItem>Italy</ListBoxItem>
+            <ListBoxItem>Spain</ListBoxItem>
+            <ListBoxItem>Mexico</ListBoxItem>
+            <ListBoxItem>Canada</ListBoxItem>
+            <ListBoxItem>United States</ListBoxItem>
           </ListBox>
         </Popover>
       </Select>
-      <NumberField name="width" id="width" minValue={0}>
-        <Label>Width</Label>
-        <Group>
-          <Button slot="decrement">-</Button>
-          <Input autoComplete='on'/>
-          <Button slot="increment">+</Button>
-        </Group>
-      </NumberField>
-      <input type="date" id="bday" name="bday" autoComplete="bday"/>
       <Button type="submit">Submit</Button>
     </Form>
   );
