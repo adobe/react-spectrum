@@ -204,6 +204,7 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
       case 'Tab':
         // Moving forward will always go into the collection which will handle Tab itself, prevent the browser's default tab behavior so both don't happen
         if (!e.shiftKey) {
+          e.nativeEvent.stopImmediatePropagation(); // react 16 compat due to where it listens to the events
           e.preventDefault();
         }
         // Moving backwards shouldn't only be handled by the browser's default tab behavior
