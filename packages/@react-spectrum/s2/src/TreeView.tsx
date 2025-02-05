@@ -39,7 +39,7 @@ import React, {createContext, forwardRef, isValidElement, JSXElementConstructor,
 import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale} from 'react-aria';
-import { useScale } from './utils';
+import {useScale} from './utils';
 
 interface S2TreeProps {
   // Only detatched is supported right now with the current styles from Spectrum
@@ -470,7 +470,7 @@ const expandButton = style<ExpandableRowChevronProps>({
   transition: 'default',
   backgroundColor: 'transparent',
   borderStyle: 'none',
-  disableTapHighlight: true,
+  disableTapHighlight: true
 });
 
 function ExpandableRowChevron(props: ExpandableRowChevronProps) {
