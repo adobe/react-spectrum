@@ -367,10 +367,10 @@ describe('useClipboard', () => {
     it('should show the type of the clipboard event if cutting', async () => {
       let getItems = (details) => [{
         [details.type]: 'test data'
-      }]
+      }];
 
       let onCut = jest.fn();
-      let tree = render(<Copyable getItems={getItems} onCut={onCut}/>);
+      let tree = render(<Copyable getItems={getItems} onCut={onCut} />);
       let button = tree.getByRole('button');
 
       await user.tab();
@@ -380,15 +380,15 @@ describe('useClipboard', () => {
       fireEvent(button, new ClipboardEvent('cut', {clipboardData}));
       expect([...clipboardData.items]).toEqual([new DataTransferItem('cut', 'test data')]);
       expect(onCut).toHaveBeenCalledTimes(1);
-    })
+    });
 
     it('should show the type of the clipboard event if copying', async () => {
       let getItems = (details) => [{
         [details.type]: 'test data'
-      }]
+      }];
 
       let onCopy = jest.fn();
-      let tree = render(<Copyable getItems={getItems} onCopy={onCopy}/>);
+      let tree = render(<Copyable getItems={getItems} onCopy={onCopy} />);
       let button = tree.getByRole('button');
 
       await user.tab();
@@ -398,7 +398,7 @@ describe('useClipboard', () => {
       fireEvent(button, new ClipboardEvent('copy', {clipboardData}));
       expect([...clipboardData.items]).toEqual([new DataTransferItem('copy', 'test data')]);
       expect(onCopy).toHaveBeenCalledTimes(1);
-    })
+    });
   });
 });
 
