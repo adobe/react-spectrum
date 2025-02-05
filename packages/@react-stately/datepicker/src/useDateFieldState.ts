@@ -430,7 +430,11 @@ function processSegments(dateValue, validSegments, dateFormatter, resolvedOption
       isEditable
     } as DateSegment;
 
+    // There is an issue in RTL languages where time fields render (minute:hour) instead of (hour:minute).
+    // To force an LTR direction on the time field since, we wrap the time segments in LRI (left-to-right) isolate unicode. See https://www.w3.org/International/questions/qa-bidi-unicode-controls.
+    // These unicode characters will be added to the array of processed segments as literals and will mark the start and end of the embedded direction change. 
     if (segment.type === 'hour') {
+      // This marks the start of the embedded direction change. 
       processedSegments.push({
         type: 'literal',
         text: '\u2066',
@@ -440,6 +444,7 @@ function processSegments(dateValue, validSegments, dateFormatter, resolvedOption
         isEditable: false
       });
       processedSegments.push(dateSegment);
+      // This marks the end of the embedded direction change in the case that the granularity it set to "hour".
       if (segment.type === granularity) {
         processedSegments.push({
           type: 'literal',
@@ -450,8 +455,9 @@ function processSegments(dateValue, validSegments, dateFormatter, resolvedOption
           isEditable: false
         });
       }
-    } else if (timeValue.includes(granularity) && segment.type === granularity) {
+    } else if (timeValue.includes(segment.type) && segment.type === granularity) {
       processedSegments.push(dateSegment);
+      // This marks the end of the embedded direction change.
       processedSegments.push({
         type: 'literal',
         text: '\u2069',
@@ -461,6 +467,7 @@ function processSegments(dateValue, validSegments, dateFormatter, resolvedOption
         isEditable: false
       });
     } else {
+      // We only want to "wrap" the unicode around segments that are hour, minute, or second. If they aren't, just process as normal. 
       processedSegments.push(dateSegment);
     }
   }

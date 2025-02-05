@@ -64,7 +64,9 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
   });
 
   let fieldRef = useRef<HTMLDivElement>(null);
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let inputRef = useRef<HTMLInputElement>(null);
   let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useDateField({
     ...removeDataAttributes(props),
@@ -127,7 +129,9 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
   });
 
   let fieldRef = useRef<HTMLDivElement>(null);
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let inputRef = useRef<HTMLInputElement>(null);
   let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useTimeField({
     ...removeDataAttributes(props),

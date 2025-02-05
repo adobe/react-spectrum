@@ -23,7 +23,8 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 interface ContentProps extends UnsafeStyles, SlotProps {
   children?: ReactNode,
   styles?: StyleString,
-  isHidden?: boolean
+  isHidden?: boolean,
+  id?: string
 }
 
 interface HeadingProps extends ContentProps {
