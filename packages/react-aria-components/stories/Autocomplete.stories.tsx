@@ -586,7 +586,7 @@ const MyMenu2 = () => {
   );
 };
 
-export function App() {
+export function AutocompleteWithExtraButtons() {
   return (
     <div>
       <input />
