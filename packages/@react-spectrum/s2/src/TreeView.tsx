@@ -361,6 +361,7 @@ export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
   let nestedRows;
   let {renderer} = useTreeRendererContext();
   let {isDetached, isEmphasized} = useContext(InternalTreeContext);
+  let scale = useScale();
 
   if (typeof children === 'string') {
     content = <Text>{children}</Text>;
