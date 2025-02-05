@@ -63,16 +63,14 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
     state.setSelectedValue(value);
   };
 
+  // Handle press state for keyboard interactions and cases where labelProps is not used.
   let {pressProps, isPressed} = usePress({
     isDisabled
   });
 
-  // iOS does not toggle radios if you drag off and back onto the label, so handle it ourselves.
+  // Handle press state on the label.
   let {pressProps: labelProps, isPressed: isLabelPressed} = usePress({
-    isDisabled,
-    onPress() {
-      state.setSelectedValue(value);
-    }
+    isDisabled
   });
 
   let {focusableProps} = useFocusable(mergeProps(props, {
@@ -97,7 +95,7 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
   useFormValidation({validationBehavior}, state, ref);
 
   return {
-    labelProps: mergeProps(labelProps, {onClick: e => e.preventDefault()}),
+    labelProps,
     inputProps: mergeProps(domProps, {
       ...interactions,
       type: 'radio',
