@@ -19,7 +19,7 @@ export default {
 };
 
 
-export const FormExample = () => {
+export const FormAutoFillExample = () => {
   return (
     <Form
       aria-label="Shipping information"
