@@ -111,9 +111,9 @@ function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
 
   let layout = useMemo(() => {
     return new UNSTABLE_ListLayout({
-      estimatedRowHeight: scale === 'medium' ? (isDetached ? 42 : 40) : (isDetached ? 52 : 50),
+      rowHeight: scale === 'medium' ? (isDetached ? 44 : 40) : (isDetached ? 54 : 50)
     });
-  }, [isDetached]);
+  }, [isDetached, scale]);
 
   return (
     <UNSTABLE_Virtualizer layout={layout}>
@@ -164,7 +164,12 @@ const rowBackgroundColor = {
 const treeRow = style({
   position: 'relative',
   display: 'flex',
-  height: 'full',
+  height: {
+    scale: {
+      medium: 40,
+      large: 50
+    }
+  },
   width: 'full',
   boxSizing: 'border-box',
   font: 'ui',
@@ -357,6 +362,7 @@ export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
   let nestedRows;
   let {renderer} = useTreeRendererContext();
   let {isDetached, isEmphasized} = useContext(InternalTreeContext);
+  let scale = useScale();
 
   if (typeof children === 'string') {
     content = <Text>{children}</Text>;
@@ -383,7 +389,7 @@ export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
   return (
     <UNSTABLE_TreeItem
       {...props}
-      className={(renderProps) => treeRow({...renderProps, isLink: !!href, isEmphasized}) + (renderProps.isFocusVisible && !isDetached ? ' ' + treeRowFocusIndicator : '')}>
+      className={(renderProps) => treeRow({...renderProps, isLink: !!href, isEmphasized, scale}) + (renderProps.isFocusVisible && !isDetached ? ' ' + treeRowFocusIndicator : '')}>
       <UNSTABLE_TreeItemContent>
         {({isExpanded, hasChildRows, selectionMode, selectionBehavior, isDisabled, isFocusVisible, isSelected, id, state}) => {
           let isNextSelected = false;
@@ -463,7 +469,8 @@ const expandButton = style<ExpandableRowChevronProps>({
   },
   transition: 'default',
   backgroundColor: 'transparent',
-  borderStyle: 'none'
+  borderStyle: 'none',
+  disableTapHighlight: true,
 });
 
 function ExpandableRowChevron(props: ExpandableRowChevronProps) {
