@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, FileTrigger, Form, Group, Input, Label, ListBox, ListBoxItem, Link, NumberField, Popover, Select, SelectValue, TextField} from 'react-aria-components';
+import {Button, Form, Input, Label, ListBox, ListBoxItem, Popover, Select, SelectValue, TextField} from 'react-aria-components';
 import React from 'react';
 
 export default {
@@ -26,24 +26,24 @@ export const FormAutoFillExample = () => {
       onSubmit={e => {
         action('onSubmit')(Object.fromEntries(new FormData(e.target as HTMLFormElement).entries()));
         e.preventDefault();
-    }}>
+      }}>
       <TextField>
         <Label>Address</Label>
-        <Input name="streetAddress" type="text" id="streetAddress" autoComplete='shipping street-address'/>
+        <Input name="streetAddress" type="text" id="streetAddress" autoComplete="shipping street-address" />
       </TextField>
       <TextField>
         <Label>City</Label>
-        <Input name="city" type="text" id="city" autoComplete='shipping address-level2'/>
+        <Input name="city" type="text" id="city" autoComplete="shipping address-level2" />
       </TextField>
       <TextField>
         <Label>State</Label>
-        <Input name="state" type="text" id="state" autoComplete='shipping address-level1'/>
+        <Input name="state" type="text" id="state" autoComplete="shipping address-level1" />
       </TextField>
       <TextField>
         <Label>Zip</Label>
-        <Input name="city" type="text" id="city" autoComplete='shipping postal-code'/>
+        <Input name="city" type="text" id="city" autoComplete="shipping postal-code" />
       </TextField>
-      <Select name="country" id="country" autoComplete='shipping country'>
+      <Select name="country" id="country" autoComplete="shipping country">
         <Label>Country</Label>
         <Button>
           <SelectValue />
