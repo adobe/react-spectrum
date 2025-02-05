@@ -109,11 +109,15 @@ function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
 
   let domRef = useDOMRef(ref);
 
+  let rowHeight = isDetached ? 44 : 40;
+  if (scale === 'large') {
+    rowHeight = isDetached ? 54 : 50;
+  }
   let layout = useMemo(() => {
     return new UNSTABLE_ListLayout({
-      rowHeight: scale === 'medium' ? (isDetached ? 44 : 40) : (isDetached ? 54 : 50)
+      rowHeight
     });
-  }, [isDetached, scale]);
+  }, [rowHeight]);
 
   return (
     <UNSTABLE_Virtualizer layout={layout}>
@@ -199,7 +203,7 @@ const treeCellGrid = style({
   height: 'full',
   alignContent: 'center',
   alignItems: 'center',
-  gridTemplateColumns: ['auto', 'auto', 'auto', 40, 'auto', '1fr', 'minmax(0, auto)', 'auto'],
+  gridTemplateColumns: ['auto', 'auto', 'auto', 'auto', 'auto', '1fr', 'minmax(0, auto)', 'auto'],
   gridTemplateRows: '1fr',
   gridTemplateAreas: [
     'drag-handle checkbox level-padding expand-button icon content actions actionmenu'
@@ -415,7 +419,7 @@ export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
                   width: '[calc(calc(var(--tree-item-level, 0) - 1) * var(--indent))]'
                 })} />
               {/* TODO: revisit when we do async loading, at the moment hasChildItems will only cause the chevron to be rendered, no aria/data attributes indicating the row's expandability are added */}
-              {(hasChildRows || hasChildItems) && <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} />}
+              <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} scale={scale} isHidden={!(hasChildRows || hasChildItems)} />
               <Provider
                 values={[
                   [TextContext, {styles: treeContent}],
@@ -441,7 +445,9 @@ export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
 interface ExpandableRowChevronProps {
   isExpanded?: boolean,
   isDisabled?: boolean,
-  isRTL?: boolean
+  isRTL?: boolean,
+  scale: 'medium' | 'large',
+  isHidden?: boolean
 }
 
 const expandButton = style<ExpandableRowChevronProps>({
@@ -453,8 +459,8 @@ const expandButton = style<ExpandableRowChevronProps>({
       forcedColors: 'GrayText'
     }
   },
-  height: 'full',
-  aspectRatio: 'square',
+  height: 40,
+  width: 40,
   display: 'flex',
   flexWrap: 'wrap',
   alignContent: 'center',
@@ -467,17 +473,22 @@ const expandButton = style<ExpandableRowChevronProps>({
       isRTL: 'rotate(-90deg)'
     }
   },
+  padding: 0,
   transition: 'default',
   backgroundColor: 'transparent',
   borderStyle: 'none',
-  disableTapHighlight: true
+  disableTapHighlight: true,
+  visibility: {
+    isHidden: 'hidden'
+  }
 });
 
 function ExpandableRowChevron(props: ExpandableRowChevronProps) {
   let expandButtonRef = useRef<HTMLButtonElement>(null);
   let [fullProps, ref] = useContextProps({...props, slot: 'chevron'}, expandButtonRef, ButtonContext);
-  let {isExpanded, isDisabled} = fullProps;
+  let {isExpanded, isDisabled, scale, isHidden} = fullProps;
   let {direction} = useLocale();
+  isDisabled = isDisabled || isHidden;
 
   return (
     <Button
@@ -487,7 +498,7 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
       // Override tabindex so that grid keyboard nav skips over it. Needs -1 so android talkback can actually "focus" it
       excludeFromTabOrder={isAndroid() && !isDisabled}
       preventFocusOnPress
-      className={renderProps => expandButton({...renderProps, isExpanded, isRTL: direction === 'rtl'})}>
+      className={renderProps => expandButton({...renderProps, isExpanded, isRTL: direction === 'rtl', scale, isHidden})}>
       <Chevron
         className={style({
           scale: {
