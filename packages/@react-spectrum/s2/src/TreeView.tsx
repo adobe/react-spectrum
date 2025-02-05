@@ -168,12 +168,7 @@ const rowBackgroundColor = {
 const treeRow = style({
   position: 'relative',
   display: 'flex',
-  height: {
-    scale: {
-      medium: 40,
-      large: 50
-    }
-  },
+  height: 40,
   width: 'full',
   boxSizing: 'border-box',
   font: 'ui',
@@ -366,7 +361,6 @@ export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
   let nestedRows;
   let {renderer} = useTreeRendererContext();
   let {isDetached, isEmphasized} = useContext(InternalTreeContext);
-  let scale = useScale();
 
   if (typeof children === 'string') {
     content = <Text>{children}</Text>;
@@ -393,7 +387,7 @@ export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
   return (
     <UNSTABLE_TreeItem
       {...props}
-      className={(renderProps) => treeRow({...renderProps, isLink: !!href, isEmphasized, scale}) + (renderProps.isFocusVisible && !isDetached ? ' ' + treeRowFocusIndicator : '')}>
+      className={(renderProps) => treeRow({...renderProps, isLink: !!href, isEmphasized}) + (renderProps.isFocusVisible && !isDetached ? ' ' + treeRowFocusIndicator : '')}>
       <UNSTABLE_TreeItemContent>
         {({isExpanded, hasChildRows, selectionMode, selectionBehavior, isDisabled, isFocusVisible, isSelected, id, state}) => {
           let isNextSelected = false;
