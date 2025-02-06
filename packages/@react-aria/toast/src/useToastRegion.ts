@@ -64,11 +64,16 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
   useEffect(() => {
     let currentCount = state.visibleToasts.length;
     let prevCount = prevToastCount.current;
-    if (currentCount < prevCount && isHovered.current && ref.current) {
-      let rect = ref.current.getBoundingClientRect();
-      let {x, y} = pointerPosition.current;
-      let isOutside = x < rect.left || x > rect.right || y < rect.top || y > rect.bottom;
-      if (isOutside) {
+    if (currentCount < prevCount && ref.current) {
+      if (isHovered.current) {
+        let rect = ref.current.getBoundingClientRect();
+        let {x, y} = pointerPosition.current;
+        let isOutside = x < rect.left || x > rect.right || y < rect.top || y > rect.bottom;
+        if (isOutside) {
+          state.resumeAll();
+        }
+      } else {
+        // If not stuck in hovered state (e.g. closed via touch), resume all timers.
         state.resumeAll();
       }
     }
