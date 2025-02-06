@@ -35,7 +35,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
   private lastPersistedKeys: Set<Key> | null = null;
   private persistedIndices: Map<Key, number[]> = new Map();
 
-  constructor(options: ListLayoutOptions) {
+  constructor(options?: ListLayoutOptions) {
     super(options);
     this.stickyColumnIndices = [];
   }
