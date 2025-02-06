@@ -214,7 +214,7 @@ This codebase contains a modified portion of code from Yarn berry which can be o
 
 
 -------------------------------------------------------------------------------
-This codebase contains a modified portion of code from Yarn berry which can be obtained at:
+This codebase contains a modified portion of code from Microsoft which can be obtained at:
   * SOURCE:
     * https://github.com/microsoft/tabster
 
