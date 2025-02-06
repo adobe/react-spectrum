@@ -90,7 +90,7 @@ export function AllStates() {
         (merged.isSelectionEnd && !merged.isRangeEnd)
       ).map(props => (
         <div style={{whiteSpace: 'pre-wrap'}}>
-          {Object.keys(props).join('\n')}
+          {Object.keys(props).reverse().join('\n')}
           <div style={{position: 'relative', width: size, height: size, textAlign: 'center'}}>
             <Cell {...props} />
           </div>

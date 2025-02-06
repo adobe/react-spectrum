@@ -54,7 +54,7 @@ export const Default = {
         (merged.isRangeStart && merged.isRangeEnd) ||
         (merged.isSelectionStart && !merged.isRangeStart) ||
         (merged.isSelectionEnd && !merged.isRangeEnd)
-      ).map(props => <div>{Object.keys(props).join(' ')}<div style={{position: 'relative', width: 40, height: 40, textAlign: 'center'}}><Cell {...props} /></div></div>)}
+      ).map(props => <div>{Object.keys(props).reverse().join(' ')}<div style={{position: 'relative', width: 40, height: 40, textAlign: 'center'}}><Cell {...props} /></div></div>)}
     </Grid>
   )
 };

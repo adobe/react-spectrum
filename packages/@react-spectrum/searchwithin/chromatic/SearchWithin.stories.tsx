@@ -62,7 +62,7 @@ export default meta;
 const Template: StoryFn<SpectrumSearchWithinProps> = (args) => (
   <Grid columns={repeat(4, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
-      let key = Object.keys(c).map(k => shortName(k)).join(' ');
+      let key = Object.keys(c).reverse().map(k => shortName(k)).join(' ');
       if (!key) {
         key = 'empty';
       }
@@ -83,7 +83,7 @@ const Template: StoryFn<SpectrumSearchWithinProps> = (args) => (
 const TemplateSideLabel: StoryFn<SpectrumSearchWithinProps> = (args) => (
   <Grid columns={repeat(2, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
-      let key = Object.keys(c).map(k => shortName(k)).join(' ');
+      let key = Object.keys(c).reverse().map(k => shortName(k)).join(' ');
       if (!key) {
         key = 'empty';
       }

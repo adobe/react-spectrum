@@ -113,7 +113,7 @@ export default meta;
 const Template: StoryFn<SpectrumNumberFieldProps> = (args) => (
   <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
     {combinations.map(c => {
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      let key = Object.keys(c).reverse().map(k => shortName(k, c[k])).join(' ');
       if (!key) {
         key = 'empty';
       }
@@ -125,7 +125,7 @@ const Template: StoryFn<SpectrumNumberFieldProps> = (args) => (
 const TemplateVertical: StoryFn<SpectrumNumberFieldProps> = (args) => (
   <Grid autoFlow="row" gap="size-300">
     {combinations.map(c => {
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      let key = Object.keys(c).reverse().map(k => shortName(k, c[k])).join(' ');
       if (!key) {
         key = 'empty';
       }
@@ -137,7 +137,7 @@ const TemplateVertical: StoryFn<SpectrumNumberFieldProps> = (args) => (
 const TemplateSmall: StoryFn<SpectrumNumberFieldProps> = (args) => (
   <Grid columns={repeat(4, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      let key = Object.keys(c).reverse().map(k => shortName(k, c[k])).join(' ');
       if (!key) {
         key = 'empty';
       }
@@ -149,7 +149,7 @@ const TemplateSmall: StoryFn<SpectrumNumberFieldProps> = (args) => (
 const TemplateWithForcedStyles: StoryFn<SpectrumNumberFieldProps> = (args) => (
   <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
     {combinationsStyles.map(c => {
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      let key = Object.keys(c).reverse().map(k => shortName(k, c[k])).join(' ');
       return <div key={key}><div>{key}</div><NumberField {...args} {...c} /></div>;
     })}
   </Grid>

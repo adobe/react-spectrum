@@ -76,7 +76,7 @@ let items = [
 const Template: StoryFn<SpectrumComboBoxProps<object>> = (args) => (
   <Grid columns={repeat(4, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      let key = Object.keys(c).reverse().map(k => shortName(k, c[k])).join(' ');
       if (!key) {
         key = 'empty';
       }
@@ -94,7 +94,7 @@ const Template: StoryFn<SpectrumComboBoxProps<object>> = (args) => (
 const TemplateSideLabel: StoryFn<SpectrumComboBoxProps<object>> = (args) => (
   <Grid columns={repeat(2, '1fr')} autoFlow="row" gap="size-200" width={800}>
     {combinations.filter(combo => !(combo.isReadOnly || combo.isDisabled)).map(c => {
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      let key = Object.keys(c).reverse().map(k => shortName(k, c[k])).join(' ');
       if (!key) {
         key = 'empty';
       }

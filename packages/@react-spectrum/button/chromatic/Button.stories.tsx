@@ -136,7 +136,7 @@ function render(props: any = {}) {
             return '';
           }
           return typeof c[k] === 'boolean' ? k.replace(/^data-/, '') : `${k}: ${c[k]}`;
-        }).filter(Boolean).reverse().join(', ');
+        }).filter(Boolean).join(', ');
         if (!key) {
           key = 'default';
         }

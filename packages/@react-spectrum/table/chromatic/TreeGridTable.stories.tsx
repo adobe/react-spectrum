@@ -123,7 +123,7 @@ let nestedItems = [
 const Template = ({combos, columns, items, ...args}) => (
   <Grid columns={repeat(3, '1fr')} autoFlow="row" gap="size-300">
     {combos.map(c => {
-      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+      let key = Object.keys(c).reverse().map(k => shortName(k, c[k])).join(' ');
       if (!key) {
         key = 'empty';
       }
