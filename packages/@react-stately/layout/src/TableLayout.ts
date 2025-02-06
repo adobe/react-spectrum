@@ -18,7 +18,7 @@ import {LayoutNode, ListLayout, ListLayoutOptions} from './ListLayout';
 import {TableCollection} from '@react-types/table';
 import {TableColumnLayout} from '@react-stately/table';
 
-export interface TableLayoutProps {
+export interface TableLayoutProps extends ListLayoutOptions {
   columnWidths?: Map<Key, number>
 }
 
@@ -35,7 +35,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
   private lastPersistedKeys: Set<Key> | null = null;
   private persistedIndices: Map<Key, number[]> = new Map();
 
-  constructor(options: ListLayoutOptions) {
+  constructor(options?: ListLayoutOptions) {
     super(options);
     this.stickyColumnIndices = [];
   }
@@ -55,6 +55,11 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
         c.props.minWidth !== oldCollection.columns[i].props.minWidth ||
         c.props.maxWidth !== oldCollection.columns[i].props.maxWidth
       );
+  }
+
+  shouldInvalidateLayoutOptions(newOptions: O, oldOptions: O): boolean {
+    return newOptions.columnWidths !== oldOptions.columnWidths
+      || super.shouldInvalidateLayoutOptions(newOptions, oldOptions);
   }
 
   update(invalidationContext: InvalidationContext<O>): void {
