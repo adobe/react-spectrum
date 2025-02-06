@@ -41,8 +41,8 @@ const Template = ({combos, containerStyle, ...args}) => {
   return (
     <div className={containerStyle}>
       {combos.map(c => {
-        let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
-        let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
+        let fullComboName = Object.keys(c).reverse().map(k => `${k}: ${c[k]}`).join(' ');
+        let key = Object.keys(c).reverse().map(k => shortName(k, c[k])).join(' ');
         if (!key) {
           key = 'default';
         }
