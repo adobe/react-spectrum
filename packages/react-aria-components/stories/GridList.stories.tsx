@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Checkbox, CheckboxProps, DropIndicator, GridLayout, GridList, GridListItem, GridListItemProps, ListLayout, Tag, TagGroup, TagList, useDragAndDrop, Virtualizer} from 'react-aria-components';
+import {Button, Checkbox, CheckboxProps, DropIndicator, GridLayout, GridList, GridListItem, GridListItemProps, ListLayout, Size, Tag, TagGroup, TagList, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import React, {useMemo} from 'react';
-import {Size} from '@react-stately/virtualizer';
 import styles from '../example/index.css';
 import {useListData} from 'react-stately';
 
@@ -160,14 +159,14 @@ export function VirtualizedGridListGrid() {
     items.push({id: i, name: `Item ${i}`});
   }
 
-  let layout = useMemo(() => {
-    return new GridLayout({
-      minItemSize: new Size(40, 40)
-    });
-  }, []);
+  let layout = useMemo(() => new GridLayout(), []);
 
   return (
-    <Virtualizer layout={layout}>
+    <Virtualizer 
+      layout={layout}
+      layoutOptions={{
+        minItemSize: new Size(40, 40)
+      }}>
       <GridList className={styles.menu} layout="grid" style={{height: 400, width: 400}} aria-label="virtualized listbox" items={items}>
         {item => <MyGridListItem>{item.name}</MyGridListItem>}
       </GridList>

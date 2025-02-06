@@ -68,7 +68,7 @@ const DEFAULT_HEIGHT = 48;
  * that arranges its items in a vertical stack. It supports both fixed
  * and variable height items.
  */
-export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTargetDelegate {
+export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> extends Layout<Node<T>, O> implements DropTargetDelegate {
   protected rowHeight: number | null;
   protected estimatedRowHeight: number | null;
   protected headingHeight: number | null;
@@ -189,10 +189,28 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
     return node.layoutInfo.rect.intersects(rect) || node.layoutInfo.isSticky || node.layoutInfo.type === 'header' || this.virtualizer!.isPersistedKey(node.layoutInfo.key);
   }
 
-  protected shouldInvalidateEverything(invalidationContext: InvalidationContext<O>) {
+  protected shouldInvalidateEverything(invalidationContext: InvalidationContext<O>): boolean {
     // Invalidate cache if the size of the collection changed.
     // In this case, we need to recalculate the entire layout.
-    return invalidationContext.sizeChanged || false;
+    // Also invalidate if fixed sizes/gaps change.
+    let options = invalidationContext.layoutOptions;
+    return invalidationContext.sizeChanged
+      || this.rowHeight !== (options?.rowHeight ?? this.rowHeight)
+      || this.headingHeight !== (options?.headingHeight ?? this.headingHeight)
+      || this.loaderHeight !== (options?.loaderHeight ?? this.loaderHeight)
+      || this.gap !== (options?.gap ?? this.gap)
+      || this.padding !== (options?.padding ?? this.padding);
+  }
+
+  shouldInvalidateLayoutOptions(newOptions: O, oldOptions: O): boolean {
+    return newOptions.rowHeight !== oldOptions.rowHeight
+      || newOptions.estimatedRowHeight !== oldOptions.estimatedRowHeight
+      || newOptions.headingHeight !== oldOptions.headingHeight
+      || newOptions.estimatedHeadingHeight !== oldOptions.estimatedHeadingHeight
+      || newOptions.loaderHeight !== oldOptions.loaderHeight
+      || newOptions.dropIndicatorThickness !== oldOptions.dropIndicatorThickness
+      || newOptions.gap !== oldOptions.gap
+      || newOptions.padding !== oldOptions.padding;
   }
 
   update(invalidationContext: InvalidationContext<O>) {
@@ -205,6 +223,16 @@ export class ListLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
       this.requestedRect = this.virtualizer!.visibleRect.copy();
       this.layoutNodes.clear();
     }
+
+    let options = invalidationContext.layoutOptions;
+    this.rowHeight = options?.rowHeight ?? this.rowHeight;
+    this.estimatedRowHeight = options?.estimatedRowHeight ?? this.estimatedRowHeight;
+    this.headingHeight = options?.headingHeight ?? this.headingHeight;
+    this.estimatedHeadingHeight = options?.estimatedHeadingHeight ?? this.estimatedHeadingHeight;
+    this.loaderHeight = options?.loaderHeight ?? this.loaderHeight;
+    this.dropIndicatorThickness = options?.dropIndicatorThickness ?? this.dropIndicatorThickness;
+    this.gap = options?.gap ?? this.gap;
+    this.padding = options?.padding ?? this.padding;
 
     this.rootNodes = this.buildCollection();
 
