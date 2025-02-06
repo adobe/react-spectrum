@@ -11,8 +11,35 @@
  */
 
 import {DropTarget, DropTargetDelegate, Key, LayoutDelegate, Node} from '@react-types/shared';
-import {GridLayoutOptions} from './GridLayout';
 import {InvalidationContext, Layout, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
+
+export interface WaterfallLayoutOptions {
+  /**
+   * The minimum item size.
+   * @default 200 x 200
+   */
+  minItemSize?: Size,
+  /**
+   * The maximum item size.
+   * @default Infinity
+   */
+  maxItemSize?: Size,
+  /**
+   * The minimum space required between items.
+   * @default 18 x 18
+   */
+  minSpace?: Size,
+  /**
+   * The maximum number of columns.
+   * @default Infinity
+   */
+  maxColumns?: number,
+  /**
+   * The thickness of the drop indicator.
+   * @default 2
+   */
+  dropIndicatorThickness?: number
+}
 
 class WaterfallLayoutInfo extends LayoutInfo {
   column = 0;
@@ -32,7 +59,7 @@ const DEFAULT_OPTIONS = {
   dropIndicatorThickness: 2
 };
 
-export class WaterfallLayout<T extends object, O extends GridLayoutOptions = GridLayoutOptions> extends Layout<Node<T>, O> implements LayoutDelegate, DropTargetDelegate {
+export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions = WaterfallLayoutOptions> extends Layout<Node<T>, O> implements LayoutDelegate, DropTargetDelegate {
   private contentSize: Size = new Size();
   private layoutInfos: Map<Key, WaterfallLayoutInfo> = new Map();
   protected numColumns = 0;
