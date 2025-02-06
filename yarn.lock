@@ -152,6 +152,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@adobe/spectrum-tokens@npm:^13.0.0-beta.56":
+  version: 13.0.0-beta.56
+  resolution: "@adobe/spectrum-tokens@npm:13.0.0-beta.56"
+  checksum: 10c0/473a7e3cfb9317862584045b31c16e67122512f310c490c8cb9e11c1d200bbd78f79885e970e16034b375c19f2a27da27397a4ba3ee0cec1a8424a34582a85ad
+  languageName: node
+  linkType: hard
+
 "@algolia/cache-browser-local-storage@npm:4.14.1":
   version: 4.14.1
   resolution: "@algolia/cache-browser-local-storage@npm:4.14.1"
@@ -7894,7 +7901,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/s2@workspace:packages/@react-spectrum/s2"
   dependencies:
-    "@adobe/spectrum-tokens": "npm:^13.0.0-beta.53"
+    "@adobe/spectrum-tokens": "npm:^13.0.0-beta.56"
     "@parcel/macros": "npm:^2.13.0"
     "@react-aria/collections": "npm:3.0.0-alpha.7"
     "@react-aria/focus": "npm:^3.19.1"
