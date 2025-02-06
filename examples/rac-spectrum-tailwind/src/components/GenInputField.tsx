@@ -16,13 +16,13 @@ export function GenInputField() {
         value={value}
         onChange={setValue}
         aria-label="Prompt"
-        className="flex-grow h-full p-150"
+        className="grow h-full p-150"
       >
-        <Input className="w-full h-full text-xl font-semibold text-black dark:bg-black dark:text-white p-50 focus:outline-none" />
+        <Input className="w-full h-full text-xl font-semibold text-black dark:bg-black dark:text-white p-50 focus:outline-hidden" />
       </TextField>
       <Button
         isDisabled={value === ""}
-        className="self-end my-auto font-semibold text-white rounded-full disabled:bg-gray-300 disabled:text-gray-500 mx-200 bg-accent-800 p-150 focus-visible:ring focus:outline-none"
+        className="self-end my-auto font-semibold text-white rounded-full disabled:bg-gray-300 disabled:text-gray-500 mx-200 bg-accent-800 p-150 focus-visible:ring focus:outline-hidden"
       >
         Generate
       </Button>

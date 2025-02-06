@@ -7,6 +7,8 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License. */}
 
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
@@ -178,16 +180,30 @@ A Tailwind CSS plugin is also available to make styling states of React Aria Com
 yarn add tailwindcss-react-aria-components
 ```
 
-Then add the plugin to your `tailwind.config.js` file:
+When using Tailwind v4, add it to your CSS:
 
-```jsx
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold', paddingBottom: 8}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x, and add the plugin to your `tailwind.config.js` instead:
+
+```tsx
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  // ...
   plugins: [
     require('tailwindcss-react-aria-components')
   ]
 };
 ```
+
+</details>
 
 With the plugin installed, you can now access all states without the `data-` prefix. If you have the [Tailwind VSCode Extension](https://tailwindcss.com/docs/editor-setup#intelli-sense-for-vs-code) installed, you'll also get autocomplete for all states in your editor.
 
@@ -221,6 +237,16 @@ Non-boolean states follow the `{name}-{value}` pattern, so you can style an elem
 
 By default, all modifiers are unprefixed (e.g. `disabled:`), and generate CSS that automatically handles both React Aria Components and native CSS pseudo classes when the names conflict. If you prefer, you can optionally prefix all React Aria Components modifiers with a string of your choice.
 
+```css render=false
+@plugin "tailwindcss-react-aria-components" { prefix: rac };
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold', paddingBottom: 8}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, pass the prefix option to the plugin in `tailwind.config.js`:
+
 ```jsx
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -229,6 +255,8 @@ module.exports = {
   ],
 };
 ```
+
+</details>
 
 With this configured, all states for React Aria Components can be accessed with that prefix.
 

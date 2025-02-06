@@ -16,6 +16,7 @@ import {
   DisabledBehavior,
   DOMAttributes,
   DOMProps,
+  FocusStrategy,
   Key,
   KeyboardDelegate,
   LayoutDelegate,
@@ -30,6 +31,8 @@ import {useHasTabbableChild} from '@react-aria/focus';
 import {useSelectableList} from '@react-aria/selection';
 
 export interface GridListProps<T> extends CollectionBase<T>, MultipleSelection {
+  /** Whether to auto focus the gridlist or an option. */
+  autoFocus?: boolean | FocusStrategy,
   /**
    * Handler that is called when a user performs an action on an item. The exact user event depends on
    * the collection's `selectionBehavior` prop and the interaction modality.
@@ -124,7 +127,8 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     selectOnFocus: state.selectionManager.selectionBehavior === 'replace',
     shouldFocusWrap: props.shouldFocusWrap,
     linkBehavior,
-    disallowTypeAhead
+    disallowTypeAhead,
+    autoFocus: props.autoFocus
   });
 
 

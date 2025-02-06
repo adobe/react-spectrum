@@ -17,6 +17,7 @@ import Button from '@react-spectrum/docs/pages/assets/component-illustrations/Ac
 import Dialog from '@react-spectrum/docs/pages/assets/component-illustrations/Dialog.svg';
 import Link from '@react-spectrum/docs/pages/assets/component-illustrations/Link.svg';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
 ---
 keywords: [example, modal, dialog, aria, accessibility, react, component]
@@ -41,9 +42,9 @@ import AlertIcon from '@spectrum-icons/workflow/Alert';
 
 function ModalExample() {
   return (
-    <div className="bg-gradient-to-r from-sky-400 to-indigo-500 p-12 rounded-lg flex justify-center">
+    <div className="bg-linear-to-r from-sky-400 to-indigo-500 p-12 rounded-lg flex justify-center">
       <DialogTrigger>
-        <Button className="inline-flex items-center justify-center rounded-md bg-black bg-opacity-20 bg-clip-padding border border-white/20 px-3.5 py-2 font-medium font-[inherit] text-base text-white hover:bg-opacity-30 pressed:bg-opacity-40 transition-colors cursor-default outline-none focus-visible:ring-2 focus-visible:ring-white/75">Delete…</Button>
+        <Button className="inline-flex items-center justify-center rounded-md bg-black/20 bg-clip-padding border border-white/20 px-3.5 py-2 font-medium font-[inherit] text-base text-white hover:bg-black/30 pressed:bg-black/40 transition-colors cursor-default outline-hidden focus-visible:ring-2 focus-visible:ring-white/75">Delete…</Button>
         <ModalOverlay className={({isEntering, isExiting}) => `
           fixed inset-0 z-10 overflow-y-auto bg-black/25 flex min-h-full items-center justify-center p-4 text-center backdrop-blur
           ${isEntering ? 'animate-in fade-in duration-300 ease-out' : ''}
@@ -54,7 +55,7 @@ function ModalExample() {
             ${isEntering ? 'animate-in zoom-in-95 ease-out duration-300' : ''}
             ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}
           `}>
-            <Dialog role="alertdialog" className="outline-none relative">
+            <Dialog role="alertdialog" className="outline-hidden relative">
               {({ close }) => (<>
                 <Heading slot="title" className="text-xxl font-semibold leading-6 my-0 text-slate-700">Delete folder</Heading>
                 <div className="w-6 h-6 text-red-500 absolute right-0 top-0 stroke-2"><AlertIcon size="M" /></div>
@@ -83,7 +84,7 @@ function ModalExample() {
 }
 
 function DialogButton({className, ...props}) {
-  return <Button {...props} className={`inline-flex justify-center rounded-md border border-solid border-transparent px-5 py-2 font-semibold font-[inherit] text-base transition-colors cursor-default outline-none focus-visible:ring-2 ring-blue-500 ring-offset-2 ${className}`} />;
+  return <Button {...props} className={`inline-flex justify-center rounded-md border border-solid border-transparent px-5 py-2 font-semibold font-[inherit] text-base transition-colors cursor-default outline-hidden focus-visible:ring-2 ring-blue-500 ring-offset-2 ${className}`} />;
 }
 ```
 
@@ -94,7 +95,19 @@ This example uses the following plugins:
 * [tailwindcss-react-aria-components](../styling.html#plugin)
 * [tailwindcss-animate](https://github.com/jamiebuilds/tailwindcss-animate)
 
-Add them to your `tailwind.config.js`:
+When using Tailwind v4, add them to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+@plugin "tailwindcss-animate";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugins to your `tailwind.config.js` instead:
 
 ```tsx
 module.exports = {
@@ -105,6 +118,10 @@ module.exports = {
   ]
 };
 ```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
 
 ## Components
 
