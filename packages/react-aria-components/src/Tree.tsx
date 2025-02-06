@@ -260,7 +260,10 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
 
 // TODO: readd the rest of the render props when tree supports them
 export interface TreeItemRenderProps extends Omit<ItemRenderProps, 'allowsDragging' | 'isDragging' | 'isDropTarget'> {
-  /** Whether the tree item is expanded. */
+  /**
+   * Whether the tree item is expanded.
+   * @selector [data-expanded]
+   */
   isExpanded: boolean,
   // TODO: api discussion, how do we feel about the below? This is so we can still style the row as grey when a child element within is focused
   // Maybe should have this for the other collection item render props
@@ -269,7 +272,10 @@ export interface TreeItemRenderProps extends Omit<ItemRenderProps, 'allowsDraggi
 }
 
 export interface TreeItemContentRenderProps extends ItemRenderProps {
-  // Whether the tree item is expanded.
+  /**
+   * Whether the tree item is expanded.
+   * @selector [data-expanded]
+   */
   isExpanded: boolean,
   // Whether the tree item has child rows.
   hasChildRows: boolean,
