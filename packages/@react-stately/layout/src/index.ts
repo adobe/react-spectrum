@@ -15,3 +15,4 @@ export type {TableLayoutProps} from './TableLayout';
 export {GridLayout} from './GridLayout';
 export {ListLayout} from './ListLayout';
 export {TableLayout} from './TableLayout';
+export {WaterfallLayout} from './WaterfallLayout';
