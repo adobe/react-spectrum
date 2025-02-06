@@ -352,7 +352,7 @@ describe('Autocomplete', () => {
     expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
     expect(options[0]).toHaveAttribute('data-focus-visible');
     expect(input).not.toHaveAttribute('data-focus-visible');
-    expect(input).toHaveAttribute('data-focused');
+    expect(input).not.toHaveAttribute('data-focused');
 
     // Focus ring should not be on either input or option when hovering (aka mouse modality)
     await user.click(input);
@@ -360,7 +360,7 @@ describe('Autocomplete', () => {
     options = within(menu).getAllByRole('menuitem');
     expect(options[1]).toHaveAttribute('data-focused');
     expect(options[1]).not.toHaveAttribute('data-focus-visible');
-    expect(input).toHaveAttribute('data-focused');
+    expect(input).not.toHaveAttribute('data-focused');
 
     // Reset focus visible on input so that isTextInput in useFocusRing doesn't prevent the focus ring
     // from appearing on the input
@@ -373,7 +373,7 @@ describe('Autocomplete', () => {
     options = within(menu).getAllByRole('menuitem');
     expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
     expect(options[0]).toHaveAttribute('data-focus-visible');
-    expect(input).toHaveAttribute('data-focused');
+    expect(input).not.toHaveAttribute('data-focused');
 
     // Focus ring should be on input after clearing focus via ArrowLeft
     await user.keyboard('{ArrowLeft}');
@@ -389,7 +389,7 @@ describe('Autocomplete', () => {
     expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
     expect(options[0]).toHaveAttribute('data-focus-visible');
     expect(input).not.toHaveAttribute('data-focus-visible');
-    expect(input).toHaveAttribute('data-focused');
+    expect(input).not.toHaveAttribute('data-focused');
     await user.keyboard('{Backspace}');
     act(() => jest.runAllTimers());
     expect(input).not.toHaveAttribute('aria-activedescendant');
@@ -418,7 +418,7 @@ describe('Autocomplete', () => {
     expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
     expect(options[0]).toHaveAttribute('data-focus-visible');
     expect(input).not.toHaveAttribute('data-focus-visible');
-    expect(input).toHaveAttribute('data-focused');
+    expect(input).not.toHaveAttribute('data-focused');
 
     await user.tab();
     expect(document.activeElement).not.toBe(input);
@@ -432,7 +432,7 @@ describe('Autocomplete', () => {
     expect(options[0]).toHaveAttribute('data-focused');
     expect(options[0]).toHaveAttribute('data-focus-visible');
     expect(input).not.toHaveAttribute('data-focus-visible');
-    expect(input).toHaveAttribute('data-focused');
+    expect(input).not.toHaveAttribute('data-focused');
   });
 });
 

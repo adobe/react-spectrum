@@ -20,6 +20,7 @@ import intlMessages from '../intl/*.json';
 import React, {KeyboardEvent as ReactKeyboardEvent, FocusEvent as ReactFocusEvent, useCallback, useEffect, useMemo, useRef} from 'react';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import { dispatchVirtualBlur, dispatchVirtualFocus, moveVirtualFocus } from '@react-aria/focus';
+import { flushSync } from 'react-dom';
 
 export interface CollectionOptions extends DOMProps, AriaLabelingProps {
   /** Whether the collection items should use virtual focus instead of being focused directly. */
@@ -76,7 +77,6 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
       return;
     }
     
-    console.log(target.id)
     clearTimeout(timeout.current);
     // e.stopPropagation();
     if (target !== collectionRef.current) {
@@ -205,7 +205,9 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
           bubbles: true
         });
 
-        collectionRef.current?.dispatchEvent(focusCollection);
+        flushSync(() => {
+          collectionRef.current?.dispatchEvent(focusCollection);
+        });
         break;
       }
       case 'ArrowLeft':
@@ -236,16 +238,18 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
       e.stopPropagation();
     }
 
-    if (state.focusedNodeId == null) {
-      collectionRef.current?.dispatchEvent(
-        new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
-      );
-    } else {
-      let item = document.getElementById(state.focusedNodeId);
-      item?.dispatchEvent(
-        new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
-      );
-    }
+    flushSync(() => {
+      if (state.focusedNodeId == null) {
+        collectionRef.current?.dispatchEvent(
+          new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
+        );
+      } else {
+        let item = document.getElementById(state.focusedNodeId);
+        item?.dispatchEvent(
+          new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
+        );
+      }
+    });
   };
 
   let onKeyUpCapture = useEffectEvent((e) => {

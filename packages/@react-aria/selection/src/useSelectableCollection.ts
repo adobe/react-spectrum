@@ -149,9 +149,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
           return;
         }
 
-        flushSync(() => {
-          manager.setFocusedKey(key, childFocus);
-        });
+        manager.setFocusedKey(key, childFocus);
 
         if (manager.isLink(key) && linkBehavior === 'override') {
           return;
