@@ -14,13 +14,22 @@ import docs from 'docs:react-aria-components';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI, VersionBadge} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
+import Anatomy from './TreeAnatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
-import {InlineAlert, Content, Heading} from '@adobe/react-spectrum';
+import {Divider} from '@react-spectrum/divider';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
+import {Keyboard} from '@react-spectrum/text';
+import Collections from '@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg';
+import Selection from '@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg';
+import Checkbox from '@react-spectrum/docs/pages/assets/component-illustrations/Checkbox.svg';
+import Button from '@react-spectrum/docs/pages/assets/component-illustrations/Button.svg';
 import treeUtils from 'docs:@react-aria/test-utils/src/tree.ts';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 
 ---
 category: Collections
-keywords: [disclosure, collapse, expand, aria]
+keywords: [disclosure, collapse, expand, aria, tree, grid]
 type: component
 preRelease: beta
 ---
@@ -35,11 +44,6 @@ preRelease: beta
   sourceData={[
     {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/treegrid/'}
   ]} />
-
-<InlineAlert variant="notice" marginTop={60}>
-  <Heading>Under construction</Heading>
-  <Content>This component is in <strong>beta</strong>. More documentation is coming soon!</Content>
-</InlineAlert>
 
 ## Example
 
@@ -237,6 +241,232 @@ let items = [
 
 </details>
 
+{/* Which example do we like first? they are both more complex than in other components base setup due to the conditional button for expanding */}
+## Static Tree Example
+
+```tsx example
+import {Button} from 'react-aria-components';
+
+function MyTreeItemContent(props) {
+  return (
+    <TreeItemContent>
+     {({hasChildRows}) => (
+      <>
+        {hasChildRows && <Button slot="chevron">
+            <svg viewBox="0 0 24 24">
+              <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
+          </Button>
+     }
+        {props.children}
+      </>
+    )}
+    </TreeItemContent>
+  );
+}
+
+<Tree aria-label="Files" style={{height: '300px'}} defaultExpandedKeys={['documents', 'photos', 'project']}>
+  <TreeItem id="documents" textValue="Documents">
+    <MyTreeItemContent>
+      Documents
+    </MyTreeItemContent>
+    <TreeItem id="project" textValue="Project">
+      <MyTreeItemContent>
+        Project
+      </MyTreeItemContent>
+      <TreeItem id="report" textValue="Weekly Report">
+        <MyTreeItemContent>
+          Weekly Report
+        </MyTreeItemContent>
+      </TreeItem>
+    </TreeItem>
+  </TreeItem>
+  <TreeItem id="photos" textValue="Photos">
+    <MyTreeItemContent>
+      Photos
+    </MyTreeItemContent>
+    <TreeItem id="one" textValue="Image 1">
+      <MyTreeItemContent>
+        Image 1
+      </MyTreeItemContent>
+    </TreeItem>
+    <TreeItem id="two" textValue="Image 2">
+      <MyTreeItemContent>
+        Image 2
+      </MyTreeItemContent>
+    </TreeItem>
+  </TreeItem>
+</Tree>
+```
+
+
+## Features
+
+A tree can be built using the [&lt;ul&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ul), [&lt;li&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/li),
+ and [&lt;ol&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ol), but is very limited in functionality especially when it comes to user interactions.
+HTML lists are meant for static content, rather than heirarchies with rich interactions like focusable elements within cells, keyboard navigation, row selection, sorting, etc.
+`Tree` helps achieve accessible and interactive tree components that can be styled as needed.
+
+* **Row selection** – Single or multiple selection, with optional checkboxes, disabled rows, and both `toggle` and `replace` selection behaviors.
+* **Interactive children** – Tree rows may include interactive elements such as buttons, menus, etc.
+* **Actions** – Rows support optional actions such as navigation via click, tap, double click, or <Keyboard>Enter</Keyboard> key.
+* **Keyboard navigation** – Tree rows and focusable children can be navigated using the arrow keys, along with page up/down, home/end, etc. Typeahead, auto scrolling, and selection modifier keys are supported as well.
+* **Touch friendly** – Selection and actions adapt their behavior depending on the device. For example, selection is activated via long press on touch when row actions are present.
+* **Accessible** – Follows the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/), with additional selection announcements via an ARIA live region. Extensively tested across many devices and [assistive technologies](accessibility.html#testing) to ensure announcements and behaviors are consistent.
+
+## Anatomy
+
+<Anatomy role="img" aria-label="Anatomy diagram of a Tree, consisting of multiple rows. Each row in the table body contains a selection checkbox, an expand toggle button, and the name of the item." />
+
+A Tree consists of a container element, with rows containing data inside. The rows within a tree may contain focusable elements or plain text content. Each row may also contain a button to toggle the expandable state of that row.
+
+If the tree supports row selection, each row can optionally include a selection checkbox.
+
+
+### Concepts
+
+`Tree` makes use of the following concepts:
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="collections.html"
+  title="Collections"
+  description="Defining collections of items, async loading, and updating items over time.">
+  <Collections />
+</ExampleCard>
+
+<ExampleCard
+  url="selection.html"
+  title="Selection"
+  description="Interactions and data structures to represent selection.">
+  <Selection />
+</ExampleCard>
+
+</section>
+
+### Composed components
+
+A `Tree` uses the following components, which may also be used standalone or reused in other components.
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="Checkbox.html"
+  title="Checkbox"
+  description="A checkbox allows a user to select an individual option.">
+  <Checkbox />
+</ExampleCard>
+
+<ExampleCard
+  url="Button.html"
+  title="Button"
+  description="A button allows a user to perform an action.">
+  <Button />
+</ExampleCard>
+
+</section>
+
+## Examples
+
+<ExampleList tag="tree" />
+
+## Starter kits
+
+To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
+
+{/* <StarterKits component="tree" /> */}
+
+
+## Reusable wrappers
+
+If you will use a Tree in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+The following example includes a custom
+{/* Need idea for example here */}
+
+## Content
+{/*
+Do we need this section? we've kinda already covered this */}
+
+```tsx example export=true
+
+let items = [
+  {id: 1, title: 'Documents', children: [
+    {id: 2, title: 'Project', children: [
+      {id: 3, title: 'Weekly Report', children: []}
+    ]}
+  ]},
+  {id: 4, title: 'Photos', children: [
+    {id: 5, title: 'Image 1', children: []},
+    {id: 6, title: 'Image 2', children: []}
+  ]}
+];
+function FileTree(props) {
+  return (
+    <Tree aria-label="Files" items={items} {...props}>
+      {function renderItem(item) {
+        return (
+          <TreeItem textValue={item.title}>
+            <TreeItemContent>
+              {({hasChildRows}) => (
+                <>
+                  {hasChildRows ? <Button slot="chevron">
+                    <svg viewBox="0 0 24 24">
+                      <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                    </svg>
+                  </Button> : null}
+                  <MyCheckbox slot="selection" />
+                  {item.title}
+                  <Button aria-label="Info">ⓘ</Button>
+                </>
+              )}
+            </TreeItemContent>
+            <Collection items={item.children}>
+              {renderItem}
+            </Collection>
+          </TreeItem>
+        );
+      }}
+    </Tree>
+  )
+}
+```
+
+## Selection
+
+### Single selection
+
+By default, `Tree` doesn't allow row selection but this can be enabled using the `selectionMode` prop. Use `defaultSelectedKeys` to provide a default set of selected rows.
+Note that the value of the selected keys must match the `id` prop of the row.
+
+The example below enables single selection mode, and uses `defaultSelectedKeys` to select the row with id equal to `2`.
+A user can click on a different row to change the selection, or click on the same row again to deselect it entirely.
+
+```tsx example
+// Using the example above
+<FileTree selectionMode="single" defaultSelectedKeys={[2]} defaultExpandedKeys={[1]} />
+```
+
+### Multiple selection
+
+Multiple selection can be enabled by setting `selectionMode` to `multiple`.
+
+```tsx example
+// Using the example above
+<FileTree selectionMode="multiple" defaultSelectedKeys={[2, 4]} defaultExpandedKeys={[1]} />
+```
+
+### Disallow empty selection
+
+Table also supports a `disallowEmptySelection` prop which forces the user to have at least one row in the Table selected at all times.
+In this mode, if a single row is selected and the user presses it, it will not be deselected.
+
+```tsx example
+// Using the example above
+<FileTree selectionMode="single" defaultSelectedKeys={[2]} defaultExpandedKeys={[1]} disallowEmptySelection />
+```
+
 ## Props
 
 ### Tree
@@ -321,6 +551,12 @@ TreeItem also exposes a `--tree-item-level` CSS custom property, which you can u
   padding-left: calc((var(--tree-item-level) - 1) * 20px);
 }
 ```
+
+### TreeItemContent
+
+A `TreeItemContent` can be targeted with the `.react-aria-TreeItemContent` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.TreeItemContentRenderProps.properties} showOptional />
 
 ## Testing
 
