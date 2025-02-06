@@ -10,13 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button} from '@react-spectrum/button';
 import {clearToastQueue, ToastContainer, ToastQueue} from '../src/ToastContainer';
 import {defaultTheme} from '@adobe/react-spectrum';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
+
+function pointerEvent(type, opts) {
+  let evt = new Event(type, {bubbles: true, cancelable: true});
+  Object.assign(evt, {
+    ctrlKey: false,
+    metaKey: false,
+    shiftKey: false,
+    button: opts.button || 0
+  }, opts);
+  return evt;
+}
 
 function RenderToastButton(props = {}) {
   return (
@@ -46,6 +57,8 @@ function fireAnimationEnd(alert) {
 }
 
 describe('Toast Provider and Container', function () {
+  installPointerEvent();
+
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
@@ -431,5 +444,104 @@ describe('Toast Provider and Container', function () {
 
     let region = getByRole('region');
     expect(region).toHaveAttribute('aria-label', 'Toasts');
+  });
+
+  it('resumes timers if user closes the top toast while hovered and pointer ends up outside region', async () => {
+    // Mock getBoundingClientRect so we can simulate the toast region shrinking
+    let boundingRect = {
+      left: 0, top: 0, width: 300, height: 300,
+      right: 300, bottom: 300, x: 0, y: 0,
+      toJSON() {}
+    };
+    let rectSpy = jest
+      .spyOn(HTMLElement.prototype, 'getBoundingClientRect')
+      .mockImplementation(() => boundingRect);
+
+    let {getAllByRole, getByRole} = render(
+      <Provider theme={defaultTheme}>
+        <ToastContainer />
+        <Button onPress={() => ToastQueue.neutral('Test toast', {timeout: 5000})}>
+          Show Toast
+        </Button>
+      </Provider>
+    );
+
+    let button = getByRole('button');
+
+    await user.click(button);
+    await user.click(button);
+
+    let toasts = getAllByRole('alertdialog');
+    expect(toasts).toHaveLength(2);
+
+    // Advance timeout by 1s
+    act(() => jest.advanceTimersByTime(1000));
+
+    // Simulate hover over the toast region (causing timers to pause)
+    let region = getByRole('region');
+    fireEvent(region, pointerEvent('pointerenter', {pointerType: 'mouse'}));
+    fireEvent(region, pointerEvent('pointermove', {pointerType: 'mouse'}));
+
+    // Timeout shouldn't expire since we're paused
+    act(() => jest.advanceTimersByTime(6000));
+    expect(toasts).toHaveLength(2);
+
+    // Close the top toast
+    let closeButton = within(toasts[0]).getByRole('button');
+    await user.click(closeButton);
+    fireAnimationEnd(toasts[0]);
+
+    // Simulate the toast region shrinking so that the pointer is outside
+    boundingRect = {
+      left: 0, top: 0, width: 100, height: 100,
+      right: 100, bottom: 100, x: 0, y: 0,
+      toJSON() {}
+    };
+
+    expect(getAllByRole('alertdialog')).toHaveLength(1);
+
+    // Let the timeout expire
+    act(() => jest.advanceTimersByTime(5000));
+    fireAnimationEnd(toasts[0]);
+
+    expect(getAllByRole('alertdialog')).toHaveLength(0);
+
+    rectSpy.mockRestore();
+  });
+
+  it('resumes timers if a toast is closed after no pointermove event (i.e. touch) ', async () => {
+    let {getAllByRole, getByRole} = render(
+      <Provider theme={defaultTheme}>
+        <ToastContainer />
+        <Button onPress={() => ToastQueue.info('Another toast', {timeout: 5000})}>
+          Show Toast
+        </Button>
+      </Provider>
+    );
+
+    let button = getByRole('button');
+
+    await user.click(button);
+    await user.click(button);
+    let toasts = getAllByRole('alertdialog');
+    expect(toasts).toHaveLength(2);
+
+    // Advance timeout by 1s
+    act(() => jest.advanceTimersByTime(1000));
+
+    let closeButton = within(toasts[0]).getByRole('button');
+    await user.click(closeButton);
+    fireAnimationEnd(toasts[0]);
+
+    expect(getAllByRole('alertdialog')).toHaveLength(1);
+
+    // Advance timer so the second toast times out.
+    act(() => jest.advanceTimersByTime(6000));
+    fireAnimationEnd(toasts[0]);
+
+    toasts = getAllByRole('alertdialog');
+    expect(toasts).toHaveLength(1);
+
+    expect(getAllByRole('alertdialog')).toHaveLength(0);
   });
 });
