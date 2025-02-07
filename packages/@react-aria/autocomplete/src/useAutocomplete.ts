@@ -171,7 +171,13 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
         break;
       case ' ':
         // Space shouldn't trigger onAction so early return.
-
+        return;
+      case 'Tab':
+        // Don't propogate Tab down to the collection, otherwise we will try to focus the collection via useSelectableCollection's Tab handler (aka shift tab logic)
+        // We want FocusScope to handle Tab if one exists (aka sub dialog), so special casepropogate
+        if ('continuePropagation' in e) {
+          e.continuePropagation();
+        }
         return;
       case 'Home':
       case 'End':
@@ -200,18 +206,6 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
         // focused on a submenutrigger? May not need to since focus would
         // But what about wrapped grids where ArrowLeft and ArrowRight should navigate left/right
         clearVirtualFocus();
-        break;
-      case 'Tab':
-        // Moving forward will always go into the collection which will handle Tab itself, prevent the browser's default tab behavior so both don't happen
-        if (!e.shiftKey) {
-          e.nativeEvent.stopImmediatePropagation(); // react 16 compat due to where it listens to the events
-          e.preventDefault();
-        }
-        // Moving backwards shouldn't only be handled by the browser's default tab behavior
-        if (e.shiftKey) {
-          e.continuePropagation();
-          return;
-        }
         break;
     }
 
