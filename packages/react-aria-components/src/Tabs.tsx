@@ -13,9 +13,9 @@
 import {AriaLabelingProps, forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
 import {Collection, CollectionBuilder, createHideableComponent, createLeafComponent} from '@react-aria/collections';
-import {CollectionProps, CollectionRendererContext, usePersistedKeys} from './Collection';
+import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, usePersistedKeys} from './Collection';
 import {ContextValue, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, inertValue, useObjectRef} from '@react-aria/utils';
 import {Collection as ICollection, Node, TabListState, useTabListState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, JSX, useContext, useMemo} from 'react';
 
@@ -255,6 +255,7 @@ export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, f
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
+    children: item.rendered,
     defaultClassName: 'react-aria-Tab',
     values: {
       isSelected,
@@ -277,7 +278,9 @@ export const Tab = /*#__PURE__*/ createLeafComponent('item', (props: TabProps, f
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}
-      data-hovered={isHovered || undefined} />
+      data-hovered={isHovered || undefined}>
+      {renderProps.children}
+    </ElementType>
   );
 });
 
@@ -320,14 +323,16 @@ export const TabPanel = /*#__PURE__*/ createHideableComponent(function TabPanel(
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       // @ts-ignore
-      inert={!isSelected ? 'true' : undefined}
+      inert={inertValue(!isSelected)}
       data-inert={!isSelected ? 'true' : undefined}>
       <Provider
         values={[
           [TabsContext, null],
           [TabListStateContext, null]
         ]}>
-        {renderProps.children}
+        <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
+          {renderProps.children}
+        </CollectionRendererContext.Provider>
       </Provider>
     </div>
   );

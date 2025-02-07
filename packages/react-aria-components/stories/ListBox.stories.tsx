@@ -39,16 +39,12 @@ ListBoxExample.story = {
   },
   argTypes: {
     selectionMode: {
-      control: {
-        type: 'radio',
-        options: ['none', 'single', 'multiple']
-      }
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
     },
     selectionBehavior: {
-      control: {
-        type: 'radio',
-        options: ['toggle', 'replace']
-      }
+      control: 'radio',
+      options: ['toggle', 'replace']
     }
   },
   parameters: {

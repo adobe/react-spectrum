@@ -479,7 +479,7 @@ these two options will also automatically filter out any invalid drag items from
   <InterfaceType properties={dndDocs.exports.DroppableCollectionBaseProps.properties} />
 </TypeContext.Provider>
 
-These lower level drop handlers and options can be used to supplement or replace the high-level options mentioned above. `getDropOperation` allows you to allows you to specify what drop operations is returned based on the
+These lower level drop handlers and options can be used to supplement or replace the high-level options mentioned above. `getDropOperation` allows you to specify what drop operations is returned based on the
 dragged items' drag types, the drop target information, and drop operations allowed by the drag source. It can be used in tandem with the higher level `acceptedDragTypes` and `shouldAcceptItemDrop` (when onItemDrop is provided) options. Those
 two options serve as a pre-filter, preemptively canceling any attempted drop operation that doesn't pass their requirements.
 

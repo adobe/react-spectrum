@@ -11,6 +11,7 @@
  */
 
 export {Accordion, AccordionContext} from './Accordion';
+export {ActionBar, ActionBarContext} from './ActionBar';
 export {ActionButton, ActionButtonContext} from './ActionButton';
 export {ActionButtonGroup, ActionButtonGroupContext} from './ActionButtonGroup';
 export {ActionMenu, ActionMenuContext} from './ActionMenu';
@@ -75,6 +76,7 @@ export {TextArea, TextField, TextAreaContext, TextFieldContext} from './TextFiel
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {ToggleButtonGroup, ToggleButtonGroupContext} from './ToggleButtonGroup';
 export {Tooltip, TooltipTrigger} from './Tooltip';
+export {TreeView, TreeViewItem} from './TreeView';
 
 export {pressScale} from './pressScale';
 
@@ -82,6 +84,7 @@ export {Collection} from 'react-aria-components';
 export {FileTrigger} from 'react-aria-components';
 
 export type {AccordionProps} from './Accordion';
+export type {ActionBarProps} from './ActionBar';
 export type {ActionButtonProps} from './ActionButton';
 export type {ActionButtonGroupProps} from './ActionButtonGroup';
 export type {ActionMenuProps} from './ActionMenu';
@@ -142,4 +145,5 @@ export type {TextFieldProps, TextAreaProps} from './TextField';
 export type {ToggleButtonProps} from './ToggleButton';
 export type {ToggleButtonGroupProps} from './ToggleButtonGroup';
 export type {TooltipProps} from './Tooltip';
+export type {TreeViewProps, TreeViewItemProps} from './TreeView';
 export type {FileTriggerProps, TooltipTriggerComponentProps as TooltipTriggerProps} from 'react-aria-components';

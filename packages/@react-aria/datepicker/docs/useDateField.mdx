@@ -130,12 +130,12 @@ function DateSegment({segment, state}) {
   let {segmentProps} = useDateSegment(segment, state, ref);
 
   return (
-    <div
+    <span
       {...segmentProps}
       ref={ref}
       className={`segment ${segment.isPlaceholder ? 'placeholder' : ''}`}>
       {segment.text}
-    </div>
+    </span>
   );
 }
 
@@ -153,7 +153,7 @@ function DateSegment({segment, state}) {
 }
 
 .field {
-  display: inline-flex;
+  display: block;
   padding: 2px 4px;
   border-radius: 2px;
   border: 1px solid var(--gray);

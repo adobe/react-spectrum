@@ -7,10 +7,10 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License. */}
 
-import {Layout} from '@react-spectrum/docs';
+import {Layout, VersionBadge} from '@react-spectrum/docs';
 export default Layout;
 import testUtilDocs from 'docs:@react-spectrum/test-utils';
-import {TypeLink} from '@react-spectrum/docs';
+import {ClassAPI, TypeLink} from '@react-spectrum/docs';
 
 ---
 category: Concepts
@@ -18,14 +18,13 @@ category: Concepts
 
 # Testing
 
-This page describes how to test an application built with with React Spectrum, including how to
+This page describes how to test an application built with React Spectrum, including how to
 query the DOM tree for elements and simulate user interactions.
 
 ## Introduction
 
 Running automated tests on your application helps ensure that it continues to work as expected over time.
-You can use testing tools like [Enzyme](https://enzymejs.github.io/enzyme/) or
-[React Testing Library](https://testing-library.com/docs/react-testing-library/intro) along with test runners like
+You can use testing tools like [React Testing Library](https://testing-library.com/docs/react-testing-library/intro) along with test runners like
 [Jest](https://jestjs.io) or [Mocha](https://mochajs.org) to test React Spectrum applications. These generally
 work quite well out of the box but there are a few things to consider to ensure your tests are the best they
 can be.
@@ -72,18 +71,6 @@ let tree = render(<MyComponent />);
 let option = tree.getByRole('button');
 ```
 
-### Enzyme
-
-In Enzyme, you can [use CSS selectors](https://enzymejs.github.io/enzyme/docs/api/ReactWrapper/find.html) to find
-elements. You can query by role using an attribute selector:
-
-```tsx
-import {mount} from 'enzyme';
-
-let wrapper = mount(<MyComponent />);
-let option = wrapper.find('[role="option"]');
-```
-
 ## Test ids
 
 Querying by semantics covers many scenarios, but what if you have many buttons on a page? How do you find the specific button
@@ -97,7 +84,7 @@ through to their underlying DOM nodes, which allows you to use an attribute like
 a particular instance of a component. For example, you could add test ids to the two input elements
 in a login form and use them to find the username and password fields.
 
-This example uses React Testing Library, but the idea could be applied in a similar way with Enzyme or other
+This example uses React Testing Library, but the idea could be applied in a similar way with other
 testing libraries.
 
 ```tsx
@@ -248,7 +235,7 @@ Components like ComboBox and Picker render a different experience on mobile vers
 components are rendered only against a specific experience, you'll need to mock the window screen width accordingly. We currently use a
 [screen width of 700px](https://github.com/adobe/react-spectrum/blob/5e487532e3ca4714513fb6ab64f7a78d9d1ca281/packages/%40react-spectrum/utils/src/useIsMobileDevice.ts#L15-L23) as the breakpoint
 between mobile and desktop, so you should mock the `width` getter of `window.screen` to a value greater or less than this value accordingly. You may use <TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.simulateMobile} /> and
-<TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.simulateDesktop} /> from the `@react-spectrum/test-utils` package to handle this width mocking for you in Jest:
+<TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.simulateDesktop} /> from the [@react-spectrum/test-utils](https://www.npmjs.com/package/@react-spectrum/test-utils) package to handle this width mocking for you in Jest:
 
 The example below shows how you would set this up in Jest.
 
@@ -351,3 +338,72 @@ import {SSRProvider, Provider, lightTheme} from '@adobe/react-spectrum';
   </Provider>
 </SSRProvider>
 ```
+
+## React Spectrum test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+In addition to the test utilities mentioned above, [@react-spectrum/test-utils](https://www.npmjs.com/package/@react-spectrum/test-utils) re-exports the same test utils available in `@react-aria/test-utils`, including
+the ARIA pattern testers. These testers are set of testing utilities that aims to make writing unit tests easier for consumers of React Spectrum. By using the ARIA specification for any given component pattern as a source of truth,
+we can make assumptions about the existence of various aria attributes in a component. This allows us to navigate the component's DOM structure, simulate common interactions, and verify the resulting state of the component.
+
+### Installation
+
+`@react-spectrum/test-utils` can be installed using a package manager like [npm](https://docs.npmjs.com/cli/npm) or [yarn](https://classic.yarnpkg.com/lang/en/).
+
+```
+yarn add --dev @react-spectrum/test-utils
+```
+
+Please note that this library uses [@testing-library/react@15](https://www.npmjs.com/package/@testing-library/react) and [@testing-library/user-event](https://www.npmjs.com/package/@testing-library/user-event/v/13.1.5). This means that you need
+to be on React 18+ in order for these utilities to work.
+
+### Setup
+
+Once installed, you can access the `User` that `@react-spectrum/test-utils` provides in your test file as shown below. This user only needs to be initialized once and then can be used to generate
+specific ARIA pattern tester in your test cases. This gives you access to that pattern's specific utilities that you can then call within your test to query for specific subcomponents or simulate common interactions.
+See [below](#patterns) for what patterns are currently supported.
+
+```ts
+// YourTest.test.ts
+import {screen} from '@testing-library/react';
+import {User} from '@react-spectrum/test-utils';
+
+// Provide whatever method of advancing timers you use in your test, this example assumes Jest with fake timers.
+// 'interactionType' specifies what mode of interaction should be simulated by the tester
+// 'advanceTimer' is used by the tester to advance the timers in the tests for specific interactions (e.g. long press)
+let testUtilUser = new User({interactionType: 'mouse', advanceTimer: jest.advanceTimersByTime});
+// ...
+
+it('my test case', async function () {
+  // Render your test component/app
+  render();
+  // Initialize the table tester via providing the 'Table' pattern name and the root element of said table
+  let table = testUtilUser.createTester('Table', {root: screen.getByTestId('test_table')});
+
+  // ...
+});
+```
+
+See below for the full definition of the `User` object.
+
+<ClassAPI links={testUtilDocs.links} class={testUtilDocs.exports.User} />
+
+### Patterns
+
+Below is a list of the ARIA patterns testers currently supported by `createTester`. See the accompanying component testing docs pages for a sample of how to use
+the testers in your test suite.
+
+-  [ComboBox](ComboBox.html#test-utils)
+
+-  [ListView](ListView.html#test-utils)
+
+-  [ListBox](ListBox.html#test-utils)
+
+-  [MenuTrigger](MenuTrigger.html#test-utils)
+
+-  [Picker](Picker.html#test-utils)
+
+-  [TableView](TableView.html#test-utils)
+
+-  [Tabs](Tabs.html#test-utils)
+
+-  [TreeView](TreeView.html#test-utils)

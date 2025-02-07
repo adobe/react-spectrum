@@ -56,12 +56,14 @@ async function build() {
           name === 'framer-motion' ||
           name === 'tailwindcss-animate' ||
           name === 'tailwindcss' ||
+          name === '@tailwindcss/postcss' ||
           name === 'autoprefixer' ||
           name === 'lucide-react' ||
           name === 'tailwind-variants' ||
           name === 'react' ||
           name === 'react-dom' ||
-          name === 'typescript'
+          name === 'typescript' ||
+          name === 'xml'
         )
     ),
     dependencies: {
@@ -79,7 +81,8 @@ async function build() {
     scripts: {
       // Add a public url if provided via arg (for verdaccio prod doc website build since we want a commit hash)
       build: `DOCS_ENV=production PARCEL_WORKER_BACKEND=process GIT_HASH=${gitHash} parcel build 'docs/*/*/docs/*.mdx' 'docs/react-aria-components/docs/**/*.mdx' 'packages/dev/docs/pages/**/*.mdx' ${publicUrlFlag}`,
-      postinstall: 'patch-package'
+      postinstall: 'patch-package',
+      createRssFeed: "node scripts/createFeed.mjs"
     },
     '@parcel/transformer-css': packageJSON['@parcel/transformer-css']
   };
@@ -134,7 +137,10 @@ async function build() {
   fs.copySync(path.join(__dirname, '..', '.browserslistrc'), path.join(dir, '.browserslistrc'));
   fs.copySync(path.join(__dirname, '..', 'starters'), path.join(dir, 'starters'));
   fs.copySync(path.join(__dirname, '..', '.yarn', 'releases'), path.join(dir, '.yarn', 'releases'));
+  fs.copySync(path.join(__dirname, '..', '.yarn', 'plugins'), path.join(dir, '.yarn', 'plugins'));
+  fs.copySync(path.join(__dirname, '..', '.yarn', 'patches'), path.join(dir, '.yarn', 'patches'));
   fs.copySync(path.join(__dirname, '..', '.yarnrc.yml'), path.join(dir, '.yarnrc.yml'));
+  fs.copySync(path.join(__dirname, '..', 'scripts', 'createFeed.mjs'), path.join(dir, 'scripts', 'createFeed.mjs'));
 
   // Delete mdx files from dev/docs that shouldn't go out yet.
   let devPkg = JSON.parse(fs.readFileSync(path.join(dir, 'packages/dev/docs/package.json'), 'utf8'));
@@ -171,8 +177,14 @@ async function build() {
   // Build the website
   await run('yarn', ['build'], {cwd: dir, stdio: 'inherit'});
 
+  // Generate the rss file for the release notes and blog
+  await run('yarn', ['createRssFeed', 'releases'], {cwd: dir, stdio: 'inherit'});
+  await run('yarn', ['createRssFeed', 'blog'], {cwd: dir, stdio: 'inherit'});
+
   // Copy the build back into dist, and delete the temp dir.
   fs.copySync(path.join(dir, 'dist'), path.join(__dirname, '..', 'dist', 'production', 'docs'));
+  fs.copySync(path.join(dir, 'scripts', 'releases-feed.rss'), path.join(__dirname, '..', 'dist', 'production', 'docs', 'releases', 'releases-feed.rss'))
+  fs.copySync(path.join(dir, 'scripts', 'blog-feed.rss'), path.join(__dirname, '..', 'dist', 'production', 'docs', 'blog', 'blog-feed.rss'))
   fs.removeSync(dir);
 }
 

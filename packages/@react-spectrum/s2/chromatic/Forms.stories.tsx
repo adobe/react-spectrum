@@ -57,59 +57,62 @@ const meta: Meta<typeof Form> = {
 
 export default meta;
 
-export const Example = (args: any) => (
-  <Form {...args}>
-    <TextField label="First Name" name="firstName" />
-    <TextField label="Last Name" name="firstName" />
-    <TextField label="Email" name="email" type="email" description="Enter an email" />
-    <CheckboxGroup label="Favorite sports">
-      <Checkbox value="soccer">Soccer</Checkbox>
-      <Checkbox value="baseball">Baseball</Checkbox>
-      <Checkbox value="basketball">Basketball</Checkbox>
-    </CheckboxGroup>
-    <RadioGroup label="Favorite pet">
-      <Radio value="cat">Cat</Radio>
-      <Radio value="dog">Dog</Radio>
-      <Radio value="plant" isDisabled>Plant</Radio>
-    </RadioGroup>
-    <TextField label="City" name="city" description="A long description to test help text wrapping." />
-    <TextField label="A long label to test wrapping behavior" name="long" />
-    <SearchField label="Search" name="search" />
-    <TextArea label="Comment" name="comment" />
-    <Switch>Wi-Fi</Switch>
-    <Checkbox>I agree to the terms</Checkbox>
-    <Slider label="Cookies"  defaultValue={30} />
-    <RangeSlider label="Range"  defaultValue={{start: 30, end: 60}} />
-    <Button type="submit" variant="primary" styles={style({gridColumnStart: 'field', width: 'fit'})}>Submit</Button>
-  </Form>
-);
+export const Example = {
+  render: (args: any) => (
+    <Form {...args}>
+      <TextField label="First Name" name="firstName" />
+      <TextField label="Last Name" name="firstName" />
+      <TextField label="Email" name="email" type="email" description="Enter an email" />
+      <CheckboxGroup label="Favorite sports">
+        <Checkbox value="soccer">Soccer</Checkbox>
+        <Checkbox value="baseball">Baseball</Checkbox>
+        <Checkbox value="basketball">Basketball</Checkbox>
+      </CheckboxGroup>
+      <RadioGroup label="Favorite pet">
+        <Radio value="cat">Cat</Radio>
+        <Radio value="dog">Dog</Radio>
+        <Radio value="plant" isDisabled>Plant</Radio>
+      </RadioGroup>
+      <TextField label="City" name="city" description="A long description to test help text wrapping." />
+      <TextField label="A long label to test wrapping behavior" name="long" />
+      <SearchField label="Search" name="search" />
+      <TextArea label="Comment" name="comment" />
+      <Switch>Wi-Fi</Switch>
+      <Checkbox>I agree to the terms</Checkbox>
+      <Slider label="Cookies"  defaultValue={30} />
+      <RangeSlider label="Range"  defaultValue={{start: 30, end: 60}} />
+      <Button type="submit" variant="primary" styles={style({gridColumnStart: 'field', width: 'fit'})}>Submit</Button>
+    </Form>
+  )
+};
 
-export const MixedForm = (args: any) => (
-  <Form {...args}>
-    <TextField label="First Name" name="firstName" />
-    <TextField label="Last Name" name="firstName" />
-    <TextField label="Email" name="email" type="email" description="Enter an email" />
-    <CheckboxGroup aria-label="Favorite sports">
-      <Checkbox value="soccer">Soccer</Checkbox>
-      <Checkbox value="baseball">Baseball</Checkbox>
-      <Checkbox value="basketball">Basketball</Checkbox>
-    </CheckboxGroup>
-    <RadioGroup aria-label="Favorite pet">
-      <Radio value="cat">Cat</Radio>
-      <Radio value="dog">Dog</Radio>
-      <Radio value="plant" isDisabled>Plant</Radio>
-    </RadioGroup>
-    <SearchField label="Search" name="search" />
-  </Form>
-);
-
-MixedForm.parameters = {
-  docs: {
-    disable: true
+export const MixedForm = {
+  render: (args: any) => (
+    <Form {...args}>
+      <TextField label="First Name" name="firstName" />
+      <TextField label="Last Name" name="firstName" />
+      <TextField label="Email" name="email" type="email" description="Enter an email" />
+      <CheckboxGroup aria-label="Favorite sports">
+        <Checkbox value="soccer">Soccer</Checkbox>
+        <Checkbox value="baseball">Baseball</Checkbox>
+        <Checkbox value="basketball">Basketball</Checkbox>
+      </CheckboxGroup>
+      <RadioGroup aria-label="Favorite pet">
+        <Radio value="cat">Cat</Radio>
+        <Radio value="dog">Dog</Radio>
+        <Radio value="plant" isDisabled>Plant</Radio>
+      </RadioGroup>
+      <SearchField label="Search" name="search" />
+    </Form>
+  ),
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };
 
-export const CustomLabelsExample = (args: any) => {
+const CustomLabelsExampleRender = (args: any) => {
   const [isSortAscending, setIsSortAscending] = useState(true);
   return (
     <Form {...args}>
@@ -202,8 +205,11 @@ export const CustomLabelsExample = (args: any) => {
   );
 };
 
-CustomLabelsExample.parameters = {
-  docs: {
-    disable: true
+export const CustomLabelsExample = {
+  render: (args: any) => <CustomLabelsExampleRender {...args} />,
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };

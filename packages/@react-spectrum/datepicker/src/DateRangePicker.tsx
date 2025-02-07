@@ -51,7 +51,8 @@ export const DateRangePicker = React.forwardRef(function DateRangePicker<T exten
     autoFocus,
     placeholderValue,
     maxVisibleMonths = 1,
-    pageBehavior
+    pageBehavior,
+    firstDayOfWeek
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let targetRef = useRef<HTMLDivElement | null>(null);
@@ -137,33 +138,35 @@ export const DateRangePicker = React.forwardRef(function DateRangePicker<T exten
         {...mergeProps(groupProps, hoverProps, focusProps)}
         className={className}
         ref={targetRef}>
-        <Input
-          isDisabled={isDisabled}
-          isQuiet={isQuiet}
-          validationState={validationState}
-          className={classNames(styles, 'spectrum-InputGroup-field')}
-          inputClassName={fieldClassName}
-          disableFocusRing
-          minWidth={approximateWidth}>
-          <DatePickerField
-            {...startFieldProps}
-            data-testid="start-date"
-            isQuiet={props.isQuiet}
-            inputClassName={classNames(datepickerStyles, 'react-spectrum-Datepicker-startField')} />
-          <DateRangeDash />
-          <DatePickerField
-            {...endFieldProps}
-            data-testid="end-date"
-            isQuiet={props.isQuiet}
-            inputClassName={classNames(
-              styles,
-              'spectrum-Datepicker-endField',
-              classNames(
-                datepickerStyles,
-                'react-spectrum-Datepicker-endField'
-              )
-            )} />
-        </Input>
+        <div style={{overflow: 'hidden', width: '100%'}}>
+          <Input
+            isDisabled={isDisabled}
+            isQuiet={isQuiet}
+            validationState={validationState}
+            className={classNames(styles, 'spectrum-InputGroup-field')}
+            inputClassName={fieldClassName}
+            disableFocusRing
+            minWidth={approximateWidth}>
+            <DatePickerField
+              {...startFieldProps}
+              data-testid="start-date"
+              isQuiet={props.isQuiet}
+              inputClassName={classNames(datepickerStyles, 'react-spectrum-Datepicker-startField')} />
+            <DateRangeDash />
+            <DatePickerField
+              {...endFieldProps}
+              data-testid="end-date"
+              isQuiet={props.isQuiet}
+              inputClassName={classNames(
+                styles,
+                'spectrum-Datepicker-endField',
+                classNames(
+                  datepickerStyles,
+                  'react-spectrum-Datepicker-endField'
+                )
+              )} />
+          </Input>
+        </div>
         <DialogTrigger
           type="popover"
           mobileType="tray"
@@ -187,6 +190,7 @@ export const DateRangePicker = React.forwardRef(function DateRangePicker<T exten
                   {...calendarProps}
                   visibleMonths={visibleMonths}
                   pageBehavior={pageBehavior}
+                  firstDayOfWeek={firstDayOfWeek}
                   UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-calendar', {'is-invalid': validationState === 'invalid'})} />
                 {showTimeField &&
                   <Flex gap="size-100" marginTop="size-100" UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-timeFields')}>
@@ -225,7 +229,7 @@ export const DateRangePicker = React.forwardRef(function DateRangePicker<T exten
 
 function DateRangeDash() {
   return (
-    <div
+    <span
       aria-hidden="true"
       data-testid="date-range-dash"
       className={classNames(datepickerStyles, 'react-spectrum-Datepicker-rangeDash')} />

@@ -13,7 +13,7 @@
 import Bold from '../s2wf-icons/S2_Icon_TextBold_20_N.svg';
 import {categorizeArgTypes, StaticColorDecorator} from '../stories/utils';
 import Italic from '../s2wf-icons/S2_Icon_TextItalic_20_N.svg';
-import type {Meta, StoryFn} from '@storybook/react';
+import type {Meta} from '@storybook/react';
 import {style} from '../style' with { type: 'macro' };
 import {Text, ToggleButton, ToggleButtonGroup} from '../src';
 import Underline from '../s2wf-icons/S2_Icon_TextUnderline_20_N.svg';
@@ -46,26 +46,32 @@ let justifiedStyle = style({
   }
 });
 
-export const Example: StoryFn<typeof ToggleButtonGroup> = (args) => (
-  <ToggleButtonGroup {...args}>
-    <ToggleButton id={1}><Bold /><Text slot="label">Bold</Text></ToggleButton>
-    <ToggleButton id={2}><Italic /><Text slot="label">Italic</Text></ToggleButton>
-    <ToggleButton id={3}><Underline /><Text slot="label">Underline</Text></ToggleButton>
-  </ToggleButtonGroup>
-);
+export const Example = {
+  render: (args) => (
+    <ToggleButtonGroup {...args}>
+      <ToggleButton id={1}><Bold /><Text slot="label">Bold</Text></ToggleButton>
+      <ToggleButton id={2}><Italic /><Text slot="label">Italic</Text></ToggleButton>
+      <ToggleButton id={3}><Underline /><Text slot="label">Underline</Text></ToggleButton>
+    </ToggleButtonGroup>
+  )
+};
 
-export const IconOnly: StoryFn<typeof ToggleButtonGroup> = (args) => (
-  <ToggleButtonGroup {...args}>
-    <ToggleButton id={1} aria-label="Bold"><Bold /></ToggleButton>
-    <ToggleButton id={2} aria-label="Italic"><Italic /></ToggleButton>
-    <ToggleButton id={3} aria-label="Underline"><Underline /></ToggleButton>
-  </ToggleButtonGroup>
-);
+export const IconOnly = {
+  render: (args) => (
+    <ToggleButtonGroup {...args}>
+      <ToggleButton id={1} aria-label="Bold"><Bold /></ToggleButton>
+      <ToggleButton id={2} aria-label="Italic"><Italic /></ToggleButton>
+      <ToggleButton id={3} aria-label="Underline"><Underline /></ToggleButton>
+    </ToggleButtonGroup>
+)
+};
 
-export const Justified: StoryFn<typeof ToggleButtonGroup> = (args) => (
-  <ToggleButtonGroup {...args} isJustified styles={justifiedStyle(args)}>
-    <ToggleButton id={1}><Bold /><Text slot="label">Bold</Text></ToggleButton>
-    <ToggleButton id={2}><Italic /><Text slot="label">Italic</Text></ToggleButton>
-    <ToggleButton id={3}><Underline /><Text slot="label">Underline</Text></ToggleButton>
-  </ToggleButtonGroup>
-);
+export const Justified = {
+  render: (args) => (
+    <ToggleButtonGroup {...args} isJustified styles={justifiedStyle(args)}>
+      <ToggleButton id={1}><Bold /><Text slot="label">Bold</Text></ToggleButton>
+      <ToggleButton id={2}><Italic /><Text slot="label">Italic</Text></ToggleButton>
+      <ToggleButton id={3}><Underline /><Text slot="label">Underline</Text></ToggleButton>
+    </ToggleButtonGroup>
+  )
+};

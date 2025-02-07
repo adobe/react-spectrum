@@ -14,7 +14,7 @@ import {DOMAttributes, DOMProps, FocusableElement, FocusEvents, HoverEvents, Key
 import {filterDOMProps, mergeProps, useLinkProps, useRouter, useSlotId} from '@react-aria/utils';
 import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useFocus, useHover, useKeyboard, usePress} from '@react-aria/interactions';
-import {menuData} from './useMenu';
+import {menuData} from './utils';
 import {SelectionManager} from '@react-stately/selection';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableItem} from '@react-aria/selection';
@@ -34,6 +34,8 @@ export interface MenuItemAria {
 
   /** Whether the item is currently focused. */
   isFocused: boolean,
+  /** Whether the item is keyboard focused. */
+  isFocusVisible: boolean,
   /** Whether the item is currently selected. */
   isSelected: boolean,
   /** Whether the item is currently in a pressed state. */
@@ -225,6 +227,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   };
 
   let {itemProps, isFocused} = useSelectableItem({
+    id,
     selectionManager: selectionManager,
     key,
     ref,
@@ -234,7 +237,8 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     // because we handle it ourselves. The behavior of menus
     // is slightly different from other collections because
     // actions are performed on key down rather than key up.
-    linkBehavior: 'none'
+    linkBehavior: 'none',
+    shouldUseVirtualFocus: data.shouldUseVirtualFocus
   });
 
   let {pressProps, isPressed} = usePress({
@@ -314,6 +318,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       id: keyboardId
     },
     isFocused,
+    isFocusVisible: isFocused && isFocusVisible(),
     isSelected,
     isPressed,
     isDisabled

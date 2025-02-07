@@ -13,6 +13,7 @@
 import {ContextValue, Keyboard as KeyboardAria, Header as RACHeader, Heading as RACHeading, TextContext as RACTextContext, SlotProps, Text as TextAria} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {inertValue} from '@react-aria/utils';
 import {StyleString} from '../style/types';
 import {UnsafeStyles} from './style-utils';
 import {useDOMRef} from '@react-spectrum/utils';
@@ -22,7 +23,8 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 interface ContentProps extends UnsafeStyles, SlotProps {
   children?: ReactNode,
   styles?: StyleString,
-  isHidden?: boolean
+  isHidden?: boolean,
+  id?: string
 }
 
 interface HeadingProps extends ContentProps {
@@ -107,7 +109,7 @@ export const Text = forwardRef(function Text(props: ContentProps, ref: DOMRef) {
       {...otherProps}
       ref={domRef}
       // @ts-ignore - compatibility with React < 19
-      inert={isSkeleton ? 'true' : undefined}
+      inert={inertValue(isSkeleton)}
       className={UNSAFE_className + styles}
       style={UNSAFE_style}
       slot={slot || undefined}

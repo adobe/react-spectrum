@@ -21,7 +21,7 @@ export default {
   title: 'TimeField',
   parameters: {
     chromaticProvider: {
-      locales: ['en-US'/* , 'ar-EG', 'ja-JP' */]
+      locales: ['en-US', 'ar-EG', 'ja-JP']
     }
   }
 };
@@ -35,6 +35,16 @@ export const PlaceholderFocus = () => <TimeField label="Time" placeholderValue={
 PlaceholderFocus.parameters = {
   chromaticProvider: {
     locales: ['en-US'],
+    scales: ['medium'],
+    colorSchemes: ['light'],
+    express: false
+  }
+};
+
+export const PlaceholderFocusRTL = () => <TimeField label="Time" placeholderValue={time} autoFocus />;
+PlaceholderFocusRTL.parameters = {
+  chromaticProvider: {
+    locales: ['ar-EG'],
     scales: ['medium'],
     colorSchemes: ['light'],
     express: false

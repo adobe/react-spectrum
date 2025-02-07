@@ -10,13 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-
-import {AriaMenuProps, FocusScope, mergeProps, useFocusRing, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
+import {AriaMenuProps, FocusScope, mergeProps, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
+import {BaseCollection, Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
 import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
-import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
-import {ContextValue, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
-import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {filterDOMProps, mergeRefs, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {FocusStrategy, forwardRefType, HoverEvents, Key, LinkDOMProps, MultipleSelection} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import {KeyboardContext} from './Keyboard';
@@ -33,12 +32,14 @@ import React, {
   RefObject,
   useCallback,
   useContext,
+  useMemo,
   useRef,
   useState
 } from 'react';
 import {RootMenuTriggerState, useSubmenuTriggerState} from '@react-stately/menu';
 import {SeparatorContext} from './Separator';
 import {TextContext} from './Text';
+import {UNSTABLE_InternalAutocompleteContext} from './Autocomplete';
 import {useSubmenuTrigger} from '@react-aria/menu';
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
@@ -167,19 +168,23 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
 
 interface MenuInnerProps<T> {
   props: MenuProps<T>,
-  collection: ICollection<Node<object>>,
+  collection: BaseCollection<object>,
   menuRef: RefObject<HTMLDivElement | null>
 }
 
 function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
+  let {filterFn, collectionProps: autocompleteMenuProps, collectionRef} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
+  // Memoed so that useAutocomplete callback ref is properly only called once on mount and not everytime a rerender happens
+  ref = useObjectRef(useMemo(() => mergeRefs(ref, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null), [collectionRef, ref]));
+  let filteredCollection = useMemo(() => filterFn ? collection.filter(filterFn) : collection, [collection, filterFn]);
   let state = useTreeState({
     ...props,
-    collection,
+    collection: filteredCollection as ICollection<Node<object>>,
     children: undefined
   });
   let triggerState = useContext(RootMenuTriggerStateContext);
   let {isVirtualized, CollectionRoot} = useContext(CollectionRendererContext);
-  let {menuProps} = useMenu({...props, isVirtualized, onClose: props.onClose || triggerState?.close}, state, ref);
+  let {menuProps} = useMenu({...props, ...autocompleteMenuProps, isVirtualized, onClose: props.onClose || triggerState?.close}, state, ref);
   let renderProps = useRenderProps({
     defaultClassName: 'react-aria-Menu',
     className: props.className,
@@ -206,7 +211,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             [SelectionManagerContext, state.selectionManager]
           ]}>
           <CollectionRoot
-            collection={collection}
+            collection={state.collection}
             persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)}
             scrollRef={ref} />
         </Provider>
@@ -338,7 +343,6 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent('item', function MenuI
     selectionManager
   }, state, ref);
 
-  let {isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({
     isDisabled: states.isDisabled
   });
@@ -350,7 +354,7 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent('item', function MenuI
     values: {
       ...states,
       isHovered,
-      isFocusVisible,
+      isFocusVisible: states.isFocusVisible,
       selectionMode: selectionManager.selectionMode,
       selectionBehavior: selectionManager.selectionBehavior,
       hasSubmenu: !!props['aria-haspopup'],
@@ -362,13 +366,13 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent('item', function MenuI
 
   return (
     <ElementType
-      {...mergeProps(menuItemProps, focusProps, hoverProps)}
+      {...mergeProps(menuItemProps, hoverProps)}
       {...renderProps}
       ref={ref}
       data-disabled={states.isDisabled || undefined}
       data-hovered={isHovered || undefined}
       data-focused={states.isFocused || undefined}
-      data-focus-visible={isFocusVisible || undefined}
+      data-focus-visible={states.isFocusVisible || undefined}
       data-pressed={states.isPressed || undefined}
       data-selected={states.isSelected || undefined}
       data-selection-mode={selectionManager.selectionMode === 'none' ? undefined : selectionManager.selectionMode}
@@ -378,6 +382,7 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent('item', function MenuI
         values={[
           [TextContext, {
             slots: {
+              [DEFAULT_SLOT]: labelProps,
               label: labelProps,
               description: descriptionProps
             }

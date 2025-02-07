@@ -252,3 +252,13 @@ By default, when pressing the next or previous buttons, pagination will advance 
   <RangeCalendar aria-label="Trip dates" visibleMonths={3} pageBehavior="single" />
 </div>
 ```
+
+### Custom first day of week
+
+By default, the first day of the week is automatically set based on the current locale. This can be changed by setting the `firstDayOfWeek` prop to `'sun'`, `'mon'`, `'tue'`, `'wed'`, `'thu'`, `'fri'`, or `'sat'`.
+
+```tsx example
+<div style={{maxWidth: '100%', overflow: 'auto'}}>
+  <RangeCalendar aria-label="Trip dates" firstDayOfWeek="mon" />
+</div>
+```

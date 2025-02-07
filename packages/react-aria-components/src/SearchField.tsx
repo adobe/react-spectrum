@@ -14,7 +14,7 @@ import {AriaSearchFieldProps, useSearchField} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {FormContext} from './Form';
 import {forwardRefType} from '@react-types/shared';
 import {GroupContext} from './Group';
@@ -58,7 +58,10 @@ export const SearchField = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let inputRef = useRef<HTMLInputElement>(null);
-  let [labelRef, label] = useSlot();
+  let [inputContextProps, mergedInputRef] = useContextProps({}, inputRef, InputContext);
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let state = useSearchFieldState({
     ...props,
     validationBehavior
@@ -68,7 +71,7 @@ export const SearchField = /*#__PURE__*/ (forwardRef as forwardRefType)(function
     ...removeDataAttributes(props),
     label,
     validationBehavior
-  }, state, inputRef);
+  }, state, mergedInputRef);
 
   let renderProps = useRenderProps({
     ...props,
@@ -96,7 +99,7 @@ export const SearchField = /*#__PURE__*/ (forwardRef as forwardRefType)(function
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],
-          [InputContext, {...inputProps, ref: inputRef}],
+          [InputContext, {...mergeProps(inputProps, inputContextProps), ref: mergedInputRef}],
           [ButtonContext, clearButtonProps],
           [TextContext, {
             slots: {

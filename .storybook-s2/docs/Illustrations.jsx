@@ -11,7 +11,7 @@ import { useState } from 'react';
 export function Illustrations() {
   let [gradientStyle, setStyle] = useState('generic1');
   return (
-    <div className={style({marginX: 'auto'})}>
+    <div className={'sb-unstyled ' + style({marginX: 'auto'})}>
       <div className={style({marginX: 48})}>
         <h1 className={style({font: 'heading-2xl', marginBottom: 48})}>
           Illustrations
@@ -36,7 +36,7 @@ export function Illustrations() {
                     size="XS"
                     isQuiet
                     aria-label="Copy"
-                    onPress={() => navigator.clipboard.writeText(`import ${name} from '@react-spectrum/s2/illustrations/${gradientStyle}/${icon}';`)}>
+                    onPress={() => navigator.clipboard.writeText(`import ${name} from '@react-spectrum/s2/illustrations/gradient/${gradientStyle}/${icon}';`)}>
                     <Paste />
                   </ActionButton>
                 </span>

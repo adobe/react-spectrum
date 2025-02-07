@@ -214,7 +214,7 @@ describe('Table', () => {
       expect(cell).toHaveAttribute('class', 'react-aria-Cell');
     }
 
-    for (let cell of tableTester.cells) {
+    for (let cell of tableTester.cells()) {
       expect(cell).toHaveAttribute('class', 'react-aria-Cell');
     }
   });
@@ -477,7 +477,7 @@ describe('Table', () => {
     expect(column).toHaveClass('focus');
   });
 
-  it('should support press state', () => {
+  it('should support press state', async () => {
     let {getAllByRole} = renderTable({
       tableProps: {selectionMode: 'multiple'},
       rowProps: {className: ({isPressed}) => isPressed ? 'pressed' : ''}
@@ -488,16 +488,16 @@ describe('Table', () => {
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(row);
+    await user.pointer({target: row, keys: '[MouseLeft>]'});
     expect(row).toHaveAttribute('data-pressed', 'true');
     expect(row).toHaveClass('pressed');
 
-    fireEvent.mouseUp(row);
+    await user.pointer({target: row, keys: '[/MouseLeft]'});
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
   });
 
-  it('should not show press state when not interactive', () => {
+  it('should not show press state when not interactive', async () => {
     let {getAllByRole} = renderTable({
       rowProps: {className: ({isPressed}) => isPressed ? 'pressed' : ''}
     });
@@ -506,16 +506,16 @@ describe('Table', () => {
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(row);
+    await user.pointer({target: row, keys: '[MouseLeft>]'});
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
 
-    fireEvent.mouseUp(row);
+    await user.pointer({target: row, keys: '[/MouseLeft]'});
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
   });
 
-  it('should support row actions', () => {
+  it('should support row actions', async () => {
     let onRowAction = jest.fn();
     let {getAllByRole} = renderTable({
       tableProps: {onRowAction},
@@ -527,11 +527,11 @@ describe('Table', () => {
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(row);
+    await user.pointer({target: row, keys: '[MouseLeft>]'});
     expect(row).toHaveAttribute('data-pressed', 'true');
     expect(row).toHaveClass('pressed');
 
-    fireEvent.mouseUp(row);
+    await user.pointer({target: row, keys: '[/MouseLeft]'});
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
 
@@ -618,7 +618,7 @@ describe('Table', () => {
     );
 
     let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
-    await tableTester.triggerRowAction({index: 0});
+    await tableTester.triggerRowAction({row: 0});
     expect(onAction).toHaveBeenCalled();
   });
 
@@ -639,7 +639,7 @@ describe('Table', () => {
     expect(columns[2]).toHaveAttribute('aria-sort', 'none');
     expect(columns[2]).not.toHaveTextContent('▲');
 
-    await tableTester.toggleSort({index: 0});
+    await tableTester.toggleSort({column: 0});
     expect(onSortChange).toHaveBeenCalledTimes(1);
     expect(onSortChange).toHaveBeenCalledWith({column: 'name', direction: 'descending'});
   });
@@ -902,22 +902,22 @@ describe('Table', () => {
       expect(button).toHaveAttribute('aria-label', 'Drag Games');
     });
 
-    it('should render drop indicators', () => {
+    it('should render drop indicators', async () => {
       let onReorder = jest.fn();
       let {getAllByRole} = render(<DraggableTable onReorder={onReorder} renderDropIndicator={(target) => <DropIndicator target={target}>Test</DropIndicator>} />);
-      let button = getAllByRole('button')[0];
-      fireEvent.keyDown(button, {key: 'Enter'});
-      fireEvent.keyUp(button, {key: 'Enter'});
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
       act(() => jest.runAllTimers());
 
       let rows = getAllByRole('row');
       expect(rows).toHaveLength(5);
       expect(rows[0]).toHaveAttribute('class', 'react-aria-DropIndicator');
-      expect(rows[0]).toHaveAttribute('data-drop-target', 'true');
+      expect(rows[0]).not.toHaveAttribute('data-drop-target', 'true');
       expect(rows[0]).toHaveTextContent('Test');
       expect(within(rows[0]).getByRole('button')).toHaveAttribute('aria-label', 'Insert before Games');
       expect(rows[2]).toHaveAttribute('class', 'react-aria-DropIndicator');
-      expect(rows[2]).not.toHaveAttribute('data-drop-target');
+      expect(rows[2]).toHaveAttribute('data-drop-target');
       expect(within(rows[2]).getByRole('button')).toHaveAttribute('aria-label', 'Insert between Games and Program Files');
       expect(rows[3]).toHaveAttribute('class', 'react-aria-DropIndicator');
       expect(rows[3]).not.toHaveAttribute('data-drop-target');
@@ -926,30 +926,29 @@ describe('Table', () => {
       expect(rows[4]).not.toHaveAttribute('data-drop-target');
       expect(within(rows[4]).getByRole('button')).toHaveAttribute('aria-label', 'Insert after bootmgr');
 
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
-      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+      await user.keyboard('{ArrowDown}');
 
-      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Games and Program Files');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Program Files and bootmgr');
       expect(rows[0]).not.toHaveAttribute('data-drop-target', 'true');
-      expect(rows[2]).toHaveAttribute('data-drop-target', 'true');
+      expect(rows[2]).not.toHaveAttribute('data-drop-target', 'true');
+      expect(rows[3]).toHaveAttribute('data-drop-target', 'true');
 
-      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      await user.keyboard('{Enter}');
       act(() => jest.runAllTimers());
 
       expect(onReorder).toHaveBeenCalledTimes(1);
     });
 
-    it('should support dropping on rows', () => {
+    it('should support dropping on rows', async () => {
       let onItemDrop = jest.fn();
       let {getAllByRole} = render(<>
         <DraggableTable />
         <DraggableTable onItemDrop={onItemDrop} />
       </>);
 
-      let button = getAllByRole('button')[0];
-      fireEvent.keyDown(button, {key: 'Enter'});
-      fireEvent.keyUp(button, {key: 'Enter'});
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
       act(() => jest.runAllTimers());
 
       let grids = getAllByRole('grid');
@@ -964,23 +963,22 @@ describe('Table', () => {
 
       expect(document.activeElement).toBe(within(rows[0]).getByRole('button'));
 
-      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      await user.keyboard('{Enter}');
       act(() => jest.runAllTimers());
 
       expect(onItemDrop).toHaveBeenCalledTimes(1);
     });
 
-    it('should support dropping on the root', () => {
+    it('should support dropping on the root', async () => {
       let onRootDrop = jest.fn();
       let {getAllByRole} = render(<>
         <DraggableTable />
         <DraggableTable onRootDrop={onRootDrop} />
       </>);
 
-      let button = getAllByRole('button')[0];
-      fireEvent.keyDown(button, {key: 'Enter'});
-      fireEvent.keyUp(button, {key: 'Enter'});
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
       act(() => jest.runAllTimers());
 
       let grids = getAllByRole('grid');
@@ -990,8 +988,7 @@ describe('Table', () => {
       expect(document.activeElement).toBe(within(rows[0]).getByRole('button'));
       expect(grids[1]).toHaveAttribute('data-drop-target', 'true');
 
-      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      await user.keyboard('{Enter}');
       act(() => jest.runAllTimers());
 
       expect(onRootDrop).toHaveBeenCalledTimes(1);

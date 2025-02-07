@@ -114,7 +114,9 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
 
   // Get props for child elements from useSelect
   let buttonRef = useRef<HTMLButtonElement>(null);
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let {
     labelProps,
     triggerProps,
@@ -202,6 +204,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         data-invalid={validation.isInvalid || undefined}
         data-required={props.isRequired || undefined} />
       <HiddenSelect
+        autoComplete={props.autoComplete}
         state={state}
         triggerRef={buttonRef}
         label={label}

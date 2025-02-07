@@ -26,11 +26,12 @@ const meta: Meta<typeof ContextualHelp> = {
 
 export default meta;
 
-export const Default = Example;
-
-Default.play = async ({canvasElement}) => {
-  await userEvent.tab();
-  await userEvent.keyboard('{Enter}');
-  let body = canvasElement.ownerDocument.body;
-  await within(body).findByRole('dialog');
+export const Default = {
+  ...Example,
+  play: async ({canvasElement}) => {
+    await userEvent.tab();
+    await userEvent.keyboard('{Enter}');
+    let body = canvasElement.ownerDocument.body;
+    await within(body).findByRole('dialog');
+  }
 };

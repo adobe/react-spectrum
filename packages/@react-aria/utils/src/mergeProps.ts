@@ -34,10 +34,10 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
  * @param args - Multiple sets of props to merge together.
  */
 export function mergeProps<T extends PropsArg[]>(...args: T): UnionToIntersection<TupleTypes<T>> {
-  // Start with a base clone of the first argument. This is a lot faster than starting
+  // Start with a base clone of the last argument. This is a lot faster than starting
   // with an empty object and adding properties as we go.
-  let result: Props = {...args[0]};
-  for (let i = 1; i < args.length; i++) {
+  let result: Props = {...args[args.length - 1]};
+  for (let i = args.length - 2; i >= 0; i--) {
     let props = args[i];
     for (let key in props) {
       let a = result[key];
@@ -53,7 +53,7 @@ export function mergeProps<T extends PropsArg[]>(...args: T): UnionToIntersectio
         key.charCodeAt(2) >= /* 'A' */ 65 &&
         key.charCodeAt(2) <= /* 'Z' */ 90
       ) {
-        result[key] = chain(a, b);
+        result[key] = chain(b, a);
 
         // Merge classnames, sometimes classNames are empty string which eval to false, so we just need to do a type check
       } else if (
@@ -61,12 +61,12 @@ export function mergeProps<T extends PropsArg[]>(...args: T): UnionToIntersectio
         typeof a === 'string' &&
         typeof b === 'string'
       ) {
-        result[key] = clsx(a, b);
+        result[key] = clsx(b, a);
       } else if (key === 'id' && a && b) {
-        result.id = mergeIds(a, b);
+        result.id = mergeIds(b, a);
         // Override others
-      } else {
-        result[key] = b !== undefined ? b : a;
+      } else if (a === undefined) {
+        result[key] = b;
       }
     }
   }
