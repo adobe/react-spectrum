@@ -92,6 +92,7 @@ describe('ComboBox SSR', function () {
     let [button, button2] = buttons;
     fireEvent.click(button2);
     expect(button2.textContent).toBe('1');
-    expect(button.textContent.split(', ')[2]).toBe(button.textContent.split(', ')[1]);
+    let [, first, second] = button.textContent.split(', ');
+    expect(first.replace(/ aria-describedby="[^"]*"/, '')).toBe(second);
   });
 });
