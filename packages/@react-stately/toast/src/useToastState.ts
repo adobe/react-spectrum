@@ -155,7 +155,7 @@ export class ToastQueue<T> {
     this.visibleToasts = this.queue.slice(0, this.maxVisibleToasts);
 
     for (let fn of this.subscriptions) {
-      this.runWithWrapUpdate(() => fn());
+      this.runWithWrapUpdate(fn);
     }
   }
 
