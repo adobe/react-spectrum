@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ariaHideOutside} from './ariaHideOutside';
+import {ariaHideOutside, keepVisible} from './ariaHideOutside';
 import {AriaPositionProps, useOverlayPosition} from './useOverlayPosition';
 import {DOMAttributes, RefObject} from '@react-types/shared';
 import {mergeProps, useLayoutEffect} from '@react-aria/utils';
@@ -80,10 +80,13 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     ...otherProps
   } = props;
 
+  let isSubmenu = otherProps['trigger'] === 'SubmenuTrigger' || otherProps['trigger'] === 'SubDialogTrigger';
+
   let {overlayProps, underlayProps} = useOverlay(
     {
       // If popover is in the top layer, it should not prevent other popovers from being dismissed.
-      isOpen: state.isOpen && !otherProps['data-react-aria-top-layer'],
+      // TODO: fix interact outside detecting submenus as "outside" parent menu.
+      isOpen: state.isOpen && !isSubmenu,
       onClose: state.close,
       shouldCloseOnBlur: true,
       isDismissable: !isNonModal,
@@ -106,8 +109,12 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
   });
 
   useLayoutEffect(() => {
-    if (state.isOpen && !isNonModal && popoverRef.current) {
-      return ariaHideOutside([popoverRef.current]);
+    if (state.isOpen && popoverRef.current) {
+      if (isNonModal) {
+        return keepVisible(popoverRef.current);
+      } else {
+        return ariaHideOutside([popoverRef.current]);
+      }
     }
   }, [isNonModal, state.isOpen, popoverRef]);
 

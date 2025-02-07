@@ -32,6 +32,7 @@ import React, {
   RefObject,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState
@@ -147,7 +148,7 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
           placement: 'end top',
           // Prevent parent popover from hiding submenu.
           // @ts-ignore
-          'data-react-aria-top-layer': true,
+          // 'data-react-aria-top-layer': true,
           onDismissButtonPress,
           ...popoverProps
         }]
@@ -159,7 +160,7 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
 }, props => props.children[0]);
 
 // TODO: make SubdialogTrigger unstable
-export interface SubdialogTriggerProps {
+export interface SubDialogTriggerProps {
   /**
    * The contents of the SubDialogTrigger. The first child should be an Item (the trigger) and the second child should be the Popover (for the subdialog).
    */
@@ -176,7 +177,7 @@ export interface SubdialogTriggerProps {
  *
  * @version alpha
  */
-export const SubDialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogtrigger', (props: SubdialogTriggerProps, ref: ForwardedRef<HTMLDivElement>, item) => {
+export const SubDialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogtrigger', (props: SubDialogTriggerProps, ref: ForwardedRef<HTMLDivElement>, item) => {
   let {CollectionBranch} = useContext(CollectionRendererContext);
   let state = useContext(MenuStateContext)!;
   let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
@@ -230,7 +231,7 @@ export const SubDialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogt
           // I've opted to add subDialogKeyDown in useSubmenuTrigger instead and make useDialog accept onKeyDown instead
           // Prevent parent popover from hiding subdialog.
           // @ts-ignore
-          'data-react-aria-top-layer': true,
+          // 'data-react-aria-top-layer': true,
           onDismissButtonPress,
           ...popoverProps
         }]
