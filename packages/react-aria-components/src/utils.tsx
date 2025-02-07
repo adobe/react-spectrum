@@ -160,15 +160,12 @@ export function useSlottedContext<T>(context: Context<SlottedContextValue<T>>, s
     return null;
   }
   if (ctx && typeof ctx === 'object' && 'slots' in ctx && ctx.slots) {
-    let availableSlots = new Intl.ListFormat().format(Object.keys(ctx.slots).map(p => `"${p}"`));
-
-    if (!slot && !ctx.slots[DEFAULT_SLOT]) {
-      throw new Error(`A slot prop is required. Valid slot names are ${availableSlots}.`);
-    }
     let slotKey = slot || DEFAULT_SLOT;
     if (!ctx.slots[slotKey]) {
-      // @ts-ignore
-      throw new Error(`Invalid slot "${slot}". Valid slot names are ${availableSlots}.`);
+      let availableSlots = new Intl.ListFormat().format(Object.keys(ctx.slots).map(p => `"${p}"`));
+      let errorMessage = slot ? `Invalid slot "${slot}".` : 'A slot prop is required.';
+
+      throw new Error(`${errorMessage} Valid slot names are ${availableSlots}.`);
     }
     return ctx.slots[slotKey];
   }
