@@ -12,7 +12,7 @@
 
 import {createPortal} from 'react-dom';
 import {forwardRefType} from '@react-types/shared';
-import React, {createContext, forwardRef, ReactElement, ReactNode, useContext, useMemo} from 'react';
+import React, {createContext, forwardRef, ReactElement, ReactNode, useContext, useRef} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
 
 // React doesn't understand the <template> element, which doesn't have children like a normal element.
@@ -43,8 +43,7 @@ const hiddenFragment = typeof DocumentFragment !== 'undefined' ? new DocumentFra
 export function Hidden(props: {children: ReactNode}) {
   let isHidden = useContext(HiddenContext);
   let isSSR = useIsSSR();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  let wasSSR = useMemo(() => isSSR, []);
+  let wasSSR = useRef(isSSR).current;
   if (isHidden) {
     // Don't hide again if we are already hidden.
     return <>{props.children}</>;
