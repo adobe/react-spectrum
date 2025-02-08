@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {Button, FileTrigger, Link} from '../';
+import {Button, FileTrigger, Label, Link} from '../';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -100,4 +100,30 @@ describe('FileTrigger', () => {
     expect(input).toHaveAttribute('webkitdirectory');
   });
 
+  it('should accept aria attributes on the input', async () => {
+    let {getByLabelText} = render(
+      <FileTrigger aria-label="File Upload">
+        <Button>Upload</Button>
+      </FileTrigger>
+    );
+
+    let file = new File(['hello'], 'hello.png', {type: 'image/png'});
+
+    await userEvent.upload(getByLabelText('File Upload'), file);
+  });
+
+  it("should able to be used with spectrum's label component", async () => {
+    let {getByLabelText} = render(
+      <>
+        <Label id="file-input-label">File Upload</Label>
+        <FileTrigger aria-labelledby="file-input-label">
+          <Button>Upload</Button>
+        </FileTrigger>
+      </>
+    );
+
+    let file = new File(['hello'], 'hello.png', {type: 'image/png'});
+
+    await userEvent.upload(getByLabelText('File Upload'), file);
+  });
 });
