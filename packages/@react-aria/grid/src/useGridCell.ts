@@ -253,7 +253,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   let gridCellProps: DOMAttributes = mergeProps(itemProps, {
     role: 'gridcell',
     onKeyDownCapture,
-    'aria-colspan': node.colspan,
+    'aria-colspan': node.colSpan,
     'aria-colindex': node.colIndex != null ? node.colIndex + 1 : undefined, // aria-colindex is 1-based
     onFocus
   });

@@ -61,13 +61,14 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
         if (rowHasCellWithColSpan) {
           let last: GridNode<T> | null = null;
           for (let child of childNodes) {
+            child.colSpan = child.props?.colSpan;
             child.colspan = child.props?.colSpan;
-            child.colIndex = !last ? child.index : (last.colIndex ?? last.index) + (last.colspan ?? 1);
+            child.colIndex = !last ? child.index : (last.colIndex ?? last.index) + (last.colSpan ?? 1);
             last = child;
           }
 
           let lastColIndex = last?.colIndex ?? 0 + 1; // internally colIndex is 0 based
-          let lastColSpan = last?.colspan ?? 1;
+          let lastColSpan = last?.colSpan ?? 1;
           let numberOfCellsInRow = lastColIndex + lastColSpan;
 
           if (numberOfCellsInRow !== this.columns.length && !isSSR) {
@@ -779,7 +780,7 @@ export const Column = /*#__PURE__*/ createLeafComponent('column', (props: Column
       {...mergeProps(filterDOMProps(props as any), columnHeaderProps, focusProps, hoverProps)}
       {...renderProps}
       style={style}
-      colSpan={column.colspan}
+      colSpan={column.colSpan}
       ref={ref}
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
@@ -1257,7 +1258,7 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
     <TD
       {...mergeProps(filterDOMProps(props as any), gridCellProps, focusProps, hoverProps)}
       {...renderProps}
-      colSpan={cell.colspan}
+      colSpan={cell.colSpan}
       ref={ref}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}

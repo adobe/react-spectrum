@@ -99,7 +99,7 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, st
       ),
       role: 'columnheader',
       id: getColumnHeaderId(state, node.key),
-      'aria-colspan': node.colspan && node.colspan > 1 ? node.colspan : undefined,
+      'aria-colspan': node.colSpan && node.colSpan > 1 ? node.colSpan : undefined,
       'aria-sort': ariaSort
     }
   };

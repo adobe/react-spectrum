@@ -56,7 +56,8 @@ export class GridCollection<T> implements IGridCollection<T> {
       for (let child of node.childNodes as Iterable<GridNode<T>>) {
         if (child.type === 'cell' && rowHasCellWithColSpan) {
           child.colspan = child.props?.colSpan;
-          child.colIndex = !last ? child.index : (last.colIndex ?? last.index) + (last.colspan ?? 1);
+          child.colSpan = child.props?.colSpan;
+          child.colIndex = !last ? child.index : (last.colIndex ?? last.index) + (last.colSpan ?? 1);
         }
 
         if (child.type === 'cell' && child.parentKey == null) {
@@ -81,7 +82,7 @@ export class GridCollection<T> implements IGridCollection<T> {
 
         if (rowHasCellWithColSpan && node.type === 'item') {
           let lastColIndex = last?.colIndex ?? 0 + 1; // internally colIndex is 0 based
-          let lastColSpan = last?.colspan ?? 1;
+          let lastColSpan = last?.colSpan ?? 1;
           let numberOfCellsInRow = lastColIndex + lastColSpan;
           if (numberOfCellsInRow !== this.columnCount) {
             throw new Error(`Cell count must match column count. Found ${numberOfCellsInRow} cells and ${this.columnCount} columns.`);

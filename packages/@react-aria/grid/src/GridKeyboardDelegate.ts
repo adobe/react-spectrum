@@ -115,12 +115,12 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
 
     let i = 0;
     for (let child of getChildNodes(item, this.collection) as Iterable<GridNode<T>>) {
-      if (child.colspan && child.colspan + i > index) {
+      if (child.colSpan && child.colSpan + i > index) {
         return child.key ?? null;
       }
 
-      if (child.colspan) {
-        i = i + child.colspan - 1;
+      if (child.colSpan) {
+        i = i + child.colSpan - 1;
       }
 
       if (i === index) {
