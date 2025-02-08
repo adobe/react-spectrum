@@ -48,7 +48,7 @@ export interface FileTriggerProps {
 export const FileTrigger = forwardRef(function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLInputElement>) {
   let {onSelect, acceptedFileTypes, allowsMultiple, defaultCamera, children, acceptDirectory, ...rest} = props;
   let inputRef = useObjectRef(ref);
-  let domProps = filterDOMProps(rest);
+  let domProps = filterDOMProps(rest, {labelable: true});
 
   return (
     <>
