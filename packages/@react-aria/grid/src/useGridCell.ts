@@ -255,6 +255,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     onKeyDownCapture,
     'aria-colspan': node.colSpan,
     'aria-colindex': node.colIndex != null ? node.colIndex + 1 : undefined, // aria-colindex is 1-based
+    colSpan: isVirtualized ? undefined : node.colSpan,
     onFocus
   });
 

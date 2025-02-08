@@ -1258,7 +1258,6 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
     <TD
       {...mergeProps(filterDOMProps(props as any), gridCellProps, focusProps, hoverProps)}
       {...renderProps}
-      colSpan={cell.colSpan}
       ref={ref}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
