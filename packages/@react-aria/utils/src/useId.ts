@@ -18,11 +18,11 @@ import {useValueEffect} from './';
 // copied from SSRProvider.tsx to reduce exports, if needed again, consider sharing
 let canUseDOM = Boolean(
   typeof window !== 'undefined' &&
-  window.document &&
-  window.document.createElement
+    window.document &&
+    window.document.createElement
 );
-
-let idsUpdaterMap: Map<string, Array<(v: string) => void>> = new Map();
+// Directly caching RefObject can reduce memory usage
+let idRefsMap: Map<string, { current: string | null }[]> = new Map();
 
 /**
  * If a default is not provided, generate an id.
@@ -34,23 +34,22 @@ export function useId(defaultId?: string): string {
 
   let res = useSSRSafeId(value);
 
-  let updateValue = useCallback((val) => {
-    nextId.current = val;
-  }, []);
-
   if (canUseDOM) {
-    // TS not smart enough to know that `has` means the value exists
-    if (idsUpdaterMap.has(res) && !idsUpdaterMap.get(res)!.includes(updateValue)) {
-      idsUpdaterMap.set(res, [...idsUpdaterMap.get(res)!, updateValue]);
+    const cacheIdRef = idRefsMap.get(res);
+    if (cacheIdRef && !cacheIdRef.includes(nextId)) {
+      cacheIdRef.push(nextId);
     } else {
-      idsUpdaterMap.set(res, [updateValue]);
+     // It is also not safe in the concurrent mode here, but it is acceptable because the cached RefObject occupies a relatively small amount of memory
+    // Saving the Fn earlier will cause a closure and lead to more memory leaks
+      idRefsMap.set(res, [nextId]);
     }
   }
 
   useLayoutEffect(() => {
     let r = res;
     return () => {
-      idsUpdaterMap.delete(r);
+      // In Suspense, the cleanup function may be not called
+      idRefsMap.delete(r);
     };
   }, [res]);
 
@@ -77,15 +76,15 @@ export function mergeIds(idA: string, idB: string): string {
     return idA;
   }
 
-  let setIdsA = idsUpdaterMap.get(idA);
-  if (setIdsA) {
-    setIdsA.forEach(fn => fn(idB));
+  let idRefsA = idRefsMap.get(idA);
+  if (idRefsA) {
+    idRefsA.forEach((ref) => (ref.current = idB));
     return idB;
   }
 
-  let setIdsB = idsUpdaterMap.get(idB);
-  if (setIdsB) {
-    setIdsB.forEach(fn => fn(idA));
+  let idRefsB = idRefsMap.get(idB);
+  if (idRefsB) {
+    idRefsB.forEach((ref) => (ref.current = idA));
     return idA;
   }
 
