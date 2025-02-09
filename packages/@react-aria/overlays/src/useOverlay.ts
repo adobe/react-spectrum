@@ -11,9 +11,9 @@
  */
 
 import {DOMAttributes, RefObject} from '@react-types/shared';
+import {getEventTarget} from '@react-aria/utils';
 import {isElementInChildOfActiveScope} from '@react-aria/focus';
 import {useEffect} from 'react';
-import {getEventTarget} from "@react-aria/utils"
 import {useFocusWithin, useInteractOutside} from '@react-aria/interactions';
 
 export interface AriaOverlayProps {
