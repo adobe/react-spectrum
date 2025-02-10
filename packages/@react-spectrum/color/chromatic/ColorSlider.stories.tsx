@@ -62,7 +62,7 @@ export default meta;
 const Template: StoryFn<SpectrumColorSliderProps> = (args) => (
   <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
     {combinations.map(c => {
-      let key = Object.keys(c).reverse().map(k => shortName(k, c[k])).join(' ');
+      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
       if (!key) {
         key = 'empty';
       }
@@ -74,7 +74,7 @@ const Template: StoryFn<SpectrumColorSliderProps> = (args) => (
 const VerticalTemplate: StoryFn<SpectrumColorSliderProps> = (args) => (
   <Grid columns={repeat(5, '1fr')} autoFlow="row" gap="size-300">
     {combinations.map(c => {
-      let key = Object.keys(c).reverse().map(k => shortName(k, c[k])).join(' ');
+      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
       if (!key) {
         key = 'empty';
       }

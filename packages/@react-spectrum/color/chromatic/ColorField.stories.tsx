@@ -73,7 +73,7 @@ export default meta;
 const Template: StoryFn<SpectrumColorFieldProps> = (args) => (
   <Grid columns={repeat(3, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
-      let key = Object.keys(c).reverse().map(k => shortName(k, c[k])).join(' ');
+      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
       if (!key) {
         key = 'empty';
       }
@@ -85,7 +85,7 @@ const Template: StoryFn<SpectrumColorFieldProps> = (args) => (
 const TemplateSmall: StoryFn<SpectrumColorFieldProps> = (args) => (
   <Grid columns={repeat(2, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
-      let key = Object.keys(c).reverse().map(k => shortName(k, c[k])).join(' ');
+      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
       if (!key) {
         key = 'empty';
       }
@@ -97,7 +97,7 @@ const TemplateSmall: StoryFn<SpectrumColorFieldProps> = (args) => (
 const NoLabelTemplate: StoryFn<SpectrumColorFieldProps> = (args) => (
   <Grid columns={repeat(3, '1fr')} autoFlow="row" gap="size-300">
     {combinations.filter(combo => combo.isRequired == null && combo.necessityIndicator == null).map(c => {
-      let key = Object.keys(c).reverse().map(k => shortName(k, c[k])).join(' ');
+      let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
       if (!key) {
         key = 'empty';
       }
