@@ -171,7 +171,6 @@ export function TableColumnHeader({column, state, layout, onResizeStart, onResiz
   return (
     <th
       {...mergeProps(columnHeaderProps, focusProps)}
-      colSpan={column.colSpan}
       style={{
         width: layout.getColumnWidth(column.key),
         textAlign: column.colSpan > 1 ? 'center' : 'left',

@@ -780,7 +780,6 @@ export const Column = /*#__PURE__*/ createLeafComponent('column', (props: Column
       {...mergeProps(filterDOMProps(props as any), columnHeaderProps, focusProps, hoverProps)}
       {...renderProps}
       style={style}
-      colSpan={column.colSpan}
       ref={ref}
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}

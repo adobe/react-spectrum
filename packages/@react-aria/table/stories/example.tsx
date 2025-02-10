@@ -102,7 +102,6 @@ export function TableColumnHeader({column, state}) {
   return (
     <th
       {...mergeProps(columnHeaderProps, focusProps)}
-      colSpan={column.colSpan}
       style={{
         textAlign: column.colSpan > 1 ? 'center' : 'left',
         padding: '5px 10px',
