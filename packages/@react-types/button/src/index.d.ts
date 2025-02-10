@@ -20,7 +20,7 @@ interface ButtonProps extends PressEvents, FocusableProps {
   children?: ReactNode
 }
 
-interface ToggleButtonProps extends ButtonProps {
+interface ToggleButtonProps extends Omit<ButtonProps, 'aria-current'> {
   /** Whether the element should be selected (controlled). */
   isSelected?: boolean,
   /** Whether the element should be selected (uncontrolled). */
