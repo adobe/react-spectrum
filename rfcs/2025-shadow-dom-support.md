@@ -22,7 +22,7 @@ We can improve across all of these.
 
 ## Motivation
 
-As Web Components have become more prominent and more libraries and applications use them, we have encountered friction for people trying to adopt or use our libraries alongside others.
+As Shadow DOM is used by more libraries and applications, users have encountered friction trying to adopt or use our libraries. This might be using another 3rd party library that wants to prevent outside styles from affecting their components. It might be the usage of web components. Or, it might be just using native controls such as the `video` tag.
 
 Some examples of these are:
 - [Dialog's focus management and work with 3rd party dialogs](https://github.com/adobe/react-spectrum/issues/5314)
