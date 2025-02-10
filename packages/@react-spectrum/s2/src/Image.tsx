@@ -1,5 +1,5 @@
 import {ContextValue, SlotProps} from 'react-aria-components';
-import {createContext, ForwardedRef, forwardRef, HTMLAttributeReferrerPolicy, ReactNode, useCallback, useContext, useMemo, useReducer, useRef} from 'react';
+import {createContext, ForwardedRef, forwardRef, HTMLAttributeReferrerPolicy, ReactNode, useCallback, useContext, useMemo, useReducer, useRef, version} from 'react';
 import {DefaultImageGroup, ImageGroup} from './ImageCoordinator';
 import {loadingStyle, useIsSkeleton, useLoadingAnimation} from './Skeleton';
 import {mergeStyles} from '../style/runtime';
@@ -27,8 +27,11 @@ export interface ImageProps extends UnsafeStyles, SlotProps {
    * [See MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#decoding).
    */
   decoding?: 'async' | 'auto' | 'sync',
-  // Only supported in React 19...
-  // fetchPriority?: 'high' | 'low' | 'auto',
+  /**
+   * Provides a hint of the relative priority to use when fetching the image.
+   * [See MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#fetchpriority).
+   */
+  fetchPriority?: 'high' | 'low' | 'auto',
   /**
    * Whether the image should be loaded immediately or lazily when scrolled into view.
    * [See MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#loading).
@@ -146,6 +149,7 @@ export const Image = forwardRef(function Image(props: ImageProps, domRef: Forwar
     alt,
     crossOrigin,
     decoding,
+    fetchPriority,
     loading,
     referrerPolicy,
     slot
@@ -223,6 +227,7 @@ export const Image = forwardRef(function Image(props: ImageProps, domRef: Forwar
       {errorState}
       {!errorState && (
         <img
+          {...getFetchPriorityProp(fetchPriority)}
           src={src}
           alt={alt}
           crossOrigin={crossOrigin}
@@ -235,5 +240,14 @@ export const Image = forwardRef(function Image(props: ImageProps, domRef: Forwar
           className={imgStyles({isRevealed, isTransitioning})} />
         )}
     </div>
-  ), [slot, hidden, domRef, UNSAFE_style, UNSAFE_className, styles, isAnimating, errorState, src, alt, crossOrigin, decoding, loading, referrerPolicy, onLoad, onError, isRevealed, isTransitioning]);
+  ), [slot, hidden, domRef, UNSAFE_style, UNSAFE_className, styles, isAnimating, errorState, src, alt, crossOrigin, decoding, fetchPriority, loading, referrerPolicy, onLoad, onError, isRevealed, isTransitioning]);
 });
+
+function getFetchPriorityProp(fetchPriority?: 'high' | 'low' | 'auto'): Record<string, string | undefined> {
+  const pieces = version.split('.');
+  const major = parseInt(pieces[0], 10);
+  if (major >= 19) {
+    return {fetchPriority};
+  }
+  return {fetchpriority: fetchPriority};
+}

@@ -182,6 +182,33 @@ tree.move('Sam', 'Animals', 1);
 tree.move('Sam', null, 1);
 ```
 
+### Move before
+An alias to move
+
+```tsx
+// Move an item within the same parent
+tree.moveBefore('Sam', 'People', 0);
+
+// Move an item to a different parent
+tree.moveBefore('Sam', 'Animals', 1);
+
+// Move an item to the root
+tree.moveBefore('Sam', null, 1);
+```
+
+### Move after
+
+```tsx
+// Move an item within the same parent
+tree.moveAfter('Sam', 'People', 0);
+
+// Move an item to a different parent
+tree.moveAfter('Sam', 'Animals', 1);
+
+// Move an item to the root
+tree.moveAfter('Sam', null, 1);
+```
+
 ### Updating items
 
 ```tsx
