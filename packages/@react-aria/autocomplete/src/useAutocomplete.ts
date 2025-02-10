@@ -312,9 +312,10 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
 
     let curFocusedNode = queuedActiveDescendant.current ? document.getElementById(queuedActiveDescendant.current) : null;
     if (curFocusedNode) {
+      let target = e.target;
       queueMicrotask(() => {
-        dispatchVirtualBlur(e.target, curFocusedNode);
-        dispatchVirtualFocus(curFocusedNode, e.target);
+        dispatchVirtualBlur(target, curFocusedNode);
+        dispatchVirtualFocus(curFocusedNode, target);
       });
     }
   };
