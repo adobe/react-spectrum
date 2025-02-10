@@ -310,7 +310,7 @@ describe('Autocomplete', () => {
     expect(document.activeElement).toBe(secondButton);
   });
 
-  it('should be able to tab inside a focus scope that contains', async () => {
+  it('should be able to tab inside a focus scope that contains with buttons after the autocomplete', async () => {
     const MyMenu = () => {
       let {contains} = useFilter({sensitivity: 'base'});
 
