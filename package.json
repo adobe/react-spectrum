@@ -37,6 +37,7 @@
     "ci-test": "cross-env STRICT_MODE=1 yarn jest --maxWorkers=2 && cross-env STRICT_MODE=1 yarn test:ssr --runInBand",
     "lint": "concurrently \"yarn check-types\" \"eslint packages\" \"node scripts/lint-packages.js\" \"yarn constraints\"",
     "jest": "node scripts/jest.js",
+    "jest:memory": "node --expose-gc node_modules/.bin/jest --runInBand useId",
     "copyrights": "babel-node --presets @babel/env ./scripts/addHeaders.js",
     "build:icons": "babel-node --presets @babel/env ./scripts/buildIcons.js",
     "clean:icons": "babel-node --presets @babel/env ./scripts/cleanIcons.js",

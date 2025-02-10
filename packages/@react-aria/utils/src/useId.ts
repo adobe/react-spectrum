@@ -14,6 +14,7 @@ import {useCallback, useEffect, useRef, useState} from 'react';
 import {useLayoutEffect} from './useLayoutEffect';
 import {useSSRSafeId} from '@react-aria/ssr';
 import {useValueEffect} from './';
+import React from 'react';
 
 // copied from SSRProvider.tsx to reduce exports, if needed again, consider sharing
 let canUseDOM = Boolean(
@@ -22,7 +23,8 @@ let canUseDOM = Boolean(
   window.document.createElement
 );
 
-let idsUpdaterMap: Map<string, Array<(v: string) => void>> = new Map();
+export let idsUpdaterMap: Map<string, Array<(v: string) => void>> = new Map();
+let ownerIdsWeakMap = new WeakMap();
 
 /**
  * If a default is not provided, generate an id.
@@ -33,6 +35,16 @@ export function useId(defaultId?: string): string {
   let nextId = useRef(null);
 
   let res = useSSRSafeId(value);
+  // @ts-ignore
+  let currentOwner = React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED?.ReactCurrentOwner?.current;
+  if (currentOwner) {
+    // can we tell if this is a re-render inside a Suspense boundary?
+    if (ownerIdsWeakMap.has(currentOwner)) {
+      console.log('found currentOwner');
+    } else {
+      ownerIdsWeakMap.set(currentOwner, res);
+    }
+  }
 
   let updateValue = useCallback((val) => {
     nextId.current = val;
