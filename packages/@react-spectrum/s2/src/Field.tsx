@@ -39,7 +39,7 @@ interface FieldLabelProps extends Omit<LabelProps, 'className' | 'style' | 'chil
   staticColor?: 'white' | 'black' | 'auto',
   contextualHelp?: ReactNode,
   isQuiet?: boolean,
-  children: ReactNode
+  children?: ReactNode
 }
 
 export const FieldLabel = forwardRef(function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
