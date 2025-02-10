@@ -298,7 +298,6 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
       return;
     }
 
-    // console.log('blur')
     let lastFocusedNode = queuedActiveDescendant.current ? document.getElementById(queuedActiveDescendant.current) : null;
     if (lastFocusedNode) {
       dispatchVirtualBlur(lastFocusedNode, e.relatedTarget);

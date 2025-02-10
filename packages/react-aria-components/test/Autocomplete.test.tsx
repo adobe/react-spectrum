@@ -428,6 +428,7 @@ describe('Autocomplete', () => {
     expect(input).not.toHaveAttribute('data-focused');
 
     await user.tab({shift: true});
+    act(() => jest.runAllTimers());
     expect(document.activeElement).toBe(input);
     expect(options[0]).toHaveAttribute('data-focused');
     expect(options[0]).toHaveAttribute('data-focus-visible');
