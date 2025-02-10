@@ -10,8 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const postcssReal = require('postcss');
-
 function getProcessors(keepVars = false, notNested = true, secondNotNested = true) {
   return [
     require('postcss-import'),

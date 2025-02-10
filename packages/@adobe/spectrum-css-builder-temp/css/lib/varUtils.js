@@ -26,8 +26,8 @@ function getVarsFromCSS(css) {
     rule.walkDecls((decl) => {
       let matches = decl.value.match(/var\(.*?\)/g);
       if (matches) {
-        matches.forEach(function(match) {
-          let varName = match.replace(/var\((--[\w\-]+),?.*?\)/, '$1').trim();
+        matches.forEach(function (match) {
+          let varName = match.replace(/var\((--[\w-]+),?.*?\)/, '$1').trim();
           if (variableList.indexOf(varName) === -1) {
             variableList.push(varName);
           }
@@ -52,40 +52,7 @@ function getVarValues(css) {
 }
 
 function getClassNames(contents, pkgName) {
-  let root = postcss.parse(contents);
   let classNames = [];
-
-  function addClassname(className) {
-    if (classNames.indexOf(className) === -1) {
-      classNames.push(className);
-    }
-  }
-
-  let result = root.walkRules((rule, ruleIndex) => {
-    let selector = rule.selectors[0];
-
-    if (pkgName === 'page') {
-      className = '';
-      return 'false';
-    }
-
-    rule.selectors.forEach((fullSelector) => {
-      // Skip compound selectors, they may not start with the component itself
-      if (fullSelector.match(/~|\+/)) {
-        return true;
-      }
-
-      let selector = fullSelector.split(' ').shift();
-
-      if (rule.type === 'rule') {
-        let matches = selector.match(/^\.spectrum-[\w]+/);
-        if (matches) {
-          let modSelector = matches[0]
-          addClassname(modSelector);
-        }
-      }
-    });
-  });
 
   if (classNames.length === 0) {
     logger.error(`Could not find classNames for ${pkgName}, assuming no classNames`);
