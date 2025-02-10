@@ -65,7 +65,7 @@ export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'cla
 
 export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'style' | 'className' | 'aria-label' | 'aria-labelledby'>, StyleProps {
   /** The content to display in the tablist. */
-  children: ReactNode
+  children?: ReactNode | ((item: T) => ReactNode)
 }
 
 export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className'>, UnsafeStyles {
@@ -521,7 +521,7 @@ let HiddenTabs = function (props: {
   );
 };
 
-let TabsMenu = (props: {valueId: string, items: Array<Node<any>>, onSelectionChange: TabsProps['onSelectionChange'], children: ReactNode} & TabsProps) => {
+let TabsMenu = (props: {valueId: string, items: Array<Node<any>>, onSelectionChange: TabsProps['onSelectionChange']} & TabsProps) => {
   let {id, items, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, valueId} = props;
   let {density, onSelectionChange, selectedKey, isDisabled, disabledKeys, labelBehavior} = useContext(InternalTabsContext);
   let state = useContext(TabListStateContext);
