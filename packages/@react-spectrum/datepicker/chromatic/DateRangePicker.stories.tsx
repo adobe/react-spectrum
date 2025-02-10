@@ -16,12 +16,13 @@ import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {DateRangePicker} from '../';
 import {Heading} from '@react-spectrum/text';
 import React from 'react';
+import {userEvent, within} from '@storybook/testing-library';
 
 export default {
   title: 'DateRangePicker',
   parameters: {
     chromaticProvider: {
-      locales: ['en-US'/* , 'ar-EG', 'ja-JP' */]
+      locales: ['en-US', 'ar-EG', 'ja-JP', 'he-IL']
     }
   }
 };
@@ -37,6 +38,17 @@ const focusParams = {
 
 const openParams = {
   chromaticProvider: {
+    locales: ['en-US'],
+    colorSchemes: ['light'],
+    scales: ['medium'],
+    disableAnimations: true,
+    express: false
+  }
+};
+
+const openParamsRTL = {
+  chromaticProvider: {
+    locales: ['ar-EG'],
     colorSchemes: ['light'],
     scales: ['medium'],
     disableAnimations: true,
@@ -64,6 +76,16 @@ const zoned = {
 export const Placeholder = () => <DateRangePicker label="Date" placeholderValue={value.start} />;
 export const PlaceholderFocus = () => <DateRangePicker label="Date" placeholderValue={value.start} autoFocus />;
 PlaceholderFocus.parameters = focusParams;
+
+export const PlaceholderFocusRTL = () => <DateRangePicker label="Date" placeholderValue={value.start} autoFocus />;
+PlaceholderFocusRTL.parameters = {
+  chromaticProvider: {
+    locales: ['he-IL'],
+    scales: ['medium'],
+    colorSchemes: ['light'],
+    express: false
+  }
+};
 
 export const PlaceholderFocusExpress = () => <DateRangePicker label="Date" placeholderValue={value.start} autoFocus />;
 PlaceholderFocusExpress.parameters = {
@@ -121,9 +143,17 @@ export const OpenPlaceholder = () => <DateRangePicker label="Date" placeholderVa
 OpenPlaceholder.parameters = openParams;
 OpenPlaceholder.decorators = openDecorators;
 
+export const OpenPlaceholderRTL = () => <DateRangePicker label="Date" placeholderValue={value.start} isOpen />;
+OpenPlaceholderRTL.parameters = openParamsRTL;
+OpenPlaceholderRTL.decorators = openDecorators;
+
 export const OpenValue = () => <DateRangePicker label="Date" value={value} isOpen />;
 OpenValue.parameters = openParams;
 OpenValue.decorators = openDecorators;
+
+export const OpenValueRTL = () => <DateRangePicker label="Date" value={value} isOpen />;
+OpenValueRTL.parameters = openParamsRTL;
+OpenValueRTL.decorators = openDecorators;
 
 export const OpenTime = () => <DateRangePicker label="Date" value={dateTime} isOpen />;
 OpenTime.parameters = openParams;
@@ -157,6 +187,54 @@ OpenExpress.parameters = {
   }
 };
 OpenExpress.decorators = openDecorators;
+
+export const OpenFocusLTRInteractions = () => <DateRangePicker label="Date" value={value} />;
+OpenFocusLTRInteractions.parameters = {
+  chromaticProvider: {
+    locales: ['en-US'],
+    scales: ['medium'],
+    colorSchemes: ['light'],
+    express: false
+  }
+};
+OpenFocusLTRInteractions.decorators = openDecorators;
+
+OpenFocusLTRInteractions.play = async ({canvasElement}) => {
+  await userEvent.tab();
+  await userEvent.keyboard('[ArrowRight]');
+  await userEvent.keyboard('[ArrowRight]');
+  await userEvent.keyboard('[ArrowRight]');
+  await userEvent.keyboard('[ArrowRight]');
+  await userEvent.keyboard('[ArrowRight]');
+  await userEvent.keyboard('[ArrowRight]');
+  await userEvent.keyboard('[Enter]');
+  let body = canvasElement.ownerDocument.body;
+  await within(body).findByRole('dialog');
+  await userEvent.keyboard('[ArrowLeft]');
+};
+
+export const OpenFocusRTLInteractions = () => <DateRangePicker label="Date" value={value} />;
+OpenFocusRTLInteractions.parameters = {
+  chromaticProvider: {
+    locales: ['he-IL'],
+    scales: ['medium'],
+    colorSchemes: ['light'],
+    express: false
+  }
+};
+OpenFocusRTLInteractions.decorators = openDecorators;
+
+OpenFocusRTLInteractions.play = async ({canvasElement}) => {
+  await userEvent.tab();
+  await userEvent.keyboard('[ArrowLeft]');
+  await userEvent.keyboard('[ArrowLeft]');
+  await userEvent.keyboard('[ArrowLeft]');
+  await userEvent.keyboard('[ArrowLeft]');
+  await userEvent.keyboard('[Enter]');
+  let body = canvasElement.ownerDocument.body;
+  await within(body).findByRole('dialog');
+  await userEvent.keyboard('[ArrowRight]');
+};
 
 export const MultipleMonths = () => <DateRangePicker label="Date" value={value} isOpen maxVisibleMonths={3} />;
 MultipleMonths.parameters = openParams;
