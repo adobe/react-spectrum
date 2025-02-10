@@ -215,7 +215,7 @@ describe('Submenu', function () {
     act(() => {jest.runAllTimers();});
     menus = tree.getAllByRole('menu', {hidden: true});
     expect(menus).toHaveLength(2);
-    expect(document.activeElement).toBe(submenuTrigger1);
+    expect(document.activeElement).toBe(submenu1Items[0]);
   });
 
   it('should close the sub menu if the user hovers a neighboring menu item from the submenu trigger', async function () {

@@ -116,37 +116,6 @@ describe('Group', () => {
     expect(group).not.toHaveClass('focus');
   });
 
-  it('should not display a focus ring if it contains an input with aria-activedescendant', async () => {
-    let {getByRole, rerender} = render(<Group className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>
-      <Input className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''} aria-activedescendant="test" type="text" />
-    </Group>);
-    let group = getByRole('group');
-    let input = getByRole('textbox');
-
-    expect(group).not.toHaveAttribute('data-focus-visible');
-    expect(group).not.toHaveClass('focus');
-    expect(input).toHaveAttribute('aria-activedescendant');
-
-    await user.tab();
-    expect(document.activeElement).toBe(input);
-    expect(input).not.toHaveAttribute('data-focus-visible');
-    expect(input).not.toHaveClass('focus');
-    expect(group).not.toHaveAttribute('data-focus-visible');
-    expect(group).not.toHaveClass('focus');
-
-    rerender(<Group className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>
-      <Input className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''} type="text" />
-    </Group>);
-
-    await user.tab();
-    await user.tab({shift: true});
-    expect(document.activeElement).toBe(input);
-    expect(input).toHaveAttribute('data-focus-visible');
-    expect(input).toHaveClass('focus');
-    expect(group).toHaveAttribute('data-focus-visible');
-    expect(group).toHaveClass('focus');
-  });
-
   it('should support disabled state', () => {
     let {getByRole} = render(<Group isDisabled className={({isDisabled}) => isDisabled ? 'disabled' : ''}>Test</Group>);
     let group = getByRole('group');

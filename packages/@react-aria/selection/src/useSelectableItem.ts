@@ -11,8 +11,8 @@
  */
 
 import {DOMAttributes, DOMProps, FocusableElement, Key, LongPressEvent, PointerType, PressEvent, RefObject} from '@react-types/shared';
-import {focusSafely, getVirtuallyFocusedElement, moveVirtualFocus} from '@react-aria/focus';
-import {isCtrlKeyPressed, mergeProps, openLink, UPDATE_ACTIVEDESCENDANT, useId, useRouter} from '@react-aria/utils';
+import {focusSafely, moveVirtualFocus} from '@react-aria/focus';
+import {isCtrlKeyPressed, mergeProps, openLink, useId, useRouter} from '@react-aria/utils';
 import {isNonContiguousSelectionModifier} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {PressProps, useLongPress, usePress} from '@react-aria/interactions';
@@ -173,16 +173,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
           focusSafely(ref.current);
         }
       } else {
-        // let updateActiveDescendant = new CustomEvent(UPDATE_ACTIVEDESCENDANT, {
-        //   cancelable: true,
-        //   bubbles: true
-        // });
-
-        // ref.current?.dispatchEvent(updateActiveDescendant);
-        // let lastFocused = getVirtuallyFocusedElement();
-        // console.trace(lastFocused?.outerHTML, ref.current?.outerHTML)
         moveVirtualFocus(ref.current);
-        // console.log('AFTER')
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -373,7 +364,9 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       itemProps,
       allowsSelection || hasPrimaryAction ? pressProps : {},
       longPressEnabled ? longPressProps : {},
-      {onDoubleClick, onDragStartCapture, onClick, id}
+      {onDoubleClick, onDragStartCapture, onClick, id},
+      // Prevent DOM focus from moving on mouse down when using virtual focus
+      shouldUseVirtualFocus ? {onMouseDown: e => e.preventDefault()} : undefined
     ),
     isPressed,
     isSelected: manager.isSelected(key),

@@ -561,8 +561,6 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   let tabIndex: number | undefined = undefined;
   if (!shouldUseVirtualFocus) {
     tabIndex = manager.focusedKey == null ? 0 : -1;
-  } else {
-    tabIndex = -1;
   }
 
   return {

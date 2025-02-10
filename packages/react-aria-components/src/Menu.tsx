@@ -32,7 +32,6 @@ import React, {
   RefObject,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useRef,
   useState
@@ -146,9 +145,6 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
           trigger: 'SubmenuTrigger',
           triggerRef: itemRef,
           placement: 'end top',
-          // Prevent parent popover from hiding submenu.
-          // @ts-ignore
-          // 'data-react-aria-top-layer': true,
           onDismissButtonPress,
           ...popoverProps
         }]
@@ -201,17 +197,6 @@ export const SubDialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogt
     itemRef.current?.focus();
   };
 
-  // TODO: if we can get this to work, perhaps should be in hook
-  // However, due to data-react-aria-top-layer, it won't trigger at all
-  // useInteractOutside({
-  //   ref: subdialogRef,
-  //   onInteractOutside: (e) => {
-  //     if (e.target !== itemRef.current) {
-  //       submenuTriggerState.close();
-  //     }
-  //   }
-  // });
-
   return (
     <Provider
       values={[
@@ -223,15 +208,6 @@ export const SubDialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogt
           trigger: 'SubDialogTrigger',
           triggerRef: itemRef,
           placement: 'end top',
-          // TODO: if we apply this data attribute then the dialog won't close on ESC via useOverlay due to logic in usePopover preventing it from being added
-          // to the visibleOverlays list in useOverlay because isOpen is false, thus not calling onHide nor useInteractOutside. We do want this data attribute
-          // because we want it to not get clipped similar to https://github.com/adobe/react-spectrum/pull/7352#discussion_r1837109265
-          // Hypothetically, if we were to get rid of this data attribute then Esc will work but not clicking outside to close because this popover
-          // has isNonModal = true, meaning it isn't dismissible. To resolve this we could make a custom useInteractOutside in MenuTrigger like we do in RSP
-          // I've opted to add subDialogKeyDown in useSubmenuTrigger instead and make useDialog accept onKeyDown instead
-          // Prevent parent popover from hiding subdialog.
-          // @ts-ignore
-          // 'data-react-aria-top-layer': true,
           onDismissButtonPress,
           ...popoverProps
         }]
@@ -303,10 +279,15 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             [UNSTABLE_InternalAutocompleteContext, null],
             [SelectionManagerContext, state.selectionManager]
           ]}>
-          <CollectionRoot
-            collection={state.collection}
-            persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)}
-            scrollRef={ref} />
+          {/* Ensure root MenuTriggerState is defined, in case Menu is rendered outside a MenuTrigger. */}
+          {/* We assume the context can never change between defined and undefined. */}
+          {/* eslint-disable-next-line react-hooks/rules-of-hooks */}
+          <RootMenuTriggerStateContext.Provider value={triggerState ?? useMenuTriggerState({})}>
+            <CollectionRoot
+              collection={state.collection}
+              persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)}
+              scrollRef={ref} />
+          </RootMenuTriggerStateContext.Provider>
         </Provider>
       </div>
     </FocusScope>

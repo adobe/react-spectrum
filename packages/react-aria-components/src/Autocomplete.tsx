@@ -14,12 +14,9 @@ import {AriaAutocompleteProps, CollectionOptions, UNSTABLE_useAutocomplete} from
 import {AutocompleteState, UNSTABLE_useAutocompleteState} from '@react-stately/autocomplete';
 import {mergeProps} from '@react-aria/utils';
 import {Provider, removeDataAttributes, SlotProps, SlottedContextValue, useSlottedContext} from './utils';
-import React, {createContext, RefObject, useContext, useRef} from 'react';
-import {RootMenuTriggerStateContext} from './Menu';
+import React, {createContext, RefObject, useRef} from 'react';
 import {SearchFieldContext} from './SearchField';
 import {TextFieldContext} from './TextField';
-import {useInteractOutside} from 'react-aria';
-import {useMenuTriggerState} from 'react-stately';
 
 export interface AutocompleteProps extends AriaAutocompleteProps, SlotProps {}
 
@@ -55,27 +52,6 @@ export function UNSTABLE_Autocomplete(props: AutocompleteProps) {
     collectionRef
   }, state);
 
-  // TODO: perhaps the below should be moved into the hooks but it is a bit specific to submenus/subdialogs
-  // We need some sort of root menu state for subdialogs/submenus in the Autocomplete wrapped collection even though the autocomplete
-  // itself isn't actually a trigger. Only a problem for Autocomplete's that are outside a MenuTrigger/DialogTrigger
-  let rootMenuTriggerState = useContext(RootMenuTriggerStateContext);
-  let menuState = useMenuTriggerState({});
-
-  // If the Autocomplete is wrapped around a menu that is rendered outside a popover (aka just in the DOM as is), then we need to be able to
-  // close all submenus/dialogs when clicking on the body of the page/parent input field since those submenus/dialogs aren't dismissible and rely on the
-  // root menu/dialog handling useInteractOutside
-  // TODO: If we fix the usage of due to data-react-aria-top-layer however, we will need to check if the event occurs within the tree, otherwise clicking
-  // in a subdialog will be treated as a useInteractOutside. At that point we could perhaps get rid of this anyways?
-  useInteractOutside({
-    ref: collectionRef,
-    onInteractOutside: () => {
-      if (menuState.expandedKeysStack.length > 0) {
-        menuState?.close();
-      }
-    },
-    isDisabled: rootMenuTriggerState != null
-  });
-
   return (
     <Provider
       values={[
@@ -86,8 +62,7 @@ export function UNSTABLE_Autocomplete(props: AutocompleteProps) {
           filterFn,
           collectionProps,
           collectionRef: mergedCollectionRef
-        }],
-        [RootMenuTriggerStateContext, rootMenuTriggerState ? rootMenuTriggerState : menuState]
+        }]
       ]}>
       {props.children}
     </Provider>

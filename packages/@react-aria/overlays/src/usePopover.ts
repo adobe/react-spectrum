@@ -29,6 +29,12 @@ export interface AriaPopoverProps extends Omit<AriaPositionProps, 'isOpen' | 'on
    */
   popoverRef: RefObject<Element | null>,
   /**
+   * An optional ref for a group of popovers, e.g. submenus.
+   * When provided, this element is used to detect outside interactions
+   * and hiding elements from assistive technologies instead of the popoverRef.
+   */
+  groupRef?: RefObject<Element | null>,
+  /**
    * Whether the popover is non-modal, i.e. elements outside the popover may be
    * interacted with by assistive technologies.
    *
@@ -74,26 +80,23 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
   let {
     triggerRef,
     popoverRef,
+    groupRef,
     isNonModal,
     isKeyboardDismissDisabled,
     shouldCloseOnInteractOutside,
     ...otherProps
   } = props;
 
-  let isSubmenu = otherProps['trigger'] === 'SubmenuTrigger' || otherProps['trigger'] === 'SubDialogTrigger';
-
   let {overlayProps, underlayProps} = useOverlay(
     {
-      // If popover is in the top layer, it should not prevent other popovers from being dismissed.
-      // TODO: fix interact outside detecting submenus as "outside" parent menu.
-      isOpen: state.isOpen && !isSubmenu,
+      isOpen: state.isOpen,
       onClose: state.close,
       shouldCloseOnBlur: true,
       isDismissable: !isNonModal,
       isKeyboardDismissDisabled,
       shouldCloseOnInteractOutside
     },
-    popoverRef
+    groupRef ?? popoverRef
   );
 
   let {overlayProps: positionProps, arrowProps, placement} = useOverlayPosition({
@@ -111,12 +114,12 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
   useLayoutEffect(() => {
     if (state.isOpen && popoverRef.current) {
       if (isNonModal) {
-        return keepVisible(popoverRef.current);
+        return keepVisible(groupRef?.current ?? popoverRef.current);
       } else {
-        return ariaHideOutside([popoverRef.current]);
+        return ariaHideOutside([groupRef?.current ?? popoverRef.current]);
       }
     }
-  }, [isNonModal, state.isOpen, popoverRef]);
+  }, [isNonModal, state.isOpen, popoverRef, groupRef]);
 
   return {
     popoverProps: mergeProps(overlayProps, positionProps),

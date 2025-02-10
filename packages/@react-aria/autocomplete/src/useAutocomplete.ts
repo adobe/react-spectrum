@@ -13,14 +13,14 @@
 import {AriaLabelingProps, BaseEvent, DOMProps, RefObject} from '@react-types/shared';
 import {AriaTextFieldProps} from '@react-aria/textfield';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, isCtrlKeyPressed, mergeProps, mergeRefs, UPDATE_ACTIVEDESCENDANT, useEffectEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
-import {getInteractionModality, isFocusVisible} from '@react-aria/interactions';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, isCtrlKeyPressed, mergeProps, mergeRefs, useEffectEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
+import {dispatchVirtualBlur, dispatchVirtualFocus, moveVirtualFocus} from '@react-aria/focus';
+import {flushSync} from 'react-dom';
+import {getInteractionModality} from '@react-aria/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {KeyboardEvent as ReactKeyboardEvent, FocusEvent as ReactFocusEvent, useCallback, useEffect, useMemo, useRef} from 'react';
+import React, {FocusEvent as ReactFocusEvent, KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef} from 'react';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
-import { dispatchVirtualBlur, dispatchVirtualFocus, moveVirtualFocus } from '@react-aria/focus';
-import { flushSync } from 'react-dom';
 
 export interface CollectionOptions extends DOMProps, AriaLabelingProps {
   /** Whether the collection items should use virtual focus instead of being focused directly. */
@@ -78,18 +78,18 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
     }
     
     clearTimeout(timeout.current);
-    // e.stopPropagation();
     if (target !== collectionRef.current) {
       if (delayNextActiveDescendant.current) {
         queuedActiveDescendant.current = target.id;
         timeout.current = setTimeout(() => {
           state.setFocusedNodeId(target.id);
-          queuedActiveDescendant.current = null;
         }, 500);
       } else {
+        queuedActiveDescendant.current = target.id;
         state.setFocusedNodeId(target.id);
       }
     } else {
+      queuedActiveDescendant.current = null;
       state.setFocusedNodeId(null);
     }
 
@@ -128,6 +128,7 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
 
   let clearVirtualFocus = useEffectEvent((clearFocusKey?: boolean) => {
     moveVirtualFocus(document.activeElement);
+    queuedActiveDescendant.current = null;
     state.setFocusedNodeId(null);
     let clearFocusEvent = new CustomEvent(CLEAR_FOCUS_EVENT, {
       cancelable: true,
@@ -238,18 +239,16 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
       e.stopPropagation();
     }
 
-    flushSync(() => {
-      if (state.focusedNodeId == null) {
-        collectionRef.current?.dispatchEvent(
-          new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
-        );
-      } else {
-        let item = document.getElementById(state.focusedNodeId);
-        item?.dispatchEvent(
-          new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
-        );
-      }
-    });
+    if (state.focusedNodeId == null) {
+      collectionRef.current?.dispatchEvent(
+        new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
+      );
+    } else {
+      let item = document.getElementById(state.focusedNodeId);
+      item?.dispatchEvent(
+        new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
+      );
+    }
   };
 
   let onKeyUpCapture = useEffectEvent((e) => {
@@ -300,7 +299,7 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
     }
 
     // console.log('blur')
-    let lastFocusedNode = state.focusedNodeId ? document.getElementById(state.focusedNodeId) : null;
+    let lastFocusedNode = queuedActiveDescendant.current ? document.getElementById(queuedActiveDescendant.current) : null;
     if (lastFocusedNode) {
       dispatchVirtualBlur(lastFocusedNode, e.relatedTarget);
     }
@@ -311,37 +310,14 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
       return;
     }
 
-    // if (getInteractionModality() === 'pointer') {
-    //   return;
-    // }
-
-    let curFocusedNode = state.focusedNodeId ? document.getElementById(state.focusedNodeId) : null;
+    let curFocusedNode = queuedActiveDescendant.current ? document.getElementById(queuedActiveDescendant.current) : null;
     if (curFocusedNode) {
       queueMicrotask(() => {
-        // moveVirtualFocus(e.target, curFocusedNode);
-      dispatchVirtualBlur(e.target, curFocusedNode);
-      dispatchVirtualFocus(curFocusedNode, e.target);
+        dispatchVirtualBlur(e.target, curFocusedNode);
+        dispatchVirtualFocus(curFocusedNode, e.target);
       });
     }
-    // let focusCollection = new CustomEvent(FOCUS_EVENT, {
-    //   cancelable: true,
-    //   bubbles: true
-    // });
-
-    // collectionRef.current?.dispatchEvent(focusCollection);
   };
-
-  // let lastFocusedId = useRef<string | null>(null);
-  // useEffect(() => {
-  //   if (state.focusedNodeId !== lastFocusedId.current && isFocusVisible()) {
-  //     let lastFocusedNode = lastFocusedId.current ? document.getElementById(lastFocusedId.current) : document.activeElement;
-  //     let curFocusedNode = state.focusedNodeId ? document.getElementById(state.focusedNodeId) : document.activeElement;
-
-  //     lastFocusedId.current = state.focusedNodeId;
-
-  //     moveFocus(lastFocusedNode, curFocusedNode);
-  //   }
-  // }, [state.focusedNodeId]);
 
   return {
     textFieldProps: {
