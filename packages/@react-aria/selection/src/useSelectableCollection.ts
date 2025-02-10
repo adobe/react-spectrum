@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, isCtrlKeyPressed, mergeProps, scrollIntoView, scrollIntoViewport, UPDATE_ACTIVEDESCENDANT, useEffectEvent, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, isCtrlKeyPressed, mergeProps, scrollIntoView, scrollIntoViewport, useEffectEvent, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, FocusStrategy, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {flushSync} from 'react-dom';
 import {FocusEvent, KeyboardEvent, useEffect, useRef} from 'react';
@@ -413,12 +413,6 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
     // If no focusable items exist in the list, make sure to clear any activedescendant that may still exist
     if (keyToFocus == null) {
-      // ref.current?.dispatchEvent(
-      //   new CustomEvent(UPDATE_ACTIVEDESCENDANT, {
-      //     cancelable: true,
-      //     bubbles: true
-      //   })
-      // );
       moveVirtualFocus(ref.current);
 
       // If there wasn't a focusable key but the collection had items, then that means we aren't in an intermediate load state and all keys are disabled.

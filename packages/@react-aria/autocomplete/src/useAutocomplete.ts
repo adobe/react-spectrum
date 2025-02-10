@@ -99,7 +99,7 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
   let callbackRef = useCallback((collectionNode) => {
     if (collectionNode != null) {
       // When typing forward, we want to delay the setting of active descendant to not interrupt the native screen reader announcement
-      // of the letter you just typed. If we recieve another UPDATE_ACTIVEDESCENDANT call then we clear the queued update
+      // of the letter you just typed. If we recieve another focus event then we clear the queued update
       // We track lastCollectionNode to do proper cleanup since callbackRefs just pass null when unmounting. This also handles
       // React 19's extra call of the callback ref in strict mode
       lastCollectionNode.current?.removeEventListener('focusin', updateActiveDescendant);

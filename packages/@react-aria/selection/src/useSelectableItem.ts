@@ -161,7 +161,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
 
   // Focus the associated DOM node when this item becomes the focusedKey
   // TODO: can't make this useLayoutEffect bacause it breaks menus inside dialogs
-  // However, if this is a useEffect, it runs twice and dispatches two UPDATE_ACTIVEDESCENDANT and immediately sets
+  // However, if this is a useEffect, it runs twice and dispatches two blur events and immediately sets
   // aria-activeDescendant in useAutocomplete... I've worked around this for now
   useEffect(() => {
     let isFocused = key === manager.focusedKey;
