@@ -466,7 +466,6 @@ describe('Toast Provider and Container', function () {
     // Close the top toast
     let closeButton = within(toasts[0]).getByRole('button');
     await user.click(closeButton);
-    fireAnimationEnd(toasts[0]);
 
     // Simulate the toast region shrinking so that the pointer is outside
     boundingRect = {
@@ -479,7 +478,6 @@ describe('Toast Provider and Container', function () {
 
     // Let the timeout expire
     act(() => jest.advanceTimersByTime(5000));
-    fireAnimationEnd(toasts[0]);
 
     expect(getAllByRole('alertdialog')).toHaveLength(0);
 
@@ -509,13 +507,11 @@ describe('Toast Provider and Container', function () {
 
     let closeButton = within(toasts[0]).getByRole('button');
     await user.click(closeButton);
-    fireAnimationEnd(toasts[0]);
 
     expect(getAllByRole('alertdialog')).toHaveLength(1);
 
     // Advance timer so the second toast times out.
     act(() => jest.advanceTimersByTime(6000));
-    fireAnimationEnd(toasts[0]);
 
     toasts = getAllByRole('alertdialog');
     expect(toasts).toHaveLength(1);
