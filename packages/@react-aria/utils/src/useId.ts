@@ -23,6 +23,9 @@ let canUseDOM = Boolean(
 );
 
 export let idsUpdaterMap: Map<string, Array<(v: string) => void>> = new Map();
+// This allows us to clean up the idsUpdaterMap when the id is no longer used.
+// Map is a strong reference, so unused ids wouldn't be cleaned up otherwise.
+// This can happen in suspended components where mount/unmount is not called.
 let registry = new FinalizationRegistry<string>((heldValue) => {
   idsUpdaterMap.delete(heldValue);
 });
