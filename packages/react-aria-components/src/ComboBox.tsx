@@ -195,7 +195,10 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
           placement: 'bottom start',
           isNonModal: true,
           trigger: 'ComboBox',
-          style: {'--trigger-width': menuWidth} as React.CSSProperties
+          style: {'--trigger-width': menuWidth} as React.CSSProperties,
+          shouldCloseOnInteractOutside(element) {
+            return element !== buttonRef.current;
+          }
         }],
         [ListBoxContext, {...listBoxProps, ref: listBoxRef}],
         [ListStateContext, state],
