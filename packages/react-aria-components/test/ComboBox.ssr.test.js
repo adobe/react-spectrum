@@ -48,18 +48,18 @@ describe('ComboBox SSR', function () {
       import {useLayoutEffect} from '@react-aria/utils';
 
       function App() {
-        let [trigger, setTrigger] = useState(['null']);
+        let [triggers, setTriggers] = useState(['null']);
         let [otherState, setOtherState] = useState(0);
         let ref = useRef(null);
 
         useLayoutEffect(() => {
-          setTrigger(prev => [...prev, ref.current?.outerHTML]);
+          setTriggers(prev => [...prev, ref.current?.outerHTML]);
         }, [otherState]);
 
         return (
           <React.StrictMode>
             <ComboBox defaultSelectedKey="dog">
-              <div ref={ref}>
+              <div ref={ref} role="group">
                 <Label>Favorite Animal</Label>
                 <Input />
               </div>
@@ -71,7 +71,7 @@ describe('ComboBox SSR', function () {
                 </ListBox>
               </Popover>
             </ComboBox>
-            <div role="button">{trigger.join(", ")}</div>
+            <div role="button">{triggers.join(", ")}</div>
             <div role="button" onClick={() => setOtherState(1)}>{otherState}</div>
           </React.StrictMode>
         );
@@ -92,7 +92,7 @@ describe('ComboBox SSR', function () {
     let [button, button2] = buttons;
     fireEvent.click(button2);
     expect(button2.textContent).toBe('1');
-    let [, first, second] = button.textContent.split(', ');
-    expect(first.replace(/ aria-describedby="[^"]*"/, '')).toBe(second);
+    let [, , second] = button.textContent.split(', ');
+    expect(second).toBe(screen.getByRole('group').outerHTML);
   });
 });
