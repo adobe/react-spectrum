@@ -32,7 +32,7 @@ export interface ActionMenuProps<T> extends
   menuSize?: 'S' | 'M' | 'L' | 'XL'
 }
 
-export const ActionMenuContext = createContext<ContextValue<ActionMenuProps<any>, FocusableRefValue<HTMLButtonElement>>>(null);
+export const ActionMenuContext = createContext<ContextValue<Partial<ActionMenuProps<any>>, FocusableRefValue<HTMLButtonElement>>>(null);
 
 /**
  * ActionMenu combines an ActionButton with a Menu for simple "more actions" use cases.

@@ -62,10 +62,10 @@ interface BreadcrumbsStyleProps {
 
 export interface BreadcrumbsProps<T> extends Omit<AriaBreadcrumbsProps<T>, 'children' | 'items' | 'style' | 'className'>, BreadcrumbsStyleProps, StyleProps {
   /** The children of the Breadcrumbs. */
-  children?: ReactNode
+  children: ReactNode
 }
 
-export const BreadcrumbsContext = createContext<ContextValue<BreadcrumbsProps<any>, DOMRefValue<HTMLOListElement>>>(null);
+export const BreadcrumbsContext = createContext<ContextValue<Partial<BreadcrumbsProps<any>>, DOMRefValue<HTMLOListElement>>>(null);
 
 const wrapper = style<BreadcrumbsStyleProps>({
   position: 'relative',
@@ -95,7 +95,7 @@ const wrapper = style<BreadcrumbsStyleProps>({
   }
 }, getAllowedOverrides());
 
-const InternalBreadcrumbsContext = createContext<BreadcrumbsProps<any>>({});
+const InternalBreadcrumbsContext = createContext<Partial<BreadcrumbsProps<any>>>({});
 
 /** Breadcrumbs show hierarchy and navigational context for a user’s location within an application. */
 export const Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: DOMRef<HTMLOListElement>) {
@@ -290,7 +290,7 @@ const heading = style({
 
 export interface BreadcrumbProps extends Omit<AriaBreadcrumbItemProps, 'children' | 'style' | 'className' | 'autoFocus'>, LinkDOMProps {
   /** The children of the breadcrumb item. */
-  children?: ReactNode
+  children: ReactNode
 }
 
 /** An individual Breadcrumb for Breadcrumbs. */

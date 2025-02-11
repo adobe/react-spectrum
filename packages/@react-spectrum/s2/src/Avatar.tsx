@@ -53,7 +53,7 @@ const imageStyles = style({
   }
 }, getAllowedOverrides({width: false}));
 
-export const AvatarContext = createContext<ContextValue<AvatarProps, DOMRefValue<HTMLImageElement>>>(null);
+export const AvatarContext = createContext<ContextValue<Partial<AvatarProps>, DOMRefValue<HTMLImageElement>>>(null);
 
 /**
  * An avatar is a thumbnail representation of an entity, such as a user or an organization.
