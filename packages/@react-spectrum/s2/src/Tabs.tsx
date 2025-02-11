@@ -44,7 +44,7 @@ export interface TabsProps extends Omit<AriaTabsProps, 'className' | 'style' | '
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
   /** The content to display in the tabs. */
-  children?: ReactNode,
+  children: ReactNode,
   /**
    * The amount of space between the tabs.
    * @default 'regular'
@@ -63,17 +63,20 @@ export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'cla
   children: ReactNode
 }
 
-export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'style' | 'className' | 'aria-label' | 'aria-labelledby'>, StyleProps {}
+export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'style' | 'className' | 'aria-label' | 'aria-labelledby'>, StyleProps {
+  /** The content to display in the tablist. */
+  children: ReactNode | ((item: T) => ReactNode)
+}
 
 export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className'>, UnsafeStyles {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
   /** The content to display in the tab panels. */
-  children?: ReactNode
+  children: ReactNode
 }
 
-export const TabsContext = createContext<ContextValue<TabsProps, DOMRefValue<HTMLDivElement>>>(null);
-const InternalTabsContext = createContext<TabsProps>({});
+export const TabsContext = createContext<ContextValue<Partial<TabsProps>, DOMRefValue<HTMLDivElement>>>(null);
+const InternalTabsContext = createContext<Partial<TabsProps>>({});
 const CollapseContext = createContext({
   showTabs: true,
   menuId: '',
@@ -518,7 +521,7 @@ let HiddenTabs = function (props: {
   );
 };
 
-let TabsMenu = (props: {valueId: string, items: Array<Node<any>>, onSelectionChange: TabsProps['onSelectionChange']} & TabsProps) => {
+let TabsMenu = (props: {valueId: string, items: Array<Node<any>>, onSelectionChange: TabsProps['onSelectionChange']} & Omit<TabsProps, 'children'>) => {
   let {id, items, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, valueId} = props;
   let {density, onSelectionChange, selectedKey, isDisabled, disabledKeys, labelBehavior} = useContext(InternalTabsContext);
   let state = useContext(TabListStateContext);

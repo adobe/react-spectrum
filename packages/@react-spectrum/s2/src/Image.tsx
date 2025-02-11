@@ -57,7 +57,7 @@ interface ImageContextValue extends ImageProps {
   hidden?: boolean
 }
 
-export const ImageContext = createContext<ContextValue<ImageContextValue, HTMLDivElement>>(null);
+export const ImageContext = createContext<ContextValue<Partial<ImageContextValue>, HTMLDivElement>>(null);
 
 type ImageState = 'loading' | 'loaded' | 'revealed' | 'error';
 interface State {

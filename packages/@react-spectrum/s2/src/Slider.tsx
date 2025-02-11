@@ -66,7 +66,7 @@ export interface SliderProps extends Omit<SliderBaseProps<number>, 'children'>, 
   fillOffset?: number
 }
 
-export const SliderContext = createContext<ContextValue<SliderProps, FocusableRefValue<HTMLDivElement>>>(null);
+export const SliderContext = createContext<ContextValue<Partial<SliderProps>, FocusableRefValue<HTMLDivElement>>>(null);
 
 const slider = style({
   font: 'control',
