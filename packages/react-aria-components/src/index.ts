@@ -99,7 +99,7 @@ export type {ColorWheelProps, ColorWheelRenderProps, ColorWheelTrackProps, Color
 export type {ComboBoxProps, ComboBoxRenderProps} from './ComboBox';
 export type {DateFieldProps, DateFieldRenderProps, DateInputProps, DateInputRenderProps, DateSegmentProps, DateSegmentRenderProps, TimeFieldProps} from './DateField';
 export type {DatePickerProps, DatePickerRenderProps, DateRangePickerProps, DateRangePickerRenderProps} from './DatePicker';
-export type {DialogProps, DialogTriggerProps} from './Dialog';
+export type {DialogProps, DialogTriggerProps, DialogRenderProps} from './Dialog';
 export type {DisclosureProps, DisclosureRenderProps, DisclosurePanelProps, DisclosurePanelRenderProps, DisclosureGroupProps, DisclosureGroupRenderProps} from './Disclosure';
 export type {DropZoneProps, DropZoneRenderProps} from './DropZone';
 export type {FieldErrorProps, FieldErrorRenderProps} from './FieldError';
@@ -111,8 +111,7 @@ export type {HeadingProps} from './Heading';
 export type {InputProps, InputRenderProps} from './Input';
 export type {SectionProps, CollectionRenderer} from './Collection';
 export type {LabelProps} from './Label';
-export type {LinkProps} from './Link';
-export type {LinkRenderProps} from './Link';
+export type {LinkProps, LinkRenderProps} from './Link';
 export type {ListBoxProps, ListBoxRenderProps, ListBoxItemProps, ListBoxItemRenderProps, ListBoxSectionProps} from './ListBox';
 export type {MenuProps, MenuItemProps, MenuItemRenderProps, MenuTriggerProps, SubmenuTriggerProps, MenuSectionProps} from './Menu';
 export type {MeterProps, MeterRenderProps} from './Meter';
@@ -139,7 +138,7 @@ export type {ToolbarProps, ToolbarRenderProps} from './Toolbar';
 export type {TooltipProps, TooltipRenderProps, TooltipTriggerComponentProps} from './Tooltip';
 export type {TreeProps, TreeRenderProps, TreeItemProps, TreeItemRenderProps, TreeItemContentProps, TreeItemContentRenderProps} from './Tree';
 export type {DragAndDropHooks, DragAndDropOptions} from './useDragAndDrop';
-export type {DropIndicatorProps} from './DragAndDrop';
+export type {DropIndicatorProps, DropIndicatorRenderProps} from './DragAndDrop';
 export type {ContextValue, SlotProps} from './utils';
 export type {VirtualizerProps} from './Virtualizer';
 
