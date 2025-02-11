@@ -202,6 +202,7 @@ export const SubDialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogt
       values={[
         [MenuItemContext, {...submenuTriggerProps, onAction: undefined, ref: itemRef}],
         [DialogContext, submenuProps],
+        [MenuContext, undefined],
         [OverlayTriggerStateContext, submenuTriggerState],
         [PopoverContext, {
           ref: subdialogRef,
