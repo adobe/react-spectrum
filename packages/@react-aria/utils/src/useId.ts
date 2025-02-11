@@ -14,7 +14,6 @@ import {useCallback, useEffect, useRef, useState} from 'react';
 import {useLayoutEffect} from './useLayoutEffect';
 import {useSSRSafeId} from '@react-aria/ssr';
 import {useValueEffect} from './';
-import React from 'react';
 
 // copied from SSRProvider.tsx to reduce exports, if needed again, consider sharing
 let canUseDOM = Boolean(
@@ -24,7 +23,9 @@ let canUseDOM = Boolean(
 );
 
 export let idsUpdaterMap: Map<string, Array<(v: string) => void>> = new Map();
-let ownerIdsWeakMap = new WeakMap();
+let registry = new FinalizationRegistry<string>((heldValue) => {
+  idsUpdaterMap.delete(heldValue);
+});
 
 /**
  * If a default is not provided, generate an id.
@@ -35,16 +36,9 @@ export function useId(defaultId?: string): string {
   let nextId = useRef(null);
 
   let res = useSSRSafeId(value);
-  // @ts-ignore
-  let currentOwner = React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED?.ReactCurrentOwner?.current;
-  if (currentOwner) {
-    // can we tell if this is a re-render inside a Suspense boundary?
-    if (ownerIdsWeakMap.has(currentOwner)) {
-      console.log('found currentOwner');
-    } else {
-      ownerIdsWeakMap.set(currentOwner, res);
-    }
-  }
+  let cleanupRef = useRef(null);
+
+  registry.register(cleanupRef, res);
 
   let updateValue = useCallback((val) => {
     nextId.current = val;
@@ -62,6 +56,7 @@ export function useId(defaultId?: string): string {
   useLayoutEffect(() => {
     let r = res;
     return () => {
+      registry.unregister(cleanupRef);
       idsUpdaterMap.delete(r);
     };
   }, [res]);
