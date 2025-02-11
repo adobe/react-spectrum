@@ -115,7 +115,8 @@ export let menu = style({
     isPopover: 8
   },
   fontFamily: 'sans',
-  fontSize: 'control'
+  fontSize: 'control',
+  gridAutoRows: 'min-content'
 }, getAllowedOverrides());
 
 export let section = style({
