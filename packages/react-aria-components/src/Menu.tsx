@@ -278,17 +278,16 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             [SubmenuTriggerContext, {parentMenuRef: ref, isVirtualFocus: autocompleteMenuProps?.shouldUseVirtualFocus}],
             [MenuItemContext, null],
             [UNSTABLE_InternalAutocompleteContext, null],
-            [SelectionManagerContext, state.selectionManager]
+            [SelectionManagerContext, state.selectionManager],
+            /* Ensure root MenuTriggerState is defined, in case Menu is rendered outside a MenuTrigger. */
+            /* We assume the context can never change between defined and undefined. */
+            /* eslint-disable-next-line react-hooks/rules-of-hooks */
+            [RootMenuTriggerStateContext, triggerState ?? useMenuTriggerState({})]
           ]}>
-          {/* Ensure root MenuTriggerState is defined, in case Menu is rendered outside a MenuTrigger. */}
-          {/* We assume the context can never change between defined and undefined. */}
-          {/* eslint-disable-next-line react-hooks/rules-of-hooks */}
-          <RootMenuTriggerStateContext.Provider value={triggerState ?? useMenuTriggerState({})}>
-            <CollectionRoot
-              collection={state.collection}
-              persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)}
-              scrollRef={ref} />
-          </RootMenuTriggerStateContext.Provider>
+          <CollectionRoot
+            collection={state.collection}
+            persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)}
+            scrollRef={ref} />
         </Provider>
       </div>
     </FocusScope>
