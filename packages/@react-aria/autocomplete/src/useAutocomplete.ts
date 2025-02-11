@@ -71,6 +71,10 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
   let queuedActiveDescendant = useRef<string | null>(null);
   let lastCollectionNode = useRef<HTMLElement>(null);
 
+  useEffect(() => {
+    return () => clearTimeout(timeout.current);
+  }, []);
+
   let updateActiveDescendant = useEffectEvent((e: Event) => {
     let target = e.target as Element | null;
     if (e.isTrusted || !target || queuedActiveDescendant.current === target.id) {
@@ -164,6 +168,7 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
       return;
     }
 
+    let focusedNodeId = queuedActiveDescendant.current;
     switch (e.key) {
       case 'a':
         if (isCtrlKeyPressed(e)) {
@@ -194,7 +199,7 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
       case 'PageUp':
       case 'ArrowUp':
       case 'ArrowDown': {
-        if ((e.key === 'Home' || e.key === 'End') && state.focusedNodeId == null && e.shiftKey) {
+        if ((e.key === 'Home' || e.key === 'End') && focusedNodeId == null && e.shiftKey) {
           return;
         }
 
@@ -215,7 +220,7 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
       case 'ArrowRight': {
         // TODO: What about wrapped grids where ArrowLeft and ArrowRight should navigate left/right? Kinda gross that there is menu specific
         // logic here, would need to do something similar for grid (detect that focused item is a grid item?)
-        let item = state.focusedNodeId && document.getElementById(state.focusedNodeId);
+        let item = focusedNodeId && document.getElementById(focusedNodeId);
         if (
           (item && item.hasAttribute('aria-expanded') && !item.hasAttribute('aria-disabled')) &&
           ((direction === 'ltr' && e.key === 'ArrowRight') || (direction === 'rtl' && e.key === 'ArrowLeft'))) {
@@ -239,12 +244,12 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
       e.stopPropagation();
     }
 
-    if (state.focusedNodeId == null) {
+    if (focusedNodeId == null) {
       collectionRef.current?.dispatchEvent(
         new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
       );
     } else {
-      let item = document.getElementById(state.focusedNodeId);
+      let item = document.getElementById(focusedNodeId);
       item?.dispatchEvent(
         new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
       );
@@ -257,12 +262,13 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
     // is detected by usePress instead of the original keyup originating from the input
     if (e.target === keyDownTarget.current) {
       e.stopImmediatePropagation();
-      if (state.focusedNodeId == null) {
+      let focusedNodeId = queuedActiveDescendant.current;
+      if (focusedNodeId == null) {
         collectionRef.current?.dispatchEvent(
           new KeyboardEvent(e.type, e)
         );
       } else {
-        let item = document.getElementById(state.focusedNodeId);
+        let item = document.getElementById(focusedNodeId);
         item?.dispatchEvent(
           new KeyboardEvent(e.type, e)
         );
