@@ -65,7 +65,7 @@ export interface TabProps extends Omit<AriaTabProps, 'children' | 'style' | 'cla
 
 export interface TabListProps<T> extends Omit<AriaTabListProps<T>, 'style' | 'className' | 'aria-label' | 'aria-labelledby'>, StyleProps {
   /** The content to display in the tablist. */
-  children?: ReactNode | ((item: T) => ReactNode)
+  children: ReactNode | ((item: T) => ReactNode)
 }
 
 export interface TabPanelProps extends Omit<AriaTabPanelProps, 'children' | 'style' | 'className'>, UnsafeStyles {
