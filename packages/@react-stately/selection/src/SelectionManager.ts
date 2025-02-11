@@ -398,7 +398,7 @@ export class SelectionManager implements MultipleSelectionManager {
           }
 
           // Add child keys. If cell selection is allowed, then include item children too.
-          if (item && (item?.firstChildKey === undefined ? item?.hasChildNodes : item?.firstChildKey != null) && (this.allowsCellSelection || item.type !== 'item')) {
+          if (item?.hasChildNodes && (this.allowsCellSelection || item.type !== 'item')) {
             addKeys(getFirstItem(getChildNodes(item, this.collection))?.key ?? null);
           }
         }

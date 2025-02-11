@@ -88,9 +88,14 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   };
 
   let treeGridRowProps: HTMLAttributes<HTMLElement> = {};
-  let hasChildRows = props.hasChildItems || node.hasChildNodes;
+  let hasChildRows = props.hasChildItems;
   let hasLink = state.selectionManager.isLink(node.key);
   if (node != null && 'expandedKeys' in state) {
+    // TODO: ideally node.hasChildNodes would be a way to tell if a row has child nodes, but the row's contents make it so that value is always
+    // true...
+    let children = state.collection.getChildren?.(node.key);
+    hasChildRows = [...(children ?? [])].length > 1;
+
     if (onAction == null && !hasLink && state.selectionManager.selectionMode === 'none' && hasChildRows) {
       onAction = () => state.toggleKey(node.key);
     }

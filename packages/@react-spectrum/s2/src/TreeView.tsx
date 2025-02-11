@@ -318,7 +318,7 @@ export const TreeItemContent = (props: Omit<TreeItemContentProps, 'children'> & 
 
   return (
     <UNSTABLE_TreeItemContent>
-      {({isExpanded, hasChildRows, selectionMode, selectionBehavior, isDisabled, isFocusVisible, isSelected, id, state}) => {
+      {({isExpanded, hasChildItems, selectionMode, selectionBehavior, isDisabled, isFocusVisible, isSelected, id, state}) => {
         let isNextSelected = false;
         let isNextFocused = false;
         let keyAfter = state.collection.getKeyAfter(id);
@@ -342,7 +342,7 @@ export const TreeItemContent = (props: Omit<TreeItemContentProps, 'children'> & 
                 width: '[calc(calc(var(--tree-item-level, 0) - 1) * var(--indent))]'
               })} />
             {/* TODO: revisit when we do async loading, at the moment hasChildItems will only cause the chevron to be rendered, no aria/data attributes indicating the row's expandability are added */}
-            {hasChildRows && <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} />}
+            {hasChildItems && <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} />}
             <Provider
               values={[
                 [TextContext, {styles: treeContent}],

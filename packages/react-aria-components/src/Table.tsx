@@ -58,7 +58,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
       switch (node.type) {
         case 'column':
           columnKeyMap.set(node.key, node);
-          if (node.firstChildKey == null) {
+          if (!node.hasChildNodes) {
             node.index = this.columns.length;
             this.columns.push(node);
 

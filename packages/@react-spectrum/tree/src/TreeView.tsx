@@ -240,7 +240,7 @@ export const TreeItemContent = (props: Omit<TreeItemContentProps, 'children'> & 
 
   return (
     <UNSTABLE_TreeItemContent>
-      {({isExpanded, hasChildRows, level, selectionMode, selectionBehavior, isDisabled, isSelected, isFocusVisible}) => (
+      {({isExpanded, hasChildItems, level, selectionMode, selectionBehavior, isDisabled, isSelected, isFocusVisible}) => (
         <div className={treeCellGrid({isDisabled})}>
           {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               // TODO: add transition?
@@ -252,7 +252,7 @@ export const TreeItemContent = (props: Omit<TreeItemContentProps, 'children'> & 
             )}
           <div style={{gridArea: 'level-padding', marginInlineEnd: `calc(${level - 1} * var(--spectrum-global-dimension-size-200))`}} />
           {/* TODO: revisit when we do async loading, at the moment hasChildItems will only cause the chevron to be rendered, no aria/data attributes indicating the row's expandability are added */}
-          {hasChildRows && <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} />}
+          {hasChildItems && <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} />}
           <SlotProvider
             slots={{
               text: {UNSAFE_className: treeContent({isDisabled})},
