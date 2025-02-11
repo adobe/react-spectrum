@@ -39,6 +39,7 @@ import React, {createContext, forwardRef, JSXElementConstructor, ReactElement, R
 import {TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale} from 'react-aria';
+import {useScale} from './utils';
 
 interface S2TreeProps {
   // Only detatched is supported right now with the current styles from Spectrum
@@ -95,6 +96,7 @@ const tree = style({
 
 function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
   let {children, isDetached, isEmphasized} = props;
+  let scale = useScale();
 
   let renderer;
   if (typeof children === 'function') {
@@ -103,11 +105,15 @@ function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
 
   let domRef = useDOMRef(ref);
 
+  let rowHeight = isDetached ? 44 : 40;
+  if (scale === 'large') {
+    rowHeight = isDetached ? 54 : 50;
+  }
   let layout = useMemo(() => {
     return new UNSTABLE_ListLayout({
-      rowHeight: isDetached ? 42 : 40
+      rowHeight
     });
-  }, [isDetached]);
+  }, [rowHeight]);
 
   return (
     <UNSTABLE_Virtualizer layout={layout}>
@@ -185,9 +191,10 @@ const treeRow = style({
 const treeCellGrid = style({
   display: 'grid',
   width: 'full',
+  height: 'full',
   alignContent: 'center',
   alignItems: 'center',
-  gridTemplateColumns: ['minmax(0, auto)', 'minmax(0, auto)', 'minmax(0, auto)', 40, 'minmax(0, auto)', '1fr', 'minmax(0, auto)', 'auto'],
+  gridTemplateColumns: ['auto', 'auto', 'auto', 'auto', 'auto', '1fr', 'minmax(0, auto)', 'auto'],
   gridTemplateRows: '1fr',
   gridTemplateAreas: [
     'drag-handle checkbox level-padding expand-button icon content actions actionmenu'
@@ -257,8 +264,6 @@ const treeContent = style({
 
 const treeActions = style({
   gridArea: 'actions',
-  flexGrow: 0,
-  flexShrink: 0,
   /* TODO: I made this one up, confirm desired behavior. These paddings are to make sure the action group has enough padding for the focus ring */
   marginStart: 2,
   marginEnd: 4
@@ -315,6 +320,7 @@ export const TreeItemContent = (props: Omit<TreeItemContentProps, 'children'> & 
     children
   } = props;
   let {isDetached, isEmphasized} = useContext(InternalTreeContext);
+  let scale = useScale();
 
   return (
     <UNSTABLE_TreeItemContent>
@@ -342,7 +348,7 @@ export const TreeItemContent = (props: Omit<TreeItemContentProps, 'children'> & 
                 width: '[calc(calc(var(--tree-item-level, 0) - 1) * var(--indent))]'
               })} />
             {/* TODO: revisit when we do async loading, at the moment hasChildItems will only cause the chevron to be rendered, no aria/data attributes indicating the row's expandability are added */}
-            {hasChildItems && <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} />}
+            {hasChildItems && <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} scale={scale} />}
             <Provider
               values={[
                 [TextContext, {styles: treeContent}],
@@ -351,7 +357,7 @@ export const TreeItemContent = (props: Omit<TreeItemContentProps, 'children'> & 
                   styles: style({size: fontRelative(20), flexShrink: 0})
                 }],
                 [ActionButtonGroupContext, {styles: treeActions}],
-                [ActionMenuContext, {styles: treeActionMenu, isQuiet: true, 'aria-label': 'Actions'}]
+                [ActionMenuContext, {styles: treeActionMenu, isQuiet: true}]
               ]}>
               {children}
             </Provider>
@@ -366,13 +372,22 @@ export const TreeItemContent = (props: Omit<TreeItemContentProps, 'children'> & 
 interface ExpandableRowChevronProps {
   isExpanded?: boolean,
   isDisabled?: boolean,
-  isRTL?: boolean
+  isRTL?: boolean,
+  scale: 'medium' | 'large',
+  isHidden?: boolean
 }
 
 const expandButton = style<ExpandableRowChevronProps>({
   gridArea: 'expand-button',
-  height: 'full',
-  aspectRatio: 'square',
+  color: {
+    default: '[inherit]',
+    isDisabled: {
+      default: 'disabled',
+      forcedColors: 'GrayText'
+    }
+  },
+  height: 40,
+  width: 40,
   display: 'flex',
   flexWrap: 'wrap',
   alignContent: 'center',
@@ -385,16 +400,22 @@ const expandButton = style<ExpandableRowChevronProps>({
       isRTL: 'rotate(-90deg)'
     }
   },
+  padding: 0,
   transition: 'default',
   backgroundColor: 'transparent',
-  borderStyle: 'none'
+  borderStyle: 'none',
+  disableTapHighlight: true,
+  visibility: {
+    isHidden: 'hidden'
+  }
 });
 
 function ExpandableRowChevron(props: ExpandableRowChevronProps) {
   let expandButtonRef = useRef<HTMLButtonElement>(null);
   let [fullProps, ref] = useContextProps({...props, slot: 'chevron'}, expandButtonRef, ButtonContext);
-  let {isExpanded, isDisabled} = fullProps;
+  let {isExpanded, isDisabled, scale, isHidden} = fullProps;
   let {direction} = useLocale();
+  isDisabled = isDisabled || isHidden;
 
   return (
     <Button
@@ -404,7 +425,7 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
       // Override tabindex so that grid keyboard nav skips over it. Needs -1 so android talkback can actually "focus" it
       excludeFromTabOrder={isAndroid() && !isDisabled}
       preventFocusOnPress
-      className={renderProps => expandButton({...renderProps, isExpanded, isRTL: direction === 'rtl'})}>
+      className={renderProps => expandButton({...renderProps, isExpanded, isRTL: direction === 'rtl', scale, isHidden})}>
       <Chevron
         className={style({
           scale: {
