@@ -31,7 +31,7 @@ export interface ColorSliderProps extends Omit<AriaColorSliderProps, 'children' 
   label?: string
 }
 
-export const ColorSliderContext = createContext<ContextValue<ColorSliderProps, DOMRefValue<HTMLDivElement>>>(null);
+export const ColorSliderContext = createContext<ContextValue<Partial<ColorSliderProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 /**
  * A ColorSlider allows users to adjust an individual channel of a color value.

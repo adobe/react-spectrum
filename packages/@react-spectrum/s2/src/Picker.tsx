@@ -190,7 +190,8 @@ export let menu = style({
   overflow: 'auto',
   padding: 8,
   fontFamily: 'sans',
-  fontSize: 'control'
+  fontSize: 'control',
+  gridAutoRows: 'min-content'
 });
 
 const invalidBorder = style({
