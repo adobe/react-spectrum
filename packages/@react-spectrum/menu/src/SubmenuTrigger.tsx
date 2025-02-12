@@ -98,8 +98,7 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
         triggerRef={triggerRef}
         scrollRef={menuRef}
         placement="end top"
-        hideArrow
-        shouldCloseOnInteractOutside={() => window.event instanceof FocusEvent}>
+        hideArrow>
         {menu}
       </Popover>
     );
