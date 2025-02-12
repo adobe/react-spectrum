@@ -10,17 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Menu} from '../src';
-
-import type {Meta} from '@storybook/react';
-
-const meta: Meta<typeof Menu<any>> = {
-  component: Menu,
-  parameters: {
-    chromaticProvider: {colorSchemes: ['dark'], backgrounds: ['base'], locales: ['ar-AE'], disableAnimations: true}
-  },
-  title: 'S2 Chromatic/MenuRTL'
-};
-
-export default meta;
-export {Default, WithKeyboardShortcuts, WithIcons, WithImages, Dynamic} from './Menu.stories';
+export function createShadowRoot(attachTo = document.body) {
+  const div = document.createElement('div');
+  attachTo.appendChild(div);
+  const shadowRoot = div.attachShadow({mode: 'open'});
+  return {shadowHost: div, shadowRoot, cleanup: () => attachTo.removeChild(div)};
+}

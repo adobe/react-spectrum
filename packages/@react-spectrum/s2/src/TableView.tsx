@@ -256,7 +256,7 @@ export class S2TableLayout<T> extends UNSTABLE_TableLayout<T> {
   }
 }
 
-export const TableContext = createContext<ContextValue<TableViewProps, DOMRefValue<HTMLDivElement>>>(null);
+export const TableContext = createContext<ContextValue<Partial<TableViewProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 /**
  * Tables are containers for displaying information. They allow users to quickly scan, sort, compare, and take action on large amounts of data.

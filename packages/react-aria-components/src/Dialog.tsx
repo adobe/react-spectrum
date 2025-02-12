@@ -25,7 +25,7 @@ export interface DialogTriggerProps extends OverlayTriggerProps {
   children: ReactNode
 }
 
-interface DialogRenderProps {
+export interface DialogRenderProps {
   close: () => void
 }
 
