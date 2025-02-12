@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionMenu, Content, Heading, IllustratedMessage, Link, MenuItem, Text, TreeView, TreeViewItem, TreeItemContent, Collection} from '../src';
+import {ActionMenu, Collection, Content, Heading, IllustratedMessage, Link, MenuItem, Text, TreeItemContent, TreeView, TreeViewItem} from '../src';
 import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import FileTxt from '../s2wf-icons/S2_Icon_FileText_20_N.svg';
@@ -37,40 +37,9 @@ function TreeExample(props) {
         aria-label="test static tree"
         expandedKeys={['projects']}>
 
-      <TreeViewItem id="Photos" textValue="Photos">
-        <TreeItemContent>
-          <Text>Photos</Text>
-          <Folder />
-          <ActionMenu>
-            <MenuItem id="edit">
-              <Edit />
-              <Text>Edit</Text>
-            </MenuItem>
-            <MenuItem id="delete">
-              <Delete />
-              <Text>Delete</Text>
-            </MenuItem>
-          </ActionMenu>
-        </TreeItemContent>
-      </TreeViewItem>
-      <TreeViewItem id="projects" textValue="Projects">
-        <TreeItemContent>
-          <Text>Projects</Text>
-          <Folder />
-          <ActionMenu>
-            <MenuItem id="edit">
-              <Edit />
-              <Text>Edit</Text>
-            </MenuItem>
-            <MenuItem id="delete">
-              <Delete />
-              <Text>Delete</Text>
-            </MenuItem>
-          </ActionMenu>
-        </TreeItemContent>
-        <TreeViewItem id="projects-1" textValue="Projects-1">
+        <TreeViewItem id="Photos" textValue="Photos">
           <TreeItemContent>
-            <Text>Projects-1</Text>
+            <Text>Photos</Text>
             <Folder />
             <ActionMenu>
               <MenuItem id="edit">
@@ -83,9 +52,73 @@ function TreeExample(props) {
               </MenuItem>
             </ActionMenu>
           </TreeItemContent>
-          <TreeViewItem id="projects-1A" textValue="Projects-1A">
+        </TreeViewItem>
+        <TreeViewItem id="projects" textValue="Projects">
+          <TreeItemContent>
+            <Text>Projects</Text>
+            <Folder />
+            <ActionMenu>
+              <MenuItem id="edit">
+                <Edit />
+                <Text>Edit</Text>
+              </MenuItem>
+              <MenuItem id="delete">
+                <Delete />
+                <Text>Delete</Text>
+              </MenuItem>
+            </ActionMenu>
+          </TreeItemContent>
+          <TreeViewItem id="projects-1" textValue="Projects-1">
             <TreeItemContent>
-              <Text>Projects-1A</Text>
+              <Text>Projects-1</Text>
+              <Folder />
+              <ActionMenu>
+                <MenuItem id="edit">
+                  <Edit />
+                  <Text>Edit</Text>
+                </MenuItem>
+                <MenuItem id="delete">
+                  <Delete />
+                  <Text>Delete</Text>
+                </MenuItem>
+              </ActionMenu>
+            </TreeItemContent>
+            <TreeViewItem id="projects-1A" textValue="Projects-1A">
+              <TreeItemContent>
+                <Text>Projects-1A</Text>
+                <FileTxt />
+                <ActionMenu>
+                  <MenuItem id="edit">
+                    <Edit />
+                    <Text>Edit</Text>
+                  </MenuItem>
+                  <MenuItem id="delete">
+                    <Delete />
+                    <Text>Delete</Text>
+                  </MenuItem>
+                </ActionMenu>
+              </TreeItemContent>
+            </TreeViewItem>
+          </TreeViewItem>
+          <TreeViewItem id="projects-2" textValue="Projects-2">
+            <TreeItemContent>
+              <Text>Projects-2</Text>
+              <FileTxt />
+              <ActionMenu>
+                <MenuItem id="edit">
+                  <Edit />
+                  <Text>Edit</Text>
+                </MenuItem>
+                <MenuItem id="delete">
+                  <Delete />
+                  <Text>Delete</Text>
+                </MenuItem>
+              </ActionMenu>
+            </TreeItemContent>
+          </TreeViewItem>
+          <TreeViewItem id="projects-3" textValue="Projects-3">
+            <TreeItemContent>
+              <Text>Projects-3</Text>
               <FileTxt />
               <ActionMenu>
                 <MenuItem id="edit">
@@ -100,39 +133,6 @@ function TreeExample(props) {
             </TreeItemContent>
           </TreeViewItem>
         </TreeViewItem>
-        <TreeViewItem id="projects-2" textValue="Projects-2">
-          <TreeItemContent>
-            <Text>Projects-2</Text>
-            <FileTxt />
-            <ActionMenu>
-              <MenuItem id="edit">
-                <Edit />
-                <Text>Edit</Text>
-              </MenuItem>
-              <MenuItem id="delete">
-                <Delete />
-                <Text>Delete</Text>
-              </MenuItem>
-            </ActionMenu>
-          </TreeItemContent>
-        </TreeViewItem>
-        <TreeViewItem id="projects-3" textValue="Projects-3">
-          <TreeItemContent>
-            <Text>Projects-3</Text>
-            <FileTxt />
-            <ActionMenu>
-              <MenuItem id="edit">
-                <Edit />
-                <Text>Edit</Text>
-              </MenuItem>
-              <MenuItem id="delete">
-                <Delete />
-                <Text>Delete</Text>
-              </MenuItem>
-            </ActionMenu>
-          </TreeItemContent>
-        </TreeViewItem>
-      </TreeViewItem>
       </TreeView>
     </div>
   );
