@@ -17,7 +17,6 @@ import {isFocusVisible, useFocus, useHover, useKeyboard, usePress} from '@react-
 import {menuData} from './utils';
 import {SelectionManager} from '@react-stately/selection';
 import {TreeState} from '@react-stately/tree';
-import {useEffect} from 'react';
 import {useSelectableItem} from '@react-aria/selection';
 
 export interface MenuItemAria {
@@ -265,7 +264,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     isDisabled,
     onHoverStart(e) {
       // Hovering over an already expanded sub dialog trigger should keep focus in the dialog.
-      if (!isFocusVisible() && !(isTriggerExpanded && hasPopup === 'dialog')) {
+      if (!isFocusVisible() && !(isTriggerExpanded && hasPopup)) {
         selectionManager.setFocused(true);
         selectionManager.setFocusedKey(key);
       }
@@ -313,21 +312,24 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   delete domProps.id;
   let linkProps = useLinkProps(item?.props);
 
-  useEffect(() => {
-    if (isTrigger && data.shouldUseVirtualFocus && isTriggerExpanded && key !== selectionManager.focusedKey) {
-      // If using virtual focus, we need to fake a blur event when virtual focus moves away from an open submenutrigger since we won't actual trigger a real
-      // blur event. This is so the submenu will close when the user hovers/keyboard navigates to another sibiling menu item
-      ref.current?.dispatchEvent(new FocusEvent('focusout', {bubbles: true}));
-      ref.current?.dispatchEvent(new Event('blur'));
-    }
-  }, [data.shouldUseVirtualFocus, isTrigger, isTriggerExpanded, key, selectionManager, ref]);
-
   return {
     menuItemProps: {
       ...ariaProps,
-      ...mergeProps(domProps, linkProps, isTrigger ? {onFocus: itemProps.onFocus, 'data-key': itemProps['data-key']} : itemProps, pressProps, hoverProps, keyboardProps, focusProps),
+      ...mergeProps(
+        domProps,
+        linkProps,
+        isTrigger 
+          ? {onFocus: itemProps.onFocus, 'data-key': itemProps['data-key']} 
+          : itemProps,
+        pressProps,
+        hoverProps,
+        keyboardProps,
+        focusProps,
+        // Prevent DOM focus from moving on mouse down when using virtual focus or this is a submenu/subdialog trigger.
+        data.shouldUseVirtualFocus || isTrigger ? {onMouseDown: e => e.preventDefault()} : undefined
+      ),
       // If a submenu is expanded, set the tabIndex to -1 so that shift tabbing goes out of the menu instead of the parent menu item.
-      tabIndex: itemProps.tabIndex != null && isTriggerExpanded ? -1 : itemProps.tabIndex
+      tabIndex: itemProps.tabIndex != null && isTriggerExpanded && !data.shouldUseVirtualFocus ? -1 : itemProps.tabIndex
     },
     labelProps: {
       id: labelId

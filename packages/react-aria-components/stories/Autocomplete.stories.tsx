@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {UNSTABLE_Autocomplete as Autocomplete, Button, Collection, Dialog, DialogTrigger, Header, Input, Keyboard, Label, ListBox, ListBoxSection, UNSTABLE_ListLayout as ListLayout, Menu, MenuSection, MenuTrigger, Popover, SearchField, Separator, Text, TextField, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
+import {UNSTABLE_Autocomplete as Autocomplete, Button, Collection, Dialog, DialogTrigger, Header, Input, Keyboard, Label, ListBox, ListBoxSection, UNSTABLE_ListLayout as ListLayout, Menu, MenuSection, MenuTrigger, Popover, SearchField, Select, SelectValue, Separator, Text, TextField, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
 import {MyListBoxItem, MyMenuItem} from './utils';
 import React, {useMemo} from 'react';
 import styles from '../example/index.css';
@@ -737,3 +737,27 @@ export const AutocompleteMenuInPopoverDialogTrigger = {
     }
   }
 };
+
+let manyItems = [...Array(100)].map((_, i) => ({id: i, name: `Item ${i}`}));
+
+export const AutocompleteSelect = () => (
+  <Select style={{marginBottom: 40}}>
+    <Label style={{display: 'block'}}>Test</Label>
+    <Button>
+      <SelectValue />
+      <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
+    </Button>
+    <Popover style={{background: 'Canvas', border: '1px solid ButtonBorder', padding: 5, boxSizing: 'border-box', display: 'flex'}}>
+      <Dialog aria-label="Test" style={{display: 'flex', flexDirection: 'column'}}>
+        <Autocomplete filter={useFilter({sensitivity: 'base'}).contains}>
+          <SearchField aria-label="Search" autoFocus style={{display: 'flex', flexDirection: 'column'}}>
+            <Input />
+          </SearchField>
+          <ListBox items={manyItems} className={styles.menu} style={{flex: 1}}>
+            {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+          </ListBox>
+        </Autocomplete>
+      </Dialog>
+    </Popover>
+  </Select>
+);

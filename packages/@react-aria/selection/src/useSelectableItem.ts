@@ -11,8 +11,8 @@
  */
 
 import {DOMAttributes, DOMProps, FocusableElement, Key, LongPressEvent, PointerType, PressEvent, RefObject} from '@react-types/shared';
-import {focusSafely} from '@react-aria/focus';
-import {isCtrlKeyPressed, mergeProps, openLink, UPDATE_ACTIVEDESCENDANT, useId, useRouter} from '@react-aria/utils';
+import {focusSafely, moveVirtualFocus} from '@react-aria/focus';
+import {isCtrlKeyPressed, mergeProps, openLink, useId, useRouter} from '@react-aria/utils';
 import {isNonContiguousSelectionModifier} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {PressProps, useLongPress, usePress} from '@react-aria/interactions';
@@ -161,7 +161,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
 
   // Focus the associated DOM node when this item becomes the focusedKey
   // TODO: can't make this useLayoutEffect bacause it breaks menus inside dialogs
-  // However, if this is a useEffect, it runs twice and dispatches two UPDATE_ACTIVEDESCENDANT and immediately sets
+  // However, if this is a useEffect, it runs twice and dispatches two blur events and immediately sets
   // aria-activeDescendant in useAutocomplete... I've worked around this for now
   useEffect(() => {
     let isFocused = key === manager.focusedKey;
@@ -173,12 +173,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
           focusSafely(ref.current);
         }
       } else {
-        let updateActiveDescendant = new CustomEvent(UPDATE_ACTIVEDESCENDANT, {
-          cancelable: true,
-          bubbles: true
-        });
-
-        ref.current?.dispatchEvent(updateActiveDescendant);
+        moveVirtualFocus(ref.current);
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -369,7 +364,9 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       itemProps,
       allowsSelection || hasPrimaryAction ? pressProps : {},
       longPressEnabled ? longPressProps : {},
-      {onDoubleClick, onDragStartCapture, onClick, id}
+      {onDoubleClick, onDragStartCapture, onClick, id},
+      // Prevent DOM focus from moving on mouse down when using virtual focus
+      shouldUseVirtualFocus ? {onMouseDown: e => e.preventDefault()} : undefined
     ),
     isPressed,
     isSelected: manager.isSelected(key),

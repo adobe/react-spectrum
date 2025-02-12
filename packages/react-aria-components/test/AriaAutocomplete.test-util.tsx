@@ -13,6 +13,7 @@
 import {act, fireEvent, render, within} from '@testing-library/react';
 import {
   AriaBaseTestProps,
+  installPointerEvent,
   mockClickDefault,
   pointerMap
 } from '@react-spectrum/test-utils-internal';
@@ -692,25 +693,29 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
           expect(menus).toHaveLength(2);
         });
 
-        it('should close the menu when hovering an adjacent menu item in the virtual focus list', async function () {
-          let {getByRole, getAllByRole} = (renderers.submenus!)();
-          let menu = getByRole('menu');
-          let options = within(menu).getAllByRole('menuitem');
-          expect(options[1]).toHaveAttribute('aria-haspopup', 'menu');
-          await user.click(options[1]);
-          act(() => {
-            jest.runAllTimers();
-          });
+        describe('pointer events', function () {
+          installPointerEvent();
+          
+          it('should close the menu when hovering an adjacent menu item in the virtual focus list', async function () {
+            let {getByRole, getAllByRole} = (renderers.submenus!)();
+            let menu = getByRole('menu');
+            let options = within(menu).getAllByRole('menuitem');
+            expect(options[1]).toHaveAttribute('aria-haspopup', 'menu');
+            await user.click(options[1]);
+            act(() => {
+              jest.runAllTimers();
+            });
 
-          let menus = getAllByRole('menu');
-          expect(menus).toHaveLength(2);
+            let menus = getAllByRole('menu');
+            expect(menus).toHaveLength(2);
 
-          await user.hover(options[2]);
-          act(() => {
-            jest.runAllTimers();
+            await user.hover(options[2]);
+            act(() => {
+              jest.runAllTimers();
+            });
+            menus = getAllByRole('menu');
+            expect(menus).toHaveLength(1);
           });
-          menus = getAllByRole('menu');
-          expect(menus).toHaveLength(1);
         });
 
         it('should not clear the focused key when using arrowRight to open a submenu', async function () {
@@ -732,7 +737,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
           // Open submenu
           await user.keyboard('{ArrowRight}');
           act(() => jest.runAllTimers());
-          expect(input).not.toHaveAttribute('aria-activedescendant');
+          expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
           expect(options[1]).not.toHaveAttribute('data-focused');
           expect(options[1]).not.toHaveAttribute('data-focus-visible');
           let menus = getAllByRole('menu');

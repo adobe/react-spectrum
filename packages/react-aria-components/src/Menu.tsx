@@ -105,7 +105,7 @@ export interface SubmenuTriggerProps {
   delay?: number
 }
 
-const SubmenuTriggerContext = createContext<{parentMenuRef: RefObject<HTMLElement | null>, isVirtualFocus?: boolean} | null>(null);
+const SubmenuTriggerContext = createContext<{parentMenuRef: RefObject<HTMLElement | null>, shouldUseVirtualFocus?: boolean} | null>(null);
 
 /**
  * A submenu trigger is used to wrap a submenu's trigger item and the submenu itself.
@@ -119,12 +119,12 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
   let submenuTriggerState = useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
   let submenuRef = useRef<HTMLDivElement>(null);
   let itemRef = useObjectRef(ref);
-  let {parentMenuRef, isVirtualFocus} = useContext(SubmenuTriggerContext)!;
+  let {parentMenuRef, shouldUseVirtualFocus} = useContext(SubmenuTriggerContext)!;
   let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger({
     parentMenuRef,
     submenuRef,
     delay: props.delay,
-    isVirtualFocus
+    shouldUseVirtualFocus
   }, submenuTriggerState, itemRef);
 
   let onDismissButtonPress = () => {
@@ -145,9 +145,6 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
           trigger: 'SubmenuTrigger',
           triggerRef: itemRef,
           placement: 'end top',
-          // Prevent parent popover from hiding submenu.
-          // @ts-ignore
-          'data-react-aria-top-layer': true,
           onDismissButtonPress,
           ...popoverProps
         }]
@@ -159,7 +156,7 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
 }, props => props.children[0]);
 
 // TODO: make SubdialogTrigger unstable
-export interface SubdialogTriggerProps {
+export interface SubDialogTriggerProps {
   /**
    * The contents of the SubDialogTrigger. The first child should be an Item (the trigger) and the second child should be the Popover (for the subdialog).
    */
@@ -176,20 +173,20 @@ export interface SubdialogTriggerProps {
  *
  * @version alpha
  */
-export const SubDialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogtrigger', (props: SubdialogTriggerProps, ref: ForwardedRef<HTMLDivElement>, item) => {
+export const SubDialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogtrigger', (props: SubDialogTriggerProps, ref: ForwardedRef<HTMLDivElement>, item) => {
   let {CollectionBranch} = useContext(CollectionRendererContext);
   let state = useContext(MenuStateContext)!;
   let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
   let submenuTriggerState = useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
   let subdialogRef = useRef<HTMLDivElement>(null);
   let itemRef = useObjectRef(ref);
-  let {parentMenuRef, isVirtualFocus} = useContext(SubmenuTriggerContext)!;
+  let {parentMenuRef, shouldUseVirtualFocus} = useContext(SubmenuTriggerContext)!;
   let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger({
     parentMenuRef,
     submenuRef: subdialogRef,
     type: 'dialog',
     delay: props.delay,
-    isVirtualFocus
+    shouldUseVirtualFocus
     // TODO: might need to have something like isUnavailable like we do for ContextualHelpTrigger
   }, submenuTriggerState, itemRef);
 
@@ -200,37 +197,18 @@ export const SubDialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogt
     itemRef.current?.focus();
   };
 
-  // TODO: if we can get this to work, perhaps should be in hook
-  // However, due to data-react-aria-top-layer, it won't trigger at all
-  // useInteractOutside({
-  //   ref: subdialogRef,
-  //   onInteractOutside: (e) => {
-  //     if (e.target !== itemRef.current) {
-  //       submenuTriggerState.close();
-  //     }
-  //   }
-  // });
-
   return (
     <Provider
       values={[
         [MenuItemContext, {...submenuTriggerProps, onAction: undefined, ref: itemRef}],
-        [DialogContext, submenuProps],
+        [DialogContext, {'aria-labelledby': submenuProps['aria-labelledby']}],
+        [MenuContext, submenuProps],
         [OverlayTriggerStateContext, submenuTriggerState],
         [PopoverContext, {
           ref: subdialogRef,
           trigger: 'SubDialogTrigger',
           triggerRef: itemRef,
           placement: 'end top',
-          // TODO: if we apply this data attribute then the dialog won't close on ESC via useOverlay due to logic in usePopover preventing it from being added
-          // to the visibleOverlays list in useOverlay because isOpen is false, thus not calling onHide nor useInteractOutside. We do want this data attribute
-          // because we want it to not get clipped similar to https://github.com/adobe/react-spectrum/pull/7352#discussion_r1837109265
-          // Hypothetically, if we were to get rid of this data attribute then Esc will work but not clicking outside to close because this popover
-          // has isNonModal = true, meaning it isn't dismissible. To resolve this we could make a custom useInteractOutside in MenuTrigger like we do in RSP
-          // I've opted to add subDialogKeyDown in useSubmenuTrigger instead and make useDialog accept onKeyDown instead
-          // Prevent parent popover from hiding subdialog.
-          // @ts-ignore
-          'data-react-aria-top-layer': true,
           onDismissButtonPress,
           ...popoverProps
         }]
@@ -297,10 +275,14 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             [MenuStateContext, state],
             [SeparatorContext, {elementType: 'div'}],
             [SectionContext, {name: 'MenuSection', render: MenuSectionInner}],
-            [SubmenuTriggerContext, {parentMenuRef: ref, isVirtualFocus: autocompleteMenuProps?.shouldUseVirtualFocus}],
+            [SubmenuTriggerContext, {parentMenuRef: ref, shouldUseVirtualFocus: autocompleteMenuProps?.shouldUseVirtualFocus}],
             [MenuItemContext, null],
             [UNSTABLE_InternalAutocompleteContext, null],
-            [SelectionManagerContext, state.selectionManager]
+            [SelectionManagerContext, state.selectionManager],
+            /* Ensure root MenuTriggerState is defined, in case Menu is rendered outside a MenuTrigger. */
+            /* We assume the context can never change between defined and undefined. */
+            /* eslint-disable-next-line react-hooks/rules-of-hooks */
+            [RootMenuTriggerStateContext, triggerState ?? useMenuTriggerState({})]
           ]}>
           <CollectionRoot
             collection={state.collection}
