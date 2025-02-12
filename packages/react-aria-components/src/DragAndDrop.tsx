@@ -45,7 +45,9 @@ export const DropIndicator = forwardRef(function DropIndicator(props: DropIndica
   return <>{render(props, ref)}</>;
 });
 
-export function useRenderDropIndicator(dragAndDropHooks?: DragAndDropHooks, dropState?: DroppableCollectionState): ((target: ItemDropTarget) => ReactElement | undefined) | undefined {
+type RenderDropIndicatorRetValue = ((target: ItemDropTarget) => ReactElement | undefined) | undefined
+
+export function useRenderDropIndicator(dragAndDropHooks?: DragAndDropHooks, dropState?: DroppableCollectionState): RenderDropIndicatorRetValue {
   let renderDropIndicator = dragAndDropHooks?.renderDropIndicator;
   let isVirtualDragging = dragAndDropHooks?.isVirtualDragging?.();
   let fn = useCallback((target: ItemDropTarget) => {
