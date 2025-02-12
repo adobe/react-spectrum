@@ -440,7 +440,10 @@ export default [{
 }, {
     files: [
         "packages/react-aria-components/**/*.ts",
-        "packages/react-aria-components/**/*.tsx"
+        "packages/react-aria-components/**/*.tsx",
+
+        "packages/@internationalized/**/*.ts",
+        "packages/@internationalized/**/*.tsx"
     ],
 
     rules: {
