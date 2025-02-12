@@ -87,7 +87,12 @@ interface RenderPropsHookOptions<T> extends RenderProps<T>, SharedDOMProps, Aria
   defaultStyle?: CSSProperties
 }
 
-export function useRenderProps<T>(props: RenderPropsHookOptions<T>) {
+export function useRenderProps<T>(props: RenderPropsHookOptions<T>): {
+  className?: string,
+  style?: CSSProperties,
+  children?: ReactNode,
+  'data-rac': string
+} {
   let {
     className,
     style,

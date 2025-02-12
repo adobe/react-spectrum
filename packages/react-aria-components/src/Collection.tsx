@@ -177,6 +177,6 @@ function useCollectionRender(
 
 export const CollectionRendererContext = createContext<CollectionRenderer>(DefaultCollectionRenderer);
 
-export function usePersistedKeys(focusedKey: Key | null) {
+export function usePersistedKeys(focusedKey: Key | null): Set<Key> | null {
   return useMemo(() => focusedKey != null ? new Set([focusedKey]) : null, [focusedKey]);
 }

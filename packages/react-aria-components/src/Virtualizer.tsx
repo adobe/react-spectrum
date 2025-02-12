@@ -36,7 +36,7 @@ export interface VirtualizerProps<O> {
 const VirtualizerContext = createContext<VirtualizerState<any, any> | null>(null);
 const LayoutContext = createContext<Pick<VirtualizerProps<any>, 'layout' | 'layoutOptions'> | null>(null);
 
-export function Virtualizer<O>(props: VirtualizerProps<O>) {
+export function Virtualizer<O>(props: VirtualizerProps<O>): ReactElement {
   let {children, layout, layoutOptions} = props;
   let renderer: CollectionRenderer = useMemo(() => ({
     isVirtualized: true,
