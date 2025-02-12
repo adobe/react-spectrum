@@ -112,7 +112,6 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: ForwardedRef
   } = usePopover({
     ...props,
     popoverRef: objRef,
-    groupRef: props.container ? {current: props.container} : undefined,
     maxHeight: undefined,
     arrowSize: hideArrow ? 0 : secondary,
     arrowBoundaryOffset: borderRadius
