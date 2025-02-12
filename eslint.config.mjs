@@ -443,7 +443,10 @@ export default [{
         "packages/react-aria-components/**/*.tsx",
 
         "packages/@internationalized/**/*.ts",
-        "packages/@internationalized/**/*.tsx"
+        "packages/@internationalized/**/*.tsx",
+
+        "packages/@react-stately/**/*.ts",
+        "packages/@react-stately/**/*.tsx"
     ],
 
     rules: {

@@ -52,7 +52,7 @@ export abstract class Layout<T extends object, O = any> implements LayoutDelegat
    * Called by the virtualizer before {@link getVisibleLayoutInfos}
    * or {@link getLayoutInfo} are called.
    */
-  update(invalidationContext: InvalidationContext<O>) {} // eslint-disable-line @typescript-eslint/no-unused-vars
+  update(invalidationContext: InvalidationContext<O>): void {} // eslint-disable-line @typescript-eslint/no-unused-vars
 
   /**
    * Returns an array of {@link LayoutInfo} objects which are inside the given rectangle.
@@ -73,7 +73,7 @@ export abstract class Layout<T extends object, O = any> implements LayoutDelegat
    */
   abstract getContentSize(): Size;
 
-  /** 
+  /**
    * Updates the size of the given item.
    */
   updateItemSize?(key: Key, size: Size): boolean;
