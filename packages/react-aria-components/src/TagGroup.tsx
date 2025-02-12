@@ -20,7 +20,7 @@ import {forwardRefType, HoverEvents, Key, LinkDOMProps} from '@react-types/share
 import {LabelContext} from './Label';
 import {ListState, Node, useListState} from 'react-stately';
 import {ListStateContext} from './ListBox';
-import React, {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, useContext, useEffect, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface TagGroupProps extends Omit<AriaTagGroupProps<unknown>, 'children' | 'items' | 'label' | 'description' | 'errorMessage' | 'keyboardDelegate'>, DOMProps, SlotProps {}
@@ -73,7 +73,7 @@ interface TagGroupInnerProps {
   collection
 }
 
-function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProps): ReactElement {
+function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProps) {
   let tagListRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot(
     !props['aria-label'] && !props['aria-labelledby']
@@ -126,7 +126,7 @@ function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProp
 /**
  * A tag list is a container for tags within a TagGroup.
  */
-export const TagList = /*#__PURE__*/ (forwardRef as forwardRefType)(function TagList<T extends object>(props: TagListProps<T>, ref: ForwardedRef<HTMLDivElement>): ReactElement {
+export const TagList = /*#__PURE__*/ (forwardRef as forwardRefType)(function TagList<T extends object>(props: TagListProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element {
   let state = useContext(ListStateContext);
   return state
     ? <TagListInner props={props} forwardedRef={ref} />
@@ -138,7 +138,7 @@ interface TagListInnerProps<T> {
   forwardedRef: ForwardedRef<HTMLDivElement>
 }
 
-function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps<T>): ReactElement {
+function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps<T>) {
   let state = useContext(ListStateContext)!;
   let {CollectionRoot} = useContext(CollectionRendererContext);
   let [gridProps, ref] = useContextProps(props, forwardedRef, TagListContext);
