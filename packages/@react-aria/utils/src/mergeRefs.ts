@@ -25,9 +25,7 @@ export function mergeRefs<T>(...refs: Array<Ref<T> | MutableRefObject<T> | null 
 
     const cleanups = refs.map(ref => {
       const cleanup = setRef(ref, value);
-      if (!hasCleanup) {
-        hasCleanup = typeof cleanup === 'function';
-      }
+      hasCleanup ||= typeof cleanup == 'function';
       return cleanup;
     });
 
