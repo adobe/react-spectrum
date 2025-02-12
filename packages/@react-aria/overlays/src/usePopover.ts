@@ -92,7 +92,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
       isOpen: state.isOpen,
       onClose: state.close,
       shouldCloseOnBlur: true,
-      isDismissable: true,
+      isDismissable: !isNonModal,
       isKeyboardDismissDisabled,
       shouldCloseOnInteractOutside
     },

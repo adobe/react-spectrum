@@ -186,8 +186,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase(props: SpectrumCombo
         placement={`${direction} ${align}`}
         hideArrow
         isNonModal
-        shouldFlip={shouldFlip}
-        shouldCloseOnInteractOutside={element => element !== unwrappedButtonRef.current}>
+        shouldFlip={shouldFlip}>
         <ListBoxBase
           {...listBoxProps}
           ref={listBoxRef}
