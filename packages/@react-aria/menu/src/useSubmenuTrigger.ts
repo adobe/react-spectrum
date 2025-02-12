@@ -41,7 +41,7 @@ export interface AriaSubmenuTriggerProps {
    */
   delay?: number,
   /** Whether the submenu trigger uses virtual focus. */
-  isVirtualFocus?: boolean
+  shouldUseVirtualFocus?: boolean
 }
 
 interface SubmenuTriggerProps extends Omit<AriaMenuItemProps, 'key'> {
@@ -70,7 +70,7 @@ export interface SubmenuTriggerAria<T> {
  * @param ref - Ref to the submenu trigger element.
  */
 export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: SubmenuTriggerState, ref: RefObject<FocusableElement | null>): SubmenuTriggerAria<T> {
-  let {parentMenuRef, submenuRef, type = 'menu', isDisabled, delay = 200, isVirtualFocus} = props;
+  let {parentMenuRef, submenuRef, type = 'menu', isDisabled, delay = 200, shouldUseVirtualFocus} = props;
   let submenuTriggerId = useId();
   let overlayId = useId();
   let {direction} = useLocale();
@@ -104,7 +104,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
         if (direction === 'ltr' && e.currentTarget.contains(e.target as Element)) {
           e.stopPropagation();
           onSubmenuClose();
-          if (!isVirtualFocus && ref.current) {
+          if (!shouldUseVirtualFocus && ref.current) {
             focusWithoutScrolling(ref.current);
           }
         }
@@ -113,7 +113,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
         if (direction === 'rtl' && e.currentTarget.contains(e.target as Element)) {
           e.stopPropagation();
           onSubmenuClose();
-          if (!isVirtualFocus && ref.current) {
+          if (!shouldUseVirtualFocus && ref.current) {
             focusWithoutScrolling(ref.current);
           }
         }
@@ -123,7 +123,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
         if (submenuRef.current?.contains(e.target as Element)) {
           e.stopPropagation();
           onSubmenuClose();
-          if (!isVirtualFocus && ref.current) {
+          if (!shouldUseVirtualFocus && ref.current) {
             focusWithoutScrolling(ref.current);
           }
         }
@@ -249,7 +249,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
       // We will manually coerce focus back to the triggers for mobile screen readers and non virtual focus use cases (aka submenus outside of autocomplete) so turn off
       // FocusScope then. For virtual focus use cases (Autocomplete subdialogs/menu) and subdialogs we want to keep FocusScope restoreFocus to automatically
       // send focus to parent subdialog input fields and/or tab containment
-      disableFocusManagement: !isVirtualFocus && (getInteractionModality() === 'virtual' || type === 'menu'),
+      disableFocusManagement: !shouldUseVirtualFocus && (getInteractionModality() === 'virtual' || type === 'menu'),
       shouldCloseOnInteractOutside
     }
   };

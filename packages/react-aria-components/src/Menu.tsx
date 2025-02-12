@@ -105,7 +105,7 @@ export interface SubmenuTriggerProps {
   delay?: number
 }
 
-const SubmenuTriggerContext = createContext<{parentMenuRef: RefObject<HTMLElement | null>, isVirtualFocus?: boolean} | null>(null);
+const SubmenuTriggerContext = createContext<{parentMenuRef: RefObject<HTMLElement | null>, shouldUseVirtualFocus?: boolean} | null>(null);
 
 /**
  * A submenu trigger is used to wrap a submenu's trigger item and the submenu itself.
@@ -119,12 +119,12 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
   let submenuTriggerState = useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
   let submenuRef = useRef<HTMLDivElement>(null);
   let itemRef = useObjectRef(ref);
-  let {parentMenuRef, isVirtualFocus} = useContext(SubmenuTriggerContext)!;
+  let {parentMenuRef, shouldUseVirtualFocus} = useContext(SubmenuTriggerContext)!;
   let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger({
     parentMenuRef,
     submenuRef,
     delay: props.delay,
-    isVirtualFocus
+    shouldUseVirtualFocus
   }, submenuTriggerState, itemRef);
 
   let onDismissButtonPress = () => {
@@ -180,13 +180,13 @@ export const SubDialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogt
   let submenuTriggerState = useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
   let subdialogRef = useRef<HTMLDivElement>(null);
   let itemRef = useObjectRef(ref);
-  let {parentMenuRef, isVirtualFocus} = useContext(SubmenuTriggerContext)!;
+  let {parentMenuRef, shouldUseVirtualFocus} = useContext(SubmenuTriggerContext)!;
   let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger({
     parentMenuRef,
     submenuRef: subdialogRef,
     type: 'dialog',
     delay: props.delay,
-    isVirtualFocus
+    shouldUseVirtualFocus
     // TODO: might need to have something like isUnavailable like we do for ContextualHelpTrigger
   }, submenuTriggerState, itemRef);
 
@@ -275,7 +275,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             [MenuStateContext, state],
             [SeparatorContext, {elementType: 'div'}],
             [SectionContext, {name: 'MenuSection', render: MenuSectionInner}],
-            [SubmenuTriggerContext, {parentMenuRef: ref, isVirtualFocus: autocompleteMenuProps?.shouldUseVirtualFocus}],
+            [SubmenuTriggerContext, {parentMenuRef: ref, shouldUseVirtualFocus: autocompleteMenuProps?.shouldUseVirtualFocus}],
             [MenuItemContext, null],
             [UNSTABLE_InternalAutocompleteContext, null],
             [SelectionManagerContext, state.selectionManager],

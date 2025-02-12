@@ -188,7 +188,6 @@ export const AutocompletePopover = (args: any) => (
             <MenuItem>Baz</MenuItem>
           </Menu>
         </Autocomplete>
-        <input />
       </Popover>
     </DialogTrigger>
   </>
