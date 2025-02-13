@@ -22,7 +22,7 @@ let canUseDOM = Boolean(
   window.document.createElement
 );
 
-export let idsUpdaterMap: Map<string, Array<(v: string) => void>> = new Map();
+export let idsUpdaterMap: Map<string, { current: string | null }[]> = new Map();
 // This allows us to clean up the idsUpdaterMap when the id is no longer used.
 // Map is a strong reference, so unused ids wouldn't be cleaned up otherwise.
 // This can happen in suspended components where mount/unmount is not called.
@@ -43,22 +43,20 @@ export function useId(defaultId?: string): string {
 
   registry.register(cleanupRef, res);
 
-  let updateValue = useCallback((val) => {
-    nextId.current = val;
-  }, []);
-
   if (canUseDOM) {
-    // TS not smart enough to know that `has` means the value exists
-    if (idsUpdaterMap.has(res) && !idsUpdaterMap.get(res)!.includes(updateValue)) {
-      idsUpdaterMap.set(res, [...idsUpdaterMap.get(res)!, updateValue]);
+    const cacheIdRef = idsUpdaterMap.get(res);
+    if (cacheIdRef && !cacheIdRef.includes(nextId)) {
+      cacheIdRef.push(nextId);
     } else {
-      idsUpdaterMap.set(res, [updateValue]);
+      idsUpdaterMap.set(res, [nextId]);
     }
   }
 
   useLayoutEffect(() => {
     let r = res;
     return () => {
+      // In Suspense, the cleanup function may be not called
+      // when it is though, also remove it from the finalization registry.
       registry.unregister(cleanupRef);
       idsUpdaterMap.delete(r);
     };
@@ -89,13 +87,13 @@ export function mergeIds(idA: string, idB: string): string {
 
   let setIdsA = idsUpdaterMap.get(idA);
   if (setIdsA) {
-    setIdsA.forEach(fn => fn(idB));
+    setIdsA.forEach(ref => (ref.current = idB));
     return idB;
   }
 
   let setIdsB = idsUpdaterMap.get(idB);
   if (setIdsB) {
-    setIdsB.forEach(fn => fn(idA));
+    setIdsB.forEach((ref) => (ref.current = idA));
     return idA;
   }
 
