@@ -15,7 +15,6 @@ import {AriaTextFieldProps} from '@react-aria/textfield';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
 import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, isCtrlKeyPressed, mergeProps, mergeRefs, useEffectEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
 import {dispatchVirtualBlur, dispatchVirtualFocus, moveVirtualFocus} from '@react-aria/focus';
-import {flushSync} from 'react-dom';
 import {getInteractionModality} from '@react-aria/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -211,9 +210,7 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
           bubbles: true
         });
 
-        flushSync(() => {
-          collectionRef.current?.dispatchEvent(focusCollection);
-        });
+        collectionRef.current?.dispatchEvent(focusCollection);
         break;
       }
       case 'ArrowLeft':

@@ -182,7 +182,7 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
 
 export function keepVisible(element: Element) {
   let observer = observerStack[observerStack.length - 1];
-  if (observer) {
+  if (observer && !observer.visibleNodes.has(element)) {
     observer.visibleNodes.add(element);
     return () => {
       observer.visibleNodes.delete(element);
