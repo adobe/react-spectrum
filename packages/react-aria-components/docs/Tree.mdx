@@ -129,8 +129,7 @@ import {MyCheckbox} from './Checkbox';
     gap: 0.571rem;
     min-height: 28px;
     padding: 0.286rem 0.286rem 0.286rem 0.571rem;
-    --padding: 20px;
-    padding-left: calc((var(--tree-item-level) - 1) * 20px + 0.571rem + var(--padding));
+    --padding: 8px;
     border-radius: 6px;
     outline: none;
     cursor: default;
@@ -139,10 +138,6 @@ import {MyCheckbox} from './Checkbox';
     position: relative;
     transform: translateZ(0);
 
-    &[data-has-child-items] {
-      --padding: 0px;
-    }
-
     .react-aria-Button[slot=chevron] {
       all: unset;
       display: flex;
@@ -150,6 +145,7 @@ import {MyCheckbox} from './Checkbox';
       justify-content: center;
       width: 1.143rem;
       height: 1.143rem;
+      padding-left: calc((var(--tree-item-level) - 1) * var(--padding));
 
       svg {
         rotate: 0deg;
@@ -335,12 +331,11 @@ function MyTreeItemContent(props: TreeItemContentProps) {
     <TreeItemContent>
      {({hasChildItems}) => (
       <>
-        {hasChildItems && <Button slot="chevron">
-            <svg viewBox="0 0 24 24">
-              <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-            </svg>
-          </Button>
-     }
+        <Button slot="chevron" style={{visibility: hasChildItems ? 'visible' : 'hidden'}}>
+          <svg viewBox="0 0 24 24">
+            <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          </svg>
+        </Button>
         {props.children}
         <Button aria-label="Info">ⓘ</Button>
       </>
@@ -418,11 +413,11 @@ function FileTree(props: TreeProps<FileType>) {
               {({hasChildItems}) => (
                 <>
                   <MyCheckbox slot="selection" />
-                  {hasChildItems ? <Button slot="chevron">
+                  <Button slot="chevron" style={{visibility: hasChildItems ? 'visible' : 'hidden'}}>
                     <svg viewBox="0 0 24 24">
                       <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                     </svg>
-                  </Button> : null}
+                  </Button>
                   {item.title}
                   <Button aria-label="Info">ⓘ</Button>
                 </>
@@ -533,14 +528,14 @@ function PokemonEvolutionTree(props: PokemonEvolutionTreeProps<Pokemon>) {
         return (
           <TreeItem textValue={item.name}>
             <TreeItemContent>
-              {({hasChildItems, selectionBehavior}) => (
+              {({hasChildItems, selectionBehavior, selectionMode}) => (
                 <>
-                  {selectionBehavior === 'toggle' && <MyCheckbox slot="selection" />}
-                  {hasChildItems ? <Button slot="chevron">
+                  {selectionBehavior === 'toggle' && selectionMode !== 'none' && <MyCheckbox slot="selection" />}
+                  <Button slot="chevron" style={{visibility: hasChildItems ? 'visible' : 'hidden'}}>
                     <svg viewBox="0 0 24 24">
                       <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                     </svg>
-                  </Button> : null}
+                  </Button>
                   {item.name}
                 </>
               )}
