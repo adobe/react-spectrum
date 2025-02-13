@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, KeyboardEvents, RefObject, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, RefObject, StyleProps} from '@react-types/shared';
 import {OverlayTriggerProps, PositionProps} from '@react-types/overlays';
 import {ReactElement, ReactNode} from 'react';
 
@@ -54,7 +54,7 @@ export interface SpectrumDialogContainerProps {
   isKeyboardDismissDisabled?: boolean
 }
 
-export interface AriaDialogProps extends DOMProps, AriaLabelingProps, KeyboardEvents {
+export interface AriaDialogProps extends DOMProps, AriaLabelingProps {
   /**
    * The accessibility role for the dialog.
    * @default 'dialog'
