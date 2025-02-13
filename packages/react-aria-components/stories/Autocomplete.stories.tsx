@@ -11,11 +11,10 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {UNSTABLE_Autocomplete as Autocomplete, Button, Collection, Dialog, DialogTrigger, Header, Input, Keyboard, Label, ListBox, ListBoxSection, UNSTABLE_ListLayout as ListLayout, Menu, MenuSection, MenuTrigger, Popover, SearchField, Select, SelectValue, Separator, Text, TextField, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
+import {UNSTABLE_Autocomplete as Autocomplete, Button, Collection, Dialog, DialogTrigger, Header, Input, Keyboard, Label, ListBox, ListBoxSection, UNSTABLE_ListLayout as ListLayout, Menu, MenuItem, MenuSection, MenuTrigger, Popover, SearchField, Select, SelectValue, Separator, UNSTABLE_SubDialogTrigger as SubDialogTrigger, SubmenuTrigger, Text, TextField, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
 import {MyListBoxItem, MyMenuItem} from './utils';
 import React, {useMemo} from 'react';
 import styles from '../example/index.css';
-import {SubDialogTrigger, SubmenuTrigger} from '../src/Menu';
 import {useAsyncList, useListData, useTreeData} from 'react-stately';
 import {useFilter} from 'react-aria';
 
@@ -691,52 +690,86 @@ export const AutocompleteInPopoverDialogTrigger = {
   }
 };
 
-export const AutocompleteMenuInPopoverDialogTrigger = {
-  render: (args) => {
-    let {onAction, onSelectionChange, selectionMode} = args;
-    return (
-      <DialogTrigger>
-        <Button>
-          Open popover
-        </Button>
-        <Popover
-          placement="bottom start"
-          style={{
-            background: 'Canvas',
-            color: 'CanvasText',
-            border: '1px solid gray',
-            padding: 20,
-            height: 250
-          }}>
-          <Dialog aria-label="dialog with autocomplete">
-            {() => (
-              <AutocompleteWrapper>
-                <div>
-                  <SearchField autoFocus>
-                    <Label style={{display: 'block'}}>Test</Label>
-                    <Input />
-                    <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
-                  </SearchField>
-                  <Menu className={styles.menu} items={dynamicAutocompleteSubdialog}  onAction={onAction} onSelectionChange={onSelectionChange} selectionMode={selectionMode}>
-                    {item => dynamicRenderFuncSections(item)}
-                  </Menu>
-                </div>
-              </AutocompleteWrapper>
-            )}
-          </Dialog>
-        </Popover>
-      </DialogTrigger>
-    );
-  },
-  name: 'Autocomplete in popover (dialog trigger), rendering dynamic autocomplete menu',
-  argTypes: {
-    selectionMode: {
-      table: {
-        disable: true
-      }
-    }
-  }
+const MyMenu = () => {
+  let {contains} = useFilter({sensitivity: 'base'});
+
+  return (
+    <DialogTrigger>
+      <Button aria-label="Menu">☰</Button>
+      <Popover>
+        <Dialog>
+          <Button>First</Button>
+          <Button>Second</Button>
+          <Autocomplete filter={contains}>
+            <TextField autoFocus>
+              <Input />
+            </TextField>
+            <Menu>
+              <MenuItem onAction={() => console.log('open')}>Open</MenuItem>
+              <MenuItem onAction={() => console.log('rename')}>
+                Rename…
+              </MenuItem>
+              <MenuItem onAction={() => console.log('duplicate')}>
+                Duplicate
+              </MenuItem>
+              <MenuItem onAction={() => console.log('share')}>Share…</MenuItem>
+              <MenuItem onAction={() => console.log('delete')}>
+                Delete…
+              </MenuItem>
+            </Menu>
+          </Autocomplete>
+        </Dialog>
+      </Popover>
+    </DialogTrigger>
+  );
 };
+
+const MyMenu2 = () => {
+  let {contains} = useFilter({sensitivity: 'base'});
+
+  return (
+    <DialogTrigger>
+      <Button aria-label="Menu">☰</Button>
+      <Popover>
+        <Dialog>
+          <Autocomplete filter={contains}>
+            <TextField autoFocus>
+              <Input />
+            </TextField>
+            <Menu>
+              <MenuItem onAction={() => console.log('open')}>Open</MenuItem>
+              <MenuItem onAction={() => console.log('rename')}>
+                Rename…
+              </MenuItem>
+              <MenuItem onAction={() => console.log('duplicate')}>
+                Duplicate
+              </MenuItem>
+              <MenuItem onAction={() => console.log('share')}>Share…</MenuItem>
+              <MenuItem onAction={() => console.log('delete')}>
+                Delete…
+              </MenuItem>
+            </Menu>
+          </Autocomplete>
+          <Button>First</Button>
+          <Button>Second</Button>
+        </Dialog>
+      </Popover>
+    </DialogTrigger>
+  );
+};
+
+export function AutocompleteWithExtraButtons() {
+  return (
+    <div>
+      <input />
+      <div style={{display: 'flex', gap: '200px'}}>
+        <MyMenu />
+        <MyMenu2 />
+      </div>
+      <input />
+    </div>
+  );
+}
 
 let manyItems = [...Array(100)].map((_, i) => ({id: i, name: `Item ${i}`}));
 

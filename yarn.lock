@@ -145,10 +145,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@adobe/spectrum-tokens@npm:^13.0.0-beta.53":
-  version: 13.0.0-beta.53
-  resolution: "@adobe/spectrum-tokens@npm:13.0.0-beta.53"
-  checksum: 10c0/e9968e211aec06cb6af1fbc29712cafa79f0b971b4c22882c6a65f14ea8fb23afe2c81f8bbfd377bbde4332cb1dbdc873e6a32a2cc6e3933592eb5724a6ce471
+"@adobe/spectrum-tokens@npm:^13.0.0-beta.56":
+  version: 13.0.0-beta.56
+  resolution: "@adobe/spectrum-tokens@npm:13.0.0-beta.56"
+  checksum: 10c0/473a7e3cfb9317862584045b31c16e67122512f310c490c8cb9e11c1d200bbd78f79885e970e16034b375c19f2a27da27397a4ba3ee0cec1a8424a34582a85ad
   languageName: node
   linkType: hard
 
@@ -4511,7 +4511,7 @@ __metadata:
     "@parcel/source-map": "npm:^2.1.1"
     "@parcel/utils": "npm:2.13.3"
     browserslist: "npm:^4.6.6"
-    lightningcss: "npm:^1.22.1"
+    lightningcss: "npm:^1.29.1"
     nullthrows: "npm:^1.1.1"
   checksum: 10c0/3300fdbd17fca043985f4be3d97c702825283fa0d656743cf9e8aab6c66b157946419eece6c70f85a2b8d316d75b986ec47d3f12d1e9bd65daa1156b8af3b288
   languageName: node
@@ -4624,7 +4624,7 @@ __metadata:
     "@parcel/plugin": "npm:2.13.3"
     "@parcel/source-map": "npm:^2.1.1"
     "@parcel/utils": "npm:2.13.3"
-    lightningcss: "npm:^1.22.1"
+    lightningcss: "npm:^1.29.1"
     nullthrows: "npm:^1.1.1"
   checksum: 10c0/549f690864fa397c565fe4f308968d0351388baff9fc193900e1ae82291a498dc5861751408be42e24f5fb3c0785cf87adf3ffe200d82e2d231c87d2f02513f3
   languageName: node
@@ -4873,7 +4873,7 @@ __metadata:
     "@parcel/source-map": "npm:^2.1.1"
     "@parcel/utils": "npm:2.13.3"
     browserslist: "npm:^4.6.6"
-    lightningcss: "npm:^1.22.1"
+    lightningcss: "npm:^1.29.1"
     nullthrows: "npm:^1.1.1"
   checksum: 10c0/16acf19f69a484ff1c4ea33c83396a7bf2d33cd6f858327cb39c63f5edcd60ad883a3b41d046010ffecd139b8be181d3883861922b364bf9ed27d50db7f3022d
   languageName: node
@@ -6253,6 +6253,7 @@ __metadata:
   dependencies:
     "@react-aria/ssr": "npm:^3.9.7"
     "@react-aria/utils": "npm:^3.27.0"
+    "@react-stately/flags": "npm:^3.0.5"
     "@react-types/shared": "npm:^3.27.0"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
@@ -6809,6 +6810,7 @@ __metadata:
   resolution: "@react-aria/utils@workspace:packages/@react-aria/utils"
   dependencies:
     "@react-aria/ssr": "npm:^3.9.7"
+    "@react-stately/flags": "npm:^3.0.5"
     "@react-stately/utils": "npm:^3.10.5"
     "@react-types/shared": "npm:^3.27.0"
     "@swc/helpers": "npm:^0.5.0"
@@ -7775,7 +7777,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/parcel-transformer-s2-icon@workspace:packages/dev/parcel-transformer-s2-icon"
   dependencies:
-    "@adobe/spectrum-tokens": "npm:^13.0.0-beta.53"
+    "@adobe/spectrum-tokens": "npm:^13.0.0-beta.56"
     "@parcel/plugin": "npm:^2.0.0"
     "@svgr/core": "npm:^8.1.0"
     "@svgr/plugin-jsx": "npm:^8.1.0"
@@ -7894,13 +7896,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/s2@workspace:packages/@react-spectrum/s2"
   dependencies:
-    "@adobe/spectrum-tokens": "npm:^13.0.0-beta.53"
+    "@adobe/spectrum-tokens": "npm:^13.0.0-beta.56"
     "@parcel/macros": "npm:^2.13.0"
     "@react-aria/collections": "npm:3.0.0-alpha.7"
+    "@react-aria/focus": "npm:^3.19.1"
     "@react-aria/i18n": "npm:^3.12.5"
     "@react-aria/interactions": "npm:^3.23.0"
     "@react-aria/live-announcer": "npm:^3.4.1"
     "@react-aria/test-utils": "npm:1.0.0-alpha.3"
+    "@react-aria/tree": "npm:3.0.0-beta.3"
     "@react-aria/utils": "npm:^3.27.0"
     "@react-spectrum/utils": "npm:^3.12.1"
     "@react-stately/layout": "npm:^4.1.1"
@@ -14379,9 +14383,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chromatic@npm:^11.3.0":
-  version: 11.3.0
-  resolution: "chromatic@npm:11.3.0"
+"chromatic@npm:^11.25.2":
+  version: 11.25.2
+  resolution: "chromatic@npm:11.25.2"
   peerDependencies:
     "@chromatic-com/cypress": ^0.*.* || ^1.0.0
     "@chromatic-com/playwright": ^0.*.* || ^1.0.0
@@ -14394,7 +14398,7 @@ __metadata:
     chroma: dist/bin.js
     chromatic: dist/bin.js
     chromatic-cli: dist/bin.js
-  checksum: 10c0/e977ef43a43ebb0250ec8fc46f5751c8cb9b798f75fcf9ec52485c1127caf9d6cef0346a9dd1660a8967faf1a7cde579571a0ac130cfaf475d6f22e4929003b6
+  checksum: 10c0/2cb4bb40a062005292a4cd606321f6c9bdaa31e255e66bae12c780bca9b72e883c017ebe48c5a9228db88a010f5977571ef7dfdcdd4195ad0e7b955f9966d7df
   languageName: node
   linkType: hard
 
@@ -23593,7 +23597,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lightningcss@npm:^1.22.1, lightningcss@npm:^1.29.1":
+"lightningcss@npm:^1.29.1":
   version: 1.29.1
   resolution: "lightningcss@npm:1.29.1"
   dependencies:
@@ -29364,7 +29368,7 @@ __metadata:
     babel-plugin-transform-glob-import: "npm:^1.0.1"
     babelify: "npm:^10.0.0"
     chalk: "npm:^4.1.2"
-    chromatic: "npm:^11.3.0"
+    chromatic: "npm:^11.25.2"
     clsx: "npm:^2.0.0"
     color-space: "npm:^1.16.0"
     concurrently: "npm:^6.0.2"

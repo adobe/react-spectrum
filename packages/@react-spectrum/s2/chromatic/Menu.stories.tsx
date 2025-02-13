@@ -15,7 +15,7 @@ import {Menu} from '../src';
 import type {Meta} from '@storybook/react';
 import {userEvent, within} from '@storybook/testing-library';
 
-const meta: Meta<typeof Menu> = {
+const meta: Meta<typeof Menu<any>> = {
   component: Menu,
   parameters: {
     chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true}

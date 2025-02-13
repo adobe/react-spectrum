@@ -12,9 +12,8 @@
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaAutocompleteTests} from './AriaAutocomplete.test-util';
-import {Button, Dialog, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, Popover, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Text, UNSTABLE_Autocomplete} from '..';
+import {Button, Dialog, DialogTrigger, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, Popover, SearchField, Select, SelectValue, Separator, UNSTABLE_SubDialogTrigger as SubDialogTrigger, SubmenuTrigger, Text, TextField, UNSTABLE_Autocomplete} from '..';
 import React, {ReactNode} from 'react';
-import {SubDialogTrigger} from '../src/Menu';
 import {useAsyncList} from 'react-stately';
 import {useFilter} from '@react-aria/i18n';
 import userEvent from '@testing-library/user-event';
@@ -480,6 +479,136 @@ describe('Autocomplete', () => {
     expect(listbox).not.toBeInTheDocument();
     expect(document.activeElement).toBe(button);
     expect(button).toHaveTextContent('Bar');
+  });
+
+  it('should be able to tab inside a focus scope that contains', async () => {
+    const MyMenu = () => {
+      let {contains} = useFilter({sensitivity: 'base'});
+
+      return (
+        <DialogTrigger>
+          <Button aria-label="Menu">☰</Button>
+          <Popover>
+            <Dialog>
+              <Button>First</Button>
+              <Button>Second</Button>
+              <UNSTABLE_Autocomplete filter={contains}>
+                <TextField autoFocus aria-label="Search">
+                  <Input />
+                </TextField>
+                <Menu>
+                  <MenuItem>Open</MenuItem>
+                  <MenuItem>
+                    Rename…
+                  </MenuItem>
+                  <MenuItem>
+                    Duplicate
+                  </MenuItem>
+                </Menu>
+              </UNSTABLE_Autocomplete>
+            </Dialog>
+          </Popover>
+        </DialogTrigger>
+      );
+    };
+
+    function App() {
+      return (
+        <div>
+          <input />
+          <div>
+            <MyMenu />
+          </div>
+          <input />
+        </div>
+      );
+    }
+
+    let {getByRole} = render(<App />);
+    let trigger = getByRole('button', {name: 'Menu'});
+    await user.click(trigger);
+    let firstButton = getByRole('button', {name: 'First'});
+    let secondButton = getByRole('button', {name: 'Second'});
+    let input = getByRole('textbox');
+
+    expect(document.activeElement).toBe(input);
+
+    await user.tab();
+
+    expect(document.activeElement).toBe(firstButton);
+
+    await user.tab({shift: true});
+
+    expect(document.activeElement).toBe(input);
+
+    await user.tab({shift: true});
+
+    expect(document.activeElement).toBe(secondButton);
+  });
+
+  it('should be able to tab inside a focus scope that contains with buttons after the autocomplete', async () => {
+    const MyMenu = () => {
+      let {contains} = useFilter({sensitivity: 'base'});
+
+      return (
+        <DialogTrigger>
+          <Button aria-label="Menu">☰</Button>
+          <Popover>
+            <Dialog>
+              <UNSTABLE_Autocomplete filter={contains}>
+                <TextField autoFocus aria-label="Search">
+                  <Input />
+                </TextField>
+                <Menu>
+                  <MenuItem>Open</MenuItem>
+                  <MenuItem>
+                    Rename…
+                  </MenuItem>
+                  <MenuItem>
+                    Duplicate
+                  </MenuItem>
+                </Menu>
+              </UNSTABLE_Autocomplete>
+              <Button>First</Button>
+              <Button>Second</Button>
+            </Dialog>
+          </Popover>
+        </DialogTrigger>
+      );
+    };
+
+    function App() {
+      return (
+        <div>
+          <input />
+          <div>
+            <MyMenu />
+          </div>
+          <input />
+        </div>
+      );
+    }
+
+    let {getByRole} = render(<App />);
+    let trigger = getByRole('button', {name: 'Menu'});
+    await user.click(trigger);
+    let firstButton = getByRole('button', {name: 'First'});
+    let secondButton = getByRole('button', {name: 'Second'});
+    let input = getByRole('textbox');
+
+    expect(document.activeElement).toBe(input);
+
+    await user.tab();
+
+    expect(document.activeElement).toBe(firstButton);
+
+    await user.tab({shift: true});
+
+    expect(document.activeElement).toBe(input);
+
+    await user.tab({shift: true});
+
+    expect(document.activeElement).toBe(secondButton);
   });
 });
 

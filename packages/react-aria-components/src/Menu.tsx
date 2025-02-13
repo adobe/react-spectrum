@@ -14,7 +14,7 @@ import {AriaMenuProps, FocusScope, mergeProps, useMenu, useMenuItem, useMenuSect
 import {BaseCollection, Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
 import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
-import {ContextValue, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {DialogContext, OverlayTriggerStateContext} from './Dialog';
 import {filterDOMProps, mergeRefs, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {FocusStrategy, forwardRefType, HoverEvents, Key, LinkDOMProps, MultipleSelection} from '@react-types/shared';
@@ -456,6 +456,7 @@ export const MenuItem = /*#__PURE__*/ createLeafComponent('item', function MenuI
         values={[
           [TextContext, {
             slots: {
+              [DEFAULT_SLOT]: labelProps,
               label: labelProps,
               description: descriptionProps
             }
