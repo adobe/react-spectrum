@@ -729,7 +729,6 @@ describe('useTreeData', function () {
 
   it('should move an item to a different level at the end when the index is greater than the node list length', function () {
     const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
-    console.log('initialItems', initialItems[0]);
     let {result} = renderHook(() =>
       useTreeData({initialItems, getChildren, getKey})
     );
