@@ -1,4 +1,4 @@
-import {getOwnerDocument} from '@react-aria/utils';
+import {getActiveElement, getOwnerDocument} from '@react-aria/utils';
 
 export function moveVirtualFocus(to: Element | null) {
   let from = getVirtuallyFocusedElement(getOwnerDocument(to));
@@ -23,7 +23,7 @@ export function dispatchVirtualFocus(to: Element, from: Element | null) {
 }
 
 export function getVirtuallyFocusedElement(document: Document) {
-  let activeElement = document.activeElement;
+  let activeElement = getActiveElement(document);
   let activeDescendant = activeElement?.getAttribute('aria-activedescendant');
   if (activeDescendant) {
     return document.getElementById(activeDescendant) || activeElement;
