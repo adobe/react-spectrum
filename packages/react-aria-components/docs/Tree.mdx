@@ -327,9 +327,10 @@ If you will use a Tree in multiple places in your app, you can wrap all of the p
 The following example includes a custom tree item with an action button.
 
 ```tsx example export=true render=false
+import type {TreeItemContentProps} from 'react-aria-components';
 import {Button} from 'react-aria-components';
 
-function MyTreeItemContent(props) {
+function MyTreeItemContent(props: TreeItemContentProps) {
   return (
     <TreeItemContent>
      {({hasChildItems}) => (
@@ -352,7 +353,9 @@ function MyTreeItemContent(props) {
 The `TreeItem` can also be wrapped, for example, it could include the TreeItemContent automatically.
 
 ```tsx example export=true render=false
-function MyTreeItem(props) {
+import {TreeItemProps} from 'react-aria-components';
+
+function MyTreeItem(props: Omit<TreeItemProps, 'textValue' | 'children'> & Partial<Pick<TreeItemProps, 'children'>> & {title: string}) {
   return (
     <TreeItem id={props.title.toLowerCase()} textValue={props.title}>
       <MyTreeItemContent>
@@ -399,8 +402,13 @@ let items = [
     {id: 6, title: 'Image 2', children: []}
   ]}
 ];
+interface FileType {
+  id: number,
+  title: string,
+  children: FileType[]
+}
 
-function FileTree(props: TreeProps) {
+function FileTree(props: TreeProps<FileType>) {
   return (
     <Tree aria-label="Files" items={items} selectionMode="multiple" {...props}>
       {function renderItem(item) {
@@ -478,17 +486,16 @@ import type {Selection} from 'react-aria-components';
 interface Pokemon {
   id: number,
   name: string,
-  type: string,
-  level: string
+  children?: Pokemon[]
 }
 
-interface PokemonEvolutionTreeProps extends TreeProps {
-  items?: Pokemon[],
+interface PokemonEvolutionTreeProps<T> extends TreeProps<T> {
+  items?: T[],
   renderEmptyState?: () => string
 }
 
-function PokemonEvolutionTree(props: PokemonEvolutionTreeProps) {
-  let items = props.items || [
+function PokemonEvolutionTree(props: PokemonEvolutionTreeProps<Pokemon>) {
+  let items: Pokemon[] = props.items ?? [
     {id: 1, name: 'Bulbasaur', children: [
       {id: 2, name: 'Ivysaur', children: [
         {id: 3, name: 'Venusaur'}
@@ -514,13 +521,13 @@ function PokemonEvolutionTree(props: PokemonEvolutionTreeProps) {
     <Tree
       aria-label="Pokemon evolution tree"
       style={{height: '300px'}}
-      {...props}
       items={items}
       defaultExpandedKeys={[1, 2]}
       /*- begin highlight -*/
       selectedKeys={selectedKeys}
       onSelectionChange={setSelectedKeys}
       /*- end highlight -*/
+      {...props}
     >
       {function renderItem(item) {
         return (
@@ -897,8 +904,8 @@ Tree passes props to its child components, such as the selection checkboxes, via
 This example consumes from `CheckboxContext` in an existing styled checkbox component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by Tree. See [useCheckbox](useCheckbox.html) for more details about the hooks used in this example.
 
 ```tsx
-import type {CheckboxProps} from 'react-aria-components';
-import {CheckboxContext, useContextProps} from 'react-aria-components';
+import type {CheckboxProps, useContextProps} from 'react-aria-components';
+import {CheckboxContext} from 'react-aria-components';
 import {useToggleState} from 'react-stately';
 import {useCheckbox} from 'react-aria';
 

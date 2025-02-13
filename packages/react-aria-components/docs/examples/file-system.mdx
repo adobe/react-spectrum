@@ -82,9 +82,7 @@ const filesystem = [
 
 ```tsx example standalone
 import {Button, Collection, UNSTABLE_Tree as Tree, UNSTABLE_TreeItem as TreeItem, UNSTABLE_TreeItemContent as TreeItemContent} from 'react-aria-components';
-import type {ColumnProps, RowProps, CellProps} from 'react-aria-components';
 import ChevronIcon from '@spectrum-icons/ui/ChevronRightMedium';
-import {useState, useMemo} from 'react';
 
 function FileSystemExample() {
   return (
@@ -94,14 +92,16 @@ function FileSystemExample() {
         overflow-auto rounded-lg shadow-lg`}>
           {function renderItem(item) {
             return (
-              <TreeItem className={`selected:bg-slate-600 text-white
+              <TreeItem
+                textValue={item.name}
+                className={`selected:bg-slate-600 text-white
                   cursor-default group outline-hidden focus-visible:outline focus-visible:outline-2
                   focus-visible:outline-slate-600 focus-visible:-outline-offset-4
                   selected:focus-visible:outline-white`}>
                 <TreeItemContent>
-                  {({hasChildRows}) => (
+                  {({hasChildItems}) => (
                     <div className="flex items-center space-x-2 py-2 ps-[calc(calc(var(--tree-item-level)_-_1)_*_calc(var(--spacing)_*_3))]">
-                      {hasChildRows ? <Button slot="chevron" className={`shrink-0 w-8 h-8
+                      {hasChildItems ? <Button slot="chevron" className={`shrink-0 w-8 h-8
                         group-data-[expanded=true]:rotate-90 transition-rotate duration-200
                         inline-flex items-center justify-center bg-transparent border-0 me-0
                         cursor-default outline-hidden`}><ChevronIcon /></Button> : <div className="shrink-0 w-8 h-8" />}
