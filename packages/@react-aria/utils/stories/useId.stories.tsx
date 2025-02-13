@@ -70,7 +70,7 @@ export const GCuseId = {
   render: () => <TestUseId />,
   parameters: {
     description: {
-      data: 'This story demonstrates garbage collection cleanup of useId hook. Depends on the browser when it happens. Easiest to see by rendering, clicking the toggle button twice, then waiting for the GC.'
+      data: 'This story demonstrates garbage collection cleanup of useId hook. Depends on the browser when it happens. Easiest to see by rendering, clicking the toggle button twice, then waiting for the GC or, if you are in chrome, you can force GC to run with developer tools in the memory tab.'
     }
   }
 };
