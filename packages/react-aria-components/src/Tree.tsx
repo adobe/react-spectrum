@@ -16,7 +16,7 @@ import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, usePersistedKeys} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {DisabledBehavior, Expandable, forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
+import {DisabledBehavior, Expandable, forwardRefType, HoverEvents, Key, LinkDOMProps, MultipleSelection, RefObject} from '@react-types/shared';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {FocusScope,  mergeProps, useFocusRing, useGridListSelectionCheckbox, useHover} from 'react-aria';
 import {Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
@@ -120,7 +120,7 @@ export interface TreeRenderProps {
 
 export interface TreeEmptyStateRenderProps extends Omit<TreeRenderProps, 'isEmpty'> {}
 
-export interface TreeProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<TreeRenderProps>, SlotProps, ScrollableProps<HTMLDivElement>, Expandable {
+export interface TreeProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>, MultipleSelection, CollectionProps<T>, StyleRenderProps<TreeRenderProps>, SlotProps, ScrollableProps<HTMLDivElement>, Expandable {
   /** How multiple selection should behave in the tree. */
   selectionBehavior?: SelectionBehavior,
   /** Provides content to display when there are no items in the list. */
@@ -133,16 +133,16 @@ export interface TreeProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>
 }
 
 
-export const UNSTABLE_TreeContext = createContext<ContextValue<TreeProps<any>, HTMLDivElement>>(null);
-export const UNSTABLE_TreeStateContext = createContext<TreeState<any> | null>(null);
+export const TreeContext = createContext<ContextValue<TreeProps<any>, HTMLDivElement>>(null);
+export const TreeStateContext = createContext<TreeState<any> | null>(null);
 
 /**
  * A tree provides users with a way to navigate nested hierarchical information, with support for keyboard navigation
  * and selection.
  */
-export const UNSTABLE_Tree = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tree<T extends object>(props: TreeProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const Tree = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tree<T extends object>(props: TreeProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   // Render the portal first so that we have the collection by the time we render the DOM in SSR.
-  [props, ref] = useContextProps(props, ref, UNSTABLE_TreeContext);
+  [props, ref] = useContextProps(props, ref, TreeContext);
 
   return (
     <CollectionBuilder content={<Collection {...props} />}>
@@ -245,7 +245,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
         data-focus-visible={isFocusVisible || undefined}>
         <Provider
           values={[
-            [UNSTABLE_TreeStateContext, state]
+            [TreeStateContext, state]
           ]}>
           <CollectionRoot
             collection={state.collection}
@@ -260,7 +260,10 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
 
 // TODO: readd the rest of the render props when tree supports them
 export interface TreeItemRenderProps extends Omit<ItemRenderProps, 'allowsDragging' | 'isDragging' | 'isDropTarget'> {
-  /** Whether the tree item is expanded. */
+  /**
+   * Whether the tree item is expanded.
+   * @selector [data-expanded]
+   */
   isExpanded: boolean,
   // TODO: api discussion, how do we feel about the below? This is so we can still style the row as grey when a child element within is focused
   // Maybe should have this for the other collection item render props
@@ -269,7 +272,10 @@ export interface TreeItemRenderProps extends Omit<ItemRenderProps, 'allowsDraggi
 }
 
 export interface TreeItemContentRenderProps extends ItemRenderProps {
-  // Whether the tree item is expanded.
+  /**
+   * Whether the tree item is expanded.
+   * @selector [data-expanded]
+   */
   isExpanded: boolean,
   // Whether the tree item has child tree items.
   hasChildItems: boolean,
@@ -287,7 +293,7 @@ export interface TreeItemContentRenderProps extends ItemRenderProps {
 // need to do a bunch of check to figure out what is the Content and what are the actual collection elements (aka child rows) of the TreeItem
 export interface TreeItemContentProps extends Pick<RenderProps<TreeItemContentRenderProps>, 'children'> {}
 
-export const UNSTABLE_TreeItemContent = /*#__PURE__*/ createLeafComponent('content', function TreeItemContent(props: TreeItemContentProps) {
+export const TreeItemContent = /*#__PURE__*/ createLeafComponent('content', function TreeItemContent(props: TreeItemContentProps) {
   let values = useContext(TreeItemContentContext)!;
   let renderProps = useRenderProps({
     children: props.children,
@@ -312,14 +318,21 @@ export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRend
   /** An accessibility label for this tree item. */
   'aria-label'?: string,
   /** The content of the tree item along with any nested children. Supports static nested tree items or use of a Collection to dynamically render nested tree items. */
-  children: ReactNode
+  children: ReactNode,
+  /** Whether the item is disabled. */
+  isDisabled?: boolean,
+  /**
+   * Handler that is called when a user performs an action on this tree item. The exact user event depends on
+   * the collection's `selectionBehavior` prop and the interaction modality.
+   */
+  onAction?: () => void
 }
 
 /**
  * A TreeItem represents an individual item in a Tree.
  */
-export const UNSTABLE_TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
-  let state = useContext(UNSTABLE_TreeStateContext)!;
+export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
+  let state = useContext(TreeStateContext)!;
   ref = useObjectRef<HTMLDivElement>(ref);
   // TODO: remove this when we support description in tree row
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -461,8 +474,8 @@ export interface TreeLoadingIndicatorRenderProps {
 
 export interface TreeLoaderProps extends RenderProps<TreeLoadingIndicatorRenderProps>, StyleRenderProps<TreeLoadingIndicatorRenderProps> {}
 
-export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', function TreeLoader<T extends object>(props: TreeLoaderProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
-  let state = useContext(UNSTABLE_TreeStateContext);
+export const TreeLoadingIndicator = createLeafComponent('loader', function TreeLoader<T extends object>(props: TreeLoaderProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+  let state = useContext(TreeStateContext);
   // This loader row is is non-interactable, but we want the same aria props calculated as a typical row
   // @ts-ignore
   let {rowProps} = useTreeGridListItem({node: item}, state, ref);

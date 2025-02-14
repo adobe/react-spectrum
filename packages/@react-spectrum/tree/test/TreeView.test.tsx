@@ -22,7 +22,7 @@ import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {TreeItemContent, TreeView, TreeViewItem} from '../';
+import {TreeView, TreeViewItem, TreeViewItemContent} from '../';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -33,7 +33,7 @@ let onExpandedChange = jest.fn();
 let StaticTree = ({treeProps = {}, rowProps = {}}) => (
   <TreeView defaultExpandedKeys={new Set(['Projects', 'Projects-1'])} aria-label="test tree" onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
     <TreeViewItem id="Photos" textValue="Photos" {...rowProps}>
-      <TreeItemContent>
+      <TreeViewItemContent>
         <Text>Photos</Text>
         <Folder />
         <ActionGroup>
@@ -46,10 +46,10 @@ let StaticTree = ({treeProps = {}, rowProps = {}}) => (
             <Text>Delete</Text>
           </Item>
         </ActionGroup>
-      </TreeItemContent>
+      </TreeViewItemContent>
     </TreeViewItem>
     <TreeViewItem id="Projects" textValue="Projects" {...rowProps}>
-      <TreeItemContent>
+      <TreeViewItemContent>
         <Text>Projects</Text>
         <Folder />
         <ActionGroup>
@@ -62,9 +62,9 @@ let StaticTree = ({treeProps = {}, rowProps = {}}) => (
             <Text>Delete</Text>
           </Item>
         </ActionGroup>
-      </TreeItemContent>
+      </TreeViewItemContent>
       <TreeViewItem id="Projects-1" textValue="Projects-1" {...rowProps}>
-        <TreeItemContent>
+        <TreeViewItemContent>
           <Text>Projects-1</Text>
           <Folder />
           <ActionGroup>
@@ -77,9 +77,9 @@ let StaticTree = ({treeProps = {}, rowProps = {}}) => (
               <Text>Delete</Text>
             </Item>
           </ActionGroup>
-        </TreeItemContent>
+        </TreeViewItemContent>
         <TreeViewItem id="Projects-1A" textValue="Projects-1A" {...rowProps}>
-          <TreeItemContent>
+          <TreeViewItemContent>
             <Text>Projects-1A</Text>
             <Folder />
             <ActionGroup>
@@ -92,11 +92,11 @@ let StaticTree = ({treeProps = {}, rowProps = {}}) => (
                 <Text>Delete</Text>
               </Item>
             </ActionGroup>
-          </TreeItemContent>
+          </TreeViewItemContent>
         </TreeViewItem>
       </TreeViewItem>
       <TreeViewItem id="Projects-2" textValue="Projects-2" {...rowProps}>
-        <TreeItemContent>
+        <TreeViewItemContent>
           <Text>Projects-2</Text>
           <Folder />
           <ActionGroup>
@@ -109,10 +109,10 @@ let StaticTree = ({treeProps = {}, rowProps = {}}) => (
               <Text>Delete</Text>
             </Item>
           </ActionGroup>
-        </TreeItemContent>
+        </TreeViewItemContent>
       </TreeViewItem>
       <TreeViewItem id="Projects-3" textValue="Projects-3" {...rowProps}>
-        <TreeItemContent>
+        <TreeViewItemContent>
           <Text>Projects-3</Text>
           <Folder />
           <ActionGroup>
@@ -125,7 +125,7 @@ let StaticTree = ({treeProps = {}, rowProps = {}}) => (
               <Text>Delete</Text>
             </Item>
           </ActionGroup>
-        </TreeItemContent>
+        </TreeViewItemContent>
       </TreeViewItem>
     </TreeViewItem>
   </TreeView>
@@ -166,7 +166,7 @@ const DynamicTreeItem = (props) => {
   return (
     <>
       <TreeViewItem id={props.id} childItems={childItems} textValue={name} href={props.href}>
-        <TreeItemContent>
+        <TreeViewItemContent>
           <Text>{name}</Text>
           <ActionGroup>
             <Item key="edit">
@@ -178,7 +178,7 @@ const DynamicTreeItem = (props) => {
               <Text>Delete</Text>
             </Item>
           </ActionGroup>
-        </TreeItemContent>
+        </TreeViewItemContent>
         <Collection items={childItems}>
           {(item: any) => (
             <DynamicTreeItem
@@ -467,9 +467,9 @@ describe('Tree', () => {
     let {getAllByRole} = render(
       <TreeView aria-label="test tree">
         <TreeViewItem textValue="Test" hasChildItems>
-          <TreeItemContent>
+          <TreeViewItemContent>
             <Text>Test</Text>
-          </TreeItemContent>
+          </TreeViewItemContent>
         </TreeViewItem>
       </TreeView>
     );
@@ -488,9 +488,9 @@ describe('Tree', () => {
     let {getAllByRole} = render(
       <TreeView aria-label="test tree">
         <TreeViewItem textValue="Test" aria-label="test row">
-          <TreeItemContent>
+          <TreeViewItemContent>
             <Text>Test</Text>
-          </TreeItemContent>
+          </TreeViewItemContent>
         </TreeViewItem>
       </TreeView>
     );
@@ -1238,9 +1238,9 @@ describe('Tree', () => {
       let tree = render(
         <TreeView aria-label="test tree" selectionMode="multiple" disabledBehavior="selection">
           <TreeViewItem id="Test" textValue="Test" hasChildItems>
-            <TreeItemContent>
+            <TreeViewItemContent>
               <Text>Test</Text>
-            </TreeItemContent>
+            </TreeViewItemContent>
           </TreeViewItem>
         </TreeView>
       );
@@ -1252,9 +1252,9 @@ describe('Tree', () => {
         tree,
         <TreeView aria-label="test tree" selectionMode="multiple" disabledKeys={['Test']} disabledBehavior="selection">
           <TreeViewItem id="Test" textValue="Test" hasChildItems>
-            <TreeItemContent>
+            <TreeViewItemContent>
               <Text>Test</Text>
-            </TreeItemContent>
+            </TreeViewItemContent>
           </TreeViewItem>
         </TreeView>
       );
@@ -1266,9 +1266,9 @@ describe('Tree', () => {
         tree,
         <TreeView aria-label="test tree" selectionMode="multiple" disabledBehavior="all" disabledKeys={['Test']}>
           <TreeViewItem id="Test" textValue="Test" hasChildItems>
-            <TreeItemContent>
+            <TreeViewItemContent>
               <Text>Test</Text>
-            </TreeItemContent>
+            </TreeViewItemContent>
           </TreeViewItem>
         </TreeView>
       );

@@ -20,9 +20,9 @@ import {
   Link,
   MenuItem,
   Text,
-  TreeItemContent,
   TreeView,
-  TreeViewItem
+  TreeViewItem,
+  TreeViewItemContent
 } from '../src';
 import {categorizeArgTypes} from './utils';
 import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
@@ -79,7 +79,7 @@ const TreeExampleStatic = (args) => (
       onExpandedChange={action('onExpandedChange')}
       onSelectionChange={action('onSelectionChange')}>
       <TreeViewItem id="Photos" textValue="Photos">
-        <TreeItemContent>
+        <TreeViewItemContent>
           <Text>Photos</Text>
           <Folder />
           <ActionMenu onAction={action('onActionGroup action')}>
@@ -92,10 +92,10 @@ const TreeExampleStatic = (args) => (
               <Text>Delete</Text>
             </MenuItem>
           </ActionMenu>
-        </TreeItemContent>
+        </TreeViewItemContent>
       </TreeViewItem>
       <TreeViewItem id="projects" textValue="Projects">
-        <TreeItemContent>
+        <TreeViewItemContent>
           <Text>Projects</Text>
           <Folder />
           <ActionMenu onAction={action('onActionGroup action')}>
@@ -108,9 +108,9 @@ const TreeExampleStatic = (args) => (
               <Text>Delete</Text>
             </MenuItem>
           </ActionMenu>
-        </TreeItemContent>
+        </TreeViewItemContent>
         <TreeViewItem id="projects-1" textValue="Projects-1">
-          <TreeItemContent>
+          <TreeViewItemContent>
             <Text>Projects-1</Text>
             <Folder />
             <ActionMenu onAction={action('onActionGroup action')}>
@@ -123,9 +123,9 @@ const TreeExampleStatic = (args) => (
                 <Text>Delete</Text>
               </MenuItem>
             </ActionMenu>
-          </TreeItemContent>
+          </TreeViewItemContent>
           <TreeViewItem id="projects-1A" textValue="Projects-1A">
-            <TreeItemContent>
+            <TreeViewItemContent>
               <Text>Projects-1A</Text>
               <FileTxt />
               <ActionMenu onAction={action('onActionGroup action')}>
@@ -138,11 +138,11 @@ const TreeExampleStatic = (args) => (
                   <Text>Delete</Text>
                 </MenuItem>
               </ActionMenu>
-            </TreeItemContent>
+            </TreeViewItemContent>
           </TreeViewItem>
         </TreeViewItem>
         <TreeViewItem id="projects-2" textValue="Projects-2">
-          <TreeItemContent>
+          <TreeViewItemContent>
             <Text>Projects-2</Text>
             <FileTxt />
             <ActionMenu onAction={action('onActionGroup action')}>
@@ -155,10 +155,10 @@ const TreeExampleStatic = (args) => (
                 <Text>Delete</Text>
               </MenuItem>
             </ActionMenu>
-          </TreeItemContent>
+          </TreeViewItemContent>
         </TreeViewItem>
         <TreeViewItem id="projects-3" textValue="Projects-3">
-          <TreeItemContent>
+          <TreeViewItemContent>
             <Text>Projects-3</Text>
             <FileTxt />
             <ActionMenu onAction={action('onActionGroup action')}>
@@ -171,7 +171,7 @@ const TreeExampleStatic = (args) => (
                 <Text>Delete</Text>
               </MenuItem>
             </ActionMenu>
-          </TreeItemContent>
+          </TreeViewItemContent>
         </TreeViewItem>
       </TreeViewItem>
     </TreeView>
@@ -221,7 +221,7 @@ const DynamicTreeItem = (props) => {
   return (
     <>
       <TreeViewItem id={props.id} childItems={childItems} textValue={name} href={props.href}>
-        <TreeItemContent>
+        <TreeViewItemContent>
           <Text>{name}</Text>
           {icon}
           <ActionMenu onAction={action('onActionGroup action')}>
@@ -234,7 +234,7 @@ const DynamicTreeItem = (props) => {
               <Text>Delete</Text>
             </MenuItem>
           </ActionMenu>
-        </TreeItemContent>
+        </TreeViewItemContent>
         <Collection items={childItems}>
           {(item: any) => (
             <DynamicTreeItem
