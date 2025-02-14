@@ -187,9 +187,6 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
   let domRef = useDOMRef(ref);
   let innerRef = useRef(null);
   let scrollRef = props.renderActionBar ? innerRef : domRef;
-  let layout = useMemo(() => {
-    return layoutName === 'waterfall' ? new WaterfallLayout() : new GridLayout();
-  }, [layoutName]);
 
   // This calculates the maximum t-shirt size where at least two columns fit in the available width.
   let [maxSizeIndex, setMaxSizeIndex] = useState(SIZES.length - 1);
@@ -218,6 +215,7 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
 
   // The actual rendered t-shirt size is the minimum between the size prop and the maximum possible size.
   let size = SIZES[Math.min(maxSizeIndex, SIZES.indexOf(sizeProp))];
+  let layout = layoutName === 'waterfall' ? WaterfallLayout : GridLayout;
   let options = layoutOptions[size][density];
 
   useLoadMore({

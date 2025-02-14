@@ -63,7 +63,6 @@ type: component
 
 ```tsx example
 import {Virtualizer, ListLayout, ListBox, ListBoxItem} from 'react-aria-components';
-import {useMemo} from 'react';
 
 let items = [];
 for (let i = 0; i < 5000; i++) {
@@ -73,7 +72,7 @@ for (let i = 0; i < 5000; i++) {
 function Example() {
   return (
     <Virtualizer 
-      layout={useMemo(() => new ListLayout(), [])}
+      layout={ListLayout}
       layoutOptions={{
         rowHeight: 32,
         padding: 4,
@@ -102,9 +101,7 @@ Collection components such as [ListBox](ListBox.html), [GridList](GridList.html)
 ```tsx
 import {Virtualizer, ListLayout} from 'react-aria-components';
 
-let layout = useMemo(() => new ListLayout(), []);
-
-<Virtualizer layout={layout}>
+<Virtualizer layout={ListLayout}>
   <ListBox>
     {/* ... */}
   </ListBox>
@@ -112,13 +109,8 @@ let layout = useMemo(() => new ListLayout(), []);
 ```
 
 <InlineAlert variant="notice" maxWidth={600}>
-  <Heading>Important Requirements</Heading>
-  <Content>
-    <ol style={{margin: 0, paddingLeft: '1em'}}>
-      <li><strong>Layout objects must be memoized.</strong> Layouts store cached data that must not be reset on every React render.</li>
-      <li><strong>Virtualized components must have a defined size.</strong> This may be an explicit CSS `width` and `height`, or an implicit size (e.g. percentage or `flex`) bounded by an ancestor element. Without a bounded size, all items will be rendered to the DOM, negating the performance benefits of virtualized scrolling.</li>
-    </ol>
-  </Content>
+  <Heading>Virtualized components must have a defined size</Heading>
+  <Content>This may be an explicit CSS `width` and `height`, or an implicit size (e.g. percentage or `flex`) bounded by an ancestor element. Without a bounded size, all items will be rendered to the DOM, negating the performance benefits of virtualized scrolling.</Content>
 </InlineAlert>
 
 ## Layouts
@@ -153,7 +145,7 @@ function Example() {
   return (
     <Virtualizer 
       /*- begin highlight -*/
-      layout={useMemo(() => new ListLayout(), [])}
+      layout={ListLayout}
       layoutOptions={{
         estimatedRowHeight: 34,
         gap: 4,
@@ -225,7 +217,7 @@ function Example() {
     <div className="resizable">
       <Virtualizer
         /*- begin highlight -*/
-        layout={useMemo(() => new GridLayout(), [])}
+        layout={GridLayout}
         layoutOptions={{
           minItemSize: new Size(100, 140),
           minSpace: new Size(8, 8)
@@ -506,7 +498,7 @@ function Example() {
   return (
     <Virtualizer 
       /*- begin highlight -*/
-      layout={useMemo(() => new WaterfallLayout(), [])}
+      layout={WaterfallLayout}
       layoutOptions={{
         minItemSize: new Size(150, 150),
         minSpace: new Size(8, 8)
@@ -562,7 +554,7 @@ function Example() {
   return (
     <Virtualizer
       /*- begin highlight -*/
-      layout={useMemo(() => new TableLayout(), [])}
+      layout={TableLayout}
       layoutOptions={{
         rowHeight: 32,
         headingHeight: 32,
@@ -686,15 +678,13 @@ class HorizontalLayout extends Layout {
 }
 
 function Example() {
-  let layout = useMemo(() => new HorizontalLayout(), []);
-
   let items = [];
   for (let i = 0; i < 200; i++) {
     items.push({id: i, name: `Item ${i}`});
   }
 
   return (
-    <Virtualizer layout={layout}>
+    <Virtualizer layout={HorizontalLayout}>
       <ListBox aria-label="Favorite animal" items={items} orientation="horizontal" style={{height: 'fit-content'}}>
         {item => <ListBoxItem className="item">{item.name}</ListBoxItem>}
       </ListBox>

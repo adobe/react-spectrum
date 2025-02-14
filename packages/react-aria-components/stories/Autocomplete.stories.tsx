@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {UNSTABLE_Autocomplete as Autocomplete, Button, Collection, Dialog, DialogTrigger, Header, Input, Keyboard, Label, ListBox, ListBoxSection, ListLayout, Menu, MenuItem, MenuSection, MenuTrigger, Popover, SearchField, Separator, Text, TextField, Virtualizer} from 'react-aria-components';
 import {MyListBoxItem, MyMenuItem} from './utils';
-import React, {useMemo} from 'react';
+import React from 'react';
 import styles from '../example/index.css';
 import {useAsyncList, useListData, useTreeData} from 'react-stately';
 import {useFilter} from 'react-aria';
@@ -323,12 +323,6 @@ function VirtualizedListBox(props) {
     items.push({id: i, name: `Item ${i}`});
   }
 
-  let layout = useMemo(() => {
-    return new ListLayout({
-      rowHeight: 25
-    });
-  }, []);
-
   let list = useListData({
     initialItems: items
   });
@@ -336,7 +330,7 @@ function VirtualizedListBox(props) {
   let {onSelectionChange, selectionMode} = props;
 
   return (
-    <Virtualizer layout={layout}>
+    <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 25}}>
       <ListBox
         onSelectionChange={onSelectionChange}
         selectionMode={selectionMode}
@@ -387,19 +381,17 @@ function ShellExample() {
     getChildren: item => item.children || null
   });
 
-  let layout = useMemo(() => {
-    return new ListLayout({
-      rowHeight: 25,
-      headingHeight: 25
-    });
-  }, []);
-
   let onSelectionChange = (keys) => {
     tree.move([...keys][0], 'recent', 0);
   };
 
   return (
-    <Virtualizer layout={layout}>
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        rowHeight: 25,
+        headingHeight: 25
+      }}>
       <ListBox
         onSelectionChange={onSelectionChange}
         selectionMode="single"

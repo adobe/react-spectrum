@@ -12,7 +12,7 @@
 
 import {Button, Checkbox, CheckboxProps, DropIndicator, GridLayout, GridList, GridListItem, GridListItemProps, ListLayout, Size, Tag, TagGroup, TagList, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
-import React, {useMemo} from 'react';
+import React from 'react';
 import styles from '../example/index.css';
 import {useListData} from 'react-stately';
 
@@ -112,12 +112,6 @@ export function VirtualizedGridList() {
     items.push({id: i, name: `Item ${i}`});
   }
 
-  let layout = useMemo(() => {
-    return new ListLayout({
-      rowHeight: 25
-    });
-  }, []);
-
   let list = useListData({
     initialItems: items
   });
@@ -139,7 +133,11 @@ export function VirtualizedGridList() {
   });
 
   return (
-    <Virtualizer layout={layout}>
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        rowHeight: 25
+      }}>
       <GridList
         className={styles.menu}
         selectionMode="multiple"
@@ -159,11 +157,9 @@ export function VirtualizedGridListGrid() {
     items.push({id: i, name: `Item ${i}`});
   }
 
-  let layout = useMemo(() => new GridLayout(), []);
-
   return (
     <Virtualizer 
-      layout={layout}
+      layout={GridLayout}
       layoutOptions={{
         minItemSize: new Size(40, 40)
       }}>
