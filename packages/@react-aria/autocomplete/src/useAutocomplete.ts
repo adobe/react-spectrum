@@ -19,7 +19,7 @@ import {getInteractionModality} from '@react-aria/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import React, {FocusEvent as ReactFocusEvent, KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef} from 'react';
-import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface CollectionOptions extends DOMProps, AriaLabelingProps {
   /** Whether the collection items should use virtual focus instead of being focused directly. */
@@ -66,7 +66,6 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
     filter
   } = props;
 
-  let {direction} = useLocale();
   let collectionId = useId();
   let timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   let delayNextActiveDescendant = useRef(false);
