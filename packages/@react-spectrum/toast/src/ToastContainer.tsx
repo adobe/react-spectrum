@@ -47,7 +47,7 @@ function wrapInViewTransition<R>(fn: () => R): R {
       flushSync(() => {
         result = fn();
       });
-    });
+    }).ready.catch(() => {});
     // @ts-ignore
     return result;
   } else {
