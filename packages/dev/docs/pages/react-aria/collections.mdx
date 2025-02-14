@@ -369,9 +369,15 @@ const renderer: CollectionRenderer = {
 </CollectionRendererContext.Provider>
 ```
 
-**Note**: ensure that the value passed to `CollectionRendererContext` is memoized so React does not unmount and remount `CollectionRoot` and `CollectionBranch` unnecessarily.
-
-You also need to ensure that any additional DOM elements you add, such as wrappers around the items, are valid within the ARIA pattern that the collection component follows. Use `role="presentation"` for elements added only for styling purposes.
+<InlineAlert variant="notice" maxWidth={600}>
+  <Heading>Important Requirements</Heading>
+  <Content>
+    <ol style={{margin: 0, paddingLeft: '1em'}}>
+      <li><strong>The value passed to `CollectionRendererContext` must be memoized.</strong> Otherwise React will unmount and remount `CollectionRoot` and `CollectionBranch` on every render.</li>
+      <li><strong>Additional DOM elements must have a valid ARIA role.</strong> Use `role="presentation"` for elements added only for styling purposes. Other elements must be valid within the ARIA pattern that the collection component follows.</li>
+    </ol>
+  </Content>
+</InlineAlert>
 
 ## Hooks
 

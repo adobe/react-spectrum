@@ -411,7 +411,7 @@ function Example() {
 
   return (
     <Virtualizer layout={layout}>
-      <ListBox aria-label="Favorite animal" items={items} style={{height: 102}}>
+      <ListBox aria-label="Favorite animal" items={items} style={{height: 'fit-content'}}>
         {item => <ListBoxItem className="item">{item.name}</ListBoxItem>}
       </ListBox>
     </Virtualizer>
