@@ -13,6 +13,7 @@ export default Layout;
 import docs from 'docs:react-aria-components';
 import dataDocs from 'docs:@react-stately/data';
 import {HeaderInfo, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import {InlineAlert, Content, Heading} from '@adobe/react-spectrum';
 
 ---
 category: Guides
@@ -343,7 +344,7 @@ The two required properties are `CollectionRoot` and `CollectionBranch`. These a
 
 ```tsx
 import type {CollectionRenderer} from 'react-aria-components';
-import {UNSTABLE_CollectionRendererContext as CollectionRendererContext} from 'react-aria-components';
+import {CollectionRendererContext} from 'react-aria-components';
 
 const renderer: CollectionRenderer = {
   CollectionRoot({collection}) {

@@ -44,7 +44,7 @@ export {Group, GroupContext} from './Group';
 export {Header, HeaderContext} from './Header';
 export {Heading} from './Heading';
 export {Input, InputContext} from './Input';
-export {Section, CollectionRendererContext as UNSTABLE_CollectionRendererContext, DefaultCollectionRenderer as UNSTABLE_DefaultCollectionRenderer} from './Collection';
+export {Section, CollectionRendererContext, DefaultCollectionRenderer} from './Collection';
 export {Collection, createLeafComponent as UNSTABLE_createLeafComponent, createBranchComponent as UNSTABLE_createBranchComponent, CollectionBuilder as UNSTABLE_CollectionBuilder} from '@react-aria/collections';
 export {Keyboard, KeyboardContext} from './Keyboard';
 export {Label, LabelContext} from './Label';
