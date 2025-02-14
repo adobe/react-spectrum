@@ -36,11 +36,11 @@ preRelease: beta
 
 # Tree
 
-<PageDescription>{docs.exports.UNSTABLE_Tree.description}</PageDescription>
+<PageDescription>{docs.exports.Tree.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['UNSTABLE_Tree']}
+  componentNames={['Tree']}
   sourceData={[
     {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/treegrid/'}
   ]} />
@@ -51,13 +51,12 @@ This example's MyTreeItemContent is from the [Reusable Wrappers](#reusable-wrapp
 
 ```tsx example
 import {
-  UNSTABLE_Tree as Tree,
-  UNSTABLE_TreeItem as TreeItem,
-  UNSTABLE_TreeItemContent as TreeItemContent,
+  Tree,
+  TreeItem,
+  TreeItemContent,
   Button,
   Collection
 } from 'react-aria-components';
-import {MyCheckbox} from './Checkbox';
 
 <Tree aria-label="Files" style={{height: '300px'}} defaultExpandedKeys={['documents', 'photos', 'project']}>
   <TreeItem id="documents" textValue="Documents">
@@ -254,7 +253,7 @@ HTML lists are meant for static content, rather than heirarchies with rich inter
 
 ## Anatomy
 
-<Anatomy role="img" aria-label="Anatomy diagram of a Tree, consisting of multiple rows. Each row in the table body contains a selection checkbox, an expand toggle button, and the name of the item." />
+<Anatomy role="img" aria-label="Anatomy diagram of a Tree, consisting of multiple items. Each item in the tree contains a selection checkbox, an expand toggle button, and the name of the item." />
 
 A Tree consists of a container element, with items containing data inside. The items within a tree may contain focusable elements or plain text content. Each item may also contain a button to toggle the expandable state of that item.
 
@@ -386,6 +385,7 @@ or updates over time. In the example below, data for each item is provided to th
 
 ```tsx example export=true
 import type {TreeProps} from 'react-aria-components';
+import {MyCheckbox} from './Checkbox';
 let items = [
   {id: 1, title: 'Documents', children: [
     {id: 2, title: 'Project', children: [
@@ -752,15 +752,15 @@ Use the `renderEmptyState` prop to customize what the `Tree` will display if the
 
 ### Tree
 
-<PropTable component={docs.exports.UNSTABLE_Tree} links={docs.links} />
+<PropTable component={docs.exports.Tree} links={docs.links} />
 
 ### TreeItem
 
-<PropTable component={docs.exports.UNSTABLE_TreeItem} links={docs.links} />
+<PropTable component={docs.exports.TreeItem} links={docs.links} />
 
 ### TreeItemContent
 
-<PropTable component={docs.exports.UNSTABLE_TreeItemContent} links={docs.links} />
+<PropTable component={docs.exports.TreeItemContent} links={docs.links} />
 
 ## Styling
 
@@ -845,13 +845,13 @@ A `TreeItemContent` can be targeted with the `.react-aria-TreeItemContent` CSS s
 
 All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
 
-<ContextTable components={['UNSTABLE_Tree']} docs={docs} />
+<ContextTable components={['Tree']} docs={docs} />
 
 This example shows a component that accepts a `Tree` and a [ToggleButton](ToggleButton.html) as children, and allows the user to turn selection mode for the tree on and off by pressing the button.
 
 ```tsx example render=false export=true
 import type {SelectionMode} from 'react-aria-components';
-import {ToggleButtonContext, UNSTABLE_TreeContext as TreeContext} from 'react-aria-components';
+import {ToggleButtonContext, TreeContext} from 'react-aria-components';
 
 function Selectable({children}) {
   let [isSelected, onChange] = React.useState(false);

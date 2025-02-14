@@ -133,16 +133,16 @@ export interface TreeProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>
 }
 
 
-export const UNSTABLE_TreeContext = createContext<ContextValue<TreeProps<any>, HTMLDivElement>>(null);
-export const UNSTABLE_TreeStateContext = createContext<TreeState<any> | null>(null);
+export const TreeContext = createContext<ContextValue<TreeProps<any>, HTMLDivElement>>(null);
+export const TreeStateContext = createContext<TreeState<any> | null>(null);
 
 /**
  * A tree provides users with a way to navigate nested hierarchical information, with support for keyboard navigation
  * and selection.
  */
-export const UNSTABLE_Tree = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tree<T extends object>(props: TreeProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+export const Tree = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tree<T extends object>(props: TreeProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   // Render the portal first so that we have the collection by the time we render the DOM in SSR.
-  [props, ref] = useContextProps(props, ref, UNSTABLE_TreeContext);
+  [props, ref] = useContextProps(props, ref, TreeContext);
 
   return (
     <CollectionBuilder content={<Collection {...props} />}>
@@ -245,7 +245,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
         data-focus-visible={isFocusVisible || undefined}>
         <Provider
           values={[
-            [UNSTABLE_TreeStateContext, state]
+            [TreeStateContext, state]
           ]}>
           <CollectionRoot
             collection={state.collection}
@@ -293,7 +293,7 @@ export interface TreeItemContentRenderProps extends ItemRenderProps {
 // need to do a bunch of check to figure out what is the Content and what are the actual collection elements (aka child rows) of the TreeItem
 export interface TreeItemContentProps extends Pick<RenderProps<TreeItemContentRenderProps>, 'children'> {}
 
-export const UNSTABLE_TreeItemContent = /*#__PURE__*/ createLeafComponent('content', function TreeItemContent(props: TreeItemContentProps) {
+export const TreeItemContent = /*#__PURE__*/ createLeafComponent('content', function TreeItemContent(props: TreeItemContentProps) {
   let values = useContext(TreeItemContentContext)!;
   let renderProps = useRenderProps({
     children: props.children,
@@ -331,8 +331,8 @@ export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRend
 /**
  * A TreeItem represents an individual item in a Tree.
  */
-export const UNSTABLE_TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
-  let state = useContext(UNSTABLE_TreeStateContext)!;
+export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
+  let state = useContext(TreeStateContext)!;
   ref = useObjectRef<HTMLDivElement>(ref);
   // TODO: remove this when we support description in tree row
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -474,8 +474,8 @@ export interface TreeLoadingIndicatorRenderProps {
 
 export interface TreeLoaderProps extends RenderProps<TreeLoadingIndicatorRenderProps>, StyleRenderProps<TreeLoadingIndicatorRenderProps> {}
 
-export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', function TreeLoader<T extends object>(props: TreeLoaderProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
-  let state = useContext(UNSTABLE_TreeStateContext);
+export const TreeLoadingIndicator = createLeafComponent('loader', function TreeLoader<T extends object>(props: TreeLoaderProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+  let state = useContext(TreeStateContext);
   // This loader row is is non-interactable, but we want the same aria props calculated as a typical row
   // @ts-ignore
   let {rowProps} = useTreeGridListItem({node: item}, state, ref);
