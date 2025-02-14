@@ -127,13 +127,6 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
     shouldUseVirtualFocus
   }, submenuTriggerState, itemRef);
 
-  let onDismissButtonPress = () => {
-    submenuTriggerState.close();
-    // TODO: this works but in iOS VO, double tapping the dimiss button actually seems to trigger an "interact outside" causing all
-    // menus to close...
-    itemRef.current?.focus();
-  };
-
   return (
     <Provider
       values={[
@@ -145,7 +138,6 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
           trigger: 'SubmenuTrigger',
           triggerRef: itemRef,
           placement: 'end top',
-          onDismissButtonPress,
           ...popoverProps
         }]
       ]}>
@@ -190,13 +182,6 @@ export const SubDialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogt
     // TODO: might need to have something like isUnavailable like we do for ContextualHelpTrigger
   }, submenuTriggerState, itemRef);
 
-  let onDismissButtonPress = () => {
-    submenuTriggerState.close();
-    // TODO: this works but in iOS VO, double tapping the dimiss button actually seems to trigger an "interact outside" causing all
-    // menus to close...
-    itemRef.current?.focus();
-  };
-
   return (
     <Provider
       values={[
@@ -209,7 +194,6 @@ export const SubDialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogt
           trigger: 'SubDialogTrigger',
           triggerRef: itemRef,
           placement: 'end top',
-          onDismissButtonPress,
           ...popoverProps
         }]
       ]}>
