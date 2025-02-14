@@ -241,6 +241,16 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
         expect(input.selectionStart).toBe(2);
       });
 
+      it('should focus the input when clicking on an item', async function () {
+        let {getByRole} = renderers.standard();
+        let input = getByRole('searchbox') as HTMLInputElement;
+        let menu = getByRole(collectionNodeRole);
+        let options = within(menu).getAllByRole(collectionItemRole);
+
+        await user.click(options[0]);
+        expect(document.activeElement).toBe(input);
+      });
+
       if (ariaPattern === 'menu') {
         it('should update the aria-activedescendant when hovering over an item', async function () {
           let {getByRole} = renderers.standard();

@@ -317,6 +317,25 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
 
   itemProps['data-key'] = key;
   itemPressProps.preventFocusOnPress = shouldUseVirtualFocus;
+
+  // When using virtual focus, make sure the focused key gets updated on press.
+  if (shouldUseVirtualFocus) {
+    itemPressProps = mergeProps(itemPressProps, {
+      onPressStart(e) {
+        if (e.pointerType !== 'touch') {
+          manager.setFocused(true);
+          manager.setFocusedKey(key);
+        }
+      },
+      onPress(e) {
+        if (e.pointerType === 'touch') {
+          manager.setFocused(true);
+          manager.setFocusedKey(key);
+        }
+      }
+    });
+  }
+
   let {pressProps, isPressed} = usePress(itemPressProps);
 
   // Double clicking with a mouse with selectionBehavior = 'replace' performs an action.
@@ -362,7 +381,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   return {
     itemProps: mergeProps(
       itemProps,
-      allowsSelection || hasPrimaryAction ? pressProps : {},
+      allowsSelection || hasPrimaryAction || shouldUseVirtualFocus ? pressProps : {},
       longPressEnabled ? longPressProps : {},
       {onDoubleClick, onDragStartCapture, onClick, id},
       // Prevent DOM focus from moving on mouse down when using virtual focus

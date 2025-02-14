@@ -13,7 +13,7 @@
 import {AriaLabelingProps, BaseEvent, DOMProps, RefObject} from '@react-types/shared';
 import {AriaTextFieldProps} from '@react-aria/textfield';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, getActiveElement, isCtrlKeyPressed, mergeProps, mergeRefs, useEffectEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, getActiveElement, getOwnerDocument, isCtrlKeyPressed, mergeProps, mergeRefs, useEffectEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
 import {dispatchVirtualBlur, dispatchVirtualFocus, moveVirtualFocus} from '@react-aria/focus';
 import {getInteractionModality} from '@react-aria/interactions';
 // @ts-ignore
@@ -37,6 +37,8 @@ export interface AriaAutocompleteProps extends AutocompleteProps {
 
 export interface AriaAutocompleteOptions extends Omit<AriaAutocompleteProps, 'children'> {
   /** The ref for the wrapped collection element. */
+  inputRef: RefObject<HTMLInputElement | null>,
+  /** The ref for the wrapped collection element. */
   collectionRef: RefObject<HTMLElement | null>
 }
 
@@ -59,6 +61,7 @@ export interface AutocompleteAria {
  */
 export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: AutocompleteState): AutocompleteAria {
   let {
+    inputRef,
     collectionRef,
     filter
   } = props;
@@ -70,11 +73,20 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
   let queuedActiveDescendant = useRef<string | null>(null);
   let lastCollectionNode = useRef<HTMLElement>(null);
 
+  // For mobile screen readers, we don't want virtual focus, instead opting to disable FocusScope's restoreFocus and manually
+  // moving focus back to the subtriggers
+  let shouldUseVirtualFocus = getInteractionModality() !== 'virtual';
+
   useEffect(() => {
     return () => clearTimeout(timeout.current);
   }, []);
 
   let updateActiveDescendant = useEffectEvent((e: Event) => {
+    // Ensure input is focused if the user clicks on the collection directly.
+    if (!e.isTrusted && shouldUseVirtualFocus && inputRef.current && getActiveElement(getOwnerDocument(inputRef.current)) !== inputRef.current) {
+      inputRef.current.focus();
+    }
+
     let target = e.target as Element | null;
     if (e.isTrusted || !target || queuedActiveDescendant.current === target.id) {
       return;
@@ -342,9 +354,7 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
       onFocus
     },
     collectionProps: mergeProps(collectionProps, {
-      // For mobile screen readers, we don't want virtual focus, instead opting to disable FocusScope's restoreFocus and manually
-      // moving focus back to the subtriggers
-      shouldUseVirtualFocus: getInteractionModality() !== 'virtual',
+      shouldUseVirtualFocus,
       disallowTypeAhead: true
     }),
     collectionRef: mergedCollectionRef,
