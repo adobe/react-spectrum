@@ -59,7 +59,9 @@ export const SearchField = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let inputRef = useRef<HTMLInputElement>(null);
   let [inputContextProps, mergedInputRef] = useContextProps({}, inputRef, InputContext);
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let state = useSearchFieldState({
     ...props,
     validationBehavior

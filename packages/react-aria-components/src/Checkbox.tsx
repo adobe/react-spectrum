@@ -123,7 +123,9 @@ export const CheckboxGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
     ...props,
     validationBehavior
   });
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let {groupProps, labelProps, descriptionProps, errorMessageProps, ...validation} = useCheckboxGroup({
     ...props,
     label,
