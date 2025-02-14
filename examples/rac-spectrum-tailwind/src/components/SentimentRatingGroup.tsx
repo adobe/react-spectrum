@@ -40,7 +40,7 @@ export function SentimentRating({ rating }: { rating: string }) {
   return (
     <Radio
       value={rating}
-      className="flex items-center justify-center bg-white border rounded-full disabled:bg-gray-200 disabled:text-gray-400 p-160 m-75 h-200 w-200 focus:outline-none focus-visible:ring dark:bg-black selected:bg-accent-800 dark:selected:bg-accent-800 selected:border-accent-800 selected:text-white pressed:bg-gray-200 dark:pressed:bg-gray-200 hover:border-gray-300"
+      className="flex items-center justify-center bg-white border rounded-full disabled:bg-gray-200 disabled:text-gray-400 p-160 m-75 h-200 w-200 focus:outline-hidden focus-visible:ring dark:bg-black selected:bg-accent-800 dark:selected:bg-accent-800 selected:border-accent-800 selected:text-white pressed:bg-gray-200 dark:pressed:bg-gray-200 hover:border-gray-300"
     >
       {rating}
     </Radio>

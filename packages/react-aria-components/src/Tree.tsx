@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTreeGridListProps, useTreeGridList, useTreeGridListItem} from '@react-aria/tree';
+import {AriaTreeGridListItemOptions, AriaTreeGridListProps, useTreeGridList, useTreeGridListItem} from '@react-aria/tree';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
@@ -127,7 +127,7 @@ export interface TreeProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>
   renderEmptyState?: (props: TreeEmptyStateRenderProps) => ReactNode,
   /**
    * Whether `disabledKeys` applies to all interactions, or only selection.
-   * @default 'selection'
+   * @default 'all'
    */
   disabledBehavior?: DisabledBehavior
 }
@@ -163,7 +163,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     expandedKeys: propExpandedKeys,
     defaultExpandedKeys: propDefaultExpandedKeys,
     onExpandedChange,
-    disabledBehavior = 'selection'
+    disabledBehavior = 'all'
   } = props;
   let {CollectionRoot, isVirtualized, layoutDelegate} = useContext(CollectionRendererContext);
 
@@ -271,12 +271,16 @@ export interface TreeItemRenderProps extends Omit<ItemRenderProps, 'allowsDraggi
 export interface TreeItemContentRenderProps extends ItemRenderProps {
   // Whether the tree item is expanded.
   isExpanded: boolean,
-  // Whether the tree item has child rows.
-  hasChildRows: boolean,
+  // Whether the tree item has child tree items.
+  hasChildItems: boolean,
   // What level the tree item has within the tree.
   level: number,
   // Whether the tree item's children have keyboard focus.
-  isFocusVisibleWithin: boolean
+  isFocusVisibleWithin: boolean,
+  // The state of the tree.
+  state: TreeState<unknown>,
+  // The unique id of the tree row.
+  id: Key
 }
 
 // The TreeItemContent is the one that accepts RenderProps because we would get much more complicated logic in TreeItem otherwise since we'd
@@ -298,7 +302,7 @@ export const UNSTABLE_TreeItemContent = /*#__PURE__*/ createLeafComponent('conte
 
 export const TreeItemContentContext = createContext<TreeItemContentRenderProps | null>(null);
 
-export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRenderProps>, LinkDOMProps, HoverEvents {
+export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRenderProps>, LinkDOMProps, HoverEvents, Pick<AriaTreeGridListItemOptions, 'hasChildItems'> {
   /** The unique id of the tree row. */
   id?: Key,
   /** The object value that this tree item represents. When using dynamic collections, this is set automatically. */
@@ -321,7 +325,7 @@ export const UNSTABLE_TreeItem = /*#__PURE__*/ createBranchComponent('item', <T 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {rowProps, gridCellProps, expandButtonProps, descriptionProps, ...states} = useTreeGridListItem({node: item}, state, ref);
   let isExpanded = rowProps['aria-expanded'] === true;
-  let hasChildRows = [...state.collection.getChildren!(item.key)]?.length > 1;
+  let hasChildItems = props.hasChildItems || [...state.collection.getChildren!(item.key)]?.length > 1;;
   let level = rowProps['aria-level'] || 1;
 
   let {hoverProps, isHovered} = useHover({
@@ -346,12 +350,14 @@ export const UNSTABLE_TreeItem = /*#__PURE__*/ createBranchComponent('item', <T 
     isHovered,
     isFocusVisible,
     isExpanded,
-    hasChildRows,
+    hasChildItems,
     level,
     selectionMode: state.selectionManager.selectionMode,
     selectionBehavior: state.selectionManager.selectionBehavior,
-    isFocusVisibleWithin
-  }), [states, isHovered, isFocusVisible, state.selectionManager, isExpanded, hasChildRows, level, isFocusVisibleWithin]);
+    isFocusVisibleWithin,
+    state,
+    id: item.key
+  }), [states, isHovered, isFocusVisible, state.selectionManager, isExpanded, hasChildItems, level, isFocusVisibleWithin, state, item.key]);
 
   let renderProps = useRenderProps({
     ...props,
@@ -373,7 +379,7 @@ export const UNSTABLE_TreeItem = /*#__PURE__*/ createBranchComponent('item', <T 
 
   let expandButtonRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
-    if (hasChildRows && !expandButtonRef.current) {
+    if (hasChildItems && !expandButtonRef.current) {
       console.warn('Expandable tree items must contain a expand button so screen reader users can expand/collapse the item.');
     }
   // eslint-disable-next-line
@@ -404,8 +410,8 @@ export const UNSTABLE_TreeItem = /*#__PURE__*/ createBranchComponent('item', <T 
         {...renderProps}
         ref={ref}
         // TODO: missing selectionBehavior, hasAction and allowsSelection data attribute equivalents (available in renderProps). Do we want those?
-        data-expanded={(hasChildRows && isExpanded) || undefined}
-        data-has-child-rows={hasChildRows || undefined}
+        data-expanded={(hasChildItems && isExpanded) || undefined}
+        data-has-child-items={hasChildItems || undefined}
         data-level={level}
         data-selected={states.isSelected || undefined}
         data-disabled={states.isDisabled || undefined}

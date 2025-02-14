@@ -29,7 +29,7 @@ import {useDOMRef} from '@react-spectrum/utils';
 
 export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentProps, 'children' | 'closeDelay'>, Pick<AriaTooltipProps, 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset'> {
   /** The content of the tooltip. */
-  children?: ReactNode,
+  children: ReactNode,
   /**
    * The placement of the element with respect to its anchor element.
    *
@@ -40,7 +40,7 @@ export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentPro
 
 export interface TooltipProps extends Omit<AriaTooltipProps, 'children' | 'className' | 'style' | 'triggerRef' | 'UNSTABLE_portalContainer' | 'isEntering' | 'isExiting' | 'placement' | 'containerPadding' |  'offset' | 'crossOffset' |  'shouldFlip' | 'arrowBoundaryOffset' | 'isOpen' | 'defaultOpen' | 'onOpenChange'>, UnsafeStyles {
   /** The content of the tooltip. */
-  children?: ReactNode
+  children: ReactNode
 }
 
 const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | 'light dark' | null}>({
@@ -123,7 +123,7 @@ const arrowStyles = style<TooltipRenderProps>({
   }
 });
 
-let InternalTooltipTriggerContext = createContext<TooltipTriggerProps>({});
+let InternalTooltipTriggerContext = createContext<Partial<TooltipTriggerProps>>({});
 
 /**
  * Display container for Tooltip content. Has a directional arrow dependent on its placement.

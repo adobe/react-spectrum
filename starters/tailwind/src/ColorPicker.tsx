@@ -11,7 +11,7 @@ import { focusRing } from './utils';
 
 const buttonStyles = tv({
   extend: focusRing,
-  base: 'flex gap-2 items-center cursor-default rounded text-sm text-gray-800 dark:text-gray-200'
+  base: 'flex gap-2 items-center cursor-default rounded-xs text-sm text-gray-800 dark:text-gray-200'
 });
 
 export interface ColorPickerProps extends AriaColorPickerProps {
