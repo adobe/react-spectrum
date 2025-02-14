@@ -18,6 +18,7 @@ import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {FormContext} from './Form';
 import {forwardRefType} from '@react-types/shared';
 import {Group, GroupContext} from './Group';
+import {HiddenDateInput} from './HiddenDateInput';
 import {Input, InputContext} from './Input';
 import {LabelContext} from './Label';
 import React, {cloneElement, createContext, ForwardedRef, forwardRef, JSX, ReactElement, useContext, useRef} from 'react';
@@ -39,7 +40,9 @@ export interface DateFieldRenderProps {
    */
   isDisabled: boolean
 }
-export interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<DateFieldRenderProps>, SlotProps {}
+export interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<DateFieldRenderProps>, SlotProps {
+  autoComplete?: string
+}
 export interface TimeFieldProps<T extends TimeValue> extends Omit<AriaTimeFieldProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<DateFieldRenderProps>, SlotProps {}
 
 export const DateFieldContext = createContext<ContextValue<DateFieldProps<any>, HTMLDivElement>>(null);
@@ -109,6 +112,11 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
         ref={ref}
         slot={props.slot || undefined}
         data-invalid={state.isInvalid || undefined} />
+      <HiddenDateInput 
+        autoComplete={props.autoComplete}
+        name={props.name}
+        isDisabled={props.isDisabled}
+        state={state} />    
     </Provider>
   );
 });
@@ -342,7 +350,6 @@ export const DateSegment = /*#__PURE__*/ (forwardRef as forwardRefType)(function
     defaultChildren: segment.text,
     defaultClassName: 'react-aria-DateSegment'
   });
-
 
   return (
     <span
