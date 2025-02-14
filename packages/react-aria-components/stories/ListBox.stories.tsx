@@ -11,9 +11,9 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Collection, DropIndicator, GridLayout, Header, ListBox, ListBoxItem, ListBoxProps, ListBoxSection, ListLayout, Separator, Text, useDragAndDrop, Virtualizer} from 'react-aria-components';
+import {Collection, DropIndicator, GridLayout, Header, ListBox, ListBoxItem, ListBoxProps, ListBoxSection, ListLayout, Separator, Text, useDragAndDrop, Virtualizer, WaterfallLayout} from 'react-aria-components';
 import {MyListBoxItem} from './utils';
-import React, {useMemo} from 'react';
+import React from 'react';
 import {Size} from '@react-stately/virtualizer';
 import styles from '../example/index.css';
 import {useListData} from 'react-stately';
@@ -246,15 +246,13 @@ export function VirtualizedListBox({variableHeight}) {
     sections.push({id: `section_${s}`, name: `Section ${s}`, children: items});
   }
 
-  let layout = useMemo(() => {
-    return new ListLayout({
-      [variableHeight ? 'estimatedRowHeight' : 'rowHeight']: 25,
-      estimatedHeadingHeight: 26
-    });
-  }, [variableHeight]);
-
   return (
-    <Virtualizer layout={layout}>
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        [variableHeight ? 'estimatedRowHeight' : 'rowHeight']: 25,
+        estimatedHeadingHeight: 26
+      }}>
       <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox" items={sections}>
         {section => (
           <ListBoxSection className={styles.group}>
@@ -274,15 +272,13 @@ VirtualizedListBox.args = {
 };
 
 export function VirtualizedListBoxEmpty() {
-  let layout = useMemo(() => {
-    return new ListLayout({
-      rowHeight: 25,
-      estimatedHeadingHeight: 26
-    });
-  }, []);
-
   return (
-    <Virtualizer layout={layout}>
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        rowHeight: 25,
+        estimatedHeadingHeight: 26
+      }}>
       <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox" renderEmptyState={() => 'Empty'}>
         <></>
       </ListBox>
@@ -295,12 +291,6 @@ export function VirtualizedListBoxDnd() {
   for (let i = 0; i < 10000; i++) {
     items.push({id: i, name: `Item ${i}`});
   }
-
-  let layout = useMemo(() => {
-    return new ListLayout({
-      rowHeight: 25
-    });
-  }, []);
 
   let list = useListData({
     initialItems: items
@@ -324,7 +314,11 @@ export function VirtualizedListBoxDnd() {
 
   return (
     <div style={{height: 400, width: 400, resize: 'both', padding: 40, overflow: 'hidden'}}>
-      <Virtualizer layout={layout}>
+      <Virtualizer
+        layout={ListLayout}
+        layoutOptions={{
+          rowHeight: 25
+        }}>
         <ListBox
           className={styles.menu}
           selectionMode="multiple"
@@ -340,18 +334,11 @@ export function VirtualizedListBoxDnd() {
   );
 }
 
-export function VirtualizedListBoxGrid({minSize, maxSize}) {
+function VirtualizedListBoxGridExample({minSize = 80, maxSize = 100, preserveAspectRatio = false}) {
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 10000; i++) {
     items.push({id: i, name: `Item ${i}`});
   }
-
-  let layout = useMemo(() => {
-    return new GridLayout({
-      minItemSize: new Size(minSize, minSize),
-      maxItemSize: new Size(maxSize, maxSize)
-    });
-  }, [minSize, maxSize]);
 
   let list = useListData({
     initialItems: items
@@ -375,7 +362,13 @@ export function VirtualizedListBoxGrid({minSize, maxSize}) {
 
   return (
     <div style={{height: 400, width: 400, resize: 'both', padding: 40, overflow: 'hidden'}}>
-      <Virtualizer layout={layout}>
+      <Virtualizer 
+        layout={GridLayout}
+        layoutOptions={{
+          minItemSize: new Size(minSize, minSize),
+          maxItemSize: new Size(maxSize, maxSize),
+          preserveAspectRatio
+        }}>
         <ListBox
           className={styles.menu}
           selectionMode="multiple"
@@ -392,7 +385,46 @@ export function VirtualizedListBoxGrid({minSize, maxSize}) {
   );
 }
 
-VirtualizedListBoxGrid.args = {
-  minSize: 80,
-  maxSize: 100
+export const VirtualizedListBoxGrid = {
+  render(args) {
+    return <VirtualizedListBoxGridExample {...args} />;
+  },
+  args: {
+    minSize: 80,
+    maxSize: 100,
+    preserveAspectRatio: false
+  }
 };
+
+let lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'.split(' ');
+
+export function VirtualizedListBoxWaterfall({minSize = 80, maxSize = 100}) {
+  let items: {id: number, name: string}[] = [];
+  for (let i = 0; i < 1000; i++) {
+    let words = Math.max(2, Math.floor(Math.random() * 25));
+    let name = lorem.slice(0, words).join(' ');
+    items.push({id: i, name});
+  }
+
+  return (
+    <div style={{height: 400, width: 400, resize: 'both', padding: 40, overflow: 'hidden'}}>
+      <Virtualizer 
+        layout={WaterfallLayout}
+        layoutOptions={{
+          minItemSize: new Size(minSize, minSize),
+          maxItemSize: new Size(maxSize, maxSize)
+        }}>
+        <ListBox
+          className={styles.menu}
+          selectionMode="multiple"
+          selectionBehavior="replace"
+          layout="grid"
+          style={{width: '100%', height: '100%'}}
+          aria-label="virtualized listbox"
+          items={items}>
+          {item => <MyListBoxItem style={{height: '100%', border: '1px solid', boxSizing: 'border-box'}}>{item.name}</MyListBoxItem>}
+        </ListBox>
+      </Virtualizer>
+    </div>
+  );
+}

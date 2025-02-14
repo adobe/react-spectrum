@@ -15,7 +15,7 @@ import {LayoutOptionsDelegate} from './Virtualizer';
 import {TableColumnResizeStateContext} from './Table';
 import {useContext, useMemo} from 'react';
 
-export class TableLayout<T> extends BaseTableLayout<T> implements LayoutOptionsDelegate<TableLayoutProps> {
+export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> extends BaseTableLayout<T, O> implements LayoutOptionsDelegate<TableLayoutProps> {
   // Invalidate the layout whenever the column widths change.
   useLayoutOptions() {
     // This is not a React class component, just a regular class.

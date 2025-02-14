@@ -19,6 +19,7 @@ export interface InvalidationContext<O = any> {
   offsetChanged?: boolean,
   sizeChanged?: boolean,
   itemSizeChanged?: boolean,
+  layoutOptionsChanged?: boolean,
   layoutOptions?: O
 }
 
