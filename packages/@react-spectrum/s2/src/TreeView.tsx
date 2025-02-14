@@ -105,15 +105,14 @@ function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
 
   let domRef = useDOMRef(ref);
 
-  let rowHeight = isDetached ? 44 : 40;
-  if (scale === 'large') {
-    rowHeight = isDetached ? 54 : 50;
-  }
+  let rowHeight = scale === 'large' ? 50 : 40;
+  let gap = isDetached ? 4 : 0;
   let layout = useMemo(() => {
     return new ListLayout({
-      rowHeight
+      rowHeight,
+      gap
     });
-  }, [rowHeight]);
+  }, [rowHeight, gap]);
 
   return (
     <Virtualizer layout={layout}>
@@ -192,6 +191,7 @@ const treeCellGrid = style({
   display: 'grid',
   width: 'full',
   height: 'full',
+  boxSizing: 'border-box',
   alignContent: 'center',
   alignItems: 'center',
   gridTemplateColumns: ['auto', 'auto', 'auto', 'auto', 'auto', '1fr', 'minmax(0, auto)', 'auto'],
