@@ -36,6 +36,7 @@ export interface CollectionBuilderProps<C extends BaseCollection<object>> {
 export function CollectionBuilder<C extends BaseCollection<object>>(props: CollectionBuilderProps<C>): ReactElement {
   // If a document was provided above us, we're already in a hidden tree. Just render the content.
   let doc = useContext(CollectionDocumentContext);
+  let isSSR = useIsSSR();
   if (doc) {
     // The React types prior to 18 did not allow returning ReactNode from components
     // even though the actual implementation since React 16 did.
@@ -58,7 +59,7 @@ export function CollectionBuilder<C extends BaseCollection<object>>(props: Colle
           {props.content}
         </CollectionDocumentContext.Provider>
       </Hidden>
-      <CollectionInner render={props.children} collection={collection} />
+      <CollectionInner render={props.children} collection={collection} key={isSSR ? 'server' : 'client'} />
     </>
   );
 }
@@ -116,7 +117,7 @@ function useCollectionDocument<T extends object, C extends BaseCollection<T>>(cr
   useLayoutEffect(() => {
     document.isMounted = true;
     return () => {
-      // Mark unmounted so we can skip all of the collection updates caused by 
+      // Mark unmounted so we can skip all of the collection updates caused by
       // React calling removeChild on every item in the collection.
       document.isMounted = false;
     };
