@@ -8,10 +8,11 @@ export const MyListBoxItem = (props: ListBoxItemProps) => {
     <ListBoxItem
       {...props}
       style={{wordBreak: 'break-word', ...props.style}}
-      className={({isFocused, isSelected, isHovered}) => classNames(styles, 'item', {
+      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'item', {
         focused: isFocused,
         selected: isSelected,
-        hovered: isHovered
+        hovered: isHovered,
+        focusVisible: isFocusVisible
       })} />
   );
 };

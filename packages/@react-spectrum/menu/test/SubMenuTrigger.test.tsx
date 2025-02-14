@@ -215,7 +215,7 @@ describe('Submenu', function () {
     act(() => {jest.runAllTimers();});
     menus = tree.getAllByRole('menu', {hidden: true});
     expect(menus).toHaveLength(2);
-    expect(document.activeElement).toBe(submenuTrigger1);
+    expect(document.activeElement).toBe(submenu1Items[0]);
   });
 
   it('should close the sub menu if the user hovers a neighboring menu item from the submenu trigger', async function () {
@@ -348,7 +348,6 @@ describe('Submenu', function () {
       ${'ltr, Enter/Esc'} | ${'en-US'}  | ${[async () => await user.keyboard('[Enter]'), async () => await user.keyboard('[Escape]')]}
     `('opens/closes the submenu via keyboard ($Name)', async function ({Name, locale, actions}) {
       let tree = render(<SubmenuStatic menuTriggerProps={{onOpenChange}} />, 'medium', locale);
-      let triggerButton = tree.getByRole('button');
       await user.tab();
       await user.keyboard('[ArrowDown]');
       act(() => {jest.runAllTimers();});
@@ -376,13 +375,6 @@ describe('Submenu', function () {
       act(() => {jest.runAllTimers();});
 
       if (Name === 'ltr, Enter/Esc') {
-        // Closes all submenus + menu via Esc
-        menus = tree.queryAllByRole('menu', {hidden: true});
-        expect(menus).toHaveLength(0);
-        expect(triggerButton).toHaveAttribute('aria-expanded', 'false');
-        expect(onOpenChange).toHaveBeenCalledTimes(2);
-        expect(onOpenChange).toHaveBeenLastCalledWith(false);
-      } else {
         // Only closes the current submenu via Arrow keys
         menus = tree.getAllByRole('menu', {hidden: true});
         expect(menus).toHaveLength(1);
@@ -601,7 +593,7 @@ describe('Submenu', function () {
       await user.keyboard('[Escape]');
       act(() => {jest.runAllTimers();});
       menus = tree.queryAllByRole('menu');
-      expect(menus).toHaveLength(0);
+      expect(menus).toHaveLength(1);
       expect(onClose).not.toHaveBeenCalled();
       expect(submenuOnClose).not.toHaveBeenCalled();
     });

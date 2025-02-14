@@ -18,6 +18,7 @@ export {focusSafely} from './focusSafely';
 export {useHasTabbableChild} from './useHasTabbableChild';
 // For backward compatibility.
 export {isFocusable} from '@react-aria/utils';
+export {moveVirtualFocus, dispatchVirtualBlur, dispatchVirtualFocus, getVirtuallyFocusedElement} from './virtualFocus';
 
 export type {FocusScopeProps, FocusManager, FocusManagerOptions} from './FocusScope';
 export type {FocusRingProps} from './FocusRing';

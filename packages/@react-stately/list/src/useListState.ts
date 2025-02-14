@@ -61,11 +61,35 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
     , [collection, selectionState, layoutDelegate]
   );
 
+  useFocusedKeyReset(collection, selectionManager);
+
+  return {
+    collection,
+    disabledKeys,
+    selectionManager
+  };
+}
+
+/**
+ * Filters a collection using the provided filter function and returns a new ListState.
+ */
+export function useFilteredListState<T extends object>(state: ListState<T>, filterFn: ((nodeValue: string) => boolean) | null | undefined): ListState<T> {
+  let collection = useMemo(() => filterFn ? state.collection.filter!(filterFn) : state.collection, [state.collection, filterFn]);
+  let selectionManager = state.selectionManager.withCollection(collection);
+  useFocusedKeyReset(collection, selectionManager);
+  return {
+    collection,
+    selectionManager,
+    disabledKeys: state.disabledKeys
+  };
+}
+
+function useFocusedKeyReset<T>(collection: Collection<Node<T>>, selectionManager: SelectionManager) {
   // Reset focused key if that item is deleted from the collection.
   const cachedCollection = useRef<Collection<Node<T>> | null>(null);
   useEffect(() => {
-    if (selectionState.focusedKey != null && !collection.getItem(selectionState.focusedKey) && cachedCollection.current) {
-      const startItem = cachedCollection.current.getItem(selectionState.focusedKey);
+    if (selectionManager.focusedKey != null && !collection.getItem(selectionManager.focusedKey) && cachedCollection.current) {
+      const startItem = cachedCollection.current.getItem(selectionManager.focusedKey);
       const cachedItemNodes = [...cachedCollection.current.getKeys()].map(
         key => {
           const itemNode = cachedCollection.current!.getItem(key);
@@ -105,14 +129,8 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
           index--;
         }
       }
-      selectionState.setFocusedKey(newNode ? newNode.key : null);
+      selectionManager.setFocusedKey(newNode ? newNode.key : null);
     }
     cachedCollection.current = collection;
-  }, [collection, selectionManager, selectionState, selectionState.focusedKey]);
-
-  return {
-    collection,
-    disabledKeys,
-    selectionManager
-  };
+  }, [collection, selectionManager]);
 }
