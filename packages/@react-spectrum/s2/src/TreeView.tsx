@@ -35,7 +35,7 @@ import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-u
 import {IconContext} from './Icon';
 import {isAndroid} from '@react-aria/utils';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, forwardRef, isValidElement, JSXElementConstructor, ReactElement, useContext, useMemo, useRef} from 'react';
+import React, {createContext, forwardRef, isValidElement, JSXElementConstructor, ReactElement, useContext, useRef} from 'react';
 import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale} from 'react-aria';
@@ -107,14 +107,12 @@ function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
 
   let domRef = useDOMRef(ref);
 
-  let layout = useMemo(() => {
-    return new ListLayout({
-      rowHeight: isDetached ? 42 : 40
-    });
-  }, [isDetached]);
-
   return (
-    <Virtualizer layout={layout}>
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        rowHeight: isDetached ? 42 : 40
+      }}>
       <TreeRendererContext.Provider value={{renderer}}>
         <InternalTreeContext.Provider value={{isDetached, isEmphasized}}>
           <UNSTABLE_Tree

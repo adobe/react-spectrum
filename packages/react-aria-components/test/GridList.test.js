@@ -393,10 +393,6 @@ describe('GridList', () => {
   });
 
   it('should support virtualizer', async () => {
-    let layout = new ListLayout({
-      rowHeight: 25
-    });
-
     let items = [];
     for (let i = 0; i < 50; i++) {
       items.push({id: i, name: 'Item ' + i});
@@ -406,7 +402,7 @@ describe('GridList', () => {
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
 
     let {getByRole, getAllByRole} = render(
-      <Virtualizer layout={layout}>
+      <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 25}}>
         <GridList aria-label="Test" items={items}>
           {item => <GridListItem>{item.name}</GridListItem>}
         </GridList>
