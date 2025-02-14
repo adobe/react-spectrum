@@ -245,9 +245,8 @@ function TableColumnHeader({column, state}) {
   return (
     <th
       {...mergeProps(columnHeaderProps, focusProps)}
-      colSpan={column.colspan}
       style={{
-        textAlign: column.colspan > 1 ? 'center' : 'left',
+        textAlign: column.colSpan > 1 ? 'center' : 'left',
         padding: '5px 10px',
         outline: 'none',
         boxShadow: isFocusVisible ? 'inset 0 0 0 2px orange' : 'none',
@@ -767,7 +766,7 @@ function AsyncSortTable() {
 
 ### Nested columns
 
-Columns can be nested to create column groups. This will result in more than one header row to be created, with the `colspan`
+Columns can be nested to create column groups. This will result in more than one header row to be created, with the `colSpan`
 attribute of each column header cell set to the appropriate value so that the columns line up. Data for the leaf columns
 appears in each row of the table body.
 

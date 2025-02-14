@@ -27,9 +27,14 @@ export interface GridRow<T> extends Partial<GridNode<T>> {
 
 export interface GridNode<T> extends Node<T> {
   column?: GridNode<T>,
-  /** The number of columns spanned by this cell. */
+  /**
+   * The number of columns spanned by this cell. Use `colSpan` instead.
+   * @deprecated
+   */
   colspan?: number,
-  /** The column index of this cell, accounting for any colspans. */
+  /** The number of columns spanned by this cell.  */
+  colSpan?: number,
+  /** The column index of this cell, accounting for any colSpans. */
   colIndex?: number,
   /** The index of this node within its parent, ignoring sibling nodes that aren't of the same type. */
   indexOfType?: number

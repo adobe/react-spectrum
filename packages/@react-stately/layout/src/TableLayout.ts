@@ -171,10 +171,10 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
   // used to get the column widths when rendering to the DOM
   private getRenderedColumnWidth(node: GridNode<T>) {
     let collection = this.virtualizer!.collection as TableCollection<T>;
-    let colspan = node.colspan ?? 1;
+    let colSpan = node.colSpan ?? 1;
     let colIndex = node.colIndex ?? node.index;
     let width = 0;
-    for (let i = colIndex; i < colIndex + colspan; i++) {
+    for (let i = colIndex; i < colIndex + colSpan; i++) {
       let column = collection.columns[i];
       if (column?.key != null) {
         width += this.columnWidths.get(column.key) ?? 0;
