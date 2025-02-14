@@ -41,7 +41,7 @@ export interface CheckboxProps extends Omit<AriaCheckboxProps, 'className' | 'st
   children?: ReactNode
 }
 
-export const CheckboxContext = createContext<ContextValue<CheckboxProps, FocusableRefValue<HTMLLabelElement>>>(null);
+export const CheckboxContext = createContext<ContextValue<Partial<CheckboxProps>, FocusableRefValue<HTMLLabelElement>>>(null);
 
 const wrapper = style({
   display: 'flex',

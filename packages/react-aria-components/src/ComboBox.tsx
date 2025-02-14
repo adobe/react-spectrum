@@ -126,7 +126,9 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
   let inputRef = useRef<HTMLInputElement>(null);
   let listBoxRef = useRef<HTMLDivElement>(null);
   let popoverRef = useRef<HTMLDivElement>(null);
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let {
     buttonProps,
     inputProps,

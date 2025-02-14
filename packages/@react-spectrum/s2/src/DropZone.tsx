@@ -26,7 +26,7 @@ export interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'sty
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
   /** The content to display in the drop zone. */
-  children?: ReactNode,
+  children: ReactNode,
   /** Whether the drop zone has been filled. */
   isFilled?: boolean,
   /** The message to replace the default banner message that is shown when the drop zone is filled. */
@@ -39,7 +39,7 @@ export interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'sty
     size?: 'S' | 'M' | 'L'
 }
 
-export const DropZoneContext = createContext<ContextValue<DropZoneProps, DOMRefValue<HTMLDivElement>>>(null);
+export const DropZoneContext = createContext<ContextValue<Partial<DropZoneProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const dropzone = style<DropZoneRenderProps>({
   display: 'flex',

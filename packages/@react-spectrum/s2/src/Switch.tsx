@@ -45,7 +45,7 @@ export interface SwitchProps extends Omit<AriaSwitchProps, 'className' | 'style'
   children?: ReactNode
 }
 
-export const SwitchContext = createContext<ContextValue<SwitchProps, FocusableRefValue<HTMLLabelElement>>>(null);
+export const SwitchContext = createContext<ContextValue<Partial<SwitchProps>, FocusableRefValue<HTMLLabelElement>>>(null);
 
 const wrapper = style({
   display: 'flex',

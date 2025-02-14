@@ -11,16 +11,15 @@
  */
 
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from '@internationalized/date';
-import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Heading} from '@react-spectrum/text';
 import {LabeledValue} from '..';
+import {Link} from '@react-spectrum/link';
+import {Meta} from '@storybook/react';
 import React from 'react';
 
-type LabeledValueStory = ComponentStoryObj<typeof LabeledValue>;
-
-export default {
+const meta: Meta<typeof LabeledValue> = {
   title: 'LabeledValue',
   component: LabeledValue,
   argTypes: {
@@ -43,84 +42,95 @@ export default {
       }
     }
   }
-} as ComponentMeta<typeof LabeledValue>;
+};
+ 
+export default meta;
 
-export let Default: LabeledValueStory = {
+export let Default = {
   args: {label: 'Test', value: 'foo '.repeat(20)},
   name: 'String'
 };
 
-export let StringArray: LabeledValueStory = {
+export let StringArray = {
   args: {label: 'Test', value: ['wow', 'cool', 'awesome']},
   name: 'String array'
 };
 
-export let CalendarDateType: LabeledValueStory = {
+export let CalendarDateType = {
   args: {label: 'Test', value: new CalendarDate(2019, 6, 5)},
   name: 'CalendarDate'
 };
 
-export let CalendarDateTimeType: LabeledValueStory = {
+export let CalendarDateTimeType = {
   args: {label: 'Test', value: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120)},
   name: 'CalendarDateTime'
 };
 
-export let CalendarDateTimeTypeFormatOptions: LabeledValueStory = {
+export let CalendarDateTimeTypeFormatOptions = {
   args: {label: 'Test', value: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), formatOptions: {dateStyle: 'short', timeStyle: 'short'}},
   name: 'CalendarDateTime with formatOptions'
 };
 
-export let ZonedDateTimeType: LabeledValueStory = {
+export let ZonedDateTimeType = {
   args: {label: 'Test', value: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000)},
   name: 'ZonedDateTime'
 };
 
-export let DateType: LabeledValueStory = {
+export let DateType = {
   args: {label: 'Test', value: new Date(2000, 5, 5)},
   name: 'Date'
 };
 
-export let TimeType: LabeledValueStory = {
+export let TimeType = {
   args: {label: 'Test', value: new Time(9, 45)},
   name: 'Time'
 };
 
-export let CalendarDateRange: LabeledValueStory = {
+export let CalendarDateRange = {
   args: {label: 'Test', value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 7, 5)}},
   name: 'RangeValue<CalendarDate>'
 };
 
-export let CalendarDateTimeRange: LabeledValueStory = {
+export let CalendarDateTimeRange = {
   args: {label: 'Test', value: {start: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), end: new CalendarDateTime(2020, 3, 3, 12, 23, 24, 120)}},
   name: 'RangeValue<CalendarDateTime>'
 };
 
-export let ZonedDateTimeRange: LabeledValueStory = {
+export let ZonedDateTimeRange = {
   args: {label: 'Test', value: {start: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000), end: new ZonedDateTime(2020, 3, 3, 'America/Los_Angeles', -28800000)}},
   name: 'RangeValue<ZonedDateTime>'
 };
 
-export let DateRange: LabeledValueStory = {
+export let DateRange = {
   args: {label: 'Test', value: {start: new Date(2019, 6, 5), end: new Date(2019, 6, 10)}},
   name: 'RangeValue<Date>'
 };
 
-export let TimeRange: LabeledValueStory = {
+export let TimeRange = {
   args: {label: 'Test', value: {start: new Time(9, 45), end: new Time(10, 50)}},
   name: 'RangeValue<Time>'
 };
 
-export let Number: LabeledValueStory = {
+export let Number = {
   args: {label: 'Test', value: 10},
   name: 'Number'
 };
 
-export let NumberRange: LabeledValueStory = {
+export let NumberRange = {
   args: {label: 'Test', value: {start: 10, end: 20}},
   name: 'RangeValue<Number>'
 };
 
-export let WithContextualHelp: LabeledValueStory = {
+
+export let CustomComponent = {
+  args: {
+    label: 'Test',
+    value: <Link href="https://www.adobe.com">Adobe</Link>
+  },
+  name: 'Custom component'
+};
+
+export let WithContextualHelp = {
   args: {
     label: 'Test',
     value: 25,

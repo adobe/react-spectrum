@@ -111,6 +111,16 @@ By default, the list is displayed as a conjunction (an "and"-based grouping of i
 <LabeledValue label="Interests" value={['Travel', 'Hiking', 'Snorkeling', 'Camping']} formatOptions={{type: 'unit'}} />
 ```
 
+### Components
+
+The value can be a component and will be rendered as provided. Components cannot be editable.
+
+```tsx example
+import {Link} from '@adobe/react-spectrum';
+
+<LabeledValue label="Website" value={<Link href="https://www.adobe.com/">Adobe.com</Link>} />
+```
+
 ## Labeling
 
 A visual label must be provided to the `LabeledValue` using the `label` prop.

@@ -61,7 +61,9 @@ export const TextField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let inputRef = useRef(null);
   let [inputContextProps, mergedInputRef] = useContextProps({}, inputRef, InputContext);
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let [inputElementType, setInputElementType] = useState('input');
   let {labelProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useTextField<any>({
     ...removeDataAttributes(props),

@@ -54,14 +54,15 @@ export function useId(defaultId?: string): string {
     };
   }, [res]);
 
-  // This cannot cause an infinite loop because the ref is updated first.
+  // This cannot cause an infinite loop because the ref is always cleaned up.
   // eslint-disable-next-line
   useEffect(() => {
     let newId = nextId.current;
-    if (newId) {
-      nextId.current = null;
-      setValue(newId);
-    }
+    if (newId) { setValue(newId); }
+
+    return () => {
+      if (newId) { nextId.current = null; }
+    };
   });
 
   return res;

@@ -31,8 +31,8 @@ export interface IllustrationContextValue extends IconContextValue {
   size?: 'S' | 'M' | 'L'
 }
 
-export const IconContext = createContext<ContextValue<IconContextValue, SVGElement>>({});
-export const IllustrationContext = createContext<ContextValue<IllustrationContextValue, SVGElement>>({});
+export const IconContext = createContext<ContextValue<Partial<IconContextValue>, SVGElement>>({});
+export const IllustrationContext = createContext<ContextValue<Partial<IllustrationContextValue>, SVGElement>>({});
 
 export function createIcon(Component: ComponentType<SVGProps<SVGSVGElement>>, context: Context<ContextValue<IconContextValue, SVGElement>> = IconContext): FunctionComponent<IconProps> {
   return (props: IconProps) => {

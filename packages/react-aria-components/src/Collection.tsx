@@ -19,7 +19,7 @@ export interface CollectionProps<T> extends Omit<CollectionBase<T>, 'children'> 
   /** The contents of the collection. */
   children?: ReactNode | ((item: T) => ReactNode),
   /** Values that should invalidate the item cache when using dynamic collections. */
-  dependencies?: any[]
+  dependencies?: ReadonlyArray<any>
 }
 
 export interface ItemRenderProps {
@@ -89,7 +89,7 @@ export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' 
   /** Static child items or a function to render children. */
   children?: ReactNode | ((item: T) => ReactElement),
   /** Values that should invalidate the item cache when using dynamic collections. */
-  dependencies?: any[]
+  dependencies?: ReadonlyArray<any>
 }
 
 interface SectionContextValue {

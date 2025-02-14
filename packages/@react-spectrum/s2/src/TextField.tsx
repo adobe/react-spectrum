@@ -41,7 +41,7 @@ export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'c
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 
-export const TextFieldContext = createContext<ContextValue<TextFieldProps, TextFieldRef>>(null);
+export const TextFieldContext = createContext<ContextValue<Partial<TextFieldProps>, TextFieldRef>>(null);
 
 /**
  * TextFields are text inputs that allow users to input custom text entries
@@ -61,7 +61,7 @@ export const TextField = forwardRef(function TextField(props: TextFieldProps, re
 
 export interface TextAreaProps extends Omit<TextFieldProps, 'type' | 'pattern'> {}
 
-export const TextAreaContext = createContext<ContextValue<TextAreaProps, TextFieldRef<HTMLTextAreaElement>>>(null);
+export const TextAreaContext = createContext<ContextValue<Partial<TextAreaProps>, TextFieldRef<HTMLTextAreaElement>>>(null);
 
 /**
  * TextAreas are multiline text inputs, useful for cases where users have

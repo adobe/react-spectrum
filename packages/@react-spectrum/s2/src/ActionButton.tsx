@@ -54,7 +54,7 @@ interface ActionGroupItemStyleProps {
 
 export interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'isPending'>, StyleProps, ActionButtonStyleProps {
   /** The content to display in the ActionButton. */
-  children?: ReactNode
+  children: ReactNode
 }
 
 // These styles handle both ActionButton and ToggleButton
@@ -228,7 +228,7 @@ const avatarSize = {
   X: 26
 } as const;
 
-export const ActionButtonContext = createContext<ContextValue<ActionButtonProps, FocusableRefValue<HTMLButtonElement>>>(null);
+export const ActionButtonContext = createContext<ContextValue<Partial<ActionButtonProps>, FocusableRefValue<HTMLButtonElement>>>(null);
 
 /**
  * ActionButtons allow users to perform an action.

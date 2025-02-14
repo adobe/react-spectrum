@@ -55,7 +55,9 @@ export const Slider = /*#__PURE__*/ (forwardRef as forwardRefType)(function Slid
   let trackRef = useRef<HTMLDivElement>(null);
   let numberFormatter = useNumberFormatter(props.formatOptions);
   let state = useSliderState({...props, numberFormatter});
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let {
     groupProps,
     trackProps,
@@ -221,7 +223,9 @@ export const SliderThumb = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   let {index = 0} = props;
   let defaultInputRef = useRef<HTMLInputElement>(null);
   let inputRef = userInputRef || defaultInputRef;
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let {thumbProps, inputProps, labelProps, isDragging, isFocused, isDisabled} = useSliderThumb({
     ...props,
     index,

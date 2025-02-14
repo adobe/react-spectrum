@@ -75,7 +75,9 @@ interface TagGroupInnerProps {
 
 function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProps) {
   let tagListRef = useRef<HTMLDivElement>(null);
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let state = useListState({
     ...props,
     children: undefined,

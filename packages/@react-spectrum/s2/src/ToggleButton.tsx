@@ -28,12 +28,12 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ToggleButtonProps extends Omit<RACToggleButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, StyleProps, ActionButtonStyleProps {
   /** The content to display in the button. */
-  children?: ReactNode,
+  children: ReactNode,
   /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
   isEmphasized?: boolean
 }
 
-export const ToggleButtonContext = createContext<ContextValue<ToggleButtonProps, FocusableRefValue<HTMLButtonElement>>>(null);
+export const ToggleButtonContext = createContext<ContextValue<Partial<ToggleButtonProps>, FocusableRefValue<HTMLButtonElement>>>(null);
 
 /**
  * ToggleButtons allow users to toggle a selection on or off, for example

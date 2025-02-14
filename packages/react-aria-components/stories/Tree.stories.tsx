@@ -57,15 +57,15 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
         hovered: isHovered
       })}>
       <UNSTABLE_TreeItemContent>
-        {({isExpanded, hasChildRows, level, selectionMode, selectionBehavior}) => (
+        {({isExpanded, hasChildItems, level, selectionMode, selectionBehavior}) => (
           <>
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               <MyCheckbox slot="selection" />
             )}
             <div
               className={classNames(styles, 'content-wrapper')}
-              style={{marginInlineStart: `${(!hasChildRows ? 20 : 0) + (level - 1) * 15}px`}}>
-              {hasChildRows && <Button className={styles.chevron} slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
+              style={{marginInlineStart: `${(!hasChildItems ? 20 : 0) + (level - 1) * 15}px`}}>
+              {hasChildItems && <Button className={styles.chevron} slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
               <Text className={styles.title}>{props.title || props.children}</Text>
               <Button className={styles.button} aria-label="Info" onPress={action('Info press')}>ⓘ</Button>
               <MenuTrigger>
@@ -230,13 +230,13 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
           hovered: isHovered
         })}>
         <UNSTABLE_TreeItemContent>
-          {({isExpanded, hasChildRows, level, selectionBehavior, selectionMode}) => (
+          {({isExpanded, hasChildItems, level, selectionBehavior, selectionMode}) => (
             <>
               {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
                 <MyCheckbox slot="selection" />
               )}
-              <div className={styles['content-wrapper']} style={{marginInlineStart: `${(!hasChildRows ? 20 : 0) + (level - 1) * 15}px`}}>
-                {hasChildRows && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
+              <div className={styles['content-wrapper']} style={{marginInlineStart: `${(!hasChildItems ? 20 : 0) + (level - 1) * 15}px`}}>
+                {hasChildItems && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
                 <Text>{props.children}</Text>
                 <Button className={styles.button} aria-label="Info" onPress={action('Info press')}>ⓘ</Button>
                 <MenuTrigger>
@@ -429,13 +429,13 @@ const DynamicTreeItemWithButtonLoader = (props: DynamicTreeItemProps) => {
           hovered: isHovered
         })}>
         <UNSTABLE_TreeItemContent>
-          {({isExpanded, hasChildRows, level, selectionBehavior, selectionMode}) => (
+          {({isExpanded, hasChildItems, level, selectionBehavior, selectionMode}) => (
             <>
               {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
                 <MyCheckbox slot="selection" />
               )}
-              <div className={styles['content-wrapper']} style={{marginInlineStart: `${(!hasChildRows ? 20 : 0) + (level - 1) * 15}px`}}>
-                {hasChildRows && <ExpandButton isLoading={isLoading && renderLoader && renderLoader(props.id)} isExpanded={isExpanded} />}
+              <div className={styles['content-wrapper']} style={{marginInlineStart: `${(!hasChildItems ? 20 : 0) + (level - 1) * 15}px`}}>
+                {hasChildItems && <ExpandButton isLoading={isLoading && renderLoader && renderLoader(props.id)} isExpanded={isExpanded} />}
                 <Text>{props.children}</Text>
                 <Button className={styles.button} aria-label="Info" onPress={action('Info press')}>ⓘ</Button>
                 <MenuTrigger>

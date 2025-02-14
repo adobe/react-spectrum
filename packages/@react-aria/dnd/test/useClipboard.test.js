@@ -363,5 +363,42 @@ describe('useClipboard', () => {
       expect(await onPaste.mock.calls[0][0][1].getText('test')).toBe('item 2');
       expect(await onPaste.mock.calls[0][0][1].getText('text/plain')).toBe('item 2');
     });
+
+    it('should show the type of the clipboard event if cutting', async () => {
+      let getItems = (details) => [{
+        [details.type]: 'test data'
+      }];
+
+      let onCut = jest.fn();
+      let tree = render(<Copyable getItems={getItems} onCut={onCut} />);
+      let button = tree.getByRole('button');
+
+      await user.tab();
+      expect(document.activeElement).toBe(button);
+
+      let clipboardData = new DataTransfer();
+      fireEvent(button, new ClipboardEvent('cut', {clipboardData}));
+      expect([...clipboardData.items]).toEqual([new DataTransferItem('cut', 'test data')]);
+      expect(onCut).toHaveBeenCalledTimes(1);
+    });
+
+    it('should show the type of the clipboard event if copying', async () => {
+      let getItems = (details) => [{
+        [details.type]: 'test data'
+      }];
+
+      let onCopy = jest.fn();
+      let tree = render(<Copyable getItems={getItems} onCopy={onCopy} />);
+      let button = tree.getByRole('button');
+
+      await user.tab();
+      expect(document.activeElement).toBe(button);
+
+      let clipboardData = new DataTransfer();
+      fireEvent(button, new ClipboardEvent('copy', {clipboardData}));
+      expect([...clipboardData.items]).toEqual([new DataTransferItem('copy', 'test data')]);
+      expect(onCopy).toHaveBeenCalledTimes(1);
+    });
   });
 });
+

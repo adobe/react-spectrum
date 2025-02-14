@@ -57,7 +57,7 @@ interface ButtonGroupContextValue extends Partial<ButtonGroupProps> {
   isHidden?: boolean
 }
 
-export const ButtonGroupContext = createContext<ContextValue<ButtonGroupContextValue, DOMRefValue<HTMLDivElement>>>({});
+export const ButtonGroupContext = createContext<ContextValue<Partial<ButtonGroupContextValue>, DOMRefValue<HTMLDivElement>>>({});
 
 const buttongroup = style<ButtonGroupStyleProps>({
   display: 'inline-flex',

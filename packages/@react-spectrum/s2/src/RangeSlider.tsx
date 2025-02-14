@@ -37,7 +37,7 @@ export interface RangeSliderProps extends Omit<SliderBaseProps<RangeValue<number
   endName?: string
 }
 
-export const RangeSliderContext = createContext<ContextValue<RangeSliderProps, FocusableRefValue<HTMLDivElement>>>(null);
+export const RangeSliderContext = createContext<ContextValue<Partial<RangeSliderProps>, FocusableRefValue<HTMLDivElement>>>(null);
 
 export const RangeSlider = /*#__PURE__*/ forwardRef(function RangeSlider(props: RangeSliderProps, ref: FocusableRef<HTMLDivElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');

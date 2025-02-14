@@ -52,7 +52,7 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 // Get types from RSP and extend those?
 export interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'className'> {
   /** The children of the tag. */
-  children?: ReactNode
+  children: ReactNode
 }
 
 export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | 'style' | 'className'>, Pick<TagListProps<T>, 'items' | 'children' | 'renderEmptyState'>, Omit<SpectrumLabelableProps, 'isRequired' | 'necessityIndicator'>, StyleProps, Omit<HelpTextProps, 'errorMessage'> {
@@ -80,7 +80,7 @@ export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | '
   onGroupAction?: () => void
 }
 
-export const TagGroupContext = createContext<ContextValue<TagGroupProps<any>, DOMRefValue<HTMLDivElement>>>(null);
+export const TagGroupContext = createContext<ContextValue<Partial<TagGroupProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
 const helpTextStyles = style({
   gridArea: 'helptext',

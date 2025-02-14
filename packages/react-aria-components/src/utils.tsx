@@ -160,15 +160,12 @@ export function useSlottedContext<T>(context: Context<SlottedContextValue<T>>, s
     return null;
   }
   if (ctx && typeof ctx === 'object' && 'slots' in ctx && ctx.slots) {
-    let availableSlots = new Intl.ListFormat().format(Object.keys(ctx.slots).map(p => `"${p}"`));
-
-    if (!slot && !ctx.slots[DEFAULT_SLOT]) {
-      throw new Error(`A slot prop is required. Valid slot names are ${availableSlots}.`);
-    }
     let slotKey = slot || DEFAULT_SLOT;
     if (!ctx.slots[slotKey]) {
-      // @ts-ignore
-      throw new Error(`Invalid slot "${slot}". Valid slot names are ${availableSlots}.`);
+      let availableSlots = new Intl.ListFormat().format(Object.keys(ctx.slots).map(p => `"${p}"`));
+      let errorMessage = slot ? `Invalid slot "${slot}".` : 'A slot prop is required.';
+
+      throw new Error(`${errorMessage} Valid slot names are ${availableSlots}.`);
     }
     return ctx.slots[slotKey];
   }
@@ -209,9 +206,10 @@ export function useContextProps<T, U extends SlotProps, E extends Element>(props
   return [mergedProps, mergedRef];
 }
 
-export function useSlot(): [RefCallback<Element>, boolean] {
-  // Assume we do have the slot in the initial render.
-  let [hasSlot, setHasSlot] = useState(true);
+export function useSlot(initialState: boolean | (() => boolean) = true): [RefCallback<Element>, boolean] {
+  // Initial state is typically based on the parent having an aria-label or aria-labelledby.
+  // If it does, this value should be false so that we don't update the state and cause a rerender when we go through the layoutEffect
+  let [hasSlot, setHasSlot] = useState(initialState);
   let hasRun = useRef(false);
 
   // A callback ref which will run when the slotted element mounts.

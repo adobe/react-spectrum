@@ -53,7 +53,7 @@ export interface MeterProps extends Omit<AriaMeterProps, 'children' | 'className
   label?: ReactNode
 }
 
-export const MeterContext = createContext<ContextValue<MeterProps, DOMRefValue<HTMLDivElement>>>(null);
+export const MeterContext = createContext<ContextValue<Partial<MeterProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const wrapper = style({
   ...bar()

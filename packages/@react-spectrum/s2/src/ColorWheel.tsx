@@ -31,7 +31,7 @@ export interface ColorWheelProps extends Omit<AriaColorWheelProps, 'children' | 
   size?: number
 }
 
-export const ColorWheelContext = createContext<ContextValue<ColorWheelProps, DOMRefValue<HTMLDivElement>>>(null);
+export const ColorWheelContext = createContext<ContextValue<Partial<ColorWheelProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 /**
  * A ColorWheel allows users to adjust the hue of an HSL or HSB color value on a circular track.

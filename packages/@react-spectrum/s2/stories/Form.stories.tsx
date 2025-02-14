@@ -67,6 +67,12 @@ export const Example = (args: any) => (
     <TextField label="First Name" name="firstName" />
     <TextField label="Last Name" name="firstName" />
     <TextField label="Email" name="email" type="email" description="Enter an email" />
+    <Picker label="Country" name="country">
+      <PickerItem id="canada">Canada</PickerItem>
+      <PickerItem id="united-states">United States</PickerItem>
+      <PickerItem id="mexico">Mexico</PickerItem>
+      <PickerItem id="argentina">Argentina</PickerItem>
+    </Picker>
     <CheckboxGroup label="Favorite sports">
       <Checkbox value="soccer">Soccer</Checkbox>
       <Checkbox value="baseball">Baseball</Checkbox>

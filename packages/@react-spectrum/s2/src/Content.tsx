@@ -21,7 +21,7 @@ import {useIsSkeleton, useSkeletonText} from './Skeleton';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface ContentProps extends UnsafeStyles, SlotProps {
-  children?: ReactNode,
+  children: ReactNode,
   styles?: StyleString,
   isHidden?: boolean,
   id?: string
@@ -31,7 +31,7 @@ interface HeadingProps extends ContentProps {
   level?: number
 }
 
-export const HeadingContext = createContext<ContextValue<HeadingProps, DOMRefValue<HTMLHeadingElement>>>(null);
+export const HeadingContext = createContext<ContextValue<Partial<HeadingProps>, DOMRefValue<HTMLHeadingElement>>>(null);
 
 export const Heading = forwardRef(// Wrapper around RAC Heading to unmount when hidden.
 function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
@@ -52,7 +52,7 @@ function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
   );
 });
 
-export const HeaderContext = createContext<ContextValue<ContentProps, DOMRefValue<HTMLElement>>>(null);
+export const HeaderContext = createContext<ContextValue<Partial<ContentProps>, DOMRefValue<HTMLElement>>>(null);
 
 export const Header = forwardRef(function Header(props: ContentProps, ref: DOMRef) {
   [props, ref] = useSpectrumContextProps(props, ref, HeaderContext);
@@ -72,7 +72,7 @@ export const Header = forwardRef(function Header(props: ContentProps, ref: DOMRe
   );
 });
 
-export const ContentContext = createContext<ContextValue<ContentProps, DOMRefValue<HTMLDivElement>>>(null);
+export const ContentContext = createContext<ContextValue<Partial<ContentProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 export const Content = forwardRef(function Content(props: ContentProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ContentContext);
@@ -91,7 +91,7 @@ export const Content = forwardRef(function Content(props: ContentProps, ref: DOM
   );
 });
 
-export const TextContext = createContext<ContextValue<ContentProps, DOMRefValue>>(null);
+export const TextContext = createContext<ContextValue<Partial<ContentProps>, DOMRefValue>>(null);
 
 export const Text = forwardRef(function Text(props: ContentProps, ref: DOMRef) {
   [props, ref] = useSpectrumContextProps(props, ref, TextContext);
@@ -125,7 +125,7 @@ export const Text = forwardRef(function Text(props: ContentProps, ref: DOMRef) {
   return text;
 });
 
-export const KeyboardContext = createContext<ContextValue<ContentProps, DOMRefValue>>({});
+export const KeyboardContext = createContext<ContextValue<Partial<ContentProps>, DOMRefValue>>({});
 
 export const Keyboard = forwardRef(function Keyboard(props: ContentProps, ref: DOMRef) {
   [props, ref] = useSpectrumContextProps(props, ref, KeyboardContext);
@@ -144,7 +144,7 @@ export const Keyboard = forwardRef(function Keyboard(props: ContentProps, ref: D
   );
 });
 
-export const FooterContext = createContext<ContextValue<ContentProps, DOMRefValue>>({});
+export const FooterContext = createContext<ContextValue<Partial<ContentProps>, DOMRefValue>>({});
 
 export const Footer = forwardRef(function Footer(props: ContentProps, ref: DOMRef) {
   [props, ref] = useSpectrumContextProps(props, ref, FooterContext);
