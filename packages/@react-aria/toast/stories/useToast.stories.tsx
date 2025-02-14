@@ -16,7 +16,14 @@ import {ToastContainer} from './Example';
 export default {
   title: 'useToast',
   args: {
-    maxVisibleToasts: 1
+    maxVisibleToasts: 1,
+    timeout: null
+  },
+  argTypes: {
+    timeout: {
+      control: 'radio',
+      options: [null, 5000]
+    }
   }
 };
 
@@ -25,9 +32,9 @@ let count = 0;
 export const Default = args => (
   <ToastContainer {...args}>
     {state => (<>
-      <button onClick={() => state.add('High ' + ++count, {priority: 10})}>Add high priority toast</button>
-      <button onClick={() => state.add('Medium ' + ++count, {priority: 5})}>Add medium priority toast</button>
-      <button onClick={() => state.add('Low ' + ++count, {priority: 1})}>Add low priority toast</button>
+      <button onClick={() => state.add('High ' + ++count, {priority: 10, timeout: args.timeout})}>Add high priority toast</button>
+      <button onClick={() => state.add('Medium ' + ++count, {priority: 5, timeout: args.timeout})}>Add medium priority toast</button>
+      <button onClick={() => state.add('Low ' + ++count, {priority: 1, timeout: args.timeout})}>Add low priority toast</button>
     </>)}
   </ToastContainer>
 );
