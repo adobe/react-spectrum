@@ -11,7 +11,7 @@
  */
 
 import {DOMAttributes, FocusableElement} from '@react-types/shared';
-import {isFocusable, mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
+import {getOwnerWindow, isFocusable, mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {PressProps, usePress} from './usePress';
 import React, {ForwardedRef, ReactElement, useEffect} from 'react';
 import {useFocusable} from './useFocusable';
@@ -28,7 +28,7 @@ export const Pressable = React.forwardRef(({children, ...props}: PressableProps,
 
   useEffect(() => {
     let el = ref.current;
-    if (!el || !(el instanceof Element)) {
+    if (!el || !(el instanceof getOwnerWindow(el).Element)) {
       console.error('<Pressable> child must forward its ref to a DOM element.');
       return;
     }

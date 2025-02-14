@@ -12,7 +12,7 @@
 
 import {DOMAttributes, FocusableDOMProps, FocusableElement, FocusableProps, RefObject} from '@react-types/shared';
 import {focusSafely} from './';
-import {isFocusable, mergeProps, mergeRefs, useObjectRef, useSyncRef} from '@react-aria/utils';
+import {getOwnerWindow, isFocusable, mergeProps, mergeRefs, useObjectRef, useSyncRef} from '@react-aria/utils';
 import React, {ForwardedRef, forwardRef, MutableRefObject, ReactElement, ReactNode, useContext, useEffect, useRef} from 'react';
 import {useFocus} from './useFocus';
 import {useKeyboard} from './useKeyboard';
@@ -111,7 +111,7 @@ export const Focusable = forwardRef(({children, ...props}: FocusableComponentPro
 
   useEffect(() => {
     let el = ref.current;
-    if (!el || !(el instanceof Element)) {
+    if (!el || !(el instanceof getOwnerWindow(el).Element)) {
       console.error('<Focusable> child must forward its ref to a DOM element.');
       return;
     }

@@ -208,7 +208,7 @@ describe('Tooltip', () => {
     });
   });
 
-  it('should support custom Focusable trigger on hover', async () => {
+  it('should support custom Focusable trigger on focus', async () => {
     let {getByRole} = render(
       <TooltipTrigger>
         <Focusable>
@@ -228,7 +228,7 @@ describe('Tooltip', () => {
     expect(tooltip).toBeInTheDocument();
   });
 
-  it('should support custom Focusable trigger on focus', async () => {
+  it('should support custom Focusable trigger on hover', async () => {
     let {getByRole} = render(
       <TooltipTrigger>
         <Focusable>
