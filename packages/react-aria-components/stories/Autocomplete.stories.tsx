@@ -771,6 +771,53 @@ export function AutocompleteWithExtraButtons() {
   );
 }
 
+export const AutocompleteMenuInPopoverDialogTrigger = {
+  render: (args) => {
+    let {onAction, onSelectionChange, selectionMode} = args;
+    return (
+      <DialogTrigger>
+        <Button>
+          Open popover
+        </Button>
+        <Popover
+          placement="bottom start"
+          style={{
+            background: 'Canvas',
+            color: 'CanvasText',
+            border: '1px solid gray',
+            padding: 20,
+            height: 250
+          }}>
+          <Dialog aria-label="dialog with autocomplete">
+            {() => (
+              <AutocompleteWrapper>
+                <div>
+                  <SearchField autoFocus>
+                    <Label style={{display: 'block'}}>Test</Label>
+                    <Input />
+                    <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+                  </SearchField>
+                  <Menu className={styles.menu} items={dynamicAutocompleteSubdialog}  onAction={onAction} onSelectionChange={onSelectionChange} selectionMode={selectionMode}>
+                    {item => dynamicRenderFuncSections(item)}
+                  </Menu>
+                </div>
+              </AutocompleteWrapper>
+            )}
+          </Dialog>
+        </Popover>
+      </DialogTrigger>
+    );
+  },
+  name: 'Autocomplete in popover (dialog trigger), rendering dynamic autocomplete menu',
+  argTypes: {
+    selectionMode: {
+      table: {
+        disable: true
+      }
+    }
+  }
+};
+
 let manyItems = [...Array(100)].map((_, i) => ({id: i, name: `Item ${i}`}));
 
 export const AutocompleteSelect = () => (

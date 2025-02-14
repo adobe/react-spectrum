@@ -6102,7 +6102,6 @@ __metadata:
   resolution: "@react-aria/dialog@workspace:packages/@react-aria/dialog"
   dependencies:
     "@react-aria/focus": "npm:^3.19.1"
-    "@react-aria/interactions": "npm:^3.22.5"
     "@react-aria/overlays": "npm:^3.25.0"
     "@react-aria/utils": "npm:^3.27.0"
     "@react-types/dialog": "npm:^3.5.15"
@@ -6247,7 +6246,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/interactions@npm:^3.1.0, @react-aria/interactions@npm:^3.22.5, @react-aria/interactions@npm:^3.23.0, @react-aria/interactions@workspace:packages/@react-aria/interactions":
+"@react-aria/interactions@npm:^3.1.0, @react-aria/interactions@npm:^3.23.0, @react-aria/interactions@workspace:packages/@react-aria/interactions":
   version: 0.0.0-use.local
   resolution: "@react-aria/interactions@workspace:packages/@react-aria/interactions"
   dependencies:
