@@ -140,9 +140,12 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
         }
 
         let key = skeleton ? `${skeleton.key}-${skeletonCount++}` : node.key;
-        let content = skeleton ? {...skeleton, key} : node;
-        let x = horizontalSpacing + col * (itemWidth + horizontalSpacing);
         let oldLayoutInfo = this.layoutInfos.get(key);
+        let content = node;
+        if (skeleton) {
+          content = oldLayoutInfo && oldLayoutInfo.content.key === key ? oldLayoutInfo.content : {...skeleton, key};
+        }
+        let x = horizontalSpacing + col * (itemWidth + horizontalSpacing);
         let height = itemHeight;
         let estimatedSize = !preserveAspectRatio;
         if (oldLayoutInfo && estimatedSize) {
