@@ -102,6 +102,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
     switch (e.key) {
       case 'ArrowLeft':
         if (direction === 'ltr' && e.currentTarget.contains(e.target as Element)) {
+          e.preventDefault();
           e.stopPropagation();
           onSubmenuClose();
           if (!shouldUseVirtualFocus && ref.current) {
@@ -111,6 +112,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
         break;
       case 'ArrowRight':
         if (direction === 'rtl' && e.currentTarget.contains(e.target as Element)) {
+          e.preventDefault();
           e.stopPropagation();
           onSubmenuClose();
           if (!shouldUseVirtualFocus && ref.current) {
@@ -147,6 +149,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
       case 'ArrowRight':
         if (!isDisabled) {
           if (direction === 'ltr') {
+            e.preventDefault();
             if (!state.isOpen) {
               onSubmenuOpen('first');
             }
@@ -165,6 +168,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
       case 'ArrowLeft':
         if (!isDisabled) {
           if (direction === 'rtl') {
+            e.preventDefault();
             if (!state.isOpen) {
               onSubmenuOpen('first');
             }

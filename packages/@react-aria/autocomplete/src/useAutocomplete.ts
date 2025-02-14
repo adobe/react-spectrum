@@ -225,24 +225,6 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
         collectionRef.current?.dispatchEvent(focusCollection);
         break;
       }
-      case 'ArrowLeft':
-      case 'ArrowRight': {
-        // TODO: What about wrapped grids where ArrowLeft and ArrowRight should navigate left/right? Kinda gross that there is menu specific
-        // logic here, would need to do something similar for grid (detect that focused item is a grid item?)
-        let item = focusedNodeId && document.getElementById(focusedNodeId);
-        if (
-          (item && item.hasAttribute('aria-expanded') && !item.hasAttribute('aria-disabled')) &&
-          ((direction === 'ltr' && e.key === 'ArrowRight') || (direction === 'rtl' && e.key === 'ArrowLeft'))) {
-          // Don't move the cursor in the field and don't clear virtual focus if the ArrowLeft/Right would trigger a submenu to be opened
-          // e.preventDefault();
-        } else {
-          // Clear the activedescendant so NVDA announcements aren't interrupted but retain the focused key in the collection so the
-          // user's keyboard navigation restarts from where they left off
-          clearVirtualFocus();
-        }
-
-        break;
-      }
     }
 
     // Emulate the keyboard events that happen in the input field in the wrapped collection. This is for triggering things like onAction via Enter
@@ -253,15 +235,28 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
       e.stopPropagation();
     }
 
+    let shouldPerformDefaultAction = true;
     if (focusedNodeId == null) {
-      collectionRef.current?.dispatchEvent(
+      shouldPerformDefaultAction = collectionRef.current?.dispatchEvent(
         new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
-      );
+      ) || false;
     } else {
       let item = document.getElementById(focusedNodeId);
-      item?.dispatchEvent(
+      shouldPerformDefaultAction = item?.dispatchEvent(
         new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
-      );
+      ) || false;
+    }
+    
+    if (shouldPerformDefaultAction) {
+      switch (e.key) {
+        case 'ArrowLeft':
+        case 'ArrowRight': {
+          // Clear the activedescendant so NVDA announcements aren't interrupted but retain the focused key in the collection so the
+          // user's keyboard navigation restarts from where they left off
+          clearVirtualFocus();
+          break;
+        }
+      }
     }
   };
 
