@@ -1,0 +1,61 @@
+<svg style="background: var(--anatomy-gray-100); padding: 10px; min-height: 152px; box-sizing: border-box" height="173" viewBox="0 0 300 173">
+  <defs>
+    <clipPath id="clip-treeview_anatomy">
+      <rect width="300" height="173"/>
+    </clipPath>
+  </defs>
+  <g id="treeview_anatomy" clip-path="url(#clip-treeview_anatomy)">
+    <rect width="300" height="173" fill="var(--anatomy-gray-100)"/>
+    <g id="Group_156385" data-name="Group 156385" transform="translate(-44.293 -11.295)">
+      <g id="Checkbox" transform="translate(143.293 106.045)">
+        <g id="Placement_Area" data-name="Placement Area" fill="red" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
+          <rect width="21" height="47" stroke="none"/>
+          <rect x="0.5" y="0.5" width="20" height="46" fill="none"/>
+        </g>
+        <g id="Box" transform="translate(0 13)" fill="var(--anatomy-gray-700)" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1">
+          <rect width="21" height="21" rx="2" stroke="none"/>
+          <rect x="0.5" y="0.5" width="20" height="20" rx="1.5" fill="none"/>
+        </g>
+        <g id="Checkmark" transform="translate(3.255 16.276)">
+          <g id="Frame" transform="translate(-0.255 -0.276)" fill="var(--anatomy-gray-600)" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
+            <rect width="14" height="14" stroke="none"/>
+            <rect x="0.5" y="0.5" width="13" height="13" fill="none"/>
+          </g>
+          <path id="Shape" d="M5.275,12.609a1.45,1.45,0,0,1-1.142-.558L.815,7.7A1.45,1.45,0,1,1,3.1,5.918L5.275,8.8l5.689-7.236a1.45,1.45,0,1,1,2.285,1.783l-6.832,8.7A1.45,1.45,0,0,1,5.275,12.609Z" transform="translate(-0.139 0.112)" fill="var(--anatomy-gray-75)"/>
+        </g>
+      </g>
+      <g id="Group_152112" data-name="Group 152112" transform="translate(-36.707 -251.455)">
+        <rect id="Rectangle_140798" data-name="Rectangle 140798" width="194" height="32" transform="translate(134 365)" fill="var(--anatomy-gray-800)" fill-opacity="0.1"/>
+        <text id="Photos" transform="translate(216 339)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="14">Photos</tspan></text>
+        <path id="Path_36603" data-name="Path 36603" d="M2.552,0h188.86c1.41,0,2.552,1.791,2.552,4V28c0,2.209-1.143,4-2.552,4H2.552C1.143,32,0,30.209,0,28V4C0,1.791,1.143,0,2.552,0Z" transform="translate(134 365)" fill="var(--anatomy-gray-100)" opacity="0"/>
+        <text id="PDFs" transform="translate(216 371)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="14">PDFs</tspan></text>
+        <rect id="Rectangle_140795" data-name="Rectangle 140795" width="32" height="32" transform="translate(134 301)" fill="red" opacity="0"/>
+        <g id="Chevron" transform="translate(145 314)">
+          <rect id="Frame-2" data-name="Frame" width="10" height="6" fill="var(--anatomy-gray-700)" opacity="0"/>
+          <path id="Shape-2" data-name="Shape" d="M9.99,1.01A1,1,0,0,0,8.283.3L5,3.586,1.717.3A1,1,0,1,0,.3,1.717L4.293,5.7a1,1,0,0,0,1.414,0L9.7,1.717A1,1,0,0,0,9.99,1.01Z" fill="var(--anatomy-gray-700)"/>
+        </g>
+        <text id="Documents" transform="translate(204 307)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="14">Documents</tspan></text>
+      </g>
+      <g id="Checkbox-2" data-name="Checkbox" transform="translate(143.293 73.545)">
+        <g id="Placement_Area-2" data-name="Placement Area" fill="red" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
+          <rect width="21" height="48" stroke="none"/>
+          <rect x="0.5" y="0.5" width="20" height="47" fill="none"/>
+        </g>
+        <g id="Box-2" data-name="Box" transform="translate(0 13.5)" fill="var(--anatomy-gray-75)" stroke="var(--anatomy-gray-600)" stroke-width="3">
+          <rect width="21" height="21" rx="2" stroke="none"/>
+          <rect x="1.5" y="1.5" width="18" height="18" rx="0.5" fill="none"/>
+        </g>
+      </g>
+      <g id="Checkbox-3" data-name="Checkbox" transform="translate(131.293 42.545)">
+        <g id="Placement_Area-3" data-name="Placement Area" fill="red" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
+          <rect width="21" height="48" stroke="none"/>
+          <rect x="0.5" y="0.5" width="20" height="47" fill="none"/>
+        </g>
+        <g id="Box-3" data-name="Box" transform="translate(0 13.5)" fill="var(--anatomy-gray-75)" stroke="var(--anatomy-gray-600)" stroke-width="3">
+          <rect width="21" height="21" rx="2" stroke="none"/>
+          <rect x="1.5" y="1.5" width="18" height="18" rx="0.5" fill="none"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -31,13 +31,7 @@
         <rect id="Rectangle_140788" data-name="Rectangle 140788" width="1" height="14.424" transform="translate(252.048 147.425) rotate(180)" fill="var(--anatomy-gray-500)"/>
       </g>
     </g>
-    <text id="Collapse_and_expand_button" data-name="Collapse and expand button" transform="translate(373.293 50.822)" fill="var(--anatomy-gray-800)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-70.948" y="0">Collapse and expand button</tspan></text>
-    <g id="Group_156363" data-name="Group 156363" transform="translate(616.579 150.513) rotate(180)">
-      <g id="Group_156364" data-name="Group 156364" transform="translate(242 76.77)">
-        <rect id="Rectangle_140787-2" data-name="Rectangle 140787" width="9.07" height="18.088" transform="translate(9.07 18.088) rotate(180)" fill="red" opacity="0"/>
-        <path id="Union_57" data-name="Union 57" d="M0,0H1V17.035H0Z" transform="translate(5.035 18.198) rotate(180)" fill="var(--anatomy-gray-500)"/>
-      </g>
-    </g>
+    <text id="Collapse_and_expand_button" data-name="Collapse and expand button" transform="translate(393.293 45.545)" fill="var(--anatomy-gray-800)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-70.948" y="0">Collapse and expand button</tspan></text>
     <g id="Group_152112" data-name="Group 152112" transform="translate(243.293 -245.455)">
       <rect id="Rectangle_140798" data-name="Rectangle 140798" width="194" height="32" transform="translate(134 365)" fill="var(--anatomy-gray-800)" fill-opacity="0.1"/>
       <text id="Photos" transform="translate(216 339)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="14">Photos</tspan></text>
@@ -66,10 +60,10 @@
         </g>
       </g>
     </g>
-    <g id="Group_156385" data-name="Group 156385" transform="translate(462.412 -179.68) rotate(90)">
-      <g id="Group_156364-2" data-name="Group 156364" transform="translate(242 76.77)">
-        <rect id="Rectangle_140787-3" data-name="Rectangle 140787" width="20" height="15.265" transform="translate(20 15.265) rotate(180)" fill="red" opacity="0"/>
-        <path id="Union_57-2" data-name="Union 57" d="M0,13.137a2.5,2.5,0,0,1,2-2.45V-.472H3V10.687a2.5,2.5,0,1,1-3,2.45Z" transform="translate(12.499 15.628) rotate(180)" fill="var(--anatomy-gray-500)"/>
+    <g id="Group_156385" data-name="Group 156385" transform="translate(645.293 143.135) rotate(180)">
+      <g id="Group_156364" data-name="Group 156364" transform="translate(242 76.77)">
+        <rect id="Rectangle_140787-2" data-name="Rectangle 140787" width="20" height="15.265" transform="translate(20 15.265) rotate(180)" fill="red" opacity="0"/>
+        <path id="Union_57" data-name="Union 57" d="M0,13.137a2.5,2.5,0,0,1,2-2.45V-.472H3V10.687a2.5,2.5,0,1,1-3,2.45Z" transform="translate(12.499 15.628) rotate(180)" fill="var(--anatomy-gray-500)"/>
       </g>
     </g>
     <g id="Checkbox-2" data-name="Checkbox" transform="translate(423.293 79.545)">
