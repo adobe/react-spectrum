@@ -63,7 +63,7 @@ interface DateFieldBase<T extends DateValue> extends InputBase, Validation<Mappe
   /**
    * Describes the type of autocomplete functionality the input should provide if any. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
    */
-  autoComplete?: string,
+  autoComplete?: string
 }
 
 interface AriaDateFieldBaseProps<T extends DateValue> extends DateFieldBase<T>, AriaLabelingProps, DOMProps {}
