@@ -209,7 +209,7 @@ export const DatePickerAutofill = (props) => (
       <Label>Name</Label>
       <Input name="firstName" type="name" id="name" autoComplete="name" />
     </TextField>
-    <DatePicker data-testid="date-picker-example" name="bday" {...props}>
+    <DatePicker data-testid="date-picker-example" name="bday" autoComplete="bday" {...props}>
       <Label style={{display: 'block'}}>Date</Label>
       <Group style={{display: 'inline-flex'}}>
         <DateInput className={styles.field}>

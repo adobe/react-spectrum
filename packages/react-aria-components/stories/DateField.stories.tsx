@@ -80,6 +80,7 @@ export const DateFieldAutoFill = (props) => (
     <DateField
       {...props}
       name="bday"
+      autoComplete="bday"
       data-testid="date-field-example">
       <Label style={{display: 'block'}}>Date</Label>
       <DateInput className={styles.field} data-testid2="date-input">
