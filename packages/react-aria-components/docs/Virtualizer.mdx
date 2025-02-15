@@ -373,13 +373,25 @@ import {Layout, LayoutInfo, Rect, Size, Key} from 'react-aria-components';
 class HorizontalLayout extends Layout {
   // Determine which items are visible within the given rectangle.
   getVisibleLayoutInfos(rect: Rect): LayoutInfo[] {
-    let keys = Array.from(this.virtualizer!.collection.getKeys());
+    let virtualizer = this.virtualizer!;
+    let keys = Array.from(virtualizer.collection.getKeys());
     let startIndex = Math.max(0, Math.floor(rect.x / 100));
     let endIndex = Math.min(keys.length - 1, Math.ceil(rect.maxX / 100));
     let layoutInfos = [];
     for (let i = startIndex; i <= endIndex; i++) {
       layoutInfos.push(this.getLayoutInfo(keys[i]));
     }
+
+    // Always add persisted keys (e.g. the focused item), even when out of view.
+    for (let key of virtualizer.persistedKeys) {
+      let item = virtualizer.collection.getItem(key);
+      if (item?.index < startIndex) {
+        layoutInfos.unshift(this.getLayoutInfo(key));
+      } else if (item?.index > endIndex) {
+        layoutInfos.push(this.getLayoutInfo(key));
+      }
+    }
+    
     return layoutInfos;
   }
 
@@ -411,7 +423,7 @@ function Example() {
 
   return (
     <Virtualizer layout={layout}>
-      <ListBox aria-label="Favorite animal" items={items} style={{height: 'fit-content'}}>
+      <ListBox aria-label="Favorite animal" items={items} orientation="horizontal" style={{height: 'fit-content'}}>
         {item => <ListBoxItem className="item">{item.name}</ListBoxItem>}
       </ListBox>
     </Virtualizer>
