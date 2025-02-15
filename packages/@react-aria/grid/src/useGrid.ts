@@ -27,6 +27,11 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
   /** Whether the grid uses virtual scrolling. */
   isVirtualized?: boolean,
   /**
+   * Whether typeahead navigation is disabled.
+   * @default false
+   */
+  disallowTypeAhead?: boolean,
+  /**
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
@@ -66,6 +71,7 @@ export interface GridAria {
 export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<T>>, ref: RefObject<HTMLElement | null>): GridAria {
   let {
     isVirtualized,
+    disallowTypeAhead,
     keyboardDelegate,
     focusMode,
     scrollRef,
@@ -99,7 +105,8 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     selectionManager: manager,
     keyboardDelegate: delegate,
     isVirtualized,
-    scrollRef
+    scrollRef,
+    disallowTypeAhead
   });
 
   let id = useId(props.id);
