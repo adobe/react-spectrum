@@ -144,7 +144,7 @@ function ListBoxInner<T extends object>({state, props, listBoxRef}: ListBoxInner
     })
   ), [collection, collator, listBoxRef, disabledBehavior, disabledKeys, orientation, direction, props.keyboardDelegate, layout, layoutDelegate]);
 
-  let {listBoxProps: {id, ...listBoxProps}} = useListBox({
+  let {listBoxProps} = useListBox({
     ...props,
     shouldSelectOnPressUp: isListDraggable || props.shouldSelectOnPressUp,
     keyboardDelegate,
@@ -230,7 +230,7 @@ function ListBoxInner<T extends object>({state, props, listBoxRef}: ListBoxInner
     <FocusScope>
       <div
         {...filterDOMProps(props)}
-        {...mergeProps(listBoxProps, focusProps, droppableCollection?.collectionProps, {id})}
+        {...mergeProps(listBoxProps, focusProps, droppableCollection?.collectionProps)}
         {...renderProps}
         ref={listBoxRef}
         slot={props.slot || undefined}

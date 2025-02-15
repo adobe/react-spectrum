@@ -408,7 +408,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
 
   let {isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate, CollectionRoot} = useContext(CollectionRendererContext);
   let {dragAndDropHooks} = props;
-  let {gridProps: {id, ...gridProps}} = useTable({
+  let {gridProps} = useTable({
     ...props,
     layoutDelegate,
     isVirtualized
@@ -514,7 +514,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
         <ElementType
           {...filterDOMProps(props)}
           {...renderProps}
-          {...mergeProps(gridProps, focusProps, droppableCollection?.collectionProps, {id})}
+          {...mergeProps(gridProps, focusProps, droppableCollection?.collectionProps)}
           style={style}
           ref={ref}
           slot={props.slot || undefined}

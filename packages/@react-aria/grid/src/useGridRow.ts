@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, mergeProps} from '@react-aria/utils';
+import {chain} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
-import {getNodeKey} from '@react-aria/collections';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
@@ -53,7 +52,7 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
     onAction
   } = props;
 
-  let {id, actions} = gridMap.get(state)!;
+  let {actions} = gridMap.get(state)!;
   let onRowAction = actions.onRowAction ? () => actions.onRowAction?.(node.key) : onAction;
   let {itemProps, ...states} = useSelectableItem({
     selectionManager: state.selectionManager,
@@ -67,12 +66,12 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
 
   let isSelected = state.selectionManager.isSelected(node.key);
 
-  let rowProps: DOMAttributes = mergeProps(itemProps, {
+  let rowProps: DOMAttributes = {
     role: 'row',
     'aria-selected': state.selectionManager.selectionMode !== 'none' ? isSelected : undefined,
     'aria-disabled': states.isDisabled || undefined,
-    'data-key': getNodeKey(node.key, id)
-  });
+    ...itemProps
+  };
 
   if (isVirtualized) {
     rowProps['aria-rowindex'] = node.index + 1; // aria-rowindex is 1 based

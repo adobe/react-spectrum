@@ -927,8 +927,9 @@ describe('Table', () => {
 
     for (let item of items) {
       if (item instanceof HTMLElement) {
-        expect(itemMap.has(item.dataset.key)).toBe(false);
-        itemMap.set(item.dataset.key, item);
+        let key = item.dataset.collection + ':' + item.dataset.key;
+        expect(itemMap.has(key)).toBe(false);
+        itemMap.set(key, item);
       }
     }
   });

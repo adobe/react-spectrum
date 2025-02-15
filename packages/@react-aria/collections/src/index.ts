@@ -14,7 +14,6 @@ export {CollectionBuilder, Collection, createLeafComponent, createBranchComponen
 export {createHideableComponent, useIsHidden} from './Hidden';
 export {useCachedChildren} from './useCachedChildren';
 export {BaseCollection, CollectionNode} from './BaseCollection';
-export {getNodeKey} from './utils';
 
 export type {CollectionBuilderProps, CollectionProps} from './CollectionBuilder';
 export type {CachedChildrenOptions} from './useCachedChildren';

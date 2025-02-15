@@ -16,8 +16,7 @@ import {flushSync} from 'react-dom';
 import {FocusEvent, KeyboardEvent, useEffect, useRef} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getInteractionModality} from '@react-aria/interactions';
-import {getNodeKey} from '@react-aria/collections';
-import {isNonContiguousSelectionModifier} from './utils';
+import {getItemElement, isNonContiguousSelectionModifier, useCollectionId} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useLocale} from '@react-aria/i18n';
 import {useTypeSelect} from './useTypeSelect';
@@ -35,8 +34,6 @@ export interface AriaSelectableCollectionOptions {
    * The ref attached to the element representing the collection.
    */
   ref: RefObject<HTMLElement | null>,
-  /** A scope to prepend to all child node keys to ensure they are unique. */
-  idScope?: Key,
   /**
    * Whether the collection or one of its items should be automatically focused upon render.
    * @default false
@@ -107,7 +104,6 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     selectionManager: manager,
     keyboardDelegate: delegate,
     ref,
-    idScope,
     autoFocus = false,
     shouldFocusWrap = false,
     disallowEmptySelection = false,
@@ -144,7 +140,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
             manager.setFocusedKey(key, childFocus);
           });
 
-          let item = scrollRef.current?.querySelector(`[data-key="${CSS.escape(getNodeKey(key, idScope))}"]`);
+          let item = getItemElement(ref, key);
           let itemProps = manager.getItemProps(key);
           if (item) {
             router.open(item, e, itemProps.href, itemProps.routerOptions);
@@ -372,8 +368,8 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
     if (manager.focusedKey != null && scrollRef.current) {
       // Refocus and scroll the focused item into view if it exists within the scrollable region.
-      let element = scrollRef.current.querySelector(`[data-key="${CSS.escape(getNodeKey(manager.focusedKey, idScope))}"]`) as HTMLElement;
-      if (element) {
+      let element = getItemElement(ref, manager.focusedKey);
+      if (element instanceof HTMLElement) {
         // This prevents a flash of focus on the first/last element in the collection, or the collection itself.
         if (!element.contains(document.activeElement)) {
           focusWithoutScrolling(element);
@@ -503,8 +499,8 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   useEffect(() => {
     if (manager.isFocused && manager.focusedKey != null && (manager.focusedKey !== lastFocusedKey.current || autoFocusRef.current) && scrollRef.current && ref.current) {
       let modality = getInteractionModality();
-      let element = ref.current.querySelector(`[data-key="${CSS.escape(getNodeKey(manager.focusedKey, idScope))}"]`) as HTMLElement;
-      if (!element) {
+      let element = getItemElement(ref, manager.focusedKey);
+      if (!(element instanceof HTMLElement)) {
         // If item element wasn't found, return early (don't update autoFocusRef and lastFocusedKey).
         // The collection may initially be empty (e.g. virtualizer), so wait until the element exists.
         return;
@@ -566,10 +562,11 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     tabIndex = -1;
   }
 
+  let collectionId = useCollectionId(manager.collection);
   return {
     collectionProps: mergeProps(handlers, {
       tabIndex,
-      'data-scope': idScope
+      'data-collection': collectionId
     })
   };
 }

@@ -125,7 +125,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
     })
   ), [collection, ref, layout, disabledKeys, disabledBehavior, layoutDelegate, collator, direction]);
 
-  let {gridProps: {id, ...gridProps}} = useGridList({
+  let {gridProps} = useGridList({
     ...props,
     keyboardDelegate,
     // Only tab navigation is supported in grid layout.
@@ -223,7 +223,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
       <div
         {...filterDOMProps(props)}
         {...renderProps}
-        {...mergeProps(gridProps, focusProps, droppableCollection?.collectionProps, emptyStatePropOverrides, {id})}
+        {...mergeProps(gridProps, focusProps, droppableCollection?.collectionProps, emptyStatePropOverrides)}
         ref={ref}
         slot={props.slot || undefined}
         onScroll={props.onScroll}

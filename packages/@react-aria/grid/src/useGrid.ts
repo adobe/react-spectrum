@@ -100,18 +100,17 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     focusMode
   }), [keyboardDelegate, state.collection, state.disabledKeys, disabledBehavior, ref, direction, collator, focusMode]);
 
-  let id = useId(props.id);
-  gridMap.set(state, {id, keyboardDelegate: delegate, actions: {onRowAction, onCellAction}});
-  
   let {collectionProps} = useSelectableCollection({
     ref,
-    idScope: id,
     selectionManager: manager,
     keyboardDelegate: delegate,
     isVirtualized,
     scrollRef,
     disallowTypeAhead
   });
+
+  let id = useId(props.id);
+  gridMap.set(state, {keyboardDelegate: delegate, actions: {onRowAction, onCellAction}});
 
   let descriptionProps = useHighlightSelectionDescription({
     selectionManager: manager,

@@ -12,7 +12,6 @@
 
 import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
-import {getNodeKey} from '@react-aria/collections';
 import {getScrollParent, mergeProps, scrollIntoViewport} from '@react-aria/utils';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {gridMap} from './utils';
@@ -63,7 +62,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   } = props;
 
   let {direction} = useLocale();
-  let {id, keyboardDelegate, actions: {onCellAction}} = gridMap.get(state)!;
+  let {keyboardDelegate, actions: {onCellAction}} = gridMap.get(state)!;
 
   // We need to track the key of the item at the time it was last focused so that we force
   // focus to go to the item when the DOM node is reused for a different item in a virtualizer.
@@ -254,7 +253,6 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   let gridCellProps: DOMAttributes = mergeProps(itemProps, {
     role: 'gridcell',
     onKeyDownCapture,
-    'data-key': getNodeKey(node.key, id),
     'aria-colspan': node.colSpan,
     'aria-colindex': node.colIndex != null ? node.colIndex + 1 : undefined, // aria-colindex is 1-based
     colSpan: isVirtualized ? undefined : node.colSpan,
