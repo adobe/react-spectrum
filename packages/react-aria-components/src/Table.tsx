@@ -41,8 +41,51 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
 
   commit(firstKey: Key, lastKey: Key, isSSR = false) {
     this.updateColumns(isSSR);
+    this.updateRows(isSSR);
     super.commit(firstKey, lastKey, isSSR);
-    this.rows = [...this.getChildren(this.body.key)];
+  }
+
+  private updateRows(isSSR: boolean) {
+    this.rows = [];
+    let visit = (node: Node<T>) => {
+      if (node.hasChildNodes) {
+        let rowHasCellWithColSpan = false;
+        let childNodes: Iterable<GridNode<T>> = this.getChildren(node.key);
+        for (let child of childNodes) {
+          if (child.type === 'cell' && child.props?.colSpan !== undefined) {
+            rowHasCellWithColSpan = true;
+            break;
+          }
+        }
+
+        if (rowHasCellWithColSpan) {
+          let last: GridNode<T> | null = null;
+          for (let child of childNodes) {
+            child.colSpan = child.props?.colSpan;
+            child.colspan = child.props?.colSpan;
+            child.colIndex = !last ? child.index : (last.colIndex ?? last.index) + (last.colSpan ?? 1);
+            last = child;
+          }
+
+          let lastColIndex = last?.colIndex ?? 0 + 1; // internally colIndex is 0 based
+          let lastColSpan = last?.colSpan ?? 1;
+          let numberOfCellsInRow = lastColIndex + lastColSpan;
+
+          if (numberOfCellsInRow !== this.columns.length && !isSSR) {
+            throw new Error(`Cell count must match column count. Found ${numberOfCellsInRow} cells and ${this.columns.length} columns.`);
+          }
+        } else {
+          let numberOfCellsInRow = [...childNodes].length;
+          if (numberOfCellsInRow !== this.columns.length && !isSSR) {
+            throw new Error(`Cell count must match column count. Found ${numberOfCellsInRow} cells and ${this.columns.length} columns.`);
+          }
+        }
+      }
+      this.rows.push(node);
+    };
+    for (let child of this.getChildren(this.body.key)) {
+      visit(child);
+    }
   }
 
   private updateColumns(isSSR: boolean) {
@@ -526,11 +569,11 @@ export interface TableHeaderRenderProps {
 
 export interface TableHeaderProps<T> extends StyleRenderProps<TableHeaderRenderProps>, HoverEvents {
   /** A list of table columns. */
-  columns?: T[],
+  columns?: Iterable<T>,
   /** A list of `Column(s)` or a function. If the latter, a list of columns must be provided using the `columns` prop. */
   children?: ReactNode | ((item: T) => ReactElement),
   /** Values that should invalidate the column cache when using dynamic collections. */
-  dependencies?: any[]
+  dependencies?: ReadonlyArray<any>
 }
 
 /**
@@ -737,7 +780,6 @@ export const Column = /*#__PURE__*/ createLeafComponent('column', (props: Column
       {...mergeProps(filterDOMProps(props as any), columnHeaderProps, focusProps, hoverProps)}
       {...renderProps}
       style={style}
-      colSpan={column.colspan}
       ref={ref}
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
@@ -989,7 +1031,7 @@ export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMPr
   /** The object value that this row represents. When using dynamic collections, this is set automatically. */
   value?: T,
   /** Values that should invalidate the cell cache when using dynamic collections. */
-  dependencies?: any[],
+  dependencies?: ReadonlyArray<any>,
   /** A string representation of the row's contents, used for features like typeahead. */
   textValue?: string,
   /** Whether the row is disabled. */
@@ -1175,7 +1217,9 @@ export interface CellProps extends RenderProps<CellRenderProps> {
   /** The unique id of the cell. */
   id?: Key,
   /** A string representation of the cell's contents, used for features like typeahead. */
-  textValue?: string
+  textValue?: string,
+  /** Indicates how many columns the data cell spans. */
+  colSpan?: number
 }
 
 /**

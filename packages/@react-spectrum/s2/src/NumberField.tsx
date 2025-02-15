@@ -54,7 +54,7 @@ export interface NumberFieldProps extends
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 
-export const NumberFieldContext = createContext<ContextValue<NumberFieldProps, TextFieldRef>>(null);
+export const NumberFieldContext = createContext<ContextValue<Partial<NumberFieldProps>, TextFieldRef>>(null);
 
 const inputButton = style({
   display: 'flex',
