@@ -15,13 +15,13 @@ import {
   Breadcrumb as AriaBreadcrumb,
   BreadcrumbsProps as AriaBreadcrumbsProps,
   CollectionRenderer,
+  CollectionRendererContext,
   ContextValue,
+  DefaultCollectionRenderer,
   HeadingContext,
   Link,
   Provider,
-  Breadcrumbs as RACBreadcrumbs,
-  UNSTABLE_CollectionRendererContext,
-  UNSTABLE_DefaultCollectionRenderer
+  Breadcrumbs as RACBreadcrumbs
 } from 'react-aria-components';
 import {AriaBreadcrumbItemProps, useLocale} from 'react-aria';
 import ChevronIcon from '../ui-icons/Chevron';
@@ -139,7 +139,7 @@ let BreadcrumbMenu = (props: {items: Array<Node<any>>, onAction: BreadcrumbsProp
   let {size, isDisabled} = useContext(InternalBreadcrumbsContext);
   let label = stringFormatter.format('breadcrumbs.more');
   return (
-    <UNSTABLE_CollectionRendererContext.Provider value={UNSTABLE_DefaultCollectionRenderer}>
+    <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
       <li className={breadcrumbStyles({size, isDisabled, isMenu: true})}>
         <MenuTrigger>
           <ActionButton isDisabled={isDisabled} isQuiet aria-label={label}><FolderIcon /></ActionButton>
@@ -159,7 +159,7 @@ let BreadcrumbMenu = (props: {items: Array<Node<any>>, onAction: BreadcrumbsProp
           size={size}
           className={chevronStyles({direction, isMenu: true})} />
       </li>
-    </UNSTABLE_CollectionRendererContext.Provider>
+    </CollectionRendererContext.Provider>
   );
 };
 
@@ -360,9 +360,9 @@ let CollapseContext = createContext<{
 function CollapsingCollection({children, containerRef, onAction}) {
   return (
     <CollapseContext.Provider value={{containerRef, onAction}}>
-      <UNSTABLE_CollectionRendererContext.Provider value={CollapsingCollectionRenderer}>
+      <CollectionRendererContext.Provider value={CollapsingCollectionRenderer}>
         {children}
-      </UNSTABLE_CollectionRendererContext.Provider>
+      </CollectionRendererContext.Provider>
     </CollapseContext.Provider>
   );
 }
