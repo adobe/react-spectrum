@@ -17,7 +17,7 @@ import {
   getOwnerDocument,
   runAfterTransition
 } from '@react-aria/utils';
-import {getInteractionModality} from '@react-aria/interactions';
+import {getInteractionModality} from './useFocusVisible';
 
 /**
  * A utility function that focuses an element while avoiding undesired side effects such
