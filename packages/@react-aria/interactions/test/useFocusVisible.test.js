@@ -20,7 +20,8 @@ import userEvent from '@testing-library/user-event';
 
 function Example(props) {
   const {isFocusVisible} = useFocusVisible();
-  return <div {...props}>example{isFocusVisible && '-focusVisible'}</div>;
+  // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+  return <div tabIndex={0} {...props}>example{isFocusVisible && '-focusVisible'}</div>;
 }
 
 function ButtonExample(props) {
@@ -31,32 +32,32 @@ function ButtonExample(props) {
   return <button {...mergeProps(props, buttonProps, focusProps)} ref={ref}>example{isFocusVisible && '-focusVisible'}</button>;
 }
 
-function toggleBrowserTabs() {
+function toggleBrowserTabs(win = window) {
   // this describes Chrome behaviour only, for other browsers visibilitychange fires after all focus events.
   // leave tab
-  const lastActiveElement = document.activeElement;
+  const lastActiveElement = win.document.activeElement;
   fireEvent(lastActiveElement, new Event('blur'));
-  fireEvent(window, new Event('blur'));
-  Object.defineProperty(document, 'visibilityState', {
+  fireEvent(win, new Event('blur'));
+  Object.defineProperty(win.document, 'visibilityState', {
     value: 'hidden',
     writable: true
   });
-  Object.defineProperty(document, 'hidden', {value: true, writable: true});
-  fireEvent(document, new Event('visibilitychange'));
+  Object.defineProperty(win.document, 'hidden', {value: true, writable: true});
+  fireEvent(win.document, new Event('visibilitychange'));
   // return to tab
-  Object.defineProperty(document, 'visibilityState', {
+  Object.defineProperty(win.document, 'visibilityState', {
     value: 'visible',
     writable: true
   });
-  Object.defineProperty(document, 'hidden', {value: false, writable: true});
-  fireEvent(document, new Event('visibilitychange'));
-  fireEvent(window, new Event('focus', {target: window}));
+  Object.defineProperty(win.document, 'hidden', {value: false, writable: true});
+  fireEvent(win.document, new Event('visibilitychange'));
+  fireEvent(win, new Event('focus', {target: win}));
   fireEvent(lastActiveElement, new Event('focus'));
 }
 
-function toggleBrowserWindow() {
-  fireEvent(window, new Event('blur', {target: window}));
-  fireEvent(window, new Event('focus', {target: window}));
+function toggleBrowserWindow(win = window) {
+  fireEvent(win, new Event('blur', {target: win}));
+  fireEvent(win, new Event('focus', {target: win}));
 }
 
 describe('useFocusVisible', function () {
@@ -69,41 +70,43 @@ describe('useFocusVisible', function () {
     fireEvent.focus(document.body);
   });
 
-  it('returns positive isFocusVisible result after toggling browser tabs after keyboard navigation', function () {
+  it('returns positive isFocusVisible result after toggling browser tabs after keyboard navigation', async function () {
     render(<Example />);
+    await user.tab();
     let el = screen.getByText('example-focusVisible');
 
-    fireEvent.keyDown(el, {key: 'Tab'});
     toggleBrowserTabs();
 
     expect(el.textContent).toBe('example-focusVisible');
   });
 
-  it('returns negative isFocusVisible result after toggling browser tabs without prior keyboard navigation', function () {
+  it('returns negative isFocusVisible result after toggling browser tabs without prior keyboard navigation', async function () {
     render(<Example />);
+    await user.tab();
     let el = screen.getByText('example-focusVisible');
-
-    fireEvent.mouseDown(el);
+    
+    await user.click(el);
     toggleBrowserTabs();
 
     expect(el.textContent).toBe('example');
   });
 
-  it('returns positive isFocusVisible result after toggling browser window after keyboard navigation', function () {
+  it('returns positive isFocusVisible result after toggling browser window after keyboard navigation', async function () {
     render(<Example />);
+    await user.tab();
     let el = screen.getByText('example-focusVisible');
 
-    fireEvent.keyDown(el, {key: 'Tab'});
     toggleBrowserWindow();
 
     expect(el.textContent).toBe('example-focusVisible');
   });
 
-  it('returns negative isFocusVisible result after toggling browser window without prior keyboard navigation', function () {
+  it('returns negative isFocusVisible result after toggling browser window without prior keyboard navigation', async function () {
     render(<Example />);
+    await user.tab();
     let el = screen.getByText('example-focusVisible');
 
-    fireEvent.mouseDown(el);
+    await user.click(el);
     toggleBrowserWindow();
 
     expect(el.textContent).toBe('example');
@@ -117,6 +120,7 @@ describe('useFocusVisible', function () {
       window.document.body.appendChild(iframe);
       iframeRoot = iframe.contentWindow.document.createElement('div');
       iframe.contentWindow.document.body.appendChild(iframeRoot);
+      iframe.contentWindow.document.body.addEventListener('keydown', e => e.stopPropagation());
     });
 
     afterEach(async () => {
@@ -127,12 +131,13 @@ describe('useFocusVisible', function () {
     it('sets up focus listener in a different window', async function () {
       render(<Example id="iframe-example" />, {container: iframeRoot});
       await waitFor(() => {
-        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[id="iframe-example"]')).toBeTruthy();
+        expect(iframe.contentWindow.document.body.querySelector('div[id="iframe-example"]')).toBeTruthy();
       });
-      const el = document.querySelector('iframe').contentWindow.document.body.querySelector('div[id="iframe-example"]');
+      const el = iframe.contentWindow.document.body.querySelector('div[id="iframe-example"]');
 
       // Focus in iframe before setupFocus should not do anything
-      fireEvent.focus(iframe.contentWindow.document.body);
+      await user.click(document.body);
+      await user.click(el);
       expect(el.textContent).toBe('example');
 
       // Setup focus in iframe
@@ -140,34 +145,35 @@ describe('useFocusVisible', function () {
       expect(el.textContent).toBe('example');
 
       // Focus in iframe after setupFocus
-      fireEvent.focus(iframe.contentWindow.document.body);
+      expect(iframe.contentWindow.document.activeElement).toBe(el);
+      await user.keyboard('{Enter}');
       expect(el.textContent).toBe('example-focusVisible');
     });
 
     it('removes event listeners on beforeunload', async function () {
-      let tree = render(<Example data-testid="iframe-example" />, iframeRoot);
+      let tree = render(<Example data-testid="iframe-example" />, {container: iframeRoot});
 
       await waitFor(() => {
         expect(tree.getByTestId('iframe-example')).toBeTruthy();
       });
       const el = tree.getByTestId('iframe-example');
+      addWindowFocusTracking(iframeRoot);
       // trigger keyboard focus
-      fireEvent.keyDown(el, {key: 'a'});
-      fireEvent.keyUp(el, {key: 'a'});
+      await user.tab();
+      await user.keyboard('a');
       expect(el.textContent).toBe('example-focusVisible');
 
-      fireEvent.mouseDown(el);
-      fireEvent.mouseUp(el);
+      await user.click(el);
       expect(el.textContent).toBe('example');
-
+      
       // Focus events after beforeunload no longer work
       fireEvent(iframe.contentWindow, new Event('beforeunload'));
-      fireEvent.focus(iframe.contentWindow.document.body);
+      await user.keyboard('{Enter}');
       expect(el.textContent).toBe('example');
     });
 
     it('removes event listeners using teardown function', async function () {
-      let tree = render(<Example data-testid="iframe-example" />, iframeRoot);
+      let tree = render(<Example data-testid="iframe-example" />, {container: iframeRoot});
       let tearDown = addWindowFocusTracking(iframeRoot);
 
       await waitFor(() => {
@@ -175,16 +181,15 @@ describe('useFocusVisible', function () {
       });
       const el = tree.getByTestId('iframe-example');
       // trigger keyboard focus
-      fireEvent.keyDown(el, {key: 'a'});
-      fireEvent.keyUp(el, {key: 'a'});
+      await user.tab();
+      await user.keyboard('a');
       expect(el.textContent).toBe('example-focusVisible');
 
-      fireEvent.mouseDown(el);
-      fireEvent.mouseUp(el);
+      await user.click(el);
       expect(el.textContent).toBe('example');
 
       tearDown();
-      fireEvent.focus(iframe.contentWindow.document.body);
+      await user.keyboard('{Enter}');
       expect(el.textContent).toBe('example');
     });
 
@@ -231,17 +236,16 @@ describe('useFocusVisible', function () {
 
       // Fire focus in iframe
       await waitFor(() => {
-        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[id="iframe-example"]')).toBeTruthy();
+        expect(iframe.contentWindow.document.body.querySelector('div[id="iframe-example"]')).toBeTruthy();
       });
-      fireEvent.focus(iframe.contentWindow.document.body);
+      await user.tab();
 
       // Iframe event listeners
-      const el = document.querySelector('iframe').contentWindow.document.body.querySelector('div[id="iframe-example"]');
+      const el = iframe.contentWindow.document.body.querySelector('div[id="iframe-example"]');
       expect(el.textContent).toBe('example-focusVisible');
 
       // Toggling browser tabs should have the same behavior since the iframe is on the same tab as before.
-      fireEvent.keyDown(el, {key: 'Tab'});
-      toggleBrowserTabs();
+      toggleBrowserTabs(iframe.contentWindow);
       expect(el.textContent).toBe('example-focusVisible');
     });
 
@@ -251,15 +255,15 @@ describe('useFocusVisible', function () {
 
       // Fire focus in iframe
       await waitFor(() => {
-        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[id="iframe-example"]')).toBeTruthy();
+        expect(iframe.contentWindow.document.body.querySelector('div[id="iframe-example"]')).toBeTruthy();
       });
-      fireEvent.focus(iframe.contentWindow.document.body);
+      await user.tab();
 
       // Iframe event listeners
-      const el = document.querySelector('iframe').contentWindow.document.body.querySelector('div[id="iframe-example"]');
+      const el = iframe.contentWindow.document.body.querySelector('div[id="iframe-example"]');
       expect(el.textContent).toBe('example-focusVisible');
 
-      fireEvent.mouseDown(el);
+      await user.click(el);
       expect(el.textContent).toBe('example');
     });
 
@@ -269,15 +273,14 @@ describe('useFocusVisible', function () {
 
       // Fire focus in iframe
       await waitFor(() => {
-        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[id="iframe-example"]')).toBeTruthy();
+        expect(iframe.contentWindow.document.body.querySelector('div[id="iframe-example"]')).toBeTruthy();
       });
-      fireEvent.focus(iframe.contentWindow.document.body);
+      await user.tab();
 
       // Iframe event listeners
-      const el = document.querySelector('iframe').contentWindow.document.body.querySelector('div[id="iframe-example"]');
+      const el = iframe.contentWindow.document.body.querySelector('div[id="iframe-example"]');
       expect(el.textContent).toBe('example-focusVisible');
 
-      fireEvent.keyDown(el, {key: 'Tab'});
       toggleBrowserWindow();
       expect(el.textContent).toBe('example-focusVisible');
     });
@@ -288,15 +291,15 @@ describe('useFocusVisible', function () {
 
       // Fire focus in iframe
       await waitFor(() => {
-        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[id="iframe-example"]')).toBeTruthy();
+        expect(iframe.contentWindow.document.body.querySelector('div[id="iframe-example"]')).toBeTruthy();
       });
-      fireEvent.focus(iframe.contentWindow.document.body);
+      await user.tab();
 
       // Iframe event listeners
-      const el = document.querySelector('iframe').contentWindow.document.body.querySelector('div[id="iframe-example"]');
+      const el = iframe.contentWindow.document.body.querySelector('div[id="iframe-example"]');
       expect(el.textContent).toBe('example-focusVisible');
 
-      fireEvent.mouseDown(el);
+      await user.click(el);
       toggleBrowserWindow();
       expect(el.textContent).toBe('example');
     });
@@ -307,10 +310,10 @@ describe('useFocusVisible', function () {
 
       // Fire focus in iframe
       await waitFor(() => {
-        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('button[id="iframe-example"]')).toBeTruthy();
+        expect(iframe.contentWindow.document.body.querySelector('button[id="iframe-example"]')).toBeTruthy();
       });
 
-      const el = document.querySelector('iframe').contentWindow.document.body.querySelector('button[id="iframe-example"]');
+      const el = iframe.contentWindow.document.body.querySelector('button[id="iframe-example"]');
 
       await user.pointer({target: el, keys: '[MouseLeft]'});
       await user.keyboard('{Esc}');

@@ -253,7 +253,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     isDisabled,
     onHoverStart(e) {
       // Hovering over an already expanded sub dialog trigger should keep focus in the dialog.
-      if (!isFocusVisible() && !(isTriggerExpanded && hasPopup === 'dialog')) {
+      if (!isFocusVisible() && !(isTriggerExpanded && hasPopup)) {
         selectionManager.setFocused(true);
         selectionManager.setFocusedKey(key);
       }
@@ -304,9 +304,21 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   return {
     menuItemProps: {
       ...ariaProps,
-      ...mergeProps(domProps, linkProps, isTrigger ? {onFocus: itemProps.onFocus, 'data-key': itemProps['data-key']} : itemProps, pressProps, hoverProps, keyboardProps, focusProps),
+      ...mergeProps(
+        domProps,
+        linkProps,
+        isTrigger 
+          ? {onFocus: itemProps.onFocus, 'data-key': itemProps['data-key']} 
+          : itemProps,
+        pressProps,
+        hoverProps,
+        keyboardProps,
+        focusProps,
+        // Prevent DOM focus from moving on mouse down when using virtual focus or this is a submenu/subdialog trigger.
+        data.shouldUseVirtualFocus || isTrigger ? {onMouseDown: e => e.preventDefault()} : undefined
+      ),
       // If a submenu is expanded, set the tabIndex to -1 so that shift tabbing goes out of the menu instead of the parent menu item.
-      tabIndex: itemProps.tabIndex != null && isTriggerExpanded ? -1 : itemProps.tabIndex
+      tabIndex: itemProps.tabIndex != null && isTriggerExpanded && !data.shouldUseVirtualFocus ? -1 : itemProps.tabIndex
     },
     labelProps: {
       id: labelId
@@ -318,7 +330,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       id: keyboardId
     },
     isFocused,
-    isFocusVisible: isFocused && isFocusVisible(),
+    isFocusVisible: isFocused && selectionManager.isFocused && isFocusVisible() && !isTriggerExpanded,
     isSelected,
     isPressed,
     isDisabled
