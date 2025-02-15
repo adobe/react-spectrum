@@ -49,6 +49,32 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
     onHoverEnd: state.resumeAll
   });
 
+  let prevToastCount = useRef(state.visibleToasts.length);
+  useEffect(() => {
+    // Resume timers if the user's pointer left the region due to a toast being removed and the region shrinking.
+    // Waits until the next pointermove after a toast is removed.
+    let onPointerMove = (e: PointerEvent) => {
+      if (!ref.current) {
+        document.removeEventListener('pointermove', onPointerMove);
+        return;
+      }
+      let regionRect = ref.current.getBoundingClientRect();
+      const isPointerOverRegion = e.clientX >= regionRect.left && e.clientX <= regionRect.right && e.clientY >= regionRect.top && e.clientY <= regionRect.bottom;
+      if (!isPointerOverRegion) {
+        state.resumeAll();
+      }
+      document.removeEventListener('pointermove', onPointerMove);
+    };
+
+    if (state.visibleToasts.length < prevToastCount.current && state.visibleToasts.length > 0) {
+      document.addEventListener('pointermove', onPointerMove);
+    }
+    prevToastCount.current = state.visibleToasts.length;
+    return () => {
+      document.removeEventListener('pointermove', onPointerMove);
+    };
+  }, [state.visibleToasts, ref, state]);
+
   // Manage focus within the toast region.
   // If a focused containing toast is removed, move focus to the next toast, or the previous toast if there is no next toast.
   // We might be making an assumption with how this works if someone implements the priority queue differently, or

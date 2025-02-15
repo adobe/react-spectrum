@@ -32,7 +32,7 @@ function ToastRegion() {
   let ref = useRef(null);
   let {regionProps} = useToastRegion({}, state, ref);
   return (
-    <div {...regionProps} ref={ref} style={{position: 'fixed', bottom: 0, right: 0}}>
+    <div {...regionProps} ref={ref} style={{position: 'fixed', bottom: 0, right: 0, display: 'flex', flexDirection: 'column', gap: 10}}>
       {state.visibleToasts.map(toast => (
         <Toast key={toast.key} toast={toast} />
       ))}
