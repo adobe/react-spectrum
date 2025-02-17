@@ -146,7 +146,6 @@ const allowedOverrides = [
   'marginBottom',
   'marginX',
   'marginY',
-  'flex',
   'flexGrow',
   'flexShrink',
   'flexBasis',

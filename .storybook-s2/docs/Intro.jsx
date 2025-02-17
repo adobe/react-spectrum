@@ -202,7 +202,6 @@ import {ActionButton} from '@react-spectrum/s2';
           <li><Code>width</Code></li>
           <li><Code>minWidth</Code></li>
           <li><Code>maxWidth</Code></li>
-          <li><Code>flex</Code></li>
           <li><Code>flexGrow</Code></li>
           <li><Code>flexShrink</Code></li>
           <li><Code>flexBasis</Code></li>
