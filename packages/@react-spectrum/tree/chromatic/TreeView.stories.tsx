@@ -24,7 +24,7 @@ import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Meta} from '@storybook/react';
 import React from 'react';
-import {SpectrumTreeViewProps, TreeItemContent, TreeView, TreeViewItem} from '../src';
+import {SpectrumTreeViewProps, TreeView, TreeViewItem, TreeViewItemContent} from '../src';
 
 let states = [
   {selectionMode: ['multiple', 'single']},
@@ -78,7 +78,7 @@ const Template = ({combos}) => (
         <View flexGrow={1} maxWidth="size-5000" maxHeight={700}>
           <TreeView {...c} disabledKeys={['projects-1']} defaultExpandedKeys={['Photos', 'projects', 'projects-1']} aria-label="test static tree">
             <TreeViewItem href="https://adobe.com/" id="Photos" textValue="Photos">
-              <TreeItemContent>
+              <TreeViewItemContent>
                 <Text>Photos</Text>
                 <Folder />
                 <ActionGroup>
@@ -91,10 +91,10 @@ const Template = ({combos}) => (
                     <Text>Delete</Text>
                   </Item>
                 </ActionGroup>
-              </TreeItemContent>
+              </TreeViewItemContent>
             </TreeViewItem>
             <TreeViewItem id="projects" textValue="Projects">
-              <TreeItemContent>
+              <TreeViewItemContent>
                 <Text>Projects</Text>
                 <Folder />
                 <ActionMenu>
@@ -107,9 +107,9 @@ const Template = ({combos}) => (
                     <Text>Delete</Text>
                   </Item>
                 </ActionMenu>
-              </TreeItemContent>
+              </TreeViewItemContent>
               <TreeViewItem id="projects-1" textValue="Projects-1">
-                <TreeItemContent>
+                <TreeViewItemContent>
                   <Text>Projects-1</Text>
                   <Folder />
                   <ActionGroup>
@@ -122,9 +122,9 @@ const Template = ({combos}) => (
                       <Text>Delete</Text>
                     </Item>
                   </ActionGroup>
-                </TreeItemContent>
+                </TreeViewItemContent>
                 <TreeViewItem id="projects-1A" textValue="Projects-1A">
-                  <TreeItemContent>
+                  <TreeViewItemContent>
                     <Text>Projects-1A</Text>
                     <FileTxt />
                     <ActionMenu>
@@ -137,11 +137,11 @@ const Template = ({combos}) => (
                         <Text>Delete</Text>
                       </Item>
                     </ActionMenu>
-                  </TreeItemContent>
+                  </TreeViewItemContent>
                 </TreeViewItem>
               </TreeViewItem>
               <TreeViewItem id="projects-2" textValue="Projects-2">
-                <TreeItemContent>
+                <TreeViewItemContent>
                   <Text>Projects-2</Text>
                   <FileTxt />
                   <ActionGroup>
@@ -154,13 +154,13 @@ const Template = ({combos}) => (
                       <Text>Delete</Text>
                     </Item>
                   </ActionGroup>
-                </TreeItemContent>
+                </TreeViewItemContent>
               </TreeViewItem>
               <TreeViewItem id="projects-3" textValue="Projects-3">
-                <TreeItemContent>
+                <TreeViewItemContent>
                   <Text>Projects-3</Text>
                   <FileTxt />
-                </TreeItemContent>
+                </TreeViewItemContent>
               </TreeViewItem>
             </TreeViewItem>
           </TreeView>
@@ -190,9 +190,9 @@ const EmptyTemplate = () =>
       renderEmptyState={renderEmptyState}>
       {() => (
         <TreeViewItem textValue="dummy value">
-          <TreeItemContent>
+          <TreeViewItemContent>
             <Text>dummy content</Text>
-          </TreeItemContent>
+          </TreeViewItemContent>
         </TreeViewItem>
       )}
     </TreeView>
