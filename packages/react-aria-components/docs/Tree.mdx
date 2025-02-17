@@ -356,8 +356,9 @@ import {Button} from 'react-aria-components';
 function MyTreeItemContent(props: TreeItemContentProps) {
   return (
     <TreeItemContent>
-     {({hasChildItems}) => (
+     {({hasChildItems, selectionBehavior, selectionMode}) => (
       <>
+        {selectionBehavior === 'toggle' && selectionMode !== 'none' && <MyCheckbox slot="selection" />}
         <Button slot="chevron">
           <svg viewBox="0 0 24 24">
             <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
@@ -440,6 +441,7 @@ function FileTree(props: TreeProps<FileType>) {
   return (
     <Tree
       aria-label="Files"
+      defaultExpandedKeys={[1, 4]}
       /*- begin highlight -*/
       items={items}
       /*- end highlight -*/
@@ -452,25 +454,14 @@ function FileTree(props: TreeProps<FileType>) {
         return (
           <TreeItem
             textValue={item.title}>
-            <TreeItemContent>
-              {({hasChildItems}) => (
-                <>
-                  <MyCheckbox slot="selection" />
-                  <Button
-                    slot="chevron">
-                    <svg viewBox="0 0 24 24">
-                      <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                    </svg>
-                  </Button>
-                  {item.title}
-                  <Button
-                    aria-label="Info"
-                    onPress={() => alert(`Info for ${item.title}...`)}>
-                    ⓘ
-                  </Button>
-                </>
-              )}
-            </TreeItemContent>
+            <MyTreeItemContent>
+              {item.title}
+              <Button
+                aria-label="Info"
+                onPress={() => alert(`Info for ${item.title}...`)}>
+                ⓘ
+              </Button>
+            </MyTreeItemContent>
             <Collection items={item.children}>
               {
                 ///- begin highlight -///
@@ -541,7 +532,9 @@ interface PokemonEvolutionTreeProps<T> extends TreeProps<T> {
   renderEmptyState?: () => string
 }
 
-function PokemonEvolutionTree(props: PokemonEvolutionTreeProps<Pokemon>) {
+function PokemonEvolutionTree(
+  props: PokemonEvolutionTreeProps<Pokemon>
+) {
   let items: Pokemon[] = props.items ?? [
     {id: 1, name: 'Bulbasaur', children: [
       {id: 2, name: 'Ivysaur', children: [
@@ -561,7 +554,8 @@ function PokemonEvolutionTree(props: PokemonEvolutionTreeProps<Pokemon>) {
   ];
 
   ///- begin highlight -///
-  let [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set());
+  let [selectedKeys, setSelectedKeys] =
+    React.useState<Selection>(new Set());
   ///- end highlight -///
 
   return (
@@ -579,19 +573,9 @@ function PokemonEvolutionTree(props: PokemonEvolutionTreeProps<Pokemon>) {
       {function renderItem(item) {
         return (
           <TreeItem textValue={item.name}>
-            <TreeItemContent>
-              {({hasChildItems, selectionBehavior, selectionMode}) => (
-                <>
-                  {selectionBehavior === 'toggle' && selectionMode !== 'none' && <MyCheckbox slot="selection" />}
-                  <Button slot="chevron">
-                    <svg viewBox="0 0 24 24">
-                      <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                    </svg>
-                  </Button>
-                  {item.name}
-                </>
-              )}
-            </TreeItemContent>
+            <MyTreeItemContent>
+              {item.name}
+            </MyTreeItemContent>
             <Collection items={item.children}>
               {renderItem}
             </Collection>
