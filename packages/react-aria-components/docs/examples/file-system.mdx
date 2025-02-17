@@ -94,7 +94,7 @@ function FileSystemExample() {
             return (
               <TreeItem
                 textValue={item.name}
-                className={`selected:bg-slate-600 text-white
+                className={`selected:bg-slate-500 text-white
                   cursor-default group outline-hidden focus-visible:outline focus-visible:outline-2
                   focus-visible:outline-slate-600 focus-visible:-outline-offset-4
                   selected:focus-visible:outline-white`}>
@@ -104,7 +104,7 @@ function FileSystemExample() {
                       {hasChildItems ? <Button slot="chevron" className={`shrink-0 w-8 h-8
                         group-data-[expanded=true]:rotate-90 transition-rotate duration-200
                         inline-flex items-center justify-center bg-transparent border-0 me-0
-                        cursor-default outline-hidden`}><ChevronIcon /></Button> : <div className="shrink-0 w-8 h-8" />}
+                        cursor-default outline-hidden text-white`}><ChevronIcon /></Button> : <div className="shrink-0 w-8 h-8" />}
                       <div>{item.name}</div>
                     </div>
                   )}
