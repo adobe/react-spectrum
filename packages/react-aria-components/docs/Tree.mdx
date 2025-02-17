@@ -57,18 +57,21 @@ import {
   Collection
 } from 'react-aria-components';
 
-<Tree aria-label="Files" style={{height: '300px'}} defaultExpandedKeys={['documents', 'photos', 'project']}>
+<Tree aria-label="Files" style={{height: '300px'}} defaultExpandedKeys={['documents', 'photos', 'project']} selectionMode="multiple" defaultSelectedKeys={['photos']}>
   <TreeItem id="documents" textValue="Documents">
     <MyTreeItemContent>
       Documents
+      <Button aria-label="Info">ⓘ</Button>
     </MyTreeItemContent>
     <TreeItem id="project" textValue="Project">
       <MyTreeItemContent>
         Project
+        <Button aria-label="Info">ⓘ</Button>
       </MyTreeItemContent>
       <TreeItem id="report" textValue="Weekly Report">
         <MyTreeItemContent>
           Weekly Report
+          <Button aria-label="Info">ⓘ</Button>
         </MyTreeItemContent>
       </TreeItem>
     </TreeItem>
@@ -76,15 +79,18 @@ import {
   <TreeItem id="photos" textValue="Photos">
     <MyTreeItemContent>
       Photos
+      <Button aria-label="Info">ⓘ</Button>
     </MyTreeItemContent>
     <TreeItem id="one" textValue="Image 1">
       <MyTreeItemContent>
         Image 1
+        <Button aria-label="Info">ⓘ</Button>
       </MyTreeItemContent>
     </TreeItem>
     <TreeItem id="two" textValue="Image 2">
       <MyTreeItemContent>
         Image 2
+        <Button aria-label="Info">ⓘ</Button>
       </MyTreeItemContent>
     </TreeItem>
   </TreeItem>
@@ -97,6 +103,7 @@ import {
 ```css hidden
 @import "@react-aria/example-theme";
 @import './Button.mdx' layer(button);
+@import './ToggleButton.mdx' layer(togglebutton);
 @import './Checkbox.mdx' layer(checkbox);
 ```
 
@@ -139,6 +146,7 @@ import {
     .react-aria-Button[slot=chevron] {
       all: unset;
       display: flex;
+      visibility: hidden;
       align-items: center;
       justify-content: center;
       width: 1.143rem;
@@ -154,6 +162,10 @@ import {
         stroke: currentColor;
         stroke-width: 3px;
       }
+    }
+
+    &[data-has-child-items] .react-aria-Button[slot=chevron] {
+      visibility: visible;
     }
 
     &[data-expanded] .react-aria-Button[slot=chevron] svg {
@@ -248,7 +260,7 @@ HTML lists are meant for static content, rather than heirarchies with rich inter
 * **Actions** – Items support optional actions such as navigation via click, tap, double click, or <Keyboard>Enter</Keyboard> key.
 * **Keyboard navigation** – Tree items and focusable children can be navigated using the arrow keys, along with page up/down, home/end, etc. Typeahead, auto scrolling, and selection modifier keys are supported as well.
 * **Touch friendly** – Selection and actions adapt their behavior depending on the device. For example, selection is activated via long press on touch when item actions are present.
-* **Accessible** – Follows the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/treeview/), with additional selection announcements via an ARIA live region. Extensively tested across many devices and [assistive technologies](accessibility.html#testing) to ensure announcements and behaviors are consistent.
+* **Accessible** – Follows the [ARIA treegrid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/treegrid/), with additional selection announcements via an ARIA live region. Extensively tested across many devices and [assistive technologies](accessibility.html#testing) to ensure announcements and behaviors are consistent.
 
 ## Anatomy
 
@@ -258,6 +270,23 @@ A Tree consists of a container element, with items containing data inside. The i
 
 If the tree supports item selection, each item can optionally include a selection checkbox.
 
+```tsx render=false
+import {Tree, TreeItem, TreeItemContent, Button, Checkbox} from 'react-aria-components';
+
+<Tree>
+  <TreeItem>
+    <TreeItemContent>
+      <Button slot="chevron" />
+      <Checkbox slot="selection" />
+    </TreeItemContent>
+    <TreeItem>
+      <TreeItemContent>
+        <Checkbox slot="selection" />
+      </TreeItemContent>
+    </TreeItem>
+  </TreeItem>
+</Tree>
+```
 
 ### Concepts
 
@@ -329,13 +358,12 @@ function MyTreeItemContent(props: TreeItemContentProps) {
     <TreeItemContent>
      {({hasChildItems}) => (
       <>
-        <Button slot="chevron" style={{visibility: hasChildItems ? 'visible' : 'hidden'}}>
+        <Button slot="chevron">
           <svg viewBox="0 0 24 24">
             <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
           </svg>
         </Button>
         {props.children}
-        <Button aria-label="Info">ⓘ</Button>
       </>
     )}
     </TreeItemContent>
@@ -348,7 +376,11 @@ The `TreeItem` can also be wrapped, for example, it could include the TreeItemCo
 ```tsx example export=true render=false
 import {TreeItemProps} from 'react-aria-components';
 
-function MyTreeItem(props: Omit<TreeItemProps, 'textValue' | 'children'> & Partial<Pick<TreeItemProps, 'children'>> & {title: string}) {
+interface MyTreeItemProps extends Omit<TreeItemProps, 'textValue' | 'children'>, Partial<Pick<TreeItemProps, 'children'>> {
+  title: string
+}
+
+function MyTreeItem(props: MyTreeItemProps) {
   return (
     <TreeItem id={props.title.toLowerCase()} textValue={props.title}>
       <MyTreeItemContent>
@@ -385,6 +417,7 @@ or updates over time. In the example below, data for each item is provided to th
 ```tsx example export=true
 import type {TreeProps} from 'react-aria-components';
 import {MyCheckbox} from './Checkbox';
+
 let items = [
   {id: 1, title: 'Documents', children: [
     {id: 2, title: 'Project', children: [
@@ -396,6 +429,7 @@ let items = [
     {id: 6, title: 'Image 2', children: []}
   ]}
 ];
+
 interface FileType {
   id: number,
   title: string,
@@ -404,26 +438,45 @@ interface FileType {
 
 function FileTree(props: TreeProps<FileType>) {
   return (
-    <Tree aria-label="Files" items={items} selectionMode="multiple" {...props}>
-      {function renderItem(item) {
+    <Tree
+      aria-label="Files"
+      /*- begin highlight -*/
+      items={items}
+      /*- end highlight -*/
+      selectionMode="multiple"
+      {...props}>
+      {
+        ///- begin highlight -///
+        function renderItem(item) {
+        ///- end highlight -///
         return (
-          <TreeItem textValue={item.title}>
+          <TreeItem
+            textValue={item.title}>
             <TreeItemContent>
               {({hasChildItems}) => (
                 <>
                   <MyCheckbox slot="selection" />
-                  <Button slot="chevron" style={{visibility: hasChildItems ? 'visible' : 'hidden'}}>
+                  <Button
+                    slot="chevron">
                     <svg viewBox="0 0 24 24">
                       <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                     </svg>
                   </Button>
                   {item.title}
-                  <Button aria-label="Info">ⓘ</Button>
+                  <Button
+                    aria-label="Info"
+                    onPress={() => alert(`Info for ${item.title}...`)}>
+                    ⓘ
+                  </Button>
                 </>
               )}
             </TreeItemContent>
             <Collection items={item.children}>
-              {renderItem}
+              {
+                ///- begin highlight -///
+                renderItem // same as renderItem function above
+                ///- end highlight -///
+              }
             </Collection>
           </TreeItem>
         );
@@ -530,7 +583,7 @@ function PokemonEvolutionTree(props: PokemonEvolutionTreeProps<Pokemon>) {
               {({hasChildItems, selectionBehavior, selectionMode}) => (
                 <>
                   {selectionBehavior === 'toggle' && selectionMode !== 'none' && <MyCheckbox slot="selection" />}
-                  <Button slot="chevron" style={{visibility: hasChildItems ? 'visible' : 'hidden'}}>
+                  <Button slot="chevron">
                     <svg viewBox="0 0 24 24">
                       <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                     </svg>
@@ -589,7 +642,7 @@ and reverts the selection behavior back to `"replace"`. Keyboard behaviors are u
 </div>
 ```
 
-Items may also have an action specified by directly applying `onAction` on the `TreeItem` itself. This may be especially convenient in static collections. If `onAction` is also provided to the `Tree`, both the trees's and the item's `onAction` are called.
+Items may also have an action specified by directly applying `onAction` on the `TreeItem` itself. This may be especially convenient in static collections. If `onAction` is also provided to the `Tree`, both the tree's and the item's `onAction` are called.
 
 ```tsx example
 <Tree aria-label="Tree with onAction applied on the items directly" style={{height: '300px'}} defaultExpandedKeys={['bulbasaur', 'ivysaur']}>
@@ -624,15 +677,15 @@ Tree items may also be links to another page or website. This can be achieved by
 
 ```tsx example
 <Tree aria-label="Tree with onAction applied on the items directly" style={{height: '200px'}} defaultExpandedKeys={['bulbasaur', 'ivysaur']}>
-  <TreeItem id="bulbasaur" textValue="Bulbasaur" href="https://pokemondb.net/pokedex/bulbasaur">
+  <TreeItem id="bulbasaur" textValue="Bulbasaur" href="https://pokemondb.net/pokedex/bulbasaur" target="_blank">
     <MyTreeItemContent>
       Bulbasaur
     </MyTreeItemContent>
-    <TreeItem id="ivysaur" textValue="Ivysaur" href="https://pokemondb.net/pokedex/ivysaur">
+    <TreeItem id="ivysaur" textValue="Ivysaur" href="https://pokemondb.net/pokedex/ivysaur" target="_blank">
       <MyTreeItemContent>
         Ivysaur
       </MyTreeItemContent>
-      <TreeItem id="venisaur" textValue="Venisaur" href="https://pokemondb.net/pokedex/venusaur">
+      <TreeItem id="venisaur" textValue="Venisaur" href="https://pokemondb.net/pokedex/venusaur" target="_blank">
         <MyTreeItemContent>
           Venisaur
         </MyTreeItemContent>
@@ -680,7 +733,7 @@ Note that you are responsible for the styling of disabled items, however, the se
 </Tree>
 ```
 
-By default, only item selection is disabled. When `disabledBehavior` is set to `all`, all interactions such as focus, dragging, and actions are also disabled.
+When `disabledBehavior` is set to `selection`, interactions such as focus, dragging, or actions can still be performed on disabled rows.
 
 ```tsx example
 <Tree
@@ -689,7 +742,7 @@ By default, only item selection is disabled. When `disabledBehavior` is set to `
   selectionMode="multiple"
   defaultExpandedKeys={['bulbasaur']}
   /*- begin highlight -*/
-  disabledBehavior="all"
+  disabledBehavior="selection"
   /*- end highlight -*/
 >
   <TreeItem id="bulbasaur" textValue="Bulbasaur">
@@ -930,9 +983,9 @@ Now you can use `MyCustomCheckbox` within a `Tree`, in place of the builtin Reac
 </Tree>
 ```
 
-### Hooks
+{/* ### Hooks
 
-If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useTree](useTree.html) for more details.
+If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useTreeGridList](useTreeGridList.html) for more details. */}
 
 ## Testing
 

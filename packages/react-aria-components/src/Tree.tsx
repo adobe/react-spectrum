@@ -265,29 +265,28 @@ export interface TreeItemRenderProps extends Omit<ItemRenderProps, 'allowsDraggi
    * @selector [data-expanded]
    */
   isExpanded: boolean,
-  // TODO: api discussion, how do we feel about the below? This is so we can still style the row as grey when a child element within is focused
-  // Maybe should have this for the other collection item render props
-  /** Whether the tree item's children have keyboard focus. */
-  isFocusVisibleWithin: boolean
-}
-
-export interface TreeItemContentRenderProps extends ItemRenderProps {
   /**
-   * Whether the tree item is expanded.
-   * @selector [data-expanded]
+   * Whether the tree item has child tree items.
+   * @selector [data-has-child-items]
    */
-  isExpanded: boolean,
-  // Whether the tree item has child tree items.
   hasChildItems: boolean,
-  // What level the tree item has within the tree.
+  /**
+   * What level the tree item has within the tree.
+   * @selector [data-level="number"]
+   */
   level: number,
-  // Whether the tree item's children have keyboard focus.
+  /**
+   * Whether the tree item's children have keyboard focus.
+   * @selector [data-focus-visible-within]
+   */
   isFocusVisibleWithin: boolean,
   // The state of the tree.
   state: TreeState<unknown>,
   // The unique id of the tree row.
   id: Key
 }
+
+export interface TreeItemContentRenderProps extends TreeItemRenderProps {}
 
 // The TreeItemContent is the one that accepts RenderProps because we would get much more complicated logic in TreeItem otherwise since we'd
 // need to do a bunch of check to figure out what is the Content and what are the actual collection elements (aka child rows) of the TreeItem
@@ -358,6 +357,8 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
     state
   );
 
+  let selectionMode = state.selectionManager.selectionMode;
+  let selectionBehavior = state.selectionManager.selectionBehavior;
   let renderPropValues = React.useMemo<TreeItemContentRenderProps>(() => ({
     ...states,
     isHovered,
@@ -365,12 +366,12 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
     isExpanded,
     hasChildItems,
     level,
-    selectionMode: state.selectionManager.selectionMode,
-    selectionBehavior: state.selectionManager.selectionBehavior,
+    selectionMode,
+    selectionBehavior,
     isFocusVisibleWithin,
     state,
     id: item.key
-  }), [states, isHovered, isFocusVisible, state.selectionManager, isExpanded, hasChildItems, level, isFocusVisibleWithin, state, item.key]);
+  }), [states, isHovered, isFocusVisible, selectionMode, selectionBehavior, isExpanded, hasChildItems, level, isFocusVisibleWithin, state, item.key]);
 
   let renderProps = useRenderProps({
     ...props,
