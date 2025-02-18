@@ -69,12 +69,12 @@ export function useHiddenDateInput(props: HiddenDateInputProps, state) {
 
   let dateSegments = ['day', 'month', 'year'];
   let timeSegments = ['hour', 'minute', 'second'];
-  let granularitySegments = {'hour': 1, 'minute': 2, 'second': 3};
+  let granularityMap = {'hour': 1, 'minute': 2, 'second': 3};
 
-
+  // Depending on the granularity, we only want to validate certain time segments
   let end = 0;
   if (timeSegments.includes(state.granularity)) {
-    end = granularitySegments[state.granularity];
+    end = granularityMap[state.granularity];
     timeSegments = timeSegments.slice(0, end);
   }
 
@@ -92,6 +92,7 @@ export function useHiddenDateInput(props: HiddenDateInputProps, state) {
       autoComplete,
       disabled: isDisabled,
       type: inputType,
+      // We set the form prop to an empty string to prevent the hidden date input's value from being submitted
       form: '',
       name,
       step: inputStep,
@@ -104,9 +105,13 @@ export function useHiddenDateInput(props: HiddenDateInputProps, state) {
             targetValue = parseDate(targetString);
           }
           setDateValue(targetString);
-          // DatePickerState doesn't have a setSegment method so this is only necessary to do in DateFields
+          // We check to to see if setSegment exists in the state since it only exists in DateFieldState and not DatePickerState.
+          // The setValue method has different behavior depending on if it's coming from DateFieldState or DatePickerState.
+          // In DateFieldState, setValue firsts checks to make sure that each segment is filled before committing the newValue 
+          // which is why in the code below we first set each segment to validate it before committing the new value. 
+          // However, in DatePickerState, since we have to be able to commit values from the Calendar popover, we are able to set a new value
+          // when the field itself is empty. 
           if (typeof state.setSegment === 'function') {
-            console.log(targetValue);
             for (let type in targetValue) {
               if (dateSegments.includes(type)) {
                 state.setSegment(type, targetValue[type]);
