@@ -79,20 +79,6 @@ export class GridCollection<T> implements IGridCollection<T> {
 
       if (last) {
         last.nextKey = null;
-
-        if (rowHasCellWithColSpan && node.type === 'item') {
-          let lastColIndex = last?.colIndex ?? 0 + 1; // internally colIndex is 0 based
-          let lastColSpan = last?.colSpan ?? 1;
-          let numberOfCellsInRow = lastColIndex + lastColSpan;
-          if (numberOfCellsInRow !== this.columnCount) {
-            throw new Error(`Cell count must match column count. Found ${numberOfCellsInRow} cells and ${this.columnCount} columns.`);
-          }
-        } else if (node.type === 'item') {
-          let numberOfCellsInRow = [...node.childNodes].length;
-          if (numberOfCellsInRow !== this.columnCount) {
-            throw new Error(`Cell count must match column count. Found ${numberOfCellsInRow} cells and ${this.columnCount} columns.`);
-          }
-        }
       }
 
       // Remove deleted nodes and their children from the key map
