@@ -372,7 +372,7 @@ function MyTreeItemContent(props: TreeItemContentProps) {
 }
 ```
 
-The `TreeItem` can also be wrapped, for example, it could include the TreeItemContent automatically.
+The `TreeItem` can also be wrapped. For example, it could include the TreeItemContent automatically.
 
 ```tsx example export=true render=false
 import {TreeItemProps} from 'react-aria-components';
@@ -411,7 +411,7 @@ Now we can render a Tree using far less code.
 
 ## Content
 
-So far, our examples have shown static collections, where the data is hard coded.
+So far, our examples have shown static collections where the data is hard coded.
 Dynamic collections, as shown below, can be used when the tree data comes from an external data source such as an API,
 or updates over time. In the example below, data for each item is provided to the tree via a render function.
 
@@ -485,8 +485,8 @@ function FileTree(props: TreeProps<FileType>) {
 By default, `Tree` doesn't allow item selection but this can be enabled using the `selectionMode` prop. Use `defaultSelectedKeys` to provide a default set of selected items.
 Note that the value of the selected keys must match the `id` prop of the item.
 
-The example below enables single selection mode, and uses `defaultSelectedKeys` to select the item with id equal to `2`.
-A user can click on a different item to change the selection, or click on the same item again to deselect it entirely.
+The example below enables single selection mode and uses `defaultSelectedKeys` to select the item with id equal to `2`.
+A user can click on a different item to change the selection or click on the same item again to deselect it entirely.
 
 ```tsx example
 // Using the example above
@@ -593,7 +593,7 @@ function PokemonEvolutionTree(
 
 By default, `Tree` uses the `"toggle"` selection behavior, which behaves like a checkbox group: clicking, tapping, or pressing the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys toggles selection for the focused item. Using the arrow keys moves focus but does not change selection. The `"toggle"` selection mode is often paired with checkboxes in each item as an explicit affordance for selection.
 
-When the `selectionBehavior` prop is set to `"replace"`, clicking a item with the mouse _replaces_ the selection with only that item. Using the arrow keys moves both focus and selection. To select multiple items, modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used. To move focus without moving selection, the <Keyboard>Ctrl</Keyboard> key on Windows or the <Keyboard>Option</Keyboard> key on macOS can be held while pressing the arrow keys. Holding this modifier while pressing the <Keyboard>Space</Keyboard> key toggles selection for the focused item, which allows multiple selection of non-contiguous items. On touch screen devices, selection always behaves as toggle since modifier keys may not be available. This behavior emulates native platforms such as macOS and Windows, and is often used when checkboxes in each item are not desired.
+When the `selectionBehavior` prop is set to `"replace"`, clicking an item with the mouse _replaces_ the selection with only that item. Using the arrow keys moves both focus and selection. To select multiple items, modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used. To move focus without moving selection, the <Keyboard>Ctrl</Keyboard> key on Windows or the <Keyboard>Option</Keyboard> key on macOS can be held while pressing the arrow keys. Holding this modifier while pressing the <Keyboard>Space</Keyboard> key toggles selection for the focused item, which allows multiple selection of non-contiguous items. On touch screen devices, selection always behaves as toggle since modifier keys may not be available. This behavior emulates native platforms such as macOS and Windows and is often used when checkboxes in each item are not desired.
 
 ```tsx example
 <PokemonEvolutionTree selectionMode="multiple" selectionBehavior="replace" />
@@ -691,7 +691,7 @@ The `<TreeItem>` component works with frameworks and client side routers like [N
 
 ## Disabled items
 
-A `TreeItem` can be disabled with the `isDisabled` prop. This will disable all interactions on the item,
+A `TreeItem` can be disabled with the `isDisabled` prop. This will disable all interactions on the item
 unless the `disabledBehavior` prop on `Tree` is used to change this behavior.
 Note that you are responsible for the styling of disabled items, however, the selection checkbox will be automatically disabled.
 
@@ -968,7 +968,7 @@ Now you can use `MyCustomCheckbox` within a `Tree`, in place of the builtin Reac
 ```
 
 {/* ### Hooks
-
+TODO: add back once hooks docs are written with new collections
 If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useTreeGridList](useTreeGridList.html) for more details. */}
 
 ## Testing
