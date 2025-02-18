@@ -72,6 +72,7 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, conte
       } else {
         let cells: PartialNode<T>[] = [];
         let childRows: PartialNode<T>[] = [];
+        let columnCount = 0;
         React.Children.forEach(children, node => {
           if (node.type === Row) {
             if (cells.length < context.columns.length) {
@@ -87,8 +88,13 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, conte
               type: 'cell',
               element: node
             });
+            columnCount += node.props.colSpan ?? 1;
           }
         });
+
+        if (columnCount !== context.columns.length) {
+          throw new Error(`Cell count must match column count. Found ${columnCount} cells and ${context.columns.length} columns.`);
+        }
 
         yield* cells;
         yield* childRows;
