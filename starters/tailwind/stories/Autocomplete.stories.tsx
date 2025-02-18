@@ -21,6 +21,7 @@ export const Example = (args: any) => (
     <AutocompleteItem id="mint">Mint</AutocompleteItem>
     <AutocompleteItem>Strawberry</AutocompleteItem>
     <AutocompleteItem>Vanilla</AutocompleteItem>
+    <AutocompleteItem>Cookies and Cream</AutocompleteItem>
   </Autocomplete>
 );
 
