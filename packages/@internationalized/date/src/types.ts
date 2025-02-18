@@ -34,6 +34,7 @@ export interface AnyTime {
 /** An interface that is compatible with any object with both date and time fields. */
 export interface AnyDateTime extends AnyCalendarDate, AnyTime {}
 type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime
+
 /**
  * The Calendar interface represents a calendar system, including information
  * about how days, months, years, and eras are organized, and methods to perform
@@ -73,9 +74,19 @@ export interface Calendar {
    * Returns the number of weeks in the given date's month.
    */
   getWeeksInMonth?(date: AnyCalendarDate): number,
+
+  /**
+   * Returns the start and end of the month of the given date. In most cases this can be
+   * left unimplemented, since the default assumes that months start on the first day and
+   * end on the last day. However, in some calendars such as a fiscal calendar, months may
+   * not align with the standard calendar months.
+   */
   getCurrentMonth?(date: AnyCalendarDate): {start: DateValue, end: DateValue},
 
-  isInSameSpan?(date1: AnyCalendarDate, date2: AnyCalendarDate, span: 'hour' | 'day' | 'week' | 'month' | 'year'): boolean,
+  /**
+   * Returns whether the first and second dates both occur within the same period of time.
+   */
+  isSamePeriod?(a: AnyCalendarDate, b: AnyCalendarDate, period: 'day' | 'week' | 'month' | 'year'): boolean,
 
   /** @private */
   balanceDate?(date: AnyCalendarDate): void,
