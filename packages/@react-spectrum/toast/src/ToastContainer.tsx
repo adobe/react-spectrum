@@ -39,19 +39,13 @@ export interface SpectrumToastOptions extends Omit<ToastOptions, 'priority'>, DO
 
 type CloseFunction = () => void;
 
-function wrapInViewTransition<R>(fn: () => R): R {
+function wrapInViewTransition(fn: () => void): void {
   if ('startViewTransition' in document) {
-    let result: R;
-    // @ts-expect-error
     document.startViewTransition(() => {
-      flushSync(() => {
-        result = fn();
-      });
+      flushSync(fn);
     }).ready.catch(() => {});
-    // @ts-ignore
-    return result;
   } else {
-    return fn();
+    fn();
   }
 }
 
@@ -141,8 +135,7 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
                 key={toast.key}
                 className={classNames(toastContainerStyles, 'spectrum-ToastContainer-listitem')}
                 style={{
-                  // @ts-expect-error
-                  viewTransitionName: `_${toast.key.slice(2)}`,
+                  viewTransitionName: toast.key,
                   viewTransitionClass: classNames(
                     toastContainerStyles,
                     'toast',
