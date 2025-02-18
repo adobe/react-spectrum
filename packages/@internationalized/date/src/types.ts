@@ -76,12 +76,13 @@ export interface Calendar {
   getWeeksInMonth?(date: AnyCalendarDate): number,
 
   /**
-   * Returns the start and end of the month of the given date. In most cases this can be
-   * left unimplemented, since the default assumes that months start on the first day and
-   * end on the last day. However, in some calendars such as a fiscal calendar, months may
-   * not align with the standard calendar months.
+   * Returns the start and end dates of the month for which the given date is in, as
+   * well as the 1-based index of the month of the year (e.g. Jan = 1, Feb = 2, etc.). 
    */
-  getCurrentMonth?(date: AnyCalendarDate): {start: DateValue, end: DateValue},
+  // In some calendars such as a fiscal calendar, months may
+  // not align with the standard calendar months. In this case, this method should be
+  // implemented to return the start and end of the month that the given date falls in.
+  getCurrentMonth?(date: AnyCalendarDate): {start: DateValue, end: DateValue, index: number},
 
   /**
    * Returns whether the first and second dates both occur within the same period of time.
