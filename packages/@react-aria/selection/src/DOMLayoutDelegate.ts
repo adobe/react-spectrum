@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {getItemElement} from './utils';
 import {Key, LayoutDelegate, Rect, RefObject, Size} from '@react-types/shared';
 
 export class DOMLayoutDelegate implements LayoutDelegate {
@@ -24,7 +25,7 @@ export class DOMLayoutDelegate implements LayoutDelegate {
     if (!container) {
       return null;
     }
-    let item = key != null ? container.querySelector(`[data-key="${CSS.escape(key.toString())}"]`) : null;
+    let item = key != null ? getItemElement(this.ref, key) : null;
     if (!item) {
       return null;
     }

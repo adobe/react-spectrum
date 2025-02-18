@@ -57,6 +57,11 @@ export interface GridListRenderProps {
 }
 
 export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<GridListRenderProps>, SlotProps, ScrollableProps<HTMLDivElement> {
+  /**
+   * Whether typeahead navigation is disabled.
+   * @default false
+   */
+  disallowTypeAhead?: boolean,
   /** How multiple selection should behave in the collection. */
   selectionBehavior?: SelectionBehavior,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the GridList. */
