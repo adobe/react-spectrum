@@ -84,7 +84,7 @@ function MyColumn`);
     // We need one for the Storybook auto-generated docs to work.
     reusableWrapper = reusableWrapper
       .replace('<Tree ', '<MyTree ').replace('/Tree>', '/MyTree>')
-      .replace('function MyTreeItemContent', `function MyTree<T = unknown>(props: TreeProps<T>) {
+      .replace('function MyTreeItemContent', `function MyTree<T extends object>(props: TreeProps<T>) {
   return <Tree {...props} />
 }
 
