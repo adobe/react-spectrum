@@ -346,13 +346,13 @@ To help kick-start your project, we offer starter kits that include example impl
 If you will use a Tree in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
 ```tsx example export=true render=false
-import type {TreeItemContentProps} from 'react-aria-components';
+import type {TreeItemContentProps, TreeItemContentRenderProps} from 'react-aria-components';
 import {Button} from 'react-aria-components';
 
 function MyTreeItemContent(props: TreeItemContentProps) {
   return (
     <TreeItemContent>
-      {({hasChildItems, selectionBehavior, selectionMode}) => (
+      {({hasChildItems, selectionBehavior, selectionMode}: TreeItemContentRenderProps) => (
         <>
           {selectionBehavior === 'toggle' && selectionMode !== 'none' && <MyCheckbox slot="selection" />}
           <Button slot="chevron">
@@ -620,7 +620,7 @@ Items may also have an action specified by directly applying `onAction` on the `
 
 ```tsx example
 <Tree aria-label="Tree with onAction applied on the items directly" style={{height: '300px'}} defaultExpandedKeys={['bulbasaur', 'ivysaur']}>
-  <MyTreeItem 
+  <MyTreeItem
     /*- begin highlight -*/
     onAction={() => alert(`Opening Bulbasaur...`)}
     /*- end highlight -*/
