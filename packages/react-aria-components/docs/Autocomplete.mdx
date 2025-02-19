@@ -15,7 +15,16 @@ import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTab
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
-import {InlineAlert, Content, Heading} from '@adobe/react-spectrum';
+import statelyDocs from 'docs:@react-stately/autocomplete';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
+import SearchField from '@react-spectrum/docs/pages/assets/component-illustrations/SearchField.svg';
+import TextField from '@react-spectrum/docs/pages/assets/component-illustrations/TextField.svg';
+import Menu from '@react-spectrum/docs/pages/assets/component-illustrations/Menu.svg';
+import ListBox from '@react-spectrum/docs/pages/assets/component-illustrations/ListBox.svg';
+import Collections from '@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg';
+import Selection from '@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 
 ---
 category: Pickers
@@ -35,11 +44,6 @@ preRelease: alpha
     {type: 'W3C', url: 'https://w3c.github.io/aria/#aria-autocomplete'}
   ]} />
 
-<InlineAlert variant="notice" marginTop={60}>
-  <Heading>Under construction</Heading>
-  <Content>This component is in <strong>alpha</strong>. More documentation is coming soon!</Content>
-</InlineAlert>
-
 ## Example
 
 ```tsx example
@@ -51,7 +55,7 @@ function Example() {
   return (
     <div className="autocomplete">
       <Autocomplete filter={contains}>
-        <MySearchField placeholder="Search commands..." />
+        <MySearchField label="Commands" placeholder="Search commands..." />
         <Menu>
           <MenuItem>Create new file...</MenuItem>
           <MenuItem>Create new folder...</MenuItem>
@@ -98,6 +102,10 @@ function Example() {
     flex: 1;
     overflow: auto;
   }
+
+  .react-aria-Label {
+    margin-bottom: .5em;
+  }
 }
 ```
 
@@ -116,6 +124,454 @@ import {UNSTABLE_Autocomplete as Autocomplete, SearchField, Menu} from 'react-ar
 </Autocomplete>
 ```
 
+## Features
+
+An autocomplete can be built using the [&lt;datalist&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/datalist) HTML element, but this is very limited in functionality and difficult to style. `Autocomplete` helps achieve accessible autocomplete components that can be styled as needed.
+
+* **Flexible** – Support for multiple input types and collection types, controlled and uncontrolled state, and custom filter functions.
+* **Keyboard navigation** – Autocomplete can be navigated using the arrow keys, along with page up/down, home/end, etc. The list of options is filtered while typing into the input, and items can be selected with the enter key.
+* **Accessible** – Follows the [ARIA autocomplete pattern](https://w3c.github.io/aria/#aria-autocomplete), with support for items and sections, and slots for label and description elements within each item. Custom localized announcements are included for option focusing, filtering, and selection using an ARIA live region to ensure announcements are clear and consistent.
+* **Styleable** – Items include builtin states for styling, such as hover, press, focus, selected, and disabled.
+
+### Concepts
+
+`Autocomplete` makes use of the following concepts:
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="collections.html"
+  title="Collections"
+  description="Defining collections of items, async loading, and updating items over time.">
+  <Collections />
+</ExampleCard>
+
+<ExampleCard
+  url="selection.html"
+  title="Selection"
+  description="Interactions and data structures to represent selection.">
+  <Selection />
+</ExampleCard>
+
+</section>
+
+### Composed components
+
+An `Autocomplete` can use the following components, which may also be used standalone or reused in other components.
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="TextField.html"
+  title="TextField"
+  description="A text field allows a user to enter a plain text value with a keyboard.">
+  <TextField />
+</ExampleCard>
+
+<ExampleCard
+  url="SearchField.html"
+  title="SearchField"
+  description="A search field allows a user to enter and clear a search query.">
+  <SearchField />
+</ExampleCard>
+
+<ExampleCard
+  url="Menu.html"
+  title="Menu"
+  description="A menu displays a list of actions or options that a user can choose.">
+  <Menu />
+</ExampleCard>
+
+<ExampleCard
+  url="ListBox.html"
+  title="ListBox"
+  description="A listbox allows a user to select one or more options from a list.">
+  <ListBox />
+</ExampleCard>
+
+</section>
+
+## Examples
+
+<ExampleList tag="combobox" />
+
+## Starter kits
+
+To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
+
+<StarterKits component="autocomplete" />
+
+## Reusable wrappers
+
+If you will use an Autocomplete in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `Autocomplete` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. It also shows how to use the `description` slot to render [help text](#description), and `FieldError` component to render [validation errors](#validation). The `Item` component is also wrapped to apply class names based on the current state, as described in the [styling](#styling) section.
+
+```tsx example export=true
+import type {AutocompleteProps, MenuItemProps} from 'react-aria-components';
+import {SearchField, Menu, MenuItem} from 'react-aria-components';
+
+interface MyAutocompleteProps<T extends object> extends Omit<AutocompleteProps<T>, 'children'> {
+  label?: string,
+  placeholder?: string,
+  items?: Iterable<T>;
+  children: React.ReactNode | ((item: T) => React.ReactNode)
+  onAction?: (id: Key) => void
+}
+
+function MyAutocomplete<T extends object>({label,placeholder, items, children, onAction, ...props}: MyAutocompleteProps<T>) {
+  let {contains} = useFilter({sensitivity: 'base'});
+  return (
+    <div className="my-autocomplete">
+      <Autocomplete filter={contains} {...props}>
+        <MySearchField label={label} placeholder={placeholder} />
+        <Menu items={items} onAction={onAction}>
+          {children}
+        </Menu>
+      </Autocomplete>
+    </div>
+  );
+}
+
+function MyItem(props: MenuItemProps) {
+  let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
+  return <MenuItem {...props} className={({isFocused, isSelected}) => `my-item ${isFocused ? 'focused' : ''} ${isSelected ? 'selected' : ''}`} />
+}
+
+<MyAutocomplete label="Commands" placeholder="Search commands...">
+  <MyItem>Create new file...</MyItem>
+  <MyItem>Create new folder...</MyItem>
+  <MyItem>Assign to...</MyItem>
+  <MyItem>Assign to me</MyItem>
+  <MyItem>Change status...</MyItem>
+  <MyItem>Change priority...</MyItem>
+  <MyItem>Add label...</MyItem>
+  <MyItem>Remove label...</MyItem>
+</MyAutocomplete>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.my-autocomplete {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 300px;
+  height: 180px;
+  border: 1px solid var(--border-color);
+  padding: 16px;
+  border-radius: 10px;
+  background: var(--overlay-background);
+}
+
+.react-aria-SearchField {
+  width: 100%;
+}
+
+.react-aria-Label {
+  margin-bottom: .5em;
+}
+
+.my-item {
+  margin: 2px;
+  padding: 4px 8px 4px 22px;
+  border-radius: 6px;
+  outline: none;
+  cursor: default;
+  color: var(--text-color);
+  font-size: 1.072rem;
+  position: relative;
+
+  &.selected {
+    font-weight: 600;
+    background: none;
+
+    &::before {
+      content: '✓';
+      content: '✓' / '';
+      alt: ' ';
+      position: absolute;
+      top: 4px;
+      left: 4px;
+    }
+  }
+
+  &.focused {
+    background: #e70073;
+    color: white;
+  }
+}
+
+@media (forced-colors: active) {
+  .my-item.focused {
+    background: Highlight;
+    color: HighlightText;
+  }
+}
+```
+
+</details>
+
+
+## Content
+
+Autocomplete follows the [Collection Components API](collections.html), accepting both static and dynamic collections.
+The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
+as shown below, can be used when the options come from an external data source such as an API call, or update over time.
+
+As seen below, an iterable list of options is passed to the Autocomplete's Menu using the `items` prop. Each item accepts an `id` prop, which
+is passed to the `onAction` prop on the `Menu` to identify the selected item. Alternatively, if the item objects contain an `id` property,
+as shown in the example below, then this is used automatically and an `id` prop is not required.
+
+```tsx example
+import type {Key} from 'react-aria-components';
+
+function Example() {
+  let items = [
+    {id: 1, name: 'New'},
+    {id: 2, name: 'Open'},
+    {id: 3, name: 'Close'},
+    {id: 4, name: 'Save'},
+    {id: 5, name: 'Duplicate'},
+    {id: 6, name: 'Rename'},
+    {id: 7, name: 'Move'}
+  ];
+
+  return (
+    <MyAutocomplete label="Actions" items={items} onAction={id => alert(id)}>
+      {(item) => <MyItem>{item.name}</MyItem>}
+    </MyAutocomplete>
+  );
+}
+```
+
+## Value
+
+An Autocomplete's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultInputValue` prop.
+Alternatively, a controlled value can be provided using the `inputValue` prop. Note that the input value of the Autocomplete does not affect
+the ComboBox's selected option.
+
+```tsx example
+function Example() {
+  let options = [
+    {id: 1, name: 'Adobe Photoshop'},
+    {id: 2, name: 'Adobe XD'},
+    {id: 3, name: 'Adobe InDesign'},
+    {id: 4, name: 'Adobe AfterEffects'},
+    {id: 5, name: 'Adobe Illustrator'},
+    {id: 6, name: 'Adobe Lightroom'},
+    {id: 7, name: 'Adobe Premiere Pro'},
+    {id: 8, name: 'Adobe Fresco'},
+    {id: 9, name: 'Adobe Dreamweaver'}
+  ];
+  let [value, setValue] = React.useState('Adobe XD');
+
+  return (
+    <div style={{display: 'flex', gap: 16, flexWrap: 'wrap'}}>
+      <MyAutocomplete
+        label="Adobe products (Uncontrolled)"
+        items={options}
+        /*- begin highlight -*/
+        defaultInputValue="Adobe XD">
+        {/*- end highlight -*/}
+        {item => <MyItem>{item.name}</MyItem>}
+      </MyAutocomplete>
+
+      <MyAutocomplete
+        label="Adobe products (Controlled)"
+        items={options}
+        /*- begin highlight -*/
+        inputValue={value}
+        onInputChange={setValue}>
+        {/*- end highlight -*/}
+        {item => <MyItem>{item.name}</MyItem>}
+      </MyAutocomplete>
+    </div>
+  );
+}
+```
+
 ## Props
 
 <PropTable component={docs.exports.UNSTABLE_Autocomplete} links={docs.links} />
+
+## Styling
+
+Since Autocomplete doesn't render any DOM elements itself, it doesn't offer any styling options. See the styling sections for [TextField](TextField.html#styling), [SearchField](SearchField.html#styling), [Menu](Menu.html#styling), and [ListBox](ListBox.html#styling) for more information on how to style components within the Autocomplete.
+
+## Advanced customization
+
+### Composition
+
+If you need to customize one of the components within an `Autocomplete`, such as `TextField`, `SearchField`, `Menu` or `ListBox`, you can create a wrapper
+component. This lets you customize the props passed to the component.
+
+```tsx
+function MyListBox(props) {
+  return <ListBox {...props} className="my-listbox" />
+}
+```
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['UNSTABLE_Autocomplete']} docs={docs} />
+
+This example shows a `FieldGroup` component that renders a group of filters with a title. The entire group can be given the same `filter` prop, which is passed to all child selects via the `AutocompleteContext` provider.
+
+```tsx example
+import {UNSTABLE_AutocompleteContext as AutocompleteContext, ListBox, ListBoxItem, Menu, MenuItem} from 'react-aria-components';
+
+interface FieldGroupProps {
+  title?: string,
+  children?: React.ReactNode,
+  filter?: (text: string) => boolean
+}
+
+function FieldGroup({title, children, isDisabled}: FieldGroupProps) {
+  let {contains} = useFilter({sensitivity: 'base'});
+  return (
+    <fieldset>
+      <legend>{title}</legend>
+      {/*- begin highlight -*/}
+      <AutocompleteContext.Provider value={{filter: contains}}>
+      {/*- end highlight -*/}
+        {children}
+      </AutocompleteContext.Provider>
+    </fieldset>
+  );
+}
+
+<FieldGroup title="Filters">
+  <MyAutocomplete label="Actions" placeholder="Search actions...">
+    <MyItem id="draft">Draft</MyItem>
+    <MyItem id="published">Published</MyItem>
+    <MyItem id="deleted">Deleted</MyItem>
+  </MyAutocomplete>
+  <MyAutocomplete label="People" placeholder="Search people...">
+    <MyItem id="john">John</MyItem>
+    <MyItem id="emma">Emma</MyItem>
+    <MyItem id="tim">Tim</MyItem>
+  </MyAutocomplete>
+</FieldGroup>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+fieldset {
+  padding: 1.5em;
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+```
+
+</details>
+
+### Custom children
+
+Autocomplete passes props to its child components, such as the label and input, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['TextField', 'SearchField', 'Menu', 'ListBox']} docs={docs} />
+
+This example consumes from `LabelContext` in an existing styled label component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by Autocomplete.
+
+```tsx
+import type {LabelProps} from 'react-aria-components';
+import {LabelContext, useContextProps} from 'react-aria-components';
+
+const MyCustomLabel = React.forwardRef((props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, LabelContext);
+  ///- end highlight -///
+
+  // ... your existing Label component
+  return <label {...props} ref={ref} />;
+});
+```
+
+Now you can use `MyCustomLabel` within an `Autocomplete`, in place of the builtin React Aria Components `Label`.
+
+```tsx
+<Autocomplete>
+  {/*- begin highlight -*/}
+  <MyCustomLabel>Name</MyCustomLabel>
+  {/*- end highlight -*/}
+  {/* ... */}
+</Autocomplete>
+```
+
+### State
+
+Autocomplete provides an <TypeLink links={statelyDocs.links} type={statelyDocs.exports.AutocompleteState} /> object to its children via `AutocompleteStateContext`. This can be used to access and manipulate the autocomplete's state.
+
+This example shows an `AutocompleteClearButton` component that can be placed within an `Autocomplete` to allow the user to clear the selected value.
+
+```tsx example
+import {UNSTABLE_AutocompleteStateContext as AutocompleteStateContext, Popover, Button} from 'react-aria-components';
+
+function Example() {
+  let {contains} = useFilter({sensitivity: 'base'});
+  return (
+    <div className="custom-autocomplete">
+      <Autocomplete filter={contains}>
+        <MySearchField label="Animals" placeholder="Search animals..." />
+        <AutocompleteClearButton />
+        <Menu>
+          <MyItem id="cat">Cat</MyItem>
+          <MyItem id="dog">Dog</MyItem>
+          <MyItem id="kangaroo">Kangaroo</MyItem>
+        </Menu>
+      </Autocomplete>
+    </div>
+  )
+}
+
+function AutocompleteClearButton() {
+  /*- begin highlight -*/
+  let state = React.useContext(AutocompleteStateContext);
+  /*- end highlight -*/
+  return (
+    <Button
+      className="clear-button"
+      onPress={() => state?.setInputValue('')}>
+      Clear
+    </Button>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+
+.custom-autocomplete {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 300px;
+  height: 220px;
+  border: 1px solid var(--border-color);
+  padding: 16px;
+  border-radius: 10px;
+  background: var(--overlay-background);
+}
+
+.clear-button {
+  margin-top: 8px;
+}
+```
+
+</details>
+
+### Hooks
+
+If you need to customize things even further, such as accessing internal state, intercepting events, or customizing the DOM structure, you can drop down to the lower level Hook-based API. See [useAutocomplete](useAutocomplete.html) for more details.
