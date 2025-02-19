@@ -903,8 +903,8 @@ describe('Table', () => {
 
       let cells1 = [...within(rows[1]).getAllByRole('rowheader'), ...within(rows[1]).getAllByRole('gridcell')];
       expect(cells1).toHaveLength(3);
-      expect(cells1[0]).toHaveAttribute('aria-colindex', '1');
-      expect(cells1[1]).toHaveAttribute('aria-colindex', '2');
+      expect(cells1[0]).not.toHaveAttribute('aria-colindex');
+      expect(cells1[1]).not.toHaveAttribute('aria-colindex');
       expect(cells1[1]).toHaveAttribute('colspan', '2');
       expect(cells1[2]).toHaveAttribute('aria-colindex', '4');
 
@@ -917,12 +917,12 @@ describe('Table', () => {
 
       let cells3 = within(rows[3]).getAllByRole('rowheader');
       expect(cells3).toHaveLength(1);
-      expect(cells3[0]).toHaveAttribute('aria-colindex', '1');
+      expect(cells3[0]).not.toHaveAttribute('aria-colindex');
       expect(cells3[0]).toHaveAttribute('colspan', '4');
 
       let cells5 = [...within(rows[5]).getAllByRole('rowheader'), ...within(rows[5]).getAllByRole('gridcell')];
       expect(cells5).toHaveLength(2);
-      expect(cells5[0]).toHaveAttribute('aria-colindex', '1');
+      expect(cells5[0]).not.toHaveAttribute('aria-colindex');
       expect(cells5[0]).toHaveAttribute('colspan', '3');
       expect(cells5[1]).toHaveAttribute('aria-colindex', '4');
     });
@@ -982,6 +982,7 @@ describe('Table', () => {
 
     it('should throw error if number of cells do not match column count', () => {
       jest.spyOn(console, 'error').mockImplementation(() => {});
+      let error;
       try {
         render(
           <Table aria-label="Col Span Table with wrong number of cells">
@@ -1005,10 +1006,11 @@ describe('Table', () => {
               </Row>
             </TableBody>
           </Table>
-          );
+        );
       } catch (e) {
-        expect(e.message).toEqual('Cell count must match column count. Found 5 cells and 4 columns.');
+        error = e;
       }
+      expect(error?.message).toEqual('Cell count must match column count. Found 5 cells and 4 columns.');
       try {
         render(
           <Table aria-label="Col Span Table with wrong number of cells">
@@ -1024,8 +1026,9 @@ describe('Table', () => {
           </Table>
         );
       } catch (e) {
-        expect(e.message).toEqual('Cell count must match column count. Found 1 cells and 2 columns.');
+        error = e;
       }
+      expect(error?.message).toEqual('Cell count must match column count. Found 1 cells and 2 columns.');
     });
   });
 
