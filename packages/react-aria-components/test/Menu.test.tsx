@@ -12,7 +12,7 @@
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaMenuTests} from './AriaMenu.test-util';
-import {Button, Collection, Dialog, Header, Heading, Input, Keyboard, Label, Menu, MenuContext, MenuItem, MenuSection, MenuTrigger, Popover, Separator, SubmenuTrigger, Text, TextField} from '..';
+import {Button, Collection, Dialog, Header, Heading, Input, Keyboard, Label, Menu, MenuContext, MenuItem, MenuSection, MenuTrigger, Popover, Pressable, Separator, SubmenuTrigger, Text, TextField} from '..';
 import React, {useState} from 'react';
 import {Selection, SelectionMode} from '@react-types/shared';
 import {SubDialogTrigger} from '../src/Menu';
@@ -1394,6 +1394,30 @@ describe('Menu', () => {
 
       expect(getByRole('menu').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
     });
+  });
+
+  it('should support custom Pressable trigger', async () => {
+    let {getByRole} = render(
+      <MenuTrigger>
+        <Pressable>
+          <span role="button">Trigger</span>
+        </Pressable>
+        <Popover>
+          <Menu aria-label="Test">
+            <MenuItem id="1">One</MenuItem>
+            <MenuItem id="">Two</MenuItem>
+            <MenuItem id="3">Three</MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+
+    let button = getByRole('button');
+
+    await user.click(button);
+
+    let menu = getByRole('menu');
+    expect(menu).toBeInTheDocument();
   });
 });
 
