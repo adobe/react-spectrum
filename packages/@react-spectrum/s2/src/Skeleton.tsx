@@ -17,13 +17,11 @@ import {mergeStyles} from '../style/runtime';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
-
-let reduceMotion = typeof window?.matchMedia === 'function'
-  ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  : false;
+import {useMediaQuery} from '@react-spectrum/utils';
 
 export function useLoadingAnimation(isAnimating: boolean) {
   let animationRef = useRef<Animation | null>(null);
+  let reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
   return useCallback((element: HTMLElement | null) => {
     if (isAnimating && !animationRef.current && element && !reduceMotion) {
       // Use web animation API instead of CSS animations so that we can
