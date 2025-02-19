@@ -209,9 +209,9 @@ This example wraps `Autocomplete` and all of its children together into a single
 
 ```tsx example export=true
 import type {AutocompleteProps, MenuItemProps} from 'react-aria-components';
-import {SearchField, Menu, MenuItem} from 'react-aria-components';
+import {Menu, MenuItem} from 'react-aria-components';
 
-interface MyAutocompleteProps<T extends object> extends Omit<AutocompleteProps<T>, 'children'> {
+interface MyAutocompleteProps<T extends object> extends Omit<AutocompleteProps, 'children'> {
   label?: string,
   placeholder?: string,
   items?: Iterable<T>;
@@ -234,7 +234,6 @@ function MyAutocomplete<T extends object>({label,placeholder, items, children, o
 }
 
 function MyItem(props: MenuItemProps) {
-  let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   return <MenuItem {...props} className={({isFocused, isSelected}) => `my-item ${isFocused ? 'focused' : ''} ${isSelected ? 'selected' : ''}`} />
 }
 
@@ -423,15 +422,14 @@ All React Aria Components export a corresponding context that can be used to sen
 This example shows a `FieldGroup` component that renders a group of filters with a title. The entire group can be given the same `filter` prop, which is passed to all child selects via the `AutocompleteContext` provider.
 
 ```tsx example
-import {UNSTABLE_AutocompleteContext as AutocompleteContext, ListBox, ListBoxItem, Menu, MenuItem} from 'react-aria-components';
+import {UNSTABLE_AutocompleteContext as AutocompleteContext, Menu, MenuItem} from 'react-aria-components';
 
 interface FieldGroupProps {
   title?: string,
-  children?: React.ReactNode,
-  filter?: (text: string) => boolean
+  children?: React.ReactNode
 }
 
-function FieldGroup({title, children, isDisabled}: FieldGroupProps) {
+function FieldGroup({title, children}: FieldGroupProps) {
   let {contains} = useFilter({sensitivity: 'base'});
   return (
     <fieldset>

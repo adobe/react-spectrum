@@ -18,7 +18,7 @@ import React, {createContext, RefObject, useRef} from 'react';
 import {SearchFieldContext} from './SearchField';
 import {TextFieldContext} from './TextField';
 
-export interface AutocompleteProps extends AriaAutocompleteProps, SlotProps {}
+export interface AutocompleteProps extends Omit<AriaAutocompleteProps, 'children'>, SlotProps {}
 
 interface InternalAutocompleteContextValue {
   filterFn?: (nodeTextValue: string) => boolean,
