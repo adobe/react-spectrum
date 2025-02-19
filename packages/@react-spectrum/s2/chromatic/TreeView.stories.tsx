@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionMenu, Content, Heading, IllustratedMessage, Link, MenuItem, Text, TreeView, TreeViewItem} from '../src';
+import {ActionMenu, Collection, Content, Heading, IllustratedMessage, Link, MenuItem, Text, TreeItemContent, TreeView, TreeViewItem} from '../src';
 import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import FileTxt from '../s2wf-icons/S2_Icon_FileText_20_N.svg';
@@ -36,35 +36,10 @@ function TreeExample(props) {
         disabledKeys={['projects-1']}
         aria-label="test static tree"
         expandedKeys={['projects']}>
+
         <TreeViewItem id="Photos" textValue="Photos">
-          <Text>Photos</Text>
-          <Folder />
-          <ActionMenu>
-            <MenuItem id="edit">
-              <Edit />
-              <Text>Edit</Text>
-            </MenuItem>
-            <MenuItem id="delete">
-              <Delete />
-              <Text>Delete</Text>
-            </MenuItem>
-          </ActionMenu>
-        </TreeViewItem>
-        <TreeViewItem id="projects" textValue="Projects">
-          <Text>Projects</Text>
-          <Folder />
-          <ActionMenu>
-            <MenuItem id="edit">
-              <Edit />
-              <Text>Edit</Text>
-            </MenuItem>
-            <MenuItem id="delete">
-              <Delete />
-              <Text>Delete</Text>
-            </MenuItem>
-          </ActionMenu>
-          <TreeViewItem id="projects-1" textValue="Projects-1">
-            <Text>Projects-1</Text>
+          <TreeItemContent>
+            <Text>Photos</Text>
             <Folder />
             <ActionMenu>
               <MenuItem id="edit">
@@ -76,8 +51,58 @@ function TreeExample(props) {
                 <Text>Delete</Text>
               </MenuItem>
             </ActionMenu>
+          </TreeItemContent>
+        </TreeViewItem>
+        <TreeViewItem id="projects" textValue="Projects">
+          <TreeItemContent>
+            <Text>Projects</Text>
+            <Folder />
+            <ActionMenu>
+              <MenuItem id="edit">
+                <Edit />
+                <Text>Edit</Text>
+              </MenuItem>
+              <MenuItem id="delete">
+                <Delete />
+                <Text>Delete</Text>
+              </MenuItem>
+            </ActionMenu>
+          </TreeItemContent>
+          <TreeViewItem id="projects-1" textValue="Projects-1">
+            <TreeItemContent>
+              <Text>Projects-1</Text>
+              <Folder />
+              <ActionMenu>
+                <MenuItem id="edit">
+                  <Edit />
+                  <Text>Edit</Text>
+                </MenuItem>
+                <MenuItem id="delete">
+                  <Delete />
+                  <Text>Delete</Text>
+                </MenuItem>
+              </ActionMenu>
+            </TreeItemContent>
             <TreeViewItem id="projects-1A" textValue="Projects-1A">
-              <Text>Projects-1A</Text>
+              <TreeItemContent>
+                <Text>Projects-1A</Text>
+                <FileTxt />
+                <ActionMenu>
+                  <MenuItem id="edit">
+                    <Edit />
+                    <Text>Edit</Text>
+                  </MenuItem>
+                  <MenuItem id="delete">
+                    <Delete />
+                    <Text>Delete</Text>
+                  </MenuItem>
+                </ActionMenu>
+              </TreeItemContent>
+            </TreeViewItem>
+          </TreeViewItem>
+          <TreeViewItem id="projects-2" textValue="Projects-2">
+            <TreeItemContent>
+              <Text>Projects-2</Text>
               <FileTxt />
               <ActionMenu>
                 <MenuItem id="edit">
@@ -89,35 +114,23 @@ function TreeExample(props) {
                   <Text>Delete</Text>
                 </MenuItem>
               </ActionMenu>
-            </TreeViewItem>
-          </TreeViewItem>
-          <TreeViewItem id="projects-2" textValue="Projects-2">
-            <Text>Projects-2</Text>
-            <FileTxt />
-            <ActionMenu>
-              <MenuItem id="edit">
-                <Edit />
-                <Text>Edit</Text>
-              </MenuItem>
-              <MenuItem id="delete">
-                <Delete />
-                <Text>Delete</Text>
-              </MenuItem>
-            </ActionMenu>
+            </TreeItemContent>
           </TreeViewItem>
           <TreeViewItem id="projects-3" textValue="Projects-3">
-            <Text>Projects-3</Text>
-            <FileTxt />
-            <ActionMenu>
-              <MenuItem id="edit">
-                <Edit />
-                <Text>Edit</Text>
-              </MenuItem>
-              <MenuItem id="delete">
-                <Delete />
-                <Text>Delete</Text>
-              </MenuItem>
-            </ActionMenu>
+            <TreeItemContent>
+              <Text>Projects-3</Text>
+              <FileTxt />
+              <ActionMenu>
+                <MenuItem id="edit">
+                  <Edit />
+                  <Text>Edit</Text>
+                </MenuItem>
+                <MenuItem id="delete">
+                  <Delete />
+                  <Text>Delete</Text>
+                </MenuItem>
+              </ActionMenu>
+            </TreeItemContent>
           </TreeViewItem>
         </TreeViewItem>
       </TreeView>
@@ -207,14 +220,53 @@ let rows = [
   ]}
 ];
 
+const DynamicTreeItem = (props) => {
+  let {childItems, name, icon} = props;
+  return (
+    <>
+      <TreeViewItem id={props.id} childItems={childItems} textValue={name} href={props.href}>
+        <TreeItemContent>
+          <Text>{name}</Text>
+          {icon}
+          <ActionMenu>
+            <MenuItem id="edit">
+              <Edit />
+              <Text>Edit</Text>
+            </MenuItem>
+            <MenuItem id="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </MenuItem>
+          </ActionMenu>
+        </TreeItemContent>
+        <Collection items={childItems}>
+          {(item: any) => (
+            <DynamicTreeItem
+              id={item.id}
+              icon={item.icon}
+              childItems={item.childItems}
+              textValue={item.name}
+              name={item.name}
+              href={props.href}>
+              {item.name}
+            </DynamicTreeItem>
+          )}
+        </Collection>
+      </TreeViewItem>
+    </>
+  );
+};
+
 const TreeExampleDynamic = (args) => (
   <div style={{width: '300px', height: '320px', display: 'flex', flexDirection: 'column'}}>
     <TreeView aria-label="test dynamic tree" items={rows} {...args}>
       {(item: any) => (
-        <TreeViewItem childItems={item.childItems} textValue={item.name}>
-          <Text>{item.name}</Text>
-          {item.icon}
-        </TreeViewItem>
+        <DynamicTreeItem
+          id={item.id}
+          icon={item.icon}
+          childItems={item.childItems}
+          textValue={item.name}
+          name={item.name} />
       )}
     </TreeView>
   </div>
