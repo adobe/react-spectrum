@@ -280,9 +280,7 @@ import {Tree, TreeItem, TreeItemContent, Button, Checkbox} from 'react-aria-comp
       <Checkbox slot="selection" />
     </TreeItemContent>
     <TreeItem>
-      <TreeItemContent>
-        <Checkbox slot="selection" />
-      </TreeItemContent>
+      {/* ... */}
     </TreeItem>
   </TreeItem>
 </Tree>
@@ -347,8 +345,6 @@ To help kick-start your project, we offer starter kits that include example impl
 
 If you will use a Tree in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-The following example includes a custom tree item with an action button.
-
 ```tsx example export=true render=false
 import type {TreeItemContentProps} from 'react-aria-components';
 import {Button} from 'react-aria-components';
@@ -356,34 +352,34 @@ import {Button} from 'react-aria-components';
 function MyTreeItemContent(props: TreeItemContentProps) {
   return (
     <TreeItemContent>
-     {({hasChildItems, selectionBehavior, selectionMode}) => (
-      <>
-        {selectionBehavior === 'toggle' && selectionMode !== 'none' && <MyCheckbox slot="selection" />}
-        <Button slot="chevron">
-          <svg viewBox="0 0 24 24">
-            <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-          </svg>
-        </Button>
-        {props.children}
-      </>
-    )}
+      {({hasChildItems, selectionBehavior, selectionMode}) => (
+        <>
+          {selectionBehavior === 'toggle' && selectionMode !== 'none' && <MyCheckbox slot="selection" />}
+          <Button slot="chevron">
+            <svg viewBox="0 0 24 24">
+              <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
+          </Button>
+          {props.children}
+        </>
+      )}
     </TreeItemContent>
   );
 }
 ```
 
-The `TreeItem` can also be wrapped. For example, it could include the TreeItemContent automatically.
+The `TreeItem` can also be wrapped. This example accepts a `title` prop and renders the `TreeItemContent` automatically.
 
 ```tsx example export=true render=false
 import {TreeItemProps} from 'react-aria-components';
 
-interface MyTreeItemProps extends Omit<TreeItemProps, 'textValue' | 'children'>, Partial<Pick<TreeItemProps, 'children'>> {
+interface MyTreeItemProps extends Partial<TreeItemProps> {
   title: string
 }
 
 function MyTreeItem(props: MyTreeItemProps) {
   return (
-    <TreeItem id={props.title.toLowerCase()} textValue={props.title}>
+    <TreeItem textValue={props.title} {...props}>
       <MyTreeItemContent>
         {props.title}
       </MyTreeItemContent>
@@ -447,13 +443,11 @@ function FileTree(props: TreeProps<FileType>) {
       /*- end highlight -*/
       selectionMode="multiple"
       {...props}>
-      {
-        ///- begin highlight -///
-        function renderItem(item) {
+      {/*- begin highlight -*/}
+      {function renderItem(item) {
         ///- end highlight -///
         return (
-          <TreeItem
-            textValue={item.title}>
+          <TreeItem textValue={item.title}>
             <MyTreeItemContent>
               {item.title}
               <Button
@@ -463,11 +457,10 @@ function FileTree(props: TreeProps<FileType>) {
               </Button>
             </MyTreeItemContent>
             <Collection items={item.children}>
-              {
-                ///- begin highlight -///
-                renderItem // same as renderItem function above
-                ///- end highlight -///
-              }
+              {/*- begin highlight -*/}
+              {/* recursively render children */}
+              {renderItem}
+              {/*- end highlight -*/}
             </Collection>
           </TreeItem>
         );
@@ -572,14 +565,11 @@ function PokemonEvolutionTree(
     >
       {function renderItem(item) {
         return (
-          <TreeItem textValue={item.name}>
-            <MyTreeItemContent>
-              {item.name}
-            </MyTreeItemContent>
+          <MyTreeItem title={item.name}>
             <Collection items={item.children}>
               {renderItem}
             </Collection>
-          </TreeItem>
+          </MyTreeItem>
         );
       }}
     </Tree>
@@ -630,27 +620,22 @@ Items may also have an action specified by directly applying `onAction` on the `
 
 ```tsx example
 <Tree aria-label="Tree with onAction applied on the items directly" style={{height: '300px'}} defaultExpandedKeys={['bulbasaur', 'ivysaur']}>
-  {/*- begin highlight -*/}
-  <TreeItem id="bulbasaur" textValue="Bulbasaur" onAction={() => alert(`Opening Bulbasaur...`)}>
-  {/*- end highlight -*/}
-    <MyTreeItemContent>
-      Bulbasaur
-    </MyTreeItemContent>
-    {/*- begin highlight -*/}
-    <TreeItem id="ivysaur" textValue="Ivysaur" onAction={() => alert(`Opening Ivysaur...`)}>
-    {/*- end highlight -*/}
-      <MyTreeItemContent>
-        Ivysaur
-      </MyTreeItemContent>
-      {/*- begin highlight -*/}
-      <TreeItem id="venisaur" textValue="Venisaur" onAction={() => alert(`Opening Venisaur...`)}>
-      {/*- end highlight -*/}
-        <MyTreeItemContent>
-          Venisaur
-        </MyTreeItemContent>
-      </TreeItem>
-    </TreeItem>
-  </TreeItem>
+  <MyTreeItem 
+    /*- begin highlight -*/
+    onAction={() => alert(`Opening Bulbasaur...`)}
+    /*- end highlight -*/
+    id="bulbasaur"
+    title="Bulbasaur">
+    <MyTreeItem
+      onAction={() => alert(`Opening Ivysaur...`)}
+      id="ivysaur"
+      title="Ivysaur">
+      <MyTreeItem
+        onAction={() => alert(`Opening Venisaur...`)}
+        id="venisaur"
+        title="Venisaur" />
+    </MyTreeItem>
+  </MyTreeItem>
 </Tree>
 ```
 
@@ -661,21 +646,25 @@ Tree items may also be links to another page or website. This can be achieved by
 
 ```tsx example
 <Tree aria-label="Tree with onAction applied on the items directly" style={{height: '200px'}} defaultExpandedKeys={['bulbasaur', 'ivysaur']}>
-  <TreeItem id="bulbasaur" textValue="Bulbasaur" href="https://pokemondb.net/pokedex/bulbasaur" target="_blank">
-    <MyTreeItemContent>
-      Bulbasaur
-    </MyTreeItemContent>
-    <TreeItem id="ivysaur" textValue="Ivysaur" href="https://pokemondb.net/pokedex/ivysaur" target="_blank">
-      <MyTreeItemContent>
-        Ivysaur
-      </MyTreeItemContent>
-      <TreeItem id="venisaur" textValue="Venisaur" href="https://pokemondb.net/pokedex/venusaur" target="_blank">
-        <MyTreeItemContent>
-          Venisaur
-        </MyTreeItemContent>
-      </TreeItem>
-    </TreeItem>
-  </TreeItem>
+  <MyTreeItem
+    /*- begin highlight -*/
+    href="https://pokemondb.net/pokedex/bulbasaur"
+    target="_blank"
+    /*- end highlight -*/
+    id="bulbasaur"
+    title="Bulbasaur">
+    <MyTreeItem
+      id="ivysaur"
+      title="Ivysaur"
+      href="https://pokemondb.net/pokedex/ivysaur"
+      target="_blank">
+      <MyTreeItem
+        id="venisaur"
+        title="Venisaur"
+        href="https://pokemondb.net/pokedex/venusaur"
+        target="_blank" />
+    </MyTreeItem>
+  </MyTreeItem>
 </Tree>
 ```
 
@@ -697,23 +686,13 @@ Note that you are responsible for the styling of disabled items, however, the se
 
 ```tsx example
 <Tree aria-label="Tree with disabled items" style={{height: '100px'}} defaultExpandedKeys={['bulbasaur']}>
-  <TreeItem id="bulbasaur" textValue="Bulbasaur">
-    <MyTreeItemContent>
-      Bulbasaur
-    </MyTreeItemContent>
+  <MyTreeItem id="bulbasaur" title="Bulbasaur">
     {/*- begin highlight -*/}
-    <TreeItem id="ivysaur" textValue="Ivysaur" isDisabled>
+    <MyTreeItem id="ivysaur" title="Ivysaur" isDisabled>
     {/*- end highlight -*/}
-      <MyTreeItemContent>
-        Ivysaur
-      </MyTreeItemContent>
-      <TreeItem id="venisaur" textValue="Venisaur">
-        <MyTreeItemContent>
-          Venisaur
-        </MyTreeItemContent>
-      </TreeItem>
-    </TreeItem>
-  </TreeItem>
+      <MyTreeItem id="venisaur" title="Venisaur" />
+    </MyTreeItem>
+  </MyTreeItem>
 </Tree>
 ```
 
@@ -729,23 +708,13 @@ When `disabledBehavior` is set to `selection`, interactions such as focus, dragg
   disabledBehavior="selection"
   /*- end highlight -*/
 >
-  <TreeItem id="bulbasaur" textValue="Bulbasaur">
-    <MyTreeItemContent>
-      Bulbasaur
-    </MyTreeItemContent>
+  <MyTreeItem id="bulbasaur" title="Bulbasaur">
     {/*- begin highlight -*/}
-    <TreeItem id="ivysaur" textValue="Ivysaur" isDisabled>
+    <MyTreeItem id="ivysaur" title="Ivysaur" isDisabled>
     {/*- end highlight -*/}
-      <MyTreeItemContent>
-        Ivysaur
-      </MyTreeItemContent>
-      <TreeItem id="venisaur" textValue="Venisaur">
-        <MyTreeItemContent>
-          Venisaur
-        </MyTreeItemContent>
-      </TreeItem>
-    </TreeItem>
-  </TreeItem>
+      <MyTreeItem id="venisaur" title="Venisaur" />
+    </MyTreeItem>
+  </MyTreeItem>
 </Tree>
 ```
 
@@ -857,7 +826,7 @@ A `Tree` can be targeted with the `.react-aria-Tree` CSS selector, or by overrid
 
 ### TreeItem
 
-A `TreeItem` can be targeted with the `.react-aria-TreeItem` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+A `TreeItem` can be targeted with the `.react-aria-TreeItem` CSS selector, or by overriding with a custom `className`. It supports the following states:
 
 <StateTable properties={docs.exports.TreeItemRenderProps.properties} showOptional />
 
@@ -871,9 +840,9 @@ TreeItem also exposes a `--tree-item-level` CSS custom property, which you can u
 
 ### TreeItemContent
 
-A `TreeItemContent` can be targeted with the `.react-aria-TreeItemContent` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+`TreeItemContent` does not render a DOM node. It supports the following render props:
 
-<StateTable properties={docs.exports.TreeItemContentRenderProps.properties} showOptional />
+<StateTable properties={docs.exports.TreeItemContentRenderProps.properties} showOptional hideSelector />
 
 ## Advanced customization
 

@@ -280,9 +280,9 @@ export interface TreeItemRenderProps extends Omit<ItemRenderProps, 'allowsDraggi
    * @selector [data-focus-visible-within]
    */
   isFocusVisibleWithin: boolean,
-  // The state of the tree.
+  /** The state of the tree. */
   state: TreeState<unknown>,
-  // The unique id of the tree row.
+  /** The unique id of the tree row. */
   id: Key
 }
 
