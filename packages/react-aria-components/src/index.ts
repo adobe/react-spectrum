@@ -78,7 +78,7 @@ export {UNSTABLE_TreeLoadingIndicator, UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABL
 export {useDragAndDrop} from './useDragAndDrop';
 export {DropIndicator, DropIndicatorContext, DragAndDropContext} from './DragAndDrop';
 export {Virtualizer} from './Virtualizer';
-export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem, SSRProvider, RouterProvider, I18nProvider, useLocale, useFilter} from 'react-aria';
+export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem, SSRProvider, RouterProvider, I18nProvider, useLocale, useFilter, Pressable, Focusable} from 'react-aria';
 export {FormValidationContext} from 'react-stately';
 export {parseColor, getColorChannels} from '@react-stately/color';
 export {ListLayout, GridLayout} from '@react-stately/layout';
