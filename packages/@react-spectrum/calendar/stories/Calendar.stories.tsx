@@ -11,11 +11,10 @@
  */
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
-import {add} from '@internationalized/date/src/manipulation';
-import {AnyCalendarDate, Calendar as CalendarClass, CalendarDate, CalendarDateTime, createCalendar, endOfWeek, getLocalTimeZone, parseZonedDateTime, startOfWeek, today, ZonedDateTime} from '@internationalized/date';
 import {Calendar} from '../';
-import {compareDate} from '@internationalized/date/src/queries';
+import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseZonedDateTime, today, ZonedDateTime} from '@internationalized/date';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Custom454Calendar} from '@internationalized/date/tests/customCalendarImpl';
 import {DateValue} from '@react-types/calendar';
 import {Flex} from '@react-spectrum/layout';
 import {Item, Picker, Section} from '@react-spectrum/picker';
@@ -292,108 +291,6 @@ function ControlledFocus(props) {
 
 function CustomCalendar(props) { 
   return (
-    <ControlledFocus {...props} createCalendar={() => new Custom454()} focusedValue={new CalendarDate(2023, 2, 5)} />
+    <ControlledFocus {...props} createCalendar={() => new Custom454Calendar()} focusedValue={new CalendarDate(2023, 2, 5)} />
   );
-}
-
-type Mutable<T> = {
-  -readonly[P in keyof T]: T[P]
-}
-
-export class Custom454 implements CalendarClass {
-  identifier = '454';
-  anchorDate: CalendarDate;
-  gregCalendar: CalendarClass;
-
-  constructor() {
-    this.gregCalendar = createCalendar('gregory');
-    this.anchorDate = new CalendarDate(this, 2001, 2, 4);
-  }
-
-  fromJulianDay(jd: number): CalendarDate {
-    return this.gregCalendar.fromJulianDay(jd);
-  }
-  toJulianDay(date: AnyCalendarDate): number {
-    return this.gregCalendar.toJulianDay(date);
-  }
-  getDaysInMonth(date: AnyCalendarDate): number {
-    return this.gregCalendar.getDaysInMonth(date);
-  }
-  getMonthsInYear(): number {
-    return 12;
-  }
-  getYearsInEra(date: AnyCalendarDate): number {
-    return this.gregCalendar.getYearsInEra(date);
-  }
-  getEras(): string[] {
-    return this.gregCalendar.getEras();
-  }
-  getWeeksInMonth(date: AnyCalendarDate): number {
-    const dateMonth = this.getCurrentMonth(date);
-    const weekPattern = this.getWeekPattern(this.getCurrentYear(date).isBigYear);
-    return weekPattern[dateMonth.index - 1];
-  }
-  isSamePeriod(a: AnyCalendarDate, b: AnyCalendarDate, span:  'day' | 'week' | 'month' | 'year'): boolean {
-    switch (span) {
-      case 'month':
-        return this.getCurrentMonth(a).index === this.getCurrentMonth(b).index;
-      case 'year':
-        return this.getCurrentYear(a).start.year === this.getCurrentYear(b).start.year;
-      default:
-        return a.day === b.day && a.month === b.month && a.year === b.year;
-    }
-  }
-
-  getCurrentMonth(date: AnyCalendarDate) {
-    const yearRange = this.getCurrentYear(date);
-    const months = this.getWeekPattern(yearRange.isBigYear);
-    let pointer = yearRange.start;
-    
-    for (let k = 1; k <= months.length; k++) {
-      const weeksInMonth = months[k % months.length];
-      const end = pointer.add({weeks: weeksInMonth});
-      // if date is in the current month
-      if (this.toJulianDay(date) < this.toJulianDay(end)) {
-        return {
-          start: pointer,
-          end: end.subtract({days: 1}),
-          index: (k % months.length) + 1,
-          isBigYear: yearRange.isBigYear
-        };
-      }
-      pointer = end;
-    }
-
-    throw Error('Date is not in any month somehow');
-  }
-
-  private getWeekPattern(isBigYear: boolean) {
-    // Retail calendars begin in Feb, but RSP indexes months with Jan as month 1, so we shift the week pattern by 1.
-    return isBigYear ? [5, 4, 5, 4, 4, 5, 4, 4, 5, 4, 4, 5] : [4, 4, 5, 4, 4, 5, 4, 4, 5, 4, 4, 5];
-  }
-
-  private getCurrentYear(date: AnyCalendarDate) {
-    const getStartOfWeek = (currentDate: Mutable<AnyCalendarDate>) => this.getCurrentWeek(currentDate as DateValue).start;
-    let currentAnchor: Mutable<CalendarDate> = this.anchorDate.copy();
-    currentAnchor.year = date.year + 1;
-    
-    while (compareDate(date, getStartOfWeek(currentAnchor)) < 0) {
-      currentAnchor.year -= 1;
-    }
-
-    const startOfYear = getStartOfWeek(currentAnchor);
-    const isBigYear = !startOfYear.add({weeks: 53}).compare(add(currentAnchor as CalendarDate, {years: 1}));
-    return {
-      isBigYear,
-      start: startOfYear.copy(),
-      end: startOfYear.add({weeks: isBigYear ? 53 : 52, days: -1})
-    };
-  }
-
-  private getCurrentWeek(date: DateValue) {
-    return {
-      start: startOfWeek(date, 'en', 'sun'),
-      end: endOfWeek(date, 'en', 'sun')
-    };
-  }
 }

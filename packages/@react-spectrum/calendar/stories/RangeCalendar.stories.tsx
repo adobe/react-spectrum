@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, isWeekend, parseZonedDateTime, today} from '@internationalized/date';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
-import {Custom454} from './Calendar.stories';
+import {Custom454Calendar} from '@internationalized/date/tests/customCalendarImpl';
 import {DateValue} from '@react-types/calendar';
 import {Flex} from '@react-spectrum/layout';
 import {RangeCalendar} from '../';
@@ -207,5 +207,5 @@ function DateUnavailableAndInvalid(props) {
 }
 
 function Custom454RangedCalendar(props) {
-  return render({...props, createCalendar: () => new Custom454(), visibleMonths: 3, defaultValue: {start: new CalendarDate(2023, 8, 6), end: new CalendarDate(2023, 10, 7)}});
+  return render({...props, createCalendar: () => new Custom454Calendar(), visibleMonths: 3, defaultValue: {start: new CalendarDate(2023, 8, 6), end: new CalendarDate(2023, 10, 7)}});
 }
