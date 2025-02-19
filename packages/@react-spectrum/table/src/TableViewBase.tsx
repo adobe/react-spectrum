@@ -337,7 +337,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
           <div
             role="gridcell"
             aria-colindex={item.index + 1}
-            aria-colspan={item.colspan != null && item.colspan > 1 ? item.colspan : undefined} />
+            aria-colspan={item.colSpan != null && item.colSpan > 1 ? item.colSpan : undefined} />
         );
       case 'column':
         if (item.props.isSelectionCell) {
@@ -783,7 +783,7 @@ function TableColumnHeader(props) {
               stylesOverrides,
               'react-spectrum-Table-cell',
               {
-                'react-spectrum-Table-cell--alignCenter': columnProps.align === 'center' || column.colspan > 1,
+                'react-spectrum-Table-cell--alignCenter': columnProps.align === 'center' || column.colSpan > 1,
                 'react-spectrum-Table-cell--alignEnd': columnProps.align === 'end'
               }
             )
@@ -914,7 +914,7 @@ function ResizableTableColumnHeader(props) {
   let showResizer = !isEmpty && ((headerRowHovered && getInteractionModality() !== 'keyboard') || resizingColumn != null);
   let alignment = 'start';
   let menuAlign = 'start' as 'start' | 'end';
-  if (columnProps.align === 'center' || column.colspan > 1) {
+  if (columnProps.align === 'center' || column.colSpan > 1) {
     alignment = 'center';
   } else if (columnProps.align === 'end') {
     alignment = 'end';

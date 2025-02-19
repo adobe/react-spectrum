@@ -72,7 +72,7 @@ interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
 }
 
 export interface AriaButtonProps<T extends ElementType = 'button'> extends ButtonProps, LinkButtonProps<T>, AriaBaseButtonProps {}
-export interface AriaToggleButtonProps<T extends ElementType = 'button'> extends ToggleButtonProps, AriaBaseButtonProps, AriaButtonElementTypeProps<T> {}
+export interface AriaToggleButtonProps<T extends ElementType = 'button'> extends ToggleButtonProps, Omit<AriaBaseButtonProps, 'aria-current'>, AriaButtonElementTypeProps<T> {}
 export interface AriaToggleButtonGroupItemProps<E extends ElementType = 'button'> extends Omit<AriaToggleButtonProps<E>, 'id' | 'isSelected' | 'defaultSelected' | 'onChange'> {
   /** An identifier for the item in the `selectedKeys` of a ToggleButtonGroup. */
   id: Key
@@ -110,7 +110,7 @@ export interface SpectrumLogicButtonProps extends AriaBaseButtonProps, ButtonPro
   variant: 'and' | 'or'
 }
 
-export interface SpectrumToggleButtonProps extends ToggleButtonProps, SpectrumActionButtonProps {
+export interface SpectrumToggleButtonProps extends ToggleButtonProps, Omit<SpectrumActionButtonProps, 'aria-current'> {
   /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
   isEmphasized?: boolean
 }

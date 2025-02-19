@@ -48,7 +48,7 @@ export function useLoadingAnimation(isAnimating: boolean) {
 }
 
 export type SkeletonElement = ReactElement<{
-  children?: ReactNode,
+  children: ReactNode,
   className?: string,
   ref?: Ref<HTMLElement>,
   inert?: boolean | 'true'
