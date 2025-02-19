@@ -58,7 +58,7 @@
             <rect id="Rectangle_138452" data-name="Rectangle 138452" width="8.023" height="1" transform="translate(1 44.244)" fill="var(--anatomy-gray-500)"/>
           </g>
         </g>
-        <text id="Item" transform="translate(548.117 224.551)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-22.62" y="0">Item</tspan></text>
+        <text id="Item" transform="translate(548.117 224.551)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-42.62" y="0">TreeItem</tspan></text>
         <text id="Checkbox_optional_" data-name="Checkbox (optional)" transform="translate(572.117 318.551)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-101.998" y="0">Checkbox (optional)</tspan></text>
       </g>
       <rect id="rectangle-34-2" data-name="rectangle-34" width="298" height="1" transform="translate(343 252)" fill="var(--anatomy-gray-600)"/>
@@ -114,7 +114,7 @@ expand button" transform="translate(274 124.892)" fill="var(--anatomy-gray-800)"
       <g id="Group_156899" data-name="Group 156899" transform="translate(336.57 287) rotate(-90)">
         <g id="Group_156364-2" data-name="Group 156364" transform="translate(0 0)">
           <rect id="Rectangle_140787-2" data-name="Rectangle 140787" width="20" height="38.586" transform="translate(20 39.421) rotate(180)" fill="red" opacity="0"/>
-          <path id="Union_57-2" data-name="Union 57" d="M2,39.43V4.95a2.5,2.5,0,1,1,1,0V39.43Z" transform="translate(12.499 39.43) rotate(180)" fill="var(--anatomy-gray-500)"/>
+          <path id="Union_57-2" data-name="Union 57" d="M2,65.43V4.95a2.5,2.5,0,1,1,1,0V65.43Z" transform="translate(12.499 65.43) rotate(180)" fill="var(--anatomy-gray-500)"/>
         </g>
       </g>
     </g>
