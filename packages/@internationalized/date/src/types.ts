@@ -74,7 +74,6 @@ export interface Calendar {
    * Returns the number of weeks in the given date's month.
    */
   getWeeksInMonth?(date: AnyCalendarDate): number,
-
   /**
    * Returns the start and end dates of the month for which the given date is in, as
    * well as the 1-based index of the month of the year (e.g. Jan = 1, Feb = 2, etc.). 
@@ -83,7 +82,6 @@ export interface Calendar {
   // not align with the standard calendar months. In this case, this method should be
   // implemented to return the start and end of the month that the given date falls in.
   getCurrentMonth?(date: AnyCalendarDate): {start: DateValue, end: DateValue, index: number},
-
   /**
    * Returns whether the first and second dates both occur within the same period of time.
    */
