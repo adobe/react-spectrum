@@ -18,7 +18,7 @@ import React, {createContext, RefObject, useRef} from 'react';
 import {SearchFieldContext} from './SearchField';
 import {TextFieldContext} from './TextField';
 
-export interface AutocompleteProps extends Omit<AriaAutocompleteProps, 'children'>, SlotProps {}
+export interface AutocompleteProps extends AriaAutocompleteProps, SlotProps {}
 
 interface InternalAutocompleteContextValue {
   filterFn?: (nodeTextValue: string) => boolean,
@@ -26,7 +26,7 @@ interface InternalAutocompleteContextValue {
   collectionRef: RefObject<HTMLElement | null>
 }
 
-export const UNSTABLE_AutocompleteContext = createContext<SlottedContextValue<AutocompleteProps>>(null);
+export const UNSTABLE_AutocompleteContext = createContext<SlottedContextValue<Partial<AutocompleteProps>>>(null);
 export const UNSTABLE_AutocompleteStateContext = createContext<AutocompleteState | null>(null);
 // This context is to pass the register and filter down to whatever collection component is wrapped by the Autocomplete
 // TODO: export from RAC, but rename to something more appropriate
