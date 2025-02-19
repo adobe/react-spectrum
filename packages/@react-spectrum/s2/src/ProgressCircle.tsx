@@ -34,7 +34,7 @@ export interface ProgressCircleStyleProps {
   isIndeterminate?: boolean
 }
 
-export const ProgressCircleContext = createContext<ContextValue<ProgressCircleProps, DOMRefValue<HTMLDivElement>>>(null);
+export const ProgressCircleContext = createContext<ContextValue<Partial<ProgressCircleProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 // Double check the types passed to each style, may not need all for each
 const wrapper = style<ProgressCircleStyleProps>({

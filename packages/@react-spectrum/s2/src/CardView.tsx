@@ -531,7 +531,7 @@ const cardViewStyles = style({
   outlineOffset: -2
 }, getAllowedOverrides({height: true}));
 
-export const CardViewContext = createContext<ContextValue<CardViewProps<any>, DOMRefValue<HTMLDivElement>>>(null);
+export const CardViewContext = createContext<ContextValue<Partial<CardViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
 export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function CardView<T extends object>(props: CardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, CardViewContext);

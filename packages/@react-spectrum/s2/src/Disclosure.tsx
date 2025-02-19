@@ -39,7 +39,7 @@ export interface DisclosureProps extends Omit<RACDisclosureProps, 'className' | 
   children: ReactNode
 }
 
-export const DisclosureContext = createContext<ContextValue<Omit<DisclosureProps, 'children'>, DOMRefValue<HTMLDivElement>>>(null);
+export const DisclosureContext = createContext<ContextValue<Partial<DisclosureProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const disclosure = style({
   color: 'heading',

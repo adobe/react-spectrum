@@ -78,7 +78,7 @@ export {UNSTABLE_TreeLoadingIndicator, UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABL
 export {useDragAndDrop} from './useDragAndDrop';
 export {DropIndicator, DropIndicatorContext, DragAndDropContext} from './DragAndDrop';
 export {Virtualizer as UNSTABLE_Virtualizer} from './Virtualizer';
-export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem, SSRProvider, RouterProvider, I18nProvider, useLocale, useFilter} from 'react-aria';
+export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem, SSRProvider, RouterProvider, I18nProvider, useLocale, useFilter, Pressable, Focusable} from 'react-aria';
 export {FormValidationContext} from 'react-stately';
 export {parseColor, getColorChannels} from '@react-stately/color';
 export {ListLayout as UNSTABLE_ListLayout, GridLayout as UNSTABLE_GridLayout} from '@react-stately/layout';
@@ -99,7 +99,7 @@ export type {ColorWheelProps, ColorWheelRenderProps, ColorWheelTrackProps, Color
 export type {ComboBoxProps, ComboBoxRenderProps} from './ComboBox';
 export type {DateFieldProps, DateFieldRenderProps, DateInputProps, DateInputRenderProps, DateSegmentProps, DateSegmentRenderProps, TimeFieldProps} from './DateField';
 export type {DatePickerProps, DatePickerRenderProps, DateRangePickerProps, DateRangePickerRenderProps} from './DatePicker';
-export type {DialogProps, DialogTriggerProps} from './Dialog';
+export type {DialogProps, DialogTriggerProps, DialogRenderProps} from './Dialog';
 export type {DisclosureProps, DisclosureRenderProps, DisclosurePanelProps, DisclosurePanelRenderProps, DisclosureGroupProps, DisclosureGroupRenderProps} from './Disclosure';
 export type {DropZoneProps, DropZoneRenderProps} from './DropZone';
 export type {FieldErrorProps, FieldErrorRenderProps} from './FieldError';
@@ -111,8 +111,7 @@ export type {HeadingProps} from './Heading';
 export type {InputProps, InputRenderProps} from './Input';
 export type {SectionProps, CollectionRenderer} from './Collection';
 export type {LabelProps} from './Label';
-export type {LinkProps} from './Link';
-export type {LinkRenderProps} from './Link';
+export type {LinkProps, LinkRenderProps} from './Link';
 export type {ListBoxProps, ListBoxRenderProps, ListBoxItemProps, ListBoxItemRenderProps, ListBoxSectionProps} from './ListBox';
 export type {MenuProps, MenuItemProps, MenuItemRenderProps, MenuTriggerProps, SubmenuTriggerProps, MenuSectionProps} from './Menu';
 export type {MeterProps, MeterRenderProps} from './Meter';
@@ -139,7 +138,7 @@ export type {ToolbarProps, ToolbarRenderProps} from './Toolbar';
 export type {TooltipProps, TooltipRenderProps, TooltipTriggerComponentProps} from './Tooltip';
 export type {TreeProps, TreeRenderProps, TreeItemProps, TreeItemRenderProps, TreeItemContentProps, TreeItemContentRenderProps} from './Tree';
 export type {DragAndDropHooks, DragAndDropOptions} from './useDragAndDrop';
-export type {DropIndicatorProps} from './DragAndDrop';
+export type {DropIndicatorProps, DropIndicatorRenderProps} from './DragAndDrop';
 export type {ContextValue, SlotProps} from './utils';
 export type {VirtualizerProps} from './Virtualizer';
 
