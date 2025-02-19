@@ -164,6 +164,9 @@ export function endOfMonth(date: CalendarDateTime): CalendarDateTime;
 export function endOfMonth(date: CalendarDate): CalendarDate;
 export function endOfMonth(date: DateValue): DateValue;
 export function endOfMonth(date: DateValue): DateValue {
+  if (date.calendar.getCurrentMonth) {
+    return date.calendar.getCurrentMonth(date).end;
+  }
   return date.add({days: date.calendar.getDaysInMonth(date) - date.day});
 }
 
