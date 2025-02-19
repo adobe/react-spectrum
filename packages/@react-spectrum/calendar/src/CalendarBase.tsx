@@ -156,7 +156,9 @@ function getCurrentMonthName(date: CalendarState['focusedDate'], timezone: strin
     const monthRange = date.calendar.getCurrentMonth(date);
     // The monthRange's index indicates which month we are in in the current year, since the start of 
     // the month range may not be in the same month (e.g. fiscal calendar).
-    const month = date.set({month: monthRange.index, year: monthRange.end.year});
+    // To get the correct year, use the end date's year. Unless the month is December, then use the start date's year.
+    // This ensures that we don't have two December 2025s or January 2026s 12 months apart.
+    const month = date.set({month: monthRange.index, year: monthRange.index === 12 ? monthRange.start.year : monthRange.end.year});
     return monthDateFormatter.format(month.toDate(timezone));
   }
   return monthDateFormatter.format(date.toDate(timezone));

@@ -149,14 +149,18 @@ function formatBasedOnCustomMonth(monthFormatter: DateFormatter, stringFormatter
     return undefined;
   }
 
+  // To get the correct year, use the end date's year. Unless the month is December, then use the start date's year.
+  // This ensures that we don't have two Decembers or Januarys 12 months apart in the "same year".
+  const getCorrectYear = (month: ReturnType<typeof getCurrentMonth>) => month.index === 12 ? month.start.year : month.end.year;
+
   const startMonth = getCurrentMonth(startDate);
   const endMonth = getCurrentMonth(endDate);
   if (startMonth.index === endMonth.index) {
-    return monthFormatter.format(startDate.set({month: startMonth.index, year: endMonth.end.year}).toDate(timeZone));
+    return monthFormatter.format(startDate.set({month: startMonth.index, year: getCorrectYear(endMonth)}).toDate(timeZone));
   }
 
-  const adjustedStartDate = startMonth.start.set({month: startMonth.index, year: startMonth.end.year}) as CalendarDate;
-  const adjustedEndDate = endMonth.end.set({month: endMonth.index, year: endMonth.end.year}) as CalendarDate;
+  const adjustedStartDate = startMonth.start.set({month: startMonth.index, year: getCorrectYear(startMonth)}) as CalendarDate;
+  const adjustedEndDate = endMonth.end.set({month: endMonth.index, year: getCorrectYear(endMonth)}) as CalendarDate;
   return isAria
     ? formatRange(monthFormatter, stringFormatter, adjustedStartDate, adjustedEndDate, timeZone)
     : monthFormatter.formatRange(adjustedStartDate.toDate(timeZone), adjustedEndDate.toDate(timeZone));
