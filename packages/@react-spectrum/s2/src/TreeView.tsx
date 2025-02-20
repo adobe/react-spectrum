@@ -15,16 +15,16 @@ import {ActionMenuContext} from './ActionMenu';
 import {
   Button,
   ButtonContext,
+  ListLayout,
   Provider,
   TreeItemProps as RACTreeItemProps,
   TreeProps as RACTreeProps,
   TreeItemContentProps,
-  UNSTABLE_ListLayout,
   UNSTABLE_Tree,
   UNSTABLE_TreeItem,
   UNSTABLE_TreeItemContent,
-  UNSTABLE_Virtualizer,
-  useContextProps
+  useContextProps,
+  Virtualizer
 } from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
@@ -105,18 +105,17 @@ function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
 
   let domRef = useDOMRef(ref);
 
-  let rowHeight = isDetached ? 44 : 40;
-  if (scale === 'large') {
-    rowHeight = isDetached ? 54 : 50;
-  }
+  let rowHeight = scale === 'large' ? 50 : 40;
+  let gap = isDetached ? 4 : 0;
   let layout = useMemo(() => {
-    return new UNSTABLE_ListLayout({
-      rowHeight
+    return new ListLayout({
+      rowHeight,
+      gap
     });
-  }, [rowHeight]);
+  }, [rowHeight, gap]);
 
   return (
-    <UNSTABLE_Virtualizer layout={layout}>
+    <Virtualizer layout={layout}>
       <TreeRendererContext.Provider value={{renderer}}>
         <InternalTreeContext.Provider value={{isDetached, isEmphasized}}>
           <UNSTABLE_Tree
@@ -128,7 +127,7 @@ function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
           </UNSTABLE_Tree>
         </InternalTreeContext.Provider>
       </TreeRendererContext.Provider>
-    </UNSTABLE_Virtualizer>
+    </Virtualizer>
   );
 }
 
@@ -192,6 +191,7 @@ const treeCellGrid = style({
   display: 'grid',
   width: 'full',
   height: 'full',
+  boxSizing: 'border-box',
   alignContent: 'center',
   alignItems: 'center',
   gridTemplateColumns: ['auto', 'auto', 'auto', 'auto', 'auto', '1fr', 'minmax(0, auto)', 'auto'],
