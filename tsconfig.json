@@ -45,7 +45,9 @@
   },
   "include": [
     "packages",
-    "lib/svg.d.ts"
+    "lib/svg.d.ts",
+    "lib/viewTransitions.d.ts",
+    "lib/css.d.ts"
   ],
   "exclude": [
     "**/node_modules",
