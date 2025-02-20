@@ -19,7 +19,7 @@ import FileTxt from '@spectrum-icons/workflow/FileTxt';
 import Folder from '@spectrum-icons/workflow/Folder';
 import React from 'react';
 import {Text} from '@react-spectrum/text';
-import {TreeItemContent, TreeView, TreeViewItem} from '../src';
+import {TreeView, TreeViewItem, TreeViewItemContent} from '../src';
 
 export default {
   title: 'TreeView'
@@ -30,7 +30,7 @@ function TestTree(props) {
     <div style={{width: '300px', height: '800px'}}>
       <TreeView {...props} disabledKeys={['projects-1']} defaultExpandedKeys={['Photos', 'projects', 'projects-1']} aria-label="test static tree">
         <TreeViewItem href="https://adobe.com/" id="Photos" textValue="Photos">
-          <TreeItemContent>
+          <TreeViewItemContent>
             <Text>Photos</Text>
             <Folder />
             <ActionGroup>
@@ -43,10 +43,10 @@ function TestTree(props) {
                 <Text>Delete</Text>
               </Item>
             </ActionGroup>
-          </TreeItemContent>
+          </TreeViewItemContent>
         </TreeViewItem>
         <TreeViewItem id="projects" textValue="Projects">
-          <TreeItemContent>
+          <TreeViewItemContent>
             <Text>Projects</Text>
             <Folder />
             <ActionMenu>
@@ -59,9 +59,9 @@ function TestTree(props) {
                 <Text>Delete</Text>
               </Item>
             </ActionMenu>
-          </TreeItemContent>
+          </TreeViewItemContent>
           <TreeViewItem id="projects-1" textValue="Projects-1">
-            <TreeItemContent>
+            <TreeViewItemContent>
               <Text>Projects-1</Text>
               <Folder />
               <ActionGroup>
@@ -74,9 +74,9 @@ function TestTree(props) {
                   <Text>Delete</Text>
                 </Item>
               </ActionGroup>
-            </TreeItemContent>
+            </TreeViewItemContent>
             <TreeViewItem id="projects-1A" textValue="Projects-1A">
-              <TreeItemContent>
+              <TreeViewItemContent>
                 <Text>Projects-1A</Text>
                 <FileTxt />
                 <ActionMenu>
@@ -89,11 +89,11 @@ function TestTree(props) {
                     <Text>Delete</Text>
                   </Item>
                 </ActionMenu>
-              </TreeItemContent>
+              </TreeViewItemContent>
             </TreeViewItem>
           </TreeViewItem>
           <TreeViewItem id="projects-2" textValue="Projects-2">
-            <TreeItemContent>
+            <TreeViewItemContent>
               <Text>Projects-2</Text>
               <FileTxt />
               <ActionGroup>
@@ -106,13 +106,13 @@ function TestTree(props) {
                   <Text>Delete</Text>
                 </Item>
               </ActionGroup>
-            </TreeItemContent>
+            </TreeViewItemContent>
           </TreeViewItem>
           <TreeViewItem id="projects-3" textValue="Projects-3">
-            <TreeItemContent>
+            <TreeViewItemContent>
               <Text>Projects-3</Text>
               <FileTxt />
-            </TreeItemContent>
+            </TreeViewItemContent>
           </TreeViewItem>
         </TreeViewItem>
       </TreeView>
