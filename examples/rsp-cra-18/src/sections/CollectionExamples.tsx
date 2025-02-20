@@ -117,7 +117,7 @@ export default function CollectionExamples(){
             <Item>Gaming</Item>
             <Item>Shopping</Item>
           </TagGroup>
-          <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>
+          <div style={{width: '300px', height: '150px', overflow: 'auto'}}>
             <TreeView disabledKeys={['projects-1']} aria-label="test static tree">
               <TreeViewItem id="Photos" textValue="Photos">
                 <TreeViewItemContent>
