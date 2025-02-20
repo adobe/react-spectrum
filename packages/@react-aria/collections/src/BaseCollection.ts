@@ -35,6 +35,8 @@ export class CollectionNode<T> implements Node<T> {
   readonly lastChildKey: Key | null = null;
   readonly props: any = {};
   readonly render?: (node: Node<any>) => ReactElement;
+  readonly colSpan: number | null = null;
+  readonly colIndex: number | null = null;
 
   constructor(type: string, key: Key) {
     this.type = type;
@@ -61,6 +63,8 @@ export class CollectionNode<T> implements Node<T> {
     node.lastChildKey = this.lastChildKey;
     node.props = this.props;
     node.render = this.render;
+    node.colSpan = this.colSpan;
+    node.colIndex = this.colIndex;
     return node;
   }
 }

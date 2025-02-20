@@ -20,7 +20,7 @@ export interface ToggleButtonGroupProps extends ActionButtonGroupProps, Omit<RAC
   isEmphasized?: boolean
 }
 
-export const ToggleButtonGroupContext = createContext<ContextValue<ToggleButtonGroupProps, HTMLDivElement>>(null);
+export const ToggleButtonGroupContext = createContext<ContextValue<Partial<ToggleButtonGroupProps>, HTMLDivElement>>(null);
 
 /**
  * A ToggleButtonGroup is a grouping of related ToggleButtons, with single or multiple selection.
