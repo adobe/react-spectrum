@@ -446,7 +446,10 @@ export default [{
         "packages/@internationalized/**/*.tsx",
 
         "packages/@react-stately/**/*.ts",
-        "packages/@react-stately/**/*.tsx"
+        "packages/@react-stately/**/*.tsx",
+
+        "packages/@react-spectrum/**/*.ts",
+        "packages/@react-spectrum/**/*.tsx"
     ],
 
     rules: {
@@ -461,6 +464,7 @@ export default [{
         "**/chromatic/**",
         "**/chromatic-fc/**",
         "**/__tests__/**",
+        "**/s2/**"
     ],
 
     rules: {
