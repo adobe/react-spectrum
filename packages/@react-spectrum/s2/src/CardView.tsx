@@ -25,6 +25,7 @@ import {focusRing, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ImageCoordinator} from './ImageCoordinator';
 import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
+import {mergeStyles} from '../style/runtime';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useEffectEvent, useLayoutEffect, useLoadMore, useResizeObserver} from '@react-aria/utils';
@@ -616,7 +617,7 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
   // ActionBar cannot be inside the GridList due to ARIA and focus management requirements.
   if (props.renderActionBar) {
     return (
-      <div ref={domRef} className={style({position: 'relative', overflow: 'clip', size: 'fit'})}>
+      <div ref={domRef} className={UNSAFE_className + mergeStyles(style({position: 'relative', overflow: 'clip', size: 'fit'}), styles)} style={UNSAFE_style}>
         {cardView}
         {actionBar}
       </div>
