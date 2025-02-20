@@ -6,9 +6,9 @@ import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 import {
   Text,
-  TreeItemContent,
   TreeView,
-  TreeViewItem
+  TreeViewItem,
+  TreeViewItemContent
 } from '../src';
 
 AriaTreeTests({
@@ -31,69 +31,69 @@ AriaTreeTests({
     standard: () => render(
       <TreeView aria-label="test tree">
         <TreeViewItem id="Photos" textValue="Photos">
-          <TreeItemContent>
+          <TreeViewItemContent>
             <Text>Photos</Text>
             <Folder />
-          </TreeItemContent>
+          </TreeViewItemContent>
         </TreeViewItem>
         <TreeViewItem id="projects" textValue="Projects">
-          <TreeItemContent>
+          <TreeViewItemContent>
             <Text>Projects</Text>
             <Folder />
-          </TreeItemContent>
+          </TreeViewItemContent>
           <TreeViewItem id="projects-1" textValue="Projects-1">
-            <TreeItemContent>
+            <TreeViewItemContent>
               <Text>Projects-1</Text>
               <Folder />
-            </TreeItemContent>
+            </TreeViewItemContent>
             <TreeViewItem id="projects-1A" textValue="Projects-1A">
-              <TreeItemContent>
+              <TreeViewItemContent>
                 <Text>Projects-1A</Text>
                 <FileTxt />
-              </TreeItemContent>
+              </TreeViewItemContent>
             </TreeViewItem>
           </TreeViewItem>
           <TreeViewItem id="projects-2" textValue="Projects-2">
-            <TreeItemContent>
+            <TreeViewItemContent>
               <Text>Projects-2</Text>
               <FileTxt />
-            </TreeItemContent>
+            </TreeViewItemContent>
           </TreeViewItem>
           <TreeViewItem id="projects-3" textValue="Projects-3">
-            <TreeItemContent>
+            <TreeViewItemContent>
               <Text>Projects-3</Text>
               <FileTxt />
-            </TreeItemContent>
+            </TreeViewItemContent>
           </TreeViewItem>
         </TreeViewItem>
         <TreeViewItem id="school" textValue="school">
-          <TreeItemContent>
+          <TreeViewItemContent>
             <Text>School</Text>
             <Folder />
-          </TreeItemContent>
+          </TreeViewItemContent>
           <TreeViewItem id="homework-1" textValue="homework-1">
-            <TreeItemContent>
+            <TreeViewItemContent>
               <Text>Homework-1</Text>
               <Folder />
-            </TreeItemContent>
+            </TreeViewItemContent>
             <TreeViewItem id="homework-1A" textValue="homework-1A">
-              <TreeItemContent>
+              <TreeViewItemContent>
                 <Text>Homework-1A</Text>
                 <FileTxt />
-              </TreeItemContent>
+              </TreeViewItemContent>
             </TreeViewItem>
           </TreeViewItem>
           <TreeViewItem id="homework-2" textValue="homework-2">
-            <TreeItemContent>
+            <TreeViewItemContent>
               <Text>Homework-2</Text>
               <FileTxt />
-            </TreeItemContent>
+            </TreeViewItemContent>
           </TreeViewItem>
           <TreeViewItem id="homework-3" textValue="homework-3">
-            <TreeItemContent>
+            <TreeViewItemContent>
               <Text>Homework-3</Text>
               <FileTxt />
-            </TreeItemContent>
+            </TreeViewItemContent>
           </TreeViewItem>
         </TreeViewItem>
       </TreeView>
@@ -101,69 +101,69 @@ AriaTreeTests({
     singleSelection: () => render(
       <TreeView aria-label="test tree" selectionMode="single" disabledKeys={['school']} disabledBehavior="selection">
         <TreeViewItem id="Photos" textValue="Photos">
-          <TreeItemContent>
+          <TreeViewItemContent>
             <Text>Photos</Text>
             <Folder />
-          </TreeItemContent>
+          </TreeViewItemContent>
         </TreeViewItem>
         <TreeViewItem id="projects" textValue="Projects">
-          <TreeItemContent>
+          <TreeViewItemContent>
             <Text>Projects</Text>
             <Folder />
-          </TreeItemContent>
+          </TreeViewItemContent>
           <TreeViewItem id="projects-1" textValue="Projects-1">
-            <TreeItemContent>
+            <TreeViewItemContent>
               <Text>Projects-1</Text>
               <Folder />
-            </TreeItemContent>
+            </TreeViewItemContent>
             <TreeViewItem id="projects-1A" textValue="Projects-1A">
-              <TreeItemContent>
+              <TreeViewItemContent>
                 <Text>Projects-1A</Text>
                 <FileTxt />
-              </TreeItemContent>
+              </TreeViewItemContent>
             </TreeViewItem>
           </TreeViewItem>
           <TreeViewItem id="projects-2" textValue="Projects-2">
-            <TreeItemContent>
+            <TreeViewItemContent>
               <Text>Projects-2</Text>
               <FileTxt />
-            </TreeItemContent>
+            </TreeViewItemContent>
           </TreeViewItem>
           <TreeViewItem id="projects-3" textValue="Projects-3">
-            <TreeItemContent>
+            <TreeViewItemContent>
               <Text>Projects-3</Text>
               <FileTxt />
-            </TreeItemContent>
+            </TreeViewItemContent>
           </TreeViewItem>
         </TreeViewItem>
         <TreeViewItem id="school" textValue="school">
-          <TreeItemContent>
+          <TreeViewItemContent>
             <Text>School</Text>
             <Folder />
-          </TreeItemContent>
+          </TreeViewItemContent>
           <TreeViewItem id="homework-1" textValue="homework-1">
-            <TreeItemContent>
+            <TreeViewItemContent>
               <Text>Homework-1</Text>
               <Folder />
-            </TreeItemContent>
+            </TreeViewItemContent>
             <TreeViewItem id="homework-1A" textValue="homework-1A">
-              <TreeItemContent>
+              <TreeViewItemContent>
                 <Text>Homework-1A</Text>
                 <FileTxt />
-              </TreeItemContent>
+              </TreeViewItemContent>
             </TreeViewItem>
           </TreeViewItem>
           <TreeViewItem id="homework-2" textValue="homework-2">
-            <TreeItemContent>
+            <TreeViewItemContent>
               <Text>Homework-2</Text>
               <FileTxt />
-            </TreeItemContent>
+            </TreeViewItemContent>
           </TreeViewItem>
           <TreeViewItem id="homework-3" textValue="homework-3">
-            <TreeItemContent>
+            <TreeViewItemContent>
               <Text>Homework-3</Text>
               <FileTxt />
-            </TreeItemContent>
+            </TreeViewItemContent>
           </TreeViewItem>
         </TreeViewItem>
       </TreeView>
@@ -171,69 +171,69 @@ AriaTreeTests({
     allInteractionsDisabled: () => render(
       <TreeView aria-label="test tree" selectionMode="single" disabledKeys={['school']} disabledBehavior="all">
         <TreeViewItem id="Photos" textValue="Photos">
-          <TreeItemContent>
+          <TreeViewItemContent>
             <Text>Photos</Text>
             <Folder />
-          </TreeItemContent>
+          </TreeViewItemContent>
         </TreeViewItem>
         <TreeViewItem id="projects" textValue="Projects">
-          <TreeItemContent>
+          <TreeViewItemContent>
             <Text>Projects</Text>
             <Folder />
-          </TreeItemContent>
+          </TreeViewItemContent>
           <TreeViewItem id="projects-1" textValue="Projects-1">
-            <TreeItemContent>
+            <TreeViewItemContent>
               <Text>Projects-1</Text>
               <Folder />
-            </TreeItemContent>
+            </TreeViewItemContent>
             <TreeViewItem id="projects-1A" textValue="Projects-1A">
-              <TreeItemContent>
+              <TreeViewItemContent>
                 <Text>Projects-1A</Text>
                 <FileTxt />
-              </TreeItemContent>
+              </TreeViewItemContent>
             </TreeViewItem>
           </TreeViewItem>
           <TreeViewItem id="projects-2" textValue="Projects-2">
-            <TreeItemContent>
+            <TreeViewItemContent>
               <Text>Projects-2</Text>
               <FileTxt />
-            </TreeItemContent>
+            </TreeViewItemContent>
           </TreeViewItem>
           <TreeViewItem id="projects-3" textValue="Projects-3">
-            <TreeItemContent>
+            <TreeViewItemContent>
               <Text>Projects-3</Text>
               <FileTxt />
-            </TreeItemContent>
+            </TreeViewItemContent>
           </TreeViewItem>
         </TreeViewItem>
         <TreeViewItem id="school" textValue="school">
-          <TreeItemContent>
+          <TreeViewItemContent>
             <Text>School</Text>
             <Folder />
-          </TreeItemContent>
+          </TreeViewItemContent>
           <TreeViewItem id="homework-1" textValue="homework-1">
-            <TreeItemContent>
+            <TreeViewItemContent>
               <Text>Homework-1</Text>
               <Folder />
-            </TreeItemContent>
+            </TreeViewItemContent>
             <TreeViewItem id="homework-1A" textValue="homework-1A">
-              <TreeItemContent>
+              <TreeViewItemContent>
                 <Text>Homework-1A</Text>
                 <FileTxt />
-              </TreeItemContent>
+              </TreeViewItemContent>
             </TreeViewItem>
           </TreeViewItem>
           <TreeViewItem id="homework-2" textValue="homework-2">
-            <TreeItemContent>
+            <TreeViewItemContent>
               <Text>Homework-2</Text>
               <FileTxt />
-            </TreeItemContent>
+            </TreeViewItemContent>
           </TreeViewItem>
           <TreeViewItem id="homework-3" textValue="homework-3">
-            <TreeItemContent>
+            <TreeViewItemContent>
               <Text>Homework-3</Text>
               <FileTxt />
-            </TreeItemContent>
+            </TreeViewItemContent>
           </TreeViewItem>
         </TreeViewItem>
       </TreeView>

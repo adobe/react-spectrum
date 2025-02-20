@@ -19,10 +19,10 @@ import {
   Provider,
   TreeItemProps as RACTreeItemProps,
   TreeProps as RACTreeProps,
+  Tree,
+  TreeItem,
+  TreeItemContent,
   TreeItemContentProps,
-  UNSTABLE_Tree,
-  UNSTABLE_TreeItem,
-  UNSTABLE_TreeItemContent,
   useContextProps,
   Virtualizer
 } from 'react-aria-components';
@@ -114,13 +114,13 @@ function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
       }}>
       <TreeRendererContext.Provider value={{renderer}}>
         <InternalTreeContext.Provider value={{isDetached, isEmphasized}}>
-          <UNSTABLE_Tree
+          <Tree
             {...props}
             className={({isEmpty}) => tree({isEmpty, isDetached}, props.styles)}
             selectionBehavior="toggle"
             ref={domRef}>
             {props.children}
-          </UNSTABLE_Tree>
+          </Tree>
         </InternalTreeContext.Provider>
       </TreeRendererContext.Provider>
     </Virtualizer>
@@ -302,7 +302,7 @@ export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
   let {isDetached, isEmphasized} = useContext(InternalTreeContext);
 
   return (
-    <UNSTABLE_TreeItem
+    <TreeItem
       {...props}
       className={(renderProps) => treeRow({
         ...renderProps,
@@ -311,7 +311,7 @@ export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
   );
 };
 
-export const TreeItemContent = (props: Omit<TreeItemContentProps, 'children'> & {children: ReactNode}) => {
+export const TreeViewItemContent = (props: Omit<TreeItemContentProps, 'children'> & {children: ReactNode}) => {
   let {
     children
   } = props;
@@ -319,7 +319,7 @@ export const TreeItemContent = (props: Omit<TreeItemContentProps, 'children'> & 
   let scale = useScale();
 
   return (
-    <UNSTABLE_TreeItemContent>
+    <TreeItemContent>
       {({isExpanded, hasChildItems, selectionMode, selectionBehavior, isDisabled, isFocusVisible, isSelected, id, state}) => {
         let isNextSelected = false;
         let isNextFocused = false;
@@ -361,7 +361,7 @@ export const TreeItemContent = (props: Omit<TreeItemContentProps, 'children'> & 
           </div>
         );
       }}
-    </UNSTABLE_TreeItemContent>
+    </TreeItemContent>
   );
 };
 
