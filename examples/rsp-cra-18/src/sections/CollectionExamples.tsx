@@ -1,4 +1,30 @@
-import {ActionMenu, Flex, Divider, Item, ListBox, ListView, MenuTrigger, Menu, SubmenuTrigger, ActionButton, TableBody, TableView, Row, Cell, TableHeader, Column, TagGroup} from '@adobe/react-spectrum';
+import {
+  ActionMenu,
+  Flex,
+  Divider,
+  Item,
+  ListBox,
+  ListView,
+  MenuTrigger,
+  Menu,
+  SubmenuTrigger,
+  ActionButton,
+  TableBody,
+  TableView,
+  Row,
+  Cell,
+  TableHeader,
+  Column,
+  TagGroup,
+  TreeView,
+  TreeViewItem,
+  TreeViewItemContent
+} from '@adobe/react-spectrum';
+
+import Delete from '@spectrum-icons/workflow/Delete';
+import Edit from '@spectrum-icons/workflow/Edit';
+import FileTxt from '@spectrum-icons/workflow/FileTxt';
+import Folder from '@spectrum-icons/workflow/Folder';
 
 export default function CollectionExamples(){
     return (
@@ -92,6 +118,106 @@ export default function CollectionExamples(){
             <Item>Gaming</Item>
             <Item>Shopping</Item>
           </TagGroup>
+          <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>
+            <TreeView disabledKeys={['projects-1']} aria-label="test static tree">
+              <TreeViewItem id="Photos" textValue="Photos">
+                <TreeViewItemContent>
+                  <Text>Photos</Text>
+                  <Folder />
+                  <ActionGroup>
+                    <Item key="edit">
+                      <Edit />
+                      <Text>Edit</Text>
+                    </Item>
+                    <Item key="delete">
+                      <Delete />
+                      <Text>Delete</Text>
+                    </Item>
+                  </ActionGroup>
+                </TreeViewItemContent>
+              </TreeViewItem>
+              <TreeViewItem id="projects" textValue="Projects">
+                <TreeViewItemContent>
+                  <Text>Projects</Text>
+                  <Folder />
+                  <ActionGroup>
+                    <Item key="edit">
+                      <Edit />
+                      <Text>Edit</Text>
+                    </Item>
+                    <Item key="delete">
+                      <Delete />
+                      <Text>Delete</Text>
+                    </Item>
+                  </ActionGroup>
+                </TreeViewItemContent>
+                <TreeViewItem id="projects-1" textValue="Projects-1">
+                  <TreeViewItemContent>
+                    <Text>Projects-1</Text>
+                    <Folder />
+                    <ActionGroup>
+                      <Item key="edit">
+                        <Edit />
+                        <Text>Edit</Text>
+                      </Item>
+                      <Item key="delete">
+                        <Delete />
+                        <Text>Delete</Text>
+                      </Item>
+                    </ActionGroup>
+                  </TreeViewItemContent>
+                  <TreeViewItem id="projects-1A" textValue="Projects-1A">
+                    <TreeViewItemContent>
+                      <Text>Projects-1A</Text>
+                      <FileTxt />
+                      <ActionGroup>
+                        <Item key="edit">
+                          <Edit />
+                          <Text>Edit</Text>
+                        </Item>
+                        <Item key="delete">
+                          <Delete />
+                          <Text>Delete</Text>
+                        </Item>
+                      </ActionGroup>
+                    </TreeViewItemContent>
+                  </TreeViewItem>
+                </TreeViewItem>
+                <TreeViewItem id="projects-2" textValue="Projects-2">
+                  <TreeViewItemContent>
+                    <Text>Projects-2</Text>
+                    <FileTxt />
+                    <ActionGroup>
+                      <Item key="edit">
+                        <Edit />
+                        <Text>Edit</Text>
+                      </Item>
+                      <Item key="delete">
+                        <Delete />
+                        <Text>Delete</Text>
+                      </Item>
+                    </ActionGroup>
+                  </TreeViewItemContent>
+                </TreeViewItem>
+                <TreeViewItem id="projects-3" textValue="Projects-3">
+                  <TreeViewItemContent>
+                    <Text>Projects-3</Text>
+                    <FileTxt />
+                    <ActionGroup>
+                      <Item key="edit">
+                        <Edit />
+                        <Text>Edit</Text>
+                      </Item>
+                      <Item key="delete">
+                        <Delete />
+                        <Text>Delete</Text>
+                      </Item>
+                    </ActionGroup>
+                  </TreeViewItemContent>
+                </TreeViewItem>
+              </TreeViewItem>
+            </TreeView>
+          </div>
         </Flex>
       </>
     )
