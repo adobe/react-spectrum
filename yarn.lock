@@ -5913,6 +5913,7 @@ __metadata:
   resolution: "@react-aria/autocomplete@workspace:packages/@react-aria/autocomplete"
   dependencies:
     "@react-aria/combobox": "npm:^3.11.1"
+    "@react-aria/focus": "npm:^3.19.1"
     "@react-aria/i18n": "npm:^3.12.5"
     "@react-aria/interactions": "npm:^3.23.0"
     "@react-aria/listbox": "npm:^3.14.0"
@@ -7914,7 +7915,7 @@ __metadata:
     "@react-types/textfield": "npm:^3.11.0"
     "@testing-library/dom": "npm:^10.1.0"
     "@testing-library/react": "npm:^15.0.7"
-    "@testing-library/user-event": "npm:^14.0.0"
+    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch"
     csstype: "npm:^3.0.2"
     jest: "npm:^29.5.0"
     react-aria: "npm:^3.37.0"
@@ -8178,7 +8179,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.1.0"
     "@testing-library/jest-dom": "npm:^5.16.4"
     "@testing-library/react": "npm:^15.0.7"
-    "@testing-library/user-event": "npm:^14.4.3"
+    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch"
     jest: "npm:^29.5.0"
     resolve: "npm:^1.17.0"
   peerDependencies:
@@ -10891,12 +10892,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/user-event@npm:^14.0.0, @testing-library/user-event@npm:^14.4.0, @testing-library/user-event@npm:^14.4.3, @testing-library/user-event@npm:^14.6.1":
+"@testing-library/user-event@npm:14.6.1":
   version: 14.6.1
   resolution: "@testing-library/user-event@npm:14.6.1"
   peerDependencies:
     "@testing-library/dom": ">=7.21.4"
   checksum: 10c0/75fea130a52bf320d35d46ed54f3eec77e71a56911b8b69a3fe29497b0b9947b2dc80d30f04054ad4ce7f577856ae3e5397ea7dff0ef14944d3909784c7a93fe
+  languageName: node
+  linkType: hard
+
+"@testing-library/user-event@patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch":
+  version: 14.6.1
+  resolution: "@testing-library/user-event@patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch::version=14.6.1&hash=13cf21"
+  peerDependencies:
+    "@testing-library/dom": ">=7.21.4"
+  checksum: 10c0/ede32fec9345bb5e5c19a5abcb647d8c4704239f3f5417afe2914c1397067dae7ce547e46adfd4027c913f5735c0651ec530c73bdc5c7ea955efa860cc6a9dd9
   languageName: node
   linkType: hard
 
@@ -29341,7 +29351,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.1.0"
     "@testing-library/jest-dom": "npm:^5.16.5"
     "@testing-library/react": "npm:^15.0.7"
-    "@testing-library/user-event": "npm:^14.6.1"
+    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch"
     "@types/react": "npm:types-react@19.0.0-rc.0"
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.0"
     "@types/storybook__react": "npm:^4.0.2"
