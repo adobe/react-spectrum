@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Checkbox, CheckboxProps, Collection, Key, ListLayout, Menu, MenuTrigger, Popover, Text, TreeItemProps, TreeProps, Tree, TreeItem, TreeItemContent, Virtualizer} from 'react-aria-components';
+import {Button, Checkbox, CheckboxProps, Collection, Key, ListLayout, Menu, MenuTrigger, Popover, Text, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeProps, Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import {MyMenuItem} from './utils';
 import React, {ReactNode, useMemo} from 'react';
