@@ -37,6 +37,7 @@ function PhotoCard({item, layout}) {
       {({size}) => (<>
         <CardPreview>
           <Image
+            alt={item.description || item.alt_description}
             src={item.urls.regular}
             styles={style({
               width: 'full',

@@ -127,14 +127,14 @@ function App() {
             label="CardView Loading State"
             items={cardViewLoadingOptions}
             selectedKey={cardViewState.loadingState}
-            onSelectionChange={loadingState => setCardViewState({...cardViewState, loadingState})}>
+            onSelectionChange={loadingState => setCardViewState({...cardViewState, layout: loadingState.toString()})}>
             {item => <PickerItem id={item.id}>{item.label}</PickerItem>}
           </Picker>
           <Picker
             label="CardView Layout"
             items={cardViewLayoutOptions}
             selectedKey={cardViewState.layout}
-            onSelectionChange={layout => setCardViewState({...cardViewState, layout})}>
+            onSelectionChange={layout => setCardViewState({...cardViewState, layout: layout.toString()})}>
             {item => <PickerItem id={item.id}>{item.label}</PickerItem>}
           </Picker>
           <CardViewExample {...cardViewState} />
