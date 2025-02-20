@@ -2,7 +2,7 @@ import {InvalidationContext, LayoutInfo, Rect} from '@react-stately/virtualizer'
 import {LayoutNode, ListLayout, ListLayoutOptions} from '@react-stately/layout';
 import {Node} from '@react-types/shared';
 
-interface ListBoxLayoutProps {
+interface ListBoxLayoutProps extends ListLayoutOptions {
   isLoading?: boolean
 }
 

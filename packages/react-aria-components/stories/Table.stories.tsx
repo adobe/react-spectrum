@@ -716,13 +716,6 @@ export function VirtualizedTable() {
     items.push({id: i, foo: `Foo ${i}`, bar: `Bar ${i}`, baz: `Baz ${i}`});
   }
 
-  let layout = useMemo(() => {
-    return new TableLayout({
-      rowHeight: 25,
-      headingHeight: 25
-    });
-  }, []);
-
   let list = useListData({
     initialItems: items
   });
@@ -744,7 +737,12 @@ export function VirtualizedTable() {
   });
 
   return (
-    <Virtualizer layout={layout}>
+    <Virtualizer
+      layout={TableLayout}
+      layoutOptions={{
+        rowHeight: 25,
+        headingHeight: 25
+      }}>
       <Table aria-label="virtualized table" selectionMode="multiple" dragAndDropHooks={dragAndDropHooks} style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}}>
         <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
           <Column width={30} minWidth={0} />
@@ -775,16 +773,14 @@ export function VirtualizedTableWithResizing() {
     items.push({id: i, foo: `Foo ${i}`, bar: `Bar ${i}`, baz: `Baz ${i}`});
   }
 
-  let layout = useMemo(() => {
-    return new TableLayout({
-      rowHeight: 25,
-      headingHeight: 25
-    });
-  }, []);
-
   return (
     <ResizableTableContainer style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}}>
-      <Virtualizer layout={layout}>
+      <Virtualizer
+        layout={TableLayout}
+        layoutOptions={{
+          rowHeight: 25,
+          headingHeight: 25
+        }}>
         <Table aria-label="virtualized table">
           <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
             <MyColumn isRowHeader>Foo</MyColumn>
@@ -807,13 +803,6 @@ export function VirtualizedTableWithResizing() {
 }
 
 function VirtualizedTableWithEmptyState(args) {
-  let layout = useMemo(() => {
-    return new TableLayout({
-      rowHeight: 25,
-      headingHeight: 25
-    });
-  }, []);
-
   let rows = [
     {foo: 'Foo 1', bar: 'Bar 1', baz: 'Baz 1'},
     {foo: 'Foo 2', bar: 'Bar 2', baz: 'Baz 2'},
@@ -823,7 +812,12 @@ function VirtualizedTableWithEmptyState(args) {
 
   return (
     <ResizableTableContainer style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}}>
-      <Virtualizer layout={layout}>
+      <Virtualizer
+        layout={TableLayout}
+        layoutOptions={{
+          rowHeight: 25,
+          headingHeight: 25
+        }}>
         <Table aria-label="virtualized table">
           <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
             <MyColumn isRowHeader>Foo</MyColumn>
@@ -875,13 +869,6 @@ const OnLoadMoreTableVirtualized = () => {
     }
   });
 
-  let layout = useMemo(() => {
-    return new TableLayout({
-      rowHeight: 25,
-      headingHeight: 25
-    });
-  }, []);
-
   let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
   let scrollRef = useRef<HTMLTableElement>(null);
   let memoedLoadMoreProps = useMemo(() => ({
@@ -892,7 +879,12 @@ const OnLoadMoreTableVirtualized = () => {
   useLoadMore(memoedLoadMoreProps, scrollRef);
 
   return (
-    <Virtualizer layout={layout}>
+    <Virtualizer
+      layout={TableLayout}
+      layoutOptions={{
+        rowHeight: 25,
+        headingHeight: 25
+      }}>
       <Table aria-label="Load more table virtualized" ref={scrollRef} style={{height: 150, width: 400, overflow: 'auto'}}>
         <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
           <Column id="name" isRowHeader>Name</Column>
@@ -941,13 +933,6 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
     }
   });
 
-  let layout = useMemo(() => {
-    return new TableLayout({
-      rowHeight: 25,
-      headingHeight: 25
-    });
-  }, []);
-
   let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
   let scrollRef = useRef<HTMLDivElement>(null);
   let memoedLoadMoreProps = useMemo(() => ({
@@ -959,7 +944,12 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
 
   return (
     <ResizableTableContainer ref={scrollRef} style={{height: 150, width: 400, overflow: 'auto'}}>
-      <Virtualizer layout={layout}>
+      <Virtualizer
+        layout={TableLayout}
+        layoutOptions={{
+          rowHeight: 25,
+          headingHeight: 25
+        }}>
         <Table aria-label="Load more table virtualized">
           <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
             <Column id="name" isRowHeader>Name</Column>

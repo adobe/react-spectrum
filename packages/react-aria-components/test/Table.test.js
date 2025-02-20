@@ -840,10 +840,6 @@ describe('Table', () => {
   });
 
   it('should support virtualizer', async () => {
-    let layout = new TableLayout({
-      rowHeight: 25
-    });
-
     let items = [];
     for (let i = 0; i < 50; i++) {
       items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
@@ -853,7 +849,7 @@ describe('Table', () => {
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
 
     let {getByRole, getAllByRole} = render(
-      <Virtualizer layout={layout}>
+      <Virtualizer layout={TableLayout} layoutOptions={{rowHeight: 25}}>
         <Table aria-label="Test">
           <TableHeader>
             <Column isRowHeader>Foo</Column>
@@ -1847,15 +1843,11 @@ describe('Table', () => {
         items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
       }
       function VirtualizedTableLoad() {
-        let layout = new TableLayout({
-          rowHeight: 25
-        });
-
         let scrollRef = useRef(null);
         useLoadMore({onLoadMore}, scrollRef);
 
         return (
-          <Virtualizer layout={layout}>
+          <Virtualizer layout={TableLayout} layoutOptions={{rowHeight: 25}}>
             <Table aria-label="Load more table" ref={scrollRef} onLoadMore={onLoadMore}>
               <TableHeader>
                 <Column isRowHeader>Foo</Column>
