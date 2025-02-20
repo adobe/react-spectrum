@@ -11,7 +11,7 @@
  */
 
 import {DropTarget, DropTargetDelegate, ItemDropTarget, Key, Node} from '@react-types/shared';
-import {Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
+import {InvalidationContext, Layout, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
 
 export interface GridLayoutOptions {
   /**
@@ -24,6 +24,13 @@ export interface GridLayoutOptions {
    * @default Infinity
    */
   maxItemSize?: Size,
+  /**
+   * Whether to preserve the aspect ratio of the `minItemSize`.
+   * By default, grid rows may have variable heights. When `preserveAspectRatio`
+   * is true, all rows will have equal heights.
+   * @default false
+   */
+  preserveAspectRatio?: boolean,
   /**
    * The minimum space required between items.
    * @default 18 x 18
@@ -41,135 +48,187 @@ export interface GridLayoutOptions {
   dropIndicatorThickness?: number
 }
 
+const DEFAULT_OPTIONS = {
+  minItemSize: new Size(200, 200),
+  maxItemSize: new Size(Infinity, Infinity),
+  preserveAspectRatio: false,
+  minSpace: new Size(18, 18),
+  maxColumns: Infinity,
+  dropIndicatorThickness: 2
+};
+
 /**
  * GridLayout is a virtualizer Layout implementation
- * that arranges its items in an equal sized grid. 
+ * that arranges its items in a grid. 
  * The items are sized between a minimum and maximum size
  * depending on the width of the container.
  */
-export class GridLayout<T, O = any> extends Layout<Node<T>, O> implements DropTargetDelegate {
-  protected minItemSize: Size;
-  protected maxItemSize: Size;
-  protected minSpace: Size;
-  protected maxColumns: number;
-  protected dropIndicatorThickness: number;
-  protected itemSize: Size = new Size();
+export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> extends Layout<Node<T>, O> implements DropTargetDelegate {
+  protected gap: Size = DEFAULT_OPTIONS.minSpace;
+  protected dropIndicatorThickness = 2;
   protected numColumns: number = 0;
-  protected horizontalSpacing: number = 0;
-  protected layoutInfos: LayoutInfo[] = [];
+  private contentSize: Size = new Size();
+  private layoutInfos: Map<Key, LayoutInfo> = new Map();
 
-  constructor(options: GridLayoutOptions) {
-    super();
-    this.minItemSize = options.minItemSize || new Size(200, 200);
-    this.maxItemSize = options.maxItemSize || new Size(Infinity, Infinity);
-    this.minSpace = options.minSpace || new Size(18, 18);
-    this.maxColumns = options.maxColumns || Infinity;
-    this.dropIndicatorThickness = options.dropIndicatorThickness || 2;
+  shouldInvalidateLayoutOptions(newOptions: O, oldOptions: O): boolean {
+    return newOptions.maxColumns !== oldOptions.maxColumns
+      || newOptions.dropIndicatorThickness !== oldOptions.dropIndicatorThickness
+      || newOptions.preserveAspectRatio !== oldOptions.preserveAspectRatio
+      || (!(newOptions.minItemSize || DEFAULT_OPTIONS.minItemSize).equals(oldOptions.minItemSize || DEFAULT_OPTIONS.minItemSize))
+      || (!(newOptions.maxItemSize || DEFAULT_OPTIONS.maxItemSize).equals(oldOptions.maxItemSize || DEFAULT_OPTIONS.maxItemSize))
+      || (!(newOptions.minSpace || DEFAULT_OPTIONS.minSpace).equals(oldOptions.minSpace || DEFAULT_OPTIONS.minSpace));
   }
 
-  update(): void {
+  update(invalidationContext: InvalidationContext<O>): void {
+    let {
+      minItemSize = DEFAULT_OPTIONS.minItemSize,
+      maxItemSize = DEFAULT_OPTIONS.maxItemSize,
+      preserveAspectRatio = DEFAULT_OPTIONS.preserveAspectRatio,
+      minSpace = DEFAULT_OPTIONS.minSpace,
+      maxColumns = DEFAULT_OPTIONS.maxColumns,
+      dropIndicatorThickness = DEFAULT_OPTIONS.dropIndicatorThickness
+    } = invalidationContext.layoutOptions || {};
+    this.dropIndicatorThickness = dropIndicatorThickness;
+
     let visibleWidth = this.virtualizer!.visibleRect.width;
 
     // The max item width is always the entire viewport.
     // If the max item height is infinity, scale in proportion to the max width.
-    let maxItemWidth = Math.min(this.maxItemSize.width, visibleWidth);
-    let maxItemHeight = Number.isFinite(this.maxItemSize.height) 
-      ? this.maxItemSize.height
-      : Math.floor((this.minItemSize.height / this.minItemSize.width) * maxItemWidth);
+    let maxItemWidth = Math.min(maxItemSize.width, visibleWidth);
+    let maxItemHeight = Number.isFinite(maxItemSize.height)
+      ? maxItemSize.height
+      : Math.floor((minItemSize.height / minItemSize.width) * maxItemWidth);
 
     // Compute the number of rows and columns needed to display the content
-    let columns = Math.floor(visibleWidth / (this.minItemSize.width + this.minSpace.width));
-    this.numColumns = Math.max(1, Math.min(this.maxColumns, columns));
+    let columns = Math.floor(visibleWidth / (minItemSize.width + minSpace.width));
+    let numColumns = Math.max(1, Math.min(maxColumns, columns));
 
     // Compute the available width (minus the space between items)
-    let width = visibleWidth - (this.minSpace.width * Math.max(0, this.numColumns));
+    let width = visibleWidth - (minSpace.width * Math.max(0, numColumns));
 
     // Compute the item width based on the space available
-    let itemWidth = Math.floor(width / this.numColumns);
-    itemWidth = Math.max(this.minItemSize.width, Math.min(maxItemWidth, itemWidth));
+    let itemWidth = Math.floor(width / numColumns);
+    itemWidth = Math.max(minItemSize.width, Math.min(maxItemWidth, itemWidth));
 
     // Compute the item height, which is proportional to the item width
-    let t = ((itemWidth - this.minItemSize.width) / Math.max(1, maxItemWidth - this.minItemSize.width));
-    let itemHeight = this.minItemSize.height +  Math.floor((maxItemHeight - this.minItemSize.height) * t);
-    itemHeight = Math.max(this.minItemSize.height, Math.min(maxItemHeight, itemHeight));
-    this.itemSize = new Size(itemWidth, itemHeight);
+    let t = ((itemWidth - minItemSize.width) / Math.max(1, maxItemWidth - minItemSize.width));
+    let itemHeight = minItemSize.height + Math.floor((maxItemHeight - minItemSize.height) * t);
+    itemHeight = Math.max(minItemSize.height, Math.min(maxItemHeight, itemHeight));
 
     // Compute the horizontal spacing and content height
-    this.horizontalSpacing = Math.floor((visibleWidth - this.numColumns * this.itemSize.width) / (this.numColumns + 1));
+    let horizontalSpacing = Math.floor((visibleWidth - numColumns * itemWidth) / (numColumns + 1));
+    this.gap = new Size(horizontalSpacing, minSpace.height);
 
-    this.layoutInfos = [];
-    for (let node of this.virtualizer!.collection) {
-      this.layoutInfos.push(this.getLayoutInfoForNode(node));
-    }
-  }
+    let rows = Math.ceil(this.virtualizer!.collection.size / numColumns);
+    let iterator = this.virtualizer!.collection[Symbol.iterator]();
+    let y = rows > 0 ? minSpace.height : 0;
+    let newLayoutInfos = new Map();
+    let skeleton: Node<T> | null = null;
+    let skeletonCount = 0;
+    for (let row = 0; row < rows; row++) {
+      let maxHeight = 0;
+      let rowLayoutInfos: LayoutInfo[] = [];
+      for (let col = 0; col < numColumns; col++) {
+        // Repeat skeleton until the end of the current row.
+        let node = skeleton || iterator.next().value;
+        if (!node) {
+          break;
+        }
 
-  getVisibleLayoutInfos(rect: Rect): LayoutInfo[] {
-    let firstVisibleItem = this.getIndexAtPoint(rect.x, rect.y);
-    let lastVisibleItem = this.getIndexAtPoint(rect.maxX, rect.maxY);
-    let result = this.layoutInfos.slice(firstVisibleItem, lastVisibleItem + 1);
-    let persistedIndices: number[] = [];
-    for (let key of this.virtualizer!.persistedKeys) {
-      let item = this.virtualizer!.collection.getItem(key);
-      if (item?.index != null) {
-        persistedIndices.push(item.index);
+        if (node.type === 'skeleton') {
+          skeleton = node;
+        }
+
+        let key = skeleton ? `${skeleton.key}-${skeletonCount++}` : node.key;
+        let oldLayoutInfo = this.layoutInfos.get(key);
+        let content = node;
+        if (skeleton) {
+          content = oldLayoutInfo && oldLayoutInfo.content.key === key ? oldLayoutInfo.content : {...skeleton, key};
+        }
+        let x = horizontalSpacing + col * (itemWidth + horizontalSpacing);
+        let height = itemHeight;
+        let estimatedSize = !preserveAspectRatio;
+        if (oldLayoutInfo && estimatedSize) {
+          height = oldLayoutInfo.rect.height;
+          estimatedSize = invalidationContext.layoutOptionsChanged || invalidationContext.sizeChanged || oldLayoutInfo.estimatedSize || (oldLayoutInfo.content !== content);
+        }
+
+        let rect = new Rect(x, y, itemWidth, height);
+        let layoutInfo = new LayoutInfo(node.type, key, rect);
+        layoutInfo.estimatedSize = estimatedSize;
+        layoutInfo.allowOverflow = true;
+        layoutInfo.content = content;
+        newLayoutInfos.set(key, layoutInfo);
+        rowLayoutInfos.push(layoutInfo);
+
+        maxHeight = Math.max(maxHeight, layoutInfo.rect.height);
+      }
+
+      for (let layoutInfo of rowLayoutInfos) {
+        layoutInfo.rect.height = maxHeight;
+      }
+
+      y += maxHeight + minSpace.height;
+
+      // Keep adding skeleton rows until we fill the viewport
+      if (skeleton && row === rows - 1 && y < this.virtualizer!.visibleRect.height) {
+        rows++;
       }
     }
-    persistedIndices.sort((a, b) => a - b);
-    
-    let persistedBefore: LayoutInfo[] = [];
-    for (let index of persistedIndices) {
-      if (index < firstVisibleItem) {
-        persistedBefore.push(this.layoutInfos[index]);
-      } else if (index > lastVisibleItem) {
-        result.push(this.layoutInfos[index]);
-      }
-    }
-    result.unshift(...persistedBefore);
-    return result;
+
+    this.layoutInfos = newLayoutInfos;
+    this.contentSize = new Size(this.virtualizer!.visibleRect.width, y);
   }
 
-  protected getIndexAtPoint(x: number, y: number) {
-    let itemHeight = this.itemSize.height + this.minSpace.height;
-    let itemWidth = this.itemSize.width + this.horizontalSpacing;
-    return Math.max(0,
-      Math.min(
-        this.virtualizer!.collection.size - 1,
-        Math.floor(y / itemHeight) * this.numColumns + Math.floor((x - this.horizontalSpacing) / itemWidth)
-      )
-    );
-  }
-
-  getLayoutInfo(key: Key): LayoutInfo | null {
-    let node = this.virtualizer!.collection.getItem(key);
-    return node ? this.layoutInfos[node.index] : null;
-  }
-
-  protected getLayoutInfoForNode(node: Node<T>): LayoutInfo {
-    let idx = node.index;
-    let row = Math.floor(idx / this.numColumns);
-    let column = idx % this.numColumns;
-    let x = this.horizontalSpacing + column * (this.itemSize.width + this.horizontalSpacing);
-    let y = this.minSpace.height + row * (this.itemSize.height + this.minSpace.height);
-    let rect = new Rect(x, y, this.itemSize.width, this.itemSize.height);
-    return new LayoutInfo(node.type, node.key, rect);
+  getLayoutInfo(key: Key): LayoutInfo {
+    return this.layoutInfos.get(key)!;
   }
 
   getContentSize(): Size {
-    let numRows = Math.ceil(this.virtualizer!.collection.size / this.numColumns);
-    let contentHeight = this.minSpace.height + numRows * (this.itemSize.height + this.minSpace.height);  
-    return new Size(this.virtualizer!.visibleRect.width, contentHeight);
+    return this.contentSize;
+  }
+
+  getVisibleLayoutInfos(rect: Rect): LayoutInfo[] {
+    let layoutInfos: LayoutInfo[] = [];
+    for (let layoutInfo of this.layoutInfos.values()) {
+      if (layoutInfo.rect.intersects(rect) || this.virtualizer!.isPersistedKey(layoutInfo.key)) {
+        layoutInfos.push(layoutInfo);
+      }
+    }
+    return layoutInfos;
+  }
+
+  updateItemSize(key: Key, size: Size) {
+    let layoutInfo = this.layoutInfos.get(key);
+    if (!size || !layoutInfo) {
+      return false;
+    }
+
+    if (size.height !== layoutInfo.rect.height) {
+      let newLayoutInfo = layoutInfo.copy();
+      newLayoutInfo.rect.height = size.height;
+      newLayoutInfo.estimatedSize = false;
+      this.layoutInfos.set(key, newLayoutInfo);
+      return true;
+    }
+
+    return false;
   }
 
   getDropTargetFromPoint(x: number, y: number, isValidDropTarget: (target: DropTarget) => boolean): DropTarget {
-    if (this.layoutInfos.length === 0) {
+    if (this.layoutInfos.size === 0) {
       return {type: 'root'};
     }
 
     x += this.virtualizer!.visibleRect.x;
     y += this.virtualizer!.visibleRect.y;
-    let index = this.getIndexAtPoint(x, y);
 
-    let layoutInfo = this.layoutInfos[index];
+    let key = this.virtualizer!.keyAtPoint(new Point(x, y));
+    let layoutInfo = key != null ? this.getLayoutInfo(key) : null;
+    if (!layoutInfo) {
+      return {type: 'root'};
+    }
+
     let target: DropTarget =  {
       type: 'item',
       key: layoutInfo.key,
@@ -208,16 +267,16 @@ export class GridLayout<T, O = any> extends Layout<Node<T>, O> implements DropTa
       rect = new Rect(
         layoutInfo.rect.x,
         target.dropPosition === 'before' 
-          ? layoutInfo.rect.y - this.minSpace.height / 2 - this.dropIndicatorThickness / 2
-          : layoutInfo.rect.maxY + this.minSpace.height / 2 - this.dropIndicatorThickness / 2,
+          ? layoutInfo.rect.y - this.gap.height / 2 - this.dropIndicatorThickness / 2
+          : layoutInfo.rect.maxY + this.gap.height / 2 - this.dropIndicatorThickness / 2,
         layoutInfo.rect.width,
         this.dropIndicatorThickness
       );
     } else {
       rect = new Rect(
         target.dropPosition === 'before' 
-          ? layoutInfo.rect.x - this.horizontalSpacing / 2 - this.dropIndicatorThickness / 2 
-          : layoutInfo.rect.maxX + this.horizontalSpacing / 2 - this.dropIndicatorThickness / 2,
+          ? layoutInfo.rect.x - this.gap.width / 2 - this.dropIndicatorThickness / 2 
+          : layoutInfo.rect.maxX + this.gap.width / 2 - this.dropIndicatorThickness / 2,
         layoutInfo.rect.y,
         this.dropIndicatorThickness,
         layoutInfo.rect.height

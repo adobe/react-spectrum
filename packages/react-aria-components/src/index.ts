@@ -50,7 +50,7 @@ export {Keyboard, KeyboardContext} from './Keyboard';
 export {Label, LabelContext} from './Label';
 export {Link, LinkContext} from './Link';
 export {ListBox, ListBoxItem, ListBoxSection, ListBoxContext, ListStateContext} from './ListBox';
-export {Menu, MenuItem, MenuTrigger, MenuSection, MenuContext, MenuStateContext, RootMenuTriggerStateContext, SubmenuTrigger} from './Menu';
+export {Menu, MenuItem, MenuTrigger, MenuSection, MenuContext, MenuStateContext, RootMenuTriggerStateContext, SubmenuTrigger, SubDialogTrigger as UNSTABLE_SubDialogTrigger} from './Menu';
 export {Meter, MeterContext} from './Meter';
 export {Modal, ModalOverlay, ModalContext} from './Modal';
 export {NumberField, NumberFieldContext, NumberFieldStateContext} from './NumberField';
@@ -81,7 +81,7 @@ export {Virtualizer} from './Virtualizer';
 export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem, SSRProvider, RouterProvider, I18nProvider, useLocale, useFilter, Pressable, Focusable} from 'react-aria';
 export {FormValidationContext} from 'react-stately';
 export {parseColor, getColorChannels} from '@react-stately/color';
-export {ListLayout, GridLayout} from '@react-stately/layout';
+export {ListLayout, GridLayout, WaterfallLayout} from '@react-stately/layout';
 export {Layout, LayoutInfo, Size, Rect, Point} from '@react-stately/virtualizer';
 
 export type {AutocompleteProps} from './Autocomplete';
@@ -148,4 +148,4 @@ export type {DirectoryDropItem, DraggableCollectionEndEvent, DraggableCollection
 export type {Key, Selection, SortDescriptor, SortDirection, SelectionMode} from 'react-stately';
 export type {ValidationResult, RouterConfig} from '@react-types/shared';
 export type {Color, ColorSpace, ColorFormat} from '@react-types/color';
-export type {ListLayoutOptions, GridLayoutOptions} from '@react-stately/layout';
+export type {ListLayoutOptions, GridLayoutOptions, WaterfallLayoutOptions} from '@react-stately/layout';

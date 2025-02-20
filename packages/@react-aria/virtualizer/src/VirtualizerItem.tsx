@@ -88,7 +88,7 @@ export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent
     ...rectStyles
   };
 
-  if (layoutInfo.isSticky) {
+  if (layoutInfo.isSticky && !parent?.allowOverflow) {
     if (style.top) {
       style.marginTop = style.top;
     }
