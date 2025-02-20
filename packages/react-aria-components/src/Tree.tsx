@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTreeGridListItemOptions, AriaTreeGridListProps, FocusScope, mergeProps, useFocusRing,  useGridListSelectionCheckbox, useHover, useTreeGridList, useTreeGridListItem} from 'react-aria';
+import {AriaTreeItemOptions, AriaTreeProps, FocusScope, mergeProps, useFocusRing,  useGridListSelectionCheckbox, useHover, useTree, useTreeItem} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
@@ -119,7 +119,7 @@ export interface TreeRenderProps {
 
 export interface TreeEmptyStateRenderProps extends Omit<TreeRenderProps, 'isEmpty'> {}
 
-export interface TreeProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>, MultipleSelection, CollectionProps<T>, StyleRenderProps<TreeRenderProps>, SlotProps, ScrollableProps<HTMLDivElement>, Expandable {
+export interface TreeProps<T> extends Omit<AriaTreeProps<T>, 'children'>, MultipleSelection, CollectionProps<T>, StyleRenderProps<TreeRenderProps>, SlotProps, ScrollableProps<HTMLDivElement>, Expandable {
   /** How multiple selection should behave in the tree. */
   selectionBehavior?: SelectionBehavior,
   /** Provides content to display when there are no items in the list. */
@@ -188,7 +188,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     disabledBehavior
   });
 
-  let {gridProps} = useTreeGridList({
+  let {gridProps} = useTree({
     ...props,
     isVirtualized,
     layoutDelegate
@@ -306,7 +306,7 @@ export const TreeItemContent = /*#__PURE__*/ createLeafComponent('content', func
 
 export const TreeItemContentContext = createContext<TreeItemContentRenderProps | null>(null);
 
-export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRenderProps>, LinkDOMProps, HoverEvents, Pick<AriaTreeGridListItemOptions, 'hasChildItems'> {
+export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRenderProps>, LinkDOMProps, HoverEvents, Pick<AriaTreeItemOptions, 'hasChildItems'> {
   /** The unique id of the tree row. */
   id?: Key,
   /** The object value that this tree item represents. When using dynamic collections, this is set automatically. */
@@ -334,7 +334,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
   ref = useObjectRef<HTMLDivElement>(ref);
   // TODO: remove this when we support description in tree row
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {rowProps, gridCellProps, expandButtonProps, descriptionProps, ...states} = useTreeGridListItem({node: item}, state, ref);
+  let {rowProps, gridCellProps, expandButtonProps, descriptionProps, ...states} = useTreeItem({node: item}, state, ref);
   let isExpanded = rowProps['aria-expanded'] === true;
   let hasChildItems = props.hasChildItems || [...state.collection.getChildren!(item.key)]?.length > 1;;
   let level = rowProps['aria-level'] || 1;
@@ -478,7 +478,7 @@ export const TreeLoadingIndicator = createLeafComponent('loader', function TreeL
   let state = useContext(TreeStateContext);
   // This loader row is is non-interactable, but we want the same aria props calculated as a typical row
   // @ts-ignore
-  let {rowProps} = useTreeGridListItem({node: item}, state, ref);
+  let {rowProps} = useTreeItem({node: item}, state, ref);
   let level = rowProps['aria-level'] || 1;
 
   let ariaProps = {
