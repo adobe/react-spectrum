@@ -31,7 +31,9 @@ interface FocusableContextValue extends FocusableProviderProps {
   ref?: MutableRefObject<FocusableElement | null>
 }
 
-let FocusableContext = React.createContext<FocusableContextValue | null>(null);
+// Exported for @react-aria/collections, which forwards this context.
+/** @private */
+export let FocusableContext = React.createContext<FocusableContextValue | null>(null);
 
 function useFocusableContext(ref: RefObject<FocusableElement | null>): FocusableContextValue {
   let context = useContext(FocusableContext) || {};

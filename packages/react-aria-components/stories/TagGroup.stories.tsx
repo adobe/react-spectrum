@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Label, Tag, TagGroup, TagGroupProps, TagList, TagProps} from 'react-aria-components';
+import {Label, OverlayArrow, Tag, TagGroup, TagGroupProps, TagList, TagProps, Tooltip, TooltipTrigger} from 'react-aria-components';
 import React from 'react';
 
 export default {
@@ -24,7 +24,25 @@ export const TagGroupExample = (props: TagGroupProps) => (
       <MyTag href="https://nytimes.com">News</MyTag>
       <MyTag>Travel</MyTag>
       <MyTag>Gaming</MyTag>
-      <MyTag>Shopping</MyTag>
+      <TooltipTrigger>
+        <MyTag>Shopping</MyTag>
+        <Tooltip
+          offset={5}
+          style={{
+            background: 'Canvas',
+            color: 'CanvasText',
+            border: '1px solid gray',
+            padding: 5,
+            borderRadius: 4
+          }}>
+          <OverlayArrow style={{transform: 'translateX(-50%)'}}>
+            <svg width="8" height="8" style={{display: 'block'}}>
+              <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
+            </svg>
+          </OverlayArrow>
+          I am a tooltip
+        </Tooltip>
+      </TooltipTrigger>
     </TagList>
   </TagGroup>
 );

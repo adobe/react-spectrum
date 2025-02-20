@@ -15,6 +15,7 @@ import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useLinkProps} from '@react-aria/utils';
 import {generateId} from './utils';
 import {TabListState} from '@react-stately/tabs';
+import {useFocusable} from '@react-aria/focus';
 import {useSelectableItem} from '@react-aria/selection';
 
 export interface TabAria {
@@ -60,9 +61,12 @@ export function useTab<T>(
   let domProps = filterDOMProps(item?.props, {labelable: true});
   delete domProps.id;
   let linkProps = useLinkProps(item?.props);
+  let {focusableProps} = useFocusable({
+    isDisabled
+  }, ref);
 
   return {
-    tabProps: mergeProps(domProps, linkProps, itemProps, {
+    tabProps: mergeProps(domProps, focusableProps, linkProps, itemProps, {
       id: tabId,
       'aria-selected': isSelected,
       'aria-disabled': isDisabled || undefined,

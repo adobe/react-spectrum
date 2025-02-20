@@ -6008,6 +6008,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/collections@workspace:packages/@react-aria/collections"
   dependencies:
+    "@react-aria/interactions": "npm:^3.23.0"
     "@react-aria/ssr": "npm:^3.9.7"
     "@react-aria/utils": "npm:^3.27.0"
     "@react-types/shared": "npm:^3.27.0"
