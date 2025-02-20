@@ -41,7 +41,7 @@ import {
   TreeViewItemContent
 } from "@react-spectrum/s2";
 import Edit from "@react-spectrum/s2/icons/Edit";
-import FileTxt from "@react-spectrum/s2/icons/FileTxt";
+import FileTxt from "@react-spectrum/s2/icons/FileText";
 import Folder from "@react-spectrum/s2/icons/Folder";
 import Section from "./components/Section";
 import { style } from "@react-spectrum/s2/style" with { type: "macro" };
