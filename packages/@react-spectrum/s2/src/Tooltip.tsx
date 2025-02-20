@@ -148,7 +148,7 @@ export const Tooltip = forwardRef(function Tooltip(props: TooltipProps, ref: DOM
     if (el) {
       el.lang = locale;
       el.dir = direction;
-      let spectrumBorderRadius = window.getComputedStyle(el).borderRadius;
+      let spectrumBorderRadius = typeof window !== 'undefined' ? window.getComputedStyle(el).borderRadius : '';
       if (spectrumBorderRadius !== '') {
         setBorderRadius(parseInt(spectrumBorderRadius, 10));
       }

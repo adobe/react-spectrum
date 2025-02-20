@@ -12,6 +12,6 @@
 
 /// <reference types="css-module-types" />
 
-export {TreeViewItem, TreeView, TreeItemContent} from './TreeView';
+export {TreeViewItem, TreeView, TreeViewItemContent} from './TreeView';
 export {Collection} from 'react-aria-components';
 export type {SpectrumTreeViewProps, SpectrumTreeViewItemProps} from './TreeView';

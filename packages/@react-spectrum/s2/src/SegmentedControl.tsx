@@ -19,7 +19,7 @@ import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
 import {Text, TextContext} from './Content';
-import {useDOMRef, useFocusableRef} from '@react-spectrum/utils';
+import {useDOMRef, useFocusableRef, useMediaQuery} from '@react-spectrum/utils';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -227,17 +227,14 @@ export const SegmentedControlItem = /*#__PURE__*/ forwardRef(function SegmentedC
   let state = useContext(ToggleGroupStateContext);
   let isSelected = state?.selectedKeys.has(props.id);
   // do not apply animation if a user has the prefers-reduced-motion setting
-  let isReduced = false;
-  if (window?.matchMedia) {
-    isReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  }
+  let reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
 
   useLayoutEffect(() => {
     register?.(props.id);
   }, []);
 
   useLayoutEffect(() => {
-    if (isSelected && prevRef?.current && currentSelectedRef?.current && !isReduced) {
+    if (isSelected && prevRef?.current && currentSelectedRef?.current && !reduceMotion) {
       let currentItem = currentSelectedRef?.current.getBoundingClientRect();
 
       let deltaX = prevRef?.current.left - currentItem?.left;
@@ -255,7 +252,7 @@ export const SegmentedControlItem = /*#__PURE__*/ forwardRef(function SegmentedC
 
       prevRef.current = null;
     }
-  }, [isSelected]);
+  }, [isSelected, reduceMotion]);
 
   return (
     <ToggleButton 

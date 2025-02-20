@@ -116,7 +116,7 @@ function useCollectionDocument<T extends object, C extends BaseCollection<T>>(cr
   useLayoutEffect(() => {
     document.isMounted = true;
     return () => {
-      // Mark unmounted so we can skip all of the collection updates caused by 
+      // Mark unmounted so we can skip all of the collection updates caused by
       // React calling removeChild on every item in the collection.
       document.isMounted = false;
     };

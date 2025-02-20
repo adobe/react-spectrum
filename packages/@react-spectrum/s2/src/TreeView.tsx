@@ -15,16 +15,16 @@ import {ActionMenuContext} from './ActionMenu';
 import {
   Button,
   ButtonContext,
+  ListLayout,
   Provider,
   TreeItemProps as RACTreeItemProps,
   TreeProps as RACTreeProps,
+  Tree,
+  TreeItem,
+  TreeItemContent,
   TreeItemContentProps,
-  UNSTABLE_ListLayout,
-  UNSTABLE_Tree,
-  UNSTABLE_TreeItem,
-  UNSTABLE_TreeItemContent,
-  UNSTABLE_Virtualizer,
-  useContextProps
+  useContextProps,
+  Virtualizer
 } from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
@@ -105,30 +105,29 @@ function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
 
   let domRef = useDOMRef(ref);
 
-  let rowHeight = isDetached ? 44 : 40;
-  if (scale === 'large') {
-    rowHeight = isDetached ? 54 : 50;
-  }
+  let rowHeight = scale === 'large' ? 50 : 40;
+  let gap = isDetached ? 4 : 0;
   let layout = useMemo(() => {
-    return new UNSTABLE_ListLayout({
-      rowHeight
+    return new ListLayout({
+      rowHeight,
+      gap
     });
-  }, [rowHeight]);
+  }, [rowHeight, gap]);
 
   return (
-    <UNSTABLE_Virtualizer layout={layout}>
+    <Virtualizer layout={layout}>
       <TreeRendererContext.Provider value={{renderer}}>
         <InternalTreeContext.Provider value={{isDetached, isEmphasized}}>
-          <UNSTABLE_Tree
+          <Tree
             {...props}
             className={({isEmpty}) => tree({isEmpty, isDetached}, props.styles)}
             selectionBehavior="toggle"
             ref={domRef}>
             {props.children}
-          </UNSTABLE_Tree>
+          </Tree>
         </InternalTreeContext.Provider>
       </TreeRendererContext.Provider>
-    </UNSTABLE_Virtualizer>
+    </Virtualizer>
   );
 }
 
@@ -192,6 +191,7 @@ const treeCellGrid = style({
   display: 'grid',
   width: 'full',
   height: 'full',
+  boxSizing: 'border-box',
   alignContent: 'center',
   alignItems: 'center',
   gridTemplateColumns: ['auto', 'auto', 'auto', 'auto', 'auto', '1fr', 'minmax(0, auto)', 'auto'],
@@ -306,7 +306,7 @@ export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
   let {isDetached, isEmphasized} = useContext(InternalTreeContext);
 
   return (
-    <UNSTABLE_TreeItem
+    <TreeItem
       {...props}
       className={(renderProps) => treeRow({
         ...renderProps,
@@ -315,7 +315,7 @@ export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
   );
 };
 
-export const TreeItemContent = (props: Omit<TreeItemContentProps, 'children'> & {children: ReactNode}) => {
+export const TreeViewItemContent = (props: Omit<TreeItemContentProps, 'children'> & {children: ReactNode}) => {
   let {
     children
   } = props;
@@ -323,7 +323,7 @@ export const TreeItemContent = (props: Omit<TreeItemContentProps, 'children'> & 
   let scale = useScale();
 
   return (
-    <UNSTABLE_TreeItemContent>
+    <TreeItemContent>
       {({isExpanded, hasChildItems, selectionMode, selectionBehavior, isDisabled, isFocusVisible, isSelected, id, state}) => {
         let isNextSelected = false;
         let isNextFocused = false;
@@ -365,7 +365,7 @@ export const TreeItemContent = (props: Omit<TreeItemContentProps, 'children'> & 
           </div>
         );
       }}
-    </UNSTABLE_TreeItemContent>
+    </TreeItemContent>
   );
 };
 

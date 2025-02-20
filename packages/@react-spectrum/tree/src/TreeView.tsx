@@ -11,7 +11,18 @@
  */
 
 import {AriaTreeGridListProps} from '@react-aria/tree';
-import {ButtonContext, TreeItemContentProps, TreeItemContentRenderProps, TreeItemProps, TreeItemRenderProps, TreeRenderProps, UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeItemContent, useContextProps} from 'react-aria-components';
+import {
+  ButtonContext,
+  Tree,
+  TreeItem,
+  TreeItemContent,
+  TreeItemContentProps,
+  TreeItemContentRenderProps,
+  TreeItemProps,
+  TreeItemRenderProps,
+  TreeRenderProps,
+  useContextProps
+} from 'react-aria-components';
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
@@ -97,9 +108,9 @@ export const TreeView = React.forwardRef(function TreeView<T extends object>(pro
 
   return (
     <TreeRendererContext.Provider value={{renderer}}>
-      <UNSTABLE_Tree {...props} {...styleProps} className={({isEmpty}) => tree({isEmpty})} selectionBehavior={selectionBehavior as SelectionBehavior} ref={domRef}>
+      <Tree {...props} {...styleProps} className={({isEmpty}) => tree({isEmpty})} selectionBehavior={selectionBehavior as SelectionBehavior} ref={domRef}>
         {props.children}
-      </UNSTABLE_Tree>
+      </Tree>
     </TreeRendererContext.Provider>
   );
 }) as <T>(props: SpectrumTreeViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
@@ -223,7 +234,7 @@ export const TreeViewItem = <T extends object>(props: SpectrumTreeViewItemProps<
   } = props;
 
   return (
-    <UNSTABLE_TreeItem
+    <TreeItem
       {...props}
       className={renderProps => treeRow({
         ...renderProps,
@@ -233,13 +244,13 @@ export const TreeViewItem = <T extends object>(props: SpectrumTreeViewItemProps<
 };
 
 
-export const TreeItemContent = (props: Omit<TreeItemContentProps, 'children'> & {children: ReactNode}) => {
+export const TreeViewItemContent = (props: Omit<TreeItemContentProps, 'children'> & {children: ReactNode}) => {
   let {
     children
   } = props;
 
   return (
-    <UNSTABLE_TreeItemContent>
+    <TreeItemContent>
       {({isExpanded, hasChildItems, level, selectionMode, selectionBehavior, isDisabled, isSelected, isFocusVisible}) => (
         <div className={treeCellGrid({isDisabled})}>
           {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
@@ -275,7 +286,7 @@ export const TreeItemContent = (props: Omit<TreeItemContentProps, 'children'> & 
           <div className={treeRowOutline({isFocusVisible, isSelected})} />
         </div>
         )}
-    </UNSTABLE_TreeItemContent>
+    </TreeItemContent>
   );
 };
 
