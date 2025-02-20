@@ -532,12 +532,6 @@ const cardViewStyles = style({
   outlineOffset: -2
 }, getAllowedOverrides({height: true}));
 
-// let wrapper = style({
-//   position: 'relative', 
-//   overflow: 'clip', 
-//   size: 'fit'
-// }, getAllowedOverrides({height: true}))
-
 export const CardViewContext = createContext<ContextValue<Partial<CardViewProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
 export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function CardView<T extends object>(props: CardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
