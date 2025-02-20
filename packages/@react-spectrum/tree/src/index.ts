@@ -14,4 +14,4 @@
 
 export {TreeViewItem, TreeView, TreeViewItemContent} from './TreeView';
 export {Collection} from 'react-aria-components';
-export type {SpectrumTreeViewProps, SpectrumTreeViewItemProps} from './TreeView';
+export type {SpectrumTreeViewProps, SpectrumTreeViewItemProps, SpectrumTreeViewItemContentProps} from './TreeView';

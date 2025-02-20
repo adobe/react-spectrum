@@ -62,6 +62,7 @@ export {theme as darkTheme} from '@react-spectrum/theme-dark';
 export {theme as defaultTheme} from '@react-spectrum/theme-default';
 export {theme as lightTheme} from '@react-spectrum/theme-light';
 export {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
+export {TreeView, TreeViewItem, TreeViewItemContent} from '@react-spectrum/tree';
 export {Content, Footer, Header, View} from '@react-spectrum/view';
 export {Well} from '@react-spectrum/well';
 export {Item, Section} from '@react-stately/collections';
@@ -115,6 +116,7 @@ export type {SpectrumTabListProps, SpectrumTabPanelsProps, SpectrumTabsProps} fr
 export type {SpectrumTagGroupProps} from '@react-spectrum/tag';
 export type {SpectrumTextFieldProps, SpectrumTextAreaProps} from '@react-spectrum/textfield';
 export type {SpectrumTooltipProps, SpectrumTooltipTriggerProps} from '@react-spectrum/tooltip';
+export type {SpectrumTreeViewProps, SpectrumTreeViewItemProps, SpectrumTreeViewItemContentProps} from '@react-spectrum/tree';
 export type {ContentProps, FooterProps, HeaderProps, ViewProps} from '@react-spectrum/view';
 export type {SpectrumWellProps} from '@react-spectrum/well';
 export type {AsyncListData, AsyncListOptions, ListData, ListOptions, TreeData, TreeOptions} from '@react-stately/data';

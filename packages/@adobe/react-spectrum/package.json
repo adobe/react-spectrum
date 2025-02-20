@@ -92,6 +92,7 @@
     "@react-spectrum/theme-default": "^3.5.15",
     "@react-spectrum/theme-light": "^3.4.15",
     "@react-spectrum/tooltip": "^3.7.1",
+    "@react-spectrum/tree": "^3.0.0-beta.3",
     "@react-spectrum/view": "^3.6.15",
     "@react-spectrum/well": "^3.4.19",
     "@react-stately/collections": "^3.12.1",

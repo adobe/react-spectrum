@@ -29,7 +29,7 @@ fs.mkdirSync(`starters/docs/src`, {recursive: true});
 fs.mkdirSync(`starters/docs/stories`, {recursive: true});
 
 for (let file of glob.sync('packages/react-aria-components/docs/*.mdx')) {
-  if (!/^[A-Z]/.test(basename(file)) || /^Autocomplete/.test(basename(file))) {
+  if (!/^[A-Z]/.test(basename(file)) || /^Autocomplete|^Virtualizer/.test(basename(file))) {
     continue;
   }
   console.log('Processing ' + file);
