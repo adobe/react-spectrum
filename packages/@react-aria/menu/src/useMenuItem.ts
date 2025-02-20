@@ -308,7 +308,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
         domProps,
         linkProps,
         isTrigger 
-          ? {onFocus: itemProps.onFocus, 'data-key': itemProps['data-key']} 
+          ? {onFocus: itemProps.onFocus, 'data-collection': itemProps['data-collection'], 'data-key': itemProps['data-key']} 
           : itemProps,
         pressProps,
         hoverProps,

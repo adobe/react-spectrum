@@ -12,8 +12,8 @@
 
 import {DOMAttributes, DOMProps, FocusableElement, Key, LongPressEvent, PointerType, PressEvent, RefObject} from '@react-types/shared';
 import {focusSafely, PressProps, useLongPress, usePress} from '@react-aria/interactions';
+import {getCollectionId, isNonContiguousSelectionModifier} from './utils';
 import {isCtrlKeyPressed, mergeProps, openLink, useId, useRouter} from '@react-aria/utils';
-import {isNonContiguousSelectionModifier} from './utils';
 import {moveVirtualFocus} from '@react-aria/focus';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useEffect, useRef} from 'react';
@@ -315,6 +315,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     };
   }
 
+  itemProps['data-collection'] = getCollectionId(manager.collection);
   itemProps['data-key'] = key;
   itemPressProps.preventFocusOnPress = shouldUseVirtualFocus;
 

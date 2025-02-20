@@ -495,6 +495,29 @@ describe('GridList', () => {
     expect(checkbox).toBeInTheDocument();
   });
 
+  it('should support nested collections with colliding keys', async () => {
+    let {container} = render(
+      <GridList aria-label="CardView" keyboardNavigationBehavior="Tab">
+        <GridListItem id="1" textValue="Card">
+          <GridList aria-label="Previews">
+            <GridListItem id="1">Paco de Lucia</GridListItem>
+          </GridList>
+        </GridListItem>
+      </GridList>
+    );
+
+    let itemMap = new Map();
+    let items = container.querySelectorAll('[data-key]');
+
+    for (let item of items) {
+      if (item instanceof HTMLElement) {
+        let key = item.dataset.collection + ':' + item.dataset.key;
+        expect(itemMap.has(key)).toBe(false);
+        itemMap.set(key, item);
+      }
+    }
+  });
+
   describe('drag and drop', () => {
     it('should support drag button slot', () => {
       let {getAllByRole} = render(<DraggableGridList />);
