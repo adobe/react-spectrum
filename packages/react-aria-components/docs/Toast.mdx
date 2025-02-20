@@ -137,6 +137,8 @@ Then, you can trigger a toast from anywhere using the exported `queue`.
   .react-aria-ToastContent {
     display: flex;
     flex-direction: column;
+    flex: 1 1 auto;
+    min-width: 0px;
 
     [slot=title] {
       font-weight: bold;
@@ -144,6 +146,7 @@ Then, you can trigger a toast from anywhere using the exported `queue`.
   }
 
   .react-aria-Button[slot=close] {
+    flex: 0 0 auto;
     background: none;
     border: none;
     appearance: none;
