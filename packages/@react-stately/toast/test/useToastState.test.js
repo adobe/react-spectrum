@@ -217,20 +217,4 @@ describe('useToastState', () => {
     expect(result.current.visibleToasts.length).toBe(1);
     expect(result.current.visibleToasts[0].content).toBe('Second Toast');
   });
-
-  it('should queue toasts with priority', () => {
-    let {result} = renderHook(() => useToastState());
-    expect(result.current.visibleToasts).toStrictEqual([]);
-
-    act(() => {result.current.add(newValue[0].content, newValue[0].props);});
-    expect(result.current.visibleToasts[0].content).toBe(newValue[0].content);
-
-    act(() => {result.current.add('Second Toast', {priority: 1});});
-    expect(result.current.visibleToasts.length).toBe(1);
-    expect(result.current.visibleToasts[0].content).toBe('Second Toast');
-
-    act(() => {result.current.close(result.current.visibleToasts[0].key);});
-    expect(result.current.visibleToasts.length).toBe(1);
-    expect(result.current.visibleToasts[0].content).toBe(newValue[0].content);
-  });
 });

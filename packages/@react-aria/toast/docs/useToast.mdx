@@ -49,13 +49,12 @@ There is no built in way to toast notifications in HTML. <TypeLink links={docs.l
 
 * **Accessible** – Toasts follow the [ARIA alert pattern](https://www.w3.org/WAI/ARIA/apg/patterns/alert/). They are rendered in a [landmark region](https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/), which keyboard and screen reader users can easily jump to when an alert is announced.
 * **Focus management** – When a toast unmounts, focus is moved to the next toast if any. Otherwise, focus is restored to where it was before navigating to the toast region.
-* **Priority queue** – Toasts are displayed according to a priority queue, displaying a configurable number of toasts at a time. The queue can either be owned by a provider component, or global.
 
 ## Anatomy
 
 <Anatomy role="img" aria-label="Toast anatomy diagram, showing the toast's title and close button within the toast region." />
 
-A toast region is an ARIA landmark region labeled "Notifications" by default. A toast region contains one or more visible toasts, in priority order. When the limit is reached, additional toasts are queued until the user dismisses one. Each toast is an ARIA alert element, containing the content of the notification and a close button.
+A toast region is an ARIA landmark region labeled "Notifications" by default. A toast region contains one or more visible toasts in chronological order. When the limit is reached, additional toasts are queued until the user dismisses one. Each toast is an ARIA alert element, containing the content of the notification and a close button.
 
 Landmark regions including the toast container can be navigated using the keyboard by pressing the <Keyboard>F6</Keyboard> key to move forward, and the <Keyboard>Shift</Keyboard> + <Keyboard>F6</Keyboard> key to move backward. This provides an easy way for keyboard users to jump to the toasts from anywhere in the app. When the last toast is closed, keyboard focus is restored.
 
@@ -230,32 +229,6 @@ function Button(props) {
 ## Usage
 
 The following examples show how to use the `ToastProvider` component created in the above example.
-
-### Toast priorities
-
-Toasts are displayed according to a priority queue. The priority of a toast can be set using the `priority` option, passed to the `state.add` function. Priorities are arbitrary numbers defined by your implementation.
-
-```tsx example
-<ToastProvider>
-  {state => (<>
-    {/*- begin highlight -*/}
-    <Button onPress={() => state.add('Toasting…', {priority: 1})}>
-    {/*- end highlight -*/}
-      Show low priority toast
-    </Button>
-    {/*- begin highlight -*/}
-    <Button onPress={() => state.add('Toast is done!', {priority: 2})}>
-    {/*- end highlight -*/}
-      Show medium priority toast
-    </Button>
-    {/*- begin highlight -*/}
-    <Button onPress={() => state.add('Toast is burned!', {priority: 3})}>
-    {/*- end highlight -*/}
-      Show high priority toast
-    </Button>
-  </>)}
-</ToastProvider>
-```
 
 ### Auto-dismiss
 

@@ -28,7 +28,7 @@ export interface SpectrumToastContainerProps extends AriaToastRegionProps {
   placement?: ToastPlacement
 }
 
-export interface SpectrumToastOptions extends Omit<ToastOptions, 'priority'>, DOMProps {
+export interface SpectrumToastOptions extends ToastOptions, DOMProps {
   /** A label for the action button within the toast. */
   actionLabel?: string,
   /** Handler that is called when the action button is pressed. */
@@ -155,7 +155,7 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
                   state={state} />
               </li>
             );
-          })} 
+          })}
         </ol>
       </Toaster>
     );
