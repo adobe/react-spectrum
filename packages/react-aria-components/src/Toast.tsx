@@ -27,12 +27,12 @@ export interface ToastRegionRenderProps<T> {
   /** A list of all currently visible toasts. */
   visibleToasts: QueuedToast<T>[],
   /**
-   * Whether the thumb is currently focused.
+   * Whether the toast region is currently focused.
    * @selector [data-focused]
    */
   isFocused: boolean,
   /**
-   * Whether the thumb is keyboard focused.
+   * Whether the toast region is keyboard focused.
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean
@@ -104,12 +104,12 @@ export interface ToastRenderProps<T> {
    */
   toast: QueuedToast<T>,
   /**
-   * Whether the thumb is currently focused.
+   * Whether the toast is currently focused.
    * @selector [data-focused]
    */
   isFocused: boolean,
   /**
-   * Whether the thumb is keyboard focused.
+   * Whether the toast is keyboard focused.
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean
