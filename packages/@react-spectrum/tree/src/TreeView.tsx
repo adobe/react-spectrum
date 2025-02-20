@@ -243,8 +243,13 @@ export const TreeViewItem = <T extends object>(props: SpectrumTreeViewItemProps<
   );
 };
 
+export interface SpectrumTreeViewItemContentProps extends Omit<TreeItemContentProps, 'children'> {
+  /** Rendered contents of the tree item or child items. */
+  children: ReactNode
+}
 
-export const TreeViewItemContent = (props: Omit<TreeItemContentProps, 'children'> & {children: ReactNode}) => {
+
+export const TreeViewItemContent = (props: SpectrumTreeViewItemContentProps) => {
   let {
     children
   } = props;
