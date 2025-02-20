@@ -260,6 +260,16 @@ export class ElementNode<T> extends BaseNode<T> {
     node.hasChildNodes = !!this.firstChild;
     node.firstChildKey = this.firstChild?.node.key ?? null;
     node.lastChildKey = this.lastChild?.node.key ?? null;
+
+    // Update the colIndex of sibling nodes if this node has a colSpan.
+    if ((node.colSpan != null || node.colIndex != null) && this.nextSibling) {
+      // This queues the next sibling for update, which means this happens recursively.
+      let nextColIndex = (node.colIndex ?? node.index) + (node.colSpan ?? 1);
+      if (nextColIndex !== this.nextSibling.node.colIndex) {
+        let siblingNode = this.ownerDocument.getMutableNode(this.nextSibling);
+        siblingNode.colIndex = nextColIndex;
+      }
+    }
   }
 
   setProps<E extends Element>(obj: any, ref: ForwardedRef<E>, rendered?: any, render?: (node: Node<T>) => ReactElement) {
@@ -276,6 +286,10 @@ export class ElementNode<T> extends BaseNode<T> {
         throw new Error('Cannot change the id of an item');
       }
       node.key = id;
+    }
+
+    if (props.colSpan != null) {
+      node.colSpan = props.colSpan;
     }
 
     // If this is the first time props have been set, end the transaction started in the constructor
@@ -418,8 +432,8 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
         }
       }
 
-      collection.commit(this.firstChild?.node.key ?? null, this.lastChild?.node.key ?? null, this.isSSR);
       this.mutatedNodes.clear();
+      collection.commit(this.firstChild?.node.key ?? null, this.lastChild?.node.key ?? null, this.isSSR);
     }
 
     this.collectionMutated = false;
