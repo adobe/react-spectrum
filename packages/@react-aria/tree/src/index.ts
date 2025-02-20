@@ -11,7 +11,6 @@
  */
 
 export {useTree} from './useTree';
-export {useTree} from './useTree';
 export {useTreeItem} from './useTreeItem';
 
 export type {AriaTreeOptions, AriaTreeProps, TreeAria, TreeProps} from './useTree';
