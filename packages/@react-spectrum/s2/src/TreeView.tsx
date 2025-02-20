@@ -311,7 +311,12 @@ export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
   );
 };
 
-export const TreeViewItemContent = (props: Omit<TreeItemContentProps, 'children'> & {children: ReactNode}) => {
+export interface TreeViewItemContentProps extends Omit<TreeItemContentProps, 'children'> {
+  /** Rendered contents of the tree item or child items. */
+  children: ReactNode
+}
+
+export const TreeViewItemContent = (props: TreeViewItemContentProps) => {
   let {
     children
   } = props;

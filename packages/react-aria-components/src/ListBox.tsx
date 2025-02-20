@@ -16,7 +16,7 @@ import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionCont
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
-import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, useListState} from 'react-stately';
+import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, useFilteredListState, useListState} from 'react-stately';
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {HeaderContext} from './Header';
@@ -107,12 +107,8 @@ export const ListBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Lis
 function StandaloneListBox({props, listBoxRef, collection}) {
   props = {...props, collection, children: null, items: null};
   let {layoutDelegate} = useContext(CollectionRendererContext);
-  let {filterFn, collectionProps, collectionRef} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
-  // Memoed so that useAutocomplete callback ref is properly only called once on mount and not everytime a rerender happens
-  listBoxRef = useObjectRef(useMemo(() => mergeRefs(listBoxRef, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null), [collectionRef, listBoxRef]));
-  let filteredCollection = useMemo(() => filterFn ? collection.filter(filterFn) : collection, [collection, filterFn]);
-  let state = useListState({...props, collection: filteredCollection, layoutDelegate});
-  return <ListBoxInner state={state} props={{...props, ...collectionProps}} listBoxRef={listBoxRef} />;
+  let state = useListState({...props, layoutDelegate});
+  return <ListBoxInner state={state} props={props} listBoxRef={listBoxRef} />;
 }
 
 interface ListBoxInnerProps<T> {
@@ -121,8 +117,13 @@ interface ListBoxInnerProps<T> {
   listBoxRef: RefObject<HTMLDivElement | null>
 }
 
-function ListBoxInner<T extends object>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
+function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: ListBoxInnerProps<T>) {
+  let {filterFn, collectionProps, collectionRef} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
+  props = useMemo(() => collectionProps ? ({...props, ...collectionProps}) : props, [props, collectionProps]);
   let {dragAndDropHooks, layout = 'stack', orientation = 'vertical'} = props;
+  // Memoed so that useAutocomplete callback ref is properly only called once on mount and not everytime a rerender happens
+  listBoxRef = useObjectRef(useMemo(() => mergeRefs(listBoxRef, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null), [collectionRef, listBoxRef]));
+  let state = useFilteredListState(inputState, filterFn);
   let {collection, selectionManager} = state;
   let isListDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
   let isListDroppable = !!dragAndDropHooks?.useDroppableCollectionState;
