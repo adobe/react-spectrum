@@ -29,8 +29,9 @@ export function Menu<T extends object>(props: MenuProps<T>) {
 }
 
 export function MenuItem(props: MenuItemProps) {
+  let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   return (
-    <AriaMenuItem {...props} className={dropdownItemStyles}>
+    <AriaMenuItem textValue={textValue} {...props} className={dropdownItemStyles}>
       {composeRenderProps(props.children, (children, {selectionMode, isSelected, hasSubmenu}) => <>
         {selectionMode !== 'none' && (
           <span className="flex items-center w-4">
