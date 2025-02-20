@@ -188,10 +188,6 @@ const ROW_HEIGHTS = {
 };
 
 export class S2TableLayout<T> extends TableLayout<T> {
-  constructor(options) {
-    super({...options, loaderHeight: 60});
-  }
-
   protected isStickyColumn(node: GridNode<T>): boolean {
     return node.props.isSticky;
   }
@@ -281,18 +277,6 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
 
   let domRef = useDOMRef(ref);
   let scale = useScale();
-  let layout = useMemo(() => {
-    return new S2TableLayout({
-      rowHeight: overflowMode === 'wrap'
-        ? undefined
-        : ROW_HEIGHTS[density][scale],
-      estimatedRowHeight: overflowMode === 'wrap'
-      ? ROW_HEIGHTS[density][scale]
-      : undefined,
-      // No need for estimated headingHeight since the headers aren't affected by overflow mode: wrap
-      headingHeight: DEFAULT_HEADER_HEIGHT[scale]
-    });
-  }, [overflowMode, density, scale]);
 
   // Starts when the user selects resize from the menu, ends when resizing ends
   // used to control the visibility of the resizer Nubbin
@@ -334,7 +318,19 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
       onResizeStart={onResizeStart}
       className={(UNSAFE_className || '') + mergeStyles(tableWrapper, styles)}
       style={UNSAFE_style}>
-      <Virtualizer layout={layout}>
+      <Virtualizer
+        layout={S2TableLayout}
+        layoutOptions={{
+          rowHeight: overflowMode === 'wrap'
+            ? undefined
+            : ROW_HEIGHTS[density][scale],
+          estimatedRowHeight: overflowMode === 'wrap'
+          ? ROW_HEIGHTS[density][scale]
+          : undefined,
+          // No need for estimated headingHeight since the headers aren't affected by overflow mode: wrap
+          headingHeight: DEFAULT_HEADER_HEIGHT[scale],
+          loaderHeight: 60
+        }}>
         <InternalTableContext.Provider value={context}>
           <RACTable
             ref={scrollRef as any}

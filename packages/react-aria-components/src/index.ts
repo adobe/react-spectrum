@@ -84,7 +84,7 @@ export {FormValidationContext} from 'react-stately';
 export {parseColor, getColorChannels} from '@react-stately/color';
 export {ListLayout as UNSTABLE_ListLayout, GridLayout as UNSTABLE_GridLayout} from '@react-stately/layout';
 export {ToastQueue as UNSTABLE_ToastQueue} from '@react-stately/toast';
-export {ListLayout, GridLayout} from '@react-stately/layout';
+export {ListLayout, GridLayout, WaterfallLayout} from '@react-stately/layout';
 export {Layout, LayoutInfo, Size, Rect, Point} from '@react-stately/virtualizer';
 
 export type {AutocompleteProps} from './Autocomplete';
@@ -153,4 +153,4 @@ export type {DirectoryDropItem, DraggableCollectionEndEvent, DraggableCollection
 export type {Key, Selection, SortDescriptor, SortDirection, SelectionMode} from 'react-stately';
 export type {ValidationResult, RouterConfig} from '@react-types/shared';
 export type {Color, ColorSpace, ColorFormat} from '@react-types/color';
-export type {ListLayoutOptions, GridLayoutOptions} from '@react-stately/layout';
+export type {ListLayoutOptions, GridLayoutOptions, WaterfallLayoutOptions} from '@react-stately/layout';
