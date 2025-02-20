@@ -47,15 +47,18 @@ preRelease: alpha
 ## Example
 
 ```tsx example
-import {UNSTABLE_Autocomplete as Autocomplete, Menu, MenuItem, useFilter} from 'react-aria-components';
-import {MySearchField} from './SearchField';
+import {UNSTABLE_Autocomplete as Autocomplete, Button, Input, Label, Menu, MenuItem, SearchField, useFilter} from 'react-aria-components';
 
 function Example() {
   let {contains} = useFilter({sensitivity: 'base'});
   return (
     <div className="autocomplete">
       <Autocomplete filter={contains}>
-        <MySearchField label="Commands" placeholder="Search commands..." />
+        <SearchField>
+          <Label>Commands</Label>
+          <Input placeholder="Search commands...." />
+          <Button>✕</Button>
+        </SearchField>
         <Menu>
           <MenuItem>Create new file...</MenuItem>
           <MenuItem>Create new folder...</MenuItem>
@@ -119,8 +122,8 @@ function Example() {
 import {UNSTABLE_Autocomplete as Autocomplete, SearchField, Menu} from 'react-aria-components';
 
 <Autocomplete>
-  <SearchField />
-  <Menu />
+  <SearchField />   {/*   or <TextField />   */}
+  <Menu />   {/*   or <ListBox />   */}
 </Autocomplete>
 ```
 
@@ -130,7 +133,7 @@ An autocomplete can be built using the [&lt;datalist&gt;](https://developer.mozi
 
 * **Flexible** – Support for multiple input types and collection types, controlled and uncontrolled state, and custom filter functions.
 * **Keyboard navigation** – Autocomplete can be navigated using the arrow keys, along with page up/down, home/end, etc. The list of options is filtered while typing into the input, and items can be selected with the enter key.
-* **Accessible** – Follows the [ARIA autocomplete pattern](https://w3c.github.io/aria/#aria-autocomplete), with support for items and sections, and slots for label and description elements within each item. Custom localized announcements are included for option focusing, filtering, and selection using an ARIA live region to ensure announcements are clear and consistent.
+* **Accessible** – Follows the [ARIA autocomplete pattern](https://w3c.github.io/aria/#aria-autocomplete), with support for items and sections, and slots for label and description elements within each item.
 * **Styleable** – Items include builtin states for styling, such as hover, press, focus, selected, and disabled.
 
 ### Concepts
@@ -193,7 +196,7 @@ An `Autocomplete` can use the following components, which may also be used stand
 
 ## Examples
 
-<ExampleList tag="combobox" />
+<ExampleList tag="autocomplete" />
 
 ## Starter kits
 
@@ -205,11 +208,13 @@ To help kick-start your project, we offer starter kits that include example impl
 
 If you will use an Autocomplete in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `Autocomplete` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. It also shows how to use the `description` slot to render [help text](#description), and `FieldError` component to render [validation errors](#validation). The `Item` component is also wrapped to apply class names based on the current state, as described in the [styling](#styling) section.
+This example wraps `Autocomplete` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. The `Item` component is also wrapped to apply class names based on the current state, as described in the [styling](#styling) section.
 
 ```tsx example export=true
 import type {AutocompleteProps, MenuItemProps} from 'react-aria-components';
 import {Menu, MenuItem} from 'react-aria-components';
+import {MySearchField} from './SearchField';
+import {MyItem} from './Menu';
 
 interface MyAutocompleteProps<T extends object> extends Omit<AutocompleteProps, 'children'> {
   label?: string,
@@ -231,10 +236,6 @@ function MyAutocomplete<T extends object>({label,placeholder, items, children, o
       </Autocomplete>
     </div>
   );
-}
-
-function MyItem(props: MenuItemProps) {
-  return <MenuItem {...props} className={({isFocused, isSelected}) => `my-item ${isFocused ? 'focused' : ''} ${isSelected ? 'selected' : ''}`} />
 }
 
 <MyAutocomplete label="Commands" placeholder="Search commands...">
@@ -272,79 +273,9 @@ function MyItem(props: MenuItemProps) {
 .react-aria-Label {
   margin-bottom: .5em;
 }
-
-.my-item {
-  margin: 2px;
-  padding: 4px 8px 4px 22px;
-  border-radius: 6px;
-  outline: none;
-  cursor: default;
-  color: var(--text-color);
-  font-size: 1.072rem;
-  position: relative;
-
-  &.selected {
-    font-weight: 600;
-    background: none;
-
-    &::before {
-      content: '✓';
-      content: '✓' / '';
-      alt: ' ';
-      position: absolute;
-      top: 4px;
-      left: 4px;
-    }
-  }
-
-  &.focused {
-    background: #e70073;
-    color: white;
-  }
-}
-
-@media (forced-colors: active) {
-  .my-item.focused {
-    background: Highlight;
-    color: HighlightText;
-  }
-}
 ```
 
 </details>
-
-
-## Content
-
-Autocomplete follows the [Collection Components API](collections.html), accepting both static and dynamic collections.
-The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
-as shown below, can be used when the options come from an external data source such as an API call, or update over time.
-
-As seen below, an iterable list of options is passed to the Autocomplete's Menu using the `items` prop. Each item accepts an `id` prop, which
-is passed to the `onAction` prop on the `Menu` to identify the selected item. Alternatively, if the item objects contain an `id` property,
-as shown in the example below, then this is used automatically and an `id` prop is not required.
-
-```tsx example
-import type {Key} from 'react-aria-components';
-
-function Example() {
-  let items = [
-    {id: 1, name: 'New'},
-    {id: 2, name: 'Open'},
-    {id: 3, name: 'Close'},
-    {id: 4, name: 'Save'},
-    {id: 5, name: 'Duplicate'},
-    {id: 6, name: 'Rename'},
-    {id: 7, name: 'Move'}
-  ];
-
-  return (
-    <MyAutocomplete label="Actions" items={items} onAction={id => alert(id)}>
-      {(item) => <MyItem>{item.name}</MyItem>}
-    </MyAutocomplete>
-  );
-}
-```
 
 ## Value
 
@@ -419,98 +350,11 @@ All React Aria Components export a corresponding context that can be used to sen
 
 <ContextTable components={['UNSTABLE_Autocomplete']} docs={docs} />
 
-This example shows a `FieldGroup` component that renders a group of filters with a title. The entire group can be given the same `filter` prop, which is passed to all child selects via the `AutocompleteContext` provider.
-
-```tsx example
-import {UNSTABLE_AutocompleteContext as AutocompleteContext, Menu, MenuItem} from 'react-aria-components';
-
-interface FieldGroupProps {
-  title?: string,
-  children?: React.ReactNode
-}
-
-function FieldGroup({title, children}: FieldGroupProps) {
-  let {contains} = useFilter({sensitivity: 'base'});
-  return (
-    <fieldset>
-      <legend>{title}</legend>
-      {/*- begin highlight -*/}
-      <AutocompleteContext.Provider value={{filter: contains}}>
-      {/*- end highlight -*/}
-        {children}
-      </AutocompleteContext.Provider>
-    </fieldset>
-  );
-}
-
-<FieldGroup title="Filters">
-  <MyAutocomplete label="Actions" placeholder="Search actions...">
-    <MyItem id="draft">Draft</MyItem>
-    <MyItem id="published">Published</MyItem>
-    <MyItem id="deleted">Deleted</MyItem>
-  </MyAutocomplete>
-  <MyAutocomplete label="People" placeholder="Search people...">
-    <MyItem id="john">John</MyItem>
-    <MyItem id="emma">Emma</MyItem>
-    <MyItem id="tim">Tim</MyItem>
-  </MyAutocomplete>
-</FieldGroup>
-```
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-
-```css
-fieldset {
-  padding: 1.5em;
-  width: fit-content;
-  display: flex;
-  flex-direction: column;
-  gap: 1em;
-}
-```
-
-</details>
-
-### Custom children
-
-Autocomplete passes props to its child components, such as the label and input, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
-
-<ContextTable components={['TextField', 'SearchField', 'Menu', 'ListBox']} docs={docs} />
-
-This example consumes from `LabelContext` in an existing styled label component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by Autocomplete.
-
-```tsx
-import type {LabelProps} from 'react-aria-components';
-import {LabelContext, useContextProps} from 'react-aria-components';
-
-const MyCustomLabel = React.forwardRef((props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
-  // Merge the local props and ref with the ones provided via context.
-  ///- begin highlight -///
-  [props, ref] = useContextProps(props, ref, LabelContext);
-  ///- end highlight -///
-
-  // ... your existing Label component
-  return <label {...props} ref={ref} />;
-});
-```
-
-Now you can use `MyCustomLabel` within an `Autocomplete`, in place of the builtin React Aria Components `Label`.
-
-```tsx
-<Autocomplete>
-  {/*- begin highlight -*/}
-  <MyCustomLabel>Name</MyCustomLabel>
-  {/*- end highlight -*/}
-  {/* ... */}
-</Autocomplete>
-```
-
 ### State
 
 Autocomplete provides an <TypeLink links={statelyDocs.links} type={statelyDocs.exports.AutocompleteState} /> object to its children via `AutocompleteStateContext`. This can be used to access and manipulate the autocomplete's state.
 
-This example shows an `AutocompleteClearButton` component that can be placed within an `Autocomplete` to allow the user to clear the selected value.
+This example shows an `AutocompleteClearButton` component that can be placed within an `Autocomplete` to allow the user to clear the input.
 
 ```tsx example
 import {UNSTABLE_AutocompleteStateContext as AutocompleteStateContext, Button} from 'react-aria-components';

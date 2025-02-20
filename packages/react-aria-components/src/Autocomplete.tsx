@@ -33,7 +33,7 @@ export const UNSTABLE_AutocompleteStateContext = createContext<AutocompleteState
 export const UNSTABLE_InternalAutocompleteContext = createContext<InternalAutocompleteContextValue | null>(null);
 
 /**
- * A autocomplete combines a text input with a menu, allowing users to filter a list of options to items matching a query.
+ * An autocomplete combines a text input with a menu, allowing users to filter a list of options to items matching a query.
  */
 export function UNSTABLE_Autocomplete(props: AutocompleteProps) {
   let ctx = useSlottedContext(UNSTABLE_AutocompleteContext, props.slot);
