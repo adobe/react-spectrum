@@ -14,6 +14,8 @@
 // subtracted from when showing it again. When it reaches zero, aria-hidden is removed.
 let refCountMap = new WeakMap<Element, number>();
 interface ObserverWrapper {
+  visibleNodes: Set<Element>,
+  hiddenNodes: Set<Element>,
   observe: () => void,
   disconnect: () => void
 }
@@ -138,6 +140,8 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
   observer.observe(root, {childList: true, subtree: true});
 
   let observerWrapper: ObserverWrapper = {
+    visibleNodes,
+    hiddenNodes,
     observe() {
       observer.observe(root, {childList: true, subtree: true});
     },
@@ -174,4 +178,14 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
       observerStack.splice(observerStack.indexOf(observerWrapper), 1);
     }
   };
+}
+
+export function keepVisible(element: Element) {
+  let observer = observerStack[observerStack.length - 1];
+  if (observer && !observer.visibleNodes.has(element)) {
+    observer.visibleNodes.add(element);
+    return () => {
+      observer.visibleNodes.delete(element);
+    };
+  }
 }

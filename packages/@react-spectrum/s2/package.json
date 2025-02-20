@@ -125,7 +125,7 @@
     "@react-aria/test-utils": "1.0.0-alpha.3",
     "@testing-library/dom": "^10.1.0",
     "@testing-library/react": "^15.0.7",
-    "@testing-library/user-event": "^14.0.0",
+    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch",
     "jest": "^29.5.0"
   },
   "dependencies": {

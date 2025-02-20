@@ -227,7 +227,7 @@ describe('ComboBox', function () {
     expect(items[1]).toHaveTextContent('Two');
     expect(items[2]).toHaveTextContent('Three');
 
-    expect(listbox).toHaveAttribute('tabIndex', '-1');
+    expect(listbox).not.toHaveAttribute('tabIndex');
     for (let item of items) {
       expect(item).not.toHaveAttribute('tabIndex');
     }

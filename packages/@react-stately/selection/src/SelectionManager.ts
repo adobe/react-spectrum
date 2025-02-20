@@ -512,4 +512,11 @@ export class SelectionManager implements MultipleSelectionManager {
   getItemProps(key: Key) {
     return this.collection.getItem(key)?.props;
   }
+
+  withCollection(collection: Collection<Node<unknown>>) {
+    return new SelectionManager(collection, this.state, {
+      allowsCellSelection: this.allowsCellSelection,
+      layoutDelegate: this.layoutDelegate || undefined
+    });
+  }
 }

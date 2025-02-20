@@ -12,8 +12,9 @@
 
 import {DOMAttributes, DOMProps, FocusableElement, Key, LongPressEvent, PointerType, PressEvent, RefObject} from '@react-types/shared';
 import {focusSafely, PressProps, useLongPress, usePress} from '@react-aria/interactions';
-import {isCtrlKeyPressed, mergeProps, openLink, UPDATE_ACTIVEDESCENDANT, useId, useRouter} from '@react-aria/utils';
+import {isCtrlKeyPressed, mergeProps, openLink, useId, useRouter} from '@react-aria/utils';
 import {isNonContiguousSelectionModifier} from './utils';
+import {moveVirtualFocus} from '@react-aria/focus';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useEffect, useRef} from 'react';
 
@@ -160,7 +161,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
 
   // Focus the associated DOM node when this item becomes the focusedKey
   // TODO: can't make this useLayoutEffect bacause it breaks menus inside dialogs
-  // However, if this is a useEffect, it runs twice and dispatches two UPDATE_ACTIVEDESCENDANT and immediately sets
+  // However, if this is a useEffect, it runs twice and dispatches two blur events and immediately sets
   // aria-activeDescendant in useAutocomplete... I've worked around this for now
   useEffect(() => {
     let isFocused = key === manager.focusedKey;
@@ -172,12 +173,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
           focusSafely(ref.current);
         }
       } else {
-        let updateActiveDescendant = new CustomEvent(UPDATE_ACTIVEDESCENDANT, {
-          cancelable: true,
-          bubbles: true
-        });
-
-        ref.current?.dispatchEvent(updateActiveDescendant);
+        moveVirtualFocus(ref.current);
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -321,6 +317,25 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
 
   itemProps['data-key'] = key;
   itemPressProps.preventFocusOnPress = shouldUseVirtualFocus;
+
+  // When using virtual focus, make sure the focused key gets updated on press.
+  if (shouldUseVirtualFocus) {
+    itemPressProps = mergeProps(itemPressProps, {
+      onPressStart(e) {
+        if (e.pointerType !== 'touch') {
+          manager.setFocused(true);
+          manager.setFocusedKey(key);
+        }
+      },
+      onPress(e) {
+        if (e.pointerType === 'touch') {
+          manager.setFocused(true);
+          manager.setFocusedKey(key);
+        }
+      }
+    });
+  }
+
   let {pressProps, isPressed} = usePress(itemPressProps);
 
   // Double clicking with a mouse with selectionBehavior = 'replace' performs an action.
@@ -366,9 +381,11 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   return {
     itemProps: mergeProps(
       itemProps,
-      allowsSelection || hasPrimaryAction ? pressProps : {},
+      allowsSelection || hasPrimaryAction || shouldUseVirtualFocus ? pressProps : {},
       longPressEnabled ? longPressProps : {},
-      {onDoubleClick, onDragStartCapture, onClick, id}
+      {onDoubleClick, onDragStartCapture, onClick, id},
+      // Prevent DOM focus from moving on mouse down when using virtual focus
+      shouldUseVirtualFocus ? {onMouseDown: e => e.preventDefault()} : undefined
     ),
     isPressed,
     isSelected: manager.isSelected(key),

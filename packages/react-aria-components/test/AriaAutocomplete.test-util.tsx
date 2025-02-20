@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render, within} from '@testing-library/react';
+import {act, fireEvent, render, within} from '@testing-library/react';
 import {
   AriaBaseTestProps,
+  installPointerEvent,
   mockClickDefault,
   pointerMap
 } from '@react-spectrum/test-utils-internal';
@@ -47,9 +48,16 @@ interface AriaAutocompleteTestProps extends AriaBaseTestProps {
     defaultValue?: () => ReturnType<typeof render>,
     // should allow the user to filter the items themselves in a async manner. The items should be Foo, Bar, and Baz with ids 1, 2, and 3 respectively.
     // The filtering can take any amount of time but should be standard non-case sensitive contains matching
-    asyncFiltering?: () => ReturnType<typeof render>
-    // TODO, add tests for this when we support it
-    // submenus?: (props?: {name: string}) => ReturnType<typeof render>
+    asyncFiltering?: () => ReturnType<typeof render>,
+    // Should have a menu with three items, and two levels of submenus. Tree should be roughly: Foo Bar Baz -> (branch off Bar) Lvl 1 Bar 1, Lvl 1 Bar 2, Lvl 1 Bar 3 ->
+    // (branch off Lvl 1 Bar 2) ->  Lvl 2 Bar 1, Lvl 2 Bar 2, Lvl 2 Bar 3
+    submenus?: () => ReturnType<typeof render>,
+    // Should have a menu with three items, and two levels of subdialog. Tree should be roughly: Foo Bar Baz -> (branch off Bar) Lvl 1 Bar 1, Lvl 1 Bar 2, Lvl 1 Bar 3 ->
+    // (branch off Lvl 1 Bar 2) ->  Lvl 2 Bar 1, Lvl 2 Bar 2, Lvl 2 Bar 3
+    subdialogs?: () => ReturnType<typeof render>,
+    // Should have a menu with items -> a subdialog -> submenu -> subdialog. Tree should be roughly: Foo Bar Baz -> (branch off Bar) Lvl 1 Bar 1, Lvl 1 Bar 2, Lvl 1 Bar 3 ->
+    // (branch off Lvl 1 Bar 2) ->  Lvl 2 Bar 1, Lvl 2 Bar 2, Lvl 2 Bar 3 -> (branch off Lvl 2 Bar 2) ->  Lvl 3 Bar 1, Lvl 3 Bar 2, Lvl 3 Bar 3
+    subdialogAndMenu?: () => ReturnType<typeof render>
   },
   ariaPattern?: 'menu' | 'listbox',
   selectionListener?: jest.Mock<any, any>,
@@ -119,7 +127,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
         expect(document.activeElement).toBe(input);
       });
 
-      it('should clear the focused key when using ArrowLeft and ArrowRight', async function () {
+      it('should clear the focused key when using ArrowLeft and ArrowRight but preserves it internally for future keyboard operations', async function () {
         let {getByRole} = renderers.standard();
         let input = getByRole('searchbox');
         let menu = getByRole(collectionNodeRole);
@@ -128,17 +136,45 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
         await user.tab();
         expect(document.activeElement).toBe(input);
 
-        await user.keyboard('Foo');
-        act(() => jest.runAllTimers());
+        await user.keyboard('{ArrowDown}');
         let options = within(menu).getAllByRole(collectionItemRole);
         expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
         await user.keyboard('{ArrowRight}');
         expect(input).not.toHaveAttribute('aria-activedescendant');
+        // Old focused key was options[0] so should move one down
         await user.keyboard('{ArrowDown}');
-        expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+        expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
         await user.keyboard('{ArrowLeft}');
         expect(input).not.toHaveAttribute('aria-activedescendant');
         expect(document.activeElement).toBe(input);
+        await user.keyboard('{ArrowUp}');
+        expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+      });
+
+      it('should completely clear the focused key when Backspacing', async function () {
+        let {getByRole} = renderers.standard();
+        let input = getByRole('searchbox');
+        let menu = getByRole(collectionNodeRole);
+        expect(input).not.toHaveAttribute('aria-activedescendant');
+
+        await user.tab();
+        expect(document.activeElement).toBe(input);
+
+        await user.keyboard('B');
+        act(() => jest.runAllTimers());
+        let options = within(menu).getAllByRole(collectionItemRole);
+        let firstActiveDescendant = options[0].id;
+        expect(input).toHaveAttribute('aria-activedescendant', firstActiveDescendant);
+        expect(options[0]).toHaveTextContent('Bar');
+        await user.keyboard('{Backspace}');
+        act(() => jest.runAllTimers());
+        expect(input).not.toHaveAttribute('aria-activedescendant');
+
+        options = within(menu).getAllByRole(collectionItemRole);
+        await user.keyboard('{ArrowDown}');
+        expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+        expect(firstActiveDescendant).not.toEqual(options[0].id);
+        expect(options[0]).toHaveTextContent('Foo');
       });
 
       it('should delay the aria-activedescendant being set when autofocusing the first option', async function () {
@@ -203,6 +239,16 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
         await user.keyboard('{ArrowUp}');
         act(() => jest.runAllTimers());
         expect(input.selectionStart).toBe(2);
+      });
+
+      it('should focus the input when clicking on an item', async function () {
+        let {getByRole} = renderers.standard();
+        let input = getByRole('searchbox') as HTMLInputElement;
+        let menu = getByRole(collectionNodeRole);
+        let options = within(menu).getAllByRole(collectionItemRole);
+
+        await user.click(options[0]);
+        expect(document.activeElement).toBe(input);
       });
 
       if (ariaPattern === 'menu') {
@@ -496,33 +542,6 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
       });
     }
 
-    if (renderers.links) {
-      describe('with links', function () {
-        it('should trigger the link option when hitting Enter', async function () {
-          let {getByRole} = (renderers.links!)();
-          let input = getByRole('searchbox');
-          let menu = getByRole(collectionNodeRole);
-          expect(input).not.toHaveAttribute('aria-activedescendant');
-
-          await user.tab();
-          expect(document.activeElement).toBe(input);
-
-          await user.keyboard('{ArrowDown}');
-          await user.keyboard('{ArrowDown}');
-          await user.keyboard('{ArrowDown}');
-
-          let options = within(menu).getAllByRole(collectionItemRole);
-          expect(options[2].tagName).toBe('A');
-          expect(options[2]).toHaveAttribute('href', 'https://google.com');
-          let onClick = mockClickDefault();
-
-          await user.keyboard('{Enter}');
-          expect(onClick).toHaveBeenCalledTimes(1);
-          window.removeEventListener('click', onClick);
-        });
-      });
-    }
-
     if (renderers.sections) {
       describe('with sections', function () {
         it('should properly skip over sections when keyboard navigating', async function () {
@@ -635,6 +654,448 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
             await user.keyboard('{ArrowDown}');
             expect(input).toHaveAttribute('aria-activedescendant', firstSecOpts[0].id);
           }
+        });
+      });
+    }
+
+    if (renderers.links) {
+      describe('with links', function () {
+        it('should trigger the link option when hitting Enter', async function () {
+          let {getByRole} = (renderers.links!)();
+          let input = getByRole('searchbox');
+          let menu = getByRole(collectionNodeRole);
+          expect(input).not.toHaveAttribute('aria-activedescendant');
+
+          await user.tab();
+          expect(document.activeElement).toBe(input);
+
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+
+          let options = within(menu).getAllByRole(collectionItemRole);
+          expect(options[2].tagName).toBe('A');
+          expect(options[2]).toHaveAttribute('href', 'https://google.com');
+          let onClick = mockClickDefault();
+
+          await user.keyboard('{Enter}');
+          expect(onClick).toHaveBeenCalledTimes(1);
+          window.removeEventListener('click', onClick);
+        });
+      });
+    }
+
+    if (renderers.submenus) {
+      // TODO: wrap all of these within a DialogTrigger?
+      describe('with submenus', function () {
+        it('should open a submenu when pressing the autocomplete wrapped submenu trigger', async function () {
+          let {getByRole, getAllByRole} = (renderers.submenus!)();
+          let menu = getByRole('menu');
+          let options = within(menu).getAllByRole('menuitem');
+          expect(options[1]).toHaveAttribute('aria-haspopup', 'menu');
+
+          await user.click(options[1]);
+          act(() => {
+            jest.runAllTimers();
+          });
+
+          let menus = getAllByRole('menu');
+          expect(menus).toHaveLength(2);
+        });
+
+        describe('pointer events', function () {
+          installPointerEvent();
+          
+          it('should close the menu when hovering an adjacent menu item in the virtual focus list', async function () {
+            let {getByRole, getAllByRole} = (renderers.submenus!)();
+            let menu = getByRole('menu');
+            let options = within(menu).getAllByRole('menuitem');
+            expect(options[1]).toHaveAttribute('aria-haspopup', 'menu');
+            await user.click(options[1]);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            let menus = getAllByRole('menu');
+            expect(menus).toHaveLength(2);
+
+            await user.hover(options[2]);
+            act(() => {
+              jest.runAllTimers();
+            });
+            menus = getAllByRole('menu');
+            expect(menus).toHaveLength(1);
+          });
+        });
+
+        it('should not clear the focused key when using arrowRight to open a submenu', async function () {
+          let {getByRole, getAllByRole} = (renderers.submenus!)();
+          let input = getByRole('searchbox');
+          let menu = getByRole('menu');
+          expect(input).not.toHaveAttribute('aria-activedescendant');
+
+          await user.tab();
+          expect(document.activeElement).toBe(input);
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          let options = within(menu).getAllByRole('menuitem');
+          expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
+          expect(options[1]).toHaveAttribute('aria-haspopup', 'menu');
+          expect(options[1]).toHaveAttribute('data-focused');
+          expect(options[1]).toHaveAttribute('data-focus-visible');
+
+          // Open submenu
+          await user.keyboard('{ArrowRight}');
+          act(() => jest.runAllTimers());
+          expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
+          expect(options[1]).not.toHaveAttribute('data-focused');
+          expect(options[1]).not.toHaveAttribute('data-focus-visible');
+          let menus = getAllByRole('menu');
+          expect(menus).toHaveLength(2);
+          expect(menus[1]).toContainElement(document.activeElement as HTMLElement);
+
+          // Close submenu and check that previous focus location was retained
+          await user.keyboard('{ArrowLeft}');
+          act(() => jest.runAllTimers());
+          menus = getAllByRole('menu');
+          expect(menus).toHaveLength(1);
+          expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
+          expect(options[1]).toHaveAttribute('data-focused');
+          expect(options[1]).toHaveAttribute('data-focus-visible');
+          await user.keyboard('{ArrowDown}');
+          expect(input).toHaveAttribute('aria-activedescendant', options[2].id);
+          expect(options[2]).toHaveAttribute('data-focused');
+          expect(options[2]).toHaveAttribute('data-focus-visible');
+        });
+
+        it('should only close a single level when hitting Escape and focus should be moved back to the input', async function () {
+          let {getByRole, getAllByRole} = (renderers.submenus!)();
+          let input = getByRole('searchbox');
+          let menu = getByRole('menu');
+
+          await user.tab();
+          expect(document.activeElement).toBe(input);
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          let options = within(menu).getAllByRole('menuitem');
+          expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
+
+          // Open submenu
+          await user.keyboard('{ArrowRight}');
+          act(() => jest.runAllTimers());
+          let menus = getAllByRole('menu');
+          expect(menus).toHaveLength(2);
+          expect(menus[1]).toContainElement(document.activeElement as HTMLElement);
+
+          // Open the nested submenu
+          await user.keyboard('{ArrowDown}');
+          expect(document.activeElement).toHaveAttribute('aria-haspopup');
+          await user.keyboard('{ArrowRight}');
+          act(() => jest.runAllTimers());
+          menus = getAllByRole('menu');
+          expect(menus).toHaveLength(3);
+          expect(menus[2]).toContainElement(document.activeElement as HTMLElement);
+
+          // Close submenus and check that previous focus location are retained
+          await user.keyboard('{Escape}');
+          act(() => jest.runAllTimers());
+          menus = getAllByRole('menu');
+          expect(menus).toHaveLength(2);
+          expect(menus[1]).toContainElement(document.activeElement as HTMLElement);
+          expect(document.activeElement).toBe(within(menus[1]).getAllByRole('menuitem')[1]);
+
+          await user.keyboard('{Escape}');
+          act(() => jest.runAllTimers());
+          menus = getAllByRole('menu');
+          expect(menus).toHaveLength(1);
+          expect(document.activeElement).toBe(input);
+        });
+
+        it('should close all menus when clicking on the body', async function () {
+          let {getByRole, getAllByRole} = (renderers.submenus!)();
+          let menu = getByRole('menu');
+          let options = within(menu).getAllByRole('menuitem');
+          expect(options[1]).toHaveAttribute('aria-haspopup', 'menu');
+          await user.click(options[1]);
+          act(() => {
+            jest.runAllTimers();
+          });
+
+          let menus = getAllByRole('menu');
+          expect(menus).toHaveLength(2);
+
+          await user.hover(within(menus[1]).getAllByRole('menuitem')[1]);
+          act(() => {
+            jest.runAllTimers();
+          });
+          menus = getAllByRole('menu');
+          expect(menus).toHaveLength(3);
+
+          await user.click(document.body);
+          act(() => {
+            jest.runAllTimers();
+          });
+          menus = getAllByRole('menu');
+          expect(menus).toHaveLength(1);
+        });
+
+        // TODO: not sure why this is causing the "statndard interactions -> should support keyboard navigation" test to fail...
+        it.skip('should close the current submenu when clicking the dismiss button', function () {
+          let {getByRole, getAllByRole} = (renderers.submenus!)();
+          let input = getByRole('searchbox');
+          let menu = getByRole('menu');
+
+          act(() => input.focus());
+          fireEvent.click(input, {pointerType: 'mouse', width: 1, height: 1, detail: 0});
+          expect(document.activeElement).toBe(input);
+          let options = within(menu).getAllByRole('menuitem');
+          expect(options[1]).toHaveAttribute('aria-haspopup', 'menu');
+
+          act(() => options[1].focus());
+          fireEvent.click(options[1], {pointerType: 'mouse', width: 1, height: 1, detail: 0});
+          act(() => jest.runAllTimers());
+          let menus = getAllByRole('menu');
+          expect(menus).toHaveLength(2);
+
+          let popover = menus[1].closest('.react-aria-Popover');
+          let dismissButtons = within(popover as HTMLElement).getAllByRole('button', {hidden: true});
+          expect(dismissButtons.length).toBe(1);
+          act(() => dismissButtons[0].focus());
+          fireEvent.click(dismissButtons[0], {pointerType: 'mouse', width: 1, height: 1, detail: 0});
+          act(() => jest.runAllTimers());
+
+          menus = getAllByRole('menu');
+          expect(menus).toHaveLength(1);
+          expect(document.activeElement).toBe(options[1]);
+        });
+      });
+    }
+
+    if (renderers.subdialogs) {
+      describe('with subdialogs', function () {
+        it('should open a subdialog when pressing the autocomplete wrapped subdialog triggers', async function () {
+          let {getByRole, getAllByRole} = (renderers.subdialogs!)();
+          let menu = getByRole('menu');
+          let options = within(menu).getAllByRole('menuitem');
+          expect(options[1]).toHaveAttribute('aria-haspopup', 'dialog');
+
+          await user.click(options[1]);
+          act(() => {jest.runAllTimers();});
+
+          let dialogs = getAllByRole('dialog');
+          expect(dialogs).toHaveLength(1);
+
+          await user.click(within(dialogs[0]).getAllByRole('menuitem')[1]);
+          act(() => {jest.runAllTimers();});
+
+          dialogs = getAllByRole('dialog');
+          expect(dialogs).toHaveLength(2);
+        });
+
+        it('should close the subdialog when hovering an adjacent menu item in the virtual focus list', async function () {
+          document.elementFromPoint = jest.fn().mockImplementation(query => query);
+          let {getByRole, getAllByRole} = (renderers.subdialogs!)();
+          let menu = getByRole('menu');
+          let options = within(menu).getAllByRole('menuitem');
+          expect(options[1]).toHaveAttribute('aria-haspopup', 'dialog');
+          await user.click(options[1]);
+          act(() => {
+            jest.runAllTimers();
+          });
+
+          let dialogs = getAllByRole('dialog');
+          expect(dialogs).toHaveLength(1);
+
+          await user.hover(within(dialogs[0]).getAllByRole('menuitem')[1]);
+          act(() => {
+            jest.runAllTimers();
+          });
+
+          dialogs = getAllByRole('dialog');
+          expect(dialogs).toHaveLength(2);
+
+          await user.hover(within(dialogs[0]).getAllByRole('menuitem')[0]);
+          act(() => {
+            jest.runAllTimers();
+          });
+          dialogs = getAllByRole('dialog');
+          expect(dialogs).toHaveLength(1);
+        });
+
+        it('should contain focus even for virtual focus', async function () {
+          let {getByRole, getAllByRole} = (renderers.subdialogs!)();
+          let input = getByRole('searchbox');
+          let menu = getByRole('menu');
+          let options = within(menu).getAllByRole('menuitem');
+          expect(options[1]).toHaveAttribute('aria-haspopup', 'dialog');
+          await user.tab();
+          expect(document.activeElement).toBe(input);
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowRight}');
+          act(() => {
+            jest.runAllTimers();
+          });
+
+          let dialogs = getAllByRole('dialog');
+          expect(dialogs).toHaveLength(1);
+          let subDialogInput = within(dialogs[0]).getByRole('searchbox');
+          expect(document.activeElement).toBe(subDialogInput);
+
+          await user.tab();
+          expect(document.activeElement).toBe(subDialogInput);
+          await user.tab({shift: true});
+          expect(document.activeElement).toBe(subDialogInput);
+        });
+
+        it('should only close a single level when hitting Escape and focus should be moved back to the input', async function () {
+          let {getByRole, getAllByRole, queryAllByRole} = (renderers.subdialogs!)();
+          let input = getByRole('searchbox');
+          let menu = getByRole('menu');
+
+          await user.tab();
+          expect(document.activeElement).toBe(input);
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          let options = within(menu).getAllByRole('menuitem');
+          expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
+
+          // Open subdialog
+          await user.keyboard('{ArrowRight}');
+          act(() => jest.runAllTimers());
+          let dialogs = getAllByRole('dialog');
+          expect(dialogs).toHaveLength(1);
+          let subDialogInput = within(dialogs[0]).getByRole('searchbox');
+          expect(document.activeElement).toBe(subDialogInput);
+
+          // Open the nested submenu
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowRight}');
+          act(() => jest.runAllTimers());
+          dialogs = getAllByRole('dialog');
+          expect(dialogs).toHaveLength(2);
+          let subDialogInput2 = within(dialogs[1]).getByRole('searchbox');
+          expect(document.activeElement).toBe(subDialogInput2);
+
+          // Close subdialogs and check that previous focus locations are retained
+          await user.keyboard('{Escape}');
+          act(() => jest.runAllTimers());
+          dialogs = getAllByRole('dialog');
+          expect(dialogs).toHaveLength(1);
+          expect(document.activeElement).toBe(subDialogInput);
+          let subDialogMenuItems = within(dialogs[0]).getAllByRole('menuitem');
+          expect(subDialogMenuItems[1]).toHaveAttribute('aria-haspopup', 'dialog');
+          expect(subDialogInput).toHaveAttribute('aria-activedescendant', subDialogMenuItems[1].id);
+
+          await user.keyboard('{Escape}');
+          act(() => jest.runAllTimers());
+          dialogs = queryAllByRole('dialog');
+          expect(dialogs).toHaveLength(0);
+          expect(document.activeElement).toBe(input);
+        });
+
+        // TODO: not sure why this is causing other tests to fail... Something with calling fireEvent?
+        it.skip('should close the current subdialog when clicking the dismiss button', function () {
+          let {getByRole, getAllByRole, queryAllByRole} = (renderers.subdialogs!)();
+          let input = getByRole('searchbox');
+          let menu = getByRole('menu');
+
+          act(() => input.focus());
+          fireEvent.click(input, {pointerType: 'mouse', width: 1, height: 1, detail: 0});
+          expect(document.activeElement).toBe(input);
+          let options = within(menu).getAllByRole('menuitem');
+          expect(options[1]).toHaveAttribute('aria-haspopup', 'dialog');
+
+          act(() => options[1].focus());
+          fireEvent.click(options[1], {pointerType: 'mouse', width: 1, height: 1, detail: 0});
+          act(() => jest.runAllTimers());
+          let dialogs = getAllByRole('dialog');
+          expect(dialogs).toHaveLength(1);
+
+          let popover = dialogs[0].closest('.react-aria-Popover');
+          let dismissButtons = within(popover as HTMLElement).getAllByRole('button', {hidden: true});
+          expect(dismissButtons.length).toBe(2);
+          act(() => dismissButtons[1].focus());
+          fireEvent.click(dismissButtons[1], {pointerType: 'mouse', width: 1, height: 1, detail: 0});
+          act(() => jest.runAllTimers());
+
+          dialogs = queryAllByRole('dialog');
+          expect(dialogs).toHaveLength(0);
+          expect(document.activeElement).toBe(options[1]);
+          act(() => jest.runAllTimers());
+        });
+      });
+    }
+
+    if (renderers.subdialogAndMenu) {
+      describe('with subdialogs and menus mixed', function () {
+        it('should allow opening a subdialog from menu and vice versa', async function () {
+          // Tests a mix of virtual focus and non virtual focus
+          let {getByRole, getAllByRole, queryAllByRole} = (renderers.subdialogAndMenu!)();
+          let input = getByRole('searchbox');
+          let menus = getAllByRole('menu');
+
+          await user.tab();
+          expect(document.activeElement).toBe(input);
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          let options = within(menus[0]).getAllByRole('menuitem');
+          expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
+          expect(options[1]).toHaveAttribute('aria-haspopup', 'dialog');
+
+          // Open subdialog
+          await user.keyboard('{ArrowRight}');
+          act(() => {jest.runAllTimers();});
+
+          let dialogs = getAllByRole('dialog');
+          expect(dialogs).toHaveLength(1);
+          let subDialogInput = within(dialogs[0]).getByRole('searchbox');
+          expect(document.activeElement).toBe(subDialogInput);
+          let subDialogMenuItems = within(dialogs[0]).getAllByRole('menuitem');
+          expect(subDialogMenuItems[1]).toHaveAttribute('aria-haspopup', 'menu');
+
+          // Open submenu
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowRight}');
+          act(() => {jest.runAllTimers();});
+          menus = getAllByRole('menu');
+          // 3 menus, 2 from autocomplete dialogs and one from submenu
+          expect(menus).toHaveLength(3);
+          expect(menus[2]).toContainElement(document.activeElement as HTMLElement);
+          let submenuItems = within(menus[2]).getAllByRole('menuitem');
+          expect(submenuItems[1]).toHaveAttribute('aria-haspopup', 'dialog');
+
+          // Open last subdialog
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowRight}');
+          act(() => {jest.runAllTimers();});
+          dialogs = getAllByRole('dialog');
+          expect(dialogs).toHaveLength(2);
+          let subDialogInput2 = within(dialogs[1]).getByRole('searchbox');
+          expect(document.activeElement).toBe(subDialogInput2);
+
+          // Check focus is restored to the expected places when closing dialogs/menus
+          await user.keyboard('{Escape}');
+          act(() => jest.runAllTimers());
+          dialogs = getAllByRole('dialog');
+          expect(dialogs).toHaveLength(1);
+          expect(document.activeElement).toBe(submenuItems[1]);
+
+          await user.keyboard('{ArrowLeft}');
+          act(() => jest.runAllTimers());
+          menus = getAllByRole('menu');
+          expect(menus).toHaveLength(2);
+          expect(document.activeElement).toBe(subDialogInput);
+          expect(subDialogInput).toHaveAttribute('aria-activedescendant', subDialogMenuItems[1].id);
+
+          await user.keyboard('{Escape}');
+          act(() => jest.runAllTimers());
+          dialogs = queryAllByRole('dialog');
+          expect(dialogs).toHaveLength(0);
+          expect(document.activeElement).toBe(input);
+          expect(input).toHaveAttribute('aria-activedescendant', options[1].id);
         });
       });
     }

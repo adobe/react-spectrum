@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, isCtrlKeyPressed, mergeProps, scrollIntoView, scrollIntoViewport, UPDATE_ACTIVEDESCENDANT, useEffectEvent, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, isCtrlKeyPressed, mergeProps, scrollIntoView, scrollIntoViewport, useEffectEvent, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, FocusStrategy, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {flushSync} from 'react-dom';
 import {FocusEvent, KeyboardEvent, useEffect, useRef} from 'react';
 import {focusSafely, getInteractionModality} from '@react-aria/interactions';
-import {getFocusableTreeWalker} from '@react-aria/focus';
+import {getFocusableTreeWalker, moveVirtualFocus} from '@react-aria/focus';
 import {isNonContiguousSelectionModifier} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useLocale} from '@react-aria/i18n';
@@ -371,7 +371,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       let element = scrollRef.current.querySelector(`[data-key="${CSS.escape(manager.focusedKey.toString())}"]`) as HTMLElement;
       if (element) {
         // This prevents a flash of focus on the first/last element in the collection, or the collection itself.
-        if (!element.contains(document.activeElement)) {
+        if (!element.contains(document.activeElement) && !shouldUseVirtualFocus) {
           focusWithoutScrolling(element);
         }
 
@@ -413,12 +413,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
     // If no focusable items exist in the list, make sure to clear any activedescendant that may still exist
     if (keyToFocus == null) {
-      ref.current?.dispatchEvent(
-        new CustomEvent(UPDATE_ACTIVEDESCENDANT, {
-          cancelable: true,
-          bubbles: true
-        })
-      );
+      moveVirtualFocus(ref.current);
 
       // If there wasn't a focusable key but the collection had items, then that means we aren't in an intermediate load state and all keys are disabled.
       // Reset shouldVirtualFocusFirst so that we don't erronously autofocus an item when the collection is filtered again.
@@ -454,10 +449,12 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     resetFocusFirstFlag();
   }, [manager.focusedKey, resetFocusFirstFlag]);
 
-  useEvent(ref, CLEAR_FOCUS_EVENT, !shouldUseVirtualFocus ? undefined : (e) => {
+  useEvent(ref, CLEAR_FOCUS_EVENT, !shouldUseVirtualFocus ? undefined : (e: any) => {
     e.stopPropagation();
     manager.setFocused(false);
-    manager.setFocusedKey(null);
+    if (e.detail?.clearFocusKey) {
+      manager.setFocusedKey(null);
+    }
   });
 
   const autoFocusRef = useRef(autoFocus);
@@ -558,8 +555,6 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   let tabIndex: number | undefined = undefined;
   if (!shouldUseVirtualFocus) {
     tabIndex = manager.focusedKey == null ? 0 : -1;
-  } else {
-    tabIndex = -1;
   }
 
   return {

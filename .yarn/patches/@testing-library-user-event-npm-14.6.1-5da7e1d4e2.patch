@@ -1,0 +1,26 @@
+diff --git a/dist/cjs/document/prepareDocument.js b/dist/cjs/document/prepareDocument.js
+index 39a24b8f2ccdc52739d130480ab18975073616cb..0c3f5199401c15b90230c25a02de364eeef3e297 100644
+--- a/dist/cjs/document/prepareDocument.js
++++ b/dist/cjs/document/prepareDocument.js
+@@ -30,7 +30,7 @@ function prepareDocument(document) {
+         const initialValue = UI.getInitialValue(el);
+         if (initialValue !== undefined) {
+             if (el.value !== initialValue) {
+-                dispatchEvent.dispatchDOMEvent(el, 'change');
++                el.dispatchEvent(new Event('change'));
+             }
+             UI.clearInitialValue(el);
+         }
+diff --git a/dist/cjs/utils/focus/getActiveElement.js b/dist/cjs/utils/focus/getActiveElement.js
+index d25f3a8ef67e856e43614559f73012899c0b53d7..4ed9ee45565ed438ee9284d8d3043c0bd50463eb 100644
+--- a/dist/cjs/utils/focus/getActiveElement.js
++++ b/dist/cjs/utils/focus/getActiveElement.js
+@@ -6,6 +6,8 @@ function getActiveElement(document) {
+     const activeElement = document.activeElement;
+     if (activeElement === null || activeElement === undefined ? undefined : activeElement.shadowRoot) {
+         return getActiveElement(activeElement.shadowRoot);
++    } else if (activeElement && activeElement.tagName === 'IFRAME') {
++        return getActiveElement(activeElement.contentWindow.document);
+     } else {
+         // Browser does not yield disabled elements as document.activeElement - jsdom does
+         if (isDisabled.isDisabled(activeElement)) {
