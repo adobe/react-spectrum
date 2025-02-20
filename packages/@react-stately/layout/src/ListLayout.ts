@@ -80,7 +80,6 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
   protected layoutNodes: Map<Key, LayoutNode>;
   protected contentSize: Size;
   protected lastCollection: Collection<Node<T>> | null;
-  private lastWidth: number;
   protected rootNodes: LayoutNode[];
   private invalidateEverything: boolean;
   /** The rectangle containing currently valid layout infos. */
@@ -104,7 +103,6 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     this.padding = options.padding || 0;
     this.layoutNodes = new Map();
     this.rootNodes = [];
-    this.lastWidth = 0;
     this.lastCollection = null;
     this.invalidateEverything = false;
     this.validRect = new Rect();
@@ -248,7 +246,6 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
       }
     }
 
-    this.lastWidth = this.virtualizer!.visibleRect.width;
     this.lastCollection = collection;
     this.invalidateEverything = false;
     this.validRect = this.requestedRect.copy();
@@ -392,7 +389,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
         let curNode = this.virtualizer!.collection.getItem(node.key);
         let lastNode = this.lastCollection ? this.lastCollection.getItem(node.key) : null;
         rectHeight = previousLayoutInfo.rect.height;
-        isEstimated = width !== this.lastWidth || curNode !== lastNode || previousLayoutInfo.estimatedSize;
+        isEstimated = width !== previousLayoutInfo.rect.width || curNode !== lastNode || previousLayoutInfo.estimatedSize;
       } else {
         rectHeight = (node.rendered ? this.estimatedHeadingHeight : 0);
         isEstimated = true;
@@ -415,7 +412,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
   }
 
   protected buildItem(node: Node<T>, x: number, y: number): LayoutNode {
-    let width = this.virtualizer!.visibleRect.width - this.padding;
+    let width = this.virtualizer!.visibleRect.width - this.padding - x;
     let rectHeight = this.rowHeight;
     let isEstimated = false;
 
@@ -427,7 +424,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
       let previousLayoutNode = this.layoutNodes.get(node.key);
       if (previousLayoutNode) {
         rectHeight = previousLayoutNode.layoutInfo.rect.height;
-        isEstimated = width !== this.lastWidth || node !== previousLayoutNode.node || previousLayoutNode.layoutInfo.estimatedSize;
+        isEstimated = width !== previousLayoutNode.layoutInfo.rect.width || node !== previousLayoutNode.node || previousLayoutNode.layoutInfo.estimatedSize;
       } else {
         rectHeight = this.estimatedRowHeight;
         isEstimated = true;
@@ -438,7 +435,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
       rectHeight = DEFAULT_HEIGHT;
     }
 
-    let rect = new Rect(x, y, width - x, rectHeight);
+    let rect = new Rect(x, y, width, rectHeight);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
     layoutInfo.estimatedSize = isEstimated;
     return {
