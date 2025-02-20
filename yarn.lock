@@ -120,6 +120,7 @@ __metadata:
     "@react-spectrum/theme-default": "npm:^3.5.15"
     "@react-spectrum/theme-light": "npm:^3.4.15"
     "@react-spectrum/tooltip": "npm:^3.7.1"
+    "@react-spectrum/tree": "npm:^3.0.0-beta.3"
     "@react-spectrum/view": "npm:^3.6.15"
     "@react-spectrum/well": "npm:^3.4.19"
     "@react-stately/collections": "npm:^3.12.1"
@@ -6781,7 +6782,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/tree@npm:3.0.0-beta.3, @react-aria/tree@workspace:packages/@react-aria/tree":
+"@react-aria/tree@npm:3.0.0-beta.3, @react-aria/tree@npm:^3.0.0-beta.3, @react-aria/tree@workspace:packages/@react-aria/tree":
   version: 0.0.0-use.local
   resolution: "@react-aria/tree@workspace:packages/@react-aria/tree"
   dependencies:
@@ -8344,7 +8345,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/tree@workspace:packages/@react-spectrum/tree":
+"@react-spectrum/tree@npm:^3.0.0-beta.3, @react-spectrum/tree@workspace:packages/@react-spectrum/tree":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/tree@workspace:packages/@react-spectrum/tree"
   dependencies:
@@ -29088,6 +29089,7 @@ __metadata:
     "@react-aria/tag": "npm:^3.4.9"
     "@react-aria/textfield": "npm:^3.16.0"
     "@react-aria/tooltip": "npm:^3.7.11"
+    "@react-aria/tree": "npm:^3.0.0-beta.3"
     "@react-aria/utils": "npm:^3.27.0"
     "@react-aria/visually-hidden": "npm:^3.8.19"
     "@react-types/shared": "npm:^3.27.0"

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTreeGridListProps} from '@react-aria/tree';
+import {AriaTreeProps} from '@react-aria/tree';
 import {
   ButtonContext,
   Tree,
@@ -34,7 +34,7 @@ import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
 import {useButton} from '@react-aria/button';
 import {useLocale} from '@react-aria/i18n';
 
-export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>, StyleProps, SpectrumSelectionProps, Expandable {
+export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeProps<T>, 'children'>, StyleProps, SpectrumSelectionProps, Expandable {
   /** Provides content to display when there are no items in the tree. */
   renderEmptyState?: () => JSX.Element,
   /**
@@ -243,8 +243,13 @@ export const TreeViewItem = <T extends object>(props: SpectrumTreeViewItemProps<
   );
 };
 
+export interface SpectrumTreeViewItemContentProps extends Omit<TreeItemContentProps, 'children'> {
+  /** Rendered contents of the tree item or child items. */
+  children: ReactNode
+}
 
-export const TreeViewItemContent = (props: Omit<TreeItemContentProps, 'children'> & {children: ReactNode}) => {
+
+export const TreeViewItemContent = (props: SpectrumTreeViewItemContentProps) => {
   let {
     children
   } = props;
