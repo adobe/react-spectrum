@@ -11,12 +11,12 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Checkbox, CheckboxProps, Collection, Key, ListLayout, Menu, MenuTrigger, Popover, Text, TreeItemProps, TreeProps, UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeItemContent, Virtualizer} from 'react-aria-components';
+import {Button, Checkbox, CheckboxProps, Collection, Key, ListLayout, Menu, MenuTrigger, Popover, Text, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeProps, Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import {MyMenuItem} from './utils';
 import React, {ReactNode, useMemo} from 'react';
 import styles from '../example/index.css';
-import {UNSTABLE_TreeLoadingIndicator} from '../src/Tree';
+import {TreeLoadingIndicator} from '../src/Tree';
 
 export default {
   title: 'React Aria Components'
@@ -48,7 +48,7 @@ function MyCheckbox({children, ...props}: CheckboxProps) {
 
 const StaticTreeItem = (props: StaticTreeItemProps) => {
   return (
-    <UNSTABLE_TreeItem
+    <TreeItem
       {...props}
       className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
         focused: isFocused,
@@ -56,7 +56,7 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
         selected: isSelected,
         hovered: isHovered
       })}>
-      <UNSTABLE_TreeItemContent>
+      <TreeItemContent>
         {({isExpanded, hasChildItems, level, selectionMode, selectionBehavior}) => (
           <>
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
@@ -81,14 +81,14 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
             </div>
           </>
         )}
-      </UNSTABLE_TreeItemContent>
+      </TreeItemContent>
       {props.title && props.children}
-    </UNSTABLE_TreeItem>
+    </TreeItem>
   );
 };
 
 const TreeExampleStaticRender = (args) => (
-  <UNSTABLE_Tree className={styles.tree} {...args} disabledKeys={['projects']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+  <Tree className={styles.tree} {...args} disabledKeys={['projects']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
     <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
     <StaticTreeItem id="projects" textValue="Projects" title="Projects">
       <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
@@ -103,7 +103,7 @@ const TreeExampleStaticRender = (args) => (
         Projects-3
       </StaticTreeItem>
     </StaticTreeItem>
-    <UNSTABLE_TreeItem
+    <TreeItem
       id="reports"
       textValue="Reports"
       className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
@@ -112,11 +112,11 @@ const TreeExampleStaticRender = (args) => (
         selected: isSelected,
         hovered: isHovered
       })}>
-      <UNSTABLE_TreeItemContent>
+      <TreeItemContent>
         Reports
-      </UNSTABLE_TreeItemContent>
-    </UNSTABLE_TreeItem>
-    <UNSTABLE_TreeItem
+      </TreeItemContent>
+    </TreeItem>
+    <TreeItem
       id="Tests"
       textValue="Tests"
       className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
@@ -125,13 +125,13 @@ const TreeExampleStaticRender = (args) => (
         selected: isSelected,
         hovered: isHovered
       })}>
-      <UNSTABLE_TreeItemContent>
+      <TreeItemContent>
         {({isFocused}) => (
           <Text>{`${isFocused} Tests`}</Text>
         )}
-      </UNSTABLE_TreeItemContent>
-    </UNSTABLE_TreeItem>
-  </UNSTABLE_Tree>
+      </TreeItemContent>
+    </TreeItem>
+  </Tree>
 );
 
 export const TreeExampleStatic = {
@@ -157,7 +157,7 @@ export const TreeExampleStatic = {
   },
   parameters: {
     description: {
-      data: 'Note that the last two items are just to test bare minimum UNSTABLE_TreeItem and thus dont have the checkbox or any of the other contents that the other items have. The last item tests the isFocused renderProp'
+      data: 'Note that the last two items are just to test bare minimum TreeItem and thus dont have the checkbox or any of the other contents that the other items have. The last item tests the isFocused renderProp'
     }
   }
 };
@@ -194,7 +194,7 @@ let rows = [
 
 const MyTreeLoader = () => {
   return (
-    <UNSTABLE_TreeLoadingIndicator>
+    <TreeLoadingIndicator>
       {({level}) => {
         let message = `Level ${level} loading spinner`;
         if (level === 1) {
@@ -206,7 +206,7 @@ const MyTreeLoader = () => {
           </span>
         );
       }}
-    </UNSTABLE_TreeLoadingIndicator>
+    </TreeLoadingIndicator>
   );
 };
 
@@ -221,7 +221,7 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
   let {childItems, renderLoader} = props;
   return (
     <>
-      <UNSTABLE_TreeItem
+      <TreeItem
         {...props}
         className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
           focused: isFocused,
@@ -229,7 +229,7 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
           selected: isSelected,
           hovered: isHovered
         })}>
-        <UNSTABLE_TreeItemContent>
+        <TreeItemContent>
           {({isExpanded, hasChildItems, level, selectionBehavior, selectionMode}) => (
             <>
               {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
@@ -252,7 +252,7 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
               </div>
             </>
           )}
-        </UNSTABLE_TreeItemContent>
+        </TreeItemContent>
         <Collection items={childItems}>
           {(item: any) => (
             <DynamicTreeItem renderLoader={renderLoader} isLoading={props.isLoading} id={item.id} childItems={item.childItems} textValue={item.name} href={props.href}>
@@ -260,7 +260,7 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
             </DynamicTreeItem>
           )}
         </Collection>
-      </UNSTABLE_TreeItem>
+      </TreeItem>
       {/* TODO this would need to check if the parent was loading and then the user would insert this tree loader after last row of that section.
         theoretically this would look like (loadingKeys.includes(parentKey) && props.id === last key of parent) &&....
         both the parentKey of a given item as well as checking if the current tree item is the last item of said parent would need to be done by the user outside of this tree item?
@@ -273,13 +273,13 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
 let defaultExpandedKeys = new Set(['projects', 'project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']);
 
 const TreeExampleDynamicRender = (args: TreeProps<unknown>) => (
-  <UNSTABLE_Tree {...args} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+  <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
     {(item) => (
       <DynamicTreeItem id={item.id} childItems={item.childItems} textValue={item.name}>
         {item.name}
       </DynamicTreeItem>
     )}
-  </UNSTABLE_Tree>
+  </Tree>
 );
 
 export const TreeExampleDynamic = {
@@ -294,23 +294,23 @@ export const WithActions = {
     onAction: action('onAction'),
     ...TreeExampleDynamic.args
   },
-  name: 'UNSTABLE_Tree with actions'
+  name: 'Tree with actions'
 };
 
 const WithLinksRender = (args: TreeProps<unknown>) => (
-  <UNSTABLE_Tree {...args} defaultExpandedKeys={defaultExpandedKeys} className={styles.tree} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+  <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} className={styles.tree} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
     {(item) => (
       <DynamicTreeItem href="https://adobe.com/" childItems={item.childItems} textValue={item.name}>
         {item.name}
       </DynamicTreeItem>
     )}
-  </UNSTABLE_Tree>
+  </Tree>
 );
 
 export const WithLinks = {
   ...TreeExampleDynamic,
   render: WithLinksRender,
-  name: 'UNSTABLE_Tree with links',
+  name: 'Tree with links',
   parameters: {
     description: {
       data: 'every tree item should link to adobe.com'
@@ -323,7 +323,7 @@ function renderEmptyLoader({isLoading}) {
 }
 
 const EmptyTreeStatic = (args: {isLoading: boolean}) => (
-  <UNSTABLE_Tree
+  <Tree
     {...args}
     className={styles.tree}
     aria-label="test empty static tree"
@@ -335,7 +335,7 @@ const EmptyTreeStatic = (args: {isLoading: boolean}) => (
         </DynamicTreeItem>
       )}
     </Collection>
-  </UNSTABLE_Tree>
+  </Tree>
 );
 
 export const EmptyTreeStaticStory = {
@@ -348,7 +348,7 @@ export const EmptyTreeStaticStory = {
 
 function LoadingStoryDepOnCollection(args) {
   return (
-    <UNSTABLE_Tree {...args} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+    <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
       <Collection items={rows} dependencies={[args.isLoading]}>
         {(item) => (
           <DynamicTreeItem renderLoader={(id) => id === 'project-2C'} isLoading={args.isLoading} id={item.id} childItems={item.childItems} textValue={item.name}>
@@ -357,7 +357,7 @@ function LoadingStoryDepOnCollection(args) {
         )}
       </Collection>
       {args.isLoading && <MyTreeLoader />}
-    </UNSTABLE_Tree>
+    </Tree>
   );
 }
 
@@ -376,13 +376,13 @@ export const LoadingStoryDepOnCollectionStory = {
 
 function LoadingStoryDepOnTop(args: TreeProps<unknown> & {isLoading: boolean}) {
   return (
-    <UNSTABLE_Tree {...args} dependencies={[args.isLoading]} items={rows} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+    <Tree {...args} dependencies={[args.isLoading]} items={rows} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
       {(item) => (
         <DynamicTreeItem renderLoader={(id) => (id === 'reports' || id === 'project-2C')} isLoading={args.isLoading} id={item.id} childItems={item.childItems} textValue={item.name}>
           {item.name}
         </DynamicTreeItem>
       )}
-    </UNSTABLE_Tree>
+    </Tree>
   );
 }
 
@@ -420,7 +420,7 @@ const DynamicTreeItemWithButtonLoader = (props: DynamicTreeItemProps) => {
 
   return (
     <>
-      <UNSTABLE_TreeItem
+      <TreeItem
         {...props}
         className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
           focused: isFocused,
@@ -428,7 +428,7 @@ const DynamicTreeItemWithButtonLoader = (props: DynamicTreeItemProps) => {
           selected: isSelected,
           hovered: isHovered
         })}>
-        <UNSTABLE_TreeItemContent>
+        <TreeItemContent>
           {({isExpanded, hasChildItems, level, selectionBehavior, selectionMode}) => (
             <>
               {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
@@ -451,7 +451,7 @@ const DynamicTreeItemWithButtonLoader = (props: DynamicTreeItemProps) => {
               </div>
             </>
           )}
-        </UNSTABLE_TreeItemContent>
+        </TreeItemContent>
         <Collection items={childItems}>
           {(item: any) => (
             <DynamicTreeItemWithButtonLoader renderLoader={renderLoader} isLoading={props.isLoading} id={item.id} childItems={item.childItems} textValue={item.name} href={props.href}>
@@ -459,20 +459,20 @@ const DynamicTreeItemWithButtonLoader = (props: DynamicTreeItemProps) => {
             </DynamicTreeItemWithButtonLoader>
           )}
         </Collection>
-      </UNSTABLE_TreeItem>
+      </TreeItem>
     </>
   );
 };
 
 function ButtonLoadingIndicator(args: TreeProps<unknown> & {isLoading: boolean}) {
   return (
-    <UNSTABLE_Tree {...args} dependencies={[args.isLoading]} items={rows} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+    <Tree {...args} dependencies={[args.isLoading]} items={rows} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
       {(item) => (
         <DynamicTreeItemWithButtonLoader renderLoader={(id) => (id === 'project-2' || id === 'project-5')} isLoading={args.isLoading} id={item.id} childItems={item.childItems} textValue={item.name}>
           {item.name}
         </DynamicTreeItemWithButtonLoader>
       )}
-    </UNSTABLE_Tree>
+    </Tree>
   );
 }
 
