@@ -1,7 +1,59 @@
-import { ArrowUpIcon, BellIcon, CheckCircleIcon, CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
+import { ArrowUpIcon, BellIcon, CheckCircleIcon, CheckIcon, ChevronUpDownIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 import { ChatBubbleOvalLeftEllipsisIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { useMemo, useState } from 'react';
-import { UNSTABLE_Autocomplete as Autocomplete, Button, Cell, Collection, Column, ComboBox, DateInput, DatePicker, DateSegment, Dialog, DialogTrigger, Group, Header, Heading, Input, Label, ListBox, ListBoxItem, Menu, MenuItem, MenuTrigger, Modal, ModalOverlay, OverlayArrow, Popover, ProgressBar, Radio, RadioGroup, Row, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, Text, useFilter} from 'react-aria-components';
+import {
+  Tree as AriaTree,
+  TreeItem as AriaTreeItem,
+  TreeItemContent as AriaTreeItemContent,
+  UNSTABLE_Autocomplete as Autocomplete,
+  Button,
+  Cell,
+  Collection,
+  Column,
+  ComboBox,
+  DateInput,
+  DatePicker,
+  DateSegment,
+  Dialog,
+  DialogTrigger,
+  Group,
+  Header,
+  Heading,
+  Input,
+  Label,
+  ListBox,
+  ListBoxItem,
+  Menu,
+  MenuItem,
+  MenuTrigger,
+  Modal,
+  ModalOverlay,
+  OverlayArrow,
+  Popover,
+  ProgressBar,
+  Radio,
+  RadioGroup,
+  Row,
+  SearchField,
+  Section,
+  Select,
+  SelectValue,
+  Separator,
+  Slider,
+  SliderOutput,
+  SliderThumb,
+  SliderTrack,
+  Switch,
+  Tab,
+  Table,
+  TableBody,
+  TableHeader,
+  TabList,
+  TabPanel,
+  Tabs,
+  Text,
+  useFilter
+} from 'react-aria-components';
 import { useAsyncList } from 'react-stately';
 import { people } from './people.js';
 import stocks from './stocks.json';
@@ -30,6 +82,7 @@ export function App() {
         <ComboBoxExample />
         <ProgressBarExample />
         <AutocompleteExample />
+        <TreeExample />
       </div>
     </>
   );
@@ -578,3 +631,72 @@ function AutocompleteExample() {
     </div>
   );
 }
+
+function TreeExample (
+  { children, ...props }
+) {
+  return (
+    <div className="bg-linear-to-r from-amber-500 to-rose-500 p-8 rounded-lg flex justify-center flex-col">
+      <AriaTree {...props} className={'w-72 h-[290px] overflow-auto outline-hidden bg-white text-gray-700 p-2 flex flex-col gap-2 rounded-lg shadow-sm scroll-pb-2 scroll-pt-7'}>
+        <TreeItem id="documents" textValue="Documents">
+          <TreeItemContent>
+            Documents
+          </TreeItemContent>
+          <TreeItem id="project" textValue="Project">
+            <TreeItemContent>
+              Project
+            </TreeItemContent>
+            <TreeItem id="report" textValue="Weekly Report">
+              <TreeItemContent>
+                Weekly Report
+              </TreeItemContent>
+            </TreeItem>
+          </TreeItem>
+        </TreeItem>
+        <TreeItem id="photos" textValue="Photos">
+          <TreeItemContent>
+            Photos
+          </TreeItemContent>
+          <TreeItem id="one" textValue="Image 1">
+            <TreeItemContent>
+              Image 1
+            </TreeItemContent>
+          </TreeItem>
+          <TreeItem id="two" textValue="Image 2">
+            <TreeItemContent>
+              Image 2
+            </TreeItemContent>
+          </TreeItem>
+        </TreeItem>
+      </AriaTree>
+    </div>
+  );
+}
+
+export function TreeItem(props) {
+  return (
+    <AriaTreeItem {...props} className="group peer relative py-1 px-2 text-sm outline-hidden cursor-default flex gap-x-3 rounded-sm aria-selected:bg-blue-500 text-slate-700 aria-selected:text-white [&:has(+[aria-selected=true])]:aria-selected:rounded-b-none peer-aria-selected:aria-selected:rounded-t-none data-focus-visible:ring-2 ring-offset-2 ring-blue-500 [&[aria-selected=false]:has(+[aria-selected=false])_.divider]:block [&[aria-selected=true]:has(+[aria-selected=true])_.divider]:block" />
+  )
+}
+
+export function TreeItemContent({ children, ...props }) {
+  return (
+    <AriaTreeItemContent {...props}>
+      {({ selectionMode, selectionBehavior, hasChildItems }) => (
+        <div className={`flex items-center`}>
+          {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
+            <Checkbox slot="selection" />
+          )}
+          <div className='shrink-0 w-[calc(calc(var(--tree-item-level)_-_1)_*_calc(var(--spacing)_*_3))]' />
+          {hasChildItems ? (
+            <Button slot="chevron" className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-start cursor-default">
+              <ChevronRightIcon aria-hidden className="w-5 h-5 text-gray-500 dark:text-gray-400 transition-transform duration-200 ease-in-out group-data-[expanded=true]:rotate-90" />
+            </Button>
+          ) : <div className='shrink-0 w-8 h-8' />}
+          {children}
+        </div>
+      )}
+    </AriaTreeItemContent>
+  );
+}
+

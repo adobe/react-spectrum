@@ -14,6 +14,7 @@ import {BaseCollection} from './BaseCollection';
 import {BaseNode, Document, ElementNode} from './Document';
 import {CachedChildrenOptions, useCachedChildren} from './useCachedChildren';
 import {createPortal} from 'react-dom';
+import {FocusableContext} from '@react-aria/interactions';
 import {forwardRefType, Node} from '@react-types/shared';
 import {Hidden} from './Hidden';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
@@ -116,7 +117,7 @@ function useCollectionDocument<T extends object, C extends BaseCollection<T>>(cr
   useLayoutEffect(() => {
     document.isMounted = true;
     return () => {
-      // Mark unmounted so we can skip all of the collection updates caused by 
+      // Mark unmounted so we can skip all of the collection updates caused by
       // React calling removeChild on every item in the collection.
       document.isMounted = false;
     };
@@ -161,6 +162,7 @@ export function createLeafComponent<T extends object, P extends object, E extend
 export function createLeafComponent<P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node?: any) => ReactElement) {
   let Component = ({node}) => render(node.props, node.props.ref, node);
   let Result = (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
+    let focusableProps = useContext(FocusableContext);
     let isShallow = useContext(ShallowRenderContext);
     if (!isShallow) {
       if (render.length >= 3) {
@@ -169,7 +171,19 @@ export function createLeafComponent<P extends object, E extends Element>(type: s
       return render(props, ref);
     }
 
-    return useSSRCollectionNode(type, props, ref, 'children' in props ? props.children : null, null, node => <Component node={node} />);
+    return useSSRCollectionNode(
+      type,
+      props,
+      ref,
+      'children' in props ? props.children : null,
+      null,
+      node => (
+        // Forward FocusableContext to real DOM tree so tooltips work.
+        <FocusableContext.Provider value={focusableProps}>
+          <Component node={node} />
+        </FocusableContext.Provider>
+      )
+    );
   });
   // @ts-ignore
   Result.displayName = render.name;

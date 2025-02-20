@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render, triggerLongPress, within} from '@react-spectrum/test-utils-internal';
-import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, UNSTABLE_TableLayout as TableLayout, useDragAndDrop, useTableOptions, UNSTABLE_Virtualizer as Virtualizer} from '../';
+import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, useDragAndDrop, useTableOptions, Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
 import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
 import React, {useMemo, useRef, useState} from 'react';
@@ -840,10 +840,6 @@ describe('Table', () => {
   });
 
   it('should support virtualizer', async () => {
-    let layout = new TableLayout({
-      rowHeight: 25
-    });
-
     let items = [];
     for (let i = 0; i < 50; i++) {
       items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
@@ -853,7 +849,7 @@ describe('Table', () => {
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
 
     let {getByRole, getAllByRole} = render(
-      <Virtualizer layout={layout}>
+      <Virtualizer layout={TableLayout} layoutOptions={{rowHeight: 25}}>
         <Table aria-label="Test">
           <TableHeader>
             <Column isRowHeader>Foo</Column>
@@ -903,8 +899,8 @@ describe('Table', () => {
 
       let cells1 = [...within(rows[1]).getAllByRole('rowheader'), ...within(rows[1]).getAllByRole('gridcell')];
       expect(cells1).toHaveLength(3);
-      expect(cells1[0]).toHaveAttribute('aria-colindex', '1');
-      expect(cells1[1]).toHaveAttribute('aria-colindex', '2');
+      expect(cells1[0]).not.toHaveAttribute('aria-colindex');
+      expect(cells1[1]).not.toHaveAttribute('aria-colindex');
       expect(cells1[1]).toHaveAttribute('colspan', '2');
       expect(cells1[2]).toHaveAttribute('aria-colindex', '4');
 
@@ -917,12 +913,12 @@ describe('Table', () => {
 
       let cells3 = within(rows[3]).getAllByRole('rowheader');
       expect(cells3).toHaveLength(1);
-      expect(cells3[0]).toHaveAttribute('aria-colindex', '1');
+      expect(cells3[0]).not.toHaveAttribute('aria-colindex');
       expect(cells3[0]).toHaveAttribute('colspan', '4');
 
       let cells5 = [...within(rows[5]).getAllByRole('rowheader'), ...within(rows[5]).getAllByRole('gridcell')];
       expect(cells5).toHaveLength(2);
-      expect(cells5[0]).toHaveAttribute('aria-colindex', '1');
+      expect(cells5[0]).not.toHaveAttribute('aria-colindex');
       expect(cells5[0]).toHaveAttribute('colspan', '3');
       expect(cells5[1]).toHaveAttribute('aria-colindex', '4');
     });
@@ -982,6 +978,7 @@ describe('Table', () => {
 
     it('should throw error if number of cells do not match column count', () => {
       jest.spyOn(console, 'error').mockImplementation(() => {});
+      let error;
       try {
         render(
           <Table aria-label="Col Span Table with wrong number of cells">
@@ -1005,10 +1002,11 @@ describe('Table', () => {
               </Row>
             </TableBody>
           </Table>
-          );
+        );
       } catch (e) {
-        expect(e.message).toEqual('Cell count must match column count. Found 5 cells and 4 columns.');
+        error = e;
       }
+      expect(error?.message).toEqual('Cell count must match column count. Found 5 cells and 4 columns.');
       try {
         render(
           <Table aria-label="Col Span Table with wrong number of cells">
@@ -1024,8 +1022,9 @@ describe('Table', () => {
           </Table>
         );
       } catch (e) {
-        expect(e.message).toEqual('Cell count must match column count. Found 1 cells and 2 columns.');
+        error = e;
       }
+      expect(error?.message).toEqual('Cell count must match column count. Found 1 cells and 2 columns.');
     });
   });
 
@@ -1844,15 +1843,11 @@ describe('Table', () => {
         items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
       }
       function VirtualizedTableLoad() {
-        let layout = new TableLayout({
-          rowHeight: 25
-        });
-
         let scrollRef = useRef(null);
         useLoadMore({onLoadMore}, scrollRef);
 
         return (
-          <Virtualizer layout={layout}>
+          <Virtualizer layout={TableLayout} layoutOptions={{rowHeight: 25}}>
             <Table aria-label="Load more table" ref={scrollRef} onLoadMore={onLoadMore}>
               <TableHeader>
                 <Column isRowHeader>Foo</Column>
