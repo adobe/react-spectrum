@@ -29,9 +29,10 @@ fs.mkdirSync(`starters/docs/src`, {recursive: true});
 fs.mkdirSync(`starters/docs/stories`, {recursive: true});
 
 for (let file of glob.sync('packages/react-aria-components/docs/*.mdx')) {
-  if (!/^[A-Z]/.test(basename(file)) || /^Tree|^Autocomplete/.test(basename(file))) {
+  if (!/^[A-Z]/.test(basename(file)) || /^Autocomplete/.test(basename(file))) {
     continue;
   }
+  console.log('Processing ' + file);
 
   // Parse the MDX file, and extract the CSS and Reusable wrappers section.
   let contents = fs.readFileSync(file);
@@ -76,6 +77,18 @@ for (let file of glob.sync('packages/react-aria-components/docs/*.mdx')) {
 }
 
 function MyColumn`);
+  }
+
+  if (name === 'Tree') {
+    // Special case for Tree which doesn't have a wrapper component in the docs.
+    // We need one for the Storybook auto-generated docs to work.
+    reusableWrapper = reusableWrapper
+      .replace('<Tree ', '<MyTree ').replace('/Tree>', '/MyTree>')
+      .replace('function MyTreeItemContent', `function MyTree<T extends object>(props: TreeProps<T>) {
+  return <Tree {...props} />
+}
+
+function MyTreeItemContent`);
   }
 
   let usedClasses = new Set();
