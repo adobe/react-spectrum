@@ -39,9 +39,7 @@ import {
   Menu,
   MenuItem,
   useFilter,
-  Label,
-  Input,
-  Button
+  Input
 } from 'react-aria-components';
 
 function CommandPaletteExample() {
@@ -64,10 +62,12 @@ function CommandPaletteExample() {
         <Autocomplete filter={contains}>
           <TextField
             aria-label="Search commands"
-            placeholder="Search commands…"
             className="flex flex-col px-3 py-2 rounded-md outline-none placeholder-white/70"
           >
-            <Input className="border-none py-2 px-3 leading-5 text-gray-900 bg-transparent outline-hidden text-base focus-visible:ring-2 focus-visible:ring-violet-500 rounded-lg" />
+            <Input
+              placeholder="Search commands…"
+              className="border-none py-2 px-3 leading-5 text-gray-900 bg-transparent outline-hidden text-base focus-visible:ring-2 focus-visible:ring-violet-500 rounded-lg"
+            />
           </TextField>
           <Menu
             items={commands}

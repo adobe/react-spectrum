@@ -211,7 +211,7 @@ If you will use an Autocomplete in multiple places in your app, you can wrap all
 This example wraps `Autocomplete` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. The `Item` component is also wrapped to apply class names based on the current state, as described in the [styling](#styling) section.
 
 ```tsx example export=true
-import type {AutocompleteProps, MenuItemProps} from 'react-aria-components';
+import type {AutocompleteProps, Key} from 'react-aria-components';
 import {Menu, MenuItem} from 'react-aria-components';
 import {MySearchField} from './SearchField';
 import {MyItem} from './Menu';
