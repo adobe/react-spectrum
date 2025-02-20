@@ -22,9 +22,9 @@ export function Example(props) {
   const {visibleDuration} = props;
 
   let state = useCalendarState({
+    createCalendar,
     ...props,
-    locale,
-    createCalendar
+    locale
   });
 
   let {calendarProps, prevButtonProps, nextButtonProps} = useCalendar(props, state);
@@ -103,9 +103,9 @@ export function ExampleCustomFirstDay(props) {
   const {firstDayOfWeek} = props;
 
   let state = useCalendarState({
+    createCalendar,
     ...props,
-    locale,
-    createCalendar
+    locale
   });
 
   let {calendarProps, prevButtonProps, nextButtonProps} = useCalendar(props, state);
