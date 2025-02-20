@@ -124,8 +124,8 @@ class Custom454 implements CalendarClass {
   getDaysInMonth(date) {
     return this.fallbackCalendar.getDaysInMonth(date);
   }
-  getMonthsInYear() {
-    return this.fallbackCalendar.getMonthsInYear();
+  getMonthsInYear(date) {
+    return this.fallbackCalendar.getMonthsInYear(date);
   }
   getYearsInEra(date) {
     return this.fallbackCalendar.getYearsInEra(date);
@@ -135,13 +135,13 @@ class Custom454 implements CalendarClass {
   }
   // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  getWeeksInMonth(date: AnyCalendarDate) {
+  getWeeksInMonth(date) {
     const dateMonth = this.getCurrentMonth(date);
     const weekPattern = this.getWeekPattern();
     return weekPattern[dateMonth.index - 1];
   }
 
-  getCurrentMonth(date: AnyCalendarDate) {
+  getCurrentMonth(date) {
     const weekPattern = this.getWeekPattern();
     let pointer = new CalendarDate(date.year, 1, 1);
 
@@ -166,7 +166,7 @@ class Custom454 implements CalendarClass {
     return [4, 5, 4, 4, 5, 4, 4, 5, 4, 4, 5, 4];
   }
 
-  private dateIsBefore(a: AnyCalendarDate, b: AnyCalendarDate) {
+  private dateIsBefore(a, b) {
     return this.toJulianDay(a) < this.toJulianDay(b);
   }
 }
