@@ -134,7 +134,7 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
     return (
       <Toaster state={state} {...props}>
         <ol className={classNames(toastContainerStyles, 'spectrum-ToastContainer-list')}>
-          {state.visibleToasts.slice().reverse().map((toast, index) => {
+          {state.visibleToasts.map((toast, index) => {
             let shouldFade = isCentered && index !== 0;
             return (
               <li

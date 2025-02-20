@@ -72,12 +72,12 @@ describe('single toast at a time', () => {
     await user.click(button);
 
     let toast = tree.getByRole('alertdialog');
-    expect(toast.textContent).toContain('Mmmmm toast 1x');
+    expect(toast.textContent).toContain('Mmmmm toast 2x');
     let closeButton = within(toast).getByRole('button');
     await user.click(closeButton);
 
     toast = tree.getByRole('alertdialog');
-    expect(toast.textContent).toContain('Mmmmm toast 2x');
+    expect(toast.textContent).toContain('Mmmmm toast 1x');
     expect(toast).toHaveFocus();
 
     closeButton = within(toast).getByRole('button');

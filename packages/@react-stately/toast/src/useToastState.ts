@@ -119,7 +119,7 @@ export class ToastQueue<T> {
       timer: options.timeout ? new Timer(() => this.close(toastKey), options.timeout) : undefined
     };
 
-    this.queue.push(toast);
+    this.queue.unshift(toast);
 
     this.updateVisibleToasts();
     return toastKey;
