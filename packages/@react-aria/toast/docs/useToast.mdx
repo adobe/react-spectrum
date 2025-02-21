@@ -48,14 +48,13 @@ keywords: [toast, notifications, alert, aria]
 There is no built in way to display toast notifications in HTML. <TypeLink links={docs.links} type={docs.exports.useToastRegion} /> and <TypeLink links={docs.links} type={docs.exports.useToast} /> help achieve accessible toasts that can be styled as needed.
 
 * **Accessible** – Toasts follow the [ARIA alertdialog pattern](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/). They are rendered in a [landmark region](https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/), which keyboard and screen reader users can easily jump to when an alert is announced.
-* **Focus management** – When a toast unmounts, focus is moved to the next toast if any. Otherwise, focus is restored to where it was before navigating to the toast region.
-* **Priority queue** – Toasts are displayed according to a priority queue, displaying a configurable number of toasts at a time. The queue can either be owned by a provider component, or global.
+* **Focus management** – When a toast unmounts, focus is moved to the next toast if any. Otherwise, focus is restored to where it was before navigating to the toast region. Tabbing through the Toast region will move from newest to oldest.
 
 ## Anatomy
 
 <Anatomy role="img" aria-label="Toast anatomy diagram, showing the toast's title and close button within the toast region." />
 
-A toast region is an [ARIA landmark region](https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/) labeled "Notifications" by default. A toast region contains one or more visible toasts, in priority order. When the limit is reached, additional toasts are queued until the user dismisses one. Each toast is a non-modal ARIA [alertdialog](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/), containing the content of the notification and a close button.
+A toast region is an [ARIA landmark region](https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/) labeled "Notifications" by default. A toast region contains one or more visible toasts, in chronological order. When the limit is reached, additional toasts are queued until the user dismisses one. Each toast is a non-modal ARIA [alertdialog](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/), containing the content of the notification and a close button.
 
 Landmark regions including the toast container can be navigated using the keyboard by pressing the <Keyboard>F6</Keyboard> key to move forward, and the <Keyboard>Shift</Keyboard> + <Keyboard>F6</Keyboard> key to move backward. This provides an easy way for keyboard users to jump to the toasts from anywhere in the app. When the last toast is closed, keyboard focus is restored.
 
@@ -169,7 +168,7 @@ function Toast<T extends React.ReactNode>({state, ...props}: ToastProps<T>) {
   bottom: 16px;
   right: 16px;
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   gap: 8px;
 }
 
@@ -231,32 +230,6 @@ function Button(props) {
 
 The following examples show how to use the `ToastProvider` component created in the above example.
 
-### Toast priorities
-
-Toasts are displayed according to a priority queue. The priority of a toast can be set using the `priority` option, passed to the `state.add` function. Priorities are arbitrary numbers defined by your implementation.
-
-```tsx example
-<ToastProvider>
-  {state => (<>
-    {/*- begin highlight -*/}
-    <Button onPress={() => state.add('Toasting…', {priority: 1})}>
-    {/*- end highlight -*/}
-      Show low priority toast
-    </Button>
-    {/*- begin highlight -*/}
-    <Button onPress={() => state.add('Toast is done!', {priority: 2})}>
-    {/*- end highlight -*/}
-      Show medium priority toast
-    </Button>
-    {/*- begin highlight -*/}
-    <Button onPress={() => state.add('Toast is burned!', {priority: 3})}>
-    {/*- end highlight -*/}
-      Show high priority toast
-    </Button>
-  </>)}
-</ToastProvider>
-```
-
 ### Auto-dismiss
 
 Toasts support a `timeout` option to automatically hide them after a certain amount of time. For accessibility, toasts should have a minimum timeout of 5 seconds to give users enough time to read them. If a toast includes action buttons or other interactive elements it should not auto dismiss. In addition, timers will automatically pause when the user focuses or hovers over a toast.
@@ -267,7 +240,7 @@ Be sure only to automatically dismiss toasts when the information is not importa
 <ToastProvider>
   {state => (
     ///- begin highlight -///
-    <Button onPress={() => state.add('Toast is done!', {timeout: 5000})}>
+    <Button onPress={() => state.add('Toast still toasting!', {timeout: 5000})}>
     {/*- end highlight -*/}
       Show toast
     </Button>
