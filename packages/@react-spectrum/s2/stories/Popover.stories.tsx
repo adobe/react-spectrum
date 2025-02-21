@@ -18,9 +18,9 @@ import Help from '../s2wf-icons/S2_Icon_HelpCircle_20_N.svg';
 import Lightbulb from '../s2wf-icons/S2_Icon_Lightbulb_20_N.svg';
 import type {Meta} from '@storybook/react';
 import Org from '../s2wf-icons/S2_Icon_Buildings_20_N.svg';
+import {Autocomplete as RACAutocomplete, useFilter} from 'react-aria-components';
 import Settings from '../s2wf-icons/S2_Icon_Settings_20_N.svg';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {UNSTABLE_Autocomplete, useFilter} from 'react-aria-components';
 import User from '../s2wf-icons/S2_Icon_User_20_N.svg';
 import Users from '../s2wf-icons/S2_Icon_UserGroup_20_N.svg';
 
@@ -171,7 +171,7 @@ AccountMenu.argTypes = {
 function Autocomplete(props) {
   let {contains} = useFilter({sensitivity: 'base'});
   return (
-    <UNSTABLE_Autocomplete filter={contains} {...props} />
+    <RACAutocomplete filter={contains} {...props} />
   );
 }
 
