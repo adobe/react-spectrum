@@ -152,11 +152,9 @@ function Toast<T extends React.ReactNode>({state, ...props}: ToastProps<T>) {
 ```
 
 ```tsx example
-let i = 0;
-
 <ToastProvider>
   {state => (
-    <Button onPress={() => state.add('Toast is done! ' + i++)}>Show toast</Button>
+    <Button onPress={() => state.add('Toast is done!')}>Show toast</Button>
   )}
 </ToastProvider>
 ```
@@ -239,12 +237,10 @@ Toasts support a `timeout` option to automatically hide them after a certain amo
 Be sure only to automatically dismiss toasts when the information is not important, or may be found elsewhere. Some users may require additional time to read a toast message, and screen zoom users may miss toasts entirely.
 
 ```tsx example
-let i = 0;
-
 <ToastProvider>
   {state => (
     ///- begin highlight -///
-    <Button onPress={() => state.add('Toast still toasting! ' + i++, {timeout: 5000})}>
+    <Button onPress={() => state.add('Toast still toasting!', {timeout: 5000})}>
     {/*- end highlight -*/}
       Show toast
     </Button>
@@ -257,8 +253,6 @@ let i = 0;
 Toasts may be programmatically dismissed if they become irrelevant before the user manually closes them. `state.add` returns a key for the toast which may be passed to `state.close` to dismiss the toast.
 
 ```tsx example
-let i = 0;
-
 function Example() {
   let [toastKey, setToastKey] = React.useState(null);
 
@@ -269,7 +263,7 @@ function Example() {
           onPress={() => {
             if (!toastKey) {
               ///- begin highlight -///
-              setToastKey(state.add('Unable to save ' + i++, {onClose: () => setToastKey(null)}));
+              setToastKey(state.add('Unable to save', {onClose: () => setToastKey(null)}));
               ///- end highlight -///
             } else {
               ///- begin highlight -///
