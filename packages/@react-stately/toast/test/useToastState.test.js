@@ -64,8 +64,8 @@ describe('useToastState', () => {
 
     act(() => {result.current.add(secondToast.content, secondToast.props);});
     expect(result.current.visibleToasts.length).toBe(2);
-    expect(result.current.visibleToasts[0].content).toBe(newValue[0].content);
-    expect(result.current.visibleToasts[1].content).toBe(secondToast.content);
+    expect(result.current.visibleToasts[0].content).toBe(secondToast.content);
+    expect(result.current.visibleToasts[1].content).toBe(newValue[0].content);
   });
 
   it('should be able to display three toasts and remove the middle toast via timeout then the visible toast', () => {
@@ -83,7 +83,7 @@ describe('useToastState', () => {
       result.current.add('Second Toast', {timeout: 1000});
     });
     expect(result.current.visibleToasts).toHaveLength(2);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
+    expect(result.current.visibleToasts[0].content).toBe('Second Toast');
 
     result.current.resumeAll();
 
@@ -92,21 +92,21 @@ describe('useToastState', () => {
       result.current.add('Third Toast', {timeout: 0});
     });
     expect(result.current.visibleToasts).toHaveLength(3);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
+    expect(result.current.visibleToasts[0].content).toBe('Third Toast');
     expect(result.current.visibleToasts[1].content).toBe('Second Toast');
-    expect(result.current.visibleToasts[2].content).toBe('Third Toast');
+    expect(result.current.visibleToasts[2].content).toBe('First Toast');
 
     act(() => jest.advanceTimersByTime(500));
     expect(result.current.visibleToasts).toHaveLength(3);
 
     act(() => jest.advanceTimersByTime(1000));
     expect(result.current.visibleToasts).toHaveLength(2);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
-    expect(result.current.visibleToasts[1].content).toBe('Third Toast');
+    expect(result.current.visibleToasts[0].content).toBe('Third Toast');
+    expect(result.current.visibleToasts[1].content).toBe('First Toast');
 
     act(() => {result.current.close(result.current.visibleToasts[0].key);});
     expect(result.current.visibleToasts.length).toBe(1);
-    expect(result.current.visibleToasts[0].content).toBe('Third Toast');
+    expect(result.current.visibleToasts[0].content).toBe('First Toast');
   });
 
   it('should be able to display one toast, add multiple toasts, and remove the middle not visible one programmatically', () => {
@@ -125,24 +125,24 @@ describe('useToastState', () => {
       secondToastKey = result.current.add('Second Toast', {timeout: 0});
     });
     expect(result.current.visibleToasts).toHaveLength(1);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
+    expect(result.current.visibleToasts[0].content).toBe('Second Toast');
 
     // Add the third toast
     act(() => {
       result.current.add('Third Toast', {timeout: 0});
     });
     expect(result.current.visibleToasts).toHaveLength(1);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
+    expect(result.current.visibleToasts[0].content).toBe('Third Toast');
 
     // Remove a toast that isn't visible
     act(() => {result.current.close(secondToastKey);});
     expect(result.current.visibleToasts).toHaveLength(1);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
+    expect(result.current.visibleToasts[0].content).toBe('Third Toast');
 
     // Remove the visible toast to confirm the middle toast was removed
     act(() => {result.current.close(result.current.visibleToasts[0].key);});
     expect(result.current.visibleToasts.length).toBe(1);
-    expect(result.current.visibleToasts[0].content).toBe('Third Toast');
+    expect(result.current.visibleToasts[0].content).toBe('First Toast');
   });
 
   it('should be able to display one toast, add multiple toasts', () => {
@@ -160,14 +160,14 @@ describe('useToastState', () => {
       result.current.add('Second Toast', {timeout: 0});
     });
     expect(result.current.visibleToasts).toHaveLength(1);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
+    expect(result.current.visibleToasts[0].content).toBe('Second Toast');
 
     // Add the third toast
     act(() => {
       result.current.add('Third Toast', {timeout: 0});
     });
     expect(result.current.visibleToasts).toHaveLength(1);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
+    expect(result.current.visibleToasts[0].content).toBe('Third Toast');
   });
 
   it('should maintain the toast queue order on close', () => {
@@ -179,19 +179,19 @@ describe('useToastState', () => {
 
     act(() => {result.current.add('Second Toast');});
     expect(result.current.visibleToasts).toHaveLength(2);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
-    expect(result.current.visibleToasts[1].content).toBe('Second Toast');
+    expect(result.current.visibleToasts[0].content).toBe('Second Toast');
+    expect(result.current.visibleToasts[1].content).toBe('First Toast');
 
     act(() => {result.current.add('Third Toast');});
     expect(result.current.visibleToasts).toHaveLength(3);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
+    expect(result.current.visibleToasts[0].content).toBe('Third Toast');
     expect(result.current.visibleToasts[1].content).toBe('Second Toast');
-    expect(result.current.visibleToasts[2].content).toBe('Third Toast');
+    expect(result.current.visibleToasts[2].content).toBe('First Toast');
 
     act(() => {result.current.close(result.current.visibleToasts[1].key);});
     expect(result.current.visibleToasts).toHaveLength(2);
-    expect(result.current.visibleToasts[0].content).toBe('First Toast');
-    expect(result.current.visibleToasts[1].content).toBe('Third Toast');
+    expect(result.current.visibleToasts[0].content).toBe('Third Toast');
+    expect(result.current.visibleToasts[1].content).toBe('First Toast');
   });
 
   it('should close a toast', () => {
@@ -210,22 +210,6 @@ describe('useToastState', () => {
     expect(result.current.visibleToasts[0].content).toBe(newValue[0].content);
 
     act(() => {result.current.add('Second Toast');});
-    expect(result.current.visibleToasts.length).toBe(1);
-    expect(result.current.visibleToasts[0].content).toBe(newValue[0].content);
-
-    act(() => {result.current.close(result.current.visibleToasts[0].key);});
-    expect(result.current.visibleToasts.length).toBe(1);
-    expect(result.current.visibleToasts[0].content).toBe('Second Toast');
-  });
-
-  it('should queue toasts with priority', () => {
-    let {result} = renderHook(() => useToastState());
-    expect(result.current.visibleToasts).toStrictEqual([]);
-
-    act(() => {result.current.add(newValue[0].content, newValue[0].props);});
-    expect(result.current.visibleToasts[0].content).toBe(newValue[0].content);
-
-    act(() => {result.current.add('Second Toast', {priority: 1});});
     expect(result.current.visibleToasts.length).toBe(1);
     expect(result.current.visibleToasts[0].content).toBe('Second Toast');
 

@@ -84,7 +84,7 @@ export function App() {
 Then, you can trigger a toast from anywhere using the exported `queue`.
 
 ```tsx example
-<Button 
+<Button
   onPress={() => queue.add({
     title: 'Toast complete!',
     description: 'Great success.'
@@ -158,7 +158,7 @@ Then, you can trigger a toast from anywhere using the exported `queue`.
     color: white;
     padding: 0;
     outline: none;
-  
+
     &[data-focus-visible] {
       box-shadow: 0 0 0 2px slateblue, 0 0 0 4px white;
     }
@@ -183,7 +183,7 @@ There is no built in way to display toast notifications in HTML. `<ToastRegion>`
 
 <Anatomy role="img" aria-label="Toast anatomy diagram, showing the toast's title and close button within the toast region." />
 
-A `<ToastRegion>` is an [ARIA landmark region](https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/) labeled "Notifications" by default. A `<ToastRegion>` accepts a function to render one or more visible toasts, in priority order. When the limit is reached, additional toasts are queued until the user dismisses one. Each `<Toast>` is a non-modal ARIA [alertdialog](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/), containing the content of the notification and a close button.
+A `<ToastRegion>` is an [ARIA landmark region](https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/) labeled "Notifications" by default. A `<ToastRegion>` accepts a function to render one or more visible toasts, in chronological order. When the limit is reached, additional toasts are queued until the user dismisses one. Each `<Toast>` is a non-modal ARIA [alertdialog](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/), containing the content of the notification and a close button.
 
 Landmark regions including the toast container can be navigated using the keyboard by pressing the <Keyboard>F6</Keyboard> key to move forward, and the <Keyboard>Shift</Keyboard> + <Keyboard>F6</Keyboard> key to move backward. This provides an easy way for keyboard users to jump to the toasts from anywhere in the app. When the last toast is closed, keyboard focus is restored.
 
@@ -210,7 +210,7 @@ Toasts support a `timeout` option to automatically hide them after a certain amo
 Be sure only to automatically dismiss toasts when the information is not important, or may be found elsewhere. Some users may require additional time to read a toast message, and screen zoom users may miss toasts entirely.
 
 ```tsx example
-<Button 
+<Button
   /*- begin highlight -*/
   onPress={() => queue.add({title: 'Toast is done!'}, {timeout: 5000})}
   /*- end highlight -*/
