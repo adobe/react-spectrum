@@ -21,6 +21,7 @@ import {
 } from './utils';
 import {
   Collection,
+  DOMProps,
   DropEvent,
   DropOperation,
   DroppableCollectionDropEvent,
@@ -42,7 +43,7 @@ import {useAutoScroll} from './useAutoScroll';
 import {useDrop} from './useDrop';
 import {useLocale} from '@react-aria/i18n';
 
-export interface DroppableCollectionOptions extends DroppableCollectionProps {
+export interface DroppableCollectionOptions extends DOMProps, DroppableCollectionProps {
   /** A delegate object that implements behavior for keyboard focus movement. */
   keyboardDelegate: KeyboardDelegate,
   /** A delegate object that provides drop targets for pointer coordinates within the collection. */
@@ -745,7 +746,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     });
   }, [localState, ref, onDrop, direction]);
 
-  let id = useId();
+  let id = useId(props.id);
   droppableCollectionMap.set(state, {id, ref});
   return {
     collectionProps: mergeProps(dropProps, {
