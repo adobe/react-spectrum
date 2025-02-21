@@ -12,7 +12,7 @@
 
 
 import {CalendarDate, CalendarDateTime, parseDate, parseDateTime} from '@internationalized/date';
-import {DateFieldState, DatePickerState} from 'react-stately';
+import {DateFieldState, DatePickerState, DateSegmentType} from 'react-stately';
 import React, {useEffect} from 'react';
 import {useVisuallyHidden} from 'react-aria';
 
@@ -41,7 +41,7 @@ export interface HiddenDateAria {
   inputProps: React.InputHTMLAttributes<HTMLInputElement>
 }
 
-export function useHiddenDateInput(props: HiddenDateInputProps, state) {
+export function useHiddenDateInput(props: HiddenDateInputProps, state: DateFieldState | DatePickerState) {
   let {
     autoComplete,
     isDisabled,
@@ -61,7 +61,7 @@ export function useHiddenDateInput(props: HiddenDateInputProps, state) {
     if (state.value == null) {
       setDateValue('');
     } else {
-      setDateValue(state.value);
+      setDateValue(state.value.toString());
     }
   }, [state.value]);
   
@@ -109,15 +109,15 @@ export function useHiddenDateInput(props: HiddenDateInputProps, state) {
           // The setValue method has different behavior depending on if it's coming from DateFieldState or DatePickerState.
           // In DateFieldState, setValue firsts checks to make sure that each segment is filled before committing the newValue 
           // which is why in the code below we first set each segment to validate it before committing the new value. 
-          // However, in DatePickerState, since we have to be able to commit values from the Calendar popover, we are able to set a new value
-          // when the field itself is empty. 
-          if (typeof state.setSegment === 'function') {
+          // However, in DatePickerState, since we have to be able to commit values from the Calendar popover, we are also able to 
+          // set a new value when the field itself is empty. 
+          if ('setSegment' in state) {
             for (let type in targetValue) {
               if (dateSegments.includes(type)) {
-                state.setSegment(type, targetValue[type]);
+                state.setSegment(type as DateSegmentType, targetValue[type]);
               }
               if (timeSegments.includes(type)) {
-                state.setSegment(type, targetValue[type]);
+                state.setSegment(type as DateSegmentType, targetValue[type]);
               }
             }
             
@@ -129,7 +129,7 @@ export function useHiddenDateInput(props: HiddenDateInputProps, state) {
   };
 }
 
-export function HiddenDateInput(props) {
+export function HiddenDateInput(props: HiddenDateInputProps) {
   let {state} = props;
   let {containerProps, inputProps} = useHiddenDateInput({...props}, state);
   return (
