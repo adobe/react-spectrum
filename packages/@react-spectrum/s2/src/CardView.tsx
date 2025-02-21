@@ -250,7 +250,7 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
                 scrollPadding: options.minSpace.height,
                 scrollPaddingBottom: actionBarHeight + options.minSpace.height
               }}
-              className={renderProps => (!props.renderActionBar ? UNSAFE_className + cardViewStyles({...renderProps, isLoading: props.loadingState === 'loading'}) : '')}>
+              className={renderProps => (!props.renderActionBar ? UNSAFE_className + cardViewStyles({...renderProps, isLoading: props.loadingState === 'loading'}, styles) : '')}>
               {children}
             </AriaGridList>
           </ImageCoordinator>
