@@ -54,7 +54,7 @@ There is no built in way to display toast notifications in HTML. <TypeLink links
 
 <Anatomy role="img" aria-label="Toast anatomy diagram, showing the toast's title and close button within the toast region." />
 
-A toast region is an ARIA landmark region labeled "Notifications" by default. A toast region contains one or more visible toasts in chronological order. When the limit is reached, additional toasts are queued until the user dismisses one. Each toast is an ARIA alert element, containing the content of the notification and a close button.
+A toast region is an [ARIA landmark region](https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/) labeled "Notifications" by default. A toast region contains one or more visible toasts, in chronological order. When the limit is reached, additional toasts are queued until the user dismisses one. Each toast is a non-modal ARIA [alertdialog](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/), containing the content of the notification and a close button.
 
 Landmark regions including the toast container can be navigated using the keyboard by pressing the <Keyboard>F6</Keyboard> key to move forward, and the <Keyboard>Shift</Keyboard> + <Keyboard>F6</Keyboard> key to move backward. This provides an easy way for keyboard users to jump to the toasts from anywhere in the app. When the last toast is closed, keyboard focus is restored.
 
