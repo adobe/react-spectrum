@@ -35,7 +35,7 @@ keywords: [toast, notifications, alert, aria]
   packageData={packageData}
   componentNames={['useToastRegion', 'useToast']}
   sourceData={[
-    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/alert/'}
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/'}
   ]} />
 
 ## API
@@ -45,9 +45,9 @@ keywords: [toast, notifications, alert, aria]
 
 ## Features
 
-There is no built in way to toast notifications in HTML. <TypeLink links={docs.links} type={docs.exports.useToastRegion} /> and <TypeLink links={docs.links} type={docs.exports.useToast} /> help achieve accessible toasts that can be styled as needed.
+There is no built in way to display toast notifications in HTML. <TypeLink links={docs.links} type={docs.exports.useToastRegion} /> and <TypeLink links={docs.links} type={docs.exports.useToast} /> help achieve accessible toasts that can be styled as needed.
 
-* **Accessible** – Toasts follow the [ARIA alert pattern](https://www.w3.org/WAI/ARIA/apg/patterns/alert/). They are rendered in a [landmark region](https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/), which keyboard and screen reader users can easily jump to when an alert is announced.
+* **Accessible** – Toasts follow the [ARIA alertdialog pattern](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/). They are rendered in a [landmark region](https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/), which keyboard and screen reader users can easily jump to when an alert is announced.
 * **Focus management** – When a toast unmounts, focus is moved to the next toast if any. Otherwise, focus is restored to where it was before navigating to the toast region.
 * **Priority queue** – Toasts are displayed according to a priority queue, displaying a configurable number of toasts at a time. The queue can either be owned by a provider component, or global.
 
@@ -55,7 +55,7 @@ There is no built in way to toast notifications in HTML. <TypeLink links={docs.l
 
 <Anatomy role="img" aria-label="Toast anatomy diagram, showing the toast's title and close button within the toast region." />
 
-A toast region is an ARIA landmark region labeled "Notifications" by default. A toast region contains one or more visible toasts, in priority order. When the limit is reached, additional toasts are queued until the user dismisses one. Each toast is an ARIA alert element, containing the content of the notification and a close button.
+A toast region is an [ARIA landmark region](https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/) labeled "Notifications" by default. A toast region contains one or more visible toasts, in priority order. When the limit is reached, additional toasts are queued until the user dismisses one. Each toast is a non-modal ARIA [alertdialog](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/), containing the content of the notification and a close button.
 
 Landmark regions including the toast container can be navigated using the keyboard by pressing the <Keyboard>F6</Keyboard> key to move forward, and the <Keyboard>Shift</Keyboard> + <Keyboard>F6</Keyboard> key to move backward. This provides an easy way for keyboard users to jump to the toasts from anywhere in the app. When the last toast is closed, keyboard focus is restored.
 
