@@ -26,7 +26,11 @@ description: An command palette with actions, styled with Tailwind CSS.
 
 # Command Palette
 
-A Command Palette is an interface that allows users to quickly run commands or navigate to content within an application. This example uses the [`Autocomplete`](../Autocomplete.html) component from React Aria Components to filter a list of commands and display them in a [`Menu`](../Menu.html). The [`TextField`](../TextField.html) is used to capture user input and filter the list of available commands.
+A Command Palette is an interface that allows users to quickly run commands or navigate to content within an application. 
+
+## Example
+
+This example uses the [`Autocomplete`](../Autocomplete.html) component from React Aria Components to filter a list of commands and display them in a [`Menu`](../Menu.html). The [`TextField`](../TextField.html) is used to capture user input and filter the list of available commands.
 
 ```tsx import
 import './tailwind.global.css';
@@ -41,6 +45,7 @@ import {
   useFilter,
   Input
 } from 'react-aria-components';
+import {useEffect, useState} from 'react';
 
 function CommandPaletteExample() {
   let commands = [
@@ -54,29 +59,49 @@ function CommandPaletteExample() {
     {id: 'label-remove', label: 'Remove label…'}
   ];
 
+  let [isOpen, setOpen] = useState(false);
   let {contains} = useFilter({sensitivity: 'base'});
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'k' && e.metaKey) {
+        e.preventDefault();
+        setOpen((prev) => !prev);
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  })
+
   return (
-    <div className="bg-linear-to-r from-indigo-500 to-violet-500 p-8 h-[340px] rounded-lg flex flex-col items-center justify-center">
-      <div className="flex flex-col gap-1 w-[320px] rounded-md bg-white shadow-lg">
-        <Autocomplete filter={contains}>
-          <TextField
-            aria-label="Search commands"
-            className="flex flex-col px-3 py-2 rounded-md outline-none placeholder-white/70"
-          >
-            <Input
-              placeholder="Search commands…"
-              className="border-none py-2 px-3 leading-5 text-gray-900 bg-transparent outline-hidden text-base focus-visible:ring-2 focus-visible:ring-violet-500 rounded-lg"
-            />
-          </TextField>
-          <Menu
-            items={commands}
-            className="mt-2 p-1 max-h-44 overflow-auto"
-          >
-            {({ label }) => <CommandItem>{label}</CommandItem>}
-          </Menu>
-        </Autocomplete>
-      </div>
+    <div className="bg-linear-to-r from-indigo-500 to-violet-500 p-8 h-[340px] rounded-lg flex items-center justify-center">
+      {isOpen ?
+        <div className="flex flex-col gap-1 w-[320px] rounded-md bg-white shadow-lg">
+          <Autocomplete filter={contains}>
+            <TextField
+              aria-label="Search commands"
+              className="flex flex-col px-3 py-2 rounded-md outline-none placeholder-white/70"
+            >
+              <Input
+                autoFocus
+                placeholder="Search commands…"
+                className="border-none py-2 px-3 leading-5 text-gray-900 bg-transparent outline-hidden text-base focus-visible:ring-2 focus-visible:ring-violet-500 rounded-lg"
+              />
+            </TextField>
+            <Menu
+              items={commands}
+              className="mt-2 p-1 max-h-44 overflow-auto"
+            >
+              {({ label }) => <CommandItem>{label}</CommandItem>}
+            </Menu>
+          </Autocomplete>
+        </div>
+        : <span className="text-white text-lg">Press <kbd>⌘</kbd> + <kbd>K</kbd> to open the command palette.</span>
+      }
     </div>
   );
 }
