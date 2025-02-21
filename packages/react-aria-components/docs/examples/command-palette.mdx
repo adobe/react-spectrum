@@ -50,6 +50,7 @@ import {
   ModalOverlay,
   Button
 } from 'react-aria-components';
+import {isMac} from '@react-aria/utils';
 import {useEffect, useState} from 'react';
 
 function CommandPaletteExample() {
@@ -69,7 +70,7 @@ function CommandPaletteExample() {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'k' && e.metaKey) {
+      if (e.key === 'k' && (isMac() ? e.metaKey : e.ctrlKey)) {
         e.preventDefault();
         setOpen((prev) => !prev);
       } else if (e.key === 'Escape') {
@@ -86,7 +87,7 @@ function CommandPaletteExample() {
     <div className="bg-linear-to-r from-indigo-500 to-violet-500 p-8 h-[340px] rounded-lg flex items-center justify-center">
       <DialogTrigger isOpen={isOpen} onOpenChange={setOpen}>
         <Button className="inline-flex items-center justify-center rounded-xl bg-black/20 bg-clip-padding border border-white/20 px-3.5 py-2 font-medium font-[inherit] text-base text-white hover:bg-black/30 pressed:bg-black/40 transition-colors cursor-default outline-hidden focus-visible:ring-2 focus-visible:ring-white/75">
-          Press here or type <kbd class="px-2 py-1 text-xs font-semibold border border-gray-200 rounded-lg m-2">Ctrl</kbd> + <kbd class="px-2 py-1 text-xs font-semibold border border-gray-200 rounded-lg m-2">K</kbd> to open command palette
+          Press here or type <kbd class="px-2 py-1 m-2 text-xs font-semibold border border-gray-200 rounded-lg">{isMac() ? '⌘' : 'Ctrl'}</kbd> + <kbd class="px-2 py-1 m-2 text-xs font-semibold border border-gray-200 rounded-lg">K</kbd> to open command palette
         </Button>
         <ModalOverlay
           className={({ isEntering, isExiting }) => `
