@@ -380,10 +380,11 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         // first try the other positions in the current key. Otherwise (e.g. in a grid layout),
         // jump to the same drop position in the new key.
         let nextCollectionKey = horizontal && direction === 'rtl' ? localState.state.collection.getKeyBefore(target.key) : localState.state.collection.getKeyAfter(target.key);
-        if (nextKey == null || nextKey === nextCollectionKey) {
+        let isNextDisabled = nextCollectionKey && localState.state.selectionManager.isDisabled(nextCollectionKey);
+        if (nextKey == null || nextKey === nextCollectionKey || isNextDisabled) {
           let positionIndex = dropPositions.indexOf(target.dropPosition);
           let nextDropPosition = dropPositions[positionIndex + 1];
-          if (positionIndex < dropPositions.length - 1 && !(nextDropPosition === dropPositions[2] && nextKey != null)) {
+          if (positionIndex < dropPositions.length - 1 && (!(nextDropPosition === dropPositions[2] && nextKey != null) || isNextDisabled)) {
             return {
               type: 'item',
               key: target.key,
@@ -393,7 +394,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
 
           // If the last drop position was 'after', then 'before' on the next key is equivalent.
           // Switch to 'on' instead.
-          if (target.dropPosition === dropPositions[2]) {
+          if (target.dropPosition === dropPositions[2] && !isNextDisabled) {
             dropPosition = 'on';
           }
         } else {
@@ -434,10 +435,12 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         // first try the other positions in the current key. Otherwise (e.g. in a grid layout),
         // jump to the same drop position in the new key.
         let prevCollectionKey = horizontal && direction === 'rtl' ? localState.state.collection.getKeyAfter(target.key) : localState.state.collection.getKeyBefore(target.key);
-        if (nextKey == null || nextKey === prevCollectionKey) {
+        let isPrevDisabled = prevCollectionKey && localState.state.selectionManager.isDisabled(prevCollectionKey);
+        if (nextKey == null || nextKey === prevCollectionKey || isPrevDisabled) {
           let positionIndex = dropPositions.indexOf(target.dropPosition);
           let nextDropPosition = dropPositions[positionIndex - 1];
-          if (positionIndex > 0 && nextDropPosition !== dropPositions[2]) {
+          console.log(target.key, target.dropPosition, isPrevDisabled);
+          if (positionIndex > 0 && (nextDropPosition !== dropPositions[2] || isPrevDisabled)) {
             return {
               type: 'item',
               key: target.key,
@@ -445,9 +448,13 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
             };
           }
 
+          if (isPrevDisabled) {
+            nextKey = prevCollectionKey;
+          }
+
           // If the last drop position was 'before', then 'after' on the previous key is equivalent.
           // Switch to 'on' instead.
-          if (target.dropPosition === dropPositions[0]) {
+          if (target.dropPosition === dropPositions[0] && nextKey !== prevCollectionKey) {
             dropPosition = 'on';
           }
         } else {
