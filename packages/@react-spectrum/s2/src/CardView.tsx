@@ -243,14 +243,14 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
               defaultSelectedKeys={undefined}
               onSelectionChange={onSelectionChange}
               style={{
-                ...UNSAFE_style,
+                ...(!props.renderActionBar ? UNSAFE_style : {}),
                 // Add padding at the bottom when the action bar is visible so users can scroll to the last items.
                 // Also add scroll padding so keyboard navigating preserves the padding.
                 paddingBottom: actionBarHeight > 0 ? actionBarHeight + options.minSpace.height : 0,
                 scrollPadding: options.minSpace.height,
                 scrollPaddingBottom: actionBarHeight + options.minSpace.height
               }}
-              className={renderProps => UNSAFE_className + cardViewStyles({...renderProps, isLoading: props.loadingState === 'loading'}, styles)}>
+              className={renderProps => (!props.renderActionBar ? UNSAFE_className + cardViewStyles({...renderProps, isLoading: props.loadingState === 'loading'}) : '')}>
               {children}
             </AriaGridList>
           </ImageCoordinator>
