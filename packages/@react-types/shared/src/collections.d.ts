@@ -180,7 +180,10 @@ export interface Collection<T> extends Iterable<T> {
   getChildren?(key: Key): Iterable<T>,
 
   /** Returns a string representation of the item's contents. */
-  getTextValue?(key: Key): string
+  getTextValue?(key: Key): string,
+
+  /** Filters the collection using the given function. */
+  filter?(filterFn: (nodeValue: string) => boolean): Collection<T>
 }
 
 export interface Node<T> {

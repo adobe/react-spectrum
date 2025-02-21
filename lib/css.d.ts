@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2025 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,8 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-export {useTree} from './useTree';
-export {useTreeItem} from './useTreeItem';
+declare module 'react' {
+  interface CSSProperties {
+    viewTransitionName?: string,
+    viewTransitionClass?: string
+  }
+}
 
-export type {AriaTreeOptions, AriaTreeProps, TreeAria, TreeProps} from './useTree';
-export type {AriaTreeItemOptions, TreeItemAria} from './useTreeItem';
+export {};
