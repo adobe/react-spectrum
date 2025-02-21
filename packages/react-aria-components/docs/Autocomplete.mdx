@@ -35,11 +35,11 @@ preRelease: alpha
 
 # Autocomplete
 
-<PageDescription>{docs.exports.UNSTABLE_Autocomplete.description}</PageDescription>
+<PageDescription>{docs.exports.Autocomplete.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['UNSTABLE_Autocomplete']}
+  componentNames={['Autocomplete']}
   sourceData={[
     {type: 'W3C', url: 'https://w3c.github.io/aria/#aria-autocomplete'}
   ]} />
@@ -47,7 +47,7 @@ preRelease: alpha
 ## Example
 
 ```tsx example
-import {UNSTABLE_Autocomplete as Autocomplete, Button, Input, Label, Menu, MenuItem, SearchField, useFilter} from 'react-aria-components';
+import {Autocomplete, Button, Input, Label, Menu, MenuItem, SearchField, useFilter} from 'react-aria-components';
 
 function Example() {
   let {contains} = useFilter({sensitivity: 'base'});
@@ -119,7 +119,7 @@ function Example() {
 `Autocomplete` is a controller for a child text input, such as a [TextField](TextField.html) or [SearchField](SearchField.html), and a collection component such as a [Menu](Menu.html) or [ListBox](ListBox.html). It enables the user to filter a list of items, and navigate via the arrow keys while keeping focus on the input.
 
 ```tsx
-import {UNSTABLE_Autocomplete as Autocomplete, SearchField, Menu} from 'react-aria-components';
+import {Autocomplete, SearchField, Menu} from 'react-aria-components';
 
 <Autocomplete>
   <SearchField />   {/*   or <TextField />   */}
@@ -325,7 +325,7 @@ function Example() {
 
 ## Props
 
-<PropTable component={docs.exports.UNSTABLE_Autocomplete} links={docs.links} />
+<PropTable component={docs.exports.Autocomplete} links={docs.links} />
 
 ## Styling
 
@@ -348,7 +348,7 @@ function MyListBox(props) {
 
 All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
 
-<ContextTable components={['UNSTABLE_Autocomplete']} docs={docs} />
+<ContextTable components={['Autocomplete']} docs={docs} />
 
 ### State
 
@@ -357,7 +357,7 @@ Autocomplete provides an <TypeLink links={statelyDocs.links} type={statelyDocs.e
 This example shows an `AutocompleteClearButton` component that can be placed within an `Autocomplete` to allow the user to clear the input.
 
 ```tsx example
-import {UNSTABLE_AutocompleteStateContext as AutocompleteStateContext, Button} from 'react-aria-components';
+import {AutocompleteStateContext as AutocompleteStateContext, Button} from 'react-aria-components';
 
 function Example() {
   let {contains} = useFilter({sensitivity: 'base'});
