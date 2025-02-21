@@ -90,6 +90,7 @@ function CommandPaletteExample() {
           Press here or type <kbd class="px-2 py-1 m-2 text-xs font-semibold border border-gray-200 rounded-lg">{isMac() ? '⌘' : 'Ctrl'}</kbd> + <kbd class="px-2 py-1 m-2 text-xs font-semibold border border-gray-200 rounded-lg">K</kbd> to open command palette
         </Button>
         <ModalOverlay
+          isDismissable
           className={({ isEntering, isExiting }) => `
           fixed inset-0 z-10 overflow-y-auto bg-black/25 flex min-h-full items-center justify-center p-4 text-center
           ${isEntering ? 'animate-in fade-in duration-300 ease-out' : ''}
