@@ -25,9 +25,7 @@ export interface ToastOptions {
   /** Handler that is called when the toast is closed, either by the user or after a timeout. */
   onClose?: () => void,
   /** A timeout to automatically close the toast after, in milliseconds. */
-  timeout?: number,
-  /** The priority of the toast relative to other toasts. Larger numbers indicate higher priority. */
-  priority?: number
+  timeout?: number
 }
 
 export interface QueuedToast<T> extends ToastOptions {
@@ -82,7 +80,7 @@ export function useToastQueue<T>(queue: ToastQueue<T>): ToastState<T> {
 }
 
 /**
- * A ToastQueue is a priority queue of toasts.
+ * A ToastQueue manages the order of toasts.
  */
 export class ToastQueue<T> {
   private queue: QueuedToast<T>[] = [];
@@ -121,18 +119,7 @@ export class ToastQueue<T> {
       timer: options.timeout ? new Timer(() => this.close(toastKey), options.timeout) : undefined
     };
 
-    let low = 0;
-    let high = this.queue.length;
-    while (low < high) {
-      let mid = Math.floor((low + high) / 2);
-      if ((toast.priority || 0) > (this.queue[mid].priority || 0)) {
-        high = mid;
-      } else {
-        low = mid + 1;
-      }
-    }
-
-    this.queue.splice(low, 0, toast);
+    this.queue.unshift(toast);
 
     this.updateVisibleToasts();
     return toastKey;
