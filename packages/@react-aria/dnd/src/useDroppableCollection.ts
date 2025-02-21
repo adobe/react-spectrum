@@ -392,9 +392,13 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
             };
           }
 
+          if (isNextDisabled) {
+            nextKey = nextCollectionKey;
+          }
+
           // If the last drop position was 'after', then 'before' on the next key is equivalent.
           // Switch to 'on' instead.
-          if (target.dropPosition === dropPositions[2] && !isNextDisabled) {
+          if (target.dropPosition === dropPositions[2]) {
             dropPosition = 'on';
           }
         } else {
@@ -439,7 +443,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         if (nextKey == null || nextKey === prevCollectionKey || isPrevDisabled) {
           let positionIndex = dropPositions.indexOf(target.dropPosition);
           let nextDropPosition = dropPositions[positionIndex - 1];
-          console.log(target.key, target.dropPosition, isPrevDisabled);
           if (positionIndex > 0 && (nextDropPosition !== dropPositions[2] || isPrevDisabled)) {
             return {
               type: 'item',
@@ -454,7 +457,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
 
           // If the last drop position was 'before', then 'after' on the previous key is equivalent.
           // Switch to 'on' instead.
-          if (target.dropPosition === dropPositions[0] && nextKey !== prevCollectionKey) {
+          if (target.dropPosition === dropPositions[0]) {
             dropPosition = 'on';
           }
         } else {
