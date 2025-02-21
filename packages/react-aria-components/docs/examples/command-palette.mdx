@@ -43,7 +43,12 @@ import {
   Menu,
   MenuItem,
   useFilter,
-  Input
+  Input,
+  Dialog,
+  DialogTrigger,
+  Modal,
+  ModalOverlay,
+  Button
 } from 'react-aria-components';
 import {useEffect, useState} from 'react';
 
@@ -79,29 +84,48 @@ function CommandPaletteExample() {
 
   return (
     <div className="bg-linear-to-r from-indigo-500 to-violet-500 p-8 h-[340px] rounded-lg flex items-center justify-center">
-      {isOpen ?
-        <div className="flex flex-col gap-1 w-[320px] rounded-md bg-white shadow-lg">
-          <Autocomplete filter={contains}>
-            <TextField
-              aria-label="Search commands"
-              className="flex flex-col px-3 py-2 rounded-md outline-none placeholder-white/70"
-            >
-              <Input
-                autoFocus
-                placeholder="Search commands…"
-                className="border-none py-2 px-3 leading-5 text-gray-900 bg-transparent outline-hidden text-base focus-visible:ring-2 focus-visible:ring-violet-500 rounded-lg"
-              />
-            </TextField>
-            <Menu
-              items={commands}
-              className="mt-2 p-1 max-h-44 overflow-auto"
-            >
-              {({ label }) => <CommandItem>{label}</CommandItem>}
-            </Menu>
-          </Autocomplete>
-        </div>
-        : <span className="text-white text-lg">Press <kbd>⌘</kbd> + <kbd>K</kbd> to open the command palette.</span>
-      }
+      <DialogTrigger isOpen={isOpen} onOpenChange={setOpen}>
+        <Button className="inline-flex items-center justify-center rounded-xl bg-black/20 bg-clip-padding border border-white/20 px-3.5 py-2 font-medium font-[inherit] text-base text-white hover:bg-black/30 pressed:bg-black/40 transition-colors cursor-default outline-hidden focus-visible:ring-2 focus-visible:ring-white/75">
+          Press here or type <kbd class="px-2 py-1 text-xs font-semibold border border-gray-200 rounded-lg m-2">Ctrl</kbd> + <kbd class="px-2 py-1 text-xs font-semibold border border-gray-200 rounded-lg m-2">K</kbd> to open command palette
+        </Button>
+        <ModalOverlay
+          className={({ isEntering, isExiting }) => `
+          fixed inset-0 z-10 overflow-y-auto bg-black/25 flex min-h-full items-center justify-center p-4 text-center
+          ${isEntering ? 'animate-in fade-in duration-300 ease-out' : ''}
+          ${isExiting ? 'animate-out fade-out duration-200 ease-in' : ''}
+        `}
+        >
+          <Modal
+            className={({ isEntering, isExiting }) => `
+            ${isEntering ? 'animate-in zoom-in-95 ease-out duration-300' : ''}
+            ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}
+          `}
+          >
+            <Dialog className="outline-hidden relative">
+              <div className="flex flex-col gap-1 w-[500px] rounded-xl bg-white shadow-lg p-2">
+                <Autocomplete filter={contains}>
+                  <TextField
+                    aria-label="Search commands"
+                    className="flex flex-col px-3 py-2 rounded-md outline-none placeholder-white/70"
+                  >
+                    <Input
+                      autoFocus
+                      placeholder="Search commands…"
+                      className="border-none py-2 px-3 leading-5 text-gray-900 bg-transparent outline-hidden text-base focus-visible:ring-2 focus-visible:ring-violet-500 rounded-lg"
+                    />
+                  </TextField>
+                  <Menu
+                    items={commands}
+                    className="mt-2 p-1 max-h-44 overflow-auto"
+                  >
+                    {({ label }) => <CommandItem>{label}</CommandItem>}
+                  </Menu>
+                </Autocomplete>
+              </div>
+            </Dialog>
+          </Modal>
+        </ModalOverlay>
+      </DialogTrigger>
     </div>
   );
 }
