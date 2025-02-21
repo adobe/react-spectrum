@@ -88,6 +88,15 @@ export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent
     ...rectStyles
   };
 
+  if (layoutInfo.isSticky && !parent?.allowOverflow) {
+    if (style.top) {
+      style.marginTop = style.top;
+    }
+    if (style[xProperty]) {
+      style[dir === 'rtl' ? 'marginRight' : 'marginLeft'] = style[xProperty];
+    }
+  }
+
   cache.set(layoutInfo, style);
   return style;
 }

@@ -10,8 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTreeGridListProps} from '@react-aria/tree';
-import {ButtonContext, TreeItemContentProps, TreeItemContentRenderProps, TreeItemProps, TreeItemRenderProps, TreeRenderProps, UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeItemContent, useContextProps} from 'react-aria-components';
+import {AriaTreeProps} from '@react-aria/tree';
+import {
+  ButtonContext,
+  Tree,
+  TreeItem,
+  TreeItemContent,
+  TreeItemContentProps,
+  TreeItemContentRenderProps,
+  TreeItemProps,
+  TreeItemRenderProps,
+  TreeRenderProps,
+  useContextProps
+} from 'react-aria-components';
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
@@ -23,7 +34,7 @@ import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
 import {useButton} from '@react-aria/button';
 import {useLocale} from '@react-aria/i18n';
 
-export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>, StyleProps, SpectrumSelectionProps, Expandable {
+export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeProps<T>, 'children'>, StyleProps, SpectrumSelectionProps, Expandable {
   /** Provides content to display when there are no items in the tree. */
   renderEmptyState?: () => JSX.Element,
   /**
@@ -97,9 +108,9 @@ export const TreeView = React.forwardRef(function TreeView<T extends object>(pro
 
   return (
     <TreeRendererContext.Provider value={{renderer}}>
-      <UNSTABLE_Tree {...props} {...styleProps} className={({isEmpty}) => tree({isEmpty})} selectionBehavior={selectionBehavior as SelectionBehavior} ref={domRef}>
+      <Tree {...props} {...styleProps} className={({isEmpty}) => tree({isEmpty})} selectionBehavior={selectionBehavior as SelectionBehavior} ref={domRef}>
         {props.children}
-      </UNSTABLE_Tree>
+      </Tree>
     </TreeRendererContext.Provider>
   );
 }) as <T>(props: SpectrumTreeViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
@@ -223,7 +234,7 @@ export const TreeViewItem = <T extends object>(props: SpectrumTreeViewItemProps<
   } = props;
 
   return (
-    <UNSTABLE_TreeItem
+    <TreeItem
       {...props}
       className={renderProps => treeRow({
         ...renderProps,
@@ -232,14 +243,19 @@ export const TreeViewItem = <T extends object>(props: SpectrumTreeViewItemProps<
   );
 };
 
+export interface SpectrumTreeViewItemContentProps extends Omit<TreeItemContentProps, 'children'> {
+  /** Rendered contents of the tree item or child items. */
+  children: ReactNode
+}
 
-export const TreeItemContent = (props: Omit<TreeItemContentProps, 'children'> & {children: ReactNode}) => {
+
+export const TreeViewItemContent = (props: SpectrumTreeViewItemContentProps) => {
   let {
     children
   } = props;
 
   return (
-    <UNSTABLE_TreeItemContent>
+    <TreeItemContent>
       {({isExpanded, hasChildItems, level, selectionMode, selectionBehavior, isDisabled, isSelected, isFocusVisible}) => (
         <div className={treeCellGrid({isDisabled})}>
           {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
@@ -275,7 +291,7 @@ export const TreeItemContent = (props: Omit<TreeItemContentProps, 'children'> & 
           <div className={treeRowOutline({isFocusVisible, isSelected})} />
         </div>
         )}
-    </UNSTABLE_TreeItemContent>
+    </TreeItemContent>
   );
 };
 

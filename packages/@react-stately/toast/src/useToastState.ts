@@ -18,7 +18,7 @@ export interface ToastStateProps {
   /** The maximum number of toasts to display at a time. */
   maxVisibleToasts?: number,
   /** Function to wrap updates in (i.e. document.startViewTransition()). */
-  wrapUpdate?: <R>(fn: () => R) => R
+  wrapUpdate?: (fn: () => void) => void
 }
 
 export interface ToastOptions {
@@ -88,20 +88,20 @@ export class ToastQueue<T> {
   private queue: QueuedToast<T>[] = [];
   private subscriptions: Set<() => void> = new Set();
   private maxVisibleToasts: number;
-  private wrapUpdate?: <R>(fn: () => R) => R;
+  private wrapUpdate?: (fn: () => void) => void;
   /** The currently visible toasts. */
   visibleToasts: QueuedToast<T>[] = [];
 
   constructor(options?: ToastStateProps) {
-    this.maxVisibleToasts = options?.maxVisibleToasts ?? 1;
+    this.maxVisibleToasts = options?.maxVisibleToasts ?? Infinity;
     this.wrapUpdate = options?.wrapUpdate;
   }
 
-  private runWithWrapUpdate<R>(fn: () => R): R {
+  private runWithWrapUpdate(fn: () => void): void {
     if (this.wrapUpdate) {
-      return this.wrapUpdate(fn);
+      this.wrapUpdate(fn);
     } else {
-      return fn();
+      fn();
     }
   }
 
@@ -113,7 +113,7 @@ export class ToastQueue<T> {
 
   /** Adds a new toast to the queue. */
   add(content: T, options: ToastOptions = {}) {
-    let toastKey = Math.random().toString(36);
+    let toastKey = '_' + Math.random().toString(36).slice(2);
     let toast: QueuedToast<T> = {
       ...options,
       content,

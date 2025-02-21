@@ -21,14 +21,14 @@ import {
   GridListContext,
   GridListItem,
   Label,
-  UNSTABLE_ListLayout as ListLayout,
+  ListLayout,
   Modal,
   RouterProvider,
   Tag,
   TagGroup,
   TagList,
   useDragAndDrop,
-  UNSTABLE_Virtualizer as Virtualizer
+  Virtualizer
 } from '../';
 import React from 'react';
 import {User} from '@react-aria/test-utils';
@@ -393,10 +393,6 @@ describe('GridList', () => {
   });
 
   it('should support virtualizer', async () => {
-    let layout = new ListLayout({
-      rowHeight: 25
-    });
-
     let items = [];
     for (let i = 0; i < 50; i++) {
       items.push({id: i, name: 'Item ' + i});
@@ -406,7 +402,7 @@ describe('GridList', () => {
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
 
     let {getByRole, getAllByRole} = render(
-      <Virtualizer layout={layout}>
+      <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 25}}>
         <GridList aria-label="Test" items={items}>
           {item => <GridListItem>{item.name}</GridListItem>}
         </GridList>
@@ -497,6 +493,29 @@ describe('GridList', () => {
     await user.click(tree.getByRole('button'));
     let checkbox = tree.getByRole('checkbox');
     expect(checkbox).toBeInTheDocument();
+  });
+
+  it('should support nested collections with colliding keys', async () => {
+    let {container} = render(
+      <GridList aria-label="CardView" keyboardNavigationBehavior="Tab">
+        <GridListItem id="1" textValue="Card">
+          <GridList aria-label="Previews">
+            <GridListItem id="1">Paco de Lucia</GridListItem>
+          </GridList>
+        </GridListItem>
+      </GridList>
+    );
+
+    let itemMap = new Map();
+    let items = container.querySelectorAll('[data-key]');
+
+    for (let item of items) {
+      if (item instanceof HTMLElement) {
+        let key = item.dataset.collection + ':' + item.dataset.key;
+        expect(itemMap.has(key)).toBe(false);
+        itemMap.set(key, item);
+      }
+    }
   });
 
   describe('drag and drop', () => {

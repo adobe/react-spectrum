@@ -12,6 +12,7 @@
 
 import {AriaAutocompleteProps, CollectionOptions, UNSTABLE_useAutocomplete} from '@react-aria/autocomplete';
 import {AutocompleteState, UNSTABLE_useAutocompleteState} from '@react-stately/autocomplete';
+import {InputContext} from './Input';
 import {mergeProps} from '@react-aria/utils';
 import {Provider, removeDataAttributes, SlotProps, SlottedContextValue, useSlottedContext} from './utils';
 import React, {createContext, RefObject, useRef} from 'react';
@@ -40,8 +41,8 @@ export function UNSTABLE_Autocomplete(props: AutocompleteProps) {
   props = mergeProps(ctx, props);
   let {filter, shouldFocusOnSearch} = props;
   let state = UNSTABLE_useAutocompleteState(props);
+  let inputRef = useRef<HTMLInputElement | null>(null);
   let collectionRef = useRef<HTMLElement>(null);
-
   let {
     textFieldProps,
     collectionProps,
@@ -51,6 +52,7 @@ export function UNSTABLE_Autocomplete(props: AutocompleteProps) {
     ...removeDataAttributes(props),
     filter,
     shouldFocusOnSearch,
+    inputRef,
     collectionRef
   }, state);
 
@@ -60,6 +62,7 @@ export function UNSTABLE_Autocomplete(props: AutocompleteProps) {
         [UNSTABLE_AutocompleteStateContext, state],
         [SearchFieldContext, textFieldProps],
         [TextFieldContext, textFieldProps],
+        [InputContext, {ref: inputRef}],
         [UNSTABLE_InternalAutocompleteContext, {
           filterFn,
           collectionProps,

@@ -72,16 +72,15 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element | nul
 
   // Add the overlay ref to the stack of visible overlays on mount, and remove on unmount.
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !visibleOverlays.includes(ref)) {
       visibleOverlays.push(ref);
+      return () => {
+        let index = visibleOverlays.indexOf(ref);
+        if (index >= 0) {
+          visibleOverlays.splice(index, 1);
+        }
+      };
     }
-
-    return () => {
-      let index = visibleOverlays.indexOf(ref);
-      if (index >= 0) {
-        visibleOverlays.splice(index, 1);
-      }
-    };
   }, [isOpen, ref]);
 
   // Only hide the overlay when it is the topmost visible overlay in the stack
