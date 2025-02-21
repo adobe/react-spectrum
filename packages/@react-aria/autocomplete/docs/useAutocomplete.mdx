@@ -47,7 +47,7 @@ Autocomplete can be implemented using the [&lt;datalist&gt;](https://developer.m
 
 ## Anatomy
 
-An autocomplete consists a text input which displays the current value, and a collection of items. Users can type within the input
+An autocomplete consists of a text input that displays the current value and a collection of items. Users can type within the input
 to filter the collection. `useAutocomplete` handles exposing the correct ARIA attributes for accessibility for each of the elements comprising the autocomplete.
 
 `useAutocomplete` returns props that you should spread onto the appropriate elements:
@@ -62,6 +62,6 @@ The state object should be passed as an option to `useAutocomplete`.
 ## Internationalization
 
 `useAutocomplete` handles some aspects of internationalization automatically.
-For example, the item focus, count, and selection VoiceOver announcements are localized.
+For example, VoiceOver announcements about the item focus, count, and selection are localized.
 You are responsible for localizing all labels and option
 content that is passed into the autocomplete.
