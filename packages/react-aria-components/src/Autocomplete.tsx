@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaAutocompleteProps, CollectionOptions, UNSTABLE_useAutocomplete} from '@react-aria/autocomplete';
-import {AutocompleteState, UNSTABLE_useAutocompleteState} from '@react-stately/autocomplete';
+import {AriaAutocompleteProps, CollectionOptions, useAutocomplete} from '@react-aria/autocomplete';
+import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomplete';
 import {InputContext} from './Input';
 import {mergeProps} from '@react-aria/utils';
 import {Provider, removeDataAttributes, SlotProps, SlottedContextValue, useSlottedContext} from './utils';
@@ -40,7 +40,7 @@ export function Autocomplete(props: AutocompleteProps) {
   let ctx = useSlottedContext(AutocompleteContext, props.slot);
   props = mergeProps(ctx, props);
   let {filter} = props;
-  let state = UNSTABLE_useAutocompleteState(props);
+  let state = useAutocompleteState(props);
   let inputRef = useRef<HTMLInputElement | null>(null);
   let collectionRef = useRef<HTMLElement>(null);
   let {
@@ -48,7 +48,7 @@ export function Autocomplete(props: AutocompleteProps) {
     collectionProps,
     collectionRef: mergedCollectionRef,
     filterFn
-  } = UNSTABLE_useAutocomplete({
+  } = useAutocomplete({
     ...removeDataAttributes(props),
     filter,
     inputRef,
