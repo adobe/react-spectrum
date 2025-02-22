@@ -133,7 +133,7 @@ export function HiddenDateInput(props: HiddenDateInputProps) {
   let {state} = props;
   let {containerProps, inputProps} = useHiddenDateInput({...props}, state);
   return (
-    <div {...containerProps}>
+    <div {...containerProps} data-testid="hidden-dateinput-container">
       <input {...inputProps} />
     </div>
   );

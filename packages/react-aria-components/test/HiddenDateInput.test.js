@@ -10,17 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {HiddenDateInput} from '../';
+import {createCalendar, parseDate} from '@internationalized/date';
+import {HiddenDateInput} from '../src/HiddenDateInput';
+import {pointerMap, render} from '@react-spectrum/test-utils-internal';
+import React from 'react';
 import {useDateFieldState} from 'react-stately';
-import {pointerMap} from '@react-spectrum/test-utils-internal';
-import React, {useRef} from 'react';
-import {render, screen} from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import {createCalendar} from '@internationalized/date';
 import {useLocale} from 'react-aria';
+import userEvent from '@testing-library/user-event';
 
-
-const HiddenSelectDateFieldExample = (props) => {
+const HiddenDateInputExample = (props) => {
   let {locale} = useLocale();
   const state = useDateFieldState({
     ...props,
@@ -33,8 +31,7 @@ const HiddenSelectDateFieldExample = (props) => {
       autoComplete={props.autoComplete}
       name={props.name}
       isDisabled={props.isDisabled}
-      state={state}
-      {...props.hiddenProps} />
+      state={props.state || state} />
   );
 };
 
@@ -44,32 +41,32 @@ describe('<HiddenDateInput />', () => {
     user = userEvent.setup({delay: null, pointerMap});
   });
 
-  it('should trigger on onSelectionChange when select onchange is triggered (autofill)', async () => {
-    const onSelectionChange = jest.fn();
+  it('should trigger onChange when input onchange is triggered (autofill)', async () => {
+    const onChange = jest.fn();
     render(
-      <HiddenSelectDateFieldExample
-        onSelectionChange={onSelectionChange}
-        items={makeItems(5)} />
+      <HiddenDateInputExample
+        onChange={onChange} />
     );
 
-    const select = screen.getByLabelText('select');
-    await user.selectOptions(select, '5');
-    expect(onSelectionChange).toBeCalledWith('5');
+    let input = document.querySelector('input[type=date]');
+    await user.type(input, '2000-05-30');
+    let dateValue = parseDate('2000-05-30');
+    expect(onChange).toBeCalledWith(dateValue);
   });
 
   it('should always add a data attribute data-a11y-ignore="aria-hidden-focus"', () => {
-    render(
-      <HiddenSelectDateFieldExample items={makeItems(5)} />
+    let {getByTestId} = render(
+      <HiddenDateInputExample autoComplete="bday" name="bday" />
     );
 
-    expect(screen.getByTestId('hidden-select-container')).toHaveAttribute('data-a11y-ignore', 'aria-hidden-focus');
+    expect(getByTestId('hidden-dateinput-container')).toHaveAttribute('data-a11y-ignore', 'aria-hidden-focus');
   });
 
   it('should always add a data attribute data-react-aria-prevent-focus', () => {
-    render(≠
-      <HiddenSelectDateFieldExample items={makeItems(5)} />
+    let {getByTestId} = render(
+      <HiddenDateInputExample autoComplete="bday" name="bday" />
     );
 
-    expect(screen.getByTestId('hidden-select-container')).toHaveAttribute('data-react-aria-prevent-focus');
+    expect(getByTestId('hidden-dateinput-container')).toHaveAttribute('data-react-aria-prevent-focus');
   });
 });
