@@ -28,7 +28,7 @@ export interface SpectrumToastContainerProps extends AriaToastRegionProps {
   placement?: ToastPlacement
 }
 
-export interface SpectrumToastOptions extends Omit<ToastOptions, 'priority'>, DOMProps {
+export interface SpectrumToastOptions extends ToastOptions, DOMProps {
   /** A label for the action button within the toast. */
   actionLabel?: string,
   /** Handler that is called when the action button is pressed. */
@@ -128,7 +128,7 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
     return (
       <Toaster state={state} {...props}>
         <ol className={classNames(toastContainerStyles, 'spectrum-ToastContainer-list')}>
-          {state.visibleToasts.slice().reverse().map((toast, index) => {
+          {state.visibleToasts.map((toast, index) => {
             let shouldFade = isCentered && index !== 0;
             return (
               <li
@@ -148,7 +148,7 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
                   state={state} />
               </li>
             );
-          })} 
+          })}
         </ol>
       </Toaster>
     );
