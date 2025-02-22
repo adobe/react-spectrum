@@ -54,8 +54,8 @@ export interface AutocompleteAria {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a autocomplete component.
- * A autocomplete combines a text input with a collection, allowing users to filter the collection's contents match a query.
+ * Provides the behavior and accessibility implementation for an autocomplete component.
+ * An autocomplete combines a text input with a collection, allowing users to filter the collection's contents match a query.
  * @param props - Props for the autocomplete.
  * @param state - State for the autocomplete, as returned by `useAutocompleteState`.
  */

@@ -12,7 +12,7 @@
 
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {AriaAutocompleteTests} from './AriaAutocomplete.test-util';
-import {Button, Dialog, DialogTrigger, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, Popover, SearchField, Select, SelectValue, Separator, UNSTABLE_SubDialogTrigger as SubDialogTrigger, SubmenuTrigger, Text, TextField, UNSTABLE_Autocomplete} from '..';
+import {Autocomplete, Button, Dialog, DialogTrigger, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, Popover, SearchField, Select, SelectValue, Separator, UNSTABLE_SubDialogTrigger as SubDialogTrigger, SubmenuTrigger, Text, TextField} from '..';
 import React, {ReactNode} from 'react';
 import {useAsyncList} from 'react-stately';
 import {useFilter} from '@react-aria/i18n';
@@ -210,7 +210,7 @@ let AutocompleteWrapper = ({autocompleteProps = {}, inputProps = {}, children}: 
   let filter = (textValue, inputValue) => contains(textValue, inputValue);
 
   return (
-    <UNSTABLE_Autocomplete filter={filter} {...autocompleteProps}>
+    <Autocomplete filter={filter} {...autocompleteProps}>
       <SearchField {...inputProps}>
         <Label style={{display: 'block'}}>Test</Label>
         <Input />
@@ -218,7 +218,7 @@ let AutocompleteWrapper = ({autocompleteProps = {}, inputProps = {}, children}: 
         <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
       </SearchField>
       {children}
-    </UNSTABLE_Autocomplete>
+    </Autocomplete>
   );
 };
 
@@ -228,14 +228,14 @@ let ControlledAutocomplete = ({autocompleteProps = {}, inputProps = {}, children
   let filter = (textValue, inputValue) => contains(textValue, inputValue);
 
   return (
-    <UNSTABLE_Autocomplete inputValue={inputValue} onInputChange={setInputValue} filter={filter} {...autocompleteProps}>
+    <Autocomplete inputValue={inputValue} onInputChange={setInputValue} filter={filter} {...autocompleteProps}>
       <SearchField {...inputProps}>
         <Label style={{display: 'block'}}>Test</Label>
         <Input />
         <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
       </SearchField>
       {children}
-    </UNSTABLE_Autocomplete>
+    </Autocomplete>
   );
 };
 
@@ -264,7 +264,7 @@ let AsyncFiltering = ({autocompleteProps = {}, inputProps = {}}: {autocompletePr
   });
 
   return (
-    <UNSTABLE_Autocomplete inputValue={list.filterText} onInputChange={list.setFilterText} {...autocompleteProps}>
+    <Autocomplete inputValue={list.filterText} onInputChange={list.setFilterText} {...autocompleteProps}>
       <SearchField {...inputProps}>
         <Label style={{display: 'block'}}>Test</Label>
         <Input />
@@ -276,7 +276,7 @@ let AsyncFiltering = ({autocompleteProps = {}, inputProps = {}}: {autocompletePr
         onSelectionChange={onSelectionChange}>
         {item => <MenuItem id={item.id}>{item.name}</MenuItem>}
       </Menu>
-    </UNSTABLE_Autocomplete>
+    </Autocomplete>
   );
 };
 
@@ -492,7 +492,7 @@ describe('Autocomplete', () => {
             <Dialog>
               <Button>First</Button>
               <Button>Second</Button>
-              <UNSTABLE_Autocomplete filter={contains}>
+              <Autocomplete filter={contains}>
                 <TextField autoFocus aria-label="Search">
                   <Input />
                 </TextField>
@@ -505,7 +505,7 @@ describe('Autocomplete', () => {
                     Duplicate
                   </MenuItem>
                 </Menu>
-              </UNSTABLE_Autocomplete>
+              </Autocomplete>
             </Dialog>
           </Popover>
         </DialogTrigger>
@@ -555,7 +555,7 @@ describe('Autocomplete', () => {
           <Button aria-label="Menu">☰</Button>
           <Popover>
             <Dialog>
-              <UNSTABLE_Autocomplete filter={contains}>
+              <Autocomplete filter={contains}>
                 <TextField autoFocus aria-label="Search">
                   <Input />
                 </TextField>
@@ -568,7 +568,7 @@ describe('Autocomplete', () => {
                     Duplicate
                   </MenuItem>
                 </Menu>
-              </UNSTABLE_Autocomplete>
+              </Autocomplete>
               <Button>First</Button>
               <Button>Second</Button>
             </Dialog>
