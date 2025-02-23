@@ -466,8 +466,7 @@ export default [{
         "**/docs/**",
         "**/chromatic/**",
         "**/chromatic-fc/**",
-        "**/__tests__/**",
-        "**/s2/**"
+        "**/__tests__/**"
     ],
 
     rules: {

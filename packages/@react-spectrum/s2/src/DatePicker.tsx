@@ -29,7 +29,7 @@ import {
   Text
 } from 'react-aria-components';
 import {HelpTextProps} from '@react-types/shared';
-import {ReactNode} from 'react';
+import {ReactElement, ReactNode} from 'react';
 
 export interface DatePickerProps<T extends DateValue>
   extends AriaDatePickerProps<T>, HelpTextProps {
@@ -38,7 +38,7 @@ export interface DatePickerProps<T extends DateValue>
 
 export function DatePicker<T extends DateValue>(
   {label, description, errorMessage, ...props}: DatePickerProps<T>
-) {
+): ReactElement {
   return (
     <AriaDatePicker {...props}>
       <Label>{label}</Label>

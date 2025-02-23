@@ -11,9 +11,9 @@
  */
 
 import Gripper_M from './S2_GripperSize100.svg';
-import {SVGProps} from 'react';
+import {ReactElement, SVGProps} from 'react';
 
-export default function Gripper(props: SVGProps<SVGSVGElement> & {size?: 'M'}) {
+export default function Gripper(props: SVGProps<SVGSVGElement> & {size?: 'M'}): ReactElement {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':

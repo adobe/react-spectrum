@@ -52,7 +52,7 @@ import {GridNode} from '@react-types/grid';
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {LayoutNode} from '@react-stately/layout';
+import {LayoutNode, ListLayoutOptions} from '@react-stately/layout';
 import {Menu, MenuItem, MenuTrigger} from './Menu';
 import {mergeStyles} from '../style/runtime';
 import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
@@ -188,7 +188,7 @@ const ROW_HEIGHTS = {
 };
 
 export class S2TableLayout<T> extends TableLayout<T> {
-  constructor(options) {
+  constructor(options: ListLayoutOptions) {
     super({...options, loaderHeight: 60});
   }
 

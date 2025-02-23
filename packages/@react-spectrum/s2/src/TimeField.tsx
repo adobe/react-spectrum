@@ -21,7 +21,7 @@ import {
   TimeValue
 } from 'react-aria-components';
 import {HelpTextProps} from '@react-types/shared';
-import {ReactNode} from 'react';
+import {ReactElement, ReactNode} from 'react';
 
 export interface TimeFieldProps<T extends TimeValue>
   extends AriaTimeFieldProps<T>, HelpTextProps {
@@ -30,7 +30,7 @@ export interface TimeFieldProps<T extends TimeValue>
 
 export function TimeField<T extends TimeValue>(
   {label, description, errorMessage, ...props}: TimeFieldProps<T>
-) {
+): ReactElement {
   return (
     <AriaTimeField {...props}>
       <Label>{label}</Label>
