@@ -40,7 +40,7 @@ export const HiddenContext = createContext<boolean>(false);
 // Portal to nowhere
 const hiddenFragment = typeof DocumentFragment !== 'undefined' ? new DocumentFragment() : null;
 
-export function Hidden(props: {children: ReactNode}) {
+export function Hidden(props: {children: ReactNode}): ReactElement {
   let isHidden = useContext(HiddenContext);
   let isSSR = useIsSSR();
   if (isHidden) {

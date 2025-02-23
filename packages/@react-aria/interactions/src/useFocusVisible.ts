@@ -247,7 +247,7 @@ export function getInteractionModality(): Modality | null {
   return currentModality;
 }
 
-export function setInteractionModality(modality: Modality) {
+export function setInteractionModality(modality: Modality): void {
   currentModality = modality;
   triggerChangeHandlers(modality, null);
 }

@@ -448,6 +448,9 @@ export default [{
         "packages/@react-stately/**/*.ts",
         "packages/@react-stately/**/*.tsx",
 
+        "packages/@react-aria/**/*.ts",
+        "packages/@react-aria/**/*.tsx",
+
         "packages/@react-spectrum/**/*.ts",
         "packages/@react-spectrum/**/*.tsx"
     ],

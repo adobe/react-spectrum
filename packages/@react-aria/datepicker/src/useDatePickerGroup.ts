@@ -1,12 +1,12 @@
 import {createFocusManager, getFocusableTreeWalker} from '@react-aria/focus';
 import {DateFieldState, DatePickerState, DateRangePickerState} from '@react-stately/datepicker';
-import {FocusableElement, KeyboardEvent, RefObject} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, KeyboardEvent, RefObject} from '@react-types/shared';
 import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 import {useMemo, useRef} from 'react';
 import {usePress} from '@react-aria/interactions';
 
-export function useDatePickerGroup(state: DatePickerState | DateRangePickerState | DateFieldState, ref: RefObject<Element | null>, disableArrowNavigation?: boolean) {
+export function useDatePickerGroup(state: DatePickerState | DateRangePickerState | DateFieldState, ref: RefObject<Element | null>, disableArrowNavigation?: boolean): DOMAttributes<FocusableElement> {
   let {direction} = useLocale();
   let focusManager = useMemo(() => createFocusManager(ref), [ref]);
   let segments = useRef<FocusableElement[]>(undefined);
@@ -24,7 +24,7 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
               rectX: node.getBoundingClientRect().left
             };
           });
-      
+
           let orderedSegments = segmentsArr.sort((a, b) => a.rectX - b.rectX).map((item => item.element));
           segments.current = orderedSegments;
         }
@@ -99,9 +99,9 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
               target = orderedSegments[index - 1] || target;
             }
 
-  
+
             target = orderedSegments[index + 1] || target;
-  
+
             if (target) {
               target.focus();
             }

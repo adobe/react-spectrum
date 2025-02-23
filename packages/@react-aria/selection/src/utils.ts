@@ -18,7 +18,7 @@ interface Event {
   metaKey: boolean
 }
 
-export function isNonContiguousSelectionModifier(e: Event) {
+export function isNonContiguousSelectionModifier(e: Event): boolean {
   // Ctrl + Arrow Up/Arrow Down has a system wide meaning on macOS, so use Alt instead.
   // On Windows and Ubuntu, Alt + Space has a system wide meaning.
   return isAppleDevice() ? e.altKey : e.ctrlKey;

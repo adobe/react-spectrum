@@ -116,7 +116,7 @@ function useCollectionDocument<T extends object, C extends BaseCollection<T>>(cr
   useLayoutEffect(() => {
     document.isMounted = true;
     return () => {
-      // Mark unmounted so we can skip all of the collection updates caused by 
+      // Mark unmounted so we can skip all of the collection updates caused by
       // React calling removeChild on every item in the collection.
       document.isMounted = false;
     };
@@ -158,7 +158,7 @@ function useSSRCollectionNode<T extends Element>(Type: string, props: object, re
 
 export function createLeafComponent<T extends object, P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>) => ReactElement): (props: P & React.RefAttributes<T>) => ReactElement | null;
 export function createLeafComponent<T extends object, P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement): (props: P & React.RefAttributes<T>) => ReactElement | null;
-export function createLeafComponent<P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node?: any) => ReactElement) {
+export function createLeafComponent<P extends object, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node?: any) => ReactElement): (props: P & React.RefAttributes<any>) => ReactElement | null {
   let Component = ({node}) => render(node.props, node.props.ref, node);
   let Result = (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
     let isShallow = useContext(ShallowRenderContext);
@@ -176,7 +176,7 @@ export function createLeafComponent<P extends object, E extends Element>(type: s
   return Result;
 }
 
-export function createBranchComponent<T extends object, P extends {children?: any}, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement, useChildren: (props: P) => ReactNode = useCollectionChildren) {
+export function createBranchComponent<T extends object, P extends {children?: any}, E extends Element>(type: string, render: (props: P, ref: ForwardedRef<E>, node: Node<T>) => ReactElement, useChildren: (props: P) => ReactNode = useCollectionChildren): (props: P & React.RefAttributes<E>) => React.ReactElement | null {
   let Component = ({node}) => render(node.props, node.props.ref, node);
   let Result = (forwardRef as forwardRefType)((props: P, ref: ForwardedRef<E>) => {
     let children = useChildren(props);

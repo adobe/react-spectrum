@@ -12,7 +12,7 @@
 
 import {ClearPressResponder} from '@react-aria/interactions';
 import {FocusScope} from '@react-aria/focus';
-import React, {ReactNode, useContext, useMemo, useState} from 'react';
+import React, {ReactElement, ReactNode, useContext, useMemo, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {useIsSSR} from '@react-aria/ssr';
 import {useLayoutEffect} from '@react-aria/utils';
@@ -45,7 +45,7 @@ export const OverlayContext = React.createContext<{contain: boolean, setContain:
  * A container which renders an overlay such as a popover or modal in a portal,
  * and provides a focus scope for the child elements.
  */
-export function Overlay(props: OverlayProps) {
+export function Overlay(props: OverlayProps): ReactElement | null {
   let isSSR = useIsSSR();
   let {portalContainer = isSSR ? null : document.body, isExiting} = props;
   let [contain, setContain] = useState(false);
@@ -81,7 +81,7 @@ export function Overlay(props: OverlayProps) {
 }
 
 /** @private */
-export function useOverlayFocusContain() {
+export function useOverlayFocusContain(): void {
   let ctx = useContext(OverlayContext);
   let setContain = ctx?.setContain;
   useLayoutEffect(() => {

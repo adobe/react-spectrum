@@ -78,7 +78,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
   // When virtualized, the layout object will be passed in as a prop and override this.
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let delegate = useMemo(() => keyboardDelegate || new ListKeyboardDelegate(state.collection, state.disabledKeys, ref, collator), [keyboardDelegate, state.collection, state.disabledKeys, collator]);
+  let delegate = useMemo(() => keyboardDelegate || new ListKeyboardDelegate(state.collection, state.disabledKeys, ref, collator), [keyboardDelegate, state.collection, state.disabledKeys, collator, ref]);
 
   let {menuTriggerProps, menuProps} = useMenuTrigger<T>(
     {

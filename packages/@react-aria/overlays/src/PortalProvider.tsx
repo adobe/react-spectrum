@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {createContext, ReactNode, useContext} from 'react';
+import React, {createContext, ReactElement, ReactNode, useContext} from 'react';
 
 export interface PortalProviderProps {
   /* Should return the element where we should portal to. Can clear the context by passing null. */
@@ -19,7 +19,7 @@ export interface PortalProviderProps {
 
 export const PortalContext = createContext<PortalProviderProps>({});
 
-export function UNSTABLE_PortalProvider(props: PortalProviderProps & {children: ReactNode}) {
+export function UNSTABLE_PortalProvider(props: PortalProviderProps & {children: ReactNode}): ReactElement {
   let {getContainer} = props;
   let {getContainer: ctxGetContainer} = useUNSTABLE_PortalContext();
   return (
@@ -29,6 +29,6 @@ export function UNSTABLE_PortalProvider(props: PortalProviderProps & {children: 
   );
 }
 
-export function useUNSTABLE_PortalContext() {
+export function useUNSTABLE_PortalContext(): PortalProviderProps {
   return useContext(PortalContext) ?? {};
 }
