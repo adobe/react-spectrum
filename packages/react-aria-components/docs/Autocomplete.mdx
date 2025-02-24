@@ -214,7 +214,6 @@ This example wraps `Autocomplete` and all of its children together into a single
 import type {AutocompleteProps, Key} from 'react-aria-components';
 import {Menu, MenuItem} from 'react-aria-components';
 import {MySearchField} from './SearchField';
-import {MyItem} from './Menu';
 
 interface MyAutocompleteProps<T extends object> extends Omit<AutocompleteProps, 'children'> {
   label?: string,
@@ -239,14 +238,14 @@ function MyAutocomplete<T extends object>({label,placeholder, items, children, o
 }
 
 <MyAutocomplete label="Commands" placeholder="Search commands...">
-  <MyItem>Create new file...</MyItem>
-  <MyItem>Create new folder...</MyItem>
-  <MyItem>Assign to...</MyItem>
-  <MyItem>Assign to me</MyItem>
-  <MyItem>Change status...</MyItem>
-  <MyItem>Change priority...</MyItem>
-  <MyItem>Add label...</MyItem>
-  <MyItem>Remove label...</MyItem>
+  <MenuItem>Create new file...</MenuItem>
+  <MenuItem>Create new folder...</MenuItem>
+  <MenuItem>Assign to...</MenuItem>
+  <MenuItem>Assign to me</MenuItem>
+  <MenuItem>Change status...</MenuItem>
+  <MenuItem>Change priority...</MenuItem>
+  <MenuItem>Add label...</MenuItem>
+  <MenuItem>Remove label...</MenuItem>
 </MyAutocomplete>
 ```
 
@@ -306,7 +305,7 @@ function Example() {
         /*- begin highlight -*/
         defaultInputValue="Adobe XD">
         {/*- end highlight -*/}
-        {item => <MyItem>{item.name}</MyItem>}
+        {item => <MenuItem>{item.name}</MenuItem>}
       </MyAutocomplete>
 
       <MyAutocomplete
@@ -316,7 +315,7 @@ function Example() {
         inputValue={value}
         onInputChange={setValue}>
         {/*- end highlight -*/}
-        {item => <MyItem>{item.name}</MyItem>}
+        {item => <MenuItem>{item.name}</MenuItem>}
       </MyAutocomplete>
     </div>
   );
@@ -367,9 +366,9 @@ function Example() {
         <MySearchField label="Animals" placeholder="Search animals..." />
         <AutocompleteClearButton />
         <Menu>
-          <MyItem id="cat">Cat</MyItem>
-          <MyItem id="dog">Dog</MyItem>
-          <MyItem id="kangaroo">Kangaroo</MyItem>
+          <MenuItem id="cat">Cat</MenuItem>
+          <MenuItem id="dog">Dog</MenuItem>
+          <MenuItem id="kangaroo">Kangaroo</MenuItem>
         </Menu>
       </Autocomplete>
     </div>
