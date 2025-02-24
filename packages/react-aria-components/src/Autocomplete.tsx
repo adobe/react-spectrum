@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaAutocompleteProps, CollectionOptions, UNSTABLE_useAutocomplete} from '@react-aria/autocomplete';
-import {AutocompleteState, UNSTABLE_useAutocompleteState} from '@react-stately/autocomplete';
+import {AriaAutocompleteProps, CollectionOptions, useAutocomplete} from '@react-aria/autocomplete';
+import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomplete';
 import {InputContext} from './Input';
 import {mergeProps} from '@react-aria/utils';
 import {Provider, removeDataAttributes, SlotProps, SlottedContextValue, useSlottedContext} from './utils';
@@ -27,20 +27,20 @@ interface InternalAutocompleteContextValue {
   collectionRef: RefObject<HTMLElement | null>
 }
 
-export const UNSTABLE_AutocompleteContext = createContext<SlottedContextValue<AutocompleteProps>>(null);
-export const UNSTABLE_AutocompleteStateContext = createContext<AutocompleteState | null>(null);
+export const AutocompleteContext = createContext<SlottedContextValue<Partial<AutocompleteProps>>>(null);
+export const AutocompleteStateContext = createContext<AutocompleteState | null>(null);
 // This context is to pass the register and filter down to whatever collection component is wrapped by the Autocomplete
 // TODO: export from RAC, but rename to something more appropriate
 export const UNSTABLE_InternalAutocompleteContext = createContext<InternalAutocompleteContextValue | null>(null);
 
 /**
- * A autocomplete combines a text input with a menu, allowing users to filter a list of options to items matching a query.
+ * An autocomplete combines a text input with a menu, allowing users to filter a list of options to items matching a query.
  */
-export function UNSTABLE_Autocomplete(props: AutocompleteProps) {
-  let ctx = useSlottedContext(UNSTABLE_AutocompleteContext, props.slot);
+export function Autocomplete(props: AutocompleteProps) {
+  let ctx = useSlottedContext(AutocompleteContext, props.slot);
   props = mergeProps(ctx, props);
   let {filter} = props;
-  let state = UNSTABLE_useAutocompleteState(props);
+  let state = useAutocompleteState(props);
   let inputRef = useRef<HTMLInputElement | null>(null);
   let collectionRef = useRef<HTMLElement>(null);
   let {
@@ -48,7 +48,7 @@ export function UNSTABLE_Autocomplete(props: AutocompleteProps) {
     collectionProps,
     collectionRef: mergedCollectionRef,
     filterFn
-  } = UNSTABLE_useAutocomplete({
+  } = useAutocomplete({
     ...removeDataAttributes(props),
     filter,
     inputRef,
@@ -58,7 +58,7 @@ export function UNSTABLE_Autocomplete(props: AutocompleteProps) {
   return (
     <Provider
       values={[
-        [UNSTABLE_AutocompleteStateContext, state],
+        [AutocompleteStateContext, state],
         [SearchFieldContext, textFieldProps],
         [TextFieldContext, textFieldProps],
         [InputContext, {ref: inputRef}],
