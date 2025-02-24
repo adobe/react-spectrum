@@ -14,6 +14,7 @@ import {ArbitraryValue, CSSProperties, CSSValue, PropertyValueMap} from './types
 import {autoStaticColor, colorScale, colorToken, fontSizeToken, generateOverlayColorScale, getToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
 import {Color, createArbitraryProperty, createColorProperty, createMappedProperty, createRenamedProperty, createSizingProperty, createTheme, parseArbitraryValue} from './style-macro';
 import type * as CSS from 'csstype';
+import {getThemeVersion} from './version';
 
 interface MacroContext {
   addAsset(asset: {type: string, content: string}): void
@@ -453,6 +454,7 @@ const fontSize = {
 } as const;
 
 export const style = createTheme({
+  version: getThemeVersion(),
   properties: {
     // colors
     color: createColorProperty({

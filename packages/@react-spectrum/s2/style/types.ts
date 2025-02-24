@@ -30,6 +30,7 @@ export type PropertyFunction<T> = (value: T, property: string) => PropertyValueD
 export type ShorthandProperty<T> = (value: T) => {[name: string]: Value};
 
 export interface Theme {
+  version?: string,
   properties: {
     [name: string]: PropertyValueMap | PropertyFunction<any> | string[]
   },
@@ -53,7 +54,7 @@ type PropertyValue<T> =
 export type ArbitraryValue = CustomProperty | `[${string}]`;
 type PropertyValue2<T> = PropertyValue<T> | ArbitraryValue;
 type Merge<T> = T extends any ? T : never;
-type ShorthandValue<T extends Theme, P> = 
+type ShorthandValue<T extends Theme, P> =
   P extends string[]
     ? PropertyValue2<T['properties'][P[0]]>
     : P extends ShorthandProperty<infer V>
