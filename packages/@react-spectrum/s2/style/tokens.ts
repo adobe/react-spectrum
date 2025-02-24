@@ -64,7 +64,23 @@ export function autoStaticColor(bg = 'var(--s2-container-bg)', alpha = 1): strin
   return `lch(from ${bg} calc((49.44 - l) * infinity) 0 0 / ${alpha})`;
 }
 
-export function generateOverlayColorScale(bg = 'var(--s2-container-bg)'): {[key: string]: string} {
+interface ColorScaleValues {
+    'transparent-overlay-25': string,
+    'transparent-overlay-50': string,
+    'transparent-overlay-75': string,
+    'transparent-overlay-100': string,
+    'transparent-overlay-200': string,
+    'transparent-overlay-300': string,
+    'transparent-overlay-400': string,
+    'transparent-overlay-500': string,
+    'transparent-overlay-600': string,
+    'transparent-overlay-700': string,
+    'transparent-overlay-800': string,
+    'transparent-overlay-900': string,
+    'transparent-overlay-1000': string
+}
+
+export function generateOverlayColorScale(bg = 'var(--s2-container-bg)'): ColorScaleValues {
   return {
     'transparent-overlay-25': autoStaticColor(bg, extractOpacity(getToken('transparent-white-25'))),
     'transparent-overlay-50': autoStaticColor(bg, extractOpacity(getToken('transparent-white-50'))),

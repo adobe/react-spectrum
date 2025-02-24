@@ -191,7 +191,14 @@ interface ActionBarContainerHookProps {
   scrollRef?: RefObject<HTMLElement | null>
 }
 
-export function useActionBarContainer(props: ActionBarContainerHookProps): void {
+interface ActionBarContainerHookResult {
+  selectedKeys: 'all' | Iterable<Key>,
+  onSelectionChange: (keys: 'all' | Iterable<Key>) => void,
+  actionBar: ReactElement,
+  actionBarHeight: number
+}
+
+export function useActionBarContainer(props: ActionBarContainerHookProps): ActionBarContainerHookResult {
   let {renderActionBar, scrollRef} = props;
   let [selectedKeys, setSelectedKeys] = useControlledState(props.selectedKeys, props.defaultSelectedKeys || new Set(), props.onSelectionChange);
   let selectedKeysSet = useMemo(() => selectedKeys === 'all' ? selectedKeys as 'all' : new Set(selectedKeys), [selectedKeys]);
