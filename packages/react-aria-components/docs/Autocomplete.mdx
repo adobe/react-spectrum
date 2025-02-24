@@ -122,19 +122,10 @@ function Example() {
 import {Autocomplete, SearchField, Menu} from 'react-aria-components';
 
 <Autocomplete>
-  <SearchField />   {/*   or <TextField />   */}
-  <Menu />   {/*   or <ListBox />   */}
+  <SearchField /> or <TextField />
+  <Menu /> or <ListBox />
 </Autocomplete>
 ```
-
-## Features
-
-An autocomplete can be built using the [&lt;datalist&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/datalist) HTML element, but this is very limited in functionality and difficult to style. `Autocomplete` helps achieve accessible autocomplete components that can be styled as needed.
-
-* **Flexible** – Support for multiple input types and collection types, controlled and uncontrolled state, and custom filter functions.
-* **Keyboard navigation** – Autocomplete can be navigated using the arrow keys, along with page up/down, home/end, etc. The list of options is filtered while typing into the input, and items can be selected with the enter key.
-* **Accessible** – Follows the [ARIA autocomplete pattern](https://w3c.github.io/aria/#aria-autocomplete), with support for items and sections, and slots for label and description elements within each item.
-* **Styleable** – Items include builtin states for styling, such as hover, press, focus, selected, and disabled.
 
 ### Concepts
 
