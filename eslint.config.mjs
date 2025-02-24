@@ -439,20 +439,8 @@ export default [{
     },
 }, {
     files: [
-        "packages/react-aria-components/**/*.ts",
-        "packages/react-aria-components/**/*.tsx",
-
-        "packages/@internationalized/**/*.ts",
-        "packages/@internationalized/**/*.tsx",
-
-        "packages/@react-stately/**/*.ts",
-        "packages/@react-stately/**/*.tsx",
-
-        "packages/@react-aria/**/*.ts",
-        "packages/@react-aria/**/*.tsx",
-
-        "packages/@react-spectrum/**/*.ts",
-        "packages/@react-spectrum/**/*.tsx"
+        "packages/**/*.ts",
+        "packages/**/*.tsx"
     ],
 
     rules: {
