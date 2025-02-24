@@ -613,7 +613,7 @@ describe('Autocomplete', () => {
 
   it('should not auto focus first item when disableAutoFocusFirst is true', async () => {
     let {getByRole} = render(
-      <AutocompleteWrapper autocompleteProps={{ disableAutoFocusFirst: true }}>
+      <AutocompleteWrapper autocompleteProps={{disableAutoFocusFirst: true}}>
         <StaticMenu />
       </AutocompleteWrapper>
     );
