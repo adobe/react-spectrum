@@ -1,0 +1,198 @@
+{/* Copyright 2025 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {ExampleLayout} from '@react-spectrum/docs';
+export default ExampleLayout;
+
+import docs from 'docs:react-aria-components';
+import styles from '@react-spectrum/docs/src/docs.css';
+import Menu from '@react-spectrum/docs/pages/assets/component-illustrations/Menu.svg';
+import TextField from '@react-spectrum/docs/pages/assets/component-illustrations/TextField.svg';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+
+---
+keywords: [example, autocomplete, menu, aria, accessibility, react, component]
+type: component
+image: command-palette.png
+description: An command palette with actions, styled with Tailwind CSS.
+---
+
+# Command Palette
+
+A Command Palette is an interface that allows users to quickly run commands or navigate to content within an application. 
+
+## Example
+
+This example uses the [`Autocomplete`](../Autocomplete.html) component from React Aria Components to filter a list of commands and display them in a [`Menu`](../Menu.html). The [`TextField`](../TextField.html) is used to capture user input and filter the list of available commands.
+
+```tsx import
+import './tailwind.global.css';
+```
+
+```tsx example standalone
+import {
+  Autocomplete,
+  TextField,
+  Menu,
+  MenuItem,
+  useFilter,
+  Input,
+  Dialog,
+  DialogTrigger,
+  Modal,
+  ModalOverlay,
+  Button
+} from 'react-aria-components';
+import {useEffect, useMemo, useState} from 'react';
+
+function CommandPaletteExample() {
+  let commands = [
+    {id: 'new-file', label: 'Create new file…'},
+    {id: 'new-folder', label: 'Create new folder…'},
+    {id: 'assign', label: 'Assign to…'},
+    {id: 'assign-me', label: 'Assign to me'},
+    {id: 'status', label: 'Change status…'},
+    {id: 'priority', label: 'Change priority…'},
+    {id: 'label-add', label: 'Add label…'},
+    {id: 'label-remove', label: 'Remove label…'}
+  ];
+
+  let [isOpen, setOpen] = useState(false);
+  let {contains} = useFilter({sensitivity: 'base'});
+  let isMac = useMemo(() => /Mac/.test(navigator.platform), []);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'k' && (isMac ? e.metaKey : e.ctrlKey)) {
+        e.preventDefault();
+        setOpen((prev) => !prev);
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  })
+
+  return (
+    <div className="bg-linear-to-r from-indigo-500 to-violet-500 p-8 h-[340px] rounded-lg flex items-center justify-center">
+      <DialogTrigger isOpen={isOpen} onOpenChange={setOpen}>
+        <Button className="inline-flex items-center justify-center rounded-xl bg-black/20 bg-clip-padding border border-white/20 px-3.5 py-2 font-medium font-[inherit] text-base text-white hover:bg-black/30 pressed:bg-black/40 transition-colors cursor-default outline-hidden focus-visible:ring-2 focus-visible:ring-white/75">
+          Press here or type <kbd className="px-2 py-1 m-2 text-xs font-semibold border border-gray-200 rounded-lg">{isMac ? '⌘' : 'Ctrl'}</kbd> + <kbd className="px-2 py-1 m-2 text-xs font-semibold border border-gray-200 rounded-lg">K</kbd> to open command palette
+        </Button>
+        <ModalOverlay
+          isDismissable
+          className={({ isEntering, isExiting }) => `
+          fixed inset-0 z-10 overflow-y-auto bg-black/25 flex min-h-full items-center justify-center p-4 text-center
+          ${isEntering ? 'animate-in fade-in duration-300 ease-out' : ''}
+          ${isExiting ? 'animate-out fade-out duration-200 ease-in' : ''}
+        `}
+        >
+          <Modal
+            className={({ isEntering, isExiting }) => `
+            ${isEntering ? 'animate-in zoom-in-95 ease-out duration-300' : ''}
+            ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}
+          `}
+          >
+            <Dialog className="outline-hidden relative">
+              <div className="flex flex-col gap-1 w-[500px] rounded-xl bg-white shadow-lg p-2">
+                <Autocomplete filter={contains}>
+                  <TextField
+                    aria-label="Search commands"
+                    className="flex flex-col px-3 py-2 rounded-md outline-none placeholder-white/70"
+                  >
+                    <Input
+                      autoFocus
+                      placeholder="Search commands…"
+                      className="border-none py-2 px-3 leading-5 text-gray-900 bg-transparent outline-hidden text-base focus-visible:ring-2 focus-visible:ring-violet-500 rounded-lg"
+                    />
+                  </TextField>
+                  <Menu
+                    items={commands}
+                    className="mt-2 p-1 max-h-44 overflow-auto"
+                  >
+                    {({ label }) => <CommandItem>{label}</CommandItem>}
+                  </Menu>
+                </Autocomplete>
+              </div>
+            </Dialog>
+          </Modal>
+        </ModalOverlay>
+      </DialogTrigger>
+    </div>
+  );
+}
+
+function CommandItem(props) {
+  return (
+    <MenuItem
+      {...props}
+      className="group flex w-full items-center rounded-md px-3 py-2 box-border outline-none cursor-default text-gray-900 hover:bg-violet-100 pressed:bg-violet-200 focus:bg-violet-500 focus:text-white"
+    />
+  );
+}
+```
+
+### Tailwind config
+
+This example uses the following plugins:
+
+* [tailwindcss-react-aria-components](../styling.html#plugin)
+* [tailwindcss-animate](https://github.com/jamiebuilds/tailwindcss-animate)
+
+When using Tailwind v4, add them to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+@plugin "tailwindcss-animate";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugins to your `tailwind.config.js` instead:
+
+```tsx
+module.exports = {
+  // ...
+  plugins: [
+    require('tailwindcss-react-aria-components'),
+    require('tailwindcss-animate')
+  ]
+};
+```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
+
+## Components
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="../TextField.html"
+  title="TextField"
+  description="A text field allows a user to enter a plain text value with a keyboard.">
+  <TextField />
+</ExampleCard>
+
+<ExampleCard
+  url="../Menu.html"
+  title="Menu"
+  description="A menu displays a list of actions or options that a user can choose.">
+  <Menu style={{background: 'var(--anatomy-gray-100)', width: 'calc(100% - 20px)', padding: 10, maxHeight: 132}} />
+</ExampleCard>
+
+</section>

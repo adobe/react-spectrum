@@ -73,6 +73,7 @@
     "@react-aria/tag": "^3.4.9",
     "@react-aria/textfield": "^3.16.0",
     "@react-aria/tooltip": "^3.7.11",
+    "@react-aria/tree": "^3.0.0-beta.3",
     "@react-aria/utils": "^3.27.0",
     "@react-aria/visually-hidden": "^3.8.19",
     "@react-types/shared": "^3.27.0"

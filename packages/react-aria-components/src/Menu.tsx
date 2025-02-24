@@ -15,12 +15,12 @@ import {BaseCollection, Collection, CollectionBuilder, createBranchComponent, cr
 import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {DialogContext, OverlayTriggerStateContext} from './Dialog';
 import {filterDOMProps, mergeRefs, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {FocusStrategy, forwardRefType, HoverEvents, Key, LinkDOMProps, MultipleSelection} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import {KeyboardContext} from './Keyboard';
 import {MultipleSelectionState, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
-import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
 import {PressResponder, useHover} from '@react-aria/interactions';
 import React, {
@@ -70,7 +70,6 @@ export function MenuTrigger(props: MenuTriggerProps) {
     ref: ref,
     onResize: onResize
   });
-
   let scrollRef = useRef(null);
 
   return (
@@ -106,7 +105,7 @@ export interface SubmenuTriggerProps {
   delay?: number
 }
 
-const SubmenuTriggerContext = createContext<{parentMenuRef: RefObject<HTMLElement | null>} | null>(null);
+const SubmenuTriggerContext = createContext<{parentMenuRef: RefObject<HTMLElement | null>, shouldUseVirtualFocus?: boolean} | null>(null);
 
 /**
  * A submenu trigger is used to wrap a submenu's trigger item and the submenu itself.
@@ -120,11 +119,12 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
   let submenuTriggerState = useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
   let submenuRef = useRef<HTMLDivElement>(null);
   let itemRef = useObjectRef(ref);
-  let {parentMenuRef} = useContext(SubmenuTriggerContext)!;
+  let {parentMenuRef, shouldUseVirtualFocus} = useContext(SubmenuTriggerContext)!;
   let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger({
     parentMenuRef,
     submenuRef,
-    delay: props.delay
+    delay: props.delay,
+    shouldUseVirtualFocus
   }, submenuTriggerState, itemRef);
 
   return (
@@ -138,9 +138,62 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
           trigger: 'SubmenuTrigger',
           triggerRef: itemRef,
           placement: 'end top',
-          // Prevent parent popover from hiding submenu.
-          // @ts-ignore
-          'data-react-aria-top-layer': true,
+          ...popoverProps
+        }]
+      ]}>
+      <CollectionBranch collection={state.collection} parent={item} />
+      {props.children[1]}
+    </Provider>
+  );
+}, props => props.children[0]);
+
+// TODO: make SubdialogTrigger unstable
+export interface SubDialogTriggerProps {
+  /**
+   * The contents of the SubDialogTrigger. The first child should be an Item (the trigger) and the second child should be the Popover (for the subdialog).
+   */
+  children: ReactElement[],
+  /**
+   * The delay time in milliseconds for the subdialog to appear after hovering over the trigger.
+   * @default 200
+   */
+  delay?: number
+}
+
+/**
+ * A subdialog trigger is used to wrap a subdialog's trigger item and the subdialog itself.
+ *
+ * @version alpha
+ */
+export const SubDialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogtrigger', (props: SubDialogTriggerProps, ref: ForwardedRef<HTMLDivElement>, item) => {
+  let {CollectionBranch} = useContext(CollectionRendererContext);
+  let state = useContext(MenuStateContext)!;
+  let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
+  let submenuTriggerState = useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
+  let subdialogRef = useRef<HTMLDivElement>(null);
+  let itemRef = useObjectRef(ref);
+  let {parentMenuRef, shouldUseVirtualFocus} = useContext(SubmenuTriggerContext)!;
+  let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger({
+    parentMenuRef,
+    submenuRef: subdialogRef,
+    type: 'dialog',
+    delay: props.delay,
+    shouldUseVirtualFocus
+    // TODO: might need to have something like isUnavailable like we do for ContextualHelpTrigger
+  }, submenuTriggerState, itemRef);
+
+  return (
+    <Provider
+      values={[
+        [MenuItemContext, {...submenuTriggerProps, onAction: undefined, ref: itemRef}],
+        [DialogContext, {'aria-labelledby': submenuProps['aria-labelledby']}],
+        [MenuContext, submenuProps],
+        [OverlayTriggerStateContext, submenuTriggerState],
+        [PopoverContext, {
+          ref: subdialogRef,
+          trigger: 'SubDialogTrigger',
+          triggerRef: itemRef,
+          placement: 'end top',
           ...popoverProps
         }]
       ]}>
@@ -206,9 +259,14 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             [MenuStateContext, state],
             [SeparatorContext, {elementType: 'div'}],
             [SectionContext, {name: 'MenuSection', render: MenuSectionInner}],
-            [SubmenuTriggerContext, {parentMenuRef: ref}],
+            [SubmenuTriggerContext, {parentMenuRef: ref, shouldUseVirtualFocus: autocompleteMenuProps?.shouldUseVirtualFocus}],
             [MenuItemContext, null],
-            [SelectionManagerContext, state.selectionManager]
+            [UNSTABLE_InternalAutocompleteContext, null],
+            [SelectionManagerContext, state.selectionManager],
+            /* Ensure root MenuTriggerState is defined, in case Menu is rendered outside a MenuTrigger. */
+            /* We assume the context can never change between defined and undefined. */
+            /* eslint-disable-next-line react-hooks/rules-of-hooks */
+            [RootMenuTriggerStateContext, triggerState ?? useMenuTriggerState({})]
           ]}>
           <CollectionRoot
             collection={state.collection}
