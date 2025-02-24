@@ -110,7 +110,7 @@ function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
       layout={ListLayout}
       layoutOptions={{
         rowHeight: scale === 'large' ? 50 : 40,
-        gap: isDetached ? 4 : 0
+        gap: isDetached ? 2 : 0
       }}>
       <TreeRendererContext.Provider value={{renderer}}>
         <InternalTreeContext.Provider value={{isDetached, isEmphasized}}>
