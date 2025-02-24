@@ -345,66 +345,6 @@ All React Aria Components export a corresponding context that can be used to sen
 
 Autocomplete provides an <TypeLink links={statelyDocs.links} type={statelyDocs.exports.AutocompleteState} /> object to its children via `AutocompleteStateContext`. This can be used to access and manipulate the autocomplete's state.
 
-This example shows an `AutocompleteClearButton` component that can be placed within an `Autocomplete` to allow the user to clear the input.
-
-```tsx example
-import {AutocompleteStateContext as AutocompleteStateContext, Button} from 'react-aria-components';
-
-function Example() {
-  let {contains} = useFilter({sensitivity: 'base'});
-  return (
-    <div className="custom-autocomplete">
-      <Autocomplete filter={contains}>
-        <MySearchField label="Animals" placeholder="Search animals..." />
-        <AutocompleteClearButton />
-        <Menu>
-          <MyItem id="cat">Cat</MyItem>
-          <MyItem id="dog">Dog</MyItem>
-          <MyItem id="kangaroo">Kangaroo</MyItem>
-        </Menu>
-      </Autocomplete>
-    </div>
-  )
-}
-
-function AutocompleteClearButton() {
-  /*- begin highlight -*/
-  let state = React.useContext(AutocompleteStateContext);
-  /*- end highlight -*/
-  return (
-    <Button
-      className="clear-button"
-      onPress={() => state?.setInputValue('')}>
-      Clear
-    </Button>
-  );
-}
-```
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-
-```css
-
-.custom-autocomplete {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  max-width: 300px;
-  height: 220px;
-  border: 1px solid var(--border-color);
-  padding: 16px;
-  border-radius: 10px;
-  background: var(--overlay-background);
-}
-
-.clear-button {
-  margin-top: 8px;
-}
-```
-
-</details>
-
 ### Hooks
 
 If you need to customize things even further, such as accessing internal state, intercepting events, or customizing the DOM structure, you can drop down to the lower level Hook-based API. See [useAutocomplete](useAutocomplete.html) for more details.
