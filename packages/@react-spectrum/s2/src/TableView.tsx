@@ -365,7 +365,7 @@ const centeredWrapper = style({
   alignItems: 'center',
   justifyContent: 'center',
   width: 'full',
-  height: '[calc(100% - 40px)]'
+  height: '[calc(100% - 80px)]'
 });
 
 export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 'className' | 'dependencies'> {}
@@ -381,7 +381,7 @@ export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
   let renderer = children;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let loadMoreSpinner = (
-    <UNSTABLE_TableLoadingIndicator className={style({height: '[calc(100% - 40px)]', width: 'full'})}>
+    <UNSTABLE_TableLoadingIndicator className={style({height: '[calc(100% - 80px)]', width: 'full'})}>
       <div className={centeredWrapper}>
         <ProgressCircle
           isIndeterminate
