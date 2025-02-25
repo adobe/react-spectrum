@@ -223,7 +223,7 @@ export class S2TableLayout<T> extends TableLayout<T> {
     layoutInfo.allowOverflow = true;
     // If loading or empty, we'll want the body to be sticky and centered
     if (children?.length === 0) {
-      layoutInfo.rect = new Rect(40, 40, this.virtualizer!.visibleRect.width - 80, this.virtualizer!.visibleRect.height - 80);
+      layoutInfo.rect = new Rect(40, 0, this.virtualizer!.visibleRect.width - 80, this.virtualizer!.visibleRect.height - 80);
       layoutInfo.isSticky = true;
     }
 
@@ -365,7 +365,7 @@ const centeredWrapper = style({
   alignItems: 'center',
   justifyContent: 'center',
   width: 'full',
-  height: '[calc(100% - 80px)]'
+  height: 'full'
 });
 
 export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 'className' | 'dependencies'> {}
@@ -381,7 +381,7 @@ export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
   let renderer = children;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let loadMoreSpinner = (
-    <UNSTABLE_TableLoadingIndicator className={style({height: '[calc(100% - 80px)]', width: 'full'})}>
+    <UNSTABLE_TableLoadingIndicator className={style({height: 'full', width: 'full'})}>
       <div className={centeredWrapper}>
         <ProgressCircle
           isIndeterminate
