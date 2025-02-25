@@ -27,7 +27,8 @@ const onActionOptions = {onActionFunc, noOnAction};
 const meta: Meta<typeof TableView> = {
   component: TableView,
   parameters: {
-    layout: 'centered'
+    layout: 'centered',
+    controls: {exclude: ['onResize']}
   },
   tags: ['autodocs'],
   args: {
@@ -490,7 +491,6 @@ const SortableResizableTable = (args: any) => {
 export const ResizingTable = {
   render: SortableResizableTable,
   args: {
-    onResize: action('onResize'),
     onResizeStart: action('onResizeStart'),
     onResizeEnd: action('onResizeEnd'),
     columns: resizeColumn,
@@ -502,7 +502,6 @@ export const ResizingTable = {
 export const ResizingSortableTable = {
   render: SortableResizableTable,
   args: {
-    onResize: action('onResize'),
     onResizeStart: action('onResizeStart'),
     onResizeEnd: action('onResizeEnd'),
     columns: sortResizeColumns,
@@ -586,7 +585,6 @@ export const ResizingUncontrolledSortableColumns = {
   render: (args) => <AsyncLoadingExample {...args} />,
   args: {
     ...Example.args,
-    onResize: action('onResize'),
     onResizeStart: action('onResizeStart'),
     onResizeEnd: action('onResizeEnd')
   },
