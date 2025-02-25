@@ -16,6 +16,7 @@ import AlertIcon from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
 import {Button} from './Button';
 import {CenterBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../s2wf-icons/S2_Icon_CheckmarkCircle_20_N.svg';
+import Chevron from '../s2wf-icons/S2_Icon_ChevronDownSize300_20_N.svg';
 import {CloseButton} from './CloseButton';
 import {DOMProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
@@ -243,7 +244,7 @@ export function ToastContainer(props: SpectrumToastContainerProps) {
       })}>
       {/* {!queue.isExpanded && <div style={{position: 'absolute', viewTransitionName: 'toast-grad', insetBlock: -100, insetInline: -200, backgroundImage: 'radial-gradient(farthest-side, var(--s2-container-bg) 50%, transparent)'}} />} */}
       {queue.isExpanded && <div style={{viewTransitionName: 'toast-background'}} className={style({position: 'fixed', inset: 0, backgroundColor: 'transparent-black-500'})} />}
-      {queue?.visibleToasts.length > 1 && 
+      {queue.isExpanded && 
         <div style={{display: 'flex', justifyContent: 'end', gap: 8, viewTransitionName: 'toast-button'}}>
           <ActionButton
             size="S"
@@ -322,7 +323,15 @@ export function SpectrumToast(props: ToastProps<SpectrumToastValue>) {
         ...renderProps,
         variant: toast.content.variant || 'info',
         index
-      })}>
+      })}
+      onClick={() => {
+        if (!queue.isExpanded) {
+          document.startViewTransition({
+            update: () => queue.toggleExpandedState(),
+            types: [queue.isExpanded ? 'toast-collapse' : 'toast-expand']
+          });
+        }
+      }}>
       <div role="presentation" className={toastBody}>
         <ToastContent className={toastContent} style={{opacity: isLast || queue.isExpanded ? 1 : 0}}>
           {Icon &&
@@ -332,6 +341,19 @@ export function SpectrumToast(props: ToastProps<SpectrumToastValue>) {
           }
           <Text slot="title">{toast.content.children}</Text>
         </ToastContent>
+        {isLast && queue.visibleToasts.length > 1 &&
+          <ActionButton
+            size="XS"
+            variant="secondary"
+            isQuiet
+            staticColor="white"
+            styles={style({marginStart: 'auto'})}
+            UNSAFE_style={{visibility: queue.isExpanded ? 'hidden' : 'visible'}}
+            onPress={() => document.startViewTransition({
+              update: () => queue.toggleExpandedState(),
+              types: [queue.isExpanded ? 'toast-collapse' : 'toast-expand']
+            })}><Chevron UNSAFE_style={{rotate: '180deg'}} /><Text>1 of {queue.visibleToasts.length}</Text></ActionButton>
+        }
         {toast.content.actionLabel && (isLast || queue.isExpanded) &&
           <Button
             variant="secondary"

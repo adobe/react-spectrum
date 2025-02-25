@@ -130,12 +130,15 @@ export const Toast = /*#__PURE__*/ (forwardRef as forwardRefType)(function Toast
   });
 
   return (
+    // eslint-disable-next-line
     <div
       {...renderProps}
       {...mergeProps(toastProps, focusProps)}
       ref={objectRef}
       // @ts-ignore
       inert={props.inert}
+      // @ts-ignore
+      onClick={props.onClick}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}>
       <Provider
