@@ -216,6 +216,7 @@ export class S2TableLayout<T> extends TableLayout<T> {
     return layoutNode;
   }
 
+  // y is the height of the headers
   protected buildBody(y: number): LayoutNode {
     let layoutNode = super.buildBody(y);
     let {children, layoutInfo} = layoutNode;
@@ -223,7 +224,7 @@ export class S2TableLayout<T> extends TableLayout<T> {
     layoutInfo.allowOverflow = true;
     // If loading or empty, we'll want the body to be sticky and centered
     if (children?.length === 0) {
-      layoutInfo.rect = new Rect(40, 0, this.virtualizer!.visibleRect.width - 80, this.virtualizer!.visibleRect.height - 80);
+      layoutInfo.rect = new Rect(40, 40, this.virtualizer!.visibleRect.width - 80, this.virtualizer!.visibleRect.height - y - 80);
       layoutInfo.isSticky = true;
     }
 
