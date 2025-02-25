@@ -36,7 +36,7 @@ export interface AriaAutocompleteProps extends AutocompleteProps {
 
   /**
    * Whether or not to focus the first item in the collection after a filter is performed.
-   * @default true
+   * @default false
    */
   disableAutoFocusFirst?: boolean
 }
