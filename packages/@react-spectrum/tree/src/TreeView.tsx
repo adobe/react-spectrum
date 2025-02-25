@@ -27,10 +27,10 @@ import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {DOMRef, Expandable, Key, SelectionBehavior, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {focusRing, style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
 import {isAndroid} from '@react-aria/utils';
 import React, {createContext, JSX, JSXElementConstructor, ReactElement, ReactNode, useRef} from 'react';
 import {SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
 import {useButton} from '@react-aria/button';
 import {useLocale} from '@react-aria/i18n';
 
@@ -66,6 +66,8 @@ const TreeRendererContext = createContext<TreeRendererContextValue>({});
 // keyboard focus ring. Perhaps find a different way of rendering the outlines since the top of the item doesn't
 // scroll into view due to how the ring is offset. Alternatively, have the tree render the top/bottom outline like it does in Listview
 const tree = style<Pick<TreeRenderProps, 'isEmpty'>>({
+  ...focusRing(),
+  outlineOffset: '[-2px]', // make certain we are visible inside overflow hidden containers
   height: 'full',
   width: 'full',
   borderWidth: 2,
@@ -105,7 +107,7 @@ export const TreeView = React.forwardRef(function TreeView<T extends object>(pro
 
   return (
     <TreeRendererContext.Provider value={{renderer}}>
-      <Tree {...props} {...styleProps} className={({isEmpty}) => UNSAFE_className + tree({isEmpty})} selectionBehavior={selectionBehavior as SelectionBehavior} ref={domRef}>
+      <Tree {...props} {...styleProps} className={renderProps => UNSAFE_className + tree(renderProps)} selectionBehavior={selectionBehavior as SelectionBehavior} ref={domRef}>
         {props.children}
       </Tree>
     </TreeRendererContext.Provider>
