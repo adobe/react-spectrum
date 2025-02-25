@@ -485,6 +485,19 @@ describe('Menu', () => {
     expect(onScroll).toHaveBeenCalled();
   });
 
+  it('should support empty state', () => {
+    let {getByRole} = render(
+      <Menu aria-label="Test" renderEmptyState={() => 'No results'}>
+        {[]}
+      </Menu>
+    );
+    let menu = getByRole('menu');
+    expect(menu).toHaveAttribute('data-empty', 'true');
+
+    let menuitem = getByRole('menuitem');
+    expect(menuitem).toHaveTextContent('No results');
+  });
+
   describe('supports links', function () {
     describe.each(['mouse', 'keyboard'])('%s', (type) => {
       it.each(['none', 'single', 'multiple'] as unknown as SelectionMode[])('with selectionMode = %s', async function (selectionMode) {
