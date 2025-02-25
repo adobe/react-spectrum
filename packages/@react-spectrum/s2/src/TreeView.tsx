@@ -29,7 +29,7 @@ import {
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
-import {colorMix, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
+import {colorMix, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
 import {DOMRef, Key} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
@@ -73,10 +73,13 @@ let InternalTreeContext = createContext<{isDetached?: boolean, isEmphasized?: bo
 // keyboard focus ring. Perhaps find a different way of rendering the outlines since the top of the item doesn't
 // scroll into view due to how the ring is offset. Alternatively, have the tree render the top/bottom outline like it does in Listview
 const tree = style({
+  ...focusRing(),
+  outlineOffset: -2, // make certain we are visible inside overflow hidden containers
   userSelect: 'none',
   minHeight: 0,
   minWidth: 0,
   width: 'full',
+  height: 'full',
   overflow: 'auto',
   boxSizing: 'border-box',
   justifyContent: {
@@ -84,9 +87,6 @@ const tree = style({
   },
   alignItems: {
     isEmpty: 'center'
-  },
-  height: {
-    isEmpty: 'full'
   },
   '--indent': {
     type: 'width',
@@ -116,7 +116,7 @@ function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
         <InternalTreeContext.Provider value={{isDetached, isEmphasized}}>
           <Tree
             {...props}
-            className={({isEmpty}) => tree({isEmpty, isDetached}, props.styles)}
+            className={renderProps => tree({isDetached, ...renderProps}, props.styles)}
             selectionBehavior="toggle"
             ref={domRef}>
             {props.children}
