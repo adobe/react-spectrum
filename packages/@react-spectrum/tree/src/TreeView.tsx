@@ -66,6 +66,8 @@ const TreeRendererContext = createContext<TreeRendererContextValue>({});
 // keyboard focus ring. Perhaps find a different way of rendering the outlines since the top of the item doesn't
 // scroll into view due to how the ring is offset. Alternatively, have the tree render the top/bottom outline like it does in Listview
 const tree = style<Pick<TreeRenderProps, 'isEmpty'>>({
+  height: 'full',
+  width: 'full',
   borderWidth: 2,
   boxSizing: 'border-box',
   borderXWidth: 0,
@@ -80,22 +82,17 @@ const tree = style<Pick<TreeRenderProps, 'isEmpty'>>({
   alignItems: {
     isEmpty: 'center'
   },
-  width: {
-    isEmpty: 'full'
-  },
-  height: {
-    isEmpty: 'full'
-  },
   display: {
     isEmpty: 'flex'
-  }
+  },
+  overflow: 'auto'
 });
 
 /**
  * A tree view provides users with a way to navigate nested hierarchical information.
  */
 export const TreeView = React.forwardRef(function TreeView<T extends object>(props: SpectrumTreeViewProps<T>, ref: DOMRef<HTMLDivElement>) {
-  let {children, selectionStyle} = props;
+  let {children, selectionStyle, UNSAFE_className} = props;
 
   let renderer;
   if (typeof children === 'function') {
@@ -108,7 +105,7 @@ export const TreeView = React.forwardRef(function TreeView<T extends object>(pro
 
   return (
     <TreeRendererContext.Provider value={{renderer}}>
-      <Tree {...props} {...styleProps} className={({isEmpty}) => tree({isEmpty})} selectionBehavior={selectionBehavior as SelectionBehavior} ref={domRef}>
+      <Tree {...props} {...styleProps} className={({isEmpty}) => UNSAFE_className + tree({isEmpty})} selectionBehavior={selectionBehavior as SelectionBehavior} ref={domRef}>
         {props.children}
       </Tree>
     </TreeRendererContext.Provider>
