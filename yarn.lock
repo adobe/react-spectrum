@@ -6049,6 +6049,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/combobox@workspace:packages/@react-aria/combobox"
   dependencies:
+    "@react-aria/focus": "npm:^3.19.1"
     "@react-aria/i18n": "npm:^3.12.5"
     "@react-aria/listbox": "npm:^3.14.0"
     "@react-aria/live-announcer": "npm:^3.4.1"
