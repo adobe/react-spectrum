@@ -12,11 +12,11 @@
 
 import {AriaLabelingProps, DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 import {focusWithoutScrolling, mergeProps, useLayoutEffect} from '@react-aria/utils';
-import {getInteractionModality, useFocusWithin, useHover} from '@react-aria/interactions';
+import {getInteractionModality, useFocusWithin} from '@react-aria/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ToastState} from '@react-stately/toast';
-import {useEffect, useRef} from 'react';
+import {useCallback, useEffect, useRef} from 'react';
 import {useLandmark} from '@react-aria/landmark';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -43,11 +43,39 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
     role: 'region',
     'aria-label': props['aria-label'] || stringFormatter.format('notifications', {count: state.visibleToasts.length})
   }, ref);
+  let isHovered = useRef(false);
+  let isFocused = useRef(false);
 
-  let {hoverProps} = useHover({
-    onHoverStart: state.pauseAll,
-    onHoverEnd: state.resumeAll
-  });
+  let updateTimers = useCallback(() => {
+    if (isHovered.current || isFocused.current) {
+      state.pauseAll();
+    } else {
+      state.resumeAll();
+    }
+  }, [state]);
+
+  useEffect(() => {
+    let onPointerLeave = () => {
+      isHovered.current = false;
+      updateTimers();
+    };
+    let onPointerEnter = () => {
+      isHovered.current = true;
+      updateTimers();
+    };
+    let region = ref.current;
+    if (region) {
+      region.addEventListener('pointerleave', onPointerLeave);
+      region.addEventListener('pointerenter', onPointerEnter);
+    }
+    return () => {
+      if (region) {
+        region.removeEventListener('pointerleave', onPointerLeave);
+        region.removeEventListener('pointerenter', onPointerEnter);
+      }
+    };
+  }, [ref, updateTimers]);
+    
 
   let prevToastCount = useRef(state.visibleToasts.length);
   useEffect(() => {
@@ -59,10 +87,9 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
         return;
       }
       let regionRect = ref.current.getBoundingClientRect();
-      const isPointerOverRegion = e.clientX >= regionRect.left && e.clientX <= regionRect.right && e.clientY >= regionRect.top && e.clientY <= regionRect.bottom;
-      if (!isPointerOverRegion) {
-        state.resumeAll();
-      }
+      let isPointerOverRegion = e.clientX >= regionRect.left && e.clientX <= regionRect.right && e.clientY >= regionRect.top && e.clientY <= regionRect.bottom;
+      isHovered.current = isPointerOverRegion;
+      updateTimers();
       document.removeEventListener('pointermove', onPointerMove);
     };
 
@@ -73,7 +100,21 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
     return () => {
       document.removeEventListener('pointermove', onPointerMove);
     };
-  }, [state.visibleToasts, ref, state]);
+  }, [state.visibleToasts, ref, state, updateTimers]);
+
+  let lastFocused = useRef<FocusableElement | null>(null);
+  let {focusWithinProps} = useFocusWithin({
+    onFocusWithin: (e) => {
+      isFocused.current = true;
+      updateTimers();
+      lastFocused.current = e.relatedTarget as FocusableElement;
+    },
+    onBlurWithin: () => {
+      isFocused.current = false;
+      updateTimers();
+      lastFocused.current = null;
+    }
+  });
 
   // Manage focus within the toast region.
   // If a focused containing toast is removed, move focus to the next toast, or the previous toast if there is no next toast.
@@ -139,18 +180,6 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
     prevVisibleToasts.current = state.visibleToasts;
   }, [state.visibleToasts, ref]);
 
-  let lastFocused = useRef<FocusableElement | null>(null);
-  let {focusWithinProps} = useFocusWithin({
-    onFocusWithin: (e) => {
-      state.pauseAll();
-      lastFocused.current = e.relatedTarget as FocusableElement;
-    },
-    onBlurWithin: () => {
-      state.resumeAll();
-      lastFocused.current = null;
-    }
-  });
-
   // When the number of visible toasts becomes 0 or the region unmounts,
   // restore focus to the last element that had focus before the user moved focus
   // into the region. FocusScope restore focus doesn't update whenever the focus
@@ -164,8 +193,10 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
         lastFocused.current.focus();
       }
       lastFocused.current = null;
+      isFocused.current = false;
+      updateTimers();
     }
-  }, [ref, state.visibleToasts.length]);
+  }, [ref, state.visibleToasts.length, updateTimers]);
 
   useEffect(() => {
     return () => {
@@ -176,12 +207,14 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
           lastFocused.current.focus();
         }
         lastFocused.current = null;
+        isFocused.current = false;
+        updateTimers();
       }
     };
-  }, [ref]);
+  }, [ref, updateTimers]);
 
   return {
-    regionProps: mergeProps(landmarkProps, hoverProps, focusWithinProps, {
+    regionProps: mergeProps(landmarkProps, focusWithinProps, {
       tabIndex: -1,
       // Mark the toast region as a "top layer", so that it:
       //   - is not aria-hidden when opening an overlay
@@ -194,9 +227,13 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
       onFocus: (e) => {
         let target = e.target.closest('[role="alertdialog"]');
         focusedToast.current = toasts.current.findIndex(t => t === target);
+        isFocused.current = true;
+        updateTimers();
       },
       onBlur: () => {
         focusedToast.current = -1;
+        isFocused.current = false;
+        updateTimers();
       }
     })
   };
