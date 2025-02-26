@@ -65,7 +65,15 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
             <div
               className={classNames(styles, 'content-wrapper')}
               style={{marginInlineStart: `${(!hasChildItems ? 20 : 0) + (level - 1) * 15}px`}}>
-              {hasChildItems && <Button className={styles.chevron} slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
+              {hasChildItems && (
+                <Button className={styles.chevron} slot="chevron">
+                  <div style={{transform: `rotate(${isExpanded ? 90 : 0}deg)`, width: '16px', height: '16px'}}>
+                    <svg viewBox="0 0 24 24" style={{width: '16px', height: '16px'}}>
+                      <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                    </svg>
+                  </div>
+                </Button>
+                )}
               <Text className={styles.title}>{props.title || props.children}</Text>
               <Button className={styles.button} aria-label="Info" onPress={action('Info press')}>ⓘ</Button>
               <MenuTrigger>
@@ -236,7 +244,15 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
                 <MyCheckbox slot="selection" />
               )}
               <div className={styles['content-wrapper']} style={{marginInlineStart: `${(!hasChildItems ? 20 : 0) + (level - 1) * 15}px`}}>
-                {hasChildItems && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
+                {hasChildItems && (
+                <Button className={styles.chevron} slot="chevron">
+                  <div style={{transform: `rotate(${isExpanded ? 90 : 0}deg)`, width: '16px', height: '16px'}}>
+                    <svg viewBox="0 0 24 24" style={{width: '16px', height: '16px'}}>
+                      <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                    </svg>
+                  </div>
+                </Button>
+                )}
                 <Text>{props.children}</Text>
                 <Button className={styles.button} aria-label="Info" onPress={action('Info press')}>ⓘ</Button>
                 <MenuTrigger>
