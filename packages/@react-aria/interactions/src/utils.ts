@@ -59,17 +59,17 @@ export class SyntheticFocusEvent<Target = Element> implements ReactFocusEvent<Ta
     return false;
   }
 
-  persist() {}
+  persist(): void {}
 }
 
-export function useSyntheticBlurEvent<Target = Element>(onBlur: (e: ReactFocusEvent<Target>) => void) {
+export function useSyntheticBlurEvent<Target = Element>(onBlur: (e: ReactFocusEvent<Target>) => void): (e: ReactFocusEvent<Target>) => void {
   let stateRef = useRef({
     isFocused: false,
     observer: null as MutationObserver | null
   });
 
   // Clean up MutationObserver on unmount. See below.
-   
+
   useLayoutEffect(() => {
     const state = stateRef.current;
     return () => {
@@ -137,7 +137,7 @@ export let ignoreFocusEvent = false;
  * It works by waiting for the series of focus events to occur, and reverts focus back to where it was before.
  * It also makes these events mostly non-observable by using a capturing listener on the window and stopping propagation.
  */
-export function preventFocus(target: FocusableElement | null) {
+export function preventFocus(target: FocusableElement | null): (() => void) | undefined {
   // The browser will focus the nearest focusable ancestor of our target.
   while (target && !isFocusable(target)) {
     target = target.parentElement;
@@ -148,7 +148,7 @@ export function preventFocus(target: FocusableElement | null) {
   if (!activeElement || activeElement === target) {
     return;
   }
-  
+
   ignoreFocusEvent = true;
   let isRefocusing = false;
   let onBlur = (e: FocusEvent) => {
@@ -170,7 +170,7 @@ export function preventFocus(target: FocusableElement | null) {
       }
     }
   };
-  
+
   let onFocus = (e: FocusEvent) => {
     if (e.target === target || isRefocusing) {
       e.stopImmediatePropagation();

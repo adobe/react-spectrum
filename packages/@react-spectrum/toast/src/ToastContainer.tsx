@@ -63,7 +63,7 @@ function getGlobalToastQueue() {
 }
 
 // For testing. Not exported from the package index.
-export function clearToastQueue() {
+export function clearToastQueue(): void {
   globalToastQueue = null;
 }
 

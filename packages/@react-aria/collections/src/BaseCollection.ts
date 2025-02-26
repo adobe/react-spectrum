@@ -80,15 +80,15 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   private lastKey: Key | null = null;
   private frozen = false;
 
-  get size() {
+  get size(): number {
     return this.keyMap.size;
   }
 
-  getKeys() {
+  getKeys(): IterableIterator<Key> {
     return this.keyMap.keys();
   }
 
-  *[Symbol.iterator]() {
+  *[Symbol.iterator](): IterableIterator<Node<T>> {
     let node: Node<T> | undefined = this.firstKey != null ? this.keyMap.get(this.firstKey) : undefined;
     while (node) {
       yield node;
@@ -110,7 +110,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     };
   }
 
-  getKeyBefore(key: Key) {
+  getKeyBefore(key: Key): Key | null {
     let node = this.keyMap.get(key);
     if (!node) {
       return null;
@@ -129,7 +129,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     return node.parentKey;
   }
 
-  getKeyAfter(key: Key) {
+  getKeyAfter(key: Key): Key | null {
     let node = this.keyMap.get(key);
     if (!node) {
       return null;
@@ -154,11 +154,11 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     return null;
   }
 
-  getFirstKey() {
+  getFirstKey(): Key | null {
     return this.firstKey;
   }
 
-  getLastKey() {
+  getLastKey(): Key | null {
     let node = this.lastKey != null ? this.keyMap.get(this.lastKey) : null;
     while (node?.lastChildKey != null) {
       node = this.keyMap.get(node.lastChildKey);
@@ -187,7 +187,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     return collection;
   }
 
-  addNode(node: CollectionNode<T>) {
+  addNode(node: CollectionNode<T>): void {
     if (this.frozen) {
       throw new Error('Cannot add a node to a frozen collection');
     }
@@ -195,7 +195,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     this.keyMap.set(node.key, node);
   }
 
-  removeNode(key: Key) {
+  removeNode(key: Key): void {
     if (this.frozen) {
       throw new Error('Cannot remove a node to a frozen collection');
     }
@@ -203,7 +203,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
     this.keyMap.delete(key);
   }
 
-  commit(firstKey: Key | null, lastKey: Key | null, isSSR = false) {
+  commit(firstKey: Key | null, lastKey: Key | null, isSSR = false): void {
     if (this.frozen) {
       throw new Error('Cannot commit a frozen collection');
     }

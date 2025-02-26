@@ -14,7 +14,7 @@ import {FocusableElement} from '@react-types/shared';
 import {mergeProps, useObjectRef, useSyncRef} from '@react-aria/utils';
 import {PressProps} from './usePress';
 import {PressResponderContext} from './context';
-import React, {ForwardedRef, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
+import React, {ForwardedRef, ReactElement, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 
 interface PressResponderProps extends PressProps {
   children: ReactNode
@@ -54,7 +54,7 @@ export const PressResponder = React.forwardRef(({children, ...props}: PressRespo
   );
 });
 
-export function ClearPressResponder({children}: {children: ReactNode}) {
+export function ClearPressResponder({children}: {children: ReactNode}): ReactElement {
   let context = useMemo(() => ({register: () => {}}), []);
   return (
     <PressResponderContext.Provider value={context}>

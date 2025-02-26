@@ -21,7 +21,7 @@ export interface DialogContainerProps extends Omit<SpectrumDialogContainerProps,
  * it in a modal. Useful in cases where there is no trigger element
  * or when the trigger unmounts while the dialog is open.
  */
-export function DialogContainer(props: DialogContainerProps) {
+export function DialogContainer(props: DialogContainerProps): ReactElement {
   let {
     children,
     onDismiss

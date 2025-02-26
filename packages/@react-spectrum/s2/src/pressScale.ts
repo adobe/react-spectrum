@@ -13,7 +13,7 @@
 import {composeRenderProps} from 'react-aria-components';
 import {CSSProperties, RefObject} from 'react';
 
-export function pressScale<R extends {isPressed: boolean}>(ref: RefObject<HTMLElement | null>, style?: CSSProperties | ((renderProps: R) => CSSProperties)) {
+export function pressScale<R extends {isPressed: boolean}>(ref: RefObject<HTMLElement | null>, style?: CSSProperties | ((renderProps: R) => CSSProperties)): (renderProps: R) => CSSProperties {
   return composeRenderProps(style, (style, renderProps: R) => {
     if (renderProps.isPressed && ref.current) {
       let {width = 0, height = 0} = ref.current.getBoundingClientRect() ?? {};

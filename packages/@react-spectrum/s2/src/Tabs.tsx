@@ -27,7 +27,7 @@ import {
 import {centerBaseline} from './CenterBaseline';
 import {Collection, DOMRef, DOMRefValue, Key, Node, Orientation, RefObject} from '@react-types/shared';
 import {CollectionBuilder} from '@react-aria/collections';
-import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {createContext, forwardRef, ReactElement, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {focusRing, size, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
@@ -182,12 +182,13 @@ const tablist = style({
   flexBasis: '[0%]'
 });
 
-export function TabList<T extends object>(props: TabListProps<T>) {
+export function TabList<T extends object>(props: TabListProps<T>): ReactElement | null {
   let {showTabs} = useContext(CollapseContext) ?? {};
 
   if (showTabs) {
     return <TabListInner {...props} />;
   }
+  return null;
 }
 
 function TabListInner<T extends object>(props: TabListProps<T>) {
@@ -362,7 +363,7 @@ const icon = style({
   }
 });
 
-export function Tab(props: TabProps) {
+export function Tab(props: TabProps): ReactElement {
   let {density, labelBehavior} = useContext(InternalTabsContext) ?? {};
 
   let contentId = useId();
@@ -421,7 +422,7 @@ const tabPanel = style({
   minWidth: 0
 }, getAllowedOverrides({height: true}));
 
-export function TabPanel(props: TabPanelProps) {
+export function TabPanel(props: TabPanelProps): ReactElement | null {
   let {showTabs} = useContext(CollapseContext);
   let {selectedKey} = useContext(InternalTabsContext);
   if (showTabs) {

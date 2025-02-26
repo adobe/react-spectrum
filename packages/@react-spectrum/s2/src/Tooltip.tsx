@@ -22,7 +22,7 @@ import {
 import {centerPadding, colorScheme, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ColorScheme} from '@react-types/provider';
 import {ColorSchemeContext} from './Provider';
-import {createContext, forwardRef, MutableRefObject, ReactNode, useCallback, useContext, useState} from 'react';
+import {createContext, forwardRef, MutableRefObject, ReactElement, ReactNode, useCallback, useContext, useState} from 'react';
 import {DOMRef} from '@react-types/shared';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
@@ -186,7 +186,7 @@ export const Tooltip = forwardRef(function Tooltip(props: TooltipProps, ref: DOM
  * the Tooltip when the user hovers over or focuses the trigger, and positioning the Tooltip
  * relative to the trigger.
  */
-export function TooltipTrigger(props: TooltipTriggerProps) {
+export function TooltipTrigger(props: TooltipTriggerProps): ReactElement {
   let {
     containerPadding,
     crossOffset,
@@ -216,6 +216,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 // This is purely so that storybook generates the types for both Menu and MenuTrigger
 interface ICombined extends Omit<TooltipProps, 'placement'>, TooltipTriggerProps {}
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function CombinedTooltip(props: ICombined) {
+export function CombinedTooltip(props: ICombined): ReactElement {
   return <div />;
 }

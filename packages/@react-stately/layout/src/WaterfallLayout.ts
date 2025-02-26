@@ -184,7 +184,7 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
     return layoutInfos;
   }
 
-  updateItemSize(key: Key, size: Size) {
+  updateItemSize(key: Key, size: Size): boolean {
     let layoutInfo = this.layoutInfos.get(key);
     if (!size || !layoutInfo) {
       return false;

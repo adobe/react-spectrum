@@ -295,7 +295,7 @@ const treeRowFocusIndicator = raw(`
   }`
 );
 
-export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
+export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>): ReactElement => {
   let {
     href
   } = props;
@@ -316,7 +316,7 @@ export interface TreeViewItemContentProps extends Omit<TreeItemContentProps, 'ch
   children: ReactNode
 }
 
-export const TreeViewItemContent = (props: TreeViewItemContentProps) => {
+export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactElement => {
   let {
     children
   } = props;
