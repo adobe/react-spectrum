@@ -48,11 +48,9 @@ export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeProps<T>, 'childr
   children?: ReactNode | ((item: T) => ReactNode)
 }
 
-export interface SpectrumTreeViewItemProps<T extends object = object> extends Omit<TreeItemProps, 'className' | 'style' | 'value' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'> {
+export interface SpectrumTreeViewItemProps extends Omit<TreeItemProps, 'className' | 'style' | 'value' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'> {
   /** Rendered contents of the tree item or child items. */
-  children: ReactNode,
-  /** A list of child tree item objects used when dynamically rendering the tree item children. */
-  childItems?: Iterable<T>
+  children: ReactNode
 }
 
 interface TreeRendererContextValue {
@@ -227,7 +225,7 @@ const treeRowOutline = style({
   }
 });
 
-export const TreeViewItem = <T extends object>(props: SpectrumTreeViewItemProps<T>) => {
+export const TreeViewItem = (props: SpectrumTreeViewItemProps) => {
   let {
     href
   } = props;

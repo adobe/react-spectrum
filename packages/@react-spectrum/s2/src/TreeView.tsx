@@ -54,11 +54,9 @@ export interface TreeViewProps extends Omit<RACTreeProps<any>, 'style' | 'classN
   styles?: StylesPropWithHeight
 }
 
-export interface TreeViewItemProps<T extends object = object> extends Omit<RACTreeItemProps, 'className' | 'style'> {
+export interface TreeViewItemProps extends Omit<RACTreeItemProps, 'className' | 'style'> {
   /** Whether this item has children, even if not loaded yet. */
-  hasChildItems?: boolean,
-  /** A list of child tree item objects used when dynamically rendering the tree item children. */
-  childItems?: Iterable<T>
+  hasChildItems?: boolean
 }
 
 interface TreeRendererContextValue {
@@ -295,7 +293,7 @@ const treeRowFocusIndicator = raw(`
   }`
 );
 
-export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
+export const TreeViewItem = (props: TreeViewItemProps) => {
   let {
     href
   } = props;

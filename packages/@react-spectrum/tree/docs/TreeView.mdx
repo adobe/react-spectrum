@@ -145,7 +145,7 @@ let items: MyItem[] = [
 const DynamicTreeItem = (props) => {
   return (
     <>
-      <TreeViewItem id={props.id} childItems={props.childItems} textValue={props.name}>
+      <TreeViewItem id={props.id} textValue={props.name}>
         <TreeViewItemContent>
           <Text>{props.name}</Text>
           {props.icon}
@@ -421,7 +421,7 @@ The `<TreeViewItem>` component works with frameworks and client side routers lik
 <TreeView aria-label="Example tree with action groups" height="size-3000" maxWidth="size-6000" items={items}>
   {function renderItem(item: MyItem) {
     return (
-      <TreeViewItem childItems={item.childItems} textValue={item.name}>
+      <TreeViewItem textValue={item.name}>
         <TreeViewItemContent>
           <Text>{item.name}</Text>
           {item.icon}
@@ -453,7 +453,7 @@ import {Collection} from 'react-aria-components';
 <TreeView aria-label="Example tree with action menus" height="size-3000" maxWidth="size-6000" items={items}>
   {function renderItem(item: MyItem) {
     return (
-      <TreeViewItem childItems={item.childItems} textValue={item.name}>
+      <TreeViewItem textValue={item.name}>
         <TreeViewItemContent>
           <Text>{item.name}</Text>
           {item.icon}
