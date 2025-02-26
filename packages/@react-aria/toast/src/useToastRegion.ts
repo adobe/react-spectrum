@@ -44,36 +44,26 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
     'aria-label': props['aria-label'] || stringFormatter.format('notifications', {count: state.visibleToasts.length})
   }, ref);
 
-  let {hoverProps} = useHover({
-    onHoverStart: state.pauseAll,
-    onHoverEnd: state.resumeAll
-  });
-
-  let prevToastCount = useRef(state.visibleToasts.length);
-  useEffect(() => {
-    // Resume timers if the user's pointer left the region due to a toast being removed and the region shrinking.
-    // Waits until the next pointermove after a toast is removed.
-    let onPointerMove = (e: PointerEvent) => {
-      if (!ref.current) {
-        document.removeEventListener('pointermove', onPointerMove);
-        return;
-      }
-      let regionRect = ref.current.getBoundingClientRect();
-      const isPointerOverRegion = e.clientX >= regionRect.left && e.clientX <= regionRect.right && e.clientY >= regionRect.top && e.clientY <= regionRect.bottom;
-      if (!isPointerOverRegion) {
-        state.resumeAll();
-      }
-      document.removeEventListener('pointermove', onPointerMove);
-    };
-
-    if (state.visibleToasts.length < prevToastCount.current && state.visibleToasts.length > 0) {
-      document.addEventListener('pointermove', onPointerMove);
+  let isHovered = useRef(false);
+  let isFocused = useRef(false);
+  let updateTimers = () => {
+    if (isHovered.current || isFocused.current) {
+      state.pauseAll();
+    } else {
+      state.resumeAll();
     }
-    prevToastCount.current = state.visibleToasts.length;
-    return () => {
-      document.removeEventListener('pointermove', onPointerMove);
-    };
-  }, [state.visibleToasts, ref, state]);
+  };
+
+  let {hoverProps} = useHover({
+    onHoverStart: () => {
+      isHovered.current = true;
+      updateTimers();
+    },
+    onHoverEnd: () => {
+      isHovered.current = false;
+      updateTimers();
+    }
+  });
 
   // Manage focus within the toast region.
   // If a focused containing toast is removed, move focus to the next toast, or the previous toast if there is no next toast.
@@ -142,12 +132,14 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
   let lastFocused = useRef<FocusableElement | null>(null);
   let {focusWithinProps} = useFocusWithin({
     onFocusWithin: (e) => {
-      state.pauseAll();
+      isFocused.current = true;
       lastFocused.current = e.relatedTarget as FocusableElement;
+      updateTimers();
     },
     onBlurWithin: () => {
-      state.resumeAll();
+      isFocused.current = false;
       lastFocused.current = null;
+      updateTimers();
     }
   });
 
