@@ -29,7 +29,7 @@ import {
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
-import {colorMix, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
+import {colorMix, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
 import {DOMRef, Key} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
@@ -54,11 +54,9 @@ export interface TreeViewProps extends Omit<RACTreeProps<any>, 'style' | 'classN
   styles?: StylesPropWithHeight
 }
 
-export interface TreeViewItemProps<T extends object = object> extends Omit<RACTreeItemProps, 'className' | 'style'> {
+export interface TreeViewItemProps extends Omit<RACTreeItemProps, 'className' | 'style'> {
   /** Whether this item has children, even if not loaded yet. */
-  hasChildItems?: boolean,
-  /** A list of child tree item objects used when dynamically rendering the tree item children. */
-  childItems?: Iterable<T>
+  hasChildItems?: boolean
 }
 
 interface TreeRendererContextValue {
@@ -73,10 +71,13 @@ let InternalTreeContext = createContext<{isDetached?: boolean, isEmphasized?: bo
 // keyboard focus ring. Perhaps find a different way of rendering the outlines since the top of the item doesn't
 // scroll into view due to how the ring is offset. Alternatively, have the tree render the top/bottom outline like it does in Listview
 const tree = style({
+  ...focusRing(),
+  outlineOffset: -2, // make certain we are visible inside overflow hidden containers
   userSelect: 'none',
   minHeight: 0,
   minWidth: 0,
   width: 'full',
+  height: 'full',
   overflow: 'auto',
   boxSizing: 'border-box',
   justifyContent: {
@@ -84,9 +85,6 @@ const tree = style({
   },
   alignItems: {
     isEmpty: 'center'
-  },
-  height: {
-    isEmpty: 'full'
   },
   '--indent': {
     type: 'width',
@@ -110,13 +108,13 @@ function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
       layout={ListLayout}
       layoutOptions={{
         rowHeight: scale === 'large' ? 50 : 40,
-        gap: isDetached ? 4 : 0
+        gap: isDetached ? 2 : 0
       }}>
       <TreeRendererContext.Provider value={{renderer}}>
         <InternalTreeContext.Provider value={{isDetached, isEmphasized}}>
           <Tree
             {...props}
-            className={({isEmpty}) => tree({isEmpty, isDetached}, props.styles)}
+            className={renderProps => tree({isDetached, ...renderProps}, props.styles)}
             selectionBehavior="toggle"
             ref={domRef}>
             {props.children}
@@ -295,7 +293,7 @@ const treeRowFocusIndicator = raw(`
   }`
 );
 
-export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
+export const TreeViewItem = (props: TreeViewItemProps) => {
   let {
     href
   } = props;

@@ -19,7 +19,7 @@ import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, Slot
 import {DisabledBehavior, Expandable, forwardRefType, HoverEvents, Key, LinkDOMProps, MultipleSelection, RefObject} from '@react-types/shared';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
 
 class TreeCollection<T> implements ICollection<Node<T>> {
@@ -210,7 +210,6 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   });
 
   let emptyState: ReactNode = null;
-  let emptyStatePropOverrides: HTMLAttributes<HTMLElement> | null = null;
   if (state.collection.size === 0 && props.renderEmptyState) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let {isEmpty, ...values} = renderValues;
@@ -235,7 +234,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
       <div
         {...filterDOMProps(props)}
         {...renderProps}
-        {...mergeProps(gridProps, focusProps, emptyStatePropOverrides)}
+        {...mergeProps(gridProps, focusProps)}
         ref={ref}
         slot={props.slot || undefined}
         onScroll={props.onScroll}

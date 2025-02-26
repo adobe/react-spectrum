@@ -27,10 +27,10 @@ import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {DOMRef, Expandable, Key, SelectionBehavior, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {focusRing, style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
 import {isAndroid} from '@react-aria/utils';
 import React, {createContext, JSX, JSXElementConstructor, ReactElement, ReactNode, useRef} from 'react';
 import {SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
 import {useButton} from '@react-aria/button';
 import {useLocale} from '@react-aria/i18n';
 
@@ -48,11 +48,9 @@ export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeProps<T>, 'childr
   children?: ReactNode | ((item: T) => ReactNode)
 }
 
-export interface SpectrumTreeViewItemProps<T extends object = object> extends Omit<TreeItemProps, 'className' | 'style' | 'value' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'> {
+export interface SpectrumTreeViewItemProps extends Omit<TreeItemProps, 'className' | 'style' | 'value' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'> {
   /** Rendered contents of the tree item or child items. */
-  children: ReactNode,
-  /** A list of child tree item objects used when dynamically rendering the tree item children. */
-  childItems?: Iterable<T>
+  children: ReactNode
 }
 
 interface TreeRendererContextValue {
@@ -66,6 +64,10 @@ const TreeRendererContext = createContext<TreeRendererContextValue>({});
 // keyboard focus ring. Perhaps find a different way of rendering the outlines since the top of the item doesn't
 // scroll into view due to how the ring is offset. Alternatively, have the tree render the top/bottom outline like it does in Listview
 const tree = style<Pick<TreeRenderProps, 'isEmpty'>>({
+  ...focusRing(),
+  outlineOffset: '[-2px]', // make certain we are visible inside overflow hidden containers
+  height: 'full',
+  width: 'full',
   borderWidth: 2,
   boxSizing: 'border-box',
   borderXWidth: 0,
@@ -80,22 +82,17 @@ const tree = style<Pick<TreeRenderProps, 'isEmpty'>>({
   alignItems: {
     isEmpty: 'center'
   },
-  width: {
-    isEmpty: 'full'
-  },
-  height: {
-    isEmpty: 'full'
-  },
   display: {
     isEmpty: 'flex'
-  }
+  },
+  overflow: 'auto'
 });
 
 /**
  * A tree view provides users with a way to navigate nested hierarchical information.
  */
 export const TreeView = React.forwardRef(function TreeView<T extends object>(props: SpectrumTreeViewProps<T>, ref: DOMRef<HTMLDivElement>) {
-  let {children, selectionStyle} = props;
+  let {children, selectionStyle, UNSAFE_className} = props;
 
   let renderer;
   if (typeof children === 'function') {
@@ -108,7 +105,7 @@ export const TreeView = React.forwardRef(function TreeView<T extends object>(pro
 
   return (
     <TreeRendererContext.Provider value={{renderer}}>
-      <Tree {...props} {...styleProps} className={({isEmpty}) => tree({isEmpty})} selectionBehavior={selectionBehavior as SelectionBehavior} ref={domRef}>
+      <Tree {...props} {...styleProps} className={renderProps => UNSAFE_className + tree(renderProps)} selectionBehavior={selectionBehavior as SelectionBehavior} ref={domRef}>
         {props.children}
       </Tree>
     </TreeRendererContext.Provider>
@@ -228,7 +225,7 @@ const treeRowOutline = style({
   }
 });
 
-export const TreeViewItem = <T extends object>(props: SpectrumTreeViewItemProps<T>) => {
+export const TreeViewItem = (props: SpectrumTreeViewItemProps) => {
   let {
     href
   } = props;
