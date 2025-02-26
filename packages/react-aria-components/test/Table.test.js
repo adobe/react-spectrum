@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render, triggerLongPress, within} from '@react-spectrum/test-utils-internal';
-import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, useDragAndDrop, useTableOptions, Virtualizer} from '../';
+import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, Tag, TagGroup, TagList, useDragAndDrop, useTableOptions, Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
 import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
 import React, {useMemo, useRef, useState} from 'react';
@@ -64,7 +64,7 @@ function MyRow({id, columns, children, ...otherProps}) {
   let {selectionBehavior, allowsDragging} = useTableOptions();
 
   return (
-    <Row id={id} {...otherProps}>
+    <Row id={id} {...otherProps} columns={columns}>
       {allowsDragging && (
         <Cell>
           <Button slot="drag">≡</Button>
@@ -120,6 +120,31 @@ let TestTable = ({tableProps, tableHeaderProps, columnProps, tableBodyProps, row
         <Cell {...cellProps}>bootmgr</Cell>
         <Cell {...cellProps}>System file</Cell>
         <Cell {...cellProps}>11/20/2010</Cell>
+      </MyRow>
+    </TableBody>
+  </Table>
+);
+
+let EditableTable = ({tableProps, tableHeaderProps, columnProps, tableBodyProps, rowProps, cellProps}) => (
+  <Table aria-label="Files" {...tableProps}>
+    <MyTableHeader {...tableHeaderProps}>
+      <MyColumn id="name" isRowHeader {...columnProps}>Name</MyColumn>
+      <MyColumn {...columnProps}>Type</MyColumn>
+      <MyColumn {...columnProps}>Actions</MyColumn>
+    </MyTableHeader>
+    <TableBody {...tableBodyProps}>
+      <MyRow id="1" textValue="Edit" {...rowProps}>
+        <Cell {...cellProps}>Games</Cell>
+        <Cell {...cellProps}>File folder</Cell>
+        <Cell {...cellProps}>
+          <TagGroup aria-label="Tag group">
+            <TagList>
+              <Tag id="1">Tag 1</Tag>
+              <Tag id="2">Tag 2</Tag>
+              <Tag id="3">Tag 3</Tag>
+            </TagList>
+          </TagGroup>
+        </Cell>
       </MyRow>
     </TableBody>
   </Table>
@@ -840,10 +865,6 @@ describe('Table', () => {
   });
 
   it('should support virtualizer', async () => {
-    let layout = new TableLayout({
-      rowHeight: 25
-    });
-
     let items = [];
     for (let i = 0; i < 50; i++) {
       items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
@@ -853,7 +874,7 @@ describe('Table', () => {
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
 
     let {getByRole, getAllByRole} = render(
-      <Virtualizer layout={layout}>
+      <Virtualizer layout={TableLayout} layoutOptions={{rowHeight: 25}}>
         <Table aria-label="Test">
           <TableHeader>
             <Column isRowHeader>Foo</Column>
@@ -894,6 +915,21 @@ describe('Table', () => {
     expect(rows.map(r => r.textContent)).toEqual(['FooBar', 'Foo 7Bar 7', 'Foo 8Bar 8', 'Foo 9Bar 9', 'Foo 10Bar 10', 'Foo 11Bar 11', 'Foo 12Bar 12', 'Foo 13Bar 13', 'Foo 49Bar 49']);
   });
 
+  it('should support nested collections with colliding keys', async () => {
+    let {container} = render(<EditableTable />);
+
+    let itemMap = new Map();
+    let items = container.querySelectorAll('[data-key]');
+
+    for (let item of items) {
+      if (item instanceof HTMLElement) {
+        let key = item.dataset.collection + ':' + item.dataset.key;
+        expect(itemMap.has(key)).toBe(false);
+        itemMap.set(key, item);
+      }
+    }
+  });
+  
   describe('colSpan', () => {
     it('should render table with colSpans', () => {
       let {getAllByRole} = render(<TableCellColSpan />);
@@ -1847,15 +1883,11 @@ describe('Table', () => {
         items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
       }
       function VirtualizedTableLoad() {
-        let layout = new TableLayout({
-          rowHeight: 25
-        });
-
         let scrollRef = useRef(null);
         useLoadMore({onLoadMore}, scrollRef);
 
         return (
-          <Virtualizer layout={layout}>
+          <Virtualizer layout={TableLayout} layoutOptions={{rowHeight: 25}}>
             <Table aria-label="Load more table" ref={scrollRef} onLoadMore={onLoadMore}>
               <TableHeader>
                 <Column isRowHeader>Foo</Column>

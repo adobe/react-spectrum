@@ -77,8 +77,6 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
 
   // Manage focus within the toast region.
   // If a focused containing toast is removed, move focus to the next toast, or the previous toast if there is no next toast.
-  // We might be making an assumption with how this works if someone implements the priority queue differently, or
-  // if they only show one toast at a time.
   let toasts = useRef<FocusableElement[]>([]);
   let prevVisibleToasts = useRef(state.visibleToasts);
   let focusedToast = useRef<number | null>(null);

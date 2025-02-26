@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  UNSTABLE_Autocomplete as AriaAutocomplete,
+  Autocomplete as AriaAutocomplete,
   AutocompleteProps as AriaAutocompleteProps,
   Menu as AriaMenu,
   MenuSection as AriaMenuSection,

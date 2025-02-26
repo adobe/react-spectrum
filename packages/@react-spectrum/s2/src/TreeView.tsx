@@ -35,7 +35,7 @@ import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-u
 import {IconContext} from './Icon';
 import {isAndroid} from '@react-aria/utils';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useContext, useMemo, useRef} from 'react';
+import React, {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
 import {TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale} from 'react-aria';
@@ -105,17 +105,13 @@ function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
 
   let domRef = useDOMRef(ref);
 
-  let rowHeight = scale === 'large' ? 50 : 40;
-  let gap = isDetached ? 4 : 0;
-  let layout = useMemo(() => {
-    return new ListLayout({
-      rowHeight,
-      gap
-    });
-  }, [rowHeight, gap]);
-
   return (
-    <Virtualizer layout={layout}>
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        rowHeight: scale === 'large' ? 50 : 40,
+        gap: isDetached ? 4 : 0
+      }}>
       <TreeRendererContext.Provider value={{renderer}}>
         <InternalTreeContext.Provider value={{isDetached, isEmphasized}}>
           <Tree
@@ -315,7 +311,12 @@ export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>): Rea
   );
 };
 
-export const TreeViewItemContent = (props: Omit<TreeItemContentProps, 'children'> & {children: ReactNode}): ReactElement => {
+export interface TreeViewItemContentProps extends Omit<TreeItemContentProps, 'children'> {
+  /** Rendered contents of the tree item or child items. */
+  children: ReactNode
+}
+
+export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactElement => {
   let {
     children
   } = props;
