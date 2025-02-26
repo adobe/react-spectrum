@@ -14,7 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {Button, Checkbox, CheckboxProps, Collection, Key, ListLayout, Menu, MenuTrigger, Popover, Text, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeProps, Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import {MyMenuItem} from './utils';
-import React, {ReactNode, useMemo} from 'react';
+import React, {ReactNode} from 'react';
 import styles from '../example/index.css';
 import {TreeLoadingIndicator} from '../src/Tree';
 
@@ -489,14 +489,8 @@ export const ButtonLoadingIndicatorStory = {
   }
 };
 function VirtualizedTreeRender(args) {
-  let layout = useMemo(() => {
-    return new ListLayout({
-      rowHeight: 30
-    });
-  }, []);
-
   return (
-    <Virtualizer layout={layout}>
+    <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 30}}>
       <TreeExampleDynamicRender {...args} />
     </Virtualizer>
   );

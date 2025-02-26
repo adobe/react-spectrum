@@ -266,6 +266,7 @@ export class Virtualizer<T extends object, V> {
     let offsetChanged = false;
     let sizeChanged = false;
     let itemSizeChanged = false;
+    let layoutOptionsChanged = false;
     let needsUpdate = false;
 
     if (opts.collection !== this.collection) {
@@ -308,8 +309,11 @@ export class Virtualizer<T extends object, V> {
         sizeChanged ||= opts.invalidationContext.sizeChanged || false;
         offsetChanged ||= opts.invalidationContext.offsetChanged || false;
         itemSizeChanged ||= opts.invalidationContext.itemSizeChanged || false;
-        needsLayout ||= itemSizeChanged || sizeChanged || offsetChanged;
-        needsLayout ||= opts.invalidationContext.layoutOptions !== this._invalidationContext.layoutOptions;
+        layoutOptionsChanged ||= opts.invalidationContext.layoutOptions != null
+          && this._invalidationContext.layoutOptions != null
+          && opts.invalidationContext.layoutOptions !== this._invalidationContext.layoutOptions 
+          && this.layout.shouldInvalidateLayoutOptions(opts.invalidationContext.layoutOptions, this._invalidationContext.layoutOptions);
+        needsLayout ||= itemSizeChanged || sizeChanged || offsetChanged || layoutOptionsChanged;
       }
       this._invalidationContext = opts.invalidationContext;
     }
@@ -327,6 +331,7 @@ export class Virtualizer<T extends object, V> {
         offsetChanged,
         sizeChanged,
         itemSizeChanged,
+        layoutOptionsChanged,
         layoutOptions: this._invalidationContext.layoutOptions
       });
     } else if (needsUpdate) {

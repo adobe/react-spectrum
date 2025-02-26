@@ -51,6 +51,11 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
   });
 
   let onBlur = useCallback((e: FocusEvent) => {
+    // Ignore events bubbling through portals.
+    if (!e.currentTarget.contains(e.target)) {
+      return;
+    }
+
     // We don't want to trigger onBlurWithin and then immediately onFocusWithin again
     // when moving focus inside the element. Only trigger if the currentTarget doesn't
     // include the relatedTarget (where focus is moving).
@@ -69,6 +74,11 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
 
   let onSyntheticFocus = useSyntheticBlurEvent(onBlur);
   let onFocus = useCallback((e: FocusEvent) => {
+    // Ignore events bubbling through portals.
+    if (!e.currentTarget.contains(e.target)) {
+      return;
+    }
+
     // Double check that document.activeElement actually matches e.target in case a previously chained
     // focus handler already moved focus somewhere else.
     const ownerDocument = getOwnerDocument(e.target);

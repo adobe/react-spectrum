@@ -32,9 +32,7 @@ let count = 0;
 export const Default = args => (
   <ToastContainer {...args}>
     {state => (<>
-      <button onClick={() => state.add('High ' + ++count, {priority: 10, timeout: args.timeout})}>Add high priority toast</button>
-      <button onClick={() => state.add('Medium ' + ++count, {priority: 5, timeout: args.timeout})}>Add medium priority toast</button>
-      <button onClick={() => state.add('Low ' + ++count, {priority: 1, timeout: args.timeout})}>Add low priority toast</button>
+      <button onClick={() => state.add('Mmmmm toast ' + ++count, {timeout: args.timeout})}>Add toast</button>
     </>)}
   </ToastContainer>
 );

@@ -120,6 +120,7 @@ __metadata:
     "@react-spectrum/theme-default": "npm:^3.5.15"
     "@react-spectrum/theme-light": "npm:^3.4.15"
     "@react-spectrum/tooltip": "npm:^3.7.1"
+    "@react-spectrum/tree": "npm:^3.0.0-beta.3"
     "@react-spectrum/view": "npm:^3.6.15"
     "@react-spectrum/well": "npm:^3.4.19"
     "@react-stately/collections": "npm:^3.12.1"
@@ -5928,6 +5929,7 @@ __metadata:
   resolution: "@react-aria/autocomplete@workspace:packages/@react-aria/autocomplete"
   dependencies:
     "@react-aria/combobox": "npm:^3.11.1"
+    "@react-aria/focus": "npm:^3.19.1"
     "@react-aria/i18n": "npm:^3.12.5"
     "@react-aria/interactions": "npm:^3.23.0"
     "@react-aria/listbox": "npm:^3.14.0"
@@ -6024,6 +6026,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/collections@workspace:packages/@react-aria/collections"
   dependencies:
+    "@react-aria/interactions": "npm:^3.23.0"
     "@react-aria/ssr": "npm:^3.9.7"
     "@react-aria/utils": "npm:^3.27.0"
     "@react-types/shared": "npm:^3.27.0"
@@ -6796,7 +6799,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/tree@npm:3.0.0-beta.3, @react-aria/tree@workspace:packages/@react-aria/tree":
+"@react-aria/tree@npm:3.0.0-beta.3, @react-aria/tree@npm:^3.0.0-beta.3, @react-aria/tree@workspace:packages/@react-aria/tree":
   version: 0.0.0-use.local
   resolution: "@react-aria/tree@workspace:packages/@react-aria/tree"
   dependencies:
@@ -7928,7 +7931,7 @@ __metadata:
     "@react-types/textfield": "npm:^3.11.0"
     "@testing-library/dom": "npm:^10.1.0"
     "@testing-library/react": "npm:^15.0.7"
-    "@testing-library/user-event": "npm:^14.0.0"
+    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch"
     csstype: "npm:^3.0.2"
     jest: "npm:^29.5.0"
     react-aria: "npm:^3.37.0"
@@ -8192,7 +8195,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.1.0"
     "@testing-library/jest-dom": "npm:^5.16.4"
     "@testing-library/react": "npm:^15.0.7"
-    "@testing-library/user-event": "npm:^14.4.3"
+    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch"
     jest: "npm:^29.5.0"
     resolve: "npm:^1.17.0"
   peerDependencies:
@@ -8359,7 +8362,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/tree@workspace:packages/@react-spectrum/tree":
+"@react-spectrum/tree@npm:^3.0.0-beta.3, @react-spectrum/tree@workspace:packages/@react-spectrum/tree":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/tree@workspace:packages/@react-spectrum/tree"
   dependencies:
@@ -10884,12 +10887,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/user-event@npm:^14.0.0, @testing-library/user-event@npm:^14.4.0, @testing-library/user-event@npm:^14.4.3, @testing-library/user-event@npm:^14.6.1":
+"@testing-library/user-event@npm:14.6.1":
   version: 14.6.1
   resolution: "@testing-library/user-event@npm:14.6.1"
   peerDependencies:
     "@testing-library/dom": ">=7.21.4"
   checksum: 10c0/75fea130a52bf320d35d46ed54f3eec77e71a56911b8b69a3fe29497b0b9947b2dc80d30f04054ad4ce7f577856ae3e5397ea7dff0ef14944d3909784c7a93fe
+  languageName: node
+  linkType: hard
+
+"@testing-library/user-event@patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch":
+  version: 14.6.1
+  resolution: "@testing-library/user-event@patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch::version=14.6.1&hash=13cf21"
+  peerDependencies:
+    "@testing-library/dom": ">=7.21.4"
+  checksum: 10c0/ede32fec9345bb5e5c19a5abcb647d8c4704239f3f5417afe2914c1397067dae7ce547e46adfd4027c913f5735c0651ec530c73bdc5c7ea955efa860cc6a9dd9
   languageName: node
   linkType: hard
 
@@ -27484,6 +27496,7 @@ __metadata:
     "@react-aria/interactions": "npm:^3.23.0"
     "@react-aria/live-announcer": "npm:^3.4.1"
     "@react-aria/menu": "npm:^3.17.0"
+    "@react-aria/toast": "npm:3.0.0-beta.19"
     "@react-aria/toolbar": "npm:3.0.0-beta.12"
     "@react-aria/tree": "npm:3.0.0-beta.3"
     "@react-aria/utils": "npm:^3.27.0"
@@ -27495,6 +27508,7 @@ __metadata:
     "@react-stately/menu": "npm:^3.9.1"
     "@react-stately/selection": "npm:^3.19.0"
     "@react-stately/table": "npm:^3.13.1"
+    "@react-stately/toast": "npm:3.0.0-beta.7"
     "@react-stately/utils": "npm:^3.10.5"
     "@react-stately/virtualizer": "npm:^4.2.1"
     "@react-types/color": "npm:^3.0.2"
@@ -27556,6 +27570,7 @@ __metadata:
     "@react-aria/tag": "npm:^3.4.9"
     "@react-aria/textfield": "npm:^3.16.0"
     "@react-aria/tooltip": "npm:^3.7.11"
+    "@react-aria/tree": "npm:^3.0.0-beta.3"
     "@react-aria/utils": "npm:^3.27.0"
     "@react-aria/visually-hidden": "npm:^3.8.19"
     "@react-types/shared": "npm:^3.27.0"
@@ -27807,7 +27822,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.1.0"
     "@testing-library/jest-dom": "npm:^5.16.5"
     "@testing-library/react": "npm:^15.0.7"
-    "@testing-library/user-event": "npm:^14.6.1"
+    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch"
     "@types/react": "npm:types-react@19.0.0-rc.0"
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.0"
     "@types/storybook__react": "npm:^4.0.2"

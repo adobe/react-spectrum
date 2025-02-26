@@ -63,6 +63,15 @@ export abstract class Layout<T extends object = Node<any>, O = any> implements L
   }
 
   /**
+   * Returns whether the layout should invalidate when the layout options change.
+   * By default it invalidates when the object identity changes. Override this
+   * method to optimize layout updates based on specific option changes.
+   */
+  shouldInvalidateLayoutOptions(newOptions: O, oldOptions: O): boolean {
+    return newOptions !== oldOptions;
+  }
+
+  /**
    * This method allows the layout to perform any pre-computation
    * it needs to in order to prepare LayoutInfos for retrieval.
    * Called by the virtualizer before `getVisibleLayoutInfos`
