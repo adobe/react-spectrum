@@ -65,6 +65,7 @@ describe('Submenu', function () {
     jest.restoreAllMocks();
   });
 
+  // TODO: this should be in chromatic tests
   it.each`
     Name                 | Component
     ${'static'}          | ${SubmenuStatic}
@@ -214,7 +215,7 @@ describe('Submenu', function () {
     act(() => {jest.runAllTimers();});
     menus = tree.getAllByRole('menu', {hidden: true});
     expect(menus).toHaveLength(2);
-    expect(document.activeElement).toBe(submenuTrigger1);
+    expect(document.activeElement).toBe(submenu1Items[0]);
   });
 
   it('should close the sub menu if the user hovers a neighboring menu item from the submenu trigger', async function () {
@@ -312,38 +313,6 @@ describe('Submenu', function () {
     expect(document.activeElement).toBe(target);
   });
 
-  it('should close everything if the user clicks outside of the submenus', async function () {
-    let tree = render(<SubmenuStatic />);
-    let triggerButton = tree.getByRole('button');
-    await user.pointer({target: triggerButton, keys: '[MouseLeft]'});
-    act(() => {jest.runAllTimers();});
-
-    let menu = tree.getByRole('menu');
-    expect(menu).toBeTruthy();
-    let submenuTrigger1 = within(menu).getAllByRole('menuitem')[1];
-    await user.pointer({target: submenuTrigger1});
-    act(() => {jest.runAllTimers();});
-    let menus = tree.getAllByRole('menu', {hidden: true});
-    expect(menus).toHaveLength(2);
-
-    let submenuTrigger2 = within(menus[1]).getAllByRole('menuitem')[2];
-    await user.pointer({target: submenuTrigger2});
-    act(() => {jest.runAllTimers();});
-    menus = tree.getAllByRole('menu', {hidden: true});
-    expect(menus).toHaveLength(3);
-
-    // @ts-ignore
-    let underlay = tree.getByTestId('underlay', {hidden: true});
-    // TODO: use mouseDown for now, adding installPointerEvents makes some the other tests break
-    fireEvent.mouseDown(underlay);
-    fireEvent.mouseUp(underlay);
-    act(() => {jest.runAllTimers();});
-    act(() => {jest.runAllTimers();});
-    menus = tree.queryAllByRole('menu', {hidden: true});
-    expect(menus).toHaveLength(0);
-    expect(document.activeElement).toBe(triggerButton);
-  });
-
   it('disables a submenu trigger if the wrapped item is in the disabledKeys array', async function () {
     let tree = render(<SubmenuStatic disabledKeys={['Lvl 1 Item 2']} />);
     let triggerButton = tree.getByRole('button');
@@ -379,7 +348,6 @@ describe('Submenu', function () {
       ${'ltr, Enter/Esc'} | ${'en-US'}  | ${[async () => await user.keyboard('[Enter]'), async () => await user.keyboard('[Escape]')]}
     `('opens/closes the submenu via keyboard ($Name)', async function ({Name, locale, actions}) {
       let tree = render(<SubmenuStatic menuTriggerProps={{onOpenChange}} />, 'medium', locale);
-      let triggerButton = tree.getByRole('button');
       await user.tab();
       await user.keyboard('[ArrowDown]');
       act(() => {jest.runAllTimers();});
@@ -407,13 +375,6 @@ describe('Submenu', function () {
       act(() => {jest.runAllTimers();});
 
       if (Name === 'ltr, Enter/Esc') {
-        // Closes all submenus + menu via Esc
-        menus = tree.queryAllByRole('menu', {hidden: true});
-        expect(menus).toHaveLength(0);
-        expect(triggerButton).toHaveAttribute('aria-expanded', 'false');
-        expect(onOpenChange).toHaveBeenCalledTimes(2);
-        expect(onOpenChange).toHaveBeenLastCalledWith(false);
-      } else {
         // Only closes the current submenu via Arrow keys
         menus = tree.getAllByRole('menu', {hidden: true});
         expect(menus).toHaveLength(1);
@@ -632,7 +593,7 @@ describe('Submenu', function () {
       await user.keyboard('[Escape]');
       act(() => {jest.runAllTimers();});
       menus = tree.queryAllByRole('menu');
-      expect(menus).toHaveLength(0);
+      expect(menus).toHaveLength(1);
       expect(onClose).not.toHaveBeenCalled();
       expect(submenuOnClose).not.toHaveBeenCalled();
     });
@@ -833,7 +794,7 @@ describe('Submenu', function () {
       expect(trayDialog).toBeTruthy();
       let backButton = within(trayDialog).getByRole('button');
       expect(backButton).toHaveAttribute('aria-label', `Return to ${submenuTrigger1.textContent}`);
-      let menuHeader = within(trayDialog).getAllByText(submenuTrigger1.textContent)[0];
+      let menuHeader = within(trayDialog).getAllByText(submenuTrigger1.textContent!)[0];
       expect(menuHeader).toBeVisible();
       expect(menuHeader.tagName).toBe('H1');
       let submenuTrigger2 = submenu1Items[2];
@@ -856,7 +817,7 @@ describe('Submenu', function () {
       trayDialog = within(tray).getByRole('dialog');
       backButton = within(trayDialog).getByRole('button');
       expect(backButton).toHaveAttribute('aria-label', `Return to ${submenuTrigger2.textContent}`);
-      menuHeader = within(tray).getAllByText(submenuTrigger2.textContent)[0];
+      menuHeader = within(tray).getAllByText(submenuTrigger2.textContent!)[0];
       expect(menuHeader).toBeVisible();
       expect(menuHeader.tagName).toBe('H1');
     });

@@ -36,6 +36,11 @@ export interface NumberFieldRenderProps {
    */
   isInvalid: boolean,
   /**
+   * Whether the number field is required.
+   * @selector [data-required]
+   */
+  isRequired: boolean,
+  /**
    * State of the number field.
    */
   state: NumberFieldState
@@ -46,7 +51,10 @@ export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | '
 export const NumberFieldContext = createContext<ContextValue<NumberFieldProps, HTMLDivElement>>(null);
 export const NumberFieldStateContext = createContext<NumberFieldState | null>(null);
 
-function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A number field allows a user to enter a number, and increment or decrement the value using stepper buttons.
+ */
+export const NumberField = /*#__PURE__*/ (forwardRef as forwardRefType)(function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, NumberFieldContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
@@ -58,7 +66,9 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
   });
 
   let inputRef = useRef<HTMLInputElement>(null);
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let {
     labelProps,
     groupProps,
@@ -79,7 +89,8 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
     values: {
       state,
       isDisabled: props.isDisabled || false,
-      isInvalid: validation.isInvalid || false
+      isInvalid: validation.isInvalid || false,
+      isRequired: props.isRequired || false
     },
     defaultClassName: 'react-aria-NumberField'
   });
@@ -114,14 +125,9 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
         ref={ref}
         slot={props.slot || undefined}
         data-disabled={props.isDisabled || undefined}
+        data-required={props.isRequired || undefined}
         data-invalid={validation.isInvalid || undefined} />
       {props.name && <input type="hidden" name={props.name} value={isNaN(state.numberValue) ? '' : state.numberValue} />}
     </Provider>
   );
-}
-
-/**
- * A number field allows a user to enter a number, and increment or decrement the value using stepper buttons.
- */
-const _NumberField = /*#__PURE__*/ (forwardRef as forwardRefType)(NumberField);
-export {_NumberField as NumberField};
+});

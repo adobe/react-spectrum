@@ -22,7 +22,11 @@ import {useProviderProps} from '@react-spectrum/provider';
 import {useRadioGroup} from '@react-aria/radio';
 import {useRadioGroupState} from '@react-stately/radio';
 
-function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLElement>) {
+/**
+ * Radio groups allow users to select a single option from a list of mutually exclusive options.
+ * All possible options are exposed up front for users to compare.
+ */
+export const RadioGroup = React.forwardRef(function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
   let {
@@ -63,11 +67,4 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLElement>) {
       </div>
     </Field>
   );
-}
-
-/**
- * Radio groups allow users to select a single option from a list of mutually exclusive options.
- * All possible options are exposed up front for users to compare.
- */
-const _RadioGroup = React.forwardRef(RadioGroup);
-export {_RadioGroup as RadioGroup};
+});

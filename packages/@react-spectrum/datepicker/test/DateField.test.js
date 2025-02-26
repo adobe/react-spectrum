@@ -167,13 +167,11 @@ describe('DateField', function () {
     });
 
     it('should support format help text', function () {
-      let {getByRole, getByText, getAllByRole} = render(<DateField label="Date" showFormatHelpText />);
+      let {getByRole, getAllByRole} = render(<DateField label="Date" showFormatHelpText />);
 
       // Not needed in aria-described by because each segment has a label already, so this would be duplicative.
       let group = getByRole('group');
       expect(group).not.toHaveAttribute('aria-describedby');
-
-      expect(getByText('month / day / year')).toBeVisible();
 
       let segments = getAllByRole('spinbutton');
       for (let segment of segments) {

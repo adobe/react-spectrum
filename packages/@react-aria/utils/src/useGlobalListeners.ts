@@ -13,6 +13,7 @@
 import {useCallback, useEffect, useRef} from 'react';
 
 interface GlobalListeners {
+  addGlobalListener<K extends keyof WindowEventMap>(el: Window, type: K, listener: (this: Document, ev: WindowEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void,
   addGlobalListener<K extends keyof DocumentEventMap>(el: EventTarget, type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void,
   addGlobalListener(el: EventTarget, type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void,
   removeGlobalListener<K extends keyof DocumentEventMap>(el: EventTarget, type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void,
@@ -29,7 +30,7 @@ export function useGlobalListeners(): GlobalListeners {
       listener(...args);
     } : listener;
     globalListeners.current.set(listener, {type, eventTarget, fn, options});
-    eventTarget.addEventListener(type, listener, options);
+    eventTarget.addEventListener(type, fn, options);
   }, []);
   let removeGlobalListener = useCallback((eventTarget, type, listener, options) => {
     let fn = globalListeners.current.get(listener)?.fn || listener;
@@ -42,7 +43,7 @@ export function useGlobalListeners(): GlobalListeners {
     });
   }, [removeGlobalListener]);
 
-  // eslint-disable-next-line arrow-body-style
+   
   useEffect(() => {
     return removeAllGlobalListeners;
   }, [removeAllGlobalListeners]);

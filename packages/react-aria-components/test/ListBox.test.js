@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {
   Button, Dialog,
   DialogTrigger,
@@ -19,14 +19,15 @@ import {
   ListBox,
   ListBoxContext,
   ListBoxItem,
-  UNSTABLE_ListLayout as ListLayout,
+  ListBoxSection,
+  ListLayout,
   Modal,
-  Section,
   Text,
   useDragAndDrop,
-  UNSTABLE_Virtualizer as Virtualizer
+  Virtualizer
 } from '../';
 import React, {useState} from 'react';
+import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestListBox = ({listBoxProps, itemProps}) => (
@@ -60,6 +61,8 @@ let keyPress = (key) => {
 
 describe('ListBox', () => {
   let user;
+  let testUtilUser = new User();
+
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
@@ -76,27 +79,29 @@ describe('ListBox', () => {
   });
 
   it('should have the base set of aria and data attributes', () => {
-    let {getByRole, getAllByRole} = render(
+    let {getByRole} = render(
       <ListBox aria-label="Animals">
         <ListBoxItem id="cat">Cat</ListBoxItem>
         <ListBoxItem id="dog">Dog</ListBoxItem>
         <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
-        <Section>
+        <ListBoxSection>
           <Header>Fish</Header>
           <ListBoxItem id="salmon">Salmon</ListBoxItem>
           <ListBoxItem id="tuna">Tuna</ListBoxItem>
           <ListBoxItem id="cod">Cod</ListBoxItem>
-        </Section>
+        </ListBoxSection>
       </ListBox>
     );
-    let menu = getByRole('listbox');
-    expect(menu).toHaveAttribute('data-rac');
 
-    for (let group of getAllByRole('group')) {
-      expect(group).toHaveAttribute('data-rac');
+    let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
+    expect(listboxTester.listbox).toHaveAttribute('data-rac');
+    let sections = listboxTester.sections;
+    for (let section of sections) {
+      expect(section).toHaveAttribute('data-rac');
     }
 
-    for (let option of getAllByRole('option')) {
+    let options = listboxTester.options();
+    for (let option of options) {
       expect(option).toHaveAttribute('data-rac');
     }
   });
@@ -157,9 +162,9 @@ describe('ListBox', () => {
     let itemRef = React.createRef();
     render(
       <ListBox aria-label="Test" ref={listBoxRef}>
-        <Section ref={sectionRef}>
+        <ListBoxSection ref={sectionRef}>
           <ListBoxItem ref={itemRef}>Cat</ListBoxItem>
-        </Section>
+        </ListBoxSection>
       </ListBox>
     );
     expect(listBoxRef.current).toBeInstanceOf(HTMLElement);
@@ -187,25 +192,25 @@ describe('ListBox', () => {
   it('should support sections', () => {
     let {getAllByRole} = render(
       <ListBox aria-label="Sandwich contents" selectionMode="multiple">
-        <Section data-test-prop="test-section-1">
+        <ListBoxSection data-test-prop="test-section-1">
           <Header>Veggies</Header>
           <ListBoxItem id="lettuce">Lettuce</ListBoxItem>
           <ListBoxItem id="tomato">Tomato</ListBoxItem>
           <ListBoxItem id="onion">Onion</ListBoxItem>
-        </Section>
-        <Section data-test-prop="test-section-2" aria-label="Protein">
+        </ListBoxSection>
+        <ListBoxSection data-test-prop="test-section-2" aria-label="Protein">
           <ListBoxItem id="ham">Ham</ListBoxItem>
           <ListBoxItem id="tuna">Tuna</ListBoxItem>
           <ListBoxItem id="tofu">Tofu</ListBoxItem>
-        </Section>
+        </ListBoxSection>
       </ListBox>
     );
 
     let groups = getAllByRole('group');
     expect(groups).toHaveLength(2);
 
-    expect(groups[0]).toHaveClass('react-aria-Section');
-    expect(groups[1]).toHaveClass('react-aria-Section');
+    expect(groups[0]).toHaveClass('react-aria-ListBoxSection');
+    expect(groups[1]).toHaveClass('react-aria-ListBoxSection');
 
     expect(groups[0]).toHaveAttribute('aria-labelledby');
     expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Veggies');
@@ -332,6 +337,12 @@ describe('ListBox', () => {
     expect(getAllByRole('option').map(o => o.textContent)).toEqual(['Hi']);
   });
 
+  it('should support autoFocus', () => {
+    let {getByRole} = renderListbox({autoFocus: true});
+    let listbox = getByRole('listbox');
+    expect(document.activeElement).toBe(listbox);
+  });
+
   it('should support hover', async () => {
     let hoverStartSpy = jest.fn();
     let hoverChangeSpy = jest.fn();
@@ -395,50 +406,51 @@ describe('ListBox', () => {
     expect(option).not.toHaveClass('focus');
   });
 
-  it('should support press state', () => {
+  it('should support press state', async () => {
     let {getAllByRole} = renderListbox({selectionMode: 'multiple'}, {className: ({isPressed}) => isPressed ? 'pressed' : ''});
     let option = getAllByRole('option')[0];
 
     expect(option).not.toHaveAttribute('data-pressed');
     expect(option).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(option);
+    await user.pointer({target: option, keys: '[MouseLeft>]'});
     expect(option).toHaveAttribute('data-pressed', 'true');
     expect(option).toHaveClass('pressed');
 
-    fireEvent.mouseUp(option);
+    await user.pointer({target: option, keys: '[/MouseLeft]'});
     expect(option).not.toHaveAttribute('data-pressed');
     expect(option).not.toHaveClass('pressed');
   });
 
-  it('should not show press state when not interactive', () => {
+  it('should not show press state when not interactive', async () => {
     let {getAllByRole} = renderListbox({}, {className: ({isPressed}) => isPressed ? 'pressed' : ''});
     let option = getAllByRole('option')[0];
 
     expect(option).not.toHaveAttribute('data-pressed');
     expect(option).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(option);
+    await user.pointer({target: option, keys: '[MouseLeft>]'});
     expect(option).not.toHaveAttribute('data-pressed');
     expect(option).not.toHaveClass('pressed');
 
-    fireEvent.mouseUp(option);
+    await user.pointer({target: option, keys: '[/MouseLeft]'});
     expect(option).not.toHaveAttribute('data-pressed');
     expect(option).not.toHaveClass('pressed');
   });
 
   it('should support selection state', async () => {
-    let {getAllByRole} = renderListbox({selectionMode: 'multiple'}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
-    let option = getAllByRole('option')[0];
+    let {getByRole} = renderListbox({selectionMode: 'multiple'}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
 
+    let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
+    let option = listboxTester.options()[0];
     expect(option).not.toHaveAttribute('aria-selected', 'true');
     expect(option).not.toHaveClass('selected');
 
-    await user.click(option);
+    await listboxTester.toggleOptionSelection({option});
     expect(option).toHaveAttribute('aria-selected', 'true');
     expect(option).toHaveClass('selected');
 
-    await user.click(option);
+    await listboxTester.toggleOptionSelection({option});
     expect(option).not.toHaveAttribute('aria-selected', 'true');
     expect(option).not.toHaveClass('selected');
   });
@@ -459,6 +471,7 @@ describe('ListBox', () => {
         <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
       </ListBox>
     );
+
     let items = getAllByRole('option');
     expect(items[1]).toHaveAttribute('aria-disabled', 'true');
 
@@ -468,21 +481,79 @@ describe('ListBox', () => {
     expect(document.activeElement).toBe(items[2]);
   });
 
-  it('should support onAction on items', async () => {
+  it.each`
+    interactionType
+    ${'mouse'}
+    ${'keyboard'}
+    ${'touch'}
+  `('should support onAction, interactionType: $interactionType ', async ({interactionType}) => {
     let onAction = jest.fn();
-    let {getAllByRole} = render(
+    let {getByRole} = render(
       <ListBox aria-label="Test">
         <ListBoxItem id="cat" onAction={onAction}>Cat</ListBoxItem>
         <ListBoxItem id="dog">Dog</ListBoxItem>
         <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
       </ListBox>
     );
-    let items = getAllByRole('option');
-    await user.click(items[0]);
+    let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
+
+    let options = listboxTester.options();
+    await listboxTester.triggerOptionAction({option: options[0], interactionType});
     expect(onAction).toHaveBeenCalledTimes(1);
   });
 
-  it('should support onAction on list ans list items', async () => {
+  it('should trigger onAction on double click if selectionBehavior="replace"', async () => {
+    let onAction = jest.fn();
+    let {getByRole} = render(
+      <ListBox aria-label="Test" selectionMode="multiple" selectionBehavior="replace" onAction={onAction}>
+        <ListBoxItem id="cat">Cat</ListBoxItem>
+        <ListBoxItem id="dog">Dog</ListBoxItem>
+        <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+      </ListBox>
+    );
+    let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
+
+    let options = listboxTester.options();
+    await listboxTester.triggerOptionAction({option: options[0]});
+    let selectedOptions = listboxTester.selectedOptions;
+    expect(selectedOptions).toHaveLength(1);
+    expect(onAction).not.toHaveBeenCalled();
+
+    await listboxTester.triggerOptionAction({option: options[1], needsDoubleClick: true});
+    selectedOptions = listboxTester.selectedOptions;
+    expect(selectedOptions).toHaveLength(1);
+    expect(onAction).toHaveBeenCalledTimes(1);
+  });
+
+  describe('with pointer events', () => {
+    installPointerEvent();
+    it('should trigger selection on long press if both onAction and selection exist (touch only)', async () => {
+      let onAction = jest.fn();
+      let {getByRole} = render(
+        <ListBox aria-label="Test" selectionMode="multiple" selectionBehavior="toggle" onAction={onAction}>
+          <ListBoxItem id="cat">Cat</ListBoxItem>
+          <ListBoxItem id="dog">Dog</ListBoxItem>
+          <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+        </ListBox>
+      );
+      let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox'), advanceTimer: jest.advanceTimersByTime, interactionType: 'touch'});
+
+      await listboxTester.toggleOptionSelection({option: listboxTester.options()[0]});
+      expect(listboxTester.selectedOptions).toHaveLength(0);
+      expect(onAction).toHaveBeenCalledTimes(1);
+
+      await listboxTester.toggleOptionSelection({option: listboxTester.options()[0], needsLongPress: true});
+      expect(listboxTester.selectedOptions).toHaveLength(1);
+      expect(listboxTester.selectedOptions[0]).toBe(listboxTester.options()[0]);
+      expect(onAction).toHaveBeenCalledTimes(1);
+
+      await listboxTester.toggleOptionSelection({option: listboxTester.options()[1]});
+      expect(listboxTester.selectedOptions).toHaveLength(2);
+      expect(listboxTester.selectedOptions[1]).toBe(listboxTester.options()[1]);
+    });
+  });
+
+  it('should support onAction on list and list items', async () => {
     let onAction = jest.fn();
     let itemAction = jest.fn();
     let {getAllByRole} = render(
@@ -709,10 +780,6 @@ describe('ListBox', () => {
   });
 
   it('should support virtualizer', async () => {
-    let layout = new ListLayout({
-      rowHeight: 25
-    });
-
     let items = [];
     for (let i = 0; i < 50; i++) {
       items.push({id: i, name: 'Item ' + i});
@@ -723,7 +790,7 @@ describe('ListBox', () => {
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
 
     let {getByRole, getAllByRole} = render(
-      <Virtualizer layout={layout}>
+      <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 25}}>
         <ListBox aria-label="Test" items={items}>
           {item => <ListBoxItem>{item.name}</ListBoxItem>}
         </ListBox>
@@ -1083,77 +1150,77 @@ describe('ListBox', () => {
     describe('keyboard', () => {
       it('should deselect item 0 when navigating back in replace selection mode', async () => {
         let {getAllByRole} = render(<FalsyExample />);
-  
+
         let items = getAllByRole('option');
-  
+
         await user.click(items[1]);
         expect(items[1]).toHaveAttribute('aria-selected', 'true');
-  
+
         // Hold Shift and press ArrowUp to select item 0
         await user.keyboard('{Shift>}{ArrowUp}{/Shift}');
-  
+
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
         expect(items[1]).toHaveAttribute('aria-selected', 'true');
         expect(items[2]).toHaveAttribute('aria-selected', 'false');
-  
+
         // Hold Shift and press ArrowDown to navigate back to item 1
         await user.keyboard('{Shift>}{ArrowDown}{/Shift}');
-  
+
         expect(items[0]).toHaveAttribute('aria-selected', 'false');
         expect(items[1]).toHaveAttribute('aria-selected', 'true');
         expect(items[2]).toHaveAttribute('aria-selected', 'false');
       });
-  
+
       it('should correctly handle starting selection at item 0 and extending to item 2', async () => {
         let {getAllByRole} = render(<FalsyExample />);
-  
+
         let items = getAllByRole('option');
-  
+
         await user.click(items[0]);
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
-  
+
         // Hold Shift and press ArrowDown to select item 1
         await user.keyboard('{Shift>}{ArrowDown}{/Shift}');
-  
+
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
         expect(items[1]).toHaveAttribute('aria-selected', 'true');
         expect(items[2]).toHaveAttribute('aria-selected', 'false');
-  
+
         // Hold Shift and press ArrowDown to select item 2
         await user.keyboard('{Shift>}{ArrowDown}{/Shift}');
-  
+
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
         expect(items[1]).toHaveAttribute('aria-selected', 'true');
         expect(items[2]).toHaveAttribute('aria-selected', 'true');
       });
     });
-  
+
     describe('mouse', () => {
       it('should deselect item 0 when clicking another item in replace selection mode', async () => {
         let {getAllByRole} = render(<FalsyExample />);
-  
+
         let items = getAllByRole('option');
-  
+
         await user.click(items[1]);
         expect(items[1]).toHaveAttribute('aria-selected', 'true');
-  
+
         await user.click(items[0]);
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
         expect(items[1]).toHaveAttribute('aria-selected', 'false');
-  
+
         await user.click(items[1]);
         expect(items[1]).toHaveAttribute('aria-selected', 'true');
         expect(items[0]).toHaveAttribute('aria-selected', 'false');
       });
-  
+
       it('should correctly handle mouse selection starting at item 0 and extending to item 2', async () => {
         let {getAllByRole} = render(<FalsyExample />);
-  
+
         let items = getAllByRole('option');
-  
+
         await user.click(items[0]);
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
-  
+
         await user.click(items[2]);
         expect(items[0]).toHaveAttribute('aria-selected', 'false');
         expect(items[2]).toHaveAttribute('aria-selected', 'true');

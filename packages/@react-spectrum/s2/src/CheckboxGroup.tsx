@@ -41,7 +41,7 @@ export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'classN
   /**
    * The Checkboxes contained within the CheckboxGroup.
    */
-  children?: ReactNode,
+  children: ReactNode,
   /**
    * By default, checkboxes are not emphasized (gray).
    * The emphasized (blue) version provides visual prominence.
@@ -49,9 +49,12 @@ export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'classN
   isEmphasized?: boolean
 }
 
-export const CheckboxGroupContext = createContext<ContextValue<CheckboxGroupProps, DOMRefValue<HTMLDivElement>>>(null);
+export const CheckboxGroupContext = createContext<ContextValue<Partial<CheckboxGroupProps>, DOMRefValue<HTMLDivElement>>>(null);
 
-function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A CheckboxGroup allows users to select one or more items from a list of choices.
+ */
+export const CheckboxGroup = forwardRef(function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, CheckboxGroupContext);
   let formContext = useContext(FormContext);
   props = useFormProps(props);
@@ -117,7 +120,7 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
             columnGap: 16,
             flexWrap: 'wrap'
           })({orientation})}>
-          <FormContext.Provider value={{...formContext, size}}>
+          <FormContext.Provider value={{...formContext, size, isRequired: undefined}}>
             <CheckboxContext.Provider value={{isEmphasized}}>
               {children}
             </CheckboxContext.Provider>
@@ -134,10 +137,4 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
       </>)}
     </AriaCheckboxGroup>
   );
-}
-
-/**
- * A CheckboxGroup allows users to select one or more items from a list of choices.
- */
-let _CheckboxGroup = forwardRef(CheckboxGroup);
-export {_CheckboxGroup as CheckboxGroup};
+});

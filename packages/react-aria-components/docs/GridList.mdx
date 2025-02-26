@@ -12,7 +12,8 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import sharedDocs from 'docs:@react-types/shared';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
+import gridlistUtil from 'docs:@react-aria/test-utils/src/gridlist.ts';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI, VersionBadge} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from './GridListAnatomy.svg';
@@ -215,6 +216,7 @@ HTML lists are meant for static content, rather than lists with rich interaction
 * **Async loading** – Support for loading items asynchronously.
 * **Keyboard navigation** – List items and focusable children can be navigated using the arrow keys, along with page up/down, home/end, etc. Typeahead, auto scrolling, and selection modifier keys are supported as well.
 * **Drag and drop** – GridList supports drag and drop to reorder, insert, or update items via mouse, touch, keyboard, and screen reader interactions.
+* **Virtualized scrolling** – Use [Virtualizer](Virtualizer.html) to improve performance of large lists by rendering only the visible items.
 * **Touch friendly** – Selection and actions adapt their behavior depending on the device. For example, selection is activated via long press on touch when item actions are present.
 * **Accessible** – Follows the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/), with additional selection announcements via an ARIA live region. Extensively tested across many devices and [assistive technologies](accessibility.html#testing) to ensure announcements and behaviors are consistent.
 
@@ -308,7 +310,7 @@ This example wraps `GridList` and all of its children together into a single com
 ```tsx example export=true
 import type {GridListProps, GridListItemProps} from 'react-aria-components';
 
-function MyGridList<T extends object>({children, ...props}: GridListProps<T>) {
+export function MyGridList<T extends object>({children, ...props}: GridListProps<T>) {
   return (
     <GridList {...props}>
       {children}
@@ -316,7 +318,7 @@ function MyGridList<T extends object>({children, ...props}: GridListProps<T>) {
   );
 }
 
-function MyItem({children, ...props}: GridListItemProps) {
+export function MyItem({children, ...props}: GridListItemProps) {
   let textValue = typeof children === 'string' ? children : undefined;
   return (
     <GridListItem textValue={textValue} {...props}>
@@ -578,7 +580,7 @@ Note that you are responsible for the styling of disabled rows, however, the sel
 When `disabledBehavior` is set to `selection`, interactions such as focus, dragging, or actions can still be performed on disabled rows.
 
 ```tsx example
-<MyGridList 
+<MyGridList
   aria-label="List with disabled rows" selectionMode="multiple"
   /*- begin highlight -*/
   disabledBehavior="selection"
@@ -1772,7 +1774,7 @@ A `GridListItem` can be targeted with the `.react-aria-GridListItem` CSS selecto
 
 ### Composition
 
-If you need to customize one of the components within a `GridList`, such as `GridListItem` or `Section`, in many cases you can create a wrapper component. This lets you customize the props passed to the component.
+If you need to customize one of the components within a `GridList`, such as `GridListItem`, in many cases you can create a wrapper component. This lets you customize the props passed to the component.
 
 ```tsx
 function MyItem(props) {
@@ -1865,3 +1867,43 @@ Now you can use `MyCustomCheckbox` within a `GridList`, in place of the builtin 
 ### Hooks
 
 If you need to customize things even further, such as accessing internal state, intercepting events, or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useGridList](useGridList.html) for more details.
+
+## Testing
+
+### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+`@react-aria/test-utils` offers common gridlist interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
+in your tests. Below is the full definition of the gridlist tester and a sample of how you could use it in your test suite.
+
+```ts
+// GridList.test.ts
+import {render, within} from '@testing-library/react';
+import {User} from '@react-aria/test-utils';
+
+let testUtilUser = new User({interactionType: 'mouse'});
+// ...
+
+it('GridList can select a row via keyboard', async function () {
+  // Render your test component/app and initialize the gridlist tester
+  let {getByTestId} = render(
+    <GridList data-testid="test-gridlist" selectionMode="single">
+      ...
+    </GridList>
+  );
+  let gridListTester = testUtilUser.createTester('GridList', {root: getByTestId('test-gridlist'), interactionType: 'keyboard'});
+
+  let row = gridListTester.rows[0];
+  expect(within(row).getByRole('checkbox')).not.toBeChecked();
+  expect(gridListTester.selectedRows).toHaveLength(0);
+
+  await gridListTester.toggleRowSelection({row: 0});
+  expect(within(row).getByRole('checkbox')).toBeChecked();
+  expect(gridListTester.selectedRows).toHaveLength(1);
+
+  await gridListTester.toggleRowSelection({row: 0});
+  expect(within(row).getByRole('checkbox')).not.toBeChecked();
+  expect(gridListTester.selectedRows).toHaveLength(0);
+});
+```
+
+<ClassAPI links={gridlistUtil.links} class={gridlistUtil.exports.GridListTester} />

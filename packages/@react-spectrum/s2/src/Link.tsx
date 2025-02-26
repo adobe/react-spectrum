@@ -14,7 +14,7 @@ import {ContextValue, LinkRenderProps, Link as RACLink, LinkProps as RACLinkProp
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
-import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
 import {SkeletonContext, useSkeletonText} from './Skeleton';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useLayoutEffect} from '@react-aria/utils';
@@ -27,7 +27,7 @@ interface LinkStyleProps {
    */
   variant?: 'primary' | 'secondary',
   /** The static color style to apply. Useful when the link appears over a color background. */
-  staticColor?: 'white' | 'black',
+  staticColor?: 'white' | 'black' | 'auto',
   /** Whether the link is on its own vs inside a longer string of text. */
   isStandalone?: boolean,
   /** Whether the link should be displayed with a quiet style. */
@@ -35,13 +35,14 @@ interface LinkStyleProps {
 }
 
 export interface LinkProps extends Omit<RACLinkProps, 'isDisabled' | 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, StyleProps, LinkStyleProps {
-  children?: ReactNode
+  children: ReactNode
 }
 
-export const LinkContext = createContext<ContextValue<LinkProps, FocusableRefValue<HTMLAnchorElement>>>(null);
+export const LinkContext = createContext<ContextValue<Partial<LinkProps>, FocusableRefValue<HTMLAnchorElement>>>(null);
 
-const link = style<LinkRenderProps & LinkStyleProps & {isSkeleton: boolean}>({
+const link = style<LinkRenderProps & LinkStyleProps & {isSkeleton: boolean, isStaticColor: boolean}>({
   ...focusRing(),
+  ...staticColor(),
   borderRadius: 'sm',
   font: {
     isStandalone: 'ui'
@@ -51,10 +52,7 @@ const link = style<LinkRenderProps & LinkStyleProps & {isSkeleton: boolean}>({
       primary: 'accent',
       secondary: 'neutral' // TODO: should there be an option to inherit from the paragraph? What about hover states?
     },
-    staticColor: {
-      white: 'white',
-      black: 'black'
-    },
+    isStaticColor: 'transparent-overlay-1000',
     forcedColors: 'LinkText'
   },
   transition: 'default',
@@ -74,16 +72,17 @@ const link = style<LinkRenderProps & LinkStyleProps & {isSkeleton: boolean}>({
   },
   outlineColor: {
     default: 'focus-ring',
-    staticColor: {
-      white: 'white',
-      black: 'black'
-    },
+    isStaticColor: 'transparent-overlay-1000',
     forcedColors: 'Highlight'
   },
   disableTapHighlight: true
 }, getAllowedOverrides());
 
-function Link(props: LinkProps, ref: FocusableRef<HTMLAnchorElement>) {
+/**
+ * Links allow users to navigate to a different location.
+ * They can be presented inline inside a paragraph or as standalone text.
+ */
+export const Link = /*#__PURE__*/ forwardRef(function Link(props: LinkProps, ref: FocusableRef<HTMLAnchorElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, LinkContext);
   let {variant = 'primary', staticColor, isQuiet, isStandalone, UNSAFE_style, UNSAFE_className = '', styles, children} = props;
 
@@ -103,15 +102,8 @@ function Link(props: LinkProps, ref: FocusableRef<HTMLAnchorElement>) {
       {...props}
       ref={domRef}
       style={UNSAFE_style}
-      className={renderProps => UNSAFE_className + link({...renderProps, variant, staticColor, isQuiet, isStandalone, isSkeleton}, styles)}>
+      className={renderProps => UNSAFE_className + link({...renderProps, variant, staticColor, isStaticColor: !!staticColor, isQuiet, isStandalone, isSkeleton}, styles)}>
       {children}
     </RACLink>
   );
-}
-
-/**
- * Links allow users to navigate to a different location.
- * They can be presented inline inside a paragraph or as standalone text.
- */
-const _Link = /*#__PURE__*/ forwardRef(Link);
-export {_Link as Link};
+});

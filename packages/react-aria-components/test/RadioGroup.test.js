@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button, Dialog, DialogTrigger, FieldError, Label, Modal, Radio, RadioContext, RadioGroup, RadioGroupContext, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -166,18 +166,18 @@ describe('RadioGroup', () => {
     expect(label).not.toHaveClass('focus');
   });
 
-  it('should support press state', () => {
+  it('should support press state', async () => {
     let {getAllByRole} = renderGroup({}, {className: ({isPressed}) => isPressed ? 'pressed' : ''});
     let radio = getAllByRole('radio')[0].closest('label');
 
     expect(radio).not.toHaveAttribute('data-pressed');
     expect(radio).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(radio);
+    await user.pointer({target: radio, keys: '[MouseLeft>]'});
     expect(radio).toHaveAttribute('data-pressed', 'true');
     expect(radio).toHaveClass('pressed');
 
-    fireEvent.mouseUp(radio);
+    await user.pointer({target: radio, keys: '[/MouseLeft]'});
     expect(radio).not.toHaveAttribute('data-pressed');
     expect(radio).not.toHaveClass('pressed');
   });
@@ -421,6 +421,45 @@ describe('RadioGroup', () => {
         <RadioGroup isRequired>
           <Label>Test</Label>
           <Radio value="a">A</Radio>
+          <FieldError />
+        </RadioGroup>
+      </form>
+    );
+
+    let group = getByRole('radiogroup');
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
+
+    let radios = getAllByRole('radio');
+    for (let input of radios) {
+      expect(input).toHaveAttribute('required');
+      expect(input).not.toHaveAttribute('aria-required');
+      expect(input.validity.valid).toBe(false);
+    }
+
+    act(() => {getByTestId('form').checkValidity();});
+
+    expect(group).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(group).toHaveAttribute('data-invalid');
+    expect(document.activeElement).toBe(radios[0]);
+
+    await user.click(radios[0]);
+    for (let input of radios) {
+      expect(input.validity.valid).toBe(true);
+    }
+
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
+  });
+
+  it('supports validation errors when last radio is disabled', async () => {
+    let {getByRole, getAllByRole, getByTestId} = render(
+      <form data-testid="form">
+        <RadioGroup isRequired>
+          <Label>Test</Label>
+          <Radio value="a">A</Radio>
+          <Radio value="b" isDisabled>B</Radio>
           <FieldError />
         </RadioGroup>
       </form>

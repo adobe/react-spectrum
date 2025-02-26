@@ -25,7 +25,11 @@ const flexStyleProps: StyleHandlers = {
   alignContent: ['alignContent', flexAlignValue]
 };
 
-function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A layout container using flexbox. Provides Spectrum dimension values, and supports the gap
+ * property to define consistent spacing between items.
+ */
+export const Flex = forwardRef(function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
     ...otherProps
@@ -58,7 +62,7 @@ function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
       {children}
     </div>
   );
-}
+});
 
 /**
  * Normalize 'start' and 'end' alignment values to 'flex-start' and 'flex-end'
@@ -86,10 +90,3 @@ function flexWrapValue(value) {
 
   return value;
 }
-
-/**
- * A layout container using flexbox. Provides Spectrum dimension values, and supports the gap
- * property to define consistent spacing between items.
- */
-const _Flex = forwardRef(Flex);
-export {_Flex as Flex};

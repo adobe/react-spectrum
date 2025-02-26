@@ -11,9 +11,9 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Collection, DropIndicator, UNSTABLE_GridLayout as GridLayout, Header, ListBox, ListBoxItem, ListBoxProps, UNSTABLE_ListLayout as ListLayout, Section, Separator, Text, useDragAndDrop, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
+import {Collection, DropIndicator, GridLayout, Header, ListBox, ListBoxItem, ListBoxProps, ListBoxSection, ListLayout, Separator, Text, useDragAndDrop, Virtualizer, WaterfallLayout} from 'react-aria-components';
 import {MyListBoxItem} from './utils';
-import React, {useMemo} from 'react';
+import React from 'react';
 import {Size} from '@react-stately/virtualizer';
 import styles from '../example/index.css';
 import {useListData} from 'react-stately';
@@ -39,16 +39,12 @@ ListBoxExample.story = {
   },
   argTypes: {
     selectionMode: {
-      control: {
-        type: 'radio',
-        options: ['none', 'single', 'multiple']
-      }
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
     },
     selectionBehavior: {
-      control: {
-        type: 'radio',
-        options: ['toggle', 'replace']
-      }
+      control: 'radio',
+      options: ['toggle', 'replace']
     }
   },
   parameters: {
@@ -62,18 +58,18 @@ ListBoxExample.story = {
 // also has a aXe landmark error, not sure what it means
 export const ListBoxSections = () => (
   <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="test listbox with section">
-    <Section className={styles.group}>
+    <ListBoxSection className={styles.group}>
       <Header style={{fontSize: '1.2em'}}>Section 1</Header>
       <MyListBoxItem>Foo</MyListBoxItem>
       <MyListBoxItem>Bar</MyListBoxItem>
       <MyListBoxItem>Baz</MyListBoxItem>
-    </Section>
+    </ListBoxSection>
     <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
-    <Section className={styles.group} aria-label="Section 2">
+    <ListBoxSection className={styles.group} aria-label="Section 2">
       <MyListBoxItem>Foo</MyListBoxItem>
       <MyListBoxItem>Bar</MyListBoxItem>
       <MyListBoxItem>Baz</MyListBoxItem>
-    </Section>
+    </ListBoxSection>
   </ListBox>
 );
 
@@ -134,7 +130,7 @@ export const ListBoxDnd = (props: ListBoxProps<typeof albums[0]>) => {
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key).title})),
+    getItems: (keys) => [...keys].map(key => ({'text/plain': list.getItem(key)?.title ?? ''})),
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
         list.moveBefore(e.target.key, e.keys);
@@ -191,7 +187,7 @@ export const ListBoxHover = () => (
 export const ListBoxGrid = (args) => (
   <ListBox
     {...args}
-    className={styles.menu} 
+    className={styles.menu}
     aria-label="test listbox"
     style={{
       width: 300,
@@ -250,23 +246,21 @@ export function VirtualizedListBox({variableHeight}) {
     sections.push({id: `section_${s}`, name: `Section ${s}`, children: items});
   }
 
-  let layout = useMemo(() => {
-    return new ListLayout({
-      [variableHeight ? 'estimatedRowHeight' : 'rowHeight']: 25,
-      estimatedHeadingHeight: 26
-    });
-  }, [variableHeight]);
-
   return (
-    <Virtualizer layout={layout}>
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        [variableHeight ? 'estimatedRowHeight' : 'rowHeight']: 25,
+        estimatedHeadingHeight: 26
+      }}>
       <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox" items={sections}>
         {section => (
-          <Section className={styles.group}>
+          <ListBoxSection className={styles.group}>
             <Header style={{fontSize: '1.2em'}}>{section.name}</Header>
             <Collection items={section.children}>
               {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
             </Collection>
-          </Section>
+          </ListBoxSection>
         )}
       </ListBox>
     </Virtualizer>
@@ -278,15 +272,13 @@ VirtualizedListBox.args = {
 };
 
 export function VirtualizedListBoxEmpty() {
-  let layout = useMemo(() => {
-    return new ListLayout({
-      rowHeight: 25,
-      estimatedHeadingHeight: 26
-    });
-  }, []);
-
   return (
-    <Virtualizer layout={layout}>
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        rowHeight: 25,
+        estimatedHeadingHeight: 26
+      }}>
       <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox" renderEmptyState={() => 'Empty'}>
         <></>
       </ListBox>
@@ -300,19 +292,13 @@ export function VirtualizedListBoxDnd() {
     items.push({id: i, name: `Item ${i}`});
   }
 
-  let layout = useMemo(() => {
-    return new ListLayout({
-      rowHeight: 25
-    });
-  }, []);
-
   let list = useListData({
     initialItems: items
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => {
-      return [...keys].map(key => ({'text/plain': list.getItem(key).name}));
+      return [...keys].map(key => ({'text/plain': list.getItem(key)?.name ?? ''}));
     },
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
@@ -328,8 +314,12 @@ export function VirtualizedListBoxDnd() {
 
   return (
     <div style={{height: 400, width: 400, resize: 'both', padding: 40, overflow: 'hidden'}}>
-      <Virtualizer layout={layout}>
-        <ListBox 
+      <Virtualizer
+        layout={ListLayout}
+        layoutOptions={{
+          rowHeight: 25
+        }}>
+        <ListBox
           className={styles.menu}
           selectionMode="multiple"
           selectionBehavior="replace"
@@ -344,18 +334,11 @@ export function VirtualizedListBoxDnd() {
   );
 }
 
-export function VirtualizedListBoxGrid({minSize, maxSize}) {
+function VirtualizedListBoxGridExample({minSize = 80, maxSize = 100, preserveAspectRatio = false}) {
   let items: {id: number, name: string}[] = [];
   for (let i = 0; i < 10000; i++) {
     items.push({id: i, name: `Item ${i}`});
   }
-
-  let layout = useMemo(() => {
-    return new GridLayout({
-      minItemSize: new Size(minSize, minSize),
-      maxItemSize: new Size(maxSize, maxSize)
-    });
-  }, [minSize, maxSize]);
 
   let list = useListData({
     initialItems: items
@@ -363,7 +346,7 @@ export function VirtualizedListBoxGrid({minSize, maxSize}) {
 
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => {
-      return [...keys].map(key => ({'text/plain': list.getItem(key).name}));
+      return [...keys].map(key => ({'text/plain': list.getItem(key)?.name ?? ''}));
     },
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
@@ -379,7 +362,13 @@ export function VirtualizedListBoxGrid({minSize, maxSize}) {
 
   return (
     <div style={{height: 400, width: 400, resize: 'both', padding: 40, overflow: 'hidden'}}>
-      <Virtualizer layout={layout}>
+      <Virtualizer 
+        layout={GridLayout}
+        layoutOptions={{
+          minItemSize: new Size(minSize, minSize),
+          maxItemSize: new Size(maxSize, maxSize),
+          preserveAspectRatio
+        }}>
         <ListBox
           className={styles.menu}
           selectionMode="multiple"
@@ -396,7 +385,46 @@ export function VirtualizedListBoxGrid({minSize, maxSize}) {
   );
 }
 
-VirtualizedListBoxGrid.args = {
-  minSize: 80,
-  maxSize: 100
+export const VirtualizedListBoxGrid = {
+  render(args) {
+    return <VirtualizedListBoxGridExample {...args} />;
+  },
+  args: {
+    minSize: 80,
+    maxSize: 100,
+    preserveAspectRatio: false
+  }
 };
+
+let lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'.split(' ');
+
+export function VirtualizedListBoxWaterfall({minSize = 80, maxSize = 100}) {
+  let items: {id: number, name: string}[] = [];
+  for (let i = 0; i < 1000; i++) {
+    let words = Math.max(2, Math.floor(Math.random() * 25));
+    let name = lorem.slice(0, words).join(' ');
+    items.push({id: i, name});
+  }
+
+  return (
+    <div style={{height: 400, width: 400, resize: 'both', padding: 40, overflow: 'hidden'}}>
+      <Virtualizer 
+        layout={WaterfallLayout}
+        layoutOptions={{
+          minItemSize: new Size(minSize, minSize),
+          maxItemSize: new Size(maxSize, maxSize)
+        }}>
+        <ListBox
+          className={styles.menu}
+          selectionMode="multiple"
+          selectionBehavior="replace"
+          layout="grid"
+          style={{width: '100%', height: '100%'}}
+          aria-label="virtualized listbox"
+          items={items}>
+          {item => <MyListBoxItem style={{height: '100%', border: '1px solid', boxSizing: 'border-box'}}>{item.name}</MyListBoxItem>}
+        </ListBox>
+      </Virtualizer>
+    </div>
+  );
+}

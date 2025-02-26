@@ -41,7 +41,7 @@ export interface CheckboxProps extends Omit<AriaCheckboxProps, 'className' | 'st
   children?: ReactNode
 }
 
-export const CheckboxContext = createContext<ContextValue<CheckboxProps, FocusableRefValue<HTMLLabelElement>>>(null);
+export const CheckboxContext = createContext<ContextValue<Partial<CheckboxProps>, FocusableRefValue<HTMLLabelElement>>>(null);
 
 const wrapper = style({
   display: 'flex',
@@ -125,7 +125,11 @@ const iconSize = {
   XL: 'L'
 } as const;
 
-function Checkbox({children, ...props}: CheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
+/**
+ * Checkboxes allow users to select multiple items from a list of individual items,
+ * or to mark one individual item as selected.
+ */
+export const Checkbox = forwardRef(function Checkbox({children, ...props}: CheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, CheckboxContext);
   let boxRef = useRef(null);
   let inputRef = useRef<HTMLInputElement | null>(null);
@@ -179,11 +183,4 @@ function Checkbox({children, ...props}: CheckboxProps, ref: FocusableRef<HTMLLab
       }}
     </AriaCheckbox>
   );
-}
-
-/**
- * Checkboxes allow users to select multiple items from a list of individual items,
- * or to mark one individual item as selected.
- */
-let _Checkbox = forwardRef(Checkbox);
-export {_Checkbox as Checkbox};
+});

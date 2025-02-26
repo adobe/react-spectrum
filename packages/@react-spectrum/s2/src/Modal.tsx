@@ -14,7 +14,6 @@ import {colorScheme} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
 import {DOMRef} from '@react-types/shared';
 import {forwardRef, MutableRefObject, useCallback, useContext} from 'react';
-import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {ModalOverlay, ModalOverlayProps, Modal as RACModal, useLocale} from 'react-aria-components';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
@@ -28,28 +27,6 @@ interface ModalProps extends ModalOverlayProps {
   size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover'
 }
 
-const fade = keyframes(`
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-`);
-
-const fadeAndSlide = keyframes(`
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`);
-
 const modalOverlayStyles = style({
   ...colorScheme(),
   position: 'fixed',
@@ -59,21 +36,21 @@ const modalOverlayStyles = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  animation: {
-    isEntering: fade,
-    isExiting: fade
+  opacity: {
+    isEntering: 0,
+    isExiting: 0
   },
-  animationDuration: {
-    isEntering: 250,
+  transition: 'opacity',
+  transitionDuration: {
+    default: 250,
     isExiting: 130
-  },
-  animationDirection: {
-    isEntering: 'normal',
-    isExiting: 'reverse'
   }
 });
 
-function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A modal is an overlay element which blocks interaction with elements outside it.
+ */
+export const Modal = forwardRef(function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
   let domRef = useDOMRef(ref);
   let colorScheme = useContext(ColorSchemeContext);
   let {locale, direction} = useLocale();
@@ -106,9 +83,9 @@ function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
           width: {
             size: {
               // Copied from designs, not sure if correct.
-              S: '[21rem]',
-              M: '[26rem]',
-              L: '[36rem]',
+              S: 336,
+              M: 416,
+              L: 576,
               fullscreen: '[calc(100% - 40px)]',
               fullscreenTakeover: 'full'
             }
@@ -120,17 +97,17 @@ function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
             }
           },
           maxWidth: {
+            default: '[90vw]',
             size: {
-              S: '[90vw]',
-              M: '[90vw]',
-              L: '[90vw]'
+              fullscreen: 'none',
+              fullscreenTakeover: 'none'
             }
           },
           maxHeight: {
+            default: '[90vh]',
             size: {
-              S: '[90vh]',
-              M: '[90vh]',
-              L: '[90vh]'
+              fullscreen: 'none',
+              fullscreenTakeover: 'none'
             }
           },
           '--s2-container-bg': {
@@ -138,34 +115,27 @@ function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
             value: 'layer-2'
           },
           backgroundColor: '--s2-container-bg',
-          animation: {
-            isEntering: fadeAndSlide,
-            isExiting: fade
-          },
-          animationDuration: {
-            isEntering: 250,
-            isExiting: 130
-          },
-          animationDelay: {
-            isEntering: 160,
+          opacity: {
+            isEntering: 0,
             isExiting: 0
           },
-          animationDirection: {
-            isEntering: 'normal',
-            isExiting: 'reverse'
+          translateY: {
+            isEntering: 20
           },
-          animationFillMode: 'both',
+          transition: '[opacity, translate]',
+          transitionDuration: {
+            default: 250,
+            isExiting: 130
+          },
+          transitionDelay: {
+            default: 160,
+            isExiting: 0
+          },
           // Transparent outline for WHCM.
           outlineStyle: 'solid',
           outlineWidth: 1,
           outlineColor: 'transparent'
-        })({...renderProps, size: props.size || 'M'})} />
+        })({...renderProps, size: props.size})} />
     </ModalOverlay>
   );
-}
-
-/**
- * A modal is an overlay element which blocks interaction with elements outside it.
- */
-let _Modal = forwardRef(Modal);
-export {_Modal as Modal};
+});

@@ -54,7 +54,7 @@ function MenuButton(props) {
   let state = useMenuTriggerState(props);
 
   // Get props for the menu trigger and menu elements
-  let ref = React.useRef(undefined);
+  let ref = React.useRef(null);
   let {menuTriggerProps, menuProps} = useMenuTrigger({}, state, ref);
 
   // Get props for the button based on the trigger props from useMenuTrigger
@@ -84,12 +84,12 @@ function MenuPopup(props) {
   let state = useTreeState({...props, selectionMode: 'none'});
 
   // Get props for the menu element
-  let ref = React.useRef(undefined);
+  let ref = React.useRef(null);
   let {menuProps} = useMenu(props, state, ref);
 
   // Handle events that should cause the menu to close,
   // e.g. blur, clicking outside, or pressing the escape key.
-  let overlayRef = React.useRef(undefined);
+  let overlayRef = React.useRef(null);
   // before useOverlay so this action will get called
   useInteractOutside({ref: overlayRef, onInteractOutside: action('onInteractOutside')});
   let {overlayProps} = useOverlay(
@@ -139,7 +139,7 @@ function MenuPopup(props) {
 
 function MenuItem({item, state, onAction, onClose}) {
   // Get props for the menu item element
-  let ref = React.useRef(undefined);
+  let ref = React.useRef(null);
   let {menuItemProps} = useMenuItem(
     {
       key: item.key,

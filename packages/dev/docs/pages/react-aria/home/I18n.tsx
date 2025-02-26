@@ -12,7 +12,7 @@
 import {Calendar} from 'tailwind-starter/Calendar';
 import {DateField} from 'tailwind-starter/DateField';
 import {DateValue, I18nProvider, useLocale} from 'react-aria-components';
-import {getLocalTimeZone, now} from '@internationalized/date';
+import {getLocalTimeZone, now, ZonedDateTime} from '@internationalized/date';
 import {NumberField} from 'tailwind-starter/NumberField';
 import React from 'react';
 import {Select, SelectItem, SelectSection} from 'tailwind-starter/Select';
@@ -91,7 +91,7 @@ function matchLocale(defaultLocale: string) {
   let parsed: Intl.Locale;
   try {
     parsed = new Intl.Locale(defaultLocale);
-  } catch (err) {
+  } catch {
     return 'en-US';
   }
 
@@ -121,7 +121,8 @@ export function I18n() {
   }, [langDisplay, regionDisplay]);
 
   let pref = preferences.find(p => p.value === locale);
-  let preferredCalendars = React.useMemo(() => pref ? (pref.ordering || 'gregory').split(' ').map(p => calendars.find(c => c.key === p)).filter(Boolean) : [calendars[0]], [pref]);
+  // @ts-ignore there cannot be any undefined values in the array
+  let preferredCalendars: Array<{key: string, name: string}> = React.useMemo(() => pref ? (pref.ordering || 'gregory').split(' ').map(p => calendars.find(c => c.key === p)).filter(Boolean) : [calendars[0]], [pref]);
   let otherCalendars = React.useMemo(() => calendars.filter(c => !preferredCalendars.some(p => p?.key === c.key)), [preferredCalendars]);
 
   let updateLocale = locale => {
@@ -149,8 +150,8 @@ export function I18n() {
     numberingSystem = 'arab';
   }
 
-  let [date, setDate] = React.useState(() => now(getLocalTimeZone()));
-  let [focusedDate, setFocusedDate] = React.useState<DateValue>(date);
+  let [date, setDate] = React.useState<ZonedDateTime | null>(() => now(getLocalTimeZone()));
+  let [focusedDate, setFocusedDate] = React.useState<DateValue | null>(date);
   let [number, setNumber] = React.useState(1234);
   let updateNumberFormat = format => {
     setNumberFormat(format);
@@ -170,22 +171,24 @@ export function I18n() {
 
   return (
     <div className="grid items-center justify-items-center py-10 px-0 md:p-10 lg:p-0 gap-10 lg:gap-0 lg:grid-cols-[auto_1fr_1fr] mt-10 card-shadow rounded-2xl bg-white dark:bg-zinc-800/90 overflow-hidden">
-      <div className="grid md:grid-cols-2 lg:grid-cols-1 flex-col gap-4 lg:p-10 lg:mr-10 lg:border-r dark:border-r-zinc-300/10">
+      <div className="grid md:grid-cols-2 lg:grid-cols-1 flex-col gap-4 lg:p-10 lg:mr-10 lg:border-r border-r-gray-200 dark:border-r-zinc-300/10">
         <Select label="Locale" items={locales} selectedKey={locale} onSelectionChange={updateLocale}>
           {item => <SelectItem id={item.value}>{item.label}</SelectItem>}
         </Select>
         <Select label="Calendar" selectedKey={calendar} onSelectionChange={updateCalendar}>
           <SelectSection title="Preferred" items={preferredCalendars}>
-            {item => <SelectItem>{item.name}</SelectItem>}
+            {(item: { key: string, name: string }) => <SelectItem>{item.name}</SelectItem>}
           </SelectSection>
           <SelectSection title="Other" items={otherCalendars}>
-            {item => <SelectItem>{item.name}</SelectItem>}
+            {(item: { key: string, name: string }) => <SelectItem>{item.name}</SelectItem>}
           </SelectSection>
         </Select>
         <Select label="Numbering System" selectedKey={numberingSystem} onSelectionChange={setNumberingSystem}>
           <SelectItem id="latn">Latin</SelectItem>
           <SelectItem id="arab">Arabic</SelectItem>
           <SelectItem id="hanidec">Hanidec</SelectItem>
+          <SelectItem id="deva">Devanagari</SelectItem>
+          <SelectItem id="beng">Bengali</SelectItem>
         </Select>
         <Select label="Number Format" selectedKey={numberFormat} onSelectionChange={updateNumberFormat}>
           <SelectItem id="decimal">Decimal</SelectItem>

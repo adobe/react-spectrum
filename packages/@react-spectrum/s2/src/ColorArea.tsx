@@ -25,9 +25,12 @@ import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ColorAreaProps extends Omit<AriaColorAreaProps, 'children' | 'className' | 'style'>, StyleProps {}
 
-export const ColorAreaContext = createContext<ContextValue<ColorAreaProps, DOMRefValue<HTMLDivElement>>>(null);
+export const ColorAreaContext = createContext<ContextValue<Partial<ColorAreaProps>, DOMRefValue<HTMLDivElement>>>(null);
 
-function ColorArea(props: ColorAreaProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * A ColorArea allows users to adjust two channels of an RGB, HSL or HSB color value against a two-dimensional gradient background.
+ */
+export const ColorArea = forwardRef(function ColorArea(props: ColorAreaProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ColorAreaContext);
   let {UNSAFE_className = '', UNSAFE_style, styles} = props;
   let containerRef = useDOMRef(ref);
@@ -68,10 +71,4 @@ function ColorArea(props: ColorAreaProps, ref: DOMRef<HTMLDivElement>) {
       }
     </AriaColorArea>
   );
-}
-
-/**
- * A ColorArea allows users to adjust two channels of an RGB, HSL or HSB color value against a two-dimensional gradient background.
- */
-let _ColorArea = forwardRef(ColorArea);
-export {_ColorArea as ColorArea};
+});

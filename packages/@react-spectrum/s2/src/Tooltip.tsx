@@ -24,13 +24,12 @@ import {ColorScheme} from '@react-types/provider';
 import {ColorSchemeContext} from './Provider';
 import {createContext, forwardRef, MutableRefObject, ReactNode, useCallback, useContext, useState} from 'react';
 import {DOMRef} from '@react-types/shared';
-import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 
 export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentProps, 'children' | 'closeDelay'>, Pick<AriaTooltipProps, 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset'> {
   /** The content of the tooltip. */
-  children?: ReactNode,
+  children: ReactNode,
   /**
    * The placement of the element with respect to its anchor element.
    *
@@ -41,20 +40,8 @@ export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentPro
 
 export interface TooltipProps extends Omit<AriaTooltipProps, 'children' | 'className' | 'style' | 'triggerRef' | 'UNSTABLE_portalContainer' | 'isEntering' | 'isExiting' | 'placement' | 'containerPadding' |  'offset' | 'crossOffset' |  'shouldFlip' | 'arrowBoundaryOffset' | 'isOpen' | 'defaultOpen' | 'onOpenChange'>, UnsafeStyles {
   /** The content of the tooltip. */
-  children?: ReactNode
+  children: ReactNode
 }
-
-const slide = keyframes(`
-  from {
-    transform: translate(var(--originX), var(--originY));
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-`);
 
 const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | 'light dark' | null}>({
   ...colorScheme(),
@@ -82,42 +69,38 @@ const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | 'light da
   paddingX: 'edge-to-text',
   paddingY: centerPadding(),
   margin: 8,
-  animation: {
-    isEntering: slide,
-    isExiting: slide
-  },
-  animationDuration: {
-    isEntering: 200,
-    isExiting: 200
-  },
-  animationDirection: {
-    isEntering: 'normal',
-    isExiting: 'reverse'
-  },
-  animationTimingFunction: {
+  transition: 'default',
+  transitionDuration: 200,
+  transitionTimingFunction: {
     isExiting: 'in'
   },
-  '--originX': {
-    type: 'marginTop',
-    value: {
-      placement: {
-        top: 0,
-        bottom: 0,
-        left: 4,
-        right: -4
+  translateX: {
+    placement: {
+      left: {
+        isEntering: 4,
+        isExiting: 4
+      },
+      right: {
+        isEntering: -4,
+        isExiting: -4
       }
     }
   },
-  '--originY': {
-    type: 'marginTop',
-    value: {
-      placement: {
-        top: 4,
-        bottom: -4,
-        left: 0,
-        right: -0
+  translateY: {
+    placement: {
+      top: {
+        isEntering: 4,
+        isExiting: 4
+      },
+      bottom: {
+        isEntering: -4,
+        isExiting: -4
       }
     }
+  },
+  opacity: {
+    isEntering: 0,
+    isExiting: 0
   }
 });
 
@@ -140,9 +123,12 @@ const arrowStyles = style<TooltipRenderProps>({
   }
 });
 
-let InternalTooltipTriggerContext = createContext<TooltipTriggerProps>({});
+let InternalTooltipTriggerContext = createContext<Partial<TooltipTriggerProps>>({});
 
-function Tooltip(props: TooltipProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Display container for Tooltip content. Has a directional arrow dependent on its placement.
+ */
+export const Tooltip = forwardRef(function Tooltip(props: TooltipProps, ref: DOMRef<HTMLDivElement>) {
   let {children, UNSAFE_style, UNSAFE_className = ''} = props;
   let domRef = useDOMRef(ref);
   let {
@@ -162,7 +148,7 @@ function Tooltip(props: TooltipProps, ref: DOMRef<HTMLDivElement>) {
     if (el) {
       el.lang = locale;
       el.dir = direction;
-      let spectrumBorderRadius = window.getComputedStyle(el).borderRadius;
+      let spectrumBorderRadius = typeof window !== 'undefined' ? window.getComputedStyle(el).borderRadius : '';
       if (spectrumBorderRadius !== '') {
         setBorderRadius(parseInt(spectrumBorderRadius, 10));
       }
@@ -193,7 +179,7 @@ function Tooltip(props: TooltipProps, ref: DOMRef<HTMLDivElement>) {
       )}
     </AriaTooltip>
   );
-}
+});
 
 /**
  * TooltipTrigger wraps around a trigger element and a Tooltip. It handles opening and closing
@@ -225,13 +211,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     </AriaTooltipTrigger>
   );
 }
-
-
-/**
- * Display container for Tooltip content. Has a directional arrow dependent on its placement.
- */
-let _Tooltip = forwardRef(Tooltip);
-export {_Tooltip as Tooltip};
 
 
 // This is purely so that storybook generates the types for both Menu and MenuTrigger

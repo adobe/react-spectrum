@@ -1,0 +1,44 @@
+<svg width="96" height="96" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+<radialGradient id="paint0_radial_5481_99335" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(53.4364 9.68696) rotate(90) scale(36.1398)">
+<stop offset="0.166667" stop-color="#FF709F"/>
+<stop offset="1" stop-color="#FF709F" stop-opacity="0"/>
+</radialGradient>
+<linearGradient id="paint1_linear_5481_99335" x1="-14.4094" y1="80.6996" x2="120.646" y2="-1.46692" gradientUnits="userSpaceOnUse">
+<stop offset="0.0598452" stop-color="#8480FE"/>
+<stop offset="0.599632" stop-color="#8480FE" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint2_linear_5481_99335" x1="93.9712" y1="21.7664" x2="36.0328" y2="84.0663" gradientUnits="userSpaceOnUse">
+<stop stop-color="#EB1000"/>
+<stop offset="1" stop-color="#EB1000" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint3_linear_5481_99335" x1="23.5615" y1="92.6642" x2="126.271" y2="35.128" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FC7D00" stop-opacity="0"/>
+<stop offset="0.432292" stop-color="#FC7D00"/>
+<stop offset="0.609375" stop-color="#FC7D00"/>
+<stop offset="1" stop-color="#FC7D00" stop-opacity="0"/>
+</linearGradient>
+<radialGradient id="paint4_radial_5481_99335" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(84.6942 21.4721) rotate(90) scale(36.1398)">
+<stop offset="0.166667" stop-color="#EB1000"/>
+<stop offset="1" stop-color="#EB1000" stop-opacity="0"/>
+</radialGradient>
+<clipPath id="clip0_5481_99335">
+<rect x="6.46484" y="6.46484" width="83.0696" height="83.0696" rx="2.07674" fill="white"/>
+</clipPath>
+</defs>
+<clipPath id="mask0_5481_99335">
+<path d="M52.9233 19.8607L58.7194 31.6049C59.5192 33.2256 61.0653 34.3489 62.8538 34.6088L75.8143 36.4921C80.3182 37.1465 82.1166 42.6814 78.8576 45.8582L69.4793 54.9998C68.1851 56.2613 67.5945 58.0789 67.9001 59.8602L70.114 72.7683C70.8833 77.254 66.1751 80.6747 62.1466 78.5569L50.5544 72.4625C48.9547 71.6215 47.0436 71.6215 45.4439 72.4625L33.8518 78.5569C29.8233 80.6747 25.1151 77.254 25.8844 72.7683L28.0983 59.8602C28.4038 58.0789 27.8133 56.2613 26.5191 54.9998L17.1408 45.8582C13.8817 42.6814 15.6801 37.1465 20.1841 36.4921L33.1445 34.6088C34.933 34.3489 36.4792 33.2256 37.279 31.6049L43.0751 19.8607C45.0893 15.7795 50.9091 15.7795 52.9233 19.8607Z" fill="white"/>
+</clipPath>
+<g clip-path="url(#mask0_5481_99335)">
+<g clip-path="url(#clip0_5481_99335)">
+<rect x="6.46484" y="6.46484" width="83.0696" height="83.0696" rx="2.07674" fill="#FFECCF"/>
+<rect width="83.0696" height="83.0696" transform="translate(6.46484 6.46484)" fill="#FFECCF"/>
+<circle cx="53.4364" cy="9.68696" r="36.1398" transform="rotate(-0.0800682 53.4364 9.68696)" fill="url(#paint0_radial_5481_99335)"/>
+<path d="M38.1729 -8.20876C31.7932 -12.1565 23.7102 -12.1807 17.3068 -8.27118L-46.7386 30.8329C-53.011 34.6627 -53.0215 43.7025 -46.7576 47.5468L16.8646 86.5954C23.2584 90.519 31.3415 90.5144 37.7297 86.5814L101.221 47.4963C107.452 43.6602 107.463 34.6709 101.24 30.8203L38.1729 -8.20876Z" fill="url(#paint1_linear_5481_99335)"/>
+<path d="M18.437 45.9048C19.8569 14.8925 46.1483 -9.09703 77.1607 -7.67722C108.173 -6.2574 132.162 20.0341 130.743 51.0464C129.323 82.0588 103.031 106.048 72.0191 104.628C41.0067 103.209 17.0172 76.9172 18.437 45.9048Z" fill="url(#paint2_linear_5481_99335)"/>
+<path d="M-27.1893 66.3524C-14.8618 61.0934 -1.56677 61.3189 9.95169 65.9189C33.0004 75.1463 46.4117 69.4413 55.7136 46.4453C60.3469 34.906 69.393 25.1334 81.7342 19.8685C106.409 9.35835 134.895 20.7625 145.39 45.3642C155.885 69.9659 144.398 98.4068 119.729 108.931C107.36 114.207 94.0394 113.96 82.5033 109.319C59.492 100.141 46.1062 105.867 36.8161 128.891C32.171 140.403 23.127 150.142 10.7995 155.401C-13.8554 165.919 -42.3412 154.515 -52.8306 129.927C-63.32 105.339 -51.8442 76.8704 -27.1893 66.3524Z" fill="url(#paint3_linear_5481_99335)"/>
+<circle cx="84.6942" cy="21.4721" r="36.1398" transform="rotate(-0.0800682 84.6942 21.4721)" fill="url(#paint4_radial_5481_99335)"/>
+</g>
+</g>
+
+</svg>

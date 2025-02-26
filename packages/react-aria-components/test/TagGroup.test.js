@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Label, RouterProvider, Tag, TagGroup, TagList, Text} from '../';
-import {fireEvent, mockClickDefault, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, mockClickDefault, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {Button, Label, RouterProvider, Tag, TagGroup, TagList, Text, Tooltip, TooltipTrigger} from '../';
 import React from 'react';
 import {useListData} from '@react-stately/data';
 import userEvent from '@testing-library/user-event';
@@ -176,34 +176,34 @@ describe('TagGroup', () => {
     expect(row).not.toHaveClass('focus');
   });
 
-  it('should support press state', () => {
+  it('should support press state', async () => {
     let {getAllByRole} = renderTagGroup({selectionMode: 'multiple'}, {}, {className: ({isPressed}) => isPressed ? 'pressed' : ''});
     let row = getAllByRole('row')[0];
 
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(row);
+    await user.pointer({target: row, keys: '[MouseLeft>]'});
     expect(row).toHaveAttribute('data-pressed', 'true');
     expect(row).toHaveClass('pressed');
 
-    fireEvent.mouseUp(row);
+    await user.pointer({target: row, keys: '[/MouseLeft]'});
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
   });
 
-  it('should not show press state when not interactive', () => {
+  it('should not show press state when not interactive', async () => {
     let {getAllByRole} = renderTagGroup({}, {}, {className: ({isPressed}) => isPressed ? 'pressed' : ''});
     let row = getAllByRole('row')[0];
 
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(row);
+    await user.pointer({target: row, keys: '[MouseLeft>]'});
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
 
-    fireEvent.mouseUp(row);
+    await user.pointer({target: row, keys: '[/MouseLeft]'});
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
   });
@@ -304,6 +304,27 @@ describe('TagGroup', () => {
     let grid = getByTestId('list');
     expect(grid).toHaveAttribute('data-empty', 'true');
     expect(grid).toHaveTextContent('No results');
+  });
+
+  it('supports tooltips', async function () {
+    let {getByRole, getAllByRole} = render(
+      <TagGroup>
+        <Label>Test</Label>
+        <TagList>
+          <RemovableTag id="cat">Cat</RemovableTag>
+          <RemovableTag id="dog">Dog</RemovableTag>
+          <TooltipTrigger>
+            <RemovableTag id="kangaroo">Kangaroo</RemovableTag>
+            <Tooltip>Test</Tooltip>
+          </TooltipTrigger>
+        </TagList>
+      </TagGroup>
+    );
+
+    let tag = getAllByRole('row')[2];
+    await user.hover(tag);
+    act(() => jest.runAllTimers());
+    expect(getByRole('tooltip')).toHaveTextContent('Test');
   });
 
   describe('supports links', function () {
@@ -418,5 +439,35 @@ describe('TagGroup', () => {
     await user.tab();
     await user.keyboard('{Backspace}');
     expect(grid).toHaveFocus();
+  });
+
+  it('disabled tags should not be deletable', async () => {
+    let onRemove = jest.fn();
+    let tree = render(
+      <>
+        <TagGroup data-testid="group" onRemove={onRemove} disabledKeys={['cat', 'dog', 'kangaroo']}>
+          <Label>Test</Label>
+          <TagList>
+            <RemovableTag id="cat">Cat</RemovableTag>
+            <RemovableTag id="dog">Dog</RemovableTag>
+            <RemovableTag id="kangaroo">Kangaroo</RemovableTag>
+          </TagList>
+          <Text slot="description">Description</Text>
+          <Text slot="errorMessage">Error</Text>
+        </TagGroup>
+        <Button>Click here first</Button>
+      </>
+    );
+    let items = tree.getAllByRole('row');
+
+    act(() => items[2].focus());
+    await user.keyboard('{Backspace}');
+
+    expect(onRemove).not.toHaveBeenCalled();
+
+    await user.click(tree.getAllByRole('button')[3]);
+    await user.tab({shift: true});
+
+    expect(document.activeElement).toBe(tree.getByRole('grid'));
   });
 });

@@ -1,0 +1,44 @@
+<svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+<radialGradient id="paint0_radial_5481_99237" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(16.3929 15.4531) rotate(90) scale(15.4531 16.3929)">
+<stop offset="0.166667" stop-color="#FF709F"/>
+<stop offset="1" stop-color="#FF709F" stop-opacity="0"/>
+</radialGradient>
+<linearGradient id="paint1_linear_5481_99237" x1="-3.94892" y1="37.952" x2="55.3055" y2="-0.290131" gradientUnits="userSpaceOnUse">
+<stop offset="0.0598452" stop-color="#8480FE"/>
+<stop offset="0.599632" stop-color="#8480FE" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint2_linear_5481_99237" x1="45.2133" y1="12.7527" x2="20.5875" y2="40.8425" gradientUnits="userSpaceOnUse">
+<stop stop-color="#EB1000"/>
+<stop offset="1" stop-color="#EB1000" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint3_linear_5481_99237" x1="13.273" y1="43.0681" x2="58.5074" y2="16.1875" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FC7D00" stop-opacity="0"/>
+<stop offset="0.432292" stop-color="#FC7D00"/>
+<stop offset="0.609375" stop-color="#FC7D00"/>
+<stop offset="1" stop-color="#FC7D00" stop-opacity="0"/>
+</linearGradient>
+<radialGradient id="paint4_radial_5481_99237" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(16.3929 15.4531) rotate(90) scale(15.4531 16.3929)">
+<stop offset="0.166667" stop-color="#EB1000"/>
+<stop offset="1" stop-color="#EB1000" stop-opacity="0"/>
+</radialGradient>
+<clipPath id="clip0_5481_99237">
+<rect x="5.51953" y="6.20996" width="37.68" height="35.52" rx="1.03837" fill="white"/>
+</clipPath>
+</defs>
+<clipPath id="mask0_5481_99237">
+<path fill-rule="evenodd" d="M10.6076 26.8653C7.2662 30.1902 7.26623 35.5835 10.6076 38.9084C13.9457 42.23 19.3554 42.23 22.6935 38.9084L36.2141 25.4544C36.6839 24.9869 36.6858 24.2272 36.2183 23.7574C35.7508 23.2876 34.991 23.2857 34.5212 23.7532L21.0006 37.2071C18.5988 39.5971 14.7023 39.5971 12.3005 37.2071C9.90194 34.8204 9.90192 30.9533 12.3004 28.5666L30.8175 10.1408C32.3466 8.61923 34.8281 8.61923 36.3572 10.1408C37.883 11.659 37.883 14.1182 36.3572 15.6364L19.7597 32.1522C19.1212 32.7875 18.0836 32.7875 17.4451 32.1522C16.8099 31.5201 16.8099 30.4978 17.4451 29.8658L29.0462 18.3219C29.516 17.8544 29.5179 17.0946 29.0504 16.6248C28.5829 16.155 27.8231 16.1532 27.3533 16.6206L15.7522 28.1645C14.1742 29.7348 14.1742 32.2832 15.7523 33.8534C17.327 35.4204 19.8778 35.4204 21.4525 33.8534L38.0501 17.3377C40.5187 14.8812 40.5187 10.896 38.0501 8.43951C35.5847 5.98631 31.59 5.98631 29.1247 8.43952L10.6076 26.8653Z" fill="white" stroke="white" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+</clipPath>
+<g clip-path="url(#mask0_5481_99237)">
+<g clip-path="url(#clip0_5481_99237)">
+<rect x="5.51953" y="6.20996" width="37.68" height="35.52" rx="1.03837" fill="#FFECCF"/>
+<rect width="37.68" height="35.52" transform="translate(5.51953 6.20996)" fill="#FFECCF"/>
+<ellipse cx="16.3929" cy="15.4531" rx="16.3929" ry="15.4531" transform="matrix(0.999999 -0.00131734 0.00148243 0.999999 10.4102 -7.84375)" fill="url(#paint0_radial_5481_99237)"/>
+<path d="M19.9022 -0.0646213C17.0084 -1.75265 13.3419 -1.76298 10.4374 -0.0913083L-18.6133 16.6293C-21.4584 18.2669 -21.4632 22.1323 -18.6219 23.7761L10.2368 40.473C13.137 42.1507 16.8035 42.1487 19.7012 40.467L48.5004 23.7545C51.3267 22.1142 51.3318 18.2704 48.5091 16.6239L19.9022 -0.0646213Z" fill="url(#paint1_linear_5481_99237)"/>
+<path d="M10.9514 23.0741C11.5954 9.81347 23.5211 -0.444263 37.5881 0.16284C51.6552 0.769943 62.5367 12.012 61.8927 25.2727C61.2486 38.5333 49.323 48.791 35.2559 48.1839C21.1889 47.5768 10.3073 36.3348 10.9514 23.0741Z" fill="url(#paint2_linear_5481_99237)"/>
+<path d="M-9.74728 31.8174C-4.1556 29.5687 1.87496 29.6651 7.09968 31.632C17.5545 35.5776 23.6378 33.1382 27.8571 23.3053C29.9587 18.3711 34.062 14.1924 39.6599 11.9412C50.8522 7.44712 63.7732 12.3235 68.5338 22.843C73.2944 33.3625 68.0837 45.5236 56.8941 50.0235C51.2836 52.2798 45.2415 52.1741 40.0088 50.1896C29.5709 46.265 23.4992 48.7137 19.2852 58.5584C17.1783 63.4807 13.0759 67.6452 7.48427 69.8939C-3.69908 74.3913 -16.6201 69.5149 -21.3781 59.0013C-26.136 48.4877 -20.9306 36.3148 -9.74728 31.8174Z" fill="url(#paint3_linear_5481_99237)"/>
+<ellipse cx="16.3929" cy="15.4531" rx="16.3929" ry="15.4531" transform="matrix(0.999999 -0.00131734 0.00148243 0.999999 24.5859 -2.80469)" fill="url(#paint4_radial_5481_99237)"/>
+</g>
+</g>
+
+</svg>

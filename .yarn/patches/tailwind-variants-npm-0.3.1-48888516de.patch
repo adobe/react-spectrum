@@ -1,0 +1,19 @@
+diff --git a/dist/transformer.d.ts b/dist/transformer.d.ts
+index 508be4d8176486bfbbccd0b8cf297465c8efd15a..afbd775c60f09c8a9c35e30c79f286fddc7c7018 100644
+--- a/dist/transformer.d.ts
++++ b/dist/transformer.d.ts
+@@ -1,10 +1,10 @@
+-import type {Config} from "tailwindcss/types/config";
+-import type {DefaultTheme} from "tailwindcss/types/generated/default-theme";
++// import type {Config} from "tailwindcss/types/config";
++// import type {DefaultTheme} from "tailwindcss/types/generated/default-theme";
+ 
+-export type DefaultScreens = keyof DefaultTheme["screens"];
++export type DefaultScreens = any;
+ 
+ export type WithTV = {
+-  <C extends Config>(tvConfig: C, config?: TVTransformerConfig): C;
++  <C>(tvConfig: C, config?: TVTransformerConfig): C;
+ };
+ 
+ export declare const withTV: WithTV;

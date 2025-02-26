@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/s2",
-  "version": "0.4.1",
+  "version": "0.6.0",
   "description": "Spectrum 2 UI components in React",
   "license": "Apache-2.0",
   "repository": {
@@ -41,7 +41,8 @@
       "import": "./illustrations/*.mjs",
       "require": "./illustrations/*.cjs"
     },
-    "./illustrations/linear/internal/*": null
+    "./illustrations/linear/internal/*": null,
+    "./illustrations/gradient/*/internal/*": null
   },
   "targets": {
     "module": {},
@@ -82,7 +83,7 @@
     },
     "illustrations-module": {
       "source": [
-        "spectrum-illustrations/gradient/*.svg",
+        "spectrum-illustrations/gradient/*/*.tsx",
         "spectrum-illustrations/linear/*.tsx"
       ],
       "distDir": "illustrations",
@@ -92,7 +93,7 @@
     },
     "illustrations-main": {
       "source": [
-        "spectrum-illustrations/gradient/*.svg",
+        "spectrum-illustrations/gradient/*/*.tsx",
         "spectrum-illustrations/linear/*.tsx"
       ],
       "distDir": "illustrations",
@@ -119,31 +120,40 @@
     "postpack": "git checkout -- package.json"
   },
   "devDependencies": {
-    "@adobe/spectrum-tokens": "^13.0.0-beta.48",
-    "@parcel/macros": "2.12.1-canary.3165"
+    "@adobe/spectrum-tokens": "^13.0.0-beta.56",
+    "@parcel/macros": "^2.13.0",
+    "@react-aria/test-utils": "1.0.0-alpha.3",
+    "@testing-library/dom": "^10.1.0",
+    "@testing-library/react": "^15.0.7",
+    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch",
+    "jest": "^29.5.0"
   },
   "dependencies": {
-    "@react-aria/collections": "3.0.0-alpha.5",
-    "@react-aria/i18n": "^3.12.3",
-    "@react-aria/interactions": "^3.22.4",
-    "@react-aria/utils": "^3.25.3",
-    "@react-spectrum/utils": "^3.11.11",
-    "@react-stately/layout": "^4.0.3",
-    "@react-stately/virtualizer": "^4.1.0",
-    "@react-types/color": "^3.0.0",
-    "@react-types/dialog": "^3.5.13",
-    "@react-types/grid": "^3.2.9",
-    "@react-types/provider": "^3.8.4",
-    "@react-types/shared": "^3.25.0",
-    "@react-types/table": "^3.10.2",
-    "@react-types/textfield": "^3.9.7",
+    "@react-aria/collections": "3.0.0-alpha.7",
+    "@react-aria/focus": "^3.19.1",
+    "@react-aria/i18n": "^3.12.5",
+    "@react-aria/interactions": "^3.23.0",
+    "@react-aria/live-announcer": "^3.4.1",
+    "@react-aria/tree": "3.0.0-beta.3",
+    "@react-aria/utils": "^3.27.0",
+    "@react-spectrum/utils": "^3.12.1",
+    "@react-stately/layout": "^4.1.1",
+    "@react-stately/utils": "^3.10.5",
+    "@react-stately/virtualizer": "^4.2.1",
+    "@react-types/color": "^3.0.2",
+    "@react-types/dialog": "^3.5.15",
+    "@react-types/grid": "^3.2.11",
+    "@react-types/provider": "^3.8.6",
+    "@react-types/shared": "^3.27.0",
+    "@react-types/table": "^3.10.4",
+    "@react-types/textfield": "^3.11.0",
     "csstype": "^3.0.2",
-    "react-aria": "^3.35.1",
-    "react-aria-components": "^1.4.1"
+    "react-aria": "^3.37.0",
+    "react-aria-components": "^1.6.0"
   },
   "peerDependencies": {
-    "react": "^18.0.0 || ^19.0.0",
-    "react-dom": "^18.0.0 || ^19.0.0"
+    "react": "^18.0.0 || ^19.0.0-rc.1",
+    "react-dom": "^18.0.0 || ^19.0.0-rc.1"
   },
   "publishConfig": {
     "access": "public"

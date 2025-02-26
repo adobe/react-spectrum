@@ -57,6 +57,11 @@ export interface GridListRenderProps {
 }
 
 export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<GridListRenderProps>, SlotProps, ScrollableProps<HTMLDivElement> {
+  /**
+   * Whether typeahead navigation is disabled.
+   * @default false
+   */
+  disallowTypeAhead?: boolean,
   /** How multiple selection should behave in the collection. */
   selectionBehavior?: SelectionBehavior,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the GridList. */
@@ -73,7 +78,11 @@ export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>
 
 export const GridListContext = createContext<ContextValue<GridListProps<any>, HTMLDivElement>>(null);
 
-function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A grid list displays a list of interactive items, with support for keyboard navigation,
+ * single or multiple selection, and row actions.
+ */
+export const GridList = /*#__PURE__*/ (forwardRef as forwardRefType)(function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   // Render the portal first so that we have the collection by the time we render the DOM in SSR.
   [props, ref] = useContextProps(props, ref, GridListContext);
 
@@ -82,7 +91,7 @@ function GridList<T extends object>(props: GridListProps<T>, ref: ForwardedRef<H
       {collection => <GridListInner props={props} collection={collection} gridListRef={ref} />}
     </CollectionBuilder>
   );
-}
+});
 
 interface GridListInnerProps<T extends object> {
   props: GridListProps<T>,
@@ -243,13 +252,6 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   );
 }
 
-/**
- * A grid list displays a list of interactive items, with support for keyboard navigation,
- * single or multiple selection, and row actions.
- */
-const _GridList = /*#__PURE__*/ (forwardRef as forwardRefType)(GridList);
-export {_GridList as GridList};
-
 export interface GridListItemRenderProps extends ItemRenderProps {}
 
 export interface GridListItemProps<T = object> extends RenderProps<GridListItemRenderProps>, LinkDOMProps, HoverEvents {
@@ -375,6 +377,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
             values={[
               [CheckboxContext, {
                 slots: {
+                  [DEFAULT_SLOT]: {},
                   selection: checkboxProps
                 }
               }],

@@ -18,10 +18,10 @@ import {GregorianCalendar} from './calendars/GregorianCalendar';
 import {Mutable} from './utils';
 
 const TIME_RE = /^(\d{2})(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?$/;
-const DATE_RE = /^(\d{4})-(\d{2})-(\d{2})$/;
-const DATE_TIME_RE = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?$/;
-const ZONED_DATE_TIME_RE = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:([+-]\d{2})(?::?(\d{2}))?)?\[(.*?)\]$/;
-const ABSOLUTE_RE = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:(?:([+-]\d{2})(?::?(\d{2}))?)|Z)$/;
+const DATE_RE = /^([+-]\d{6}|\d{4})-(\d{2})-(\d{2})$/;
+const DATE_TIME_RE = /^([+-]\d{6}|\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?$/;
+const ZONED_DATE_TIME_RE = /^([+-]\d{6}|\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:([+-]\d{2})(?::?(\d{2}))?)?\[(.*?)\]$/;
+const ABSOLUTE_RE = /^([+-]\d{6}|\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?(?::(\d{2}))?(?::(\d{2}))?(\.\d+)?(?:(?:([+-]\d{2})(?::?(\d{2}))?)|Z)$/;
 const DATE_TIME_DURATION_RE =
     /^((?<negative>-)|\+)?P((?<years>\d*)Y)?((?<months>\d*)M)?((?<weeks>\d*)W)?((?<days>\d*)D)?((?<time>T)((?<hours>\d*[.,]?\d{1,9})H)?((?<minutes>\d*[.,]?\d{1,9})M)?((?<seconds>\d*[.,]?\d{1,9})S)?)?$/;
 const requiredDurationTimeGroups = ['hours', 'minutes', 'seconds'];
@@ -66,8 +66,12 @@ export function parseDateTime(value: string): CalendarDateTime {
     throw new Error('Invalid ISO 8601 date time string: ' + value);
   }
 
+  let year = parseNumber(m[1], -9999, 9999);
+  let era = year < 1 ? 'BC' : 'AD';
+
   let date: Mutable<CalendarDateTime> = new CalendarDateTime(
-    parseNumber(m[1], 1, 9999),
+    era,
+    year < 1 ? -year + 1 : year,
     parseNumber(m[2], 1, 12),
     1,
     m[4] ? parseNumber(m[4], 0, 23) : 0,
@@ -92,8 +96,12 @@ export function parseZonedDateTime(value: string, disambiguation?: Disambiguatio
     throw new Error('Invalid ISO 8601 date time string: ' + value);
   }
 
+  let year = parseNumber(m[1], -9999, 9999);
+  let era = year < 1 ? 'BC' : 'AD';
+
   let date: Mutable<ZonedDateTime> = new ZonedDateTime(
-    parseNumber(m[1], 1, 9999),
+    era,
+    year < 1 ? -year + 1 : year,
     parseNumber(m[2], 1, 12),
     1,
     m[10],
@@ -136,8 +144,12 @@ export function parseAbsolute(value: string, timeZone: string): ZonedDateTime {
     throw new Error('Invalid ISO 8601 date time string: ' + value);
   }
 
+  let year = parseNumber(m[1], -9999, 9999);
+  let era = year < 1 ? 'BC' : 'AD';
+
   let date: Mutable<ZonedDateTime> = new ZonedDateTime(
-    parseNumber(m[1], 1, 9999),
+    era,
+    year < 1 ? -year + 1 : year,
     parseNumber(m[2], 1, 12),
     1,
     timeZone,
@@ -180,7 +192,15 @@ export function timeToString(time: Time): string {
 
 export function dateToString(date: CalendarDate): string {
   let gregorianDate = toCalendar(date, new GregorianCalendar());
-  return `${String(gregorianDate.year).padStart(4, '0')}-${String(gregorianDate.month).padStart(2, '0')}-${String(gregorianDate.day).padStart(2, '0')}`;
+  let year: string;
+  if (gregorianDate.era === 'BC') {
+    year = gregorianDate.year === 1 
+      ? '0000'
+      : '-' + String(Math.abs(1 - gregorianDate.year)).padStart(6, '00');
+  } else {
+    year = String(gregorianDate.year).padStart(4, '0');
+  }
+  return `${year}-${String(gregorianDate.month).padStart(2, '0')}-${String(gregorianDate.day).padStart(2, '0')}`;
 }
 
 export function dateTimeToString(date: AnyDateTime): string {
@@ -214,16 +234,14 @@ export function parseDuration(value: string): Required<DateTimeDuration> {
 
   const parseDurationGroup = (
     group: string | undefined,
-    isNegative: boolean,
-    min: number,
-    max: number
+    isNegative: boolean
   ): number => {
     if (!group) {
       return 0;
     }
     try {
       const sign = isNegative ? -1 : 1;
-      return sign * parseNumber(group.replace(',', '.'), min, max);
+      return sign * Number(group.replace(',', '.'));
     } catch {
       throw new Error(`Invalid ISO 8601 Duration string: ${value}`);
     }
@@ -247,13 +265,13 @@ export function parseDuration(value: string): Required<DateTimeDuration> {
   }
 
   const duration: Mutable<DateTimeDuration> = {
-    years: parseDurationGroup(match.groups?.years, isNegative, 0, 9999),
-    months: parseDurationGroup(match.groups?.months, isNegative, 0, 12),
-    weeks: parseDurationGroup(match.groups?.weeks, isNegative, 0, Infinity),
-    days: parseDurationGroup(match.groups?.days, isNegative, 0, 31),
-    hours: parseDurationGroup(match.groups?.hours, isNegative, 0, 23),
-    minutes: parseDurationGroup(match.groups?.minutes, isNegative, 0, 59),
-    seconds: parseDurationGroup(match.groups?.seconds, isNegative, 0, 59)
+    years: parseDurationGroup(match.groups?.years, isNegative),
+    months: parseDurationGroup(match.groups?.months, isNegative),
+    weeks: parseDurationGroup(match.groups?.weeks, isNegative),
+    days: parseDurationGroup(match.groups?.days, isNegative),
+    hours: parseDurationGroup(match.groups?.hours, isNegative),
+    minutes: parseDurationGroup(match.groups?.minutes, isNegative),
+    seconds: parseDurationGroup(match.groups?.seconds, isNegative)
   };
 
   if (duration.hours !== undefined && ((duration.hours % 1) !== 0) && (duration.minutes || duration.seconds)) {

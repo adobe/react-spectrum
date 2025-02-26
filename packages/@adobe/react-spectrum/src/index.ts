@@ -17,6 +17,7 @@ import 'client-only';
 export {ActionGroup} from '@react-spectrum/actiongroup';
 export {Badge} from '@react-spectrum/badge';
 export {Breadcrumbs} from '@react-spectrum/breadcrumbs';
+export {Accordion, Disclosure, DisclosurePanel, DisclosureTitle} from '@react-spectrum/accordion';
 export {ActionBar, ActionBarContainer} from '@react-spectrum/actionbar';
 export {ActionButton, Button, LogicButton, ToggleButton} from '@react-spectrum/button';
 export {Avatar} from '@react-spectrum/avatar';
@@ -61,6 +62,7 @@ export {theme as darkTheme} from '@react-spectrum/theme-dark';
 export {theme as defaultTheme} from '@react-spectrum/theme-default';
 export {theme as lightTheme} from '@react-spectrum/theme-light';
 export {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
+export {TreeView, TreeViewItem, TreeViewItemContent} from '@react-spectrum/tree';
 export {Content, Footer, Header, View} from '@react-spectrum/view';
 export {Well} from '@react-spectrum/well';
 export {Item, Section} from '@react-stately/collections';
@@ -114,6 +116,7 @@ export type {SpectrumTabListProps, SpectrumTabPanelsProps, SpectrumTabsProps} fr
 export type {SpectrumTagGroupProps} from '@react-spectrum/tag';
 export type {SpectrumTextFieldProps, SpectrumTextAreaProps} from '@react-spectrum/textfield';
 export type {SpectrumTooltipProps, SpectrumTooltipTriggerProps} from '@react-spectrum/tooltip';
+export type {SpectrumTreeViewProps, SpectrumTreeViewItemProps, SpectrumTreeViewItemContentProps} from '@react-spectrum/tree';
 export type {ContentProps, FooterProps, HeaderProps, ViewProps} from '@react-spectrum/view';
 export type {SpectrumWellProps} from '@react-spectrum/well';
 export type {AsyncListData, AsyncListOptions, ListData, ListOptions, TreeData, TreeOptions} from '@react-stately/data';
@@ -122,3 +125,4 @@ export type {DateFormatter, DateFormatterOptions, Filter, FormatMessage, Locale,
 export type {SSRProviderProps} from '@react-aria/ssr';
 export type {DirectoryDropItem, DragAndDropHooks, DragAndDropOptions, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-spectrum/dnd';
 export type {Key, Selection, ItemProps, SectionProps, RouterConfig} from '@react-types/shared';
+export type {SpectrumAccordionProps, SpectrumDisclosureProps, SpectrumDisclosurePanelProps, SpectrumDisclosureTitleProps} from '@react-spectrum/accordion';

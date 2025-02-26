@@ -2,24 +2,24 @@ import {InvalidationContext, LayoutInfo, Rect} from '@react-stately/virtualizer'
 import {LayoutNode, ListLayout, ListLayoutOptions} from '@react-stately/layout';
 import {Node} from '@react-types/shared';
 
-interface ListBoxLayoutProps {
+interface ListBoxLayoutProps extends ListLayoutOptions {
   isLoading?: boolean
 }
 
 interface ListBoxLayoutOptions extends ListLayoutOptions {
   placeholderHeight: number,
-  padding: number
+  paddingY: number
 }
 
 export class ListBoxLayout<T> extends ListLayout<T, ListBoxLayoutProps> {
   private isLoading: boolean = false;
   private placeholderHeight: number;
-  private padding: number;
+  private paddingY: number;
 
   constructor(opts: ListBoxLayoutOptions) {
     super(opts);
     this.placeholderHeight = opts.placeholderHeight;
-    this.padding = opts.padding;
+    this.paddingY = opts.paddingY;
   }
 
   update(invalidationContext: InvalidationContext<ListBoxLayoutProps>): void {
@@ -28,11 +28,11 @@ export class ListBoxLayout<T> extends ListLayout<T, ListBoxLayoutProps> {
   }
 
   protected buildCollection(): LayoutNode[] {
-    let nodes = super.buildCollection(this.padding);
+    let nodes = super.buildCollection(this.paddingY);
     let y = this.contentSize.height;
 
     if (this.isLoading) {
-      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, 40);
+      let rect = new Rect(0, y, this.virtualizer!.visibleRect.width, 40);
       let loader = new LayoutInfo('loader', 'loader', rect);
       let node = {
         layoutInfo: loader,
@@ -44,7 +44,7 @@ export class ListBoxLayout<T> extends ListLayout<T, ListBoxLayoutProps> {
     }
 
     if (nodes.length === 0) {
-      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, this.placeholderHeight ?? this.virtualizer.visibleRect.height);
+      let rect = new Rect(0, y, this.virtualizer!.visibleRect.width, this.placeholderHeight ?? this.virtualizer!.visibleRect.height);
       let placeholder = new LayoutInfo('placeholder', 'placeholder', rect);
       let node = {
         layoutInfo: placeholder,
@@ -55,7 +55,7 @@ export class ListBoxLayout<T> extends ListLayout<T, ListBoxLayoutProps> {
       y = placeholder.rect.maxY;
     }
 
-    this.contentSize.height = y + this.padding;
+    this.contentSize.height = y + this.paddingY;
     return nodes;
   }
 
@@ -67,6 +67,7 @@ export class ListBoxLayout<T> extends ListLayout<T, ListBoxLayoutProps> {
       parentKey: node.key,
       value: null,
       level: node.level,
+      index: node.index,
       hasChildNodes: false,
       childNodes: [],
       rendered: node.rendered,
@@ -81,7 +82,7 @@ export class ListBoxLayout<T> extends ListLayout<T, ListBoxLayoutProps> {
     y += header.layoutInfo.rect.height;
 
     let section = super.buildSection(node, x, y);
-    section.children.unshift(header);
+    section.children!.unshift(header);
     return section;
   }
 }

@@ -15,13 +15,13 @@ import {
   Breadcrumb as AriaBreadcrumb,
   BreadcrumbsProps as AriaBreadcrumbsProps,
   CollectionRenderer,
+  CollectionRendererContext,
   ContextValue,
+  DefaultCollectionRenderer,
   HeadingContext,
   Link,
   Provider,
-  Breadcrumbs as RACBreadcrumbs,
-  UNSTABLE_CollectionRendererContext,
-  UNSTABLE_DefaultCollectionRenderer
+  Breadcrumbs as RACBreadcrumbs
 } from 'react-aria-components';
 import {AriaBreadcrumbItemProps, useLocale} from 'react-aria';
 import ChevronIcon from '../ui-icons/Chevron';
@@ -31,12 +31,12 @@ import {focusRing, size, style} from '../style' with { type: 'macro' };
 import FolderIcon from '../s2wf-icons/S2_Icon_FolderBreadcrumb_20_N.svg';
 import {forwardRefType} from './types';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {inertValue, useLayoutEffect} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Menu, MenuItem, MenuTrigger} from './Menu';
 import {Text} from './Content';
 import {useDOMRef, useResizeObserver} from '@react-spectrum/utils';
-import {useLayoutEffect} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -62,10 +62,10 @@ interface BreadcrumbsStyleProps {
 
 export interface BreadcrumbsProps<T> extends Omit<AriaBreadcrumbsProps<T>, 'children' | 'items' | 'style' | 'className'>, BreadcrumbsStyleProps, StyleProps {
   /** The children of the Breadcrumbs. */
-  children?: ReactNode
+  children: ReactNode
 }
 
-export const BreadcrumbsContext = createContext<ContextValue<BreadcrumbsProps<any>, DOMRefValue<HTMLOListElement>>>(null);
+export const BreadcrumbsContext = createContext<ContextValue<Partial<BreadcrumbsProps<any>>, DOMRefValue<HTMLOListElement>>>(null);
 
 const wrapper = style<BreadcrumbsStyleProps>({
   position: 'relative',
@@ -78,6 +78,7 @@ const wrapper = style<BreadcrumbsStyleProps>({
   flexBasis: 0,
   gap: {
     size: {
+      // TODO: why do these scale but other spacings don't?
       M: size(6), // breadcrumbs-text-to-separator-medium
       L: size(9) // breadcrumbs-text-to-separator-large
     }
@@ -94,9 +95,10 @@ const wrapper = style<BreadcrumbsStyleProps>({
   }
 }, getAllowedOverrides());
 
-const InternalBreadcrumbsContext = createContext<BreadcrumbsProps<any>>({});
+const InternalBreadcrumbsContext = createContext<Partial<BreadcrumbsProps<any>>>({});
 
-function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: DOMRef<HTMLOListElement>) {
+/** Breadcrumbs show hierarchy and navigational context for a user’s location within an application. */
+export const Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: DOMRef<HTMLOListElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, BreadcrumbsContext);
   let domRef = useDOMRef(ref);
   let {
@@ -128,7 +130,7 @@ function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: DOMRef<H
       </CollapsingCollection>
     </Provider>
   );
-}
+});
 
 let BreadcrumbMenu = (props: {items: Array<Node<any>>, onAction: BreadcrumbsProps<unknown>['onAction']}) => {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
@@ -137,7 +139,7 @@ let BreadcrumbMenu = (props: {items: Array<Node<any>>, onAction: BreadcrumbsProp
   let {size, isDisabled} = useContext(InternalBreadcrumbsContext);
   let label = stringFormatter.format('breadcrumbs.more');
   return (
-    <UNSTABLE_CollectionRendererContext.Provider value={UNSTABLE_DefaultCollectionRenderer}>
+    <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
       <li className={breadcrumbStyles({size, isDisabled, isMenu: true})}>
         <MenuTrigger>
           <ActionButton isDisabled={isDisabled} isQuiet aria-label={label}><FolderIcon /></ActionButton>
@@ -157,20 +159,16 @@ let BreadcrumbMenu = (props: {items: Array<Node<any>>, onAction: BreadcrumbsProp
           size={size}
           className={chevronStyles({direction, isMenu: true})} />
       </li>
-    </UNSTABLE_CollectionRendererContext.Provider>
+    </CollectionRendererContext.Provider>
   );
 };
-
-/** Breadcrumbs show hierarchy and navigational context for a user’s location within an application. */
-let _Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(Breadcrumbs);
-export {_Breadcrumbs as Breadcrumbs};
 
 let HiddenBreadcrumbs = function (props: {listRef: RefObject<HTMLDivElement | null>, items: Array<Node<any>>, size: string}) {
   let {listRef, items, size} = props;
   return (
     <div
       // @ts-ignore
-      inert="true"
+      inert={inertValue(true)}
       ref={listRef}
       className={style({
         display: '[inherit]',
@@ -292,10 +290,11 @@ const heading = style({
 
 export interface BreadcrumbProps extends Omit<AriaBreadcrumbItemProps, 'children' | 'style' | 'className' | 'autoFocus'>, LinkDOMProps {
   /** The children of the breadcrumb item. */
-  children?: ReactNode
+  children: ReactNode
 }
 
-function Breadcrumb({children, ...props}: BreadcrumbProps, ref: DOMRef<HTMLLIElement>) {
+/** An individual Breadcrumb for Breadcrumbs. */
+export const Breadcrumb = /*#__PURE__*/ (forwardRef as forwardRefType)(function Breadcrumb({children, ...props}: BreadcrumbProps, ref: DOMRef<HTMLLIElement>) {
   let {href, target, rel, download, ping, referrerPolicy} = props;
   let {size = 'M'} = useContext(InternalBreadcrumbsContext) ?? {};
   let domRef = useDOMRef(ref);
@@ -350,11 +349,7 @@ function Breadcrumb({children, ...props}: BreadcrumbProps, ref: DOMRef<HTMLLIEle
       }}
     </AriaBreadcrumb>
   );
-}
-
-/** An individual Breadcrumb for Breadcrumbs. */
-let _Breadcrumb = /*#__PURE__*/ (forwardRef as forwardRefType)(Breadcrumb);
-export {_Breadcrumb as Breadcrumb};
+});
 
 // Context for passing the count for the custom renderer
 let CollapseContext = createContext<{
@@ -365,9 +360,9 @@ let CollapseContext = createContext<{
 function CollapsingCollection({children, containerRef, onAction}) {
   return (
     <CollapseContext.Provider value={{containerRef, onAction}}>
-      <UNSTABLE_CollectionRendererContext.Provider value={CollapsingCollectionRenderer}>
+      <CollectionRendererContext.Provider value={CollapsingCollectionRenderer}>
         {children}
-      </UNSTABLE_CollectionRendererContext.Provider>
+      </CollectionRendererContext.Provider>
     </CollapseContext.Provider>
   );
 }

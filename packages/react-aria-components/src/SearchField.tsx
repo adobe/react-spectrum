@@ -13,14 +13,14 @@
 import {AriaSearchFieldProps, useSearchField} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {createHideableComponent} from '@react-aria/collections';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {FormContext} from './Form';
-import {forwardRefType} from '@react-types/shared';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
-import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
+import React, {createContext, ForwardedRef, useRef} from 'react';
 import {SearchFieldState, useSearchFieldState} from 'react-stately';
 import {TextContext} from './Text';
 
@@ -50,12 +50,18 @@ export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'label' | '
 
 export const SearchFieldContext = createContext<ContextValue<SearchFieldProps, HTMLDivElement>>(null);
 
-function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A search field allows a user to enter and clear a search query.
+ */
+export const SearchField = /*#__PURE__*/ createHideableComponent(function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SearchFieldContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let inputRef = useRef<HTMLInputElement>(null);
-  let [labelRef, label] = useSlot();
+  let [inputContextProps, mergedInputRef] = useContextProps({}, inputRef, InputContext);
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let state = useSearchFieldState({
     ...props,
     validationBehavior
@@ -65,7 +71,7 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
     ...removeDataAttributes(props),
     label,
     validationBehavior
-  }, state, inputRef);
+  }, state, mergedInputRef);
 
   let renderProps = useRenderProps({
     ...props,
@@ -93,7 +99,7 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],
-          [InputContext, {...inputProps, ref: inputRef}],
+          [InputContext, {...mergeProps(inputProps, inputContextProps), ref: mergedInputRef}],
           [ButtonContext, clearButtonProps],
           [TextContext, {
             slots: {
@@ -108,10 +114,4 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
       </Provider>
     </div>
   );
-}
-
-/**
- * A search field allows a user to enter and clear a search query.
- */
-const _SearchField = /*#__PURE__*/ (forwardRef as forwardRefType)(SearchField);
-export {_SearchField as SearchField};
+});

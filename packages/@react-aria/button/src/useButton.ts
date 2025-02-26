@@ -21,8 +21,7 @@ import {
 import {AriaButtonProps} from '@react-types/button';
 import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {useFocusable} from '@react-aria/focus';
-import {usePress} from '@react-aria/interactions';
+import {useFocusable, usePress} from '@react-aria/interactions';
 
 export interface AriaButtonOptions<E extends ElementType> extends Omit<AriaButtonProps<E>, 'children'> {}
 
@@ -74,8 +73,7 @@ export function useButton(props: AriaButtonOptions<ElementType>, ref: RefObject<
   } else {
     additionalProps = {
       role: 'button',
-      tabIndex: isDisabled ? undefined : 0,
-      href: elementType === 'a' && isDisabled ? undefined : href,
+      href: elementType === 'a' && !isDisabled ? href : undefined,
       target: elementType === 'a' ? target : undefined,
       type: elementType === 'input' ? type : undefined,
       disabled: elementType === 'input' ? isDisabled : undefined,
@@ -108,6 +106,7 @@ export function useButton(props: AriaButtonOptions<ElementType>, ref: RefObject<
       'aria-expanded': props['aria-expanded'],
       'aria-controls': props['aria-controls'],
       'aria-pressed': props['aria-pressed'],
+      'aria-current': props['aria-current'],
       onClick: (e) => {
         if (deprecatedOnClick) {
           deprecatedOnClick(e);

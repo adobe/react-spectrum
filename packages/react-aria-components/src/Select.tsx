@@ -62,12 +62,15 @@ export interface SelectRenderProps {
   isRequired: boolean
 }
 
-export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior' | 'items'>, RACValidation, RenderProps<SelectRenderProps>, SlotProps {}
+export interface SelectProps<T extends object = {}> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior' | 'items'>, RACValidation, RenderProps<SelectRenderProps>, SlotProps {}
 
 export const SelectContext = createContext<ContextValue<SelectProps<any>, HTMLDivElement>>(null);
 export const SelectStateContext = createContext<SelectState<unknown> | null>(null);
 
-function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * A select displays a collapsible list of options and allows a user to select one of them.
+ */
+export const Select = /*#__PURE__*/ (forwardRef as forwardRefType)(function Select<T extends object = {}>(props: SelectProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SelectContext);
   let {children, isDisabled = false, isInvalid = false, isRequired = false} = props;
   let content = useMemo(() => (
@@ -89,7 +92,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
       {collection => <SelectInner props={props} collection={collection} selectRef={ref} />}
     </CollectionBuilder>
   );
-}
+});
 
 interface SelectInnerProps<T extends object> {
   props: SelectProps<T>,
@@ -111,7 +114,9 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
 
   // Get props for child elements from useSelect
   let buttonRef = useRef<HTMLButtonElement>(null);
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let {
     labelProps,
     triggerProps,
@@ -199,6 +204,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         data-invalid={validation.isInvalid || undefined}
         data-required={props.isRequired || undefined} />
       <HiddenSelect
+        autoComplete={props.autoComplete}
         state={state}
         triggerRef={buttonRef}
         label={label}
@@ -207,12 +213,6 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
     </Provider>
   );
 }
-
-/**
- * A select displays a collapsible list of options and allows a user to select one of them.
- */
-const _Select = /*#__PURE__*/ (forwardRef as forwardRefType)(Select);
-export {_Select as Select};
 
 export interface SelectValueRenderProps<T> {
   /**
@@ -230,7 +230,11 @@ export interface SelectValueProps<T extends object> extends Omit<HTMLAttributes<
 
 export const SelectValueContext = createContext<ContextValue<SelectValueProps<any>, HTMLSpanElement>>(null);
 
-function SelectValue<T extends object>(props: SelectValueProps<T>, ref: ForwardedRef<HTMLSpanElement>) {
+/**
+ * SelectValue renders the current value of a Select, or a placeholder if no value is selected.
+ * It is usually placed within the button element.
+ */
+export const SelectValue = /*#__PURE__*/ (forwardRef as forwardRefType)(function SelectValue<T extends object>(props: SelectValueProps<T>, ref: ForwardedRef<HTMLSpanElement>) {
   [props, ref] = useContextProps(props, ref, SelectValueContext);
   let state = useContext(SelectStateContext)!;
   let {placeholder} = useSlottedContext(SelectContext)!;
@@ -276,11 +280,4 @@ function SelectValue<T extends object>(props: SelectValueProps<T>, ref: Forwarde
       </TextContext.Provider>
     </span>
   );
-}
-
-/**
- * SelectValue renders the current value of a Select, or a placeholder if no value is selected.
- * It is usually placed within the button element.
- */
-const _SelectValue = /*#__PURE__*/ (forwardRef as forwardRefType)(SelectValue);
-export {_SelectValue as SelectValue};
+});

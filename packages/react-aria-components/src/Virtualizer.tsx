@@ -24,20 +24,35 @@ export interface LayoutOptionsDelegate<O> {
 
 interface ILayout<O> extends Layout<Node<unknown>, O>, Partial<DropTargetDelegate>, LayoutOptionsDelegate<O> {}
 
+interface LayoutClass<O> {
+  new(): ILayout<O>
+}
+
 export interface VirtualizerProps<O> {
   /** The child collection to virtualize (e.g. ListBox, GridList, or Table). */
   children: ReactNode,
   /** The layout object that determines the position and size of the visible elements. */
-  layout: ILayout<O>,
+  layout: LayoutClass<O> | ILayout<O>,
   /** Options for the layout. */
   layoutOptions?: O
 }
 
-const VirtualizerContext = createContext<VirtualizerState<any, any> | null>(null);
-const LayoutContext = createContext<Pick<VirtualizerProps<any>, 'layout' | 'layoutOptions'> | null>(null);
+interface LayoutContextValue {
+  layout: ILayout<any>,
+  layoutOptions?: any
+}
 
+const VirtualizerContext = createContext<VirtualizerState<any, any> | null>(null);
+const LayoutContext = createContext<LayoutContextValue | null>(null);
+
+/**
+ * A Virtualizer renders a scrollable collection of data using customizable layouts.
+ * It supports very large collections by only rendering visible items to the DOM, reusing
+ * them as the user scrolls.
+ */
 export function Virtualizer<O>(props: VirtualizerProps<O>) {
-  let {children, layout, layoutOptions} = props;
+  let {children, layout: layoutProp, layoutOptions} = props;
+  let layout = useMemo(() => typeof layoutProp === 'function' ? new layoutProp() : layoutProp, [layoutProp]);
   let renderer: CollectionRenderer = useMemo(() => ({
     isVirtualized: true,
     layoutDelegate: layout,
@@ -126,7 +141,7 @@ function renderWrapper(
   );
 
   let {collection, layout} = reusableView.virtualizer;
-  let {key, type} = reusableView.content;
+  let {key, type} = reusableView.content!;
   if (type === 'item' && renderDropIndicator && layout.getDropTargetLayoutInfo) {
     rendered = (
       <React.Fragment key={reusableView.key}>
@@ -146,7 +161,7 @@ function renderDropIndicatorWrapper(
   dropPosition: DropPosition,
   renderDropIndicator: (target: ItemDropTarget) => ReactNode
 ) {
-  let target: DropTarget = {type: 'item', key: reusableView.content.key, dropPosition};
+  let target: DropTarget = {type: 'item', key: reusableView.content!.key, dropPosition};
   let indicator = renderDropIndicator(target);
   if (indicator) {
     let layoutInfo = reusableView.virtualizer.layout.getDropTargetLayoutInfo!(target);

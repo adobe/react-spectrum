@@ -12,18 +12,16 @@
 
 import {cloneElement, createContext, CSSProperties, ReactElement, ReactNode, Ref, useCallback, useContext, useRef} from 'react';
 import {colorToken} from '../style/tokens' with {type: 'macro'};
-import {mergeRefs} from '@react-aria/utils';
+import {inertValue, mergeRefs} from '@react-aria/utils';
 import {mergeStyles} from '../style/runtime';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
-
-let reduceMotion = typeof window?.matchMedia === 'function'
-  ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  : false;
+import {useMediaQuery} from '@react-spectrum/utils';
 
 export function useLoadingAnimation(isAnimating: boolean) {
   let animationRef = useRef<Animation | null>(null);
+  let reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
   return useCallback((element: HTMLElement | null) => {
     if (isAnimating && !animationRef.current && element && !reduceMotion) {
       // Use web animation API instead of CSS animations so that we can
@@ -48,7 +46,7 @@ export function useLoadingAnimation(isAnimating: boolean) {
 }
 
 export type SkeletonElement = ReactElement<{
-  children?: ReactNode,
+  children: ReactNode,
   className?: string,
   ref?: Ref<HTMLElement>,
   inert?: boolean | 'true'
@@ -82,7 +80,7 @@ export const loadingStyle = raw(`
   * {
     visibility: hidden;
   }
-`, 'UNSAFE_overrides');
+`, 'L'); // add to a separate layer so it overrides default style macro styles
 
 export function useSkeletonText(children: ReactNode, style: CSSProperties | undefined): [ReactNode, CSSProperties | undefined] {
   let isSkeleton = useContext(SkeletonContext);
@@ -103,7 +101,7 @@ export function SkeletonText({children}) {
   return (
     <span
       // @ts-ignore - compatibility with React < 19
-      inert="true"
+      inert={inertValue(true)}
       ref={useLoadingAnimation(true)}
       className={loadingStyle + style({
         color: 'transparent',

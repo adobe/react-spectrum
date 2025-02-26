@@ -13,7 +13,7 @@
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {ContextValue, Provider, SlotProps} from 'react-aria-components';
+import {ContextValue, Provider, TextContext as RACTextContext, SlotProps} from 'react-aria-components';
 import {filterDOMProps} from '@react-aria/utils';
 import {fontRelative, lightDark, style} from '../style' with {type: 'macro'};
 import {IconContext} from './Icon';
@@ -35,12 +35,17 @@ export interface BadgeStyleProps {
    *
    * @default 'neutral'
    */
-  variant?: 'accent' | 'informative' | 'neutral' | 'positive' | 'notice' | 'negative' | 'gray' | 'red' | 'orange' | 'yellow' | 'charteuse' | 'celery' | 'green' | 'seafoam' | 'cyan' | 'blue' | 'indigo' | 'purple' | 'fuchsia' | 'magenta' | 'pink' | 'turquoise' | 'brown' | 'cinnamon' | 'silver',
+  variant?: 'accent' | 'informative' | 'neutral' | 'positive' | 'notice' | 'negative' | 'gray' | 'red' | 'orange' | 'yellow' | 'chartreuse' | 'celery' | 'green' | 'seafoam' | 'cyan' | 'blue' | 'indigo' | 'purple' | 'fuchsia' | 'magenta' | 'pink' | 'turquoise' | 'brown' | 'cinnamon' | 'silver',
   /**
    * The fill of the badge.
    * @default 'bold'
    */
-  fillStyle?: 'bold' | 'subtle' | 'outline'
+  fillStyle?: 'bold' | 'subtle' | 'outline',
+  /**
+   * Sets the text behavior for the contents.
+   * @default 'wrap'
+   */
+  overflowMode?: 'wrap' | 'truncate'
 }
 
 export interface BadgeProps extends DOMProps, AriaLabelingProps, StyleProps, BadgeStyleProps, SlotProps {
@@ -56,7 +61,10 @@ const badge = style<BadgeStyleProps>({
   display: 'flex',
   font: 'control',
   justifyContent: 'center',
-  alignItems: 'center',
+  alignItems: {
+    default: 'baseline',
+    ':has([slot=icon]:only-child)': 'center'
+  },
   borderRadius: 'control',
   minHeight: 'control',
   paddingX: {
@@ -86,7 +94,7 @@ const badge = style<BadgeStyleProps>({
           notice: 'black',
           orange: 'black',
           yellow: 'black',
-          charteuse: 'black',
+          chartreuse: 'black',
           celery: 'black'
         }
       },
@@ -108,7 +116,7 @@ const badge = style<BadgeStyleProps>({
           red: 'red',
           orange: 'orange',
           yellow: 'yellow',
-          charteuse: 'chartreuse',
+          chartreuse: 'chartreuse',
           celery: 'celery',
           green: 'green',
           seafoam: 'seafoam',
@@ -137,7 +145,7 @@ const badge = style<BadgeStyleProps>({
           red: 'red-subtle',
           orange: 'orange-subtle',
           yellow: 'yellow-subtle',
-          charteuse: 'chartreuse-subtle',
+          chartreuse: 'chartreuse-subtle',
           celery: 'celery-subtle',
           green: 'green-subtle',
           seafoam: 'seafoam-subtle',
@@ -181,13 +189,17 @@ const badge = style<BadgeStyleProps>({
   }
 }, getAllowedOverrides());
 
-function Badge(props: BadgeProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * Badges are used for showing a small amount of color-categorized metadata, ideal for getting a user's attention.
+ */
+export const Badge = forwardRef(function Badge(props: BadgeProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, BadgeContext);
   let {
     children,
     variant = 'neutral',
     size = 'S',
     fillStyle = 'bold',
+    overflowMode = 'wrap',
     ...otherProps
   } = props; // useProviderProps(props) in v3
   let domRef = useDOMRef(ref);
@@ -196,7 +208,17 @@ function Badge(props: BadgeProps, ref: DOMRef<HTMLDivElement>) {
   return (
     <Provider
       values={[
-        [TextContext, {styles: style({paddingY: '--labelPadding', order: 1})}],
+        [TextContext, {
+          styles: style({
+            paddingY: '--labelPadding',
+            order: 1,
+            overflowX: 'hidden',
+            overflowY: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: {overflowMode: {truncate: 'nowrap', wrap: 'normal'}}
+          })({overflowMode})
+        }],
+        [RACTextContext, {}],
         [IconContext, {
           render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
           styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
@@ -218,10 +240,4 @@ function Badge(props: BadgeProps, ref: DOMRef<HTMLDivElement>) {
       </SkeletonWrapper>
     </Provider>
   );
-}
-
-/**
- * Badges are used for showing a small amount of color-categorized metadata, ideal for getting a user's attention.
- */
-let _Badge = forwardRef(Badge);
-export {_Badge as Badge};
+});

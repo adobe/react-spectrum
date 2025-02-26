@@ -28,7 +28,10 @@ export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledK
 
 export const BreadcrumbsContext = createContext<ContextValue<BreadcrumbsProps<any>, HTMLOListElement>>(null);
 
-function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: ForwardedRef<HTMLOListElement>) {
+/**
+ * Breadcrumbs display a hierarchy of links to the current page or resource in an application.
+ */
+export const Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: ForwardedRef<HTMLOListElement>) {
   [props, ref] = useContextProps(props, ref, BreadcrumbsContext);
   let {CollectionRoot} = useContext(CollectionRendererContext);
   let {navProps} = useBreadcrumbs(props);
@@ -49,13 +52,7 @@ function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: Forwarde
       )}
     </CollectionBuilder>
   );
-}
-
-/**
- * Breadcrumbs display a hierarchy of links to the current page or resource in an application.
- */
-const _Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(Breadcrumbs);
-export {_Breadcrumbs as Breadcrumbs};
+});
 
 export interface BreadcrumbRenderProps {
   /**

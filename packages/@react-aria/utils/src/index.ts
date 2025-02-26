@@ -11,7 +11,9 @@
  */
 export {useId, mergeIds, useSlotId} from './useId';
 export {chain} from './chain';
-export {getOwnerDocument, getOwnerWindow} from './domHelpers';
+export {createShadowTreeWalker, ShadowTreeWalker} from './shadowdom/ShadowTreeWalker';
+export {getActiveElement, getEventTarget, nodeContains} from './shadowdom/DOMFunctions';
+export {getOwnerDocument, getOwnerWindow, isShadowRoot} from './domHelpers';
 export {mergeProps} from './mergeProps';
 export {mergeRefs} from './mergeRefs';
 export {filterDOMProps} from './filterDOMProps';
@@ -24,6 +26,7 @@ export {useGlobalListeners} from './useGlobalListeners';
 export {useLabels} from './useLabels';
 export {useObjectRef} from './useObjectRef';
 export {useUpdateEffect} from './useUpdateEffect';
+export {useUpdateLayoutEffect} from './useUpdateLayoutEffect';
 export {useLayoutEffect} from './useLayoutEffect';
 export {useResizeObserver} from './useResizeObserver';
 export {useSyncRef} from './useSyncRef';
@@ -42,3 +45,8 @@ export {useEffectEvent} from './useEffectEvent';
 export {useDeepMemo} from './useDeepMemo';
 export {useFormReset} from './useFormReset';
 export {useLoadMore} from './useLoadMore';
+export {inertValue} from './inertValue';
+export {CLEAR_FOCUS_EVENT, FOCUS_EVENT} from './constants';
+export {isCtrlKeyPressed} from './keyboard';
+export {useEnterAnimation, useExitAnimation} from './animation';
+export {isFocusable, isTabbable} from './isFocusable';

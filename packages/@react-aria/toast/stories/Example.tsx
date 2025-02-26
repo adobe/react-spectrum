@@ -15,7 +15,7 @@ import {ToastState, useToastState} from '@react-stately/toast';
 import {useButton} from 'react-aria';
 import {useToast, useToastRegion} from '../src';
 
-const ToastContext = createContext<ToastState<string>>(null);
+const ToastContext = createContext<ToastState<string> | null>(null);
 
 export function ToastContainer({children, ...otherProps}) {
   let state = useToastState<string>(otherProps);
@@ -28,11 +28,11 @@ export function ToastContainer({children, ...otherProps}) {
 }
 
 function ToastRegion() {
-  let state = useContext(ToastContext);
-  let ref = useRef(undefined);
+  let state = useContext(ToastContext)!;
+  let ref = useRef(null);
   let {regionProps} = useToastRegion({}, state, ref);
   return (
-    <div {...regionProps} ref={ref} style={{position: 'fixed', bottom: 0, right: 0}}>
+    <div {...regionProps} ref={ref} style={{position: 'fixed', bottom: 0, right: 0, display: 'flex', flexDirection: 'column', gap: 10}}>
       {state.visibleToasts.map(toast => (
         <Toast key={toast.key} toast={toast} />
       ))}
@@ -41,10 +41,10 @@ function ToastRegion() {
 }
 
 function Toast(props) {
-  let state = useContext(ToastContext);
+  let state = useContext(ToastContext)!;
   let ref = useRef(null);
   let {toastProps, contentProps, titleProps, closeButtonProps} = useToast(props, state, ref);
-  let buttonRef = useRef(undefined);
+  let buttonRef = useRef(null);
   let {buttonProps} = useButton(closeButtonProps, buttonRef);
 
   return (

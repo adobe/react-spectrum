@@ -37,7 +37,11 @@ export interface ProgressBarRenderProps {
 
 export const ProgressBarContext = createContext<ContextValue<ProgressBarProps, HTMLDivElement>>(null);
 
-function ProgressBar(props: ProgressBarProps, ref: ForwardedRef<HTMLDivElement>) {
+/**
+ * Progress bars show either determinate or indeterminate progress of an operation
+ * over time.
+ */
+export const ProgressBar = forwardRef(function ProgressBar(props: ProgressBarProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ProgressBarContext);
   let {
     value = 0,
@@ -47,7 +51,9 @@ function ProgressBar(props: ProgressBarProps, ref: ForwardedRef<HTMLDivElement>)
   } = props;
   value = clamp(value, minValue, maxValue);
 
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let {
     progressBarProps,
     labelProps
@@ -73,11 +79,4 @@ function ProgressBar(props: ProgressBarProps, ref: ForwardedRef<HTMLDivElement>)
       </LabelContext.Provider>
     </div>
   );
-}
-
-/**
- * Progress bars show either determinate or indeterminate progress of an operation
- * over time.
- */
-const _ProgressBar = forwardRef(ProgressBar);
-export {_ProgressBar as ProgressBar};
+});

@@ -1,5 +1,9 @@
 {
-  "breadcrumbs.more": "Flere elementer",
+  "actionbar.actions": "Handlinger",
+  "actionbar.actionsAvailable": "Tilgængelige handlinger.",
+  "actionbar.clearSelection": "Ryd markering",
+  "actionbar.selected": "{count, plural, =0 {Ingen valgt} other {# valgt}}",
+  "actionbar.selectedAll": "Alle valgt",
   "button.pending": "afventende",
   "contextualhelp.help": "Hjælp",
   "contextualhelp.info": "Oplysninger",
@@ -16,13 +20,14 @@
   "picker.placeholder": "Vælg…",
   "slider.maximum": "Maksimum",
   "slider.minimum": "Minimum",
-  "table.loading": "Indlæser...",
-  "table.loadingMore": "Indlæser flere...",
+  "table.loading": "Indlæser ...",
+  "table.loadingMore": "Indlæser flere ...",
   "table.resizeColumn": "Tilpas størrelse på kolonne",
   "table.sortAscending": "Sorter stigende",
   "table.sortDescending": "Sorter faldende",
   "tag.actions": "Handlinger",
   "tag.hideButtonLabel": "Vis mindre",
   "tag.noTags": "Ingen",
-  "tag.showAllButtonLabel": "Vis alle ({tagCount, number})"
+  "tag.showAllButtonLabel": "Vis alle ({tagCount, number})",
+  "breadcrumbs.more": "Flere elementer"
 }

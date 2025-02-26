@@ -13,7 +13,7 @@
 import {alignCenter, constrainValue, isInvalid, previousAvailableDate} from './utils';
 import {Calendar, CalendarDate, DateDuration, GregorianCalendar, isEqualDay, maxDate, minDate, toCalendar, toCalendarDate} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from './types';
-import {DateValue, RangeCalendarProps} from '@react-types/calendar';
+import {DateValue, MappedDateValue, RangeCalendarProps} from '@react-types/calendar';
 import {RangeValue, ValidationState} from '@react-types/shared';
 import {useCalendarState} from './useCalendarState';
 import {useControlledState} from '@react-stately/utils';
@@ -42,7 +42,7 @@ export interface RangeCalendarStateOptions<T extends DateValue = DateValue> exte
  */
 export function useRangeCalendarState<T extends DateValue = DateValue>(props: RangeCalendarStateOptions<T>): RangeCalendarState {
   let {value: valueProp, defaultValue, onChange, createCalendar, locale, visibleDuration = {months: 1}, minValue, maxValue, ...calendarProps} = props;
-  let [value, setValue] = useControlledState<RangeValue<T> | null, RangeValue<T>>(
+  let [value, setValue] = useControlledState<RangeValue<T> | null, RangeValue<MappedDateValue<T>>>(
     valueProp!,
     defaultValue || null!,
     onChange

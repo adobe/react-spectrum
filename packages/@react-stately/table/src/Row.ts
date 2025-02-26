@@ -15,7 +15,7 @@ import {PartialNode} from '@react-stately/collections';
 import React, {JSX, ReactElement} from 'react';
 import {RowProps} from '@react-types/table';
 
-function Row<T>(props: RowProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
+function Row<T>(props: RowProps<T>): ReactElement | null { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;
 }
 
@@ -72,6 +72,7 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, conte
       } else {
         let cells: PartialNode<T>[] = [];
         let childRows: PartialNode<T>[] = [];
+        let columnCount = 0;
         React.Children.forEach(children, node => {
           if (node.type === Row) {
             if (cells.length < context.columns.length) {
@@ -87,11 +88,12 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, conte
               type: 'cell',
               element: node
             });
+            columnCount += node.props.colSpan ?? 1;
           }
         });
 
-        if (cells.length !== context.columns.length) {
-          throw new Error(`Cell count must match column count. Found ${cells.length} cells and ${context.columns.length} columns.`);
+        if (columnCount !== context.columns.length) {
+          throw new Error(`Cell count must match column count. Found ${columnCount} cells and ${context.columns.length} columns.`);
         }
 
         yield* cells;

@@ -105,6 +105,11 @@ html {
   color: white;
 }
 
+.item.focusVisible{
+  outline: 3px solid black;
+  outline-offset: -2px;
+}
+
 .item.open:not(.focused) {
   background: lightslategray;
   color: white;
@@ -141,7 +146,6 @@ html {
 }
 
 .field {
-  display: inline-flex;
   padding: 2px 4px;
   border-radius: 2px;
   border: 1px solid gray;
@@ -461,4 +465,12 @@ html {
   .errorMessage {
     padding-bottom: 10px;
   }
+}
+
+input {
+  outline: none;
+}
+
+[aria-autocomplete][data-focus-visible]{
+  outline: 3px solid blue;
 }

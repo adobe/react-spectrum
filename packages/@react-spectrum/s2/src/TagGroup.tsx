@@ -40,19 +40,19 @@ import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {IconContext} from './Icon';
 import {ImageContext} from './Image';
+import {inertValue, useEffectEvent, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
 import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
-import {useEffectEvent, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 // Get types from RSP and extend those?
 export interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'className'> {
   /** The children of the tag. */
-  children?: ReactNode
+  children: ReactNode
 }
 
 export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | 'style' | 'className'>, Pick<TagListProps<T>, 'items' | 'children' | 'renderEmptyState'>, Omit<SpectrumLabelableProps, 'isRequired' | 'necessityIndicator'>, StyleProps, Omit<HelpTextProps, 'errorMessage'> {
@@ -80,7 +80,7 @@ export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | '
   onGroupAction?: () => void
 }
 
-export const TagGroupContext = createContext<ContextValue<TagGroupProps<any>, DOMRefValue<HTMLDivElement>>>(null);
+export const TagGroupContext = createContext<ContextValue<Partial<TagGroupProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
 const helpTextStyles = style({
   gridArea: 'helptext',
@@ -103,7 +103,8 @@ const helpTextStyles = style({
 
 const InternalTagGroupContext = createContext<TagGroupProps<any>>({});
 
-function TagGroup<T extends object>(props: TagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
+/** Tags allow users to categorize content. They can represent keywords or people, and are grouped to describe an item or a search request. */
+export const TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(function TagGroup<T extends object>(props: TagGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, TagGroupContext);
   props = useFormProps(props);
   let {onRemove} = props;
@@ -114,11 +115,7 @@ function TagGroup<T extends object>(props: TagGroupProps<T>, ref: DOMRef<HTMLDiv
       </CollectionBuilder>
     </InternalTagGroupContext.Provider>
   );
-}
-
-/** Tags allow users to categorize content. They can represent keywords or people, and are grouped to describe an item or a search request. */
-let _TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(TagGroup);
-export {_TagGroup as TagGroup};
+});
 
 function TagGroupInner<T>({
   props: {
@@ -322,7 +319,7 @@ function TagGroupInner<T>({
             {maxRows != null && (
               <div
                 // @ts-ignore
-                inert="true"
+                inert={inertValue(true)}
                 ref={hiddenTagsRef}
                 className={style({
                   display: 'inline',
@@ -360,7 +357,7 @@ function TagGroupInner<T>({
                 minWidth: 'full',
                 font: 'ui'
               })}>
-              {item => <_Tag {...item.props} id={item.key} textValue={item.textValue} />}
+              {item => <Tag {...item.props} id={item.key} textValue={item.textValue} />}
             </TagList>
             {!isEmpty && (showCollapseToggleButton || groupActionLabel) &&
               <ActionGroup
@@ -519,7 +516,8 @@ const avatarSize = {
   L: 24
 } as const;
 
-function Tag({children, textValue, ...props}: TagProps, ref: DOMRef<HTMLDivElement>) {
+/** An individual Tag for TagGroups. */
+export const Tag = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tag({children, textValue, ...props}: TagProps, ref: DOMRef<HTMLDivElement>) {
   textValue ||= typeof children === 'string' ? children : undefined;
   let ctx = useSlottedContext(TagGroupContext);
   let isInRealDOM = Boolean(ctx?.size);
@@ -541,12 +539,7 @@ function Tag({children, textValue, ...props}: TagProps, ref: DOMRef<HTMLDivEleme
       ))}
     </AriaTag>
   );
-}
-
-
-/** An individual Tag for TagGroups. */
-let _Tag = /*#__PURE__*/ (forwardRef as forwardRefType)(Tag);
-export {_Tag as Tag};
+});
 
 function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM}) {
   let {size = 'M'} = useSlottedContext(TagGroupContext) ?? {};

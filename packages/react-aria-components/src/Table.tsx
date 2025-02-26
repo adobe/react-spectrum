@@ -41,8 +41,21 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
 
   commit(firstKey: Key, lastKey: Key, isSSR = false) {
     this.updateColumns(isSSR);
+
+    this.rows = [];
+    for (let row of this.getChildren(this.body.key)) {
+      let lastChildKey = (row as CollectionNode<T>).lastChildKey;
+      if (lastChildKey != null) {
+        let lastCell = this.getItem(lastChildKey) as GridNode<T>;
+        let numberOfCellsInRow = (lastCell.colIndex ?? lastCell.index) + (lastCell.colSpan ?? 1);
+        if (numberOfCellsInRow !== this.columns.length && !isSSR) {
+          throw new Error(`Cell count must match column count. Found ${numberOfCellsInRow} cells and ${this.columns.length} columns.`);
+        }
+      }
+      this.rows.push(row);
+    }
+
     super.commit(firstKey, lastKey, isSSR);
-    this.rows = [...this.getChildren(this.body.key)];
   }
 
   private updateColumns(isSSR: boolean) {
@@ -214,7 +227,7 @@ export interface ResizableTableContainerProps extends DOMProps, ScrollableProps<
   onResizeEnd?: (widths: Map<Key, ColumnSize>) => void
 }
 
-function ResizableTableContainer(props: ResizableTableContainerProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ResizableTableContainer = forwardRef(function ResizableTableContainer(props: ResizableTableContainerProps, ref: ForwardedRef<HTMLDivElement>) {
   let containerRef = useObjectRef(ref);
   let tableRef = useRef<HTMLTableElement>(null);
   let scrollRef = useRef<HTMLElement | null>(null);
@@ -267,10 +280,7 @@ function ResizableTableContainer(props: ResizableTableContainerProps, ref: Forwa
       </ResizableTableContainerContext.Provider>
     </div>
   );
-}
-
-const _ResizableTableContainer = forwardRef(ResizableTableContainer);
-export {_ResizableTableContainer as ResizableTableContainer};
+});
 
 export const TableContext = createContext<ContextValue<TableProps, HTMLTableElement>>(null);
 export const TableStateContext = createContext<TableState<any> | null>(null);
@@ -317,7 +327,11 @@ export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, Sty
   dragAndDropHooks?: DragAndDropHooks
 }
 
-function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
+/**
+ * A table displays data in rows and columns and enables a user to navigate its contents via directional navigation keys,
+ * and optionally supports row selection and sorting.
+ */
+export const Table = forwardRef(function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
   [props, ref] = useContextProps(props, ref, TableContext);
 
   // Separate selection state so we have access to it from collection components via useTableOptions.
@@ -342,7 +356,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
       {collection => <TableInner props={props} forwardedRef={ref} selectionState={selectionState} collection={collection} />}
     </CollectionBuilder>
   );
-}
+});
 
 interface TableInnerProps {
   props: TableProps,
@@ -490,13 +504,6 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
   );
 }
 
-/**
- * A table displays data in rows and columns and enables a user to navigate its contents via directional navigation keys,
- * and optionally supports row selection and sorting.
- */
-const _Table = forwardRef(Table);
-export {_Table as Table};
-
 function useElementType<E extends keyof JSX.IntrinsicElements>(element: E): E | 'div' {
   let {isVirtualized} = useContext(CollectionRendererContext);
   return isVirtualized ? 'div' : element;
@@ -532,11 +539,11 @@ export interface TableHeaderRenderProps {
 
 export interface TableHeaderProps<T> extends StyleRenderProps<TableHeaderRenderProps>, HoverEvents {
   /** A list of table columns. */
-  columns?: T[],
+  columns?: Iterable<T>,
   /** A list of `Column(s)` or a function. If the latter, a list of columns must be provided using the `columns` prop. */
   children?: ReactNode | ((item: T) => ReactElement),
   /** Values that should invalidate the column cache when using dynamic collections. */
-  dependencies?: any[]
+  dependencies?: ReadonlyArray<any>
 }
 
 /**
@@ -743,7 +750,6 @@ export const Column = /*#__PURE__*/ createLeafComponent('column', (props: Column
       {...mergeProps(filterDOMProps(props as any), columnHeaderProps, focusProps, hoverProps)}
       {...renderProps}
       style={style}
-      colSpan={column.colspan}
       ref={ref}
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
@@ -802,7 +808,7 @@ interface ColumnResizerContextValue {
 
 const ColumnResizerContext = createContext<ColumnResizerContextValue | null>(null);
 
-function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ColumnResizer = forwardRef(function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivElement>) {
   let layoutState = useContext(TableColumnResizeStateContext);
   if (!layoutState) {
     throw new Error('Wrap your <Table> in a <ResizableTableContainer> to enable column resizing');
@@ -891,10 +897,7 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
       {isResizing && isMouseDown && ReactDOM.createPortal(<div style={{position: 'fixed', top: 0, left: 0, bottom: 0, right: 0, cursor}} />, document.body)}
     </div>
   );
-}
-
-const _ColumnResizer = forwardRef(ColumnResizer);
-export {_ColumnResizer as ColumnResizer};
+});
 
 export interface TableBodyRenderProps {
   /**
@@ -998,7 +1001,7 @@ export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMPr
   /** The object value that this row represents. When using dynamic collections, this is set automatically. */
   value?: T,
   /** Values that should invalidate the cell cache when using dynamic collections. */
-  dependencies?: any[],
+  dependencies?: ReadonlyArray<any>,
   /** A string representation of the row's contents, used for features like typeahead. */
   textValue?: string,
   /** Whether the row is disabled. */
@@ -1118,6 +1121,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
             values={[
               [CheckboxContext, {
                 slots: {
+                  [DEFAULT_SLOT]: {},
                   selection: checkboxProps
                 }
               }],
@@ -1142,7 +1146,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
   },
   props => {
     if (props.id == null && typeof props.children === 'function') {
-      console.warn('No id detected for the Row element. The Row element requires a id to be provided to it when the cells are rendered dynamically.');
+      throw new Error('No id detected for the Row element. The Row element requires a id to be provided to it when the cells are rendered dynamically.');
     }
 
     let dependencies = [props.value].concat(props.dependencies);
@@ -1181,7 +1185,9 @@ export interface CellProps extends RenderProps<CellRenderProps> {
   /** The unique id of the cell. */
   id?: Key,
   /** A string representation of the cell's contents, used for features like typeahead. */
-  textValue?: string
+  textValue?: string,
+  /** Indicates how many columns the data cell spans. */
+  colSpan?: number
 }
 
 /**
@@ -1193,7 +1199,6 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
   let {dragState} = useContext(DragAndDropContext);
   let {isVirtualized} = useContext(CollectionRendererContext);
 
-  // @ts-ignore
   cell.column = state.collection.columns[cell.index];
 
   let {gridCellProps, isPressed} = useTableCell({

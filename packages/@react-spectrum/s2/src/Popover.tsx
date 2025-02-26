@@ -14,14 +14,16 @@ import {
   Popover as AriaPopover,
   PopoverProps as AriaPopoverProps,
   composeRenderProps,
+  Dialog,
+  DialogProps,
   OverlayArrow,
+  OverlayTriggerStateContext,
   useLocale
 } from 'react-aria-components';
-import {colorScheme, getAllowedOverrides, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {colorScheme, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
 import {DOMRef} from '@react-types/shared';
 import {forwardRef, MutableRefObject, useCallback, useContext} from 'react';
-import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {mergeStyles} from '../style/runtime';
 import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types' with {type: 'macro'};
@@ -35,54 +37,13 @@ export interface PopoverProps extends UnsafeStyles, Omit<AriaPopoverProps, 'arro
    * @default false
    */
   hideArrow?: boolean,
+  /**
+   * The size of the Popover. If not specified, the popover fits its contents.
+   */
   size?: 'S' | 'M' | 'L'
+  /** The type of overlay that should be rendered when on a mobile device. */
+  // mobileType?: 'modal' | 'fullscreen' | 'fullscreenTakeover' // TODO: add tray back in
 }
-
-const fadeKeyframes = keyframes(`
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-`);
-const slideUpKeyframes = keyframes(`
-  from {
-    transform: translateY(-4px);
-  }
-
-  to {
-    transform: translateY(0);
-  }
-`);
-const slideDownKeyframes = keyframes(`
-  from {
-    transform: translateY(4px);
-  }
-
-  to {
-    transform: translateY(0);
-  }
-`);
-const slideRightKeyframes = keyframes(`
-  from {
-    transform: translateX(4px);
-  }
-
-  to {
-    transform: translateX(0);
-  }
-`);
-const slideLeftKeyframes = keyframes(`
-  from {
-    transform: translateX(-4px);
-  }
-
-  to {
-    transform: translateX(0);
-  }
-`);
 
 let popover = style({
   ...colorScheme(),
@@ -110,64 +71,50 @@ let popover = style({
   width: {
     size: {
       // Copied from designs, not sure if correct.
-      S: '[21rem]',
-      M: '[26rem]',
-      L: '[36rem]'
+      S: 336,
+      M: 416,
+      L: 576
     }
+  },
+  // Don't be larger than full screen minus 2 * containerPadding
+  maxWidth: '[calc(100vw - 24px)]',
+  boxSizing: 'border-box',
+  display: 'flex',
+  opacity: {
+    isEntering: 0,
+    isExiting: 0
   },
   translateY: {
     placement: {
-      bottom: {
-        isArrowShown: 8 // TODO: not defined yet should this change with font size? need boolean support for 'hideArrow' prop
-      },
       top: {
-        isArrowShown: -8
+        isEntering: 4,
+        isExiting: 4
+      },
+      bottom: {
+        isEntering: -4,
+        isExiting: -4
       }
-    }
+    },
+    isSubmenu: 0
   },
   translateX: {
     placement: {
       left: {
-        isArrowShown: -8
+        isEntering: 4,
+        isExiting: 4
       },
       right: {
-        isArrowShown: 8
+        isEntering: -4,
+        isExiting: -4
       }
-    }
+    },
+    isSubmenu: 0
   },
-  animation: {
-    placement: {
-      top: {
-        isEntering: `${slideDownKeyframes}, ${fadeKeyframes}`,
-        isExiting: `${slideDownKeyframes}, ${fadeKeyframes}`
-      },
-      bottom: {
-        isEntering: `${slideUpKeyframes}, ${fadeKeyframes}`,
-        isExiting: `${slideUpKeyframes}, ${fadeKeyframes}`
-      },
-      left: {
-        isEntering: `${slideRightKeyframes}, ${fadeKeyframes}`,
-        isExiting: `${slideRightKeyframes}, ${fadeKeyframes}`
-      },
-      right: {
-        isEntering: `${slideLeftKeyframes}, ${fadeKeyframes}`,
-        isExiting: `${slideLeftKeyframes}, ${fadeKeyframes}`
-      }
-    }
-  },
-  animationDuration: {
-    isEntering: 200,
-    isExiting: 200
-  },
-  animationDirection: {
-    isEntering: 'normal',
-    isExiting: 'reverse'
-  },
-  animationTimingFunction: {
+  transition: '[opacity, translate]',
+  transitionDuration: 200,
+  transitionTimingFunction: {
     isExiting: 'in'
   },
-  transition: '[opacity, transform]',
-  willChange: '[opacity, transform]',
   isolation: 'isolate',
   pointerEvents: {
     isExiting: 'none'
@@ -200,7 +147,7 @@ let arrow = style({
   }
 });
 
-function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
+export const PopoverBase = forwardRef(function PopoverBase(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
   let {
     hideArrow = false,
     UNSAFE_className = '',
@@ -221,18 +168,40 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
     }
   }, [locale, direction, domRef]);
 
+  // On small devices, show a modal (or eventually a tray) instead of a popover.
+  // TODO: reverted this until we have trays.
+  // let isMobile = useIsMobileDevice();
+  // if (isMobile && process.env.NODE_ENV !== 'test') {
+  //   let mappedChildren = typeof children === 'function'
+  //     ? (renderProps: ModalRenderProps) => children({...renderProps, defaultChildren: null, trigger, placement: 'bottom'})
+  //     : children;
+
+  //   return (
+  //     <Modal size={size} isDismissable>
+  //       {composeRenderProps(mappedChildren, (children, {state}) => (
+  //         <>
+  //           {children}
+  //           {/* Add additional dismiss button at the end to match popovers. */}
+  //           <DismissButton onDismiss={state.close} />
+  //         </>
+  //       ))}
+  //     </Modal>
+  //   );
+  // }
+
   // TODO: this still isn't the final popover 'tip', copying various ones out of the designs files yields different results
   // containerPadding not working as expected
   return (
     <AriaPopover
       {...props}
+      offset={(props.offset ?? 8) + (hideArrow ? 0 : 8)}
       ref={popoverRef}
       style={{
         ...UNSAFE_style,
         // Override default z-index from useOverlayPosition. We use isolation: isolate instead.
         zIndex: undefined
       }}
-      className={(renderProps) => UNSAFE_className + mergeStyles(popover({...renderProps, size, isArrowShown: !hideArrow, colorScheme}), styles)}>
+      className={(renderProps) => UNSAFE_className + mergeStyles(popover({...renderProps, size, isArrowShown: !hideArrow, colorScheme, isSubmenu: renderProps.trigger === 'SubmenuTrigger'}), styles)}>
       {composeRenderProps(props.children, (children, renderProps) => (
         <>
           {!hideArrow && (
@@ -247,10 +216,41 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
       ))}
     </AriaPopover>
   );
-}
+});
+
+export interface PopoverDialogProps extends Pick<PopoverProps, 'size' | 'hideArrow'| 'placement' | 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset'>, Omit<DialogProps, 'className' | 'style'>, StyleProps {}
+
+const dialogStyle = style({
+  padding: 8,
+  boxSizing: 'border-box',
+  outlineStyle: 'none',
+  borderRadius: '[inherit]',
+  overflow: 'auto',
+  position: 'relative',
+  width: 'full',
+  maxSize: '[inherit]'
+}, getAllowedOverrides({height: true}));
 
 /**
  * A popover is an overlay element positioned relative to a trigger.
  */
-let _Popover = forwardRef(Popover);
-export {_Popover as Popover};
+export const Popover = forwardRef(function Popover(props: PopoverDialogProps, ref: DOMRef) {
+  let domRef = useDOMRef(ref);
+
+  return (
+    <PopoverBase size={props.size} hideArrow={props.hideArrow} placement={props.placement} shouldFlip={props.shouldFlip} containerPadding={props.containerPadding} offset={props.offset} crossOffset={props.crossOffset}>
+      <Dialog
+        {...props}
+        ref={domRef}
+        style={props.UNSAFE_style}
+        className={(props.UNSAFE_className || '') + dialogStyle(null, props.styles)}>
+        {composeRenderProps(props.children, (children) => (
+          // Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state.
+          <OverlayTriggerStateContext.Provider value={null}>
+            {children}
+          </OverlayTriggerStateContext.Provider>
+        ))}
+      </Dialog>
+    </PopoverBase>
+  );
+});

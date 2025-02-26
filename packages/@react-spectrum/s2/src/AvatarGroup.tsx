@@ -35,7 +35,7 @@ export interface AvatarGroupProps extends UnsafeStyles, DOMProps, AriaLabelingPr
   styles?: StylesPropWithoutWidth
 }
 
-export const AvatarGroupContext = createContext<ContextValue<AvatarGroupProps, DOMRefValue<HTMLDivElement>>>(null);
+export const AvatarGroupContext = createContext<ContextValue<Partial<AvatarGroupProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const avatar = style({
   marginStart: {
@@ -65,7 +65,10 @@ const container = style({
   alignItems: 'center'
 }, getAllowedOverrides({width: false}));
 
-function AvatarGroup(props: AvatarGroupProps, ref: DOMRef<HTMLDivElement>) {
+/**
+ * An avatar group is a grouping of avatars that are related to each other.
+ */
+export const AvatarGroup = forwardRef(function AvatarGroup(props: AvatarGroupProps, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, AvatarGroupContext);
   let domRef = useDOMRef(ref);
   let {children, label, size = 24, styles, UNSAFE_style, UNSAFE_className, ...otherProps} = props;
@@ -91,10 +94,4 @@ function AvatarGroup(props: AvatarGroupProps, ref: DOMRef<HTMLDivElement>) {
       </div>
     </AvatarContext.Provider>
   );
-}
-
-/**
- * An avatar group is a grouping of avatars that are related to each other.
- */
-let _AvatarGroup = forwardRef(AvatarGroup);
-export {_AvatarGroup as AvatarGroup};
+});

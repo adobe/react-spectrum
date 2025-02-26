@@ -48,11 +48,10 @@ export const ICONS = {
   positive: SuccessMedium
 };
 
-function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
+export const Toast = React.forwardRef(function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
   let {
     toast: {
       key,
-      animation,
       content: {
         children,
         variant,
@@ -103,17 +102,7 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
           'spectrum-Toast',
           {'focus-ring': isFocusVisible}
         )
-      )}
-      style={{
-        ...styleProps.style,
-        zIndex: props.toast.priority
-      }}
-      data-animation={animation}
-      onAnimationEnd={() => {
-        if (animation === 'exiting') {
-          state.remove(key);
-        }
-      }}>
+      )}>
       <div
         {...contentProps}
         className={classNames(toastContainerStyles, 'spectrum-Toast-contentWrapper')}>
@@ -142,7 +131,4 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
       </div>
     </div>
   );
-}
-
-let _Toast = React.forwardRef(Toast);
-export {_Toast as Toast};
+});

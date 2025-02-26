@@ -11,7 +11,9 @@
  */
 
 import {AriaTextFieldProps} from '@react-types/textfield';
-import {
+import {DOMAttributes, ValidationResult} from '@react-types/shared';
+import {filterDOMProps, getOwnerWindow, mergeProps, useFormReset} from '@react-aria/utils';
+import React, {
   ChangeEvent,
   HTMLAttributes,
   type JSX,
@@ -19,11 +21,9 @@ import {
   RefObject,
   useEffect
 } from 'react';
-import {DOMAttributes, ValidationResult} from '@react-types/shared';
-import {filterDOMProps, getOwnerWindow, mergeProps, useFormReset} from '@react-aria/utils';
 import {useControlledState} from '@react-stately/utils';
 import {useField} from '@react-aria/label';
-import {useFocusable} from '@react-aria/focus';
+import {useFocusable} from '@react-aria/interactions';
 import {useFormValidation} from '@react-aria/form';
 import {useFormValidationState} from '@react-stately/form';
 
@@ -69,7 +69,7 @@ type TextFieldHTMLAttributesType = Pick<IntrinsicHTMLAttributes, TextFieldIntrin
  */
 type TextFieldInputProps<T extends TextFieldIntrinsicElements> = TextFieldHTMLAttributesType[T];
 
-export interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements> extends AriaTextFieldProps {
+export interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements> extends AriaTextFieldProps<TextFieldHTMLElementType[T]> {
   /**
    * The HTML element used to render the input, e.g. 'input', or 'textarea'.
    * It determines whether certain HTML attributes will be included in `inputProps`.
@@ -118,9 +118,9 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     isReadOnly = false,
     type = 'text',
     validationBehavior = 'aria'
-  }: AriaTextFieldOptions<TextFieldIntrinsicElements> = props;
+  } = props;
   let [value, setValue] = useControlledState<string>(props.value, props.defaultValue || '', props.onChange);
-  let {focusableProps} = useFocusable(props, ref);
+  let {focusableProps} = useFocusable<TextFieldHTMLElementType[T]>(props, ref);
   let validationState = useFormValidationState({
     ...props,
     value
@@ -174,6 +174,7 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
         'aria-activedescendant': props['aria-activedescendant'],
         'aria-autocomplete': props['aria-autocomplete'],
         'aria-haspopup': props['aria-haspopup'],
+        'aria-controls': props['aria-controls'],
         value,
         onChange: (e: ChangeEvent<HTMLInputElement>) => setValue(e.target.value),
         autoComplete: props.autoComplete,
@@ -183,6 +184,9 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
         name: props.name,
         placeholder: props.placeholder,
         inputMode: props.inputMode,
+        autoCorrect: props.autoCorrect,
+        spellCheck: props.spellCheck,
+        [parseInt(React.version, 10) >= 17 ? 'enterKeyHint' : 'enterkeyhint']: props.enterKeyHint,
 
         // Clipboard events
         onCopy: props.onCopy,

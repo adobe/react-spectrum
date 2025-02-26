@@ -62,7 +62,20 @@ function getStylePropValue(prop: string, value: t.ObjectProperty['value'], eleme
     case 'maxWidth':
     case 'height':
     case 'minHeight':
-    case 'maxHeight':
+    case 'maxHeight': {
+      if (value.type === 'StringLiteral' || value.type === 'NumericLiteral') {
+        let val = convertDimension(value.value, 'size');
+        if (val != null) {
+          return {
+            macroValues: [{key: mappedProp, value: val}]
+          };
+        }
+      } else if (value.type === 'ObjectExpression') {
+        return getResponsiveValue(prop, value, element, colorVersion);
+      }
+      // return [mappedProp, customProp, [[customProp, value]]];
+      return null;
+    }
     case 'margin':
     case 'marginStart':
     case 'marginEnd':
@@ -78,7 +91,18 @@ function getStylePropValue(prop: string, value: t.ObjectProperty['value'], eleme
     case 'end':
     case 'flexBasis': {
       if (value.type === 'StringLiteral' || value.type === 'NumericLiteral') {
-        let val = convertDimension(value.value);
+        if (prop === 'margin' && value.type === 'StringLiteral' && /\s/.test(value.value)) {
+          // Check if it has multiple whitespace-separated values
+          let expansions = expandSpaceShorthand(prop, value.value, convertDimension);
+          if (!expansions) {
+            return null;
+          }
+          return {
+            macroValues: expansions
+          };
+        }
+
+        let val = convertDimension(value.value, 'space');
         if (val != null) {
           return {
             macroValues: [{key: mappedProp, value: val}]
@@ -173,7 +197,7 @@ function getStylePropValue(prop: string, value: t.ObjectProperty['value'], eleme
     case 'rowGap':
       if (element === 'Flex' || element === 'Grid') {
         if (value.type === 'StringLiteral' || value.type === 'NumericLiteral') {
-          let val = convertDimension(value.value);
+          let val = convertDimension(value.value, 'space');
           if (val != null) {
             return {
               macroValues: [{key: mappedProp, value: val}]
@@ -303,7 +327,18 @@ function getStylePropValue(prop: string, value: t.ObjectProperty['value'], eleme
     case 'paddingBottom':
       if (element === 'View') {
         if (value.type === 'StringLiteral' || value.type === 'NumericLiteral') {
-          let val = convertDimension(value.value);
+          if (prop === 'padding' && value.type === 'StringLiteral' && /\s/.test(value.value)) {
+            // Check if it has multiple whitespace-separated values
+            let expansions = expandSpaceShorthand(prop, value.value, convertDimension);
+            if (!expansions) {
+              return null;
+            }
+            return {
+              macroValues: expansions
+            };
+          }
+
+          let val = convertDimension(value.value, 'space');
           if (val != null) {
             return {
               macroValues: [{key: mappedProp, value: val}]
@@ -399,7 +434,7 @@ function getStylePropValue(prop: string, value: t.ObjectProperty['value'], eleme
       // Try to automatically convert size prop to a macro value for components that supported size.
       if (element === 'ColorArea' || element === 'ColorWheel') {
         if (value.type === 'StringLiteral' || value.type === 'NumericLiteral') {
-          let val = convertDimension(value.value);
+          let val = convertDimension(value.value, 'size');
           if (val != null) {
             return {
               macroValues: [{key: 'size', value: val}]
@@ -502,6 +537,56 @@ function handleProp(
         // Found a value we couldn't handle.
         addComment(path.node, ' TODO(S2-upgrade): update this style prop');
       }
+    }
+  }
+}
+
+function expandSpaceShorthand(
+  prop: string,
+  rawValue: string,
+  convertFn: (val: string | number, type: 'space' | 'size' | 'px') => any
+) {
+  // Split on whitespace (e.g. "10px 16px" -> ["10px", "16px"])
+  let parts = rawValue.trim().split(/\s+/);
+
+  // One value => all sides
+  // Two values => vertical horizontal
+  // Three values => top, horizontal, bottom
+  // Four values => top, right, bottom, left
+  // Return keys and values in an array we can map to macroValues.
+  switch (parts.length) {
+    case 1: {
+      let val = convertFn(parts[0], 'space');
+      return [{key: prop, value: val}];
+    }
+    case 2: {
+      let [y, x] = parts;
+      return [
+        {key: `${prop}Y`, value: convertFn(y, 'space')},
+        {key: `${prop}X`, value: convertFn(x, 'space')}
+      ];
+    }
+    case 3: {
+      // top horizontal bottom
+      let [top, x, bottom] = parts;
+      return [
+        {key: `${prop}Top`, value: convertFn(top, 'space')},
+        {key: `${prop}X`, value: convertFn(x, 'space')},
+        {key: `${prop}Bottom`, value: convertFn(bottom, 'space')}
+      ];
+    }
+    case 4: {
+      // top right bottom left
+      let [top, right, bottom, left] = parts;
+      return [
+        {key: `${prop}Top`, value: convertFn(top, 'space')},
+        {key: `${prop}Right`, value: convertFn(right, 'space')},
+        {key: `${prop}Bottom`, value: convertFn(bottom, 'space')},
+        {key: `${prop}Left`, value: convertFn(left, 'space')}
+      ];
+    }
+    default: {
+      return null;
     }
   }
 }

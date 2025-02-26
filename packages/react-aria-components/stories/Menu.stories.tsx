@@ -11,10 +11,11 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Header, Keyboard, Menu, MenuTrigger, Popover, Section, Separator, SubmenuTrigger, Text} from 'react-aria-components';
+import {Button, Dialog, Header, Heading, Input, Keyboard, Label, Menu, MenuSection, MenuTrigger, Popover, Separator, SubmenuTrigger, Text, TextField} from 'react-aria-components';
 import {MyMenuItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
+import {SubDialogTrigger} from '../src/Menu';
 
 export default {
   title: 'React Aria Components'
@@ -25,19 +26,19 @@ export const MenuExample = () => (
     <Button aria-label="Menu">☰</Button>
     <Popover>
       <Menu className={styles.menu} onAction={action('onAction')}>
-        <Section className={styles.group} aria-label={'Section 1'}>
+        <MenuSection className={styles.group} aria-label={'Section 1'}>
           <MyMenuItem>Foo</MyMenuItem>
           <MyMenuItem>Bar</MyMenuItem>
           <MyMenuItem>Baz</MyMenuItem>
           <MyMenuItem href="https://google.com">Google</MyMenuItem>
-        </Section>
+        </MenuSection>
         <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
-        <Section className={styles.group}>
+        <MenuSection className={styles.group}>
           <Header style={{fontSize: '1.2em'}}>Section 2</Header>
           <MyMenuItem>Foo</MyMenuItem>
           <MyMenuItem>Bar</MyMenuItem>
           <MyMenuItem>Baz</MyMenuItem>
-        </Section>
+        </MenuSection>
       </Menu>
     </Popover>
   </MenuTrigger>
@@ -64,6 +65,54 @@ export const MenuComplex = () => (
           <Keyboard>⌘V</Keyboard>
         </MyMenuItem>
       </Menu>
+    </Popover>
+  </MenuTrigger>
+);
+
+export const MenuScrollPaddingExample = () => (
+  <MenuTrigger>
+    <Button aria-label="Menu">☰</Button>
+    <Popover>
+      <Menu
+        className={styles.menu}
+        onAction={action('onAction')}
+        style={{
+          maxHeight: 200,
+          position: 'relative',
+          scrollPaddingTop: '25px',
+          scrollPaddingBottom: '25px',
+          paddingBottom: '25px' // needed due to absolute-positioned footer
+        }}>
+        <Header
+          style={{
+            fontSize: '1.2em',
+            position: 'sticky',
+            top: 0,
+            height: '25px',
+            background: 'lightgray',
+            borderBottom: '1px solid gray'
+          }}>
+          Section 1
+        </Header>
+        {Array.from({length: 30}).map((_, i) => (
+          <MyMenuItem key={i}>Item {i + 1}</MyMenuItem>
+        ))}
+      </Menu>
+      {/* Menu doesn't have a footer, so have to put one outside to
+        and position it absolutely to demo scroll padding bottom support. */}
+      <div
+        style={{
+          fontSize: '1.2em',
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          width: '100%',
+          height: '24px', // with the border it'll be 25px
+          borderTop: '1px solid gray',
+          background: 'lightgray'
+        }}>
+        A footer
+      </div>
     </Popover>
   </MenuTrigger>
 );
@@ -192,40 +241,131 @@ export const SubmenuSectionsExample = (args) => (
     <Button aria-label="Menu">☰</Button>
     <Popover>
       <Menu className={styles.menu} onAction={action('onAction')}>
-        <Section className={styles.group}>
+        <MenuSection className={styles.group}>
           <Header style={{fontSize: '1.2em'}}>Section 1</Header>
           <MyMenuItem>Foo</MyMenuItem>
           <SubmenuTrigger {...args}>
             <MyMenuItem id="Bar">Bar</MyMenuItem>
             <Popover className={styles.popover}>
               <Menu className={styles.menu} onAction={action('onAction')}>
-                <Section className={styles.group}>
+                <MenuSection className={styles.group}>
                   <Header style={{fontSize: '1.2em'}}>Submenu Section 1</Header>
                   <MyMenuItem id="Submenu Foo">Submenu Foo</MyMenuItem>
                   <MyMenuItem id="Submenu Bar">Submenu Bar</MyMenuItem>
                   <MyMenuItem id="Submenu Baz">Submenu Baz</MyMenuItem>
                   <MyMenuItem href="https://google.com">Google</MyMenuItem>
-                </Section>
+                </MenuSection>
                 <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
-                <Section className={styles.group}>
+                <MenuSection className={styles.group}>
                   <Header style={{fontSize: '1.2em'}}>Submenu Section 2</Header>
                   <MyMenuItem id="Submenu Foo 2">Submenu Foo</MyMenuItem>
                   <MyMenuItem id="Submenu Bar 2">Submenu Bar</MyMenuItem>
                   <MyMenuItem id="Submenu Baz 2">Submenu Baz</MyMenuItem>
-                </Section>
+                </MenuSection>
               </Menu>
             </Popover>
           </SubmenuTrigger>
           <MyMenuItem>Baz</MyMenuItem>
           <MyMenuItem href="https://google.com">Google</MyMenuItem>
-        </Section>
+        </MenuSection>
         <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
-        <Section className={styles.group}>
+        <MenuSection className={styles.group}>
           <Header style={{fontSize: '1.2em'}}>Section 2</Header>
           <MyMenuItem>Foo</MyMenuItem>
           <MyMenuItem>Bar</MyMenuItem>
           <MyMenuItem>Baz</MyMenuItem>
-        </Section>
+        </MenuSection>
+      </Menu>
+    </Popover>
+  </MenuTrigger>
+);
+
+// TODO: figure out why it is autofocusing the Menu in the SubDialog
+export const SubdialogExample = (args) => (
+  <MenuTrigger>
+    <Button aria-label="Menu">☰</Button>
+    <Popover>
+      <Menu className={styles.menu} onAction={action('onAction')}>
+        <MyMenuItem id="Foo">Foo</MyMenuItem>
+        <SubDialogTrigger {...args}>
+          <MyMenuItem id="Bar">Bar</MyMenuItem>
+          <Popover
+            style={{
+              background: 'Canvas',
+              color: 'CanvasText',
+              border: '1px solid gray',
+              padding: 5
+            }}>
+            <Dialog>
+              {({close}) => (
+                <form style={{display: 'flex', flexDirection: 'column'}}>
+                  <Heading slot="title">Sign up</Heading>
+                  <TextField autoFocus>
+                    <Label>First Name: </Label>
+                    <Input />
+                  </TextField>
+                  <TextField>
+                    <Label>Last Name: </Label>
+                    <Input />
+                  </TextField>
+                  <Menu>
+                    <SubmenuTrigger {...args}>
+                      <MyMenuItem>SubMenu</MyMenuItem>
+                      <Popover
+                        style={{
+                          background: 'Canvas',
+                          color: 'CanvasText',
+                          border: '1px solid gray',
+                          padding: 5
+                        }}>
+                        <Menu>
+                          <MyMenuItem>1</MyMenuItem>
+                          <MyMenuItem>2</MyMenuItem>
+                          <MyMenuItem>3</MyMenuItem>
+                        </Menu>
+                      </Popover>
+                    </SubmenuTrigger>
+                    <SubDialogTrigger {...args}>
+                      <MyMenuItem>SubDialog</MyMenuItem>
+                      <Popover
+                        style={{
+                          background: 'Canvas',
+                          color: 'CanvasText',
+                          border: '1px solid gray',
+                          padding: 5
+                        }}>
+                        <Dialog>
+                          {({close}) => (
+                            <form style={{display: 'flex', flexDirection: 'column'}}>
+                              <Heading slot="title">Contact</Heading>
+                              <TextField autoFocus>
+                                <Label>Email: </Label>
+                                <Input />
+                              </TextField>
+                              <TextField>
+                                <Label>Contact number: </Label>
+                                <Input />
+                              </TextField>
+                              <Button onPress={close} style={{marginTop: 10}}>
+                                Submit
+                              </Button>
+                            </form>
+                          )}
+                        </Dialog>
+                      </Popover>
+                    </SubDialogTrigger>
+                    <MyMenuItem>C</MyMenuItem>
+                  </Menu>
+                  <Button onPress={close} style={{marginTop: 10}}>
+                    Submit
+                  </Button>
+                </form>
+              )}
+            </Dialog>
+          </Popover>
+        </SubDialogTrigger>
+        <MyMenuItem id="Baz">Baz</MyMenuItem>
+        <MyMenuItem id="Google" href="https://google.com">Google</MyMenuItem>
       </Menu>
     </Popover>
   </MenuTrigger>
@@ -246,3 +386,4 @@ SubmenuExample.story = {...submenuArgs};
 SubmenuNestedExample.story = {...submenuArgs};
 SubmenuManyItemsExample.story = {...submenuArgs};
 SubmenuDisabledExample.story = {...submenuArgs};
+SubdialogExample.story = {...submenuArgs};

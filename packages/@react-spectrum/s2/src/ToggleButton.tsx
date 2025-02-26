@@ -12,7 +12,7 @@
 
 import {ActionButtonStyleProps, btnStyles} from './ActionButton';
 import {centerBaseline} from './CenterBaseline';
-import {ContextValue, Provider, ToggleButton as RACToggleButton, ToggleButtonProps as RACToggleButtonProps} from 'react-aria-components';
+import {ContextValue, Provider, ToggleButton as RACToggleButton, ToggleButtonProps as RACToggleButtonProps, useSlottedContext} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {fontRelative, style} from '../style' with {type: 'macro'};
@@ -21,40 +21,64 @@ import {pressScale} from './pressScale';
 import {SkeletonContext} from './Skeleton';
 import {StyleProps} from './style-utils';
 import {Text, TextContext} from './Content';
+import {ToggleButtonGroupContext} from './ToggleButtonGroup';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useFormProps} from './Form';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ToggleButtonProps extends Omit<RACToggleButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, StyleProps, ActionButtonStyleProps {
   /** The content to display in the button. */
-  children?: ReactNode,
+  children: ReactNode,
   /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
   isEmphasized?: boolean
 }
 
-export const ToggleButtonContext = createContext<ContextValue<ToggleButtonProps, FocusableRefValue<HTMLButtonElement>>>(null);
+export const ToggleButtonContext = createContext<ContextValue<Partial<ToggleButtonProps>, FocusableRefValue<HTMLButtonElement>>>(null);
 
-function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+/**
+ * ToggleButtons allow users to toggle a selection on or off, for example
+ * switching between two states or modes.
+ */
+export const ToggleButton = forwardRef(function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ToggleButtonContext);
   props = useFormProps(props as any);
   let domRef = useFocusableRef(ref);
+  let ctx = useSlottedContext(ToggleButtonGroupContext);
+  let isInGroup = !!ctx;
+  let {
+    density = 'regular',
+    isJustified,
+    orientation = 'horizontal',
+    staticColor = props.staticColor,
+    isQuiet = props.isQuiet,
+    isEmphasized = props.isEmphasized,
+    size = props.size || 'M',
+    isDisabled = props.isDisabled
+  } = ctx || {};
+
   return (
     <RACToggleButton
       {...props}
+      isDisabled={isDisabled}
       ref={domRef}
       style={pressScale(domRef, props.UNSAFE_style)}
       className={renderProps => (props.UNSAFE_className || '') + btnStyles({
         ...renderProps,
-        staticColor: props.staticColor,
-        size: props.size,
-        isQuiet: props.isQuiet,
-        isEmphasized: props.isEmphasized,
-        isPending: false
+        staticColor,
+        isStaticColor: !!staticColor,
+        size,
+        isQuiet,
+        isEmphasized,
+        isPending: false,
+        density,
+        isJustified,
+        orientation,
+        isInGroup
       }, props.styles)}>
       <Provider
         values={[
           [SkeletonContext, null],
-          [TextContext, {styles: style({paddingY: '--labelPadding', order: 1})}],
+          [TextContext, {styles: style({paddingY: '--labelPadding', order: 1, truncate: true})}],
           [IconContext, {
             render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
             styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
@@ -64,11 +88,4 @@ function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElem
       </Provider>
     </RACToggleButton>
   );
-}
-
-/**
- * ToggleButtons allow users to toggle a selection on or off, for example
- * switching between two states or modes.
- */
-let _ToggleButton = forwardRef(ToggleButton);
-export {_ToggleButton as ToggleButton};
+});

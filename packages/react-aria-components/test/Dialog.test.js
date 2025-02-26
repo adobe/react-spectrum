@@ -30,6 +30,18 @@ describe('Dialog', () => {
     user = userEvent.setup({delay: null, pointerMap});
   });
 
+  it('should have a base default set of attributes', () => {
+    let {getByRole} = render(
+      <Dialog>
+        <Heading slot="title">Title</Heading>
+      </Dialog>
+    );
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toHaveClass('react-aria-Dialog');
+    expect(dialog).toHaveAttribute('data-rac');
+  });
+
   it('works with modal', async () => {
     let {getByRole} = render(
       <DialogTrigger>
@@ -155,6 +167,7 @@ describe('Dialog', () => {
     let heading = getByRole('heading');
     expect(dialog).toHaveAttribute('aria-labelledby', heading.id);
     expect(dialog).toHaveAttribute('data-test', 'dialog');
+    expect(dialog).toHaveClass('react-aria-Dialog');
 
     let popover = dialog.closest('.react-aria-Popover');
     expect(popover).toHaveStyle('position: absolute');

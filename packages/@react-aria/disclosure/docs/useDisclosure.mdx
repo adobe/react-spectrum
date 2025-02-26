@@ -1,0 +1,351 @@
+{/* Copyright 2024 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/disclosure';
+import utilsDocs from 'docs:@react-aria/utils';
+import statelyDocs from 'docs:@react-stately/disclosure';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
+import packageData from '@react-aria/disclosure/package.json';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import Anatomy from './anatomy.svg';
+
+---
+category: Navigation
+keywords: [disclosure, collapse, expand, aria]
+---
+
+# useDisclosure
+
+<PageDescription>{docs.exports.useDisclosure.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useDisclosure']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useDisclosure} links={docs.links} />
+
+## Features
+
+A disclosure is a collapsible section of content. It is composed of a trigger button and a panel that contains the content. `useDisclosure` can be used to implement these in an accessible way.
+
+* Support for mouse, touch, and keyboard interactions to open and close the disclosure
+* Support for disabled disclosures
+* Follows the disclosure ARIA pattern, semantically linking the trigger button and panel
+* Uses [hidden="until-found"](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/hidden#the_hidden_until_found_state) in supported browsers, enabling find-in-page search support and improved search engine visibility for collapsed content
+
+## Anatomy
+
+<Anatomy />
+
+A disclosure consists of a trigger button and a panel. Clicking on or pressing <Keyboard>Enter</Keyboard> or <Keyboard>Space</Keyboard> while the trigger button is focused toggles the visibility of the panel. 
+
+`useDisclosure` returns props to spread onto the trigger button and panel.
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useDisclosure.return.id].properties} />
+</TypeContext.Provider>
+
+
+State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useDisclosureState} />
+hook in `@react-stately/disclosure`. The state object should be passed as an option to `useDisclosure`.
+
+## Example
+
+This example displays a basic disclosure with a button that toggles the visibility of the panel.
+
+```tsx example export=true
+import {useDisclosureState} from '@react-stately/disclosure';
+import {useDisclosure} from '@react-aria/disclosure';
+import {useButton} from '@react-aria/button';
+import {mergeProps, useFocusRing} from 'react-aria';
+
+function Disclosure(props) {
+  let state = useDisclosureState(props);
+  let panelRef = React.useRef<HTMLDivElement | null>(null);
+  let triggerRef = React.useRef<HTMLButtonElement | null>(null);
+  let {buttonProps: triggerProps, panelProps} = useDisclosure(props, state, panelRef);
+  let {buttonProps} = useButton(triggerProps, triggerRef);
+  let {isFocusVisible, focusProps} = useFocusRing();
+
+  return (
+    <div className="disclosure">
+      <h3>
+        <button 
+          className="trigger" 
+          ref={triggerRef}
+          {...mergeProps(buttonProps, focusProps)}
+          style={{outline: isFocusVisible ? '2px solid dodgerblue' : 'none'}}>
+          <svg viewBox="0 0 24 24">
+            <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          </svg>
+          {props.title}
+        </button>
+      </h3>
+      <div className="panel" ref={panelRef} {...panelProps}>
+        <p>
+          {props.children}
+        </p>
+      </div>
+    </div>
+  );
+};
+
+<Disclosure title="System Requirements">
+  Details about system requirements here.
+</Disclosure>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@import "@react-aria/example-theme";
+
+.disclosure {
+  .trigger {
+    background: none;
+    border: none;
+    box-shadow: none;
+    font-weight: bold;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-color);
+
+    svg {
+      rotate: 0deg;
+      transition: rotate 200ms;
+      width: 12px;
+      height: 12px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 3px;
+    }
+
+    &[aria-expanded="true"] svg {
+      rotate: 90deg;
+    }
+
+    &:disabled {
+      color: var(--gray-300);
+    }
+  }
+}
+
+.panel {
+  margin-left: 32px;
+}
+```
+
+</details>
+
+## Usage
+
+The following examples show how to use the `Disclosure` component created in the above example.
+
+### Default expansion
+
+Whether or not the disclosure is expanded or not by default can be set with the `defaultExpanded` prop.
+
+```tsx example
+<Disclosure title="System Requirements" defaultExpanded>
+  Details about system requirements here.
+</Disclosure>
+```
+
+### Controlled expansion
+
+Expansion can be controlled using the `isExpanded` prop, paired with the `onExpandedChange` event. The `onExpandedChange` event is fired when the user presses the trigger button.
+
+```tsx example
+function ControlledDisclosure(props) {
+  let [isExpanded, setExpanded] = React.useState(false);
+
+  return (
+    <Disclosure title="System Requirements" isExpanded={isExpanded} onExpandedChange={setExpanded}>
+      Details about system requirements here.
+    </Disclosure>
+  );
+}
+```
+
+### Disabled
+
+A disclosure can be disabled with the `isDisabled` prop. This will disable the trigger button and prevent the panel from being opened or closed.
+
+```tsx example
+<Disclosure title="System Requirements" isDisabled>
+  Details about system requirements here.
+</Disclosure>
+```
+
+## Disclosure Group
+
+A disclosure group (i.e. accordion) is a set of disclosures where only one disclosure can be expanded at a time. The following example shows how to create a `DisclosureGroup` component with the `useDisclosureGroupState` hook. We'll also create a `DisclosureItem` component that uses the `DisclosureGroupState` context for managing its state.
+
+```tsx example export=true render=false
+import {useDisclosureGroupState} from '@react-stately/disclosure';
+import {useId} from '@react-aria/utils';
+
+const DisclosureGroupStateContext = React.createContext(null);
+
+function DisclosureGroup(props) {
+  let state = useDisclosureGroupState(props);
+
+  return (
+    <div className="group">
+      <DisclosureGroupStateContext.Provider value={state}>
+        {props.children}
+      </DisclosureGroupStateContext.Provider>
+    </div>
+  );
+}
+
+function DisclosureItem(props) {
+  let defaultId = useId();
+  let id = props.id || defaultId;
+  let groupState = React.useContext(DisclosureGroupStateContext);
+  let isExpanded = groupState ? groupState.expandedKeys.has(id) : props.isExpanded;
+  let state = useDisclosureState({
+    ...props,
+    isExpanded,
+    onExpandedChange(isExpanded) {
+      if (groupState) {
+        groupState.toggleKey(id);
+      }
+
+      props.onExpandedChange?.(isExpanded);
+    }
+  });
+
+  let panelRef = React.useRef<HTMLDivElement | null>(null);
+  let triggerRef = React.useRef<HTMLButtonElement | null>(null);
+  let isDisabled = props.isDisabled || groupState?.isDisabled || false;
+  let {buttonProps: triggerProps, panelProps} = useDisclosure({
+    ...props,
+    isExpanded,
+    isDisabled
+  }, state, panelRef);
+  let {buttonProps} = useButton(triggerProps, triggerRef);
+  let {isFocusVisible, focusProps} = useFocusRing();
+
+  return (
+    <div className="disclosure">
+      <h3>
+        <button 
+          className="trigger" 
+          ref={triggerRef}
+          {...mergeProps(buttonProps, focusProps)}
+          style={{outline: isFocusVisible ? '2px solid dodgerblue' : 'none'}}>
+          <svg viewBox="0 0 24 24">
+            <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          </svg>
+          {props.title}
+        </button>
+      </h3>
+      <div className="panel" ref={panelRef} {...panelProps}>
+        <p>
+          {props.children}
+        </p>
+      </div>
+    </div>
+  );
+};
+```
+
+### Usage
+
+The following examples show how to use the `DisclosureGroup` component created in the above example.
+
+```tsx example
+<DisclosureGroup>
+  <DisclosureItem title="Personal Information">
+    Personal information form here.
+  </DisclosureItem>
+  <DisclosureItem title="Billing Address">
+    Billing address form here.
+  </DisclosureItem>
+</DisclosureGroup>
+```
+
+#### Default expansion
+
+Which disclosure is expanded by default can be set with the `defaultExpandedKeys` prop.
+
+```tsx example
+<DisclosureGroup defaultExpandedKeys={['billing']}>
+  <DisclosureItem id="personal" title="Personal Information">
+    Personal information form here.
+  </DisclosureItem>
+  <DisclosureItem id="billing" title="Billing Address">
+    Billing address form here.
+  </DisclosureItem>
+</DisclosureGroup>
+```
+
+#### Controlled expansion
+
+Expansion can be controlled using the `expandedKeys` prop, paired with the `onExpandedChange` event. The `onExpandedChange` event is fired when one of the disclosures is expanded or collapsed.
+
+```tsx example
+function ControlledDisclosureGroup(props) {
+  let [expandedKeys, setExpandedKeys] = React.useState(['personal']);
+
+  return (
+    <DisclosureGroup expandedKeys={expandedKeys} onExpandedChange={setExpandedKeys}>
+      <DisclosureItem id="personal" title="Personal Information">
+        Personal information form here.
+      </DisclosureItem>
+      <DisclosureItem id="billing" title="Billing Address">
+        Billing address form here.
+      </DisclosureItem>
+    </DisclosureGroup>
+  );
+}
+```
+
+#### Multiple expanded
+
+Multiple disclosures can be expanded at the same time by setting the `allowsMultipleExpanded` prop to `true`.
+
+```tsx example
+<DisclosureGroup allowsMultipleExpanded>
+  <DisclosureItem title="Personal Information">
+    Personal information form here.
+  </DisclosureItem>
+  <DisclosureItem title="Billing Address">
+    Billing address form here.
+  </DisclosureItem>
+</DisclosureGroup>
+```
+
+#### Disabled
+
+An entire disclosure group can be disabled with the `isDisabled` prop. This will disable all trigger buttons and prevent the panels from being opened or closed.
+
+```tsx example
+<DisclosureGroup isDisabled>
+  <DisclosureItem title="Personal Information">
+    Personal information form here.
+  </DisclosureItem>
+  <DisclosureItem title="Billing Address">
+    Billing address form here.
+  </DisclosureItem>
+</DisclosureGroup>
+```

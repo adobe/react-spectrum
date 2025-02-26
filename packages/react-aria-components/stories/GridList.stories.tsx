@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Checkbox, CheckboxProps, DropIndicator, UNSTABLE_GridLayout as GridLayout, GridList, GridListItem, GridListItemProps, UNSTABLE_ListLayout as ListLayout, Tag, TagGroup, TagList, useDragAndDrop, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
+import {Button, Checkbox, CheckboxProps, DropIndicator, GridLayout, GridList, GridListItem, GridListItemProps, ListLayout, Size, Tag, TagGroup, TagList, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
-import React, {useMemo} from 'react';
-import {Size} from '@react-stately/virtualizer';
+import React from 'react';
 import styles from '../example/index.css';
 import {useListData} from 'react-stately';
 
@@ -24,7 +23,7 @@ export default {
 export const GridListExample = (args) => (
   <GridList
     {...args}
-    className={styles.menu} 
+    className={styles.menu}
     aria-label="test gridlist"
     style={{
       width: 300,
@@ -113,19 +112,13 @@ export function VirtualizedGridList() {
     items.push({id: i, name: `Item ${i}`});
   }
 
-  let layout = useMemo(() => {
-    return new ListLayout({
-      rowHeight: 25
-    });
-  }, []);
-
   let list = useListData({
     initialItems: items
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
     getItems: (keys) => {
-      return [...keys].map(key => ({'text/plain': list.getItem(key).name}));
+      return [...keys].map(key => ({'text/plain': list.getItem(key)?.name ?? ''}));
     },
     onReorder(e) {
       if (e.target.dropPosition === 'before') {
@@ -140,8 +133,12 @@ export function VirtualizedGridList() {
   });
 
   return (
-    <Virtualizer layout={layout}>
-      <GridList 
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        rowHeight: 25
+      }}>
+      <GridList
         className={styles.menu}
         selectionMode="multiple"
         dragAndDropHooks={dragAndDropHooks}
@@ -160,14 +157,12 @@ export function VirtualizedGridListGrid() {
     items.push({id: i, name: `Item ${i}`});
   }
 
-  let layout = useMemo(() => {
-    return new GridLayout({
-      minItemSize: new Size(40, 40)
-    });
-  }, []);
-
   return (
-    <Virtualizer layout={layout}>
+    <Virtualizer 
+      layout={GridLayout}
+      layoutOptions={{
+        minItemSize: new Size(40, 40)
+      }}>
       <GridList className={styles.menu} layout="grid" style={{height: 400, width: 400}} aria-label="virtualized listbox" items={items}>
         {item => <MyGridListItem>{item.name}</MyGridListItem>}
       </GridList>
@@ -178,8 +173,9 @@ export function VirtualizedGridListGrid() {
 export function TagGroupInsideGridList() {
   return (
     <GridList
-      className={styles.menu} 
+      className={styles.menu}
       aria-label="Grid list with tag group"
+      keyboardNavigationBehavior="tab"
       style={{
         width: 300,
         height: 300
@@ -194,8 +190,19 @@ export function TagGroupInsideGridList() {
           </TagList>
         </TagGroup>
       </MyGridListItem>
-      <MyGridListItem>1,2 <Button>Actions</Button></MyGridListItem>
-      <MyGridListItem>1,3 <Button>Actions</Button></MyGridListItem>
+      <MyGridListItem>
+        1,2 <Button>Actions</Button>
+      </MyGridListItem>
+      <MyGridListItem>
+        1,3         
+        <TagGroup aria-label="Tag group">
+          <TagList style={{display: 'flex', gap: 10}}>
+            <Tag key="1">Tag 1</Tag>
+            <Tag key="2">Tag 2</Tag>
+            <Tag key="3">Tag 3</Tag>
+          </TagList>
+        </TagGroup>
+      </MyGridListItem>
     </GridList>
   );
 }

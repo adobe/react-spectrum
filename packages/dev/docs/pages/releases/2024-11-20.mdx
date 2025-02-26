@@ -1,0 +1,331 @@
+{/* Copyright 2024 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+
+description: We’re excited to announce that our Accordion and Disclosure components are now generally available! We've also introduced the ToggleButtonGroup component, as well as Section-level selection groups in Menu. Additionally, React Spectrum and React Aria are now Typescript Strict compliant.
+
+date: 2024-11-20
+---
+
+# November 20, 2024 Release
+
+We’re excited to announce that our Accordion and Disclosure components are now generally available! This includes [Disclosure](/react-aria/Disclosure.html) and [DisclosureGroup](/react-aria/DisclosureGroup.html) in React Aria, as well as [Disclosure](/react-spectrum/Disclosure.html) and [Accordion](/react-spectrum/Accordion.html) in React Spectrum. These components now also use the `hidden="until-found"` API currently supported in Chrome to enable searching collapsed content with ctrl + F.
+
+We are also introducing [ToggleButtonGroup](/react-aria/ToggleButtonGroup.html) in React Aria Components, which supports arrow key navigation with single and multiple selection modes. In addition, Menu now supports the ability to create [Section-level selection groups](/react-aria/Menu.html#section-level-selection), allowing you to mix actions, single, and multiple selection within the same menu. Menus can also be nested inside Dialog popovers to enable more complex use cases.
+
+Last but not least, React Spectrum and React Aria are now [Typescript Strict](https://www.typescriptlang.org/tsconfig/#strict) compliant! This has been an extremely large, multi-year effort and we thank you for your patience. This helps us reduce bugs, particularly related to `null` checks, resulting in more correct type definitions for our APIs.
+
+As always, thanks to everyone in our community for your feedback and contributions! ❤️
+
+**Typescript Strict notice**
+
+React Spectrum and React Aria are now [Typescript Strict](https://www.typescriptlang.org/tsconfig/#strict) compliant!
+
+**Accordion changes**
+
+With the GA release of Accordion and Disclosure, take note of the following changes:
+
+- `useAccordion` and `useAccordionItem` from `@react-aria/accordion` have been deprecated in favor of `useDisclosure` from `@react-aria/disclosure`
+- `DisclosureHeader` from `@react-spectrum/accordion` has been updated to be `DisclosureTitle`
+
+If you're using an older pre-release version of Accordion, see the [previous release notes](/releases/2024-09-30.html#accordion-updates) for instructions on how to migrate to the released API.
+
+**Section changes**
+
+`Section` in React Aria Components is deprecated in this release. It is replaced by specific components for each parent collection component, e.g. ListBoxSection and MenuSection.
+
+## Enhancements
+
+- Accordion
+  - Support `hidden="until-found"` in `DisclosureGroup` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7199)
+- Dialog
+  - Add `<Button slot="close">` support - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7405)
+- Menu
+  - Add Section-level selection groups in `Menu` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7254)
+  - Support nesting `Menu` inside `Dialog` popovers with additional interactive content - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7402)
+- ToggleButtonGroup
+  - Add `ToggleButtonGroup` component to RAC - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7264)
+- Misc
+  - Support Devanagari & Bengali decimal numbering systems - [@Rocss](https://github.com/Rocss) - [PR](https://github.com/adobe/react-spectrum/pull/6715)
+  - Update `NumberParser` to support `roundingIncrement` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7186)
+  - Add `expanded` state to RAC Tailwind plugin - [@neefrehman](https://github.com/neefrehman) - [PR](https://github.com/adobe/react-spectrum/pull/7152)
+  - Add `pending` state to RAC Tailwind plugin - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7231)
+
+## Fixes
+
+- Accordion
+  - Fix `Accordion` borders - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7284)
+  - Add `box-sizing: content-box` to `Accordion` chevron - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7354)
+- Button
+  - Fix `useButton` `href` condition - [@mehm8128](https://github.com/mehm8128) - [PR](https://github.com/adobe/react-spectrum/pull/7239)
+- Checkbox
+  - Fix `Checkbox` validation reset not working - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/7268)
+  - Fix `ToggleProps` validate function type - [@joshuajaco](https://github.com/joshuajaco) - [PR](https://github.com/adobe/react-spectrum/pull/7347)
+  - Add `Checkbox` default slot to `GridList` and `Table` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7188)
+- Date and time
+  - Fix `DatePicker` with `defaultValue` to persist time zone - [@boutahlilsoufiane](https://github.com/boutahlilsoufiane) - [PR](https://github.com/adobe/react-spectrum/pull/7069)
+  - Fix BC era timestamps in `fromAbsolute` - [@KimPeeters](https://github.com/KimPeeters) and [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/6542), [PR](https://github.com/adobe/react-spectrum/pull/7410)
+- Dialog
+  - Add `data-rac` attribute to `Dialog` - [@amitdahan](https://github.com/amitdahan) - [PR](https://github.com/adobe/react-spectrum/pull/7189)
+- Select
+  - Remove iOS `HiddenSelect` workaround - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7200)
+  - Set default value for type parameter in `SelectProps` - [@kp047i](https://github.com/kp047i) - [PR](https://github.com/adobe/react-spectrum/pull/7014)
+- Slider
+  - Update `restrictValues` in `useSliderState` - [@Danji-ya](https://github.com/Danji-ya) - [PR](https://github.com/adobe/react-spectrum/pull/7338)
+- Tooltip
+  - Fix RAC `Tooltip` getting stuck on screen when scrolling - [@acr92](https://github.com/acr92) - [PR](https://github.com/adobe/react-spectrum/pull/7227)
+- Misc
+  - Support React 19 prerelease - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7383)
+  - Add `"use strict";` to style macro CommonJS build output - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7271)
+  - Add prefix to style macro class names - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7365)
+  - Fix Typescript Strict Mode remaining issues - [@snowystinger](https://github.com/snowystinger) and [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7368), [PR](https://github.com/adobe/react-spectrum/pull/6761)
+  - Add optional property types - [@alecmev](https://github.com/alecmev) - [PR](https://github.com/adobe/react-spectrum/pull/6872)
+
+## Docs
+
+- Add ARIA APG grid link to `useTagGroup` docs - [@mehm8128](https://github.com/mehm8128) - [PR](https://github.com/adobe/react-spectrum/pull/7367)
+- Update CodeSandbox templates in `useDatePicker` and `useDateRangePicker` - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7342)
+- Fix `DisclosureGroup` anatomy diagram SVG clipping on mobile - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7323)
+- Update contribution guide - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7253)
+- Update `Accordion` and `DisclosureGroup` docs - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7273)
+- Add Tailwind starter for `Disclosure` and `DisclosureGroup` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7166)
+- Update `Accordion`, `Disclosure`, `DisclosureGroup` docs - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7165)
+- Fix typo on `ProgressBar` docs - [@mehm8128](https://github.com/mehm8128) - [PR](https://github.com/adobe/react-spectrum/pull/7373)
+- Add `Disclosure` hook docs - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7178)
+- Add Q&A section to contribution guide - [@unional](https://github.com/unional) - [PR](https://github.com/adobe/react-spectrum/pull/6951)
+- Fix Tailwind starter `Submenu` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7251)
+- Add `Accordion` to example apps - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7296)
+- Fix disabled `Tag` styles in RAC Tailwind starter - [@steveoh](https://github.com/steveoh) - [PR](https://github.com/adobe/react-spectrum/pull/7247)
+
+
+## Released packages
+
+```
+ - @adobe/react-spectrum@3.38.0
+ - @internationalized/date@3.6.0
+ - @internationalized/message@3.1.6
+ - @internationalized/number@3.6.0
+ - @internationalized/string-compiler@3.2.6
+ - @internationalized/string@3.2.5
+ - @react-aria/accordion@3.0.0-alpha.36
+ - @react-aria/actiongroup@3.7.11
+ - @react-aria/aria-modal-polyfill@3.7.13
+ - @react-aria/autocomplete@3.0.0-alpha.36
+ - @react-aria/breadcrumbs@3.5.19
+ - @react-aria/button@3.11.0
+ - @react-aria/calendar@3.6.0
+ - @react-aria/checkbox@3.15.0
+ - @react-aria/collections@3.0.0-alpha.6
+ - @react-aria/color@3.0.2
+ - @react-aria/combobox@3.11.0
+ - @react-aria/datepicker@3.12.0
+ - @react-aria/dialog@3.5.20
+ - @react-aria/disclosure@3.0.0
+ - @react-aria/dnd@3.8.0
+ - @react-aria/example-theme@1.0.5
+ - @react-aria/focus@3.19.0
+ - @react-aria/form@3.0.11
+ - @react-aria/grid@3.11.0
+ - @react-aria/gridlist@3.10.0
+ - @react-aria/i18n@3.12.4
+ - @react-aria/interactions@3.22.5
+ - @react-aria/label@3.7.13
+ - @react-aria/landmark@3.0.0-beta.17
+ - @react-aria/link@3.7.7
+ - @react-aria/listbox@3.13.6
+ - @react-aria/live-announcer@3.4.1
+ - @react-aria/menu@3.16.0
+ - @react-aria/meter@3.4.18
+ - @react-aria/numberfield@3.11.9
+ - @react-aria/overlays@3.24.0
+ - @react-aria/progress@3.4.18
+ - @react-aria/radio@3.10.10
+ - @react-aria/searchfield@3.7.11
+ - @react-aria/select@3.15.0
+ - @react-aria/selection@3.21.0
+ - @react-aria/separator@3.4.4
+ - @react-aria/slider@3.7.14
+ - @react-aria/spinbutton@3.6.10
+ - @react-aria/ssr@3.9.7
+ - @react-aria/steplist@3.0.0-alpha.12
+ - @react-aria/switch@3.6.10
+ - @react-aria/table@3.16.0
+ - @react-aria/tabs@3.9.8
+ - @react-aria/tag@3.4.8
+ - @react-aria/test-utils@1.0.0-alpha.3
+ - @react-aria/textfield@3.15.0
+ - @react-aria/toast@3.0.0-beta.18
+ - @react-aria/toggle@3.10.10
+ - @react-aria/toolbar@3.0.0-beta.11
+ - @react-aria/tooltip@3.7.10
+ - @react-aria/tree@3.0.0-beta.2
+ - @react-aria/utils@3.26.0
+ - @react-aria/virtualizer@4.1.0
+ - @react-aria/visually-hidden@3.8.18
+ - @react-spectrum/accordion@3.0.0
+ - @react-spectrum/actionbar@3.6.2
+ - @react-spectrum/actiongroup@3.10.10
+ - @react-spectrum/autocomplete@3.0.0-alpha.38
+ - @react-spectrum/avatar@3.0.17
+ - @react-spectrum/badge@3.1.18
+ - @react-spectrum/breadcrumbs@3.9.12
+ - @react-spectrum/button@3.16.9
+ - @react-spectrum/buttongroup@3.6.17
+ - @react-spectrum/calendar@3.5.0
+ - @react-spectrum/card@3.0.0-alpha.38
+ - @react-spectrum/checkbox@3.9.11
+ - @react-spectrum/color@3.0.2
+ - @react-spectrum/combobox@3.14.0
+ - @react-spectrum/contextualhelp@3.6.16
+ - @react-spectrum/datepicker@3.11.0
+ - @react-spectrum/dialog@3.8.16
+ - @react-spectrum/divider@3.5.18
+ - @react-spectrum/dnd@3.5.0
+ - @react-spectrum/dropzone@3.0.6
+ - @react-spectrum/filetrigger@3.0.6
+ - @react-spectrum/form@3.7.10
+ - @react-spectrum/icon@3.8.0
+ - @react-spectrum/illustratedmessage@3.5.5
+ - @react-spectrum/image@3.5.6
+ - @react-spectrum/inlinealert@3.2.10
+ - @react-spectrum/label@3.16.10
+ - @react-spectrum/labeledvalue@3.1.18
+ - @react-spectrum/layout@3.6.10
+ - @react-spectrum/link@3.6.12
+ - @react-spectrum/list@3.9.0
+ - @react-spectrum/listbox@3.14.0
+ - @react-spectrum/menu@3.21.0
+ - @react-spectrum/meter@3.5.5
+ - @react-spectrum/numberfield@3.9.8
+ - @react-spectrum/overlays@5.7.0
+ - @react-spectrum/picker@3.15.4
+ - @react-spectrum/progress@3.7.11
+ - @react-spectrum/provider@3.10.0
+ - @react-spectrum/radio@3.7.11
+ - @react-spectrum/s2@0.5.0
+ - @react-spectrum/searchfield@3.8.11
+ - @react-spectrum/slider@3.7.0
+ - @react-spectrum/statuslight@3.5.17
+ - @react-spectrum/steplist@3.0.0-alpha.10
+ - @react-spectrum/style-macro-s1@3.0.0-alpha.2
+ - @react-spectrum/switch@3.5.10
+ - @react-spectrum/table@3.15.0
+ - @react-spectrum/tabs@3.8.15
+ - @react-spectrum/tag@3.2.11
+ - @react-spectrum/test-utils@1.0.0-alpha.3
+ - @react-spectrum/text@3.5.10
+ - @react-spectrum/textfield@3.12.7
+ - @react-spectrum/theme-dark@3.5.14
+ - @react-spectrum/theme-default@3.5.14
+ - @react-spectrum/theme-express@3.0.0-alpha.16
+ - @react-spectrum/theme-light@3.4.14
+ - @react-spectrum/toast@3.0.0-beta.17
+ - @react-spectrum/tooltip@3.7.0
+ - @react-spectrum/tree@3.0.0-beta.2
+ - @react-spectrum/utils@3.12.0
+ - @react-spectrum/view@3.6.14
+ - @react-spectrum/well@3.4.18
+ - @react-stately/calendar@3.6.0
+ - @react-stately/checkbox@3.6.10
+ - @react-stately/collections@3.12.0
+ - @react-stately/color@3.8.1
+ - @react-stately/combobox@3.10.1
+ - @react-stately/data@3.12.0
+ - @react-stately/datepicker@3.11.0
+ - @react-stately/disclosure@3.0.0
+ - @react-stately/dnd@3.5.0
+ - @react-stately/flags@3.0.5
+ - @react-stately/form@3.1.0
+ - @react-stately/grid@3.10.0
+ - @react-stately/layout@4.1.0
+ - @react-stately/list@3.11.1
+ - @react-stately/menu@3.9.0
+ - @react-stately/numberfield@3.9.8
+ - @react-stately/overlays@3.6.12
+ - @react-stately/radio@3.10.9
+ - @react-stately/searchfield@3.5.8
+ - @react-stately/select@3.6.9
+ - @react-stately/selection@3.18.0
+ - @react-stately/slider@3.6.0
+ - @react-stately/steplist@3.0.0-alpha.10
+ - @react-stately/table@3.13.0
+ - @react-stately/tabs@3.7.0
+ - @react-stately/toast@3.0.0-beta.7
+ - @react-stately/toggle@3.8.0
+ - @react-stately/tooltip@3.5.0
+ - @react-stately/tree@3.8.6
+ - @react-stately/utils@3.10.5
+ - @react-stately/virtualizer@4.2.0
+ - @react-types/accordion@3.0.0-alpha.25
+ - @react-types/actionbar@3.1.11
+ - @react-types/actiongroup@3.4.13
+ - @react-types/autocomplete@3.0.0-alpha.27
+ - @react-types/avatar@3.0.11
+ - @react-types/badge@3.1.13
+ - @react-types/breadcrumbs@3.7.9
+ - @react-types/button@3.10.1
+ - @react-types/buttongroup@3.3.13
+ - @react-types/calendar@3.5.0
+ - @react-types/card@3.0.0-alpha.31
+ - @react-types/checkbox@3.9.0
+ - @react-types/color@3.0.1
+ - @react-types/combobox@3.13.1
+ - @react-types/contextualhelp@3.2.14
+ - @react-types/datepicker@3.9.0
+ - @react-types/dialog@3.5.14
+ - @react-types/divider@3.3.13
+ - @react-types/form@3.7.8
+ - @react-types/grid@3.2.10
+ - @react-types/illustratedmessage@3.3.13
+ - @react-types/image@3.4.5
+ - @react-types/label@3.9.7
+ - @react-types/layout@3.3.19
+ - @react-types/link@3.5.9
+ - @react-types/list@3.2.22
+ - @react-types/listbox@3.5.3
+ - @react-types/menu@3.9.13
+ - @react-types/meter@3.4.5
+ - @react-types/numberfield@3.8.7
+ - @react-types/overlays@3.8.11
+ - @react-types/progress@3.5.8
+ - @react-types/provider@3.8.5
+ - @react-types/radio@3.8.5
+ - @react-types/searchfield@3.5.10
+ - @react-types/select@3.9.8
+ - @react-types/shared@3.26.0
+ - @react-types/slider@3.7.7
+ - @react-types/statuslight@3.3.13
+ - @react-types/switch@3.5.7
+ - @react-types/table@3.10.3
+ - @react-types/tabs@3.3.11
+ - @react-types/text@3.3.13
+ - @react-types/textfield@3.10.0
+ - @react-types/tooltip@3.4.13
+ - @react-types/view@3.4.13
+ - @react-types/well@3.3.13
+ - @spectrum-icons/color@3.5.17
+ - @spectrum-icons/express@3.0.0-alpha.21
+ - @spectrum-icons/illustrations@3.6.17
+ - @spectrum-icons/ui@3.6.11
+ - @spectrum-icons/workflow@4.2.16
+ - @react-spectrum/codemods@0.3.0
+ - @react-aria/optimize-locales-plugin@1.1.3
+ - @react-aria/parcel-resolver-optimize-locales@1.2.0
+ - @react-spectrum/parcel-transformer-s2-icon@0.2.0
+ - @react-spectrum/s2-icon-builder@0.2.0
+ - @react-spectrum/ts-plugin@0.1.0
+ - react-aria@3.36.0
+ - react-aria-components@1.5.0
+ - react-stately@3.34.0
+ - tailwindcss-react-aria-components@1.2.0
+```

@@ -4,8 +4,7 @@ import {DOMAttributes, RefObject} from '@react-types/shared';
 import {getSliderThumbId, sliderData} from './utils';
 import React, {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, useCallback, useEffect, useRef} from 'react';
 import {SliderState} from '@react-stately/slider';
-import {useFocusable} from '@react-aria/focus';
-import {useKeyboard, useMove} from '@react-aria/interactions';
+import {useFocusable, useKeyboard, useMove} from '@react-aria/interactions';
 import {useLabel} from '@react-aria/label';
 import {useLocale} from '@react-aria/i18n';
 
@@ -61,7 +60,7 @@ export function useSliderThumb(
   let {direction} = useLocale();
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
-  let data = sliderData.get(state);
+  let data = sliderData.get(state)!;
   const {labelProps, fieldProps} = useLabel({
     ...opts,
     id: getSliderThumbId(state, index),
@@ -139,6 +138,9 @@ export function useSliderThumb(
         step,
         pageSize
       } = state;
+      if (!trackRef.current) {
+        return;
+      }
       let {width, height} = trackRef.current.getBoundingClientRect();
       let size = isVertical ? height : width;
 

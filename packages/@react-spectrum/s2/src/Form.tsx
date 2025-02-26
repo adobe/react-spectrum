@@ -31,10 +31,10 @@ interface FormStyleProps extends Omit<SpectrumLabelableProps, 'label' | 'context
 }
 
 export interface FormProps extends FormStyleProps, Omit<RACFormProps, 'className' | 'style' | 'children'>, StyleProps {
-  children?: ReactNode
+  children: ReactNode
 }
 
-export const FormContext = createContext<FormStyleProps | null>(null);
+export const FormContext = createContext<Partial<FormStyleProps | null>>(null);
 export function useFormProps<T extends FormStyleProps>(props: T): T {
   let ctx = useContext(FormContext);
   let isSkeleton = useIsSkeleton();
@@ -62,7 +62,10 @@ export function useFormProps<T extends FormStyleProps>(props: T): T {
   }, [ctx, props, isSkeleton]);
 }
 
-function Form(props: FormProps, ref: DOMRef<HTMLFormElement>) {
+/**
+ * Forms allow users to enter data that can be submitted while providing alignment and styling for form fields.
+ */
+export const Form = /*#__PURE__*/ forwardRef(function Form(props: FormProps, ref: DOMRef<HTMLFormElement>) {
   let {
     labelPosition = 'top',
     labelAlign,
@@ -114,10 +117,4 @@ function Form(props: FormProps, ref: DOMRef<HTMLFormElement>) {
       </FormContext.Provider>
     </RACForm>
   );
-}
-
-/**
- * Forms allow users to enter data that can be submitted while providing alignment and styling for form fields.
- */
-let _Form = /*#__PURE__*/ forwardRef(Form);
-export {_Form as Form};
+});

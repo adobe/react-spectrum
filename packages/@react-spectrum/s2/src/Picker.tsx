@@ -11,8 +11,8 @@
  */
 
 import {
+  ListBoxSection as AriaListBoxSection,
   PopoverProps as AriaPopoverProps,
-  Section as AriaSection,
   Select as AriaSelect,
   SelectProps as AriaSelectProps,
   SelectRenderProps as AriaSelectRenderProps,
@@ -49,7 +49,7 @@ import {
   FieldLabel,
   HelpText
 } from './Field';
-import {FocusableRef, FocusableRefValue, HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue, HelpTextProps, PressEvent, SpectrumLabelableProps} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
@@ -57,11 +57,13 @@ import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Placement} from 'react-aria';
-import {Popover} from './Popover';
+import {PopoverBase} from './Popover';
+import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
+import React, {createContext, forwardRef, ReactNode, useContext, useRef, useState} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
+import {useGlobalListeners} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -122,7 +124,16 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   font: 'control',
   display: 'flex',
   textAlign: 'start',
-  borderStyle: 'none',
+  borderStyle: {
+    default: 'none',
+    forcedColors: 'solid'
+  },
+  borderColor: {
+    forcedColors: {
+      default: 'ButtonText',
+      isDisabled: 'GrayText'
+    }
+  },
   borderRadius: 'control',
   alignItems: 'center',
   height: 'control',
@@ -167,6 +178,7 @@ const quietFocusLine = style({
 export let menu = style({
   outlineStyle: 'none',
   display: 'grid',
+  width: 'full',
   gridTemplateColumns: {
     size: {
       S: [edgeToText(24), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(24)],
@@ -180,7 +192,8 @@ export let menu = style({
   overflow: 'auto',
   padding: 8,
   fontFamily: 'sans',
-  fontSize: 'control'
+  fontSize: 'control',
+  gridAutoRows: 'min-content'
 });
 
 const invalidBorder = style({
@@ -219,7 +232,10 @@ const iconStyles = style({
 let InternalPickerContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({size: 'M'});
 let InsideSelectValueContext = createContext(false);
 
-function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLButtonElement>) {
+/**
+ * Pickers allow users to choose a single option from a collapsible list of options when space is limited.
+ */
+export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLButtonElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, PickerContext);
   let domRef = useFocusableRef(ref);
@@ -258,6 +274,21 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
     menuOffset = 8;
   }
 
+  // For mouse interactions, pickers open on press start. When the popover underlay appears
+  // it covers the trigger button, causing onPressEnd to fire immediately and no press scaling
+  // to occur. We override this by listening for pointerup on the document ourselves.
+  let [isPressed, setPressed] = useState(false);
+  let {addGlobalListener} = useGlobalListeners();
+  let onPressStart = (e: PressEvent) => {
+    if (e.pointerType !== 'mouse') {
+      return;
+    }
+    setPressed(true);
+    addGlobalListener(document, 'pointerup', () => {
+      setPressed(false);
+    }, {once: true, capture: true});
+  };
+
   return (
     <AriaSelect
       {...pickerProps}
@@ -282,64 +313,66 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
               contextualHelp={props.contextualHelp}>
               {label}
             </FieldLabel>
-            <Button
-              ref={domRef}
-              style={renderProps => pressScale(domRef)(renderProps)}
-              // Prevent press scale from sticking while Picker is open.
-              // @ts-ignore
-              isPressed={false}
-              className={renderProps => inputButton({
-                ...renderProps,
-                size: size,
-                isOpen,
-                isQuiet
-              })}>
-              {(renderProps) => (
-                <>
-                  <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> * {display: none;}')}>
-                    {({defaultChildren}) => {
-                      return (
-                        <Provider
-                          values={[
-                            [IconContext, {
-                              slots: {
-                                icon: {
-                                  render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
-                                  styles: icon
+            <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
+              <Button
+                ref={domRef}
+                style={renderProps => pressScale(domRef)(renderProps)}
+                // Prevent press scale from sticking while Picker is open.
+                // @ts-ignore
+                isPressed={false}
+                className={renderProps => inputButton({
+                  ...renderProps,
+                  size: size,
+                  isOpen,
+                  isQuiet
+                })}>
+                {(renderProps) => (
+                  <>
+                    <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> * {display: none;}')}>
+                      {({defaultChildren}) => {
+                        return (
+                          <Provider
+                            values={[
+                              [IconContext, {
+                                slots: {
+                                  icon: {
+                                    render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
+                                    styles: icon
+                                  }
                                 }
-                              }
-                            }],
-                            [TextContext, {
-                              slots: {
-                                description: {},
-                                label: {styles: style({
-                                  display: 'block',
-                                  flexGrow: 1,
-                                  truncate: true
-                                })}
-                              }
-                            }],
-                            [InsideSelectValueContext, true]
-                          ]}>
-                          {defaultChildren}
-                        </Provider>
-                      );
-                    }}
-                  </SelectValue>
-                  {isInvalid && (
-                    <FieldErrorIcon isDisabled={isDisabled} />
-                  )}
-                  <ChevronIcon
-                    size={size}
-                    className={iconStyles} />
-                  {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
-                  {isInvalid && !isDisabled && !isQuiet &&
-                    // @ts-ignore known limitation detecting functions from the theme
-                    <div className={invalidBorder({...renderProps, size})} />
-                  }
-                </>
-              )}
-            </Button>
+                              }],
+                              [TextContext, {
+                                slots: {
+                                  description: {},
+                                  label: {styles: style({
+                                    display: 'block',
+                                    flexGrow: 1,
+                                    truncate: true
+                                  })}
+                                }
+                              }],
+                              [InsideSelectValueContext, true]
+                            ]}>
+                            {defaultChildren}
+                          </Provider>
+                        );
+                      }}
+                    </SelectValue>
+                    {isInvalid && (
+                      <FieldErrorIcon isDisabled={isDisabled} />
+                    )}
+                    <ChevronIcon
+                      size={size}
+                      className={iconStyles} />
+                    {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
+                    {isInvalid && !isDisabled && !isQuiet &&
+                      // @ts-ignore known limitation detecting functions from the theme
+                      <div className={invalidBorder({...renderProps, size})} />
+                    }
+                  </>
+                )}
+              </Button>
+            </PressResponder>
             <HelpText
               size={size}
               isDisabled={isDisabled}
@@ -347,7 +380,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
               description={descriptionMessage}>
               {errorMessage}
             </HelpText>
-            <Popover
+            <PopoverBase
               hideArrow
               offset={menuOffset}
               placement={`${direction} ${align}` as Placement}
@@ -384,19 +417,13 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
                   {children}
                 </ListBox>
               </Provider>
-            </Popover>
+            </PopoverBase>
           </InternalPickerContext.Provider>
         </>
       )}
     </AriaSelect>
   );
-}
-
-/**
- * Pickers allow users to choose a single option from a collapsible list of options when space is limited.
- */
-let _Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(Picker);
-export {_Picker as Picker};
+});
 
 export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {
   children: ReactNode
@@ -458,13 +485,14 @@ function DefaultProvider({context, value, children}: {context: React.Context<any
 
 export interface PickerSectionProps<T extends object> extends SectionProps<T> {}
 export function PickerSection<T extends object>(props: PickerSectionProps<T>) {
+  let {size} = useContext(InternalPickerContext);
   return (
     <>
-      <AriaSection
+      <AriaListBoxSection
         {...props}
-        className={section}>
+        className={section({size})}>
         {props.children}
-      </AriaSection>
+      </AriaListBoxSection>
       <Divider />
     </>
   );

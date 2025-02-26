@@ -18,7 +18,7 @@ import {useFocus} from '@react-aria/interactions';
 
 export interface ClipboardProps {
   /** A function that returns the items to copy. */
-  getItems?: () => DragItem[],
+  getItems?: (details: {type: 'cut' | 'copy'}) => DragItem[],
   /** Handler that is called when the user triggers a copy interaction. */
   onCopy?: () => void,
   /** Handler that is called when the user triggers a cut interaction. */
@@ -87,8 +87,10 @@ export function useClipboard(options: ClipboardProps): ClipboardResult {
     }
 
     e.preventDefault();
-    writeToDataTransfer(e.clipboardData, options.getItems());
-    options.onCopy?.();
+    if (e.clipboardData) {
+      writeToDataTransfer(e.clipboardData, options.getItems({type: 'copy'}));
+      options.onCopy?.();
+    }
   });
 
   let onBeforeCut = useEffectEvent((e: ClipboardEvent) => {
@@ -103,8 +105,10 @@ export function useClipboard(options: ClipboardProps): ClipboardResult {
     }
 
     e.preventDefault();
-    writeToDataTransfer(e.clipboardData, options.getItems());
-    options.onCut();
+    if (e.clipboardData) {
+      writeToDataTransfer(e.clipboardData, options.getItems({type: 'cut'}));
+      options.onCut();
+    }
   });
 
   let onBeforePaste = useEffectEvent((e: ClipboardEvent) => {
@@ -121,8 +125,10 @@ export function useClipboard(options: ClipboardProps): ClipboardResult {
     }
 
     e.preventDefault();
-    let items = readFromDataTransfer(e.clipboardData);
-    options.onPaste(items);
+    if (e.clipboardData) {
+      let items = readFromDataTransfer(e.clipboardData);
+      options.onPaste(items);
+    }
   });
 
   useEffect(() => {
