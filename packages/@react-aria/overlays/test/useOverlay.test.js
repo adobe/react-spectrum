@@ -42,10 +42,19 @@ function Example(props) {
 
 describe('useOverlay', function () {
   describe.each`
-    type                | prepare                | actions
-    ${'Mouse Events'}   | ${installMouseEvent}   | ${[(el) => fireEvent.mouseDown(el, {button: 0}), (el) => fireEvent.mouseUp(el, {button: 0})]}
-    ${'Pointer Events'} | ${installPointerEvent} | ${[(el) => fireEvent.pointerDown(el, {button: 0, pointerId: 1}), (el) => fireEvent.pointerUp(el, {button: 0, pointerId: 1})]}
-    ${'Touch Events'}   | ${() => {}}            | ${[(el) => fireEvent.touchStart(el, {changedTouches: [{identifier: 1}]}), (el) => fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]})]}
+  type                | prepare               | actions
+  ${'Mouse Events'}   | ${installMouseEvent}  | ${[
+    (el) => fireEvent.mouseDown(el, {button: 0}),
+    (el) => fireEvent.mouseUp(el, {button: 0})
+  ]}
+  ${'Pointer Events'} | ${installPointerEvent}| ${[
+    (el) => fireEvent.pointerDown(el, {button: 0, pointerId: 1}),
+    (el) => fireEvent.pointerUp(el, {button: 0, pointerId: 1})
+  ]}
+  ${'Touch Events'}   | ${() => {}}           | ${[
+    (el) => fireEvent.touchStart(el, {changedTouches: [{identifier: 1}]}),
+    (el) => fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]})
+  ]}
   `('$type', ({actions: [pressStart, pressEnd], prepare}) => {
     prepare();
 
@@ -70,13 +79,7 @@ describe('useOverlay', function () {
 
     it('should hide the overlay when clicking outside if shouldCloseOnInteractOutside returns true', function () {
       let onClose = jest.fn();
-      render(
-        <Example
-          isOpen
-          onClose={onClose}
-          isDismissable
-          shouldCloseOnInteractOutside={(target) => target === document.body} />
-      );
+      render(<Example isOpen onClose={onClose} isDismissable shouldCloseOnInteractOutside={target => target === document.body} />);
       pressStart(document.body);
       pressEnd(document.body);
       expect(onClose).toHaveBeenCalledTimes(1);
@@ -84,13 +87,7 @@ describe('useOverlay', function () {
 
     it('should not hide the overlay when clicking outside if shouldCloseOnInteractOutside returns false', function () {
       let onClose = jest.fn();
-      render(
-        <Example
-          isOpen
-          onClose={onClose}
-          isDismissable
-          shouldCloseOnInteractOutside={(target) => target !== document.body} />
-      );
+      render(<Example isOpen onClose={onClose} isDismissable shouldCloseOnInteractOutside={target => target !== document.body} />);
       pressStart(document.body);
       pressEnd(document.body);
       expect(onClose).toHaveBeenCalledTimes(0);
@@ -108,9 +105,7 @@ describe('useOverlay', function () {
       let onCloseFirst = jest.fn();
       let onCloseSecond = jest.fn();
       render(<Example isOpen onClose={onCloseFirst} isDismissable />);
-      let second = render(
-        <Example isOpen onClose={onCloseSecond} isDismissable />
-      );
+      let second = render(<Example isOpen onClose={onCloseSecond} isDismissable />);
 
       pressStart(document.body);
       pressEnd(document.body);
@@ -135,9 +130,7 @@ describe('useOverlay', function () {
 
   it('should still hide the overlay when pressing the escape key if isDismissable is false', function () {
     let onClose = jest.fn();
-    let res = render(
-      <Example isOpen onClose={onClose} isDismissable={false} />
-    );
+    let res = render(<Example isOpen onClose={onClose} isDismissable={false} />);
     let el = res.getByTestId('test');
     fireEvent.keyDown(el, {key: 'Escape'});
     expect(onClose).toHaveBeenCalledTimes(1);
@@ -147,13 +140,8 @@ describe('useOverlay', function () {
     installPointerEvent();
     it('should prevent default on pointer down on the underlay', function () {
       let underlayRef = React.createRef();
-      render(
-        <Example isOpen isDismissable underlayProps={{ref: underlayRef}} />
-      );
-      let isPrevented = fireEvent.pointerDown(underlayRef.current, {
-        button: 0,
-        pointerId: 1
-      });
+      render(<Example isOpen isDismissable underlayProps={{ref: underlayRef}} />);
+      let isPrevented = fireEvent.pointerDown(underlayRef.current, {button: 0, pointerId: 1});
       fireEvent.pointerUp(document.body);
       expect(isPrevented).toBeFalsy(); // meaning the event had preventDefault called
     });
