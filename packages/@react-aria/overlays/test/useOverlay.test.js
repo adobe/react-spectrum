@@ -42,19 +42,19 @@ function Example(props) {
 
 describe('useOverlay', function () {
   describe.each`
-  type                | prepare               | actions
-  ${'Mouse Events'}   | ${installMouseEvent}  | ${[
-    (el) => fireEvent.mouseDown(el, {button: 0}),
-    (el) => fireEvent.mouseUp(el, {button: 0})
-  ]}
-  ${'Pointer Events'} | ${installPointerEvent}| ${[
-    (el) => fireEvent.pointerDown(el, {button: 0, pointerId: 1}),
-    (el) => fireEvent.pointerUp(el, {button: 0, pointerId: 1})
-  ]}
-  ${'Touch Events'}   | ${() => {}}           | ${[
-    (el) => fireEvent.touchStart(el, {changedTouches: [{identifier: 1}]}),
-    (el) => fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]})
-  ]}
+    type                | prepare               | actions
+    ${'Mouse Events'}   | ${installMouseEvent}  | ${[
+      (el) => fireEvent.mouseDown(el, {button: 0}),
+      (el) => fireEvent.mouseUp(el, {button: 0})
+    ]}
+    ${'Pointer Events'} | ${installPointerEvent}| ${[
+      (el) => fireEvent.pointerDown(el, {button: 0, pointerId: 1}),
+      (el) => fireEvent.pointerUp(el, {button: 0, pointerId: 1})
+    ]}
+    ${'Touch Events'}   | ${() => {}}           | ${[
+      (el) => fireEvent.touchStart(el, {changedTouches: [{identifier: 1}]}),
+      (el) => fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]})
+    ]}
   `('$type', ({actions: [pressStart, pressEnd], prepare}) => {
     prepare();
 
