@@ -458,6 +458,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   });
 
   const autoFocusRef = useRef(autoFocus);
+  const didAutoFocusRef = useRef(false);
   useEffect(() => {
     if (autoFocusRef.current) {
       let focusedKey: Key | null = null;
@@ -487,14 +488,19 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       if (focusedKey == null && !shouldUseVirtualFocus && ref.current) {
         focusSafely(ref.current);
       }
+
+      // Wait until the collection has items to autofocus.
+      if (manager.collection.size > 0) {
+        autoFocusRef.current = false;
+        didAutoFocusRef.current = true;
+      }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  });
 
   // Scroll the focused element into view when the focusedKey changes.
   let lastFocusedKey = useRef(manager.focusedKey);
   useEffect(() => {
-    if (manager.isFocused && manager.focusedKey != null && (manager.focusedKey !== lastFocusedKey.current || autoFocusRef.current) && scrollRef.current && ref.current) {
+    if (manager.isFocused && manager.focusedKey != null && (manager.focusedKey !== lastFocusedKey.current || didAutoFocusRef.current) && scrollRef.current && ref.current) {
       let modality = getInteractionModality();
       let element = getItemElement(ref, manager.focusedKey);
       if (!(element instanceof HTMLElement)) {
@@ -503,7 +509,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         return;
       }
 
-      if (modality === 'keyboard' || autoFocusRef.current) {
+      if (modality === 'keyboard' || didAutoFocusRef.current) {
         scrollIntoView(scrollRef.current, element);
 
         // Avoid scroll in iOS VO, since it may cause overlay to close (i.e. RAC submenu)
@@ -519,7 +525,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     }
 
     lastFocusedKey.current = manager.focusedKey;
-    autoFocusRef.current = false;
+    didAutoFocusRef.current = false;
   });
 
   // Intercept FocusScope restoration since virtualized collections can reuse DOM nodes.
