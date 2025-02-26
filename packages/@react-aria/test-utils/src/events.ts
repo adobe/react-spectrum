@@ -11,7 +11,6 @@
  */
 
 import {act, fireEvent} from '@testing-library/react';
-import {UserEvent} from '@testing-library/user-event';
 import {UserOpts} from './types';
 
 export const DEFAULT_LONG_PRESS_TIME = 500;
@@ -58,8 +57,8 @@ export async function triggerLongPress(opts: {element: HTMLElement, advanceTimer
   fireEvent.click(element, {detail: 1, ...pointerOpts});
 }
 
-
-export async function pressElement(user: UserEvent, element: HTMLElement, interactionType: UserOpts['interactionType']): Promise<void> {
+// Docs cannot handle the types that userEvent actually declares, so hopefully this sub set is okay
+export async function pressElement(user: {click: (element: Element) => Promise<void>, keyboard: (keys: string) => Promise<void>, pointer: (opts: {target: Element, keys: string}) => Promise<void>}, element: HTMLElement, interactionType: UserOpts['interactionType']): Promise<void> {
   if (interactionType === 'mouse') {
     await user.click(element);
   } else if (interactionType === 'keyboard') {
