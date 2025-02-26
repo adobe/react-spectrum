@@ -28,12 +28,14 @@
     "@react-aria/ssr": "^3.9.7",
     "@react-aria/utils": "^3.27.0",
     "@react-aria/visually-hidden": "^3.8.19",
-    "@react-stately/flags": "^3.0.5",
     "@react-stately/overlays": "^3.6.13",
     "@react-types/button": "^3.10.2",
     "@react-types/overlays": "^3.8.12",
     "@react-types/shared": "^3.27.0",
     "@swc/helpers": "^0.5.0"
+  },
+  "devDependencies": {
+    "@react-stately/flags": "^3.0.5"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
