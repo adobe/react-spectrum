@@ -91,7 +91,7 @@ const StaticTable = (args: any) => (
         <Cell>Long long long long long long long cell</Cell>
       </Row>
       <Row id="4">
-        <Cell colSpan={4}>Total size: 75.4 GB</Cell>
+        <Cell colSpan={5}>Total size: 75.4 GB</Cell>
       </Row>
     </TableBody>
   </TableView>
