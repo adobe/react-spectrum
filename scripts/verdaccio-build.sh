@@ -7,6 +7,12 @@ yarn config set npmRegistryServer $registry
 yarn config set unsafeHttpWhitelist localhost
 npm set registry $registry
 
+cd starters/docs
+yarn config set npmRegistryServer $registry
+cd ../tailwind
+yarn config set npmRegistryServer $registry
+cd ../..
+
 # build prod docs with a public url of /reactspectrum/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
 PUBLIC_URL=/reactspectrum/`git rev-parse HEAD~0`/verdaccio/docs make website-production
 
