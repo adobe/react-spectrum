@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {ClientProviders} from './provider';
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -24,7 +25,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <ClientProviders>
+          {children}
+        </ClientProviders>
+      </body>
     </html>
   );
 }
