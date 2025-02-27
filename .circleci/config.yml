@@ -461,22 +461,43 @@ jobs:
           paths:
             - '*/docs/'
 
-  docs-verdaccio:
+  verdaccio:
     executor: rsp-xlarge
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
-          name: run verdaccio
-          command: ./scripts/verdaccio.sh ci
+          name: run verdaccio and publish built packages
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-deploy.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-storage
 
       # Store the prod docs website w/ verdaccio packages in a separate dist folder so it doesn't get deployed by "deploy" workflow
       # This is because we have a separate deploy flow for the test prod docs website so it doesn't hold up the normal "deploy" workflow
       - persist_to_workspace:
-          root: verdaccio_dist
+          root: /tmp
           paths:
-            - '*/verdaccio/'
+            - '*/verdaccio-storage'
+
+  v-docs:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-storage
+
+      - run:
+          name: build docs off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-storage
 
   deploy:
     docker:
@@ -646,12 +667,33 @@ workflows:
       - docs:
           requires:
             - install
-      - docs-verdaccio:
-          filters:
-            branches:
-              only: main
+      - verdaccio:
           requires:
             - install
+      - v-docs:
+          requires:
+            - verdaccio
+      # - v-rsp-cra-18:
+      #     requires:
+      #       - verdaccio
+      # - v-webpack-4:
+      #     requires:
+      #       - verdaccio
+      # - v-nextjs:
+      #     requires:
+      #       - verdaccio
+      # - v-rac-tailwind:
+      #     requires:
+      #       - verdaccio
+      # - v-rac-rsp-tailwind:
+      #     requires:
+      #       - verdaccio
+      # - v-s2-parcel:
+      #     requires:
+      #       - verdaccio
+      # - v-icon-builder:
+      #     requires:
+      #       - verdaccio
       - deploy:
           requires:
             - lint
@@ -670,7 +712,14 @@ workflows:
             - docs
       - deploy-verdaccio:
           requires:
-            - docs-verdaccio
+            - v-docs
+            # - v-rsp-cra-18
+            # - v-webpack-4
+            # - v-nextjs
+            # - v-rac-tailwind
+            # - v-rac-rsp-tailwind
+            # - v-s2-parcel
+            # - v-icon-builder
       - comment:
           name: comment-pr
           filters:
