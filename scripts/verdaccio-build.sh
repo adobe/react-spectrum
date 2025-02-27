@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
+port=4000
+registry="http://localhost:$port"
 # Login as test user
 yarn config set npmRegistryServer $registry
 yarn config set unsafeHttpWhitelist localhost
-yarn config set npmAlwaysAuth true
 npm set registry $registry
 
 # build prod docs with a public url of /reactspectrum/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
@@ -14,3 +15,5 @@ PUBLIC_URL=/reactspectrum/`git rev-parse HEAD~0`/verdaccio/docs make website-pro
 verdaccio_path=verdaccio_dist/`git rev-parse HEAD~0`/verdaccio
 mkdir -p $verdaccio_path
 mv dist/production/docs $verdaccio_path
+
+netstat -tpln | awk -F'[[:space:]/:]+' '$5 == 4000 {print $(NF-2)}' | xargs kill
