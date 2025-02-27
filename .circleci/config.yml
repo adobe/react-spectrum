@@ -470,8 +470,11 @@ jobs:
       - run:
           name: run verdaccio and publish built packages
           command: |
+            ls -la
+            ls -la /tmp
             ./scripts/verdaccio-ci.sh
             ./scripts/verdaccio-deploy.sh
+            ls -la /tmp
           environment:
             VERDACCIO_STORAGE_PATH: /tmp/verdaccio-storage
 
@@ -480,7 +483,7 @@ jobs:
       - persist_to_workspace:
           root: /tmp
           paths:
-            - '*/verdaccio-storage'
+            - 'verdaccio-storage'
 
   v-docs:
     executor: rsp-xlarge
@@ -500,7 +503,7 @@ jobs:
             VERDACCIO_STORAGE_PATH: /tmp/verdaccio-storage
 
       - persist_to_workspace:
-          root: verdaccio_dist
+          root: /verdaccio_dist
           paths:
             - '*/verdaccio/'
 
