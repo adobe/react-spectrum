@@ -675,7 +675,7 @@ The example below illustrates how each of the column width props affects their r
 <TableView
   aria-label="TableView with resizable columns"
   maxWidth={320}
-  height={200} >
+  height={210} >
   <TableHeader>
     {/*- begin highlight -*/}
     <Column key="file" allowsResizing maxWidth={500}>File Name</Column>
@@ -693,6 +693,9 @@ The example below illustrates how each of the column width props affects their r
       <Cell>62259692_p0_master1200</Cell>
       <Cell>120 KB</Cell>
       <Cell>January 27, 2021 at 1:56AM</Cell>
+    </Row>
+    <Row>
+      <Cell colSpan={3}>Total space: 334 KB</Cell>
     </Row>
   </TableBody>
 </TableView>
