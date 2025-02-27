@@ -499,6 +499,11 @@ jobs:
           environment:
             VERDACCIO_STORAGE_PATH: /tmp/verdaccio-storage
 
+      - persist_to_workspace:
+          root: verdaccio_dist
+          paths:
+            - '*/verdaccio/'
+
   deploy:
     docker:
       - image: mcr.microsoft.com/azure-cli:2.63.0
