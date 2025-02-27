@@ -30,8 +30,6 @@ async function build() {
   let dir = tempy.directory();
   console.log(`Building into ${dir}...`);
 
-  console.log(spawnSync('yarn config get registry', [], {stdio: 'inherit'}));
-
   // Generate a package.json containing just what we need to build the website
   let gitHash = spawnSync('git', ['rev-parse', '--short', 'HEAD']).stdout.toString().trim();
   let pkg = {
@@ -87,6 +85,8 @@ async function build() {
     },
     '@parcel/transformer-css': packageJSON['@parcel/transformer-css']
   };
+
+  console.log(spawnSync('yarn config get npmRegistryServer', [], {stdio: 'inherit'}));
 
   // Add dependencies on each published package to the package.json, and
   // copy the docs from the current package into the temp dir.
