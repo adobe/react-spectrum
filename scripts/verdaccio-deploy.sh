@@ -11,9 +11,6 @@ commit_to_revert="HEAD"
 # Generate dists for the packages
 make build
 
-# Wait for verdaccio to start
-grep -q 'http address' <(tail -f $output)
-
 # Login as test user
 yarn npm-cli-login -u abc -p abc -e 'abc@abc.com' -r $registry
 yarn config set npmPublishRegistry $registry
