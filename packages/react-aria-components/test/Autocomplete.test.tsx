@@ -610,6 +610,27 @@ describe('Autocomplete', () => {
 
     expect(document.activeElement).toBe(secondButton);
   });
+
+  it('should not auto focus first item when disableAutoFocusFirst is true', async () => {
+    let {getByRole} = render(
+      <AutocompleteWrapper autocompleteProps={{disableAutoFocusFirst: true}}>
+        <StaticMenu />
+      </AutocompleteWrapper>
+    );
+
+    let input = getByRole('searchbox');
+    await user.tab();
+    expect(document.activeElement).toBe(input);
+
+    await user.keyboard('Foo');
+
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+
+    await user.keyboard('{ArrowDown}');
+    let menu = getByRole('menu');
+    let options = within(menu).getAllByRole('menuitem');
+    expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+  });
 });
 
 AriaAutocompleteTests({

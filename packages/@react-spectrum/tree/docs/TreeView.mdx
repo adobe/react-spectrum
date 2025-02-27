@@ -145,7 +145,7 @@ let items: MyItem[] = [
 const DynamicTreeItem = (props) => {
   return (
     <>
-      <TreeViewItem id={props.id} childItems={props.childItems} textValue={props.name}>
+      <TreeViewItem id={props.id} textValue={props.name}>
         <TreeViewItemContent>
           <Text>{props.name}</Text>
           {props.icon}
@@ -419,49 +419,61 @@ The `<TreeViewItem>` component works with frameworks and client side routers lik
 
 ```tsx example
 <TreeView aria-label="Example tree with action groups" height="size-3000" maxWidth="size-6000" items={items}>
-  {(item: MyItem) => (
-    <TreeViewItem childItems={item.childItems} textValue={item.name}>
-      <TreeViewItemContent>
-        <Text>{item.name}</Text>
-        {item.icon}
-        <ActionGroup onAction={(key) => alert(`Item: ${item.id}, Action: ${key}`)}>
-          <Item key="edit" textValue="Edit">
-            <Edit />
-            <Text>Edit</Text>
-          </Item>
-          <Item key="delete" textValue="Delete">
-            <Delete />
-            <Text>Delete</Text>
-          </Item>
-        </ActionGroup>
-      </TreeViewItemContent>
-    </TreeViewItem>
-  )}
+  {function renderItem(item: MyItem) {
+    return (
+      <TreeViewItem textValue={item.name}>
+        <TreeViewItemContent>
+          <Text>{item.name}</Text>
+          {item.icon}
+          <ActionGroup onAction={(key) => alert(`Item: ${item.id}, Action: ${key}`)}>
+            <Item key="edit" textValue="Edit">
+              <Edit />
+              <Text>Edit</Text>
+            </Item>
+            <Item key="delete" textValue="Delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionGroup>
+        </TreeViewItemContent>
+        <Collection items={item.childItems}>
+          {renderItem}
+        </Collection>
+      </TreeViewItem>
+    )
+  }}
 </TreeView>
 ```
 
 ### With action menus
 
 ```tsx example
+import {Collection} from 'react-aria-components';
+
 <TreeView aria-label="Example tree with action menus" height="size-3000" maxWidth="size-6000" items={items}>
-  {(item: MyItem) => (
-    <TreeViewItem childItems={item.childItems} textValue={item.name}>
-      <TreeViewItemContent>
-        <Text>{item.name}</Text>
-        {item.icon}
-        <ActionMenu onAction={(key) => alert(`Item: ${item.id}, Action: ${key}`)}>
-          <Item key="edit" textValue="Edit">
-            <Edit />
-            <Text>Edit</Text>
-          </Item>
-          <Item key="delete" textValue="Delete">
-            <Delete />
-            <Text>Delete</Text>
-          </Item>
-        </ActionMenu>
-      </TreeViewItemContent>
-    </TreeViewItem>
-  )}
+  {function renderItem(item: MyItem) {
+    return (
+      <TreeViewItem textValue={item.name}>
+        <TreeViewItemContent>
+          <Text>{item.name}</Text>
+          {item.icon}
+          <ActionMenu onAction={(key) => alert(`Item: ${item.id}, Action: ${key}`)}>
+            <Item key="edit" textValue="Edit">
+              <Edit />
+              <Text>Edit</Text>
+            </Item>
+            <Item key="delete" textValue="Delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionMenu>
+        </TreeViewItemContent>
+        <Collection items={item.childItems}>
+          {renderItem}
+        </Collection>
+      </TreeViewItem>
+    )
+  }}
 </TreeView>
 ```
 
