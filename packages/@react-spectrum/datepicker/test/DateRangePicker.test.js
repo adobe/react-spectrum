@@ -284,7 +284,7 @@ describe('DateRangePicker', function () {
       onKeyUpSpy.mockClear();
     });
 
-    it('should focus field, move a segment, and open popover and does not blur', async function () {
+    it('should focus field, move a segment, and open popover', async function () {
       let {getByRole, getAllByRole} = render(<DateRangePicker label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
       let segments = getAllByRole('spinbutton');
       let button = getByRole('button');
@@ -310,8 +310,8 @@ describe('DateRangePicker', function () {
 
       let dialog = getByRole('dialog');
       expect(dialog).toBeVisible();
-      expect(onBlurSpy).not.toHaveBeenCalled();
-      expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
+      expect(onBlurSpy).toHaveBeenCalledTimes(1);
+      expect(onFocusChangeSpy).toHaveBeenCalledTimes(2);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
     });
 
@@ -349,8 +349,8 @@ describe('DateRangePicker', function () {
 
       let dialog = getByRole('dialog');
       expect(dialog).toBeVisible();
-      expect(onBlurSpy).not.toHaveBeenCalled();
-      expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
+      expect(onBlurSpy).toHaveBeenCalledTimes(1);
+      expect(onFocusChangeSpy).toHaveBeenCalledTimes(2);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
     });
 
@@ -367,8 +367,8 @@ describe('DateRangePicker', function () {
 
       let dialog = getByRole('dialog');
       expect(dialog).toBeVisible();
-      expect(onBlurSpy).not.toHaveBeenCalled();
-      expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
+      expect(onBlurSpy).toHaveBeenCalledTimes(1);
+      expect(onFocusChangeSpy).toHaveBeenCalledTimes(2);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
 
       fireEvent.keyDown(document.activeElement, {key: 'Escape'});
@@ -387,15 +387,15 @@ describe('DateRangePicker', function () {
       expect(dialog).not.toBeInTheDocument();
       expect(document.activeElement).toBe(button);
       expect(button).toHaveFocus();
-      expect(onBlurSpy).not.toHaveBeenCalled();
-      expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
-      expect(onFocusSpy).toHaveBeenCalledTimes(1);
+      expect(onBlurSpy).toHaveBeenCalledTimes(1);
+      expect(onFocusChangeSpy).toHaveBeenCalledTimes(3);
+      expect(onFocusSpy).toHaveBeenCalledTimes(2);
 
       await user.tab();
       expect(document.body).toHaveFocus();
-      expect(onBlurSpy).toHaveBeenCalledTimes(1);
-      expect(onFocusChangeSpy).toHaveBeenCalledTimes(2);
-      expect(onFocusSpy).toHaveBeenCalledTimes(1);
+      expect(onBlurSpy).toHaveBeenCalledTimes(2);
+      expect(onFocusChangeSpy).toHaveBeenCalledTimes(4);
+      expect(onFocusSpy).toHaveBeenCalledTimes(2);
     });
 
     it('should trigger right arrow key event for segment navigation', async function () {
@@ -431,16 +431,16 @@ describe('DateRangePicker', function () {
 
       let dialog = getByRole('dialog');
       expect(dialog).toBeVisible();
-      expect(onBlurSpy).not.toHaveBeenCalled();
-      expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
+      expect(onBlurSpy).toHaveBeenCalledTimes(1);
+      expect(onFocusChangeSpy).toHaveBeenCalledTimes(2);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
       fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
       expect(onKeyDownSpy).toHaveBeenCalledTimes(0);
       expect(onKeyUpSpy).toHaveBeenCalledTimes(0);
-      expect(onBlurSpy).not.toHaveBeenCalled();
-      expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
+      expect(onBlurSpy).toHaveBeenCalledTimes(1);
+      expect(onFocusChangeSpy).toHaveBeenCalledTimes(2);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
     });
   });
