@@ -93,7 +93,7 @@ const tree = style({
 }, getAllowedOverrides({height: true}));
 
 function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, isDetached, isEmphasized} = props;
+  let {children, isDetached, isEmphasized, UNSAFE_className, UNSAFE_style} = props;
   let scale = useScale();
 
   let renderer;
@@ -114,7 +114,8 @@ function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
         <InternalTreeContext.Provider value={{isDetached, isEmphasized}}>
           <Tree
             {...props}
-            className={renderProps => tree({isDetached, ...renderProps}, props.styles)}
+            style={UNSAFE_style}
+            className={renderProps => (UNSAFE_className ?? '') + tree({isDetached, ...renderProps}, props.styles)}
             selectionBehavior="toggle"
             ref={domRef}>
             {props.children}

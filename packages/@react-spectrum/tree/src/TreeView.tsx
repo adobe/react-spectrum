@@ -27,7 +27,7 @@ import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {DOMRef, Expandable, Key, SelectionBehavior, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
-import {focusRing, style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
+import {focusRing, raw, style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
 import {isAndroid} from '@react-aria/utils';
 import React, {createContext, JSX, JSXElementConstructor, ReactElement, ReactNode, useRef} from 'react';
 import {SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
@@ -105,7 +105,7 @@ export const TreeView = React.forwardRef(function TreeView<T extends object>(pro
 
   return (
     <TreeRendererContext.Provider value={{renderer}}>
-      <Tree {...props} {...styleProps} className={renderProps => UNSAFE_className + tree(renderProps)} selectionBehavior={selectionBehavior as SelectionBehavior} ref={domRef}>
+      <Tree {...props} {...styleProps} className={renderProps => (UNSAFE_className ?? '') + tree(renderProps)} selectionBehavior={selectionBehavior as SelectionBehavior} ref={domRef}>
         {props.children}
       </Tree>
     </TreeRendererContext.Provider>
@@ -197,14 +197,7 @@ const treeRowOutline = style({
   position: 'absolute',
   insetStart: 0,
   insetEnd: 0,
-  top: {
-    default: 0,
-    isFocusVisible: '[-2px]',
-    isSelected: {
-      default: '[-1px]',
-      isFocusVisible: '[-2px]'
-    }
-  },
+  top: 0,
   bottom: 0,
   pointerEvents: 'none',
   forcedColorAdjust: 'none',
