@@ -11,7 +11,7 @@
  */
 
 import {act, render, waitFor} from '@react-spectrum/test-utils-internal';
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {useFocusWithin} from '../';
 
 function Example(props) {
