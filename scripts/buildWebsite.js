@@ -30,6 +30,8 @@ async function build() {
   let dir = tempy.directory();
   console.log(`Building into ${dir}...`);
 
+  console.log(spawnSync('yarn config get registry', [], {stdio: 'inherit'}));
+
   // Generate a package.json containing just what we need to build the website
   let gitHash = spawnSync('git', ['rev-parse', '--short', 'HEAD']).stdout.toString().trim();
   let pkg = {
