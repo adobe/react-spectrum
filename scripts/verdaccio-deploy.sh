@@ -6,10 +6,9 @@ original_registry=`npm get registry`
 registry="http://localhost:$port"
 output="output.out"
 ci=false
-commit_to_revert="HEAD"
 
-# Generate dists for the packages
-make build
+# Wait for verdaccio to start
+grep -q 'http address' <(tail -f $output)
 
 # Login as test user
 yarn npm-cli-login -u abc -p abc -e 'abc@abc.com' -r $registry
@@ -24,11 +23,12 @@ npm set registry $registry
 git config --global user.email octobot@github.com
 git config --global user.name GitHub Actions
 
+# Generate dists for the packages
+make build
+
 # Bump all package versions (allow publish from current branch but don't push tags or commit)
 yarn workspaces foreach --all --no-private version patch --deferred
 yarn version apply --all
-
-commit_to_revert="HEAD~0"
 
 # Publish packages to verdaccio
 yarn workspaces foreach --all --no-private -pt npm publish
