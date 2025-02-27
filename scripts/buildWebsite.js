@@ -86,6 +86,8 @@ async function build() {
     '@parcel/transformer-css': packageJSON['@parcel/transformer-css']
   };
 
+  console.log(spawnSync('yarn', ['config', 'get', 'npmRegistryServer'], {stdio: 'inherit'}));
+
   // Add dependencies on each published package to the package.json, and
   // copy the docs from the current package into the temp dir.
   let packagesDir = path.join(__dirname, '..', 'packages');
