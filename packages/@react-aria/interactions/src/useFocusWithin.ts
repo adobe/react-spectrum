@@ -17,8 +17,8 @@
 
 import {DOMAttributes} from '@react-types/shared';
 import {FocusEvent, useCallback, useRef} from 'react';
-import {getActiveElement, getEventTarget, getOwnerDocument} from '@react-aria/utils';
-import {useSyntheticBlurEvent} from './utils';
+import {getActiveElement, getEventTarget, getOwnerDocument, nodeContains, useGlobalListeners} from '@react-aria/utils';
+import {SyntheticFocusEvent, useSyntheticBlurEvent} from './utils';
 
 export interface FocusWithinProps {
   /** Whether the focus within events should be disabled. */
@@ -50,6 +50,8 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
     isFocusWithin: false
   });
 
+  let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
+
   let onBlur = useCallback((e: FocusEvent) => {
     // Ignore events bubbling through portals.
     if (!e.currentTarget.contains(e.target)) {
@@ -61,6 +63,7 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
     // include the relatedTarget (where focus is moving).
     if (state.current.isFocusWithin && !(e.currentTarget as Element).contains(e.relatedTarget as Element)) {
       state.current.isFocusWithin = false;
+      removeAllGlobalListeners();
 
       if (onBlurWithin) {
         onBlurWithin(e);
@@ -70,7 +73,7 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
         onFocusWithinChange(false);
       }
     }
-  }, [onBlurWithin, onFocusWithinChange, state]);
+  }, [onBlurWithin, onFocusWithinChange, state, removeAllGlobalListeners]);
 
   let onSyntheticFocus = useSyntheticBlurEvent(onBlur);
   let onFocus = useCallback((e: FocusEvent) => {
@@ -94,8 +97,21 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
 
       state.current.isFocusWithin = true;
       onSyntheticFocus(e);
+
+      // Browsers don't fire blur events when elements are removed from the DOM.
+      // However, if a focus event occurs outside the element we're tracking, we
+      // can manually fire onBlur.
+      let currentTarget = e.currentTarget;
+      addGlobalListener(ownerDocument, 'focus', e => {
+        if (state.current.isFocusWithin && !nodeContains(currentTarget, e.target as Element)) {
+          let event = new SyntheticFocusEvent('blur', new ownerDocument.defaultView!.FocusEvent('blur', {relatedTarget: e.target}));
+          event.target = currentTarget;
+          event.currentTarget = currentTarget;
+          onBlur(event);
+        }
+      }, {capture: true});
     }
-  }, [onFocusWithin, onFocusWithinChange, onSyntheticFocus]);
+  }, [onFocusWithin, onFocusWithinChange, onSyntheticFocus, addGlobalListener, onBlur]);
 
   if (isDisabled) {
     return {
