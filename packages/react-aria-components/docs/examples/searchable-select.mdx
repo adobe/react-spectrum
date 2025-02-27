@@ -1,0 +1,218 @@
+{/* Copyright 2025 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {ExampleLayout} from '@react-spectrum/docs';
+export default ExampleLayout;
+
+import docs from 'docs:react-aria-components';
+import styles from '@react-spectrum/docs/src/docs.css';
+import Picker from '@react-spectrum/docs/pages/assets/component-illustrations/Picker.svg';
+import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
+import Popover from '@react-spectrum/docs/pages/assets/component-illustrations/Popover.svg';
+import ListBox from '@react-spectrum/docs/pages/assets/component-illustrations/ListBox.svg';
+import SearchField from '@react-spectrum/docs/pages/assets/component-illustrations/SearchField.svg';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+
+---
+keywords: [example, autocomplete, select, listbox, aria, accessibility, react, component]
+type: component
+image: searchable-select.png
+description: A Select component with Autocomplete filtering.
+---
+
+# Searchable Select
+
+A [Select](../Select.html) component with [Autocomplete](../Autocomplete.html) filtering.
+
+## Example
+
+```tsx import
+import './tailwind.global.css';
+
+const languages = [
+  {"id": "ar", "name": "Arabic"},
+  {"id": "bn", "name": "Bengali"},
+  {"id": "bs", "name": "Bosnian"},
+  {"id": "cs", "name": "Czech"},
+  {"id": "da", "name": "Danish"},
+  {"id": "de", "name": "German"},
+  {"id": "el", "name": "Greek"},
+  {"id": "en", "name": "English"},
+  {"id": "es", "name": "Spanish"},
+  {"id": "fa", "name": "Persian"},
+  {"id": "fi", "name": "Finnish"},
+  {"id": "fr", "name": "French"},
+  {"id": "gu", "name": "Gujarati"},
+  {"id": "hi", "name": "Hindi"},
+  {"id": "hr", "name": "Croatian"},
+  {"id": "hu", "name": "Hungarian"},
+  {"id": "is", "name": "Icelandic"},
+  {"id": "it", "name": "Italian"},
+  {"id": "ja", "name": "Japanese"},
+  {"id": "jv", "name": "Javanese"},
+  {"id": "kn", "name": "Kannada"},
+  {"id": "ko", "name": "Korean"},
+  {"id": "ml", "name": "Malayalam"},
+  {"id": "mr", "name": "Marathi"},
+  {"id": "no", "name": "Norwegian"},
+  {"id": "pa", "name": "Punjabi"},
+  {"id": "pl", "name": "Polish"},
+  {"id": "pt", "name": "Portuguese"},
+  {"id": "ro", "name": "Romanian"},
+  {"id": "ru", "name": "Russian"},
+  {"id": "sk", "name": "Slovak"},
+  {"id": "sl", "name": "Slovenian"},
+  {"id": "sq", "name": "Albanian"},
+  {"id": "sr", "name": "Serbian"},
+  {"id": "sv", "name": "Swedish"},
+  {"id": "sw", "name": "Swahili"},
+  {"id": "ta", "name": "Tamil"},
+  {"id": "te", "name": "Telugu"},
+  {"id": "th", "name": "Thai"},
+  {"id": "tl", "name": "Filipino"},
+  {"id": "tr", "name": "Turkish"},
+  {"id": "uk", "name": "Ukrainian"},
+  {"id": "ur", "name": "Urdu"},
+  {"id": "vi", "name": "Vietnamese"},
+  {"id": "zh", "name": "Chinese"},
+];
+```
+
+```tsx example standalone
+import type {ListBoxItemProps} from 'react-aria-components';
+import {Autocomplete, Select, Label, Button, SelectValue, Popover, Dialog, ListBox, ListBoxItem, SearchField, Input, useFilter} from 'react-aria-components';
+import {ChevronsUpDownIcon, CheckIcon, CheckIcon, SearchIcon, XIcon} from 'lucide-react';
+
+function SelectExample() {
+  let {contains} = useFilter({sensitivity: 'base'});
+
+  return (
+    <div className="bg-linear-to-br from-cyan-200 to-blue-400 p-8 sm:h-[350px] rounded-lg flex justify-center">
+      <Select className="flex flex-col gap-1 w-[200px]">
+        <Label className="text-black cursor-default">Language</Label>
+        <Button className="flex items-center cursor-default rounded-lg border-0 bg-white/90 pressed:bg-white transition py-2 pl-5 pr-2 text-base text-left leading-normal ring-1 ring-black/5 shadow-md text-gray-700 focus:outline-hidden focus-visible:outline-2 outline-black outline-offset-3 focus-visible:ring-black/25">
+          <SelectValue className="flex-1 truncate" />
+          <ChevronsUpDownIcon className="w-4 h-4" />
+        </Button>
+        <Popover className="!max-h-80 w-(--trigger-width) rounded-md bg-white text-base shadow-lg ring-1 ring-black/5 entering:animate-in entering:fade-in exiting:animate-out exiting:fade-out">
+          <Dialog className="flex flex-col max-h-[inherit]">
+            <Autocomplete filter={contains}>
+              <SearchField aria-label="Search" autoFocus className="group flex items-center bg-white forced-colors:bg-[Field] border-2 border-gray-300 has-focus:border-sky-600 rounded-full m-1">
+                <SearchIcon aria-hidden className="w-4 h-4 ml-2 text-gray-600 forced-colors:text-[ButtonText]" />
+                <Input placeholder="Search languages" className="px-2 py-1 flex-1 min-w-0 border-none outline outline-0 bg-white text-base text-gray-800 placeholder-gray-500 font-[inherit] [&::-webkit-search-cancel-button]:hidden" />
+                <Button className="text-sm text-center transition rounded-full border-0 p-1 flex items-center justify-center text-gray-600 bg-transparent hover:bg-black/[5%] pressed:bg-black/10 mr-1 w-6 group-empty:invisible">
+                  <XIcon aria-hidden className="w-4 h-4" />
+                </Button>
+              </SearchField>
+              <ListBox items={languages} className="outline-hidden p-1 overflow-auto flex-1 scroll-pb-1">
+                {item => <SelectItem>{item.name}</SelectItem>}
+              </ListBox>
+            </Autocomplete>
+          </Dialog>
+        </Popover>
+      </Select>
+    </div>
+  );
+}
+
+function SelectItem(props: ListBoxItemProps & {children: string}) {
+  return (
+    <ListBoxItem
+      {...props}
+      textValue={props.children}
+      className="group flex items-center gap-2 cursor-default select-none py-2 px-4 outline-hidden rounded-sm text-gray-900 focus:bg-sky-600 focus:text-white">
+      {({ isSelected }) => (
+        <>
+          <span className="flex-1 flex items-center gap-2 truncate font-normal group-selected:font-medium">{props.children}</span>
+          <span className="w-5 flex items-center text-sky-600 group-focus:text-white">
+            {isSelected && <CheckIcon size="S" />}
+          </span>
+        </>
+      )}
+    </ListBoxItem>
+  );
+}
+```
+
+### Tailwind config
+
+This example uses the following plugins:
+
+* [tailwindcss-react-aria-components](../styling.html#plugin)
+* [tailwindcss-animate](https://github.com/jamiebuilds/tailwindcss-animate)
+
+When using Tailwind v4, add them to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+@plugin "tailwindcss-animate";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugins to your `tailwind.config.js` instead:
+
+```tsx
+module.exports = {
+  // ...
+  plugins: [
+    require('tailwindcss-react-aria-components'),
+    require('tailwindcss-animate')
+  ]
+};
+```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
+
+## Components
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="../Select.html"
+  title="Select"
+  description="A select displays a collapsible list of options, and allows a user to select one of them.">
+  <Picker style={{background: 'var(--anatomy-gray-100)', width: 'calc(100% - 20px)', padding: 10, maxHeight: 132}} />
+</ExampleCard>
+
+<ExampleCard
+  url="../ListBox.html"
+  title="ListBox"
+  description="A listbox allows a user to select one or more options from a list.">
+  <ListBox style={{background: 'var(--anatomy-gray-100)', width: 'calc(100% - 20px)', padding: 10, maxHeight: 132}} />
+</ExampleCard>
+
+<ExampleCard
+  url="../Popover.html"
+  title="Popover"
+  description="A popover displays content in context with a trigger element.">
+  <Popover />
+</ExampleCard>
+
+<ExampleCard
+  url="../Button.html"
+  title="Button"
+  description="A button allows a user to perform an action.">
+  <Button />
+</ExampleCard>
+
+<ExampleCard
+  url="../SearchField.html"
+  title="SearchField"
+  description="A search field allows a user to enter and clear a search query.">
+  <SearchField />
+</ExampleCard>
+
+</section>

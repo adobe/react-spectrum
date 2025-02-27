@@ -216,6 +216,7 @@ export class S2TableLayout<T> extends TableLayout<T> {
     return layoutNode;
   }
 
+  // y is the height of the headers
   protected buildBody(y: number): LayoutNode {
     let layoutNode = super.buildBody(y);
     let {children, layoutInfo} = layoutNode;

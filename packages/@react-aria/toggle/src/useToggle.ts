@@ -70,6 +70,10 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
 
   // Handle press state on the label.
   let {pressProps: labelProps, isPressed: isLabelPressed} = usePress({
+    onPress() {
+      state.toggle();
+      ref.current?.focus();
+    },
     isDisabled: isDisabled || isReadOnly
   });
 
@@ -80,7 +84,7 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
   useFormReset(ref, state.isSelected, state.setSelected);
 
   return {
-    labelProps,
+    labelProps: mergeProps(labelProps, {onClick: e => e.preventDefault()}),
     inputProps: mergeProps(domProps, {
       'aria-invalid': isInvalid || validationState === 'invalid' || undefined,
       'aria-errormessage': props['aria-errormessage'],
