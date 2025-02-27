@@ -16,7 +16,7 @@ import 'client-only';
 
 export {CheckboxContext, ColorAreaContext, ColorFieldContext, ColorSliderContext, ColorWheelContext, HeadingContext} from './RSPContexts';
 
-export {UNSTABLE_Autocomplete, UNSTABLE_AutocompleteContext, UNSTABLE_AutocompleteStateContext} from './Autocomplete';
+export {Autocomplete, AutocompleteContext, AutocompleteStateContext} from './Autocomplete';
 export {Breadcrumbs, BreadcrumbsContext, Breadcrumb} from './Breadcrumbs';
 export {Button, ButtonContext} from './Button';
 export {Calendar, CalendarGrid, CalendarGridHeader, CalendarGridBody, CalendarHeaderCell, CalendarCell, RangeCalendar, CalendarContext, RangeCalendarContext, CalendarStateContext, RangeCalendarStateContext} from './Calendar';
@@ -82,7 +82,6 @@ export {Virtualizer} from './Virtualizer';
 export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem, SSRProvider, RouterProvider, I18nProvider, useLocale, useFilter, Pressable, Focusable} from 'react-aria';
 export {FormValidationContext} from 'react-stately';
 export {parseColor, getColorChannels} from '@react-stately/color';
-export {ListLayout as UNSTABLE_ListLayout, GridLayout as UNSTABLE_GridLayout} from '@react-stately/layout';
 export {ToastQueue as UNSTABLE_ToastQueue} from '@react-stately/toast';
 export {ListLayout, GridLayout, WaterfallLayout} from '@react-stately/layout';
 export {Layout, LayoutInfo, Size, Rect, Point} from '@react-stately/virtualizer';

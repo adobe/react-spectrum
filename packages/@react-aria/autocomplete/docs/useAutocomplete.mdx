@@ -1,0 +1,67 @@
+{/* Copyright 2025 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/autocomplete';
+import {FunctionAPI, HeaderInfo, InterfaceType, TypeContext, TypeLink, PageDescription} from '@react-spectrum/docs';
+import packageData from '@react-aria/autocomplete/package.json';
+import statelyDocs from 'docs:@react-stately/autocomplete';
+import {InlineAlert, Content, Heading} from '@adobe/react-spectrum';
+
+---
+category: Pickers
+keywords: [autocomplete, autosuggest, typeahead, search, aria]
+after_version: 3.0.0
+---
+
+# useAutocomplete
+
+<PageDescription>{docs.exports.useAutocomplete.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useAutocomplete']}
+  />
+
+<InlineAlert variant="notice" marginTop={60}>
+  <Heading>Under construction</Heading>
+  <Content>This hook is in <strong>beta</strong>. More documentation is coming soon!</Content>
+</InlineAlert>
+
+## API
+
+<FunctionAPI function={docs.exports.useAutocomplete} links={docs.links} />
+
+## Features
+
+Autocomplete can be implemented using the [&lt;datalist&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/datalist) HTML element, but this has limited functionality and behaves differently across browsers.
+`useAutocomplete` helps achieve accessible text input and collection that can be styled as needed.
+
+## Anatomy
+
+An autocomplete consists of a text input that displays the current value and a collection of items. Users can type within the input
+to filter the collection. `useAutocomplete` handles exposing the correct ARIA attributes for accessibility for each of the elements comprising the autocomplete.
+
+`useAutocomplete` returns props that you should spread onto the appropriate elements:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useAutocomplete.return.base?.id ?? docs.exports.useAutocomplete.return.id].properties} />
+</TypeContext.Provider>
+
+State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useAutocompleteState} /> hook from `@react-stately/autocomplete`.
+The state object should be passed as an option to `useAutocomplete`.
+
+## Internationalization
+
+`useAutocomplete` handles some aspects of internationalization automatically.
+For example, VoiceOver announcements about the item focus, count, and selection are localized.
+You are responsible for localizing all labels and option
+content that is passed into the autocomplete.

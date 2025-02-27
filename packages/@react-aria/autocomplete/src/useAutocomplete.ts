@@ -32,7 +32,13 @@ export interface AriaAutocompleteProps extends AutocompleteProps {
    * An optional filter function used to determine if a option should be included in the autocomplete list.
    * Include this if the items you are providing to your wrapped collection aren't filtered by default.
    */
-  filter?: (textValue: string, inputValue: string) => boolean
+  filter?: (textValue: string, inputValue: string) => boolean,
+
+  /**
+   * Whether or not to focus the first item in the collection after a filter is performed.
+   * @default false
+   */
+  disableAutoFocusFirst?: boolean
 }
 
 export interface AriaAutocompleteOptions extends Omit<AriaAutocompleteProps, 'children'> {
@@ -54,16 +60,17 @@ export interface AutocompleteAria {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a autocomplete component.
- * A autocomplete combines a text input with a collection, allowing users to filter the collection's contents match a query.
+ * Provides the behavior and accessibility implementation for an autocomplete component.
+ * An autocomplete combines a text input with a collection, allowing users to filter the collection's contents match a query.
  * @param props - Props for the autocomplete.
  * @param state - State for the autocomplete, as returned by `useAutocompleteState`.
  */
-export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: AutocompleteState): AutocompleteAria {
+export function useAutocomplete(props: AriaAutocompleteOptions, state: AutocompleteState): AutocompleteAria {
   let {
     inputRef,
     collectionRef,
-    filter
+    filter,
+    disableAutoFocusFirst = false
   } = props;
 
   let collectionId = useId();
@@ -160,7 +167,7 @@ export function UNSTABLE_useAutocomplete(props: AriaAutocompleteOptions, state: 
   let onChange = (value: string) => {
     // Tell wrapped collection to focus the first element in the list when typing forward and to clear focused key when deleting text
     // for screen reader announcements
-    if (state.inputValue !== value && state.inputValue.length <= value.length) {
+    if (state.inputValue !== value && state.inputValue.length <= value.length && !disableAutoFocusFirst) {
       focusFirstItem();
     } else {
       // Fully clear focused key when backspacing since the list may change and thus we'd want to start fresh again
