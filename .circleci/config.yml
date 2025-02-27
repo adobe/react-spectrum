@@ -477,14 +477,14 @@ jobs:
             ./scripts/verdaccio-deploy.sh
             ls -la /tmp
           environment:
-            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/verdaccio-storage
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
 
       # Store the prod docs website w/ verdaccio packages in a separate dist folder so it doesn't get deployed by "deploy" workflow
       # This is because we have a separate deploy flow for the test prod docs website so it doesn't hold up the normal "deploy" workflow
       - persist_to_workspace:
           root: verdaccio-workspace
           paths:
-            - verdaccio-storage
+            - storage
 
   v-docs:
     executor: rsp-xlarge
@@ -501,7 +501,7 @@ jobs:
             ./scripts/verdaccio-ci.sh
             ./scripts/verdaccio-build.sh
           environment:
-            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/verdaccio-storage
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
 
       - persist_to_workspace:
           root: /verdaccio_dist
