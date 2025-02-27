@@ -114,11 +114,11 @@ function mapConditionalShorthand<T, C extends string, R extends RenderProps<stri
   }
 }
 
-function createValueLookup(values: Array<CSSValue>, atStart = false) {
+function createValueLookup(values: Array<CSSValue>, atStart = false, prefix = '') {
   let map = new Map<CSSValue, string>();
   for (let value of values) {
     if (!map.has(value)) {
-      map.set(value, generateName(map.size, atStart));
+      map.set(value, prefix + generateName(map.size, atStart));
     }
   }
   return map;
@@ -138,8 +138,9 @@ interface MacroContext {
 }
 
 export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemeProperties<T>, 'default' | Extract<keyof T['conditions'], string>> {
-  let themePropertyMap = createValueLookup(Object.keys(theme.properties), true);
-  let themeConditionMap = createValueLookup(Object.keys(theme.conditions), true);
+  let themePropertyMap = createValueLookup(Object.keys(theme.properties), true, theme.version);
+  let themeConditionMap = createValueLookup(Object.keys(theme.conditions), true, theme.version);
+
   let propertyFunctions = new Map(Object.entries(theme.properties).map(([k, v]) => {
     if (typeof v === 'function') {
       return [k, v];
