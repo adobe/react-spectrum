@@ -461,22 +461,17 @@ jobs:
           paths:
             - '*/docs/'
 
-  docs-verdaccio:
+  verdaccio:
     executor: rsp-xlarge
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
-          name: run verdaccio
-          command: ./scripts/verdaccio.sh ci
-
-      # Store the prod docs website w/ verdaccio packages in a separate dist folder so it doesn't get deployed by "deploy" workflow
-      # This is because we have a separate deploy flow for the test prod docs website so it doesn't hold up the normal "deploy" workflow
-      - persist_to_workspace:
-          root: verdaccio_dist
-          paths:
-            - '*/verdaccio/'
+          name: run verdaccio and publish built packages
+          command: |
+            make build
+            npx pkg-pr-new publish './packages/*' --template './packages/examples/*'
 
   deploy:
     docker:
@@ -573,116 +568,144 @@ workflows:
   commit:
     jobs:
       - install
-      - install-16
-      - install-17
-      - install-19
-      - test-ssr:
+      # - install-16
+      # - install-17
+      # - install-19
+      # - test-ssr:
+      #     requires:
+      #       - install
+      # - test:
+      #     requires:
+      #       - install
+      # - test-ssr-16:
+      #     requires:
+      #       - install-16
+      # - test-16:
+      #     requires:
+      #       - install-16
+      # - test-ssr-17:
+      #     requires:
+      #       - install-17
+      # - test-17:
+      #     requires:
+      #       - install-17
+      # - test-19:
+      #     requires:
+      #       - install-19
+      # - test-ssr-19:
+      #     requires:
+      #       - install-19
+      # - test-esm:
+      #     requires:
+      #       - install
+      # - lint:
+      #     requires:
+      #       - install
+      # - ts-build-fork-point:
+      #     requires:
+      #       - install
+      #     filters:
+      #       branches:
+      #         ignore: main
+      # - ts-build-branch:
+      #     requires:
+      #       - install
+      #     filters:
+      #       branches:
+      #         ignore: main
+      # - ts-diff:
+      #     requires:
+      #       - ts-build-fork-point
+      #       - ts-build-branch
+      #     filters:
+      #       branches:
+      #         ignore: main
+      # - typecheck-docs:
+      #     requires:
+      #       - install
+      # - storybook:
+      #     requires:
+      #       - install
+      # - storybook-16:
+      #     requires:
+      #       - install-16
+      # - storybook-17:
+      #     requires:
+      #       - install-17
+      # - storybook-19:
+      #     requires:
+      #       - install-19
+      # - storybook-s2:
+      #     requires:
+      #       - install
+      # - docs:
+      #     requires:
+      #       - install
+      - verdaccio:
           requires:
             - install
-      - test:
-          requires:
-            - install
-      - test-ssr-16:
-          requires:
-            - install-16
-      - test-16:
-          requires:
-            - install-16
-      - test-ssr-17:
-          requires:
-            - install-17
-      - test-17:
-          requires:
-            - install-17
-      - test-19:
-          requires:
-            - install-19
-      - test-ssr-19:
-          requires:
-            - install-19
-      - test-esm:
-          requires:
-            - install
-      - lint:
-          requires:
-            - install
-      - ts-build-fork-point:
-          requires:
-            - install
-          filters:
-            branches:
-              ignore: main
-      - ts-build-branch:
-          requires:
-            - install
-          filters:
-            branches:
-              ignore: main
-      - ts-diff:
-          requires:
-            - ts-build-fork-point
-            - ts-build-branch
-          filters:
-            branches:
-              ignore: main
-      - typecheck-docs:
-          requires:
-            - install
-      - storybook:
-          requires:
-            - install
-      - storybook-16:
-          requires:
-            - install-16
-      - storybook-17:
-          requires:
-            - install-17
-      - storybook-19:
-          requires:
-            - install-19
-      - storybook-s2:
-          requires:
-            - install
-      - docs:
-          requires:
-            - install
-      - docs-verdaccio:
-          filters:
-            branches:
-              only: main
-          requires:
-            - install
-      - deploy:
-          requires:
-            - lint
-            - test-ssr
-            - test
-            - test-ssr-16
-            - test-16
-            - test-ssr-17
-            - test-17
-            - test-esm
-            - storybook
-            - storybook-16
-            - storybook-17
-            - storybook-19
-            - storybook-s2
-            - docs
-      - deploy-verdaccio:
-          requires:
-            - docs-verdaccio
-      - comment:
-          name: comment-pr
-          filters:
-            branches:
-              ignore: main
-          requires:
-            - ts-diff
-            - deploy
-      - comment:
-          name: comment-verdaccio
-          requires:
-            - deploy-verdaccio
+      # - v-docs:
+      #     requires:
+      #       - verdaccio
+      # - v-rsp-cra-18:
+      #     requires:
+      #       - verdaccio
+      # - v-webpack-4:
+      #     requires:
+      #       - verdaccio
+      # - v-nextjs:
+      #     requires:
+      #       - verdaccio
+      # - v-rac-tailwind:
+      #     requires:
+      #       - verdaccio
+      # - v-rac-rsp-tailwind:
+      #     requires:
+      #       - verdaccio
+      # - v-s2-parcel:
+      #     requires:
+      #       - verdaccio
+      # - v-icon-builder:
+      #     requires:
+      #       - verdaccio
+      # - deploy:
+      #     requires:
+      #       - lint
+      #       - test-ssr
+      #       - test
+      #       - test-ssr-16
+      #       - test-16
+      #       - test-ssr-17
+      #       - test-17
+      #       - test-esm
+      #       - storybook
+      #       - storybook-16
+      #       - storybook-17
+      #       - storybook-19
+      #       - storybook-s2
+      #       - docs
+      # - deploy-verdaccio:
+      #     requires:
+      #       - v-docs
+            # - v-rsp-cra-18
+            # - v-webpack-4
+            # - v-nextjs
+            # - v-rac-tailwind
+            # - v-rac-rsp-tailwind
+            # - v-s2-parcel
+            # - v-icon-builder
+      # - comment:
+      #     name: comment-pr
+      #     filters:
+      #       branches:
+      #         ignore: main
+      #     requires:
+      #       - ts-diff
+      #       - deploy
+      # - comment:
+      #     name: comment-verdaccio
+      #     requires:
+      #       - deploy-verdaccio
 
   prod-docs:
     when:

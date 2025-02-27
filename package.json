@@ -182,6 +182,7 @@
     "parcel": "^2.13.1",
     "parcel-optimizer-strict-mode": "workspace:^",
     "patch-package": "^6.2.0",
+    "pkg-pr-new": "0.0.40",
     "playwright": "^1.45.3",
     "plop": "^2.4.0",
     "postcss": "^8.4.24",
