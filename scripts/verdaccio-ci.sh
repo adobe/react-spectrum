@@ -5,7 +5,7 @@ output="output.out"
 
 set -e
 
-echo $VERDACCIO_STORAGE_PATH
+printenv
 # Start verdaccio and send it to the background
 yarn verdaccio --config ./verdaccio-config.yaml --listen $port &>${output} &
 
