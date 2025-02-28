@@ -21,5 +21,10 @@ export interface SearchFieldProps extends TextFieldProps {
   onClear?: () => void
 }
 
-export interface AriaSearchFieldProps extends SearchFieldProps, AriaTextFieldProps {}
+export interface AriaSearchFieldProps extends SearchFieldProps, AriaTextFieldProps {
+  /**
+   * An enumerated attribute that defines what action label or icon to preset for the enter key on virtual keyboards. See [https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/enterkeyhint].
+   */
+  enterKeyHint?: string
+}
 export interface SpectrumSearchFieldProps extends SpectrumTextInputBase, Omit<AriaSearchFieldProps, 'isInvalid' | 'validationState'>, SpectrumTextFieldProps {}
