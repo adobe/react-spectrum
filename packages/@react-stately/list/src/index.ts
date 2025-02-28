@@ -12,6 +12,6 @@
 
 export type {ListProps, ListState} from './useListState';
 export type {SingleSelectListProps, SingleSelectListState} from './useSingleSelectListState';
-export {useListState, useFilteredListState} from './useListState';
+export {useListState, UNSTABLE_useFilteredListState} from './useListState';
 export {useSingleSelectListState} from './useSingleSelectListState';
 export {ListCollection} from './ListCollection';
