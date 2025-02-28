@@ -4,6 +4,47 @@ export default MDXLayout;
 
 # Release Notes
 
+## v0.7.0
+
+### New Components
+* [TreeView](?path=/docs/treeview--docs)
+
+### Updates
+* [Badge](?path=/docs/badge--docs): Add `overflowMode` prop, fix icon alignment, update typo from `variant="charteuse"` to `variant="chartreuse"`
+* [CardView](?path=/docs/cardview--docs): Allow override stylings when using `renderActionBar`
+* Image: Add `fetchPriority` prop
+* [Menu](?path=/docs/menu--docs): Fix menu item's focus rings from exceeding popover boundaries
+* [Tabs](?path=/docs/tabs--docs): Refactor collapse implementation to fix accessibilty issues
+* Remove `all: revert-layer` from style macro generated CSS 
+* Remove references to CSS flex shorthand. Please use `flexGrow`, `flexBasis`, and `flexShrink` instead.
+
+### Codemods
+* Update S2 icon migration map
+* Handle margin/padding shorthands in style props codemod
+
+
+All the S2 commits. Feel free to add anything that I missed that you think should be included!
+* fix: Remove extra class from style macro - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7623)
+* feat: add overflowMode to S2 Badge - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7653)
+* fix(s2): Remove `all: revert-layer` to avoid Safari bugs - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7598)
+* fix: top/left align icon in s2 badge - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7691)
+* feat: add fetchPriority prop to S2 Image - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/7706)
+* fix: S2 Badge context - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7704)
+* fix: prevent menu item focus ring from exceeding popover boundaries - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7672)
+* handle margin/padding shorthands in style props codemod - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7740)
+* chore(s2): fix S2 children and context types - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7668)
+* fix: prevent menu items from overlapping in firefox - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7754)
+* feat: S2 treeview - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7343)
+* fix: Fix S2 Picker press scaling - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7802)
+* chore(codemod): update S2 icon migration map - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7739)
+* chore: removing s2 references to css flex shorthand, use grow, basis, and shrink - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/7776)
+* fix(s2): SSR fixes - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7792)
+* fix(s2): apply styling to CardView when using an action bar - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7795)
+* fix(s2): testing session bugs treeview and tabs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7713)
+* chore: Refactor S2 tabs to fix accessibility issues - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7600)
+* fix: Avoid triggering collection updates when hovering over S2 TableView headers - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7786)
+
+
 ## v0.6.0
 
 ### New Components
