@@ -784,6 +784,36 @@ describe('MenuTrigger', function () {
       expect(tree.getByRole('menu').closest('[data-testid="custom-container"]')).toBe(tree.getByTestId('custom-container'));
     });
   });
+
+  it('closes if menu is tabbed away from', async function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <MenuTrigger>
+          <Button variant="primary">
+            {triggerText}
+          </Button>
+          <Menu>
+            <Item id="1">One</Item>
+            <Item id="2">Two</Item>
+            <Item id="3">Three</Item>
+          </Menu>
+        </MenuTrigger>
+      </Provider>
+    );
+    let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+    menuTester.setInteractionType('keyboard');
+
+    await menuTester.open();
+    act(() => {jest.runAllTimers();});
+
+    let menu = menuTester.menu;
+
+    await user.tab();
+    act(() => {jest.runAllTimers();});
+    act(() => {jest.runAllTimers();});
+    expect(menu).not.toBeInTheDocument();
+    expect(document.activeElement).toBe(menuTester.trigger);
+  });
 });
 
 function SelectionStatic(props) {

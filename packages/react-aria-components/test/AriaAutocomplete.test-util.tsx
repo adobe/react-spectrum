@@ -970,7 +970,6 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
 
           // Open the nested submenu
           await user.keyboard('{ArrowDown}');
-          // await user.keyboard('{ArrowDown}');
           await user.keyboard('{ArrowRight}');
           act(() => jest.runAllTimers());
           dialogs = getAllByRole('dialog');
@@ -1057,7 +1056,6 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
 
           // Open submenu
           await user.keyboard('{ArrowDown}');
-          // await user.keyboard('{ArrowDown}');
           await user.keyboard('{ArrowRight}');
           act(() => {jest.runAllTimers();});
           menus = getAllByRole('menu');

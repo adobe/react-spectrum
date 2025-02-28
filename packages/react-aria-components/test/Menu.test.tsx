@@ -1396,6 +1396,38 @@ describe('Menu', () => {
     let menu = getByRole('menu');
     expect(menu).toBeInTheDocument();
   });
+
+  it('contains focus within the menu', async function () {
+    let tree = render(
+      <MenuTrigger>
+        <Button>Menu Button</Button>
+        <Popover>
+          <Menu aria-label="Test">
+            <MenuSection>
+              <Header>Heading 1</Header>
+              <MenuItem>Foo</MenuItem>
+              <MenuItem>Bar</MenuItem>
+              <MenuItem>Baz</MenuItem>
+            </MenuSection>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+    );
+    let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
+    menuTester.setInteractionType('keyboard');
+
+    await menuTester.open();
+    act(() => {jest.runAllTimers();});
+
+    let menu = menuTester.menu;
+    let activeElement = document.activeElement;
+
+    await user.tab();
+    act(() => {jest.runAllTimers();});
+    act(() => {jest.runAllTimers();});
+    expect(menu).toBeInTheDocument();
+    expect(document.activeElement).toBe(activeElement);
+  });
 });
 
 // better to accept items from the test? or just have the test have a requirement that you render a certain-ish structure?
@@ -1500,25 +1532,6 @@ AriaMenuTests({
     ),
     multipleSelection: () => render(
       <SelectionStatic selectionMode="multiple" />
-    ),
-    siblingFocusableElement: () => render(
-      <>
-        <input aria-label="before" />
-        <MenuTrigger>
-          <Button>Menu Button</Button>
-          <Popover>
-            <Menu aria-label="Test">
-              <MenuSection>
-                <Header>Heading 1</Header>
-                <MenuItem>Foo</MenuItem>
-                <MenuItem>Bar</MenuItem>
-                <MenuItem>Baz</MenuItem>
-              </MenuSection>
-            </Menu>
-          </Popover>
-        </MenuTrigger>
-        <input aria-label="after" />
-      </>
     ),
     multipleMenus: () => render(
       <>
