@@ -12,10 +12,13 @@ export default BlogPostLayout;
 
 ---
 description: 
-date: 2025-03-3
+date: 2025-03-03
 ---
 
 # March 3, 2025 Release
+
+### Date and Time Formatting in RTL Languages
+If you are not directly using React Spectrum DateField, DatePicker, or DateRangePicker, you will need to make updates to your components for them to properly format in RTL languages. If you are using RAC, the DateInput must have display set to either `inline`, `inline-block`, or `block`. If you are using the hooks, you must ensure that the date segments are rendered as `spans` and that the field grouping element has display set to either `inline`, `inline-block`, or `block`. If you choose to not make these updates, your component will still look the same as before, but they will not format correctly in RTL languages.
 
 ## Enhancements
 
@@ -24,7 +27,7 @@ date: 2025-03-3
   - Add `colSpan prop` to Table - [@oyvinmar](https://github.com/oyvinmar) - [PR](https://github.com/adobe/react-spectrum/pull/7638), [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7780), [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7785)
   - Support Tooltips on Tags and Tabs - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7793)
   - Support nested collections - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/7379)
-  - Add WaterfallLayout to RAC, and update GridLayout - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7729)
+  - Add WaterfallLayout to RAC and update GridLayout - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7729)
 - LabeledValue
   -Allow `ReactElement` in LabeledValue value - [@sana-malik](https://github.com/sana-malik) - [PR](https://github.com/adobe/react-spectrum/pull/7679)
 - Toast
@@ -35,7 +38,8 @@ date: 2025-03-3
 - Miscellaneous
   - Update to Tailwind v4 - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7669)
   - Focus Management within ShadowDOM - [@MahmoudElsayad](https://github.com/MahmoudElsayad) - [PR](https://github.com/adobe/react-spectrum/pull/6046)
-  - Implemented `action` prop to the getItems function in the useClipboard hook - [@Nevnet99](https://github.com/Nevnet99) - [PR](https://github.com/adobe/react-spectrum/pull/7727)
+  - Implemented `action` prop to the getItems function in the useClipboard hook - [@Nevnet99](https://github.com/Nevnet99) - [PR](https://github.com/adobe/react-spectrum/pull/7727), [PR](https://github.com/adobe/react-spectrum/pull/7841)
+  - Add `has-child-items` to Tailwind plugin - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7842)
 
 ## Fixes
 
@@ -45,28 +49,28 @@ date: 2025-03-3
 - ComboBox
   - Fix SSR Combobox inner ref from getting lost - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7663)
 - Date and Time
-  - Ensure dayPeriod segment no longer resets when hour is deleted - [@charlotte-whiting](https://github.com/charlotte-whiting) - [PR](https://github.com/adobe/react-spectrum/pull/7506)
+  - Ensure `dayPeriod` no longer resets when hour is deleted - [@charlotte-whiting](https://github.com/charlotte-whiting) - [PR](https://github.com/adobe/react-spectrum/pull/7506)
   - Correctly format date/time in RTL - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7423), [PR](https://github.com/adobe/react-spectrum/pull/7685), [PR](https://github.com/adobe/react-spectrum/pull/7712)
 - NumberField
-  - Add isRequired to NumberField RenderProps - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7831)
+  - Add `isRequired` to NumberField RenderProps - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7831)
 - Select
   - Fix HiddenSelect browser autofill - [@igorlima](https://github.com/igorlima) - [PR](https://github.com/adobe/react-spectrum/pull/7670)
 - Tabs
   - Fix TabList auto selection - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7529)
 - Tree
   - Update TreeView API - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7613)
+  - Add label to the expand/collapse button in `useTreeItem` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/7840)
 - Toast
   - Remove Toast priority queue - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7805)
   - Resume timers if pointer left region due to region shrinking - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7771)
-
-
+  - Fix Toast hover and focus behavior - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7838)
 - Miscellaneous
   - Expose missing `renderProps` types in RAC - [@agscala](https://github.com/agscala) - [PR](https://github.com/adobe/react-spectrum/pull/7762)
   - Do not build list of available slots when there is no error - [@jorrit](https://github.com/jorrit) - [PR](https://github.com/adobe/react-spectrum/pull/7731)
-  - Ensure React inert prop compatibility - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/7519)
+  - Ensure React `inert` prop compatibility - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/7519)
   - Fix infinite re-render on reoccuring ids - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/7657)
-  - Save render through optimized useSlot() - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/7270)
-  - Fix memory leak suspense safe useId - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7757)
+  - Save render through optimized `useSlot()` - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/7270)
+  - Fix memory leak suspense safe `useId` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7757)
 
 ## Docs
 
@@ -75,10 +79,9 @@ date: 2025-03-3
 - Fix typo in Drag and Drop docs - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/7647)
 - Fix RadioGroup controlled example - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7763)
 - Add Virtualizer docs - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7700)
-- Add colSpan examples to docs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7837)
+- Add `colSpan` examples to docs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7837)
 - RAC Tree docs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7730)
 - Add docs for custom overlay trigger elements - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7662)
-
 
 ## Under Construction
 
@@ -96,8 +99,6 @@ Autocomplete
 
 
 ## Released packages
-
-
 
 Haven't included these yet since we might revert:
 * feat(Button): add support for `aria-current` prop - [@TimonVS](https://github.com/TimonVS) - [PR](https://github.com/adobe/react-spectrum/pull/7643)
