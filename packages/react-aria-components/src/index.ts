@@ -75,7 +75,7 @@ export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {ToggleButtonGroup, ToggleButtonGroupContext, ToggleGroupStateContext} from './ToggleButtonGroup';
 export {Toolbar, ToolbarContext} from './Toolbar';
 export {TooltipTrigger, Tooltip, TooltipTriggerStateContext, TooltipContext} from './Tooltip';
-export {TreeLoadingIndicator, Tree, TreeItem, TreeContext, TreeItemContent, TreeStateContext} from './Tree';
+export {UNSTABLE_TreeLoadingIndicator, Tree, TreeItem, TreeContext, TreeItemContent, TreeStateContext} from './Tree';
 export {useDragAndDrop} from './useDragAndDrop';
 export {DropIndicator, DropIndicatorContext, DragAndDropContext} from './DragAndDrop';
 export {Virtualizer} from './Virtualizer';

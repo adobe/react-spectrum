@@ -81,7 +81,11 @@ export interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements> exte
    * Controls whether inputted text is automatically capitalized and, if so, in what manner.
    * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/autocapitalize).
    */
-  autoCapitalize?: 'off' | 'none' | 'on' | 'sentences' | 'words' | 'characters'
+  autoCapitalize?: 'off' | 'none' | 'on' | 'sentences' | 'words' | 'characters',
+  /**
+   * An enumerated attribute that defines what action label or icon to preset for the enter key on virtual keyboards. See [https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/enterkeyhint].
+   */
+  enterKeyHint?: string
 }
 
 /**
