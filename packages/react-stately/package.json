@@ -45,6 +45,7 @@
     "@react-stately/slider": "^3.6.1",
     "@react-stately/table": "^3.13.1",
     "@react-stately/tabs": "^3.7.1",
+    "@react-stately/toast": "3.0.0-beta.7",
     "@react-stately/toggle": "^3.8.1",
     "@react-stately/tooltip": "^3.5.1",
     "@react-stately/tree": "^3.8.7",
