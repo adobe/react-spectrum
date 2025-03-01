@@ -50,7 +50,6 @@
     "@react-aria/menu": "^3.17.0",
     "@react-aria/toast": "3.0.0-beta.19",
     "@react-aria/toolbar": "3.0.0-beta.12",
-    "@react-aria/tree": "3.0.0-beta.3",
     "@react-aria/utils": "^3.27.0",
     "@react-aria/virtualizer": "^4.1.1",
     "@react-stately/autocomplete": "3.0.0-alpha.0",
