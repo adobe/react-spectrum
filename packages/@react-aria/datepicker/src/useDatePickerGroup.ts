@@ -15,8 +15,10 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
 
       let update = () => {
         if (ref.current) {
-          // TODO: For now, just querying this list of elements. However, it's possible that either through hooks or RAC that some users may include other focusable items that they would want to able to keyboard navigate to. In that case, we might want to utilize focusableElements in isFocusable.ts
-          let editableSegments: NodeListOf<Element> | undefined = ref.current?.querySelectorAll('span[role="spinbutton"], span[role="textbox"], button, div[role="spinbutton"], div[role="textbox"]');
+          // TODO: For now, just querying this list of elements.
+          // However, it's possible that either through hooks or RAC that some users may include other focusable items that they would want to able to keyboard navigate to.
+          // In that case, we might want to utilize focusableElements in isFocusable.ts
+          let editableSegments: NodeListOf<Element> | undefined = ref.current?.querySelectorAll('[role="spinbutton"], [role="textbox"], button, [role="spinbutton"], [role="textbox"]');
 
           let segmentsArr = Array.from(editableSegments as NodeListOf<Element>).filter(Boolean).map(node => {
             return {
@@ -24,23 +26,13 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
               rectX: node.getBoundingClientRect().left
             };
           });
-      
+
           let orderedSegments = segmentsArr.sort((a, b) => a.rectX - b.rectX).map((item => item.element));
           segments.current = orderedSegments;
         }
       };
 
       update();
-
-      let observer = new MutationObserver(update);
-      observer.observe(ref.current, {
-        subtree: true,
-        childList: true
-      });
-
-      return () => {
-        observer.disconnect();
-      };
     }
   }, []);
 
@@ -99,9 +91,9 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
               target = orderedSegments[index - 1] || target;
             }
 
-  
+
             target = orderedSegments[index + 1] || target;
-  
+
             if (target) {
               target.focus();
             }
