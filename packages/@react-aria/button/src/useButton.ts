@@ -106,7 +106,6 @@ export function useButton(props: AriaButtonOptions<ElementType>, ref: RefObject<
       'aria-expanded': props['aria-expanded'],
       'aria-controls': props['aria-controls'],
       'aria-pressed': props['aria-pressed'],
-      'aria-current': props['aria-current'],
       onClick: (e) => {
         if (deprecatedOnClick) {
           deprecatedOnClick(e);
