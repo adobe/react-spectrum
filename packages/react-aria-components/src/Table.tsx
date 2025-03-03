@@ -912,7 +912,7 @@ export interface TableBodyRenderProps {
   isDropTarget: boolean
 }
 
-export interface TableBodyProps<T> extends CollectionProps<T>, StyleRenderProps<TableBodyRenderProps> {
+export interface TableBodyProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, StyleRenderProps<TableBodyRenderProps> {
   /** Provides content to display when there are no rows in the table. */
   renderEmptyState?: (props: TableBodyRenderProps) => ReactNode
 }
