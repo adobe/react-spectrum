@@ -16,7 +16,7 @@ import {classNames} from '@react-spectrum/utils';
 import {MyMenuItem} from './utils';
 import React, {ReactNode} from 'react';
 import styles from '../example/index.css';
-import {TreeLoadingIndicator} from '../src/Tree';
+import {UNSTABLE_TreeLoadingIndicator} from '../src/Tree';
 
 export default {
   title: 'React Aria Components'
@@ -202,7 +202,7 @@ let rows = [
 
 const MyTreeLoader = () => {
   return (
-    <TreeLoadingIndicator>
+    <UNSTABLE_TreeLoadingIndicator>
       {({level}) => {
         let message = `Level ${level} loading spinner`;
         if (level === 1) {
@@ -214,7 +214,7 @@ const MyTreeLoader = () => {
           </span>
         );
       }}
-    </TreeLoadingIndicator>
+    </UNSTABLE_TreeLoadingIndicator>
   );
 };
 

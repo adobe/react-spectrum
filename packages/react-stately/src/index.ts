@@ -29,6 +29,7 @@ export type {MultipleSelectionManager, MultipleSelectionState, SingleSelectionSt
 export type {NumberFieldState, NumberFieldStateOptions} from '@react-stately/numberfield';
 export type {TableState, TableStateProps, TableHeaderProps, TableBodyProps, ColumnProps, RowProps, CellProps, TableColumnResizeState, TableColumnResizeStateProps} from '@react-stately/table';
 export type {TabListProps, TabListState} from '@react-stately/tabs';
+export type {ToastState, QueuedToast, ToastStateProps, ToastOptions} from '@react-stately/toast';
 export type {ToggleProps, ToggleState, ToggleGroupProps, ToggleGroupState} from '@react-stately/toggle';
 export type {TooltipTriggerProps, TooltipTriggerState} from '@react-stately/tooltip';
 export type {TreeProps, TreeState} from '@react-stately/tree';
@@ -54,6 +55,7 @@ export {useSliderState} from '@react-stately/slider';
 export {useMultipleSelectionState} from '@react-stately/selection';
 export {useTableState, TableHeader, TableBody, Column, Row, Cell, useTableColumnResizeState} from '@react-stately/table';
 export {useTabListState} from '@react-stately/tabs';
+export {useToastState, ToastQueue, useToastQueue} from '@react-stately/toast';
 export {useToggleState, useToggleGroupState} from '@react-stately/toggle';
 export {useTooltipTriggerState} from '@react-stately/tooltip';
 export {useTreeState} from '@react-stately/tree';

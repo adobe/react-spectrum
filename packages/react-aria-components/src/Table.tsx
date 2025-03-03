@@ -988,12 +988,12 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
 
 export interface RowRenderProps extends ItemRenderProps {
   /** Whether the row's children have keyboard focus. */
-  isFocusVisibleWithin: boolean
+  isFocusVisibleWithin: boolean,
+  /** The unique id of the row. */
+  id?: Key
 }
 
 export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMProps, HoverEvents {
-  /** The unique id of the row. */
-  id?: Key,
   /** A list of columns used when dynamically rendering cells. */
   columns?: Iterable<T>,
   /** The cells within the row. Supports static items or a function for dynamic rendering. */
@@ -1010,7 +1010,9 @@ export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMPr
    * Handler that is called when a user performs an action on the row. The exact user event depends on
    * the collection's `selectionBehavior` prop and the interaction modality.
    */
-  onAction?: () => void
+  onAction?: () => void,
+  /** The unique id of the row. */
+  id?: Key
 }
 
 /**
@@ -1087,7 +1089,8 @@ export const Row = /*#__PURE__*/ createBranchComponent(
         selectionBehavior: state.selectionManager.selectionBehavior,
         isDragging,
         isDropTarget: dropIndicator?.isDropTarget,
-        isFocusVisibleWithin
+        isFocusVisibleWithin,
+        id: item.key
       }
     });
 
@@ -1178,12 +1181,14 @@ export interface CellRenderProps {
    * Whether the cell is currently hovered with a mouse.
    * @selector [data-hovered]
    */
-  isHovered: boolean
+  isHovered: boolean,
+  /**
+   * The unique id of the cell.
+   **/
+  id?: Key
 }
 
 export interface CellProps extends RenderProps<CellRenderProps> {
-  /** The unique id of the cell. */
-  id?: Key,
   /** A string representation of the cell's contents, used for features like typeahead. */
   textValue?: string,
   /** Indicates how many columns the data cell spans. */
@@ -1217,7 +1222,8 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
       isFocused,
       isFocusVisible,
       isPressed,
-      isHovered
+      isHovered,
+      id: cell.key
     }
   });
 
