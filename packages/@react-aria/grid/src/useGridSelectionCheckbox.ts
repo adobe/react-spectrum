@@ -45,14 +45,14 @@ export function useGridSelectionCheckbox<T, C extends GridCollection<T>>(props: 
       }
     };
 
-    document.addEventListener('keydown', trackKeyDown);
-    document.addEventListener('keyup', trackKeyUp);
+    document.addEventListener('keydown', trackKeyDown, true);
+    document.addEventListener('keyup', trackKeyUp, true);
 
     return () => {
-      document.removeEventListener('keydown', trackKeyDown);
-      document.removeEventListener('keyup', trackKeyUp);
+      document.removeEventListener('keydown', trackKeyDown, true);
+      document.removeEventListener('keyup', trackKeyUp, true);
     };
-  });
+  }, []);
 
   // Checkbox should always toggle selection, regardless of selectionBehavior.
   let onChange = () => isShiftDown.current ? manager.extendSelection(key) : manager.toggleSelection(key);
