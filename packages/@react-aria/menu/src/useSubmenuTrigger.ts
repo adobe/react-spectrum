@@ -14,9 +14,9 @@ import {AriaMenuItemProps} from './useMenuItem';
 import {AriaMenuOptions} from './useMenu';
 import type {AriaPopoverProps, OverlayProps} from '@react-aria/overlays';
 import {FocusableElement, FocusStrategy, KeyboardEvent, Node, PressEvent, RefObject} from '@react-types/shared';
+import {focusWithoutScrolling, useEffectEvent, useId, useLayoutEffect} from '@react-aria/utils';
 import type {SubmenuTriggerState} from '@react-stately/menu';
 import {useCallback, useRef} from 'react';
-import {useEffectEvent, useId, useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 import {useSafelyMouseToSubmenu} from './useSafelyMouseToSubmenu';
 
@@ -38,7 +38,9 @@ export interface AriaSubmenuTriggerProps {
    * The delay time in milliseconds for the submenu to appear after hovering over the trigger.
    * @default 200
    */
-  delay?: number
+  delay?: number,
+  /** Whether the submenu trigger uses virtual focus. */
+  shouldUseVirtualFocus?: boolean
 }
 
 interface SubmenuTriggerProps extends Omit<AriaMenuItemProps, 'key'> {
@@ -67,7 +69,7 @@ export interface SubmenuTriggerAria<T> {
  * @param ref - Ref to the submenu trigger element.
  */
 export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: SubmenuTriggerState, ref: RefObject<FocusableElement | null>): SubmenuTriggerAria<T> {
-  let {parentMenuRef, submenuRef, type = 'menu', isDisabled, delay = 200} = props;
+  let {parentMenuRef, submenuRef, type = 'menu', isDisabled, delay = 200, shouldUseVirtualFocus} = props;
   let submenuTriggerId = useId();
   let overlayId = useId();
   let {direction} = useLocale();
@@ -96,24 +98,42 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
   }, [cancelOpenTimeout]);
 
   let submenuKeyDown = (e: KeyboardEvent) => {
+    // If focus is not within the menu, assume virtual focus is being used.
+    // This means some other input element is also within the popover, so we shouldn't close the menu.
+    if (!e.currentTarget.contains(document.activeElement)) {
+      return;
+    }
+
     switch (e.key) {
       case 'ArrowLeft':
         if (direction === 'ltr' && e.currentTarget.contains(e.target as Element)) {
+          e.preventDefault();
           e.stopPropagation();
           onSubmenuClose();
-          ref.current?.focus();
+          if (!shouldUseVirtualFocus && ref.current) {
+            focusWithoutScrolling(ref.current);
+          }
         }
         break;
       case 'ArrowRight':
         if (direction === 'rtl' && e.currentTarget.contains(e.target as Element)) {
+          e.preventDefault();
           e.stopPropagation();
           onSubmenuClose();
-          ref.current?.focus();
+          if (!shouldUseVirtualFocus && ref.current) {
+            focusWithoutScrolling(ref.current);
+          }
         }
         break;
       case 'Escape':
-        e.stopPropagation();
-        state.closeAll();
+        // TODO: can remove this when we fix collection event leaks
+        if (submenuRef.current?.contains(e.target as Element)) {
+          e.stopPropagation();
+          onSubmenuClose();
+          if (!shouldUseVirtualFocus && ref.current) {
+            focusWithoutScrolling(ref.current);
+          }
+        }
         break;
     }
   };
@@ -134,12 +154,13 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
       case 'ArrowRight':
         if (!isDisabled) {
           if (direction === 'ltr') {
+            e.preventDefault();
             if (!state.isOpen) {
               onSubmenuOpen('first');
             }
 
             if (type === 'menu' && !!submenuRef?.current && document.activeElement === ref?.current) {
-              submenuRef.current.focus();
+              focusWithoutScrolling(submenuRef.current);
             }
           } else if (state.isOpen) {
             onSubmenuClose();
@@ -152,12 +173,13 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
       case 'ArrowLeft':
         if (!isDisabled) {
           if (direction === 'rtl') {
+            e.preventDefault();
             if (!state.isOpen) {
               onSubmenuOpen('first');
             }
 
             if (type === 'menu' && !!submenuRef?.current && document.activeElement === ref?.current) {
-              submenuRef.current.focus();
+              focusWithoutScrolling(submenuRef.current);
             }
           } else if (state.isOpen) {
             onSubmenuClose();
@@ -165,9 +187,6 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
             e.continuePropagation();
           }
         }
-        break;
-      case 'Escape':
-        state.closeAll();
         break;
       default:
         e.continuePropagation();
@@ -205,7 +224,7 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
   };
 
   let onBlur = (e) => {
-    if (state.isOpen && parentMenuRef.current?.contains(e.relatedTarget)) {
+    if (state.isOpen && (parentMenuRef.current?.contains(e.relatedTarget))) {
       onSubmenuClose();
     }
   };
@@ -236,7 +255,6 @@ export function useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: Subm
     submenuProps,
     popoverProps: {
       isNonModal: true,
-      disableFocusManagement: true,
       shouldCloseOnInteractOutside
     }
   };

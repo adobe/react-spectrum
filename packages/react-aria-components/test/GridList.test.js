@@ -21,14 +21,14 @@ import {
   GridListContext,
   GridListItem,
   Label,
-  UNSTABLE_ListLayout as ListLayout,
+  ListLayout,
   Modal,
   RouterProvider,
   Tag,
   TagGroup,
   TagList,
   useDragAndDrop,
-  UNSTABLE_Virtualizer as Virtualizer
+  Virtualizer
 } from '../';
 import React from 'react';
 import {User} from '@react-aria/test-utils';
@@ -393,10 +393,6 @@ describe('GridList', () => {
   });
 
   it('should support virtualizer', async () => {
-    let layout = new ListLayout({
-      rowHeight: 25
-    });
-
     let items = [];
     for (let i = 0; i < 50; i++) {
       items.push({id: i, name: 'Item ' + i});
@@ -406,7 +402,7 @@ describe('GridList', () => {
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
 
     let {getByRole, getAllByRole} = render(
-      <Virtualizer layout={layout}>
+      <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 25}}>
         <GridList aria-label="Test" items={items}>
           {item => <GridListItem>{item.name}</GridListItem>}
         </GridList>
@@ -499,6 +495,29 @@ describe('GridList', () => {
     expect(checkbox).toBeInTheDocument();
   });
 
+  it('should support nested collections with colliding keys', async () => {
+    let {container} = render(
+      <GridList aria-label="CardView" keyboardNavigationBehavior="Tab">
+        <GridListItem id="1" textValue="Card">
+          <GridList aria-label="Previews">
+            <GridListItem id="1">Paco de Lucia</GridListItem>
+          </GridList>
+        </GridListItem>
+      </GridList>
+    );
+
+    let itemMap = new Map();
+    let items = container.querySelectorAll('[data-key]');
+
+    for (let item of items) {
+      if (item instanceof HTMLElement) {
+        let key = item.dataset.collection + ':' + item.dataset.key;
+        expect(itemMap.has(key)).toBe(false);
+        itemMap.set(key, item);
+      }
+    }
+  });
+
   describe('drag and drop', () => {
     it('should support drag button slot', () => {
       let {getAllByRole} = render(<DraggableGridList />);
@@ -506,22 +525,22 @@ describe('GridList', () => {
       expect(button).toHaveAttribute('aria-label', 'Drag Cat');
     });
 
-    it('should render drop indicators', () => {
+    it('should render drop indicators', async () => {
       let onReorder = jest.fn();
       let {getAllByRole} = render(<DraggableGridList onReorder={onReorder} renderDropIndicator={(target) => <DropIndicator target={target}>Test</DropIndicator>} />);
-      let button = getAllByRole('button')[0];
-      fireEvent.keyDown(button, {key: 'Enter'});
-      fireEvent.keyUp(button, {key: 'Enter'});
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
       act(() => jest.runAllTimers());
 
       let rows = getAllByRole('row');
       expect(rows).toHaveLength(5);
       expect(rows[0]).toHaveAttribute('class', 'react-aria-DropIndicator');
-      expect(rows[0]).toHaveAttribute('data-drop-target', 'true');
+      expect(rows[0]).not.toHaveAttribute('data-drop-target', 'true');
       expect(rows[0]).toHaveTextContent('Test');
       expect(within(rows[0]).getByRole('button')).toHaveAttribute('aria-label', 'Insert before Cat');
       expect(rows[2]).toHaveAttribute('class', 'react-aria-DropIndicator');
-      expect(rows[2]).not.toHaveAttribute('data-drop-target');
+      expect(rows[2]).toHaveAttribute('data-drop-target');
       expect(within(rows[2]).getByRole('button')).toHaveAttribute('aria-label', 'Insert between Cat and Dog');
       expect(rows[3]).toHaveAttribute('class', 'react-aria-DropIndicator');
       expect(rows[3]).not.toHaveAttribute('data-drop-target');
@@ -530,30 +549,29 @@ describe('GridList', () => {
       expect(rows[4]).not.toHaveAttribute('data-drop-target');
       expect(within(rows[4]).getByRole('button')).toHaveAttribute('aria-label', 'Insert after Kangaroo');
 
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
-      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+      await user.keyboard('{ArrowDown}');
 
-      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Cat and Dog');
+      expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Dog and Kangaroo');
       expect(rows[0]).not.toHaveAttribute('data-drop-target', 'true');
-      expect(rows[2]).toHaveAttribute('data-drop-target', 'true');
+      expect(rows[2]).not.toHaveAttribute('data-drop-target', 'true');
+      expect(rows[3]).toHaveAttribute('data-drop-target', 'true');
 
-      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      await user.keyboard('{Enter}');
       act(() => jest.runAllTimers());
 
       expect(onReorder).toHaveBeenCalledTimes(1);
     });
 
-    it('should support dropping on rows', () => {
+    it('should support dropping on rows', async () => {
       let onItemDrop = jest.fn();
       let {getAllByRole} = render(<>
         <DraggableGridList />
         <DraggableGridList onItemDrop={onItemDrop} />
       </>);
 
-      let button = getAllByRole('button')[0];
-      fireEvent.keyDown(button, {key: 'Enter'});
-      fireEvent.keyUp(button, {key: 'Enter'});
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
       act(() => jest.runAllTimers());
 
       let grids = getAllByRole('grid');
@@ -568,23 +586,22 @@ describe('GridList', () => {
 
       expect(document.activeElement).toBe(within(rows[0]).getByRole('button'));
 
-      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      await user.keyboard('{Enter}');
       act(() => jest.runAllTimers());
 
       expect(onItemDrop).toHaveBeenCalledTimes(1);
     });
 
-    it('should support dropping on the root', () => {
+    it('should support dropping on the root', async () => {
       let onRootDrop = jest.fn();
       let {getAllByRole} = render(<>
         <DraggableGridList />
         <DraggableGridList onRootDrop={onRootDrop} />
       </>);
 
-      let button = getAllByRole('button')[0];
-      fireEvent.keyDown(button, {key: 'Enter'});
-      fireEvent.keyUp(button, {key: 'Enter'});
+      await user.tab();
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{Enter}');
       act(() => jest.runAllTimers());
 
       let grids = getAllByRole('grid');
@@ -594,8 +611,7 @@ describe('GridList', () => {
       expect(document.activeElement).toBe(within(rows[0]).getByRole('button'));
       expect(grids[1]).toHaveAttribute('data-drop-target', 'true');
 
-      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      await user.keyboard('{Enter}');
       act(() => jest.runAllTimers());
 
       expect(onRootDrop).toHaveBeenCalledTimes(1);
@@ -628,6 +644,9 @@ describe('GridList', () => {
         }
 
         let onClick = mockClickDefault();
+        if (type === 'keyboard') {
+          await user.tab();
+        }
         await trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
@@ -649,6 +668,9 @@ describe('GridList', () => {
         }
 
         let onClick = mockClickDefault();
+        if (type === 'keyboard') {
+          await user.tab();
+        }
         await trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
@@ -657,6 +679,10 @@ describe('GridList', () => {
         await user.click(within(items[0]).getByRole('checkbox'));
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
+
+        if (type === 'keyboard') {
+          await user.keyboard('{ArrowDown}');
+        }
         await trigger(items[1], ' ');
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(items[1]).toHaveAttribute('aria-selected', 'true');
@@ -680,8 +706,12 @@ describe('GridList', () => {
         if (type === 'mouse') {
           await user.click(items[0]);
         } else {
-          fireEvent.keyDown(items[0], {key: ' '});
-          fireEvent.keyUp(items[0], {key: ' '});
+          await user.tab();
+          await user.keyboard(' ');
+          if (selectionMode === 'single') {
+            // single selection with replace will follow focus
+            await user.keyboard(' ');
+          }
         }
         expect(onClick).not.toHaveBeenCalled();
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
@@ -689,8 +719,7 @@ describe('GridList', () => {
         if (type === 'mouse') {
           await user.dblClick(items[0], {pointerType: 'mouse'});
         } else {
-          fireEvent.keyDown(items[0], {key: 'Enter'});
-          fireEvent.keyUp(items[0], {key: 'Enter'});
+          await user.keyboard('{Enter}');
         }
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
@@ -710,6 +739,10 @@ describe('GridList', () => {
 
         let items = getAllByRole('row');
         expect(items[0]).toHaveAttribute('data-href', '/base/foo');
+
+        if (type === 'keyboard') {
+          await user.tab();
+        }
         await trigger(items[0]);
         expect(navigate).toHaveBeenCalledWith('/foo', {foo: 'bar'});
       });

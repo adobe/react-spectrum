@@ -466,3 +466,11 @@ html {
     padding-bottom: 10px;
   }
 }
+
+input {
+  outline: none;
+}
+
+[aria-autocomplete][data-focus-visible]{
+  outline: 3px solid blue;
+}

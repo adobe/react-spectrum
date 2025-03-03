@@ -72,7 +72,7 @@ export interface MenuTriggerProps extends AriaMenuTriggerProps {
   shouldFlip?: boolean
 }
 
-export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style' | 'className' | 'dependencies'>, StyleProps {
+export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style' | 'className' | 'dependencies' | 'renderEmptyState'>, StyleProps {
   /**
    * The size of the Menu.
    *
@@ -82,12 +82,12 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style
   /**
    * The contents of the collection.
    */
-  children?: ReactNode | ((item: T) => ReactNode),
+  children: ReactNode | ((item: T) => ReactNode),
   /** Hides the default link out icons on menu items that open links in a new tab. */
   hideLinkOutIcon?: boolean
 }
 
-export const MenuContext = createContext<ContextValue<MenuProps<any>, DOMRefValue<HTMLDivElement>>>(null);
+export const MenuContext = createContext<ContextValue<Partial<MenuProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
 const menuItemGrid = {
   size: {
@@ -104,6 +104,7 @@ export let menu = style({
   gridTemplateColumns: menuItemGrid,
   boxSizing: 'border-box',
   maxHeight: '[inherit]',
+  width: 'full',
   overflow: {
     isPopover: 'auto'
   },
@@ -114,7 +115,8 @@ export let menu = style({
     isPopover: 8
   },
   fontFamily: 'sans',
-  fontSize: 'control'
+  fontSize: 'control',
+  gridAutoRows: 'min-content'
 }, getAllowedOverrides());
 
 export let section = style({
@@ -187,6 +189,7 @@ export let menuitem = style({
   },
   alignItems: 'baseline',
   minHeight: 'control',
+  height: 'min',
   textDecoration: 'none',
   cursor: {
     default: 'default',

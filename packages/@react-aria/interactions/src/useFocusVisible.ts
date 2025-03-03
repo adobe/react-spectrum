@@ -93,7 +93,7 @@ function handleFocusEvent(e: FocusEvent) {
   // Firefox fires two extra focus events when the user first clicks into an iframe:
   // first on the window, then on the document. We ignore these events so they don't
   // cause keyboard focus rings to appear.
-  if (e.target === window || e.target === document || ignoreFocusEvent) {
+  if (e.target === window || e.target === document || ignoreFocusEvent || !e.isTrusted) {
     return;
   }
 
@@ -181,6 +181,7 @@ const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
   documentObject.removeEventListener('keydown', handleKeyboardEvent, true);
   documentObject.removeEventListener('keyup', handleKeyboardEvent, true);
   documentObject.removeEventListener('click', handleClickEvent, true);
+
   windowObject.removeEventListener('focus', handleFocusEvent, true);
   windowObject.removeEventListener('blur', handleWindowBlur, false);
 

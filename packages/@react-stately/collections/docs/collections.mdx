@@ -296,56 +296,6 @@ function addPerson(name) {
 </ListBox>
 ```
 
-{/*
-
-## Hierarchical data
-
-Sections only allow a single level of hierarchy. Some components like trees allow arbitrary hierarchical
-data of any depth to be displayed. This can be accomplished by nesting
-&lt;<TypeLink links={docs.links} type={docs.exports.Item} />&gt; components, and using the `title` prop
-to specify the contents of items with children.
-
-```tsx
-<Tree>
-  <Item title="Animals">
-    <Item>Aardvark</Item>
-    <Item>Kangaroo</Item>
-    <Item>Snake</Item>
-  </Item>
-  <Item title="People">
-    <Item>Danni</Item>
-    <Item>Devon</Item>
-    <Item>Ross</Item>
-  </Item>
-</Tree>
-```
-
-To support dynamic data, &lt;<TypeLink links={docs.links} type={docs.exports.Item} />&gt; supports a
-`childItems` prop, which causes your item renderer function to be called recursively for each child.
-
-```tsx
-let [items, setItems] = useState([
-  {name: 'Animals', children: [
-    {name: 'Aardvark'},
-    {name: 'Kangaroo'},
-    {name: 'Snake'}
-  ]},
-  {name: 'People', children: [
-    {name: 'Danni'},
-    {name: 'Devon'},
-    {name: 'Ross'}
-  ]}
-]);
-
-<Tree items={items}>
-  {item =>
-    <Item key={item.name} childItems={item.children}>{item.name}</Item>
-  }
-</Tree>
-```
-
-*/}
-
 ## Asynchronous loading
 
 Many collection components support loading data asynchronously. This is supported by passing an `isLoading` prop,

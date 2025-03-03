@@ -34,7 +34,7 @@ export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'children' | 
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 
-export const ColorFieldContext = createContext<ContextValue<ColorFieldProps, TextFieldRef>>(null);
+export const ColorFieldContext = createContext<ContextValue<Partial<ColorFieldProps>, TextFieldRef>>(null);
 
 /**
  * A color field allows users to edit a hex color or individual color channel value.

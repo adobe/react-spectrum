@@ -40,7 +40,7 @@ export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className'
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 
-export const SearchFieldContext = createContext<ContextValue<SearchFieldProps, TextFieldRef>>(null);
+export const SearchFieldContext = createContext<ContextValue<Partial<SearchFieldProps>, TextFieldRef>>(null);
 
 /**
  * A SearchField is a text field designed for searches.

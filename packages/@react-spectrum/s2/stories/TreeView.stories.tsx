@@ -13,6 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {
   ActionMenu,
+  Collection,
   Content,
   Heading,
   IllustratedMessage,
@@ -20,7 +21,8 @@ import {
   MenuItem,
   Text,
   TreeView,
-  TreeViewItem
+  TreeViewItem,
+  TreeViewItemContent
 } from '../src';
 import {categorizeArgTypes} from './utils';
 import Delete from '../s2wf-icons/S2_Icon_Delete_20_N.svg';
@@ -77,34 +79,8 @@ const TreeExampleStatic = (args) => (
       onExpandedChange={action('onExpandedChange')}
       onSelectionChange={action('onSelectionChange')}>
       <TreeViewItem id="Photos" textValue="Photos">
-        <Text>Photos</Text>
-        <Folder />
-        <ActionMenu onAction={action('onActionGroup action')}>
-          <MenuItem id="edit">
-            <Edit />
-            <Text>Edit</Text>
-          </MenuItem>
-          <MenuItem id="delete">
-            <Delete />
-            <Text>Delete</Text>
-          </MenuItem>
-        </ActionMenu>
-      </TreeViewItem>
-      <TreeViewItem id="projects" textValue="Projects">
-        <Text>Projects</Text>
-        <Folder />
-        <ActionMenu onAction={action('onActionGroup action')}>
-          <MenuItem id="edit">
-            <Edit />
-            <Text>Edit</Text>
-          </MenuItem>
-          <MenuItem id="delete">
-            <Delete />
-            <Text>Delete</Text>
-          </MenuItem>
-        </ActionMenu>
-        <TreeViewItem id="projects-1" textValue="Projects-1">
-          <Text>Projects-1</Text>
+        <TreeViewItemContent>
+          <Text>Photos</Text>
           <Folder />
           <ActionMenu onAction={action('onActionGroup action')}>
             <MenuItem id="edit">
@@ -116,8 +92,58 @@ const TreeExampleStatic = (args) => (
               <Text>Delete</Text>
             </MenuItem>
           </ActionMenu>
+        </TreeViewItemContent>
+      </TreeViewItem>
+      <TreeViewItem id="projects" textValue="Projects">
+        <TreeViewItemContent>
+          <Text>Projects</Text>
+          <Folder />
+          <ActionMenu onAction={action('onActionGroup action')}>
+            <MenuItem id="edit">
+              <Edit />
+              <Text>Edit</Text>
+            </MenuItem>
+            <MenuItem id="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </MenuItem>
+          </ActionMenu>
+        </TreeViewItemContent>
+        <TreeViewItem id="projects-1" textValue="Projects-1">
+          <TreeViewItemContent>
+            <Text>Projects-1</Text>
+            <Folder />
+            <ActionMenu onAction={action('onActionGroup action')}>
+              <MenuItem id="edit">
+                <Edit />
+                <Text>Edit</Text>
+              </MenuItem>
+              <MenuItem id="delete">
+                <Delete />
+                <Text>Delete</Text>
+              </MenuItem>
+            </ActionMenu>
+          </TreeViewItemContent>
           <TreeViewItem id="projects-1A" textValue="Projects-1A">
-            <Text>Projects-1A</Text>
+            <TreeViewItemContent>
+              <Text>Projects-1A</Text>
+              <FileTxt />
+              <ActionMenu onAction={action('onActionGroup action')}>
+                <MenuItem id="edit">
+                  <Edit />
+                  <Text>Edit</Text>
+                </MenuItem>
+                <MenuItem id="delete">
+                  <Delete />
+                  <Text>Delete</Text>
+                </MenuItem>
+              </ActionMenu>
+            </TreeViewItemContent>
+          </TreeViewItem>
+        </TreeViewItem>
+        <TreeViewItem id="projects-2" textValue="Projects-2">
+          <TreeViewItemContent>
+            <Text>Projects-2</Text>
             <FileTxt />
             <ActionMenu onAction={action('onActionGroup action')}>
               <MenuItem id="edit">
@@ -129,35 +155,23 @@ const TreeExampleStatic = (args) => (
                 <Text>Delete</Text>
               </MenuItem>
             </ActionMenu>
-          </TreeViewItem>
-        </TreeViewItem>
-        <TreeViewItem id="projects-2" textValue="Projects-2">
-          <Text>Projects-2</Text>
-          <FileTxt />
-          <ActionMenu onAction={action('onActionGroup action')}>
-            <MenuItem id="edit">
-              <Edit />
-              <Text>Edit</Text>
-            </MenuItem>
-            <MenuItem id="delete">
-              <Delete />
-              <Text>Delete</Text>
-            </MenuItem>
-          </ActionMenu>
+          </TreeViewItemContent>
         </TreeViewItem>
         <TreeViewItem id="projects-3" textValue="Projects-3">
-          <Text>Projects-3</Text>
-          <FileTxt />
-          <ActionMenu onAction={action('onActionGroup action')}>
-            <MenuItem id="edit">
-              <Edit />
-              <Text>Edit</Text>
-            </MenuItem>
-            <MenuItem id="delete">
-              <Delete />
-              <Text>Delete</Text>
-            </MenuItem>
-          </ActionMenu>
+          <TreeViewItemContent>
+            <Text>Projects-3</Text>
+            <FileTxt />
+            <ActionMenu onAction={action('onActionGroup action')}>
+              <MenuItem id="edit">
+                <Edit />
+                <Text>Edit</Text>
+              </MenuItem>
+              <MenuItem id="delete">
+                <Delete />
+                <Text>Delete</Text>
+              </MenuItem>
+            </ActionMenu>
+          </TreeViewItemContent>
         </TreeViewItem>
       </TreeViewItem>
     </TreeView>
@@ -202,13 +216,14 @@ let rows = [
   ]}
 ];
 
-const TreeExampleDynamic = (args) => (
-  <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto', display: 'flex', flexDirection: 'column'}}>
-    <TreeView disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')} {...args}>
-      {(item: any) => (
-        <TreeViewItem childItems={item.childItems} textValue={item.name}>
-          <Text>{item.name}</Text>
-          {item.icon}
+const DynamicTreeItem = (props) => {
+  let {childItems, name, icon} = props;
+  return (
+    <>
+      <TreeViewItem id={props.id} textValue={name} href={props.href}>
+        <TreeViewItemContent>
+          <Text>{name}</Text>
+          {icon}
           <ActionMenu onAction={action('onActionGroup action')}>
             <MenuItem id="edit">
               <Edit />
@@ -219,7 +234,35 @@ const TreeExampleDynamic = (args) => (
               <Text>Delete</Text>
             </MenuItem>
           </ActionMenu>
-        </TreeViewItem>
+        </TreeViewItemContent>
+        <Collection items={childItems}>
+          {(item: any) => (
+            <DynamicTreeItem
+              id={item.id}
+              icon={item.icon}
+              childItems={item.childItems}
+              textValue={item.name}
+              name={item.name}
+              href={props.href}>
+              {item.name}
+            </DynamicTreeItem>
+          )}
+        </Collection>
+      </TreeViewItem>
+    </>
+  );
+};
+
+const TreeExampleDynamic = (args) => (
+  <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto', display: 'flex', flexDirection: 'column'}}>
+    <TreeView disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')} {...args}>
+      {(item: any) => (
+        <DynamicTreeItem
+          id={item.id}
+          icon={item.icon}
+          childItems={item.childItems}
+          textValue={item.name}
+          name={item.name} />
       )}
     </TreeView>
   </div>
@@ -259,20 +302,13 @@ const TreeExampleWithLinks = (args) => (
   <div style={{width: '300px', resize: 'both', height: '320px', overflow: 'auto'}}>
     <TreeView {...args} disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
       {(item) => (
-        <TreeViewItem href="https://adobe.com/" childItems={item.childItems} textValue={item.name}>
-          <Text>{item.name}</Text>
-          {item.icon}
-          <ActionMenu onAction={action('onActionGroup action')}>
-            <MenuItem id="edit">
-              <Edit />
-              <Text>Edit</Text>
-            </MenuItem>
-            <MenuItem id="delete">
-              <Delete />
-              <Text>Delete</Text>
-            </MenuItem>
-          </ActionMenu>
-        </TreeViewItem>
+        <DynamicTreeItem
+          id={item.id}
+          icon={item.icon}
+          childItems={item.childItems}
+          textValue={item.name}
+          name={item.name}
+          href="https://adobe.com/" />
       )}
     </TreeView>
   </div>
