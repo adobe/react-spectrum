@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "@internationalized/string": "^3.2.5",
+    "@react-aria/collections": "3.0.0-alpha.7",
     "@react-aria/i18n": "^3.12.5",
     "@react-aria/ssr": "^3.9.7",
     "@react-aria/utils": "^3.27.0",
@@ -91,6 +92,7 @@
     "@react-spectrum/theme-dark": "^3.5.15",
     "@react-spectrum/theme-default": "^3.5.15",
     "@react-spectrum/theme-light": "^3.4.15",
+    "@react-spectrum/toast": "3.0.0-beta.18",
     "@react-spectrum/tooltip": "^3.7.1",
     "@react-spectrum/tree": "^3.0.0-beta.3",
     "@react-spectrum/view": "^3.6.15",

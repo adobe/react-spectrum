@@ -66,6 +66,7 @@ __metadata:
     "@babel/cli": "npm:^7.12.10"
     "@babel/core": "npm:^7.24.3"
     "@internationalized/string": "npm:^3.2.5"
+    "@react-aria/collections": "npm:3.0.0-alpha.7"
     "@react-aria/i18n": "npm:^3.12.5"
     "@react-aria/ssr": "npm:^3.9.7"
     "@react-aria/utils": "npm:^3.27.0"
@@ -119,6 +120,7 @@ __metadata:
     "@react-spectrum/theme-dark": "npm:^3.5.15"
     "@react-spectrum/theme-default": "npm:^3.5.15"
     "@react-spectrum/theme-light": "npm:^3.4.15"
+    "@react-spectrum/toast": "npm:3.0.0-beta.18"
     "@react-spectrum/tooltip": "npm:^3.7.1"
     "@react-spectrum/tree": "npm:^3.0.0-beta.3"
     "@react-spectrum/view": "npm:^3.6.15"
@@ -8297,7 +8299,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/toast@workspace:packages/@react-spectrum/toast":
+"@react-spectrum/toast@npm:3.0.0-beta.18, @react-spectrum/toast@workspace:packages/@react-spectrum/toast":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/toast@workspace:packages/@react-spectrum/toast"
   dependencies:
@@ -29030,7 +29032,6 @@ __metadata:
     "@react-aria/menu": "npm:^3.17.0"
     "@react-aria/toast": "npm:3.0.0-beta.19"
     "@react-aria/toolbar": "npm:3.0.0-beta.12"
-    "@react-aria/tree": "npm:3.0.0-beta.3"
     "@react-aria/utils": "npm:^3.27.0"
     "@react-aria/virtualizer": "npm:^4.1.1"
     "@react-stately/autocomplete": "npm:3.0.0-alpha.0"

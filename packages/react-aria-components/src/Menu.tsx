@@ -186,7 +186,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   let {filterFn, collectionProps: autocompleteMenuProps, collectionRef} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
   // Memoed so that useAutocomplete callback ref is properly only called once on mount and not everytime a rerender happens
   ref = useObjectRef(useMemo(() => mergeRefs(ref, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null), [collectionRef, ref]));
-  let filteredCollection = useMemo(() => filterFn ? collection.filter(filterFn) : collection, [collection, filterFn]);
+  let filteredCollection = useMemo(() => filterFn ? collection.UNSTABLE_filter(filterFn) : collection, [collection, filterFn]);
   let state = useTreeState({
     ...props,
     collection: filteredCollection as ICollection<Node<object>>,
