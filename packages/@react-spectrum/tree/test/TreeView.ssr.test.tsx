@@ -13,7 +13,7 @@
 import {testSSR} from '@react-spectrum/test-utils-internal';
 
 // TODO: fix the macros to work with SSR tests
-describe.skip('Table SSR', function () {
+describe('TreeView SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
       import {Provider} from '@react-spectrum/provider';
