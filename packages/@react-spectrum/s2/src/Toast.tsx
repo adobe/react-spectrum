@@ -299,7 +299,7 @@ export function ToastContainer(props: SpectrumToastContainerProps) {
         style={{
           [placement === 'top' ? 'paddingBottom' : 'paddingTop']: queue.isExpanded ? 0 : (Math.min(3, queue.visibleToasts.length) - 1) * 12,
           perspective: 80,
-          perspectiveOrigin: 'center ' + (placement === 'top' ? 'calc(100% + var(--origin)' : 'calc(-1 * var(--origin)'),
+          perspectiveOrigin: 'center ' + (placement === 'top' ? 'calc(100% + var(--origin)' : 'calc(-1 * var(--origin))'),
           transition: 'perspective-origin 400ms'
         }}
         className={toastList({placement, align, isExpanded: queue.isExpanded})}
