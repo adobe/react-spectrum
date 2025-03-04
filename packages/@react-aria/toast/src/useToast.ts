@@ -85,7 +85,7 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
     contentProps: {
       role: 'alert',
       'aria-atomic': 'true',
-      'aria-hidden': isVisible ? 'false' : 'true'
+      'aria-hidden': isVisible ? undefined : 'true'
     },
     titleProps: {
       id: titleId
