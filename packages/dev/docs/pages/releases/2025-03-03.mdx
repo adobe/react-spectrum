@@ -17,8 +17,23 @@ date: 2025-03-03
 
 # March 3, 2025 Release
 
+Buckle in because this is a big one! In this React Aria release, we’re excited to announce three new components: [Toast](../react-aria/Toast.html), [Tree](../react-aria/Tree.html), and [Virtualizer](../react-aria/Virtualizer.html). In addition, we have improved [Autocomplete](../react-aria/Autocomplete.html) to enable UI patterns like [Searchable Menus](../react-aria/Menu.html#complex-content), [Searchable Selects](../react-aria/examples/searchable-select.html), and [Command Palettes](../react-aria/examples/command-palette.html), added support for custom [Menu](../react-aria/Menu.html#custom-trigger), [Popover](../react-aria/Popover.html#custom-trigger), and [Tooltip](../react-aria/Tooltip.html#custom-trigger) triggers, introduced `colSpan` support in Table, and upgraded to Tailwind CSS v4. Last but not least, we have a major refactor of [usePress](../react-aria/usePress.html), which fixes many longstanding issues and improves compatibility with third party libraries.
+
+For React Spectrum, we have GA versions of [Toast](../react-spectrum/Toast.html) and [TreeView](../react-spectrum/TreeView.html), support for tooltips in TagGroup and Tabs, and improved localization support in our DatePicker components.
+
+This release would not be possible without the fantastic contributions we received from the community. A special shoutout to [@oyvinmar](https://github.com/oyvinmar) and [@nwidynski](https://github.com/nwidynski) for contributing features like `colSpan` and nested collection support. Huge thanks to everyone else who contributed as well. ❤️
+
 ### Date and Time Formatting in RTL Languages
-If you are not directly using React Spectrum DateField, DatePicker, or DateRangePicker, you will need to make updates to your components for them to properly format in RTL languages. If you are using RAC, the DateInput must have display set to either `inline`, `inline-block`, or `block`. If you are using the hooks, you must ensure that the date segments are rendered as `spans` and that the field grouping element has display set to either `inline`, `inline-block`, or `block`. If you choose to not make these updates, your component will still look the same as before, but they will not format correctly in RTL languages.
+
+In this release, we’ve improved support for right-to-left languages in our date picker components to correct the order of the segments. To account for this, you must update your styles for DateInput to use normal [CSS flow layout](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_display/Flow_layout), e.g. `display: block` instead of `display: flex`. If you are using the `useDateSegment` hook, ensure that you render spans instead of divs. These changes allow the browser to correctly order the segments according to the [Unicode Bidirectional Algorithm](https://unicode.org/reports/tr9/). If you choose to not make these style changes, your component will look the same as before, but will not format correctly in RTL languages.
+
+### usePress update
+
+[usePress](../react-aria/usePress.html) was heavily refactored to improve focus management and compatibility with third party libraries. Prior to this refactor, we used `preventDefault` and manually managed focus due to [differences in focus behavior](https://react-spectrum.adobe.com/blog/building-a-button-part-3.html#ensuring-consistent-focus-behavior) between Safari and other browsers. Unfortunately, this resulted in many unintended side effects, such as canceling compatibility mouse events, breaking the `:active` and `:focus-visible` pseudo classes, causing issues with the mobile virtual keyboard, etc.
+
+Thanks to an update in Safari 17, all elements with an explicit `tabIndex` can now receive focus like in other browsers. This allows us to remove our reliance on `preventDefault`, and change the timing of when `onPress` is fired. As a result, browser events that used to be prevented when interacting with our components now fire as expected, greatly improving compatibility with third party libraries that rely on these events, and resolving [over 15 open issues](https://github.com/adobe/react-spectrum/pull/7542).
+
+Note that this refactor changes the order that focus occurs. Previously, focus always occurred before `onPressStart`. Now focus occurs after `onPressStart` on mouse and keyboard interactions, and after `onPressEnd` on touch screens, matching native browser behavior. Additionally, unit tests may need to simulate different events than before. We recommend the [user-event](https://testing-library.com/docs/user-event/intro/) library to simulate events matching browser behavior.
 
 ## Enhancements
 
@@ -29,14 +44,14 @@ If you are not directly using React Spectrum DateField, DatePicker, or DateRange
   - Add `colSpan prop` to Table - [@oyvinmar](https://github.com/oyvinmar) - [PR](https://github.com/adobe/react-spectrum/pull/7638), [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7780), [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7785)
   - Support Tooltips on Tags and Tabs - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7793)
   - Support nested collections - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/7379)
-  - Add WaterfallLayout to RAC and update GridLayout - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7729)
+  - Add WaterfallLayout for Virtualizer and update GridLayout - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7729)
 - LabeledValue
-  -Allow `ReactElement` in LabeledValue value - [@sana-malik](https://github.com/sana-malik) - [PR](https://github.com/adobe/react-spectrum/pull/7679)
+  - Allow `ReactElement` in LabeledValue value - [@sana-malik](https://github.com/sana-malik) - [PR](https://github.com/adobe/react-spectrum/pull/7679)
 - Popover
   - Automatically render Popovers as Dialogs - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7813)
 - Toast
-  - Add `placement` prop to ToastContainer - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7609), [PR](https://github.com/adobe/react-spectrum/pull/7615)
-  - use View Transition API for Toast animations - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7631), [PR](https://github.com/adobe/react-spectrum/pull/7760)
+  - Add `placement` prop to Spectrum ToastContainer - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7609), [PR](https://github.com/adobe/react-spectrum/pull/7615)
+  - Use View Transition API for Toast animations - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7631), [PR](https://github.com/adobe/react-spectrum/pull/7760)
 - usePress
   - No longer `preventDefault` in `usePress` and allow browser to manage focus - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7542), [PR](https://github.com/adobe/react-spectrum/pull/7774), [PR](https://github.com/adobe/react-spectrum/pull/7677), [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7832)
 - Miscellaneous
@@ -62,7 +77,7 @@ If you are not directly using React Spectrum DateField, DatePicker, or DateRange
 - Tabs
   - Fix TabList auto selection - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7529)
 - Tree
-  - Update TreeView API - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7613)
+  - Update Spectrum TreeView API - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7613)
   - Add label to the expand/collapse button in `useTreeItem` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/7840)
 - Toast
   - Remove Toast priority queue - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7805)
@@ -74,7 +89,7 @@ If you are not directly using React Spectrum DateField, DatePicker, or DateRange
   - Ensure React `inert` prop compatibility - [@chirokas](https://github.com/chirokas) - [PR](https://github.com/adobe/react-spectrum/pull/7519)
   - Fix infinite re-render on reoccuring ids - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/7657)
   - Save render through optimized `useSlot()` - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/7270)
-  - Fix memory leak suspense safe `useId` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7757)
+  - Fix memory leak in `useId` when used with React Suspense - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7757)
 
 ## Docs
 
