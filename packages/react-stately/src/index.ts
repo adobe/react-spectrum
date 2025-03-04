@@ -44,7 +44,7 @@ export {useDisclosureState, useDisclosureGroupState} from '@react-stately/disclo
 export {useDraggableCollectionState, useDroppableCollectionState} from '@react-stately/dnd';
 export {Item, Section, useCollection} from '@react-stately/collections';
 export {useAsyncList, useListData, useTreeData} from '@react-stately/data';
-export {useListState, useSingleSelectListState, useFilteredListState} from '@react-stately/list';
+export {useListState, useSingleSelectListState, UNSTABLE_useFilteredListState} from '@react-stately/list';
 export {useMenuTriggerState, useSubmenuTriggerState} from '@react-stately/menu';
 export {useNumberFieldState} from '@react-stately/numberfield';
 export {useOverlayTriggerState} from '@react-stately/overlays';
