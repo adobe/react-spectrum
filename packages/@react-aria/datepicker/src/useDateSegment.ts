@@ -391,7 +391,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     // While the bidirectional algorithm seems to work properly on inline elements with actual values, it returns different results for placeholder strings. 
     // To ensure placeholder render in correct format, we apply the CSS equivalent of LRE (left-to-right embedding). See https://www.unicode.org/reports/tr9/#Explicit_Directional_Embeddings.
     // However, we apply this to both placeholders and date segments with an actual value because the date segments will shift around when deleting otherwise. 
-    if (dateSegments.includes(segment.type)) {
+    if (dateSegments.includes(segment.type) && options.month !== 'long') {
       segmentStyle = {caretColor: 'transparent', direction: 'ltr', unicodeBidi: 'embed'};
     } else if (segment.type === 'timeZoneName') {
       // This is needed so that the time zone renders on the left side of the time segments (hour:minute).
