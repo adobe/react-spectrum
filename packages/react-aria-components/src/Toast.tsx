@@ -34,7 +34,8 @@ export interface ToastRegionRenderProps<T> {
    * Whether the thumb is keyboard focused.
    * @selector [data-focus-visible]
    */
-  isFocusVisible: boolean
+  isFocusVisible: boolean,
+  isHovered: boolean
 }
 
 export interface ToastRegionProps<T> extends AriaToastRegionProps, StyleRenderProps<ToastRegionRenderProps<T>> {
