@@ -118,12 +118,12 @@ interface ListBoxInnerProps<T> {
 }
 
 function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: ListBoxInnerProps<T>) {
-  let {filterFn, collectionProps, collectionRef} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
+  let {filter, collectionProps, collectionRef} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
   props = useMemo(() => collectionProps ? ({...props, ...collectionProps}) : props, [props, collectionProps]);
   let {dragAndDropHooks, layout = 'stack', orientation = 'vertical'} = props;
   // Memoed so that useAutocomplete callback ref is properly only called once on mount and not everytime a rerender happens
   listBoxRef = useObjectRef(useMemo(() => mergeRefs(listBoxRef, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null), [collectionRef, listBoxRef]));
-  let state = UNSTABLE_useFilteredListState(inputState, filterFn);
+  let state = UNSTABLE_useFilteredListState(inputState, filter);
   let {collection, selectionManager} = state;
   let isListDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
   let isListDroppable = !!dragAndDropHooks?.useDroppableCollectionState;
