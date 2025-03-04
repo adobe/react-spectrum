@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaToastProps, AriaToastRegionProps, useToast, useToastRegion} from '@react-aria/toast';
+import {AriaToastProps, AriaToastRegionProps, mergeProps, useFocusRing, useToast, useToastRegion} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {createPortal} from 'react-dom';
 import {forwardRefType} from '@react-types/shared';
-import {mergeProps, useFocusRing} from 'react-aria';
 import {QueuedToast, ToastQueue, ToastState, useToastQueue} from '@react-stately/toast';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, useContext} from 'react';
 import {TextContext} from './Text';
