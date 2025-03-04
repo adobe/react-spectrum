@@ -147,7 +147,14 @@ const toastRegion = style({
   boxSizing: 'border-box',
   maxHeight: '[100vh]',
   paddingTop: 8,
-  borderRadius: 'lg'
+  borderRadius: 'lg',
+  '--origin': {
+    type: 'top',
+    value: {
+      default: '[55px]',
+      isHovered: '[95px]'
+    }
+  }
 });
 
 const toastList = style({
@@ -199,7 +206,15 @@ const toastStyle = style({
 });
 
 const toastBody = style({
-  display: 'flex',
+  display: {
+    default: 'grid',
+    isSingle: 'flex'
+  },
+  gridTemplateColumns: ['auto', '1fr', 'auto'],
+  gridTemplateAreas: [
+    'content content content',
+    'expand  .       action'
+  ],
   flexGrow: 1,
   flexWrap: 'wrap',
   alignItems: 'center',
@@ -210,7 +225,9 @@ const toastBody = style({
 const toastContent = style({
   display: 'flex',
   gap: 8,
-  alignItems: 'baseline'
+  alignItems: 'baseline',
+  gridArea: 'content',
+  cursor: 'default'
 });
 
 export const ICONS = {
@@ -282,9 +299,18 @@ export function ToastContainer(props: SpectrumToastContainerProps) {
         style={{
           [placement === 'top' ? 'paddingBottom' : 'paddingTop']: queue.isExpanded ? 0 : (Math.min(3, queue.visibleToasts.length) - 1) * 12,
           perspective: 80,
-          perspectiveOrigin: 'center ' + (placement === 'top' ? 'calc(100% + 80px)' : '-80px')
+          perspectiveOrigin: 'center ' + (placement === 'top' ? 'calc(100% + var(--origin)' : 'calc(-1 * var(--origin)'),
+          transition: 'perspective-origin 400ms'
         }}
-        className={toastList({placement, align, isExpanded: queue.isExpanded})}>
+        className={toastList({placement, align, isExpanded: queue.isExpanded})}
+        onClick={() => {
+          if (!queue.isExpanded) {
+            document.startViewTransition({
+              update: () => queue.toggleExpandedState(),
+              types: [queue.isExpanded ? 'toast-collapse' : 'toast-expand']
+            });
+          }
+        }}>
         {({toast}) => (
           <SpectrumToast toast={toast} queue={queue} placement={placement} align={align} />
         )}
@@ -323,16 +349,8 @@ export function SpectrumToast(props: ToastProps<SpectrumToastValue>) {
         ...renderProps,
         variant: toast.content.variant || 'info',
         index
-      })}
-      onClick={() => {
-        if (!queue.isExpanded) {
-          document.startViewTransition({
-            update: () => queue.toggleExpandedState(),
-            types: [queue.isExpanded ? 'toast-collapse' : 'toast-expand']
-          });
-        }
-      }}>
-      <div role="presentation" className={toastBody}>
+      })}>
+      <div role="presentation" className={toastBody({isSingle: !isLast || queue.visibleToasts.length === 1})}>
         <ToastContent className={toastContent} style={{opacity: isLast || queue.isExpanded ? 1 : 0}}>
           {Icon &&
             <CenterBaseline>
@@ -347,12 +365,15 @@ export function SpectrumToast(props: ToastProps<SpectrumToastValue>) {
             variant="secondary"
             isQuiet
             staticColor="white"
-            styles={style({marginStart: 'auto'})}
+            styles={style({gridArea: 'expand'})}
             UNSAFE_style={{visibility: queue.isExpanded ? 'hidden' : 'visible'}}
             onPress={() => document.startViewTransition({
               update: () => queue.toggleExpandedState(),
               types: [queue.isExpanded ? 'toast-collapse' : 'toast-expand']
-            })}><Chevron UNSAFE_style={{rotate: '180deg'}} /><Text>1 of {queue.visibleToasts.length}</Text></ActionButton>
+            })}>
+            <Text UNSAFE_style={{order: -1}}>Show all</Text>
+            <Chevron UNSAFE_style={{rotate: '180deg'}} />
+          </ActionButton>
         }
         {toast.content.actionLabel && (isLast || queue.isExpanded) &&
           <Button
@@ -360,7 +381,7 @@ export function SpectrumToast(props: ToastProps<SpectrumToastValue>) {
             fillStyle="outline"
             staticColor="white"
             onPress={toast.content.onAction}
-            styles={style({marginStart: 'auto'})}>
+            styles={style({marginStart: 'auto', gridArea: 'action'})}>
             {toast.content.actionLabel}
           </Button>
         }

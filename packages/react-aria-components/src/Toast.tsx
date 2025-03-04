@@ -15,7 +15,7 @@ import {ButtonContext} from './Button';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {createPortal} from 'react-dom';
 import {forwardRefType} from '@react-types/shared';
-import {mergeProps, useFocusRing} from 'react-aria';
+import {mergeProps, useFocusRing, useHover} from 'react-aria';
 import {QueuedToast, ToastQueue, ToastState, useToastQueue} from '@react-stately/toast';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactElement, useContext} from 'react';
 import {TextContext} from './Text';
@@ -48,12 +48,14 @@ export const ToastRegion = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   let {regionProps} = useToastRegion(props, state, objectRef);
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
+  let {hoverProps, isHovered} = useHover({});
   let renderProps = useRenderProps({
     ...props,
     children: undefined,
     defaultClassName: 'react-aria-ToastRegion',
     values: {
       visibleToasts: state.visibleToasts,
+      isHovered,
       isFocused,
       isFocusVisible
     }
@@ -63,8 +65,9 @@ export const ToastRegion = /*#__PURE__*/ (forwardRef as forwardRefType)(function
     <ToastStateContext.Provider value={state}>
       <div
         {...renderProps}
-        {...mergeProps(regionProps, focusProps)}
+        {...mergeProps(regionProps, focusProps, hoverProps)}
         ref={objectRef}
+        data-hovered={isHovered || undefined}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}>
         {typeof props.children === 'function' ? <ToastList {...props}  style={{display: 'contents'}} /> : props.children}
@@ -81,7 +84,8 @@ export const ToastList = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
   let state = useContext(ToastStateContext)!;
   return (
     // @ts-ignore
-    <ol ref={ref} style={props.style} className={props.className}>
+    // eslint-disable-next-line
+    <ol ref={ref} style={props.style} className={props.className} onClick={props.onClick}>
       {state.visibleToasts.map((toast) => (
         <li key={toast.key} style={{display: 'contents'}}>
           {props.children({toast})}
