@@ -411,6 +411,11 @@ export function Migrating() {
           <li className={style({font: 'body', marginY: 8})}>Update placement prop to be have one value (i.e. Update <Code>placement="bottom left"</Code> to be <Code>placement="bottom"</Code>)</li>
         </ul>
 
+        <H3>TreeView</H3>
+        <ul className="sb-unstyled">
+          <li className={style({font: 'body', marginY: 8})}>Update content within <Code>TreeViewItem</Code> to be wrapped in <Code>TreeViewContentItem</Code></li>
+        </ul>
+
         <H3>View</H3>
         <ul className="sb-unstyled">
           <li className={style({font: 'body', marginY: 8})}>Update <Code>View</Code> to be a <Code>div</Code> and apply styles using the style macro</li>
