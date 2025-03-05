@@ -14,10 +14,10 @@ import datepickerImage from 'url:../assets/datepicker-rtl.png';
 
 ---
 description: 
-date: 2025-03-03
+date: 2025-03-05
 ---
 
-# March 3, 2025 Release
+# March 5, 2025 Release
 
 Buckle in because this is a big one! In this React Aria release, we’re excited to announce three new components: [Toast](../react-aria/Toast.html), [Tree](../react-aria/Tree.html), and [Virtualizer](../react-aria/Virtualizer.html). In addition, we have improved [Autocomplete](../react-aria/Autocomplete.html) to enable UI patterns like [Searchable Menus](../react-aria/Menu.html#complex-content), [Searchable Selects](../react-aria/examples/searchable-select.html), and [Command Palettes](../react-aria/examples/command-palette.html), added support for custom [Menu](../react-aria/Menu.html#custom-trigger), [Popover](../react-aria/Popover.html#custom-trigger), and [Tooltip](../react-aria/Tooltip.html#custom-trigger) triggers, introduced `colSpan` support in Table, and upgraded to Tailwind CSS v4. Last but not least, we have a major refactor of [usePress](../react-aria/usePress.html), which fixes many longstanding issues and improves compatibility with third party libraries.
 
@@ -57,7 +57,7 @@ Note that this refactor changes the order that focus occurs. Previously, focus a
   - Add `placement` prop to Spectrum ToastContainer - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7609), [PR](https://github.com/adobe/react-spectrum/pull/7615)
   - Use View Transition API for Toast animations - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7631), [PR](https://github.com/adobe/react-spectrum/pull/7760)
 - usePress
-  - No longer `preventDefault` in `usePress` and allow browser to manage focus - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7542), [PR](https://github.com/adobe/react-spectrum/pull/7774), [PR](https://github.com/adobe/react-spectrum/pull/7677), [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7832)
+  - No longer `preventDefault` in `usePress` and allow browser to manage focus - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7542), [PR](https://github.com/adobe/react-spectrum/pull/7774), [PR](https://github.com/adobe/react-spectrum/pull/7677), [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7832), [PR](https://github.com/adobe/react-spectrum/pull/7720)
 - Miscellaneous
   - Update to Tailwind v4 - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7669)
   - Focus Management within ShadowDOM - [@MahmoudElsayad](https://github.com/MahmoudElsayad) - [PR](https://github.com/adobe/react-spectrum/pull/6046)
@@ -73,7 +73,7 @@ Note that this refactor changes the order that focus occurs. Previously, focus a
   - Fix SSR Combobox inner ref from getting lost - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7663)
 - Date and Time
   - Ensure `dayPeriod` no longer resets when hour is deleted - [@charlotte-whiting](https://github.com/charlotte-whiting) - [PR](https://github.com/adobe/react-spectrum/pull/7506)
-  - Correctly format date/time in RTL - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7423), [PR](https://github.com/adobe/react-spectrum/pull/7685), [PR](https://github.com/adobe/react-spectrum/pull/7712)
+  - Correctly format date/time in RTL - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7423), [PR](https://github.com/adobe/react-spectrum/pull/7685), [PR](https://github.com/adobe/react-spectrum/pull/7712), [PR](https://github.com/adobe/react-spectrum/pull/7864)
 - NumberField
   - Add `isRequired` to NumberField RenderProps - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7831)
 - Select
@@ -87,6 +87,7 @@ Note that this refactor changes the order that focus occurs. Previously, focus a
   - Remove Toast priority queue - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7805)
   - Resume timers if pointer left region due to region shrinking - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7771)
   - Fix Toast hover and focus behavior - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7838)
+  - Make Toasts announce when rendered in NVDA - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/7859)
 - Miscellaneous
   - Expose missing `renderProps` types in RAC - [@agscala](https://github.com/agscala) - [PR](https://github.com/adobe/react-spectrum/pull/7762)
   - Do not build list of available slots when there is no error - [@jorrit](https://github.com/jorrit) - [PR](https://github.com/adobe/react-spectrum/pull/7731)
@@ -119,7 +120,7 @@ Autocomplete
   - Add `disableAutoFocusFirst` prop to opt out of autofocus on first ListBoxItem in Autocomplete  - [@romansndlr](https://github.com/romansndlr) - [PR](https://github.com/adobe/react-spectrum/pull/7807)
   - Fix Autocomplete `tab` key forwarding - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7724)
   - Add `isFocusVisible` to `useMenuItem` and fix focusRing when typing in Autocomplete SearchField  - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/7625)
-
+  - Rename filterFn in useAutocomplete to filter - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/7863)
 
 ## Released packages
 
