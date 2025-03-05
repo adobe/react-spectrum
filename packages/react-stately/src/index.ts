@@ -12,7 +12,7 @@
 
 export type {CalendarState, CalendarStateOptions, RangeCalendarState, RangeCalendarStateOptions} from '@react-stately/calendar';
 export type {CheckboxGroupProps, CheckboxGroupState} from '@react-stately/checkbox';
-export type {Color, ColorAreaProps, ColorAreaState, ColorChannelFieldProps, ColorChannelFieldState, ColorChannelFieldStateOptions, ColorFieldProps, ColorFieldState, ColorPickerProps, ColorPickerState, ColorSliderState, ColorSliderStateOptions, ColorWheelProps, ColorWheelState} from '@react-stately/color';
+export type {Color, ColorChannel, ColorFormat, ColorSpace, ColorAreaProps, ColorAreaState, ColorChannelFieldProps, ColorChannelFieldState, ColorChannelFieldStateOptions, ColorFieldProps, ColorFieldState, ColorPickerProps, ColorPickerState, ColorSliderState, ColorSliderStateOptions, ColorWheelProps, ColorWheelState} from '@react-stately/color';
 export type {ComboBoxState, ComboBoxStateOptions} from '@react-stately/combobox';
 export type {DateFieldState, DateFieldStateOptions, DatePickerState, DatePickerStateOptions, DateRangePickerState, DateRangePickerStateOptions, DateSegment, SegmentType as DateSegmentType, TimeFieldStateOptions, TimeFieldState} from '@react-stately/datepicker';
 export type {DisclosureState, DisclosureProps, DisclosureGroupState, DisclosureGroupProps} from '@react-stately/disclosure';
