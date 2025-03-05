@@ -14,6 +14,7 @@ import docs from 'docs:@react-aria/autocomplete';
 import {FunctionAPI, HeaderInfo, InterfaceType, TypeContext, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/autocomplete/package.json';
 import statelyDocs from 'docs:@react-stately/autocomplete';
+import Anatomy from './anatomy.svg';
 import {InlineAlert, Content, Heading} from '@adobe/react-spectrum';
 
 ---
@@ -46,6 +47,8 @@ Autocomplete can be implemented using the [&lt;datalist&gt;](https://developer.m
 `useAutocomplete` helps achieve accessible text input and collection that can be styled as needed.
 
 ## Anatomy
+
+<Anatomy />
 
 An autocomplete consists of a text input that displays the current value and a collection of items. Users can type within the input
 to filter the collection. `useAutocomplete` handles exposing the correct ARIA attributes for accessibility for each of the elements comprising the autocomplete.
