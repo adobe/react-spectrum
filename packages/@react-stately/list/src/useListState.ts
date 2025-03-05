@@ -73,8 +73,8 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
 /**
  * Filters a collection using the provided filter function and returns a new ListState.
  */
-export function UNSTABLE_useFilteredListState<T extends object>(state: ListState<T>, filterFn: ((nodeValue: string) => boolean) | null | undefined): ListState<T> {
-  let collection = useMemo(() => filterFn ? state.collection.UNSTABLE_filter!(filterFn) : state.collection, [state.collection, filterFn]);
+export function UNSTABLE_useFilteredListState<T extends object>(state: ListState<T>, filter: ((nodeValue: string) => boolean) | null | undefined): ListState<T> {
+  let collection = useMemo(() => filter ? state.collection.UNSTABLE_filter!(filter) : state.collection, [state.collection, filter]);
   let selectionManager = state.selectionManager.withCollection(collection);
   useFocusedKeyReset(collection, selectionManager);
   return {
