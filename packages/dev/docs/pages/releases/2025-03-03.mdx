@@ -7,8 +7,10 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License. */}
 
-import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+import {BlogPostLayout, Hero, Image} from '@react-spectrum/docs';
 export default BlogPostLayout;
+
+import datepickerImage from 'url:../assets/datepicker-rtl.png';
 
 ---
 description: 
@@ -26,6 +28,8 @@ This release would not be possible without the fantastic contributions we receiv
 ### Date and Time Formatting in RTL Languages
 
 In this release, we’ve improved support for right-to-left languages in our date picker components to correct the order of the segments. To account for this, you must update your styles for DateInput to use normal [CSS flow layout](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_display/Flow_layout), e.g. `display: block` instead of `display: flex`. If you are using the `useDateSegment` hook, ensure that you render spans instead of divs. These changes allow the browser to correctly order the segments according to the [Unicode Bidirectional Algorithm](https://unicode.org/reports/tr9/). If you choose to not make these style changes, your component will look the same as before, but will not format correctly in RTL languages.
+
+<Image src={datepickerImage} alt="Screenshot showing difference between DatePicker before and after in Hebrew locale" style={{maxWidth: 'min(100%, 586px)', display: 'block', margin: '20px auto'}} />
 
 ### usePress update
 
