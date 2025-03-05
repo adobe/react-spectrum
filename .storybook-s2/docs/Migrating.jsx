@@ -412,8 +412,9 @@ export function Migrating() {
         </ul>
 
         <H3>TreeView</H3>
+        <P>If migrating from TreeView version 3.0.0-beta.3 or before, please do the following. Otherwise, no updates needed.</P>
         <ul className="sb-unstyled">
-          <li className={style({font: 'body', marginY: 8})}>Update content within <Code>TreeViewItem</Code> to be wrapped in <Code>TreeViewContentItem</Code></li>
+          <li className={style({font: 'body', marginY: 8})}> Update content within <Code>TreeViewItem</Code> to be wrapped in <Code>TreeViewContentItem</Code></li>
         </ul>
 
         <H3>View</H3>
