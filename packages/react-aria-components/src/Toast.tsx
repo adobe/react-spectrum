@@ -15,7 +15,7 @@ import {ButtonContext} from './Button';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {createPortal} from 'react-dom';
 import {forwardRefType} from '@react-types/shared';
-import {QueuedToast, ToastQueue, ToastState, useToastQueue} from '@react-stately/toast';
+import {QueuedToast, ToastQueue, ToastState, useToastQueue} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, useContext} from 'react';
 import {TextContext} from './Text';
 import {useObjectRef} from '@react-aria/utils';

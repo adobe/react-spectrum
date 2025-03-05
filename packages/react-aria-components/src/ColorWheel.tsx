@@ -1,6 +1,6 @@
-import {AriaColorWheelOptions, useColorWheel} from '@react-aria/color';
+import {AriaColorWheelOptions, useColorWheel} from 'react-aria';
 import {ColorWheelContext} from './RSPContexts';
-import {ColorWheelState, useColorWheelState} from '@react-stately/color';
+import {ColorWheelState, useColorWheelState} from 'react-stately';
 import {ContextValue, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {InternalColorThumbContext} from './ColorThumb';
