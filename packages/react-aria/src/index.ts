@@ -25,7 +25,7 @@ export {I18nProvider, useCollator, useDateFormatter, useFilter, useLocale, useLo
 export {useFocus, useFocusVisible, useFocusWithin, useHover, useInteractOutside, useKeyboard, useMove, usePress, useLongPress, useFocusable, Pressable, Focusable} from '@react-aria/interactions';
 export {useField, useLabel} from '@react-aria/label';
 export {useGridList, useGridListItem, useGridListSelectionCheckbox} from '@react-aria/gridlist';
-export {useLandmark, createLandmarkController} from '@react-aria/landmark';
+export {useLandmark} from '@react-aria/landmark';
 export {useLink} from '@react-aria/link';
 export {useListBox, useListBoxSection, useOption} from '@react-aria/listbox';
 export {useMenu, useMenuItem, useMenuSection, useMenuTrigger, useSubmenuTrigger} from '@react-aria/menu';
