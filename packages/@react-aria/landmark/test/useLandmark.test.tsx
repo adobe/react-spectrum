@@ -1321,7 +1321,7 @@ describe('LandmarkManager', function () {
       let manager = document[Symbol.for('react-aria-landmark-manager')];
       expect(manager).toBeDefined();
       expect(typeof manager.version).toBe('number');
-      expect(typeof manager.UNSTABLE_createLandmarkController).toBe('function');
+      expect(typeof manager.createLandmarkController).toBe('function');
       expect(typeof manager.registerLandmark).toBe('function');
       controller.dispose();
     });
