@@ -176,6 +176,8 @@ function App() {
 <Provider background="base">
   {/* your app */}
 </Provider>`)}</Pre>
+        <H3>Usage with older React Spectrum versions</H3>
+        <P>See Adobe internal documentation.</P>
         <H2>Styling</H2>
         <P>React Spectrum v3 supported a limited set of <Link href="https://react-spectrum.adobe.com/react-spectrum/styling.html" target="_blank">style props</Link> for layout and positioning using Spectrum-defined values. In Spectrum 2, we’re improving on this by offering a much more flexible style macro. This offers additional Spectrum tokens, improves performance by generating CSS at build time rather than runtime, and works with any DOM element for use in custom components.</P>
         <P><Link href="https://parceljs.org/features/macros/" target="_blank">Macros</Link> are a new bundler feature that enable functions to run at build time. The React Spectrum <Code>style</Code> macro uses this to generate CSS that can be applied to any DOM element or component. Import the <Code>style</Code> macro using the with <Code>{`{type: 'macro'}`}</Code> <Link href="https://github.com/tc39/proposal-import-attributes" target="_blank">import attribute</Link>, and pass the result to the <Code>styles</Code> prop of any React Spectrum component to provide it with styles.</P>
@@ -238,8 +240,12 @@ function YourComponent() {
         <Pre>{highlight(`/* YourComponent.css */
 .your-unsafe-class {
   background: red;
-}
-`, 'CSS')}</Pre>
+}`, 'CSS')}</Pre>
+        <H3>CSS Resets</H3>
+        <P>CSS resets are strongly discouraged. Global CSS selectors can unintentionally affect elements that were not intended, leading to style clashes. Since Spectrum 2 uses <Link href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Cascade_layers" target="_blank">CSS cascade layers</Link>, global CSS outside a <Code>@layer</Code> will override S2's CSS. Therefore, if you cannot remove your CSS reset, it must be placed in a lower layer. This can be done by declaring your reset layer before the <Code>_</Code> layer used by S2.</P>
+        <Pre>{highlight(`/* App.css */
+@layer reset, _;
+@import "reset.css" layer(reset);`)}</Pre>
       </main>
     </div>
   )
