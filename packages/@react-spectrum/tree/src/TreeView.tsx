@@ -197,7 +197,15 @@ const treeRowOutline = style({
   position: 'absolute',
   insetStart: 0,
   insetEnd: 0,
-  top: 0,
+  top: {
+    default: 0,
+    isFocusVisible: '[-2px]',
+    isSelected: {
+      default: '[-1px]',
+      isFocusVisible: '[-2px]'
+    },
+    isFirst: 0
+  },
   bottom: 0,
   pointerEvents: 'none',
   forcedColorAdjust: 'none',
@@ -246,41 +254,44 @@ export const TreeViewItemContent = (props: SpectrumTreeViewItemContentProps) => 
 
   return (
     <TreeItemContent>
-      {({isExpanded, hasChildItems, level, selectionMode, selectionBehavior, isDisabled, isSelected, isFocusVisible}) => (
-        <div className={treeCellGrid({isDisabled})}>
-          {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
+      {({isExpanded, hasChildItems, level, selectionMode, selectionBehavior, isDisabled, isSelected, isFocusVisible, state, id}) => {
+        let isFirst = state.collection.getFirstKey() === id;
+        return (
+          <div className={treeCellGrid({isDisabled})}>
+            {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               // TODO: add transition?
-          <Checkbox
-            isEmphasized
-            UNSAFE_className={treeCheckbox()}
-            UNSAFE_style={{paddingInlineEnd: '0px'}}
-            slot="selection" />
-            )}
-          <div style={{gridArea: 'level-padding', marginInlineEnd: `calc(${level - 1} * var(--spectrum-global-dimension-size-200))`}} />
-          {/* TODO: revisit when we do async loading, at the moment hasChildItems will only cause the chevron to be rendered, no aria/data attributes indicating the row's expandability are added */}
-          {hasChildItems && <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} />}
-          <SlotProvider
-            slots={{
-              text: {UNSAFE_className: treeContent({isDisabled})},
-                // Note there is also an issue here where these icon props are making into the action menu's icon. Resolved by 8ab0ffb276ff437a65b365c9a3be0323a1b24656
-                // but could crop up later for other components
-              icon: {UNSAFE_className: treeIcon(), size: 'S'},
-              actionButton: {UNSAFE_className: treeActions(), isQuiet: true},
-              actionGroup: {
-                UNSAFE_className: treeActions(),
-                isQuiet: true,
-                density: 'compact',
-                buttonLabelBehavior: 'hide',
-                isDisabled,
-                overflowMode: 'collapse'
-              },
-              actionMenu: {UNSAFE_className: treeActionMenu(), UNSAFE_style: {marginInlineEnd: '.5rem'}, isQuiet: true}
-            }}>
-            {children}
-          </SlotProvider>
-          <div className={treeRowOutline({isFocusVisible, isSelected})} />
-        </div>
-        )}
+              <Checkbox
+                isEmphasized
+                UNSAFE_className={treeCheckbox()}
+                UNSAFE_style={{paddingInlineEnd: '0px'}}
+                slot="selection" />
+              )}
+            <div style={{gridArea: 'level-padding', marginInlineEnd: `calc(${level - 1} * var(--spectrum-global-dimension-size-200))`}} />
+            {/* TODO: revisit when we do async loading, at the moment hasChildItems will only cause the chevron to be rendered, no aria/data attributes indicating the row's expandability are added */}
+            {hasChildItems && <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} />}
+            <SlotProvider
+              slots={{
+                text: {UNSAFE_className: treeContent({isDisabled})},
+                  // Note there is also an issue here where these icon props are making into the action menu's icon. Resolved by 8ab0ffb276ff437a65b365c9a3be0323a1b24656
+                  // but could crop up later for other components
+                icon: {UNSAFE_className: treeIcon(), size: 'S'},
+                actionButton: {UNSAFE_className: treeActions(), isQuiet: true},
+                actionGroup: {
+                  UNSAFE_className: treeActions(),
+                  isQuiet: true,
+                  density: 'compact',
+                  buttonLabelBehavior: 'hide',
+                  isDisabled,
+                  overflowMode: 'collapse'
+                },
+                actionMenu: {UNSAFE_className: treeActionMenu(), UNSAFE_style: {marginInlineEnd: '.5rem'}, isQuiet: true}
+              }}>
+              {children}
+            </SlotProvider>
+            <div className={treeRowOutline({isFocusVisible, isSelected, isFirst})} />
+          </div>
+        );
+      }}
     </TreeItemContent>
   );
 };
