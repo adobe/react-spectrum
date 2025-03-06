@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/inlinealert",
-  "version": "3.2.11",
+  "version": "3.2.12",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -36,13 +36,13 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/focus": "^3.19.1",
-    "@react-aria/i18n": "^3.12.5",
-    "@react-aria/utils": "^3.27.0",
-    "@react-spectrum/layout": "^3.6.11",
-    "@react-spectrum/utils": "^3.12.1",
-    "@react-types/shared": "^3.27.0",
-    "@spectrum-icons/ui": "^3.6.12",
+    "@react-aria/focus": "^3.20.0",
+    "@react-aria/i18n": "^3.12.6",
+    "@react-aria/utils": "^3.28.0",
+    "@react-spectrum/layout": "^3.6.12",
+    "@react-spectrum/utils": "^3.12.2",
+    "@react-types/shared": "^3.28.0",
+    "@spectrum-icons/ui": "^3.6.13",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {

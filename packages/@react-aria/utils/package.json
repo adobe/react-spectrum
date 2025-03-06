@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/utils",
-  "version": "3.27.0",
+  "version": "3.28.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -23,9 +23,9 @@
   },
   "dependencies": {
     "@react-aria/ssr": "^3.9.7",
-    "@react-stately/flags": "^3.0.5",
+    "@react-stately/flags": "^3.1.0",
     "@react-stately/utils": "^3.10.5",
-    "@react-types/shared": "^3.27.0",
+    "@react-types/shared": "^3.28.0",
     "@swc/helpers": "^0.5.0",
     "clsx": "^2.0.0"
   },
