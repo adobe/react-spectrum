@@ -217,7 +217,7 @@ export class BaseCollection<T> implements ICollection<Node<T>> {
   // Will need to handle varying levels I assume but will revisit after I get searchable menu working for base menu
   // TODO: an alternative is to simply walk the collection and add all item nodes that match the filter and any sections/separators we encounter
   // to an array, then walk that new array and fix all the next/Prev keys while adding them to the new collection
-  filter(filterFn: (nodeValue: string) => boolean): BaseCollection<T> {
+  UNSTABLE_filter(filterFn: (nodeValue: string) => boolean): BaseCollection<T> {
     let newCollection = new BaseCollection<T>();
     // This tracks the absolute last node we've visited in the collection when filtering, used for setting up the filteredCollection's lastKey and
     // for updating the next/prevKey for every non-filtered node.

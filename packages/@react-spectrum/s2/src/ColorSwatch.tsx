@@ -13,10 +13,10 @@
 import {
   ColorSwatch as AriaColorSwatch,
   ColorSwatchProps as AriaColorSwatchProps,
+  Color,
   ContextValue,
   parseColor
 } from 'react-aria-components';
-import {Color} from '@react-types/color';
 import {createContext, forwardRef, JSX, ReactElement, useContext, useMemo} from 'react';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};

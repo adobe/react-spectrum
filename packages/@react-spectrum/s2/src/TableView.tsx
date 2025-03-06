@@ -32,6 +32,7 @@ import {
   TableHeader as RACTableHeader,
   TableHeaderProps as RACTableHeaderProps,
   TableProps as RACTableProps,
+  Rect,
   ResizableTableContainer,
   RowRenderProps,
   TableBodyRenderProps,
@@ -59,7 +60,6 @@ import Nubbin from '../ui-icons/S2_MoveHorizontalTableWidget.svg';
 import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
-import {Rect} from '@react-stately/virtualizer';
 import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {useActionBarContainer} from './ActionBar';
@@ -216,6 +216,7 @@ export class S2TableLayout<T> extends TableLayout<T> {
     return layoutNode;
   }
 
+  // y is the height of the headers
   protected buildBody(y: number): LayoutNode {
     let layoutNode = super.buildBody(y);
     let {children, layoutInfo} = layoutNode;
