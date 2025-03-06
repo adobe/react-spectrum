@@ -32,7 +32,7 @@ git config --global user.name GitHub Actions
 make build
 
 # Bump all package versions (allow publish from current branch but don't push tags or commit)
-yarn workspaces foreach --all --no-private version patch --deferred
+yarn workspaces list --json --no-private | node ./scripts/verdaccio-generate-versions.js
 yarn version apply --all
 
 # Publish packages to verdaccio
