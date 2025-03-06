@@ -5864,23 +5864,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-aria/accordion@workspace:packages/@react-aria/accordion":
-  version: 0.0.0-use.local
-  resolution: "@react-aria/accordion@workspace:packages/@react-aria/accordion"
-  dependencies:
-    "@react-aria/button": "npm:^3.11.1"
-    "@react-aria/selection": "npm:^3.22.0"
-    "@react-aria/utils": "npm:^3.27.0"
-    "@react-stately/tree": "npm:^3.8.7"
-    "@react-types/accordion": "npm:3.0.0-alpha.26"
-    "@react-types/shared": "npm:^3.27.0"
-    "@swc/helpers": "npm:^0.5.0"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
-    react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
-  languageName: unknown
-  linkType: soft
-
 "@react-aria/actiongroup@npm:^3.7.12, @react-aria/actiongroup@workspace:packages/@react-aria/actiongroup":
   version: 0.0.0-use.local
   resolution: "@react-aria/actiongroup@workspace:packages/@react-aria/actiongroup"
@@ -8848,16 +8831,6 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
-  languageName: unknown
-  linkType: soft
-
-"@react-types/accordion@npm:3.0.0-alpha.26, @react-types/accordion@workspace:packages/@react-types/accordion":
-  version: 0.0.0-use.local
-  resolution: "@react-types/accordion@workspace:packages/@react-types/accordion"
-  dependencies:
-    "@react-types/shared": "npm:^3.27.0"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
   linkType: soft
 
