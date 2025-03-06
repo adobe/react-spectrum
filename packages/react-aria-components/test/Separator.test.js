@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 import {Separator, SeparatorContext} from '../';
 
@@ -23,7 +24,7 @@ describe('Separator', () => {
   });
 
   it('should render a separator with custom class', () => {
-    let {getByRole} = render(<Separator className="test"/>);
+    let {getByRole} = render(<Separator className="test" />);
     let separator = getByRole('separator');
     expect(separator).toHaveAttribute('class', 'test');
   });
