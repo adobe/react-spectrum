@@ -10,19 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaMenuProps, FocusScope, mergeProps, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
+import {AriaMenuProps, FocusScope, mergeProps, useHover, useMenu, useMenuItem, useMenuSection, useMenuTrigger, useSubmenuTrigger} from 'react-aria';
 import {BaseCollection, Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
-import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
+import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, RootMenuTriggerState, TreeState, useMenuTriggerState, useSubmenuTriggerState, useTreeState} from 'react-stately';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
-import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
-import {DialogContext, OverlayTriggerStateContext} from './Dialog';
+import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {filterDOMProps, mergeRefs, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {FocusStrategy, forwardRefType, HoverEvents, Key, LinkDOMProps, MultipleSelection} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import {KeyboardContext} from './Keyboard';
 import {MultipleSelectionState, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
+import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
-import {PressResponder, useHover} from '@react-aria/interactions';
+import {PressResponder} from '@react-aria/interactions';
 import React, {
   createContext,
   ForwardedRef,
@@ -36,11 +36,9 @@ import React, {
   useRef,
   useState
 } from 'react';
-import {RootMenuTriggerState, useSubmenuTriggerState} from '@react-stately/menu';
 import {SeparatorContext} from './Separator';
 import {TextContext} from './Text';
 import {UNSTABLE_InternalAutocompleteContext} from './Autocomplete';
-import {useSubmenuTrigger} from '@react-aria/menu';
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 export const MenuStateContext = createContext<TreeState<any> | null>(null);
@@ -83,7 +81,8 @@ export function MenuTrigger(props: MenuTriggerProps): ReactElement {
           triggerRef: ref,
           scrollRef,
           placement: 'bottom start',
-          style: {'--trigger-width': buttonWidth} as React.CSSProperties
+          style: {'--trigger-width': buttonWidth} as React.CSSProperties,
+          'aria-labelledby': menuProps['aria-labelledby']
         }]
       ]}>
       <PressResponder {...menuTriggerProps} ref={ref} isPressed={state.isOpen}>
@@ -138,6 +137,7 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
           trigger: 'SubmenuTrigger',
           triggerRef: itemRef,
           placement: 'end top',
+          'aria-labelledby': submenuProps['aria-labelledby'],
           ...popoverProps
         }]
       ]}>
@@ -147,63 +147,18 @@ export const SubmenuTrigger =  /*#__PURE__*/ createBranchComponent('submenutrigg
   );
 }, props => props.children[0]);
 
-// TODO: make SubdialogTrigger unstable
-export interface SubDialogTriggerProps {
+export interface MenuRenderProps {
   /**
-   * The contents of the SubDialogTrigger. The first child should be an Item (the trigger) and the second child should be the Popover (for the subdialog).
+   * Whether the menu has no items and should display its empty state.
+   * @selector [data-empty]
    */
-  children: ReactElement[],
-  /**
-   * The delay time in milliseconds for the subdialog to appear after hovering over the trigger.
-   * @default 200
-   */
-  delay?: number
+  isEmpty: boolean
 }
 
-/**
- * A subdialog trigger is used to wrap a subdialog's trigger item and the subdialog itself.
- *
- * @version alpha
- */
-export const SubDialogTrigger =  /*#__PURE__*/ createBranchComponent('subdialogtrigger', (props: SubDialogTriggerProps, ref: ForwardedRef<HTMLDivElement>, item) => {
-  let {CollectionBranch} = useContext(CollectionRendererContext);
-  let state = useContext(MenuStateContext)!;
-  let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
-  let submenuTriggerState = useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
-  let subdialogRef = useRef<HTMLDivElement>(null);
-  let itemRef = useObjectRef(ref);
-  let {parentMenuRef, shouldUseVirtualFocus} = useContext(SubmenuTriggerContext)!;
-  let {submenuTriggerProps, submenuProps, popoverProps} = useSubmenuTrigger({
-    parentMenuRef,
-    submenuRef: subdialogRef,
-    type: 'dialog',
-    delay: props.delay,
-    shouldUseVirtualFocus
-    // TODO: might need to have something like isUnavailable like we do for ContextualHelpTrigger
-  }, submenuTriggerState, itemRef);
-
-  return (
-    <Provider
-      values={[
-        [MenuItemContext, {...submenuTriggerProps, onAction: undefined, ref: itemRef}],
-        [DialogContext, {'aria-labelledby': submenuProps['aria-labelledby']}],
-        [MenuContext, submenuProps],
-        [OverlayTriggerStateContext, submenuTriggerState],
-        [PopoverContext, {
-          ref: subdialogRef,
-          trigger: 'SubDialogTrigger',
-          triggerRef: itemRef,
-          placement: 'end top',
-          ...popoverProps
-        }]
-      ]}>
-      <CollectionBranch collection={state.collection} parent={item} />
-      {props.children[1]}
-    </Provider>
-  );
-}, props => props.children[0]);
-
-export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, CollectionProps<T>, StyleProps, SlotProps, ScrollableProps<HTMLDivElement> {}
+export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<MenuRenderProps>, SlotProps, ScrollableProps<HTMLDivElement> {
+  /** Provides content to display when there are no items in the list. */
+  renderEmptyState?: () => ReactNode
+}
 
 /**
  * A menu displays a list of actions or options that a user can choose.
@@ -214,7 +169,7 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
   // Delay rendering the actual menu until we have the collection so that auto focus works properly.
   return (
     <CollectionBuilder content={<Collection {...props} />}>
-      {collection => collection.size > 0 && <MenuInner props={props} collection={collection} menuRef={ref} />}
+      {collection => <MenuInner props={props} collection={collection} menuRef={ref} />}
     </CollectionBuilder>
   );
 });
@@ -226,10 +181,10 @@ interface MenuInnerProps<T> {
 }
 
 function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
-  let {filterFn, collectionProps: autocompleteMenuProps, collectionRef} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
+  let {filter, collectionProps: autocompleteMenuProps, collectionRef} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
   // Memoed so that useAutocomplete callback ref is properly only called once on mount and not everytime a rerender happens
   ref = useObjectRef(useMemo(() => mergeRefs(ref, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null), [collectionRef, ref]));
-  let filteredCollection = useMemo(() => filterFn ? collection.filter(filterFn) : collection, [collection, filterFn]);
+  let filteredCollection = useMemo(() => filter ? collection.UNSTABLE_filter(filter) : collection, [collection, filter]);
   let state = useTreeState({
     ...props,
     collection: filteredCollection as ICollection<Node<object>>,
@@ -242,8 +197,21 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
     defaultClassName: 'react-aria-Menu',
     className: props.className,
     style: props.style,
-    values: {}
+    values: {
+      isEmpty: state.collection.size === 0
+    }
   });
+
+  let emptyState: ReactElement | null = null;
+  if (state.collection.size === 0 && props.renderEmptyState) {
+    emptyState = (
+      <div
+        role="menuitem"
+        style={{display: 'contents'}}>
+        {props.renderEmptyState()}
+      </div>
+    );
+  }
 
   return (
     <FocusScope>
@@ -253,6 +221,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
         {...renderProps}
         ref={ref}
         slot={props.slot || undefined}
+        data-empty={state.collection.size === 0 || undefined}
         onScroll={props.onScroll}>
         <Provider
           values={[
@@ -273,6 +242,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)}
             scrollRef={ref} />
         </Provider>
+        {emptyState}
       </div>
     </FocusScope>
   );

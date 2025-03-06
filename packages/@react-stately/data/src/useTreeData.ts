@@ -108,22 +108,6 @@ export interface TreeData<T extends object> {
   move(key: Key, toParentKey: Key | null, index: number): void,
 
   /**
-   * Moves an item before a node within the tree.
-   * @param key - The key of the item to move.
-   * @param toParentKey - The key of the new parent to insert into. `null` for the root.
-   * @param index - The index within the new parent to insert before.
-   */
-  moveBefore(key: Key, toParentKey: Key | null, index: number): void,
-
-  /**
-   * Moves an item after a node within the tree.
-   * @param key - The key of the item to move.
-   * @param toParentKey - The key of the new parent to insert into. `null` for the root.
-   * @param index - The index within the new parent to insert after.
-   */
-  moveAfter(key: Key, toParentKey: Key | null, index: number): void,
-
-  /**
    * Updates an item in the tree.
    * @param key - The key of the item to update.
    * @param newValue - The new value for the item.
@@ -387,50 +371,6 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
             ...parentNode.children!.slice(index)
           ]
         }), newMap);
-      });
-    },
-    moveBefore(key: Key, toParentKey: Key | null, index: number) {
-      this.move(key, toParentKey, index);
-    },
-    moveAfter(key: Key, toParentKey: Key | null, index: number) {
-      setItems(({items, nodeMap: originalMap}) => {
-        let node = originalMap.get(key);
-        if (!node) {
-          return {items, nodeMap: originalMap};
-        }
-
-        let {items: newItems, nodeMap: newMap} = updateTree(items, key, () => null, originalMap);
-
-        const movedNode = {
-          ...node,
-          parentKey: toParentKey
-        };
-
-        const afterIndex = items.length === index ? index : index + 1;
-        // If parentKey is null, insert into the root.
-        if (toParentKey == null) {
-          newMap.set(movedNode.key, movedNode);
-          return {items: [
-            ...newItems.slice(0, afterIndex),
-            movedNode,
-            ...newItems.slice(afterIndex)
-          ], nodeMap: newMap};
-        }
-
-        // Otherwise, update the parent node and its ancestors.
-        return updateTree(newItems, toParentKey, parentNode => {
-          const c = [
-            ...parentNode.children!.slice(0, afterIndex),
-            movedNode,
-            ...parentNode.children!.slice(afterIndex)
-          ];
-          return {
-            key: parentNode.key,
-            parentKey: parentNode.parentKey,
-            value: parentNode.value,
-            children: c
-          };
-        }, newMap);
       });
     },
     update(oldKey: Key, newValue: T) {

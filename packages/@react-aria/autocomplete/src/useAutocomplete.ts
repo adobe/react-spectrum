@@ -18,7 +18,7 @@ import {dispatchVirtualBlur, dispatchVirtualFocus, moveVirtualFocus} from '@reac
 import {getInteractionModality} from '@react-aria/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {FocusEvent as ReactFocusEvent, KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef} from 'react';
+import {FocusEvent as ReactFocusEvent, KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef} from 'react';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface CollectionOptions extends DOMProps, AriaLabelingProps {
@@ -56,7 +56,7 @@ export interface AutocompleteAria {
   /** Ref to attach to the wrapped collection. */
   collectionRef: RefObject<HTMLElement | null>,
   /** A filter function that returns if the provided collection node should be filtered out of the collection. */
-  filterFn?: (nodeTextValue: string) => boolean
+  filter?: (nodeTextValue: string) => boolean
 }
 
 /**
@@ -97,7 +97,7 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
     if (e.isTrusted || !target || queuedActiveDescendant.current === target.id) {
       return;
     }
-    
+
     clearTimeout(timeout.current);
     if (target !== collectionRef.current) {
       if (delayNextActiveDescendant.current) {
@@ -252,7 +252,7 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
         new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
       ) || false;
     }
-    
+
     if (shouldPerformDefaultAction) {
       switch (e.key) {
         case 'ArrowLeft':
@@ -350,7 +350,7 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
       autoCorrect: 'off',
       // This disable's the macOS Safari spell check auto corrections.
       spellCheck: 'false',
-      [parseInt(React.version, 10) >= 17 ? 'enterKeyHint' : 'enterkeyhint']: 'enter',
+      enterKeyHint: 'go',
       onBlur,
       onFocus
     },
@@ -359,6 +359,6 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
       disallowTypeAhead: true
     }),
     collectionRef: mergedCollectionRef,
-    filterFn: filter != null ? filterFn : undefined
+    filter: filter != null ? filterFn : undefined
   };
 }

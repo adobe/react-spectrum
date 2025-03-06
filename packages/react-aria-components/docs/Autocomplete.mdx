@@ -114,6 +114,17 @@ function Example() {
 
 </details>
 
+## Features
+
+`Autocomplete` can be used to build UI patterns such as command palettes, searchable menus, and filterable selects.
+
+* **Flexible** – Support for multiple input types and collection types, controlled and uncontrolled state, and custom filter functions.
+* **Keyboard navigation** – Autocomplete can be navigated using the arrow keys, along with page up/down, home/end, etc. The list of options is filtered while typing into the input, and items can be selected with the enter key.
+* **Accessible** – Follows the [ARIA autocomplete pattern](https://w3c.github.io/aria/#aria-autocomplete), with support for items and sections, and slots for label and description elements within each item.
+* **Styleable** – Items include builtin states for styling, such as hover, press, focus, selected, and disabled.
+
+**Note**: Autocomplete supports experiences where the text input and suggestion lists are siblings. For an input combined with a separate popover suggestion list, see the [ComboBox](ComboBox.html) component.
+
 ## Anatomy
 
 `Autocomplete` is a controller for a child text input, such as a [TextField](TextField.html) or [SearchField](SearchField.html), and a collection component such as a [Menu](Menu.html) or [ListBox](ListBox.html). It enables the user to filter a list of items, and navigate via the arrow keys while keeping focus on the input.
@@ -122,19 +133,10 @@ function Example() {
 import {Autocomplete, SearchField, Menu} from 'react-aria-components';
 
 <Autocomplete>
-  <SearchField />   {/*   or <TextField />   */}
-  <Menu />   {/*   or <ListBox />   */}
+  <SearchField /> or <TextField />
+  <Menu /> or <ListBox />
 </Autocomplete>
 ```
-
-## Features
-
-An autocomplete can be built using the [&lt;datalist&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/datalist) HTML element, but this is very limited in functionality and difficult to style. `Autocomplete` helps achieve accessible autocomplete components that can be styled as needed.
-
-* **Flexible** – Support for multiple input types and collection types, controlled and uncontrolled state, and custom filter functions.
-* **Keyboard navigation** – Autocomplete can be navigated using the arrow keys, along with page up/down, home/end, etc. The list of options is filtered while typing into the input, and items can be selected with the enter key.
-* **Accessible** – Follows the [ARIA autocomplete pattern](https://w3c.github.io/aria/#aria-autocomplete), with support for items and sections, and slots for label and description elements within each item.
-* **Styleable** – Items include builtin states for styling, such as hover, press, focus, selected, and disabled.
 
 ### Concepts
 
@@ -272,6 +274,14 @@ function MyAutocomplete<T extends object>({label,placeholder, items, children, o
 .react-aria-Label {
   margin-bottom: .5em;
 }
+
+.react-aria-Menu {
+  &[data-empty] {
+    align-items: center;
+    justify-content: center;
+    font-style: italic;
+  }
+}
 ```
 
 </details>
@@ -322,6 +332,51 @@ function Example() {
 }
 ```
 
+## Async loading
+
+This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading
+and filtering of data from a server. No `filter` prop is provided to `Autocomplete` since filtering is done on the server.
+
+```tsx example
+import {useAsyncList} from '@react-stately/data';
+
+function AsyncLoadingExample() {
+  let list = useAsyncList<{name: string}>({
+    async load({signal, filterText}) {
+      let res = await fetch(
+        `https://swapi.py4e.com/api/people/?search=${filterText}`,
+        {signal}
+      );
+      let json = await res.json();
+
+      return {
+        items: json.results
+      };
+    }
+  });
+
+  return (
+    <div className="my-autocomplete">
+      <Autocomplete
+        inputValue={list.filterText}
+        onInputChange={list.setFilterText}>
+        <MySearchField label="Star Wars Character Search" />
+        <Menu items={list.items} renderEmptyState={() => 'No results found.'}>
+          {(item) => <MenuItem id={item.name} href={`https://www.starwars.com/databank/${item.name.toLowerCase().replace(/\s/g, '-')}`} target="_blank">{item.name}</MenuItem>}
+        </Menu>
+      </Autocomplete>
+    </div>
+  );
+}
+```
+
+```css hidden
+.react-aria-MenuItem[href] {
+  text-decoration: none;
+  cursor: pointer;
+}
+```
+
 ## Props
 
 <PropTable component={docs.exports.Autocomplete} links={docs.links} />
@@ -352,66 +407,6 @@ All React Aria Components export a corresponding context that can be used to sen
 ### State
 
 Autocomplete provides an <TypeLink links={statelyDocs.links} type={statelyDocs.exports.AutocompleteState} /> object to its children via `AutocompleteStateContext`. This can be used to access and manipulate the autocomplete's state.
-
-This example shows an `AutocompleteClearButton` component that can be placed within an `Autocomplete` to allow the user to clear the input.
-
-```tsx example
-import {AutocompleteStateContext as AutocompleteStateContext, Button} from 'react-aria-components';
-
-function Example() {
-  let {contains} = useFilter({sensitivity: 'base'});
-  return (
-    <div className="custom-autocomplete">
-      <Autocomplete filter={contains}>
-        <MySearchField label="Animals" placeholder="Search animals..." />
-        <AutocompleteClearButton />
-        <Menu>
-          <MenuItem id="cat">Cat</MenuItem>
-          <MenuItem id="dog">Dog</MenuItem>
-          <MenuItem id="kangaroo">Kangaroo</MenuItem>
-        </Menu>
-      </Autocomplete>
-    </div>
-  )
-}
-
-function AutocompleteClearButton() {
-  /*- begin highlight -*/
-  let state = React.useContext(AutocompleteStateContext);
-  /*- end highlight -*/
-  return (
-    <Button
-      className="clear-button"
-      onPress={() => state?.setInputValue('')}>
-      Clear
-    </Button>
-  );
-}
-```
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-
-```css
-
-.custom-autocomplete {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  max-width: 300px;
-  height: 220px;
-  border: 1px solid var(--border-color);
-  padding: 16px;
-  border-radius: 10px;
-  background: var(--overlay-background);
-}
-
-.clear-button {
-  margin-top: 8px;
-}
-```
-
-</details>
 
 ### Hooks
 

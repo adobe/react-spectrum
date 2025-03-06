@@ -65,7 +65,7 @@ const StaticTable = (args: any) => (
       <Column isRowHeader>Name</Column>
       <Column>Type</Column>
       <Column>Date Modified</Column>
-      <Column>A</Column>
+      <Column>Size</Column>
       <Column>B</Column>
     </TableHeader>
     <TableBody>
@@ -73,21 +73,21 @@ const StaticTable = (args: any) => (
         <Cell>Games</Cell>
         <Cell>File folder</Cell>
         <Cell>6/7/2020</Cell>
-        <Cell>Dummy content</Cell>
+        <Cell>74 GB</Cell>
         <Cell>Long long long long long long long cell</Cell>
       </Row>
       <Row id="2">
         <Cell>Program Files</Cell>
         <Cell>File folder</Cell>
         <Cell>4/7/2021</Cell>
-        <Cell>Dummy content</Cell>
+        <Cell>1.2 GB</Cell>
         <Cell>Long long long long long long long cell</Cell>
       </Row>
       <Row id="3">
         <Cell>bootmgr</Cell>
         <Cell>System file</Cell>
         <Cell>11/20/2010</Cell>
-        <Cell>Dummy content</Cell>
+        <Cell>0.2 GB</Cell>
         <Cell>Long long long long long long long cell</Cell>
       </Row>
     </TableBody>
@@ -708,4 +708,51 @@ export const FlexWidth = {
     }
   },
   name: 'flex calculated height, flex direction row'
+};
+
+
+export const ColSpan = {
+  render: (args: any) => (
+    <TableView aria-label="Files" {...args} styles={style({width: 320, height: 320})}>
+      <TableHeader>
+        <Column isRowHeader>Name</Column>
+        <Column>Type</Column>
+        <Column>Date Modified</Column>
+        <Column>Size</Column>
+      </TableHeader>
+      <TableBody>
+        <Row id="1">
+          <Cell>Games</Cell>
+          <Cell>File folder</Cell>
+          <Cell>6/7/2020</Cell>
+          <Cell>74 GB</Cell>
+        </Row>
+        <Row id="2">
+          <Cell>Program Files</Cell>
+          <Cell>File folder</Cell>
+          <Cell>4/7/2021</Cell>
+          <Cell>1.2 GB</Cell>
+        </Row>
+        <Row id="3">
+          <Cell>bootmgr</Cell>
+          <Cell>System file</Cell>
+          <Cell>11/20/2010</Cell>
+          <Cell>0.2 GB</Cell>
+        </Row>
+        <Row id="4">
+          <Cell colSpan={4}>Total size: 75.4 GB</Cell>
+        </Row>
+      </TableBody>
+    </TableView>
+  ),
+  parameters: {
+    docs: {
+      disable: true
+    }
+  },
+  argTypes: {
+    selectionMode: {
+      control: false
+    }
+  }
 };

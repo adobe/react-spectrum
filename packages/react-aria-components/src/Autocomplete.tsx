@@ -22,7 +22,7 @@ import {TextFieldContext} from './TextField';
 export interface AutocompleteProps extends AriaAutocompleteProps, SlotProps {}
 
 interface InternalAutocompleteContextValue {
-  filterFn?: (nodeTextValue: string) => boolean,
+  filter?: (nodeTextValue: string) => boolean,
   collectionProps: CollectionOptions,
   collectionRef: RefObject<HTMLElement | null>
 }
@@ -34,7 +34,7 @@ export const AutocompleteStateContext = createContext<AutocompleteState | null>(
 export const UNSTABLE_InternalAutocompleteContext = createContext<InternalAutocompleteContextValue | null>(null);
 
 /**
- * An autocomplete combines a text input with a menu, allowing users to filter a list of options to items matching a query.
+ * An autocomplete combines a TextField or SearchField with a Menu or ListBox, allowing users to search or filter a list of suggestions.
  */
 export function Autocomplete(props: AutocompleteProps): ReactElement {
   let ctx = useSlottedContext(AutocompleteContext, props.slot);
@@ -47,7 +47,7 @@ export function Autocomplete(props: AutocompleteProps): ReactElement {
     textFieldProps,
     collectionProps,
     collectionRef: mergedCollectionRef,
-    filterFn
+    filter: filterFn
   } = useAutocomplete({
     ...removeDataAttributes(props),
     filter,
@@ -64,7 +64,7 @@ export function Autocomplete(props: AutocompleteProps): ReactElement {
         [TextFieldContext, textFieldProps],
         [InputContext, {ref: inputRef}],
         [UNSTABLE_InternalAutocompleteContext, {
-          filterFn,
+          filter: filterFn,
           collectionProps,
           collectionRef: mergedCollectionRef
         }]

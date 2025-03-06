@@ -69,7 +69,11 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
 
   // Handle press state on the label.
   let {pressProps: labelProps, isPressed: isLabelPressed} = usePress({
-    isDisabled
+    isDisabled,
+    onPress() {
+      state.setSelectedValue(value);
+      ref.current?.focus();
+    }
   });
 
   let {focusableProps} = useFocusable(mergeProps(props, {
@@ -94,7 +98,7 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
   useFormValidation({validationBehavior}, state, ref);
 
   return {
-    labelProps,
+    labelProps: mergeProps(labelProps, {onClick: e => e.preventDefault()}),
     inputProps: mergeProps(domProps, {
       ...interactions,
       type: 'radio',
