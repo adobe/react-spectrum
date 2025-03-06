@@ -93,6 +93,10 @@ export class ListBoxTester {
       throw new Error('Option provided is not in the listbox');
     }
 
+    if (document.activeElement !== this._listbox || !this._listbox.contains(document.activeElement)) {
+      act(() => this._listbox.focus());
+    }
+
     if (document.activeElement === this._listbox) {
       await this.user.keyboard('[ArrowDown]');
     }
@@ -135,10 +139,6 @@ export class ListBoxTester {
         return;
       }
 
-      if (document.activeElement !== this._listbox || !this._listbox.contains(document.activeElement)) {
-        act(() => this._listbox.focus());
-      }
-
       await this.keyboardNavigateToOption({option});
       await this.user.keyboard(`[${keyboardActivation}]`);
     } else {
@@ -177,10 +177,6 @@ export class ListBoxTester {
     } else if (interactionType === 'keyboard') {
       if (option?.getAttribute('aria-disabled') === 'true') {
         return;
-      }
-
-      if (document.activeElement !== this._listbox || !this._listbox.contains(document.activeElement)) {
-        act(() => this._listbox.focus());
       }
 
       await this.keyboardNavigateToOption({option});

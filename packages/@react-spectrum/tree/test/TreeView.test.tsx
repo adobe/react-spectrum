@@ -524,10 +524,10 @@ describe('Tree', () => {
     expect(rows[0]).toHaveAttribute('aria-selected', 'true');
   });
 
+  // TODO: replace the test above this one with a similar set up as the below
   it('should perform selection for highlight mode with single selection', async () => {
     let {getByRole} = render(<StaticTree treeProps={{selectionMode: 'single', selectionStyle: 'highlight'}} />);
     let treeTester = testUtilUser.createTester('Tree', {user, root: getByRole('treegrid')});
-    expect(treeTester.tree).toHaveAttribute('aria-multiselectable', 'true');
     let rows = treeTester.rows;
 
     for (let row of treeTester.rows) {

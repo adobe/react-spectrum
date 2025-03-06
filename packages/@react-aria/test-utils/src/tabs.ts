@@ -84,6 +84,10 @@ export class TabsTester {
       throw new Error('Tab provided is not in the tablist');
     }
 
+    if (document.activeElement !== this._tablist || !this._tablist.contains(document.activeElement)) {
+      act(() => this._tablist.focus());
+    }
+
     if (!this._tablist.contains(document.activeElement)) {
       let selectedTab = this.selectedTab;
       if (selectedTab != null) {
@@ -137,10 +141,6 @@ export class TabsTester {
     }
 
     if (interactionType === 'keyboard') {
-      if (document.activeElement !== this._tablist || !this._tablist.contains(document.activeElement)) {
-        act(() => this._tablist.focus());
-      }
-
       let tabsOrientation = this._tablist.getAttribute('aria-orientation') || 'horizontal';
       await this.keyboardNavigateToTab({tab, orientation: tabsOrientation as Orientation});
       if (manualActivation) {
