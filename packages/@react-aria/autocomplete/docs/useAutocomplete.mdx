@@ -12,8 +12,10 @@ export default Layout;
 
 import docs from 'docs:@react-aria/autocomplete';
 import {FunctionAPI, HeaderInfo, InterfaceType, TypeContext, TypeLink, PageDescription} from '@react-spectrum/docs';
+import i18nDocs from 'docs:@react-aria/i18n';
 import packageData from '@react-aria/autocomplete/package.json';
 import statelyDocs from 'docs:@react-stately/autocomplete';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {InlineAlert, Content, Heading} from '@adobe/react-spectrum';
 
 ---
@@ -58,6 +60,150 @@ to filter the collection. `useAutocomplete` handles exposing the correct ARIA at
 
 State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useAutocompleteState} /> hook from `@react-stately/autocomplete`.
 The state object should be passed as an option to `useAutocomplete`.
+
+
+## Example
+
+```tsx example export=true
+import {Item} from '@react-stately/collections';
+import {useButton} from '@react-aria/button';
+import {useAutocompleteState} from '@react-stately/autocomplete'
+import {useAutocomplete} from '@react-aria/autocomplete';
+import {useFilter} from '@react-aria/i18n';
+import {UNSTABLE_useFilteredListState} from '@react-stately/list';
+
+// Reuse the ListBox, Popover, and Button from your component library. See below for details.
+import {ListBox} from 'your-component-library';
+
+function Autocomplete(props) {
+  // Setup filter function and state.
+  let {contains} = useFilter({sensitivity: 'base'});
+  let state = useAutocompleteState(props);
+
+  // Setup refs and get props for child elements.
+  let ref = React.useRef(null);
+  let inputRef = React.useRef(null);
+
+  let {textFieldProps, collectionProps, collectionRef, filter} = useAutocomplete(
+    {
+      ...props,
+      inputRef,
+      collectionRef: ref,
+      filter: contains,
+    },
+    state
+  );
+
+  return (
+    <div style={{display: 'inline-flex', flexDirection: 'column'}}>
+      <label>{props.label}</label>
+      <div>
+        <input
+          {...textFieldProps}
+          ref={inputRef}
+          style={{
+            height: 24,
+            boxSizing: 'border-box',
+            marginRight: 0,
+            fontSize: 16
+          }} />
+        <ListBox
+          {...collectionProps}
+          filter={filter}
+          listBoxRef={collectionRef}
+          state={state}>
+          {props.children}
+        </ListBox>
+      </div>
+    </div>
+  );
+}
+
+<Autocomplete label="Favorite Animal">
+  <Item key="red panda">Red Panda</Item>
+  <Item key="cat">Cat</Item>
+  <Item key="dog">Dog</Item>
+  <Item key="aardvark">Aardvark</Item>
+  <Item key="kangaroo">Kangaroo</Item>
+  <Item key="snake">Snake</Item>
+</Autocomplete>
+```
+
+
+### ListBox
+
+The `ListBox` and `Option` components are used to show the filtered list of options as the
+user types in the ComboBox. They can also be shared with other components like a [Select](useSelect.html). See
+[useListBox](useListBox.html) for more examples, including sections and more complex items.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useListBox, useOption} from '@react-aria/listbox';
+
+function ListBox(props) {
+  let {listBoxRef, state} = props;
+  let newState = UNSTABLE_useFilteredListState(state, props.filter);
+  let {listBoxProps} = useListBox(props, newState, listBoxRef);
+
+  return (
+    <ul
+      {...listBoxProps}
+      ref={listBoxRef}
+      style={{
+        margin: 0,
+        padding: 0,
+        listStyle: "none",
+        maxHeight: 150,
+        overflow: "auto",
+        minWidth: 200
+      }}>
+      {[...newState.collection].map(item => (
+        <Option
+          key={item.key}
+          item={item}
+          state={state} />
+      ))}
+    </ul>
+  );
+}
+
+function Option({item, state}) {
+  let ref = React.useRef(null);
+  let {optionProps, isSelected, isFocused, isDisabled} = useOption({key: item.key}, state, ref);
+
+  let backgroundColor;
+  let color = 'black';
+
+  if (isSelected) {
+    backgroundColor = 'blueviolet';
+    color = 'white';
+  } else if (isFocused) {
+    backgroundColor = 'gray';
+  } else if (isDisabled) {
+    backgroundColor = 'transparent';
+    color = 'gray';
+  }
+
+  return (
+    <li
+      {...optionProps}
+      ref={ref}
+      style={{
+        background: backgroundColor,
+        color: color,
+        padding: '2px 5px',
+        outline: 'none',
+        cursor: 'pointer'
+      }}>
+      {item.rendered}
+    </li>
+  );
+}
+```
+
+</details>
 
 ## Internationalization
 
