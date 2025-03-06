@@ -79,6 +79,7 @@ export class TreeTester {
       } while (document.activeElement!.getAttribute('role') !== 'row');
     }
     let currIndex = rows.indexOf(document.activeElement as HTMLElement);
+    console.log('document', document.activeElement?.outerHTML)
     if (currIndex === -1) {
       throw new Error('ActiveElement is not in the tree');
     }
@@ -119,6 +120,11 @@ export class TreeTester {
     // this would be better than the check to do nothing in events.ts
     // also, it'd be good to be able to trigger selection on the row instead of having to go to the checkbox directly
     if (interactionType === 'keyboard' && !checkboxSelection) {
+      // TODO: probable should just call this in keyboardNavigateToRow everytime, adjust this for all the utils
+      if (document.activeElement !== this._tree || !this._tree.contains(document.activeElement)) {
+        act(() => this._tree.focus());
+      }
+
       await this.keyboardNavigateToRow({row});
       await this.user.keyboard('{Space}');
       return;
@@ -135,7 +141,7 @@ export class TreeTester {
         // Note that long press interactions with rows is strictly touch only for grid rows
         await triggerLongPress({element: cell, advanceTimer: this._advanceTimer, pointerOpts: {pointerType: 'touch'}});
       } else {
-        await pressElement(this.user, cell, interactionType);
+        await pressElement(this.user, row, interactionType);
       }
     }
   };
