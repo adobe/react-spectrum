@@ -15,13 +15,13 @@ import {ActionButton, Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Content} from '@react-spectrum/view';
-import {createLandmarkController, useLandmark} from '@react-aria/landmark';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import React, {SyntheticEvent, useEffect, useMemo, useRef, useState} from 'react';
 import {SpectrumToastOptions, ToastPlacement} from '../src/ToastContainer';
 import {ToastContainer, ToastQueue} from '../';
+import {UNSTABLE_createLandmarkController, useLandmark} from '@react-aria/landmark';
 import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
 
 export default {
@@ -260,7 +260,7 @@ function MultipleInner() {
 }
 
 function IframeExample() {
-  let controller = useMemo(() => createLandmarkController(), []);
+  let controller = useMemo(() => UNSTABLE_createLandmarkController(), []);
   useEffect(() => () => controller.dispose(), [controller]);
   let onLoad = (e: SyntheticEvent) => {
     let iframe = e.target as HTMLIFrameElement;
