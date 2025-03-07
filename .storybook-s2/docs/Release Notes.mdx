@@ -4,6 +4,35 @@ export default MDXLayout;
 
 # Release Notes
 
+## v0.7.0
+
+### New Components
+
+* [TreeView](?path=/docs/treeview--docs)
+
+### Updates
+
+* [Badge](?path=/docs/badge--docs): Add `overflowMode` prop, fix icon alignment, update typo from `variant="charteuse"` to `variant="chartreuse"`
+* [CardView](?path=/docs/cardview--docs): Fix styling when using `renderActionBar`
+* Image: Add `fetchPriority` prop
+* [Menu](?path=/docs/menu--docs): Fix menu item's focus rings from exceeding popover boundaries
+* [Tabs](?path=/docs/tabs--docs): Add collapse behavior
+* Remove `all: revert-layer` from style macro generated CSS to fix Safari issues
+* Remove references to CSS `flex` shorthand. Please use `flexGrow`, `flexBasis`, and `flexShrink` instead.
+
+### Codemods
+
+* Update S2 icon migration map
+* Handle margin/padding shorthands in style props codemod
+
+### Important CSS update
+
+In this release, we have made significant changes to the way our Style Macro generates CSS in order to fix issues with Safari. The Style Macro uses [CSS Cascade Layers](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Cascade_layers) to avoid CSS specificity and ordering issues. However, this means global CSS declared outside a `@layer`, such as CSS resets, will take precedence over S2's CSS. To avoid this, we previously used [all: revert-layer](https://developer.mozilla.org/en-US/docs/Web/CSS/revert-layer). Unfortunately, due to numerous bugs in Safari 18, this caused rendering issues in our components.
+
+To fix these Safari issues, we have removed `all: revert-layer` in this release. This means that global CSS will now take precedence over S2's styles. **If you are using a CSS reset on the same page as S2 components, you will need to remove it** or put it in a `@layer` of its own. See [the docs](?path=/docs/intro--docs#css-resets) for more information.
+
+**If you are using a version older than React Spectrum v3 on the same page, you must update to the latest version.** See the Adobe internal documentation for more details.
+
 ## v0.6.0
 
 ### New Components

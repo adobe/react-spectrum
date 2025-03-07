@@ -31,7 +31,14 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
         e.preventDefault();
         e.stopPropagation();
         if (direction === 'rtl') {
-          focusManager.focusNext();
+          if (ref.current) {
+            let target = e.target as FocusableElement;
+            let prev = findNextSegment(ref.current, target.getBoundingClientRect().left, -1);
+
+            if (prev) {
+              prev.focus();
+            }
+          }
         } else {
           focusManager.focusPrevious();
         }
@@ -40,7 +47,14 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
         e.preventDefault();
         e.stopPropagation();
         if (direction === 'rtl') {
-          focusManager.focusPrevious();
+          if (ref.current) {
+            let target = e.target as FocusableElement;
+            let next = findNextSegment(ref.current, target.getBoundingClientRect().left, 1);
+
+            if (next) {
+              next.focus();
+            }
+          }
         } else {
           focusManager.focusNext();
         }
@@ -103,4 +117,22 @@ export function useDatePickerGroup(state: DatePickerState | DateRangePickerState
   });
 
   return mergeProps(pressProps, {onKeyDown});
+}
+
+function findNextSegment(group: Element, fromX: number, direction: number) {
+  let walker = getFocusableTreeWalker(group, {tabbable: true});
+  let node = walker.nextNode();
+  let closest: FocusableElement | null = null;
+  let closestDistance = Infinity;
+  while (node) {
+    let x = (node as Element).getBoundingClientRect().left;
+    let distance = x - fromX;
+    let absoluteDistance = Math.abs(distance);
+    if (Math.sign(distance) === direction && absoluteDistance < closestDistance) {
+      closest = node as FocusableElement;
+      closestDistance = absoluteDistance;
+    }
+    node = walker.nextNode();
+  }
+  return closest;
 }

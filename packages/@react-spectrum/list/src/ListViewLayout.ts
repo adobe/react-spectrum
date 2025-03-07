@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 import {InvalidationContext, LayoutInfo, Rect} from '@react-stately/virtualizer';
-import {LayoutNode, ListLayout} from '@react-stately/layout';
+import {LayoutNode, ListLayout, ListLayoutOptions} from '@react-stately/layout';
 import {Node} from '@react-types/shared';
 
-interface ListViewLayoutProps {
+interface ListViewLayoutProps extends ListLayoutOptions {
   isLoading?: boolean
 }
 

@@ -16,6 +16,7 @@ import {
   DisabledBehavior,
   DOMAttributes,
   DOMProps,
+  FocusStrategy,
   Key,
   KeyboardDelegate,
   LayoutDelegate,
@@ -30,6 +31,8 @@ import {useHasTabbableChild} from '@react-aria/focus';
 import {useSelectableList} from '@react-aria/selection';
 
 export interface GridListProps<T> extends CollectionBase<T>, MultipleSelection {
+  /** Whether to auto focus the gridlist or an option. */
+  autoFocus?: boolean | FocusStrategy,
   /**
    * Handler that is called when a user performs an action on an item. The exact user event depends on
    * the collection's `selectionBehavior` prop and the interaction modality.
@@ -51,6 +54,11 @@ export interface AriaGridListProps<T> extends GridListProps<T>, DOMProps, AriaLa
 export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'children'> {
   /** Whether the list uses virtual scrolling. */
   isVirtualized?: boolean,
+  /**
+   * Whether typeahead navigation is disabled.
+   * @default false
+   */
+  disallowTypeAhead?: boolean,
   /**
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
@@ -95,6 +103,7 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     keyboardDelegate,
     layoutDelegate,
     onAction,
+    disallowTypeAhead,
     linkBehavior = 'action',
     keyboardNavigationBehavior = 'arrow'
   } = props;
@@ -113,7 +122,9 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     isVirtualized,
     selectOnFocus: state.selectionManager.selectionBehavior === 'replace',
     shouldFocusWrap: props.shouldFocusWrap,
-    linkBehavior
+    linkBehavior,
+    disallowTypeAhead,
+    autoFocus: props.autoFocus
   });
 
   let id = useId(props.id);

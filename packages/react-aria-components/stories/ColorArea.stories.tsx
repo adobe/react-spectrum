@@ -12,7 +12,7 @@
 
 import {ColorArea, ColorThumb} from '../src';
 import {ColorSliderExample} from './ColorSlider.stories';
-import {parseColor} from '@react-stately/color';
+import {parseColor} from 'react-stately';
 import React, {useState} from 'react';
 
 export default {

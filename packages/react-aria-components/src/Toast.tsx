@@ -10,28 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaToastProps, AriaToastRegionProps, useToast, useToastRegion} from '@react-aria/toast';
+import {AriaToastProps, AriaToastRegionProps, mergeProps, useFocusRing, useToast, useToastRegion} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {createPortal} from 'react-dom';
 import {forwardRefType} from '@react-types/shared';
-import {mergeProps, useFocusRing, useHover} from 'react-aria';
-import {QueuedToast, ToastQueue, ToastState, useToastQueue} from '@react-stately/toast';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactElement, useContext} from 'react';
+import {QueuedToast, ToastQueue, ToastState, useToastQueue} from 'react-stately';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, useContext} from 'react';
 import {TextContext} from './Text';
 import {useObjectRef} from '@react-aria/utils';
 
 const ToastStateContext = createContext<ToastState<any> | null>(null);
 
 export interface ToastRegionRenderProps<T> {
+  /** A list of all currently visible toasts. */
   visibleToasts: QueuedToast<T>[],
   /**
-   * Whether the thumb is currently focused.
+   * Whether the toast region is currently focused.
    * @selector [data-focused]
    */
   isFocused: boolean,
   /**
-   * Whether the thumb is keyboard focused.
+   * Whether the toast region is keyboard focused.
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean,
@@ -39,12 +39,17 @@ export interface ToastRegionRenderProps<T> {
 }
 
 export interface ToastRegionProps<T> extends AriaToastRegionProps, StyleRenderProps<ToastRegionRenderProps<T>> {
-  toastQueue: ToastQueue<T>,
+  /** The queue of toasts to display. */
+  queue: ToastQueue<T>,
+  /** A function to render each toast. */
   children: (renderProps: {toast: QueuedToast<T>}) => ReactElement
 }
 
-export const ToastRegion = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastRegion<T>(props: ToastRegionProps<T>, ref: ForwardedRef<HTMLDivElement>) {
-  let state = useToastQueue(props.toastQueue);
+/**
+ * A ToastRegion displays one or more toast notifications.
+ */
+export const ToastRegion = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastRegion<T>(props: ToastRegionProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
+  let state = useToastQueue(props.queue);
   let objectRef = useObjectRef(ref);
   let {regionProps} = useToastRegion(props, state, objectRef);
 
@@ -81,7 +86,8 @@ export const ToastRegion = /*#__PURE__*/ (forwardRef as forwardRefType)(function
     : null;
 });
 
-export const ToastList = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastList<T>(props: ToastRegionProps<T>, ref: ForwardedRef<HTMLOListElement>) {
+// TODO: possibly export this so additional children can be added to the region, outside the list.
+const ToastList = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastList<T>(props: ToastRegionProps<T>, ref: ForwardedRef<HTMLOListElement>) {
   let state = useContext(ToastStateContext)!;
   return (
     // @ts-ignore
@@ -97,23 +103,27 @@ export const ToastList = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
 });
 
 export interface ToastRenderProps<T> {
+  /**
+   * The toast object to display.
+   */
   toast: QueuedToast<T>,
   /**
-   * Whether the thumb is currently focused.
+   * Whether the toast is currently focused.
    * @selector [data-focused]
    */
   isFocused: boolean,
   /**
-   * Whether the thumb is keyboard focused.
+   * Whether the toast is keyboard focused.
    * @selector [data-focus-visible]
    */
   isFocusVisible: boolean
 }
 
-export interface ToastProps<T> extends AriaToastProps<T>, RenderProps<ToastRenderProps<T>> {
+export interface ToastProps<T> extends AriaToastProps<T>, RenderProps<ToastRenderProps<T>> {}
 
-}
-
+/**
+ * A Toast displays a brief, temporary notification of actions, errors, or other events in an application.
+ */
 export const Toast = /*#__PURE__*/ (forwardRef as forwardRefType)(function Toast<T>(props: ToastProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   let state = useContext(ToastStateContext)!;
   let objectRef = useObjectRef(ref);
@@ -171,6 +181,9 @@ export const Toast = /*#__PURE__*/ (forwardRef as forwardRefType)(function Toast
 
 export const ToastContentContext = createContext<ContextValue<HTMLAttributes<HTMLElement>, HTMLDivElement>>({});
 
+/**
+ * ToastContent wraps the main content of a toast notification.
+ */
 export const ToastContent = /*#__PURE__*/ forwardRef(function ToastContent(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ToastContentContext);
   return (

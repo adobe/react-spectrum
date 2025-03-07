@@ -16,12 +16,13 @@ import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {DatePicker} from '../';
 import {Heading} from '@react-spectrum/text';
 import React from 'react';
+import {userEvent, within} from '@storybook/testing-library';
 
 export default {
   title: 'DatePicker',
   parameters: {
     chromaticProvider: {
-      locales: ['en-US'/* , 'ar-EG', 'ja-JP' */]
+      locales: ['en-US', 'ar-EG', 'ja-JP', 'he-IL']
     }
   }
 };
@@ -37,6 +38,17 @@ const focusParams = {
 
 const openParams = {
   chromaticProvider: {
+    locales: ['en-US'],
+    colorSchemes: ['light'],
+    scales: ['medium'],
+    disableAnimations: true,
+    express: false
+  }
+};
+
+const openParamsRTL = {
+  chromaticProvider: {
+    locales: ['he-IL'],
     colorSchemes: ['light'],
     scales: ['medium'],
     disableAnimations: true,
@@ -53,6 +65,16 @@ const zonedDateTime = parseZonedDateTime('2021-11-07T00:45-07:00[America/Los_Ang
 export const Placeholder = () => <DatePicker label="Date" placeholderValue={date} />;
 export const PlaceholderFocus = () => <DatePicker label="Date" placeholderValue={date} autoFocus />;
 PlaceholderFocus.parameters = focusParams;
+
+export const PlaceholderFocusRTL = () => <DatePicker label="Date" placeholderValue={date} autoFocus />;
+PlaceholderFocusRTL.parameters = {
+  chromaticProvider: {
+    locales: ['ar-EG'],
+    scales: ['medium'],
+    colorSchemes: ['light'],
+    express: false
+  }
+};
 
 export const PlaceholderFocusExpress = () => <DatePicker label="Date" placeholderValue={date} autoFocus />;
 PlaceholderFocusExpress.parameters = {
@@ -110,9 +132,17 @@ export const OpenPlaceholder = () => <DatePicker label="Date" placeholderValue={
 OpenPlaceholder.parameters = openParams;
 OpenPlaceholder.decorators = openDecorators;
 
+export const OpenPlaceholderRTL = () => <DatePicker label="Date" placeholderValue={date} isOpen shouldFlip={false} />;
+OpenPlaceholderRTL.parameters = openParamsRTL;
+OpenPlaceholderRTL.decorators = openDecorators;
+
 export const OpenValue = () => <DatePicker label="Date" value={date} isOpen shouldFlip={false} />;
 OpenValue.parameters = openParams;
 OpenValue.decorators = openDecorators;
+
+export const OpenValueRTL = () => <DatePicker label="Date" value={date} isOpen shouldFlip={false} />;
+OpenValueRTL.parameters = openParamsRTL;
+OpenValueRTL.decorators = openDecorators;
 
 export const OpenTime = () => <DatePicker label="Date" value={dateTime} isOpen shouldFlip={false} />;
 OpenTime.parameters = openParams;
@@ -146,6 +176,50 @@ OpenExpress.parameters = {
   }
 };
 OpenExpress.decorators = openDecorators;
+
+export const OpenLTRInteractions = () => <DatePicker label="Date" value={date} />;
+OpenLTRInteractions.parameters = {
+  chromaticProvider: {
+    locales: ['en-US'],
+    scales: ['medium'],
+    colorSchemes: ['light'],
+    express: false
+  }
+};
+OpenLTRInteractions.decorators = openDecorators;
+
+OpenLTRInteractions.play = async ({canvasElement}) => {
+  await userEvent.tab();
+  await userEvent.keyboard('[ArrowRight]');
+  await userEvent.keyboard('[ArrowRight]');
+  await userEvent.keyboard('[ArrowRight]');
+  await userEvent.keyboard('[Enter]]');
+  let body = canvasElement.ownerDocument.body;
+  await within(body).findByRole('dialog');
+  await userEvent.keyboard('[ArrowRight]');
+};
+
+export const OpenRTLInteractions = () => <DatePicker label="Date" value={date} />;
+OpenRTLInteractions.parameters = {
+  chromaticProvider: {
+    locales: ['ar-EG'],
+    scales: ['medium'],
+    colorSchemes: ['light'],
+    express: false
+  }
+};
+OpenRTLInteractions.decorators = openDecorators;
+
+OpenRTLInteractions.play = async ({canvasElement}) => {
+  await userEvent.tab();
+  await userEvent.keyboard('[ArrowLeft]');
+  await userEvent.keyboard('[ArrowLeft]');
+  await userEvent.keyboard('[ArrowLeft]');
+  await userEvent.keyboard('[Enter]]');
+  let body = canvasElement.ownerDocument.body;
+  await within(body).findByRole('dialog');
+  await userEvent.keyboard('[ArrowLeft]');
+};
 
 export const MultipleMonths = () => <DatePicker label="Date" value={date} isOpen shouldFlip={false} maxVisibleMonths={3} />;
 MultipleMonths.parameters = openParams;

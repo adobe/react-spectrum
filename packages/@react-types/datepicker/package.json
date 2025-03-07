@@ -1,6 +1,6 @@
 {
   "name": "@react-types/datepicker",
-  "version": "3.10.0",
+  "version": "3.11.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "types": "src/index.d.ts",
@@ -10,9 +10,9 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.7.0",
-    "@react-types/calendar": "^3.6.0",
-    "@react-types/overlays": "^3.8.12",
-    "@react-types/shared": "^3.27.0"
+    "@react-types/calendar": "^3.6.1",
+    "@react-types/overlays": "^3.8.13",
+    "@react-types/shared": "^3.28.0"
   },
   "publishConfig": {
     "access": "public"

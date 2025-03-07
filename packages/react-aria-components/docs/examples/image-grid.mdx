@@ -16,6 +16,7 @@ import styles from '@react-spectrum/docs/src/docs.css';
 import ListBox from '@react-spectrum/docs/pages/assets/component-illustrations/ListBox.svg';
 import ProgressCircle from '@react-spectrum/docs/pages/assets/component-illustrations/ProgressCircle.svg';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
 ---
 keywords: [example, listbox, aria, accessibility, react, component]
@@ -65,13 +66,13 @@ function ImageGridExample() {
   };
 
   return (
-    <div className="bg-gradient-to-r from-sky-500 to-teal-500 p-2 sm:p-8 rounded-lg flex justify-center">
-      <ListBox aria-label="Images" items={list.items} selectionMode="multiple" layout="grid" renderEmptyState={renderEmptyState} className="overflow-auto outline-none bg-white rounded-lg shadow p-2 h-[350px] w-full max-w-[372px] grid grid-cols-3 gap-3 empty:flex">
+    <div className="bg-linear-to-r from-sky-500 to-teal-500 p-2 sm:p-8 rounded-lg flex justify-center">
+      <ListBox aria-label="Images" items={list.items} selectionMode="multiple" layout="grid" renderEmptyState={renderEmptyState} className="overflow-auto outline-hidden bg-white rounded-lg shadow-sm p-2 h-[350px] w-full max-w-[372px] grid grid-cols-3 gap-3 empty:flex">
         {item => (
-          <ListBoxItem textValue={item.user.name} className="relative rounded outline-none group cursor-default">
-            <img src={item.urls.regular} alt={item.alt_description} className="h-[80px] w-full object-cover rounded group-selected:ring-2 group-focus-visible:ring-4 group-selected:group-focus-visible:ring-4 ring-offset-2 ring-sky-600" />
+          <ListBoxItem textValue={item.user.name} className="relative rounded-sm outline-hidden group cursor-default">
+            <img src={item.urls.regular} alt={item.alt_description} className="h-[80px] w-full object-cover rounded-sm group-selected:ring-2 group-focus-visible:ring-4 group-selected:group-focus-visible:ring-4 ring-offset-2 ring-sky-600" />
             <Text slot="label" className="text-[11px] text-gray-700 font-semibold overflow-hidden text-ellipsis whitespace-nowrap max-w-full block mt-1">{item.user.name}</Text>
-            <div className="absolute top-2 left-2 text-sky-800 rounded-full leading-[0] bg-white border border-white border-solid hidden group-selected:block">
+            <div className="absolute top-2 left-2 text-sky-800 rounded-full leading-0 bg-white border border-white border-solid hidden group-selected:block">
               <CheckCircleIcon size="S" />
             </div>
           </ListBoxItem>
@@ -95,7 +96,18 @@ function ProgressCircle() {
 
 ### Tailwind config
 
-This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. Add it to your `tailwind.config.js`:
+This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. When using Tailwind v4, add it to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugin to your `tailwind.config.js` instead:
 
 ```tsx
 module.exports = {
@@ -105,6 +117,10 @@ module.exports = {
   ]
 };
 ```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
 
 ## Components
 

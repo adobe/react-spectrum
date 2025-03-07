@@ -20,11 +20,11 @@ import {
   ListBoxContext,
   ListBoxItem,
   ListBoxSection,
-  UNSTABLE_ListLayout as ListLayout,
+  ListLayout,
   Modal,
   Text,
   useDragAndDrop,
-  UNSTABLE_Virtualizer as Virtualizer
+  Virtualizer
 } from '../';
 import React, {useState} from 'react';
 import {User} from '@react-aria/test-utils';
@@ -335,6 +335,12 @@ describe('ListBox', () => {
 
     act(() => setItemText('Hi'));
     expect(getAllByRole('option').map(o => o.textContent)).toEqual(['Hi']);
+  });
+
+  it('should support autoFocus', () => {
+    let {getByRole} = renderListbox({autoFocus: true});
+    let listbox = getByRole('listbox');
+    expect(document.activeElement).toBe(listbox);
   });
 
   it('should support hover', async () => {
@@ -774,10 +780,6 @@ describe('ListBox', () => {
   });
 
   it('should support virtualizer', async () => {
-    let layout = new ListLayout({
-      rowHeight: 25
-    });
-
     let items = [];
     for (let i = 0; i < 50; i++) {
       items.push({id: i, name: 'Item ' + i});
@@ -788,7 +790,7 @@ describe('ListBox', () => {
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
 
     let {getByRole, getAllByRole} = render(
-      <Virtualizer layout={layout}>
+      <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 25}}>
         <ListBox aria-label="Test" items={items}>
           {item => <ListBoxItem>{item.name}</ListBoxItem>}
         </ListBox>

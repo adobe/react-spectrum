@@ -46,8 +46,9 @@ export function disableTextSelection(target?: Element) {
   } else if (target instanceof HTMLElement || target instanceof SVGElement) {
     // If not iOS, store the target's original user-select and change to user-select: none
     // Ignore state since it doesn't apply for non iOS
-    modifiedElementMap.set(target, target.style.userSelect);
-    target.style.userSelect = 'none';
+    let property = 'userSelect' in target.style ? 'userSelect' : 'webkitUserSelect';
+    modifiedElementMap.set(target, target.style[property]);
+    target.style[property] = 'none';
   }
 }
 
@@ -85,9 +86,10 @@ export function restoreTextSelection(target?: Element) {
     // Ignore state since it doesn't apply for non iOS
     if (target && modifiedElementMap.has(target)) {
       let targetOldUserSelect = modifiedElementMap.get(target) as string;
+      let property = 'userSelect' in target.style ? 'userSelect' : 'webkitUserSelect';
 
-      if (target.style.userSelect === 'none') {
-        target.style.userSelect = targetOldUserSelect;
+      if (target.style[property] === 'none') {
+        target.style[property] = targetOldUserSelect;
       }
 
       if (target.getAttribute('style') === '') {

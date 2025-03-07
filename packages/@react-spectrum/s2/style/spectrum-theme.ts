@@ -595,7 +595,6 @@ export const style = createTheme({
       },
       disabled: colorToken('disabled-border-color')
         // forcedColors: 'GrayText'
-
     }),
     outlineColor: createColorProperty({
       ...color,
