@@ -542,17 +542,23 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     x += this.virtualizer!.visibleRect.x;
     y += this.virtualizer!.visibleRect.y;
 
-    // Custom variation of this.virtualizer.keyAtPoint that ignores body
+    // Find the closest item within on either side of the point using the gap width.
+    let searchRect = new Rect(x, Math.max(0, y - this.gap), 1, this.gap * 2);
+    let candidates = this.getVisibleLayoutInfos(searchRect);
     let key: Key | null = null;
-    let point = new Point(x, y);
-    let rectAtPoint = new Rect(point.x, point.y, 1, 1);
-    let layoutInfos = this.virtualizer!.layout.getVisibleLayoutInfos(rectAtPoint).filter(info => info.type === 'row');
+    let minDistance = Infinity;
+    for (let candidate of candidates) {
+      // Ignore items outside the search rect, e.g. persisted keys.
+      if (candidate.type !== 'row' || !candidate.rect.intersects(searchRect)) {
+        continue;
+      }
 
-    // Layout may return multiple layout infos in the case of
-    // persisted keys, so find the first one that actually intersects.
-    for (let layoutInfo of layoutInfos) {
-      if (layoutInfo.rect.intersects(rectAtPoint)) {
-        key = layoutInfo.key;
+      let yDist = Math.abs(candidate.rect.y - x);
+      let maxYDist = Math.abs(candidate.rect.maxY - x);
+      let dist = Math.min(yDist, maxYDist);
+      if (dist < minDistance) {
+        minDistance = dist;
+        key = candidate.key;
       }
     }
 
