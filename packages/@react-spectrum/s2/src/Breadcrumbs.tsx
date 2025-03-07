@@ -20,6 +20,7 @@ import {
   DefaultCollectionRenderer,
   HeadingContext,
   Link,
+  LinkRenderProps,
   Provider,
   Breadcrumbs as RACBreadcrumbs
 } from 'react-aria-components';
@@ -97,7 +98,7 @@ const wrapper = style<BreadcrumbsStyleProps>({
 
 const InternalBreadcrumbsContext = createContext<Partial<BreadcrumbsProps<any>>>({});
 
-/** Breadcrumbs show hierarchy and navigational context for a user’s location within an application. */
+/** Breadcrumbs show hierarchy and navigational context for a user's location within an application. */
 export const Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: DOMRef<HTMLOListElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, BreadcrumbsContext);
   let domRef = useDOMRef(ref);
@@ -200,7 +201,7 @@ let HiddenBreadcrumbs = function (props: {listRef: RefObject<HTMLDivElement | nu
   );
 };
 
-const breadcrumbStyles = style({
+const breadcrumbStyles = style<BreadcrumbsStyleProps & {isMenu?: boolean, isCurrent?: boolean}>({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'start',
@@ -245,7 +246,7 @@ const chevronStyles = style({
   }
 });
 
-const linkStyles = style({
+const linkStyles = style<LinkRenderProps & {size?: 'M' | 'L', isCurrent?: boolean}>({
   ...focusRing(),
   borderRadius: 'sm',
   font: 'control',
@@ -255,7 +256,8 @@ const linkStyles = style({
     isCurrent: 'neutral',
     forcedColors: {
       default: 'LinkText',
-      isDisabled: 'GrayText'
+      isDisabled: 'GrayText',
+      isCurrent: 'GrayText'
     }
   },
   transition: 'default',
@@ -337,7 +339,7 @@ export const Breadcrumb = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
                   ping={ping}
                   referrerPolicy={referrerPolicy}
                   isDisabled={isDisabled || isCurrent}
-                  className={({isFocused, isFocusVisible, isHovered, isDisabled, isPressed}) => linkStyles({isFocused, isFocusVisible, isHovered, isDisabled, size, isPressed})}>
+                  className={({isFocused, isFocusVisible, isHovered, isDisabled, isPressed}) => linkStyles({isFocused, isFocusVisible, isHovered, isDisabled, size, isPressed, isCurrent})}>
                   {children}
                 </Link>
                 <ChevronIcon

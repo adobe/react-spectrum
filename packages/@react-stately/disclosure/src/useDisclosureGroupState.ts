@@ -33,7 +33,7 @@ export interface DisclosureGroupState {
 
   /** Whether all items are disabled. */
   readonly isDisabled: boolean,
-  
+
   /** A set of keys for items that are expanded. */
   readonly expandedKeys: Set<Key>,
 
@@ -55,11 +55,14 @@ export function useDisclosureGroupState(props: DisclosureGroupProps): Disclosure
     useMemo(() => props.defaultExpandedKeys ? new Set(props.defaultExpandedKeys) : new Set(), [props.defaultExpandedKeys]),
     props.onExpandedChange
   );
-  
+
   useEffect(() => {
     // Ensure only one item is expanded if allowsMultipleExpanded is false.
     if (!allowsMultipleExpanded && expandedKeys.size > 1) {
-      setExpandedKeys(new Set([expandedKeys.values().next().value]));
+      let firstKey = expandedKeys.values().next().value;
+      if (firstKey != null) {
+        setExpandedKeys(new Set([firstKey]));
+      }
     }
   });
 
@@ -80,7 +83,7 @@ export function useDisclosureGroupState(props: DisclosureGroupProps): Disclosure
       } else {
         keys = new Set(expandedKeys.has(key) ? [] : [key]);
       }
-  
+
       setExpandedKeys(keys);
     }
   };

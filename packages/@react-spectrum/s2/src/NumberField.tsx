@@ -16,6 +16,7 @@ import {
   NumberField as AriaNumberField,
   NumberFieldProps as AriaNumberFieldProps,
   ButtonContext,
+  ButtonRenderProps,
   ContextValue,
   InputContext,
   Text,
@@ -56,7 +57,7 @@ export interface NumberFieldProps extends
 
 export const NumberFieldContext = createContext<ContextValue<Partial<NumberFieldProps>, TextFieldRef>>(null);
 
-const inputButton = style({
+const inputButton = style<ButtonRenderProps & {size: 'S' | 'M' | 'L' | 'XL', type: 'decrement' | 'increment'}>({
   display: 'flex',
   outlineStyle: 'none',
   textAlign: 'center',
@@ -71,7 +72,7 @@ const inputButton = style({
       }
     },
     type: {
-      decrementStep: 'none'
+      decrement: 'none'
     }
   },
   borderBottomRadius: {
@@ -84,7 +85,7 @@ const inputButton = style({
       }
     },
     type: {
-      incrementStep: 'none'
+      increment: 'none'
     }
   },
   alignItems: 'center',
