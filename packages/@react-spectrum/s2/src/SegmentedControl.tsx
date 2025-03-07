@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, DOMRef, DOMRefValue, FocusableRef, Key} from '@react-types/shared';
 import {centerBaseline} from './CenterBaseline';
-import {ContextValue, DEFAULT_SLOT, Provider, TextContext as RACTextContext, SlotProps, ToggleButton, ToggleButtonGroup, ToggleGroupStateContext} from 'react-aria-components';
+import {ContextValue, DEFAULT_SLOT, Provider, TextContext as RACTextContext, SlotProps, ToggleButton, ToggleButtonGroup, ToggleButtonRenderProps, ToggleGroupStateContext} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode, RefObject, useCallback, useContext, useRef} from 'react';
 import {focusRing, space, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -62,7 +62,7 @@ const segmentedControl = style({
   width: 'fit'
 }, getAllowedOverrides());
 
-const controlItem = style({
+const controlItem = style<ToggleButtonRenderProps & {isJustified?: boolean}>({
   ...focusRing(),
   position: 'relative',
   display: 'flex',
@@ -107,7 +107,7 @@ const controlItem = style({
   }
 }, getAllowedOverrides());
 
-const slider = style({
+const slider = style<{isDisabled: boolean}>({
   backgroundColor: {
     default: 'gray-25',
     forcedColors: {
