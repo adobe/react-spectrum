@@ -7140,7 +7140,7 @@ __metadata:
     "@react-spectrum/s2": "npm:^0.7.1"
     "@react-types/shared": "npm:^3.28.0"
     "@types/jscodeshift": "npm:^0.11.11"
-    "@types/node": "npm:^20"
+    "@types/node": "patch:@types/node@npm%3A20.14.13#~/.yarn/patches/@types-node-npm-20.14.13-41f92d384c.patch"
     boxen: "npm:^5.1.2"
     build: "npm:^0.1.4"
     chalk: "npm:^4.0.0"
@@ -11370,7 +11370,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:>= 8, @types/node@npm:^20":
+"@types/node@npm:20.14.13":
   version: 20.14.13
   resolution: "@types/node@npm:20.14.13"
   dependencies:
@@ -11379,12 +11379,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.0.0":
-  version: 18.19.31
-  resolution: "@types/node@npm:18.19.31"
+"@types/node@patch:@types/node@npm%3A20.14.13#~/.yarn/patches/@types-node-npm-20.14.13-41f92d384c.patch":
+  version: 20.14.13
+  resolution: "@types/node@patch:@types/node@npm%3A20.14.13#~/.yarn/patches/@types-node-npm-20.14.13-41f92d384c.patch::version=20.14.13&hash=24fda2"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10c0/bfebae8389220c0188492c82eaf328f4ba15e6e9b4abee33d6bf36d3b13f188c2f53eb695d427feb882fff09834f467405e2ed9be6aeb6ad4705509822d2ea08
+  checksum: 10c0/1bbbadf2732c27a8f1bc7b20be41bf7faa50436461c1af6e67398c2003a8bde9893e04f762d55b231ef818d4567ec6bcb6bcdf28748f73a715a11dd7df88e9f5
   languageName: node
   linkType: hard
 
