@@ -69,6 +69,17 @@ interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
    * such as ComboBox's MenuTrigger or a NumberField's increment/decrement control.
    */
   preventFocusOnPress?: boolean
+  & (
+    | { type?: 'button' | 'reset' }
+    | { 
+        type: 'submit',
+        /**
+         * The id of the form that the button is associated with.
+         * Only applicable when type is 'submit'.
+         */
+        form?: string 
+      }
+    )
 }
 
 export interface AriaButtonProps<T extends ElementType = 'button'> extends ButtonProps, LinkButtonProps<T>, AriaBaseButtonProps {}
