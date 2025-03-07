@@ -11,7 +11,7 @@
  */
 
 import {DropTarget, DropTargetDelegate, ItemDropTarget, Key, Node} from '@react-types/shared';
-import {InvalidationContext, Layout, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
+import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 
 export interface GridLayoutOptions {
   /**
@@ -102,6 +102,7 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
     // Compute the number of rows and columns needed to display the content
     let columns = Math.floor(visibleWidth / (minItemSize.width + minSpace.width));
     let numColumns = Math.max(1, Math.min(maxColumns, columns));
+    this.numColumns = numColumns;
 
     // Compute the available width (minus the space between items)
     let width = visibleWidth - (minSpace.width * Math.max(0, numColumns));
@@ -223,7 +224,46 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
     x += this.virtualizer!.visibleRect.x;
     y += this.virtualizer!.visibleRect.y;
 
-    let key = this.virtualizer!.keyAtPoint(new Point(x, y));
+    // Find the closest item within on either side of the point using the gap width.
+    let key: Key | null = null;
+    if (this.numColumns === 1) {
+      let searchRect = new Rect(x, Math.max(0, y - this.gap.height), 1, this.gap.height * 2);
+      let candidates = this.getVisibleLayoutInfos(searchRect);
+      let minDistance = Infinity;
+      for (let candidate of candidates) {
+        // Ignore items outside the search rect, e.g. persisted keys.
+        if (!candidate.rect.intersects(searchRect)) {
+          continue;
+        }
+
+        let yDist = Math.abs(candidate.rect.y - x);
+        let maxYDist = Math.abs(candidate.rect.maxY - x);
+        let dist = Math.min(yDist, maxYDist);
+        if (dist < minDistance) {
+          minDistance = dist;
+          key = candidate.key;
+        }
+      }
+    } else {
+      let searchRect = new Rect(Math.max(0, x - this.gap.width), y, this.gap.width * 2, 1);
+      let candidates = this.getVisibleLayoutInfos(searchRect);
+      let minDistance = Infinity;
+      for (let candidate of candidates) {
+        // Ignore items outside the search rect, e.g. persisted keys.
+        if (!candidate.rect.intersects(searchRect)) {
+          continue;
+        }
+
+        let xDist = Math.abs(candidate.rect.x - x);
+        let maxXDist = Math.abs(candidate.rect.maxX - x);
+        let dist = Math.min(xDist, maxXDist);
+        if (dist < minDistance) {
+          minDistance = dist;
+          key = candidate.key;
+        }
+      }
+    }
+
     let layoutInfo = key != null ? this.getLayoutInfo(key) : null;
     if (!layoutInfo) {
       return {type: 'root'};

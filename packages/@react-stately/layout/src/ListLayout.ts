@@ -12,7 +12,7 @@
 
 import {Collection, DropTarget, DropTargetDelegate, ItemDropTarget, Key, Node} from '@react-types/shared';
 import {getChildNodes} from '@react-stately/collections';
-import {InvalidationContext, Layout, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
+import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 
 export interface ListLayoutOptions {
   /**
@@ -505,7 +505,26 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     x += this.virtualizer!.visibleRect.x;
     y += this.virtualizer!.visibleRect.y;
 
-    let key = this.virtualizer!.keyAtPoint(new Point(x, y));
+    // Find the closest item within on either side of the point using the gap width.
+    let searchRect = new Rect(x, Math.max(0, y - this.gap), 1, this.gap * 2);
+    let candidates = this.getVisibleLayoutInfos(searchRect);
+    let key: Key | null = null;
+    let minDistance = Infinity;
+    for (let candidate of candidates) {
+      // Ignore items outside the search rect, e.g. persisted keys.
+      if (!candidate.rect.intersects(searchRect)) {
+        continue;
+      }
+
+      let yDist = Math.abs(candidate.rect.y - x);
+      let maxYDist = Math.abs(candidate.rect.maxY - x);
+      let dist = Math.min(yDist, maxYDist);
+      if (dist < minDistance) {
+        minDistance = dist;
+        key = candidate.key;
+      }
+    }
+
     if (key == null || this.virtualizer!.collection.size === 0) {
       return {type: 'root'};
     }
