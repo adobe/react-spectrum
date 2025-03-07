@@ -11,7 +11,7 @@
  */
 
 import {DropTarget, DropTargetDelegate, ItemDropTarget, Key, Node} from '@react-types/shared';
-import {InvalidationContext, Layout, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
+import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 
 export interface GridLayoutOptions {
   /**

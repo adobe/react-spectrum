@@ -12,7 +12,7 @@
 
 import {Collection, DropTarget, DropTargetDelegate, ItemDropTarget, Key, Node} from '@react-types/shared';
 import {getChildNodes} from '@react-stately/collections';
-import {InvalidationContext, Layout, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
+import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 
 export interface ListLayoutOptions {
   /**
