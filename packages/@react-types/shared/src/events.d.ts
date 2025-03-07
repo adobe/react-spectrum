@@ -10,8 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {FocusableElement} from './dom';
 import {
   FocusEvent,
+  MouseEvent,
   KeyboardEvent as ReactKeyboardEvent,
   SyntheticEvent
 } from 'react';
@@ -112,7 +114,9 @@ export interface PressEvents {
    * Handler that is called when a press is released over the target, regardless of
    * whether it started on the target or not.
    */
-  onPressUp?: (e: PressEvent) => void
+  onPressUp?: (e: PressEvent) => void,
+  /** @deprecated Use onPress instead. */
+  onClick?: (e: MouseEvent<FocusableElement>) => void
 }
 
 export interface FocusableProps<Target = Element> extends FocusEvents<Target>, KeyboardEvents {
