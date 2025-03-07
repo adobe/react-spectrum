@@ -553,8 +553,8 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
         continue;
       }
 
-      let yDist = Math.abs(candidate.rect.y - x);
-      let maxYDist = Math.abs(candidate.rect.maxY - x);
+      let yDist = Math.abs(candidate.rect.y - y);
+      let maxYDist = Math.abs(candidate.rect.maxY - y);
       let dist = Math.min(yDist, maxYDist);
       if (dist < minDistance) {
         minDistance = dist;
