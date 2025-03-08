@@ -23,7 +23,7 @@ export default {
 
 export const ButtonExample = () => {
   return (
-    <Button data-testid="button-example" onPress={() => alert('Hello world!')}>Press me</Button>
+    <Button data-testid="button-example" onPress={action('onPress')} onClick={action('onClick')}>Press me</Button>
   );
 };
 
