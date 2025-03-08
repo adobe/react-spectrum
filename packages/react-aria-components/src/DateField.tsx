@@ -92,7 +92,7 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
     <Provider
       values={[
         [DateFieldStateContext, state],
-        [GroupContext, {...fieldProps, ref: fieldRef, isInvalid: state.isInvalid}],
+        [GroupContext, {...fieldProps, ref: fieldRef, isInvalid: state.isInvalid, isDisabled: state.isDisabled}],
         [InputContext, {...inputProps, ref: inputRef}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [TextContext, {
@@ -108,7 +108,8 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
         {...renderProps}
         ref={ref}
         slot={props.slot || undefined}
-        data-invalid={state.isInvalid || undefined} />
+        data-invalid={state.isInvalid || undefined}
+        data-disabled={state.isDisabled || undefined} />
     </Provider>
   );
 });
