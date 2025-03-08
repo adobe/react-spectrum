@@ -317,7 +317,8 @@ export function VirtualizedListBoxDnd() {
       <Virtualizer
         layout={ListLayout}
         layoutOptions={{
-          rowHeight: 25
+          rowHeight: 25,
+          gap: 8
         }}>
         <ListBox
           className={styles.menu}
