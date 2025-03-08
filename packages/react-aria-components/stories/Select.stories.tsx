@@ -10,10 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Label, ListBox, ListLayout, OverlayArrow, Popover, Select, SelectValue, Virtualizer} from 'react-aria-components';
+import {Button, Collection, Label, ListBox, ListLayout, OverlayArrow, Popover, Select, SelectValue, Virtualizer} from 'react-aria-components';
 import {MyListBoxItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
+import {useAsyncList} from 'react-stately';
+import { UNSTABLE_ListBoxLoadingIndicator } from '../src/ListBox';
 
 export default {
   title: 'React Aria Components'
@@ -101,3 +103,107 @@ export const VirtualizedSelect = () => (
     </Popover>
   </Select>
 );
+
+interface Character {
+  name: string,
+  height: number,
+  mass: number,
+  birth_year: number
+}
+
+// TODO: this might just be unrealistic since the user needs to render the loading spinner... Do we help them with that?
+// They could technically do something like we do in Table.stories with MyRow where they selectively render the loading spinner
+// dynamically but that feels odd
+export const AsyncVirtualizedDynamicSelect = () => {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      // Slow down load so progress circle can appear
+      await new Promise(resolve => setTimeout(resolve, 4000));
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <Select isLoading={list.isLoading} onLoadMore={list.loadMore}>
+      <Label style={{display: 'block'}}>Async Virtualized Dynamic Select</Label>
+      <Button>
+        <SelectValue />
+        <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
+      </Button>
+      <Popover>
+        <OverlayArrow>
+          <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
+        </OverlayArrow>
+        <Virtualizer layout={new ListLayout({rowHeight: 25})}>
+          <ListBox items={list.items} className={styles.menu}>
+            {item => <MyListBoxItem id={item.name}>{item.name}</MyListBoxItem>}
+          </ListBox>
+        </Virtualizer>
+      </Popover>
+    </Select>
+  );
+};
+
+const MyListBoxLoaderIndicator = () => {
+  return (
+    <UNSTABLE_ListBoxLoadingIndicator>
+      <span>
+        Load more spinner
+      </span>
+    </UNSTABLE_ListBoxLoadingIndicator>
+  );
+};
+
+export const AsyncVirtualizedCollectionRenderSelect = () => {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      // Slow down load so progress circle can appear
+      await new Promise(resolve => setTimeout(resolve, 4000));
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <Select isLoading={list.isLoading} onLoadMore={list.loadMore}>
+      <Label style={{display: 'block'}}>Async Virtualized Collection render Select</Label>
+      <Button>
+        <SelectValue />
+        <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
+      </Button>
+      <Popover>
+        <OverlayArrow>
+          <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
+        </OverlayArrow>
+        <Virtualizer layout={new ListLayout({rowHeight: 25})}>
+          <ListBox className={styles.menu}>
+            <Collection items={list.items}>
+              {item => (
+                <MyListBoxItem id={item.name}>{item.name}</MyListBoxItem>
+              )}
+            </Collection>
+            {/* TODO: loading indicator and/or renderEmpty? */}
+            {list.isLoading && <MyListBoxLoaderIndicator />}
+          </ListBox>
+        </Virtualizer>
+      </Popover>
+    </Select>
+  );
+};

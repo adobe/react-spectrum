@@ -47,7 +47,14 @@ export interface ComboBoxRenderProps {
    * Whether the combobox is required.
    * @selector [data-required]
    */
-  isRequired: boolean
+  isRequired: boolean,
+  // TODO: do we want loadingState for RAC Combobox or just S2
+  // TODO: move types somewhere common later
+  /**
+   * Whether the combobox is loading items.
+   * @selector [data-loading]
+   */
+  isLoading?: boolean
 }
 
 export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<ComboBoxRenderProps>, SlotProps {
@@ -60,7 +67,11 @@ export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<
    */
   formValue?: 'text' | 'key',
   /** Whether the combo box allows the menu to be open when the collection is empty. */
-  allowsEmptyCollection?: boolean
+  allowsEmptyCollection?: boolean,
+  /** Whether the combobox is loading items. */
+  isLoading?: boolean,
+  /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom. */
+  onLoadMore?: () => void
 }
 
 export const ComboBoxContext = createContext<ContextValue<ComboBoxProps<any>, HTMLDivElement>>(null);
@@ -103,7 +114,9 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
   let {
     name,
     formValue = 'key',
-    allowsCustomValue
+    allowsCustomValue,
+    isLoading,
+    onLoadMore
   } = props;
   if (allowsCustomValue) {
     formValue = 'text';
@@ -170,8 +183,9 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     isOpen: state.isOpen,
     isDisabled: props.isDisabled || false,
     isInvalid: validation.isInvalid || false,
-    isRequired: props.isRequired || false
-  }), [state.isOpen, props.isDisabled, validation.isInvalid, props.isRequired]);
+    isRequired: props.isRequired || false,
+    isLoading: props.isLoading || false
+  }), [state.isOpen, props.isDisabled, validation.isInvalid, props.isRequired, props.isLoading]);
 
   let renderProps = useRenderProps({
     ...props,
@@ -199,7 +213,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
           trigger: 'ComboBox',
           style: {'--trigger-width': menuWidth} as React.CSSProperties
         }],
-        [ListBoxContext, {...listBoxProps, ref: listBoxRef}],
+        [ListBoxContext, {...listBoxProps, onLoadMore, isLoading, ref: listBoxRef}],
         [ListStateContext, state],
         [TextContext, {
           slots: {
@@ -219,7 +233,8 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
         data-open={state.isOpen || undefined}
         data-disabled={props.isDisabled || undefined}
         data-invalid={validation.isInvalid || undefined}
-        data-required={props.isRequired || undefined} />
+        data-required={props.isRequired || undefined}
+        data-loading={props.isLoading || undefined} />
       {name && formValue === 'key' && <input type="hidden" name={name} value={state.selectedKey ?? ''} />}
     </Provider>
   );

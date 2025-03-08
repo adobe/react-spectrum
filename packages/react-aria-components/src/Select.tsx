@@ -16,7 +16,7 @@ import {Collection, Node, SelectState, useSelectState} from 'react-stately';
 import {CollectionBuilder} from '@react-aria/collections';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, useLoadMore, useResizeObserver} from '@react-aria/utils';
 import {FormContext} from './Form';
 import {forwardRefType} from '@react-types/shared';
 // @ts-ignore
@@ -59,10 +59,21 @@ export interface SelectRenderProps {
    * Whether the select is required.
    * @selector [data-required]
    */
-  isRequired: boolean
+  isRequired: boolean,
+  // TODO: move types somewhere common later
+  /**
+   * Whether the select is loading items.
+   * @selector [data-loading]
+   */
+  isLoading?: boolean
 }
 
-export interface SelectProps<T extends object = {}> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior' | 'items'>, RACValidation, RenderProps<SelectRenderProps>, SlotProps {}
+export interface SelectProps<T extends object = {}> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior' | 'items'>, RACValidation, RenderProps<SelectRenderProps>, SlotProps {
+  /** Whether the select is loading items. */
+  isLoading?: boolean,
+  /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom. */
+  onLoadMore?: () => void
+}
 
 export const SelectContext = createContext<ContextValue<SelectProps<any>, HTMLDivElement>>(null);
 export const SelectStateContext = createContext<SelectState<unknown> | null>(null);
@@ -151,8 +162,9 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
     isFocusVisible,
     isDisabled: props.isDisabled || false,
     isInvalid: validation.isInvalid || false,
-    isRequired: props.isRequired || false
-  }), [state.isOpen, state.isFocused, isFocusVisible, props.isDisabled, validation.isInvalid, props.isRequired]);
+    isRequired: props.isRequired || false,
+    isLoading: props.isLoading || false
+  }), [state.isOpen, state.isFocused, isFocusVisible, props.isDisabled, validation.isInvalid, props.isRequired, props.isLoading]);
 
   let renderProps = useRenderProps({
     ...props,
@@ -164,6 +176,9 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
   delete DOMProps.id;
 
   let scrollRef = useRef(null);
+  // TODO: in select we don't call useLoadMore because we need it to trigger when the listbox opens and has a scrollref
+  // Perhaps we should still call the first time to populate the list? This is automatically done by useAsyncList so maybe not?
+  // TODO: Include a slot in the input for a loading spinner?
 
   return (
     <Provider
@@ -182,7 +197,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
           style: {'--trigger-width': buttonWidth} as React.CSSProperties,
           'aria-labelledby': menuProps['aria-labelledby']
         }],
-        [ListBoxContext, {...menuProps, ref: scrollRef}],
+        [ListBoxContext, {...menuProps, isLoading: props.isLoading, onLoadMore: props.onLoadMore, ref: scrollRef}],
         [ListStateContext, state],
         [TextContext, {
           slots: {
@@ -203,7 +218,8 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         data-open={state.isOpen || undefined}
         data-disabled={props.isDisabled || undefined}
         data-invalid={validation.isInvalid || undefined}
-        data-required={props.isRequired || undefined} />
+        data-required={props.isRequired || undefined}
+        data-loading={props.isLoading || undefined} />
       <HiddenSelect
         autoComplete={props.autoComplete}
         state={state}

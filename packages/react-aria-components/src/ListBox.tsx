@@ -17,8 +17,8 @@ import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, Slot
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
-import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
-import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
+import {filterDOMProps, mergeRefs, useLoadMore, useObjectRef} from '@react-aria/utils';
+import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject, StyleProps} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {SeparatorContext} from './Separator';
@@ -74,7 +74,10 @@ export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children' | 
    * direction that the collection scrolls.
    * @default 'vertical'
    */
-  orientation?: Orientation
+  orientation?: Orientation,
+  // TODO: move types somewhere common later
+  isLoading?: boolean,
+  onLoadMore?: () => void
 }
 
 export const ListBoxContext = createContext<ContextValue<ListBoxProps<any>, HTMLDivElement>>(null);
@@ -92,7 +95,7 @@ export const ListBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Lis
   // The first copy sends a collection document via context which we render the collection portal into.
   // The second copy sends a ListState object via context which we use to render the ListBox without rebuilding the state.
   // Otherwise, we have a standalone ListBox, so we need to create a collection and state ourselves.
-
+  // console.log('in listbox render', state)
   if (state) {
     return <ListBoxInner state={state} props={props} listBoxRef={ref} />;
   }
@@ -226,6 +229,20 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
       </div>
     );
   }
+  // console.log(' in here')
+  // TODO: see if we need to memo this. Also decide if scrollOffset should be settable by the user
+  let memoedLoadMoreProps = useMemo(() => ({
+    isLoading: props.isLoading,
+    onLoadMore: props.onLoadMore,
+    collection
+  }), [props.isLoading, props.onLoadMore, collection]);
+  // TODO: maybe this should be called at the ListBox level and the StandaloneListBox level. At its current place it is only called
+  // when the Listbox in the dropdown is rendered
+  useLoadMore(memoedLoadMoreProps, listBoxRef);
+
+  // TODO: add loading indicator to ListBox so user can render that when loading. Think about if completely empty state
+  // do we leave it up to the user to setup the two states for empty and empty + loading? Do we add a data attibute/prop/renderprop to ListBox
+  // for isLoading
 
   return (
     <FocusScope>
@@ -461,3 +478,38 @@ function ListBoxDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRe
 }
 
 const ListBoxDropIndicatorForwardRef = forwardRef(ListBoxDropIndicator);
+
+export interface ListBoxLoadingIndicatorProps extends StyleProps {
+  children?: ReactNode
+}
+
+export const UNSTABLE_ListBoxLoadingIndicator = createLeafComponent('loader', function ListBoxLoadingIndicator<T extends object>(props: ListBoxLoadingIndicatorProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+  let state = useContext(ListStateContext)!;
+  let {isVirtualized} = useContext(CollectionRendererContext);
+
+  let renderProps = useRenderProps({
+    ...props,
+    id: undefined,
+    children: item.rendered,
+    defaultClassName: 'react-aria-ListBoxLoadingIndicator',
+    values: null
+  });
+  let optionProps = {};
+
+  if (isVirtualized) {
+    optionProps['aria-posinset'] = state.collection.size + 1;
+    optionProps['aria-setsize'] = state.collection.size;
+  }
+
+  return (
+    <div
+      // aria-selected isn't needed here since this option is not selectable.
+      // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
+      role="option"
+      ref={ref}
+      {...mergeProps(filterDOMProps(props as any), optionProps)}
+      {...renderProps}>
+      {renderProps.children}
+    </div>
+  );
+});
