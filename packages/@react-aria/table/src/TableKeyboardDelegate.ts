@@ -178,6 +178,13 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
         return null;
       }
 
+      if (item.textValue) {
+        let substring = item.textValue.slice(0, search.length);
+        if (this.collator.compare(substring, search) === 0) {
+          return item.key;
+        }
+      }
+
       // Check each of the row header cells in this row for a match
       for (let cell of getChildNodes(item, this.collection)) {
         let column = collection.columns[cell.index];
