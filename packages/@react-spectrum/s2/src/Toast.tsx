@@ -30,7 +30,7 @@ import './Toast.css';
 import {flushSync} from 'react-dom';
 
 export type ToastPlacement = 'top' | 'top end' | 'bottom' | 'bottom end';
-export interface SpectrumToastContainerProps extends Omit<ToastRegionProps<SpectrumToastValue>, 'toastQueue' | 'children'> {
+export interface SpectrumToastContainerProps extends Omit<ToastRegionProps<SpectrumToastValue>, 'queue' | 'children'> {
   placement?: ToastPlacement
 }
 
