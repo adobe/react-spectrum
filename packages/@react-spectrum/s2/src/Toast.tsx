@@ -16,17 +16,18 @@ import AlertIcon from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
 import {Button} from './Button';
 import {CenterBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../s2wf-icons/S2_Icon_CheckmarkCircle_20_N.svg';
-import Chevron from '../s2wf-icons/S2_Icon_ChevronDownSize300_20_N.svg';
+import Chevron from '../s2wf-icons/S2_Icon_ChevronDown_20_N.svg';
 import {CloseButton} from './CloseButton';
+import {createContext, useContext, useMemo, useRef, useState} from 'react';
 import {DOMProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import InfoIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
 import {Text} from './Content';
-import {Toast, ToastContent, ToastOptions, ToastProps, ToastQueue, ToastRegion, ToastRegionProps} from 'react-aria-components';
+import {UNSTABLE_Toast as Toast, UNSTABLE_ToastContent as ToastContent, ToastOptions, ToastProps, UNSTABLE_ToastQueue as ToastQueue, UNSTABLE_ToastRegion as ToastRegion, ToastRegionProps} from 'react-aria-components';
 import {ToastList} from 'react-aria-components/src/Toast';
-import {useToastQueue} from '@react-stately/toast';
 import './Toast.css';
+import {flushSync} from 'react-dom';
 
 export type ToastPlacement = 'top' | 'top end' | 'bottom' | 'bottom end';
 export interface SpectrumToastContainerProps extends Omit<ToastRegionProps<SpectrumToastValue>, 'toastQueue' | 'children'> {
@@ -55,7 +56,13 @@ let globalToastQueue: ToastQueue<SpectrumToastValue> | null = null;
 function getGlobalToastQueue() {
   if (!globalToastQueue) {
     globalToastQueue = new ToastQueue({
-      maxVisibleToasts: Infinity
+      maxVisibleToasts: Infinity,
+      wrapUpdate(fn, action) {
+        document.startViewTransition({
+          update: () => flushSync(fn),
+          types: [`toast-${action}`]
+        });
+      }
     });
   }
 
@@ -77,10 +84,7 @@ function addToast(children: string, variant: SpectrumToastValue['variant'], opti
   // It is debatable whether non-actionable toasts would also fail.
   let timeout = options.timeout && !options.onAction ? Math.max(options.timeout, 5000) : undefined;
   let queue = getGlobalToastQueue();
-  let key = document.startViewTransition({
-    update: () => queue.add(value, {timeout, onClose: options.onClose}),
-    types: ['toast-add']
-  });
+  let key = queue.add(value, {timeout, onClose: options.onClose});
   return () => queue.close(key);
 }
 
@@ -112,27 +116,33 @@ const toastRegion = style({
   display: 'flex',
   flexDirection: {
     placement: {
-      top: 'column-reverse',
-      bottom: 'column'
+      top: 'column',
+      bottom: 'column-reverse'
     }
   },
   gap: 8,
   position: 'fixed',
-  insetX: 16,
+  insetX: 0,
   width: 'fit',
   top: {
     placement: {
-      top: 0
+      top: {
+        default: 16,
+        isExpanded: 0
+      }
     }
   },
   bottom: {
     placement: {
-      bottom: 0
+      bottom: {
+        default: 16,
+        isExpanded: 0
+      }
     }
   },
   marginStart: {
     align: {
-      start: 0,
+      start: 16,
       center: 'auto',
       end: 'auto'
     }
@@ -141,36 +151,45 @@ const toastRegion = style({
     align: {
       start: 'auto',
       center: 'auto',
-      end: 0
+      end: 16
     }
   },
   boxSizing: 'border-box',
   maxHeight: '[100vh]',
-  paddingTop: 8,
   borderRadius: 'lg',
-  '--origin': {
-    type: 'top',
-    value: {
-      default: '[55px]',
-      isHovered: '[95px]'
+  paddingBottom: {
+    placement: {
+      top: 8
+    }
+  },
+  paddingTop: {
+    placement: {
+      bottom: 8
     }
   }
 });
 
 const toastList = style({
+  position: 'relative',
   flexGrow: 1,
   display: 'flex',
   gap: 8,
   flexDirection: {
     placement: {
-      top: 'column-reverse',
-      bottom: 'column'
+      top: 'column',
+      bottom: 'column-reverse'
     }
   },
-  margin: 0,
-  padding: 0,
-  paddingBottom: 16,
   boxSizing: 'border-box',
+  marginY: 0,
+  padding: {
+    default: 0,
+    isExpanded: 8
+  },
+  marginX: {
+    default: 0,
+    isExpanded: -8
+  },
   overflow: {
     isExpanded: 'auto'
   }
@@ -227,7 +246,8 @@ const toastContent = style({
   gap: 8,
   alignItems: 'baseline',
   gridArea: 'content',
-  cursor: 'default'
+  cursor: 'default',
+  width: 'fit'
 });
 
 export const ICONS = {
@@ -235,6 +255,13 @@ export const ICONS = {
   negative: AlertIcon,
   positive: CheckmarkIcon
 };
+
+interface ToastContainerContextValue {
+  isExpanded: boolean,
+  toggleExpanded: () => void
+}
+
+const ToastContainerContext = createContext<ToastContainerContextValue | null>(null);
 
 /**
  * A ToastContainer renders the queued toasts in an application. It should be placed
@@ -245,76 +272,78 @@ export function ToastContainer(props: SpectrumToastContainerProps) {
     placement = 'bottom'
   } = props;
   let queue = getGlobalToastQueue();
-  useToastQueue(queue);
   let align = 'center';
   [placement, align = 'center'] = placement.split(' ');
+  let regionRef = useRef(null);
+
+  let [isExpanded, setExpanded] = useState(false);
+  let ctx = useMemo(() => ({
+    isExpanded,
+    toggleExpanded() {
+      if (!isExpanded && queue.visibleToasts.length <= 1) {
+        return;
+      }
+
+      document.startViewTransition({
+        update: () => flushSync(() => setExpanded(!isExpanded)),
+        types: [isExpanded ? 'toast-collapse' : 'toast-expand']
+      });
+    }
+  }), [isExpanded, setExpanded, queue]);
 
   return (
     <ToastRegion
       {...props}
-      toastQueue={queue}
+      ref={regionRef}
+      queue={queue}
       className={renderProps => toastRegion({
         ...renderProps,
         placement,
         align,
-        isExpanded: queue.isExpanded
+        isExpanded
       })}>
-      {/* {!queue.isExpanded && <div style={{position: 'absolute', viewTransitionName: 'toast-grad', insetBlock: -100, insetInline: -200, backgroundImage: 'radial-gradient(farthest-side, var(--s2-container-bg) 50%, transparent)'}} />} */}
-      {queue.isExpanded && <div style={{viewTransitionName: 'toast-background'}} className={style({position: 'fixed', inset: 0, backgroundColor: 'transparent-black-500'})} />}
-      {queue.isExpanded && 
-        <div style={{display: 'flex', justifyContent: 'end', gap: 8, viewTransitionName: 'toast-button'}}>
+      <ToastContainerContext.Provider value={ctx}>
+        {isExpanded && (
+          // eslint-disable-next-line
+          <div
+            className={'toast-background' + style({position: 'fixed', inset: 0, backgroundColor: 'transparent-black-500'})}
+            onClick={() => ctx.toggleExpanded()} />
+        )}
+        <ToastList
+          style={({isHovered}) => {
+            let origin = isHovered ? 95 : 55;
+            return {
+              perspective: 80,
+              perspectiveOrigin: 'center ' + (placement === 'top' ? `calc(100% + ${origin}px)` : `${-origin}px`),
+              transition: 'perspective-origin 400ms'
+            };
+          }}
+          className={toastList({placement, align, isExpanded})}
+          onClick={() => {
+            if (!ctx.isExpanded) {
+              ctx.toggleExpanded();
+            }
+          }}>
+          {({toast}) => (
+            <SpectrumToast toast={toast} queue={queue} placement={placement} align={align} />
+          )}
+        </ToastList>
+        <div className="toast-controls" style={{display: isExpanded ? 'flex' : 'none', justifyContent: 'end', gap: 8, opacity: isExpanded ? 1 : 0}}>
           <ActionButton
             size="S"
-            onPress={() => document.startViewTransition({
-              update: () => queue.clear(),
-              types: [queue.isExpanded ? 'toast-clear-expanded' : 'toast-clear']
-            })}>
+            onPress={() => queue.clear()}>
             Clear all
           </ActionButton>
           <ActionButton
             size="S"
             onPress={() => {
-              document.startViewTransition({
-                update: () => queue.toggleExpandedState(),
-                types: [queue.isExpanded ? 'toast-collapse' : 'toast-expand']
-              });
+              regionRef.current.focus();
+              ctx.toggleExpanded();
             }}>
-            {queue.isExpanded ? 'Collapse' : `Show all (${queue.visibleToasts.length})`}
+            Collapse
           </ActionButton>
         </div>
-      }
-      {/* {queue?.visibleToasts.length > 1 && !queue.isExpanded &&
-        <div
-          style={{position: 'absolute', top: 0, width: '100%', height: 32, zIndex: 9999}}
-          role="button"
-          tabIndex={0}
-          onClick={() => {
-            document.startViewTransition({
-              update: () => queue.toggleExpandedState(),
-              types: [queue.isExpanded ? 'toast-collapse' : 'toast-expand']
-            })
-          }} />
-      } */}
-      <ToastList
-        style={{
-          [placement === 'top' ? 'paddingBottom' : 'paddingTop']: queue.isExpanded ? 0 : (Math.min(3, queue.visibleToasts.length) - 1) * 12,
-          perspective: 80,
-          perspectiveOrigin: 'center ' + (placement === 'top' ? 'calc(100% + var(--origin)' : 'calc(-1 * var(--origin))'),
-          transition: 'perspective-origin 400ms'
-        }}
-        className={toastList({placement, align, isExpanded: queue.isExpanded})}
-        onClick={() => {
-          if (!queue.isExpanded) {
-            document.startViewTransition({
-              update: () => queue.toggleExpandedState(),
-              types: [queue.isExpanded ? 'toast-collapse' : 'toast-expand']
-            });
-          }
-        }}>
-        {({toast}) => (
-          <SpectrumToast toast={toast} queue={queue} placement={placement} align={align} />
-        )}
-      </ToastList>
+      </ToastContainerContext.Provider>
     </ToastRegion>
   );
 }
@@ -325,33 +354,47 @@ export function SpectrumToast(props: ToastProps<SpectrumToastValue>) {
   let variant = toast.content.variant || 'info';
   let Icon = ICONS[variant];
   let visibleToasts = queue?.visibleToasts || [];
-  let globalIndex = queue.queue.indexOf(toast);
   let index = visibleToasts.indexOf(toast);
-  let isLast = index === visibleToasts.length - 1;
-  let s = queue.isExpanded ? {} : {
-    position: isLast ? undefined : 'absolute',
-    translate: '0 0 ' + (12 * (index - visibleToasts.length + 1)) + 'px',
-    width: isLast ? undefined : '100%',
-    height: isLast ? undefined : 0,
-    opacity: index < visibleToasts.length - 3 ? 0 : 1
-  };
+  let isLast = index === 0;
+  let ctx = useContext(ToastContainerContext)!;
+  let toastRef = useRef(null);
+
+  if (!isLast && !ctx.isExpanded) {
+    return (
+      <div 
+        style={{
+          position: isLast ? undefined : 'absolute',
+          [placement === 'top' ? 'bottom' : 'top']: !isLast ? 0 : undefined,
+          left: !isLast ? 0 : undefined,
+          translate: '0 0 ' + (-12 * index) + 'px',
+          width: isLast ? undefined : '100%',
+          height: isLast ? undefined : 0,
+          opacity: index >= 3 ? 0 : 1,
+          zIndex: visibleToasts.length - index - 1,
+          viewTransitionName: toast.key,
+          viewTransitionClass: 'toast ' + (isLast ? ' last' : '') + ' ' + placement + ' ' + align
+        }}
+        className={toastStyle({variant: toast.content.variant || 'info', index})} />
+    );
+  }
+
   return (
     <Toast
+      ref={toastRef}
       toast={toast}
       style={{
-        ...s,
-        zIndex: globalIndex,
-        viewTransitionName: '_' + toast.key.slice(2),
+        zIndex: visibleToasts.length - index - 1,
+        viewTransitionName: toast.key,
         viewTransitionClass: 'toast ' + (isLast ? ' last' : '') + ' ' + placement + ' ' + align
       }}
-      inert={!isLast && !queue.isExpanded ? 'true' : undefined}
+      inert={!isLast && !ctx.isExpanded ? 'true' : undefined}
       className={renderProps => toastStyle({
         ...renderProps,
         variant: toast.content.variant || 'info',
         index
       })}>
-      <div role="presentation" className={toastBody({isSingle: !isLast || queue.visibleToasts.length === 1})}>
-        <ToastContent className={toastContent} style={{opacity: isLast || queue.isExpanded ? 1 : 0}}>
+      <div role="presentation" className={toastBody({isSingle: !isLast || queue.visibleToasts.length === 1 || ctx.isExpanded})}>
+        <ToastContent className={toastContent + (isLast ? ' toast-content' : null)} style={{opacity: isLast || ctx.isExpanded ? 1 : 0}}>
           {Icon &&
             <CenterBaseline>
               <Icon />
@@ -359,78 +402,38 @@ export function SpectrumToast(props: ToastProps<SpectrumToastValue>) {
           }
           <Text slot="title">{toast.content.children}</Text>
         </ToastContent>
-        {isLast && queue.visibleToasts.length > 1 &&
+        {isLast && queue.visibleToasts.length > 1 && !ctx.isExpanded &&
           <ActionButton
-            size="XS"
             variant="secondary"
             isQuiet
             staticColor="white"
             styles={style({gridArea: 'expand'})}
-            UNSAFE_style={{visibility: queue.isExpanded ? 'hidden' : 'visible'}}
-            onPress={() => document.startViewTransition({
-              update: () => queue.toggleExpandedState(),
-              types: [queue.isExpanded ? 'toast-collapse' : 'toast-expand']
-            })}>
-            <Text UNSAFE_style={{order: -1}}>Show all</Text>
-            <Chevron UNSAFE_style={{rotate: '180deg'}} />
+            UNSAFE_style={{marginInlineStart: variant === 'neutral' ? -10 : 14}}
+            UNSAFE_className={isLast ? 'toast-expand' : undefined}
+            onPress={() => {
+              toastRef.current.focus();
+              ctx.toggleExpanded();
+            }}>
+            <Text>Show all</Text>
+            <Chevron UNSAFE_style={{rotate: placement === 'bottom' ? '180deg' : undefined}} />
           </ActionButton>
         }
-        {toast.content.actionLabel && (isLast || queue.isExpanded) &&
+        {toast.content.actionLabel && (isLast || ctx.isExpanded) &&
           <Button
             variant="secondary"
             fillStyle="outline"
             staticColor="white"
             onPress={toast.content.onAction}
+            UNSAFE_className={isLast ? 'toast-action' : undefined}
             styles={style({marginStart: 'auto', gridArea: 'action'})}>
             {toast.content.actionLabel}
           </Button>
         }
       </div>
-      <CloseButton staticColor="white" isDisabled={!isLast && !queue.isExpanded} />
+      <CloseButton
+        staticColor="white"
+        UNSAFE_style={{opacity: (isLast || ctx.isExpanded) ? 1 : 0}}
+        UNSAFE_className={isLast ? 'toast-close' : undefined} />
     </Toast>
   );
 }
-
-// viewTransition({
-//   animationName: {
-//     entering: {
-//       isFirst: 'scale-in',
-//       isLast: 'slide-in',
-//       ':active-view-transition-type(toast-expand)': 'expand'
-//     },
-//     exiting: {
-//       default: 'scale-back',
-//       isLast: 'slide-out',
-//       ':active-view-transition-type(toast-collapse': 'collapse'
-//     },
-//     ':active-view-transition-type(toast-clear)': 'slide-out',
-//     ':active-view-transition-type(toast-clear-expanded)': 'fade-out'
-//   },
-//   '--slideX': {
-//     type: 'translateX',
-//     value: {
-//       align: {
-//         start: 'calc(-100% - 12px)',
-//         end: 'calc(100% + 12px)'
-//       }
-//     }
-//   },
-//   '--slideY': {
-//     type: 'translateY',
-//     value: {
-//       placement: {
-//         top: 'calc(-100% - 12px)',
-//         bottom: 'calc(100% + 12px)'
-//       }
-//     }
-//   },
-//   '--translateY': {
-//     type: 'translateY',
-//     value: {
-//       placement: {
-//         top: 12,
-//         bottom: -12
-//       }
-//     }
-//   }
-// });

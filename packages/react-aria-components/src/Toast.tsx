@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaToastProps, AriaToastRegionProps, mergeProps, useFocusRing, useToast, useToastRegion} from 'react-aria';
+import {AriaToastProps, AriaToastRegionProps, mergeProps, useFocusRing, useHover, useLocale, useToast, useToastRegion} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {createPortal} from 'react-dom';
@@ -67,16 +67,19 @@ export const ToastRegion = /*#__PURE__*/ (forwardRef as forwardRefType)(function
     }
   });
 
+  let {direction} = useLocale();
+
   let region = (
     <ToastStateContext.Provider value={state}>
       <div
         {...renderProps}
         {...mergeProps(regionProps, focusProps, hoverProps)}
+        dir={direction}
         ref={objectRef}
         data-hovered={isHovered || undefined}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}>
-        {typeof props.children === 'function' ? <ToastList {...props}  style={{display: 'contents'}} /> : props.children}
+        {typeof props.children === 'function' ? <ToastList {...props} className={undefined} style={{display: 'contents'}} /> : props.children}
       </div>
     </ToastStateContext.Provider>
   );
@@ -87,12 +90,25 @@ export const ToastRegion = /*#__PURE__*/ (forwardRef as forwardRefType)(function
 });
 
 // TODO: possibly export this so additional children can be added to the region, outside the list.
-const ToastList = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastList<T>(props: ToastRegionProps<T>, ref: ForwardedRef<HTMLOListElement>) {
+export const ToastList = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastList<T>(props: ToastRegionProps<T>, ref: ForwardedRef<HTMLOListElement>) {
   let state = useContext(ToastStateContext)!;
+  let {hoverProps, isHovered} = useHover({});
+  let renderProps = useRenderProps({
+    ...props,
+    children: undefined,
+    defaultClassName: 'react-aria-ToastList',
+    values: {
+      visibleToasts: state.visibleToasts,
+      isFocused: false,
+      isFocusVisible: false,
+      isHovered
+    }
+  });
+
   return (
     // @ts-ignore
     // eslint-disable-next-line
-    <ol ref={ref} style={props.style} className={props.className} onClick={props.onClick}>
+    <ol {...hoverProps} {...renderProps} ref={ref} onClick={props.onClick}>
       {state.visibleToasts.map((toast) => (
         <li key={toast.key} style={{display: 'contents'}}>
           {props.children({toast})}

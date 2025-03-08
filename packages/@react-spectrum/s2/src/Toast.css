@@ -18,16 +18,19 @@
   }
 }
 
-:root:active-view-transition-type(toast-add, toast-expand, toast-collapse, toast-clear, toast-clear-expanded) {
+:root:active-view-transition-type(toast-add, toast-remove, toast-expand, toast-collapse, toast-clear) {
   view-transition-name: none;
-}
 
-::view-transition-group(toast-button) {
-  z-index: 9999;
+  .toast-controls {
+    view-transition-name: toast-controls;
+  }
 }
 
 ::view-transition-group(.toast),
-::view-transition-group(toast-button) {
+::view-transition-group(toast-content),
+::view-transition-group(toast-action),
+::view-transition-group(toast-close),
+::view-transition-group(toast-controls) {
   animation-duration: 400ms;
 }
 
@@ -61,24 +64,56 @@ html:active-view-transition-type(toast-add, toast-remove) {
   }
 }
 
-html:active-view-transition-type(toast-expand, toast-collapse) {
-  &::view-transition-group(toast-grad) {
-    z-index: -2;
+html:active-view-transition-type(toast-expand) {
+  &::view-transition-group(toast-expand) {
+    animation-duration: 300ms;
   }
+}
 
+html:active-view-transition-type(toast-collapse) {
+  &::view-transition-group(toast-expand) {
+    animation-duration: 600ms;
+  }
+}
+
+html:active-view-transition-type(toast-expand, toast-collapse) {
   &::view-transition-group(toast-background) {
     z-index: -1;
     animation-duration: 400ms;
   }
-}
 
-html:active-view-transition-type(toast-clear) {
-  &::view-transition-group(.toast) {
-    animation-name: slide-out;
+  .toast-background {
+    view-transition-name: toast-background;
+  }
+
+  .toast-content {
+    view-transition-name: toast-content;
+  }
+
+  .toast-expand {
+    view-transition-name: toast-expand;
+  }
+
+  .toast-action {
+    view-transition-name: toast-action;
+  }
+
+  .toast-close {
+    view-transition-name: toast-close;
+  }
+
+  .toast-controls {
+    display: flex !important;
+  }
+
+  &::view-transition-old(.toast.last),
+  &::view-transition-new(.toast.last) {
+    height: 100%;
+    width: 100%;
   }
 }
 
-html:active-view-transition-type(toast-clear-expanded) {
+html:active-view-transition-type(toast-clear) {
   &::view-transition-group(.toast) {
     animation-name: fade-out;
   }
