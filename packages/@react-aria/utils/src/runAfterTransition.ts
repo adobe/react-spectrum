@@ -91,7 +91,7 @@ if (typeof document !== 'undefined') {
   }
 }
 
-export function runAfterTransition(fn: () => void) {
+export function runAfterTransition(fn: () => void): void {
   // Wait one frame to see if an animation starts, e.g. a transition on mount.
   requestAnimationFrame(() => {
     // If no transitions are running, call the function immediately.

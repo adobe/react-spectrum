@@ -15,7 +15,7 @@ import {TabListState} from '@react-stately/tabs';
 
 export const tabsIds = new WeakMap<TabListState<unknown>, string>();
 
-export function generateId<T>(state: TabListState<T> | null, key: Key | null | undefined, role: string) {
+export function generateId<T>(state: TabListState<T> | null, key: Key | null | undefined, role: string): string {
   if (!state) {
     // this case should only happen in the first render before the tabs are registered
     return '';

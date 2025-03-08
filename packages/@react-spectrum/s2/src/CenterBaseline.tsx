@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CSSProperties, ReactNode} from 'react';
+import {CSSProperties, ReactElement, ReactNode} from 'react';
 import {mergeStyles} from '../style/runtime';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
@@ -28,7 +28,7 @@ const styles = style({
   alignItems: 'center'
 });
 
-export function CenterBaseline(props: CenterBaselineProps) {
+export function CenterBaseline(props: CenterBaselineProps): ReactElement {
   return (
     <div
       slot={props.slot}

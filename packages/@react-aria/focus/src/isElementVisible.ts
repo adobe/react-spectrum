@@ -59,7 +59,7 @@ function isAttributeVisible(element: Element, childElement?: Element) {
  * Licensed under the MIT License.
  * @param element - Element to evaluate for display or visibility.
  */
-export function isElementVisible(element: Element, childElement?: Element) {
+export function isElementVisible(element: Element, childElement?: Element): boolean {
   return (
     element.nodeName !== '#comment' &&
     isStyleVisible(element) &&

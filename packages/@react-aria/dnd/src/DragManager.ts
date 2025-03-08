@@ -38,7 +38,7 @@ interface DropTarget {
 export function registerDropTarget(target: DropTarget) {
   dropTargets.set(target.element, target);
   dragSession?.updateValidDropTargets();
-  return () => {
+  return (): void => {
     dropTargets.delete(target.element);
     dragSession?.updateValidDropTargets();
   };
@@ -52,7 +52,7 @@ interface DroppableItem {
 
 export function registerDropItem(item: DroppableItem) {
   dropItems.set(item.element, item);
-  return () => {
+  return (): void => {
     dropItems.delete(item.element);
   };
 }
@@ -64,7 +64,7 @@ interface DragTarget {
   onDragEnd?: (e: DragEndEvent) => void
 }
 
-export function beginDragging(target: DragTarget, stringFormatter: LocalizedStringFormatter) {
+export function beginDragging(target: DragTarget, stringFormatter: LocalizedStringFormatter): void {
   if (dragSession) {
     throw new Error('Cannot begin dragging while already dragging');
   }
@@ -84,7 +84,7 @@ export function beginDragging(target: DragTarget, stringFormatter: LocalizedStri
   }
 }
 
-export function useDragSession() {
+export function useDragSession(): DragSession | null {
   let [session, setSession] = useState(dragSession);
 
   useEffect(() => {

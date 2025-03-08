@@ -11,8 +11,9 @@
  */
 
 import {Toolbar as RACToolbar, ToolbarProps} from 'react-aria-components';
+import {ReactElement} from 'react';
 
 
-export function Toolbar(props: ToolbarProps) {
+export function Toolbar(props: ToolbarProps): ReactElement {
   return <RACToolbar {...props} />;
 }

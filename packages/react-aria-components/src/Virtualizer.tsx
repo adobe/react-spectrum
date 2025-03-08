@@ -50,7 +50,7 @@ const LayoutContext = createContext<LayoutContextValue | null>(null);
  * It supports very large collections by only rendering visible items to the DOM, reusing
  * them as the user scrolls.
  */
-export function Virtualizer<O>(props: VirtualizerProps<O>) {
+export function Virtualizer<O>(props: VirtualizerProps<O>): ReactElement {
   let {children, layout: layoutProp, layoutOptions} = props;
   let layout = useMemo(() => typeof layoutProp === 'function' ? new layoutProp() : layoutProp, [layoutProp]);
   let renderer: CollectionRenderer = useMemo(() => ({

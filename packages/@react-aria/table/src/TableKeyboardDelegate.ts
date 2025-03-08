@@ -17,11 +17,11 @@ import {TableCollection} from '@react-types/table';
 
 export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableCollection<T>> {
 
-  protected isCell(node: Node<T>) {
+  protected isCell(node: Node<T>): boolean {
     return node.type === 'cell' || node.type === 'rowheader' || node.type === 'column';
   }
 
-  getKeyBelow(key: Key) {
+  getKeyBelow(key: Key): Key | null {
     let startItem = this.collection.getItem(key);
     if (!startItem) {
       return null;
@@ -51,7 +51,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
     return super.getKeyBelow(key);
   }
 
-  getKeyAbove(key: Key) {
+  getKeyAbove(key: Key): Key | null {
     let startItem = this.collection.getItem(key);
     if (!startItem) {
       return null;
@@ -84,7 +84,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
     return this.collection.columns[0].key;
   }
 
-  private findNextColumnKey(column: Node<T>) {
+  private findNextColumnKey(column: Node<T>): Key | null {
     // Search following columns
     let key = this.findNextKey(column.key, item => item.type === 'column');
     if (key != null) {
@@ -102,7 +102,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
     return null;
   }
 
-  private findPreviousColumnKey(column: Node<T>) {
+  private findPreviousColumnKey(column: Node<T>): Key | null {
     // Search previous columns
     let key = this.findPreviousKey(column.key, item => item.type === 'column');
     if (key != null) {
@@ -122,7 +122,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
     return null;
   }
 
-  getKeyRightOf(key: Key) {
+  getKeyRightOf(key: Key): Key | null {
     let item = this.collection.getItem(key);
     if (!item) {
       return null;
@@ -138,7 +138,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
     return super.getKeyRightOf(key);
   }
 
-  getKeyLeftOf(key: Key) {
+  getKeyLeftOf(key: Key): Key | null {
     let item = this.collection.getItem(key);
     if (!item) {
       return null;
@@ -154,7 +154,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
     return super.getKeyLeftOf(key);
   }
 
-  getKeyForSearch(search: string, fromKey?: Key) {
+  getKeyForSearch(search: string, fromKey?: Key): Key | null {
     if (!this.collator) {
       return null;
     }

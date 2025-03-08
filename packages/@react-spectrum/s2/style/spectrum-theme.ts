@@ -74,7 +74,7 @@ const color = {
   LinkText: 'LinkText'
 };
 
-export function baseColor(base: keyof typeof color) {
+export function baseColor(base: keyof typeof color): {default: keyof typeof color, isHovered: keyof typeof color, isFocusVisible: keyof typeof color, isPressed: keyof typeof color} {
   let keys = Object.keys(color) as (keyof typeof color)[];
   let index = keys.indexOf(base);
   if (index === -1) {
@@ -223,15 +223,15 @@ const negativeSpacing = generateSpacing([
   -384
 ] as const);
 
-export function fontRelative(this: MacroContext | void, base: number, baseFontSize = 14) {
+export function fontRelative(this: MacroContext | void, base: number, baseFontSize = 14): string {
   return (base / baseFontSize) + 'em';
 }
 
-export function edgeToText(this: MacroContext | void, height: keyof typeof baseSpacing) {
+export function edgeToText(this: MacroContext | void, height: keyof typeof baseSpacing): string {
   return `calc(${baseSpacing[height]} * 3 / 8)`;
 }
 
-export function space(this: MacroContext | void, px: number) {
+export function space(this: MacroContext | void, px: number): string {
   return pxToRem(px);
 }
 
@@ -249,7 +249,7 @@ const spacing = {
   'pill': 'calc(self(height, self(minHeight)) / 2)'
 };
 
-export function size(this: MacroContext | void, px: number) {
+export function size(this: MacroContext | void, px: number): string {
   return `calc(${pxToRem(px)} * var(--s2-scale))`;
 }
 

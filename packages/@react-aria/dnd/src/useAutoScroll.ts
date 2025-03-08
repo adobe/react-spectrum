@@ -16,7 +16,12 @@ import {useCallback, useEffect, useRef} from 'react';
 
 const AUTOSCROLL_AREA_SIZE = 20;
 
-export function useAutoScroll(ref: RefObject<Element | null>) {
+interface AutoScrollAria {
+    move(x: number, y: number): void,
+    stop(): void
+}
+
+export function useAutoScroll(ref: RefObject<Element | null>): AutoScrollAria {
   let scrollableRef = useRef<Element>(null);
   let scrollableX = useRef(true);
   let scrollableY = useRef(true);

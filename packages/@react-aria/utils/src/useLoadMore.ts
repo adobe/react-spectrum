@@ -12,7 +12,7 @@
 
 import {RefObject, useCallback, useRef} from 'react';
 import {useEvent} from './useEvent';
- 
+
 import {useLayoutEffect} from './useLayoutEffect';
 
 export interface LoadMoreProps {
@@ -32,7 +32,7 @@ export interface LoadMoreProps {
   items?: any
 }
 
-export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | null>) {
+export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | null>): void {
   let {isLoading, onLoadMore, scrollOffset = 1, items} = props;
 
   // Handle scrolling, and call onLoadMore when nearing the bottom.

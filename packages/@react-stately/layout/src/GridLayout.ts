@@ -59,7 +59,7 @@ const DEFAULT_OPTIONS = {
 
 /**
  * GridLayout is a virtualizer Layout implementation
- * that arranges its items in a grid. 
+ * that arranges its items in a grid.
  * The items are sized between a minimum and maximum size
  * depending on the width of the container.
  */
@@ -199,7 +199,7 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
     return layoutInfos;
   }
 
-  updateItemSize(key: Key, size: Size) {
+  updateItemSize(key: Key, size: Size): boolean {
     let layoutInfo = this.layoutInfos.get(key);
     if (!size || !layoutInfo) {
       return false;
@@ -306,7 +306,7 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
       // Flip from vertical to horizontal if only one column is visible.
       rect = new Rect(
         layoutInfo.rect.x,
-        target.dropPosition === 'before' 
+        target.dropPosition === 'before'
           ? layoutInfo.rect.y - this.gap.height / 2 - this.dropIndicatorThickness / 2
           : layoutInfo.rect.maxY + this.gap.height / 2 - this.dropIndicatorThickness / 2,
         layoutInfo.rect.width,
@@ -314,8 +314,8 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
       );
     } else {
       rect = new Rect(
-        target.dropPosition === 'before' 
-          ? layoutInfo.rect.x - this.gap.width / 2 - this.dropIndicatorThickness / 2 
+        target.dropPosition === 'before'
+          ? layoutInfo.rect.x - this.gap.width / 2 - this.dropIndicatorThickness / 2
           : layoutInfo.rect.maxX + this.gap.width / 2 - this.dropIndicatorThickness / 2,
         layoutInfo.rect.y,
         this.dropIndicatorThickness,
