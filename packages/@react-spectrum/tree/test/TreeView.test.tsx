@@ -463,6 +463,102 @@ describe('Tree', () => {
     expect(treeTester.selectedRows[0]).toBe(row1);
   });
 
+  it('highlight selection TreeView can select a row via keyboard', async function () {
+    let items = [
+      {
+        id: 'projects',
+        name: 'Projects',
+        childItems: [
+          {id: 'project-1', name: 'Project 1'},
+          {
+            id: 'project-2',
+            name: 'Project 2',
+            childItems: [
+              {id: 'document-a', name: 'Document A'},
+              {id: 'document-b', name: 'Document B'}
+            ]
+          }
+        ]
+      },
+      {
+        id: 'reports',
+        name: 'Reports',
+        childItems: [
+          {id: 'report-1', name: 'Reports 1'}
+        ]
+      }
+    ];
+
+    let {getByTestId} = render(
+      <TreeView
+        aria-label="Example tree with dynamic content"
+        height="size-3000"
+        maxWidth="size-6000"
+        defaultExpandedKeys={['projects', 'project-2']}
+        items={items}
+        data-testid="action-rail-tree"
+        selectionMode="single"
+        selectionStyle="highlight">
+        {(item: any) => (
+          <DynamicTreeItem id={item.id} childItems={item.childItems} textValue={item.name} name={item.name} />
+        )}
+      </TreeView>
+    );
+    let treeTester = testUtilUser.createTester('Tree', {
+      user,
+      root: getByTestId('action-rail-tree'),
+      interactionType: 'keyboard'
+    });
+
+    let rows = treeTester.rows;
+    await treeTester.toggleRowSelection({row: 0});
+    expect(treeTester.selectedRows).toHaveLength(1);
+    expect(rows[0]).toHaveAttribute('aria-selected', 'true');
+
+    await treeTester.toggleRowSelection({row: 1});
+    expect(treeTester.selectedRows).toHaveLength(1);
+    expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+
+    await treeTester.toggleRowSelection({row: 0});
+    expect(treeTester.selectedRows).toHaveLength(1);
+    expect(rows[0]).toHaveAttribute('aria-selected', 'true');
+  });
+
+  // TODO: replace the test above this one with a similar set up as the below
+  it('should perform selection for highlight mode with single selection', async () => {
+    let {getByRole} = render(<StaticTree treeProps={{selectionMode: 'single', selectionStyle: 'highlight'}} />);
+    let treeTester = testUtilUser.createTester('Tree', {user, root: getByRole('treegrid')});
+    let rows = treeTester.rows;
+
+    for (let row of treeTester.rows) {
+      let checkbox = within(row).queryByRole('checkbox');
+      expect(checkbox).toBeNull();
+      expect(row).toHaveAttribute('aria-selected', 'false');
+      expect(row).not.toHaveAttribute('data-selected');
+      expect(row).toHaveAttribute('data-selection-mode', 'multiple');
+    }
+
+    let row2 = rows[2];
+    await treeTester.toggleRowSelection({row: 'Projects-1'});
+    expect(row2).toHaveAttribute('aria-selected', 'true');
+    expect(row2).toHaveAttribute('data-selected', 'true');
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Projects-1']));
+    expect(treeTester.selectedRows).toHaveLength(1);
+    expect(treeTester.selectedRows[0]).toBe(row2);
+
+    let row1 = rows[1];
+    await treeTester.toggleRowSelection({row: row1});
+    expect(row1).toHaveAttribute('aria-selected', 'true');
+    expect(row1).toHaveAttribute('data-selected', 'true');
+    expect(row2).toHaveAttribute('aria-selected', 'false');
+    expect(row2).not.toHaveAttribute('data-selected');
+    expect(onSelectionChange).toHaveBeenCalledTimes(2);
+    expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Projects']));
+    expect(treeTester.selectedRows).toHaveLength(1);
+    expect(treeTester.selectedRows[0]).toBe(row1);
+  });
+
   it('should render a chevron for an expandable row marked with hasChildItems', () => {
     let {getAllByRole} = render(
       <TreeView aria-label="test tree">

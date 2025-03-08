@@ -71,6 +71,11 @@ export class TreeTester {
     if (targetIndex === -1) {
       throw new Error('Option provided is not in the tree');
     }
+
+    if (document.activeElement !== this._tree || !this._tree.contains(document.activeElement)) {
+      act(() => this._tree.focus());
+    }
+
     if (document.activeElement === this.tree) {
       await this.user.keyboard('[ArrowDown]');
     } else if (this._tree.contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
@@ -89,6 +94,8 @@ export class TreeTester {
     }
   };
 
+  // TODO: we'll need to support selectionBehavior="replace", where clicks/keyboard will need to go through different flows
+  // for both single selection and multiple selection due to the nature of the selection replacement on focus
   /**
    * Toggles the selection for the specified tree row. Defaults to using the interaction type set on the tree tester.
    */
@@ -135,7 +142,7 @@ export class TreeTester {
         // Note that long press interactions with rows is strictly touch only for grid rows
         await triggerLongPress({element: cell, advanceTimer: this._advanceTimer, pointerOpts: {pointerType: 'touch'}});
       } else {
-        await pressElement(this.user, cell, interactionType);
+        await pressElement(this.user, row, interactionType);
       }
     }
   };
@@ -204,10 +211,6 @@ export class TreeTester {
     } else if (interactionType === 'keyboard') {
       if (row?.getAttribute('aria-disabled') === 'true') {
         return;
-      }
-
-      if (document.activeElement !== this._tree || !this._tree.contains(document.activeElement)) {
-        act(() => this._tree.focus());
       }
 
       await this.keyboardNavigateToRow({row});
