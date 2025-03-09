@@ -12,7 +12,7 @@
 
 export type {CalendarState, CalendarStateOptions, RangeCalendarState, RangeCalendarStateOptions} from '@react-stately/calendar';
 export type {CheckboxGroupProps, CheckboxGroupState} from '@react-stately/checkbox';
-export type {Color, ColorAreaProps, ColorAreaState, ColorChannelFieldProps, ColorChannelFieldState, ColorChannelFieldStateOptions, ColorFieldProps, ColorFieldState, ColorPickerProps, ColorPickerState, ColorSliderState, ColorSliderStateOptions, ColorWheelProps, ColorWheelState} from '@react-stately/color';
+export type {Color, ColorChannel, ColorFormat, ColorSpace, ColorAreaProps, ColorAreaState, ColorChannelFieldProps, ColorChannelFieldState, ColorChannelFieldStateOptions, ColorFieldProps, ColorFieldState, ColorPickerProps, ColorPickerState, ColorSliderState, ColorSliderStateOptions, ColorWheelProps, ColorWheelState} from '@react-stately/color';
 export type {ComboBoxState, ComboBoxStateOptions} from '@react-stately/combobox';
 export type {DateFieldState, DateFieldStateOptions, DatePickerState, DatePickerStateOptions, DateRangePickerState, DateRangePickerStateOptions, DateSegment, SegmentType as DateSegmentType, TimeFieldStateOptions, TimeFieldState} from '@react-stately/datepicker';
 export type {DisclosureState, DisclosureProps, DisclosureGroupState, DisclosureGroupProps} from '@react-stately/disclosure';
@@ -44,7 +44,7 @@ export {useDisclosureState, useDisclosureGroupState} from '@react-stately/disclo
 export {useDraggableCollectionState, useDroppableCollectionState} from '@react-stately/dnd';
 export {Item, Section, useCollection} from '@react-stately/collections';
 export {useAsyncList, useListData, useTreeData} from '@react-stately/data';
-export {useListState, useSingleSelectListState, useFilteredListState} from '@react-stately/list';
+export {useListState, useSingleSelectListState, UNSTABLE_useFilteredListState} from '@react-stately/list';
 export {useMenuTriggerState, useSubmenuTriggerState} from '@react-stately/menu';
 export {useNumberFieldState} from '@react-stately/numberfield';
 export {useOverlayTriggerState} from '@react-stately/overlays';

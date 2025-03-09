@@ -235,7 +235,7 @@
     "recast": "0.23.6",
     "ast-types": "0.16.1",
     "svgo": "^3",
-    "@testing-library/user-event@npm:^14.4.0": "patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch"
+    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch"
   },
   "@parcel/transformer-css": {
     "cssModules": {

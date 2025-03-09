@@ -22,7 +22,7 @@ import {TextFieldContext} from './TextField';
 export interface AutocompleteProps extends AriaAutocompleteProps, SlotProps {}
 
 interface InternalAutocompleteContextValue {
-  filterFn?: (nodeTextValue: string) => boolean,
+  filter?: (nodeTextValue: string) => boolean,
   collectionProps: CollectionOptions,
   collectionRef: RefObject<HTMLElement | null>
 }
@@ -47,7 +47,7 @@ export function Autocomplete(props: AutocompleteProps) {
     textFieldProps,
     collectionProps,
     collectionRef: mergedCollectionRef,
-    filterFn
+    filter: filterFn
   } = useAutocomplete({
     ...removeDataAttributes(props),
     filter,
@@ -64,7 +64,7 @@ export function Autocomplete(props: AutocompleteProps) {
         [TextFieldContext, textFieldProps],
         [InputContext, {ref: inputRef}],
         [UNSTABLE_InternalAutocompleteContext, {
-          filterFn,
+          filter: filterFn,
           collectionProps,
           collectionRef: mergedCollectionRef
         }]
