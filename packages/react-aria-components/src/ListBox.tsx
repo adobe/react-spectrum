@@ -76,6 +76,7 @@ export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children' | 
    */
   orientation?: Orientation,
   // TODO: move types somewhere common later
+  // Discuss if we want the RAC components to call the useLoadMore directly (think they have to if we wanna support using <Collection> as child)
   isLoading?: boolean,
   onLoadMore?: () => void
 }

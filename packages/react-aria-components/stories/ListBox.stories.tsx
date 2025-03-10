@@ -16,7 +16,8 @@ import {MyListBoxItem} from './utils';
 import React from 'react';
 import {Size} from '@react-stately/virtualizer';
 import styles from '../example/index.css';
-import {useListData} from 'react-stately';
+import {useAsyncList, useListData} from 'react-stately';
+import { UNSTABLE_ListBoxLoadingIndicator } from '../src/ListBox';
 
 export default {
   title: 'React Aria Components'
@@ -363,7 +364,7 @@ function VirtualizedListBoxGridExample({minSize = 80, maxSize = 100, preserveAsp
 
   return (
     <div style={{height: 400, width: 400, resize: 'both', padding: 40, overflow: 'hidden'}}>
-      <Virtualizer 
+      <Virtualizer
         layout={GridLayout}
         layoutOptions={{
           minItemSize: new Size(minSize, minSize),
@@ -409,7 +410,7 @@ export function VirtualizedListBoxWaterfall({minSize = 80, maxSize = 100}) {
 
   return (
     <div style={{height: 400, width: 400, resize: 'both', padding: 40, overflow: 'hidden'}}>
-      <Virtualizer 
+      <Virtualizer
         layout={WaterfallLayout}
         layoutOptions={{
           minItemSize: new Size(minSize, minSize),
@@ -429,3 +430,95 @@ export function VirtualizedListBoxWaterfall({minSize = 80, maxSize = 100}) {
     </div>
   );
 }
+
+interface Character {
+  name: string,
+  height: number,
+  mass: number,
+  birth_year: number
+}
+
+const MyListBoxLoaderIndicator = () => {
+  return (
+    <UNSTABLE_ListBoxLoadingIndicator>
+      <span>
+        Load more spinner
+      </span>
+    </UNSTABLE_ListBoxLoadingIndicator>
+  );
+};
+
+// TODO: this doesn't have load more spinner since user basically needs to use <Collection> or wrap their ListboxItem renderer so it renders the
+// additional loading indicator based on list load state
+export const AsyncListBox = () => {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 4000));
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <ListBox
+      className={styles.menu}
+      style={{height: 400}}
+      items={list.items}
+      aria-label="async listbox"
+      isLoading={list.isLoading}
+      onLoadMore={list.loadMore}
+      renderEmptyState={() => list.isLoading ? 'Loading spinner' : 'No results found'}>
+      {item => <MyListBoxItem id={item.name}>{item.name}</MyListBoxItem>}
+    </ListBox>
+  );
+};
+
+export const AsyncListBoxVirtualized = () => {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 4000));
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <Virtualizer
+      // TODO: loadMore doesn't quite work if we dont set a rowHeight, this is because when
+      // Will also need to test against a case where there are sections being loaded and/or estimated height
+      // layout={new ListLayout({estimatedRowHeight: 50})}
+      // layout={ListLayout}
+      layout={new ListLayout({rowHeight: 25})}>
+      <ListBox
+        className={styles.menu}
+        style={{height: 400}}
+        aria-label="async virtualized listbox"
+        isLoading={list.isLoading}
+        onLoadMore={list.loadMore}
+        renderEmptyState={() => list.isLoading ? 'Loading spinner' : 'No results found'}>
+        <Collection items={list.items}>
+          {item => <MyListBoxItem id={item.name}>{item.name}</MyListBoxItem>}
+        </Collection>
+        {list.isLoading && list.items.length > 0 && <MyListBoxLoaderIndicator />}
+      </ListBox>
+    </Virtualizer>
+  );
+};

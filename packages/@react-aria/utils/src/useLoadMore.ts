@@ -29,13 +29,13 @@ export interface LoadMoreProps {
    */
   scrollOffset?: number,
   // TODO: will need to refactor the existing components that use items
+  // this is a breaking change but this isn't documented and is in the react-aria/utils package so might be ok? Maybe can move this to a different package?
   // /** The data currently loaded. */
   // items?: any,
   collection?: Collection<Node<unknown>>
 }
 
 export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | null>) {
-  // let {isLoading, onLoadMore, scrollOffset = 1, items} = props;
   let {isLoading, onLoadMore, scrollOffset = 1, collection} = props;
 
   // Handle scrolling, and call onLoadMore when nearing the bottom.
@@ -67,6 +67,10 @@ export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | n
     // the collection and thus don't want to trigger a load or we had items preloaded and need to load more. That means comparing collection to lastCollection is
     // insufficient
     // might need to wait for height to change?
+    // TODO: This doesn't quite work if we dont set a rowHeight in the ListLayout, this is because when
+    // Will also need to test against a case where there are sections being loaded and/or estimated height
+    // Ideally this layoutEffect would trigger after the collection updates AND the item size has settled
+    // Previously, Virtualizer passed state into this hook so the
     let shouldLoadMore = onLoadMore
       && !isLoading
       && !collectionAwaitingUpdate.current
