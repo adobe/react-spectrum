@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="437" height="250" style="max-height: 496px; background: var(--anatomy-gray-100); padding: 32px; margin-top: 16px; margin-bottom: 32px; width: calc(100% - 64px); border-radius: 4px;"  viewBox="0 0 280 120">
+  <text id="Hover_Text_area_" data-name="Hover (Text area)" transform="translate(25 17)" fill="var(--anatomy-gray-900)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">Incorrect (he-IL)</tspan></text>
+  <rect id="Rule" width="280" height="4" rx="2" transform="translate(0 27)" fill="var(--anatomy-gray-800)"/>
+  <g id="Text_field" data-name="Text field" transform="translate(2 33)">
+    <g id="Placement_Area" data-name="Placement Area" fill="red" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
+      <rect width="124" height="56" stroke="none"/>
+      <rect x="0.5" y="0.5" width="123" height="55" fill="none"/>
+    </g>
+    <text id="Label" transform="translate(76 16)" fill="var(--anatomy-gray-800)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">Start Date</tspan></text>
+    <g id="Field" transform="translate(0 24)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+      <rect width="124" height="32" rx="4" stroke="none"/>
+      <rect x="0.5" y="0.5" width="123" height="31" rx="3.5" fill="none"/>
+    </g>
+    <text id="Text" transform="translate(28 44)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0" xml:space="preserve">45:8 ,  2025.1.31</tspan></text>
+  </g>
+  <g id="Text_field-2" data-name="Text field" transform="translate(153 33)">
+    <g id="Placement_Area-2" data-name="Placement Area" fill="red" stroke="var(--anatomy-gray-900)" stroke-opacity="0" stroke-width="1" opacity="0">
+      <rect width="124" height="56" stroke="none"/>
+      <rect x="0.5" y="0.5" width="123" height="55" fill="none"/>
+    </g>
+    <text id="Label-2" data-name="Label" transform="translate(76 16)" fill="var(--anatomy-gray-800)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">Start Date</tspan></text>
+    <g id="Field-2" data-name="Field" transform="translate(0 24)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+      <rect width="124" height="32" rx="4" stroke="none"/>
+      <rect x="0.5" y="0.5" width="123" height="31" rx="3.5" fill="none"/>
+    </g>
+    <text id="Text-2" data-name="Text" transform="translate(24 44)" fill="var(--anatomy-gray-800)" font-size="14" font-family="Adobe-Clean"><tspan x="0" y="0" xml:space="preserve">8:45 ,  01.31.2025</tspan></text>
+  </g>
+  <rect id="Rule-2" data-name="Rule" width="104" height="1" rx="0.5" transform="translate(140) rotate(90)" fill="var(--anatomy-gray-800)"/>
+  <text id="Hover_Text_area_2" data-name="Hover (Text area)" transform="translate(175 17)" fill="var(--anatomy-gray-900)" font-size="12" font-family="Adobe-Clean"><tspan x="0" y="0">Correct (he-IL)</tspan></text>
+</svg>
+
+
