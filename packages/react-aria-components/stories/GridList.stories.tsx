@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Checkbox, CheckboxProps, DropIndicator, GridLayout, GridList, GridListItem, GridListItemProps, ListLayout, Size, Tag, TagGroup, TagList, useDragAndDrop, Virtualizer} from 'react-aria-components';
+import {Button, Checkbox, CheckboxProps, Collection, DropIndicator, GridLayout, GridList, GridListItem, GridListItemProps, ListLayout, Size, Tag, TagGroup, TagList, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import React from 'react';
 import styles from '../example/index.css';
-import {useListData} from 'react-stately';
+import {useAsyncList, useListData} from 'react-stately';
+import { UNSTABLE_GridListLoadingIndicator } from '../src/GridList';
 
 export default {
   title: 'React Aria Components'
@@ -158,7 +159,7 @@ export function VirtualizedGridListGrid() {
   }
 
   return (
-    <Virtualizer 
+    <Virtualizer
       layout={GridLayout}
       layoutOptions={{
         minItemSize: new Size(40, 40)
@@ -169,6 +170,94 @@ export function VirtualizedGridListGrid() {
     </Virtualizer>
   );
 }
+
+interface Character {
+  name: string,
+  height: number,
+  mass: number,
+  birth_year: number
+}
+
+const MyGridListLoaderIndicator = () => {
+  return (
+    <UNSTABLE_GridListLoadingIndicator>
+      <span>
+        Load more spinner
+      </span>
+    </UNSTABLE_GridListLoadingIndicator>
+  );
+};
+
+export const AsyncGridList = () => {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 4000));
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <GridList
+      className={styles.menu}
+      style={{height: 400}}
+      items={list.items}
+      aria-label="async gridlist"
+      isLoading={list.isLoading}
+      onLoadMore={list.loadMore}
+      renderEmptyState={() => list.isLoading ? 'Loading spinner' : 'No results found'}>
+      {item => <MyGridListItem id={item.name}>{item.name}</MyGridListItem>}
+    </GridList>
+  );
+};
+
+export const AsyncGridListVirtualized = () => {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 4000));
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        rowHeight: 25
+      }}>
+      <GridList
+        className={styles.menu}
+        style={{height: 400}}
+        aria-label="async virtualized gridlist"
+        isLoading={list.isLoading}
+        onLoadMore={list.loadMore}
+        renderEmptyState={() => list.isLoading ? 'Loading spinner' : 'No results found'}>
+        <Collection items={list.items}>
+          {item => <MyGridListItem id={item.name}>{item.name}</MyGridListItem>}
+        </Collection>
+        {list.isLoading && list.items.length > 0 && <MyGridListLoaderIndicator />}
+      </GridList>
+    </Virtualizer>
+  );
+};
 
 export function TagGroupInsideGridList() {
   return (
@@ -194,7 +283,7 @@ export function TagGroupInsideGridList() {
         1,2 <Button>Actions</Button>
       </MyGridListItem>
       <MyGridListItem>
-        1,3         
+        1,3
         <TagGroup aria-label="Tag group">
           <TagList style={{display: 'flex', gap: 10}}>
             <Tag key="1">Tag 1</Tag>

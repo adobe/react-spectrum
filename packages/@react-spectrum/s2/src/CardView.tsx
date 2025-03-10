@@ -28,10 +28,10 @@ import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-u
 import {ImageCoordinator} from './ImageCoordinator';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from '@react-spectrum/utils';
-import {useEffectEvent, useLayoutEffect, useLoadMore, useResizeObserver} from '@react-aria/utils';
+import {useEffectEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
-export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior' | 'className' | 'style'>, UnsafeStyles {
+export interface CardViewProps<T> extends Omit<GridListProps<T>, 'layout' | 'keyboardNavigationBehavior' | 'selectionBehavior' | 'className' | 'style' | 'isLoading'>, UnsafeStyles {
   /**
    * The layout of the cards.
    * @default 'grid'
@@ -180,8 +180,8 @@ const cardViewStyles = style({
 }, getAllowedOverrides({height: true}));
 
 const wrapperStyles = style({
-  position: 'relative', 
-  overflow: 'clip', 
+  position: 'relative',
+  overflow: 'clip',
   size: 'fit'
 }, getAllowedOverrides({height: true}));
 
@@ -189,7 +189,18 @@ export const CardViewContext = createContext<ContextValue<Partial<CardViewProps<
 
 export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function CardView<T extends object>(props: CardViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, CardViewContext);
-  let {children, layout: layoutName = 'grid', size: sizeProp = 'M', density = 'regular', variant = 'primary', selectionStyle = 'checkbox', UNSAFE_className = '', UNSAFE_style, styles, ...otherProps} = props;
+  let {
+    children,
+    layout: layoutName = 'grid',
+    size: sizeProp = 'M',
+    density = 'regular',
+    variant = 'primary',
+    selectionStyle = 'checkbox',
+    UNSAFE_className = '',
+    UNSAFE_style,
+    styles,
+    onLoadMore,
+    ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let innerRef = useRef(null);
   let scrollRef = props.renderActionBar ? innerRef : domRef;
@@ -224,12 +235,6 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
   let layout = layoutName === 'waterfall' ? WaterfallLayout : GridLayout;
   let options = layoutOptions[size][density];
 
-  useLoadMore({
-    isLoading: props.loadingState !== 'idle' && props.loadingState !== 'error',
-    items: props.items, // TODO: ideally this would be the collection. items won't exist for static collections, or those using <Collection>
-    onLoadMore: props.onLoadMore
-  }, scrollRef);
-
   let ctx = useMemo(() => ({size, variant}), [size, variant]);
 
   let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
@@ -242,6 +247,8 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
             <AriaGridList
               ref={scrollRef}
               {...otherProps}
+              isLoading={props.loadingState !== 'idle' && props.loadingState !== 'error'}
+              onLoadMore={onLoadMore}
               layout="grid"
               selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
               selectedKeys={selectedKeys}

@@ -70,7 +70,8 @@ export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | n
     // TODO: This doesn't quite work if we dont set a rowHeight in the ListLayout, this is because when
     // Will also need to test against a case where there are sections being loaded and/or estimated height
     // Ideally this layoutEffect would trigger after the collection updates AND the item size has settled
-    // Previously, Virtualizer passed state into this hook so the
+    // Previously, Virtualizer passed state from useVirtualizerState into this hook so that we could get a rerender and trigger this effect
+    // as well as compare previous/last sizes
     let shouldLoadMore = onLoadMore
       && !isLoading
       && !collectionAwaitingUpdate.current

@@ -18,8 +18,8 @@ import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, Slot
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
-import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
+import {filterDOMProps, useLoadMore, useObjectRef} from '@react-aria/utils';
+import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject, StyleProps} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
@@ -72,7 +72,11 @@ export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>
    * Whether the items are arranged in a stack or grid.
    * @default 'stack'
    */
-  layout?: 'stack' | 'grid'
+  layout?: 'stack' | 'grid',
+  // TODO: move types somewhere common later
+  // Discuss if we want the RAC components to call the useLoadMore directly (think they have to if we wanna support using <Collection> as child)
+  isLoading?: boolean,
+  onLoadMore?: () => void
 }
 
 
@@ -100,7 +104,7 @@ interface GridListInnerProps<T extends object> {
 }
 
 function GridListInner<T extends object>({props, collection, gridListRef: ref}: GridListInnerProps<T>) {
-  let {dragAndDropHooks, keyboardNavigationBehavior = 'arrow', layout = 'stack'} = props;
+  let {dragAndDropHooks, keyboardNavigationBehavior = 'arrow', layout = 'stack', isLoading, onLoadMore} = props;
   let {CollectionRoot, isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate} = useContext(CollectionRendererContext);
   let state = useListState({
     ...props,
@@ -217,6 +221,13 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
       </div>
     );
   }
+
+  let memoedLoadMoreProps = useMemo(() => ({
+    isLoading,
+    onLoadMore,
+    collection
+  }), [isLoading, onLoadMore, collection]);
+  useLoadMore(memoedLoadMoreProps, ref);
 
   return (
     <FocusScope>
@@ -489,3 +500,38 @@ function RootDropIndicator() {
     </div>
   );
 }
+
+export interface GridListLoadingIndicatorProps extends StyleProps {
+  children?: ReactNode
+}
+
+export const UNSTABLE_GridListLoadingIndicator = createLeafComponent('loader', function GridListLoadingIndicator<T extends object>(props: GridListLoadingIndicatorProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+  let state = useContext(ListStateContext)!;
+  let {isVirtualized} = useContext(CollectionRendererContext);
+
+  let renderProps = useRenderProps({
+    ...props,
+    id: undefined,
+    children: item.rendered,
+    defaultClassName: 'react-aria-GridListLoadingIndicator',
+    values: null
+  });
+
+  return (
+    <div
+      role="row"
+      // TODO: do we need any of the other row props from useGridListItem? Rather not grab too much if this is all we need
+      aria-rowindex={isVirtualized ? state.collection.size + 1 : undefined}
+      ref={ref}
+      {...mergeProps(filterDOMProps(props as any))}
+      {...renderProps}>
+      <div
+        // TODO: test accessibility of this. For some reason the useGridListItem hook includes this still even when not virtualized
+        // which doesn't seem right
+        aria-colindex={isVirtualized ? 1 : undefined}
+        role="gridcell">
+        {renderProps.children}
+      </div>
+    </div>
+  );
+});

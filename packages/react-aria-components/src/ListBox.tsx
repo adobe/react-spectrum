@@ -230,21 +230,21 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
       </div>
     );
   }
-  // console.log(' in here')
-  // TODO: see if we need to memo this. Also decide if scrollOffset should be settable by the user
+
+  // TODO: Should scrollOffset for useLoadMore should be configurable by the user
   let memoedLoadMoreProps = useMemo(() => ({
     isLoading: props.isLoading,
     onLoadMore: props.onLoadMore,
     collection
   }), [props.isLoading, props.onLoadMore, collection]);
   // TODO: maybe this should be called at the ListBox level and the StandaloneListBox level. At its current place it is only called
-  // when the Listbox in the dropdown is rendered
+  // when the Listbox in the dropdown is rendered. The benefit to this would be that useLoadMore would trigger a load for the user before the
+  // dropdown opens but the current state gives the user more freedom as to whether they would like to pre-fetch or not
   useLoadMore(memoedLoadMoreProps, listBoxRef);
 
   // TODO: add loading indicator to ListBox so user can render that when loading. Think about if completely empty state
   // do we leave it up to the user to setup the two states for empty and empty + loading? Do we add a data attibute/prop/renderprop to ListBox
   // for isLoading
-
   return (
     <FocusScope>
       <div
