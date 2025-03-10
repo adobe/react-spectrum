@@ -40,6 +40,6 @@ cat ./packages/react-aria-components/package.json
 # Publish packages to verdaccio
 yarn workspaces foreach --all --no-private -pt npm publish --tag latest
 
-curl -s http://localhost:4000/@adobe/react-spectrum/-/package/-/dist-tags
+curl -s http://localhost:4000/@adobe/react-spectrum
 
 netstat -tpln | awk -F'[[:space:]/:]+' '$5 == 4000 {print $(NF-2)}' | xargs kill
