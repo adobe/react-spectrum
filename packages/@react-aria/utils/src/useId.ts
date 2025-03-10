@@ -27,7 +27,7 @@ export let idsUpdaterMap: Map<string, { current: string | null }[]> = new Map();
 // Map is a strong reference, so unused ids wouldn't be cleaned up otherwise.
 // This can happen in suspended components where mount/unmount is not called.
 let registry;
-if (typeof window !== 'undefined' && window.FinalizationRegistry) {
+if (typeof FinalizationRegistry !== 'undefined') {
   registry = new FinalizationRegistry<string>((heldValue) => {
     idsUpdaterMap.delete(heldValue);
   });
