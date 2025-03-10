@@ -69,17 +69,6 @@ interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
    * such as ComboBox's MenuTrigger or a NumberField's increment/decrement control.
    */
   preventFocusOnPress?: boolean
-  & (
-    | { type?: 'button' | 'reset' }
-    | { 
-        type: 'submit',
-        /**
-         * The id of the form that the button is associated with.
-         * Only applicable when type is 'submit'.
-         */
-        form?: string 
-      }
-    )
 }
 
 export interface AriaButtonProps<T extends ElementType = 'button'> extends ButtonProps, LinkButtonProps<T>, AriaBaseButtonProps {}
@@ -106,7 +95,11 @@ export interface SpectrumButtonProps<T extends ElementType = 'button'> extends A
    * Whether the button should be displayed with a quiet style.
    * @deprecated
    */
-  isQuiet?: boolean
+  isQuiet?: boolean, 
+  /**
+   * If type of the button is submit we will have a form prop.
+   */
+  type?: 'submit' & { form?: string }
 }
 
 export interface SpectrumActionButtonProps extends AriaBaseButtonProps, ButtonProps, StyleProps {
