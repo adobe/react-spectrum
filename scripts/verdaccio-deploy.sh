@@ -33,7 +33,9 @@ make build
 
 # Bump all package versions (allow publish from current branch but don't push tags or commit)
 yarn workspaces list --json --no-private | node ./scripts/verdaccio-generate-versions.js
+cat .yarn/versions/version.yml
 yarn version apply --all
+cat ./packages/react-aria-components/package.json
 
 # Publish packages to verdaccio
 yarn workspaces foreach --all --no-private -pt npm publish
