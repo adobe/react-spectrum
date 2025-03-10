@@ -97,9 +97,9 @@ export interface SpectrumButtonProps<T extends ElementType = 'button'> extends A
    */
   isQuiet?: boolean, 
   /**
-   * If type of the button is submit we will have a form prop.
+   * We have a form prop for buttons.
    */
-  type?: 'submit' & { form?: string }
+  form?: string
 }
 
 export interface SpectrumActionButtonProps extends AriaBaseButtonProps, ButtonProps, StyleProps {
