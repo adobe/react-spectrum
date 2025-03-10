@@ -10,14 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-export {FocusScope, useFocusManager, getFocusableTreeWalker, createFocusManager, isElementInChildOfActiveScope, isFocusable} from './FocusScope';
+export {FocusScope, useFocusManager, getFocusableTreeWalker, createFocusManager, isElementInChildOfActiveScope} from './FocusScope';
 export {FocusRing} from './FocusRing';
-export {FocusableProvider, useFocusable} from './useFocusable';
 export {useFocusRing} from './useFocusRing';
-export {focusSafely} from './focusSafely';
 export {useHasTabbableChild} from './useHasTabbableChild';
+export {moveVirtualFocus, dispatchVirtualBlur, dispatchVirtualFocus, getVirtuallyFocusedElement} from './virtualFocus';
+// For backward compatibility.
+export {isFocusable} from '@react-aria/utils';
+export {FocusableProvider, Focusable, useFocusable, focusSafely} from '@react-aria/interactions';
 
 export type {FocusScopeProps, FocusManager, FocusManagerOptions} from './FocusScope';
 export type {FocusRingProps} from './FocusRing';
-export type {FocusableAria, FocusableOptions, FocusableProviderProps} from './useFocusable';
+export type {FocusableAria, FocusableOptions, FocusableProviderProps} from '@react-aria/interactions';
 export type {AriaFocusRingProps, FocusRingAria} from './useFocusRing';

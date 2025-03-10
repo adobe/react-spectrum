@@ -13,14 +13,13 @@
 import {ChangeEvent, useCallback, useEffect, useRef} from 'react';
 import {ColumnSize} from '@react-types/table';
 import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
-import {focusSafely} from '@react-aria/focus';
+import {focusSafely, useInteractionModality, useKeyboard, useMove, usePress} from '@react-aria/interactions';
 import {getColumnHeaderId} from './utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps, useDescription, useEffectEvent, useId} from '@react-aria/utils';
 import {TableColumnResizeState} from '@react-stately/table';
-import {useInteractionModality, useKeyboard, useMove, usePress} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
@@ -224,6 +223,7 @@ export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, st
   };
 
   let {pressProps} = usePress({
+    preventFocusOnPress: true,
     onPressStart: (e) => {
       if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey || e.pointerType === 'keyboard') {
         return;

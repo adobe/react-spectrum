@@ -615,8 +615,7 @@ it('Picker can select an option via keyboard', async function () {
   );
   let selectTester = testUtilUser.createTester('Select', {root: getByTestId('test-select'), interactionType: 'keyboard'});
   let trigger = selectTester.trigger;
-  expect(trigger).toHaveTextContent('Select an item');
-  expect(trigger).not.toHaveAttribute('data-pressed');
+  expect(trigger).toHaveTextContent('Select…');
 
   await selectTester.selectOption({option: 'Cat'});
   expect(trigger).toHaveTextContent('Cat');

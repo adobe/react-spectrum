@@ -55,6 +55,7 @@ async function build() {
           name === 'framer-motion' ||
           name === 'tailwindcss-animate' ||
           name === 'tailwindcss' ||
+          name === '@tailwindcss/postcss' ||
           name === 'autoprefixer' ||
           name === 'lucide-react' ||
           name === 'tailwind-variants' ||
@@ -135,6 +136,7 @@ async function build() {
   fs.copySync(path.join(__dirname, '..', 'starters'), path.join(dir, 'starters'));
   fs.copySync(path.join(__dirname, '..', '.yarn', 'releases'), path.join(dir, '.yarn', 'releases'));
   fs.copySync(path.join(__dirname, '..', '.yarn', 'plugins'), path.join(dir, '.yarn', 'plugins'));
+  fs.copySync(path.join(__dirname, '..', '.yarn', 'patches'), path.join(dir, '.yarn', 'patches'));
   fs.copySync(path.join(__dirname, '..', '.yarnrc.yml'), path.join(dir, '.yarnrc.yml'));
   fs.copySync(path.join(__dirname, '..', 'scripts', 'createFeed.mjs'), path.join(dir, 'scripts', 'createFeed.mjs'));
 

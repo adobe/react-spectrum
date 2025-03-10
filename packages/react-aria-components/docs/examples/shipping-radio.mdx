@@ -15,6 +15,7 @@ import {TypeLink} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import RadioGroup from '@react-spectrum/docs/pages/assets/component-illustrations/RadioGroup.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
 ---
 keywords: [example, radio, aria, accessibility, react, component]
@@ -39,7 +40,7 @@ import CheckCircleIcon from '@spectrum-icons/workflow/CheckmarkCircle';
 
 function RadioGroupExample() {
   return (
-    <div className="bg-gradient-to-r from-blue-300 to-indigo-300 p-2 sm:p-8 rounded-lg flex justify-center">
+    <div className="bg-linear-to-r from-blue-300 to-indigo-300 p-2 sm:p-8 rounded-lg flex justify-center">
       <RadioGroup className="flex flex-col gap-2 w-full max-w-[300px]" defaultValue="Standard">
         <Label className="text-xl text-slate-900 font-semibold font-serif">Shipping</Label>
         <ShippingOption name="Standard" time="4-10 business days" price="$4.99" />
@@ -53,7 +54,7 @@ function RadioGroupExample() {
 function ShippingOption({name, time, price}) {
   return (
     <Radio value={name} className={({isFocusVisible, isSelected, isPressed}) => `
-      group relative flex cursor-default rounded-lg px-4 py-3 shadow-lg outline-none bg-clip-padding border border-solid
+      group relative flex cursor-default rounded-lg px-4 py-3 shadow-lg outline-hidden bg-clip-padding border border-solid
       ${isFocusVisible ? 'ring-2 ring-blue-600 ring-offset-1 ring-offset-white/80' : ''}
       ${isSelected ? 'bg-blue-600 border-white/30 text-white' : 'border-transparent'}
       ${isPressed && !isSelected ? 'bg-blue-50' : ''}
@@ -78,7 +79,18 @@ function ShippingOption({name, time, price}) {
 
 ### Tailwind config
 
-This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. Add it to your `tailwind.config.js`:
+This example uses the [tailwindcss-react-aria-components](../styling.html#plugin) plugin. When using Tailwind v4, add it to your CSS:
+
+```css render=false
+@import "tailwindcss";
+@plugin "tailwindcss-react-aria-components";
+```
+
+<details>
+
+<summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Tailwind v3</summary>
+
+When using Tailwind v3, add the plugin to your `tailwind.config.js` instead:
 
 ```tsx
 module.exports = {
@@ -88,6 +100,10 @@ module.exports = {
   ]
 };
 ```
+
+**Note**: When using Tailwind v3, install `tailwindcss-react-aria-components` version 1.x instead of 2.x.
+
+</details>
 
 ## Components
 

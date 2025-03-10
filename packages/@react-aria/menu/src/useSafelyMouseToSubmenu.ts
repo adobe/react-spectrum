@@ -1,8 +1,8 @@
 
 import {RefObject} from '@react-types/shared';
 import {useEffect, useRef, useState} from 'react';
+import {useEffectEvent, useResizeObserver} from '@react-aria/utils';
 import {useInteractionModality} from '@react-aria/interactions';
-import {useResizeObserver} from '@react-aria/utils';
 
 interface SafelyMouseToSubmenuOptions {
   /** Ref for the parent menu. */
@@ -50,6 +50,14 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
   };
 
   let modality = useInteractionModality();
+
+  // Prevent mouse down over safe triangle. Clicking while pointer-events: none is applied
+  // will cause focus to move unexpectedly since it will go to an element behind the menu.
+  let onPointerDown = useEffectEvent((e: PointerEvent) => {
+    if (preventPointerEvents) {
+      e.preventDefault();
+    }
+  });
 
   useEffect(() => {
     if (preventPointerEvents && menuRef.current) {
@@ -150,12 +158,21 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
 
     window.addEventListener('pointermove', onPointerMove);
 
+    // Prevent pointer down over the safe triangle. See above comment.
+    // Do not enable in tests, because JSDom doesn't do hit testing.
+    if (process.env.NODE_ENV !== 'test') {
+      window.addEventListener('pointerdown', onPointerDown, true);
+    }
+
     return () => {
       window.removeEventListener('pointermove', onPointerMove);
+      if (process.env.NODE_ENV !== 'test') {
+        window.removeEventListener('pointerdown', onPointerDown, true);
+      }
       clearTimeout(timeout.current);
       clearTimeout(autoCloseTimeout.current);
       movementsTowardsSubmenuCount.current = ALLOWED_INVALID_MOVEMENTS;
     };
 
-  }, [isDisabled, isOpen, menuRef, modality, setPreventPointerEvents, submenuRef]);
+  }, [isDisabled, isOpen, menuRef, modality, setPreventPointerEvents, onPointerDown, submenuRef]);
 }

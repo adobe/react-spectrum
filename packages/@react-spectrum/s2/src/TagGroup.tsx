@@ -40,19 +40,19 @@ import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {IconContext} from './Icon';
 import {ImageContext} from './Image';
+import {inertValue, useEffectEvent, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
 import {Text, TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
-import {useEffectEvent, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 // Get types from RSP and extend those?
 export interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'className'> {
   /** The children of the tag. */
-  children?: ReactNode
+  children: ReactNode
 }
 
 export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | 'style' | 'className'>, Pick<TagListProps<T>, 'items' | 'children' | 'renderEmptyState'>, Omit<SpectrumLabelableProps, 'isRequired' | 'necessityIndicator'>, StyleProps, Omit<HelpTextProps, 'errorMessage'> {
@@ -80,7 +80,7 @@ export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | '
   onGroupAction?: () => void
 }
 
-export const TagGroupContext = createContext<ContextValue<TagGroupProps<any>, DOMRefValue<HTMLDivElement>>>(null);
+export const TagGroupContext = createContext<ContextValue<Partial<TagGroupProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
 const helpTextStyles = style({
   gridArea: 'helptext',
@@ -319,7 +319,7 @@ function TagGroupInner<T>({
             {maxRows != null && (
               <div
                 // @ts-ignore
-                inert="true"
+                inert={inertValue(true)}
                 ref={hiddenTagsRef}
                 className={style({
                   display: 'inline',

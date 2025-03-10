@@ -85,7 +85,9 @@ export const DatePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(function 
   });
 
   let groupRef = useRef<HTMLDivElement>(null);
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let {
     groupProps,
     labelProps,
@@ -186,7 +188,9 @@ export const DateRangePicker = /*#__PURE__*/ (forwardRef as forwardRefType)(func
   });
 
   let groupRef = useRef<HTMLDivElement>(null);
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let {
     groupProps,
     labelProps,

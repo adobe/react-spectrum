@@ -74,6 +74,7 @@ export const Group = /*#__PURE__*/ (forwardRef as forwardRefType)(function Group
 
   isDisabled ??= !!props['aria-disabled'] && props['aria-disabled'] !== 'false';
   isInvalid ??= !!props['aria-invalid'] && props['aria-invalid'] !== 'false';
+
   let renderProps = useRenderProps({
     ...props,
     values: {isHovered, isFocusWithin: isFocused, isFocusVisible, isDisabled, isInvalid},

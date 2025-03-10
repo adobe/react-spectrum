@@ -49,7 +49,7 @@ export interface StatusLightProps extends StatusLightStyleProps, DOMProps, AriaL
   role?: 'status'
 }
 
-export const StatusLightContext = createContext<ContextValue<StatusLightProps, DOMRefValue<HTMLDivElement>>>(null);
+export const StatusLightContext = createContext<ContextValue<Partial<StatusLightProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const wrapper = style<StatusLightStyleProps>({
   display: 'flex',

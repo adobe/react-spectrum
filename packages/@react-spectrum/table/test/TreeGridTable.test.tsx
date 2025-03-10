@@ -954,14 +954,19 @@ describe('TableView with expandable rows', function () {
           checkSelectAll(treegrid);
         });
 
-        it('should select a row by pressing the Enter key on a chevron cell', function () {
+        it('should select a row by pressing the Enter key on a chevron cell', async function () {
           let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={undefined} onAction={undefined} />);
           let rowgroups = treegrid.getAllByRole('rowgroup');
           let rows = within(rowgroups[1]).getAllByRole('row');
-          let cell = getCell(treegrid, 'Row 1, Lvl 1, Foo');
+          let cell = within(rows[0]).getByRole('checkbox');
 
           checkRowSelection(rows, false);
-          pressWithKeyboard(cell, 'Enter');
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.keyboard('{ArrowRight}');
+          expect(document.activeElement).toBe(cell);
+          await user.keyboard('{Enter}');
           checkSelection(onSelectionChange, [
             'Row 1 Lvl 1'
           ]);
@@ -969,14 +974,19 @@ describe('TableView with expandable rows', function () {
           checkSelectAll(treegrid);
         });
 
-        it('should select a row by pressing the Space key on a chevron cell', function () {
+        it('should select a row by pressing the Space key on a chevron cell', async function () {
           let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={undefined} onAction={undefined} />);
           let rowgroups = treegrid.getAllByRole('rowgroup');
           let rows = within(rowgroups[1]).getAllByRole('row');
-          let cell = getCell(treegrid, 'Row 1, Lvl 1, Foo');
+          let cell = within(rows[0]).getByRole('checkbox');
 
           checkRowSelection(rows, false);
-          pressWithKeyboard(cell);
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.keyboard('{ArrowRight}');
+          expect(document.activeElement).toBe(cell);
+          await user.keyboard(' ');
           checkSelection(onSelectionChange, [
             'Row 1 Lvl 1'
           ]);
@@ -1103,33 +1113,36 @@ describe('TableView with expandable rows', function () {
       });
 
       describe('with keyboard', function () {
-        it('should extend a selection with Shift + ArrowDown through nested keys', function () {
+        it('should extend a selection with Shift + ArrowDown through nested keys', async function () {
           let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={undefined} onAction={undefined} />);
           let rowgroups = treegrid.getAllByRole('rowgroup');
           let rows = within(rowgroups[1]).getAllByRole('row');
+          let cell = within(rows[0]).getByRole('checkbox');
 
           checkRowSelection(rows, false);
-          pressWithKeyboard(getCell(treegrid, 'Row 1, Lvl 1, Foo'));
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.keyboard('{ArrowRight}');
+          expect(document.activeElement).toBe(cell);
+          await user.keyboard(' ');
           onSelectionChange.mockReset();
 
-          fireEvent.keyDown(document.activeElement!, {key: 'ArrowDown', shiftKey: true});
-          fireEvent.keyUp(document.activeElement!, {key: 'ArrowDown', shiftKey: true});
+          await user.keyboard('{Shift>}{ArrowDown}{/Shift}');
           act(() => jest.runAllTimers());
           checkSelection(onSelectionChange, [
             'Row 1 Lvl 1', 'Row 1 Lvl 2'
           ]);
 
           onSelectionChange.mockReset();
-          fireEvent.keyDown(document.activeElement!, {key: 'ArrowDown', shiftKey: true});
-          fireEvent.keyUp(document.activeElement!, {key: 'ArrowDown', shiftKey: true});
+          await user.keyboard('{Shift>}{ArrowDown}{/Shift}');
           act(() => jest.runAllTimers());
           checkSelection(onSelectionChange, [
             'Row 1 Lvl 1', 'Row 1 Lvl 2', 'Row 1 Lvl 3'
           ]);
 
           onSelectionChange.mockReset();
-          fireEvent.keyDown(document.activeElement!, {key: 'ArrowDown', shiftKey: true});
-          fireEvent.keyUp(document.activeElement!, {key: 'ArrowDown', shiftKey: true});
+          await user.keyboard('{Shift>}{ArrowDown}{/Shift}');
           act(() => jest.runAllTimers());
           checkSelection(onSelectionChange, [
             'Row 1 Lvl 1', 'Row 1 Lvl 2', 'Row 1 Lvl 3', 'Row 2 Lvl 1'
@@ -1139,33 +1152,39 @@ describe('TableView with expandable rows', function () {
           checkRowSelection(rows.slice(4), false);
         });
 
-        it('should extend a selection with Shift + ArrowUp through nested keys', function () {
+        it('should extend a selection with Shift + ArrowUp through nested keys', async function () {
           let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={undefined} onAction={undefined} />);
           let rowgroups = treegrid.getAllByRole('rowgroup');
           let rows = within(rowgroups[1]).getAllByRole('row');
+          let cell = within(rows[3]).getByRole('checkbox');
 
           checkRowSelection(rows, false);
-          pressWithKeyboard(getCell(treegrid, 'Row 2, Lvl 1, Foo'));
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowRight}');
+          expect(document.activeElement).toBe(cell);
+          await user.keyboard('{Enter}');
           onSelectionChange.mockReset();
 
-          fireEvent.keyDown(document.activeElement!, {key: 'ArrowUp', shiftKey: true});
-          fireEvent.keyUp(document.activeElement!, {key: 'ArrowUp', shiftKey: true});
+          await user.keyboard('{Shift>}{ArrowUp}{/Shift}');
           act(() => jest.runAllTimers());
           checkSelection(onSelectionChange, [
             'Row 2 Lvl 1', 'Row 1 Lvl 3'
           ]);
 
           onSelectionChange.mockReset();
-          fireEvent.keyDown(document.activeElement!, {key: 'ArrowUp', shiftKey: true});
-          fireEvent.keyUp(document.activeElement!, {key: 'ArrowUp', shiftKey: true});
+          await user.keyboard('{Shift>}{ArrowUp}{/Shift}');
           act(() => jest.runAllTimers());
           checkSelection(onSelectionChange, [
             'Row 2 Lvl 1', 'Row 1 Lvl 3', 'Row 1 Lvl 2'
           ]);
 
           onSelectionChange.mockReset();
-          fireEvent.keyDown(document.activeElement!, {key: 'ArrowUp', shiftKey: true});
-          fireEvent.keyUp(document.activeElement!, {key: 'ArrowUp', shiftKey: true});
+          await user.keyboard('{Shift>}{ArrowUp}{/Shift}');
           act(() => jest.runAllTimers());
           checkSelection(onSelectionChange, [
             'Row 2 Lvl 1', 'Row 1 Lvl 3', 'Row 1 Lvl 2', 'Row 1 Lvl 1'
@@ -1175,17 +1194,28 @@ describe('TableView with expandable rows', function () {
           checkRowSelection(rows.slice(4), false);
         });
 
-        it('should extend a selection with Ctrl + Shift + Home', function () {
+        it('should extend a selection with Ctrl + Shift + Home', async function () {
           let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={undefined} onAction={undefined} />);
           let rowgroups = treegrid.getAllByRole('rowgroup');
           let rows = within(rowgroups[1]).getAllByRole('row');
+          let cell = within(rows[6]).getByRole('checkbox');
 
           checkRowSelection(rows, false);
-          pressWithKeyboard(getCell(treegrid, 'Row 3, Lvl 1, Foo'));
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowRight}');
+          expect(document.activeElement).toBe(cell);
+          await user.keyboard('{Enter}');
           onSelectionChange.mockReset();
 
-          fireEvent.keyDown(document.activeElement!, {key: 'Home', shiftKey: true, ctrlKey: true});
-          fireEvent.keyUp(document.activeElement!, {key: 'Home', shiftKey: true, ctrlKey: true});
+          await user.keyboard('{Shift>}{Control>}{Home}{/Control}{/Shift}');
           act(() => jest.runAllTimers());
 
           checkSelection(onSelectionChange, [
@@ -1196,33 +1226,55 @@ describe('TableView with expandable rows', function () {
           checkRowSelection(rows.slice(7), false);
         });
 
-        it('should extend a selection with Ctrl + Shift + End', function () {
+        it('should extend a selection with Ctrl + Shift + End', async function () {
           let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={undefined} onAction={undefined} />);
           let rowgroups = treegrid.getAllByRole('rowgroup');
           let rows = within(rowgroups[1]).getAllByRole('row');
+          let cell = within(rows[6]).getByRole('checkbox');
 
           checkRowSelection(rows, false);
-          pressWithKeyboard(getCell(treegrid, 'Row 3, Lvl 1, Foo'));
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowRight}');
+          expect(document.activeElement).toBe(cell);
+          await user.keyboard('{Enter}');
           onSelectionChange.mockReset();
 
-          fireEvent.keyDown(document.activeElement!, {key: 'End', shiftKey: true, ctrlKey: true});
-          fireEvent.keyUp(document.activeElement!, {key: 'End', shiftKey: true, ctrlKey: true});
+          await user.keyboard('{Shift>}{Control>}{End}{/Control}{/Shift}');
           act(() => jest.runAllTimers());
 
           checkRowSelection(rows.slice(6), true);
         });
 
-        it('should extend a selection with Shift + PageDown', function () {
+        it('should extend a selection with Shift + PageDown', async function () {
           let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={undefined} onAction={undefined} />);
           let rowgroups = treegrid.getAllByRole('rowgroup');
           let rows = within(rowgroups[1]).getAllByRole('row');
+          let cell = within(rows[6]).getByRole('checkbox');
 
           checkRowSelection(rows, false);
-          pressWithKeyboard(getCell(treegrid, 'Row 3, Lvl 1, Foo'));
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowRight}');
+          expect(document.activeElement).toBe(cell);
+          await user.keyboard('{Enter}');
           onSelectionChange.mockReset();
 
-          fireEvent.keyDown(document.activeElement!, {key: 'PageDown', shiftKey: true});
-          fireEvent.keyUp(document.activeElement!, {key: 'PageDown', shiftKey: true});
+          await user.keyboard('{Shift>}{PageDown}{/Shift}');
           act(() => jest.runAllTimers());
 
           checkSelection(onSelectionChange, [
@@ -1234,17 +1286,28 @@ describe('TableView with expandable rows', function () {
           ]);
         });
 
-        it('should extend a selection with Shift + PageUp', function () {
+        it('should extend a selection with Shift + PageUp', async function () {
           let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={undefined} onAction={undefined} />);
           let rowgroups = treegrid.getAllByRole('rowgroup');
           let rows = within(rowgroups[1]).getAllByRole('row');
+          let cell = within(rows[6]).getByRole('checkbox');
 
           checkRowSelection(rows, false);
-          pressWithKeyboard(getCell(treegrid, 'Row 3, Lvl 1, Foo'));
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowDown}');
+          await user.keyboard('{ArrowRight}');
+          expect(document.activeElement).toBe(cell);
+          await user.keyboard('{Enter}');
           onSelectionChange.mockReset();
 
-          fireEvent.keyDown(document.activeElement!, {key: 'PageUp', shiftKey: true});
-          fireEvent.keyUp(document.activeElement!, {key: 'PageUp', shiftKey: true});
+          await user.keyboard('{Shift>}{PageUp}{/Shift}');
           act(() => jest.runAllTimers());
 
           checkSelection(onSelectionChange, [
@@ -1252,20 +1315,24 @@ describe('TableView with expandable rows', function () {
           ]);
         });
 
-        it('should not include disabled rows', function () {
+        it('should not include disabled rows', async function () {
           let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={['Row 1 Lvl 2']} onAction={undefined} />);
           let rowgroups = treegrid.getAllByRole('rowgroup');
           let rows = within(rowgroups[1]).getAllByRole('row');
+          let cell = within(rows[0]).getByRole('checkbox');
 
           checkRowSelection(rows, false);
-          pressWithKeyboard(getCell(treegrid, 'Row 1, Lvl 1, Foo'));
+          await user.tab();
+          await user.tab();
+          await user.tab();
+          await user.keyboard('{ArrowRight}');
+          expect(document.activeElement).toBe(cell);
+          await user.keyboard('{Enter}');
           onSelectionChange.mockReset();
 
-          fireEvent.keyDown(document.activeElement!, {key: 'ArrowDown', shiftKey: true});
-          fireEvent.keyUp(document.activeElement!, {key: 'ArrowDown', shiftKey: true});
+          await user.keyboard('{Shift>}{ArrowDown}{/Shift}');
           act(() => jest.runAllTimers());
-          fireEvent.keyDown(document.activeElement!, {key: 'ArrowDown', shiftKey: true});
-          fireEvent.keyUp(document.activeElement!, {key: 'ArrowDown', shiftKey: true});
+          await user.keyboard('{Shift>}{ArrowDown}{/Shift}');
           act(() => jest.runAllTimers());
           checkSelection(onSelectionChange, [
             'Row 1 Lvl 1', 'Row 1 Lvl 3'
@@ -1314,14 +1381,20 @@ describe('TableView with expandable rows', function () {
         checkRowSelection([rows[0], rows[2]], true);
       });
 
-      it('should trigger onAction when pressing Enter', function () {
+      it('should trigger onAction when pressing Enter', async function () {
         let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={undefined} onAction={onAction} />);
         let rowgroups = treegrid.getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
-        let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
+        let cell = within(rows[2]).getByRole('checkbox');
+        await user.tab();
+        await user.tab();
+        await user.tab();
 
-        fireEvent.keyDown(cell, {key: 'Enter'});
-        fireEvent.keyUp(cell, {key: 'Enter'});
+        await user.keyboard('{ArrowDown}');
+        await user.keyboard('{ArrowDown}');
+        await user.keyboard('{ArrowRight}');
+        await user.keyboard('{Enter}');
+        expect(document.activeElement).toBe(cell);
         act(() => jest.runAllTimers());
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).toHaveBeenCalledTimes(1);
@@ -1329,8 +1402,7 @@ describe('TableView with expandable rows', function () {
         checkRowSelection(rows, false);
 
         onAction.mockReset();
-        fireEvent.keyDown(cell, {key: ' '});
-        fireEvent.keyUp(cell, {key: ' '});
+        await user.keyboard(' ');
         act(() => jest.runAllTimers());
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         expect(onAction).not.toHaveBeenCalled();
@@ -1341,7 +1413,7 @@ describe('TableView with expandable rows', function () {
     describe('selectionStyle highlight', function () {
       installPointerEvent();
 
-      it('should toggle selection with mouse', function () {
+      it('should toggle selection with mouse', async function () {
         let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="highlight" disabledKeys={undefined} onAction={undefined} />);
         expect(treegrid.queryByLabelText('Select All')).toBeNull();
 
@@ -1350,8 +1422,7 @@ describe('TableView with expandable rows', function () {
         let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
 
         checkRowSelection(rows, false);
-        fireEvent.pointerDown(cell, {pointerType: 'mouse', pointerId: 1});
-        fireEvent.pointerUp(cell, {pointerType: 'mouse', pointerId: 1});
+        await user.pointer({target: cell, keys: '[MouseLeft]', coords: {pressure: 0.5}});
         act(() => jest.runAllTimers());
         expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 3, Foo selected.');
         expect(announce).toHaveBeenCalledTimes(1);
@@ -1360,8 +1431,7 @@ describe('TableView with expandable rows', function () {
         onSelectionChange.mockReset();
 
         cell = getCell(treegrid, 'Row 1, Lvl 1, Foo');
-        fireEvent.pointerDown(cell, {pointerType: 'mouse', pointerId: 1});
-        fireEvent.pointerUp(cell, {pointerType: 'mouse', pointerId: 1});
+        await user.pointer({target: cell, keys: '[MouseLeft]', coords: {pressure: 0.5}});
         act(() => jest.runAllTimers());
         expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 1, Foo selected.');
         expect(announce).toHaveBeenCalledTimes(2);
@@ -1370,7 +1440,7 @@ describe('TableView with expandable rows', function () {
         checkRowSelection(rows.slice(1), false);
       });
 
-      it('should toggle selection with touch', function () {
+      it('should toggle selection with touch', async function () {
         let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="highlight" disabledKeys={undefined} onAction={undefined} />);
         expect(treegrid.queryByLabelText('Select All')).toBeNull();
 
@@ -1379,8 +1449,7 @@ describe('TableView with expandable rows', function () {
         let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
 
         checkRowSelection(rows, false);
-        fireEvent.pointerDown(cell, {pointerType: 'touch', pointerId: 1});
-        fireEvent.pointerUp(cell, {pointerType: 'touch', pointerId: 1});
+        await user.pointer({target: cell, keys: '[TouchA]', coords: {width: 1}});
         act(() => jest.runAllTimers());
         expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 3, Foo selected.');
         expect(announce).toHaveBeenCalledTimes(1);
@@ -1389,8 +1458,7 @@ describe('TableView with expandable rows', function () {
         onSelectionChange.mockReset();
 
         cell = getCell(treegrid, 'Row 1, Lvl 1, Foo');
-        fireEvent.pointerDown(cell, {pointerType: 'touch', pointerId: 1});
-        fireEvent.pointerUp(cell, {pointerType: 'touch', pointerId: 1});
+        await user.pointer({target: cell, keys: '[TouchA]', coords: {width: 1}});
         act(() => jest.runAllTimers());
         expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 1, Foo selected. 2 items selected.');
         expect(announce).toHaveBeenCalledTimes(2);
@@ -1406,7 +1474,7 @@ describe('TableView with expandable rows', function () {
         let firstCell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
         let secondCell = getCell(treegrid, 'Row 1, Lvl 1, Foo');
 
-        fireEvent.pointerDown(firstCell, {pointerType: 'touch'});
+        await user.pointer({target: firstCell, keys: '[TouchA>]', coords: {width: 1}});
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(onAction).not.toHaveBeenCalled();
 
@@ -1416,22 +1484,19 @@ describe('TableView with expandable rows', function () {
         checkRowSelection([rows[2]], true);
         expect(onAction).not.toHaveBeenCalled();
 
-        fireEvent.pointerUp(firstCell, {pointerType: 'touch'});
+        await user.pointer({target: firstCell, keys: '[/TouchA]', coords: {width: 1}});
         onSelectionChange.mockReset();
 
-        fireEvent.pointerDown(secondCell, {pointerType: 'touch', pointerId: 1});
-        fireEvent.pointerUp(secondCell, {pointerType: 'touch', pointerId: 1});
+        await user.pointer({target: secondCell, keys: '[TouchA]', coords: {width: 1}});
         act(() => jest.runAllTimers());
         checkSelection(onSelectionChange, ['Row 1 Lvl 1', 'Row 1 Lvl 3']);
         checkRowSelection([rows[0], rows[2]], true);
 
         // Deselect all to exit selection mode
-        fireEvent.pointerDown(firstCell, {pointerType: 'touch', pointerId: 1});
-        fireEvent.pointerUp(firstCell, {pointerType: 'touch', pointerId: 1});
+        await user.pointer({target: firstCell, keys: '[TouchA]', coords: {width: 1}});
         act(() => jest.runAllTimers());
         onSelectionChange.mockReset();
-        fireEvent.pointerDown(secondCell, {pointerType: 'touch', pointerId: 1});
-        fireEvent.pointerUp(secondCell, {pointerType: 'touch', pointerId: 1});
+        await user.pointer({target: secondCell, keys: '[TouchA]', coords: {width: 1}});
         act(() => jest.runAllTimers());
         checkSelection(onSelectionChange, []);
         expect(onAction).not.toHaveBeenCalled();
@@ -1447,15 +1512,14 @@ describe('TableView with expandable rows', function () {
         let cell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
 
         checkRowSelection(rows, false);
-        fireEvent.pointerDown(cell, {pointerType: 'mouse', pointerId: 1});
-        fireEvent.pointerUp(cell, {pointerType: 'mouse', pointerId: 1});
+        await user.pointer({target: cell, keys: '[MouseLeft]', coords: {pressure: 0.5}});
         act(() => jest.runAllTimers());
         expect(announce).toHaveBeenLastCalledWith('Row 1, Lvl 3, Foo selected.');
         expect(announce).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['Row 1 Lvl 3']);
         expect(onAction).not.toHaveBeenCalled();
         onSelectionChange.mockReset();
-        await user.dblClick(cell);
+        await user.pointer({target: cell, keys: '[MouseLeft][MouseLeft]', coords: {pressure: 0.5}});
         act(() => jest.runAllTimers());
         expect(announce).toHaveBeenCalledTimes(1);
         expect(onSelectionChange).not.toHaveBeenCalled();
