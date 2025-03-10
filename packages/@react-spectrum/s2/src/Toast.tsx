@@ -18,7 +18,7 @@ import {CenterBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../s2wf-icons/S2_Icon_CheckmarkCircle_20_N.svg';
 import Chevron from '../s2wf-icons/S2_Icon_ChevronDown_20_N.svg';
 import {CloseButton} from './CloseButton';
-import {createContext, useContext, useMemo, useRef, useState} from 'react';
+import {createContext, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {DOMProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {focusRing, style} from '../style' with {type: 'macro'};
@@ -120,7 +120,6 @@ const toastRegion = style({
       bottom: 'column-reverse'
     }
   },
-  gap: 8,
   position: 'fixed',
   insetX: 0,
   width: 'fit',
@@ -155,18 +154,8 @@ const toastRegion = style({
     }
   },
   boxSizing: 'border-box',
-  maxHeight: '[100vh]',
-  borderRadius: 'lg',
-  paddingBottom: {
-    placement: {
-      top: 8
-    }
-  },
-  paddingTop: {
-    placement: {
-      bottom: 8
-    }
-  }
+  maxHeight: 'screen',
+  borderRadius: 'lg'
 });
 
 const toastList = style({
@@ -184,10 +173,29 @@ const toastList = style({
   marginY: 0,
   padding: {
     default: 0,
+    // Add padding when expanded to account for focus ring.
     isExpanded: 8
   },
+  paddingBottom: {
+    isExpanded: {
+      placement: {
+        top: 8,
+        bottom: 16
+      }
+    }
+  },
+  paddingTop: {
+    isExpanded: {
+      placement: {
+        top: 16,
+        bottom: 8
+      }
+    }
+  },
+  margin: 0,
   marginX: {
     default: 0,
+    // Undo padding for focus ring.
     isExpanded: -8
   },
   overflow: {
@@ -197,6 +205,10 @@ const toastList = style({
 
 const toastStyle = style({
   ...focusRing(),
+  outlineColor: {
+    default: 'focus-ring',
+    isExpanded: 'white'
+  },
   display: 'flex',
   gap: 16,
   paddingStart: 16,
@@ -221,7 +233,10 @@ const toastStyle = style({
     type: 'fill',
     value: 'currentColor'
   },
-  boxShadow: 'elevated'
+  boxShadow: {
+    default: 'elevated',
+    isExpanded: 'none'
+  }
 });
 
 const toastBody = style({
@@ -291,6 +306,14 @@ export function ToastContainer(props: SpectrumToastContainerProps) {
     }
   }), [isExpanded, setExpanded, queue]);
 
+  useEffect(() => {
+    return queue.subscribe(() => {
+      if (queue.visibleToasts.length === 0 && isExpanded) {
+        setExpanded(false);
+      }
+    });
+  });
+
   return (
     <ToastRegion
       {...props}
@@ -316,7 +339,7 @@ export function ToastContainer(props: SpectrumToastContainerProps) {
               perspective: 80,
               perspectiveOrigin: 'center ' + (placement === 'top' ? `calc(100% + ${origin}px)` : `${-origin}px`),
               transition: 'perspective-origin 400ms'
-            };
+            }; 
           }}
           className={toastList({placement, align, isExpanded})}
           onClick={() => {
@@ -330,12 +353,10 @@ export function ToastContainer(props: SpectrumToastContainerProps) {
         </ToastList>
         <div className="toast-controls" style={{display: isExpanded ? 'flex' : 'none', justifyContent: 'end', gap: 8, opacity: isExpanded ? 1 : 0}}>
           <ActionButton
-            size="S"
             onPress={() => queue.clear()}>
             Clear all
           </ActionButton>
           <ActionButton
-            size="S"
             onPress={() => {
               regionRef.current.focus();
               ctx.toggleExpanded();
@@ -374,7 +395,7 @@ export function SpectrumToast(props: ToastProps<SpectrumToastValue>) {
           viewTransitionName: toast.key,
           viewTransitionClass: 'toast ' + (isLast ? ' last' : '') + ' ' + placement + ' ' + align
         }}
-        className={toastStyle({variant: toast.content.variant || 'info', index})} />
+        className={toastStyle({variant: toast.content.variant || 'info', index, isExpanded: ctx.isExpanded})} />
     );
   }
 
@@ -391,7 +412,8 @@ export function SpectrumToast(props: ToastProps<SpectrumToastValue>) {
       className={renderProps => toastStyle({
         ...renderProps,
         variant: toast.content.variant || 'info',
-        index
+        index,
+        isExpanded: ctx.isExpanded
       })}>
       <div role="presentation" className={toastBody({isSingle: !isLast || queue.visibleToasts.length === 1 || ctx.isExpanded})}>
         <ToastContent className={toastContent + (isLast ? ' toast-content' : null)} style={{opacity: isLast || ctx.isExpanded ? 1 : 0}}>

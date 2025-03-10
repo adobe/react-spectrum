@@ -24,6 +24,15 @@
   .toast-controls {
     view-transition-name: toast-controls;
   }
+
+  .toast-background {
+    view-transition-name: toast-background;
+  }
+
+  &::view-transition-group(toast-background) {
+    z-index: -1;
+    animation-duration: 400ms;
+  }
 }
 
 ::view-transition-group(.toast),
@@ -77,15 +86,6 @@ html:active-view-transition-type(toast-collapse) {
 }
 
 html:active-view-transition-type(toast-expand, toast-collapse) {
-  &::view-transition-group(toast-background) {
-    z-index: -1;
-    animation-duration: 400ms;
-  }
-
-  .toast-background {
-    view-transition-name: toast-background;
-  }
-
   .toast-content {
     view-transition-name: toast-content;
   }
