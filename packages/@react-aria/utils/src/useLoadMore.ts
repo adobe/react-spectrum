@@ -50,14 +50,15 @@ export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | n
   }, [onLoadMore, isLoading, ref, scrollOffset]);
 
   let lastCollection = useRef(collection);
-  // If we are in a loading state when this hook is called, we can assume that the collection will update in the future so we don't
+  // If we are in a loading state when this hook is called and a collection is provided, we can assume that the collection will update in the future so we don't
   // want to trigger another loadMore until the collection has updated as a result of the load.
   // TODO: If the load doesn't end up updating the collection even after completion, this flag could get stuck as true. However, not tracking
   // this means we could end up calling onLoadMore multiple times if isLoading changes but the collection takes time to update
-  let collectionAwaitingUpdate = useRef(isLoading);
+  let collectionAwaitingUpdate = useRef(collection && isLoading);
   useLayoutEffect(() => {
     // Only update this flag if the collection changes when we aren't loading. Guard against the addition of a loading spinner when a load starts
     // which mutates the collection? Alternatively, the user might wipe the collection during load
+    // If collection isn't provided, update flag
     if (collection !== lastCollection.current && !isLoading) {
       collectionAwaitingUpdate.current = false;
     }
@@ -74,11 +75,18 @@ export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | n
     // as well as compare previous/last sizes
     let shouldLoadMore = onLoadMore
       && !isLoading
-      && !collectionAwaitingUpdate.current
-      && (!collection || (ref?.current && ref.current.clientHeight === ref.current.scrollHeight));
+      // For v3 virtualizer, no collection will be provided to this hook so skip this check. Otherwise we should stop loadMore
+      // calls in RAC if we are waiting for the collection to be updated from a async load call
+      && (!(collection && collectionAwaitingUpdate.current))
+      && (ref?.current && ref.current.clientHeight === ref.current.scrollHeight);
+
     if (shouldLoadMore) {
       onLoadMore?.();
-      collectionAwaitingUpdate.current = true;
+      // Only update this flag if a collection has been provided, v3 virtualizer doesn't provide a collection so we don't need
+      // to use collectionAwaitingUpdate at all.
+      if (collection !== null && lastCollection.current !== null) {
+        collectionAwaitingUpdate.current = true;
+      }
     }
 
     // TODO: only update this when isLoading is false? Might need to guard against the case where loading spinners are added/collection is temporarly wiped/
