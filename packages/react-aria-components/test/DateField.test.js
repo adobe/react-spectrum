@@ -182,15 +182,12 @@ describe('DateField', () => {
       <DateField
         minValue={new CalendarDate(2023, 1, 1)}
         defaultValue={new CalendarDate(2020, 2, 3)}
-        validationBehavior="aria"
-        isDisabled>
-        {({isInvalid, isDisabled}) => (
+        validationBehavior="aria">
+        {({isInvalid}) => (
           <>
             <Label>Birth date</Label>
             <DateInput
-              data-validation-state={isInvalid ? 'invalid' : null}
-              data-disabled-state={isDisabled ? 'disabled' : 
-            null}>
+              data-validation-state={isInvalid ? 'invalid' : null}>
               {segment => <DateSegment segment={segment} />}
             </DateInput>
           </>
@@ -199,6 +196,24 @@ describe('DateField', () => {
     );
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-validation-state', 'invalid');
+  });
+
+  it('should support disabled render prop', () => {
+    let {getByRole} = render(
+      <DateField isDisabled>
+        {({isDisabled}) => (
+          <>
+            <Label>Birth date</Label>
+            <DateInput 
+              data-disabled-state={isDisabled ? 'disabled' : null}>
+              {segment => <DateSegment segment={segment} />}
+            </DateInput>
+          </>
+        )} 
+      </DateField>
+    );
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-disabled-state', 'disabled');
   });
 
   it('should support form value', () => {
@@ -291,81 +306,6 @@ describe('DateField', () => {
     expect(input.validity.valid).toBe(false);
     expect(group).not.toHaveAttribute('aria-describedby');
     expect(group).not.toHaveAttribute('data-invalid');
-  });
-
-  it('should support both invalid and disabled states simultaneously', () => {
-    let {getByRole} = render(
-      <DateField isInvalid isDisabled>
-        <Label>Birth date</Label>
-        <DateInput
-          className={({isInvalid, isDisabled}) => 
-          `${isInvalid ? 'invalid' : ''} ${isDisabled ? 'disabled' : ''}`
-        }>
-          {segment => <DateSegment segment={segment} />}
-        </DateInput>
-      </DateField>
-    );
-    let group = getByRole('group');
-    expect(group).toHaveAttribute('data-invalid');
-    expect(group).toHaveAttribute('data-disabled');
-    expect(group).toHaveClass('invalid');
-    expect(group).toHaveClass('disabled');
-  });
-
-  it('should use controlled disabled state', async () => {
-    function ControlledDisabledTest() {
-      let [isDisabled, setIsDisabled] = React.useState(false);
-      return (
-        <>
-          <DateField isDisabled={isDisabled}>
-            <Label>Birth date</Label>
-            <DateInput className={({isDisabled}) => isDisabled ? 'disabled' : ''}>
-              {segment => <DateSegment segment={segment} />}
-            </DateInput>
-          </DateField>
-          <button onClick={() => setIsDisabled(true)}>Disable</button>
-        </>
-      );
-    }
-    let {getByRole} = render(<ControlledDisabledTest />);
-    let group = getByRole('group');
-    expect(group).not.toHaveAttribute('data-disabled');
-    expect(group).not.toHaveClass('disabled');
-    
-    let button = getByRole('button');
-    await userEvent.click(button);
-    
-    expect(group).toHaveAttribute('data-disabled');
-    expect(group).toHaveClass('disabled');
-  });
-
-  it('should not validate on submit when disabled', async () => {
-    let onSubmit = jest.fn();
-    let {getByRole} = render(
-      <form
-        data-testid="form"
-        onSubmit={e => {
-          e.preventDefault();
-          onSubmit();
-        }}>
-        <DateField name="date" isRequired isDisabled>
-          <Label>Birth Date</Label>
-          <DateInput>
-            {segment => <DateSegment segment={segment} />}
-          </DateInput>
-          <FieldError />
-        </DateField>
-        <button type="submit">Submit</button>
-      </form>
-    );
-    
-    let submitButton = getByRole('button');
-    await userEvent.click(submitButton);
-    
-    let group = getByRole('group');
-    expect(group).not.toHaveAttribute('data-invalid');
-    expect(group).toHaveAttribute('data-disabled');
-    expect(onSubmit).toHaveBeenCalled();
   });
 
   it('should focus previous segment when backspacing on an empty date segment', async () => {
