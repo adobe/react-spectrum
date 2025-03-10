@@ -99,7 +99,7 @@ export interface SpectrumButtonProps<T extends ElementType = 'button'> extends A
   /**
    * The `<form>` element to associate the button with.
    * The value of this attribute must be the id of a `<form>` in the same document.
-   * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#form
+   * See [form attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#form).
    */
   form?: string
 }
