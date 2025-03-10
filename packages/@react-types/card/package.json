@@ -1,6 +1,6 @@
 {
   "name": "@react-types/card",
-  "version": "3.0.0-alpha.33",
+  "version": "3.0.0-alpha.34",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "types": "src/index.d.ts",
@@ -9,7 +9,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-stately/virtualizer": "^4.3.0",
+    "@react-stately/virtualizer": "^4.3.1",
     "@react-types/provider": "^3.8.7",
     "@react-types/shared": "^3.28.0"
   },
