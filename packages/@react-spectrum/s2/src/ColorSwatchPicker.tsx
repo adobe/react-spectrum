@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ColorSwatchPicker as AriaColorSwatchPicker, ColorSwatchPickerItem as AriaColorSwatchPickerItem, ContextValue, SlotProps} from 'react-aria-components';
-import {Color} from '@react-types/color';
+import {ColorSwatchPicker as AriaColorSwatchPicker, ColorSwatchPickerItem as AriaColorSwatchPickerItem, Color, ContextValue, SlotProps} from 'react-aria-components';
 import {ColorSwatchProps, InternalColorSwatchContext} from './ColorSwatch';
 import {createContext, forwardRef, ReactElement, ReactNode} from 'react';
 import {DOMRef, DOMRefValue, ValueBase} from '@react-types/shared';

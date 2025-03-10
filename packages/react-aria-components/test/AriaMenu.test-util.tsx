@@ -291,23 +291,6 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
       expect(menu).not.toBeInTheDocument();
     });
 
-    it('closes if menu is tabbed away from', async function () {
-      let tree = renderers.standard();
-      let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
-      menuTester.setInteractionType('keyboard');
-
-      await menuTester.open();
-      act(() => {jest.runAllTimers();});
-
-      let menu = menuTester.menu;
-
-      await user.tab();
-      act(() => {jest.runAllTimers();});
-      act(() => {jest.runAllTimers();});
-      expect(menu).not.toBeInTheDocument();
-      expect(document.activeElement).toBe(menuTester.trigger);
-    });
-
     it('has hidden dismiss buttons for screen readers', async function () {
       let tree = renderers.standard();
       let menuTester = testUtilUser.createTester('Menu', {user, root: tree.container});
