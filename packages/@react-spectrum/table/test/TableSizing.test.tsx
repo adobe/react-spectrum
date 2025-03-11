@@ -984,7 +984,8 @@ describe('TableViewSizing', function () {
         let resizeMenuItem = tree.getAllByRole('menuitem')[0];
 
         triggerTouch(resizeMenuItem);
-        act(() => {jest.runAllTimers();});
+        act(() => {jest.advanceTimersToNextTimer();});
+        act(() => {jest.advanceTimersToNextTimer();});
 
         let resizer = tree.getByRole('slider');
         expect(resizer).toBeVisible();
