@@ -133,7 +133,7 @@ export function TrayHeaderWrapper(props: {
   onBackButtonPress?: (() => void),
   wrapperKeyDown?: KeyboardEventHandler<HTMLDivElement> | undefined,
   menuRef?: RefObject<HTMLDivElement | null>
-}): ReactElement {
+}): ReactNode {
   let {children, isSubmenu, hasOpenSubmenu, parentMenuTreeState, rootMenuTriggerState, onBackButtonPress, wrapperKeyDown, menuRef} = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/menu');
   let lastKey = rootMenuTriggerState?.expandedKeysStack.slice(-1)[0];

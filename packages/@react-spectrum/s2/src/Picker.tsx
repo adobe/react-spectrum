@@ -61,7 +61,7 @@ import {PopoverBase} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, forwardRef, ReactElement, ReactNode, useContext, useRef, useState} from 'react';
+import React, {createContext, forwardRef, ReactNode, useContext, useRef, useState} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useGlobalListeners} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -436,7 +436,7 @@ const checkmarkIconSize = {
   XL: 'XL'
 } as const;
 
-export function PickerItem(props: PickerItemProps): ReactElement {
+export function PickerItem(props: PickerItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   let {size} = useContext(InternalPickerContext);
@@ -484,7 +484,7 @@ function DefaultProvider({context, value, children}: {context: React.Context<any
 }
 
 export interface PickerSectionProps<T extends object> extends SectionProps<T> {}
-export function PickerSection<T extends object>(props: PickerSectionProps<T>): ReactElement {
+export function PickerSection<T extends object>(props: PickerSectionProps<T>): ReactNode {
   let {size} = useContext(InternalPickerContext);
   return (
     <>

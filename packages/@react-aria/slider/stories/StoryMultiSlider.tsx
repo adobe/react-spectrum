@@ -59,7 +59,7 @@ export function StoryMultiSlider(props: StoryMultiSliderProps) {
       <div ref={trackRef} className={styles.track} {...trackProps}>
         <div className={styles.rail} />
         {React.Children.map(children, ((child, index) =>
-          React.cloneElement(child as React.ReactElement, {
+          React.cloneElement(child as React.ReactNode, {
             __context: {
               sliderProps: props,
               state,

@@ -12,7 +12,7 @@
 import type {DropIndicatorProps as AriaDropIndicatorProps, ItemDropTarget, Key} from 'react-aria';
 import type {DragAndDropHooks} from './useDragAndDrop';
 import type {DraggableCollectionState, DroppableCollectionState, MultipleSelectionManager} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useMemo} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useCallback, useContext, useMemo} from 'react';
 import type {RenderProps} from './utils';
 
 export interface DragAndDropContextValue {
@@ -45,7 +45,7 @@ export const DropIndicator = forwardRef(function DropIndicator(props: DropIndica
   return <>{render(props, ref)}</>;
 });
 
-type RenderDropIndicatorRetValue = ((target: ItemDropTarget) => ReactElement | undefined) | undefined
+type RenderDropIndicatorRetValue = ((target: ItemDropTarget) => ReactNode | undefined) | undefined
 
 export function useRenderDropIndicator(dragAndDropHooks?: DragAndDropHooks, dropState?: DroppableCollectionState): RenderDropIndicatorRetValue {
   let renderDropIndicator = dragAndDropHooks?.renderDropIndicator;

@@ -48,7 +48,7 @@ import {Placement} from 'react-aria';
 import {PopoverBase} from './Popover';
 import {pressScale} from './pressScale';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, forwardRef, ReactElement, ReactNode, useContext, useRef} from 'react';
+import React, {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useFormProps} from './Form';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -305,7 +305,7 @@ function TabLine(props) {
 export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {
   children: ReactNode
 }
-export function PickerItem(props: PickerItemProps): ReactElement {
+export function PickerItem(props: PickerItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   const size = 'M';

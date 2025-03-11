@@ -41,7 +41,7 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {createContext, CSSProperties, forwardRef, ReactElement, ReactNode, Ref, useCallback, useContext, useImperativeHandle, useRef, useState} from 'react';
+import {createContext, CSSProperties, forwardRef, ReactNode, Ref, useCallback, useContext, useImperativeHandle, useRef, useState} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
@@ -338,7 +338,7 @@ const checkmarkIconSize = {
   XL: 'XL'
 } as const;
 
-export function ComboBoxItem(props: ComboBoxItemProps): ReactElement {
+export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   let {size} = useContext(InternalComboboxContext);
@@ -378,7 +378,7 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactElement {
 }
 
 export interface ComboBoxSectionProps<T extends object> extends SectionProps<T> {}
-export function ComboBoxSection<T extends object>(props: ComboBoxSectionProps<T>): ReactElement {
+export function ComboBoxSection<T extends object>(props: ComboBoxSectionProps<T>): ReactNode {
   let {size} = useContext(InternalComboboxContext);
   return (
     <>

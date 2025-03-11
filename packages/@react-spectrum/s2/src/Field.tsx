@@ -18,7 +18,7 @@ import {CenterBaseline, centerBaseline, centerBaselineBefore} from './CenterBase
 import {composeRenderProps, FieldError, FieldErrorProps, Group, GroupProps, Label, LabelProps, Provider, Input as RACInput, InputProps as RACInputProps, Text} from 'react-aria-components';
 import {ContextualHelpContext} from './ContextualHelp';
 import {fieldInput, fieldLabel, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {ForwardedRef, forwardRef, ReactElement, ReactNode} from 'react';
+import {ForwardedRef, forwardRef, ReactNode} from 'react';
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -276,7 +276,7 @@ const helpTextStyles = style({
   }
 });
 
-export function HelpText(props: HelpTextProps & {descriptionRef?: DOMRef<HTMLDivElement>, errorRef?: DOMRef<HTMLDivElement>}): ReactElement {
+export function HelpText(props: HelpTextProps & {descriptionRef?: DOMRef<HTMLDivElement>, errorRef?: DOMRef<HTMLDivElement>}): ReactNode {
   let domDescriptionRef = useDOMRef(props.descriptionRef || null);
   let domErrorRef = useDOMRef(props.errorRef || null);
 
@@ -308,7 +308,7 @@ export function HelpText(props: HelpTextProps & {descriptionRef?: DOMRef<HTMLDiv
   );
 }
 
-export function FieldErrorIcon(props: {isDisabled?: boolean}): ReactElement {
+export function FieldErrorIcon(props: {isDisabled?: boolean}): ReactNode {
   return (
     <Provider
       values={[

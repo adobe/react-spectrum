@@ -65,7 +65,7 @@ export interface SkeletonProps {
 /**
  * A Skeleton wraps around content to render it as a placeholder.
  */
-export function Skeleton({children, isLoading}: SkeletonProps): ReactElement {
+export function Skeleton({children, isLoading}: SkeletonProps): ReactNode {
   // Disable all form components inside a skeleton.
   return (
     <SkeletonContext.Provider value={isLoading}>
@@ -97,7 +97,7 @@ export function useSkeletonText(children: ReactNode, style: CSSProperties | unde
 }
 
 // Rendered inside <Text> to create skeleton line boxes via box-decoration-break.
-export function SkeletonText({children}: {children: ReactNode}): ReactElement {
+export function SkeletonText({children}: {children: ReactNode}): ReactNode {
   return (
     <span
       // @ts-ignore - compatibility with React < 19
@@ -114,7 +114,7 @@ export function SkeletonText({children}: {children: ReactNode}): ReactElement {
 }
 
 // Clones the child element and displays it with skeleton styling.
-export function SkeletonWrapper({children}: {children: SkeletonElement}): ReactElement {
+export function SkeletonWrapper({children}: {children: SkeletonElement}): ReactNode {
   let isLoading = useContext(SkeletonContext);
   let animation = useLoadingAnimation(isLoading || false);
   if (isLoading == null) {

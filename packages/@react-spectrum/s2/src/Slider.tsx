@@ -19,7 +19,7 @@ import {
   SliderTrack
 } from 'react-aria-components';
 import {clamp} from '@react-aria/utils';
-import {createContext, forwardRef, ReactElement, ReactNode, RefObject, useContext, useRef} from 'react';
+import {createContext, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel} from './Field';
 import {FocusableRef, FocusableRefValue, InputDOMProps, SpectrumLabelableProps} from '@react-types/shared';
@@ -317,7 +317,7 @@ export let filledTrack = style({
   translateY: '[-50%]'
 });
 
-export function SliderBase<T extends number | number[]>(props: SliderBaseProps<T> & {sliderRef: RefObject<HTMLDivElement | null>}): ReactElement {
+export function SliderBase<T extends number | number[]>(props: SliderBaseProps<T> & {sliderRef: RefObject<HTMLDivElement | null>}): ReactNode {
   let formContext = useContext(FormContext);
   props = useFormProps(props);
   let {

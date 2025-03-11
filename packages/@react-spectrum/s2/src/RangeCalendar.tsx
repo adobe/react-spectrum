@@ -20,7 +20,7 @@ import {
   Heading,
   Text
 } from 'react-aria-components';
-import {ReactElement} from 'react';
+import {ReactNode} from 'react';
 
 
 export interface RangeCalendarProps<T extends DateValue>
@@ -30,7 +30,7 @@ export interface RangeCalendarProps<T extends DateValue>
 
 export function RangeCalendar<T extends DateValue>(
   {errorMessage, ...props}: RangeCalendarProps<T>
-): ReactElement {
+): ReactNode {
   return (
     <AriaRangeCalendar {...props}>
       <header>

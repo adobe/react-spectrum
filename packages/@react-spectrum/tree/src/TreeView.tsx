@@ -226,7 +226,7 @@ const treeRowOutline = style({
   }
 });
 
-export const TreeViewItem = (props: SpectrumTreeViewItemProps): ReactElement => {
+export const TreeViewItem = (props: SpectrumTreeViewItemProps): ReactNode => {
   let {
     href
   } = props;
@@ -247,7 +247,7 @@ export interface SpectrumTreeViewItemContentProps extends Omit<TreeItemContentPr
 }
 
 
-export const TreeViewItemContent = (props: SpectrumTreeViewItemContentProps): ReactElement => {
+export const TreeViewItemContent = (props: SpectrumTreeViewItemContentProps): ReactNode => {
   let {
     children
   } = props;

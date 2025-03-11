@@ -21,7 +21,7 @@ import {
   Text
 } from 'react-aria-components';
 import {HelpTextProps} from '@react-types/shared';
-import {ReactElement, ReactNode} from 'react';
+import {ReactNode} from 'react';
 
 
 export interface DateFieldProps<T extends DateValue>
@@ -31,7 +31,7 @@ export interface DateFieldProps<T extends DateValue>
 
 export function DateField<T extends DateValue>(
   {label, description, errorMessage, ...props}: DateFieldProps<T>
-): ReactElement {
+): ReactNode {
   return (
     <AriaDateField {...props}>
       <Label>{label}</Label>
