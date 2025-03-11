@@ -84,6 +84,10 @@ export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'chil
    * @default false
    */
   shouldFocusWrap?: boolean,
+
+  /** Whether selection should occur on press up instead of press down. */
+  shouldSelectOnPressUp?: boolean,
+
   /**
    * The behavior of links in the collection.
    * - 'action': link behaves like onAction.
@@ -115,7 +119,8 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     disallowTypeAhead,
     linkBehavior = 'action',
     keyboardNavigationBehavior = 'arrow',
-    escapeKeyBehavior = 'clearSelection'
+    escapeKeyBehavior = 'clearSelection',
+    shouldSelectOnPressUp
   } = props;
 
   if (!props['aria-label'] && !props['aria-labelledby']) {
@@ -139,7 +144,7 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
   });
 
   let id = useId(props.id);
-  listMap.set(state, {id, onAction, linkBehavior, keyboardNavigationBehavior});
+  listMap.set(state, {id, onAction, linkBehavior, keyboardNavigationBehavior, shouldSelectOnPressUp});
 
   let descriptionProps = useHighlightSelectionDescription({
     selectionManager: state.selectionManager,
