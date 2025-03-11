@@ -30,7 +30,7 @@ export {useMove} from './useMove';
 export {usePress} from './usePress';
 export {useScrollWheel} from './useScrollWheel';
 export {useLongPress} from './useLongPress';
-export {useFocusable, FocusableProvider, Focusable} from './useFocusable';
+export {useFocusable, FocusableProvider, Focusable, FocusableContext} from './useFocusable';
 export {focusSafely} from './focusSafely';
 
 export type {FocusProps, FocusResult} from './useFocus';

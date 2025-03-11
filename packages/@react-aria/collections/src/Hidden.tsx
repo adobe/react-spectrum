@@ -10,10 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {createPortal} from 'react-dom';
 import {forwardRefType} from '@react-types/shared';
 import React, {createContext, forwardRef, ReactElement, ReactNode, useContext} from 'react';
-import {useIsSSR} from '@react-aria/ssr';
 
 // React doesn't understand the <template> element, which doesn't have children like a normal element.
 // It will throw an error during hydration when it expects the firstChild to contain content rendered
@@ -37,12 +35,8 @@ if (typeof HTMLTemplateElement !== 'undefined') {
 
 export const HiddenContext = createContext<boolean>(false);
 
-// Portal to nowhere
-const hiddenFragment = typeof DocumentFragment !== 'undefined' ? new DocumentFragment() : null;
-
 export function Hidden(props: {children: ReactNode}) {
   let isHidden = useContext(HiddenContext);
-  let isSSR = useIsSSR();
   if (isHidden) {
     // Don't hide again if we are already hidden.
     return <>{props.children}</>;
@@ -54,12 +48,10 @@ export function Hidden(props: {children: ReactNode}) {
     </HiddenContext.Provider>
   );
 
-  // In SSR, portals are not supported by React. Instead, render into a <template>
+  // In SSR, portals are not supported by React. Instead, always render into a <template>
   // element, which the browser will never display to the user. In addition, the
-  // content is not part of the DOM tree, so it won't affect ids or other accessibility attributes.
-  return isSSR
-    ? <template data-react-aria-hidden>{children}</template>
-    : createPortal(children, hiddenFragment!);
+  // content is not part of the accessible DOM tree, so it won't affect ids or other accessibility attributes.
+  return <template data-react-aria-hidden>{children}</template>;
 }
 
 /** Creates a component that forwards its ref and returns null if it is in a hidden subtree. */

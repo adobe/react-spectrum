@@ -33,9 +33,9 @@ export interface GridNode<T> extends Node<T> {
    */
   colspan?: number,
   /** The number of columns spanned by this cell.  */
-  colSpan?: number,
+  colSpan?: number | null,
   /** The column index of this cell, accounting for any colSpans. */
-  colIndex?: number,
+  colIndex?: number | null,
   /** The index of this node within its parent, ignoring sibling nodes that aren't of the same type. */
   indexOfType?: number
 }

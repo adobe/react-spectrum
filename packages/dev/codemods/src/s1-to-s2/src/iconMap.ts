@@ -9,6 +9,10 @@ export const iconMap = new Map([
     '3DMaterial'
   ],
   [
+    'ABC',
+    'ABC'
+  ],
+  [
     'Add',
     'Add'
   ],
@@ -57,6 +61,10 @@ export const iconMap = new Map([
     'DirectSelect'
   ],
   [
+    'App',
+    'App'
+  ],
+  [
     'Apps',
     'AppsAll'
   ],
@@ -101,6 +109,22 @@ export const iconMap = new Map([
     'Blur'
   ],
   [
+    'BookmarkSingle',
+    'Bookmark'
+  ],
+  [
+    'BookmarkSingleOutline',
+    'Bookmark'
+  ],
+  [
+    'BookmarkSmall',
+    'Bookmark'
+  ],
+  [
+    'BookmarkSmallOutline',
+    'Bookmark'
+  ],
+  [
     'Boolean',
     'Toggle'
   ],
@@ -125,12 +149,20 @@ export const iconMap = new Map([
     'Bug'
   ],
   [
+    'Building',
+    'Building'
+  ],
+  [
     'Calendar',
     'Calendar'
   ],
   [
     'CalendarAdd',
     'CalendarAdd'
+  ],
+  [
+    'CallCenter',
+    'CallCenter'
   ],
   [
     'Camera',
@@ -153,8 +185,12 @@ export const iconMap = new Map([
     'Channel'
   ],
   [
+    'Chat',
+    'Chat'
+  ],
+  [
     'Checkmark',
-    'CheckmarkSize300'
+    'Checkmark'
   ],
   [
     'CheckmarkCircle',
@@ -165,8 +201,16 @@ export const iconMap = new Map([
     'CheckmarkCircle'
   ],
   [
+    'ChevronDoubleLeft',
+    'ChevronDoubleLeft'
+  ],
+  [
+    'ChevronDoubleRight',
+    'ChevronDoubleRight'
+  ],
+  [
     'ChevronDown',
-    'ChevronDownSize300'
+    'ChevronDown'
   ],
   [
     'ChevronLeft',
@@ -175,6 +219,10 @@ export const iconMap = new Map([
   [
     'ChevronRight',
     'ChevronRight'
+  ],
+  [
+    'ChevronUp',
+    'ChevronUp'
   ],
   [
     'Circle',
@@ -217,6 +265,10 @@ export const iconMap = new Map([
     'Cloud'
   ],
   [
+    'Code',
+    'Code'
+  ],
+  [
     'Collection',
     'Collection'
   ],
@@ -231,6 +283,10 @@ export const iconMap = new Map([
   [
     'Comment',
     'Comment'
+  ],
+  [
+    'Compare',
+    'Compare'
   ],
   [
     'Compass',
@@ -257,12 +313,20 @@ export const iconMap = new Map([
     'Cut'
   ],
   [
+    'Dashboard',
+    'SpeedFast'
+  ],
+  [
     'Data',
     'Data'
   ],
   [
     'DataAdd',
     'DataAdd'
+  ],
+  [
+    'DataRefresh',
+    'DataRefresh'
   ],
   [
     'DataSettings',
@@ -283,6 +347,10 @@ export const iconMap = new Map([
   [
     'DeleteOutline',
     'Delete'
+  ],
+  [
+    'Demographic',
+    'PeopleGroup'
   ],
   [
     'Deselect',
@@ -406,11 +474,11 @@ export const iconMap = new Map([
   ],
   [
     'Export',
-    'ExportTo'
+    'Export'
   ],
   [
     'ExportOriginal',
-    'ExportTo'
+    'Export'
   ],
   [
     'Exposure',
@@ -473,6 +541,10 @@ export const iconMap = new Map([
     'Folder'
   ],
   [
+    'FolderSearch',
+    'FolderSearch'
+  ],
+  [
     'FullScreen',
     'FullScreen'
   ],
@@ -495,6 +567,18 @@ export const iconMap = new Map([
   [
     'Gradient',
     'Gradient'
+  ],
+  [
+    'GraphBarVertical',
+    'ChartBarVert'
+  ],
+  [
+    'GraphPie',
+    'ChartPie'
+  ],
+  [
+    'GraphTrend',
+    'ChartTrend'
   ],
   [
     'Group',
@@ -545,6 +629,10 @@ export const iconMap = new Map([
     'Images'
   ],
   [
+    'Import',
+    'Import'
+  ],
+  [
     'Info',
     'InfoCircle'
   ],
@@ -559,6 +647,10 @@ export const iconMap = new Map([
   [
     'Invite',
     'Invite'
+  ],
+  [
+    'Key',
+    'Key'
   ],
   [
     'Keyboard',
@@ -645,6 +737,10 @@ export const iconMap = new Map([
     'Minimize'
   ],
   [
+    'ModernGridView',
+    'ViewGridFluid'
+  ],
+  [
     'More',
     'More'
   ],
@@ -711,6 +807,10 @@ export const iconMap = new Map([
   [
     'Pending',
     'ClockPending'
+  ],
+  [
+    'PeopleGroup',
+    'PeopleGroup'
   ],
   [
     'PinOff',
@@ -843,6 +943,10 @@ export const iconMap = new Map([
   [
     'Sampler',
     'Eyedropper'
+  ],
+  [
+    'SaveFloppy',
+    'SaveFloppy'
   ],
   [
     'SaveTo',
@@ -1087,6 +1191,10 @@ export const iconMap = new Map([
   [
     'UserAdd',
     'UserAdd'
+  ],
+  [
+    'UserAdmin',
+    'UserSettings'
   ],
   [
     'UserEdit',

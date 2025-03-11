@@ -10,29 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import { action } from "@storybook/addon-actions";
-import { ActionGroup, Item } from "@react-spectrum/actiongroup";
-import { classNames } from "@react-spectrum/utils";
-import { Collection } from "react-aria-components";
-import { Content } from "@react-spectrum/view";
-import Delete from "@spectrum-icons/workflow/Delete";
-import { DragItem } from "@react-types/shared";
+import {action} from '@storybook/addon-actions';
+import {ActionGroup, Item} from '@react-spectrum/actiongroup';
+import {Collection} from 'react-aria-components';
+import {Content} from '@react-spectrum/view';
+import Delete from '@spectrum-icons/workflow/Delete';
+import Edit from '@spectrum-icons/workflow/Edit';
+import FileTxt from '@spectrum-icons/workflow/FileTxt';
+import Folder from '@spectrum-icons/workflow/Folder';
+import {Heading, Text} from '@react-spectrum/text';
+import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import {Link} from '@react-spectrum/link';
+import React, { JSX } from 'react';
+import {SpectrumTreeViewProps, TreeView, TreeViewItem, TreeViewItemContent} from '../src';
+import { useTreeData } from 'react-stately';
+import { useDragAndDrop } from '@react-spectrum/dnd';
+import { classNames } from '@react-spectrum/utils';
 import dropIndicatorStyles from "@adobe/spectrum-css-temp/components/dropindicator/vars.css";
-import Edit from "@spectrum-icons/workflow/Edit";
-import FileTxt from "@spectrum-icons/workflow/FileTxt";
-import Folder from "@spectrum-icons/workflow/Folder";
-import { Heading, Text } from "@react-spectrum/text";
-import { IllustratedMessage } from "@react-spectrum/illustratedmessage";
-import { Link } from "@react-spectrum/link";
-import React, { JSX } from "react";
-import {
-  SpectrumTreeViewProps,
-  TreeItemContent,
-  TreeView,
-  TreeViewItem,
-} from "../src";
-import { useDragAndDrop } from "react-aria-components";
-import { useTreeData } from "react-stately";
+import { DragItem } from '@react-types/shared';
 
 export default {
   title: "TreeView",
@@ -64,7 +59,7 @@ export const TreeExampleStatic = (args: SpectrumTreeViewProps<unknown>) => (
       onSelectionChange={action("onSelectionChange")}
     >
       <TreeViewItem id="Photos" textValue="Photos">
-        <TreeItemContent>
+        <TreeViewItemContent>
           <Text>Photos</Text>
           <Folder />
           <ActionGroup onAction={action("onActionGroup action")}>
@@ -77,10 +72,10 @@ export const TreeExampleStatic = (args: SpectrumTreeViewProps<unknown>) => (
               <Text>Delete</Text>
             </Item>
           </ActionGroup>
-        </TreeItemContent>
+        </TreeViewItemContent>
       </TreeViewItem>
       <TreeViewItem id="projects" textValue="Projects">
-        <TreeItemContent>
+        <TreeViewItemContent>
           <Text>Projects</Text>
           <Folder />
           <ActionGroup onAction={action("onActionGroup action")}>
@@ -93,9 +88,9 @@ export const TreeExampleStatic = (args: SpectrumTreeViewProps<unknown>) => (
               <Text>Delete</Text>
             </Item>
           </ActionGroup>
-        </TreeItemContent>
+        </TreeViewItemContent>
         <TreeViewItem id="projects-1" textValue="Projects-1">
-          <TreeItemContent>
+          <TreeViewItemContent>
             <Text>Projects-1</Text>
             <Folder />
             <ActionGroup onAction={action("onActionGroup action")}>
@@ -108,9 +103,9 @@ export const TreeExampleStatic = (args: SpectrumTreeViewProps<unknown>) => (
                 <Text>Delete</Text>
               </Item>
             </ActionGroup>
-          </TreeItemContent>
+          </TreeViewItemContent>
           <TreeViewItem id="projects-1A" textValue="Projects-1A">
-            <TreeItemContent>
+            <TreeViewItemContent>
               <Text>Projects-1A</Text>
               <FileTxt />
               <ActionGroup onAction={action("onActionGroup action")}>
@@ -123,11 +118,11 @@ export const TreeExampleStatic = (args: SpectrumTreeViewProps<unknown>) => (
                   <Text>Delete</Text>
                 </Item>
               </ActionGroup>
-            </TreeItemContent>
+            </TreeViewItemContent>
           </TreeViewItem>
         </TreeViewItem>
         <TreeViewItem id="projects-2" textValue="Projects-2">
-          <TreeItemContent>
+          <TreeViewItemContent>
             <Text>Projects-2</Text>
             <FileTxt />
             <ActionGroup onAction={action("onActionGroup action")}>
@@ -140,10 +135,10 @@ export const TreeExampleStatic = (args: SpectrumTreeViewProps<unknown>) => (
                 <Text>Delete</Text>
               </Item>
             </ActionGroup>
-          </TreeItemContent>
+          </TreeViewItemContent>
         </TreeViewItem>
         <TreeViewItem id="projects-3" textValue="Projects-3">
-          <TreeItemContent>
+          <TreeViewItemContent>
             <Text>Projects-3</Text>
             <FileTxt />
             <ActionGroup onAction={action("onActionGroup action")}>
@@ -156,7 +151,7 @@ export const TreeExampleStatic = (args: SpectrumTreeViewProps<unknown>) => (
                 <Text>Delete</Text>
               </Item>
             </ActionGroup>
-          </TreeItemContent>
+          </TreeViewItemContent>
         </TreeViewItem>
       </TreeViewItem>
     </TreeView>
@@ -269,13 +264,8 @@ const DynamicTreeItem = (props) => {
   let { childItems, name, icon } = props;
   return (
     <>
-      <TreeViewItem
-        id={props.id}
-        childItems={childItems}
-        textValue={name}
-        href={props.href}
-      >
-        <TreeItemContent>
+      <TreeViewItem id={props.id} childItems={childItems} textValue={name} href={props.href}>
+        <TreeViewItemContent>
           <Text>{name}</Text>
           {icon}
           <ActionGroup onAction={action("onActionGroup action")}>
@@ -288,7 +278,7 @@ const DynamicTreeItem = (props) => {
               <Text>Delete</Text>
             </Item>
           </ActionGroup>
-        </TreeItemContent>
+        </TreeViewItemContent>
         <Collection items={childItems}>
           {(item: any) => (
             <DynamicTreeItem
@@ -356,9 +346,9 @@ export const TreeExampleDynamicDragNDrop = (
         } as DragItem;
       });
     },
-    renderDropIndicator() {
-      return <InsertionIndicator />;
-    },
+    // renderDropIndicator() {
+    //   return <InsertionIndicator />;
+    // },
     onReorder(e) {
       const k = e.keys.values().next().value;
       const parent = list.getItem(e.target.key)?.parentKey ?? null;

@@ -176,7 +176,12 @@ export interface TextInputDOMProps extends DOMProps, InputDOMProps, TextInputDOM
   /**
    * An enumerated attribute that defines whether the element may be checked for spelling errors. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/spellcheck).
    */
-  spellCheck?: string
+  spellCheck?: string,
+
+  /**
+   * An enumerated attribute that defines what action label or icon to preset for the enter key on virtual keyboards. See [https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/enterkeyhint].
+   */
+  enterKeyHint?: string
 }
 
 /**
