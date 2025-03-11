@@ -66,7 +66,8 @@ const MyGridListItem = (props: GridListItemProps) => {
 GridListExample.story = {
   args: {
     layout: 'stack',
-    escapeKeyBehavior: 'clearSelection'
+    escapeKeyBehavior: 'clearSelection',
+    shouldSelectOnPressUp: false
   },
   argTypes: {
     layout: {
