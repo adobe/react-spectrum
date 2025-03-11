@@ -11,7 +11,7 @@
  */
 
 import {BaseCollection, CollectionNode, Mutable} from './BaseCollection';
-import {CSSProperties, ForwardedRef, ReactNode} from 'react';
+import {CSSProperties, ForwardedRef, ReactElement, ReactNode} from 'react';
 import {Node} from '@react-types/shared';
 
 // This Collection implementation is perhaps a little unusual. It works by rendering the React tree into a
@@ -272,7 +272,7 @@ export class ElementNode<T> extends BaseNode<T> {
     }
   }
 
-  setProps<E extends Element>(obj: {[key: string]: any}, ref: ForwardedRef<E>, rendered?: ReactNode, render?: (node: Node<T>) => ReactNode): void {
+  setProps<E extends Element>(obj: {[key: string]: any}, ref: ForwardedRef<E>, rendered?: ReactNode, render?: (node: Node<T>) => ReactElement): void {
     let node = this.ownerDocument.getMutableNode(this);
     let {value, textValue, id, ...props} = obj;
     props.ref = ref;

@@ -11,7 +11,7 @@
  */
 
 import {Collection as ICollection, Key, Node} from '@react-types/shared';
-import {ReactNode} from 'react';
+import {ReactElement, ReactNode} from 'react';
 
 export type Mutable<T> = {
   -readonly[P in keyof T]: T[P]
@@ -34,7 +34,7 @@ export class CollectionNode<T> implements Node<T> {
   readonly firstChildKey: Key | null = null;
   readonly lastChildKey: Key | null = null;
   readonly props: any = {};
-  readonly render?: (node: Node<any>) => ReactNode;
+  readonly render?: (node: Node<any>) => ReactElement;
   readonly colSpan: number | null = null;
   readonly colIndex: number | null = null;
 
