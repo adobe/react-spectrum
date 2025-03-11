@@ -16,7 +16,7 @@ import {Collection, Node, SelectState, useSelectState} from 'react-stately';
 import {CollectionBuilder} from '@react-aria/collections';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, useLoadMore, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {FormContext} from './Form';
 import {forwardRefType} from '@react-types/shared';
 // @ts-ignore

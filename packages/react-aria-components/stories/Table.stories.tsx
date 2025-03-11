@@ -14,11 +14,10 @@ import {action} from '@storybook/addon-actions';
 import {Button, Cell, Checkbox, CheckboxProps, Collection, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {isTextDropItem} from 'react-aria';
 import {MyMenuItem} from './utils';
-import React, {useMemo, useRef} from 'react';
+import React from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_TableLoadingIndicator} from '../src/Table';
 import {useAsyncList, useListData} from 'react-stately';
-import {useLoadMore} from '@react-aria/utils';
 
 export default {
   title: 'React Aria Components',
@@ -669,17 +668,9 @@ const OnLoadMoreTable = () => {
   });
 
   let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
-  let scrollRef = useRef<HTMLDivElement>(null);
-  let memoedLoadMoreProps = useMemo(() => ({
-    isLoading: isLoading,
-    onLoadMore: list.loadMore,
-    items: list.items
-  }), [isLoading, list.loadMore, list.items]);
-  useLoadMore(memoedLoadMoreProps, scrollRef);
-
   return (
-    <ResizableTableContainer ref={scrollRef} style={{height: 150, width: 400, overflow: 'auto'}}>
-      <Table aria-label="Load more table">
+    <ResizableTableContainer style={{height: 150, width: 400, overflow: 'auto'}}>
+      <Table aria-label="Load more table" isLoading={isLoading} onLoadMore={list.loadMore}>
         <TableHeader>
           <Column id="name" isRowHeader style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Name</Column>
           <Column id="height" style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Height</Column>
@@ -870,14 +861,6 @@ const OnLoadMoreTableVirtualized = () => {
   });
 
   let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
-  let scrollRef = useRef<HTMLTableElement>(null);
-  let memoedLoadMoreProps = useMemo(() => ({
-    isLoading: isLoading,
-    onLoadMore: list.loadMore,
-    items: list.items
-  }), [isLoading, list.loadMore, list.items]);
-  useLoadMore(memoedLoadMoreProps, scrollRef);
-
   return (
     <Virtualizer
       layout={TableLayout}
@@ -885,7 +868,7 @@ const OnLoadMoreTableVirtualized = () => {
         rowHeight: 25,
         headingHeight: 25
       }}>
-      <Table aria-label="Load more table virtualized" ref={scrollRef} style={{height: 150, width: 400, overflow: 'auto'}}>
+      <Table aria-label="Load more table virtualized" style={{height: 150, width: 400, overflow: 'auto'}} isLoading={isLoading} onLoadMore={list.loadMore}>
         <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
           <Column id="name" isRowHeader>Name</Column>
           <Column id="height">Height</Column>
@@ -934,23 +917,15 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
   });
 
   let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
-  let scrollRef = useRef<HTMLDivElement>(null);
-  let memoedLoadMoreProps = useMemo(() => ({
-    isLoading: isLoading,
-    onLoadMore: list.loadMore,
-    items: list.items
-  }), [isLoading, list.loadMore, list.items]);
-  useLoadMore(memoedLoadMoreProps, scrollRef);
-
   return (
-    <ResizableTableContainer ref={scrollRef} style={{height: 150, width: 400, overflow: 'auto'}}>
+    <ResizableTableContainer style={{height: 150, width: 400, overflow: 'auto'}}>
       <Virtualizer
         layout={TableLayout}
         layoutOptions={{
           rowHeight: 25,
           headingHeight: 25
         }}>
-        <Table aria-label="Load more table virtualized">
+        <Table aria-label="Load more table virtualized" isLoading={isLoading} onLoadMore={list.loadMore}>
           <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
             <Column id="name" isRowHeader>Name</Column>
             <Column id="height">Height</Column>

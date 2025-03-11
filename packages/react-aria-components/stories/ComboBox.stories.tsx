@@ -14,8 +14,8 @@ import {Button, Collection, ComboBox, Input, Label, ListBox, ListLayout, Popover
 import {MyListBoxItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
+import {UNSTABLE_ListBoxLoadingIndicator} from '../src/ListBox';
 import {useAsyncList} from 'react-stately';
-import { UNSTABLE_ListBoxLoadingIndicator } from '../src/ListBox';
 
 export default {
   title: 'React Aria Components'

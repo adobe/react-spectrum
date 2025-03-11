@@ -14,11 +14,10 @@ import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, rende
 import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, Tag, TagGroup, TagList, useDragAndDrop, useTableOptions, Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
 import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
-import React, {useMemo, useRef, useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {resizingTests} from '@react-aria/table/test/tableResizingTests';
 import {setInteractionModality} from '@react-aria/interactions';
 import * as stories from '../stories/Table.stories';
-import {useLoadMore} from '@react-aria/utils';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -929,7 +928,7 @@ describe('Table', () => {
       }
     }
   });
-  
+
   describe('colSpan', () => {
     it('should render table with colSpans', () => {
       let {getAllByRole} = render(<TableCellColSpan />);
@@ -1729,18 +1728,10 @@ describe('Table', () => {
       items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
     }
 
-    function LoadMoreTable({onLoadMore, isLoading, scrollOffset, items}) {
-      let scrollRef = useRef(null);
-      let memoedLoadMoreProps = useMemo(() => ({
-        isLoading,
-        onLoadMore,
-        scrollOffset
-      }), [isLoading, onLoadMore, scrollOffset]);
-      useLoadMore(memoedLoadMoreProps, scrollRef);
-
+    function LoadMoreTable({onLoadMore, isLoading, items}) {
       return (
-        <ResizableTableContainer data-testid="scrollRegion" ref={scrollRef}>
-          <Table aria-label="Load more table" onLoadMore={onLoadMore} isLoading={isLoading} scrollRef={scrollRef} scrollOffset={scrollOffset}>
+        <ResizableTableContainer data-testid="scrollRegion">
+          <Table aria-label="Load more table" onLoadMore={onLoadMore} isLoading={isLoading}>
             <TableHeader>
               <Column isRowHeader>Foo</Column>
               <Column>Bar</Column>
@@ -1861,7 +1852,8 @@ describe('Table', () => {
       expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
 
-    it('allows the user to customize the scrollOffset required to trigger onLoadMore', function () {
+    // TODO: decide if we want to allow customization for this (I assume we will)
+    it.skip('allows the user to customize the scrollOffset required to trigger onLoadMore', function () {
       jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 100);
       jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 25);
 
@@ -1883,12 +1875,9 @@ describe('Table', () => {
         items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
       }
       function VirtualizedTableLoad() {
-        let scrollRef = useRef(null);
-        useLoadMore({onLoadMore}, scrollRef);
-
         return (
           <Virtualizer layout={TableLayout} layoutOptions={{rowHeight: 25}}>
-            <Table aria-label="Load more table" ref={scrollRef} onLoadMore={onLoadMore}>
+            <Table aria-label="Load more table" onLoadMore={onLoadMore}>
               <TableHeader>
                 <Column isRowHeader>Foo</Column>
                 <Column>Bar</Column>

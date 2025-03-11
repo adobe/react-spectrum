@@ -16,8 +16,8 @@ import {MyListBoxItem} from './utils';
 import React from 'react';
 import {Size} from '@react-stately/virtualizer';
 import styles from '../example/index.css';
+import {UNSTABLE_ListBoxLoadingIndicator} from '../src/ListBox';
 import {useAsyncList, useListData} from 'react-stately';
-import { UNSTABLE_ListBoxLoadingIndicator } from '../src/ListBox';
 
 export default {
   title: 'React Aria Components'

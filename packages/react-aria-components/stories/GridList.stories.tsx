@@ -14,8 +14,8 @@ import {Button, Checkbox, CheckboxProps, Collection, DropIndicator, GridLayout, 
 import {classNames} from '@react-spectrum/utils';
 import React from 'react';
 import styles from '../example/index.css';
+import {UNSTABLE_GridListLoadingIndicator} from '../src/GridList';
 import {useAsyncList, useListData} from 'react-stately';
-import { UNSTABLE_GridListLoadingIndicator } from '../src/GridList';
 
 export default {
   title: 'React Aria Components'

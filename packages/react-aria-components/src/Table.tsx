@@ -10,7 +10,7 @@ import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Mu
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
-import {filterDOMProps, isScrollable, mergeRefs, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, isScrollable, mergeRefs, useLayoutEffect, useLoadMore, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -324,7 +324,9 @@ export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, Sty
   /** Handler that is called when a user performs an action on the row. */
   onRowAction?: (key: Key) => void,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the Table. */
-  dragAndDropHooks?: DragAndDropHooks
+  dragAndDropHooks?: DragAndDropHooks,
+  isLoading?: boolean,
+  onLoadMore?: () => void
 }
 
 /**
@@ -377,7 +379,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
   });
 
   let {isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate, CollectionRoot} = useContext(CollectionRendererContext);
-  let {dragAndDropHooks} = props;
+  let {dragAndDropHooks, isLoading, onLoadMore} = props;
   let {gridProps} = useTable({
     ...props,
     layoutDelegate,
@@ -471,6 +473,13 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
   }
 
   let ElementType = useElementType('table');
+
+  let memoedLoadMoreProps = useMemo(() => ({
+    isLoading,
+    onLoadMore,
+    collection
+  }), [isLoading, onLoadMore, collection]);
+  useLoadMore(memoedLoadMoreProps, tableContainerContext?.scrollRef ?? ref);
 
   return (
     <Provider
