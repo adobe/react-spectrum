@@ -17,12 +17,12 @@ import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, cr
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, usePersistedKeys} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, HoverEvents, Key, KeyboardDelegate, LinkDOMProps, RefObject} from '@react-types/shared';
-import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useRenderDropIndicator} from './DragAndDrop';
+import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
 import {DraggableItemResult, DroppableCollectionResult, DroppableItemResult, FocusScope,  ListKeyboardDelegate,  mergeProps, useCollator, useFocusRing, useGridListSelectionCheckbox, useHover, useLocale} from 'react-aria';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
 
 class TreeCollection<T> implements ICollection<Node<T>> {
@@ -263,6 +263,8 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   let dragState: DraggableCollectionState | undefined = undefined;
   let dropState: DroppableCollectionState | undefined = undefined;
   let droppableCollection: DroppableCollectionResult | undefined = undefined;
+  let isRootDropTarget = false;
+  let dragPreview: JSX.Element | null = null;
   let preview = useRef<DragPreviewRenderer>(null);
 
   if (isListDraggable && dragAndDropHooks) {
@@ -272,6 +274,11 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
       preview: dragAndDropHooks.renderDragPreview ? preview : undefined
     });
     dragAndDropHooks.useDraggableCollection!({}, dragState, ref);
+
+    let DragPreview = dragAndDropHooks.DragPreview!;
+    dragPreview = dragAndDropHooks.renderDragPreview
+      ? <DragPreview ref={preview}>{dragAndDropHooks.renderDragPreview}</DragPreview>
+      : null;
   }
 
   if (isListDroppable && dragAndDropHooks) {
@@ -291,6 +298,8 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
       dropState,
       ref
     );
+
+    isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
   return (
     <FocusScope>
@@ -317,7 +326,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
           ]}>
           <CollectionRoot
             collection={state.collection}
-            persistedKeys={usePersistedKeys(state.selectionManager.focusedKey)}
+            persistedKeys={useDndPersistedKeys(state.selectionManager, dragAndDropHooks, dropState)}
             scrollRef={ref}
             renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
         </Provider>
@@ -426,6 +435,8 @@ export const UNSTABLE_TreeItem = /*#__PURE__*/ createBranchComponent('item', <T 
     droppableItem = dragAndDropHooks.useDroppableItem!({target: {type: 'item', key: item.key, dropPosition: 'on'}}, dropState, ref);
   }
 
+  let isDragging = dragState && dragState.isDragging(item.key);
+
   let renderPropValues = React.useMemo<TreeItemContentRenderProps>(() => ({
     ...states,
     isHovered,
@@ -437,7 +448,10 @@ export const UNSTABLE_TreeItem = /*#__PURE__*/ createBranchComponent('item', <T 
     selectionBehavior: state.selectionManager.selectionBehavior,
     isFocusVisibleWithin,
     state,
-    id: item.key
+    id: item.key,
+    allowsDragging: !!dragState,
+    isDragging,
+    isDropTarget: droppableItem?.isDropTarget
   }), [states, isHovered, isFocusVisible, state.selectionManager, isExpanded, hasChildItems, level, isFocusVisibleWithin, state, item.key]);
 
   let renderProps = useRenderProps({
@@ -508,7 +522,10 @@ export const UNSTABLE_TreeItem = /*#__PURE__*/ createBranchComponent('item', <T 
         data-focused={states.isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-pressed={states.isPressed || undefined}
-        data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
+        data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}
+        data-allows-dragging={!!dragState || undefined}
+        data-dragging={isDragging || undefined}
+        data-drop-target={droppableItem?.isDropTarget || undefined}>
         <div {...gridCellProps} style={{display: 'contents'}}>
           <Provider
             values={[

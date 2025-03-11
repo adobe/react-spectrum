@@ -11,10 +11,10 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Checkbox, CheckboxProps, Collection, Key, UNSTABLE_ListLayout as ListLayout, Menu, MenuTrigger, Popover, Text, TreeItemProps, TreeProps, UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeItemContent, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
+import {Button, Checkbox, CheckboxProps, Collection, Key, UNSTABLE_ListLayout as ListLayout, Menu, MenuTrigger, Popover, Text, TreeItemProps, TreeProps, UNSTABLE_Tree, UNSTABLE_TreeItem, UNSTABLE_TreeItemContent, useDragAndDrop, UNSTABLE_Virtualizer as Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import {MyMenuItem} from './utils';
-import React, {ReactNode, useMemo} from 'react';
+import React, {ReactNode, useMemo, useState} from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_TreeLoadingIndicator} from '../src/Tree';
 
@@ -505,4 +505,97 @@ function VirtualizedTreeRender(args) {
 export const VirtualizedTree = {
   ...TreeExampleDynamic,
   render: VirtualizedTreeRender
+};
+
+function flattenTree(items) {
+  let flattened = new Map();
+  function traverse(items) {
+    if (!items) return;
+    for (let item of items) {
+      flattened.set(item.id, item);
+      if (item.childItems) {
+        traverse(item.childItems);
+      }
+    }
+  }
+  traverse(items);
+  return flattened;
+}
+
+function findParentAndIndex(items, key) {
+  for (let i = 0; i < items.length; i++) {
+    if (items[i].id === key) {
+      return { parent: items, index: i };
+    }
+    
+    if (items[i].childItems) {
+      let result = findParentAndIndex(items[i].childItems, key);
+      if (result) {
+        return result;
+      }
+    }
+  }
+  return null;
+};
+
+function TreeDragAndDropExample(args) {
+  let [items, setItems] = useState(rows);
+  let flattenedItems = useMemo(() => flattenTree(items), [items]);
+
+  let getItems = (keys) => [...keys].map(key => {
+    let item = flattenedItems.get(key);
+    return {
+      'text/plain': item?.name
+    };
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems,
+    onReorder(e) {
+      let draggedKeys = [...e.keys];
+      let targetKey = e.target.key;
+      
+      setItems((prevItems) => {
+        let newItems = JSON.parse(JSON.stringify(prevItems));
+        let targetLocation = findParentAndIndex(newItems, targetKey);
+        if (!targetLocation){
+          // Target not found
+          return prevItems
+        }
+        
+        let draggedItems = [];
+        for (let key of draggedKeys) {
+          let location = findParentAndIndex(newItems, key);
+          if (location) {
+            let [item] = location.parent.splice(location.index, 1);
+            draggedItems.push(item);
+          }
+        }
+        
+        let insertIndex = e.target.dropPosition === 'before' 
+          ? targetLocation.index
+          : targetLocation.index + 1;
+        
+        // Insert the dragged items at the new position
+        targetLocation.parent.splice(insertIndex, 0, ...draggedItems);
+        
+        return newItems;
+      });
+    }
+  });
+
+  return (
+    <UNSTABLE_Tree dragAndDropHooks={dragAndDropHooks} {...args} className={styles.tree} aria-label="Tree with drag and drop" items={items}>
+      {(item: any) => (
+        <DynamicTreeItem id={item.id} childItems={item.childItems} textValue={item.name}>
+          {item.name}
+        </DynamicTreeItem>
+      )}
+    </UNSTABLE_Tree>
+  );
+}
+
+export const TreeWithDragAndDrop = {
+  ...TreeExampleDynamic,
+  render: TreeDragAndDropExample
 };
