@@ -407,10 +407,6 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   }
 
   private getMutableCollection() {
-    if (this.isSSR) {
-      return this.collection;
-    }
-
     if (!this.nextCollection) {
       this.nextCollection = this.collection.clone();
     }
@@ -463,7 +459,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     return this.collection;
   }
 
-  private updateCollection() {
+  updateCollection() {
     // First, update the indices of dirty element children.
     for (let element of this.dirtyNodes) {
       element.updateChildIndices();
@@ -488,8 +484,10 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     // Finally, update the collection.
     if (this.nextCollection) {
       this.nextCollection.commit(this.firstVisibleChild?.node.key ?? null, this.lastVisibleChild?.node.key ?? null, this.isSSR);
-      this.collection = this.nextCollection;
-      this.nextCollection = null;
+      if (!this.isSSR) {
+        this.collection = this.nextCollection;
+        this.nextCollection = null;
+      }
     }
   }
 
