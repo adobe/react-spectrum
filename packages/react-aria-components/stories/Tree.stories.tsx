@@ -600,7 +600,7 @@ function TreeDragAndDropExample(args) {
           }
         }
         
-        let draggedItems = [];
+        let draggedItems: any[] = [];
         let adjustIndexOffset = 0;
         
         for (let key of draggedKeys) {
