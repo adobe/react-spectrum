@@ -17,12 +17,12 @@ import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, cr
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, DragPreviewRenderer, Expandable, forwardRefType, HoverEvents, Key, KeyboardDelegate, LinkDOMProps, MultipleSelection, RefObject} from '@react-types/shared';
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {DragAndDropContext, DropIndicatorContext, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
+import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
+import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
-import { DragAndDropHooks } from './useDragAndDrop';
-import { DragAndDropContext, DropIndicatorContext, useDndPersistedKeys, useRenderDropIndicator } from './DragAndDrop';
 
 class TreeCollection<T> implements ICollection<Node<T>> {
   private flattenedRows: Node<T>[];
@@ -173,14 +173,14 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   let hasDropHooks = !!dragAndDropHooks?.useDroppableCollectionState;
   let dragHooksProvided = useRef(hasDragHooks);
   let dropHooksProvided = useRef(hasDropHooks);
-    useEffect(() => {
-      if (dragHooksProvided.current !== hasDragHooks) {
-        console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
-      }
-      if (dropHooksProvided.current !== hasDropHooks) {
-        console.warn('Drop hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
-      }
-    }, [hasDragHooks, hasDropHooks]);
+  useEffect(() => {
+    if (dragHooksProvided.current !== hasDragHooks) {
+      console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
+    }
+    if (dropHooksProvided.current !== hasDropHooks) {
+      console.warn('Drop hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
+    }
+  }, [hasDragHooks, hasDropHooks]);
   let {
     selectionMode = 'none',
     expandedKeys: propExpandedKeys,
@@ -218,12 +218,60 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     layoutDelegate
   }, state, ref);
 
+  let dragState: DraggableCollectionState | undefined = undefined;
+  let dropState: DroppableCollectionState | undefined = undefined;
+  let droppableCollection: DroppableCollectionResult | undefined = undefined;
+  let isRootDropTarget = false;
+  let dragPreview: JSX.Element | null = null;
+  let preview = useRef<DragPreviewRenderer>(null);
+
+  if (hasDragHooks && dragAndDropHooks) {
+    dragState = dragAndDropHooks.useDraggableCollectionState!({
+      collection: state.collection,
+      selectionManager: state.selectionManager,
+      preview: dragAndDropHooks.renderDragPreview ? preview : undefined
+    });
+    dragAndDropHooks.useDraggableCollection!({}, dragState, ref);
+
+    let DragPreview = dragAndDropHooks.DragPreview!;
+    dragPreview = dragAndDropHooks.renderDragPreview
+      ? <DragPreview ref={preview}>{dragAndDropHooks.renderDragPreview}</DragPreview>
+      : null;
+  }
+
+  if (hasDropHooks && dragAndDropHooks) {
+    dropState = dragAndDropHooks.useDroppableCollectionState!({
+      collection: state.collection,
+      selectionManager: state.selectionManager
+    });
+    let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || ctxDropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(state.collection, ref, {layout: 'stack', direction});
+    let keyboardDelegate = props.keyboardDelegate ||
+      new ListKeyboardDelegate({
+        collection: state.collection,
+        collator,
+        ref,
+        disabledKeys: state.selectionManager.disabledKeys,
+        disabledBehavior: state.selectionManager.disabledBehavior,
+        layout: 'stack',
+        direction,
+        layoutDelegate
+      });
+    droppableCollection = dragAndDropHooks.useDroppableCollection!(
+      {keyboardDelegate, dropTargetDelegate},
+      dropState,
+      ref
+    );
+
+    isRootDropTarget = dropState.isDropTarget({type: 'root'});
+  }
+
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let renderValues = {
     isEmpty: state.collection.size === 0,
     isFocused,
     isFocusVisible,
-    state
+    isDropTarget: isRootDropTarget,
+    state,
   };
 
   let renderProps = useRenderProps({
@@ -253,89 +301,43 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
       </div>
     );
   }
-  let dragState: DraggableCollectionState | undefined = undefined;
-  let dropState: DroppableCollectionState | undefined = undefined;
-  let droppableCollection: DroppableCollectionResult | undefined = undefined;
-  let isRootDropTarget = false;
-  let dragPreview: JSX.Element | null = null;
-  let preview = useRef<DragPreviewRenderer>(null);
 
-  if (hasDragHooks && dragAndDropHooks) {
-    dragState = dragAndDropHooks.useDraggableCollectionState!({
-      collection: state.collection,
-      selectionManager: state.selectionManager,
-      preview: dragAndDropHooks.renderDragPreview ? preview : undefined
-    });
-    dragAndDropHooks.useDraggableCollection!({}, dragState, ref);
-
-    let DragPreview = dragAndDropHooks.DragPreview!;
-    dragPreview = dragAndDropHooks.renderDragPreview
-      ? <DragPreview ref={preview}>{dragAndDropHooks.renderDragPreview}</DragPreview>
-      : null;
-  }
-
-  if (hasDropHooks && dragAndDropHooks) {
-    dropState = dragAndDropHooks.useDroppableCollectionState!({
-      collection: state.collection,
-      selectionManager: state.selectionManager
-    });
-    let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || ctxDropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(state.collection, ref, {layout: 'stack', direction});
-    let keyboardDelegate = useMemo(
-      () =>
-        props.keyboardDelegate ||
-        new ListKeyboardDelegate({
-          collection: state.collection,
-          collator,
-          ref,
-          disabledKeys: state.selectionManager.disabledKeys,
-          disabledBehavior: state.selectionManager.disabledBehavior,
-          layout: 'stack',
-          direction,
-          layoutDelegate
-        }),
-      [collator, ref, state.selectionManager.disabledKeys, direction, state.collection, state.selectionManager.disabledBehavior, props.keyboardDelegate, layoutDelegate]
-    );  
-
-    droppableCollection = dragAndDropHooks.useDroppableCollection!(
-      {keyboardDelegate, dropTargetDelegate},
-      dropState,
-      ref
-    );
-
-    isRootDropTarget = dropState.isDropTarget({type: 'root'});
-  }
   return (
-    <FocusScope>
-      <div
-        {...filterDOMProps(props)}
-        {...renderProps}
-        {...mergeProps(
-          gridProps,
-          focusProps,
-          emptyStatePropOverrides,
-          droppableCollection?.collectionProps
-        )}
-        ref={ref}
-        slot={props.slot || undefined}
-        onScroll={props.onScroll}
-        data-empty={state.collection.size === 0 || undefined}
-        data-focused={isFocused || undefined}
-        data-focus-visible={isFocusVisible || undefined}>
-        <Provider
-          values={[
-            [TreeStateContext, state],
-            [DragAndDropContext, {dragAndDropHooks, dragState, dropState}],
-            [DropIndicatorContext, {render: TreeDropIndicatorWrapper}]
-          ]}>
-          <CollectionRoot
-            collection={state.collection}
-            persistedKeys={useDndPersistedKeys(state.selectionManager, dragAndDropHooks, dropState)}
-            scrollRef={ref}
-            renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
-        </Provider>
-        {emptyState}
-      </div>
-    </FocusScope>
+    <>
+      <FocusScope>
+        <div
+          {...filterDOMProps(props)}
+          {...renderProps}
+          {...mergeProps(
+            gridProps,
+            focusProps,
+            emptyStatePropOverrides,
+            droppableCollection?.collectionProps
+          )}
+          ref={ref}
+          slot={props.slot || undefined}
+          onScroll={props.onScroll}
+          data-empty={state.collection.size === 0 || undefined}
+          data-focused={isFocused || undefined}
+          data-drop-target={isRootDropTarget || undefined}
+          data-focus-visible={isFocusVisible || undefined}>
+          <Provider
+            values={[
+              [TreeStateContext, state],
+              [DragAndDropContext, {dragAndDropHooks, dragState, dropState}],
+              [DropIndicatorContext, {render: TreeDropIndicatorWrapper}]
+            ]}>
+            <CollectionRoot
+              collection={state.collection}
+              persistedKeys={useDndPersistedKeys(state.selectionManager, dragAndDropHooks, dropState)}
+              scrollRef={ref}
+              renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
+          </Provider>
+          {emptyState}
+        </div>
+      </FocusScope>
+      {dragPreview}
+    </>
   );
 }
 
