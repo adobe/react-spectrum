@@ -41,8 +41,21 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
 
   commit(firstKey: Key, lastKey: Key, isSSR = false) {
     this.updateColumns(isSSR);
+
+    this.rows = [];
+    for (let row of this.getChildren(this.body.key)) {
+      let lastChildKey = (row as CollectionNode<T>).lastChildKey;
+      if (lastChildKey != null) {
+        let lastCell = this.getItem(lastChildKey) as GridNode<T>;
+        let numberOfCellsInRow = (lastCell.colIndex ?? lastCell.index) + (lastCell.colSpan ?? 1);
+        if (numberOfCellsInRow !== this.columns.length && !isSSR) {
+          throw new Error(`Cell count must match column count. Found ${numberOfCellsInRow} cells and ${this.columns.length} columns.`);
+        }
+      }
+      this.rows.push(row);
+    }
+
     super.commit(firstKey, lastKey, isSSR);
-    this.rows = [...this.getChildren(this.body.key)];
   }
 
   private updateColumns(isSSR: boolean) {
@@ -737,7 +750,6 @@ export const Column = /*#__PURE__*/ createLeafComponent('column', (props: Column
       {...mergeProps(filterDOMProps(props as any), columnHeaderProps, focusProps, hoverProps)}
       {...renderProps}
       style={style}
-      colSpan={column.colspan}
       ref={ref}
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
@@ -900,7 +912,7 @@ export interface TableBodyRenderProps {
   isDropTarget: boolean
 }
 
-export interface TableBodyProps<T> extends CollectionProps<T>, StyleRenderProps<TableBodyRenderProps> {
+export interface TableBodyProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, StyleRenderProps<TableBodyRenderProps> {
   /** Provides content to display when there are no rows in the table. */
   renderEmptyState?: (props: TableBodyRenderProps) => ReactNode
 }
@@ -976,12 +988,12 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
 
 export interface RowRenderProps extends ItemRenderProps {
   /** Whether the row's children have keyboard focus. */
-  isFocusVisibleWithin: boolean
+  isFocusVisibleWithin: boolean,
+  /** The unique id of the row. */
+  id?: Key
 }
 
 export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMProps, HoverEvents {
-  /** The unique id of the row. */
-  id?: Key,
   /** A list of columns used when dynamically rendering cells. */
   columns?: Iterable<T>,
   /** The cells within the row. Supports static items or a function for dynamic rendering. */
@@ -998,7 +1010,9 @@ export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMPr
    * Handler that is called when a user performs an action on the row. The exact user event depends on
    * the collection's `selectionBehavior` prop and the interaction modality.
    */
-  onAction?: () => void
+  onAction?: () => void,
+  /** The unique id of the row. */
+  id?: Key
 }
 
 /**
@@ -1075,7 +1089,8 @@ export const Row = /*#__PURE__*/ createBranchComponent(
         selectionBehavior: state.selectionManager.selectionBehavior,
         isDragging,
         isDropTarget: dropIndicator?.isDropTarget,
-        isFocusVisibleWithin
+        isFocusVisibleWithin,
+        id: item.key
       }
     });
 
@@ -1166,14 +1181,18 @@ export interface CellRenderProps {
    * Whether the cell is currently hovered with a mouse.
    * @selector [data-hovered]
    */
-  isHovered: boolean
+  isHovered: boolean,
+  /**
+   * The unique id of the cell.
+   **/
+  id?: Key
 }
 
 export interface CellProps extends RenderProps<CellRenderProps> {
-  /** The unique id of the cell. */
-  id?: Key,
   /** A string representation of the cell's contents, used for features like typeahead. */
-  textValue?: string
+  textValue?: string,
+  /** Indicates how many columns the data cell spans. */
+  colSpan?: number
 }
 
 /**
@@ -1203,7 +1222,8 @@ export const Cell = /*#__PURE__*/ createLeafComponent('cell', (props: CellProps,
       isFocused,
       isFocusVisible,
       isPressed,
-      isHovered
+      isHovered,
+      id: cell.key
     }
   });
 

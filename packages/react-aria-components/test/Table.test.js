@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render, triggerLongPress, within} from '@react-spectrum/test-utils-internal';
-import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, UNSTABLE_TableLayout as TableLayout, useDragAndDrop, useTableOptions, UNSTABLE_Virtualizer as Virtualizer} from '../';
+import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, Tag, TagGroup, TagList, useDragAndDrop, useTableOptions, Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
 import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
 import React, {useMemo, useRef, useState} from 'react';
@@ -24,7 +24,8 @@ import userEvent from '@testing-library/user-event';
 
 let {
   RenderEmptyStateStory: EmptyLoadingTable,
-  TableLoadingBodyWrapperStory: LoadingMoreTable
+  TableLoadingBodyWrapperStory: LoadingMoreTable,
+  TableCellColSpanWithVariousSpansExample: TableCellColSpan
 } = composeStories(stories);
 
 function MyColumn(props) {
@@ -63,7 +64,7 @@ function MyRow({id, columns, children, ...otherProps}) {
   let {selectionBehavior, allowsDragging} = useTableOptions();
 
   return (
-    <Row id={id} {...otherProps}>
+    <Row id={id} {...otherProps} columns={columns}>
       {allowsDragging && (
         <Cell>
           <Button slot="drag">≡</Button>
@@ -119,6 +120,31 @@ let TestTable = ({tableProps, tableHeaderProps, columnProps, tableBodyProps, row
         <Cell {...cellProps}>bootmgr</Cell>
         <Cell {...cellProps}>System file</Cell>
         <Cell {...cellProps}>11/20/2010</Cell>
+      </MyRow>
+    </TableBody>
+  </Table>
+);
+
+let EditableTable = ({tableProps, tableHeaderProps, columnProps, tableBodyProps, rowProps, cellProps}) => (
+  <Table aria-label="Files" {...tableProps}>
+    <MyTableHeader {...tableHeaderProps}>
+      <MyColumn id="name" isRowHeader {...columnProps}>Name</MyColumn>
+      <MyColumn {...columnProps}>Type</MyColumn>
+      <MyColumn {...columnProps}>Actions</MyColumn>
+    </MyTableHeader>
+    <TableBody {...tableBodyProps}>
+      <MyRow id="1" textValue="Edit" {...rowProps}>
+        <Cell {...cellProps}>Games</Cell>
+        <Cell {...cellProps}>File folder</Cell>
+        <Cell {...cellProps}>
+          <TagGroup aria-label="Tag group">
+            <TagList>
+              <Tag id="1">Tag 1</Tag>
+              <Tag id="2">Tag 2</Tag>
+              <Tag id="3">Tag 3</Tag>
+            </TagList>
+          </TagGroup>
+        </Cell>
       </MyRow>
     </TableBody>
   </Table>
@@ -668,10 +694,8 @@ describe('Table', () => {
 
     let tableTester = testUtilUser.createTester('Table', {root: getByRole('grid')});
     await user.tab();
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{ArrowRight}');
 
     let gridRows = tableTester.rows;
     expect(gridRows).toHaveLength(4);
@@ -791,6 +815,66 @@ describe('Table', () => {
     expect(cells[0]).toHaveTextContent('Foo (focused)');
   });
 
+  it('should support columnHeader typeahead', async () => {
+    let {getAllByRole} = render(
+      <Table aria-label="Files">
+        <MyTableHeader columns={columns}>
+          {column => (
+            <MyColumn isRowHeader={column.isRowHeader} childColumns={column.children}>
+              {column.name}
+            </MyColumn>
+          )}
+        </MyTableHeader>
+        <TableBody items={rows}>
+          {item => (
+            <MyRow columns={columns}>
+              {column => <Cell>{item[column.id]}</Cell>}
+            </MyRow>
+          )}
+        </TableBody>
+      </Table>
+    );
+    let rowElements = getAllByRole('row');
+
+    await user.tab();
+    expect(document.activeElement).toBe(rowElements[1]);
+    await user.keyboard('boo');
+    expect(document.activeElement).toBe(rowElements[3]);
+  });
+
+  it('should support textValue overriding typeahead', async () => {
+    let rows = [
+      {id: 1, name: '1. Games', date: '6/7/2020', type: 'File folder', textValue: 'Games'},
+      {id: 2, name: '2. Program Files', date: '4/7/2021', type: 'File folder', textValue: 'Program Files'},
+      {id: 3, name: '3. bootmgr', date: '11/20/2010', type: 'System file', textValue: 'bootmgr'},
+      {id: 4, name: '4. log.txt', date: '1/18/2016', type: 'Text Document', textValue: 'log.txt'}
+    ];
+    let {getAllByRole} = render(
+      <Table aria-label="Files">
+        <MyTableHeader columns={columns}>
+          {column => (
+            <MyColumn isRowHeader={column.isRowHeader} childColumns={column.children}>
+              {column.name}
+            </MyColumn>
+          )}
+        </MyTableHeader>
+        <TableBody items={rows}>
+          {item => (
+            <MyRow columns={columns} textValue={item.textValue}>
+              {column => <Cell>{item[column.id]}</Cell>}
+            </MyRow>
+          )}
+        </TableBody>
+      </Table>
+    );
+    let rowElements = getAllByRole('row');
+
+    await user.tab();
+    expect(document.activeElement).toBe(rowElements[1]);
+    await user.keyboard('boo');
+    expect(document.activeElement).toBe(rowElements[3]);
+  });
+
   it('should support updating columns', () => {
     let tree = render(<DynamicTable tableHeaderProps={{columns}} tableBodyProps={{dependencies: [columns]}} rowProps={{columns}} />);
     let headers = tree.getAllByRole('columnheader');
@@ -841,10 +925,6 @@ describe('Table', () => {
   });
 
   it('should support virtualizer', async () => {
-    let layout = new TableLayout({
-      rowHeight: 25
-    });
-
     let items = [];
     for (let i = 0; i < 50; i++) {
       items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
@@ -854,7 +934,7 @@ describe('Table', () => {
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
 
     let {getByRole, getAllByRole} = render(
-      <Virtualizer layout={layout}>
+      <Virtualizer layout={TableLayout} layoutOptions={{rowHeight: 25}}>
         <Table aria-label="Test">
           <TableHeader>
             <Column isRowHeader>Foo</Column>
@@ -893,6 +973,159 @@ describe('Table', () => {
     rows = getAllByRole('row');
     expect(rows).toHaveLength(9);
     expect(rows.map(r => r.textContent)).toEqual(['FooBar', 'Foo 7Bar 7', 'Foo 8Bar 8', 'Foo 9Bar 9', 'Foo 10Bar 10', 'Foo 11Bar 11', 'Foo 12Bar 12', 'Foo 13Bar 13', 'Foo 49Bar 49']);
+  });
+
+  it('should support nested collections with colliding keys', async () => {
+    let {container} = render(<EditableTable />);
+
+    let itemMap = new Map();
+    let items = container.querySelectorAll('[data-key]');
+
+    for (let item of items) {
+      if (item instanceof HTMLElement) {
+        let key = item.dataset.collection + ':' + item.dataset.key;
+        expect(itemMap.has(key)).toBe(false);
+        itemMap.set(key, item);
+      }
+    }
+  });
+
+  describe('colSpan', () => {
+    it('should render table with colSpans', () => {
+      let {getAllByRole} = render(<TableCellColSpan />);
+
+      const rows = getAllByRole('row');
+      expect(rows).toHaveLength(8);
+
+      let cells1 = [...within(rows[1]).getAllByRole('rowheader'), ...within(rows[1]).getAllByRole('gridcell')];
+      expect(cells1).toHaveLength(3);
+      expect(cells1[0]).not.toHaveAttribute('aria-colindex');
+      expect(cells1[1]).not.toHaveAttribute('aria-colindex');
+      expect(cells1[1]).toHaveAttribute('colspan', '2');
+      expect(cells1[2]).toHaveAttribute('aria-colindex', '4');
+
+      let cells2 = [...within(rows[2]).getAllByRole('rowheader'), ...within(rows[2]).getAllByRole('gridcell')];
+      expect(cells2).toHaveLength(4);
+      expect(cells2[0]).not.toHaveAttribute('aria-colindex', '1');
+      expect(cells2[1]).not.toHaveAttribute('aria-colindex', '2');
+      expect(cells2[2]).not.toHaveAttribute('aria-colindex', '3');
+      expect(cells2[3]).not.toHaveAttribute('aria-colindex', '4');
+
+      let cells3 = within(rows[3]).getAllByRole('rowheader');
+      expect(cells3).toHaveLength(1);
+      expect(cells3[0]).not.toHaveAttribute('aria-colindex');
+      expect(cells3[0]).toHaveAttribute('colspan', '4');
+
+      let cells5 = [...within(rows[5]).getAllByRole('rowheader'), ...within(rows[5]).getAllByRole('gridcell')];
+      expect(cells5).toHaveLength(2);
+      expect(cells5[0]).not.toHaveAttribute('aria-colindex');
+      expect(cells5[0]).toHaveAttribute('colspan', '3');
+      expect(cells5[1]).toHaveAttribute('aria-colindex', '4');
+    });
+
+    it('should focus to the same colIndex when moving focus up or down', async () => {
+      let {getAllByRole} = render(<TableCellColSpan />);
+      let rows = getAllByRole('row');
+      await user.tab();
+      expect(document.activeElement).toBe(rows[1]);
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(within(rows[1]).getByRole('rowheader'));
+
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(within(rows[1]).getAllByRole('gridcell')[0]);
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(within(rows[2]).getAllByRole('gridcell')[0]);
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(within(rows[3]).getByRole('rowheader'));
+
+      await user.keyboard('{ArrowDown}');
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(within(rows[4]).getAllByRole('gridcell')[0]);
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(within(rows[5]).getByRole('rowheader'));
+
+      await user.keyboard('{ArrowDown}');
+      await user.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(within(rows[6]).getAllByRole('gridcell')[0]);
+
+      await user.keyboard('{ArrowDown}');
+      expect(document.activeElement).toBe(within(rows[7]).getAllByRole('gridcell')[0]);
+
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(within(rows[6]).getAllByRole('gridcell')[0]);
+
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(within(rows[5]).getAllByRole('gridcell')[0]);
+
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(within(rows[4]).getAllByRole('gridcell')[2]);
+
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(within(rows[3]).getByRole('rowheader'));
+
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(within(rows[2]).getByRole('rowheader'));
+
+      await user.keyboard('{ArrowRight}');
+      await user.keyboard('{ArrowUp}');
+      expect(document.activeElement).toBe(within(rows[1]).getAllByRole('gridcell')[0]);
+    });
+
+    it('should throw error if number of cells do not match column count', () => {
+      jest.spyOn(console, 'error').mockImplementation(() => {});
+      let error;
+      try {
+        render(
+          <Table aria-label="Col Span Table with wrong number of cells">
+            <TableHeader>
+              <Column isRowHeader>Col 1</Column>
+              <Column >Col 2</Column>
+              <Column >Col 3</Column>
+              <Column >Col 4</Column>
+            </TableHeader>
+            <TableBody>
+              <Row>
+                <Cell>Cell 11</Cell>
+                <Cell colSpan={2}>Cell 12</Cell>
+                <Cell>Cell 14</Cell>
+              </Row>
+              <Row>
+                <Cell>Cell 21</Cell>
+                <Cell colSpan={2}>Cell 22</Cell>
+                <Cell>Cell 24</Cell>
+                <Cell>Cell 25</Cell>
+              </Row>
+            </TableBody>
+          </Table>
+        );
+      } catch (e) {
+        error = e;
+      }
+      expect(error?.message).toEqual('Cell count must match column count. Found 5 cells and 4 columns.');
+      try {
+        render(
+          <Table aria-label="Col Span Table with wrong number of cells">
+            <TableHeader>
+              <Column isRowHeader>Col 1</Column>
+              <Column >Col 2</Column>
+            </TableHeader>
+            <TableBody>
+              <Row>
+                <Cell>Cell</Cell>
+              </Row>
+            </TableBody>
+          </Table>
+        );
+      } catch (e) {
+        error = e;
+      }
+      expect(error?.message).toEqual('Cell count must match column count. Found 1 cells and 2 columns.');
+    });
   });
 
   describe('drag and drop', () => {
@@ -1710,15 +1943,11 @@ describe('Table', () => {
         items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
       }
       function VirtualizedTableLoad() {
-        let layout = new TableLayout({
-          rowHeight: 25
-        });
-
         let scrollRef = useRef(null);
         useLoadMore({onLoadMore}, scrollRef);
 
         return (
-          <Virtualizer layout={layout}>
+          <Virtualizer layout={TableLayout} layoutOptions={{rowHeight: 25}}>
             <Table aria-label="Load more table" ref={scrollRef} onLoadMore={onLoadMore}>
               <TableHeader>
                 <Column isRowHeader>Foo</Column>

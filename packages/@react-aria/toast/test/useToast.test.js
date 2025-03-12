@@ -66,25 +66,31 @@ describe('single toast at a time', () => {
 
   it('moves focus to the next toast when it appears', async () => {
     let tree = render(<Default />);
-    // eslint-disable-next-line
-    let [bLow, bMedium, bHigh] = tree.getAllByRole('button');
+    let button = tree.getByRole('button');
 
-    await user.click(bHigh);
-    await user.click(bLow);
-
+    await user.tab();
+    await user.keyboard('{Enter}');
+    await user.keyboard('{Enter}');
+    
     let toast = tree.getByRole('alertdialog');
-    expect(toast.textContent).toContain('High');
+    expect(toast.textContent).toContain('Mmmmm toast 2x');
     let closeButton = within(toast).getByRole('button');
-    await user.click(closeButton);
+    await user.keyboard('{F6}');
+    await user.tab();
+    await user.tab();
+    expect(document.activeElement).toBe(closeButton);
+    await user.keyboard('{Enter}');
 
     toast = tree.getByRole('alertdialog');
-    expect(toast.textContent).toContain('Low');
+    expect(toast.textContent).toContain('Mmmmm toast 1x');
     expect(toast).toHaveFocus();
 
     closeButton = within(toast).getByRole('button');
-    await user.click(closeButton);
+    await user.tab();
+    expect(document.activeElement).toBe(closeButton);
+    await user.keyboard('{Enter}');
 
     expect(tree.queryByRole('alertdialog')).toBeNull();
-    expect(bLow).toHaveFocus();
+    expect(button).toHaveFocus();
   });
 });

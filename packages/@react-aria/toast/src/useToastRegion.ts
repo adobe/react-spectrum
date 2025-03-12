@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
-import {focusWithoutScrolling, mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
 import {getInteractionModality, useFocusWithin, useHover} from '@react-aria/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -44,15 +44,29 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
     'aria-label': props['aria-label'] || stringFormatter.format('notifications', {count: state.visibleToasts.length})
   }, ref);
 
+  let isHovered = useRef(false);
+  let isFocused = useRef(false);
+  let updateTimers = useEffectEvent(() => {
+    if (isHovered.current || isFocused.current) {
+      state.pauseAll();
+    } else {
+      state.resumeAll();
+    }
+  });
+
   let {hoverProps} = useHover({
-    onHoverStart: state.pauseAll,
-    onHoverEnd: state.resumeAll
+    onHoverStart: () => {
+      isHovered.current = true;
+      updateTimers();
+    },
+    onHoverEnd: () => {
+      isHovered.current = false;
+      updateTimers();
+    }
   });
 
   // Manage focus within the toast region.
   // If a focused containing toast is removed, move focus to the next toast, or the previous toast if there is no next toast.
-  // We might be making an assumption with how this works if someone implements the priority queue differently, or
-  // if they only show one toast at a time.
   let toasts = useRef<FocusableElement[]>([]);
   let prevVisibleToasts = useRef(state.visibleToasts);
   let focusedToast = useRef<number | null>(null);
@@ -78,52 +92,60 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
         isRemoved: !state.visibleToasts.some(t2 => t.key === t2.key)
       }));
 
-    let removedFocusedToastIndex = allToasts.findIndex(t => t.i === focusedToast.current);
+    let removedFocusedToastIndex = allToasts.findIndex(t => t.i === focusedToast.current && t.isRemoved);
 
     // If the focused toast was removed, focus the next or previous toast.
     if (removedFocusedToastIndex > -1) {
-      let i = 0;
-      let nextToast;
-      let prevToast;
-      while (i <= removedFocusedToastIndex) {
-        if (!allToasts[i].isRemoved) {
-          prevToast = Math.max(0, i - 1);
+      // In pointer modality, move focus out of the toast region.
+      // Otherwise auto-dismiss timers will appear "stuck".
+      if (getInteractionModality() === 'pointer' && lastFocused.current?.isConnected) {
+        focusWithoutScrolling(lastFocused.current);
+      } else {
+        let i = 0;
+        let nextToast;
+        let prevToast;
+        while (i <= removedFocusedToastIndex) {
+          if (!allToasts[i].isRemoved) {
+            prevToast = Math.max(0, i - 1);
+          }
+          i++;
         }
-        i++;
-      }
-      while (i < allToasts.length) {
-        if (!allToasts[i].isRemoved) {
-          nextToast = i - 1;
-          break;
+        while (i < allToasts.length) {
+          if (!allToasts[i].isRemoved) {
+            nextToast = i - 1;
+            break;
+          }
+          i++;
         }
-        i++;
-      }
 
-      // in the case where it's one toast at a time, both will be undefined, but we know the index must be 0
-      if (prevToast === undefined && nextToast === undefined) {
-        prevToast = 0;
-      }
+        // in the case where it's one toast at a time, both will be undefined, but we know the index must be 0
+        if (prevToast === undefined && nextToast === undefined) {
+          prevToast = 0;
+        }
 
-      // prioritize going to newer toasts
-      if (prevToast >= 0 && prevToast < toasts.current.length) {
-        focusWithoutScrolling(toasts.current[prevToast]);
-      } else if (nextToast >= 0 && nextToast < toasts.current.length) {
-        focusWithoutScrolling(toasts.current[nextToast]);
+        // prioritize going to newer toasts
+        if (prevToast >= 0 && prevToast < toasts.current.length) {
+          focusWithoutScrolling(toasts.current[prevToast]);
+        } else if (nextToast >= 0 && nextToast < toasts.current.length) {
+          focusWithoutScrolling(toasts.current[nextToast]);
+        }
       }
     }
 
     prevVisibleToasts.current = state.visibleToasts;
-  }, [state.visibleToasts, ref]);
+  }, [state.visibleToasts, ref, updateTimers]);
 
   let lastFocused = useRef<FocusableElement | null>(null);
   let {focusWithinProps} = useFocusWithin({
     onFocusWithin: (e) => {
-      state.pauseAll();
+      isFocused.current = true;
       lastFocused.current = e.relatedTarget as FocusableElement;
+      updateTimers();
     },
     onBlurWithin: () => {
-      state.resumeAll();
+      isFocused.current = false;
       lastFocused.current = null;
+      updateTimers();
     }
   });
 
@@ -133,7 +155,7 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
   // moves in, it only happens once, so we correct it.
   // Because we're in a hook, we can't control if the user unmounts or not.
   useEffect(() => {
-    if (state.visibleToasts.length === 0 && lastFocused.current && document.body.contains(lastFocused.current)) {
+    if (state.visibleToasts.length === 0 && lastFocused.current?.isConnected) {
       if (getInteractionModality() === 'pointer') {
         focusWithoutScrolling(lastFocused.current);
       } else {
@@ -145,7 +167,7 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
 
   useEffect(() => {
     return () => {
-      if (lastFocused.current && document.body.contains(lastFocused.current)) {
+      if (lastFocused.current?.isConnected) {
         if (getInteractionModality() === 'pointer') {
           focusWithoutScrolling(lastFocused.current);
         } else {

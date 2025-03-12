@@ -15,7 +15,7 @@ import {AriaLabelingProps, DOMAttributes, FocusableElement, RefObject} from '@re
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {QueuedToast, ToastState} from '@react-stately/toast';
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {useId, useSlotId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -64,6 +64,14 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
   let descriptionId = useSlotId();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/toast');
 
+  // This is required for NVDA announcements, without it NVDA will NOT announce the toast when it appears.
+  // Originally was tied to animationStart/End via https://github.com/adobe/react-spectrum/pull/6223/commits/e22e319df64958e822ab7cd9685e96818cae9ba5
+  // but toasts don't always have animations.
+  let [isVisible, setIsVisible] = useState(false);
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
+
   return {
     toastProps: {
       role: 'alertdialog',
@@ -76,7 +84,8 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
     },
     contentProps: {
       role: 'alert',
-      'aria-atomic': 'true'
+      'aria-atomic': 'true',
+      'aria-hidden': isVisible ? undefined : 'true'
     },
     titleProps: {
       id: titleId

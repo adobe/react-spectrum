@@ -40,7 +40,7 @@ export interface StatusLightProps extends StatusLightStyleProps, DOMProps, AriaL
   /**
    * The content to display as the label.
    */
-  children: ReactNode,
+  children?: ReactNode,
   /**
    * An accessibility role for the status light. Should be set when the status
    * can change at runtime, and no more than one status light will update simultaneously.

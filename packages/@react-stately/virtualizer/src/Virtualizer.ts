@@ -33,14 +33,14 @@ interface VirtualizerOptions<T extends object, V> {
  * them as you scroll. Virtualizer can present any type of view, including non-item views
  * such as section headers and footers.
  *
- * Virtualizer uses {@link Layout} objects to compute what views should be visible, and how
+ * Virtualizer uses `Layout` objects to compute what views should be visible, and how
  * to position and style them. This means that virtualizer can have its items arranged in
  * a stack, a grid, a circle, or any other layout you can think of. The layout can be changed
  * dynamically at runtime as well.
  *
  * Layouts produce information on what views should appear in the virtualizer, but do not create
- * the views themselves directly. It is the responsibility of the {@link VirtualizerDelegate} object
- * to render elements for each layout info. The virtualizer manages a set of {@link ReusableView} objects,
+ * the views themselves directly. It is the responsibility of the `VirtualizerDelegate` object
+ * to render elements for each layout info. The virtualizer manages a set of `ReusableView` objects,
  * which are reused as the user scrolls by swapping their content with cached elements returned by the delegate.
  */
 export class Virtualizer<T extends object, V> {
@@ -266,6 +266,7 @@ export class Virtualizer<T extends object, V> {
     let offsetChanged = false;
     let sizeChanged = false;
     let itemSizeChanged = false;
+    let layoutOptionsChanged = false;
     let needsUpdate = false;
 
     if (opts.collection !== this.collection) {
@@ -308,8 +309,11 @@ export class Virtualizer<T extends object, V> {
         sizeChanged ||= opts.invalidationContext.sizeChanged || false;
         offsetChanged ||= opts.invalidationContext.offsetChanged || false;
         itemSizeChanged ||= opts.invalidationContext.itemSizeChanged || false;
-        needsLayout ||= itemSizeChanged || sizeChanged || offsetChanged;
-        needsLayout ||= opts.invalidationContext.layoutOptions !== this._invalidationContext.layoutOptions;
+        layoutOptionsChanged ||= opts.invalidationContext.layoutOptions != null
+          && this._invalidationContext.layoutOptions != null
+          && opts.invalidationContext.layoutOptions !== this._invalidationContext.layoutOptions 
+          && this.layout.shouldInvalidateLayoutOptions(opts.invalidationContext.layoutOptions, this._invalidationContext.layoutOptions);
+        needsLayout ||= itemSizeChanged || sizeChanged || offsetChanged || layoutOptionsChanged;
       }
       this._invalidationContext = opts.invalidationContext;
     }
@@ -327,6 +331,7 @@ export class Virtualizer<T extends object, V> {
         offsetChanged,
         sizeChanged,
         itemSizeChanged,
+        layoutOptionsChanged,
         layoutOptions: this._invalidationContext.layoutOptions
       });
     } else if (needsUpdate) {

@@ -685,7 +685,7 @@ describe('useTreeData', function () {
       useTreeData({initialItems, getChildren, getKey})
     );
     act(() => {
-      result.current.moveBefore('Eli', null, 0);
+      result.current.move('Eli', null, 0);
     });
     expect(result.current.items[0].key).toEqual('Eli');
     expect(result.current.items[1].key).toEqual('David');
@@ -700,7 +700,7 @@ describe('useTreeData', function () {
       useTreeData({initialItems, getChildren, getKey})
     );
     act(() => {
-      result.current.moveBefore('Eli', 'David', 1);
+      result.current.move('Eli', 'David', 1);
     });
     expect(result.current.items[0].key).toEqual('David');
     expect(result.current.items[0].children[0].key).toEqual('John');
@@ -716,7 +716,7 @@ describe('useTreeData', function () {
     );
 
     act(() => {
-      result.current.moveAfter('Eli', 'David', 1);
+      result.current.move('Eli', 'David', 2);
     });
     expect(result.current.items[0].key).toEqual('David');
 
@@ -729,13 +729,12 @@ describe('useTreeData', function () {
 
   it('should move an item to a different level at the end when the index is greater than the node list length', function () {
     const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
-    console.log('initialItems', initialItems[0]);
     let {result} = renderHook(() =>
       useTreeData({initialItems, getChildren, getKey})
     );
 
     act(() => {
-      result.current.moveAfter('Eli', 'David', 100);
+      result.current.move('Eli', 'David', 101);
     });
     expect(result.current.items[0].key).toEqual('David');
 
