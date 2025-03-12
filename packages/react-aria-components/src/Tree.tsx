@@ -271,7 +271,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     isFocused,
     isFocusVisible,
     isDropTarget: isRootDropTarget,
-    state,
+    state
   };
 
   let renderProps = useRenderProps({
