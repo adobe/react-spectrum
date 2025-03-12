@@ -26,6 +26,7 @@ import React, {HTMLAttributes, JSX} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useDateFormatter, useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
+import { createCalendar, endOfWeek, toCalendar } from '@internationalized/date';
 
 interface CalendarBaseProps<T extends CalendarState | RangeCalendarState> extends CalendarPropsBase, DOMProps, StyleProps {
   state: T,
@@ -152,14 +153,27 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
 }
 
 function getCurrentMonthName(date: CalendarState['focusedDate'], timezone: string, monthDateFormatter: ReturnType<typeof useDateFormatter>): string {
-  if (date.calendar.getCurrentMonth) {
-    const monthRange = date.calendar.getCurrentMonth(date);
-    // The monthRange's index indicates which month we are in in the current year, since the start of 
-    // the month range may not be in the same month (e.g. fiscal calendar).
-    // To get the correct year, use the end date's year. Unless the month is December, then use the start date's year.
-    // This ensures that we don't have two December 2025s or January 2026s 12 months apart.
-    const month = date.set({month: monthRange.index, year: monthRange.index === 12 ? monthRange.start.year : monthRange.end.year});
-    return monthDateFormatter.format(month.toDate(timezone));
+  // if (date.calendar.getCurrentMonth) {
+  //   const monthRange = date.calendar.getCurrentMonth(date);
+  //   // The monthRange's index indicates which month we are in in the current year, since the start of 
+  //   // the month range may not be in the same month (e.g. fiscal calendar).
+  //   // To get the correct year, use the end date's year. Unless the month is December, then use the start date's year.
+  //   // This ensures that we don't have two December 2025s or January 2026s 12 months apart.
+  //   const month = date.set({month: monthRange.index, year: monthRange.index === 12 ? monthRange.start.year : monthRange.end.year});
+  //   return monthDateFormatter.format(month.toDate(timezone));
+  // }
+
+  // let resolvedCalendar = monthDateFormatter.resolvedOptions().calendar;
+  // if (resolvedCalendar !== date.calendar.identifier) {
+  //   let dateInResolvedCalendar = toCalendar(date, createCalendar(resolvedCalendar));
+  //   // console.log(dateInResolvedCalendar)
+  //   let weekEnd = endOfWeek(dateInResolvedCalendar, monthDateFormatter.resolvedOptions().locale);
+  //   return monthDateFormatter.format(weekEnd.toDate(timezone));
+  // }
+
+  if (date.calendar.getFormattableMonth) {
+    date = date.calendar.getFormattableMonth(date);
   }
+
   return monthDateFormatter.format(date.toDate(timezone));
 }
