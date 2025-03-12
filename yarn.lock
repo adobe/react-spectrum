@@ -29305,7 +29305,7 @@ __metadata:
     "@babel/node": "npm:^7.23.9"
     "@babel/plugin-proposal-decorators": "npm:^7.24.1"
     "@babel/plugin-syntax-decorators": "npm:7.24.1"
-    "@babel/plugin-syntax-import-attributes": "npm:^7.24.1"
+    "@babel/plugin-syntax-import-assertions": "npm:^7.24.1"
     "@babel/plugin-transform-runtime": "npm:^7.24.3"
     "@babel/preset-env": "npm:^7.24.3"
     "@babel/preset-react": "npm:^7.24.1"

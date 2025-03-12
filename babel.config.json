@@ -53,14 +53,6 @@
         "legacy": true
       }
     ],
-    [
-      "@babel/plugin-syntax-import-attributes",
-      {
-        "generatorOpts": {
-          "importAttributesKeyword": "with"
-        }
-      }
-    ],
     "transform-glob-import",
     "babel-plugin-macros"
   ],
