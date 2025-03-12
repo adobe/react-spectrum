@@ -169,8 +169,18 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   const {dragAndDropHooks} = props;
   let {direction} = useLocale();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let isListDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
-  let isListDroppable = !!dragAndDropHooks?.useDroppableCollectionState;
+  let hasDragHooks = !!dragAndDropHooks?.useDraggableCollectionState;
+  let hasDropHooks = !!dragAndDropHooks?.useDroppableCollectionState;
+  let dragHooksProvided = useRef(hasDragHooks);
+  let dropHooksProvided = useRef(hasDropHooks);
+    useEffect(() => {
+      if (dragHooksProvided.current !== hasDragHooks) {
+        console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
+      }
+      if (dropHooksProvided.current !== hasDropHooks) {
+        console.warn('Drop hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
+      }
+    }, [hasDragHooks, hasDropHooks]);
   let {
     selectionMode = 'none',
     expandedKeys: propExpandedKeys,
@@ -178,7 +188,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     onExpandedChange,
     disabledBehavior = 'all'
   } = props;
-  let {CollectionRoot, isVirtualized, layoutDelegate} = useContext(CollectionRendererContext);
+  let {CollectionRoot, isVirtualized, layoutDelegate,  dropTargetDelegate: ctxDropTargetDelegate} = useContext(CollectionRendererContext);
 
   // Kinda annoying that we have to replicate this code here as well as in useTreeState, but don't want to add
   // flattenCollection stuff to useTreeState. Think about this later
@@ -250,7 +260,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   let dragPreview: JSX.Element | null = null;
   let preview = useRef<DragPreviewRenderer>(null);
 
-  if (isListDraggable && dragAndDropHooks) {
+  if (hasDragHooks && dragAndDropHooks) {
     dragState = dragAndDropHooks.useDraggableCollectionState!({
       collection: state.collection,
       selectionManager: state.selectionManager,
@@ -264,18 +274,12 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
       : null;
   }
 
-  if (isListDroppable && dragAndDropHooks) {
+  if (hasDropHooks && dragAndDropHooks) {
     dropState = dragAndDropHooks.useDroppableCollectionState!({
       collection: state.collection,
       selectionManager: state.selectionManager
     });
-
-    let dropTargetDelegate = new dragAndDropHooks.ListDropTargetDelegate(
-      state.collection,
-      ref,
-      {layout: 'stack', direction}
-    );
-
+    let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || ctxDropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(state.collection, ref, {layout: 'stack', direction});
     let keyboardDelegate = useMemo(
       () =>
         props.keyboardDelegate ||
