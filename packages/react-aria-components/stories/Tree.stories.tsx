@@ -532,6 +532,20 @@ function findParentAndIndex(items, key) {
   return null;
 };
 
+function isParentOf(possibleParent, childKey) {
+  if (!possibleParent || !possibleParent.childItems) {
+    return false;
+  }
+  
+  for (let child of possibleParent.childItems) {
+    if (child.id === childKey || isParentOf(child, childKey)) {
+      return true;
+    }
+  }
+  
+  return false;
+}
+
 function TreeDragAndDropExample(args) {
   let [items, setItems] = useState(rows);
   let flattenedItems = useMemo(() => flattenTree(items), [items]);
@@ -557,22 +571,39 @@ function TreeDragAndDropExample(args) {
           return prevItems
         }
         
+        let targetParent = targetLocation.parent;
+        let dropPosition = e.target.dropPosition;
+        let targetIndex = targetLocation.index;
+        
+        // Prevent dragging parent into its own children
+        for (let key of draggedKeys) {
+          if (isParentOf(flattenedItems.get(key), targetKey)) {
+            return prevItems;
+          }
+        }
+        
         let draggedItems = [];
+        let adjustIndexOffset = 0;
+        
         for (let key of draggedKeys) {
           let location = findParentAndIndex(newItems, key);
           if (location) {
+            // Adjust target index if we're removing from the same parent
+            // and the removed item is before the target
+            if (location.parent === targetParent && location.index < targetIndex) {
+              adjustIndexOffset++;
+            }
+            
             let [item] = location.parent.splice(location.index, 1);
             draggedItems.push(item);
           }
         }
         
-        let insertIndex = e.target.dropPosition === 'before' 
-          ? targetLocation.index
-          : targetLocation.index + 1;
+        let insertIndex = dropPosition === 'before' 
+          ? targetIndex - adjustIndexOffset
+          : targetIndex - adjustIndexOffset + 1;
         
-        // Insert the dragged items at the new position
-        targetLocation.parent.splice(insertIndex, 0, ...draggedItems);
-        
+        targetParent.splice(insertIndex, 0, ...draggedItems);        
         return newItems;
       });
     }
