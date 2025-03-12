@@ -11,6 +11,7 @@
  */
 
 import {BuddhistCalendar, CalendarDate, CalendarDateTime, EthiopicAmeteAlemCalendar, EthiopicCalendar, GregorianCalendar, HebrewCalendar, IndianCalendar, IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar, JapaneseCalendar, PersianCalendar, TaiwanCalendar, Time, toCalendar, toCalendarDate, toCalendarDateTime, toTime, ZonedDateTime} from '..';
+import {Custom454Calendar} from './customCalendarImpl';
 import {fromAbsolute, possibleAbsolutes, toAbsolute, toDate} from '../src/conversion';
 
 describe('CalendarDate conversion', function () {
@@ -442,6 +443,18 @@ describe('CalendarDate conversion', function () {
       it('gregorian to ethioaa', function () {
         let date = new CalendarDate(4507, 9, 29);
         expect(toCalendar(date, new EthiopicAmeteAlemCalendar())).toEqual(new CalendarDate(new EthiopicAmeteAlemCalendar(), 9999, 13, 5));
+      });
+    });
+
+    describe('custom calendar', function () {
+      it('to gregorian', function () {
+        console.log(toCalendar(new CalendarDate(new Custom454Calendar(), 2023, 1, 1), new GregorianCalendar()));
+        console.log(toCalendar(new CalendarDate(new Custom454Calendar(), 2022, 12, 28), new GregorianCalendar()));
+      });
+
+      it('from gregorian', function () {
+        console.log(toCalendar(new CalendarDate(2023, 1, 29), new Custom454Calendar()));
+        console.log(toCalendar(new CalendarDate(2023, 1, 28), new Custom454Calendar()));
       });
     });
   });

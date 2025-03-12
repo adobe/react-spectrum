@@ -24,6 +24,7 @@ export class Custom454Calendar extends GregorianCalendar {
     let year = gregorian.year;
     if (compareDate(gregorian, startOfYear) < 0) {
       year--;
+      [startOfYear, isBigYear] = this.#getCurrentYear(year);
     }
 
     let pointer = startOfYear;
@@ -31,7 +32,7 @@ export class Custom454Calendar extends GregorianCalendar {
       const weeksInMonth = months[k % months.length];
       const end = pointer.add({weeks: weeksInMonth});
       if (compareDate(end, gregorian) > 0) {
-        return new CalendarDate(this, year, k, compareDate(gregorian, pointer) - 1);
+        return new CalendarDate(this, year, k, compareDate(gregorian, pointer) + 1);
       }
       pointer = end;
     }

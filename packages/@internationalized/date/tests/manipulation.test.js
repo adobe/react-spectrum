@@ -494,9 +494,6 @@ describe('CalendarDate manipulation', function () {
         // Sep 2023 has 5 weeks in the 454 calendar; 5*7 = 35 days | Oct 1 - 35 = Aug 27
         let date = toCalendar(new CalendarDate(2023, 10, 1), new Custom454Calendar()); // Start of Oct 2023
         expect(toCalendar(date.subtract({months: 1}), new GregorianCalendar())).toEqual(new CalendarDate(2023, 8, 27));
-
-        console.log(toCalendar(new CalendarDate(2023, 2, 29), new Custom454Calendar()));
-        console.log(toCalendar(new CalendarDate(2023, 2, 29), new Custom454Calendar()));
       });
 
       it('should subtract multiple months correctly', function () {
