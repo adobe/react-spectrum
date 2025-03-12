@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/disclosure",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@react-aria/ssr": "^3.9.7",
-    "@react-aria/utils": "^3.28.0",
+    "@react-aria/utils": "^3.28.1",
     "@react-stately/disclosure": "^3.0.2",
     "@react-types/button": "^3.11.0",
     "@swc/helpers": "^0.5.0"

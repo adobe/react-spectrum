@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/actionbar",
-  "version": "3.6.4",
+  "version": "3.6.5",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -36,20 +36,20 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/focus": "^3.20.0",
-    "@react-aria/i18n": "^3.12.6",
-    "@react-aria/interactions": "^3.24.0",
+    "@react-aria/focus": "^3.20.1",
+    "@react-aria/i18n": "^3.12.7",
+    "@react-aria/interactions": "^3.24.1",
     "@react-aria/live-announcer": "^3.4.1",
-    "@react-aria/utils": "^3.28.0",
-    "@react-spectrum/actiongroup": "^3.10.12",
-    "@react-spectrum/button": "^3.16.11",
-    "@react-spectrum/overlays": "^5.7.2",
-    "@react-spectrum/text": "^3.5.12",
-    "@react-spectrum/utils": "^3.12.2",
+    "@react-aria/utils": "^3.28.1",
+    "@react-spectrum/actiongroup": "^3.10.13",
+    "@react-spectrum/button": "^3.16.12",
+    "@react-spectrum/overlays": "^5.7.3",
+    "@react-spectrum/text": "^3.5.13",
+    "@react-spectrum/utils": "^3.12.3",
     "@react-stately/collections": "^3.12.2",
     "@react-types/actionbar": "^3.1.13",
     "@react-types/shared": "^3.28.0",
-    "@spectrum-icons/ui": "^3.6.13",
+    "@spectrum-icons/ui": "^3.6.14",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {

@@ -217,4 +217,28 @@ describe('useToastState', () => {
     expect(result.current.visibleToasts.length).toBe(1);
     expect(result.current.visibleToasts[0].content).toBe(newValue[0].content);
   });
+
+  it('should use provided wrapUpdate', () => {
+    let wrapUpdate = jest.fn(fn => fn());
+
+    let {result} = renderHook(() => useToastState({wrapUpdate}));
+    expect(result.current.visibleToasts).toStrictEqual([]);
+
+    act(() => {result.current.add(newValue[0].content, newValue[0].props);});
+    expect(result.current.visibleToasts[0].content).toBe(newValue[0].content);
+
+    expect(wrapUpdate).toHaveBeenCalledTimes(1);
+
+    act(() => {result.current.add('Second Toast');});
+    expect(result.current.visibleToasts.length).toBe(1);
+    expect(result.current.visibleToasts[0].content).toBe('Second Toast');
+
+    expect(wrapUpdate).toHaveBeenCalledTimes(2);
+
+    act(() => {result.current.close(result.current.visibleToasts[0].key);});
+    expect(result.current.visibleToasts.length).toBe(1);
+    expect(result.current.visibleToasts[0].content).toBe(newValue[0].content);
+
+    expect(wrapUpdate).toHaveBeenCalledTimes(3);
+  });
 });
