@@ -56,6 +56,10 @@ export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | n
   // this means we could end up calling onLoadMore multiple times if isLoading changes but the collection takes time to update
   let collectionAwaitingUpdate = useRef(collection && isLoading);
   useLayoutEffect(() => {
+    if (!ref.current) {
+      return;
+    }
+
     // Only update this flag if the collection changes when we aren't loading. Guard against the addition of a loading spinner when a load starts
     // which mutates the collection? Alternatively, the user might wipe the collection during load
     // If collection isn't provided, update flag
@@ -63,36 +67,40 @@ export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | n
       collectionAwaitingUpdate.current = false;
     }
 
-    // TODO: if we aren't loading, if the collection has changed, and the height is the same, we should load more
-    // if we aren't loading, if the collection is the same, and the height is the same, we are either in a case where we are still processing
-    // the collection and thus don't want to trigger a load or we had items preloaded and need to load more. That means comparing collection to lastCollection is
-    // insufficient
-    // might need to wait for height to change?
-    // TODO: This doesn't quite work if we dont set a rowHeight in the ListLayout, this is because when
-    // Will also need to test against a case where there are sections being loaded and/or estimated height
-    // Ideally this layoutEffect would trigger after the collection updates AND the item size has settled
-    // Previously, Virtualizer passed state from useVirtualizerState into this hook so that we could get a rerender and trigger this effect
-    // as well as compare previous/last sizes
-    let shouldLoadMore = onLoadMore
-      && !isLoading
-      // For v3 virtualizer, no collection will be provided to this hook so skip this check. Otherwise we should stop loadMore
-      // calls in RAC if we are waiting for the collection to be updated from a async load call
-      && (!(collection && collectionAwaitingUpdate.current))
-      && (ref?.current && ref.current.clientHeight === ref.current.scrollHeight);
+    let observer = new IntersectionObserver((entries) => {
+      let allItemsInView = true;
+      entries.forEach((entry) => {
+        // TODO this is problematic if the entry is a long row since a part of it will always out of view meaning the intersectionRatio is < 1
+        if (entry.intersectionRatio < 1) {
+          allItemsInView = false;
+        }
+      });
 
-    if (shouldLoadMore) {
-      onLoadMore?.();
-      // Only update this flag if a collection has been provided, v3 virtualizer doesn't provide a collection so we don't need
-      // to use collectionAwaitingUpdate at all.
-      if (collection !== null && lastCollection.current !== null) {
-        collectionAwaitingUpdate.current = true;
+      if (allItemsInView && !isLoading && !(collection && collectionAwaitingUpdate.current) && onLoadMore) {
+        onLoadMore();
+        if (collection !== null && lastCollection.current !== null) {
+          collectionAwaitingUpdate.current = true;
+        }
       }
+    }, {root: ref.current});
+
+    // TODO: right now this is using the Virtualizer's div that wraps the rows, but perhaps should be the items themselves
+    // This also has various problems because we'll need to figure out what is the proper element to compare the scroll container height to
+
+    let lastElement = ref.current.querySelector('[role="presentation"]');
+    // let lastElement = ref.current.querySelector('[role="presentation"]>[role="presentation"]:last-child');
+    if (lastElement) {
+      observer.observe(lastElement);
     }
 
-    // TODO: only update this when isLoading is false? Might need to guard against the case where loading spinners are added/collection is temporarly wiped/
-    // loading spinner is removed when loading finishes (this last one we might still need to guard against somehow...). Seems to be ok for now
     lastCollection.current = collection;
+    return () => {
+      if (observer) {
+        observer.disconnect();
+      }
+    };
   }, [isLoading, onLoadMore, props, ref, collection]);
+
 
   // TODO: maybe this should still just return scroll props?
   // Test against case where the ref isn't defined when this is called
