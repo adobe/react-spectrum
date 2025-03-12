@@ -69,7 +69,8 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
   // let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/gridlist');
   let {direction} = useLocale();
-  let {onAction, linkBehavior, keyboardNavigationBehavior} = listMap.get(state)!;
+  const listMapData = listMap.get(state);
+  let {onAction, linkBehavior = 'action', keyboardNavigationBehavior = 'arrow'} = listMapData || {};
   let descriptionId = useSlotId();
 
   // We need to track the key of the item at the time it was last focused so that we force
