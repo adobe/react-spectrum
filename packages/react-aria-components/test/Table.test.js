@@ -815,6 +815,66 @@ describe('Table', () => {
     expect(cells[0]).toHaveTextContent('Foo (focused)');
   });
 
+  it('should support columnHeader typeahead', async () => {
+    let {getAllByRole} = render(
+      <Table aria-label="Files">
+        <MyTableHeader columns={columns}>
+          {column => (
+            <MyColumn isRowHeader={column.isRowHeader} childColumns={column.children}>
+              {column.name}
+            </MyColumn>
+          )}
+        </MyTableHeader>
+        <TableBody items={rows}>
+          {item => (
+            <MyRow columns={columns}>
+              {column => <Cell>{item[column.id]}</Cell>}
+            </MyRow>
+          )}
+        </TableBody>
+      </Table>
+    );
+    let rowElements = getAllByRole('row');
+
+    await user.tab();
+    expect(document.activeElement).toBe(rowElements[1]);
+    await user.keyboard('boo');
+    expect(document.activeElement).toBe(rowElements[3]);
+  });
+
+  it('should support textValue overriding typeahead', async () => {
+    let rows = [
+      {id: 1, name: '1. Games', date: '6/7/2020', type: 'File folder', textValue: 'Games'},
+      {id: 2, name: '2. Program Files', date: '4/7/2021', type: 'File folder', textValue: 'Program Files'},
+      {id: 3, name: '3. bootmgr', date: '11/20/2010', type: 'System file', textValue: 'bootmgr'},
+      {id: 4, name: '4. log.txt', date: '1/18/2016', type: 'Text Document', textValue: 'log.txt'}
+    ];
+    let {getAllByRole} = render(
+      <Table aria-label="Files">
+        <MyTableHeader columns={columns}>
+          {column => (
+            <MyColumn isRowHeader={column.isRowHeader} childColumns={column.children}>
+              {column.name}
+            </MyColumn>
+          )}
+        </MyTableHeader>
+        <TableBody items={rows}>
+          {item => (
+            <MyRow columns={columns} textValue={item.textValue}>
+              {column => <Cell>{item[column.id]}</Cell>}
+            </MyRow>
+          )}
+        </TableBody>
+      </Table>
+    );
+    let rowElements = getAllByRole('row');
+
+    await user.tab();
+    expect(document.activeElement).toBe(rowElements[1]);
+    await user.keyboard('boo');
+    expect(document.activeElement).toBe(rowElements[3]);
+  });
+
   it('should support updating columns', () => {
     let tree = render(<DynamicTable tableHeaderProps={{columns}} tableBodyProps={{dependencies: [columns]}} rowProps={{columns}} />);
     let headers = tree.getAllByRole('columnheader');
@@ -929,7 +989,7 @@ describe('Table', () => {
       }
     }
   });
-  
+
   describe('colSpan', () => {
     it('should render table with colSpans', () => {
       let {getAllByRole} = render(<TableCellColSpan />);
