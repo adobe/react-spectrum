@@ -57,8 +57,8 @@ export interface ToastState<T> {
  * of actions, errors, or other events in an application.
  */
 export function useToastState<T>(props: ToastStateProps = {}): ToastState<T> {
-  let {maxVisibleToasts = 1} = props;
-  let queue = useMemo(() => new ToastQueue<T>({maxVisibleToasts}), [maxVisibleToasts]);
+  let {maxVisibleToasts = 1, wrapUpdate} = props;
+  let queue = useMemo(() => new ToastQueue<T>({maxVisibleToasts, wrapUpdate}), [maxVisibleToasts, wrapUpdate]);
   return useToastQueue(queue);
 }
 
