@@ -26,7 +26,8 @@ export function evaluate(code, filename) {
     React,
     require(id) {
       return require(Module._resolveFilename(id, {filename}));
-    }
+    },
+    exports: {}
   };
 
   vm.createContext(ctx);

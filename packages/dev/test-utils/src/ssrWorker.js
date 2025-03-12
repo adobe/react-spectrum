@@ -21,12 +21,15 @@ ignoreStyles.default(undefined, (module) => {
   module.exports = identityObjectProxy;
 });
 
-require('@babel/register')({
+const {register} = require('@swc-node/register/register');
+register({
   extensions: ['.js', '.ts', '.tsx']
 });
 
 let {evaluate} = require('./ssrUtils');
 let {SSRProvider} = require('@react-aria/ssr');
+
+
 
 http.createServer((req, res) => {
   let body = '';

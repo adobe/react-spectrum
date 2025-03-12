@@ -22,6 +22,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {SSRProvider} from '@react-aria/ssr';
 import util from 'util';
+import * as swc from '@swc/core';
 
 let ReactDOMClient;
 try {
@@ -32,7 +33,26 @@ try {
 
 export async function testSSR(filename, source, runAfterServer) {
   // Transform the code with babel so JSX becomes JS.
-  source = babel.transformSync(source, {filename}).code;
+  source = swc.transformSync(source, {
+    filename,
+    module: {
+      type: 'module'
+    },
+    jsc: {
+      parser: {
+        syntax: 'typescript',
+        tsx: true,
+        importAssertions: true
+      },
+
+      transform: {
+        react: {
+          runtime: 'automatic'
+        }
+      }
+    }
+  }).code;
+  console.log(source);
 
   // Send the HTML along with the source code to the worker to be hydrated in a DOM environment.
   return new Promise((resolve, reject) => {
