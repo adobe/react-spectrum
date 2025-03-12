@@ -504,7 +504,9 @@ export const VirtualizedTree = {
 function flattenTree(items) {
   let flattened = new Map();
   function traverse(items) {
-    if (!items) return;
+    if (!items) {
+      return;
+    }
     for (let item of items) {
       flattened.set(item.id, item);
       if (item.childItems) {
@@ -519,7 +521,7 @@ function flattenTree(items) {
 function findParentAndIndex(items, key) {
   for (let i = 0; i < items.length; i++) {
     if (items[i].id === key) {
-      return { parent: items, index: i };
+      return {parent: items, index: i};
     }
     
     if (items[i].childItems) {
@@ -566,9 +568,9 @@ function TreeDragAndDropExample(args) {
       setItems((prevItems) => {
         let newItems = JSON.parse(JSON.stringify(prevItems));
         let targetLocation = findParentAndIndex(newItems, targetKey);
-        if (!targetLocation){
+        if (!targetLocation) {
           // Target not found
-          return prevItems
+          return prevItems;
         }
         
         let targetParent = targetLocation.parent;
