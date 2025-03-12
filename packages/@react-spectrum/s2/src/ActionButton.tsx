@@ -19,6 +19,7 @@ import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {getAllowedOverrides, staticColor, StyleProps} from './style-utils' with { type: 'macro' };
 import {IconContext} from './Icon';
+import {NotificationBadgeContext} from './NotificationBadge';
 import {pressScale} from './pressScale';
 import {SkeletonContext} from './Skeleton';
 import {Text, TextContext} from './Content';
@@ -59,6 +60,7 @@ export interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'styl
 
 // These styles handle both ActionButton and ToggleButton
 const iconOnly = ':has([slot=icon], [slot=avatar]):not(:has([data-rsp-slot=text]))';
+const textOnly = ':has([data-rsp-slot=text]):not(:has([slot=icon], [slot=avatar]))';
 export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleButtonStyleProps & ActionGroupItemStyleProps & {isInGroup: boolean, isStaticColor: boolean}>({
   ...focusRing(),
   ...staticColor(),
@@ -216,7 +218,34 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
   zIndex: {
     isFocusVisible: 2
   },
-  disableTapHighlight: true
+  disableTapHighlight: true,
+  '--badgeTop': {
+    type: 'top',
+    value: {
+      default: '[calc(self(height)/2 - var(--iconWidth)/2)]',
+      [iconOnly]: '[calc(self(height)/2 - var(--iconWidth)/2)]',
+      [textOnly]: 0
+    }
+  },
+  '--buttonPaddingX': {
+    type: 'paddingStart',
+    value: {
+      default: '[calc(self(height, self(minHeight)) * 3 / 8)]',
+      [iconOnly]: 0
+    }
+  },
+  '--iconWidth': {
+    type: 'width',
+    value: fontRelative(20)
+  },
+  '--badgePosition': {
+    type: 'width',
+    value: {
+      default: '[calc(var(--buttonPaddingX) + var(--iconWidth))]',
+      [iconOnly]: '[calc(self(minWidth)/2 + var(--iconWidth)/2)]',
+      [textOnly]: 'full'
+    }
+  }
 }, getAllowedOverrides());
 
 // Matching icon sizes. TBD.
@@ -232,7 +261,7 @@ export const ActionButtonContext = createContext<ContextValue<Partial<ActionButt
 
 /**
  * ActionButtons allow users to perform an action.
- * They’re used for similar, task-based options within a workflow, and are ideal for interfaces where buttons aren’t meant to draw a lot of attention.
+ * They're used for similar, task-based options within a workflow, and are ideal for interfaces where buttons aren't meant to draw a lot of attention.
  */
 export const ActionButton = forwardRef(function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ActionButtonContext);
@@ -281,6 +310,12 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
           [AvatarContext, {
             size: avatarSize[size],
             styles: style({marginStart: '--iconMargin', flexShrink: 0, order: 0})
+          }],
+          [NotificationBadgeContext, {
+            // there is no XS NotificationBadge design but there are XS Action Buttons. 
+            // what should we do in the case someone wants to add an indicator on an XS Action Button? just use size small?
+            size: props.size === 'XS' ? 'S' : props.size,
+            styles: style({position: 'absolute', top: '--badgeTop', insetStart: '[var(--badgePosition)]', marginTop: '[calc((self(height) * -1)/2)]', marginStart: '[calc((self(height) * -1)/2)]'})
           }]
         ]}>
         {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}

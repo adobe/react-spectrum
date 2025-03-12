@@ -129,6 +129,7 @@
     "jest": "^29.5.0"
   },
   "dependencies": {
+    "@internationalized/number": "^3.6.0",
     "@react-aria/collections": "3.0.0-beta.1",
     "@react-aria/focus": "^3.20.1",
     "@react-aria/i18n": "^3.12.7",

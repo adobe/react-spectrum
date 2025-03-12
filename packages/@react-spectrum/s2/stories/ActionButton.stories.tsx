@@ -10,8 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Avatar, Text} from '../src';
+import {ActionButton, Avatar, NotificationBadge, Text} from '../src';
+import BellIcon from '../s2wf-icons/S2_Icon_Bell_20_N.svg';
 import {categorizeArgTypes, StaticColorDecorator} from './utils';
+import CommentIcon from '../s2wf-icons/S2_Icon_Comment_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {style} from '../style' with { type: 'macro' };
@@ -198,3 +200,17 @@ export const Avatars: Story = {
     );
   }
 };
+
+export const NotificationBadges: Story = {
+  render: (args) => {
+    return (
+      <div style={{display: 'flex', gap: 8, padding: 8, justifyContent: 'center'}}>
+        <ActionButton aria-label="Press me" {...args}><NewIcon /><NotificationBadge /></ActionButton>
+        <ActionButton aria-label="Press me" {...args}><BellIcon /><NotificationBadge value={10} /></ActionButton>
+        <ActionButton {...args}><CommentIcon /><Text>Messages</Text><NotificationBadge value={5} /></ActionButton>
+        <ActionButton {...args}><Text>Notifications</Text><NotificationBadge value={105} /></ActionButton>
+      </div>
+    );
+  }
+};
+
