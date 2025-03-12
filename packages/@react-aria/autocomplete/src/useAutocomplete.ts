@@ -18,7 +18,7 @@ import {dispatchVirtualBlur, dispatchVirtualFocus, moveVirtualFocus} from '@reac
 import {getInteractionModality} from '@react-aria/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {FocusEvent as ReactFocusEvent, KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef} from 'react';
+import {FocusEvent as ReactFocusEvent, KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef} from 'react';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface CollectionOptions extends DOMProps, AriaLabelingProps {
@@ -32,7 +32,13 @@ export interface AriaAutocompleteProps extends AutocompleteProps {
    * An optional filter function used to determine if a option should be included in the autocomplete list.
    * Include this if the items you are providing to your wrapped collection aren't filtered by default.
    */
-  filter?: (textValue: string, inputValue: string) => boolean
+  filter?: (textValue: string, inputValue: string) => boolean,
+
+  /**
+   * Whether or not to focus the first item in the collection after a filter is performed.
+   * @default false
+   */
+  disableAutoFocusFirst?: boolean
 }
 
 export interface AriaAutocompleteOptions extends Omit<AriaAutocompleteProps, 'children'> {
@@ -50,7 +56,7 @@ export interface AutocompleteAria {
   /** Ref to attach to the wrapped collection. */
   collectionRef: RefObject<HTMLElement | null>,
   /** A filter function that returns if the provided collection node should be filtered out of the collection. */
-  filterFn?: (nodeTextValue: string) => boolean
+  filter?: (nodeTextValue: string) => boolean
 }
 
 /**
@@ -63,7 +69,8 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
   let {
     inputRef,
     collectionRef,
-    filter
+    filter,
+    disableAutoFocusFirst = false
   } = props;
 
   let collectionId = useId();
@@ -90,7 +97,7 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
     if (e.isTrusted || !target || queuedActiveDescendant.current === target.id) {
       return;
     }
-    
+
     clearTimeout(timeout.current);
     if (target !== collectionRef.current) {
       if (delayNextActiveDescendant.current) {
@@ -160,7 +167,7 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
   let onChange = (value: string) => {
     // Tell wrapped collection to focus the first element in the list when typing forward and to clear focused key when deleting text
     // for screen reader announcements
-    if (state.inputValue !== value && state.inputValue.length <= value.length) {
+    if (state.inputValue !== value && state.inputValue.length <= value.length && !disableAutoFocusFirst) {
       focusFirstItem();
     } else {
       // Fully clear focused key when backspacing since the list may change and thus we'd want to start fresh again
@@ -245,7 +252,7 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
         new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
       ) || false;
     }
-    
+
     if (shouldPerformDefaultAction) {
       switch (e.key) {
         case 'ArrowLeft':
@@ -343,7 +350,7 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
       autoCorrect: 'off',
       // This disable's the macOS Safari spell check auto corrections.
       spellCheck: 'false',
-      [parseInt(React.version, 10) >= 17 ? 'enterKeyHint' : 'enterkeyhint']: 'enter',
+      enterKeyHint: 'go',
       onBlur,
       onFocus
     },
@@ -352,6 +359,6 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
       disallowTypeAhead: true
     }),
     collectionRef: mergedCollectionRef,
-    filterFn: filter != null ? filterFn : undefined
+    filter: filter != null ? filterFn : undefined
   };
 }

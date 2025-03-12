@@ -250,6 +250,11 @@ exports[`variants 1`] = `
     background-color: var(--color-red);
   }
 }
+.has-child-items\\:bg-red {
+  &[data-has-child-items] {
+    background-color: var(--color-red);
+  }
+}
 .expanded\\:bg-red {
   &:where([data-rac])[data-expanded] {
     background-color: var(--color-red);
@@ -469,6 +474,11 @@ exports[`variants with prefix 1`] = `
 }
 .rac-has-submenu\\:bg-red {
   &[data-has-submenu] {
+    background-color: var(--color-red);
+  }
+}
+.rac-has-child-items\\:bg-red {
+  &[data-has-child-items] {
     background-color: var(--color-red);
   }
 }

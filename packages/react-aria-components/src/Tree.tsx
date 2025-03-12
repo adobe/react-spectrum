@@ -21,7 +21,7 @@ import {DragAndDropContext, DropIndicatorContext, useDndPersistedKeys, useRender
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
 
 class TreeCollection<T> implements ICollection<Node<T>> {
@@ -282,7 +282,6 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   });
 
   let emptyState: ReactNode = null;
-  let emptyStatePropOverrides: HTMLAttributes<HTMLElement> | null = null;
   if (state.collection.size === 0 && props.renderEmptyState) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let {isEmpty, ...values} = renderValues;
@@ -308,12 +307,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
         <div
           {...filterDOMProps(props)}
           {...renderProps}
-          {...mergeProps(
-            gridProps,
-            focusProps,
-            emptyStatePropOverrides,
-            droppableCollection?.collectionProps
-          )}
+          {...mergeProps(gridProps, focusProps, droppableCollection?.collectionProps)}
           ref={ref}
           slot={props.slot || undefined}
           onScroll={props.onScroll}
@@ -576,7 +570,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
   );
 });
 
-export interface TreeLoadingIndicatorRenderProps {
+export interface UNSTABLE_TreeLoadingIndicatorRenderProps {
   /**
    * What level the tree item has within the tree.
    * @selector [data-level]
@@ -584,9 +578,9 @@ export interface TreeLoadingIndicatorRenderProps {
   level: number
 }
 
-export interface TreeLoaderProps extends RenderProps<TreeLoadingIndicatorRenderProps>, StyleRenderProps<TreeLoadingIndicatorRenderProps> {}
+export interface TreeLoaderProps extends RenderProps<UNSTABLE_TreeLoadingIndicatorRenderProps>, StyleRenderProps<UNSTABLE_TreeLoadingIndicatorRenderProps> {}
 
-export const TreeLoadingIndicator = createLeafComponent('loader', function TreeLoader<T extends object>(props: TreeLoaderProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', function TreeLoader<T extends object>(props: TreeLoaderProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let state = useContext(TreeStateContext);
   // This loader row is is non-interactable, but we want the same aria props calculated as a typical row
   // @ts-ignore

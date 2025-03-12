@@ -15,7 +15,7 @@ import {AriaGridListItemOptions, GridListItemAria, useGridListItem} from '@react
 import {DOMAttributes, FocusableElement, Node, RefObject} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isAndroid} from '@react-aria/utils';
+import {isAndroid, useLabels} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -46,6 +46,10 @@ export function useTreeItem<T>(props: AriaTreeItemOptions, state: TreeState<T>, 
   let gridListAria = useGridListItem(props, state, ref);
   let isExpanded = gridListAria.rowProps['aria-expanded'] === true;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/tree');
+  let labelProps = useLabels({
+    'aria-label': isExpanded ? stringFormatter.format('collapse') : stringFormatter.format('expand'),
+    'aria-labelledby': gridListAria.rowProps.id
+  });
 
   let expandButtonProps = {
     onPress: () => {
@@ -55,9 +59,9 @@ export function useTreeItem<T>(props: AriaTreeItemOptions, state: TreeState<T>, 
         state.selectionManager.setFocusedKey(node.key);
       }
     },
-    'aria-label': isExpanded ? stringFormatter.format('collapse') : stringFormatter.format('expand'),
     tabIndex: isAndroid() ? -1 : null,
-    'data-react-aria-prevent-focus': true
+    'data-react-aria-prevent-focus': true,
+    ...labelProps
   };
 
   // TODO: should it return a state specifically for isExpanded? Or is aria attribute sufficient?

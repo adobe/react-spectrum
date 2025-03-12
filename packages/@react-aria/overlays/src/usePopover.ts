@@ -87,7 +87,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     ...otherProps
   } = props;
 
-  let isSubmenu = otherProps['trigger'] === 'SubmenuTrigger' || otherProps['trigger'] === 'SubDialogTrigger';
+  let isSubmenu = otherProps['trigger'] === 'SubmenuTrigger';
 
   let {overlayProps, underlayProps} = useOverlay(
     {
@@ -106,7 +106,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     targetRef: triggerRef,
     overlayRef: popoverRef,
     isOpen: state.isOpen,
-    onClose: isNonModal ? state.close : null
+    onClose: isNonModal && !isSubmenu ? state.close : null
   });
 
   usePreventScroll({
