@@ -28,12 +28,11 @@ import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {DOMRef, Expandable, Key, SelectionBehavior, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {isAndroid} from '@react-aria/utils';
-import React, {createContext, JSX, JSXElementConstructor, ReactElement, ReactNode, useRef} from 'react';
+import React, {createContext, JSX, JSXElementConstructor, ReactElement, ReactNode, useEffect, useRef} from 'react';
 import {SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
 import {useButton} from '@react-aria/button';
 import {useLocale} from '@react-aria/i18n';
-import type {DragAndDropHooks} from '@react-spectrum/dnd';
 
 export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeProps<T>, 'children'>, StyleProps, SpectrumSelectionProps, Expandable {
   /** Provides content to display when there are no items in the tree. */
@@ -46,10 +45,7 @@ export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeProps<T>, 'childr
   /**
    * The contents of the tree.
    */
-  children?: ReactNode | ((item: T) => ReactNode),
-
-  /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the ListBox. */
-  dragAndDropHooks?: DragAndDropHooks['dragAndDropHooks']
+  children?: ReactNode | ((item: T) => ReactNode)
 }
 
 export interface SpectrumTreeViewItemProps<T extends object = object> extends Omit<TreeItemProps, 'className' | 'style' | 'value' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'> {
