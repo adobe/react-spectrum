@@ -21,12 +21,31 @@ ignoreStyles.default(undefined, (module) => {
   module.exports = identityObjectProxy;
 });
 
-require('@babel/register')({
-  extensions: ['.js', '.ts', '.tsx']
+const {register} = require('@swc-node/register/register');
+register({
+  extensions: ['.js', '.ts', '.tsx'],
+  module: {
+    type: ''
+  },
+
+  jsc: {
+    parser: {
+      syntax: 'typescript',
+      tsx: true,
+      importAssertions: true
+    },
+
+    transform: {
+      react: {
+        runtime: 'automatic'
+      }
+    }
+  }
 });
 
 let {evaluate} = require('./ssrUtils');
 let {SSRProvider} = require('@react-aria/ssr');
+
 
 http.createServer((req, res) => {
   let body = '';
@@ -45,6 +64,7 @@ http.createServer((req, res) => {
 
     let html;
     try {
+      console.log(parsed.source);
       // Evaluate the code, and render the resulting JSX element to HTML.
       let element = evaluate(parsed.source, parsed.filename);
       html = ReactDOMServer.renderToString(React.createElement(SSRProvider, undefined, element));

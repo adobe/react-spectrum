@@ -43,6 +43,7 @@ export async function testSSR(filename, source, runAfterServer) {
       headers: {
         'Content-Type': 'application/json'
       }
+
     }, res => {
       let body = '';
       res.setEncoding('utf8');
