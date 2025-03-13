@@ -101,7 +101,7 @@ export const NotificationBadge = forwardRef(function Badge(props: NotificationBa
   let {locale} = useLocale();
 
   if (value && value < 0) {
-    throw new Error('Value cannot be negative')
+    throw new Error('Value cannot be negative');
   }
 
   let truncatedValue: number | undefined = undefined;
@@ -126,7 +126,7 @@ export const NotificationBadge = forwardRef(function Badge(props: NotificationBa
   } else if (length === 1) {
     isSingleDigit = true;
   } else if (length === 2) {
-    isDoubleDigit = true
+    isDoubleDigit = true;
   }
 
   if (truncatedValue) {
@@ -140,7 +140,7 @@ export const NotificationBadge = forwardRef(function Badge(props: NotificationBa
       className={(props.UNSAFE_className || '') + badge({size, isEmpty, isSingleDigit, isDoubleDigit, isMaxDigit}, props.styles)}
       style={props.UNSAFE_style}
       ref={domRef}>
-        {formattedValue}
+      {formattedValue}
     </span>
   );
 });
