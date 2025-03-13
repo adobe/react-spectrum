@@ -90,7 +90,7 @@ export class MenuTester {
   /**
    * Set the interaction type used by the menu tester.
    */
-  setInteractionType(type: UserOpts['interactionType']) {
+  setInteractionType(type: UserOpts['interactionType']): void {
     this._interactionType = type;
   }
 
@@ -99,7 +99,7 @@ export class MenuTester {
   /**
    * Opens the menu. Defaults to using the interaction type set on the menu tester.
    */
-  async open(opts: MenuOpenOpts = {}) {
+  async open(opts: MenuOpenOpts = {}): Promise<void> {
     let {
       needsLongPress,
       interactionType = this._interactionType,
@@ -178,7 +178,7 @@ export class MenuTester {
    * Selects the desired menu option. Defaults to using the interaction type set on the menu tester. If necessary, will open the menu dropdown beforehand.
    * The desired option can be targeted via the option's node, the option's text, or the option's index.
    */
-  async selectOption(opts: MenuSelectOpts) {
+  async selectOption(opts: MenuSelectOpts): Promise<void> {
     let {
       menuSelectionMode = 'single',
       needsLongPress,
@@ -314,7 +314,7 @@ export class MenuTester {
   /**
    * Closes the menu.
    */
-  async close() {
+  async close(): Promise<void> {
     let menu = this.menu;
     if (menu) {
       act(() => menu.focus());

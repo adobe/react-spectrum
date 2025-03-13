@@ -14,7 +14,7 @@ import {AriaLabelingProps, DOMProps, IconColorValue, StyleProps} from '@react-ty
 import {baseStyleProps, classNames, StyleHandlers, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {ProviderContext, useProvider} from '@react-spectrum/provider';
-import React, {ReactElement} from 'react';
+import React, {ReactElement, ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 
 export interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
@@ -59,7 +59,7 @@ const iconStyleProps: StyleHandlers = {
 /**
  * Spectrum icons are clear, minimal, and consistent across platforms. They follow the focused and rational principles of the design system in both metaphor and style.
  */
-export function Icon(props: IconProps) {
+export function Icon(props: IconProps): ReactNode {
   props = useSlotProps(props, 'icon');
   let {
     children,

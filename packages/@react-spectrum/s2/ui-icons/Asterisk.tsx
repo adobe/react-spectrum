@@ -13,9 +13,9 @@
 import Asterisk_L from './S2_AsteriskSize200.svg';
 import Asterisk_M from './S2_AsteriskSize100.svg';
 import Asterisk_XL from './S2_AsteriskSize300.svg';
-import {SVGProps} from 'react';
+import {ReactNode, SVGProps} from 'react';
 
-export default function Asterisk(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL'}) {
+export default function Asterisk(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL'}): ReactNode {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':
