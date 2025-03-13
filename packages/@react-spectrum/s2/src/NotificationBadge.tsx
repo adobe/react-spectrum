@@ -14,16 +14,18 @@ import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/sha
 import {ContextValue, SlotProps} from 'react-aria-components';
 import {filterDOMProps} from '@react-aria/utils';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {NumberFormatter} from '@internationalized/number';
 import React, {createContext, forwardRef} from 'react';
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface NotificationBadgeStyleProps {
   /**
-   * The size of the badge.
+   * The size of the notification badge.
    *
    * @default 'S'
    */
@@ -32,7 +34,7 @@ export interface NotificationBadgeStyleProps {
 
 export interface NotificationBadgeProps extends DOMProps, AriaLabelingProps, StyleProps, NotificationBadgeStyleProps, SlotProps {
   /**
-   * The value to be displayed in the badge.
+   * The value to be displayed in the notification badge.
    */
   value?: number
 }
@@ -74,98 +76,61 @@ const badge = style({
     }
   },
   aspectRatio: {
+    isEmpty: 'square',
     isSingleDigit: 'square'
   },
-  // width: {
-  //   isSingleDigit: {
-  //     size: {
-  //       S: 12,
-  //       M: '[14px]',
-  //       L: 16,
-  //       XL: 18
-  //     }
-  //   },
-  //   isDoubleDigit: {
-  //     size: {
-  //       S: 18,
-  //       M: 20,
-  //       L: '[22px]',
-  //       XL: 26
-  //     }
-  //   },
-  //   isMaxDigit: {
-  //     size: {
-  //       S: 24,
-  //       M: '[26px]',
-  //       L: 28,
-  //       XL: '[34px]'
-  //     }
-  //   },
-  //   isEmpty: {
-  //     size: {
-  //       S: 8,
-  //       M: 8,
-  //       L: '[10px]',
-  //       XL: '[10px]'
-  //     }
-  //   }
-  // },
+  width: 'fit',
+  paddingX: {
+    isDoubleDigit: 'edge-to-text'
+  },
   borderRadius: 'pill'
 }, getAllowedOverrides());
 
-let wrapper = style({
-  width: 'fit',
-  '--textWidth': {
-    type: 'width',
-    value: '[self(width)]'
-  }
-})
-
 /**
- * Badges are used for showing a small amount of color-categorized metadata, ideal for getting a user's attention.
+ * Notification badges are used to indicate new or pending activity .
  */
 export const NotificationBadge = forwardRef(function Badge(props: NotificationBadgeProps, ref: DOMRef<HTMLDivElement>) {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   [props, ref] = useSpectrumContextProps(props, ref, NotificationBadgeContext);
   let {
     size = 'S',
     value,
     ...otherProps
-  } = props; // useProviderProps(props) in v3
+  } = props;
   let domRef = useDOMRef(ref);
   let {locale} = useLocale();
 
-  // should we error if the value is negative? is that a valid value someone can enter? ask design?
-  if (value && value > 99) {
-    value = 99;
+  if (value && value < 0) {
+    throw new Error('Value cannot be negative')
   }
 
+  let truncatedValue: number | undefined = undefined;
+  if (value && value > 99) {
+    truncatedValue = 99;
+  }
+
+  let formattedValue = '';
+  if (truncatedValue) {
+    formattedValue = new NumberFormatter(locale).format(truncatedValue);
+  } else if (value) {
+    formattedValue = new NumberFormatter(locale).format(value);
+  }
+
+  let length = formattedValue.length;
   let isEmpty = false;
   let isSingleDigit = false;
   let isDoubleDigit = false;
   let isMaxDigit = false;
   if (!value) {
     isEmpty = true; 
-  } else if (value < 10) {
+  } else if (length === 1) {
     isSingleDigit = true;
-  } else if (value === 99) {
-    isMaxDigit = true;
-  } else {
-    isDoubleDigit = true;
+  } else if (length === 2) {
+    isDoubleDigit = true
   }
 
-
-  let formattedValue = '';
-  if (value) {
-    formattedValue = new NumberFormatter(locale).format(value);
-    formattedValue = new NumberFormatter('zh-CN', {numberingSystem: 'hanidec'}).format(value);
-    // formattedValue = new NumberFormatter('ko-KR', {numberingSystem: 'kore'}).format(value);
-  }
-
-  console.log(formattedValue.length);
-  
-  if (value === 99) {
-    // do we need to localize this? are there any locales where we should using something else than a + symbol?
-    formattedValue += '+';
+  if (truncatedValue) {
+    formattedValue += stringFormatter.format('notificationbadge.plus');
   }
 
   return (
@@ -175,9 +140,7 @@ export const NotificationBadge = forwardRef(function Badge(props: NotificationBa
       className={(props.UNSAFE_className || '') + badge({size, isEmpty, isSingleDigit, isDoubleDigit, isMaxDigit}, props.styles)}
       style={props.UNSAFE_style}
       ref={domRef}>
-        <span>
-          {formattedValue}
-        </span>
+        {formattedValue}
     </span>
   );
 });

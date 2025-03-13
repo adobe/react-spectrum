@@ -25,14 +25,13 @@ const meta: Meta<typeof NotificationBadge> = {
 export default meta;
 
 export const Example = (args: any) => (
-  <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
-    <NotificationBadge {...args} value={1} />
-    <NotificationBadge {...args} value={10} />
-    <NotificationBadge {...args} value={100} />
-    <NotificationBadge {...args} />
+  <div style={{display: 'flex', flexWrap: 'wrap', gap: 8, maxWidth: '600px'}}>
+    {Array.from({length: 100}, (_, i) => i + 1).map(value => (
+      <NotificationBadge key={value} {...args} value={value} />
+    ))}
   </div>
 );
 
-// Example.args = {
-//   value: 1
-// }
+export const Empty = (args: any) => (
+  <NotificationBadge {...args} />
+);
