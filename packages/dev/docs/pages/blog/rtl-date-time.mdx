@@ -29,34 +29,46 @@ author: '[Yihui Liao](https://github.com/yihuiliao)'
 
 # Improving Internationalization Support in Our Date and Time Components
 
-Internationalization is a core feature of our Date and Time components. We support 13 different calendar systems such as Gregorian, Buddhist, Islamic, Persian, and more, as well as locale-specific formatting, number systems, and 12 and 24 hour time. However, we identified an issue with our right-to-left support where in some right-to-left (RTL) languages, the format of the date and time fields was incorrect. While investigating this bug, we faced several challenges in ensuring proper date and time representation in RTL languages and implemented various strategies that we’d like to share.
+Internationalization is a core feature of our Date and Time components. We support 13 different calendar systems such as Gregorian, Buddhist, Islamic, Persian, and more, as well as locale-specific formatting, number systems, and 12 and 24 hour time. However, we identified an issue with our right-to-left support where in some right-to-left (RTL) languages, the format of the date and time fields was incorrect. While investigating this bug, we faced several challenges in ensuring accurate date and time representation in RTL languages and implemented various strategies that we’d like to share in this blog post.
 
 
 ## The Structure of Our Date/Time Components
 
-In a [previous blog post](https://react-spectrum.adobe.com/blog/date-and-time-pickers-for-all.html#date-fields), we discussed the reasoning behind the component structure of our date and time components. In short, we decided that our date and time components would render individually focusable segments for each date and time unit to avoid the problem of parsing dates in various formats entirely, a common problem when using a free form text field as a date field. Since the date and time format is automatically determined based on the user’s locale, the user only needs to fill in the values without having to worry about the appropriate separators or the order. This made for a smoother and more intuitive experience for the user that leaves out the guess work when it coming to formatting and parsing dates in various locales.
+In a [previous blog post](https://react-spectrum.adobe.com/blog/date-and-time-pickers-for-all.html#date-fields), we discussed the reasoning behind the component structure of our date and time components. In short, we designed these components to render individually focusable segments for each date and time unit, eliminating the challenges of parsing various date formats — an issue commonly encountered with free-form text fields. Since the date and time format is automatically determined based on the user’s locale, the user only needs to fill in the values without worrying about the appropriate separators or the order. This made for a smoother, more intuitive experience for the user, removing the guesswork associated with formatting and parsing dates in various locales.
 
 
 <Video src={localeVideoURL} loop autoPlay muted />
 
 ## Unicode Bidirectional Algorithm
 
-To format the segments based on the user locales, we rely on the browser’s [unicode bidirectional algorithm](https://unicode.org/reports/tr9/). However, we discovered an issue with the segments being formatted incorrectly in RTL languages. For example, in he-IL, the correct order for datefields with numeric values would be `DD.MM.YYYY`. However, our date component was returning a displayed value of `YYYY.MM.DD`. In all RTL languages, the time segments were flipped. Instead of `HH:MM`, they were being rendered as `MM:HH`. 
+To format the segments according to the user locales, we rely on the browser’s [Unicode Bidirectional Algorithm](https://unicode.org/reports/tr9/). However, we found that some of our CSS styles were interferring with algorithm's application, leading to incorrect formating. For instance, in `he-IL`, the proper numeric date format should be `DD.MM.YYYY`, but our date component was displaying `YYYY.MM.DD` instead. This issue varied across different RTL languages for date fields, but for time fields, we observed a consistent problem across all RTL languages — time segments were flipped, rendering `MM:HH` instead of the correct `HH:MM` format.
 
 <RTLTimefield />
 
-We found the culprit to be two things. First, we were applying `display: flex` on the container wrapping the segments. Second, each segment were being rendered as divs with `display: block`. It seemed like these styles were interfering with the applications of the algorithm. Instead, we needed to use [normal CSS flow layout](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_display/Flow_layout) on the wrapper around the segments and update each segments to be spans. 
+We found the culprit to be two things. First, we were applying `display: flex` on the container wrapping the segments. Second, each segment were being rendered as divs with `display: block`. Instead, we needed to use [normal CSS flow layout](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_display/Flow_layout) on the wrapper around the segments and update each segment to be a span instead. 
 
-However, we discovered that this only corrected the format when the segments had actual values. If they had placeholder values, the order was still incorrect. This ended up creating some undesirable behaviors. When clearing a segment back to its placeholder value, the segment would shift around back to the incorrect order. It seemed that the unicode bidirectional algorithm was returning different results for the placeholder string and actual values. We needed to ensure that regardless of placeholder or  non-placeholder value, that the formatting would remain the same without having to hard code the ordering of segments based off locales. 
+While that seemed like a relatively simple fix, we later discovered through testing that this only corrected the format when segments contained actual values. If they had placeholder values, the order was still incorrect, leading to some unexpected and undesirable behaviors. When a segment was cleared back to its placeholder, it would shift back to the incorrect order. When a user entered a value, the segment would shift back to its correct order. It seemed that the Unicode Bidirectional Algorithm was interpreting placeholder values differently from actual values. Our challenge was to ensure consistent formatting regardless of whether a segment contained a placeholder or user-entered value — all without hard coding segment order for each locale. 
 
 <Video src={placeholderVideoURL} loop autoPlay muted />
 
 
 ## TimeFields
 
-As mentioned earlier, the segments in TimeFields in RTL languages were flipped. Luckily, we learned that regardless of locale, all TimeFields are supposed to be formatted as HH:MM. Knowing that, we applied a direction of LTR on the numeric values across the TimeField. 
+First, we started by addressing time fields since they were easier to tackle. As mentioned earlier, the segments in time fields for RTL languages were flipped. However, we learned that regardless of locale, all time fields should follow the `HH:MM` format. Knowing this, we could apply a direction of LTR on the numeric values across all numeric segments in a time field. 
 
-Instead of wrapping the the segments in a `<bdo>` tag with a dir=“ltr” which would impact the DOM structure and have potential side effects, we opted to use the LRI (left-to-right isolate) unicode character to encapsulate the time segments and force an LTR direction (https://www.w3.org/International/questions/qa-bidi-unicode-controls). Adding this unicode character was the equivalent of wrapping the time segments in a `<bdo>` tag but offered several benefits. Since the character is invisible, there are no visual changes, and because we added the characters as siblings to the segments, there is no major structural changes to the DOM. Furthermore, since we were enforcing an LTR direction, we did not have to worry about whether the TimeField consisted of placeholder or non-placeholder values. Lastly, it ensured that when a DateField included a time, that the time segments together appeared in the correct order with respect to the date segments (e.g. 8:45 1/31/2025 instead of 1/31/2025 8:45 in he-IL) 
+Instead of wrapping the the segments in a `<bdo>` tag with a dir=“ltr” which would impact the DOM structure and have potentially introduce side effects, we chose to use the [LRI (left-to-right isolate) Unicode character](https://www.w3.org/International/questions/qa-bidi-unicode-controls) to encapsulate the time segments and force an LTR direction. Adding this Unicode character was the equivalent of wrapping the time segments in a `<bdo>` tag but offered several advantages. Since the character is invisible, there are no visual changes, and by adding it as a siblings to the segments, we avoided major structural changes to the DOM. Additionally, by enforcing an LTR direction, we no longer had to worry about whether the time field consisted of placeholder or actual values. Lastly, it ensured that when a date field included a time, that the time field appeared in the correct order with respect to the date field (e.g. 8:45 1/31/2025 instead of 1/31/2025 8:45)
+
+Below is a simplified code example of how we utilitze using Unicode characters to enforce an left-to-right direction on the segments:
+
+```tsx example render=false
+<div styles={{display: 'inline'}}>
+  <span>{'\u2066'}</span>
+  <span aria-label="hour">2</span>
+  <span>:</span>
+  <span aria-label="minute">45</span>
+  <span>{'\u2069'}</span>
+</div>
+```
 
 ## DateFields
 
