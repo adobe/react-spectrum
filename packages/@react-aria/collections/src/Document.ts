@@ -38,6 +38,7 @@ export class BaseNode<T> {
   private _previousSibling: ElementNode<T> | null = null;
   private _nextSibling: ElementNode<T> | null = null;
   private _parentNode: BaseNode<T> | null = null;
+  private _minInvalidChildIndex: ElementNode<T> | null = null;
   ownerDocument: Document<T, any>;
 
   constructor(ownerDocument: Document<T, any>) {
@@ -101,6 +102,21 @@ export class BaseNode<T> {
     return this.parentNode?.isConnected || false;
   }
 
+  private invalidateChildIndices(child: ElementNode<T>) {
+    if (this._minInvalidChildIndex == null || child.index < this._minInvalidChildIndex.index) {
+      this._minInvalidChildIndex = child;
+    }
+  }
+
+  updateChildIndices() {
+    let node = this._minInvalidChildIndex;
+    while (node) {
+      node.index = node.previousSibling ? node.previousSibling.index + 1 : 0;
+      node = node.nextSibling;
+    }
+    this._minInvalidChildIndex = null;
+  }
+
   appendChild(child: ElementNode<T>) {
     this.ownerDocument.startTransaction();
     if (child.parentNode) {
@@ -158,11 +174,7 @@ export class BaseNode<T> {
     referenceNode.previousSibling = newNode;
     newNode.parentNode = referenceNode.parentNode;
 
-    let node: ElementNode<T> | null = referenceNode;
-    while (node) {
-      node.index++;
-      node = node.nextSibling;
-    }
+    this.invalidateChildIndices(referenceNode);
 
     if (newNode.hasSetProps) {
       this.ownerDocument.addNode(newNode);
@@ -178,13 +190,9 @@ export class BaseNode<T> {
     }
 
     this.ownerDocument.startTransaction();
-    let node = child.nextSibling;
-    while (node) {
-      node.index--;
-      node = node.nextSibling;
-    }
-
+    
     if (child.nextSibling) {
+      this.invalidateChildIndices(child.nextSibling);
       child.nextSibling.previousSibling = child.previousSibling;
     }
 
@@ -330,6 +338,8 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   private mutatedNodes: Set<ElementNode<T>> = new Set();
   private subscriptions: Set<() => void> = new Set();
   private transactionCount = 0;
+  private queuedRender = false;
+  private inSubscription = false;
 
   constructor(collection: C) {
     // @ts-ignore
@@ -412,10 +422,22 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     }
 
     this.updateCollection();
+
+    // Reset queuedRender to false when getCollection is called during render.
+    if (!this.inSubscription) {
+      this.queuedRender = false;
+    }
+
     return this.collection;
   }
 
   updateCollection() {
+    // First, update the indices of dirty element children.
+    for (let element of this.dirtyNodes) {
+      element.updateChildIndices();
+    }
+
+    // Next, update dirty collection nodes.
     for (let element of this.dirtyNodes) {
       if (element instanceof ElementNode && element.isConnected) {
         element.updateNode();
@@ -424,6 +446,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
     this.dirtyNodes.clear();
 
+    // Finally, update the collection.
     if (this.mutatedNodes.size || this.collectionMutated) {
       let collection = this.getMutableCollection();
       for (let element of this.mutatedNodes) {
@@ -442,13 +465,21 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   queueUpdate() {
     // Don't emit any updates if there is a transaction in progress.
     // queueUpdate should be called again after the transaction.
-    if (this.dirtyNodes.size === 0 || this.transactionCount > 0) {
+    if (this.dirtyNodes.size === 0 || this.transactionCount > 0 || this.queuedRender) {
       return;
     }
 
+    // Only trigger subscriptions once during an update, when the first item changes.
+    // React's useSyncExternalStore will call getCollection immediately, to check whether the snapshot changed.
+    // If so, React will queue a render to happen after the current commit to our fake DOM finishes.
+    // We track whether getCollection is called in a subscription, and once it is called during render,
+    // we reset queuedRender back to false.
+    this.queuedRender = true;
+    this.inSubscription = true;
     for (let fn of this.subscriptions) {
       fn();
     }
+    this.inSubscription = false;
   }
 
   subscribe(fn: () => void) {
