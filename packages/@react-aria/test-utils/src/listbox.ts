@@ -58,7 +58,7 @@ export class ListBoxTester {
   /**
    * Set the interaction type used by the listbox tester.
    */
-  setInteractionType(type: UserOpts['interactionType']) {
+  setInteractionType(type: UserOpts['interactionType']): void {
     this._interactionType = type;
   }
 
@@ -119,7 +119,7 @@ export class ListBoxTester {
   /**
    * Toggles the selection for the specified listbox option. Defaults to using the interaction type set on the listbox tester.
    */
-  async toggleOptionSelection(opts: ListBoxToggleOptionOpts) {
+  async toggleOptionSelection(opts: ListBoxToggleOptionOpts): Promise<void> {
     let {option, needsLongPress, keyboardActivation = 'Enter', interactionType = this._interactionType} = opts;
 
     if (typeof option === 'string' || typeof option === 'number') {
@@ -157,7 +157,7 @@ export class ListBoxTester {
   /**
    * Triggers the action for the specified listbox option. Defaults to using the interaction type set on the listbox tester.
    */
-  async triggerOptionAction(opts: ListBoxOptionActionOpts) {
+  async triggerOptionAction(opts: ListBoxOptionActionOpts): Promise<void> {
     let {
       option,
       needsDoubleClick,

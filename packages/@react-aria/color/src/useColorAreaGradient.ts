@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
 */
 
-import {Color} from '@react-types/color';
+import {Color, ColorChannel} from '@react-types/color';
+import {ColorAreaState, parseColor} from '@react-stately/color';
 import {CSSProperties, useMemo} from 'react';
-import {parseColor} from '@react-stately/color';
 
 const hue = (color: Color) => [0, 60, 120, 180, 240, 300, 360].map(hue => color.withChannelValue('hue', hue).toString('css')).join(', ');
 const saturation = (color: Color) => `${color.withChannelValue('saturation', 0)}, transparent`;
@@ -38,7 +38,15 @@ interface Gradients {
   }
 }
 
-export function useColorAreaGradient({direction, state, zChannel, xChannel, yChannel}): Gradients {
+interface ColorAreaGradientProps {
+  direction: 'ltr' | 'rtl',
+  state: ColorAreaState,
+  zChannel: ColorChannel,
+  xChannel: ColorChannel,
+  yChannel: ColorChannel
+}
+
+export function useColorAreaGradient({direction, state, zChannel, xChannel, yChannel}: ColorAreaGradientProps): Gradients {
   let returnVal = useMemo<Gradients>(() => {
     let end = direction === 'rtl' ? 'left' : 'right';
     let colorAreaStyles = {};
@@ -71,7 +79,7 @@ export function useColorAreaGradient({direction, state, zChannel, xChannel, yCha
         if (zChannel === 'hue') {
           bg.push(value.toString('css'));
         }
-    
+
         colorAreaStyles = {
           background: bg.join(', ')
         };
@@ -88,7 +96,7 @@ export function useColorAreaGradient({direction, state, zChannel, xChannel, yCha
         if (zChannel === 'hue') {
           bg.push(value.toString('css'));
         }
-    
+
         colorAreaStyles = {
           background: bg.join(', ')
         };
