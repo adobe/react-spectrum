@@ -32,7 +32,7 @@ describe('useToast', () => {
   };
 
   it('handles defaults', function () {
-    let {closeButtonProps, toastProps, contentProps, titleProps} = renderToastHook({toast:{}}, {close});
+    let {closeButtonProps, toastProps, contentProps, titleProps} = renderToastHook({toast: {}}, {close});
 
     expect(toastProps.role).toBe('alertdialog');
     expect(contentProps.role).toBe('alert');
@@ -42,7 +42,7 @@ describe('useToast', () => {
   });
 
   it('handles close button', function () {
-    let {closeButtonProps} = renderToastHook({toast:{key: 1}}, {close});
+    let {closeButtonProps} = renderToastHook({toast: {key: 1}}, {close});
     closeButtonProps.onPress();
 
     expect(close).toHaveBeenCalledTimes(1);
@@ -50,7 +50,7 @@ describe('useToast', () => {
   });
 
   it('passes through data attributes', function () {
-    let {toastProps} = renderToastHook({toast:{}, 'data-test-id': 'toast'}, {close});
+    let {toastProps} = renderToastHook({toast: {}, 'data-test-id': 'toast'}, {close});
 
     expect(toastProps['data-test-id']).toBe('toast');
   });
