@@ -39,7 +39,9 @@ export interface GridListProps<T> extends CollectionBase<T>, MultipleSelection {
    */
   onAction?: (key: Key) => void,
   /** Whether `disabledKeys` applies to all interactions, or only selection. */
-  disabledBehavior?: DisabledBehavior
+  disabledBehavior?: DisabledBehavior,
+  /** Whether selection should occur on press up instead of press down. */
+  shouldSelectOnPressUp?: boolean
 }
 
 export interface AriaGridListProps<T> extends GridListProps<T>, DOMProps, AriaLabelingProps {
@@ -84,10 +86,6 @@ export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'chil
    * @default false
    */
   shouldFocusWrap?: boolean,
-
-  /** Whether selection should occur on press up instead of press down. */
-  shouldSelectOnPressUp?: boolean,
-
   /**
    * The behavior of links in the collection.
    * - 'action': link behaves like onAction.
