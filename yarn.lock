@@ -19283,15 +19283,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"full-icu@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "full-icu@npm:1.3.0"
-  bin:
-    node-full-icu-path: ./node-icu-data.js
-  checksum: 10c0/39f8bea2cae2d35efc35b412fcb68e40ab14933b733f15078a3ecbef4048a33f210f22cd0a8d187cfe736e4b338848ebde9a944972021dd399220655de589d43
-  languageName: node
-  linkType: hard
-
 "function-bind@npm:^1.1.2":
   version: 1.1.2
   resolution: "function-bind@npm:1.1.2"
@@ -29581,7 +29572,6 @@ __metadata:
     fast-glob: "npm:^3.1.0"
     framer-motion: "npm:^11.3.0-alpha.0"
     fs-extra: "npm:^10.0.0"
-    full-icu: "npm:^1.3.0"
     glob: "npm:^8.0.3"
     glob-promise: "npm:^6.0.5"
     globals: "npm:^15.11.0"
