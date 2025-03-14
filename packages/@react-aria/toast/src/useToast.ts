@@ -12,7 +12,7 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaLabelingProps, DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useId, useSlotId} from '@react-aria/utils';
+import {filterDOMProps, useId, useSlotId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {QueuedToast, ToastState} from '@react-stately/toast';
@@ -75,13 +75,14 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
   let toastProps = filterDOMProps(props, {labelable: true});
 
   return {
-    toastProps: mergeProps(toastProps, {
+    toastProps: {
+      ...toastProps,
       role: 'alertdialog',
       'aria-modal': 'false',
       'aria-labelledby': props['aria-labelledby'] || titleId,
       'aria-describedby': props['aria-describedby'] || descriptionId,
       tabIndex: 0
-    } as const),
+    },
     contentProps: {
       role: 'alert',
       'aria-atomic': 'true',
