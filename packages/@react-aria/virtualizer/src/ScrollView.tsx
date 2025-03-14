@@ -39,7 +39,7 @@ interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
   sentinelRef: React.RefObject<HTMLDivElement | null>
 }
 
-interface ScrollViewOptions extends Omit<ScrollViewProps, 'sentinelRef'> {}
+
 
 function ScrollView(props: ScrollViewProps, ref: ForwardedRef<HTMLDivElement | null>) {
   let {sentinelRef, ...otherProps} = props;
@@ -60,7 +60,13 @@ function ScrollView(props: ScrollViewProps, ref: ForwardedRef<HTMLDivElement | n
 const ScrollViewForwardRef = React.forwardRef(ScrollView);
 export {ScrollViewForwardRef as ScrollView};
 
-export function useScrollView(props: ScrollViewOptions, ref: RefObject<HTMLElement | null>) {
+interface ScrollViewAria {
+  scrollViewProps: HTMLAttributes<HTMLElement>,
+  contentProps: HTMLAttributes<HTMLElement>
+}
+interface ScrollViewOptions extends Omit<ScrollViewProps, 'sentinelRef'> {}
+
+export function useScrollView(props: ScrollViewOptions, ref: RefObject<HTMLElement | null>): ScrollViewAria {
   let {
     contentSize,
     onVisibleRectChange,

@@ -92,7 +92,7 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
     <Provider
       values={[
         [DateFieldStateContext, state],
-        [GroupContext, {...fieldProps, ref: fieldRef, isInvalid: state.isInvalid}],
+        [GroupContext, {...fieldProps, ref: fieldRef, isInvalid: state.isInvalid, isDisabled: state.isDisabled}],
         [InputContext, {...inputProps, ref: inputRef}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [TextContext, {
@@ -108,7 +108,8 @@ export const DateField = /*#__PURE__*/ (forwardRef as forwardRefType)(function D
         {...renderProps}
         ref={ref}
         slot={props.slot || undefined}
-        data-invalid={state.isInvalid || undefined} />
+        data-invalid={state.isInvalid || undefined}
+        data-disabled={state.isDisabled || undefined} />
     </Provider>
   );
 });
@@ -157,7 +158,7 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
     <Provider
       values={[
         [TimeFieldStateContext, state],
-        [GroupContext, {...fieldProps, ref: fieldRef, isInvalid: state.isInvalid}],
+        [GroupContext, {...fieldProps, ref: fieldRef, isInvalid: state.isInvalid, isDisabled: state.isDisabled}],
         [InputContext, {...inputProps, ref: inputRef}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [TextContext, {
@@ -173,7 +174,8 @@ export const TimeField = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
         {...renderProps}
         ref={ref}
         slot={props.slot || undefined}
-        data-invalid={state.isInvalid || undefined} />
+        data-invalid={state.isInvalid || undefined} 
+        data-disabled={state.isDisabled || undefined} />
     </Provider>
   );
 });
@@ -241,7 +243,7 @@ const DateInputStandalone = forwardRef((props: DateInputProps, ref: ForwardedRef
       values={[
         [DateFieldStateContext, state],
         [InputContext, {...inputProps, ref: inputRef}],
-        [GroupContext, {...fieldProps, ref: fieldRef, isInvalid: state.isInvalid}]
+        [GroupContext, {...fieldProps, ref: fieldRef, isInvalid: state.isInvalid, isDisabled: state.isDisabled}]
       ]}>
       <DateInputInner {...props} />
     </Provider>
@@ -261,7 +263,8 @@ const DateInputInner = forwardRef((props: DateInputProps, ref: ForwardedRef<HTML
         ref={ref}
         slot={props.slot || undefined}
         className={className ?? 'react-aria-DateInput'}
-        isInvalid={state.isInvalid}>
+        isInvalid={state.isInvalid}
+        isDisabled={state.isDisabled}>
         {state.segments.map((segment, i) => cloneElement(children(segment), {key: i}))}
       </Group>
       <Input />

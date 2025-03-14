@@ -13,7 +13,7 @@
 /**
  * Enables reading pageX/pageY from fireEvent.mouse*(..., {pageX: ..., pageY: ...}).
  */
-export function installMouseEvent() {
+export function installMouseEvent(): void {
   let oldMouseEvent = MouseEvent;
   beforeAll(() => {
     global.MouseEvent = class FakeMouseEvent extends MouseEvent {
@@ -35,7 +35,7 @@ export function installMouseEvent() {
   });
 }
 
-export function installPointerEvent() {
+export function installPointerEvent(): void {
   beforeAll(() => {
     // @ts-ignore
     global.PointerEvent = class FakePointerEvent extends MouseEvent {

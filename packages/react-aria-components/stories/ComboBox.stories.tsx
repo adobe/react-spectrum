@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Collection, ComboBox, Input, Label, ListBox, ListLayout, Popover, Virtualizer} from 'react-aria-components';
+import {Button, Collection, ComboBox, Input, Label, ListBox, ListLayout, Popover, useFilter, Virtualizer} from 'react-aria-components';
 import {MyListBoxItem} from './utils';
-import React from 'react';
+import React, {useMemo, useState} from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_ListBoxLoadingIndicator} from '../src/ListBox';
 import {useAsyncList} from 'react-stately';
@@ -208,6 +208,35 @@ export const ComboBoxImeExample = () => (
     </Popover>
   </ComboBox>
 );
+
+let manyItems = [...Array(10000)].map((_, i) => ({id: i, name: `Item ${i}`}));
+
+export const VirtualizedComboBox = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const {contains} = useFilter({sensitivity: 'base'});
+  const filteredItems = useMemo(() => {
+    return manyItems.filter((item) => contains(item.name, searchTerm));
+  }, [searchTerm, contains]);
+
+  return (
+    <ComboBox items={filteredItems} inputValue={searchTerm} onInputChange={setSearchTerm}>
+      <Label style={{display: 'block'}}>Test</Label>
+      <div style={{display: 'flex'}}>
+        <Input />
+        <Button>
+          <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
+        </Button>
+      </div>
+      <Popover>
+        <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 25}}>
+          <ListBox className={styles.menu}>
+            {(item: any) => <MyListBoxItem>{item.name}</MyListBoxItem>}
+          </ListBox>
+        </Virtualizer>
+      </Popover>
+    </ComboBox>
+  );
+};
 
 interface Character {
   name: string,

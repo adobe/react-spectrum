@@ -37,7 +37,7 @@ export interface LoadMoreProps {
   sentinelRef: RefObject<HTMLElement | null>
 }
 
-export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | null>) {
+export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | null>): void {
   let {isLoading, onLoadMore, scrollOffset = 1, collection, sentinelRef} = props;
   let lastCollection = useRef(collection);
 
