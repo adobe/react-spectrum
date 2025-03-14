@@ -17,6 +17,7 @@ import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
+import {useAsyncList} from 'react-stately';
 
 const meta: Meta<typeof ComboBox<any>> = {
   component: ComboBox,
@@ -98,7 +99,6 @@ export const Dynamic: Story = {
   }
 };
 
-
 export const WithIcons: Story = {
   render: (args) => (
     <ComboBox {...args}>
@@ -176,6 +176,68 @@ export const CustomWidth = {
       <ComboBoxItem>Strawberry</ComboBoxItem>
       <ComboBoxItem>Vanilla</ComboBoxItem>
       <ComboBoxItem>Chocolate Chip Cookie Dough</ComboBoxItem>
+    </ComboBox>
+  ),
+  args: Example.args,
+  parameters: {
+    docs: {
+      disable: true
+    }
+  }
+};
+
+interface Character {
+  name: string,
+  height: number,
+  mass: number,
+  birth_year: number
+}
+
+const AsyncComboBox = (args: any) => {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor, filterText}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      // Slow down load so progress circle can appear
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <ComboBox
+      {...args}
+      items={list.items}
+      inputValue={list.filterText}
+      onInputChange={list.setFilterText}
+      loadingState={list.loadingState}
+      onLoadMore={list.loadMore}>
+      {(item: Character) => <ComboBoxItem id={item.name} textValue={item.name}>{item.name}</ComboBoxItem>}
+    </ComboBox>
+  );
+};
+
+export const AsyncComboBoxStory  = {
+  render: AsyncComboBox,
+  args: {
+    ...Example.args,
+    label: 'Star Wars Character Lookup'
+  },
+  name: 'Async loading combobox'
+};
+
+export const EmptyCombobox = {
+  render: (args) => (
+    <ComboBox {...args}>
+      {[]}
     </ComboBox>
   ),
   args: Example.args,

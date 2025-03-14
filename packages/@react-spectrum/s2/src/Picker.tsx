@@ -26,6 +26,7 @@ import {
   ListBoxProps,
   Provider,
   SectionProps,
+  SelectStateContext,
   SelectValue,
   UNSTABLE_ListBoxLoadingIndicator
 } from 'react-aria-components';
@@ -222,6 +223,9 @@ const valueStyles = style({
   alignItems: 'center'
 });
 
+// TODO: the designs show that it should be disabled when loading, but I think that should
+// only apply if there aren't any items in the picker. What do we think? I could also do the same
+// for the button and make it have disabled styles
 const iconStyles = style({
   flexShrink: 0,
   rotate: 90,
@@ -230,7 +234,7 @@ const iconStyles = style({
     value: 'currentColor'
   },
   color: {
-    isLoading: 'disabled'
+    isInitialLoad: 'disabled'
   }
 });
 
@@ -317,15 +321,19 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
 
   // TODO: no designs for the spinner in the listbox that I've seen so will need to double check
   let renderer;
-  let loadingSpinner = (
+  let loadingCircle = (
+    <ProgressCircle
+      isIndeterminate
+      size="S"
+      styles={progressCircleStyles({size})}
+      // Same loading string as table
+      aria-label={stringFormatter.format('table.loadingMore')} />
+  );
+
+  let listBoxLoadingCircle = (
     <UNSTABLE_ListBoxLoadingIndicator
       className={loadingWrapperStyles}>
-      <ProgressCircle
-        isIndeterminate
-        size="S"
-        styles={progressCircleStyles({size})}
-        // Same loading string as table
-        aria-label={stringFormatter.format('table.loadingMore')} />
+      {loadingCircle}
     </UNSTABLE_ListBoxLoadingIndicator>
   );
 
@@ -335,14 +343,14 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
         <Collection items={items}>
           {children}
         </Collection>
-        {isLoading && loadingSpinner}
+        {isLoading && listBoxLoadingCircle}
       </>
     );
   } else {
     renderer = (
       <>
         {children}
-        {isLoading && loadingSpinner}
+        {isLoading && listBoxLoadingCircle}
       </>
     );
   }
@@ -416,19 +424,9 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                         );
                       }}
                     </SelectValue>
-                    {isInvalid && (
-                      // TODO: in Figma it shows the icon as being disabled when loading, confirm with spectrum
-                      <FieldErrorIcon isDisabled={isDisabled} />
-                    )}
-                    {isLoading && (
-                      <ProgressCircle
-                        isIndeterminate
-                        size="S"
-                        styles={progressCircleStyles({size})} />
-                    )}
-                    <ChevronIcon
-                      size={size}
-                      className={iconStyles({isLoading})} />
+                    {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
+                    {isLoading && loadingCircle}
+                    <Chevron size={size} isLoading={isLoading} />
                     {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
                     {isInvalid && !isDisabled && !isQuiet &&
                       // @ts-ignore known limitation detecting functions from the theme
@@ -477,6 +475,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                   }]
                 ]}>
                 <ListBox
+                  isLoading={isLoading}
                   items={items}
                   className={menu({size})}>
                   {renderer}
@@ -560,5 +559,19 @@ export function PickerSection<T extends object>(props: PickerSectionProps<T>) {
       </AriaListBoxSection>
       <Divider />
     </>
+  );
+}
+
+interface ChevronProps<T extends object> extends Pick<PickerProps<T>, 'size' | 'isLoading'> {}
+
+function Chevron<T extends object>(props: ChevronProps<T>) {
+  let {size, isLoading} = props;
+  let state = useContext(SelectStateContext);
+  // If it is the initial load, the collection either hasn't been formed or only has the loader so apply the disabled style
+  let isInitialLoad = (state?.collection.size == null || state?.collection.size <= 1) && isLoading;
+  return (
+    <ChevronIcon
+      size={size}
+      className={iconStyles({isInitialLoad})} />
   );
 }
