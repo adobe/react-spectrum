@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {NotificationBadge} from '../src';
 
 const meta: Meta<typeof NotificationBadge> = {
@@ -24,14 +24,23 @@ const meta: Meta<typeof NotificationBadge> = {
 
 export default meta;
 
-export const Example = (args: any) => (
-  <div style={{display: 'flex', flexWrap: 'wrap', gap: 8, maxWidth: '600px'}}>
-    {Array.from({length: 100}, (_, i) => i + 1).map(value => (
-      <NotificationBadge key={value} {...args} value={value} />
-    ))}
-  </div>
-);
+type Story = StoryObj<typeof NotificationBadge>;
+export const Example: Story = {
+  render: (args) => {
+    return (
+      <div style={{display: 'flex', flexWrap: 'wrap', gap: 8, maxWidth: '600px'}}>
+      {Array.from({length: 100}, (_, i) => i + 1).map(value => (
+        <NotificationBadge key={value} {...args} value={value} />
+      ))}
+    </div>
+    );
+  }
+};
 
-export const Empty = (args: any) => (
-  <NotificationBadge {...args} />
-);
+export const Empty: Story = {
+  render: (args) => {
+    return (
+      <NotificationBadge {...args} />
+    )
+  }
+}
