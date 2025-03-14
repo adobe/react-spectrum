@@ -27,7 +27,7 @@ interface CloseOnScrollOptions {
 }
 
 /** @private */
-export function useCloseOnScroll(opts: CloseOnScrollOptions) {
+export function useCloseOnScroll(opts: CloseOnScrollOptions): void {
   let {triggerRef, isOpen, onClose} = opts;
 
   useEffect(() => {
