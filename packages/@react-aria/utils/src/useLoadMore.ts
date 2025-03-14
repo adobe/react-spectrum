@@ -73,9 +73,8 @@ export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | n
       collectionAwaitingUpdate.current = false;
     }
 
-    sentinelObserver.current = new IntersectionObserver(triggerLoadMore, {root: ref.current, rootMargin: `0px 0px ${100 * scrollOffset}% 0px`});
+    sentinelObserver.current = new IntersectionObserver(triggerLoadMore, {root: ref.current, rootMargin: `0px ${100 * scrollOffset}% ${100 * scrollOffset}% ${100 * scrollOffset}%`});
     if (sentinelRef?.current) {
-      // console.log('observing', sentinelRef.current.outerHTML)
       sentinelObserver.current.observe(sentinelRef.current);
     }
 

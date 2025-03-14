@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover, useLocale, useVisuallyHidden} from 'react-aria';
+import {AsyncLoadable, forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps} from './Collection';
-import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, inertValue, useLoadMore, useObjectRef} from '@react-aria/utils';
-import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject, StyleProps} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
@@ -53,10 +53,15 @@ export interface GridListRenderProps {
   /**
    * State of the grid list.
    */
-  state: ListState<unknown>
+  state: ListState<unknown>,
+  /**
+   * Whether the grid list is currently loading items.
+   * @selector [data-loading]
+   */
+  isLoading?: boolean
 }
 
-export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<GridListRenderProps>, SlotProps, ScrollableProps<HTMLDivElement> {
+export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<GridListRenderProps>, SlotProps, ScrollableProps<HTMLDivElement>, AsyncLoadable {
   /**
    * Whether typeahead navigation is disabled.
    * @default false
@@ -72,11 +77,7 @@ export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>
    * Whether the items are arranged in a stack or grid.
    * @default 'stack'
    */
-  layout?: 'stack' | 'grid',
-  // TODO: move types somewhere common later
-  // Discuss if we want the RAC components to call the useLoadMore directly (think they have to if we wanna support using <Collection> as child)
-  isLoading?: boolean,
-  onLoadMore?: () => void
+  layout?: 'stack' | 'grid'
 }
 
 
@@ -200,7 +201,8 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
     isFocused,
     isFocusVisible,
     layout,
-    state
+    state,
+    isLoading: isLoading || false
   };
   let renderProps = useRenderProps({
     className: props.className,
@@ -243,7 +245,8 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
         data-empty={state.collection.size === 0 || undefined}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
-        data-layout={layout}>
+        data-layout={layout}
+        data-loading={isLoading || undefined}>
         <Provider
           values={[
             [ListStateContext, state],

@@ -11,14 +11,14 @@
  */
 
 import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
+import {AsyncLoadable, forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps} from './Collection';
-import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
 import {filterDOMProps, inertValue, mergeRefs, useLoadMore, useObjectRef} from '@react-aria/utils';
-import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject, StyleProps} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {SeparatorContext} from './Separator';
@@ -54,10 +54,15 @@ export interface ListBoxRenderProps {
   /**
    * State of the listbox.
    */
-  state: ListState<unknown>
+  state: ListState<unknown>,
+  /**
+   * Whether the listbox is currently loading items.
+   * @selector [data-loading]
+   */
+  isLoading?: boolean
 }
 
-export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children' | 'label'>, CollectionProps<T>, StyleRenderProps<ListBoxRenderProps>, SlotProps, ScrollableProps<HTMLDivElement> {
+export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children' | 'label'>, CollectionProps<T>, StyleRenderProps<ListBoxRenderProps>, SlotProps, ScrollableProps<HTMLDivElement>, AsyncLoadable {
   /** How multiple selection should behave in the collection. */
   selectionBehavior?: SelectionBehavior,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the ListBox. */
@@ -74,11 +79,7 @@ export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children' | 
    * direction that the collection scrolls.
    * @default 'vertical'
    */
-  orientation?: Orientation,
-  // TODO: move types somewhere common later
-  // Discuss if we want the RAC components to call the useLoadMore directly (think they have to if we wanna support using <Collection> as child)
-  isLoading?: boolean,
-  onLoadMore?: () => void
+  orientation?: Orientation
 }
 
 export const ListBoxContext = createContext<ContextValue<ListBoxProps<any>, HTMLDivElement>>(null);
@@ -210,7 +211,8 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
     isFocused,
     isFocusVisible,
     layout: props.layout || 'stack',
-    state
+    state,
+    isLoading: props.isLoading || false
   };
   let renderProps = useRenderProps({
     className: props.className,
@@ -261,7 +263,8 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-layout={props.layout || 'stack'}
-        data-orientation={props.orientation || 'vertical'}>
+        data-orientation={props.orientation || 'vertical'}
+        data-loading={props.isLoading || undefined}>
         <Provider
           values={[
             [ListBoxContext, props],

@@ -39,7 +39,7 @@ export {DropZone, DropZoneContext} from './DropZone';
 export {FieldError, FieldErrorContext} from './FieldError';
 export {FileTrigger} from './FileTrigger';
 export {Form, FormContext} from './Form';
-export {GridList, GridListItem, GridListContext} from './GridList';
+export {UNSTABLE_GridListLoadingIndicator, GridList, GridListItem, GridListContext} from './GridList';
 export {Group, GroupContext} from './Group';
 export {Header, HeaderContext} from './Header';
 export {Heading} from './Heading';
@@ -49,7 +49,7 @@ export {Collection, createLeafComponent as UNSTABLE_createLeafComponent, createB
 export {Keyboard, KeyboardContext} from './Keyboard';
 export {Label, LabelContext} from './Label';
 export {Link, LinkContext} from './Link';
-export {ListBox, ListBoxItem, ListBoxSection, ListBoxContext, ListStateContext} from './ListBox';
+export {UNSTABLE_ListBoxLoadingIndicator, ListBox, ListBoxItem, ListBoxSection, ListBoxContext, ListStateContext} from './ListBox';
 export {Menu, MenuItem, MenuTrigger, MenuSection, MenuContext, MenuStateContext, RootMenuTriggerStateContext, SubmenuTrigger} from './Menu';
 export {Meter, MeterContext} from './Meter';
 export {Modal, ModalOverlay, ModalContext} from './Modal';

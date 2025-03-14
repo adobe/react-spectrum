@@ -29,6 +29,7 @@ import DeviceDesktopIcon from '../s2wf-icons/S2_Icon_DeviceDesktop_20_N.svg';
 import DeviceTabletIcon from '../s2wf-icons/S2_Icon_DeviceTablet_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
+import {useAsyncList} from '@react-stately/data';
 
 const meta: Meta<typeof Picker<any>> = {
   component: Picker,
@@ -200,4 +201,44 @@ export const ContextualHelpExample = {
   args: {
     label: 'Ice cream flavor'
   }
+};
+
+interface Character {
+  name: string,
+  height: number,
+  mass: number,
+  birth_year: number
+}
+
+const AsyncPicker = (args: any) => {
+  let list = useAsyncList<Character>({
+    async load({signal, cursor}) {
+      if (cursor) {
+        cursor = cursor.replace(/^http:\/\//i, 'https://');
+      }
+
+      // Slow down load so progress circle can appear
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <Picker {...args} isLoading={list.isLoading} onLoadMore={list.loadMore} items={list.items}>
+      {(item: Character) => <PickerItem id={item.name} textValue={item.name}>{item.name}</PickerItem>}
+    </Picker>
+  );
+};
+
+export const AsyncPickerStory  = {
+  render: AsyncPicker,
+  args: {
+    ...Example.args
+  },
+  name: 'Async loading picker'
 };

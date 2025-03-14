@@ -1,4 +1,4 @@
-import {AriaLabelingProps, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
 import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
@@ -305,10 +305,15 @@ export interface TableRenderProps {
   /**
    * State of the table.
    */
-  state: TableState<unknown>
+  state: TableState<unknown>,
+  /**
+   * Whether the table is currently loading items.
+   * @selector [data-loading]
+   */
+  isLoading?: boolean
 }
 
-export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, StyleRenderProps<TableRenderProps>, SlotProps, AriaLabelingProps, ScrollableProps<HTMLTableElement> {
+export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, StyleRenderProps<TableRenderProps>, SlotProps, AriaLabelingProps, ScrollableProps<HTMLTableElement>, AsyncLoadable {
   /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
   children?: ReactNode,
   /**
@@ -324,9 +329,7 @@ export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, Sty
   /** Handler that is called when a user performs an action on the row. */
   onRowAction?: (key: Key) => void,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the Table. */
-  dragAndDropHooks?: DragAndDropHooks,
-  isLoading?: boolean,
-  onLoadMore?: () => void
+  dragAndDropHooks?: DragAndDropHooks
 }
 
 /**
@@ -451,7 +454,8 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
       isDropTarget: isRootDropTarget,
       isFocused,
       isFocusVisible,
-      state
+      state,
+      isLoading: isLoading || false
     }
   });
 
@@ -506,7 +510,8 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
           data-allows-dragging={isListDraggable || undefined}
           data-drop-target={isRootDropTarget || undefined}
           data-focused={isFocused || undefined}
-          data-focus-visible={isFocusVisible || undefined}>
+          data-focus-visible={isFocusVisible || undefined}
+          data-loading={props.isLoading || undefined}>
           <CollectionRoot
             collection={collection}
             scrollRef={tableContainerContext?.scrollRef ?? ref}

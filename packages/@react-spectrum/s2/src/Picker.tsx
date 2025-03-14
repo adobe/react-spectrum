@@ -18,6 +18,7 @@ import {
   SelectRenderProps as AriaSelectRenderProps,
   Button,
   ButtonRenderProps,
+  Collection,
   ContextValue,
   ListBox,
   ListBoxItem,
@@ -25,7 +26,8 @@ import {
   ListBoxProps,
   Provider,
   SectionProps,
-  SelectValue
+  SelectValue,
+  UNSTABLE_ListBoxLoadingIndicator
 } from 'react-aria-components';
 import {baseColor, edgeToText, focusRing, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
@@ -60,13 +62,13 @@ import {Placement} from 'react-aria';
 import {PopoverBase} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
 import {pressScale} from './pressScale';
+import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactNode, useContext, useRef, useState} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useGlobalListeners} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-
 
 export interface PickerStyleProps {
   /**
@@ -226,6 +228,29 @@ const iconStyles = style({
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
+  },
+  color: {
+    isLoading: 'disabled'
+  }
+});
+
+const loadingWrapperStyles = style({
+  gridColumnStart: '1',
+  gridColumnEnd: '-1',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginY: 8
+});
+
+const progressCircleStyles = style({
+  size: {
+    size: {
+      S: 16,
+      M: 20,
+      L: 22,
+      XL: 26
+    }
   }
 });
 
@@ -259,6 +284,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
     UNSAFE_style,
     placeholder = stringFormatter.format('picker.placeholder'),
     isQuiet,
+    isLoading,
     ...pickerProps
   } = props;
 
@@ -288,6 +314,38 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
       setPressed(false);
     }, {once: true, capture: true});
   };
+
+  // TODO: no designs for the spinner in the listbox that I've seen so will need to double check
+  let renderer;
+  let loadingSpinner = (
+    <UNSTABLE_ListBoxLoadingIndicator
+      className={loadingWrapperStyles}>
+      <ProgressCircle
+        isIndeterminate
+        size="S"
+        styles={progressCircleStyles({size})}
+        // Same loading string as table
+        aria-label={stringFormatter.format('table.loadingMore')} />
+    </UNSTABLE_ListBoxLoadingIndicator>
+  );
+
+  if (typeof children === 'function' && items) {
+    renderer = (
+      <>
+        <Collection items={items}>
+          {children}
+        </Collection>
+        {isLoading && loadingSpinner}
+      </>
+    );
+  } else {
+    renderer = (
+      <>
+        {children}
+        {isLoading && loadingSpinner}
+      </>
+    );
+  }
 
   return (
     <AriaSelect
@@ -359,11 +417,18 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                       }}
                     </SelectValue>
                     {isInvalid && (
+                      // TODO: in Figma it shows the icon as being disabled when loading, confirm with spectrum
                       <FieldErrorIcon isDisabled={isDisabled} />
+                    )}
+                    {isLoading && (
+                      <ProgressCircle
+                        isIndeterminate
+                        size="S"
+                        styles={progressCircleStyles({size})} />
                     )}
                     <ChevronIcon
                       size={size}
-                      className={iconStyles} />
+                      className={iconStyles({isLoading})} />
                     {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
                     {isInvalid && !isDisabled && !isQuiet &&
                       // @ts-ignore known limitation detecting functions from the theme
@@ -414,7 +479,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                 <ListBox
                   items={items}
                   className={menu({size})}>
-                  {children}
+                  {renderer}
                 </ListBox>
               </Provider>
             </PopoverBase>
