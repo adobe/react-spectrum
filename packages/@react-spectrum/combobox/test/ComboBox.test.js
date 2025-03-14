@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, pointerMap, render, simulateDesktop, simulateMobile, waitFor, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render, setupIntersectionObserverMock, simulateDesktop, simulateMobile, waitFor, within} from '@react-spectrum/test-utils-internal';
 import {announce} from '@react-aria/live-announcer';
 import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
@@ -2074,6 +2074,7 @@ describe('ComboBox', function () {
       jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     });
     it('onLoadMore is called on initial open', async () => {
+      let observer = setupIntersectionObserverMock();
       load = jest
         .fn()
         .mockImplementationOnce(() => {
@@ -2111,6 +2112,7 @@ describe('ComboBox', function () {
       expect(listbox).toBeVisible();
       // update size, virtualizer raf kicks in
       act(() => {jest.advanceTimersToNextTimer();});
+      act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
       // onLoadMore queued by previous timer, run it now
       act(() => {jest.advanceTimersToNextTimer();});
 
@@ -2137,6 +2139,7 @@ describe('ComboBox', function () {
     });
 
     it('onLoadMore is not called on when previously opened', async () => {
+      let observer = setupIntersectionObserverMock();
       load = jest
       .fn()
       .mockImplementationOnce(() => {
@@ -2173,6 +2176,7 @@ describe('ComboBox', function () {
       expect(listbox).toBeVisible();
       // update size, virtualizer raf kicks in
       act(() => {jest.advanceTimersToNextTimer();});
+      act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
       // onLoadMore queued by previous timer, run it now
       act(() => {jest.advanceTimersToNextTimer();});
 

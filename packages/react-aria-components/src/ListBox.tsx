@@ -17,7 +17,7 @@ import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, Slot
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
-import {filterDOMProps, mergeRefs, useLoadMore, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, inertValue, mergeRefs, useLoadMore, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject, StyleProps} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
@@ -231,11 +231,13 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
     );
   }
 
+  let sentinelRef = useRef(null);
   // TODO: Should scrollOffset for useLoadMore should be configurable by the user
   let memoedLoadMoreProps = useMemo(() => ({
     isLoading: props.isLoading,
     onLoadMore: props.onLoadMore,
-    collection
+    collection,
+    sentinelRef
   }), [props.isLoading, props.onLoadMore, collection]);
   // TODO: maybe this should be called at the ListBox level and the StandaloneListBox level. At its current place it is only called
   // when the Listbox in the dropdown is rendered. The benefit to this would be that useLoadMore would trigger a load for the user before the
@@ -274,6 +276,8 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
             scrollRef={listBoxRef}
             persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)}
             renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
+          {/* @ts-ignore - compatibility with React < 19 */}
+          <div data-testid="loadMoreSentinel" ref={sentinelRef} style={{height: 1, width: 1}} inert={inertValue(true)} />
         </Provider>
         {emptyState}
         {dragPreview}

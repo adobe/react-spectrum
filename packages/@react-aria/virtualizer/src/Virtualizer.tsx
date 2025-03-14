@@ -13,7 +13,7 @@
 import {Collection, Key, RefObject} from '@react-types/shared';
 import {Layout, Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
 import {mergeProps, useLoadMore, useObjectRef} from '@react-aria/utils';
-import React, {ForwardedRef, HTMLAttributes, ReactElement, ReactNode, useCallback} from 'react';
+import React, {ForwardedRef, HTMLAttributes, ReactElement, ReactNode, useCallback, useRef} from 'react';
 import {ScrollView} from './ScrollView';
 import {VirtualizerItem} from './VirtualizerItem';
 
@@ -68,21 +68,25 @@ export const Virtualizer = React.forwardRef(function Virtualizer<T extends objec
     layoutOptions
   });
 
-  useLoadMore({isLoading, onLoadMore, scrollOffset: 1}, ref);
+  let sentinelRef = useRef(null);
+  useLoadMore({isLoading, onLoadMore, scrollOffset: 1, sentinelRef}, ref);
   let onVisibleRectChange = useCallback((rect: Rect) => {
     state.setVisibleRect(rect);
   }, [state]);
 
   return (
-    <ScrollView
-      {...mergeProps(otherProps, {onVisibleRectChange})}
-      ref={ref}
-      contentSize={state.contentSize}
-      onScrollStart={state.startScrolling}
-      onScrollEnd={state.endScrolling}
-      scrollDirection={scrollDirection}>
-      {renderChildren(null, state.visibleViews, renderWrapper || defaultRenderWrapper)}
-    </ScrollView>
+    <>
+      <ScrollView
+        {...mergeProps(otherProps, {onVisibleRectChange})}
+        ref={ref}
+        sentinelRef={sentinelRef}
+        contentSize={state.contentSize}
+        onScrollStart={state.startScrolling}
+        onScrollEnd={state.endScrolling}
+        scrollDirection={scrollDirection}>
+        {renderChildren(null, state.visibleViews, renderWrapper || defaultRenderWrapper)}
+      </ScrollView>
+    </>
   );
 }) as <T extends object, V, O>(props: VirtualizerProps<T, V, O> & {ref?: RefObject<HTMLDivElement | null>}) => ReactElement;
 

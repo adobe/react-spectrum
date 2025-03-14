@@ -18,7 +18,7 @@ import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, Slot
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
-import {filterDOMProps, useLoadMore, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, inertValue, useLoadMore, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject, StyleProps} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
@@ -221,11 +221,12 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
       </div>
     );
   }
-
+  let sentinelRef = useRef(null);
   let memoedLoadMoreProps = useMemo(() => ({
     isLoading,
     onLoadMore,
-    collection
+    collection,
+    sentinelRef
   }), [isLoading, onLoadMore, collection]);
   useLoadMore(memoedLoadMoreProps, ref);
 
@@ -255,6 +256,8 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
             scrollRef={ref}
             persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)}
             renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
+          {/* @ts-ignore - compatibility with React < 19 */}
+          <div data-testid="loadMoreSentinel" ref={sentinelRef} style={{height: 1, width: 1}} inert={inertValue(true)} />
         </Provider>
         {emptyState}
         {dragPreview}

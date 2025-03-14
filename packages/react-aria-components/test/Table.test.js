@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render, triggerLongPress, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render, setupIntersectionObserverMock, triggerLongPress, within} from '@react-spectrum/test-utils-internal';
 import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, Tag, TagGroup, TagList, useDragAndDrop, useTableOptions, Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
 import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
@@ -227,9 +227,11 @@ describe('Table', () => {
     }
 
     let rowGroups = tableTester.rowGroups;
-    expect(rowGroups).toHaveLength(2);
+    expect(rowGroups).toHaveLength(3);
     expect(rowGroups[0]).toHaveAttribute('class', 'react-aria-TableHeader');
     expect(rowGroups[1]).toHaveAttribute('class', 'react-aria-TableBody');
+    // Sentinel element for loadmore
+    expect(rowGroups[2]).toHaveAttribute('inert');
 
     for (let cell of tableTester.columns) {
       expect(cell).toHaveAttribute('class', 'react-aria-Column');
@@ -261,9 +263,10 @@ describe('Table', () => {
     }
 
     let rowGroups = getAllByRole('rowgroup');
-    expect(rowGroups).toHaveLength(2);
+    expect(rowGroups).toHaveLength(3);
     expect(rowGroups[0]).toHaveAttribute('class', 'table-header');
     expect(rowGroups[1]).toHaveAttribute('class', 'table-body');
+    expect(rowGroups[2]).toHaveAttribute('inert');
 
     for (let cell of getAllByRole('columnheader')) {
       expect(cell).toHaveAttribute('class', 'column');
@@ -295,7 +298,7 @@ describe('Table', () => {
     }
 
     let rowGroups = getAllByRole('rowgroup');
-    expect(rowGroups).toHaveLength(2);
+    expect(rowGroups).toHaveLength(3);
     expect(rowGroups[0]).toHaveAttribute('data-testid', 'table-header');
     expect(rowGroups[1]).toHaveAttribute('data-testid', 'table-body');
 
@@ -1754,6 +1757,10 @@ describe('Table', () => {
     });
 
     it('should fire onLoadMore when scrolling near the bottom', function () {
+      let observe = jest.fn();
+      let observer = setupIntersectionObserverMock({
+        observe
+      });
       jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 100);
       jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 25);
 
@@ -1761,6 +1768,9 @@ describe('Table', () => {
 
       let scrollView = tree.getByTestId('scrollRegion');
       expect(onLoadMore).toHaveBeenCalledTimes(0);
+      let sentinel = tree.getByTestId('loadMoreSentinel');
+      expect(observe).toHaveBeenLastCalledWith(sentinel);
+      expect(sentinel.nodeName).toBe('TBODY');
 
       scrollView.scrollTop = 50;
       fireEvent.scroll(scrollView);
@@ -1770,12 +1780,14 @@ describe('Table', () => {
 
       scrollView.scrollTop = 76;
       fireEvent.scroll(scrollView);
+      act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
       act(() => {jest.runAllTimers();});
 
       expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
 
     it('doesn\'t call onLoadMore if it is already loading items', function () {
+      let observer = setupIntersectionObserverMock();
       jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 100);
       jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 25);
 
@@ -1793,16 +1805,19 @@ describe('Table', () => {
       tree.rerender(<LoadMoreTable onLoadMore={onLoadMore} />);
 
       fireEvent.scroll(scrollView);
+      act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
       act(() => {jest.runAllTimers();});
       expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
 
     it('should automatically fire onLoadMore if there aren\'t enough items to fill the Table', function () {
+      let observer = setupIntersectionObserverMock();
       jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 100);
       jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
 
       let tree = render(<LoadMoreTable onLoadMore={onLoadMore} isLoading items={items} />);
       tree.rerender(<LoadMoreTable onLoadMore={onLoadMore} items={items} />);
+      act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
 
       expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
@@ -1870,6 +1885,10 @@ describe('Table', () => {
     });
 
     it('works with virtualizer', function () {
+      let observe = jest.fn();
+      let observer = setupIntersectionObserverMock({
+        observe
+      });
       let items = [];
       for (let i = 0; i < 6; i++) {
         items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
@@ -1905,10 +1924,13 @@ describe('Table', () => {
         return 25;
       });
 
-      let {getByRole} = render(<VirtualizedTableLoad />);
+      let {getByRole, getByTestId} = render(<VirtualizedTableLoad />);
 
       let scrollView = getByRole('grid');
       expect(onLoadMore).toHaveBeenCalledTimes(0);
+      let sentinel = getByTestId('loadMoreSentinel');
+      expect(observe).toHaveBeenLastCalledWith(sentinel);
+      expect(sentinel.nodeName).toBe('DIV');
 
       scrollView.scrollTop = 50;
       fireEvent.scroll(scrollView);
@@ -1918,6 +1940,7 @@ describe('Table', () => {
 
       scrollView.scrollTop = 76;
       fireEvent.scroll(scrollView);
+      act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
       act(() => {jest.runAllTimers();});
 
       expect(onLoadMore).toHaveBeenCalledTimes(1);

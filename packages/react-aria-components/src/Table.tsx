@@ -10,7 +10,7 @@ import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Mu
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
-import {filterDOMProps, isScrollable, mergeRefs, useLayoutEffect, useLoadMore, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, inertValue, isScrollable, mergeRefs, useLayoutEffect, useLoadMore, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -474,12 +474,17 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
 
   let ElementType = useElementType('table');
 
+  let sentinelRef = useRef(null);
   let memoedLoadMoreProps = useMemo(() => ({
     isLoading,
     onLoadMore,
-    collection
+    collection,
+    sentinelRef
   }), [isLoading, onLoadMore, collection]);
   useLoadMore(memoedLoadMoreProps, tableContainerContext?.scrollRef ?? ref);
+  // TODO: double check this, can't render the sentinel as a div for non-virtualized cases, theoretically
+  // the inert should hide this from the accessbility tree anyways
+  let TBody = useElementType('tbody');
 
   return (
     <Provider
@@ -506,6 +511,8 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
             collection={collection}
             scrollRef={tableContainerContext?.scrollRef ?? ref}
             persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)} />
+          {/* @ts-ignore - compatibility with React < 19 */}
+          <TBody data-testid="loadMoreSentinel" ref={sentinelRef} style={{height: 1, width: 1}} inert={inertValue(true)} />
         </ElementType>
       </FocusScope>
       {dragPreview}

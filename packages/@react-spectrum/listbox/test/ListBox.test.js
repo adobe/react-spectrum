@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, mockClickDefault, pointerMap, render, setupIntersectionObserverMock, within} from '@react-spectrum/test-utils-internal';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {FocusExample} from '../stories/ListBox.stories';
 import {Item, ListBox, Section} from '../';
@@ -886,6 +886,10 @@ describe('ListBox', function () {
     });
 
     it('should fire onLoadMore when scrolling near the bottom', function () {
+      let observe = jest.fn();
+      let observer = setupIntersectionObserverMock({
+        observe
+      });
       // Mock clientHeight to match maxHeight prop
       let maxHeight = 200;
       jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => maxHeight);
@@ -903,7 +907,7 @@ describe('ListBox', function () {
 
         return 48;
       });
-      let {getByRole} = render(
+      let {getByRole, getByTestId} = render(
         <Provider theme={theme}>
           <ListBox aria-label="listbox" items={items} maxHeight={maxHeight} onLoadMore={onLoadMore}>
             {item => <Item key={item.name}>{item.name}</Item>}
@@ -916,6 +920,8 @@ describe('ListBox', function () {
       let listbox = getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
       expect(options.length).toBe(6); // each row is 48px tall, listbox is 200px. 5 rows fit. + 1/3 overscan
+      let sentinel = getByTestId('loadMoreSentinel');
+      expect(observe).toHaveBeenLastCalledWith(sentinel);
 
       listbox.scrollTop = 250;
       fireEvent.scroll(listbox);
@@ -929,6 +935,7 @@ describe('ListBox', function () {
       // there are no more items to load at this height, so loadMore is only called twice
       listbox.scrollTop = 5000;
       fireEvent.scroll(listbox);
+      act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
       act(() => jest.runAllTimers());
 
       expect(onLoadMore).toHaveBeenCalledTimes(1);
@@ -936,6 +943,7 @@ describe('ListBox', function () {
     });
 
     it('should fire onLoadMore if there aren\'t enough items to fill the ListBox ', async function () {
+      let observer = setupIntersectionObserverMock();
       // Mock clientHeight to match maxHeight prop
       let maxHeight = 300;
       jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => maxHeight);
@@ -1000,9 +1008,11 @@ describe('ListBox', function () {
       let {getByRole} = render(
         <AsyncListBox />
       );
+
       await act(async () => {
         jest.runAllTimers();
       });
+      await act(async () => {observer.instance.triggerCallback([{isIntersecting: true}]);});
 
       let listbox = getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
