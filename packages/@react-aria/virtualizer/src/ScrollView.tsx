@@ -39,8 +39,6 @@ interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
   sentinelRef: React.RefObject<HTMLDivElement | null>
 }
 
-
-
 function ScrollView(props: ScrollViewProps, ref: ForwardedRef<HTMLDivElement | null>) {
   let {sentinelRef, ...otherProps} = props;
   ref = useObjectRef(ref);

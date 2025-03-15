@@ -97,7 +97,6 @@ export const ListBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Lis
   // The first copy sends a collection document via context which we render the collection portal into.
   // The second copy sends a ListState object via context which we use to render the ListBox without rebuilding the state.
   // Otherwise, we have a standalone ListBox, so we need to create a collection and state ourselves.
-  // console.log('in listbox render', state)
   if (state) {
     return <ListBoxInner state={state} props={props} listBoxRef={ref} />;
   }

@@ -450,7 +450,7 @@ const MyListBoxLoaderIndicator = () => {
 
 // TODO: this doesn't have load more spinner since user basically needs to use <Collection> or wrap their ListboxItem renderer so it renders the
 // additional loading indicator based on list load state
-export const AsyncListBox = () => {
+export const AsyncListBox = (args) => {
   let list = useAsyncList<Character>({
     async load({signal, cursor, filterText}) {
       if (cursor) {
@@ -470,16 +470,44 @@ export const AsyncListBox = () => {
 
   return (
     <ListBox
-      className={styles.menu}
-      style={{height: 400}}
+      {...args}
+      style={{
+        height: args.orientation === 'horizontal' ? 100 : 400,
+        width: args.orientation === 'horizontal' ? 400 : 200,
+        overflow: 'auto'
+      }}
       items={list.items}
       aria-label="async listbox"
       isLoading={list.isLoading}
       onLoadMore={list.loadMore}
       renderEmptyState={() => list.isLoading ? 'Loading spinner' : 'No results found'}>
-      {item => <MyListBoxItem id={item.name}>{item.name}</MyListBoxItem>}
+      {(item: Character) => (
+        <MyListBoxItem
+          style={{
+            minHeight: args.orientation === 'horizontal' ? 100 : 50,
+            minWidth: args.orientation === 'horizontal' ? 50 : 200,
+            backgroundColor: 'lightgrey',
+            border: '1px solid black',
+            boxSizing: 'border-box'
+          }}
+          id={item.name}>
+          {item.name}
+        </MyListBoxItem>
+      )}
     </ListBox>
   );
+};
+
+AsyncListBox.story = {
+  args: {
+    orientation: 'horizontal'
+  },
+  argTypes: {
+    orientation: {
+      control: 'radio',
+      options: ['horizontal', 'vertical']
+    }
+  }
 };
 
 export const AsyncListBoxVirtualized = () => {
