@@ -779,7 +779,7 @@ describe('GridList', () => {
       expect(onSelectionChange).toBeCalledTimes(1);
     });
 
-    it('should not select an item on pressing up when shouldSelectOnPressUp is false', async () => {
+    it('should select an item on pressing down when shouldSelectOnPressUp is false', async () => {
       let onSelectionChange = jest.fn();
       let {getAllByRole} = renderGridList({selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: false});
       let items = getAllByRole('row');
