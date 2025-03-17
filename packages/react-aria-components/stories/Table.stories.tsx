@@ -14,7 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {Button, Cell, Checkbox, CheckboxProps, Collection, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {isTextDropItem} from 'react-aria';
 import {MyMenuItem} from './utils';
-import React, {useMemo, useRef} from 'react';
+import React, {Suspense, useMemo, useRef, useState} from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_TableLoadingIndicator} from '../src/Table';
 import {useAsyncList, useListData} from 'react-stately';
@@ -979,4 +979,83 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
 export const OnLoadMoreTableVirtualizedResizeWrapperStory  = {
   render: OnLoadMoreTableVirtualizedResizeWrapper,
   name: 'Virtualized Table with async loading, resizable table container wrapper'
+};
+
+interface Launch {
+  id: number,
+  mission_name: string,
+  launch_year: number
+}
+
+const items: Launch[] = [
+  {id: 0, mission_name: 'FalconSat', launch_year: 2006},
+  {id: 1, mission_name: 'DemoSat', launch_year: 2007},
+  {id: 2, mission_name: 'Trailblazer', launch_year: 2008},
+  {id: 3, mission_name: 'RatSat', launch_year: 2009}
+];
+
+function makePromise(items: Launch[]) {
+  return new Promise(resolve => setTimeout(() => resolve(items), 1000));
+}
+
+function TableSuspense({reactTransition = false}) {
+  let [promise, setPromise] = useState(() => makePromise(items.slice(0, 2)));
+  let [isPending, startTransition] = React.useTransition();
+  return (
+    <div>
+      <Table aria-label="Suspense table">
+        <TableHeader>
+          <Column isRowHeader>Name</Column>
+          <Column>Year</Column>
+        </TableHeader>
+        <TableBody>
+          <Suspense
+            fallback={
+              <Row>
+                <Cell colSpan={2}>Loading...</Cell>
+              </Row>
+            }>
+            <LocationsTableBody promise={promise} />
+          </Suspense>
+        </TableBody>
+      </Table>
+      <button
+        onClick={() => {
+          let update = () => {
+            setPromise(makePromise(items));
+          };
+
+          if (reactTransition) {
+            startTransition(update);
+          } else {
+            update();
+          }
+        }}>
+        {isPending ? 'Loading' : 'Load more'}
+      </button>
+    </div>
+  );
+}
+
+function LocationsTableBody({promise}) {
+  let items = React.use<Launch[]>(promise);
+
+  return items.map(item => (
+    <Row key={item.id}>
+      <Cell>{item.mission_name}</Cell>
+      <Cell>{item.launch_year}</Cell>
+    </Row>
+  ));
+}
+
+export const TableWithSuspense = {
+  render: React.use != null ? TableSuspense : () => 'This story requires React 19.',
+  args: {
+    reactTransition: false
+  },
+  parameters: {
+    description: {
+      data: 'Expected behavior: With reactTransition=false, rows should be replaced by loading indicator when pressing button. With reactTransition=true, existing rows should remain and loading should appear inside the button.'
+    }
+  }
 };
