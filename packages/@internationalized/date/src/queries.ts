@@ -20,18 +20,12 @@ type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime;
 /** Returns whether the given dates occur on the same day, regardless of the time or calendar system. */
 export function isSameDay(a: DateValue, b: DateValue): boolean {
   b = toCalendar(b, a.calendar);
-  if (a.calendar.isSamePeriod) {
-    return a.calendar.isSamePeriod(a, b, 'day');
-  }
   return a.era === b.era && a.year === b.year && a.month === b.month && a.day === b.day;
 }
 
 /** Returns whether the given dates occur in the same month, using the calendar system of the first date. */
 export function isSameMonth(a: DateValue, b: DateValue): boolean {
   b = toCalendar(b, a.calendar);
-  if (a.calendar.isSamePeriod) {
-    return a.calendar.isSamePeriod(a, b, 'month');
-  }
   // In the Japanese calendar, months can span multiple eras/years, so only compare the first of the month.
   a = startOfMonth(a);
   b = startOfMonth(b);
@@ -41,9 +35,6 @@ export function isSameMonth(a: DateValue, b: DateValue): boolean {
 /** Returns whether the given dates occur in the same year, using the calendar system of the first date. */
 export function isSameYear(a: DateValue, b: DateValue): boolean {
   b = toCalendar(b, a.calendar);
-  if (a.calendar.isSamePeriod) {
-    return a.calendar.isSamePeriod(a, b, 'year');
-  }
   a = startOfYear(a);
   b = startOfYear(b);
   return a.era === b.era && a.year === b.year;
@@ -51,17 +42,21 @@ export function isSameYear(a: DateValue, b: DateValue): boolean {
 
 /** Returns whether the given dates occur on the same day, and are of the same calendar system. */
 export function isEqualDay(a: DateValue, b: DateValue): boolean {
-  return a.calendar.identifier === b.calendar.identifier && isSameDay(a, b);
+  return a.calendar.identifier === b.calendar.identifier && a.era === b.era && a.year === b.year && a.month === b.month && a.day === b.day;
 }
 
 /** Returns whether the given dates occur in the same month, and are of the same calendar system. */
 export function isEqualMonth(a: DateValue, b: DateValue): boolean {
-  return a.calendar.identifier === b.calendar.identifier && isSameMonth(a, b);
+  a = startOfMonth(a);
+  b = startOfMonth(b);
+  return a.calendar.identifier === b.calendar.identifier && a.era === b.era && a.year === b.year && a.month === b.month;
 }
 
 /** Returns whether the given dates occur in the same year, and are of the same calendar system. */
 export function isEqualYear(a: DateValue, b: DateValue): boolean {
-  return a.calendar.identifier === b.calendar.identifier && isSameYear(a, b);
+  a = startOfYear(a);
+  b = startOfYear(b);
+  return a.calendar.identifier === b.calendar.identifier && a.era === b.era && a.year === b.year;
 }
 
 /** Returns whether the date is today in the given time zone. */
@@ -151,9 +146,6 @@ export function startOfMonth(date: CalendarDateTime): CalendarDateTime;
 export function startOfMonth(date: CalendarDate): CalendarDate;
 export function startOfMonth(date: DateValue): DateValue;
 export function startOfMonth(date: DateValue): DateValue {
-  if (date.calendar.getCurrentMonth) {
-    return date.calendar.getCurrentMonth(date).start;
-  }
   // Use `subtract` instead of `set` so we don't get constrained in an era.
   return date.subtract({days: date.day - 1});
 }
@@ -164,9 +156,6 @@ export function endOfMonth(date: CalendarDateTime): CalendarDateTime;
 export function endOfMonth(date: CalendarDate): CalendarDate;
 export function endOfMonth(date: DateValue): DateValue;
 export function endOfMonth(date: DateValue): DateValue {
-  if (date.calendar.getCurrentMonth) {
-    return date.calendar.getCurrentMonth(date).end;
-  }
   return date.add({days: date.calendar.getDaysInMonth(date) - date.day});
 }
 
@@ -258,9 +247,6 @@ function getWeekStart(locale: string): number {
 
 /** Returns the number of weeks in the given month and locale. */
 export function getWeeksInMonth(date: DateValue, locale: string, firstDayOfWeek?: DayOfWeek): number {
-  if (date.calendar.getWeeksInMonth) {
-    return date.calendar.getWeeksInMonth(date);
-  }
   let days = date.calendar.getDaysInMonth(date);
   return Math.ceil((getDayOfWeek(startOfMonth(date), locale, firstDayOfWeek) + days) / 7);
 }

@@ -448,13 +448,13 @@ describe('CalendarDate conversion', function () {
 
     describe('custom calendar', function () {
       it('to gregorian', function () {
-        console.log(toCalendar(new CalendarDate(new Custom454Calendar(), 2023, 1, 1), new GregorianCalendar()));
-        console.log(toCalendar(new CalendarDate(new Custom454Calendar(), 2022, 12, 28), new GregorianCalendar()));
+        expect(toCalendar(new CalendarDate(new Custom454Calendar(), 2023, 1, 1), new GregorianCalendar())).toEqual(new CalendarDate(2023, 1, 29));
+        expect(toCalendar(new CalendarDate(new Custom454Calendar(), 2022, 12, 28), new GregorianCalendar())).toEqual(new CalendarDate(2023, 1, 28));
       });
 
       it('from gregorian', function () {
-        console.log(toCalendar(new CalendarDate(2023, 1, 29), new Custom454Calendar()));
-        console.log(toCalendar(new CalendarDate(2023, 1, 28), new Custom454Calendar()));
+        expect(toCalendar(new CalendarDate(2023, 1, 29), new Custom454Calendar())).toEqual(new CalendarDate(new Custom454Calendar(), 2023, 1, 1));
+        expect(toCalendar(new CalendarDate(2023, 1, 28), new Custom454Calendar())).toEqual(new CalendarDate(new Custom454Calendar(), 2022, 12, 28));
       });
     });
   });

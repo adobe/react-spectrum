@@ -1,4 +1,4 @@
-import {AnyCalendarDate, CalendarDate, GregorianCalendar, toCalendar} from '../src';
+import {AnyCalendarDate, CalendarDate, GregorianCalendar, toCalendar, toCalendarDate} from '../src';
 import {compareDate, startOfWeek} from '../src/queries';
 
 export class Custom454Calendar extends GregorianCalendar {
@@ -10,7 +10,7 @@ export class Custom454Calendar extends GregorianCalendar {
     this.#anchorDate = new CalendarDate(2001, 2, 4);
   }
 
-  getDaysInMonth(date: AnyCalendarDate) {
+  getDaysInMonth(date: AnyCalendarDate): number {
     let [, isBigYear] = this.#getCurrentYear(date.year);
     const weekPattern = this.#getWeekPattern(isBigYear);
     return weekPattern[date.month % weekPattern.length] * 7;
@@ -66,7 +66,8 @@ export class Custom454Calendar extends GregorianCalendar {
   }
 
   getFormattableMonth(date: AnyCalendarDate): CalendarDate {
-    let gregorian = toCalendar(date, new GregorianCalendar());
+    // Convert to Gregorian, but use month number from this calendar (offset by anchor).
+    let gregorian = toCalendarDate(toCalendar(date, new GregorianCalendar()));
     let month = (this.#anchorDate.month - 1 + date.month - 1) % 12 + 1;
     return gregorian.set({month, day: 1});
   }
