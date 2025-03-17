@@ -147,7 +147,6 @@ The `state.getDatesInWeek` function returns the dates in each week of the month.
 import {useCalendarGrid} from '@react-aria/calendar';
 
 function CalendarGrid({state, ...props}) {
-  let {locale} = useLocale();
   let {gridProps, headerProps, weekDays, weeksInMonth} = useCalendarGrid(props, state);
 
   return (
@@ -385,7 +384,8 @@ function Example() {
 The `createCalendar` prop accepts a function that returns an instance of the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.Calendar} /> interface. See the [@internationalized/date docs](../internationalized/date/Calendar.html#custom-calendars) for an example implementation.
 
 ```tsx import
-import {CalendarDate, createCalendar, startOfWeek, toCalendar} from '@internationalized/date';
+import type {AnyCalendarDate} from '@internationalized/date';
+import {CalendarDate, startOfWeek, toCalendar} from '@internationalized/date';
 ```
 
 ```tsx example
