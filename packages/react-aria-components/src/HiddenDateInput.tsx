@@ -13,7 +13,7 @@
 
 import {CalendarDate, CalendarDateTime, parseDate, parseDateTime} from '@internationalized/date';
 import {DateFieldState, DatePickerState, DateSegmentType} from 'react-stately';
-import React, {useEffect} from 'react';
+import React, {ReactNode, useEffect} from 'react';
 import {useVisuallyHidden} from 'react-aria';
 
 interface AriaHiddenDateInputProps {
@@ -41,7 +41,7 @@ export interface HiddenDateAria {
   inputProps: React.InputHTMLAttributes<HTMLInputElement>
 }
 
-export function useHiddenDateInput(props: HiddenDateInputProps, state: DateFieldState | DatePickerState) {
+export function useHiddenDateInput(props: HiddenDateInputProps, state: DateFieldState | DatePickerState) : HiddenDateAria {
   let {
     autoComplete,
     isDisabled,
@@ -129,7 +129,7 @@ export function useHiddenDateInput(props: HiddenDateInputProps, state: DateField
   };
 }
 
-export function HiddenDateInput(props: HiddenDateInputProps) {
+export function HiddenDateInput(props: HiddenDateInputProps): ReactNode | null {
   let {state} = props;
   let {containerProps, inputProps} = useHiddenDateInput({...props}, state);
   return (
