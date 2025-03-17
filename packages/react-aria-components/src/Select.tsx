@@ -62,7 +62,14 @@ export interface SelectRenderProps {
   isRequired: boolean
 }
 
-export interface SelectProps<T extends object = {}> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior' | 'items'>, RACValidation, RenderProps<SelectRenderProps>, SlotProps {}
+export interface SelectProps<T extends object = {}> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior' | 'items'>, RACValidation, RenderProps<SelectRenderProps>, SlotProps {
+  /**
+   * Temporary text that occupies the select when it is empty.
+   * @selector [data-placeholder]
+   * @default 'Select an item' in English
+   */
+  placeholder?: string
+}
 
 export const SelectContext = createContext<ContextValue<SelectProps<any>, HTMLDivElement>>(null);
 export const SelectStateContext = createContext<SelectState<unknown> | null>(null);
