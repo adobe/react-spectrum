@@ -34,7 +34,7 @@ export class GridListTester {
   /**
    * Set the interaction type used by the gridlist tester.
    */
-  setInteractionType(type: UserOpts['interactionType']) {
+  setInteractionType(type: UserOpts['interactionType']): void {
     this._interactionType = type;
   }
 
@@ -85,7 +85,7 @@ export class GridListTester {
   /**
    * Toggles the selection for the specified gridlist row. Defaults to using the interaction type set on the gridlist tester.
    */
-  async toggleRowSelection(opts: GridListToggleRowOpts) {
+  async toggleRowSelection(opts: GridListToggleRowOpts): Promise<void> {
     let {
       row,
       needsLongPress,
@@ -139,7 +139,7 @@ export class GridListTester {
   /**
    * Triggers the action for the specified gridlist row. Defaults to using the interaction type set on the gridlist tester.
    */
-  async triggerRowAction(opts: GridListRowActionOpts) {
+  async triggerRowAction(opts: GridListRowActionOpts): Promise<void> {
     let {
       row,
       needsDoubleClick,

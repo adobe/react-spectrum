@@ -22,7 +22,7 @@ export const DEFAULT_LONG_PRESS_TIME = 500;
  * @param opts.advanceTimer - Function that when called advances the timers in your test suite by a specific amount of time(ms).
  * @param opts.pointeropts - Options to pass to the simulated event. Defaults to mouse. See https://testing-library.com/docs/dom-testing-library/api-events/#fireevent for more info.
  */
-export async function triggerLongPress(opts: {element: HTMLElement, advanceTimer: (time?: number) => void | Promise<unknown>, pointerOpts?: Record<string, any>}) {
+export async function triggerLongPress(opts: {element: HTMLElement, advanceTimer: (time?: number) => void | Promise<unknown>, pointerOpts?: Record<string, any>}): Promise<void> {
   // TODO: note that this only works if the code from installPointerEvent is called somewhere in the test BEFORE the
   // render. Perhaps we should rely on the user setting that up since I'm not sure there is a great way to set that up here in the
   // util before first render. Will need to document it well
@@ -57,8 +57,8 @@ export async function triggerLongPress(opts: {element: HTMLElement, advanceTimer
   fireEvent.click(element, {detail: 1, ...pointerOpts});
 }
 
-
-export async function pressElement(user, element: HTMLElement, interactionType: UserOpts['interactionType']) {
+// Docs cannot handle the types that userEvent actually declares, so hopefully this sub set is okay
+export async function pressElement(user: {click: (element: Element) => Promise<void>, keyboard: (keys: string) => Promise<void>, pointer: (opts: {target: Element, keys: string}) => Promise<void>}, element: HTMLElement, interactionType: UserOpts['interactionType']): Promise<void> {
   if (interactionType === 'mouse') {
     await user.click(element);
   } else if (interactionType === 'keyboard') {

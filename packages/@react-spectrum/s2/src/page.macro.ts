@@ -21,7 +21,7 @@ function weirdColorToken(token: typeof tokens['background-layer-2-color']) {
   return `light-dark(${token.sets.light.sets.light.value}, ${token.sets.dark.sets.dark.value})`;
 }
 
-export function generatePageStyles(this: MacroContext | void) {
+export function generatePageStyles(this: MacroContext | void): void {
   if (this && typeof this.addAsset === 'function') {
     this.addAsset({
       type: 'css',
@@ -55,13 +55,13 @@ export function generatePageStyles(this: MacroContext | void) {
   }
 }
 
-// This generates a low specificity rule to define default values for 
+// This generates a low specificity rule to define default values for
 // --lightningcss-light and --lightningcss-dark. This is used when rendering
 // a <Provider> without setting a colorScheme prop, and when page.css is not present.
 // It is equivalent to setting `color-scheme: light dark`, but without overriding
 // the browser default for content outside the provider.
 // Also set defaults for --s2-scale here.
-export function generateDefaultColorSchemeStyles(this: MacroContext | void) {
+export function generateDefaultColorSchemeStyles(this: MacroContext | void): void {
   if (this && typeof this.addAsset === 'function') {
     this.addAsset({
       type: 'css',

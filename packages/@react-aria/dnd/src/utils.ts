@@ -23,7 +23,7 @@ interface DroppableCollectionMap {
 export const droppableCollectionMap = new WeakMap<DroppableCollectionState, DroppableCollectionMap>();
 export const DIRECTORY_DRAG_TYPE = Symbol();
 
-export function getDroppableCollectionId(state: DroppableCollectionState) {
+export function getDroppableCollectionId(state: DroppableCollectionState): string {
   let {id} = droppableCollectionMap.get(state) || {};
   if (!id) {
     throw new Error('Droppable item outside a droppable collection');
@@ -32,7 +32,7 @@ export function getDroppableCollectionId(state: DroppableCollectionState) {
   return id;
 }
 
-export function getDroppableCollectionRef(state: DroppableCollectionState) {
+export function getDroppableCollectionRef(state: DroppableCollectionState): RefObject<HTMLElement | null> {
   let {ref} = droppableCollectionMap.get(state) || {};
   if (!ref) {
     throw new Error('Droppable item outside a droppable collection');
@@ -68,15 +68,15 @@ function mapModality(modality: string | null) {
   return modality;
 }
 
-export function useDragModality() {
+export function useDragModality(): string {
   return mapModality(useInteractionModality());
 }
 
-export function getDragModality() {
+export function getDragModality(): string {
   return mapModality(getInteractionModality());
 }
 
-export function writeToDataTransfer(dataTransfer: DataTransfer, items: DragItem[]) {
+export function writeToDataTransfer(dataTransfer: DataTransfer, items: DragItem[]): void {
   // The data transfer API doesn't support more than one item of a given type at once.
   // In addition, only a small set of types are supported natively for transfer between applications.
   // We allow for both multiple items, as well as multiple representations of a single item.
@@ -166,7 +166,7 @@ export class DragTypes implements IDragTypes {
     this.includesUnknownTypes = !hasFiles && dataTransfer.types.includes('Files');
   }
 
-  has(type: string | symbol) {
+  has(type: string | symbol): boolean {
     if (this.includesUnknownTypes || (type === DIRECTORY_DRAG_TYPE && this.types.has(GENERIC_TYPE))) {
       return true;
     }
@@ -175,7 +175,7 @@ export class DragTypes implements IDragTypes {
   }
 }
 
-export function readFromDataTransfer(dataTransfer: DataTransfer) {
+export function readFromDataTransfer(dataTransfer: DataTransfer): DropItem[] {
   let items: DropItem[] = [];
   if (!dataTransfer) {
     return items;
@@ -346,40 +346,40 @@ export interface DnDState {
 
 export let globalDndState: DnDState = {draggingKeys: new Set()};
 
-export function setDraggingCollectionRef(ref: RefObject<HTMLElement | null>) {
+export function setDraggingCollectionRef(ref: RefObject<HTMLElement | null>): void {
   globalDndState.draggingCollectionRef = ref;
 }
 
-export function setDraggingKeys(keys: Set<Key>) {
+export function setDraggingKeys(keys: Set<Key>): void {
   globalDndState.draggingKeys = keys;
 }
 
-export function setDropCollectionRef(ref?: RefObject<HTMLElement | null>) {
+export function setDropCollectionRef(ref?: RefObject<HTMLElement | null>): void {
   globalDndState.dropCollectionRef = ref;
 }
 
-export function clearGlobalDnDState() {
+export function clearGlobalDnDState(): void {
   globalDndState = {draggingKeys: new Set()};
 }
 
-export function setGlobalDnDState(state: DnDState) {
+export function setGlobalDnDState(state: DnDState): void {
   globalDndState = state;
 }
 
 // Util function to check if the current dragging collection ref is the same as the current targeted droppable collection ref.
 // Allows a droppable ref arg in case the global drop collection ref hasn't been set
-export function isInternalDropOperation(ref?: RefObject<HTMLElement | null>) {
+export function isInternalDropOperation(ref?: RefObject<HTMLElement | null>): boolean {
   let {draggingCollectionRef, dropCollectionRef} = globalDndState;
   return draggingCollectionRef?.current != null && draggingCollectionRef.current === (ref?.current || dropCollectionRef?.current);
 }
 
 type DropEffect = 'none' | 'copy' | 'link' | 'move';
 export let globalDropEffect: DropEffect | undefined;
-export function setGlobalDropEffect(dropEffect: DropEffect | undefined) {
+export function setGlobalDropEffect(dropEffect: DropEffect | undefined): void {
   globalDropEffect = dropEffect;
 }
 
 export let globalAllowedDropOperations = DROP_OPERATION.none;
-export function setGlobalAllowedDropOperations(o: DROP_OPERATION) {
+export function setGlobalAllowedDropOperations(o: DROP_OPERATION): void {
   globalAllowedDropOperations = o;
 }
