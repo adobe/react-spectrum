@@ -37,6 +37,13 @@ cd examples/rac-spectrum-tailwind
 yarn config set npmRegistryServer $registry
 yarn install --no-immutable
 yarn build --public-url ./
+
+echo 'build RAC Spectrum Tailwind app done'
+
 mv dist ../../$verdaccio_path/rac-spectrum-tailwind
 
+echo 'move RAC Spectrum Tailwind app done'
+
 netstat -tpln | awk -F'[[:space:]/:]+' '$5 == 4000 {print $(NF-2)}' | xargs kill
+
+echo 'verdaccio shutdown done'
