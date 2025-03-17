@@ -338,7 +338,7 @@ const checkmarkIconSize = {
   XL: 'XL'
 } as const;
 
-export function ComboBoxItem(props: ComboBoxItemProps) {
+export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   let {size} = useContext(InternalComboboxContext);
@@ -378,7 +378,7 @@ export function ComboBoxItem(props: ComboBoxItemProps) {
 }
 
 export interface ComboBoxSectionProps<T extends object> extends SectionProps<T> {}
-export function ComboBoxSection<T extends object>(props: ComboBoxSectionProps<T>) {
+export function ComboBoxSection<T extends object>(props: ComboBoxSectionProps<T>): ReactNode {
   let {size} = useContext(InternalComboboxContext);
   return (
     <>
