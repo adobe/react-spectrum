@@ -2,7 +2,6 @@ import {AnyCalendarDate, CalendarDate, GregorianCalendar, toCalendar, toCalendar
 import {compareDate, startOfWeek} from '../src/queries';
 
 export class Custom454Calendar extends GregorianCalendar {
-  identifier = 'custom-454';
   #anchorDate: CalendarDate;
 
   constructor() {

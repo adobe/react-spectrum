@@ -217,10 +217,10 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   let clearedSegment = useRef<string | null>(null);
 
   // Reset placeholder when calendar changes
-  let lastCalendarIdentifier = useRef(calendar.identifier);
+  let lastCalendar = useRef(calendar);
   useEffect(() => {
-    if (calendar.identifier !== lastCalendarIdentifier.current) {
-      lastCalendarIdentifier.current = calendar.identifier;
+    if (Object.getPrototypeOf(calendar) !== Object.getPrototypeOf(lastCalendar.current)) {
+      lastCalendar.current = calendar;
       setPlaceholderDate(placeholder =>
         Object.keys(validSegments).length > 0
           ? toCalendar(placeholder, calendar)

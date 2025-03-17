@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AnyCalendarDate, AnyTime} from './types';
+import {AnyCalendarDate, AnyTime, Calendar} from './types';
 import {CalendarDate, CalendarDateTime, ZonedDateTime} from './CalendarDate';
 import {fromAbsolute, toAbsolute, toCalendar, toCalendarDate} from './conversion';
 import {weekStartData} from './weekStartData';
@@ -42,21 +42,25 @@ export function isSameYear(a: DateValue, b: DateValue): boolean {
 
 /** Returns whether the given dates occur on the same day, and are of the same calendar system. */
 export function isEqualDay(a: DateValue, b: DateValue): boolean {
-  return a.calendar.identifier === b.calendar.identifier && a.era === b.era && a.year === b.year && a.month === b.month && a.day === b.day;
+  return isSameCalendar(a.calendar, b.calendar) && a.era === b.era && a.year === b.year && a.month === b.month && a.day === b.day;
 }
 
 /** Returns whether the given dates occur in the same month, and are of the same calendar system. */
 export function isEqualMonth(a: DateValue, b: DateValue): boolean {
   a = startOfMonth(a);
   b = startOfMonth(b);
-  return a.calendar.identifier === b.calendar.identifier && a.era === b.era && a.year === b.year && a.month === b.month;
+  return isSameCalendar(a.calendar, b.calendar) && a.era === b.era && a.year === b.year && a.month === b.month;
 }
 
 /** Returns whether the given dates occur in the same year, and are of the same calendar system. */
 export function isEqualYear(a: DateValue, b: DateValue): boolean {
   a = startOfYear(a);
   b = startOfYear(b);
-  return a.calendar.identifier === b.calendar.identifier && a.era === b.era && a.year === b.year;
+  return isSameCalendar(a.calendar, b.calendar) && a.era === b.era && a.year === b.year;
+}
+
+export function isSameCalendar(a: Calendar, b: Calendar): boolean {
+  return Object.getPrototypeOf(a) === Object.getPrototypeOf(b);
 }
 
 /** Returns whether the date is today in the given time zone. */

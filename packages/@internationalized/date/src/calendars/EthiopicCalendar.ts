@@ -13,7 +13,7 @@
 // Portions of the code in this file are based on code from ICU.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
-import {AnyCalendarDate, Calendar} from '../types';
+import {AnyCalendarDate, Calendar, CalendarIdentifier} from '../types';
 import {CalendarDate} from '../CalendarDate';
 import {Mutable} from '../utils';
 
@@ -66,7 +66,7 @@ function getDaysInMonth(year: number, month: number) {
  * on whether it is a leap year. Two eras are supported: 'AA' and 'AM'.
  */
 export class EthiopicCalendar implements Calendar {
-  identifier = 'ethiopic';
+  identifier: CalendarIdentifier = 'ethiopic';
 
   fromJulianDay(jd: number): CalendarDate {
     let [year, month, day] = julianDayToCE(ETHIOPIC_EPOCH, jd);
@@ -117,7 +117,7 @@ export class EthiopicCalendar implements Calendar {
  * except years were measured from a different epoch. Only one era is supported: 'AA'.
  */
 export class EthiopicAmeteAlemCalendar extends EthiopicCalendar {
-  identifier = 'ethioaa'; // also known as 'ethiopic-amete-alem' in ICU
+  identifier: CalendarIdentifier = 'ethioaa'; // also known as 'ethiopic-amete-alem' in ICU
 
   fromJulianDay(jd: number): CalendarDate {
     let [year, month, day] = julianDayToCE(ETHIOPIC_EPOCH, jd);
@@ -141,7 +141,7 @@ export class EthiopicAmeteAlemCalendar extends EthiopicCalendar {
  * on whether it is a leap year. Two eras are supported: 'BCE' and 'CE'.
  */
 export class CopticCalendar extends EthiopicCalendar {
-  identifier = 'coptic';
+  identifier: CalendarIdentifier = 'coptic';
 
   fromJulianDay(jd: number): CalendarDate {
     let [year, month, day] = julianDayToCE(COPTIC_EPOCH, jd);
