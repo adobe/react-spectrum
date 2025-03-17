@@ -200,7 +200,6 @@ export const DateRangePickerTriggerWidthExample = () => (
 
 export const DatePickerAutofill = (props) => (
   <Form
-    // action={'#'}
     onSubmit={e => {
       action('onSubmit')(Object.fromEntries(new FormData(e.target as HTMLFormElement).entries()));
       e.preventDefault();

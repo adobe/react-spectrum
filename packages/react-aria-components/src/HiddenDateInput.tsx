@@ -13,7 +13,7 @@
 
 import {CalendarDate, CalendarDateTime, parseDate, parseDateTime} from '@internationalized/date';
 import {DateFieldState, DatePickerState, DateSegmentType} from 'react-stately';
-import React, {ReactNode, useEffect} from 'react';
+import React, {ReactNode} from 'react';
 import {useVisuallyHidden} from 'react-aria';
 
 interface AriaHiddenDateInputProps {
@@ -41,13 +41,15 @@ export interface HiddenDateAria {
   inputProps: React.InputHTMLAttributes<HTMLInputElement>
 }
 
+const dateSegments = ['day', 'month', 'year'];
+const granularityMap = {'hour': 1, 'minute': 2, 'second': 3};
+
 export function useHiddenDateInput(props: HiddenDateInputProps, state: DateFieldState | DatePickerState) : HiddenDateAria {
   let {
     autoComplete,
     isDisabled,
     name
   } = props;
-  let [dateValue, setDateValue] = React.useState('');
   let {visuallyHiddenProps} = useVisuallyHidden();
 
   let inputStep = 60;
@@ -57,20 +59,11 @@ export function useHiddenDateInput(props: HiddenDateInputProps, state: DateField
     inputStep = 3600; 
   }
 
-  useEffect(() => {
-    if (state.value == null) {
-      setDateValue('');
-    } else {
-      setDateValue(state.value.toString());
-    }
-  }, [state.value]);
-  
+  let dateValue = state.value == null ? '' : state.value.toString();
+
   let inputType = state.granularity === 'day' ? 'date' : 'datetime-local';
 
-  let dateSegments = ['day', 'month', 'year'];
   let timeSegments = ['hour', 'minute', 'second'];
-  let granularityMap = {'hour': 1, 'minute': 2, 'second': 3};
-
   // Depending on the granularity, we only want to validate certain time segments
   let end = 0;
   if (timeSegments.includes(state.granularity)) {
@@ -104,13 +97,12 @@ export function useHiddenDateInput(props: HiddenDateInputProps, state: DateField
           if (state.granularity === 'day') {
             targetValue = parseDate(targetString);
           }
-          setDateValue(targetString);
           // We check to to see if setSegment exists in the state since it only exists in DateFieldState and not DatePickerState.
           // The setValue method has different behavior depending on if it's coming from DateFieldState or DatePickerState.
           // In DateFieldState, setValue firsts checks to make sure that each segment is filled before committing the newValue 
           // which is why in the code below we first set each segment to validate it before committing the new value. 
           // However, in DatePickerState, since we have to be able to commit values from the Calendar popover, we are also able to 
-          // set a new value when the field itself is empty. 
+          // set a new value when the field itself is empty.
           if ('setSegment' in state) {
             for (let type in targetValue) {
               if (dateSegments.includes(type)) {
