@@ -11,7 +11,7 @@
  */
 
 import {ModalContext, useSlottedContext} from 'react-aria-components';
-import React, {ReactElement, useState} from 'react';
+import React, {ReactElement, ReactNode, useState} from 'react';
 import {SpectrumDialogContainerProps} from '@react-types/dialog';
 
 export interface DialogContainerProps extends Omit<SpectrumDialogContainerProps, 'type' | 'isDismissable' | 'isKeyboardDismissDisabled'> {}
@@ -21,7 +21,7 @@ export interface DialogContainerProps extends Omit<SpectrumDialogContainerProps,
  * it in a modal. Useful in cases where there is no trigger element
  * or when the trigger unmounts while the dialog is open.
  */
-export function DialogContainer(props: DialogContainerProps) {
+export function DialogContainer(props: DialogContainerProps): ReactNode {
   let {
     children,
     onDismiss

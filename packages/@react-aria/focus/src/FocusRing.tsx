@@ -12,7 +12,7 @@
 
 import clsx from 'clsx';
 import {mergeProps} from '@react-aria/utils';
-import React, {ReactElement} from 'react';
+import React, {ReactElement, ReactNode} from 'react';
 import {useFocusRing} from './useFocusRing';
 
 export interface FocusRingProps {
@@ -40,7 +40,7 @@ export interface FocusRingProps {
  * Focus rings are visible only when the user is interacting with a keyboard,
  * not with a mouse, touch, or other input methods.
  */
-export function FocusRing(props: FocusRingProps) {
+export function FocusRing(props: FocusRingProps): ReactNode {
   let {children, focusClass, focusRingClass} = props;
   let {isFocused, isFocusVisible, focusProps} = useFocusRing(props);
   let child = React.Children.only(children);

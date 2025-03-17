@@ -12,9 +12,9 @@
 
 import Arrow_M from './S2_ArrowSize100.svg';
 import Arrow_XXL from './S2_ArrowSize400.svg';
-import {SVGProps} from 'react';
+import {ReactNode, SVGProps} from 'react';
 
-export default function Arrow(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'XXL'}) {
+export default function Arrow(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'XXL'}): ReactNode {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':

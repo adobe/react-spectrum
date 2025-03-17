@@ -11,7 +11,7 @@
  */
 
 import type {LocalizedString} from '@internationalized/string';
-import React from 'react';
+import React, {ReactNode} from 'react';
 
 type PackageLocalizedStrings = {
   [packageName: string]: Record<string, LocalizedString>
@@ -27,7 +27,7 @@ interface PackageLocalizationProviderProps {
  * A PackageLocalizationProvider can be rendered on the server to inject the localized strings
  * needed by the client into the initial HTML.
  */
-export function PackageLocalizationProvider(props: PackageLocalizationProviderProps) {
+export function PackageLocalizationProvider(props: PackageLocalizationProviderProps): ReactNode | null {
   if (typeof document !== 'undefined') {
     console.log('PackageLocalizationProvider should only be rendered on the server.');
     return null;
@@ -42,7 +42,7 @@ export function PackageLocalizationProvider(props: PackageLocalizationProviderPr
 /**
  * Returns the content for an inline `<script>` tag to inject localized strings into initial HTML.
  */
-export function getPackageLocalizationScript(locale: string, strings: PackageLocalizedStrings) {
+export function getPackageLocalizationScript(locale: string, strings: PackageLocalizedStrings): string {
   return `window[Symbol.for('react-aria.i18n.locale')]=${JSON.stringify(locale)};{${serialize(strings)}}`;
 }
 

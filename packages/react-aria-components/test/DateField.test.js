@@ -179,11 +179,15 @@ describe('DateField', () => {
 
   it('should support render props', () => {
     let {getByRole} = render(
-      <DateField minValue={new CalendarDate(2023, 1, 1)} defaultValue={new CalendarDate(2020, 2, 3)} validationBehavior="aria">
+      <DateField
+        minValue={new CalendarDate(2023, 1, 1)}
+        defaultValue={new CalendarDate(2020, 2, 3)}
+        validationBehavior="aria">
         {({isInvalid}) => (
           <>
             <Label>Birth date</Label>
-            <DateInput data-validation-state={isInvalid ? 'invalid' : null}>
+            <DateInput
+              data-validation-state={isInvalid ? 'invalid' : null}>
               {segment => <DateSegment segment={segment} />}
             </DateInput>
           </>
@@ -192,6 +196,24 @@ describe('DateField', () => {
     );
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-validation-state', 'invalid');
+  });
+
+  it('should support disabled render prop', () => {
+    let {getByRole} = render(
+      <DateField isDisabled>
+        {({isDisabled}) => (
+          <>
+            <Label>Birth date</Label>
+            <DateInput 
+              data-disabled-state={isDisabled ? 'disabled' : null}>
+              {segment => <DateSegment segment={segment} />}
+            </DateInput>
+          </>
+        )} 
+      </DateField>
+    );
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-disabled-state', 'disabled');
   });
 
   it('should support form value', () => {

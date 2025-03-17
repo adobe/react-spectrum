@@ -14,7 +14,7 @@ import {classNames} from '@react-spectrum/utils';
 import {getChildNodes} from '@react-stately/collections';
 import {MenuItem} from './MenuItem';
 import {Node} from '@react-types/shared';
-import React, {Fragment} from 'react';
+import React, {Fragment, ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {TreeState} from '@react-stately/tree';
 import {useMenuSection} from '@react-aria/menu';
@@ -26,7 +26,7 @@ interface MenuSectionProps<T> {
 }
 
 /** @private */
-export function MenuSection<T>(props: MenuSectionProps<T>) {
+export function MenuSection<T>(props: MenuSectionProps<T>): ReactNode {
   let {item, state} = props;
   let {itemProps, headingProps, groupProps} = useMenuSection({
     heading: item.rendered,

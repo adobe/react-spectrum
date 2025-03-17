@@ -22,7 +22,7 @@ interface ScrollIntoViewportOpts {
  * Similar to `element.scrollIntoView({block: 'nearest'})` (not supported in Edge),
  * but doesn't affect parents above `scrollView`.
  */
-export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement) {
+export function scrollIntoView(scrollView: HTMLElement, element: HTMLElement): void {
   let offsetX = relativeOffset(scrollView, element, 'left');
   let offsetY = relativeOffset(scrollView, element, 'top');
   let width = element.offsetWidth;
@@ -97,7 +97,7 @@ function relativeOffset(ancestor: HTMLElement, child: HTMLElement, axis: 'left'|
  * that will be centered in the viewport prior to scrolling the targetElement into view. If scrolling is prevented on
  * the body (e.g. targetElement is in a popover), this will only scroll the scroll parents of the targetElement up to but not including the body itself.
  */
-export function scrollIntoViewport(targetElement: Element | null, opts?: ScrollIntoViewportOpts) {
+export function scrollIntoViewport(targetElement: Element | null, opts?: ScrollIntoViewportOpts): void {
   if (targetElement && document.contains(targetElement)) {
     let root = document.scrollingElement || document.documentElement;
     let isScrollPrevented = window.getComputedStyle(root).overflow === 'hidden';

@@ -54,7 +54,7 @@ export const PressResponder = React.forwardRef(({children, ...props}: PressRespo
   );
 });
 
-export function ClearPressResponder({children}: {children: ReactNode}) {
+export function ClearPressResponder({children}: {children: ReactNode}): ReactNode {
   let context = useMemo(() => ({register: () => {}}), []);
   return (
     <PressResponderContext.Provider value={context}>

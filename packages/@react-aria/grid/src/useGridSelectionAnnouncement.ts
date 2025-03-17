@@ -36,7 +36,7 @@ interface GridSelectionState<T> {
   selectionManager: SelectionManager
 }
 
-export function useGridSelectionAnnouncement<T>(props: GridSelectionAnnouncementProps, state: GridSelectionState<T>) {
+export function useGridSelectionAnnouncement<T>(props: GridSelectionAnnouncementProps, state: GridSelectionState<T>): void {
   let {
     getRowText = (key) => state.collection.getTextValue?.(key) ?? state.collection.getItem(key)?.textValue
   } = props;

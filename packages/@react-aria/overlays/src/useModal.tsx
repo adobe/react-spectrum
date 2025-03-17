@@ -36,7 +36,7 @@ const Context = React.createContext<ModalContext | null>(null);
  * subtree from screen readers. This is done using React context in order to account for things
  * like portals, which can cause the React tree and the DOM tree to differ significantly in structure.
  */
-export function ModalProvider(props: ModalProviderProps) {
+export function ModalProvider(props: ModalProviderProps): ReactNode {
   let {children} = props;
   let parent = useContext(Context);
   let [modalCount, setModalCount] = useState(0);
@@ -100,7 +100,7 @@ function OverlayContainerDOM(props: ModalProviderProps) {
  * if a modal or other overlay is opened. Only the top-most modal or
  * overlay should be accessible at once.
  */
-export function OverlayProvider(props: ModalProviderProps) {
+export function OverlayProvider(props: ModalProviderProps): ReactNode {
   return (
     <ModalProvider>
       <OverlayContainerDOM {...props} />

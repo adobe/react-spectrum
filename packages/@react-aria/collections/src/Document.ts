@@ -11,7 +11,7 @@
  */
 
 import {BaseCollection, CollectionNode, Mutable} from './BaseCollection';
-import {ForwardedRef, ReactElement} from 'react';
+import {CSSProperties, ForwardedRef, ReactElement, ReactNode} from 'react';
 import {Node} from '@react-types/shared';
 
 // This Collection implementation is perhaps a little unusual. It works by rendering the React tree into a
@@ -45,7 +45,7 @@ export class BaseNode<T> {
     this.ownerDocument = ownerDocument;
   }
 
-  *[Symbol.iterator]() {
+  *[Symbol.iterator](): Iterator<ElementNode<T>> {
     let node = this.firstChild;
     while (node) {
       yield node;
@@ -53,62 +53,62 @@ export class BaseNode<T> {
     }
   }
 
-  get firstChild() {
+  get firstChild(): ElementNode<T> | null {
     return this._firstChild;
   }
 
-  set firstChild(firstChild) {
+  set firstChild(firstChild: ElementNode<T> | null) {
     this._firstChild = firstChild;
     this.ownerDocument.markDirty(this);
   }
 
-  get lastChild() {
+  get lastChild(): ElementNode<T> | null {
     return this._lastChild;
   }
 
-  set lastChild(lastChild) {
+  set lastChild(lastChild: ElementNode<T> | null) {
     this._lastChild = lastChild;
     this.ownerDocument.markDirty(this);
   }
 
-  get previousSibling() {
+  get previousSibling(): ElementNode<T> | null {
     return this._previousSibling;
   }
 
-  set previousSibling(previousSibling) {
+  set previousSibling(previousSibling: ElementNode<T> | null) {
     this._previousSibling = previousSibling;
     this.ownerDocument.markDirty(this);
   }
 
-  get nextSibling() {
+  get nextSibling(): ElementNode<T> | null {
     return this._nextSibling;
   }
 
-  set nextSibling(nextSibling) {
+  set nextSibling(nextSibling: ElementNode<T> | null) {
     this._nextSibling = nextSibling;
     this.ownerDocument.markDirty(this);
   }
 
-  get parentNode() {
+  get parentNode(): BaseNode<T> | null {
     return this._parentNode;
   }
 
-  set parentNode(parentNode) {
+  set parentNode(parentNode: BaseNode<T> | null) {
     this._parentNode = parentNode;
     this.ownerDocument.markDirty(this);
   }
 
-  get isConnected() {
+  get isConnected(): boolean {
     return this.parentNode?.isConnected || false;
   }
 
-  private invalidateChildIndices(child: ElementNode<T>) {
+  private invalidateChildIndices(child: ElementNode<T>): void {
     if (this._minInvalidChildIndex == null || child.index < this._minInvalidChildIndex.index) {
       this._minInvalidChildIndex = child;
     }
   }
 
-  updateChildIndices() {
+  updateChildIndices(): void {
     let node = this._minInvalidChildIndex;
     while (node) {
       node.index = node.previousSibling ? node.previousSibling.index + 1 : 0;
@@ -117,7 +117,7 @@ export class BaseNode<T> {
     this._minInvalidChildIndex = null;
   }
 
-  appendChild(child: ElementNode<T>) {
+  appendChild(child: ElementNode<T>): void {
     this.ownerDocument.startTransaction();
     if (child.parentNode) {
       child.parentNode.removeChild(child);
@@ -151,7 +151,7 @@ export class BaseNode<T> {
     this.ownerDocument.queueUpdate();
   }
 
-  insertBefore(newNode: ElementNode<T>, referenceNode: ElementNode<T>) {
+  insertBefore(newNode: ElementNode<T>, referenceNode: ElementNode<T>): void {
     if (referenceNode == null) {
       return this.appendChild(newNode);
     }
@@ -184,7 +184,7 @@ export class BaseNode<T> {
     this.ownerDocument.queueUpdate();
   }
 
-  removeChild(child: ElementNode<T>) {
+  removeChild(child: ElementNode<T>): void {
     if (child.parentNode !== this || !this.ownerDocument.isMounted) {
       return;
     }
@@ -218,8 +218,8 @@ export class BaseNode<T> {
     this.ownerDocument.queueUpdate();
   }
 
-  addEventListener() {}
-  removeEventListener() {}
+  addEventListener(): void {}
+  removeEventListener(): void {}
 }
 
 /**
@@ -241,11 +241,11 @@ export class ElementNode<T> extends BaseNode<T> {
     this.ownerDocument.startTransaction();
   }
 
-  get index() {
+  get index(): number {
     return this._index;
   }
 
-  set index(index) {
+  set index(index: number) {
     this._index = index;
     this.ownerDocument.markDirty(this);
   }
@@ -258,7 +258,7 @@ export class ElementNode<T> extends BaseNode<T> {
     return 0;
   }
 
-  updateNode() {
+  updateNode(): void {
     let node = this.ownerDocument.getMutableNode(this);
     node.index = this.index;
     node.level = this.level;
@@ -280,7 +280,7 @@ export class ElementNode<T> extends BaseNode<T> {
     }
   }
 
-  setProps<E extends Element>(obj: any, ref: ForwardedRef<E>, rendered?: any, render?: (node: Node<T>) => ReactElement) {
+  setProps<E extends Element>(obj: {[key: string]: any}, ref: ForwardedRef<E>, rendered?: ReactNode, render?: (node: Node<T>) => ReactElement): void {
     let node = this.ownerDocument.getMutableNode(this);
     let {value, textValue, id, ...props} = obj;
     props.ref = ref;
@@ -311,14 +311,14 @@ export class ElementNode<T> extends BaseNode<T> {
     this.ownerDocument.queueUpdate();
   }
 
-  get style() {
+  get style(): CSSProperties {
     return {};
   }
 
-  hasAttribute() {}
-  setAttribute() {}
-  setAttributeNS() {}
-  removeAttribute() {}
+  hasAttribute(): void {}
+  setAttribute(): void {}
+  setAttributeNS(): void {}
+  removeAttribute(): void {}
 }
 
 /**
@@ -348,11 +348,11 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     this.collectionMutated = true;
   }
 
-  get isConnected() {
+  get isConnected(): boolean {
     return this.isMounted;
   }
 
-  createElement(type: string) {
+  createElement(type: string): ElementNode<T> {
     return new ElementNode(type, this);
   }
 
@@ -380,19 +380,19 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     return this.collection;
   }
 
-  markDirty(node: BaseNode<T>) {
+  markDirty(node: BaseNode<T>): void {
     this.dirtyNodes.add(node);
   }
 
-  startTransaction() {
+  startTransaction(): void {
     this.transactionCount++;
   }
 
-  endTransaction() {
+  endTransaction(): void {
     this.transactionCount--;
   }
 
-  addNode(element: ElementNode<T>) {
+  addNode(element: ElementNode<T>): void {
     let collection = this.getMutableCollection();
     if (!collection.getItem(element.node.key)) {
       collection.addNode(element.node);
@@ -405,7 +405,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     this.markDirty(element);
   }
 
-  removeNode(node: ElementNode<T>) {
+  removeNode(node: ElementNode<T>): void {
     for (let child of node) {
       this.removeNode(child);
     }
@@ -431,7 +431,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     return this.collection;
   }
 
-  updateCollection() {
+  updateCollection(): void {
     // First, update the indices of dirty element children.
     for (let element of this.dirtyNodes) {
       element.updateChildIndices();
@@ -462,7 +462,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     this.collectionMutated = false;
   }
 
-  queueUpdate() {
+  queueUpdate(): void {
     // Don't emit any updates if there is a transaction in progress.
     // queueUpdate should be called again after the transaction.
     if (this.dirtyNodes.size === 0 || this.transactionCount > 0 || this.queuedRender) {
@@ -484,10 +484,10 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
   subscribe(fn: () => void) {
     this.subscriptions.add(fn);
-    return () => this.subscriptions.delete(fn);
+    return (): boolean => this.subscriptions.delete(fn);
   }
 
-  resetAfterSSR() {
+  resetAfterSSR(): void {
     if (this.isSSR) {
       this.isSSR = false;
       this.firstChild = null;

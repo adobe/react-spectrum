@@ -311,7 +311,7 @@ export function createShadowTreeWalker(
     root: Node,
     whatToShow?: number,
     filter?: NodeFilter | null
-) {
+): TreeWalker {
   if (shadowDOM()) {
     return new ShadowTreeWalker(doc, root, whatToShow, filter);
   }

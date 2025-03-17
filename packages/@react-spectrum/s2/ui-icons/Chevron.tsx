@@ -16,9 +16,9 @@ import Chevron_S from './S2_ChevronSize75.svg';
 import Chevron_XL from './S2_ChevronSize300.svg';
 import Chevron_XS from './S2_ChevronSize50.svg';
 import Chevron_XXL from './S2_ChevronSize400.svg';
-import {SVGProps} from 'react';
+import {ReactNode, SVGProps} from 'react';
 
-export default function Chevron(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XXL' | 'XS' | 'S'}) {
+export default function Chevron(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XXL' | 'XS' | 'S'}): ReactNode {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':

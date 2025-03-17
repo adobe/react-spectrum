@@ -46,14 +46,14 @@ export class SelectTester {
   /**
    * Set the interaction type used by the select tester.
    */
-  setInteractionType(type: UserOpts['interactionType']) {
+  setInteractionType(type: UserOpts['interactionType']): void {
     this._interactionType = type;
   }
 
   /**
    * Opens the select. Defaults to using the interaction type set on the select tester.
    */
-  async open(opts: SelectOpenOpts = {}) {
+  async open(opts: SelectOpenOpts = {}): Promise<void> {
     let {
       interactionType = this._interactionType
     } = opts;
@@ -89,7 +89,7 @@ export class SelectTester {
   /**
    * Closes the select.
    */
-  async close() {
+  async close(): Promise<void> {
     let listbox = this.listbox;
     if (listbox) {
       act(() => listbox.focus());
@@ -155,7 +155,7 @@ export class SelectTester {
    * Selects the desired select option. Defaults to using the interaction type set on the select tester. If necessary, will open the select dropdown beforehand.
    * The desired option can be targeted via the option's node, the option's text, or the option's index.
    */
-  async selectOption(opts: SelectTriggerOptionOpts) {
+  async selectOption(opts: SelectTriggerOptionOpts): Promise<void> {
     let {
       option,
       interactionType = this._interactionType

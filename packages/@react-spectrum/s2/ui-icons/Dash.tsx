@@ -15,9 +15,9 @@ import Dash_M from './S2_DashSize100.svg';
 import Dash_S from './S2_DashSize75.svg';
 import Dash_XL from './S2_DashSize300.svg';
 import Dash_XS from './S2_DashSize50.svg';
-import {SVGProps} from 'react';
+import {ReactNode, SVGProps} from 'react';
 
-export default function Dash(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XS' | 'S'}) {
+export default function Dash(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XS' | 'S'}): ReactNode {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':

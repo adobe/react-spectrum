@@ -28,7 +28,7 @@ interface ListBoxSectionProps<T> extends Omit<VirtualizerItemOptions, 'ref' | 'l
 }
 
 /** @private */
-export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
+export function ListBoxSection<T>(props: ListBoxSectionProps<T>): ReactNode {
   let {children, layoutInfo, headerLayoutInfo, virtualizer, item} = props;
   let {headingProps, groupProps} = useListBoxSection({
     heading: item.rendered,

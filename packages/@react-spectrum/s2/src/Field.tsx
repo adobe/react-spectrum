@@ -276,7 +276,7 @@ const helpTextStyles = style({
   }
 });
 
-export function HelpText(props: HelpTextProps & {descriptionRef?: DOMRef<HTMLDivElement>, errorRef?: DOMRef<HTMLDivElement>}) {
+export function HelpText(props: HelpTextProps & {descriptionRef?: DOMRef<HTMLDivElement>, errorRef?: DOMRef<HTMLDivElement>}): ReactNode {
   let domDescriptionRef = useDOMRef(props.descriptionRef || null);
   let domErrorRef = useDOMRef(props.errorRef || null);
 
@@ -308,7 +308,7 @@ export function HelpText(props: HelpTextProps & {descriptionRef?: DOMRef<HTMLDiv
   );
 }
 
-export function FieldErrorIcon(props: {isDisabled?: boolean}) {
+export function FieldErrorIcon(props: {isDisabled?: boolean}): ReactNode {
   return (
     <Provider
       values={[

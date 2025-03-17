@@ -406,7 +406,7 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
   return content;
 });
 
-export function Divider(props: SeparatorProps) {
+export function Divider(props: SeparatorProps): ReactNode {
   return (
     <Separator
       {...props}
@@ -429,7 +429,7 @@ export function Divider(props: SeparatorProps) {
 }
 
 export interface MenuSectionProps<T extends object> extends AriaMenuSectionProps<T> {}
-export function MenuSection<T extends object>(props: MenuSectionProps<T>) {
+export function MenuSection<T extends object>(props: MenuSectionProps<T>): ReactNode {
   // remember, context doesn't work if it's around Section nor inside
   let {size} = useContext(InternalMenuContext);
   return (
@@ -465,7 +465,7 @@ const linkIconSize = {
   XL: 'XL'
 } as const;
 
-export function MenuItem(props: MenuItemProps) {
+export function MenuItem(props: MenuItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   let isLinkOut = isLink && props.target === '_blank';
@@ -548,7 +548,7 @@ export function MenuItem(props: MenuItemProps) {
  * The MenuTrigger serves as a wrapper around a Menu and its associated trigger,
  * linking the Menu's open state with the trigger's press state.
  */
-function MenuTrigger(props: MenuTriggerProps) {
+function MenuTrigger(props: MenuTriggerProps): ReactNode {
   // RAC sets isPressed via PressResponder when the menu is open.
   // We don't want press scaling to appear to get "stuck", so override this.
   // For mouse interactions, menus open on press start. When the popover underlay appears
@@ -591,6 +591,6 @@ export {MenuTrigger, SubmenuTrigger};
 // This is purely so that storybook generates the types for both Menu and MenuTrigger
 interface ICombined<T extends object> extends MenuProps<T>, Omit<MenuTriggerProps, 'children'> {}
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function CombinedMenu<T extends object>(props: ICombined<T>) {
+export function CombinedMenu<T extends object>(props: ICombined<T>): ReactNode {
   return <div />;
 }

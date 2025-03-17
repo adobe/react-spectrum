@@ -14,9 +14,9 @@ import CornerTriangle_L from './S2_CornerTriangleSize200.svg';
 import CornerTriangle_M from './S2_CornerTriangleSize100.svg';
 import CornerTriangle_S from './S2_CornerTriangleSize75.svg';
 import CornerTriangle_XL from './S2_CornerTriangleSize300.svg';
-import {SVGProps} from 'react';
+import {ReactNode, SVGProps} from 'react';
 
-export default function CornerTriangle(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'S'}) {
+export default function CornerTriangle(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'S'}): ReactNode {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':

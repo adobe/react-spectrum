@@ -24,7 +24,7 @@ interface VirtualizerItemProps extends Omit<VirtualizerItemOptions, 'ref'> {
   children: ReactNode
 }
 
-export function VirtualizerItem(props: VirtualizerItemProps) {
+export function VirtualizerItem(props: VirtualizerItemProps): ReactNode {
   let {style, className, layoutInfo, virtualizer, parent, children} = props;
   let {direction} = useLocale();
   let ref = useRef<HTMLDivElement | null>(null);

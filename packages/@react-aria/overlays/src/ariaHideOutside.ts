@@ -152,7 +152,7 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
 
   observerStack.push(observerWrapper);
 
-  return () => {
+  return (): void => {
     observer.disconnect();
 
     for (let node of hiddenNodes) {

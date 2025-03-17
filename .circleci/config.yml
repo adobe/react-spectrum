@@ -461,22 +461,239 @@ jobs:
           paths:
             - '*/docs/'
 
-  docs-verdaccio:
+  verdaccio:
     executor: rsp-xlarge
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
-          name: run verdaccio
-          command: ./scripts/verdaccio.sh ci
+          name: run verdaccio and publish built packages
+          command: |
+            mkdir -p verdaccio-workspace
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-deploy.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
 
       # Store the prod docs website w/ verdaccio packages in a separate dist folder so it doesn't get deployed by "deploy" workflow
       # This is because we have a separate deploy flow for the test prod docs website so it doesn't hold up the normal "deploy" workflow
       - persist_to_workspace:
+          root: /tmp/verdaccio-workspace
+          paths:
+            - storage
+
+  v-docs:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-workspace
+
+      - run:
+          name: build docs off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - persist_to_workspace:
           root: verdaccio_dist
           paths:
-            - '*/verdaccio/'
+            - '*/verdaccio/docs'
+
+  v-rsp-cra-18:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-workspace
+
+      - run:
+          name: build react-spectrum-cra-18 off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build-rsp-cra-18.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - persist_to_workspace:
+          root: verdaccio_dist
+          paths:
+            - '*/verdaccio/rsp-cra-18'
+
+  v-webpack-4:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-workspace
+
+      - run:
+          name: build webpack-4 off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build-webpack-4.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - persist_to_workspace:
+          root: verdaccio_dist
+          paths:
+            - '*/verdaccio/webpack-4'
+
+  v-nextjs:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-workspace
+
+      - run:
+          name: build nextjs off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build-nextjs.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - persist_to_workspace:
+          root: verdaccio_dist
+          paths:
+            - '*/verdaccio/next'
+
+  v-rac-tailwind:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-workspace
+
+      - run:
+          name: build rac-tailwind off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build-rac-tailwind.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - persist_to_workspace:
+          root: verdaccio_dist
+          paths:
+            - '*/verdaccio/rac-tailwind'
+
+  v-rac-rsp-tailwind:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-workspace
+
+      - run:
+          name: build rac-rsp-tailwind off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build-rac-rsp-tailwind.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - persist_to_workspace:
+          root: verdaccio_dist
+          paths:
+            - '*/verdaccio/rac-spectrum-tailwind'
+
+  v-s2-parcel:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-workspace
+
+      - run:
+          name: build s2-parcel off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build-s2-parcel.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - persist_to_workspace:
+          root: verdaccio_dist
+          paths:
+            - '*/verdaccio/s2-parcel-example'
+
+  v-s2-webpack:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-workspace
+
+      - run:
+          name: build s2-webpack off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build-s2-webpack.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+      - persist_to_workspace:
+          root: verdaccio_dist
+          paths:
+            - '*/verdaccio/s2-webpack-5-example'
+
+  v-icon-builder:
+    executor: rsp-xlarge
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio-workspace
+
+      - run:
+          name: build icon-builder off verdaccio
+          command: |
+            ./scripts/verdaccio-ci.sh
+            ./scripts/verdaccio-build-icon-builder.sh
+          environment:
+            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
+
+  v-publish-stats:
+    executor: rsp
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - attach_workspace:
+          at: /tmp/verdaccio_dist
+
+      - run:
+          name: build size diffs off verdaccio
+          command: |
+            ./scripts/verdaccio-build-pre-azure.sh
+
+      - persist_to_workspace:
+          root: verdaccio_dist
+          paths:
+            - '*/verdaccio/publish-stats'
 
   deploy:
     docker:
@@ -646,12 +863,45 @@ workflows:
       - docs:
           requires:
             - install
-      - docs-verdaccio:
+      - verdaccio:
           filters:
             branches:
               only: main
           requires:
             - install
+      - v-docs:
+          requires:
+            - verdaccio
+      - v-rsp-cra-18:
+          requires:
+            - verdaccio
+      - v-webpack-4:
+          requires:
+            - verdaccio
+      - v-nextjs:
+          requires:
+            - verdaccio
+      - v-rac-tailwind:
+          requires:
+            - verdaccio
+      - v-rac-rsp-tailwind:
+          requires:
+            - verdaccio
+      - v-s2-parcel:
+          requires:
+            - verdaccio
+      - v-s2-webpack:
+          requires:
+            - verdaccio
+      - v-icon-builder:
+          requires:
+            - verdaccio
+      - v-publish-stats:
+          requires:
+            - verdaccio
+            - v-webpack-4
+            - v-nextjs
+            - v-rsp-cra-18
       - deploy:
           requires:
             - lint
@@ -670,7 +920,16 @@ workflows:
             - docs
       - deploy-verdaccio:
           requires:
-            - docs-verdaccio
+            - v-docs
+            - v-rsp-cra-18
+            - v-webpack-4
+            - v-nextjs
+            - v-rac-tailwind
+            - v-rac-rsp-tailwind
+            - v-s2-parcel
+            - v-s2-webpack
+            - v-icon-builder
+            - v-publish-stats
       - comment:
           name: comment-pr
           filters:

@@ -20,6 +20,7 @@ import {
   Heading,
   Text
 } from 'react-aria-components';
+import {ReactNode} from 'react';
 
 
 export interface CalendarProps<T extends DateValue>
@@ -29,7 +30,7 @@ export interface CalendarProps<T extends DateValue>
 
 export function Calendar<T extends DateValue>(
   {errorMessage, ...props}: CalendarProps<T>
-) {
+): ReactNode {
   return (
     <AriaCalendar {...props}>
       <header>

@@ -39,7 +39,7 @@ export function isVirtualClick(event: MouseEvent | PointerEvent): boolean {
   return event.detail === 0 && !(event as PointerEvent).pointerType;
 }
 
-export function isVirtualPointerEvent(event: PointerEvent) {
+export function isVirtualPointerEvent(event: PointerEvent): boolean {
   // If the pointer size is zero, then we assume it's from a screen reader.
   // Android TalkBack double tap will sometimes return a event with width and height of 1
   // and pointerType === 'mouse' so we need to check for a specific combination of event attributes.

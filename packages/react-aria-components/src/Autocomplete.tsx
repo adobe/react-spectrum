@@ -15,7 +15,7 @@ import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomple
 import {InputContext} from './Input';
 import {mergeProps} from '@react-aria/utils';
 import {Provider, removeDataAttributes, SlotProps, SlottedContextValue, useSlottedContext} from './utils';
-import React, {createContext, RefObject, useRef} from 'react';
+import React, {createContext, ReactNode, RefObject, useRef} from 'react';
 import {SearchFieldContext} from './SearchField';
 import {TextFieldContext} from './TextField';
 
@@ -36,7 +36,7 @@ export const UNSTABLE_InternalAutocompleteContext = createContext<InternalAutoco
 /**
  * An autocomplete combines a TextField or SearchField with a Menu or ListBox, allowing users to search or filter a list of suggestions.
  */
-export function Autocomplete(props: AutocompleteProps) {
+export function Autocomplete(props: AutocompleteProps): ReactNode {
   let ctx = useSlottedContext(AutocompleteContext, props.slot);
   props = mergeProps(ctx, props);
   let {filter, disableAutoFocusFirst} = props;

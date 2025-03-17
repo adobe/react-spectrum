@@ -14,7 +14,7 @@ import {classNames} from '@react-spectrum/utils';
 import {Color} from '@react-types/color';
 import {DOMProps, RefObject} from '@react-types/shared';
 import {Overlay} from '@react-spectrum/overlays';
-import React, {CSSProperties, ReactElement, useRef, useState} from 'react';
+import React, {CSSProperties, ReactElement, ReactNode, useRef, useState} from 'react';
 import stylesHandle from '@adobe/spectrum-css-temp/components/colorhandle/vars.css';
 import stylesLoupe from '@adobe/spectrum-css-temp/components/colorloupe/vars.css';
 import {useId, useLayoutEffect} from '@react-aria/utils';
@@ -31,7 +31,7 @@ interface ColorThumbProps extends DOMProps {
   containerRef?: RefObject<HTMLElement | null>
 }
 
-function ColorThumb(props: ColorThumbProps) {
+function ColorThumb(props: ColorThumbProps): ReactNode {
   let {value, isDisabled, isDragging, isFocused, children, className = '', style, containerRef, ...otherProps} = props;
 
   let valueCSS = value.toString('css');

@@ -26,7 +26,7 @@ export function announce(
   message: Message,
   assertiveness: Assertiveness = 'assertive',
   timeout = LIVEREGION_TIMEOUT_DELAY
-) {
+): void {
   if (!liveAnnouncer) {
     liveAnnouncer = new LiveAnnouncer();
     // wait for the live announcer regions to be added to the dom, then announce
@@ -54,7 +54,7 @@ export function announce(
 /**
  * Stops all queued announcements.
  */
-export function clearAnnouncer(assertiveness: Assertiveness) {
+export function clearAnnouncer(assertiveness: Assertiveness): void {
   if (liveAnnouncer) {
     liveAnnouncer.clear(assertiveness);
   }
@@ -63,7 +63,7 @@ export function clearAnnouncer(assertiveness: Assertiveness) {
 /**
  * Removes the announcer from the DOM.
  */
-export function destroyAnnouncer() {
+export function destroyAnnouncer(): void {
   if (liveAnnouncer) {
     liveAnnouncer.destroy();
     liveAnnouncer = null;

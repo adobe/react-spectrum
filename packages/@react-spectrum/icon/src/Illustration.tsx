@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import React, {ReactElement} from 'react';
+import React, {ReactElement, ReactNode} from 'react';
 import {useSlotProps, useStyleProps} from '@react-spectrum/utils';
 
 export interface IllustrationProps extends DOMProps, AriaLabelingProps, StyleProps {
@@ -40,7 +40,7 @@ export type IllustrationPropsWithoutChildren = Omit<IllustrationProps, 'children
 /**
  * Wrapper component for illustrations. Use this to wrap your svg element for a custom illustration.
  */
-export function Illustration(props: IllustrationProps) {
+export function Illustration(props: IllustrationProps): ReactNode {
   props = useSlotProps(props, 'illustration');
   let {
     children,

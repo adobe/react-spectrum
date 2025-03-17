@@ -15,9 +15,9 @@ import Add_M from './S2_AddSize100.svg';
 import Add_S from './S2_AddSize75.svg';
 import Add_XL from './S2_AddSize300.svg';
 import Add_XS from './S2_AddSize50.svg';
-import {SVGProps} from 'react';
+import {ReactNode, SVGProps} from 'react';
 
-export default function Add(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XS' | 'S'}) {
+export default function Add(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XS' | 'S'}): ReactNode {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':

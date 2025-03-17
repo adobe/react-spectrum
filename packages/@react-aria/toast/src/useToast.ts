@@ -12,11 +12,11 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaLabelingProps, DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
+import {filterDOMProps, useId, useSlotId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {QueuedToast, ToastState} from '@react-stately/toast';
 import {useEffect, useState} from 'react';
-import {useId, useSlotId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface AriaToastProps<T> extends AriaLabelingProps {
@@ -72,14 +72,15 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
     setIsVisible(true);
   }, []);
 
+  let toastProps = filterDOMProps(props, {labelable: true});
+
   return {
     toastProps: {
+      ...toastProps,
       role: 'alertdialog',
       'aria-modal': 'false',
-      'aria-label': props['aria-label'],
       'aria-labelledby': props['aria-labelledby'] || titleId,
       'aria-describedby': props['aria-describedby'] || descriptionId,
-      'aria-details': props['aria-details'],
       tabIndex: 0
     },
     contentProps: {

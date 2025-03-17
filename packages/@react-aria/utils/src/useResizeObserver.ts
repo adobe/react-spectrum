@@ -12,7 +12,7 @@ type useResizeObserverOptionsType<T> = {
   onResize: () => void
 }
 
-export function useResizeObserver<T extends Element>(options: useResizeObserverOptionsType<T>) {
+export function useResizeObserver<T extends Element>(options: useResizeObserverOptionsType<T>): void {
   const {ref, box, onResize} = options;
 
   useEffect(() => {

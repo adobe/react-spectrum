@@ -86,7 +86,7 @@ export function useVisuallyHidden(props: VisuallyHiddenProps = {}): VisuallyHidd
  * VisuallyHidden hides its children visually, while keeping content visible
  * to screen readers.
  */
-export function VisuallyHidden(props: VisuallyHiddenProps) {
+export function VisuallyHidden(props: VisuallyHiddenProps): ReactNode {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {children, elementType: Element = 'div', isFocusable, style, ...otherProps} = props;
   let {visuallyHiddenProps} = useVisuallyHidden(props);

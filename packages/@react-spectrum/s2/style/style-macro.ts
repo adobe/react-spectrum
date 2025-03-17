@@ -124,7 +124,7 @@ function createValueLookup(values: Array<CSSValue>, atStart = false) {
   return map;
 }
 
-export function parseArbitraryValue(value: any) {
+export function parseArbitraryValue(value: string | number): string[] | undefined {
   if (typeof value === 'string' && value.startsWith('--')) {
     return [`var(${value})`, generateArbitraryValueSelector(value)];
   } else if (typeof value === 'string' && value[0] === '[' && value[value.length - 1] === ']') {
@@ -629,7 +629,7 @@ function getStaticClassName(rules: Rule[]): string {
   return rules.map(rule => (rule.prelude.startsWith('.') ? ' ' + rule.prelude.slice(1) : '') + (Array.isArray(rule.body) ? getStaticClassName(rule.body) : '')).join('');
 }
 
-export function raw(this: MacroContext | void, css: string, layer = '_.a') {
+export function raw(this: MacroContext | void, css: string, layer = '_.a'): string {
   // Check if `this` is undefined, which means style was not called as a macro but as a normal function.
   // We also check if this is globalThis, which happens in non-strict mode bundles.
   // Also allow style to be called as a normal function in tests.
@@ -659,7 +659,7 @@ export function raw(this: MacroContext | void, css: string, layer = '_.a') {
   return className;
 }
 
-export function keyframes(this: MacroContext | void, css: string) {
+export function keyframes(this: MacroContext | void, css: string): string {
   // Check if `this` is undefined, which means style was not called as a macro but as a normal function.
   // We also check if this is globalThis, which happens in non-strict mode bundles.
   // Also allow style to be called as a normal function in tests.

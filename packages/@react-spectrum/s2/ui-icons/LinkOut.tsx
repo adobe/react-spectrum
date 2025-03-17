@@ -14,9 +14,9 @@ import LinkOut_L from './S2_LinkOutSize200.svg';
 import LinkOut_M from './S2_LinkOutSize100.svg';
 import LinkOut_XL from './S2_LinkOutSize300.svg';
 import LinkOut_XXL from './S2_LinkOutSize400.svg';
-import {SVGProps} from 'react';
+import {ReactNode, SVGProps} from 'react';
 
-export default function LinkOut(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XXL'}) {
+export default function LinkOut(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XXL'}): ReactNode {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':
