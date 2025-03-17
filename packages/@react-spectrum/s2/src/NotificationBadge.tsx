@@ -18,7 +18,7 @@ import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro
 import intlMessages from '../intl/*.json';
 import {NumberFormatter} from '@internationalized/number';
 import React, {createContext, forwardRef} from 'react';
-import {style} from '../style' with {type: 'macro'};
+import {fontRelative, style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -62,16 +62,16 @@ const badge = style({
         isEmpty: 8
       },
       M: {
-        default: '[14px]',
+        default: fontRelative(18), // sort of arbitrary? tried to get as close to the figma designs as possible
         isEmpty: 8
       },
       L: {
         default: 16,
-        isEmpty: '[10px]'
+        isEmpty: fontRelative(12)
       },
       XL: {
         default: 18,
-        isEmpty: '[10px]'
+        isEmpty: fontRelative(12)
       }
     }
   },
@@ -99,45 +99,37 @@ export const NotificationBadge = forwardRef(function Badge(props: NotificationBa
   } = props;
   let domRef = useDOMRef(ref);
   let {locale} = useLocale();
-
-  if (value && value < 0) {
-    throw new Error('Value cannot be negative');
-  }
-
-  let truncatedValue: number | undefined = undefined;
-  if (value && value > 99) {
-    truncatedValue = 99;
-  }
-
   let formattedValue = '';
-  if (truncatedValue) {
-    formattedValue = new NumberFormatter(locale).format(truncatedValue);
-  } else if (value) {
-    formattedValue = new NumberFormatter(locale).format(value);
-  }
 
-  let length = formattedValue.length;
   let isEmpty = false;
   let isSingleDigit = false;
   let isDoubleDigit = false;
-  let isMaxDigit = false;
-  if (!value) {
-    isEmpty = true; 
-  } else if (length === 1) {
-    isSingleDigit = true;
-  } else if (length === 2) {
-    isDoubleDigit = true;
-  }
 
-  if (truncatedValue) {
-    formattedValue += stringFormatter.format('notificationbadge.plus');
+  if (value == undefined) {
+    isEmpty = true;
+  } else if (value <= 0) {
+    throw new Error('Value cannot be negative or zero');
+  } else {
+    formattedValue = new NumberFormatter(locale).format(Math.min(value, 99));
+    let length = Math.log(value <= 99 ? value : 99) * Math.LOG10E + 1 | 0;  // for positive integers (https://stackoverflow.com/questions/14879691/get-number-of-digits-with-javascript)
+    // or alternatively let length = formattedValue.length? depends on if we want to rely on the formatted value which is a string
+
+    if (length === 1) {
+      isSingleDigit = true;
+    } else if (length === 2) {
+      isDoubleDigit = true;
+    }
+
+    if (value > 99) {
+      formattedValue = stringFormatter.format('notificationbadge.plus', {notifications: formattedValue});
+    }
   }
 
   return (
     <span
       {...filterDOMProps(otherProps)}
       role="presentation"
-      className={(props.UNSAFE_className || '') + badge({size, isEmpty, isSingleDigit, isDoubleDigit, isMaxDigit}, props.styles)}
+      className={(props.UNSAFE_className || '') + badge({size, isEmpty, isSingleDigit, isDoubleDigit}, props.styles)}
       style={props.UNSAFE_style}
       ref={domRef}>
       {formattedValue}

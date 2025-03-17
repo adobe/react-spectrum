@@ -17,7 +17,7 @@
   "label.(required)": "(required)",
   "label.(optional)": "(optional)",
   "menu.moreActions": "More actions",
-  "notificationbadge.plus": "+",
+  "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Select…",
   "slider.minimum": "Minimum",
   "slider.maximum": "Maximum",
