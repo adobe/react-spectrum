@@ -44,6 +44,10 @@ export const NotificationBadgeContext = createContext<ContextValue<Partial<Notif
 const badge = style({
   display: 'flex',
   font: 'control',
+  color: {
+    default: 'white',
+    forcedColors: 'ButtonText'
+  },
   fontSize: {
     size: {
       S: 'ui-xs',
@@ -52,9 +56,21 @@ const badge = style({
       XL: 'ui'
     }
   },
+  borderStyle: {
+    forcedColors: 'solid'
+  },
+  borderWidth: {
+    forcedColors: '[1px]'
+  },
+  borderColor: {
+    forcedColors: 'ButtonBorder'
+  },
   justifyContent: 'center',
   alignItems: 'center',
-  backgroundColor: 'accent',
+  backgroundColor: {
+    default: 'accent',
+    forcedColors: 'ButtonFace'
+  },
   height: {
     size: {
       S: {
