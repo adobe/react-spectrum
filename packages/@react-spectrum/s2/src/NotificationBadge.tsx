@@ -13,12 +13,12 @@
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {ContextValue, SlotProps} from 'react-aria-components';
 import {filterDOMProps} from '@react-aria/utils';
+import {fontRelative, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {NumberFormatter} from '@internationalized/number';
 import React, {createContext, forwardRef} from 'react';
-import {fontRelative, style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -105,7 +105,7 @@ export const NotificationBadge = forwardRef(function Badge(props: NotificationBa
   let isSingleDigit = false;
   let isDoubleDigit = false;
 
-  if (value == undefined) {
+  if (value === undefined) {
     isEmpty = true;
   } else if (value <= 0) {
     throw new Error('Value cannot be negative or zero');

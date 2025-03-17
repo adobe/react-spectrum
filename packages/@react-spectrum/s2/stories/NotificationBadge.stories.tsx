@@ -29,10 +29,10 @@ export const Example: Story = {
   render: (args) => {
     return (
       <div style={{display: 'flex', flexWrap: 'wrap', gap: 8, maxWidth: '600px'}}>
-      {Array.from({length: 100}, (_, i) => i + 1).map(value => (
-        <NotificationBadge key={value} {...args} value={value} />
-      ))}
-    </div>
+        {Array.from({length: 100}, (_, i) => i + 1).map(value => (
+          <NotificationBadge key={value} {...args} value={value} />
+        ))}
+      </div>
     );
   }
 };
@@ -41,6 +41,6 @@ export const Empty: Story = {
   render: (args) => {
     return (
       <NotificationBadge {...args} />
-    )
+    );
   }
-}
+};
