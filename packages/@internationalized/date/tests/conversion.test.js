@@ -447,14 +447,36 @@ describe('CalendarDate conversion', function () {
     });
 
     describe('custom calendar', function () {
+      const customCal = new Custom454Calendar();
+      
       it('to gregorian', function () {
-        console.log(toCalendar(new CalendarDate(new Custom454Calendar(), 2023, 1, 1), new GregorianCalendar()));
-        console.log(toCalendar(new CalendarDate(new Custom454Calendar(), 2022, 12, 28), new GregorianCalendar()));
+        const gregorianCal = new GregorianCalendar();
+
+        let customDate = new CalendarDate(customCal, 2024, 1, 1); // Start of FY2024
+        let expectedGregorian = new CalendarDate(2024, 2, 4); // Start of FY2024 in Gregorian
+        expect(toCalendar(customDate, gregorianCal)).toEqual(expectedGregorian);
+
+        customDate = new CalendarDate(customCal, 2024, 1, 28); // End of first month of FY2024
+        expectedGregorian = new CalendarDate(2024, 3, 2);
+        expect(toCalendar(customDate, gregorianCal)).toEqual(expectedGregorian);
+
+        customDate = new CalendarDate(customCal, 2024, 12, 31); // End of FY2024
+        expectedGregorian = new CalendarDate(2025, 2, 1);
+        expect(toCalendar(customDate, gregorianCal)).toEqual(expectedGregorian);
       });
 
       it('from gregorian', function () {
-        console.log(toCalendar(new CalendarDate(2023, 1, 29), new Custom454Calendar()));
-        console.log(toCalendar(new CalendarDate(2023, 1, 28), new Custom454Calendar()));
+        let gregorianDate = new CalendarDate(2024, 2, 4);
+        let expectedCustom = new CalendarDate(customCal, 2024, 1, 1);
+        expect(toCalendar(gregorianDate, customCal)).toEqual(expectedCustom);
+
+        gregorianDate = new CalendarDate(2024, 3, 2);
+        expectedCustom = new CalendarDate(customCal, 2024, 1, 28);
+        expect(toCalendar(gregorianDate, customCal)).toEqual(expectedCustom);
+
+        gregorianDate = new CalendarDate(2025, 2, 1);
+        expectedCustom = new CalendarDate(customCal, 2024, 12, 31);
+        expect(toCalendar(gregorianDate, customCal)).toEqual(expectedCustom);
       });
     });
   });

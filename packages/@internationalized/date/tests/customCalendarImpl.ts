@@ -1,32 +1,34 @@
 import {AnyCalendarDate, CalendarDate, GregorianCalendar, toCalendar} from '../src';
 import {compareDate, startOfWeek} from '../src/queries';
+import {set as setDate} from '../src/manipulation';
 
 export class Custom454Calendar extends GregorianCalendar {
   identifier = 'custom-454';
-  #anchorDate: CalendarDate;
+  // The anchor date, in Gregorian calendar.
+  private anchorDate: CalendarDate;
 
   constructor() {
     super();
-    this.#anchorDate = new CalendarDate(2001, 2, 4);
+    this.anchorDate = new CalendarDate(2001, 2, 4);
   }
 
   getDaysInMonth(date: AnyCalendarDate) {
-    let [, isBigYear] = this.#getCurrentYear(date.year);
-    const weekPattern = this.#getWeekPattern(isBigYear);
+    const [, isBigYear] = this.getCurrentYear(date.year);
+    const weekPattern = this.getWeekPattern(isBigYear);
     return weekPattern[date.month % weekPattern.length] * 7;
   }
 
   fromJulianDay(jd: number): CalendarDate {
-    let gregorian = super.fromJulianDay(jd);
-    let [startOfYear, isBigYear] = this.#getCurrentYear(gregorian.year);
-    const months = this.#getWeekPattern(isBigYear);
+    const gregorian = super.fromJulianDay(jd);
+    let [startOfYear, isBigYear] = this.getCurrentYear(gregorian.year);
 
     let year = gregorian.year;
     if (compareDate(gregorian, startOfYear) < 0) {
       year--;
-      [startOfYear, isBigYear] = this.#getCurrentYear(year);
+      [startOfYear, isBigYear] = this.getCurrentYear(year);
     }
 
+    const months = this.getWeekPattern(isBigYear);
     let pointer = startOfYear;
     for (let k = 1; k <= months.length; k++) {
       const weeksInMonth = months[k % months.length];
@@ -41,33 +43,35 @@ export class Custom454Calendar extends GregorianCalendar {
   }
 
   toJulianDay(date: AnyCalendarDate): number {
-    let [startOfYear, isBigYear] = this.#getCurrentYear(date.year);
+    const [startOfYear, isBigYear] = this.getCurrentYear(date.year);
 
     let startOfMonth = startOfYear;
-    const months = this.#getWeekPattern(isBigYear);
+    const months = this.getWeekPattern(isBigYear);
     for (let i = 1; i < date.month; i++) {
       startOfMonth = startOfMonth.add({weeks: months[i % months.length]});
     }
 
-    let gregorian = startOfMonth.add({days: date.day - 1});
+    const gregorian = startOfMonth.add({days: date.day - 1});
     return super.toJulianDay(gregorian);
   }
 
-  #getWeekPattern(isBigYear: boolean) {
+  getFormattableMonth(date: AnyCalendarDate): CalendarDate {
+    const gregorian = toCalendar(date, new GregorianCalendar()) as CalendarDate;
+    const anchorMonth = this.anchorDate.month - 1;
+    const dateMonth = date.month - 1;
+    const month = ((anchorMonth + dateMonth) % 12) + 1;
+    return setDate(gregorian, {month, day: 1});
+  }
+
+  private getWeekPattern(isBigYear: boolean) {
     // Retail calendars begin in Feb, but we index months with Jan as month 1, so we shift the week pattern by 1.
     return isBigYear ? [5, 4, 5, 4, 4, 5, 4, 4, 5, 4, 4, 5] : [4, 4, 5, 4, 4, 5, 4, 4, 5, 4, 4, 5];
   }
 
-  #getCurrentYear(year: number): [CalendarDate, boolean] {
-    let anchor = this.#anchorDate.set({year});
-    let startOfYear = startOfWeek(anchor, 'en', 'sun');
-    let isBigYear = !startOfYear.add({weeks: 53}).compare(anchor.add({years: 1}));
+  private getCurrentYear(year: number): [CalendarDate, boolean] {
+    const anchor = this.anchorDate.set({year});
+    const startOfYear = startOfWeek(anchor, 'en', 'sun');
+    const isBigYear = !startOfYear.add({weeks: 53}).compare(anchor.add({years: 1}));
     return [startOfYear, isBigYear];
-  }
-
-  getFormattableMonth(date: AnyCalendarDate): CalendarDate {
-    let gregorian = toCalendar(date, new GregorianCalendar());
-    let month = (this.#anchorDate.month - 1 + date.month - 1) % 12 + 1;
-    return gregorian.set({month, day: 1});
   }
 }
