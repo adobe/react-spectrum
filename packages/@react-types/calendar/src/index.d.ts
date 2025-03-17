@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMProps, RangeValue, StyleProps, ValidationState, ValueBase} from '@react-types/shared';
-import type {CalendarDate, CalendarDateTime, createCalendar, ZonedDateTime} from '@internationalized/date';
+import type {Calendar, CalendarDate, CalendarDateTime, ZonedDateTime} from '@internationalized/date';
 import {ReactNode} from 'react';
 
 export type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime;
@@ -97,7 +97,7 @@ export interface SpectrumCalendarProps<T extends DateValue> extends AriaCalendar
    * object for a given calendar identifier. If not provided, the {@link createCalendar} function
    * from `@internationalized/date` will be used.
    */
-  createCalendar?: typeof createCalendar
+  createCalendar?: (name: string) => Calendar
 }
 
 export interface SpectrumRangeCalendarProps<T extends DateValue> extends AriaRangeCalendarProps<T>, StyleProps {
@@ -112,5 +112,5 @@ export interface SpectrumRangeCalendarProps<T extends DateValue> extends AriaRan
    * object for a given calendar identifier. If not provided, the {@link createCalendar} function
    * from `@internationalized/date` will be used.
    */
-  createCalendar?: typeof createCalendar
+  createCalendar?: (name: string) => Calendar
 }
