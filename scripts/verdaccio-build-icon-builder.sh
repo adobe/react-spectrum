@@ -17,8 +17,6 @@ else
     echo "Verdaccio is NOT running on port 4000."
 fi
 
-curl -s http://localhost:4000/@adobe/react-spectrum
-
 yarn config set npmPublishRegistry --home $registry
 yarn config set npmRegistryServer --home $registry
 yarn config set npmAlwaysAuth --home false
