@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/parcel-transformer-s2-icon",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "main": "IconTransformer.js",
   "engines": {
     "parcel": "^2.0.0"

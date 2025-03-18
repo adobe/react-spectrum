@@ -12,7 +12,7 @@
 
 import {Collection, DropTarget, DropTargetDelegate, ItemDropTarget, Key, Node} from '@react-types/shared';
 import {getChildNodes} from '@react-stately/collections';
-import {InvalidationContext, Layout, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
+import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 
 export interface ListLayoutOptions {
   /**
@@ -115,12 +115,12 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     return this.virtualizer!.collection;
   }
 
-  getLayoutInfo(key: Key) {
+  getLayoutInfo(key: Key): LayoutInfo | null {
     this.ensureLayoutInfo(key);
     return this.layoutNodes.get(key)?.layoutInfo || null;
   }
 
-  getVisibleLayoutInfos(rect: Rect) {
+  getVisibleLayoutInfos(rect: Rect): LayoutInfo[] {
     // Adjust rect to keep number of visible rows consistent.
     // (only if height > 1 for getDropTargetFromPoint)
     if (rect.height > 1) {
@@ -151,7 +151,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     return res;
   }
 
-  protected layoutIfNeeded(rect: Rect) {
+  protected layoutIfNeeded(rect: Rect): void {
     if (!this.lastCollection) {
       return;
     }
@@ -160,7 +160,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
       this.requestedRect = this.requestedRect.union(rect);
       this.rootNodes = this.buildCollection();
     }
-    
+
     // Ensure all of the persisted keys are available.
     for (let key of this.virtualizer!.persistedKeys) {
       if (this.ensureLayoutInfo(key)) {
@@ -183,7 +183,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     return false;
   }
 
-  protected isVisible(node: LayoutNode, rect: Rect) {
+  protected isVisible(node: LayoutNode, rect: Rect): boolean {
     return node.layoutInfo.rect.intersects(rect) || node.layoutInfo.isSticky || node.layoutInfo.type === 'header' || this.virtualizer!.isPersistedKey(node.layoutInfo.key);
   }
 
@@ -211,7 +211,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
       || newOptions.padding !== oldOptions.padding;
   }
 
-  update(invalidationContext: InvalidationContext<O>) {
+  update(invalidationContext: InvalidationContext<O>): void {
     let collection = this.virtualizer!.collection;
 
     // Reset valid rect if we will have to invalidate everything.
@@ -281,11 +281,11 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     return nodes;
   }
 
-  protected isValid(node: Node<T>, y: number) {
+  protected isValid(node: Node<T>, y: number): boolean {
     let cached = this.layoutNodes.get(node.key);
     return (
       !this.invalidateEverything &&
-      cached &&
+      !!cached &&
       cached.node === node &&
       y === cached.layoutInfo.rect.y &&
       cached.layoutInfo.rect.intersects(this.validRect) &&
@@ -446,7 +446,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     };
   }
 
-  updateItemSize(key: Key, size: Size) {
+  updateItemSize(key: Key, size: Size): boolean {
     let layoutNode = this.layoutNodes.get(key);
     // If no layoutInfo, item has been deleted/removed.
     if (!layoutNode) {
@@ -497,7 +497,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     }
   }
 
-  getContentSize() {
+  getContentSize(): Size {
     return this.contentSize;
   }
 
@@ -505,7 +505,26 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     x += this.virtualizer!.visibleRect.x;
     y += this.virtualizer!.visibleRect.y;
 
-    let key = this.virtualizer!.keyAtPoint(new Point(x, y));
+    // Find the closest item within on either side of the point using the gap width.
+    let searchRect = new Rect(x, Math.max(0, y - this.gap), 1, this.gap * 2);
+    let candidates = this.getVisibleLayoutInfos(searchRect);
+    let key: Key | null = null;
+    let minDistance = Infinity;
+    for (let candidate of candidates) {
+      // Ignore items outside the search rect, e.g. persisted keys.
+      if (!candidate.rect.intersects(searchRect)) {
+        continue;
+      }
+
+      let yDist = Math.abs(candidate.rect.y - y);
+      let maxYDist = Math.abs(candidate.rect.maxY - y);
+      let dist = Math.min(yDist, maxYDist);
+      if (dist < minDistance) {
+        minDistance = dist;
+        key = candidate.key;
+      }
+    }
+
     if (key == null || this.virtualizer!.collection.size === 0) {
       return {type: 'root'};
     }

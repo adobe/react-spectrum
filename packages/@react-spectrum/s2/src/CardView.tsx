@@ -16,6 +16,7 @@ import {
   GridLayout,
   GridListItem,
   GridListProps,
+  Size,
   Virtualizer,
   WaterfallLayout
 } from 'react-aria-components';
@@ -25,7 +26,6 @@ import {DOMRef, DOMRefValue, forwardRefType, Key, LoadingState} from '@react-typ
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ImageCoordinator} from './ImageCoordinator';
-import {Size} from '@react-stately/virtualizer';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useEffectEvent, useLayoutEffect, useLoadMore, useResizeObserver} from '@react-aria/utils';

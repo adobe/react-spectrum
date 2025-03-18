@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-export function getOffset(element, reverse, orientation = 'horizontal') {
+import {Orientation} from '@react-types/shared';
+
+export function getOffset(element: HTMLElement, reverse?: boolean, orientation: Orientation = 'horizontal'): number {
   let rect = element.getBoundingClientRect();
   if (reverse) {
     return orientation === 'horizontal' ? rect.right : rect.bottom;

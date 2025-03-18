@@ -41,7 +41,7 @@ let restore;
  * restores it on unmount. Also ensures that content does not
  * shift due to the scrollbars disappearing.
  */
-export function usePreventScroll(options: PreventScrollOptions = {}) {
+export function usePreventScroll(options: PreventScrollOptions = {}): void {
   let {isDisabled} = options;
 
   useLayoutEffect(() => {

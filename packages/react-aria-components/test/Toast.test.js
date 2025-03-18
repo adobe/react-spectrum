@@ -322,4 +322,43 @@ describe('Toast', () => {
     let region = getByRole('region');
     expect(region).toHaveAttribute('aria-label', 'Toasts');
   });
+
+  it('should render the toast region in the portal container', async () => {
+    let queue = new ToastQueue();
+
+    function LocalToast(props) {
+      return (
+        <>
+          <ToastRegion queue={queue} portalContainer={props.container}>
+            {({toast}) => (
+              <Toast toast={toast}>
+                <ToastContent>
+                  <Text slot="title">{toast.content}</Text>
+                </ToastContent>
+                <Button slot="close">x</Button>
+              </Toast>
+            )}
+          </ToastRegion> 
+
+          <Button onPress={() => queue.add('Toast')}>Add toast</Button>
+        </>
+      );
+    }
+    function App() {
+      let [container, setContainer] = React.useState();
+      return (
+        <>
+          <LocalToast container={container} />
+          <div ref={setContainer} data-testid="custom-container" />
+        </>
+      );
+    }
+
+    let {getByRole, getByTestId} = render(<App />);
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    expect(within(getByTestId('custom-container')).getByRole('alertdialog')).toBeInTheDocument();
+  });
 });

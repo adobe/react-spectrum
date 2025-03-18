@@ -1,5 +1,5 @@
 import {AriaLabelingProps, HoverEvents, ValueBase} from '@react-types/shared';
-import {Color, parseColor, useColorPickerState} from '@react-stately/color';
+import {Color, parseColor, useColorPickerState} from 'react-stately';
 import {ColorSwatchContext} from './ColorSwatch';
 import {composeRenderProps, ContextValue, RenderProps, StyleRenderProps, useContextProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
