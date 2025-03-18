@@ -12,11 +12,11 @@
 
 import {Button, Checkbox, CheckboxProps, Collection, DropIndicator, GridLayout, GridList, GridListItem, GridListItemProps, ListLayout, Size, Tag, TagGroup, TagList, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
+import {LoadingSpinner} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_GridListLoadingIndicator} from '../src/GridList';
 import {useAsyncList, useListData} from 'react-stately';
-import { LoadingSpinner } from './utils';
 
 export default {
   title: 'React Aria Components'

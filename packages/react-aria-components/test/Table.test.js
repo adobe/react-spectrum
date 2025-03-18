@@ -1621,10 +1621,12 @@ describe('Table', () => {
       let rows = getAllByRole('row');
       expect(rows).toHaveLength(6);
       let loader = rows[5];
-      expect(loader).toHaveTextContent('Load more spinner');
 
       let cell = within(loader).getByRole('rowheader');
       expect(cell).toHaveAttribute('colspan', '3');
+
+      let spinner = within(cell).getByRole('progressbar');
+      expect(spinner).toHaveAttribute('aria-label', 'loading');
     });
 
     it('should not focus the load more row when using ArrowDown', async () => {
@@ -1632,7 +1634,8 @@ describe('Table', () => {
 
       let rows = getAllByRole('row');
       let loader = rows[5];
-      expect(loader).toHaveTextContent('Load more spinner');
+      let spinner = within(loader).getByRole('progressbar');
+      expect(spinner).toHaveAttribute('aria-label', 'loading');
 
       await user.tab();
       expect(document.activeElement).toBe(rows[1]);
@@ -1654,7 +1657,8 @@ describe('Table', () => {
 
       let rows = getAllByRole('row');
       let loader = rows[5];
-      expect(loader).toHaveTextContent('Load more spinner');
+      let spinner = within(loader).getByRole('progressbar');
+      expect(spinner).toHaveAttribute('aria-label', 'loading');
 
       await user.tab();
       expect(document.activeElement).toBe(rows[1]);
@@ -1671,7 +1675,8 @@ describe('Table', () => {
 
       let rows = getAllByRole('row');
       let loader = rows[5];
-      expect(loader).toHaveTextContent('Load more spinner');
+      let spinner = within(loader).getByRole('progressbar');
+      expect(spinner).toHaveAttribute('aria-label', 'loading');
 
       await user.tab();
       expect(document.activeElement).toBe(rows[1]);
@@ -1710,7 +1715,8 @@ describe('Table', () => {
 
       expect(rows).toHaveLength(2);
       expect(body).toHaveAttribute('data-empty', 'true');
-      expect(loader).toHaveTextContent('Loading spinner');
+      let spinner = within(loader).getByRole('progressbar');
+      expect(spinner).toHaveAttribute('aria-label', 'loading');
 
       rerender(<EmptyLoadingTable />);
 
@@ -1727,7 +1733,8 @@ describe('Table', () => {
       let rows = getAllByRole('row');
       expect(rows).toHaveLength(4);
       let loader = rows[3];
-      expect(loader).toHaveTextContent('Load more spinner');
+      let spinner = within(loader).getByRole('progressbar');
+      expect(spinner).toHaveAttribute('aria-label', 'loading');
 
       let selectAll = getAllByRole('checkbox')[0];
       expect(selectAll).toHaveAttribute('aria-label', 'Select All');
@@ -1747,7 +1754,8 @@ describe('Table', () => {
       expect(rows).toHaveLength(4);
       expect(rows[1]).toHaveTextContent('Adobe Photoshop');
       let loader = rows[3];
-      expect(loader).toHaveTextContent('Load more spinner');
+      let spinner = within(loader).getByRole('progressbar');
+      expect(spinner).toHaveAttribute('aria-label', 'loading');
 
       let dragButton = getAllByRole('button')[0];
       expect(dragButton).toHaveAttribute('aria-label', 'Drag Adobe Photoshop');

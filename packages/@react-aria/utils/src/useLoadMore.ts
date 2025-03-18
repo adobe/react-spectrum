@@ -49,12 +49,15 @@ export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | n
   let sentinelObserver = useRef<IntersectionObserver>(null);
 
   let triggerLoadMore = useEffectEvent((entries: IntersectionObserverEntry[]) => {
-    // Only one entry should exist so this should be ok. Also use "isIntersecting" over an equality check of 0 since it seems like there is cases where
+    // Use "isIntersecting" over an equality check of 0 since it seems like there is cases where
     // a intersection ratio of 0 can be reported when isIntersecting is actually true
-    if (entries[0].isIntersecting && !isLoading && !(collection && collectionAwaitingUpdate.current) && onLoadMore) {
-      onLoadMore();
-      if (collection !== null && lastCollection.current !== null) {
-        collectionAwaitingUpdate.current = true;
+    // TODO: firefox seems to gather multiple entries, will need to reproduce in a base repro
+    for (let entry of entries) {
+      if (entry.isIntersecting && !isLoading && !(collection && collectionAwaitingUpdate.current) && onLoadMore) {
+        onLoadMore();
+        if (collection !== null && lastCollection.current !== null) {
+          collectionAwaitingUpdate.current = true;
+        }
       }
     }
   });
@@ -72,7 +75,6 @@ export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | n
     if (collection !== lastCollection.current && !isLoading) {
       collectionAwaitingUpdate.current = false;
     }
-
     sentinelObserver.current = new IntersectionObserver(triggerLoadMore, {root: ref.current, rootMargin: `0px ${100 * scrollOffset}% ${100 * scrollOffset}% ${100 * scrollOffset}%`});
     if (sentinelRef?.current) {
       sentinelObserver.current.observe(sentinelRef.current);

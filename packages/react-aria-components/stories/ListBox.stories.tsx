@@ -249,11 +249,10 @@ export function VirtualizedListBox({variableHeight}) {
 
   return (
     <Virtualizer
-      layout={ListLayout}
-      layoutOptions={{
-        [variableHeight ? 'estimatedRowHeight' : 'rowHeight']: 25,
+      layout={new ListLayout({
+        estimatedRowHeight: 25,
         estimatedHeadingHeight: 26
-      }}>
+      })}>
       <ListBox className={styles.menu} style={{height: 400}} aria-label="virtualized listbox" items={sections}>
         {section => (
           <ListBoxSection className={styles.group}>
@@ -478,7 +477,7 @@ export const AsyncListBox = (args) => {
     <ListBox
       {...args}
       style={{
-        height: args.orientation === 'horizontal' ? 100 : 400,
+        height: args.orientation === 'horizontal' ? 'fit-content' : 400,
         width: args.orientation === 'horizontal' ? 400 : 200,
         overflow: 'auto'
       }}
@@ -599,7 +598,7 @@ export const AsyncListBoxVirtualized = (args) => {
       <ListBox
         {...args}
         style={{
-          height: args.orientation === 'horizontal' ? 100 : 400,
+          height: args.orientation === 'horizontal' ? 'fit-content' : 400,
           width: args.orientation === 'horizontal' ? 400 : 100,
           border: '1px solid gray',
           background: 'lightgray',

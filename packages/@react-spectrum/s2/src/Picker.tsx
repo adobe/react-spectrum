@@ -26,6 +26,7 @@ import {
   ListBoxProps,
   Provider,
   SectionProps,
+  SelectRenderProps,
   SelectStateContext,
   SelectValue,
   UNSTABLE_ListBoxLoadingIndicator
@@ -393,46 +394,15 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                   isQuiet
                 })}>
                 {(renderProps) => (
-                  <>
-                    <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> * {display: none;}')}>
-                      {({defaultChildren}) => {
-                        return (
-                          <Provider
-                            values={[
-                              [IconContext, {
-                                slots: {
-                                  icon: {
-                                    render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
-                                    styles: icon
-                                  }
-                                }
-                              }],
-                              [TextContext, {
-                                slots: {
-                                  description: {},
-                                  label: {styles: style({
-                                    display: 'block',
-                                    flexGrow: 1,
-                                    truncate: true
-                                  })}
-                                }
-                              }],
-                              [InsideSelectValueContext, true]
-                            ]}>
-                            {defaultChildren}
-                          </Provider>
-                        );
-                      }}
-                    </SelectValue>
-                    {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
-                    {isLoading && loadingCircle}
-                    <Chevron size={size} isLoading={isLoading} />
-                    {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
-                    {isInvalid && !isDisabled && !isQuiet &&
-                      // @ts-ignore known limitation detecting functions from the theme
-                      <div className={invalidBorder({...renderProps, size})} />
-                    }
-                  </>
+                  <PickerButtonInner
+                    {...renderProps}
+                    isFocusVisible={isFocusVisible}
+                    size={size}
+                    isLoading={isLoading}
+                    isQuiet={isQuiet}
+                    isInvalid={isInvalid}
+                    isOpen={isOpen}
+                    loadingCircle={loadingCircle} />
                 )}
               </Button>
             </PressResponder>
@@ -562,16 +532,58 @@ export function PickerSection<T extends object>(props: PickerSectionProps<T>): R
   );
 }
 
-interface ChevronProps<T extends object> extends Pick<PickerProps<T>, 'size' | 'isLoading'> {}
+interface PickerButtonInnerProps<T extends object> extends Pick<PickerProps<T>, 'size' | 'isLoading' | 'isQuiet'>, Pick<SelectRenderProps, 'isOpen' | 'isInvalid'>, ButtonRenderProps {
+  loadingCircle: ReactNode
+}
 
-function Chevron<T extends object>(props: ChevronProps<T>) {
-  let {size, isLoading} = props;
+function PickerButtonInner<T extends object>(props: PickerButtonInnerProps<T>) {
+  let {size, isLoading, isQuiet, isInvalid, isDisabled, isFocusVisible, isOpen, loadingCircle} = props;
   let state = useContext(SelectStateContext);
   // If it is the initial load, the collection either hasn't been formed or only has the loader so apply the disabled style
   let isInitialLoad = (state?.collection.size == null || state?.collection.size <= 1) && isLoading;
+
   return (
-    <ChevronIcon
-      size={size}
-      className={iconStyles({isInitialLoad})} />
+    <>
+      <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> * {display: none;}')}>
+        {({defaultChildren}) => {
+          return (
+            <Provider
+              values={[
+                [IconContext, {
+                  slots: {
+                    icon: {
+                      render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
+                      styles: icon
+                    }
+                  }
+                }],
+                [TextContext, {
+                  slots: {
+                    description: {},
+                    label: {styles: style({
+                      display: 'block',
+                      flexGrow: 1,
+                      truncate: true
+                    })}
+                  }
+                }],
+                [InsideSelectValueContext, true]
+              ]}>
+              {defaultChildren}
+            </Provider>
+          );
+        }}
+      </SelectValue>
+      {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
+      {isInitialLoad && !isOpen && loadingCircle}
+      <ChevronIcon
+        size={size}
+        className={iconStyles({isInitialLoad})} />
+      {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
+      {isInvalid && !isDisabled && !isQuiet &&
+        // @ts-ignore known limitation detecting functions from the theme
+        <div className={invalidBorder({...props, size})} />
+      }
+    </>
   );
 }
