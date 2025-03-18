@@ -448,35 +448,23 @@ describe('CalendarDate conversion', function () {
 
     describe('custom calendar', function () {
       const customCal = new Custom454Calendar();
-      
-      it('to gregorian', function () {
-        const gregorianCal = new GregorianCalendar();
 
-        let customDate = new CalendarDate(customCal, 2024, 1, 1); // Start of FY2024
-        let expectedGregorian = new CalendarDate(2024, 2, 4); // Start of FY2024 in Gregorian
-        expect(toCalendar(customDate, gregorianCal)).toEqual(expectedGregorian);
+      const dates = [
+        {customName: 'start of FY2024', custom: new CalendarDate(customCal, 2024, 1, 1), gregorian: new CalendarDate(2024, 2, 4)},
+        {customName: 'end of FY2024', custom: new CalendarDate(customCal, 2024, 12, 28), gregorian: new CalendarDate(2025, 2, 1)},
+        {customName: 'end of FY2023 (big year)', custom: new CalendarDate(customCal, 2023, 12, 35), gregorian: new CalendarDate(2024, 2, 3)}
+      ];
 
-        customDate = new CalendarDate(customCal, 2024, 1, 28); // End of first month of FY2024
-        expectedGregorian = new CalendarDate(2024, 3, 2);
-        expect(toCalendar(customDate, gregorianCal)).toEqual(expectedGregorian);
-
-        customDate = new CalendarDate(customCal, 2024, 12, 31); // End of FY2024
-        expectedGregorian = new CalendarDate(2025, 2, 1);
-        expect(toCalendar(customDate, gregorianCal)).toEqual(expectedGregorian);
+      describe('to gregorian', function () {
+        it.each(dates)('should convert $customName to gregorian', function ({custom, gregorian}) {
+          expect(toCalendar(custom, new GregorianCalendar())).toEqual(gregorian);
+        });
       });
 
-      it('from gregorian', function () {
-        let gregorianDate = new CalendarDate(2024, 2, 4);
-        let expectedCustom = new CalendarDate(customCal, 2024, 1, 1);
-        expect(toCalendar(gregorianDate, customCal)).toEqual(expectedCustom);
-
-        gregorianDate = new CalendarDate(2024, 3, 2);
-        expectedCustom = new CalendarDate(customCal, 2024, 1, 28);
-        expect(toCalendar(gregorianDate, customCal)).toEqual(expectedCustom);
-
-        gregorianDate = new CalendarDate(2025, 2, 1);
-        expectedCustom = new CalendarDate(customCal, 2024, 12, 31);
-        expect(toCalendar(gregorianDate, customCal)).toEqual(expectedCustom);
+      describe('from gregorian', function () {
+        it.each(dates)('should convert gregorian to $customName', function ({custom, gregorian}) {
+          expect(toCalendar(gregorian, customCal)).toEqual(custom);
+        });
       });
     });
   });
