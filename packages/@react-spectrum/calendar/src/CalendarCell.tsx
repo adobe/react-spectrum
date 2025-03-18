@@ -110,14 +110,8 @@ function getIsRangeStartOrEnd({
   }
 
   const dayOfMonth = date.day;
-  let isStartOfMonth = dayOfMonth === 1;
-  let isEndOfMonth = dayOfMonth === currentMonth.calendar.getDaysInMonth(currentMonth);
-  
-  if (currentMonth.calendar.getCurrentMonth) {
-    const customMonth = currentMonth.calendar.getCurrentMonth(date);
-    isStartOfMonth = dayOfMonth === customMonth.start.day && customMonth.start.month === date.month;
-    isEndOfMonth = dayOfMonth === customMonth.end.day && customMonth.end.month === date.month;
-  }
+  const isStartOfMonth = dayOfMonth === 1;
+  const isEndOfMonth = dayOfMonth === currentMonth.calendar.getDaysInMonth(currentMonth);
 
   const isRangeStart = isFirstSelectedAfterDisabled || dayOfWeek === 0 || isStartOfMonth;
   const isRangeEnd = isLastSelectedBeforeDisabled || dayOfWeek === 6 || isEndOfMonth;
