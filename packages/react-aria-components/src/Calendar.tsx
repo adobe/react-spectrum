@@ -24,7 +24,7 @@ import {
   VisuallyHidden
 } from 'react-aria';
 import {ButtonContext} from './Button';
-import {CalendarDate, createCalendar, DateDuration, endOfMonth, isSameDay, isSameMonth} from '@internationalized/date';
+import {CalendarDate, createCalendar, DateDuration, endOfMonth, Calendar as ICalendar, isSameDay, isSameMonth} from '@internationalized/date';
 import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState} from 'react-stately';
 import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {DOMAttributes, FocusableElement, forwardRefType, HoverEvents} from '@react-types/shared';
@@ -69,7 +69,7 @@ export interface CalendarProps<T extends DateValue> extends Omit<AriaCalendarPro
    * object for a given calendar identifier. If not provided, the {@link createCalendar} function
    * from `@internationalized/date` will be used.
    */
-  createCalendar?: typeof createCalendar
+  createCalendar?: (identifier: string) => ICalendar
 }
 
 export interface RangeCalendarProps<T extends DateValue> extends Omit<AriaRangeCalendarProps<T>, 'errorMessage' | 'validationState'>, RenderProps<RangeCalendarRenderProps>, SlotProps {
@@ -84,7 +84,7 @@ export interface RangeCalendarProps<T extends DateValue> extends Omit<AriaRangeC
    * object for a given calendar identifier. If not provided, the {@link createCalendar} function
    * from `@internationalized/date` will be used.
    */
-  createCalendar?: typeof createCalendar
+  createCalendar?: (identifier: string) => ICalendar
 }
 
 export const CalendarContext = createContext<ContextValue<CalendarProps<any>, HTMLDivElement>>(null);
