@@ -16,6 +16,7 @@ import React from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_GridListLoadingIndicator} from '../src/GridList';
 import {useAsyncList, useListData} from 'react-stately';
+import { LoadingSpinner } from './utils';
 
 export default {
   title: 'React Aria Components'
@@ -171,6 +172,14 @@ export function VirtualizedGridListGrid() {
   );
 }
 
+let renderEmptyState = ({isLoading}) => {
+  return  (
+    <div style={{height: 30, width: '100%'}}>
+      {isLoading ? <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} /> : 'No results'}
+    </div>
+  );
+};
+
 interface Character {
   name: string,
   height: number,
@@ -180,10 +189,8 @@ interface Character {
 
 const MyGridListLoaderIndicator = () => {
   return (
-    <UNSTABLE_GridListLoadingIndicator>
-      <span>
-        Load more spinner
-      </span>
+    <UNSTABLE_GridListLoadingIndicator style={{height: 30, width: '100%'}}>
+      <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} />
     </UNSTABLE_GridListLoadingIndicator>
   );
 };
@@ -195,7 +202,7 @@ export const AsyncGridList = () => {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      await new Promise(resolve => setTimeout(resolve, 4000));
+      await new Promise(resolve => setTimeout(resolve, 2000));
       let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
 
@@ -214,7 +221,7 @@ export const AsyncGridList = () => {
       aria-label="async gridlist"
       isLoading={list.isLoading}
       onLoadMore={list.loadMore}
-      renderEmptyState={() => list.isLoading ? 'Loading spinner' : 'No results found'}>
+      renderEmptyState={({isLoading}) => renderEmptyState({isLoading})}>
       {item => <MyGridListItem id={item.name}>{item.name}</MyGridListItem>}
     </GridList>
   );
@@ -227,7 +234,7 @@ export const AsyncGridListVirtualized = () => {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      await new Promise(resolve => setTimeout(resolve, 4000));
+      await new Promise(resolve => setTimeout(resolve, 2000));
       let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
       return {
@@ -249,7 +256,7 @@ export const AsyncGridListVirtualized = () => {
         aria-label="async virtualized gridlist"
         isLoading={list.isLoading}
         onLoadMore={list.loadMore}
-        renderEmptyState={() => list.isLoading ? 'Loading spinner' : 'No results found'}>
+        renderEmptyState={({isLoading}) => renderEmptyState({isLoading})}>
         <Collection items={list.items}>
           {item => <MyGridListItem id={item.name}>{item.name}</MyGridListItem>}
         </Collection>

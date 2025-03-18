@@ -14,7 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {Collection, DropIndicator, GridLayout, Header, ListBox, ListBoxItem, ListBoxProps, ListBoxSection, ListLayout, Separator, Text, useDragAndDrop, Virtualizer, WaterfallLayout} from 'react-aria-components';
 import {Key, useAsyncList, useListData} from 'react-stately';
 import {Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
-import {MyListBoxItem} from './utils';
+import {LoadingSpinner, MyListBoxItem} from './utils';
 import React, {useMemo} from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_ListBoxLoadingIndicator} from '../src/ListBox';
@@ -431,6 +431,14 @@ export function VirtualizedListBoxWaterfall({minSize = 80, maxSize = 100}) {
   );
 }
 
+let renderEmptyState = ({isLoading}) => {
+  return  (
+    <div style={{height: 30, width: '100%'}}>
+      {isLoading ? <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} /> : 'No results'}
+    </div>
+  );
+};
+
 interface Character {
   name: string,
   height: number,
@@ -440,10 +448,8 @@ interface Character {
 
 const MyListBoxLoaderIndicator = () => {
   return (
-    <UNSTABLE_ListBoxLoadingIndicator>
-      <span>
-        Load more spinner
-      </span>
+    <UNSTABLE_ListBoxLoadingIndicator style={{height: 30, width: '100%'}}>
+      <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} />
     </UNSTABLE_ListBoxLoadingIndicator>
   );
 };
@@ -457,7 +463,7 @@ export const AsyncListBox = (args) => {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      await new Promise(resolve => setTimeout(resolve, 4000));
+      await new Promise(resolve => setTimeout(resolve, 2000));
       let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
 
@@ -480,7 +486,7 @@ export const AsyncListBox = (args) => {
       aria-label="async listbox"
       isLoading={list.isLoading}
       onLoadMore={list.loadMore}
-      renderEmptyState={() => list.isLoading ? 'Loading spinner' : 'No results found'}>
+      renderEmptyState={({isLoading}) => renderEmptyState({isLoading})}>
       {(item: Character) => (
         <MyListBoxItem
           style={{
@@ -573,7 +579,7 @@ export const AsyncListBoxVirtualized = (args) => {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      await new Promise(resolve => setTimeout(resolve, 4000));
+      await new Promise(resolve => setTimeout(resolve, 2000));
       let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
 
@@ -604,7 +610,7 @@ export const AsyncListBoxVirtualized = (args) => {
         aria-label="async virtualized listbox"
         isLoading={list.isLoading}
         onLoadMore={list.loadMore}
-        renderEmptyState={() => list.isLoading ? 'Loading spinner' : 'No results found'}>
+        renderEmptyState={({isLoading}) => renderEmptyState({isLoading})}>
         <Collection items={list.items}>
           {(item: Character) => (
             <MyListBoxItem

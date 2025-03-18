@@ -13,8 +13,8 @@
 import {action} from '@storybook/addon-actions';
 import {Button, Cell, Checkbox, CheckboxProps, Collection, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {isTextDropItem} from 'react-aria';
-import {MyMenuItem} from './utils';
-import React, {Suspense, useMemo, useRef, useState} from 'react';
+import {LoadingSpinner, MyMenuItem} from './utils';
+import React, {Suspense, useState} from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_TableLoadingIndicator} from '../src/Table';
 import {useAsyncList, useListData} from 'react-stately';
@@ -512,10 +512,8 @@ const MyTableLoadingIndicator = ({tableWidth = 400}) => {
     // These styles will make the load more spinner sticky. A user would know if their table is virtualized and thus could control this styling if they wanted to
     // TODO: this doesn't work because the virtualizer wrapper around the table body has overflow: hidden. Perhaps could change this by extending the table layout and
     // making the layoutInfo for the table body have allowOverflow
-    <UNSTABLE_TableLoadingIndicator style={{height: 'inherit', position: 'sticky', top: 0, left: 0, width: tableWidth}}>
-      <span>
-        Load more spinner
-      </span>
+    <UNSTABLE_TableLoadingIndicator style={{height: 30, position: 'sticky', top: 0, left: 0, width: tableWidth}}>
+      <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} />
     </UNSTABLE_TableLoadingIndicator>
   );
 };
@@ -602,8 +600,8 @@ export const TableLoadingRowRenderWrapperStory = {
 
 
 function renderEmptyLoader({isLoading, tableWidth = 400}) {
-  let contents = isLoading ? 'Loading spinner' : 'No results found';
-  return <div style={{height: 'inherit', position: 'sticky', top: 0, left: 0, width: tableWidth}}>{contents}</div>;
+  let contents = isLoading ? <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} />  : 'No results found';
+  return <div style={{height: 30, position: 'sticky', top: 0, left: 0, width: tableWidth}}>{contents}</div>;
 }
 
 const RenderEmptyState = (args: {isLoading: boolean}) => {
@@ -657,7 +655,7 @@ const OnLoadMoreTable = () => {
       }
 
       // Slow down load so progress circle can appear
-      await new Promise(resolve => setTimeout(resolve, 4000));
+      await new Promise(resolve => setTimeout(resolve, 2000));
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
       let json = await res.json();
       return {
@@ -850,7 +848,7 @@ const OnLoadMoreTableVirtualized = () => {
       }
 
       // Slow down load so progress circle can appear
-      await new Promise(resolve => setTimeout(resolve, 4000));
+      await new Promise(resolve => setTimeout(resolve, 2000));
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
       let json = await res.json();
       return {
@@ -906,7 +904,7 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
       }
 
       // Slow down load so progress circle can appear
-      await new Promise(resolve => setTimeout(resolve, 4000));
+      await new Promise(resolve => setTimeout(resolve, 2000));
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
       let json = await res.json();
       return {
@@ -953,7 +951,12 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
 
 export const OnLoadMoreTableVirtualizedResizeWrapperStory  = {
   render: OnLoadMoreTableVirtualizedResizeWrapper,
-  name: 'Virtualized Table with async loading, resizable table container wrapper'
+  name: 'Virtualized Table with async loading, with wrapper around Virtualizer',
+  parameters: {
+    description: {
+      data: 'This table has a ResizableTableContainer wrapper around the Virtualizer. The table itself doesnt have any resizablity, this is simply to test that it still loads/scrolls in this configuration.'
+    }
+  }
 };
 
 interface Launch {

@@ -11,7 +11,7 @@
  */
 
 import {Button, Collection, Label, ListBox, ListLayout, OverlayArrow, Popover, Select, SelectValue, Virtualizer} from 'react-aria-components';
-import {MyListBoxItem} from './utils';
+import {LoadingSpinner, MyListBoxItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_ListBoxLoadingIndicator} from '../src/ListBox';
@@ -122,7 +122,7 @@ export const AsyncVirtualizedDynamicSelect = () => {
       }
 
       // Slow down load so progress circle can appear
-      await new Promise(resolve => setTimeout(resolve, 4000));
+      await new Promise(resolve => setTimeout(resolve, 2000));
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
       let json = await res.json();
       return {
@@ -135,9 +135,10 @@ export const AsyncVirtualizedDynamicSelect = () => {
   return (
     <Select isLoading={list.isLoading} onLoadMore={list.loadMore}>
       <Label style={{display: 'block'}}>Async Virtualized Dynamic Select</Label>
-      <Button>
+      <Button style={{position: 'relative'}}>
         <SelectValue />
-        <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
+        {list.isLoading && <LoadingSpinner style={{right: '20px', left: 'unset', top: '0px', height: '100%', width: 20}} />}
+        <span aria-hidden="true" style={{paddingLeft: 25}}>▼</span>
       </Button>
       <Popover>
         <OverlayArrow>
@@ -155,10 +156,8 @@ export const AsyncVirtualizedDynamicSelect = () => {
 
 const MyListBoxLoaderIndicator = () => {
   return (
-    <UNSTABLE_ListBoxLoadingIndicator>
-      <span>
-        Load more spinner
-      </span>
+    <UNSTABLE_ListBoxLoadingIndicator style={{height: 30, width: '100%'}}>
+      <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} />
     </UNSTABLE_ListBoxLoadingIndicator>
   );
 };
@@ -171,7 +170,7 @@ export const AsyncVirtualizedCollectionRenderSelect = () => {
       }
 
       // Slow down load so progress circle can appear
-      await new Promise(resolve => setTimeout(resolve, 4000));
+      await new Promise(resolve => setTimeout(resolve, 2000));
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
       let json = await res.json();
       return {
@@ -184,9 +183,10 @@ export const AsyncVirtualizedCollectionRenderSelect = () => {
   return (
     <Select isLoading={list.isLoading} onLoadMore={list.loadMore}>
       <Label style={{display: 'block'}}>Async Virtualized Collection render Select</Label>
-      <Button>
+      <Button style={{position: 'relative'}}>
         <SelectValue />
-        <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
+        {list.isLoading && <LoadingSpinner style={{right: '20px', left: 'unset', top: '0px', height: '100%', width: 20}} />}
+        <span aria-hidden="true" style={{paddingLeft: 25}}>▼</span>
       </Button>
       <Popover>
         <OverlayArrow>
