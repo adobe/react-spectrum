@@ -436,7 +436,7 @@ class LandmarkManager implements LandmarkManagerApi {
 }
 
 /** Creates a LandmarkController, which allows programmatic navigation of landmarks. */
-export function createLandmarkController(): LandmarkController {
+export function UNSTABLE_createLandmarkController(): LandmarkController {
   // Get the current landmark manager and create a controller using it.
   let instance: LandmarkManagerApi | null = getLandmarkManager();
   let controller = instance?.createLandmarkController();

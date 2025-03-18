@@ -24,7 +24,7 @@ interface VirtualizerItemProps extends Omit<VirtualizerItemOptions, 'ref'> {
   children: ReactNode
 }
 
-export function VirtualizerItem(props: VirtualizerItemProps) {
+export function VirtualizerItem(props: VirtualizerItemProps): ReactNode {
   let {style, className, layoutInfo, virtualizer, parent, children} = props;
   let {direction} = useLocale();
   let ref = useRef<HTMLDivElement | null>(null);
@@ -87,15 +87,6 @@ export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent
     contain: 'size layout style',
     ...rectStyles
   };
-
-  if (layoutInfo.isSticky) {
-    if (style.top) {
-      style.marginTop = style.top;
-    }
-    if (style[xProperty]) {
-      style[dir === 'rtl' ? 'marginRight' : 'marginLeft'] = style[xProperty];
-    }
-  }
 
   cache.set(layoutInfo, style);
   return style;

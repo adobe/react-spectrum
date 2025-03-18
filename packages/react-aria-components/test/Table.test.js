@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render, triggerLongPress, within} from '@react-spectrum/test-utils-internal';
-import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, useDragAndDrop, useTableOptions, Virtualizer} from '../';
+import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, Tag, TagGroup, TagList, useDragAndDrop, useTableOptions, Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
 import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
 import React, {useMemo, useRef, useState} from 'react';
@@ -25,7 +25,8 @@ import userEvent from '@testing-library/user-event';
 let {
   RenderEmptyStateStory: EmptyLoadingTable,
   TableLoadingBodyWrapperStory: LoadingMoreTable,
-  TableCellColSpanWithVariousSpansExample: TableCellColSpan
+  TableCellColSpanWithVariousSpansExample: TableCellColSpan,
+  TableWithSuspense
 } = composeStories(stories);
 
 function MyColumn(props) {
@@ -64,7 +65,7 @@ function MyRow({id, columns, children, ...otherProps}) {
   let {selectionBehavior, allowsDragging} = useTableOptions();
 
   return (
-    <Row id={id} {...otherProps}>
+    <Row id={id} {...otherProps} columns={columns}>
       {allowsDragging && (
         <Cell>
           <Button slot="drag">≡</Button>
@@ -120,6 +121,31 @@ let TestTable = ({tableProps, tableHeaderProps, columnProps, tableBodyProps, row
         <Cell {...cellProps}>bootmgr</Cell>
         <Cell {...cellProps}>System file</Cell>
         <Cell {...cellProps}>11/20/2010</Cell>
+      </MyRow>
+    </TableBody>
+  </Table>
+);
+
+let EditableTable = ({tableProps, tableHeaderProps, columnProps, tableBodyProps, rowProps, cellProps}) => (
+  <Table aria-label="Files" {...tableProps}>
+    <MyTableHeader {...tableHeaderProps}>
+      <MyColumn id="name" isRowHeader {...columnProps}>Name</MyColumn>
+      <MyColumn {...columnProps}>Type</MyColumn>
+      <MyColumn {...columnProps}>Actions</MyColumn>
+    </MyTableHeader>
+    <TableBody {...tableBodyProps}>
+      <MyRow id="1" textValue="Edit" {...rowProps}>
+        <Cell {...cellProps}>Games</Cell>
+        <Cell {...cellProps}>File folder</Cell>
+        <Cell {...cellProps}>
+          <TagGroup aria-label="Tag group">
+            <TagList>
+              <Tag id="1">Tag 1</Tag>
+              <Tag id="2">Tag 2</Tag>
+              <Tag id="3">Tag 3</Tag>
+            </TagList>
+          </TagGroup>
+        </Cell>
       </MyRow>
     </TableBody>
   </Table>
@@ -790,6 +816,66 @@ describe('Table', () => {
     expect(cells[0]).toHaveTextContent('Foo (focused)');
   });
 
+  it('should support columnHeader typeahead', async () => {
+    let {getAllByRole} = render(
+      <Table aria-label="Files">
+        <MyTableHeader columns={columns}>
+          {column => (
+            <MyColumn isRowHeader={column.isRowHeader} childColumns={column.children}>
+              {column.name}
+            </MyColumn>
+          )}
+        </MyTableHeader>
+        <TableBody items={rows}>
+          {item => (
+            <MyRow columns={columns}>
+              {column => <Cell>{item[column.id]}</Cell>}
+            </MyRow>
+          )}
+        </TableBody>
+      </Table>
+    );
+    let rowElements = getAllByRole('row');
+
+    await user.tab();
+    expect(document.activeElement).toBe(rowElements[1]);
+    await user.keyboard('boo');
+    expect(document.activeElement).toBe(rowElements[3]);
+  });
+
+  it('should support textValue overriding typeahead', async () => {
+    let rows = [
+      {id: 1, name: '1. Games', date: '6/7/2020', type: 'File folder', textValue: 'Games'},
+      {id: 2, name: '2. Program Files', date: '4/7/2021', type: 'File folder', textValue: 'Program Files'},
+      {id: 3, name: '3. bootmgr', date: '11/20/2010', type: 'System file', textValue: 'bootmgr'},
+      {id: 4, name: '4. log.txt', date: '1/18/2016', type: 'Text Document', textValue: 'log.txt'}
+    ];
+    let {getAllByRole} = render(
+      <Table aria-label="Files">
+        <MyTableHeader columns={columns}>
+          {column => (
+            <MyColumn isRowHeader={column.isRowHeader} childColumns={column.children}>
+              {column.name}
+            </MyColumn>
+          )}
+        </MyTableHeader>
+        <TableBody items={rows}>
+          {item => (
+            <MyRow columns={columns} textValue={item.textValue}>
+              {column => <Cell>{item[column.id]}</Cell>}
+            </MyRow>
+          )}
+        </TableBody>
+      </Table>
+    );
+    let rowElements = getAllByRole('row');
+
+    await user.tab();
+    expect(document.activeElement).toBe(rowElements[1]);
+    await user.keyboard('boo');
+    expect(document.activeElement).toBe(rowElements[3]);
+  });
+
   it('should support updating columns', () => {
     let tree = render(<DynamicTable tableHeaderProps={{columns}} tableBodyProps={{dependencies: [columns]}} rowProps={{columns}} />);
     let headers = tree.getAllByRole('columnheader');
@@ -840,10 +926,6 @@ describe('Table', () => {
   });
 
   it('should support virtualizer', async () => {
-    let layout = new TableLayout({
-      rowHeight: 25
-    });
-
     let items = [];
     for (let i = 0; i < 50; i++) {
       items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
@@ -853,7 +935,7 @@ describe('Table', () => {
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
 
     let {getByRole, getAllByRole} = render(
-      <Virtualizer layout={layout}>
+      <Virtualizer layout={TableLayout} layoutOptions={{rowHeight: 25}}>
         <Table aria-label="Test">
           <TableHeader>
             <Column isRowHeader>Foo</Column>
@@ -892,6 +974,21 @@ describe('Table', () => {
     rows = getAllByRole('row');
     expect(rows).toHaveLength(9);
     expect(rows.map(r => r.textContent)).toEqual(['FooBar', 'Foo 7Bar 7', 'Foo 8Bar 8', 'Foo 9Bar 9', 'Foo 10Bar 10', 'Foo 11Bar 11', 'Foo 12Bar 12', 'Foo 13Bar 13', 'Foo 49Bar 49']);
+  });
+
+  it('should support nested collections with colliding keys', async () => {
+    let {container} = render(<EditableTable />);
+
+    let itemMap = new Map();
+    let items = container.querySelectorAll('[data-key]');
+
+    for (let item of items) {
+      if (item instanceof HTMLElement) {
+        let key = item.dataset.collection + ':' + item.dataset.key;
+        expect(itemMap.has(key)).toBe(false);
+        itemMap.set(key, item);
+      }
+    }
   });
 
   describe('colSpan', () => {
@@ -1847,15 +1944,11 @@ describe('Table', () => {
         items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
       }
       function VirtualizedTableLoad() {
-        let layout = new TableLayout({
-          rowHeight: 25
-        });
-
         let scrollRef = useRef(null);
         useLoadMore({onLoadMore}, scrollRef);
 
         return (
-          <Virtualizer layout={layout}>
+          <Virtualizer layout={TableLayout} layoutOptions={{rowHeight: 25}}>
             <Table aria-label="Load more table" ref={scrollRef} onLoadMore={onLoadMore}>
               <TableHeader>
                 <Column isRowHeader>Foo</Column>
@@ -1962,6 +2055,95 @@ describe('Table', () => {
       await user.click(tree.getByRole('button'));
       let checkbox = tree.getByRole('checkbox');
       expect(checkbox).toBeInTheDocument();
+    });
+  });
+
+  describe('Suspense', () => {
+    it('should support React Suspense without transitions', async () => {
+      // Only supported in React 19.
+      if (!React.use) {
+        return;
+      }
+
+      // Render must be wrapped in an awaited act because the table suspends.
+      let tree = await act(() => render(<TableWithSuspense />));
+
+      let rows = tree.getAllByRole('row');
+      expect(rows).toHaveLength(2);
+      expect(rows[1]).toHaveTextContent('Loading...');
+
+      await act(async () => jest.runAllTimers());
+
+      rows = tree.getAllByRole('row');
+      expect(rows).toHaveLength(3);
+      expect(rows[1]).toHaveTextContent('FalconSat');
+      expect(rows[2]).toHaveTextContent('DemoSat');
+
+      let button = tree.getByRole('button');
+      let promise = act(() => button.click());
+
+      rows = tree.getAllByRole('row');
+      expect(rows).toHaveLength(2);
+      expect(rows[1]).toHaveTextContent('Loading...');
+
+      // Make react think we've awaited the promise.
+      // We can't actually await until after we runAllTimers, which is
+      // what resolves the promise above.
+      promise.then(() => {});
+      // eslint-disable-next-line
+      jest.runAllTimers()
+      await promise;
+
+      rows = tree.getAllByRole('row');
+      expect(rows).toHaveLength(5);
+      expect(rows[1]).toHaveTextContent('FalconSat');
+      expect(rows[2]).toHaveTextContent('DemoSat');
+      expect(rows[3]).toHaveTextContent('Trailblazer');
+      expect(rows[4]).toHaveTextContent('RatSat');
+    });
+
+    it('should support React Suspense with transitions', async () => {
+      // Only supported in React 19.
+      if (!React.use) {
+        return;
+      }
+
+      let tree = await act(() => render(<TableWithSuspense reactTransition />));
+
+      let rows = tree.getAllByRole('row');
+      expect(rows).toHaveLength(2);
+      expect(rows[1]).toHaveTextContent('Loading...');
+
+      await act(async () => jest.runAllTimers());
+
+      rows = tree.getAllByRole('row');
+      expect(rows).toHaveLength(3);
+      expect(rows[1]).toHaveTextContent('FalconSat');
+      expect(rows[2]).toHaveTextContent('DemoSat');
+
+      let button = tree.getByRole('button');
+      expect(button).toHaveTextContent('Load more');
+
+      let promise = act(() => button.click());
+
+      rows = tree.getAllByRole('row');
+      expect(rows).toHaveLength(3);
+      expect(rows[1]).toHaveTextContent('FalconSat');
+      expect(rows[2]).toHaveTextContent('DemoSat');
+
+      promise.then(() => {});
+      // eslint-disable-next-line
+      jest.runAllTimers();
+      await promise;
+
+      expect(button).toHaveTextContent('Load more');
+
+      rows = tree.getAllByRole('row');
+      expect(rows).toHaveLength(5);
+      expect(rows[1]).toHaveTextContent('FalconSat');
+      expect(rows[2]).toHaveTextContent('DemoSat');
+      expect(rows[3]).toHaveTextContent('Trailblazer');
+      expect(rows[4]).toHaveTextContent('RatSat');
     });
   });
 });

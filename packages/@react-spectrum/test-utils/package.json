@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/test-utils",
-  "version": "1.0.0-alpha.4",
+  "version": "1.0.0-alpha.5",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -24,7 +24,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/test-utils": "1.0.0-alpha.4",
+    "@react-aria/test-utils": "1.0.0-alpha.5",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

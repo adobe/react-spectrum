@@ -126,7 +126,7 @@
     "@testing-library/dom": "^10.1.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^15.0.7",
-    "@testing-library/user-event": "^14.6.1",
+    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch",
     "@types/react": "npm:types-react@19.0.0-rc.0",
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.0",
     "@types/storybook__react": "^4.0.2",
@@ -209,7 +209,7 @@
     "tempy": "^0.5.0",
     "typescript": "^5.5.0",
     "typescript-eslint": "^8.9.0",
-    "verdaccio": "^5.13.0",
+    "verdaccio": "^6.0.0",
     "walk-object": "^4.0.0",
     "wsrun": "^5.0.0",
     "xml": "^1.0.1",
@@ -234,7 +234,8 @@
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.0",
     "recast": "0.23.6",
     "ast-types": "0.16.1",
-    "svgo": "^3"
+    "svgo": "^3",
+    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch"
   },
   "@parcel/transformer-css": {
     "cssModules": {

@@ -15,16 +15,16 @@ import {AriaGridListItemOptions, GridListItemAria, useGridListItem} from '@react
 import {DOMAttributes, FocusableElement, Node, RefObject} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isAndroid} from '@react-aria/utils';
+import {isAndroid, useLabels} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
-export interface AriaTreeGridListItemOptions extends Omit<AriaGridListItemOptions, 'isVirtualized'> {
+export interface AriaTreeItemOptions extends Omit<AriaGridListItemOptions, 'isVirtualized'> {
   /** An object representing the treegrid item. Contains all the relevant information that makes up the treegrid row. */
   node: Node<unknown>
 }
 
-export interface TreeGridListItemAria extends GridListItemAria {
+export interface TreeItemAria extends GridListItemAria {
   /** Props for the tree grid row element. */
   rowProps: DOMAttributes,
   /** Props for the tree grid cell element within the tree grid list row. */
@@ -41,11 +41,15 @@ export interface TreeGridListItemAria extends GridListItemAria {
  * @param state - State of the parent list, as returned by `useTreeState`.
  * @param ref - The ref attached to the row element.
  */
-export function useTreeGridListItem<T>(props: AriaTreeGridListItemOptions, state: TreeState<T>, ref: RefObject<FocusableElement | null>): TreeGridListItemAria {
+export function useTreeItem<T>(props: AriaTreeItemOptions, state: TreeState<T>, ref: RefObject<FocusableElement | null>): TreeItemAria {
   let {node} = props;
   let gridListAria = useGridListItem(props, state, ref);
   let isExpanded = gridListAria.rowProps['aria-expanded'] === true;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/tree');
+  let labelProps = useLabels({
+    'aria-label': isExpanded ? stringFormatter.format('collapse') : stringFormatter.format('expand'),
+    'aria-labelledby': gridListAria.rowProps.id
+  });
 
   let expandButtonProps = {
     onPress: () => {
@@ -55,9 +59,9 @@ export function useTreeGridListItem<T>(props: AriaTreeGridListItemOptions, state
         state.selectionManager.setFocusedKey(node.key);
       }
     },
-    'aria-label': isExpanded ? stringFormatter.format('collapse') : stringFormatter.format('expand'),
     tabIndex: isAndroid() ? -1 : null,
-    'data-react-aria-prevent-focus': true
+    'data-react-aria-prevent-focus': true,
+    ...labelProps
   };
 
   // TODO: should it return a state specifically for isExpanded? Or is aria attribute sufficient?

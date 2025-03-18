@@ -23,13 +23,14 @@ export const SeparatorContext = createContext<ContextValue<SeparatorProps, HTMLE
 export const Separator = /*#__PURE__*/ createLeafComponent('separator', function Separator(props: SeparatorProps, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, SeparatorContext);
 
-  let {elementType, orientation, style, className} = props;
+  let {elementType, orientation, style, className, slot, ...otherProps} = props;
   let Element = (elementType as ElementType) || 'hr';
   if (Element === 'hr' && orientation === 'vertical') {
     Element = 'div';
   }
 
   let {separatorProps} = useSeparator({
+    ...otherProps,
     elementType,
     orientation
   });
@@ -41,6 +42,6 @@ export const Separator = /*#__PURE__*/ createLeafComponent('separator', function
       style={style}
       className={className ?? 'react-aria-Separator'}
       ref={ref}
-      slot={props.slot || undefined} />
+      slot={slot || undefined} />
   );
 });

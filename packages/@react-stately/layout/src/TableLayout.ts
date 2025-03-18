@@ -18,7 +18,7 @@ import {LayoutNode, ListLayout, ListLayoutOptions} from './ListLayout';
 import {TableCollection} from '@react-types/table';
 import {TableColumnLayout} from '@react-stately/table';
 
-export interface TableLayoutProps {
+export interface TableLayoutProps extends ListLayoutOptions {
   columnWidths?: Map<Key, number>
 }
 
@@ -35,7 +35,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
   private lastPersistedKeys: Set<Key> | null = null;
   private persistedIndices: Map<Key, number[]> = new Map();
 
-  constructor(options: ListLayoutOptions) {
+  constructor(options?: ListLayoutOptions) {
     super(options);
     this.stickyColumnIndices = [];
   }
@@ -55,6 +55,11 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
         c.props.minWidth !== oldCollection.columns[i].props.minWidth ||
         c.props.maxWidth !== oldCollection.columns[i].props.maxWidth
       );
+  }
+
+  shouldInvalidateLayoutOptions(newOptions: O, oldOptions: O): boolean {
+    return newOptions.columnWidths !== oldOptions.columnWidths
+      || super.shouldInvalidateLayoutOptions(newOptions, oldOptions);
   }
 
   update(invalidationContext: InvalidationContext<O>): void {
@@ -362,7 +367,7 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     };
   }
 
-  getVisibleLayoutInfos(rect: Rect) {
+  getVisibleLayoutInfos(rect: Rect): LayoutInfo[] {
     // Adjust rect to keep number of visible rows consistent.
     // (only if height > 1 for getDropTargetFromPoint)
     if (rect.height > 1) {
@@ -537,17 +542,23 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     x += this.virtualizer!.visibleRect.x;
     y += this.virtualizer!.visibleRect.y;
 
-    // Custom variation of this.virtualizer.keyAtPoint that ignores body
+    // Find the closest item within on either side of the point using the gap width.
+    let searchRect = new Rect(x, Math.max(0, y - this.gap), 1, this.gap * 2);
+    let candidates = this.getVisibleLayoutInfos(searchRect);
     let key: Key | null = null;
-    let point = new Point(x, y);
-    let rectAtPoint = new Rect(point.x, point.y, 1, 1);
-    let layoutInfos = this.virtualizer!.layout.getVisibleLayoutInfos(rectAtPoint).filter(info => info.type === 'row');
+    let minDistance = Infinity;
+    for (let candidate of candidates) {
+      // Ignore items outside the search rect, e.g. persisted keys.
+      if (candidate.type !== 'row' || !candidate.rect.intersects(searchRect)) {
+        continue;
+      }
 
-    // Layout may return multiple layout infos in the case of
-    // persisted keys, so find the first one that actually intersects.
-    for (let layoutInfo of layoutInfos) {
-      if (layoutInfo.rect.intersects(rectAtPoint)) {
-        key = layoutInfo.key;
+      let yDist = Math.abs(candidate.rect.y - y);
+      let maxYDist = Math.abs(candidate.rect.maxY - y);
+      let dist = Math.min(yDist, maxYDist);
+      if (dist < minDistance) {
+        minDistance = dist;
+        key = candidate.key;
       }
     }
 

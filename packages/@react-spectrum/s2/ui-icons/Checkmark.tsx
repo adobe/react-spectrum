@@ -16,9 +16,9 @@ import Checkmark_S from './S2_CheckmarkSize75.svg';
 import Checkmark_XL from './S2_CheckmarkSize300.svg';
 import Checkmark_XS from './S2_CheckmarkSize50.svg';
 import Checkmark_XXL from './S2_CheckmarkSize400.svg';
-import {SVGProps} from 'react';
+import {ReactNode, SVGProps} from 'react';
 
-export default function Checkmark(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XXL' | 'XS' | 'S'}) {
+export default function Checkmark(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XXL' | 'XS' | 'S'}): ReactNode {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':

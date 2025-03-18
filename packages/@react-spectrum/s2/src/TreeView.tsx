@@ -29,13 +29,13 @@ import {
 import {centerBaseline} from './CenterBaseline';
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
-import {colorMix, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
+import {colorMix, focusRing, fontRelative, lightDark, style} from '../style' with {type: 'macro'};
 import {DOMRef, Key} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {isAndroid} from '@react-aria/utils';
 import {raw} from '../style/style-macro' with {type: 'macro'};
-import React, {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useContext, useMemo, useRef} from 'react';
+import React, {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
 import {TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale} from 'react-aria';
@@ -54,11 +54,9 @@ export interface TreeViewProps extends Omit<RACTreeProps<any>, 'style' | 'classN
   styles?: StylesPropWithHeight
 }
 
-export interface TreeViewItemProps<T extends object = object> extends Omit<RACTreeItemProps, 'className' | 'style'> {
+export interface TreeViewItemProps extends Omit<RACTreeItemProps, 'className' | 'style'> {
   /** Whether this item has children, even if not loaded yet. */
-  hasChildItems?: boolean,
-  /** A list of child tree item objects used when dynamically rendering the tree item children. */
-  childItems?: Iterable<T>
+  hasChildItems?: boolean
 }
 
 interface TreeRendererContextValue {
@@ -73,10 +71,13 @@ let InternalTreeContext = createContext<{isDetached?: boolean, isEmphasized?: bo
 // keyboard focus ring. Perhaps find a different way of rendering the outlines since the top of the item doesn't
 // scroll into view due to how the ring is offset. Alternatively, have the tree render the top/bottom outline like it does in Listview
 const tree = style({
+  ...focusRing(),
+  outlineOffset: -2, // make certain we are visible inside overflow hidden containers
   userSelect: 'none',
   minHeight: 0,
   minWidth: 0,
   width: 'full',
+  height: 'full',
   overflow: 'auto',
   boxSizing: 'border-box',
   justifyContent: {
@@ -85,9 +86,6 @@ const tree = style({
   alignItems: {
     isEmpty: 'center'
   },
-  height: {
-    isEmpty: 'full'
-  },
   '--indent': {
     type: 'width',
     value: 16
@@ -95,7 +93,7 @@ const tree = style({
 }, getAllowedOverrides({height: true}));
 
 function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, isDetached, isEmphasized} = props;
+  let {children, isDetached, isEmphasized, UNSAFE_className, UNSAFE_style} = props;
   let scale = useScale();
 
   let renderer;
@@ -105,22 +103,19 @@ function TreeView(props: TreeViewProps, ref: DOMRef<HTMLDivElement>) {
 
   let domRef = useDOMRef(ref);
 
-  let rowHeight = scale === 'large' ? 50 : 40;
-  let gap = isDetached ? 4 : 0;
-  let layout = useMemo(() => {
-    return new ListLayout({
-      rowHeight,
-      gap
-    });
-  }, [rowHeight, gap]);
-
   return (
-    <Virtualizer layout={layout}>
+    <Virtualizer
+      layout={ListLayout}
+      layoutOptions={{
+        rowHeight: scale === 'large' ? 50 : 40,
+        gap: isDetached ? 2 : 0
+      }}>
       <TreeRendererContext.Provider value={{renderer}}>
         <InternalTreeContext.Provider value={{isDetached, isEmphasized}}>
           <Tree
             {...props}
-            className={({isEmpty}) => tree({isEmpty, isDetached}, props.styles)}
+            style={UNSAFE_style}
+            className={renderProps => (UNSAFE_className ?? '') + tree({isDetached, ...renderProps}, props.styles)}
             selectionBehavior="toggle"
             ref={domRef}>
             {props.children}
@@ -299,7 +294,7 @@ const treeRowFocusIndicator = raw(`
   }`
 );
 
-export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
+export const TreeViewItem = (props: TreeViewItemProps): ReactNode => {
   let {
     href
   } = props;
@@ -315,7 +310,12 @@ export const TreeViewItem = <T extends object>(props: TreeViewItemProps<T>) => {
   );
 };
 
-export const TreeViewItemContent = (props: Omit<TreeItemContentProps, 'children'> & {children: ReactNode}) => {
+export interface TreeViewItemContentProps extends Omit<TreeItemContentProps, 'children'> {
+  /** Rendered contents of the tree item or child items. */
+  children: ReactNode
+}
+
+export const TreeViewItemContent = (props: TreeViewItemContentProps): ReactNode => {
   let {
     children
   } = props;

@@ -84,7 +84,7 @@ export class Virtualizer<T extends object, V> {
   }
 
   /** Returns whether the given key, or an ancestor, is persisted. */
-  isPersistedKey(key: Key) {
+  isPersistedKey(key: Key): boolean {
     // Quick check if the key is directly in the set of persisted keys.
     if (this.persistedKeys.has(key)) {
       return true;
@@ -182,7 +182,7 @@ export class Virtualizer<T extends object, V> {
     }
   }
 
-  getVisibleLayoutInfos() {
+  getVisibleLayoutInfos(): Map<Key, LayoutInfo> {
     let isTestEnv = process.env.NODE_ENV === 'test' && !process.env.VIRT_ON;
     let isClientWidthMocked = isTestEnv && typeof HTMLElement !== 'undefined' && Object.getOwnPropertyNames(HTMLElement.prototype).includes('clientWidth');
     let isClientHeightMocked = isTestEnv && typeof HTMLElement !== 'undefined' && Object.getOwnPropertyNames(HTMLElement.prototype).includes('clientHeight');
@@ -266,6 +266,7 @@ export class Virtualizer<T extends object, V> {
     let offsetChanged = false;
     let sizeChanged = false;
     let itemSizeChanged = false;
+    let layoutOptionsChanged = false;
     let needsUpdate = false;
 
     if (opts.collection !== this.collection) {
@@ -308,8 +309,11 @@ export class Virtualizer<T extends object, V> {
         sizeChanged ||= opts.invalidationContext.sizeChanged || false;
         offsetChanged ||= opts.invalidationContext.offsetChanged || false;
         itemSizeChanged ||= opts.invalidationContext.itemSizeChanged || false;
-        needsLayout ||= itemSizeChanged || sizeChanged || offsetChanged;
-        needsLayout ||= opts.invalidationContext.layoutOptions !== this._invalidationContext.layoutOptions;
+        layoutOptionsChanged ||= opts.invalidationContext.layoutOptions != null
+          && this._invalidationContext.layoutOptions != null
+          && opts.invalidationContext.layoutOptions !== this._invalidationContext.layoutOptions 
+          && this.layout.shouldInvalidateLayoutOptions(opts.invalidationContext.layoutOptions, this._invalidationContext.layoutOptions);
+        needsLayout ||= itemSizeChanged || sizeChanged || offsetChanged || layoutOptionsChanged;
       }
       this._invalidationContext = opts.invalidationContext;
     }
@@ -327,6 +331,7 @@ export class Virtualizer<T extends object, V> {
         offsetChanged,
         sizeChanged,
         itemSizeChanged,
+        layoutOptionsChanged,
         layoutOptions: this._invalidationContext.layoutOptions
       });
     } else if (needsUpdate) {
@@ -340,11 +345,11 @@ export class Virtualizer<T extends object, V> {
     return this._visibleViews.get(key);
   }
 
-  invalidate(context: InvalidationContext) {
+  invalidate(context: InvalidationContext): void {
     this.delegate.invalidate(context);
   }
 
-  updateItemSize(key: Key, size: Size) {
+  updateItemSize(key: Key, size: Size): void {
     if (!this.layout.updateItemSize) {
       return;
     }

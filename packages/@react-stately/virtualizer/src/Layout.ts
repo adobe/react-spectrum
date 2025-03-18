@@ -63,14 +63,23 @@ export abstract class Layout<T extends object = Node<any>, O = any> implements L
   }
 
   /**
+   * Returns whether the layout should invalidate when the layout options change.
+   * By default it invalidates when the object identity changes. Override this
+   * method to optimize layout updates based on specific option changes.
+   */
+  shouldInvalidateLayoutOptions(newOptions: O, oldOptions: O): boolean {
+    return newOptions !== oldOptions;
+  }
+
+  /**
    * This method allows the layout to perform any pre-computation
    * it needs to in order to prepare LayoutInfos for retrieval.
    * Called by the virtualizer before `getVisibleLayoutInfos`
    * or `getLayoutInfo` are called.
    */
-  update(invalidationContext: InvalidationContext<O>) {} // eslint-disable-line @typescript-eslint/no-unused-vars
+  update(invalidationContext: InvalidationContext<O>): void {} // eslint-disable-line @typescript-eslint/no-unused-vars
 
-  /** 
+  /**
    * Updates the size of the given item.
    */
   updateItemSize?(key: Key, size: Size): boolean;

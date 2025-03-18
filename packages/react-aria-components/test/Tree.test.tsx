@@ -257,6 +257,17 @@ describe('Tree', () => {
     expect(level2ChildRow3).toHaveAttribute('data-rac');
   });
 
+  it('should include the row as part of the expand/collapse button accessible label', () => {
+    let {getAllByRole} = render(<StaticTree />);
+    let rows = getAllByRole('row');
+    for (let row of rows) {
+      if (row.hasAttribute('data-has-child-items')) {
+        let expandButton = within(row).getAllByRole('button')[0];
+        expect(expandButton).toHaveAttribute('aria-labelledby', `${expandButton.id} ${row.id}`);
+      }
+    }
+  });
+
   it('should not label an expandable row as having an action if it supports selection', () => {
     let {getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'single'}} />);
 
@@ -363,15 +374,11 @@ describe('Tree', () => {
   });
 
   it('should support virtualizer', async () => {
-    let layout = new ListLayout({
-      rowHeight: 25
-    });
-
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
 
     let {getByRole, getAllByRole} = render(
-      <Virtualizer layout={layout}>
+      <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 25}}>
         <DynamicTree />
       </Virtualizer>
     );

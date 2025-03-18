@@ -26,7 +26,7 @@ const I18nContext = React.createContext<Locale | null>(null);
 /**
  * Provides the locale for the application to all child components.
  */
-export function I18nProvider(props: I18nProviderProps) {
+export function I18nProvider(props: I18nProviderProps): ReactNode {
   let {locale, children} = props;
   let defaultLocale = useDefaultLocale();
 

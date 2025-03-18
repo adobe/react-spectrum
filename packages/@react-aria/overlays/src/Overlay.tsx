@@ -33,6 +33,10 @@ export interface OverlayProps {
    */
   disableFocusManagement?: boolean,
   /**
+   * Whether to contain focus within the overlay.
+   */
+  shouldContainFocus?: boolean,
+  /**
    * Whether the overlay is currently performing an exit animation. When true,
    * focus is allowed to move outside.
    */
@@ -45,7 +49,7 @@ export const OverlayContext = React.createContext<{contain: boolean, setContain:
  * A container which renders an overlay such as a popover or modal in a portal,
  * and provides a focus scope for the child elements.
  */
-export function Overlay(props: OverlayProps) {
+export function Overlay(props: OverlayProps): ReactNode | null {
   let isSSR = useIsSSR();
   let {portalContainer = isSSR ? null : document.body, isExiting} = props;
   let [contain, setContain] = useState(false);
@@ -63,7 +67,7 @@ export function Overlay(props: OverlayProps) {
   let contents = props.children;
   if (!props.disableFocusManagement) {
     contents = (
-      <FocusScope restoreFocus contain={contain && !isExiting}>
+      <FocusScope restoreFocus contain={(props.shouldContainFocus || contain) && !isExiting}>
         {contents}
       </FocusScope>
     );
@@ -81,7 +85,7 @@ export function Overlay(props: OverlayProps) {
 }
 
 /** @private */
-export function useOverlayFocusContain() {
+export function useOverlayFocusContain(): void {
   let ctx = useContext(OverlayContext);
   let setContain = ctx?.setContain;
   useLayoutEffect(() => {

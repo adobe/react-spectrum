@@ -14,7 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {Button, Cell, Checkbox, CheckboxProps, Collection, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {isTextDropItem} from 'react-aria';
 import {MyMenuItem} from './utils';
-import React, {useMemo, useRef} from 'react';
+import React, {Suspense, useMemo, useRef, useState} from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_TableLoadingIndicator} from '../src/Table';
 import {useAsyncList, useListData} from 'react-stately';
@@ -716,13 +716,6 @@ export function VirtualizedTable() {
     items.push({id: i, foo: `Foo ${i}`, bar: `Bar ${i}`, baz: `Baz ${i}`});
   }
 
-  let layout = useMemo(() => {
-    return new TableLayout({
-      rowHeight: 25,
-      headingHeight: 25
-    });
-  }, []);
-
   let list = useListData({
     initialItems: items
   });
@@ -744,7 +737,12 @@ export function VirtualizedTable() {
   });
 
   return (
-    <Virtualizer layout={layout}>
+    <Virtualizer
+      layout={TableLayout}
+      layoutOptions={{
+        rowHeight: 25,
+        headingHeight: 25
+      }}>
       <Table aria-label="virtualized table" selectionMode="multiple" dragAndDropHooks={dragAndDropHooks} style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}}>
         <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
           <Column width={30} minWidth={0} />
@@ -775,16 +773,14 @@ export function VirtualizedTableWithResizing() {
     items.push({id: i, foo: `Foo ${i}`, bar: `Bar ${i}`, baz: `Baz ${i}`});
   }
 
-  let layout = useMemo(() => {
-    return new TableLayout({
-      rowHeight: 25,
-      headingHeight: 25
-    });
-  }, []);
-
   return (
     <ResizableTableContainer style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}}>
-      <Virtualizer layout={layout}>
+      <Virtualizer
+        layout={TableLayout}
+        layoutOptions={{
+          rowHeight: 25,
+          headingHeight: 25
+        }}>
         <Table aria-label="virtualized table">
           <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
             <MyColumn isRowHeader>Foo</MyColumn>
@@ -807,13 +803,6 @@ export function VirtualizedTableWithResizing() {
 }
 
 function VirtualizedTableWithEmptyState(args) {
-  let layout = useMemo(() => {
-    return new TableLayout({
-      rowHeight: 25,
-      headingHeight: 25
-    });
-  }, []);
-
   let rows = [
     {foo: 'Foo 1', bar: 'Bar 1', baz: 'Baz 1'},
     {foo: 'Foo 2', bar: 'Bar 2', baz: 'Baz 2'},
@@ -823,7 +812,12 @@ function VirtualizedTableWithEmptyState(args) {
 
   return (
     <ResizableTableContainer style={{height: 400, width: 400, overflow: 'auto', scrollPaddingTop: 25}}>
-      <Virtualizer layout={layout}>
+      <Virtualizer
+        layout={TableLayout}
+        layoutOptions={{
+          rowHeight: 25,
+          headingHeight: 25
+        }}>
         <Table aria-label="virtualized table">
           <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
             <MyColumn isRowHeader>Foo</MyColumn>
@@ -875,13 +869,6 @@ const OnLoadMoreTableVirtualized = () => {
     }
   });
 
-  let layout = useMemo(() => {
-    return new TableLayout({
-      rowHeight: 25,
-      headingHeight: 25
-    });
-  }, []);
-
   let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
   let scrollRef = useRef<HTMLTableElement>(null);
   let memoedLoadMoreProps = useMemo(() => ({
@@ -892,7 +879,12 @@ const OnLoadMoreTableVirtualized = () => {
   useLoadMore(memoedLoadMoreProps, scrollRef);
 
   return (
-    <Virtualizer layout={layout}>
+    <Virtualizer
+      layout={TableLayout}
+      layoutOptions={{
+        rowHeight: 25,
+        headingHeight: 25
+      }}>
       <Table aria-label="Load more table virtualized" ref={scrollRef} style={{height: 150, width: 400, overflow: 'auto'}}>
         <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
           <Column id="name" isRowHeader>Name</Column>
@@ -941,13 +933,6 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
     }
   });
 
-  let layout = useMemo(() => {
-    return new TableLayout({
-      rowHeight: 25,
-      headingHeight: 25
-    });
-  }, []);
-
   let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
   let scrollRef = useRef<HTMLDivElement>(null);
   let memoedLoadMoreProps = useMemo(() => ({
@@ -959,7 +944,12 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
 
   return (
     <ResizableTableContainer ref={scrollRef} style={{height: 150, width: 400, overflow: 'auto'}}>
-      <Virtualizer layout={layout}>
+      <Virtualizer
+        layout={TableLayout}
+        layoutOptions={{
+          rowHeight: 25,
+          headingHeight: 25
+        }}>
         <Table aria-label="Load more table virtualized">
           <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
             <Column id="name" isRowHeader>Name</Column>
@@ -989,4 +979,83 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
 export const OnLoadMoreTableVirtualizedResizeWrapperStory  = {
   render: OnLoadMoreTableVirtualizedResizeWrapper,
   name: 'Virtualized Table with async loading, resizable table container wrapper'
+};
+
+interface Launch {
+  id: number,
+  mission_name: string,
+  launch_year: number
+}
+
+const items: Launch[] = [
+  {id: 0, mission_name: 'FalconSat', launch_year: 2006},
+  {id: 1, mission_name: 'DemoSat', launch_year: 2007},
+  {id: 2, mission_name: 'Trailblazer', launch_year: 2008},
+  {id: 3, mission_name: 'RatSat', launch_year: 2009}
+];
+
+function makePromise(items: Launch[]) {
+  return new Promise(resolve => setTimeout(() => resolve(items), 1000));
+}
+
+function TableSuspense({reactTransition = false}) {
+  let [promise, setPromise] = useState(() => makePromise(items.slice(0, 2)));
+  let [isPending, startTransition] = React.useTransition();
+  return (
+    <div>
+      <Table aria-label="Suspense table">
+        <TableHeader>
+          <Column isRowHeader>Name</Column>
+          <Column>Year</Column>
+        </TableHeader>
+        <TableBody>
+          <Suspense
+            fallback={
+              <Row>
+                <Cell colSpan={2}>Loading...</Cell>
+              </Row>
+            }>
+            <LocationsTableBody promise={promise} />
+          </Suspense>
+        </TableBody>
+      </Table>
+      <button
+        onClick={() => {
+          let update = () => {
+            setPromise(makePromise(items));
+          };
+
+          if (reactTransition) {
+            startTransition(update);
+          } else {
+            update();
+          }
+        }}>
+        {isPending ? 'Loading' : 'Load more'}
+      </button>
+    </div>
+  );
+}
+
+function LocationsTableBody({promise}) {
+  let items = React.use<Launch[]>(promise);
+
+  return items.map(item => (
+    <Row key={item.id}>
+      <Cell>{item.mission_name}</Cell>
+      <Cell>{item.launch_year}</Cell>
+    </Row>
+  ));
+}
+
+export const TableWithSuspense = {
+  render: React.use != null ? TableSuspense : () => 'This story requires React 19.',
+  args: {
+    reactTransition: false
+  },
+  parameters: {
+    description: {
+      data: 'Expected behavior: With reactTransition=false, rows should be replaced by loading indicator when pressing button. With reactTransition=true, existing rows should remain and loading should appear inside the button.'
+    }
+  }
 };
