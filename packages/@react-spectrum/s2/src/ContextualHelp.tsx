@@ -30,7 +30,7 @@ export interface ContextualHelpProps extends
   Pick<PopoverDialogProps, 'shouldFlip' | 'offset' | 'crossOffset' | 'placement' | 'containerPadding'>,
   ContextualHelpStyleProps, StyleProps, DOMProps, AriaLabelingProps {
   /** Contents of the Contextual Help popover. */
-  children?: ReactNode,
+  children: ReactNode,
   /**
    * The size of the ActionButton.
    *
@@ -46,7 +46,7 @@ const popover = style({
   padding: 24
 });
 
-export const ContextualHelpContext = createContext<ContextValue<ContextualHelpProps, FocusableRefValue<HTMLButtonElement>>>(null);
+export const ContextualHelpContext = createContext<ContextValue<Partial<ContextualHelpProps>, FocusableRefValue<HTMLButtonElement>>>(null);
 
 /**
  * Contextual help shows a user extra information about the state of an adjacent component, or a total view.

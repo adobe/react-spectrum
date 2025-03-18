@@ -29,7 +29,7 @@ import {useDOMRef} from '@react-spectrum/utils';
 
 export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentProps, 'children' | 'closeDelay'>, Pick<AriaTooltipProps, 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset'> {
   /** The content of the tooltip. */
-  children?: ReactNode,
+  children: ReactNode,
   /**
    * The placement of the element with respect to its anchor element.
    *
@@ -40,7 +40,7 @@ export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentPro
 
 export interface TooltipProps extends Omit<AriaTooltipProps, 'children' | 'className' | 'style' | 'triggerRef' | 'UNSTABLE_portalContainer' | 'isEntering' | 'isExiting' | 'placement' | 'containerPadding' |  'offset' | 'crossOffset' |  'shouldFlip' | 'arrowBoundaryOffset' | 'isOpen' | 'defaultOpen' | 'onOpenChange'>, UnsafeStyles {
   /** The content of the tooltip. */
-  children?: ReactNode
+  children: ReactNode
 }
 
 const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | 'light dark' | null}>({
@@ -123,7 +123,7 @@ const arrowStyles = style<TooltipRenderProps>({
   }
 });
 
-let InternalTooltipTriggerContext = createContext<TooltipTriggerProps>({});
+let InternalTooltipTriggerContext = createContext<Partial<TooltipTriggerProps>>({});
 
 /**
  * Display container for Tooltip content. Has a directional arrow dependent on its placement.
@@ -148,7 +148,7 @@ export const Tooltip = forwardRef(function Tooltip(props: TooltipProps, ref: DOM
     if (el) {
       el.lang = locale;
       el.dir = direction;
-      let spectrumBorderRadius = window.getComputedStyle(el).borderRadius;
+      let spectrumBorderRadius = typeof window !== 'undefined' ? window.getComputedStyle(el).borderRadius : '';
       if (spectrumBorderRadius !== '') {
         setBorderRadius(parseInt(spectrumBorderRadius, 10));
       }
@@ -186,7 +186,7 @@ export const Tooltip = forwardRef(function Tooltip(props: TooltipProps, ref: DOM
  * the Tooltip when the user hovers over or focuses the trigger, and positioning the Tooltip
  * relative to the trigger.
  */
-export function TooltipTrigger(props: TooltipTriggerProps) {
+export function TooltipTrigger(props: TooltipTriggerProps): ReactNode {
   let {
     containerPadding,
     crossOffset,
@@ -216,6 +216,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 // This is purely so that storybook generates the types for both Menu and MenuTrigger
 interface ICombined extends Omit<TooltipProps, 'placement'>, TooltipTriggerProps {}
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function CombinedTooltip(props: ICombined) {
+export function CombinedTooltip(props: ICombined): ReactNode {
   return <div />;
 }

@@ -99,7 +99,7 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
       disabled: isDisabled,
       required: validationBehavior === 'native' && isRequired,
       name,
-      value: state.selectedKey ?? '',
+      value: state.selectedKey ?? undefined,
       onChange: (e: React.ChangeEvent<HTMLSelectElement>) => state.setSelectedKey(e.target.value)
     }
   };
@@ -109,7 +109,7 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
  * Renders a hidden native `<select>` element, which can be used to support browser
  * form autofill, mobile form navigation, and native form submission.
  */
-export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
+export function HiddenSelect<T>(props: HiddenSelectProps<T>): ReactNode | null {
   let {state, triggerRef, label, name, isDisabled} = props;
   let selectRef = useRef(null);
   let {containerProps, selectProps} = useHiddenSelect({...props, selectRef}, state, triggerRef);

@@ -14,7 +14,6 @@ import {ActionGroup, Item} from '@react-spectrum/actiongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
-import {createLandmarkController, useLandmark} from '../';
 import {Flex} from '@react-spectrum/layout';
 import {Link} from '@react-spectrum/link';
 import {Meta} from '@storybook/react';
@@ -22,6 +21,7 @@ import React, {SyntheticEvent, useEffect, useMemo, useRef} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import styles from './index.css';
 import {TextField} from '@react-spectrum/textfield';
+import {UNSTABLE_createLandmarkController, useLandmark} from '../';
 
 interface StoryProps {}
 
@@ -314,7 +314,7 @@ function ApplicationExample() {
 }
 
 function IframeExample() {
-  let controller = useMemo(() => createLandmarkController(), []);
+  let controller = useMemo(() => UNSTABLE_createLandmarkController(), []);
   useEffect(() => () => controller.dispose(), [controller]);
   let onLoad = (e: SyntheticEvent) => {
     let iframe = e.target as HTMLIFrameElement;

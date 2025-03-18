@@ -66,7 +66,7 @@ export interface SliderProps extends Omit<SliderBaseProps<number>, 'children'>, 
   fillOffset?: number
 }
 
-export const SliderContext = createContext<ContextValue<SliderProps, FocusableRefValue<HTMLDivElement>>>(null);
+export const SliderContext = createContext<ContextValue<Partial<SliderProps>, FocusableRefValue<HTMLDivElement>>>(null);
 
 const slider = style({
   font: 'control',
@@ -317,7 +317,7 @@ export let filledTrack = style({
   translateY: '[-50%]'
 });
 
-export function SliderBase<T extends number | number[]>(props: SliderBaseProps<T> & {sliderRef: RefObject<HTMLDivElement | null>}) {
+export function SliderBase<T extends number | number[]>(props: SliderBaseProps<T> & {sliderRef: RefObject<HTMLDivElement | null>}): ReactNode {
   let formContext = useContext(FormContext);
   props = useFormProps(props);
   let {

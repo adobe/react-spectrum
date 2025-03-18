@@ -13,7 +13,7 @@
 import {act, fireEvent, pointerMap, render as render_, within} from '@react-spectrum/test-utils-internal';
 import {Button} from '@react-spectrum/button';
 import {Form} from '@react-spectrum/form';
-import {parseZonedDateTime, Time} from '@internationalized/date';
+import {parseTime, parseZonedDateTime, Time} from '@internationalized/date';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -165,6 +165,23 @@ describe('TimeField', function () {
       expect(onBlurSpy).toHaveBeenCalledTimes(1);
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(2);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should keep dayPeriod the same when hour segment that has a value >= 12 is cleared', async function () {
+      let {getAllByRole} = render(<TimeField label="Time" defaultValue={parseTime('20:24')} />);
+      let segments = getAllByRole('spinbutton');
+
+      await user.tab();
+      expect(segments[0]).toHaveFocus();
+      expect(segments[0]).toHaveAttribute('aria-valuetext', '8 PM');
+      expect(segments[2].getAttribute('aria-label')).toBe('AM/PM, ');
+      expect(within(segments[2]).getByText('PM')).toBeInTheDocument();
+
+      fireEvent.keyDown(document.activeElement, {key: 'Backspace'});
+      fireEvent.keyUp(document.activeElement, {key: 'Backspace'});
+      expect(segments[0]).toHaveAttribute('aria-valuetext', 'Empty');
+      expect(segments[2].getAttribute('aria-label')).toBe('AM/PM, ');
+      expect(within(segments[2]).getByText('PM')).toBeInTheDocument();
     });
 
     it('should trigger right arrow key event for segment navigation', async function () {

@@ -8,7 +8,7 @@ interface SliderData {
 
 export const sliderData = new WeakMap<SliderState, SliderData>();
 
-export function getSliderThumbId(state: SliderState, index: number) {
+export function getSliderThumbId(state: SliderState, index: number): string {
   let data = sliderData.get(state);
   if (!data) {
     throw new Error('Unknown slider state');

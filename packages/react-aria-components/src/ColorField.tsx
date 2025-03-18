@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaColorFieldProps, useColorChannelField, useColorField} from '@react-aria/color';
-import {ColorChannel, ColorSpace} from '@react-types/color';
+import {AriaColorFieldProps, useColorChannelField, useColorField, useLocale} from 'react-aria';
+import {ColorChannel, ColorFieldState, ColorSpace, useColorChannelFieldState, useColorFieldState} from 'react-stately';
 import {ColorFieldContext} from './RSPContexts';
-import {ColorFieldState, useColorChannelFieldState, useColorFieldState} from '@react-stately/color';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from '@react-aria/utils';
 import {InputContext} from './Input';
@@ -22,7 +21,6 @@ import {LabelContext} from './Label';
 import {Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, Ref, useRef} from 'react';
 import {TextContext} from './Text';
-import {useLocale} from 'react-aria';
 
 export interface ColorFieldRenderProps {
   /**
@@ -86,7 +84,9 @@ function ColorChannelField(props: ColorChannelFieldProps) {
   });
 
   let inputRef = useRef<HTMLInputElement>(null);
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let {
     labelProps,
     inputProps,
@@ -129,7 +129,9 @@ function HexColorField(props: HexColorFieldProps) {
   });
 
   let inputRef = useRef<HTMLInputElement>(null);
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let {
     labelProps,
     inputProps,

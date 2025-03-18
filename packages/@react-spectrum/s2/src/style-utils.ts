@@ -124,7 +124,7 @@ export const colorScheme = () => ({
   }
 } as const);
 
-export function staticColor() {
+export function staticColor(): Record<string, any> {
   return {
     '--s2-container-bg': {
       type: 'backgroundColor',
@@ -146,7 +146,6 @@ const allowedOverrides = [
   'marginBottom',
   'marginX',
   'marginY',
-  'flex',
   'flexGrow',
   'flexShrink',
   'flexBasis',
@@ -199,6 +198,6 @@ export interface StyleProps extends UnsafeStyles {
   styles?: StylesProp
 }
 
-export function getAllowedOverrides({width = true, height = false} = {}) {
+export function getAllowedOverrides({width = true, height = false} = {}): string[] {
   return (allowedOverrides as unknown as string[]).concat(width ? widthProperties : []).concat(height ? heightProperties : []);
 }

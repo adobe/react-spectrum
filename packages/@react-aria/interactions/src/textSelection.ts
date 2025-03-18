@@ -33,10 +33,10 @@ let state: State = 'default';
 let savedUserSelect = '';
 let modifiedElementMap = new WeakMap<Element, string>();
 
-export function disableTextSelection(target?: Element) {
+export function disableTextSelection(target?: Element): void {
   if (isIOS()) {
     if (state === 'default') {
-       
+
       const documentObject = getOwnerDocument(target);
       savedUserSelect = documentObject.documentElement.style.webkitUserSelect;
       documentObject.documentElement.style.webkitUserSelect = 'none';
@@ -46,12 +46,13 @@ export function disableTextSelection(target?: Element) {
   } else if (target instanceof HTMLElement || target instanceof SVGElement) {
     // If not iOS, store the target's original user-select and change to user-select: none
     // Ignore state since it doesn't apply for non iOS
-    modifiedElementMap.set(target, target.style.userSelect);
-    target.style.userSelect = 'none';
+    let property = 'userSelect' in target.style ? 'userSelect' : 'webkitUserSelect';
+    modifiedElementMap.set(target, target.style[property]);
+    target.style[property] = 'none';
   }
 }
 
-export function restoreTextSelection(target?: Element) {
+export function restoreTextSelection(target?: Element): void {
   if (isIOS()) {
     // If the state is already default, there's nothing to do.
     // If it is restoring, then there's no need to queue a second restore.
@@ -69,7 +70,7 @@ export function restoreTextSelection(target?: Element) {
       runAfterTransition(() => {
         // Avoid race conditions
         if (state === 'restoring') {
-           
+
           const documentObject = getOwnerDocument(target);
           if (documentObject.documentElement.style.webkitUserSelect === 'none') {
             documentObject.documentElement.style.webkitUserSelect = savedUserSelect || '';
@@ -85,9 +86,10 @@ export function restoreTextSelection(target?: Element) {
     // Ignore state since it doesn't apply for non iOS
     if (target && modifiedElementMap.has(target)) {
       let targetOldUserSelect = modifiedElementMap.get(target) as string;
+      let property = 'userSelect' in target.style ? 'userSelect' : 'webkitUserSelect';
 
-      if (target.style.userSelect === 'none') {
-        target.style.userSelect = targetOldUserSelect;
+      if (target.style[property] === 'none') {
+        target.style[property] = targetOldUserSelect;
       }
 
       if (target.getAttribute('style') === '') {

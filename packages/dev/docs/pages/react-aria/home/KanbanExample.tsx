@@ -203,7 +203,7 @@ function Column({list, status, itemClassName}: ColumnProps) {
         selectionMode="multiple"
         dragAndDropHooks={dragAndDropHooks}
         renderEmptyState={() => 'No tasks.'}
-        className="h-[320px] p-2 md:p-4 overflow-y-auto overflow-x-hidden relative outline outline-0 bg-white/70 dark:bg-zinc-900/60 backdrop-blur border border-black/10 dark:border-white/10 bg-clip-padding text-gray-700 dark:text-zinc-400 flex flex-col gap-3 rounded-xl shadow-xl drop-target:bg-blue-200 dark:drop-target:bg-blue-800/60 drop-target:outline-2 outline-blue-500 forced-colors:outline-[Highlight] -outline-offset-2 empty:items-center empty:justify-center">
+        className="h-[320px] p-2 md:p-4 overflow-y-auto overflow-x-hidden relative outline outline-0 bg-white/70 dark:bg-zinc-900/60 backdrop-blur-sm border border-black/10 dark:border-white/10 bg-clip-padding text-gray-700 dark:text-zinc-400 flex flex-col gap-3 rounded-xl shadow-xl drop-target:bg-blue-200 dark:drop-target:bg-blue-800/60 drop-target:outline-2 outline-blue-500 forced-colors:outline-[Highlight] -outline-offset-2 empty:items-center empty:justify-center">
         {item => <Card item={item} className={itemClassName} />}
       </GridList>
     </section>
@@ -218,15 +218,15 @@ interface CardProps {
 
 function Card({id, item, className}: CardProps) {
   return (
-    <GridListItem id={id} textValue={item.title} className={`group grid grid-cols-[1fr_auto] gap-1 p-2 rounded-lg border border-solid border-black/10 hover:border-black/20 dark:border-white/10 dark:hover:border-white/20 forced-colors:!border-[ButtonBorder] bg-white/80 dark:bg-zinc-900/70 bg-clip-padding hover:shadow-md selected:shadow-md dragging:opacity-50 transition text-slate-700 dark:text-slate-200 cursor-default select-none outline outline-0 outline-offset-2 focus-visible:outline-2 outline-blue-500 forced-colors:outline-[Highlight] forced-colors:!text-[ButtonText] forced-colors:selected:!bg-[Highlight] forced-colors:selected:!text-[HighlightText] forced-color-adjust-none ${className}`}>
+    <GridListItem id={id} textValue={item.title} className={`group grid grid-cols-[1fr_auto] gap-1 p-2 rounded-lg border border-solid border-black/10 hover:border-black/20 dark:border-white/10 dark:hover:border-white/20 forced-colors:border-[ButtonBorder]! bg-white/80 dark:bg-zinc-900/70 bg-clip-padding hover:shadow-md selected:shadow-md dragging:opacity-50 transition text-slate-700 dark:text-slate-200 cursor-default select-none outline outline-0 outline-offset-2 focus-visible:outline-2 outline-blue-500 forced-colors:outline-[Highlight] forced-colors:text-[ButtonText]! forced-colors:selected:bg-[Highlight]! forced-colors:selected:text-[HighlightText]! forced-color-adjust-none ${className}`}>
       <span className="font-bold truncate">{item.title}</span>
       <span className="text-sm justify-self-end">{item.id}</span>
-      <Text slot="description" className="text-sm line-clamp-2 col-span-2 text-slate-500 dark:text-zinc-300 forced-colors:!text-inherit">{item.description}</Text>
+      <Text slot="description" className="text-sm line-clamp-2 col-span-2 text-slate-500 dark:text-zinc-300 forced-colors:text-inherit!">{item.description}</Text>
       <span className="flex items-center gap-1">
         <img src={item.avatar} alt="" className="h-4 w-4 rounded-full" />
         <span className="text-sm">{item.assignee}</span>
       </span>
-      <Button slot="drag" className="bg-transparent border-none text-gray-500 dark:text-zinc-300 text-base leading-none w-fit aspect-square p-0 justify-self-end outline outline-0 focus-visible:outline-2 outline-blue-500 forced-colors:outline-[Highlight] rounded-sm sr-only group-focus-visible:not-sr-only focus:not-sr-only forced-colors:group-selected:text-[HighlightText] forced-colors:group-selected:outline-[HighlightText]">≡</Button>
+      <Button slot="drag" className="bg-transparent border-none text-gray-500 dark:text-zinc-300 text-base leading-none w-fit aspect-square p-0 justify-self-end outline outline-0 focus-visible:outline-2 outline-blue-500 forced-colors:outline-[Highlight] rounded-xs sr-only group-focus-visible:not-sr-only focus:not-sr-only forced-colors:group-selected:text-[HighlightText] forced-colors:group-selected:outline-[HighlightText]">≡</Button>
     </GridListItem>
   );
 }

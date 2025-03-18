@@ -16,16 +16,16 @@ const track = tv({
   variants: {
     isSelected: {
       false: 'bg-gray-400 dark:bg-zinc-400 group-pressed:bg-gray-500 dark:group-pressed:bg-zinc-300',
-      true: 'bg-gray-700 dark:bg-zinc-300 forced-colors:!bg-[Highlight] group-pressed:bg-gray-800 dark:group-pressed:bg-zinc-200',
+      true: 'bg-gray-700 dark:bg-zinc-300 forced-colors:bg-[Highlight]! group-pressed:bg-gray-800 dark:group-pressed:bg-zinc-200',
     },
     isDisabled: {
-      true: 'bg-gray-200 dark:bg-zinc-700 forced-colors:group-selected:!bg-[GrayText] forced-colors:border-[GrayText]',
+      true: 'bg-gray-200 dark:bg-zinc-700 forced-colors:group-selected:bg-[GrayText]! forced-colors:border-[GrayText]',
     }
   }
 });
 
 const handle = tv({
-  base: 'h-3 w-3 transform rounded-full bg-white dark:bg-zinc-900 outline outline-1 -outline-offset-1 outline-transparent shadow transition duration-200 ease-in-out',
+  base: 'h-3 w-3 transform rounded-full bg-white dark:bg-zinc-900 outline outline-1 -outline-offset-1 outline-transparent shadow-xs transition duration-200 ease-in-out',
   variants: {
     isSelected: {
       false: 'translate-x-0',

@@ -9,15 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-@config "./tailwind.config.js";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss' source(none);
+@source "*.mdx";
+@source "home/*.tsx";
+@source "../../../../../starters/tailwind/**/*.{ts,tsx}";
+@plugin "tailwindcss-react-aria-components";
+@plugin "tailwindcss-animate";
 
-@layer utilities {
-  .focus-ring {
-    @apply outline outline-0 outline-blue-600 dark:outline-blue-500 focus-visible:outline-2;
-  }
+@utility focus-ring {
+  @apply outline outline-0 outline-blue-600 dark:outline-blue-500 focus-visible:outline-2;
 }
 
 @font-face {
@@ -56,7 +56,7 @@ body {
   font-family: "adobe-clean", system-ui, sans-serif;
   background: var(--page-bg);
   color-scheme: dark light;
-  @apply [--page-bg:theme(colors.zinc.50)] dark:[--page-bg:theme(colors.zinc.900)];
+  @apply [--page-bg:var(--color-zinc-50)] dark:[--page-bg:var(--color-zinc-900)];
 }
 
 @media (min-resolution: 200dpi) {
@@ -114,7 +114,7 @@ main > section > h2 {
   --hljs-color: theme(colors.gray.800);
   --hljs-background: transparent;
   --hljs-keyword-color: theme(colors.fuchsia.700);
-  --hljs-section-color: lch(from theme(colors.red.600) calc(l - 2%) c h);
+  --hljs-section-color: theme(colors.red.600);
   --hljs-string-color: theme(colors.green.700);
   --hljs-literal-color: theme(colors.purple.700);
   --hljs-attribute-color: theme(colors.indigo.700);
@@ -248,39 +248,48 @@ pre.small {
 
 @keyframes switch-animation {
   0%, 16% {
-    @apply ml-6 w-8;
+    margin-left: --spacing(6);
+    width: --spacing(8);
   }
 
   18.5%, 22% {
-    @apply ml-4 w-10;
+    margin-left: --spacing(4);
+    width: --spacing(10);
   }
 
   25%, 30% {
-    @apply ml-6 w-8;
+    margin-left: --spacing(6);
+    width: --spacing(8);
   }
 
   33%, 36.5% {
-    @apply ml-4 w-10;
+    margin-left: --spacing(4);
+    width: --spacing(10);
   }
 
   38.5%, 66% {
-    @apply ml-0 w-8;
+    margin-left: 0;
+    width: --spacing(8);
   }
 
   68.5%, 72% {
-    @apply ml-0 w-10;
+    margin-left: 0;
+    width: --spacing(10);
   }
 
   75%, 80% {
-    @apply ml-0 w-8;
+    margin-left: 0;
+    width: --spacing(8);
   }
 
   83%, 86.5% {
-    @apply ml-0 w-10;
+    margin-left: 0;
+    width: --spacing(10);
   }
 
   88.5%, 100% {
-    @apply ml-6 w-8;
+    margin-left: --spacing(6);
+    width: --spacing(8);
   }
 }
 
@@ -354,7 +363,7 @@ pre.small {
       right: 0;
       height: 0.99lh;
       opacity: 0;
-      @apply rounded bg-red-600/[15%] dark:bg-red-600/20;
+      @apply rounded-sm bg-red-600/[15%] dark:bg-red-600/20;
       animation: highlight 5s infinite var(--delay, 0s);
     }
   }

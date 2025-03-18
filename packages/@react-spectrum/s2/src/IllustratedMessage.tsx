@@ -155,7 +155,7 @@ interface IllustratedMessageContextProps extends Partial<S2SpectrumIllustratedMe
   isDropTarget?: boolean
 }
 
-export const IllustratedMessageContext = createContext<ContextValue<IllustratedMessageContextProps, DOMRefValue<HTMLDivElement>>>(null);
+export const IllustratedMessageContext = createContext<ContextValue<Partial<IllustratedMessageContextProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 /**
  * An IllustratedMessage displays an illustration and a message, usually

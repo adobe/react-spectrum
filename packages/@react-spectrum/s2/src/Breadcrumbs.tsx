@@ -15,13 +15,13 @@ import {
   Breadcrumb as AriaBreadcrumb,
   BreadcrumbsProps as AriaBreadcrumbsProps,
   CollectionRenderer,
+  CollectionRendererContext,
   ContextValue,
+  DefaultCollectionRenderer,
   HeadingContext,
   Link,
   Provider,
-  Breadcrumbs as RACBreadcrumbs,
-  UNSTABLE_CollectionRendererContext,
-  UNSTABLE_DefaultCollectionRenderer
+  Breadcrumbs as RACBreadcrumbs
 } from 'react-aria-components';
 import {AriaBreadcrumbItemProps, useLocale} from 'react-aria';
 import ChevronIcon from '../ui-icons/Chevron';
@@ -62,10 +62,10 @@ interface BreadcrumbsStyleProps {
 
 export interface BreadcrumbsProps<T> extends Omit<AriaBreadcrumbsProps<T>, 'children' | 'items' | 'style' | 'className'>, BreadcrumbsStyleProps, StyleProps {
   /** The children of the Breadcrumbs. */
-  children?: ReactNode
+  children: ReactNode
 }
 
-export const BreadcrumbsContext = createContext<ContextValue<BreadcrumbsProps<any>, DOMRefValue<HTMLOListElement>>>(null);
+export const BreadcrumbsContext = createContext<ContextValue<Partial<BreadcrumbsProps<any>>, DOMRefValue<HTMLOListElement>>>(null);
 
 const wrapper = style<BreadcrumbsStyleProps>({
   position: 'relative',
@@ -95,7 +95,7 @@ const wrapper = style<BreadcrumbsStyleProps>({
   }
 }, getAllowedOverrides());
 
-const InternalBreadcrumbsContext = createContext<BreadcrumbsProps<any>>({});
+const InternalBreadcrumbsContext = createContext<Partial<BreadcrumbsProps<any>>>({});
 
 /** Breadcrumbs show hierarchy and navigational context for a user’s location within an application. */
 export const Breadcrumbs = /*#__PURE__*/ (forwardRef as forwardRefType)(function Breadcrumbs<T extends object>(props: BreadcrumbsProps<T>, ref: DOMRef<HTMLOListElement>) {
@@ -139,7 +139,7 @@ let BreadcrumbMenu = (props: {items: Array<Node<any>>, onAction: BreadcrumbsProp
   let {size, isDisabled} = useContext(InternalBreadcrumbsContext);
   let label = stringFormatter.format('breadcrumbs.more');
   return (
-    <UNSTABLE_CollectionRendererContext.Provider value={UNSTABLE_DefaultCollectionRenderer}>
+    <CollectionRendererContext.Provider value={DefaultCollectionRenderer}>
       <li className={breadcrumbStyles({size, isDisabled, isMenu: true})}>
         <MenuTrigger>
           <ActionButton isDisabled={isDisabled} isQuiet aria-label={label}><FolderIcon /></ActionButton>
@@ -159,7 +159,7 @@ let BreadcrumbMenu = (props: {items: Array<Node<any>>, onAction: BreadcrumbsProp
           size={size}
           className={chevronStyles({direction, isMenu: true})} />
       </li>
-    </UNSTABLE_CollectionRendererContext.Provider>
+    </CollectionRendererContext.Provider>
   );
 };
 
@@ -290,7 +290,7 @@ const heading = style({
 
 export interface BreadcrumbProps extends Omit<AriaBreadcrumbItemProps, 'children' | 'style' | 'className' | 'autoFocus'>, LinkDOMProps {
   /** The children of the breadcrumb item. */
-  children?: ReactNode
+  children: ReactNode
 }
 
 /** An individual Breadcrumb for Breadcrumbs. */
@@ -360,9 +360,9 @@ let CollapseContext = createContext<{
 function CollapsingCollection({children, containerRef, onAction}) {
   return (
     <CollapseContext.Provider value={{containerRef, onAction}}>
-      <UNSTABLE_CollectionRendererContext.Provider value={CollapsingCollectionRenderer}>
+      <CollectionRendererContext.Provider value={CollapsingCollectionRenderer}>
         {children}
-      </UNSTABLE_CollectionRendererContext.Provider>
+      </CollectionRendererContext.Provider>
     </CollapseContext.Provider>
   );
 }

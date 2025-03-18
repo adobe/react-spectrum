@@ -15,7 +15,7 @@ import {createCalendar} from '@internationalized/date';
 import {DatePickerSegment} from './DatePickerSegment';
 import datepickerStyles from './styles.css';
 import {DateValue, SpectrumDatePickerProps} from '@react-types/datepicker';
-import React, {useRef} from 'react';
+import React, {ReactNode, useRef} from 'react';
 import {useDateField} from '@react-aria/datepicker';
 import {useDateFieldState} from '@react-stately/datepicker';
 import {useLocale} from '@react-aria/i18n';
@@ -26,7 +26,7 @@ interface DatePickerFieldProps<T extends DateValue> extends SpectrumDatePickerPr
   maxGranularity?: SpectrumDatePickerProps<T>['granularity']
 }
 
-export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps<T>) {
+export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps<T>): ReactNode {
   let {
     isDisabled,
     isReadOnly,
@@ -45,7 +45,7 @@ export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps
   let {fieldProps, inputProps} = useDateField({...props, inputRef}, state, ref);
 
   return (
-    <div {...fieldProps} data-testid={props['data-testid']} className={classNames(datepickerStyles, 'react-spectrum-Datepicker-segments', inputClassName)} ref={ref}>
+    <span {...fieldProps} data-testid={props['data-testid']} className={classNames(datepickerStyles, 'react-spectrum-Datepicker-segments', inputClassName)} ref={ref}>
       {state.segments.map((segment, i) =>
         (<DatePickerSegment
           key={i}
@@ -56,6 +56,6 @@ export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps
           isRequired={isRequired} />)
       )}
       <input {...inputProps} ref={inputRef} />
-    </div>
+    </span>
   );
 }

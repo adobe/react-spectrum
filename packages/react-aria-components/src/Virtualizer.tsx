@@ -13,7 +13,7 @@
 import {CollectionBranchProps, CollectionRenderer, CollectionRendererContext, CollectionRootProps} from './Collection';
 import {DropPosition, DropTarget, DropTargetDelegate, ItemDropTarget, Node} from '@react-types/shared';
 import {Layout, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
-import React, {createContext, ReactElement, ReactNode, useContext, useMemo} from 'react';
+import React, {createContext, ReactNode, useContext, useMemo} from 'react';
 import {useScrollView, VirtualizerItem} from '@react-aria/virtualizer';
 
 type View = ReusableView<Node<unknown>, ReactNode>;
@@ -24,20 +24,35 @@ export interface LayoutOptionsDelegate<O> {
 
 interface ILayout<O> extends Layout<Node<unknown>, O>, Partial<DropTargetDelegate>, LayoutOptionsDelegate<O> {}
 
+interface LayoutClass<O> {
+  new(): ILayout<O>
+}
+
 export interface VirtualizerProps<O> {
   /** The child collection to virtualize (e.g. ListBox, GridList, or Table). */
   children: ReactNode,
   /** The layout object that determines the position and size of the visible elements. */
-  layout: ILayout<O>,
+  layout: LayoutClass<O> | ILayout<O>,
   /** Options for the layout. */
   layoutOptions?: O
 }
 
-const VirtualizerContext = createContext<VirtualizerState<any, any> | null>(null);
-const LayoutContext = createContext<Pick<VirtualizerProps<any>, 'layout' | 'layoutOptions'> | null>(null);
+interface LayoutContextValue {
+  layout: ILayout<any>,
+  layoutOptions?: any
+}
 
-export function Virtualizer<O>(props: VirtualizerProps<O>) {
-  let {children, layout, layoutOptions} = props;
+const VirtualizerContext = createContext<VirtualizerState<any, any> | null>(null);
+const LayoutContext = createContext<LayoutContextValue | null>(null);
+
+/**
+ * A Virtualizer renders a scrollable collection of data using customizable layouts.
+ * It supports very large collections by only rendering visible items to the DOM, reusing
+ * them as the user scrolls.
+ */
+export function Virtualizer<O>(props: VirtualizerProps<O>): ReactNode {
+  let {children, layout: layoutProp, layoutOptions} = props;
+  let layout = useMemo(() => typeof layoutProp === 'function' ? new layoutProp() : layoutProp, [layoutProp]);
   let renderer: CollectionRenderer = useMemo(() => ({
     isVirtualized: true,
     layoutDelegate: layout,
@@ -114,7 +129,7 @@ function renderWrapper(
   parent: View | null,
   reusableView: View,
   renderDropIndicator?: (target: ItemDropTarget) => ReactNode
-): ReactElement {
+): ReactNode {
   let rendered = (
     <VirtualizerItem
       key={reusableView.key}

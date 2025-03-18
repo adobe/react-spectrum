@@ -25,7 +25,7 @@ export interface DialogTriggerProps extends OverlayTriggerProps {
   children: ReactNode
 }
 
-interface DialogRenderProps {
+export interface DialogRenderProps {
   close: () => void
 }
 
@@ -40,7 +40,7 @@ export const OverlayTriggerStateContext = createContext<OverlayTriggerState | nu
 /**
  * A DialogTrigger opens a dialog when a trigger element is pressed.
  */
-export function DialogTrigger(props: DialogTriggerProps) {
+export function DialogTrigger(props: DialogTriggerProps): ReactNode {
   // Use useMenuTriggerState instead of useOverlayTriggerState in case a menu is embedded in the dialog.
   // This is needed to handle submenus.
   let state = useMenuTriggerState(props);
@@ -61,7 +61,11 @@ export function DialogTrigger(props: DialogTriggerProps) {
         [OverlayTriggerStateContext, state],
         [RootMenuTriggerStateContext, state],
         [DialogContext, overlayProps],
-        [PopoverContext, {trigger: 'DialogTrigger', triggerRef: buttonRef}]
+        [PopoverContext, {
+          trigger: 'DialogTrigger',
+          triggerRef: buttonRef,
+          'aria-labelledby': overlayProps['aria-labelledby']
+        }]
       ]}>
       <PressResponder {...triggerProps} ref={buttonRef} isPressed={state.isOpen}>
         {props.children}
