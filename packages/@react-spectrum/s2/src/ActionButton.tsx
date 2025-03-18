@@ -16,7 +16,7 @@ import {baseColor, focusRing, fontRelative, style} from '../style' with { type: 
 import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext, Provider, Button as RACButton, useSlottedContext} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
-import {FocusableRef, FocusableRefValue} from '@react-types/shared'; 
+import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {getAllowedOverrides, staticColor, StyleProps} from './style-utils' with { type: 'macro' };
 import {IconContext} from './Icon';
 import {mergeProps, useLabels, useSlotId} from '@react-aria/utils';
