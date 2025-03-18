@@ -68,7 +68,7 @@ import {ProgressCircle} from './ProgressCircle';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactNode, useContext, useRef, useState} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
-import {useGlobalListeners} from '@react-aria/utils';
+import {useGlobalListeners, useSlotId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -224,9 +224,6 @@ const valueStyles = style({
   alignItems: 'center'
 });
 
-// TODO: the designs show that it should be disabled when loading, but I think that should
-// only apply if there aren't any items in the picker. What do we think? I could also do the same
-// for the button and make it have disabled styles
 const iconStyles = style({
   flexShrink: 0,
   rotate: 90,
@@ -320,8 +317,8 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
     }, {once: true, capture: true});
   };
 
-  // TODO: no designs for the spinner in the listbox that I've seen so will need to double check
   let renderer;
+  let spinnerId = useSlotId([isLoading]);
   let loadingCircle = (
     <ProgressCircle
       isIndeterminate
@@ -359,6 +356,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
   return (
     <AriaSelect
       {...pickerProps}
+      aria-describedby={spinnerId}
       placeholder={placeholder}
       style={UNSAFE_style}
       className={UNSAFE_className + style(field(), getAllowedOverrides())({
@@ -402,7 +400,15 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                     isQuiet={isQuiet}
                     isInvalid={isInvalid}
                     isOpen={isOpen}
-                    loadingCircle={loadingCircle} />
+                    loadingCircle={
+                      <ProgressCircle
+                        id={spinnerId}
+                        isIndeterminate
+                        size="S"
+                        styles={progressCircleStyles({size})}
+                        // Same loading string as table
+                        aria-label={stringFormatter.format('table.loading')} />
+                    } />
                 )}
               </Button>
             </PressResponder>

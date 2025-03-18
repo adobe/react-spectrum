@@ -44,7 +44,7 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useCallback, useContext, useEffect, useImperativeHandle, useRef, useState} from 'react';
+import {createContext, CSSProperties, ForwardedRef, forwardRef, ReactNode, Ref, useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
@@ -56,7 +56,7 @@ import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {menu} from './Picker';
-import {mergeRefs, useResizeObserver} from '@react-aria/utils';
+import {mergeRefs, useResizeObserver, useSlotId} from '@react-aria/utils';
 import {Placement} from 'react-aria';
 import {PopoverBase} from './Popover';
 import {pressScale} from './pressScale';
@@ -367,6 +367,9 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
   let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   let [showLoading, setShowLoading] = useState(false);
   let isLoading = loadingState === 'loading' || loadingState === 'filtering';
+  {/* Logic copied from S1 */}
+  let showFieldSpinner = useMemo(() => showLoading && (isOpen || menuTrigger === 'manual' || loadingState === 'loading'), [showLoading, isOpen, menuTrigger, loadingState]);
+  let spinnerId = useSlotId([showFieldSpinner]);
 
   let inputValue = state?.inputValue;
   let lastInputValue = useRef(inputValue);
@@ -467,18 +470,18 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
           <InputContext.Consumer>
             {ctx => (
               <InputContext.Provider value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
-                <Input />
+                <Input aria-describedby={spinnerId} />
               </InputContext.Provider>
             )}
           </InputContext.Consumer>
           {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
-          {/* Logic copied from S1 */}
-          {showLoading && (isOpen || menuTrigger === 'manual' || loadingState === 'loading') && (
+          {showFieldSpinner && (
             <ProgressCircle
+              id={spinnerId}
               isIndeterminate
               size="S"
               styles={progressCircleStyles({size, isInput: true})}
-              aria-label={stringFormatter.format('table.loadingMore')} />
+              aria-label={stringFormatter.format('table.loading')} />
           )}
           <Button
             ref={buttonRef}
