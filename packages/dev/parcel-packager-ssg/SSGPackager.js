@@ -61,9 +61,6 @@ module.exports = new Packager({
       }
 
       let [asset, code] = assets.get(id);
-      if (asset.filePath.includes('@react-spectrum/provider/src/context')) {
-        console.log(asset, asset.env, asset.env.id, asset.id)
-      }
       let moduleFunction = vm.compileFunction(code, ['exports', 'require', 'module', '__dirname', '__filename', 'parcelRequire'], {
         filename: asset.filePath
       });
@@ -113,8 +110,7 @@ module.exports = new Packager({
 
       require.resolve = defaultRequire.resolve;
 
-      let parcelRequire = (publicId) => {
-        console.log('parcelRequire!')
+      let parcelRequire = () => {
         throw new Error('UNKNOWN');
       };
 
