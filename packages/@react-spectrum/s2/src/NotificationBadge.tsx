@@ -75,24 +75,24 @@ const badge = style({
     size: {
       S: {
         default: 12,
-        isEmpty: 8
+        isIndicatorOnly: 8
       },
       M: {
         default: fontRelative(18), // sort of arbitrary? tried to get as close to the figma designs as possible
-        isEmpty: 8
+        isIndicatorOnly: 8
       },
       L: {
         default: 16,
-        isEmpty: fontRelative(12)
+        isIndicatorOnly: fontRelative(12)
       },
       XL: {
         default: 18,
-        isEmpty: fontRelative(12)
+        isIndicatorOnly: fontRelative(12)
       }
     }
   },
   aspectRatio: {
-    isEmpty: 'square',
+    isIndicatorOnly: 'square',
     isSingleDigit: 'square'
   },
   width: 'fit',
@@ -117,12 +117,12 @@ export const NotificationBadge = forwardRef(function Badge(props: NotificationBa
   let {locale} = useLocale();
   let formattedValue = '';
 
-  let isEmpty = false;
+  let isIndicatorOnly = false;
   let isSingleDigit = false;
   let isDoubleDigit = false;
 
   if (value === undefined) {
-    isEmpty = true;
+    isIndicatorOnly = true;
   } else if (value <= 0) {
     throw new Error('Value cannot be negative or zero');
   } else {
@@ -143,9 +143,8 @@ export const NotificationBadge = forwardRef(function Badge(props: NotificationBa
 
   return (
     <span
-      {...filterDOMProps(otherProps)}
-      role="presentation"
-      className={(props.UNSAFE_className || '') + badge({size, isEmpty, isSingleDigit, isDoubleDigit}, props.styles)}
+      {...filterDOMProps(otherProps, {labelable: true})}
+      className={(props.UNSAFE_className || '') + badge({size, isIndicatorOnly, isSingleDigit, isDoubleDigit}, props.styles)}
       style={props.UNSAFE_style}
       ref={domRef}>
       {formattedValue}

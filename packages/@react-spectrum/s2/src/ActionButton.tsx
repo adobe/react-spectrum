@@ -16,9 +16,10 @@ import {baseColor, focusRing, fontRelative, style} from '../style' with { type: 
 import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext, Provider, Button as RACButton, useSlottedContext} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
-import {FocusableRef, FocusableRefValue} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue} from '@react-types/shared'; 
 import {getAllowedOverrides, staticColor, StyleProps} from './style-utils' with { type: 'macro' };
 import {IconContext} from './Icon';
+import {mergeProps, useLabels, useSlotId} from '@react-aria/utils';
 import {NotificationBadgeContext} from './NotificationBadge';
 import {pressScale} from './pressScale';
 import {SkeletonContext} from './Skeleton';
@@ -280,8 +281,12 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
     isDisabled = props.isDisabled
   } = ctx || {};
 
+  let notificationId = useSlotId();
+  let labelProps = useLabels({'aria-label': props['aria-label'], 'aria-labelledby': notificationId});
+
   return (
     <RACButton
+      {...mergeProps(props, labelProps)}
       {...props}
       isDisabled={isDisabled}
       ref={domRef}
@@ -312,6 +317,7 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
             styles: style({marginStart: '--iconMargin', flexShrink: 0, order: 0})
           }],
           [NotificationBadgeContext, {
+            id: notificationId,
             size: props.size === 'XS' ? undefined : props.size,
             styles: style({position: 'absolute', top: '--badgeTop', insetStart: '[var(--badgePosition)]', marginTop: '[calc((self(height) * -1)/2)]', marginStart: '[calc((self(height) * -1)/2)]'})
           }]
