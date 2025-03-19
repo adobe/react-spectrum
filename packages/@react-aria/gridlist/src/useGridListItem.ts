@@ -69,7 +69,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
   // let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/gridlist');
   let {direction} = useLocale();
-  const listMapData = listMap.get(state);
+  let listMapData = listMap.get(state);
   let {onAction, linkBehavior = 'action', keyboardNavigationBehavior = 'arrow'} = listMapData || {};
   let descriptionId = useSlotId();
 

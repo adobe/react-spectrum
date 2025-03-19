@@ -257,7 +257,50 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
         layoutDelegate
       });
     droppableCollection = dragAndDropHooks.useDroppableCollection!(
-      {keyboardDelegate, dropTargetDelegate},
+      {
+        keyboardDelegate,
+        dropTargetDelegate,
+        onDropActivate: (e) => {
+          // Expand collapsed item when dragging over
+          if (e.target.type === 'item') {
+            let key = e.target.key
+            let item = state.collection.getItem(key);
+            if (item && item.hasChildNodes && expandedKeys !== 'all' && !expandedKeys.has(key)) {
+              state.toggleKey(key);
+            }
+          }
+        },
+        onKeyDown: e => {
+          if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+            // Toggle expansion when drop target is after expandable item
+            let target = dropState?.target;
+            if (target && target.type === 'item') {
+              let keyToToggle = target.dropPosition === 'after' ? target.key : state.collection.getKeyBefore(target.key);
+              if (keyToToggle) {
+                let item = state.collection.getItem(keyToToggle);
+                let isExpanded = state.expandedKeys.has(keyToToggle);
+                if (item && item.hasChildNodes) {
+                  state.toggleKey(keyToToggle);
+
+                  if (isExpanded){
+                    // When collapsing, set drop target to the item itself
+                    dropState?.setTarget({type: 'item', key: keyToToggle , dropPosition: 'before'});
+                  } else {
+                    // When expanding, set drop target to first child
+                    let children = [...state.collection.getChildren!(keyToToggle)];
+                    if (children.length > 0) {
+                      let firstChildKey = children[0].nextKey;
+                      if (firstChildKey) {
+                        dropState?.setTarget({type: 'item', key: firstChildKey, dropPosition: 'before'});
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       dropState,
       ref
     );
@@ -447,6 +490,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
   }
 
   let isDragging = dragState && dragState.isDragging(item.key);
+  let isDropTarget = droppableItem?.isDropTarget;
 
   let selectionMode = state.selectionManager.selectionMode;
   let selectionBehavior = state.selectionManager.selectionBehavior;
@@ -464,7 +508,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
     id: item.key,
     allowsDragging: !!dragState,
     isDragging,
-    isDropTarget: droppableItem?.isDropTarget
+    isDropTarget
   }), [states, isHovered, isFocusVisible, state.selectionManager, isExpanded, hasChildItems, level, isFocusVisibleWithin, state, item.key]);
 
   let renderProps = useRenderProps({
@@ -538,7 +582,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
         data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}
         data-allows-dragging={!!dragState || undefined}
         data-dragging={isDragging || undefined}
-        data-drop-target={droppableItem?.isDropTarget || undefined}>
+        data-drop-target={isDropTarget || undefined}>
         <div {...gridCellProps} style={{display: 'contents'}}>
           <Provider
             values={[
