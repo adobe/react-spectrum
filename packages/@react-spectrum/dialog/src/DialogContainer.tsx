@@ -12,7 +12,7 @@
 
 import {DialogContext} from './context';
 import {Modal} from '@react-spectrum/overlays';
-import React, {ReactElement, useState} from 'react';
+import React, {ReactElement, ReactNode, useState} from 'react';
 import {SpectrumDialogContainerProps} from '@react-types/dialog';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
@@ -21,7 +21,7 @@ import {useOverlayTriggerState} from '@react-stately/overlays';
  * it in a modal. Useful in cases where there is no trigger element
  * or when the trigger unmounts while the dialog is open.
  */
-export function DialogContainer(props: SpectrumDialogContainerProps) {
+export function DialogContainer(props: SpectrumDialogContainerProps): ReactNode {
   let {
     children,
     type = 'modal',
