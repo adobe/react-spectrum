@@ -263,7 +263,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
         onDropActivate: (e) => {
           // Expand collapsed item when dragging over
           if (e.target.type === 'item') {
-            let key = e.target.key
+            let key = e.target.key;
             let item = state.collection.getItem(key);
             if (item && item.hasChildNodes && expandedKeys !== 'all' && !expandedKeys.has(key)) {
               state.toggleKey(key);
@@ -281,15 +281,17 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
                 let isExpanded = state.expandedKeys.has(keyToToggle);
                 if (item && item.hasChildNodes) {
                   state.toggleKey(keyToToggle);
-
-                  if (isExpanded){
+                  // eslint-disable-next-line max-depth
+                  if (isExpanded) {
                     // When collapsing, set drop target to the item itself
-                    dropState?.setTarget({type: 'item', key: keyToToggle , dropPosition: 'before'});
+                    dropState?.setTarget({type: 'item', key: keyToToggle, dropPosition: 'before'});
                   } else {
                     // When expanding, set drop target to first child
                     let children = [...state.collection.getChildren!(keyToToggle)];
+                    // eslint-disable-next-line max-depth
                     if (children.length > 0) {
                       let firstChildKey = children[0].nextKey;
+                      // eslint-disable-next-line max-depth
                       if (firstChildKey) {
                         dropState?.setTarget({type: 'item', key: firstChildKey, dropPosition: 'before'});
                       }
@@ -509,7 +511,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
     allowsDragging: !!dragState,
     isDragging,
     isDropTarget
-  }), [states, isHovered, isFocusVisible, state.selectionManager, isExpanded, hasChildItems, level, isFocusVisibleWithin, state, item.key]);
+  }), [states, isHovered, isFocusVisible, state.selectionManager, isExpanded, hasChildItems, level, isFocusVisibleWithin, state, item.key, dragState, isDragging, isDropTarget, selectionBehavior, selectionMode]);
 
   let renderProps = useRenderProps({
     ...props,
