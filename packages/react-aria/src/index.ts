@@ -25,7 +25,7 @@ export {I18nProvider, useCollator, useDateFormatter, useFilter, useLocale, useLo
 export {useFocus, useFocusVisible, useFocusWithin, useHover, useInteractOutside, useKeyboard, useMove, usePress, useLongPress, useFocusable, Pressable, Focusable} from '@react-aria/interactions';
 export {useField, useLabel} from '@react-aria/label';
 export {useGridList, useGridListItem, useGridListSelectionCheckbox} from '@react-aria/gridlist';
-export {useLandmark, createLandmarkController} from '@react-aria/landmark';
+export {useLandmark} from '@react-aria/landmark';
 export {useLink} from '@react-aria/link';
 export {useListBox, useListBoxSection, useOption} from '@react-aria/listbox';
 export {useMenu, useMenuItem, useMenuSection, useMenuTrigger, useSubmenuTrigger} from '@react-aria/menu';
@@ -55,7 +55,7 @@ export type {AriaBreadcrumbItemProps, AriaBreadcrumbsProps, BreadcrumbItemAria, 
 export type {AriaButtonOptions, AriaButtonProps, AriaToggleButtonProps, ButtonAria, AriaToggleButtonGroupProps, ToggleButtonGroupAria} from '@react-aria/button';
 export type {AriaCalendarCellProps, AriaCalendarGridProps, AriaCalendarProps, AriaRangeCalendarProps, CalendarAria, CalendarCellAria, CalendarGridAria, CalendarProps, RangeCalendarProps} from '@react-aria/calendar';
 export type {AriaCheckboxGroupItemProps, AriaCheckboxGroupProps, AriaCheckboxProps, CheckboxAria, CheckboxGroupAria} from '@react-aria/checkbox';
-export type {AriaColorAreaOptions, AriaColorChannelFieldProps, AriaColorFieldProps, AriaColorSliderOptions, AriaColorSwatchProps, AriaColorWheelOptions, ColorAreaAria, ColorChannelFieldAria, ColorFieldAria, ColorSliderAria, ColorSwatchAria, ColorWheelAria} from '@react-aria/color';
+export type {AriaColorAreaOptions, AriaColorAreaProps, AriaColorChannelFieldProps, AriaColorFieldProps, AriaColorSliderOptions, AriaColorSliderProps, AriaColorSwatchProps, AriaColorWheelOptions, ColorAreaAria, ColorChannelFieldAria, ColorFieldAria, ColorSliderAria, ColorSwatchAria, ColorWheelAria} from '@react-aria/color';
 export type {AriaComboBoxOptions, AriaComboBoxProps, ComboBoxAria} from '@react-aria/combobox';
 export type {AriaDateFieldProps, AriaDatePickerProps, AriaDateRangePickerProps, AriaTimeFieldProps, DateFieldAria, DatePickerAria, DateRangePickerAria, DateSegmentAria, DateRange, DateValue, TimeValue} from '@react-aria/datepicker';
 export type {AriaDialogProps, DialogAria} from '@react-aria/dialog';

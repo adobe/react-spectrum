@@ -35,7 +35,7 @@ if (typeof HTMLTemplateElement !== 'undefined') {
 
 export const HiddenContext = createContext<boolean>(false);
 
-export function Hidden(props: {children: ReactNode}) {
+export function Hidden(props: {children: ReactNode}): ReactNode {
   let isHidden = useContext(HiddenContext);
   if (isHidden) {
     // Don't hide again if we are already hidden.

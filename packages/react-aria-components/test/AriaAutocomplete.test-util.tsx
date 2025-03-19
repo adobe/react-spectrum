@@ -100,6 +100,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
         expect(input).toHaveAttribute('aria-autocomplete', 'list');
         expect(input).toHaveAttribute('autoCorrect', 'off');
         expect(input).toHaveAttribute('spellCheck', 'false');
+        expect(input).toHaveAttribute('enterkeyhint', 'go');
 
         let menu = getByRole(collectionNodeRole);
         expect(menu).toHaveAttribute('id', input.getAttribute('aria-controls')!);
