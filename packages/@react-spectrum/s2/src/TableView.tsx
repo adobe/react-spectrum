@@ -788,7 +788,7 @@ function ColumnWithMenu(props: ColumnWithMenuProps) {
         </Button>
         <Menu onAction={onMenuSelect} styles={style({minWidth: 128})}>
           {items.length > 0 && (
-            <MenuSection aria-label="Sort or resize?">
+            <MenuSection aria-label={stringFormatter.format('table.standardColumnMenu')}>
               <Collection items={items}>
                 {(item) => <MenuItem>{item?.label}</MenuItem>}
               </Collection>
