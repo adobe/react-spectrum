@@ -11,7 +11,7 @@
  */
 
 import {ArbitraryValue, CSSProperties, CSSValue, PropertyValueMap} from './types';
-import {autoStaticColor, colorScale, colorToken, fontSizeToken, generateOverlayColorScale, getToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
+import {autoStaticColor, colorScale, colorToken, fontSizeToken, generateOverlayColorScale, getToken, shadowLayer, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
 import {Color, createArbitraryProperty, createColorProperty, createMappedProperty, createRenamedProperty, createSizingProperty, createTheme, parseArbitraryValue} from './style-macro';
 import type * as CSS from 'csstype';
 
@@ -813,13 +813,13 @@ export const style = createTheme({
 
     // effects
     boxShadow: {
-      emphasized: `${getToken('drop-shadow-emphasized-default-x')} ${getToken('drop-shadow-emphasized-default-y')} ${getToken('drop-shadow-emphasized-default-blur')} ${colorToken('drop-shadow-emphasized-default-color')}`,
+      emphasized: `${shadowLayer('drop-shadow-emphasized-default-ambient')}, ${shadowLayer('drop-shadow-emphasized-default-transition')}, ${shadowLayer('drop-shadow-emphasized-default-transition-key')}`,
       elevated: `${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${colorToken('drop-shadow-elevated-color')}`,
       dragged: `${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${colorToken('drop-shadow-dragged-color')}`,
       none: 'none'
     },
     filter: {
-      emphasized: `drop-shadow(${getToken('drop-shadow-emphasized-default-x')} ${getToken('drop-shadow-emphasized-default-y')} ${getToken('drop-shadow-emphasized-default-blur')} ${colorToken('drop-shadow-emphasized-default-color')})`,
+      emphasized: `drop-shadow(${shadowLayer('drop-shadow-emphasized-default-ambient')}, ${shadowLayer('drop-shadow-emphasized-default-transition')}, ${shadowLayer('drop-shadow-emphasized-default-transition-key')})`,
       elevated: `drop-shadow(${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${colorToken('drop-shadow-elevated-color')})`,
       dragged: `drop-shadow${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${colorToken('drop-shadow-dragged-color')}`,
       none: 'none'

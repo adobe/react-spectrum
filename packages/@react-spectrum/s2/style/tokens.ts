@@ -11,6 +11,7 @@
  */
 
 // package.json in this directory is not the real package.json. Lint rule not smart enough.
+import assert from 'assert';
 // eslint-disable-next-line rulesdir/imports
 import * as tokens from '@adobe/spectrum-tokens/dist/json/variables.json';
 
@@ -111,4 +112,19 @@ export function fontSizeToken(name: keyof typeof tokens): {default: string, touc
     default: pxToRem(token.sets.desktop.value),
     touch: pxToRem(token.sets.mobile.value)
   };
+}
+
+export function shadowLayer(name: keyof typeof tokens): string {
+  let token = tokens[name] as typeof tokens['drop-shadow-emphasized-default-ambient'];
+  
+  // Currently we depend on x/y/blur being the same between light and dark theme.
+  // Spread must also be zero, since filter: drop-shadow() does not support it.
+  // Assertions so we know if these assumptions change in the future.
+  assert.equal(token.sets.light.value.x, token.sets.dark.value.x);
+  assert.equal(token.sets.light.value.y, token.sets.dark.value.y);
+  assert.equal(token.sets.light.value.blur, token.sets.dark.value.blur);
+  assert.equal(token.sets.light.value.spread, token.sets.dark.value.spread);
+  assert.equal(token.sets.light.value.spread, '0px');
+
+  return `${token.sets.light.value.x} ${token.sets.light.value.y} ${token.sets.light.value.blur} light-dark(${token.sets.light.value.color}, ${token.sets.dark.value.color})`;
 }
