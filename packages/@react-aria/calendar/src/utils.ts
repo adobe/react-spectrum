@@ -31,7 +31,7 @@ export function getEraFormat(date: CalendarDate | undefined): 'short' | undefine
   return date?.calendar.identifier === 'gregory' && date.era === 'BC' ? 'short' : undefined;
 }
 
-export function useSelectedDateDescription(state: CalendarState | RangeCalendarState) {
+export function useSelectedDateDescription(state: CalendarState | RangeCalendarState): string {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/calendar');
 
   let start: CalendarDate | undefined, end: CalendarDate | undefined;
@@ -69,7 +69,7 @@ export function useSelectedDateDescription(state: CalendarState | RangeCalendarS
   }, [start, end, anchorDate, state.timeZone, stringFormatter, dateFormatter]);
 }
 
-export function useVisibleRangeDescription(startDate: CalendarDate, endDate: CalendarDate, timeZone: string, isAria: boolean) {
+export function useVisibleRangeDescription(startDate: CalendarDate, endDate: CalendarDate, timeZone: string, isAria: boolean): string {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/calendar');
   let era: any = getEraFormat(startDate) || getEraFormat(endDate);
   let monthFormatter = useDateFormatter({
