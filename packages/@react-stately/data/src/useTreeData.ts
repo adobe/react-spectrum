@@ -235,7 +235,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     }
   }
 
-  function getDescendantKeys(node?: TreeNode<T>): Key[] {
+  function getDescendantKeys(node: TreeNode<T>): Key[] {
     let descendantKeys: Key[] = [];
     if (!node) {
       return descendantKeys;

@@ -627,7 +627,7 @@ export interface UNSTABLE_TreeLoadingIndicatorRenderProps {
 export interface TreeLoaderProps extends RenderProps<UNSTABLE_TreeLoadingIndicatorRenderProps>, StyleRenderProps<UNSTABLE_TreeLoadingIndicatorRenderProps> {}
 
 export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', function TreeLoader<T extends object>(props: TreeLoaderProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
-  let state = useContext(TreeStateContext);
+  let state = useContext(TreeStateContext)!;
   // This loader row is is non-interactable, but we want the same aria props calculated as a typical row
   // @ts-ignore
   let {rowProps} = useTreeItem({node: item}, state, ref);
