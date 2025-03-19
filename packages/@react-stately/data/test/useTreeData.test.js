@@ -745,17 +745,15 @@ describe('useTreeData', function () {
     expect(result.current.items.length).toEqual(2);
   });
 
-  it('gets the decentants of a node', function () {
+  it('gets the descendants of a node', function () {
     const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
     let {result} = renderHook(() =>
       useTreeData({initialItems, getChildren, getKey})
     );
-    let decendants;
-    act(() => {
-      const top = result.current.getItem('David');
-      decendants = result.current.getDescendantKeys(top);
-    });
-    expect(decendants).toEqual([
+    let descendants;
+    const top = result.current.getItem('David');
+    descendants = result.current.getDescendantKeys(top);
+    expect(descendants).toEqual([
       'John',
       'Suzie',
       'Sam',
@@ -765,7 +763,7 @@ describe('useTreeData', function () {
     ]);
   });
 
-  it('gets the decentants of a child node', function () {
+  it('gets the descendants of a child node', function () {
     const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
     let {result} = renderHook(() =>
       useTreeData({initialItems, getChildren, getKey})
@@ -778,7 +776,7 @@ describe('useTreeData', function () {
     expect(descendants).toEqual(['Stacy', 'Brad']);
   });
 
-  it('returns an empty array when getting the decendant keys for a leaf node', function () {
+  it('returns an empty array when getting the descendant keys for a leaf node', function () {
     const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
     let {result} = renderHook(() =>
       useTreeData({initialItems, getChildren, getKey})

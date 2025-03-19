@@ -131,6 +131,7 @@ export interface TreeProps<T> extends Omit<AriaTreeProps<T>, 'children'>, Multip
    * @default 'all'
    */
   disabledBehavior?: DisabledBehavior,
+  /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the Tree. */
   dragAndDropHooks?: DragAndDropHooks,
 
   /**
@@ -244,7 +245,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
       collection: state.collection,
       selectionManager: state.selectionManager
     });
-    let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || ctxDropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(state.collection, ref, {layout: 'stack', direction});
+    let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || ctxDropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(state.collection, ref, {direction});
     let keyboardDelegate = props.keyboardDelegate ||
       new ListKeyboardDelegate({
         collection: state.collection,
@@ -252,7 +253,6 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
         ref,
         disabledKeys: state.selectionManager.disabledKeys,
         disabledBehavior: state.selectionManager.disabledBehavior,
-        layout: 'stack',
         direction,
         layoutDelegate
       });
