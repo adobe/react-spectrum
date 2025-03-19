@@ -813,13 +813,15 @@ export const style = createTheme({
 
     // effects
     boxShadow: {
+      // top-most layer is first in the box-shadow property.
       emphasized: `${shadowLayer('drop-shadow-emphasized-default-ambient')}, ${shadowLayer('drop-shadow-emphasized-default-transition')}, ${shadowLayer('drop-shadow-emphasized-default-transition-key')}`,
       elevated: `${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${colorToken('drop-shadow-elevated-color')}`,
       dragged: `${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${colorToken('drop-shadow-dragged-color')}`,
       none: 'none'
     },
     filter: {
-      emphasized: `drop-shadow(${shadowLayer('drop-shadow-emphasized-default-ambient')}, ${shadowLayer('drop-shadow-emphasized-default-transition')}, ${shadowLayer('drop-shadow-emphasized-default-transition-key')})`,
+      // layer order is reversed for filter property. filters are applied in the order they are specified.
+      emphasized: `drop-shadow(${shadowLayer('drop-shadow-emphasized-default-transition-key')}) drop-shadow(${shadowLayer('drop-shadow-emphasized-default-transition')}) drop-shadow(${shadowLayer('drop-shadow-emphasized-default-ambient')})`,
       elevated: `drop-shadow(${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${colorToken('drop-shadow-elevated-color')})`,
       dragged: `drop-shadow${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${colorToken('drop-shadow-dragged-color')}`,
       none: 'none'
