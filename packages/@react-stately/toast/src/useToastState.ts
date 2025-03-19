@@ -58,8 +58,8 @@ export interface ToastState<T> {
  * of actions, errors, or other events in an application.
  */
 export function useToastState<T>(props: ToastStateProps = {}): ToastState<T> {
-  let {maxVisibleToasts = 1} = props;
-  let queue = useMemo(() => new ToastQueue<T>({maxVisibleToasts}), [maxVisibleToasts]);
+  let {maxVisibleToasts = 1, wrapUpdate} = props;
+  let queue = useMemo(() => new ToastQueue<T>({maxVisibleToasts, wrapUpdate}), [maxVisibleToasts, wrapUpdate]);
   return useToastQueue(queue);
 }
 
@@ -105,13 +105,13 @@ export class ToastQueue<T> {
   }
 
   /** Subscribes to updates to the visible toasts. */
-  subscribe(fn: () => void) {
+  subscribe(fn: () => void): () => boolean {
     this.subscriptions.add(fn);
-    return () => this.subscriptions.delete(fn);
+    return (): boolean => this.subscriptions.delete(fn);
   }
 
   /** Adds a new toast to the queue. */
-  add(content: T, options: ToastOptions = {}) {
+  add(content: T, options: ToastOptions = {}): string {
     let toastKey = '_' + Math.random().toString(36).slice(2);
     let toast: QueuedToast<T> = {
       ...options,
@@ -129,7 +129,7 @@ export class ToastQueue<T> {
   /**
    * Closes a toast.
    */
-  close(key: string) {
+  close(key: string): void {
     let index = this.queue.findIndex(t => t.key === key);
     if (index >= 0) {
       this.queue[index].onClose?.();
@@ -148,7 +148,7 @@ export class ToastQueue<T> {
   }
 
   /** Pauses the timers for all visible toasts. */
-  pauseAll() {
+  pauseAll(): void {
     for (let toast of this.visibleToasts) {
       if (toast.timer) {
         toast.timer.pause();
@@ -157,7 +157,7 @@ export class ToastQueue<T> {
   }
 
   /** Resumes the timers for all visible toasts. */
-  resumeAll() {
+  resumeAll(): void {
     for (let toast of this.visibleToasts) {
       if (toast.timer) {
         toast.timer.resume();

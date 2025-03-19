@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/menu",
-  "version": "3.18.0",
+  "version": "3.18.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -22,12 +22,12 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/focus": "^3.20.0",
-    "@react-aria/i18n": "^3.12.6",
-    "@react-aria/interactions": "^3.24.0",
-    "@react-aria/overlays": "^3.26.0",
-    "@react-aria/selection": "^3.23.0",
-    "@react-aria/utils": "^3.28.0",
+    "@react-aria/focus": "^3.20.1",
+    "@react-aria/i18n": "^3.12.7",
+    "@react-aria/interactions": "^3.24.1",
+    "@react-aria/overlays": "^3.26.1",
+    "@react-aria/selection": "^3.23.1",
+    "@react-aria/utils": "^3.28.1",
     "@react-stately/collections": "^3.12.2",
     "@react-stately/menu": "^3.9.2",
     "@react-stately/selection": "^3.20.0",
