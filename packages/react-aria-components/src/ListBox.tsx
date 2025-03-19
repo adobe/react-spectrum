@@ -501,10 +501,14 @@ export const UNSTABLE_ListBoxLoadingIndicator = createLeafComponent('loader', fu
     defaultClassName: 'react-aria-ListBoxLoadingIndicator',
     values: null
   });
-  let optionProps = {};
+
+  let optionProps = {
+    // For Android talkback
+    tabIndex: -1
+  };
 
   if (isVirtualized) {
-    optionProps['aria-posinset'] = state.collection.size + 1;
+    optionProps['aria-posinset'] = item.index + 1;
     optionProps['aria-setsize'] = state.collection.size;
   }
 

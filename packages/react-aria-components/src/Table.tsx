@@ -1385,7 +1385,7 @@ export const UNSTABLE_TableLoadingIndicator = createLeafComponent('loader', func
   let style = {};
 
   if (isVirtualized) {
-    rowProps['aria-rowindex'] = state.collection.headerRows.length + state.collection.size ;
+    rowProps['aria-rowindex'] = item.index + 1 + state.collection.headerRows.length;
     rowHeaderProps['aria-colspan'] = numColumns;
     style = {display: 'contents'};
   } else {

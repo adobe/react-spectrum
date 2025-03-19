@@ -512,7 +512,6 @@ export interface GridListLoadingIndicatorProps extends StyleProps {
 }
 
 export const UNSTABLE_GridListLoadingIndicator = createLeafComponent('loader', function GridListLoadingIndicator<T extends object>(props: GridListLoadingIndicatorProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
-  let state = useContext(ListStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
 
   let renderProps = useRenderProps({
@@ -527,13 +526,11 @@ export const UNSTABLE_GridListLoadingIndicator = createLeafComponent('loader', f
     <div
       role="row"
       // TODO: do we need any of the other row props from useGridListItem? Rather not grab too much if this is all we need
-      aria-rowindex={isVirtualized ? state.collection.size + 1 : undefined}
+      aria-rowindex={isVirtualized ? item.index + 1 : undefined}
       ref={ref}
       {...mergeProps(filterDOMProps(props as any))}
       {...renderProps}>
       <div
-        // TODO: test accessibility of this. For some reason the useGridListItem hook includes this still even when not virtualized
-        // which doesn't seem right
         aria-colindex={isVirtualized ? 1 : undefined}
         role="gridcell">
         {renderProps.children}

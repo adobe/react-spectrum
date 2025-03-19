@@ -336,8 +336,6 @@ export const AsyncVirtualizedCollectionRenderCombobox = () => {
                 <MyListBoxItem id={item.name}>{item.name}</MyListBoxItem>
               )}
             </Collection>
-            {/* TODO: loading indicator and/or renderEmpty? The spinner shows at weird times and flickers if
-              no delay is added, might be nice to support loadingState */}
             {list.isLoading && <MyListBoxLoaderIndicator />}
           </ListBox>
         </Virtualizer>
