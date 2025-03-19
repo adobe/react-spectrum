@@ -64,146 +64,137 @@ The state object should be passed as an option to `useAutocomplete`.
 
 ## Example
 
-```tsx example export=true
-import {Item} from '@react-stately/collections';
-import {useButton} from '@react-aria/button';
-import {useAutocompleteState} from '@react-stately/autocomplete'
-import {useAutocomplete} from '@react-aria/autocomplete';
-import {useFilter} from '@react-aria/i18n';
-import {UNSTABLE_useFilteredListState} from '@react-stately/list';
+```tsx example
+import {AriaAutocompleteProps, CollectionOptions, useAutocomplete} from '@react-aria/autocomplete';
+import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomplete';
+import {mergeProps} from '@react-aria/utils';
+import React, {createContext, RefObject, useRef} from 'react';
+import {
+  Label,
+  Text,
+  InputContext,
+  Input,
+  Provider,
+  SlotProps,
+  SlottedContextValue,
+  useSlottedContext,
+  SearchFieldContext,
+  SearchField,
+  ListBox,
+  ListBoxItem,
+  useFilter,
+  UNSTABLE_InternalAutocompleteContext
+} from 'react-aria-components'
 
-// Reuse the ListBox, Popover, and Button from your component library. See below for details.
-import {ListBox} from 'your-component-library';
+interface AutocompleteProps extends AriaAutocompleteProps, SlotProps {}
 
-function Autocomplete(props) {
-  // Setup filter function and state.
-  let {contains} = useFilter({sensitivity: 'base'});
-  let state = useAutocompleteState(props);
-
-  // Setup refs and get props for child elements.
-  let ref = React.useRef(null);
-  let inputRef = React.useRef(null);
-
-  let {textFieldProps, collectionProps, collectionRef, filter} = useAutocomplete(
-    {
-      ...props,
-      inputRef,
-      collectionRef: ref,
-      filter: contains,
-    },
-    state
-  );
-
-  return (
-    <div style={{display: 'inline-flex', flexDirection: 'column'}}>
-      <label>{props.label}</label>
-      <div>
-        <input
-          {...textFieldProps}
-          ref={inputRef}
-          style={{
-            height: 24,
-            boxSizing: 'border-box',
-            marginRight: 0,
-            fontSize: 16
-          }} />
-        <ListBox
-          {...collectionProps}
-          filter={filter}
-          listBoxRef={collectionRef}
-          state={state}>
-          {props.children}
-        </ListBox>
-      </div>
-    </div>
-  );
+interface InternalAutocompleteContextValue {
+  filter?: (nodeTextValue: string) => boolean,
+  collectionProps: CollectionOptions,
+  collectionRef: RefObject<HTMLElement | null>
 }
 
-<Autocomplete label="Favorite Animal">
-  <Item key="red panda">Red Panda</Item>
-  <Item key="cat">Cat</Item>
-  <Item key="dog">Dog</Item>
-  <Item key="aardvark">Aardvark</Item>
-  <Item key="kangaroo">Kangaroo</Item>
-  <Item key="snake">Snake</Item>
-</Autocomplete>
+const AutocompleteContext = createContext<SlottedContextValue<Partial<AutocompleteProps>>>(null);
+const AutocompleteStateContext = createContext<AutocompleteState | null>(null);
+
+function Autocomplete(props: AutocompleteProps) {
+  let {contains} = useFilter({ sensitivity: 'base' });
+  let filter = (textValue, inputValue) => contains(textValue, inputValue);
+  let ctx = useSlottedContext(AutocompleteContext, props.slot);
+  props = mergeProps(ctx, props);
+  let {disableAutoFocusFirst} = props;
+  let state = useAutocompleteState(props);
+  let inputRef = useRef<HTMLInputElement | null>(null);
+  let collectionRef = useRef<HTMLElement>(null);
+  let {
+    textFieldProps,
+    collectionProps,
+    collectionRef: mergedCollectionRef,
+    filter: filterFn
+  } = useAutocomplete({
+    ...props,
+    filter,
+    disableAutoFocusFirst,
+    inputRef,
+    collectionRef
+  }, state);
+
+  return (
+    <Provider
+      values={[
+        [AutocompleteStateContext, state],
+        [SearchFieldContext, textFieldProps],
+        [InputContext, {ref: inputRef}],
+        [UNSTABLE_InternalAutocompleteContext, {
+          filter: filterFn,
+          collectionProps,
+          collectionRef: mergedCollectionRef
+        }]
+      ]}>
+      {props.children}
+    </Provider>
+  );
+};
+
+<div className="autocomplete">
+  <Autocomplete>
+    <SearchField>
+      <Label>Favorite animal</Label>
+      <Input />
+      <Text slot="description">Please select a pet below.</Text>
+    </SearchField>
+    <ListBox selectionMode="single" aria-label="Possible pets">
+      <ListBoxItem id="red panda">Red Panda</ListBoxItem>
+      <ListBoxItem id="cat">Cat</ListBoxItem>
+      <ListBoxItem id="dog">Dog</ListBoxItem>
+      <ListBoxItem id="aardvark">Aardvark</ListBoxItem>
+      <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+      <ListBoxItem id="snake">Snake</ListBoxItem>
+    </ListBox>
+  </Autocomplete>
+</div>
 ```
 
-
-### ListBox
-
-The `ListBox` and `Option` components are used to show the filtered list of options as the
-user types in the ComboBox. They can also be shared with other components like a [Select](useSelect.html). See
-[useListBox](useListBox.html) for more examples, including sections and more complex items.
-
 <details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import '../../../react-aria-components/docs/Checkbox.mdx' layer(checkbox);
+@import '../../../react-aria-components/docs/SearchField.mdx' layer(searchfield);
+@import '../../../react-aria-components/docs/ListBox.mdx' layer(listbox);
+```
 
-```tsx example export=true render=false
-import {useListBox, useOption} from '@react-aria/listbox';
+```css
+@import "@react-aria/example-theme";
 
-function ListBox(props) {
-  let {listBoxRef, state} = props;
-  let newState = UNSTABLE_useFilteredListState(state, props.filter);
-  let {listBoxProps} = useListBox(props, newState, listBoxRef);
+.autocomplete {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 300px;
+  height: 180px;
+  border: 1px solid var(--border-color);
+  padding: 16px;
+  border-radius: 10px;
+  background: var(--overlay-background);
 
-  return (
-    <ul
-      {...listBoxProps}
-      ref={listBoxRef}
-      style={{
-        margin: 0,
-        padding: 0,
-        listStyle: "none",
-        maxHeight: 150,
-        overflow: "auto",
-        minWidth: 200
-      }}>
-      {[...newState.collection].map(item => (
-        <Option
-          key={item.key}
-          item={item}
-          state={state} />
-      ))}
-    </ul>
-  );
-}
-
-function Option({item, state}) {
-  let ref = React.useRef(null);
-  let {optionProps, isSelected, isFocused, isDisabled} = useOption({key: item.key}, state, ref);
-
-  let backgroundColor;
-  let color = 'black';
-
-  if (isSelected) {
-    backgroundColor = 'blueviolet';
-    color = 'white';
-  } else if (isFocused) {
-    backgroundColor = 'gray';
-  } else if (isDisabled) {
-    backgroundColor = 'transparent';
-    color = 'gray';
+  .react-aria-SearchField {
+    width: 100%;
   }
 
-  return (
-    <li
-      {...optionProps}
-      ref={ref}
-      style={{
-        background: backgroundColor,
-        color: color,
-        padding: '2px 5px',
-        outline: 'none',
-        cursor: 'pointer'
-      }}>
-      {item.rendered}
-    </li>
-  );
+  .react-aria-ListBox {
+    flex: 1;
+    overflow: auto;
+  }
+
+  .react-aria-Label {
+    margin-bottom: .5em;
+  }
 }
 ```
 
 </details>
+
+
 
 ## Internationalization
 
