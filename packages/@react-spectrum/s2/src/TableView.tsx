@@ -511,7 +511,8 @@ export interface ColumnProps extends RACColumnProps {
   align?: 'start' | 'center' | 'end',
   /** The content to render as the column header. */
   children: ReactNode,
-  menu?: ReactNode
+  /** Menu fragment to be rendered inside the column header's menu. */
+  menuItems?: ReactNode
 }
 
 /**
@@ -521,7 +522,7 @@ export const Column = forwardRef(function Column(props: ColumnProps, ref: DOMRef
   let {isQuiet} = useContext(InternalTableContext);
   let {allowsResizing, children, align = 'start'} = props;
   let domRef = useDOMRef(ref);
-  let isMenu = allowsResizing || !!props.menu;
+  let isMenu = allowsResizing || !!props.menuItems;
 
 
   return (
@@ -534,9 +535,9 @@ export const Column = forwardRef(function Column(props: ColumnProps, ref: DOMRef
           {isFocusVisible && <CellFocusRing />}
           {isMenu ?
             (
-              <ResizableColumnContents isColumnResizable={allowsResizing} menu={props.menu} allowsSorting={allowsSorting} sortDirection={sortDirection} sort={sort} startResize={startResize} align={align}>
+              <ColumnWithMenu isColumnResizable={allowsResizing} menuItems={props.menuItems} allowsSorting={allowsSorting} sortDirection={sortDirection} sort={sort} startResize={startResize} align={align}>
                 {children}
-              </ResizableColumnContents>
+              </ColumnWithMenu>
             ) : (
               <ColumnContents allowsSorting={allowsSorting} sortDirection={sortDirection}>
                 {children}
@@ -706,13 +707,13 @@ const nubbin = style({
   }
 });
 
-interface ResizableColumnContentProps extends Pick<ColumnRenderProps, 'allowsSorting' | 'sort' | 'sortDirection' | 'startResize'>, Pick<ColumnProps, 'align' | 'children'> {
+interface ColumnWithMenuProps extends Pick<ColumnRenderProps, 'allowsSorting' | 'sort' | 'sortDirection' | 'startResize'>, Pick<ColumnProps, 'align' | 'children'> {
   isColumnResizable?: boolean,
-  menu?: ReactNode
+  menuItems?: ReactNode
 }
 
-function ResizableColumnContents(props: ResizableColumnContentProps) {
-  let {allowsSorting, sortDirection, sort, startResize, children, align, isColumnResizable, menu} = props;
+function ColumnWithMenu(props: ColumnWithMenuProps) {
+  let {allowsSorting, sortDirection, sort, startResize, children, align, isColumnResizable, menuItems} = props;
   let {setIsInResizeMode, isInResizeMode} = useContext(InternalTableContext);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   const onMenuSelect = (key) => {
@@ -793,7 +794,7 @@ function ResizableColumnContents(props: ResizableColumnContentProps) {
               </Collection>
             </MenuSection>
           )}
-          {menu}
+          {menuItems}
         </Menu>
       </MenuTrigger>
       {isColumnResizable && (

@@ -162,7 +162,7 @@ const DynamicTableWithCustomMenus = (args: any) => (
           width={150}
           minWidth={150}
           isRowHeader={column.isRowHeader}
-          menu={
+          menuItems={
             <>
               <MenuSection>
                 <MenuItem onAction={action('filter')}><Filter /><Text slot="label">Filter</Text></MenuItem>
@@ -215,7 +215,7 @@ const DynamicSortableTableWithCustomMenus = (args: any) => {
             width={150}
             minWidth={150}
             isRowHeader={column.isRowHeader}
-            menu={
+            menuItems={
               <>
                 <MenuSection>
                   <MenuItem onAction={action('filter')}><Filter /><Text slot="label">Filter</Text></MenuItem>
@@ -577,11 +577,7 @@ const SortableResizableTable = (args: any) => {
     <TableView aria-label="sortable table" {...args} sortDescriptor={isSortable ? sortDescriptor : null} onSortChange={isSortable ? onSortChange : null} styles={style({width: 384, height: 320})}>
       <TableHeader columns={args.columns}>
         {(column: any) => (
-          <Column
-            isRowHeader={column.isRowHeader}
-            allowsSorting={column.isSortable}
-            allowsResizing={column.allowsResizing}
-            align={column.align}>{column.name}</Column>
+          <Column {...column}>{column.name}</Column>
         )}
       </TableHeader>
       <TableBody items={items}>
