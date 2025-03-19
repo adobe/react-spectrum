@@ -59,19 +59,15 @@ The state object should be passed as an option to `useAutocomplete`.
 ## Example
 
 ```tsx example
-import {AriaAutocompleteProps, CollectionOptions, useAutocomplete} from '@react-aria/autocomplete';
-import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomplete';
-import {mergeProps} from '@react-aria/utils';
-import React, {createContext, RefObject, useRef} from 'react';
+import {AriaAutocompleteProps, useAutocomplete} from '@react-aria/autocomplete';
+import {useAutocompleteState} from '@react-stately/autocomplete';
+import {useRef} from 'react';
 import {
   Label,
   Text,
   InputContext,
   Input,
   Provider,
-  SlotProps,
-  SlottedContextValue,
-  useSlottedContext,
   SearchFieldContext,
   SearchField,
   ListBox,
@@ -80,22 +76,11 @@ import {
   UNSTABLE_InternalAutocompleteContext
 } from 'react-aria-components'
 
-interface AutocompleteProps extends AriaAutocompleteProps, SlotProps {}
-
-interface InternalAutocompleteContextValue {
-  filter?: (nodeTextValue: string) => boolean,
-  collectionProps: CollectionOptions,
-  collectionRef: RefObject<HTMLElement | null>
-}
-
-const AutocompleteContext = createContext<SlottedContextValue<Partial<AutocompleteProps>>>(null);
-const AutocompleteStateContext = createContext<AutocompleteState | null>(null);
+interface AutocompleteProps extends AriaAutocompleteProps {}
 
 function Autocomplete(props: AutocompleteProps) {
   let {contains} = useFilter({ sensitivity: 'base' });
   let filter = (textValue, inputValue) => contains(textValue, inputValue);
-  let ctx = useSlottedContext(AutocompleteContext, props.slot);
-  props = mergeProps(ctx, props);
   let {disableAutoFocusFirst} = props;
   let state = useAutocompleteState(props);
   let inputRef = useRef<HTMLInputElement | null>(null);
@@ -116,7 +101,6 @@ function Autocomplete(props: AutocompleteProps) {
   return (
     <Provider
       values={[
-        [AutocompleteStateContext, state],
         [SearchFieldContext, textFieldProps],
         [InputContext, {ref: inputRef}],
         [UNSTABLE_InternalAutocompleteContext, {
