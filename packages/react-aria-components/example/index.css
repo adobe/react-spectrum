@@ -13,7 +13,8 @@ html {
   overflow: auto;
 }
 
-.tree-item {
+.tree-item,
+.tree-loader {
   padding: 4px 5px;
   outline: none;
   cursor: default;

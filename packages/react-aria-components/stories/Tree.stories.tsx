@@ -203,7 +203,11 @@ let rows = [
 
 const MyTreeLoader = () => {
   return (
-    <UNSTABLE_TreeLoadingIndicator>
+    <UNSTABLE_TreeLoadingIndicator
+      className={({isFocused, isFocusVisible}) => classNames(styles, 'tree-loader', {
+        focused: isFocused,
+        'focus-visible': isFocusVisible
+      })}>
       {({level}) => {
         let message = `Level ${level} loading spinner`;
         if (level === 1) {
@@ -403,6 +407,8 @@ function LoadingStoryDepOnTop(args: TreeProps<unknown> & {isLoading: boolean}) {
   );
 }
 
+// TODO: this story isn't quite working with PageUp/Down. Loading spinner gets focused but then you can't use PageUp/Down anymore
+// Also ArrowDown doesn't bring the spinner into view
 export const LoadingStoryDepOnTopStory = {
   render: LoadingStoryDepOnTop,
   args: {
