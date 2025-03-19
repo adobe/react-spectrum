@@ -281,8 +281,10 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
     isDisabled = props.isDisabled
   } = ctx || {};
 
+  let textId = useSlotId();
   let notificationId = useSlotId();
-  let labelProps = useLabels({'aria-label': props['aria-label'], 'aria-labelledby': notificationId});
+  let ariaLabelledby = [textId, notificationId].filter(Boolean).join(' ') || undefined;
+  let labelProps = useLabels({'aria-label': props['aria-label'], 'aria-labelledby': ariaLabelledby});
 
   return (
     <RACButton
@@ -307,7 +309,7 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
       <Provider
         values={[
           [SkeletonContext, null],
-          [TextContext, {styles: style({paddingY: '--labelPadding', order: 1, truncate: true})}],
+          [TextContext, {id: textId, styles: style({paddingY: '--labelPadding', order: 1, truncate: true})}],
           [IconContext, {
             render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
             styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
