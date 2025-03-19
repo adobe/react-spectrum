@@ -125,11 +125,11 @@ export const NotificationBadge = forwardRef(function Badge(props: NotificationBa
     isIndicatorOnly = true;
   } else if (value <= 0) {
     throw new Error('Value cannot be negative or zero');
+  } else if (!Number.isInteger(value)) {
+    throw new Error('Value must be a positive integer');
   } else {
     formattedValue = new NumberFormatter(locale).format(Math.min(value, 99));
     let length = Math.log(value <= 99 ? value : 99) * Math.LOG10E + 1 | 0;  // for positive integers (https://stackoverflow.com/questions/14879691/get-number-of-digits-with-javascript)
-    // or alternatively let length = formattedValue.length? depends on if we want to rely on the formatted value which is a string
-
     if (length === 1) {
       isSingleDigit = true;
     } else if (length === 2) {
