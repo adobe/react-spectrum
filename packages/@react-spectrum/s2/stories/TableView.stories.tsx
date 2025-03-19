@@ -162,7 +162,7 @@ const DynamicTableWithCustomMenus = (args: any) => (
           width={150}
           minWidth={150}
           isRowHeader={column.isRowHeader}
-          menuItems={
+          UNSTABLE_menuItems={
             <>
               <MenuSection>
                 <MenuItem onAction={action('filter')}><Filter /><Text slot="label">Filter</Text></MenuItem>
@@ -215,7 +215,7 @@ const DynamicSortableTableWithCustomMenus = (args: any) => {
             width={150}
             minWidth={150}
             isRowHeader={column.isRowHeader}
-            menuItems={
+            UNSTABLE_menuItems={
               <>
                 <MenuSection>
                   <MenuItem onAction={action('filter')}><Filter /><Text slot="label">Filter</Text></MenuItem>

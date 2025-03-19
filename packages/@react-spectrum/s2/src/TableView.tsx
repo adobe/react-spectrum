@@ -512,7 +512,7 @@ export interface ColumnProps extends RACColumnProps {
   /** The content to render as the column header. */
   children: ReactNode,
   /** Menu fragment to be rendered inside the column header's menu. */
-  menuItems?: ReactNode
+  UNSTABLE_menuItems?: ReactNode
 }
 
 /**
@@ -522,7 +522,7 @@ export const Column = forwardRef(function Column(props: ColumnProps, ref: DOMRef
   let {isQuiet} = useContext(InternalTableContext);
   let {allowsResizing, children, align = 'start'} = props;
   let domRef = useDOMRef(ref);
-  let isMenu = allowsResizing || !!props.menuItems;
+  let isMenu = allowsResizing || !!props.UNSTABLE_menuItems;
 
 
   return (
@@ -535,7 +535,7 @@ export const Column = forwardRef(function Column(props: ColumnProps, ref: DOMRef
           {isFocusVisible && <CellFocusRing />}
           {isMenu ?
             (
-              <ColumnWithMenu isColumnResizable={allowsResizing} menuItems={props.menuItems} allowsSorting={allowsSorting} sortDirection={sortDirection} sort={sort} startResize={startResize} align={align}>
+              <ColumnWithMenu isColumnResizable={allowsResizing} menuItems={props.UNSTABLE_menuItems} allowsSorting={allowsSorting} sortDirection={sortDirection} sort={sort} startResize={startResize} align={align}>
                 {children}
               </ColumnWithMenu>
             ) : (
