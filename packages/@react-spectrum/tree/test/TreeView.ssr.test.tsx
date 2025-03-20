@@ -18,7 +18,8 @@ describe('TreeView SSR', function () {
     await testSSR(__filename, `
       import {Provider} from '@react-spectrum/provider';
       import {theme} from '@react-spectrum/theme-default';
-      import {TreeView, TreeViewItem, TreeViewItemContent, Text} from '../';
+      import {TreeView, TreeViewItem, TreeViewItemContent} from '../';
+      import {Text} from '@react-spectrum/text';
       <Provider theme={theme}>
         <TreeView aria-label="Example tree with static contents" defaultExpandedKeys={['documents', 'photos']} height="size-4600" maxWidth="size-6000">
           <TreeViewItem id="documents" textValue="Documents">
