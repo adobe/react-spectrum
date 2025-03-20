@@ -269,8 +269,8 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
 
   let dateValue = useMemo(() => displayValue.toDate(timeZone), [displayValue, timeZone]);
   let segments = useMemo(() => 
-    processSegments(dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity), 
-    [dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity]);
+    processSegments(dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity, isReadOnly), 
+    [dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity, isReadOnly]);
 
   // When the era field appears, mark it valid if the year field is already valid.
   // If the era field disappears, remove it from the valid segments.
@@ -408,13 +408,13 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   };
 }
 
-function processSegments(dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity) : DateSegment[] {
+function processSegments(dateValue, validSegments, dateFormatter, resolvedOptions, displayValue, calendar, locale, granularity, isReadOnly) : DateSegment[] {
   let timeValue = ['hour', 'minute', 'second'];
   let segments = dateFormatter.formatToParts(dateValue);
   let processedSegments: DateSegment[] = [];
   for (let segment of segments) {
     let isEditable = EDITABLE_SEGMENTS[segment.type];
-    if (segment.type === 'era' && calendar.getEras().length === 1) {
+    if (segment.type === 'era' && calendar.getEras().length === 1 || isReadOnly) {
       isEditable = false;
     }
 
