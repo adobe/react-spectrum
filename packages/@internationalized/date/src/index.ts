@@ -15,6 +15,7 @@ export type {
   AnyTime,
   AnyDateTime,
   Calendar,
+  CalendarIdentifier,
   DateDuration,
   TimeDuration,
   DateTimeDuration,

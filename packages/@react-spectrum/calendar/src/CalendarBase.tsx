@@ -80,7 +80,7 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
           // so we don't need to repeat that here for screen reader users.
           aria-hidden
           className={classNames(styles, 'spectrum-Calendar-title')}>
-          {monthDateFormatter.format(d.toDate(state.timeZone))}
+          {getCurrentMonthName(d, state.timeZone, monthDateFormatter)}
         </h2>
         {i === visibleMonths - 1 &&
           <ActionButton
@@ -149,4 +149,12 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
       }
     </div>
   );
+}
+
+function getCurrentMonthName(date: CalendarState['focusedDate'], timezone: string, monthDateFormatter: ReturnType<typeof useDateFormatter>): string {
+  if (date.calendar.getFormattableMonth) {
+    date = date.calendar.getFormattableMonth(date);
+  }
+
+  return monthDateFormatter.format(date.toDate(timezone));
 }

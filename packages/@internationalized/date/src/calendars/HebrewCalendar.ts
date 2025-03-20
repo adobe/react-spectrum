@@ -13,7 +13,7 @@
 // Portions of the code in this file are based on code from ICU.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
-import {AnyCalendarDate, Calendar} from '../types';
+import {AnyCalendarDate, Calendar, CalendarIdentifier} from '../types';
 import {CalendarDate} from '../CalendarDate';
 import {mod, Mutable} from '../utils';
 
@@ -128,7 +128,7 @@ function getDaysInMonth(year: number, month: number): number {
  * In leap years, an extra month is inserted at month 6.
  */
 export class HebrewCalendar implements Calendar {
-  identifier = 'hebrew';
+  identifier: CalendarIdentifier = 'hebrew';
 
   fromJulianDay(jd: number): CalendarDate {
     let d = jd - HEBREW_EPOCH;
