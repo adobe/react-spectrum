@@ -80,7 +80,7 @@ export const TooltipContext = createContext<ContextValue<TooltipProps, HTMLDivEl
  * the Tooltip when the user hovers over or focuses the trigger, and positioning the Tooltip
  * relative to the trigger.
  */
-export function TooltipTrigger(props: TooltipTriggerComponentProps) {
+export function TooltipTrigger(props: TooltipTriggerComponentProps): ReactNode {
   let state = useTooltipTriggerState(props);
   let ref = useRef<FocusableElement>(null);
   let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);

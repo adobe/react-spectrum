@@ -112,7 +112,7 @@ const ActionBarInner = forwardRef(function ActionBarInner(props: ActionBarProps 
   if ((selectedItemCount === 'all' || selectedItemCount > 0) && selectedItemCount !== lastCount) {
     setLastCount(selectedItemCount);
   }
-    
+
   // Measure the width of the collection's scrollbar and offset the action bar by that amount.
   let scrollRef = props.scrollRef;
   let [scrollbarWidth, setScrollbarWidth] = useState(0);
@@ -191,7 +191,14 @@ interface ActionBarContainerHookProps {
   scrollRef?: RefObject<HTMLElement | null>
 }
 
-export function useActionBarContainer(props: ActionBarContainerHookProps) {
+interface ActionBarContainerHookResult {
+  selectedKeys: 'all' | Iterable<Key>,
+  onSelectionChange: (keys: 'all' | Iterable<Key>) => void,
+  actionBar: ReactElement,
+  actionBarHeight: number
+}
+
+export function useActionBarContainer(props: ActionBarContainerHookProps): ActionBarContainerHookResult {
   let {renderActionBar, scrollRef} = props;
   let [selectedKeys, setSelectedKeys] = useControlledState(props.selectedKeys, props.defaultSelectedKeys || new Set(), props.onSelectionChange);
   let selectedKeysSet = useMemo(() => selectedKeys === 'all' ? selectedKeys as 'all' : new Set(selectedKeys), [selectedKeys]);

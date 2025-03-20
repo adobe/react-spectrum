@@ -31,7 +31,7 @@ export interface DateFieldProps<T extends DateValue>
 
 export function DateField<T extends DateValue>(
   {label, description, errorMessage, ...props}: DateFieldProps<T>
-) {
+): ReactNode {
   return (
     <AriaDateField {...props}>
       <Label>{label}</Label>

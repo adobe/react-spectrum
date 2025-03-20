@@ -33,10 +33,10 @@ let state: State = 'default';
 let savedUserSelect = '';
 let modifiedElementMap = new WeakMap<Element, string>();
 
-export function disableTextSelection(target?: Element) {
+export function disableTextSelection(target?: Element): void {
   if (isIOS()) {
     if (state === 'default') {
-       
+
       const documentObject = getOwnerDocument(target);
       savedUserSelect = documentObject.documentElement.style.webkitUserSelect;
       documentObject.documentElement.style.webkitUserSelect = 'none';
@@ -52,7 +52,7 @@ export function disableTextSelection(target?: Element) {
   }
 }
 
-export function restoreTextSelection(target?: Element) {
+export function restoreTextSelection(target?: Element): void {
   if (isIOS()) {
     // If the state is already default, there's nothing to do.
     // If it is restoring, then there's no need to queue a second restore.
@@ -70,7 +70,7 @@ export function restoreTextSelection(target?: Element) {
       runAfterTransition(() => {
         // Avoid race conditions
         if (state === 'restoring') {
-           
+
           const documentObject = getOwnerDocument(target);
           if (documentObject.documentElement.style.webkitUserSelect === 'none') {
             documentObject.documentElement.style.webkitUserSelect = savedUserSelect || '';
