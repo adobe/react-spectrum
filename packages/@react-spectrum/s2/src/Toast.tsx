@@ -28,6 +28,7 @@ import {UNSTABLE_Toast as Toast, UNSTABLE_ToastContent as ToastContent, ToastOpt
 import {ToastList} from 'react-aria-components/src/Toast';
 import './Toast.css';
 import {flushSync} from 'react-dom';
+import { mergeStyles } from '../style/runtime';
 
 export type ToastPlacement = 'top' | 'top end' | 'bottom' | 'bottom end';
 export interface SpectrumToastContainerProps extends Omit<ToastRegionProps<SpectrumToastValue>, 'queue' | 'children'> {
@@ -203,12 +204,15 @@ const toastList = style({
   }
 });
 
-const toastStyle = style({
+const toastFocusRing = style({
   ...focusRing(),
   outlineColor: {
     default: 'focus-ring',
     isExpanded: 'white'
-  },
+  }
+});
+
+const toastStyle = style({
   display: 'flex',
   gap: 16,
   paddingStart: 16,
@@ -351,7 +355,7 @@ export function ToastContainer(props: SpectrumToastContainerProps) {
             <SpectrumToast toast={toast} queue={queue} placement={placement} align={align} />
           )}
         </ToastList>
-        <div className="toast-controls" style={{display: isExpanded ? 'flex' : 'none', justifyContent: 'end', gap: 8, opacity: isExpanded ? 1 : 0}}>
+        <div className={'toast-controls'} style={{display: isExpanded ? 'flex' : 'none', justifyContent: 'end', gap: 8, opacity: isExpanded ? 1 : 0}}>
           <ActionButton
             onPress={() => queue.clear()}>
             Clear all
@@ -409,12 +413,11 @@ export function SpectrumToast(props: ToastProps<SpectrumToastValue>) {
         viewTransitionClass: 'toast ' + (isLast ? ' last' : '') + ' ' + placement + ' ' + align
       }}
       inert={!isLast && !ctx.isExpanded ? 'true' : undefined}
-      className={renderProps => toastStyle({
-        ...renderProps,
+      className={renderProps => mergeStyles(toastFocusRing({...renderProps, isExpanded: ctx.isExpanded}), toastStyle({
         variant: toast.content.variant || 'info',
         index,
         isExpanded: ctx.isExpanded
-      })}>
+      }))}>
       <div role="presentation" className={toastBody({isSingle: !isLast || queue.visibleToasts.length === 1 || ctx.isExpanded})}>
         <ToastContent className={toastContent + (isLast ? ' toast-content' : null)} style={{opacity: isLast || ctx.isExpanded ? 1 : 0}}>
           {Icon &&
