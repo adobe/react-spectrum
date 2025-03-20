@@ -73,6 +73,8 @@
     "access": "public"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.0.0"
+    "@tailwindcss/postcss": "^4.0.0",
+    "@tanstack/react-router": "^1.114.25",
+    "react-router": "^7.1.5"
   }
 }
