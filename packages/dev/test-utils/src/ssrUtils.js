@@ -38,6 +38,10 @@ Module._resolveFilename = (request, parent) => {
     return request;
   }
 
+  if (request.includes('style')) {
+    return path.join(__dirname, '../../../../__mocks__/macroStyleMock.js');
+  }
+
   if (request.startsWith('bundle-text:')) {
     return path.join(__dirname, '../../../../__mocks__/fileMock.js');
   }
