@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Calendar} from '@react-spectrum/calendar';
+import {Calendar, SpectrumCalendarProps} from '@react-spectrum/calendar';
 import CalendarIcon from '@spectrum-icons/workflow/Calendar';
 import {classNames} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
@@ -64,6 +64,9 @@ export const DatePicker = React.forwardRef(function DatePicker<T extends DateVal
   let {direction} = useLocale();
   let domRef = useFocusManagerRef(ref);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/datepicker');
+  if (props.createCalendar) {
+    (calendarProps as SpectrumCalendarProps<DateValue>).createCalendar = props.createCalendar;
+  }
 
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({
     within: true,

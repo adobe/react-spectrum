@@ -25,7 +25,7 @@ import {
   Validation,
   ValueBase
 } from '@react-types/shared';
-import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from '@internationalized/date';
+import {CalendarDate, CalendarDateTime, Calendar as ICalendar, Time, ZonedDateTime} from '@internationalized/date';
 import {OverlayTriggerProps} from '@react-types/overlays';
 import {PageBehavior} from '@react-types/calendar';
 
@@ -124,7 +124,12 @@ interface SpectrumDatePickerBase<T extends DateValue> extends SpectrumDateFieldB
    * Whether the calendar popover should automatically flip direction when space is limited.
    * @default true
    */
-  shouldFlip?: boolean
+  shouldFlip?: boolean,
+  /**
+   * A function to create a new [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html)
+   * object for a given calendar identifier. This will be used for the popover calendar.
+   */
+  createCalendar?: (identifier: string) => ICalendar
 }
 
 export interface SpectrumDatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'isInvalid' | 'validationState'>, SpectrumDatePickerBase<T> {}

@@ -50,8 +50,7 @@ export function CalendarCell({state, currentMonth, firstDayOfWeek, ...props}: Ca
   let isSelectionEnd = isSelected && highlightedRange && isSameDay(props.date, highlightedRange.end);
   let {locale} = useLocale();
   let dayOfWeek = getDayOfWeek(props.date, locale, firstDayOfWeek);
-  let isRangeStart = isSelected && (isFirstSelectedAfterDisabled || dayOfWeek === 0 || props.date.day === 1);
-  let isRangeEnd = isSelected && (isLastSelectedBeforeDisabled || dayOfWeek === 6 || props.date.day === currentMonth.calendar.getDaysInMonth(currentMonth));
+  let {isRangeStart, isRangeEnd} = getIsRangeStartOrEnd({isSelected, date: props.date, dayOfWeek, currentMonth, isFirstSelectedAfterDisabled, isLastSelectedBeforeDisabled});
   let {focusProps, isFocusVisible} = useFocusRing();
   let {hoverProps, isHovered} = useHover({isDisabled: isDisabled || isUnavailable || state.isReadOnly});
 
@@ -86,4 +85,38 @@ export function CalendarCell({state, currentMonth, firstDayOfWeek, ...props}: Ca
       </span>
     </td>
   );
+}
+
+function getIsRangeStartOrEnd({
+  date,
+  dayOfWeek,
+  isSelected,
+  currentMonth,
+  isFirstSelectedAfterDisabled,
+  isLastSelectedBeforeDisabled
+}: {
+  date: CalendarDate,
+  dayOfWeek: number,
+  isSelected: boolean,
+  currentMonth: CalendarDate,
+  isFirstSelectedAfterDisabled: boolean,
+  isLastSelectedBeforeDisabled: boolean
+}) {
+  if (!isSelected) {
+    return {
+      isRangeStart: false,
+      isRangeEnd: false
+    };
+  }
+
+  const dayOfMonth = date.day;
+  const isStartOfMonth = dayOfMonth === 1;
+  const isEndOfMonth = dayOfMonth === currentMonth.calendar.getDaysInMonth(currentMonth);
+
+  const isRangeStart = isFirstSelectedAfterDisabled || dayOfWeek === 0 || isStartOfMonth;
+  const isRangeEnd = isLastSelectedBeforeDisabled || dayOfWeek === 6 || isEndOfMonth;
+  return {
+    isRangeStart,
+    isRangeEnd
+  };
 }

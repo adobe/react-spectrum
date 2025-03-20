@@ -114,9 +114,9 @@ import {Button} from 'your-component-library';
 function RangeCalendar(props) {
   let {locale} = useLocale();
   let state = useRangeCalendarState({
+    createCalendar,
     ...props,
-    locale,
-    createCalendar
+    locale
   });
 
   let ref = React.useRef(null);
@@ -145,14 +145,9 @@ The `state.getDatesInWeek` function returns the dates in each week of the month.
 
 ```tsx example render=false export=true
 import {useCalendarGrid} from '@react-aria/calendar';
-import {getWeeksInMonth} from '@internationalized/date';
 
 function CalendarGrid({state, ...props}) {
-  let {locale} = useLocale();
-  let {gridProps, headerProps, weekDays} = useCalendarGrid(props, state);
-
-  // Get the number of weeks in the month so we can render the proper number of rows.
-  let weeksInMonth = getWeeksInMonth(state.visibleRange.start, locale, props.firstDayOfWeek);
+  let {gridProps, headerProps, weekDays, weeksInMonth} = useCalendarGrid(props, state);
 
   return (
     <table {...gridProps}>

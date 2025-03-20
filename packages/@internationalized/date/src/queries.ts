@@ -42,21 +42,17 @@ export function isSameYear(a: DateValue, b: DateValue): boolean {
 
 /** Returns whether the given dates occur on the same day, and are of the same calendar system. */
 export function isEqualDay(a: DateValue, b: DateValue): boolean {
-  return a.calendar.identifier === b.calendar.identifier && a.era === b.era && a.year === b.year && a.month === b.month && a.day === b.day;
+  return a.calendar.identifier === b.calendar.identifier && isSameDay(a, b);
 }
 
 /** Returns whether the given dates occur in the same month, and are of the same calendar system. */
 export function isEqualMonth(a: DateValue, b: DateValue): boolean {
-  a = startOfMonth(a);
-  b = startOfMonth(b);
-  return a.calendar.identifier === b.calendar.identifier && a.era === b.era && a.year === b.year && a.month === b.month;
+  return a.calendar.identifier === b.calendar.identifier && isSameMonth(a, b);
 }
 
 /** Returns whether the given dates occur in the same year, and are of the same calendar system. */
 export function isEqualYear(a: DateValue, b: DateValue): boolean {
-  a = startOfYear(a);
-  b = startOfYear(b);
-  return a.calendar.identifier === b.calendar.identifier && a.era === b.era && a.year === b.year;
+  return a.calendar.identifier === b.calendar.identifier && isSameYear(a, b);
 }
 
 /** Returns whether the date is today in the given time zone. */

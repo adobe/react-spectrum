@@ -69,6 +69,13 @@ export interface Calendar {
    * eras may begin in the middle of a month.
    */
   getMinimumDayInMonth?(date: AnyCalendarDate): number,
+  /**
+   * Returns a date that is the first day of the month for the given date.
+   * This is used to determine the month that the given date falls in, if
+   * the calendar has months that do not align with the standard calendar months 
+   * (e.g. fiscal calendars).
+   */
+  getFormattableMonth?(date: AnyCalendarDate): AnyCalendarDate,
 
   /** @private */
   balanceDate?(date: AnyCalendarDate): void,
