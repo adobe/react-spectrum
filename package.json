@@ -27,6 +27,8 @@
     "build:s2-docs": "NODE_ENV=storybook storybook build -c .storybook-s2 --docs",
     "start:docs": "DOCS_ENV=dev parcel 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/react-aria-components/docs/**/*.mdx' 'packages/@internationalized/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
     "build:docs": "DOCS_ENV=staging parcel build 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/react-aria-components/docs/**/*.mdx' 'packages/@internationalized/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
+    "start:s2-docs": "DOCS_ENV=dev parcel --config .parcelrc-s2-docs 'packages/dev/s2-docs/pages/**/*.mdx'",
+    "build:s2-docs2": "DOCS_ENV=dev parcel build --config .parcelrc-s2-docs 'packages/dev/s2-docs/pages/**/*.mdx'",
     "test": "cross-env STRICT_MODE=1 yarn jest",
     "test:lint": "node packages/**/*.test-lint.js",
     "test-loose": "cross-env VIRT_ON=1 yarn jest",
@@ -93,11 +95,13 @@
     "@parcel/core": "^2.14.0",
     "@parcel/optimizer-data-url": "^2.14.0",
     "@parcel/optimizer-terser": "^2.14.0",
+    "@parcel/packager-react-static": "2.14.0",
     "@parcel/packager-ts": "^2.14.0",
     "@parcel/reporter-cli": "^2.14.0",
     "@parcel/resolver-glob": "^2.14.0",
     "@parcel/transformer-inline": "^2.14.0",
     "@parcel/transformer-inline-string": "^2.14.0",
+    "@parcel/transformer-react-static": "2.14.0",
     "@parcel/transformer-svg-react": "^2.14.0",
     "@parcel/transformer-typescript-types": "^2.14.0",
     "@react-spectrum/s2-icon-builder": "^0.2.0",
@@ -188,9 +192,9 @@
     "postcss-import": "^15.1.0",
     "prop-types": "^15.6.0",
     "raf": "^3.4.0",
-    "react": "^18.2.0",
+    "react": "19.1.0-canary-db7dfe05-20250319",
     "react-axe": "^3.0.2",
-    "react-dom": "^18.2.0",
+    "react-dom": "19.1.0-canary-db7dfe05-20250319",
     "react-frame-component": "^5.0.0",
     "react-test-renderer": "^18.3.1",
     "recast": "^0.23",
@@ -234,7 +238,9 @@
     "recast": "0.23.6",
     "ast-types": "0.16.1",
     "svgo": "^3",
-    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch"
+    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch",
+    "react": "19.1.0-canary-db7dfe05-20250319",
+    "react-dom": "19.1.0-canary-db7dfe05-20250319"
   },
   "@parcel/transformer-css": {
     "cssModules": {
@@ -247,7 +253,8 @@
         "packages/@react-spectrum/tree/**",
         "packages/@react-spectrum/color/src/*.tsx",
         "packages/@react-spectrum/s2/**",
-        ".storybook-s2/**"
+        ".storybook-s2/**",
+        "packages/dev/s2-docs/**"
       ]
     },
     "drafts": {
@@ -273,5 +280,20 @@
         ]
       }
     ]
+  },
+  "targets": {
+    "react-static": {
+      "context": "react-server",
+      "engines": {
+        "browsers": [
+          "last 2 Chrome versions",
+          "last 2 Safari versions",
+          "last 2 Firefox versions"
+        ]
+      },
+      "includeNodeModules": {
+        "tree-sitter-highlight": false
+      }
+    }
   }
 }

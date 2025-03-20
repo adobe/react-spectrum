@@ -444,7 +444,7 @@ function visitChildren(obj, fn) {
         keyof: fn(obj.keyof, 'keyof')
       };
     default:
-      console.log('Unknown type in DocsPackager: ' + obj.type, obj);
+      // console.log('Unknown type in DocsPackager: ' + obj.type, obj);
       return obj;
   }
 }

@@ -22,14 +22,19 @@
       "import": "./dist/module.mjs",
       "require": "./dist/main.cjs"
     },
-    "./page.css": "./page.css",
+    "./page.css": {
+      "source": "./src/page.ts",
+      "default": "./page.css"
+    },
     "./style": {
+      "source": "./style/index.ts",
       "types": "./style/dist/types.d.ts",
       "module": "./style/dist/module.mjs",
       "import": "./style/dist/module.mjs",
       "require": "./style/dist/main.cjs"
     },
     "./icons/*": {
+      "source": "./s2wf-icons/S2_Icon_*_20_N.svg",
       "types": "./icons/*.d.ts",
       "module": "./icons/*.mjs",
       "import": "./icons/*.mjs",
@@ -138,6 +143,7 @@
     "@react-spectrum/utils": "^3.12.3",
     "@react-stately/layout": "^4.2.1",
     "@react-stately/utils": "^3.10.5",
+    "@react-stately/virtualizer": "^4.3.1",
     "@react-types/dialog": "^3.5.16",
     "@react-types/grid": "^3.3.0",
     "@react-types/provider": "^3.8.7",

@@ -4705,6 +4705,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@parcel/packager-react-static@npm:2.14.0":
+  version: 2.14.0
+  resolution: "@parcel/packager-react-static@npm:2.14.0"
+  dependencies:
+    "@parcel/node-resolver-core": "npm:3.5.0"
+    "@parcel/plugin": "npm:2.14.0"
+    "@parcel/rust": "npm:2.14.0"
+    "@parcel/types": "npm:2.14.0"
+    "@parcel/utils": "npm:2.14.0"
+    nullthrows: "npm:^1.1.1"
+    rsc-html-stream: "npm:^0.0.4"
+  checksum: 10c0/99581e7f6f6665dd6ad25c3829c0a15fb87ec841c749ed8f2d8e62fdc3e8017645eb3136d1021d802d9799fe79c00be012591376d8729ec327a945729bb38d65
+  languageName: node
+  linkType: hard
+
 "@parcel/packager-svg@npm:2.14.0":
   version: 2.14.0
   resolution: "@parcel/packager-svg@npm:2.14.0"
@@ -4823,6 +4838,19 @@ __metadata:
     "@parcel/node-resolver-core": "npm:^3.1.2"
     "@parcel/plugin": "npm:^2.10.2"
   checksum: 10c0/730b440fef53e6c1817d0dec1b72c8f127cde5c4fd3e37ecd129c9f47101bbd23184c01d32d1553e0a4d2388d27d978d5346eb8d6fe52a2db2a74c6250c9a67a
+  languageName: node
+  linkType: hard
+
+"@parcel/rsc@npm:^2.14.1":
+  version: 2.14.1
+  resolution: "@parcel/rsc@npm:2.14.1"
+  dependencies:
+    react-server-dom-parcel: "npm:canary"
+    rsc-html-stream: "npm:^0.0.4"
+  peerDependencies:
+    react: ^19
+    react-dom: ^19
+  checksum: 10c0/f6a8d52d2c3241e21639802e3a54de05179c4bb84886aa169f0e3b13a60f8ba57472a6afe78c1d744e0cd7eb8cace926345c023a0c306bdb79a6df4cfed3840e
   languageName: node
   linkType: hard
 
@@ -5061,6 +5089,15 @@ __metadata:
     "@parcel/utils": "npm:2.14.0"
     react-refresh: "npm:>=0.9 <=0.16"
   checksum: 10c0/3a52246964df7a3d217bcfea705b4151ee1fda0c016b8e5b9cfa9ef1250b53f466ef3188595e786c8582f44c60569d247731a7c608ec6c0fd0a64ba9611f19d1
+  languageName: node
+  linkType: hard
+
+"@parcel/transformer-react-static@npm:2.14.0":
+  version: 2.14.0
+  resolution: "@parcel/transformer-react-static@npm:2.14.0"
+  dependencies:
+    "@parcel/plugin": "npm:2.14.0"
+  checksum: 10c0/1cc9bd6183df6c627518f34d713bfbf958d8cd348042c8b3cf85cbde4786e8e6e40a6d0c3f26578c9cb51c981771228fd16a9eaeb1242bf30418b9533d9373d9
   languageName: node
   linkType: hard
 
@@ -7431,6 +7468,8 @@ __metadata:
     highlight.js: "npm:9.18.1"
     markdown-to-jsx: "npm:^6.11.0"
     quicklink: "npm:^2.3.0"
+    react: "npm:19.1.0-canary-db7dfe05-20250319"
+    react-dom: "npm:19.1.0-canary-db7dfe05-20250319"
     react-lowlight: "npm:^2.0.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -7946,6 +7985,7 @@ __metadata:
     "@react-spectrum/utils": "npm:^3.12.3"
     "@react-stately/layout": "npm:^4.2.1"
     "@react-stately/utils": "npm:^3.10.5"
+    "@react-stately/virtualizer": "npm:^4.3.1"
     "@react-types/dialog": "npm:^3.5.16"
     "@react-types/grid": "npm:^3.3.0"
     "@react-types/provider": "npm:^3.8.7"
@@ -9600,7 +9640,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@spectrum-icons/workflow@npm:^4.0.0, @spectrum-icons/workflow@npm:^4.2.19, @spectrum-icons/workflow@workspace:packages/@spectrum-icons/workflow":
+"@spectrum-icons/workflow@npm:^4.0.0, @spectrum-icons/workflow@npm:^4.2.16, @spectrum-icons/workflow@npm:^4.2.19, @spectrum-icons/workflow@workspace:packages/@spectrum-icons/workflow":
   version: 0.0.0-use.local
   resolution: "@spectrum-icons/workflow@workspace:packages/@spectrum-icons/workflow"
   dependencies:
@@ -29372,15 +29412,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0, react-dom@npm:^18.2.0":
-  version: 18.3.1
-  resolution: "react-dom@npm:18.3.1"
+"react-dom@npm:19.1.0-canary-db7dfe05-20250319":
+  version: 19.1.0-canary-db7dfe05-20250319
+  resolution: "react-dom@npm:19.1.0-canary-db7dfe05-20250319"
   dependencies:
-    loose-envify: "npm:^1.1.0"
-    scheduler: "npm:^0.23.2"
+    scheduler: "npm:0.26.0-canary-db7dfe05-20250319"
   peerDependencies:
-    react: ^18.3.1
-  checksum: 10c0/a752496c1941f958f2e8ac56239172296fcddce1365ce45222d04a1947e0cc5547df3e8447f855a81d6d39f008d7c32eab43db3712077f09e3f67c4874973e85
+    react: 19.1.0-canary-db7dfe05-20250319
+  checksum: 10c0/ff33b84962226e0d86b58d431fb8b5845938b2a97f3a097f38562c46a2f9107ba03593e733541cc1e39f43c201165a2c769bac8f4564030cc8aebff721229fc1
   languageName: node
   linkType: hard
 
@@ -29492,6 +29531,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-server-dom-parcel@npm:canary":
+  version: 19.1.0-canary-db7dfe05-20250319
+  resolution: "react-server-dom-parcel@npm:19.1.0-canary-db7dfe05-20250319"
+  peerDependencies:
+    react: 19.1.0-canary-db7dfe05-20250319
+    react-dom: 19.1.0-canary-db7dfe05-20250319
+  checksum: 10c0/7ce8fc09556e5a8c7cdd2c01634a3bd59350b6fedc4a5b03463557696c3ae7027ec93e0f27f8fe2c46dafcd5c86e0f3584f6535a496b72bc7f51d4bab960330a
+  languageName: node
+  linkType: hard
+
 "react-shallow-renderer@npm:^16.15.0":
   version: 16.15.0
   resolution: "react-shallow-renderer@npm:16.15.0"
@@ -29534,11 +29583,13 @@ __metadata:
     "@parcel/core": "npm:^2.14.0"
     "@parcel/optimizer-data-url": "npm:^2.14.0"
     "@parcel/optimizer-terser": "npm:^2.14.0"
+    "@parcel/packager-react-static": "npm:2.14.0"
     "@parcel/packager-ts": "npm:^2.14.0"
     "@parcel/reporter-cli": "npm:^2.14.0"
     "@parcel/resolver-glob": "npm:^2.14.0"
     "@parcel/transformer-inline": "npm:^2.14.0"
     "@parcel/transformer-inline-string": "npm:^2.14.0"
+    "@parcel/transformer-react-static": "npm:2.14.0"
     "@parcel/transformer-svg-react": "npm:^2.14.0"
     "@parcel/transformer-typescript-types": "npm:^2.14.0"
     "@react-spectrum/s2-icon-builder": "npm:^0.2.0"
@@ -29629,9 +29680,9 @@ __metadata:
     postcss-import: "npm:^15.1.0"
     prop-types: "npm:^15.6.0"
     raf: "npm:^3.4.0"
-    react: "npm:^18.2.0"
+    react: "npm:19.1.0-canary-db7dfe05-20250319"
     react-axe: "npm:^3.0.2"
-    react-dom: "npm:^18.2.0"
+    react-dom: "npm:19.1.0-canary-db7dfe05-20250319"
     react-frame-component: "npm:^5.0.0"
     react-test-renderer: "npm:^18.3.1"
     recast: "npm:^0.23"
@@ -29739,12 +29790,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^18.2.0":
-  version: 18.3.1
-  resolution: "react@npm:18.3.1"
-  dependencies:
-    loose-envify: "npm:^1.1.0"
-  checksum: 10c0/283e8c5efcf37802c9d1ce767f302dd569dd97a70d9bb8c7be79a789b9902451e0d16334b05d73299b20f048cbc3c7d288bbbde10b701fa194e2089c237dbea3
+"react@npm:19.1.0-canary-db7dfe05-20250319":
+  version: 19.1.0-canary-db7dfe05-20250319
+  resolution: "react@npm:19.1.0-canary-db7dfe05-20250319"
+  checksum: 10c0/5c1849ce16a558283893c310adab75227732aa662a7807931cd8863fa940c23e2b352336cc15d01d2de4167942f917fdae5be9ec5c7d66f5feb7733f16aba2e6
   languageName: node
   linkType: hard
 
@@ -30689,6 +30738,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rsc-html-stream@npm:^0.0.4":
+  version: 0.0.4
+  resolution: "rsc-html-stream@npm:0.0.4"
+  checksum: 10c0/3bd009b41d764e1290b8318bc3a3c9641a37f9500751e96a76fd8a24dce0999c43ab9b46bb25b53c83b18174f9a762801441896a19cb92f57826c0201c4166fe
+  languageName: node
+  linkType: hard
+
 "run-async@npm:^2.2.0":
   version: 2.4.0
   resolution: "run-async@npm:2.4.0"
@@ -30747,6 +30803,20 @@ __metadata:
   checksum: 10c0/3c49c1ecd66170b175c9cacf5cef67f8914dcbc7cd0162855538d365c83fea631167cacb644b3ce533b2ea0e9a4d0b12175186985f89d75abe73dbd8f7f06f68
   languageName: node
   linkType: hard
+
+"s2-docs@workspace:packages/dev/s2-docs":
+  version: 0.0.0-use.local
+  resolution: "s2-docs@workspace:packages/dev/s2-docs"
+  dependencies:
+    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
+    "@parcel/rsc": "npm:^2.14.1"
+    "@react-spectrum/s2": "npm:^0.7.1"
+    "@spectrum-icons/workflow": "npm:^4.2.16"
+    react: "npm:^19"
+    react-aria-components: "npm:^1.7.1"
+    react-dom: "npm:^19"
+  languageName: unknown
+  linkType: soft
 
 "s3-deleter@npm:0.x":
   version: 0.1.2
@@ -30852,6 +30922,13 @@ __metadata:
   dependencies:
     xmlchars: "npm:^2.2.0"
   checksum: 10c0/3847b839f060ef3476eb8623d099aa502ad658f5c40fd60c105ebce86d244389b0d76fcae30f4d0c728d7705ceb2f7e9b34bb54717b6a7dbedaf5dad2d9a4b74
+  languageName: node
+  linkType: hard
+
+"scheduler@npm:0.26.0-canary-db7dfe05-20250319":
+  version: 0.26.0-canary-db7dfe05-20250319
+  resolution: "scheduler@npm:0.26.0-canary-db7dfe05-20250319"
+  checksum: 10c0/1e5d7361f17e21d151a46e272fd19e2596681918d94e3d012b37de653f8857db188017d36b7735f8c4510367700335d250bca2da0e3afd0ed77a138dd4af8b25
   languageName: node
   linkType: hard
 
