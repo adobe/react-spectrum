@@ -18,18 +18,19 @@ import {CenterBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../s2wf-icons/S2_Icon_CheckmarkCircle_20_N.svg';
 import Chevron from '../s2wf-icons/S2_Icon_ChevronDown_20_N.svg';
 import {CloseButton} from './CloseButton';
-import {createContext, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {createContext, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {DOMProps} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps, useEvent} from '@react-aria/utils';
 import {flushSync} from 'react-dom';
 import {focusRing, style} from '../style' with {type: 'macro'};
+import {FocusScope, useModalOverlay} from 'react-aria';
 import InfoIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
 import {mergeStyles} from '../style/runtime';
 import {Text} from './Content';
 import {UNSTABLE_Toast as Toast, UNSTABLE_ToastContent as ToastContent, ToastOptions, ToastProps, UNSTABLE_ToastQueue as ToastQueue, UNSTABLE_ToastRegion as ToastRegion, ToastRegionProps} from 'react-aria-components';
 import toastCss from './Toast.module.css';
 import {ToastList} from 'react-aria-components/src/Toast';
-import { classNames } from '@react-spectrum/utils';
+import {useOverlayTriggerState} from 'react-stately';
 
 export type ToastPlacement = 'top' | 'top end' | 'bottom' | 'bottom end';
 export interface SpectrumToastContainerProps extends Omit<ToastRegionProps<SpectrumToastValue>, 'queue' | 'children'> {
@@ -313,7 +314,8 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactNode {
   [placement, align = 'center'] = placement.split(' ');
   let regionRef = useRef(null);
 
-  let [isExpanded, setExpanded] = useState(false);
+  let state = useOverlayTriggerState({});
+  let {isOpen: isExpanded, close, toggle} = state;
   let ctx = useMemo(() => ({
     isExpanded,
     toggleExpanded() {
@@ -322,19 +324,28 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactNode {
       }
 
       startViewTransition(
-        () => setExpanded(!isExpanded),
+        () => toggle(),
         isExpanded ? 'toast-collapse' : 'toast-expand'
       );
     }
-  }), [isExpanded, setExpanded, queue]);
+  }), [isExpanded, toggle, queue]);
 
   useEffect(() => {
     return queue.subscribe(() => {
       if (queue.visibleToasts.length === 0 && isExpanded) {
-        setExpanded(false);
+        close();
       }
     });
-  });
+  }, [queue, isExpanded, close]);
+
+  // Prevent scroll, aria hide outside, and contain focus when expanded, since we take over the whole screen.
+  // Attach event handler to the ref since ToastRegion doesn't pass through onKeyDown.
+  useModalOverlay({}, state, regionRef);
+  useEvent(regionRef, 'keydown', isExpanded ? (e) => {
+    if (e.key === 'Escape') {
+      ctx.toggleExpanded();
+    }
+  } : null);
 
   return (
     <ToastRegion
@@ -347,48 +358,53 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactNode {
         align,
         isExpanded
       })}>
-      <ToastContainerContext.Provider value={ctx}>
-        {isExpanded && (
-          // eslint-disable-next-line
-          <div
-            className={toastCss['toast-background'] + style({position: 'fixed', inset: 0, backgroundColor: 'transparent-black-500'})}
-            onClick={() => ctx.toggleExpanded()} />
-        )}
-        <ToastList
-          style={({isHovered}) => {
-            let origin = isHovered ? 95 : 55;
-            return {
-              perspective: 80,
-              perspectiveOrigin: 'center ' + (placement === 'top' ? `calc(100% + ${origin}px)` : `${-origin}px`),
-              transition: 'perspective-origin 400ms'
-            }; 
-          }}
-          className={toastList({placement, align, isExpanded})}
-          onClick={() => {
-            if (!ctx.isExpanded) {
-              ctx.toggleExpanded();
-            }
-          }}>
-          {({toast}) => (
-            <SpectrumToast toast={toast} queue={queue} placement={placement} align={align} />
+      <FocusScope contain={isExpanded}>
+        <ToastContainerContext.Provider value={ctx}>
+          {isExpanded && (
+            // eslint-disable-next-line
+            <div
+              className={toastCss['toast-background'] + style({position: 'fixed', inset: 0, backgroundColor: 'transparent-black-500'})}
+              onClick={() => ctx.toggleExpanded()} />
           )}
-        </ToastList>
-        <div className={toastCss['toast-controls']} style={{display: isExpanded ? 'flex' : 'none', justifyContent: 'end', gap: 8, opacity: isExpanded ? 1 : 0}}>
-          <ActionButton
-            size="S"
-            onPress={() => queue.clear()}>
-            Clear all
-          </ActionButton>
-          <ActionButton
-            size="S"
-            onPress={() => {
-              regionRef.current.focus();
-              ctx.toggleExpanded();
+          <ToastList
+            style={({isHovered}) => {
+              let origin = isHovered ? 95 : 55;
+              return {
+                perspective: 80,
+                perspectiveOrigin: 'center ' + (placement === 'top' ? `calc(100% + ${origin}px)` : `${-origin}px`),
+                transition: 'perspective-origin 400ms'
+              }; 
+            }}
+            className={toastList({placement, align, isExpanded})}
+            onClick={() => {
+              if (!ctx.isExpanded) {
+                ctx.toggleExpanded();
+              }
             }}>
-            Collapse
-          </ActionButton>
-        </div>
-      </ToastContainerContext.Provider>
+            {({toast}) => (
+              <SpectrumToast toast={toast} queue={queue} placement={placement} align={align} />
+            )}
+          </ToastList>
+          <div className={toastCss['toast-controls']} style={{display: isExpanded ? 'flex' : 'none', justifyContent: 'end', gap: 8, opacity: isExpanded ? 1 : 0}}>
+            <ActionButton
+              size="S"
+              onPress={() => queue.clear()}
+              // Default focus ring does not have enough contrast against gray background.
+              UNSAFE_style={{outlineColor: 'white'}}>
+              Clear all
+            </ActionButton>
+            <ActionButton
+              size="S"
+              onPress={() => {
+                regionRef.current.focus();
+                ctx.toggleExpanded();
+              }}
+              UNSAFE_style={{outlineColor: 'white'}}>
+              Collapse
+            </ActionButton>
+          </div>
+        </ToastContainerContext.Provider>
+      </FocusScope>
     </ToastRegion>
   );
 }
