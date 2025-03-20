@@ -148,6 +148,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@adobe/spectrum-tokens@npm:0.0.0-s2-composite-drop-shadow-20250319174850":
+  version: 0.0.0-s2-composite-drop-shadow-20250319174850
+  resolution: "@adobe/spectrum-tokens@npm:0.0.0-s2-composite-drop-shadow-20250319174850"
+  checksum: 10c0/af3e5c1e66d03107b0ed224a0b7f5132fd0fbe5ed16e18842941bba484f7b040aca4bd59a8147d7d9bf74271eca35b538348652fbbf63305fbddb890cc61682a
+  languageName: node
+  linkType: hard
+
 "@adobe/spectrum-tokens@npm:^13.0.0-beta.56":
   version: 13.0.0-beta.56
   resolution: "@adobe/spectrum-tokens@npm:13.0.0-beta.56"
@@ -7934,7 +7941,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/s2@workspace:packages/@react-spectrum/s2"
   dependencies:
-    "@adobe/spectrum-tokens": "npm:^13.0.0-beta.56"
+    "@adobe/spectrum-tokens": "npm:0.0.0-s2-composite-drop-shadow-20250319174850"
     "@parcel/macros": "npm:^2.14.0"
     "@react-aria/collections": "npm:3.0.0-beta.1"
     "@react-aria/focus": "npm:^3.20.1"
