@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/illustratedmessage",
-  "version": "3.5.7",
+  "version": "3.5.8",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -36,9 +36,9 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/utils": "^3.28.0",
-    "@react-spectrum/layout": "^3.6.12",
-    "@react-spectrum/utils": "^3.12.2",
+    "@react-aria/utils": "^3.28.1",
+    "@react-spectrum/layout": "^3.6.13",
+    "@react-spectrum/utils": "^3.12.3",
     "@react-types/illustratedmessage": "^3.3.15",
     "@react-types/shared": "^3.28.0",
     "@swc/helpers": "^0.5.0"

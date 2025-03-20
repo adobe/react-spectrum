@@ -17,9 +17,9 @@ import Cross_XL from './S2_CrossSize300.svg';
 import Cross_XXL from './S2_CrossSize400.svg';
 import Cross_XXXL from './S2_CrossSize500.svg';
 import Cross_XXXXL from './S2_CrossSize600.svg';
-import {SVGProps} from 'react';
+import {ReactNode, SVGProps} from 'react';
 
-export default function Cross(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XXL' | 'XXXL' | 'XXXXL' | 'S'}) {
+export default function Cross(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'XXL' | 'XXXL' | 'XXXXL' | 'S'}): ReactNode {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':

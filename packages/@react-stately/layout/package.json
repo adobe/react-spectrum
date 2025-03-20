@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/layout",
-  "version": "4.2.0",
+  "version": "4.2.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -24,7 +24,7 @@
   "dependencies": {
     "@react-stately/collections": "^3.12.2",
     "@react-stately/table": "^3.14.0",
-    "@react-stately/virtualizer": "^4.3.0",
+    "@react-stately/virtualizer": "^4.3.1",
     "@react-types/grid": "^3.3.0",
     "@react-types/shared": "^3.28.0",
     "@react-types/table": "^3.11.0",

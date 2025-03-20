@@ -26,9 +26,12 @@ export let idsUpdaterMap: Map<string, { current: string | null }[]> = new Map();
 // This allows us to clean up the idsUpdaterMap when the id is no longer used.
 // Map is a strong reference, so unused ids wouldn't be cleaned up otherwise.
 // This can happen in suspended components where mount/unmount is not called.
-let registry = new FinalizationRegistry<string>((heldValue) => {
-  idsUpdaterMap.delete(heldValue);
-});
+let registry;
+if (typeof FinalizationRegistry !== 'undefined') {
+  registry = new FinalizationRegistry<string>((heldValue) => {
+    idsUpdaterMap.delete(heldValue);
+  });
+}
 
 /**
  * If a default is not provided, generate an id.
@@ -41,7 +44,9 @@ export function useId(defaultId?: string): string {
   let res = useSSRSafeId(value);
   let cleanupRef = useRef(null);
 
-  registry.register(cleanupRef, res);
+  if (registry) {
+    registry.register(cleanupRef, res);
+  }
 
   if (canUseDOM) {
     const cacheIdRef = idsUpdaterMap.get(res);
@@ -57,7 +62,9 @@ export function useId(defaultId?: string): string {
     return () => {
       // In Suspense, the cleanup function may be not called
       // when it is though, also remove it from the finalization registry.
-      registry.unregister(cleanupRef);
+      if (registry) {
+        registry.unregister(cleanupRef);
+      }
       idsUpdaterMap.delete(r);
     };
   }, [res]);
