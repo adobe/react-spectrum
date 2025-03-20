@@ -413,8 +413,8 @@ function processSegments(dateValue, validSegments, dateFormatter, resolvedOption
   let segments = dateFormatter.formatToParts(dateValue);
   let processedSegments: DateSegment[] = [];
   for (let segment of segments) {
-    let isEditable = EDITABLE_SEGMENTS[segment.type];
-    if (segment.type === 'era' && calendar.getEras().length === 1 || isReadOnly) {
+    let isEditable = !isReadOnly && EDITABLE_SEGMENTS[segment.type];
+    if (segment.type === 'era' && calendar.getEras().length === 1) {
       isEditable = false;
     }
 
