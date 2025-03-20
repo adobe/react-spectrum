@@ -5,6 +5,7 @@
   "actionbar.actions": "Actions",
   "actionbar.actionsAvailable": "Actions available.",
   "button.pending": "pending",
+  "combobox.noResults": "No results",
   "contextualhelp.info": "Information",
   "contextualhelp.help": "Help",
   "dialog.dismiss": "Dismiss",

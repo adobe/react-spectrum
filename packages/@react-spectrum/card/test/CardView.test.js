@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/utils/src/scrollIntoView');
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render, setupIntersectionObserverMock, within} from '@react-spectrum/test-utils-internal';
 import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '../';
 import {composeStories} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
@@ -1186,6 +1186,10 @@ describe('CardView', function () {
       ${'Grid layout'}      | ${GridLayout}
       ${'Gallery layout'}   | ${GalleryLayout}
     `('$Name CardView should call loadMore when scrolling to the bottom', async function ({layout}) {
+      let observe = jest.fn();
+      let observer = setupIntersectionObserverMock({
+        observe
+      });
       let scrollHeightMock = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 3000);
       let onLoadMore = jest.fn();
       let tree = render(<DynamicCardView layout={layout} onLoadMore={onLoadMore} />);
@@ -1196,10 +1200,13 @@ describe('CardView', function () {
 
       let cards = tree.getAllByRole('gridcell');
       expect(cards).toBeTruthy();
+      let sentinel = tree.getByTestId('loadMoreSentinel');
+      expect(observe).toHaveBeenLastCalledWith(sentinel);
 
       let grid = tree.getByRole('grid');
       grid.scrollTop = 3000;
       fireEvent.scroll(grid);
+      act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
       expect(onLoadMore).toHaveBeenCalledTimes(1);
       scrollHeightMock.mockReset();
     });

@@ -587,8 +587,8 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
       columnWidths: columnResizeState.columnWidths
     }), [columnResizeState.columnWidths])
   });
-
-  useLoadMore({isLoading, onLoadMore, scrollOffset: 1}, bodyRef);
+  let sentinelRef = useRef(null);
+  useLoadMore({isLoading, onLoadMore, scrollOffset: 1, sentinelRef}, bodyRef);
   let onVisibleRectChange = useCallback((rect: Rect) => {
     state.setVisibleRect(rect);
   }, [state]);
@@ -697,6 +697,7 @@ function TableVirtualizer<T>(props: TableVirtualizerProps<T>) {
             }}
             innerStyle={{overflow: 'visible'}}
             ref={bodyRef}
+            sentinelRef={sentinelRef}
             contentSize={state.contentSize}
             onVisibleRectChange={onVisibleRectChangeMemo}
             onScrollStart={state.startScrolling}
