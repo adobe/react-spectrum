@@ -107,7 +107,7 @@ export class ToastQueue<T> {
   /** Subscribes to updates to the visible toasts. */
   subscribe(fn: () => void): () => boolean {
     this.subscriptions.add(fn);
-    return (): boolean => this.subscriptions.delete(fn);
+    return () => this.subscriptions.delete(fn);
   }
 
   /** Adds a new toast to the queue. */
@@ -142,9 +142,11 @@ export class ToastQueue<T> {
   private updateVisibleToasts(action: ToastAction) {
     this.visibleToasts = this.queue.slice(0, this.maxVisibleToasts);
 
-    for (let fn of this.subscriptions) {
-      this.runWithWrapUpdate(fn, action);
-    }
+    this.runWithWrapUpdate(() => {
+      for (let fn of this.subscriptions) {
+        fn();
+      }
+    }, action);
   }
 
   /** Pauses the timers for all visible toasts. */
@@ -165,7 +167,7 @@ export class ToastQueue<T> {
     }
   }
 
-  clear() {
+  clear(): void {
     this.queue = [];
     this.updateVisibleToasts('clear');
   }

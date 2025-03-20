@@ -1,24 +1,10 @@
-@keyframes slide-in {
-  from {
-    translate: var(--slideX) var(--slideY);
-    opacity: 0;
-  }
-}
-
-@keyframes slide-out {
-  to {
-    translate: var(--slideX) var(--slideY);
-    opacity: 0;
-  }
-}
-
-@keyframes fade-out {
-  to {
-    opacity: 0
-  }
-}
-
-:root:active-view-transition-type(toast-add, toast-remove, toast-expand, toast-collapse, toast-clear) {
+/* Safari doesn't support :active-view-transition-type() yet, so we fall back to a class on the html element */
+html.toast-add,
+html.toast-remove,
+html.toast-expand,
+html.toast-collapse,
+html.toast-clear,
+html:active-view-transition-type(toast-add, toast-remove, toast-expand, toast-collapse, toast-clear) {
   view-transition-name: none;
 
   .toast-controls {
@@ -63,6 +49,8 @@
   --slideY: 0;
 }
 
+html.toast-add,
+html.toast-remove,
 html:active-view-transition-type(toast-add, toast-remove) {
   &::view-transition-new(.toast.last):only-child {
     animation-name: slide-in;
@@ -73,18 +61,22 @@ html:active-view-transition-type(toast-add, toast-remove) {
   }
 }
 
+html.toast-expand,
 html:active-view-transition-type(toast-expand) {
   &::view-transition-group(toast-expand) {
     animation-duration: 300ms;
   }
 }
 
+html.toast-collapse,
 html:active-view-transition-type(toast-collapse) {
   &::view-transition-group(toast-expand) {
     animation-duration: 600ms;
   }
 }
 
+html.toast-expand,
+html.toast-collapse,
 html:active-view-transition-type(toast-expand, toast-collapse) {
   .toast-content {
     view-transition-name: toast-content;
@@ -113,8 +105,29 @@ html:active-view-transition-type(toast-expand, toast-collapse) {
   }
 }
 
+html.toast-clear,
 html:active-view-transition-type(toast-clear) {
   &::view-transition-group(.toast) {
     animation-name: fade-out;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    translate: var(--slideX) var(--slideY);
+    opacity: 0;
+  }
+}
+
+@keyframes slide-out {
+  to {
+    translate: var(--slideX) var(--slideY);
+    opacity: 0;
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0
   }
 }

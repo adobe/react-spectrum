@@ -18,17 +18,18 @@ import {CenterBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../s2wf-icons/S2_Icon_CheckmarkCircle_20_N.svg';
 import Chevron from '../s2wf-icons/S2_Icon_ChevronDown_20_N.svg';
 import {CloseButton} from './CloseButton';
-import {createContext, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {createContext, ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {DOMProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
+import {flushSync} from 'react-dom';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import InfoIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
+import {mergeStyles} from '../style/runtime';
 import {Text} from './Content';
 import {UNSTABLE_Toast as Toast, UNSTABLE_ToastContent as ToastContent, ToastOptions, ToastProps, UNSTABLE_ToastQueue as ToastQueue, UNSTABLE_ToastRegion as ToastRegion, ToastRegionProps} from 'react-aria-components';
+import toastCss from './Toast.module.css';
 import {ToastList} from 'react-aria-components/src/Toast';
-import './Toast.css';
-import {flushSync} from 'react-dom';
-import { mergeStyles } from '../style/runtime';
+import { classNames } from '@react-spectrum/utils';
 
 export type ToastPlacement = 'top' | 'top end' | 'bottom' | 'bottom end';
 export interface SpectrumToastContainerProps extends Omit<ToastRegionProps<SpectrumToastValue>, 'queue' | 'children'> {
@@ -52,6 +53,24 @@ export interface SpectrumToastValue extends DOMProps {
   shouldCloseOnAction?: boolean
 }
 
+function startViewTransition(fn: () => void, type: string) {
+  if ('startViewTransition' in document) {
+    // Safari doesn't support :active-view-transition-type() yet, so we fall back to a class on the html element.
+    document.documentElement.classList.add(toastCss[type]);
+    let viewTransition = document.startViewTransition({
+      update: () => flushSync(fn),
+      types: [toastCss[type]]
+    });
+
+    viewTransition.ready.catch(() => {});
+    viewTransition.finished.then(() => {
+      document.documentElement.classList.remove(toastCss[type]);
+    });
+  } else {
+    fn();
+  }
+}
+
 // There is a single global toast queue instance for the whole app, initialized lazily.
 let globalToastQueue: ToastQueue<SpectrumToastValue> | null = null;
 function getGlobalToastQueue() {
@@ -59,10 +78,7 @@ function getGlobalToastQueue() {
     globalToastQueue = new ToastQueue({
       maxVisibleToasts: Infinity,
       wrapUpdate(fn, action) {
-        document.startViewTransition({
-          update: () => flushSync(fn),
-          types: [`toast-${action}`]
-        });
+        startViewTransition(fn, `toast-${action}`);
       }
     });
   }
@@ -204,6 +220,8 @@ const toastList = style({
   }
 });
 
+// Separate style macro for focus ring and toast so that
+// isFocusVisible doesn't cause toast background to change.
 const toastFocusRing = style({
   ...focusRing(),
   outlineColor: {
@@ -286,7 +304,7 @@ const ToastContainerContext = createContext<ToastContainerContextValue | null>(n
  * A ToastContainer renders the queued toasts in an application. It should be placed
  * at the root of the app.
  */
-export function ToastContainer(props: SpectrumToastContainerProps) {
+export function ToastContainer(props: SpectrumToastContainerProps): ReactNode {
   let {
     placement = 'bottom'
   } = props;
@@ -303,10 +321,10 @@ export function ToastContainer(props: SpectrumToastContainerProps) {
         return;
       }
 
-      document.startViewTransition({
-        update: () => flushSync(() => setExpanded(!isExpanded)),
-        types: [isExpanded ? 'toast-collapse' : 'toast-expand']
-      });
+      startViewTransition(
+        () => setExpanded(!isExpanded),
+        isExpanded ? 'toast-collapse' : 'toast-expand'
+      );
     }
   }), [isExpanded, setExpanded, queue]);
 
@@ -333,7 +351,7 @@ export function ToastContainer(props: SpectrumToastContainerProps) {
         {isExpanded && (
           // eslint-disable-next-line
           <div
-            className={'toast-background' + style({position: 'fixed', inset: 0, backgroundColor: 'transparent-black-500'})}
+            className={toastCss['toast-background'] + style({position: 'fixed', inset: 0, backgroundColor: 'transparent-black-500'})}
             onClick={() => ctx.toggleExpanded()} />
         )}
         <ToastList
@@ -355,12 +373,14 @@ export function ToastContainer(props: SpectrumToastContainerProps) {
             <SpectrumToast toast={toast} queue={queue} placement={placement} align={align} />
           )}
         </ToastList>
-        <div className={'toast-controls'} style={{display: isExpanded ? 'flex' : 'none', justifyContent: 'end', gap: 8, opacity: isExpanded ? 1 : 0}}>
+        <div className={toastCss['toast-controls']} style={{display: isExpanded ? 'flex' : 'none', justifyContent: 'end', gap: 8, opacity: isExpanded ? 1 : 0}}>
           <ActionButton
+            size="S"
             onPress={() => queue.clear()}>
             Clear all
           </ActionButton>
           <ActionButton
+            size="S"
             onPress={() => {
               regionRef.current.focus();
               ctx.toggleExpanded();
@@ -374,17 +394,17 @@ export function ToastContainer(props: SpectrumToastContainerProps) {
 }
 
 // Exported for stories.
-export function SpectrumToast(props: ToastProps<SpectrumToastValue>) {
+export function SpectrumToast(props: ToastProps<SpectrumToastValue>): ReactNode {
   let {toast, queue, placement, align} = props;
   let variant = toast.content.variant || 'info';
   let Icon = ICONS[variant];
   let visibleToasts = queue?.visibleToasts || [];
   let index = visibleToasts.indexOf(toast);
-  let isLast = index === 0;
-  let ctx = useContext(ToastContainerContext)!;
+  let isLast = index <= 0;
+  let ctx = useContext(ToastContainerContext);
   let toastRef = useRef(null);
 
-  if (!isLast && !ctx.isExpanded) {
+  if (!isLast && ctx && !ctx.isExpanded) {
     return (
       <div 
         style={{
@@ -397,7 +417,7 @@ export function SpectrumToast(props: ToastProps<SpectrumToastValue>) {
           opacity: index >= 3 ? 0 : 1,
           zIndex: visibleToasts.length - index - 1,
           viewTransitionName: toast.key,
-          viewTransitionClass: 'toast ' + (isLast ? ' last' : '') + ' ' + placement + ' ' + align
+          viewTransitionClass: [toastCss.toast, isLast && toastCss.last, toastCss[placement], toastCss[align]].filter(Boolean).map(c => CSS.escape(c)).join(' ')
         }}
         className={toastStyle({variant: toast.content.variant || 'info', index, isExpanded: ctx.isExpanded})} />
     );
@@ -410,16 +430,16 @@ export function SpectrumToast(props: ToastProps<SpectrumToastValue>) {
       style={{
         zIndex: visibleToasts.length - index - 1,
         viewTransitionName: toast.key,
-        viewTransitionClass: 'toast ' + (isLast ? ' last' : '') + ' ' + placement + ' ' + align
+        viewTransitionClass: [toastCss.toast, isLast && toastCss.last, toastCss[placement], toastCss[align]].filter(Boolean).map(c => CSS.escape(c)).join(' ')
       }}
-      inert={!isLast && !ctx.isExpanded ? 'true' : undefined}
-      className={renderProps => mergeStyles(toastFocusRing({...renderProps, isExpanded: ctx.isExpanded}), toastStyle({
+      inert={!isLast && !ctx?.isExpanded ? 'true' : undefined}
+      className={renderProps => mergeStyles(toastFocusRing({...renderProps, isExpanded: ctx?.isExpanded}), toastStyle({
         variant: toast.content.variant || 'info',
         index,
-        isExpanded: ctx.isExpanded
+        isExpanded: ctx?.isExpanded
       }))}>
-      <div role="presentation" className={toastBody({isSingle: !isLast || queue.visibleToasts.length === 1 || ctx.isExpanded})}>
-        <ToastContent className={toastContent + (isLast ? ' toast-content' : null)} style={{opacity: isLast || ctx.isExpanded ? 1 : 0}}>
+      <div role="presentation" className={toastBody({isSingle: !isLast || visibleToasts.length === 1 || ctx?.isExpanded})}>
+        <ToastContent className={toastContent + (isLast ? ` ${toastCss['toast-content']}` : null)} style={{opacity: isLast || ctx.isExpanded ? 1 : 0}}>
           {Icon &&
             <CenterBaseline>
               <Icon />
@@ -427,14 +447,14 @@ export function SpectrumToast(props: ToastProps<SpectrumToastValue>) {
           }
           <Text slot="title">{toast.content.children}</Text>
         </ToastContent>
-        {isLast && queue.visibleToasts.length > 1 && !ctx.isExpanded &&
+        {isLast && visibleToasts.length > 1 && !ctx?.isExpanded &&
           <ActionButton
             variant="secondary"
             isQuiet
             staticColor="white"
             styles={style({gridArea: 'expand'})}
             UNSAFE_style={{marginInlineStart: variant === 'neutral' ? -10 : 14}}
-            UNSAFE_className={isLast ? 'toast-expand' : undefined}
+            UNSAFE_className={isLast ? toastCss['toast-expand'] : undefined}
             onPress={() => {
               toastRef.current.focus();
               ctx.toggleExpanded();
@@ -443,13 +463,13 @@ export function SpectrumToast(props: ToastProps<SpectrumToastValue>) {
             <Chevron UNSAFE_style={{rotate: placement === 'bottom' ? '180deg' : undefined}} />
           </ActionButton>
         }
-        {toast.content.actionLabel && (isLast || ctx.isExpanded) &&
+        {toast.content.actionLabel && (isLast || ctx?.isExpanded) &&
           <Button
             variant="secondary"
             fillStyle="outline"
             staticColor="white"
             onPress={toast.content.onAction}
-            UNSAFE_className={isLast ? 'toast-action' : undefined}
+            UNSAFE_className={isLast ? toastCss['toast-action'] : undefined}
             styles={style({marginStart: 'auto', gridArea: 'action'})}>
             {toast.content.actionLabel}
           </Button>
@@ -458,7 +478,7 @@ export function SpectrumToast(props: ToastProps<SpectrumToastValue>) {
       <CloseButton
         staticColor="white"
         UNSAFE_style={{opacity: (isLast || ctx.isExpanded) ? 1 : 0}}
-        UNSAFE_className={isLast ? 'toast-close' : undefined} />
+        UNSAFE_className={isLast ? toastCss['toast-close'] : undefined} />
     </Toast>
   );
 }
