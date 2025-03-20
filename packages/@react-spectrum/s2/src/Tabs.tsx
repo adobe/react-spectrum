@@ -182,12 +182,13 @@ const tablist = style({
   flexBasis: '[0%]'
 });
 
-export function TabList<T extends object>(props: TabListProps<T>) {
+export function TabList<T extends object>(props: TabListProps<T>): ReactNode | null {
   let {showTabs} = useContext(CollapseContext) ?? {};
 
   if (showTabs) {
     return <TabListInner {...props} />;
   }
+  return null;
 }
 
 function TabListInner<T extends object>(props: TabListProps<T>) {
@@ -362,7 +363,7 @@ const icon = style({
   }
 });
 
-export function Tab(props: TabProps) {
+export function Tab(props: TabProps): ReactNode {
   let {density, labelBehavior} = useContext(InternalTabsContext) ?? {};
 
   let contentId = useId();
@@ -421,7 +422,7 @@ const tabPanel = style({
   minWidth: 0
 }, getAllowedOverrides({height: true}));
 
-export function TabPanel(props: TabPanelProps) {
+export function TabPanel(props: TabPanelProps): ReactNode | null {
   let {showTabs} = useContext(CollapseContext);
   let {selectedKey} = useContext(InternalTabsContext);
   if (showTabs) {

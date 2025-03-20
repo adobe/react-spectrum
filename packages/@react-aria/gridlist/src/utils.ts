@@ -24,7 +24,7 @@ interface ListMapShared {
 // id of the list and onAction between useList, useListItem, and useListSelectionCheckbox
 export const listMap = new WeakMap<ListState<unknown>, ListMapShared>();
 
-export function getRowId<T>(state: ListState<T>, key: Key) {
+export function getRowId<T>(state: ListState<T>, key: Key): string {
   let {id} = listMap.get(state) ?? {};
   if (!id) {
     throw new Error('Unknown list');
