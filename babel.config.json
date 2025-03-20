@@ -41,7 +41,6 @@
     }
   },
   "plugins": [
-    ["@babel/plugin-syntax-import-attributes"],
     [
       "@babel/plugin-transform-runtime",
       {
