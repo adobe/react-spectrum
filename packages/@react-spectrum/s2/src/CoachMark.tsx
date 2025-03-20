@@ -14,22 +14,24 @@ import {ActionMenuContext} from './ActionMenu';
 import {
   DialogTriggerProps as AriaDialogTriggerProps,
   Popover as AriaPopover,
+  ContextValue,
   DEFAULT_SLOT,
   DialogContext,
   OverlayTriggerStateContext,
   PopoverContext,
   PopoverProps,
   Provider,
-  RootMenuTriggerStateContext
+  RootMenuTriggerStateContext,
+  useContextProps
 } from 'react-aria-components';
 import {ButtonContext} from './Button';
 import {Card} from './Card';
 import {CheckboxContext} from './Checkbox';
-import {colorScheme, getAllowedOverrides} from './style-utils' with {type: 'macro'};
+import {colorScheme, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
 import {ContentContext, FooterContext, KeyboardContext, TextContext} from './Content';
+import {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef, useState} from 'react';
 import {DividerContext} from './Divider';
-import {ForwardedRef, forwardRef, ReactNode, useContext, useRef, useState} from 'react';
 import {forwardRefType} from './types';
 import {ImageContext} from './Image';
 import {ImageCoordinator} from './ImageCoordinator';
@@ -40,10 +42,11 @@ import {SliderContext} from './Slider';
 import {space, style} from '../style' with {type: 'macro'};
 import {useId, useOverlayTrigger} from 'react-aria';
 import {useMenuTriggerState} from '@react-stately/menu';
+import {useObjectRef} from '@react-aria/utils';
 
-export interface CoachMarkProps extends Omit<PopoverProps, 'children'> {
+export interface CoachMarkProps extends Omit<PopoverProps, 'children'>, StyleProps {
   /** The children of the coach mark. */
-  children: ReactNode | ((renderProps: { size: 'XS' | 'S' | 'M' | 'L' | 'XL' }) => ReactNode),
+  children: ReactNode,
 
   size?: 'S' | 'M' | 'L' | 'XL'
 }
@@ -310,9 +313,17 @@ const actionButtonSize = {
   XL: 'L'
 } as const;
 
-export function CoachMark(props: CoachMarkProps) {
+export const CoachMarkContext = createContext<ContextValue<CoachMarkProps, HTMLElement>>({});
+
+// there is a focus trap outside of the Coachmark, can only forward tab to things in coachmark or after the trigger
+export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HTMLElement>) => {
   let colorScheme = useContext(ColorSchemeContext);
+  [props, ref] = useContextProps(props, ref, CoachMarkContext);
+  // let {isOpen} = useContext(OverlayTriggerStateContext)!; // valid assumption?
+  let {UNSAFE_style} = props;
+  // let {triggerRef} = useContext(PopoverContext);
   let {size = 'M'} = props;
+  let popoverRef = useObjectRef(ref);
 
   let children = (
     <Provider
@@ -339,16 +350,26 @@ export function CoachMark(props: CoachMarkProps) {
         }]
       ]}>
       <ImageCoordinator>
-        {typeof props.children === 'function' ? props.children({size}) : props.children}
+        {props.children}
       </ImageCoordinator>
     </Provider>
   );
+
+  // useLayoutEffect(() => { // do we want to hide everything so that it's easier for a AT user to get to the trigger for required actions?
+  //   if (isOpen) {
+  //     let cleanup = ariaHideOutside([triggerRef.current, popoverRef.current]);
+  //     return () => {
+  //       cleanup();
+  //     };
+  //   }
+  // }, [isOpen]);
+
   return (
     <AriaPopover
       {...props}
-      // ref={popoverRef}
+      ref={popoverRef}
       style={{
-        // ...UNSAFE_style,
+        ...UNSAFE_style,
         // Override default z-index from useOverlayPosition. We use isolation: isolate instead.
         zIndex: undefined
       }}
@@ -361,7 +382,7 @@ export function CoachMark(props: CoachMarkProps) {
       </Card>
     </AriaPopover>
   );
-}
+});
 
 
 export interface CoachMarkTriggerProps extends AriaDialogTriggerProps {
@@ -372,12 +393,12 @@ export interface CoachMarkTriggerProps extends AriaDialogTriggerProps {
  * open state with the trigger's press state. Additionally, it allows you to customize the type and
  * positioning of the Dialog.
  */
-export function CoachMarkTrigger(props: CoachMarkTriggerProps) {
+export function CoachMarkTrigger(props: CoachMarkTriggerProps): ReactNode {
+  let containerRef = useRef<HTMLDivElement>(null);
   // Use useMenuTriggerState instead of useOverlayTriggerState in case a menu is embedded in the dialog.
   // This is needed to handle submenus.
   let state = useMenuTriggerState(props);
 
-  let containerRef = useRef<HTMLDivElement>(null);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, containerRef);
 
   // Label dialog by the trigger as a fallback if there is no title slot.
@@ -394,9 +415,9 @@ export function CoachMarkTrigger(props: CoachMarkTriggerProps) {
           [OverlayTriggerStateContext, state],
           [RootMenuTriggerStateContext, state],
           [DialogContext, overlayProps],
-          [PopoverContext, {trigger: 'DialogTrigger', triggerRef: containerRef, isNonModal: true}]
+          [PopoverContext, {trigger: 'DialogTrigger', triggerRef: containerRef, isNonModal: true}] // valid to pass triggerRef?
       ]}>
-      <PressResponder {...triggerProps}  isPressed={state.isOpen}>
+      <PressResponder {...triggerProps} isPressed={state.isOpen}>
         <CoachIndicator ref={containerRef} isActive={props.isOpen}>
           {props.children}
         </CoachIndicator>
@@ -404,19 +425,6 @@ export function CoachMarkTrigger(props: CoachMarkTriggerProps) {
     </Provider>
   );
 }
-// export function CoachMarkTrigger(props: CoachMarkTriggerProps) {
-//   return (
-//     <AriaDialogTrigger {...props}>
-//       {/* RAC sets isPressed via PressResponder when the dialog is open.
-//           We don't want press scaling to appear to get "stuck", so override this. */}
-//       <PressResponder isPressed={false}>
-//         <CoachIndicator isActive={props.isOpen}>
-//           {props.children}
-//         </CoachIndicator>
-//       </PressResponder>
-//     </AriaDialogTrigger>
-//   );
-// }
 
 
 // TODO better way to calculate 4px transform? (not 4%?)
@@ -504,11 +512,31 @@ export const CoachIndicator = /*#__PURE__*/ (forwardRef as forwardRefType)(funct
   );
 });
 
+export interface TourProps {
+  defaultStep?: number,
+  defaultComplete?: boolean,
+  /**
+   * Used to pre-set the total number of steps when more coachmarks may arrive async.
+   */
+  totalSteps?: number
+}
+
+export interface TourReturnVal {
+  createCoachMarkTriggerProps: (step: number) => Omit<CoachMarkTriggerProps, 'children'>,
+  currentStep: number,
+  totalSteps: number,
+  advanceStep: () => void,
+  previousStep: () => void,
+  skipTour: () => void,
+  restartTour: () => void
+}
+
 // FUTURE: support multiple tours on a page?
-export function useTour({defaultStep = 1, defaultComplete = false}) {
+export function useTour(props: TourProps): TourReturnVal  {
+  let {defaultStep = 1, defaultComplete = false, totalSteps: controlledTotalSteps} = props;
   const [isComplete, setIsComplete] = useState(defaultComplete);
   const [currentStep, setCurrentStep] = useState(defaultStep);
-  const [totalSteps, setTotalSteps] = useState(0);
+  const [totalSteps, setTotalSteps] = useState(controlledTotalSteps ?? 0);
   const advanceStep = () => {
     if (currentStep + 1 > totalSteps) {
       setIsComplete(true);
@@ -522,9 +550,9 @@ export function useTour({defaultStep = 1, defaultComplete = false}) {
     setCurrentStep(1);
   };
 
-  const coachMarkTriggerProps = (step: number) => {
+  const createCoachMarkTriggerProps = (step: number): Omit<CoachMarkTriggerProps, 'children'> => {
     // TODO find a better way for this so it's not run on every rerender
-    if (step > totalSteps) {
+    if (step > totalSteps && controlledTotalSteps === undefined) {
       setTotalSteps(step);
     }
     return {
@@ -533,7 +561,7 @@ export function useTour({defaultStep = 1, defaultComplete = false}) {
   };
 
   return {
-    coachMarkTriggerProps,
+    createCoachMarkTriggerProps,
     currentStep,
     totalSteps,
     advanceStep,
