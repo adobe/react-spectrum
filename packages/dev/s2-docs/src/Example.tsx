@@ -25,8 +25,6 @@ export function Example({render, children, ...props}) {
     );
   }
 
-  console.log(render, props)
-
   let lines = children.split('\n').length;
   return (
     <div className={example}>
