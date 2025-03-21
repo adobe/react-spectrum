@@ -11,6 +11,7 @@ import {BlogPostLayout, Video, Track, Image} from '@react-spectrum/docs';
 export default BlogPostLayout;
 
 import RTLTimefield from '../assets/rtl-timefield.svg';
+import RTLActualPlaceholder from '../assets/rtl-actual-placeholder.svg';
 import localeVideoURL from 'url:../assets/datefield-locales.mp4';
 import placeholderVideoURL from 'url:../assets/datefield-placeholder.mp4';
 import keyboardVideoURL from 'url:../assets/rtl-keyboard.mp4';
@@ -49,6 +50,10 @@ To format the segments according to the user locale, we rely on the browser’s 
 We found the culprit to be two things. First, we were applying `display: flex` on the container wrapping the segments. Second, each segment was being rendered as a `div` with `display: block`. Instead, we needed to use [normal CSS flow layout](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_display/Flow_layout) on the wrapper around the segments and update each segment to be a span instead. 
 
 While it seemed like a relatively simple fix, we later discovered through testing that this only corrected the format when segments contained actual values. If they had placeholder values, the order was still incorrect, causing some undesirable behaviors. It seemed that the Unicode Bidirectional Algorithm was interpreting placeholder values differently from actual values. As a result, when a segment was cleared back to its placeholder, it would shift back to the incorrect order. Furthermore, when a user entered a value, the segment would shift back to its correct order. This posed an interesting challenge: how do we ensure consistent formatting regardless of whether a segment contained a placeholder or a user-entered value — all without hard coding segment order for each locale?
+
+Below is an example of how the dates were being formatted based on user-entered or placeholder values along with a video to demonstrate the shifting behavior:
+
+<RTLActualPlaceholder />
 
 <Video src={placeholderVideoURL} loop autoPlay muted />
 
