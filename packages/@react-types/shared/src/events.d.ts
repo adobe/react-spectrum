@@ -115,7 +115,11 @@ export interface PressEvents {
    * whether it started on the target or not.
    */
   onPressUp?: (e: PressEvent) => void,
-  /** @deprecated Use onPress instead. */
+  /**
+   * **Not recommended – use `onPress` instead.** `onClick` is an alias for `onPress`
+   * provided for compatibility with other libraries. `onPress` provides 
+   * additional event details for non-mouse interactions.
+   */
   onClick?: (e: MouseEvent<FocusableElement>) => void
 }
 
