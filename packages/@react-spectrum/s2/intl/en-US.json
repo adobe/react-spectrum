@@ -29,5 +29,8 @@
   "tag.hideButtonLabel": "Show less",
   "tag.actions": "Actions",
   "tag.noTags": "None",
-  "breadcrumbs.more": "More items"
+  "breadcrumbs.more": "More items",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

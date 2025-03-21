@@ -29,5 +29,8 @@
   "tag.hideButtonLabel": "Mostrar menos",
   "tag.noTags": "Ninguno",
   "tag.showAllButtonLabel": "Mostrar todo ({tagCount, number})",
-  "breadcrumbs.more": "Más elementos"
+  "breadcrumbs.more": "Más elementos",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

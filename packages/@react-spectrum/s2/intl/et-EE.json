@@ -29,5 +29,8 @@
   "tag.hideButtonLabel": "Kuva vähem",
   "tag.noTags": "Puudub",
   "tag.showAllButtonLabel": "Kuva kõik ({tagCount, number})",
-  "breadcrumbs.more": "Veel üksusi"
+  "breadcrumbs.more": "Veel üksusi",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

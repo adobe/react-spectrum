@@ -29,5 +29,8 @@
   "tag.hideButtonLabel": "Zobrazit méně",
   "tag.noTags": "Žádný",
   "tag.showAllButtonLabel": "Zobrazit vše ({tagCount, number})",
-  "breadcrumbs.more": "Více položek"
+  "breadcrumbs.more": "Více položek",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

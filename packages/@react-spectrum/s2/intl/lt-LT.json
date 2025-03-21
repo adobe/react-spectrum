@@ -29,5 +29,8 @@
   "tag.hideButtonLabel": "Rodyti mažiau",
   "tag.noTags": "Nėra",
   "tag.showAllButtonLabel": "Rodyti viską ({tagCount, number})",
-  "breadcrumbs.more": "Daugiau elementų"
+  "breadcrumbs.more": "Daugiau elementų",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

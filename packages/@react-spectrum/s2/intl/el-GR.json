@@ -29,5 +29,8 @@
   "tag.hideButtonLabel": "Εμφάνιση λιγότερων",
   "tag.noTags": "Κανένα",
   "tag.showAllButtonLabel": "Εμφάνιση όλων ({tagCount, number})",
-  "breadcrumbs.more": "Περισσότερα στοιχεία"
+  "breadcrumbs.more": "Περισσότερα στοιχεία",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

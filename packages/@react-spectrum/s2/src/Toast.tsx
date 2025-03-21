@@ -24,10 +24,13 @@ import {flushSync} from 'react-dom';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {FocusScope, useModalOverlay} from 'react-aria';
 import InfoIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {mergeStyles} from '../style/runtime';
 import {ToastOptions as RACToastOptions, UNSTABLE_Toast as Toast, UNSTABLE_ToastContent as ToastContent, UNSTABLE_ToastList as ToastList, ToastProps, UNSTABLE_ToastQueue as ToastQueue, UNSTABLE_ToastRegion as ToastRegion, ToastRegionProps, UNSTABLE_ToastStateContext as ToastStateContext} from 'react-aria-components';
 import {Text} from './Content';
 import toastCss from './Toast.module.css';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMediaQuery} from '@react-spectrum/utils';
 import {useOverlayTriggerState} from 'react-stately';
 
@@ -340,6 +343,7 @@ export function ToastContainer(props: ToastContainerProps): ReactNode {
   let queue = getGlobalToastQueue();
   let align = 'center';
   [placement, align = 'center'] = placement.split(' ') as any;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let regionRef = useRef<HTMLDivElement | null>(null);
 
   let state = useOverlayTriggerState({});
@@ -407,13 +411,13 @@ export function ToastContainer(props: ToastContainerProps): ReactNode {
               onPress={() => queue.clear()}
               // Default focus ring does not have enough contrast against gray background.
               UNSAFE_style={{outlineColor: 'white'}}>
-              Clear all
+              {stringFormatter.format('toast.clearAll')}
             </ActionButton>
             <ActionButton
               size="S"
               onPress={collapse}
               UNSAFE_style={{outlineColor: 'white'}}>
-              Collapse
+              {stringFormatter.format('toast.collapse')}
             </ActionButton>
           </div>
         </ToastContainerContext.Provider>
@@ -477,6 +481,7 @@ export function SpectrumToast(props: SpectrumToastProps): ReactNode {
   let ctx = useContext(ToastContainerContext);
   let isExpanded = ctx?.isExpanded || false;
   let toastRef = useRef<HTMLDivElement | null>(null);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
 
   // When not expanded, use a presentational div for the toasts behind the top one.
   // The content is invisible, all we show is the background color.
@@ -544,8 +549,7 @@ export function SpectrumToast(props: SpectrumToastProps): ReactNode {
               toastRef.current?.focus();
               ctx?.toggleExpanded();
             }}>
-            {/* TODO: translate */}
-            <Text>Show all</Text>
+            <Text>{stringFormatter.format('toast.showAll')}</Text>
             {/* @ts-ignore */}
             <Chevron UNSAFE_style={{rotate: placement === 'bottom' ? '180deg' : undefined}} />
           </ActionButton>

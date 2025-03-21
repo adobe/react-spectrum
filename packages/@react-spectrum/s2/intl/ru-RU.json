@@ -29,5 +29,8 @@
   "tag.hideButtonLabel": "Показать меньше",
   "tag.noTags": "Нет",
   "tag.showAllButtonLabel": "Показать все ({tagCount, number})",
-  "breadcrumbs.more": "Дополнительные элементы"
+  "breadcrumbs.more": "Дополнительные элементы",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

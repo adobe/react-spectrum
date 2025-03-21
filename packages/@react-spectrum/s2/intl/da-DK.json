@@ -29,5 +29,8 @@
   "tag.hideButtonLabel": "Vis mindre",
   "tag.noTags": "Ingen",
   "tag.showAllButtonLabel": "Vis alle ({tagCount, number})",
-  "breadcrumbs.more": "Flere elementer"
+  "breadcrumbs.more": "Flere elementer",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

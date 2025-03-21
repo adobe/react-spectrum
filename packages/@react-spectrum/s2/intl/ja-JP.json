@@ -29,5 +29,8 @@
   "tag.hideButtonLabel": "表示を減らす",
   "tag.noTags": "なし",
   "tag.showAllButtonLabel": "すべての ({tagCount, number}) を表示",
-  "breadcrumbs.more": "項目を追加"
+  "breadcrumbs.more": "項目を追加",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

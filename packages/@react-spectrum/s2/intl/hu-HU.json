@@ -29,5 +29,8 @@
   "tag.hideButtonLabel": "Mutass kevesebbet",
   "tag.noTags": "Egyik sem",
   "tag.showAllButtonLabel": "Az összes megjelenítése ({tagCount, number})",
-  "breadcrumbs.more": "További elemek"
+  "breadcrumbs.more": "További elemek",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }
