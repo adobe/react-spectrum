@@ -27,6 +27,11 @@ export interface ToastRegionRenderProps<T> {
   /** A list of all currently visible toasts. */
   visibleToasts: QueuedToast<T>[],
   /**
+   * Whether the toast region is currently hovered with a mouse.
+   * @selector [data-hovered]
+   */
+  isHovered: boolean,
+  /**
    * Whether the toast region is currently focused.
    * @selector [data-focused]
    */
@@ -35,8 +40,7 @@ export interface ToastRegionRenderProps<T> {
    * Whether the toast region is keyboard focused.
    * @selector [data-focus-visible]
    */
-  isFocusVisible: boolean,
-  isHovered: boolean
+  isFocusVisible: boolean
 }
 
 export interface ToastRegionProps<T> extends AriaToastRegionProps, StyleRenderProps<ToastRegionRenderProps<T>> {

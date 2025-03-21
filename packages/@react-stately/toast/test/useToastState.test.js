@@ -13,7 +13,7 @@
 import {actHook as act, renderHook} from '@react-spectrum/test-utils-internal';
 import {useToastState} from '../';
 
-describe.skip('useToastState', () => {
+describe('useToastState', () => {
   let newValue = [{
     content: 'Toast Message',
     props: {timeout: 0}
