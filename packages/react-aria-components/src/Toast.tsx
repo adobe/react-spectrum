@@ -87,7 +87,7 @@ export const ToastRegion = /*#__PURE__*/ (forwardRef as forwardRefType)(function
         data-hovered={isHovered || undefined}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}>
-        {typeof props.children === 'function' ? <ToastList {...props} className={undefined} style={{display: 'contents'}} /> : props.children}
+        {typeof props.children === 'function' ? <ToastList {...props} className={undefined} style={{display: 'contents'}}>{props.children}</ToastList> : props.children}
       </div>
     </ToastStateContext.Provider>
   );
