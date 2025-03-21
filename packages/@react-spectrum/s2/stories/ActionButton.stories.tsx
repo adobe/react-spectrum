@@ -18,6 +18,7 @@ import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {style} from '../style' with { type: 'macro' };
 import './unsafe.css';
+import {NumberFormatter} from '@internationalized/number';
 
 const meta: Meta<typeof ActionButton> = {
   component: ActionButton,
@@ -203,14 +204,16 @@ export const Avatars: Story = {
 
 export const NotificationBadges: Story = {
   render: (args) => {
+    let badgeValue = 10;
+    let formattedValue = new NumberFormatter('en-US').format(badgeValue);
+
     return (
       <div style={{display: 'flex', gap: 8, padding: 8, justifyContent: 'center'}}>
-        <ActionButton aria-label="Press me" {...args}><NewIcon /><NotificationBadge /></ActionButton>
-        <ActionButton aria-label="Press me" {...args}><BellIcon /><NotificationBadge value={10} /></ActionButton>
+        <ActionButton aria-label="Messages has new activity" {...args}><CommentIcon /><NotificationBadge /></ActionButton>
+        <ActionButton aria-label={`${formattedValue} notifications`} {...args}><BellIcon /><NotificationBadge value={badgeValue} /></ActionButton>
         <ActionButton {...args}><CommentIcon /><Text>Messages</Text><NotificationBadge value={5} /></ActionButton>
         <ActionButton {...args}><Text>Notifications</Text><NotificationBadge value={105} /></ActionButton>
       </div>
     );
   }
 };
-

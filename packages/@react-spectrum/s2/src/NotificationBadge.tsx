@@ -36,7 +36,7 @@ export interface NotificationBadgeProps extends DOMProps, AriaLabelingProps, Sty
   /**
    * The value to be displayed in the notification badge.
    */
-  value?: number
+  value?: number | null
 }
 
 export const NotificationBadgeContext = createContext<ContextValue<Partial<NotificationBadgeProps>, DOMRefValue<HTMLDivElement>>>(null);
@@ -121,7 +121,7 @@ export const NotificationBadge = forwardRef(function Badge(props: NotificationBa
   let isSingleDigit = false;
   let isDoubleDigit = false;
 
-  if (value === undefined) {
+  if (value == null) {
     isIndicatorOnly = true;
   } else if (value <= 0) {
     throw new Error('Value cannot be negative or zero');
@@ -141,9 +141,16 @@ export const NotificationBadge = forwardRef(function Badge(props: NotificationBa
     }
   }
 
+  let ariaLabel = props['aria-label'] || undefined;
+  if (ariaLabel === undefined && isIndicatorOnly) {
+    ariaLabel = stringFormatter.format('notificationbadge.indicatorOnly');
+  }
+
   return (
     <span
       {...filterDOMProps(otherProps, {labelable: true})}
+      role={ariaLabel ? 'img' : undefined}
+      aria-label={ariaLabel}
       className={(props.UNSAFE_className || '') + badge({size, isIndicatorOnly, isSingleDigit, isDoubleDigit}, props.styles)}
       style={props.UNSAFE_style}
       ref={domRef}>

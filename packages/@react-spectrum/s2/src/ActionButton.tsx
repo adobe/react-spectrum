@@ -19,7 +19,6 @@ import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {getAllowedOverrides, staticColor, StyleProps} from './style-utils' with { type: 'macro' };
 import {IconContext} from './Icon';
-import {mergeProps, useLabels, useSlotId} from '@react-aria/utils';
 import {NotificationBadgeContext} from './NotificationBadge';
 import {pressScale} from './pressScale';
 import {SkeletonContext} from './Skeleton';
@@ -281,14 +280,9 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
     isDisabled = props.isDisabled
   } = ctx || {};
 
-  let textId = useSlotId();
-  let notificationId = useSlotId();
-  let ariaLabelledby = [textId, notificationId].filter(Boolean).join(' ') || undefined;
-  let labelProps = useLabels({'aria-label': props['aria-label'], 'aria-labelledby': ariaLabelledby});
 
   return (
     <RACButton
-      {...mergeProps(props, labelProps)}
       {...props}
       isDisabled={isDisabled}
       ref={domRef}
@@ -309,7 +303,7 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
       <Provider
         values={[
           [SkeletonContext, null],
-          [TextContext, {id: textId, styles: style({paddingY: '--labelPadding', order: 1, truncate: true})}],
+          [TextContext, {styles: style({paddingY: '--labelPadding', order: 1, truncate: true})}],
           [IconContext, {
             render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
             styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
@@ -319,7 +313,6 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
             styles: style({marginStart: '--iconMargin', flexShrink: 0, order: 0})
           }],
           [NotificationBadgeContext, {
-            id: notificationId,
             size: props.size === 'XS' ? undefined : props.size,
             styles: style({position: 'absolute', top: '--badgeTop', insetStart: '[var(--badgePosition)]', marginTop: '[calc((self(height) * -1)/2)]', marginStart: '[calc((self(height) * -1)/2)]'})
           }]
