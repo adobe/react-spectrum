@@ -149,7 +149,7 @@ export const NotificationBadge = forwardRef(function Badge(props: NotificationBa
   return (
     <span
       {...filterDOMProps(otherProps, {labelable: true})}
-      role={ariaLabel ? 'img' : undefined}
+      role={ariaLabel && 'img'}
       aria-label={ariaLabel}
       className={(props.UNSAFE_className || '') + badge({size, isIndicatorOnly, isSingleDigit, isDoubleDigit}, props.styles)}
       style={props.UNSAFE_style}
