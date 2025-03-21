@@ -12,7 +12,8 @@
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button, Dialog, DialogTrigger, OverlayArrow, Popover, Pressable} from '../';
-import React from 'react';
+import React, {useRef} from 'react';
+import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
 
 let TestPopover = (props) => (
@@ -177,11 +178,11 @@ describe('Popover', () => {
   });
 
   describe('portalContainer', () => {
-    function InfoPopover(props) {
+    function InfoPopover() {
       return (
         <DialogTrigger>
           <Button />
-          <Popover UNSTABLE_portalContainer={props.container}>
+          <Popover>
             <OverlayArrow>
               <svg width={12} height={12}>
                 <path d="M0 0,L6 6,L12 0" />
@@ -193,11 +194,13 @@ describe('Popover', () => {
       );
     }
     function App() {
-      let [container, setContainer] = React.useState();
+      let container = useRef(null);
       return (
         <>
-          <InfoPopover container={container} />
-          <div ref={setContainer} data-testid="custom-container" />
+          <UNSTABLE_PortalProvider getContainer={() => container.current}>
+            <InfoPopover container={container} />
+          </UNSTABLE_PortalProvider>
+          <div ref={container} data-testid="custom-container" />
         </>
       );
     }

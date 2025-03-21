@@ -21,7 +21,8 @@ import {
   Popover
 } from '../';
 import {pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import React from 'react';
+import React, {useRef} from 'react';
+import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
 
 describe('Dialog', () => {
@@ -302,12 +303,12 @@ describe('Dialog', () => {
     expect(modal).not.toBeInTheDocument();
   });
 
-  describe('portalContainer', () => {
-    function InfoDialog(props) {
+  describe('portal provider', () => {
+    function InfoDialog() {
       return (
         <DialogTrigger>
           <Button>Delete…</Button>
-          <Modal UNSTABLE_portalContainer={props.container} data-test="modal">
+          <Modal data-test="modal">
             <Dialog role="alertdialog" data-test="dialog">
               {({close}) => (
                 <>
@@ -321,15 +322,17 @@ describe('Dialog', () => {
       );
     }
     function App() {
-      let [container, setContainer] = React.useState();
+      let container = useRef(null);
       return (
         <>
-          <InfoDialog container={container} />
-          <div ref={setContainer} data-testid="custom-container" />
+          <UNSTABLE_PortalProvider getContainer={() => container.current}>
+            <InfoDialog container={container} />
+          </UNSTABLE_PortalProvider>
+          <div ref={container} data-testid="custom-container" />
         </>
       );
     }
-    it('should render the tooltip in the portal container', async () => {
+    it('should render the tooltip in the portal container provided by the PortalProvider', async () => {
       let {getByRole, getByTestId} = render(<App />);
       let button = getByRole('button');
       await user.click(button);

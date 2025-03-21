@@ -12,7 +12,8 @@
 
 import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button, Focusable, OverlayArrow, Pressable, Tooltip, TooltipTrigger} from 'react-aria-components';
-import React from 'react';
+import React, {useRef} from 'react';
+import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
 
 function TestTooltip(props) {
@@ -173,7 +174,7 @@ describe('Tooltip', () => {
       return (
         <TooltipTrigger delay={0}>
           <Button><span aria-hidden="true">✏️</span></Button>
-          <Tooltip UNSTABLE_portalContainer={props.container} data-test="tooltip" {...props}>
+          <Tooltip data-test="tooltip" {...props}>
             <OverlayArrow>
               <svg width={8} height={8}>
                 <path d="M0 0,L4 4,L8 0" />
@@ -185,11 +186,13 @@ describe('Tooltip', () => {
       );
     }
     function App() {
-      let [container, setContainer] = React.useState();
+      let container = useRef(null);
       return (
         <>
-          <InfoTooltip container={container} />
-          <div ref={setContainer} data-testid="custom-container" />
+          <UNSTABLE_PortalProvider getContainer={() => container.current}>
+            <InfoTooltip container={container} />
+          </UNSTABLE_PortalProvider>
+          <div ref={container} data-testid="custom-container" />
         </>
       );
     }

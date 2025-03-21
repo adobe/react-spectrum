@@ -39,11 +39,6 @@ export interface TooltipProps extends PositionProps, Pick<AriaPositionProps, 'ar
    */
   isExiting?: boolean,
   /**
-   * The container element in which the overlay portal will be placed. This may have unknown behavior depending on where it is portalled to.
-   * @default document.body
-   */
-  UNSTABLE_portalContainer?: Element,
-  /**
    * The placement of the tooltip with respect to the trigger.
    * @default 'top'
    */
@@ -101,7 +96,7 @@ export function TooltipTrigger(props: TooltipTriggerComponentProps): ReactNode {
 /**
  * A tooltip displays a description of an element on hover or focus.
  */
-export const Tooltip = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tooltip({UNSTABLE_portalContainer, ...props}: TooltipProps, ref: ForwardedRef<HTMLDivElement>) {
+export const Tooltip = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tooltip(props: TooltipProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TooltipContext);
   let contextState = useContext(TooltipTriggerStateContext);
   let localState = useTooltipTriggerState(props);
@@ -112,7 +107,7 @@ export const Tooltip = /*#__PURE__*/ (forwardRef as forwardRefType)(function Too
   }
 
   return (
-    <OverlayContainer portalContainer={UNSTABLE_portalContainer}>
+    <OverlayContainer>
       <TooltipInner {...props} tooltipRef={ref} isExiting={isExiting} />
     </OverlayContainer>
   );

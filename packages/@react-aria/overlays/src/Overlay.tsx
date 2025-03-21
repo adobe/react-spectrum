@@ -56,7 +56,7 @@ export function Overlay(props: OverlayProps): ReactNode | null {
   let contextValue = useMemo(() => ({contain, setContain}), [contain, setContain]);
 
   let {getContainer} = useUNSTABLE_PortalContext();
-  if  (!props.portalContainer && getContainer) {
+  if (!props.portalContainer && getContainer) {
     portalContainer = getContainer();
   }
 

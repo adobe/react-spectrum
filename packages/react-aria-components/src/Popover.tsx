@@ -44,11 +44,6 @@ export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPo
    */
   isExiting?: boolean,
   /**
-   * The container element in which the overlay portal will be placed. This may have unknown behavior depending on where it is portalled to.
-   * @default document.body
-   */
-  UNSTABLE_portalContainer?: Element,
-  /**
    * The additional offset applied along the main axis between the element and its
    * anchor element.
    * @default 8
@@ -131,12 +126,11 @@ interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderP
   state: OverlayTriggerState,
   isEntering?: boolean,
   isExiting: boolean,
-  UNSTABLE_portalContainer?: Element,
   trigger?: string,
   dir?: 'ltr' | 'rtl'
 }
 
-function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: PopoverInnerProps) {
+function PopoverInner({state, isExiting, ...props}: PopoverInnerProps) {
   // Calculate the arrow size internally (and remove props.arrowSize from PopoverProps)
   // Referenced from: packages/@react-spectrum/tooltip/src/TooltipTrigger.tsx
   let arrowRef = useRef<HTMLDivElement>(null);
@@ -154,7 +148,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: Po
     ...props,
     offset: props.offset ?? 8,
     arrowSize: arrowWidth,
-    // If this is a submenu/subdialog, use the root popover's container 
+    // If this is a submenu/subdialog, use the root popover's container
     // to detect outside interaction and add aria-hidden.
     groupRef: isSubPopover ? groupCtx! : containerRef
   }, state);
@@ -217,7 +211,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: Po
   // If this is a root popover, render an extra div to act as the portal container for submenus/subdialogs.
   if (!isSubPopover) {
     return (
-      <Overlay {...props} shouldContainFocus={isDialog} isExiting={isExiting} portalContainer={UNSTABLE_portalContainer}>
+      <Overlay {...props} shouldContainFocus={isDialog} isExiting={isExiting}>
         {!props.isNonModal && state.isOpen && <div data-testid="underlay" {...underlayProps} style={{position: 'fixed', inset: 0}} />}
         <div ref={containerRef} style={{display: 'contents'}}>
           <PopoverGroupContext.Provider value={containerRef}>
@@ -230,7 +224,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: Po
 
   // Submenus/subdialogs are mounted into the root popover's container.
   return (
-    <Overlay {...props} shouldContainFocus={isDialog} isExiting={isExiting} portalContainer={UNSTABLE_portalContainer ?? groupCtx?.current ?? undefined}>
+    <Overlay {...props} shouldContainFocus={isDialog} isExiting={isExiting} portalContainer={groupCtx?.current ?? undefined}>
       {overlay}
     </Overlay>
   );
