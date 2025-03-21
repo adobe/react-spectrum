@@ -62,7 +62,13 @@ export interface MenuProps<T> extends CollectionBase<T>, MultipleSelection {
   onClose?: () => void
 }
 
-export interface AriaMenuProps<T> extends MenuProps<T>, DOMProps, AriaLabelingProps {}
+export interface AriaMenuProps<T> extends MenuProps<T>, DOMProps, AriaLabelingProps {
+  /**
+   * Whether the menu allows the user to clear all selected items via Escape.
+   * @default false
+   */
+  disallowClearAll?: boolean
+}
 export interface SpectrumMenuProps<T> extends AriaMenuProps<T>, StyleProps {}
 
 export interface SpectrumActionMenuProps<T> extends CollectionBase<T>, Omit<SpectrumMenuTriggerProps, 'children'>, StyleProps, DOMProps, AriaLabelingProps {

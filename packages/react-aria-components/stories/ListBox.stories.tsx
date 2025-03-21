@@ -35,7 +35,8 @@ ListBoxExample.story = {
   args: {
     selectionMode: 'none',
     selectionBehavior: 'toggle',
-    shouldFocusOnHover: false
+    shouldFocusOnHover: false,
+    disallowClearAll: false
   },
   argTypes: {
     selectionMode: {
@@ -363,7 +364,7 @@ function VirtualizedListBoxGridExample({minSize = 80, maxSize = 100, preserveAsp
 
   return (
     <div style={{height: 400, width: 400, resize: 'both', padding: 40, overflow: 'hidden'}}>
-      <Virtualizer 
+      <Virtualizer
         layout={GridLayout}
         layoutOptions={{
           minItemSize: new Size(minSize, minSize),
@@ -409,7 +410,7 @@ export function VirtualizedListBoxWaterfall({minSize = 80, maxSize = 100}) {
 
   return (
     <div style={{height: 400, width: 400, resize: 'both', padding: 40, overflow: 'hidden'}}>
-      <Virtualizer 
+      <Virtualizer
         layout={WaterfallLayout}
         layoutOptions={{
           minItemSize: new Size(minSize, minSize),
