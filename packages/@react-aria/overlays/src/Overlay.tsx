@@ -22,6 +22,7 @@ export interface OverlayProps {
   /**
    * The container element in which the overlay portal will be placed.
    * @default document.body
+   * @deprecated - Use a parent UNSTABLE_PortalProvider to set your portal container instead.
    */
   portalContainer?: Element,
   /** The overlay to render in the portal. */
@@ -56,7 +57,7 @@ export function Overlay(props: OverlayProps): ReactNode | null {
   let contextValue = useMemo(() => ({contain, setContain}), [contain, setContain]);
 
   let {getContainer} = useUNSTABLE_PortalContext();
-  if (!props.portalContainer && getContainer) {
+  if (getContainer) {
     portalContainer = getContainer();
   }
 

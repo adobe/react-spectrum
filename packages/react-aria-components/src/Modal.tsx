@@ -27,6 +27,12 @@ export interface ModalOverlayProps extends AriaModalOverlayProps, OverlayTrigger
    * Whether the modal is currently performing an exit animation.
    */
   isExiting?: boolean,
+  /**
+   * The container element in which the overlay portal will be placed. This may have unknown behavior depending on where it is portalled to.
+   * @default document.body
+   * @deprecated - Use a parent UNSTABLE_PortalProvider to set your portal container instead.
+   */
+  UNSTABLE_portalContainer?: Element
 }
 
 interface InternalModalContextValue {
@@ -75,6 +81,7 @@ export const Modal = /*#__PURE__*/ (forwardRef as forwardRefType)(function Modal
     children,
     isEntering,
     isExiting,
+    UNSTABLE_portalContainer,
     shouldCloseOnInteractOutside,
     ...otherProps
   } = props;
@@ -88,6 +95,7 @@ export const Modal = /*#__PURE__*/ (forwardRef as forwardRefType)(function Modal
       onOpenChange={onOpenChange}
       isEntering={isEntering}
       isExiting={isExiting}
+      UNSTABLE_portalContainer={UNSTABLE_portalContainer}
       shouldCloseOnInteractOutside={shouldCloseOnInteractOutside}>
       <ModalContent {...otherProps} modalRef={ref}>
         {children}
@@ -135,7 +143,7 @@ function ModalOverlayWithForwardRef(props: ModalOverlayProps, ref: ForwardedRef<
  */
 export const ModalOverlay = /*#__PURE__*/ (forwardRef as forwardRefType)(ModalOverlayWithForwardRef);
 
-function ModalOverlayInner(props: ModalOverlayInnerProps) {
+function ModalOverlayInner({UNSTABLE_portalContainer, ...props}: ModalOverlayInnerProps) {
   let modalRef = props.modalRef;
   let {state} = props;
   let {modalProps, underlayProps} = useModalOverlay(props, state, modalRef);
@@ -158,7 +166,7 @@ function ModalOverlayInner(props: ModalOverlayInnerProps) {
   };
 
   return (
-    <Overlay isExiting={props.isExiting}>
+    <Overlay isExiting={props.isExiting} portalContainer={UNSTABLE_portalContainer}>
       <div
         {...mergeProps(filterDOMProps(props as any), underlayProps)}
         {...renderProps}

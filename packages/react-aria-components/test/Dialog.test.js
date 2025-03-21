@@ -303,7 +303,7 @@ describe('Dialog', () => {
     expect(modal).not.toBeInTheDocument();
   });
 
-  describe('portal provider', () => {
+  describe('portalProvider', () => {
     function InfoDialog() {
       return (
         <DialogTrigger>
@@ -332,7 +332,45 @@ describe('Dialog', () => {
         </>
       );
     }
-    it('should render the tooltip in the portal container provided by the PortalProvider', async () => {
+    it('should render the dialog in the portal container provided by the PortalProvider', async () => {
+      let {getByRole, getByTestId} = render(<App />);
+      let button = getByRole('button');
+      await user.click(button);
+
+      expect(getByRole('alertdialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+      await user.click(document.body);
+    });
+  });
+
+  // TODO: delete this test when we get rid of the deprecated prop
+  describe('portalContainer', () => {
+    function InfoDialog(props) {
+      return (
+        <DialogTrigger>
+          <Button>Delete…</Button>
+          <Modal UNSTABLE_portalContainer={props.container} data-test="modal">
+            <Dialog role="alertdialog" data-test="dialog">
+              {({close}) => (
+                <>
+                  <Heading slot="title">Alert</Heading>
+                  <Button onPress={close}>Close</Button>
+                </>
+              )}
+            </Dialog>
+          </Modal>
+        </DialogTrigger>
+      );
+    }
+    function App() {
+      let [container, setContainer] = React.useState();
+      return (
+        <>
+          <InfoDialog container={container} />
+          <div ref={setContainer} data-testid="custom-container" />
+        </>
+      );
+    }
+    it('should render the dialog in the portal container', async () => {
       let {getByRole, getByTestId} = render(<App />);
       let button = getByRole('button');
       await user.click(button);

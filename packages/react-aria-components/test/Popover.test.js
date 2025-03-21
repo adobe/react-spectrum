@@ -177,7 +177,7 @@ describe('Popover', () => {
     expect(arrow).toHaveAttribute('style', expect.stringContaining('top: 5px'));
   });
 
-  describe('portalContainer', () => {
+  describe('portalProvider', () => {
     function InfoPopover() {
       return (
         <DialogTrigger>
@@ -201,6 +201,44 @@ describe('Popover', () => {
             <InfoPopover container={container} />
           </UNSTABLE_PortalProvider>
           <div ref={container} data-testid="custom-container" />
+        </>
+      );
+    }
+    it('should render the dialog in the portal container set by the PortalProvider', async () => {
+      let {getByRole, getByTestId} = render(
+        <App />
+      );
+
+      let button = getByRole('button');
+      await user.click(button);
+
+      expect(getByRole('dialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+    });
+  });
+
+  // TODO: delete this test when we get rid of the deprecated prop
+  describe('portalContainer', () => {
+    function InfoPopover(props) {
+      return (
+        <DialogTrigger>
+          <Button />
+          <Popover UNSTABLE_portalContainer={props.container}>
+            <OverlayArrow>
+              <svg width={12} height={12}>
+                <path d="M0 0,L6 6,L12 0" />
+              </svg>
+            </OverlayArrow>
+            <Dialog>Popover</Dialog>
+          </Popover>
+        </DialogTrigger>
+      );
+    }
+    function App() {
+      let [container, setContainer] = React.useState();
+      return (
+        <>
+          <InfoPopover container={container} />
+          <div ref={setContainer} data-testid="custom-container" />
         </>
       );
     }
