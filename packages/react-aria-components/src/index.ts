@@ -70,7 +70,7 @@ export {TagGroup, TagGroupContext, TagList, TagListContext, Tag} from './TagGrou
 export {Text, TextContext} from './Text';
 export {TextArea, TextAreaContext} from './TextArea';
 export {TextField, TextFieldContext} from './TextField';
-export {Toast as UNSTABLE_Toast, ToastRegion as UNSTABLE_ToastRegion, ToastContent as UNSTABLE_ToastContent} from './Toast';
+export {Toast as UNSTABLE_Toast, ToastRegion as UNSTABLE_ToastRegion, ToastContent as UNSTABLE_ToastContent, ToastStateContext as UNSTABLE_ToastStateContext} from './Toast';
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {ToggleButtonGroup, ToggleButtonGroupContext, ToggleGroupStateContext} from './ToggleButtonGroup';
 export {Toolbar, ToolbarContext} from './Toolbar';

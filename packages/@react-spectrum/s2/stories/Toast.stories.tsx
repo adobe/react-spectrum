@@ -11,22 +11,19 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, ButtonGroup} from '../src';
+import {Button, ButtonGroup, ToastContainer, ToastQueue} from '../src';
 import type {Meta} from '@storybook/react';
-import {SpectrumToast, ToastContainer, ToastQueue} from '../src/Toast';
+import {SpectrumToast} from '../src/Toast';
+import {UNSTABLE_ToastStateContext} from 'react-aria-components';
+import {useToastState} from 'react-stately';
 
 const meta: Meta<typeof Example> = {
-  // component: Example,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs'],
   title: 'Toast',
   argTypes: {
-    variant: {
-      control: 'radio',
-      options: ['neutral', 'info', 'positive', 'negative']
-    },
     timeout: {
       control: 'number'
     },
@@ -36,8 +33,6 @@ const meta: Meta<typeof Example> = {
     }
   },
   args: {
-    children: 'This is a really long toast message so that it wraps and I can test really well',
-    variant: 'info',
     actionLabel: 'Action!',
     shouldCloseOnAction: false,
     timeout: null,
@@ -52,22 +47,22 @@ export const Example = (args: any) => (
     <ToastContainer placement={args.placement} />
     <ButtonGroup>
       <Button
-        onPress={() => ToastQueue.neutral('Toast available', {...args, onClose: action('onClose')})}
+        onPress={() => ToastQueue.neutral('Toast available', {...args, onAction: action('onAction'), onClose: action('onClose')})}
         variant="secondary">
         Show Neutral Toast
       </Button>
       <Button
-        onPress={() => ToastQueue.positive('Toast is done!', {...args, onClose: action('onClose')})}
+        onPress={() => ToastQueue.positive('Toast is done!', {...args, onAction: action('onAction'), onClose: action('onClose')})}
         variant="primary">
         Show Positive Toast
       </Button>
       <Button
-        onPress={() => ToastQueue.negative('Toast is burned!', {...args, onClose: action('onClose')})}
+        onPress={() => ToastQueue.negative('Toast is burned!', {...args, onAction: action('onAction'), onClose: action('onClose')})}
         variant="negative">
         Show Negative Toast
       </Button>
       <Button
-        onPress={() => ToastQueue.info('Toasting…', {...args, onClose: action('onClose')})}
+        onPress={() => ToastQueue.info('Toasting…', {...args, onAction: action('onAction'), onClose: action('onClose')})}
         variant="accent">
         Show Info Toast
       </Button>
@@ -81,9 +76,23 @@ export const Example = (args: any) => (
 );
 
 export const Toast = (args: any) => (
-  <SpectrumToast
-    toast={{
-      key: 'x',
-      content: args
-    }} />
+  <UNSTABLE_ToastStateContext.Provider value={useToastState()}>
+    <SpectrumToast
+      toast={{
+        key: 'x',
+        content: args
+      }} />
+  </UNSTABLE_ToastStateContext.Provider>
 );
+
+Toast.args = {
+  variant: 'info',
+  children: 'Toasting…'
+};
+
+Toast.argTypes = {
+  variant: {
+    control: 'radio',
+    options: ['neutral', 'info', 'positive', 'negative']
+  }
+};

@@ -73,6 +73,7 @@ export {TableView, TableHeader, TableBody, Row, Cell, Column, TableContext} from
 export {Tabs, TabList, Tab, TabPanel, TabsContext} from './Tabs';
 export {TagGroup, Tag, TagGroupContext} from './TagGroup';
 export {TextArea, TextField, TextAreaContext, TextFieldContext} from './TextField';
+export {ToastContainer, ToastQueue} from './Toast';
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {ToggleButtonGroup, ToggleButtonGroupContext} from './ToggleButtonGroup';
 export {Tooltip, TooltipTrigger} from './Tooltip';
@@ -142,6 +143,7 @@ export type {TableViewProps, TableHeaderProps, TableBodyProps, RowProps, CellPro
 export type {TabsProps, TabProps, TabListProps, TabPanelProps} from './Tabs';
 export type {TagGroupProps, TagProps} from './TagGroup';
 export type {TextFieldProps, TextAreaProps} from './TextField';
+export type {ToastOptions, ToastContainerProps} from './Toast';
 export type {ToggleButtonProps} from './ToggleButton';
 export type {ToggleButtonGroupProps} from './ToggleButtonGroup';
 export type {TooltipProps} from './Tooltip';

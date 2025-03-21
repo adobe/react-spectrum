@@ -16,12 +16,12 @@ import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, StyleRenderProps, use
 import {createPortal} from 'react-dom';
 import {forwardRefType} from '@react-types/shared';
 import {QueuedToast, ToastQueue, ToastState, useToastQueue} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, useContext} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, ReactNode, useContext} from 'react';
 import {TextContext} from './Text';
 import {useIsSSR} from '@react-aria/ssr';
 import {useObjectRef} from '@react-aria/utils';
 
-const ToastStateContext = createContext<ToastState<any> | null>(null);
+export const ToastStateContext = createContext<ToastState<any> | null>(null);
 
 export interface ToastRegionRenderProps<T> {
   /** A list of all currently visible toasts. */
@@ -42,8 +42,8 @@ export interface ToastRegionRenderProps<T> {
 export interface ToastRegionProps<T> extends AriaToastRegionProps, StyleRenderProps<ToastRegionRenderProps<T>> {
   /** The queue of toasts to display. */
   queue: ToastQueue<T>,
-  /** A function to render each toast. */
-  children: (renderProps: {toast: QueuedToast<T>}) => ReactElement,
+  /** A function to render each toast, or children containing a `<ToastList>`. */
+  children: ReactNode | ((renderProps: {toast: QueuedToast<T>}) => ReactElement),
   /**
    * The container element in which the toast region portal will be placed.
    * @default document.body
@@ -97,7 +97,12 @@ export const ToastRegion = /*#__PURE__*/ (forwardRef as forwardRefType)(function
     : null;
 });
 
-export const ToastList = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastList<T>(props: ToastRegionProps<T>, ref: ForwardedRef<HTMLOListElement>) {
+export interface ToastListProps<T> extends Omit<ToastRegionProps<T>, 'queue' | 'children'> {
+  /** A function to render each toast. */
+  children: (renderProps: {toast: QueuedToast<T>}) => ReactElement
+}
+
+export const ToastList = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastList<T>(props: ToastListProps<T>, ref: ForwardedRef<HTMLOListElement>) {
   let state = useContext(ToastStateContext)!;
   let {hoverProps, isHovered} = useHover({});
   let renderProps = useRenderProps({

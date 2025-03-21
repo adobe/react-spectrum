@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-// @ts-nocheck
 import {ActionButton} from './ActionButton';
 import AlertIcon from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
 import {Button} from './Button';
@@ -26,18 +25,23 @@ import {focusRing, style} from '../style' with {type: 'macro'};
 import {FocusScope, useModalOverlay} from 'react-aria';
 import InfoIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
 import {mergeStyles} from '../style/runtime';
+import {ToastOptions as RACToastOptions, UNSTABLE_Toast as Toast, UNSTABLE_ToastContent as ToastContent, ToastProps, UNSTABLE_ToastQueue as ToastQueue, UNSTABLE_ToastRegion as ToastRegion, ToastRegionProps, UNSTABLE_ToastStateContext as ToastStateContext} from 'react-aria-components';
 import {Text} from './Content';
-import {UNSTABLE_Toast as Toast, UNSTABLE_ToastContent as ToastContent, ToastOptions, ToastProps, UNSTABLE_ToastQueue as ToastQueue, UNSTABLE_ToastRegion as ToastRegion, ToastRegionProps} from 'react-aria-components';
 import toastCss from './Toast.module.css';
 import {ToastList} from 'react-aria-components/src/Toast';
+import {useMediaQuery} from '@react-spectrum/utils';
 import {useOverlayTriggerState} from 'react-stately';
 
 export type ToastPlacement = 'top' | 'top end' | 'bottom' | 'bottom end';
-export interface SpectrumToastContainerProps extends Omit<ToastRegionProps<SpectrumToastValue>, 'queue' | 'children'> {
+export interface ToastContainerProps extends Omit<ToastRegionProps<SpectrumToastValue>, 'queue' | 'children'> {
+  /**
+   * Placement of the toast container on the page.
+   * @default "bottom"
+   */
   placement?: ToastPlacement
 }
 
-export interface SpectrumToastOptions extends Omit<ToastOptions, 'priority'>, DOMProps {
+export interface ToastOptions extends Omit<RACToastOptions, 'priority'>, DOMProps {
   /** A label for the action button within the toast. */
   actionLabel?: string,
   /** Handler that is called when the action button is pressed. */
@@ -47,10 +51,15 @@ export interface SpectrumToastOptions extends Omit<ToastOptions, 'priority'>, DO
 }
 
 export interface SpectrumToastValue extends DOMProps {
+  /** The content of the toast. */
   children: string,
+  /** The variant (i.e. color) of the toast. */
   variant: 'positive' | 'negative' | 'info' | 'neutral',
+  /** A label for the action button within the toast. */
   actionLabel?: string,
+  /** Handler that is called when the action button is pressed. */
   onAction?: () => void,
+  /** Whether the toast should automatically close when an action is performed. */
   shouldCloseOnAction?: boolean
 }
 
@@ -87,7 +96,7 @@ function getGlobalToastQueue() {
   return globalToastQueue;
 }
 
-function addToast(children: string, variant: SpectrumToastValue['variant'], options: SpectrumToastOptions = {}) {
+function addToast(children: string, variant: SpectrumToastValue['variant'], options: ToastOptions = {}) {
   let value = {
     children,
     variant,
@@ -100,7 +109,7 @@ function addToast(children: string, variant: SpectrumToastValue['variant'], opti
   // Minimum time of 5s from https://spectrum.adobe.com/page/toast/#Auto-dismissible
   // Actionable toasts cannot be auto dismissed. That would fail WCAG SC 2.2.1.
   // It is debatable whether non-actionable toasts would also fail.
-  let timeout = options.timeout && !options.onAction ? Math.max(options.timeout, 5000) : undefined;
+  let timeout = options.timeout && !options.actionLabel ? Math.max(options.timeout, 5000) : undefined;
   let queue = getGlobalToastQueue();
   let key = queue.add(value, {timeout, onClose: options.onClose});
   return () => queue.close(key);
@@ -110,19 +119,19 @@ type CloseFunction = () => void;
 
 const SpectrumToastQueue = {
   /** Queues a neutral toast. */
-  neutral(children: string, options: SpectrumToastOptions = {}): CloseFunction {
+  neutral(children: string, options: ToastOptions = {}): CloseFunction {
     return addToast(children, 'neutral', options);
   },
   /** Queues a positive toast. */
-  positive(children: string, options: SpectrumToastOptions = {}): CloseFunction {
+  positive(children: string, options: ToastOptions = {}): CloseFunction {
     return addToast(children, 'positive', options);
   },
   /** Queues a negative toast. */
-  negative(children: string, options: SpectrumToastOptions = {}): CloseFunction {
+  negative(children: string, options: ToastOptions = {}): CloseFunction {
     return addToast(children, 'negative', options);
   },
   /** Queues an informational toast. */
-  info(children: string, options: SpectrumToastOptions = {}): CloseFunction {
+  info(children: string, options: ToastOptions = {}): CloseFunction {
     return addToast(children, 'info', options);
   }
 };
@@ -239,7 +248,11 @@ const toastStyle = style({
   paddingY: 12,
   borderRadius: 'lg',
   minHeight: 56,
-  maxWidth: 336,
+  '--maxWidth': {
+    type: 'maxWidth',
+    value: 336
+  },
+  maxWidth: '[min(var(--maxWidth), 90vw)]',
   boxSizing: 'border-box',
   flexShrink: 0,
   font: 'ui',
@@ -304,7 +317,7 @@ const controls = style({
   }
 });
 
-export const ICONS = {
+const ICONS = {
   info: InfoIcon,
   negative: AlertIcon,
   positive: CheckmarkIcon
@@ -321,14 +334,14 @@ const ToastContainerContext = createContext<ToastContainerContextValue | null>(n
  * A ToastContainer renders the queued toasts in an application. It should be placed
  * at the root of the app.
  */
-export function ToastContainer(props: SpectrumToastContainerProps): ReactNode {
+export function ToastContainer(props: ToastContainerProps): ReactNode {
   let {
     placement = 'bottom'
   } = props;
   let queue = getGlobalToastQueue();
   let align = 'center';
-  [placement, align = 'center'] = placement.split(' ');
-  let regionRef = useRef(null);
+  [placement, align = 'center'] = placement.split(' ') as any;
+  let regionRef = useRef<HTMLDivElement | null>(null);
 
   let state = useOverlayTriggerState({});
   let {isOpen: isExpanded, close, toggle} = state;
@@ -356,7 +369,7 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactNode {
   }, [queue, isExpanded, close]);
 
   let collapse = () => {
-    regionRef.current.focus();
+    regionRef.current?.focus();
     ctx.toggleExpanded();
   };
 
@@ -367,7 +380,7 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactNode {
     if (e.key === 'Escape') {
       collapse();
     }
-  } : null);
+  } : undefined);
 
   return (
     <ToastRegion
@@ -388,7 +401,7 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactNode {
               className={toastCss['toast-background'] + style({position: 'fixed', inset: 0, backgroundColor: 'transparent-black-500'})}
               onClick={collapse} />
           )}
-          <SpectrumToastList placement={placement} align={align} queue={queue} />
+          <SpectrumToastList placement={placement} align={align} />
           <div className={toastCss['toast-controls'] + controls({isExpanded})}>
             <ActionButton
               size="S"
@@ -410,17 +423,22 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactNode {
   );
 }
 
-function SpectrumToastList({placement, align, queue}) {
+function SpectrumToastList({placement, align}) {
   let {isExpanded, toggleExpanded} = useContext(ToastContainerContext)!;
+
+  // Attach click handler to ref since ToastList doesn't pass through onClick/onPress.
   let toastListRef = useRef(null);
-  useEvent(toastListRef, 'click', () => {
-    if (!isExpanded) {
+  useEvent(toastListRef, 'click', (e) => {
+    // Have to check if this is a button because stopPropagation in react events doesn't affect native events.
+    if (!isExpanded && !(e.target as Element)?.closest('button')) {
       toggleExpanded();
     }
   });
 
+  let reduceMotion = useMediaQuery('(prefers-reduced-motion)');
+
   return (
-    <ToastList
+    <ToastList<SpectrumToastValue>
       ref={toastListRef}
       style={({isHovered}) => {
         let origin = isHovered ? 95 : 55;
@@ -430,43 +448,61 @@ function SpectrumToastList({placement, align, queue}) {
           transition: 'perspective-origin 400ms'
         };
       }}
-      className={toastList({placement, align, isExpanded})}>
+      className={toastCss[isExpanded ? 'toast-list-expanded' : 'toast-list-collapsed'] + toastList({placement, align, isExpanded})}>
       {({toast}) => (
-        <SpectrumToast toast={toast} queue={queue} placement={placement} align={align} />
+        <SpectrumToast
+          toast={toast}
+          placement={placement}
+          align={align}
+          reduceMotion={reduceMotion} />
       )}
     </ToastList>
   );
 }
 
-// Exported for stories.
-export function SpectrumToast(props: ToastProps<SpectrumToastValue>): ReactNode {
-  let {toast, queue, placement, align} = props;
+interface SpectrumToastProps extends ToastProps<SpectrumToastValue> {
+  placement?: 'top' | 'bottom',
+  align?: 'start' | 'center' | 'end',
+  reduceMotion?: boolean
+}
+
+// Exported locally for stories.
+export function SpectrumToast(props: SpectrumToastProps): ReactNode {
+  let {toast, placement = 'bottom', align = 'center'} = props;
   let variant = toast.content.variant || 'info';
   let Icon = ICONS[variant];
-  let visibleToasts = queue?.visibleToasts || [];
+  let state = useContext(ToastStateContext)!;
+  let visibleToasts = state.visibleToasts;
   let index = visibleToasts.indexOf(toast);
-  let isLast = index <= 0;
+  let isMain = index <= 0;
   let ctx = useContext(ToastContainerContext);
-  let toastRef = useRef(null);
+  let isExpanded = ctx?.isExpanded || false;
+  let toastRef = useRef<HTMLDivElement | null>(null);
 
   // When not expanded, use a presentational div for the toasts behind the top one.
-  if (!isLast && ctx && !ctx.isExpanded) {
+  // The content is invisible, all we show is the background color.
+  if (!isMain && ctx && !ctx.isExpanded) {
     return (
       <div
         role="presentation"
         style={{
-          position: isLast ? undefined : 'absolute',
-          [placement === 'top' ? 'bottom' : 'top']: !isLast ? 0 : undefined,
-          left: !isLast ? 0 : undefined,
-          translate: '0 0 ' + (-12 * index) + 'px',
-          width: isLast ? undefined : '100%',
-          height: isLast ? undefined : 0,
+          position: 'absolute',
+          [placement === 'top' ? 'bottom' : 'top']: 0,
+          left: 0,
+          width: '100%',
+          translate: `0 0 ${(-12 * index)}px`,
+          // Only 3 toasts are visible in the stack at once, but all toasts are in the DOM.
+          // This allows view transitions to smoothly animate them from where they would be 
+          // in the collapsed stack to their final position in the expanded list.
           opacity: index >= 3 ? 0 : 1,
           zIndex: visibleToasts.length - index - 1,
-          viewTransitionName: toast.key,
-          viewTransitionClass: [toastCss.toast, isLast && toastCss.last, toastCss[placement], toastCss[align]].filter(Boolean).map(c => CSS.escape(c)).join(' ')
+          // When reduced motion is enabled, use append index to view-transition-name
+          // so that adding/removing a toast cross fades instead of transitioning the position.
+          // This works because the toasts are seen as separate elements instead of the same one when their index changes.
+          viewTransitionName: toast.key + (props.reduceMotion ? '-' + index : ''),
+          viewTransitionClass: [toastCss.toast, toastCss['background-toast']].map(c => CSS.escape(c)).join(' ')
         }}
-        className={toastStyle({variant: toast.content.variant || 'info', index, isExpanded: ctx.isExpanded})} />
+        className={toastCss.toast + toastStyle({variant: toast.content.variant || 'info', index, isExpanded})} />
     );
   }
 
@@ -477,18 +513,18 @@ export function SpectrumToast(props: ToastProps<SpectrumToastValue>): ReactNode 
       style={{
         zIndex: visibleToasts.length - index - 1,
         viewTransitionName: toast.key,
-        viewTransitionClass: [toastCss.toast, isLast && toastCss.last, toastCss[placement], toastCss[align]].filter(Boolean).map(c => CSS.escape(c)).join(' ')
+        viewTransitionClass: [toastCss.toast, !isMain ? toastCss['background-toast'] : '', toastCss[placement], toastCss[align]].filter(Boolean).map(c => CSS.escape(c)).join(' ')
       }}
-      className={renderProps => mergeStyles(
-        toastFocusRing({...renderProps, isExpanded: ctx?.isExpanded}),
+      className={renderProps => toastCss.toast + mergeStyles(
+        toastFocusRing({...renderProps, isExpanded}),
         toastStyle({
           variant: toast.content.variant || 'info',
           index,
-          isExpanded: ctx?.isExpanded
+          isExpanded
         })
       )}>
-      <div role="presentation" className={toastBody({isSingle: !isLast || visibleToasts.length === 1 || ctx?.isExpanded})}>
-        <ToastContent className={toastContent + (isLast ? ` ${toastCss['toast-content']}` : null)}>
+      <div role="presentation" className={toastBody({isSingle: !isMain || visibleToasts.length <= 1 || isExpanded})}>
+        <ToastContent className={toastContent + (isMain ? ` ${toastCss['toast-content']}` : null)}>
           {Icon &&
             <CenterBaseline>
               <Icon />
@@ -496,22 +532,22 @@ export function SpectrumToast(props: ToastProps<SpectrumToastValue>): ReactNode 
           }
           <Text slot="title">{toast.content.children}</Text>
         </ToastContent>
-        {!ctx?.isExpanded && visibleToasts.length > 1 && 
+        {!isExpanded && visibleToasts.length > 1 && 
           <ActionButton
-            variant="secondary"
             isQuiet
             staticColor="white"
             styles={style({gridArea: 'expand'})}
             // Make the chevron line up with the toast text, even though there is padding within the button.
             UNSAFE_style={{marginInlineStart: variant === 'neutral' ? -10 : 14}}
-            UNSAFE_className={isLast ? toastCss['toast-expand'] : undefined}
+            UNSAFE_className={isMain ? toastCss['toast-expand'] : undefined}
             onPress={() => {
               // This button disappears when clicked, so move focus to the toast.
-              toastRef.current.focus();
-              ctx.toggleExpanded();
+              toastRef.current?.focus();
+              ctx?.toggleExpanded();
             }}>
             {/* TODO: translate */}
             <Text>Show all</Text>
+            {/* @ts-ignore */}
             <Chevron UNSAFE_style={{rotate: placement === 'bottom' ? '180deg' : undefined}} />
           </ActionButton>
         }
@@ -520,8 +556,13 @@ export function SpectrumToast(props: ToastProps<SpectrumToastValue>): ReactNode 
             variant="secondary"
             fillStyle="outline"
             staticColor="white"
-            onPress={toast.content.onAction}
-            UNSAFE_className={isLast ? toastCss['toast-action'] : undefined}
+            onPress={() => {
+              toast.content.onAction?.();
+              if (toast.content.shouldCloseOnAction) {
+                state.close(toast.key);
+              }
+            }}
+            UNSAFE_className={isMain ? toastCss['toast-action'] : undefined}
             styles={style({marginStart: 'auto', gridArea: 'action'})}>
             {toast.content.actionLabel}
           </Button>
@@ -529,7 +570,7 @@ export function SpectrumToast(props: ToastProps<SpectrumToastValue>): ReactNode 
       </div>
       <CloseButton
         staticColor="white"
-        UNSAFE_className={isLast ? toastCss['toast-close'] : undefined} />
+        UNSAFE_className={isMain ? toastCss['toast-close'] : undefined} />
     </Toast>
   );
 }

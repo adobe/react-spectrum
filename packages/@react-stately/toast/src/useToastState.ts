@@ -105,7 +105,7 @@ export class ToastQueue<T> {
   }
 
   /** Subscribes to updates to the visible toasts. */
-  subscribe(fn: () => void): () => boolean {
+  subscribe(fn: () => void): () => void {
     this.subscriptions.add(fn);
     return () => this.subscriptions.delete(fn);
   }
