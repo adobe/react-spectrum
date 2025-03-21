@@ -621,6 +621,86 @@ describe('Autocomplete', () => {
     let options = within(menu).getAllByRole('menuitem');
     expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
   });
+
+  it('should close the Dialog on the second press of Escape if the inner ListBox has disallowClearAll', async () => {
+    const DialogExample = ({disallowClearAll = false}) => {
+      let {contains} = useFilter({sensitivity: 'base'});
+
+      return (
+        <DialogTrigger>
+          <Button aria-label="Menu">☰</Button>
+          <Popover>
+            <Dialog>
+              <Button>First</Button>
+              <Button>Second</Button>
+              <Autocomplete filter={contains}>
+                <SearchField autoFocus aria-label="Search">
+                  <Input />
+                </SearchField>
+                <StaticListbox disallowClearAll={disallowClearAll} selectionMode="single" defaultSelectedKeys={['1']} />
+              </Autocomplete>
+            </Dialog>
+          </Popover>
+        </DialogTrigger>
+      );
+    };
+
+    let {getByRole, getAllByRole, rerender, queryAllByRole} = render(<DialogExample disallowClearAll />);
+    let button = getByRole('button');
+    await user.tab();
+    expect(document.activeElement).toBe(button);
+    await user.keyboard('{Enter}');
+    act(() => jest.runAllTimers());
+
+    let dialogs = getAllByRole('dialog');
+    expect(dialogs).toHaveLength(1);
+    let options = getAllByRole('option');
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+
+    let input = getByRole('searchbox');
+    expect(document.activeElement).toBe(input);
+    await user.keyboard('I');
+    expect(input).toHaveValue('I');
+
+    await user.keyboard('{Escape}');
+    expect(input).toHaveValue('');
+
+    await user.keyboard('{Escape}');
+    act(() => jest.runAllTimers());
+    dialogs = queryAllByRole('dialog');
+    expect(dialogs).toHaveLength(0);
+
+    // Test without disallowClearAll, 2nd Escape should clear selection instead of closing the dialog
+    rerender(<DialogExample />);
+    button = getByRole('button');
+    await user.click(button);
+    act(() => jest.runAllTimers());
+
+    dialogs = getAllByRole('dialog');
+    expect(dialogs).toHaveLength(1);
+    options = getAllByRole('option');
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+
+    input = getByRole('searchbox');
+    expect(document.activeElement).toBe(input);
+    await user.keyboard('I');
+    expect(input).toHaveValue('I');
+
+    await user.keyboard('{Escape}');
+    expect(input).toHaveValue('');
+
+    await user.keyboard('{Escape}');
+    act(() => jest.runAllTimers());
+    dialogs = queryAllByRole('dialog');
+    expect(dialogs).toHaveLength(1);
+    options = getAllByRole('option');
+    expect(options[0]).not.toHaveAttribute('aria-selected', 'true');
+
+    await user.keyboard('{Escape}');
+    act(() => jest.runAllTimers());
+    dialogs = queryAllByRole('dialog');
+    expect(dialogs).toHaveLength(0);
+  });
 });
 
 AriaAutocompleteTests({

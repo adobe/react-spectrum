@@ -32,7 +32,12 @@ export interface AriaListBoxProps<T> extends AriaListBoxPropsBase<T> {
    * Handler that is called when a user performs an action on an item. The exact user event depends on
    * the collection's `selectionBehavior` prop and the interaction modality.
    */
-  onAction?: (key: Key) => void
+  onAction?: (key: Key) => void,
+  /**
+   * Whether the listbox allows the user to clear all selected items via Escape.
+   * @default false
+   */
+  disallowClearAll?: boolean
 }
 
 export interface SpectrumListBoxProps<T> extends AriaListBoxPropsBase<T>, AsyncLoadable, StyleProps {

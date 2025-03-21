@@ -22,7 +22,8 @@ export default {
   title: 'React Aria Components',
   args: {
     onAction: action('onAction'),
-    selectionMode: 'multiple'
+    selectionMode: 'multiple',
+    disallowClearAll: false
   },
   argTypes: {
     onAction: {
@@ -109,8 +110,6 @@ function AutocompleteWrapper(props) {
 
 export const AutocompleteExample = {
   render: (args) => {
-    let {onAction, onSelectionChange, selectionMode} = args;
-
     return (
       <AutocompleteWrapper>
         <div>
@@ -119,7 +118,7 @@ export const AutocompleteExample = {
             <Input />
             <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
           </TextField>
-          <StaticMenu onAction={onAction} onSelectionChange={onSelectionChange} selectionMode={selectionMode} />
+          <StaticMenu {...args} />
         </div>
       </AutocompleteWrapper>
     );
@@ -129,7 +128,6 @@ export const AutocompleteExample = {
 
 export const AutocompleteSearchfield = {
   render: (args) => {
-    let {onAction, onSelectionChange, selectionMode} = args;
     return (
       <AutocompleteWrapper defaultInputValue="Ba">
         <div>
@@ -138,7 +136,7 @@ export const AutocompleteSearchfield = {
             <Input />
             <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
           </SearchField>
-          <StaticMenu onAction={onAction} onSelectionChange={onSelectionChange} selectionMode={selectionMode} />
+          <StaticMenu {...args} />
         </div>
       </AutocompleteWrapper>
     );
@@ -288,8 +286,6 @@ let dynamicRenderFuncSections = (item: ItemNode) => {
 
 export const AutocompleteMenuDynamic = {
   render: (args) => {
-    let {onAction, onSelectionChange, selectionMode} = args;
-
     return (
       <>
         <input />
@@ -300,7 +296,7 @@ export const AutocompleteMenuDynamic = {
               <Input />
               <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
             </SearchField>
-            <Menu className={styles.menu} items={dynamicAutocompleteSubdialog} onAction={onAction} onSelectionChange={onSelectionChange} selectionMode={selectionMode}>
+            <Menu className={styles.menu} items={dynamicAutocompleteSubdialog} {...args}>
               {item => dynamicRenderFuncSections(item)}
             </Menu>
           </div>
@@ -314,7 +310,6 @@ export const AutocompleteMenuDynamic = {
 
 export const AutocompleteOnActionOnMenuItems = {
   render: (args) => {
-    let {onSelectionChange, selectionMode} = args;
     return (
       <AutocompleteWrapper>
         <div>
@@ -323,7 +318,7 @@ export const AutocompleteOnActionOnMenuItems = {
             <Input />
             <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
           </SearchField>
-          <Menu className={styles.menu} onSelectionChange={onSelectionChange} selectionMode={selectionMode}>
+          <Menu className={styles.menu} {...args}>
             <MyMenuItem onAction={action('Foo action')}>Foo</MyMenuItem>
             <MyMenuItem onAction={action('Bar action')}>Bar</MyMenuItem>
             <MyMenuItem onAction={action('Baz action')}>Baz</MyMenuItem>
@@ -344,7 +339,6 @@ let items: AutocompleteItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'},
 
 export const AutocompleteDisabledKeys = {
   render: (args) => {
-    let {onAction, onSelectionChange, selectionMode} = args;
     return (
       <AutocompleteWrapper>
         <div>
@@ -353,8 +347,8 @@ export const AutocompleteDisabledKeys = {
             <Input />
             <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
           </SearchField>
-          <Menu className={styles.menu} items={items} onAction={onAction} disabledKeys={['2']} onSelectionChange={onSelectionChange} selectionMode={selectionMode}>
-            {item => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
+          <Menu className={styles.menu} items={items} disabledKeys={['2']} {...args}>
+            {(item: AutocompleteItem) => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
           </Menu>
         </div>
       </AutocompleteWrapper>
@@ -386,7 +380,7 @@ const AsyncExample = (args) => {
       };
     }
   });
-  let {onSelectionChange, selectionMode, includeLoadState} = args;
+  let {onSelectionChange, selectionMode, includeLoadState, disallowClearAll} = args;
   let renderEmptyState;
   if (includeLoadState) {
     renderEmptyState = list.isLoading ? () => 'Loading' : () => 'No results found.';
@@ -401,6 +395,7 @@ const AsyncExample = (args) => {
           <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
         </SearchField>
         <ListBox<AutocompleteItem>
+          disallowClearAll={disallowClearAll}
           renderEmptyState={renderEmptyState}
           items={includeLoadState && list.isLoading ? [] : list.items}
           className={styles.menu}
@@ -428,7 +423,7 @@ const CaseSensitiveFilter = (args) => {
     sensitivity: 'case'
   });
   let defaultFilter = (itemText, input) => contains(itemText, input);
-  let {onAction, onSelectionChange, selectionMode} = args;
+
   return (
     <Autocomplete filter={defaultFilter}>
       <div>
@@ -437,8 +432,8 @@ const CaseSensitiveFilter = (args) => {
           <Input />
           <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
         </SearchField>
-        <Menu className={styles.menu} items={items} onAction={onAction} onSelectionChange={onSelectionChange} selectionMode={selectionMode}>
-          {item => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
+        <Menu className={styles.menu} items={items} {...args}>
+          {(item: AutocompleteItem) => <MyMenuItem id={item.id}>{item.name}</MyMenuItem>}
         </Menu>
       </div>
     </Autocomplete>
@@ -454,35 +449,51 @@ export const AutocompleteCaseSensitive = {
 
 export const AutocompleteWithListbox = {
   render: (args) => {
-    let {onSelectionChange, selectionMode} = args;
     return (
-      <AutocompleteWrapper defaultInputValue="Ba">
-        <div>
-          <SearchField autoFocus>
-            <Label style={{display: 'block'}}>Test</Label>
-            <Input />
-            <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
-          </SearchField>
-          <ListBox className={styles.menu} onSelectionChange={onSelectionChange} selectionMode={selectionMode} aria-label="test listbox with section">
-            <ListBoxSection className={styles.group}>
-              <Header style={{fontSize: '1.2em'}}>Section 1</Header>
-              <MyListBoxItem>Foo</MyListBoxItem>
-              <MyListBoxItem>Bar</MyListBoxItem>
-              <MyListBoxItem>Baz</MyListBoxItem>
-              <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
-            </ListBoxSection>
-            <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
-            <ListBoxSection className={styles.group} aria-label="Section 2">
-              <MyListBoxItem>Copy</MyListBoxItem>
-              <MyListBoxItem>Paste</MyListBoxItem>
-              <MyListBoxItem>Cut</MyListBoxItem>
-            </ListBoxSection>
-          </ListBox>
-        </div>
-      </AutocompleteWrapper>
+      <DialogTrigger>
+        <Button>
+          Open popover
+        </Button>
+        <Popover
+          placement="bottom start"
+          style={{
+            background: 'Canvas',
+            color: 'CanvasText',
+            border: '1px solid gray',
+            padding: 20,
+            height: 250
+          }}>
+          {() => (
+            <AutocompleteWrapper defaultInputValue="Ba">
+              <div>
+                <SearchField autoFocus>
+                  <Label style={{display: 'block'}}>Test</Label>
+                  <Input />
+                  <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+                </SearchField>
+                <ListBox className={styles.menu} {...args} aria-label="test listbox with section">
+                  <ListBoxSection className={styles.group}>
+                    <Header style={{fontSize: '1.2em'}}>Section 1</Header>
+                    <MyListBoxItem>Foo</MyListBoxItem>
+                    <MyListBoxItem>Bar</MyListBoxItem>
+                    <MyListBoxItem>Baz</MyListBoxItem>
+                    <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
+                  </ListBoxSection>
+                  <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
+                  <ListBoxSection className={styles.group} aria-label="Section 2">
+                    <MyListBoxItem>Copy</MyListBoxItem>
+                    <MyListBoxItem>Paste</MyListBoxItem>
+                    <MyListBoxItem>Cut</MyListBoxItem>
+                  </ListBoxSection>
+                </ListBox>
+              </div>
+            </AutocompleteWrapper>
+          )}
+        </Popover>
+      </DialogTrigger>
     );
   },
-  name: 'Autocomplete with ListBox'
+  name: 'Autocomplete with ListBox + Popover'
 };
 
 function VirtualizedListBox(props) {
@@ -495,15 +506,16 @@ function VirtualizedListBox(props) {
     initialItems: items
   });
 
-  let {onSelectionChange, selectionMode} = props;
+  let {onSelectionChange, selectionMode, disallowClearAll} = props;
 
   return (
     <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 25}}>
       <ListBox
+        disallowClearAll={disallowClearAll}
         onSelectionChange={onSelectionChange}
         selectionMode={selectionMode}
         className={styles.menu}
-        style={{height: 400}}
+        style={{height: 200}}
         aria-label="virtualized listbox"
         items={list.items}>
         {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
@@ -514,21 +526,37 @@ function VirtualizedListBox(props) {
 
 export const AutocompleteWithVirtualizedListbox = {
   render: (args) => {
-    let {onSelectionChange, selectionMode} = args;
     return (
-      <AutocompleteWrapper>
-        <div>
-          <SearchField autoFocus>
-            <Label style={{display: 'block'}}>Test</Label>
-            <Input />
-            <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
-          </SearchField>
-          <VirtualizedListBox onSelectionChange={onSelectionChange} selectionMode={selectionMode} />
-        </div>
-      </AutocompleteWrapper>
+      <DialogTrigger>
+        <Button>
+          Open popover
+        </Button>
+        <Popover
+          placement="bottom start"
+          style={{
+            background: 'Canvas',
+            color: 'CanvasText',
+            border: '1px solid gray',
+            padding: 20,
+            height: 250
+          }}>
+          {() => (
+            <AutocompleteWrapper>
+              <div>
+                <SearchField autoFocus>
+                  <Label style={{display: 'block'}}>Test</Label>
+                  <Input />
+                  <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+                </SearchField>
+                <VirtualizedListBox {...args} />
+              </div>
+            </AutocompleteWrapper>
+          )}
+        </Popover>
+      </DialogTrigger>
     );
   },
-  name: 'Autocomplete with ListBox, virtualized'
+  name: 'Autocomplete with ListBox + Popover, virtualized'
 };
 
 let lotsOfSections: any[] = [];
@@ -751,9 +779,11 @@ export function AutocompleteWithExtraButtons() {
   );
 }
 
+// TODO: note that Space is used to select an item in a multiselect menu but that is also reserved for the
+// autocomplete input field. Should we add logic to allow Space to select menu items when focus is in the Menu
+// or is that a rare/unlikely use case for menus in general?
 export const AutocompleteMenuInPopoverDialogTrigger = {
   render: (args) => {
-    let {onAction, onSelectionChange, selectionMode} = args;
     return (
       <DialogTrigger>
         <Button>
@@ -775,7 +805,7 @@ export const AutocompleteMenuInPopoverDialogTrigger = {
                 <Input />
                 <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
               </SearchField>
-              <Menu className={styles.menu} items={dynamicAutocompleteSubdialog}  onAction={onAction} onSelectionChange={onSelectionChange} selectionMode={selectionMode}>
+              <Menu className={styles.menu} items={dynamicAutocompleteSubdialog} {...args}>
                 {item => dynamicRenderFuncSections(item)}
               </Menu>
             </div>
