@@ -95,7 +95,13 @@ export interface SpectrumButtonProps<T extends ElementType = 'button'> extends A
    * Whether the button should be displayed with a quiet style.
    * @deprecated
    */
-  isQuiet?: boolean
+  isQuiet?: boolean, 
+  /**
+   * The `<form>` element to associate the button with.
+   * The value of this attribute must be the id of a `<form>` in the same document.
+   * See [form attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#form).
+   */
+  form?: string
 }
 
 export interface SpectrumActionButtonProps extends AriaBaseButtonProps, ButtonProps, StyleProps {
