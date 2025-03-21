@@ -29,5 +29,8 @@
   "tag.hideButtonLabel": "显示更少",
   "tag.noTags": "无",
   "tag.showAllButtonLabel": "全部显示 ({tagCount, number})",
-  "breadcrumbs.more": "更多项目"
+  "breadcrumbs.more": "更多项目",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

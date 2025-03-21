@@ -29,5 +29,8 @@
   "tag.hideButtonLabel": "Minder weergeven",
   "tag.noTags": "Geen",
   "tag.showAllButtonLabel": "Alles tonen ({tagCount, number})",
-  "breadcrumbs.more": "Meer items"
+  "breadcrumbs.more": "Meer items",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

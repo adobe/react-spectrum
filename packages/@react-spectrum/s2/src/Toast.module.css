@@ -1,0 +1,153 @@
+/* Safari doesn't support :active-view-transition-type() yet, so we fall back to a class on the html element */
+html.toast-add,
+html.toast-remove,
+html.toast-expand,
+html.toast-collapse,
+html.toast-clear,
+html:active-view-transition-type(toast-add, toast-remove, toast-expand, toast-collapse, toast-clear) {
+  view-transition-name: none;
+
+  .toast-controls {
+    view-transition-name: toast-controls;
+  }
+
+  .toast-background {
+    view-transition-name: toast-background;
+  }
+
+  &::view-transition-group(toast-background) {
+    z-index: -1;
+  }
+
+  &::view-transition-group(*) {
+    animation-duration: 400ms;
+  }
+}
+
+html.toast-add,
+html.toast-remove,
+html:active-view-transition-type(toast-add, toast-remove) {
+  /* The new toast should slide in and out. With reduce motion enabled, it fades by default. */
+  @media (prefers-reduced-motion: no-preference) {
+    &::view-transition-new(.toast):only-child {
+      animation-name: slide-in;
+    }
+
+    &::view-transition-old(.toast):only-child {
+      animation-name: slide-out;
+    }
+  }
+
+  &::view-transition-group(.toast.bottom) {
+    --slideX: 0;
+    --slideY: calc(100% + 12px);
+  }
+  
+  &::view-transition-group(.toast.top) {
+    --slideX: 0;
+    --slideY: calc(-100% - 12px);
+  }
+  
+  &::view-transition-group(.toast.start) {
+    --slideX: calc(-100% - 12px);
+    --slideY: 0;
+  }
+  
+  &::view-transition-group(.toast.end) {
+    --slideX: calc(100% + 12px);
+    --slideY: 0;
+  }  
+}
+
+/* Make the "Show all" button animate slightly faster/slower than other components when expanding/collapsing.
+ * This prevents it from appearing to overlap the text when it fades out and the text repositions. */
+html.toast-expand,
+html:active-view-transition-type(toast-expand) {
+  &::view-transition-group(toast-expand) {
+    animation-duration: 300ms;
+  }
+}
+
+html.toast-collapse,
+html:active-view-transition-type(toast-collapse) {
+  &::view-transition-group(toast-expand) {
+    animation-duration: 600ms;
+  }
+}
+
+html.toast-expand,
+html.toast-collapse,
+html:active-view-transition-type(toast-expand, toast-collapse) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* When expanding/collapsing, animate the components of the main toast individually. */
+    .toast-content {
+      view-transition-name: toast-content;
+    }
+
+    .toast-expand {
+      view-transition-name: toast-expand;
+    }
+
+    .toast-action {
+      view-transition-name: toast-action;
+    }
+
+    .toast-close {
+      view-transition-name: toast-close;
+    }
+
+    /* Force toast controls to be visible during the animation */
+    .toast-controls {
+      display: flex;
+    }
+
+    /* Smoothly transition the size of toasts. */
+    &::view-transition-old(.toast),
+    &::view-transition-new(.toast) {
+      /* Make the old and new images fill the size of the parent group. */
+      height: 100%;
+      width: 100%;
+    }
+
+    /* Background toasts don't have their components split apart in separate view transitions.
+     * This means we need to do some tricks to get the aspect ratio to transition smoothly.
+     * Clipping messes up the shadows a bit, but it's less noticeable on the background toasts. */
+    &::view-transition-old(.background-toast),
+    &::view-transition-new(.background-toast) {
+      /* Cover all of the available space without stretching the aspect ratio */
+      object-fit: cover;
+      object-position: top center;
+      /* Clip to retain rounded corners */
+      clip-path: inset(0px round 10px);
+    }
+  }
+
+  @media (prefers-reduced-motion) {
+    /* Do not animate individual toasts in reduced motion. The whole list cross-fades instead. */
+    .toast {
+      view-transition-name: none !important;
+    }
+
+    .toast-list-expanded {
+      view-transition-name: toast-list-expanded;
+    }
+
+    .toast-list-collapsed {
+      view-transition-name: toast-list-collapsed;
+    }
+  }
+}
+
+@keyframes slide-in {
+  from {
+    translate: var(--slideX) var(--slideY);
+    opacity: 0;
+  }
+}
+
+@keyframes slide-out {
+  to {
+    translate: var(--slideX) var(--slideY);
+    opacity: 0;
+  }
+}
