@@ -37,16 +37,3 @@ export const Example: Story = {
     );
   }
 };
-
-export const AllValues: Story = {
-  render: (args) => {
-    return (
-      <div style={{display: 'flex', flexWrap: 'wrap', gap: 8, maxWidth: '600px'}}>
-        <NotificationBadge {...args} />
-        {Array.from({length: 100}, (_, i) => i + 1).map(value => (
-          <NotificationBadge key={value} {...args} value={value} />
-        ))}
-      </div>
-    );
-  }
-};

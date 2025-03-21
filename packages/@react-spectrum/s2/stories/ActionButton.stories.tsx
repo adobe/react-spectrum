@@ -18,7 +18,7 @@ import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {style} from '../style' with { type: 'macro' };
 import './unsafe.css';
-import {NumberFormatter} from '@internationalized/number';
+import {useNumberFormatter} from 'react-aria';
 
 const meta: Meta<typeof ActionButton> = {
   component: ActionButton,
@@ -202,18 +202,40 @@ export const Avatars: Story = {
   }
 };
 
-export const NotificationBadges: Story = {
-  render: (args) => {
-    let badgeValue = 10;
-    let formattedValue = new NumberFormatter('en-US').format(badgeValue);
+const NotificationBadgesExample = (args) => {
+  let badgeValue = 10;
+  let formattedValue = useNumberFormatter().format(badgeValue);
 
-    return (
-      <div style={{display: 'flex', gap: 8, padding: 8, justifyContent: 'center'}}>
-        <ActionButton aria-label="Messages has new activity" {...args}><CommentIcon /><NotificationBadge /></ActionButton>
-        <ActionButton aria-label={`${formattedValue} notifications`} {...args}><BellIcon /><NotificationBadge value={badgeValue} /></ActionButton>
-        <ActionButton {...args}><CommentIcon /><Text>Messages</Text><NotificationBadge value={5} /></ActionButton>
-        <ActionButton {...args}><Text>Notifications</Text><NotificationBadge value={105} /></ActionButton>
-      </div>
-    );
+  return (
+    <div style={{display: 'flex', gap: 8, padding: 8, justifyContent: 'center'}}>
+      <ActionButton aria-label="Messages has new activity" {...args}><CommentIcon /><NotificationBadge /></ActionButton>
+      <ActionButton aria-label={`${formattedValue} notifications`} {...args}><BellIcon /><NotificationBadge value={badgeValue} /></ActionButton>
+      <ActionButton {...args}><CommentIcon /><Text>Messages</Text><NotificationBadge value={5} /></ActionButton>
+      <ActionButton {...args}><Text>Notifications</Text><NotificationBadge value={105} /></ActionButton>
+    </div>
+  );
+};
+
+export const NotificationBadges: Story = {
+  render: NotificationBadgesExample
+};
+
+NotificationBadges.parameters = {
+  docs: {
+    source: {
+      transform: () => {
+        return `let badgeValue = 10;
+        let formattedValue = useNumberFormatter().format(badgeValue);
+      
+        return (
+          <div style={{display: 'flex', gap: 8, padding: 8, justifyContent: 'center'}}>
+            <ActionButton aria-label="Messages has new activity" {...props}><CommentIcon /><NotificationBadge /></ActionButton>
+            <ActionButton aria-label={\`\${formattedValue} notifications\`}  {...props}><BellIcon /><NotificationBadge value={badgeValue} /></ActionButton>
+            <ActionButton {...props}><CommentIcon /><Text>Messages</Text><NotificationBadge value={5} /></ActionButton>
+            <ActionButton {...props}><Text>Notifications</Text><NotificationBadge value={105} /></ActionButton>
+          </div>
+        )`;
+      }
+    }
   }
 };
