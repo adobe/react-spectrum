@@ -25,10 +25,9 @@ import {focusRing, style} from '../style' with {type: 'macro'};
 import {FocusScope, useModalOverlay} from 'react-aria';
 import InfoIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
 import {mergeStyles} from '../style/runtime';
-import {ToastOptions as RACToastOptions, UNSTABLE_Toast as Toast, UNSTABLE_ToastContent as ToastContent, ToastProps, UNSTABLE_ToastQueue as ToastQueue, UNSTABLE_ToastRegion as ToastRegion, ToastRegionProps, UNSTABLE_ToastStateContext as ToastStateContext} from 'react-aria-components';
+import {ToastOptions as RACToastOptions, UNSTABLE_Toast as Toast, UNSTABLE_ToastContent as ToastContent, UNSTABLE_ToastList as ToastList, ToastProps, UNSTABLE_ToastQueue as ToastQueue, UNSTABLE_ToastRegion as ToastRegion, ToastRegionProps, UNSTABLE_ToastStateContext as ToastStateContext} from 'react-aria-components';
 import {Text} from './Content';
 import toastCss from './Toast.module.css';
-import {ToastList} from 'react-aria-components/src/Toast';
 import {useMediaQuery} from '@react-spectrum/utils';
 import {useOverlayTriggerState} from 'react-stately';
 
