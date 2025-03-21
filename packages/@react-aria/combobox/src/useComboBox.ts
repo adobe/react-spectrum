@@ -80,7 +80,8 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     // completionMode = 'suggest',
     shouldFocusWrap,
     isReadOnly,
-    isDisabled
+    isDisabled,
+    shouldFocusOnHover = true
   } = props;
   let backupBtnRef = useRef(null);
   buttonRef = buttonRef ?? backupBtnRef;
@@ -378,7 +379,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       autoFocus: state.focusStrategy,
       shouldUseVirtualFocus: true,
       shouldSelectOnPressUp: true,
-      shouldFocusOnHover: true,
+      shouldFocusOnHover: shouldFocusOnHover,
       linkBehavior: 'selection' as const
     }),
     descriptionProps,
