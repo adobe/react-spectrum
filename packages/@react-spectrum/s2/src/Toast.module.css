@@ -94,8 +94,9 @@ html:active-view-transition-type(toast-expand, toast-collapse) {
     view-transition-name: toast-close;
   }
 
+  /* Force toast controls to be visible during the animation */
   .toast-controls {
-    display: flex !important;
+    display: flex;
   }
 
   &::view-transition-old(.toast.last),

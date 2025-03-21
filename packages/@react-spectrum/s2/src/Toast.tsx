@@ -263,6 +263,8 @@ const toastStyle = style({
 });
 
 const toastBody = style({
+  // The top toast in a non-expanded stack has the expand button, so it is rendered as a grid.
+  // Otherwise it uses flex so the content can wrap when needed.
   display: {
     default: 'grid',
     isSingle: 'flex'
@@ -286,6 +288,20 @@ const toastContent = style({
   gridArea: 'content',
   cursor: 'default',
   width: 'fit'
+});
+
+const controls = style({
+  colorScheme: 'light',
+  display: {
+    default: 'none',
+    isExpanded: 'flex'
+  },
+  justifyContent: 'end',
+  gap: 8,
+  opacity: {
+    default: 0,
+    isExpanded: 1
+  }
 });
 
 export const ICONS = {
@@ -330,6 +346,7 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactNode {
     }
   }), [isExpanded, toggle, queue]);
 
+  // Set the state to collapsed whenever the queue is emptied.
   useEffect(() => {
     return queue.subscribe(() => {
       if (queue.visibleToasts.length === 0 && isExpanded) {
@@ -338,12 +355,17 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactNode {
     });
   }, [queue, isExpanded, close]);
 
+  let collapse = () => {
+    regionRef.current.focus();
+    ctx.toggleExpanded();
+  };
+
   // Prevent scroll, aria hide outside, and contain focus when expanded, since we take over the whole screen.
   // Attach event handler to the ref since ToastRegion doesn't pass through onKeyDown.
   useModalOverlay({}, state, regionRef);
   useEvent(regionRef, 'keydown', isExpanded ? (e) => {
     if (e.key === 'Escape') {
-      ctx.toggleExpanded();
+      collapse();
     }
   } : null);
 
@@ -364,28 +386,10 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactNode {
             // eslint-disable-next-line
             <div
               className={toastCss['toast-background'] + style({position: 'fixed', inset: 0, backgroundColor: 'transparent-black-500'})}
-              onClick={() => ctx.toggleExpanded()} />
+              onClick={collapse} />
           )}
-          <ToastList
-            style={({isHovered}) => {
-              let origin = isHovered ? 95 : 55;
-              return {
-                perspective: 80,
-                perspectiveOrigin: 'center ' + (placement === 'top' ? `calc(100% + ${origin}px)` : `${-origin}px`),
-                transition: 'perspective-origin 400ms'
-              }; 
-            }}
-            className={toastList({placement, align, isExpanded})}
-            onClick={() => {
-              if (!ctx.isExpanded) {
-                ctx.toggleExpanded();
-              }
-            }}>
-            {({toast}) => (
-              <SpectrumToast toast={toast} queue={queue} placement={placement} align={align} />
-            )}
-          </ToastList>
-          <div className={toastCss['toast-controls']} style={{display: isExpanded ? 'flex' : 'none', justifyContent: 'end', gap: 8, opacity: isExpanded ? 1 : 0}}>
+          <SpectrumToastList placement={placement} align={align} queue={queue} />
+          <div className={toastCss['toast-controls'] + controls({isExpanded})}>
             <ActionButton
               size="S"
               onPress={() => queue.clear()}
@@ -395,10 +399,7 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactNode {
             </ActionButton>
             <ActionButton
               size="S"
-              onPress={() => {
-                regionRef.current.focus();
-                ctx.toggleExpanded();
-              }}
+              onPress={collapse}
               UNSAFE_style={{outlineColor: 'white'}}>
               Collapse
             </ActionButton>
@@ -406,6 +407,34 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactNode {
         </ToastContainerContext.Provider>
       </FocusScope>
     </ToastRegion>
+  );
+}
+
+function SpectrumToastList({placement, align, queue}) {
+  let {isExpanded, toggleExpanded} = useContext(ToastContainerContext)!;
+  let toastListRef = useRef(null);
+  useEvent(toastListRef, 'click', () => {
+    if (!isExpanded) {
+      toggleExpanded();
+    }
+  });
+
+  return (
+    <ToastList
+      ref={toastListRef}
+      style={({isHovered}) => {
+        let origin = isHovered ? 95 : 55;
+        return {
+          perspective: 80,
+          perspectiveOrigin: 'center ' + (placement === 'top' ? `calc(100% + ${origin}px)` : `${-origin}px`),
+          transition: 'perspective-origin 400ms'
+        };
+      }}
+      className={toastList({placement, align, isExpanded})}>
+      {({toast}) => (
+        <SpectrumToast toast={toast} queue={queue} placement={placement} align={align} />
+      )}
+    </ToastList>
   );
 }
 
@@ -420,9 +449,11 @@ export function SpectrumToast(props: ToastProps<SpectrumToastValue>): ReactNode 
   let ctx = useContext(ToastContainerContext);
   let toastRef = useRef(null);
 
+  // When not expanded, use a presentational div for the toasts behind the top one.
   if (!isLast && ctx && !ctx.isExpanded) {
     return (
-      <div 
+      <div
+        role="presentation"
         style={{
           position: isLast ? undefined : 'absolute',
           [placement === 'top' ? 'bottom' : 'top']: !isLast ? 0 : undefined,
@@ -448,14 +479,16 @@ export function SpectrumToast(props: ToastProps<SpectrumToastValue>): ReactNode 
         viewTransitionName: toast.key,
         viewTransitionClass: [toastCss.toast, isLast && toastCss.last, toastCss[placement], toastCss[align]].filter(Boolean).map(c => CSS.escape(c)).join(' ')
       }}
-      inert={!isLast && !ctx?.isExpanded ? 'true' : undefined}
-      className={renderProps => mergeStyles(toastFocusRing({...renderProps, isExpanded: ctx?.isExpanded}), toastStyle({
-        variant: toast.content.variant || 'info',
-        index,
-        isExpanded: ctx?.isExpanded
-      }))}>
+      className={renderProps => mergeStyles(
+        toastFocusRing({...renderProps, isExpanded: ctx?.isExpanded}),
+        toastStyle({
+          variant: toast.content.variant || 'info',
+          index,
+          isExpanded: ctx?.isExpanded
+        })
+      )}>
       <div role="presentation" className={toastBody({isSingle: !isLast || visibleToasts.length === 1 || ctx?.isExpanded})}>
-        <ToastContent className={toastContent + (isLast ? ` ${toastCss['toast-content']}` : null)} style={{opacity: isLast || ctx.isExpanded ? 1 : 0}}>
+        <ToastContent className={toastContent + (isLast ? ` ${toastCss['toast-content']}` : null)}>
           {Icon &&
             <CenterBaseline>
               <Icon />
@@ -463,23 +496,26 @@ export function SpectrumToast(props: ToastProps<SpectrumToastValue>): ReactNode 
           }
           <Text slot="title">{toast.content.children}</Text>
         </ToastContent>
-        {isLast && visibleToasts.length > 1 && !ctx?.isExpanded &&
+        {!ctx?.isExpanded && visibleToasts.length > 1 && 
           <ActionButton
             variant="secondary"
             isQuiet
             staticColor="white"
             styles={style({gridArea: 'expand'})}
+            // Make the chevron line up with the toast text, even though there is padding within the button.
             UNSAFE_style={{marginInlineStart: variant === 'neutral' ? -10 : 14}}
             UNSAFE_className={isLast ? toastCss['toast-expand'] : undefined}
             onPress={() => {
+              // This button disappears when clicked, so move focus to the toast.
               toastRef.current.focus();
               ctx.toggleExpanded();
             }}>
+            {/* TODO: translate */}
             <Text>Show all</Text>
             <Chevron UNSAFE_style={{rotate: placement === 'bottom' ? '180deg' : undefined}} />
           </ActionButton>
         }
-        {toast.content.actionLabel && (isLast || ctx?.isExpanded) &&
+        {toast.content.actionLabel &&
           <Button
             variant="secondary"
             fillStyle="outline"
@@ -493,7 +529,6 @@ export function SpectrumToast(props: ToastProps<SpectrumToastValue>): ReactNode 
       </div>
       <CloseButton
         staticColor="white"
-        UNSAFE_style={{opacity: (isLast || ctx.isExpanded) ? 1 : 0}}
         UNSAFE_className={isLast ? toastCss['toast-close'] : undefined} />
     </Toast>
   );

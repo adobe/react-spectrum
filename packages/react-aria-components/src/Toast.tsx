@@ -97,7 +97,6 @@ export const ToastRegion = /*#__PURE__*/ (forwardRef as forwardRefType)(function
     : null;
 });
 
-// TODO: possibly export this so additional children can be added to the region, outside the list.
 export const ToastList = /*#__PURE__*/ (forwardRef as forwardRefType)(function ToastList<T>(props: ToastRegionProps<T>, ref: ForwardedRef<HTMLOListElement>) {
   let state = useContext(ToastStateContext)!;
   let {hoverProps, isHovered} = useHover({});
@@ -114,9 +113,7 @@ export const ToastList = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
   });
 
   return (
-    // @ts-ignore
-    // eslint-disable-next-line
-    <ol {...hoverProps} {...renderProps} ref={ref} onClick={props.onClick}>
+    <ol {...hoverProps} {...renderProps} ref={ref}>
       {state.visibleToasts.map((toast) => (
         <li key={toast.key} style={{display: 'contents'}}>
           {props.children({toast})}
@@ -169,15 +166,10 @@ export const Toast = /*#__PURE__*/ (forwardRef as forwardRefType)(function Toast
   });
 
   return (
-    // eslint-disable-next-line
     <div
       {...renderProps}
       {...mergeProps(toastProps, focusProps)}
       ref={objectRef}
-      // @ts-ignore
-      inert={props.inert}
-      // @ts-ignore
-      onClick={props.onClick}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}>
       <Provider
