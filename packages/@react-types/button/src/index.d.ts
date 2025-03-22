@@ -80,7 +80,7 @@ export interface AriaToggleButtonGroupItemProps<E extends ElementType = 'button'
 
 /** @deprecated */
 type LegacyButtonVariant = 'cta' | 'overBackground';
-export interface SpectrumButtonProps<T extends ElementType = 'button'> extends AriaBaseButtonProps, ButtonProps, LinkButtonProps<T>, StyleProps {
+export interface SpectrumButtonProps<T extends ElementType = 'button'> extends AriaBaseButtonProps, Omit<ButtonProps, 'onClick'>, LinkButtonProps<T>, StyleProps {
   /** The [visual style](https://spectrum.adobe.com/page/button/#Options) of the button. */
   variant: 'accent' | 'primary' | 'secondary' | 'negative' | LegacyButtonVariant,
   /** The background style of the button. */
@@ -98,19 +98,19 @@ export interface SpectrumButtonProps<T extends ElementType = 'button'> extends A
   isQuiet?: boolean
 }
 
-export interface SpectrumActionButtonProps extends AriaBaseButtonProps, ButtonProps, StyleProps {
+export interface SpectrumActionButtonProps extends AriaBaseButtonProps, Omit<ButtonProps, 'onClick'>, StyleProps {
   /** Whether the button should be displayed with a [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
   isQuiet?: boolean,
   /** The static color style to apply. Useful when the button appears over a color background. */
   staticColor?: 'white' | 'black'
 }
 
-export interface SpectrumLogicButtonProps extends AriaBaseButtonProps, ButtonProps, StyleProps {
+export interface SpectrumLogicButtonProps extends AriaBaseButtonProps, Omit<ButtonProps, 'onClick'>, StyleProps {
   /** The type of boolean sequence to be represented by the LogicButton. */
   variant: 'and' | 'or'
 }
 
-export interface SpectrumToggleButtonProps extends ToggleButtonProps, Omit<SpectrumActionButtonProps, 'aria-current'> {
+export interface SpectrumToggleButtonProps extends Omit<ToggleButtonProps, 'onClick'>, Omit<SpectrumActionButtonProps, 'aria-current'> {
   /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
   isEmphasized?: boolean
 }
