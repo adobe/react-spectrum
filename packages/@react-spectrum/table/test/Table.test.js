@@ -5045,4 +5045,6 @@ export let tableTests = () => {
   });
 };
 
-describe('TableView', tableTests);
+if (parseInt(React.version, 10) >= 16) {
+  describe('TableView', tableTests);
+}
