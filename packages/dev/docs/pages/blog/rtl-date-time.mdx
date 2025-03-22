@@ -17,8 +17,11 @@ import placeholderVideoURL from 'url:../assets/datefield-placeholder.mp4';
 import keyboardVideoURL from 'url:../assets/rtl-keyboard.mp4';
 
 
-```jsx import
 
+```jsx import
+import {I18nProvider} from 'react-aria';
+import {DateField} from '@adobe/react-spectrum';
+import {parseZonedDateTime} from '@internationalized/date';
 ```
 
 ---
@@ -115,13 +118,28 @@ Through much trial and error, we discovered that appplying the [left-to-right em
 
 ## Keyboard Navigation
 
-After fixing the formatting, we also needed to update the keyboard navigation. Previously, when pressing the left arrow key, you would go to the next node in the DOM and vice versa for the right arrow key. After these changes though, visually adjacent elements were not necessarily adjacent in the DOM so this would not work anymore. 
+After fixing the formatting, we also needed to update the keyboard navigation. Previously, when pressing the left arrow key, you would go to the next node in the DOM and vice versa for the right arrow key. However, after these changes, visually adjacent elements were not necessarily adjacent in the DOM so this would not work anymore. For example, in Hebrew (`he-IL`), the day and minute segment are supposed to be visually adjacent (e.g. `HH:MM DD.MM.YYYY`), but in the DOM, there are several other segments between them.
+
+```tsx example render=false
+// An example of the DOM structure of a date field in he-IL
+<div>
+  <span aria-label="day">3</span>
+  <span>.</span>
+  <span aria-label="month">11</span>
+  <span>.</span>  
+  <span aria-label="year">2020</span>
+  <span>,</span>
+  <span aria-label="hour">8</span>
+  <span>:</span>  
+  <span aria-label="minute">45</span>
+</div>
+```
 
 Below is an example of a date field in Hebrew with the correct date format but incorrect keyboard navigation. Pressing the left arrow key should navigate you to the segment to the immediate left, while the right arrow key should navigate you to the segment to the immediate right. 
 
 <Video src={keyboardVideoURL} loop autoPlay muted />
 
-As a result, we updated the keyboard navigation in right-to-left langauges to rely on the positioning of the different segments to determine which node to receive focus for an intuitive keyboard experience.
+As a result, we updated the keyboard navigation in right-to-left langauges to calculate the distance between the currently focused segment and other segments to identify the closest node based on whether the left or right arrow key was pressed, rather than reying on the DOM order.
 
 ## Conclusion
 
