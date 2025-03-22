@@ -384,14 +384,14 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
   });
 
   useEffect(() => {
-    if (!item.textValue) {
+    if (!item.textValue && process.env.NODE_ENV !== 'production') {
       console.warn('A `textValue` prop is required for <TreeItem> elements in order to support accessibility features such as type to select.');
     }
   }, [item.textValue]);
 
   let expandButtonRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
-    if (hasChildItems && !expandButtonRef.current) {
+    if (hasChildItems && !expandButtonRef.current && process.env.NODE_ENV !== 'production') {
       console.warn('Expandable tree items must contain a expand button so screen reader users can expand/collapse the item.');
     }
   // eslint-disable-next-line

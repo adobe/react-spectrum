@@ -79,7 +79,7 @@ export function useInteractOutside(props: InteractOutsideProps): void {
         documentObject.removeEventListener('pointerdown', onPointerDown, true);
         documentObject.removeEventListener('pointerup', onPointerUp, true);
       };
-    } else {
+    } else if (process.env.NODE_ENV === 'test') {
       let onMouseUp = (e) => {
         if (state.ignoreEmulatedMouseEvents) {
           state.ignoreEmulatedMouseEvents = false;

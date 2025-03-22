@@ -61,7 +61,7 @@ function setupGlobalTouchEvents() {
 
   if (typeof PointerEvent !== 'undefined') {
     document.addEventListener('pointerup', handleGlobalPointerEvent);
-  } else {
+  } else if (process.env.NODE_ENV === 'test') {
     document.addEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents);
   }
 
@@ -74,7 +74,7 @@ function setupGlobalTouchEvents() {
 
     if (typeof PointerEvent !== 'undefined') {
       document.removeEventListener('pointerup', handleGlobalPointerEvent);
-    } else {
+    } else if (process.env.NODE_ENV === 'test') {
       document.removeEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents);
     }
   };
@@ -182,7 +182,7 @@ export function useHover(props: HoverProps): HoverResult {
           triggerHoverEnd(e, e.pointerType);
         }
       };
-    } else {
+    } else if (process.env.NODE_ENV === 'test') {
       hoverProps.onTouchStart = () => {
         state.ignoreEmulatedMouseEvents = true;
       };

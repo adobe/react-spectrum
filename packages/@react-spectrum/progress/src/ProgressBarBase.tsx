@@ -54,7 +54,7 @@ export const ProgressBarBase = React.forwardRef(function ProgressBarBase(props: 
 
   // Ideally this should be in useProgressBar, but children
   // are not supported in ProgressCircle which shares that hook...
-  if (!label && !ariaLabel && !ariaLabelledby) {
+  if (!label && !ariaLabel && !ariaLabelledby && process.env.NODE_ENV !== 'production') {
     console.warn('If you do not provide a visible label via children, you must specify an aria-label or aria-labelledby attribute for accessibility');
   }
   // use inline style for fit-content because cssnano is too smart for us and will strip out the -moz prefix in css files

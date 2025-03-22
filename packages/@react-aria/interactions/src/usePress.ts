@@ -552,8 +552,8 @@ export function usePress(props: PressHookProps): PressResult {
         // Safari does not call onPointerCancel when a drag starts, whereas Chrome and Firefox do.
         cancel(e);
       };
-    } else {
-      // NOTE: this fallback branch is almost entirely used by unit tests.
+    } else if (process.env.NODE_ENV === 'test') {
+      // NOTE: this fallback branch is entirely used by unit tests.
       // All browsers now support pointer events, but JSDOM still does not.
 
       pressProps.onMouseDown = (e) => {
