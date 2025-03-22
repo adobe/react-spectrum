@@ -5045,6 +5045,10 @@ export let tableTests = () => {
   });
 };
 
-if (parseInt(React.version, 10) > 16) {
-  describe('TableView', tableTests);
-}
+describe('TableView', () => {
+  tableTests();
+
+  it('success', () => {
+    // jest requires there to be at least one test per file and these tests are skipped in React 16.
+  });
+});
