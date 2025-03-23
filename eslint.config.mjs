@@ -398,7 +398,7 @@ export default [{
         "rsp-rules/no-getByRole-toThrow": ERROR,
         "rulesdir/imports": OFF,
         "monorepo/no-internal-import": OFF,
-        "jsdoc/require-jsdoc": OFF,
+        "jsdoc/require-jsdoc": OFF
     },
 
     languageOptions: {
@@ -436,6 +436,29 @@ export default [{
     rules: {
         "jsdoc/require-jsdoc": OFF,
         "jsdoc/require-description": OFF,
+    },
+}, {
+    files: [
+        "packages/**/*.ts",
+        "packages/**/*.tsx"
+    ],
+
+    rules: {
+        "@typescript-eslint/explicit-module-boundary-types": ERROR,
+    },
+}, {
+    files: [
+        "**/dev/**",
+        "**/test/**",
+        "**/stories/**",
+        "**/docs/**",
+        "**/chromatic/**",
+        "**/chromatic-fc/**",
+        "**/__tests__/**"
+    ],
+
+    rules: {
+        "@typescript-eslint/explicit-module-boundary-types": OFF,
     },
 }, {
     files: [

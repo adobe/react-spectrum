@@ -51,7 +51,7 @@ export class TabsTester {
   /**
    * Set the interaction type used by the tabs tester.
    */
-  setInteractionType(type: UserOpts['interactionType']) {
+  setInteractionType(type: UserOpts['interactionType']): void {
     this._interactionType = type;
   }
 
@@ -119,7 +119,7 @@ export class TabsTester {
   /**
    * Triggers the specified tab. Defaults to using the interaction type set on the tabs tester.
    */
-  async triggerTab(opts: TriggerTabOptions) {
+  async triggerTab(opts: TriggerTabOptions): Promise<void> {
     let {
       tab,
       interactionType = this._interactionType,

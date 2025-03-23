@@ -25,7 +25,8 @@ import userEvent from '@testing-library/user-event';
 let {
   RenderEmptyStateStory: EmptyLoadingTable,
   TableLoadingBodyWrapperStory: LoadingMoreTable,
-  TableCellColSpanWithVariousSpansExample: TableCellColSpan
+  TableCellColSpanWithVariousSpansExample: TableCellColSpan,
+  TableWithSuspense
 } = composeStories(stories);
 
 function MyColumn(props) {
@@ -2054,6 +2055,95 @@ describe('Table', () => {
       await user.click(tree.getByRole('button'));
       let checkbox = tree.getByRole('checkbox');
       expect(checkbox).toBeInTheDocument();
+    });
+  });
+
+  describe('Suspense', () => {
+    it('should support React Suspense without transitions', async () => {
+      // Only supported in React 19.
+      if (!React.use) {
+        return;
+      }
+
+      // Render must be wrapped in an awaited act because the table suspends.
+      let tree = await act(() => render(<TableWithSuspense />));
+
+      let rows = tree.getAllByRole('row');
+      expect(rows).toHaveLength(2);
+      expect(rows[1]).toHaveTextContent('Loading...');
+
+      await act(async () => jest.runAllTimers());
+
+      rows = tree.getAllByRole('row');
+      expect(rows).toHaveLength(3);
+      expect(rows[1]).toHaveTextContent('FalconSat');
+      expect(rows[2]).toHaveTextContent('DemoSat');
+
+      let button = tree.getByRole('button');
+      let promise = act(() => button.click());
+
+      rows = tree.getAllByRole('row');
+      expect(rows).toHaveLength(2);
+      expect(rows[1]).toHaveTextContent('Loading...');
+
+      // Make react think we've awaited the promise.
+      // We can't actually await until after we runAllTimers, which is
+      // what resolves the promise above.
+      promise.then(() => {});
+      // eslint-disable-next-line
+      jest.runAllTimers()
+      await promise;
+
+      rows = tree.getAllByRole('row');
+      expect(rows).toHaveLength(5);
+      expect(rows[1]).toHaveTextContent('FalconSat');
+      expect(rows[2]).toHaveTextContent('DemoSat');
+      expect(rows[3]).toHaveTextContent('Trailblazer');
+      expect(rows[4]).toHaveTextContent('RatSat');
+    });
+
+    it('should support React Suspense with transitions', async () => {
+      // Only supported in React 19.
+      if (!React.use) {
+        return;
+      }
+
+      let tree = await act(() => render(<TableWithSuspense reactTransition />));
+
+      let rows = tree.getAllByRole('row');
+      expect(rows).toHaveLength(2);
+      expect(rows[1]).toHaveTextContent('Loading...');
+
+      await act(async () => jest.runAllTimers());
+
+      rows = tree.getAllByRole('row');
+      expect(rows).toHaveLength(3);
+      expect(rows[1]).toHaveTextContent('FalconSat');
+      expect(rows[2]).toHaveTextContent('DemoSat');
+
+      let button = tree.getByRole('button');
+      expect(button).toHaveTextContent('Load more');
+
+      let promise = act(() => button.click());
+
+      rows = tree.getAllByRole('row');
+      expect(rows).toHaveLength(3);
+      expect(rows[1]).toHaveTextContent('FalconSat');
+      expect(rows[2]).toHaveTextContent('DemoSat');
+
+      promise.then(() => {});
+      // eslint-disable-next-line
+      jest.runAllTimers();
+      await promise;
+
+      expect(button).toHaveTextContent('Load more');
+
+      rows = tree.getAllByRole('row');
+      expect(rows).toHaveLength(5);
+      expect(rows[1]).toHaveTextContent('FalconSat');
+      expect(rows[2]).toHaveTextContent('DemoSat');
+      expect(rows[3]).toHaveTextContent('Trailblazer');
+      expect(rows[4]).toHaveTextContent('RatSat');
     });
   });
 });

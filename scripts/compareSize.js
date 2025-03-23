@@ -22,8 +22,8 @@ async function compareBuildAppSize() {
 
   if (commit) {
     // Attempt to pull stats from last publish commit. If they don't exist, pull from a hardcoded commit (fallback until these records are generated for a first publish w/ this script)
-    let lastAppStatUrl = `https://reactspectrum.blob.core.windows.net/reactspectrum/${commit}/verdaccio/publish-stats/${currentAppStatsFile}`;
-    let lastPublishStatUrl = `https://reactspectrum.blob.core.windows.net/reactspectrum/${commit}/verdaccio/publish-stats/${currentPublishStatsFile}`;
+    let lastAppStatUrl = `https://reactspectrum.blob.core.windows.net/reactspectrum/${commit}/verdaccio/rsp-cra-18/publish-stats/${currentAppStatsFile}`;
+    let lastPublishStatUrl = `https://reactspectrum.blob.core.windows.net/reactspectrum/${commit}/verdaccio/rsp-cra-18/publish-stats/${currentPublishStatsFile}`;
     let lastAppStatPath = path.join(__dirname, '..', lastAppStatsFile);
     let lastPublishStatPath = path.join(__dirname, '..', lastPublishStatsFile);
     await download(lastAppStatUrl, lastAppStatPath);

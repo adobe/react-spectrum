@@ -112,6 +112,25 @@ describe('TimeField', () => {
     expect(group).toHaveAttribute('data-validation-state', 'invalid');
   });
 
+  it('should support disabled render prop', () => {
+    let {getByRole} = render(
+      <TimeField isDisabled>
+        {({isDisabled}) => (
+          <>
+            <Label>Birth date</Label>
+            <DateInput 
+              data-disabled-state={isDisabled ? 'disabled' : null}>
+              {segment => <DateSegment segment={segment} />}
+            </DateInput>
+          </>
+        )}
+      </TimeField>
+    );
+
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-disabled-state', 'disabled');
+  });
+
   it('should support form value', () => {
     render(
       <TimeField name="time" value={new Time(8, 30)}>
