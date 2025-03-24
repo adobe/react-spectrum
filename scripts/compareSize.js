@@ -19,6 +19,7 @@ async function compareBuildAppSize() {
   let res = await octokit.search.commits({q: 'Publish repo:adobe/react-spectrum'});
   let {items} = res.data;
   let commit = items && items[0]?.parents[0]?.sha;
+  commit = '4b2c6e76fa97d2e00a478a152972837c1cb76938';
   console.log(commit)
 
   if (commit) {
