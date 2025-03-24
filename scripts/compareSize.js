@@ -19,6 +19,7 @@ async function compareBuildAppSize() {
   let res = await octokit.search.commits({q: 'Publish repo:adobe/react-spectrum'});
   let {items} = res.data;
   let commit = items && items[0]?.parents[0]?.sha;
+  console.log(commit)
 
   if (commit) {
     // Attempt to pull stats from last publish commit. If they don't exist, pull from a hardcoded commit (fallback until these records are generated for a first publish w/ this script)
