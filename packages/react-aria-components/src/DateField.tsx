@@ -331,11 +331,12 @@ export const DateSegment = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   let {segmentProps} = useDateSegment(segment, state, domRef);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let {hoverProps, isHovered} = useHover({...otherProps, isDisabled: state.isDisabled || segment.type === 'literal'});
+  let {isEditable, ...segmentRest} = segment;
   let renderProps = useRenderProps({
     ...otherProps,
     values: {
-      ...segment,
-      isReadOnly: !segment.isEditable,
+      ...segmentRest,
+      isReadOnly: !isEditable,
       isInvalid: state.isInvalid,
       isDisabled: state.isDisabled,
       isHovered,
@@ -355,7 +356,7 @@ export const DateSegment = /*#__PURE__*/ (forwardRef as forwardRefType)(function
       ref={domRef}
       data-placeholder={segment.isPlaceholder || undefined}
       data-invalid={state.isInvalid || undefined}
-      data-readonly={!segment.isEditable || undefined}
+      data-readonly={!isEditable || undefined}
       data-disabled={state.isDisabled || undefined}
       data-type={segment.type}
       data-hovered={isHovered || undefined}
