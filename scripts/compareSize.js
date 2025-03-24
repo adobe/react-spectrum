@@ -32,6 +32,7 @@ async function compareBuildAppSize() {
     await download(lastPublishStatUrl, lastPublishStatPath);
 
     if (!fs.existsSync(lastAppStatPath)) {
+      console.log('failed last commit')
       // TODO: placeholder until we get some real stats. Hardcoded URL pointing to a commit with actual data
       await download(
         `https://reactspectrum.blob.core.windows.net/reactspectrum/2504f8ad927d0d0ad55e7e6db8a22fec16a67b6f/verdaccio/publish-stats/${currentAppStatsFile}`,
@@ -39,6 +40,7 @@ async function compareBuildAppSize() {
     }
 
     if (!fs.existsSync(lastPublishStatPath)) {
+      console.log('failed last commit')
       await download(
         `https://reactspectrum.blob.core.windows.net/reactspectrum/2504f8ad927d0d0ad55e7e6db8a22fec16a67b6f/verdaccio/publish-stats/${currentPublishStatsFile}`,
         lastPublishStatPath);
