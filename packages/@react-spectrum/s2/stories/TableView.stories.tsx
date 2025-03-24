@@ -549,9 +549,9 @@ let resizeColumn = [
 ];
 
 let sortResizeColumns = [
-  {name: 'Name', id: 'name', isRowHeader: true, allowsResizing: true, showDivider: true, isSortable: true},
-  {name: 'Height', id: 'height', isSortable: true},
-  {name: 'Weight', id: 'weight', allowsResizing: true, isSortable: true}
+  {name: 'Name', id: 'name', isRowHeader: true, allowsResizing: true, showDivider: true, allowsSorting: true},
+  {name: 'Height', id: 'height', allowsSorting: true},
+  {name: 'Weight', id: 'weight', allowsResizing: true, allowsSorting: true}
 ];
 
 const SortableResizableTable = (args: any) => {
