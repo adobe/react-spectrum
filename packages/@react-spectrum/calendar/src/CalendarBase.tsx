@@ -154,7 +154,7 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
 
 function getCurrentMonthName(date: CalendarDate, timezone: string, monthDateFormatter: ReturnType<typeof useDateFormatter>): string {
   if (date.calendar.getFormattableMonth) {
-    date = date.calendar.getFormattableMonth(date) as CalendarDate;
+    date = date.calendar.getFormattableMonth(date);
   }
   return monthDateFormatter.format(date.toDate(timezone));
 }

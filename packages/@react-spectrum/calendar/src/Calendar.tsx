@@ -31,10 +31,10 @@ export const Calendar = React.forwardRef(function Calendar<T extends DateValue>(
   let visibleDuration = useMemo(() => ({months: visibleMonths}), [visibleMonths]);
   let {locale} = useLocale();
   let state = useCalendarState({
-    createCalendar,
     ...props,
     locale,
-    visibleDuration
+    visibleDuration,
+    createCalendar: props.createCalendar || createCalendar
   });
 
   let domRef = useRef(null);

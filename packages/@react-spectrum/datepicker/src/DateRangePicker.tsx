@@ -25,7 +25,7 @@ import {Input} from './Input';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
-import {RangeCalendar, SpectrumRangeCalendarProps} from '@react-spectrum/calendar';
+import {RangeCalendar} from '@react-spectrum/calendar';
 import React, {ReactElement, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TimeField} from './TimeField';
@@ -65,9 +65,6 @@ export const DateRangePicker = React.forwardRef(function DateRangePicker<T exten
   let {direction} = useLocale();
   let domRef = useFocusManagerRef(ref);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/datepicker');
-  if (props.createCalendar) {
-    (calendarProps as SpectrumRangeCalendarProps<DateValue>).createCalendar = props.createCalendar;
-  }
 
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({
     within: true,
@@ -194,6 +191,7 @@ export const DateRangePicker = React.forwardRef(function DateRangePicker<T exten
                   visibleMonths={visibleMonths}
                   pageBehavior={pageBehavior}
                   firstDayOfWeek={firstDayOfWeek}
+                  createCalendar={props.createCalendar}
                   UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-calendar', {'is-invalid': validationState === 'invalid'})} />
                 {showTimeField &&
                   <Flex gap="size-100" marginTop="size-100" UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-timeFields')}>

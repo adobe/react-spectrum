@@ -24,7 +24,7 @@ import {
   VisuallyHidden
 } from 'react-aria';
 import {ButtonContext} from './Button';
-import {CalendarDate, createCalendar, DateDuration, endOfMonth, Calendar as ICalendar, isSameDay, isSameMonth} from '@internationalized/date';
+import {CalendarDate, CalendarIdentifier, createCalendar, DateDuration, endOfMonth, Calendar as ICalendar, isSameDay, isSameMonth} from '@internationalized/date';
 import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState} from 'react-stately';
 import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
 import {DOMAttributes, FocusableElement, forwardRefType, HoverEvents} from '@react-types/shared';
@@ -66,10 +66,10 @@ export interface CalendarProps<T extends DateValue> extends Omit<AriaCalendarPro
 
   /**
    * A function to create a new [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html)
-   * object for a given calendar identifier. If not provided, the {@link createCalendar} function
+   * object for a given calendar identifier. If not provided, the `createCalendar` function
    * from `@internationalized/date` will be used.
    */
-  createCalendar?: (identifier: string) => ICalendar
+  createCalendar?: (identifier: CalendarIdentifier) => ICalendar
 }
 
 export interface RangeCalendarProps<T extends DateValue> extends Omit<AriaRangeCalendarProps<T>, 'errorMessage' | 'validationState'>, RenderProps<RangeCalendarRenderProps>, SlotProps {
@@ -81,10 +81,10 @@ export interface RangeCalendarProps<T extends DateValue> extends Omit<AriaRangeC
 
   /**
    * A function to create a new [Calendar](https://react-spectrum.adobe.com/internationalized/date/Calendar.html)
-   * object for a given calendar identifier. If not provided, the {@link createCalendar} function
+   * object for a given calendar identifier. If not provided, the `createCalendar` function
    * from `@internationalized/date` will be used.
    */
-  createCalendar?: (identifier: string) => ICalendar
+  createCalendar?: (identifier: CalendarIdentifier) => ICalendar
 }
 
 export const CalendarContext = createContext<ContextValue<CalendarProps<any>, HTMLDivElement>>(null);
@@ -99,9 +99,9 @@ export const Calendar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
   [props, ref] = useContextProps(props, ref, CalendarContext);
   let {locale} = useLocale();
   let state = useCalendarState({
-    createCalendar,
     ...props,
-    locale
+    locale,
+    createCalendar: props.createCalendar || createCalendar
   });
 
   let {calendarProps, prevButtonProps, nextButtonProps, errorMessageProps, title} = useCalendar(props, state);
@@ -172,9 +172,9 @@ export const RangeCalendar = /*#__PURE__*/ (forwardRef as forwardRefType)(functi
   [props, ref] = useContextProps(props, ref, RangeCalendarContext);
   let {locale} = useLocale();
   let state = useRangeCalendarState({
-    createCalendar,
     ...props,
-    locale
+    locale,
+    createCalendar: props.createCalendar || createCalendar
   });
 
   let {calendarProps, prevButtonProps, nextButtonProps, errorMessageProps, title} = useRangeCalendar(

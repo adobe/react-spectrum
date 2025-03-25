@@ -34,14 +34,19 @@ export interface AnyTime {
 /** An interface that is compatible with any object with both date and time fields. */
 export interface AnyDateTime extends AnyCalendarDate, AnyTime {}
 
+export type CalendarIdentifier = 'gregory' | 'buddhist' | 'chinese' | 'coptic' | 'dangi' | 'ethioaa' | 'ethiopic' | 'hebrew' | 'indian' | 'islamic' | 'islamic-umalqura' | 'islamic-tbla' | 'islamic-civil' | 'islamic-rgsa' | 'iso8601' | 'japanese' | 'persian' | 'roc';
+
 /**
  * The Calendar interface represents a calendar system, including information
  * about how days, months, years, and eras are organized, and methods to perform
  * arithmetic on dates.
  */
 export interface Calendar {
-  /** A string identifier for the calendar, as defined by Unicode CLDR. */
-  identifier: string,
+  /**
+   * A string identifier for the calendar, as defined by Unicode CLDR.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/supportedValuesOf#supported_calendar_types).
+   */
+  identifier: CalendarIdentifier,
 
   /** Creates a CalendarDate in this calendar from the given Julian day number. */
   fromJulianDay(jd: number): CalendarDate,
@@ -75,7 +80,10 @@ export interface Calendar {
    * the calendar has months that do not align with the standard calendar months 
    * (e.g. fiscal calendars).
    */
-  getFormattableMonth?(date: AnyCalendarDate): AnyCalendarDate,
+  getFormattableMonth?(date: AnyCalendarDate): CalendarDate,
+
+  /** Returns whether the given calendar is the same as this calendar. */
+  isEqual?(calendar: Calendar): boolean,
 
   /** @private */
   balanceDate?(date: AnyCalendarDate): void,
