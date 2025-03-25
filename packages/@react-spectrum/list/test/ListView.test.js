@@ -812,6 +812,24 @@ describe('ListView', function () {
       expect(announce).toHaveBeenCalledTimes(3);
     });
 
+    it('should prevent Esc from clearing selection if disallowClearAll is true', async function () {
+      let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', disallowClearAll: true});
+
+      let rows = tree.getAllByRole('row');
+      await user.click(within(rows[1]).getByRole('checkbox'));
+      checkSelection(onSelectionChange, ['bar']);
+
+      onSelectionChange.mockClear();
+      await user.click(within(rows[2]).getByRole('checkbox'));
+      checkSelection(onSelectionChange, ['bar', 'baz']);
+
+      onSelectionChange.mockClear();
+      await user.keyboard('{Escape}');
+      expect(onSelectionChange).not.toHaveBeenCalled();
+      expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+      expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+    });
+
     it('should support range selection', async function () {
       let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
 

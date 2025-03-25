@@ -475,6 +475,33 @@ describe('Menu', function () {
 
       expect(onSelectionChange).toBeCalledTimes(0);
     });
+
+    it.each`
+      Name        | Component | props
+      ${'Menu'}   | ${Menu}   | ${{onSelectionChange, selectionMode: 'multiple', disallowClearAll: true}}
+    `('$Name should prevent Esc from clearing selection if disallowClearAll is true', async function ({Component, props}) {
+      let user = userEvent.setup({delay: null, pointerMap});
+      let tree = renderComponent(Component, {}, props);
+      let menu = tree.getByRole('menu');
+
+      let menuItems = within(menu).getAllByRole('menuitemcheckbox');
+      let firstItem = menuItems[3];
+      await user.click(firstItem);
+      expect(firstItem).toHaveAttribute('aria-checked', 'true');
+
+      let secondItem = menuItems[1];
+      await user.click(secondItem);
+      expect(secondItem).toHaveAttribute('aria-checked', 'true');
+
+      expect(onSelectionChange).toBeCalledTimes(2);
+      expect(onSelectionChange.mock.calls[0][0].has('Blah')).toBeTruthy();
+      expect(onSelectionChange.mock.calls[1][0].has('Bar')).toBeTruthy();
+
+      await user.keyboard('{Escape}');
+      expect(onSelectionChange).toBeCalledTimes(2);
+      expect(onSelectionChange.mock.calls[0][0].has('Blah')).toBeTruthy();
+      expect(onSelectionChange.mock.calls[1][0].has('Bar')).toBeTruthy();
+    });
   });
 
   describe('supports no selection', function () {

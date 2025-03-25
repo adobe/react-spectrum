@@ -20,7 +20,13 @@ export interface ListBoxProps<T> extends CollectionBase<T>, MultipleSelection, F
   shouldFocusWrap?: boolean
 }
 
-interface AriaListBoxPropsBase<T> extends ListBoxProps<T>, DOMProps, AriaLabelingProps {}
+interface AriaListBoxPropsBase<T> extends ListBoxProps<T>, DOMProps, AriaLabelingProps {
+  /**
+   * Whether the listbox allows the user to clear all selected items via Escape.
+   * @default false
+   */
+  disallowClearAll?: boolean
+}
 export interface AriaListBoxProps<T> extends AriaListBoxPropsBase<T> {
   /**
    * An optional visual label for the listbox.
@@ -32,12 +38,7 @@ export interface AriaListBoxProps<T> extends AriaListBoxPropsBase<T> {
    * Handler that is called when a user performs an action on an item. The exact user event depends on
    * the collection's `selectionBehavior` prop and the interaction modality.
    */
-  onAction?: (key: Key) => void,
-  /**
-   * Whether the listbox allows the user to clear all selected items via Escape.
-   * @default false
-   */
-  disallowClearAll?: boolean
+  onAction?: (key: Key) => void
 }
 
 export interface SpectrumListBoxProps<T> extends AriaListBoxPropsBase<T>, AsyncLoadable, StyleProps {

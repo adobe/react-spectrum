@@ -2211,6 +2211,26 @@ export let tableTests = () => {
         checkSelectAll(tree, 'indeterminate');
       });
 
+      it('should prevent Esc from clearing selection if disallowClearAll is true', async function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionMode: 'multiple', disallowClearAll: true});
+        let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
+        tableTester.setInteractionType('keyboard');
+
+
+        await tableTester.toggleRowSelection({row: 0});
+        expect(tableTester.selectedRows).toHaveLength(1);
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+
+        await tableTester.toggleRowSelection({row: 1});
+        expect(tableTester.selectedRows).toHaveLength(2);
+        expect(onSelectionChange).toHaveBeenCalledTimes(2);
+
+        await user.keyboard('{Escape}');
+        expect(tableTester.selectedRows).toHaveLength(2);
+        expect(onSelectionChange).toHaveBeenCalledTimes(2);
+      });
+
       it('should not allow selection of a disabled row via checkbox click', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange, disabledKeys: ['Foo 1']});
