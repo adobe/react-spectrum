@@ -16,12 +16,16 @@ const path = require('path');
 const ReactDOMServer = require('react-dom/server');
 const React = require('react');
 const vm = require('vm');
-const {createBuildCache} = require('@parcel/core/lib/buildCache');
 
-const packagingBundles = createBuildCache();
-const moduleCache = createBuildCache();
+const packagingBundles = new Map();
+const moduleCache = new Map();
 
 module.exports = new Packager({
+  async loadConfig({config}) {
+    config.invalidateOnBuild();
+    packagingBundles.clear();
+    moduleCache.clear();
+  },
   async package({bundle, bundleGraph, getInlineBundleContents}) {
     let queue = new PromiseQueue({maxConcurrent: 32});
     bundle.traverse(node => {
@@ -57,7 +61,7 @@ module.exports = new Packager({
       }
 
       let [asset, code] = assets.get(id);
-      let moduleFunction = vm.compileFunction(code, ['exports', 'require', 'module', '__dirname', '__filename'], {
+      let moduleFunction = vm.compileFunction(code, ['exports', 'require', 'module', '__dirname', '__filename', 'parcelRequire'], {
         filename: asset.filePath
       });
 
@@ -106,6 +110,28 @@ module.exports = new Packager({
 
       require.resolve = defaultRequire.resolve;
 
+      let parcelRequire = () => {
+        throw new Error('UNKNOWN');
+      };
+
+      parcelRequire.root = parcelRequire;
+
+      parcelRequire.meta = {
+        distDir: bundle.target.distDir,
+        publicUrl: bundle.target.publicUrl
+      };
+
+      parcelRequire.resolve = (url) => {
+        let bundle = bundleGraph
+          .getBundles()
+          .find(b => b.publicId === url || b.name === url);
+        if (bundle) {
+          return urlJoin(bundle.target.publicUrl, bundle.name);
+        } else {
+          throw new Error('Bundle not found');
+        }
+      };
+
       let dirname = path.dirname(asset.filePath);
       let module = {
         exports: {},
@@ -113,12 +139,13 @@ module.exports = new Packager({
         children: [],
         filename: asset.filePath,
         id,
-        path: dirname
+        path: dirname,
+        bundle: parcelRequire
       };
 
       moduleCache.set(id, module);
-
-      moduleFunction(module.exports, require, module, dirname, asset.filePath);
+    
+      moduleFunction(module.exports, require, module, dirname, asset.filePath, parcelRequire);
       return module.exports;
     };
 
@@ -180,6 +207,7 @@ module.exports = new Packager({
     );
 
     return {
+      type: 'html',
       contents: '<!doctype html>' + code
     };
   }
