@@ -29,7 +29,12 @@ export interface TableProps<T> extends MultipleSelection, Sortable {
   /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
   children: [ReactElement<TableHeaderProps<T>>, ReactElement<TableBodyProps<T>>],
   /** A list of row keys to disable. */
-  disabledKeys?: Iterable<Key>
+  disabledKeys?: Iterable<Key>,
+  /**
+   * Whether the table allows the user to clear all selected items via Escape.
+   * @default false
+   */
+  disallowClearAll?: boolean
 }
 
 /**

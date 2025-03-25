@@ -65,7 +65,8 @@ const MyGridListItem = (props: GridListItemProps) => {
 
 GridListExample.story = {
   args: {
-    layout: 'stack'
+    layout: 'stack',
+    disallowClearAll: false
   },
   argTypes: {
     layout: {
@@ -158,7 +159,7 @@ export function VirtualizedGridListGrid() {
   }
 
   return (
-    <Virtualizer 
+    <Virtualizer
       layout={GridLayout}
       layoutOptions={{
         minItemSize: new Size(40, 40)
@@ -194,7 +195,7 @@ export function TagGroupInsideGridList() {
         1,2 <Button>Actions</Button>
       </MyGridListItem>
       <MyGridListItem>
-        1,3         
+        1,3
         <TagGroup aria-label="Tag group">
           <TagList style={{display: 'flex', gap: 10}}>
             <Tag key="1">Tag 1</Tag>

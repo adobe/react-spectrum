@@ -248,6 +248,23 @@ describe('GridList', () => {
     expect(within(row).getByRole('checkbox')).not.toBeChecked();
   });
 
+  it('should prevent Esc from clearing selection if disallowClearAll is true', async () => {
+    let {getByRole} = renderGridList({selectionMode: 'multiple', disallowClearAll: true});
+    let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
+
+    let row = gridListTester.rows[0];
+    expect(within(row).getByRole('checkbox')).not.toBeChecked();
+
+    await gridListTester.toggleRowSelection({row: 0});
+    expect(gridListTester.selectedRows).toHaveLength(1);
+
+    await gridListTester.toggleRowSelection({row: 1});
+    expect(gridListTester.selectedRows).toHaveLength(2);
+
+    await user.keyboard('{Escape}');
+    expect(gridListTester.selectedRows).toHaveLength(2);
+  });
+
   it('should support disabled state', () => {
     let {getAllByRole} = renderGridList({selectionMode: 'multiple', disabledKeys: ['cat']}, {className: ({isDisabled}) => isDisabled ? 'disabled' : ''});
     let row = getAllByRole('row')[0];

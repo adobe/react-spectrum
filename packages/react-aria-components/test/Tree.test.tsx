@@ -629,6 +629,24 @@ describe('Tree', () => {
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
     });
 
+    it('should prevent Esc from clearing selection if disallowClearAll is true', async () => {
+      let {getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', disallowClearAll: true}}  />);
+
+      let rows = getAllByRole('row');
+      await user.click(rows[0]);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Photos']));
+
+      await user.click(rows[1]);
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
+      expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Photos', 'projects']));
+
+      await user.keyboard('{Escape}');
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
+      expect(rows[0]).toHaveAttribute('data-selected');
+      expect(rows[1]).toHaveAttribute('data-selected');
+    });
+
     it('should support onScroll', () => {
       let onScroll = jest.fn();
       let {getByRole} = render(<StaticTree treeProps={{onScroll}} />);

@@ -48,7 +48,12 @@ export interface AriaGridListProps<T> extends GridListProps<T>, DOMProps, AriaLa
    * via the left/right arrow keys or the tab key.
    * @default 'arrow'
    */
-  keyboardNavigationBehavior?: 'arrow' | 'tab'
+  keyboardNavigationBehavior?: 'arrow' | 'tab',
+  /**
+   * Whether the gridlist allows the user to clear all selected items via Escape.
+   * @default false
+   */
+  disallowClearAll?: boolean
 }
 
 export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'children'> {
@@ -105,7 +110,8 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     onAction,
     disallowTypeAhead,
     linkBehavior = 'action',
-    keyboardNavigationBehavior = 'arrow'
+    keyboardNavigationBehavior = 'arrow',
+    disallowClearAll = false
   } = props;
 
   if (!props['aria-label'] && !props['aria-labelledby']) {
@@ -124,7 +130,8 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     shouldFocusWrap: props.shouldFocusWrap,
     linkBehavior,
     disallowTypeAhead,
-    autoFocus: props.autoFocus
+    autoFocus: props.autoFocus,
+    disallowClearAll
   });
 
   let id = useId(props.id);

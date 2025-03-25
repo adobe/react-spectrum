@@ -53,7 +53,12 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
   /** Handler that is called when a user performs an action on the row. */
   onRowAction?: (key: Key) => void,
   /** Handler that is called when a user performs an action on the cell. */
-  onCellAction?: (key: Key) => void
+  onCellAction?: (key: Key) => void,
+  /**
+   * Whether the grid allows the user to clear all selected items via Escape.
+   * @default false
+   */
+  disallowClearAll?: boolean
 }
 
 export interface GridAria {
@@ -77,7 +82,8 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     scrollRef,
     getRowText,
     onRowAction,
-    onCellAction
+    onCellAction,
+    disallowClearAll = false
   } = props;
   let {selectionManager: manager} = state;
 
@@ -106,7 +112,8 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     keyboardDelegate: delegate,
     isVirtualized,
     scrollRef,
-    disallowTypeAhead
+    disallowTypeAhead,
+    disallowClearAll
   });
 
   let id = useId(props.id);
