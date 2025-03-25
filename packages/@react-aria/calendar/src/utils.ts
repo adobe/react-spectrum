@@ -96,10 +96,10 @@ export function useVisibleRangeDescription(startDate: CalendarDate, endDate: Cal
       let startMonth = startDate;
       let endMonth = endDate;
       if (startDate.calendar.getFormattableMonth) {
-        startMonth = startDate.calendar.getFormattableMonth(startDate) as CalendarDate;
+        startMonth = startDate.calendar.getFormattableMonth(startDate);
       }
       if (endDate.calendar.getFormattableMonth) {
-        endMonth = endDate.calendar.getFormattableMonth(endDate) as CalendarDate;
+        endMonth = endDate.calendar.getFormattableMonth(endDate);
       }
 
       if (isSameDay(endDate, endOfMonth(startDate))) {

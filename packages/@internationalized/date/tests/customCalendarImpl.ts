@@ -1,14 +1,15 @@
-import {AnyCalendarDate, CalendarDate, GregorianCalendar} from '../src';
+import {AnyCalendarDate, Calendar, CalendarDate, CalendarIdentifier, GregorianCalendar} from '../src';
 import {compareDate, startOfWeek} from '../src/queries';
 
 // This calendar gives each month a 4-5-4 week pattern, with February as the first month of the year.
 // This means that in this calendar, 2024-01-01 translates to 2024-02-04 in the Gregorian calendar.
 // Months begin on day 1, and go through 7*weeksInMonth days, ending on either the 28th or 35th day of the month.
 export class Custom454Calendar extends GregorianCalendar {
-  identifier = 'custom-454';
+  identifier: CalendarIdentifier = 'gregory';
   // The anchor date, in Gregorian calendar.
   // The anchor date is a date that occurs in the first week of the first month of every fiscal year.
   private anchorDate: CalendarDate;
+  private is454 = true;
 
   constructor() {
     super();
@@ -69,6 +70,11 @@ export class Custom454Calendar extends GregorianCalendar {
     }
     // Return as Gregorian date
     return new CalendarDate(year, month, 1);
+  }
+
+  isEqual(other: Calendar): boolean {
+    let other454 = other as Custom454Calendar;
+    return other454.is454 === true && other454.anchorDate.compare(this.anchorDate) === 0;
   }
 
   private getWeekPattern(isBigYear: boolean): number[] {

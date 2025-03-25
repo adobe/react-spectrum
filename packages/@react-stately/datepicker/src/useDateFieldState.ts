@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Calendar, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, toCalendar} from '@internationalized/date';
+import {Calendar, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, isEqualCalendar, toCalendar} from '@internationalized/date';
 import {convertValue, createPlaceholderDate, FieldOptions, FormatterOptions, getFormatOptions, getValidationResult, useDefaultProps} from './utils';
 import {DatePickerProps, DateValue, Granularity, MappedDateValue} from '@react-types/datepicker';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
@@ -217,10 +217,10 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   let clearedSegment = useRef<string | null>(null);
 
   // Reset placeholder when calendar changes
-  let lastCalendarIdentifier = useRef(calendar.identifier);
+  let lastCalendar = useRef(calendar);
   useEffect(() => {
-    if (calendar.identifier !== lastCalendarIdentifier.current) {
-      lastCalendarIdentifier.current = calendar.identifier;
+    if (!isEqualCalendar(calendar, lastCalendar.current)) {
+      lastCalendar.current = calendar;
       setPlaceholderDate(placeholder =>
         Object.keys(validSegments).length > 0
           ? toCalendar(placeholder, calendar)
