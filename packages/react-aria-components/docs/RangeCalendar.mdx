@@ -370,6 +370,10 @@ class Custom454 extends GregorianCalendar {
     let gregorian = toCalendar(date, new GregorianCalendar());
     return gregorian.set({month: date.month, day: 1});
   }
+
+  isEqual(other) {
+    return other instanceof Custom454;
+  }
  ///- end collapse -///
 }
 ```

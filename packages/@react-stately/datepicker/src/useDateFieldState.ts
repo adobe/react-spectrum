@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Calendar, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, isEqualCalendar, toCalendar} from '@internationalized/date';
+import {Calendar, CalendarIdentifier, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, isEqualCalendar, toCalendar} from '@internationalized/date';
 import {convertValue, createPlaceholderDate, FieldOptions, FormatterOptions, getFormatOptions, getValidationResult, useDefaultProps} from './utils';
 import {DatePickerProps, DateValue, Granularity, MappedDateValue} from '@react-types/datepicker';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
@@ -137,7 +137,7 @@ export interface DateFieldStateOptions<T extends DateValue = DateValue> extends 
    * `@internationalized/date` package, or manually implemented to include support for
    * only certain calendars.
    */
-  createCalendar: (name: string) => Calendar
+  createCalendar: (name: CalendarIdentifier) => Calendar
 }
 
 /**
@@ -168,7 +168,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
   }
 
   let defaultFormatter = useMemo(() => new DateFormatter(locale), [locale]);
-  let calendar = useMemo(() => createCalendar(defaultFormatter.resolvedOptions().calendar), [createCalendar, defaultFormatter]);
+  let calendar = useMemo(() => createCalendar(defaultFormatter.resolvedOptions().calendar as CalendarIdentifier), [createCalendar, defaultFormatter]);
 
   let [value, setDate] = useControlledState<DateValue | null, MappedDateValue<T> | null>(
     props.value,
