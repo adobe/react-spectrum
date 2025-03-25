@@ -129,7 +129,7 @@ export function OverlayContainer(props: OverlayContainerProps): React.ReactPorta
   let isSSR = useIsSSR();
   let {portalContainer = isSSR ? null : document.body, ...rest} = props;
   let {getContainer} = useUNSTABLE_PortalContext();
-  if (getContainer) {
+  if (!props.portalContainer && getContainer) {
     portalContainer = getContainer();
   }
 
