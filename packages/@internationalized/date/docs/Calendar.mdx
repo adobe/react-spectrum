@@ -236,7 +236,7 @@ To implement a calendar, either extend an existing implementation (e.g. `Gregori
 The following code is an example of how you might implement a custom 4-5-4 calendar (though implementing a true 4-5-4 calendar would be more nuanced than this).
 
 ```tsx
-import type {AnyCalendarDate} from '@internationalized/date';
+import type {AnyCalendarDate, Calendar} from '@internationalized/date';
 import {CalendarDate, GregorianCalendar, startOfWeek} from '@internationalized/date';
 
 const weekPattern = [4, 5, 4, 4, 5, 4, 4, 5, 4, 4, 5, 4];
@@ -275,6 +275,10 @@ class Custom454 extends GregorianCalendar {
 
     let gregorian = monthStart.add({days: date.day - 1});
     return super.toJulianDay(gregorian);
+  }
+
+  isEqual(other: Calendar) {
+    return other instanceof Custom454;
   }
 }
 ```
