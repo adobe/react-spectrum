@@ -726,7 +726,7 @@ jobs:
           command: |
             wget -O azcopy.tar.gz https://aka.ms/downloadazcopy-v10-linux
             tar -xf azcopy.tar.gz
-            mv ./azcopy_linux_amd64_*/azcopy /usr/local/bin/
+            mv ./linux_dir_*/azcopy /usr/local/bin/
       - run:
           name: deploy
           command: |
