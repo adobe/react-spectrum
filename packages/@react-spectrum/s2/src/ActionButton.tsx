@@ -223,14 +223,13 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
     type: 'top',
     value: {
       default: '[calc(self(height)/2 - var(--iconWidth)/2)]',
-      [iconOnly]: '[calc(self(height)/2 - var(--iconWidth)/2)]',
       [textOnly]: 0
     }
   },
   '--buttonPaddingX': {
     type: 'paddingStart',
     value: {
-      default: '[calc(self(height, self(minHeight)) * 3 / 8)]',
+      default: 'edge-to-text',
       [iconOnly]: 0
     }
   },
