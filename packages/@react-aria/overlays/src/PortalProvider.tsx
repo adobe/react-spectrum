@@ -13,13 +13,20 @@
 import React, {createContext, ReactNode, useContext} from 'react';
 
 export interface PortalProviderProps {
-  /* Should return the element where we should portal to. Can clear the context by passing null. */
-  getContainer?: () => HTMLElement | null
+  /** Should return the element where we should portal to. Can clear the context by passing null. */
+  getContainer?: () => HTMLElement | null,
+  /** The content of the PortalProvider. Should contain all children that want to portal their overlays to the element returned by the provided getContainer(). */
+  children: ReactNode
 }
 
-export const PortalContext = createContext<PortalProviderProps>({});
+export interface PortalProviderContextValue extends Omit<PortalProviderProps, 'children'>{};
 
-export function UNSTABLE_PortalProvider(props: PortalProviderProps & {children: ReactNode}): ReactNode {
+export const PortalContext = createContext<PortalProviderContextValue>({});
+
+/**
+ * Sets the portal container for all overlay elements rendered by its children.
+ */
+export function UNSTABLE_PortalProvider(props: PortalProviderProps): ReactNode {
   let {getContainer} = props;
   let {getContainer: ctxGetContainer} = useUNSTABLE_PortalContext();
   return (
@@ -29,6 +36,6 @@ export function UNSTABLE_PortalProvider(props: PortalProviderProps & {children: 
   );
 }
 
-export function useUNSTABLE_PortalContext(): PortalProviderProps {
+export function useUNSTABLE_PortalContext(): PortalProviderContextValue {
   return useContext(PortalContext) ?? {};
 }
