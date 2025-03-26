@@ -707,7 +707,7 @@ jobs:
             wget -O azcopy.tar.gz https://aka.ms/downloadazcopy-v10-linux
             tar -xf azcopy.tar.gz
             ls -al
-            mv ./linux_dir/azcopy /usr/local/bin/
+            mv ./azcopy_linux_amd64_*/azcopy /usr/local/bin/
       - run:
           name: deploy
           command: |
@@ -727,7 +727,7 @@ jobs:
           command: |
             wget -O azcopy.tar.gz https://aka.ms/downloadazcopy-v10-linux
             tar -xf azcopy.tar.gz
-            mv ./linux_dir/azcopy /usr/local/bin/
+            mv ./azcopy_linux_amd64_*/azcopy /usr/local/bin/
       - run:
           name: deploy
           command: |
@@ -748,7 +748,7 @@ jobs:
           command: |
             wget -O azcopy.tar.gz https://aka.ms/downloadazcopy-v10-linux
             tar -xf azcopy.tar.gz
-            mv ./linux_dir/azcopy /usr/local/bin/
+            mv ./azcopy_linux_amd64_*/azcopy /usr/local/bin/
       - run:
           name: deploy
           command: azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive
