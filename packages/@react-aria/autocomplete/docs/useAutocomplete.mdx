@@ -91,8 +91,6 @@ interface AutocompleteProps extends AriaAutocompleteProps {}
 
 function Autocomplete(props: AutocompleteProps) {
   let {contains} = useFilter({ sensitivity: 'base' });
-  let filter = (textValue, inputValue) => contains(textValue, inputValue);
-  let {disableAutoFocusFirst} = props;
   let state = useAutocompleteState(props);
   let inputRef = useRef<HTMLInputElement | null>(null);
   let collectionRef = useRef<HTMLElement>(null);
@@ -100,11 +98,10 @@ function Autocomplete(props: AutocompleteProps) {
     textFieldProps,
     collectionProps,
     collectionRef: mergedCollectionRef,
-    filter: filterFn
+    filter: contains
   } = useAutocomplete({
     ...props,
     filter,
-    disableAutoFocusFirst,
     inputRef,
     collectionRef
   }, state);
