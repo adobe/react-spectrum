@@ -843,7 +843,7 @@ export function createFocusManager(ref: RefObject<Element | null>, defaultOption
       let {tabbable = defaultOptions.tabbable, accept = defaultOptions.accept} = opts;
       let walker = getFocusableTreeWalker(root, {tabbable, accept});
       let nextNode = walker.nextNode() as FocusableElement;
-      if (nextNode) {
+      if (nextNode && !opts.preview) {
         focusElement(nextNode, true);
       }
       return nextNode;
@@ -856,7 +856,7 @@ export function createFocusManager(ref: RefObject<Element | null>, defaultOption
       let {tabbable = defaultOptions.tabbable, accept = defaultOptions.accept} = opts;
       let walker = getFocusableTreeWalker(root, {tabbable, accept});
       let next = last(walker);
-      if (next) {
+      if (next && !opts.preview) {
         focusElement(next, true);
       }
       return next ?? null;

@@ -67,7 +67,7 @@ export function Overlay(props: OverlayProps): ReactNode | null {
   let contents = props.children;
   if (!props.disableFocusManagement) {
     contents = (
-      <FocusScope restoreFocus contain={(props.shouldContainFocus || contain) && !isExiting}>
+      <FocusScope restoreFocus={props.shouldRestoreFocus ?? true} contain={(props.shouldContainFocus || contain) && !isExiting}>
         {contents}
       </FocusScope>
     );
