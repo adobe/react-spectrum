@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import { useState } from 'react';
 import {
   ActionButton,
   ActionMenu,
@@ -25,7 +24,8 @@ import {
 } from '../src';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import type {Meta} from '@storybook/react';
-import { style } from '../style' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
+import {useState} from 'react';
 
 const meta: Meta<typeof CoachMark> = {
   component: CoachMark,

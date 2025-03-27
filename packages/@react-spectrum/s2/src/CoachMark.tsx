@@ -27,6 +27,7 @@ import {
   useContextProps,
   useRenderProps
 } from 'react-aria-components';
+import {ariaHideOutside, AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PopoverAria} from '@react-aria/overlays';
 import {ButtonContext} from './Button';
 import {Card} from './Card';
 import {CheckboxContext} from './Checkbox';
@@ -34,23 +35,22 @@ import {colorScheme, getAllowedOverrides, StyleProps} from './style-utils' with 
 import {ColorSchemeContext} from './Provider';
 import {ContentContext, FooterContext, KeyboardContext, TextContext} from './Content';
 import {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useEffect, useRef, useState} from 'react';
+import {createFocusManager} from '@react-aria/focus';
 import {DividerContext} from './Divider';
+import {filterDOMProps, getEventTarget, getOwnerDocument, mergeProps, useEnterAnimation, useExitAnimation, useGlobalListeners, useLayoutEffect, useObjectRef} from '@react-aria/utils';
+import {focusSafely, PressResponder} from '@react-aria/interactions';
 import {forwardRefType} from './types';
 import {ImageContext} from './Image';
 import {ImageCoordinator} from './ImageCoordinator';
 import {keyframes, raw} from '../style/style-macro' with {type: 'macro'};
 import {mergeStyles} from '../style/runtime';
-import {focusSafely, PressResponder} from '@react-aria/interactions';
+import {OverlayArrowContext} from 'react-aria-components/src/OverlayArrow';
+import {OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import {SliderContext} from './Slider';
 import {space, style} from '../style' with {type: 'macro'};
 import {useId, useLocale, useOverlay, useOverlayPosition, useOverlayTrigger, usePreventScroll} from 'react-aria';
+import {useIsHidden} from '@react-aria/collections';
 import {useMenuTriggerState} from '@react-stately/menu';
-import {filterDOMProps, getEventTarget, getOwnerDocument, mergeProps, useEnterAnimation, useExitAnimation, useGlobalListeners, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import { createFocusManager } from '@react-aria/focus';
-import { ariaHideOutside, AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PopoverAria } from '@react-aria/overlays';
-import { useIsHidden } from '@react-aria/collections';
-import { OverlayTriggerState, useOverlayTriggerState } from 'react-stately';
-import { OverlayArrowContext } from 'react-aria-components/src/OverlayArrow';
 
 export interface CoachMarkTriggerProps extends AriaDialogTriggerProps {
 }
@@ -108,7 +108,7 @@ export function CoachMarkTrigger(props: CoachMarkTriggerProps): ReactNode {
       };
       let onFocusWithin = (e) => {
         // if the relatedTarget is from an element after the trigger and from outside the coachmark, then focus the last element in the coachmark
-        if (triggerRef.current.compareDocumentPosition(e.relatedTarget) === Node.DOCUMENT_POSITION_FOLLOWING && !popoverRef.current?.contains(e.relatedTarget)) {
+        if (triggerRef.current?.compareDocumentPosition(e.relatedTarget) === Node.DOCUMENT_POSITION_FOLLOWING && !popoverRef.current?.contains(e.relatedTarget)) {
           let manager = createFocusManager(popoverRef, {tabbable: true});
           manager.focusLast();
         }

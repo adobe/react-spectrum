@@ -12,7 +12,7 @@
 
 import {act, ByRoleMatcher, ByRoleOptions, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {ActionMenu, Button, CardPreview, Checkbox, CoachMark, CoachMarkTrigger, Content, Footer, Image, Keyboard, MenuItem, Text} from '../src';
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import userEvent, {UserEvent} from '@testing-library/user-event';
 
 const mockAnimations = () => {
