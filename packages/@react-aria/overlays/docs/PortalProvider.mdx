@@ -34,6 +34,13 @@ Modals, Popovers, Toasts, and Tooltips will portal their overlay element to. Thi
 your app is already portalling other elements to a location other than the `document.body` and thus requires
 your React Aria components to send their overlays to the same container.
 
+Please note that `UNSTABLE_PortalProvider` is considered `UNSTABLE` because it is an escape hatch, and there are
+many places that an application could portal to. Not all of them will work, either with styling, accessibility,
+or for a variety of other reasons. Typically, it is best to portal to the root of the entire application, typically the `body` element,
+outside of any possible overflow or stacking contexts. We envision `UNSTABLE_PortalProvider` being used to group all of the portalled
+elements into a single container at the root of the app or to control the order of children of the `body` element, but you may have use cases
+that need to do otherwise.
+
 ## Props
 
 <PropTable links={docs.links} component={docs.exports.UNSTABLE_PortalProvider} />
@@ -89,7 +96,7 @@ function App() {
             title: 'Toast complete!',
             description: 'Great success.'
           })}>
-          Toast
+          Open Toast
         </Button>
       </UNSTABLE_PortalProvider>
       <div ref={container} style={{height: '70px', width: '200px',  overflow: 'auto'}}>
