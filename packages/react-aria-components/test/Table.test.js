@@ -335,10 +335,10 @@ describe('Table', () => {
     }
   });
 
-  it('should prevent Esc from clearing selection if disallowClearAll is true', async () => {
+  it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
     let onSelectionChange = jest.fn();
     let {getAllByRole} = renderTable({
-      tableProps: {selectionMode: 'multiple', disallowClearAll: true, onSelectionChange}
+      tableProps: {selectionMode: 'multiple', escapeKeyBehavior: 'none', onSelectionChange}
     });
 
     let checkbox1 = getAllByRole('checkbox')[1];

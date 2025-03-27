@@ -386,8 +386,8 @@ describe('Menu', () => {
     }
   });
 
-  it('should prevent Esc from clearing selection if disallowClearAll is true', async () => {
-    let {getAllByRole} = renderMenu({selectionMode: 'multiple', disallowClearAll: true});
+  it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
+    let {getAllByRole} = renderMenu({selectionMode: 'multiple', escapeKeyBehavior: 'none'});
     let menuitem = getAllByRole('menuitemcheckbox')[0];
 
     expect(menuitem).not.toHaveAttribute('aria-checked', 'true');

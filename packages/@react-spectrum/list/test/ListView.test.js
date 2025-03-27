@@ -812,8 +812,8 @@ describe('ListView', function () {
       expect(announce).toHaveBeenCalledTimes(3);
     });
 
-    it('should prevent Esc from clearing selection if disallowClearAll is true', async function () {
-      let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', disallowClearAll: true});
+    it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async function () {
+      let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', escapeKeyBehavior: 'none'});
 
       let rows = tree.getAllByRole('row');
       await user.click(within(rows[1]).getByRole('checkbox'));

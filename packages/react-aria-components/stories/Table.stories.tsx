@@ -182,7 +182,7 @@ export const TableExampleStory = {
   args: {
     selectionMode: 'none',
     selectionBehavior: 'toggle',
-    disallowClearAll: false
+    escapeKeyBehavior: 'clearSelection'
   },
   argTypes: {
     selectionMode: {
@@ -192,6 +192,10 @@ export const TableExampleStory = {
     selectionBehavior: {
       control: 'radio',
       options: ['toggle', 'replace']
+    },
+    escapeKeyBehavior: {
+      control: 'radio',
+      options: ['clearSelection', 'none']
     }
   }
 };

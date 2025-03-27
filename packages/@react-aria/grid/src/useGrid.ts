@@ -55,10 +55,14 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
   /** Handler that is called when a user performs an action on the cell. */
   onCellAction?: (key: Key) => void,
   /**
-   * Whether the grid allows the user to clear all selected items via Escape.
-   * @default false
+   * Whether pressing the escape key should clear selection in the grid or not.
+   *
+   * Most experiences should not modify this option as it eliminates a keyboard user's ability to
+   * easily clear selection. Only use if the escape key is being handled externally or should not
+   * trigger selection clearing contextually.
+   * @default 'clearSelection'
    */
-  disallowClearAll?: boolean
+  escapeKeyBehavior?: 'clearSelection' | 'none'
 }
 
 export interface GridAria {
@@ -83,7 +87,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     getRowText,
     onRowAction,
     onCellAction,
-    disallowClearAll = false
+    escapeKeyBehavior = 'clearSelection'
   } = props;
   let {selectionManager: manager} = state;
 
@@ -113,7 +117,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     isVirtualized,
     scrollRef,
     disallowTypeAhead,
-    disallowClearAll
+    escapeKeyBehavior
   });
 
   let id = useId(props.id);

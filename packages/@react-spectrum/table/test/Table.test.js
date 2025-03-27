@@ -2211,9 +2211,9 @@ export let tableTests = () => {
         checkSelectAll(tree, 'indeterminate');
       });
 
-      it('should prevent Esc from clearing selection if disallowClearAll is true', async function () {
+      it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async function () {
         let onSelectionChange = jest.fn();
-        let tree = renderTable({onSelectionChange, selectionMode: 'multiple', disallowClearAll: true});
+        let tree = renderTable({onSelectionChange, selectionMode: 'multiple', escapeKeyBehavior: 'none'});
         let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
         tableTester.setInteractionType('keyboard');
 

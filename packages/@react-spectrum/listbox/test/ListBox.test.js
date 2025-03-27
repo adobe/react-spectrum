@@ -500,9 +500,9 @@ describe('ListBox', function () {
       expect(onSelectionChange).toBeCalledTimes(0);
     });
 
-    it('should prevent Esc from clearing selection if disallowClearAll is true', async function () {
+    it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async function () {
       let user = userEvent.setup({delay: null, pointerMap});
-      let tree = renderComponent({onSelectionChange, selectionMode: 'multiple', disallowClearAll: true});
+      let tree = renderComponent({onSelectionChange, selectionMode: 'multiple', escapeKeyBehavior: 'none'});
       let listbox = tree.getByRole('listbox');
 
       let options = within(listbox).getAllByRole('option');

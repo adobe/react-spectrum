@@ -248,8 +248,8 @@ describe('GridList', () => {
     expect(within(row).getByRole('checkbox')).not.toBeChecked();
   });
 
-  it('should prevent Esc from clearing selection if disallowClearAll is true', async () => {
-    let {getByRole} = renderGridList({selectionMode: 'multiple', disallowClearAll: true});
+  it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
+    let {getByRole} = renderGridList({selectionMode: 'multiple', escapeKeyBehavior: 'none'});
     let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
 
     let row = gridListTester.rows[0];

@@ -31,10 +31,14 @@ export interface TableProps<T> extends MultipleSelection, Sortable {
   /** A list of row keys to disable. */
   disabledKeys?: Iterable<Key>,
   /**
-   * Whether the table allows the user to clear all selected items via Escape.
-   * @default false
+   * Whether pressing the escape key should clear selection in the table or not.
+   *
+   * Most experiences should not modify this option as it eliminates a keyboard user's ability to
+   * easily clear selection. Only use if the escape key is being handled externally or should not
+   * trigger selection clearing contextually.
+   * @default 'clearSelection'
    */
-  disallowClearAll?: boolean
+  escapeKeyBehavior?: 'clearSelection' | 'none'
 }
 
 /**

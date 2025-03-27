@@ -629,8 +629,8 @@ describe('Tree', () => {
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
     });
 
-    it('should prevent Esc from clearing selection if disallowClearAll is true', async () => {
-      let {getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', disallowClearAll: true}}  />);
+    it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
+      let {getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', escapeKeyBehavior: 'none'}}  />);
 
       let rows = getAllByRole('row');
       await user.click(rows[0]);

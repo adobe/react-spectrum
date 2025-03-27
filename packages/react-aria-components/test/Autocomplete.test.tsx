@@ -622,8 +622,8 @@ describe('Autocomplete', () => {
     expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
   });
 
-  it('should close the Dialog on the second press of Escape if the inner ListBox has disallowClearAll', async () => {
-    const DialogExample = ({disallowClearAll = false}) => {
+  it('should close the Dialog on the second press of Escape if the inner ListBox has escapeKeyBehavior: "none" ', async () => {
+    const DialogExample = (props) => {
       let {contains} = useFilter({sensitivity: 'base'});
 
       return (
@@ -637,7 +637,7 @@ describe('Autocomplete', () => {
                 <SearchField autoFocus aria-label="Search">
                   <Input />
                 </SearchField>
-                <StaticListbox disallowClearAll={disallowClearAll} selectionMode="single" defaultSelectedKeys={['1']} />
+                <StaticListbox escapeKeyBehavior={props?.escapeKeyBehavior} selectionMode="single" defaultSelectedKeys={['1']} />
               </Autocomplete>
             </Dialog>
           </Popover>
@@ -645,7 +645,7 @@ describe('Autocomplete', () => {
       );
     };
 
-    let {getByRole, getAllByRole, rerender, queryAllByRole} = render(<DialogExample disallowClearAll />);
+    let {getByRole, getAllByRole, rerender, queryAllByRole} = render(<DialogExample escapeKeyBehavior="none" />);
     let button = getByRole('button');
     await user.tab();
     expect(document.activeElement).toBe(button);
@@ -670,7 +670,7 @@ describe('Autocomplete', () => {
     dialogs = queryAllByRole('dialog');
     expect(dialogs).toHaveLength(0);
 
-    // Test without disallowClearAll, 2nd Escape should clear selection instead of closing the dialog
+    // Test without escapeKeyBehavior, 2nd Escape should clear selection instead of closing the dialog
     rerender(<DialogExample />);
     button = getByRole('button');
     await user.click(button);

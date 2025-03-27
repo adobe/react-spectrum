@@ -463,8 +463,8 @@ describe('Tree', () => {
     expect(treeTester.selectedRows[0]).toBe(row1);
   });
 
-  it('should prevent Esc from clearing selection if disallowClearAll is true', async () => {
-    let {getByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', disallowClearAll: true}} />);
+  it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
+    let {getByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', escapeKeyBehavior: 'none'}} />);
     let treeTester = testUtilUser.createTester('Tree', {user, root: getByRole('treegrid')});
     let rows = treeTester.rows;
     let row1 = rows[1];

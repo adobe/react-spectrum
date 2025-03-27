@@ -23,7 +23,7 @@ export default {
   args: {
     onAction: action('onAction'),
     selectionMode: 'multiple',
-    disallowClearAll: false
+    escapeKeyBehavior: 'clearSelection'
   },
   argTypes: {
     onAction: {
@@ -39,6 +39,10 @@ export default {
     selectionMode: {
       control: 'radio',
       options: ['none', 'single', 'multiple']
+    },
+    escapeKeyBehavior: {
+      control: 'radio',
+      options: ['clearSelection', 'none']
     }
   }
 };
@@ -380,7 +384,7 @@ const AsyncExample = (args) => {
       };
     }
   });
-  let {onSelectionChange, selectionMode, includeLoadState, disallowClearAll} = args;
+  let {onSelectionChange, selectionMode, includeLoadState, escapeKeyBehavior} = args;
   let renderEmptyState;
   if (includeLoadState) {
     renderEmptyState = list.isLoading ? () => 'Loading' : () => 'No results found.';
@@ -395,7 +399,7 @@ const AsyncExample = (args) => {
           <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
         </SearchField>
         <ListBox<AutocompleteItem>
-          disallowClearAll={disallowClearAll}
+          escapeKeyBehavior={escapeKeyBehavior}
           renderEmptyState={renderEmptyState}
           items={includeLoadState && list.isLoading ? [] : list.items}
           className={styles.menu}
@@ -506,12 +510,12 @@ function VirtualizedListBox(props) {
     initialItems: items
   });
 
-  let {onSelectionChange, selectionMode, disallowClearAll} = props;
+  let {onSelectionChange, selectionMode, escapeKeyBehavior} = props;
 
   return (
     <Virtualizer layout={ListLayout} layoutOptions={{rowHeight: 25}}>
       <ListBox
-        disallowClearAll={disallowClearAll}
+        escapeKeyBehavior={escapeKeyBehavior}
         onSelectionChange={onSelectionChange}
         selectionMode={selectionMode}
         className={styles.menu}

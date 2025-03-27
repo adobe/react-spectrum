@@ -478,8 +478,8 @@ describe('Menu', function () {
 
     it.each`
       Name        | Component | props
-      ${'Menu'}   | ${Menu}   | ${{onSelectionChange, selectionMode: 'multiple', disallowClearAll: true}}
-    `('$Name should prevent Esc from clearing selection if disallowClearAll is true', async function ({Component, props}) {
+      ${'Menu'}   | ${Menu}   | ${{onSelectionChange, selectionMode: 'multiple', escapeKeyBehavior: 'none'}}
+    `('$Name should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async function ({Component, props}) {
       let user = userEvent.setup({delay: null, pointerMap});
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
