@@ -14,7 +14,7 @@ import {ActionButton, Button, Provider, Tooltip, TooltipTrigger} from '../src';
 import {CombinedTooltip} from '../src/Tooltip';
 import Crop from '../s2wf-icons/S2_Icon_Crop_20_N.svg';
 import LassoSelect from '../s2wf-icons/S2_Icon_LassoSelect_20_N.svg';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
 
 const meta: Meta<typeof CombinedTooltip> = {
@@ -80,12 +80,32 @@ const ExampleRender = (args: any) => {
   );
 };
 
-export const Example = {
+type Story = StoryObj<typeof TooltipTrigger>;
+
+export const Example: Story = {
   render: (args) => <ExampleRender {...args} />,
   argTypes: {
     isOpen: {
       control: 'select',
       options: [true, false, undefined]
+    }
+  }
+};
+
+Example.parameters = {
+  docs: {
+    source: {
+      transform: () => {
+        return `
+<TooltipTrigger>
+  <Button aria-label="Crop"><Crop /></Button>
+  <Tooltip>Crop</Tooltip>
+</TooltipTrigger>
+<TooltipTrigger>
+  <ActionButton aria-label="Lasso"><LassoSelect /></ActionButton>
+  <Tooltip>Lasso</Tooltip>
+</TooltipTrigger>`;
+      }
     }
   }
 };
