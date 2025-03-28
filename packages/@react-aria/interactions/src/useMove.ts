@@ -151,7 +151,7 @@ export function useMove(props: MoveEvents): MoveResult {
         addGlobalListener(window, 'touchend', onTouchEnd, false);
         addGlobalListener(window, 'touchcancel', onTouchEnd, false);
       };
-    } else {
+    } else if (process.env.NODE_ENV === 'test') {
       let onPointerMove = (e: PointerEvent) => {
         if (e.pointerId === state.current.id) {
           let pointerType = (e.pointerType || 'mouse') as PointerType;

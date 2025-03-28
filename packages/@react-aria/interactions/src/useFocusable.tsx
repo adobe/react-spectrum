@@ -112,6 +112,10 @@ export const Focusable = forwardRef(({children, ...props}: FocusableComponentPro
   let child = React.Children.only(children);
 
   useEffect(() => {
+    if (process.env.NODE_ENV === 'production') {
+      return;
+    }
+
     let el = ref.current;
     if (!el || !(el instanceof getOwnerWindow(el).Element)) {
       console.error('<Focusable> child must forward its ref to a DOM element.');
