@@ -98,10 +98,10 @@ function Autocomplete(props: AutocompleteProps) {
     textFieldProps,
     collectionProps,
     collectionRef: mergedCollectionRef,
-    filter: contains
+    filter: filterFn
   } = useAutocomplete({
     ...props,
-    filter,
+    filter: contains,
     inputRef,
     collectionRef
   }, state);
