@@ -208,7 +208,7 @@ const NotificationBadgesExample = (args) => {
 
   return (
     <div style={{display: 'flex', gap: 8, padding: 8, justifyContent: 'center'}}>
-      <ActionButton aria-label="Messages has new activity" {...args}><CommentIcon /><NotificationBadge value={105} /></ActionButton>
+      <ActionButton aria-label="Messages has new activity" {...args}><CommentIcon /><NotificationBadge /></ActionButton>
       <ActionButton aria-label={`${formattedValue} notifications`} {...args}><BellIcon /><NotificationBadge value={badgeValue} /></ActionButton>
       <ActionButton {...args}><CommentIcon /><Text>Messages</Text><NotificationBadge value={5} /></ActionButton>
       <ActionButton {...args}><Text>Notifications</Text><NotificationBadge value={105} /></ActionButton>
@@ -230,10 +230,11 @@ let formattedValue = useNumberFormatter().format(badgeValue);
 
 return (
   <div style={{display: 'flex', gap: 8, padding: 8, justifyContent: 'center'}}>
-    <ActionButton aria-label="Messages has new activity" {...props}><CommentIcon /><NotificationBadge /></ActionButton>
-    <ActionButton aria-label={\`\${formattedValue} notifications\`}  {...props}><BellIcon /><NotificationBadge value={badgeValue} /></ActionButton>
-    <ActionButton {...props}><CommentIcon /><Text>Messages</Text><NotificationBadge value={5} /></ActionButton>
-    <ActionButton {...props}><Text>Notifications</Text><NotificationBadge value={105} /></ActionButton>
+    <ActionButton aria-label="Messages has new activity"><CommentIcon /><NotificationBadge /></ActionButton>
+    <ActionButton aria-label={\`\${formattedValue} notifications\`} ><BellIcon /><NotificationBadge value={badgeValue} /></ActionButton>
+    <ActionButton><CommentIcon /><Text>Messages</Text><NotificationBadge value={5} /></ActionButton>
+    {/* cannot have an isQuiet label-only Action Button with a Notification Badge */}
+    <ActionButton><Text>Notifications</Text><NotificationBadge value={105} /></ActionButton>
   </div>
         )`;
       }

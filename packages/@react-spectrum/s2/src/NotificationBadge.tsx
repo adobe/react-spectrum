@@ -39,10 +39,17 @@ export interface NotificationBadgeProps extends DOMProps, AriaLabelingProps, Sty
   value?: number | null
 }
 
-export const NotificationBadgeContext = createContext<ContextValue<Partial<NotificationBadgeProps>, DOMRefValue<HTMLDivElement>>>(null);
+interface NotificationBadgeContextProps extends Partial<NotificationBadgeProps> {
+  isDisabled?: boolean
+}
+
+export const NotificationBadgeContext = createContext<ContextValue<Partial<NotificationBadgeContextProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const badge = style({
-  display: 'flex',
+  display: {
+    default: 'flex',
+    isDisabled: 'none'
+  },
   font: 'control',
   color: {
     default: 'white',
@@ -111,8 +118,9 @@ export const NotificationBadge = forwardRef(function Badge(props: NotificationBa
   let {
     size = 'S',
     value,
+    isDisabled = false,
     ...otherProps
-  } = props;
+  } = props as NotificationBadgeContextProps;
   let domRef = useDOMRef(ref);
   let {locale} = useLocale();
   let formattedValue = '';
@@ -151,7 +159,7 @@ export const NotificationBadge = forwardRef(function Badge(props: NotificationBa
       {...filterDOMProps(otherProps, {labelable: true})}
       role={ariaLabel && 'img'}
       aria-label={ariaLabel}
-      className={(props.UNSAFE_className || '') + badge({size, isIndicatorOnly, isSingleDigit, isDoubleDigit}, props.styles)}
+      className={(props.UNSAFE_className || '') + badge({size, isIndicatorOnly, isSingleDigit, isDoubleDigit, isDisabled}, props.styles)}
       style={props.UNSAFE_style}
       ref={domRef}>
       {formattedValue}
