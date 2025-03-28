@@ -25,7 +25,8 @@ import {
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import type {Meta} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
-import {useState} from 'react';
+import {useCallback, useRef, useState} from 'react';
+import {CoachMarkContainer} from '../src/CoachMark';
 
 const meta: Meta<typeof CoachMark> = {
   component: CoachMark,
@@ -66,7 +67,7 @@ export const CoachMarkExample = {
           <Footer>
             <Text slot="steps">1 of 10</Text>
             <Button fillStyle="outline" variant="secondary">Previous</Button>
-            <Button variant="primary">Next</Button>
+            <Button variant="primary" autoFocus>Next</Button>
           </Footer>
         </CoachMark>
       </CoachMarkTrigger>
@@ -75,7 +76,7 @@ export const CoachMarkExample = {
   )
 };
 
-function ControlledCoachMark(args) {
+function ControlledCoachMark(props) {
   let [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -83,7 +84,7 @@ function ControlledCoachMark(args) {
       <Button onPress={() => setIsOpen(true)}>Open</Button>
       <CoachMarkTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
         <Checkbox>Sync with CC</Checkbox>
-        <CoachMark placement="right top" {...args}>
+        <CoachMark placement="right top" {...props}>
           <CardPreview>
             <Image src={new URL('assets/preview.png', import.meta.url).toString()} />
           </CardPreview>
@@ -191,6 +192,54 @@ export const CoachMarkButton = {
     }
   }
 };
+
+function DetachedCoachMark(props) {
+  let [isOpen, setIsOpen] = useState(false);
+  let triggerRef = useRef<HTMLButtonElement>(null);
+  let callbackRef = useCallback((e) => { // TODO: this seems undesired, maybe another way to get a trigger/target ref? (RS)
+    triggerRef.current = e?.UNSAFE_getDOMNode();
+  }, []);
+  return (
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
+      <Button onPress={() => setIsOpen(true)}>Before</Button>
+      <Button ref={callbackRef}>Target</Button>
+      <Button onPress={() => setIsOpen(false)}>After</Button>
+      <CoachMarkContainer onDismiss={() => {}} triggerRef={triggerRef}>
+        {isOpen && (
+          <CoachMark placement="right top" {...props}>
+            <CardPreview>
+              <Image src={new URL('assets/preview.png', import.meta.url).toString()} />
+            </CardPreview>
+            <Content>
+              <Text slot="title">Hello</Text>
+              <ActionMenu>
+                <MenuItem>Skip tour</MenuItem>
+                <MenuItem>Restart tour</MenuItem>
+              </ActionMenu>
+              <Keyboard>Command + B</Keyboard>
+              <Text slot="description">This is the description</Text>
+            </Content>
+            <Footer>
+              <Text slot="steps">1 of 10</Text>
+              <Button fillStyle="outline" variant="secondary">Previous</Button>
+              <Button variant="primary">Next</Button>
+            </Footer>
+          </CoachMark>
+        )}
+      </CoachMarkContainer>
+    </div>
+  );
+}
+
+export const CoachMarkDetached = {
+  render: (args) => (
+    <DetachedCoachMark {...args} />
+  ),
+  parameters: {
+    docs: {disable: true}
+  }
+};
+
 // function MyCoachMark({step, currentStep, totalSteps, description = '', skipTour, restartTour, advanceStep, previousStep, hasPressAction = false, placement = 'right top' as Placement}) {
 //   const onAction = actionKey => {
 //     if (actionKey === 'skip') {

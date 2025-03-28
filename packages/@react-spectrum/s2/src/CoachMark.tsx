@@ -17,6 +17,8 @@ import {
   ContextValue,
   DEFAULT_SLOT,
   DialogContext,
+  Modal,
+  ModalContext,
   OverlayTriggerStateContext,
   PopoverContext,
   PopoverProps,
@@ -34,10 +36,10 @@ import {CheckboxContext} from './Checkbox';
 import {colorScheme, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
 import {ContentContext, FooterContext, KeyboardContext, TextContext} from './Content';
-import {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useEffect, useRef, useState} from 'react';
+import {Children, createContext, ForwardedRef, forwardRef, isValidElement, ReactElement, ReactNode, Ref, RefCallback, RefObject, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {createFocusManager} from '@react-aria/focus';
 import {DividerContext} from './Divider';
-import {filterDOMProps, getEventTarget, getOwnerDocument, mergeProps, useEnterAnimation, useExitAnimation, useGlobalListeners, useLayoutEffect, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, getEventTarget, getOwnerDocument, mergeProps, mergeRefs, useEnterAnimation, useExitAnimation, useGlobalListeners, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import {focusSafely, PressResponder} from '@react-aria/interactions';
 import {forwardRefType} from './types';
 import {ImageContext} from './Image';
@@ -137,6 +139,70 @@ export function CoachMarkTrigger(props: CoachMarkTriggerProps): ReactNode {
         </CoachIndicator>
       </PressResponder>
     </Provider>
+  );
+}
+
+export function CoachMarkContainer(props: CoachMarkContainerProps) {
+  let {
+    children,
+    onDismiss,
+    triggerRef
+  } = props;
+  let [overlayProps, setOverlayProps] = useState({});
+
+  let childArray = Children.toArray(children);
+  if (childArray.length > 1) {
+    throw new Error('Only a single child can be passed to DialogContainer.');
+  }
+
+  let [lastChild, setLastChild] = useState<ReactElement | null>(null);
+
+  // React.Children.toArray mutates the children, and we need them to be stable
+  // between renders so that the lastChild comparison works.
+  let child: ReactElement | undefined = undefined;
+  if (Array.isArray(children)) {
+    child = children.find(isValidElement);
+  } else if (isValidElement(children)) {
+    child = children;
+  }
+
+  if (child && child !== lastChild) {
+    setLastChild(child);
+  }
+
+  let onOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      onDismiss();
+    }
+  };
+
+  let ref = useCallback(() => {
+    console.log('callback ref')
+    let triggerId = triggerRef?.current?.id;
+    console.log(triggerId);
+    if (triggerId) {
+      setOverlayProps({
+        id: triggerId
+      });
+    }
+  }, []) as RefCallback<HTMLElement>;
+
+  console.log(triggerRef);
+  return (
+    <ModalContext.Provider value={{isOpen: !!child, onOpenChange}}>
+      <Modal isDismissable isKeyboardDismissDisabled>
+        {({state}) => (
+          <Provider
+            values={[
+                [OverlayTriggerStateContext, state],
+                [DialogContext, overlayProps], // not using here... see if i can
+                [PopoverContext, {trigger: 'DialogTrigger', triggerRef, ref, isNonModal: true}] // valid to pass triggerRef?
+            ]}>
+            {lastChild}
+          </Provider>
+        )}
+      </Modal>
+    </ModalContext.Provider>
   );
 }
 
@@ -627,7 +693,7 @@ interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderP
   dir?: 'ltr' | 'rtl'
 }
 
-function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: PopoverInnerProps) {
+function PopoverInner({state, isExiting, UNSTABLE_portalContainer, popoverRef: ref, ...props}: PopoverInnerProps) {
   // Calculate the arrow size internally (and remove props.arrowSize from PopoverProps)
   // Referenced from: packages/@react-spectrum/tooltip/src/TooltipTrigger.tsx
   let arrowRef = useRef<HTMLDivElement>(null);
@@ -643,6 +709,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: Po
 
   let {popoverProps, underlayProps, arrowProps, placement} = useCoachMarkPopover({
     ...props,
+    popoverRef: ref,
     offset: props.offset ?? 16,
     arrowSize: arrowWidth,
     // If this is a submenu/subdialog, use the root popover's container
@@ -650,7 +717,6 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: Po
     groupRef: isSubPopover ? groupCtx! : containerRef
   }, state);
 
-  let ref = props.popoverRef as RefObject<HTMLDivElement | null>;
   let isEntering = useEnterAnimation(ref, !!placement) || props.isEntering || false;
   let renderProps = useRenderProps({
     ...props,
