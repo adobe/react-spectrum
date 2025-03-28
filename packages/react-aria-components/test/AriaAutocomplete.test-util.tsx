@@ -706,7 +706,7 @@ export const AriaAutocompleteTests = ({renderers, setup, prefix, ariaPattern = '
 
         describe('pointer events', function () {
           installPointerEvent();
-          
+
           it('should close the menu when hovering an adjacent menu item in the virtual focus list', async function () {
             let {getByRole, getAllByRole} = (renderers.submenus!)();
             let menu = getByRole('menu');

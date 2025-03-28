@@ -15,7 +15,7 @@ import {ButtonContext} from './Button';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {createHideableComponent} from '@react-aria/collections';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
 import {FormContext} from './Form';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
@@ -57,7 +57,7 @@ export const SearchField = /*#__PURE__*/ createHideableComponent(function Search
   [props, ref] = useContextProps(props, ref, SearchFieldContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
-  let inputRef = useRef<HTMLInputElement>(null);
+  let inputRef = useObjectRef(props.inputRef);
   let [inputContextProps, mergedInputRef] = useContextProps({}, inputRef, InputContext);
   let [labelRef, label] = useSlot(
     !props['aria-label'] && !props['aria-labelledby']

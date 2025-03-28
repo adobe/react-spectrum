@@ -28,7 +28,7 @@ import {
   Validation,
   ValueBase
 } from '@react-types/shared';
-import {ReactElement} from 'react';
+import {ReactElement, Ref} from 'react';
 
 export interface TextFieldProps<T = HTMLInputElement> extends InputBase, Validation<string>, HelpTextProps, FocusableProps<T>, TextInputBase, ValueBase<string>, LabelableProps {}
 
@@ -48,7 +48,9 @@ export interface AriaTextFieldProps<T = HTMLInputElement> extends TextFieldProps
   /**
    * An enumerated attribute that defines what action label or icon to preset for the enter key on virtual keyboards. See [https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/enterkeyhint].
    */
-  enterKeyHint?: 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send'
+  enterKeyHint?: 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send',
+  /** Ref to attach to the wrapped input element. */
+  inputRef?: Ref<T | null>
 }
 
 interface SpectrumTextFieldBaseProps {
@@ -58,7 +60,7 @@ interface SpectrumTextFieldBaseProps {
   isQuiet?: boolean
 }
 
-export interface SpectrumTextFieldProps extends SpectrumTextFieldBaseProps, SpectrumTextInputBase, Omit<AriaTextFieldProps, 'isInvalid' | 'validationState'>, SpectrumFieldValidation<string>, SpectrumLabelableProps, StyleProps {}
+export interface SpectrumTextFieldProps extends SpectrumTextFieldBaseProps, SpectrumTextInputBase, Omit<AriaTextFieldProps, 'isInvalid' | 'validationState' | 'inputRef'>, SpectrumFieldValidation<string>, SpectrumLabelableProps, StyleProps {}
 export interface SpectrumTextAreaProps extends SpectrumTextFieldBaseProps, SpectrumTextInputBase, Omit<AriaTextFieldProps<HTMLTextAreaElement>, 'isInvalid' | 'validationState' | 'type' | 'pattern'>, SpectrumFieldValidation<string>, SpectrumLabelableProps, StyleProps {}
 
 export interface TextFieldRef<T extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement> extends FocusableRefValue<T, HTMLDivElement> {
