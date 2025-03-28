@@ -112,4 +112,103 @@ describe('useTagGroup', function () {
     expect(onRemove).toHaveBeenCalledTimes(3);
     expect(onRemove).toHaveBeenLastCalledWith(new Set(['pool']));
   });
+
+  it('should support tabbing to tags and arrow navigation between tags', async () => {
+    let {getAllByRole} = render(
+      <TagGroup
+        label="Amenities">
+        <Item key="laundry">Laundry</Item>
+        <Item key="fitness">Fitness center</Item>
+        <Item key="parking">Parking</Item>
+      </TagGroup>
+    );
+
+    let tags = getAllByRole('row');
+    expect(tags).toHaveLength(3);
+    
+    // Initially, nothing should be focused
+    expect(document.activeElement).not.toBe(tags[0]);
+    
+    // Tab to focus the first tag
+    await user.tab();
+    expect(document.activeElement).toBe(tags[0]);
+    
+    // Check that we can focus each tag with keyboard
+    // Instead of using tab, let's verify we can move with arrow keys
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(tags[1]);
+    
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(tags[2]);
+    
+    // Test we can go back
+    await user.keyboard('{ArrowLeft}');
+    expect(document.activeElement).toBe(tags[1]);
+  });
+
+  it('should support tabbing to remove buttons', async () => {
+    let onRemove = jest.fn();
+    let {getAllByRole, getAllByText} = render(
+      <TagGroup
+        label="Amenities"
+        onRemove={onRemove}>
+        <Item key="laundry">Laundry</Item>
+        <Item key="fitness">Fitness center</Item>
+        <Item key="parking">Parking</Item>
+      </TagGroup>
+    );
+
+    let tags = getAllByRole('row');
+    let removeButtons = getAllByText('x');
+    expect(removeButtons).toHaveLength(3);
+    
+    // Tab to focus the first tag
+    await user.tab();
+    expect(document.activeElement).toBe(tags[0]);
+    
+    // Tab to focus the first remove button
+    await user.tab();
+    expect(document.activeElement).toBe(removeButtons[0]);
+    
+    // Test remove button functionality
+    await user.keyboard(' '); // Press space to activate button
+    expect(onRemove).toHaveBeenCalledTimes(1);
+    expect(onRemove).toHaveBeenLastCalledWith(new Set(['laundry']));
+  });
+
+  it('should support keyboard selection while navigating between tags', async () => {
+    let onSelectionChange = jest.fn();
+    let {getAllByRole} = render(
+      <TagGroup
+        label="Amenities"
+        selectionMode="multiple"
+        onSelectionChange={onSelectionChange}>
+        <Item key="laundry">Laundry</Item>
+        <Item key="fitness">Fitness center</Item>
+        <Item key="parking">Parking</Item>
+      </TagGroup>
+    );
+
+    let tags = getAllByRole('row');
+    
+    // Tab to focus the first tag
+    await user.tab();
+    expect(document.activeElement).toBe(tags[0]);
+    
+    // Press space to select the first tag
+    await user.keyboard(' ');
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    
+    // Move to the second tag using arrow key
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(tags[1]);
+    
+    // Press space to select the second tag
+    await user.keyboard(' ');
+    expect(onSelectionChange).toHaveBeenCalledTimes(2);
+    
+    // Move to the third tag
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(tags[2]);
+  });
 });
