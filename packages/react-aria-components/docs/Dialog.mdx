@@ -327,7 +327,7 @@ import {OverlayTriggerStateContext} from 'react-aria-components';
 
 function CloseButton() {
   /*- begin highlight -*/
-  let state = React.useContext(OverlayTriggerStateContext)!;
+  let state = React.useContext(OverlayTriggerStateContext);
   /*- end highlight -*/
   return <Button onPress={() => state.close()}>Close</Button>;
 }
