@@ -457,6 +457,14 @@ A `Popover` can be targeted with the `.react-aria-Popover` CSS selector, or by o
 
 <StateTable properties={docs.exports.PopoverRenderProps.properties} />
 
+Within a DialogTrigger, the popover will have the `data-trigger="DialogTrigger"` attribute. In addition, the `--trigger-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the trigger button.
+
+```css render=false
+.react-aria-Popover[data-trigger=DialogTrigger] {
+  width: var(--trigger-width);
+}
+```
+
 ### OverlayArrow
 
 A `OverlayArrow` can be targeted with the `.react-aria-OverlayArrow` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
