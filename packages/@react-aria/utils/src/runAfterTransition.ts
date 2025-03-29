@@ -91,9 +91,23 @@ if (typeof document !== 'undefined') {
   }
 }
 
+/**
+ * Cleans up any elements that are no longer in the document.
+ * This is necessary because we can't rely on transitionend events to fire
+ * for elements that are removed from the document while transitioning.
+ */
+function cleanupDetachedElements() {
+  for (const [element] of transitionsByElement) {
+    if (element instanceof HTMLElement && !document.contains(element)) {
+      transitionsByElement.delete(element);
+    }
+  }
+}
+
 export function runAfterTransition(fn: () => void): void {
   // Wait one frame to see if an animation starts, e.g. a transition on mount.
   requestAnimationFrame(() => {
+    cleanupDetachedElements();
     // If no transitions are running, call the function immediately.
     // Otherwise, add it to a list of callbacks to run at the end of the animation.
     if (transitionsByElement.size === 0) {
