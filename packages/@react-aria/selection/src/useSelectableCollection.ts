@@ -55,6 +55,11 @@ export interface AriaSelectableCollectionOptions {
    */
   disallowSelectAll?: boolean,
   /**
+   * Whether pressing the Escape should clear selection in the collection or not.
+   * @default 'clearSelection'
+   */
+  escapeKeyBehavior?: 'clearSelection' | 'none',
+  /**
    * Whether selection should occur automatically on focus.
    * @default false
    */
@@ -108,6 +113,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     shouldFocusWrap = false,
     disallowEmptySelection = false,
     disallowSelectAll = false,
+    escapeKeyBehavior = 'clearSelection',
     selectOnFocus = manager.selectionBehavior === 'replace',
     disallowTypeAhead = false,
     shouldUseVirtualFocus,
@@ -279,7 +285,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         }
         break;
       case 'Escape':
-        if (!disallowEmptySelection && manager.selectedKeys.size !== 0) {
+        if (escapeKeyBehavior === 'clearSelection' && !disallowEmptySelection && manager.selectedKeys.size !== 0) {
           e.stopPropagation();
           e.preventDefault();
           manager.clearSelection();

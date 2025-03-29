@@ -147,7 +147,8 @@ export const TreeExampleStatic = {
   args: {
     selectionMode: 'none',
     selectionBehavior: 'toggle',
-    disabledBehavior: 'selection'
+    disabledBehavior: 'selection',
+    disallowClearAll: false
   },
   argTypes: {
     selectionMode: {
