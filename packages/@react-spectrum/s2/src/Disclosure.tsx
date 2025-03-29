@@ -130,10 +130,10 @@ const buttonStyles = style({
   fontWeight: 'bold',
   fontSize: {
     size: {
-      S: 'heading-xs',
-      M: 'heading-sm',
-      L: 'heading',
-      XL: 'heading-lg'
+      S: 'title-sm',
+      M: 'title',
+      L: 'title-lg',
+      XL: 'title-xl'
     }
   },
   lineHeight: 'ui',
@@ -148,30 +148,30 @@ const buttonStyles = style({
     size: {
       S: {
         density: {
+          compact: 18,
+          regular: 24,
+          spacious: 32
+        }
+      },
+      M: {
+        density: {
           compact: 24,
           regular: 32,
           spacious: 40
         }
       },
-      M: {
+      L: {
         density: {
           compact: 32,
           regular: 40,
           spacious: 48
         }
       },
-      L: {
+      XL: {
         density: {
           compact: 40,
           regular: 48,
           spacious: 56
-        }
-      },
-      XL: {
-        density: {
-          compact: 48,
-          regular: 56,
-          spacious: 64
         }
       }
     }
@@ -219,18 +219,12 @@ function DisclosureHeaderWithForwardRef(props: DisclosureHeaderProps, ref: DOMRe
   let domRef = useDOMRef(ref);
   let {size, isQuiet, density} = useSlottedContext(DisclosureContext)!;
 
-  let mapSize = {
-    S: 'XS',
-    M: 'S',
-    L: 'M',
-    XL: 'L'
-  };
-
-  // maps to one size smaller in the compact density to ensure there is space between the top and bottom of the action button and container
+  // Shift button size down by 2 for compact density, 1 for regular/spacious to ensure there is space between the top and bottom of the action button and container
   let newSize : 'XS' | 'S' | 'M' | 'L' | 'XL' | undefined = size;
-  if (density === 'compact') {
-    newSize = mapSize[size ?? 'M'] as 'XS' | 'S' | 'M' | 'L';
-  }
+  const sizes = ['XS', 'S', 'M', 'L', 'XL'];
+  const currentIndex = sizes.indexOf(size ?? 'M');
+  const shift = density === 'compact' ? 2 : 1;
+  newSize = sizes[Math.max(0, currentIndex - shift)] as 'XS' | 'S' | 'M' | 'L' | 'XL';
 
   return (
     <Provider
