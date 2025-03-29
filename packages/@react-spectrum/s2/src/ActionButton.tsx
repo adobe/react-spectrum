@@ -223,14 +223,13 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
     type: 'top',
     value: {
       default: '[calc(self(height)/2 - var(--iconWidth)/2)]',
-      [iconOnly]: '[calc(self(height)/2 - var(--iconWidth)/2)]',
       [textOnly]: 0
     }
   },
   '--buttonPaddingX': {
     type: 'paddingStart',
     value: {
-      default: '[calc(self(height, self(minHeight)) * 3 / 8)]',
+      default: 'edge-to-text',
       [iconOnly]: 0
     }
   },
@@ -314,6 +313,7 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
           }],
           [NotificationBadgeContext, {
             size: props.size === 'XS' ? undefined : props.size,
+            isDisabled: props.isDisabled,
             styles: style({position: 'absolute', top: '--badgeTop', insetStart: '[var(--badgePosition)]', marginTop: '[calc((self(height) * -1)/2)]', marginStart: '[calc((self(height) * -1)/2)]'})
           }]
         ]}>
