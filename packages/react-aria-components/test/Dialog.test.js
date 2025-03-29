@@ -22,7 +22,7 @@ import {
 } from '../';
 import {pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import React, {useRef} from 'react';
-import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
 
 describe('Dialog', () => {
@@ -325,9 +325,9 @@ describe('Dialog', () => {
       let container = useRef(null);
       return (
         <>
-          <UNSTABLE_PortalProvider getContainer={() => container.current}>
+          <UNSAFE_PortalProvider getContainer={() => container.current}>
             <InfoDialog container={container} />
-          </UNSTABLE_PortalProvider>
+          </UNSAFE_PortalProvider>
           <div ref={container} data-testid="custom-container" />
         </>
       );

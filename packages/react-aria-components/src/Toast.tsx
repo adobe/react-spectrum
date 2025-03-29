@@ -20,7 +20,7 @@ import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, Rea
 import {TextContext} from './Text';
 import {useIsSSR} from '@react-aria/ssr';
 import {useObjectRef} from '@react-aria/utils';
-import {useUNSTABLE_PortalContext} from '@react-aria/overlays';
+import {useUNSAFE_PortalContext} from '@react-aria/overlays';
 
 const ToastStateContext = createContext<ToastState<any> | null>(null);
 
@@ -68,7 +68,7 @@ export const ToastRegion = /*#__PURE__*/ (forwardRef as forwardRefType)(function
   });
 
   let portalContainer;
-  let {getContainer} = useUNSTABLE_PortalContext();
+  let {getContainer} = useUNSAFE_PortalContext();
   if (!isSSR) {
     portalContainer = document.body;
     if (getContainer) {

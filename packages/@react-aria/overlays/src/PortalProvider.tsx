@@ -26,9 +26,9 @@ export const PortalContext = createContext<PortalProviderContextValue>({});
 /**
  * Sets the portal container for all overlay elements rendered by its children.
  */
-export function UNSTABLE_PortalProvider(props: PortalProviderProps): ReactNode {
+export function UNSAFE_PortalProvider(props: PortalProviderProps): ReactNode {
   let {getContainer} = props;
-  let {getContainer: ctxGetContainer} = useUNSTABLE_PortalContext();
+  let {getContainer: ctxGetContainer} = useUNSAFE_PortalContext();
   return (
     <PortalContext.Provider value={{getContainer: getContainer === null ? undefined : getContainer ?? ctxGetContainer}}>
       {props.children}
@@ -36,6 +36,6 @@ export function UNSTABLE_PortalProvider(props: PortalProviderProps): ReactNode {
   );
 }
 
-export function useUNSTABLE_PortalContext(): PortalProviderContextValue {
+export function useUNSAFE_PortalContext(): PortalProviderContextValue {
   return useContext(PortalContext) ?? {};
 }

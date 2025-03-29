@@ -14,7 +14,7 @@ import {DOMAttributes} from '@react-types/shared';
 import React, {AriaAttributes, ReactNode, useContext, useEffect, useMemo, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {useIsSSR} from '@react-aria/ssr';
-import {useUNSTABLE_PortalContext} from './PortalProvider';
+import {useUNSAFE_PortalContext} from './PortalProvider';
 
 export interface ModalProviderProps extends DOMAttributes {
   children: ReactNode
@@ -113,7 +113,7 @@ export interface OverlayContainerProps extends ModalProviderProps {
   /**
    * The container element in which the overlay portal will be placed.
    * @default document.body
-   * @deprecated - Use a parent UNSTABLE_PortalProvider to set your portal container instead.
+   * @deprecated - Use a parent UNSAFE_PortalProvider to set your portal container instead.
    */
   portalContainer?: Element
 }
@@ -128,7 +128,7 @@ export interface OverlayContainerProps extends ModalProviderProps {
 export function OverlayContainer(props: OverlayContainerProps): React.ReactPortal | null {
   let isSSR = useIsSSR();
   let {portalContainer = isSSR ? null : document.body, ...rest} = props;
-  let {getContainer} = useUNSTABLE_PortalContext();
+  let {getContainer} = useUNSAFE_PortalContext();
   if (!props.portalContainer && getContainer) {
     portalContainer = getContainer();
   }

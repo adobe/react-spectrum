@@ -13,7 +13,7 @@
 import {act, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button, Text, UNSTABLE_Toast as Toast, UNSTABLE_ToastContent as ToastContent, UNSTABLE_ToastQueue as ToastQueue, UNSTABLE_ToastRegion as ToastRegion} from 'react-aria-components';
 import React, {useRef} from 'react';
-import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
 
 function Example(options) {
@@ -349,9 +349,9 @@ describe('Toast', () => {
       let container = useRef(null);
       return (
         <>
-          <UNSTABLE_PortalProvider getContainer={() => container.current}>
+          <UNSAFE_PortalProvider getContainer={() => container.current}>
             <LocalToast container={container} />
-          </UNSTABLE_PortalProvider>
+          </UNSAFE_PortalProvider>
           <div ref={container} data-testid="custom-container" />
         </>
       );

@@ -13,7 +13,7 @@
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button, Dialog, DialogTrigger, OverlayArrow, Popover, Pressable} from '../';
 import React, {useRef} from 'react';
-import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
 
 let TestPopover = (props) => (
@@ -197,9 +197,9 @@ describe('Popover', () => {
       let container = useRef(null);
       return (
         <>
-          <UNSTABLE_PortalProvider getContainer={() => container.current}>
+          <UNSAFE_PortalProvider getContainer={() => container.current}>
             <InfoPopover container={container} />
-          </UNSTABLE_PortalProvider>
+          </UNSAFE_PortalProvider>
           <div ref={container} data-testid="custom-container" />
         </>
       );

@@ -21,38 +21,38 @@ keywords: [overlays, portals]
 
 # PortalProvider
 
-<PageDescription>{docs.exports.UNSTABLE_PortalProvider.description}</PageDescription>
+<PageDescription>{docs.exports.UNSAFE_PortalProvider.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['UNSTABLE_PortalProvider', 'useUNSTABLE_PortalContext']} />
+  componentNames={['UNSAFE_PortalProvider', 'useUNSAFE_PortalContext']} />
 
 ## Introduction
 
-`UNSTABLE_PortalProvider` is a utility wrapper component that can be used to set where components like
+`UNSAFE_PortalProvider` is a utility wrapper component that can be used to set where components like
 Modals, Popovers, Toasts, and Tooltips will portal their overlay element to. This is typically used when
 your app is already portalling other elements to a location other than the `document.body` and thus requires
 your React Aria components to send their overlays to the same container.
 
-Please note that `UNSTABLE_PortalProvider` is considered `UNSTABLE` because it is an escape hatch, and there are
+Please note that `UNSAFE_PortalProvider` is considered `UNSTABLE` because it is an escape hatch, and there are
 many places that an application could portal to. Not all of them will work, either with styling, accessibility,
 or for a variety of other reasons. Typically, it is best to portal to the root of the entire application, typically the `body` element,
-outside of any possible overflow or stacking contexts. We envision `UNSTABLE_PortalProvider` being used to group all of the portalled
+outside of any possible overflow or stacking contexts. We envision `UNSAFE_PortalProvider` being used to group all of the portalled
 elements into a single container at the root of the app or to control the order of children of the `body` element, but you may have use cases
 that need to do otherwise.
 
 ## Props
 
-<PropTable links={docs.links} component={docs.exports.UNSTABLE_PortalProvider} />
+<PropTable links={docs.links} component={docs.exports.UNSAFE_PortalProvider} />
 
 ## Example
 
-The example below shows how you can use `UNSTABLE_PortalProvider` to portal your Toasts to an arbitrary container. Note that
+The example below shows how you can use `UNSAFE_PortalProvider` to portal your Toasts to an arbitrary container. Note that
 the Toast in this example is taken directly from the [React Aria Components Toast documentation](Toast.html#example), please visit that page for
 a detailed explanation of its implementation.
 
 ```tsx example
-import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 ///- begin collapse -///
 import {UNSTABLE_ToastRegion as ToastRegion, UNSTABLE_Toast as Toast, UNSTABLE_ToastQueue as ToastQueue, UNSTABLE_ToastContent as ToastContent, Button, Text} from 'react-aria-components';
 
@@ -89,7 +89,7 @@ function App() {
   let container = React.useRef(null);
   return (
     <>
-      <UNSTABLE_PortalProvider getContainer={() => container.current}>
+      <UNSAFE_PortalProvider getContainer={() => container.current}>
         <MyToastRegion />
         <Button
           onPress={() => queue.add({
@@ -98,7 +98,7 @@ function App() {
           })}>
           Open Toast
         </Button>
-      </UNSTABLE_PortalProvider>
+      </UNSAFE_PortalProvider>
       <div ref={container} style={{height: '70px', width: '200px',  overflow: 'auto'}}>
         Toasts are portalled here!
       </div>
@@ -111,17 +111,17 @@ function App() {
 
 ## Contexts
 
-The `getContainer` set by the nearest PortalProvider can be accessed by calling `useUNSTABLE_PortalContext`. This can be
+The `getContainer` set by the nearest PortalProvider can be accessed by calling `useUNSAFE_PortalContext`. This can be
 used by custom overlay components to ensure that they are also being consistently portalled throughout your app.
 
-<FunctionAPI links={docs.links} function={docs.exports.useUNSTABLE_PortalContext} />
+<FunctionAPI links={docs.links} function={docs.exports.useUNSAFE_PortalContext} />
 
 ```tsx
-import {useUNSTABLE_PortalContext} from '@react-aria/overlays';
+import {useUNSAFE_PortalContext} from '@react-aria/overlays';
 
 function MyOverlay(props) {
   let {children} = props;
-  let {getContainer} = useUNSTABLE_PortalContext();
+  let {getContainer} = useUNSAFE_PortalContext();
   return ReactDOM.createPortal(children, getContainer());
 }
 ```

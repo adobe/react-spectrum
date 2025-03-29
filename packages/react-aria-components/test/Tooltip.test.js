@@ -13,7 +13,7 @@
 import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button, Focusable, OverlayArrow, Pressable, Tooltip, TooltipTrigger} from 'react-aria-components';
 import React, {useRef} from 'react';
-import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
 
 function TestTooltip(props) {
@@ -189,9 +189,9 @@ describe('Tooltip', () => {
       let container = useRef(null);
       return (
         <>
-          <UNSTABLE_PortalProvider getContainer={() => container.current}>
+          <UNSAFE_PortalProvider getContainer={() => container.current}>
             <InfoTooltip container={container} />
-          </UNSTABLE_PortalProvider>
+          </UNSAFE_PortalProvider>
           <div ref={container} data-testid="custom-container" />
         </>
       );
