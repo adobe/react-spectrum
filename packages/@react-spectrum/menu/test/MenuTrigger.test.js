@@ -29,7 +29,7 @@ import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -735,7 +735,7 @@ describe('MenuTrigger', function () {
     function InfoMenu(props) {
       return (
         <Provider theme={theme}>
-          <UNSTABLE_PortalProvider getContainer={() => props.container.current}>
+          <UNSAFE_PortalProvider getContainer={() => props.container.current}>
             <MenuTrigger>
               <ActionButton aria-label="trigger" />
               <Menu>
@@ -744,7 +744,7 @@ describe('MenuTrigger', function () {
                 <Item key="3">Three</Item>
               </Menu>
             </MenuTrigger>
-          </UNSTABLE_PortalProvider>
+          </UNSAFE_PortalProvider>
         </Provider>
       );
     }
