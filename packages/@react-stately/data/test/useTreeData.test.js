@@ -693,6 +693,166 @@ describe('useTreeData', function () {
     expect(result.current.items.length).toEqual(initialItems.length);
   });
 
+  it('should move an item within its same level before the target by key', function () {
+    const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren, getKey})
+    );
+    act(() => {
+      result.current.moveBefore('David', ['Suzie']);
+    });
+    expect(result.current.items[0].key).toEqual('Suzie');
+    expect(result.current.items[1].key).toEqual('David');
+    expect(result.current.items[2].key).toEqual('Emily');
+    expect(result.current.items[3].key).toEqual('Eli');
+    expect(result.current.items.length).toEqual(4);
+    expect(result.current.items[1].children[0].key).toEqual('John');
+    expect(result.current.items[1].children[0].children.length).toEqual(0);
+  });
+
+  it('should move an item within its same level before the target by keys', function () {
+    const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren, getKey})
+    );
+    act(() => {
+      result.current.moveBefore('David', ['John', 'Eli']);
+    });
+    expect(result.current.items[0].key).toEqual('John');
+    expect(result.current.items[1].key).toEqual('Eli');
+    expect(result.current.items[2].key).toEqual('David');
+    expect(result.current.items[3].key).toEqual('Emily');
+    expect(result.current.items.length).toEqual(4);
+    expect(result.current.items[0].children[0].key).toEqual('Suzie');
+    expect(result.current.items[1].children.length).toEqual(0);
+    expect(result.current.items[2].children[0].key).toEqual('Sam');
+  });
+
+  it('should move an item within its same level before the target by keys with nested items and keep tree order', function () {
+    const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren, getKey})
+    );
+    act(() => {
+      result.current.moveBefore('David', ['John', 'Eli', 'Suzie']);
+    });
+    expect(result.current.items[0].key).toEqual('John');
+    expect(result.current.items[1].key).toEqual('Suzie');
+    expect(result.current.items[2].key).toEqual('Eli');
+    expect(result.current.items[3].key).toEqual('David');
+    expect(result.current.items[4].key).toEqual('Emily');
+    expect(result.current.items.length).toEqual(5);
+    expect(result.current.items[0].children.length).toEqual(0);
+    expect(result.current.items[1].children.length).toEqual(0);
+    expect(result.current.items[2].children.length).toEqual(0);
+    expect(result.current.items[3].children[0].key).toEqual('Sam');
+  });
+
+  it('should move items down the tree', function () {
+    const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren, getKey})
+    );
+    act(() => {
+      result.current.moveBefore('Suzie', ['Sam', 'Eli']);
+    });
+    expect(result.current.items[0].key).toEqual('David');
+    expect(result.current.items[1].key).toEqual('Emily');
+    expect(result.current.items.length).toEqual(2);
+    expect(result.current.items[0].children.length).toEqual(2);
+    expect(result.current.items[1].children.length).toEqual(0);
+    expect(result.current.items[0].children[0].children[0].key).toEqual('Sam');
+    expect(result.current.items[0].children[0].children[1].key).toEqual('Eli');
+    expect(result.current.items[0].children[0].children[2].key).toEqual('Suzie');
+    expect(result.current.items[0].children[0].children.length).toEqual(3);
+  });
+
+  describe('moveBefore error', function () {
+    const consoleError = console.error;
+    beforeEach(() => {
+      console.error = jest.fn();
+    });
+
+    afterEach(() => {
+      console.error = consoleError;
+    });
+
+    it('cannot move an item within itself', function () {
+      const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+
+      let {result} = renderHook(() =>
+        useTreeData({initialItems, getChildren, getKey})
+      );
+      try {
+        act(() => result.current.moveBefore('Suzie', ['John', 'Sam', 'Eli']));
+      } catch (e) {
+        expect(e.toString()).toContain('Cannot move an item to be a child of itself.');
+      }
+    });
+  });
+
+  it('should move an item within its same level after the target by key', function () {
+    const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren, getKey})
+    );
+    act(() => {
+      result.current.moveAfter('David', ['Suzie']);
+    });
+    expect(result.current.items[0].key).toEqual('David');
+    expect(result.current.items[1].key).toEqual('Suzie');
+    expect(result.current.items[2].key).toEqual('Emily');
+    expect(result.current.items[3].key).toEqual('Eli');
+    expect(result.current.items.length).toEqual(4);
+    expect(result.current.items[0].children[0].key).toEqual('John');
+    expect(result.current.items[0].children[0].children.length).toEqual(0);
+  });
+
+  it('should move an item within its same level after the target by keys', function () {
+    const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren, getKey})
+    );
+    act(() => {
+      result.current.moveAfter('David', ['John', 'Eli']);
+    });
+    expect(result.current.items[0].key).toEqual('David');
+    expect(result.current.items[1].key).toEqual('John');
+    expect(result.current.items[2].key).toEqual('Eli');
+    expect(result.current.items[3].key).toEqual('Emily');
+    expect(result.current.items.length).toEqual(4);
+    expect(result.current.items[0].children[0].key).toEqual('Sam');
+    expect(result.current.items[1].children[0].key).toEqual('Suzie');
+    expect(result.current.items[2].children.length).toEqual(0);
+  });
+
+  it('should move an item within its same level after the target by keys with nested items and keep tree order', function () {
+    const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren, getKey})
+    );
+    act(() => {
+      result.current.moveAfter('David', ['John', 'Eli', 'Suzie']);
+    });
+    expect(result.current.items[0].key).toEqual('David');
+    expect(result.current.items[1].key).toEqual('John');
+    expect(result.current.items[2].key).toEqual('Suzie');
+    expect(result.current.items[3].key).toEqual('Eli');
+    expect(result.current.items[4].key).toEqual('Emily');
+    expect(result.current.items.length).toEqual(5);
+    expect(result.current.items[0].children[0].key).toEqual('Sam');
+    expect(result.current.items[1].children.length).toEqual(0);
+    expect(result.current.items[2].children.length).toEqual(0);
+    expect(result.current.items[3].children.length).toEqual(0);
+  });
+
   it('should move an item to a different level before the target', function () {
     const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
 
