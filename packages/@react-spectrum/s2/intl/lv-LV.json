@@ -29,5 +29,8 @@
   "tag.hideButtonLabel": "Rādīt mazāk",
   "tag.noTags": "Nav",
   "tag.showAllButtonLabel": "Rādīt visu ({tagCount, number})",
-  "breadcrumbs.more": "Vairāk vienumu"
+  "breadcrumbs.more": "Vairāk vienumu",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

@@ -29,5 +29,8 @@
   "tag.hideButtonLabel": "Näytä vähemmän",
   "tag.noTags": "Ei mitään",
   "tag.showAllButtonLabel": "Näytä kaikki ({tagCount, number})",
-  "breadcrumbs.more": "Lisää kohteita"
+  "breadcrumbs.more": "Lisää kohteita",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }
