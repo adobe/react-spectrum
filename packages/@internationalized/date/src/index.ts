@@ -27,7 +27,7 @@ export type {
   CycleTimeOptions
 } from './types';
 
-export {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
+export {CalendarDate, CalendarDateTime, Time, ZonedDateTime, Duration} from './CalendarDate';
 export {GregorianCalendar} from './calendars/GregorianCalendar';
 export {JapaneseCalendar} from './calendars/JapaneseCalendar';
 export {BuddhistCalendar} from './calendars/BuddhistCalendar';
@@ -84,6 +84,6 @@ export {
   parseAbsoluteToLocal,
   parseZonedDateTime,
   parseDuration,
-  durationToString
+  parseTemporalDuration
 } from './string';
 export {DateFormatter} from './DateFormatter';

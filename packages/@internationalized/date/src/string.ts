@@ -11,7 +11,7 @@
  */
 
 import {AnyDateTime, DateTimeDuration, Disambiguation} from './types';
-import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
+import {CalendarDate, CalendarDateTime, Duration, Time, ZonedDateTime} from './CalendarDate';
 import {epochFromDate, fromAbsolute, possibleAbsolutes, toAbsolute, toCalendar, toCalendarDateTime, toTimeZone} from './conversion';
 import {getLocalTimeZone} from './queries';
 import {GregorianCalendar} from './calendars/GregorianCalendar';
@@ -308,47 +308,29 @@ export function parseDuration(value: string): Required<DateTimeDuration> {
   return duration;
 }
 
-type NormalizedDuration = Omit<Required<DateTimeDuration>, 'weeks' | 'milliseconds'> & { isNegative: boolean }
+/**
+ * Parses an ISO 8601 duration string (e.g. "P3Y6M6W4DT12H30M5S").
+ * @param value An ISO 8601 duration string.
+ * @returns A Duration object.
+ */
+export function parseTemporalDuration(value: string): Duration {
+  const result = parseDuration(value);
+  const nanoseconds = (result.milliseconds / 1e6) | 0;
+  const microseconds = ((result.milliseconds - nanoseconds * 1e6) / 1e3) | 0;
+  const milliseconds = result.milliseconds % 1e3;
 
-function normalizeDuration(duration: DateTimeDuration): NormalizedDuration {
-  const isNegative =
-    (duration.years || 0) < 0 ||
-    (duration.months || 0) < 0 ||
-    (duration.weeks || 0) < 0 ||
-    (duration.days || 0) < 0 ||
-    (duration.hours || 0) < 0 ||
-    (duration.minutes || 0) < 0 ||
-    (duration.seconds || 0) < 0;
-
-  const isPositive =
-    (duration.years || 0) > 0 ||
-    (duration.months || 0) > 0 ||
-    (duration.weeks || 0) > 0 ||
-    (duration.days || 0) > 0 ||
-    (duration.hours || 0) > 0 ||
-    (duration.minutes || 0) > 0 ||
-    (duration.seconds || 0) > 0;
-
-  if (isNegative && isPositive) {
-    throw new Error('Cannot stringify a duration with mixed positive and negative components');
-  }
-
-  if (!validateDurationDecimal(duration)) {
-    throw new Error('Cannot stringify a duration which contains fractional values other than in the lowest order component');
-  }
-
-  const mul = isNegative ? -1 : 1;
-
-  return {
-    isNegative,
-
-    years: mul * (duration.years || 0),
-    months: mul * (duration.months || 0),
-    days: mul * (((duration.weeks || 0) * 7) + (duration.days || 0)),
-    hours: mul * (duration.hours || 0),
-    minutes: mul * (duration.minutes || 0),
-    seconds: mul * ((duration.seconds || 0) + ((duration.milliseconds || 0) / 1e3))
-  };
+  return new Duration(
+    result.years,
+    result.months,
+    result.weeks,
+    result.days,
+    result.hours,
+    result.minutes,
+    result.seconds,
+    milliseconds,
+    microseconds,
+    nanoseconds
+  );
 }
 
 /**
@@ -356,25 +338,32 @@ function normalizeDuration(duration: DateTimeDuration): NormalizedDuration {
  * @param value A DateTimeDuration object.
  * @returns An ISO 8601 duration string.
  */
-export function durationToString(durationSrc: DateTimeDuration): string {
+export function durationToString(duration: Duration, fractionalDigits: number | 'auto'): string {
   let durationString = 'P';
   let timeDurationString = 'T';
 
-  const duration = normalizeDuration(durationSrc);
-
   if (duration.years) { durationString += `${duration.years}Y`; }
   if (duration.months) { durationString += `${duration.months}M`; }
+  // Invalid per ISO 8601-1, but accepted by ISO 8601-2 used by Temporal
+  if (duration.weeks) { durationString += `${duration.weeks}W`; }
   if (duration.days) { durationString += `${duration.days}D`; }
 
   if (duration.hours) { timeDurationString += `${duration.hours}H`; }
   if (duration.minutes) { timeDurationString += `${duration.minutes}M`; }
-  if (duration.seconds) { timeDurationString += `${duration.seconds}S`; }
+
+  const seconds = duration.seconds + (duration.milliseconds / 1e3) + (duration.microseconds / 1e6) + (duration.nanoseconds / 1e9);
+  if (seconds || fractionalDigits !== 'auto') {
+    timeDurationString += fractionalDigits !== 'auto'
+      ? `${seconds.toFixed(fractionalDigits)}S`
+      : `${seconds.toPrecision(9)}S`;
+  }
 
   if (timeDurationString.length > 1) { durationString += timeDurationString; }
 
   // ISO 8601-1:2019 § 5.5.2.3 a) "[...] at least one number and its designator shall be present."
   // Picking day is arbitrary; it's the smallest unit that doesn't involve the time designator.
+  // It seems Temporal would do `DT0S` instead, but this shouldn't matter (and involves annoying sub-second logic).
   if (durationString.length < 2) { durationString += '0D'; }
 
-  return duration.isNegative ? `-${durationString}` : durationString;
+  return duration.sign < 0 ? `-${durationString}` : durationString;
 }
