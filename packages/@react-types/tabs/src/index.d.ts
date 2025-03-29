@@ -30,12 +30,14 @@ export interface AriaTabProps extends AriaLabelingProps {
   shouldSelectOnPressUp?: boolean
 }
 
-export interface TabListProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection'> {
+export interface TabListProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection' | 'onSelectionChange'> {
   /**
    * Whether the TabList is disabled.
    * Shows that a selection exists, but is not available in that circumstance.
    */
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  /** Handler that is called when the selection changes. */
+  onSelectionChange?: (key: Key) => void
 }
 
 interface AriaTabListBase extends AriaLabelingProps {
@@ -55,7 +57,7 @@ export interface AriaTabListProps<T> extends TabListProps<T>, AriaTabListBase, D
 
 export interface AriaTabPanelProps extends DOMProps, AriaLabelingProps {}
 
-export interface SpectrumTabsProps<T> extends AriaTabListBase, SingleSelection, DOMProps, StyleProps {
+export interface SpectrumTabsProps<T> extends AriaTabListBase, Omit<SingleSelection, 'onSelectionChange'>, DOMProps, StyleProps {
   /** The children of the `<Tabs>` element. Should include `<TabList>` and `<TabPanels>` elements. */
   children: ReactNode,
   /** The item objects for each tab, for dynamic collections. */
@@ -69,7 +71,9 @@ export interface SpectrumTabsProps<T> extends AriaTabListBase, SingleSelection, 
   /** Whether the tabs are displayed in an emphasized style. */
   isEmphasized?: boolean,
   /** The amount of space between the tabs. */
-  density?: 'compact' | 'regular'
+  density?: 'compact' | 'regular',
+  /** Handler that is called when the selection changes. */
+  onSelectionChange?: (key: Key) => void
 }
 
 export interface SpectrumTabListProps<T> extends DOMProps, StyleProps {
