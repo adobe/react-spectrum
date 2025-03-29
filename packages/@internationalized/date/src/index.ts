@@ -15,6 +15,7 @@ export type {
   AnyTime,
   AnyDateTime,
   Calendar,
+  CalendarIdentifier,
   DateDuration,
   TimeDuration,
   DateTimeDuration,
@@ -74,7 +75,8 @@ export {
   minDate,
   maxDate,
   isWeekend,
-  isWeekday
+  isWeekday,
+  isEqualCalendar
 } from './queries';
 export {
   parseDate,
