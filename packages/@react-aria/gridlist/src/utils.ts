@@ -17,7 +17,8 @@ interface ListMapShared {
   id: string,
   onAction?: (key: Key) => void,
   linkBehavior?: 'action' | 'selection' | 'override',
-  keyboardNavigationBehavior: 'arrow' | 'tab'
+  keyboardNavigationBehavior: 'arrow' | 'tab',
+  shouldSelectOnPressUp?: boolean
 }
 
 // Used to share:

@@ -39,7 +39,9 @@ export interface GridListProps<T> extends CollectionBase<T>, MultipleSelection {
    */
   onAction?: (key: Key) => void,
   /** Whether `disabledKeys` applies to all interactions, or only selection. */
-  disabledBehavior?: DisabledBehavior
+  disabledBehavior?: DisabledBehavior,
+  /** Whether selection should occur on press up instead of press down. */
+  shouldSelectOnPressUp?: boolean
 }
 
 export interface AriaGridListProps<T> extends GridListProps<T>, DOMProps, AriaLabelingProps {
@@ -105,7 +107,8 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     onAction,
     disallowTypeAhead,
     linkBehavior = 'action',
-    keyboardNavigationBehavior = 'arrow'
+    keyboardNavigationBehavior = 'arrow',
+    shouldSelectOnPressUp
   } = props;
 
   if (!props['aria-label'] && !props['aria-labelledby']) {
@@ -128,7 +131,7 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
   });
 
   let id = useId(props.id);
-  listMap.set(state, {id, onAction, linkBehavior, keyboardNavigationBehavior});
+  listMap.set(state, {id, onAction, linkBehavior, keyboardNavigationBehavior, shouldSelectOnPressUp});
 
   let descriptionProps = useHighlightSelectionDescription({
     selectionManager: state.selectionManager,
