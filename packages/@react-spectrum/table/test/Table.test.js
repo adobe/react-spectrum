@@ -140,9 +140,9 @@ function pointerEvent(type, opts) {
 }
 
 export let tableTests = () => {
-  // Temporarily disabling these tests in React 16 because they run into a memory limit and crash.
+  // Temporarily disabling these tests in React 16/17 because they run into a memory limit and crash.
   // TODO: investigate.
-  if (parseInt(React.version, 10) <= 16) {
+  if (parseInt(React.version, 10) <= 17) {
     return;
   }
 
