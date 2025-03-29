@@ -80,7 +80,7 @@ const ExampleRender = (args: any) => {
   );
 };
 
-type Story = StoryObj<typeof TooltipTrigger>;
+type Story = StoryObj<typeof CombinedTooltip>;
 
 export const Example: Story = {
   render: (args) => <ExampleRender {...args} />,
@@ -146,7 +146,7 @@ const LongLabelRender = (args: any) => {
   );
 };
 
-export const LongLabel = {
+export const LongLabel: Story = {
   render: (args) => <LongLabelRender {...args} />,
   argTypes: {
     isOpen: {
@@ -156,7 +156,21 @@ export const LongLabel = {
   }
 };
 
-export const ColorScheme = {
+LongLabel.parameters = {
+  docs: {
+    source: {
+      transform: () => {
+        return `
+<TooltipTrigger>
+  <ActionButton aria-label="Lasso"><LassoSelect /></ActionButton>
+  <Tooltip>Checkbox with very long label so we can see wrapping</Tooltip>
+</TooltipTrigger>`;
+      }
+    }
+  }
+};
+
+export const ColorScheme: Story = {
   render: (args: any) => (
     <Provider colorScheme="dark" background="base" styles={style({padding: 48})}>
       <ExampleRender {...args} />
@@ -166,6 +180,26 @@ export const ColorScheme = {
     isOpen: {
       control: 'select',
       options: [true, false, undefined]
+    }
+  }
+};
+
+ColorScheme.parameters = {
+  docs: {
+    source: {
+      transform: () => {
+        return `
+<Provider colorScheme="dark" background="base" styles={style({padding: 48})}>
+  <TooltipTrigger>
+    <Button aria-label="Crop"><Crop /></Button>
+    <Tooltip>Crop</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger>
+    <ActionButton aria-label="Lasso"><LassoSelect /></ActionButton>
+    <Tooltip>Lasso</Tooltip>
+  </TooltipTrigger>
+</Provider>`;
+      }
     }
   }
 };
