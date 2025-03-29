@@ -13,6 +13,7 @@
 // @ts-ignore
 import {flushSync} from 'react-dom';
 import {getScrollLeft} from './utils';
+import {inertValue, useEffectEvent, useEvent, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import React, {
   CSSProperties,
   ForwardedRef,
@@ -25,7 +26,6 @@ import React, {
   useState
 } from 'react';
 import {Rect, Size} from '@react-stately/virtualizer';
-import {useEffectEvent, useEvent, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
 interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
@@ -35,18 +35,22 @@ interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
   innerStyle?: CSSProperties,
   onScrollStart?: () => void,
   onScrollEnd?: () => void,
-  scrollDirection?: 'horizontal' | 'vertical' | 'both'
+  scrollDirection?: 'horizontal' | 'vertical' | 'both',
+  sentinelRef: React.RefObject<HTMLDivElement | null>
 }
 
 function ScrollView(props: ScrollViewProps, ref: ForwardedRef<HTMLDivElement | null>) {
+  let {sentinelRef, ...otherProps} = props;
   ref = useObjectRef(ref);
-  let {scrollViewProps, contentProps} = useScrollView(props, ref);
+  let {scrollViewProps, contentProps} = useScrollView(otherProps, ref);
 
   return (
     <div role="presentation" {...scrollViewProps} ref={ref}>
       <div {...contentProps}>
         {props.children}
       </div>
+      {/* @ts-ignore - compatibility with React < 19 */}
+      <div data-testid="loadMoreSentinel" ref={sentinelRef} style={{height: 1, width: 1}} inert={inertValue(true)} />
     </div>
   );
 }
@@ -58,8 +62,9 @@ interface ScrollViewAria {
   scrollViewProps: HTMLAttributes<HTMLElement>,
   contentProps: HTMLAttributes<HTMLElement>
 }
+interface ScrollViewOptions extends Omit<ScrollViewProps, 'sentinelRef'> {}
 
-export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement | null>): ScrollViewAria {
+export function useScrollView(props: ScrollViewOptions, ref: RefObject<HTMLElement | null>): ScrollViewAria {
   let {
     contentSize,
     onVisibleRectChange,
