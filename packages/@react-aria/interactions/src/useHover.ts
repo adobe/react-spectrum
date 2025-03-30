@@ -213,8 +213,8 @@ export function useHover(props: HoverProps): HoverResult {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDisabled]);
 
-  return {
+  return useMemo(() => ({
     hoverProps,
     isHovered
-  };
+  }), [hoverProps, isHovered]);
 }

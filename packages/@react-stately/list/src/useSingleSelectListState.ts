@@ -13,7 +13,7 @@
 import {CollectionStateBase, Key, Node, Selection, SingleSelection} from '@react-types/shared';
 import {ListState, useListState} from './useListState';
 import {useControlledState} from '@react-stately/utils';
-import {useMemo} from 'react';
+import {useMemo, useCallback} from 'react';
 
 export interface SingleSelectListProps<T> extends CollectionStateBase<T>, Omit<SingleSelection, 'disallowEmptySelection'> {
   /** Filter function to generate a filtered list of nodes. */
@@ -46,7 +46,7 @@ export function useSingleSelectListState<T extends object>(props: SingleSelectLi
     disallowEmptySelection: true,
     allowDuplicateSelectionEvents: true,
     selectedKeys,
-    onSelectionChange: (keys: Selection) => {
+    onSelectionChange: useCallback((keys: Selection) => {
       // impossible, but TS doesn't know that
       if (keys === 'all') {
         return;
@@ -60,19 +60,20 @@ export function useSingleSelectListState<T extends object>(props: SingleSelectLi
       }
 
       setSelectedKey(key);
-    }
+    }, [props.onSelectionChange, selectedKey, setSelectedKey])
   });
 
   let selectedItem = selectedKey != null
     ? collection.getItem(selectedKey)
     : null;
 
-  return {
+  return useMemo(() => ({
     collection,
     disabledKeys,
     selectionManager,
+    focusedKey: selectionManager.focusedKey,
     selectedKey,
     setSelectedKey,
     selectedItem
-  };
+  }), [collection, disabledKeys, selectionManager, selectedKey, setSelectedKey, selectedItem]);
 }

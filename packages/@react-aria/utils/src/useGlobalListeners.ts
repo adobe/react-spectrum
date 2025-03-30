@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {useCallback, useEffect, useRef} from 'react';
+import {useCallback, useEffect, useRef, useMemo} from 'react';
 
 interface GlobalListeners {
   addGlobalListener<K extends keyof WindowEventMap>(el: Window, type: K, listener: (this: Document, ev: WindowEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void,
@@ -48,5 +48,5 @@ export function useGlobalListeners(): GlobalListeners {
     return removeAllGlobalListeners;
   }, [removeAllGlobalListeners]);
 
-  return {addGlobalListener, removeGlobalListener, removeAllGlobalListeners};
+  return useMemo(() => ({addGlobalListener, removeGlobalListener, removeAllGlobalListeners}), [addGlobalListener, removeGlobalListener, removeAllGlobalListeners]);
 }

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
+import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption, OptionAria} from 'react-aria';
 import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
@@ -20,10 +20,11 @@ import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Ori
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {HeaderContext} from './Header';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, memo, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {SeparatorContext} from './Separator';
 import {TextContext} from './Text';
 import {UNSTABLE_InternalAutocompleteContext} from './Autocomplete';
+import {SelectionManager} from '@react-stately/selection';
 
 export interface ListBoxRenderProps {
   /**
@@ -332,12 +333,22 @@ export interface ListBoxItemProps<T = object> extends RenderProps<ListBoxItemRen
 export const ListBoxItem = /*#__PURE__*/ createLeafComponent('item', function ListBoxItem<T extends object>(props: ListBoxItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let ref = useObjectRef<any>(forwardedRef);
   let state = useContext(ListStateContext)!;
-  let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
-  let {optionProps, labelProps, descriptionProps, ...states} = useOption(
+
+  let options = useOption(
     {key: item.key, 'aria-label': props?.['aria-label']},
     state,
     ref
   );
+
+  return <ListBoxItemInner selectionManager={state.selectionManager} options={options} focused={item.key === state.focusedKey} passRef={ref} props={props} item={item} />
+});
+
+const ListBoxItemInner = memo(function ListBoxItemInner<T extends object>({props, item, selectionManager, options, focused, passRef}: 
+  {options: OptionAria, props: ListBoxItemProps<T>, focused: boolean, selectionManager: SelectionManager, item: Node<T>, passRef: React.MutableRefObject<any>}) {
+  const ref = passRef;
+
+  let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
+  let {optionProps, labelProps, descriptionProps, ...states} = options;
 
   let {hoverProps, isHovered} = useHover({
     isDisabled: !states.allowsSelection && !states.hasAction,
@@ -367,8 +378,8 @@ export const ListBoxItem = /*#__PURE__*/ createLeafComponent('item', function Li
     values: {
       ...states,
       isHovered,
-      selectionMode: state.selectionManager.selectionMode,
-      selectionBehavior: state.selectionManager.selectionBehavior,
+      selectionMode: selectionManager.selectionMode,
+      selectionBehavior: selectionManager.selectionBehavior,
       allowsDragging: !!dragState,
       isDragging,
       isDropTarget: droppableItem?.isDropTarget
@@ -397,7 +408,7 @@ export const ListBoxItem = /*#__PURE__*/ createLeafComponent('item', function Li
       data-pressed={states.isPressed || undefined}
       data-dragging={isDragging || undefined}
       data-drop-target={droppableItem?.isDropTarget || undefined}
-      data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
+      data-selection-mode={selectionManager.selectionMode === 'none' ? undefined : selectionManager.selectionMode}>
       <Provider
         values={[
           [TextContext, {

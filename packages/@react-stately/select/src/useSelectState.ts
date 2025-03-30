@@ -15,7 +15,7 @@ import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {SelectProps} from '@react-types/select';
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
-import {useState} from 'react';
+import {useState, useMemo, useEffect, useCallback, useRef} from 'react';
 
 export interface SelectStateOptions<T> extends Omit<SelectProps<T>, 'children'>, CollectionStateBase<T> {}
 
@@ -44,26 +44,34 @@ export interface SelectState<T> extends SingleSelectListState<T>, OverlayTrigger
 export function useSelectState<T extends object>(props: SelectStateOptions<T>): SelectState<T>  {
   let triggerState = useOverlayTriggerState(props);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy | null>(null);
+
+  let validationStateRef = useRef<FormValidationState>(null);
+
   let listState = useSingleSelectListState({
     ...props,
-    onSelectionChange: (key) => {
+    onSelectionChange: useCallback(key => {
       if (props.onSelectionChange != null) {
         props.onSelectionChange(key);
       }
 
       triggerState.close();
-      validationState.commitValidation();
-    }
+      validationStateRef.current!.commitValidation();
+    }, [props.onSelectionChange, triggerState])
   });
 
   let validationState = useFormValidationState({
     ...props,
     value: listState.selectedKey
   });
+  validationStateRef.current = validationState;
 
   let [isFocused, setFocused] = useState(false);
 
-  return {
+  useEffect(() => {
+    console.log("come on");
+  }, [triggerState])
+
+  return useMemo(() => ({
     ...validationState,
     ...listState,
     ...triggerState,
@@ -83,5 +91,5 @@ export function useSelectState<T extends object>(props: SelectStateOptions<T>): 
     },
     isFocused,
     setFocused
-  };
+  }), [validationState, listState, triggerState, focusStrategy, isFocused]);
 }

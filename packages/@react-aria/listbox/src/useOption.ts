@@ -17,6 +17,7 @@ import {getItemId, listData} from './utils';
 import {isFocusVisible, useHover} from '@react-aria/interactions';
 import {ListState} from '@react-stately/list';
 import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
+import {useCallback} from 'react';
 
 export interface OptionAria extends SelectableItemStates {
   /** Props for the option element. */
@@ -142,12 +143,12 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
 
   let {hoverProps} = useHover({
     isDisabled: isDisabled || !shouldFocusOnHover,
-    onHoverStart() {
+    onHoverStart: useCallback(() => {
       if (!isFocusVisible()) {
         state.selectionManager.setFocused(true);
         state.selectionManager.setFocusedKey(key);
       }
-    }
+    }, [state.selectionManager])
   });
 
   let domProps = filterDOMProps(item?.props);
