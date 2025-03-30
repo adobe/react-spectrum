@@ -249,7 +249,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
           values={[
             [ListBoxContext, props],
             [ListStateContext, state],
-            [DragAndDropContext, {dragAndDropHooks, dragState, dropState}],
+            [DragAndDropContext, useMemo(() => ({dragAndDropHooks, dragState, dropState}), [dragAndDropHooks, dragState, dropState])],
             [SeparatorContext, {elementType: 'div'}],
             [DropIndicatorContext, {render: ListBoxDropIndicatorWrapper}],
             [SectionContext, {name: 'ListBoxSection', render: ListBoxSectionInner}]

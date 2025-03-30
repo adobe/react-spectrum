@@ -63,11 +63,11 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
 
   useFocusedKeyReset(collection, selectionManager);
 
-  return {
+  return useMemo(() => ({
     collection,
     disabledKeys,
     selectionManager
-  };
+  }), [collection, disabledKeys, selectionManager]);
 }
 
 /**
@@ -75,13 +75,13 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
  */
 export function UNSTABLE_useFilteredListState<T extends object>(state: ListState<T>, filter: ((nodeValue: string) => boolean) | null | undefined): ListState<T> {
   let collection = useMemo(() => filter ? state.collection.UNSTABLE_filter!(filter) : state.collection, [state.collection, filter]);
-  let selectionManager = state.selectionManager.withCollection(collection);
+  let selectionManager = useMemo(() => state.selectionManager.withCollection(collection), [collection]);
   useFocusedKeyReset(collection, selectionManager);
-  return {
+  return useMemo(() => ({
     collection,
     selectionManager,
     disabledKeys: state.disabledKeys
-  };
+  }), [collection, selectionManager, state.disabledKeys]);
 }
 
 function useFocusedKeyReset<T>(collection: Collection<Node<T>>, selectionManager: SelectionManager) {
