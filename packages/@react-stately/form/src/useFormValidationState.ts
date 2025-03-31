@@ -63,10 +63,20 @@ export interface FormValidationState {
 }
 
 export function useFormValidationState<T>(props: FormValidationProps<T>): FormValidationState {
+  const privateProp = props[privateValidationStateProp];
+
+  let privateState = useMemo(() => {
+    if (!privateProp) {
+      return null;
+    }
+
+    let {realtimeValidation, displayValidation, updateValidation, resetValidation, commitValidation} = privateProp as FormValidationState;
+    return {realtimeValidation, displayValidation, updateValidation, resetValidation, commitValidation};
+  }, [privateProp]);
+
   // Private prop for parent components to pass state to children.
-  if (props[privateValidationStateProp]) {
-    let {realtimeValidation, displayValidation, updateValidation, resetValidation, commitValidation} = props[privateValidationStateProp] as FormValidationState;
-    return useMemo(() => ({realtimeValidation, displayValidation, updateValidation, resetValidation, commitValidation}), [realtimeValidation, displayValidation, updateValidation, resetValidation, commitValidation]);
+  if (privateState) {
+    return privateState;
   }
 
   // eslint-disable-next-line react-hooks/rules-of-hooks

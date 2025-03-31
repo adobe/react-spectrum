@@ -15,7 +15,7 @@ import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {SelectProps} from '@react-types/select';
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
-import {useState, useMemo, useEffect, useCallback, useRef} from 'react';
+import {useCallback, useLayoutEffect, useMemo, useRef, useState} from 'react';
 
 export interface SelectStateOptions<T> extends Omit<SelectProps<T>, 'children'>, CollectionStateBase<T> {}
 
@@ -45,25 +45,30 @@ export function useSelectState<T extends object>(props: SelectStateOptions<T>): 
   let triggerState = useOverlayTriggerState(props);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy | null>(null);
 
+  // This is necessary to circumvent a circular dependency below
   let validationStateRef = useRef<FormValidationState>(null);
 
+  let onSelectionChange = props.onSelectionChange;
   let listState = useSingleSelectListState({
     ...props,
     onSelectionChange: useCallback(key => {
-      if (props.onSelectionChange != null) {
-        props.onSelectionChange(key);
+      if (onSelectionChange != null) {
+        onSelectionChange(key);
       }
 
       triggerState.close();
       validationStateRef.current!.commitValidation();
-    }, [props.onSelectionChange, triggerState])
+    }, [onSelectionChange, triggerState])
   });
 
   let validationState = useFormValidationState({
     ...props,
     value: listState.selectedKey
   });
-  validationStateRef.current = validationState;
+  useLayoutEffect(() => {
+    validationStateRef.current = validationState;
+  }, [validationState]);
+  
 
   let [isFocused, setFocused] = useState(false);
 
