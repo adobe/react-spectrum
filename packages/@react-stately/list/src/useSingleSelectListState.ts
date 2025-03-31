@@ -12,8 +12,8 @@
 
 import {CollectionStateBase, Key, Node, Selection, SingleSelection} from '@react-types/shared';
 import {ListState, useListState} from './useListState';
-import {useControlledState} from '@react-stately/utils';
 import {useCallback, useMemo} from 'react';
+import {useControlledState} from '@react-stately/utils';
 
 export interface SingleSelectListProps<T> extends CollectionStateBase<T>, Omit<SingleSelection, 'disallowEmptySelection'> {
   /** Filter function to generate a filtered list of nodes. */

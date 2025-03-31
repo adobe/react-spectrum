@@ -15,7 +15,8 @@ import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {SelectProps} from '@react-types/select';
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
-import {useCallback, useLayoutEffect, useMemo, useRef, useState} from 'react';
+import {useCallback, useMemo, useRef, useState} from 'react';
+import {useLayoutEffect} from '@react-aria/utils';
 
 export interface SelectStateOptions<T> extends Omit<SelectProps<T>, 'children'>, CollectionStateBase<T> {}
 
