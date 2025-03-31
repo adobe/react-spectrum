@@ -2,7 +2,7 @@
   "name": "next-app",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "yarn@4.2.2",
+  "packageManager": "yarn@4.8.1",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -10,16 +10,16 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "next": "14.0.3",
     "react": "^18",
-    "react-dom": "^18",
-    "next": "14.0.3"
+    "react-dom": "^18"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "glob": "^10.3.12"
+    "glob": "^10.3.12",
+    "typescript": "^5"
   },
   "workspaces": [
     "../../packages/react-aria-components",

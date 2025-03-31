@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "packageManager": "yarn@4.2.2",
+  "packageManager": "yarn@4.8.1",
   "scripts": {
     "dev": "webpack serve",
     "build": "webpack --mode production"

@@ -176,6 +176,19 @@ function enforceWorkspaceDependencies({Yarn}) {
       }
     }
   }
+
+  seen = new Map();
+  for (const workspace of Yarn.workspaces()) {
+    let peers = workspace.manifest.peerDependencies ?? {};
+    let devDependencies = workspace.manifest.devDependencies ?? {};
+    for (const [ident, range] of Object.entries(peers)) {
+      if (!devDependencies?.[ident]) {
+        // console.log(`${workspace.ident} is missing dev dependency ${ident}`);
+        devDependencies[ident] = range;
+      }
+    }
+    workspace.set('devDependencies', devDependencies);
+  }
 }
 
 /** @param {Context} context */
