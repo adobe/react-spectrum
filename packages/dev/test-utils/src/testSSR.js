@@ -32,7 +32,7 @@ try {
 
 export async function testSSR(filename, source, runAfterServer) {
   // Transform the code with babel so JSX becomes JS.
-  source = babel.transformSync(source, {filename}).code;
+  source = babel.transformSync(source, {filename, plugins: ['@babel/plugin-syntax-import-attributes']}).code;
 
   // Send the HTML along with the source code to the worker to be hydrated in a DOM environment.
   return new Promise((resolve, reject) => {
