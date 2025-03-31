@@ -30,7 +30,7 @@ export {ColorSwatchPicker, ColorSwatchPickerItem, ColorSwatchPickerContext} from
 export {ColorThumb} from './ColorThumb';
 export {ColorWheel, ColorWheelTrack, ColorWheelTrackContext, ColorWheelStateContext} from './ColorWheel';
 export {ComboBox, ComboBoxContext, ComboBoxStateContext} from './ComboBox';
-export {composeRenderProps, DEFAULT_SLOT, Provider, useContextProps, useSlottedContext} from './utils';
+export {composeRenderProps, DEFAULT_SLOT, Provider, useContextProps, useRenderProps, useSlottedContext} from './utils';
 export {DateField, DateInput, DateSegment, TimeField, DateFieldContext, TimeFieldContext, DateFieldStateContext, TimeFieldStateContext} from './DateField';
 export {DatePicker, DateRangePicker, DatePickerContext, DateRangePickerContext, DatePickerStateContext, DateRangePickerStateContext} from './DatePicker';
 export {DialogTrigger, Dialog, DialogContext, OverlayTriggerStateContext} from './Dialog';
