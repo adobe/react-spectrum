@@ -100,7 +100,7 @@ function App() {
           Open Toast
         </Button>
       </UNSAFE_PortalProvider>
-      <div ref={container} style={{height: '70px', width: '200px',  overflow: 'auto'}}>
+      <div ref={container} style={{height: '110px', width: '200px',  overflow: 'auto', display: 'flex', flexDirection: 'column', gap: '20px', padding: '5px'}}>
         Toasts are portalled here!
       </div>
     </>
@@ -108,6 +108,16 @@ function App() {
 }
 
 <App />
+```
+
+```css hidden
+@import '../../../react-aria-components/docs/Button.mdx' layer(button);
+@import '../../../react-aria-components/docs/Toast.mdx' layer(toast);
+@import "@react-aria/example-theme";
+
+.react-aria-ToastRegion {
+  position: unset;
+}
 ```
 
 ## Contexts
