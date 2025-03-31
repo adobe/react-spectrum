@@ -12,12 +12,12 @@
 
 import {act, render, screen} from '@react-spectrum/test-utils-internal';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
+import {installPointerEvent, User} from '@react-aria/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {User} from '@react-aria/test-utils';
 
-let manyItems = [];
+let manyItems = [] as any[];
 for (let i = 1; i <= 10; i++) {
   manyItems.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i, baz: 'Baz ' + i});
 }
@@ -31,7 +31,7 @@ let columns = [
 describe('Table ', function () {
   let onSelectionChange = jest.fn();
   let onSortChange = jest.fn();
-  let testUtilRealTimer = new User();
+  let testUtilRealTimer = new User({advanceTimer: async (waitTime) => await new Promise((resolve) => setTimeout(resolve, waitTime))});
 
   let TableExample = (props) => {
     let [sort, setSort] = useState({});
@@ -128,6 +128,30 @@ describe('Table ', function () {
     });
   });
 
+  describe('long press, real timers', () => {
+    installPointerEvent();
+    beforeAll(function () {
+      jest.useRealTimers();
+    });
+
+    afterEach(function () {
+      jest.clearAllMocks();
+    });
+
+    it('highlight selection should switch to selection mode on long press', async function () {
+      render(<TableExample allowsResizing selectionStyle="highlight" />);
+      let tableTester = testUtilRealTimer.createTester('Table', {root: screen.getByTestId('test'), interactionType: 'touch'});
+      tableTester.setInteractionType('touch');
+      await tableTester.toggleRowSelection({row: 2, needsLongPress: true});
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Foo 3']));
+
+      await tableTester.toggleRowSelection({row: 'Foo 4'});
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
+      expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Foo 3', 'Foo 4']));
+    });
+  });
+
   describe.each`
     interactionType
     ${'mouse'}
@@ -179,11 +203,11 @@ describe('Table ', function () {
       let tableTester = testUtilFakeTimer.createTester('Table', {root: screen.getByTestId('test')});
       tableTester.setInteractionType(interactionType);
 
-      await tableTester.toggleRowSelection({row: 2, focusToSelect: true});
+      await tableTester.toggleRowSelection({row: 2});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Foo 3']));
 
-      await tableTester.toggleRowSelection({row: 'Foo 4', focusToSelect: true});
+      await tableTester.toggleRowSelection({row: 'Foo 4'});
       expect(onSelectionChange).toHaveBeenCalledTimes(2);
       expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Foo 4']));
 
@@ -198,6 +222,32 @@ describe('Table ', function () {
       await tableTester.toggleSort({column: 'Foo'});
       expect(onSortChange).toHaveBeenCalledTimes(3);
       expect(onSortChange).toHaveBeenLastCalledWith({column: 'foo', direction: 'descending'});
+    });
+  });
+
+  describe('long press, fake timers', () => {
+    installPointerEvent();
+    let testUtilFakeTimer = new User({interactionType: 'touch', advanceTimer: jest.advanceTimersByTime});
+    beforeAll(function () {
+      jest.useFakeTimers();
+    });
+
+    afterEach(function () {
+      act(() => jest.runAllTimers());
+      jest.clearAllMocks();
+    });
+
+    it('highlight selection should switch to selection mode on long press', async function () {
+      render(<TableExample allowsResizing selectionStyle="highlight" />);
+      let tableTester = testUtilFakeTimer.createTester('Table', {root: screen.getByTestId('test')});
+
+      await tableTester.toggleRowSelection({row: 2, needsLongPress: true});
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Foo 3']));
+
+      await tableTester.toggleRowSelection({row: 'Foo 4'});
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
+      expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Foo 3', 'Foo 4']));
     });
   });
 });
