@@ -89,14 +89,12 @@ export const Example: Story = {
       control: 'select',
       options: [true, false, undefined]
     }
-  }
-};
-
-Example.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `
+  },
+  parameters: {
+    docs: {
+      source: {
+        transform: () => {
+          return `
 <TooltipTrigger>
   <Button aria-label="Crop"><Crop /></Button>
   <Tooltip>Crop</Tooltip>
@@ -105,6 +103,7 @@ Example.parameters = {
   <ActionButton aria-label="Lasso"><LassoSelect /></ActionButton>
   <Tooltip>Lasso</Tooltip>
 </TooltipTrigger>`;
+        }
       }
     }
   }
@@ -153,18 +152,17 @@ export const LongLabel: Story = {
       control: 'select',
       options: [true, false, undefined]
     }
-  }
-};
-
-LongLabel.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `
+  },
+  parameters: {
+    docs: {
+      source: {
+        transform: () => {
+          return `
 <TooltipTrigger>
   <ActionButton aria-label="Lasso"><LassoSelect /></ActionButton>
   <Tooltip>Checkbox with very long label so we can see wrapping</Tooltip>
 </TooltipTrigger>`;
+        }
       }
     }
   }
@@ -181,14 +179,12 @@ export const ColorScheme: Story = {
       control: 'select',
       options: [true, false, undefined]
     }
-  }
-};
-
-ColorScheme.parameters = {
-  docs: {
-    source: {
-      transform: () => {
-        return `
+  },
+  parameters: {
+    docs: {
+      source: {
+        transform: () => {
+          return `
 <Provider colorScheme="dark" background="base" styles={style({padding: 48})}>
   <TooltipTrigger>
     <Button aria-label="Crop"><Crop /></Button>
@@ -199,6 +195,7 @@ ColorScheme.parameters = {
     <Tooltip>Lasso</Tooltip>
   </TooltipTrigger>
 </Provider>`;
+        }
       }
     }
   }
