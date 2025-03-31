@@ -187,7 +187,9 @@ function enforceWorkspaceDependencies({Yarn}) {
         devDependencies[ident] = range;
       }
     }
-    workspace.set('devDependencies', devDependencies);
+    if (Object.keys(devDependencies).length > 0) {
+      workspace.set('devDependencies', devDependencies);
+    }
   }
 }
 
