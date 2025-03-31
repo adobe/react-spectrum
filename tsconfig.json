@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "types": ["@testing-library/jest-dom"],
     // we can explicitly declare `any`, but we don't want to infer `any`
     "noImplicitAny": false,
     // maybe bump to 'esNext'?
