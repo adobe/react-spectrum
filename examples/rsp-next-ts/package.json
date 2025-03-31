@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@swc/jest": "^0.2.36",
-    "@testing-library/react": "^15.0.7",
+    "@testing-library/react": "^16.2.0",
     "@types/node": "^18.8.2",
     "@types/react": "^18",
     "eslint": "^8.24.0",

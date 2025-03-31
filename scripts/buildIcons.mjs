@@ -14,6 +14,13 @@ import concurrently from 'concurrently';
 import glob from 'fast-glob';
 import path from 'path';
 import fs from 'fs';
+import { createRequire } from 'node:module';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+let require = createRequire(import.meta.url);
 
 const PACKAGES = {
   ui: path.dirname(require.resolve('@adobe/react-spectrum-ui/dist/')),
@@ -31,6 +38,7 @@ const PACKAGES = {
   let commandPromises = [];
   // run in packages where at least one dist js file is newer that the corresponding source js file
   for (let [pkg, srcFolder] of Object.entries(PACKAGES)) {
+    console.log(pkg, srcFolder);
     let distFolder = getIconPackageFolder(pkg);
     for (let srcFile of await glob([
       path.join(srcFolder, '*.{js,tsx,svg}').replace(/\\/g, '/')
