@@ -11,11 +11,11 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {DragEvent, HTMLAttributes, useRef, useState} from 'react';
+import {DOMAttributes, DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEvent, DropOperation, FocusableElement, DragTypes as IDragTypes, RefObject} from '@react-types/shared';
+import {DragEvent, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DragTypes, globalAllowedDropOperations, globalDndState, readFromDataTransfer, setGlobalDnDState, setGlobalDropEffect} from './utils';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, DROP_OPERATION_TO_DROP_EFFECT} from './constants';
-import {DropActivateEvent, DropEnterEvent, DropEvent, DropExitEvent, DropMoveEvent, DropOperation, FocusableElement, DragTypes as IDragTypes, RefObject} from '@react-types/shared';
 import {isIPad, isMac, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
 import {useVirtualDrop} from './useVirtualDrop';
 
@@ -56,7 +56,7 @@ export interface DropOptions {
 
 export interface DropResult {
   /** Props for the droppable element. */
-  dropProps: HTMLAttributes<HTMLElement>,
+  dropProps: DOMAttributes,
   /** Whether the drop target is currently focused or hovered. */
   isDropTarget: boolean,
   /** Props for the explicit drop button affordance, if any. */
