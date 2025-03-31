@@ -13,7 +13,7 @@
 // Portions of the code in this file are based on code from ICU.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
-import {AnyCalendarDate, Calendar} from '../types';
+import {AnyCalendarDate, Calendar, CalendarIdentifier} from '../types';
 import {CalendarDate} from '../CalendarDate';
 import {mod, Mutable} from '../utils';
 
@@ -68,7 +68,7 @@ const daysInMonth = {
  * Years always contain 12 months, and 365 or 366 days depending on whether it is a leap year.
  */
 export class GregorianCalendar implements Calendar {
-  identifier = 'gregory';
+  identifier: CalendarIdentifier = 'gregory';
 
   fromJulianDay(jd: number): CalendarDate {
     let jd0 = jd;
@@ -118,7 +118,7 @@ export class GregorianCalendar implements Calendar {
     return 9999;
   }
 
-  getEras() {
+  getEras(): string[] {
     return ['BC', 'AD'];
   }
 
@@ -126,7 +126,7 @@ export class GregorianCalendar implements Calendar {
     return date.era === 'BC';
   }
 
-  balanceDate(date: Mutable<AnyCalendarDate>) {
+  balanceDate(date: Mutable<AnyCalendarDate>): void {
     if (date.year <= 0) {
       date.era = date.era === 'BC' ? 'AD' : 'BC';
       date.year = 1 - date.year;

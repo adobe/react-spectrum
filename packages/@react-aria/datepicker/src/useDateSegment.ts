@@ -385,13 +385,15 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     };
   }
 
-  let dateSegments = ['day', 'month', 'year'];
-  let segmentStyle : CSSProperties = {caretColor: 'transparent'};
+  let segmentStyle: CSSProperties = {caretColor: 'transparent'};
   if (direction === 'rtl') {
-    if (dateSegments.includes(segment.type)) {
-      segmentStyle = {caretColor: 'transparent', direction: 'ltr', unicodeBidi: 'embed'};
-    } else if (segment.type === 'timeZoneName') {
-      segmentStyle = {caretColor: 'transparent', unicodeBidi: 'embed'};
+    // While the bidirectional algorithm seems to work properly on inline elements with actual values, it returns different results for placeholder strings. 
+    // To ensure placeholder render in correct format, we apply the CSS equivalent of LRE (left-to-right embedding). See https://www.unicode.org/reports/tr9/#Explicit_Directional_Embeddings.
+    // However, we apply this to both placeholders and date segments with an actual value because the date segments will shift around when deleting otherwise. 
+    segmentStyle.unicodeBidi = 'embed';
+    let format = options[segment.type];
+    if (format === 'numeric' || format === '2-digit') {
+      segmentStyle.direction = 'ltr';
     }
   }
 

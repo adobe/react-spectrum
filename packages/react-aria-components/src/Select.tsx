@@ -114,7 +114,9 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
 
   // Get props for child elements from useSelect
   let buttonRef = useRef<HTMLButtonElement>(null);
-  let [labelRef, label] = useSlot();
+  let [labelRef, label] = useSlot(
+    !props['aria-label'] && !props['aria-labelledby']
+  );
   let {
     labelProps,
     triggerProps,
@@ -177,7 +179,8 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
           triggerRef: buttonRef,
           scrollRef,
           placement: 'bottom start',
-          style: {'--trigger-width': buttonWidth} as React.CSSProperties
+          style: {'--trigger-width': buttonWidth} as React.CSSProperties,
+          'aria-labelledby': menuProps['aria-labelledby']
         }],
         [ListBoxContext, {...menuProps, ref: scrollRef}],
         [ListStateContext, state],

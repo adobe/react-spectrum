@@ -15,8 +15,7 @@ import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
 import {InputHTMLAttributes, LabelHTMLAttributes} from 'react';
 import {RefObject} from '@react-types/shared';
 import {ToggleState} from '@react-stately/toggle';
-import {useFocusable} from '@react-aria/focus';
-import {usePress} from '@react-aria/interactions';
+import {useFocusable, usePress} from '@react-aria/interactions';
 
 export interface ToggleAria {
   /** Props to be spread on the label element. */
@@ -60,7 +59,7 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
 
   let hasChildren = children != null;
   let hasAriaLabel = ariaLabel != null || ariaLabelledby != null;
-  if (!hasChildren && !hasAriaLabel) {
+  if (!hasChildren && !hasAriaLabel && process.env.NODE_ENV !== 'production') {
     console.warn('If you do not provide children, you must specify an aria-label for accessibility');
   }
 
@@ -71,6 +70,10 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
 
   // Handle press state on the label.
   let {pressProps: labelProps, isPressed: isLabelPressed} = usePress({
+    onPress() {
+      state.toggle();
+      ref.current?.focus();
+    },
     isDisabled: isDisabled || isReadOnly
   });
 
@@ -81,7 +84,7 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
   useFormReset(ref, state.isSelected, state.setSelected);
 
   return {
-    labelProps,
+    labelProps: mergeProps(labelProps, {onClick: e => e.preventDefault()}),
     inputProps: mergeProps(domProps, {
       'aria-invalid': isInvalid || validationState === 'invalid' || undefined,
       'aria-errormessage': props['aria-errormessage'],

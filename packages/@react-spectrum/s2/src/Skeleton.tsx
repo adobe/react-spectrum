@@ -17,13 +17,11 @@ import {mergeStyles} from '../style/runtime';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
+import {useMediaQuery} from '@react-spectrum/utils';
 
-let reduceMotion = typeof window?.matchMedia === 'function'
-  ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  : false;
-
-export function useLoadingAnimation(isAnimating: boolean) {
+export function useLoadingAnimation(isAnimating: boolean): (element: HTMLElement | null) => void {
   let animationRef = useRef<Animation | null>(null);
+  let reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
   return useCallback((element: HTMLElement | null) => {
     if (isAnimating && !animationRef.current && element && !reduceMotion) {
       // Use web animation API instead of CSS animations so that we can
@@ -48,7 +46,7 @@ export function useLoadingAnimation(isAnimating: boolean) {
 }
 
 export type SkeletonElement = ReactElement<{
-  children?: ReactNode,
+  children: ReactNode,
   className?: string,
   ref?: Ref<HTMLElement>,
   inert?: boolean | 'true'
@@ -67,7 +65,7 @@ export interface SkeletonProps {
 /**
  * A Skeleton wraps around content to render it as a placeholder.
  */
-export function Skeleton({children, isLoading}: SkeletonProps) {
+export function Skeleton({children, isLoading}: SkeletonProps): ReactNode {
   // Disable all form components inside a skeleton.
   return (
     <SkeletonContext.Provider value={isLoading}>
@@ -99,7 +97,7 @@ export function useSkeletonText(children: ReactNode, style: CSSProperties | unde
 }
 
 // Rendered inside <Text> to create skeleton line boxes via box-decoration-break.
-export function SkeletonText({children}) {
+export function SkeletonText({children}: {children: ReactNode}): ReactNode {
   return (
     <span
       // @ts-ignore - compatibility with React < 19
@@ -116,7 +114,7 @@ export function SkeletonText({children}) {
 }
 
 // Clones the child element and displays it with skeleton styling.
-export function SkeletonWrapper({children}: {children: SkeletonElement}) {
+export function SkeletonWrapper({children}: {children: SkeletonElement}): ReactNode {
   let isLoading = useContext(SkeletonContext);
   let animation = useLoadingAnimation(isLoading || false);
   if (isLoading == null) {

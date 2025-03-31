@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, mockClickDefault, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {Button, Label, RouterProvider, Tag, TagGroup, TagList, Text} from '../';
+import {Button, Label, RouterProvider, Tag, TagGroup, TagList, Text, Tooltip, TooltipTrigger} from '../';
 import React from 'react';
 import {useListData} from '@react-stately/data';
 import userEvent from '@testing-library/user-event';
@@ -304,6 +304,27 @@ describe('TagGroup', () => {
     let grid = getByTestId('list');
     expect(grid).toHaveAttribute('data-empty', 'true');
     expect(grid).toHaveTextContent('No results');
+  });
+
+  it('supports tooltips', async function () {
+    let {getByRole, getAllByRole} = render(
+      <TagGroup>
+        <Label>Test</Label>
+        <TagList>
+          <RemovableTag id="cat">Cat</RemovableTag>
+          <RemovableTag id="dog">Dog</RemovableTag>
+          <TooltipTrigger>
+            <RemovableTag id="kangaroo">Kangaroo</RemovableTag>
+            <Tooltip>Test</Tooltip>
+          </TooltipTrigger>
+        </TagList>
+      </TagGroup>
+    );
+
+    let tag = getAllByRole('row')[2];
+    await user.hover(tag);
+    act(() => jest.runAllTimers());
+    expect(getByRole('tooltip')).toHaveTextContent('Test');
   });
 
   describe('supports links', function () {

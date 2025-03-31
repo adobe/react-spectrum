@@ -21,8 +21,7 @@ import {
 import {AriaButtonProps} from '@react-types/button';
 import {DOMAttributes} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {useFocusable} from '@react-aria/focus';
-import {usePress} from '@react-aria/interactions';
+import {useFocusable, usePress} from '@react-aria/interactions';
 
 export interface AriaButtonOptions<E extends ElementType> extends Omit<AriaButtonProps<E>, 'children'> {}
 
@@ -58,8 +57,7 @@ export function useButton(props: AriaButtonOptions<ElementType>, ref: RefObject<
     preventFocusOnPress,
     // @ts-ignore - undocumented
     allowFocusWhenDisabled,
-    // @ts-ignore
-    onClick: deprecatedOnClick,
+    onClick,
     href,
     target,
     rel,
@@ -89,6 +87,7 @@ export function useButton(props: AriaButtonOptions<ElementType>, ref: RefObject<
     onPressChange,
     onPress,
     onPressUp,
+    onClick,
     isDisabled,
     preventFocusOnPress,
     ref
@@ -107,13 +106,7 @@ export function useButton(props: AriaButtonOptions<ElementType>, ref: RefObject<
       'aria-expanded': props['aria-expanded'],
       'aria-controls': props['aria-controls'],
       'aria-pressed': props['aria-pressed'],
-      'aria-current': props['aria-current'],
-      onClick: (e) => {
-        if (deprecatedOnClick) {
-          deprecatedOnClick(e);
-          console.warn('onClick is deprecated, please use onPress');
-        }
-      }
+      'aria-current': props['aria-current']
     })
   };
 }

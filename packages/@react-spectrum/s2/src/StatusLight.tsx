@@ -49,7 +49,7 @@ export interface StatusLightProps extends StatusLightStyleProps, DOMProps, AriaL
   role?: 'status'
 }
 
-export const StatusLightContext = createContext<ContextValue<StatusLightProps, DOMRefValue<HTMLDivElement>>>(null);
+export const StatusLightContext = createContext<ContextValue<Partial<StatusLightProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const wrapper = style<StatusLightStyleProps>({
   display: 'flex',
@@ -112,11 +112,11 @@ export const StatusLight = /*#__PURE__*/ forwardRef(function StatusLight(props: 
   let domRef = useDOMRef(ref);
   let isSkeleton = useIsSkeleton();
 
-  if (!children && !props['aria-label']) {
+  if (!children && !props['aria-label'] && process.env.NODE_ENV !== 'production') {
     console.warn('If no children are provided, an aria-label must be specified');
   }
 
-  if (!role && (props['aria-label'] || props['aria-labelledby'])) {
+  if (!role && (props['aria-label'] || props['aria-labelledby']) && process.env.NODE_ENV !== 'production') {
     console.warn('A labelled StatusLight must have a role.');
   }
 

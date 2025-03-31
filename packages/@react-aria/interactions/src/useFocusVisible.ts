@@ -93,7 +93,7 @@ function handleFocusEvent(e: FocusEvent) {
   // Firefox fires two extra focus events when the user first clicks into an iframe:
   // first on the window, then on the document. We ignore these events so they don't
   // cause keyboard focus rings to appear.
-  if (e.target === window || e.target === document || ignoreFocusEvent) {
+  if (e.target === window || e.target === document || ignoreFocusEvent || !e.isTrusted) {
     return;
   }
 
@@ -153,7 +153,7 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
     documentObject.addEventListener('pointerdown', handlePointerEvent, true);
     documentObject.addEventListener('pointermove', handlePointerEvent, true);
     documentObject.addEventListener('pointerup', handlePointerEvent, true);
-  } else {
+  } else if (process.env.NODE_ENV === 'test') {
     documentObject.addEventListener('mousedown', handlePointerEvent, true);
     documentObject.addEventListener('mousemove', handlePointerEvent, true);
     documentObject.addEventListener('mouseup', handlePointerEvent, true);
@@ -181,6 +181,7 @@ const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
   documentObject.removeEventListener('keydown', handleKeyboardEvent, true);
   documentObject.removeEventListener('keyup', handleKeyboardEvent, true);
   documentObject.removeEventListener('click', handleClickEvent, true);
+
   windowObject.removeEventListener('focus', handleFocusEvent, true);
   windowObject.removeEventListener('blur', handleWindowBlur, false);
 
@@ -188,7 +189,7 @@ const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
     documentObject.removeEventListener('pointerdown', handlePointerEvent, true);
     documentObject.removeEventListener('pointermove', handlePointerEvent, true);
     documentObject.removeEventListener('pointerup', handlePointerEvent, true);
-  } else {
+  } else if (process.env.NODE_ENV === 'test') {
     documentObject.removeEventListener('mousedown', handlePointerEvent, true);
     documentObject.removeEventListener('mousemove', handlePointerEvent, true);
     documentObject.removeEventListener('mouseup', handlePointerEvent, true);
@@ -246,7 +247,7 @@ export function getInteractionModality(): Modality | null {
   return currentModality;
 }
 
-export function setInteractionModality(modality: Modality) {
+export function setInteractionModality(modality: Modality): void {
   currentModality = modality;
   triggerChangeHandlers(modality, null);
 }

@@ -51,18 +51,18 @@ interface ButtonStyleProps {
   staticColor?: 'white' | 'black' | 'auto'
 }
 
-export interface ButtonProps extends Omit<RACButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, StyleProps, ButtonStyleProps {
+export interface ButtonProps extends Omit<RACButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick'>, StyleProps, ButtonStyleProps {
   /** The content to display in the Button. */
-  children?: ReactNode
+  children: ReactNode
 }
 
-export interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' | 'children'>, StyleProps, ButtonStyleProps {
+export interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' | 'children' | 'onClick'>, StyleProps, ButtonStyleProps {
   /** The content to display in the Button. */
-  children?: ReactNode
+  children: ReactNode
 }
 
-export const ButtonContext = createContext<ContextValue<ButtonProps, FocusableRefValue<HTMLButtonElement>>>(null);
-export const LinkButtonContext = createContext<ContextValue<ButtonProps, FocusableRefValue<HTMLAnchorElement>>>(null);
+export const ButtonContext = createContext<ContextValue<Partial<ButtonProps>, FocusableRefValue<HTMLButtonElement>>>(null);
+export const LinkButtonContext = createContext<ContextValue<Partial<ButtonProps>, FocusableRefValue<HTMLAnchorElement>>>(null);
 
 const iconOnly = ':has([slot=icon]):not(:has([data-rsp-slot=text]))';
 const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: boolean}>({

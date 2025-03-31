@@ -34,11 +34,11 @@ interface LinkStyleProps {
   isQuiet?: boolean
 }
 
-export interface LinkProps extends Omit<RACLinkProps, 'isDisabled' | 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange'>, StyleProps, LinkStyleProps {
-  children?: ReactNode
+export interface LinkProps extends Omit<RACLinkProps, 'isDisabled' | 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'onClick'>, StyleProps, LinkStyleProps {
+  children: ReactNode
 }
 
-export const LinkContext = createContext<ContextValue<LinkProps, FocusableRefValue<HTMLAnchorElement>>>(null);
+export const LinkContext = createContext<ContextValue<Partial<LinkProps>, FocusableRefValue<HTMLAnchorElement>>>(null);
 
 const link = style<LinkRenderProps & LinkStyleProps & {isSkeleton: boolean, isStaticColor: boolean}>({
   ...focusRing(),

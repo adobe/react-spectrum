@@ -15,13 +15,13 @@ import {ActionButton, Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Content} from '@react-spectrum/view';
-import {createLandmarkController, useLandmark} from '@react-aria/landmark';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import React, {SyntheticEvent, useEffect, useMemo, useRef, useState} from 'react';
-import {SpectrumToastOptions} from '../src/ToastContainer';
+import {SpectrumToastOptions, ToastPlacement} from '../src/ToastContainer';
 import {ToastContainer, ToastQueue} from '../';
+import {UNSTABLE_createLandmarkController, useLandmark} from '@react-aria/landmark';
 import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
 
 export default {
@@ -235,13 +235,13 @@ function ToastToggle(options: SpectrumToastOptions) {
   );
 }
 
-function Multiple(options: SpectrumToastOptions) {
+function Multiple(options: SpectrumToastOptions & {placement: ToastPlacement}) {
   let [isMounted1, setMounted1] = useState(true);
 
   return (
     <Flex direction="column">
       <Checkbox isSelected={isMounted1} onChange={setMounted1}>First mounted</Checkbox>
-      {isMounted1 && <ToastContainer />}
+      {isMounted1 && <ToastContainer placement={options.placement} />}
       <MultipleInner />
       <RenderProvider {...options} />
     </Flex>
@@ -260,7 +260,7 @@ function MultipleInner() {
 }
 
 function IframeExample() {
-  let controller = useMemo(() => createLandmarkController(), []);
+  let controller = useMemo(() => UNSTABLE_createLandmarkController(), []);
   useEffect(() => () => controller.dispose(), [controller]);
   let onLoad = (e: SyntheticEvent) => {
     let iframe = e.target as HTMLIFrameElement;
@@ -361,7 +361,7 @@ function MainLandmark(props) {
 }
 
 export const withFullscreen = {
-  render: () => <FullscreenApp />,
+  render: (args) => <FullscreenApp {...args} />,
   parameters: {
     disableToastContainer: true
   }
@@ -387,9 +387,9 @@ function FullscreenApp(props) {
       <UNSTABLE_PortalProvider getContainer={() => ref.current}>
         <RenderProvider {...props} />
         <ActionButton onPress={fullscreenPress}>Enter fullscreen</ActionButton>
-        {isFullscreen && <ToastContainer key="miniapp" />}
+        {isFullscreen && <ToastContainer key="miniapp" placement={props.placement} />}
       </UNSTABLE_PortalProvider>
-      {!isFullscreen && <ToastContainer key="app" />}
+      {!isFullscreen && <ToastContainer key="app" placement={props.placement} />}
     </div>
   );
 }

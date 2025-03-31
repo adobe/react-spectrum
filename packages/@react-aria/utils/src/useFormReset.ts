@@ -18,7 +18,7 @@ export function useFormReset<T>(
   ref: RefObject<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null> | undefined,
   initialValue: T,
   onReset: (value: T) => void
-) {
+): void {
   let resetValue = useRef(initialValue);
   let handleReset = useEffectEvent(() => {
     if (onReset) {

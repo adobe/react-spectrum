@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, renderHook, within} from '@react-spectrum/test-utils-internal';
+import {act, pointerMap, render, renderHook, within} from '@react-spectrum/test-utils-internal';
 import {composeStories} from '@storybook/react';
 import React, {useRef} from 'react';
 import * as stories from '../stories/useToast.stories';
@@ -26,13 +26,13 @@ describe('useToast', () => {
     close.mockClear();
   });
 
-  let renderToastHook = (toast, state, wrapper) => {
-    let {result} = renderHook(() => useToast({toast}, state, useRef(document.createElement('div'))), {wrapper});
+  let renderToastHook = (props, state, wrapper) => {
+    let {result} = renderHook(() => useToast(props, state, useRef(document.createElement('div'))), {wrapper});
     return result.current;
   };
 
   it('handles defaults', function () {
-    let {closeButtonProps, toastProps, contentProps, titleProps} = renderToastHook({}, {close});
+    let {closeButtonProps, toastProps, contentProps, titleProps} = renderToastHook({toast: {}}, {close});
 
     expect(toastProps.role).toBe('alertdialog');
     expect(contentProps.role).toBe('alert');
@@ -42,21 +42,21 @@ describe('useToast', () => {
   });
 
   it('handles close button', function () {
-    let {closeButtonProps} = renderToastHook({key: 1}, {close});
+    let {closeButtonProps} = renderToastHook({toast: {key: 1}}, {close});
     closeButtonProps.onPress();
 
     expect(close).toHaveBeenCalledTimes(1);
     expect(close).toHaveBeenCalledWith(1);
   });
+
+  it('passes through data attributes', function () {
+    let {toastProps} = renderToastHook({toast: {}, 'data-test-id': 'toast'}, {close});
+
+    expect(toastProps['data-test-id']).toBe('toast');
+  });
 });
 
 describe('single toast at a time', () => {
-  function fireAnimationEnd(alert) {
-    let e = new Event('animationend', {bubbles: true, cancelable: false});
-    e.animationName = 'fade-out';
-    fireEvent(alert, e);
-  }
-
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
@@ -72,27 +72,31 @@ describe('single toast at a time', () => {
 
   it('moves focus to the next toast when it appears', async () => {
     let tree = render(<Default />);
-    // eslint-disable-next-line
-    let [bLow, bMedium, bHigh] = tree.getAllByRole('button');
+    let button = tree.getByRole('button');
 
-    await user.click(bHigh);
-    await user.click(bLow);
+    await user.tab();
+    await user.keyboard('{Enter}');
+    await user.keyboard('{Enter}');
 
     let toast = tree.getByRole('alertdialog');
-    expect(toast.textContent).toContain('High');
+    expect(toast.textContent).toContain('Mmmmm toast 2x');
     let closeButton = within(toast).getByRole('button');
-    await user.click(closeButton);
-    fireAnimationEnd(toast);
+    await user.keyboard('{F6}');
+    await user.tab();
+    await user.tab();
+    expect(document.activeElement).toBe(closeButton);
+    await user.keyboard('{Enter}');
 
     toast = tree.getByRole('alertdialog');
-    expect(toast.textContent).toContain('Low');
+    expect(toast.textContent).toContain('Mmmmm toast 1x');
     expect(toast).toHaveFocus();
 
     closeButton = within(toast).getByRole('button');
-    await user.click(closeButton);
-    fireAnimationEnd(toast);
+    await user.tab();
+    expect(document.activeElement).toBe(closeButton);
+    await user.keyboard('{Enter}');
 
     expect(tree.queryByRole('alertdialog')).toBeNull();
-    expect(bLow).toHaveFocus();
+    expect(button).toHaveFocus();
   });
 });

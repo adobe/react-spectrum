@@ -13,7 +13,7 @@
 // Portions of the code in this file are based on code from ICU.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
-import {AnyCalendarDate, Calendar} from '../types';
+import {AnyCalendarDate, Calendar, CalendarIdentifier} from '../types';
 import {CalendarDate} from '../CalendarDate';
 
 const CIVIL_EPOC = 1948440; // CE 622 July 16 Friday (Julian calendar) / CE 622 July 19 (Gregorian calendar)
@@ -50,13 +50,13 @@ function isLeapYear(year: number): boolean {
  * Learn more about the available Islamic calendars [here](https://cldr.unicode.org/development/development-process/design-proposals/islamic-calendar-types).
  */
 export class IslamicCivilCalendar implements Calendar {
-  identifier = 'islamic-civil';
+  identifier: CalendarIdentifier = 'islamic-civil';
 
   fromJulianDay(jd: number): CalendarDate {
     return julianDayToIslamic(this, CIVIL_EPOC, jd);
   }
 
-  toJulianDay(date: AnyCalendarDate) {
+  toJulianDay(date: AnyCalendarDate): number {
     return islamicToJulianDay(CIVIL_EPOC, date.year, date.month, date.day);
   }
 
@@ -82,7 +82,7 @@ export class IslamicCivilCalendar implements Calendar {
     return 9665;
   }
 
-  getEras() {
+  getEras(): string[] {
     return ['AH'];
   }
 }
@@ -95,13 +95,13 @@ export class IslamicCivilCalendar implements Calendar {
  * Learn more about the available Islamic calendars [here](https://cldr.unicode.org/development/development-process/design-proposals/islamic-calendar-types).
  */
 export class IslamicTabularCalendar extends IslamicCivilCalendar {
-  identifier = 'islamic-tbla';
+  identifier: CalendarIdentifier = 'islamic-tbla';
 
   fromJulianDay(jd: number): CalendarDate {
     return julianDayToIslamic(this, ASTRONOMICAL_EPOC, jd);
   }
 
-  toJulianDay(date: AnyCalendarDate) {
+  toJulianDay(date: AnyCalendarDate): number {
     return islamicToJulianDay(ASTRONOMICAL_EPOC, date.year, date.month, date.day);
   }
 }
@@ -145,7 +145,7 @@ function umalquraYearLength(year: number): number {
  * Learn more about the available Islamic calendars [here](https://cldr.unicode.org/development/development-process/design-proposals/islamic-calendar-types).
  */
 export class IslamicUmalquraCalendar extends IslamicCivilCalendar {
-  identifier = 'islamic-umalqura';
+  identifier: CalendarIdentifier = 'islamic-umalqura';
 
   constructor() {
     super();

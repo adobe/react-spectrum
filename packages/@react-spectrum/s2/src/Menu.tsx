@@ -22,6 +22,7 @@ import {
   SubmenuTrigger as AriaSubmenuTrigger,
   SubmenuTriggerProps as AriaSubmenuTriggerProps,
   ContextValue,
+  DEFAULT_SLOT,
   Provider,
   Separator,
   SeparatorProps
@@ -71,7 +72,7 @@ export interface MenuTriggerProps extends AriaMenuTriggerProps {
   shouldFlip?: boolean
 }
 
-export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style' | 'className' | 'dependencies'>, StyleProps {
+export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style' | 'className' | 'dependencies' | 'renderEmptyState'>, StyleProps {
   /**
    * The size of the Menu.
    *
@@ -81,12 +82,12 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style
   /**
    * The contents of the collection.
    */
-  children?: ReactNode | ((item: T) => ReactNode),
+  children: ReactNode | ((item: T) => ReactNode),
   /** Hides the default link out icons on menu items that open links in a new tab. */
   hideLinkOutIcon?: boolean
 }
 
-export const MenuContext = createContext<ContextValue<MenuProps<any>, DOMRefValue<HTMLDivElement>>>(null);
+export const MenuContext = createContext<ContextValue<Partial<MenuProps<any>>, DOMRefValue<HTMLDivElement>>>(null);
 
 const menuItemGrid = {
   size: {
@@ -103,6 +104,7 @@ export let menu = style({
   gridTemplateColumns: menuItemGrid,
   boxSizing: 'border-box',
   maxHeight: '[inherit]',
+  width: 'full',
   overflow: {
     isPopover: 'auto'
   },
@@ -113,7 +115,8 @@ export let menu = style({
     isPopover: 8
   },
   fontFamily: 'sans',
-  fontSize: 'control'
+  fontSize: 'control',
+  gridAutoRows: 'min-content'
 }, getAllowedOverrides());
 
 export let section = style({
@@ -186,6 +189,7 @@ export let menuitem = style({
   },
   alignItems: 'baseline',
   minHeight: 'control',
+  height: 'min',
   textDecoration: 'none',
   cursor: {
     default: 'default',
@@ -402,7 +406,7 @@ export const Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(function Menu<T
   return content;
 });
 
-export function Divider(props: SeparatorProps) {
+export function Divider(props: SeparatorProps): ReactNode {
   return (
     <Separator
       {...props}
@@ -425,7 +429,7 @@ export function Divider(props: SeparatorProps) {
 }
 
 export interface MenuSectionProps<T extends object> extends AriaMenuSectionProps<T> {}
-export function MenuSection<T extends object>(props: MenuSectionProps<T>) {
+export function MenuSection<T extends object>(props: MenuSectionProps<T>): ReactNode {
   // remember, context doesn't work if it's around Section nor inside
   let {size} = useContext(InternalMenuContext);
   return (
@@ -461,7 +465,7 @@ const linkIconSize = {
   XL: 'XL'
 } as const;
 
-export function MenuItem(props: MenuItemProps) {
+export function MenuItem(props: MenuItemProps): ReactNode {
   let ref = useRef(null);
   let isLink = props.href != null;
   let isLinkOut = isLink && props.target === '_blank';
@@ -490,6 +494,7 @@ export function MenuItem(props: MenuItemProps) {
                 }],
                 [TextContext, {
                   slots: {
+                    [DEFAULT_SLOT]: {styles: label({size})},
                     label: {styles: label({size})},
                     description: {styles: description({...renderProps, size})},
                     value: {styles: value}
@@ -543,7 +548,7 @@ export function MenuItem(props: MenuItemProps) {
  * The MenuTrigger serves as a wrapper around a Menu and its associated trigger,
  * linking the Menu's open state with the trigger's press state.
  */
-function MenuTrigger(props: MenuTriggerProps) {
+function MenuTrigger(props: MenuTriggerProps): ReactNode {
   // RAC sets isPressed via PressResponder when the menu is open.
   // We don't want press scaling to appear to get "stuck", so override this.
   // For mouse interactions, menus open on press start. When the popover underlay appears
@@ -586,6 +591,6 @@ export {MenuTrigger, SubmenuTrigger};
 // This is purely so that storybook generates the types for both Menu and MenuTrigger
 interface ICombined<T extends object> extends MenuProps<T>, Omit<MenuTriggerProps, 'children'> {}
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function CombinedMenu<T extends object>(props: ICombined<T>) {
+export function CombinedMenu<T extends object>(props: ICombined<T>): ReactNode {
   return <div />;
 }

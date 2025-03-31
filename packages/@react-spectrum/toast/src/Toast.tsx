@@ -52,7 +52,6 @@ export const Toast = React.forwardRef(function Toast(props: SpectrumToastProps, 
   let {
     toast: {
       key,
-      animation,
       content: {
         children,
         variant,
@@ -103,17 +102,7 @@ export const Toast = React.forwardRef(function Toast(props: SpectrumToastProps, 
           'spectrum-Toast',
           {'focus-ring': isFocusVisible}
         )
-      )}
-      style={{
-        ...styleProps.style,
-        zIndex: props.toast.priority
-      }}
-      data-animation={animation}
-      onAnimationEnd={() => {
-        if (animation === 'exiting') {
-          state.remove(key);
-        }
-      }}>
+      )}>
       <div
         {...contentProps}
         className={classNames(toastContainerStyles, 'spectrum-Toast-contentWrapper')}>

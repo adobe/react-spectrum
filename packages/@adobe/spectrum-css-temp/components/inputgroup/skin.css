@@ -20,6 +20,10 @@ governing permissions and limitations under the License.
     }
   }
 
+  .spectrum-InputGroup-input:focus {
+    border-color: var(--spectrum-textfield-border-color);
+  }
+
   &.is-focused {
     &:not(.spectrum-InputGroup--invalid):not(.is-disabled) {
       .spectrum-InputGroup-input {
@@ -48,7 +52,8 @@ governing permissions and limitations under the License.
 
   &.spectrum-InputGroup--invalid {
     .spectrum-FieldButton:before,
-    .spectrum-InputGroup-input {
+    .spectrum-InputGroup-input,
+    .spectrum-InputGroup-input:focus {
       border-color: var(--spectrum-textfield-border-color-error);
     }
 

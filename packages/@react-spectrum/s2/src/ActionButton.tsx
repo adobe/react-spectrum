@@ -19,6 +19,7 @@ import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {getAllowedOverrides, staticColor, StyleProps} from './style-utils' with { type: 'macro' };
 import {IconContext} from './Icon';
+import {NotificationBadgeContext} from './NotificationBadge';
 import {pressScale} from './pressScale';
 import {SkeletonContext} from './Skeleton';
 import {Text, TextContext} from './Content';
@@ -52,13 +53,14 @@ interface ActionGroupItemStyleProps {
   isJustified?: boolean
 }
 
-export interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'isPending'>, StyleProps, ActionButtonStyleProps {
+export interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'style' | 'children' | 'onHover' | 'onHoverStart' | 'onHoverEnd' | 'onHoverChange' | 'isPending' | 'onClick'>, StyleProps, ActionButtonStyleProps {
   /** The content to display in the ActionButton. */
-  children?: ReactNode
+  children: ReactNode
 }
 
 // These styles handle both ActionButton and ToggleButton
 const iconOnly = ':has([slot=icon], [slot=avatar]):not(:has([data-rsp-slot=text]))';
+const textOnly = ':has([data-rsp-slot=text]):not(:has([slot=icon], [slot=avatar]))';
 export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleButtonStyleProps & ActionGroupItemStyleProps & {isInGroup: boolean, isStaticColor: boolean}>({
   ...focusRing(),
   ...staticColor(),
@@ -216,7 +218,33 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
   zIndex: {
     isFocusVisible: 2
   },
-  disableTapHighlight: true
+  disableTapHighlight: true,
+  '--badgeTop': {
+    type: 'top',
+    value: {
+      default: '[calc(self(height)/2 - var(--iconWidth)/2)]',
+      [textOnly]: 0
+    }
+  },
+  '--buttonPaddingX': {
+    type: 'paddingStart',
+    value: {
+      default: 'edge-to-text',
+      [iconOnly]: 0
+    }
+  },
+  '--iconWidth': {
+    type: 'width',
+    value: fontRelative(20)
+  },
+  '--badgePosition': {
+    type: 'width',
+    value: {
+      default: '[calc(var(--buttonPaddingX) + var(--iconWidth))]',
+      [iconOnly]: '[calc(self(minWidth)/2 + var(--iconWidth)/2)]',
+      [textOnly]: 'full'
+    }
+  }
 }, getAllowedOverrides());
 
 // Matching icon sizes. TBD.
@@ -228,11 +256,11 @@ const avatarSize = {
   X: 26
 } as const;
 
-export const ActionButtonContext = createContext<ContextValue<ActionButtonProps, FocusableRefValue<HTMLButtonElement>>>(null);
+export const ActionButtonContext = createContext<ContextValue<Partial<ActionButtonProps>, FocusableRefValue<HTMLButtonElement>>>(null);
 
 /**
  * ActionButtons allow users to perform an action.
- * They’re used for similar, task-based options within a workflow, and are ideal for interfaces where buttons aren’t meant to draw a lot of attention.
+ * They're used for similar, task-based options within a workflow, and are ideal for interfaces where buttons aren't meant to draw a lot of attention.
  */
 export const ActionButton = forwardRef(function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   [props, ref] = useSpectrumContextProps(props, ref, ActionButtonContext);
@@ -250,6 +278,7 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
     size = props.size || 'M',
     isDisabled = props.isDisabled
   } = ctx || {};
+
 
   return (
     <RACButton
@@ -281,6 +310,11 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
           [AvatarContext, {
             size: avatarSize[size],
             styles: style({marginStart: '--iconMargin', flexShrink: 0, order: 0})
+          }],
+          [NotificationBadgeContext, {
+            size: props.size === 'XS' ? undefined : props.size,
+            isDisabled: props.isDisabled,
+            styles: style({position: 'absolute', top: '--badgeTop', insetStart: '[var(--badgePosition)]', marginTop: '[calc((self(height) * -1)/2)]', marginStart: '[calc((self(height) * -1)/2)]'})
           }]
         ]}>
         {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}

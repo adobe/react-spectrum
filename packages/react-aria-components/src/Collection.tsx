@@ -19,7 +19,7 @@ export interface CollectionProps<T> extends Omit<CollectionBase<T>, 'children'> 
   /** The contents of the collection. */
   children?: ReactNode | ((item: T) => ReactNode),
   /** Values that should invalidate the item cache when using dynamic collections. */
-  dependencies?: any[]
+  dependencies?: ReadonlyArray<any>
 }
 
 export interface ItemRenderProps {
@@ -89,7 +89,7 @@ export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' 
   /** Static child items or a function to render children. */
   children?: ReactNode | ((item: T) => ReactElement),
   /** Values that should invalidate the item cache when using dynamic collections. */
-  dependencies?: any[]
+  dependencies?: ReadonlyArray<any>
 }
 
 interface SectionContextValue {
@@ -102,7 +102,9 @@ export const SectionContext = createContext<SectionContextValue | null>(null);
 /** @deprecated */
 export const Section = /*#__PURE__*/ createBranchComponent('section', <T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>): JSX.Element => {
   let {name, render} = useContext(SectionContext)!;
-  console.warn(`<Section> is deprecated. Please use <${name}> instead.`);
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn(`<Section> is deprecated. Please use <${name}> instead.`);
+  }
   return render(props, ref, section, 'react-aria-Section');
 });
 
@@ -177,6 +179,7 @@ function useCollectionRender(
 
 export const CollectionRendererContext = createContext<CollectionRenderer>(DefaultCollectionRenderer);
 
-export function usePersistedKeys(focusedKey: Key | null) {
+type PersistedKeysReturnValue = Set<Key> | null;
+export function usePersistedKeys(focusedKey: Key | null): PersistedKeysReturnValue {
   return useMemo(() => focusedKey != null ? new Set([focusedKey]) : null, [focusedKey]);
 }

@@ -1,4 +1,4 @@
-import {UNSTABLE_Autocomplete as Autocomplete, Input, Label, Menu, MenuItem, SearchField, Text, useFilter} from 'react-aria-components'
+import {Autocomplete, Input, Label, Menu, MenuItem, SearchField, Text, useFilter} from 'react-aria-components'
 import {classNames} from '@react-spectrum/utils';
 import styles from './autocomplete.css';
 
