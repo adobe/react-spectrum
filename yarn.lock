@@ -6729,8 +6729,9 @@ __metadata:
   resolution: "@react-aria/test-utils@workspace:packages/@react-aria/test-utils"
   dependencies:
     "@swc/helpers": "npm:^0.5.0"
+    react-aria-components: "npm:^1.7.1"
   peerDependencies:
-    "@testing-library/react": ^15.0.7
+    "@testing-library/react": ^16.0.0
     "@testing-library/user-event": ^14.0.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
   languageName: unknown
@@ -7954,7 +7955,7 @@ __metadata:
     "@react-types/table": "npm:^3.11.0"
     "@react-types/textfield": "npm:^3.12.0"
     "@testing-library/dom": "npm:^10.1.0"
-    "@testing-library/react": "npm:^15.0.7"
+    "@testing-library/react": "npm:^16.0.0"
     "@testing-library/user-event": "npm:^14.0.0"
     csstype: "npm:^3.0.2"
     jest: "npm:^29.5.0"
@@ -8219,7 +8220,7 @@ __metadata:
     "@swc/helpers": "npm:^0.5.0"
     "@testing-library/dom": "npm:^10.1.0"
     "@testing-library/jest-dom": "npm:^5.16.4"
-    "@testing-library/react": "npm:^15.0.7"
+    "@testing-library/react": "npm:^16.0.0"
     "@testing-library/user-event": "npm:^14.0.0"
     jest: "npm:^29.5.0"
     resolve: "npm:^1.17.0"
@@ -8238,7 +8239,7 @@ __metadata:
     "@react-aria/test-utils": "npm:1.0.0-alpha.5"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
-    "@testing-library/react": ^15.0.7
+    "@testing-library/react": ^16.0.0
     "@testing-library/user-event": ^14.0.0
     jest: ^29.5.0
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -10862,7 +10863,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/dom@npm:^10.0.0, @testing-library/dom@npm:^10.1.0":
+"@testing-library/dom@npm:^10.1.0":
   version: 10.1.0
   resolution: "@testing-library/dom@npm:10.1.0"
   dependencies:
@@ -10911,21 +10912,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:^15.0.7":
-  version: 15.0.7
-  resolution: "@testing-library/react@npm:15.0.7"
+"@testing-library/react@npm:^16.0.0":
+  version: 16.2.0
+  resolution: "@testing-library/react@npm:16.2.0"
   dependencies:
     "@babel/runtime": "npm:^7.12.5"
-    "@testing-library/dom": "npm:^10.0.0"
-    "@types/react-dom": "npm:^18.0.0"
   peerDependencies:
-    "@types/react": ^18.0.0
-    react: ^18.0.0
-    react-dom: ^18.0.0
+    "@testing-library/dom": ^10.0.0
+    "@types/react": ^18.0.0 || ^19.0.0
+    "@types/react-dom": ^18.0.0 || ^19.0.0
+    react: ^18.0.0 || ^19.0.0
+    react-dom: ^18.0.0 || ^19.0.0
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: 10c0/ac8ee8968e81949ecb35f7ee34741c2c043f73dd7fee2247d56f6de6a30de4742af94f25264356863974e54387485b46c9448ecf3f6ca41cf4339011c369f2d4
+    "@types/react-dom":
+      optional: true
+  checksum: 10c0/7adaedaf237002b42e04a6261d2756074a19cbca0f0c79ba375660f618e123c0ee56256ced00aeb0bb7225ba1a8a81b92b692cca053521a21bb92a8cace1e4c6
   languageName: node
   linkType: hard
 
@@ -29567,7 +29570,7 @@ __metadata:
     "@tailwindcss/postcss": "npm:^4.0.0"
     "@testing-library/dom": "npm:^10.1.0"
     "@testing-library/jest-dom": "npm:^5.16.5"
-    "@testing-library/react": "npm:^15.0.7"
+    "@testing-library/react": "npm:^16.0.0"
     "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch"
     "@types/react": "npm:types-react@19.0.0-rc.0"
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.0"

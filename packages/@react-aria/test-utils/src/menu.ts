@@ -227,21 +227,48 @@ export class MenuTester {
         }
       }
 
+      // This chain of waitFors is needed in place of running all timers since we don't know how long transitions may take, or what action
+      // the menu option select may trigger.
       if (
         !(menuSelectionMode === 'single' && !closesOnSelect) &&
         !(menuSelectionMode === 'multiple' && (keyboardActivation === 'Space' || interactionType === 'mouse'))
       ) {
+        // For RSP, clicking on a submenu option seems to briefly lose focus to the body before moving to the clicked option in the test so we need to wait
+        // for focus to be coerced to somewhere else in place of running all timers.
+        if (this._isSubmenu) {
+          await waitFor(() => {
+            if (document.activeElement === document.body) {
+              throw new Error('Expected focus to move to somewhere other than the body after selecting a submenu option.');
+            } else {
+              return true;
+            }
+          });
+        }
+
         // If user isn't trying to select multiple menu options or closeOnSelect is true then we can assume that
         // the menu will close or some action is triggered. In cases like that focus should move somewhere after the menu closes
         // but we can't really know where so just make sure it doesn't get lost to the body.
         await waitFor(() => {
           if (document.activeElement === option) {
-            throw new Error('Expected focus after selecting an option to move away from the option');
+            throw new Error('Expected focus after selecting an option to move away from the option.');
           } else {
             return true;
           }
         });
 
+        // We'll also want to wait for focus to move away from the original submenu trigger since the entire submenu tree should
+        // close
+        if (this._isSubmenu) {
+          await waitFor(() => {
+            if (document.activeElement === this.trigger) {
+              throw new Error('Expected focus after selecting an submenu option to move away from the original submenu trigger.');
+            } else {
+              return true;
+            }
+          });
+        }
+
+        // Finally wait for focus to be coerced somewhere final when the menu tree is removed from the DOM
         await waitFor(() => {
           if (document.activeElement === document.body) {
             throw new Error('Expected focus to move to somewhere other than the body after selecting a menu option.');
