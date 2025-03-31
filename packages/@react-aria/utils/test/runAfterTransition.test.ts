@@ -1,3 +1,4 @@
+import {act} from '@testing-library/react';
 import {runAfterTransition} from '../src/runAfterTransition';
 
 class MockTransitionEvent extends Event {
@@ -20,15 +21,13 @@ describe('runAfterTransition', () => {
   afterAll(() => {
     global.TransitionEvent = originalTransitionEvent;
   });
-
+  
   beforeEach(() => {
-    jest
-      .spyOn(window, 'requestAnimationFrame')
-      // @ts-expect-error -- mock
-      .mockImplementation((cb) => cb());
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
+    jest.useRealTimers();
     jest.restoreAllMocks();
     cleanupElements();
   });
@@ -49,6 +48,7 @@ describe('runAfterTransition', () => {
   it('calls callback immediately when no transition is running', () => {
     const callback = jest.fn();
     runAfterTransition(callback);
+    act(() => {jest.runOnlyPendingTimers();});
     expect(callback).toHaveBeenCalled();
   });
 
@@ -64,7 +64,10 @@ describe('runAfterTransition', () => {
       })
     );
 
+    
     runAfterTransition(callback);
+    act(() => {jest.runOnlyPendingTimers();});
+
     // Callback should not be called immediately since a transition is active.
     expect(callback).not.toHaveBeenCalled();
 
@@ -91,7 +94,9 @@ describe('runAfterTransition', () => {
     );
 
     runAfterTransition(callback1);
+    act(() => {jest.runOnlyPendingTimers();});
     runAfterTransition(callback2);
+    act(() => {jest.runOnlyPendingTimers();});
     // Callbacks should not be called during transition.
     expect(callback1).not.toHaveBeenCalled();
     expect(callback2).not.toHaveBeenCalled();
@@ -123,6 +128,7 @@ describe('runAfterTransition', () => {
     cleanupElements();
 
     runAfterTransition(callback);
+    act(() => {jest.runOnlyPendingTimers();});
 
     expect(callback).toHaveBeenCalled();
   });

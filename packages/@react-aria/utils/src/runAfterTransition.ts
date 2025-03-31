@@ -98,7 +98,7 @@ if (typeof document !== 'undefined') {
  */
 function cleanupDetachedElements() {
   for (const [element] of transitionsByElement) {
-    if (element instanceof HTMLElement && !document.contains(element)) {
+    if (element instanceof HTMLElement && !element.isConnected) {
       transitionsByElement.delete(element);
     }
   }
