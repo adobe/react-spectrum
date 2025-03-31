@@ -67,10 +67,6 @@ export function useSelectState<T extends object>(props: SelectStateOptions<T>): 
 
   let [isFocused, setFocused] = useState(false);
 
-  useEffect(() => {
-    console.log("come on");
-  }, [triggerState])
-
   return useMemo(() => ({
     ...validationState,
     ...listState,

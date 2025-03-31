@@ -16,7 +16,7 @@ import {getCollectionId, isNonContiguousSelectionModifier} from './utils';
 import {isCtrlKeyPressed, mergeProps, openLink, useId, useRouter} from '@react-aria/utils';
 import {moveVirtualFocus} from '@react-aria/focus';
 import {MultipleSelectionManager} from '@react-stately/selection';
-import {useEffect, useRef, useCallback} from 'react';
+import {useEffect, useRef} from 'react';
 
 export interface SelectableItemOptions extends DOMProps {
   /**
@@ -184,17 +184,14 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // item is tabbable.  If using virtual focus, don't set a tabIndex at all so that VoiceOver
   // on iOS 14 doesn't try to move real DOM focus to the item anyway.
   let itemProps: SelectableItemAria['itemProps'] = {};
-
-  const onFocus = useCallback(e => {
-    if (e.target === ref.current) {
-      manager.setFocusedKey(key);
-    }
-  }, [manager]);
-
   if (!shouldUseVirtualFocus && !isDisabled) {
     itemProps = {
       tabIndex: key === manager.focusedKey ? 0 : -1,
-      onFocus
+      onFocus(e) {
+        if (e.target === ref.current) {
+          manager.setFocusedKey(key);
+        }
+      }
     };
   } else if (isDisabled) {
     itemProps.onMouseDown = (e) => {
@@ -368,11 +365,11 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // Once the user is in selection mode, they can long press again to drag.
   // Use a capturing listener to ensure this runs before useDrag, regardless of
   // the order the props get merged.
-  let onDragStartCapture = useCallback(e => {
+  let onDragStartCapture = e => {
     if (modality.current === 'touch' && longPressEnabledOnPressStart.current) {
       e.preventDefault();
     }
-  }, []);
+  };
 
   // Prevent default on link clicks so that we control exactly
   // when they open (to match selection behavior).

@@ -40,6 +40,7 @@ export interface SingleSelectListState<T> extends ListState<T> {
 export function useSingleSelectListState<T extends object>(props: SingleSelectListProps<T>): SingleSelectListState<T>  {
   let [selectedKey, setSelectedKey] = useControlledState(props.selectedKey, props.defaultSelectedKey ?? null, props.onSelectionChange);
   let selectedKeys = useMemo(() => selectedKey != null ? [selectedKey] : [], [selectedKey]);
+  let onSelectionChange = props.onSelectionChange;
   let {collection, disabledKeys, selectionManager} = useListState({
     ...props,
     selectionMode: 'single',
@@ -55,12 +56,12 @@ export function useSingleSelectListState<T extends object>(props: SingleSelectLi
 
       // Always fire onSelectionChange, even if the key is the same
       // as the current key (useControlledState does not).
-      if (key === selectedKey && props.onSelectionChange) {
-        props.onSelectionChange(key);
+      if (key === selectedKey && onSelectionChange) {
+        onSelectionChange(key);
       }
 
       setSelectedKey(key);
-    }, [props.onSelectionChange, selectedKey, setSelectedKey])
+    }, [onSelectionChange, selectedKey, setSelectedKey])
   });
 
   let selectedItem = selectedKey != null
@@ -71,7 +72,6 @@ export function useSingleSelectListState<T extends object>(props: SingleSelectLi
     collection,
     disabledKeys,
     selectionManager,
-    focusedKey: selectionManager.focusedKey,
     selectedKey,
     setSelectedKey,
     selectedItem

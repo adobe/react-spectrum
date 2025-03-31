@@ -35,9 +35,6 @@ export interface ListState<T> {
   /** A set of items that are disabled. */
   disabledKeys: Set<Key>,
 
-  /** The focused key */
-  focusedKey: Key | null,
-
   /** A selection manager to read and update multiple selection state. */
   selectionManager: SelectionManager
 }
@@ -69,9 +66,8 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
   return useMemo(() => ({
     collection,
     disabledKeys,
-    focusedKey: selectionState.focusedKey,
     selectionManager
-  }), [collection, disabledKeys, selectionState.focusedKey, selectionManager]);
+  }), [collection, disabledKeys, selectionManager]);
 }
 
 /**
@@ -81,12 +77,12 @@ export function UNSTABLE_useFilteredListState<T extends object>(state: ListState
   let collection = useMemo(() => filter ? state.collection.UNSTABLE_filter!(filter) : state.collection, [state.collection, filter]);
   let selectionManager = useMemo(() => state.selectionManager.withCollection(collection), [state, collection]);
   useFocusedKeyReset(collection, selectionManager);
+
   return useMemo(() => ({
     collection,
-    selectionManager,
-    focusedKey: selectionManager.focusedKey,
-    disabledKeys: state.disabledKeys
-  }), [collection, selectionManager, selectionManager.focusedKey, state.disabledKeys]);
+    disabledKeys: state.disabledKeys,
+    selectionManager
+  }), [collection, state.disabledKeys, selectionManager]);
 }
 
 function useFocusedKeyReset<T>(collection: Collection<Node<T>>, selectionManager: SelectionManager) {

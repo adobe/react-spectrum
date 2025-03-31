@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption, OptionAria} from 'react-aria';
+import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
 import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
@@ -24,7 +24,6 @@ import React, {createContext, ForwardedRef, forwardRef, JSX, memo, ReactNode, us
 import {SeparatorContext} from './Separator';
 import {TextContext} from './Text';
 import {UNSTABLE_InternalAutocompleteContext} from './Autocomplete';
-import {SelectionManager} from '@react-stately/selection';
 
 export interface ListBoxRenderProps {
   /**
@@ -79,14 +78,14 @@ export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children' | 
 }
 
 export const ListBoxContext = createContext<ContextValue<ListBoxProps<any>, HTMLDivElement>>(null);
-export const ListStateContext = createContext<ListState<any> | null>(null);
+export const ListStateContext = createContext<[ListState<any>, Key | null] | null>(null);
 
 /**
  * A listbox displays a list of options and allows a user to select one or more of them.
  */
 export const ListBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ListBox<T extends object>(props: ListBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ListBoxContext);
-  let state = useContext(ListStateContext);
+  let context = useContext(ListStateContext);
 
   // The structure of ListBox is a bit strange because it needs to work inside other components like ComboBox and Select.
   // Those components render two copies of their children so that the collection can be built even when the popover is closed.
@@ -94,7 +93,9 @@ export const ListBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Lis
   // The second copy sends a ListState object via context which we use to render the ListBox without rebuilding the state.
   // Otherwise, we have a standalone ListBox, so we need to create a collection and state ourselves.
 
-  if (state) {
+  if (context) {
+    let [state] = context;
+
     return <ListBoxInner state={state} props={props} listBoxRef={ref} />;
   }
 
@@ -249,7 +250,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
         <Provider
           values={[
             [ListBoxContext, props],
-            [ListStateContext, state],
+            [ListStateContext, [state, state.selectionManager.focusedKey]],
             [DragAndDropContext, useMemo(() => ({dragAndDropHooks, dragState, dropState}), [dragAndDropHooks, dragState, dropState])],
             [SeparatorContext, {elementType: 'div'}],
             [DropIndicatorContext, {render: ListBoxDropIndicatorWrapper}],
@@ -271,7 +272,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
 export interface ListBoxSectionProps<T> extends SectionProps<T> {}
 
 function ListBoxSectionInner<T extends object>(props: ListBoxSectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>, className = 'react-aria-ListBoxSection') {
-  let state = useContext(ListStateContext)!;
+  let [state] = useContext(ListStateContext)!;
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext)!;
   let {CollectionBranch} = useContext(CollectionRendererContext);
   let [headingRef, heading] = useSlot();
@@ -332,22 +333,24 @@ export interface ListBoxItemProps<T = object> extends RenderProps<ListBoxItemRen
  */
 export const ListBoxItem = /*#__PURE__*/ createLeafComponent('item', function ListBoxItem<T extends object>(props: ListBoxItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let ref = useObjectRef<any>(forwardedRef);
-  let state = useContext(ListStateContext)!;
+  let [state, focusedKey] = useContext(ListStateContext)!;
 
+  // ListBoxItemInner is memoized so that a focus change does not re-render all items in the ListBox.
+  // The data-focused attribute tells React which list boxes are affected by a focus change. It does not actually
+  // get passed through to the component - it could be named anything, as long as it changes so React knows to re-render.
+  return <ListBoxItemInner data-focused={item.key === focusedKey} props={props} state={state} passRef={ref} item={item} />;
+});
+
+const ListBoxItemInner = memo(function ListBoxItemInner<T extends object>({props, item, state, passRef}: {props: ListBoxItemProps<T>, state: ListState<T>, item: Node<T>, passRef: React.MutableRefObject<any>}) {
+  const ref = passRef;
+
+  let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
   let options = useOption(
     {key: item.key, 'aria-label': props?.['aria-label']},
     state,
     ref
   );
 
-  return <ListBoxItemInner selectionManager={state.selectionManager} options={options} focused={item.key === state.focusedKey} passRef={ref} props={props} item={item} />
-});
-
-const ListBoxItemInner = memo(function ListBoxItemInner<T extends object>({props, item, selectionManager, options, focused, passRef}: 
-  {options: OptionAria, props: ListBoxItemProps<T>, focused: boolean, selectionManager: SelectionManager, item: Node<T>, passRef: React.MutableRefObject<any>}) {
-  const ref = passRef;
-
-  let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
   let {optionProps, labelProps, descriptionProps, ...states} = options;
 
   let {hoverProps, isHovered} = useHover({
@@ -378,8 +381,8 @@ const ListBoxItemInner = memo(function ListBoxItemInner<T extends object>({props
     values: {
       ...states,
       isHovered,
-      selectionMode: selectionManager.selectionMode,
-      selectionBehavior: selectionManager.selectionBehavior,
+      selectionMode: state.selectionManager.selectionMode,
+      selectionBehavior: state.selectionManager.selectionBehavior,
       allowsDragging: !!dragState,
       isDragging,
       isDropTarget: droppableItem?.isDropTarget
@@ -408,7 +411,7 @@ const ListBoxItemInner = memo(function ListBoxItemInner<T extends object>({props
       data-pressed={states.isPressed || undefined}
       data-dragging={isDragging || undefined}
       data-drop-target={droppableItem?.isDropTarget || undefined}
-      data-selection-mode={selectionManager.selectionMode === 'none' ? undefined : selectionManager.selectionMode}>
+      data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
       <Provider
         values={[
           [TextContext, {
