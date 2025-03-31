@@ -226,32 +226,30 @@ export class MenuTester {
           await this.user.pointer({target: option, keys: '[TouchA]'});
         }
       }
-      act(() => {jest.runAllTimers();});
 
-      if (option.getAttribute('href') == null && option.getAttribute('aria-haspopup') == null && menuSelectionMode === 'single' && closesOnSelect && keyboardActivation !== 'Space' && !this._isSubmenu) {
+      if (
+        !(menuSelectionMode === 'single' && !closesOnSelect) &&
+        !(menuSelectionMode === 'multiple' && (keyboardActivation === 'Space' || interactionType === 'mouse'))
+      ) {
+        // If user isn't trying to select multiple menu options or closeOnSelect is true then we can assume that
+        // the menu will close or some action is triggered. In cases like that focus should move somewhere after the menu closes
+        // but we can't really know where so just make sure it doesn't get lost to the body.
         await waitFor(() => {
-          if (document.activeElement !== trigger) {
-            throw new Error(`Expected the document.activeElement after selecting an option to be the menu trigger but got ${document.activeElement}`);
+          if (document.activeElement === option) {
+            throw new Error('Expected focus after selecting an option to move away from the option');
           } else {
             return true;
           }
         });
 
-        if (document.contains(menu)) {
-          throw new Error('Expected menu element to not be in the document after selecting an option');
-        }
+        await waitFor(() => {
+          if (document.activeElement === document.body) {
+            throw new Error('Expected focus to move to somewhere other than the body after selecting a menu option.');
+          } else {
+            return true;
+          }
+        });
       }
-      // else {
-      //   // TODO: this is a bit unfortunate, but from a submenu point of view, we can't perform a check that waits for
-      //   // focus to return to the original trigger since we don't have that information in the submenu trigger tester. Even if we did
-      //   // it is a bit unpredicatable where focus might end up landing and waiting for the option/menu to disappear isn't sufficient if there are
-      //   // more transitions in play. For now advance times by a certain amount of time and rely on the user to advance them even more if need be
-      //   if (this._advanceTimer == null) {
-      //     throw new Error('No advanceTimers provided for long press.');
-      //   } else {
-      //     await act(async () => await this._advanceTimer(1000));
-      //   }
-      // }
     } else {
       throw new Error("Attempted to select a option in the menu, but menu wasn't found.");
     }
