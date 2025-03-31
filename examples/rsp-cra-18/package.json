@@ -24,7 +24,7 @@
     "react-aria-components": "latest",
     "react-dom": "^18.1.0",
     "react-scripts": "5.0.1",
-    "typescript": "5.0.4",
+    "typescript": "5.8.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
