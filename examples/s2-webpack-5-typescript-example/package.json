@@ -1,5 +1,5 @@
 {
-  "name": "webpack-5-example",
+  "name": "webpack-5-typescript-example",
   "version": "1.0.0",
   "description": "",
   "main": "./src/index.tsx",
