@@ -7974,6 +7974,7 @@ __metadata:
   resolution: "@react-spectrum/s2@workspace:packages/@react-spectrum/s2"
   dependencies:
     "@adobe/spectrum-tokens": "npm:^13.0.0-beta.56"
+    "@internationalized/number": "npm:^3.6.0"
     "@parcel/macros": "npm:^2.14.0"
     "@react-aria/collections": "npm:3.0.0-beta.1"
     "@react-aria/focus": "npm:^3.20.1"

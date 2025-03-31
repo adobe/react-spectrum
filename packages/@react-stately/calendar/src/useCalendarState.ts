@@ -14,12 +14,14 @@ import {alignCenter, alignEnd, alignStart, constrainStart, constrainValue, isInv
 import {
   Calendar,
   CalendarDate,
+  CalendarIdentifier,
   DateDuration,
   DateFormatter,
   endOfMonth,
   endOfWeek,
   getDayOfWeek,
   GregorianCalendar,
+  isEqualCalendar,
   isSameDay,
   startOfMonth,
   startOfWeek,
@@ -42,7 +44,7 @@ export interface CalendarStateOptions<T extends DateValue = DateValue> extends C
    * `@internationalized/date` package, or manually implemented to include support for
    * only certain calendars.
    */
-  createCalendar: (name: string) => Calendar,
+  createCalendar: (name: CalendarIdentifier) => Calendar,
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}
@@ -69,7 +71,7 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
     pageBehavior = 'visible',
     firstDayOfWeek
   } = props;
-  let calendar = useMemo(() => createCalendar(resolvedOptions.calendar), [createCalendar, resolvedOptions.calendar]);
+  let calendar = useMemo(() => createCalendar(resolvedOptions.calendar as CalendarIdentifier), [createCalendar, resolvedOptions.calendar]);
 
   let [value, setControlledValue] = useControlledState<DateValue | null, MappedDateValue<T>>(props.value!, props.defaultValue ?? null!, props.onChange);
   let calendarDateValue = useMemo(() => value ? toCalendar(toCalendarDate(value), calendar) : null, [value, calendar]);
@@ -113,12 +115,12 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
   }, [startDate, visibleDuration]);
 
   // Reset focused date and visible range when calendar changes.
-  let [lastCalendarIdentifier, setLastCalendarIdentifier] = useState(calendar.identifier);
-  if (calendar.identifier !== lastCalendarIdentifier) {
+  let [lastCalendar, setLastCalendar] = useState(calendar);
+  if (!isEqualCalendar(calendar, lastCalendar)) {
     let newFocusedDate = toCalendar(focusedDate, calendar);
     setStartDate(alignCenter(newFocusedDate, visibleDuration, locale, minValue, maxValue));
     setFocusedDate(newFocusedDate);
-    setLastCalendarIdentifier(calendar.identifier);
+    setLastCalendar(calendar);
   }
 
   if (isInvalid(focusedDate, minValue, maxValue)) {
