@@ -69,7 +69,11 @@ export interface MenuTesterOpts extends BaseTesterOpts {
   /**
    * Whether the current menu is a submenu.
    */
-  isSubmenu?: boolean
+  isSubmenu?: boolean,
+  /**
+   * The root menu of the menu tree. Only available if the menu is a submenu.
+   */
+  rootMenu?: HTMLElement
 }
 
 export interface SelectTesterOpts extends BaseTesterOpts {

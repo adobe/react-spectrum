@@ -64,9 +64,10 @@ export class MenuTester {
   private _advanceTimer: UserOpts['advanceTimer'];
   private _trigger: HTMLElement | undefined;
   private _isSubmenu: boolean = false;
+  private _rootMenu: HTMLElement | undefined;
 
   constructor(opts: MenuTesterOpts) {
-    let {root, user, interactionType, advanceTimer, isSubmenu} = opts;
+    let {root, user, interactionType, advanceTimer, isSubmenu, rootMenu} = opts;
     this.user = user;
     this._interactionType = interactionType || 'mouse';
     this._advanceTimer = advanceTimer;
@@ -85,6 +86,7 @@ export class MenuTester {
     }
 
     this._isSubmenu = isSubmenu || false;
+    this._rootMenu = rootMenu;
   }
 
   /**
@@ -257,10 +259,10 @@ export class MenuTester {
         });
 
         // We'll also want to wait for focus to move away from the original submenu trigger since the entire submenu tree should
-        // close
+        // close. In React 16, focus actually makes it all the way to the root menu's submenu trigger so we need check the root menu
         if (this._isSubmenu) {
           await waitFor(() => {
-            if (document.activeElement === this.trigger) {
+            if (document.activeElement === this.trigger || this._rootMenu?.contains(document.activeElement)) {
               throw new Error('Expected focus after selecting an submenu option to move away from the original submenu trigger.');
             } else {
               return true;
@@ -305,7 +307,14 @@ export class MenuTester {
           submenuTrigger = (within(menu!).getByText(submenuTrigger).closest('[role=menuitem]'))! as HTMLElement;
         }
 
-        let submenuTriggerTester = new MenuTester({user: this.user, interactionType: this._interactionType, root: submenuTrigger, isSubmenu: true, advanceTimer: this._advanceTimer});
+        let submenuTriggerTester = new MenuTester({
+          user: this.user,
+          interactionType: this._interactionType,
+          root: submenuTrigger,
+          isSubmenu: true,
+          advanceTimer: this._advanceTimer,
+          rootMenu: (this._isSubmenu ? this._rootMenu : this.menu) || undefined
+        });
         if (interactionType === 'mouse') {
           await this.user.pointer({target: submenuTrigger});
         } else if (interactionType === 'keyboard') {
