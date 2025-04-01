@@ -141,7 +141,7 @@ export type {TooltipProps, TooltipRenderProps, TooltipTriggerComponentProps} fro
 export type {TreeProps, TreeRenderProps, TreeItemProps, TreeItemRenderProps, TreeItemContentProps, TreeItemContentRenderProps} from './Tree';
 export type {DragAndDropHooks, DragAndDropOptions} from './useDragAndDrop';
 export type {DropIndicatorProps, DropIndicatorRenderProps} from './DragAndDrop';
-export type {ContextValue, RenderProps, SlotProps} from './utils';
+export type {ContextValue, RenderProps, SlotProps, StyleRenderProps} from './utils';
 export type {VirtualizerProps} from './Virtualizer';
 
 export type {DateValue, DateRange, TimeValue} from 'react-aria';
