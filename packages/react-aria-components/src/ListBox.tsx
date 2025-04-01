@@ -11,14 +11,14 @@
  */
 
 import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
+import {AsyncLoadable, forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps} from './Collection';
-import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
-import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
-import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
+import {filterDOMProps, inertValue, mergeRefs, useLoadMore, useObjectRef} from '@react-aria/utils';
 import {HeaderContext} from './Header';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {SeparatorContext} from './Separator';
@@ -54,10 +54,15 @@ export interface ListBoxRenderProps {
   /**
    * State of the listbox.
    */
-  state: ListState<unknown>
+  state: ListState<unknown>,
+  /**
+   * Whether the listbox is currently loading items.
+   * @selector [data-loading]
+   */
+  isLoading?: boolean
 }
 
-export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children' | 'label'>, CollectionProps<T>, StyleRenderProps<ListBoxRenderProps>, SlotProps, ScrollableProps<HTMLDivElement> {
+export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children' | 'label'>, CollectionProps<T>, StyleRenderProps<ListBoxRenderProps>, SlotProps, ScrollableProps<HTMLDivElement>, AsyncLoadable {
   /** How multiple selection should behave in the collection. */
   selectionBehavior?: SelectionBehavior,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the ListBox. */
@@ -92,7 +97,6 @@ export const ListBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Lis
   // The first copy sends a collection document via context which we render the collection portal into.
   // The second copy sends a ListState object via context which we use to render the ListBox without rebuilding the state.
   // Otherwise, we have a standalone ListBox, so we need to create a collection and state ourselves.
-
   if (state) {
     return <ListBoxInner state={state} props={props} listBoxRef={ref} />;
   }
@@ -209,7 +213,8 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
     isFocused,
     isFocusVisible,
     layout: props.layout || 'stack',
-    state
+    state,
+    isLoading: props.isLoading || false
   };
   let renderProps = useRenderProps({
     className: props.className,
@@ -230,6 +235,22 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
     );
   }
 
+  let sentinelRef = useRef(null);
+  // TODO: Should scrollOffset for useLoadMore should be configurable by the user
+  let memoedLoadMoreProps = useMemo(() => ({
+    isLoading: props.isLoading,
+    onLoadMore: props.onLoadMore,
+    collection,
+    sentinelRef
+  }), [props.isLoading, props.onLoadMore, collection]);
+  // TODO: maybe this should be called at the ListBox level and the StandaloneListBox level. At its current place it is only called
+  // when the Listbox in the dropdown is rendered. The benefit to this would be that useLoadMore would trigger a load for the user before the
+  // dropdown opens but the current state gives the user more freedom as to whether they would like to pre-fetch or not
+  useLoadMore(memoedLoadMoreProps, listBoxRef);
+
+  // TODO: add loading indicator to ListBox so user can render that when loading. Think about if completely empty state
+  // do we leave it up to the user to setup the two states for empty and empty + loading? Do we add a data attibute/prop/renderprop to ListBox
+  // for isLoading
   return (
     <FocusScope>
       <div
@@ -244,7 +265,8 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-layout={props.layout || 'stack'}
-        data-orientation={props.orientation || 'vertical'}>
+        data-orientation={props.orientation || 'vertical'}
+        data-loading={props.isLoading || undefined}>
         <Provider
           values={[
             [ListBoxContext, props],
@@ -259,6 +281,8 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
             scrollRef={listBoxRef}
             persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)}
             renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
+          {/* @ts-ignore - compatibility with React < 19 */}
+          <div data-testid="loadMoreSentinel" ref={sentinelRef} style={{height: 1, width: 1}} inert={inertValue(true)} />
         </Provider>
         {emptyState}
         {dragPreview}
@@ -464,3 +488,42 @@ function ListBoxDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRe
 }
 
 const ListBoxDropIndicatorForwardRef = forwardRef(ListBoxDropIndicator);
+
+export interface ListBoxLoadingIndicatorProps extends StyleProps {
+  children?: ReactNode
+}
+
+export const UNSTABLE_ListBoxLoadingIndicator = createLeafComponent('loader', function ListBoxLoadingIndicator<T extends object>(props: ListBoxLoadingIndicatorProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+  let state = useContext(ListStateContext)!;
+  let {isVirtualized} = useContext(CollectionRendererContext);
+
+  let renderProps = useRenderProps({
+    ...props,
+    id: undefined,
+    children: item.rendered,
+    defaultClassName: 'react-aria-ListBoxLoadingIndicator',
+    values: null
+  });
+
+  let optionProps = {
+    // For Android talkback
+    tabIndex: -1
+  };
+
+  if (isVirtualized) {
+    optionProps['aria-posinset'] = item.index + 1;
+    optionProps['aria-setsize'] = state.collection.size;
+  }
+
+  return (
+    <div
+      // aria-selected isn't needed here since this option is not selectable.
+      // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
+      role="option"
+      ref={ref}
+      {...mergeProps(filterDOMProps(props as any), optionProps)}
+      {...renderProps}>
+      {renderProps.children}
+    </div>
+  );
+});
