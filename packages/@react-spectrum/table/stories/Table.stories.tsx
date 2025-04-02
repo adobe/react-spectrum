@@ -1950,7 +1950,7 @@ function EmptyState() {
 }
 
 function ZoomResizing(props) {
-  const [child, setChild] = useState('loader');
+  const [child, setChild] = useState<string | number>('loader');
 
   return (
     <div className="App" style={{height: '100vh'}}>
