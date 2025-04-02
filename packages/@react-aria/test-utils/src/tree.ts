@@ -12,6 +12,7 @@
 
 import {act, within} from '@testing-library/react';
 import {BaseGridRowInteractionOpts, GridRowActionOpts, ToggleGridRowOpts, TreeTesterOpts, UserOpts} from './types';
+import {isMac} from '@react-aria/utils';
 import {pressElement, triggerLongPress} from './events';
 
 interface TreeToggleExpansionOpts extends BaseGridRowInteractionOpts {}
@@ -64,15 +65,21 @@ export class TreeTester {
   }
 
   // TODO: RTL
-  private async keyboardNavigateToRow(opts: {row: HTMLElement}) {
-    let {row} = opts;
+  private async keyboardNavigateToRow(opts: {row: HTMLElement, needsModifierKey?: boolean}) {
+    let {row, needsModifierKey} = opts;
+    let modifierKeyCode = isMac() ? 'Alt' : 'ControlLeft';
     let rows = this.rows;
     let targetIndex = rows.indexOf(row);
     if (targetIndex === -1) {
       throw new Error('Option provided is not in the tree');
     }
+
+    if (document.activeElement !== this._tree || !this._tree.contains(document.activeElement)) {
+      act(() => this._tree.focus());
+    }
+
     if (document.activeElement === this.tree) {
-      await this.user.keyboard('[ArrowDown]');
+      await this.user.keyboard(`${needsModifierKey ? `[${modifierKeyCode}>]` : ''}[ArrowDown]${needsModifierKey ?  `[/${modifierKeyCode}]` : ''}`);
     } else if (this._tree.contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
       do {
         await this.user.keyboard('[ArrowLeft]');
@@ -84,21 +91,33 @@ export class TreeTester {
     }
     let direction = targetIndex > currIndex ? 'down' : 'up';
 
+    if (needsModifierKey) {
+      await this.user.keyboard(`[${modifierKeyCode}>]`);
+    }
     for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
       await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
+    }
+    if (needsModifierKey) {
+      await this.user.keyboard(`[/${modifierKeyCode}]`);
     }
   };
 
   /**
    * Toggles the selection for the specified tree row. Defaults to using the interaction type set on the tree tester.
+   * Note that this will endevor to always add/remove JUST the provided row to the set of selected rows.
    */
   async toggleRowSelection(opts: TreeToggleRowOpts): Promise<void> {
     let {
       row,
       needsLongPress,
       checkboxSelection = true,
-      interactionType = this._interactionType
+      interactionType = this._interactionType,
+      // TODO: perhaps this should just be shouldUseModifierKeys?
+      selectionBehavior = 'toggle'
     } = opts;
+
+    let keyboardModifierKey = isMac() ? 'Alt' : 'ControlLeft';
+    let pointerModifierKey = isMac() ? 'MetaLeft' : 'ControlLeft';
 
     if (typeof row === 'string' || typeof row === 'number') {
       row = this.findRow({rowIndexOrText: row});
@@ -119,8 +138,14 @@ export class TreeTester {
     // this would be better than the check to do nothing in events.ts
     // also, it'd be good to be able to trigger selection on the row instead of having to go to the checkbox directly
     if (interactionType === 'keyboard' && !checkboxSelection) {
-      await this.keyboardNavigateToRow({row});
+      await this.keyboardNavigateToRow({row, needsModifierKey: selectionBehavior === 'replace'});
+      if (selectionBehavior === 'replace') {
+        await this.user.keyboard(`[${keyboardModifierKey}>]`);
+      }
       await this.user.keyboard('{Space}');
+      if (selectionBehavior === 'replace') {
+        await this.user.keyboard(`[/${keyboardModifierKey}]`);
+      }
       return;
     }
     if (rowCheckbox && checkboxSelection) {
@@ -135,7 +160,15 @@ export class TreeTester {
         // Note that long press interactions with rows is strictly touch only for grid rows
         await triggerLongPress({element: cell, advanceTimer: this._advanceTimer, pointerOpts: {pointerType: 'touch'}});
       } else {
-        await pressElement(this.user, cell, interactionType);
+
+        // TODO add modifiers here? Maybe move into pressElement if we get more cases for different types of modifier keys
+        if (selectionBehavior === 'replace' && interactionType !== 'touch') {
+          await this.user.keyboard(`[${pointerModifierKey}>]`);
+        }
+        await pressElement(this.user, row, interactionType);
+        if (selectionBehavior === 'replace' && interactionType !== 'touch') {
+          await this.user.keyboard(`[/${pointerModifierKey}]`);
+        }
       }
     }
   };
@@ -172,7 +205,10 @@ export class TreeTester {
         return;
       }
 
-      await this.keyboardNavigateToRow({row});
+      // TODO: We always Use Option/Ctrl when keyboard navigating so selection isn't changed
+      // in selectionmode="replace"/highlight selection when navigating to the row that the user wants
+      // to expand. Discuss if this is useful or not
+      await this.keyboardNavigateToRow({row, needsModifierKey: true});
       if (row.getAttribute('aria-expanded') === 'true') {
         await this.user.keyboard('[ArrowLeft]');
       } else {
@@ -210,7 +246,9 @@ export class TreeTester {
         act(() => this._tree.focus());
       }
 
-      await this.keyboardNavigateToRow({row});
+      // TODO: same as above, uses the modifier key to make sure we don't modify selection state on row focus
+      // as we keyboard navigate to the row we want activate
+      await this.keyboardNavigateToRow({row, needsModifierKey: true});
       await this.user.keyboard('[Enter]');
     } else {
       await pressElement(this.user, row, interactionType);

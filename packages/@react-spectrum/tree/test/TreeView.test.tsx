@@ -19,11 +19,11 @@ import Edit from '@spectrum-icons/workflow/Edit';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import {installPointerEvent, User} from '@react-aria/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {TreeView, TreeViewItem, TreeViewItemContent} from '../';
-import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let onSelectionChange = jest.fn();
@@ -672,6 +672,126 @@ describe('Tree', () => {
       let tree = getByRole('treegrid');
       fireEvent.scroll(tree);
       expect(onScroll).toHaveBeenCalled();
+    });
+
+    describe('highlight selection', () => {
+      // Required for proper touch detection
+      installPointerEvent();
+      describe.each(['mouse', 'keyboard', 'touch'])('%s', (type) => {
+        it('should perform selection for highlight mode with single selection', async () => {
+          let {getByRole} = render(<StaticTree treeProps={{selectionMode: 'single', selectionStyle: 'highlight'}} />);
+          let treeTester = testUtilUser.createTester('Tree', {user, root: getByRole('treegrid'), interactionType: type as 'keyboard' | 'mouse' | 'touch'});
+          let rows = treeTester.rows;
+
+          for (let row of treeTester.rows) {
+            let checkbox = within(row).queryByRole('checkbox');
+            expect(checkbox).toBeNull();
+            expect(row).toHaveAttribute('aria-selected', 'false');
+            expect(row).not.toHaveAttribute('data-selected');
+            expect(row).toHaveAttribute('data-selection-mode', 'single');
+          }
+
+          let row2 = rows[2];
+          await treeTester.toggleRowSelection({row: 'Projects-1'});
+          expect(row2).toHaveAttribute('aria-selected', 'true');
+          expect(row2).toHaveAttribute('data-selected', 'true');
+          expect(onSelectionChange).toHaveBeenCalledTimes(1);
+          expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Projects-1']));
+          expect(treeTester.selectedRows).toHaveLength(1);
+          expect(treeTester.selectedRows[0]).toBe(row2);
+
+          let row1 = rows[1];
+          await treeTester.toggleRowSelection({row: row1});
+          expect(row1).toHaveAttribute('aria-selected', 'true');
+          expect(row1).toHaveAttribute('data-selected', 'true');
+          expect(row2).toHaveAttribute('aria-selected', 'false');
+          expect(row2).not.toHaveAttribute('data-selected');
+          expect(onSelectionChange).toHaveBeenCalledTimes(2);
+          expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Projects']));
+          expect(treeTester.selectedRows).toHaveLength(1);
+          expect(treeTester.selectedRows[0]).toBe(row1);
+        });
+
+        it('should perform toggle selection in highlight mode when using modifier keys', async () => {
+          let {getByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', selectionStyle: 'highlight'}} />);
+          let treeTester = testUtilUser.createTester('Tree', {user, root: getByRole('treegrid'), interactionType: type as 'keyboard' | 'mouse' | 'touch'});
+          let rows = treeTester.rows;
+
+          for (let row of treeTester.rows) {
+            let checkbox = within(row).queryByRole('checkbox');
+            expect(checkbox).toBeNull();
+            expect(row).toHaveAttribute('aria-selected', 'false');
+            expect(row).not.toHaveAttribute('data-selected');
+            expect(row).toHaveAttribute('data-selection-mode', 'multiple');
+          }
+
+          let row2 = rows[2];
+          await treeTester.toggleRowSelection({row: 'Projects-1', selectionBehavior: 'replace'});
+          expect(row2).toHaveAttribute('aria-selected', 'true');
+          expect(row2).toHaveAttribute('data-selected', 'true');
+          expect(onSelectionChange).toHaveBeenCalledTimes(1);
+          expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Projects-1']));
+          expect(treeTester.selectedRows).toHaveLength(1);
+          expect(treeTester.selectedRows[0]).toBe(row2);
+
+          let row1 = rows[1];
+          await treeTester.toggleRowSelection({row: row1, selectionBehavior: 'replace'});
+          expect(row1).toHaveAttribute('aria-selected', 'true');
+          expect(row1).toHaveAttribute('data-selected', 'true');
+          expect(row2).toHaveAttribute('aria-selected', 'true');
+          expect(row2).toHaveAttribute('data-selected', 'true');
+          expect(onSelectionChange).toHaveBeenCalledTimes(2);
+          expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Projects', 'Projects-1']));
+          expect(treeTester.selectedRows).toHaveLength(2);
+          expect(treeTester.selectedRows[0]).toBe(row1);
+        });
+
+        it('should perform replace selection in highlight mode when not using modifier keys', async () => {
+          let {getByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', selectionStyle: 'highlight'}} />);
+          let treeTester = testUtilUser.createTester('Tree', {user, root: getByRole('treegrid'), interactionType: type as 'keyboard' | 'mouse' | 'touch'});
+          let rows = treeTester.rows;
+
+          for (let row of treeTester.rows) {
+            let checkbox = within(row).queryByRole('checkbox');
+            expect(checkbox).toBeNull();
+            expect(row).toHaveAttribute('aria-selected', 'false');
+            expect(row).not.toHaveAttribute('data-selected');
+            expect(row).toHaveAttribute('data-selection-mode', 'multiple');
+          }
+
+          let row2 = rows[2];
+          await treeTester.toggleRowSelection({row: 'Projects-1'});
+          expect(row2).toHaveAttribute('aria-selected', 'true');
+          expect(row2).toHaveAttribute('data-selected', 'true');
+          expect(onSelectionChange).toHaveBeenCalledTimes(1);
+          expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Projects-1']));
+          expect(treeTester.selectedRows).toHaveLength(1);
+          expect(treeTester.selectedRows[0]).toBe(row2);
+
+          let row1 = rows[1];
+          await treeTester.toggleRowSelection({row: row1});
+          if (type !== 'touch') {
+            expect(row1).toHaveAttribute('aria-selected', 'true');
+            expect(row1).toHaveAttribute('data-selected', 'true');
+            expect(row2).toHaveAttribute('aria-selected', 'false');
+            expect(row2).not.toHaveAttribute('data-selected');
+            expect(onSelectionChange).toHaveBeenCalledTimes(2);
+            expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Projects']));
+            expect(treeTester.selectedRows).toHaveLength(1);
+            expect(treeTester.selectedRows[0]).toBe(row1);
+          } else {
+            // touch always behaves as toggle
+            expect(row1).toHaveAttribute('aria-selected', 'true');
+            expect(row1).toHaveAttribute('data-selected', 'true');
+            expect(row2).toHaveAttribute('aria-selected', 'true');
+            expect(row2).toHaveAttribute('data-selected', 'true');
+            expect(onSelectionChange).toHaveBeenCalledTimes(2);
+            expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Projects', 'Projects-1']));
+            expect(treeTester.selectedRows).toHaveLength(2);
+            expect(treeTester.selectedRows[0]).toBe(row1);
+          }
+        });
+      });
     });
 
     describe('links', function () {
