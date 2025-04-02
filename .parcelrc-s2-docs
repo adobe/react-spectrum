@@ -7,6 +7,7 @@
     "illustration:*.svg": ["@react-spectrum/parcel-transformer-s2-icon"],
     "packages/@react-spectrum/s2/s2wf-icons/**/*.svg": ["@react-spectrum/parcel-transformer-s2-icon"],
     "packages/*/*/intl/*.json": ["parcel-transformer-intl"],
+    "starters/tailwind/**/*.css": ["@parcel/transformer-postcss", "..."],
     // Disable PostCSS from running over style macro output
     "*.css": ["@parcel/transformer-css"],
     "*.svg": ["@parcel/transformer-svg-react"],

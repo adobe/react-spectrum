@@ -491,7 +491,7 @@ export default [{
         }],
     },
 }, {
-    files: ["packages/@react-spectrum/s2/**"],
+    files: ["packages/@react-spectrum/s2/**", "packages/dev/s2-docs/**"],
 
     rules: {
         "react/react-in-jsx-scope": OFF,

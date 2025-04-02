@@ -1,4 +1,7 @@
-@import 'tailwindcss';
+/* @import 'tailwindcss' source(none); */
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+@source "{Button,utils,Slider,Field}.{ts,tsx}";
 @plugin 'tailwindcss-react-aria-components';
 @plugin 'tailwindcss-animate';
 
@@ -14,7 +17,7 @@
   }
 }
 
-body {
+/* body {
   @apply bg-white dark:bg-zinc-900;
   color-scheme: dark light;
-}
+} */

@@ -1,0 +1,153 @@
+import {Layout} from '../src/Layout';
+export default Layout;
+
+import {Table, TableHeader, TableBody, TableRow, TableCell, TableColumn} from '../src/Table';
+import {PropTable} from '../src/PropTable';
+import {StateTable, DefaultClassName} from '../src/StateTable';
+import {File} from '../src/Example';
+import {Card, CardPreview, Content, Image, Text} from '@react-spectrum/s2';
+import docs from 'docs:react-aria-components';
+import {Slider as VanillaSlider} from '../../../../starters/docs/src/Slider';
+import {Slider as TailwindSlider} from '../../../../starters/tailwind/src/Slider';
+import tailwindDocs from 'docs:../../../../starters/tailwind/src/Slider';
+import '../../../../starters/tailwind/src/index.css';
+import '../../../../starters/docs/src/Slider.css';
+import {StylingExamples} from '../src/VisualExample';
+import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
+import {InlineLink} from '../src/types';
+import Anatomy from '@react-aria/slider/docs/anatomy.svg';
+
+# Slider
+
+<PageDescription>{docs.exports.Slider.description}</PageDescription>
+
+<StylingExamples>
+  <VisualExample
+    component={VanillaSlider}
+    docs={docs.exports.Slider}
+    links={docs.links}
+    props={['orientation', 'isDisabled']}
+    initialProps={{label: 'Vanilla'}}
+    files={["starters/docs/src/Slider.tsx", "starters/docs/src/Slider.css", "starters/docs/src/theme.css"]} />
+  <VisualExample
+    component={TailwindSlider}
+    docs={tailwindDocs.exports.Slider}
+    links={tailwindDocs.links}
+    props={['orientation', 'isDisabled']}
+    initialProps={{label: 'Tailwind'}}
+    files={["starters/tailwind/src/Slider.tsx"]} />
+</StylingExamples>
+
+## Features
+
+The &lt;input type="range"&gt;
+HTML element can be used to build a slider, however it is
+very difficult to style cross browser. `Slider` helps achieve accessible
+sliders that can be styled as needed.
+
+* **Customizable** – Support for one or multiple thumbs, in both horizontal and vertical orientations. The whole slider, or individual thumbs can be disabled. Custom minimum, maximum, and step values are supported as well.
+* **High quality interactions** – Mouse, touch, and keyboard input is supported via the {/*[useMove](../react-aria/useMove.html)*/} hook. Pressing the track moves the nearest thumb to that position. Text selection and touch scrolling are prevented while dragging.
+* **Touch friendly** – Multiple thumbs or sliders can be dragged at once on multi-touch screens.
+* **Accessible** – Slider thumbs use visually hidden `<input>` elements for mobile screen reader support, and HTML form integration. `<label>` and `<output>` elements are automatically associated to provide context for assistive technologies.
+* **International** – Output value is formatted as a percentage or custom format according to the user's locale. The slider automatically mirrors all interactions in right-to-left languages.
+
+## Anatomy
+
+<Anatomy />
+
+Sliders consist of a track element showing the range of available values,
+one or more thumbs showing the current values, an
+optional &lt;output&gt;
+element displaying the current values textually, and a label.
+The thumbs can be dragged to allow a user to change their value. In addition, the
+track can be clicked to move the nearest thumb to that position.
+
+```tsx
+import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-components';
+
+<Slider>
+  <Label />
+  <SliderOutput />
+  <SliderTrack>
+    <SliderThumb />
+    <SliderThumb>
+      <Label />
+    </SliderThumb>
+  </SliderTrack>
+</Slider>
+```
+
+If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
+to identify the slider and thumbs to screen readers.
+
+## Multi-thumb
+
+```tsx render
+import {Slider} from '../../../../starters/docs/src/Slider';
+
+<Slider
+  label="Range"
+  defaultValue={[30, 60]}
+  thumbLabels={['start', 'end']} />
+```
+
+## Validation
+
+By default, slider values are percentages between 0 and 100. A different scale can be used by setting the `minValue` and `maxValue` props.
+
+The `step` prop can be used to snap the value to certain increments. The steps are calculated
+starting from the minimum. For example, if `minValue={2}`, and `step={3}`, the valid step values would be 2, 5, 8, 11, etc.
+
+<VisualExample
+  component={VanillaSlider}
+  docs={docs.exports.Slider}
+  links={docs.links}
+  props={['minValue', 'maxValue', 'step']}
+  initialProps={{
+    label: 'Amount',
+    formatOptions: {style: 'currency', currency: 'USD'},
+    minValue: 0,
+    maxValue: 150,
+    defaultValue: 50,
+    step: 5
+  }} />
+
+## Props
+
+### Slider
+
+<PropTable component={docs.exports.Slider} links={docs.links} />
+
+### SliderOutput
+
+<PropTable component={docs.exports.SliderOutput} links={docs.links} />
+
+### SliderTrack
+
+<PropTable component={docs.exports.SliderTrack} links={docs.links} />
+
+### SliderThumb
+
+<PropTable component={docs.exports.SliderThumb} links={docs.links} />
+
+## Styling
+
+### Slider
+
+<StateTable defaultClassName="react-aria-Slider" properties={docs.exports.SliderRenderProps.properties} />
+
+### Label
+
+<DefaultClassName defaultClassName="react-aria-Label" />
+
+### SliderOutput
+
+<StateTable defaultClassName="react-aria-SliderOutput" properties={docs.exports.SliderRenderProps.properties} />
+
+### SliderTrack
+
+<StateTable defaultClassName="react-aria-SliderTrack" properties={docs.exports.SliderTrackRenderProps.properties} />
+
+### SliderThumb
+
+<StateTable defaultClassName="react-aria-SliderThumb" properties={docs.exports.SliderThumbRenderProps.properties} />

@@ -3,15 +3,37 @@ export default Layout;
 
 import {Table, TableHeader, TableBody, TableRow, TableCell, TableColumn} from '../src/Table';
 import {PropTable} from '../src/PropTable';
+import {Switch, Slider} from '@react-spectrum/s2';
+import {File} from '../src/Example';
 import docs from 'docs:@react-spectrum/s2';
+import {Button as TailwindButton} from '../../../../starters/tailwind/src/Button';
+import tailwindDocs from 'docs:../../../../starters/tailwind/src/Button';
 
 export const title = 'Home';
 
 # Button
 
-<p>{docs.exports.Button.description}</p>
+<PageDescription>{docs.exports.Button.description}</PageDescription>
 
-Hello world! some `inline code` and **bold** stuff
+<VisualExample
+  docs={docs.exports.Button}
+  props={['variant', 'staticColor', 'fillStyle', 'size', 'isDisabled', 'isPending']}
+  initialProps={{children: 'Save'}} />
+
+<VisualExample
+  component={Switch}
+  docs={docs.exports.Switch}
+  props={['size', 'isEmphasized', 'isDisabled']}
+  initialProps={{children: 'Wi-Fi'}} />
+
+<VisualExample
+  component={Slider}
+  docs={docs.exports.Slider}
+  links={docs.links}
+  props={['trackStyle', 'size', 'labelPosition', 'labelAlign', 'isEmphasized', 'isDisabled', 'minValue', 'maxValue', 'step', 'fillOffset']}
+  initialProps={{label: 'Cookies'}} />
+
+Hello world! some `inline code` and **bold** stuff...
 
 Bulleted list:
 
@@ -50,6 +72,34 @@ import {Button} from '@react-spectrum/s2';
 
 <Button variant="accent">Hello Spectrum 2!</Button>
 ```
+
+```tsx render files={["starters/tailwind/src/Button.tsx", "starters/tailwind/src/index.css"]}
+"use client";
+
+import {Button} from '../../../../starters/tailwind/src/Button';
+import '../../../../starters/tailwind/src/index.css';
+
+<Button variant="primary">Hello Spectrum 2!</Button>
+```
+
+```tsx render files={["starters/docs/src/Button.tsx", "starters/docs/src/Button.css", "starters/docs/src/theme.css"]}
+"use client";
+
+import {Button} from '../../../../starters/docs/src/Button';
+import '../../../../starters/docs/src/Button.css';
+
+<Button>Test</Button>
+```
+
+<VisualExample
+  component={TailwindButton}
+  docs={tailwindDocs.exports.Button}
+  links={tailwindDocs.links}
+  props={['variant', 'isDisabled']}
+  initialProps={{children: 'Tailwind'}}
+  files={["starters/tailwind/src/Button.tsx", "starters/tailwind/src/index.css"]} />
+
+ho
 
 ## Props
 
