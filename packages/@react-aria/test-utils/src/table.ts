@@ -12,7 +12,7 @@
 
 import {act, waitFor, within} from '@testing-library/react';
 import {GridRowActionOpts, TableTesterOpts, ToggleGridRowOpts, UserOpts} from './types';
-import {pressElement, triggerLongPress} from './events';
+import {getMetaKey, pressElement, triggerLongPress} from './events';
 
 interface TableToggleRowOpts extends ToggleGridRowOpts {}
 interface TableToggleSortOpts {
@@ -56,8 +56,12 @@ export class TableTester {
       row,
       needsLongPress,
       checkboxSelection = true,
-      interactionType = this._interactionType
+      interactionType = this._interactionType,
+      selectionBehavior = 'toggle'
     } = opts;
+
+    let altKey = getMetaKey();
+    let metaKey = getMetaKey();
 
     if (typeof row === 'string' || typeof row === 'number') {
       row = this.findRow({rowIndexOrText: row});
@@ -74,7 +78,13 @@ export class TableTester {
       await act(async () => {
         row.focus();
       });
+      if (selectionBehavior === 'replace') {
+        await this.user.keyboard(`[${altKey}>]`);
+      }
       await this.user.keyboard('{Space}');
+      if (selectionBehavior === 'replace') {
+        await this.user.keyboard(`[/${altKey}]`);
+      }
       return;
     }
     if (rowCheckbox && checkboxSelection) {
@@ -89,7 +99,13 @@ export class TableTester {
         // Note that long press interactions with rows is strictly touch only for grid rows
         await triggerLongPress({element: cell, advanceTimer: this._advanceTimer, pointerOpts: {pointerType: 'touch'}});
       } else {
+        if (selectionBehavior === 'replace' && interactionType !== 'touch') {
+          await this.user.keyboard(`[${metaKey}>]`);
+        }
         await pressElement(this.user, cell, interactionType);
+        if (selectionBehavior === 'replace' && interactionType !== 'touch') {
+          await this.user.keyboard(`[/${metaKey}]`);
+        }
       }
     }
   };

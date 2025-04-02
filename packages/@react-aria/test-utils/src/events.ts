@@ -11,9 +11,17 @@
  */
 
 import {act, fireEvent} from '@testing-library/react';
+import {isMac} from '@react-aria/utils';
 import {UserOpts} from './types';
 
 export const DEFAULT_LONG_PRESS_TIME = 500;
+export function getAltKey(): 'Alt' | 'ControlLeft' {
+  return isMac() ? 'Alt' : 'ControlLeft';
+}
+
+export function getMetaKey(): 'MetaLeft' | 'ControlLeft' {
+  return isMac() ? 'MetaLeft' : 'ControlLeft';
+}
 
 /**
  * Simulates a "long press" event on a element.

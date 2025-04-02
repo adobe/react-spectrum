@@ -12,7 +12,7 @@
 
 import {act, within} from '@testing-library/react';
 import {GridListTesterOpts, GridRowActionOpts, ToggleGridRowOpts, UserOpts} from './types';
-import {pressElement, triggerLongPress} from './events';
+import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
 
 interface GridListToggleRowOpts extends ToggleGridRowOpts {}
 interface GridListRowActionOpts extends GridRowActionOpts {}
@@ -57,8 +57,9 @@ export class GridListTester {
   }
 
   // TODO: RTL
-  private async keyboardNavigateToRow(opts: {row: HTMLElement}) {
-    let {row} = opts;
+  private async keyboardNavigateToRow(opts: {row: HTMLElement, useAltKey?: boolean}) {
+    let {row, useAltKey} = opts;
+    let altKey = getAltKey();
     let rows = this.rows;
     let targetIndex = rows.indexOf(row);
     if (targetIndex === -1) {
@@ -70,7 +71,7 @@ export class GridListTester {
     }
 
     if (document.activeElement === this._gridlist) {
-      await this.user.keyboard('[ArrowDown]');
+      await this.user.keyboard(`${useAltKey ? `[${altKey}>]` : ''}[ArrowDown]${useAltKey ? `[/${altKey}]` : ''}`);
     } else if (this._gridlist.contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
       do {
         await this.user.keyboard('[ArrowLeft]');
@@ -83,20 +84,32 @@ export class GridListTester {
     let direction = targetIndex > currIndex ? 'down' : 'up';
 
     for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
+      if (useAltKey) {
+        await this.user.keyboard(`[${altKey}>]`);
+      }
       await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
+      if (useAltKey) {
+        await this.user.keyboard(`[/${altKey}]`);
+      }
     }
   };
 
   /**
    * Toggles the selection for the specified gridlist row. Defaults to using the interaction type set on the gridlist tester.
+   * Note that this will endevor to always add/remove JUST the provided row to the set of selected rows.
    */
   async toggleRowSelection(opts: GridListToggleRowOpts): Promise<void> {
     let {
       row,
       needsLongPress,
       checkboxSelection = true,
-      interactionType = this._interactionType
+      interactionType = this._interactionType,
+      // TODO: perhaps this should just be shouldUseModifierKeys?
+      selectionBehavior = 'toggle'
     } = opts;
+
+    let altKey = getAltKey();
+    let metaKey = getMetaKey();
 
     if (typeof row === 'string' || typeof row === 'number') {
       row = this.findRow({rowIndexOrText: row});
@@ -117,8 +130,14 @@ export class GridListTester {
     // this would be better than the check to do nothing in events.ts
     // also, it'd be good to be able to trigger selection on the row instead of having to go to the checkbox directly
     if (interactionType === 'keyboard' && !checkboxSelection) {
-      await this.keyboardNavigateToRow({row});
+      await this.keyboardNavigateToRow({row, useAltKey: selectionBehavior === 'replace'});
+      if (selectionBehavior === 'replace') {
+        await this.user.keyboard(`[${altKey}>]`);
+      }
       await this.user.keyboard('{Space}');
+      if (selectionBehavior === 'replace') {
+        await this.user.keyboard(`[/${altKey}]`);
+      }
       return;
     }
     if (rowCheckbox && checkboxSelection) {
@@ -132,9 +151,14 @@ export class GridListTester {
 
         // Note that long press interactions with rows is strictly touch only for grid rows
         await triggerLongPress({element: cell, advanceTimer: this._advanceTimer, pointerOpts: {pointerType: 'touch'}});
-
       } else {
-        await pressElement(this.user, cell, interactionType);
+        if (selectionBehavior === 'replace' && interactionType !== 'touch') {
+          await this.user.keyboard(`[${metaKey}>]`);
+        }
+        await pressElement(this.user, row, interactionType);
+        if (selectionBehavior === 'replace' && interactionType !== 'touch') {
+          await this.user.keyboard(`[/${metaKey}]`);
+        }
       }
     }
   }
@@ -166,7 +190,7 @@ export class GridListTester {
         return;
       }
 
-      await this.keyboardNavigateToRow({row});
+      await this.keyboardNavigateToRow({row, useAltKey: true});
       await this.user.keyboard('[Enter]');
     } else {
       await pressElement(this.user, row, interactionType);
