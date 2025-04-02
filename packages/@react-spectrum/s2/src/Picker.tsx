@@ -58,13 +58,13 @@ import {IconContext} from './Icon';
 import intlMessages from '../intl/*.json';
 import {Placement} from 'react-aria';
 import {PopoverBase} from './Popover';
-import {PressResponder} from '@react-aria/interactions';
+import {PressResponder} from '@react-aria-nutrient/interactions';
 import {pressScale} from './pressScale';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, ReactNode, useContext, useRef, useState} from 'react';
 import {useFocusableRef} from '@react-spectrum/utils';
-import {useGlobalListeners} from '@react-aria/utils';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useGlobalListeners} from '@react-aria-nutrient/utils';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 

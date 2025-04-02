@@ -16,7 +16,7 @@ import {ComponentType, createContext, forwardRef, ReactNode, useEffect, useRef} 
 import {ContentContext, HeadingContext} from './Content';
 import {ContextValue, Provider, SlotProps} from 'react-aria-components';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 import {focusRing, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
@@ -26,7 +26,7 @@ import intlMessages from '../intl/*.json';
 import NoticeSquare from '../s2wf-icons/S2_Icon_AlertDiamond_20_N.svg';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useFocusRing} from 'react-aria';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface InlineAlertProps extends DOMProps, StyleProps, InlineStylesProps, SlotProps {

@@ -10,23 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, isWeekend} from '@internationalized/date';
-import {RangeCalendar} from '../';
-import React from 'react';
-import {useLocale} from '@react-aria/i18n';
+import { CalendarDate, isWeekend } from "@internationalized/date";
+import { RangeCalendar } from "../";
+import React from "react";
+import { useLocale } from "@react-aria-nutrient/i18n";
 
 export default {
-  title: 'RangeCalendar',
+  title: "RangeCalendar",
   parameters: {
     chromaticProvider: {
-      locales: ['en-US'/* , 'ar-EG', 'ja-JP' */]
-    }
-  }
+      locales: ["en-US" /* , 'ar-EG', 'ja-JP' */],
+    },
+  },
 };
 
 const value = {
   start: new CalendarDate(2022, 2, 3),
-  end: new CalendarDate(2022, 2, 8)
+  end: new CalendarDate(2022, 2, 8),
 };
 
 export const Default = () => <RangeCalendar focusedValue={value.start} />;
@@ -34,40 +34,67 @@ export const Selected = () => <RangeCalendar value={value} />;
 export const MinMax = () => (
   <RangeCalendar
     minValue={new CalendarDate(2022, 2, 10)}
-    maxValue={new CalendarDate(2022, 2, 20)} />
+    maxValue={new CalendarDate(2022, 2, 20)}
+  />
 );
 export const Disabled = () => <RangeCalendar isDisabled value={value} />;
 export const ReadOnly = () => <RangeCalendar isReadOnly value={value} />;
 export const Unavailable = () => (
   <RangeCalendar
     focusedValue={value.start}
-    isDateUnavailable={date => date.day >= 10 && date.day <= 20} />
+    isDateUnavailable={(date) => date.day >= 10 && date.day <= 20}
+  />
 );
-export const VisibleMonths2 = () => <RangeCalendar value={value} visibleMonths={2} />;
-export const VisibleMonths3 = () => <RangeCalendar value={value} visibleMonths={3} />;
+export const VisibleMonths2 = () => (
+  <RangeCalendar value={value} visibleMonths={2} />
+);
+export const VisibleMonths3 = () => (
+  <RangeCalendar value={value} visibleMonths={3} />
+);
 export const Invalid = () => <RangeCalendar value={value} isInvalid />;
-export const ErrorMessage = () => <RangeCalendar value={value} isInvalid errorMessage="Selection invalid." />;
-export const UnavailableInvalid = () => <RangeCalendar value={value} isDateUnavailable={date => date.day >= 1 && date.day <= 5} />;
-export const DisabledInvalid = () => <RangeCalendar value={value} minValue={new CalendarDate(2022, 2, 5)} />;
+export const ErrorMessage = () => (
+  <RangeCalendar value={value} isInvalid errorMessage="Selection invalid." />
+);
+export const UnavailableInvalid = () => (
+  <RangeCalendar
+    value={value}
+    isDateUnavailable={(date) => date.day >= 1 && date.day <= 5}
+  />
+);
+export const DisabledInvalid = () => (
+  <RangeCalendar value={value} minValue={new CalendarDate(2022, 2, 5)} />
+);
 export const NonContiguous = () => {
-  let {locale} = useLocale();
+  let { locale } = useLocale();
   return (
     <RangeCalendar
-      value={{start: new CalendarDate(2022, 2, 3), end: new CalendarDate(2022, 2, 16)}}
-      isDateUnavailable={date => isWeekend(date, locale)}
-      allowsNonContiguousRanges />
+      value={{
+        start: new CalendarDate(2022, 2, 3),
+        end: new CalendarDate(2022, 2, 16),
+      }}
+      isDateUnavailable={(date) => isWeekend(date, locale)}
+      allowsNonContiguousRanges
+    />
   );
 };
 
 export const NonContiguousInvalid = () => {
-  let {locale} = useLocale();
+  let { locale } = useLocale();
   return (
     <RangeCalendar
-      value={{start: new CalendarDate(2022, 2, 3), end: new CalendarDate(2022, 2, 20)}}
-      isDateUnavailable={date => isWeekend(date, locale)}
-      allowsNonContiguousRanges />
+      value={{
+        start: new CalendarDate(2022, 2, 3),
+        end: new CalendarDate(2022, 2, 20),
+      }}
+      isDateUnavailable={(date) => isWeekend(date, locale)}
+      allowsNonContiguousRanges
+    />
   );
 };
 
-export const CustomWeekStartMonday = () => <RangeCalendar value={value} firstDayOfWeek="mon" />;
-export const CustomWeekStartSaturday = () => <RangeCalendar value={value} firstDayOfWeek="sat" />;
+export const CustomWeekStartMonday = () => (
+  <RangeCalendar value={value} firstDayOfWeek="mon" />
+);
+export const CustomWeekStartSaturday = () => (
+  <RangeCalendar value={value} firstDayOfWeek="sat" />
+);

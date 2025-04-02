@@ -1,0 +1,22 @@
+{
+  "name": "@react-aria-nutrient/example-theme",
+  "version": "1.0.5",
+  "description": "Spectrum UI components in React",
+  "license": "Apache-2.0",
+  "source": "src/index.css",
+  "out": "dist/index.css",
+  "main": "dist/index.css",
+  "targets": {
+    "main": false,
+    "out": {
+      "optimize": false
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

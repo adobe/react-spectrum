@@ -11,7 +11,7 @@
  */
 
 import fc from 'fast-check';
-import messages from '../../../@react-aria/numberfield/intl/*.json';
+import messages from '../../../@react-aria-nutrient/numberfield/intl/*.json';
 import {NumberParser} from '../src/NumberParser';
 
 // for some reason hu-HU isn't supported in jsdom/node

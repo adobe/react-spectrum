@@ -10,39 +10,47 @@
  * governing permissions and limitations under the License.
  */
 
-import {clamp} from '@react-aria/utils';
-import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
-import {ProgressBarProps, SpectrumProgressBarBaseProps} from '@react-types/progress';
-import React, {CSSProperties, HTMLAttributes} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/barloader/vars.css';
+import { clamp } from "@react-aria-nutrient/utils";
+import { classNames, useDOMRef, useStyleProps } from "@react-spectrum/utils";
+import { DOMRef } from "@react-types/shared";
+import {
+  ProgressBarProps,
+  SpectrumProgressBarBaseProps,
+} from "@react-types/progress";
+import React, { CSSProperties, HTMLAttributes } from "react";
+import styles from "@adobe/spectrum-css-temp/components/barloader/vars.css";
 
-interface ProgressBarBaseProps extends SpectrumProgressBarBaseProps, ProgressBarProps {
-  barClassName?: string,
-  barProps?: HTMLAttributes<HTMLDivElement>,
-  labelProps?: HTMLAttributes<HTMLLabelElement>
+interface ProgressBarBaseProps
+  extends SpectrumProgressBarBaseProps,
+    ProgressBarProps {
+  barClassName?: string;
+  barProps?: HTMLAttributes<HTMLDivElement>;
+  labelProps?: HTMLAttributes<HTMLLabelElement>;
 }
 
 // Base ProgressBar component shared with Meter.
-export const ProgressBarBase = React.forwardRef(function ProgressBarBase(props: ProgressBarBaseProps, ref: DOMRef<HTMLDivElement>) {
+export const ProgressBarBase = React.forwardRef(function ProgressBarBase(
+  props: ProgressBarBaseProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   let {
     value = 0,
     minValue = 0,
     maxValue = 100,
-    size = 'L',
+    size = "L",
     label,
     barClassName,
     showValueLabel = !!label,
-    labelPosition = 'top',
+    labelPosition = "top",
     isIndeterminate = false,
     barProps,
     labelProps,
-    'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledby,
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledby,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
-  let {styleProps} = useStyleProps(otherProps);
+  let { styleProps } = useStyleProps(otherProps);
 
   value = clamp(value, minValue, maxValue);
 
@@ -54,45 +62,53 @@ export const ProgressBarBase = React.forwardRef(function ProgressBarBase(props: 
 
   // Ideally this should be in useProgressBar, but children
   // are not supported in ProgressCircle which shares that hook...
-  if (!label && !ariaLabel && !ariaLabelledby && process.env.NODE_ENV !== 'production') {
-    console.warn('If you do not provide a visible label via children, you must specify an aria-label or aria-labelledby attribute for accessibility');
+  if (
+    !label &&
+    !ariaLabel &&
+    !ariaLabelledby &&
+    process.env.NODE_ENV !== "production"
+  ) {
+    console.warn(
+      "If you do not provide a visible label via children, you must specify an aria-label or aria-labelledby attribute for accessibility"
+    );
   }
   // use inline style for fit-content because cssnano is too smart for us and will strip out the -moz prefix in css files
   return (
     <div
       {...barProps}
       ref={domRef}
-      className={
-        classNames(
-          styles,
-          'spectrum-BarLoader',
-          {
-            'spectrum-BarLoader--small': size === 'S',
-            'spectrum-BarLoader--large': size === 'L',
-            'spectrum-BarLoader--indeterminate': isIndeterminate,
-            'spectrum-BarLoader--sideLabel': labelPosition === 'side'
-          },
-          barClassName,
-          styleProps.className
-        )
-      }
-      style={{minWidth: '-moz-fit-content', ...styleProps.style}}>
-      {label &&
+      className={classNames(
+        styles,
+        "spectrum-BarLoader",
+        {
+          "spectrum-BarLoader--small": size === "S",
+          "spectrum-BarLoader--large": size === "L",
+          "spectrum-BarLoader--indeterminate": isIndeterminate,
+          "spectrum-BarLoader--sideLabel": labelPosition === "side",
+        },
+        barClassName,
+        styleProps.className
+      )}
+      style={{ minWidth: "-moz-fit-content", ...styleProps.style }}
+    >
+      {label && (
         <span
           {...labelProps}
-          className={classNames(styles, 'spectrum-BarLoader-label')}>
-            {label}
+          className={classNames(styles, "spectrum-BarLoader-label")}
+        >
+          {label}
         </span>
-      }
-      {showValueLabel && barProps && 
-        <div className={classNames(styles, 'spectrum-BarLoader-percentage')}>
-          {barProps['aria-valuetext']}
+      )}
+      {showValueLabel && barProps && (
+        <div className={classNames(styles, "spectrum-BarLoader-percentage")}>
+          {barProps["aria-valuetext"]}
         </div>
-      }
-      <div className={classNames(styles, 'spectrum-BarLoader-track')}>
+      )}
+      <div className={classNames(styles, "spectrum-BarLoader-track")}>
         <div
-          className={classNames(styles, 'spectrum-BarLoader-fill')}
-          style={barStyle} />
+          className={classNames(styles, "spectrum-BarLoader-fill")}
+          style={barStyle}
+        />
       </div>
     </div>
   );

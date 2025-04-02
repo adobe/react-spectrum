@@ -10,48 +10,61 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaToolbarProps, useToolbar} from '@react-aria/toolbar';
-import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {forwardRefType, Orientation} from '@react-types/shared';
-import React, {createContext, ForwardedRef, forwardRef} from 'react';
+import { AriaToolbarProps, useToolbar } from "@react-aria-nutrient/toolbar";
+import {
+  ContextValue,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps,
+} from "./utils";
+import { filterDOMProps, mergeProps } from "@react-aria-nutrient/utils";
+import { forwardRefType, Orientation } from "@react-types/shared";
+import React, { createContext, ForwardedRef, forwardRef } from "react";
 
 export interface ToolbarRenderProps {
   /**
    * The current orientation of the toolbar.
    * @selector [data-orientation]
    */
-  orientation: Orientation
+  orientation: Orientation;
 }
 
-export interface ToolbarProps extends AriaToolbarProps, SlotProps, RenderProps<ToolbarRenderProps> {
-}
+export interface ToolbarProps
+  extends AriaToolbarProps,
+    SlotProps,
+    RenderProps<ToolbarRenderProps> {}
 
-export const ToolbarContext = createContext<ContextValue<ToolbarProps, HTMLDivElement>>({});
+export const ToolbarContext = createContext<
+  ContextValue<ToolbarProps, HTMLDivElement>
+>({});
 
 /**
  * A toolbar is a container for a set of interactive controls, such as buttons, dropdown menus, or checkboxes,
  * with arrow key navigation.
  */
-export const Toolbar = /*#__PURE__*/ (forwardRef as forwardRefType)(function Toolbar(props: ToolbarProps, ref: ForwardedRef<HTMLDivElement>) {
-  [props, ref] = useContextProps(props, ref, ToolbarContext);
-  let {toolbarProps} = useToolbar(props, ref);
-  let renderProps = useRenderProps({
-    ...props,
-    values: {orientation: props.orientation || 'horizontal'},
-    defaultClassName: 'react-aria-Toolbar'
-  });
-  let DOMProps = filterDOMProps(props);
-  delete DOMProps.id;
+export const Toolbar = /*#__PURE__*/ (forwardRef as forwardRefType)(
+  function Toolbar(props: ToolbarProps, ref: ForwardedRef<HTMLDivElement>) {
+    [props, ref] = useContextProps(props, ref, ToolbarContext);
+    let { toolbarProps } = useToolbar(props, ref);
+    let renderProps = useRenderProps({
+      ...props,
+      values: { orientation: props.orientation || "horizontal" },
+      defaultClassName: "react-aria-Toolbar",
+    });
+    let DOMProps = filterDOMProps(props);
+    delete DOMProps.id;
 
-  return (
-    <div
-      {...mergeProps(toolbarProps, DOMProps)}
-      {...renderProps}
-      ref={ref}
-      slot={props.slot || undefined}
-      data-orientation={props.orientation || 'horizontal'}>
-      {renderProps.children}
-    </div>
-  );
-});
+    return (
+      <div
+        {...mergeProps(toolbarProps, DOMProps)}
+        {...renderProps}
+        ref={ref}
+        slot={props.slot || undefined}
+        data-orientation={props.orientation || "horizontal"}
+      >
+        {renderProps.children}
+      </div>
+    );
+  }
+);

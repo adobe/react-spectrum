@@ -34,7 +34,7 @@ clean_dist:
 	rm -rf packages/{react-aria,react-aria-components,react-stately}/dist
 	rm -rf packages/{react-aria,react-aria-components,react-stately}/i18n
 	rm -rf packages/@adobe/react-spectrum/i18n
-	rm -rf packages/@react-aria/i18n/server
+	rm -rf packages/@react-aria-nutrient/i18n/server
 	rm -rf packages/@react-spectrum/s2/style/dist packages/@react-spectrum/s2/page.css packages/@react-spectrum/s2/icons packages/@react-spectrum/s2/illustrations
 
 clean_parcel:

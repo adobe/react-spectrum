@@ -45,7 +45,7 @@ describe('ComboBox SSR', function () {
     await testSSR(__filename, `
       import {ComboBox, Label, Input, Popover, ListBox, ListBoxItem} from '../';
       import {useState, useRef} from 'react';
-      import {useLayoutEffect} from '@react-aria/utils';
+      import {useLayoutEffect} from '@react-aria-nutrient/utils';
 
       function App() {
         let [triggers, setTriggers] = useState(['null']);

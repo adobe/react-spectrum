@@ -10,56 +10,74 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames} from '@react-spectrum/utils';
-import {ColorChannel, SpectrumColorFieldProps} from '@react-types/color';
-import {ColorFieldContext, useContextProps} from 'react-aria-components';
-import React, {Ref, useRef} from 'react';
-import styles from './colorfield.css';
-import {TextFieldBase} from '@react-spectrum/textfield';
-import {TextFieldRef} from '@react-types/textfield';
-import {useColorChannelField, useColorField} from '@react-aria/color';
-import {useColorChannelFieldState, useColorFieldState} from '@react-stately/color';
-import {useFormProps} from '@react-spectrum/form';
-import {useLocale} from '@react-aria/i18n';
-import {useProviderProps} from '@react-spectrum/provider';
+import { classNames } from "@react-spectrum/utils";
+import { ColorChannel, SpectrumColorFieldProps } from "@react-types/color";
+import { ColorFieldContext, useContextProps } from "react-aria-components";
+import React, { Ref, useRef } from "react";
+import styles from "./colorfield.css";
+import { TextFieldBase } from "@react-spectrum/textfield";
+import { TextFieldRef } from "@react-types/textfield";
+import {
+  useColorChannelField,
+  useColorField,
+} from "@react-aria-nutrient/color";
+import {
+  useColorChannelFieldState,
+  useColorFieldState,
+} from "@react-stately/color";
+import { useFormProps } from "@react-spectrum/form";
+import { useLocale } from "@react-aria-nutrient/i18n";
+import { useProviderProps } from "@react-spectrum/provider";
 
 /**
  * A color field allows users to edit a hex color or individual color channel value.
  */
-export const ColorField = React.forwardRef(function ColorField(props: SpectrumColorFieldProps, ref: Ref<TextFieldRef>) {
+export const ColorField = React.forwardRef(function ColorField(
+  props: SpectrumColorFieldProps,
+  ref: Ref<TextFieldRef>
+) {
   props = useProviderProps(props);
   props = useFormProps(props);
   [props] = useContextProps(props, null, ColorFieldContext);
-  if (props.placeholder && process.env.NODE_ENV !== 'production') {
-    console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/ColorField.html#help-text');
+  if (props.placeholder && process.env.NODE_ENV !== "production") {
+    console.warn(
+      "Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/ColorField.html#help-text"
+    );
   }
 
   if (props.channel) {
-    return <ColorChannelField {...props} channel={props.channel} forwardedRef={ref} />;
+    return (
+      <ColorChannelField
+        {...props}
+        channel={props.channel}
+        forwardedRef={ref}
+      />
+    );
   } else {
     return <HexColorField {...props} forwardedRef={ref} />;
   }
 });
 
-interface ColorChannelFieldProps extends Omit<SpectrumColorFieldProps, 'channel'> {
-  channel: ColorChannel,
-  forwardedRef: Ref<TextFieldRef>
+interface ColorChannelFieldProps
+  extends Omit<SpectrumColorFieldProps, "channel"> {
+  channel: ColorChannel;
+  forwardedRef: Ref<TextFieldRef>;
 }
 
 function ColorChannelField(props: ColorChannelFieldProps) {
   let {
     // These disabled props are handled by the state hook
-    value,          // eslint-disable-line @typescript-eslint/no-unused-vars
-    defaultValue,   // eslint-disable-line @typescript-eslint/no-unused-vars
-    onChange,       // eslint-disable-line @typescript-eslint/no-unused-vars
-    validate,       // eslint-disable-line @typescript-eslint/no-unused-vars
+    value, // eslint-disable-line @typescript-eslint/no-unused-vars
+    defaultValue, // eslint-disable-line @typescript-eslint/no-unused-vars
+    onChange, // eslint-disable-line @typescript-eslint/no-unused-vars
+    validate, // eslint-disable-line @typescript-eslint/no-unused-vars
     forwardedRef,
     ...otherProps
   } = props;
-  let {locale} = useLocale();
+  let { locale } = useLocale();
   let state = useColorChannelFieldState({
     ...props,
-    locale
+    locale,
   });
 
   let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>(null);
@@ -72,22 +90,29 @@ function ColorChannelField(props: ColorChannelFieldProps) {
         ref={forwardedRef}
         inputRef={inputRef}
         {...result}
-        inputClassName={classNames(styles, 'react-spectrum-ColorField-input')} />
-      {props.name && <input type="hidden" name={props.name} value={isNaN(state.numberValue) ? '' : state.numberValue} />}
+        inputClassName={classNames(styles, "react-spectrum-ColorField-input")}
+      />
+      {props.name && (
+        <input
+          type="hidden"
+          name={props.name}
+          value={isNaN(state.numberValue) ? "" : state.numberValue}
+        />
+      )}
     </>
   );
 }
 
 interface HexColorFieldProps extends SpectrumColorFieldProps {
-  forwardedRef: Ref<TextFieldRef>
+  forwardedRef: Ref<TextFieldRef>;
 }
 
 function HexColorField(props: HexColorFieldProps) {
   let {
     // These disabled props are handled by the state hook
-    value,          // eslint-disable-line @typescript-eslint/no-unused-vars
-    defaultValue,   // eslint-disable-line @typescript-eslint/no-unused-vars
-    onChange,       // eslint-disable-line @typescript-eslint/no-unused-vars
+    value, // eslint-disable-line @typescript-eslint/no-unused-vars
+    defaultValue, // eslint-disable-line @typescript-eslint/no-unused-vars
+    onChange, // eslint-disable-line @typescript-eslint/no-unused-vars
     forwardedRef,
     ...otherProps
   } = props;
@@ -101,6 +126,7 @@ function HexColorField(props: HexColorFieldProps) {
       ref={forwardedRef}
       inputRef={inputRef}
       {...result}
-      inputClassName={classNames(styles, 'react-spectrum-ColorField-input')} />
+      inputClassName={classNames(styles, "react-spectrum-ColorField-input")}
+    />
   );
 }

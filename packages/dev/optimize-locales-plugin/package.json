@@ -1,5 +1,5 @@
 {
-  "name": "@react-aria/optimize-locales-plugin",
+  "name": "@react-aria-nutrient/optimize-locales-plugin",
   "version": "1.1.4",
   "main": "LocalesPlugin.js",
   "types": "LocalesPlugin.d.ts",

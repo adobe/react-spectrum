@@ -1,33 +1,42 @@
-{/* Copyright 2024 Adobe. All rights reserved.
+{/_ Copyright 2024 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. */}
+governing permissions and limitations under the License. _/}
 
-import {Layout} from '@react-spectrum/docs';
+import { Layout } from "@react-spectrum/docs";
 export default Layout;
 
-import docs from 'docs:react-aria-components';
-import statelyDocs from 'docs:@react-stately/color';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
-import styles from '@react-spectrum/docs/src/docs.css';
-import packageData from 'react-aria-components/package.json';
-import Anatomy from '@react-aria/color/docs/ColorWheelAnatomy.svg';
-import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
-import {Divider} from '@react-spectrum/divider';
-import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
-import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
-import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
-import {Keyboard} from '@react-spectrum/text';
-import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
+import docs from "docs:react-aria-components";
+import statelyDocs from "docs:@react-stately/color";
+import {
+  PropTable,
+  HeaderInfo,
+  TypeLink,
+  PageDescription,
+  StateTable,
+  ContextTable,
+} from "@react-spectrum/docs";
+import styles from "@react-spectrum/docs/src/docs.css";
+import packageData from "react-aria-components/package.json";
+import Anatomy from "@react-aria-nutrient/color/docs/ColorWheelAnatomy.svg";
+import ChevronRight from "@spectrum-icons/workflow/ChevronRight";
+import { Divider } from "@react-spectrum/divider";
+import { ExampleList } from "@react-spectrum/docs/src/ExampleList";
+import { ExampleCard } from "@react-spectrum/docs/src/ExampleCard";
+import Label from "@react-spectrum/docs/pages/assets/component-illustrations/Label.svg";
+import { Keyboard } from "@react-spectrum/text";
+import { StarterKits } from "@react-spectrum/docs/src/StarterKits";
 
 ---
+
 category: Color
 keywords: [color wheel, color picker, aria]
 type: component
+
 ---
 
 # ColorWheel
@@ -36,20 +45,21 @@ type: component
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['ColorWheel']}
+  componentNames={["ColorWheel"]}
   sourceData={[
-    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/slider/'}
-  ]} />
+    { type: "W3C", url: "https://www.w3.org/WAI/ARIA/apg/patterns/slider/" },
+  ]}
+/>
 
 ## Example
 
 ```tsx example
-import {ColorWheel, ColorWheelTrack, ColorThumb} from 'react-aria-components';
+import { ColorWheel, ColorWheelTrack, ColorThumb } from "react-aria-components";
 
 <ColorWheel outerRadius={100} innerRadius={74}>
   <ColorWheelTrack />
   <ColorThumb />
-</ColorWheel>
+</ColorWheel>;
 ```
 
 <details>
@@ -80,35 +90,36 @@ can be used to build a color picker, however it is very inconsistent across brow
 of a complete color picker rather than only a hue color wheel. `useColorWheel` helps achieve accessible and
 touch-friendly color wheels that can be styled as needed.
 
-* **Customizable** – Support for adjusting the hue of an HSL or HSB color value, with customizable radius and track thickness.
-* **High quality interactions** – Mouse, touch, and keyboard input is supported via the [useMove](../react-aria/useMove.html) hook. Pressing the track moves the thumb to that position. Text selection and touch scrolling are prevented while dragging.
-* **Accessible** – Announces localized hue descriptions for screen reader users (e.g. "cyan blue"). Uses a visually hidden `<input>` element for mobile screen reader support and HTML form integration.
+- **Customizable** – Support for adjusting the hue of an HSL or HSB color value, with customizable radius and track thickness.
+- **High quality interactions** – Mouse, touch, and keyboard input is supported via the [useMove](../react-aria/useMove.html) hook. Pressing the track moves the thumb to that position. Text selection and touch scrolling are prevented while dragging.
+- **Accessible** – Announces localized hue descriptions for screen reader users (e.g. "cyan blue"). Uses a visually hidden `<input>` element for mobile screen reader support and HTML form integration.
 
 ## Anatomy
 
 <Anatomy
   role="img"
-  aria-label="Color wheel anatomy diagram: Shows a color wheel component with labels pointing to its parts, including the track, and thumb elements." />
+  aria-label="Color wheel anatomy diagram: Shows a color wheel component with labels pointing to its parts, including the track, and thumb elements."
+/>
 
 A color wheel consists of a circular track and a thumb that the user can drag to change the color hue.
 A visually hidden `<input>` element is used to represent the value to assistive technologies.
 
 ```tsx
-import {ColorWheel, ColorWheelTrack, ColorThumb} from 'react-aria-components';
+import { ColorWheel, ColorWheelTrack, ColorThumb } from "react-aria-components";
 
 <ColorWheel>
   <ColorWheelTrack />
   <ColorThumb />
-</ColorWheel>
+</ColorWheel>;
 ```
 
-{/*
+{/\*
 
 ## Examples
 
 <ExampleList tag="colorslider" />
 
-*/}
+\*/}
 
 ## Starter kits
 
@@ -121,9 +132,10 @@ To help kick-start your project, we offer starter kits that include example impl
 If you will use a ColorWheel in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
 ```tsx example export=true
-import type {ColorWheelProps} from 'react-aria-components';
+import type { ColorWheelProps } from "react-aria-components";
 
-interface MyColorWheelProps extends Omit<ColorWheelProps, 'outerRadius' | 'innerRadius'> {}
+interface MyColorWheelProps
+  extends Omit<ColorWheelProps, "outerRadius" | "innerRadius"> {}
 
 export function MyColorWheel(props: MyColorWheelProps) {
   return (
@@ -134,7 +146,7 @@ export function MyColorWheel(props: MyColorWheelProps) {
   );
 }
 
-<MyColorWheel defaultValue="hsl(30, 100%, 50%)" />
+<MyColorWheel defaultValue="hsl(30, 100%, 50%)" />;
 ```
 
 ## Value
@@ -157,14 +169,14 @@ function is used to parse the initial color from an HSL string, stored in state.
 is used to update the value in state when the user drags the thumb.
 
 ```tsx example
-import {parseColor} from 'react-aria-components';
+import { parseColor } from "react-aria-components";
 
 function Example() {
-  let [color, setColor] = React.useState(parseColor('hsl(0, 100%, 50%)'));
+  let [color, setColor] = React.useState(parseColor("hsl(0, 100%, 50%)"));
   return (
     <>
       <MyColorWheel value={color} onChange={setColor} />
-      <p>Current color value: {color.toString('hsl')}</p>
+      <p>Current color value: {color.toString("hsl")}</p>
     </>
   );
 }
@@ -188,7 +200,9 @@ The example below uses `onChange` and `onChangeEnd` to update two separate eleme
 
 ```tsx example
 function Example() {
-  let [currentValue, setCurrentValue] = React.useState(parseColor('hsl(50, 100%, 50%)'));
+  let [currentValue, setCurrentValue] = React.useState(
+    parseColor("hsl(50, 100%, 50%)")
+  );
   let [finalValue, setFinalValue] = React.useState(currentValue);
 
   return (
@@ -198,8 +212,8 @@ function Example() {
         onChange={setCurrentValue}
         onChangeEnd={setFinalValue}
       />
-      <p>Current value: {currentValue.toString('hsl')}</p>
-      <p>Final value: {finalValue.toString('hsl')}</p>
+      <p>Current value: {currentValue.toString("hsl")}</p>
+      <p>Final value: {finalValue.toString("hsl")}</p>
     </div>
   );
 }
@@ -241,12 +255,13 @@ By default, a localized string for the "hue" channel name is used as the `aria-l
 For example, for a ColorArea that adjusts a background color you might pass the `aria-label` prop, "Background color". If you provide your own `aria-label` or `aria-labelledby`, be sure to localize the string appropriately.
 
 ```tsx example
-<div style={{display: 'flex', gap: 8, alignItems: 'end', flexWrap: 'wrap'}}>
+<div style={{ display: "flex", gap: 8, alignItems: "end", flexWrap: "wrap" }}>
   <MyColorWheel
     /*- begin highlight -*/
     aria-label="Background color"
     /*- end highlight -*/
-    defaultValue="hsl(0, 100%, 50%)" />
+    defaultValue="hsl(0, 100%, 50%)"
+  />
   <div>
     {/*- begin highlight -*/}
     <label id="hsl-aria-labelledby-id">Background color</label>
@@ -255,7 +270,8 @@ For example, for a ColorArea that adjusts a background color you might pass the 
       /*- begin highlight -*/
       aria-labelledby="hsl-aria-labelledby-id"
       /*- end highlight -*/
-      defaultValue="hsl(0, 100%, 50%)" />
+      defaultValue="hsl(0, 100%, 50%)"
+    />
   </div>
 </div>
 ```
@@ -305,9 +321,7 @@ React Aria components can be styled in many ways, including using CSS classes, i
 A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
 
 ```jsx
-<ColorWheel className="my-color-wheel">
-  {/* ... */}
-</ColorWheel>
+<ColorWheel className="my-color-wheel">{/* ... */}</ColorWheel>
 ```
 
 In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
@@ -325,7 +339,9 @@ In addition, some components support multiple UI states (e.g. focused, placehold
 The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
 
 ```jsx
-<ColorThumb className={({isDragging}) => isDragging ? 'scale-150' : 'scale-100'} />
+<ColorThumb
+  className={({ isDragging }) => (isDragging ? "scale-150" : "scale-100")}
+/>
 ```
 
 The states, selectors, and render props for each component used in a `ColorWheel` are documented below.
@@ -354,26 +370,29 @@ The `ColorThumb` component can be targeted with the `.react-aria-ColorThumb` CSS
 
 All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
 
-<ContextTable components={['ColorWheel']} docs={docs} />
+<ContextTable components={["ColorWheel"]} docs={docs} />
 
 This example shows a `ColorWheelDescription` component that accepts a color wheel in its children and renders a description element below it. It uses the [useId](useId.html) hook to generate a unique id for the description, and associates it with the color wheel via the `aria-describedby` attribute passed to the `ColorWheelContext` provider.
 
 ```tsx example
-import {ColorWheelContext} from 'react-aria-components';
-import {useId} from 'react-aria';
+import { ColorWheelContext } from "react-aria-components";
+import { useId } from "react-aria";
 
 interface ColorWheelDescriptionProps {
-  children?: React.ReactNode,
-  description?: string
+  children?: React.ReactNode;
+  description?: string;
 }
 
-function ColorWheelDescription({children, description}: ColorWheelDescriptionProps) {
+function ColorWheelDescription({
+  children,
+  description,
+}: ColorWheelDescriptionProps) {
   let descriptionId = useId();
   return (
     <div>
       {/*- begin highlight -*/}
-      <ColorWheelContext.Provider value={{'aria-describedby': descriptionId}}>
-      {/*- end highlight -*/}
+      <ColorWheelContext.Provider value={{ "aria-describedby": descriptionId }}>
+        {/*- end highlight -*/}
         {children}
       </ColorWheelContext.Provider>
       <small id={descriptionId}>{description}</small>
@@ -383,7 +402,7 @@ function ColorWheelDescription({children, description}: ColorWheelDescriptionPro
 
 <ColorWheelDescription description="Choose a background color for your profile.">
   <MyColorWheel />
-</ColorWheelDescription>
+</ColorWheelDescription>;
 ```
 
 ### State
@@ -393,19 +412,25 @@ ColorWheel provides a <TypeLink links={statelyDocs.links} type={statelyDocs.expo
 This example shows a `HueField` component that can be placed within a `ColorWheel` to allow the user to enter a number and update the hue.
 
 ```tsx example
-import {ColorWheelStateContext, NumberField, Input, useLocale} from 'react-aria-components';
+import {
+  ColorWheelStateContext,
+  NumberField,
+  Input,
+  useLocale,
+} from "react-aria-components";
 
 function HueField() {
   /*- begin highlight -*/
   let state = React.useContext(ColorWheelStateContext)!;
   /*- end highlight -*/
-  let {locale} = useLocale();
+  let { locale } = useLocale();
   return (
     <NumberField
-      aria-label={state.value.getChannelName('hue', locale)}
-      value={state.value.getChannelValue('hue')}
-      onChange={v => state.setValue(state.value.withChannelValue('hue', v))}
-      formatOptions={state.value.getChannelFormatOptions('hue')}>
+      aria-label={state.value.getChannelName("hue", locale)}
+      value={state.value.getChannelValue("hue")}
+      onChange={(v) => state.setValue(state.value.withChannelValue("hue", v))}
+      formatOptions={state.value.getChannelFormatOptions("hue")}
+    >
       <Input />
     </NumberField>
   );
@@ -417,7 +442,7 @@ function HueField() {
   {/*- begin highlight -*/}
   <HueField />
   {/*- end highlight -*/}
-</ColorWheel>
+</ColorWheel>;
 ```
 
 <details>

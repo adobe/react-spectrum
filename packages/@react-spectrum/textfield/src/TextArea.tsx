@@ -10,21 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, useLayoutEffect} from '@react-aria/utils';
-import React, {Ref, useCallback, useRef} from 'react';
-import {SpectrumTextAreaProps, SpectrumTextFieldBaseProps, TextFieldRef} from '@react-types/textfield';
-import {TextFieldBase} from './TextFieldBase';
-import {useControlledState} from '@react-stately/utils';
-import {useFormProps} from '@react-spectrum/form';
-import {useProviderProps} from '@react-spectrum/provider';
-import {useTextField} from '@react-aria/textfield';
+import { chain, useLayoutEffect } from "@react-aria-nutrient/utils";
+import React, { Ref, useCallback, useRef } from "react";
+import {
+  SpectrumTextAreaProps,
+  SpectrumTextFieldBaseProps,
+  TextFieldRef,
+} from "@react-types/textfield";
+import { TextFieldBase } from "./TextFieldBase";
+import { useControlledState } from "@react-stately/utils";
+import { useFormProps } from "@react-spectrum/form";
+import { useProviderProps } from "@react-spectrum/provider";
+import { useTextField } from "@react-aria-nutrient/textfield";
 
 /**
  * TextAreas are multiline text inputs, useful for cases where users have
  * a sizable amount of text to enter. They allow for all customizations that
  * are available to text fields.
  */
-export const TextArea = React.forwardRef(function TextArea(props: SpectrumTextAreaProps, ref: Ref<TextFieldRef<HTMLTextAreaElement>>) {
+export const TextArea = React.forwardRef(function TextArea(
+  props: SpectrumTextAreaProps,
+  ref: Ref<TextFieldRef<HTMLTextAreaElement>>
+) {
   props = useProviderProps(props);
   props = useFormProps(props);
   let {
@@ -37,7 +44,11 @@ export const TextArea = React.forwardRef(function TextArea(props: SpectrumTextAr
   } = props;
 
   // not in stately because this is so we know when to re-measure, which is a spectrum design
-  let [inputValue, setInputValue] = useControlledState(props.value, props.defaultValue ?? '', () => {});
+  let [inputValue, setInputValue] = useControlledState(
+    props.value,
+    props.defaultValue ?? "",
+    () => {}
+  );
   let inputRef = useRef<HTMLTextAreaElement>(null);
 
   let onHeightChange = useCallback(() => {
@@ -50,14 +61,16 @@ export const TextArea = React.forwardRef(function TextArea(props: SpectrumTextAr
       // Firefox scroll position is lost when overflow: 'hidden' is applied so we skip applying it.
       // The measure/applied height is also incorrect/reset if we turn on and off
       // overflow: hidden in Firefox https://bugzilla.mozilla.org/show_bug.cgi?id=1787062
-      let isFirefox = 'MozAppearance' in input.style;
+      let isFirefox = "MozAppearance" in input.style;
       if (!isFirefox) {
-        input.style.overflow = 'hidden';
+        input.style.overflow = "hidden";
       }
-      input.style.alignSelf = 'start';
-      input.style.height = 'auto';
+      input.style.alignSelf = "start";
+      input.style.height = "auto";
       // offsetHeight - clientHeight accounts for the border/padding.
-      input.style.height = `${input.scrollHeight + (input.offsetHeight - input.clientHeight)}px`;
+      input.style.height = `${
+        input.scrollHeight + (input.offsetHeight - input.clientHeight)
+      }px`;
       input.style.overflow = prevOverflow;
       input.style.alignSelf = prevAlignment;
     }
@@ -69,19 +82,24 @@ export const TextArea = React.forwardRef(function TextArea(props: SpectrumTextAr
     }
   }, [onHeightChange, inputValue, inputRef]);
 
-  if (props.placeholder && process.env.NODE_ENV !== 'production') {
-    console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/TextArea.html#help-text');
+  if (props.placeholder && process.env.NODE_ENV !== "production") {
+    console.warn(
+      "Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/TextArea.html#help-text"
+    );
   }
 
-  let result = useTextField({
-    ...props,
-    onChange: chain(onChange, setInputValue),
-    inputElementType: 'textarea'
-  }, inputRef);
+  let result = useTextField(
+    {
+      ...props,
+      onChange: chain(onChange, setInputValue),
+      inputElementType: "textarea",
+    },
+    inputRef
+  );
 
   return (
     <TextFieldBase
-      {...otherProps as SpectrumTextFieldBaseProps}
+      {...(otherProps as SpectrumTextFieldBaseProps)}
       ref={ref}
       inputRef={inputRef}
       {...result}
@@ -89,6 +107,7 @@ export const TextArea = React.forwardRef(function TextArea(props: SpectrumTextAr
       isDisabled={isDisabled}
       isQuiet={isQuiet}
       isReadOnly={isReadOnly}
-      isRequired={isRequired} />
+      isRequired={isRequired}
+    />
   );
 });

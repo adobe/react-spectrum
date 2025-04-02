@@ -1,39 +1,50 @@
-{/* Copyright 2020 Adobe. All rights reserved.
+{/_ Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. */}
+governing permissions and limitations under the License. _/}
 
-import {Layout} from '@react-spectrum/docs';
+import { Layout } from "@react-spectrum/docs";
 export default Layout;
 
-import docs from 'docs:react-aria-components';
-import statelyDocs from 'docs:@react-stately/select';
-import selectUtil from 'docs:@react-aria/test-utils/src/select.ts';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI, VersionBadge} from '@react-spectrum/docs';
-import styles from '@react-spectrum/docs/src/docs.css';
-import packageData from 'react-aria-components/package.json';
-import Anatomy from './SelectAnatomy.svg';
-import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
-import {Divider} from '@react-spectrum/divider';
-import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
-import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
-import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
-import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
-import Popover from '@react-spectrum/docs/pages/assets/component-illustrations/Popover.svg';
-import ListBox from '@react-spectrum/docs/pages/assets/component-illustrations/ListBox.svg';
-import Collections from '@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg';
-import Selection from '@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg';
-import Form from '@react-spectrum/docs/pages/assets/component-illustrations/Form.svg';
-import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
+import docs from "docs:react-aria-components";
+import statelyDocs from "docs:@react-stately/select";
+import selectUtil from "docs:@react-aria-nutrient/test-utils/src/select.ts";
+import {
+  PropTable,
+  HeaderInfo,
+  TypeLink,
+  PageDescription,
+  StateTable,
+  ContextTable,
+  ClassAPI,
+  VersionBadge,
+} from "@react-spectrum/docs";
+import styles from "@react-spectrum/docs/src/docs.css";
+import packageData from "react-aria-components/package.json";
+import Anatomy from "./SelectAnatomy.svg";
+import ChevronRight from "@spectrum-icons/workflow/ChevronRight";
+import { Divider } from "@react-spectrum/divider";
+import { ExampleCard } from "@react-spectrum/docs/src/ExampleCard";
+import { ExampleList } from "@react-spectrum/docs/src/ExampleList";
+import Button from "@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg";
+import Label from "@react-spectrum/docs/pages/assets/component-illustrations/Label.svg";
+import Popover from "@react-spectrum/docs/pages/assets/component-illustrations/Popover.svg";
+import ListBox from "@react-spectrum/docs/pages/assets/component-illustrations/ListBox.svg";
+import Collections from "@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg";
+import Selection from "@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg";
+import Form from "@react-spectrum/docs/pages/assets/component-illustrations/Form.svg";
+import { StarterKits } from "@react-spectrum/docs/src/StarterKits";
 
 ---
+
 category: Pickers
 keywords: [listbox, select, aria]
 type: component
+
 ---
 
 # Select
@@ -42,15 +53,24 @@ type: component
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Select']}
+  componentNames={["Select"]}
   sourceData={[
-    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/listbox/'}
-  ]} />
+    { type: "W3C", url: "https://www.w3.org/WAI/ARIA/apg/patterns/listbox/" },
+  ]}
+/>
 
 ## Example
 
 ```tsx example
-import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 'react-aria-components';
+import {
+  Select,
+  SelectValue,
+  Label,
+  Button,
+  Popover,
+  ListBox,
+  ListBoxItem,
+} from "react-aria-components";
 
 <Select>
   <Label>Favorite Animal</Label>
@@ -68,7 +88,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
       <ListBoxItem>Snake</ListBoxItem>
     </ListBox>
   </Popover>
-</Select>
+</Select>;
 ```
 
 <details>
@@ -81,7 +101,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
 ```
 
 ```css
-@import "@react-aria/example-theme";
+@import "@react-aria-nutrient/example-theme";
 
 .react-aria-Select {
   color: var(--text-color);
@@ -121,7 +141,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
   }
 }
 
-.react-aria-Popover[data-trigger=Select] {
+.react-aria-Popover[data-trigger="Select"] {
   min-width: var(--trigger-width);
 
   .react-aria-ListBox {
@@ -149,9 +169,9 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
       color: var(--text-color);
 
       &::before {
-        content: '✓';
-        content: '✓' / '';
-        alt: ' ';
+        content: "✓";
+        content: "✓" / "";
+        alt: " ";
         position: absolute;
         top: 4px;
         left: 4px;
@@ -176,12 +196,12 @@ and [&lt;option&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/o
 not possible to style consistently cross browser, especially the options. `Select` helps achieve accessible
 select components that can be styled as needed without compromising on high quality interactions.
 
-* **Flexible** – Support for controlled and uncontrolled state, async loading, disabled items, validation, sections, complex items, and more.
-* **Keyboard navigation** – Select can be opened and navigated using the arrow keys, along with page up/down, home/end, etc. Auto scrolling, and typeahead both in the listbox and on the button, are supported as well.
-* **Accessible** – Follows the [ARIA listbox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/), with support for items and sections, and slots for label and description elements within each item for improved screen reader announcement.
-* **HTML form integration** – A visually hidden `<select>` element is included to enable HTML form integration and autofill.
-* **Validation** – Support for native HTML constraint validation with customizable UI, custom validation functions, and server-side validation errors.
-* **Styleable** – Items include builtin states for styling, such as hover, press, focus, selected, and disabled.
+- **Flexible** – Support for controlled and uncontrolled state, async loading, disabled items, validation, sections, complex items, and more.
+- **Keyboard navigation** – Select can be opened and navigated using the arrow keys, along with page up/down, home/end, etc. Auto scrolling, and typeahead both in the listbox and on the button, are supported as well.
+- **Accessible** – Follows the [ARIA listbox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/), with support for items and sections, and slots for label and description elements within each item for improved screen reader announcement.
+- **HTML form integration** – A visually hidden `<select>` element is included to enable HTML form integration and autofill.
+- **Validation** – Support for native HTML constraint validation with customizable UI, custom validation functions, and server-side validation errors.
+- **Styleable** – Items include builtin states for styling, such as hover, press, focus, selected, and disabled.
 
 ## Anatomy
 
@@ -195,7 +215,19 @@ to provide more context about the field, and any validation messages. These are 
 input via the `aria-describedby` attribute.
 
 ```tsx
-import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem, ListBoxSection, Header, Text, FieldError} from 'react-aria-components';
+import {
+  Select,
+  SelectValue,
+  Label,
+  Button,
+  Popover,
+  ListBox,
+  ListBoxItem,
+  ListBoxSection,
+  Header,
+  Text,
+  FieldError,
+} from "react-aria-components";
 
 <Select>
   <Label />
@@ -216,7 +248,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem, ListB
       </ListBoxSection>
     </ListBox>
   </Popover>
-</Select>
+</Select>;
 ```
 
 If a select does not have a visible label, an `aria-label` or `aria-labelledby`
@@ -231,21 +263,24 @@ prop must be passed instead to identify it to assistive technology.
 <ExampleCard
   url="collections.html"
   title="Collections"
-  description="Defining collections of items, async loading, and updating items over time.">
+  description="Defining collections of items, async loading, and updating items over time."
+>
   <Collections />
 </ExampleCard>
 
 <ExampleCard
   url="selection.html"
   title="Selection"
-  description="Interactions and data structures to represent selection.">
+  description="Interactions and data structures to represent selection."
+>
   <Selection />
 </ExampleCard>
 
 <ExampleCard
   url="forms.html"
   title="Forms"
-  description="Validating and submitting form data, and integrating with form libraries.">
+  description="Validating and submitting form data, and integrating with form libraries."
+>
   <Form />
 </ExampleCard>
 
@@ -260,28 +295,32 @@ A `Select` uses the following components, which may also be used standalone or r
 <ExampleCard
   url="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label"
   title="Label"
-  description="A label provides context for an input element.">
+  description="A label provides context for an input element."
+>
   <Label />
 </ExampleCard>
 
 <ExampleCard
   url="Button.html"
   title="Button"
-  description="A button allows a user to perform an action.">
+  description="A button allows a user to perform an action."
+>
   <Button />
 </ExampleCard>
 
 <ExampleCard
   url="Popover.html"
   title="Popover"
-  description="A popover displays content in context with a trigger element.">
+  description="A popover displays content in context with a trigger element."
+>
   <Popover />
 </ExampleCard>
 
 <ExampleCard
   url="ListBox.html"
   title="ListBox"
-  description="A listbox allows a user to select one or more options from a list.">
+  description="A listbox allows a user to select one or more options from a list."
+>
   <ListBox />
 </ExampleCard>
 
@@ -304,18 +343,30 @@ If you will use a Select in multiple places in your app, you can wrap all of the
 This example wraps `Select` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. It also shows how to use the `description` slot to render [help text](#description), and `FieldError` component to render [validation errors](#validation). The `Item` component is also wrapped to apply class names based on the current state, as described in the [styling](#styling) section.
 
 ```tsx example export=true
-import type {SelectProps, ListBoxItemProps, ValidationResult} from 'react-aria-components';
-import {Text, FieldError} from 'react-aria-components';
+import type {
+  SelectProps,
+  ListBoxItemProps,
+  ValidationResult,
+} from "react-aria-components";
+import { Text, FieldError } from "react-aria-components";
 
-interface MySelectProps<T extends object> extends Omit<SelectProps<T>, 'children'> {
-  label?: string,
-  description?: string,
-  errorMessage?: string | ((validation: ValidationResult) => string),
-  items?: Iterable<T>,
-  children: React.ReactNode | ((item: T) => React.ReactNode)
+interface MySelectProps<T extends object>
+  extends Omit<SelectProps<T>, "children"> {
+  label?: string;
+  description?: string;
+  errorMessage?: string | ((validation: ValidationResult) => string);
+  items?: Iterable<T>;
+  children: React.ReactNode | ((item: T) => React.ReactNode);
 }
 
-export function MySelect<T extends object>({label, description, errorMessage, children, items, ...props}: MySelectProps<T>) {
+export function MySelect<T extends object>({
+  label,
+  description,
+  errorMessage,
+  children,
+  items,
+  ...props
+}: MySelectProps<T>) {
   return (
     <Select {...props}>
       <Label>{label}</Label>
@@ -326,16 +377,21 @@ export function MySelect<T extends object>({label, description, errorMessage, ch
       {description && <Text slot="description">{description}</Text>}
       <FieldError>{errorMessage}</FieldError>
       <Popover>
-        <ListBox items={items}>
-          {children}
-        </ListBox>
+        <ListBox items={items}>{children}</ListBox>
       </Popover>
     </Select>
   );
 }
 
 export function MyItem(props: ListBoxItemProps) {
-  return <ListBoxItem {...props} className={({isFocused, isSelected}) => `my-item ${isFocused ? 'focused' : ''} ${isSelected ? 'selected' : ''}`} />
+  return (
+    <ListBoxItem
+      {...props}
+      className={({ isFocused, isSelected }) =>
+        `my-item ${isFocused ? "focused" : ""} ${isSelected ? "selected" : ""}`
+      }
+    />
+  );
 }
 
 <MySelect label="Ice cream flavor">
@@ -343,7 +399,7 @@ export function MyItem(props: ListBoxItemProps) {
   <MyItem>Mint</MyItem>
   <MyItem>Strawberry</MyItem>
   <MyItem>Vanilla</MyItem>
-</MySelect>
+</MySelect>;
 ```
 
 <details>
@@ -365,9 +421,9 @@ export function MyItem(props: ListBoxItemProps) {
     background: none;
 
     &::before {
-      content: '✓';
-      content: '✓' / '';
-      alt: ' ';
+      content: "✓";
+      content: "✓" / "";
+      alt: " ";
       position: absolute;
       top: 4px;
       left: 4px;
@@ -403,15 +459,15 @@ as shown in the example below, then this is used automatically and an `id` prop 
 ```tsx example
 function Example() {
   let options = [
-    {id: 1, name: 'Aerospace'},
-    {id: 2, name: 'Mechanical'},
-    {id: 3, name: 'Civil'},
-    {id: 4, name: 'Biomedical'},
-    {id: 5, name: 'Nuclear'},
-    {id: 6, name: 'Industrial'},
-    {id: 7, name: 'Chemical'},
-    {id: 8, name: 'Agricultural'},
-    {id: 9, name: 'Electrical'}
+    { id: 1, name: "Aerospace" },
+    { id: 2, name: "Mechanical" },
+    { id: 3, name: "Civil" },
+    { id: 4, name: "Biomedical" },
+    { id: 5, name: "Nuclear" },
+    { id: 6, name: "Industrial" },
+    { id: 7, name: "Chemical" },
+    { id: 8, name: "Agricultural" },
+    { id: 9, name: "Electrical" },
   ];
 
   return (
@@ -429,16 +485,16 @@ When `Select` is used with a dynamic collection as described above, the id of ea
 See the [Selection](selection.html) guide for more details.
 
 ```tsx example
-import type {Key} from 'react-aria-components';
+import type { Key } from "react-aria-components";
 
 function Example() {
   let options = [
-    {name: 'Koala'},
-    {name: 'Kangaroo'},
-    {name: 'Platypus'},
-    {name: 'Bald Eagle'},
-    {name: 'Bison'},
-    {name: 'Skunk'}
+    { name: "Koala" },
+    { name: "Kangaroo" },
+    { name: "Platypus" },
+    { name: "Bald Eagle" },
+    { name: "Bison" },
+    { name: "Skunk" },
   ];
   let [animal, setAnimal] = React.useState<Key>("Bison");
 
@@ -447,8 +503,9 @@ function Example() {
       label="Pick an animal (controlled)"
       items={options}
       selectedKey={animal}
-      onSelectionChange={selected => setAnimal(selected)}>
-      {item => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+      onSelectionChange={(selected) => setAnimal(selected)}
+    >
+      {(item) => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
     </MySelect>
   );
 }
@@ -477,7 +534,9 @@ By default, interacting with an item in a Select triggers `onSelectionChange`. A
 
 ```tsx example
 <MySelect label="Project">
-  <ListBoxItem href="https://example.com/" target="_blank">Create new…</ListBoxItem>
+  <ListBoxItem href="https://example.com/" target="_blank">
+    Create new…
+  </ListBoxItem>
   <ListBoxItem>Proposal</ListBoxItem>
   <ListBoxItem>Budget</ListBoxItem>
   <ListBoxItem>Onboarding</ListBoxItem>
@@ -502,7 +561,7 @@ Select supports sections in order to group options. Sections can be used by wrap
 ### Static items
 
 ```tsx example
-import {ListBoxSection, Header} from 'react-aria-components';
+import { ListBoxSection, Header } from "react-aria-components";
 
 <MySelect label="Preferred fruit or vegetable">
   <ListBoxSection>
@@ -527,7 +586,7 @@ import {ListBoxSection, Header} from 'react-aria-components';
     <ListBoxItem id="Cauliflower">Cauliflower</ListBoxItem>
     <ListBoxItem id="Potatoes">Potatoes</ListBoxItem>
   </ListBoxSection>
-</MySelect>
+</MySelect>;
 ```
 
 ### Dynamic items
@@ -536,39 +595,45 @@ Sections used with dynamic items are populated from a hierarchical data structur
 the <TypeLink links={docs.links} type={docs.exports.Collection} /> component can be used to render the child items.
 
 ```tsx example
-import {Collection} from 'react-aria-components';
+import { Collection } from "react-aria-components";
 
 function Example() {
   let options = [
-    {name: 'Fruit', children: [
-      {name: 'Apple'},
-      {name: 'Banana'},
-      {name: 'Orange'},
-      {name: 'Honeydew'},
-      {name: 'Grapes'},
-      {name: 'Watermelon'},
-      {name: 'Cantaloupe'},
-      {name: 'Pear'}
-    ]},
-    {name: 'Vegetable', children: [
-      {name: 'Cabbage'},
-      {name: 'Broccoli'},
-      {name: 'Carrots'},
-      {name: 'Lettuce'},
-      {name: 'Spinach'},
-      {name: 'Bok Choy'},
-      {name: 'Cauliflower'},
-      {name: 'Potatoes'}
-    ]}
+    {
+      name: "Fruit",
+      children: [
+        { name: "Apple" },
+        { name: "Banana" },
+        { name: "Orange" },
+        { name: "Honeydew" },
+        { name: "Grapes" },
+        { name: "Watermelon" },
+        { name: "Cantaloupe" },
+        { name: "Pear" },
+      ],
+    },
+    {
+      name: "Vegetable",
+      children: [
+        { name: "Cabbage" },
+        { name: "Broccoli" },
+        { name: "Carrots" },
+        { name: "Lettuce" },
+        { name: "Spinach" },
+        { name: "Bok Choy" },
+        { name: "Cauliflower" },
+        { name: "Potatoes" },
+      ],
+    },
   ];
 
   return (
     <MySelect label="Preferred fruit or vegetable" items={options}>
-      {section => (
+      {(section) => (
         <ListBoxSection id={section.name}>
           <Header>{section.name}</Header>
           <Collection items={section.children}>
-            {item => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+            {(item) => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
           </Collection>
         </ListBoxSection>
       )}
@@ -584,7 +649,7 @@ By default, items in a Select are labeled by their text contents for accessibili
 **Note**: The ARIA spec prohibits listbox items from including interactive content such as buttons, checkboxes, etc.
 
 ```tsx example
-import {Text} from 'react-aria-components';
+import { Text } from "react-aria-components";
 
 <MySelect label="Permissions">
   <ListBoxItem textValue="Read">
@@ -599,7 +664,7 @@ import {Text} from 'react-aria-components';
     <Text slot="label">Admin</Text>
     <Text slot="description">Full access</Text>
   </ListBoxItem>
-</MySelect>
+</MySelect>;
 ```
 
 <details>
@@ -608,7 +673,7 @@ import {Text} from 'react-aria-components';
 ```css
 .react-aria-Select {
   .react-aria-SelectValue {
-    [slot=description] {
+    [slot="description"] {
       display: none;
     }
   }
@@ -624,25 +689,22 @@ of data from a server. You may additionally want to display a spinner to indicat
 state to the user.
 
 ```tsx example
-import {useAsyncList} from '@react-stately/data';
+import { useAsyncList } from "@react-stately/data";
 
 interface Character {
-  name: string
+  name: string;
 }
 
 function AsyncLoadingExample() {
   let list = useAsyncList<Character>({
-    async load({signal, filterText}) {
-      let res = await fetch(
-        `https://pokeapi.co/api/v2/pokemon`,
-        {signal}
-      );
+    async load({ signal, filterText }) {
+      let res = await fetch(`https://pokeapi.co/api/v2/pokemon`, { signal });
       let json = await res.json();
 
       return {
-        items: json.results
+        items: json.results,
       };
-    }
+    },
   });
 
   return (
@@ -711,7 +773,7 @@ Disabled items are not focusable, selectable, or keyboard navigable. The `isDisa
 `useOption` can be used to style the item appropriately.
 
 ```tsx example
-<MySelect label="Favorite Animal" disabledKeys={['cat', 'kangaroo']}>
+<MySelect label="Favorite Animal" disabledKeys={["cat", "kangaroo"]}>
   <ListBoxItem id="red panda">Red Panda</ListBoxItem>
   <ListBoxItem id="cat">Cat</ListBoxItem>
   <ListBoxItem id="dog">Dog</ListBoxItem>
@@ -728,12 +790,12 @@ Select supports the `isRequired` prop to ensure the user selects an option, as w
 To display validation errors, add a `<FieldError>` element as a child of the Select. This allows you to render error messages from all of the above sources with consistent custom styles.
 
 ```tsx example
-import {Form, FieldError} from 'react-aria-components';
+import { Form, FieldError } from "react-aria-components";
 
 <Form>
   {/*- begin highlight -*/}
   <Select name="animal" isRequired>
-  {/*- end highlight -*/}
+    {/*- end highlight -*/}
     <Label>Favorite Animal</Label>
     <Button>
       <SelectValue />
@@ -754,7 +816,7 @@ import {Form, FieldError} from 'react-aria-components';
     </Popover>
   </Select>
   <Button type="submit">Submit</Button>
-</Form>
+</Form>;
 ```
 
 <details>
@@ -805,7 +867,7 @@ The `description` slot can be used to associate additional help text with a Sele
 
 ```css
 .react-aria-Select {
-  [slot=description] {
+  [slot="description"] {
     font-size: 12px;
   }
 }
@@ -823,7 +885,7 @@ function Example() {
 
   return (
     <>
-      <p>Select is {open ? 'open' : 'closed'}</p>
+      <p>Select is {open ? "open" : "closed"}</p>
       <MySelect label="Choose frequency" isOpen={open} onOpenChange={setOpen}>
         <ListBoxItem id="rarely">Rarely</ListBoxItem>
         <ListBoxItem id="sometimes">Sometimes</ListBoxItem>
@@ -844,8 +906,14 @@ Select passes the rendered children of the selected item in the render props of 
   <Button>
     {/*- begin highlight -*/}
     <SelectValue>
-      {({defaultChildren, isPlaceholder}) => {
-        return isPlaceholder ? <><b>Animal</b> selection</> : defaultChildren;
+      {({ defaultChildren, isPlaceholder }) => {
+        return isPlaceholder ? (
+          <>
+            <b>Animal</b> selection
+          </>
+        ) : (
+          defaultChildren
+        );
       }}
     </SelectValue>
     {/*- end highlight -*/}
@@ -968,9 +1036,7 @@ React Aria components can be styled in many ways, including using CSS classes, i
 A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
 
 ```jsx
-<Select className="my-select">
-  {/* ... */}
-</Select>
+<Select className="my-select">{/* ... */}</Select>
 ```
 
 In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
@@ -988,7 +1054,9 @@ In addition, some components support multiple UI states (e.g. pressed, hovered, 
 The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
 
 ```jsx
-<ListBoxItem className={({isSelected}) => isSelected ? 'bg-blue-400' : 'bg-gray-100'}>
+<ListBoxItem
+  className={({ isSelected }) => (isSelected ? "bg-blue-400" : "bg-gray-100")}
+>
   Item
 </ListBoxItem>
 ```
@@ -997,7 +1065,7 @@ Render props may also be used as children to alter what elements are rendered ba
 
 ```jsx
 <ListBoxItem>
-  {({isSelected}) => (
+  {({ isSelected }) => (
     <>
       {isSelected && <CheckmarkIcon />}
       Item
@@ -1039,7 +1107,7 @@ The [Popover](Popover.html) component can be targeted with the `.react-aria-Popo
 Within a Select, the popover will have the `data-trigger="Select"` attribute, which can be used to define select-specific styles. In addition, the `--trigger-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the select button.
 
 ```css render=false
-.react-aria-Popover[data-trigger=Select] {
+.react-aria-Popover[data-trigger="Select"] {
   width: var(--trigger-width);
 }
 ```
@@ -1084,7 +1152,7 @@ If you need to customize one of the components within a `Select`, such as `Butto
 
 ```tsx
 function MyListBox(props) {
-  return <ListBox {...props} className="my-listbox" />
+  return <ListBox {...props} className="my-listbox" />;
 }
 ```
 
@@ -1092,26 +1160,26 @@ function MyListBox(props) {
 
 All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
 
-<ContextTable components={['Select']} docs={docs} />
+<ContextTable components={["Select"]} docs={docs} />
 
 This example shows a `FieldGroup` component that renders a group of selects with a title. The entire group can be marked as disabled via the `isDisabled` prop, which is passed to all child selects via the `SelectContext` provider.
 
 ```tsx example
-import {SelectContext} from 'react-aria-components';
+import { SelectContext } from "react-aria-components";
 
 interface FieldGroupProps {
-  title?: string,
-  children?: React.ReactNode,
-  isDisabled?: boolean
+  title?: string;
+  children?: React.ReactNode;
+  isDisabled?: boolean;
 }
 
-function FieldGroup({title, children, isDisabled}: FieldGroupProps) {
+function FieldGroup({ title, children, isDisabled }: FieldGroupProps) {
   return (
     <fieldset>
       <legend>{title}</legend>
       {/*- begin highlight -*/}
-      <SelectContext.Provider value={{isDisabled}}>
-      {/*- end highlight -*/}
+      <SelectContext.Provider value={{ isDisabled }}>
+        {/*- end highlight -*/}
         {children}
       </SelectContext.Provider>
     </fieldset>
@@ -1129,7 +1197,7 @@ function FieldGroup({title, children, isDisabled}: FieldGroupProps) {
     <ListBoxItem id="emma">Emma</ListBoxItem>
     <ListBoxItem id="tim">Tim</ListBoxItem>
   </MySelect>
-</FieldGroup>
+</FieldGroup>;
 ```
 
 <details>
@@ -1148,23 +1216,28 @@ fieldset {
 
 Select passes props to its child components, such as the label and popover, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
 
-<ContextTable components={['Label', 'Button', 'Popover', 'ListBox', 'Text']} docs={docs} />
+<ContextTable
+  components={["Label", "Button", "Popover", "ListBox", "Text"]}
+  docs={docs}
+/>
 
 This example consumes from `LabelContext` in an existing styled label component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by Select.
 
 ```tsx
-import type {LabelProps} from 'react-aria-components';
-import {LabelContext, useContextProps} from 'react-aria-components';
+import type { LabelProps } from "react-aria-components";
+import { LabelContext, useContextProps } from "react-aria-components";
 
-const MyCustomLabel = React.forwardRef((props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
-  // Merge the local props and ref with the ones provided via context.
-  ///- begin highlight -///
-  [props, ref] = useContextProps(props, ref, LabelContext);
-  ///- end highlight -///
+const MyCustomLabel = React.forwardRef(
+  (props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
+    // Merge the local props and ref with the ones provided via context.
+    ///- begin highlight -///
+    [props, ref] = useContextProps(props, ref, LabelContext);
+    ///- end highlight -///
 
-  // ... your existing Label component
-  return <label {...props} ref={ref} />;
-});
+    // ... your existing Label component
+    return <label {...props} ref={ref} />;
+  }
+);
 ```
 
 Now you can use `MyCustomLabel` within a `Select`, in place of the builtin React Aria Components `Label`.
@@ -1185,7 +1258,7 @@ Select provides an <TypeLink links={statelyDocs.links} type={statelyDocs.exports
 This example shows a `SelectClearButton` component that can be placed within a `Select` to allow the user to clear the selected item.
 
 ```tsx example
-import {SelectStateContext} from 'react-aria-components';
+import { SelectStateContext } from "react-aria-components";
 
 function SelectClearButton() {
   /*- begin highlight -*/
@@ -1195,8 +1268,9 @@ function SelectClearButton() {
     <Button
       // Don't inherit behavior from Select.
       slot={null}
-      style={{fontSize: 'small', marginTop: 6, padding: 4}}
-      onPress={() => state?.setSelectedKey(null)}>
+      style={{ fontSize: "small", marginTop: 6, padding: 4 }}
+      onPress={() => state?.setSelectedKey(null)}
+    >
       Clear
     </Button>
   );
@@ -1218,7 +1292,7 @@ function SelectClearButton() {
       <ListBoxItem>Kangaroo</ListBoxItem>
     </ListBox>
   </Popover>
-</Select>
+</Select>;
 ```
 
 ### Hooks
@@ -1243,30 +1317,29 @@ from your automated accessibility tests as shown [here](./accessibility.html#fal
 
 ### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
-`@react-aria/test-utils` offers common select interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
+`@react-aria-nutrient/test-utils` offers common select interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the select tester and a sample of how you could use it in your test suite.
 
 ```ts
 // Select.test.ts
-import {render} from '@testing-library/react';
-import {User} from '@react-aria/test-utils';
+import { render } from "@testing-library/react";
+import { User } from "@react-aria-nutrient/test-utils";
 
-let testUtilUser = new User({interactionType: 'mouse'});
+let testUtilUser = new User({ interactionType: "mouse" });
 // ...
 
-it('Select can select an option via keyboard', async function () {
+it("Select can select an option via keyboard", async function () {
   // Render your test component/app and initialize the select tester
-  let {getByTestId} = render(
-    <Select data-testid="test-select">
-     ...
-    </Select>
-  );
-  let selectTester = testUtilUser.createTester('Select', {root: getByTestId('test-select'), interactionType: 'keyboard'});
+  let { getByTestId } = render(<Select data-testid="test-select">...</Select>);
+  let selectTester = testUtilUser.createTester("Select", {
+    root: getByTestId("test-select"),
+    interactionType: "keyboard",
+  });
   let trigger = selectTester.trigger;
-  expect(trigger).toHaveTextContent('Select an item');
+  expect(trigger).toHaveTextContent("Select an item");
 
-  await selectTester.selectOption({option: 'Cat'});
-  expect(trigger).toHaveTextContent('Cat');
+  await selectTester.selectOption({ option: "Cat" });
+  expect(trigger).toHaveTextContent("Cat");
 });
 ```
 

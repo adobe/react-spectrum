@@ -10,58 +10,54 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useDOMRef} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
-import {Field} from '@react-spectrum/label';
-import {RadioContext} from './context';
-import React from 'react';
-import {SpectrumRadioGroupProps} from '@react-types/radio';
-import styles from '@adobe/spectrum-css-temp/components/fieldgroup/vars.css';
-import {useFormProps} from '@react-spectrum/form';
-import {useProviderProps} from '@react-spectrum/provider';
-import {useRadioGroup} from '@react-aria/radio';
-import {useRadioGroupState} from '@react-stately/radio';
+import { classNames, useDOMRef } from "@react-spectrum/utils";
+import { DOMRef } from "@react-types/shared";
+import { Field } from "@react-spectrum/label";
+import { RadioContext } from "./context";
+import React from "react";
+import { SpectrumRadioGroupProps } from "@react-types/radio";
+import styles from "@adobe/spectrum-css-temp/components/fieldgroup/vars.css";
+import { useFormProps } from "@react-spectrum/form";
+import { useProviderProps } from "@react-spectrum/provider";
+import { useRadioGroup } from "@react-aria-nutrient/radio";
+import { useRadioGroupState } from "@react-stately/radio";
 
 /**
  * Radio groups allow users to select a single option from a list of mutually exclusive options.
  * All possible options are exposed up front for users to compare.
  */
-export const RadioGroup = React.forwardRef(function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLElement>) {
+export const RadioGroup = React.forwardRef(function RadioGroup(
+  props: SpectrumRadioGroupProps,
+  ref: DOMRef<HTMLElement>
+) {
   props = useProviderProps(props);
   props = useFormProps(props);
-  let {
-    isEmphasized,
-    children,
-    orientation = 'vertical'
-  } = props;
+  let { isEmphasized, children, orientation = "vertical" } = props;
 
   let domRef = useDOMRef(ref);
   let state = useRadioGroupState(props);
-  let {radioGroupProps, ...otherProps} = useRadioGroup(props, state);
+  let { radioGroupProps, ...otherProps } = useRadioGroup(props, state);
 
   return (
     <Field
       {...props}
       {...otherProps}
       ref={domRef}
-      wrapperClassName={classNames(styles, 'spectrum-FieldGroup')}
-      elementType="span">
+      wrapperClassName={classNames(styles, "spectrum-FieldGroup")}
+      elementType="span"
+    >
       <div
         {...radioGroupProps}
-        className={
-          classNames(
-            styles,
-            'spectrum-FieldGroup-group',
-            {
-              'spectrum-FieldGroup-group--horizontal': orientation === 'horizontal'
-            }
-          )
-        }>
+        className={classNames(styles, "spectrum-FieldGroup-group", {
+          "spectrum-FieldGroup-group--horizontal": orientation === "horizontal",
+        })}
+      >
         <RadioContext.Provider
           value={{
             isEmphasized,
-            state
-          }}>
+            state,
+          }}
+        >
           {children}
         </RadioContext.Provider>
       </div>

@@ -1,31 +1,41 @@
-{/* Copyright 2025 Adobe. All rights reserved.
+{/_ Copyright 2025 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. */}
+governing permissions and limitations under the License. _/}
 
-import {Layout} from '@react-spectrum/docs';
+import { Layout } from "@react-spectrum/docs";
 export default Layout;
 
-import docs from 'docs:react-aria-components';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI} from '@react-spectrum/docs';
-import styles from '@react-spectrum/docs/src/docs.css';
-import packageData from 'react-aria-components/package.json';
-import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
-import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
-import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
-import Anatomy from '@react-aria/toast/docs/toast-anatomy.svg';
-import {Keyboard} from '@react-spectrum/text';
-import {InlineAlert, Content, Heading} from '@adobe/react-spectrum';
+import docs from "docs:react-aria-components";
+import {
+  PropTable,
+  HeaderInfo,
+  TypeLink,
+  PageDescription,
+  StateTable,
+  ContextTable,
+  ClassAPI,
+} from "@react-spectrum/docs";
+import styles from "@react-spectrum/docs/src/docs.css";
+import packageData from "react-aria-components/package.json";
+import ChevronRight from "@spectrum-icons/workflow/ChevronRight";
+import { ExampleCard } from "@react-spectrum/docs/src/ExampleCard";
+import { StarterKits } from "@react-spectrum/docs/src/StarterKits";
+import Anatomy from "@react-aria-nutrient/toast/docs/toast-anatomy.svg";
+import { Keyboard } from "@react-spectrum/text";
+import { InlineAlert, Content, Heading } from "@adobe/react-spectrum";
 
 ---
+
 category: Status
 keywords: [toast, notifications, alert, aria]
 type: component
 preRelease: alpha
+
 ---
 
 # Toast
@@ -34,14 +44,21 @@ preRelease: alpha
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['ToastRegion', 'Toast']}
+  componentNames={["ToastRegion", "Toast"]}
   sourceData={[
-    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/'}
-  ]} />
+    {
+      type: "W3C",
+      url: "https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/",
+    },
+  ]}
+/>
 
 <InlineAlert variant="notice" marginTop={60}>
   <Heading>Under construction</Heading>
-  <Content>This component is in <strong>alpha</strong>. More documentation is coming soon!</Content>
+  <Content>
+    This component is in <strong>alpha</strong>. More documentation is coming
+    soon!
+  </Content>
 </InlineAlert>
 
 ## Example
@@ -49,12 +66,19 @@ preRelease: alpha
 First, render a `ToastRegion` in the root of your app.
 
 ```tsx example hidden export=true
-import {UNSTABLE_ToastRegion as ToastRegion, UNSTABLE_Toast as Toast, UNSTABLE_ToastQueue as ToastQueue, UNSTABLE_ToastContent as ToastContent, Button, Text} from 'react-aria-components';
+import {
+  UNSTABLE_ToastRegion as ToastRegion,
+  UNSTABLE_Toast as Toast,
+  UNSTABLE_ToastQueue as ToastQueue,
+  UNSTABLE_ToastContent as ToastContent,
+  Button,
+  Text,
+} from "react-aria-components";
 
 // Define the type for your toast content.
 interface MyToastContent {
-  title: string,
-  description?: string
+  title: string;
+  description?: string;
 }
 
 // Create a global ToastQueue.
@@ -65,7 +89,7 @@ export function App() {
   return (
     <>
       <ToastRegion queue={queue}>
-        {({toast}) => (
+        {({ toast }) => (
           <Toast toast={toast}>
             <ToastContent>
               <Text slot="title">{toast.content.title}</Text>
@@ -85,10 +109,13 @@ Then, you can trigger a toast from anywhere using the exported `queue`.
 
 ```tsx example
 <Button
-  onPress={() => queue.add({
-    title: 'Toast complete!',
-    description: 'Great success.'
-  })}>
+  onPress={() =>
+    queue.add({
+      title: "Toast complete!",
+      description: "Great success.",
+    })
+  }
+>
   Toast
 </Button>
 ```
@@ -97,11 +124,11 @@ Then, you can trigger a toast from anywhere using the exported `queue`.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css hidden
-@import './Button.mdx' layer(button);
+@import "./Button.mdx" layer(button);
 ```
 
 ```css
-@import "@react-aria/example-theme";
+@import "@react-aria-nutrient/example-theme";
 
 .react-aria-ToastRegion {
   position: fixed;
@@ -140,12 +167,12 @@ Then, you can trigger a toast from anywhere using the exported `queue`.
     flex: 1 1 auto;
     min-width: 0px;
 
-    [slot=title] {
+    [slot="title"] {
       font-weight: bold;
     }
   }
 
-  .react-aria-Button[slot=close] {
+  .react-aria-Button[slot="close"] {
     flex: 0 0 auto;
     background: none;
     border: none;
@@ -176,22 +203,31 @@ Then, you can trigger a toast from anywhere using the exported `queue`.
 
 There is no built in way to display toast notifications in HTML. `<ToastRegion>` and `<Toast>` help achieve accessible toasts that can be styled as needed.
 
-* **Accessible** – Toasts follow the [ARIA alertdialog pattern](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/). They are rendered in a [landmark region](https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/), which keyboard and screen reader users can easily jump to when an alert is announced.
-* **Focus management** – When a toast unmounts, focus is moved to the next toast if any. Otherwise, focus is restored to where it was before navigating to the toast region.
+- **Accessible** – Toasts follow the [ARIA alertdialog pattern](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/). They are rendered in a [landmark region](https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/), which keyboard and screen reader users can easily jump to when an alert is announced.
+- **Focus management** – When a toast unmounts, focus is moved to the next toast if any. Otherwise, focus is restored to where it was before navigating to the toast region.
 
 ## Anatomy
 
-<Anatomy role="img" aria-label="Toast anatomy diagram, showing the toast's title and close button within the toast region." />
+<Anatomy
+  role="img"
+  aria-label="Toast anatomy diagram, showing the toast's title and close button within the toast region."
+/>
 
 A `<ToastRegion>` is an [ARIA landmark region](https://www.w3.org/WAI/ARIA/apg/practices/landmark-regions/) labeled "Notifications" by default. A `<ToastRegion>` accepts a function to render one or more visible toasts, in chronological order. When the limit is reached, additional toasts are queued until the user dismisses one. Each `<Toast>` is a non-modal ARIA [alertdialog](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/), containing the content of the notification and a close button.
 
 Landmark regions including the toast container can be navigated using the keyboard by pressing the <Keyboard>F6</Keyboard> key to move forward, and the <Keyboard>Shift</Keyboard> + <Keyboard>F6</Keyboard> key to move backward. This provides an easy way for keyboard users to jump to the toasts from anywhere in the app. When the last toast is closed, keyboard focus is restored.
 
 ```tsx
-import {ToastRegion, Toast, ToastContent, Text, Button} from 'react-aria-components';
+import {
+  ToastRegion,
+  Toast,
+  ToastContent,
+  Text,
+  Button,
+} from "react-aria-components";
 
 <ToastRegion>
-  {({toast}) => (
+  {({ toast }) => (
     <Toast toast={toast}>
       <ToastContent>
         <Text slot="title" />
@@ -200,7 +236,7 @@ import {ToastRegion, Toast, ToastContent, Text, Button} from 'react-aria-compone
       <Button slot="close" />
     </Toast>
   )}
-</ToastRegion>
+</ToastRegion>;
 ```
 
 ## Auto-dismiss
@@ -212,7 +248,7 @@ Be sure only to automatically dismiss toasts when the information is not importa
 ```tsx example
 <Button
   /*- begin highlight -*/
-  onPress={() => queue.add({title: 'Toast is done!'}, {timeout: 5000})}
+  onPress={() => queue.add({ title: "Toast is done!" }, { timeout: 5000 })}
   /*- end highlight -*/
 >
   Show toast
@@ -232,15 +268,21 @@ function Example() {
       onPress={() => {
         if (!toastKey) {
           ///- begin highlight -///
-          setToastKey(queue.add({title: 'Unable to save'}, {onClose: () => setToastKey(null)}));
+          setToastKey(
+            queue.add(
+              { title: "Unable to save" },
+              { onClose: () => setToastKey(null) }
+            )
+          );
           ///- end highlight -///
         } else {
           ///- begin highlight -///
           queue.close(toastKey);
           ///- end highlight -///
         }
-      }}>
-      {toastKey ? 'Hide' : 'Show'} Toast
+      }}
+    >
+      {toastKey ? "Hide" : "Show"} Toast
     </Button>
   );
 }

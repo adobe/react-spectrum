@@ -1,33 +1,42 @@
-{/* Copyright 2024 Adobe. All rights reserved.
+{/_ Copyright 2024 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. */}
+governing permissions and limitations under the License. _/}
 
-import {Layout} from '@react-spectrum/docs';
+import { Layout } from "@react-spectrum/docs";
 export default Layout;
 
-import docs from 'docs:react-aria-components';
-import statelyDocs from 'docs:@react-stately/color';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
-import styles from '@react-spectrum/docs/src/docs.css';
-import packageData from 'react-aria-components/package.json';
-import Anatomy from '@react-aria/color/docs/ColorSliderAnatomy.svg';
-import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
-import {Divider} from '@react-spectrum/divider';
-import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
-import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
-import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
-import {Keyboard} from '@react-spectrum/text';
-import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
+import docs from "docs:react-aria-components";
+import statelyDocs from "docs:@react-stately/color";
+import {
+  PropTable,
+  HeaderInfo,
+  TypeLink,
+  PageDescription,
+  StateTable,
+  ContextTable,
+} from "@react-spectrum/docs";
+import styles from "@react-spectrum/docs/src/docs.css";
+import packageData from "react-aria-components/package.json";
+import Anatomy from "@react-aria-nutrient/color/docs/ColorSliderAnatomy.svg";
+import ChevronRight from "@spectrum-icons/workflow/ChevronRight";
+import { Divider } from "@react-spectrum/divider";
+import { ExampleList } from "@react-spectrum/docs/src/ExampleList";
+import { ExampleCard } from "@react-spectrum/docs/src/ExampleCard";
+import Label from "@react-spectrum/docs/pages/assets/component-illustrations/Label.svg";
+import { Keyboard } from "@react-spectrum/text";
+import { StarterKits } from "@react-spectrum/docs/src/StarterKits";
 
 ---
+
 category: Color
 keywords: [color slider, color picker, aria]
 type: component
+
 ---
 
 # ColorSlider
@@ -36,15 +45,22 @@ type: component
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['ColorSlider']}
+  componentNames={["ColorSlider"]}
   sourceData={[
-    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/slider/'}
-  ]} />
+    { type: "W3C", url: "https://www.w3.org/WAI/ARIA/apg/patterns/slider/" },
+  ]}
+/>
 
 ## Example
 
 ```tsx example
-import {ColorSlider, ColorThumb, Label, SliderOutput, SliderTrack} from 'react-aria-components';
+import {
+  ColorSlider,
+  ColorThumb,
+  Label,
+  SliderOutput,
+  SliderTrack,
+} from "react-aria-components";
 
 <ColorSlider channel="hue" defaultValue="hsl(0, 100%, 50%)">
   <Label />
@@ -52,7 +68,7 @@ import {ColorSlider, ColorThumb, Label, SliderOutput, SliderTrack} from 'react-a
   <SliderTrack>
     <ColorThumb />
   </SliderTrack>
-</ColorSlider>
+</ColorSlider>;
 ```
 
 <details>
@@ -61,8 +77,9 @@ import {ColorSlider, ColorThumb, Label, SliderOutput, SliderTrack} from 'react-a
 ```css
 .react-aria-ColorSlider {
   display: grid;
-  grid-template-areas: "label output"
-                       "track track";
+  grid-template-areas:
+    "label output"
+    "track track";
   grid-template-columns: 1fr auto;
   gap: 4px;
   max-width: 300px;
@@ -80,7 +97,7 @@ import {ColorSlider, ColorThumb, Label, SliderOutput, SliderTrack} from 'react-a
     border-radius: 4px;
   }
 
-  &[data-orientation=horizontal] {
+  &[data-orientation="horizontal"] {
     .react-aria-SliderTrack {
       height: 28px;
     }
@@ -115,23 +132,30 @@ can be used to build a color picker, however it is very inconsistent across brow
 of a complete color picker rather than a single color channel slider. `ColorSlider` helps achieve accessible and
 touch-friendly color sliders that can be styled as needed.
 
-* **Customizable** – Support for adjusting a single channel of RGBA, HSLA, and HSBA colors, in both horizontal and vertical orientations.
-* **High quality interactions** – Mouse, touch, and keyboard input is supported via the [useMove](../react-aria/useMove.html) hook. Pressing the track moves the thumb to that position. Text selection and touch scrolling are prevented while dragging.
-* **Accessible** – Announces localized color descriptions for screen reader users (e.g. "dark vibrant blue"). Uses a visually hidden `<input>` element for mobile screen reader support and HTML form integration.
-* **International** – Channel value is formatted according to the user's locale. The color slider automatically mirrors all interactions in right-to-left languages.
+- **Customizable** – Support for adjusting a single channel of RGBA, HSLA, and HSBA colors, in both horizontal and vertical orientations.
+- **High quality interactions** – Mouse, touch, and keyboard input is supported via the [useMove](../react-aria/useMove.html) hook. Pressing the track moves the thumb to that position. Text selection and touch scrolling are prevented while dragging.
+- **Accessible** – Announces localized color descriptions for screen reader users (e.g. "dark vibrant blue"). Uses a visually hidden `<input>` element for mobile screen reader support and HTML form integration.
+- **International** – Channel value is formatted according to the user's locale. The color slider automatically mirrors all interactions in right-to-left languages.
 
 ## Anatomy
 
 <Anatomy
   role="img"
-  aria-label="Color slider anatomy diagram: Shows a color slider component with labels pointing to its parts, including the track, thumb, label, and output elements." />
+  aria-label="Color slider anatomy diagram: Shows a color slider component with labels pointing to its parts, including the track, thumb, label, and output elements."
+/>
 
 A color slider consists of a track element and a thumb that the user can drag to change a single channel of a color value.
 It may also include optional label and `<output>` elements to display the color channel name and current numeric value, respectively.
 A visually hidden `<input>` element is used to represent the value to assistive technologies.
 
 ```tsx
-import {ColorSlider, ColorThumb, Label, SliderOutput, SliderTrack} from 'react-aria-components';
+import {
+  ColorSlider,
+  ColorThumb,
+  Label,
+  SliderOutput,
+  SliderTrack,
+} from "react-aria-components";
 
 <ColorSlider>
   <Label />
@@ -139,7 +163,7 @@ import {ColorSlider, ColorThumb, Label, SliderOutput, SliderTrack} from 'react-a
   <SliderTrack>
     <ColorThumb />
   </SliderTrack>
-</ColorSlider>
+</ColorSlider>;
 ```
 
 ### Composed components
@@ -151,19 +175,20 @@ A `ColorSlider` uses the following components, which may also be used standalone
 <ExampleCard
   url="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label"
   title="Label"
-  description="A label provides context for an input element.">
+  description="A label provides context for an input element."
+>
   <Label />
 </ExampleCard>
 
 </section>
 
-{/*
+{/\*
 
 ## Examples
 
 <ExampleList tag="colorslider" />
 
-*/}
+\*/}
 
 ## Starter kits
 
@@ -178,29 +203,30 @@ If you will use a ColorSlider in multiple places in your app, you can wrap all o
 This example wraps `ColorSlider` and all of its children together into a single component which accepts an optional `label` prop, which is passed to the right place. It also shows how to use the `defaultStyle` [render prop](styling.html#render-props) to add a checkerboard pattern behind partially transparent gradients.
 
 ```tsx example export=true
-import type {ColorSliderProps} from 'react-aria-components';
+import type { ColorSliderProps } from "react-aria-components";
 
 interface MyColorSliderProps extends ColorSliderProps {
-  label?: string
+  label?: string;
 }
 
-export function MyColorSlider({label, ...props}: MyColorSliderProps) {
+export function MyColorSlider({ label, ...props }: MyColorSliderProps) {
   return (
     <ColorSlider {...props}>
       <Label>{label}</Label>
       <SliderOutput />
-      <SliderTrack 
-        style={({defaultStyle}) => ({
+      <SliderTrack
+        style={({ defaultStyle }) => ({
           background: `${defaultStyle.background},
-            repeating-conic-gradient(#CCC 0% 25%, white 0% 50%) 50% / 16px 16px`
-        })}>
+            repeating-conic-gradient(#CCC 0% 25%, white 0% 50%) 50% / 16px 16px`,
+        })}
+      >
         <ColorThumb />
       </SliderTrack>
     </ColorSlider>
   );
 }
 
-<MyColorSlider label="Red Opacity" defaultValue="#f00" channel="alpha" />
+<MyColorSlider label="Red Opacity" defaultValue="#f00" channel="alpha" />;
 ```
 
 ## Value
@@ -213,18 +239,19 @@ The value provided to either of these props should be a color string or <TypeLin
 In the example below, the <TypeLink links={docs.links} type={docs.exports.parseColor} /> function is used to parse the initial color from an HSL string. This is passed to the `value` prop to make the `ColorSlider` controlled, and updated in the `onChange` event.
 
 ```tsx example
-import {parseColor} from 'react-aria-components';
+import { parseColor } from "react-aria-components";
 
 function Example() {
-  let [value, setValue] = React.useState(parseColor('hsl(0, 100%, 50%)'));
+  let [value, setValue] = React.useState(parseColor("hsl(0, 100%, 50%)"));
   return (
     <>
       <MyColorSlider
         label="Hue (controlled)"
         value={value}
         onChange={setValue}
-        channel="hue" />
-      <p>Value: {value.toString('hex')}</p>
+        channel="hue"
+      />
+      <p>Value: {value.toString("hex")}</p>
     </>
   );
 }
@@ -235,10 +262,7 @@ function Example() {
 ColorSlider supports the `name` prop for integration with HTML forms. The value will be submitted as a number between the minimum and maximum value for the displayed channel.
 
 ```tsx example
-<MyColorSlider
-  defaultValue="#7f0000"
-  channel="red"
-  name="red" />
+<MyColorSlider defaultValue="#7f0000" channel="red" name="red" />
 ```
 
 ## Events
@@ -251,7 +275,9 @@ The example below uses `onChange` and `onChangeEnd` to update two separate eleme
 
 ```tsx example
 function Example() {
-  let [currentValue, setCurrentValue] = React.useState(parseColor('hsl(50, 100%, 50%)'));
+  let [currentValue, setCurrentValue] = React.useState(
+    parseColor("hsl(50, 100%, 50%)")
+  );
   let [finalValue, setFinalValue] = React.useState(currentValue);
 
   return (
@@ -260,9 +286,10 @@ function Example() {
         value={currentValue}
         channel="hue"
         onChange={setCurrentValue}
-        onChangeEnd={setFinalValue} />
-      <p>Current value: {currentValue.toString('hsl')}</p>
-      <p>Final value: {finalValue.toString('hsl')}</p>
+        onChangeEnd={setFinalValue}
+      />
+      <p>Current value: {currentValue.toString("hsl")}</p>
+      <p>Final value: {finalValue.toString("hsl")}</p>
     </div>
   );
 }
@@ -279,7 +306,7 @@ of ColorSlider are used to make the sliders controlled, so that they all update 
 
 ```tsx example
 function Example() {
-  let [color, setColor] = React.useState(parseColor('#ff00ff'));
+  let [color, setColor] = React.useState(parseColor("#ff00ff"));
 
   return (
     <>
@@ -298,7 +325,7 @@ This example shows how to build a similar color picker to the one above, using H
 
 ```tsx example
 function Example() {
-  let [color, setColor] = React.useState(parseColor('hsla(0, 100%, 50%, 0.5)'));
+  let [color, setColor] = React.useState(parseColor("hsla(0, 100%, 50%, 0.5)"));
 
   return (
     <>
@@ -317,7 +344,7 @@ This example shows how to build an HSBA color picker.
 
 ```tsx example
 function Example() {
-  let [color, setColor] = React.useState(parseColor('hsba(0, 100%, 50%, 0.5)'));
+  let [color, setColor] = React.useState(parseColor("hsba(0, 100%, 50%, 0.5)"));
   return (
     <>
       <MyColorSlider channel="hue" value={color} onChange={setColor} />
@@ -339,7 +366,8 @@ Sliders are horizontally oriented by default. The `orientation` prop can be set 
 <MyColorSlider
   orientation="vertical"
   defaultValue="hsb(0, 100%, 100%)"
-  channel="hue" />
+  channel="hue"
+/>
 ```
 
 <details>
@@ -347,7 +375,7 @@ Sliders are horizontally oriented by default. The `orientation` prop can be set 
 
 ```css
 .react-aria-ColorSlider {
-  &[data-orientation=vertical] {
+  &[data-orientation="vertical"] {
     height: 150px;
     display: block;
 
@@ -366,7 +394,6 @@ Sliders are horizontally oriented by default. The `orientation` prop can be set 
     }
   }
 }
-
 ```
 
 </details>
@@ -490,9 +517,7 @@ React Aria components can be styled in many ways, including using CSS classes, i
 A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
 
 ```jsx
-<ColorSlider className="my-color-slider">
-  {/* ... */}
-</ColorSlider>
+<ColorSlider className="my-color-slider">{/* ... */}</ColorSlider>
 ```
 
 In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
@@ -510,14 +535,16 @@ In addition, some components support multiple UI states (e.g. focused, placehold
 The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
 
 ```jsx
-<ColorThumb className={({isDragging}) => isDragging ? 'scale-150' : 'scale-100'} />
+<ColorThumb
+  className={({ isDragging }) => (isDragging ? "scale-150" : "scale-100")}
+/>
 ```
 
 Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could implement custom formatting for the slider's current value.
 
 ```jsx
 <SliderOutput>
-  {state => `Value: ${state.getThumbValueLabel(0)}`}
+  {(state) => `Value: ${state.getThumbValueLabel(0)}`}
 </SliderOutput>
 ```
 
@@ -559,7 +586,7 @@ If you need to customize one of the components within a `ColorSlider`, such as `
 
 ```tsx
 function MySliderOutput(props) {
-  return <SliderOutput {...props} className="my-slider-output" />
+  return <SliderOutput {...props} className="my-slider-output" />;
 }
 ```
 
@@ -567,26 +594,31 @@ function MySliderOutput(props) {
 
 All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
 
-<ContextTable components={['ColorSlider']} docs={docs} />
+<ContextTable components={["ColorSlider"]} docs={docs} />
 
 This example shows a `ColorSliderDescription` component that accepts a color slider in its children and renders a description element below it. It uses the [useId](useId.html) hook to generate a unique id for the description, and associates it with the color slider via the `aria-describedby` attribute passed to the `ColorSliderContext` provider.
 
 ```tsx example
-import {ColorSliderContext} from 'react-aria-components';
-import {useId} from 'react-aria';
+import { ColorSliderContext } from "react-aria-components";
+import { useId } from "react-aria";
 
 interface ColorSliderDescriptionProps {
-  children?: React.ReactNode,
-  description?: string
+  children?: React.ReactNode;
+  description?: string;
 }
 
-function ColorSliderDescription({children, description}: ColorSliderDescriptionProps) {
+function ColorSliderDescription({
+  children,
+  description,
+}: ColorSliderDescriptionProps) {
   let descriptionId = useId();
   return (
     <div>
       {/*- begin highlight -*/}
-      <ColorSliderContext.Provider value={{'aria-describedby': descriptionId}}>
-      {/*- end highlight -*/}
+      <ColorSliderContext.Provider
+        value={{ "aria-describedby": descriptionId }}
+      >
+        {/*- end highlight -*/}
         {children}
       </ColorSliderContext.Provider>
       <small id={descriptionId}>{description}</small>
@@ -596,30 +628,32 @@ function ColorSliderDescription({children, description}: ColorSliderDescriptionP
 
 <ColorSliderDescription description="It's not easy being green.">
   <MyColorSlider channel="green" defaultValue="#006" />
-</ColorSliderDescription>
+</ColorSliderDescription>;
 ```
 
 ### Custom children
 
 ColorSlider passes props to its child components, such as the label, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
 
-<ContextTable components={['Label']} docs={docs} />
+<ContextTable components={["Label"]} docs={docs} />
 
 This example consumes from `LabelContext` in an existing styled label component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by ColorSlider.
 
 ```tsx
-import type {LabelProps} from 'react-aria-components';
-import {LabelContext, useContextProps} from 'react-aria-components';
+import type { LabelProps } from "react-aria-components";
+import { LabelContext, useContextProps } from "react-aria-components";
 
-const MyCustomLabel = React.forwardRef((props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
-  // Merge the local props and ref with the ones provided via context.
-  ///- begin highlight -///
-  [props, ref] = useContextProps(props, ref, LabelContext);
-  ///- end highlight -///
+const MyCustomLabel = React.forwardRef(
+  (props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
+    // Merge the local props and ref with the ones provided via context.
+    ///- begin highlight -///
+    [props, ref] = useContextProps(props, ref, LabelContext);
+    ///- end highlight -///
 
-  // ... your existing Label component
-  return <label {...props} ref={ref} />;
-});
+    // ... your existing Label component
+    return <label {...props} ref={ref} />;
+  }
+);
 ```
 
 Now you can use `MyCustomLabel` within a `ColorSlider`, in place of the builtin React Aria Components `Label`.
@@ -642,9 +676,15 @@ ColorSlider provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exp
 This example shows a `ColorNumberField` component that can be placed within a `ColorSlider` to allow the user to enter a number and update the channel value.
 
 ```tsx example
-import {ColorSliderStateContext, LabelContext, NumberField, Input, useSlottedContext} from 'react-aria-components';
+import {
+  ColorSliderStateContext,
+  LabelContext,
+  NumberField,
+  Input,
+  useSlottedContext,
+} from "react-aria-components";
 
-function ColorNumberField({channel}) {
+function ColorNumberField({ channel }) {
   /*- begin highlight -*/
   let state = React.useContext(ColorSliderStateContext)!;
   /*- end highlight -*/
@@ -655,8 +695,9 @@ function ColorNumberField({channel}) {
       value={state.value.getChannelValue(channel)}
       minValue={state.value.getChannelRange(channel).minValue}
       maxValue={state.value.getChannelRange(channel).maxValue}
-      onChange={v => state.setValue(state.value.withChannelValue(channel, v))}
-      formatOptions={state.value.getChannelFormatOptions(channel)}>
+      onChange={(v) => state.setValue(state.value.withChannelValue(channel, v))}
+      formatOptions={state.value.getChannelFormatOptions(channel)}
+    >
       <Input />
     </NumberField>
   );
@@ -670,7 +711,7 @@ function ColorNumberField({channel}) {
   <SliderTrack>
     <ColorThumb />
   </SliderTrack>
-</ColorSlider>
+</ColorSlider>;
 ```
 
 <details>

@@ -10,44 +10,50 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaToastRegionProps, useToastRegion} from '@react-aria/toast';
-import {classNames} from '@react-spectrum/utils';
-import {FocusScope, useFocusRing} from '@react-aria/focus';
-import {mergeProps} from '@react-aria/utils';
-import {Provider} from '@react-spectrum/provider';
-import React, {createContext, ReactElement, ReactNode, useMemo, useRef} from 'react';
-import ReactDOM from 'react-dom';
-import toastContainerStyles from './toastContainer.css';
-import type {ToastPlacement} from './ToastContainer';
-import {ToastState} from '@react-stately/toast';
-import {useUNSTABLE_PortalContext} from '@react-aria/overlays';
+import {
+  AriaToastRegionProps,
+  useToastRegion,
+} from "@react-aria-nutrient/toast";
+import { classNames } from "@react-spectrum/utils";
+import { FocusScope, useFocusRing } from "@react-aria-nutrient/focus";
+import { mergeProps } from "@react-aria-nutrient/utils";
+import { Provider } from "@react-spectrum/provider";
+import React, {
+  createContext,
+  ReactElement,
+  ReactNode,
+  useMemo,
+  useRef,
+} from "react";
+import ReactDOM from "react-dom";
+import toastContainerStyles from "./toastContainer.css";
+import type { ToastPlacement } from "./ToastContainer";
+import { ToastState } from "@react-stately/toast";
+import { useUNSTABLE_PortalContext } from "@react-aria-nutrient/overlays";
 
 interface ToastContainerProps extends AriaToastRegionProps {
-  children: ReactNode,
-  state: ToastState<unknown>,
-  placement?: ToastPlacement
+  children: ReactNode;
+  state: ToastState<unknown>;
+  placement?: ToastPlacement;
 }
 
 export const ToasterContext = createContext(false);
 
 export function Toaster(props: ToastContainerProps): ReactElement {
-  let {
-    children,
-    state
-  } = props;
+  let { children, state } = props;
 
   let ref = useRef(null);
-  let {regionProps} = useToastRegion(props, state, ref);
-  let {focusProps, isFocusVisible} = useFocusRing();
-  let {getContainer} = useUNSTABLE_PortalContext();
+  let { regionProps } = useToastRegion(props, state, ref);
+  let { focusProps, isFocusVisible } = useFocusRing();
+  let { getContainer } = useUNSTABLE_PortalContext();
 
   let [position, placement] = useMemo(() => {
-    let [pos = 'bottom', place = 'center'] = props.placement?.split(' ') || [];
+    let [pos = "bottom", place = "center"] = props.placement?.split(" ") || [];
     return [pos, place];
   }, [props.placement]);
 
   let contents = (
-    <Provider UNSAFE_style={{background: 'transparent'}}>
+    <Provider UNSAFE_style={{ background: "transparent" }}>
       <FocusScope>
         <ToasterContext.Provider value={isFocusVisible}>
           <div
@@ -57,9 +63,10 @@ export function Toaster(props: ToastContainerProps): ReactElement {
             data-placement={placement}
             className={classNames(
               toastContainerStyles,
-              'react-spectrum-ToastContainer',
-              {'focus-ring': isFocusVisible}
-            )}>
+              "react-spectrum-ToastContainer",
+              { "focus-ring": isFocusVisible }
+            )}
+          >
             {children}
           </div>
         </ToasterContext.Provider>

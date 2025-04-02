@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-jest.mock('@react-aria/live-announcer');
-jest.mock('@react-aria/utils/src/scrollIntoView');
+jest.mock('@react-aria-nutrient/live-announcer');
+jest.mock('@react-aria-nutrient/utils/src/scrollIntoView');
 import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render as renderComponent, User, within} from '@react-spectrum/test-utils-internal';
 import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
-import {announce} from '@react-aria/live-announcer';
+import {announce} from '@react-aria-nutrient/live-announcer';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {composeStories} from '@storybook/react';
@@ -23,13 +23,13 @@ import {Content} from '@react-spectrum/view';
 import {CRUDExample} from '../stories/CRUDExample';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
-import {getFocusableTreeWalker} from '@react-aria/focus';
+import {getFocusableTreeWalker} from '@react-aria-nutrient/focus';
 import {Heading} from '@react-spectrum/text';
 import {Item, Picker} from '@react-spectrum/picker';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {scrollIntoView} from '@react-aria/utils';
+import {scrollIntoView} from '@react-aria-nutrient/utils';
 import * as stories from '../stories/Table.stories';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';

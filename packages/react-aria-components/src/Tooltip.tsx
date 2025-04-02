@@ -10,44 +10,87 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, FocusableElement, forwardRefType, RefObject} from '@react-types/shared';
-import {AriaPositionProps, mergeProps, OverlayContainer, Placement, PlacementAxis, PositionProps, useOverlayPosition, useTooltip, useTooltipTrigger} from 'react-aria';
-import {ContextValue, Provider, RenderProps, useContextProps, useRenderProps} from './utils';
-import {FocusableProvider} from '@react-aria/focus';
-import {OverlayArrowContext} from './OverlayArrow';
-import {OverlayTriggerProps, TooltipTriggerProps, TooltipTriggerState, useTooltipTriggerState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef, useState} from 'react';
-import {useEnterAnimation, useExitAnimation, useLayoutEffect} from '@react-aria/utils';
+import {
+  AriaLabelingProps,
+  FocusableElement,
+  forwardRefType,
+  RefObject,
+} from "@react-types/shared";
+import {
+  AriaPositionProps,
+  mergeProps,
+  OverlayContainer,
+  Placement,
+  PlacementAxis,
+  PositionProps,
+  useOverlayPosition,
+  useTooltip,
+  useTooltipTrigger,
+} from "react-aria";
+import {
+  ContextValue,
+  Provider,
+  RenderProps,
+  useContextProps,
+  useRenderProps,
+} from "./utils";
+import { FocusableProvider } from "@react-aria-nutrient/focus";
+import { OverlayArrowContext } from "./OverlayArrow";
+import {
+  OverlayTriggerProps,
+  TooltipTriggerProps,
+  TooltipTriggerState,
+  useTooltipTriggerState,
+} from "react-stately";
+import React, {
+  createContext,
+  ForwardedRef,
+  forwardRef,
+  ReactNode,
+  useContext,
+  useRef,
+  useState,
+} from "react";
+import {
+  useEnterAnimation,
+  useExitAnimation,
+  useLayoutEffect,
+} from "@react-aria-nutrient/utils";
 
 export interface TooltipTriggerComponentProps extends TooltipTriggerProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
-export interface TooltipProps extends PositionProps, Pick<AriaPositionProps, 'arrowBoundaryOffset'>, OverlayTriggerProps, AriaLabelingProps, RenderProps<TooltipRenderProps> {
+export interface TooltipProps
+  extends PositionProps,
+    Pick<AriaPositionProps, "arrowBoundaryOffset">,
+    OverlayTriggerProps,
+    AriaLabelingProps,
+    RenderProps<TooltipRenderProps> {
   /**
    * The ref for the element which the tooltip positions itself with respect to.
    *
    * When used within a TooltipTrigger this is set automatically. It is only required when used standalone.
    */
-  triggerRef?: RefObject<Element | null>,
+  triggerRef?: RefObject<Element | null>;
   /**
    * Whether the tooltip is currently performing an entry animation.
    */
-  isEntering?: boolean,
+  isEntering?: boolean;
   /**
    * Whether the tooltip is currently performing an exit animation.
    */
-  isExiting?: boolean,
+  isExiting?: boolean;
   /**
    * The container element in which the overlay portal will be placed. This may have unknown behavior depending on where it is portalled to.
    * @default document.body
    */
-  UNSTABLE_portalContainer?: Element,
+  UNSTABLE_portalContainer?: Element;
   /**
    * The placement of the tooltip with respect to the trigger.
    * @default 'top'
    */
-  placement?: Placement
+  placement?: Placement;
 }
 
 export interface TooltipRenderProps {
@@ -55,25 +98,27 @@ export interface TooltipRenderProps {
    * The placement of the tooltip relative to the trigger.
    * @selector [data-placement="left | right | top | bottom"]
    */
-  placement: PlacementAxis | null,
+  placement: PlacementAxis | null;
   /**
    * Whether the tooltip is currently entering. Use this to apply animations.
    * @selector [data-entering]
    */
-  isEntering: boolean,
+  isEntering: boolean;
   /**
    * Whether the tooltip is currently exiting. Use this to apply animations.
    * @selector [data-exiting]
    */
-  isExiting: boolean,
+  isExiting: boolean;
   /**
    * State of the tooltip.
    */
-  state: TooltipTriggerState
+  state: TooltipTriggerState;
 }
 
-export const TooltipTriggerStateContext = createContext<TooltipTriggerState | null>(null);
-export const TooltipContext = createContext<ContextValue<TooltipProps, HTMLDivElement>>(null);
+export const TooltipTriggerStateContext =
+  createContext<TooltipTriggerState | null>(null);
+export const TooltipContext =
+  createContext<ContextValue<TooltipProps, HTMLDivElement>>(null);
 
 /**
  * TooltipTrigger wraps around a trigger element and a Tooltip. It handles opening and closing
@@ -83,14 +128,15 @@ export const TooltipContext = createContext<ContextValue<TooltipProps, HTMLDivEl
 export function TooltipTrigger(props: TooltipTriggerComponentProps): ReactNode {
   let state = useTooltipTriggerState(props);
   let ref = useRef<FocusableElement>(null);
-  let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);
+  let { triggerProps, tooltipProps } = useTooltipTrigger(props, state, ref);
 
   return (
     <Provider
       values={[
         [TooltipTriggerStateContext, state],
-        [TooltipContext, {...tooltipProps, triggerRef: ref}]
-      ]}>
+        [TooltipContext, { ...tooltipProps, triggerRef: ref }],
+      ]}
+    >
       <FocusableProvider {...triggerProps} ref={ref}>
         {props.children}
       </FocusableProvider>
@@ -101,24 +147,38 @@ export function TooltipTrigger(props: TooltipTriggerComponentProps): ReactNode {
 /**
  * A tooltip displays a description of an element on hover or focus.
  */
-export const Tooltip = /*#__PURE__*/ (forwardRef as forwardRefType)(function Tooltip({UNSTABLE_portalContainer, ...props}: TooltipProps, ref: ForwardedRef<HTMLDivElement>) {
-  [props, ref] = useContextProps(props, ref, TooltipContext);
-  let contextState = useContext(TooltipTriggerStateContext);
-  let localState = useTooltipTriggerState(props);
-  let state = props.isOpen != null || props.defaultOpen != null || !contextState ? localState : contextState;
-  let isExiting = useExitAnimation(ref, state.isOpen) || props.isExiting || false;
-  if (!state.isOpen && !isExiting) {
-    return null;
+export const Tooltip = /*#__PURE__*/ (forwardRef as forwardRefType)(
+  function Tooltip(
+    { UNSTABLE_portalContainer, ...props }: TooltipProps,
+    ref: ForwardedRef<HTMLDivElement>
+  ) {
+    [props, ref] = useContextProps(props, ref, TooltipContext);
+    let contextState = useContext(TooltipTriggerStateContext);
+    let localState = useTooltipTriggerState(props);
+    let state =
+      props.isOpen != null || props.defaultOpen != null || !contextState
+        ? localState
+        : contextState;
+    let isExiting =
+      useExitAnimation(ref, state.isOpen) || props.isExiting || false;
+    if (!state.isOpen && !isExiting) {
+      return null;
+    }
+
+    return (
+      <OverlayContainer portalContainer={UNSTABLE_portalContainer}>
+        <TooltipInner {...props} tooltipRef={ref} isExiting={isExiting} />
+      </OverlayContainer>
+    );
   }
+);
 
-  return (
-    <OverlayContainer portalContainer={UNSTABLE_portalContainer}>
-      <TooltipInner {...props} tooltipRef={ref} isExiting={isExiting} />
-    </OverlayContainer>
-  );
-});
-
-function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: RefObject<HTMLDivElement | null>}) {
+function TooltipInner(
+  props: TooltipProps & {
+    isExiting: boolean;
+    tooltipRef: RefObject<HTMLDivElement | null>;
+  }
+) {
   let state = useContext(TooltipTriggerStateContext)!;
 
   // Calculate the arrow size internally
@@ -131,8 +191,8 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
     }
   }, [state.isOpen, arrowRef]);
 
-  let {overlayProps, arrowProps, placement} = useOverlayPosition({
-    placement: props.placement || 'top',
+  let { overlayProps, arrowProps, placement } = useOverlayPosition({
+    placement: props.placement || "top",
     targetRef: props.triggerRef!,
     overlayRef: props.tooltipRef,
     offset: props.offset,
@@ -141,34 +201,40 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
     arrowSize: arrowWidth,
     arrowBoundaryOffset: props.arrowBoundaryOffset,
     shouldFlip: props.shouldFlip,
-    onClose: () => state.close(true)
+    onClose: () => state.close(true),
   });
 
-  let isEntering = useEnterAnimation(props.tooltipRef, !!placement) || props.isEntering || false;
+  let isEntering =
+    useEnterAnimation(props.tooltipRef, !!placement) ||
+    props.isEntering ||
+    false;
   let renderProps = useRenderProps({
     ...props,
-    defaultClassName: 'react-aria-Tooltip',
+    defaultClassName: "react-aria-Tooltip",
     values: {
       placement,
       isEntering,
       isExiting: props.isExiting,
-      state
-    }
+      state,
+    },
   });
 
   props = mergeProps(props, overlayProps);
-  let {tooltipProps} = useTooltip(props, state);
+  let { tooltipProps } = useTooltip(props, state);
 
   return (
     <div
       {...tooltipProps}
       ref={props.tooltipRef}
       {...renderProps}
-      style={{...overlayProps.style, ...renderProps.style}}
+      style={{ ...overlayProps.style, ...renderProps.style }}
       data-placement={placement ?? undefined}
       data-entering={isEntering || undefined}
-      data-exiting={props.isExiting || undefined}>
-      <OverlayArrowContext.Provider value={{...arrowProps, placement, ref: arrowRef}}>
+      data-exiting={props.isExiting || undefined}
+    >
+      <OverlayArrowContext.Provider
+        value={{ ...arrowProps, placement, ref: arrowRef }}
+      >
         {renderProps.children}
       </OverlayArrowContext.Provider>
     </div>

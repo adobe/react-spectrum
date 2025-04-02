@@ -34,7 +34,7 @@ const ERROR = 2;
 
 export default [{
     ignores: [
-        "packages/@react-aria/i18n/server",
+        "packages/@react-aria-nutrient/i18n/server",
         "packages/@spectrum-icons/color/**/*",
         "packages/@spectrum-icons/ui/**/*",
         "packages/@spectrum-icons/workflow/**/*",
@@ -462,32 +462,32 @@ export default [{
     },
 }, {
     files: [
-        "packages/@react-aria/focus/src/**/*.ts",
-        "packages/@react-aria/focus/src/**/*.tsx",
+        "packages/@react-aria-nutrient/focus/src/**/*.ts",
+        "packages/@react-aria-nutrient/focus/src/**/*.tsx",
     ],
 
     rules: {
         "no-restricted-globals": [ERROR, {
             name: "window",
-            message: "Use getOwnerWindow from @react-aria/utils instead.",
+            message: "Use getOwnerWindow from @react-aria-nutrient/utils instead.",
         }, {
             name: "document",
-            message: "Use getOwnerDocument from @react-aria/utils instead.",
+            message: "Use getOwnerDocument from @react-aria-nutrient/utils instead.",
         }],
     },
 }, {
     files: [
-        "packages/@react-aria/interactions/src/**/*.ts",
-        "packages/@react-aria/interactions/src/**/*.tsx",
+        "packages/@react-aria-nutrient/interactions/src/**/*.ts",
+        "packages/@react-aria-nutrient/interactions/src/**/*.tsx",
     ],
 
     rules: {
         "no-restricted-globals": [WARN, {
             name: "window",
-            message: "Use getOwnerWindow from @react-aria/utils instead.",
+            message: "Use getOwnerWindow from @react-aria-nutrient/utils instead.",
         }, {
             name: "document",
-            message: "Use getOwnerDocument from @react-aria/utils instead.",
+            message: "Use getOwnerDocument from @react-aria-nutrient/utils instead.",
         }],
     },
 }, {

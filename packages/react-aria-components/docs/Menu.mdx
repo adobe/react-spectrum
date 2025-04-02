@@ -1,36 +1,47 @@
-{/* Copyright 2020 Adobe. All rights reserved.
+{/_ Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. */}
+governing permissions and limitations under the License. _/}
 
-import {Layout} from '@react-spectrum/docs';
+import { Layout } from "@react-spectrum/docs";
 export default Layout;
 
-import docs from 'docs:react-aria-components';
-import menuUtil from 'docs:@react-aria/test-utils/src/menu.ts';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI, VersionBadge} from '@react-spectrum/docs';
-import styles from '@react-spectrum/docs/src/docs.css';
-import packageData from 'react-aria-components/package.json';
-import Anatomy from './MenuAnatomy.svg';
-import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
-import {Divider} from '@react-spectrum/divider';
-import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
-import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
-import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
-import Popover from '@react-spectrum/docs/pages/assets/component-illustrations/Popover.svg';
-import {Keyboard} from '@react-spectrum/text';
-import Collections from '@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg';
-import Selection from '@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg';
-import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
+import docs from "docs:react-aria-components";
+import menuUtil from "docs:@react-aria-nutrient/test-utils/src/menu.ts";
+import {
+  PropTable,
+  HeaderInfo,
+  TypeLink,
+  PageDescription,
+  StateTable,
+  ContextTable,
+  ClassAPI,
+  VersionBadge,
+} from "@react-spectrum/docs";
+import styles from "@react-spectrum/docs/src/docs.css";
+import packageData from "react-aria-components/package.json";
+import Anatomy from "./MenuAnatomy.svg";
+import ChevronRight from "@spectrum-icons/workflow/ChevronRight";
+import { Divider } from "@react-spectrum/divider";
+import { ExampleCard } from "@react-spectrum/docs/src/ExampleCard";
+import { ExampleList } from "@react-spectrum/docs/src/ExampleList";
+import Button from "@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg";
+import Popover from "@react-spectrum/docs/pages/assets/component-illustrations/Popover.svg";
+import { Keyboard } from "@react-spectrum/text";
+import Collections from "@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg";
+import Selection from "@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg";
+import { StarterKits } from "@react-spectrum/docs/src/StarterKits";
 
 ---
+
 category: Collections
 keywords: [menu trigger, mutli-select menu, aria]
 type: component
+
 ---
 
 # Menu
@@ -39,28 +50,35 @@ type: component
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['MenuTrigger', 'Menu', 'SubmenuTrigger']}
+  componentNames={["MenuTrigger", "Menu", "SubmenuTrigger"]}
   sourceData={[
-    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/menu/'}
-  ]} />
+    { type: "W3C", url: "https://www.w3.org/WAI/ARIA/apg/patterns/menu/" },
+  ]}
+/>
 
 ## Example
 
 ```tsx example
-import {MenuTrigger, Button, Popover, Menu, MenuItem} from 'react-aria-components';
+import {
+  MenuTrigger,
+  Button,
+  Popover,
+  Menu,
+  MenuItem,
+} from "react-aria-components";
 
 <MenuTrigger>
   <Button aria-label="Menu">☰</Button>
   <Popover>
     <Menu>
-      <MenuItem onAction={() => alert('open')}>Open</MenuItem>
-      <MenuItem onAction={() => alert('rename')}>Rename…</MenuItem>
-      <MenuItem onAction={() => alert('duplicate')}>Duplicate</MenuItem>
-      <MenuItem onAction={() => alert('share')}>Share…</MenuItem>
-      <MenuItem onAction={() => alert('delete')}>Delete…</MenuItem>
+      <MenuItem onAction={() => alert("open")}>Open</MenuItem>
+      <MenuItem onAction={() => alert("rename")}>Rename…</MenuItem>
+      <MenuItem onAction={() => alert("duplicate")}>Duplicate</MenuItem>
+      <MenuItem onAction={() => alert("share")}>Share…</MenuItem>
+      <MenuItem onAction={() => alert("delete")}>Delete…</MenuItem>
     </Menu>
   </Popover>
-</MenuTrigger>
+</MenuTrigger>;
 ```
 
 <details>
@@ -72,7 +90,7 @@ import {MenuTrigger, Button, Popover, Menu, MenuItem} from 'react-aria-component
 ```
 
 ```css
-@import "@react-aria/example-theme";
+@import "@react-aria-nutrient/example-theme";
 
 .react-aria-Menu {
   max-height: inherit;
@@ -94,8 +112,9 @@ import {MenuTrigger, Button, Popover, Menu, MenuItem} from 'react-aria-component
   font-size: 1.072rem;
   position: relative;
   display: grid;
-  grid-template-areas: "label kbd"
-                      "desc  kbd";
+  grid-template-areas:
+    "label kbd"
+    "desc  kbd";
   align-items: center;
   column-gap: 20px;
   forced-color-adjust: none;
@@ -114,10 +133,10 @@ import {MenuTrigger, Button, Popover, Menu, MenuItem} from 'react-aria-component
 There is no native element to implement a menu in HTML that is widely supported. `MenuTrigger` and `Menu`
 help achieve accessible menu components that can be styled as needed.
 
-* **Keyboard navigation** – Menu items can be navigated using the arrow keys, along with page up/down, home/end, etc. Typeahead, auto scrolling, and disabled items are supported as well.
-* **Item selection** – Single or multiple selection can be optionally enabled.
-* **Trigger interactions** – Menus can be triggered by pressing with a mouse or touch, or optionally, with a long press interaction. The arrow keys also open the menu with a keyboard, automatically focusing the first or last item accordingly.
-* **Accessible** – Follows the [ARIA menu pattern](https://www.w3.org/WAI/ARIA/apg/patterns/menu/), with support for items and sections, and slots for label, description, and keyboard shortcut elements within each item for improved screen reader announcement.
+- **Keyboard navigation** – Menu items can be navigated using the arrow keys, along with page up/down, home/end, etc. Typeahead, auto scrolling, and disabled items are supported as well.
+- **Item selection** – Single or multiple selection can be optionally enabled.
+- **Trigger interactions** – Menus can be triggered by pressing with a mouse or touch, or optionally, with a long press interaction. The arrow keys also open the menu with a keyboard, automatically focusing the first or last item accordingly.
+- **Accessible** – Follows the [ARIA menu pattern](https://www.w3.org/WAI/ARIA/apg/patterns/menu/), with support for items and sections, and slots for label, description, and keyboard shortcut elements within each item for improved screen reader announcement.
 
 ## Anatomy
 
@@ -127,7 +146,18 @@ A menu trigger consists of a button or other trigger element combined with a men
 with a list of menu items or sections inside. Users can click, touch, or use the keyboard on the button to open the menu.
 
 ```tsx
-import {MenuTrigger, Button, Popover, Menu, MenuItem, MenuSection, Separator, Header, Text, Keyboard} from 'react-aria-components';
+import {
+  MenuTrigger,
+  Button,
+  Popover,
+  Menu,
+  MenuItem,
+  MenuSection,
+  Separator,
+  Header,
+  Text,
+  Keyboard,
+} from "react-aria-components";
 
 <MenuTrigger>
   <Button />
@@ -145,8 +175,9 @@ import {MenuTrigger, Button, Popover, Menu, MenuItem, MenuSection, Separator, He
       </MenuSection>
     </Menu>
   </Popover>
-</MenuTrigger>
+</MenuTrigger>;
 ```
+
 ### Concepts
 
 `Menu` makes use of the following concepts:
@@ -156,14 +187,16 @@ import {MenuTrigger, Button, Popover, Menu, MenuItem, MenuSection, Separator, He
 <ExampleCard
   url="collections.html"
   title="Collections"
-  description="Defining collections of items, async loading, and updating items over time.">
+  description="Defining collections of items, async loading, and updating items over time."
+>
   <Collections />
 </ExampleCard>
 
 <ExampleCard
   url="selection.html"
   title="Selection"
-  description="Interactions and data structures to represent selection.">
+  description="Interactions and data structures to represent selection."
+>
   <Selection />
 </ExampleCard>
 
@@ -178,14 +211,16 @@ A `Menu` uses the following components, which may also be used standalone or reu
 <ExampleCard
   url="Button.html"
   title="Button"
-  description="A button allows a user to perform an action.">
+  description="A button allows a user to perform an action."
+>
   <Button />
 </ExampleCard>
 
 <ExampleCard
   url="Popover.html"
   title="Popover"
-  description="A popover displays content in context with a trigger element.">
+  description="A popover displays content in context with a trigger element."
+>
   <Popover />
 </ExampleCard>
 
@@ -208,37 +243,52 @@ If you will use a Menu in multiple places in your app, you can wrap all of the p
 This example wraps `MenuTrigger` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. The `MenuItem` component is also wrapped to apply class names based on the current state, as described in the [styling](#styling) section.
 
 ```tsx example export=true
-import type {MenuProps, MenuTriggerProps, MenuItemProps} from 'react-aria-components';
+import type {
+  MenuProps,
+  MenuTriggerProps,
+  MenuItemProps,
+} from "react-aria-components";
 
-interface MyMenuButtonProps<T> extends MenuProps<T>, Omit<MenuTriggerProps, 'children'> {
-  label?: string
+interface MyMenuButtonProps<T>
+  extends MenuProps<T>,
+    Omit<MenuTriggerProps, "children"> {
+  label?: string;
 }
 
-function MyMenuButton<T extends object>({label, children, ...props}: MyMenuButtonProps<T>) {
+function MyMenuButton<T extends object>({
+  label,
+  children,
+  ...props
+}: MyMenuButtonProps<T>) {
   return (
     <MenuTrigger {...props}>
       <Button>{label}</Button>
       <Popover>
-        <Menu {...props}>
-          {children}
-        </Menu>
+        <Menu {...props}>{children}</Menu>
       </Popover>
     </MenuTrigger>
   );
 }
 
 export function MyItem(props: MenuItemProps) {
-  let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
+  let textValue =
+    props.textValue ||
+    (typeof props.children === "string" ? props.children : undefined);
   return (
     <MenuItem
       {...props}
       textValue={textValue}
-      className={({isFocused, isSelected, isOpen}) => `my-item ${isFocused ? 'focused' : ''} ${isOpen ? 'open' : ''}`}>
-      {({hasSubmenu}) => (
+      className={({ isFocused, isSelected, isOpen }) =>
+        `my-item ${isFocused ? "focused" : ""} ${isOpen ? "open" : ""}`
+      }
+    >
+      {({ hasSubmenu }) => (
         <>
           {props.children}
           {hasSubmenu && (
-            <svg className="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" /></svg>
+            <svg className="chevron" viewBox="0 0 24 24">
+              <path d="m9 18 6-6-6-6" />
+            </svg>
           )}
         </>
       )}
@@ -250,7 +300,7 @@ export function MyItem(props: MenuItemProps) {
   <MyItem>Cut</MyItem>
   <MyItem>Copy</MyItem>
   <MyItem>Paste</MyItem>
-</MyMenuButton>
+</MyMenuButton>;
 ```
 
 <details>
@@ -314,17 +364,17 @@ as shown in the example below, then this is used automatically and an `id` prop 
 ```tsx example
 function Example() {
   let items = [
-    {id: 1, name: 'New'},
-    {id: 2, name: 'Open'},
-    {id: 3, name: 'Close'},
-    {id: 4, name: 'Save'},
-    {id: 5, name: 'Duplicate'},
-    {id: 6, name: 'Rename'},
-    {id: 7, name: 'Move'}
+    { id: 1, name: "New" },
+    { id: 2, name: "Open" },
+    { id: 3, name: "Close" },
+    { id: 4, name: "Save" },
+    { id: 5, name: "Duplicate" },
+    { id: 6, name: "Rename" },
+    { id: 7, name: "Move" },
   ];
 
   return (
-    <MyMenuButton label="Actions" items={items} onAction={id => alert(id)}>
+    <MyMenuButton label="Actions" items={items} onAction={(id) => alert(id)}>
       {(item) => <MenuItem>{item.name}</MenuItem>}
     </MyMenuButton>
   );
@@ -339,24 +389,28 @@ Use `defaultSelectedKeys` to provide a default set of selected items (uncontroll
 ### Single
 
 ```tsx example
-import type {Selection} from 'react-aria-components';
+import type { Selection } from "react-aria-components";
 
 function Example() {
-  let [selected, setSelected] = React.useState<Selection>(new Set(['center']));
+  let [selected, setSelected] = React.useState<Selection>(new Set(["center"]));
 
   return (
     <>
-      <MyMenuButton label="Align" selectionMode="single" selectedKeys={selected} onSelectionChange={setSelected}>
+      <MyMenuButton
+        label="Align"
+        selectionMode="single"
+        selectedKeys={selected}
+        onSelectionChange={setSelected}
+      >
         <MenuItem id="left">Left</MenuItem>
         <MenuItem id="center">Center</MenuItem>
         <MenuItem id="right">Right</MenuItem>
       </MyMenuButton>
-      <p>Current selection (controlled): {[...selected].join(', ')}</p>
+      <p>Current selection (controlled): {[...selected].join(", ")}</p>
     </>
   );
 }
 ```
-
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
@@ -372,19 +426,19 @@ function Example() {
       font-weight: 600;
     }
 
-    &[data-selection-mode=multiple][data-selected]::before {
-      content: '✓';
-      content: '✓' / '';
-      alt: ' ';
+    &[data-selection-mode="multiple"][data-selected]::before {
+      content: "✓";
+      content: "✓" / "";
+      alt: " ";
       position: absolute;
       left: 4px;
       font-weight: 600;
     }
 
-    &[data-selection-mode=single][data-selected]::before {
-      content: '●';
-      content: '●' / '';
-      transform: scale(0.7)
+    &[data-selection-mode="single"][data-selected]::before {
+      content: "●";
+      content: "●" / "";
+      transform: scale(0.7);
     }
   }
 }
@@ -395,20 +449,30 @@ function Example() {
 ### Multiple
 
 ```tsx example
-import type {Selection} from 'react-aria-components';
+import type { Selection } from "react-aria-components";
 
 function Example() {
-  let [selected, setSelected] = React.useState<Selection>(new Set(['sidebar', 'console']));
+  let [selected, setSelected] = React.useState<Selection>(
+    new Set(["sidebar", "console"])
+  );
 
   return (
     <>
-      <MyMenuButton label="View" selectionMode="multiple" selectedKeys={selected} onSelectionChange={setSelected}>
-        <MenuItem id='sidebar'>Sidebar</MenuItem>
-        <MenuItem id='searchbar'>Searchbar</MenuItem>
-        <MenuItem id='tools'>Tools</MenuItem>
-        <MenuItem id='console'>Console</MenuItem>
+      <MyMenuButton
+        label="View"
+        selectionMode="multiple"
+        selectedKeys={selected}
+        onSelectionChange={setSelected}
+      >
+        <MenuItem id="sidebar">Sidebar</MenuItem>
+        <MenuItem id="searchbar">Searchbar</MenuItem>
+        <MenuItem id="tools">Tools</MenuItem>
+        <MenuItem id="console">Console</MenuItem>
       </MyMenuButton>
-      <p>Current selection (controlled): {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
+      <p>
+        Current selection (controlled):{" "}
+        {selected === "all" ? "all" : [...selected].join(", ")}
+      </p>
     </>
   );
 }
@@ -420,10 +484,18 @@ By default, interacting with an item in a Menu triggers `onAction` and optionall
 
 ```tsx example
 <MyMenuButton label="Links">
-  <MenuItem href="https://adobe.com/" target="_blank">Adobe</MenuItem>
-  <MenuItem href="https://apple.com/" target="_blank">Apple</MenuItem>
-  <MenuItem href="https://google.com/" target="_blank">Google</MenuItem>
-  <MenuItem href="https://microsoft.com/" target="_blank">Microsoft</MenuItem>
+  <MenuItem href="https://adobe.com/" target="_blank">
+    Adobe
+  </MenuItem>
+  <MenuItem href="https://apple.com/" target="_blank">
+    Apple
+  </MenuItem>
+  <MenuItem href="https://google.com/" target="_blank">
+    Google
+  </MenuItem>
+  <MenuItem href="https://microsoft.com/" target="_blank">
+    Microsoft
+  </MenuItem>
 </MyMenuButton>
 ```
 
@@ -445,7 +517,7 @@ Menu supports sections with headings in order to group items. Sections can be us
 ### Static items
 
 ```tsx example
-import {MenuSection, Header} from 'react-aria-components';
+import { MenuSection, Header } from "react-aria-components";
 
 <MyMenuButton label="Actions">
   <MenuSection>
@@ -459,7 +531,7 @@ import {MenuSection, Header} from 'react-aria-components';
     <MenuItem>Middle</MenuItem>
     <MenuItem>Right</MenuItem>
   </MenuSection>
-</MyMenuButton>
+</MyMenuButton>;
 ```
 
 <details>
@@ -488,28 +560,26 @@ Similarly to the props on Menu, `<MenuSection>` takes an array of data using the
 the <TypeLink links={docs.links} type={docs.exports.Collection} /> component can be used to render the child items.
 
 ```tsx example
-import type {Selection} from 'react-aria-components';
-import {Collection} from 'react-aria-components';
+import type { Selection } from "react-aria-components";
+import { Collection } from "react-aria-components";
 
 function Example() {
-  let [selected, setSelected] = React.useState<Selection>(new Set([1,3]));
+  let [selected, setSelected] = React.useState<Selection>(new Set([1, 3]));
   let openWindows = [
     {
-      name: 'Left Panel',
-      id: 'left',
-      children: [
-        {id: 1, name: 'Final Copy (1)'}
-      ]
+      name: "Left Panel",
+      id: "left",
+      children: [{ id: 1, name: "Final Copy (1)" }],
     },
     {
-      name: 'Right Panel',
-      id: 'right',
+      name: "Right Panel",
+      id: "right",
       children: [
-        {id: 2, name: 'index.ts'},
-        {id: 3, name: 'package.json'},
-        {id: 4, name: 'license.txt'}
-      ]
-    }
+        { id: 2, name: "index.ts" },
+        { id: 3, name: "package.json" },
+        { id: 4, name: "license.txt" },
+      ],
+    },
   ];
 
   return (
@@ -518,12 +588,13 @@ function Example() {
       items={openWindows}
       selectionMode="multiple"
       selectedKeys={selected}
-      onSelectionChange={setSelected}>
-      {section => (
+      onSelectionChange={setSelected}
+    >
+      {(section) => (
         <MenuSection>
           <Header>{section.name}</Header>
           <Collection items={section.children}>
-            {item => <MenuItem>{item.name}</MenuItem>}
+            {(item) => <MenuItem>{item.name}</MenuItem>}
           </Collection>
         </MenuSection>
       )}
@@ -537,7 +608,7 @@ function Example() {
 Separators may be added between menu items or sections in order to create non-labeled groupings.
 
 ```tsx example
-import {Separator} from 'react-aria-components';
+import { Separator } from "react-aria-components";
 
 <MyMenuButton label="Actions">
   <MenuItem>New…</MenuItem>
@@ -549,7 +620,7 @@ import {Separator} from 'react-aria-components';
   <Separator />
   <MenuItem>Page setup…</MenuItem>
   <MenuItem>Print…</MenuItem>
-</MyMenuButton>
+</MyMenuButton>;
 ```
 
 <details>
@@ -573,8 +644,8 @@ Each section in a menu may have independent selection states. This works the sam
 
 ```tsx example
 function Example() {
-  let [style, setStyle] = React.useState<Selection>(new Set(['bold']));
-  let [align, setAlign] = React.useState<Selection>(new Set(['left']));
+  let [style, setStyle] = React.useState<Selection>(new Set(["bold"]));
+  let [align, setAlign] = React.useState<Selection>(new Set(["left"]));
   return (
     <MyMenuButton label="Edit">
       <MenuSection>
@@ -583,13 +654,21 @@ function Example() {
         <MenuItem>Copy</MenuItem>
         <MenuItem>Paste</MenuItem>
       </MenuSection>
-      <MenuSection selectionMode="multiple" selectedKeys={style} onSelectionChange={setStyle}>
+      <MenuSection
+        selectionMode="multiple"
+        selectedKeys={style}
+        onSelectionChange={setStyle}
+      >
         <Header>Text style</Header>
         <MenuItem id="bold">Bold</MenuItem>
         <MenuItem id="italic">Italic</MenuItem>
         <MenuItem id="underline">Underline</MenuItem>
       </MenuSection>
-      <MenuSection selectionMode="single" selectedKeys={align} onSelectionChange={setAlign}>
+      <MenuSection
+        selectionMode="single"
+        selectedKeys={align}
+        onSelectionChange={setAlign}
+      >
         <Header>Text alignment</Header>
         <MenuItem id="left">Left</MenuItem>
         <MenuItem id="center">Center</MenuItem>
@@ -609,7 +688,7 @@ Sections without a `<Header>` must provide an `aria-label` for accessibility.
 By default, items in a `ListBox` are labeled by their text contents for accessibility. MenuItems also support the "label" and "description" slots to separate primary and secondary content, which improves screen reader announcements and can also be used for styling purposes. The `<Keyboard>` component can also be used to display a keyboard shortcut.
 
 ```tsx example
-import {Text, Keyboard} from 'react-aria-components';
+import { Text, Keyboard } from "react-aria-components";
 
 <MyMenuButton label="Actions">
   <MenuItem textValue="Copy">
@@ -627,7 +706,7 @@ import {Text, Keyboard} from 'react-aria-components';
     <Text slot="description">Paste the copied text</Text>
     <Keyboard>⌘V</Keyboard>
   </MenuItem>
-</MyMenuButton>
+</MyMenuButton>;
 ```
 
 <details>
@@ -635,12 +714,12 @@ import {Text, Keyboard} from 'react-aria-components';
 
 ```css
 .react-aria-MenuItem {
-  [slot=label] {
+  [slot="label"] {
     font-weight: bold;
     grid-area: label;
   }
 
-  [slot=description] {
+  [slot="description"] {
     font-size: small;
     grid-area: desc;
   }
@@ -661,7 +740,7 @@ By default, MenuTrigger opens by pressing the trigger element or activating it v
 
 ```tsx example
 <MenuTrigger trigger="longPress">
-  <Button onPress={() => alert('crop')}>Crop</Button>
+  <Button onPress={() => alert("crop")}>Crop</Button>
   <Popover>
     <Menu>
       <MenuItem>Rotate</MenuItem>
@@ -706,13 +785,13 @@ to the `items` prop (see the [Collections](collections.html) for more details). 
 ```tsx example
 function Example() {
   let items = [
-    {id: 1, name: 'New'},
-    {id: 2, name: 'Open'},
-    {id: 3, name: 'Close'},
-    {id: 4, name: 'Save'},
-    {id: 5, name: 'Duplicate'},
-    {id: 6, name: 'Rename'},
-    {id: 7, name: 'Move'}
+    { id: 1, name: "New" },
+    { id: 2, name: "Open" },
+    { id: 3, name: "Close" },
+    { id: 4, name: "Save" },
+    { id: 5, name: "Duplicate" },
+    { id: 6, name: "Rename" },
+    { id: 7, name: "Move" },
   ];
 
   return (
@@ -739,11 +818,8 @@ function Example() {
 
   return (
     <>
-      <p>Menu is {open ? 'open' : 'closed'}</p>
-      <MyMenuButton
-        label="View"
-        isOpen={open}
-        onOpenChange={setOpen}>
+      <p>Menu is {open ? "open" : "closed"}</p>
+      <MyMenuButton label="View" isOpen={open} onOpenChange={setOpen}>
         <MenuItem id="side">Side bar</MenuItem>
         <MenuItem id="options">Page options</MenuItem>
         <MenuItem id="edit">Edit Panel</MenuItem>
@@ -760,7 +836,7 @@ Submenus can be created by wrapping an item and a submenu in a `SubmenuTrigger`.
 ### Static
 
 ```tsx example
-import {Menu, Popover, SubmenuTrigger} from 'react-aria-components';
+import { Menu, Popover, SubmenuTrigger } from "react-aria-components";
 
 <MyMenuButton label="Actions">
   <MyItem>Cut</MyItem>
@@ -784,7 +860,7 @@ import {Menu, Popover, SubmenuTrigger} from 'react-aria-components';
       </Menu>
     </Popover>
   </SubmenuTrigger>
-</MyMenuButton>
+</MyMenuButton>;
 ```
 
 ### Dynamic
@@ -792,20 +868,28 @@ import {Menu, Popover, SubmenuTrigger} from 'react-aria-components';
 You can define a recursive function to render the nested menu items dynamically.
 
 ```tsx example
-import {Menu, Popover, SubmenuTrigger} from 'react-aria-components';
+import { Menu, Popover, SubmenuTrigger } from "react-aria-components";
 
 let items = [
-  {id: 'cut', name: 'Cut'},
-  {id: 'copy', name: 'Copy'},
-  {id: 'delete', name: 'Delete'},
-  {id: 'share', name: 'Share', children: [
-    {id: 'sms', name: 'SMS'},
-    {id: 'x', name: 'X'},
-    {id: 'email', name: 'Email', children: [
-      {id: 'work', name: 'Work'},
-      {id: 'personal', name: 'Personal'},
-    ]}
-  ]}
+  { id: "cut", name: "Cut" },
+  { id: "copy", name: "Copy" },
+  { id: "delete", name: "Delete" },
+  {
+    id: "share",
+    name: "Share",
+    children: [
+      { id: "sms", name: "SMS" },
+      { id: "x", name: "X" },
+      {
+        id: "email",
+        name: "Email",
+        children: [
+          { id: "work", name: "Work" },
+          { id: "personal", name: "Personal" },
+        ],
+      },
+    ],
+  },
 ];
 
 <MyMenuButton label="Actions" items={items}>
@@ -815,9 +899,7 @@ let items = [
         <SubmenuTrigger>
           <MyItem key={item.name}>{item.name}</MyItem>
           <Popover>
-            <Menu items={item.children}>
-              {(item) => renderSubmenu(item)}
-            </Menu>
+            <Menu items={item.children}>{(item) => renderSubmenu(item)}</Menu>
           </Popover>
         </SubmenuTrigger>
       );
@@ -825,18 +907,18 @@ let items = [
       return <MyItem key={item.name}>{item.name}</MyItem>;
     }
   }}
-</MyMenuButton>
+</MyMenuButton>;
 ```
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-Popover[data-trigger=SubmenuTrigger][data-placement="right"] {
+.react-aria-Popover[data-trigger="SubmenuTrigger"][data-placement="right"] {
   margin-left: -5px;
 }
 
-.react-aria-Popover[data-trigger=SubmenuTrigger][data-placement="left"] {
+.react-aria-Popover[data-trigger="SubmenuTrigger"][data-placement="left"] {
   margin-right: -5px;
 }
 ```
@@ -848,11 +930,17 @@ let items = [
 Submenu popovers can also include components other than menus. This example uses an [Autocomplete](Autocomplete.html) to make the submenu searchable.
 
 ```tsx example
-import {Menu, Popover, SubmenuTrigger, Autocomplete, useFilter} from 'react-aria-components';
-import {MySearchField} from './SearchField';
+import {
+  Menu,
+  Popover,
+  SubmenuTrigger,
+  Autocomplete,
+  useFilter,
+} from "react-aria-components";
+import { MySearchField } from "./SearchField";
 
 function Example() {
-  let {contains} = useFilter({sensitivity: 'base'});
+  let { contains } = useFilter({ sensitivity: "base" });
 
   return (
     <MyMenuButton label="Actions">
@@ -884,7 +972,7 @@ function Example() {
 ```
 
 ```css hidden
-.react-aria-Popover[data-trigger=SubmenuTrigger] .react-aria-SearchField {
+.react-aria-Popover[data-trigger="SubmenuTrigger"] .react-aria-SearchField {
   margin: 4px 8px;
 }
 ```
@@ -894,7 +982,7 @@ function Example() {
 `MenuTrigger` works out of the box with any pressable React Aria component (e.g. [Button](Button.html), [Link](Link.html), etc.). Custom trigger elements such as third party components and other DOM elements are also supported by wrapping them with the `<Pressable>` component, or using the [usePress](usePress.html) hook.
 
 ```tsx example
-import {Pressable} from 'react-aria-components';
+import { Pressable } from "react-aria-components";
 
 <MenuTrigger>
   {/*- begin highlight -*/}
@@ -910,7 +998,7 @@ import {Pressable} from 'react-aria-components';
       <MenuItem>Delete…</MenuItem>
     </Menu>
   </Popover>
-</MenuTrigger>
+</MenuTrigger>;
 ```
 
 Note that any `<Pressable>` child must have an [interactive ARIA role](https://www.w3.org/TR/wai-aria-1.2/#widget_roles) or use an appropriate semantic HTML element so that screen readers can announce the trigger. Trigger components must forward their `ref` and spread all props to a DOM element.
@@ -1007,9 +1095,7 @@ React Aria components can be styled in many ways, including using CSS classes, i
 A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
 
 ```jsx
-<Menu className="my-menu">
-  {/* ... */}
-</Menu>
+<Menu className="my-menu">{/* ... */}</Menu>
 ```
 
 In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
@@ -1027,7 +1113,9 @@ In addition, some components support multiple UI states (e.g. pressed, hovered, 
 The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
 
 ```jsx
-<MenuItem className={({isSelected}) => isSelected ? 'bg-blue-400' : 'bg-gray-100'}>
+<MenuItem
+  className={({ isSelected }) => (isSelected ? "bg-blue-400" : "bg-gray-100")}
+>
   Item
 </MenuItem>
 ```
@@ -1036,7 +1124,7 @@ Render props may also be used as children to alter what elements are rendered ba
 
 ```jsx
 <MenuItem>
-  {({isSelected}) => (
+  {({ isSelected }) => (
     <>
       {isSelected && <CheckmarkIcon />}
       Item
@@ -1053,9 +1141,7 @@ The `MenuTrigger` component does not render any DOM elements (it only passes thr
 
 ```jsx
 <MenuTrigger>
-  <div className="my-menu-trigger">
-    {/* ... */}
-  </div>
+  <div className="my-menu-trigger">{/* ... */}</div>
 </MenuTrigger>
 ```
 
@@ -1074,7 +1160,7 @@ The [Popover](Popover.html) component can be targeted with the `.react-aria-Popo
 Within a MenuTrigger, the popover will have the `data-trigger="MenuTrigger"` attribute, which can be used to define menu-specific styles. In addition, the `--trigger-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the menu button.
 
 ```css render=false
-.react-aria-Popover[data-trigger=MenuTrigger] {
+.react-aria-Popover[data-trigger="MenuTrigger"] {
   width: var(--trigger-width);
 }
 ```
@@ -1082,11 +1168,11 @@ Within a MenuTrigger, the popover will have the `data-trigger="MenuTrigger"` att
 Within a SubmenuTrigger, the popover will have the `data-trigger="SubmenuTrigger"` attribute, which can be used to define submenu-specific styles.
 
 ```css render=false
-.react-aria-Popover[data-trigger=SubmenuTrigger][data-placement="right"] {
+.react-aria-Popover[data-trigger="SubmenuTrigger"][data-placement="right"] {
   transform: translateX(-5px);
 }
 
-.react-aria-Popover[data-trigger=SubmenuTrigger][data-placement="left"] {
+.react-aria-Popover[data-trigger="SubmenuTrigger"][data-placement="left"] {
   transform: translateX(5px);
 }
 ```
@@ -1125,7 +1211,7 @@ If you need to customize one of the components within a `MenuTrigger`, such as `
 
 ```tsx
 function MyMenu(props) {
-  return <Menu {...props} className="my-menu" />
+  return <Menu {...props} className="my-menu" />;
 }
 ```
 
@@ -1133,22 +1219,30 @@ function MyMenu(props) {
 
 MenuTrigger passes props to its child components, such as the button and popover, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
 
-<ContextTable components={['Button', 'Popover', 'Menu', 'Separator', 'Text', 'Keyboard']} docs={docs} />
+<ContextTable
+  components={["Button", "Popover", "Menu", "Separator", "Text", "Keyboard"]}
+  docs={docs}
+/>
 
 This example consumes from `KeyboardContext` in an existing styled keyboard shortcut component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by Menu.
 
 ```tsx
-import {KeyboardContext, useContextProps} from 'react-aria-components';
+import { KeyboardContext, useContextProps } from "react-aria-components";
 
-const MyKeyboard = React.forwardRef((props: React.HTMLAttributes<HTMLElement>, ref: React.ForwardedRef<HTMLElement>) => {
-  // Merge the local props and ref with the ones provided via context.
-  ///- begin highlight -///
-  [props, ref] = useContextProps(props, ref, KeyboardContext);
-  ///- end highlight -///
+const MyKeyboard = React.forwardRef(
+  (
+    props: React.HTMLAttributes<HTMLElement>,
+    ref: React.ForwardedRef<HTMLElement>
+  ) => {
+    // Merge the local props and ref with the ones provided via context.
+    ///- begin highlight -///
+    [props, ref] = useContextProps(props, ref, KeyboardContext);
+    ///- end highlight -///
 
-  // ... your existing Keyboard component
-  return <kbd {...props} ref={ref} />;
-});
+    // ... your existing Keyboard component
+    return <kbd {...props} ref={ref} />;
+  }
+);
 ```
 
 Now you can use `MyKeyboard` within a `Menu`, in place of the builtin React Aria Components `Keyboard`.
@@ -1172,32 +1266,44 @@ If you need to customize things further, such as intercepting events or customiz
 This example implements a custom `OptionMenuTrigger` component that intercepts the keyboard and press events returned by `useMenuTrigger` so that the menu only opens if the user holds the <Keyboard>Alt</Keyboard> key. This allows a button to have a default action, with additional options for power users.
 
 ```tsx example render=false export=true
-import {ButtonContext, OverlayTriggerStateContext, PopoverContext, MenuContext, Provider} from 'react-aria-components';
-import {useMenuTriggerState} from 'react-stately';
-import {useMenuTrigger} from 'react-aria';
+import {
+  ButtonContext,
+  OverlayTriggerStateContext,
+  PopoverContext,
+  MenuContext,
+  Provider,
+} from "react-aria-components";
+import { useMenuTriggerState } from "react-stately";
+import { useMenuTrigger } from "react-aria";
 
 function OptionMenuTrigger(props: MenuTriggerProps) {
   let state = useMenuTriggerState(props);
   let ref = React.useRef(null);
-  let {menuTriggerProps, menuProps} = useMenuTrigger(props, state, ref);
+  let { menuTriggerProps, menuProps } = useMenuTrigger(props, state, ref);
 
   return (
     // Provider is a utility that renders multiple context providers without nesting.
     <Provider
       values={[
-        [ButtonContext, {
-          ...menuTriggerProps,
-          // Intercept events and only forward to useMenuTrigger if alt key is held.
-          onPressStart: e => e.altKey && menuTriggerProps.onPressStart(e),
-          onPress: e => (e.pointerType !== 'mouse' || e.altKey) && menuTriggerProps.onPress(e),
-          onKeyDown: e => e.altKey && menuTriggerProps.onKeyDown(e),
-          ref,
-          isPressed: state.isOpen
-        }],
+        [
+          ButtonContext,
+          {
+            ...menuTriggerProps,
+            // Intercept events and only forward to useMenuTrigger if alt key is held.
+            onPressStart: (e) => e.altKey && menuTriggerProps.onPressStart(e),
+            onPress: (e) =>
+              (e.pointerType !== "mouse" || e.altKey) &&
+              menuTriggerProps.onPress(e),
+            onKeyDown: (e) => e.altKey && menuTriggerProps.onKeyDown(e),
+            ref,
+            isPressed: state.isOpen,
+          },
+        ],
         [OverlayTriggerStateContext, state],
-        [PopoverContext, {triggerRef: ref, placement: 'bottom start'}],
-        [MenuContext, menuProps]
-      ]}>
+        [PopoverContext, { triggerRef: ref, placement: "bottom start" }],
+        [MenuContext, menuProps],
+      ]}
+    >
       {props.children}
     </Provider>
   );
@@ -1224,36 +1330,41 @@ By providing the above contexts, the existing `Button`, `Popover`, and `Menu` co
 
 ### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
-`@react-aria/test-utils` offers common menu interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
+`@react-aria-nutrient/test-utils` offers common menu interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the menu tester and a sample of how you could use it in your test suite.
 
 ```ts
 // Menu.test.ts
-import {render} from '@testing-library/react';
-import {User} from '@react-aria/test-utils';
+import { render } from "@testing-library/react";
+import { User } from "@react-aria-nutrient/test-utils";
 
-let testUtilUser = new User({interactionType: 'mouse'});
+let testUtilUser = new User({ interactionType: "mouse" });
 // ...
 
-it('Menu can open its submenu via keyboard', async function () {
+it("Menu can open its submenu via keyboard", async function () {
   // Render your test component/app and initialize the menu tester
-  let {getByTestId} = render(
+  let { getByTestId } = render(
     <MenuTrigger>
       <Button data-testid="test-menutrigger">Menu trigger</Button>
       ...
     </MenuTrigger>
   );
-  let menuTester = testUtilUser.createTester('Menu', {root: getByTestId('test-menutrigger'), interactionType: 'keyboard'});
+  let menuTester = testUtilUser.createTester("Menu", {
+    root: getByTestId("test-menutrigger"),
+    interactionType: "keyboard",
+  });
 
   await menuTester.open();
   expect(menuTester.menu).toBeInTheDocument();
   let submenuTriggers = menuTester.submenuTriggers;
   expect(submenuTriggers).toHaveLength(1);
 
-  let submenuTester = await menuTester.openSubmenu({submenuTrigger: 'Share…'});
+  let submenuTester = await menuTester.openSubmenu({
+    submenuTrigger: "Share…",
+  });
   expect(submenuTester.menu).toBeInTheDocument();
 
-  await submenuTester.selectOption({option: submenuTester.options()[0]});
+  await submenuTester.selectOption({ option: submenuTester.options()[0] });
   expect(submenuTester.menu).not.toBeInTheDocument();
   expect(menuTester.menu).not.toBeInTheDocument();
 });

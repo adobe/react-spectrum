@@ -9,18 +9,22 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {ActionButton} from '@react-spectrum/button';
-import {BreadcrumbItem} from './BreadcrumbItem';
-import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, Key} from '@react-types/shared';
-import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
-import {Menu, MenuTrigger} from '@react-spectrum/menu';
-import React, {ReactElement, useCallback, useRef} from 'react';
-import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
-import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
-import {useBreadcrumbs} from '@react-aria/breadcrumbs';
-import {useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
-import {useProviderProps} from '@react-spectrum/provider';
+import { ActionButton } from "@react-spectrum/button";
+import { BreadcrumbItem } from "./BreadcrumbItem";
+import { classNames, useDOMRef, useStyleProps } from "@react-spectrum/utils";
+import { DOMRef, Key } from "@react-types/shared";
+import FolderBreadcrumb from "@spectrum-icons/ui/FolderBreadcrumb";
+import { Menu, MenuTrigger } from "@react-spectrum/menu";
+import React, { ReactElement, useCallback, useRef } from "react";
+import { SpectrumBreadcrumbsProps } from "@react-types/breadcrumbs";
+import styles from "@adobe/spectrum-css-temp/components/breadcrumb/vars.css";
+import { useBreadcrumbs } from "@react-aria-nutrient/breadcrumbs";
+import {
+  useLayoutEffect,
+  useResizeObserver,
+  useValueEffect,
+} from "@react-aria-nutrient/utils";
+import { useProviderProps } from "@react-spectrum/provider";
 
 const MIN_VISIBLE_ITEMS = 1;
 const MAX_VISIBLE_ITEMS = 4;
@@ -28,10 +32,13 @@ const MAX_VISIBLE_ITEMS = 4;
 /**
  * Breadcrumbs show hierarchy and navigational context for a user’s location within an application.
  */
-export const Breadcrumbs = React.forwardRef(function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
+export const Breadcrumbs = React.forwardRef(function Breadcrumbs<T>(
+  props: SpectrumBreadcrumbsProps<T>,
+  ref: DOMRef
+) {
   props = useProviderProps(props);
   let {
-    size = 'L',
+    size = "L",
     isMultiline,
     children,
     showRoot,
@@ -46,7 +53,7 @@ export const Breadcrumbs = React.forwardRef(function Breadcrumbs<T>(props: Spect
   React.Children.forEach(children, (child, index) => {
     if (React.isValidElement(child)) {
       if (child.key == null) {
-        child = React.cloneElement(child, {key: index});
+        child = React.cloneElement(child, { key: index });
       }
       childArray.push(child);
     }
@@ -57,8 +64,8 @@ export const Breadcrumbs = React.forwardRef(function Breadcrumbs<T>(props: Spect
 
   let [visibleItems, setVisibleItems] = useValueEffect(childArray.length);
 
-  let {navProps} = useBreadcrumbs(props);
-  let {styleProps} = useStyleProps(otherProps);
+  let { navProps } = useBreadcrumbs(props);
+  let { styleProps } = useStyleProps(otherProps);
 
   let updateOverflow = useCallback(() => {
     let computeVisibleItems = (visibleItems: number): number => {
@@ -99,15 +106,15 @@ export const Breadcrumbs = React.forwardRef(function Breadcrumbs<T>(props: Spect
       } else {
         if (listItems.length > 0) {
           // Ensure the last breadcrumb isn't truncated when we measure it.
-          let last = (listItems.pop() as HTMLLIElement);
-          last.style.overflow = 'visible';
+          let last = listItems.pop() as HTMLLIElement;
+          last.style.overflow = "visible";
 
           calculatedWidth += last.offsetWidth;
           if (calculatedWidth < containerWidth) {
             newVisibleItems++;
           }
 
-          last.style.overflow = '';
+          last.style.overflow = "";
         }
       }
 
@@ -118,10 +125,13 @@ export const Breadcrumbs = React.forwardRef(function Breadcrumbs<T>(props: Spect
         }
       }
 
-      return Math.max(MIN_VISIBLE_ITEMS, Math.min(maxVisibleItems, newVisibleItems));
+      return Math.max(
+        MIN_VISIBLE_ITEMS,
+        Math.min(maxVisibleItems, newVisibleItems)
+      );
     };
 
-    setVisibleItems(function *() {
+    setVisibleItems(function* () {
       // Update to show all items.
       yield childArray.length;
 
@@ -137,7 +147,7 @@ export const Breadcrumbs = React.forwardRef(function Breadcrumbs<T>(props: Spect
     });
   }, [childArray.length, setVisibleItems, showRoot, isMultiline]);
 
-  useResizeObserver({ref: domRef, onResize: updateOverflow});
+  useResizeObserver({ ref: domRef, onResize: updateOverflow });
 
   let lastChildren = useRef<typeof children | null>(null);
   useLayoutEffect(() => {
@@ -162,13 +172,21 @@ export const Breadcrumbs = React.forwardRef(function Breadcrumbs<T>(props: Spect
       <BreadcrumbItem key="menu" isMenu>
         <MenuTrigger>
           <ActionButton
-            UNSAFE_className={classNames(styles, 'spectrum-Breadcrumbs-actionButton')}
+            UNSAFE_className={classNames(
+              styles,
+              "spectrum-Breadcrumbs-actionButton"
+            )}
             aria-label="…"
             isQuiet
-            isDisabled={isDisabled}>
+            isDisabled={isDisabled}
+          >
             <FolderBreadcrumb />
           </ActionButton>
-          <Menu selectionMode="single" selectedKeys={[selectedKey]} onAction={onMenuAction}>
+          <Menu
+            selectionMode="single"
+            selectedKeys={[selectedKey]}
+            onAction={onMenuAction}
+          >
             {childArray}
           </Menu>
         </MenuTrigger>
@@ -201,19 +219,16 @@ export const Breadcrumbs = React.forwardRef(function Breadcrumbs<T>(props: Spect
     return (
       <li
         key={index}
-        className={
-          classNames(
-            styles,
-            'spectrum-Breadcrumbs-item'
-          )
-        }>
+        className={classNames(styles, "spectrum-Breadcrumbs-item")}
+      >
         <BreadcrumbItem
           {...child.props}
           key={key}
           isCurrent={isCurrent}
           isDisabled={isDisabled}
           onPress={onPress}
-          autoFocus={isCurrent && autoFocusCurrent}>
+          autoFocus={isCurrent && autoFocusCurrent}
+        >
           {child.props.children}
         </BreadcrumbItem>
       </li>
@@ -221,26 +236,22 @@ export const Breadcrumbs = React.forwardRef(function Breadcrumbs<T>(props: Spect
   });
 
   return (
-    <nav
-      {...styleProps}
-      {...navProps}
-      ref={domRef}>
+    <nav {...styleProps} {...navProps} ref={domRef}>
       <ul
         ref={listRef}
-        className={
-          classNames(
-            styles,
-            'spectrum-Breadcrumbs',
-            {
-              'spectrum-Breadcrumbs--small': size === 'S',
-              'spectrum-Breadcrumbs--medium': size === 'M',
-              'spectrum-Breadcrumbs--multiline': isMultiline,
-              'spectrum-Breadcrumbs--showRoot': showRoot,
-              'is-disabled': isDisabled
-            },
-            styleProps.className
-          )
-        }>
+        className={classNames(
+          styles,
+          "spectrum-Breadcrumbs",
+          {
+            "spectrum-Breadcrumbs--small": size === "S",
+            "spectrum-Breadcrumbs--medium": size === "M",
+            "spectrum-Breadcrumbs--multiline": isMultiline,
+            "spectrum-Breadcrumbs--showRoot": showRoot,
+            "is-disabled": isDisabled,
+          },
+          styleProps.className
+        )}
+      >
         {breadcrumbItems}
       </ul>
     </nav>

@@ -10,52 +10,69 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames} from '@react-spectrum/utils';
-import {FocusableElement, ItemDropTarget} from '@react-types/shared';
-import React, {DOMAttributes, HTMLAttributes, ReactNode, useRef} from 'react';
-import styles from './table.css';
-import {useTableContext} from './TableViewBase';
-import {useVisuallyHidden} from '@react-aria/visually-hidden';
+import { classNames } from "@react-spectrum/utils";
+import { FocusableElement, ItemDropTarget } from "@react-types/shared";
+import React, { DOMAttributes, HTMLAttributes, ReactNode, useRef } from "react";
+import styles from "./table.css";
+import { useTableContext } from "./TableViewBase";
+import { useVisuallyHidden } from "@react-aria-nutrient/visually-hidden";
 
 interface InsertionIndicatorProps {
-  target: ItemDropTarget,
-  rowProps: HTMLAttributes<HTMLElement> & DOMAttributes<FocusableElement>
+  target: ItemDropTarget;
+  rowProps: HTMLAttributes<HTMLElement> & DOMAttributes<FocusableElement>;
 }
 
-export function InsertionIndicator(props: InsertionIndicatorProps): ReactNode | null {
-  let {dropState, dragAndDropHooks} = useTableContext();
-  const {target, rowProps} = props;
+export function InsertionIndicator(
+  props: InsertionIndicatorProps
+): ReactNode | null {
+  let { dropState, dragAndDropHooks } = useTableContext();
+  const { target, rowProps } = props;
 
   let ref = useRef<HTMLDivElement | null>(null);
-  let {dropIndicatorProps} = dragAndDropHooks!.useDropIndicator!(props, dropState!, ref);
-  let {visuallyHiddenProps} = useVisuallyHidden();
+  let { dropIndicatorProps } = dragAndDropHooks!.useDropIndicator!(
+    props,
+    dropState!,
+    ref
+  );
+  let { visuallyHiddenProps } = useVisuallyHidden();
 
   let isDropTarget = dropState!.isDropTarget(target);
 
-  if (!isDropTarget && dropIndicatorProps['aria-hidden']) {
+  if (!isDropTarget && dropIndicatorProps["aria-hidden"]) {
     return null;
   }
 
   return (
     <div
       style={{
-        position: 'absolute',
-        top: typeof rowProps.style?.top === 'number' && typeof rowProps.style?.height === 'number' ? rowProps.style.top + (target.dropPosition === 'after' ? rowProps.style.height : 0) : 0,
-        width: rowProps.style?.width
+        position: "absolute",
+        top:
+          typeof rowProps.style?.top === "number" &&
+          typeof rowProps.style?.height === "number"
+            ? rowProps.style.top +
+              (target.dropPosition === "after" ? rowProps.style.height : 0)
+            : 0,
+        width: rowProps.style?.width,
       }}
       role="row"
-      aria-hidden={dropIndicatorProps['aria-hidden']}>
+      aria-hidden={dropIndicatorProps["aria-hidden"]}
+    >
       <div
         role="gridcell"
-        className={
-          classNames(
-            styles,
-            'react-spectrum-Table-InsertionIndicator',
-            {
-              'react-spectrum-Table-InsertionIndicator--dropTarget': isDropTarget
-            }
-        )}>
-        <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={ref} />
+        className={classNames(
+          styles,
+          "react-spectrum-Table-InsertionIndicator",
+          {
+            "react-spectrum-Table-InsertionIndicator--dropTarget": isDropTarget,
+          }
+        )}
+      >
+        <div
+          {...visuallyHiddenProps}
+          role="button"
+          {...dropIndicatorProps}
+          ref={ref}
+        />
       </div>
     </div>
   );

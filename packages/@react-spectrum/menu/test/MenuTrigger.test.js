@@ -29,8 +29,8 @@ import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
-import {User} from '@react-aria/test-utils';
+import {UNSTABLE_PortalProvider} from '@react-aria-nutrient/overlays';
+import {User} from '@react-aria-nutrient/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let triggerText = 'Menu Button';

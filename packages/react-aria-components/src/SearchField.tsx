@@ -10,108 +10,171 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSearchFieldProps, useSearchField} from 'react-aria';
-import {ButtonContext} from './Button';
-import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
-import {createHideableComponent} from '@react-aria/collections';
-import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {FormContext} from './Form';
-import {GroupContext} from './Group';
-import {InputContext} from './Input';
-import {LabelContext} from './Label';
-import React, {createContext, ForwardedRef, useRef} from 'react';
-import {SearchFieldState, useSearchFieldState} from 'react-stately';
-import {TextContext} from './Text';
+import { AriaSearchFieldProps, useSearchField } from "react-aria";
+import { ButtonContext } from "./Button";
+import {
+  ContextValue,
+  Provider,
+  RACValidation,
+  removeDataAttributes,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps,
+  useSlot,
+  useSlottedContext,
+} from "./utils";
+import { createHideableComponent } from "@react-aria-nutrient/collections";
+import { FieldErrorContext } from "./FieldError";
+import { filterDOMProps, mergeProps } from "@react-aria-nutrient/utils";
+import { FormContext } from "./Form";
+import { GroupContext } from "./Group";
+import { InputContext } from "./Input";
+import { LabelContext } from "./Label";
+import React, { createContext, ForwardedRef, useRef } from "react";
+import { SearchFieldState, useSearchFieldState } from "react-stately";
+import { TextContext } from "./Text";
 
 export interface SearchFieldRenderProps {
   /**
    * Whether the search field is empty.
    * @selector [data-empty]
    */
-  isEmpty: boolean,
+  isEmpty: boolean;
   /**
    * Whether the search field is disabled.
    * @selector [data-disabled]
    */
-  isDisabled: boolean,
+  isDisabled: boolean;
   /**
    * Whether the search field is invalid.
    * @selector [data-invalid]
    */
-  isInvalid: boolean,
+  isInvalid: boolean;
   /**
    * State of the search field.
    */
-  state: SearchFieldState
+  state: SearchFieldState;
 }
 
-export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<SearchFieldRenderProps>, SlotProps {}
+export interface SearchFieldProps
+  extends Omit<
+      AriaSearchFieldProps,
+      | "label"
+      | "placeholder"
+      | "description"
+      | "errorMessage"
+      | "validationState"
+      | "validationBehavior"
+    >,
+    RACValidation,
+    RenderProps<SearchFieldRenderProps>,
+    SlotProps {}
 
-export const SearchFieldContext = createContext<ContextValue<SearchFieldProps, HTMLDivElement>>(null);
+export const SearchFieldContext =
+  createContext<ContextValue<SearchFieldProps, HTMLDivElement>>(null);
 
 /**
  * A search field allows a user to enter and clear a search query.
  */
-export const SearchField = /*#__PURE__*/ createHideableComponent(function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>) {
-  [props, ref] = useContextProps(props, ref, SearchFieldContext);
-  let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
-  let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
-  let inputRef = useRef<HTMLInputElement>(null);
-  let [inputContextProps, mergedInputRef] = useContextProps({}, inputRef, InputContext);
-  let [labelRef, label] = useSlot(
-    !props['aria-label'] && !props['aria-labelledby']
-  );
-  let state = useSearchFieldState({
-    ...props,
-    validationBehavior
-  });
+export const SearchField = /*#__PURE__*/ createHideableComponent(
+  function SearchField(
+    props: SearchFieldProps,
+    ref: ForwardedRef<HTMLDivElement>
+  ) {
+    [props, ref] = useContextProps(props, ref, SearchFieldContext);
+    let { validationBehavior: formValidationBehavior } =
+      useSlottedContext(FormContext) || {};
+    let validationBehavior =
+      props.validationBehavior ?? formValidationBehavior ?? "native";
+    let inputRef = useRef<HTMLInputElement>(null);
+    let [inputContextProps, mergedInputRef] = useContextProps(
+      {},
+      inputRef,
+      InputContext
+    );
+    let [labelRef, label] = useSlot(
+      !props["aria-label"] && !props["aria-labelledby"]
+    );
+    let state = useSearchFieldState({
+      ...props,
+      validationBehavior,
+    });
 
-  let {labelProps, inputProps, clearButtonProps, descriptionProps, errorMessageProps, ...validation} = useSearchField({
-    ...removeDataAttributes(props),
-    label,
-    validationBehavior
-  }, state, mergedInputRef);
+    let {
+      labelProps,
+      inputProps,
+      clearButtonProps,
+      descriptionProps,
+      errorMessageProps,
+      ...validation
+    } = useSearchField(
+      {
+        ...removeDataAttributes(props),
+        label,
+        validationBehavior,
+      },
+      state,
+      mergedInputRef
+    );
 
-  let renderProps = useRenderProps({
-    ...props,
-    values: {
-      isEmpty: state.value === '',
-      isDisabled: props.isDisabled || false,
-      isInvalid: validation.isInvalid || false,
-      state
-    },
-    defaultClassName: 'react-aria-SearchField'
-  });
+    let renderProps = useRenderProps({
+      ...props,
+      values: {
+        isEmpty: state.value === "",
+        isDisabled: props.isDisabled || false,
+        isInvalid: validation.isInvalid || false,
+        state,
+      },
+      defaultClassName: "react-aria-SearchField",
+    });
 
-  let DOMProps = filterDOMProps(props);
-  delete DOMProps.id;
+    let DOMProps = filterDOMProps(props);
+    delete DOMProps.id;
 
-  return (
-    <div
-      {...DOMProps}
-      {...renderProps}
-      ref={ref}
-      slot={props.slot || undefined}
-      data-empty={state.value === '' || undefined}
-      data-disabled={props.isDisabled || undefined}
-      data-invalid={validation.isInvalid || undefined}>
-      <Provider
-        values={[
-          [LabelContext, {...labelProps, ref: labelRef}],
-          [InputContext, {...mergeProps(inputProps, inputContextProps), ref: mergedInputRef}],
-          [ButtonContext, clearButtonProps],
-          [TextContext, {
-            slots: {
-              description: descriptionProps,
-              errorMessage: errorMessageProps
-            }
-          }],
-          [GroupContext, {isInvalid: validation.isInvalid, isDisabled: props.isDisabled || false}],
-          [FieldErrorContext, validation]
-        ]}>
-        {renderProps.children}
-      </Provider>
-    </div>
-  );
-});
+    return (
+      <div
+        {...DOMProps}
+        {...renderProps}
+        ref={ref}
+        slot={props.slot || undefined}
+        data-empty={state.value === "" || undefined}
+        data-disabled={props.isDisabled || undefined}
+        data-invalid={validation.isInvalid || undefined}
+      >
+        <Provider
+          values={[
+            [LabelContext, { ...labelProps, ref: labelRef }],
+            [
+              InputContext,
+              {
+                ...mergeProps(inputProps, inputContextProps),
+                ref: mergedInputRef,
+              },
+            ],
+            [ButtonContext, clearButtonProps],
+            [
+              TextContext,
+              {
+                slots: {
+                  description: descriptionProps,
+                  errorMessage: errorMessageProps,
+                },
+              },
+            ],
+            [
+              GroupContext,
+              {
+                isInvalid: validation.isInvalid,
+                isDisabled: props.isDisabled || false,
+              },
+            ],
+            [FieldErrorContext, validation],
+          ]}
+        >
+          {renderProps.children}
+        </Provider>
+      </div>
+    );
+  }
+);

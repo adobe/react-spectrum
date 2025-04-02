@@ -10,15 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, getWrappedElement, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {FocusRing} from '@react-aria/focus';
-import {mergeProps, mergeRefs} from '@react-aria/utils';
-import React, {ForwardedRef, JSX, MutableRefObject, ReactNode, useRef} from 'react';
-import {SpectrumLinkProps} from '@react-types/link';
-import styles from '@adobe/spectrum-css-temp/components/link/vars.css';
-import {useHover} from '@react-aria/interactions';
-import {useLink} from '@react-aria/link';
-import {useProviderProps} from '@react-spectrum/provider';
+import {
+  classNames,
+  getWrappedElement,
+  useSlotProps,
+  useStyleProps,
+} from "@react-spectrum/utils";
+import { FocusRing } from "@react-aria-nutrient/focus";
+import { mergeProps, mergeRefs } from "@react-aria-nutrient/utils";
+import React, {
+  ForwardedRef,
+  JSX,
+  MutableRefObject,
+  ReactNode,
+  useRef,
+} from "react";
+import { SpectrumLinkProps } from "@react-types/link";
+import styles from "@adobe/spectrum-css-temp/components/link/vars.css";
+import { useHover } from "@react-aria-nutrient/interactions";
+import { useLink } from "@react-aria-nutrient/link";
+import { useProviderProps } from "@react-spectrum/provider";
 
 let isOldReact = parseInt(React.version, 10) <= 18;
 /**
@@ -27,22 +38,25 @@ let isOldReact = parseInt(React.version, 10) <= 18;
  */
 export function Link(props: SpectrumLinkProps): ReactNode {
   props = useProviderProps(props);
-  props = useSlotProps(props, 'link');
+  props = useSlotProps(props, "link");
   let {
-    variant = 'primary',
+    variant = "primary",
     isQuiet,
     children,
     // @ts-ignore
-    href
+    href,
   } = props;
-  let {styleProps} = useStyleProps(props);
-  let {hoverProps, isHovered} = useHover({});
+  let { styleProps } = useStyleProps(props);
+  let { hoverProps, isHovered } = useHover({});
 
   let ref = useRef(null);
-  let {linkProps} = useLink({
-    ...props,
-    elementType: !href && typeof children === 'string' ? 'span' : 'a'
-  }, ref);
+  let { linkProps } = useLink(
+    {
+      ...props,
+      elementType: !href && typeof children === "string" ? "span" : "a",
+    },
+    ref
+  );
 
   let domProps = {
     ...styleProps,
@@ -50,14 +64,14 @@ export function Link(props: SpectrumLinkProps): ReactNode {
     ref,
     className: classNames(
       styles,
-      'spectrum-Link',
+      "spectrum-Link",
       {
-        'spectrum-Link--quiet': isQuiet,
+        "spectrum-Link--quiet": isQuiet,
         [`spectrum-Link--${variant}`]: variant,
-        'is-hovered': isHovered
+        "is-hovered": isHovered,
       },
       styleProps.className
-    )
+    ),
   };
 
   let link: JSX.Element;
@@ -77,13 +91,12 @@ export function Link(props: SpectrumLinkProps): ReactNode {
     link = React.cloneElement(wrappedChild, {
       ...mergeProps(wrappedChild.props, domProps),
       // @ts-ignore https://github.com/facebook/react/issues/8873
-      ref: mergedRef
+      ref: mergedRef,
     });
   }
 
-
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+    <FocusRing focusRingClass={classNames(styles, "focus-ring")}>
       {link}
     </FocusRing>
   );

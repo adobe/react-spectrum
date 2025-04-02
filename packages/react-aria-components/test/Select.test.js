@@ -13,7 +13,7 @@
 import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button, FieldError, Label, ListBox, ListBoxItem, Popover, Select, SelectContext, SelectStateContext, SelectValue, Text} from '../';
 import React from 'react';
-import {User} from '@react-aria/test-utils';
+import {User} from '@react-aria-nutrient/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestSelect = (props) => (

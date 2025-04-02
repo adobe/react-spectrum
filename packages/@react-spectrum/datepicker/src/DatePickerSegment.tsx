@@ -10,60 +10,80 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames} from '@react-spectrum/utils';
-import {DateFieldState, DateSegment} from '@react-stately/datepicker';
-import {DatePickerBase, DateValue} from '@react-types/datepicker';
-import React, {ReactNode, useRef} from 'react';
-import styles from './styles.css';
-import {useDateSegment} from '@react-aria/datepicker';
+import { classNames } from "@react-spectrum/utils";
+import { DateFieldState, DateSegment } from "@react-stately/datepicker";
+import { DatePickerBase, DateValue } from "@react-types/datepicker";
+import React, { ReactNode, useRef } from "react";
+import styles from "./styles.css";
+import { useDateSegment } from "@react-aria-nutrient/datepicker";
 
 interface DatePickerSegmentProps extends DatePickerBase<DateValue> {
-  segment: DateSegment,
-  state: DateFieldState
+  segment: DateSegment;
+  state: DateFieldState;
 }
 
 interface LiteralSegmentProps {
-  segment: DateSegment
+  segment: DateSegment;
 }
 
-export function DatePickerSegment({segment, state, ...otherProps}: DatePickerSegmentProps): ReactNode {
+export function DatePickerSegment({
+  segment,
+  state,
+  ...otherProps
+}: DatePickerSegmentProps): ReactNode {
   switch (segment.type) {
     // A separator, e.g. punctuation
-    case 'literal':
+    case "literal":
       return <LiteralSegment segment={segment} />;
 
     // Editable segment
     default:
-      return <EditableSegment segment={segment} state={state} {...otherProps} />;
+      return (
+        <EditableSegment segment={segment} state={state} {...otherProps} />
+      );
   }
 }
 
-function LiteralSegment({segment}: LiteralSegmentProps) {
+function LiteralSegment({ segment }: LiteralSegmentProps) {
   return (
     <span
       aria-hidden="true"
-      className={classNames(styles, 'react-spectrum-Datepicker-literal')}
-      data-testid={segment.type === 'literal' ? undefined : segment.type}>
+      className={classNames(styles, "react-spectrum-Datepicker-literal")}
+      data-testid={segment.type === "literal" ? undefined : segment.type}
+    >
       {segment.text}
     </span>
   );
 }
 
-function EditableSegment({segment, state}: DatePickerSegmentProps) {
+function EditableSegment({ segment, state }: DatePickerSegmentProps) {
   let ref = useRef<HTMLDivElement | null>(null);
-  let {segmentProps} = useDateSegment(segment, state, ref);
+  let { segmentProps } = useDateSegment(segment, state, ref);
 
   return (
     <span
       {...segmentProps}
       ref={ref}
-      className={classNames(styles, 'react-spectrum-DatePicker-cell', {
-        'is-placeholder': segment.isPlaceholder,
-        'is-read-only': !segment.isEditable
+      className={classNames(styles, "react-spectrum-DatePicker-cell", {
+        "is-placeholder": segment.isPlaceholder,
+        "is-read-only": !segment.isEditable,
       })}
       style={segmentProps.style}
-      data-testid={segment.type}>
-      {segment.isPlaceholder ? <span aria-hidden="true" className={classNames(styles, 'react-spectrum-DatePicker-placeholder')}>{segment.placeholder}</span> : segment.text}
+      data-testid={segment.type}
+    >
+      {segment.isPlaceholder ? (
+        <span
+          aria-hidden="true"
+          className={classNames(
+            styles,
+            "react-spectrum-DatePicker-placeholder"
+          )}
+        >
+          {segment.placeholder}
+        </span>
+      ) : (
+        segment.text
+      )}
     </span>
   );
 }

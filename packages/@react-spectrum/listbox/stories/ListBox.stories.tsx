@@ -10,24 +10,32 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
-import {ActionGroup, AlertDialog, Avatar, Button, DialogContainer, Flex, Text} from '@adobe/react-spectrum';
-import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
-import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
-import AlignRight from '@spectrum-icons/workflow/AlignRight';
-import Blower from '@spectrum-icons/workflow/Blower';
-import Book from '@spectrum-icons/workflow/Book';
-import Copy from '@spectrum-icons/workflow/Copy';
-import Cut from '@spectrum-icons/workflow/Cut';
-import Delete from '@spectrum-icons/workflow/Delete';
-import {FocusScope} from '@react-aria/focus';
-import {Item, ListBox, Section} from '../';
-import {Key} from '@react-types/shared';
-import {Label} from '@react-spectrum/label';
-import Paste from '@spectrum-icons/workflow/Paste';
-import React, {useRef, useState} from 'react';
-import {TranslateListBox} from './../chromatic/ListBoxLanguages.stories';
-import {useAsyncList, useTreeData} from '@react-stately/data';
+import { action } from "@storybook/addon-actions";
+import {
+  ActionGroup,
+  AlertDialog,
+  Avatar,
+  Button,
+  DialogContainer,
+  Flex,
+  Text,
+} from "@adobe/react-spectrum";
+import AlignCenter from "@spectrum-icons/workflow/AlignCenter";
+import AlignLeft from "@spectrum-icons/workflow/AlignLeft";
+import AlignRight from "@spectrum-icons/workflow/AlignRight";
+import Blower from "@spectrum-icons/workflow/Blower";
+import Book from "@spectrum-icons/workflow/Book";
+import Copy from "@spectrum-icons/workflow/Copy";
+import Cut from "@spectrum-icons/workflow/Cut";
+import Delete from "@spectrum-icons/workflow/Delete";
+import { FocusScope } from "@react-aria-nutrient/focus";
+import { Item, ListBox, Section } from "../";
+import { Key } from "@react-types/shared";
+import { Label } from "@react-spectrum/label";
+import Paste from "@spectrum-icons/workflow/Paste";
+import React, { useRef, useState } from "react";
+import { TranslateListBox } from "./../chromatic/ListBoxLanguages.stories";
+import { useAsyncList, useTreeData } from "@react-stately/data";
 
 let iconMap = {
   AlignCenter,
@@ -37,87 +45,100 @@ let iconMap = {
   Book,
   Copy,
   Cut,
-  Paste
+  Paste,
 };
 
 let hardModeProgrammatic = [
-  {name: 'Section 1', children: [
-    {name: 'Copy', icon: 'Copy'},
-    {name: 'Cut', icon: 'Cut'},
-    {name: 'Paste', icon: 'Paste'}
-  ]},
-  {name: 'Section 2', children: [
-    {name: 'Puppy', icon: 'AlignLeft'},
-    {name: 'Doggo', icon: 'AlignCenter'},
-    {name: 'Floof', icon: 'AlignRight'}
-  ]}
+  {
+    name: "Section 1",
+    children: [
+      { name: "Copy", icon: "Copy" },
+      { name: "Cut", icon: "Cut" },
+      { name: "Paste", icon: "Paste" },
+    ],
+  },
+  {
+    name: "Section 2",
+    children: [
+      { name: "Puppy", icon: "AlignLeft" },
+      { name: "Doggo", icon: "AlignCenter" },
+      { name: "Floof", icon: "AlignRight" },
+    ],
+  },
 ];
 
 let flatOptions = [
-  {name: 'Aardvark'},
-  {name: 'Kangaroo'},
-  {name: 'Snake'},
-  {name: 'Danni'},
-  {name: 'Devon'},
-  {name: 'Ross'},
-  {name: 'Puppy'},
-  {name: 'Doggo'},
-  {name: 'Floof'}
+  { name: "Aardvark" },
+  { name: "Kangaroo" },
+  { name: "Snake" },
+  { name: "Danni" },
+  { name: "Devon" },
+  { name: "Ross" },
+  { name: "Puppy" },
+  { name: "Doggo" },
+  { name: "Floof" },
 ];
 
 let withSection = [
-  {name: 'Animals', children: [
-    {name: 'Aardvark'},
-    {name: 'Kangaroo'},
-    {name: 'Snake'}
-  ]},
-  {name: 'People', children: [
-    {name: 'Danni'},
-    {name: 'Devon'},
-    {name: 'Ross'}
-  ]}
+  {
+    name: "Animals",
+    children: [{ name: "Aardvark" }, { name: "Kangaroo" }, { name: "Snake" }],
+  },
+  {
+    name: "People",
+    children: [{ name: "Danni" }, { name: "Devon" }, { name: "Ross" }],
+  },
 ];
 
 let itemsWithFalsyId = [
-  {id: 0, name: 'key=0', children: [
-    {id: 1, name: 'Aardvark'},
-    {id: 2, name: 'Kangaroo'},
-    {id: 3, name: 'Snake'}
-  ]},
-  {id: '', name: 'key=""', children: [
-    {id: 4, name: 'Danni'},
-    {id: 5, name: 'Devon'},
-    {id: 6, name: 'Ross'}
-  ]}
+  {
+    id: 0,
+    name: "key=0",
+    children: [
+      { id: 1, name: "Aardvark" },
+      { id: 2, name: "Kangaroo" },
+      { id: 3, name: "Snake" },
+    ],
+  },
+  {
+    id: "",
+    name: 'key=""',
+    children: [
+      { id: 4, name: "Danni" },
+      { id: 5, name: "Devon" },
+      { id: 6, name: "Ross" },
+    ],
+  },
 ];
 
-let lotsOfSections: {name: string, children: {name: string}[]}[] = [];
+let lotsOfSections: { name: string; children: { name: string }[] }[] = [];
 for (let i = 0; i < 50; i++) {
-  let children: {name: string}[] = [];
+  let children: { name: string }[] = [];
   for (let j = 0; j < 50; j++) {
-    children.push({name: `Section ${i}, Item ${j}`});
+    children.push({ name: `Section ${i}, Item ${j}` });
   }
 
-  lotsOfSections.push({name: 'Section ' + i, children});
+  lotsOfSections.push({ name: "Section " + i, children });
 }
 
 export default {
-  title: 'ListBox',
-  excludeStories: ['FocusExample']
+  title: "ListBox",
+  excludeStories: ["FocusExample"],
 };
 
 function StoryDecorator(props) {
   return (
-    <div style={{display: 'flex', flexDirection: 'column'}}>
+    <div style={{ display: "flex", flexDirection: "column" }}>
       <Label id="label">Choose an item</Label>
       <div
         style={{
-          display: 'flex',
-          minWidth: '200px',
-          background: 'var(--spectrum-global-color-gray-50)',
-          border: '1px solid lightgray',
-          maxHeight: 300
-        }}>
+          display: "flex",
+          minWidth: "200px",
+          background: "var(--spectrum-global-color-gray-50)",
+          border: "1px solid lightgray",
+          maxHeight: 300,
+        }}
+      >
         {props.children}
       </div>
     </div>
@@ -130,12 +151,14 @@ export const DefaultListBox = {
       {(item) => <Item key={item.name}>{item.name}</Item>}
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'Default ListBox'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: "Default ListBox",
 };
 
 export const ListBoxWSections = {
@@ -148,12 +171,14 @@ export const ListBoxWSections = {
       )}
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'ListBox w/ sections'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: "ListBox w/ sections",
 };
 
 export const ListBoxWManySectionsAndSelection = {
@@ -163,7 +188,8 @@ export const ListBoxWManySectionsAndSelection = {
       aria-labelledby="label"
       selectionMode="multiple"
       items={lotsOfSections}
-      onSelectionChange={action('onSelectionChange')}>
+      onSelectionChange={action("onSelectionChange")}
+    >
       {(item) => (
         <Section key={item.name} items={item.children} title={item.name}>
           {(item: any) => <Item key={item.name}>{item.name}</Item>}
@@ -171,12 +197,14 @@ export const ListBoxWManySectionsAndSelection = {
       )}
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'ListBox w/ many sections and selection'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: "ListBox w/ many sections and selection",
 };
 
 export const ListBoxWSectionsAndFalsyIds = {
@@ -186,7 +214,8 @@ export const ListBoxWSectionsAndFalsyIds = {
       aria-labelledby="label"
       items={itemsWithFalsyId}
       selectionMode="multiple"
-      onSelectionChange={action('onSelectionChange')}>
+      onSelectionChange={action("onSelectionChange")}
+    >
       {(item) => (
         <Section items={item.children} title={item.name}>
           {(item) => <Item>{item.name}</Item>}
@@ -194,12 +223,14 @@ export const ListBoxWSectionsAndFalsyIds = {
       )}
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'ListBox w/ sections and falsy ids'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: "ListBox w/ sections and falsy ids",
 };
 
 export const ListBoxWSectionsAndNoTitle = {
@@ -212,12 +243,14 @@ export const ListBoxWSectionsAndNoTitle = {
       )}
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'ListBox w/ sections and no title'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: "ListBox w/ sections and no title",
 };
 
 export const Static = {
@@ -228,11 +261,13 @@ export const Static = {
       <Item>Three</Item>
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )]
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
 };
 
 export const StaticWithSectionsAndSelection = {
@@ -250,12 +285,14 @@ export const StaticWithSectionsAndSelection = {
       </Section>
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'Static with sections and selection'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: "Static with sections and selection",
 };
 
 export const StaticWithSectionsAndNoTitle = {
@@ -273,12 +310,14 @@ export const StaticWithSectionsAndNoTitle = {
       </Section>
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'Static with sections and no title'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: "Static with sections and no title",
 };
 
 export const WithDefaultSelectedOption = {
@@ -287,9 +326,10 @@ export const WithDefaultSelectedOption = {
       flexGrow={1}
       aria-labelledby="label"
       selectionMode="multiple"
-      onSelectionChange={action('onSelectionChange')}
+      onSelectionChange={action("onSelectionChange")}
       items={withSection}
-      defaultSelectedKeys={['Kangaroo']}>
+      defaultSelectedKeys={["Kangaroo"]}
+    >
       {(item) => (
         <Section key={item.name} items={item.children} title={item.name}>
           {(item) => <Item key={item.name}>{item.name}</Item>}
@@ -297,12 +337,14 @@ export const WithDefaultSelectedOption = {
       )}
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'with default selected option'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: "with default selected option",
 };
 
 export const SingleSelectionWithDefaultSelectedOption = {
@@ -310,19 +352,22 @@ export const SingleSelectionWithDefaultSelectedOption = {
     <ListBox
       flexGrow={1}
       selectionMode="single"
-      onSelectionChange={action('onSelectionChange')}
+      onSelectionChange={action("onSelectionChange")}
       aria-labelledby="label"
       items={flatOptions}
-      defaultSelectedKeys={['Kangaroo']}>
+      defaultSelectedKeys={["Kangaroo"]}
+    >
       {(item) => <Item key={item.name}>{item.name}</Item>}
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'single selection with default selected option'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: "single selection with default selected option",
 };
 
 export const StaticWithDefaultSelectedOptions = {
@@ -331,8 +376,9 @@ export const StaticWithDefaultSelectedOptions = {
       flexGrow={1}
       aria-labelledby="label"
       selectionMode="multiple"
-      onSelectionChange={action('onSelectionChange')}
-      defaultSelectedKeys={['2', '3']}>
+      onSelectionChange={action("onSelectionChange")}
+      defaultSelectedKeys={["2", "3"]}
+    >
       <Section title="Section 1">
         <Item key="1">One</Item>
         <Item key="2">Two</Item>
@@ -346,12 +392,14 @@ export const StaticWithDefaultSelectedOptions = {
       </Section>
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'static with default selected options'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: "static with default selected options",
 };
 
 export const WithSelectedOptionsControlled = {
@@ -360,9 +408,10 @@ export const WithSelectedOptionsControlled = {
       flexGrow={1}
       aria-labelledby="label"
       selectionMode="multiple"
-      onSelectionChange={action('onSelectionChange')}
+      onSelectionChange={action("onSelectionChange")}
       items={withSection}
-      selectedKeys={['Kangaroo']}>
+      selectedKeys={["Kangaroo"]}
+    >
       {(item) => (
         <Section key={item.name} items={item.children} title={item.name}>
           {(item) => <Item key={item.name}>{item.name}</Item>}
@@ -370,12 +419,14 @@ export const WithSelectedOptionsControlled = {
       )}
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'with selected options (controlled)'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: "with selected options (controlled)",
 };
 
 export const StaticWithSelectedOptionsControlled = {
@@ -384,8 +435,9 @@ export const StaticWithSelectedOptionsControlled = {
       flexGrow={1}
       aria-labelledby="label"
       selectionMode="multiple"
-      onSelectionChange={action('onSelectionChange')}
-      selectedKeys={['2']}>
+      onSelectionChange={action("onSelectionChange")}
+      selectedKeys={["2"]}
+    >
       <Section title="Section 1">
         <Item key="1">One</Item>
         <Item key="2">Two</Item>
@@ -399,12 +451,14 @@ export const StaticWithSelectedOptionsControlled = {
       </Section>
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'static with selected options (controlled)'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: "static with selected options (controlled)",
 };
 
 export const WithDisabledOptions = {
@@ -413,7 +467,8 @@ export const WithDisabledOptions = {
       flexGrow={1}
       aria-labelledby="label"
       items={withSection}
-      disabledKeys={['Kangaroo', 'Ross']}>
+      disabledKeys={["Kangaroo", "Ross"]}
+    >
       {(item) => (
         <Section key={item.name} items={item.children} title={item.name}>
           {(item) => <Item key={item.name}>{item.name}</Item>}
@@ -421,17 +476,19 @@ export const WithDisabledOptions = {
       )}
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'with disabled options'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: "with disabled options",
 };
 
 export const StaticWithDisabledOptions = {
   render: () => (
-    <ListBox flexGrow={1} aria-labelledby="label" disabledKeys={['3', '5']}>
+    <ListBox flexGrow={1} aria-labelledby="label" disabledKeys={["3", "5"]}>
       <Section title="Section 1">
         <Item key="1">One</Item>
         <Item key="2">Two</Item>
@@ -445,12 +502,14 @@ export const StaticWithDisabledOptions = {
       </Section>
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'static with disabled options'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: "static with disabled options",
 };
 
 export const MultipleSelection = {
@@ -459,10 +518,11 @@ export const MultipleSelection = {
       flexGrow={1}
       aria-labelledby="label"
       items={withSection}
-      onSelectionChange={action('onSelectionChange')}
+      onSelectionChange={action("onSelectionChange")}
       selectionMode="multiple"
-      defaultSelectedKeys={['Aardvark', 'Snake']}
-      disabledKeys={['Kangaroo', 'Ross']}>
+      defaultSelectedKeys={["Aardvark", "Snake"]}
+      disabledKeys={["Kangaroo", "Ross"]}
+    >
       {(item) => (
         <Section key={item.name} items={item.children} title={item.name}>
           {(item) => <Item key={item.name}>{item.name}</Item>}
@@ -470,12 +530,14 @@ export const MultipleSelection = {
       )}
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'Multiple selection'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: "Multiple selection",
 };
 
 export const MultipleSelectionStatic = {
@@ -483,10 +545,11 @@ export const MultipleSelectionStatic = {
     <ListBox
       flexGrow={1}
       aria-labelledby="label"
-      onSelectionChange={action('onSelectionChange')}
+      onSelectionChange={action("onSelectionChange")}
       selectionMode="multiple"
-      defaultSelectedKeys={['2', '5']}
-      disabledKeys={['1', '3']}>
+      defaultSelectedKeys={["2", "5"]}
+      disabledKeys={["1", "3"]}
+    >
       <Section title="Section 1">
         <Item key="1">One</Item>
         <Item key="2">Two</Item>
@@ -499,12 +562,14 @@ export const MultipleSelectionStatic = {
       </Section>
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'Multiple selection, static'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: "Multiple selection, static",
 };
 
 export const NoSelectionAllowed = {
@@ -517,12 +582,14 @@ export const NoSelectionAllowed = {
       )}
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'No selection allowed'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: "No selection allowed",
 };
 
 export const NoSelectionAllowedStatic = {
@@ -540,12 +607,14 @@ export const NoSelectionAllowedStatic = {
       </Section>
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'No selection allowed, static'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: "No selection allowed, static",
 };
 
 export const ListBoxWithAutoFocusTrue = {
@@ -558,12 +627,14 @@ export const ListBoxWithAutoFocusTrue = {
       )}
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'ListBox with autoFocus=true'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: "ListBox with autoFocus=true",
 };
 
 export const ListBoxWithAutoFocusComplex = {
@@ -573,8 +644,9 @@ export const ListBoxWithAutoFocusComplex = {
       aria-labelledby="label"
       items={withSection}
       autoFocus
-      defaultSelectedKeys={['Snake']}
-      selectionMode="single">
+      defaultSelectedKeys={["Snake"]}
+      selectionMode="single"
+    >
       {(item) => (
         <Section key={item.name} items={item.children} title={item.name}>
           {(item) => <Item key={item.name}>{item.name}</Item>}
@@ -582,12 +654,14 @@ export const ListBoxWithAutoFocusComplex = {
       )}
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'ListBox with autoFocus=true, selectionMode=single, default selected key (uncontrolled)'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: "ListBox with autoFocus=true, selectionMode=single, default selected key (uncontrolled)",
 };
 
 export const ListBoxWithAutoFocusFirst = {
@@ -597,8 +671,9 @@ export const ListBoxWithAutoFocusFirst = {
       aria-labelledby="label"
       items={withSection}
       selectionMode="multiple"
-      onSelectionChange={action('onSelectionChange')}
-      autoFocus="first">
+      onSelectionChange={action("onSelectionChange")}
+      autoFocus="first"
+    >
       {(item) => (
         <Section key={item.name} items={item.children} title={item.name}>
           {(item) => <Item key={item.name}>{item.name}</Item>}
@@ -606,12 +681,14 @@ export const ListBoxWithAutoFocusFirst = {
       )}
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'ListBox with autoFocus="first"'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: 'ListBox with autoFocus="first"',
 };
 
 export const ListBoxWithAutoFocusLast = {
@@ -621,8 +698,9 @@ export const ListBoxWithAutoFocusLast = {
       aria-labelledby="label"
       items={withSection}
       selectionMode="multiple"
-      onSelectionChange={action('onSelectionChange')}
-      autoFocus="last">
+      onSelectionChange={action("onSelectionChange")}
+      autoFocus="last"
+    >
       {(item) => (
         <Section key={item.name} items={item.children} title={item.name}>
           {(item) => <Item key={item.name}>{item.name}</Item>}
@@ -630,12 +708,14 @@ export const ListBoxWithAutoFocusLast = {
       )}
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'ListBox with autoFocus="last"'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: 'ListBox with autoFocus="last"',
 };
 
 export const ListBoxWithKeyboardSelectionWrapping = {
@@ -645,8 +725,9 @@ export const ListBoxWithKeyboardSelectionWrapping = {
       aria-labelledby="label"
       items={withSection}
       selectionMode="multiple"
-      onSelectionChange={action('onSelectionChange')}
-      shouldFocusWrap>
+      onSelectionChange={action("onSelectionChange")}
+      shouldFocusWrap
+    >
       {(item) => (
         <Section key={item.name} items={item.children} title={item.name}>
           {(item) => <Item key={item.name}>{item.name}</Item>}
@@ -654,12 +735,14 @@ export const ListBoxWithKeyboardSelectionWrapping = {
       )}
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'ListBox with keyboard selection wrapping'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: "ListBox with keyboard selection wrapping",
 };
 
 export const WithSemanticElementsStatic = {
@@ -668,8 +751,9 @@ export const WithSemanticElementsStatic = {
       flexGrow={1}
       aria-labelledby="label"
       selectionMode="multiple"
-      disabledKeys={['paste', 'floof']}
-      onSelectionChange={action('onSelectionChange')}>
+      disabledKeys={["paste", "floof"]}
+      onSelectionChange={action("onSelectionChange")}
+    >
       <Section title="Section 1">
         <Item key="copy" textValue="Copy">
           <Copy size="S" />
@@ -688,14 +772,19 @@ export const WithSemanticElementsStatic = {
         <Item key="puppy" textValue="Puppy">
           <AlignLeft size="S" />
           <Text>Puppy</Text>
-          <Text slot="description">Puppy description super long as well geez</Text>
+          <Text slot="description">
+            Puppy description super long as well geez
+          </Text>
         </Item>
         <Item key="floof" textValue="Floof">
           <AlignRight size="S" />
           <Text>Floof</Text>
           <Text slot="description">Floof medium description</Text>
         </Item>
-        <Item key="doggo" textValue="Doggo with really really really long long long text">
+        <Item
+          key="doggo"
+          textValue="Doggo with really really really long long long text"
+        >
           <AlignCenter size="S" />
           <Text>Doggo with really really really long long long text</Text>
         </Item>
@@ -703,12 +792,14 @@ export const WithSemanticElementsStatic = {
       </Section>
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'with semantic elements (static)'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: "with semantic elements (static)",
 };
 
 export const WithSemanticElementsGenerativeMultipleSelection = {
@@ -717,8 +808,9 @@ export const WithSemanticElementsGenerativeMultipleSelection = {
       flexGrow={1}
       aria-labelledby="label"
       items={hardModeProgrammatic}
-      onSelectionChange={action('onSelectionChange')}
-      selectionMode="multiple">
+      onSelectionChange={action("onSelectionChange")}
+      selectionMode="multiple"
+    >
       {(item) => (
         <Section key={item.name} items={item.children} title={item.name}>
           {(item) => customOption(item)}
@@ -726,12 +818,14 @@ export const WithSemanticElementsGenerativeMultipleSelection = {
       )}
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'with semantic elements (generative), multiple selection'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: "with semantic elements (generative), multiple selection",
 };
 
 export const IsLoading = {
@@ -740,12 +834,14 @@ export const IsLoading = {
       {(item) => <Item>{item.name}</Item>}
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'isLoading'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: "isLoading",
 };
 
 export const IsLoadingMore = {
@@ -754,60 +850,85 @@ export const IsLoadingMore = {
       {(item) => <Item key={item.name}>{item.name}</Item>}
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'isLoading more'
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: "isLoading more",
 };
 
 export const AsyncLoading = {
-  render: () => (
-    <AsyncLoadingExample />
-  ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
-  name: 'async loading'
+  render: () => <AsyncLoadingExample />,
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
+  name: "async loading",
 };
 
 export const AsyncLoadingResizable = {
   render: () => (
-    <div style={{display: 'flex', height: '200px', flexGrow: 1, minWidth: '200px', padding: '10px', resize: 'both', overflow: 'auto'}}>
+    <div
+      style={{
+        display: "flex",
+        height: "200px",
+        flexGrow: 1,
+        minWidth: "200px",
+        padding: "10px",
+        resize: "both",
+        overflow: "auto",
+      }}
+    >
       <AsyncLoadingExample />
     </div>
   ),
-  decorators: [(Story) => (
-    <div style={{display: 'flex', flexDirection: 'column'}}>
-      <Label id="label">Choose an item</Label>
-      <div style={{display: 'flex', minWidth: '200px', background: 'var(--spectrum-global-color-gray-50)', border: '1px solid lightgray'}}>
-        <Story />
+  decorators: [
+    (Story) => (
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <Label id="label">Choose an item</Label>
+        <div
+          style={{
+            display: "flex",
+            minWidth: "200px",
+            background: "var(--spectrum-global-color-gray-50)",
+            border: "1px solid lightgray",
+          }}
+        >
+          <Story />
+        </div>
       </div>
-    </div>
-  )],
-  name: 'async loading, resizable'
+    ),
+  ],
+  name: "async loading, resizable",
 };
 
 export const ListboxContainers = {
   render: () => <App />,
   decorators: null,
-  name: 'listbox containers'
+  name: "listbox containers",
 };
 
 export const RestoreFocusExample = {
   render: (args) => <FocusExample {...args} />,
   decorators: null,
-  name: 'restore focus after deleting selected items'
+  name: "restore focus after deleting selected items",
 };
 
 export const WithTranslations = {
   render: () => <TranslateListBox />,
   decorators: null,
-  name: 'with translations',
-  parameters: {description: {data: 'Translations included for: Arabic, English, Hebrew, Japanese, Korean, Simplified Chinese, and Traditional Chinese.'}}
+  name: "with translations",
+  parameters: {
+    description: {
+      data: "Translations included for: Arabic, English, Hebrew, Japanese, Korean, Simplified Chinese, and Traditional Chinese.",
+    },
+  },
 };
 
 let customOption = (item) => {
@@ -822,48 +943,62 @@ let customOption = (item) => {
 
 function AsyncLoadingExample() {
   interface Pokemon {
-    name: string,
-    url: string
+    name: string;
+    url: string;
   }
 
   let list = useAsyncList<Pokemon>({
-    async load({signal, cursor}) {
-      let res = await fetch(cursor || 'https://pokeapi.co/api/v2/pokemon', {signal});
+    async load({ signal, cursor }) {
+      let res = await fetch(cursor || "https://pokeapi.co/api/v2/pokemon", {
+        signal,
+      });
       let json = await res.json();
       return {
         items: json.results,
-        cursor: json.next
+        cursor: json.next,
       };
-    }
+    },
   });
 
   return (
-    <ListBox flexGrow={1} aria-labelledby="label" items={list.items} isLoading={list.isLoading} onLoadMore={list.loadMore}>
-      {item => <Item key={item.name}>{item.name}</Item>}
+    <ListBox
+      flexGrow={1}
+      aria-labelledby="label"
+      items={list.items}
+      isLoading={list.isLoading}
+      onLoadMore={list.loadMore}
+    >
+      {(item) => <Item key={item.name}>{item.name}</Item>}
     </ListBox>
   );
 }
 
-let itemsForDemo = Array.from(new Array(100)).map((val, index) => ({val, index}));
+let itemsForDemo = Array.from(new Array(100)).map((val, index) => ({
+  val,
+  index,
+}));
 function App() {
-  let [size, setSize] = useState('700px');
+  let [size, setSize] = useState("700px");
 
   const toggleSize = () => {
-    if (size === '700px') {
-      setSize('300px');
+    if (size === "700px") {
+      setSize("300px");
     } else {
-      setSize('700px');
+      setSize("700px");
     }
   };
 
   return (
     <>
-      <Button variant="primary" onPress={toggleSize}> Toggle Size</Button>
-      <div style={{display: 'flex', height: size, overflow: 'hidden'}}>
+      <Button variant="primary" onPress={toggleSize}>
+        {" "}
+        Toggle Size
+      </Button>
+      <div style={{ display: "flex", height: size, overflow: "hidden" }}>
         <Flex maxHeight="300px">
           <Text id="label1">Max-Height: 300px</Text>
           <ListBox width="150px" items={itemsForDemo} aria-labelledby="label1">
-            { item => (
+            {(item) => (
               <Item textValue={String(item.index)} key={item.index}>
                 <Text>IDX: {item.index}</Text>
               </Item>
@@ -873,7 +1008,7 @@ function App() {
         <Flex>
           <Text id="label2">None</Text>
           <ListBox width="150px" items={itemsForDemo} aria-labelledby="label2">
-            { item => (
+            {(item) => (
               <Item textValue={String(item.index)} key={item.index}>
                 <Text>IDX: {item.index}</Text>
               </Item>
@@ -883,7 +1018,7 @@ function App() {
         <Flex maxHeight="700px">
           <Text id="label3">Max-Height: 700px</Text>
           <ListBox width="150px" items={itemsForDemo} aria-labelledby="label3">
-            { item => (
+            {(item) => (
               <Item textValue={String(item.index)} key={item.index}>
                 <Text>IDX: {item.index}</Text>
               </Item>
@@ -893,7 +1028,7 @@ function App() {
         <Flex maxHeight="100%">
           <Text id="label4">MaxHeight: 100%</Text>
           <ListBox width="150px" items={itemsForDemo} aria-labelledby="label4">
-            { item => (
+            {(item) => (
               <Item textValue={String(item.index)} key={item.index}>
                 <Text>IDX: {item.index}</Text>
               </Item>
@@ -903,7 +1038,7 @@ function App() {
         <Flex maxHeight="50%">
           <Text id="label5">MaxHeight: 50%</Text>
           <ListBox width="150px" items={itemsForDemo} aria-labelledby="label5">
-            { item => (
+            {(item) => (
               <Item textValue={String(item.index)} key={item.index}>
                 <Text>IDX: {item.index}</Text>
               </Item>
@@ -913,7 +1048,7 @@ function App() {
         <Flex height="700px">
           <Text id="label6">Height: 700px</Text>
           <ListBox width="150px" items={itemsForDemo} aria-labelledby="label6">
-            { item => (
+            {(item) => (
               <Item textValue={String(item.index)} key={item.index}>
                 <Text>IDX: {item.index}</Text>
               </Item>
@@ -923,7 +1058,7 @@ function App() {
         <Flex height="100%">
           <Text id="label7">Height: 100%</Text>
           <ListBox width="150px" items={itemsForDemo} aria-labelledby="label7">
-            { item => (
+            {(item) => (
               <Item textValue={String(item.index)} key={item.index}>
                 <Text>IDX: {item.index}</Text>
               </Item>
@@ -939,24 +1074,39 @@ export function FocusExample(args = {}) {
   let tree = useTreeData({
     initialItems: withSection,
     getKey: (item) => item.name,
-    getChildren: (item: {name:string, children?:{name:string, children?:{name:string}[]}[]}) => item.children ?? []
+    getChildren: (item: {
+      name: string;
+      children?: { name: string; children?: { name: string }[] }[];
+    }) => item.children ?? [],
   });
 
-  let [dialog, setDialog] = useState<{action: Key} | null>(null);
+  let [dialog, setDialog] = useState<{ action: Key } | null>(null);
   let ref = useRef(null);
 
   return (
     <FocusScope>
-      <Flex direction={'column'}>
-        <ActionGroup marginBottom={8} onAction={action => setDialog({action})}>
-          {(tree.selectedKeys.size > 0)
-            ? <Item key="bulk-delete" aria-label="Delete selected items"><Delete /></Item>
-            : null
-          }
+      <Flex direction={"column"}>
+        <ActionGroup
+          marginBottom={8}
+          onAction={(action) => setDialog({ action })}
+        >
+          {tree.selectedKeys.size > 0 ? (
+            <Item key="bulk-delete" aria-label="Delete selected items">
+              <Delete />
+            </Item>
+          ) : null}
         </ActionGroup>
-        <div style={{display: 'flex', flexDirection: 'column'}}>
+        <div style={{ display: "flex", flexDirection: "column" }}>
           <Label id="label">Choose items</Label>
-          <div style={{display: 'flex', minWidth: '200px', background: 'var(--spectrum-global-color-gray-50)', border: '1px solid lightgray', maxHeight: 300}}>
+          <div
+            style={{
+              display: "flex",
+              minWidth: "200px",
+              background: "var(--spectrum-global-color-gray-50)",
+              border: "1px solid lightgray",
+              maxHeight: 300,
+            }}
+          >
             {
               <ListBox
                 ref={ref}
@@ -965,31 +1115,45 @@ export function FocusExample(args = {}) {
                 items={tree.items}
                 selectedKeys={tree.selectedKeys}
                 onSelectionChange={(keys) => {
-                  if (keys !== 'all') {
+                  if (keys !== "all") {
                     tree.setSelectedKeys(keys);
                   }
                 }}
                 selectionMode="multiple"
-                {...args}>
-                {item => item?.children?.length ? (
-                  <Section key={item.value.name} items={item.children} title={item.value.name}>
-                    {item => <Item key={item.value.name}>{item.value.name}</Item>}
-                  </Section>
-                ) : null}
+                {...args}
+              >
+                {(item) =>
+                  item?.children?.length ? (
+                    <Section
+                      key={item.value.name}
+                      items={item.children}
+                      title={item.value.name}
+                    >
+                      {(item) => (
+                        <Item key={item.value.name}>{item.value.name}</Item>
+                      )}
+                    </Section>
+                  ) : null
+                }
               </ListBox>
             }
           </div>
         </div>
         <DialogContainer onDismiss={() => setDialog(null)}>
-          {dialog?.action === 'bulk-delete' &&
+          {dialog?.action === "bulk-delete" && (
             <AlertDialog
               title="Delete"
               variant="destructive"
               primaryActionLabel="Delete"
-              onPrimaryAction={() => tree.removeSelectedItems()}>
-              Are you sure you want to delete {tree.selectedKeys.size === 1 ? '1 item' : `${tree.selectedKeys.size} items`}?
+              onPrimaryAction={() => tree.removeSelectedItems()}
+            >
+              Are you sure you want to delete{" "}
+              {tree.selectedKeys.size === 1
+                ? "1 item"
+                : `${tree.selectedKeys.size} items`}
+              ?
             </AlertDialog>
-          }
+          )}
         </DialogContainer>
       </Flex>
     </FocusScope>
@@ -998,33 +1162,49 @@ export function FocusExample(args = {}) {
 
 export const Links = (args) => {
   return (
-    <ListBox aria-label="ListBox with links" width="250px" height={400} onSelectionChange={action('onSelectionChange')} {...args}>
-      <Item key="https://adobe.com/" href="https://adobe.com/">Adobe</Item>
-      <Item key="https://google.com/" href="https://google.com/">Google</Item>
-      <Item key="https://apple.com/" href="https://apple.com/">Apple</Item>
-      <Item key="https://nytimes.com/" href="https://nytimes.com/">New York Times</Item>
+    <ListBox
+      aria-label="ListBox with links"
+      width="250px"
+      height={400}
+      onSelectionChange={action("onSelectionChange")}
+      {...args}
+    >
+      <Item key="https://adobe.com/" href="https://adobe.com/">
+        Adobe
+      </Item>
+      <Item key="https://google.com/" href="https://google.com/">
+        Google
+      </Item>
+      <Item key="https://apple.com/" href="https://apple.com/">
+        Apple
+      </Item>
+      <Item key="https://nytimes.com/" href="https://nytimes.com/">
+        New York Times
+      </Item>
       <Item>Non link</Item>
     </ListBox>
   );
 };
 
 Links.story = {
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )],
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
   args: {
-    selectionMode: 'none'
+    selectionMode: "none",
   },
   argTypes: {
     selectionMode: {
       control: {
-        type: 'radio',
-        options: ['none', 'single', 'multiple']
-      }
-    }
-  }
+        type: "radio",
+        options: ["none", "single", "multiple"],
+      },
+    },
+  },
 };
 
 export const WithAvatars = {
@@ -1032,53 +1212,60 @@ export const WithAvatars = {
     <ListBox aria-label="Listbox with avatars" width="350px">
       <Item textValue="Person 1">
         <Text>Person 1</Text>
-        <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
+        <Avatar
+          src="https://i.imgur.com/kJOwAdv.png"
+          alt="default Adobe avatar"
+        />
       </Item>
       <Item textValue="Person 1">
         <Text>Person 2</Text>
-        <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
+        <Avatar
+          src="https://i.imgur.com/kJOwAdv.png"
+          alt="default Adobe avatar"
+        />
       </Item>
       <Item textValue="Person 1">
         <Text>Person 3</Text>
-        <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
+        <Avatar
+          src="https://i.imgur.com/kJOwAdv.png"
+          alt="default Adobe avatar"
+        />
       </Item>
     </ListBox>
   ),
-  decorators: [(Story) => (
-    <StoryDecorator>
-      <Story />
-    </StoryDecorator>
-  )]
+  decorators: [
+    (Story) => (
+      <StoryDecorator>
+        <Story />
+      </StoryDecorator>
+    ),
+  ],
 };
 
 interface ItemValue {
-  name: string,
-  items?: Array<ItemValue> | null
+  name: string;
+  items?: Array<ItemValue> | null;
 }
 
 export function WithTreeData() {
   let tree = useTreeData<ItemValue>({
     initialItems: [
       {
-        name: 'People',
-        items: [
-          {name: 'David'},
-          {name: 'Sam'},
-          {name: 'Jane'}
-        ]
+        name: "People",
+        items: [{ name: "David" }, { name: "Sam" }, { name: "Jane" }],
       },
       {
-        name: 'Animals',
+        name: "Animals",
         items: [
-          {name: 'Aardvark'},
-          {name: 'Kangaroo'},
-          {name: 'Snake', items: null}
-        ]
-      }
+          { name: "Aardvark" },
+          { name: "Kangaroo" },
+          { name: "Snake", items: null },
+        ],
+      },
     ],
-    initialSelectedKeys: ['Sam', 'Kangaroo'],
-    getKey: item => item.name,
-    getChildren: item => item.items || []
+    initialSelectedKeys: ["Sam", "Kangaroo"],
+    getKey: (item) => item.name,
+    getChildren: (item) => item.items || [],
   });
   return (
     <ListBox
@@ -1089,27 +1276,32 @@ export function WithTreeData() {
       selectedKeys={tree.selectedKeys}
       selectionMode="multiple"
       onSelectionChange={(keys) => {
-        if (keys === 'all') {
-          tree.setSelectedKeys(new Set(tree.items.reduce((acc, item) => {
-            acc.push(item.key);
-            function traverse(children) {
-              if (children) {
-                children.forEach(child => {
-                  acc.push(child.key);
-                  traverse(child.children);
-                });
-              }
-            }
-            traverse(item.children);
-            return acc;
-          }, [] as Key[])));
+        if (keys === "all") {
+          tree.setSelectedKeys(
+            new Set(
+              tree.items.reduce((acc, item) => {
+                acc.push(item.key);
+                function traverse(children) {
+                  if (children) {
+                    children.forEach((child) => {
+                      acc.push(child.key);
+                      traverse(child.children);
+                    });
+                  }
+                }
+                traverse(item.children);
+                return acc;
+              }, [] as Key[])
+            )
+          );
         } else {
           tree.setSelectedKeys(keys);
         }
-      }}>
-      {node => (
+      }}
+    >
+      {(node) => (
         <Section title={node.value.name} items={node.children ?? []}>
-          {node => <Item>{node.value.name}</Item>}
+          {(node) => <Item>{node.value.name}</Item>}
         </Section>
       )}
     </ListBox>

@@ -26,7 +26,7 @@ import {createFocusableRef} from '@react-spectrum/utils';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
-import {mergeRefs} from '@react-aria/utils';
+import {mergeRefs} from '@react-aria-nutrient/utils';
 import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
 import {TextFieldRef} from '@react-types/textfield';

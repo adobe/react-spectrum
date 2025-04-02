@@ -1,28 +1,30 @@
-{/* Copyright 2023 Adobe. All rights reserved.
+{/_ Copyright 2023 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. */}
+governing permissions and limitations under the License. _/}
 
-import sharedDocs from 'docs:@react-types/shared';
-import {TypeContext, InterfaceType} from '@react-spectrum/docs';
+import sharedDocs from "docs:@react-types/shared";
+import { TypeContext, InterfaceType } from "@react-spectrum/docs";
 
-import {Layout} from '@react-spectrum/docs';
+import { Layout } from "@react-spectrum/docs";
 export default Layout;
 
 ```css hidden
-@import '@react-aria/example-theme';
-@import 'react-aria-components/docs/TextField.mdx';
-@import 'react-aria-components/docs/Button.mdx';
+@import "@react-aria-nutrient/example-theme";
+@import "react-aria-components/docs/TextField.mdx";
+@import "react-aria-components/docs/Button.mdx";
 ```
 
 ---
+
 category: Guides
 keywords: [forms, validation, frameworks, aria, next.js, remix, react server actions]
 order: 1
+
 ---
 
 # Forms
@@ -36,7 +38,7 @@ Accessible forms start with clear, descriptive labels for each field. All React 
 In addition, React Aria components support help text, which associates additional context with a field such as a description or error message. The label and help text are announced by assistive technology such as screen readers when the user focuses the field.
 
 ```tsx example
-import {TextField, Label, Input, Text} from 'react-aria-components';
+import { TextField, Label, Input, Text } from "react-aria-components";
 
 <TextField type="password">
   {/*- begin highlight -*/}
@@ -46,7 +48,7 @@ import {TextField, Label, Input, Text} from 'react-aria-components';
   {/*- begin highlight -*/}
   <Text slot="description">Password must be at least 8 characters.</Text>
   {/*- end highlight -*/}
-</TextField>
+</TextField>;
 ```
 
 Most fields should have a visible label. In rare exceptions, the `aria-label` or `aria-labelledby` attribute must be provided instead to identify the element to screen readers.
@@ -60,7 +62,7 @@ How you submit form data depends on your framework, application, and server. By 
 The simplest way to get data from a form is using the browser's [FormData](https://developer.mozilla.org/en-US/docs/Web/API/FormData) API during the `onSubmit` event. This can be passed directly to [fetch](https://developer.mozilla.org/en-US/docs/Web/API/fetch), or converted into a regular JavaScript object using [Object.fromEntries](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/fromEntries). Each field should have a `name` prop to identify it, and values will be serialized to strings by the browser.
 
 ```tsx example
-import {Form, TextField, Label, Input, Button} from 'react-aria-components';
+import { Form, TextField, Label, Input, Button } from "react-aria-components";
 
 function Example() {
   let [submitted, setSubmitted] = React.useState(null);
@@ -85,7 +87,11 @@ function Example() {
         <Input />
       </TextField>
       <Button type="submit">Submit</Button>
-      {submitted && <div>You submitted: <code>{JSON.stringify(submitted)}</code></div>}
+      {submitted && (
+        <div>
+          You submitted: <code>{JSON.stringify(submitted)}</code>
+        </div>
+      )}
     </Form>
   );
 }
@@ -105,11 +111,11 @@ function Example() {
 By default, all React Aria components are uncontrolled, which means that the state is stored internally on your behalf. If you need access to the value in realtime, as the user is editing, you can make it controlled. You'll need to manage the state using React's [useState](https://react.dev/reference/react/useState) hook, and pass the current value and a change handler into each form component.
 
 ```tsx example
-import {Form, TextField, Label, Input, Button} from 'react-aria-components';
+import { Form, TextField, Label, Input, Button } from "react-aria-components";
 
 function Example() {
   /*- begin highlight -*/
-  let [name, setName] = React.useState('');
+  let [name, setName] = React.useState("");
   /*- end highlight -*/
 
   let onSubmit = (e) => {
@@ -123,7 +129,7 @@ function Example() {
     <Form onSubmit={onSubmit}>
       {/*- begin highlight -*/}
       <TextField value={name} onChange={setName}>
-      {/*- end highlight -*/}
+        {/*- end highlight -*/}
         <Label>Name</Label>
         <Input />
       </TextField>
@@ -145,12 +151,12 @@ All React Aria form components integrate with native HTML [constraint validation
 React Aria's `FieldError` component makes it easy to display validation errors with custom styles rather than the browser's default UI. This example shows a required email field, which is validated by the browser and displayed with a custom UI.
 
 ```tsx example
-import {FieldError} from 'react-aria-components';
+import { FieldError } from "react-aria-components";
 
 <Form>
   {/*- begin highlight -*/}
   <TextField name="email" type="email" isRequired>
-  {/*- end highlight -*/}
+    {/*- end highlight -*/}
     <Label>Email</Label>
     <Input />
     {/*- begin highlight -*/}
@@ -158,16 +164,16 @@ import {FieldError} from 'react-aria-components';
     {/*- end highlight -*/}
   </TextField>
   <Button type="submit">Submit</Button>
-</Form>
+</Form>;
 ```
 
 Supported constraints include:
 
-* `isRequired` indicates that a field must have a value before the form can be submitted.
-* `minValue` and `maxValue` specify the minimum and maximum value in a date picker or number field.
-* `minLength` and `maxLength` specify the minimum and length of text input.
-* `pattern` provides a custom [regular expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions) that a text input must conform to.
-* `type="email"` and `type="url"` provide builtin validation for email addresses and URLs.
+- `isRequired` indicates that a field must have a value before the form can be submitted.
+- `minValue` and `maxValue` specify the minimum and maximum value in a date picker or number field.
+- `minLength` and `maxLength` specify the minimum and length of text input.
+- `pattern` provides a custom [regular expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions) that a text input must conform to.
+- `type="email"` and `type="url"` provide builtin validation for email addresses and URLs.
 
 See each component's documentation for more details on the supported validation props.
 
@@ -182,9 +188,9 @@ By default, the `FieldError` component displays the error message provided by th
     <Input />
     {/*- begin highlight -*/}
     <FieldError>
-      {({validationDetails}) => (
-        validationDetails.valueMissing ? 'Please enter a name.' : ''
-      )}
+      {({ validationDetails }) =>
+        validationDetails.valueMissing ? "Please enter a name." : ""
+      }
     </FieldError>
     {/*- end highlight -*/}
   </TextField>
@@ -201,8 +207,8 @@ In addition to the built-in constraints, custom validation is supported by provi
 ```tsx example
 <Form>
   {/*- begin highlight -*/}
-  <TextField validate={value => value === 'admin' ? 'Nice try!' : null}>
-  {/*- end highlight -*/}
+  <TextField validate={(value) => (value === "admin" ? "Nice try!" : null)}>
+    {/*- end highlight -*/}
     <Label>Username</Label>
     <Input />
     <FieldError />
@@ -219,27 +225,35 @@ In some cases, validating in realtime can be desireable, such as when meeting pa
 
 ```tsx example
 function Example() {
-  let [password, setPassword] = React.useState('');
+  let [password, setPassword] = React.useState("");
   let errors = [];
   if (password.length < 8) {
-    errors.push('Password must be 8 characters or more.');
+    errors.push("Password must be 8 characters or more.");
   }
   if ((password.match(/[A-Z]/g) ?? []).length < 2) {
-    errors.push('Password must include at least 2 upper case letters');
+    errors.push("Password must include at least 2 upper case letters");
   }
-  if ((password.match(/[^a-z]/ig) ?? []).length < 2) {
-    errors.push('Password must include at least 2 symbols.');
+  if ((password.match(/[^a-z]/gi) ?? []).length < 2) {
+    errors.push("Password must include at least 2 symbols.");
   }
 
   return (
     /*- begin highlight -*/
-    <TextField isInvalid={errors.length > 0} value={password} onChange={setPassword}>
-    {/*- end highlight -*/}
+    <TextField
+      isInvalid={errors.length > 0}
+      value={password}
+      onChange={setPassword}
+    >
+      {/*- end highlight -*/}
       <Label>Name</Label>
       <Input />
       {/*- begin highlight -*/}
       <FieldError>
-        <ul>{errors.map((error, i) => <li key={i}>{error}</li>)}</ul>
+        <ul>
+          {errors.map((error, i) => (
+            <li key={i}>{error}</li>
+          ))}
+        </ul>
       </FieldError>
       {/*- end highlight -*/}
     </TextField>
@@ -271,7 +285,7 @@ function Example() {
     e.preventDefault();
 
     let data = Object.fromEntries(new FormData(e.currentTarget));
-    let result = await callServer(data)
+    let result = await callServer(data);
     /*- begin highlight -*/
     setErrors(result.errors);
     /*- end highlight -*/
@@ -280,7 +294,7 @@ function Example() {
   return (
     /*- begin highlight -*/
     <Form validationErrors={errors} onSubmit={onSubmit}>
-    {/*- end highlight -*/}
+      {/*- end highlight -*/}
       <TextField name="username" isRequired>
         <Label>Username</Label>
         <Input />
@@ -300,8 +314,8 @@ function Example() {
 function callServer(data) {
   return {
     errors: {
-      username: 'Sorry, this username is taken.'
-    }
+      username: "Sorry, this username is taken.",
+    },
   };
 }
 ```
@@ -312,11 +326,11 @@ React Aria is compatible with errors returned from schema validation libraries l
 
 ```tsx
 // In your server...
-import {z} from 'zod';
+import { z } from "zod";
 
 const schema = z.object({
   name: z.string().min(1),
-  age: z.coerce.number().positive()
+  age: z.coerce.number().positive(),
 });
 
 function handleRequest(formData: FormData) {
@@ -324,7 +338,7 @@ function handleRequest(formData: FormData) {
   if (!result.success) {
     return {
       /*- begin highlight -*/
-      errors: result.error.flatten().fieldErrors
+      errors: result.error.flatten().fieldErrors,
       /*- end highlight -*/
     };
   }
@@ -332,7 +346,7 @@ function handleRequest(formData: FormData) {
   // Do stuff...
 
   return {
-    errors: {}
+    errors: {},
   };
 }
 ```
@@ -345,21 +359,28 @@ Note that error message localization is also best done on the server rather than
 
 ```tsx
 // app/add-form.tsx
-'use client';
+"use client";
 
-import {useFormState} from 'react-dom';
-import {Form, TextField, Label, Input, FieldError, Button} from 'react-aria-components';
-import {createTodo} from '@/app/actions';
+import { useFormState } from "react-dom";
+import {
+  Form,
+  TextField,
+  Label,
+  Input,
+  FieldError,
+  Button,
+} from "react-aria-components";
+import { createTodo } from "@/app/actions";
 
 export function AddForm() {
   /*- begin highlight -*/
-  let [{errors}, formAction] = useFormState(createTodo, {errors: {}});
+  let [{ errors }, formAction] = useFormState(createTodo, { errors: {} });
   /*- end highlight -*/
 
   return (
     /*- begin highlight -*/
     <Form action={formAction} validationErrors={errors}>
-    {/*- end highlight -*/}
+      {/*- end highlight -*/}
       <TextField name="todo">
         <Label>Task</Label>
         <Input />
@@ -373,7 +394,7 @@ export function AddForm() {
 
 ```tsx
 // app/actions.ts
-'use server';
+"use server";
 
 export async function createTodo(prevState: any, formData: FormData) {
   try {
@@ -382,9 +403,9 @@ export async function createTodo(prevState: any, formData: FormData) {
     return {
       errors: {
         /*- begin highlight -*/
-        todo: 'Invalid todo.'
+        todo: "Invalid todo.",
         /*- end highlight -*/
-      }
+      },
     };
   }
 }
@@ -396,9 +417,16 @@ export async function createTodo(prevState: any, formData: FormData) {
 
 ```tsx
 // app/routes/signup.tsx
-import type {ActionFunctionArgs} from '@remix-run/node';
-import {useActionData, useSubmit} from '@remix-run/react';
-import {Form, TextField, Label, Input, FieldError, Button} from 'react-aria-components';
+import type { ActionFunctionArgs } from "@remix-run/node";
+import { useActionData, useSubmit } from "@remix-run/react";
+import {
+  Form,
+  TextField,
+  Label,
+  Input,
+  FieldError,
+  Button,
+} from "react-aria-components";
 
 export default function SignupForm() {
   let submit = useSubmit();
@@ -417,7 +445,8 @@ export default function SignupForm() {
       /*- begin highlight -*/
       validationErrors={actionData?.errors}
       /*- end highlight -*/
-      onSubmit={onSubmit}>
+      onSubmit={onSubmit}
+    >
       <TextField name="username" isRequired>
         <Label>Username</Label>
         <Input />
@@ -433,16 +462,16 @@ export default function SignupForm() {
   );
 }
 
-export async function action({request}: ActionFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   try {
     // Validate data and perform action...
   } catch (err) {
     return {
       errors: {
         /*- begin highlight -*/
-        username: 'Sorry, this username is taken.'
+        username: "Sorry, this username is taken.",
         /*- end highlight -*/
-      }
+      },
     };
   }
 }
@@ -459,13 +488,20 @@ In most cases, uncontrolled forms with the builtin validation features are enoug
 Since React Aria manages the state for components internally, you can use the [Controller](https://react-hook-form.com/docs/usecontroller/controller) component from React Hook Form to integrate React Aria components. Pass the props for the `field` render prop through to the React Aria component you're using, and use the `fieldState` to get validation errors to display.
 
 ```tsx
-import {useForm, Controller} from 'react-hook-form'
-import {Form, TextField, Label, Input, FieldError, Button} from 'react-aria-components';
+import { useForm, Controller } from "react-hook-form";
+import {
+  Form,
+  TextField,
+  Label,
+  Input,
+  FieldError,
+  Button,
+} from "react-aria-components";
 
 function App() {
-  let {handleSubmit, control} = useForm({
+  let { handleSubmit, control } = useForm({
     defaultValues: {
-      name: '',
+      name: "",
     },
   });
   let onSubmit = (data) => {
@@ -477,7 +513,7 @@ function App() {
       <Controller
         control={control}
         name="name"
-        rules={{ required: 'Name is required.' }}
+        rules={{ required: "Name is required." }}
         render={({
           field: { name, value, onChange, onBlur, ref },
           fieldState: { invalid, error },
@@ -493,8 +529,9 @@ function App() {
             isInvalid={invalid}
           >
             <Label>Name</Label>
-            // Assign React Hook Form ref to Input so it can focus the Input after validation.
-            <Input ref={ref}/>
+            // Assign React Hook Form ref to Input so it can focus the Input after
+            validation.
+            <Input ref={ref} />
             <FieldError>{error?.message}</FieldError>
           </TextField>
         )}
@@ -510,7 +547,10 @@ function App() {
 If you're using React Aria hooks rather than components, native form validation can be enabled using the `validationBehavior="native"` prop. Each hook returns validation information which can be used to render error messages with custom styles.
 
 ```tsx
-let {isInvalid, validationErrors, validationDetails} = useTextField(props, ref);
+let { isInvalid, validationErrors, validationDetails } = useTextField(
+  props,
+  ref
+);
 ```
 
 <TypeContext.Provider value={sharedDocs.links}>
@@ -520,15 +560,12 @@ let {isInvalid, validationErrors, validationDetails} = useTextField(props, ref);
 Server errors can be provided using the `FormValidationContext` directly, or using the `Form` component from `react-aria-components` as described above.
 
 ```tsx
-import {FormValidationContext} from 'react-stately';
+import { FormValidationContext } from "react-stately";
 
-<FormValidationContext.Provider value={{username: 'This username is taken.'}}>
-  <MyTextField
-    name="username"
-    isRequired
-    validationBehavior="native" />
+<FormValidationContext.Provider value={{ username: "This username is taken." }}>
+  <MyTextField name="username" isRequired validationBehavior="native" />
   {/* ... */}
-</FormValidationContext.Provider>
+</FormValidationContext.Provider>;
 ```
 
 See the [useTextField](useTextField.html) docs for an example of how to render validation errors.

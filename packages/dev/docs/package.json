@@ -6,9 +6,9 @@
   "dependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1",
     "@mdx-js/react": "next",
-    "@react-aria/aria-modal-polyfill": "^3.1.0",
-    "@react-aria/interactions": "^3.1.0",
-    "@react-aria/visually-hidden": "^3.1.0",
+    "@react-aria-nutrient/aria-modal-polyfill": "^3.1.0",
+    "@react-aria-nutrient/interactions": "^3.1.0",
+    "@react-aria-nutrient/visually-hidden": "^3.1.0",
     "@react-spectrum/autocomplete": "3.0.0-alpha.41",
     "@react-spectrum/breadcrumbs": "^3.1.0",
     "@react-spectrum/button": "^3.1.0",

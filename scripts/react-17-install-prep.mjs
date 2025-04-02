@@ -13,10 +13,10 @@ try {
 }
 
 try {
-  let content = fs.readFileSync('./packages/@react-aria/test-utils/package.json', 'utf8');
+  let content = fs.readFileSync('./packages/@react-aria-nutrient/test-utils/package.json', 'utf8');
   let pkg = JSON.parse(content);
   pkg.peerDependencies['@testing-library/react'] = '^12';
-  fs.writeFileSync('./packages/@react-aria/test-utils/package.json', JSON.stringify(pkg, null, 2));
+  fs.writeFileSync('./packages/@react-aria-nutrient/test-utils/package.json', JSON.stringify(pkg, null, 2));
 } catch (e) {
   console.error('Error:', e);
 }

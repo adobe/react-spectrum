@@ -10,82 +10,135 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaColorFieldProps, useColorChannelField, useColorField, useLocale} from 'react-aria';
-import {ColorChannel, ColorFieldState, ColorSpace, useColorChannelFieldState, useColorFieldState} from 'react-stately';
-import {ColorFieldContext} from './RSPContexts';
-import {FieldErrorContext} from './FieldError';
-import {filterDOMProps} from '@react-aria/utils';
-import {InputContext} from './Input';
-import {InputDOMProps, ValidationResult} from '@react-types/shared';
-import {LabelContext} from './Label';
-import {Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, Ref, useRef} from 'react';
-import {TextContext} from './Text';
+import {
+  AriaColorFieldProps,
+  useColorChannelField,
+  useColorField,
+  useLocale,
+} from "react-aria";
+import {
+  ColorChannel,
+  ColorFieldState,
+  ColorSpace,
+  useColorChannelFieldState,
+  useColorFieldState,
+} from "react-stately";
+import { ColorFieldContext } from "./RSPContexts";
+import { FieldErrorContext } from "./FieldError";
+import { filterDOMProps } from "@react-aria-nutrient/utils";
+import { InputContext } from "./Input";
+import { InputDOMProps, ValidationResult } from "@react-types/shared";
+import { LabelContext } from "./Label";
+import {
+  Provider,
+  RACValidation,
+  removeDataAttributes,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps,
+  useSlot,
+} from "./utils";
+import React, {
+  createContext,
+  ForwardedRef,
+  forwardRef,
+  HTMLAttributes,
+  InputHTMLAttributes,
+  LabelHTMLAttributes,
+  Ref,
+  useRef,
+} from "react";
+import { TextContext } from "./Text";
 
 export interface ColorFieldRenderProps {
   /**
    * Whether the color field is disabled.
    * @selector [data-disabled]
    */
-  isDisabled: boolean,
+  isDisabled: boolean;
   /**
    * Whether the color field is invalid.
    * @selector [data-invalid]
    */
-  isInvalid: boolean,
+  isInvalid: boolean;
   /**
    * The color channel that this field edits, or "hex" if no `channel` prop is set.
    * @selector [data-channel="hex | hue | saturation | ..."]
    */
-  channel: ColorChannel | 'hex',
+  channel: ColorChannel | "hex";
   /**
    * State of the color field.
    */
-  state: ColorFieldState
+  state: ColorFieldState;
 }
 
-export interface ColorFieldProps extends Omit<AriaColorFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, InputDOMProps, RenderProps<ColorFieldRenderProps>, SlotProps {
+export interface ColorFieldProps
+  extends Omit<
+      AriaColorFieldProps,
+      | "label"
+      | "placeholder"
+      | "description"
+      | "errorMessage"
+      | "validationState"
+      | "validationBehavior"
+    >,
+    RACValidation,
+    InputDOMProps,
+    RenderProps<ColorFieldRenderProps>,
+    SlotProps {
   /**
-   * The color channel that this field edits. If not provided, 
+   * The color channel that this field edits. If not provided,
    * the color is edited as a hex value.
    */
-  channel?: ColorChannel,
+  channel?: ColorChannel;
   /**
    * The color space that the color field operates in if a `channel` prop is provided.
    * If no `channel` is provided, the color field always displays the color as an RGB hex value.
    */
-  colorSpace?: ColorSpace
+  colorSpace?: ColorSpace;
 }
 
-export const ColorFieldStateContext = createContext<ColorFieldState | null>(null);
+export const ColorFieldStateContext = createContext<ColorFieldState | null>(
+  null
+);
 
 /**
  * A color field allows users to edit a hex color or individual color channel value.
  */
-export const ColorField = forwardRef(function ColorField(props: ColorFieldProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ColorField = forwardRef(function ColorField(
+  props: ColorFieldProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   [props, ref] = useContextProps(props, ref, ColorFieldContext);
   if (props.channel) {
-    return <ColorChannelField {...props} channel={props.channel} forwardedRef={ref} />;
+    return (
+      <ColorChannelField
+        {...props}
+        channel={props.channel}
+        forwardedRef={ref}
+      />
+    );
   } else {
     return <HexColorField {...props} forwardedRef={ref} />;
   }
 });
 
-interface ColorChannelFieldProps extends Omit<ColorFieldProps, 'channel'> {
-  channel: ColorChannel,
-  forwardedRef: ForwardedRef<HTMLDivElement>
+interface ColorChannelFieldProps extends Omit<ColorFieldProps, "channel"> {
+  channel: ColorChannel;
+  forwardedRef: ForwardedRef<HTMLDivElement>;
 }
 
 function ColorChannelField(props: ColorChannelFieldProps) {
-  let {locale} = useLocale();
+  let { locale } = useLocale();
   let state = useColorChannelFieldState({
     ...props,
-    locale
+    locale,
   });
 
   let inputRef = useRef<HTMLInputElement>(null);
   let [labelRef, label] = useSlot(
-    !props['aria-label'] && !props['aria-labelledby']
+    !props["aria-label"] && !props["aria-labelledby"]
   );
   let {
     labelProps,
@@ -93,11 +146,15 @@ function ColorChannelField(props: ColorChannelFieldProps) {
     descriptionProps,
     errorMessageProps,
     ...validation
-  } = useColorChannelField({
-    ...removeDataAttributes(props),
-    label,
-    validationBehavior: props.validationBehavior ?? 'native'
-  }, state, inputRef);
+  } = useColorChannelField(
+    {
+      ...removeDataAttributes(props),
+      label,
+      validationBehavior: props.validationBehavior ?? "native",
+    },
+    state,
+    inputRef
+  );
 
   return (
     <>
@@ -113,24 +170,30 @@ function ColorChannelField(props: ColorChannelFieldProps) {
         errorMessageProps,
         validation
       )}
-      {props.name && <input type="hidden" name={props.name} value={isNaN(state.numberValue) ? '' : state.numberValue} />}
+      {props.name && (
+        <input
+          type="hidden"
+          name={props.name}
+          value={isNaN(state.numberValue) ? "" : state.numberValue}
+        />
+      )}
     </>
   );
 }
 
 interface HexColorFieldProps extends ColorFieldProps {
-  forwardedRef: ForwardedRef<HTMLDivElement>
+  forwardedRef: ForwardedRef<HTMLDivElement>;
 }
 
 function HexColorField(props: HexColorFieldProps) {
   let state = useColorFieldState({
     ...props,
-    validationBehavior: props.validationBehavior ?? 'native'
+    validationBehavior: props.validationBehavior ?? "native",
   });
 
   let inputRef = useRef<HTMLInputElement>(null);
   let [labelRef, label] = useSlot(
-    !props['aria-label'] && !props['aria-labelledby']
+    !props["aria-label"] && !props["aria-labelledby"]
   );
   let {
     labelProps,
@@ -138,11 +201,15 @@ function HexColorField(props: HexColorFieldProps) {
     descriptionProps,
     errorMessageProps,
     ...validation
-  } = useColorField({
-    ...removeDataAttributes(props),
-    label,
-    validationBehavior: props.validationBehavior ?? 'native'
-  }, state, inputRef);
+  } = useColorField(
+    {
+      ...removeDataAttributes(props),
+      label,
+      validationBehavior: props.validationBehavior ?? "native",
+    },
+    state,
+    inputRef
+  );
 
   return useChildren(
     props,
@@ -174,11 +241,11 @@ function useChildren(
     ...props,
     values: {
       state,
-      channel: props.channel || 'hex',
+      channel: props.channel || "hex",
       isDisabled: props.isDisabled || false,
-      isInvalid: validation.isInvalid || false
+      isInvalid: validation.isInvalid || false,
     },
-    defaultClassName: 'react-aria-ColorField'
+    defaultClassName: "react-aria-ColorField",
   });
 
   let DOMProps = filterDOMProps(props);
@@ -188,24 +255,29 @@ function useChildren(
     <Provider
       values={[
         [ColorFieldStateContext, state],
-        [InputContext, {...inputProps, ref: inputRef}],
-        [LabelContext, {...labelProps, ref: labelRef}],
-        [TextContext, {
-          slots: {
-            description: descriptionProps,
-            errorMessage: errorMessageProps
-          }
-        }],
-        [FieldErrorContext, validation]
-      ]}>
+        [InputContext, { ...inputProps, ref: inputRef }],
+        [LabelContext, { ...labelProps, ref: labelRef }],
+        [
+          TextContext,
+          {
+            slots: {
+              description: descriptionProps,
+              errorMessage: errorMessageProps,
+            },
+          },
+        ],
+        [FieldErrorContext, validation],
+      ]}
+    >
       <div
         {...DOMProps}
         {...renderProps}
         ref={ref}
         slot={props.slot || undefined}
-        data-channel={props.channel || 'hex'}
+        data-channel={props.channel || "hex"}
         data-disabled={props.isDisabled || undefined}
-        data-invalid={validation.isInvalid || undefined} />
+        data-invalid={validation.isInvalid || undefined}
+      />
     </Provider>
   );
 }

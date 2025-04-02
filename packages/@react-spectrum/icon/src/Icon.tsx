@@ -10,42 +10,53 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, IconColorValue, StyleProps} from '@react-types/shared';
-import {baseStyleProps, classNames, StyleHandlers, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {filterDOMProps} from '@react-aria/utils';
-import {ProviderContext, useProvider} from '@react-spectrum/provider';
-import React, {ReactElement, ReactNode} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
+import {
+  AriaLabelingProps,
+  DOMProps,
+  IconColorValue,
+  StyleProps,
+} from "@react-types/shared";
+import {
+  baseStyleProps,
+  classNames,
+  StyleHandlers,
+  useSlotProps,
+  useStyleProps,
+} from "@react-spectrum/utils";
+import { filterDOMProps } from "@react-aria-nutrient/utils";
+import { ProviderContext, useProvider } from "@react-spectrum/provider";
+import React, { ReactElement, ReactNode } from "react";
+import styles from "@adobe/spectrum-css-temp/components/icon/vars.css";
 
 export interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
   /**
    * A screen reader only label for the Icon.
    */
-  'aria-label'?: string,
+  "aria-label"?: string;
   /**
    * The content to display. Should be an SVG.
    */
-  children: ReactElement<any>,
+  children: ReactElement<any>;
   /**
    * Size of Icon (changes based on scale).
    */
-  size?: 'XXS' | 'XS' | 'S' | 'M' | 'L' |'XL' | 'XXL',
+  size?: "XXS" | "XS" | "S" | "M" | "L" | "XL" | "XXL";
   /**
    * A slot to place the icon in.
    * @default 'icon'
    */
-  slot?: string,
+  slot?: string;
   /**
    * Indicates whether the element is exposed to an accessibility API.
    */
-  'aria-hidden'?: boolean | 'false' | 'true',
+  "aria-hidden"?: boolean | "false" | "true";
   /**
    * Color of the Icon.
    */
-  color?: IconColorValue
+  color?: IconColorValue;
 }
 
-export type IconPropsWithoutChildren = Omit<IconProps, 'children'>;
+export type IconPropsWithoutChildren = Omit<IconProps, "children">;
 
 function iconColorValue(value: IconColorValue) {
   return `var(--spectrum-semantic-${value}-color-icon)`;
@@ -53,22 +64,22 @@ function iconColorValue(value: IconColorValue) {
 
 const iconStyleProps: StyleHandlers = {
   ...baseStyleProps,
-  color: ['color', iconColorValue]
+  color: ["color", iconColorValue],
 };
 
 /**
  * Spectrum icons are clear, minimal, and consistent across platforms. They follow the focused and rational principles of the design system in both metaphor and style.
  */
 export function Icon(props: IconProps): ReactNode {
-  props = useSlotProps(props, 'icon');
+  props = useSlotProps(props, "icon");
   let {
     children,
     size,
-    'aria-label': ariaLabel,
-    'aria-hidden': ariaHidden,
+    "aria-label": ariaLabel,
+    "aria-hidden": ariaHidden,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps, iconStyleProps);
+  let { styleProps } = useStyleProps(otherProps, iconStyleProps);
 
   let provider: undefined | ProviderContext;
   try {
@@ -77,9 +88,9 @@ export function Icon(props: IconProps): ReactNode {
   } catch {
     // ignore
   }
-  let scale = 'M';
+  let scale = "M";
   if (provider != null) {
-    scale = provider.scale === 'large' ? 'L' : 'M';
+    scale = provider.scale === "large" ? "L" : "M";
   }
   if (!ariaHidden) {
     ariaHidden = undefined;
@@ -91,15 +102,16 @@ export function Icon(props: IconProps): ReactNode {
   return React.cloneElement(children, {
     ...filterDOMProps(otherProps),
     ...styleProps,
-    focusable: 'false',
-    'aria-label': ariaLabel,
-    'aria-hidden': (ariaLabel ? (ariaHidden || undefined) : true),
-    role: 'img',
+    focusable: "false",
+    "aria-label": ariaLabel,
+    "aria-hidden": ariaLabel ? ariaHidden || undefined : true,
+    role: "img",
     className: classNames(
       styles,
       children.props.className,
-      'spectrum-Icon',
+      "spectrum-Icon",
       `spectrum-Icon--size${iconSize}`,
-      styleProps.className)
+      styleProps.className
+    ),
   });
 }

@@ -15,7 +15,7 @@ import {ColorThumb} from 'react-aria-components';
 import {createPortal} from 'react-dom';
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
-import {useId, useLayoutEffect} from '@react-aria/utils';
+import {useId, useLayoutEffect} from '@react-aria-nutrient/utils';
 
 const HANDLE_SIZE = 16;
 const LOUPE_HEIGHT = 64; // Does not include borders

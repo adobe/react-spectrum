@@ -1,36 +1,42 @@
-{/* Copyright 2020 Adobe. All rights reserved.
+{/_ Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. */}
+governing permissions and limitations under the License. _/}
 
-import {Layout} from '@react-spectrum/docs';
+import { Layout } from "@react-spectrum/docs";
 export default Layout;
 
-import docs from 'docs:@react-spectrum/autocomplete';
-import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
-import packageData from '@react-spectrum/autocomplete/package.json';
+import docs from "docs:@react-spectrum/autocomplete";
+import { HeaderInfo, PropTable, PageDescription } from "@react-spectrum/docs";
+import packageData from "@react-spectrum/autocomplete/package.json";
 
 ```jsx import
-import {SearchAutocomplete, Section, Item} from '@react-spectrum/autocomplete';
-import {useFilter} from '@react-aria/i18n';
-import Email from '@spectrum-icons/workflow/Email';
-import Document from '@spectrum-icons/workflow/Document';
-import WebPages from '@spectrum-icons/workflow/WebPages';
-import SocialNetwork from '@spectrum-icons/workflow/SocialNetwork';
-import ShoppingCart from '@spectrum-icons/workflow/ShoppingCart';
-import Folder from '@spectrum-icons/workflow/Folder';
-import {Text} from '@react-spectrum/text';
-import {Avatar} from "@react-spectrum/avatar";
+import {
+  SearchAutocomplete,
+  Section,
+  Item,
+} from "@react-spectrum/autocomplete";
+import { useFilter } from "@react-aria-nutrient/i18n";
+import Email from "@spectrum-icons/workflow/Email";
+import Document from "@spectrum-icons/workflow/Document";
+import WebPages from "@spectrum-icons/workflow/WebPages";
+import SocialNetwork from "@spectrum-icons/workflow/SocialNetwork";
+import ShoppingCart from "@spectrum-icons/workflow/ShoppingCart";
+import Folder from "@spectrum-icons/workflow/Folder";
+import { Text } from "@react-spectrum/text";
+import { Avatar } from "@react-spectrum/avatar";
 ```
 
 ---
+
 category: Pickers
 keywords: [search field, input]
 after_version: 3.0.0
+
 ---
 
 # SearchAutocomplete
@@ -39,7 +45,8 @@ after_version: 3.0.0
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['SearchAutocomplete', 'Section', 'Item']} />
+  componentNames={["SearchAutocomplete", "Section", "Item"]}
+/>
 
 ## Example
 
@@ -52,6 +59,7 @@ after_version: 3.0.0
 ```
 
 ## Content
+
 SearchAutocomplete follows the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic collections.
 Similar to [ComboBox](ComboBox.html), SearchAutocomplete accepts `<Item>` elements as children, each with a `key` prop. Basic usage of SearchAutocomplete, seen in the example above, shows multiple options populated with a string.
 Static collections, as in this example, can be used when the full list of options is known ahead of time.
@@ -64,22 +72,23 @@ As seen below, an iterable list of options is passed to the SearchAutocomplete u
 ```tsx example
 function Example() {
   let options = [
-    {id: 1, name: 'Aerospace'},
-    {id: 2, name: 'Mechanical'},
-    {id: 3, name: 'Civil'},
-    {id: 4, name: 'Biomedical'},
-    {id: 5, name: 'Nuclear'},
-    {id: 6, name: 'Industrial'},
-    {id: 7, name: 'Chemical'},
-    {id: 8, name: 'Agricultural'},
-    {id: 9, name: 'Electrical'}
+    { id: 1, name: "Aerospace" },
+    { id: 2, name: "Mechanical" },
+    { id: 3, name: "Civil" },
+    { id: 4, name: "Biomedical" },
+    { id: 5, name: "Nuclear" },
+    { id: 6, name: "Industrial" },
+    { id: 7, name: "Chemical" },
+    { id: 8, name: "Agricultural" },
+    { id: 9, name: "Electrical" },
   ];
 
   return (
     <SearchAutocomplete
       label="Search engineering majors"
-      defaultItems={options}>
-      {item => <Item>{item.name}</Item>}
+      defaultItems={options}
+    >
+      {(item) => <Item>{item.name}</Item>}
     </SearchAutocomplete>
   );
 }
@@ -89,14 +98,20 @@ Alternatively, passing your list of options to SearchAutocomplete's `items` prop
 filtering logic. See the [Custom Filtering](#custom-filtering) section for more detail.
 
 ### Internationalization
+
 To internationalize a SearchAutocomplete, a localized string should be passed to the `children` of each `Item`.
 For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the SearchAutocomplete is automatically flipped.
 
 ## Labeling
+
 SearchAutocomplete can be labeled using the `label` prop. If the SearchAutocomplete is a required field, the `isRequired` and `necessityIndicator` props can be used to show a required state.
 
 ```tsx example
-<SearchAutocomplete label="Favorite Animal" isRequired necessityIndicator="icon">
+<SearchAutocomplete
+  label="Favorite Animal"
+  isRequired
+  necessityIndicator="icon"
+>
   <Item>Red Panda</Item>
   <Item>Cat</Item>
   <Item>Dog</Item>
@@ -105,8 +120,13 @@ SearchAutocomplete can be labeled using the `label` prop. If the SearchAutocompl
   <Item>Snake</Item>
 </SearchAutocomplete>
 ```
+
 ```tsx example
-<SearchAutocomplete label="Favorite Animal" isRequired necessityIndicator="label">
+<SearchAutocomplete
+  label="Favorite Animal"
+  isRequired
+  necessityIndicator="label"
+>
   <Item>Red Panda</Item>
   <Item>Cat</Item>
   <Item>Dog</Item>
@@ -115,6 +135,7 @@ SearchAutocomplete can be labeled using the `label` prop. If the SearchAutocompl
   <Item>Snake</Item>
 </SearchAutocomplete>
 ```
+
 ```tsx example
 <SearchAutocomplete label="Favorite Animal" necessityIndicator="label">
   <Item>Red Panda</Item>
@@ -143,10 +164,18 @@ By default, interacting with an item in a SearchAutocomplete updates the input v
 
 ```tsx example
 <SearchAutocomplete label="Tech company websites">
-  <Item href="https://adobe.com/" target="_blank">Adobe</Item>
-  <Item href="https://apple.com/" target="_blank">Apple</Item>
-  <Item href="https://google.com/" target="_blank">Google</Item>
-  <Item href="https://microsoft.com/" target="_blank">Microsoft</Item>
+  <Item href="https://adobe.com/" target="_blank">
+    Adobe
+  </Item>
+  <Item href="https://apple.com/" target="_blank">
+    Apple
+  </Item>
+  <Item href="https://google.com/" target="_blank">
+    Google
+  </Item>
+  <Item href="https://microsoft.com/" target="_blank">
+    Microsoft
+  </Item>
 </SearchAutocomplete>
 ```
 
@@ -155,9 +184,11 @@ By default, interacting with an item in a SearchAutocomplete updates the input v
 The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Spectrum components that support links, this works via the [Provider](Provider.html) component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
 ## Sections
+
 SearchAutocomplete supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. Each `Section` takes a `title` and `key` prop.
 
 ### Static items
+
 ```tsx example
 <SearchAutocomplete label="Preferred fruit or vegetable">
   <Section title="Fruit">
@@ -184,38 +215,48 @@ SearchAutocomplete supports sections in order to group options. Sections can be 
 ```
 
 ### Dynamic items
+
 Sections used with dynamic items are populated from a hierarchical data structure. Please note that `Section` takes an array of data using the `items` prop only.
 
 ```tsx example
 function Example() {
   let options = [
-    {name: 'Fruit', children: [
-      {name: 'Apple'},
-      {name: 'Banana'},
-      {name: 'Orange'},
-      {name: 'Honeydew'},
-      {name: 'Grapes'},
-      {name: 'Watermelon'},
-      {name: 'Cantaloupe'},
-      {name: 'Pear'}
-    ]},
-    {name: 'Vegetable', children: [
-      {name: 'Cabbage'},
-      {name: 'Broccoli'},
-      {name: 'Carrots'},
-      {name: 'Lettuce'},
-      {name: 'Spinach'},
-      {name: 'Bok Choy'},
-      {name: 'Cauliflower'},
-      {name: 'Potatoes'}
-    ]}
+    {
+      name: "Fruit",
+      children: [
+        { name: "Apple" },
+        { name: "Banana" },
+        { name: "Orange" },
+        { name: "Honeydew" },
+        { name: "Grapes" },
+        { name: "Watermelon" },
+        { name: "Cantaloupe" },
+        { name: "Pear" },
+      ],
+    },
+    {
+      name: "Vegetable",
+      children: [
+        { name: "Cabbage" },
+        { name: "Broccoli" },
+        { name: "Carrots" },
+        { name: "Lettuce" },
+        { name: "Spinach" },
+        { name: "Bok Choy" },
+        { name: "Cauliflower" },
+        { name: "Potatoes" },
+      ],
+    },
   ];
 
   return (
-    <SearchAutocomplete label="Preferred fruit or vegetable" defaultItems={options}>
-      {item => (
+    <SearchAutocomplete
+      label="Preferred fruit or vegetable"
+      defaultItems={options}
+    >
+      {(item) => (
         <Section key={item.name} items={item.children} title={item.name}>
-          {item => <Item key={item.name}>{item.name}</Item>}
+          {(item) => <Item key={item.name}>{item.name}</Item>}
         </Section>
       )}
     </SearchAutocomplete>
@@ -224,6 +265,7 @@ function Example() {
 ```
 
 ## Complex items
+
 Items within SearchAutocomplete also allow for additional content used to better communicate options. Icons, avatars, and descriptions can be added to the `children` of `Item` as shown in the example below.
 If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
 See Icon's [labeling](workflow-icons.html#labeling) section and Avatar's [accessibility](Avatar.html#accessibility) section for more information on how to label these elements.
@@ -298,17 +340,17 @@ set by the `loadingState` prop. It also supports infinite scrolling to load more
 This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle loading the data. See the docs for more information.
 
 ```tsx example
-import {useAsyncList} from '@react-stately/data';
+import { useAsyncList } from "@react-stately/data";
 
 interface Character {
-  name: string
+  name: string;
 }
 
 function AsyncLoadingExample() {
   let list = useAsyncList<Character>({
-    async load({signal, cursor, filterText}) {
+    async load({ signal, cursor, filterText }) {
       if (cursor) {
-        cursor = cursor.replace(/^http:\/\//i, 'https://');
+        cursor = cursor.replace(/^http:\/\//i, "https://");
       }
 
       // If no cursor is available, then we're loading the first page,
@@ -316,14 +358,17 @@ function AsyncLoadingExample() {
       // mirrors the SearchAutocomplete input text.
       // Otherwise, the cursor is the next URL to load,
       // as returned from the previous page.
-      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
+      let res = await fetch(
+        cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`,
+        { signal }
+      );
       let json = await res.json();
 
       return {
         items: json.results,
-        cursor: json.next
+        cursor: json.next,
       };
-    }
+    },
   });
 
   return (
@@ -333,8 +378,9 @@ function AsyncLoadingExample() {
       inputValue={list.filterText}
       onInputChange={list.setFilterText}
       loadingState={list.loadingState}
-      onLoadMore={list.loadMore}>
-      {item => <Item key={item.name}>{item.name}</Item>}
+      onLoadMore={list.loadMore}
+    >
+      {(item) => <Item key={item.name}>{item.name}</Item>}
     </SearchAutocomplete>
   );
 }
@@ -347,12 +393,12 @@ SearchAutocomplete supports the `isRequired` prop to ensure the user enters a va
 When the [Form](Form.html) component has the `validationBehavior="native"` prop, validation errors block form submission and are displayed as help text automatically. Errors are displayed when the user blurs the search field or submits the form.
 
 ```tsx example
-import {Form, ButtonGroup, Button} from '@adobe/react-spectrum';
+import { Form, ButtonGroup, Button } from "@adobe/react-spectrum";
 
 <Form validationBehavior="native" maxWidth="size-3000">
   {/*- begin highlight -*/}
   <SearchAutocomplete label="Favorite animal" name="animal" isRequired>
-  {/*- end highlight -*/}
+    {/*- end highlight -*/}
     <Item>Aardvark</Item>
     <Item>Cat</Item>
     <Item>Dog</Item>
@@ -361,15 +407,20 @@ import {Form, ButtonGroup, Button} from '@adobe/react-spectrum';
     <Item>Snake</Item>
   </SearchAutocomplete>
   <ButtonGroup>
-    <Button type="submit" variant="primary">Submit</Button>
-    <Button type="reset" variant="secondary">Reset</Button>
+    <Button type="submit" variant="primary">
+      Submit
+    </Button>
+    <Button type="reset" variant="secondary">
+      Reset
+    </Button>
   </ButtonGroup>
-</Form>
+</Form>;
 ```
 
 By default, `SearchAutocomplete` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
 
 ## Custom Filtering
+
 By default, SearchAutocomplete uses a string "contains" filtering strategy when deciding what items to display in the dropdown menu. This filtering strategy can be overwritten
 by filtering the list of items yourself and passing the filtered list to the SearchAutocomplete via the `items` prop.
 
@@ -381,28 +432,31 @@ changes in the input field ("input"), allowing you to make updates to other cont
 ```tsx example
 function Example() {
   let options = [
-    {id: 1, email: 'fake@email.com'},
-    {id: 2, email: 'anotherfake@email.com'},
-    {id: 3, email: 'bob@email.com'},
-    {id: 4, email: 'joe@email.com'},
-    {id: 5, email: 'yourEmail@email.com'},
-    {id: 6, email: 'valid@email.com'},
-    {id: 7, email: 'spam@email.com'},
-    {id: 8, email: 'newsletter@email.com'},
-    {id: 9, email: 'subscribe@email.com'}
+    { id: 1, email: "fake@email.com" },
+    { id: 2, email: "anotherfake@email.com" },
+    { id: 3, email: "bob@email.com" },
+    { id: 4, email: "joe@email.com" },
+    { id: 5, email: "yourEmail@email.com" },
+    { id: 6, email: "valid@email.com" },
+    { id: 7, email: "spam@email.com" },
+    { id: 8, email: "newsletter@email.com" },
+    { id: 9, email: "subscribe@email.com" },
   ];
 
   let [showAll, setShowAll] = React.useState(false);
-  let [filterValue, setFilterValue] = React.useState('');
-  let {startsWith} = useFilter({sensitivity: 'base'});
-  let filteredItems = React.useMemo(() => options.filter(item => startsWith(item.email, filterValue)), [options, filterValue]);
+  let [filterValue, setFilterValue] = React.useState("");
+  let { startsWith } = useFilter({ sensitivity: "base" });
+  let filteredItems = React.useMemo(
+    () => options.filter((item) => startsWith(item.email, filterValue)),
+    [options, filterValue]
+  );
 
   return (
     <SearchAutocomplete
       onOpenChange={(isOpen, menuTrigger) => {
         // Show all items if menu is opened manually
         // i.e. by the arrow keys or trigger button
-        if (menuTrigger === 'manual' && isOpen) {
+        if (menuTrigger === "manual" && isOpen) {
           setShowAll(true);
         }
       }}
@@ -413,14 +467,16 @@ function Example() {
       onInputChange={(value) => {
         setShowAll(false);
         setFilterValue(value);
-      }}>
-      {item => <Item>{item.email}</Item>}
+      }}
+    >
+      {(item) => <Item>{item.email}</Item>}
     </SearchAutocomplete>
   );
 }
 ```
 
 ## Trigger options
+
 By default, the SearchAutocomplete's menu is opened when the user types into the input field ("input"). There are two other supported modes: one where the menu opens when the SearchAutocomplete is focused ("focus") and
 the other where the menu only opens when the user clicks or taps on the SearchAutocomplete's field button ("manual"). These can be set by providing "focus" or "manual" to the `menuTrigger` prop.
 Guidelines on when to use a specific mode can be found [here](https://spectrum.adobe.com/page/combo-box/#Menu-trigger). Note that the mobile SearchAutocomplete experience requires the end user to press the SearchAutocomplete button
@@ -436,6 +492,7 @@ to open the tray regardless of the `menuTrigger` setting.
   <Item>Snake</Item>
 </SearchAutocomplete>
 ```
+
 ```tsx example
 <SearchAutocomplete label="Favorite Animal" menuTrigger="manual">
   <Item>Red Panda</Item>
@@ -460,7 +517,11 @@ The `labelAlign` prop can be used to align the label as "start" or "end". For le
 For right-to-left (RTL) languages, this is flipped.
 
 ```tsx example
-<SearchAutocomplete label="Favorite Animal" labelPosition="side" labelAlign="end">
+<SearchAutocomplete
+  label="Favorite Animal"
+  labelPosition="side"
+  labelAlign="end"
+>
   <Item>Red Panda</Item>
   <Item>Cat</Item>
   <Item>Dog</Item>
@@ -523,6 +584,7 @@ For right-to-left (RTL) languages, this is flipped.
 ```
 
 ### Menu direction
+
 ```tsx example
 <SearchAutocomplete label="Favorite Animal" direction="top">
   <Item>Red Panda</Item>

@@ -36,9 +36,9 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/focus": "^3.20.1",
-    "@react-aria/interactions": "^3.24.1",
-    "@react-aria/switch": "^3.7.1",
+    "@react-aria-nutrient/focus": "^3.20.1",
+    "@react-aria-nutrient/interactions": "^3.24.1",
+    "@react-aria-nutrient/switch": "^3.7.1",
     "@react-spectrum/utils": "^3.12.3",
     "@react-stately/toggle": "^3.8.2",
     "@react-types/shared": "^3.28.0",

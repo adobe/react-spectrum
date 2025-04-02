@@ -10,27 +10,40 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, ClearSlots, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import CornerTriangle from '@spectrum-icons/ui/CornerTriangle';
-import {FocusableRef} from '@react-types/shared';
-import {FocusRing} from '@react-aria/focus';
-import {mergeProps} from '@react-aria/utils';
-import React from 'react';
-import {SpectrumActionButtonProps} from '@react-types/button';
-import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
-import {Text} from '@react-spectrum/text';
-import {useButton} from '@react-aria/button';
-import {useHover} from '@react-aria/interactions';
-import {useProviderProps} from '@react-spectrum/provider';
+import {
+  classNames,
+  ClearSlots,
+  SlotProvider,
+  useFocusableRef,
+  useSlotProps,
+  useStyleProps,
+} from "@react-spectrum/utils";
+import CornerTriangle from "@spectrum-icons/ui/CornerTriangle";
+import { FocusableRef } from "@react-types/shared";
+import { FocusRing } from "@react-aria-nutrient/focus";
+import { mergeProps } from "@react-aria-nutrient/utils";
+import React from "react";
+import { SpectrumActionButtonProps } from "@react-types/button";
+import styles from "@adobe/spectrum-css-temp/components/button/vars.css";
+import { Text } from "@react-spectrum/text";
+import { useButton } from "@react-aria-nutrient/button";
+import { useHover } from "@react-aria-nutrient/interactions";
+import { useProviderProps } from "@react-spectrum/provider";
 
 /**
  * ActionButtons allow users to perform an action.
  * They’re used for similar, task-based options within a workflow, and are ideal for interfaces where buttons aren’t meant to draw a lot of attention.
  */
-export const ActionButton = React.forwardRef(function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+export const ActionButton = React.forwardRef(function ActionButton(
+  props: SpectrumActionButtonProps,
+  ref: FocusableRef<HTMLButtonElement>
+) {
   props = useProviderProps(props);
-  props = useSlotProps(props, 'actionButton');
-  let textProps = useSlotProps({UNSAFE_className: classNames(styles, 'spectrum-ActionButton-label')}, 'text');
+  props = useSlotProps(props, "actionButton");
+  let textProps = useSlotProps(
+    { UNSAFE_className: classNames(styles, "spectrum-ActionButton-label") },
+    "text"
+  );
 
   let {
     isQuiet,
@@ -46,56 +59,61 @@ export const ActionButton = React.forwardRef(function ActionButton(props: Spectr
   } = props;
 
   let domRef = useFocusableRef(ref);
-  let {buttonProps, isPressed} = useButton(props, domRef);
-  let {hoverProps, isHovered} = useHover({isDisabled});
-  let {styleProps} = useStyleProps(otherProps);
-  let isTextOnly = React.Children.toArray(props.children).every(c => !React.isValidElement(c));
+  let { buttonProps, isPressed } = useButton(props, domRef);
+  let { hoverProps, isHovered } = useHover({ isDisabled });
+  let { styleProps } = useStyleProps(otherProps);
+  let isTextOnly = React.Children.toArray(props.children).every(
+    (c) => !React.isValidElement(c)
+  );
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
+    <FocusRing
+      focusRingClass={classNames(styles, "focus-ring")}
+      autoFocus={autoFocus}
+    >
       <button
         {...styleProps}
         {...mergeProps(buttonProps, hoverProps)}
         ref={domRef}
-        className={
-          classNames(
-            styles,
-            'spectrum-ActionButton',
-            {
-              'spectrum-ActionButton--quiet': isQuiet,
-              'spectrum-ActionButton--staticColor': !!staticColor,
-              'spectrum-ActionButton--staticWhite': staticColor === 'white',
-              'spectrum-ActionButton--staticBlack': staticColor === 'black',
-              'is-active': isPressed,
-              'is-disabled': isDisabled,
-              'is-hovered': isHovered
-            },
-            styleProps.className
-          )
-        }>
-        {holdAffordance &&
-          <CornerTriangle UNSAFE_className={classNames(styles, 'spectrum-ActionButton-hold')} />
-        }
+        className={classNames(
+          styles,
+          "spectrum-ActionButton",
+          {
+            "spectrum-ActionButton--quiet": isQuiet,
+            "spectrum-ActionButton--staticColor": !!staticColor,
+            "spectrum-ActionButton--staticWhite": staticColor === "white",
+            "spectrum-ActionButton--staticBlack": staticColor === "black",
+            "is-active": isPressed,
+            "is-disabled": isDisabled,
+            "is-hovered": isHovered,
+          },
+          styleProps.className
+        )}
+      >
+        {holdAffordance && (
+          <CornerTriangle
+            UNSAFE_className={classNames(styles, "spectrum-ActionButton-hold")}
+          />
+        )}
         <ClearSlots>
           <SlotProvider
             slots={{
               icon: {
-                size: 'S',
-                UNSAFE_className: classNames(
-                  styles,
-                  'spectrum-Icon',
-                  {
-                    'spectrum-ActionGroup-itemIcon': hideButtonText
-                  }
-                )
+                size: "S",
+                UNSAFE_className: classNames(styles, "spectrum-Icon", {
+                  "spectrum-ActionGroup-itemIcon": hideButtonText,
+                }),
               },
               text: {
-                ...textProps
-              }
-            }}>
-            {typeof children === 'string' || isTextOnly
-              ? <Text>{children}</Text>
-              : children}
+                ...textProps,
+              },
+            }}
+          >
+            {typeof children === "string" || isTextOnly ? (
+              <Text>{children}</Text>
+            ) : (
+              children
+            )}
           </SlotProvider>
         </ClearSlots>
       </button>

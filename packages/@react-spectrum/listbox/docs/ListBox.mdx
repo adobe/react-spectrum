@@ -1,33 +1,39 @@
-{/* Copyright 2020 Adobe. All rights reserved.
+{/_ Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. */}
+governing permissions and limitations under the License. _/}
 
-import {Layout} from '@react-spectrum/docs';
+import { Layout } from "@react-spectrum/docs";
 export default Layout;
 
-import docs from 'docs:@react-spectrum/listbox';
-import {HeaderInfo, PropTable, PageDescription, ClassAPI, VersionBadge} from '@react-spectrum/docs';
-import packageData from '@react-spectrum/listbox/package.json';
-import listboxUtils from 'docs:@react-aria/test-utils/src/listbox.ts';
+import docs from "docs:@react-spectrum/listbox";
+import {
+  HeaderInfo,
+  PropTable,
+  PageDescription,
+  ClassAPI,
+  VersionBadge,
+} from "@react-spectrum/docs";
+import packageData from "@react-spectrum/listbox/package.json";
+import listboxUtils from "docs:@react-aria-nutrient/test-utils/src/listbox.ts";
 
 ```jsx import
-import {ListBox, Section, Item} from '@react-spectrum/listbox';
-import {Flex} from '@react-spectrum/layout';
-import Book from '@spectrum-icons/workflow/Book';
-import BulkEditUsers from '@spectrum-icons/workflow/BulkEditUsers';
-import Draw from '@spectrum-icons/workflow/Draw';
-import {Text} from '@react-spectrum/text';
-import {Avatar} from "@react-spectrum/avatar";
+import { ListBox, Section, Item } from "@react-spectrum/listbox";
+import { Flex } from "@react-spectrum/layout";
+import Book from "@spectrum-icons/workflow/Book";
+import BulkEditUsers from "@spectrum-icons/workflow/BulkEditUsers";
+import Draw from "@spectrum-icons/workflow/Draw";
+import { Text } from "@react-spectrum/text";
+import { Avatar } from "@react-spectrum/avatar";
 ```
 
 ---
-category: Collections
----
+
+## category: Collections
 
 # ListBox
 
@@ -35,8 +41,9 @@ category: Collections
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['ListBox, Item, Section']}
-  since="3.0.0" />
+  componentNames={["ListBox, Item, Section"]}
+  since="3.0.0"
+/>
 
 ## Example
 
@@ -49,6 +56,7 @@ category: Collections
 ```
 
 ## Content
+
 A ListBox displays a list of options, and allows users to select one or more of them. It follows the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic collections. Similar to [Picker](Picker.html), ListBox accepts `<Item>` elements as children, each with a `key` prop. Basic usage of the ListBox, seen in the example above, shows multiple options populated with a string. Static collections, as in this example, can be used when the full list of options is known ahead of time.
 
 Dynamic collections, as shown below, can be used when the options come from an external data source such as an API call, or update over time. Providing the data in this way allows for ListBox to automatically cache the rendering of each item, which dramatically improves performance.
@@ -58,52 +66,64 @@ As seen below, an iterable list of options is passed to the Listbox using the `i
 ```tsx example
 function Example() {
   let options = [
-    {id: 1, name: 'Aardvark'},
-    {id: 2, name: 'Cat'},
-    {id: 3, name: 'Dog'},
-    {id: 4, name: 'Kangaroo'},
-    {id: 5, name: 'Koala'},
-    {id: 6, name: 'Penguin'},
-    {id: 7, name: 'Snake'},
-    {id: 8, name: 'Turtle'},
-    {id: 9, name: 'Wombat'}
+    { id: 1, name: "Aardvark" },
+    { id: 2, name: "Cat" },
+    { id: 3, name: "Dog" },
+    { id: 4, name: "Kangaroo" },
+    { id: 5, name: "Koala" },
+    { id: 6, name: "Penguin" },
+    { id: 7, name: "Snake" },
+    { id: 8, name: "Turtle" },
+    { id: 9, name: "Wombat" },
   ];
   let [animalId, setAnimalId] = React.useState(null);
 
   return (
     <>
-      <ListBox width="size-2400" aria-label="Animals" items={options} selectionMode="single" onSelectionChange={setAnimalId}>
-        {item => <Item>{item.name}</Item>}
+      <ListBox
+        width="size-2400"
+        aria-label="Animals"
+        items={options}
+        selectionMode="single"
+        onSelectionChange={setAnimalId}
+      >
+        {(item) => <Item>{item.name}</Item>}
       </ListBox>
       <p>Animal id: {animalId}</p>
     </>
   );
 }
 ```
+
 ### Accessibility
-ListBoxes should be labeled using the `aria-label` prop.  If the ListBox is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
+
+ListBoxes should be labeled using the `aria-label` prop. If the ListBox is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
 
 ### Internationalization
+
 To internationalize a ListBox, a localized string should be passed to the `children` of each `Item`.
 For languages that are read right to left (e.g. Hebrew and Arabic), the layout of the ListBox is flipped.
 
 ## Selection
+
 ListBox supports no selection, single and multiple selection modes using the `selectionMode` prop. Setting selected options can be done by using the `defaultSelectedKeys` or `selectedKeys` prop. The selected key corresponds to the `key` of an item. See <a href="#events" title="Events">Events</a> for more details on selection events.
 Additionally, see the `react-stately` [Selection docs](../react-stately/selection.html#selected-key-data-type) for caveats regarding selection prop typing.
 
 ```tsx example
-import type {Selection} from '@adobe/react-spectrum';
+import type { Selection } from "@adobe/react-spectrum";
 
 function Example() {
   let options = [
-    {name: 'Koala'},
-    {name: 'Kangaroo'},
-    {name: 'Platypus'},
-    {name: 'Bald Eagle'},
-    {name: 'Bison'},
-    {name: 'Skunk'}
+    { name: "Koala" },
+    { name: "Kangaroo" },
+    { name: "Platypus" },
+    { name: "Bald Eagle" },
+    { name: "Bison" },
+    { name: "Skunk" },
   ];
-  let [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set(['Bison']));
+  let [selectedKeys, setSelectedKeys] = React.useState<Selection>(
+    new Set(["Bison"])
+  );
 
   return (
     <Flex direction="row" gap="size-350">
@@ -111,9 +131,10 @@ function Example() {
         selectionMode="multiple"
         aria-label="Pick an animal"
         items={options}
-        defaultSelectedKeys={['Bison', 'Koala']}
-        width="size-2400">
-        {item => <Item key={item.name}>{item.name}</Item>}
+        defaultSelectedKeys={["Bison", "Koala"]}
+        width="size-2400"
+      >
+        {(item) => <Item key={item.name}>{item.name}</Item>}
       </ListBox>
 
       <ListBox
@@ -122,8 +143,9 @@ function Example() {
         items={options}
         selectedKeys={selectedKeys}
         onSelectionChange={setSelectedKeys}
-        width="size-2400">
-        {item => <Item key={item.name}>{item.name}</Item>}
+        width="size-2400"
+      >
+        {(item) => <Item key={item.name}>{item.name}</Item>}
       </ListBox>
     </Flex>
   );
@@ -136,10 +158,18 @@ By default, interacting with an item in a ListBox triggers `onSelectionChange`. 
 
 ```tsx example
 <ListBox aria-label="Links">
-  <Item href="https://adobe.com/" target="_blank">Adobe</Item>
-  <Item href="https://apple.com/" target="_blank">Apple</Item>
-  <Item href="https://google.com/" target="_blank">Google</Item>
-  <Item href="https://microsoft.com/" target="_blank">Microsoft</Item>
+  <Item href="https://adobe.com/" target="_blank">
+    Adobe
+  </Item>
+  <Item href="https://apple.com/" target="_blank">
+    Apple
+  </Item>
+  <Item href="https://google.com/" target="_blank">
+    Google
+  </Item>
+  <Item href="https://microsoft.com/" target="_blank">
+    Microsoft
+  </Item>
 </ListBox>
 ```
 
@@ -148,11 +178,17 @@ By default, interacting with an item in a ListBox triggers `onSelectionChange`. 
 The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Spectrum components that support links, this works via the [Provider](Provider.html) component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
 ## Sections
+
 ListBox supports sections in order to group options. Sections can be used by wrapping groups of Items in a `Section` component. Each `Section` takes a `title` and `key` prop.
 
 ### Static Items
+
 ```tsx example
-<ListBox width="size-2400" aria-label="Pick your favorite" selectionMode="single">
+<ListBox
+  width="size-2400"
+  aria-label="Pick your favorite"
+  selectionMode="single"
+>
   <Section title="Animals">
     <Item key="Aardvark">Aardvark</Item>
     <Item key="Kangaroo">Kangaroo</Item>
@@ -165,24 +201,32 @@ ListBox supports sections in order to group options. Sections can be used by wra
   </Section>
 </ListBox>
 ```
+
 ### Dynamic Items
+
 Sections used with dynamic items are populated from a hierarchical data structure. Similarly to the props on `ListBox`, `Section` takes an array of data using the `items` prop.
 
 ```tsx example
-import type {Selection} from '@adobe/react-spectrum';
+import type { Selection } from "@adobe/react-spectrum";
 
 function Example() {
   let options = [
-    {name: 'Australian', children: [
-      {id: 2, name: 'Koala'},
-      {id: 3, name: 'Kangaroo'},
-      {id: 4, name: 'Platypus'}
-    ]},
-    {name: 'American', children: [
-      {id: 6, name: 'Bald Eagle'},
-      {id: 7, name: 'Bison'},
-      {id: 8, name: 'Skunk'}
-    ]}
+    {
+      name: "Australian",
+      children: [
+        { id: 2, name: "Koala" },
+        { id: 3, name: "Kangaroo" },
+        { id: 4, name: "Platypus" },
+      ],
+    },
+    {
+      name: "American",
+      children: [
+        { id: 6, name: "Bald Eagle" },
+        { id: 7, name: "Bison" },
+        { id: 8, name: "Skunk" },
+      ],
+    },
   ];
   let [selected, setSelected] = React.useState<Selection>(new Set());
 
@@ -193,10 +237,11 @@ function Example() {
       selectedKeys={selected}
       selectionMode="single"
       onSelectionChange={setSelected}
-      width="size-2400">
-      {item => (
+      width="size-2400"
+    >
+      {(item) => (
         <Section key={item.name} items={item.children} title={item.name}>
-          {item => <Item>{item.name}</Item>}
+          {(item) => <Item>{item.name}</Item>}
         </Section>
       )}
     </ListBox>
@@ -205,13 +250,14 @@ function Example() {
 ```
 
 ## Events
+
 ListBox supports selection via mouse, keyboard, and touch. You can handle all of these via the `onSelectionChange`
 prop. ListBox will pass the selected `key` to the `onSelectionChange` handler.
 
 The following example uses an `onSelectionChange` handler to update the selection stored in React state.
 
 ```tsx example
-import type {Selection} from '@adobe/react-spectrum';
+import type { Selection } from "@adobe/react-spectrum";
 
 function StaticExample() {
   let [frequency, setFrequency] = React.useState<Selection>(new Set());
@@ -221,8 +267,9 @@ function StaticExample() {
       <ListBox
         aria-label="Choose frequency"
         selectionMode="single"
-        onSelectionChange={selected => setFrequency(selected)}
-        width="size-2400">
+        onSelectionChange={(selected) => setFrequency(selected)}
+        width="size-2400"
+      >
         <Item key="Rarely">Rarely</Item>
         <Item key="Sometimes">Sometimes</Item>
         <Item key="Always">Always</Item>
@@ -236,20 +283,20 @@ function StaticExample() {
 When using ListBox with dynamic items, selection works much the same way using `key`. However, if your data already has an `id` property (as is common with many data sets), ListBox can use that id without needing to specify a `key` prop. The below example shows ListBox using the id of each item from the `items` array as the selected value without the need for `key`. Note that `key` will always take precedence if set.
 
 ```tsx example
-import type {Selection} from '@adobe/react-spectrum';
+import type { Selection } from "@adobe/react-spectrum";
 
 function DynamicExample() {
   let [animalId, setAnimalId] = React.useState<Selection>(new Set());
   let options = [
-    {id: 1, name: 'Aardvark'},
-    {id: 2, name: 'Cat'},
-    {id: 3, name: 'Dog'},
-    {id: 4, name: 'Kangaroo'},
-    {id: 5, name: 'Koala'},
-    {id: 6, name: 'Penguin'},
-    {id: 7, name: 'Snake'},
-    {id: 8, name: 'Turtle'},
-    {id: 9, name: 'Wombat'}
+    { id: 1, name: "Aardvark" },
+    { id: 2, name: "Cat" },
+    { id: 3, name: "Dog" },
+    { id: 4, name: "Kangaroo" },
+    { id: 5, name: "Koala" },
+    { id: 6, name: "Penguin" },
+    { id: 7, name: "Snake" },
+    { id: 8, name: "Turtle" },
+    { id: 9, name: "Wombat" },
   ];
 
   return (
@@ -258,9 +305,10 @@ function DynamicExample() {
         selectionMode="single"
         aria-label="Pick an animal"
         items={options}
-        onSelectionChange={selected => setAnimalId(selected)}
-        width="size-2400">
-        {item => <Item>{item.name}</Item>}
+        onSelectionChange={(selected) => setAnimalId(selected)}
+        width="size-2400"
+      >
+        {(item) => <Item>{item.name}</Item>}
       </ListBox>
       <p>Your favorite animal has id: {[...animalId][0]}</p>
     </>
@@ -269,6 +317,7 @@ function DynamicExample() {
 ```
 
 ## Complex Items
+
 Items within ListBox also allow for additional content used to better communicate options. Icons, avatars, and descriptions can be added to the `children` of `Item` as shown in the example below.
 If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
 See Icon's [labeling](workflow-icons.html#labeling) section and Avatar's [accessibility](Avatar.html#accessibility) section for more information on how to label these elements.
@@ -329,24 +378,26 @@ This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to
 See the docs for more information.
 
 ```tsx example
-import {useAsyncList} from '@react-stately/data';
+import { useAsyncList } from "@react-stately/data";
 
 interface Pokemon {
-  name: string
+  name: string;
 }
 
 function AsyncLoadingExample() {
   let list = useAsyncList<Pokemon>({
-    async load({signal, cursor}) {
+    async load({ signal, cursor }) {
       // If no cursor is available, then we're loading the first page.
       // Otherwise, the cursor is the next URL to load, as returned from the previous page.
-      let res = await fetch(cursor || 'https://pokeapi.co/api/v2/pokemon', {signal});
+      let res = await fetch(cursor || "https://pokeapi.co/api/v2/pokemon", {
+        signal,
+      });
       let json = await res.json();
       return {
         items: json.results,
-        cursor: json.next
+        cursor: json.next,
       };
-    }
+    },
   });
 
   return (
@@ -356,8 +407,9 @@ function AsyncLoadingExample() {
         items={list.items}
         isLoading={list.isLoading}
         onLoadMore={list.loadMore}
-        width="size-2400">
-        {item => <Item key={item.name}>{item.name}</Item>}
+        width="size-2400"
+      >
+        {(item) => <Item key={item.name}>{item.name}</Item>}
       </ListBox>
     </Flex>
   );
@@ -369,6 +421,7 @@ function AsyncLoadingExample() {
 <PropTable component={docs.exports.ListBox} links={docs.links} />
 
 ## Visual options
+
 ### Loading
 
 ```tsx example
@@ -376,16 +429,23 @@ function AsyncLoadingExample() {
   isLoading
   aria-label="Choose frequency"
   selectionMode="single"
-  width="size-1200">
+  width="size-1200"
+>
   {[]}
 </ListBox>
 ```
 
 ### Disabled
+
 Use the `disabledKeys` prop to specify which item keys to disable in the ListBox.
 
 ```tsx example
-<ListBox width="size-2400" aria-label="Pick your favorite" disabledKeys={["Snake", "Ross"]} selectionMode="single">
+<ListBox
+  width="size-2400"
+  aria-label="Pick your favorite"
+  disabledKeys={["Snake", "Ross"]}
+  selectionMode="single"
+>
   <Section title="Animals">
     <Item key="Aardvark">Aardvark</Item>
     <Item key="Kangaroo">Kangaroo</Item>
@@ -418,27 +478,33 @@ in your tests. Below is the full definition of the listbox tester and a sample o
 
 ```ts
 // ListBox.test.ts
-import {render} from '@testing-library/react';
-import {theme} from '@react-spectrum/theme-default';
-import {User} from '@react-spectrum/test-utils';
+import { render } from "@testing-library/react";
+import { theme } from "@react-spectrum/theme-default";
+import { User } from "@react-spectrum/test-utils";
 
-let testUtilUser = new User({interactionType: 'mouse'});
+let testUtilUser = new User({ interactionType: "mouse" });
 // ...
 
-it('ListBox can select an option via keyboard', async function () {
+it("ListBox can select an option via keyboard", async function () {
   // Render your test component/app and initialize the listbox tester
-  let {getByTestId} = render(
+  let { getByTestId } = render(
     <Provider theme={defaultTheme}>
       <ListBox selectionMode="single" data-testid="test-listbox">
         ...
       </ListBox>
     </Provider>
   );
-  let listboxTester = testUtilUser.createTester('ListBox', {root: getByTestId('test-listbox'), interactionType: 'keyboard'});
+  let listboxTester = testUtilUser.createTester("ListBox", {
+    root: getByTestId("test-listbox"),
+    interactionType: "keyboard",
+  });
 
-  await listboxTester.toggleOptionSelection({option: 4});
-  expect(listboxTester.options()[4]).toHaveAttribute('aria-selected', 'true');
+  await listboxTester.toggleOptionSelection({ option: 4 });
+  expect(listboxTester.options()[4]).toHaveAttribute("aria-selected", "true");
 });
 ```
 
-<ClassAPI links={listboxUtils.links} class={listboxUtils.exports.ListBoxTester} />
+<ClassAPI
+  links={listboxUtils.links}
+  class={listboxUtils.exports.ListBoxTester}
+/>

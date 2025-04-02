@@ -1,33 +1,42 @@
-{/* Copyright 2024 Adobe. All rights reserved.
+{/_ Copyright 2024 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. */}
+governing permissions and limitations under the License. _/}
 
-import {Layout} from '@react-spectrum/docs';
+import { Layout } from "@react-spectrum/docs";
 export default Layout;
 
-import docs from 'docs:react-aria-components';
-import statelyDocs from 'docs:@react-stately/color';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
-import styles from '@react-spectrum/docs/src/docs.css';
-import packageData from 'react-aria-components/package.json';
-import Anatomy from '@react-aria/color/docs/ColorAreaAnatomy.svg';
-import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
-import {Divider} from '@react-spectrum/divider';
-import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
-import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
-import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
-import {Keyboard} from '@react-spectrum/text';
-import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
+import docs from "docs:react-aria-components";
+import statelyDocs from "docs:@react-stately/color";
+import {
+  PropTable,
+  HeaderInfo,
+  TypeLink,
+  PageDescription,
+  StateTable,
+  ContextTable,
+} from "@react-spectrum/docs";
+import styles from "@react-spectrum/docs/src/docs.css";
+import packageData from "react-aria-components/package.json";
+import Anatomy from "@react-aria-nutrient/color/docs/ColorAreaAnatomy.svg";
+import ChevronRight from "@spectrum-icons/workflow/ChevronRight";
+import { Divider } from "@react-spectrum/divider";
+import { ExampleList } from "@react-spectrum/docs/src/ExampleList";
+import { ExampleCard } from "@react-spectrum/docs/src/ExampleCard";
+import Label from "@react-spectrum/docs/pages/assets/component-illustrations/Label.svg";
+import { Keyboard } from "@react-spectrum/text";
+import { StarterKits } from "@react-spectrum/docs/src/StarterKits";
 
 ---
+
 category: Color
 keywords: [color area, color picker, aria]
 type: component
+
 ---
 
 # ColorArea
@@ -36,19 +45,20 @@ type: component
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['ColorArea']}
+  componentNames={["ColorArea"]}
   sourceData={[
-    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/slider/'}
-  ]} />
+    { type: "W3C", url: "https://www.w3.org/WAI/ARIA/apg/patterns/slider/" },
+  ]}
+/>
 
 ## Example
 
 ```tsx example
-import {ColorArea, ColorThumb} from 'react-aria-components';
+import { ColorArea, ColorThumb } from "react-aria-components";
 
 <ColorArea>
   <ColorThumb />
-</ColorArea>
+</ColorArea>;
 ```
 
 <details>
@@ -90,15 +100,16 @@ can be used to build a color picker, however it is very inconsistent across brow
 of a complete color picker rather than a color area. `ColorArea` helps achieve accessible and
 touch-friendly color areas that can be styled as needed.
 
-* **Customizable** – Support for adjusting two-channel values of an HSL, HSB or RGB color value.
-* **High quality interactions** – Mouse, touch, and keyboard input is supported via the [useMove](../react-aria/useMove.html) hook. Pressing the color area moves the thumb to that position. Text selection and touch scrolling are prevented while dragging.
-* **Accessible** – Announces localized color descriptions for screen reader users (e.g. "dark vibrant blue"). Uses two visually hidden `<input>` elements for mobile screen reader support and HTML form integration.
+- **Customizable** – Support for adjusting two-channel values of an HSL, HSB or RGB color value.
+- **High quality interactions** – Mouse, touch, and keyboard input is supported via the [useMove](../react-aria/useMove.html) hook. Pressing the color area moves the thumb to that position. Text selection and touch scrolling are prevented while dragging.
+- **Accessible** – Announces localized color descriptions for screen reader users (e.g. "dark vibrant blue"). Uses two visually hidden `<input>` elements for mobile screen reader support and HTML form integration.
 
 ## Anatomy
 
 <Anatomy
   role="img"
-  aria-label="Color area anatomy diagram: Shows a color area component with labels pointing to its parts, including the area, and thumb elements." />
+  aria-label="Color area anatomy diagram: Shows a color area component with labels pointing to its parts, including the area, and thumb elements."
+/>
 
 A color area consists of a rectangular background area that provides, using a two-dimensional gradient,
 a visual representation of the range of color values from which a user can select, and a thumb that the user can drag
@@ -106,20 +117,20 @@ to change the selected color value. Two visually hidden `<input>` elements are u
 values to assistive technologies.
 
 ```tsx
-import {ColorArea, ColorThumb} from 'react-aria-components';
+import { ColorArea, ColorThumb } from "react-aria-components";
 
 <ColorArea>
   <ColorThumb />
-</ColorArea>
+</ColorArea>;
 ```
 
-{/*
+{/\*
 
 ## Examples
 
 <ExampleList tag="colorslider" />
 
-*/}
+\*/}
 
 ## Starter kits
 
@@ -132,7 +143,7 @@ To help kick-start your project, we offer starter kits that include example impl
 If you will use a ColorArea in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
 ```tsx example export=true
-import type {ColorAreaProps} from 'react-aria-components';
+import type { ColorAreaProps } from "react-aria-components";
 
 export function MyColorArea(props: ColorAreaProps) {
   return (
@@ -142,7 +153,7 @@ export function MyColorArea(props: ColorAreaProps) {
   );
 }
 
-<MyColorArea defaultValue="hsl(30, 100%, 50%)" />
+<MyColorArea defaultValue="hsl(30, 100%, 50%)" />;
 ```
 
 ## Value
@@ -171,18 +182,19 @@ channel maps to the horizontal axis or `xChannel`, and the `saturation` color ch
 In the example below, the <TypeLink links={docs.links} type={docs.exports.parseColor} /> function is used to parse the initial color from an HSL string. This is passed to the `value` prop to make the `ColorArea` controlled, and updated in the `onChange` event.
 
 ```tsx example
-import {parseColor} from 'react-aria-components';
+import { parseColor } from "react-aria-components";
 
 function Example() {
-  let [value, setValue] = React.useState(parseColor('hsl(0, 100%, 50%)'));
+  let [value, setValue] = React.useState(parseColor("hsl(0, 100%, 50%)"));
   return (
     <>
       <MyColorArea
         value={value}
         onChange={setValue}
         xChannel="saturation"
-        yChannel="lightness" />
-      <p>Value: {value.toString('hex')}</p>
+        yChannel="lightness"
+      />
+      <p>Value: {value.toString("hex")}</p>
     </>
   );
 }
@@ -206,7 +218,9 @@ The example below uses `onChange` and `onChangeEnd` to update two separate eleme
 
 ```tsx example
 function Example() {
-  let [currentValue, setCurrentValue] = React.useState(parseColor('hsl(50, 100%, 50%)'));
+  let [currentValue, setCurrentValue] = React.useState(
+    parseColor("hsl(50, 100%, 50%)")
+  );
   let [finalValue, setFinalValue] = React.useState(currentValue);
 
   return (
@@ -214,9 +228,10 @@ function Example() {
       <MyColorArea
         value={currentValue}
         onChange={setCurrentValue}
-        onChangeEnd={setFinalValue} />
-      <p>Current value: {currentValue.toString('hsl')}</p>
-      <p>Final value: {finalValue.toString('hsl')}</p>
+        onChangeEnd={setFinalValue}
+      />
+      <p>Current value: {currentValue.toString("hsl")}</p>
+      <p>Final value: {finalValue.toString("hsl")}</p>
     </div>
   );
 }
@@ -227,10 +242,15 @@ function Example() {
 To build a fully functional color picker, combine a ColorArea, which adjusts two channels of a color value, with a separate control, like a [ColorSlider](ColorSlider.html) or [ColorWheel](ColorWheel.html), to adjust the value of the third channel.
 
 ```tsx example
-import {ColorSlider, Label, SliderOutput, SliderTrack} from 'react-aria-components';
+import {
+  ColorSlider,
+  Label,
+  SliderOutput,
+  SliderTrack,
+} from "react-aria-components";
 
 function Example() {
-  let [color, setColor] = React.useState(parseColor('hsl(50, 100%, 50%)'));
+  let [color, setColor] = React.useState(parseColor("hsl(50, 100%, 50%)"));
 
   return (
     <div>
@@ -238,15 +258,21 @@ function Example() {
         value={color}
         onChange={setColor}
         xChannel="saturation"
-        yChannel="lightness" />
-      <ColorSlider channel="hue" value={color} onChange={setColor} style={{width: 192, marginTop: 8}}>
+        yChannel="lightness"
+      />
+      <ColorSlider
+        channel="hue"
+        value={color}
+        onChange={setColor}
+        style={{ width: 192, marginTop: 8 }}
+      >
         <Label />
         <SliderOutput />
         <SliderTrack>
           <ColorThumb />
         </SliderTrack>
       </ColorSlider>
-      <p>Current value: {color.toString('hsl')}</p>
+      <p>Current value: {color.toString("hsl")}</p>
     </div>
   );
 }
@@ -287,14 +313,15 @@ which labels the visually hidden `<input>` elements for the two color channels. 
 For example, for a ColorArea that adjusts a background color you might pass the `aria-label` prop, "Background color". If you provide your own `aria-label` or `aria-labelledby`, be sure to localize the string appropriately.
 
 ```tsx example
-<div style={{display: 'flex', gap: 8, alignItems: 'end', flexWrap: 'wrap'}}>
+<div style={{ display: "flex", gap: 8, alignItems: "end", flexWrap: "wrap" }}>
   <MyColorArea
     /*- begin highlight -*/
     aria-label="Background color"
     /*- end highlight -*/
     defaultValue="hsl(0, 100%, 50%)"
     xChannel="saturation"
-    yChannel="lightness" />
+    yChannel="lightness"
+  />
   <div>
     {/*- begin highlight -*/}
     <label id="hsl-aria-labelledby-id">Background color</label>
@@ -305,7 +332,8 @@ For example, for a ColorArea that adjusts a background color you might pass the 
       /*- end highlight -*/
       defaultValue="hsl(0, 100%, 50%)"
       xChannel="saturation"
-      yChannel="lightness" />
+      yChannel="lightness"
+    />
   </div>
 </div>
 ```
@@ -359,9 +387,7 @@ React Aria components can be styled in many ways, including using CSS classes, i
 A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
 
 ```jsx
-<ColorArea className="my-color-area">
-  {/* ... */}
-</ColorArea>
+<ColorArea className="my-color-area">{/* ... */}</ColorArea>
 ```
 
 In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
@@ -379,7 +405,9 @@ In addition, some components support multiple UI states (e.g. focused, placehold
 The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
 
 ```jsx
-<ColorThumb className={({isDragging}) => isDragging ? 'scale-150' : 'scale-100'} />
+<ColorThumb
+  className={({ isDragging }) => (isDragging ? "scale-150" : "scale-100")}
+/>
 ```
 
 The states, selectors, and render props for each component used in a `ColorArea` are documented below.
@@ -402,26 +430,29 @@ The `ColorThumb` component can be targeted with the `.react-aria-ColorThumb` CSS
 
 All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
 
-<ContextTable components={['ColorArea']} docs={docs} />
+<ContextTable components={["ColorArea"]} docs={docs} />
 
 This example shows a `ColorAreaDescription` component that accepts a color wheel in its children and renders a description element below it. It uses the [useId](useId.html) hook to generate a unique id for the description, and associates it with the color wheel via the `aria-describedby` attribute passed to the `ColorAreaContext` provider.
 
 ```tsx example
-import {ColorAreaContext} from 'react-aria-components';
-import {useId} from 'react-aria';
+import { ColorAreaContext } from "react-aria-components";
+import { useId } from "react-aria";
 
 interface ColorAreaDescriptionProps {
-  children?: React.ReactNode,
-  description?: string
+  children?: React.ReactNode;
+  description?: string;
 }
 
-function ColorAreaDescription({children, description}: ColorAreaDescriptionProps) {
+function ColorAreaDescription({
+  children,
+  description,
+}: ColorAreaDescriptionProps) {
   let descriptionId = useId();
   return (
     <div>
       {/*- begin highlight -*/}
-      <ColorAreaContext.Provider value={{'aria-describedby': descriptionId}}>
-      {/*- end highlight -*/}
+      <ColorAreaContext.Provider value={{ "aria-describedby": descriptionId }}>
+        {/*- end highlight -*/}
         {children}
       </ColorAreaContext.Provider>
       <small id={descriptionId}>{description}</small>
@@ -431,7 +462,7 @@ function ColorAreaDescription({children, description}: ColorAreaDescriptionProps
 
 <ColorAreaDescription description="Choose a background color for your profile.">
   <MyColorArea />
-</ColorAreaDescription>
+</ColorAreaDescription>;
 ```
 
 ### State

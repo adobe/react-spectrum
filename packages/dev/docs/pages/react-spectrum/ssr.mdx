@@ -1,21 +1,23 @@
-{/* Copyright 2020 Adobe. All rights reserved.
+{/_ Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. */}
+governing permissions and limitations under the License. _/}
 
-import {Layout} from '@react-spectrum/docs';
+import { Layout } from "@react-spectrum/docs";
 export default Layout;
 
-import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import ChevronRight from "@spectrum-icons/workflow/ChevronRight";
 
 ---
+
 category: Concepts
 keywords: [ssr, server side rendering, spectrum, next.js, gatsby]
 order: 4
+
 ---
 
 # Server Side Rendering
@@ -31,7 +33,7 @@ This page describes how to use React Spectrum with server side rendering, includ
 When using server side rendering, the `locale` prop should be set explicitly on the `Provider` rather than relying on automatic locale selection. This ensures that the locale of the content rendered on the server matches the locale expected by the browser. This could be done by using the `Accept-Language` HTTP header, which the browser sends to the server with the user’s desired language. You could also use an in-application setting for this if available, or separate locale-specific URLs, for example.
 
 ```tsx
-import {Provider, defaultTheme} from '@adobe/react-spectrum';
+import { Provider, defaultTheme } from "@adobe/react-spectrum";
 
 function App() {
   return (
@@ -55,23 +57,23 @@ See below for framework-specific guideance.
 
 #### Next.js App Router
 
-First, install `@react-aria/optimize-locales-plugin` with your package manager. Then, add the following to your `next.config.js`:
+First, install `@react-aria-nutrient/optimize-locales-plugin` with your package manager. Then, add the following to your `next.config.js`:
 
 ```ts
 // next.config.js
-const localesPlugin = require('@react-aria/optimize-locales-plugin');
+const localesPlugin = require("@react-aria-nutrient/optimize-locales-plugin");
 
 module.exports = {
   // ...
-  webpack(config, {isServer}) {
+  webpack(config, { isServer }) {
     if (!isServer) {
       // Don't include any locale strings in the client JS bundle.
       /*- begin highlight -*/
-      config.plugins.push(localesPlugin.webpack({locales: []}));
+      config.plugins.push(localesPlugin.webpack({ locales: [] }));
       /*- end highlight -*/
     }
     return config;
-  }
+  },
 };
 ```
 
@@ -80,13 +82,16 @@ Finally, add a `LocalizedStringProvider` to your root layout component. This exa
 ```tsx
 // app/[lang]/layout.tsx
 /*- begin highlight -*/
-import {LocalizedStringProvider} from '@adobe/react-spectrum/i18n';
+import { LocalizedStringProvider } from "@adobe/react-spectrum/i18n";
 /*- end highlight -*/
 
-export default function RootLayout(
-  {children, params: {lang}}:
-  {children: React.ReactNode, params: {lang: string}}
-) {
+export default function RootLayout({
+  children,
+  params: { lang },
+}: {
+  children: React.ReactNode;
+  params: { lang: string };
+}) {
   return (
     <html lang={lang}>
       <body>
@@ -102,26 +107,26 @@ export default function RootLayout(
 
 #### Next.js Pages Router
 
-First, install `@react-aria/optimize-locales-plugin` with your package manager. Then, add the following to your `next.config.js`:
+First, install `@react-aria-nutrient/optimize-locales-plugin` with your package manager. Then, add the following to your `next.config.js`:
 
 ```ts
 // next.config.js
-const localesPlugin = require('@react-aria/optimize-locales-plugin');
+const localesPlugin = require("@react-aria-nutrient/optimize-locales-plugin");
 
 module.exports = {
   // ...
   i18n: {
     // See Next.js i18n docs...
   },
-  webpack(config, {isServer}) {
+  webpack(config, { isServer }) {
     if (!isServer) {
       // Don't include any locale strings in the client JS bundle.
       /*- begin highlight -*/
-      config.plugins.push(localesPlugin.webpack({locales: []}));
+      config.plugins.push(localesPlugin.webpack({ locales: [] }));
       /*- end highlight -*/
     }
     return config;
-  }
+  },
 };
 ```
 
@@ -129,9 +134,9 @@ Finally, add a `LocalizedStringProvider` to `pages/_document.tsx` before the `<N
 
 ```tsx
 // pages/_document.tsx
-import {Html, Head, Main, NextScript, DocumentProps} from 'next/document'
- /*- begin highlight -*/
-import {LocalizedStringProvider} from '@adobe/react-spectrum/i18n';
+import { Html, Head, Main, NextScript, DocumentProps } from "next/document";
+/*- begin highlight -*/
+import { LocalizedStringProvider } from "@adobe/react-spectrum/i18n";
 /*- end highlight -*/
 
 export default function Document(props: DocumentProps) {
@@ -148,19 +153,18 @@ export default function Document(props: DocumentProps) {
     </Html>
   );
 }
-
 ```
 
 #### Remix
 
-Remix is supported [when using Vite](https://remix.run/docs/en/main/future/vite) for builds. First, install `@react-aria/optimize-locales-plugin` with your package manager. Then, add the following to your `vite.config.ts`:
+Remix is supported [when using Vite](https://remix.run/docs/en/main/future/vite) for builds. First, install `@react-aria-nutrient/optimize-locales-plugin` with your package manager. Then, add the following to your `vite.config.ts`:
 
 ```ts
 // vite.config.ts
-import { unstable_vitePlugin as remix } from '@remix-run/dev';
-import { defineConfig } from 'vite';
+import { unstable_vitePlugin as remix } from "@remix-run/dev";
+import { defineConfig } from "vite";
 /*- begin highlight -*/
-import localesPlugin from '@react-aria/optimize-locales-plugin';
+import localesPlugin from "@react-aria-nutrient/optimize-locales-plugin";
 /*- end highlight -*/
 
 export default defineConfig({
@@ -168,7 +172,7 @@ export default defineConfig({
     remix(),
     // Don't include any locale strings in the client JS bundle.
     /*- begin highlight -*/
-    {...localesPlugin.vite({locales: []}), enforce: 'pre'}
+    { ...localesPlugin.vite({ locales: [] }), enforce: "pre" },
     /*- end highlight -*/
   ],
 });
@@ -176,17 +180,17 @@ export default defineConfig({
 
 Finally, you'll need an [entry.server.tsx](https://remix.run/docs/en/main/file-conventions/entry.server) file, which will handle injecting the localized strings into the initial HTML for the client to access. The below file can be generated by running `npx remix reveal`, and making the highlighted modifications.
 
-**Note**: Remix uses the `getLocalizationScript` function instead of the  `LocalizedStringProvider` component to inject the strings into the initial HTML.
+**Note**: Remix uses the `getLocalizationScript` function instead of the `LocalizedStringProvider` component to inject the strings into the initial HTML.
 
 ```tsx
 // app/entry.server.tsx
-import type {EntryContext} from '@remix-run/node';
-import {PassThrough} from 'node:stream';
-import {createReadableStreamFromReadable} from '@remix-run/node';
-import {RemixServer} from '@remix-run/react';
-import {renderToPipeableStream} from 'react-dom/server';
- /*- begin highlight -*/
-import {getLocalizationScript} from '@adobe/react-spectrum/i18n';
+import type { EntryContext } from "@remix-run/node";
+import { PassThrough } from "node:stream";
+import { createReadableStreamFromReadable } from "@remix-run/node";
+import { RemixServer } from "@remix-run/react";
+import { renderToPipeableStream } from "react-dom/server";
+/*- begin highlight -*/
+import { getLocalizationScript } from "@adobe/react-spectrum/i18n";
 /*- end highlight -*/
 
 const ABORT_DELAY = 5000;
@@ -195,7 +199,7 @@ export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
-  remixContext: EntryContext,
+  remixContext: EntryContext
 ) {
   // Get the requested language (e.g. from headers, URL param, database, etc.)
   /*- begin highlight -*/
@@ -203,7 +207,7 @@ export default async function handleRequest(
   /*- end highlight -*/
 
   return new Promise((resolve, reject) => {
-    let {pipe, abort} = renderToPipeableStream(
+    let { pipe, abort } = renderToPipeableStream(
       <RemixServer
         context={remixContext}
         url={request.url}
@@ -217,7 +221,7 @@ export default async function handleRequest(
           let body = new PassThrough();
           let stream = createReadableStreamFromReadable(body);
 
-          responseHeaders.set('Content-Type', 'text/html');
+          responseHeaders.set("Content-Type", "text/html");
           resolve(
             new Response(stream, {
               headers: responseHeaders,
@@ -251,9 +255,11 @@ You should also make sure to set the `lang` attribute on the root `<html>` eleme
 Start by creating a `LocalizedStringDictionary` containing only the strings for the components you use with the `createLocalizedStringDictionary` function. This accepts a list of npm package names for the individual React Spectrum components you use.
 
 ```tsx
-import {createLocalizedStringDictionary} from '@adobe/react-spectrum/i18n';
+import { createLocalizedStringDictionary } from "@adobe/react-spectrum/i18n";
 
-const dictionary = createLocalizedStringDictionary(['@react-spectrum/datepicker']);
+const dictionary = createLocalizedStringDictionary([
+  "@react-spectrum/datepicker",
+]);
 ```
 
 Then, pass this as an additional prop to `LocalizedStringProvider`:
@@ -265,7 +271,7 @@ Then, pass this as an additional prop to `LocalizedStringProvider`:
 Or if using Remix, pass the dictionary as an additional parameter to `getLocalizationScript`:
 
 ```tsx
-getLocalizationScript(locale, dictionary)
+getLocalizationScript(locale, dictionary);
 ```
 
 ## React < 18
@@ -273,14 +279,14 @@ getLocalizationScript(locale, dictionary)
 In React 18, SSR works out of the box with no additional work. If you're using React 16 or 17, you will need to wrap your application in an [SSRProvider](../react-aria/SSRProvider.html) component. This signals to all nested React Spectrum components that they are being rendered in an SSR context, which ensures that the HTML generated on the server matches the DOM structure hydrated on the client.
 
 ```tsx
-import {SSRProvider, Provider, defaultTheme} from '@adobe/react-spectrum';
+import { SSRProvider, Provider, defaultTheme } from "@adobe/react-spectrum";
 
 // SSRProvider is only needed if you are using React 16 or 17.
 <SSRProvider>
   <Provider theme={defaultTheme} locale={yourLocaleHere}>
     <App />
   </Provider>
-</SSRProvider>
+</SSRProvider>;
 ```
 
 ## Other considerations
@@ -296,14 +302,14 @@ Media queries and DOM feature detection cannot be performed on the server becaus
 First, install the `glob` package with npm/yarn. Then, add the following to your `next.config.js` file. This will ensure that React Spectrum’s CSS is loaded properly by Next.js.
 
 ```tsx
-const glob = require('glob');
+const glob = require("glob");
 
 module.exports = {
   transpilePackages: [
-    '@adobe/react-spectrum',
-    '@react-spectrum/*',
-    '@spectrum-icons/*',
-  ].flatMap((spec) => glob.sync(`${spec}`, { cwd: 'node_modules/' })),
+    "@adobe/react-spectrum",
+    "@react-spectrum/*",
+    "@spectrum-icons/*",
+  ].flatMap((spec) => glob.sync(`${spec}`, { cwd: "node_modules/" })),
 };
 ```
 
@@ -319,13 +325,13 @@ yarn add next-transpile-modules
 With this installed, add the following to your `next.config.js` file.
 
 ```tsx
-const glob = require('glob');
+const glob = require("glob");
 
-const withTM = require('next-transpile-modules')([
-  '@adobe/react-spectrum',
-  '@react-spectrum/*',
-  '@spectrum-icons/*',
-].flatMap((spec) => glob.sync(`${spec}`, { cwd: 'node_modules/' })));
+const withTM = require("next-transpile-modules")(
+  ["@adobe/react-spectrum", "@react-spectrum/*", "@spectrum-icons/*"].flatMap(
+    (spec) => glob.sync(`${spec}`, { cwd: "node_modules/" })
+  )
+);
 
 module.exports = withTM({
   // Your Next.js configuration
@@ -347,15 +353,15 @@ To configure Remix to load React Spectrum styles, CSS Side-Effect Imports is req
 However, to make it work with SSR, a small amount of configuration is required. Add the following to your `vite.config.js` or `vite.config.ts` file. This will ensure that React Spectrum’s CSS can be built properly.
 
 ```tsx
-import glob from 'glob';
+import glob from "glob";
 
 export default defineConfig({
   ssr: {
     noExternal: [
-      '@adobe/react-spectrum',
-      '@react-spectrum/*',
-      '@spectrum-icons/*',
-    ].flatMap((spec) => glob.sync(`${spec}`, { cwd: 'node_modules/' })),
-  }
+      "@adobe/react-spectrum",
+      "@react-spectrum/*",
+      "@spectrum-icons/*",
+    ].flatMap((spec) => glob.sync(`${spec}`, { cwd: "node_modules/" })),
+  },
 });
 ```

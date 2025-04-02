@@ -14,7 +14,7 @@ import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
 import {Field} from '../';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
-import {useField} from '@react-aria/label';
+import {useField} from '@react-aria-nutrient/label';
 import userEvent from '@testing-library/user-event';
 
 let defaultProps = {

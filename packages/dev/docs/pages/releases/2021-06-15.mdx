@@ -1,18 +1,20 @@
-{/* Copyright 2020 Adobe. All rights reserved.
+{/_ Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. */}
+governing permissions and limitations under the License. _/}
 
-import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+import { BlogPostLayout, Hero } from "@react-spectrum/docs";
 export default BlogPostLayout;
 
 ---
+
 description: Today we're excited to announce the stable release of Tabs! Also ActionGroup now has support for collapsing behavior and a new staticColor prop has been added to ActionGroup, ActionButton, and ToggleButton for displaying over colored backgrounds. We now have support for responsive breakpoints and CSS functions in our style props plus plenty of bug fixes and documentation updates.
 date: 2021-06-15
+
 ---
 
 # June 15, 2021 Release
@@ -28,12 +30,14 @@ Finally, thanks to [@so99ynoodles](https://github.com/so99ynoodles) and [@tomson
 Thank you to all our contributors for their support! 🤩
 
 ## New component
+
 - **Tabs**
   - `@react-spectrum/tabs` - [Docs](https://react-spectrum.adobe.com/react-spectrum/Tabs.html)
-  - `@react-aria/tabs` - [Docs](https://react-spectrum.adobe.com/react-aria/useTabList.html)
+  - `@react-aria-nutrient/tabs` - [Docs](https://react-spectrum.adobe.com/react-aria/useTabList.html)
   - `@react-stately/tabs` - [Docs](https://react-spectrum.adobe.com/react-stately/useTabListState.html)
 
 ## New features
+
 - Add support for responsive style props - [@so99ynoodles](https://github.com/so99ynoodles) - [PR](https://github.com/adobe/react-spectrum/pull/1684) - [Docs](https://react-spectrum.adobe.com/react-spectrum/layout.html#responsive-layout)
 - Add support for CSS functions (e.g. `calc()`) in style props - [@tomsontom](https://github.com/tomsontom) - [PR](https://github.com/adobe/react-spectrum/pull/1774) - [Docs](https://react-spectrum.adobe.com/react-spectrum/styling.html#css-functions)
 - Add collapse behavior to ActionGroup - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1919) - [Docs](https://react-spectrum.adobe.com/react-spectrum/ActionGroup.html#collapsing-behavior)
@@ -43,6 +47,7 @@ Thank you to all our contributors for their support! 🤩
 - Add screen reader announcements for selection changes in TableView - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1929)
 
 ## Fixed
+
 - Keep modality when switching tabs in `useFocusVisible` - [@BartoszGamza](https://github.com/BartoszGamza) - [PR](https://github.com/adobe/react-spectrum/pull/1845)
 - Update `useSelectableList` to scroll to set `element` correctly - [@chungwu](https://github.com/chungwu) - [PR](https://github.com/adobe/react-spectrum/pull/1862)
 - ActionButton emphasized focus ring is now more visible - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1881)
@@ -66,11 +71,12 @@ Thank you to all our contributors for their support! 🤩
 - Fix keyboard navigation behavior of ActionGroup - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1991/)
 
 ## Docs
-- Update numbering system names in `NumberField`  - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/1876)
+
+- Update numbering system names in `NumberField` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/1876)
 - Update `selectedKey` documentation - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/1670)
 - Update imports in `Tabs` - [@solimant](https://github.com/solimant) - [PR](https://github.com/adobe/react-spectrum/pull/1889)
 - Update useMenuTrigger imports - [@shannonrothe](https://github.com/shannonrothe) - [PR](https://github.com/adobe/react-spectrum/pull/1909)
-- Fix broken design links in `Menu`  - [@matthewdeutsch](https://github.com/matthewdeutsch) - [PR](https://github.com/adobe/react-spectrum/pull/1917)
+- Fix broken design links in `Menu` - [@matthewdeutsch](https://github.com/matthewdeutsch) - [PR](https://github.com/adobe/react-spectrum/pull/1917)
 - Add docs for `useTabList` `useTabListState` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/1888)
 - Fix typo in `styleProps` - [@Robbie-Cook](https://github.com/Robbie-Cook) - [PR](https://github.com/adobe/react-spectrum/pull/1966)
 - Update `Tooltip` and `Menu` docs to include element ordering - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/2006)
@@ -88,22 +94,23 @@ Pre-release versions of the following components have been released. Please feel
   - Please note, the name of the component in React Spectrum changed from `Table` to `TableView` in this release. Also, the `isLoading` prop is now `loadingState = "loading" | "loadingMore" | "sorting" | "filtering" | "error" | "idle"`.
 
 ## Released packages
+
 ```
 - @adobe/react-spectrum => 3.11.0
 - @internationalized/message => 3.0.1
 - @internationalized/number => 3.0.1
-- @react-aria/actiongroup => 3.2.0
-- @react-aria/combobox => 3.0.0-rc.0
-- @react-aria/dnd => 3.0.0-alpha.2
-- @react-aria/focus => 3.4.0
-- @react-aria/grid => 3.0.0-beta.0
-- @react-aria/interactions => 3.5.0
-- @react-aria/menu => 3.2.2
-- @react-aria/overlays => 3.7.0
-- @react-aria/selection => 3.5.0
-- @react-aria/table => 3.0.0-beta.0
-- @react-aria/tabs => 3.0.0
-- @react-aria/utils => 3.8.1
+- @react-aria-nutrient/actiongroup => 3.2.0
+- @react-aria-nutrient/combobox => 3.0.0-rc.0
+- @react-aria-nutrient/dnd => 3.0.0-alpha.2
+- @react-aria-nutrient/focus => 3.4.0
+- @react-aria-nutrient/grid => 3.0.0-beta.0
+- @react-aria-nutrient/interactions => 3.5.0
+- @react-aria-nutrient/menu => 3.2.2
+- @react-aria-nutrient/overlays => 3.7.0
+- @react-aria-nutrient/selection => 3.5.0
+- @react-aria-nutrient/table => 3.0.0-beta.0
+- @react-aria-nutrient/tabs => 3.0.0
+- @react-aria-nutrient/utils => 3.8.1
 - @react-spectrum/actionbar => 3.0.0-alpha.0
 - @react-spectrum/actiongroup => 3.2.0
 - @react-spectrum/button => 3.5.0

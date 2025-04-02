@@ -10,68 +10,71 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaStepListProps, useStepList} from '@react-aria/steplist';
-import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, Orientation, StyleProps} from '@react-types/shared';
-import React, {ReactElement} from 'react';
-import {StepListContext} from './StepListContext';
-import {StepListItem} from './StepListItem';
-import styles from '@adobe/spectrum-css-temp/components/steplist/vars.css';
-import {useProviderProps} from '@react-spectrum/provider';
-import {useStepListState} from '@react-stately/steplist';
+import { AriaStepListProps, useStepList } from "@react-aria-nutrient/steplist";
+import { classNames, useDOMRef, useStyleProps } from "@react-spectrum/utils";
+import { DOMRef, Orientation, StyleProps } from "@react-types/shared";
+import React, { ReactElement } from "react";
+import { StepListContext } from "./StepListContext";
+import { StepListItem } from "./StepListItem";
+import styles from "@adobe/spectrum-css-temp/components/steplist/vars.css";
+import { useProviderProps } from "@react-spectrum/provider";
+import { useStepListState } from "@react-stately/steplist";
 
-export interface SpectrumStepListProps<T> extends AriaStepListProps<T>, StyleProps {
+export interface SpectrumStepListProps<T>
+  extends AriaStepListProps<T>,
+    StyleProps {
   /**
    * Whether the step list should be displayed with a emphasized style.
    * @default false
    */
-  isEmphasized?: boolean,
+  isEmphasized?: boolean;
   /**
    * The orientation of the step list.
    * @default 'horizontal'
    */
-  orientation?: Orientation,
+  orientation?: Orientation;
   /**
    * The size of the step list.
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: "S" | "M" | "L" | "XL";
 }
 
-export const StepList = React.forwardRef(function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef<HTMLOListElement>) {
-  const {size = 'M', orientation = 'horizontal'} = props;
+export const StepList = React.forwardRef(function StepList<T extends object>(
+  props: SpectrumStepListProps<T>,
+  ref: DOMRef<HTMLOListElement>
+) {
+  const { size = "M", orientation = "horizontal" } = props;
   props = useProviderProps(props);
-  const {isDisabled, isEmphasized} = props;
-  let {styleProps} = useStyleProps(props);
+  const { isDisabled, isEmphasized } = props;
+  let { styleProps } = useStyleProps(props);
   let domRef = useDOMRef(ref);
 
   let state = useStepListState(props);
-  let {listProps} = useStepList(props, state, domRef);
-
+  let { listProps } = useStepList(props, state, domRef);
 
   return (
     <ol
       {...listProps}
       {...styleProps}
       ref={domRef}
-      className={classNames(styles, 'spectrum-Steplist', styleProps.className, {
-        'spectrum-Steplist--small': size === 'S',
-        'spectrum-Steplist--medium': size === 'M',
-        'spectrum-Steplist--large': size === 'L',
-        'spectrum-Steplist--xlarge': size === 'XL',
-        'spectrum-Steplist--emphasized': isEmphasized,
-        'spectrum-Steplist--horizontal': orientation === 'horizontal',
-        'spectrum-Steplist--vertical': orientation === 'vertical'
-      })}>
+      className={classNames(styles, "spectrum-Steplist", styleProps.className, {
+        "spectrum-Steplist--small": size === "S",
+        "spectrum-Steplist--medium": size === "M",
+        "spectrum-Steplist--large": size === "L",
+        "spectrum-Steplist--xlarge": size === "XL",
+        "spectrum-Steplist--emphasized": isEmphasized,
+        "spectrum-Steplist--horizontal": orientation === "horizontal",
+        "spectrum-Steplist--vertical": orientation === "vertical",
+      })}
+    >
       <StepListContext.Provider value={state}>
         {[...state.collection].map((item) => (
-          <StepListItem
-            key={item.key}
-            isDisabled={isDisabled}
-            item={item} />
-          )
-        )}
+          <StepListItem key={item.key} isDisabled={isDisabled} item={item} />
+        ))}
       </StepListContext.Provider>
     </ol>
   );
-}) as <T>(props: SpectrumStepListProps<T> & {ref?: DOMRef<HTMLOListElement>}) => ReactElement;
+}) as <T>(
+  props: SpectrumStepListProps<T> & { ref?: DOMRef<HTMLOListElement> }
+) => ReactElement;

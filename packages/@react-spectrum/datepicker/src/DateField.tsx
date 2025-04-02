@@ -10,51 +10,64 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames} from '@react-spectrum/utils';
-import {createCalendar} from '@internationalized/date';
-import {DatePickerSegment} from './DatePickerSegment';
-import datepickerStyles from './styles.css';
-import {DateValue, SpectrumDateFieldProps} from '@react-types/datepicker';
-import {Field} from '@react-spectrum/label';
-import {FocusableRef} from '@react-types/shared';
-import {Input} from './Input';
-import React, {ReactElement, useRef} from 'react';
-import {useDateField} from '@react-aria/datepicker';
-import {useDateFieldState} from '@react-stately/datepicker';
-import {useFocusManagerRef, useFormatHelpText, useFormattedDateWidth} from './utils';
-import {useFormProps} from '@react-spectrum/form';
-import {useLocale} from '@react-aria/i18n';
-import {useProviderProps} from '@react-spectrum/provider';
+import { classNames } from "@react-spectrum/utils";
+import { createCalendar } from "@internationalized/date";
+import { DatePickerSegment } from "./DatePickerSegment";
+import datepickerStyles from "./styles.css";
+import { DateValue, SpectrumDateFieldProps } from "@react-types/datepicker";
+import { Field } from "@react-spectrum/label";
+import { FocusableRef } from "@react-types/shared";
+import { Input } from "./Input";
+import React, { ReactElement, useRef } from "react";
+import { useDateField } from "@react-aria-nutrient/datepicker";
+import { useDateFieldState } from "@react-stately/datepicker";
+import {
+  useFocusManagerRef,
+  useFormatHelpText,
+  useFormattedDateWidth,
+} from "./utils";
+import { useFormProps } from "@react-spectrum/form";
+import { useLocale } from "@react-aria-nutrient/i18n";
+import { useProviderProps } from "@react-spectrum/provider";
 
 /**
  * DateFields allow users to enter and edit date and time values using a keyboard.
  * Each part of a date value is displayed in an individually editable segment.
  */
-export const DateField = React.forwardRef(function DateField<T extends DateValue>(props: SpectrumDateFieldProps<T>, ref: FocusableRef<HTMLElement>) {
+export const DateField = React.forwardRef(function DateField<
+  T extends DateValue
+>(props: SpectrumDateFieldProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
-  let {
-    autoFocus,
-    isDisabled,
-    isReadOnly,
-    isRequired,
-    isQuiet
-  } = props;
+  let { autoFocus, isDisabled, isReadOnly, isRequired, isQuiet } = props;
 
   let domRef = useFocusManagerRef(ref);
-  let {locale} = useLocale();
+  let { locale } = useLocale();
   let state = useDateFieldState({
     ...props,
     locale,
-    createCalendar
+    createCalendar,
   });
 
   let fieldRef = useRef<HTMLElement | null>(null);
   let inputRef = useRef<HTMLInputElement | null>(null);
-  let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps, isInvalid, validationErrors, validationDetails} = useDateField({
-    ...props,
-    inputRef
-  }, state, fieldRef);
+  let {
+    labelProps,
+    fieldProps,
+    inputProps,
+    descriptionProps,
+    errorMessageProps,
+    isInvalid,
+    validationErrors,
+    validationDetails,
+  } = useDateField(
+    {
+      ...props,
+      inputRef,
+    },
+    state,
+    fieldRef
+  );
 
   // Note: this description is intentionally not passed to useDatePicker.
   // The format help text is unnecessary for screen reader users because each segment already has a label.
@@ -63,9 +76,9 @@ export const DateField = React.forwardRef(function DateField<T extends DateValue
     descriptionProps.id = undefined;
   }
 
-  let validationState = state.validationState || (isInvalid ? 'invalid' : null);
+  let validationState = state.validationState || (isInvalid ? "invalid" : null);
 
-  let approximateWidth = useFormattedDateWidth(state) + 'ch';
+  let approximateWidth = useFormattedDateWidth(state) + "ch";
 
   return (
     <Field
@@ -80,7 +93,11 @@ export const DateField = React.forwardRef(function DateField<T extends DateValue
       isInvalid={isInvalid}
       validationErrors={validationErrors}
       validationDetails={validationDetails}
-      wrapperClassName={classNames(datepickerStyles, 'react-spectrum-Datepicker-fieldWrapper')}>
+      wrapperClassName={classNames(
+        datepickerStyles,
+        "react-spectrum-Datepicker-fieldWrapper"
+      )}
+    >
       <Input
         ref={fieldRef}
         fieldProps={fieldProps}
@@ -89,18 +106,22 @@ export const DateField = React.forwardRef(function DateField<T extends DateValue
         autoFocus={autoFocus}
         validationState={validationState}
         minWidth={approximateWidth}
-        className={classNames(datepickerStyles, 'react-spectrum-DateField')}>
-        {state.segments.map((segment, i) =>
-          (<DatePickerSegment
+        className={classNames(datepickerStyles, "react-spectrum-DateField")}
+      >
+        {state.segments.map((segment, i) => (
+          <DatePickerSegment
             key={i}
             segment={segment}
             state={state}
             isDisabled={isDisabled}
             isReadOnly={isReadOnly}
-            isRequired={isRequired} />)
-        )}
+            isRequired={isRequired}
+          />
+        ))}
         <input {...inputProps} ref={inputRef} />
       </Input>
     </Field>
   );
-}) as <T extends DateValue>(props: SpectrumDateFieldProps<T> & {ref?: FocusableRef<HTMLElement>}) => ReactElement;
+}) as <T extends DateValue>(
+  props: SpectrumDateFieldProps<T> & { ref?: FocusableRef<HTMLElement> }
+) => ReactElement;

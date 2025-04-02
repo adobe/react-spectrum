@@ -109,7 +109,7 @@ function MyTreeItemContent`);
   }
 }
 
-let theme = fs.readFileSync('packages/@react-aria/example-theme/src/index.css', 'utf8');
+let theme = fs.readFileSync('packages/@react-aria-nutrient/example-theme/src/index.css', 'utf8');
 theme = `/* Base styles */
 :root {
   font-family: system-ui;
@@ -268,7 +268,7 @@ function processCSS(css, usedClasses) {
   ast.walkAtRules('import', rule => {
     rule.params = rule.params
       .replace(/\.mdx(["'])/, '.css$1')
-      .replace('@react-aria/example-theme', './theme.css')
+      .replace('@react-aria-nutrient/example-theme', './theme.css')
       .replace(/\s*layer\(.*?\)/, '');
     if (rule.prev()?.type === 'atrule') {
       rule.raws.before = '\n';

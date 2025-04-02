@@ -51,7 +51,7 @@ import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {IconContext} from './Icon';
 import {menu} from './Picker';
-import {mergeRefs, useResizeObserver} from '@react-aria/utils';
+import {mergeRefs, useResizeObserver} from '@react-aria-nutrient/utils';
 import {Placement} from 'react-aria';
 import {PopoverBase} from './Popover';
 import {pressScale} from './pressScale';

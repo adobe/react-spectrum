@@ -10,42 +10,49 @@ governing permissions and limitations under the License. -->
 # Radio
 
 ```typescript
-interface RadioGroup extends ValueBase<string>, InputBase, Labelable, DOMProps, StyleProps {
-  orientation?: 'horizontal' | 'vertical', // default vertical
-  labelPosition?: 'side' | 'bottom', // default side
-  children: ReactElement<Radio> | ReactElement<Radio>[],
-  name?: string, // HTML form name. Not displayed.
-  isEmphasized?: boolean
+interface RadioGroup
+  extends ValueBase<string>,
+    InputBase,
+    Labelable,
+    DOMProps,
+    StyleProps {
+  orientation?: "horizontal" | "vertical"; // default vertical
+  labelPosition?: "side" | "bottom"; // default side
+  children: ReactElement<Radio> | ReactElement<Radio>[];
+  name?: string; // HTML form name. Not displayed.
+  isEmphasized?: boolean;
 }
 
 interface Radio extends FocusableProps, DOMProps, StyleProps {
-  value: string, // HTML form value. Not displayed.
-  children?: ReactNode, // pass in children to render label
-  'aria-label'?: string, // if no children, aria-label is required
-  isDisabled?: boolean
+  value: string; // HTML form value. Not displayed.
+  children?: ReactNode; // pass in children to render label
+  "aria-label"?: string; // if no children, aria-label is required
+  isDisabled?: boolean;
 }
 ```
 
 ## RadioGroup Changes
-| **v2**                 | **v3**                         | **Notes** |
-| ---------------------- | ------------------------------ | --------- |
-| `labelsBelow`          | `labelPosition="bottom"`       |           |
-| `vertical`             | `orientation="vertical"`       |           |
-| `selectedValue`        | `value`                        |           |
-| `defaultSelectedValue` | `defaultValue`                 |           |
-| -                      | `isDisabled`                   | added     |
-| -                      | `isRequired`                   | added     |
-| -                      | `isReadOnly`                   | added     |
-| -                      | `validationState`              | added     |
-| -                      | `isEmphasized`                 | added     |
-| -                      | `label`                        | added     |
-| -                      | `labelPosition`                | added     |
-| -                      | `labelAlign`                   | added     |
-| -                      | `necessityIndicator`           | added     |
+
+| **v2**                 | **v3**                   | **Notes** |
+| ---------------------- | ------------------------ | --------- |
+| `labelsBelow`          | `labelPosition="bottom"` |           |
+| `vertical`             | `orientation="vertical"` |           |
+| `selectedValue`        | `value`                  |           |
+| `defaultSelectedValue` | `defaultValue`           |           |
+| -                      | `isDisabled`             | added     |
+| -                      | `isRequired`             | added     |
+| -                      | `isReadOnly`             | added     |
+| -                      | `validationState`        | added     |
+| -                      | `isEmphasized`           | added     |
+| -                      | `label`                  | added     |
+| -                      | `labelPosition`          | added     |
+| -                      | `labelAlign`             | added     |
+| -                      | `necessityIndicator`     | added     |
 
 ## Radio Changes
-| **v2**        | **v3**       | **Notes**                                                                                                            |
-| ------------- | ------------ | ----------------------------------------------------------------------------------------------------------|
+
+| **v2**        | **v3**       | **Notes**                                                                                                 |
+| ------------- | ------------ | --------------------------------------------------------------------------------------------------------- |
 | `quiet`       | -            | moved to RadioGroup `isEmphasized` property. default selected state is gray. use `isEmphasized` for blue. |
 | `disabled`    | `isDisabled` |                                                                                                           |
 | `required`    | -            | moved to RadioGroup                                                                                       |
@@ -56,6 +63,7 @@ interface Radio extends FocusableProps, DOMProps, StyleProps {
 | `renderLabel` | -            | removed. pass no children if you don’t want to render a label.                                            |
 
 ## Packages
+
 - `@react-stately/radio`
-- `@react-aria/radio`
+- `@react-aria-nutrient/radio`
 - `@react-spectrum/radio`

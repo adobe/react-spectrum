@@ -1,34 +1,43 @@
-{/* Copyright 2020 Adobe. All rights reserved.
+{/_ Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. */}
+governing permissions and limitations under the License. _/}
 
-import {Layout} from '@react-spectrum/docs';
+import { Layout } from "@react-spectrum/docs";
 export default Layout;
 
-import docs from 'docs:react-aria-components';
-import statelyDocs from 'docs:@react-stately/checkbox';
-import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
-import styles from '@react-spectrum/docs/src/docs.css';
-import packageData from 'react-aria-components/package.json';
-import Anatomy from '@react-aria/checkbox/docs/checkboxgroup-anatomy.svg';
-import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
-import {Divider} from '@react-spectrum/divider';
-import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
-import {Keyboard} from '@react-spectrum/text';
-import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
-import Form from '@react-spectrum/docs/pages/assets/component-illustrations/Form.svg';
-import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
+import docs from "docs:react-aria-components";
+import statelyDocs from "docs:@react-stately/checkbox";
+import typesDocs from "docs:@react-types/shared/src/events.d.ts";
+import {
+  PropTable,
+  HeaderInfo,
+  TypeLink,
+  PageDescription,
+  StateTable,
+  ContextTable,
+} from "@react-spectrum/docs";
+import styles from "@react-spectrum/docs/src/docs.css";
+import packageData from "react-aria-components/package.json";
+import Anatomy from "@react-aria-nutrient/checkbox/docs/checkboxgroup-anatomy.svg";
+import ChevronRight from "@spectrum-icons/workflow/ChevronRight";
+import { Divider } from "@react-spectrum/divider";
+import { ExampleCard } from "@react-spectrum/docs/src/ExampleCard";
+import { Keyboard } from "@react-spectrum/text";
+import Label from "@react-spectrum/docs/pages/assets/component-illustrations/Label.svg";
+import Form from "@react-spectrum/docs/pages/assets/component-illustrations/Form.svg";
+import { StarterKits } from "@react-spectrum/docs/src/StarterKits";
 
 ---
+
 category: Forms
 keywords: [checkbox, input, aria]
 type: component
+
 ---
 
 # CheckboxGroup
@@ -37,37 +46,44 @@ type: component
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['CheckboxGroup']}
+  componentNames={["CheckboxGroup"]}
   sourceData={[
-    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/checkbox/'}
-  ]} />
+    { type: "W3C", url: "https://www.w3.org/WAI/ARIA/apg/patterns/checkbox/" },
+  ]}
+/>
 
 ## Example
 
 ```tsx example
-import {CheckboxGroup, Checkbox, Label} from 'react-aria-components';
+import { CheckboxGroup, Checkbox, Label } from "react-aria-components";
 
 <CheckboxGroup>
   <Label>Favorite sports</Label>
   <Checkbox value="soccer">
     <div className="checkbox" aria-hidden="true">
-      <svg viewBox="0 0 18 18"><polyline points="1 9 7 14 15 4" /></svg>
+      <svg viewBox="0 0 18 18">
+        <polyline points="1 9 7 14 15 4" />
+      </svg>
     </div>
     Soccer
   </Checkbox>
   <Checkbox value="baseball">
     <div className="checkbox" aria-hidden="true">
-      <svg viewBox="0 0 18 18"><polyline points="1 9 7 14 15 4" /></svg>
+      <svg viewBox="0 0 18 18">
+        <polyline points="1 9 7 14 15 4" />
+      </svg>
     </div>
     Baseball
   </Checkbox>
   <Checkbox value="basketball">
     <div className="checkbox" aria-hidden="true">
-      <svg viewBox="0 0 18 18"><polyline points="1 9 7 14 15 4" /></svg>
+      <svg viewBox="0 0 18 18">
+        <polyline points="1 9 7 14 15 4" />
+      </svg>
     </div>
     Basketball
   </Checkbox>
-</CheckboxGroup>
+</CheckboxGroup>;
 ```
 
 <details>
@@ -79,7 +95,7 @@ import {CheckboxGroup, Checkbox, Label} from 'react-aria-components';
 ```
 
 ```css
-@import "@react-aria/example-theme";
+@import "@react-aria-nutrient/example-theme";
 
 .react-aria-CheckboxGroup {
   display: flex;
@@ -99,9 +115,9 @@ and [&lt;input&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/in
 however these can be difficult to style. `CheckboxGroup` helps achieve accessible
 checkbox groups that can be styled as needed.
 
-* **Accessible** – Checkbox groups are exposed to assistive technology via ARIA, and automatically associate a nested `<Label>`. Description and error message help text slots are supported as well.
-* **HTML form integration** – Each individual checkbox uses a visually hidden `<input>` element under the hood, which enables HTML form integration and autofill.
-* **Validation** – Support for native HTML constraint validation with customizable UI, custom validation functions, and server-side validation errors.
+- **Accessible** – Checkbox groups are exposed to assistive technology via ARIA, and automatically associate a nested `<Label>`. Description and error message help text slots are supported as well.
+- **HTML form integration** – Each individual checkbox uses a visually hidden `<input>` element under the hood, which enables HTML form integration and autofill.
+- **Validation** – Support for native HTML constraint validation with customizable UI, custom validation functions, and server-side validation errors.
 
 ## Anatomy
 
@@ -118,14 +134,20 @@ to provide more context about the field, and any validation messages. These are 
 inputs via the `aria-describedby` attribute.
 
 ```tsx
-import {CheckboxGroup, Checkbox, Label, Text, FieldError} from 'react-aria-components';
+import {
+  CheckboxGroup,
+  Checkbox,
+  Label,
+  Text,
+  FieldError,
+} from "react-aria-components";
 
 <CheckboxGroup>
   <Label />
   <Checkbox />
   <Text slot="description" />
   <FieldError />
-</CheckboxGroup>
+</CheckboxGroup>;
 ```
 
 Individual checkboxes must have a visual label. If the checkbox group does not have a visible label,
@@ -141,7 +163,8 @@ technology.
 <ExampleCard
   url="forms.html"
   title="Forms"
-  description="Validating and submitting form data, and integrating with form libraries.">
+  description="Validating and submitting form data, and integrating with form libraries."
+>
   <Form />
 </ExampleCard>
 
@@ -156,7 +179,8 @@ A `CheckboxGroup` uses the following components, which may also be used standalo
 <ExampleCard
   url="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label"
   title="Label"
-  description="A label provides context for an element.">
+  description="A label provides context for an element."
+>
   <Label />
 </ExampleCard>
 
@@ -175,14 +199,18 @@ If you will use a CheckboxGroup in multiple places in your app, you can wrap all
 This example wraps `CheckboxGroup` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` slot to render [help text](#description), and `FieldError` component to render [validation errors](#validation).
 
 ```tsx example export=true
-import type {CheckboxGroupProps, CheckboxProps, ValidationResult} from 'react-aria-components';
-import {Text, FieldError} from 'react-aria-components';
+import type {
+  CheckboxGroupProps,
+  CheckboxProps,
+  ValidationResult,
+} from "react-aria-components";
+import { Text, FieldError } from "react-aria-components";
 
-interface MyCheckboxGroupProps extends Omit<CheckboxGroupProps, 'children'> {
-  children?: React.ReactNode,
-  label?: string,
-  description?: string,
-  errorMessage?: string | ((validation: ValidationResult) => string)
+interface MyCheckboxGroupProps extends Omit<CheckboxGroupProps, "children"> {
+  children?: React.ReactNode;
+  label?: string;
+  description?: string;
+  errorMessage?: string | ((validation: ValidationResult) => string);
 }
 
 function MyCheckboxGroup({
@@ -202,15 +230,17 @@ function MyCheckboxGroup({
   );
 }
 
-interface MyCheckboxProps extends Omit<CheckboxProps, 'children'> {
-  children?: React.ReactNode
+interface MyCheckboxProps extends Omit<CheckboxProps, "children"> {
+  children?: React.ReactNode;
 }
 
-function MyCheckbox({children, ...props}: MyCheckboxProps) {
+function MyCheckbox({ children, ...props }: MyCheckboxProps) {
   return (
     <Checkbox {...props}>
       <div className="checkbox" aria-hidden="true">
-        <svg viewBox="0 0 18 18"><polyline points="1 9 7 14 15 4" /></svg>
+        <svg viewBox="0 0 18 18">
+          <polyline points="1 9 7 14 15 4" />
+        </svg>
       </div>
       {children}
     </Checkbox>
@@ -221,7 +251,7 @@ function MyCheckbox({children, ...props}: MyCheckboxProps) {
   <MyCheckbox value="soccer">Soccer</MyCheckbox>
   <MyCheckbox value="baseball">Baseball</MyCheckbox>
   <MyCheckbox value="basketball">Basketball</MyCheckbox>
-</MyCheckboxGroup>
+</MyCheckboxGroup>;
 ```
 
 ## Value
@@ -232,7 +262,10 @@ An initial, uncontrolled value can be provided to the CheckboxGroup using the `d
 `value` prop on each Checkbox.
 
 ```tsx example
-<MyCheckboxGroup label="Favorite sports (uncontrolled)" defaultValue={['soccer', 'baseball']}>
+<MyCheckboxGroup
+  label="Favorite sports (uncontrolled)"
+  defaultValue={["soccer", "baseball"]}
+>
   <MyCheckbox value="soccer">Soccer</MyCheckbox>
   <MyCheckbox value="baseball">Baseball</MyCheckbox>
   <MyCheckbox value="basketball">Basketball</MyCheckbox>
@@ -247,10 +280,14 @@ containing the updated selected values.
 
 ```tsx example
 function Example() {
-  let [selected, setSelected] = React.useState(['soccer', 'baseball']);
+  let [selected, setSelected] = React.useState(["soccer", "baseball"]);
 
   return (
-    <MyCheckboxGroup label="Favorite sports (controlled)" value={selected} onChange={setSelected}>
+    <MyCheckboxGroup
+      label="Favorite sports (controlled)"
+      value={selected}
+      onChange={setSelected}
+    >
       <MyCheckbox value="soccer">Soccer</MyCheckbox>
       <MyCheckbox value="baseball">Baseball</MyCheckbox>
       <MyCheckbox value="basketball">Basketball</MyCheckbox>
@@ -280,12 +317,12 @@ CheckboxGroup supports the `isRequired` prop to ensure the user selects at least
 The `isRequired` prop at the `CheckboxGroup` level requires that at least one item is selected. To display validation errors, add a `<FieldError>` element as a child of the CheckboxGroup. This allows you to render error messages from all of the above sources with consistent custom styles.
 
 ```tsx example
-import {Form, FieldError, Button} from 'react-aria-components';
+import { Form, FieldError, Button } from "react-aria-components";
 
 <Form>
   {/*- begin highlight -*/}
   <CheckboxGroup name="condiments" isRequired>
-  {/*- end highlight -*/}
+    {/*- end highlight -*/}
     <Label>Sandwich condiments</Label>
     <MyCheckbox value="lettuce">Lettuce</MyCheckbox>
     <MyCheckbox value="tomato">Tomato</MyCheckbox>
@@ -296,7 +333,7 @@ import {Form, FieldError, Button} from 'react-aria-components';
     {/*- end highlight -*/}
   </CheckboxGroup>
   <Button type="submit">Submit</Button>
-</Form>
+</Form>;
 ```
 
 <details>
@@ -324,9 +361,15 @@ To require that specific checkboxes are checked, set the `isRequired` prop at th
   <CheckboxGroup>
     <Label>Agree to the following</Label>
     {/*- begin highlight -*/}
-    <MyCheckbox value="terms" isRequired>Terms and conditions</MyCheckbox>
-    <MyCheckbox value="privacy" isRequired>Privacy policy</MyCheckbox>
-    <MyCheckbox value="cookies" isRequired>Cookie policy</MyCheckbox>
+    <MyCheckbox value="terms" isRequired>
+      Terms and conditions
+    </MyCheckbox>
+    <MyCheckbox value="privacy" isRequired>
+      Privacy policy
+    </MyCheckbox>
+    <MyCheckbox value="cookies" isRequired>
+      Cookie policy
+    </MyCheckbox>
     {/*- end highlight -*/}
     <FieldError />
   </CheckboxGroup>
@@ -353,7 +396,7 @@ The `description` slot can be used to associate additional help text with a chec
 
 ```css
 .react-aria-CheckboxGroup {
-  [slot=description] {
+  [slot="description"] {
     font-size: 12px;
   }
 }
@@ -378,7 +421,9 @@ To disable an individual checkbox, pass `isDisabled` to the `Checkbox` instead.
 ```tsx example
 <MyCheckboxGroup label="Favorite sports">
   <MyCheckbox value="soccer">Soccer</MyCheckbox>
-  <MyCheckbox value="baseball" isDisabled>Baseball</MyCheckbox>
+  <MyCheckbox value="baseball" isDisabled>
+    Baseball
+  </MyCheckbox>
   <MyCheckbox value="basketball">Basketball</MyCheckbox>
 </MyCheckboxGroup>
 ```
@@ -389,7 +434,7 @@ The `isReadOnly` prop makes the selection immutable. Unlike `isDisabled`, the Ch
 See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
 
 ```tsx example
-<MyCheckboxGroup label="Favorite sports" defaultValue={['baseball']} isReadOnly>
+<MyCheckboxGroup label="Favorite sports" defaultValue={["baseball"]} isReadOnly>
   <MyCheckbox value="soccer">Soccer</MyCheckbox>
   <MyCheckbox value="baseball">Baseball</MyCheckbox>
   <MyCheckbox value="basketball">Basketball</MyCheckbox>
@@ -441,9 +486,7 @@ React Aria components can be styled in many ways, including using CSS classes, i
 A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
 
 ```jsx
-<Checkbox className="my-checkbox">
-  {/* ... */}
-</Checkbox>
+<Checkbox className="my-checkbox">{/* ... */}</Checkbox>
 ```
 
 In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
@@ -457,14 +500,16 @@ In addition, some components support multiple UI states (e.g. focused, placehold
 The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
 
 ```jsx
-<Checkbox className={({isPressed}) => isPressed ? 'bg-gray-700' : 'bg-gray-600'} />
+<Checkbox
+  className={({ isPressed }) => (isPressed ? "bg-gray-700" : "bg-gray-600")}
+/>
 ```
 
 Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render an extra element when the checkbox is selected.
 
 ```jsx
 <Checkbox>
-  {({isSelected}) => (
+  {({ isSelected }) => (
     <>
       {isSelected && <CheckIcon />}
       Subscribe
@@ -505,26 +550,29 @@ All React Aria Components export a corresponding context that can be used to sen
 
 The components in a CheckboxGroup support the following contexts:
 
-<ContextTable components={['CheckboxGroup', 'Checkbox']} docs={docs} />
+<ContextTable components={["CheckboxGroup", "Checkbox"]} docs={docs} />
 
 This example shows a `CheckboxDescription` component that accepts a checkbox in its children and renders a description element below it. It uses the [useId](useId.html) hook to generate a unique id for the description, and associates it with the checkbox via the `aria-describedby` attribute passed to the `CheckboxContext` provider.
 
 ```tsx example
-import {CheckboxContext} from 'react-aria-components';
-import {useId} from 'react-aria';
+import { CheckboxContext } from "react-aria-components";
+import { useId } from "react-aria";
 
 interface CheckboxDescriptionProps {
-  children?: React.ReactNode,
-  description?: string
+  children?: React.ReactNode;
+  description?: string;
 }
 
-function CheckboxDescription({children, description}: CheckboxDescriptionProps) {
+function CheckboxDescription({
+  children,
+  description,
+}: CheckboxDescriptionProps) {
   let descriptionId = useId();
   return (
     <div>
       {/*- begin highlight -*/}
-      <CheckboxContext.Provider value={{'aria-describedby': descriptionId}}>
-      {/*- end highlight -*/}
+      <CheckboxContext.Provider value={{ "aria-describedby": descriptionId }}>
+        {/*- end highlight -*/}
         {children}
       </CheckboxContext.Provider>
       <small id={descriptionId}>{description}</small>
@@ -532,7 +580,10 @@ function CheckboxDescription({children, description}: CheckboxDescriptionProps) 
   );
 }
 
-<MyCheckboxGroup label="Email settings" defaultValue={['newsletter', 'deals', 'notifications']}>
+<MyCheckboxGroup
+  label="Email settings"
+  defaultValue={["newsletter", "deals", "notifications"]}
+>
   <CheckboxDescription description="Receive our newsletter once per week.">
     <MyCheckbox value="newsletter">Newsletter</MyCheckbox>
   </CheckboxDescription>
@@ -542,30 +593,32 @@ function CheckboxDescription({children, description}: CheckboxDescriptionProps) 
   <CheckboxDescription description="Notifications about your orders.">
     <MyCheckbox value="notifications">Notifications</MyCheckbox>
   </CheckboxDescription>
-</MyCheckboxGroup>
+</MyCheckboxGroup>;
 ```
 
 ### Custom children
 
 CheckboxGroup passes props to its child components, such as the label, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
 
-<ContextTable components={['Label', 'Text']} docs={docs} />
+<ContextTable components={["Label", "Text"]} docs={docs} />
 
 This example consumes from `LabelContext` in an existing styled label component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by CheckboxGroup.
 
 ```tsx
-import type {LabelProps} from 'react-aria-components';
-import {LabelContext, useContextProps} from 'react-aria-components';
+import type { LabelProps } from "react-aria-components";
+import { LabelContext, useContextProps } from "react-aria-components";
 
-const MyCustomLabel = React.forwardRef((props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
-  // Merge the local props and ref with the ones provided via context.
-  ///- begin highlight -///
-  [props, ref] = useContextProps(props, ref, LabelContext);
-  ///- end highlight -///
+const MyCustomLabel = React.forwardRef(
+  (props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
+    // Merge the local props and ref with the ones provided via context.
+    ///- begin highlight -///
+    [props, ref] = useContextProps(props, ref, LabelContext);
+    ///- end highlight -///
 
-  // ... your existing Label component
-  return <label {...props} ref={ref} />;
-});
+    // ... your existing Label component
+    return <label {...props} ref={ref} />;
+  }
+);
 ```
 
 Now you can use `MyCustomLabel` within a `CheckboxGroup`, in place of the builtin React Aria Components `Label`.
@@ -588,7 +641,7 @@ CheckboxGroup provides a <TypeLink links={statelyDocs.links} type={statelyDocs.e
 This example shows a `SelectionCount` component that can be placed within a `CheckboxGroup` to display the number of selected items.
 
 ```tsx example
-import {CheckboxGroupStateContext} from 'react-aria-components';
+import { CheckboxGroupStateContext } from "react-aria-components";
 
 function SelectionCount() {
   /*- begin highlight -*/
@@ -603,7 +656,7 @@ function SelectionCount() {
   <MyCheckbox value="onion">Onion</MyCheckbox>
   <MyCheckbox value="sprouts">Sprouts</MyCheckbox>
   <SelectionCount />
-</MyCheckboxGroup>
+</MyCheckboxGroup>;
 ```
 
 ### Hooks

@@ -3,8 +3,9 @@
 Replaces individual package imports with monopackage imports, where possible.
 
 Works for:
+
 - `@react-spectrum/*` -> `@adobe/react-spectrum`.
-- `@react-aria/*` -> `react-aria`.
+- `@react-aria-nutrient/*` -> `react-aria`.
 - `@react-stately/*` -> `react-stately`.
 
 By default this will apply to all the above packages, or optionally you can specify which packages to apply this by passing a comma-separated list to the packages option: `--packages=react-aria,react-stately,react-spectrum`.
@@ -22,4 +23,3 @@ Run `npx @react-spectrum/codemods use-monopackages` from the directory you want 
 - `--ignore-pattern` - A [glob pattern](https://github.com/facebook/jscodeshift?tab=readme-ov-file#ignoring-files-and-directories) of files to ignore. Defaults to `**/node_modules/**`.
 - `--dry` - Run the codemod without making changes to the files.
 - `--path` - The path to the directory to run the codemod in. Defaults to the current directory.
-

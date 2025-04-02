@@ -1,55 +1,68 @@
-{/* Copyright 2024 Adobe. All rights reserved.
+{/_ Copyright 2024 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. */}
+governing permissions and limitations under the License. _/}
 
-import {Layout} from '@react-spectrum/docs';
+import { Layout } from "@react-spectrum/docs";
 export default Layout;
 
-import docs from 'docs:react-aria-components';
-import statelyDocs from 'docs:@react-stately/color';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
-import styles from '@react-spectrum/docs/src/docs.css';
-import packageData from 'react-aria-components/package.json';
-import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
-import {Divider} from '@react-spectrum/divider';
-import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
-import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
-import {Keyboard} from '@react-spectrum/text';
-import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
-import ColorSlider from '@react-spectrum/docs/pages/assets//component-illustrations/ColorSlider.svg';
-import ColorWheel from '@react-spectrum/docs/pages/assets//component-illustrations/ColorWheel.svg';
-import ColorArea from '@react-spectrum/docs/pages/assets//component-illustrations/ColorArea.svg';
-import ColorField from '@react-spectrum/docs/pages/assets//component-illustrations/ColorField.svg';
-import ColorSwatch from '@react-spectrum/docs/pages/assets//component-illustrations/ColorSwatch.svg';
-import ColorSwatchPicker from '@react-spectrum/docs/pages/assets//component-illustrations/ColorSwatchPicker.svg';
+import docs from "docs:react-aria-components";
+import statelyDocs from "docs:@react-stately/color";
+import {
+  PropTable,
+  HeaderInfo,
+  TypeLink,
+  PageDescription,
+  StateTable,
+  ContextTable,
+} from "@react-spectrum/docs";
+import styles from "@react-spectrum/docs/src/docs.css";
+import packageData from "react-aria-components/package.json";
+import ChevronRight from "@spectrum-icons/workflow/ChevronRight";
+import { Divider } from "@react-spectrum/divider";
+import { ExampleList } from "@react-spectrum/docs/src/ExampleList";
+import { ExampleCard } from "@react-spectrum/docs/src/ExampleCard";
+import { Keyboard } from "@react-spectrum/text";
+import { StarterKits } from "@react-spectrum/docs/src/StarterKits";
+import ColorSlider from "@react-spectrum/docs/pages/assets//component-illustrations/ColorSlider.svg";
+import ColorWheel from "@react-spectrum/docs/pages/assets//component-illustrations/ColorWheel.svg";
+import ColorArea from "@react-spectrum/docs/pages/assets//component-illustrations/ColorArea.svg";
+import ColorField from "@react-spectrum/docs/pages/assets//component-illustrations/ColorField.svg";
+import ColorSwatch from "@react-spectrum/docs/pages/assets//component-illustrations/ColorSwatch.svg";
+import ColorSwatchPicker from "@react-spectrum/docs/pages/assets//component-illustrations/ColorSwatchPicker.svg";
 
 ---
+
 category: Color
 keywords: [color picker, aria]
 type: component
+
 ---
 
 # ColorPicker
 
 <PageDescription>{docs.exports.ColorPicker.description}</PageDescription>
 
-<HeaderInfo
-  packageData={packageData}
-  componentNames={['ColorPicker']} />
+<HeaderInfo packageData={packageData} componentNames={["ColorPicker"]} />
 
 ## Example
 
 ```tsx example
-import {ColorPicker, Button, Popover, Dialog, DialogTrigger} from 'react-aria-components';
-import {MyColorSwatch} from './ColorSwatch';
-import {MyColorSlider} from './ColorSlider';
-import {MyColorArea} from './ColorArea';
-import {MyColorField} from './ColorField';
+import {
+  ColorPicker,
+  Button,
+  Popover,
+  Dialog,
+  DialogTrigger,
+} from "react-aria-components";
+import { MyColorSwatch } from "./ColorSwatch";
+import { MyColorSlider } from "./ColorSlider";
+import { MyColorArea } from "./ColorArea";
+import { MyColorField } from "./ColorField";
 
 <ColorPicker defaultValue="#5100FF">
   <DialogTrigger>
@@ -59,33 +72,37 @@ import {MyColorField} from './ColorField';
     </Button>
     <Popover placement="bottom start">
       <Dialog className="color-picker-dialog">
-        <MyColorArea colorSpace="hsb" xChannel="saturation" yChannel="brightness" />
+        <MyColorArea
+          colorSpace="hsb"
+          xChannel="saturation"
+          yChannel="brightness"
+        />
         <MyColorSlider colorSpace="hsb" channel="hue" />
         <MyColorField label="Hex" />
       </Dialog>
     </Popover>
   </DialogTrigger>
-</ColorPicker>
+</ColorPicker>;
 ```
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css hidden
-@import './Button.mdx' layer(button);
+@import "./Button.mdx" layer(button);
 @import "./ColorArea.mdx" layer(colorarea);
 @import "./ColorSlider.mdx" layer(colorslider);
 @import "./ColorSwatch.mdx" layer(colorswatch);
 @import "./ColorSwatchPicker.mdx" layer(colorswatchpicker);
 @import "./ColorField.mdx" layer(colorfield);
 @import "./Popover.mdx" layer(popover);
-@import './Dialog.mdx' layer(dialog);
-@import './ListBox.mdx' layer(listbox);
-@import './Select.mdx' layer(select);
+@import "./Dialog.mdx" layer(dialog);
+@import "./ListBox.mdx" layer(listbox);
+@import "./Select.mdx" layer(select);
 ```
 
 ```css
-@import "@react-aria/example-theme";
+@import "@react-aria-nutrient/example-theme";
 
 .color-picker {
   background: none;
@@ -128,19 +145,17 @@ The [&lt;input type="color"&gt;](https://developer.mozilla.org/en-US/docs/Web/HT
 can be used to build a color picker, however it is very inconsistent across browsers and operating systems and does not
 allow customization. `ColorPicker` helps achieve accessible color pickers that can be styled as needed.
 
-* **Customizable** – Support for rendering any color picker UI by placing components like [ColorArea](ColorArea.html), [ColorSlider](ColorSlider.html), [ColorWheel](ColorWheel.html), [ColorField](ColorField.html), and [ColorSwatchPicker](ColorSwatchPicker.html) inside. These can be arranged in any desired combination or layout, with or without a popover.
-* **Accessible** – All color components announce localized color descriptions for screen reader users (e.g. "dark vibrant blue").
+- **Customizable** – Support for rendering any color picker UI by placing components like [ColorArea](ColorArea.html), [ColorSlider](ColorSlider.html), [ColorWheel](ColorWheel.html), [ColorField](ColorField.html), and [ColorSwatchPicker](ColorSwatchPicker.html) inside. These can be arranged in any desired combination or layout, with or without a popover.
+- **Accessible** – All color components announce localized color descriptions for screen reader users (e.g. "dark vibrant blue").
 
 ## Anatomy
 
 A color picker does not render any UI by itself. You can render any combination of color components as children of a color picker, including [ColorArea](ColorArea.html), [ColorSlider](ColorSlider.html), [ColorWheel](ColorWheel.html), [ColorField](ColorField.html), [ColorSwatch](ColorSwatch.html), and [ColorSwatchPicker](ColorSwatchPicker.html). `ColorPicker` manages the state of the selected color, and coordinates the value between all of the components inside it.
 
 ```tsx
-import {ColorPicker} from 'react-aria-components';
+import { ColorPicker } from "react-aria-components";
 
-<ColorPicker>
-  {/* Color components here */}
-</ColorPicker>
+<ColorPicker>{/* Color components here */}</ColorPicker>;
 ```
 
 ### Composed components
@@ -152,42 +167,48 @@ A `ColorPicker` uses the following components, which may also be used standalone
 <ExampleCard
   url="ColorArea.html"
   title="ColorArea"
-  description="A color area allows users to adjust two channels of a color value.">
+  description="A color area allows users to adjust two channels of a color value."
+>
   <ColorArea />
 </ExampleCard>
 
 <ExampleCard
   url="ColorSlider.html"
   title="ColorSlider"
-  description="A color slider allows users to adjust an individual channel of a color value.">
+  description="A color slider allows users to adjust an individual channel of a color value."
+>
   <ColorSlider />
 </ExampleCard>
 
 <ExampleCard
   url="ColorWheel.html"
   title="ColorWheel"
-  description="A color wheel allows users to adjust the hue of a color value on a circular track.">
+  description="A color wheel allows users to adjust the hue of a color value on a circular track."
+>
   <ColorWheel />
 </ExampleCard>
 
 <ExampleCard
   url="ColorField.html"
   title="ColorField"
-  description="A color field allows users to edit a hex color or individual color channel value.">
+  description="A color field allows users to edit a hex color or individual color channel value."
+>
   <ColorField />
 </ExampleCard>
 
 <ExampleCard
   url="ColorSwatch.html"
   title="ColorSwatch"
-  description="A ColorSwatch displays a preview of a selected color.">
+  description="A ColorSwatch displays a preview of a selected color."
+>
   <ColorSwatch />
 </ExampleCard>
 
 <ExampleCard
   url="ColorSwatchPicker.html"
   title="ColorSwatchPicker"
-  description="A ColorSwatchPicker displays a list of color swatches and allows a user to select one of them.">
+  description="A ColorSwatchPicker displays a list of color swatches and allows a user to select one of them."
+>
   <ColorSwatchPicker />
 </ExampleCard>
 
@@ -206,19 +227,25 @@ If you will use a ColorPicker in multiple places in your app, you can wrap all o
 This example wraps `ColorPicker` and all of its children together into a single component. It uses the reusable wrappers for [ColorSwatch](ColorSwatch.html#reusable-wrappers), [ColorArea](ColorArea.html#reusable-wrappers), [ColorSlider](ColorSlider.html#reusable-wrappers), and [ColorField](ColorField.html#reusable-wrappers) created on their corresponding documentation pages. Custom children can also be provided to customize the layout within the popover.
 
 ```tsx example export=true
-import type {ColorPickerProps} from 'react-aria-components';
-import {Button, ColorPicker, Dialog, DialogTrigger, Popover} from 'react-aria-components';
-import {MyColorSwatch} from './ColorSwatch';
-import {MyColorArea} from './ColorArea';
-import {MyColorSlider} from './ColorSlider';
-import {MyColorField} from './ColorField';
+import type { ColorPickerProps } from "react-aria-components";
+import {
+  Button,
+  ColorPicker,
+  Dialog,
+  DialogTrigger,
+  Popover,
+} from "react-aria-components";
+import { MyColorSwatch } from "./ColorSwatch";
+import { MyColorArea } from "./ColorArea";
+import { MyColorSlider } from "./ColorSlider";
+import { MyColorField } from "./ColorField";
 
 interface MyColorPickerProps extends ColorPickerProps {
-  label?: string,
-  children?: React.ReactNode
+  label?: string;
+  children?: React.ReactNode;
 }
 
-function MyColorPicker({label, children, ...props}: MyColorPickerProps) {
+function MyColorPicker({ label, children, ...props }: MyColorPickerProps) {
   return (
     <ColorPicker {...props}>
       <DialogTrigger>
@@ -228,11 +255,17 @@ function MyColorPicker({label, children, ...props}: MyColorPickerProps) {
         </Button>
         <Popover placement="bottom start">
           <Dialog className="color-picker-dialog">
-            {children || <>
-              <MyColorArea colorSpace="hsb" xChannel="saturation" yChannel="brightness" />
-              <MyColorSlider colorSpace="hsb" channel="hue" />
-              <MyColorField label="Hex" />
-            </>}
+            {children || (
+              <>
+                <MyColorArea
+                  colorSpace="hsb"
+                  xChannel="saturation"
+                  yChannel="brightness"
+                />
+                <MyColorSlider colorSpace="hsb" channel="hue" />
+                <MyColorField label="Hex" />
+              </>
+            )}
           </Dialog>
         </Popover>
       </DialogTrigger>
@@ -240,7 +273,7 @@ function MyColorPicker({label, children, ...props}: MyColorPickerProps) {
   );
 }
 
-<MyColorPicker label="Fill color" defaultValue="#f00" />
+<MyColorPicker label="Fill color" defaultValue="#f00" />;
 ```
 
 ## Value
@@ -252,9 +285,7 @@ A ColorPicker requires either an uncontrolled default value or a controlled valu
 By default, `ColorPicker` is uncontrolled. You can set a default value using the `defaultValue` prop.
 
 ```tsx example
-<MyColorPicker
-  label="Color"
-  defaultValue="hsl(25, 100%, 50%)" />
+<MyColorPicker label="Color" defaultValue="hsl(25, 100%, 50%)" />
 ```
 
 ### Controlled
@@ -262,16 +293,11 @@ By default, `ColorPicker` is uncontrolled. You can set a default value using the
 In the example below, the <TypeLink links={docs.links} type={docs.exports.parseColor} /> function is used to parse the initial color from a HSL string so that `value`'s type remains consistent.
 
 ```tsx example
-import {parseColor} from 'react-aria-components';
+import { parseColor } from "react-aria-components";
 
 function Example() {
-  let [value, setValue] = React.useState(parseColor('hsl(25, 100%, 50%)'));
-  return (
-    <MyColorPicker
-      label="Color"
-      value={value}
-      onChange={setValue} />
-  );
+  let [value, setValue] = React.useState(parseColor("hsl(25, 100%, 50%)"));
+  return <MyColorPicker label="Color" value={value} onChange={setValue} />;
 }
 ```
 
@@ -283,15 +309,12 @@ The example below uses `onChange` to update a separate element with the color va
 
 ```tsx example
 function Example() {
-  let [value, setValue] = React.useState(parseColor('hsl(50, 100%, 50%)'));
+  let [value, setValue] = React.useState(parseColor("hsl(50, 100%, 50%)"));
 
   return (
     <div>
-      <MyColorPicker
-        label="Color"
-        value={value}
-        onChange={setValue} />
-      <p>Selected color: {value.toString('hsl')}</p>
+      <MyColorPicker label="Color" value={value} onChange={setValue} />
+      <p>Selected color: {value.toString("hsl")}</p>
     </div>
   );
 }
@@ -304,23 +327,27 @@ function Example() {
 This example uses [ColorSlider](ColorSlider.html) to allow a user to adjust each channel of a color value, with a [Select](Select.html) to switch between color spaces.
 
 ```tsx example
-import type {ColorSpace} from 'react-aria-components';
-import {getColorChannels} from 'react-aria-components';
-import {MyColorSlider} from './ColorSlider';
-import {MySelect, MyItem} from './Select';
+import type { ColorSpace } from "react-aria-components";
+import { getColorChannels } from "react-aria-components";
+import { MyColorSlider } from "./ColorSlider";
+import { MySelect, MyItem } from "./Select";
 
 function Example() {
-  let [space, setSpace] = React.useState<ColorSpace>('rgb');
+  let [space, setSpace] = React.useState<ColorSpace>("rgb");
 
   return (
     <MyColorPicker label="Fill color" defaultValue="#184">
-      <MySelect aria-label="Color space" selectedKey={space} onSelectionChange={s => setSpace(s as ColorSpace)}>
+      <MySelect
+        aria-label="Color space"
+        selectedKey={space}
+        onSelectionChange={(s) => setSpace(s as ColorSpace)}
+      >
         <MyItem id="rgb">RGB</MyItem>
         <MyItem id="hsl">HSL</MyItem>
         <MyItem id="hsb">HSB</MyItem>
       </MySelect>
       {/*- begin highlight -*/}
-      {getColorChannels(space).map(channel => (
+      {getColorChannels(space).map((channel) => (
         <MyColorSlider key={channel} colorSpace={space} channel={channel} />
       ))}
       <MyColorSlider channel="alpha" />
@@ -335,17 +362,24 @@ function Example() {
 This example combines a [ColorWheel](ColorWheel.html) and [ColorArea](ColorArea.html) to build an HSB color picker.
 
 ```tsx example
-import {MyColorWheel} from './ColorWheel';
-import {MyColorArea} from './ColorArea';
+import { MyColorWheel } from "./ColorWheel";
+import { MyColorArea } from "./ColorArea";
 
 <MyColorPicker label="Stroke color" defaultValue="#345">
   <MyColorWheel />
-  <MyColorArea 
+  <MyColorArea
     colorSpace="hsb"
     xChannel="saturation"
     yChannel="brightness"
-    style={{width: '100px', height: '100px', position: 'absolute', top: 'calc(50% - 50px)', left: 'calc(50% - 50px)'}} />
-</MyColorPicker>
+    style={{
+      width: "100px",
+      height: "100px",
+      position: "absolute",
+      top: "calc(50% - 50px)",
+      left: "calc(50% - 50px)",
+    }}
+  />
+</MyColorPicker>;
 ```
 
 ### Channel fields
@@ -353,29 +387,42 @@ import {MyColorArea} from './ColorArea';
 This example uses [ColorField](ColorField.html) to allow a user to edit the value of each color channel as a number, along with a [Select](Select.html) to switch between color spaces.
 
 ```tsx example
-import type {ColorSpace} from 'react-aria-components';
-import {getColorChannels} from 'react-aria-components';
-import {MyColorArea} from './ColorArea';
-import {MyColorSlider} from './ColorSlider';
-import {MySelect, MyItem} from './Select';
-import {MyColorField} from './ColorField';
+import type { ColorSpace } from "react-aria-components";
+import { getColorChannels } from "react-aria-components";
+import { MyColorArea } from "./ColorArea";
+import { MyColorSlider } from "./ColorSlider";
+import { MySelect, MyItem } from "./Select";
+import { MyColorField } from "./ColorField";
 
 function Example() {
-  let [space, setSpace] = React.useState<ColorSpace>('rgb');
+  let [space, setSpace] = React.useState<ColorSpace>("rgb");
 
   return (
     <MyColorPicker label="Color" defaultValue="#f80">
-      <MyColorArea colorSpace="hsb" xChannel="saturation" yChannel="brightness" />
+      <MyColorArea
+        colorSpace="hsb"
+        xChannel="saturation"
+        yChannel="brightness"
+      />
       <MyColorSlider colorSpace="hsb" channel="hue" />
-      <MySelect aria-label="Color space" selectedKey={space} onSelectionChange={s => setSpace(s as ColorSpace)}>
+      <MySelect
+        aria-label="Color space"
+        selectedKey={space}
+        onSelectionChange={(s) => setSpace(s as ColorSpace)}
+      >
         <MyItem id="rgb">RGB</MyItem>
         <MyItem id="hsl">HSL</MyItem>
         <MyItem id="hsb">HSB</MyItem>
       </MySelect>
-      <div style={{display: 'flex', gap: 4, width: 192}}>
+      <div style={{ display: "flex", gap: 4, width: 192 }}>
         {/*- begin highlight -*/}
-        {getColorChannels(space).map(channel => (
-          <MyColorField key={channel} colorSpace={space} channel={channel} style={{flex: 1}} />
+        {getColorChannels(space).map((channel) => (
+          <MyColorField
+            key={channel}
+            colorSpace={space}
+            channel={channel}
+            style={{ flex: 1 }}
+          />
         ))}
         {/*- end highlight -*/}
       </div>
@@ -389,7 +436,10 @@ function Example() {
 This example uses a [ColorSwatchPicker](ColorSwatchPicker.html) to provide color presets for a color picker.
 
 ```tsx example
-import {MyColorSwatchPicker, MyColorSwatchPickerItem} from './ColorSwatchPicker';
+import {
+  MyColorSwatchPicker,
+  MyColorSwatchPickerItem,
+} from "./ColorSwatchPicker";
 
 <MyColorPicker label="Color" defaultValue="#A00">
   <MyColorArea colorSpace="hsb" xChannel="saturation" yChannel="brightness" />
@@ -401,7 +451,7 @@ import {MyColorSwatchPicker, MyColorSwatchPickerItem} from './ColorSwatchPicker'
     <MyColorSwatchPickerItem color="#08f" />
     <MyColorSwatchPickerItem color="#008" />
   </MyColorSwatchPicker>
-</MyColorPicker>
+</MyColorPicker>;
 ```
 
 ## Props
@@ -414,7 +464,7 @@ import {MyColorSwatchPicker, MyColorSwatchPickerItem} from './ColorSwatchPicker'
 
 All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
 
-<ContextTable components={['ColorPicker']} docs={docs} />
+<ContextTable components={["ColorPicker"]} docs={docs} />
 
 ### State
 
@@ -423,26 +473,29 @@ ColorPicker provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exp
 This example uses the browser [EyeDropper](https://developer.mozilla.org/en-US/docs/Web/API/EyeDropper_API) API (currently available in Chromium-based browsers) to allow users to sample on-screen colors. The ColorPicker is updated when the user chooses a color via the `ColorPickerStateContext`.
 
 ```tsx example
-import {ColorPickerStateContext, parseColor} from 'react-aria-components';
-import SamplerIcon from '@spectrum-icons/workflow/Sampler';
+import { ColorPickerStateContext, parseColor } from "react-aria-components";
+import SamplerIcon from "@spectrum-icons/workflow/Sampler";
 
 function EyeDropperButton() {
   let state = React.useContext(ColorPickerStateContext)!;
 
   // Check browser support.
   // @ts-ignore
-  if (typeof EyeDropper === 'undefined') {
-    return 'EyeDropper is not supported in your browser.';
+  if (typeof EyeDropper === "undefined") {
+    return "EyeDropper is not supported in your browser.";
   }
 
   return (
     <Button
       aria-label="Eye dropper"
-      style={{alignSelf: 'start'}}
+      style={{ alignSelf: "start" }}
       onPress={() => {
         // @ts-ignore
-        new EyeDropper().open().then(result => state.setColor(parseColor(result.sRGBHex)));
-      }}>
+        new EyeDropper()
+          .open()
+          .then((result) => state.setColor(parseColor(result.sRGBHex)));
+      }}
+    >
       <SamplerIcon size="S" />
     </Button>
   );
@@ -452,5 +505,5 @@ function EyeDropperButton() {
   <MyColorArea colorSpace="hsb" xChannel="saturation" yChannel="brightness" />
   <MyColorSlider colorSpace="hsb" channel="hue" />
   <EyeDropperButton />
-</MyColorPicker>
+</MyColorPicker>;
 ```

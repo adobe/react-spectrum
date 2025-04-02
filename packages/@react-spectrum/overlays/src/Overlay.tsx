@@ -10,14 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMRef} from '@react-types/shared';
-import {OpenTransition} from './OpenTransition';
-import {OverlayProps} from '@react-types/overlays';
-import {Provider} from '@react-spectrum/provider';
-import React, {useCallback, useState} from 'react';
-import {Overlay as ReactAriaOverlay} from '@react-aria/overlays';
+import { DOMRef } from "@react-types/shared";
+import { OpenTransition } from "./OpenTransition";
+import { OverlayProps } from "@react-types/overlays";
+import { Provider } from "@react-spectrum/provider";
+import React, { useCallback, useState } from "react";
+import { Overlay as ReactAriaOverlay } from "@react-aria-nutrient/overlays";
 
-export const Overlay = React.forwardRef(function Overlay(props: OverlayProps, ref: DOMRef<HTMLDivElement>) {
+export const Overlay = React.forwardRef(function Overlay(
+  props: OverlayProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   let {
     children,
     isOpen,
@@ -29,7 +32,7 @@ export const Overlay = React.forwardRef(function Overlay(props: OverlayProps, re
     onExit,
     onExiting,
     onExited,
-    nodeRef
+    nodeRef,
   } = props;
 
   let [exited, setExited] = useState(!isOpen);
@@ -56,8 +59,16 @@ export const Overlay = React.forwardRef(function Overlay(props: OverlayProps, re
   }
 
   return (
-    <ReactAriaOverlay portalContainer={container} disableFocusManagement={disableFocusManagement} isExiting={!isOpen}>
-      <Provider ref={ref} UNSAFE_style={{background: 'transparent', isolation: 'isolate'}} isDisabled={false}>
+    <ReactAriaOverlay
+      portalContainer={container}
+      disableFocusManagement={disableFocusManagement}
+      isExiting={!isOpen}
+    >
+      <Provider
+        ref={ref}
+        UNSAFE_style={{ background: "transparent", isolation: "isolate" }}
+        isDisabled={false}
+      >
         <OpenTransition
           in={isOpen}
           appear
@@ -67,7 +78,8 @@ export const Overlay = React.forwardRef(function Overlay(props: OverlayProps, re
           onEnter={onEnter}
           onEntering={onEntering}
           onEntered={handleEntered}
-          nodeRef={nodeRef}>
+          nodeRef={nodeRef}
+        >
           {children}
         </OpenTransition>
       </Provider>

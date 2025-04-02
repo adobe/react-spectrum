@@ -10,57 +10,56 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSliderThumbProps} from '@react-types/slider';
-import {classNames} from '@react-spectrum/utils';
-import {FocusRing} from '@react-aria/focus';
-import {mergeProps} from '@react-aria/utils';
-import React, {ReactNode, useRef} from 'react';
-import {RefObject} from '@react-types/shared';
-import {SliderState} from '@react-stately/slider';
-import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
-import {useHover} from '@react-aria/interactions';
-import {useSliderThumb} from '@react-aria/slider';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
+import { AriaSliderThumbProps } from "@react-types/slider";
+import { classNames } from "@react-spectrum/utils";
+import { FocusRing } from "@react-aria-nutrient/focus";
+import { mergeProps } from "@react-aria-nutrient/utils";
+import React, { ReactNode, useRef } from "react";
+import { RefObject } from "@react-types/shared";
+import { SliderState } from "@react-stately/slider";
+import styles from "@adobe/spectrum-css-temp/components/slider/vars.css";
+import { useHover } from "@react-aria-nutrient/interactions";
+import { useSliderThumb } from "@react-aria-nutrient/slider";
+import { VisuallyHidden } from "@react-aria-nutrient/visually-hidden";
 
 interface SliderThumbProps extends AriaSliderThumbProps {
-  trackRef: RefObject<HTMLElement | null>,
-  inputRef?: RefObject<HTMLInputElement | null>,
-  state: SliderState
+  trackRef: RefObject<HTMLElement | null>;
+  inputRef?: RefObject<HTMLInputElement | null>;
+  state: SliderState;
 }
 
 export function SliderThumb(props: SliderThumbProps): ReactNode {
-  let {
-    inputRef,
-    state
-  } = props;
+  let { inputRef, state } = props;
   let backupRef = useRef<HTMLInputElement | null>(null);
   inputRef = inputRef || backupRef;
 
-  let {thumbProps, inputProps, isDragging, isFocused} = useSliderThumb({
-    ...props,
-    inputRef
-  }, state);
+  let { thumbProps, inputProps, isDragging, isFocused } = useSliderThumb(
+    {
+      ...props,
+      inputRef,
+    },
+    state
+  );
 
-  let {hoverProps, isHovered} = useHover({});
+  let { hoverProps, isHovered } = useHover({});
 
   return (
-    <FocusRing within focusRingClass={classNames(styles, 'is-focused')}>
+    <FocusRing within focusRingClass={classNames(styles, "is-focused")}>
       <div
-        className={
-          classNames(
-            styles,
-            'spectrum-Slider-handle',
-            {
-              'is-hovered': isHovered,
-              'is-dragged': isDragging,
-              'is-tophandle': isFocused
-            }
-          )
-        }
+        className={classNames(styles, "spectrum-Slider-handle", {
+          "is-hovered": isHovered,
+          "is-dragged": isDragging,
+          "is-tophandle": isFocused,
+        })}
         {...mergeProps(thumbProps, hoverProps)}
-        role="presentation">
+        role="presentation"
+      >
         <VisuallyHidden>
-          <input className={classNames(styles, 'spectrum-Slider-input')} ref={inputRef} {...inputProps} />
+          <input
+            className={classNames(styles, "spectrum-Slider-input")}
+            ref={inputRef}
+            {...inputProps}
+          />
         </VisuallyHidden>
       </div>
     </FocusRing>

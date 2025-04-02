@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-jest.mock('@react-aria/live-announcer');
+jest.mock('@react-aria-nutrient/live-announcer');
 import {
   act,
   fireEvent,
@@ -20,14 +20,14 @@ import {
   waitFor,
   within
 } from '@react-spectrum/test-utils-internal';
-import {CUSTOM_DRAG_TYPE} from '@react-aria/dnd/src/constants';
-import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, FileSystemFileEntry} from '@react-aria/dnd/test/mocks';
-import {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
+import {CUSTOM_DRAG_TYPE} from '@react-aria-nutrient/dnd/src/constants';
+import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, FileSystemFileEntry} from '@react-aria-nutrient/dnd/test/mocks';
+import {DIRECTORY_DRAG_TYPE} from '@react-aria-nutrient/dnd';
 import {DragBetweenListsComplex} from '../stories/ListViewDnDUtilExamples';
 import {DragBetweenListsExample, DragBetweenListsRootOnlyExample, DragExample, DragIntoItemExample, ReorderExample} from '../stories/ListViewDnDExamples';
-import {Droppable} from '@react-aria/dnd/test/examples';
+import {Droppable} from '@react-aria-nutrient/dnd/test/examples';
 import {Flex} from '@react-spectrum/layout';
-import {globalDndState} from '@react-aria/dnd/src/utils';
+import {globalDndState} from '@react-aria-nutrient/dnd/src/utils';
 import {Item, ListView} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';

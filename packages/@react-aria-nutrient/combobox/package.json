@@ -1,0 +1,49 @@
+{
+  "name": "@react-aria-nutrient/combobox",
+  "version": "3.12.1",
+  "description": "Spectrum UI components in React",
+  "license": "Apache-2.0",
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "exports": {
+    "types": "./dist/types.d.ts",
+    "import": "./dist/import.mjs",
+    "require": "./dist/main.js"
+  },
+  "types": "dist/types.d.ts",
+  "source": "src/index.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@react-aria-nutrient/focus": "^3.20.1",
+    "@react-aria-nutrient/i18n": "^3.12.7",
+    "@react-aria-nutrient/listbox": "^3.14.2",
+    "@react-aria-nutrient/live-announcer": "^3.4.1",
+    "@react-aria-nutrient/menu": "^3.18.1",
+    "@react-aria-nutrient/overlays": "^3.26.1",
+    "@react-aria-nutrient/selection": "^3.23.1",
+    "@react-aria-nutrient/textfield": "^3.17.1",
+    "@react-aria-nutrient/utils": "^3.28.1",
+    "@react-stately/collections": "^3.12.2",
+    "@react-stately/combobox": "^3.10.3",
+    "@react-stately/form": "^3.1.2",
+    "@react-types/button": "^3.11.0",
+    "@react-types/combobox": "^3.13.3",
+    "@react-types/shared": "^3.28.0",
+    "@swc/helpers": "^0.5.0"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

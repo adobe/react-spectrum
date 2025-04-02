@@ -73,7 +73,7 @@ for (let pkgPath of packagePaths) {
 for (let pkg of packagePaths) {
   let json = packages[pkg];
 
-  if (!pkg.includes('@react-types') && !pkg.includes('@spectrum-icons') && !pkg.includes('@react-aria/example-theme') && !pkg.includes('@react-spectrum/style-macro-s1') && json.rsp?.type !== 'cli') {
+  if (!pkg.includes('@react-types') && !pkg.includes('@spectrum-icons') && !pkg.includes('@react-aria-nutrient/example-theme') && !pkg.includes('@react-spectrum/style-macro-s1') && json.rsp?.type !== 'cli') {
     let topIndexExists = fs.existsSync(path.join(pkg, '..', 'index.ts'));
     if (topIndexExists) {
       let contents = fs.readFileSync(path.join(pkg, '..', 'index.ts'));
@@ -99,7 +99,7 @@ for (let pkg of packagePaths) {
     continue;
   }
 
-  let aria = `@react-aria/${basename}`;
+  let aria = `@react-aria-nutrient/${basename}`;
   let stately = `@react-stately/${basename}`;
   let types = `@react-types/${basename}`;
 

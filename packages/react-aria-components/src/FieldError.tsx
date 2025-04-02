@@ -10,21 +10,31 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, ValidationResult} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
-import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
-import {RenderProps, useRenderProps} from './utils';
-import {Text} from './Text';
+import { DOMProps, ValidationResult } from "@react-types/shared";
+import { filterDOMProps } from "@react-aria-nutrient/utils";
+import React, {
+  createContext,
+  ForwardedRef,
+  forwardRef,
+  useContext,
+} from "react";
+import { RenderProps, useRenderProps } from "./utils";
+import { Text } from "./Text";
 
 export const FieldErrorContext = createContext<ValidationResult | null>(null);
 
 export interface FieldErrorRenderProps extends ValidationResult {}
-export interface FieldErrorProps extends RenderProps<FieldErrorRenderProps>, DOMProps {}
+export interface FieldErrorProps
+  extends RenderProps<FieldErrorRenderProps>,
+    DOMProps {}
 
 /**
  * A FieldError displays validation errors for a form field.
  */
-export const FieldError = forwardRef(function FieldError(props: FieldErrorProps, ref: ForwardedRef<HTMLElement>) {
+export const FieldError = forwardRef(function FieldError(
+  props: FieldErrorProps,
+  ref: ForwardedRef<HTMLElement>
+) {
   let validation = useContext(FieldErrorContext);
   if (!validation?.isInvalid) {
     return null;
@@ -33,19 +43,26 @@ export const FieldError = forwardRef(function FieldError(props: FieldErrorProps,
   return <FieldErrorInner {...props} ref={ref} />;
 });
 
-const FieldErrorInner = forwardRef((props: FieldErrorProps, ref: ForwardedRef<HTMLElement>) => {
-  let validation = useContext(FieldErrorContext)!;
-  let domProps = filterDOMProps(props)!;
-  let renderProps = useRenderProps({
-    ...props,
-    defaultClassName: 'react-aria-FieldError',
-    defaultChildren: validation.validationErrors.length === 0 ? undefined : validation.validationErrors.join(' '),
-    values: validation
-  });
+const FieldErrorInner = forwardRef(
+  (props: FieldErrorProps, ref: ForwardedRef<HTMLElement>) => {
+    let validation = useContext(FieldErrorContext)!;
+    let domProps = filterDOMProps(props)!;
+    let renderProps = useRenderProps({
+      ...props,
+      defaultClassName: "react-aria-FieldError",
+      defaultChildren:
+        validation.validationErrors.length === 0
+          ? undefined
+          : validation.validationErrors.join(" "),
+      values: validation,
+    });
 
-  if (renderProps.children == null) {
-    return null;
+    if (renderProps.children == null) {
+      return null;
+    }
+
+    return (
+      <Text slot="errorMessage" {...domProps} {...renderProps} ref={ref} />
+    );
   }
-
-  return <Text slot="errorMessage" {...domProps} {...renderProps} ref={ref} />;
-});
+);

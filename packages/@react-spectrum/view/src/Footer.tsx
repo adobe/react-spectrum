@@ -10,29 +10,32 @@
  * governing permissions and limitations under the License.
  */
 
-import {ClearSlots, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
-import {FooterProps} from '@react-types/view';
-import React, {forwardRef} from 'react';
+import {
+  ClearSlots,
+  useDOMRef,
+  useSlotProps,
+  useStyleProps,
+} from "@react-spectrum/utils";
+import { DOMRef } from "@react-types/shared";
+import { filterDOMProps } from "@react-aria-nutrient/utils";
+import { FooterProps } from "@react-types/view";
+import React, { forwardRef } from "react";
 
 /**
  * Footer represents a footer within a Spectrum container.
  */
-export const Footer = forwardRef(function Footer(props: FooterProps, ref: DOMRef) {
-  props = useSlotProps(props, 'footer');
-  let {
-    children,
-    ...otherProps
-  } = props;
-  let {styleProps} = useStyleProps(otherProps);
+export const Footer = forwardRef(function Footer(
+  props: FooterProps,
+  ref: DOMRef
+) {
+  props = useSlotProps(props, "footer");
+  let { children, ...otherProps } = props;
+  let { styleProps } = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
 
   return (
     <footer {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
-      <ClearSlots>
-        {children}
-      </ClearSlots>
+      <ClearSlots>{children}</ClearSlots>
     </footer>
   );
 });

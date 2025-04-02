@@ -11,7 +11,7 @@
  */
 
 import {ActionButtonGroup} from './ActionButtonGroup';
-import {announce} from '@react-aria/live-announcer';
+import {announce} from '@react-aria-nutrient/live-announcer';
 import {CloseButton} from './CloseButton';
 import {ContextValue, SlotProps} from 'react-aria-components';
 import {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useEffect, useMemo, useRef, useState} from 'react';
@@ -22,8 +22,8 @@ import intlMessages from '../intl/*.json';
 import {style} from '../style' with {type: 'macro'};
 import {useControlledState} from '@react-stately/utils';
 import {useDOMRef} from '@react-spectrum/utils';
-import {useEnterAnimation, useExitAnimation, useObjectRef, useResizeObserver} from '@react-aria/utils';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useEnterAnimation, useExitAnimation, useObjectRef, useResizeObserver} from '@react-aria-nutrient/utils';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 const actionBarStyles = style({

@@ -1,18 +1,20 @@
-{/* Copyright 2022 Adobe. All rights reserved.
+{/_ Copyright 2022 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. */}
+governing permissions and limitations under the License. _/}
 
-import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+import { BlogPostLayout, Hero } from "@react-spectrum/docs";
 export default BlogPostLayout;
 
 ---
+
 description: We are excited to announce the release of drag and drop support in React Aria and React Spectrum! This includes a suite of hooks for implementing drag and drop interactions. There is also an update to all Spectrum colors, aligning React Spectrum with the latest Spectrum designs. Finally, React Aria includes a new simplified API for overlays such as popovers and modals.
 date: 2022-11-15
+
 ---
 
 # November 15, 2022 Release
@@ -30,15 +32,15 @@ Finally, we have plenty of bug fixes and documentation updates. Thanks to all of
 **Drag and Drop**
 
 - React Spectrum
-    - [Introduction](https://react-spectrum.adobe.com/react-spectrum/dnd.html)
-    - [ListView](https://react-spectrum.adobe.com/react-spectrum/ListView.html#drag-and-drop)
+  - [Introduction](https://react-spectrum.adobe.com/react-spectrum/dnd.html)
+  - [ListView](https://react-spectrum.adobe.com/react-spectrum/ListView.html#drag-and-drop)
 - React Aria
-    - [Introduction](https://react-spectrum.adobe.com/react-aria/dnd.html)
-    - [useDrag](https://react-spectrum.adobe.com/react-aria/useDrag.html)
-    - [useDraggableCollection](https://react-spectrum.adobe.com/react-aria/useDraggableCollection.html)
-    - [useDrop](https://react-spectrum.adobe.com/react-aria/useDrop.html)
-    - [useDroppableCollection](https://react-spectrum.adobe.com/react-aria/useDroppableCollection.html)
-    - [useClipboard](https://react-spectrum.adobe.com/react-aria/useClipboard.html)
+  - [Introduction](https://react-spectrum.adobe.com/react-aria/dnd.html)
+  - [useDrag](https://react-spectrum.adobe.com/react-aria/useDrag.html)
+  - [useDraggableCollection](https://react-spectrum.adobe.com/react-aria/useDraggableCollection.html)
+  - [useDrop](https://react-spectrum.adobe.com/react-aria/useDrop.html)
+  - [useDroppableCollection](https://react-spectrum.adobe.com/react-aria/useDroppableCollection.html)
+  - [useClipboard](https://react-spectrum.adobe.com/react-aria/useClipboard.html)
 
 **Overlay hooks**
 
@@ -46,17 +48,21 @@ Finally, we have plenty of bug fixes and documentation updates. Thanks to all of
 - [useModalOverlay](https://react-spectrum.adobe.com/react-aria/useModalOverlay.html)
 
 ## Enhancements
+
 - Add SSR support for drag and drop - [@casperiv0](https://github.com/casperiv0) - [PR](https://github.com/adobe/react-spectrum/pull/3616)
 - Export `TableCollection` and `TreeCollection` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3690)
 - Update Spectrum colors to v6 - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3604)
 - `Button` and `ActionButton` design updates - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3650)
 - Migrate React Spectrum to new overlay hooks - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3677)
 - Add `UNSAFE_className` prop to `TableView` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3722)
+
 ### Spectrum color update
+
 Spectrum design has updated their [color system](https://spectrum.adobe.com/page/color-fundamentals/) with an expanded palette, improved contrast, and increased vibrance. This update applies across all React Spectrum components automatically. You can also use the new Spectrum colors in your custom components using the [View](https://react-spectrum.adobe.com/react-spectrum/View.html) component, which now has a `colorVersion` prop enabling you to opt-in. See the [styling documentation](https://react-spectrum.adobe.com/react-spectrum/styling.html#color-values) for more details, and to view the full color palette.
 
 ### Design updates
-Spectrum has also updated the designs for Button, ActionButton, ActionGroup, and ToggleButton  with improved contrast and accessibility. Button includes new outline and fill options, as well as new static color options. ActionButton, ActionGroup, ToggleButton, Picker, TextField, and other field components now have darker borders and selected states for improved contrast.
+
+Spectrum has also updated the designs for Button, ActionButton, ActionGroup, and ToggleButton with improved contrast and accessibility. Button includes new outline and fill options, as well as new static color options. ActionButton, ActionGroup, ToggleButton, Picker, TextField, and other field components now have darker borders and selected states for improved contrast.
 
 The Button API has been updated to add new options, and deprecate some old ones. Deprecated options will be automatically mapped to new variants.
 
@@ -68,6 +74,7 @@ The Button API has been updated to add new options, and deprecate some old ones.
 View the updates on our [Button docs](https://react-spectrum.adobe.com/react-spectrum/Button.html#visual-options) and [Spectrum Design docs](https://spectrum.adobe.com/page/button/#Accent-variant).
 
 ## Fixes
+
 - Avoid widening "type" prop of `TextInputDOMProps` - [@jossmac](https://github.com/jossmac) - [PR](https://github.com/adobe/react-spectrum/pull/3623)
 - Expose `props` to `Section` collection item - [@luisadame](https://github.com/luisadame) - [PR](https://github.com/adobe/react-spectrum/pull/3634)
 - Clear slots for `ContextualHelp` slot provider for `Dialog` - [@jluyau](https://github.com/jluyau) - [PR](https://github.com/adobe/react-spectrum/pull/3635)
@@ -87,12 +94,14 @@ View the updates on our [Button docs](https://react-spectrum.adobe.com/react-spe
 - Fix `useListData` so that reorder operations are correctly inserted at the correct index - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3724)
 
 ## Docs
+
 - Correction of a mistake in `useBreadCrumbs` - [@Zoe-CF](https://github.com/Zoe-CF) - [PR](https://github.com/adobe/react-spectrum/pull/3607)
 - Display monopackage "since" version for components in React Spectrum docs - [@dannify](https://github.com/dannify) - [PR](https://github.com/adobe/react-spectrum/pull/3609)
 - Add link to Spectrum styling page to docs - [@matthewdeutsch](https://github.com/matthewdeutsch) - [PR](https://github.com/adobe/react-spectrum/pull/3596)
 - Update copy relating to theming - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3622)
 
 ## Under construction
+
 Fixes to pre-released components are listed below. Please feel free to try them out, and report any issues you encounter.
 
 - Update `TagGroup` to use keys instead of value - [@tiffany-sy-lin](https://github.com/tiffany-sy-lin) - [PR](https://github.com/adobe/react-spectrum/pull/3692)
@@ -100,62 +109,62 @@ Fixes to pre-released components are listed below. Please feel free to try them 
 - Update `TagGroup` types - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3728)
 
 ### TagGroup updates
+
 We have made improvements to the `TagGroup` component, and it is now entering beta. This includes a few breaking changes.
 
 - `isDisabled` and `disabledKeys` props have been removed.
 - `isRemovable` has been renamed to `allowsRemoving`.
 - `onRemove` now passes the removed key instead of its children and press event.
 
-
 ## Released packages
 
 ```
 - @adobe/react-spectrum@3.23.0
-- @react-aria/accordion@3.0.0-alpha.13
-- @react-aria/actiongroup@3.4.3
-- @react-aria/aria-modal-polyfill@3.6.1
-- @react-aria/autocomplete@3.0.0-alpha.12
-- @react-aria/breadcrumbs@3.4.0
-- @react-aria/button@3.6.3
-- @react-aria/calendar@3.0.4
-- @react-aria/checkbox@3.7.0
-- @react-aria/color@3.0.0-beta.17
-- @react-aria/combobox@3.4.3
-- @react-aria/datepicker@3.2.0
-- @react-aria/dialog@3.4.1
-- @react-aria/dnd@3.0.0
-- @react-aria/focus@3.10.0
-- @react-aria/grid@3.5.1
-- @react-aria/gridlist@3.1.1
-- @react-aria/i18n@3.6.2
-- @react-aria/interactions@3.13.0
-- @react-aria/label@3.4.3
-- @react-aria/landmark@3.0.0-alpha.4
-- @react-aria/link@3.3.5
-- @react-aria/listbox@3.7.1
-- @react-aria/menu@3.7.0
-- @react-aria/meter@3.3.3
-- @react-aria/numberfield@3.3.3
-- @react-aria/overlays@3.12.0
-- @react-aria/progress@3.3.3
-- @react-aria/radio@3.4.1
-- @react-aria/searchfield@3.4.3
-- @react-aria/select@3.8.3
-- @react-aria/selection@3.12.0
-- @react-aria/separator@3.2.5
-- @react-aria/slider@3.2.3
-- @react-aria/spinbutton@3.2.0
-- @react-aria/ssr@3.4.0
-- @react-aria/switch@3.3.0
-- @react-aria/table@3.6.0
-- @react-aria/tabs@3.3.3
-- @react-aria/tag@3.0.0-beta.0
-- @react-aria/textfield@3.8.0
-- @react-aria/toggle@3.4.1
-- @react-aria/tooltip@3.3.3
-- @react-aria/utils@3.14.1
-- @react-aria/virtualizer@3.6.0
-- @react-aria/visually-hidden@3.6.0
+- @react-aria-nutrient/accordion@3.0.0-alpha.13
+- @react-aria-nutrient/actiongroup@3.4.3
+- @react-aria-nutrient/aria-modal-polyfill@3.6.1
+- @react-aria-nutrient/autocomplete@3.0.0-alpha.12
+- @react-aria-nutrient/breadcrumbs@3.4.0
+- @react-aria-nutrient/button@3.6.3
+- @react-aria-nutrient/calendar@3.0.4
+- @react-aria-nutrient/checkbox@3.7.0
+- @react-aria-nutrient/color@3.0.0-beta.17
+- @react-aria-nutrient/combobox@3.4.3
+- @react-aria-nutrient/datepicker@3.2.0
+- @react-aria-nutrient/dialog@3.4.1
+- @react-aria-nutrient/dnd@3.0.0
+- @react-aria-nutrient/focus@3.10.0
+- @react-aria-nutrient/grid@3.5.1
+- @react-aria-nutrient/gridlist@3.1.1
+- @react-aria-nutrient/i18n@3.6.2
+- @react-aria-nutrient/interactions@3.13.0
+- @react-aria-nutrient/label@3.4.3
+- @react-aria-nutrient/landmark@3.0.0-alpha.4
+- @react-aria-nutrient/link@3.3.5
+- @react-aria-nutrient/listbox@3.7.1
+- @react-aria-nutrient/menu@3.7.0
+- @react-aria-nutrient/meter@3.3.3
+- @react-aria-nutrient/numberfield@3.3.3
+- @react-aria-nutrient/overlays@3.12.0
+- @react-aria-nutrient/progress@3.3.3
+- @react-aria-nutrient/radio@3.4.1
+- @react-aria-nutrient/searchfield@3.4.3
+- @react-aria-nutrient/select@3.8.3
+- @react-aria-nutrient/selection@3.12.0
+- @react-aria-nutrient/separator@3.2.5
+- @react-aria-nutrient/slider@3.2.3
+- @react-aria-nutrient/spinbutton@3.2.0
+- @react-aria-nutrient/ssr@3.4.0
+- @react-aria-nutrient/switch@3.3.0
+- @react-aria-nutrient/table@3.6.0
+- @react-aria-nutrient/tabs@3.3.3
+- @react-aria-nutrient/tag@3.0.0-beta.0
+- @react-aria-nutrient/textfield@3.8.0
+- @react-aria-nutrient/toggle@3.4.1
+- @react-aria-nutrient/tooltip@3.3.3
+- @react-aria-nutrient/utils@3.14.1
+- @react-aria-nutrient/virtualizer@3.6.0
+- @react-aria-nutrient/visually-hidden@3.6.0
 - @react-spectrum/accordion@3.0.0-alpha.14
 - @react-spectrum/actionbar@3.0.0-alpha.14
 - @react-spectrum/actiongroup@3.7.1
@@ -293,4 +302,3 @@ We have made improvements to the `TagGroup` component, and it is now entering be
 - react-aria@3.21.0
 - react-stately@3.19.0
 ```
-

@@ -36,7 +36,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/separator": "^3.4.7",
+    "@react-aria-nutrient/separator": "^3.4.7",
     "@react-spectrum/utils": "^3.12.3",
     "@react-types/divider": "^3.3.15",
     "@react-types/shared": "^3.28.0",

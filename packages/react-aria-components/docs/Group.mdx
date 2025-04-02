@@ -1,27 +1,36 @@
-{/* Copyright 2020 Adobe. All rights reserved.
+{/_ Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. */}
+governing permissions and limitations under the License. _/}
 
-import {Layout} from '@react-spectrum/docs';
+import { Layout } from "@react-spectrum/docs";
 export default Layout;
 
-import docs from 'docs:react-aria-components';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
-import styles from '@react-spectrum/docs/src/docs.css';
-import packageData from 'react-aria-components/package.json';
-import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
-import {Divider} from '@react-spectrum/divider';
-import {Keyboard} from '@react-spectrum/text';
+import docs from "docs:react-aria-components";
+import {
+  PropTable,
+  HeaderInfo,
+  TypeLink,
+  PageDescription,
+  StateTable,
+  ContextTable,
+} from "@react-spectrum/docs";
+import styles from "@react-spectrum/docs/src/docs.css";
+import packageData from "react-aria-components/package.json";
+import ChevronRight from "@spectrum-icons/workflow/ChevronRight";
+import { Divider } from "@react-spectrum/divider";
+import { Keyboard } from "@react-spectrum/text";
 
 ---
+
 category: Content
 keywords: [group, aria]
 type: component
+
 ---
 
 # Group
@@ -30,15 +39,14 @@ type: component
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Group']}
-  sourceData={[
-    {type: 'W3C', url: 'https://w3c.github.io/aria/#group'}
-  ]} />
+  componentNames={["Group"]}
+  sourceData={[{ type: "W3C", url: "https://w3c.github.io/aria/#group" }]}
+/>
 
 ## Example
 
 ```tsx example
-import {TextField, Label, Group, Input, Button} from 'react-aria-components';
+import { TextField, Label, Group, Input, Button } from "react-aria-components";
 
 <TextField>
   <Label>Email</Label>
@@ -46,18 +54,18 @@ import {TextField, Label, Group, Input, Button} from 'react-aria-components';
     <Input />
     <Button aria-label="Add email">+</Button>
   </Group>
-</TextField>
+</TextField>;
 ```
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css hidden
-@import './Button.mdx' layer(button);
+@import "./Button.mdx" layer(button);
 ```
 
 ```css
-@import "@react-aria/example-theme";
+@import "@react-aria-nutrient/example-theme";
 
 .react-aria-Group {
   display: flex;
@@ -114,19 +122,17 @@ import {TextField, Label, Group, Input, Button} from 'react-aria-components';
 
 A group can be created with a `<div role="group">` or via the HTML [&lt;fieldset&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/fieldset) element. The `Group` component supports additional UI states, and can be used standalone or as part of a larger pattern such as [NumberField](NumberField.html) or [DatePicker](DatePicker.html).
 
-* **Styleable** – Hover, keyboard focus, disabled, and invalid states are provided for easy styling. These states only apply when interacting with an appropriate input device, unlike CSS pseudo classes.
-* **Accessible** – Implemented using the ARIA "group" role by default, with optional support for the "region" landmark role.
+- **Styleable** – Hover, keyboard focus, disabled, and invalid states are provided for easy styling. These states only apply when interacting with an appropriate input device, unlike CSS pseudo classes.
+- **Accessible** – Implemented using the ARIA "group" role by default, with optional support for the "region" landmark role.
 
 ## Anatomy
 
 A group consists of a container element for a set of semantically related UI controls. It supports states such as hover, focus within, and disabled, which are useful to style visually adjoined children.
 
 ```tsx
-import {Group} from 'react-aria-components';
+import { Group } from "react-aria-components";
 
-<Group>
-  {/* ... */}
-</Group>
+<Group>{/* ... */}</Group>;
 ```
 
 ## Accessibility
@@ -175,9 +181,7 @@ React Aria components can be styled in many ways, including using CSS classes, i
 A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
 
 ```jsx
-<Group className="my-group">
-  {/* ... */}
-</Group>
+<Group className="my-group">{/* ... */}</Group>
 ```
 
 In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
@@ -202,20 +206,20 @@ The states, selectors, and render props for `Group` are documented below.
 
 All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
 
-<ContextTable components={['Group']} docs={docs} />
+<ContextTable components={["Group"]} docs={docs} />
 
 This example shows a `LabeledGroup` component that accepts a label and a group as children. It uses the [useId](useId.html) hook to generate a unique id for the label, and provides this to the group via the `aria-labelledby` prop.
 
 ```tsx example
-import {LabelContext, GroupContext} from 'react-aria-components';
-import {useId} from 'react-aria';
+import { LabelContext, GroupContext } from "react-aria-components";
+import { useId } from "react-aria";
 
-function LabeledGroup({children}) {
+function LabeledGroup({ children }) {
   let labelId = useId();
 
   return (
-    <LabelContext.Provider value={{id: labelId, elementType: 'span'}}>
-      <GroupContext.Provider value={{'aria-labelledby': labelId}}>
+    <LabelContext.Provider value={{ id: labelId, elementType: "span" }}>
+      <GroupContext.Provider value={{ "aria-labelledby": labelId }}>
         {children}
       </GroupContext.Provider>
     </LabelContext.Provider>
@@ -229,5 +233,5 @@ function LabeledGroup({children}) {
     /
     <Input size={4} aria-label="Year" placeholder="yyyy" />
   </Group>
-</LabeledGroup>
+</LabeledGroup>;
 ```

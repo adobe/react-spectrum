@@ -11,11 +11,11 @@
  */
 
 
-jest.mock('@react-aria/live-announcer');
+jest.mock('@react-aria-nutrient/live-announcer');
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {announce} from '@react-aria/live-announcer';
+import {announce} from '@react-aria-nutrient/live-announcer';
 import {Example} from '../stories/Example';
-import {getFocusableTreeWalker} from '@react-aria/focus';
+import {getFocusableTreeWalker} from '@react-aria-nutrient/focus';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';

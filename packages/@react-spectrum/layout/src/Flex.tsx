@@ -10,39 +10,47 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, passthroughStyle, responsiveDimensionValue, StyleHandlers, useBreakpoint, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
-import {FlexProps} from '@react-types/layout';
-import React, {forwardRef} from 'react';
-import styles from './flex-gap.css';
+import {
+  classNames,
+  passthroughStyle,
+  responsiveDimensionValue,
+  StyleHandlers,
+  useBreakpoint,
+  useDOMRef,
+  useStyleProps,
+} from "@react-spectrum/utils";
+import { DOMRef } from "@react-types/shared";
+import { filterDOMProps } from "@react-aria-nutrient/utils";
+import { FlexProps } from "@react-types/layout";
+import React, { forwardRef } from "react";
+import styles from "./flex-gap.css";
 
 const flexStyleProps: StyleHandlers = {
-  direction: ['flexDirection', passthroughStyle],
-  wrap: ['flexWrap', flexWrapValue],
-  justifyContent: ['justifyContent', flexAlignValue],
-  alignItems: ['alignItems', flexAlignValue],
-  alignContent: ['alignContent', flexAlignValue]
+  direction: ["flexDirection", passthroughStyle],
+  wrap: ["flexWrap", flexWrapValue],
+  justifyContent: ["justifyContent", flexAlignValue],
+  alignItems: ["alignItems", flexAlignValue],
+  alignContent: ["alignContent", flexAlignValue],
 };
 
 /**
  * A layout container using flexbox. Provides Spectrum dimension values, and supports the gap
  * property to define consistent spacing between items.
  */
-export const Flex = forwardRef(function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
-  let {
-    children,
-    ...otherProps
-  } = props;
+export const Flex = forwardRef(function Flex(
+  props: FlexProps,
+  ref: DOMRef<HTMLDivElement>
+) {
+  let { children, ...otherProps } = props;
   let breakpointProvider = useBreakpoint();
-  let matchedBreakpoints = breakpointProvider?.matchedBreakpoints || ['base'];
-  let {styleProps} = useStyleProps(otherProps);
-  let {styleProps: flexStyle} = useStyleProps(otherProps, flexStyleProps);
+  let matchedBreakpoints = breakpointProvider?.matchedBreakpoints || ["base"];
+  let { styleProps } = useStyleProps(otherProps);
+  let { styleProps: flexStyle } = useStyleProps(otherProps, flexStyleProps);
   let domRef = useDOMRef(ref);
 
   let style = {
     ...styleProps.style,
-    ...flexStyle.style
+    ...flexStyle.style,
   };
 
   if (props.gap != null) {
@@ -50,7 +58,10 @@ export const Flex = forwardRef(function Flex(props: FlexProps, ref: DOMRef<HTMLD
   }
 
   if (props.columnGap != null) {
-    style.columnGap = responsiveDimensionValue(props.columnGap, matchedBreakpoints);
+    style.columnGap = responsiveDimensionValue(
+      props.columnGap,
+      matchedBreakpoints
+    );
   }
 
   if (props.rowGap != null) {
@@ -58,7 +69,12 @@ export const Flex = forwardRef(function Flex(props: FlexProps, ref: DOMRef<HTMLD
   }
 
   return (
-    <div {...filterDOMProps(otherProps)} className={classNames(styles, 'flex', styleProps.className)} style={style} ref={domRef}>
+    <div
+      {...filterDOMProps(otherProps)}
+      className={classNames(styles, "flex", styleProps.className)}
+      style={style}
+      ref={domRef}
+    >
       {children}
     </div>
   );
@@ -69,12 +85,12 @@ export const Flex = forwardRef(function Flex(props: FlexProps, ref: DOMRef<HTMLD
  * in flex containers for browser compatibility.
  */
 function flexAlignValue(value) {
-  if (value === 'start') {
-    return 'flex-start';
+  if (value === "start") {
+    return "flex-start";
   }
 
-  if (value === 'end') {
-    return 'flex-end';
+  if (value === "end") {
+    return "flex-end";
   }
 
   return value;
@@ -84,8 +100,8 @@ function flexAlignValue(value) {
  * Takes a boolean and translates it to flex wrap or nowrap.
  */
 function flexWrapValue(value) {
-  if (typeof value === 'boolean') {
-    return value ? 'wrap' : 'nowrap';
+  if (typeof value === "boolean") {
+    return value ? "wrap" : "nowrap";
   }
 
   return value;

@@ -10,28 +10,45 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaAutocompleteProps, CollectionOptions, useAutocomplete} from '@react-aria/autocomplete';
-import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomplete';
-import {InputContext} from './Input';
-import {mergeProps} from '@react-aria/utils';
-import {Provider, removeDataAttributes, SlotProps, SlottedContextValue, useSlottedContext} from './utils';
-import React, {createContext, ReactNode, RefObject, useRef} from 'react';
-import {SearchFieldContext} from './SearchField';
-import {TextFieldContext} from './TextField';
+import {
+  AriaAutocompleteProps,
+  CollectionOptions,
+  useAutocomplete,
+} from "@react-aria-nutrient/autocomplete";
+import {
+  AutocompleteState,
+  useAutocompleteState,
+} from "@react-stately/autocomplete";
+import { InputContext } from "./Input";
+import { mergeProps } from "@react-aria-nutrient/utils";
+import {
+  Provider,
+  removeDataAttributes,
+  SlotProps,
+  SlottedContextValue,
+  useSlottedContext,
+} from "./utils";
+import React, { createContext, ReactNode, RefObject, useRef } from "react";
+import { SearchFieldContext } from "./SearchField";
+import { TextFieldContext } from "./TextField";
 
 export interface AutocompleteProps extends AriaAutocompleteProps, SlotProps {}
 
 interface InternalAutocompleteContextValue {
-  filter?: (nodeTextValue: string) => boolean,
-  collectionProps: CollectionOptions,
-  collectionRef: RefObject<HTMLElement | null>
+  filter?: (nodeTextValue: string) => boolean;
+  collectionProps: CollectionOptions;
+  collectionRef: RefObject<HTMLElement | null>;
 }
 
-export const AutocompleteContext = createContext<SlottedContextValue<Partial<AutocompleteProps>>>(null);
-export const AutocompleteStateContext = createContext<AutocompleteState | null>(null);
+export const AutocompleteContext =
+  createContext<SlottedContextValue<Partial<AutocompleteProps>>>(null);
+export const AutocompleteStateContext = createContext<AutocompleteState | null>(
+  null
+);
 // This context is to pass the register and filter down to whatever collection component is wrapped by the Autocomplete
 // TODO: export from RAC, but rename to something more appropriate
-export const UNSTABLE_InternalAutocompleteContext = createContext<InternalAutocompleteContextValue | null>(null);
+export const UNSTABLE_InternalAutocompleteContext =
+  createContext<InternalAutocompleteContextValue | null>(null);
 
 /**
  * An autocomplete combines a TextField or SearchField with a Menu or ListBox, allowing users to search or filter a list of suggestions.
@@ -39,7 +56,7 @@ export const UNSTABLE_InternalAutocompleteContext = createContext<InternalAutoco
 export function Autocomplete(props: AutocompleteProps): ReactNode {
   let ctx = useSlottedContext(AutocompleteContext, props.slot);
   props = mergeProps(ctx, props);
-  let {filter, disableAutoFocusFirst} = props;
+  let { filter, disableAutoFocusFirst } = props;
   let state = useAutocompleteState(props);
   let inputRef = useRef<HTMLInputElement | null>(null);
   let collectionRef = useRef<HTMLElement>(null);
@@ -47,14 +64,17 @@ export function Autocomplete(props: AutocompleteProps): ReactNode {
     textFieldProps,
     collectionProps,
     collectionRef: mergedCollectionRef,
-    filter: filterFn
-  } = useAutocomplete({
-    ...removeDataAttributes(props),
-    filter,
-    disableAutoFocusFirst,
-    inputRef,
-    collectionRef
-  }, state);
+    filter: filterFn,
+  } = useAutocomplete(
+    {
+      ...removeDataAttributes(props),
+      filter,
+      disableAutoFocusFirst,
+      inputRef,
+      collectionRef,
+    },
+    state
+  );
 
   return (
     <Provider
@@ -62,14 +82,18 @@ export function Autocomplete(props: AutocompleteProps): ReactNode {
         [AutocompleteStateContext, state],
         [SearchFieldContext, textFieldProps],
         [TextFieldContext, textFieldProps],
-        [InputContext, {ref: inputRef}],
-        [UNSTABLE_InternalAutocompleteContext, {
-          filter: filterFn,
-          collectionProps,
-          collectionRef: mergedCollectionRef
-        }]
-      ]}>
+        [InputContext, { ref: inputRef }],
+        [
+          UNSTABLE_InternalAutocompleteContext,
+          {
+            filter: filterFn,
+            collectionProps,
+            collectionRef: mergedCollectionRef,
+          },
+        ],
+      ]}
+    >
       {props.children}
     </Provider>
   );
-};
+}

@@ -10,56 +10,60 @@
  * governing permissions and limitations under the License.
  */
 
-import {clamp} from '@react-aria/utils';
-import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
-import React, {CSSProperties} from 'react';
-import {SpectrumProgressCircleProps} from '@react-types/progress';
-import styles from '@adobe/spectrum-css-temp/components/circleloader/vars.css';
-import {useProgressBar} from '@react-aria/progress';
-
+import { clamp } from "@react-aria-nutrient/utils";
+import { classNames, useDOMRef, useStyleProps } from "@react-spectrum/utils";
+import { DOMRef } from "@react-types/shared";
+import React, { CSSProperties } from "react";
+import { SpectrumProgressCircleProps } from "@react-types/progress";
+import styles from "@adobe/spectrum-css-temp/components/circleloader/vars.css";
+import { useProgressBar } from "@react-aria-nutrient/progress";
 
 /**
  * ProgressCircles show the progression of a system operation such as downloading, uploading, or processing, in a visual way.
  * They can represent determinate or indeterminate progress.
  */
-export const ProgressCircle = React.forwardRef(function ProgressCircle(props: SpectrumProgressCircleProps, ref: DOMRef<HTMLDivElement>) {
+export const ProgressCircle = React.forwardRef(function ProgressCircle(
+  props: SpectrumProgressCircleProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   let {
     value = 0,
     minValue = 0,
     maxValue = 100,
-    size = 'M',
+    size = "M",
     staticColor,
     variant,
     isIndeterminate = false,
-    'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledby,
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledby,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
-  let {styleProps} = useStyleProps(otherProps);
+  let { styleProps } = useStyleProps(otherProps);
 
   value = clamp(value, minValue, maxValue);
-  let {progressBarProps} = useProgressBar({...props, value});
+  let { progressBarProps } = useProgressBar({ ...props, value });
 
   let subMask1Style: CSSProperties = {};
   let subMask2Style: CSSProperties = {};
   if (!isIndeterminate) {
-    let percentage = (value - minValue) / (maxValue - minValue) * 100;
+    let percentage = ((value - minValue) / (maxValue - minValue)) * 100;
     let angle;
     if (percentage > 0 && percentage <= 50) {
-      angle = -180 + (percentage / 50 * 180);
+      angle = -180 + (percentage / 50) * 180;
       subMask1Style.transform = `rotate(${angle}deg)`;
-      subMask2Style.transform = 'rotate(-180deg)';
+      subMask2Style.transform = "rotate(-180deg)";
     } else if (percentage > 50) {
-      angle = -180 + (percentage - 50) / 50 * 180;
-      subMask1Style.transform = 'rotate(0deg)';
+      angle = -180 + ((percentage - 50) / 50) * 180;
+      subMask1Style.transform = "rotate(0deg)";
       subMask2Style.transform = `rotate(${angle}deg)`;
     }
   }
 
-  if (!ariaLabel && !ariaLabelledby && process.env.NODE_ENV !== 'production') {
-    console.warn('ProgressCircle requires an aria-label or aria-labelledby attribute for accessibility');
+  if (!ariaLabel && !ariaLabelledby && process.env.NODE_ENV !== "production") {
+    console.warn(
+      "ProgressCircle requires an aria-label or aria-labelledby attribute for accessibility"
+    );
   }
 
   return (
@@ -67,37 +71,38 @@ export const ProgressCircle = React.forwardRef(function ProgressCircle(props: Sp
       {...styleProps}
       {...progressBarProps}
       ref={domRef}
-      className={
-        classNames(
-          styles,
-          'spectrum-CircleLoader',
-          {
-            'spectrum-CircleLoader--indeterminate': isIndeterminate,
-            'spectrum-CircleLoader--small': size === 'S',
-            'spectrum-CircleLoader--large': size === 'L',
-            'spectrum-CircleLoader--overBackground': variant === 'overBackground',
-            'spectrum-CircleLoader--staticWhite': staticColor === 'white',
-            'spectrum-CircleLoader--staticBlack': staticColor === 'black'
-          },
-          styleProps.className
-        )
-      }>
-      <div className={classNames(styles, 'spectrum-CircleLoader-track')} />
-      <div className={classNames(styles, 'spectrum-CircleLoader-fills')} >
-        <div className={classNames(styles, 'spectrum-CircleLoader-fillMask1')} >
+      className={classNames(
+        styles,
+        "spectrum-CircleLoader",
+        {
+          "spectrum-CircleLoader--indeterminate": isIndeterminate,
+          "spectrum-CircleLoader--small": size === "S",
+          "spectrum-CircleLoader--large": size === "L",
+          "spectrum-CircleLoader--overBackground": variant === "overBackground",
+          "spectrum-CircleLoader--staticWhite": staticColor === "white",
+          "spectrum-CircleLoader--staticBlack": staticColor === "black",
+        },
+        styleProps.className
+      )}
+    >
+      <div className={classNames(styles, "spectrum-CircleLoader-track")} />
+      <div className={classNames(styles, "spectrum-CircleLoader-fills")}>
+        <div className={classNames(styles, "spectrum-CircleLoader-fillMask1")}>
           <div
-            className={classNames(styles, 'spectrum-CircleLoader-fillSubMask1')}
+            className={classNames(styles, "spectrum-CircleLoader-fillSubMask1")}
             data-testid="fillSubMask1"
-            style={subMask1Style}>
-            <div className={classNames(styles, 'spectrum-CircleLoader-fill')} />
+            style={subMask1Style}
+          >
+            <div className={classNames(styles, "spectrum-CircleLoader-fill")} />
           </div>
         </div>
-        <div className={classNames(styles, 'spectrum-CircleLoader-fillMask2')} >
+        <div className={classNames(styles, "spectrum-CircleLoader-fillMask2")}>
           <div
-            className={classNames(styles, 'spectrum-CircleLoader-fillSubMask2')}
+            className={classNames(styles, "spectrum-CircleLoader-fillSubMask2")}
             data-testid="fillSubMask2"
-            style={subMask2Style} >
-            <div className={classNames(styles, 'spectrum-CircleLoader-fill')} />
+            style={subMask2Style}
+          >
+            <div className={classNames(styles, "spectrum-CircleLoader-fill")} />
           </div>
         </div>
       </div>

@@ -10,58 +10,62 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
-import React from 'react';
-import {SpectrumImageProps} from '@react-types/image';
-import styles from '@adobe/spectrum-css-temp/components/image/vars.css';
-import {useProviderProps} from '@react-spectrum/provider';
+import {
+  classNames,
+  useDOMRef,
+  useSlotProps,
+  useStyleProps,
+} from "@react-spectrum/utils";
+import { DOMRef } from "@react-types/shared";
+import { filterDOMProps } from "@react-aria-nutrient/utils";
+import React from "react";
+import { SpectrumImageProps } from "@react-types/image";
+import styles from "@adobe/spectrum-css-temp/components/image/vars.css";
+import { useProviderProps } from "@react-spectrum/provider";
 
 /**
  * Image is used to insert and display an image within a component.
  */
-export const Image = React.forwardRef(// incomplete component for show right now
+export const Image = React.forwardRef(
+  // incomplete component for show right now
 
-function Image(props: SpectrumImageProps, ref: DOMRef<HTMLDivElement>) {
-  /* Slots should be able to pass an alt for default behavior, but in Images, the child may know better. */
-  let userProvidedAlt = props.alt;
-  props = useSlotProps(props, 'image');
-  props = useProviderProps(props);
-  let {
-    objectFit,
-    src,
-    alt,
-    ...otherProps
-  } = props;
-  let {styleProps} = useStyleProps(otherProps);
-  let domRef = useDOMRef(ref);
+  function Image(props: SpectrumImageProps, ref: DOMRef<HTMLDivElement>) {
+    /* Slots should be able to pass an alt for default behavior, but in Images, the child may know better. */
+    let userProvidedAlt = props.alt;
+    props = useSlotProps(props, "image");
+    props = useProviderProps(props);
+    let { objectFit, src, alt, ...otherProps } = props;
+    let { styleProps } = useStyleProps(otherProps);
+    let domRef = useDOMRef(ref);
 
-  if (alt == null && process.env.NODE_ENV !== 'production') {
-    console.warn(
-      'The `alt` prop was not provided to an image. ' +
-      'Add `alt` text for screen readers, or set `alt=""` prop to indicate that the image ' +
-      'is decorative or redundant with displayed text and should not be announced by screen readers.'
+    if (alt == null && process.env.NODE_ENV !== "production") {
+      console.warn(
+        "The `alt` prop was not provided to an image. " +
+          'Add `alt` text for screen readers, or set `alt=""` prop to indicate that the image ' +
+          "is decorative or redundant with displayed text and should not be announced by screen readers."
+      );
+    }
+
+    return (
+      <div
+        {...filterDOMProps(props)}
+        {...styleProps}
+        className={classNames(styles, styleProps.className)}
+        style={{
+          ...styleProps.style,
+          overflow: "hidden",
+        }}
+        ref={domRef}
+      >
+        <img
+          src={src}
+          alt={userProvidedAlt || alt}
+          style={{ objectFit }}
+          className={classNames(styles, "spectrum-Image-img")}
+          onError={props?.onError}
+          onLoad={props?.onLoad}
+        />
+      </div>
     );
   }
-
-  return (
-    <div
-      {...filterDOMProps(props)}
-      {...styleProps}
-      className={classNames(styles, styleProps.className)}
-      style={{
-        ...styleProps.style,
-        overflow: 'hidden'
-      }}
-      ref={domRef}>
-      <img
-        src={src}
-        alt={userProvidedAlt || alt}
-        style={{objectFit}}
-        className={classNames(styles, 'spectrum-Image-img')} 
-        onError={props?.onError}
-        onLoad={props?.onLoad} />
-    </div>
-  );
-});
+);

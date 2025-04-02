@@ -1,6 +1,6 @@
-# @react-aria/optimize-locales-plugin
+# @react-aria-nutrient/optimize-locales-plugin
 
-A build plugin to optimize React Aria to only include translated strings for locales that your app supports. It currently supports Vite, Rollup, Webpack, and esbuild via [unplugin](https://github.com/unjs/unplugin). For Parcel, please use `@react-aria/parcel-resolver-optimize-locales`.
+A build plugin to optimize React Aria to only include translated strings for locales that your app supports. It currently supports Vite, Rollup, Webpack, and esbuild via [unplugin](https://github.com/unjs/unplugin). For Parcel, please use `@react-aria-nutrient/parcel-resolver-optimize-locales`.
 
 ## Configuration
 
@@ -10,15 +10,15 @@ Any strings for locales other than the ones listed in the configuration as shown
 
 ```js
 // webpack.config.js
-const optimizeLocales = require('@react-aria/optimize-locales-plugin');
+const optimizeLocales = require("@react-aria-nutrient/optimize-locales-plugin");
 
 module.exports = {
   // ...
   plugins: [
     optimizeLocales.webpack({
-      locales: ['en-US', 'fr-FR']
-    })
-  ]
+      locales: ["en-US", "fr-FR"],
+    }),
+  ],
 };
 ```
 
@@ -26,17 +26,17 @@ module.exports = {
 
 ```js
 // next.config.js
-const optimizeLocales = require('@react-aria/optimize-locales-plugin');
+const optimizeLocales = require("@react-aria-nutrient/optimize-locales-plugin");
 
 module.exports = {
   webpack(config) {
     config.plugins.push(
       optimizeLocales.webpack({
-        locales: ['en-US', 'fr-FR']
+        locales: ["en-US", "fr-FR"],
       })
     );
     return config;
-  }
+  },
 };
 ```
 
@@ -44,14 +44,14 @@ module.exports = {
 
 ```js
 // vite.config.js
-import optimizeLocales from '@react-aria/optimize-locales-plugin';
+import optimizeLocales from "@react-aria-nutrient/optimize-locales-plugin";
 
 export default {
   plugins: [
     optimizeLocales.vite({
-      locales: ['en-US', 'fr-FR']
-    })
-  ]
+      locales: ["en-US", "fr-FR"],
+    }),
+  ],
 };
 ```
 
@@ -59,28 +59,28 @@ export default {
 
 ```js
 // rollup.config.js
-import optimizeLocales from '@react-aria/optimize-locales-plugin';
+import optimizeLocales from "@react-aria-nutrient/optimize-locales-plugin";
 
 export default {
   plugins: [
     optimizeLocales.rollup({
-      locales: ['en-US', 'fr-FR']
-    })
-  ]
+      locales: ["en-US", "fr-FR"],
+    }),
+  ],
 };
 ```
 
 ### Esbuild
 
 ```js
-import {build} from 'esbuild';
-import optimizeLocales from '@react-aria/optimize-locales-plugin';
+import { build } from "esbuild";
+import optimizeLocales from "@react-aria-nutrient/optimize-locales-plugin";
 
 build({
   plugins: [
     optimizeLocales.esbuild({
-      locales: ['en-US', 'fr-FR']
-    })
-  ]
+      locales: ["en-US", "fr-FR"],
+    }),
+  ],
 });
 ```

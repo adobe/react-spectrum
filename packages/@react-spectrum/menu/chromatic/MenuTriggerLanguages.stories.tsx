@@ -10,41 +10,41 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton} from '@react-spectrum/button';
-import Copy from '@spectrum-icons/workflow/Copy';
-import Cut from '@spectrum-icons/workflow/Cut';
+import { ActionButton } from "@react-spectrum/button";
+import Copy from "@spectrum-icons/workflow/Copy";
+import Cut from "@spectrum-icons/workflow/Cut";
 // @ts-ignore
-import intlMessages from './intlMessages.json';
-import {Item, Menu, MenuTrigger} from '../';
-import {Keyboard, Text} from '@react-spectrum/text';
-import Paste from '@spectrum-icons/workflow/Paste';
-import {Provider} from '@react-spectrum/provider';
-import React from 'react';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import intlMessages from "./intlMessages.json";
+import { Item, Menu, MenuTrigger } from "../";
+import { Keyboard, Text } from "@react-spectrum/text";
+import Paste from "@spectrum-icons/workflow/Paste";
+import { Provider } from "@react-spectrum/provider";
+import React from "react";
+import { useLocalizedStringFormatter } from "@react-aria-nutrient/i18n";
 
 export default {
-  title: 'Languages/MenuTrigger',
+  title: "Languages/MenuTrigger",
   parameters: {
     chromaticProvider: {
-      colorSchemes: ['light'],
+      colorSchemes: ["light"],
       express: false,
-      locales: ['en-US'],
-      scales: ['large']
-    }
+      locales: ["en-US"],
+      scales: ["large"],
+    },
   },
-  excludeStories: ['TranslateMenu']
+  excludeStories: ["TranslateMenu"],
 };
 
 let iconMap = {
   Copy,
   Cut,
-  Paste
+  Paste,
 };
 
 let menuItems = [
-  {name: 'copy', icon: 'Copy', shortcut: '⌘C'},
-  {name: 'cut', icon: 'Cut', shortcut: '⌘X'},
-  {name: 'paste', icon: 'Paste', shortcut: '⌘V'}
+  { name: "copy", icon: "Copy", shortcut: "⌘C" },
+  { name: "cut", icon: "Cut", shortcut: "⌘X" },
+  { name: "paste", icon: "Paste", shortcut: "⌘V" },
 ];
 
 const customMenuItem = (item, strings) => {
@@ -63,12 +63,8 @@ export let TranslateMenu = (props) => {
 
   return (
     <MenuTrigger {...props}>
-      <ActionButton>
-        {strings.format('button')}
-      </ActionButton>
-      <Menu items={menuItems}>
-        {item => customMenuItem(item, strings)}
-      </Menu>
+      <ActionButton>{strings.format("button")}</ActionButton>
+      <Menu items={menuItems}>{(item) => customMenuItem(item, strings)}</Menu>
     </MenuTrigger>
   );
 };

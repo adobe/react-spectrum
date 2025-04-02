@@ -10,26 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
-import React, {forwardRef} from 'react';
-import {TextProps} from '@react-types/text';
-import {useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import { DOMRef } from "@react-types/shared";
+import { filterDOMProps } from "@react-aria-nutrient/utils";
+import React, { forwardRef } from "react";
+import { TextProps } from "@react-types/text";
+import { useDOMRef, useSlotProps, useStyleProps } from "@react-spectrum/utils";
 
 /**
  * Text represents text with no specific semantic meaning.
  */
 export const Text = forwardRef(function Text(props: TextProps, ref: DOMRef) {
-  props = useSlotProps(props, 'text');
-  let {
-    children,
-    ...otherProps
-  } = props;
-  let {styleProps} = useStyleProps(otherProps);
+  props = useSlotProps(props, "text");
+  let { children, ...otherProps } = props;
+  let { styleProps } = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
 
   return (
-    <span role="none" {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
+    <span
+      role="none"
+      {...filterDOMProps(otherProps)}
+      {...styleProps}
+      ref={domRef}
+    >
       {children}
     </span>
   );

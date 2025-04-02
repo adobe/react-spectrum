@@ -10,38 +10,48 @@
  * governing permissions and limitations under the License.
  */
 
-import {SeparatorProps as AriaSeparatorProps, useSeparator} from 'react-aria';
-import {ContextValue, SlotProps, StyleProps, useContextProps} from './utils';
-import {createLeafComponent} from '@react-aria/collections';
-import {filterDOMProps} from '@react-aria/utils';
-import React, {createContext, ElementType, ForwardedRef} from 'react';
+import { SeparatorProps as AriaSeparatorProps, useSeparator } from "react-aria";
+import { ContextValue, SlotProps, StyleProps, useContextProps } from "./utils";
+import { createLeafComponent } from "@react-aria-nutrient/collections";
+import { filterDOMProps } from "@react-aria-nutrient/utils";
+import React, { createContext, ElementType, ForwardedRef } from "react";
 
-export interface SeparatorProps extends AriaSeparatorProps, StyleProps, SlotProps {}
+export interface SeparatorProps
+  extends AriaSeparatorProps,
+    StyleProps,
+    SlotProps {}
 
-export const SeparatorContext = createContext<ContextValue<SeparatorProps, HTMLElement>>({});
+export const SeparatorContext = createContext<
+  ContextValue<SeparatorProps, HTMLElement>
+>({});
 
-export const Separator = /*#__PURE__*/ createLeafComponent('separator', function Separator(props: SeparatorProps, ref: ForwardedRef<HTMLElement>) {
-  [props, ref] = useContextProps(props, ref, SeparatorContext);
+export const Separator = /*#__PURE__*/ createLeafComponent(
+  "separator",
+  function Separator(props: SeparatorProps, ref: ForwardedRef<HTMLElement>) {
+    [props, ref] = useContextProps(props, ref, SeparatorContext);
 
-  let {elementType, orientation, style, className, slot, ...otherProps} = props;
-  let Element = (elementType as ElementType) || 'hr';
-  if (Element === 'hr' && orientation === 'vertical') {
-    Element = 'div';
+    let { elementType, orientation, style, className, slot, ...otherProps } =
+      props;
+    let Element = (elementType as ElementType) || "hr";
+    if (Element === "hr" && orientation === "vertical") {
+      Element = "div";
+    }
+
+    let { separatorProps } = useSeparator({
+      ...otherProps,
+      elementType,
+      orientation,
+    });
+
+    return (
+      <Element
+        {...filterDOMProps(props)}
+        {...separatorProps}
+        style={style}
+        className={className ?? "react-aria-Separator"}
+        ref={ref}
+        slot={slot || undefined}
+      />
+    );
   }
-
-  let {separatorProps} = useSeparator({
-    ...otherProps,
-    elementType,
-    orientation
-  });
-
-  return (
-    <Element
-      {...filterDOMProps(props)}
-      {...separatorProps}
-      style={style}
-      className={className ?? 'react-aria-Separator'}
-      ref={ref}
-      slot={slot || undefined} />
-  );
-});
+);

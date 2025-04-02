@@ -1,54 +1,90 @@
-import {AriaLabelingProps, HoverEvents, ValueBase} from '@react-types/shared';
-import {Color, parseColor, useColorPickerState} from 'react-stately';
-import {ColorSwatchContext} from './ColorSwatch';
-import {composeRenderProps, ContextValue, RenderProps, StyleRenderProps, useContextProps} from './utils';
-import {filterDOMProps} from '@react-aria/utils';
+import { AriaLabelingProps, HoverEvents, ValueBase } from "@react-types/shared";
+import { Color, parseColor, useColorPickerState } from "react-stately";
+import { ColorSwatchContext } from "./ColorSwatch";
+import {
+  composeRenderProps,
+  ContextValue,
+  RenderProps,
+  StyleRenderProps,
+  useContextProps,
+} from "./utils";
+import { filterDOMProps } from "@react-aria-nutrient/utils";
 // @ts-ignore
-import intlMessages from '../intl/*.json';
-import {ListBox, ListBoxItem, ListBoxItemRenderProps, ListBoxRenderProps} from './ListBox';
-import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useEffect, useMemo} from 'react';
-import {useLocale, useLocalizedStringFormatter} from 'react-aria';
+import intlMessages from "../intl/*.json";
+import {
+  ListBox,
+  ListBoxItem,
+  ListBoxItemRenderProps,
+  ListBoxRenderProps,
+} from "./ListBox";
+import React, {
+  createContext,
+  ForwardedRef,
+  forwardRef,
+  ReactNode,
+  useContext,
+  useEffect,
+  useMemo,
+} from "react";
+import { useLocale, useLocalizedStringFormatter } from "react-aria";
 
-export interface ColorSwatchPickerRenderProps extends Omit<ListBoxRenderProps, 'isDropTarget'> {}
-export interface ColorSwatchPickerProps extends ValueBase<string | Color, Color>, AriaLabelingProps, StyleRenderProps<ColorSwatchPickerRenderProps> {
+export interface ColorSwatchPickerRenderProps
+  extends Omit<ListBoxRenderProps, "isDropTarget"> {}
+export interface ColorSwatchPickerProps
+  extends ValueBase<string | Color, Color>,
+    AriaLabelingProps,
+    StyleRenderProps<ColorSwatchPickerRenderProps> {
   /** The children of the ColorSwatchPicker. */
-  children?: ReactNode,
+  children?: ReactNode;
   /**
    * Whether the items are arranged in a stack or grid.
    * @default 'grid'
    */
-  layout?: 'grid' | 'stack'
+  layout?: "grid" | "stack";
 }
 
-export const ColorSwatchPickerContext = createContext<ContextValue<ColorSwatchPickerProps, HTMLDivElement>>(null);
+export const ColorSwatchPickerContext =
+  createContext<ContextValue<ColorSwatchPickerProps, HTMLDivElement>>(null);
 const ColorMapContext = createContext<Map<string, Color> | null>(null);
 
 /**
  * A ColorSwatchPicker displays a list of color swatches and allows a user to select one of them.
  */
-export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(props: ColorSwatchPickerProps, ref: ForwardedRef<HTMLDivElement>) {
+export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(
+  props: ColorSwatchPickerProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   [props, ref] = useContextProps(props, ref, ColorSwatchPickerContext);
   let state = useColorPickerState(props);
   let colorMap = useMemo(() => new Map(), []);
-  let formatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
+  let formatter = useLocalizedStringFormatter(
+    intlMessages,
+    "react-aria-components"
+  );
 
   return (
     <ListBox
-      {...filterDOMProps(props, {labelable: true})}
+      {...filterDOMProps(props, { labelable: true })}
       ref={ref}
-      className={props.className || 'react-aria-ColorSwatchPicker'}
+      className={props.className || "react-aria-ColorSwatchPicker"}
       style={props.style}
-      aria-label={props['aria-label'] || (!props['aria-labelledby'] ? formatter.format('colorSwatchPicker') : undefined)}
-      layout={props.layout || 'grid'}
+      aria-label={
+        props["aria-label"] ||
+        (!props["aria-labelledby"]
+          ? formatter.format("colorSwatchPicker")
+          : undefined)
+      }
+      layout={props.layout || "grid"}
       selectionMode="single"
-      selectedKeys={[state.color.toString('hexa')]}
+      selectedKeys={[state.color.toString("hexa")]}
       onSelectionChange={(keys) => {
         // single select, 'all' cannot occur. appease typescript.
-        if (keys !== 'all') {
+        if (keys !== "all") {
           state.setColor(colorMap.get([...keys][0]));
         }
       }}
-      disallowEmptySelection>
+      disallowEmptySelection
+    >
       <ColorMapContext.Provider value={colorMap}>
         {props.children}
       </ColorMapContext.Provider>
@@ -56,25 +92,34 @@ export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(props: Co
   );
 });
 
-export interface ColorSwatchPickerItemRenderProps extends Omit<ListBoxItemRenderProps, 'selectionMode' | 'selectionBehavior'> {
+export interface ColorSwatchPickerItemRenderProps
+  extends Omit<ListBoxItemRenderProps, "selectionMode" | "selectionBehavior"> {
   /** The color of the swatch. */
-  color: Color
+  color: Color;
 }
 
-export interface ColorSwatchPickerItemProps extends RenderProps<ColorSwatchPickerItemRenderProps>, HoverEvents {
+export interface ColorSwatchPickerItemProps
+  extends RenderProps<ColorSwatchPickerItemRenderProps>,
+    HoverEvents {
   /** The color of the swatch. */
-  color: string | Color,
+  color: string | Color;
   /** Whether the color swatch is disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean;
 }
 
-export const ColorSwatchPickerItem = forwardRef(function ColorSwatchPickerItem(props: ColorSwatchPickerItemProps, ref: ForwardedRef<HTMLDivElement>) {
-  let propColor = props.color || '#0000';
-  let color = useMemo(() => typeof propColor === 'string' ? parseColor(propColor) : propColor, [propColor]);
-  let {locale} = useLocale();
+export const ColorSwatchPickerItem = forwardRef(function ColorSwatchPickerItem(
+  props: ColorSwatchPickerItemProps,
+  ref: ForwardedRef<HTMLDivElement>
+) {
+  let propColor = props.color || "#0000";
+  let color = useMemo(
+    () => (typeof propColor === "string" ? parseColor(propColor) : propColor),
+    [propColor]
+  );
+  let { locale } = useLocale();
   let map = useContext(ColorMapContext)!;
   useEffect(() => {
-    let key = color.toString('hexa');
+    let key = color.toString("hexa");
     map.set(key, color);
     return () => {
       map.delete(key);
@@ -82,8 +127,8 @@ export const ColorSwatchPickerItem = forwardRef(function ColorSwatchPickerItem(p
   }, [color, map]);
 
   let wrap = (v) => {
-    if (typeof v === 'function') {
-      return (renderProps) => v({...renderProps, color});
+    if (typeof v === "function") {
+      return (renderProps) => v({ ...renderProps, color });
     }
     return v;
   };
@@ -92,12 +137,13 @@ export const ColorSwatchPickerItem = forwardRef(function ColorSwatchPickerItem(p
     <ListBoxItem
       {...props}
       ref={ref}
-      id={color.toString('hexa')}
+      id={color.toString("hexa")}
       textValue={color.getColorName(locale)}
-      className={wrap(props.className || 'react-aria-ColorSwatchPickerItem')}
-      style={wrap(props.style)}>
-      {composeRenderProps(wrap(props.children), children => (
-        <ColorSwatchContext.Provider value={{color}}>
+      className={wrap(props.className || "react-aria-ColorSwatchPickerItem")}
+      style={wrap(props.style)}
+    >
+      {composeRenderProps(wrap(props.children), (children) => (
+        <ColorSwatchContext.Provider value={{ color }}>
           {children}
         </ColorSwatchContext.Provider>
       ))}

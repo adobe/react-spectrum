@@ -1,18 +1,20 @@
-{/* Copyright 2022 Adobe. All rights reserved.
+{/_ Copyright 2022 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. */}
+governing permissions and limitations under the License. _/}
 
-import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+import { BlogPostLayout, Hero } from "@react-spectrum/docs";
 export default BlogPostLayout;
 
 ---
+
 description: In this release, we focused on improvements to bundle size and developer experience. These include tree shaking improvements, large dependency removal, API simplification, TypeScript improvements, and a big documentation overhaul. And as always, we also have lots of bug fixes for our existing components.
 date: 2022-07-29
+
 ---
 
 # July 29, 2022 Release
@@ -41,37 +43,37 @@ As always, thanks to everyone who contributed!
 
 ### Enhancements
 
-* Improve API for older React Aria hooks - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3264)
-* Pre-compile localized strings and remove intl-messageformat dependency to reduce bundle size - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3294)
-* Remove dom-helpers dependency from @react-aria/overlays to reduce bundle size - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3291)
-* Make all re-exports explicit to improve tree shaking - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3296)
-* Export types from all packages - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3326)
-* Make all types compatible with both HTML and SVG elements - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3321)
-* Begin implementing TypeScript strict mode support: ButtonGroup - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3185)
-* Add support for #rgba, and #rrggbbaa in color parser - [@spsDrop](https://github.com/spsDrop) - [PR](https://github.com/adobe/react-spectrum/pull/3228)
-* Add custom props support to `Item` for `ActionGroup` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3279)
+- Improve API for older React Aria hooks - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3264)
+- Pre-compile localized strings and remove intl-messageformat dependency to reduce bundle size - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3294)
+- Remove dom-helpers dependency from @react-aria-nutrient/overlays to reduce bundle size - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3291)
+- Make all re-exports explicit to improve tree shaking - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3296)
+- Export types from all packages - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3326)
+- Make all types compatible with both HTML and SVG elements - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3321)
+- Begin implementing TypeScript strict mode support: ButtonGroup - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3185)
+- Add support for #rgba, and #rrggbbaa in color parser - [@spsDrop](https://github.com/spsDrop) - [PR](https://github.com/adobe/react-spectrum/pull/3228)
+- Add custom props support to `Item` for `ActionGroup` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3279)
 
 ### Fixes
 
-* Fix programmatically focusing `DatePicker` segments on iOS - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3253)
-* Fix CalendarDateTime add and subtract - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3316)
-* Update intl-messageformat - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3203)
-* Fix setTimeout type - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3239)
-* Fix `FocusScope` accept node - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3227)
-* Fix re-export of useValueEffect - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3335)
-* Fix `DatePicker` overlay position when there is no label - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3344)
-* Fix `isDisabled` in `Tabs` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3342)
-* Handle empty navigator.userAgentData.platform - [@alirezamirian](https://github.com/alirezamirian) - [PR](https://github.com/adobe/react-spectrum/pull/3290)
-* Ensure onChange fires before onBlur in `NumberField` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3207)
-* `getDisplayColor` from `useColorWheelState` should not include alpha channel - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/3274)
-* Fix `Tabs` flicker when resizing window - [@tomsontom](https://github.com/tomsontom) - [PR](https://github.com/adobe/react-spectrum/pull/3202)
-* Fix SSR of `OverlayContainer` portal - [@kobayang](https://github.com/kobayang) - [PR](https://github.com/adobe/react-spectrum/pull/3186)
-* Throw an exception when theme is not provided - [@lishichengyan](https://github.com/lishichengyan) - [PR](https://github.com/adobe/react-spectrum/pull/3322)
-* Fix useColorArea and `ColorArea` focus - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/3278)
+- Fix programmatically focusing `DatePicker` segments on iOS - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3253)
+- Fix CalendarDateTime add and subtract - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/3316)
+- Update intl-messageformat - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3203)
+- Fix setTimeout type - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3239)
+- Fix `FocusScope` accept node - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3227)
+- Fix re-export of useValueEffect - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3335)
+- Fix `DatePicker` overlay position when there is no label - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3344)
+- Fix `isDisabled` in `Tabs` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3342)
+- Handle empty navigator.userAgentData.platform - [@alirezamirian](https://github.com/alirezamirian) - [PR](https://github.com/adobe/react-spectrum/pull/3290)
+- Ensure onChange fires before onBlur in `NumberField` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3207)
+- `getDisplayColor` from `useColorWheelState` should not include alpha channel - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/3274)
+- Fix `Tabs` flicker when resizing window - [@tomsontom](https://github.com/tomsontom) - [PR](https://github.com/adobe/react-spectrum/pull/3202)
+- Fix SSR of `OverlayContainer` portal - [@kobayang](https://github.com/kobayang) - [PR](https://github.com/adobe/react-spectrum/pull/3186)
+- Throw an exception when theme is not provided - [@lishichengyan](https://github.com/lishichengyan) - [PR](https://github.com/adobe/react-spectrum/pull/3322)
+- Fix useColorArea and `ColorArea` focus - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/3278)
 
 ### Docs
 
-* Add more styled examples to React Aria docs - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3280), [PR](https://github.com/adobe/react-spectrum/pull/3308)
+- Add more styled examples to React Aria docs - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3280), [PR](https://github.com/adobe/react-spectrum/pull/3308)
 
 ### Under construction
 
@@ -79,11 +81,11 @@ Fixes to pre-released components are listed below. Please feel free to try them 
 
 [ListView](https://react-spectrum.adobe.com/react-spectrum/ListView.html) (RC)
 
-* Add disabledBehavior to `ListView` docs - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3261)
-* Rename useList to useGridList - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3348)
-* Add support for illustration as thumbnail in `ListView` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3249)
-* Fix `ListView` action alignment - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3340)
-* DnD: Focus initial drop target when using iOS VO - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3283)
+- Add disabledBehavior to `ListView` docs - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3261)
+- Rename useList to useGridList - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/3348)
+- Add support for illustration as thumbnail in `ListView` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3249)
+- Fix `ListView` action alignment - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/3340)
+- DnD: Focus initial drop target when using iOS VO - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/3283)
 
 ## Released packages
 
@@ -93,52 +95,52 @@ Fixes to pre-released components are listed below. Please feel free to try them 
 - @internationalized/message@3.0.9
 - @internationalized/string-compiler@3.0.0
 - @internationalized/string@3.0.0
-- @react-aria/accordion@3.0.0-alpha.10
-- @react-aria/actiongroup@3.4.0
-- @react-aria/aria-modal-polyfill@3.5.2
-- @react-aria/autocomplete@3.0.0-alpha.9
-- @react-aria/breadcrumbs@3.3.0
-- @react-aria/button@3.6.0
-- @react-aria/calendar@3.0.1
-- @react-aria/checkbox@3.5.0
-- @react-aria/color@3.0.0-beta.14
-- @react-aria/combobox@3.4.0
-- @react-aria/datepicker@3.1.0
-- @react-aria/dialog@3.3.0
-- @react-aria/dnd@3.0.0-alpha.11
-- @react-aria/focus@3.7.0
-- @react-aria/grid@3.4.0
-- @react-aria/gridlist@3.0.0-rc.0
-- @react-aria/i18n@3.5.0
-- @react-aria/interactions@3.10.0
-- @react-aria/label@3.4.0
-- @react-aria/landmark@3.0.0-alpha.1
-- @react-aria/link@3.3.2
-- @react-aria/listbox@3.6.0
-- @react-aria/live-announcer@3.1.1
-- @react-aria/menu@3.6.0
-- @react-aria/meter@3.3.0
-- @react-aria/numberfield@3.3.0
-- @react-aria/overlays@3.10.0
-- @react-aria/progress@3.3.0
-- @react-aria/radio@3.3.0
-- @react-aria/searchfield@3.4.0
-- @react-aria/select@3.8.0
-- @react-aria/selection@3.10.0
-- @react-aria/separator@3.2.2
-- @react-aria/slider@3.2.0
-- @react-aria/spinbutton@3.1.2
-- @react-aria/ssr@3.3.0
-- @react-aria/switch@3.2.2
-- @react-aria/table@3.4.0
-- @react-aria/tabs@3.3.0
-- @react-aria/tag@3.0.0-alpha.8
-- @react-aria/textfield@3.7.0
-- @react-aria/toggle@3.3.2
-- @react-aria/tooltip@3.3.0
-- @react-aria/utils@3.13.2
-- @react-aria/virtualizer@3.4.2
-- @react-aria/visually-hidden@3.4.0
+- @react-aria-nutrient/accordion@3.0.0-alpha.10
+- @react-aria-nutrient/actiongroup@3.4.0
+- @react-aria-nutrient/aria-modal-polyfill@3.5.2
+- @react-aria-nutrient/autocomplete@3.0.0-alpha.9
+- @react-aria-nutrient/breadcrumbs@3.3.0
+- @react-aria-nutrient/button@3.6.0
+- @react-aria-nutrient/calendar@3.0.1
+- @react-aria-nutrient/checkbox@3.5.0
+- @react-aria-nutrient/color@3.0.0-beta.14
+- @react-aria-nutrient/combobox@3.4.0
+- @react-aria-nutrient/datepicker@3.1.0
+- @react-aria-nutrient/dialog@3.3.0
+- @react-aria-nutrient/dnd@3.0.0-alpha.11
+- @react-aria-nutrient/focus@3.7.0
+- @react-aria-nutrient/grid@3.4.0
+- @react-aria-nutrient/gridlist@3.0.0-rc.0
+- @react-aria-nutrient/i18n@3.5.0
+- @react-aria-nutrient/interactions@3.10.0
+- @react-aria-nutrient/label@3.4.0
+- @react-aria-nutrient/landmark@3.0.0-alpha.1
+- @react-aria-nutrient/link@3.3.2
+- @react-aria-nutrient/listbox@3.6.0
+- @react-aria-nutrient/live-announcer@3.1.1
+- @react-aria-nutrient/menu@3.6.0
+- @react-aria-nutrient/meter@3.3.0
+- @react-aria-nutrient/numberfield@3.3.0
+- @react-aria-nutrient/overlays@3.10.0
+- @react-aria-nutrient/progress@3.3.0
+- @react-aria-nutrient/radio@3.3.0
+- @react-aria-nutrient/searchfield@3.4.0
+- @react-aria-nutrient/select@3.8.0
+- @react-aria-nutrient/selection@3.10.0
+- @react-aria-nutrient/separator@3.2.2
+- @react-aria-nutrient/slider@3.2.0
+- @react-aria-nutrient/spinbutton@3.1.2
+- @react-aria-nutrient/ssr@3.3.0
+- @react-aria-nutrient/switch@3.2.2
+- @react-aria-nutrient/table@3.4.0
+- @react-aria-nutrient/tabs@3.3.0
+- @react-aria-nutrient/tag@3.0.0-alpha.8
+- @react-aria-nutrient/textfield@3.7.0
+- @react-aria-nutrient/toggle@3.3.2
+- @react-aria-nutrient/tooltip@3.3.0
+- @react-aria-nutrient/utils@3.13.2
+- @react-aria-nutrient/virtualizer@3.4.2
+- @react-aria-nutrient/visually-hidden@3.4.0
 - @react-spectrum/accordion@3.0.0-alpha.11
 - @react-spectrum/actionbar@3.0.0-alpha.11
 - @react-spectrum/actiongroup@3.6.0

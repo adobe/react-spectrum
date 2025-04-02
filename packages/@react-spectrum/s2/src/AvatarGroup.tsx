@@ -14,7 +14,7 @@ import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/sha
 import {AvatarContext} from './Avatar';
 import {ContextValue, SlotProps} from 'react-aria-components';
 import {createContext, CSSProperties, forwardRef, ReactNode} from 'react';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 import {getAllowedOverrides, StylesPropWithoutWidth, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';

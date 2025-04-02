@@ -10,14 +10,36 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, RefObject,  DOMProps as SharedDOMProps} from '@react-types/shared';
-import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import React, {Context, CSSProperties, ForwardedRef, JSX, ReactNode, RefCallback, UIEvent, useCallback, useContext, useMemo, useRef, useState} from 'react';
+import {
+  AriaLabelingProps,
+  RefObject,
+  DOMProps as SharedDOMProps,
+} from "@react-types/shared";
+import {
+  mergeProps,
+  mergeRefs,
+  useLayoutEffect,
+  useObjectRef,
+} from "@react-aria-nutrient/utils";
+import React, {
+  Context,
+  CSSProperties,
+  ForwardedRef,
+  JSX,
+  ReactNode,
+  RefCallback,
+  UIEvent,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
-export const DEFAULT_SLOT = Symbol('default');
+export const DEFAULT_SLOT = Symbol("default");
 
 interface SlottedValue<T> {
-  slots?: Record<string | symbol, T>
+  slots?: Record<string | symbol, T>;
 }
 
 export type SlottedContextValue<T> = SlottedValue<T> | T | null | undefined;
@@ -29,20 +51,86 @@ type ProviderValues<A, B, C, D, E, F, G, H, I, J, K> =
   | [ProviderValue<A>, ProviderValue<B>]
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>]
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>]
-  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>]
-  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>]
-  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>]
-  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>]
-  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>, ProviderValue<I>]
-  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>, ProviderValue<I>, ProviderValue<J>]
-  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>, ProviderValue<I>, ProviderValue<J>, ProviderValue<K>];
+  | [
+      ProviderValue<A>,
+      ProviderValue<B>,
+      ProviderValue<C>,
+      ProviderValue<D>,
+      ProviderValue<E>
+    ]
+  | [
+      ProviderValue<A>,
+      ProviderValue<B>,
+      ProviderValue<C>,
+      ProviderValue<D>,
+      ProviderValue<E>,
+      ProviderValue<F>
+    ]
+  | [
+      ProviderValue<A>,
+      ProviderValue<B>,
+      ProviderValue<C>,
+      ProviderValue<D>,
+      ProviderValue<E>,
+      ProviderValue<F>,
+      ProviderValue<G>
+    ]
+  | [
+      ProviderValue<A>,
+      ProviderValue<B>,
+      ProviderValue<C>,
+      ProviderValue<D>,
+      ProviderValue<E>,
+      ProviderValue<F>,
+      ProviderValue<G>,
+      ProviderValue<H>
+    ]
+  | [
+      ProviderValue<A>,
+      ProviderValue<B>,
+      ProviderValue<C>,
+      ProviderValue<D>,
+      ProviderValue<E>,
+      ProviderValue<F>,
+      ProviderValue<G>,
+      ProviderValue<H>,
+      ProviderValue<I>
+    ]
+  | [
+      ProviderValue<A>,
+      ProviderValue<B>,
+      ProviderValue<C>,
+      ProviderValue<D>,
+      ProviderValue<E>,
+      ProviderValue<F>,
+      ProviderValue<G>,
+      ProviderValue<H>,
+      ProviderValue<I>,
+      ProviderValue<J>
+    ]
+  | [
+      ProviderValue<A>,
+      ProviderValue<B>,
+      ProviderValue<C>,
+      ProviderValue<D>,
+      ProviderValue<E>,
+      ProviderValue<F>,
+      ProviderValue<G>,
+      ProviderValue<H>,
+      ProviderValue<I>,
+      ProviderValue<J>,
+      ProviderValue<K>
+    ];
 
 interface ProviderProps<A, B, C, D, E, F, G, H, I, J, K> {
-  values: ProviderValues<A, B, C, D, E, F, G, H, I, J, K>,
-  children: ReactNode
+  values: ProviderValues<A, B, C, D, E, F, G, H, I, J, K>;
+  children: ReactNode;
 }
 
-export function Provider<A, B, C, D, E, F, G, H, I, J, K>({values, children}: ProviderProps<A, B, C, D, E, F, G, H, I, J, K>): JSX.Element {
+export function Provider<A, B, C, D, E, F, G, H, I, J, K>({
+  values,
+  children,
+}: ProviderProps<A, B, C, D, E, F, G, H, I, J, K>): JSX.Element {
   for (let [Context, value] of values) {
     // @ts-ignore
     children = <Context.Provider value={value}>{children}</Context.Provider>;
@@ -53,48 +141,61 @@ export function Provider<A, B, C, D, E, F, G, H, I, J, K>({values, children}: Pr
 
 export interface StyleProps {
   /** The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. */
-  className?: string,
+  className?: string;
   /** The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. */
-  style?: CSSProperties
+  style?: CSSProperties;
 }
 
 export interface DOMProps extends StyleProps, SharedDOMProps {
   /** The children of the component. */
-  children?: ReactNode
+  children?: ReactNode;
 }
 
 export interface ScrollableProps<T extends Element> {
   /** Handler that is called when a user scrolls. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/scroll_event). */
-  onScroll?: (e: UIEvent<T>) => void
+  onScroll?: (e: UIEvent<T>) => void;
 }
 
 export interface StyleRenderProps<T> {
   /** The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state. */
-  className?: string | ((values: T & {defaultClassName: string | undefined}) => string),
+  className?:
+    | string
+    | ((values: T & { defaultClassName: string | undefined }) => string);
   /** The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. A function may be provided to compute the style based on component state. */
-  style?: CSSProperties | ((values: T & {defaultStyle: CSSProperties}) => CSSProperties | undefined)
+  style?:
+    | CSSProperties
+    | ((
+        values: T & { defaultStyle: CSSProperties }
+      ) => CSSProperties | undefined);
 }
 
 export interface RenderProps<T> extends StyleRenderProps<T> {
   /** The children of the component. A function may be provided to alter the children based on component state. */
-  children?: ReactNode | ((values: T & {defaultChildren: ReactNode | undefined}) => ReactNode)
+  children?:
+    | ReactNode
+    | ((values: T & { defaultChildren: ReactNode | undefined }) => ReactNode);
 }
 
-interface RenderPropsHookOptions<T> extends RenderProps<T>, SharedDOMProps, AriaLabelingProps {
-  values: T,
-  defaultChildren?: ReactNode,
-  defaultClassName?: string,
-  defaultStyle?: CSSProperties
+interface RenderPropsHookOptions<T>
+  extends RenderProps<T>,
+    SharedDOMProps,
+    AriaLabelingProps {
+  values: T;
+  defaultChildren?: ReactNode;
+  defaultClassName?: string;
+  defaultStyle?: CSSProperties;
 }
 
 interface RenderPropsHookRetVal {
-  className?: string,
-  style?: CSSProperties,
-  children?: ReactNode,
-  'data-rac': string
+  className?: string;
+  style?: CSSProperties;
+  children?: ReactNode;
+  "data-rac": string;
 }
 
-export function useRenderProps<T>(props: RenderPropsHookOptions<T>): RenderPropsHookRetVal {
+export function useRenderProps<T>(
+  props: RenderPropsHookOptions<T>
+): RenderPropsHookRetVal {
   let {
     className,
     style,
@@ -102,7 +203,7 @@ export function useRenderProps<T>(props: RenderPropsHookOptions<T>): RenderProps
     defaultClassName = undefined,
     defaultChildren = undefined,
     defaultStyle,
-    values
+    values,
   } = props;
 
   return useMemo(() => {
@@ -110,20 +211,20 @@ export function useRenderProps<T>(props: RenderPropsHookOptions<T>): RenderProps
     let computedStyle: React.CSSProperties | undefined;
     let computedChildren: React.ReactNode | undefined;
 
-    if (typeof className === 'function') {
-      computedClassName = className({...values, defaultClassName});
+    if (typeof className === "function") {
+      computedClassName = className({ ...values, defaultClassName });
     } else {
       computedClassName = className;
     }
 
-    if (typeof style === 'function') {
-      computedStyle = style({...values, defaultStyle: defaultStyle || {}});
+    if (typeof style === "function") {
+      computedStyle = style({ ...values, defaultStyle: defaultStyle || {} });
     } else {
       computedStyle = style;
     }
 
-    if (typeof children === 'function') {
-      computedChildren = children({...values, defaultChildren});
+    if (typeof children === "function") {
+      computedChildren = children({ ...values, defaultChildren });
     } else if (children == null) {
       computedChildren = defaultChildren;
     } else {
@@ -132,11 +233,22 @@ export function useRenderProps<T>(props: RenderPropsHookOptions<T>): RenderProps
 
     return {
       className: computedClassName ?? defaultClassName,
-      style: (computedStyle || defaultStyle) ? {...defaultStyle, ...computedStyle} : undefined,
+      style:
+        computedStyle || defaultStyle
+          ? { ...defaultStyle, ...computedStyle }
+          : undefined,
       children: computedChildren ?? defaultChildren,
-      'data-rac': ''
+      "data-rac": "",
     };
-  }, [className, style, children, defaultClassName, defaultChildren, defaultStyle, values]);
+  }, [
+    className,
+    style,
+    children,
+    defaultClassName,
+    defaultChildren,
+    defaultStyle,
+    values,
+  ]);
 }
 
 /**
@@ -145,34 +257,44 @@ export function useRenderProps<T>(props: RenderPropsHookOptions<T>): RenderProps
  */
 export function composeRenderProps<T, U, V extends T>(
   // https://stackoverflow.com/questions/60898079/typescript-type-t-or-function-t-usage
-  value: T extends any ? (T | ((renderProps: U) => V)) : never,
+  value: T extends any ? T | ((renderProps: U) => V) : never,
   wrap: (prevValue: T, renderProps: U) => V
 ): (renderProps: U) => V {
-  return (renderProps) => wrap(typeof value === 'function' ? value(renderProps) : value, renderProps);
+  return (renderProps) =>
+    wrap(typeof value === "function" ? value(renderProps) : value, renderProps);
 }
 
-export type WithRef<T, E> = T & {ref?: ForwardedRef<E>};
+export type WithRef<T, E> = T & { ref?: ForwardedRef<E> };
 export interface SlotProps {
   /**
    * A slot name for the component. Slots allow the component to receive props from a parent component.
    * An explicit `null` value indicates that the local props completely override all props received from a parent.
    */
-  slot?: string | null
+  slot?: string | null;
 }
 
-export function useSlottedContext<T>(context: Context<SlottedContextValue<T>>, slot?: string | null): T | null | undefined {
+export function useSlottedContext<T>(
+  context: Context<SlottedContextValue<T>>,
+  slot?: string | null
+): T | null | undefined {
   let ctx = useContext(context);
   if (slot === null) {
     // An explicit `null` slot means don't use context.
     return null;
   }
-  if (ctx && typeof ctx === 'object' && 'slots' in ctx && ctx.slots) {
+  if (ctx && typeof ctx === "object" && "slots" in ctx && ctx.slots) {
     let slotKey = slot || DEFAULT_SLOT;
     if (!ctx.slots[slotKey]) {
-      let availableSlots = new Intl.ListFormat().format(Object.keys(ctx.slots).map(p => `"${p}"`));
-      let errorMessage = slot ? `Invalid slot "${slot}".` : 'A slot prop is required.';
+      let availableSlots = new Intl.ListFormat().format(
+        Object.keys(ctx.slots).map((p) => `"${p}"`)
+      );
+      let errorMessage = slot
+        ? `Invalid slot "${slot}".`
+        : "A slot prop is required.";
 
-      throw new Error(`${errorMessage} Valid slot names are ${availableSlots}.`);
+      throw new Error(
+        `${errorMessage} Valid slot names are ${availableSlots}.`
+      );
     }
     return ctx.slots[slotKey];
   }
@@ -180,40 +302,55 @@ export function useSlottedContext<T>(context: Context<SlottedContextValue<T>>, s
   return ctx;
 }
 
-export function useContextProps<T, U extends SlotProps, E extends Element>(props: T & SlotProps, ref: ForwardedRef<E>, context: Context<ContextValue<U, E>>): [T, RefObject<E | null>] {
+export function useContextProps<T, U extends SlotProps, E extends Element>(
+  props: T & SlotProps,
+  ref: ForwardedRef<E>,
+  context: Context<ContextValue<U, E>>
+): [T, RefObject<E | null>] {
   let ctx = useSlottedContext(context, props.slot) || {};
   // @ts-ignore - TS says "Type 'unique symbol' cannot be used as an index type." but not sure why.
-  let {ref: contextRef, ...contextProps} = ctx as any;
-  let mergedRef = useObjectRef(useMemo(() => mergeRefs(ref, contextRef), [ref, contextRef]));
+  let { ref: contextRef, ...contextProps } = ctx as any;
+  let mergedRef = useObjectRef(
+    useMemo(() => mergeRefs(ref, contextRef), [ref, contextRef])
+  );
   let mergedProps = mergeProps(contextProps, props) as unknown as T;
 
   // mergeProps does not merge `style`. Adding this there might be a breaking change.
   if (
-    'style' in contextProps &&
+    "style" in contextProps &&
     contextProps.style &&
-    'style' in props &&
+    "style" in props &&
     props.style
   ) {
-    if (typeof contextProps.style === 'function' || typeof props.style === 'function') {
+    if (
+      typeof contextProps.style === "function" ||
+      typeof props.style === "function"
+    ) {
       // @ts-ignore
       mergedProps.style = (renderProps) => {
-        let contextStyle = typeof contextProps.style === 'function' ? contextProps.style(renderProps) : contextProps.style;
-        let defaultStyle = {...renderProps.defaultStyle, ...contextStyle};
-        let style = typeof props.style === 'function'
-          ? props.style({...renderProps, defaultStyle})
-          : props.style;
-        return {...defaultStyle, ...style};
+        let contextStyle =
+          typeof contextProps.style === "function"
+            ? contextProps.style(renderProps)
+            : contextProps.style;
+        let defaultStyle = { ...renderProps.defaultStyle, ...contextStyle };
+        let style =
+          typeof props.style === "function"
+            ? props.style({ ...renderProps, defaultStyle })
+            : props.style;
+        return { ...defaultStyle, ...style };
       };
     } else {
       // @ts-ignore
-      mergedProps.style = {...contextProps.style, ...props.style};
+      mergedProps.style = { ...contextProps.style, ...props.style };
     }
   }
 
   return [mergedProps, mergedRef];
 }
 
-export function useSlot(initialState: boolean | (() => boolean) = true): [RefCallback<Element>, boolean] {
+export function useSlot(
+  initialState: boolean | (() => boolean) = true
+): [RefCallback<Element>, boolean] {
   // Initial state is typically based on the parent having an aria-label or aria-labelledby.
   // If it does, this value should be false so that we don't update the state and cause a rerender when we go through the layoutEffect
   let [hasSlot, setHasSlot] = useState(initialState);
@@ -221,7 +358,7 @@ export function useSlot(initialState: boolean | (() => boolean) = true): [RefCal
 
   // A callback ref which will run when the slotted element mounts.
   // This should happen before the useLayoutEffect below.
-  let ref = useCallback(el => {
+  let ref = useCallback((el) => {
     hasRun.current = true;
     setHasSlot(!!el);
   }, []);
@@ -261,5 +398,5 @@ export interface RACValidation {
    * or invalid via ARIA.
    * @default 'native'
    */
-  validationBehavior?: 'native' | 'aria'
+  validationBehavior?: "native" | "aria";
 }

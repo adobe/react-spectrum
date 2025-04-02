@@ -44,9 +44,9 @@ import LinkOutIcon from '../ui-icons/LinkOut';
 import {mergeStyles} from '../style/runtime';
 import {Placement, useLocale} from 'react-aria';
 import {PopoverBase} from './Popover';
-import {PressResponder} from '@react-aria/interactions';
+import {PressResponder} from '@react-aria-nutrient/interactions';
 import {pressScale} from './pressScale';
-import {useGlobalListeners} from '@react-aria/utils';
+import {useGlobalListeners} from '@react-aria-nutrient/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 // viewbox on LinkOut is super weird just because i copied the icon from designs...
 // need to strip id's from icons

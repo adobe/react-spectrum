@@ -27,7 +27,7 @@ import {createFocusableRef} from '@react-spectrum/utils';
 import Dash from '../ui-icons/Dash';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
-import {filterDOMProps, mergeProps, mergeRefs} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, mergeRefs} from '@react-aria-nutrient/utils';
 import {FormContext} from './Form';
 import {HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {pressScale} from './pressScale';

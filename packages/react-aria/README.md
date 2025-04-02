@@ -4,10 +4,10 @@ A library of React Hooks that provides accessible UI primitives for your design 
 
 ## Features
 
-* ♿️ **Accessible** – React Aria provides accessibility and behavior according to [WAI-ARIA Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.2/), including full screen reader and keyboard navigation support. All components have been tested across a wide variety of screen readers and devices to ensure the best experience possible for all users.
-* 📱 **Adaptive** – React Aria ensures consistent behavior, no matter the UI. It supports mouse, touch, keyboard, and screen reader interactions that have been tested across a wide variety of browsers, devices, and platforms.
-* 🌍 **International** – React Aria supports over 30 languages, including right-to-left-specific behavior, internationalized date and number formatting, and more.
-* 🎨 **Fully customizable** – React Aria doesn’t implement any rendering or impose a DOM structure, styling methodology, or design-specific details. It provides behavior, accessibility, and interactions and lets you focus on your design.
+- ♿️ **Accessible** – React Aria provides accessibility and behavior according to [WAI-ARIA Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.2/), including full screen reader and keyboard navigation support. All components have been tested across a wide variety of screen readers and devices to ensure the best experience possible for all users.
+- 📱 **Adaptive** – React Aria ensures consistent behavior, no matter the UI. It supports mouse, touch, keyboard, and screen reader interactions that have been tested across a wide variety of browsers, devices, and platforms.
+- 🌍 **International** – React Aria supports over 30 languages, including right-to-left-specific behavior, internationalized date and number formatting, and more.
+- 🎨 **Fully customizable** – React Aria doesn’t implement any rendering or impose a DOM structure, styling methodology, or design-specific details. It provides behavior, accessibility, and interactions and lets you focus on your design.
 
 ## Getting started
 
@@ -18,11 +18,11 @@ The easiest way to start building a component library with React Aria is by foll
 Here is a very basic example of using React Aria.
 
 ```jsx
-import {useButton} from '@react-aria/button';
+import { useButton } from "@react-aria-nutrient/button";
 
 function Button(props) {
   let ref = React.useRef();
-  let {buttonProps} = useButton(props, ref);
+  let { buttonProps } = useButton(props, ref);
 
   return (
     <button {...buttonProps} ref={ref}>
@@ -31,7 +31,7 @@ function Button(props) {
   );
 }
 
-<Button onPress={() => alert('Button pressed!')}>Press me</Button>
+<Button onPress={() => alert("Button pressed!")}>Press me</Button>;
 ```
 
 ## Learn more

@@ -10,31 +10,38 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Button} from '@react-spectrum/button';
-import {ButtonGroup} from '@react-spectrum/buttongroup';
-import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
-import {Content, Header} from '@react-spectrum/view';
-import {Dialog, DialogTrigger} from '../';
-import {Divider} from '@react-spectrum/divider';
-import {Heading} from '@react-spectrum/text';
+import { ActionButton, Button } from "@react-spectrum/button";
+import { ButtonGroup } from "@react-spectrum/buttongroup";
+import {
+  Cell,
+  Column,
+  Row,
+  TableBody,
+  TableHeader,
+  TableView,
+} from "@react-spectrum/table";
+import { Content, Header } from "@react-spectrum/view";
+import { Dialog, DialogTrigger } from "../";
+import { Divider } from "@react-spectrum/divider";
+import { Heading } from "@react-spectrum/text";
 // @ts-ignore
-import intlMessages from './intlMessages.json';
-import {Item, TagGroup} from '@react-spectrum/tag';
-import {Provider} from '@react-spectrum/provider';
-import React from 'react';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import intlMessages from "./intlMessages.json";
+import { Item, TagGroup } from "@react-spectrum/tag";
+import { Provider } from "@react-spectrum/provider";
+import React from "react";
+import { useLocalizedStringFormatter } from "@react-aria-nutrient/i18n";
 
 export default {
-  title: 'Languages/Dialog',
+  title: "Languages/Dialog",
   parameters: {
     chromaticProvider: {
-      colorSchemes: ['darkest'],
+      colorSchemes: ["darkest"],
       express: false,
-      locales: ['en-US'],
-      scales: ['medium']
-    }
+      locales: ["en-US"],
+      scales: ["medium"],
+    },
   },
-  excludeStories: ['TranslateDialog']
+  excludeStories: ["TranslateDialog"],
 };
 
 export let TranslateDialog = (dialogProps) => {
@@ -42,54 +49,61 @@ export let TranslateDialog = (dialogProps) => {
 
   return (
     <DialogTrigger {...dialogProps}>
-      <ActionButton>{strings.format('koji')}</ActionButton>
+      <ActionButton>{strings.format("koji")}</ActionButton>
       {(close) => (
         <Dialog>
-          <Heading>{strings.format('kojiFoods')}</Heading>
-          <Header>{strings.format('foodsMakeWithKoji')}</Header>
+          <Heading>{strings.format("kojiFoods")}</Heading>
+          <Header>{strings.format("foodsMakeWithKoji")}</Header>
           <Divider />
           <Content>
-            <TagGroup aria-label={strings.format('kojiColors')}>
-              <Item>{strings.format('white')}</Item>
-              <Item>{strings.format('yellow')}</Item>
-              <Item>{strings.format('black')}</Item>
+            <TagGroup aria-label={strings.format("kojiColors")}>
+              <Item>{strings.format("white")}</Item>
+              <Item>{strings.format("yellow")}</Item>
+              <Item>{strings.format("black")}</Item>
             </TagGroup>
-            <TableView aria-label={strings.format('foodsMakeWithKoji')} selectionMode="multiple">
+            <TableView
+              aria-label={strings.format("foodsMakeWithKoji")}
+              selectionMode="multiple"
+            >
               <TableHeader>
-                <Column>{strings.format('name')}</Column>
-                <Column>{strings.format('description')}</Column>
+                <Column>{strings.format("name")}</Column>
+                <Column>{strings.format("description")}</Column>
               </TableHeader>
               <TableBody>
                 <Row>
-                  <Cell>{strings.format('soySauce')}</Cell>
-                  <Cell>{strings.format('soySauceDescription')}</Cell>
+                  <Cell>{strings.format("soySauce")}</Cell>
+                  <Cell>{strings.format("soySauceDescription")}</Cell>
                 </Row>
                 <Row>
-                  <Cell>{strings.format('miso')}</Cell>
-                  <Cell>{strings.format('misoDescription')}</Cell>
+                  <Cell>{strings.format("miso")}</Cell>
+                  <Cell>{strings.format("misoDescription")}</Cell>
                 </Row>
                 <Row>
-                  <Cell>{strings.format('amazake')}</Cell>
-                  <Cell>{strings.format('amazakeDescription')}</Cell>
+                  <Cell>{strings.format("amazake")}</Cell>
+                  <Cell>{strings.format("amazakeDescription")}</Cell>
                 </Row>
                 <Row>
-                  <Cell>{strings.format('sake')}</Cell>
-                  <Cell>{strings.format('sakeDescription')}</Cell>
+                  <Cell>{strings.format("sake")}</Cell>
+                  <Cell>{strings.format("sakeDescription")}</Cell>
                 </Row>
                 <Row>
-                  <Cell>{strings.format('mirin')}</Cell>
-                  <Cell>{strings.format('mirinDescription')}</Cell>
+                  <Cell>{strings.format("mirin")}</Cell>
+                  <Cell>{strings.format("mirinDescription")}</Cell>
                 </Row>
                 <Row>
-                  <Cell>{strings.format('riceWineVinegar')}</Cell>
-                  <Cell>{strings.format('riceWineVinegarDescription')}</Cell>
+                  <Cell>{strings.format("riceWineVinegar")}</Cell>
+                  <Cell>{strings.format("riceWineVinegarDescription")}</Cell>
                 </Row>
               </TableBody>
             </TableView>
           </Content>
           <ButtonGroup>
-            <Button variant="secondary" onPress={close}>{strings.format('cancel')}</Button>
-            <Button variant="cta" onPress={close}>{strings.format('confirm')}</Button>
+            <Button variant="secondary" onPress={close}>
+              {strings.format("cancel")}
+            </Button>
+            <Button variant="cta" onPress={close}>
+              {strings.format("confirm")}
+            </Button>
           </ButtonGroup>
         </Dialog>
       )}

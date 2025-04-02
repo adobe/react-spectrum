@@ -16,49 +16,68 @@ import {
   useDOMRef,
   useResizeObserver,
   useSlotProps,
-  useStyleProps
-} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
-import {filterDOMProps, useLayoutEffect, useValueEffect} from '@react-aria/utils';
-import {Provider, useProvider, useProviderProps} from '@react-spectrum/provider';
-import React, {useCallback, useRef} from 'react';
-import {SpectrumButtonGroupProps} from '@react-types/buttongroup';
-import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
+  useStyleProps,
+} from "@react-spectrum/utils";
+import { DOMRef } from "@react-types/shared";
+import {
+  filterDOMProps,
+  useLayoutEffect,
+  useValueEffect,
+} from "@react-aria-nutrient/utils";
+import {
+  Provider,
+  useProvider,
+  useProviderProps,
+} from "@react-spectrum/provider";
+import React, { useCallback, useRef } from "react";
+import { SpectrumButtonGroupProps } from "@react-types/buttongroup";
+import styles from "@adobe/spectrum-css-temp/components/buttongroup/vars.css";
 
 /**
  * ButtonGroup handles overflow for a grouping of buttons whose actions are related to each other.
  */
-export const ButtonGroup = React.forwardRef(function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
-  let {scale} = useProvider();
+export const ButtonGroup = React.forwardRef(function ButtonGroup(
+  props: SpectrumButtonGroupProps,
+  ref: DOMRef<HTMLDivElement>
+) {
+  let { scale } = useProvider();
   props = useProviderProps(props);
-  props = useSlotProps(props, 'buttonGroup');
+  props = useSlotProps(props, "buttonGroup");
 
   let {
     children,
-    orientation = 'horizontal',
+    orientation = "horizontal",
     isDisabled,
-    align = 'start',
+    align = "start",
     ...otherProps
   } = props;
 
-  let {styleProps} = useStyleProps(otherProps);
+  let { styleProps } = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
   let [hasOverflow, setHasOverflow] = useValueEffect(false);
 
   let checkForOverflow = useCallback(() => {
     let computeHasOverflow = () => {
-      if (domRef.current && orientation === 'horizontal') {
-        let buttonGroupChildren = Array.from(domRef.current.children) as HTMLElement[];
+      if (domRef.current && orientation === "horizontal") {
+        let buttonGroupChildren = Array.from(
+          domRef.current.children
+        ) as HTMLElement[];
         let maxX = domRef.current.offsetWidth + 1; // + 1 to account for rounding errors
         // If any buttons have negative X positions (align="end") or extend beyond
         // the width of the button group (align="start"), then switch to vertical.
-        if (buttonGroupChildren.some(child => child.offsetLeft < 0 || child.offsetLeft + child.offsetWidth > maxX)) {
+        if (
+          buttonGroupChildren.some(
+            (child) =>
+              child.offsetLeft < 0 ||
+              child.offsetLeft + child.offsetWidth > maxX
+          )
+        ) {
           return true;
         }
         return false;
       }
     };
-    if (orientation === 'horizontal') {
+    if (orientation === "horizontal") {
       setHasOverflow(function* () {
         // Force to horizontal for measurement.
         yield false;
@@ -67,7 +86,7 @@ export const ButtonGroup = React.forwardRef(function ButtonGroup(props: Spectrum
         yield computeHasOverflow();
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [domRef, orientation, scale, setHasOverflow, children]);
 
   // There are two main reasons we need to remeasure:
@@ -82,36 +101,35 @@ export const ButtonGroup = React.forwardRef(function ButtonGroup(props: Spectrum
     if (domRef.current) {
       parent.current = domRef.current.parentElement as HTMLElement;
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [domRef.current]);
-  useResizeObserver({ref: parent, onResize: checkForOverflow});
+  useResizeObserver({ ref: parent, onResize: checkForOverflow });
 
   return (
     <div
       {...filterDOMProps(otherProps)}
       {...styleProps}
       ref={domRef}
-      className={
-        classNames(
-          styles,
-          'spectrum-ButtonGroup',
-          {
-            'spectrum-ButtonGroup--vertical': orientation === 'vertical' || hasOverflow,
-            'spectrum-ButtonGroup--alignEnd': align === 'end',
-            'spectrum-ButtonGroup--alignCenter': align === 'center'
-          },
-          styleProps.className
-        )
-      }>
+      className={classNames(
+        styles,
+        "spectrum-ButtonGroup",
+        {
+          "spectrum-ButtonGroup--vertical":
+            orientation === "vertical" || hasOverflow,
+          "spectrum-ButtonGroup--alignEnd": align === "end",
+          "spectrum-ButtonGroup--alignCenter": align === "center",
+        },
+        styleProps.className
+      )}
+    >
       <SlotProvider
         slots={{
           button: {
-            UNSAFE_className: classNames(styles, 'spectrum-ButtonGroup-Button')
-          }
-        }}>
-        <Provider isDisabled={isDisabled}>
-          {children}
-        </Provider>
+            UNSAFE_className: classNames(styles, "spectrum-ButtonGroup-Button"),
+          },
+        }}
+      >
+        <Provider isDisabled={isDisabled}>{children}</Provider>
       </SlotProvider>
     </div>
   );

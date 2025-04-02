@@ -11,20 +11,20 @@
  */
 
 
-jest.mock('@react-aria/live-announcer');
-jest.mock('@react-aria/utils/src/scrollIntoView');
+jest.mock('@react-aria-nutrient/live-announcer');
+jest.mock('@react-aria-nutrient/utils/src/scrollIntoView');
 import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render as renderComponent, triggerTouch, within} from '@react-spectrum/test-utils-internal';
 import {ActionButton} from '@react-spectrum/button';
-import {announce} from '@react-aria/live-announcer';
+import {announce} from '@react-aria-nutrient/live-announcer';
 import {FocusExample} from '../stories/ListViewActions.stories';
 import {Item, ListView} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {renderEmptyState} from '../stories/ListView.stories';
-import {scrollIntoView} from '@react-aria/utils';
+import {scrollIntoView} from '@react-aria-nutrient/utils';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
-import {User} from '@react-aria/test-utils';
+import {User} from '@react-aria-nutrient/test-utils';
 import userEvent from '@testing-library/user-event';
 
 function pointerEvent(type, opts) {

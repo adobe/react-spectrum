@@ -36,7 +36,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/meter": "^3.4.21",
+    "@react-aria-nutrient/meter": "^3.4.21",
     "@react-spectrum/progress": "^3.7.14",
     "@react-spectrum/utils": "^3.12.3",
     "@react-types/meter": "^3.4.7",

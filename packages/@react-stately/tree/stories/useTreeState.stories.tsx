@@ -10,20 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Key, Node} from '@react-types/shared';
-import {Item} from '@react-stately/collections';
-import React, {useMemo, useRef} from 'react';
-import {TreeCollection} from '../src/TreeCollection';
-import {usePress} from '@react-aria/interactions';
-import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
-import {useTreeState} from '../';
+import { Collection, Key, Node } from "@react-types/shared";
+import { Item } from "@react-stately/collections";
+import React, { useMemo, useRef } from "react";
+import { TreeCollection } from "../src/TreeCollection";
+import { usePress } from "@react-aria-nutrient/interactions";
+import {
+  useSelectableCollection,
+  useSelectableItem,
+} from "@react-aria-nutrient/selection";
+import { useTreeState } from "../";
 
 export default {
-  title: 'useTreeState'
+  title: "useTreeState",
 };
 
 export const KeyboardNavigation = () => <TreeExample />;
-
 
 function TreeExample(props = {}) {
   return (
@@ -53,45 +55,48 @@ function Tree(props) {
   let state = useTreeState(props);
   let ref = useRef(null);
 
-  let keyboardDelegate = useMemo(() => new TreeKeyboardDelegate(state.collection, state.disabledKeys), [state.collection, state.disabledKeys]);
+  let keyboardDelegate = useMemo(
+    () => new TreeKeyboardDelegate(state.collection, state.disabledKeys),
+    [state.collection, state.disabledKeys]
+  );
 
-  let {collectionProps} = useSelectableCollection({
+  let { collectionProps } = useSelectableCollection({
     keyboardDelegate,
     ref,
-    selectionManager: state.selectionManager
+    selectionManager: state.selectionManager,
   });
 
   return (
-    <div
-      {...collectionProps}
-      ref={ref}
-      role="tree">
-      {TreeNodes({nodes: state.collection, state})}
+    <div {...collectionProps} ref={ref} role="tree">
+      {TreeNodes({ nodes: state.collection, state })}
     </div>
   );
 }
 
-function TreeNodes({nodes, state}: {nodes: Collection<Node<object>>, state: any}) {
-  return Array.from(nodes).map(node => (
-    <TreeItem
-      node={node}
-      key={node.key}
-      state={state} />
+function TreeNodes({
+  nodes,
+  state,
+}: {
+  nodes: Collection<Node<object>>;
+  state: any;
+}) {
+  return Array.from(nodes).map((node) => (
+    <TreeItem node={node} key={node.key} state={state} />
   ));
 }
 
-function TreeItem({node, state}) {
+function TreeItem({ node, state }) {
   let ref = useRef(null);
 
-  let {itemProps} = useSelectableItem({
+  let { itemProps } = useSelectableItem({
     key: node.key,
     selectionManager: state.selectionManager,
-    ref: ref
+    ref: ref,
   });
 
-  let {pressProps} = usePress({
+  let { pressProps } = usePress({
     ...itemProps,
-    onPress: () => state.toggleKey(node.key)
+    onPress: () => state.toggleKey(node.key),
   });
 
   let isExpanded = node.hasChildNodes && state.expandedKeys.has(node.key);
@@ -103,15 +108,14 @@ function TreeItem({node, state}) {
       aria-expanded={node.hasChildNodes ? isExpanded : null}
       aria-selected={isSelected}
       ref={ref}
-      role="treeitem">
-      <div className="title">
-        {node.rendered}
-      </div>
-      {isExpanded &&
+      role="treeitem"
+    >
+      <div className="title">{node.rendered}</div>
+      {isExpanded && (
         <div className="children" role="group">
-          {TreeNodes({nodes: node.childNodes, state})}
+          {TreeNodes({ nodes: node.childNodes, state })}
         </div>
-      }
+      )}
     </div>
   );
 }
@@ -122,19 +126,19 @@ class TreeKeyboardDelegate<T> {
   disabledKeys: Set<Key>;
 
   constructor(collection, disabledKeys) {
-    this.collator = new Intl.Collator('en');
+    this.collator = new Intl.Collator("en");
     this.collection = collection;
     this.disabledKeys = disabledKeys;
   }
 
   getKeyAbove(key) {
-    let {collection, disabledKeys} = this;
+    let { collection, disabledKeys } = this;
     let keyBefore = collection.getKeyBefore(key);
 
     while (keyBefore !== null) {
       let item = collection.getItem(keyBefore);
 
-      if (item?.type === 'item' && !disabledKeys.has(item.key)) {
+      if (item?.type === "item" && !disabledKeys.has(item.key)) {
         return keyBefore;
       }
 
@@ -145,13 +149,13 @@ class TreeKeyboardDelegate<T> {
   }
 
   getKeyBelow(key) {
-    let {collection, disabledKeys} = this;
+    let { collection, disabledKeys } = this;
     let keyBelow = collection.getKeyAfter(key);
 
     while (keyBelow !== null) {
       let item = collection.getItem(keyBelow);
 
-      if (item?.type === 'item' && !disabledKeys.has(item.key)) {
+      if (item?.type === "item" && !disabledKeys.has(item.key)) {
         return keyBelow;
       }
 
@@ -162,13 +166,13 @@ class TreeKeyboardDelegate<T> {
   }
 
   getFirstKey() {
-    let {collection, disabledKeys} = this;
+    let { collection, disabledKeys } = this;
     let key = collection.getFirstKey();
 
     while (key !== null) {
       let item = collection.getItem(key);
 
-      if (item?.type === 'item' && !disabledKeys.has(item.key)) {
+      if (item?.type === "item" && !disabledKeys.has(item.key)) {
         return key;
       }
 
@@ -179,13 +183,13 @@ class TreeKeyboardDelegate<T> {
   }
 
   getLastKey() {
-    let {collection, disabledKeys} = this;
+    let { collection, disabledKeys } = this;
     let key = collection.getLastKey();
 
     while (key !== null) {
       let item = collection.getItem(key);
 
-      if (item?.type === 'item' && !disabledKeys.has(item.key)) {
+      if (item?.type === "item" && !disabledKeys.has(item.key)) {
         return key;
       }
 
@@ -196,13 +200,16 @@ class TreeKeyboardDelegate<T> {
   }
 
   getKeyForSearch(search, fromKey = this.getFirstKey()) {
-    let {collator, collection} = this;
+    let { collator, collection } = this;
     let key = fromKey;
 
     while (key !== null) {
       let item = collection.getItem(key);
 
-      if (item?.textValue && collator.compare(search, item.textValue.slice(0, search.length)) === 0) {
+      if (
+        item?.textValue &&
+        collator.compare(search, item.textValue.slice(0, search.length)) === 0
+      ) {
         return key;
       }
 

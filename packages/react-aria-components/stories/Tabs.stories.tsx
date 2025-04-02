@@ -10,37 +10,63 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, OverlayArrow, Tab, TabList, TabPanel, TabProps, Tabs, TabsProps, Tooltip, TooltipTrigger} from 'react-aria-components';
-import React, {useState} from 'react';
-import {RouterProvider} from '@react-aria/utils';
+import {
+  Button,
+  OverlayArrow,
+  Tab,
+  TabList,
+  TabPanel,
+  TabProps,
+  Tabs,
+  TabsProps,
+  Tooltip,
+  TooltipTrigger,
+} from "react-aria-components";
+import React, { useState } from "react";
+import { RouterProvider } from "@react-aria-nutrient/utils";
 
 export default {
-  title: 'React Aria Components'
+  title: "React Aria Components",
 };
 
 export const TabsExample = () => {
-  let [url, setUrl] = useState('/FoR');
+  let [url, setUrl] = useState("/FoR");
 
   return (
     <RouterProvider navigate={setUrl}>
       <Tabs selectedKey={url}>
-        <TabList aria-label="History of Ancient Rome" style={{display: 'flex', gap: 8}}>
-          <CustomTab id="/FoR" href="/FoR">Founding of Rome</CustomTab>
-          <CustomTab id="/MaR" href="/MaR">Monarchy and Republic</CustomTab>
+        <TabList
+          aria-label="History of Ancient Rome"
+          style={{ display: "flex", gap: 8 }}
+        >
+          <CustomTab id="/FoR" href="/FoR">
+            Founding of Rome
+          </CustomTab>
+          <CustomTab id="/MaR" href="/MaR">
+            Monarchy and Republic
+          </CustomTab>
           <TooltipTrigger>
-            <CustomTab id="/Emp" href="/Emp">Empire</CustomTab>
+            <CustomTab id="/Emp" href="/Emp">
+              Empire
+            </CustomTab>
             <Tooltip
               offset={5}
               style={{
-                background: 'Canvas',
-                color: 'CanvasText',
-                border: '1px solid gray',
+                background: "Canvas",
+                color: "CanvasText",
+                border: "1px solid gray",
                 padding: 5,
-                borderRadius: 4
-              }}>
-              <OverlayArrow style={{transform: 'translateX(-50%)'}}>
-                <svg width="8" height="8" style={{display: 'block'}}>
-                  <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                borderRadius: 4,
+              }}
+            >
+              <OverlayArrow style={{ transform: "translateX(-50%)" }}>
+                <svg width="8" height="8" style={{ display: "block" }}>
+                  <path
+                    d="M0 0L4 4L8 0"
+                    fill="white"
+                    strokeWidth={1}
+                    stroke="gray"
+                  />
                 </svg>
               </OverlayArrow>
               I am a tooltip
@@ -50,12 +76,8 @@ export const TabsExample = () => {
         <TabPanel id="/FoR">
           Arma virumque cano, Troiae qui primus ab oris.
         </TabPanel>
-        <TabPanel id="/MaR">
-          Senatus Populusque Romanus.
-        </TabPanel>
-        <TabPanel id="/Emp">
-          Alea jacta est.
-        </TabPanel>
+        <TabPanel id="/MaR">Senatus Populusque Romanus.</TabPanel>
+        <TabPanel id="/Emp">Alea jacta est.</TabPanel>
       </Tabs>
     </RouterProvider>
   );
@@ -63,20 +85,38 @@ export const TabsExample = () => {
 
 // Has error with invalid aria-controls, bug documented here: https://github.com/adobe/react-spectrum/issues/4781#issuecomment-1641057070
 export const TabsRenderProps = () => {
-  const [tabOrientation, setTabOrientation] = useState<TabsProps['orientation']>('vertical');
+  const [tabOrientation, setTabOrientation] =
+    useState<TabsProps["orientation"]>("vertical");
 
   return (
-    <div style={{display: 'flex', flexDirection: 'row', gap: 8}}>
-      <Button onPress={() => setTabOrientation((current) => current === 'vertical' ? 'horizontal' : 'vertical')}>
+    <div style={{ display: "flex", flexDirection: "row", gap: 8 }}>
+      <Button
+        onPress={() =>
+          setTabOrientation((current) =>
+            current === "vertical" ? "horizontal" : "vertical"
+          )
+        }
+      >
         Change Orientation
       </Button>
       <Tabs orientation={tabOrientation}>
-        {({orientation}) => (
+        {({ orientation }) => (
           <div>
-            <div style={{display: 'flex', flexDirection: orientation === 'vertical' ? 'row' : 'column', gap: 8}}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: orientation === "vertical" ? "row" : "column",
+                gap: 8,
+              }}
+            >
               <TabList
                 aria-label="History of Ancient Rome"
-                style={{display: 'flex', flexDirection: orientation === 'vertical' ? 'column' : 'row', gap: 8}}>
+                style={{
+                  display: "flex",
+                  flexDirection: orientation === "vertical" ? "column" : "row",
+                  gap: 8,
+                }}
+              >
                 <CustomTab id="FoR">Founding of Rome</CustomTab>
                 <CustomTab id="MaR">Monarchy and Republic</CustomTab>
                 <CustomTab id="Emp">Empire</CustomTab>
@@ -84,12 +124,8 @@ export const TabsRenderProps = () => {
               <TabPanel id="FoR">
                 Arma virumque cano, Troiae qui primus ab oris.
               </TabPanel>
-              <TabPanel id="MaR">
-                Senatus Populusque Romanus.
-              </TabPanel>
-              <TabPanel id="Emp">
-                Alea jacta est.
-              </TabPanel>
+              <TabPanel id="MaR">Senatus Populusque Romanus.</TabPanel>
+              <TabPanel id="Emp">Alea jacta est.</TabPanel>
             </div>
           </div>
         )}
@@ -102,21 +138,22 @@ const CustomTab = (props: TabProps) => {
   return (
     <Tab
       {...props}
-      style={({isSelected}) => ({
-        borderBottom: '2px solid ' + (isSelected ? 'slateblue' : 'transparent')
-      })} />
+      style={({ isSelected }) => ({
+        borderBottom: "2px solid " + (isSelected ? "slateblue" : "transparent"),
+      })}
+    />
   );
 };
 
 export const NestedTabs = () => (
   <Tabs>
-    <TabList style={{display: 'flex', gap: 8}}>
+    <TabList style={{ display: "flex", gap: 8 }}>
       <CustomTab id="foo">Foo</CustomTab>
       <CustomTab id="bar">Bar</CustomTab>
     </TabList>
     <TabPanel id="foo">
       <Tabs>
-        <TabList style={{display: 'flex', gap: 8}}>
+        <TabList style={{ display: "flex", gap: 8 }}>
           <CustomTab id="one">One</CustomTab>
           <CustomTab id="two">Two</CustomTab>
         </TabList>

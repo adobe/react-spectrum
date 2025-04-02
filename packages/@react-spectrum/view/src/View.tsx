@@ -10,34 +10,36 @@
  * governing permissions and limitations under the License.
  */
 
-import {ClearSlots, useDOMRef, useSlotProps, useStyleProps, viewStyleProps} from '@react-spectrum/utils';
-import {ColorVersion, DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
-import React, {forwardRef, ReactElement} from 'react';
-import {ViewProps} from '@react-types/view';
+import {
+  ClearSlots,
+  useDOMRef,
+  useSlotProps,
+  useStyleProps,
+  viewStyleProps,
+} from "@react-spectrum/utils";
+import { ColorVersion, DOMRef } from "@react-types/shared";
+import { filterDOMProps } from "@react-aria-nutrient/utils";
+import React, { forwardRef, ReactElement } from "react";
+import { ViewProps } from "@react-types/view";
 
 /**
  * View is a general purpose container with no specific semantics that can be used for custom styling purposes.
  * It supports Spectrum style props to ensure consistency with other Spectrum components.
  */
-export const View = forwardRef(function View<C extends ColorVersion>(props: ViewProps<C>, ref: DOMRef) {
+export const View = forwardRef(function View<C extends ColorVersion>(
+  props: ViewProps<C>,
+  ref: DOMRef
+) {
   props = useSlotProps(props);
-  let {
-    elementType: ElementType = 'div',
-    children,
-    ...otherProps
-  } = props;
-  let {styleProps} = useStyleProps(props, viewStyleProps);
+  let { elementType: ElementType = "div", children, ...otherProps } = props;
+  let { styleProps } = useStyleProps(props, viewStyleProps);
   let domRef = useDOMRef(ref);
 
   return (
-    <ElementType
-      {...filterDOMProps(otherProps)}
-      {...styleProps}
-      ref={domRef}>
-      <ClearSlots>
-        {children}
-      </ClearSlots>
+    <ElementType {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
+      <ClearSlots>{children}</ClearSlots>
     </ElementType>
   );
-}) as <C extends ColorVersion = 5>(props: ViewProps<C> & {ref?: DOMRef}) => ReactElement;
+}) as <C extends ColorVersion = 5>(
+  props: ViewProps<C> & { ref?: DOMRef }
+) => ReactElement;

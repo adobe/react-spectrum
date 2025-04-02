@@ -1,48 +1,61 @@
-{/* Copyright 2020 Adobe. All rights reserved.
+{/_ Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. */}
+governing permissions and limitations under the License. _/}
 
-import {Layout} from '@react-spectrum/docs';
+import { Layout } from "@react-spectrum/docs";
 export default Layout;
 
-import docs from 'docs:react-aria-components';
-import i18nDocs from 'docs:@internationalized/date';
-import ariaDocs from 'docs:@react-aria/calendar';
-import statelyDocs from 'docs:@react-stately/calendar';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
-import styles from '@react-spectrum/docs/src/docs.css';
-import packageData from 'react-aria-components/package.json';
-import Anatomy from '@react-aria/calendar/docs/calendar-anatomy.svg';
-import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
-import {Divider} from '@react-spectrum/divider';
-import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
-import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
-import InternationalizedDate from '@react-spectrum/docs/pages/assets/component-illustrations/InternationalizedDate.svg';
-import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
+import docs from "docs:react-aria-components";
+import i18nDocs from "docs:@internationalized/date";
+import ariaDocs from "docs:@react-aria-nutrient/calendar";
+import statelyDocs from "docs:@react-stately/calendar";
+import {
+  PropTable,
+  HeaderInfo,
+  TypeLink,
+  PageDescription,
+  StateTable,
+  ContextTable,
+} from "@react-spectrum/docs";
+import styles from "@react-spectrum/docs/src/docs.css";
+import packageData from "react-aria-components/package.json";
+import Anatomy from "@react-aria-nutrient/calendar/docs/calendar-anatomy.svg";
+import ChevronRight from "@spectrum-icons/workflow/ChevronRight";
+import { Divider } from "@react-spectrum/divider";
+import { ExampleCard } from "@react-spectrum/docs/src/ExampleCard";
+import Button from "@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg";
+import InternationalizedDate from "@react-spectrum/docs/pages/assets/component-illustrations/InternationalizedDate.svg";
+import { StarterKits } from "@react-spectrum/docs/src/StarterKits";
 
 ---
+
 category: Date and Time
 keywords: [input, form, field, date, time]
 type: component
+
 ---
 
 # Calendar
 
 <PageDescription>{docs.exports.Calendar.description}</PageDescription>
 
-<HeaderInfo
-  packageData={packageData}
-  componentNames={['Calendar']} />
+<HeaderInfo packageData={packageData} componentNames={["Calendar"]} />
 
 ## Example
 
 ```tsx example
-import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-components';
+import {
+  Calendar,
+  Heading,
+  Button,
+  CalendarGrid,
+  CalendarCell,
+} from "react-aria-components";
 
 <Calendar aria-label="Appointment date">
   <header>
@@ -50,10 +63,8 @@ import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-
     <Heading />
     <Button slot="next">▶</Button>
   </header>
-  <CalendarGrid>
-    {date => <CalendarCell date={date} />}
-  </CalendarGrid>
-</Calendar>
+  <CalendarGrid>{(date) => <CalendarCell date={date} />}</CalendarGrid>
+</Calendar>;
 ```
 
 <details>
@@ -63,7 +74,7 @@ import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-
 ```
 
 ```css
-@import "@react-aria/example-theme";
+@import "@react-aria-nutrient/example-theme";
 
 .react-aria-Calendar {
   width: fit-content;
@@ -73,7 +84,7 @@ import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-
   header {
     display: flex;
     align-items: center;
-    margin: 0 4px .5rem 4px;
+    margin: 0 4px 0.5rem 4px;
 
     .react-aria-Heading {
       flex: 1;
@@ -126,10 +137,10 @@ import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-
 
 There is no standalone calendar element in HTML. `<input type="date">` is close, but this is very limited in functionality, lacking in internationalization capabilities, inconsistent between browsers, and difficult to style. `Calendar` helps achieve accessible and international calendar components that can be styled as needed.
 
-* **Flexible** – Display one or more months at once, or a custom time range for use cases like a week view. Minimum and maximum values, unavailable dates, and non-contiguous selections are supported as well.
-* **International** – Support for 13 calendar systems used around the world, including Gregorian, Buddhist, Islamic, Persian, and more. Locale-specific formatting, number systems, and right-to-left support are available as well.
-* **Accessible** – Calendar cells can be navigated and selected using the keyboard, and localized screen reader messages are included to announce when the selection and visible date range change.
-* **Customizable** – As with all of React Aria, the DOM structure and styling of all elements can be fully customized.
+- **Flexible** – Display one or more months at once, or a custom time range for use cases like a week view. Minimum and maximum values, unavailable dates, and non-contiguous selections are supported as well.
+- **International** – Support for 13 calendar systems used around the world, including Gregorian, Buddhist, Islamic, Persian, and more. Locale-specific formatting, number systems, and right-to-left support are available as well.
+- **Accessible** – Calendar cells can be navigated and selected using the keyboard, and localized screen reader messages are included to announce when the selection and visible date range change.
+- **Customizable** – As with all of React Aria, the DOM structure and styling of all elements can be fully customized.
 
 Read our [blog post](../blog/date-and-time-pickers-for-all.html) for more details about the internationalization, accessibility, and user experience features implemented by `Calendar`.
 
@@ -137,29 +148,38 @@ Read our [blog post](../blog/date-and-time-pickers-for-all.html) for more detail
 
 <Anatomy
   role="img"
-  aria-label="Anatomy diagram of a calendar component, which consists of a heading, grid of cells, previous, and next buttons." />
+  aria-label="Anatomy diagram of a calendar component, which consists of a heading, grid of cells, previous, and next buttons."
+/>
 
 A calendar consists of a grouping element containing one or more date grids (e.g. months), and a previous and next button for navigating between date ranges. Each calendar grid consists of cells containing button elements that can be pressed and navigated to using the arrow keys to select a date.
 
 `Calendar` also supports an optional error message element, which can be used to provide more context about any validation errors. This is linked with the calendar via the `aria-describedby` attribute.
 
 ```tsx
-import {Calendar, Heading, Button, CalendarGrid, CalendarGridHeader, CalendarHeaderCell, CalendarGridBody, CalendarCell, Text} from 'react-aria-components';
+import {
+  Calendar,
+  Heading,
+  Button,
+  CalendarGrid,
+  CalendarGridHeader,
+  CalendarHeaderCell,
+  CalendarGridBody,
+  CalendarCell,
+  Text,
+} from "react-aria-components";
 
 <Calendar>
   <Button slot="previous" />
   <Heading />
   <Button slot="next" />
   <CalendarGrid>
-    <CalendarGridHeader>
-      {day => <CalendarHeaderCell />}
-    </CalendarGridHeader>
+    <CalendarGridHeader>{(day) => <CalendarHeaderCell />}</CalendarGridHeader>
     <CalendarGridBody>
-      {date => <CalendarCell date={date} />}
+      {(date) => <CalendarCell date={date} />}
     </CalendarGridBody>
   </CalendarGrid>
   <Text slot="errorMessage" />
-</Calendar>
+</Calendar>;
 ```
 
 Note that much of this anatomy is shared with [range calendars](RangeCalendar.html). If you have both, the styling and internal components such as `CalendarCell` can be shared.
@@ -173,7 +193,8 @@ Note that much of this anatomy is shared with [range calendars](RangeCalendar.ht
 <ExampleCard
   url="../internationalized/date/index.html"
   title="@internationalized/date"
-  description="Represent and manipulate dates and times in a locale-aware manner.">
+  description="Represent and manipulate dates and times in a locale-aware manner."
+>
   <InternationalizedDate />
 </ExampleCard>
 
@@ -188,7 +209,8 @@ A `Calendar` uses the following components, which may also be used standalone or
 <ExampleCard
   url="Button.html"
   title="Button"
-  description="A button allows a user to perform an action.">
+  description="A button allows a user to perform an action."
+>
   <Button />
 </ExampleCard>
 
@@ -207,14 +229,17 @@ If you will use a Calendar in multiple places in your app, you can wrap all of t
 This example also shows how to use the `errorMessage` slot to render help text in case of a validation error ([see below for details](#error-message)).
 
 ```tsx example export=true
-import type {CalendarProps, DateValue} from 'react-aria-components';
-import {Text} from 'react-aria-components';
+import type { CalendarProps, DateValue } from "react-aria-components";
+import { Text } from "react-aria-components";
 
 interface MyCalendarProps<T extends DateValue> extends CalendarProps<T> {
-  errorMessage?: string
+  errorMessage?: string;
 }
 
-function MyCalendar<T extends DateValue>({errorMessage, ...props}: MyCalendarProps<T>) {
+function MyCalendar<T extends DateValue>({
+  errorMessage,
+  ...props
+}: MyCalendarProps<T>) {
   return (
     <Calendar {...props}>
       <header>
@@ -222,15 +247,13 @@ function MyCalendar<T extends DateValue>({errorMessage, ...props}: MyCalendarPro
         <Heading />
         <Button slot="next">▶</Button>
       </header>
-      <CalendarGrid>
-        {date => <CalendarCell date={date} />}
-      </CalendarGrid>
+      <CalendarGrid>{(date) => <CalendarCell date={date} />}</CalendarGrid>
       {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
     </Calendar>
   );
 }
 
-<MyCalendar aria-label="Event date" />
+<MyCalendar aria-label="Event date" />;
 ```
 
 ## Value
@@ -242,20 +265,22 @@ Date values are provided using objects in the [@internationalized/date](../inter
 `Calendar` supports values with both date and time components, but only allows users to modify the date. By default, `Calendar` will emit <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDate} /> objects in the `onChange` event, but if a <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDateTime} /> or <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> object is passed as the `value` or `defaultValue`, values of that type will be emitted, changing only the date and preserving the time components.
 
 ```tsx example
-import {parseDate} from '@internationalized/date';
+import { parseDate } from "@internationalized/date";
 
 function Example() {
-  let [value, setValue] = React.useState(parseDate('2020-02-03'));
+  let [value, setValue] = React.useState(parseDate("2020-02-03"));
 
   return (
-    <div style={{display: 'flex', gap: 20, flexWrap: 'wrap'}}>
+    <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
       <MyCalendar
         aria-label="Date (uncontrolled)"
-        defaultValue={parseDate('2020-02-03')} />
+        defaultValue={parseDate("2020-02-03")}
+      />
       <MyCalendar
         aria-label="Date (controlled)"
         value={value}
-        onChange={setValue} />
+        onChange={setValue}
+      />
     </div>
   );
 }
@@ -270,7 +295,7 @@ Selected dates passed to `onChange` always use the same calendar system as the `
 The below example displays a `Calendar` in the Hindi language, using the Indian calendar. Dates emitted from `onChange` are in the Gregorian calendar.
 
 ```tsx example
-import {I18nProvider} from '@react-aria/i18n';
+import { I18nProvider } from "@react-aria-nutrient/i18n";
 
 function Example() {
   let [date, setDate] = React.useState<DateValue | null>(null);
@@ -290,15 +315,17 @@ function Example() {
 The `createCalendar` prop accepts a function that returns an instance of the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.Calendar} /> interface. See the [@internationalized/date docs](../internationalized/date/Calendar.html#custom-calendars) for an example implementation.
 
 ```tsx import
-import type {AnyCalendarDate} from '@internationalized/date';
-import {CalendarDate, startOfWeek, toCalendar} from '@internationalized/date';
+import type { AnyCalendarDate } from "@internationalized/date";
+import { CalendarDate, startOfWeek, toCalendar } from "@internationalized/date";
 ```
 
 ```tsx example
-import {GregorianCalendar} from '@internationalized/date';
+import { GregorianCalendar } from "@internationalized/date";
 
 function Example() {
-  return <MyCalendar firstDayOfWeek="sun" createCalendar={() => new Custom454()} />;
+  return (
+    <MyCalendar firstDayOfWeek="sun" createCalendar={() => new Custom454()} />
+  );
 }
 
 class Custom454 extends GregorianCalendar {
@@ -312,10 +339,10 @@ class Custom454 extends GregorianCalendar {
   fromJulianDay(jd: number): CalendarDate {
     let gregorian = super.fromJulianDay(jd);
 
-    let monthStart = startOfWeek(new CalendarDate(gregorian.year, 1, 1), 'en');
+    let monthStart = startOfWeek(new CalendarDate(gregorian.year, 1, 1), "en");
     for (let months = 0; months < this.weekPattern.length; months++) {
       let weeksInMonth = this.weekPattern[months];
-      let monthEnd = monthStart.add({weeks: weeksInMonth});
+      let monthEnd = monthStart.add({ weeks: weeksInMonth });
       if (monthEnd.compare(gregorian) > 0) {
         let days = gregorian.compare(monthStart);
         return new CalendarDate(this, monthStart.year, months + 1, days + 1);
@@ -323,28 +350,28 @@ class Custom454 extends GregorianCalendar {
       monthStart = monthEnd;
     }
 
-    throw Error('Date is not in any month somehow!');
+    throw Error("Date is not in any month somehow!");
   }
 
   toJulianDay(date: AnyCalendarDate): number {
-    let monthStart = startOfWeek(new CalendarDate(date.year, 1, 1), 'en');
+    let monthStart = startOfWeek(new CalendarDate(date.year, 1, 1), "en");
     for (let month = 1; month < date.month; month++) {
-      monthStart = monthStart.add({weeks: this.weekPattern[month - 1]});
+      monthStart = monthStart.add({ weeks: this.weekPattern[month - 1] });
     }
 
-    let gregorian = monthStart.add({days: date.day - 1});
+    let gregorian = monthStart.add({ days: date.day - 1 });
     return super.toJulianDay(gregorian);
   }
 
   getFormattableMonth(date) {
     let gregorian = toCalendar(date, new GregorianCalendar());
-    return gregorian.set({month: date.month, day: 1});
+    return gregorian.set({ month: date.month, day: 1 });
   }
 
   isEqual(other) {
     return other instanceof Custom454;
   }
- ///- end collapse -///
+  ///- end collapse -///
 }
 ```
 
@@ -353,12 +380,12 @@ class Custom454 extends GregorianCalendar {
 `Calendar` accepts an `onChange` prop which is triggered whenever a date is selected by the user. The example below uses `onChange` to update a separate element with a formatted version of the date in the user's locale. This is done by converting the date to a native JavaScript `Date` object to pass to the formatter.
 
 ```tsx example
-import {getLocalTimeZone} from '@internationalized/date';
-import {useDateFormatter} from '@react-aria/i18n';
+import { getLocalTimeZone } from "@internationalized/date";
+import { useDateFormatter } from "@react-aria-nutrient/i18n";
 
 function Example() {
-  let [date, setDate] = React.useState(parseDate('2022-07-04'));
-  let formatter = useDateFormatter({dateStyle: 'full'});
+  let [date, setDate] = React.useState(parseDate("2022-07-04"));
+  let formatter = useDateFormatter({ dateStyle: "full" });
 
   return (
     <>
@@ -374,21 +401,19 @@ function Example() {
 Multiple `CalendarGrid` elements can be rendered to show multiple months at once. The `visibleDuration` prop should be provided to the `Calendar` component to specify how many months are visible, and each `CalendarGrid` accepts an `offset` prop to specify its starting date relative to the first visible date.
 
 ```tsx example
-<Calendar aria-label="Appointment date" visibleDuration={{months: 3}}>
+<Calendar aria-label="Appointment date" visibleDuration={{ months: 3 }}>
   <header>
     <Button slot="previous">◀</Button>
     <Heading />
     <Button slot="next">▶</Button>
   </header>
-  <div style={{display: 'flex', gap: 30, overflow: 'auto'}}>
-    <CalendarGrid>
-      {date => <CalendarCell date={date} />}
+  <div style={{ display: "flex", gap: 30, overflow: "auto" }}>
+    <CalendarGrid>{(date) => <CalendarCell date={date} />}</CalendarGrid>
+    <CalendarGrid offset={{ months: 1 }}>
+      {(date) => <CalendarCell date={date} />}
     </CalendarGrid>
-    <CalendarGrid offset={{months: 1}}>
-      {date => <CalendarCell date={date} />}
-    </CalendarGrid>
-    <CalendarGrid offset={{months: 2}}>
-      {date => <CalendarCell date={date} />}
+    <CalendarGrid offset={{ months: 2 }}>
+      {(date) => <CalendarCell date={date} />}
     </CalendarGrid>
   </div>
 </Calendar>
@@ -399,21 +424,23 @@ Multiple `CalendarGrid` elements can be rendered to show multiple months at once
 The `pageBehavior` prop allows you to control how the calendar navigates between months. By default, the calendar will navigate by `visibleDuration`, but by setting `pageBehavior` to `single`, pagination will be by one month.
 
 ```tsx example
-<Calendar aria-label="Appointment date" visibleDuration={{months: 3}} pageBehavior="single">
+<Calendar
+  aria-label="Appointment date"
+  visibleDuration={{ months: 3 }}
+  pageBehavior="single"
+>
   <header>
     <Button slot="previous">◀</Button>
     <Heading />
     <Button slot="next">▶</Button>
   </header>
-  <div style={{display: 'flex', gap: 30, overflow: 'auto'}}>
-    <CalendarGrid>
-      {date => <CalendarCell date={date} />}
+  <div style={{ display: "flex", gap: 30, overflow: "auto" }}>
+    <CalendarGrid>{(date) => <CalendarCell date={date} />}</CalendarGrid>
+    <CalendarGrid offset={{ months: 1 }}>
+      {(date) => <CalendarCell date={date} />}
     </CalendarGrid>
-    <CalendarGrid offset={{months: 1}}>
-      {date => <CalendarCell date={date} />}
-    </CalendarGrid>
-    <CalendarGrid offset={{months: 2}}>
-      {date => <CalendarCell date={date} />}
+    <CalendarGrid offset={{ months: 2 }}>
+      {(date) => <CalendarCell date={date} />}
     </CalendarGrid>
   </div>
 </Calendar>
@@ -426,9 +453,12 @@ By default, `Calendar` allows selecting any date. The `minValue` and `maxValue` 
 This example only accepts dates after today.
 
 ```tsx example
-import {today} from '@internationalized/date';
+import { today } from "@internationalized/date";
 
-<MyCalendar aria-label="Appointment date" minValue={today(getLocalTimeZone())} />
+<MyCalendar
+  aria-label="Appointment date"
+  minValue={today(getLocalTimeZone())}
+/>;
 ```
 
 <details>
@@ -452,23 +482,33 @@ import {today} from '@internationalized/date';
 
 This example includes multiple unavailable date ranges, e.g. dates when no appointments are available. In addition, all weekends are unavailable. The `minValue` prop is also used to prevent selecting dates before today.
 
-
 ```tsx example
-import {today, isWeekend} from '@internationalized/date';
-import {useLocale} from '@react-aria/i18n';
+import { today, isWeekend } from "@internationalized/date";
+import { useLocale } from "@react-aria-nutrient/i18n";
 
 function Example() {
   let now = today(getLocalTimeZone());
   let disabledRanges = [
-    [now, now.add({days: 5})],
-    [now.add({days: 14}), now.add({days: 16})],
-    [now.add({days: 23}), now.add({days: 24})],
+    [now, now.add({ days: 5 })],
+    [now.add({ days: 14 }), now.add({ days: 16 })],
+    [now.add({ days: 23 }), now.add({ days: 24 })],
   ];
 
-  let {locale} = useLocale();
-  let isDateUnavailable = (date: DateValue) => isWeekend(date, locale) || disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+  let { locale } = useLocale();
+  let isDateUnavailable = (date: DateValue) =>
+    isWeekend(date, locale) ||
+    disabledRanges.some(
+      (interval) =>
+        date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0
+    );
 
-  return <MyCalendar aria-label="Appointment date" minValue={today(getLocalTimeZone())} isDateUnavailable={isDateUnavailable} />
+  return (
+    <MyCalendar
+      aria-label="Appointment date"
+      minValue={today(getLocalTimeZone())}
+      isDateUnavailable={isDateUnavailable}
+    />
+  );
 }
 ```
 
@@ -495,12 +535,12 @@ function Example() {
 This example validates that the selected date is a weekday and not a weekend according to the current locale.
 
 ```tsx example
-import {today, isWeekend} from '@internationalized/date';
-import {useLocale} from 'react-aria';
+import { today, isWeekend } from "@internationalized/date";
+import { useLocale } from "react-aria";
 
 function Example() {
   let [date, setDate] = React.useState(today(getLocalTimeZone()));
-  let {locale} = useLocale();
+  let { locale } = useLocale();
   let isInvalid = isWeekend(date, locale);
 
   return (
@@ -510,7 +550,7 @@ function Example() {
       onChange={setDate}
       /*- begin highlight -*/
       isInvalid={isInvalid}
-      errorMessage={isInvalid ? 'We are closed on weekends' : undefined}
+      errorMessage={isInvalid ? "We are closed on weekends" : undefined}
       /*- end highlight -*/
     />
   );
@@ -529,7 +569,7 @@ function Example() {
     }
   }
 
-  [slot=errorMessage] {
+  [slot="errorMessage"] {
     font-size: 12px;
     color: var(--invalid-color);
   }
@@ -540,12 +580,12 @@ function Example() {
 
 ## Controlling the focused date
 
-By default, the selected date is focused when a `Calendar` first mounts. If no `value` or `defaultValue` prop is provided, then the current date is focused.  However, `Calendar` supports controlling which date is focused using the `focusedValue` and `onFocusChange` props. This also determines which month is visible. The `defaultFocusedValue` prop allows setting the initial focused date when the `Calendar` first mounts, without controlling it.
+By default, the selected date is focused when a `Calendar` first mounts. If no `value` or `defaultValue` prop is provided, then the current date is focused. However, `Calendar` supports controlling which date is focused using the `focusedValue` and `onFocusChange` props. This also determines which month is visible. The `defaultFocusedValue` prop allows setting the initial focused date when the `Calendar` first mounts, without controlling it.
 
 This example focuses July 1, 2021 by default. The user may change the focused date, and the `onFocusChange` event updates the state. Clicking the button resets the focused date back to the initial value.
 
 ```tsx example
-import {CalendarDate} from '@internationalized/date';
+import { CalendarDate } from "@internationalized/date";
 
 function Example() {
   let defaultDate = new CalendarDate(2021, 7, 1);
@@ -553,7 +593,12 @@ function Example() {
 
   return (
     <>
-      <button style={{marginBottom: 20}} onClick={() => setFocusedDate(defaultDate)}>Reset focused date</button>
+      <button
+        style={{ marginBottom: 20 }}
+        onClick={() => setFocusedDate(defaultDate)}
+      >
+        Reset focused date
+      </button>
       <MyCalendar focusedValue={focusedDate} onFocusChange={setFocusedDate} />
     </>
   );
@@ -573,7 +618,11 @@ The `isDisabled` boolean prop makes the Calendar disabled. Cells cannot be focus
 The `isReadOnly` boolean prop makes the Calendar's value immutable. Unlike `isDisabled`, the Calendar remains focusable.
 
 ```tsx example
-<MyCalendar aria-label="Event date" value={today(getLocalTimeZone())} isReadOnly />
+<MyCalendar
+  aria-label="Event date"
+  value={today(getLocalTimeZone())}
+  isReadOnly
+/>
 ```
 
 ## Custom first day of week
@@ -581,7 +630,11 @@ The `isReadOnly` boolean prop makes the Calendar's value immutable. Unlike `isDi
 By default, the first day of the week is automatically set based on the current locale. This can be changed by setting the `firstDayOfWeek` prop to `'sun'`, `'mon'`, `'tue'`, `'wed'`, `'thu'`, `'fri'`, or `'sat'`.
 
 ```tsx example
-<MyCalendar aria-label="Event date" value={today(getLocalTimeZone())} firstDayOfWeek="mon" />
+<MyCalendar
+  aria-label="Event date"
+  value={today(getLocalTimeZone())}
+  firstDayOfWeek="mon"
+/>
 ```
 
 ## Labeling
@@ -676,9 +729,7 @@ React Aria components can be styled in many ways, including using CSS classes, i
 A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
 
 ```jsx
-<CalendarGrid className="my-calendar-grid">
-  {/* ... */}
-</CalendarGrid>
+<CalendarGrid className="my-calendar-grid">{/* ... */}</CalendarGrid>
 ```
 
 In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
@@ -696,14 +747,16 @@ In addition, some components support multiple UI states (e.g. focused, placehold
 The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
 
 ```jsx
-<CalendarCell className={({isSelected}) => isSelected ? 'bg-blue-600' : 'bg-gray-600'} />
+<CalendarCell
+  className={({ isSelected }) => (isSelected ? "bg-blue-600" : "bg-gray-600")}
+/>
 ```
 
 Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could add an additional element when a date is unavailable.
 
 ```jsx
 <CalendarCell>
-  {({formattedDate, isUnavailable}) => (
+  {({ formattedDate, isUnavailable }) => (
     <>
       {isUnavailable && <UnavailableIcon />}
       <span>{formattedDate}</span>
@@ -731,7 +784,11 @@ A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS select
 A `CalendarGrid` can be targeted with the `.react-aria-CalendarGrid` CSS selector, or by overriding with a custom `className`. When a function is provided as children, a default `<CalendarGridHeader>` and `<CalendarGridBody>` are rendered. If you need to customize the styling of the header cells, you can render them yourself.
 
 ```tsx example
-import {CalendarGridHeader, CalendarHeaderCell, CalendarGridBody} from 'react-aria-components';
+import {
+  CalendarGridHeader,
+  CalendarHeaderCell,
+  CalendarGridBody,
+} from "react-aria-components";
 
 <Calendar aria-label="Appointment date">
   <header>
@@ -741,14 +798,18 @@ import {CalendarGridHeader, CalendarHeaderCell, CalendarGridBody} from 'react-ar
   </header>
   <CalendarGrid>
     <CalendarGridHeader>
-      {day => <CalendarHeaderCell style={{color: 'var(--blue)'}}>{day}</CalendarHeaderCell>}
+      {(day) => (
+        <CalendarHeaderCell style={{ color: "var(--blue)" }}>
+          {day}
+        </CalendarHeaderCell>
+      )}
     </CalendarGridHeader>
     <CalendarGridBody>
-      {date => <CalendarCell date={date} />}
+      {(date) => <CalendarCell date={date} />}
     </CalendarGridBody>
   </CalendarGrid>
-</Calendar>
-````
+</Calendar>;
+```
 
 ### CalendarGridHeader
 
@@ -780,7 +841,7 @@ If you need to customize one of the components within a `Calendar`, such as `Cal
 
 ```tsx
 function MyCalendarCell(props) {
-  return <CalendarCell {...props} className="my-item" />
+  return <CalendarCell {...props} className="my-item" />;
 }
 ```
 
@@ -788,34 +849,34 @@ function MyCalendarCell(props) {
 
 All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
 
-<ContextTable components={['Calendar']} docs={docs} />
+<ContextTable components={["Calendar"]} docs={docs} />
 
 This example uses `CalendarContext` to create a composite component containing a calendar and buttons representing preset dates. The <TypeLink links={docs.links} type={docs.exports.useSlottedContext} /> hook can be used to consume contexts that support the `slot` prop.
 
 ```tsx example render=false export=true
-import {CalendarContext, useSlottedContext} from 'react-aria-components';
+import { CalendarContext, useSlottedContext } from "react-aria-components";
 
-function CalendarPicker({children}) {
+function CalendarPicker({ children }) {
   let [value, onChange] = React.useState(null);
   let [focusedValue, onFocusChange] = React.useState(null);
 
   return (
     /*- begin highlight -*/
-    <CalendarContext.Provider value={{value, onChange, focusedValue, onFocusChange}}>
-    {/*- end highlight -*/}
-      <div className="calendar-picker">
-        {children}
-      </div>
+    <CalendarContext.Provider
+      value={{ value, onChange, focusedValue, onFocusChange }}
+    >
+      {/*- end highlight -*/}
+      <div className="calendar-picker">{children}</div>
     </CalendarContext.Provider>
   );
 }
 
 interface PresetProps {
-  date: CalendarDate,
-  children: React.ReactNode
+  date: CalendarDate;
+  children: React.ReactNode;
 }
 
-function Preset({date, children}: PresetProps) {
+function Preset({ date, children }: PresetProps) {
   /*- begin highlight -*/
   let context = useSlottedContext(CalendarContext)!;
   /*- end highlight -*/
@@ -824,27 +885,27 @@ function Preset({date, children}: PresetProps) {
     context.onChange(date);
   };
 
-  return (
-    <Button onPress={onPress}>{children}</Button>
-  );
+  return <Button onPress={onPress}>{children}</Button>;
 }
 ```
 
 Now you can combine a `Calendar` and one or more `Preset` components in a `CalendarPicker`.
 
 ```tsx example
-import {startOfWeek, startOfMonth} from '@internationalized/date';
-import {useLocale} from 'react-aria';
+import { startOfWeek, startOfMonth } from "@internationalized/date";
+import { useLocale } from "react-aria";
 
 function Example() {
-  let {locale} = useLocale();
+  let { locale } = useLocale();
   let now = today(getLocalTimeZone());
 
   return (
     <CalendarPicker>
       <Preset date={now}>Today</Preset>
-      <Preset date={startOfWeek(now.add({weeks: 1}), locale)}>Next week</Preset>
-      <Preset date={startOfMonth(now.add({months: 1}))}>Next month</Preset>
+      <Preset date={startOfWeek(now.add({ weeks: 1 }), locale)}>
+        Next week
+      </Preset>
+      <Preset date={startOfMonth(now.add({ months: 1 }))}>Next month</Preset>
       <MyCalendar aria-label="Meeting date" />
     </CalendarPicker>
   );
@@ -868,23 +929,25 @@ function Example() {
 
 Calendar passes props to its child components, such as the heading and buttons, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
 
-<ContextTable components={['Heading', 'Button', 'Text']} docs={docs} />
+<ContextTable components={["Heading", "Button", "Text"]} docs={docs} />
 
 This example consumes from `HeadingContext` in an existing styled heading component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by Calendar.
 
 ```tsx
-import type {HeadingProps} from 'react-aria-components';
-import {HeadingContext, useContextProps} from 'react-aria-components';
+import type { HeadingProps } from "react-aria-components";
+import { HeadingContext, useContextProps } from "react-aria-components";
 
-const MyCustomHeading = React.forwardRef((props: HeadingProps, ref: React.ForwardedRef<HTMLHeadingElement>) => {
-  // Merge the local props and ref with the ones provided via context.
-  ///- begin highlight -///
-  [props, ref] = useContextProps(props, ref, HeadingContext);
-  ///- end highlight -///
+const MyCustomHeading = React.forwardRef(
+  (props: HeadingProps, ref: React.ForwardedRef<HTMLHeadingElement>) => {
+    // Merge the local props and ref with the ones provided via context.
+    ///- begin highlight -///
+    [props, ref] = useContextProps(props, ref, HeadingContext);
+    ///- end highlight -///
 
-  // ... your existing Heading component
-  return <h2 {...props} ref={ref} />;
-});
+    // ... your existing Heading component
+    return <h2 {...props} ref={ref} />;
+  }
+);
 ```
 
 Now you can use `MyCustomHeading` within a `Calendar`, in place of the builtin React Aria Components `Heading`.
@@ -905,16 +968,16 @@ Calendar provides a <TypeLink links={statelyDocs.links} type={statelyDocs.export
 This example shows a `CalendarValue` component that can be placed within a `Calendar` to display the currently selected date as a formatted string.
 
 ```tsx example
-import {CalendarStateContext} from 'react-aria-components';
-import {useDateFormatter} from 'react-aria';
+import { CalendarStateContext } from "react-aria-components";
+import { useDateFormatter } from "react-aria";
 
 function CalendarValue() {
   /*- begin highlight -*/
   let state = React.useContext(CalendarStateContext)!;
   /*- end highlight -*/
   let date = state.value?.toDate(getLocalTimeZone());
-  let {format} = useDateFormatter();
-  let formatted = date ? format(date) : 'None';
+  let { format } = useDateFormatter();
+  let formatted = date ? format(date) : "None";
   return <small>Selected date: {formatted}</small>;
 }
 
@@ -924,13 +987,11 @@ function CalendarValue() {
     <Heading />
     <Button slot="next">▶</Button>
   </header>
-  <CalendarGrid>
-    {date => <CalendarCell date={date} />}
-  </CalendarGrid>
+  <CalendarGrid>{(date) => <CalendarCell date={date} />}</CalendarGrid>
   {/*- begin highlight -*/}
   <CalendarValue />
   {/*- end highlight -*/}
-</Calendar>
+</Calendar>;
 ```
 
 ### Hooks
@@ -940,19 +1001,21 @@ If you need to customize things even further, such as accessing internal state o
 This example uses the <TypeLink links={ariaDocs.links} type={ariaDocs.exports.useCalendarGrid} /> hook to build a single week calendar view.
 
 ```tsx example render=false export=true
-import type {CalendarGridProps} from 'react-aria-components';
-import {CalendarStateContext} from 'react-aria-components';
-import {useCalendarGrid} from 'react-aria';
+import type { CalendarGridProps } from "react-aria-components";
+import { CalendarStateContext } from "react-aria-components";
+import { useCalendarGrid } from "react-aria";
 
 function WeekCalendarGrid(props: CalendarGridProps) {
   let state = React.useContext(CalendarStateContext)!;
-  let {gridProps} = useCalendarGrid(props, state);
+  let { gridProps } = useCalendarGrid(props, state);
 
   return (
     <table {...gridProps}>
       <tbody>
         <tr>
-          {state.getDatesInWeek(0).map((date, i) => <CalendarCell key={i} date={date} />)}
+          {state.getDatesInWeek(0).map((date, i) => (
+            <CalendarCell key={i} date={date} />
+          ))}
         </tr>
       </tbody>
     </table>
@@ -963,7 +1026,10 @@ function WeekCalendarGrid(props: CalendarGridProps) {
 `WeekCalendarGrid` can be used within a `Calendar` in place of the default `CalendarGrid` component.
 
 ```tsx example
-<Calendar visibleDuration={{weeks: 1}} defaultValue={today(getLocalTimeZone())}>
+<Calendar
+  visibleDuration={{ weeks: 1 }}
+  defaultValue={today(getLocalTimeZone())}
+>
   <div className="week">
     <Heading />
     <Button slot="previous">◀</Button>

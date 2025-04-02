@@ -1,19 +1,21 @@
-{/* Copyright 2020 Adobe. All rights reserved.
+{/_ Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. */}
+governing permissions and limitations under the License. _/}
 
-import {Layout} from '@react-spectrum/docs';
+import { Layout } from "@react-spectrum/docs";
 export default Layout;
 
 ---
+
 category: Guides
 keywords: [ssr, server side rendering, aria, next.js, gatsby]
 order: 3
+
 ---
 
 # Server Side Rendering
@@ -29,10 +31,10 @@ This page describes how to use React Aria with server side rendering, including 
 When using server side rendering, the application should be wrapped in an [I18nProvider](I18nProvider.html) with an explicit `locale` prop, rather than relying on automatic locale selection. This ensures that the locale of the content rendered on the server matches the locale expected by the browser. The `Accept-Language` HTTP header, which the browser sends to the server with the user’s desired language, could be used to implement this. You could also use an in-application setting for this if available, or locale-specific URLs, for example. In addition to passing the `locale` prop to the `I18nProvider`, you should also ensure the `lang` and `dir` attributes are set on the `<html>` element for your page.
 
 ```tsx
-import {I18nProvider, useLocale} from 'react-aria-components';
+import { I18nProvider, useLocale } from "react-aria-components";
 
 function App() {
-  let {locale, direction} = useLocale();
+  let { locale, direction } = useLocale();
 
   return (
     <html lang={locale} dir={direction}>
@@ -43,7 +45,7 @@ function App() {
 
 <I18nProvider locale={locale}>
   <App />
-</I18nProvider>
+</I18nProvider>;
 ```
 
 See the [internationalization docs](internationalization.html) for more information about i18n in React Aria.
@@ -59,23 +61,23 @@ See below for framework-specific guideance.
 
 #### Next.js App Router
 
-First, install `@react-aria/optimize-locales-plugin` with your package manager. Then, add the following to your `next.config.js`:
+First, install `@react-aria-nutrient/optimize-locales-plugin` with your package manager. Then, add the following to your `next.config.js`:
 
 ```ts
 // next.config.js
-const localesPlugin = require('@react-aria/optimize-locales-plugin');
+const localesPlugin = require("@react-aria-nutrient/optimize-locales-plugin");
 
 module.exports = {
   // ...
-  webpack(config, {isServer}) {
+  webpack(config, { isServer }) {
     if (!isServer) {
       // Don't include any locale strings in the client JS bundle.
       /*- begin highlight -*/
-      config.plugins.push(localesPlugin.webpack({locales: []}));
+      config.plugins.push(localesPlugin.webpack({ locales: [] }));
       /*- end highlight -*/
     }
     return config;
-  }
+  },
 };
 ```
 
@@ -84,13 +86,16 @@ Finally, add a `LocalizedStringProvider` to your root layout component. This exa
 ```tsx
 // app/[lang]/layout.tsx
 /*- begin highlight -*/
-import {LocalizedStringProvider} from 'react-aria-components/i18n';
+import { LocalizedStringProvider } from "react-aria-components/i18n";
 /*- end highlight -*/
 
-export default function RootLayout(
-  {children, params: {lang}}:
-  {children: React.ReactNode, params: {lang: string}}
-) {
+export default function RootLayout({
+  children,
+  params: { lang },
+}: {
+  children: React.ReactNode;
+  params: { lang: string };
+}) {
   return (
     <html lang={lang}>
       <body>
@@ -108,26 +113,26 @@ export default function RootLayout(
 
 #### Next.js Pages Router
 
-First, install `@react-aria/optimize-locales-plugin` with your package manager. Then, add the following to your `next.config.js`:
+First, install `@react-aria-nutrient/optimize-locales-plugin` with your package manager. Then, add the following to your `next.config.js`:
 
 ```ts
 // next.config.js
-const localesPlugin = require('@react-aria/optimize-locales-plugin');
+const localesPlugin = require("@react-aria-nutrient/optimize-locales-plugin");
 
 module.exports = {
   // ...
   i18n: {
     // See Next.js i18n docs...
   },
-  webpack(config, {isServer}) {
+  webpack(config, { isServer }) {
     if (!isServer) {
       // Don't include any locale strings in the client JS bundle.
       /*- begin highlight -*/
-      config.plugins.push(localesPlugin.webpack({locales: []}));
+      config.plugins.push(localesPlugin.webpack({ locales: [] }));
       /*- end highlight -*/
     }
     return config;
-  }
+  },
 };
 ```
 
@@ -135,9 +140,9 @@ Finally, add a `LocalizedStringProvider` to `pages/_document.tsx` before the `<N
 
 ```tsx
 // pages/_document.tsx
-import {Html, Head, Main, NextScript, DocumentProps} from 'next/document'
- /*- begin highlight -*/
-import {LocalizedStringProvider} from 'react-aria-components/i18n';
+import { Html, Head, Main, NextScript, DocumentProps } from "next/document";
+/*- begin highlight -*/
+import { LocalizedStringProvider } from "react-aria-components/i18n";
 /*- end highlight -*/
 
 export default function Document(props: DocumentProps) {
@@ -154,21 +159,20 @@ export default function Document(props: DocumentProps) {
     </Html>
   );
 }
-
 ```
 
 **Note**: If you are using React Aria hooks rather than components, this can be imported from `react-aria/i18n` instead.
 
 #### Remix
 
-Remix is supported [when using Vite](https://remix.run/docs/en/main/future/vite) for builds. First, install `@react-aria/optimize-locales-plugin` with your package manager. Then, add the following to your `vite.config.ts`:
+Remix is supported [when using Vite](https://remix.run/docs/en/main/future/vite) for builds. First, install `@react-aria-nutrient/optimize-locales-plugin` with your package manager. Then, add the following to your `vite.config.ts`:
 
 ```ts
 // vite.config.ts
-import { unstable_vitePlugin as remix } from '@remix-run/dev';
-import { defineConfig } from 'vite';
+import { unstable_vitePlugin as remix } from "@remix-run/dev";
+import { defineConfig } from "vite";
 /*- begin highlight -*/
-import localesPlugin from '@react-aria/optimize-locales-plugin';
+import localesPlugin from "@react-aria-nutrient/optimize-locales-plugin";
 /*- end highlight -*/
 
 export default defineConfig({
@@ -176,7 +180,7 @@ export default defineConfig({
     remix(),
     // Don't include any locale strings in the client JS bundle.
     /*- begin highlight -*/
-    {...localesPlugin.vite({locales: []}), enforce: 'pre'}
+    { ...localesPlugin.vite({ locales: [] }), enforce: "pre" },
     /*- end highlight -*/
   ],
 });
@@ -184,17 +188,17 @@ export default defineConfig({
 
 Finally, you'll need an [entry.server.tsx](https://remix.run/docs/en/main/file-conventions/entry.server) file, which will handle injecting the localized strings into the initial HTML for the client to access. The below file can be generated by running `npx remix reveal`, and making the highlighted modifications.
 
-**Note**: Remix uses the `getLocalizationScript` function instead of the  `LocalizedStringProvider` component to inject the strings into the initial HTML.
+**Note**: Remix uses the `getLocalizationScript` function instead of the `LocalizedStringProvider` component to inject the strings into the initial HTML.
 
 ```tsx
 // app/entry.server.tsx
-import type {EntryContext} from '@remix-run/node';
-import {PassThrough} from 'node:stream';
-import {createReadableStreamFromReadable} from '@remix-run/node';
-import {RemixServer} from '@remix-run/react';
-import {renderToPipeableStream} from 'react-dom/server';
- /*- begin highlight -*/
-import {getLocalizationScript} from 'react-aria-components/i18n';
+import type { EntryContext } from "@remix-run/node";
+import { PassThrough } from "node:stream";
+import { createReadableStreamFromReadable } from "@remix-run/node";
+import { RemixServer } from "@remix-run/react";
+import { renderToPipeableStream } from "react-dom/server";
+/*- begin highlight -*/
+import { getLocalizationScript } from "react-aria-components/i18n";
 /*- end highlight -*/
 
 const ABORT_DELAY = 5000;
@@ -203,7 +207,7 @@ export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
-  remixContext: EntryContext,
+  remixContext: EntryContext
 ) {
   // Get the requested language (e.g. from headers, URL param, database, etc.)
   /*- begin highlight -*/
@@ -211,7 +215,7 @@ export default async function handleRequest(
   /*- end highlight -*/
 
   return new Promise((resolve, reject) => {
-    let {pipe, abort} = renderToPipeableStream(
+    let { pipe, abort } = renderToPipeableStream(
       <RemixServer
         context={remixContext}
         url={request.url}
@@ -225,7 +229,7 @@ export default async function handleRequest(
           let body = new PassThrough();
           let stream = createReadableStreamFromReadable(body);
 
-          responseHeaders.set('Content-Type', 'text/html');
+          responseHeaders.set("Content-Type", "text/html");
           resolve(
             new Response(stream, {
               headers: responseHeaders,
@@ -261,9 +265,11 @@ You should also make sure to set the `lang` attribute on the root `<html>` eleme
 Start by creating a `LocalizedStringDictionary` containing only the strings for the components you use with the `createLocalizedStringDictionary` function. This accepts a list of npm package names for the individual React Aria hooks and components you use.
 
 ```tsx
-import {createLocalizedStringDictionary} from 'react-aria-components/i18n';
+import { createLocalizedStringDictionary } from "react-aria-components/i18n";
 
-const dictionary = createLocalizedStringDictionary(['@react-aria/datepicker']);
+const dictionary = createLocalizedStringDictionary([
+  "@react-aria-nutrient/datepicker",
+]);
 ```
 
 Then, pass this as an additional prop to `LocalizedStringProvider`:
@@ -275,7 +281,7 @@ Then, pass this as an additional prop to `LocalizedStringProvider`:
 Or if using Remix, pass the dictionary as an additional parameter to `getLocalizationScript`:
 
 ```tsx
-getLocalizationScript(locale, dictionary)
+getLocalizationScript(locale, dictionary);
 ```
 
 ## SSR specific rendering
@@ -283,17 +289,17 @@ getLocalizationScript(locale, dictionary)
 You can also use the [useIsSSR](useIsSSR.html) hook in your own components to determine whether they are running in an SSR context. This hook returns `true` both during server rendering and hydration, but updates immediately to `false` after hydration. You can use this to delay browser-specific code like media queries and feature detection until after the client has hydrated.
 
 ```tsx
-import {useIsSSR} from '@react-aria/ssr';
+import { useIsSSR } from "@react-aria-nutrient/ssr";
 
 function MyComponent() {
   let isSSR = useIsSSR();
-  return <span>{isSSR ? 'Server' : 'Client'}</span>
+  return <span>{isSSR ? "Server" : "Client"}</span>;
 }
 ```
 
 ## Automatic ID Generation
 
-When using SSR, only a single copy of React Aria can be on the page at a time. This is in contrast to client-side rendering, where multiple copies from different parts of an app can coexist. Internally, many components rely on auto-generated ids to link related elements via ARIA attributes. These ids typically use a randomly generated seed plus an incrementing counter to ensure uniqueness even when multiple instances of React Aria are on the page. With SSR, we need to ensure that these ids are consistent between the server and client.  This means the counter resets on every request, and we use a consistent seed. Due to this, multiple copies of React Aria cannot be supported because the auto-generated ids would conflict.
+When using SSR, only a single copy of React Aria can be on the page at a time. This is in contrast to client-side rendering, where multiple copies from different parts of an app can coexist. Internally, many components rely on auto-generated ids to link related elements via ARIA attributes. These ids typically use a randomly generated seed plus an incrementing counter to ensure uniqueness even when multiple instances of React Aria are on the page. With SSR, we need to ensure that these ids are consistent between the server and client. This means the counter resets on every request, and we use a consistent seed. Due to this, multiple copies of React Aria cannot be supported because the auto-generated ids would conflict.
 
 If you use React Aria’s [useId](useId.html) hook in your own components, this will ensure the ids are consistent when server rendered. In React 16 and 17 you'll need to wrap your app in an `SSRProvider` as described above. No additional changes in each component are required to enable SSR support.
 
@@ -303,9 +309,9 @@ In React 18, SSR works out of the box with no additional work. If you're using R
 
 ```tsx
 // Only needed if you are using React 16 or 17.
-import {SSRProvider} from '@react-aria/ssr';
+import { SSRProvider } from "@react-aria-nutrient/ssr";
 
 <SSRProvider>
   <App />
-</SSRProvider>
+</SSRProvider>;
 ```

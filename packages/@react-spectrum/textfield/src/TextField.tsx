@@ -10,34 +10,33 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {forwardRef, Ref, useRef} from 'react';
-import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
-import {TextFieldBase} from './TextFieldBase';
-import {useFormProps} from '@react-spectrum/form';
-import {useProviderProps} from '@react-spectrum/provider';
-import {useTextField} from '@react-aria/textfield';
+import React, { forwardRef, Ref, useRef } from "react";
+import { SpectrumTextFieldProps, TextFieldRef } from "@react-types/textfield";
+import { TextFieldBase } from "./TextFieldBase";
+import { useFormProps } from "@react-spectrum/form";
+import { useProviderProps } from "@react-spectrum/provider";
+import { useTextField } from "@react-aria-nutrient/textfield";
 
 /**
  * TextFields are text inputs that allow users to input custom text entries
  * with a keyboard. Various decorations can be displayed around the field to
  * communicate the entry requirements.
  */
-export const TextField = forwardRef(function TextField(props: SpectrumTextFieldProps, ref: Ref<TextFieldRef>) {
+export const TextField = forwardRef(function TextField(
+  props: SpectrumTextFieldProps,
+  ref: Ref<TextFieldRef>
+) {
   props = useProviderProps(props);
   props = useFormProps(props);
 
   let inputRef = useRef<HTMLInputElement>(null);
   let result = useTextField(props, inputRef);
 
-  if (props.placeholder && process.env.NODE_ENV !== 'production') {
-    console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/TextField.html#help-text');
+  if (props.placeholder && process.env.NODE_ENV !== "production") {
+    console.warn(
+      "Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/TextField.html#help-text"
+    );
   }
 
-  return (
-    <TextFieldBase
-      {...props}
-      {...result}
-      ref={ref}
-      inputRef={inputRef} />
-  );
+  return <TextFieldBase {...props} {...result} ref={ref} inputRef={inputRef} />;
 });

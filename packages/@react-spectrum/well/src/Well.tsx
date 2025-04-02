@@ -10,41 +10,41 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
-import React, {forwardRef} from 'react';
-import {SpectrumWellProps} from '@react-types/well';
-import styles from '@adobe/spectrum-css-temp/components/well/vars.css';
+import { classNames, useDOMRef, useStyleProps } from "@react-spectrum/utils";
+import { DOMRef } from "@react-types/shared";
+import { filterDOMProps } from "@react-aria-nutrient/utils";
+import React, { forwardRef } from "react";
+import { SpectrumWellProps } from "@react-types/well";
+import styles from "@adobe/spectrum-css-temp/components/well/vars.css";
 
 /**
  * A Well is a content container that displays non-editable content separate from other content on the screen.
  * Often this is used to display preformatted text, such as code/markup examples on a documentation page.
  */
-export const Well = forwardRef(function Well(props: SpectrumWellProps, ref: DOMRef<HTMLDivElement>) {
-  let {
-    children,
-    role,
-    ...otherProps
-  } = props;
+export const Well = forwardRef(function Well(
+  props: SpectrumWellProps,
+  ref: DOMRef<HTMLDivElement>
+) {
+  let { children, role, ...otherProps } = props;
   let domRef = useDOMRef(ref);
-  let {styleProps} = useStyleProps(otherProps);
+  let { styleProps } = useStyleProps(otherProps);
 
-  if (!role && (props['aria-label'] || props['aria-labelledby']) && process.env.NODE_ENV !== 'production') {
-    console.warn('A labelled Well must have a role.');
+  if (
+    !role &&
+    (props["aria-label"] || props["aria-labelledby"]) &&
+    process.env.NODE_ENV !== "production"
+  ) {
+    console.warn("A labelled Well must have a role.");
   }
 
   return (
     <div
-      {...filterDOMProps(otherProps, {labelable: !!role})}
+      {...filterDOMProps(otherProps, { labelable: !!role })}
       {...styleProps}
       role={role}
       ref={domRef}
-      className={classNames(
-        styles,
-        'spectrum-Well',
-        styleProps.className
-      )}>
+      className={classNames(styles, "spectrum-Well", styleProps.className)}
+    >
       {children}
     </div>
   );

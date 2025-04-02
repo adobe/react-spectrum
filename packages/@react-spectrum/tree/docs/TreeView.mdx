@@ -1,41 +1,55 @@
-{/* Copyright 2024 Adobe. All rights reserved.
+{/_ Copyright 2024 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. */}
+governing permissions and limitations under the License. _/}
 
-import {Layout} from '@react-spectrum/docs';
+import { Layout } from "@react-spectrum/docs";
 export default Layout;
 
-import docs from 'docs:@react-spectrum/tree';
-import treeUtils from 'docs:@react-aria/test-utils/src/tree.ts';
-import {HeaderInfo, PropTable, PageDescription, TypeLink, VersionBadge, ClassAPI} from '@react-spectrum/docs';
-import {Keyboard} from '@react-spectrum/text';
-import packageData from '@react-spectrum/tree/package.json';
-import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import docs from "docs:@react-spectrum/tree";
+import treeUtils from "docs:@react-aria-nutrient/test-utils/src/tree.ts";
+import {
+  HeaderInfo,
+  PropTable,
+  PageDescription,
+  TypeLink,
+  VersionBadge,
+  ClassAPI,
+} from "@react-spectrum/docs";
+import { Keyboard } from "@react-spectrum/text";
+import packageData from "@react-spectrum/tree/package.json";
+import ChevronRight from "@spectrum-icons/workflow/ChevronRight";
 
 ```jsx import
-import Folder from '@spectrum-icons/workflow/Folder';
-import {Flex} from '@react-spectrum/layout';
-import FileTxt from '@spectrum-icons/workflow/FileTxt';
-import GlobeOutline from '@spectrum-icons/workflow/GlobeOutline';
-import Image from '@spectrum-icons/workflow/Image';
-import Edit from '@spectrum-icons/workflow/Edit';
-import Delete from '@spectrum-icons/workflow/Delete';
-import {Text} from '@react-spectrum/text';
-import {Collection, TreeView, TreeViewItem, TreeViewItemContent} from '@react-spectrum/tree';
-import {JSX} from "react";
-import {Key} from "@react-types/shared";
-import {ActionGroup, Item} from '@react-spectrum/actiongroup';
-import {ActionMenu} from '@react-spectrum/menu';
+import Folder from "@spectrum-icons/workflow/Folder";
+import { Flex } from "@react-spectrum/layout";
+import FileTxt from "@spectrum-icons/workflow/FileTxt";
+import GlobeOutline from "@spectrum-icons/workflow/GlobeOutline";
+import Image from "@spectrum-icons/workflow/Image";
+import Edit from "@spectrum-icons/workflow/Edit";
+import Delete from "@spectrum-icons/workflow/Delete";
+import { Text } from "@react-spectrum/text";
+import {
+  Collection,
+  TreeView,
+  TreeViewItem,
+  TreeViewItemContent,
+} from "@react-spectrum/tree";
+import { JSX } from "react";
+import { Key } from "@react-types/shared";
+import { ActionGroup, Item } from "@react-spectrum/actiongroup";
+import { ActionMenu } from "@react-spectrum/menu";
 ```
 
 ---
+
 category: Collections
 keywords: [tree, grid]
+
 ---
 
 # TreeView
@@ -44,15 +58,21 @@ keywords: [tree, grid]
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['TreeView', 'TreeViewItem']}
+  componentNames={["TreeView", "TreeViewItem"]}
   sourceData={[
-    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/tree-view/'}
-  ]} />
+    { type: "Spectrum", url: "https://spectrum.adobe.com/page/tree-view/" },
+  ]}
+/>
 
 ## Example
 
 ```tsx example
-<TreeView aria-label="Example tree with static contents" defaultExpandedKeys={['documents', 'photos']} height="size-4600" maxWidth="size-6000">
+<TreeView
+  aria-label="Example tree with static contents"
+  defaultExpandedKeys={["documents", "photos"]}
+  height="size-4600"
+  maxWidth="size-6000"
+>
   <TreeViewItem id="documents" textValue="Documents">
     <TreeViewItemContent>
       <Text>Documents</Text>
@@ -111,6 +131,7 @@ keywords: [tree, grid]
 ```
 
 ## Content
+
 TreeView is a [collection component](../react-aria/collections.html) that provides users with a way to navigate nested hierarchical information.
 
 Basic usage of TreeView, seen in the example above, shows the use of a static collection where the contents of the TreeView are hard coded. Dynamic collections, as shown below, can be used when the options come from an external data source, such as an API, or update over time. Providing the data in this way allows TreeView to automatically cache the rendering of each item, which dramatically improves performance.
@@ -119,27 +140,43 @@ Items can be statically defined as children, or generated dynamically using a fu
 
 Each item has a unique key defined by the data. The `key` of each item element is implicitly defined by the id property of the item object. See [collections](../react-aria/collections.html#unique-ids) to learn more about keys in dynamic collections.
 
-<strong>Note: Asynchronous tree loading (i.e, loading by level or infinite scrolling) is not yet supported in TreeView.</strong>
+<strong>
+  Note: Asynchronous tree loading (i.e, loading by level or infinite scrolling)
+  is not yet supported in TreeView.
+</strong>
 
 ```tsx example export=true
 type MyItem = {
-  id: string,
-  name: string,
-  icon: JSX.Element,
-  childItems?: MyItem[]
+  id: string;
+  name: string;
+  icon: JSX.Element;
+  childItems?: MyItem[];
 };
 
 let items: MyItem[] = [
-  {id: 'projects', name: 'Projects', icon: <Folder />, childItems: [
-    {id: 'project-1', name: 'Project 1', icon: <FileTxt />},
-    {id: 'project-2', name: 'Project 2', icon: <Folder />, childItems: [
-      {id: 'document-a', name: 'Document A', icon: <FileTxt />},
-      {id: 'document-b', name: 'Document B', icon: <FileTxt />},
-    ]}
-  ]},
-  {id: 'reports', name: 'Reports', icon: <Folder />, childItems: [
-    {id: 'report-1', name: 'Reports 1', icon: <FileTxt />}
-  ]}
+  {
+    id: "projects",
+    name: "Projects",
+    icon: <Folder />,
+    childItems: [
+      { id: "project-1", name: "Project 1", icon: <FileTxt /> },
+      {
+        id: "project-2",
+        name: "Project 2",
+        icon: <Folder />,
+        childItems: [
+          { id: "document-a", name: "Document A", icon: <FileTxt /> },
+          { id: "document-b", name: "Document B", icon: <FileTxt /> },
+        ],
+      },
+    ],
+  },
+  {
+    id: "reports",
+    name: "Reports",
+    icon: <Folder />,
+    childItems: [{ id: "report-1", name: "Reports 1", icon: <FileTxt /> }],
+  },
 ];
 
 const DynamicTreeItem = (props) => {
@@ -157,7 +194,8 @@ const DynamicTreeItem = (props) => {
               icon={item.icon}
               childItems={item.childItems}
               textValue={item.name}
-              name={item.name}>
+              name={item.name}
+            >
               {item.name}
             </DynamicTreeItem>
           )}
@@ -169,14 +207,21 @@ const DynamicTreeItem = (props) => {
 
 function ExampleTree(props) {
   return (
-    <TreeView aria-label="Example tree with dynamic content" height="size-3000" maxWidth="size-6000" items={items} {...props}>
+    <TreeView
+      aria-label="Example tree with dynamic content"
+      height="size-3000"
+      maxWidth="size-6000"
+      items={items}
+      {...props}
+    >
       {(item: MyItem) => (
         <DynamicTreeItem
           id={item.id}
           icon={item.icon}
           childItems={item.childItems}
           textValue={item.name}
-          name={item.name} />
+          name={item.name}
+        />
       )}
     </TreeView>
   );
@@ -184,11 +229,14 @@ function ExampleTree(props) {
 ```
 
 ### Internationalization
+
 To internationalize a TreeView, all text content within the TreeView should be localized. This includes the `aria-label` provided to the TreeView if any.
 For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of TreeView is automatically flipped.
 
 ## Labeling
+
 ### Accessibility
+
 An `aria-label` must be provided to the TreeView for accessibility. If the TreeView is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
 
 ## Expansion
@@ -201,7 +249,7 @@ The example below uses `defaultExpandedKeys` to select the items with keys "docu
 <ExampleTree
   aria-label="Example tree with default expanded items"
   /*- begin highlight -*/
-  defaultExpandedKeys={['projects', 'reports']}
+  defaultExpandedKeys={["projects", "reports"]}
   /*- end highlight -*/
 />
 ```
@@ -215,7 +263,9 @@ Here is how you would control expansion for the above example.
 
 ```tsx example
 function ControlledExpansion() {
-  let [expandedKeys, setExpandedKeys] = React.useState<Set<Key>>(new Set(['projects', 'reports']));
+  let [expandedKeys, setExpandedKeys] = React.useState<Set<Key>>(
+    new Set(["projects", "reports"])
+  );
 
   return (
     <ExampleTree
@@ -239,10 +289,10 @@ The example below enables multiple selection mode, and uses `defaultSelectedKeys
 ```tsx example
 <ExampleTree
   aria-label="Example tree with selection"
-  defaultExpandedKeys={['projects', 'project-2']}
+  defaultExpandedKeys={["projects", "project-2"]}
   /*- begin highlight -*/
   selectionMode="multiple"
-  defaultSelectedKeys={['document-a', 'document-b']}
+  defaultSelectedKeys={["document-a", "document-b"]}
   /*- end highlight -*/
 />
 ```
@@ -255,15 +305,17 @@ be passed into the callback when the item is pressed, allowing you to update sta
 Here is how you would control selection for the above example.
 
 ```tsx example
-import type {Selection} from '@adobe/react-spectrum';
+import type { Selection } from "@adobe/react-spectrum";
 
 function ControlledSelection() {
-  let [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set(['document-a', 'document-b']));
+  let [selectedKeys, setSelectedKeys] = React.useState<Selection>(
+    new Set(["document-a", "document-b"])
+  );
 
   return (
     <ExampleTree
       aria-label="Example tree with controlled selection"
-      defaultExpandedKeys={['projects', 'project-2']}
+      defaultExpandedKeys={["projects", "project-2"]}
       /*- begin highlight -*/
       selectionMode="multiple"
       selectedKeys={selectedKeys}
@@ -281,7 +333,7 @@ To limit users to selecting only a single item at a time, `selectionMode` can be
 ```tsx example
 <ExampleTree
   aria-label="Example tree with single selection"
-  defaultExpandedKeys={['projects', 'project-2']}
+  defaultExpandedKeys={["projects", "project-2"]}
   /*- begin highlight -*/
   selectionMode="single"
   /*- end highlight -*/
@@ -296,9 +348,9 @@ In this mode, if a single item is selected and the user presses it, it will not 
 ```tsx example
 <ExampleTree
   aria-label="Example tree with disallowed empty selection"
-  defaultExpandedKeys={['projects', 'project-2']}
+  defaultExpandedKeys={["projects", "project-2"]}
   selectionMode="single"
-  defaultSelectedKeys={['document-a']}
+  defaultSelectedKeys={["document-a"]}
   /*- begin highlight -*/
   disallowEmptySelection
   /*- end highlight -*/
@@ -312,10 +364,10 @@ You can disable specific items by providing an array of keys to TreeView via the
 ```tsx example
 <ExampleTree
   aria-label="Example tree with disabled items"
-  defaultExpandedKeys={['projects', 'project-2']}
+  defaultExpandedKeys={["projects", "project-2"]}
   selectionMode="single"
   /*- begin highlight -*/
-  disabledKeys={['document-a', 'document-b']}
+  disabledKeys={["document-a", "document-b"]}
   /*- end highlight -*/
 />
 ```
@@ -337,9 +389,9 @@ These selection styles implement the behaviors defined in [Aria Practices](https
 ```tsx example
 <ExampleTree
   aria-label="Example tree with highlight selection"
-  defaultExpandedKeys={['projects', 'project-2']}
+  defaultExpandedKeys={["projects", "project-2"]}
   selectionMode="multiple"
-  defaultSelectedKeys={['document-a', 'document-b']}
+  defaultSelectedKeys={["document-a", "document-b"]}
   /*- begin highlight -*/
   selectionStyle="highlight"
   /*- end highlight -*/
@@ -360,19 +412,19 @@ This behavior is slightly different in the highlight selection style, where sing
 <Flex direction="column" gap="size-300">
   <ExampleTree
     aria-label="Example tree with item actions and checkbox selection"
-    defaultExpandedKeys={['projects', 'project-2']}
+    defaultExpandedKeys={["projects", "project-2"]}
     /*- begin highlight -*/
     selectionMode="multiple"
-    onAction={key => alert(`Opening item ${key}...`)}
+    onAction={(key) => alert(`Opening item ${key}...`)}
     /*- end highlight -*/
   />
   <ExampleTree
     aria-label="Example tree with item actions and highlight selection"
-    defaultExpandedKeys={['projects', 'project-2']}
+    defaultExpandedKeys={["projects", "project-2"]}
     /*- begin highlight -*/
     selectionMode="multiple"
     selectionStyle="highlight"
-    onAction={key => alert(`Opening item ${key}...`)}
+    onAction={(key) => alert(`Opening item ${key}...`)}
     /*- end highlight -*/
   />
 </Flex>
@@ -383,25 +435,45 @@ This behavior is slightly different in the highlight selection style, where sing
 Tree items may also be links to another page or website. This can be achieved by passing the `href` prop to the `<TreeViewItem>` component. Links behave the same way as described above for item actions depending on the `selectionMode` and `selectionStyle`.
 
 ```tsx example
-<TreeView aria-label="Example tree with links" defaultExpandedKeys={new Set(['bookmarks'])} height="size-2000" maxWidth="size-6000">
+<TreeView
+  aria-label="Example tree with links"
+  defaultExpandedKeys={new Set(["bookmarks"])}
+  height="size-2000"
+  maxWidth="size-6000"
+>
   <TreeViewItem id="bookmarks" textValue="Bookmarks">
     <TreeViewItemContent>
       <Text>Bookmarks</Text>
       <Folder />
     </TreeViewItemContent>
-    <TreeViewItem href="https://adobe.com/" target="_blank" id="adobe" textValue="Adobe">
+    <TreeViewItem
+      href="https://adobe.com/"
+      target="_blank"
+      id="adobe"
+      textValue="Adobe"
+    >
       <TreeViewItemContent>
         <Text>Adobe</Text>
         <GlobeOutline />
       </TreeViewItemContent>
     </TreeViewItem>
-    <TreeViewItem href="https://google.com/" target="_blank" id="google" textValue="Google">
+    <TreeViewItem
+      href="https://google.com/"
+      target="_blank"
+      id="google"
+      textValue="Google"
+    >
       <TreeViewItemContent>
         <Text>Google</Text>
         <GlobeOutline />
       </TreeViewItemContent>
     </TreeViewItem>
-    <TreeViewItem href="https://nytimes.com/" target="_blank" id="nytimes" textValue="New York Times">
+    <TreeViewItem
+      href="https://nytimes.com/"
+      target="_blank"
+      id="nytimes"
+      textValue="New York Times"
+    >
       <TreeViewItemContent>
         <Text>New York Times</Text>
         <GlobeOutline />
@@ -418,14 +490,21 @@ The `<TreeViewItem>` component works with frameworks and client side routers lik
 ### With action groups
 
 ```tsx example
-<TreeView aria-label="Example tree with action groups" height="size-3000" maxWidth="size-6000" items={items}>
+<TreeView
+  aria-label="Example tree with action groups"
+  height="size-3000"
+  maxWidth="size-6000"
+  items={items}
+>
   {function renderItem(item: MyItem) {
     return (
       <TreeViewItem textValue={item.name}>
         <TreeViewItemContent>
           <Text>{item.name}</Text>
           {item.icon}
-          <ActionGroup onAction={(key) => alert(`Item: ${item.id}, Action: ${key}`)}>
+          <ActionGroup
+            onAction={(key) => alert(`Item: ${item.id}, Action: ${key}`)}
+          >
             <Item key="edit" textValue="Edit">
               <Edit />
               <Text>Edit</Text>
@@ -436,11 +515,9 @@ The `<TreeViewItem>` component works with frameworks and client side routers lik
             </Item>
           </ActionGroup>
         </TreeViewItemContent>
-        <Collection items={item.childItems}>
-          {renderItem}
-        </Collection>
+        <Collection items={item.childItems}>{renderItem}</Collection>
       </TreeViewItem>
-    )
+    );
   }}
 </TreeView>
 ```
@@ -448,16 +525,23 @@ The `<TreeViewItem>` component works with frameworks and client side routers lik
 ### With action menus
 
 ```tsx example
-import {Collection} from '@adobe/react-spectrum';
+import { Collection } from "@adobe/react-spectrum";
 
-<TreeView aria-label="Example tree with action menus" height="size-3000" maxWidth="size-6000" items={items}>
+<TreeView
+  aria-label="Example tree with action menus"
+  height="size-3000"
+  maxWidth="size-6000"
+  items={items}
+>
   {function renderItem(item: MyItem) {
     return (
       <TreeViewItem textValue={item.name}>
         <TreeViewItemContent>
           <Text>{item.name}</Text>
           {item.icon}
-          <ActionMenu onAction={(key) => alert(`Item: ${item.id}, Action: ${key}`)}>
+          <ActionMenu
+            onAction={(key) => alert(`Item: ${item.id}, Action: ${key}`)}
+          >
             <Item key="edit" textValue="Edit">
               <Edit />
               <Text>Edit</Text>
@@ -468,38 +552,50 @@ import {Collection} from '@adobe/react-spectrum';
             </Item>
           </ActionMenu>
         </TreeViewItemContent>
-        <Collection items={item.childItems}>
-          {renderItem}
-        </Collection>
+        <Collection items={item.childItems}>{renderItem}</Collection>
       </TreeViewItem>
-    )
+    );
   }}
-</TreeView>
+</TreeView>;
 ```
 
 ## Props
 
 ### TreeView props
 
-<PropTable component={docs.exports.TreeView} links={docs.links} style={{marginBottom: '40px'}} />
+<PropTable
+  component={docs.exports.TreeView}
+  links={docs.links}
+  style={{ marginBottom: "40px" }}
+/>
 
 ### TreeViewItemContent props
 
-<PropTable component={docs.exports.TreeViewItemContent} links={docs.links} style={{marginBottom: '40px'}} />
+<PropTable
+  component={docs.exports.TreeViewItemContent}
+  links={docs.links}
+  style={{ marginBottom: "40px" }}
+/>
 
 ### TreeViewItem props
 
-<PropTable component={docs.exports.TreeViewItem} links={docs.links} style={{marginBottom: '40px'}} />
+<PropTable
+  component={docs.exports.TreeViewItem}
+  links={docs.links}
+  style={{ marginBottom: "40px" }}
+/>
 
 ## Visual options
+
 ### Empty state
+
 Use the `renderEmptyState` prop to customize what the TreeView will display if there are no items provided.
 
 ```tsx example
-import {Content} from '@react-spectrum/view';
-import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
-import NotFound from '@spectrum-icons/illustrations/NotFound';
-import {Heading} from '@react-spectrum/text';
+import { Content } from "@react-spectrum/view";
+import { IllustratedMessage } from "@react-spectrum/illustratedmessage";
+import NotFound from "@spectrum-icons/illustrations/NotFound";
+import { Heading } from "@react-spectrum/text";
 
 function renderEmptyState() {
   return (
@@ -511,9 +607,14 @@ function renderEmptyState() {
   );
 }
 
-<TreeView aria-label="Example tree for empty state" height="size-2400" maxWidth="size-6000" renderEmptyState={renderEmptyState}>
+<TreeView
+  aria-label="Example tree for empty state"
+  height="size-2400"
+  maxWidth="size-6000"
+  renderEmptyState={renderEmptyState}
+>
   {[]}
-</TreeView>
+</TreeView>;
 ```
 
 ## Testing
@@ -538,35 +639,38 @@ in your tests. Below is the full definition of the tree tester and a sample of h
 
 ```ts
 // Tree.test.ts
-import {render, within} from '@testing-library/react';
-import {theme} from '@react-spectrum/theme-default';
-import {User} from '@react-spectrum/test-utils';
+import { render, within } from "@testing-library/react";
+import { theme } from "@react-spectrum/theme-default";
+import { User } from "@react-spectrum/test-utils";
 
-let testUtilUser = new User({interactionType: 'mouse'});
+let testUtilUser = new User({ interactionType: "mouse" });
 // ...
 
-it('TreeView can select a row via keyboard', async function () {
+it("TreeView can select a row via keyboard", async function () {
   // Render your test component/app and initialize the Tree tester
-  let {getByTestId} = render(
+  let { getByTestId } = render(
     <Provider theme={defaultTheme}>
       <TreeView data-testid="test-tree" selectionMode="multiple">
         ...
       </TreeView>
     </Provider>
   );
-  let treeTester = testUtilUser.createTester('Tree', {root: getByTestId('test-tree'), interactionType: 'keyboard'});
+  let treeTester = testUtilUser.createTester("Tree", {
+    root: getByTestId("test-tree"),
+    interactionType: "keyboard",
+  });
 
-  await treeTester.toggleRowSelection({row: 0});
+  await treeTester.toggleRowSelection({ row: 0 });
   expect(treeTester.selectedRows).toHaveLength(1);
-  expect(within(treeTester.rows[0]).getByRole('checkbox')).toBeChecked();
+  expect(within(treeTester.rows[0]).getByRole("checkbox")).toBeChecked();
 
-  await treeTester.toggleRowSelection({row: 1});
+  await treeTester.toggleRowSelection({ row: 1 });
   expect(treeTester.selectedRows).toHaveLength(2);
-  expect(within(treeTester.rows[1]).getByRole('checkbox')).toBeChecked();
+  expect(within(treeTester.rows[1]).getByRole("checkbox")).toBeChecked();
 
-  await treeTester.toggleRowSelection({row: 0});
+  await treeTester.toggleRowSelection({ row: 0 });
   expect(treeTester.selectedRows).toHaveLength(1);
-  expect(within(treeTester.rows[0]).getByRole('checkbox')).not.toBeChecked();
+  expect(within(treeTester.rows[0]).getByRole("checkbox")).not.toBeChecked();
 });
 ```
 

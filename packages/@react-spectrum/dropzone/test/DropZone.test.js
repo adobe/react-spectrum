@@ -13,8 +13,8 @@
 import {act, fireEvent, render} from '@react-spectrum/test-utils-internal';
 import {Button} from '@react-spectrum/button';
 import {Content} from '@react-spectrum/view';
-import {DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
-import {Draggable} from '@react-aria/dnd/test/examples';
+import {DataTransfer, DataTransferItem, DragEvent} from '@react-aria-nutrient/dnd/test/mocks';
+import {Draggable} from '@react-aria-nutrient/dnd/test/examples';
 import {DropZone} from '../';
 import {FileTrigger} from 'react-aria-components';
 import {Heading} from '@react-spectrum/text';

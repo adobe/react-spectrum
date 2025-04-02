@@ -1,18 +1,20 @@
-{/* Copyright 2020 Adobe. All rights reserved.
+{/_ Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. */}
+governing permissions and limitations under the License. _/}
 
-import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+import { BlogPostLayout, Hero } from "@react-spectrum/docs";
 export default BlogPostLayout;
 
 ---
+
 description: This release includes the new `Tooltip`, `TooltipTrigger`, and `DialogContainer` components, a new light theme, and mono-packages for react-aria and react-stately. Thanks to all of the contributors!
 date: 2020-10-01
+
 ---
 
 # October 1, 2020 Release
@@ -32,11 +34,11 @@ Finally, make sure you check out the [last blog post](https://react-spectrum.ado
 ## New components
 
 - **DialogContainer** - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1082) - [documentation](https://react-spectrum.adobe.com/react-spectrum/DialogContainer.html)
-    - `@react-spectrum/dialog`
+  - `@react-spectrum/dialog`
 - **Tooltip** - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/843) - [documentation](https://react-spectrum.adobe.com/react-spectrum/Tooltip.html)
-    - `@react-spectrum/tooltip`
-    - `@react-aria/tooltip`
-    - `@react-stately/tooltip`
+  - `@react-spectrum/tooltip`
+  - `@react-aria-nutrient/tooltip`
+  - `@react-stately/tooltip`
 
 ## New features
 
@@ -47,25 +49,26 @@ Finally, make sure you check out the [last blog post](https://react-spectrum.ado
 - Add ability to prevent focus in `usePress` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/1073)
 - Added new `NoSearchResults` illustration for `IllustratedMessage` - [@evargast](https://github.com/evargast) - [PR](https://github.com/adobe/react-spectrum/pull/1086)
 - Add `@react-spectrum/theme-light` package - [@evargast](https://github.com/evargast) - [PR](https://github.com/adobe/react-spectrum/pull/1046/)
+
 ## Fixed
+
 - Fix .editorconfig for indent_style - [@alexey-yunoshev](https://github.com/alexey-yunoshev) - [PR](https://github.com/adobe/react-spectrum/pull/1036)
 - `Flex` passes Id to top level element - [@LucianRadu](https://github.com/LucianRadu) - [PR](https://github.com/adobe/react-spectrum/pull/1041)
 - Skip in-scope elements when restoring Focus in `useSelect` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1049)
 - Allow falsy keys in `Picker` - [@kamal](https://github.com/kamal) - [PR](https://github.com/adobe/react-spectrum/pull/1015)
 - Fix transition events breaking SSR - [@HipsterBrown](https://github.com/HipsterBrown) - [PR](https://github.com/adobe/react-spectrum/pull/1052)
 - Fix inputRef type for `useSearchField` & `useTextField` - [@RafalFilipek](https://github.com/RafalFilipek) - [PR](https://github.com/adobe/react-spectrum/pull/1027)
-- Reset box-sizing in `ActionButton`  - [@deloreyj](https://github.com/deloreyj) - [PR](https://github.com/adobe/react-spectrum/pull/1058)
+- Reset box-sizing in `ActionButton` - [@deloreyj](https://github.com/deloreyj) - [PR](https://github.com/adobe/react-spectrum/pull/1058)
 - Fix scrolling in `Menu` trays [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/958)
 - Adjust positioning code for `useOverlayPosition` when placement=”top” - [@chungwu](https://github.com/chungwu) - [PR](https://github.com/adobe/react-spectrum/pull/1005)
 - Hide unsupported functionality in full screen `Dialog` - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/1062)
 - Fix types of workflow icons - [@clentfort](https://github.com/clentfort) - [PR](https://github.com/adobe/react-spectrum/pull/1028)
 - Make sure user-select is removed on HTML elements - [@zidian257](https://github.com/zidian257) - [PR](https://github.com/adobe/react-spectrum/pull/926)
-- Fix prop types for `useListBox` - [@mischnic](https://github.com/mischnic) -  [PR](https://github.com/adobe/react-spectrum/pull/1107)
+- Fix prop types for `useListBox` - [@mischnic](https://github.com/mischnic) - [PR](https://github.com/adobe/react-spectrum/pull/1107)
 
 ## Docs
 
 - Update case in IllustratedMessage - [@evargast](https://github.com/evargast) - [PR](https://github.com/adobe/react-spectrum/pull/1086)
-
 
 ## Released packages
 
@@ -73,38 +76,38 @@ Finally, make sure you check out the [last blog post](https://react-spectrum.ado
  - @adobe/react-spectrum@3.4.0
  - react-aria@3.0.0
  - react-stately@3.0.0
- - @react-aria/actiongroup@3.1.1
- - @react-aria/aria-modal-polyfill@3.2.1
- - @react-aria/breadcrumbs@3.1.1
- - @react-aria/button@3.2.2
- - @react-aria/checkbox@3.2.1
- - @react-aria/dialog@3.1.2
- - @react-aria/focus@3.2.2
- - @react-aria/i18n@3.1.2
- - @react-aria/interactions@3.2.1
- - @react-aria/label@3.1.1
- - @react-aria/link@3.1.2
- - @react-aria/listbox@3.2.1
- - @react-aria/menu@3.1.2
- - @react-aria/meter@3.1.1
- - @react-aria/overlays@3.4.0
- - @react-aria/progress@3.1.1
- - @react-aria/radio@3.1.2
- - @react-aria/searchfield@3.1.1
- - @react-aria/select@3.2.1
- - @react-aria/selection@3.2.1
- - @react-aria/separator@3.1.1
- - @react-aria/slider@3.0.0-alpha.2
- - @react-aria/ssr@3.0.1
- - @react-aria/switch@3.1.1
- - @react-aria/table@3.0.0-alpha.7
- - @react-aria/tabs@3.0.0-alpha.1
- - @react-aria/textfield@3.2.1
- - @react-aria/toggle@3.1.1
- - @react-aria/tooltip@3.0.0
- - @react-aria/utils@3.3.0
- - @react-aria/virtualizer@3.2.0
- - @react-aria/visually-hidden@3.2.1
+ - @react-aria-nutrient/actiongroup@3.1.1
+ - @react-aria-nutrient/aria-modal-polyfill@3.2.1
+ - @react-aria-nutrient/breadcrumbs@3.1.1
+ - @react-aria-nutrient/button@3.2.2
+ - @react-aria-nutrient/checkbox@3.2.1
+ - @react-aria-nutrient/dialog@3.1.2
+ - @react-aria-nutrient/focus@3.2.2
+ - @react-aria-nutrient/i18n@3.1.2
+ - @react-aria-nutrient/interactions@3.2.1
+ - @react-aria-nutrient/label@3.1.1
+ - @react-aria-nutrient/link@3.1.2
+ - @react-aria-nutrient/listbox@3.2.1
+ - @react-aria-nutrient/menu@3.1.2
+ - @react-aria-nutrient/meter@3.1.1
+ - @react-aria-nutrient/overlays@3.4.0
+ - @react-aria-nutrient/progress@3.1.1
+ - @react-aria-nutrient/radio@3.1.2
+ - @react-aria-nutrient/searchfield@3.1.1
+ - @react-aria-nutrient/select@3.2.1
+ - @react-aria-nutrient/selection@3.2.1
+ - @react-aria-nutrient/separator@3.1.1
+ - @react-aria-nutrient/slider@3.0.0-alpha.2
+ - @react-aria-nutrient/ssr@3.0.1
+ - @react-aria-nutrient/switch@3.1.1
+ - @react-aria-nutrient/table@3.0.0-alpha.7
+ - @react-aria-nutrient/tabs@3.0.0-alpha.1
+ - @react-aria-nutrient/textfield@3.2.1
+ - @react-aria-nutrient/toggle@3.1.1
+ - @react-aria-nutrient/tooltip@3.0.0
+ - @react-aria-nutrient/utils@3.3.0
+ - @react-aria-nutrient/virtualizer@3.2.0
+ - @react-aria-nutrient/visually-hidden@3.2.1
  - @react-spectrum/actiongroup@3.1.1
  - @react-spectrum/breadcrumbs@3.1.3
  - @react-spectrum/button@3.2.1
@@ -194,4 +197,4 @@ Finally, make sure you check out the [last blog post](https://react-spectrum.ado
  - @spectrum-icons/illustrations@3.2.0
  - @spectrum-icons/ui@3.2.0
  - @spectrum-icons/workflow@3.2.0
- ```
+```

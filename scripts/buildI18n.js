@@ -59,7 +59,7 @@ export default PackageLocalizedStrings;
   // Generate index files.
   for (let ext of ['.js', '.mjs']) {
     let generateImport = (exports, from) => ext === '.mjs' ? `import ${exports} from '${from}'` : `let ${exports} = require('${from}')`;
-    let index = generateImport('{PackageLocalizationProvider, getPackageLocalizationScript}', '@react-aria/i18n/server') + ';\n';
+    let index = generateImport('{PackageLocalizationProvider, getPackageLocalizationScript}', '@react-aria-nutrient/i18n/server') + ';\n';
     index += generateImport('{LocalizedStringDictionary}', '@internationalized/string') + ';\n';
     index += generateImport('{createElement}', 'react') + ';\n';
     for (let lang in languages) {
@@ -141,6 +141,6 @@ export declare function createLocalizedStringDictionary(packages: string[]): Loc
 `);
 }
 
-build('{@react-aria/*,@react-stately/*,@react-spectrum/*,react-aria-components}', '@adobe/react-spectrum');
-build('{@react-aria/*,@react-stately/*,react-aria-components}', 'react-aria-components');
+build('{@react-aria-nutrient/*,@react-stately/*,@react-spectrum/*,react-aria-components}', '@adobe/react-spectrum');
+build('{@react-aria-nutrient/*,@react-stately/*,react-aria-components}', 'react-aria-components');
 build('{@react-aria,@react-stately}/*', 'react-aria');

@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-jest.mock('@react-aria/live-announcer');
+jest.mock('@react-aria-nutrient/live-announcer');
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {announce} from '@react-aria/live-announcer';
+import {announce} from '@react-aria-nutrient/live-announcer';
 import {Button} from '@react-spectrum/button';
-import {chain} from '@react-aria/utils';
+import {chain} from '@react-aria-nutrient/utils';
 import {Form} from '@react-spectrum/form';
-import messages from '../../../@react-aria/numberfield/intl/*.json';
+import messages from '../../../@react-aria-nutrient/numberfield/intl/*.json';
 import {NumberField} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';

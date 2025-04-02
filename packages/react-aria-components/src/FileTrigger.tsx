@@ -10,43 +10,54 @@
  * governing permissions and limitations under the License.
  */
 
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
-import {Input} from './Input';
-import {PressResponder} from '@react-aria/interactions';
-import React, {ForwardedRef, forwardRef, ReactNode} from 'react';
+import { filterDOMProps, useObjectRef } from "@react-aria-nutrient/utils";
+import { Input } from "./Input";
+import { PressResponder } from "@react-aria-nutrient/interactions";
+import React, { ForwardedRef, forwardRef, ReactNode } from "react";
 
 export interface FileTriggerProps {
   /**
    * Specifies what mime type of files are allowed.
    */
-  acceptedFileTypes?: Array<string>,
+  acceptedFileTypes?: Array<string>;
   /**
    * Whether multiple files can be selected.
    */
-  allowsMultiple?: boolean,
+  allowsMultiple?: boolean;
   /**
    * Specifies the use of a media capture mechanism to capture the media on the spot.
    */
-  defaultCamera?: 'user' | 'environment',
+  defaultCamera?: "user" | "environment";
   /**
    * Handler when a user selects a file.
    */
-  onSelect?: (files: FileList | null) => void,
+  onSelect?: (files: FileList | null) => void;
   /**
    * The children of the component.
    */
-  children?: ReactNode,
+  children?: ReactNode;
   /**
    * Enables the selection of directories instead of individual files.
    */
-  acceptDirectory?: boolean
+  acceptDirectory?: boolean;
 }
 
 /**
  * A FileTrigger allows a user to access the file system with any pressable React Aria or React Spectrum component, or custom components built with usePress.
  */
-export const FileTrigger = forwardRef(function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLInputElement>) {
-  let {onSelect, acceptedFileTypes, allowsMultiple, defaultCamera, children, acceptDirectory, ...rest} = props;
+export const FileTrigger = forwardRef(function FileTrigger(
+  props: FileTriggerProps,
+  ref: ForwardedRef<HTMLInputElement>
+) {
+  let {
+    onSelect,
+    acceptedFileTypes,
+    allowsMultiple,
+    defaultCamera,
+    children,
+    acceptDirectory,
+    ...rest
+  } = props;
   let inputRef = useObjectRef(ref);
   let domProps = filterDOMProps(rest);
 
@@ -55,23 +66,25 @@ export const FileTrigger = forwardRef(function FileTrigger(props: FileTriggerPro
       <PressResponder
         onPress={() => {
           if (inputRef.current?.value) {
-            inputRef.current.value = '';
+            inputRef.current.value = "";
           }
           inputRef.current?.click();
-        }}>
+        }}
+      >
         {children}
       </PressResponder>
       <Input
         {...domProps}
         type="file"
         ref={inputRef}
-        style={{display: 'none'}}
+        style={{ display: "none" }}
         accept={acceptedFileTypes?.toString()}
         onChange={(e) => onSelect?.(e.target.files)}
         capture={defaultCamera}
         multiple={allowsMultiple}
         // @ts-expect-error
-        webkitdirectory={acceptDirectory ? '' : undefined} />
+        webkitdirectory={acceptDirectory ? "" : undefined}
+      />
     </>
   );
 });

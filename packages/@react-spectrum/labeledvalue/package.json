@@ -37,8 +37,8 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.7.0",
-    "@react-aria/i18n": "^3.12.7",
-    "@react-aria/utils": "^3.28.1",
+    "@react-aria-nutrient/i18n": "^3.12.7",
+    "@react-aria-nutrient/utils": "^3.28.1",
     "@react-spectrum/label": "^3.16.13",
     "@react-spectrum/utils": "^3.12.3",
     "@react-types/shared": "^3.28.0",

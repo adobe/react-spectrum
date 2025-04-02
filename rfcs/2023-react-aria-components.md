@@ -40,7 +40,15 @@ The React Aria Components API is designed around composition. Each component gen
 In addition, many components are reused between patterns. For example, `<ListBox>` is used in `<ComboBox>`, `<Select>`, and other components. This is in contrast to some component libraries that have `<ComboBoxListBox>` and `<SelectListBox>` components which must be implemented separately and potentially duplicate a lot of styling code.
 
 ```jsx
-import {Button, ComboBox, Input, Item, Label, ListBox, Popover} from 'react-aria-components';
+import {
+  Button,
+  ComboBox,
+  Input,
+  Item,
+  Label,
+  ListBox,
+  Popover,
+} from "react-aria-components";
 
 <ComboBox>
   <Label>Favorite Animal</Label>
@@ -55,7 +63,7 @@ import {Button, ComboBox, Input, Item, Label, ListBox, Popover} from 'react-aria
       <Item>Kangaroo</Item>
     </ListBox>
   </Popover>
-</ComboBox>
+</ComboBox>;
 ```
 
 Each component also exposes a context object, e.g. `ListBoxContext`, which allows a parent component to send it props. This is what enables the above composition: internally, `ComboBox` calls the `useComboBox` hook and passes the resulting `listBoxProps` to the nested `ListBox` component via this context.
@@ -88,9 +96,7 @@ This makes it easy to style React Aria Components without needing to come up wit
 That said, if multiple separate implementations of the same component are on a page at once, styles could conflict. Therefore, a custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own. This would be useful when using styling methods like CSS modules, or utility CSS libraries like [Tailwind](https://tailwindcss.com/).
 
 ```jsx
-<Select className="my-select">
-  {/* ... */}
-</Select>
+<Select className="my-select">{/* ... */}</Select>
 ```
 
 If you want to apply both React Aria's default class name in addition to a custom one, you can apply them manually, e.g. `className="react-aria-Select my-select"`.
@@ -100,7 +106,7 @@ If you want to apply both React Aria's default class name in addition to a custo
 Some components support multiple UI states (e.g. pressed, hovered, selected, etc.). React Aria components expose states using DOM attributes, which can be targeted by CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. They can be thought of like custom CSS pseudo classes. For example:
 
 ```css
-.react-aria-Item[aria-selected=true] {
+.react-aria-Item[aria-selected="true"] {
   /* ... */
 }
 
@@ -112,7 +118,7 @@ Some components support multiple UI states (e.g. pressed, hovered, selected, etc
 Using attributes for states has the advantage that mutually exclusive values other than booleans are also supported. For example, the placement of a popover relative to its trigger can be defined as a data attribute:
 
 ```css
-.react-aria-Popover[data-placement=left] {
+.react-aria-Popover[data-placement="left"] {
   /* ... */
 }
 ```
@@ -120,7 +126,9 @@ Using attributes for states has the advantage that mutually exclusive values oth
 The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
 
 ```jsx
-<Item className={({isSelected}) => isSelected ? 'bg-blue-400' : 'bg-gray-100'}>
+<Item
+  className={({ isSelected }) => (isSelected ? "bg-blue-400" : "bg-gray-100")}
+>
   Item
 </Item>
 ```
@@ -129,7 +137,7 @@ Render props may also be used as children to alter what elements are rendered ba
 
 ```jsx
 <Item>
-  {({isSelected}) => (
+  {({ isSelected }) => (
     <>
       {isSelected && <CheckmarkIcon />}
       Item
@@ -150,11 +158,7 @@ This implementation enables wrapper components to be used as expected:
 
 ```jsx
 function MyItem(props) {
-  return (
-    <Item
-      {...props}
-      className="my-item" />
-  );
+  return <Item {...props} className="my-item" />;
 }
 ```
 
@@ -170,8 +174,8 @@ These downsides seem to be out-weighed by the benefits of allowing custom wrappe
 As described above, each component exposes a corresponding context which can be used to send props to it when used in a larger pattern. Because these contexts are exported, this also means you can write your own version of a component such as `ListBox` that works within a `ComboBox`, `Select`, etc. This enables using the hook-based API for additional customization options when needed, such as changing the DOM structure, accessing internal state, overriding event handlers, etc. Rather than rewriting the whole `ComboBox` pattern when you need to do that, you can just swap out the `ListBox`.
 
 ```jsx
-import {ListBoxContext, useContextProps} from 'react-aria-components';
-import {useListBox} from 'react-aria';
+import { ListBoxContext, useContextProps } from "react-aria-components";
+import { useListBox } from "react-aria";
 
 function MyListBox(props) {
   // Merge local props and ref with props from context.
@@ -179,23 +183,26 @@ function MyListBox(props) {
   [props, ref] = useContextProps(props, ref, ListBoxContext);
 
   // Get state sent from ComboBox via context, and call useListBox.
-  let {state} = React.useContext(ListBoxContext);
-  let {listBoxProps} = useListBox(props, state, ref);
+  let { state } = React.useContext(ListBoxContext);
+  let { listBoxProps } = useListBox(props, state, ref);
 
   // Render stuff
-  return (
-    <div {...listBoxProps}>
-      {/* ... */}
-    </div>
-  );
+  return <div {...listBoxProps}>{/* ... */}</div>;
 }
 ```
 
 Now you can use your custom `MyListBox` component within a `ComboBox` or `Select` from `react-aria-components`, just like the default `ListBox`:
 
 ```jsx
-import {Button, ComboBox, Input, Item, Label, Popover} from 'react-aria-components';
-import {MyListBox} from './MyListBox';
+import {
+  Button,
+  ComboBox,
+  Input,
+  Item,
+  Label,
+  Popover,
+} from "react-aria-components";
+import { MyListBox } from "./MyListBox";
 
 <ComboBox>
   <Label>Favorite Animal</Label>
@@ -209,23 +216,26 @@ import {MyListBox} from './MyListBox';
       <Item>Dog</Item>
     </MyListBox>
   </Popover>
-</ComboBox>
+</ComboBox>;
 ```
 
 This also works the other way. If you need to customize `ComboBox` itself, but want to reuse the components it contains, you can do so by providing the necessary contexts.
 
 ```jsx
-import {useComboBox} from 'react-aria';
-import {ButtonContext, InputContext, LabelContext, ListBoxContext, Provider} from 'react-aria-components';
+import { useComboBox } from "react-aria";
+import {
+  ButtonContext,
+  InputContext,
+  LabelContext,
+  ListBoxContext,
+  Provider,
+} from "react-aria-components";
 
 function MyComboBox(props) {
   // ...
-  let {
-    buttonProps,
-    inputProps,
-    listBoxProps,
-    labelProps
-  } = useComboBox({/* ... */});
+  let { buttonProps, inputProps, listBoxProps, labelProps } = useComboBox({
+    /* ... */
+  });
 
   return (
     <Provider
@@ -233,7 +243,7 @@ function MyComboBox(props) {
         [LabelContext, labelProps],
         [ButtonContext, buttonProps],
         [InputContext, inputProps],
-        [ListBoxContext, listBoxProps]
+        [ListBoxContext, listBoxProps],
       ]}
     >
       {props.children}
@@ -245,8 +255,15 @@ function MyComboBox(props) {
 This enables you to reuse `ListBox`, `Popover`, and other elements from `react-aria-components` within your custom `MyComboBox` component:
 
 ```jsx
-import {Button, Input, Item, Label, ListBox, Popover} from 'react-aria-components';
-import {MyComboBox} from './MyComboBox';
+import {
+  Button,
+  Input,
+  Item,
+  Label,
+  ListBox,
+  Popover,
+} from "react-aria-components";
+import { MyComboBox } from "./MyComboBox";
 
 <MyComboBox>
   <Label>Favorite Animal</Label>
@@ -260,7 +277,7 @@ import {MyComboBox} from './MyComboBox';
       <Item>Dog</Item>
     </ListBox>
   </Popover>
-</MyComboBox>
+</MyComboBox>;
 ```
 
 This ability to mix and match hooks with components provides the best of both worlds: start out with the component-based API, and if you hit a point where you need to customize beyond what the higher level API allows, drop down to hooks just for that one part without rewriting the rest.
@@ -275,22 +292,22 @@ Ideally, Spectrum CSS itself would use a selector structure that is compatible w
 
 This RFC proposes a significant new API addition which will require an update to the way our documentation is organized. Each component should include a documentation page, in addition to our existing hook docs. To reduce the number of pages shown in the website navigation at once, we could group the pages into collapsible sections:
 
-* Components – documentation for the new component API, with sub-sections for each category as we have today (e.g. buttons, collections, date and time, etc.).
-* Hooks – our existing hook documentation for ARIA patterns, without the hooks moved into the below sections.
-* Patterns – hook documentation for lower level patterns that span multiple ARIA patterns, such as collections, selection, virtualizer, drag and drop, etc.
-* Interactions – documentation for interactions like usePress, useHover, FocusScope, etc.
-* Utilities – documentation for various utilities that don't fit into the other categories, like i18n, SSR, mergeProps, etc.
+- Components – documentation for the new component API, with sub-sections for each category as we have today (e.g. buttons, collections, date and time, etc.).
+- Hooks – our existing hook documentation for ARIA patterns, without the hooks moved into the below sections.
+- Patterns – hook documentation for lower level patterns that span multiple ARIA patterns, such as collections, selection, virtualizer, drag and drop, etc.
+- Interactions – documentation for interactions like usePress, useHover, FocusScope, etc.
+- Utilities – documentation for various utilities that don't fit into the other categories, like i18n, SSR, mergeProps, etc.
 
 Each component page should have several sections, similar to the documentation for React Spectrum:
 
-* A main example showing a minimal real-world scenario. The CSS for this should be collapsed underneath so it can be expanded only if needed.
-* Features – a list of the main features of the component, grouped by category to allow easy skimming.
-* Anatomy – the anatomy diagram and description of the various parts of the component. For components that compose other child components, links to the documentation for those components would be useful, along with any conceptual documentation (e.g. collections, selection).
-* Prop table for all relevant components.
-* Styling – a description of how to style the component in various ways, including documentation of all of the available states and CSS selectors. Links to styled codesandbox examples with various tools like we have in our hook docs might be useful as well.
-* Reusable wrappers – an example of creating a reusable component with the styling implementation and all of the parts included.
-* Usage – the usage section copied from the hook documentation.
-* Advanced customization – if applicable, shows how to mix and match this component with the hooks and links to all of the relevant hook documentation for when more customization is needed.
+- A main example showing a minimal real-world scenario. The CSS for this should be collapsed underneath so it can be expanded only if needed.
+- Features – a list of the main features of the component, grouped by category to allow easy skimming.
+- Anatomy – the anatomy diagram and description of the various parts of the component. For components that compose other child components, links to the documentation for those components would be useful, along with any conceptual documentation (e.g. collections, selection).
+- Prop table for all relevant components.
+- Styling – a description of how to style the component in various ways, including documentation of all of the available states and CSS selectors. Links to styled codesandbox examples with various tools like we have in our hook docs might be useful as well.
+- Reusable wrappers – an example of creating a reusable component with the styling implementation and all of the parts included.
+- Usage – the usage section copied from the hook documentation.
+- Advanced customization – if applicable, shows how to mix and match this component with the hooks and links to all of the relevant hook documentation for when more customization is needed.
 
 This may seem like a lot, but most of this can either be copied from existing React Aria hook documentation, or reused from other pages (e.g. most of the styling guide).
 
@@ -320,11 +337,11 @@ There are many examples of other third party libraries that have successfully im
 
 ## Open Questions
 
-* In what package should we release the component API? Should it be part of the main `react-aria` monopackage, or a separate package like `react-aria-components` or `@react-aria/components`?
-* What should we rename the `key` prop to? So far I've used `id` but is this confusing with DOM ids?
-* How do we enable existing React Spectrum and React Aria components to use the new collection API with support for wrapping items without breaking changes?
-* Which React Spectrum components should we use React Aria Components in, and how should we update existing components?
+- In what package should we release the component API? Should it be part of the main `react-aria` monopackage, or a separate package like `react-aria-components` or `@react-aria-nutrient/components`?
+- What should we rename the `key` prop to? So far I've used `id` but is this confusing with DOM ids?
+- How do we enable existing React Spectrum and React Aria components to use the new collection API with support for wrapping items without breaking changes?
+- Which React Spectrum components should we use React Aria Components in, and how should we update existing components?
 
 ## Related Discussions
 
-* [Consider upgrading to a component-based API](https://github.com/adobe/react-spectrum/discussions/2368)
+- [Consider upgrading to a component-based API](https://github.com/adobe/react-spectrum/discussions/2368)

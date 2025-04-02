@@ -1,20 +1,20 @@
-{/* Copyright 2020 Adobe. All rights reserved.
+{/_ Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. */}
+governing permissions and limitations under the License. _/}
 
-import {Layout, VersionBadge} from '@react-spectrum/docs';
+import { Layout, VersionBadge } from "@react-spectrum/docs";
 export default Layout;
-import testUtilDocs from 'docs:@react-spectrum/test-utils';
-import {ClassAPI, TypeLink} from '@react-spectrum/docs';
+import testUtilDocs from "docs:@react-spectrum/test-utils";
+import { ClassAPI, TypeLink } from "@react-spectrum/docs";
 
 ---
-category: Concepts
----
+
+## category: Concepts
 
 # Testing
 
@@ -65,10 +65,10 @@ to test React Spectrum itself, and it's quite easy to [query](https://testing-li
 elements by role, text, label, etc.
 
 ```tsx
-import {render} from '@testing-library/react';
+import { render } from "@testing-library/react";
 
 let tree = render(<MyComponent />);
-let option = tree.getByRole('button');
+let option = tree.getByRole("button");
 ```
 
 ## Test ids
@@ -88,8 +88,8 @@ This example uses React Testing Library, but the idea could be applied in a simi
 testing libraries.
 
 ```tsx
-import {render} from '@testing-library/react';
-import {TextField} from '@react-spectrum/textfield';
+import { render } from "@testing-library/react";
+import { TextField } from "@react-spectrum/textfield";
 
 function LoginForm() {
   return (
@@ -101,8 +101,8 @@ function LoginForm() {
 }
 
 let tree = render(<LoginForm />);
-let username = tree.getByTestId('username');
-let password = tree.getByTestId('password');
+let username = tree.getByTestId("username");
+let password = tree.getByTestId("password");
 ```
 
 ## Triggering events
@@ -128,18 +128,18 @@ user-event can handle many types of interactions, e.g. clicks, tabbing, typing, 
 use it to render a login form and enter text in each field and click the submit button, just as a real user would.
 
 ```tsx
-import {render} from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 let tree = render(<LoginForm />);
 
 // Click on the username field to focus it, and enter the value.
-userEvent.click(tree.getByLabelText('Username'));
-userEvent.type(document.activeElement, 'devon');
+userEvent.click(tree.getByLabelText("Username"));
+userEvent.type(document.activeElement, "devon");
 
 // Tab to the password field, and enter the value.
 userEvent.tab();
-userEvent.type(document.activeElement, 'Pas$w0rd');
+userEvent.type(document.activeElement, "Pas$w0rd");
 
 // Tab to the submit button and click it.
 userEvent.tab();
@@ -167,15 +167,18 @@ Note the below example allows you to rerender the component with new Provider pr
 to get its updated state (e.g. `button = getByRole('button)`).
 
 ```tsx
-import {RenderOptions as BaseRenderOptions, render} from '@testing-library/react';
-import {Provider, defaultTheme} from '@adobe/react-spectrum';
-import React, {ReactElement} from 'react';
+import {
+  RenderOptions as BaseRenderOptions,
+  render,
+} from "@testing-library/react";
+import { Provider, defaultTheme } from "@adobe/react-spectrum";
+import React, { ReactElement } from "react";
 
 // export everything from React Testing Library
-export * from '@testing-library/react';
+export * from "@testing-library/react";
 
 function ProviderWrapper(props) {
-  let {children, ...providerProps} = props;
+  let { children, ...providerProps } = props;
   return (
     <Provider theme={defaultTheme} scale="medium" {...providerProps}>
       {props.children}
@@ -184,19 +187,25 @@ function ProviderWrapper(props) {
 }
 
 interface RenderOptions extends BaseRenderOptions {
-  providerProps: Omit<ProviderProps, 'children'>
+  providerProps: Omit<ProviderProps, "children">;
 }
 
 function customRender(ui: ReactElement, options?: RenderOptions) {
-  let rendered = render(ui, {wrapper: (props) => <ProviderWrapper {...props} {...options?.providerProps} />, ...options});
+  let rendered = render(ui, {
+    wrapper: (props) => (
+      <ProviderWrapper {...props} {...options?.providerProps} />
+    ),
+    ...options,
+  });
   return {
     ...rendered,
-    rerender: (ui, options) => providerWrapperRender(ui, {container: rendered.container, ...options})
+    rerender: (ui, options) =>
+      providerWrapperRender(ui, { container: rendered.container, ...options }),
   };
 }
 
 // override render method
-export {customRender as render};
+export { customRender as render };
 ```
 
 ### Timers
@@ -225,7 +234,7 @@ to wait for a dialog to appear:
 
 ```tsx
 await waitFor(() => {
-  expect(getByRole('dialog')).toBeInTheDocument();
+  expect(getByRole("dialog")).toBeInTheDocument();
 });
 ```
 
@@ -235,12 +244,17 @@ Components like ComboBox and Picker render a different experience on mobile vers
 components are rendered only against a specific experience, you'll need to mock the window screen width accordingly. We currently use a
 [screen width of 700px](https://github.com/adobe/react-spectrum/blob/5e487532e3ca4714513fb6ab64f7a78d9d1ca281/packages/%40react-spectrum/utils/src/useIsMobileDevice.ts#L15-L23) as the breakpoint
 between mobile and desktop, so you should mock the `width` getter of `window.screen` to a value greater or less than this value accordingly. You may use <TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.simulateMobile} /> and
-<TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.simulateDesktop} /> from the [@react-spectrum/test-utils](https://www.npmjs.com/package/@react-spectrum/test-utils) package to handle this width mocking for you in Jest:
+
+<TypeLink
+  links={testUtilDocs.links}
+  type={testUtilDocs.exports.simulateDesktop}
+/> from the [@react-spectrum/test-utils](https://www.npmjs.com/package/@react-spectrum/test-utils)
+package to handle this width mocking for you in Jest:
 
 The example below shows how you would set this up in Jest.
 
 ```tsx
-import {simulateDesktop, simulateMobile} from '@react-spectrum/test-utils';
+import { simulateDesktop, simulateMobile } from "@react-spectrum/test-utils";
 
 beforeAll(() => {
   simulateMobile();
@@ -260,10 +274,18 @@ To properly render virtualized components in a test environment, you'll have to 
 ```tsx
 beforeAll(function () {
   // The virtualizer will now think it has a visible area of 1000px x 1000px and that the items within it are 40px x 40px
-  jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
-  jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
-  jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 40);
-  jest.spyOn(window.HTMLElement.prototype, 'scrollWidth', 'get').mockImplementation(() => 40);
+  jest
+    .spyOn(window.HTMLElement.prototype, "clientWidth", "get")
+    .mockImplementation(() => 1000);
+  jest
+    .spyOn(window.HTMLElement.prototype, "clientHeight", "get")
+    .mockImplementation(() => 1000);
+  jest
+    .spyOn(window.HTMLElement.prototype, "scrollHeight", "get")
+    .mockImplementation(() => 40);
+  jest
+    .spyOn(window.HTMLElement.prototype, "scrollWidth", "get")
+    .mockImplementation(() => 40);
 });
 
 afterAll(() => {
@@ -283,17 +305,20 @@ If you are using Jest, you can call our <TypeLink links={testUtilDocs.links} typ
 Additionally, you are using fake timers and don't need to control the specific timings around the long press interaction, feel free to use our <TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.triggerLongPress} /> utility as shown below.
 
 ```tsx
-import {fireEvent} from '@testing-library/react';
-import {installPointerEvent, triggerLongPress} from '@react-spectrum/test-utils';
+import { fireEvent } from "@testing-library/react";
+import {
+  installPointerEvent,
+  triggerLongPress,
+} from "@react-spectrum/test-utils";
 installPointerEvent();
 
 // In test case
-let button = getByRole('button');
+let button = getByRole("button");
 
 // With fireEvent and specific timing control
-fireEvent.pointerDown(el, {pointerType: 'touch'});
+fireEvent.pointerDown(el, { pointerType: "touch" });
 act(() => jest.advanceTimersByTime(800));
-fireEvent.up(el, {pointerType: 'touch'});
+fireEvent.up(el, { pointerType: "touch" });
 
 // With triggerLongPress
 triggerLongPress(button);
@@ -307,21 +332,23 @@ If you are using Jest, you can call our <TypeLink links={testUtilDocs.links} typ
 for the draggable handle should be mocked so that the move operation calculations can be properly computed.
 
 ```tsx
-import {fireEvent} from '@testing-library/react';
-import {installMouseEvent} from '@react-spectrum/test-utils';
+import { fireEvent } from "@testing-library/react";
+import { installMouseEvent } from "@react-spectrum/test-utils";
 installMouseEvent();
 
 beforeAll(() => {
-  jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({top: 0, left: 0, width: 100, height: 10}));
-})
+  jest
+    .spyOn(window.HTMLElement.prototype, "getBoundingClientRect")
+    .mockImplementation(() => ({ top: 0, left: 0, width: 100, height: 10 }));
+});
 
 // In test case
-let sliderThumb = getByRole('slider').parentElement;
+let sliderThumb = getByRole("slider").parentElement;
 
 // With fireEvent, move thumb from 0 to 50
-fireEvent.mouseDown(thumb, {clientX: 0, pageX: 0});
-fireEvent.mouseMove(thumb, {pageX: 50});
-fireEvent.mouseUp(thumb, {pageX: 50});
+fireEvent.mouseDown(thumb, { clientX: 0, pageX: 0 });
+fireEvent.mouseMove(thumb, { pageX: 50 });
+fireEvent.mouseUp(thumb, { pageX: 50 });
 ```
 
 ## Snapshot tests
@@ -330,18 +357,18 @@ If you are using React 16 or 17, you may run into an issue where the ids generat
 Note that you can use the SSRProvider even if your component doesn't support server side rendering, it will simply stabilize the ids generated.
 
 ```tsx
-import {SSRProvider, Provider, lightTheme} from '@adobe/react-spectrum';
+import { SSRProvider, Provider, lightTheme } from "@adobe/react-spectrum";
 
 <SSRProvider>
   <Provider theme={lightTheme}>
     <YourApp />
   </Provider>
-</SSRProvider>
+</SSRProvider>;
 ```
 
 ## React Spectrum test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
-In addition to the test utilities mentioned above, [@react-spectrum/test-utils](https://www.npmjs.com/package/@react-spectrum/test-utils) re-exports the same test utils available in `@react-aria/test-utils`, including
+In addition to the test utilities mentioned above, [@react-spectrum/test-utils](https://www.npmjs.com/package/@react-spectrum/test-utils) re-exports the same test utils available in `@react-aria-nutrient/test-utils`, including
 the ARIA pattern testers. These testers are set of testing utilities that aims to make writing unit tests easier for consumers of React Spectrum. By using the ARIA specification for any given component pattern as a source of truth,
 we can make assumptions about the existence of various aria attributes in a component. This allows us to navigate the component's DOM structure, simulate common interactions, and verify the resulting state of the component.
 
@@ -364,20 +391,25 @@ See [below](#patterns) for what patterns are currently supported.
 
 ```ts
 // YourTest.test.ts
-import {screen} from '@testing-library/react';
-import {User} from '@react-spectrum/test-utils';
+import { screen } from "@testing-library/react";
+import { User } from "@react-spectrum/test-utils";
 
 // Provide whatever method of advancing timers you use in your test, this example assumes Jest with fake timers.
 // 'interactionType' specifies what mode of interaction should be simulated by the tester
 // 'advanceTimer' is used by the tester to advance the timers in the tests for specific interactions (e.g. long press)
-let testUtilUser = new User({interactionType: 'mouse', advanceTimer: jest.advanceTimersByTime});
+let testUtilUser = new User({
+  interactionType: "mouse",
+  advanceTimer: jest.advanceTimersByTime,
+});
 // ...
 
-it('my test case', async function () {
+it("my test case", async function () {
   // Render your test component/app
   render();
   // Initialize the table tester via providing the 'Table' pattern name and the root element of said table
-  let table = testUtilUser.createTester('Table', {root: screen.getByTestId('test_table')});
+  let table = testUtilUser.createTester("Table", {
+    root: screen.getByTestId("test_table"),
+  });
 
   // ...
 });
@@ -392,18 +424,18 @@ See below for the full definition of the `User` object.
 Below is a list of the ARIA patterns testers currently supported by `createTester`. See the accompanying component testing docs pages for a sample of how to use
 the testers in your test suite.
 
--  [ComboBox](ComboBox.html#test-utils)
+- [ComboBox](ComboBox.html#test-utils)
 
--  [ListView](ListView.html#test-utils)
+- [ListView](ListView.html#test-utils)
 
--  [ListBox](ListBox.html#test-utils)
+- [ListBox](ListBox.html#test-utils)
 
--  [MenuTrigger](MenuTrigger.html#test-utils)
+- [MenuTrigger](MenuTrigger.html#test-utils)
 
--  [Picker](Picker.html#test-utils)
+- [Picker](Picker.html#test-utils)
 
--  [TableView](TableView.html#test-utils)
+- [TableView](TableView.html#test-utils)
 
--  [Tabs](Tabs.html#test-utils)
+- [Tabs](Tabs.html#test-utils)
 
--  [TreeView](TreeView.html#test-utils)
+- [TreeView](TreeView.html#test-utils)

@@ -10,34 +10,34 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
-import {classNames, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {filterDOMProps} from '@react-aria/utils';
-import {ProviderContext, useProvider} from '@react-spectrum/provider';
-import React, {ReactElement, ReactNode} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
+import { AriaLabelingProps, DOMProps, StyleProps } from "@react-types/shared";
+import { classNames, useSlotProps, useStyleProps } from "@react-spectrum/utils";
+import { filterDOMProps } from "@react-aria-nutrient/utils";
+import { ProviderContext, useProvider } from "@react-spectrum/provider";
+import React, { ReactElement, ReactNode } from "react";
+import styles from "@adobe/spectrum-css-temp/components/icon/vars.css";
 
 export interface UIIconProps extends DOMProps, AriaLabelingProps, StyleProps {
-  children: ReactElement<any>,
-  slot?: string,
+  children: ReactElement<any>;
+  slot?: string;
   /**
    * Indicates whether the element is exposed to an accessibility API.
    */
-  'aria-hidden'?: boolean | 'false' | 'true'
+  "aria-hidden"?: boolean | "false" | "true";
 }
 
-export type UIIconPropsWithoutChildren = Omit<UIIconProps, 'children'>;
+export type UIIconPropsWithoutChildren = Omit<UIIconProps, "children">;
 
 export function UIIcon(props: UIIconProps): ReactNode {
-  props = useSlotProps(props, 'icon');
+  props = useSlotProps(props, "icon");
   let {
     children,
-    'aria-label': ariaLabel,
-    'aria-hidden': ariaHidden,
+    "aria-label": ariaLabel,
+    "aria-hidden": ariaHidden,
     ...otherProps
   } = props;
 
-  let {styleProps} = useStyleProps(otherProps);
+  let { styleProps } = useStyleProps(otherProps);
   let provider: undefined | ProviderContext;
   try {
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -45,9 +45,9 @@ export function UIIcon(props: UIIconProps): ReactNode {
   } catch {
     // ignore
   }
-  let scale = 'M';
+  let scale = "M";
   if (provider != null) {
-    scale = provider.scale === 'large' ? 'L' : 'M';
+    scale = provider.scale === "large" ? "L" : "M";
   }
 
   if (!ariaHidden) {
@@ -58,17 +58,19 @@ export function UIIcon(props: UIIconProps): ReactNode {
     ...filterDOMProps(otherProps),
     ...styleProps,
     scale,
-    focusable: 'false',
-    'aria-label': ariaLabel,
-    'aria-hidden': (ariaLabel ? (ariaHidden || undefined) : true),
-    role: 'img',
+    focusable: "false",
+    "aria-label": ariaLabel,
+    "aria-hidden": ariaLabel ? ariaHidden || undefined : true,
+    role: "img",
     className: classNames(
       styles,
       children.props.className,
-      'spectrum-Icon',
+      "spectrum-Icon",
       {
-        [`spectrum-UIIcon-${children.type['displayName']}`]: children.type['displayName']
+        [`spectrum-UIIcon-${children.type["displayName"]}`]:
+          children.type["displayName"],
       },
-      styleProps.className)
+      styleProps.className
+    ),
   });
 }

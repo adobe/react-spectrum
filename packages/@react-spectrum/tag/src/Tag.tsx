@@ -10,65 +10,96 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTagProps, useTag} from '@react-aria/tag';
-import {classNames, ClearSlots, SlotProvider, useStyleProps} from '@react-spectrum/utils';
-import {ClearButton} from '@react-spectrum/button';
-import type {ListState} from '@react-stately/list';
-import {mergeProps} from '@react-aria/utils';
-import React, {ReactNode, useRef} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
-import {Text} from '@react-spectrum/text';
-import {useFocusRing} from '@react-aria/focus';
-import {useHover} from '@react-aria/interactions';
+import { AriaTagProps, useTag } from "@react-aria-nutrient/tag";
+import {
+  classNames,
+  ClearSlots,
+  SlotProvider,
+  useStyleProps,
+} from "@react-spectrum/utils";
+import { ClearButton } from "@react-spectrum/button";
+import type { ListState } from "@react-stately/list";
+import { mergeProps } from "@react-aria-nutrient/utils";
+import React, { ReactNode, useRef } from "react";
+import styles from "@adobe/spectrum-css-temp/components/tags/vars.css";
+import { Text } from "@react-spectrum/text";
+import { useFocusRing } from "@react-aria-nutrient/focus";
+import { useHover } from "@react-aria-nutrient/interactions";
 
 export interface SpectrumTagProps<T> extends AriaTagProps<T> {
-  state: ListState<T>
+  state: ListState<T>;
 }
 
 export function Tag<T>(props: SpectrumTagProps<T>): ReactNode {
-  const {
-    item,
-    state,
-    ...otherProps
-  } = props;
+  const { item, state, ...otherProps } = props;
 
   // @ts-ignore
-  let {styleProps} = useStyleProps(otherProps);
-  let {hoverProps, isHovered} = useHover({});
-  let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
+  let { styleProps } = useStyleProps(otherProps);
+  let { hoverProps, isHovered } = useHover({});
+  let { isFocused, isFocusVisible, focusProps } = useFocusRing({
+    within: true,
+  });
   let ref = useRef(null);
-  let {removeButtonProps, gridCellProps, rowProps, allowsRemoving} = useTag({
-    ...props,
-    item
-  }, state, ref);
+  let { removeButtonProps, gridCellProps, rowProps, allowsRemoving } = useTag(
+    {
+      ...props,
+      item,
+    },
+    state,
+    ref
+  );
 
   return (
     <div
       {...mergeProps(rowProps, hoverProps, focusProps)}
       className={classNames(
-          styles,
-          'spectrum-Tag',
+        styles,
+        "spectrum-Tag",
         {
-          'focus-ring': isFocusVisible,
-          'is-focused': isFocused,
-          'is-hovered': isHovered,
-          'spectrum-Tag--removable': allowsRemoving
+          "focus-ring": isFocusVisible,
+          "is-focused": isFocused,
+          "is-hovered": isHovered,
+          "spectrum-Tag--removable": allowsRemoving,
         },
-          styleProps.className
-        )}
-      ref={ref}>
+        styleProps.className
+      )}
+      ref={ref}
+    >
       <div
-        className={classNames(styles, 'spectrum-Tag-cell')}
-        {...gridCellProps}>
+        className={classNames(styles, "spectrum-Tag-cell")}
+        {...gridCellProps}
+      >
         <SlotProvider
           slots={{
-            icon: {UNSAFE_className: classNames(styles, 'spectrum-Tag-icon'), size: 'XS'},
-            text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content')},
-            avatar: {UNSAFE_className: classNames(styles, 'spectrum-Tag-avatar'), size: 'avatar-size-50'}
-          }}>
-          {typeof item.rendered === 'string' ? <Text>{item.rendered}</Text> : item.rendered}
+            icon: {
+              UNSAFE_className: classNames(styles, "spectrum-Tag-icon"),
+              size: "XS",
+            },
+            text: {
+              UNSAFE_className: classNames(styles, "spectrum-Tag-content"),
+            },
+            avatar: {
+              UNSAFE_className: classNames(styles, "spectrum-Tag-avatar"),
+              size: "avatar-size-50",
+            },
+          }}
+        >
+          {typeof item.rendered === "string" ? (
+            <Text>{item.rendered}</Text>
+          ) : (
+            item.rendered
+          )}
           <ClearSlots>
-            {allowsRemoving && <TagRemoveButton item={item} {...removeButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-removeButton')} />}
+            {allowsRemoving && (
+              <TagRemoveButton
+                item={item}
+                {...removeButtonProps}
+                UNSAFE_className={classNames(
+                  styles,
+                  "spectrum-Tag-removeButton"
+                )}
+              />
+            )}
           </ClearSlots>
         </SlotProvider>
       </div>
@@ -77,7 +108,7 @@ export function Tag<T>(props: SpectrumTagProps<T>): ReactNode {
 }
 
 function TagRemoveButton(props) {
-  let {styleProps} = useStyleProps(props);
+  let { styleProps } = useStyleProps(props);
 
   return (
     <span {...styleProps}>

@@ -10,49 +10,51 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarCell} from './CalendarCell';
-import {CalendarDate, endOfMonth} from '@internationalized/date';
-import {CalendarPropsBase} from '@react-types/calendar';
-import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
-import {classNames} from '@react-spectrum/utils';
-import {DOMProps, StyleProps} from '@react-types/shared';
-import React, {ReactNode} from 'react';
-import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
-import {useCalendarGrid} from '@react-aria/calendar';
+import { CalendarCell } from "./CalendarCell";
+import { CalendarDate, endOfMonth } from "@internationalized/date";
+import { CalendarPropsBase } from "@react-types/calendar";
+import { CalendarState, RangeCalendarState } from "@react-stately/calendar";
+import { classNames } from "@react-spectrum/utils";
+import { DOMProps, StyleProps } from "@react-types/shared";
+import React, { ReactNode } from "react";
+import styles from "@adobe/spectrum-css-temp/components/calendar/vars.css";
+import { useCalendarGrid } from "@react-aria-nutrient/calendar";
 
 interface CalendarMonthProps extends CalendarPropsBase, DOMProps, StyleProps {
-  state: CalendarState | RangeCalendarState,
-  startDate: CalendarDate
+  state: CalendarState | RangeCalendarState;
+  startDate: CalendarDate;
 }
 
 export function CalendarMonth(props: CalendarMonthProps): ReactNode {
-  let {
-    state,
-    startDate,
-    firstDayOfWeek
-  } = props;
+  let { state, startDate, firstDayOfWeek } = props;
 
-  let {
-    gridProps,
-    headerProps,
-    weekDays,
-    weeksInMonth
-  } = useCalendarGrid({
-    ...props,
-    endDate: endOfMonth(startDate)
-  }, state);
+  let { gridProps, headerProps, weekDays, weeksInMonth } = useCalendarGrid(
+    {
+      ...props,
+      endDate: endOfMonth(startDate),
+    },
+    state
+  );
 
   return (
     <table
       {...gridProps}
-      className={classNames(styles, 'spectrum-Calendar-body', 'spectrum-Calendar-table')}>
+      className={classNames(
+        styles,
+        "spectrum-Calendar-body",
+        "spectrum-Calendar-table"
+      )}
+    >
       <thead {...headerProps}>
         <tr>
           {weekDays.map((day, index) => (
             <th
               key={index}
-              className={classNames(styles, 'spectrum-Calendar-tableCell')}>
-              <span className={classNames(styles, 'spectrum-Calendar-dayOfWeek')}>
+              className={classNames(styles, "spectrum-Calendar-tableCell")}
+            >
+              <span
+                className={classNames(styles, "spectrum-Calendar-dayOfWeek")}
+              >
                 {day}
               </span>
             </th>
@@ -60,18 +62,23 @@ export function CalendarMonth(props: CalendarMonthProps): ReactNode {
         </tr>
       </thead>
       <tbody>
-        {[...new Array(weeksInMonth).keys()].map(weekIndex => (
+        {[...new Array(weeksInMonth).keys()].map((weekIndex) => (
           <tr key={weekIndex}>
-            {state.getDatesInWeek(weekIndex, startDate).map((date, i) => (
-              date ? (
-                <CalendarCell
-                  key={i}
-                  state={state}
-                  date={date}
-                  currentMonth={startDate}
-                  firstDayOfWeek={firstDayOfWeek} />
-              ) : <td key={i} />
-            ))}
+            {state
+              .getDatesInWeek(weekIndex, startDate)
+              .map((date, i) =>
+                date ? (
+                  <CalendarCell
+                    key={i}
+                    state={state}
+                    date={date}
+                    currentMonth={startDate}
+                    firstDayOfWeek={firstDayOfWeek}
+                  />
+                ) : (
+                  <td key={i} />
+                )
+              )}
           </tr>
         ))}
       </tbody>

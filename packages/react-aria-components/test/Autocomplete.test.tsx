@@ -10,20 +10,51 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {AriaAutocompleteTests} from './AriaAutocomplete.test-util';
-import {Autocomplete, Button, Dialog, DialogTrigger, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, Popover, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Text, TextField} from '..';
-import React, {ReactNode} from 'react';
-import {useAsyncList} from 'react-stately';
-import {useFilter} from '@react-aria/i18n';
-import userEvent from '@testing-library/user-event';
+import {
+  act,
+  pointerMap,
+  render,
+  within,
+} from "@react-spectrum/test-utils-internal";
+import { AriaAutocompleteTests } from "./AriaAutocomplete.test-util";
+import {
+  Autocomplete,
+  Button,
+  Dialog,
+  DialogTrigger,
+  Header,
+  Input,
+  Label,
+  ListBox,
+  ListBoxItem,
+  ListBoxSection,
+  Menu,
+  MenuItem,
+  MenuSection,
+  Popover,
+  SearchField,
+  Select,
+  SelectValue,
+  Separator,
+  SubmenuTrigger,
+  Text,
+  TextField,
+} from "..";
+import React, { ReactNode } from "react";
+import { useAsyncList } from "react-stately";
+import { useFilter } from "@react-aria-nutrient/i18n";
+import userEvent from "@testing-library/user-event";
 
 interface AutocompleteItem {
-  id: string,
-  name: string
+  id: string;
+  name: string;
 }
 
-let items: AutocompleteItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'}, {id: '3', name: 'Baz'}];
+let items: AutocompleteItem[] = [
+  { id: "1", name: "Foo" },
+  { id: "2", name: "Bar" },
+  { id: "3", name: "Baz" },
+];
 let onAction = jest.fn();
 let onSelectionChange = jest.fn();
 
@@ -45,7 +76,9 @@ let MenuWithLinks = (props) => (
   <Menu {...props}>
     <MenuItem id="1">Foo</MenuItem>
     <MenuItem id="2">Bar</MenuItem>
-    <MenuItem id="3" href="https://google.com">Google</MenuItem>
+    <MenuItem id="3" href="https://google.com">
+      Google
+    </MenuItem>
   </Menu>
 );
 
@@ -86,7 +119,7 @@ let SubMenus = (props) => (
               </Menu>
             </Popover>
           </SubmenuTrigger>
-          <MenuItem >Lvl 1 Bar 3</MenuItem>
+          <MenuItem>Lvl 1 Bar 3</MenuItem>
         </Menu>
       </Popover>
     </SubmenuTrigger>
@@ -100,13 +133,13 @@ let SubDialogs = (props) => (
     <SubmenuTrigger>
       <MenuItem>Bar</MenuItem>
       <Popover>
-        <AutocompleteWrapper inputProps={{autoFocus: true}}>
+        <AutocompleteWrapper inputProps={{ autoFocus: true }}>
           <Menu {...props}>
             <MenuItem>Lvl 1 Bar 1</MenuItem>
             <SubmenuTrigger>
               <MenuItem>Lvl 1 Bar 2</MenuItem>
               <Popover>
-                <AutocompleteWrapper inputProps={{autoFocus: true}}>
+                <AutocompleteWrapper inputProps={{ autoFocus: true }}>
                   <Menu {...props}>
                     <MenuItem>Lvl 2 Bar 1</MenuItem>
                     <MenuItem>Lvl 2 Bar 2</MenuItem>
@@ -115,7 +148,7 @@ let SubDialogs = (props) => (
                 </AutocompleteWrapper>
               </Popover>
             </SubmenuTrigger>
-            <MenuItem >Lvl 1 Bar 3</MenuItem>
+            <MenuItem>Lvl 1 Bar 3</MenuItem>
           </Menu>
         </AutocompleteWrapper>
       </Popover>
@@ -130,7 +163,7 @@ let SubDialogAndMenu = (props) => (
     <SubmenuTrigger>
       <MenuItem>Bar</MenuItem>
       <Popover>
-        <AutocompleteWrapper inputProps={{autoFocus: true}}>
+        <AutocompleteWrapper inputProps={{ autoFocus: true }}>
           <Menu {...props}>
             <MenuItem>Lvl 1 Bar 1</MenuItem>
             <SubmenuTrigger>
@@ -141,7 +174,7 @@ let SubDialogAndMenu = (props) => (
                   <SubmenuTrigger>
                     <MenuItem>Lvl 2 Bar 2</MenuItem>
                     <Popover>
-                      <AutocompleteWrapper inputProps={{autoFocus: true}}>
+                      <AutocompleteWrapper inputProps={{ autoFocus: true }}>
                         <Menu {...props}>
                           <MenuItem>Lvl 3 Bar 1</MenuItem>
                           <MenuItem>Lvl 3 Bar 2</MenuItem>
@@ -154,7 +187,7 @@ let SubDialogAndMenu = (props) => (
                 </Menu>
               </Popover>
             </SubmenuTrigger>
-            <MenuItem >Lvl 1 Bar 3</MenuItem>
+            <MenuItem>Lvl 1 Bar 3</MenuItem>
           </Menu>
         </AutocompleteWrapper>
       </Popover>
@@ -175,7 +208,9 @@ let ListBoxWithLinks = (props) => (
   <ListBox {...props}>
     <ListBoxItem id="1">Foo</ListBoxItem>
     <ListBoxItem id="2">Bar</ListBoxItem>
-    <ListBoxItem id="3" href="https://google.com">Google</ListBoxItem>
+    <ListBoxItem id="3" href="https://google.com">
+      Google
+    </ListBoxItem>
   </ListBox>
 );
 
@@ -197,85 +232,128 @@ let ListBoxWithSections = (props) => (
   </ListBox>
 );
 
-let AutocompleteWrapper = ({autocompleteProps = {}, inputProps = {}, children}: {autocompleteProps?: any, inputProps?: any, children?: ReactNode}) => {
-  let {contains} = useFilter({sensitivity: 'base'});
+let AutocompleteWrapper = ({
+  autocompleteProps = {},
+  inputProps = {},
+  children,
+}: {
+  autocompleteProps?: any;
+  inputProps?: any;
+  children?: ReactNode;
+}) => {
+  let { contains } = useFilter({ sensitivity: "base" });
   let filter = (textValue, inputValue) => contains(textValue, inputValue);
 
   return (
     <Autocomplete filter={filter} {...autocompleteProps}>
       <SearchField {...inputProps}>
-        <Label style={{display: 'block'}}>Test</Label>
+        <Label style={{ display: "block" }}>Test</Label>
         <Input />
         <Button>✕</Button>
-        <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+        <Text style={{ display: "block" }} slot="description">
+          Please select an option below.
+        </Text>
       </SearchField>
       {children}
     </Autocomplete>
   );
 };
 
-let ControlledAutocomplete = ({autocompleteProps = {}, inputProps = {}, children}: {autocompleteProps?: any, inputProps?: any, children?: ReactNode}) => {
-  let [inputValue, setInputValue] = React.useState('');
-  let {contains} = useFilter({sensitivity: 'base'});
+let ControlledAutocomplete = ({
+  autocompleteProps = {},
+  inputProps = {},
+  children,
+}: {
+  autocompleteProps?: any;
+  inputProps?: any;
+  children?: ReactNode;
+}) => {
+  let [inputValue, setInputValue] = React.useState("");
+  let { contains } = useFilter({ sensitivity: "base" });
   let filter = (textValue, inputValue) => contains(textValue, inputValue);
 
   return (
-    <Autocomplete inputValue={inputValue} onInputChange={setInputValue} filter={filter} {...autocompleteProps}>
+    <Autocomplete
+      inputValue={inputValue}
+      onInputChange={setInputValue}
+      filter={filter}
+      {...autocompleteProps}
+    >
       <SearchField {...inputProps}>
-        <Label style={{display: 'block'}}>Test</Label>
+        <Label style={{ display: "block" }}>Test</Label>
         <Input />
-        <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+        <Text style={{ display: "block" }} slot="description">
+          Please select an option below.
+        </Text>
       </SearchField>
       {children}
     </Autocomplete>
   );
 };
 
-let AsyncFiltering = ({autocompleteProps = {}, inputProps = {}}: {autocompleteProps?: any, inputProps?: any, children?: ReactNode}) => {
+let AsyncFiltering = ({
+  autocompleteProps = {},
+  inputProps = {},
+}: {
+  autocompleteProps?: any;
+  inputProps?: any;
+  children?: ReactNode;
+}) => {
   let list = useAsyncList<AutocompleteItem>({
-    async load({filterText}) {
-      let json = await new Promise(resolve => {
+    async load({ filterText }) {
+      let json = (await new Promise((resolve) => {
         setTimeout(() => {
-          resolve(filterText ? items.filter(item => {
-            let name = item.name.toLowerCase();
-            for (let filterChar of filterText.toLowerCase()) {
-              if (!name.includes(filterChar)) {
-                return false;
-              }
-              name = name.replace(filterChar, '');
-            }
-            return true;
-          }) : items);
+          resolve(
+            filterText
+              ? items.filter((item) => {
+                  let name = item.name.toLowerCase();
+                  for (let filterChar of filterText.toLowerCase()) {
+                    if (!name.includes(filterChar)) {
+                      return false;
+                    }
+                    name = name.replace(filterChar, "");
+                  }
+                  return true;
+                })
+              : items
+          );
         }, 300);
-      }) as AutocompleteItem[];
+      })) as AutocompleteItem[];
 
       return {
-        items: json
+        items: json,
       };
-    }
+    },
   });
 
   return (
-    <Autocomplete inputValue={list.filterText} onInputChange={list.setFilterText} {...autocompleteProps}>
+    <Autocomplete
+      inputValue={list.filterText}
+      onInputChange={list.setFilterText}
+      {...autocompleteProps}
+    >
       <SearchField {...inputProps}>
-        <Label style={{display: 'block'}}>Test</Label>
+        <Label style={{ display: "block" }}>Test</Label>
         <Input />
-        <Text style={{display: 'block'}} slot="description">Please select an option below.</Text>
+        <Text style={{ display: "block" }} slot="description">
+          Please select an option below.
+        </Text>
       </SearchField>
       <Menu
         items={list.items}
         onAction={onAction}
-        onSelectionChange={onSelectionChange}>
-        {item => <MenuItem id={item.id}>{item.name}</MenuItem>}
+        onSelectionChange={onSelectionChange}
+      >
+        {(item) => <MenuItem id={item.id}>{item.name}</MenuItem>}
       </Menu>
     </Autocomplete>
   );
 };
 
-describe('Autocomplete', () => {
+describe("Autocomplete", () => {
   let user;
   beforeAll(() => {
-    user = userEvent.setup({delay: null, pointerMap});
+    user = userEvent.setup({ delay: null, pointerMap });
     jest.useFakeTimers();
   });
 
@@ -284,9 +362,9 @@ describe('Autocomplete', () => {
   });
 
   // Skipping since arrow keys will still leak out from useSelectableCollection, re-enable when that gets fixed
-  it.skip('should prevent key presses from leaking out of the Autocomplete', async () => {
+  it.skip("should prevent key presses from leaking out of the Autocomplete", async () => {
     let onKeyDown = jest.fn();
-    let {getByRole} = render(
+    let { getByRole } = render(
       // eslint-disable-next-line jsx-a11y/no-static-element-interactions
       <div onKeyDown={onKeyDown}>
         <AutocompleteWrapper>
@@ -295,100 +373,100 @@ describe('Autocomplete', () => {
       </div>
     );
 
-    let input = getByRole('searchbox');
+    let input = getByRole("searchbox");
     await user.tab();
     expect(document.activeElement).toBe(input);
-    await user.keyboard('{ArrowDown}');
+    await user.keyboard("{ArrowDown}");
     expect(onKeyDown).not.toHaveBeenCalled();
     onKeyDown.mockReset();
   });
 
-  it('should clear the input field when clicking on the clear button', async () => {
-    let {getByRole} = render(
+  it("should clear the input field when clicking on the clear button", async () => {
+    let { getByRole } = render(
       <AutocompleteWrapper>
         <StaticMenu />
       </AutocompleteWrapper>
     );
 
-    let input = getByRole('searchbox');
+    let input = getByRole("searchbox");
     await user.tab();
     expect(document.activeElement).toBe(input);
-    await user.keyboard('Foo');
-    expect(input).toHaveValue('Foo');
+    await user.keyboard("Foo");
+    expect(input).toHaveValue("Foo");
 
-    let button = getByRole('button');
-    expect(button).toHaveAttribute('aria-label', 'Clear search');
+    let button = getByRole("button");
+    expect(button).toHaveAttribute("aria-label", "Clear search");
     await user.click(button);
 
-    expect(input).toHaveValue('');
+    expect(input).toHaveValue("");
   });
 
-  it('should apply focusVisible/focused to virtually focused menu items when keyboard navigating', async () => {
-    let {getByRole} = render(
+  it("should apply focusVisible/focused to virtually focused menu items when keyboard navigating", async () => {
+    let { getByRole } = render(
       <AutocompleteWrapper>
         <StaticMenu />
       </AutocompleteWrapper>
     );
 
-    let input = getByRole('searchbox');
+    let input = getByRole("searchbox");
     await user.tab();
     expect(document.activeElement).toBe(input);
     // Focus ring should be on input when no aria-activeelement
-    expect(input).toHaveAttribute('data-focus-visible');
+    expect(input).toHaveAttribute("data-focus-visible");
 
     // Focus ring should be on option when it is the active descendant and keyboard modality
-    await user.keyboard('{ArrowDown}');
-    let menu = getByRole('menu');
-    let options = within(menu).getAllByRole('menuitem');
-    expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
-    expect(options[0]).toHaveAttribute('data-focus-visible');
-    expect(input).not.toHaveAttribute('data-focus-visible');
-    expect(input).not.toHaveAttribute('data-focused');
+    await user.keyboard("{ArrowDown}");
+    let menu = getByRole("menu");
+    let options = within(menu).getAllByRole("menuitem");
+    expect(input).toHaveAttribute("aria-activedescendant", options[0].id);
+    expect(options[0]).toHaveAttribute("data-focus-visible");
+    expect(input).not.toHaveAttribute("data-focus-visible");
+    expect(input).not.toHaveAttribute("data-focused");
 
     // Focus ring should not be on either input or option when hovering (aka mouse modality)
     await user.click(input);
     await user.hover(options[1]);
-    options = within(menu).getAllByRole('menuitem');
-    expect(options[1]).toHaveAttribute('data-focused');
-    expect(options[1]).not.toHaveAttribute('data-focus-visible');
-    expect(input).not.toHaveAttribute('data-focused');
+    options = within(menu).getAllByRole("menuitem");
+    expect(options[1]).toHaveAttribute("data-focused");
+    expect(options[1]).not.toHaveAttribute("data-focus-visible");
+    expect(input).not.toHaveAttribute("data-focused");
 
     // Reset focus visible on input so that isTextInput in useFocusRing doesn't prevent the focus ring
     // from appearing on the input
     await user.tab();
-    await user.tab({shift: true});
+    await user.tab({ shift: true });
 
     // Focus ring should be on option after typing and option is autofocused
-    await user.keyboard('Bar');
+    await user.keyboard("Bar");
     act(() => jest.runAllTimers());
-    options = within(menu).getAllByRole('menuitem');
-    expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
-    expect(options[0]).toHaveAttribute('data-focus-visible');
-    expect(input).not.toHaveAttribute('data-focused');
+    options = within(menu).getAllByRole("menuitem");
+    expect(input).toHaveAttribute("aria-activedescendant", options[0].id);
+    expect(options[0]).toHaveAttribute("data-focus-visible");
+    expect(input).not.toHaveAttribute("data-focused");
 
     // Focus ring should be on input after clearing focus via ArrowLeft
-    await user.keyboard('{ArrowLeft}');
+    await user.keyboard("{ArrowLeft}");
     act(() => jest.runAllTimers());
-    options = within(menu).getAllByRole('menuitem');
-    input = getByRole('searchbox');
-    expect(input).not.toHaveAttribute('aria-activedescendant');
-    expect(input).toHaveAttribute('data-focus-visible');
+    options = within(menu).getAllByRole("menuitem");
+    input = getByRole("searchbox");
+    expect(input).not.toHaveAttribute("aria-activedescendant");
+    expect(input).toHaveAttribute("data-focus-visible");
 
     // Focus ring should be on input after clearing focus via Backspace
-    await user.keyboard('{ArrowDown}');
+    await user.keyboard("{ArrowDown}");
     act(() => jest.runAllTimers());
-    expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
-    expect(options[0]).toHaveAttribute('data-focus-visible');
-    expect(input).not.toHaveAttribute('data-focus-visible');
-    expect(input).not.toHaveAttribute('data-focused');
-    await user.keyboard('{Backspace}');
+    expect(input).toHaveAttribute("aria-activedescendant", options[0].id);
+    expect(options[0]).toHaveAttribute("data-focus-visible");
+    expect(input).not.toHaveAttribute("data-focus-visible");
+    expect(input).not.toHaveAttribute("data-focused");
+    await user.keyboard("{Backspace}");
     act(() => jest.runAllTimers());
-    expect(input).not.toHaveAttribute('aria-activedescendant');
-    expect(input).toHaveAttribute('data-focus-visible');
+    expect(input).not.toHaveAttribute("aria-activedescendant");
+    expect(input).toHaveAttribute("data-focus-visible");
   });
 
-  it('should not display focus in the virtually focused menu if focus isn\'t in the autocomplete input', async function () {
-    let {getByRole} = render(
+  it("should not display focus in the virtually focused menu if focus isn't in the autocomplete input", async function () {
+    let { getByRole } = render(
       <>
         <input />
         <AutocompleteWrapper>
@@ -398,82 +476,82 @@ describe('Autocomplete', () => {
       </>
     );
 
-    let input = getByRole('searchbox');
+    let input = getByRole("searchbox");
     await user.tab();
     await user.tab();
     expect(document.activeElement).toBe(input);
-    expect(input).toHaveAttribute('data-focus-visible');
-    await user.keyboard('{ArrowDown}');
-    let menu = getByRole('menu');
-    let options = within(menu).getAllByRole('menuitem');
-    expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
-    expect(options[0]).toHaveAttribute('data-focus-visible');
-    expect(input).not.toHaveAttribute('data-focus-visible');
-    expect(input).not.toHaveAttribute('data-focused');
+    expect(input).toHaveAttribute("data-focus-visible");
+    await user.keyboard("{ArrowDown}");
+    let menu = getByRole("menu");
+    let options = within(menu).getAllByRole("menuitem");
+    expect(input).toHaveAttribute("aria-activedescendant", options[0].id);
+    expect(options[0]).toHaveAttribute("data-focus-visible");
+    expect(input).not.toHaveAttribute("data-focus-visible");
+    expect(input).not.toHaveAttribute("data-focused");
 
     await user.tab();
     expect(document.activeElement).not.toBe(input);
-    expect(options[0]).not.toHaveAttribute('data-focused');
-    expect(options[0]).not.toHaveAttribute('data-focus-visible');
-    expect(input).not.toHaveAttribute('data-focus-visible');
-    expect(input).not.toHaveAttribute('data-focused');
+    expect(options[0]).not.toHaveAttribute("data-focused");
+    expect(options[0]).not.toHaveAttribute("data-focus-visible");
+    expect(input).not.toHaveAttribute("data-focus-visible");
+    expect(input).not.toHaveAttribute("data-focused");
 
-    await user.tab({shift: true});
+    await user.tab({ shift: true });
     act(() => jest.runAllTimers());
     expect(document.activeElement).toBe(input);
-    expect(options[0]).toHaveAttribute('data-focused');
-    expect(options[0]).toHaveAttribute('data-focus-visible');
-    expect(input).not.toHaveAttribute('data-focus-visible');
-    expect(input).not.toHaveAttribute('data-focused');
+    expect(options[0]).toHaveAttribute("data-focused");
+    expect(options[0]).toHaveAttribute("data-focus-visible");
+    expect(input).not.toHaveAttribute("data-focus-visible");
+    expect(input).not.toHaveAttribute("data-focused");
   });
 
-  it('should work inside a Select', async function () {
-    let {getByRole} = render(
+  it("should work inside a Select", async function () {
+    let { getByRole } = render(
       <Select>
         <Label>Test</Label>
         <Button>
           <SelectValue />
         </Button>
         <Popover>
-          <AutocompleteWrapper inputProps={{autoFocus: true}}>
+          <AutocompleteWrapper inputProps={{ autoFocus: true }}>
             <StaticListbox />
           </AutocompleteWrapper>
         </Popover>
       </Select>
     );
 
-    let button = getByRole('button');
+    let button = getByRole("button");
     await user.tab();
     expect(document.activeElement).toBe(button);
-    await user.keyboard('{Enter}');
+    await user.keyboard("{Enter}");
     act(() => jest.runAllTimers());
 
-    let searchfield = getByRole('searchbox');
+    let searchfield = getByRole("searchbox");
     expect(document.activeElement).toBe(searchfield);
-    let listbox = getByRole('listbox');
-    let options = within(listbox).getAllByRole('option');
+    let listbox = getByRole("listbox");
+    let options = within(listbox).getAllByRole("option");
     expect(options).toHaveLength(3);
-    expect(searchfield).toHaveAttribute('aria-activedescendant', options[0].id);
-    expect(options[0]).toHaveAttribute('data-focus-visible');
+    expect(searchfield).toHaveAttribute("aria-activedescendant", options[0].id);
+    expect(options[0]).toHaveAttribute("data-focus-visible");
 
-    await user.keyboard('{ArrowDown}');
-    expect(searchfield).toHaveAttribute('aria-activedescendant', options[1].id);
+    await user.keyboard("{ArrowDown}");
+    expect(searchfield).toHaveAttribute("aria-activedescendant", options[1].id);
 
-    await user.keyboard('b');
-    options = within(listbox).getAllByRole('option');
+    await user.keyboard("b");
+    options = within(listbox).getAllByRole("option");
     expect(options).toHaveLength(2);
-    expect(searchfield).toHaveAttribute('aria-activedescendant', options[0].id);
+    expect(searchfield).toHaveAttribute("aria-activedescendant", options[0].id);
 
-    await user.keyboard('{Enter}');
+    await user.keyboard("{Enter}");
     act(() => jest.runAllTimers());
     expect(listbox).not.toBeInTheDocument();
     expect(document.activeElement).toBe(button);
-    expect(button).toHaveTextContent('Bar');
+    expect(button).toHaveTextContent("Bar");
   });
 
-  it('should be able to tab inside a focus scope that contains', async () => {
+  it("should be able to tab inside a focus scope that contains", async () => {
     const MyMenu = () => {
-      let {contains} = useFilter({sensitivity: 'base'});
+      let { contains } = useFilter({ sensitivity: "base" });
 
       return (
         <DialogTrigger>
@@ -488,12 +566,8 @@ describe('Autocomplete', () => {
                 </TextField>
                 <Menu>
                   <MenuItem>Open</MenuItem>
-                  <MenuItem>
-                    Rename…
-                  </MenuItem>
-                  <MenuItem>
-                    Duplicate
-                  </MenuItem>
+                  <MenuItem>Rename…</MenuItem>
+                  <MenuItem>Duplicate</MenuItem>
                 </Menu>
               </Autocomplete>
             </Dialog>
@@ -514,12 +588,12 @@ describe('Autocomplete', () => {
       );
     }
 
-    let {getByRole} = render(<App />);
-    let trigger = getByRole('button', {name: 'Menu'});
+    let { getByRole } = render(<App />);
+    let trigger = getByRole("button", { name: "Menu" });
     await user.click(trigger);
-    let firstButton = getByRole('button', {name: 'First'});
-    let secondButton = getByRole('button', {name: 'Second'});
-    let input = getByRole('textbox');
+    let firstButton = getByRole("button", { name: "First" });
+    let secondButton = getByRole("button", { name: "Second" });
+    let input = getByRole("textbox");
 
     expect(document.activeElement).toBe(input);
 
@@ -527,18 +601,18 @@ describe('Autocomplete', () => {
 
     expect(document.activeElement).toBe(firstButton);
 
-    await user.tab({shift: true});
+    await user.tab({ shift: true });
 
     expect(document.activeElement).toBe(input);
 
-    await user.tab({shift: true});
+    await user.tab({ shift: true });
 
     expect(document.activeElement).toBe(secondButton);
   });
 
-  it('should be able to tab inside a focus scope that contains with buttons after the autocomplete', async () => {
+  it("should be able to tab inside a focus scope that contains with buttons after the autocomplete", async () => {
     const MyMenu = () => {
-      let {contains} = useFilter({sensitivity: 'base'});
+      let { contains } = useFilter({ sensitivity: "base" });
 
       return (
         <DialogTrigger>
@@ -551,12 +625,8 @@ describe('Autocomplete', () => {
                 </TextField>
                 <Menu>
                   <MenuItem>Open</MenuItem>
-                  <MenuItem>
-                    Rename…
-                  </MenuItem>
-                  <MenuItem>
-                    Duplicate
-                  </MenuItem>
+                  <MenuItem>Rename…</MenuItem>
+                  <MenuItem>Duplicate</MenuItem>
                 </Menu>
               </Autocomplete>
               <Button>First</Button>
@@ -579,12 +649,12 @@ describe('Autocomplete', () => {
       );
     }
 
-    let {getByRole} = render(<App />);
-    let trigger = getByRole('button', {name: 'Menu'});
+    let { getByRole } = render(<App />);
+    let trigger = getByRole("button", { name: "Menu" });
     await user.click(trigger);
-    let firstButton = getByRole('button', {name: 'First'});
-    let secondButton = getByRole('button', {name: 'Second'});
-    let input = getByRole('textbox');
+    let firstButton = getByRole("button", { name: "First" });
+    let secondButton = getByRole("button", { name: "Second" });
+    let input = getByRole("textbox");
 
     expect(document.activeElement).toBe(input);
 
@@ -592,154 +662,177 @@ describe('Autocomplete', () => {
 
     expect(document.activeElement).toBe(firstButton);
 
-    await user.tab({shift: true});
+    await user.tab({ shift: true });
 
     expect(document.activeElement).toBe(input);
 
-    await user.tab({shift: true});
+    await user.tab({ shift: true });
 
     expect(document.activeElement).toBe(secondButton);
   });
 
-  it('should not auto focus first item when disableAutoFocusFirst is true', async () => {
-    let {getByRole} = render(
-      <AutocompleteWrapper autocompleteProps={{disableAutoFocusFirst: true}}>
+  it("should not auto focus first item when disableAutoFocusFirst is true", async () => {
+    let { getByRole } = render(
+      <AutocompleteWrapper autocompleteProps={{ disableAutoFocusFirst: true }}>
         <StaticMenu />
       </AutocompleteWrapper>
     );
 
-    let input = getByRole('searchbox');
+    let input = getByRole("searchbox");
     await user.tab();
     expect(document.activeElement).toBe(input);
 
-    await user.keyboard('Foo');
+    await user.keyboard("Foo");
 
-    expect(input).not.toHaveAttribute('aria-activedescendant');
+    expect(input).not.toHaveAttribute("aria-activedescendant");
 
-    await user.keyboard('{ArrowDown}');
-    let menu = getByRole('menu');
-    let options = within(menu).getAllByRole('menuitem');
-    expect(input).toHaveAttribute('aria-activedescendant', options[0].id);
+    await user.keyboard("{ArrowDown}");
+    let menu = getByRole("menu");
+    let options = within(menu).getAllByRole("menuitem");
+    expect(input).toHaveAttribute("aria-activedescendant", options[0].id);
   });
 });
 
 AriaAutocompleteTests({
-  prefix: 'rac-static-menu',
+  prefix: "rac-static-menu",
   renderers: {
-    standard: () => render(
-      <AutocompleteWrapper>
-        <StaticMenu />
-      </AutocompleteWrapper>
-    ),
-    links: () => render(
-      <AutocompleteWrapper>
-        <MenuWithLinks />
-      </AutocompleteWrapper>
-    ),
-    sections: () => render(
-      <AutocompleteWrapper>
-        <MenuWithSections />
-      </AutocompleteWrapper>
-    ),
-    controlled: () => render(
-      <ControlledAutocomplete>
-        <StaticMenu />
-      </ControlledAutocomplete>
-    ),
-    itemActions: () => render(
-      <AutocompleteWrapper>
-        <StaticMenu onAction={onAction} />
-      </AutocompleteWrapper>
-    ),
-    multipleSelection: () => render(
-      <AutocompleteWrapper>
-        <StaticMenu selectionMode="multiple" onSelectionChange={onSelectionChange} />
-      </AutocompleteWrapper>
-    ),
-    disabledItems: () => render(
-      <AutocompleteWrapper>
-        <StaticMenu onAction={onAction} disabledKeys={['2']} />
-      </AutocompleteWrapper>
-    ),
-    defaultValue: () => render(
-      <AutocompleteWrapper autocompleteProps={{defaultInputValue: 'Ba'}}>
-        <StaticMenu />
-      </AutocompleteWrapper>
-    ),
-    submenus: () => render(
-      <AutocompleteWrapper>
-        <SubMenus />
-      </AutocompleteWrapper>
-    ),
-    subdialogs: () => render(
-      <AutocompleteWrapper>
-        <SubDialogs />
-      </AutocompleteWrapper>
-    ),
-    subdialogAndMenu: () => render(
-      <AutocompleteWrapper>
-        <SubDialogAndMenu />
-      </AutocompleteWrapper>
-    )
+    standard: () =>
+      render(
+        <AutocompleteWrapper>
+          <StaticMenu />
+        </AutocompleteWrapper>
+      ),
+    links: () =>
+      render(
+        <AutocompleteWrapper>
+          <MenuWithLinks />
+        </AutocompleteWrapper>
+      ),
+    sections: () =>
+      render(
+        <AutocompleteWrapper>
+          <MenuWithSections />
+        </AutocompleteWrapper>
+      ),
+    controlled: () =>
+      render(
+        <ControlledAutocomplete>
+          <StaticMenu />
+        </ControlledAutocomplete>
+      ),
+    itemActions: () =>
+      render(
+        <AutocompleteWrapper>
+          <StaticMenu onAction={onAction} />
+        </AutocompleteWrapper>
+      ),
+    multipleSelection: () =>
+      render(
+        <AutocompleteWrapper>
+          <StaticMenu
+            selectionMode="multiple"
+            onSelectionChange={onSelectionChange}
+          />
+        </AutocompleteWrapper>
+      ),
+    disabledItems: () =>
+      render(
+        <AutocompleteWrapper>
+          <StaticMenu onAction={onAction} disabledKeys={["2"]} />
+        </AutocompleteWrapper>
+      ),
+    defaultValue: () =>
+      render(
+        <AutocompleteWrapper autocompleteProps={{ defaultInputValue: "Ba" }}>
+          <StaticMenu />
+        </AutocompleteWrapper>
+      ),
+    submenus: () =>
+      render(
+        <AutocompleteWrapper>
+          <SubMenus />
+        </AutocompleteWrapper>
+      ),
+    subdialogs: () =>
+      render(
+        <AutocompleteWrapper>
+          <SubDialogs />
+        </AutocompleteWrapper>
+      ),
+    subdialogAndMenu: () =>
+      render(
+        <AutocompleteWrapper>
+          <SubDialogAndMenu />
+        </AutocompleteWrapper>
+      ),
   },
   actionListener: onAction,
-  selectionListener: onSelectionChange
+  selectionListener: onSelectionChange,
 });
 
 AriaAutocompleteTests({
-  prefix: 'rac-dynamic-menu',
+  prefix: "rac-dynamic-menu",
   renderers: {
-    standard: () => render(
-      <AutocompleteWrapper>
-        <DynamicMenu />
-      </AutocompleteWrapper>
-    ),
-    asyncFiltering: () => render(
-      <AsyncFiltering />
-    )
-  }
+    standard: () =>
+      render(
+        <AutocompleteWrapper>
+          <DynamicMenu />
+        </AutocompleteWrapper>
+      ),
+    asyncFiltering: () => render(<AsyncFiltering />),
+  },
 });
 
 AriaAutocompleteTests({
-  prefix: 'rac-static-listbox',
+  prefix: "rac-static-listbox",
   renderers: {
-    standard: () => render(
-      <AutocompleteWrapper>
-        <StaticListbox />
-      </AutocompleteWrapper>
-    ),
-    links: () => render(
-      <AutocompleteWrapper>
-        <ListBoxWithLinks />
-      </AutocompleteWrapper>
-    ),
-    sections: () => render(
-      <AutocompleteWrapper>
-        <ListBoxWithSections />
-      </AutocompleteWrapper>
-    ),
-    controlled: () => render(
-      <ControlledAutocomplete>
-        <StaticListbox />
-      </ControlledAutocomplete>
-    ),
-    multipleSelection: () => render(
-      <AutocompleteWrapper>
-        <StaticListbox selectionMode="multiple" onSelectionChange={onSelectionChange} />
-      </AutocompleteWrapper>
-    ),
-    disabledItems: () => render(
-      <AutocompleteWrapper>
-        <StaticListbox onAction={onAction} disabledKeys={['2']} />
-      </AutocompleteWrapper>
-    ),
-    defaultValue: () => render(
-      <AutocompleteWrapper autocompleteProps={{defaultInputValue: 'Ba'}}>
-        <StaticListbox />
-      </AutocompleteWrapper>
-    )
+    standard: () =>
+      render(
+        <AutocompleteWrapper>
+          <StaticListbox />
+        </AutocompleteWrapper>
+      ),
+    links: () =>
+      render(
+        <AutocompleteWrapper>
+          <ListBoxWithLinks />
+        </AutocompleteWrapper>
+      ),
+    sections: () =>
+      render(
+        <AutocompleteWrapper>
+          <ListBoxWithSections />
+        </AutocompleteWrapper>
+      ),
+    controlled: () =>
+      render(
+        <ControlledAutocomplete>
+          <StaticListbox />
+        </ControlledAutocomplete>
+      ),
+    multipleSelection: () =>
+      render(
+        <AutocompleteWrapper>
+          <StaticListbox
+            selectionMode="multiple"
+            onSelectionChange={onSelectionChange}
+          />
+        </AutocompleteWrapper>
+      ),
+    disabledItems: () =>
+      render(
+        <AutocompleteWrapper>
+          <StaticListbox onAction={onAction} disabledKeys={["2"]} />
+        </AutocompleteWrapper>
+      ),
+    defaultValue: () =>
+      render(
+        <AutocompleteWrapper autocompleteProps={{ defaultInputValue: "Ba" }}>
+          <StaticListbox />
+        </AutocompleteWrapper>
+      ),
   },
-  ariaPattern: 'listbox',
+  ariaPattern: "listbox",
   actionListener: onAction,
-  selectionListener: onSelectionChange
+  selectionListener: onSelectionChange,
 });

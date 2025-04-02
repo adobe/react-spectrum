@@ -10,124 +10,176 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaNumberFieldProps, useLocale, useNumberField} from 'react-aria';
-import {ButtonContext} from './Button';
-import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
-import {FieldErrorContext} from './FieldError';
-import {filterDOMProps} from '@react-aria/utils';
-import {FormContext} from './Form';
-import {forwardRefType, InputDOMProps} from '@react-types/shared';
-import {GroupContext} from './Group';
-import {InputContext} from './Input';
-import {LabelContext} from './Label';
-import {NumberFieldState, useNumberFieldState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
-import {TextContext} from './Text';
+import { AriaNumberFieldProps, useLocale, useNumberField } from "react-aria";
+import { ButtonContext } from "./Button";
+import {
+  ContextValue,
+  Provider,
+  RACValidation,
+  removeDataAttributes,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps,
+  useSlot,
+  useSlottedContext,
+} from "./utils";
+import { FieldErrorContext } from "./FieldError";
+import { filterDOMProps } from "@react-aria-nutrient/utils";
+import { FormContext } from "./Form";
+import { forwardRefType, InputDOMProps } from "@react-types/shared";
+import { GroupContext } from "./Group";
+import { InputContext } from "./Input";
+import { LabelContext } from "./Label";
+import { NumberFieldState, useNumberFieldState } from "react-stately";
+import React, { createContext, ForwardedRef, forwardRef, useRef } from "react";
+import { TextContext } from "./Text";
 
 export interface NumberFieldRenderProps {
   /**
    * Whether the number field is disabled.
    * @selector [data-disabled]
    */
-  isDisabled: boolean,
+  isDisabled: boolean;
   /**
    * Whether the number field is invalid.
    * @selector [data-invalid]
    */
-  isInvalid: boolean,
+  isInvalid: boolean;
   /**
    * Whether the number field is required.
    * @selector [data-required]
    */
-  isRequired: boolean,
+  isRequired: boolean;
   /**
    * State of the number field.
    */
-  state: NumberFieldState
+  state: NumberFieldState;
 }
 
-export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, InputDOMProps, RenderProps<NumberFieldRenderProps>, SlotProps {}
+export interface NumberFieldProps
+  extends Omit<
+      AriaNumberFieldProps,
+      | "label"
+      | "placeholder"
+      | "description"
+      | "errorMessage"
+      | "validationState"
+      | "validationBehavior"
+    >,
+    RACValidation,
+    InputDOMProps,
+    RenderProps<NumberFieldRenderProps>,
+    SlotProps {}
 
-export const NumberFieldContext = createContext<ContextValue<NumberFieldProps, HTMLDivElement>>(null);
-export const NumberFieldStateContext = createContext<NumberFieldState | null>(null);
+export const NumberFieldContext =
+  createContext<ContextValue<NumberFieldProps, HTMLDivElement>>(null);
+export const NumberFieldStateContext = createContext<NumberFieldState | null>(
+  null
+);
 
 /**
  * A number field allows a user to enter a number, and increment or decrement the value using stepper buttons.
  */
-export const NumberField = /*#__PURE__*/ (forwardRef as forwardRefType)(function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>) {
-  [props, ref] = useContextProps(props, ref, NumberFieldContext);
-  let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
-  let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
-  let {locale} = useLocale();
-  let state = useNumberFieldState({
-    ...props,
-    locale,
-    validationBehavior
-  });
+export const NumberField = /*#__PURE__*/ (forwardRef as forwardRefType)(
+  function NumberField(
+    props: NumberFieldProps,
+    ref: ForwardedRef<HTMLDivElement>
+  ) {
+    [props, ref] = useContextProps(props, ref, NumberFieldContext);
+    let { validationBehavior: formValidationBehavior } =
+      useSlottedContext(FormContext) || {};
+    let validationBehavior =
+      props.validationBehavior ?? formValidationBehavior ?? "native";
+    let { locale } = useLocale();
+    let state = useNumberFieldState({
+      ...props,
+      locale,
+      validationBehavior,
+    });
 
-  let inputRef = useRef<HTMLInputElement>(null);
-  let [labelRef, label] = useSlot(
-    !props['aria-label'] && !props['aria-labelledby']
-  );
-  let {
-    labelProps,
-    groupProps,
-    inputProps,
-    incrementButtonProps,
-    decrementButtonProps,
-    descriptionProps,
-    errorMessageProps,
-    ...validation
-  } = useNumberField({
-    ...removeDataAttributes(props),
-    label,
-    validationBehavior
-  }, state, inputRef);
-
-  let renderProps = useRenderProps({
-    ...props,
-    values: {
+    let inputRef = useRef<HTMLInputElement>(null);
+    let [labelRef, label] = useSlot(
+      !props["aria-label"] && !props["aria-labelledby"]
+    );
+    let {
+      labelProps,
+      groupProps,
+      inputProps,
+      incrementButtonProps,
+      decrementButtonProps,
+      descriptionProps,
+      errorMessageProps,
+      ...validation
+    } = useNumberField(
+      {
+        ...removeDataAttributes(props),
+        label,
+        validationBehavior,
+      },
       state,
-      isDisabled: props.isDisabled || false,
-      isInvalid: validation.isInvalid || false,
-      isRequired: props.isRequired || false
-    },
-    defaultClassName: 'react-aria-NumberField'
-  });
+      inputRef
+    );
 
-  let DOMProps = filterDOMProps(props);
-  delete DOMProps.id;
+    let renderProps = useRenderProps({
+      ...props,
+      values: {
+        state,
+        isDisabled: props.isDisabled || false,
+        isInvalid: validation.isInvalid || false,
+        isRequired: props.isRequired || false,
+      },
+      defaultClassName: "react-aria-NumberField",
+    });
 
-  return (
-    <Provider
-      values={[
-        [NumberFieldStateContext, state],
-        [GroupContext, groupProps],
-        [InputContext, {...inputProps, ref: inputRef}],
-        [LabelContext, {...labelProps, ref: labelRef}],
-        [ButtonContext, {
-          slots: {
-            increment: incrementButtonProps,
-            decrement: decrementButtonProps
-          }
-        }],
-        [TextContext, {
-          slots: {
-            description: descriptionProps,
-            errorMessage: errorMessageProps
-          }
-        }],
-        [FieldErrorContext, validation]
-      ]}>
-      <div
-        {...DOMProps}
-        {...renderProps}
-        ref={ref}
-        slot={props.slot || undefined}
-        data-disabled={props.isDisabled || undefined}
-        data-required={props.isRequired || undefined}
-        data-invalid={validation.isInvalid || undefined} />
-      {props.name && <input type="hidden" name={props.name} value={isNaN(state.numberValue) ? '' : state.numberValue} />}
-    </Provider>
-  );
-});
+    let DOMProps = filterDOMProps(props);
+    delete DOMProps.id;
+
+    return (
+      <Provider
+        values={[
+          [NumberFieldStateContext, state],
+          [GroupContext, groupProps],
+          [InputContext, { ...inputProps, ref: inputRef }],
+          [LabelContext, { ...labelProps, ref: labelRef }],
+          [
+            ButtonContext,
+            {
+              slots: {
+                increment: incrementButtonProps,
+                decrement: decrementButtonProps,
+              },
+            },
+          ],
+          [
+            TextContext,
+            {
+              slots: {
+                description: descriptionProps,
+                errorMessage: errorMessageProps,
+              },
+            },
+          ],
+          [FieldErrorContext, validation],
+        ]}
+      >
+        <div
+          {...DOMProps}
+          {...renderProps}
+          ref={ref}
+          slot={props.slot || undefined}
+          data-disabled={props.isDisabled || undefined}
+          data-required={props.isRequired || undefined}
+          data-invalid={validation.isInvalid || undefined}
+        />
+        {props.name && (
+          <input
+            type="hidden"
+            name={props.name}
+            value={isNaN(state.numberValue) ? "" : state.numberValue}
+          />
+        )}
+      </Provider>
+    );
+  }
+);

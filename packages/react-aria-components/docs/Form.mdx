@@ -1,28 +1,37 @@
-{/* Copyright 2020 Adobe. All rights reserved.
+{/_ Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. */}
+governing permissions and limitations under the License. _/}
 
-import {Layout} from '@react-spectrum/docs';
+import { Layout } from "@react-spectrum/docs";
 export default Layout;
 
-import docs from 'docs:react-aria-components';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
-import styles from '@react-spectrum/docs/src/docs.css';
-import packageData from 'react-aria-components/package.json';
-import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
-import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
-import {Keyboard} from '@react-spectrum/text';
-import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
+import docs from "docs:react-aria-components";
+import {
+  PropTable,
+  HeaderInfo,
+  TypeLink,
+  PageDescription,
+  StateTable,
+  ContextTable,
+} from "@react-spectrum/docs";
+import styles from "@react-spectrum/docs/src/docs.css";
+import packageData from "react-aria-components/package.json";
+import { ExampleCard } from "@react-spectrum/docs/src/ExampleCard";
+import ChevronRight from "@spectrum-icons/workflow/ChevronRight";
+import { Keyboard } from "@react-spectrum/text";
+import { StarterKits } from "@react-spectrum/docs/src/StarterKits";
 
 ---
+
 category: Forms
 keywords: [input, form, field, validation]
 type: component
+
 ---
 
 # Form
@@ -31,15 +40,23 @@ type: component
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Form']}
+  componentNames={["Form"]}
   sourceData={[
-    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-1.2/#form'}
-  ]} />
+    { type: "W3C", url: "https://www.w3.org/TR/wai-aria-1.2/#form" },
+  ]}
+/>
 
 ## Example
 
 ```tsx example
-import {Form, TextField, Label, Input, FieldError, Button} from 'react-aria-components';
+import {
+  Form,
+  TextField,
+  Label,
+  Input,
+  FieldError,
+  Button,
+} from "react-aria-components";
 
 <Form>
   <TextField name="email" type="email" isRequired>
@@ -48,16 +65,16 @@ import {Form, TextField, Label, Input, FieldError, Button} from 'react-aria-comp
     <FieldError />
   </TextField>
   <Button type="submit">Submit</Button>
-</Form>
+</Form>;
 ```
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css hidden
-@import "@react-aria/example-theme";
-@import './TextField.mdx' layer(textfield);
-@import './Button.mdx' layer(button);
+@import "@react-aria-nutrient/example-theme";
+@import "./TextField.mdx" layer(textfield);
+@import "./Button.mdx" layer(button);
 ```
 
 ```css
@@ -75,8 +92,8 @@ import {Form, TextField, Label, Input, FieldError, Button} from 'react-aria-comp
 
 The HTML [&lt;form&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form) element can be used to build forms. React Aria's `Form` component extends HTML forms with support for providing server-side validation errors to the fields within it.
 
-* **Accessible** – Uses a native `<form>` element, with support for ARIA labelling to create a [form landmark](https://www.w3.org/WAI/ARIA/apg/patterns/landmarks/examples/form.html).
-* **Validation** – Support for native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and server-side validation errors.
+- **Accessible** – Uses a native `<form>` element, with support for ARIA labelling to create a [form landmark](https://www.w3.org/WAI/ARIA/apg/patterns/landmarks/examples/form.html).
+- **Validation** – Support for native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and server-side validation errors.
 
 See the [Forms](forms.html) guide to learn more about React Aria's form components, including submitting data, and form validation techniques.
 
@@ -87,13 +104,13 @@ A form consists of a container element that includes a group of input elements, 
 If a form has an `aria-label` or `aria-labelledby` attribute, it is exposed to assistive technology as a [form landmark](https://www.w3.org/WAI/ARIA/apg/patterns/landmarks/examples/form.html), allowing users to quickly navigate to it.
 
 ```tsx
-import {Form, Button} from 'react-aria-components';
+import { Form, Button } from "react-aria-components";
 
 <Form>
   {/* ... */}
   <Button type="submit" />
   <Button type="reset" />
-</Form>
+</Form>;
 ```
 
 ## Starter kits
@@ -112,12 +129,12 @@ function Example() {
   return (
     <Form
       /*- begin highlight -*/
-      onSubmit={e => {
+      onSubmit={(e) => {
         e.preventDefault();
         let data = Object.fromEntries(new FormData(e.currentTarget));
         setAction(`submit ${JSON.stringify(data)}`);
       }}
-      onReset={() => setAction('reset')}
+      onReset={() => setAction("reset")}
       /*- end highlight -*/
     >
       <TextField name="username" isRequired>
@@ -130,13 +147,17 @@ function Example() {
         <Input />
         <FieldError />
       </TextField>
-      <div style={{display: 'flex', gap: 8}}>
+      <div style={{ display: "flex", gap: 8 }}>
         {/*- begin highlight -*/}
         <Button type="submit">Submit</Button>
         <Button type="reset">Reset</Button>
         {/*- end highlight -*/}
       </div>
-      {action && <div>Action: <code>{action}</code></div>}
+      {action && (
+        <div>
+          Action: <code>{action}</code>
+        </div>
+      )}
     </Form>
   );
 }
@@ -149,7 +170,7 @@ React Aria supports native HTML constraint validation with customizable UI, cust
 To provide validation errors, the `validationErrors` prop should be set to an object that maps each field's `name` prop to a string or array of strings representing one or more errors. These are displayed to the user as soon as the `validationErrors` prop is set, and cleared after the user modifies each field's value.
 
 ```tsx example
-<Form validationErrors={{username: 'Sorry, this username is taken.'}}>
+<Form validationErrors={{ username: "Sorry, this username is taken." }}>
   <TextField name="username">
     <Label>Username</Label>
     <Input />
@@ -172,7 +193,8 @@ The `validationBehavior` can be set at the form level to apply to all fields, or
     name="username"
     defaultValue="admin"
     isRequired
-    validate={value => value === 'admin' ? 'Nice try.' : null}>
+    validate={(value) => (value === "admin" ? "Nice try." : null)}
+  >
     <Label>Username</Label>
     <Input />
     <FieldError />
@@ -192,24 +214,25 @@ function Example() {
   return (
     <Form
       /*- begin highlight -*/
-      onInvalid={e => {
+      onInvalid={(e) => {
         e.preventDefault();
         setInvalid(true);
       }}
       /*- end highlight -*/
-      onSubmit={e => {
+      onSubmit={(e) => {
         e.preventDefault();
         setInvalid(false);
       }}
-      onReset={() => setInvalid(false)}>
-      {isInvalid &&
+      onReset={() => setInvalid(false)}
+    >
+      {isInvalid && (
         /*- begin highlight -*/
-        <div role="alert" tabIndex={-1} ref={e => e?.focus()}>
-        {/*- end highlight -*/}
+        <div role="alert" tabIndex={-1} ref={(e) => e?.focus()}>
+          {/*- end highlight -*/}
           <h3>Unable to submit</h3>
           <p>Please fix the validation errors below, and re-submit the form.</p>
         </div>
-      }
+      )}
       <TextField name="firstName" isRequired>
         <Label>First Name</Label>
         <Input />
@@ -220,7 +243,7 @@ function Example() {
         <Input />
         <FieldError />
       </TextField>
-      <div style={{display: 'flex', gap: 8}}>
+      <div style={{ display: "flex", gap: 8 }}>
         <Button type="submit">Submit</Button>
         <Button type="reset">Reset</Button>
       </div>
@@ -233,7 +256,7 @@ function Example() {
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-Form [role=alert] {
+.react-aria-Form [role="alert"] {
   border: 2px solid var(--invalid-color);
   background: var(--overlay-background);
   border-radius: 6px;
@@ -275,9 +298,7 @@ React Aria components can be styled in many ways, including using CSS classes, i
 A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
 
 ```jsx
-<Form className="my-form">
-  {/* ... */}
-</Form>
+<Form className="my-form">{/* ... */}</Form>
 ```
 
 ## Advanced customization
@@ -286,36 +307,34 @@ A custom `className` can also be specified on any component. This overrides the 
 
 All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
 
-<ContextTable components={['Form']} docs={docs} />
+<ContextTable components={["Form"]} docs={docs} />
 
 This example adds a global form submission handler for all forms rendered inside it, which could be used to centralize logic to submit data to an API.
 
 ```tsx
-let onSubmit = e => {
+let onSubmit = (e) => {
   e.preventDefault();
   // Submit form data to an API...
 };
 
-<FormContext.Provider value={{onSubmit}}>
-  <Form>
-    {/* ... */}
-  </Form>
-</FormContext.Provider>
+<FormContext.Provider value={{ onSubmit }}>
+  <Form>{/* ... */}</Form>
+</FormContext.Provider>;
 ```
 
 `FormContext` can also be used within any component inside a form to access props from the nearest ancestor form. For example, to access the current `validationBehavior`, use the [useSlottedContext](advanced.html#useslottedcontext) hook.
 
 ```tsx
-import {FormContext, useSlottedContext} from 'react-aria-components';
+import { FormContext, useSlottedContext } from "react-aria-components";
 
 function MyFormField() {
-  let {validationBehavior} = useSlottedContext(FormContext);
+  let { validationBehavior } = useSlottedContext(FormContext);
   // ...
 }
 
 <Form validationBehavior="aria">
   <MyFormField />
-</Form>
+</Form>;
 ```
 
 ### Validation context
@@ -323,17 +342,19 @@ function MyFormField() {
 The `Form` component provides a value for `FormValidationContext`, which allows child elements to receive validation errors from the form. You can provide a value for this context directly in case you need to customize the form element, or reuse an existing form component.
 
 ```tsx example
-import {FormValidationContext} from 'react-aria-components';
+import { FormValidationContext } from "react-aria-components";
 
 <form>
-  <FormValidationContext.Provider value={{username: 'Sorry, this username is taken.'}}>
+  <FormValidationContext.Provider
+    value={{ username: "Sorry, this username is taken." }}
+  >
     <TextField name="username">
       <Label>Username</Label>
       <Input />
       <FieldError />
     </TextField>
   </FormValidationContext.Provider>
-</form>
+</form>;
 ```
 
 ### Custom children
@@ -341,11 +362,13 @@ import {FormValidationContext} from 'react-aria-components';
 You can also consume `FormValidationContext` in your own custom form input components to receive validation errors. This example shows a native `<select>` that displays validation errors provided by `Form`.
 
 ```tsx example
-import type {SelectHTMLAttributes} from 'react';
-import {useContext} from 'react';
-import {useId} from 'react-aria';
+import type { SelectHTMLAttributes } from "react";
+import { useContext } from "react";
+import { useId } from "react-aria";
 
-function NativeSelect(props: SelectHTMLAttributes<HTMLSelectElement> & {label: string}) {
+function NativeSelect(
+  props: SelectHTMLAttributes<HTMLSelectElement> & { label: string }
+) {
   let errors = useContext(FormValidationContext);
   let error = errors?.[props.name];
   let id = useId();
@@ -355,19 +378,21 @@ function NativeSelect(props: SelectHTMLAttributes<HTMLSelectElement> & {label: s
     <div className="flex">
       <label htmlFor={id}>{props.label}</label>
       <select {...props} id={id} aria-describedby={descriptionId} />
-      <small className="invalid" id={descriptionId}>{error}</small>
+      <small className="invalid" id={descriptionId}>
+        {error}
+      </small>
     </div>
   );
 }
 
-<Form validationErrors={{frequency: 'Please select a frequency.'}}>
+<Form validationErrors={{ frequency: "Please select a frequency." }}>
   <NativeSelect label="Frequency" name="frequency">
     <option value="">Select an option...</option>
     <option>Always</option>
     <option>Sometimes</option>
     <option>Never</option>
   </NativeSelect>
-</Form>
+</Form>;
 ```
 
 ```css hidden

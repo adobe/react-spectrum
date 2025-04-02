@@ -10,52 +10,47 @@
  * governing permissions and limitations under the License.
  */
 
-import {CheckboxGroupContext} from './context';
-import {classNames, useDOMRef} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
-import {Field} from '@react-spectrum/label';
-import {Provider, useProviderProps} from '@react-spectrum/provider';
-import React from 'react';
-import {SpectrumCheckboxGroupProps} from '@react-types/checkbox';
-import styles from '@adobe/spectrum-css-temp/components/fieldgroup/vars.css';
-import {useCheckboxGroup} from '@react-aria/checkbox';
-import {useCheckboxGroupState} from '@react-stately/checkbox';
-import {useFormProps} from '@react-spectrum/form';
+import { CheckboxGroupContext } from "./context";
+import { classNames, useDOMRef } from "@react-spectrum/utils";
+import { DOMRef } from "@react-types/shared";
+import { Field } from "@react-spectrum/label";
+import { Provider, useProviderProps } from "@react-spectrum/provider";
+import React from "react";
+import { SpectrumCheckboxGroupProps } from "@react-types/checkbox";
+import styles from "@adobe/spectrum-css-temp/components/fieldgroup/vars.css";
+import { useCheckboxGroup } from "@react-aria-nutrient/checkbox";
+import { useCheckboxGroupState } from "@react-stately/checkbox";
+import { useFormProps } from "@react-spectrum/form";
 
 /**
  * A CheckboxGroup allows users to select one or more items from a list of choices.
  */
-export const CheckboxGroup = React.forwardRef(function CheckboxGroup(props: SpectrumCheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
+export const CheckboxGroup = React.forwardRef(function CheckboxGroup(
+  props: SpectrumCheckboxGroupProps,
+  ref: DOMRef<HTMLDivElement>
+) {
   props = useProviderProps(props);
   props = useFormProps(props);
-  let {
-    isEmphasized,
-    children,
-    orientation = 'vertical'
-  } = props;
+  let { isEmphasized, children, orientation = "vertical" } = props;
   let domRef = useDOMRef(ref);
   let state = useCheckboxGroupState(props);
-  let {groupProps, ...otherProps} = useCheckboxGroup(props, state);
+  let { groupProps, ...otherProps } = useCheckboxGroup(props, state);
 
   return (
     <Field
       {...props}
       {...otherProps}
       ref={domRef}
-      wrapperClassName={classNames(styles, 'spectrum-FieldGroup')}
+      wrapperClassName={classNames(styles, "spectrum-FieldGroup")}
       elementType="span"
-      includeNecessityIndicatorInAccessibilityName>
+      includeNecessityIndicatorInAccessibilityName
+    >
       <div
         {...groupProps}
-        className={
-          classNames(
-            styles,
-            'spectrum-FieldGroup-group',
-            {
-              'spectrum-FieldGroup-group--horizontal': orientation === 'horizontal'
-            }
-          )
-        }>
+        className={classNames(styles, "spectrum-FieldGroup-group", {
+          "spectrum-FieldGroup-group--horizontal": orientation === "horizontal",
+        })}
+      >
         <Provider isEmphasized={isEmphasized}>
           <CheckboxGroupContext.Provider value={state}>
             {children}

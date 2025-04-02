@@ -36,9 +36,9 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/interactions": "^3.24.1",
-    "@react-aria/overlays": "^3.26.1",
-    "@react-aria/utils": "^3.28.1",
+    "@react-aria-nutrient/interactions": "^3.24.1",
+    "@react-aria-nutrient/overlays": "^3.26.1",
+    "@react-aria-nutrient/utils": "^3.28.1",
     "@react-spectrum/utils": "^3.12.3",
     "@react-stately/overlays": "^3.6.14",
     "@react-types/overlays": "^3.8.13",

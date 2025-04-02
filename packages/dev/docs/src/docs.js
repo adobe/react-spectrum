@@ -17,14 +17,14 @@ import {Content, View} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import docsStyle from './docs.css';
-import {FocusScope} from '@react-aria/focus';
+import {FocusScope} from '@react-aria-nutrient/focus';
 import highlightCss from './syntax-highlight.css';
 import {Modal} from '@react-spectrum/overlays';
-import {Pressable} from '@react-aria/interactions';
+import {Pressable} from '@react-aria-nutrient/interactions';
 import React, {useRef, useState} from 'react';
 import ReactDOM from 'react-dom/client';
 import {ThemeProvider} from './ThemeSwitcher';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useLayoutEffect} from '@react-aria-nutrient/utils';
 import {useOverlayTriggerState} from 'react-stately';
 
 let links = document.querySelectorAll('a[data-link]');

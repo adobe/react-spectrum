@@ -10,46 +10,52 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
-import React, {ReactElement, ReactNode} from 'react';
-import {useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import { AriaLabelingProps, DOMProps, StyleProps } from "@react-types/shared";
+import { filterDOMProps } from "@react-aria-nutrient/utils";
+import React, { ReactElement, ReactNode } from "react";
+import { useSlotProps, useStyleProps } from "@react-spectrum/utils";
 
-export interface IllustrationProps extends DOMProps, AriaLabelingProps, StyleProps {
+export interface IllustrationProps
+  extends DOMProps,
+    AriaLabelingProps,
+    StyleProps {
   /**
    * A screen reader only label for the Illustration.
    */
-  'aria-label'?: string,
+  "aria-label"?: string;
   /**
    * The content to display. Should be an SVG.
    */
-  children: ReactElement<any>,
+  children: ReactElement<any>;
   /**
    * A slot to place the illustration in.
    * @default 'illustration'
    */
-  slot?: string,
+  slot?: string;
   /**
    * Indicates whether the element is exposed to an accessibility API.
    */
-  'aria-hidden'?: boolean | 'false' | 'true'
+  "aria-hidden"?: boolean | "false" | "true";
 }
 
-export type IllustrationPropsWithoutChildren = Omit<IllustrationProps, 'children'>;
+export type IllustrationPropsWithoutChildren = Omit<
+  IllustrationProps,
+  "children"
+>;
 
 /**
  * Wrapper component for illustrations. Use this to wrap your svg element for a custom illustration.
  */
 export function Illustration(props: IllustrationProps): ReactNode {
-  props = useSlotProps(props, 'illustration');
+  props = useSlotProps(props, "illustration");
   let {
     children,
-    'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledby,
-    'aria-hidden': ariaHidden,
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledby,
+    "aria-hidden": ariaHidden,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
+  let { styleProps } = useStyleProps(otherProps);
 
   let hasLabel = ariaLabel || ariaLabelledby;
 
@@ -60,10 +66,10 @@ export function Illustration(props: IllustrationProps): ReactNode {
   return React.cloneElement(children, {
     ...filterDOMProps(otherProps),
     ...styleProps,
-    focusable: 'false',
-    'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledby,
-    'aria-hidden': ariaHidden,
-    role: hasLabel ? 'img' : undefined
+    focusable: "false",
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledby,
+    "aria-hidden": ariaHidden,
+    role: hasLabel ? "img" : undefined,
   });
 }

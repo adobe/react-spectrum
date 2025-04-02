@@ -33,7 +33,6 @@ In order to build such a component library, an extensible architecture needs to 
 
 Each component in React Spectrum v3 will be broken into at most three parts, enabled by the new [Hooks](https://reactjs.org/docs/hooks-intro.html) feature in React 16.8. Some components will not have all of these pieces. For example, some simple components do not require any state, and others may be only compositions of other components.
 
-
 - **State hook** - a React hook, shared across platforms. Accepts common props from the component, and provides state management. Supports controlled and uncontrolled modes. No UI is rendered here, just common state management that can be shared across multiple platform dependent UI implementations.
 - **Behavior hook** - a React hook which provides props to be passed to certain children by the component for a particular platform, e.g. web or native. Implements event handling, focus management, accessibility, internationalization, etc. and updates the component’s state via the state hook as needed. Possibly has platform specific UI state of its own (e.g. focus state for classes, etc.). In general, a behavior hook should exist for every [ARIA widget](https://www.w3.org/TR/wai-aria-practices-1.1/#aria_ex).
 - **Themed component** - the actual component used by applications. Provides the DOM structure required to implement a specific theme, e.g. the proper class names and elements. Uses props from the behavior hook and state from the state hook.
@@ -51,18 +50,18 @@ export function useAutocomplete(props) {
   let [selectedIndex, setSelectedIndex] = useState(null);
   let completions = useMemo(
     () =>
-      props.options.filter(option =>
+      props.options.filter((option) =>
         option.toLowerCase().startsWith(value.toLowerCase())
       ),
     [props.options, value]
   );
-  
+
   return {
     showMenu: showMenu && completions.length > 0,
     setShowMenu,
     toggleMenu: () => setShowMenu(!showMenu),
     value,
-    setValue: value => {
+    setValue: (value) => {
       if (value && !showMenu) {
         setShowMenu(true);
       }
@@ -73,11 +72,11 @@ export function useAutocomplete(props) {
     selectedIndex,
     setSelectedIndex,
     completions,
-    selectItem: index => {
+    selectItem: (index) => {
       setValue(completions[index]);
       setShowMenu(false);
       props.onChange(completions[index]);
-    }
+    },
   };
 }
 ```
@@ -100,7 +99,7 @@ export function useComboBox(props, autocomplete) {
     textfieldProps: getTextfieldProps(values),
     buttonProps: getButtonProps(values),
     menuProps: getMenuProps(values),
-    getMenuItemProps: index => getMenuItemProps(values, index)
+    getMenuItemProps: (index) => getMenuItemProps(values, index),
   };
 }
 
@@ -110,7 +109,7 @@ function getWrapperProps({ listboxId, showMenu }) {
     "aria-controls": showMenu ? listboxId : undefined,
     "aria-owns": showMenu ? listboxId : undefined,
     "aria-expanded": showMenu,
-    "aria-haspopup": "true"
+    "aria-haspopup": "true",
   };
 }
 
@@ -124,9 +123,9 @@ function getTextfieldProps({
   listboxId,
   showMenu,
   setShowMenu,
-  textfieldRef
+  textfieldRef,
 }) {
-  let onKeyDown = e => {
+  let onKeyDown = (e) => {
     switch (e.key) {
       case "ArrowDown":
         setSelectedIndex(
@@ -148,11 +147,11 @@ function getTextfieldProps({
         break;
     }
   };
-  
+
   return {
     value,
     ref: textfieldRef,
-    onChange: e => setValue(e.target.value),
+    onChange: (e) => setValue(e.target.value),
     "aria-controls": showMenu ? listboxId : undefined,
     "aria-autocomplete": "list",
     "aria-activedescendant":
@@ -167,26 +166,26 @@ function getTextfieldProps({
       if (value) {
         setShowMenu(true);
       }
-    }
+    },
   };
 }
 
 function getButtonProps({ toggleMenu, textfieldRef }) {
   return {
     tabIndex: "-1",
-    onMouseDown: e => e.preventDefault(),
-    onMouseUp: e => e.preventDefault(),
+    onMouseDown: (e) => e.preventDefault(),
+    onMouseUp: (e) => e.preventDefault(),
     onClick: () => {
       textfieldRef.current.focus();
       toggleMenu();
-    }
+    },
   };
 }
 
 function getMenuProps({ listboxId }) {
   return {
     id: listboxId,
-    role: "listbox"
+    role: "listbox",
   };
 }
 
@@ -200,8 +199,8 @@ function getMenuItemProps(
     tabIndex: selectedIndex === index ? 0 : -1,
     "aria-selected": selectedIndex === index,
     onMouseEnter: () => setSelectedIndex(index),
-    onMouseDown: e => e.preventDefault(),
-    onClick: () => selectItem(index)
+    onMouseDown: (e) => e.preventDefault(),
+    onClick: () => selectItem(index),
   };
 }
 ```
@@ -211,31 +210,24 @@ function getMenuItemProps(
 The following example shows what a ComboBox component might look like. It uses the autocomplete state hook along with props from the combo box behavior hook, and renders the actual DOM structure needed for the Spectrum theme. In general, components themselves should be quite small and mostly stateless, since state and behavior are provided by theme-agnostic hooks.
 
 ```jsx
-import {useAutocomplete} from '@react-state/autocomplete';
-import {useComboBox} from '@react-aria/combo-box';
-import {Textfield} from '@react-spectrum/textfield';
-import {Button} from '@react-spectrum/button';
-import {AutocompleteMenu} from '@react-spectrum/autocomplete';
+import { useAutocomplete } from "@react-state/autocomplete";
+import { useComboBox } from "@react-aria-nutrient/combo-box";
+import { Textfield } from "@react-spectrum/textfield";
+import { Button } from "@react-spectrum/button";
+import { AutocompleteMenu } from "@react-spectrum/autocomplete";
 
 function ComboBox(props) {
   let autocomplete = useAutocomplete(props);
-  let {
-    wrapperProps,
-    textfieldProps,
-    buttonProps,
-    menuProps
-  } = useComboBox(props, autocomplete);
-  
+  let { wrapperProps, textfieldProps, buttonProps, menuProps } = useComboBox(
+    props,
+    autocomplete
+  );
+
   return (
     <div {...wrapperProps} className="spectrum-InputGroup">
-      <Textfield
-        {...textfieldProps}
-        className="spectrum-InputGroup-field" />
-      <Button
-        {...buttonProps}
-        variant="field" />
-      <AutocompleteMenu
-        {...menuProps} />
+      <Textfield {...textfieldProps} className="spectrum-InputGroup-field" />
+      <Button {...buttonProps} variant="field" />
+      <AutocompleteMenu {...menuProps} />
     </div>
   );
 }
@@ -247,9 +239,9 @@ In order for each of the three pieces of each component to be used independently
 
 There will be a separate RFC to propose the individual versioning of react-spectrum packages, and the naming of these package orgs is still up for debate, but the general structure should be:
 
-  - `@react-state/combo-box` - state hook
-  - `@react-aria/combo-box` - behavior hook implementation for web
-  - `@react-spectrum/combo-box` - themed spectrum component
+- `@react-state/combo-box` - state hook
+- `@react-aria-nutrient/combo-box` - behavior hook implementation for web
+- `@react-spectrum/combo-box` - themed spectrum component
 
 In terms of folder structure inside the react-spectrum repo, a two level folder tree could be used. This groups the three parts of each component together within a single folder, even though they are separate packages, which should make it slightly easier to find things in the repo. Again, see the monorepo RFC for more details on the motivation behind splitting everything into separate packages.
 
@@ -294,7 +286,7 @@ Several alternatives were considered prior to the release of React Hooks, but th
 
 ## Open Questions
 
-- **Package naming** - We need better names for the package orgs (e.g. `@react-state`  and `@react-aria`). These need to be publicly available on npm for when we open source.
+- **Package naming** - We need better names for the package orgs (e.g. `@react-state` and `@react-aria`). These need to be publicly available on npm for when we open source.
 - **File structure** - Is the file structure proposed above confusing? Is there too much boilerplate for each component? How could we do it better?
 
 ## Frequently Asked Questions

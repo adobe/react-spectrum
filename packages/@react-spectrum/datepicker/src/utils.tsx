@@ -9,19 +9,31 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {createDOMRef} from '@react-spectrum/utils';
-import {createFocusManager} from '@react-aria/focus';
-import {DateFormatter, useDateFormatter, useLocale} from '@react-aria/i18n';
-import {FocusableRef} from '@react-types/shared';
-import {FormatterOptions} from '@react-stately/datepicker';
-import React, {ReactNode, useImperativeHandle, useMemo, useRef, useState} from 'react';
-import {SpectrumDatePickerBase} from '@react-types/datepicker';
-import {useDisplayNames} from '@react-aria/datepicker';
-import {useLayoutEffect} from '@react-aria/utils';
-import {useProvider} from '@react-spectrum/provider';
+import { createDOMRef } from "@react-spectrum/utils";
+import { createFocusManager } from "@react-aria-nutrient/focus";
+import {
+  DateFormatter,
+  useDateFormatter,
+  useLocale,
+} from "@react-aria-nutrient/i18n";
+import { FocusableRef } from "@react-types/shared";
+import { FormatterOptions } from "@react-stately/datepicker";
+import React, {
+  ReactNode,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { SpectrumDatePickerBase } from "@react-types/datepicker";
+import { useDisplayNames } from "@react-aria-nutrient/datepicker";
+import { useLayoutEffect } from "@react-aria-nutrient/utils";
+import { useProvider } from "@react-spectrum/provider";
 
-export function useFormatHelpText(props: Pick<SpectrumDatePickerBase<any>, 'description' | 'showFormatHelpText'>): ReactNode {
-  let formatter = useDateFormatter({dateStyle: 'short'});
+export function useFormatHelpText(
+  props: Pick<SpectrumDatePickerBase<any>, "description" | "showFormatHelpText">
+): ReactNode {
+  let formatter = useDateFormatter({ dateStyle: "short" });
   let displayNames = useDisplayNames();
   return useMemo(() => {
     if (props.description) {
@@ -29,31 +41,33 @@ export function useFormatHelpText(props: Pick<SpectrumDatePickerBase<any>, 'desc
     }
 
     if (props.showFormatHelpText) {
-      return (
-        formatter.formatToParts(new Date()).map((s, i) => {
-          if (s.type === 'literal') {
-            return <span key={i}>{` ${s.value} `}</span>;
-          }
+      return formatter.formatToParts(new Date()).map((s, i) => {
+        if (s.type === "literal") {
+          return <span key={i}>{` ${s.value} `}</span>;
+        }
 
-          return <span key={i} style={{unicodeBidi: 'embed', direction: 'ltr'}}>{displayNames.of(s.type)}</span>;
-        })
-      );
+        return (
+          <span key={i} style={{ unicodeBidi: "embed", direction: "ltr" }}>
+            {displayNames.of(s.type)}
+          </span>
+        );
+      });
     }
 
-    return '';
+    return "";
   }, [props.description, props.showFormatHelpText, formatter, displayNames]);
 }
 
 export function useVisibleMonths(maxVisibleMonths: number): number {
-  let {scale} = useProvider()!;
+  let { scale } = useProvider()!;
   let [visibleMonths, setVisibleMonths] = useState(getVisibleMonths(scale));
   useLayoutEffect(() => {
     let onResize = () => setVisibleMonths(getVisibleMonths(scale));
     onResize();
 
-    window.addEventListener('resize', onResize);
+    window.addEventListener("resize", onResize);
     return () => {
-      window.removeEventListener('resize', onResize);
+      window.removeEventListener("resize", onResize);
     };
   }, [scale]);
 
@@ -61,35 +75,46 @@ export function useVisibleMonths(maxVisibleMonths: number): number {
 }
 
 function getVisibleMonths(scale) {
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return 1;
   }
-  let monthWidth = scale === 'large' ? 336 : 280;
-  let gap = scale === 'large' ? 30 : 24;
-  let popoverPadding = scale === 'large' ? 32 : 48;
-  return Math.floor((window.innerWidth - popoverPadding * 2) / (monthWidth + gap));
+  let monthWidth = scale === "large" ? 336 : 280;
+  let gap = scale === "large" ? 30 : 24;
+  let popoverPadding = scale === "large" ? 32 : 48;
+  return Math.floor(
+    (window.innerWidth - popoverPadding * 2) / (monthWidth + gap)
+  );
 }
 
-export function useFocusManagerRef(ref: FocusableRef<HTMLElement>): React.RefObject<HTMLElement | null> {
+export function useFocusManagerRef(
+  ref: FocusableRef<HTMLElement>
+): React.RefObject<HTMLElement | null> {
   let domRef = useRef<HTMLElement | null>(null);
   useImperativeHandle(ref, () => ({
     ...createDOMRef(domRef),
     focus() {
-      createFocusManager(domRef).focusFirst({tabbable: true});
-    }
+      createFocusManager(domRef).focusFirst({ tabbable: true });
+    },
   }));
   return domRef;
 }
 
-export function useFormattedDateWidth(state: {getDateFormatter: (locale: string, formatOptions: FormatterOptions) => DateFormatter}): number {
+export function useFormattedDateWidth(state: {
+  getDateFormatter: (
+    locale: string,
+    formatOptions: FormatterOptions
+  ) => DateFormatter;
+}): number {
   let locale = useLocale()?.locale;
   let currentDate = new Date();
-  let formatedDate = state.getDateFormatter(locale, {shouldForceLeadingZeros: true}).format(currentDate);
-  let totalCharacters =  formatedDate.length;
+  let formatedDate = state
+    .getDateFormatter(locale, { shouldForceLeadingZeros: true })
+    .format(currentDate);
+  let totalCharacters = formatedDate.length;
 
   // The max of two is for times with only hours.
   // As the length of a date grows we need to proportionally increase the width.
   // We use the character count with 'ch' units and add extra padding to accomate for
   // dates with months and time dashes, which are wider characters.
-  return (totalCharacters + Math.max(Math.floor(totalCharacters / 5), 2));
+  return totalCharacters + Math.max(Math.floor(totalCharacters / 5), 2);
 }

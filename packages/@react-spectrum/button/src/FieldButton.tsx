@@ -10,27 +10,41 @@
  * governing permissions and limitations under the License.
  */
 
-import {ButtonProps} from '@react-types/button';
-import {classNames, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, FocusableRef, RefObject, StyleProps} from '@react-types/shared';
-import {FocusRing} from '@react-aria/focus';
-import {mergeProps} from '@react-aria/utils';
-import React from 'react';
-import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
-import {useButton} from '@react-aria/button';
-import {useHover} from '@react-aria/interactions';
+import { ButtonProps } from "@react-types/button";
+import {
+  classNames,
+  SlotProvider,
+  useFocusableRef,
+  useSlotProps,
+  useStyleProps,
+} from "@react-spectrum/utils";
+import {
+  DOMProps,
+  FocusableRef,
+  RefObject,
+  StyleProps,
+} from "@react-types/shared";
+import { FocusRing } from "@react-aria-nutrient/focus";
+import { mergeProps } from "@react-aria-nutrient/utils";
+import React from "react";
+import styles from "@adobe/spectrum-css-temp/components/button/vars.css";
+import { useButton } from "@react-aria-nutrient/button";
+import { useHover } from "@react-aria-nutrient/interactions";
 
 interface FieldButtonProps extends ButtonProps, DOMProps, StyleProps {
-  isQuiet?: boolean,
-  isActive?: boolean,
-  validationState?: 'valid' | 'invalid',
-  isInvalid?: boolean,
-  focusRingClass?: string
+  isQuiet?: boolean;
+  isActive?: boolean;
+  validationState?: "valid" | "invalid";
+  isInvalid?: boolean;
+  focusRingClass?: string;
 }
 
 // @private
-export const FieldButton = React.forwardRef(function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
-  props = useSlotProps(props, 'button');
+export const FieldButton = React.forwardRef(function FieldButton(
+  props: FieldButtonProps,
+  ref: FocusableRef
+) {
+  props = useSlotProps(props, "button");
   let {
     isQuiet,
     isDisabled,
@@ -43,36 +57,40 @@ export const FieldButton = React.forwardRef(function FieldButton(props: FieldBut
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref) as RefObject<HTMLButtonElement | null>;
-  let {buttonProps, isPressed} = useButton(props, domRef);
-  let {hoverProps, isHovered} = useHover({isDisabled});
-  let {styleProps} = useStyleProps(otherProps);
+  let { buttonProps, isPressed } = useButton(props, domRef);
+  let { hoverProps, isHovered } = useHover({ isDisabled });
+  let { styleProps } = useStyleProps(otherProps);
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring', focusRingClass)} autoFocus={autoFocus}>
+    <FocusRing
+      focusRingClass={classNames(styles, "focus-ring", focusRingClass)}
+      autoFocus={autoFocus}
+    >
       <button
         {...mergeProps(buttonProps, hoverProps)}
         ref={domRef}
-        className={
-          classNames(
-            styles,
-            'spectrum-FieldButton',
-            {
-              'spectrum-FieldButton--quiet': isQuiet,
-              'is-active': isActive || isPressed,
-              'is-disabled': isDisabled,
-              'spectrum-FieldButton--invalid': isInvalid || validationState === 'invalid',
-              'is-hovered': isHovered
-            },
-            styleProps.className
-          )
-        }>
+        className={classNames(
+          styles,
+          "spectrum-FieldButton",
+          {
+            "spectrum-FieldButton--quiet": isQuiet,
+            "is-active": isActive || isPressed,
+            "is-disabled": isDisabled,
+            "spectrum-FieldButton--invalid":
+              isInvalid || validationState === "invalid",
+            "is-hovered": isHovered,
+          },
+          styleProps.className
+        )}
+      >
         <SlotProvider
           slots={{
             icon: {
-              size: 'S',
-              UNSAFE_className: classNames(styles, 'spectrum-Icon')
-            }
-          }}>
+              size: "S",
+              UNSAFE_className: classNames(styles, "spectrum-Icon"),
+            },
+          }}
+        >
           {children}
         </SlotProvider>
       </button>

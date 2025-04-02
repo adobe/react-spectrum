@@ -1,20 +1,20 @@
-{/* Copyright 2023 Adobe. All rights reserved.
+{/_ Copyright 2023 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. */}
+governing permissions and limitations under the License. _/}
 
-import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+import { BlogPostLayout, Hero } from "@react-spectrum/docs";
 export default BlogPostLayout;
 
 ---
+
 description: In this release, we’re promoting React Aria Components from Beta to RC, introducing built-in support for form validation, adding a new Toolbar component, improving our css bundle size with Lightning CSS, and fixing plenty of bugs.
 
-date: 2023-11-08
----
+## date: 2023-11-08
 
 # November 08, 2023 Release
 
@@ -34,12 +34,13 @@ In this release, we made a few API final updates to React Aria Components.
 2. GridList and TagGroup have moved to using `display: contents` for their internal `gridcell` elements, making it easier to style items with flex or grid layout properties. If you were previously applying these using a descendant selector, you’ll need to move them to the parent row element.
 3. The Dialog component now uses an explicit `<Heading slot="title">` to ensure that other headings in the dialog are not affected. You’ll need to add the `slot` prop to the main heading, and will see a console warning if no heading is provided.
 
-
 ## Enhancements
+
 - Support native form validation - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5288)
 - `Toolbar` component - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5080)
 
 ## Fixes
+
 - Updated translations for Menu - [@rgeraghty](https://github.com/rgeraghty) - [PR](https://github.com/adobe/react-spectrum/pull/5182)
 - TS StrictMode for Radio - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/5193)
 - Add getOwnerDocument and getOwnerWindow utils and update usage - [@slye-stripe](https://github.com/slye-stripe) - [PR](https://github.com/adobe/react-spectrum/pull/5096)
@@ -62,6 +63,7 @@ In this release, we made a few API final updates to React Aria Components.
 - Bump lightningcss - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5379)
 
 ## Docs
+
 - Fix example drag behavior w/ mouseUp - [@blair-c](https://github.com/blair-c) - [PR](https://github.com/adobe/react-spectrum/pull/5190)
 - Toolbar docs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5327)
 - Add docs for form validation - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5343)
@@ -98,68 +100,65 @@ Fixes to pre-released components are listed below. Please feel free to try them 
 - Add support for named groups and peers in Tailwind plugin - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/5178)
 - Fix clicking on track to move slider in RAC - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5383)
 
-
 **React Spectrum DropZone** (Beta)
 
 - Update RSP DropZone visual feedback example in docs - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/5207)
 - Fix `DropZone`'s filled message announcement on different platforms - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/5123)
-
-
 
 ## Released packages
 
 ```
 - @adobe/react-spectrum@3.32.0
 - @internationalized/number@3.4.0
-- @react-aria/accordion@3.0.0-alpha.24
-- @react-aria/actiongroup@3.7.0
-- @react-aria/aria-modal-polyfill@3.7.7
-- @react-aria/autocomplete@3.0.0-alpha.23
-- @react-aria/breadcrumbs@3.5.8
-- @react-aria/button@3.9.0
-- @react-aria/calendar@3.5.3
-- @react-aria/checkbox@3.12.0
-- @react-aria/color@3.0.0-beta.27
-- @react-aria/combobox@3.8.0
-- @react-aria/datepicker@3.9.0
-- @react-aria/dialog@3.5.8
-- @react-aria/dnd@3.5.0
-- @react-aria/focus@3.15.0
-- @react-aria/form@3.0.0
-- @react-aria/grid@3.8.5
-- @react-aria/gridlist@3.7.2
-- @react-aria/i18n@3.9.0
-- @react-aria/interactions@3.20.0
-- @react-aria/label@3.7.3
-- @react-aria/landmark@3.0.0-beta.7
-- @react-aria/link@3.6.2
-- @react-aria/listbox@3.11.2
-- @react-aria/menu@3.11.2
-- @react-aria/meter@3.4.8
-- @react-aria/numberfield@3.10.0
-- @react-aria/overlays@3.19.0
-- @react-aria/progress@3.4.8
-- @react-aria/radio@3.9.0
-- @react-aria/searchfield@3.6.0
-- @react-aria/select@3.14.0
-- @react-aria/selection@3.17.2
-- @react-aria/separator@3.3.8
-- @react-aria/slider@3.7.3
-- @react-aria/spinbutton@3.6.0
-- @react-aria/ssr@3.9.0
-- @react-aria/steplist@3.0.0-alpha.0
-- @react-aria/switch@3.5.7
-- @react-aria/table@3.13.2
-- @react-aria/tabs@3.8.2
-- @react-aria/tag@3.3.0
-- @react-aria/textfield@3.13.0
-- @react-aria/toast@3.0.0-beta.7
-- @react-aria/toggle@3.9.0
-- @react-aria/toolbar@3.0.0-beta.0
-- @react-aria/tooltip@3.6.5
-- @react-aria/utils@3.22.0
-- @react-aria/virtualizer@3.9.5
-- @react-aria/visually-hidden@3.8.7
+- @react-aria-nutrient/accordion@3.0.0-alpha.24
+- @react-aria-nutrient/actiongroup@3.7.0
+- @react-aria-nutrient/aria-modal-polyfill@3.7.7
+- @react-aria-nutrient/autocomplete@3.0.0-alpha.23
+- @react-aria-nutrient/breadcrumbs@3.5.8
+- @react-aria-nutrient/button@3.9.0
+- @react-aria-nutrient/calendar@3.5.3
+- @react-aria-nutrient/checkbox@3.12.0
+- @react-aria-nutrient/color@3.0.0-beta.27
+- @react-aria-nutrient/combobox@3.8.0
+- @react-aria-nutrient/datepicker@3.9.0
+- @react-aria-nutrient/dialog@3.5.8
+- @react-aria-nutrient/dnd@3.5.0
+- @react-aria-nutrient/focus@3.15.0
+- @react-aria-nutrient/form@3.0.0
+- @react-aria-nutrient/grid@3.8.5
+- @react-aria-nutrient/gridlist@3.7.2
+- @react-aria-nutrient/i18n@3.9.0
+- @react-aria-nutrient/interactions@3.20.0
+- @react-aria-nutrient/label@3.7.3
+- @react-aria-nutrient/landmark@3.0.0-beta.7
+- @react-aria-nutrient/link@3.6.2
+- @react-aria-nutrient/listbox@3.11.2
+- @react-aria-nutrient/menu@3.11.2
+- @react-aria-nutrient/meter@3.4.8
+- @react-aria-nutrient/numberfield@3.10.0
+- @react-aria-nutrient/overlays@3.19.0
+- @react-aria-nutrient/progress@3.4.8
+- @react-aria-nutrient/radio@3.9.0
+- @react-aria-nutrient/searchfield@3.6.0
+- @react-aria-nutrient/select@3.14.0
+- @react-aria-nutrient/selection@3.17.2
+- @react-aria-nutrient/separator@3.3.8
+- @react-aria-nutrient/slider@3.7.3
+- @react-aria-nutrient/spinbutton@3.6.0
+- @react-aria-nutrient/ssr@3.9.0
+- @react-aria-nutrient/steplist@3.0.0-alpha.0
+- @react-aria-nutrient/switch@3.5.7
+- @react-aria-nutrient/table@3.13.2
+- @react-aria-nutrient/tabs@3.8.2
+- @react-aria-nutrient/tag@3.3.0
+- @react-aria-nutrient/textfield@3.13.0
+- @react-aria-nutrient/toast@3.0.0-beta.7
+- @react-aria-nutrient/toggle@3.9.0
+- @react-aria-nutrient/toolbar@3.0.0-beta.0
+- @react-aria-nutrient/tooltip@3.6.5
+- @react-aria-nutrient/utils@3.22.0
+- @react-aria-nutrient/virtualizer@3.9.5
+- @react-aria-nutrient/visually-hidden@3.8.7
 - @react-spectrum/accordion@3.0.0-alpha.26
 - @react-spectrum/actionbar@3.4.0
 - @react-spectrum/actiongroup@3.10.0

@@ -197,7 +197,7 @@ function isPublishing(workspace) {
   // should allowlist instead? workspace.manifest.private?
   return !name.includes('@react-types')
     && !name.includes('@spectrum-icons')
-    && !name.includes('@react-aria/example-theme')
+    && !name.includes('@react-aria-nutrient/example-theme')
     && !name.includes('@react-spectrum/style-macro-s1')
     && !name.includes('@react-spectrum/docs')
     && !name.includes('parcel')
@@ -294,7 +294,7 @@ function enforceExports({Yarn}) {
 
       // better to do in enforceCSS? it doesn't match the set of packages handled
       if (name !== 'react-aria-components') {
-        if (name.includes('@react-spectrum') || name.includes('@react-aria/visually-hidden')) {
+        if (name.includes('@react-spectrum') || name.includes('@react-aria-nutrient/visually-hidden')) {
           workspace.set('sideEffects', ['*.css']);
         } else {
           workspace.set('sideEffects', false);

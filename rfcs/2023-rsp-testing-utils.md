@@ -25,7 +25,6 @@ These are non-trivial issues for maintainers of the library and have resulted in
 
 We hope that documenting these testing gotchas externally will reduce the test debugging frustration, and that exposing testing utilities for common test setup and component interactions will simplify the overall test writing experience, leading towards easier adoption.
 
-
 ## Detailed Design
 
 As mentioned earlier, there are three proposed parts to this initiative:
@@ -41,17 +40,15 @@ There are other mocks that teams have historically needed, but the above are two
 
 In addition to these common mocks, I feel like it would be helpful to compile a list of common issues/error messages people have run into when writing tests using React Spectrum components and add a FAQ section to our existing "Testing" page in the docs. These issues may disappear as we expose more utility functions and classes, but it is a good short term goal that shouldn't take too much time investment.
 
-
 2. Create/expose low level util functions for basic test setup and interactions
 
 Some mocks we use feel like they could be applied universally, such as the mock for `window.screen`'s width when simulating a mobile device. We could expose this as `simulateMobile`/`simulateDesktop` so that users don't have to know the nitty gritty of what breakpoint we use when determining whether to render the mobile version of a React Spectrum component. Another example of a lower level util would be be for triggering a long press event. Instead of needing to know how long it takes before a pointerDown event is considered a long press or that you need to mock support for `PointerEvent` globally, we could provide our internal `triggerLongPress` test util alongside with `installPointerEvent` for mocking `PointerEvent` support. A drag and drop (via mouse and keyboard) interaction utility is another good candidate, as is a render wrapper that wraps arbitrary children in a Provider.
 
 In general, there are several internal test utils [here](https://github.com/adobe/react-spectrum/blob/07f673acb2d68144156df3aa0db6e91810b12c67/packages/dev/test-utils/src/events.ts) and in our tests that we should consider exposing that handle issuing/simulating the press/touch events that would happen in the browser. Ideally, using the `user-event` library would eliminate the need for most, if not all, of the interaction related util functions, but has proved insufficient in various cases (like for long press). We'll have to convert our own tests to use the `user-event` v14 and see if any other internal test utils can be replaced entirely.
 
-These util functions would live in one of two packages perhaps, `@react-aria/test-utils` and `@react-spectrum/test-utils`. The differentiating factor would be if the util is specific to our React Spectrum components (`simulateMobile`/`simulateDesktop`) or not (`triggerLongPress`).
+These util functions would live in one of two packages perhaps, `@react-aria-nutrient/test-utils` and `@react-spectrum/test-utils`. The differentiating factor would be if the util is specific to our React Spectrum components (`simulateMobile`/`simulateDesktop`) or not (`triggerLongPress`).
 
 Caveat: The high level test util classes that are discussed below may also minimize the need for some of these interaction utils, open for discussion.
-
 
 3. Create high level test util classes to handle common interaction patterns
 
@@ -63,7 +60,12 @@ To solve this, we could create a test helper class for each ARIA pattern (i.e. t
 ```jsx
 render(
   <Provider theme={theme}>
-    <Picker label="Test" data-testid="test" onSelectionChange={onSelectionChange} onOpenChange={onOpenChange}>
+    <Picker
+      label="Test"
+      data-testid="test"
+      onSelectionChange={onSelectionChange}
+      onOpenChange={onOpenChange}
+    >
       <Item key="one">One</Item>
       <Item key="two">Two</Item>
       <Item key="three">Three</Item>
@@ -71,14 +73,17 @@ render(
   </Provider>
 );
 
-let picker = new SelectTester({element: screen.getByTestId('test'), timerType: 'real'});
-await picker.selectOption('Three');
-expect(picker.trigger).toHaveTextContent('Three');
+let picker = new SelectTester({
+  element: screen.getByTestId("test"),
+  timerType: "real",
+});
+await picker.selectOption("Three");
+expect(picker.trigger).toHaveTextContent("Three");
 ```
 
 Since these classes are specific to each ARIA pattern, they should work for React Aria Components (RAC) as well as React Spectrum (RSP) components and thus need to handle possible differences in what `element` is provided. For instance, the `data-testid` passed to a RSP Picker is attached to the trigger button element but the `data-testid` for a RAC Select could be the one attached to the wrapper element instead. Alternatively, we could just standardize what `element` is expected to be provided to each of the util classes (aka make the user pass in the Select's trigger button element).
 
-These util classes could live in the `@react-aria/test-util` package and re-exported from `react-aria-components`.
+These util classes could live in the `@react-aria-nutrient/test-util` package and re-exported from `react-aria-components`.
 
 ## Documentation
 
@@ -87,7 +92,6 @@ Documentation for the first two parts described above should go in the existing 
 ## Drawbacks
 
 My primary concern is whether or not some of the mocks truly work in other test suite configurations. Historically, we've seen other teams struggle with a small subset of the mocks not resolving their test rendering issues (specifically with ListBox and the `clientHeight`). Making sure the interaction utils aren't brittle may be a challenge since the way we test in RSP is with components in isolation versus other teams testing entire app flows that have many elements rendered at once. For instance, we can easily find the ListBox tied to a Select element by querying for `role="listbox"` in our RSP test, but doing so in a page filled with other ListBoxes would involve looking up the `id` from the Select's `aria-controls`.
-
 
 ## Backwards Compatibility Analysis
 
@@ -99,10 +103,10 @@ Unknown, haven't done research here yet.
 
 ## Open Questions
 
-* What should be exposed as a test util vs documented? Since it will take a longer amount of time required to spin up the test util classes, should we expose the interaction util functions we already have even though they will be replaced by the test util classes?
-* Where should these utils live? Exported from the monopackage as well? Or separated into its own test-util package? Re-exported from existing packages (react-aria-components, react-aria, react-spectrum)?
-* Do we have a target version of `user-event` library? Right now we are on 12, but feels like we should move to 14 for broader pointer/keyboard support
-* Feedback for test util classes: https://github.com/adobe/react-spectrum/pull/4836/files#diff-0dc4808158bbefa842fb382ea67f1b9cfa5f35f50496133afca79d908fc49209. Still a WIP as I poke around to get the actual listbox tied to the picker and add examples of other test util classes
+- What should be exposed as a test util vs documented? Since it will take a longer amount of time required to spin up the test util classes, should we expose the interaction util functions we already have even though they will be replaced by the test util classes?
+- Where should these utils live? Exported from the monopackage as well? Or separated into its own test-util package? Re-exported from existing packages (react-aria-components, react-aria, react-spectrum)?
+- Do we have a target version of `user-event` library? Right now we are on 12, but feels like we should move to 14 for broader pointer/keyboard support
+- Feedback for test util classes: https://github.com/adobe/react-spectrum/pull/4836/files#diff-0dc4808158bbefa842fb382ea67f1b9cfa5f35f50496133afca79d908fc49209. Still a WIP as I poke around to get the actual listbox tied to the picker and add examples of other test util classes
 
 ## Help Needed
 

@@ -1,0 +1,66 @@
+{
+  "name": "@react-aria-nutrient/i18n",
+  "version": "3.12.7",
+  "description": "Spectrum UI components in React",
+  "license": "Apache-2.0",
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "exports": {
+    ".": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/import.mjs",
+      "require": "./dist/main.js"
+    },
+    "./server": {
+      "import": "./server/index.mjs",
+      "require": "./server/index.js"
+    }
+  },
+  "server-module": "server/index.mjs",
+  "server-main": "server/index.js",
+  "types": "dist/types.d.ts",
+  "source": "src/index.ts",
+  "targets": {
+    "main": {},
+    "module": {},
+    "server-module": {
+      "source": "src/server.tsx",
+      "outputFormat": "esmodule",
+      "isLibrary": true,
+      "includeNodeModules": false
+    },
+    "server-main": {
+      "source": "src/server.tsx",
+      "outputFormat": "commonjs",
+      "isLibrary": true,
+      "includeNodeModules": false
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "server"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@internationalized/date": "^3.7.0",
+    "@internationalized/message": "^3.1.6",
+    "@internationalized/number": "^3.6.0",
+    "@internationalized/string": "^3.2.5",
+    "@react-aria-nutrient/ssr": "^3.9.7",
+    "@react-aria-nutrient/utils": "^3.28.1",
+    "@react-types/shared": "^3.28.0",
+    "@swc/helpers": "^0.5.0"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
