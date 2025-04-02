@@ -97,9 +97,11 @@ if (typeof document !== 'undefined') {
  * for elements that are removed from the document while transitioning.
  */
 function cleanupDetachedElements() {
-  for (const [element] of transitionsByElement) {
-    if (element instanceof HTMLElement && !element.isConnected) {
-      transitionsByElement.delete(element);
+  for (const [eventTarget] of transitionsByElement) {
+    // Similar to `eventTarget instanceof Element && !eventTarget.isConnected`, but avoids
+    // the explicit instanceof check, since it may be different in different contexts.
+    if ('isConnected' in eventTarget && !eventTarget.isConnected) {
+      transitionsByElement.delete(eventTarget);
     }
   }
 }
