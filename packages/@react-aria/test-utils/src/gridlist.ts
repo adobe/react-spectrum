@@ -83,14 +83,14 @@ export class GridListTester {
     }
     let direction = targetIndex > currIndex ? 'down' : 'up';
 
+    if (useAltKey) {
+      await this.user.keyboard(`[${altKey}>]`);
+    }
     for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
-      if (useAltKey) {
-        await this.user.keyboard(`[${altKey}>]`);
-      }
       await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
-      if (useAltKey) {
-        await this.user.keyboard(`[/${altKey}]`);
-      }
+    }
+    if (useAltKey) {
+      await this.user.keyboard(`[/${altKey}]`);
     }
   };
 

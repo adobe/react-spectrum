@@ -11,7 +11,7 @@
  */
 
 import {act, waitFor, within} from '@testing-library/react';
-import {getMetaKey, pressElement, triggerLongPress} from './events';
+import {getAltKey, getMetaKey, pressElement, triggerLongPress} from './events';
 import {GridRowActionOpts, TableTesterOpts, ToggleGridRowOpts, UserOpts} from './types';
 
 interface TableToggleRowOpts extends ToggleGridRowOpts {}
@@ -48,6 +48,55 @@ export class TableTester {
     this._interactionType = type;
   }
 
+  // TODO: RTL
+  private async keyboardNavigateToRow(opts: {row: HTMLElement, useAltKey?: boolean}) {
+    let {row, useAltKey} = opts;
+    let altKey = getAltKey();
+    let rows = this.rows;
+    let targetIndex = rows.indexOf(row);
+    if (targetIndex === -1) {
+      throw new Error('Row provided is not in the table');
+    }
+
+    // Move focus into the table
+    if (document.activeElement !== this._table && !this._table.contains(document.activeElement)) {
+      act(() => this._table.focus());
+    }
+
+    if (document.activeElement === this._table) {
+      await this.user.keyboard('[ArrowDown]');
+    }
+
+    // If focus is currently somewhere in the first row group (aka on a column), we want to keyboard navigate downwards till we reach the rows
+    if (this.rowGroups[0].contains(document.activeElement)) {
+      do {
+        await this.user.keyboard('[ArrowDown]');
+      } while (!this.rowGroups[1].contains(document.activeElement));
+    }
+
+    // Move focus onto the row itself
+    if (this.rowGroups[1].contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
+      do {
+        await this.user.keyboard('[ArrowLeft]');
+      } while (document.activeElement!.getAttribute('role') !== 'row');
+    }
+    let currIndex = rows.indexOf(document.activeElement as HTMLElement);
+    if (currIndex === -1) {
+      throw new Error('Current active element is not on any of the table rows');
+    }
+    let direction = targetIndex > currIndex ? 'down' : 'up';
+
+    if (useAltKey) {
+      await this.user.keyboard(`[${altKey}>]`);
+    }
+    for (let i = 0; i < Math.abs(targetIndex - currIndex); i++) {
+      await this.user.keyboard(`[${direction === 'down' ? 'ArrowDown' : 'ArrowUp'}]`);
+    }
+    if (useAltKey) {
+      await this.user.keyboard(`[/${altKey}]`);
+    }
+  };
+
   /**
    * Toggles the selection for the specified table row. Defaults to using the interaction type set on the table tester.
    */
@@ -73,11 +122,8 @@ export class TableTester {
 
     let rowCheckbox = within(row).queryByRole('checkbox');
 
-    if (interactionType === 'keyboard' && !checkboxSelection) {
-      // TODO: for now focus the row directly until I add keyboard navigation
-      await act(async () => {
-        row.focus();
-      });
+    if (interactionType === 'keyboard' && (!checkboxSelection || !rowCheckbox)) {
+      await this.keyboardNavigateToRow({row, useAltKey: selectionBehavior === 'replace'});
       if (selectionBehavior === 'replace') {
         await this.user.keyboard(`[${altKey}>]`);
       }
@@ -221,8 +267,7 @@ export class TableTester {
     if (needsDoubleClick) {
       await this.user.dblClick(row);
     } else if (interactionType === 'keyboard') {
-      // TODO: add keyboard navigation instead of focusing the row directly. Will need to consider if the focus in in the columns
-      act(() => row.focus());
+      await this.keyboardNavigateToRow({row, useAltKey: true});
       await this.user.keyboard('[Enter]');
     } else {
       await pressElement(this.user, row, interactionType);
