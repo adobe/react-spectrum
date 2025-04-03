@@ -103,26 +103,17 @@ export class ListBoxTester {
       throw new Error('Option provided is not in the listbox');
     }
 
-    if (document.activeElement !== this._listbox || !this._listbox.contains(document.activeElement)) {
+    if (document.activeElement !== this._listbox && !this._listbox.contains(document.activeElement)) {
       act(() => this._listbox.focus());
-    }
-
-    await this.user.keyboard(`${useAltKey ? `[${altKey}>]` : ''}[ArrowDown]${useAltKey ? `[/${altKey}]` : ''}`);
-
-    // TODO: not sure about doing same while loop that exists in other implementations of keyboardNavigateToOption,
-    // feels like it could break easily
-    if (document.activeElement?.getAttribute('role') !== 'option') {
-      await act(async () => {
-        option.focus();
-      });
+      await this.user.keyboard(`${useAltKey ? `[${altKey}>]` : ''}[ArrowDown]${useAltKey ? `[/${altKey}]` : ''}`);
     }
 
     let currIndex = options.indexOf(document.activeElement as HTMLElement);
     if (currIndex === -1) {
       throw new Error('ActiveElement is not in the listbox');
     }
-    let direction = targetIndex > currIndex ? 'down' : 'up';
 
+    let direction = targetIndex > currIndex ? 'down' : 'up';
     if (useAltKey) {
       await this.user.keyboard(`[${altKey}>]`);
     }
@@ -168,7 +159,6 @@ export class ListBoxTester {
         await this.user.keyboard(`[${altKey}>]`);
       }
       await this.user.keyboard(`[${keyboardActivation}]`);
-
       if (selectionBehavior === 'replace') {
         await this.user.keyboard(`[/${altKey}]`);
       }

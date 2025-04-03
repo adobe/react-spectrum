@@ -81,7 +81,7 @@ export class TableTester {
       if (selectionBehavior === 'replace') {
         await this.user.keyboard(`[${altKey}>]`);
       }
-      await this.user.keyboard('{Space}');
+      await this.user.keyboard('[Space]');
       if (selectionBehavior === 'replace') {
         await this.user.keyboard(`[/${altKey}]`);
       }

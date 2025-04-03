@@ -73,7 +73,7 @@ export class TreeTester {
       throw new Error('Option provided is not in the tree');
     }
 
-    if (document.activeElement !== this._tree || !this._tree.contains(document.activeElement)) {
+    if (document.activeElement !== this._tree && !this._tree.contains(document.activeElement)) {
       act(() => this._tree.focus());
     }
 
@@ -136,12 +136,12 @@ export class TreeTester {
 
     // this would be better than the check to do nothing in events.ts
     // also, it'd be good to be able to trigger selection on the row instead of having to go to the checkbox directly
-    if (interactionType === 'keyboard' && !checkboxSelection) {
+    if (interactionType === 'keyboard' && (!checkboxSelection || !rowCheckbox)) {
       await this.keyboardNavigateToRow({row, useAltKey: selectionBehavior === 'replace'});
       if (selectionBehavior === 'replace') {
         await this.user.keyboard(`[${altKey}>]`);
       }
-      await this.user.keyboard('{Space}');
+      await this.user.keyboard('[Space]');
       if (selectionBehavior === 'replace') {
         await this.user.keyboard(`[/${altKey}]`);
       }
