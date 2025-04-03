@@ -31,7 +31,7 @@ let columns = [
 describe('Table ', function () {
   let onSelectionChange = jest.fn();
   let onSortChange = jest.fn();
-  let testUtilRealTimer = new User({advanceTimer: async (waitTime) => await new Promise((resolve) => setTimeout(resolve, waitTime))});
+  let testUtilRealTimer = new User({advanceTimer: (waitTime) => new Promise((resolve) => setTimeout(resolve, waitTime))});
 
   let TableExample = (props) => {
     let [sort, setSort] = useState({});
