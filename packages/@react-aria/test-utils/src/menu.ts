@@ -215,7 +215,7 @@ export class MenuTester {
           return;
         }
 
-        if (document.activeElement !== menu || !menu.contains(document.activeElement)) {
+        if (document.activeElement !== menu && !menu.contains(document.activeElement)) {
           act(() => menu.focus());
         }
 
