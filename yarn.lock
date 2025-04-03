@@ -6729,7 +6729,6 @@ __metadata:
   resolution: "@react-aria/test-utils@workspace:packages/@react-aria/test-utils"
   dependencies:
     "@swc/helpers": "npm:^0.5.0"
-    react-aria-components: "npm:^1.7.1"
   peerDependencies:
     "@testing-library/react": ^16.0.0
     "@testing-library/user-event": ^14.0.0
