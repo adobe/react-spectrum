@@ -93,9 +93,11 @@ export class ListBoxTester {
       throw new Error('Option provided is not in the listbox');
     }
 
-    if (document.activeElement === this._listbox) {
-      await this.user.keyboard('[ArrowDown]');
+    if (document.activeElement !== this._listbox || !this._listbox.contains(document.activeElement)) {
+      act(() => this._listbox.focus());
     }
+
+    await this.user.keyboard('[ArrowDown]');
 
     // TODO: not sure about doing same while loop that exists in other implementations of keyboardNavigateToOption,
     // feels like it could break easily
@@ -133,10 +135,6 @@ export class ListBoxTester {
     if (interactionType === 'keyboard') {
       if (option?.getAttribute('aria-disabled') === 'true') {
         return;
-      }
-
-      if (document.activeElement !== this._listbox || !this._listbox.contains(document.activeElement)) {
-        act(() => this._listbox.focus());
       }
 
       await this.keyboardNavigateToOption({option});
@@ -177,10 +175,6 @@ export class ListBoxTester {
     } else if (interactionType === 'keyboard') {
       if (option?.getAttribute('aria-disabled') === 'true') {
         return;
-      }
-
-      if (document.activeElement !== this._listbox || !this._listbox.contains(document.activeElement)) {
-        act(() => this._listbox.focus());
       }
 
       await this.keyboardNavigateToOption({option});

@@ -621,8 +621,6 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           expect(submenu).toBeInTheDocument();
 
           await submenuUtil.selectOption({option: submenuUtil.options().filter(item => item.getAttribute('aria-haspopup') == null)[0]});
-          // TODO: not ideal, this runAllTimers is only needed for RSPv3, not RAC or S2
-          act(() => {jest.runAllTimers();});
           expect(menu).not.toBeInTheDocument();
           expect(submenu).not.toBeInTheDocument();
           expect(document.activeElement).toBe(menuTester.trigger);
@@ -639,7 +637,6 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           expect(submenuTrigger).toHaveAttribute('aria-expanded', 'false');
 
           let submenuUtil = (await menuTester.openSubmenu({submenuTrigger}))!;
-          act(() => {jest.runAllTimers();});
           expect(submenuTrigger).toHaveAttribute('aria-expanded', 'true');
           let submenu = submenuUtil.menu;
           expect(submenu).toBeInTheDocument();
@@ -648,13 +645,11 @@ export const AriaMenuTests = ({renderers, setup, prefix}: AriaMenuTestProps) => 
           expect(nestedSubmenuTrigger).toHaveAttribute('aria-expanded', 'false');
 
           let nestedSubmenuUtil = (await submenuUtil.openSubmenu({submenuTrigger: nestedSubmenuTrigger}))!;
-          act(() => {jest.runAllTimers();});
           expect(nestedSubmenuTrigger).toHaveAttribute('aria-expanded', 'true');
           let nestedSubmenu = nestedSubmenuUtil.menu;
           expect(nestedSubmenu).toBeInTheDocument();
 
           await nestedSubmenuUtil.selectOption({option: nestedSubmenuUtil.options().filter(item => item.getAttribute('aria-haspopup') == null)[0]});
-          act(() => {jest.runAllTimers();});
           expect(menu).not.toBeInTheDocument();
           expect(submenu).not.toBeInTheDocument();
           expect(nestedSubmenu).not.toBeInTheDocument();

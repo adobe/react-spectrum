@@ -55,7 +55,7 @@ let renderMenu = (menuProps = {}, itemProps = {}) => render(<TestMenu {...{menuP
 
 describe('Menu', () => {
   let user;
-  let testUtilUser = new User();
+  let testUtilUser = new User({advanceTimer: jest.advanceTimersByTime});
 
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});

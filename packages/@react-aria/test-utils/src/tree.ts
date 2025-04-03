@@ -71,6 +71,11 @@ export class TreeTester {
     if (targetIndex === -1) {
       throw new Error('Option provided is not in the tree');
     }
+
+    if (document.activeElement !== this._tree || !this._tree.contains(document.activeElement)) {
+      act(() => this._tree.focus());
+    }
+
     if (document.activeElement === this.tree) {
       await this.user.keyboard('[ArrowDown]');
     } else if (this._tree.contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
@@ -204,10 +209,6 @@ export class TreeTester {
     } else if (interactionType === 'keyboard') {
       if (row?.getAttribute('aria-disabled') === 'true') {
         return;
-      }
-
-      if (document.activeElement !== this._tree || !this._tree.contains(document.activeElement)) {
-        act(() => this._tree.focus());
       }
 
       await this.keyboardNavigateToRow({row});

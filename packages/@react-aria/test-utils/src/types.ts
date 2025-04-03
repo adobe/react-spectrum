@@ -22,14 +22,14 @@ export interface UserOpts {
    * @default mouse
    */
   interactionType?: 'mouse' | 'touch' | 'keyboard',
-  // If using fake timers user should provide something like (time) => jest.advanceTimersByTime(time))}
-  // A real timer user would pass async () => await new Promise((resolve) => setTimeout(resolve, waitTime))
+  // If using fake timers user should provide something like (time) => jest.advanceTimersByTime(time))}.
+  // A real timer user would pass (waitTime) => new Promise((resolve) => setTimeout(resolve, waitTime))
   // Time is in ms.
   /**
    * A function used by the test utils to advance timers during interactions. Required for certain aria patterns (e.g. table). This can be overridden
    * at the aria pattern tester level if needed.
    */
-  advanceTimer?: (time?: number) => void | Promise<unknown>
+  advanceTimer?: (time: number) => unknown | Promise<unknown>
 }
 
 export interface BaseTesterOpts extends UserOpts {
@@ -69,7 +69,11 @@ export interface MenuTesterOpts extends BaseTesterOpts {
   /**
    * Whether the current menu is a submenu.
    */
-  isSubmenu?: boolean
+  isSubmenu?: boolean,
+  /**
+   * The root menu of the menu tree. Only available if the menu is a submenu.
+   */
+  rootMenu?: HTMLElement
 }
 
 export interface SelectTesterOpts extends BaseTesterOpts {

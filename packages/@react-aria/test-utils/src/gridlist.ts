@@ -64,6 +64,11 @@ export class GridListTester {
     if (targetIndex === -1) {
       throw new Error('Option provided is not in the gridlist');
     }
+
+    if (document.activeElement !== this._gridlist || !this._gridlist.contains(document.activeElement)) {
+      act(() => this._gridlist.focus());
+    }
+
     if (document.activeElement === this._gridlist) {
       await this.user.keyboard('[ArrowDown]');
     } else if (this._gridlist.contains(document.activeElement) && document.activeElement!.getAttribute('role') !== 'row') {
@@ -159,10 +164,6 @@ export class GridListTester {
     } else if (interactionType === 'keyboard') {
       if (row?.getAttribute('aria-disabled') === 'true') {
         return;
-      }
-
-      if (document.activeElement !== this._gridlist || !this._gridlist.contains(document.activeElement)) {
-        act(() => this._gridlist.focus());
       }
 
       await this.keyboardNavigateToRow({row});

@@ -67,7 +67,7 @@ type TesterOpts<T> =
   T extends 'Tree' ? TreeTesterOpts :
   never;
 
-let defaultAdvanceTimer = async (waitTime: number | undefined) => await new Promise((resolve) => setTimeout(resolve, waitTime));
+let defaultAdvanceTimer = (waitTime: number | undefined) => new Promise((resolve) => setTimeout(resolve, waitTime));
 
 export class User {
   private user;
