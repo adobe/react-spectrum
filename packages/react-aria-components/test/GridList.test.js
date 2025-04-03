@@ -30,8 +30,8 @@ import {
   useDragAndDrop,
   Virtualizer
 } from '../';
+import {installPointerEvent, User} from '@react-aria/test-utils';
 import React from 'react';
-import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestGridList = ({listBoxProps, itemProps}) => (
@@ -62,6 +62,7 @@ let renderGridList = (listBoxProps, itemProps) => render(<TestGridList {...{list
 describe('GridList', () => {
   let user;
   let testUtilUser = new User();
+  let onSelectionChange = jest.fn();
 
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
@@ -71,6 +72,10 @@ describe('GridList', () => {
   afterEach(() => {
     act(() => {jest.runAllTimers();});
     jest.clearAllMocks();
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
   });
 
   it('should render with default classes', () => {
@@ -390,6 +395,170 @@ describe('GridList', () => {
     expect(items[0]).toHaveAttribute('aria-selected', 'false');
     expect(items[1]).toHaveAttribute('aria-selected', 'true');
     expect(items[2]).toHaveAttribute('aria-selected', 'true');
+  });
+
+  describe('selectionBehavior="replace"', () => {
+    // Required for proper touch detection
+    installPointerEvent();
+    let GridListNoCheckboxes = ({listBoxProps, itemProps}) => (
+      <GridList aria-label="Test" {...listBoxProps}>
+        <GridListItem {...itemProps} id="cat" textValue="Cat">Cat</GridListItem>
+        <GridListItem {...itemProps} id="dog" textValue="Dog">Dog</GridListItem>
+        <GridListItem {...itemProps} id="kangaroo" textValue="Kangaroo">Kangaroo</GridListItem>
+      </GridList>
+    );
+
+    describe.each(['mouse', 'keyboard', 'touch'])('%s', (type) => {
+      it('should perform selection with single selection', async () => {
+        let {getByRole} = render(<GridListNoCheckboxes listBoxProps={{selectionMode: 'single', selectionBehavior: 'replace', onSelectionChange}} />);
+        let gridListTester = testUtilUser.createTester('GridList', {user, root: getByRole('grid'), interactionType: type});
+        let rows = gridListTester.rows;
+
+        for (let row of gridListTester.rows) {
+          let checkbox = within(row).queryByRole('checkbox');
+          expect(checkbox).toBeNull();
+          expect(row).toHaveAttribute('aria-selected', 'false');
+          expect(row).not.toHaveAttribute('data-selected');
+          expect(row).toHaveAttribute('data-selection-mode', 'single');
+        }
+
+        let row2 = rows[2];
+        await gridListTester.toggleRowSelection({row: 'Kangaroo'});
+        expect(row2).toHaveAttribute('aria-selected', 'true');
+        expect(row2).toHaveAttribute('data-selected', 'true');
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['kangaroo']));
+        expect(gridListTester.selectedRows).toHaveLength(1);
+        expect(gridListTester.selectedRows[0]).toBe(row2);
+
+        let row1 = rows[1];
+        await gridListTester.toggleRowSelection({row: row1});
+        expect(row1).toHaveAttribute('aria-selected', 'true');
+        expect(row1).toHaveAttribute('data-selected', 'true');
+        expect(row2).toHaveAttribute('aria-selected', 'false');
+        expect(row2).not.toHaveAttribute('data-selected');
+        expect(onSelectionChange).toHaveBeenCalledTimes(2);
+        expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['dog']));
+        expect(gridListTester.selectedRows).toHaveLength(1);
+        expect(gridListTester.selectedRows[0]).toBe(row1);
+
+        await gridListTester.toggleRowSelection({row: row1});
+        expect(row1).toHaveAttribute('aria-selected', 'false');
+        expect(row1).not.toHaveAttribute('data-selected');
+        expect(row2).toHaveAttribute('aria-selected', 'false');
+        expect(row2).not.toHaveAttribute('data-selected');
+        expect(onSelectionChange).toHaveBeenCalledTimes(3);
+        expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set([]));
+        expect(gridListTester.selectedRows).toHaveLength(0);
+      });
+
+      it('should perform toggle selection in highlight mode when using modifier keys', async () => {
+        let {getByRole} = render(<GridListNoCheckboxes listBoxProps={{selectionMode: 'multiple', selectionBehavior: 'replace', onSelectionChange}} />);
+        let gridListTester = testUtilUser.createTester('GridList', {user, root: getByRole('grid'), interactionType: type});
+        let rows = gridListTester.rows;
+
+        for (let row of gridListTester.rows) {
+          let checkbox = within(row).queryByRole('checkbox');
+          expect(checkbox).toBeNull();
+          expect(row).toHaveAttribute('aria-selected', 'false');
+          expect(row).not.toHaveAttribute('data-selected');
+          expect(row).toHaveAttribute('data-selection-mode', 'multiple');
+        }
+
+        let row2 = rows[2];
+        await gridListTester.toggleRowSelection({row: 'Kangaroo', selectionBehavior: 'replace'});
+        expect(row2).toHaveAttribute('aria-selected', 'true');
+        expect(row2).toHaveAttribute('data-selected', 'true');
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['kangaroo']));
+        expect(gridListTester.selectedRows).toHaveLength(1);
+        expect(gridListTester.selectedRows[0]).toBe(row2);
+
+        let row1 = rows[1];
+        await gridListTester.toggleRowSelection({row: row1, selectionBehavior: 'replace'});
+        expect(row1).toHaveAttribute('aria-selected', 'true');
+        expect(row1).toHaveAttribute('data-selected', 'true');
+        expect(row2).toHaveAttribute('aria-selected', 'true');
+        expect(row2).toHaveAttribute('data-selected', 'true');
+        expect(onSelectionChange).toHaveBeenCalledTimes(2);
+        expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['dog', 'kangaroo']));
+        expect(gridListTester.selectedRows).toHaveLength(2);
+        expect(gridListTester.selectedRows[0]).toBe(row1);
+        expect(gridListTester.selectedRows[1]).toBe(row2);
+
+        // With modifier key, you should be able to deselect on press of the same row
+        await gridListTester.toggleRowSelection({row: row1, selectionBehavior: 'replace'});
+        expect(row1).toHaveAttribute('aria-selected', 'false');
+        expect(row1).not.toHaveAttribute('data-selected');
+        expect(row2).toHaveAttribute('aria-selected', 'true');
+        expect(row2).toHaveAttribute('data-selected', 'true');
+        expect(onSelectionChange).toHaveBeenCalledTimes(3);
+        expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set(['kangaroo']));
+        expect(gridListTester.selectedRows).toHaveLength(1);
+        expect(gridListTester.selectedRows[0]).toBe(row2);
+      });
+
+      it('should perform replace selection in highlight mode when not using modifier keys', async () => {
+        let {getByRole} = render(<GridListNoCheckboxes listBoxProps={{selectionMode: 'multiple', selectionBehavior: 'replace', onSelectionChange}} />);
+        let gridListTester = testUtilUser.createTester('GridList', {user, root: getByRole('grid'), interactionType: type});
+        let rows = gridListTester.rows;
+
+        for (let row of gridListTester.rows) {
+          let checkbox = within(row).queryByRole('checkbox');
+          expect(checkbox).toBeNull();
+          expect(row).toHaveAttribute('aria-selected', 'false');
+          expect(row).not.toHaveAttribute('data-selected');
+          expect(row).toHaveAttribute('data-selection-mode', 'multiple');
+        }
+
+        let row2 = rows[2];
+        await gridListTester.toggleRowSelection({row: 'Kangaroo'});
+        expect(row2).toHaveAttribute('aria-selected', 'true');
+        expect(row2).toHaveAttribute('data-selected', 'true');
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['kangaroo']));
+        expect(gridListTester.selectedRows).toHaveLength(1);
+        expect(gridListTester.selectedRows[0]).toBe(row2);
+
+        let row1 = rows[1];
+        await gridListTester.toggleRowSelection({row: row1});
+        if (type !== 'touch') {
+          expect(row1).toHaveAttribute('aria-selected', 'true');
+          expect(row1).toHaveAttribute('data-selected', 'true');
+          expect(row2).toHaveAttribute('aria-selected', 'false');
+          expect(row2).not.toHaveAttribute('data-selected');
+          expect(onSelectionChange).toHaveBeenCalledTimes(2);
+          expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['dog']));
+          expect(gridListTester.selectedRows).toHaveLength(1);
+          expect(gridListTester.selectedRows[0]).toBe(row1);
+
+          // pressing without modifier keys won't deselect the row
+          await gridListTester.toggleRowSelection({row: row1});
+          expect(row1).toHaveAttribute('aria-selected', 'true');
+          expect(row1).toHaveAttribute('data-selected', 'true');
+          expect(onSelectionChange).toHaveBeenCalledTimes(2);
+          expect(gridListTester.selectedRows).toHaveLength(1);
+        } else {
+          // touch always behaves as toggle
+          expect(row1).toHaveAttribute('aria-selected', 'true');
+          expect(row1).toHaveAttribute('data-selected', 'true');
+          expect(row2).toHaveAttribute('aria-selected', 'true');
+          expect(row2).toHaveAttribute('data-selected', 'true');
+          expect(onSelectionChange).toHaveBeenCalledTimes(2);
+          expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['dog', 'kangaroo']));
+          expect(gridListTester.selectedRows).toHaveLength(2);
+          expect(gridListTester.selectedRows[0]).toBe(row1);
+
+          await gridListTester.toggleRowSelection({row: row1});
+          expect(row1).toHaveAttribute('aria-selected', 'false');
+          expect(row1).not.toHaveAttribute('data-selected');
+          expect(onSelectionChange).toHaveBeenCalledTimes(3);
+          expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set(['kangaroo']));
+          expect(gridListTester.selectedRows).toHaveLength(1);
+          expect(gridListTester.selectedRows[0]).toBe(row2);
+        }
+      });
+    });
   });
 
   it('should support virtualizer', async () => {

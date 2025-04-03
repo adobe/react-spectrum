@@ -11,8 +11,8 @@
  */
 
 import {act, waitFor, within} from '@testing-library/react';
-import {GridRowActionOpts, TableTesterOpts, ToggleGridRowOpts, UserOpts} from './types';
 import {getMetaKey, pressElement, triggerLongPress} from './events';
+import {GridRowActionOpts, TableTesterOpts, ToggleGridRowOpts, UserOpts} from './types';
 
 interface TableToggleRowOpts extends ToggleGridRowOpts {}
 interface TableToggleSortOpts {

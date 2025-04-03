@@ -710,6 +710,15 @@ describe('Tree', () => {
           expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Projects']));
           expect(treeTester.selectedRows).toHaveLength(1);
           expect(treeTester.selectedRows[0]).toBe(row1);
+
+          await treeTester.toggleRowSelection({row: row1});
+          expect(row1).toHaveAttribute('aria-selected', 'false');
+          expect(row1).not.toHaveAttribute('data-selected');
+          expect(row2).toHaveAttribute('aria-selected', 'false');
+          expect(row2).not.toHaveAttribute('data-selected');
+          expect(onSelectionChange).toHaveBeenCalledTimes(3);
+          expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set([]));
+          expect(treeTester.selectedRows).toHaveLength(0);
         });
 
         it('should perform toggle selection in highlight mode when using modifier keys', async () => {
@@ -744,6 +753,17 @@ describe('Tree', () => {
           expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Projects', 'Projects-1']));
           expect(treeTester.selectedRows).toHaveLength(2);
           expect(treeTester.selectedRows[0]).toBe(row1);
+
+          // With modifier key, you should be able to deselect on press of the same row
+          await treeTester.toggleRowSelection({row: row1, selectionBehavior: 'replace'});
+          expect(row1).toHaveAttribute('aria-selected', 'false');
+          expect(row1).not.toHaveAttribute('data-selected');
+          expect(row2).toHaveAttribute('aria-selected', 'true');
+          expect(row2).toHaveAttribute('data-selected', 'true');
+          expect(onSelectionChange).toHaveBeenCalledTimes(3);
+          expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set(['Projects-1']));
+          expect(treeTester.selectedRows).toHaveLength(1);
+          expect(treeTester.selectedRows[0]).toBe(row2);
         });
 
         it('should perform replace selection in highlight mode when not using modifier keys', async () => {
@@ -779,6 +799,13 @@ describe('Tree', () => {
             expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Projects']));
             expect(treeTester.selectedRows).toHaveLength(1);
             expect(treeTester.selectedRows[0]).toBe(row1);
+
+            // pressing without modifier keys won't deselect the row
+            await treeTester.toggleRowSelection({row: row1});
+            expect(row1).toHaveAttribute('aria-selected', 'true');
+            expect(row1).toHaveAttribute('data-selected', 'true');
+            expect(onSelectionChange).toHaveBeenCalledTimes(2);
+            expect(treeTester.selectedRows).toHaveLength(1);
           } else {
             // touch always behaves as toggle
             expect(row1).toHaveAttribute('aria-selected', 'true');
@@ -789,6 +816,14 @@ describe('Tree', () => {
             expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Projects', 'Projects-1']));
             expect(treeTester.selectedRows).toHaveLength(2);
             expect(treeTester.selectedRows[0]).toBe(row1);
+
+            await treeTester.toggleRowSelection({row: row1});
+            expect(row1).toHaveAttribute('aria-selected', 'false');
+            expect(row1).not.toHaveAttribute('data-selected');
+            expect(onSelectionChange).toHaveBeenCalledTimes(3);
+            expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set(['Projects-1']));
+            expect(treeTester.selectedRows).toHaveLength(1);
+            expect(treeTester.selectedRows[0]).toBe(row2);
           }
         });
       });
