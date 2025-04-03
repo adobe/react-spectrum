@@ -24,25 +24,9 @@ executors:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
 
-  rsp-large:
-    docker:
-      - image: cimg/node:18.20.3
-    resource_class: large
-    environment:
-      CACHE_VERSION: v1
-    working_directory: ~/react-spectrum
-
-  rsp-xlarge:
-    docker:
-      - image: cimg/node:18.20.3
-    resource_class: xlarge
-    environment:
-      CACHE_VERSION: v1
-    working_directory: ~/react-spectrum
-
 jobs:
   install:
-    executor: rsp-large
+    executor: rsp
     steps:
       - checkout
 
@@ -63,85 +47,9 @@ jobs:
             - ~/react-spectrum
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
 
-  install-16:
-    executor: rsp-large
-    steps:
-      - checkout
-
-      - run:
-          name: Write npmrc
-          command: |
-            if [ $NPM_PASSWORD ]; then
-              cp .circleci/.npmrc .npmrc
-            fi
-
-      - run:
-          name: build
-          command: |
-            yarn install --immutable && yarn install-16
-
-      - save_cache:
-          paths:
-            - ~/react-spectrum
-          key: react-spectrum16-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-  install-17:
-    executor: rsp-large
-    steps:
-      - checkout
-
-      - run:
-          name: Write npmrc
-          command: |
-            if [ $NPM_PASSWORD ]; then
-              cp .circleci/.npmrc .npmrc
-            fi
-
-      - run:
-          name: build
-          command: |
-            yarn install --immutable && yarn install-17
-
-      - save_cache:
-          paths:
-            - ~/react-spectrum
-          key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-  install-19:
-    executor: rsp-large
-    steps:
-      - checkout
-
-      - run:
-          name: Write npmrc
-          command: |
-            if [ $NPM_PASSWORD ]; then
-              cp .circleci/.npmrc .npmrc
-            fi
-
-      - run:
-          name: build
-          command: |
-            yarn install --immutable && yarn install-19
-
-      - save_cache:
-          paths:
-            - ~/react-spectrum
-          key: react-spectrum-19-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-  test-ssr:
-    executor: rsp-xlarge
-    steps:
-      - restore_cache:
-          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run:
-          name: test ssr
-          command: yarn test:ssr
-
   test:
+    executor: rsp
     parallelism: 3
-    executor: rsp-xlarge
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -165,113 +73,8 @@ jobs:
       - store_artifacts:
           path: ~/junit
 
-  test-ssr-16:
-    executor: rsp-xlarge
-    steps:
-      - restore_cache:
-          key: react-spectrum16-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run:
-          name: test ssr
-          command: |
-            yarn test:ssr
-
-  test-ssr-17:
-    executor: rsp-xlarge
-    steps:
-      - restore_cache:
-          key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run:
-          name: test ssr
-          command: |
-            yarn test:ssr
-
-  test-ssr-19:
-    executor: rsp-xlarge
-    steps:
-      - restore_cache:
-          key: react-spectrum-19-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run:
-          name: test ssr
-          command: |
-            yarn test:ssr
-
-  test-16:
-    parallelism: 3
-    executor: rsp-xlarge
-    steps:
-      - restore_cache:
-          key: react-spectrum16-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run: mkdir ~/junit
-
-      - run:
-          name: test
-          command: |
-            shopt -s globstar
-            TESTFILES=$(circleci tests glob "packages/**/*.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
-            JEST_JUNIT_OUTPUT_NAME="junit-16.xml" yarn test ${TESTFILES}
-
-      - run:
-          command: cp junit-16.xml ~/junit/
-          when: always
-      - store_test_results:
-          path: ~/junit
-      - store_artifacts:
-          path: ~/junit
-
-  test-17:
-    parallelism: 3
-    executor: rsp-xlarge
-    steps:
-      - restore_cache:
-          key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run: mkdir ~/junit
-
-      - run:
-          name: test
-          command: |
-            shopt -s globstar
-            TESTFILES=$(circleci tests glob "packages/**/*.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
-            JEST_JUNIT_OUTPUT_NAME="junit-17.xml" yarn test ${TESTFILES}
-
-      - run:
-          command: cp junit-17.xml ~/junit/
-          when: always
-      - store_test_results:
-          path: ~/junit
-      - store_artifacts:
-          path: ~/junit
-
-  test-19:
-    parallelism: 3
-    executor: rsp-xlarge
-    steps:
-      - restore_cache:
-          key: react-spectrum-19-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run: mkdir ~/junit
-
-      - run:
-          name: test
-          command: |
-            shopt -s globstar
-            TESTFILES=$(circleci tests glob "packages/**/*.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
-            JEST_JUNIT_OUTPUT_NAME="junit-19.xml" yarn test ${TESTFILES}
-
-      - run:
-          command: cp junit-19.xml ~/junit/
-          when: always
-      - store_test_results:
-          path: ~/junit
-      - store_artifacts:
-          path: ~/junit
-
   test-esm:
-    executor: rsp-xlarge
+    executor: rsp
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -283,7 +86,7 @@ jobs:
             node --loader ./scripts/esm-support/loader.mjs ./scripts/esm-support/testESM.mjs
 
   lint:
-    executor: rsp-xlarge
+    executor: rsp
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -295,7 +98,7 @@ jobs:
             yarn lint
 
   ts-build-branch:
-    executor: rsp-large
+    executor: rsp
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -310,7 +113,7 @@ jobs:
             - 'branch-api/'
 
   ts-build-fork-point:
-    executor: rsp-large
+    executor: rsp
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -326,7 +129,7 @@ jobs:
             - 'base-api/'
 
   ts-diff:
-    executor: rsp-large
+    executor: rsp
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -346,18 +149,8 @@ jobs:
           paths:
             - 'ts-diff.txt'
 
-  typecheck-docs:
-    executor: rsp-large
-    steps:
-      - restore_cache:
-          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run:
-          name: check-examples
-          command: make check-examples
-
   storybook:
-    executor: rsp-large
+    executor: rsp
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -371,53 +164,8 @@ jobs:
           paths:
             - '*/storybook/'
 
-  storybook-16:
-    executor: rsp-large
-    steps:
-      - restore_cache:
-          key: react-spectrum16-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run:
-          name: build storybook-16
-          command: make storybook-16
-
-      - persist_to_workspace:
-          root: dist
-          paths:
-            - '*/storybook-16/'
-
-  storybook-17:
-    executor: rsp-large
-    steps:
-      - restore_cache:
-          key: react-spectrum17-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run:
-          name: build storybook-17
-          command: make storybook-17
-
-      - persist_to_workspace:
-          root: dist
-          paths:
-            - '*/storybook-17/'
-
-  storybook-19:
-    executor: rsp-large
-    steps:
-      - restore_cache:
-          key: react-spectrum-19-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run:
-          name: build storybook-19
-          command: make storybook-19
-
-      - persist_to_workspace:
-          root: dist
-          paths:
-            - '*/storybook-19/'
-
   storybook-s2:
-    executor: rsp-large
+    executor: rsp
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -432,7 +180,7 @@ jobs:
             - '*/storybook-s2/'
 
   docs:
-    executor: rsp-xlarge
+    executor: rsp
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -447,7 +195,7 @@ jobs:
             - '*/docs/'
 
   docs-production:
-    executor: rsp-xlarge
+    executor: rsp
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -462,7 +210,7 @@ jobs:
             - '*/docs/'
 
   verdaccio:
-    executor: rsp-xlarge
+    executor: rsp
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -484,7 +232,7 @@ jobs:
             - storage
 
   v-docs:
-    executor: rsp-xlarge
+    executor: rsp
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -506,7 +254,7 @@ jobs:
             - '*/verdaccio/docs'
 
   v-rsp-cra-18:
-    executor: rsp-xlarge
+    executor: rsp
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -528,7 +276,7 @@ jobs:
             - '*/verdaccio/rsp-cra-18'
 
   v-webpack-4:
-    executor: rsp-xlarge
+    executor: rsp
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -550,7 +298,7 @@ jobs:
             - '*/verdaccio/webpack-4'
 
   v-nextjs:
-    executor: rsp-xlarge
+    executor: rsp
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -572,7 +320,7 @@ jobs:
             - '*/verdaccio/next'
 
   v-rac-tailwind:
-    executor: rsp-xlarge
+    executor: rsp
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -594,7 +342,7 @@ jobs:
             - '*/verdaccio/rac-tailwind'
 
   v-rac-rsp-tailwind:
-    executor: rsp-xlarge
+    executor: rsp
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -616,7 +364,7 @@ jobs:
             - '*/verdaccio/rac-spectrum-tailwind'
 
   v-s2-parcel:
-    executor: rsp-xlarge
+    executor: rsp
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -638,7 +386,7 @@ jobs:
             - '*/verdaccio/s2-parcel-example'
 
   v-s2-webpack:
-    executor: rsp-xlarge
+    executor: rsp
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -660,7 +408,7 @@ jobs:
             - '*/verdaccio/s2-webpack-5-example'
 
   v-icon-builder:
-    executor: rsp-xlarge
+    executor: rsp
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -695,63 +443,6 @@ jobs:
           paths:
             - '*/verdaccio/publish-stats'
 
-  deploy:
-    docker:
-      - image: mcr.microsoft.com/azure-cli:2.63.0
-    steps:
-      - attach_workspace:
-          at: /tmp/dist
-      - run:
-          name: Install AzCopy
-          command: |
-            wget -O azcopy.tar.gz https://aka.ms/downloadazcopy-v10-linux
-            tar -xf azcopy.tar.gz
-            mv ./azcopy_linux_amd64_*/azcopy /usr/local/bin/
-      - run:
-          name: deploy
-          command: |
-            if [ $AZURE_STORAGE_SAS_TOKEN ]; then
-              azcopy copy "/tmp/dist/*" "https://reactspectrum.blob.core.windows.net/reactspectrum${AZURE_STORAGE_SAS_TOKEN}" --recursive
-            fi
-
-  # Separate deploy workflow for the test docs built w/ verdaccio packages so it doesn't hold up the other deploy workflows
-  deploy-verdaccio:
-    docker:
-      - image: mcr.microsoft.com/azure-cli:2.63.0
-    steps:
-      - attach_workspace:
-          at: /tmp/verdaccio_dist
-      - run:
-          name: Install AzCopy
-          command: |
-            wget -O azcopy.tar.gz https://aka.ms/downloadazcopy-v10-linux
-            tar -xf azcopy.tar.gz
-            mv ./azcopy_linux_amd64_*/azcopy /usr/local/bin/
-      - run:
-          name: deploy
-          command: |
-            if [ $AZURE_STORAGE_SAS_TOKEN ]; then
-              for dir in /tmp/verdaccio_dist/*/verdaccio; do
-                azcopy copy "$dir/*" "https://reactspectrum.blob.core.windows.net/reactspectrum/$CIRCLE_SHA1/verdaccio${AZURE_STORAGE_SAS_TOKEN}" --recursive
-              done
-            fi
-
-  deploy-production:
-    docker:
-      - image: mcr.microsoft.com/azure-cli:2.63.0
-    steps:
-      - attach_workspace:
-          at: /tmp/dist
-      - run:
-          name: Install AzCopy
-          command: |
-            wget -O azcopy.tar.gz https://aka.ms/downloadazcopy-v10-linux
-            tar -xf azcopy.tar.gz
-            mv ./azcopy_linux_amd64_*/azcopy /usr/local/bin/
-      - run:
-          name: deploy
-          command: azcopy copy "/tmp/dist/production/docs/*" "https://reactspectrum.blob.core.windows.net/\$web${AZURE_STORAGE_SAS_TOKEN}" --recursive
-
   comment:
     executor: rsp
     steps:
@@ -771,7 +462,7 @@ jobs:
             fi
 
   publish-nightly:
-    executor: rsp-xlarge
+    executor: rsp
     steps:
       - restore_cache:
           key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -785,38 +476,24 @@ jobs:
           name: Publish
           command: make publish-nightly
 
+  typecheck-docs:
+    executor: rsp
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: check-examples
+          command: make check-examples
+
 workflows:
   version: 2
   commit:
     jobs:
       - install
-      - install-16
-      - install-17
-      - install-19
-      - test-ssr:
-          requires:
-            - install
       - test:
           requires:
             - install
-      - test-ssr-16:
-          requires:
-            - install-16
-      - test-16:
-          requires:
-            - install-16
-      - test-ssr-17:
-          requires:
-            - install-17
-      - test-17:
-          requires:
-            - install-17
-      - test-19:
-          requires:
-            - install-19
-      - test-ssr-19:
-          requires:
-            - install-19
       - test-esm:
           requires:
             - install
@@ -843,21 +520,6 @@ workflows:
             branches:
               ignore: main
       - typecheck-docs:
-          requires:
-            - install
-      - storybook:
-          requires:
-            - install
-      - storybook-16:
-          requires:
-            - install-16
-      - storybook-17:
-          requires:
-            - install-17
-      - storybook-19:
-          requires:
-            - install-19
-      - storybook-s2:
           requires:
             - install
       - docs:
@@ -902,23 +564,19 @@ workflows:
             - v-webpack-4
             - v-nextjs
             - v-rsp-cra-18
-      - deploy:
+      - comment:
+          name: comment-pr
+          filters:
+            branches:
+              ignore: main
           requires:
+            - ts-diff
             - lint
-            - test-ssr
             - test
-            - test-ssr-16
-            - test-16
-            - test-ssr-17
-            - test-17
             - test-esm
-            - storybook
-            - storybook-16
-            - storybook-17
-            - storybook-19
-            - storybook-s2
             - docs
-      - deploy-verdaccio:
+      - comment:
+          name: comment-verdaccio
           requires:
             - v-docs
             - v-rsp-cra-18
@@ -930,18 +588,6 @@ workflows:
             - v-s2-webpack
             - v-icon-builder
             - v-publish-stats
-      - comment:
-          name: comment-pr
-          filters:
-            branches:
-              ignore: main
-          requires:
-            - ts-diff
-            - deploy
-      - comment:
-          name: comment-verdaccio
-          requires:
-            - deploy-verdaccio
 
   prod-docs:
     when:
@@ -958,12 +604,6 @@ workflows:
               only: main
           requires:
             - install
-      - deploy-production:
-          filters:
-            branches:
-              only: main
-          requires:
-            - docs-production
 
   nightly:
     triggers:
