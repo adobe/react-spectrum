@@ -29,5 +29,8 @@
   "tag.hideButtonLabel": "إظهار أقل",
   "tag.noTags": "بدون",
   "tag.showAllButtonLabel": "عرض الكل ({tagCount, number})",
-  "breadcrumbs.more": "المزيد من العناصر"
+  "breadcrumbs.more": "المزيد من العناصر",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

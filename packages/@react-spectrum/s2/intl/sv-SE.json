@@ -29,5 +29,8 @@
   "tag.hideButtonLabel": "Visa mindre",
   "tag.noTags": "Ingen",
   "tag.showAllButtonLabel": "Visa alla ({tagCount, number})",
-  "breadcrumbs.more": "Fler alternativ"
+  "breadcrumbs.more": "Fler alternativ",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

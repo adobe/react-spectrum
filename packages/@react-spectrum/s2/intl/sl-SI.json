@@ -29,5 +29,8 @@
   "tag.hideButtonLabel": "Prikaži manj",
   "tag.noTags": "Nič",
   "tag.showAllButtonLabel": "Prikaž vse ({tagCount, number})",
-  "breadcrumbs.more": "Več elementov"
+  "breadcrumbs.more": "Več elementov",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

@@ -29,5 +29,8 @@
   "tag.hideButtonLabel": "Se afișează mai puțin",
   "tag.noTags": "Niciuna",
   "tag.showAllButtonLabel": "Se afișează tot ({tagCount, number})",
-  "breadcrumbs.more": "Mai multe articole"
+  "breadcrumbs.more": "Mai multe articole",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }
