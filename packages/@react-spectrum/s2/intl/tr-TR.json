@@ -1,9 +1,10 @@
 {
   "actionbar.actions": "Eylemler",
-  "actionbar.actionsAvailable": "Eylemler mevcut.",
+  "actionbar.actionsAvailable": "Mevcut eylemler var.",
   "actionbar.clearSelection": "Seçimi temizle",
   "actionbar.selected": "{count, plural, =0 {Hiçbiri seçilmedi} other {# seçildi}}",
   "actionbar.selectedAll": "Tümü seçildi",
+  "breadcrumbs.more": "Daha fazla öğe",
   "button.pending": "beklemede",
   "contextualhelp.help": "Yardım",
   "contextualhelp.info": "Bilgiler",
@@ -17,6 +18,8 @@
   "label.(optional)": "(isteğe bağlı)",
   "label.(required)": "(gerekli)",
   "menu.moreActions": "Daha fazla eylem",
+  "notificationbadge.indicatorOnly": "Yeni etkinlik",
+  "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Seçin…",
   "slider.maximum": "Maksimum",
   "slider.minimum": "Minimum",
@@ -28,6 +31,5 @@
   "tag.actions": "Eylemler",
   "tag.hideButtonLabel": "Daha az göster",
   "tag.noTags": "Hiçbiri",
-  "tag.showAllButtonLabel": "Tümünü göster ({tagCount, number})",
-  "breadcrumbs.more": "Daha Fazla Öğe"
+  "tag.showAllButtonLabel": "Tümünü göster ({tagCount, number})"
 }

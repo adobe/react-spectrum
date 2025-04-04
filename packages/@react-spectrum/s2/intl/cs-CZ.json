@@ -2,8 +2,9 @@
   "actionbar.actions": "Akce",
   "actionbar.actionsAvailable": "Dostupné akce.",
   "actionbar.clearSelection": "Vymazat výběr",
-  "actionbar.selected": "Vybráno: { count }",
+  "actionbar.selected": "{count, plural, =0 {žádné vybrané} other {# vybraných}}",
   "actionbar.selectedAll": "Vybráno vše",
+  "breadcrumbs.more": "Další položky",
   "button.pending": "čeká na vyřízení",
   "contextualhelp.help": "Nápověda",
   "contextualhelp.info": "Informace",
@@ -17,6 +18,8 @@
   "label.(optional)": "(volitelně)",
   "label.(required)": "(požadováno)",
   "menu.moreActions": "Další akce",
+  "notificationbadge.indicatorOnly": "Nová aktivita",
+  "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Vybrat…",
   "slider.maximum": "Maximum",
   "slider.minimum": "Minimum",
@@ -28,6 +31,5 @@
   "tag.actions": "Akce",
   "tag.hideButtonLabel": "Zobrazit méně",
   "tag.noTags": "Žádný",
-  "tag.showAllButtonLabel": "Zobrazit vše ({tagCount, number})",
-  "breadcrumbs.more": "Více položek"
+  "tag.showAllButtonLabel": "Zobrazit vše ({tagCount, number})"
 }

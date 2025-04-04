@@ -2,8 +2,9 @@
   "actionbar.actions": "Dejanja",
   "actionbar.actionsAvailable": "Na voljo so dejanja.",
   "actionbar.clearSelection": "Počisti izbor",
-  "actionbar.selected": "Izbrano: {count}",
-  "actionbar.selectedAll": "Vsi izbrani",
+  "actionbar.selected": "{count, plural, =0 {None selected} drugo {# selected}}",
+  "actionbar.selectedAll": "Izbrano vse",
+  "breadcrumbs.more": "Več elementov",
   "button.pending": "v teku",
   "contextualhelp.help": "Pomoč",
   "contextualhelp.info": "Informacije",
@@ -17,6 +18,8 @@
   "label.(optional)": "(opcijsko)",
   "label.(required)": "(obvezno)",
   "menu.moreActions": "Več možnosti",
+  "notificationbadge.indicatorOnly": "Nova dejavnost",
+  "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Izberite…",
   "slider.maximum": "Največji",
   "slider.minimum": "Najmanj",
@@ -28,6 +31,5 @@
   "tag.actions": "Dejanja",
   "tag.hideButtonLabel": "Prikaži manj",
   "tag.noTags": "Nič",
-  "tag.showAllButtonLabel": "Prikaž vse ({tagCount, number})",
-  "breadcrumbs.more": "Več elementov"
+  "tag.showAllButtonLabel": "Prikaž vse ({tagCount, number})"
 }
