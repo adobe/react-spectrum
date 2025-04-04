@@ -27,7 +27,7 @@
     "build:s2-docs": "NODE_ENV=storybook storybook build -c .storybook-s2 --docs",
     "start:docs": "DOCS_ENV=dev parcel 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/react-aria-components/docs/**/*.mdx' 'packages/@internationalized/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
     "build:docs": "DOCS_ENV=staging parcel build 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/react-aria-components/docs/**/*.mdx' 'packages/@internationalized/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
-    "test": "cross-env STRICT_MODE=1 yarn jest",
+    "test": "cross-env STRICT_MODE=1 yarn jest --runInBand",
     "test:lint": "node packages/**/*.test-lint.js",
     "test-loose": "cross-env VIRT_ON=1 yarn jest",
     "test-storybook": "test-storybook --url http://localhost:9003  --browsers chromium --no-cache",
