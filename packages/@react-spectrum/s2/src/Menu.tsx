@@ -157,6 +157,7 @@ export let menuitem = style({
   },
   paddingBottom: '--labelPadding',
   backgroundColor: { // TODO: revisit color when I have access to dev mode again
+    // @ts-expect-error Expression produces a union type that is too complex to represent
     default: {
       default: 'transparent',
       isFocused: baseColor('gray-100').isFocusVisible
@@ -301,6 +302,7 @@ let keyboard = style({
   color: {
     default: 'gray-600',
     isDisabled: 'disabled',
+    // @ts-expect-error Expression produces a union type that is too complex to represent
     forcedColors: {
       isDisabled: 'GrayText'
     }
