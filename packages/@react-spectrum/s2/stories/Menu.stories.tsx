@@ -242,6 +242,27 @@ export const DynamicExample: Story = {
   }
 };
 
+export const PreventDefaultClosingBehavior: Story = {
+  render: (args) => {
+    return (
+      <MenuTrigger {...args}>
+        <Button aria-label="Closing behavior"><More /></Button>
+        <Menu {...args}>
+          <MenuItem>I will close the menu by default</MenuItem>
+          <MenuItem closeOnSelect={false}>I will not close the menu</MenuItem>
+          <SubmenuTrigger>
+            <MenuItem>Submenu</MenuItem>
+            <Menu>
+              <MenuItem closeOnSelect>I will close the menu</MenuItem>
+              <MenuItem closeOnSelect={false}>I will not close the menu</MenuItem>
+            </Menu>
+          </SubmenuTrigger>
+        </Menu>
+      </MenuTrigger>
+    );
+  }
+};
+
 export const SelectionGroups = (args) => {
   let [group1, setGroup1] = useState<Selection>(new Set([1]));
   let [group2, setGroup2] = useState<Selection>(new Set());
