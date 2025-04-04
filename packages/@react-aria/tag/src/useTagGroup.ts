@@ -80,7 +80,8 @@ export function useTagGroup<T>(props: AriaTagGroupOptions<T>, state: ListState<T
     ...fieldProps,
     keyboardDelegate,
     shouldFocusWrap: true,
-    linkBehavior: 'override'
+    linkBehavior: 'override',
+    keyboardNavigationBehavior: 'tab'
   }, state, ref);
 
   let [isFocusWithin, setFocusWithin] = useState(false);
