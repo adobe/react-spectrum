@@ -12,13 +12,13 @@
 import {AriaDialogProps, useDialog, useId, useOverlayTrigger} from 'react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, DEFAULT_SLOT, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {forwardRefType} from '@react-types/shared';
 import {HeadingContext} from './RSPContexts';
 import {OverlayTriggerProps, OverlayTriggerState, useMenuTriggerState} from 'react-stately';
 import {PopoverContext} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
-import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactNode, useCallback, useContext, useRef, useState} from 'react';
 import {RootMenuTriggerStateContext} from './Menu';
 
 export interface DialogTriggerProps extends OverlayTriggerProps {
@@ -48,6 +48,19 @@ export function DialogTrigger(props: DialogTriggerProps): ReactNode {
   let buttonRef = useRef<HTMLButtonElement>(null);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, buttonRef);
 
+  // Allows popover width to match trigger element
+  let [buttonWidth, setButtonWidth] = useState<string | null>(null);
+  let onResize = useCallback(() => {
+    if (buttonRef.current) {
+      setButtonWidth(buttonRef.current.offsetWidth + 'px');
+    }
+  }, [buttonRef]);
+
+  useResizeObserver({
+    ref: buttonRef,
+    onResize: onResize
+  });
+
   // Label dialog by the trigger as a fallback if there is no title slot.
   // This is done in RAC instead of hooks because otherwise we cannot distinguish
   // between context and props. Normally aria-labelledby overrides the title
@@ -64,7 +77,8 @@ export function DialogTrigger(props: DialogTriggerProps): ReactNode {
         [PopoverContext, {
           trigger: 'DialogTrigger',
           triggerRef: buttonRef,
-          'aria-labelledby': overlayProps['aria-labelledby']
+          'aria-labelledby': overlayProps['aria-labelledby'],
+          style: {'--trigger-width': buttonWidth} as React.CSSProperties
         }]
       ]}>
       <PressResponder {...triggerProps} ref={buttonRef} isPressed={state.isOpen}>
