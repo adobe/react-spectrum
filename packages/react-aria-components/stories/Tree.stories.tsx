@@ -11,10 +11,10 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Checkbox, CheckboxProps, Collection, Key, ListLayout, Menu, MenuTrigger, Popover, Text, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeProps, Virtualizer} from 'react-aria-components';
+import {Button, Checkbox, CheckboxProps, Collection, Key, ListLayout, Menu, MenuTrigger, Popover, Text, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeProps, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import {MyMenuItem} from './utils';
-import React, {ReactNode} from 'react';
+import React, {ReactNode, useMemo, useState} from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_TreeLoadingIndicator} from '../src/Tree';
 
@@ -515,4 +515,130 @@ function VirtualizedTreeRender(args) {
 export const VirtualizedTree = {
   ...TreeExampleDynamic,
   render: VirtualizedTreeRender
+};
+
+function flattenTree(items) {
+  let flattened = new Map();
+  function traverse(items) {
+    if (!items) {
+      return;
+    }
+    for (let item of items) {
+      flattened.set(item.id, item);
+      if (item.childItems) {
+        traverse(item.childItems);
+      }
+    }
+  }
+  traverse(items);
+  return flattened;
+}
+
+function findParentAndIndex(items, key) {
+  for (let i = 0; i < items.length; i++) {
+    if (items[i].id === key) {
+      return {parent: items, index: i};
+    }
+    
+    if (items[i].childItems) {
+      let result = findParentAndIndex(items[i].childItems, key);
+      if (result) {
+        return result;
+      }
+    }
+  }
+  return null;
+};
+
+function isParentOf(possibleParent, childKey) {
+  if (!possibleParent || !possibleParent.childItems) {
+    return false;
+  }
+  
+  for (let child of possibleParent.childItems) {
+    if (child.id === childKey || isParentOf(child, childKey)) {
+      return true;
+    }
+  }
+  
+  return false;
+}
+
+function TreeDragAndDropExample(args) {
+  let [items, setItems] = useState(rows);
+  let flattenedItems = useMemo(() => flattenTree(items), [items]);
+
+  let getItems = (keys) => [...keys].map(key => {
+    let item = flattenedItems.get(key);
+    return {
+      'text/plain': item?.name
+    };
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems,
+    onReorder(e) {
+      let draggedKeys = [...e.keys];
+      let targetKey = e.target.key;
+      
+      setItems((prevItems) => {
+        let newItems = JSON.parse(JSON.stringify(prevItems));
+        let targetLocation = findParentAndIndex(newItems, targetKey);
+        if (!targetLocation) {
+          // Target not found
+          return prevItems;
+        }
+        
+        let targetParent = targetLocation.parent;
+        let dropPosition = e.target.dropPosition;
+        let targetIndex = targetLocation.index;
+        
+        // Prevent dragging parent into its own children
+        for (let key of draggedKeys) {
+          if (isParentOf(flattenedItems.get(key), targetKey)) {
+            return prevItems;
+          }
+        }
+        
+        let draggedItems: any[] = [];
+        let adjustIndexOffset = 0;
+        
+        for (let key of draggedKeys) {
+          let location = findParentAndIndex(newItems, key);
+          if (location) {
+            // Adjust target index if we're removing from the same parent
+            // and the removed item is before the target
+            if (location.parent === targetParent && location.index < targetIndex) {
+              adjustIndexOffset++;
+            }
+            
+            let [item] = location.parent.splice(location.index, 1);
+            draggedItems.push(item);
+          }
+        }
+        
+        let insertIndex = dropPosition === 'before' 
+          ? targetIndex - adjustIndexOffset
+          : targetIndex - adjustIndexOffset + 1;
+        
+        targetParent.splice(insertIndex, 0, ...draggedItems);        
+        return newItems;
+      });
+    }
+  });
+
+  return (
+    <Tree dragAndDropHooks={dragAndDropHooks} {...args} className={styles.tree} aria-label="Tree with drag and drop" items={items}>
+      {(item: any) => (
+        <DynamicTreeItem id={item.id} childItems={item.childItems} textValue={item.name}>
+          {item.name}
+        </DynamicTreeItem>
+      )}
+    </Tree>
+  );
+}
+
+export const TreeWithDragAndDrop = {
+  ...TreeExampleDynamic,
+  render: TreeDragAndDropExample
 };
