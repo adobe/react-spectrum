@@ -27,6 +27,7 @@
   "table.sortAscending": "Sort Ascending",
   "table.sortDescending": "Sort Descending",
   "table.resizeColumn": "Resize column",
+  "table.standardColumnMenu": "Default column actions",
   "tag.showAllButtonLabel": "Show all ({tagCount, number})",
   "tag.hideButtonLabel": "Show less",
   "tag.actions": "Actions",
