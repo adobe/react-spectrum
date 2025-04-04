@@ -148,4 +148,4 @@ export type {ToggleButtonProps} from './ToggleButton';
 export type {ToggleButtonGroupProps} from './ToggleButtonGroup';
 export type {TooltipProps} from './Tooltip';
 export type {TreeViewProps, TreeViewItemProps, TreeViewItemContentProps} from './TreeView';
-export type {FileTriggerProps, TooltipTriggerComponentProps as TooltipTriggerProps} from 'react-aria-components';
+export type {FileTriggerProps, TooltipTriggerComponentProps as TooltipTriggerProps, SortDescriptor} from 'react-aria-components';
