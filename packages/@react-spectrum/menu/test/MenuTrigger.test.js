@@ -268,6 +268,30 @@ describe('MenuTrigger', function () {
     });
 
     it.each`
+      Name               | Component        | props
+      ${'MenuTrigger'}   | ${MenuTrigger}   | ${{onOpenChange}}
+    `('$Name should prevent Esc from clearing selection and close the menu if escapeKeyBehavior is "none"', async function ({Component, props}) {
+      tree = renderComponent(Component, props, {selectionMode: 'multiple', escapeKeyBehavior: 'none', onSelectionChange});
+      let menuTester = testUtilUser.createTester('Menu', {root: tree.container, interactionType: 'keyboard'});
+      expect(onOpenChange).toBeCalledTimes(0);
+      await menuTester.open();
+
+      expect(onOpenChange).toBeCalledTimes(1);
+      expect(onSelectionChange).toBeCalledTimes(0);
+
+      await menuTester.selectOption({option: 'Foo', menuSelectionMode: 'multiple', keyboardActivation: 'Space'});
+      expect(onSelectionChange).toBeCalledTimes(1);
+      expect(onSelectionChange.mock.calls[0][0].has('Foo')).toBeTruthy();
+      await menuTester.selectOption({option: 'Bar', menuSelectionMode: 'multiple', keyboardActivation: 'Space'});
+      expect(onSelectionChange).toBeCalledTimes(2);
+      expect(onSelectionChange.mock.calls[1][0].has('Bar')).toBeTruthy();
+
+      await menuTester.close();
+      expect(menuTester.menu).not.toBeInTheDocument();
+      expect(onOpenChange).toBeCalledTimes(2);
+    });
+
+    it.each`
       Name                      | Component      | props | menuProps
       ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{closeOnSelect: true}} | ${{selectionMode: 'multiple', onClose}}
     `('$Name closes on menu item selection if toggled by mouse click', async function ({Component, props, menuProps}) {

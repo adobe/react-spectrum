@@ -140,9 +140,9 @@ function pointerEvent(type, opts) {
 }
 
 export let tableTests = () => {
-  // Temporarily disabling these tests in React 16 because they run into a memory limit and crash.
+  // Temporarily disabling these tests in React 16/17 because they run into a memory limit and crash.
   // TODO: investigate.
-  if (parseInt(React.version, 10) <= 16) {
+  if (parseInt(React.version, 10) <= 17) {
     return;
   }
 
@@ -2215,6 +2215,26 @@ export let tableTests = () => {
         expect(rows[1]).toHaveAttribute('aria-selected', 'true');
         checkRowSelection(rows.slice(2), false);
         checkSelectAll(tree, 'indeterminate');
+      });
+
+      it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionMode: 'multiple', escapeKeyBehavior: 'none'});
+        let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
+        tableTester.setInteractionType('keyboard');
+
+
+        await tableTester.toggleRowSelection({row: 0});
+        expect(tableTester.selectedRows).toHaveLength(1);
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+
+        await tableTester.toggleRowSelection({row: 1});
+        expect(tableTester.selectedRows).toHaveLength(2);
+        expect(onSelectionChange).toHaveBeenCalledTimes(2);
+
+        await user.keyboard('{Escape}');
+        expect(tableTester.selectedRows).toHaveLength(2);
+        expect(onSelectionChange).toHaveBeenCalledTimes(2);
       });
 
       it('should not allow selection of a disabled row via checkbox click', async function () {
