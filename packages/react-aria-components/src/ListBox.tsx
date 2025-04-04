@@ -20,7 +20,7 @@ import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Ori
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {HeaderContext} from './Header';
-import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, memo, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {SeparatorContext} from './Separator';
 import {TextContext} from './Text';
 import {UNSTABLE_InternalAutocompleteContext} from './Autocomplete';
@@ -78,14 +78,14 @@ export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children' | 
 }
 
 export const ListBoxContext = createContext<ContextValue<ListBoxProps<any>, HTMLDivElement>>(null);
-export const ListStateContext = createContext<ListState<any> | null>(null);
+export const ListStateContext = createContext<[ListState<any>, Key | null] | null>(null);
 
 /**
  * A listbox displays a list of options and allows a user to select one or more of them.
  */
 export const ListBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function ListBox<T extends object>(props: ListBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ListBoxContext);
-  let state = useContext(ListStateContext);
+  let context = useContext(ListStateContext);
 
   // The structure of ListBox is a bit strange because it needs to work inside other components like ComboBox and Select.
   // Those components render two copies of their children so that the collection can be built even when the popover is closed.
@@ -93,7 +93,9 @@ export const ListBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Lis
   // The second copy sends a ListState object via context which we use to render the ListBox without rebuilding the state.
   // Otherwise, we have a standalone ListBox, so we need to create a collection and state ourselves.
 
-  if (state) {
+  if (context) {
+    let [state] = context;
+
     return <ListBoxInner state={state} props={props} listBoxRef={ref} />;
   }
 
@@ -248,8 +250,8 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
         <Provider
           values={[
             [ListBoxContext, props],
-            [ListStateContext, state],
-            [DragAndDropContext, {dragAndDropHooks, dragState, dropState}],
+            [ListStateContext, [state, state.selectionManager.focusedKey]],
+            [DragAndDropContext, useMemo(() => ({dragAndDropHooks, dragState, dropState}), [dragAndDropHooks, dragState, dropState])],
             [SeparatorContext, {elementType: 'div'}],
             [DropIndicatorContext, {render: ListBoxDropIndicatorWrapper}],
             [SectionContext, {name: 'ListBoxSection', render: ListBoxSectionInner}]
@@ -270,7 +272,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
 export interface ListBoxSectionProps<T> extends SectionProps<T> {}
 
 function ListBoxSectionInner<T extends object>(props: ListBoxSectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>, className = 'react-aria-ListBoxSection') {
-  let state = useContext(ListStateContext)!;
+  let [state] = useContext(ListStateContext)!;
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext)!;
   let {CollectionBranch} = useContext(CollectionRendererContext);
   let [headingRef, heading] = useSlot();
@@ -331,13 +333,25 @@ export interface ListBoxItemProps<T = object> extends RenderProps<ListBoxItemRen
  */
 export const ListBoxItem = /*#__PURE__*/ createLeafComponent('item', function ListBoxItem<T extends object>(props: ListBoxItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let ref = useObjectRef<any>(forwardedRef);
-  let state = useContext(ListStateContext)!;
+  let [state, focusedKey] = useContext(ListStateContext)!;
+
+  // ListBoxItemInner is memoized so that a focus change does not re-render all items in the ListBox.
+  // The data-focused attribute tells React which list boxes are affected by a focus change. It does not actually
+  // get passed through to the component - it could be named anything, as long as it changes so React knows to re-render.
+  return <ListBoxItemInner data-focused={item.key === focusedKey} props={props} state={state} passRef={ref} item={item} />;
+});
+
+const ListBoxItemInner = memo(function ListBoxItemInner<T extends object>({props, item, state, passRef}: {props: ListBoxItemProps<T>, state: ListState<T>, item: Node<T>, passRef: React.MutableRefObject<any>}) {
+  const ref = passRef;
+
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
-  let {optionProps, labelProps, descriptionProps, ...states} = useOption(
+  let options = useOption(
     {key: item.key, 'aria-label': props?.['aria-label']},
     state,
     ref
   );
+
+  let {optionProps, labelProps, descriptionProps, ...states} = options;
 
   let {hoverProps, isHovered} = useHover({
     isDisabled: !states.allowsSelection && !states.hasAction,

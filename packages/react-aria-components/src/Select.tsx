@@ -183,7 +183,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
           'aria-labelledby': menuProps['aria-labelledby']
         }],
         [ListBoxContext, {...menuProps, ref: scrollRef}],
-        [ListStateContext, state],
+        [ListStateContext, [state, state.selectionManager.focusedKey]],
         [TextContext, {
           slots: {
             description: descriptionProps,

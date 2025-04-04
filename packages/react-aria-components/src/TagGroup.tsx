@@ -109,7 +109,7 @@ function TagGroupInner({props, forwardedRef: ref, collection}: TagGroupInnerProp
         values={[
           [LabelContext, {...labelProps, elementType: 'span', ref: labelRef}],
           [TagListContext, {...gridProps, ref: tagListRef}],
-          [ListStateContext, state],
+          [ListStateContext, [state, state.selectionManager.focusedKey]],
           [TextContext, {
             slots: {
               description: descriptionProps,
@@ -139,7 +139,7 @@ interface TagListInnerProps<T> {
 }
 
 function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps<T>) {
-  let state = useContext(ListStateContext)!;
+  let [state] = useContext(ListStateContext)!;
   let {CollectionRoot} = useContext(CollectionRendererContext);
   let [gridProps, ref] = useContextProps(props, forwardedRef, TagListContext);
   delete gridProps.items;
@@ -200,7 +200,7 @@ export interface TagProps extends RenderProps<TagRenderProps>, LinkDOMProps, Hov
  * A Tag is an individual item within a TagList.
  */
 export const Tag = /*#__PURE__*/ createLeafComponent('item', (props: TagProps, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<unknown>) => {
-  let state = useContext(ListStateContext)!;
+  let [state] = useContext(ListStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);
   let {focusProps, isFocusVisible} = useFocusRing({within: true});
   let {rowProps, gridCellProps, removeButtonProps, ...states} = useTag({item}, state, ref);

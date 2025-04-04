@@ -85,7 +85,7 @@ export function useMultipleSelectionState(props: MultipleSelectionStateProps): M
     }
   }, [selectionBehaviorProp]);
 
-  return {
+  return useMemo(() => ({
     selectionMode,
     disallowEmptySelection,
     selectionBehavior,
@@ -116,7 +116,7 @@ export function useMultipleSelectionState(props: MultipleSelectionStateProps): M
     },
     disabledKeys: disabledKeysProp,
     disabledBehavior
-  };
+  }), [selectionMode, disallowEmptySelection, selectionBehavior, selectedKeys, setSelectedKeys, allowDuplicateSelectionEvents, disabledKeysProp, disabledBehavior]);
 }
 
 function convertSelection(selection: 'all' | Iterable<Key> | null | undefined, defaultValue?: Selection): 'all' | Set<Key> | undefined {

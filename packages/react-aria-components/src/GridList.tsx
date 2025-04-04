@@ -237,7 +237,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
         data-layout={layout}>
         <Provider
           values={[
-            [ListStateContext, state],
+            [ListStateContext, [state, state.selectionManager.focusedKey]],
             [DragAndDropContext, {dragAndDropHooks, dragState, dropState}],
             [DropIndicatorContext, {render: GridListDropIndicatorWrapper}]
           ]}>
@@ -277,7 +277,7 @@ export interface GridListItemProps<T = object> extends RenderProps<GridListItemR
  * A GridListItem represents an individual item in a GridList.
  */
 export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function GridListItem<T extends object>(props: GridListItemProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>, item: Node<T>) {
-  let state = useContext(ListStateContext)!;
+  let [state] = useContext(ListStateContext)!;
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
   let ref = useObjectRef<HTMLDivElement>(forwardedRef);
   let {isVirtualized} = useContext(CollectionRendererContext);

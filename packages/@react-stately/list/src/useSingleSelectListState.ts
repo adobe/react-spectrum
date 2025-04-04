@@ -12,8 +12,8 @@
 
 import {CollectionStateBase, Key, Node, Selection, SingleSelection} from '@react-types/shared';
 import {ListState, useListState} from './useListState';
+import {useCallback, useMemo} from 'react';
 import {useControlledState} from '@react-stately/utils';
-import {useMemo} from 'react';
 
 export interface SingleSelectListProps<T> extends CollectionStateBase<T>, Omit<SingleSelection, 'disallowEmptySelection'> {
   /** Filter function to generate a filtered list of nodes. */
@@ -40,13 +40,14 @@ export interface SingleSelectListState<T> extends ListState<T> {
 export function useSingleSelectListState<T extends object>(props: SingleSelectListProps<T>): SingleSelectListState<T>  {
   let [selectedKey, setSelectedKey] = useControlledState(props.selectedKey, props.defaultSelectedKey ?? null, props.onSelectionChange);
   let selectedKeys = useMemo(() => selectedKey != null ? [selectedKey] : [], [selectedKey]);
+  let onSelectionChange = props.onSelectionChange;
   let {collection, disabledKeys, selectionManager} = useListState({
     ...props,
     selectionMode: 'single',
     disallowEmptySelection: true,
     allowDuplicateSelectionEvents: true,
     selectedKeys,
-    onSelectionChange: (keys: Selection) => {
+    onSelectionChange: useCallback((keys: Selection) => {
       // impossible, but TS doesn't know that
       if (keys === 'all') {
         return;
@@ -55,24 +56,24 @@ export function useSingleSelectListState<T extends object>(props: SingleSelectLi
 
       // Always fire onSelectionChange, even if the key is the same
       // as the current key (useControlledState does not).
-      if (key === selectedKey && props.onSelectionChange) {
-        props.onSelectionChange(key);
+      if (key === selectedKey && onSelectionChange) {
+        onSelectionChange(key);
       }
 
       setSelectedKey(key);
-    }
+    }, [onSelectionChange, selectedKey, setSelectedKey])
   });
 
   let selectedItem = selectedKey != null
     ? collection.getItem(selectedKey)
     : null;
 
-  return {
+  return useMemo(() => ({
     collection,
     disabledKeys,
     selectionManager,
     selectedKey,
     setSelectedKey,
     selectedItem
-  };
+  }), [collection, disabledKeys, selectionManager, selectedKey, setSelectedKey, selectedItem]);
 }
