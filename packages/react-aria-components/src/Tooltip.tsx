@@ -41,6 +41,7 @@ export interface TooltipProps extends PositionProps, Pick<AriaPositionProps, 'ar
   /**
    * The container element in which the overlay portal will be placed. This may have unknown behavior depending on where it is portalled to.
    * @default document.body
+   * @deprecated - Use a parent UNSAFE_PortalProvider to set your portal container instead.
    */
   UNSTABLE_portalContainer?: Element,
   /**
