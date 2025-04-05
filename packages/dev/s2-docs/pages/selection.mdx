@@ -1,0 +1,129 @@
+import {Layout} from '../src/Layout';
+export default Layout;
+
+import {Table, TableHeader, TableBody, TableRow, TableCell, TableColumn} from '../src/Table';
+import {PropTable} from '../src/PropTable';
+import {StateTable, DefaultClassName} from '../src/StateTable';
+import {Tabs, TabPanel, Tab, TabList} from '@react-spectrum/s2';
+import {File} from '../src/Example';
+import docs from 'docs:react-aria-components';
+import {StylingExamples} from '../src/VisualExample';
+import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
+import {InlineLink} from '../src/types';
+import '../../../../starters/docs/src/ListBox.css';
+import '../../../../starters/docs/src/GridList.css';
+
+export const section = 'Guides';
+
+# Selection
+
+Many collection components support selecting items by clicking or tapping them, or by using the keyboard.
+This page discusses how to handle selection events, how to control selection programmatically, and the
+data structures used to represent a selection.
+
+## Multiple selection
+
+Selection is handled by the `onSelectionChange` event, which is supported on most collection components. Controlled
+behavior is supported by the `selectedKeys` prop, and uncontrolled behavior is supported by the `defaultSelectedKeys`
+prop. These props are passed to the top-level collection component, and accept a set of unique item ids.
+This allows marking items as selected by their id even before they are loaded, which can be useful when you know
+what items should be selected on initial render, before data loading has completed.
+
+Selection is represented by a Set
+object. You can also pass any iterable collection (e.g. an array) to the `selectedKeys` and `defaultSelectedKeys` props,
+but the `onSelectionChange` event will always pass back a Set.
+
+Selection is supported on both static and dynamic
+collections. The following example shows how to implement controlled selection
+behavior on a static collection, but could be applied to a dynamic collection the same way.
+
+<Tabs aria-label="Component">
+  <TabList>
+    <Tab id="listbox">ListBox</Tab>
+    <Tab id="gridlist">GridList</Tab>
+  </TabList>
+  <TabPanel id="listbox">
+
+```tsx render expanded hideImports
+"use client";
+import {ListBox, ListBoxItem} from 'react-aria-components';
+import {useState} from 'react';
+
+function Example() {
+  let [selectedKeys, setSelectedKeys] = useState(new Set());
+
+  return (
+    <ListBox
+      selectionMode="multiple"
+      selectedKeys={selectedKeys}
+      onSelectionChange={setSelectedKeys}>
+      <ListBoxItem id="one">One</ListBoxItem>
+      <ListBoxItem id="two">Two</ListBoxItem>
+      <ListBoxItem id="three">Three</ListBoxItem>
+    </ListBox>
+  );
+}
+```
+
+  </TabPanel>
+  <TabPanel id="gridlist">
+
+```tsx render expanded hideImports
+"use client";
+import {GridList, GridListItem, Button} from 'react-aria-components';
+import {useState} from 'react';
+
+function Example() {
+  let [selectedKeys, setSelectedKeys] = useState(new Set());
+
+  return (
+    <GridList
+      selectionMode="multiple"
+      selectedKeys={selectedKeys}
+      onSelectionChange={setSelectedKeys}>
+      <GridListItem id="one">
+        One
+        <Button aria-label="Info">ⓘ</Button>
+      </GridListItem>
+      <GridListItem id="two">
+        Two
+        <Button aria-label="Info">ⓘ</Button>
+      </GridListItem>
+      <GridListItem id="three">
+        Three
+        <Button aria-label="Info">ⓘ</Button>
+      </GridListItem>
+    </GridList>
+  );
+}
+```
+
+  </TabPanel>
+</Tabs>
+
+When the user selects an item, its `id` is added to the `selectedKeys` set via the `onSelectionChange` event.
+
+## Single selection
+
+So far, we've discussed multiple selection. However, you may wish to limit selection to a single item instead.
+In some components, like a select or combo box, only single selection is supported. In this case, the singular
+`selectedKey` and `defaultSelectedKey` props are available instead of their plural variants. These accept a
+single id instead of a `Set` as their value, and `onSelectionChange` is also called with a single id.
+
+```tsx
+let [selectedKey, setSelectedKey] = useState(null);
+
+<MyComboBox
+  ///- begin highlight -///
+  selectedKey={selectedKey}
+  ///- end highlight -///
+  onSelectionChange={setSelectedKey}>
+  <ListBoxItem id="one">One</ListBoxItem>
+  <ListBoxItem id="two">Two</ListBoxItem>
+  <ListBoxItem id="three">Three</ListBoxItem>
+</MyComboBox>
+```
+
+In components which support multiple selection, you can limit the selection to a single item using the
+`selectionMode` prop. This continues to accept `selectedKeys` and `defaultSelectedKeys` as a `Set`, but it will
+only contain a single id at a time.

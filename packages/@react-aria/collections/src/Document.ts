@@ -406,6 +406,12 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     return new ElementNode(type, this);
   }
 
+  createTextNode() {
+    let node = new ElementNode('text', this);;
+    node.isHidden = true;
+    return node;
+  }
+
   private getMutableCollection() {
     if (!this.nextCollection) {
       this.nextCollection = this.collection.clone();

@@ -1,0 +1,246 @@
+import {Layout} from '../src/Layout';
+export default Layout;
+
+import {Table, TableHeader, TableBody, TableRow, TableCell, TableColumn} from '../src/Table';
+import {PropTable} from '../src/PropTable';
+import {StateTable, DefaultClassName} from '../src/StateTable';
+import {File} from '../src/Example';
+import {Card, CardPreview, Content, Image, Text} from '@react-spectrum/s2';
+import docs from 'docs:react-aria-components';
+import {Select as VanillaSelect, SelectItem} from '../../../../starters/docs/src/Select';
+import vanillaDocs from 'docs:../../../../starters/docs/src/Select';
+// import {Slider as TailwindSlider} from '../../../../starters/tailwind/src/Slider';
+// import tailwindDocs from 'docs:../../../../starters/tailwind/src/Slider';
+import '../../../../starters/tailwind/src/index.css';
+import '../../../../starters/docs/src/Select.css';
+import {StylingExamples} from '../src/VisualExample';
+import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
+import {InlineLink} from '../src/types';
+import Anatomy from '../../../../packages/react-aria-components/docs/SelectAnatomy.svg';
+
+# Select
+
+<PageDescription>{docs.exports.Select.description}</PageDescription>
+
+<StylingExamples>
+  ```tsx render docs={docs.exports.Select} links={docs.links} props={['isDisabled', 'isInvalid']} files={["starters/docs/src/Select.tsx", "starters/docs/src/Select.css", "starters/docs/src/theme.css"]}
+  "use client";
+  import {Select, SelectItem} from '../../../../starters/docs/src/Select';
+
+  <Select label="Select"/* PROPS */>
+    <SelectItem>Test</SelectItem>
+  </Select>
+  ```
+
+  ```tsx render docs={docs.exports.Select} links={docs.links} props={['isDisabled', 'isInvalid']} files={["starters/tailwind/src/Select.tsx"]}
+  "use client";
+  import {Select, SelectItem} from '../../../../starters/tailwind/src/Select';
+
+  <Select label="Select"/* PROPS */>
+    <SelectItem>Test</SelectItem>
+  </Select>
+  ```
+
+</StylingExamples>
+
+## Features
+
+A select can be built using the &lt;select&gt;
+and &lt;option&gt; HTML elements, but this is
+not possible to style consistently cross browser, especially the options. `Select` helps achieve accessible
+select components that can be styled as needed without compromising on high quality interactions.
+
+* **Flexible** – Support for controlled and uncontrolled state, async loading, disabled items, validation, sections, complex items, and more.
+* **Keyboard navigation** – Select can be opened and navigated using the arrow keys, along with page up/down, home/end, etc. Auto scrolling, and typeahead both in the listbox and on the button, are supported as well.
+* **Accessible** – Follows the ARIA listbox pattern, with support for items and sections, and slots for label and description elements within each item for improved screen reader announcement.
+* **HTML form integration** – A visually hidden `<select>` element is included to enable HTML form integration and autofill.
+* **Validation** – Support for native HTML constraint validation with customizable UI, custom validation functions, and server-side validation errors.
+
+## Anatomy
+
+<Anatomy />
+
+A select consists of a label, a button which displays a selected value, and a listbox, displayed in a
+popover. Users can click, touch, or use the keyboard on the button to open the listbox popover.
+
+`Select` also supports optional description and error message elements, which can be used
+to provide more context about the field, and any validation messages. These are linked with the
+input via the `aria-describedby` attribute.
+
+```tsx
+import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem, ListBoxSection, Header, Text, FieldError} from 'react-aria-components';
+
+<Select>
+  <Label />
+  <Button>
+    <SelectValue />
+  </Button>
+  <Text slot="description" />
+  <FieldError />
+  <Popover>
+    <ListBox>
+      <ListBoxItem>
+        <Text slot="label" />
+        <Text slot="description" />
+      </ListBoxItem>
+      <ListBoxSection>
+        <Header />
+        <ListBoxItem />
+      </ListBoxSection>
+    </ListBox>
+  </Popover>
+</Select>
+```
+
+If a select does not have a visible label, an `aria-label` or `aria-labelledby` prop must be passed instead to identify it to assistive technology.
+
+## Content
+
+`Select` reuses the `ListBox` component, following the Collection Components API. It supports ListBox features such as static and dynamic collections, sections, disabled items, links, text slots, asynchronous loading, etc. See the ListBox docs for more details.
+
+The following example shows a dynamic collection of items, grouped into sections.
+
+```tsx render hideImports
+"use client";
+import {Select} from '../../../../starters/docs/src/Select';
+import {ListBoxSection, ListBoxItem, Collection, Header} from 'react-aria-components';
+
+function Example() {
+  let options = [
+    {name: 'Fruit', children: [
+      {name: 'Apple'},
+      {name: 'Banana'},
+      {name: 'Orange'},
+      {name: 'Honeydew'},
+      {name: 'Grapes'},
+      {name: 'Watermelon'},
+      {name: 'Cantaloupe'},
+      {name: 'Pear'}
+    ]},
+    {name: 'Vegetable', children: [
+      {name: 'Cabbage'},
+      {name: 'Broccoli'},
+      {name: 'Carrots'},
+      {name: 'Lettuce'},
+      {name: 'Spinach'},
+      {name: 'Bok Choy'},
+      {name: 'Cauliflower'},
+      {name: 'Potatoes'}
+    ]}
+  ];
+
+  return (
+    <Select label="Preferred fruit or vegetable" items={options}>
+      {section => (
+        <ListBoxSection id={section.name}>
+          <Header>{section.name}</Header>
+          <Collection items={section.children}>
+            {item => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+          </Collection>
+        </ListBoxSection>
+      )}
+    </Select>
+  );
+}
+```
+
+## Selection
+
+Setting a selected option can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `id` prop of an item.
+When `Select` is used with a dynamic collection as described above, the id of each item is derived from the data.
+See the Selection guide for more details.
+
+```tsx render hideImports
+"use client";
+import {Select, SelectItem} from '../../../../starters/docs/src/Select';
+import {useState} from 'react';
+import type {Key} from 'react-aria-components';
+
+function Example() {
+  let options = [
+    {name: 'Koala'},
+    {name: 'Kangaroo'},
+    {name: 'Platypus'},
+    {name: 'Bald Eagle'},
+    {name: 'Bison'},
+    {name: 'Skunk'}
+  ];
+  let [animal, setAnimal] = useState<Key>("Bison");
+
+  return (
+    <Select
+      label="Pick an animal (controlled)"
+      items={options}
+      selectedKey={animal}
+      onSelectionChange={selected => setAnimal(selected)}>
+      {item => <SelectItem id={item.name}>{item.name}</SelectItem>}
+    </Select>
+  );
+}
+```
+
+## Validation
+
+Select supports the `isRequired` prop to ensure the user selects an option, as well as custom client and server-side validation. It can also be integrated with other form libraries. See the Forms guide to learn more.
+
+To display validation errors, add a `<FieldError>` element as a child of the Select. This allows you to render error messages from all of the above sources with consistent custom styles.
+
+```tsx render hideImports
+"use client";
+import {Select, SelectItem} from '../../../../starters/docs/src/Select';
+import {Button} from '../../../../starters/docs/src/Button';
+import {Form} from 'react-aria-components';
+
+<Form>
+  <Select name="animal" isRequired description="Please select an animal.">
+    <SelectItem>Aardvark</SelectItem>
+    <SelectItem>Cat</SelectItem>
+    <SelectItem>Dog</SelectItem>
+    <SelectItem>Kangaroo</SelectItem>
+    <SelectItem>Panda</SelectItem>
+    <SelectItem>Snake</SelectItem>
+  </Select>
+  <Button type="submit">Submit</Button>
+</Form>
+```
+
+## Controlled open state
+
+The open state of the select can be controlled via the `defaultOpen` and `isOpen` props
+
+```tsx render hideImports
+"use client";
+import {Select, SelectItem} from '../../../../starters/docs/src/Select';
+import {useState} from 'react';
+
+function Example() {
+  let [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <p>Select is {open ? 'open' : 'closed'}</p>
+      <Select label="Choose frequency" isOpen={open} onOpenChange={setOpen}>
+        <SelectItem id="rarely">Rarely</SelectItem>
+        <SelectItem id="sometimes">Sometimes</SelectItem>
+        <SelectItem id="always">Always</SelectItem>
+      </Select>
+    </>
+  );
+}
+```
+
+## API
+
+### Select
+
+<PropTable component={docs.exports.Select} links={docs.links} />
+
+<StateTable defaultClassName="react-aria-Select" properties={docs.exports.SelectRenderProps.properties} />
+
+### SelectValue
+
+<PropTable component={docs.exports.SelectValue} links={docs.links} />
+
+<StateTable defaultClassName="react-aria-SelectValue" properties={docs.exports.SelectValueRenderProps.properties} />
+
+

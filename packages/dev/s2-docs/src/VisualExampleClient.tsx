@@ -1,22 +1,25 @@
 "use client";
 
-import { createContext, Fragment, useContext, useState } from "react";
-import { LinkButton, Text, Button, ToggleButtonGroup, ToggleButton, Divider, ActionButtonGroup, ActionButton, TooltipTrigger, Tooltip, MenuTrigger, Menu, MenuItem, Picker, PickerItem, ContextualHelp, Heading, Content, Switch, NumberField } from '@react-spectrum/s2';
+import { Children, cloneElement, createContext, Fragment, isValidElement, ReactNode, useContext, useEffect, useRef, useState } from "react";
+import { LinkButton, Text, Button, ToggleButtonGroup, ToggleButton, Divider, ActionButtonGroup, ActionButton, TooltipTrigger, Tooltip, MenuTrigger, Menu, MenuItem, Picker, PickerItem, ContextualHelp, Heading, Content, Switch, NumberField, Footer, TextField, SegmentedControl, SegmentedControlItem, NotificationBadge, Avatar } from '@react-spectrum/s2';
 import { style } from '@react-spectrum/s2/style' with { type: 'macro' };
 import Copy from '@react-spectrum/s2/icons/Copy';
 import Link from '@react-spectrum/s2/icons/Link';
 import More from '@react-spectrum/s2/icons/More';
 import ExportTo from '@react-spectrum/s2/icons/ExportTo';
+import { Key } from "react-aria-components";
+import { IconPicker } from "./IconPicker";
 
 const Context = createContext({
   component: 'div',
   name: 'Button',
+  importSource: '',
   controls: {},
   props: {},
   setProps: (v: any) => {}
 });
 
-export function VisualExampleClient({component, name, controls, children, initialProps = {}}) {
+export function VisualExampleClient({component, name, importSource, controls, children, initialProps = {}}) {
   let [props, setProps] = useState(() => {
     let props = {};
     for (let name in controls) {
@@ -28,8 +31,24 @@ export function VisualExampleClient({component, name, controls, children, initia
     return props;
   });
 
+  useEffect(() => {
+    let params = new URLSearchParams(location.search);
+    let newProps = {...props};
+    for (let name in controls) {
+      try {
+        let param = params.get(name);
+        if (param) {
+          newProps[name] = JSON.parse(param);
+        }
+      } catch {
+        // ignore
+      }
+    }
+    setProps(newProps);
+  }, []);
+
   return (
-    <Context.Provider value={{component: component || Button, name, controls, props, setProps}}>
+    <Context.Provider value={{component: component || Button, name, importSource: importSource, controls, props, setProps}}>
       {children}
     </Context.Provider>
   );
@@ -47,16 +66,34 @@ function getBackgroundColor(staticColor) {
 export function Output() {
   let {component: Component, props} = useContext(Context);
   return (
-    <div className={style({display: 'flex', justifyContent: 'center', alignItems: 'center', width: 'full', gridArea: 'example', borderRadius: 'lg', font: 'ui'})} style={{background: getBackgroundColor(props.staticColor)}}>
-      <Component {...props} />
+    <div className={style({display: 'flex', justifyContent: 'center', alignItems: 'center', width: 'full', overflow: 'auto', gridArea: 'example', borderRadius: 'lg', font: 'ui', padding: 24, boxSizing: 'border-box'})} style={{background: getBackgroundColor(props.staticColor)}}>
+      {isValidElement(Component) ? cloneElement(Component, props) : renderComponent(Component, props)}
     </div>
   );
 }
 
-export function CodeOutput() {
-  let {name, props, controls} = useContext(Context);
+function renderComponent(Component, props) {
+  let children = props.children;
+  if (children?.iconJSX || children?.avatar || children?.badge) {
+    children = (
+      <>
+        {children.avatar ? <Avatar src="https://i.imgur.com/xIe7Wlb.png" /> : children.iconJSX}
+        {children.text && <Text>{children.text}</Text>}
+        {children.badge && <NotificationBadge value={12} />}
+      </>
+    );
+  } else if (children?.text != null) {
+    children = children.text;
+  }
+
+  return <Component {...props}>{children}</Component>
+}
+
+export function CodeOutput({code}) {
+  let {name, importSource, props, controls} = useContext(Context);
+  let codeRef = useRef<Element | null>(null);
   return (
-    <div className={style({backgroundColor: 'layer-2', borderRadius: 'lg', padding: 16, marginTop: 20, position: 'relative'})}>
+    <div className={style({backgroundColor: 'layer-2', borderRadius: 'lg', padding: 16, position: 'relative'})}>
       <div className={style({display: 'flex', justifyContent: 'end', position: 'absolute', right: 0, paddingX: 16})}>
         <ActionButtonGroup
           orientation="vertical"
@@ -64,7 +101,7 @@ export function CodeOutput() {
           density="regular"
           size="S">
           <TooltipTrigger placement="end">
-            <ActionButton aria-label="Copy code">
+            <ActionButton aria-label="Copy code" onPress={() => navigator.clipboard.writeText(codeRef.current!.textContent!)}>
               <Copy />
             </ActionButton>
             <Tooltip>
@@ -81,7 +118,15 @@ export function CodeOutput() {
             </Tooltip>
           </TooltipTrigger>
           <Menu>
-            <MenuItem>
+            <MenuItem onAction={() => {
+              let url = new URL(location.href);
+              for (let prop in props) {
+                if (props[prop] != null) {
+                  url.searchParams.set(prop, JSON.stringify(props[prop]));
+                }
+              }
+              navigator.clipboard.writeText(url.toString());
+            }}>
               <Link />
               <Text slot="label">Copy Link</Text>
             </MenuItem>
@@ -97,25 +142,77 @@ export function CodeOutput() {
           </MenuTrigger>
         </ActionButtonGroup>
       </div>
-      <pre className={style({borderRadius: 'lg', font: 'code-sm', whiteSpace: 'pre-wrap'})}>
-        {renderElement(name, props, controls)}
+      <pre ref={codeRef} className={style({borderRadius: 'lg', font: 'code-sm', whiteSpace: 'pre-wrap'})}>
+        <code>
+          {importSource ? renderImports(name, importSource, props) : null}
+          {code || renderElement(name, props, controls)}
+        </code>
       </pre>
     </div>
   );
 }
 
+export function CodeProps() {
+  let {props, controls} = useContext(Context);
+  let renderedProps = Object.keys(props).filter(prop => prop !== 'children').map(prop => renderProp(prop, props[prop], controls[prop])).filter(Boolean);
+  return renderedProps;
+}
+
 function renderElement(name, props, controls) {
   let start = <>&lt;<span className={style({color: 'red-1000'})}>{name}</span></>;
-  let renderedProps = Object.keys(props).filter(prop => prop !== 'children').map(prop => renderProp(prop, props[prop], controls[prop])).filter(Boolean);
-  if (renderedProps.length > 1) {
+  let renderedProps = Object.keys(props).filter(prop => prop !== 'children').map(prop => renderProp(prop, props[prop], controls?.[prop])).filter(Boolean);
+  let newlines = name.length + countChars(renderedProps) > 40;
+  if (newlines) {
     renderedProps = renderedProps.map((p, i) => <Fragment key={i}>{'\n '}{p}</Fragment>);
   }
   if (props.children) {
     let end = <>&lt;/<span className={style({color: 'red-1000'})}>{name}</span>&gt;</>;
-    return <>{start}{renderedProps}&gt;{renderedProps.length > 1 ? '\n  ' : null}{props.children}{renderedProps.length > 1 ? '\n' : null}{end}</>
+    let children = renderChildren(props.children);
+    if (typeof children !== 'string') {
+      newlines = true;
+    }
+    return <>{start}{renderedProps}&gt;{newlines ? '\n  ' : null}{children}{newlines ? '\n' : null}{end}</>
   }
 
-  return <code>{start}{renderedProps} /&gt;</code>;
+  return <>{start}{renderedProps} /&gt;</>;
+}
+
+function renderChildren(children) {
+  if (children?.icon || children?.avatar || children?.badge) {
+    let result: ReactNode = null;
+    if (children.avatar) {
+      result = renderElement('Avatar', {src: 'https://i.imgur.com/xIe7Wlb.png'}, null);
+    } else if (children.icon) {
+      result = renderElement(children.icon.replace(/^(\d)/, '_$1'), {}, null);
+    }
+
+    if (children.text) {
+      let text = renderElement('Text', {children: children.text}, null);
+      result = <>{result}{result ? '\n  ' : null}{text}</>;
+    }
+
+    if (children.badge) {
+      let badge = renderElement('NotificationBadge', {value: 12}, null);
+      result = <>{result}{result ? '\n  ' : null}{badge}</>;
+    }
+    
+    return result
+  } else if (children?.text) {
+    return children.text;
+  }
+
+  return children;
+}
+
+function countChars(element) {
+  if (typeof element === 'string') {
+    return element.length;
+  } else if (Array.isArray(element)) {
+    return element.reduce((p, i) => p + countChars(i), 0);
+  } else if (element && typeof element === 'object' && element.props) {
+    return countChars(element.props.children);
+  }
+  return 0;
 }
 
 function renderProp(name, value, control) {
@@ -136,6 +233,8 @@ function renderProp(name, value, control) {
     propValue = value === false ? <>{'{'}<span className={style({color: 'magenta-1000'})}>{String(value)}</span>{'}'}</> : null;
   } else if (value == null) {
     return null;
+  } else if (typeof value === 'object') {
+    propValue = <>{'{'}{renderValue(value)}{'}'}</>;
   }
 
   if (propValue) {
@@ -143,6 +242,57 @@ function renderProp(name, value, control) {
   }
 
   return <Fragment key={name}> {propName}{propValue}</Fragment>
+}
+
+function renderValue(value) {
+  switch (typeof value) {
+    case 'string':
+      return <span className={style({color: 'green-1000'})}>"{value}"</span>;
+    case 'number':
+      return <span className={style({color: 'pink-1000'})}>{String(value)}</span>;
+    case 'boolean':
+      return <span className={style({color: 'magenta-1000'})}>{String(value)}</span>;
+    case 'object':
+      if (value == null) {
+        return <span className={style({color: 'magenta-1000'})}>{String(value)}</span>;
+      }
+      let entries = Object.entries(value);
+      return <>{'{'}{entries.map(([name, value], i) => {
+        let result = <><span className={style({color: 'indigo-1000'})}>{name}</span>: {renderValue(value)}</>;
+        if (i < entries.length - 1) {
+          result = <>{result}, </>;
+        }
+        return <Fragment key={i}>{result}</Fragment>;
+      })}{'}'}</>;
+  }
+}
+
+function renderImports(name, importSource, props) {
+  let imports: ReactNode[] = [];
+  let components = [name];
+  if (props.children?.avatar) {
+    components.push('Avatar');
+  }
+  if (props.children?.badge) {
+    components.push('NotificationBadge');
+  }
+
+  if (components.length > 1 || props.children?.icon) {
+    components.push('Text');
+  }
+  
+  imports.push(renderImport(components.join(', '), importSource));
+
+  if (props.children?.icon && !props.children?.avatar) {
+    imports.push('\n', renderImport(props.children.icon.replace(/^(\d)/, '_$1'), `@react-spectrum/s2/icons/${props.children.icon}`, true));
+  }
+  
+  imports.push('\n\n');
+  return imports;
+}
+
+function renderImport(name, from, isDefault = false) {
+  return <Fragment key={from}><span className={style({color: 'magenta-1000'})}>import</span> {isDefault ? null : '{'}{name}{isDefault ? null : '}'} <span className={style({color: 'magenta-1000'})}>from</span> <span className={style({color: 'green-1000'})}>'{from}'</span>;</Fragment>
 }
 
 export function Control({name}) {
@@ -160,6 +310,16 @@ export function Control({name}) {
       return <UnionControl control={control} value={value} onChange={onChange} />;
     case 'number':
       return <NumberControl control={control} value={value} onChange={onChange} />;
+    case 'identifier':
+      if (control.value.name === 'Intl.NumberFormatOptions') {
+        return <NumberFormatControl control={control} value={value} onChange={onChange} />;
+      }
+      if (control.value.name === 'ReactNode') {
+        return <ChildrenControl control={control} value={value} onChange={onChange} />;
+      }
+      break;
+    case 'string':
+      return <StringControl control={control} value={value} onChange={onChange} />;
     default:
       console.warn(control)
   }
@@ -172,10 +332,9 @@ function BooleanControl({control, value, onChange}) {
     </Wrapper>
   );
   // return (
-  //   <div className={style({display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'start'})}>
-  //     <span className={style({font: 'control', color: 'neutral-subdued'})({})}>{control.name}</span>
-  //     <ToggleButton isSelected={value || false} onChange={onChange}>{String(value || false)}</ToggleButton>
-  //   </div>
+  //   <Wrapper control={control}>
+  //     <ToggleButton isSelected={value || false} onChange={onChange} styles={style({width: 'fit'})}>{String(value || false)}</ToggleButton>
+  //   </Wrapper>
   // );
 }
 
@@ -192,7 +351,7 @@ function UnionControl({control, value, onChange}) {
 
   return (
     <Wrapper control={control}>
-      <ToggleButtonGroup disallowEmptySelection={!control.optional || !!control.default} selectedKeys={[value]} onSelectionChange={keys => onChange([...keys][0])} density="compact" styles={style({marginY: 4})}>
+      <ToggleButtonGroup aria-label={control.name} disallowEmptySelection={!control.optional || !!control.default} selectedKeys={[value]} onSelectionChange={keys => onChange([...keys][0])} density="compact" styles={style({marginY: 4})}>
         {control.value.elements.map(element => (
           <ToggleButton key={element.value} id={element.value}>{element.value}</ToggleButton>
         ))}
@@ -203,7 +362,7 @@ function UnionControl({control, value, onChange}) {
 
 function Wrapper({control, children}) {
   return (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 2})}>
+    <div className={style({display: 'flex', flexDirection: 'column', gap: 4})}>
       <span className={style({font: 'control', color: 'neutral-subdued'})({})}>{control.name}&nbsp;{control.description ? <div style={{display: 'inline-flex'}}><PropContextualHelp control={control} /></div> : null}</span>
       {children}
     </div>
@@ -219,12 +378,122 @@ function PropContextualHelp({control}) {
     <ContextualHelp variant="info" size="XS">
       <Heading>{control.name}</Heading>
       <Content>{control.description}</Content>
+      <Footer><code className={style({font: 'code-xs'})}>{control.valueType}</code></Footer>
     </ContextualHelp>
   );
 }
 
 function NumberControl({control, value, onChange}) {
   return (
-    <NumberField label={control.name}  contextualHelp={<PropContextualHelp control={control} />} value={value} onChange={onChange}  styles={style({width: 120})} />
+    <NumberField
+      label={control.name}
+      contextualHelp={<PropContextualHelp control={control} />}
+      value={value}
+      onChange={onChange}
+      styles={style({width: 120})} />
+  );
+}
+
+function NumberFormatControl({control, value, onChange}) {
+  return (
+    <Picker
+      label={control.name}
+      contextualHelp={<PropContextualHelp control={control} />}
+      selectedKey={value?.style || 'decimal'}
+      onSelectionChange={id => {
+        switch (id) {
+          case 'decimal':
+            onChange({style: 'decimal'});
+            break;
+          case 'percent':
+            onChange({style: 'percent'});
+            break;
+          case 'currency':
+            onChange({style: 'currency', currency: 'USD'});
+            break;
+          case 'unit':
+            onChange({style: 'unit', unit: 'inch'});
+            break;
+        }
+      }}
+      styles={style({width: 160})}>
+      <PickerItem id="decimal">Decimal</PickerItem>
+      <PickerItem id="percent">Percent</PickerItem>
+      <PickerItem id="currency">Currency</PickerItem>
+      <PickerItem id="unit">Unit</PickerItem>
+    </Picker>
   )
+}
+
+function StringControl({control, value, onChange}) {
+  return (
+    <TextField
+      label={control.name}
+      contextualHelp={<PropContextualHelp control={control} />}
+      value={value || ''}
+      onChange={onChange}
+      styles={style({width: 160})} />
+  )
+}
+
+function ChildrenControl({control, value, onChange}) {
+  if (control.icon) {
+    let objectValue = typeof value === 'string' ? {text: value} : value;
+    return (
+      <Wrapper control={control}>
+        <div className={style({display: 'flex', gap: 4})}>
+          <TextField
+            aria-label={control.name}
+            value={objectValue?.text || ''}
+            onChange={text => onChange({...objectValue, text})}
+            styles={style({width: 80, flexGrow: 1})} />
+          <IconPicker
+            value={value}
+            onChange={onChange} />
+        </div>
+        {(control.avatar || control.badge) &&
+          <ToggleButtonGroup density="compact" isJustified>
+            {control.avatar && 
+              <ToggleButton
+                isSelected={objectValue?.avatar ?? false}
+                onChange={avatar => onChange({...objectValue, avatar})}>
+                Avatar
+              </ToggleButton>
+            }
+            {control.badge && 
+              <ToggleButton
+                isSelected={objectValue?.badge ?? false}
+                onChange={badge => onChange({...objectValue, badge})}>
+                Badge
+              </ToggleButton>
+            }
+          </ToggleButtonGroup>
+        }
+      </Wrapper>
+    );
+  }
+
+  return <StringControl control={control} value={value} onChange={onChange} />;
+}
+
+const exampleStyle = style({
+  backgroundColor: 'layer-1',
+  marginTop: 20,
+  borderRadius: 'xl',
+  display: 'flex',
+  flexDirection: 'column'
+});
+
+export function StylingExamples({children}) {
+  let [selected, setSelected] = useState<Key>('vanilla');
+
+  return (
+    <div className={exampleStyle}>
+      <SegmentedControl selectedKey={selected} onSelectionChange={setSelected} styles={style({marginTop: 20, marginStart: 20})}>
+        <SegmentedControlItem id="vanilla">Vanilla CSS</SegmentedControlItem>
+        <SegmentedControlItem id="tailwind">Tailwind</SegmentedControlItem>
+      </SegmentedControl>
+      {children[selected === 'vanilla' ? 0 : 1]}
+    </div>
+  );
 }

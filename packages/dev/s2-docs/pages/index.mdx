@@ -3,28 +3,44 @@ export default Layout;
 
 import {Table, TableHeader, TableBody, TableRow, TableCell, TableColumn} from '../src/Table';
 import {PropTable} from '../src/PropTable';
-import {Switch, Slider} from '@react-spectrum/s2';
+import {Switch, Slider, Badge, ActionButton} from '@react-spectrum/s2';
 import {File} from '../src/Example';
 import docs from 'docs:@react-spectrum/s2';
 import {Button as TailwindButton} from '../../../../starters/tailwind/src/Button';
 import tailwindDocs from 'docs:../../../../starters/tailwind/src/Button';
 
-export const title = 'Home';
+export const section = 'Getting started';
 
-# Button
-
-<PageDescription>{docs.exports.Button.description}</PageDescription>
+# Test page
 
 <VisualExample
   docs={docs.exports.Button}
   props={['variant', 'staticColor', 'fillStyle', 'size', 'isDisabled', 'isPending']}
-  initialProps={{children: 'Save'}} />
+  initialProps={{children: 'Save'}}
+  importSource="@react-spectrum/s2" />
 
 <VisualExample
   component={Switch}
   docs={docs.exports.Switch}
   props={['size', 'isEmphasized', 'isDisabled']}
-  initialProps={{children: 'Wi-Fi'}} />
+  initialProps={{children: 'Wi-Fi'}}
+  importSource="@react-spectrum/s2" />
+
+<VisualExample
+  component={Badge}
+  docs={docs.exports.Badge}
+  props={['children', 'variant', 'fillStyle', 'size', 'overflowMode']}
+  initialProps={{children: 'Wi-Fi'}}
+  iconSlot
+  importSource="@react-spectrum/s2" />
+
+<VisualExample
+  component={ActionButton}
+  docs={docs.exports.ActionButton}
+  props={['children', 'size', 'staticColor', 'isQuiet', 'isDisabled']}
+  initialProps={{children: 'Action'}}
+  slots={{icon: true, avatar: true, badge: true}}
+  importSource="@react-spectrum/s2" />
 
 <VisualExample
   component={Slider}

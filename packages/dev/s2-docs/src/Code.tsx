@@ -5,6 +5,7 @@ import flatMap from 'unist-util-flatmap';
 import { Collapse } from './Collapse';
 import docs from 'docs:@react-spectrum/s2';
 import { InlineLink, LinkType } from './types';
+import { CodeProps } from './VisualExampleClient';
 
 const property = style({color: 'indigo-1000'});
 const fn = style({color: 'red-1000'});
@@ -42,10 +43,17 @@ const groupings = {
   collapse: Collapse
 };
  
-export function Code({children, className, lang}) {
+export function Code({children, className, lang, hideImports}) {
   if (lang) {
     let highlighted = highlightHast(children, Language[lang.toUpperCase()]);
-    return <code>{lines(highlighted).map((line, i) => renderHast(line, i))}</code>;
+    let lineNodes = lines(highlighted);
+    if (hideImports) {
+      let idx = lineNodes.findIndex(line => !/^("use client"|import|(\s*$))/.test(text(line)));
+      if (idx >= 0) {
+        lineNodes = lineNodes.slice(idx);
+      }
+    }
+    return <code>{lineNodes.map((line, i) => renderHast(line, i))}</code>;
   }
 
   return <code className={style({font: 'code-sm', backgroundColor: 'layer-1', paddingX: 4, borderWidth: 1, borderColor: 'gray-100', borderStyle: 'solid', borderRadius: 'sm', whiteSpace: 'pre-wrap'})}>{children}</code>;
@@ -151,6 +159,9 @@ function renderHast(node: HastNode | HastTextNode, key: number): ReactNode {
     if (/function|constructor|tag/.test(node.properties?.className) && !/method/.test(node.properties?.className) && text(node) === 'Switch') {
       // return <a href={'/' + text(node)} {...node.properties} className={className} key={key}>{children}</a>;
       return <InlineLink key={key} type={docs.exports.Switch} />;
+    }
+    if (node.properties?.className === 'comment' && text(node) === '/* PROPS */') {
+      return <CodeProps key={key} />;
     }
     if (node.tagName === 'span' && !className) {
       return children;

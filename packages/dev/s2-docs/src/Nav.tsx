@@ -1,77 +1,154 @@
 "use client";
 
-import type {PageProps} from '../types';
-import React, { useRef } from 'react';
+import type {PageProps} from '@parcel/rsc';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-aria-components';
 import { style, size, focusRing } from '@react-spectrum/s2/style' with {type: 'macro'};
 import {pressScale} from '@react-spectrum/s2'
 // import { centerPadding } from '@react-spectrum/s2/src/style-utils' with {type: 'macro'};
 
 export function Nav({pages, currentPage}: PageProps) {
+  let sections = new Map();
+  for (let page of pages) {
+    let section = page.exports?.section ?? 'React Aria';
+    let sectionPages = sections.get(section) ?? [];
+    sectionPages.push(page);
+    sections.set(section, sectionPages);
+  }
+
   return (
-    <nav>
-      <ul className={style({
-        listStyleType: 'none',
-        padding: 0,
-        margin: 0,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 8,
-        minWidth: 160,
-        width: 192,
-        maxWidth: 240
-      })}>
-        <div className={style({font: 'ui-sm', color: 'gray-600', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>Title</div>
-        {pages.map(page => (
-          <SideNavItem key={page.url} href={page.url} isSelected={page.url === currentPage.url}>{page.name.replace('.html', '')}</SideNavItem>
-        ))}
-      </ul>
+    <nav className={style({position: 'sticky', top: 40, height: 'fit', maxHeight: 'screen', overflow: 'auto'})}>
+      {[...sections].sort((a, b) => a[0].localeCompare(b[0])).map(([name, pages]) => (
+        <SideNavSection title={name} key={name}>
+          <SideNav>
+            {pages.map(page => (
+              <SideNavItem key={page.url}><SideNavLink href={page.url} isSelected={page.url === currentPage.url}>{page.exports?.title ?? page.tableOfContents?.[0]?.title ?? page.name}</SideNavLink></SideNavItem>
+            ))}
+          </SideNav>
+        </SideNavSection>
+      ))}
     </nav>
   );
 }
 
-function SideNavItem(props) {
-  let linkRef = useRef(null);
+function SideNavSection({title, children}) {
+  return (
+    <section className={style({marginBottom: 24})}>
+      <div className={style({font: 'ui-sm', color: 'gray-600', minHeight: 32, paddingX: 12, display: 'flex', alignItems: 'center'})}>{title}</div>
+      {children}
+    </section>
+  )
+}
+
+const SideNavContext = createContext('');
+
+export function SideNav({children}) {
+  return (
+    <ul className={style({
+      listStyleType: 'none',
+      padding: 0,
+      paddingStart: {
+        default: 0,
+        ':is(li > ul)': 16
+      },
+      margin: 0,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 8,
+      minWidth: 160,
+      width: 192,
+      maxWidth: 240,
+      boxSizing: 'border-box'
+    })}>
+      {children}
+    </ul>
+  );
+}
+
+export function SideNavItem(props) {
   return (
     <li>
-      <Link
-        {...props}
-        ref={linkRef}
-        aria-current={props.isSelected ? 'page' : undefined}
-        style={pressScale(linkRef)}
-        className={style({
-          ...focusRing(),
-          minHeight: 32,
-          boxSizing: 'border-box',
-          paddingX: 4,
-          // paddingY: centerPadding(),
-          display: 'flex',
-          alignItems: 'center',
-          gap: size(6),
-          font: 'ui',
-          fontWeight: {
-            default: 'normal',
-            isCurrent: 'bold'
-          },
-          textDecoration: 'none',
-          borderRadius: 'default',
-          transition: 'default'
-        })}>
-        {({isHovered}) => (<>
-          <span className={style({
-            width: 2,
-            height: '[1lh]',
-            borderRadius: 'full',
-            transition: 'default',
-            backgroundColor: {
-              default: 'transparent',
-              isHovered: 'gray-400',
-              isSelected: 'gray-800'
-            }
-          })({isHovered, isSelected: props.isSelected})} />
-          {props.children}
-        </>)}
-      </Link>
+      {props.children}
     </li>
   );
+}
+
+export function SideNavLink(props) {
+  let linkRef = useRef(null);
+  let selected = useContext(SideNavContext);
+  return (
+    <Link
+      {...props}
+      ref={linkRef}
+      aria-current={props.isSelected || selected === props.href ? 'page' : undefined}
+      style={pressScale(linkRef)}
+      className={style({
+        ...focusRing(),
+        minHeight: 32,
+        boxSizing: 'border-box',
+        paddingX: 4,
+        // paddingY: centerPadding(),
+        display: 'flex',
+        alignItems: 'center',
+        gap: size(6),
+        font: 'ui',
+        fontWeight: {
+          default: 'normal',
+          isCurrent: 'bold'
+        },
+        textDecoration: 'none',
+        borderRadius: 'default',
+        transition: 'default'
+      })}>
+      {(renderProps) => (<>
+        <span className={style({
+          width: 2,
+          height: '[1lh]',
+          borderRadius: 'full',
+          transition: 'default',
+          backgroundColor: {
+            default: 'transparent',
+            isHovered: 'gray-400',
+            isCurrent: 'gray-800'
+          }
+        })(renderProps)} />
+        {props.children}
+      </>)}
+    </Link>
+  );
+}
+
+export function OnPageNav({children}) {
+  let [selected, setSelected] = useState('');
+
+  useEffect(() => {
+    let elements = Array.from(document.querySelectorAll('article > :is(h2,h3,h4,h5)'));
+    let visible = new Set();
+    let observer = new IntersectionObserver(entries => {
+      for (let entry of entries) {
+        if (entry.isIntersecting) {
+          visible.add(entry.target);
+        } else {
+          visible.delete(entry.target);
+        }
+
+        let firstVisible = elements.find(e => visible.has(e));
+        if (firstVisible) {
+          setSelected('#' + firstVisible.id);
+        }
+      }
+    }, {rootMargin: '0px 0px -50% 0px'});
+
+    for (let element of elements) {
+      observer.observe(element);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <SideNavContext.Provider value={selected}>
+      {children}
+    </SideNavContext.Provider>
+  )
 }

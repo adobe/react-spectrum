@@ -4,23 +4,29 @@ import {ExampleCode} from './ExampleCode';
 import {style} from '@react-spectrum/s2/style' with {type: 'macro'};
 import fs from 'fs';
 import path from 'path';
+import { VisualExample } from './VisualExample';
 
 const example = style({
   backgroundColor: 'layer-1',
   borderRadius: 'xl',
-  marginY: 32
+  marginY: 32,
+  padding: 24
 });
 
 const output = style({
-  padding: 32,
-  borderWidth: 0,
-  borderBottomWidth: 2,
-  borderColor: 'gray-25',
-  borderStyle: 'solid',
+  // padding: 32,
+  marginBottom: 32,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  // borderWidth: 0,
+  // borderBottomWidth: 2,
+  // borderColor: 'gray-25',
+  // borderStyle: 'solid',
   font: 'ui'
 });
 
-export function Example({render, children, files, ...props}) {
+export function Example({render, children, files, expanded, ...props}) {
   if (!render) {
     return (
       <pre className={style({padding: 32, marginY: 32, backgroundColor: 'layer-1', borderRadius: 'xl', font: 'code-sm', whiteSpace: 'pre-wrap'})}>
@@ -29,32 +35,38 @@ export function Example({render, children, files, ...props}) {
     );
   }
 
-  let content = <ExpandableCode {...props}>{children}</ExpandableCode>;
+  if (props.docs) {
+    return <VisualExample component={render} files={files} code={<Code {...props} hideImports>{children}</Code>} {...props} />;
+  }
+
+  let content = <ExpandableCode expanded={expanded} {...props}>{children}</ExpandableCode>;
 
   return (
     <div className={example}>
       <div className={output}>
-        {render}
+        <div>{render}</div>
       </div>
-      <div className={style({marginX: 32})}>
+      <div>
         <Files files={files}>{content}</Files>
       </div>
     </div>
   );
 }
 
-function ExpandableCode({children, ...props}) {
+function ExpandableCode({children, expanded, ...props}) {
   let lines = children.split('\n').length;
-  return lines > 5 
+  //   backgroundColor: 'layer-2', borderRadius: 'lg', padding: 16, marginTop: 20
+
+  return !expanded && lines > 6
   ? (
     <ExampleCode>
-      <pre className={style({padding: 32, paddingBottom: 0, margin: 0, backgroundColor: 'layer-1', borderRadius: 'xl', font: 'code-sm', whiteSpace: 'pre-wrap'})}>
+      <pre className={style({padding: 16, margin: 0, backgroundColor: 'layer-2', borderRadius: 'lg', font: 'code-sm', whiteSpace: 'pre-wrap'})}>
         <Code {...props}>{children}</Code>
       </pre>
     </ExampleCode>
   )
   : (
-    <pre className={style({padding: 32, margin: 0, backgroundColor: 'layer-1', borderRadius: 'xl', font: 'code-sm', whiteSpace: 'pre-wrap'})}>
+    <pre className={style({padding: 16, margin: 0, backgroundColor: 'layer-2', borderRadius: 'lg', font: 'code-sm', whiteSpace: 'pre-wrap'})}>
       <Code {...props}>{children}</Code>
     </pre>
   );
@@ -67,7 +79,7 @@ export function Files({children, files}) {
 
   return (
     <Tabs aria-label="Files" defaultSelectedKey="example" density="compact">
-      <TabList>
+      <TabList styles={style({marginBottom: 20})}>
         <Tab id="example">Example</Tab>
         {files.map(file => <Tab key={file} id={file}>{path.basename(file)}</Tab>)}
       </TabList>
