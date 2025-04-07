@@ -16,12 +16,13 @@ import React, {ReactNode, useContext, useMemo, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {useIsSSR} from '@react-aria/ssr';
 import {useLayoutEffect} from '@react-aria/utils';
-import {useUNSTABLE_PortalContext} from './PortalProvider';
+import {useUNSAFE_PortalContext} from './PortalProvider';
 
 export interface OverlayProps {
   /**
    * The container element in which the overlay portal will be placed.
    * @default document.body
+   * @deprecated - Use a parent UNSAFE_PortalProvider to set your portal container instead.
    */
   portalContainer?: Element,
   /** The overlay to render in the portal. */
@@ -55,8 +56,8 @@ export function Overlay(props: OverlayProps): ReactNode | null {
   let [contain, setContain] = useState(false);
   let contextValue = useMemo(() => ({contain, setContain}), [contain, setContain]);
 
-  let {getContainer} = useUNSTABLE_PortalContext();
-  if  (!props.portalContainer && getContainer) {
+  let {getContainer} = useUNSAFE_PortalContext();
+  if (!props.portalContainer && getContainer) {
     portalContainer = getContainer();
   }
 
