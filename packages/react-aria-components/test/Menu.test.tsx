@@ -386,6 +386,19 @@ describe('Menu', () => {
     }
   });
 
+  it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
+    let {getAllByRole} = renderMenu({selectionMode: 'multiple', escapeKeyBehavior: 'none'});
+    let menuitem = getAllByRole('menuitemcheckbox')[0];
+
+    expect(menuitem).not.toHaveAttribute('aria-checked', 'true');
+
+    await user.click(menuitem);
+    expect(menuitem).toHaveAttribute('aria-checked', 'true');
+
+    await user.keyboard('{Escape}');
+    expect(menuitem).toHaveAttribute('aria-checked', 'true');
+  });
+
   it('should support disabled state', () => {
     let {getAllByRole} = renderMenu({disabledKeys: ['cat']}, {className: ({isDisabled}) => isDisabled ? 'disabled' : ''});
     let menuitem = getAllByRole('menuitem')[0];
