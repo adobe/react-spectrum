@@ -439,9 +439,9 @@ describe('GridList', () => {
         <GridListItem data-test-id="grid-list" id="tags" textValue="tags">
           <TagGroup aria-label="Tag group">
             <TagList>
-              <Tag key="1">Tag 1</Tag>
-              <Tag key="2">Tag 2</Tag>
-              <Tag key="3">Tag 3</Tag>
+              <Tag id="1">Tag 1</Tag>
+              <Tag id="2">Tag 2</Tag>
+              <Tag id="3">Tag 3</Tag>
             </TagList>
           </TagGroup>
         </GridListItem>
@@ -470,6 +470,55 @@ describe('GridList', () => {
 
     await user.tab();
     expect(document.activeElement).toBe(document.body);
+  });
+
+  it('should support rendering a TagGroup with tabbing navigation inside a GridListItem', async () => {
+    let buttonRef = React.createRef();
+    let onRemove = jest.fn();
+    let {getAllByRole} = render(
+      <GridList aria-label="Test" keyboardNavigationBehavior="tab">
+        <GridListItem data-test-id="grid-list" id="tags" textValue="tags">
+          <TagGroup aria-label="Tag group" onRemove={onRemove}>
+            <TagList>
+              <Tag id="1" textValue="Tag 1">Tag 1<Button slot="remove">X</Button></Tag>
+              <Tag id="2" textValue="Tag 2">Tag 2<Button slot="remove">X</Button></Tag>
+              <Tag id="3" textValue="Tag 3">Tag 3<Button slot="remove">X</Button></Tag>
+            </TagList>
+          </TagGroup>
+        </GridListItem>
+        <GridListItem id="dog" textValue="Dog">Dog <Button aria-label="Info" ref={buttonRef}>ⓘ</Button></GridListItem>
+        <GridListItem id="kangaroo">Kangaroo</GridListItem>
+      </GridList>
+    );
+
+    let items = getAllByRole('grid')[0].children;
+    let tags = within(items[0]).getAllByRole('row');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(items[0]);
+
+    await user.tab();
+    expect(document.activeElement).toBe(tags[0]);
+
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(tags[1]);
+
+    await user.tab();
+    expect(document.activeElement).toBe(within(tags[1]).getByRole('button'));
+
+    await user.keyboard(' ');
+    expect(onRemove).toHaveBeenCalledTimes(1);
+    expect(onRemove).toHaveBeenLastCalledWith(new Set(['2']));
+
+    await user.tab({shift: true});
+    expect(document.activeElement).toBe(tags[1]);
+
+    // TODO: Fix, this is going to the previous tag's remove button instead of to the gridlist item
+    // await user.tab({shift: true});
+    // expect(document.activeElement).toBe(items[0]);
   });
 
   it('should not propagate the checkbox context from selection into other cells', async () => {
