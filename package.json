@@ -192,9 +192,9 @@
     "postcss-import": "^15.1.0",
     "prop-types": "^15.6.0",
     "raf": "^3.4.0",
-    "react": "19.1.0-canary-db7dfe05-20250319",
+    "react": "^19.1.0",
     "react-axe": "^3.0.2",
-    "react-dom": "19.1.0-canary-db7dfe05-20250319",
+    "react-dom": "^19.1.0",
     "react-frame-component": "^5.0.0",
     "react-test-renderer": "^18.3.1",
     "recast": "^0.23",
@@ -238,9 +238,7 @@
     "recast": "0.23.6",
     "ast-types": "0.16.1",
     "svgo": "^3",
-    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch",
-    "react": "19.1.0-canary-db7dfe05-20250319",
-    "react-dom": "19.1.0-canary-db7dfe05-20250319"
+    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch"
   },
   "@parcel/transformer-css": {
     "cssModules": {

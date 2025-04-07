@@ -7468,8 +7468,8 @@ __metadata:
     highlight.js: "npm:9.18.1"
     markdown-to-jsx: "npm:^6.11.0"
     quicklink: "npm:^2.3.0"
-    react: "npm:19.1.0-canary-db7dfe05-20250319"
-    react-dom: "npm:19.1.0-canary-db7dfe05-20250319"
+    react: "npm:^19.1.0"
+    react-dom: "npm:^19.1.0"
     react-lowlight: "npm:^2.0.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
@@ -11647,13 +11647,6 @@ __metadata:
   version: 4.0.0
   resolution: "@types/parse-json@npm:4.0.0"
   checksum: 10c0/1d3012ab2fcdad1ba313e1d065b737578f6506c8958e2a7a5bdbdef517c7e930796cb1599ee067d5dee942fb3a764df64b5eef7e9ae98548d776e86dcffba985
-  languageName: node
-  linkType: hard
-
-"@types/path-browserify@npm:^1":
-  version: 1.0.3
-  resolution: "@types/path-browserify@npm:1.0.3"
-  checksum: 10c0/6ed6de375c210dbc20d171ab547be6065ce9904463ca8ca63443a3b23efc7234ff5400d62be05b9be36fc2e863b77592c2e607896988ad39a45276b8a7e42d70
   languageName: node
   linkType: hard
 
@@ -28226,13 +28219,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-browserify@npm:^1.0.0":
-  version: 1.0.1
-  resolution: "path-browserify@npm:1.0.1"
-  checksum: 10c0/8b8c3fd5c66bd340272180590ae4ff139769e9ab79522e2eb82e3d571a89b8117c04147f65ad066dccfb42fcad902e5b7d794b3d35e0fd840491a8ddbedf8c66
-  languageName: node
-  linkType: hard
-
 "path-case@npm:^2.1.0":
   version: 2.1.1
   resolution: "path-case@npm:2.1.1"
@@ -29691,14 +29677,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:19.1.0-canary-db7dfe05-20250319":
-  version: 19.1.0-canary-db7dfe05-20250319
-  resolution: "react-dom@npm:19.1.0-canary-db7dfe05-20250319"
+"react-dom@npm:^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0, react-dom@npm:^19, react-dom@npm:^19.1.0":
+  version: 19.1.0
+  resolution: "react-dom@npm:19.1.0"
   dependencies:
-    scheduler: "npm:0.26.0-canary-db7dfe05-20250319"
+    scheduler: "npm:^0.26.0"
   peerDependencies:
-    react: 19.1.0-canary-db7dfe05-20250319
-  checksum: 10c0/ff33b84962226e0d86b58d431fb8b5845938b2a97f3a097f38562c46a2f9107ba03593e733541cc1e39f43c201165a2c769bac8f4564030cc8aebff721229fc1
+    react: ^19.1.0
+  checksum: 10c0/3e26e89bb6c67c9a6aa86cb888c7a7f8258f2e347a6d2a15299c17eb16e04c19194e3452bc3255bd34000a61e45e2cb51e46292392340432f133e5a5d2dfb5fc
   languageName: node
   linkType: hard
 
@@ -29898,7 +29884,6 @@ __metadata:
     "@testing-library/jest-dom": "npm:^5.16.5"
     "@testing-library/react": "npm:^15.0.7"
     "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch"
-    "@types/path-browserify": "npm:^1"
     "@types/react": "npm:types-react@19.0.0-rc.0"
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.0"
     "@types/storybook__react": "npm:^4.0.2"
@@ -29953,7 +29938,6 @@ __metadata:
     parcel: "npm:^2.14.4"
     parcel-optimizer-strict-mode: "workspace:^"
     patch-package: "npm:^6.2.0"
-    path-browserify: "npm:^1.0.0"
     playwright: "npm:^1.45.3"
     plop: "npm:^2.4.0"
     postcss: "npm:^8.4.24"
@@ -29961,9 +29945,9 @@ __metadata:
     postcss-import: "npm:^15.1.0"
     prop-types: "npm:^15.6.0"
     raf: "npm:^3.4.0"
-    react: "npm:19.1.0-canary-db7dfe05-20250319"
+    react: "npm:^19.1.0"
     react-axe: "npm:^3.0.2"
-    react-dom: "npm:19.1.0-canary-db7dfe05-20250319"
+    react-dom: "npm:^19.1.0"
     react-frame-component: "npm:^5.0.0"
     react-test-renderer: "npm:^18.3.1"
     recast: "npm:^0.23"
@@ -30071,10 +30055,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:19.1.0-canary-db7dfe05-20250319":
-  version: 19.1.0-canary-db7dfe05-20250319
-  resolution: "react@npm:19.1.0-canary-db7dfe05-20250319"
-  checksum: 10c0/5c1849ce16a558283893c310adab75227732aa662a7807931cd8863fa940c23e2b352336cc15d01d2de4167942f917fdae5be9ec5c7d66f5feb7733f16aba2e6
+"react@npm:^19, react@npm:^19.1.0":
+  version: 19.1.0
+  resolution: "react@npm:19.1.0"
+  checksum: 10c0/530fb9a62237d54137a13d2cfb67a7db6a2156faed43eecc423f4713d9b20c6f2728b026b45e28fcd72e8eadb9e9ed4b089e99f5e295d2f0ad3134251bdd3698
   languageName: node
   linkType: hard
 
@@ -31091,7 +31075,6 @@ __metadata:
   dependencies:
     "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@parcel/rsc": "npm:^2.14.1"
-    "@react-spectrum/color": "npm:^3.0.5"
     "@react-spectrum/s2": "npm:^0.7.1"
     "@spectrum-icons/workflow": "npm:^4.2.16"
     react: "npm:^19"
@@ -31207,19 +31190,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"scheduler@npm:0.26.0-canary-db7dfe05-20250319":
-  version: 0.26.0-canary-db7dfe05-20250319
-  resolution: "scheduler@npm:0.26.0-canary-db7dfe05-20250319"
-  checksum: 10c0/1e5d7361f17e21d151a46e272fd19e2596681918d94e3d012b37de653f8857db188017d36b7735f8c4510367700335d250bca2da0e3afd0ed77a138dd4af8b25
-  languageName: node
-  linkType: hard
-
 "scheduler@npm:^0.23.2":
   version: 0.23.2
   resolution: "scheduler@npm:0.23.2"
   dependencies:
     loose-envify: "npm:^1.1.0"
   checksum: 10c0/26383305e249651d4c58e6705d5f8425f153211aef95f15161c151f7b8de885f24751b377e4a0b3dd42cce09aad3f87a61dab7636859c0d89b7daf1a1e2a5c78
+  languageName: node
+  linkType: hard
+
+"scheduler@npm:^0.26.0":
+  version: 0.26.0
+  resolution: "scheduler@npm:0.26.0"
+  checksum: 10c0/5b8d5bfddaae3513410eda54f2268e98a376a429931921a81b5c3a2873aab7ca4d775a8caac5498f8cbc7d0daeab947cf923dbd8e215d61671f9f4e392d34356
   languageName: node
   linkType: hard
 
