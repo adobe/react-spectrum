@@ -30,7 +30,7 @@ export const Well = forwardRef(function Well(props: SpectrumWellProps, ref: DOMR
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
 
-  if (!role && (props['aria-label'] || props['aria-labelledby'])) {
+  if (!role && (props['aria-label'] || props['aria-labelledby']) && process.env.NODE_ENV !== 'production') {
     console.warn('A labelled Well must have a role.');
   }
 
