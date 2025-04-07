@@ -816,7 +816,7 @@ export function usePress(props: PressHookProps): PressResult {
   // Avoid onClick delay for double tap to zoom by default.
   useEffect(() => {
     let element = domRef?.current;
-    if (element) {
+    if (element && (element instanceof getOwnerWindow(element).Element)) {
       // Only apply touch-action if not already set by another CSS rule.
       let style = getOwnerWindow(element).getComputedStyle(element);
       if (style.touchAction === 'auto') {
