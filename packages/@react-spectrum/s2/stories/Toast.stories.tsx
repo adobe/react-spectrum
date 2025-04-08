@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, ButtonGroup, ToastContainer, ToastQueue} from '../src';
+import {Button, ButtonGroup, UNSTABLE_ToastContainer as ToastContainer, UNSTABLE_ToastQueue as ToastQueue} from '../src';
 import type {Meta} from '@storybook/react';
 import {SpectrumToast} from '../src/Toast';
 import {UNSTABLE_ToastStateContext} from 'react-aria-components';

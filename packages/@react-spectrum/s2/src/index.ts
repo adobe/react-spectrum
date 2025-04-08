@@ -74,7 +74,7 @@ export {TableView, TableHeader, TableBody, Row, Cell, Column, TableContext} from
 export {Tabs, TabList, Tab, TabPanel, TabsContext} from './Tabs';
 export {TagGroup, Tag, TagGroupContext} from './TagGroup';
 export {TextArea, TextField, TextAreaContext, TextFieldContext} from './TextField';
-export {ToastContainer, ToastQueue} from './Toast';
+export {ToastContainer as UNSTABLE_ToastContainer, ToastQueue as UNSTABLE_ToastQueue} from './Toast';
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {ToggleButtonGroup, ToggleButtonGroupContext} from './ToggleButtonGroup';
 export {Tooltip, TooltipTrigger} from './Tooltip';
