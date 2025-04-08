@@ -78,7 +78,7 @@ const badge = style({
   alignItems: 'center',
   backgroundColor: {
     default: 'accent',
-    isStaticColor: baseColor('transparent-overlay-800'),
+    isStaticColor: baseColor('transparent-overlay-1000'),
     forcedColors: 'ButtonFace'
   },
   height: {
