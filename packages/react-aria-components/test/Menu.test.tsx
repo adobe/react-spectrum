@@ -15,7 +15,7 @@ import {AriaMenuTests} from './AriaMenu.test-util';
 import {Button, Collection, Header, Heading, Input, Keyboard, Label, Menu, MenuContext, MenuItem, MenuSection, MenuTrigger, Popover, Pressable, Separator, SubmenuTrigger, Text, TextField} from '..';
 import React, {useState} from 'react';
 import {Selection, SelectionMode} from '@react-types/shared';
-import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
@@ -384,6 +384,19 @@ describe('Menu', () => {
       await user.keyboard('{ArrowDown}');
       expect(document.activeElement).toBe(item);
     }
+  });
+
+  it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
+    let {getAllByRole} = renderMenu({selectionMode: 'multiple', escapeKeyBehavior: 'none'});
+    let menuitem = getAllByRole('menuitemcheckbox')[0];
+
+    expect(menuitem).not.toHaveAttribute('aria-checked', 'true');
+
+    await user.click(menuitem);
+    expect(menuitem).toHaveAttribute('aria-checked', 'true');
+
+    await user.keyboard('{Escape}');
+    expect(menuitem).toHaveAttribute('aria-checked', 'true');
   });
 
   it('should support disabled state', () => {
@@ -1336,7 +1349,7 @@ describe('Menu', () => {
   describe('portalContainer', () => {
     function InfoMenu(props) {
       return (
-        <UNSTABLE_PortalProvider getContainer={() => props.container.current}>
+        <UNSAFE_PortalProvider getContainer={() => props.container.current}>
           <MenuTrigger>
             <Button aria-label="trigger" />
             <Popover>
@@ -1347,7 +1360,7 @@ describe('Menu', () => {
               </Menu>
             </Popover>
           </MenuTrigger>
-        </UNSTABLE_PortalProvider>
+        </UNSAFE_PortalProvider>
       );
     }
 
