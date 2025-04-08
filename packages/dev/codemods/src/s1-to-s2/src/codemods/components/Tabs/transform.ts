@@ -92,10 +92,8 @@ export default function transformTabs(path: NodePath<t.JSXElement>) {
   }
   
   // Remove isEmphasized
-  // Reason: It is no longer supported in Spectrum 2
   removeProp(path, {propToRemove: 'isEmphasized'});
 
   // Remove isQuiet
-  // Reason: It is no longer supported in Spectrum 2
   removeProp(path, {propToRemove: 'isQuiet'});
 } 

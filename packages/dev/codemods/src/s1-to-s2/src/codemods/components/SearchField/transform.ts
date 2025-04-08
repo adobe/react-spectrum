@@ -3,7 +3,7 @@ import {NodePath} from '@babel/traverse';
 import * as t from '@babel/types';
 
 /**
- * Transforms SearchField props:
+ * Transforms SearchField:
  * - Remove placeholder (it has been removed due to accessibility issues).
  * - Comment out icon (it has not been implemented yet).
  * - Remove isQuiet (it is no longer supported in Spectrum 2).
@@ -12,15 +12,12 @@ import * as t from '@babel/types';
  */
 export default function transformSearchField(path: NodePath<t.JSXElement>) {
   // Remove placeholder
-  // Reason: It has been removed due to accessibility issues
   removeProp(path, {propToRemove: 'placeholder'});
 
   // Comment out icon
-  // Reason: It has not been implemented yet
   commentOutProp(path, {propToComment: 'icon'});
 
   // Remove isQuiet
-  // Reason: It is no longer supported in Spectrum 2
   removeProp(path, {propToRemove: 'isQuiet'});
 
   // Change validationState="invalid" to isInvalid
@@ -32,6 +29,5 @@ export default function transformSearchField(path: NodePath<t.JSXElement>) {
   });
 
   // Remove validationState="valid"
-  // Reason: It is no longer supported in Spectrum 2
   removeProp(path, {propToRemove: 'validationState', propValue: 'valid'});
 } 

@@ -7,12 +7,12 @@ import * as t from '@babel/types';
 let availableComponents = getComponents();
 
 /**
- * Transforms ActionGroup props and structure:
- * - Use ActionButtonGroup if no selection.
- * - Use ToggleButtonGroup if selection is used.
+ * Transforms ActionGroup:
  * - Comment out overflowMode (it has not been implemented yet).
  * - Comment out buttonLabelBehavior (it has not been implemented yet).
  * - Comment out summaryIcon (it has not been implemented yet).
+ * - Use ActionButtonGroup if no selection.
+ * - Use ToggleButtonGroup if selection is used.
  * - Update root level onAction to onPress on each ActionButton.
  * - Apply isDisabled directly on each ActionButton/ToggleButton instead of disabledKeys.
  * - Update key to id (keep key for map).
@@ -20,15 +20,12 @@ let availableComponents = getComponents();
  */
 export default function transformActionGroup(path: NodePath<t.JSXElement>) {
   // Comment out overflowMode
-  // Reason: It has not been implemented yet
   commentOutProp(path, {propToComment: 'overflowMode'});
 
   // Comment out buttonLabelBehavior
-  // Reason: It has not been implemented yet
   commentOutProp(path, {propToComment: 'buttonLabelBehavior'});
 
   // Comment out summaryIcon
-  // Reason: It has not been implemented yet
   commentOutProp(path, {propToComment: 'summaryIcon'});
 
   let selectionModePath = path.get('openingElement').get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === 'selectionMode') as NodePath<t.JSXAttribute> | undefined;

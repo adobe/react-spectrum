@@ -4,14 +4,13 @@ import {updateDialogChild} from '../DialogTrigger/transform';
 import {updatePropName} from '../../shared/transforms';
 
 /**
- * Transforms DialogContainer props:
+ * Transforms DialogContainer:
  * - Remove type (dependent on the dialog level child used, e.g., Dialog, FullscreenDialog, Popover).
  * - Move isDismissable (as isDismissible) to the dialog level component.
  * - Move isKeyboardDismissDisabled to the dialog level component.
  */
 export default function transformDialogContainer(path: NodePath<t.JSXElement>) {
   // Move isDismissable (as isDismissible) to the dialog level component
-  // Reason: Prop now exists on the dialog level component
   updatePropName(path, {oldProp: 'isDismissable', newProp: 'isDismissible'});
 
   updateDialogChild(path);

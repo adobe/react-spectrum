@@ -1,5 +1,5 @@
 import {addComment, getName} from '../../shared/utils';
-import {commentOutProp, updateKeyToId} from '../../shared/transforms';
+import {commentOutProp} from '../../shared/transforms';
 import {NodePath} from '@babel/traverse';
 import * as t from '@babel/types';
 
@@ -143,7 +143,7 @@ function addRowHeader(
 }
 
 /**
- * Transforms TableView props:
+ * Transforms TableView:
  * - For Column and Row: Update key to be id (and keep key if rendered inside array.map).
  * - For dynamic tables, pass a columns prop into Row.
  * - For Row: Update dynamic render function to pass in column instead of columnKey.
@@ -157,7 +157,6 @@ export default function transformTable(path: NodePath<t.JSXElement>) {
   addColumnsPropToRow(path);
 
   // Comment out nested columns
-  // Reason: Nested columns are not supported yet
   commentIfNestedColumns(path);
 
   // Comment out dragAndDropHooks

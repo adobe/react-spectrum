@@ -14,6 +14,7 @@ export default function transformSection(path: NodePath<t.JSXElement>) {
   updateComponentWithinCollection(path, {parentComponent: 'Picker', newComponent: 'PickerSection'});
   updateComponentWithinCollection(path, {parentComponent: 'ComboBox', newComponent: 'ComboBoxSection'});
 
+  // Move title prop to Header component
   movePropToNewChildComponent(path, {
     parentComponent: 'Menu',
     childComponent: 'MenuSection',
@@ -34,6 +35,5 @@ export default function transformSection(path: NodePath<t.JSXElement>) {
   });
 
   // Comment if parent collection not detected
-  // Reason: Section needs to be updated based on its parent collection component.
   commentIfParentCollectionNotDetected(path);
 } 

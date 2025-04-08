@@ -67,11 +67,29 @@ export function updateDialogChild(
   });
 }
 
+/**
+ * Transforms DialogTrigger:
+ * - Comment out type="tray" (it has not been implemented yet).
+ * - Comment out mobileType (it has not been implemented yet).
+ * - Remove targetRef (it is no longer supported).
+ * - Move render props to the child component (updated API).
+ */
 export default function transformDialogTrigger(path: NodePath<t.JSXElement>) {
+  // Comment out type="tray"
   commentOutProp(path, {propToComment: 'type', propValue: 'tray'});
+
+  // Comment out mobileType
   commentOutProp(path, {propToComment: 'mobileType'});
+
+  // Remove targetRef
   removeProp(path, {propToRemove: 'targetRef'});
+
+  // Move render props to the child component
   moveRenderPropsToChild(path, {newChildComponent: 'Dialog'});
+
+  // Update isDismissable to isDismissible
   updatePropName(path, {oldProp: 'isDismissable', newProp: 'isDismissible'});
+
+  // Update DialogTrigger to the new API
   updateDialogChild(path);
 }

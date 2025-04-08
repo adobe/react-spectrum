@@ -3,10 +3,11 @@ import * as t from '@babel/types';
 import {updatePlacementToSingleValue} from '../../shared/transforms';
 
 /**
- * Transforms TooltipTrigger props:
+ * Transforms TooltipTrigger:
  * - Updates placement prop to single value.
  */
 export default function transformTooltipTrigger(path: NodePath<t.JSXElement>) {
+  // Update placement prop to single value
   updatePlacementToSingleValue(path, {
     propToUpdate: 'placement',
     childComponent: 'Tooltip'

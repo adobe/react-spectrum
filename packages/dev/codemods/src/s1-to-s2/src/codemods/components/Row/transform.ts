@@ -4,7 +4,7 @@ import * as t from '@babel/types';
 import {updateKeyToId} from '../../shared/transforms';
 
 /**
- * Updates the export function signature of the Row component.
+ * Updates the function signature of the Row component.
  */
 function updateRowFunctionArg(
   path: NodePath<t.JSXElement>
@@ -97,10 +97,10 @@ function updateRowFunctionArg(
 /**
  * Transforms Row:
  * - Update key to id.
+ * - Update function signature.
  */
 export default function transformRow(path: NodePath<t.JSXElement>) {
   // Update key to id
-  // Reason: Standardizing collection item identifiers.
   updateKeyToId(path);
 
   updateRowFunctionArg(path);

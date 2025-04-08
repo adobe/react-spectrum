@@ -3,12 +3,11 @@ import * as t from '@babel/types';
 import {updatePropNameAndValue} from '../../shared/transforms';
 
 /**
- * Transforms Badge props:
+ * Transforms Badge:
  * - Change variant="info" to variant="informative".
  */
 export default function transformBadge(path: NodePath<t.JSXElement>) {
   // Change variant="info" to variant="informative"
-  // Reason: Updated naming convention
   updatePropNameAndValue(path, {
     oldProp: 'variant',
     oldValue: 'info',

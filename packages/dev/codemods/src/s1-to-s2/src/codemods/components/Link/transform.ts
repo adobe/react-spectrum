@@ -4,20 +4,11 @@ import * as t from '@babel/types';
 import {updatePropNameAndValue} from '../../shared/transforms';
 
 /**
- * Transforms Link props:
- * - Change variant="overBackground" to staticColor="white".
- * - If <a> was used inside Link (legacy API), remove the <a> and apply props directly to Link.
+ * If <a> was used inside Link (legacy API), remove the <a> and apply props directly to Link.
  */
-export default function transformLink(path: NodePath<t.JSXElement>) {
-  // Change variant="overBackground" to staticColor="white"
-  // Reason: Updated naming convention
-  updatePropNameAndValue(path, {
-    oldProp: 'variant',
-    oldValue: 'overBackground',
-    newProp: 'staticColor',
-    newValue: 'white'
-  });
-
+function updateLegacyLink(
+  path: NodePath<t.JSXElement>
+) {
   let missingOuterHref = t.isJSXElement(path.node) && !path.node.openingElement.attributes.some((attr) => t.isJSXAttribute(attr) && attr.name.name === 'href');
   if (missingOuterHref) {
     let innerLink = path.node.children.find((child) => t.isJSXElement(child) && t.isJSXIdentifier(child.openingElement.name));
@@ -37,4 +28,22 @@ export default function transformLink(path: NodePath<t.JSXElement>) {
       path.node.children = innerLink.children;
     }
   }
+}
+
+/**
+ * Transforms Link:
+ * - Change variant="overBackground" to staticColor="white".
+ * - If <a> was used inside Link (legacy API), remove the <a> and apply props directly to Link.
+ */
+export default function transformLink(path: NodePath<t.JSXElement>) {
+  // Change variant="overBackground" to staticColor="white"
+  updatePropNameAndValue(path, {
+    oldProp: 'variant',
+    oldValue: 'overBackground',
+    newProp: 'staticColor',
+    newValue: 'white'
+  });
+
+  // Update legacy Link
+  updateLegacyLink(path);
 } 

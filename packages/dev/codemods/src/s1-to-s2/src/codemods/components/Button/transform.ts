@@ -10,7 +10,7 @@ import {NodePath} from '@babel/traverse';
 import * as t from '@babel/types';
 
 /**
- * Transforms Button props:
+ * Transforms Button:
  * - Change variant="cta" to variant="accent"
  * - Change variant="overBackground" to variant="primary" staticColor="white"
  * - Change style to fillStyle

@@ -10,9 +10,6 @@ import * as t from '@babel/types';
  * - If within Breadcrumbs: Update Item to be a Breadcrumb.
  * - If within Picker: Update Item to be a PickerItem.
  * - If within ComboBox: Update Item to be a ComboBoxItem.
- * - If within ListBox: Update Item to be a ListBoxItem.
- * - If within TabList: Update Item to be a Tab.
- * - If within TabPanels: Update Item to be a TabPanel and remove surrounding TabPanels.
  * - Update key to id (and keep key if rendered inside array.map).
  */
 export default function transformItem(path: NodePath<t.JSXElement>) {
@@ -25,6 +22,5 @@ export default function transformItem(path: NodePath<t.JSXElement>) {
   updateComponentWithinCollection(path, {parentComponent: 'ComboBox', newComponent: 'ComboBoxItem'});
 
   // Comment if parent collection not detected
-  // Reason: Item needs to be updated based on its parent collection component.
   commentIfParentCollectionNotDetected(path);
 } 

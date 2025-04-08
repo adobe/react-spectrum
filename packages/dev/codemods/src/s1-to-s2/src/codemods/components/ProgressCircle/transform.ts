@@ -3,7 +3,7 @@ import * as t from '@babel/types';
 import {updatePropNameAndValue} from '../../shared/transforms';
 
 /**
- * Transforms ProgressCircle props:
+ * Transforms ProgressCircle:
  * - Change variant="overBackground" to staticColor="white".
  */
 export default function transformProgressCircle(path: NodePath<t.JSXElement>) {

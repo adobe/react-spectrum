@@ -3,7 +3,7 @@ import {removeProp, updatePropName, updatePropNameAndValue} from '../../shared/t
 import * as t from '@babel/types';
 
 /**
- * Transforms TagGroup props:
+ * Transforms TagGroup:
  * - Rename actionLabel to groupActionLabel.
  * - Rename onAction to onGroupAction.
  * - Change validationState="invalid" to isInvalid.
@@ -26,6 +26,5 @@ export default function transformTagGroup(path: NodePath<t.JSXElement>) {
   });
 
   // Remove validationState="valid"
-  // Reason: It is no longer supported in Spectrum 2
   removeProp(path, {propToRemove: 'validationState', propValue: 'valid'});
 } 

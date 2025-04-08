@@ -199,15 +199,10 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
       if (componentTransform && typeof componentTransform.default === 'function') {
         componentTransform.default(path);
       } else {
-        // Optional: Add a comment if a transform is expected but not found or not a function
-        // addComment(path.node, ` TODO(S2-upgrade): Transform for ${elementName} not found or invalid.`);
+        // console.error('Error running transform at:', transformPath);
       }
-    } catch (error) {
-      // Handle cases where the transform file might not exist
-      if (error.code !== 'MODULE_NOT_FOUND') {
-        addComment(path.node, ` TODO(S2-upgrade): Error applying transform for ${elementName}: ${error.message}`);
-      }
-      // If MODULE_NOT_FOUND, it means no specific transform exists, which might be okay.
+    } catch (error: any) {
+      // console.error('Error running transform:', error);
     }
   });
 
