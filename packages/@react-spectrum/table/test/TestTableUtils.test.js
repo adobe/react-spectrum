@@ -28,6 +28,10 @@ let columns = [
   {name: 'Baz', key: 'baz'}
 ];
 
+// getComputedStyle is very slow in our version of jsdom.
+// These tests only care about direct inline styles. We can avoid parsing other stylesheets.
+window.getComputedStyle = (el) => el.style;
+
 describe('Table ', function () {
   let onSelectionChange = jest.fn();
   let onSortChange = jest.fn();
