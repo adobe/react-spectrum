@@ -53,6 +53,7 @@ export {InlineAlert, InlineAlertContext} from './InlineAlert';
 export {Link, LinkContext} from './Link';
 export {MenuItem, MenuTrigger, Menu, MenuSection, SubmenuTrigger, MenuContext} from './Menu';
 export {Meter, MeterContext} from './Meter';
+export {NotificationBadge, NotificationBadgeContext} from './NotificationBadge';
 export {NumberField, NumberFieldContext} from './NumberField';
 export {Picker, PickerItem, PickerSection, PickerContext} from './Picker';
 export {Popover} from './Popover';
@@ -81,6 +82,7 @@ export {TreeView, TreeViewItem, TreeViewItemContent} from './TreeView';
 
 export {pressScale} from './pressScale';
 
+export {Autocomplete, AutocompleteContext, AutocompleteStateContext} from 'react-aria-components';
 export {Collection} from 'react-aria-components';
 export {FileTrigger} from 'react-aria-components';
 
@@ -124,6 +126,7 @@ export type {ImageCoordinatorProps} from './ImageCoordinator';
 export type {LinkProps} from './Link';
 export type {MenuTriggerProps, MenuProps, MenuItemProps, MenuSectionProps, SubmenuTriggerProps} from './Menu';
 export type {MeterProps} from './Meter';
+export type {NotificationBadgeProps} from './NotificationBadge';
 export type {PickerProps, PickerItemProps, PickerSectionProps} from './Picker';
 export type {PopoverProps} from './Popover';
 export type {ProgressBarProps} from './ProgressBar';
@@ -148,4 +151,4 @@ export type {ToggleButtonProps} from './ToggleButton';
 export type {ToggleButtonGroupProps} from './ToggleButtonGroup';
 export type {TooltipProps} from './Tooltip';
 export type {TreeViewProps, TreeViewItemProps, TreeViewItemContentProps} from './TreeView';
-export type {FileTriggerProps, TooltipTriggerComponentProps as TooltipTriggerProps} from 'react-aria-components';
+export type {AutocompleteProps, FileTriggerProps, TooltipTriggerComponentProps as TooltipTriggerProps, SortDescriptor} from 'react-aria-components';

@@ -21,8 +21,8 @@ import {Heading} from '@react-spectrum/text';
 import React, {SyntheticEvent, useEffect, useMemo, useRef, useState} from 'react';
 import {SpectrumToastOptions, ToastPlacement} from '../src/ToastContainer';
 import {ToastContainer, ToastQueue} from '../';
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import {UNSTABLE_createLandmarkController, useLandmark} from '@react-aria/landmark';
-import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
 
 export default {
   title: 'Toast',
@@ -384,11 +384,11 @@ function FullscreenApp(props) {
   }, []);
   return (
     <div ref={ref} style={{position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'white'}}>
-      <UNSTABLE_PortalProvider getContainer={() => ref.current}>
+      <UNSAFE_PortalProvider getContainer={() => ref.current}>
         <RenderProvider {...props} />
         <ActionButton onPress={fullscreenPress}>Enter fullscreen</ActionButton>
         {isFullscreen && <ToastContainer key="miniapp" placement={props.placement} />}
-      </UNSTABLE_PortalProvider>
+      </UNSAFE_PortalProvider>
       {!isFullscreen && <ToastContainer key="app" placement={props.placement} />}
     </div>
   );

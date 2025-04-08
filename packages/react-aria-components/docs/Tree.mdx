@@ -350,7 +350,7 @@ If you will use a Tree in multiple places in your app, you can wrap all of the p
 import type {TreeItemContentProps, TreeItemContentRenderProps} from 'react-aria-components';
 import {Button} from 'react-aria-components';
 
-function MyTreeItemContent(props: TreeItemContentProps) {
+function MyTreeItemContent(props: Omit<TreeItemContentProps, 'children'> & {children?: React.ReactNode}) {
   return (
     <TreeItemContent>
       {({hasChildItems, selectionBehavior, selectionMode}: TreeItemContentRenderProps) => (
