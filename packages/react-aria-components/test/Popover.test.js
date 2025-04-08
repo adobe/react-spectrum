@@ -12,7 +12,8 @@
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button, Dialog, DialogTrigger, OverlayArrow, Popover, Pressable} from '../';
-import React from 'react';
+import React, {useRef} from 'react';
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
 
 let TestPopover = (props) => (
@@ -176,6 +177,46 @@ describe('Popover', () => {
     expect(arrow).toHaveAttribute('style', expect.stringContaining('top: 5px'));
   });
 
+  describe('portalProvider', () => {
+    function InfoPopover() {
+      return (
+        <DialogTrigger>
+          <Button />
+          <Popover>
+            <OverlayArrow>
+              <svg width={12} height={12}>
+                <path d="M0 0,L6 6,L12 0" />
+              </svg>
+            </OverlayArrow>
+            <Dialog>Popover</Dialog>
+          </Popover>
+        </DialogTrigger>
+      );
+    }
+    function App() {
+      let container = useRef(null);
+      return (
+        <>
+          <UNSAFE_PortalProvider getContainer={() => container.current}>
+            <InfoPopover container={container} />
+          </UNSAFE_PortalProvider>
+          <div ref={container} data-testid="custom-container" />
+        </>
+      );
+    }
+    it('should render the dialog in the portal container set by the PortalProvider', async () => {
+      let {getByRole, getByTestId} = render(
+        <App />
+      );
+
+      let button = getByRole('button');
+      await user.click(button);
+
+      expect(getByRole('dialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+    });
+  });
+
+  // TODO: delete this test when we get rid of the deprecated prop
   describe('portalContainer', () => {
     function InfoPopover(props) {
       return (
