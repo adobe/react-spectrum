@@ -15,7 +15,7 @@ import {BaseCollection, Collection, CollectionBuilder, createBranchComponent, cr
 import {MenuTriggerProps as BaseMenuTriggerProps, Collection as ICollection, Node, RootMenuTriggerState, TreeState, useMenuTriggerState, useSubmenuTriggerState, useTreeState} from 'react-stately';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps, usePersistedKeys} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
-import {filterDOMProps, mergeRefs, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {FocusStrategy, forwardRefType, HoverEvents, Key, LinkDOMProps, MultipleSelection} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import {KeyboardContext} from './Keyboard';
@@ -38,7 +38,6 @@ import React, {
 } from 'react';
 import {SeparatorContext} from './Separator';
 import {TextContext} from './Text';
-import {UNSTABLE_InternalAutocompleteContext} from './Autocomplete';
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 export const MenuStateContext = createContext<TreeState<any> | null>(null);
@@ -157,7 +156,13 @@ export interface MenuRenderProps {
 
 export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<MenuRenderProps>, SlotProps, ScrollableProps<HTMLDivElement> {
   /** Provides content to display when there are no items in the list. */
-  renderEmptyState?: () => ReactNode
+  renderEmptyState?: () => ReactNode,
+  /** An optional filter function used to determine if a menu item should be included in the menu. */
+  filter?: (nodeTextValue: string) => boolean,
+  /** Whether the collection items should use virtual focus instead of being focused directly. */
+  shouldUseVirtualFocus?: boolean,
+  /** Whether typeahead is disabled. */
+  disallowTypeAhead?: boolean
 }
 
 /**
@@ -181,9 +186,7 @@ interface MenuInnerProps<T> {
 }
 
 function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInnerProps<T>) {
-  let {filter, collectionProps: autocompleteMenuProps, collectionRef} = useContext(UNSTABLE_InternalAutocompleteContext) || {};
-  // Memoed so that useAutocomplete callback ref is properly only called once on mount and not everytime a rerender happens
-  ref = useObjectRef(useMemo(() => mergeRefs(ref, collectionRef !== undefined ? collectionRef as RefObject<HTMLDivElement> : null), [collectionRef, ref]));
+  let {filter} = props;
   let filteredCollection = useMemo(() => filter ? collection.UNSTABLE_filter(filter) : collection, [collection, filter]);
   let state = useTreeState({
     ...props,
@@ -192,7 +195,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   });
   let triggerState = useContext(RootMenuTriggerStateContext);
   let {isVirtualized, CollectionRoot} = useContext(CollectionRendererContext);
-  let {menuProps} = useMenu({...props, ...autocompleteMenuProps, isVirtualized, onClose: props.onClose || triggerState?.close}, state, ref);
+  let {menuProps} = useMenu({...props, isVirtualized, onClose: props.onClose || triggerState?.close}, state, ref);
   let renderProps = useRenderProps({
     defaultClassName: 'react-aria-Menu',
     className: props.className,
@@ -228,9 +231,8 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
             [MenuStateContext, state],
             [SeparatorContext, {elementType: 'div'}],
             [SectionContext, {name: 'MenuSection', render: MenuSectionInner}],
-            [SubmenuTriggerContext, {parentMenuRef: ref, shouldUseVirtualFocus: autocompleteMenuProps?.shouldUseVirtualFocus}],
+            [SubmenuTriggerContext, {parentMenuRef: ref, shouldUseVirtualFocus: props?.shouldUseVirtualFocus}],
             [MenuItemContext, null],
-            [UNSTABLE_InternalAutocompleteContext, null],
             [SelectionManagerContext, state.selectionManager],
             /* Ensure root MenuTriggerState is defined, in case Menu is rendered outside a MenuTrigger. */
             /* We assume the context can never change between defined and undefined. */

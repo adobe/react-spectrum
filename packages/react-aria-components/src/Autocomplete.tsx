@@ -10,28 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaAutocompleteProps, CollectionOptions, useAutocomplete} from '@react-aria/autocomplete';
+import {AriaAutocompleteProps, useAutocomplete} from '@react-aria/autocomplete';
 import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomplete';
-import {InputContext} from './Input';
+import {ListBoxContext} from './ListBox';
+import {MenuContext} from './Menu';
 import {mergeProps} from '@react-aria/utils';
 import {Provider, removeDataAttributes, SlotProps, SlottedContextValue, useSlottedContext} from './utils';
-import React, {createContext, ReactNode, RefObject, useRef} from 'react';
+import React, {createContext, ReactNode, useRef} from 'react';
 import {SearchFieldContext} from './SearchField';
 import {TextFieldContext} from './TextField';
 
 export interface AutocompleteProps extends AriaAutocompleteProps, SlotProps {}
 
-interface InternalAutocompleteContextValue {
-  filter?: (nodeTextValue: string) => boolean,
-  collectionProps: CollectionOptions,
-  collectionRef: RefObject<HTMLElement | null>
-}
-
 export const AutocompleteContext = createContext<SlottedContextValue<Partial<AutocompleteProps>>>(null);
 export const AutocompleteStateContext = createContext<AutocompleteState | null>(null);
-// This context is to pass the register and filter down to whatever collection component is wrapped by the Autocomplete
-// TODO: export from RAC, but rename to something more appropriate
-export const UNSTABLE_InternalAutocompleteContext = createContext<InternalAutocompleteContextValue | null>(null);
 
 /**
  * An autocomplete combines a TextField or SearchField with a Menu or ListBox, allowing users to search or filter a list of suggestions.
@@ -42,12 +34,10 @@ export function Autocomplete(props: AutocompleteProps): ReactNode {
   let {filter, disableAutoFocusFirst} = props;
   let state = useAutocompleteState(props);
   let inputRef = useRef<HTMLInputElement | null>(null);
-  let collectionRef = useRef<HTMLElement>(null);
+  let collectionRef = useRef<HTMLDivElement | null>(null);
   let {
     textFieldProps,
-    collectionProps,
-    collectionRef: mergedCollectionRef,
-    filter: filterFn
+    collectionProps
   } = useAutocomplete({
     ...removeDataAttributes(props),
     filter,
@@ -62,12 +52,8 @@ export function Autocomplete(props: AutocompleteProps): ReactNode {
         [AutocompleteStateContext, state],
         [SearchFieldContext, textFieldProps],
         [TextFieldContext, textFieldProps],
-        [InputContext, {ref: inputRef}],
-        [UNSTABLE_InternalAutocompleteContext, {
-          filter: filterFn,
-          collectionProps,
-          collectionRef: mergedCollectionRef
-        }]
+        [MenuContext, collectionProps],
+        [ListBoxContext, collectionProps]
       ]}>
       {props.children}
     </Provider>

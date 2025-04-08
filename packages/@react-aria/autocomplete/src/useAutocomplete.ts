@@ -25,7 +25,11 @@ export interface CollectionOptions extends DOMProps, AriaLabelingProps {
   /** Whether the collection items should use virtual focus instead of being focused directly. */
   shouldUseVirtualFocus: boolean,
   /** Whether typeahead is disabled. */
-  disallowTypeAhead: boolean
+  disallowTypeAhead: boolean,
+  /** Ref to attach to the wrapped collection. */
+  ref: RefObject<HTMLDivElement | null>,
+  /** A filter function that returns if the provided collection node should be filtered out of the collection. */
+  filter?: (nodeTextValue: string) => boolean
 }
 export interface AriaAutocompleteProps extends AutocompleteProps {
   /**
@@ -45,18 +49,14 @@ export interface AriaAutocompleteOptions extends Omit<AriaAutocompleteProps, 'ch
   /** The ref for the wrapped collection element. */
   inputRef: RefObject<HTMLInputElement | null>,
   /** The ref for the wrapped collection element. */
-  collectionRef: RefObject<HTMLElement | null>
+  collectionRef: RefObject<HTMLDivElement | null>
 }
 
 export interface AutocompleteAria {
   /** Props for the autocomplete textfield/searchfield element. These should be passed to the textfield/searchfield aria hooks respectively. */
   textFieldProps: AriaTextFieldProps,
   /** Props for the collection, to be passed to collection's respective aria hook (e.g. useMenu). */
-  collectionProps: CollectionOptions,
-  /** Ref to attach to the wrapped collection. */
-  collectionRef: RefObject<HTMLElement | null>,
-  /** A filter function that returns if the provided collection node should be filtered out of the collection. */
-  filter?: (nodeTextValue: string) => boolean
+  collectionProps: CollectionOptions
 }
 
 /**
@@ -356,9 +356,9 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
     },
     collectionProps: mergeProps(collectionProps, {
       shouldUseVirtualFocus,
-      disallowTypeAhead: true
-    }),
-    collectionRef: mergedCollectionRef,
-    filter: filter != null ? filterFn : undefined
+      disallowTypeAhead: true,
+      filter: filter != null ? filterFn : undefined,
+      ref: mergedCollectionRef
+    })
   };
 }

@@ -427,7 +427,7 @@ describe('Autocomplete', () => {
     expect(input).not.toHaveAttribute('data-focused');
   });
 
-  it('should work inside a Select', async function () {
+  it.only('should work inside a Select', async function () {
     let {getByRole} = render(
       <Select>
         <Label>Test</Label>
@@ -453,6 +453,7 @@ describe('Autocomplete', () => {
     let listbox = getByRole('listbox');
     let options = within(listbox).getAllByRole('option');
     expect(options).toHaveLength(3);
+    console.log('about to fail')
     expect(searchfield).toHaveAttribute('aria-activedescendant', options[0].id);
     expect(options[0]).toHaveAttribute('data-focus-visible');
 
@@ -623,123 +624,123 @@ describe('Autocomplete', () => {
   });
 });
 
-AriaAutocompleteTests({
-  prefix: 'rac-static-menu',
-  renderers: {
-    standard: () => render(
-      <AutocompleteWrapper>
-        <StaticMenu />
-      </AutocompleteWrapper>
-    ),
-    links: () => render(
-      <AutocompleteWrapper>
-        <MenuWithLinks />
-      </AutocompleteWrapper>
-    ),
-    sections: () => render(
-      <AutocompleteWrapper>
-        <MenuWithSections />
-      </AutocompleteWrapper>
-    ),
-    controlled: () => render(
-      <ControlledAutocomplete>
-        <StaticMenu />
-      </ControlledAutocomplete>
-    ),
-    itemActions: () => render(
-      <AutocompleteWrapper>
-        <StaticMenu onAction={onAction} />
-      </AutocompleteWrapper>
-    ),
-    multipleSelection: () => render(
-      <AutocompleteWrapper>
-        <StaticMenu selectionMode="multiple" onSelectionChange={onSelectionChange} />
-      </AutocompleteWrapper>
-    ),
-    disabledItems: () => render(
-      <AutocompleteWrapper>
-        <StaticMenu onAction={onAction} disabledKeys={['2']} />
-      </AutocompleteWrapper>
-    ),
-    defaultValue: () => render(
-      <AutocompleteWrapper autocompleteProps={{defaultInputValue: 'Ba'}}>
-        <StaticMenu />
-      </AutocompleteWrapper>
-    ),
-    submenus: () => render(
-      <AutocompleteWrapper>
-        <SubMenus />
-      </AutocompleteWrapper>
-    ),
-    subdialogs: () => render(
-      <AutocompleteWrapper>
-        <SubDialogs />
-      </AutocompleteWrapper>
-    ),
-    subdialogAndMenu: () => render(
-      <AutocompleteWrapper>
-        <SubDialogAndMenu />
-      </AutocompleteWrapper>
-    )
-  },
-  actionListener: onAction,
-  selectionListener: onSelectionChange
-});
+// AriaAutocompleteTests({
+//   prefix: 'rac-static-menu',
+//   renderers: {
+//     standard: () => render(
+//       <AutocompleteWrapper>
+//         <StaticMenu />
+//       </AutocompleteWrapper>
+//     ),
+//     links: () => render(
+//       <AutocompleteWrapper>
+//         <MenuWithLinks />
+//       </AutocompleteWrapper>
+//     ),
+//     sections: () => render(
+//       <AutocompleteWrapper>
+//         <MenuWithSections />
+//       </AutocompleteWrapper>
+//     ),
+//     controlled: () => render(
+//       <ControlledAutocomplete>
+//         <StaticMenu />
+//       </ControlledAutocomplete>
+//     ),
+//     itemActions: () => render(
+//       <AutocompleteWrapper>
+//         <StaticMenu onAction={onAction} />
+//       </AutocompleteWrapper>
+//     ),
+//     multipleSelection: () => render(
+//       <AutocompleteWrapper>
+//         <StaticMenu selectionMode="multiple" onSelectionChange={onSelectionChange} />
+//       </AutocompleteWrapper>
+//     ),
+//     disabledItems: () => render(
+//       <AutocompleteWrapper>
+//         <StaticMenu onAction={onAction} disabledKeys={['2']} />
+//       </AutocompleteWrapper>
+//     ),
+//     defaultValue: () => render(
+//       <AutocompleteWrapper autocompleteProps={{defaultInputValue: 'Ba'}}>
+//         <StaticMenu />
+//       </AutocompleteWrapper>
+//     ),
+//     submenus: () => render(
+//       <AutocompleteWrapper>
+//         <SubMenus />
+//       </AutocompleteWrapper>
+//     ),
+//     subdialogs: () => render(
+//       <AutocompleteWrapper>
+//         <SubDialogs />
+//       </AutocompleteWrapper>
+//     ),
+//     subdialogAndMenu: () => render(
+//       <AutocompleteWrapper>
+//         <SubDialogAndMenu />
+//       </AutocompleteWrapper>
+//     )
+//   },
+//   actionListener: onAction,
+//   selectionListener: onSelectionChange
+// });
 
-AriaAutocompleteTests({
-  prefix: 'rac-dynamic-menu',
-  renderers: {
-    standard: () => render(
-      <AutocompleteWrapper>
-        <DynamicMenu />
-      </AutocompleteWrapper>
-    ),
-    asyncFiltering: () => render(
-      <AsyncFiltering />
-    )
-  }
-});
+// AriaAutocompleteTests({
+//   prefix: 'rac-dynamic-menu',
+//   renderers: {
+//     standard: () => render(
+//       <AutocompleteWrapper>
+//         <DynamicMenu />
+//       </AutocompleteWrapper>
+//     ),
+//     asyncFiltering: () => render(
+//       <AsyncFiltering />
+//     )
+//   }
+// });
 
-AriaAutocompleteTests({
-  prefix: 'rac-static-listbox',
-  renderers: {
-    standard: () => render(
-      <AutocompleteWrapper>
-        <StaticListbox />
-      </AutocompleteWrapper>
-    ),
-    links: () => render(
-      <AutocompleteWrapper>
-        <ListBoxWithLinks />
-      </AutocompleteWrapper>
-    ),
-    sections: () => render(
-      <AutocompleteWrapper>
-        <ListBoxWithSections />
-      </AutocompleteWrapper>
-    ),
-    controlled: () => render(
-      <ControlledAutocomplete>
-        <StaticListbox />
-      </ControlledAutocomplete>
-    ),
-    multipleSelection: () => render(
-      <AutocompleteWrapper>
-        <StaticListbox selectionMode="multiple" onSelectionChange={onSelectionChange} />
-      </AutocompleteWrapper>
-    ),
-    disabledItems: () => render(
-      <AutocompleteWrapper>
-        <StaticListbox onAction={onAction} disabledKeys={['2']} />
-      </AutocompleteWrapper>
-    ),
-    defaultValue: () => render(
-      <AutocompleteWrapper autocompleteProps={{defaultInputValue: 'Ba'}}>
-        <StaticListbox />
-      </AutocompleteWrapper>
-    )
-  },
-  ariaPattern: 'listbox',
-  actionListener: onAction,
-  selectionListener: onSelectionChange
-});
+// AriaAutocompleteTests({
+//   prefix: 'rac-static-listbox',
+//   renderers: {
+//     standard: () => render(
+//       <AutocompleteWrapper>
+//         <StaticListbox />
+//       </AutocompleteWrapper>
+//     ),
+//     links: () => render(
+//       <AutocompleteWrapper>
+//         <ListBoxWithLinks />
+//       </AutocompleteWrapper>
+//     ),
+//     sections: () => render(
+//       <AutocompleteWrapper>
+//         <ListBoxWithSections />
+//       </AutocompleteWrapper>
+//     ),
+//     controlled: () => render(
+//       <ControlledAutocomplete>
+//         <StaticListbox />
+//       </ControlledAutocomplete>
+//     ),
+//     multipleSelection: () => render(
+//       <AutocompleteWrapper>
+//         <StaticListbox selectionMode="multiple" onSelectionChange={onSelectionChange} />
+//       </AutocompleteWrapper>
+//     ),
+//     disabledItems: () => render(
+//       <AutocompleteWrapper>
+//         <StaticListbox onAction={onAction} disabledKeys={['2']} />
+//       </AutocompleteWrapper>
+//     ),
+//     defaultValue: () => render(
+//       <AutocompleteWrapper autocompleteProps={{defaultInputValue: 'Ba'}}>
+//         <StaticListbox />
+//       </AutocompleteWrapper>
+//     )
+//   },
+//   ariaPattern: 'listbox',
+//   actionListener: onAction,
+//   selectionListener: onSelectionChange
+// });

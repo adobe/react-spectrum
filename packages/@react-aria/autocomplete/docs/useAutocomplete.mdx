@@ -84,7 +84,7 @@ import {
   ListBox,
   ListBoxItem,
   useFilter,
-  UNSTABLE_InternalAutocompleteContext
+  ListBoxContext
 } from 'react-aria-components'
 
 interface AutocompleteProps extends AriaAutocompleteProps {}
@@ -96,9 +96,7 @@ function Autocomplete(props: AutocompleteProps) {
   let collectionRef = useRef<HTMLElement>(null);
   let {
     textFieldProps,
-    collectionProps,
-    collectionRef: mergedCollectionRef,
-    filter: filterFn
+    collectionProps
   } = useAutocomplete({
     ...props,
     filter: contains,
@@ -110,12 +108,7 @@ function Autocomplete(props: AutocompleteProps) {
     <Provider
       values={[
         [SearchFieldContext, textFieldProps],
-        [InputContext, {ref: inputRef}],
-        [UNSTABLE_InternalAutocompleteContext, {
-          filter: filterFn,
-          collectionProps,
-          collectionRef: mergedCollectionRef
-        }]
+        [ListBoxContext, collectionProps]
       ]}>
       {props.children}
     </Provider>

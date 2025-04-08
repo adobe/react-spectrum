@@ -14,7 +14,7 @@ import {AriaTextFieldProps, useTextField} from 'react-aria';
 import {ContextValue, DOMProps, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {createHideableComponent} from '@react-aria/collections';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
 import {FormContext} from './Form';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
@@ -59,7 +59,7 @@ export const TextField = /*#__PURE__*/ createHideableComponent(function TextFiel
   [props, ref] = useContextProps(props, ref, TextFieldContext);
   let {validationBehavior: formValidationBehavior} = useSlottedContext(FormContext) || {};
   let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
-  let inputRef = useRef(null);
+  let inputRef = useObjectRef(props.inputRef);
   let [inputContextProps, mergedInputRef] = useContextProps({}, inputRef, InputContext);
   let [labelRef, label] = useSlot(
     !props['aria-label'] && !props['aria-labelledby']
