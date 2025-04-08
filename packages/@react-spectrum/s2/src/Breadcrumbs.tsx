@@ -288,7 +288,7 @@ const heading = style({
   fontWeight: 'extra-bold'
 });
 
-export interface BreadcrumbProps extends Omit<AriaBreadcrumbItemProps, 'children' | 'style' | 'className' | 'autoFocus'>, LinkDOMProps {
+export interface BreadcrumbProps extends Omit<AriaBreadcrumbItemProps, 'children' | 'style' | 'className' | 'autoFocus' | 'onClick'>, LinkDOMProps {
   /** The children of the breadcrumb item. */
   children: ReactNode
 }

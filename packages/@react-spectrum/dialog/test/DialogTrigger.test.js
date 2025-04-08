@@ -21,7 +21,7 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
-import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
 
 
@@ -1031,12 +1031,12 @@ describe('DialogTrigger', function () {
       let {container} = props;
       return (
         <Provider theme={theme}>
-          <UNSTABLE_PortalProvider getContainer={() => container.current}>
+          <UNSAFE_PortalProvider getContainer={() => container.current}>
             <DialogTrigger type={props.type}>
               <ActionButton>Trigger</ActionButton>
               <Dialog>contents</Dialog>
             </DialogTrigger>
-          </UNSTABLE_PortalProvider>
+          </UNSAFE_PortalProvider>
         </Provider>
       );
     }

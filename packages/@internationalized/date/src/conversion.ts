@@ -17,7 +17,7 @@ import {AnyCalendarDate, AnyDateTime, AnyTime, Calendar, DateFields, Disambiguat
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
 import {constrain} from './manipulation';
 import {getExtendedYear, GregorianCalendar} from './calendars/GregorianCalendar';
-import {getLocalTimeZone} from './queries';
+import {getLocalTimeZone, isEqualCalendar} from './queries';
 import {Mutable} from './utils';
 
 export function epochFromDate(date: AnyDateTime): number {
@@ -260,7 +260,7 @@ export function toTime(dateTime: CalendarDateTime | ZonedDateTime): Time {
 
 /** Converts a date from one calendar system to another. */
 export function toCalendar<T extends AnyCalendarDate>(date: T, calendar: Calendar): T {
-  if (date.calendar.identifier === calendar.identifier) {
+  if (isEqualCalendar(date.calendar, calendar)) {
     return date;
   }
 

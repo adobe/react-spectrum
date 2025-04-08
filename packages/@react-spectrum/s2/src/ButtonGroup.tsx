@@ -14,13 +14,13 @@ import {ButtonContext, LinkButtonContext} from './Button';
 import {ContextValue, Provider, SlotProps} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode, useCallback, useRef} from 'react';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
+import {filterDOMProps, useLayoutEffect, useValueEffect} from '@react-aria/utils';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {
   useDOMRef,
   useResizeObserver
 } from '@react-spectrum/utils';
-import {useLayoutEffect, useValueEffect} from '@react-aria/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface ButtonGroupStyleProps {
@@ -112,7 +112,8 @@ export const ButtonGroup = forwardRef(function ButtonGroup(props: ButtonGroupPro
     orientation = 'horizontal',
     align = 'start',
     children,
-    isDisabled
+    isDisabled,
+    ...otherProps
   } = props;
 
   let [hasOverflow, setHasOverflow] = useValueEffect(false);
@@ -165,6 +166,7 @@ export const ButtonGroup = forwardRef(function ButtonGroup(props: ButtonGroupPro
   let context = {styles: style({flexShrink: 0}), size, isDisabled};
   return (
     <div
+      {...filterDOMProps(otherProps)}
       ref={domRef}
       style={props.UNSAFE_style}
       className={(props.UNSAFE_className || '') + buttongroup({

@@ -34,7 +34,7 @@ export const RangeCalendar = React.forwardRef(function RangeCalendar<T extends D
     ...props,
     locale,
     visibleDuration,
-    createCalendar
+    createCalendar: props.createCalendar || createCalendar
   });
 
   let domRef = useRef(null);

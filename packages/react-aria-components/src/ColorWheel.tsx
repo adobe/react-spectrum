@@ -78,6 +78,8 @@ export const ColorWheelTrackContext = createContext<ContextValue<ColorWheelTrack
 export const ColorWheelTrack = forwardRef(function ColorWheelTrack(props: ColorWheelTrackProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ColorWheelTrackContext);
   let state = useContext(ColorWheelStateContext)!;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {className, style, ...rest} = props;
 
   let renderProps = useRenderProps({
     ...props,
@@ -87,11 +89,10 @@ export const ColorWheelTrack = forwardRef(function ColorWheelTrack(props: ColorW
       state
     }
   });
-  let DOMProps = filterDOMProps(props);
 
   return (
     <div
-      {...DOMProps}
+      {...rest}
       {...renderProps}
       ref={ref}
       data-disabled={state.isDisabled || undefined} />

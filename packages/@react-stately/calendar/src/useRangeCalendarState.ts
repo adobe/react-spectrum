@@ -11,7 +11,7 @@
  */
 
 import {alignCenter, constrainValue, isInvalid, previousAvailableDate} from './utils';
-import {Calendar, CalendarDate, DateDuration, GregorianCalendar, isEqualDay, maxDate, minDate, toCalendar, toCalendarDate} from '@internationalized/date';
+import {Calendar, CalendarDate, CalendarIdentifier, DateDuration, GregorianCalendar, isEqualDay, maxDate, minDate, toCalendar, toCalendarDate} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from './types';
 import {DateValue, MappedDateValue, RangeCalendarProps} from '@react-types/calendar';
 import {RangeValue, ValidationState} from '@react-types/shared';
@@ -28,7 +28,7 @@ export interface RangeCalendarStateOptions<T extends DateValue = DateValue> exte
    * `@internationalized/date` package, or manually implemented to include support for
    * only certain calendars.
    */
-  createCalendar: (name: string) => Calendar,
+  createCalendar: (name: CalendarIdentifier) => Calendar,
   /**
    * The amount of days that will be displayed at once. This affects how pagination works.
    * @default {months: 1}

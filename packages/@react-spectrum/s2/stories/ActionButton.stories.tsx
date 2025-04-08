@@ -10,12 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Avatar, Text} from '../src';
+import {ActionButton, Avatar, NotificationBadge, Text} from '../src';
+import BellIcon from '../s2wf-icons/S2_Icon_Bell_20_N.svg';
 import {categorizeArgTypes, StaticColorDecorator} from './utils';
+import CommentIcon from '../s2wf-icons/S2_Icon_Comment_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {style} from '../style' with { type: 'macro' };
 import './unsafe.css';
+import {useNumberFormatter} from 'react-aria';
 
 const meta: Meta<typeof ActionButton> = {
   component: ActionButton,
@@ -196,5 +199,44 @@ export const Avatars: Story = {
         <ActionButton {...args}><Text>Press me</Text><Avatar src="https://i.imgur.com/xIe7Wlb.png" /></ActionButton>
       </div>
     );
+  }
+};
+
+const NotificationBadgesExample = (args) => {
+  let badgeValue = 10;
+  let formattedValue = useNumberFormatter().format(badgeValue);
+  return (
+    <div style={{display: 'flex', gap: 8, padding: 8, justifyContent: 'center'}}>
+      <ActionButton aria-label="Messages has new activity" {...args}><CommentIcon /><NotificationBadge /></ActionButton>
+      <ActionButton aria-label={`${formattedValue} notifications`} {...args}><BellIcon /><NotificationBadge value={badgeValue} /></ActionButton>
+      <ActionButton {...args}><CommentIcon /><Text>Messages</Text><NotificationBadge value={5} /></ActionButton>
+      {!args.isQuiet && <ActionButton {...args}><Text>Notifications</Text><NotificationBadge value={105} /></ActionButton>}
+    </div>
+  );
+};
+
+export const NotificationBadges: Story = {
+  render: NotificationBadgesExample
+};
+
+NotificationBadges.parameters = {
+  docs: {
+    source: {
+      transform: () => {
+        return `
+let badgeValue = 10;
+let formattedValue = useNumberFormatter().format(badgeValue);
+
+return (
+  <div style={{display: 'flex', gap: 8, padding: 8, justifyContent: 'center'}}>
+    <ActionButton aria-label="Messages has new activity"><CommentIcon /><NotificationBadge /></ActionButton>
+    <ActionButton aria-label={\`\${formattedValue} notifications\`} ><BellIcon /><NotificationBadge value={badgeValue} /></ActionButton>
+    <ActionButton><CommentIcon /><Text>Messages</Text><NotificationBadge value={5} /></ActionButton>
+    {/* Cannot have an label-only quiet Action Button with a Notification Badge */}
+    {!isQuiet && <ActionButton><Text>Notifications</Text><NotificationBadge value={105} /></ActionButton>}
+  </div>
+        )`;
+      }
+    }
   }
 };

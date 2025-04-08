@@ -207,7 +207,7 @@ export const Image = forwardRef(function Image(props: ImageProps, domRef: Forwar
     animation(domRef.current);
   });
 
-  if (props.alt == null) {
+  if (props.alt == null && process.env.NODE_ENV !== 'production') {
     console.warn(
       'The `alt` prop was not provided to an image. ' +
       'Add `alt` text for screen readers, or set `alt=""` prop to indicate that the image ' +

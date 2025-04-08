@@ -74,7 +74,7 @@ export const Checkbox = forwardRef(function Checkbox(props: SpectrumCheckboxProp
     ? <DashSmall UNSAFE_className={classNames(styles, 'spectrum-Checkbox-partialCheckmark')} />
     : <CheckmarkSmall UNSAFE_className={classNames(styles, 'spectrum-Checkbox-checkmark')} />;
 
-  if (groupState) {
+  if (groupState && process.env.NODE_ENV !== 'production') {
     for (let key of ['isSelected', 'defaultSelected', 'isEmphasized']) {
       if (originalProps[key] != null) {
         console.warn(`${key} is unsupported on individual <Checkbox> elements within a <CheckboxGroup>. Please apply these props to the group instead.`);

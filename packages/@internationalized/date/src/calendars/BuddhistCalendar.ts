@@ -13,7 +13,7 @@
 // Portions of the code in this file are based on code from ICU.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
-import {AnyCalendarDate} from '../types';
+import {AnyCalendarDate, CalendarIdentifier} from '../types';
 import {CalendarDate} from '../CalendarDate';
 import {fromExtendedYear, getExtendedYear, GregorianCalendar} from './GregorianCalendar';
 
@@ -25,7 +25,7 @@ const BUDDHIST_ERA_START = -543;
  * era, identified as 'BE'.
  */
 export class BuddhistCalendar extends GregorianCalendar {
-  identifier = 'buddhist';
+  identifier: CalendarIdentifier = 'buddhist';
 
   fromJulianDay(jd: number): CalendarDate {
     let gregorianDate = super.fromJulianDay(jd);

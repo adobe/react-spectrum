@@ -201,10 +201,11 @@ class NumberParserImpl {
       }
     }
 
-    // fr-FR group character is char code 8239, but that's not a key on the french keyboard,
-    // so allow 'period' as a group char and replace it with a space
-    if (this.options.locale === 'fr-FR') {
-      value = replaceAll(value, '.', String.fromCharCode(8239));
+    // fr-FR group character is narrow non-breaking space, char code 8239 (U+202F), but that's not a key on the french keyboard,
+    // so allow space and non-breaking space as a group char as well
+    if (this.options.locale === 'fr-FR' && this.symbols.group) {
+      value = replaceAll(value, ' ', this.symbols.group);
+      value = replaceAll(value, /\u00A0/g, this.symbols.group);
     }
 
     return value;
@@ -303,7 +304,7 @@ function getSymbols(locale: string, formatter: Intl.NumberFormat, intlOptions: I
   return {minusSign, plusSign, decimal, group, literals, numeral, index};
 }
 
-function replaceAll(str: string, find: string, replace: string) {
+function replaceAll(str: string, find: string | RegExp, replace: string) {
   if (str.replaceAll) {
     return str.replaceAll(find, replace);
   }

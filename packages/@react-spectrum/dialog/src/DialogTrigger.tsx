@@ -60,7 +60,7 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
    
   useEffect(() => {
     return () => {
-      if ((wasOpen.current || isExiting.current) && type !== 'popover' && type !== 'tray') {
+      if ((wasOpen.current || isExiting.current) && type !== 'popover' && type !== 'tray' && process.env.NODE_ENV !== 'production') {
         console.warn('A DialogTrigger unmounted while open. This is likely due to being placed within a trigger that unmounts or inside a conditional. Consider using a DialogContainer instead.');
       }
     };

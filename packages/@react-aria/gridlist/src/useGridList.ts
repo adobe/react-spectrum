@@ -50,7 +50,16 @@ export interface AriaGridListProps<T> extends GridListProps<T>, DOMProps, AriaLa
    * via the left/right arrow keys or the tab key.
    * @default 'arrow'
    */
-  keyboardNavigationBehavior?: 'arrow' | 'tab'
+  keyboardNavigationBehavior?: 'arrow' | 'tab',
+  /**
+   * Whether pressing the escape key should clear selection in the grid list or not.
+   *
+   * Most experiences should not modify this option as it eliminates a keyboard user's ability to
+   * easily clear selection. Only use if the escape key is being handled externally or should not
+   * trigger selection clearing contextually.
+   * @default 'clearSelection'
+   */
+  escapeKeyBehavior?: 'clearSelection' | 'none'
 }
 
 export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'children'> {
@@ -108,7 +117,8 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     disallowTypeAhead,
     linkBehavior = 'action',
     keyboardNavigationBehavior = 'arrow',
-    shouldSelectOnPressUp
+    shouldSelectOnPressUp,
+    escapeKeyBehavior = 'clearSelection'
   } = props;
 
   if (!props['aria-label'] && !props['aria-labelledby']) {
@@ -127,7 +137,8 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     shouldFocusWrap: props.shouldFocusWrap,
     linkBehavior,
     disallowTypeAhead,
-    autoFocus: props.autoFocus
+    autoFocus: props.autoFocus,
+    escapeKeyBehavior
   });
 
   let id = useId(props.id);

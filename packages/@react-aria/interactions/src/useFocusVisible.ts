@@ -153,7 +153,7 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
     documentObject.addEventListener('pointerdown', handlePointerEvent, true);
     documentObject.addEventListener('pointermove', handlePointerEvent, true);
     documentObject.addEventListener('pointerup', handlePointerEvent, true);
-  } else {
+  } else if (process.env.NODE_ENV === 'test') {
     documentObject.addEventListener('mousedown', handlePointerEvent, true);
     documentObject.addEventListener('mousemove', handlePointerEvent, true);
     documentObject.addEventListener('mouseup', handlePointerEvent, true);
@@ -189,7 +189,7 @@ const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
     documentObject.removeEventListener('pointerdown', handlePointerEvent, true);
     documentObject.removeEventListener('pointermove', handlePointerEvent, true);
     documentObject.removeEventListener('pointerup', handlePointerEvent, true);
-  } else {
+  } else if (process.env.NODE_ENV === 'test') {
     documentObject.removeEventListener('mousedown', handlePointerEvent, true);
     documentObject.removeEventListener('mousemove', handlePointerEvent, true);
     documentObject.removeEventListener('mouseup', handlePointerEvent, true);

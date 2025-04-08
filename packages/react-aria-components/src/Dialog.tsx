@@ -93,7 +93,7 @@ export const Dialog = /*#__PURE__*/ (forwardRef as forwardRefType)(function Dial
     // Use that as a fallback in case there is no title slot.
     if (props['aria-labelledby']) {
       dialogProps['aria-labelledby'] = props['aria-labelledby'];
-    } else {
+    } else if (process.env.NODE_ENV !== 'production') {
       console.warn('If a Dialog does not contain a <Heading slot="title">, it must have an aria-label or aria-labelledby attribute for accessibility.');
     }
   }

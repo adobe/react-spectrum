@@ -46,6 +46,7 @@ export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPo
   /**
    * The container element in which the overlay portal will be placed. This may have unknown behavior depending on where it is portalled to.
    * @default document.body
+   * @deprecated - Use a parent UNSAFE_PortalProvider to set your portal container instead.
    */
   UNSTABLE_portalContainer?: Element,
   /**
@@ -154,7 +155,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: Po
     ...props,
     offset: props.offset ?? 8,
     arrowSize: arrowWidth,
-    // If this is a submenu/subdialog, use the root popover's container 
+    // If this is a submenu/subdialog, use the root popover's container
     // to detect outside interaction and add aria-hidden.
     groupRef: isSubPopover ? groupCtx! : containerRef
   }, state);

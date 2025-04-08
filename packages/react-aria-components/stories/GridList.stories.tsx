@@ -88,7 +88,8 @@ const MyGridListItem = (props: GridListItemProps) => {
 GridListExample.story = {
   args: {
     layout: 'stack',
-    shouldSelectOnPressUp: false
+    shouldSelectOnPressUp: false,
+    escapeKeyBehavior: 'clearSelection'
   },
   argTypes: {
     layout: {
@@ -106,6 +107,10 @@ GridListExample.story = {
     selectionBehavior: {
       control: 'radio',
       options: ['toggle', 'replace']
+    },
+    escapeKeyBehavior: {
+      control: 'radio',
+      options: ['clearSelection', 'none']
     }
   }
 };

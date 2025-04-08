@@ -15,10 +15,10 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
+import {createSyntheticEvent, setEventTarget, useSyntheticBlurEvent} from './utils';
 import {DOMAttributes} from '@react-types/shared';
 import {FocusEvent, useCallback, useRef} from 'react';
 import {getActiveElement, getEventTarget, getOwnerDocument, nodeContains, useGlobalListeners} from '@react-aria/utils';
-import {SyntheticFocusEvent, useSyntheticBlurEvent} from './utils';
 
 export interface FocusWithinProps {
   /** Whether the focus within events should be disabled. */
@@ -104,9 +104,9 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
       let currentTarget = e.currentTarget;
       addGlobalListener(ownerDocument, 'focus', e => {
         if (state.current.isFocusWithin && !nodeContains(currentTarget, e.target as Element)) {
-          let event = new SyntheticFocusEvent('blur', new ownerDocument.defaultView!.FocusEvent('blur', {relatedTarget: e.target}));
-          event.target = currentTarget;
-          event.currentTarget = currentTarget;
+          let nativeEvent = new ownerDocument.defaultView!.FocusEvent('blur', {relatedTarget: e.target});
+          setEventTarget(nativeEvent, currentTarget);
+          let event = createSyntheticEvent<FocusEvent>(nativeEvent);
           onBlur(event);
         }
       }, {capture: true});

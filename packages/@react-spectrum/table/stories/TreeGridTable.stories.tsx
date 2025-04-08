@@ -14,7 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../';
 import {chain} from '@react-aria/utils';
-import {ComponentMeta} from '@storybook/react';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import defaultConfig, {columns, EmptyStateTable, TableStory} from './Table.stories';
 import {enableTableNestedRows} from '@react-stately/flags';
 import {Flex} from '@react-spectrum/layout';
@@ -162,7 +162,6 @@ export const UserSetRowHeader: TableStory = {
   }
 };
 
-let manyRows: Record<typeof columns[number]['key'], string>[] = [];
 function generateRow(lvlIndex, lvlLimit, rowIndex) {
   let row = {key: `Row ${rowIndex} Lvl ${lvlIndex}`};
   for (let col of columns) {
@@ -175,19 +174,25 @@ function generateRow(lvlIndex, lvlLimit, rowIndex) {
   return row;
 }
 
-for (let i = 1; i < 20; i++) {
-  let row = generateRow(1, 3, i);
-  manyRows.push(row);
+function generateRows(count = 5) {
+  let manyRows: Record<typeof columns[number]['key'], string>[] = [];
+  for (let i = 1; i <= count; i++) {
+    let row = generateRow(1, 3, i);
+    manyRows.push(row);
+  }  
+  return manyRows;
 }
 
 interface ManyExpandableRowsProps extends SpectrumTableProps<unknown> {
   allowsResizing?: boolean,
-  showDivider?: boolean
+  showDivider?: boolean,
+  rowCount?: number
 }
 
 function ManyExpandableRows(props: ManyExpandableRowsProps) {
   let {allowsResizing, showDivider, ...otherProps} = props;
   let [expandedKeys, setExpandedKeys] = useState<'all' | Set<Key>>('all');
+  let manyRows = generateRows(props.rowCount ?? 5);
 
   return (
     <Flex direction="column">
@@ -211,11 +216,12 @@ function ManyExpandableRows(props: ManyExpandableRowsProps) {
   );
 }
 
-export const ManyExpandableRowsStory: TableStory = {
+export const ManyExpandableRowsStory: ComponentStoryObj<typeof ManyExpandableRows> = {
   args: {
     'aria-label': 'TableView with many dynamic expandable rows',
     width: 500,
-    height: 400
+    height: 400,
+    rowCount: 5
   },
   render: (args) => (
     <ManyExpandableRows {...args} />
@@ -230,7 +236,7 @@ export const EmptyTreeGridStory: TableStory = {
     height: 400
   },
   render: (args) => (
-    <EmptyStateTable UNSTABLE_allowsExpandableRows selectionMode="none" columns={columns} items={manyRows} allowsSorting={false} onSortChange={null} sortDescriptor={null} {...args} />
+    <EmptyStateTable UNSTABLE_allowsExpandableRows selectionMode="none" columns={columns} items={generateRows()} allowsSorting={false} onSortChange={null} sortDescriptor={null} {...args} />
   ),
   name: 'empty state'
 };
@@ -245,7 +251,7 @@ function LoadingStateTable(props) {
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
-        <TableBody items={show ? manyRows : []} loadingState="loadingMore">
+        <TableBody items={show ? generateRows() : []} loadingState="loadingMore">
           {item =>
             (<Row key={item.key} UNSTABLE_childItems={item.childRows}>
               {key => <Cell>{item[key]}</Cell>}
