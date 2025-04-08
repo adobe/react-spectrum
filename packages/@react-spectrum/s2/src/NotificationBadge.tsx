@@ -11,9 +11,9 @@
  */
 
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
-import {baseColor, fontRelative, style} from '../style' with {type: 'macro'};
 import {ContextValue, SlotProps} from 'react-aria-components';
 import {filterDOMProps} from '@react-aria/utils';
+import {fontRelative, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -22,7 +22,6 @@ import React, {createContext, forwardRef} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
-import { locales } from '../../../../.storybook/constants';
 
 export interface NotificationBadgeStyleProps {
   /**
