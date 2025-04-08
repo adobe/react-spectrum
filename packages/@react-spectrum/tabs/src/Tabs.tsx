@@ -377,13 +377,12 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-interface TabPickerProps<T> extends Omit<SpectrumPickerProps<T>, 'children' | 'onSelectionChange'> {
+interface TabPickerProps<T> extends Omit<SpectrumPickerProps<T>, 'children'> {
   density?: 'compact' | 'regular',
   isEmphasized?: boolean,
   state: TabListState<T>,
   className?: string,
-  visible: boolean,
-  onSelectionChange?: (key: Key) => void
+  visible: boolean
 }
 
 function TabPicker<T>(props: TabPickerProps<T>) {
@@ -451,11 +450,7 @@ function TabPicker<T>(props: TabPickerProps<T>) {
           isDisabled={!visible || isDisabled}
           selectedKey={state.selectedKey}
           disabledKeys={state.disabledKeys}
-          onSelectionChange={key => {
-            if (key != null) {
-              state.setSelectedKey(key);
-            }
-          }}
+          onSelectionChange={state.setSelectedKey}
           UNSAFE_className={classNames(styles, 'spectrum-Tabs-picker')}>
           {item => <Item {...item.props}>{item.rendered}</Item>}
         </Picker>

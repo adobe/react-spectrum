@@ -23,7 +23,6 @@ import {
   TextContext as RACTextContext,
   TagList,
   TagListProps,
-  TagRenderProps,
   useLocale,
   useSlottedContext
 } from 'react-aria-components';
@@ -438,7 +437,7 @@ function ActionGroup(props) {
   );
 }
 
-const tagStyles = style<TagRenderProps & {size?: 'S' | 'M' | 'L', isEmphasized?: boolean, isLink?: boolean, allowsRemoving?: boolean}>({
+const tagStyles = style({
   ...focusRing(),
   display: 'inline-flex',
   boxSizing: 'border-box',

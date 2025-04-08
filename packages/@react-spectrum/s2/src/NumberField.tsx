@@ -16,7 +16,6 @@ import {
   NumberField as AriaNumberField,
   NumberFieldProps as AriaNumberFieldProps,
   ButtonContext,
-  ButtonRenderProps,
   ContextValue,
   InputContext,
   Text,
@@ -57,7 +56,7 @@ export interface NumberFieldProps extends
 
 export const NumberFieldContext = createContext<ContextValue<Partial<NumberFieldProps>, TextFieldRef>>(null);
 
-const inputButton = style<ButtonRenderProps & {size: 'S' | 'M' | 'L' | 'XL', type: 'decrement' | 'increment'}>({
+const inputButton = style({
   display: 'flex',
   outlineStyle: 'none',
   textAlign: 'center',
@@ -70,6 +69,9 @@ const inputButton = style<ButtonRenderProps & {size: 'S' | 'M' | 'L' | 'XL', typ
         L: '[5px]',
         XL: '[6px]'
       }
+    },
+    type: {
+      decrementStep: 'none'
     }
   },
   borderBottomRadius: {
@@ -80,6 +82,9 @@ const inputButton = style<ButtonRenderProps & {size: 'S' | 'M' | 'L' | 'XL', typ
         L: '[5px]',
         XL: '[6px]'
       }
+    },
+    type: {
+      incrementStep: 'none'
     }
   },
   alignItems: 'center',
@@ -127,6 +132,13 @@ const inputButton = style<ButtonRenderProps & {size: 'S' | 'M' | 'L' | 'XL', typ
 
 const iconStyles = style({
   flexShrink: 0,
+  rotate: {
+    default: 0,
+    type: {
+      incrementStep: 270,
+      decrementStep: 90
+    }
+  },
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
@@ -249,7 +261,7 @@ export const NumberField = forwardRef(function NumberField(props: NumberFieldPro
                         type: 'decrement',
                         size
                       })}>
-                      <Dash size={size} className={iconStyles} />
+                      <Dash size={size} className={iconStyles({})} />
                     </StepButton>
                     <StepButton
                       ref={incrementButtonRef}
@@ -260,7 +272,7 @@ export const NumberField = forwardRef(function NumberField(props: NumberFieldPro
                         type: 'increment',
                         size
                       })}>
-                      <Add size={size} className={iconStyles} />
+                      <Add size={size} className={iconStyles({})} />
                     </StepButton>
                   </div>}
                 </FieldGroup>

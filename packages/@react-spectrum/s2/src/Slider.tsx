@@ -16,7 +16,6 @@ import {
   ContextValue,
   SliderOutput,
   SliderThumb,
-  SliderThumbRenderProps,
   SliderTrack
 } from 'react-aria-components';
 import {clamp} from '@react-aria/utils';
@@ -200,7 +199,7 @@ export let thumbHitArea = style({
   }
 });
 
-export let thumb = style<SliderThumbRenderProps & {size: 'S' | 'M' | 'L' | 'XL', thumbStyle: 'default' | 'precise'}>({
+export let thumb = style({
   ...focusRing(),
   display: 'inline-block',
   boxSizing: 'border-box',
@@ -272,7 +271,7 @@ const trackStyling = {
   }
 } as const;
 
-export let upperTrack = style<{isDisabled?: boolean, trackStyle: 'thin' | 'thick'}>({
+export let upperTrack = style({
   ...trackStyling,
   position: 'absolute',
   backgroundColor: {
@@ -293,7 +292,7 @@ export let upperTrack = style<{isDisabled?: boolean, trackStyle: 'thin' | 'thick
   }
 });
 
-export let filledTrack = style<{isDisabled?: boolean, isEmphasized?: boolean, trackStyle: 'thin' | 'thick'}>({
+export let filledTrack = style({
   ...trackStyling,
   position: 'absolute',
   backgroundColor: {
