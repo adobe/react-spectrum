@@ -30,7 +30,7 @@ let columns = [
 
 // getComputedStyle is very slow in our version of jsdom.
 // These tests only care about direct inline styles. We can avoid parsing other stylesheets.
-window.getComputedStyle = (el) => el.style;
+window.getComputedStyle = (el) => (el as HTMLElement).style;
 
 describe('Table ', function () {
   let onSelectionChange = jest.fn();
