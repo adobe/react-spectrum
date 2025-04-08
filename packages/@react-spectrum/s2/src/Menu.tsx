@@ -23,7 +23,6 @@ import {
   SubmenuTriggerProps as AriaSubmenuTriggerProps,
   ContextValue,
   DEFAULT_SLOT,
-  MenuItemRenderProps,
   Provider,
   Separator,
   SeparatorProps
@@ -147,7 +146,7 @@ export let sectionHeading = style({
   margin: 0
 });
 
-export let menuitem = style<Omit<MenuItemRenderProps, 'hasSubmenu' | 'isOpen'> & {isFocused: boolean, size: 'S' | 'M' | 'L' | 'XL', isLink?: boolean, hasSubmenu?: boolean, isOpen?: boolean}>({
+export let menuitem = style({
   ...focusRing(),
   boxSizing: 'border-box',
   borderRadius: 'control',
@@ -294,7 +293,7 @@ let value = style({
   marginStart: 8
 });
 
-let keyboard = style<{size: 'S' | 'M' | 'L' | 'XL', isDisabled: boolean}>({
+let keyboard = style({
   gridArea: 'keyboard',
   marginStart: 8,
   font: 'ui',
@@ -306,7 +305,7 @@ let keyboard = style<{size: 'S' | 'M' | 'L' | 'XL', isDisabled: boolean}>({
       isDisabled: 'GrayText'
     }
   },
-  backgroundColor: 'gray-25',
+  background: 'gray-25',
   unicodeBidi: 'plaintext'
 });
 
