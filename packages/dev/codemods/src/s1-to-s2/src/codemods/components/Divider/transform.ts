@@ -8,6 +8,5 @@ import * as t from '@babel/types';
  */
 export default function transformDivider(path: NodePath<t.JSXElement>) {
   // Remove Divider component if within a Dialog
-  // Reason: Updated design for Dialog in Spectrum 2
   removeComponentIfWithinParent(path, {parentComponent: 'Dialog'});
 } 

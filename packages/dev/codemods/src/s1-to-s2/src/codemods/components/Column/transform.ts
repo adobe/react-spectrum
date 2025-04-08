@@ -8,6 +8,5 @@ import {updateKeyToId} from '../../shared/transforms';
  */
 export default function transformColumn(path: NodePath<t.JSXElement>) {
   // Update key to id
-  // Reason: Standardizing collection item identifiers.
   updateKeyToId(path);
 } 
