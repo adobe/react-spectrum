@@ -11,9 +11,9 @@
  */
 
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
+import {baseColor, fontRelative, style} from '../style' with {type: 'macro'};
 import {ContextValue, SlotProps} from 'react-aria-components';
 import {filterDOMProps} from '@react-aria/utils';
-import {fontRelative, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -40,7 +40,8 @@ export interface NotificationBadgeProps extends DOMProps, AriaLabelingProps, Sty
 }
 
 interface NotificationBadgeContextProps extends Partial<NotificationBadgeProps> {
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  staticColor?: 'black' | 'white' | 'auto'
 }
 
 export const NotificationBadgeContext = createContext<ContextValue<Partial<NotificationBadgeContextProps>, DOMRefValue<HTMLDivElement>>>(null);
@@ -53,6 +54,7 @@ const badge = style({
   font: 'control',
   color: {
     default: 'white',
+    isStaticColor: 'auto',
     forcedColors: 'ButtonText'
   },
   fontSize: {
@@ -76,6 +78,7 @@ const badge = style({
   alignItems: 'center',
   backgroundColor: {
     default: 'accent',
+    isStaticColor: baseColor('transparent-overlay-800'),
     forcedColors: 'ButtonFace'
   },
   height: {
@@ -119,6 +122,7 @@ export const NotificationBadge = forwardRef(function Badge(props: NotificationBa
     size = 'S',
     value,
     isDisabled = false,
+    staticColor,
     ...otherProps
   } = props as NotificationBadgeContextProps;
   let domRef = useDOMRef(ref);
@@ -159,7 +163,7 @@ export const NotificationBadge = forwardRef(function Badge(props: NotificationBa
       {...filterDOMProps(otherProps, {labelable: true})}
       role={ariaLabel && 'img'}
       aria-label={ariaLabel}
-      className={(props.UNSAFE_className || '') + badge({size, isIndicatorOnly, isSingleDigit, isDoubleDigit, isDisabled}, props.styles)}
+      className={(props.UNSAFE_className || '') + badge({size, isIndicatorOnly, isSingleDigit, isDoubleDigit, isDisabled, isStaticColor: !!staticColor}, props.styles)}
       style={props.UNSAFE_style}
       ref={domRef}>
       {formattedValue}
