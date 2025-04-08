@@ -349,11 +349,12 @@ describe('queries', function () {
 
   describe('getLocalTimeZone', function () {
     it('gets local time zone', function () {
-      expect(getLocalTimeZone()).toBe('America/New_York');
+      const systemTimeZone = new Intl.DateTimeFormat().resolvedOptions().timeZone;
+      expect(getLocalTimeZone()).toBe(systemTimeZone);
       setLocalTimeZone('America/Denver');
       expect(getLocalTimeZone()).toBe('America/Denver');
       resetLocalTimeZone();
-      expect(getLocalTimeZone()).toBe('America/New_York');
+      expect(getLocalTimeZone()).toBe(systemTimeZone);
     });
   });
 });
