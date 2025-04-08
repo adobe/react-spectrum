@@ -78,7 +78,7 @@ const badge = style({
   alignItems: 'center',
   backgroundColor: {
     default: 'accent',
-    isStaticColor: baseColor('transparent-overlay-1000'),
+    isStaticColor: 'transparent-overlay-1000',
     forcedColors: 'ButtonFace'
   },
   height: {
@@ -105,7 +105,7 @@ const badge = style({
     isIndicatorOnly: 'square',
     isSingleDigit: 'square'
   },
-  width: 'fit',
+  width: 'max',
   paddingX: {
     isDoubleDigit: 'edge-to-text'
   },
@@ -140,7 +140,7 @@ export const NotificationBadge = forwardRef(function Badge(props: NotificationBa
   } else if (!Number.isInteger(value)) {
     throw new Error('Value must be a positive integer');
   } else {
-    formattedValue = new NumberFormatter(locale).format(Math.min(value, 99));
+    formattedValue = new NumberFormatter('zh-CN-u-nu-hanidec').format(Math.min(value, 99));
     let length = Math.log(value <= 99 ? value : 99) * Math.LOG10E + 1 | 0;  // for positive integers (https://stackoverflow.com/questions/14879691/get-number-of-digits-with-javascript)
     if (length === 1) {
       isSingleDigit = true;
