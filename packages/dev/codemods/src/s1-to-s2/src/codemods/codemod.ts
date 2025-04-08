@@ -198,11 +198,9 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
       const componentTransform = require(transformPath);
       if (componentTransform && typeof componentTransform.default === 'function') {
         componentTransform.default(path);
-      } else {
-        // console.error('Error running transform at:', transformPath);
       }
-    } catch (error: any) {
-      // console.error('Error running transform:', error);
+    } catch {
+      // Do nothing if the transform doesn't exist
     }
   });
 

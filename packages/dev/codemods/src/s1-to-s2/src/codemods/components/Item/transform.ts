@@ -1,4 +1,4 @@
-import {commentIfParentCollectionNotDetected, updateComponentWithinCollection, updateKeyToId} from '../../shared/transforms';
+import {commentIfParentCollectionNotDetected, updateComponentWithinCollection} from '../../shared/transforms';
 import {NodePath} from '@babel/traverse';
 import * as t from '@babel/types';
 
