@@ -16,7 +16,6 @@ import {
   ListBoxSection as AriaListBoxSection,
   PopoverProps as AriaPopoverProps,
   Button,
-  ButtonRenderProps,
   ContextValue,
   InputContext,
   ListBox,
@@ -96,7 +95,7 @@ export interface ComboBoxProps<T extends object> extends
 
 export const ComboBoxContext = createContext<ContextValue<Partial<ComboBoxProps<any>>, TextFieldRef>>(null);
 
-const inputButton = style<ButtonRenderProps & {isOpen: boolean, size: 'S' | 'M' | 'L' | 'XL'}>({
+const inputButton = style({
   display: 'flex',
   outlineStyle: 'none',
   textAlign: 'center',

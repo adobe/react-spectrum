@@ -39,7 +39,7 @@ const hoverBackground = {
   isStaticColor: 'transparent-overlay-200'
 } as const;
 
-const styles = style<CloseButtonProps & {isHovered: boolean, isFocusVisible: boolean, isPressed: boolean, isStaticColor: boolean}>({
+const styles = style({
   ...focusRing(),
   ...staticColor(),
   display: 'flex',
