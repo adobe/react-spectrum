@@ -1,0 +1,62 @@
+{/* Copyright 2025 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {BlogPostLayout, Hero, Image} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description:
+date: 2025-04-14
+---
+
+# April 14, 2025 Release
+
+
+## Enhancements
+
+- Calendar
+  - Custom calendar support - [@ToyWalrus](https://github.com/ToyWalrus) - [PR](https://github.com/adobe/react-spectrum/pull/7803)
+- Collections
+  - Add `escapeKeyBehavior` to GridList/ListBox/Menu/Table/Tree - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/7974)
+- Toast
+  - Pass data attributes through on Toast - [@lukpsaxo](https://github.com/lukpsaxo) - [PR](https://github.com/adobe/react-spectrum/pull/7923)
+- Miscellaneous
+  - Support `onClick` as an alias for `onPress` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7891)
+  - Reduce production bundle sizes - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7977), [PR](https://github.com/adobe/react-spectrum/pull/8046)
+
+## Fixes
+
+- Collections
+  - Support React Suspense in collections - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7912)
+
+- Date/Time
+  - Add `data-disabled` CSS selector to DateField - [@suyash5053](https://github.com/suyash5053) - [PR](https://github.com/adobe/react-spectrum/pull/7896)
+  - Exclude `isEditable` from DateSegment render props - [@Persists](https://github.com/Persists) - [PR](https://github.com/adobe/react-spectrum/pull/7961)
+- Separator
+  - Pass aria labeling props in RAC Separator - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/7881)
+- Table
+  - Ensure table typeahead does honor row `textValue` - [@nwidynski](https://github.com/nwidynski) - [PR](https://github.com/adobe/react-spectrum/pull/7857)
+  - Add Table Cell `id` prop back into the Cell types - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7983)
+- Toast
+  - Pass `wrapUpdate` through `useToastState` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/7910)
+  - Export QueuedToast - [@lukpsaxo](https://github.com/lukpsaxo) - [PR](https://github.com/adobe/react-spectrum/pull/7944)
+- Miscellaneous
+  - Update yarn peer dependencies - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7932)
+  - Improve collection update performance - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/7905), [PR](https://github.com/adobe/react-spectrum/pull/8052)
+  - Fix French number parsing ambiguity - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7966)
+  - Restore focus after a Select closes on mobile - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/7904)
+
+
+## Docs
+- Remove defaults from `BoxAlignmentStyleProps` - [@dsmmcken](https://github.com/dsmmcken) - [PR](https://github.com/adobe/react-spectrum/pull/7982)
+- Fix type in CalendarDate docs - [@DarkstarXDD](https://github.com/DarkstarXDD) - [PR](https://github.com/adobe/react-spectrum/pull/8043)
+
+## Under Construction
+
+- Allow to configure the Toast PortalProvider - [@armandabric](https://github.com/armandabric) - [PR](https://github.com/adobe/react-spectrum/pull/7907), [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/7976)
