@@ -16,14 +16,6 @@ import * as t from '@babel/types';
  * - Update key to id (and keep key if rendered inside array.map).
  */
 export default function transformItem(path: NodePath<t.JSXElement>) {
-  // Comment if parent collection not detected
-  // Reason: Item needs to be updated based on its parent collection component.
-  commentIfParentCollectionNotDetected(path);
-
-  // Update key to id
-  // Reason: Standardizing collection item identifiers.
-  updateKeyToId(path);
-
   // Update Items based on parent collection component
   updateComponentWithinCollection(path, {parentComponent: 'Menu', newComponent: 'MenuItem'});
   updateComponentWithinCollection(path, {parentComponent: 'ActionMenu', newComponent: 'MenuItem'});
@@ -31,4 +23,8 @@ export default function transformItem(path: NodePath<t.JSXElement>) {
   updateComponentWithinCollection(path, {parentComponent: 'Breadcrumbs', newComponent: 'Breadcrumb'});
   updateComponentWithinCollection(path, {parentComponent: 'Picker', newComponent: 'PickerItem'});
   updateComponentWithinCollection(path, {parentComponent: 'ComboBox', newComponent: 'ComboBoxItem'});
+
+  // Comment if parent collection not detected
+  // Reason: Item needs to be updated based on its parent collection component.
+  commentIfParentCollectionNotDetected(path);
 } 
