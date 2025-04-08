@@ -164,7 +164,7 @@ export default function transformTable(path: NodePath<t.JSXElement>) {
   commentOutProp(path, {propToComment: 'dragAndDropHooks'});
 
   // Comment out selectionStyle="highlight"
-  commentOutProp(path, {propToComment: 'selectionStyle', propValue: 'highlight'});
+  commentOutProp(path, {propToComment: 'selectionStyle'});
 
   // Comment out unstable expandable rows props
   commentOutProp(path, {propToComment: 'UNSTABLE_allowsExpandableRows'});
