@@ -2,7 +2,7 @@
   "actionbar.actions": "Dejanja",
   "actionbar.actionsAvailable": "Na voljo so dejanja.",
   "actionbar.clearSelection": "Počisti izbor",
-  "actionbar.selected": "{count, plural, =0 {None selected} drugo {# selected}}",
+  "actionbar.selected": "{count, plural, =0 {Nič ni izbrano} other {# izbrano}}",
   "actionbar.selectedAll": "Izbrano vse",
   "breadcrumbs.more": "Več elementov",
   "button.pending": "v teku",

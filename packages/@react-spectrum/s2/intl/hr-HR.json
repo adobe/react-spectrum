@@ -2,7 +2,7 @@
   "actionbar.actions": "Radnje",
   "actionbar.actionsAvailable": "Dostupne radnje.",
   "actionbar.clearSelection": "Poništi odabir",
-  "actionbar.selected": "{broj, množina, =0 {ništa nije odabrano} drugo {# odabrano}}",
+  "actionbar.selected": "{count, plural, =0 {ništa nije odabrano} other {# odabrano}}",
   "actionbar.selectedAll": "Sve odabrano",
   "breadcrumbs.more": "Više stavki",
   "button.pending": "u tijeku",
