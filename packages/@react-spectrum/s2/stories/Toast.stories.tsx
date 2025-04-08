@@ -12,7 +12,6 @@
 
 import {action} from '@storybook/addon-actions';
 import {Button, ButtonGroup, ToastContainer, ToastQueue} from '../src';
-import {Controls, Description, Primary, Stories, Subtitle, Title} from '@storybook/blocks';
 import type {Meta} from '@storybook/react';
 import {SpectrumToast} from '../src/Toast';
 import {UNSTABLE_ToastStateContext} from 'react-aria-components';
@@ -20,19 +19,7 @@ import {useToastState} from 'react-stately';
 
 const meta: Meta<typeof Example> = {
   parameters: {
-    layout: 'centered',
-    docs: {
-      page: () => (
-        <>
-          <Title />
-          <Subtitle />
-          <Description />
-          <Primary />
-          <Controls />
-          <Stories includePrimary={false} />
-        </>
-      )
-    }
+    layout: 'centered'
   },
   tags: ['autodocs'],
   title: 'Toast',
