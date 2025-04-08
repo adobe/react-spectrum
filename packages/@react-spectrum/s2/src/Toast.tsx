@@ -528,7 +528,7 @@ export function SpectrumToast(props: SpectrumToastProps): ReactNode {
         })
       )}>
       <div role="presentation" className={toastBody({isSingle: !isMain || visibleToasts.length <= 1 || isExpanded})}>
-        <ToastContent className={toastContent + (isMain ? ` ${toastCss['toast-content']}` : null)}>
+        <ToastContent className={toastContent + (ctx && isMain ? ` ${toastCss['toast-content']}` : null)}>
           {Icon &&
             <CenterBaseline>
               <Icon />
@@ -543,7 +543,7 @@ export function SpectrumToast(props: SpectrumToastProps): ReactNode {
             styles={style({gridArea: 'expand'})}
             // Make the chevron line up with the toast text, even though there is padding within the button.
             UNSAFE_style={{marginInlineStart: variant === 'neutral' ? -10 : 14}}
-            UNSAFE_className={isMain ? toastCss['toast-expand'] : undefined}
+            UNSAFE_className={ctx && isMain ? toastCss['toast-expand'] : undefined}
             onPress={() => {
               // This button disappears when clicked, so move focus to the toast.
               toastRef.current?.focus();
@@ -565,7 +565,7 @@ export function SpectrumToast(props: SpectrumToastProps): ReactNode {
                 state.close(toast.key);
               }
             }}
-            UNSAFE_className={isMain ? toastCss['toast-action'] : undefined}
+            UNSAFE_className={ctx && isMain ? toastCss['toast-action'] : undefined}
             styles={style({marginStart: 'auto', gridArea: 'action'})}>
             {toast.content.actionLabel}
           </Button>
@@ -573,7 +573,7 @@ export function SpectrumToast(props: SpectrumToastProps): ReactNode {
       </div>
       <CloseButton
         staticColor="white"
-        UNSAFE_className={isMain ? toastCss['toast-close'] : undefined} />
+        UNSAFE_className={ctx && isMain ? toastCss['toast-close'] : undefined} />
     </Toast>
   );
 }
