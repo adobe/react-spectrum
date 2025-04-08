@@ -15,6 +15,7 @@ const table = style({
 
 const tableHeader = style({
   backgroundColor: 'gray-75',
+  borderTopRadius: 'default',
   display: {
     default: 'none',
     sm: '[table-header-group]'
@@ -64,7 +65,7 @@ const tableCell = style({
   borderWidth: 0,
   borderBottomWidth: {
     default: 1,
-    ':is(:last-child > &)': 0,
+    ':is(tbody:last-child > tr:last-child > &)': 0,
     isBorderHidden: 0
   },
   borderStyle: 'solid',

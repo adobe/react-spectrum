@@ -26,13 +26,14 @@ export function StateTable({properties, showOptional, hideSelector, defaultClass
           <TableRow key={index}>
             <TableCell role="rowheader">
               <code className={codeStyle}>
-                <span className={codeStyles.variable}>{prop.name}</span>
+                <span className={codeStyles.property}>{prop.name}</span>
               </code>
             </TableCell>
             {showSelector && <TableCell role="rowheader">
-              <code className={codeStyle}>
+              {/* <code className={codeStyle}>
                 <span className={prop.selector ? codeStyles.string : null}>{prop.selector || '—'}</span>
-              </code>
+              </code> */}
+              {prop.selector ? <Code lang="css">{prop.selector}</Code> : <code className={codeStyle}>—</code>}
             </TableCell>}
             <TableCell>{renderHTMLfromMarkdown(prop.description, {forceInline: false})}</TableCell>
           </TableRow>
