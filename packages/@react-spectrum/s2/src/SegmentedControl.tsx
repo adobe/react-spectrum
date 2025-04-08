@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, DOMRef, DOMRefValue, FocusableRef, Key} from '@react-types/shared';
 import {centerBaseline} from './CenterBaseline';
-import {ContextValue, DEFAULT_SLOT, Provider, TextContext as RACTextContext, SlotProps, ToggleButton, ToggleButtonGroup, ToggleGroupStateContext} from 'react-aria-components';
+import {ContextValue, DEFAULT_SLOT, Provider, TextContext as RACTextContext, SlotProps, ToggleButton, ToggleButtonGroup, ToggleButtonRenderProps, ToggleGroupStateContext} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode, RefObject, useCallback, useContext, useRef} from 'react';
 import {focusRing, space, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -62,7 +62,7 @@ const segmentedControl = style({
   width: 'fit'
 }, getAllowedOverrides());
 
-const controlItem = style({
+const controlItem = style<ToggleButtonRenderProps & {isJustified?: boolean}>({
   ...focusRing(),
   position: 'relative',
   display: 'flex',
@@ -107,7 +107,7 @@ const controlItem = style({
   }
 }, getAllowedOverrides());
 
-const slider = style({
+const slider = style<{isDisabled: boolean}>({
   backgroundColor: {
     default: 'gray-25',
     forcedColors: {
@@ -170,14 +170,17 @@ export const SegmentedControl = /*#__PURE__*/ forwardRef(function SegmentedContr
     if (currentSelectedRef.current) {
       prevRef.current = currentSelectedRef?.current.getBoundingClientRect();
     }
-    
+
     if (onSelectionChange) {
-      onSelectionChange(values.values().next().value);
+      let firstKey = values.values().next().value;
+      if (firstKey != null) {
+        onSelectionChange(firstKey);
+      }
     }
   };
 
   return (
-    <ToggleButtonGroup 
+    <ToggleButtonGroup
       {...props}
       selectedKeys={selectedKey != null ? [selectedKey] : undefined}
       defaultSelectedKeys={defaultSelectedKey != null ? [defaultSelectedKey] : undefined}
@@ -211,7 +214,7 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
     <Provider
       values={[
         [InternalSegmentedControlContext, {register: register, prevRef: props.prevRef, currentSelectedRef: props.currentSelectedRef, isJustified: props.isJustified}]
-      ]}> 
+      ]}>
       {props.children}
     </Provider>
   );
@@ -255,15 +258,15 @@ export const SegmentedControlItem = /*#__PURE__*/ forwardRef(function SegmentedC
   }, [isSelected, reduceMotion]);
 
   return (
-    <ToggleButton 
+    <ToggleButton
       {...props}
-      ref={domRef} 
+      ref={domRef}
       style={props.UNSAFE_style}
       className={renderProps => (props.UNSAFE_className || '') + controlItem({...renderProps, isJustified}, props.styles)} >
       {({isSelected, isPressed, isDisabled}) => (
         <>
           {isSelected && <div className={slider({isDisabled})} ref={currentSelectedRef} />}
-          <Provider 
+          <Provider
             values={[
               [IconContext, {
                 render: centerBaseline({slot: 'icon', styles: style({order: 0, flexShrink: 0})})
