@@ -20,3 +20,4 @@ export * from './events';
 export * from './shadowDOM';
 export * from './types';
 export * from '@react-spectrum/test-utils';
+export * from './mockIntersectionObserver';

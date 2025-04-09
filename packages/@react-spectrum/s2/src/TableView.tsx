@@ -64,7 +64,6 @@ import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from '@react-spectrum/utils';
-import {useLoadMore} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -110,7 +109,7 @@ interface S2TableProps {
 }
 
 // TODO: Note that loadMore and loadingState are now on the Table instead of on the TableBody
-export interface TableViewProps extends Omit<RACTableProps, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks'>, UnsafeStyles, S2TableProps {
+export interface TableViewProps extends Omit<RACTableProps, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks' | 'isLoading' | 'onLoadMore'>, UnsafeStyles, S2TableProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight
 }
@@ -268,7 +267,6 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     overflowMode = 'truncate',
     styles,
     loadingState,
-    onLoadMore,
     onResize: propsOnResize,
     onResizeStart: propsOnResizeStart,
     onResizeEnd: propsOnResizeEnd,
@@ -301,11 +299,6 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
 
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let scrollRef = useRef<HTMLElement | null>(null);
-  let memoedLoadMoreProps = useMemo(() => ({
-    isLoading: isLoading,
-    onLoadMore
-  }), [isLoading, onLoadMore]);
-  useLoadMore(memoedLoadMoreProps, scrollRef);
   let isCheckboxSelection = props.selectionMode === 'multiple' || props.selectionMode === 'single';
 
   let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
@@ -353,7 +346,8 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
             {...otherProps}
             selectedKeys={selectedKeys}
             defaultSelectedKeys={undefined}
-            onSelectionChange={onSelectionChange} />
+            onSelectionChange={onSelectionChange}
+            isLoading={isLoading} />
         </InternalTableContext.Provider>
       </Virtualizer>
       {actionBar}

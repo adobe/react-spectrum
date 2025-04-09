@@ -12,7 +12,7 @@
 
 jest.mock('@react-aria/live-announcer');
 jest.mock('@react-aria/utils/src/scrollIntoView');
-import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render as renderComponent, User, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render as renderComponent, setupIntersectionObserverMock, User, within} from '@react-spectrum/test-utils-internal';
 import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {announce} from '@react-aria/live-announcer';
@@ -144,12 +144,6 @@ function pointerEvent(type, opts) {
 }
 
 export let tableTests = () => {
-  // Temporarily disabling these tests in React 16 because they run into a memory limit and crash.
-  // TODO: investigate.
-  if (parseInt(React.version, 10) <= 16) {
-    return;
-  }
-
   let offsetWidth, offsetHeight;
   let user;
   let testUtilUser = new User({advanceTimer: (time) => jest.advanceTimersByTime(time)});
@@ -4376,6 +4370,11 @@ export let tableTests = () => {
     });
 
     it('should fire onLoadMore when scrolling near the bottom', function () {
+      let observe = jest.fn();
+      let observer = setupIntersectionObserverMock({
+        observe
+      });
+
       let scrollHeightMock = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 4100);
       let items = [];
       for (let i = 1; i <= 100; i++) {
@@ -4401,6 +4400,8 @@ export let tableTests = () => {
 
       let body = tree.getAllByRole('rowgroup')[1];
       let scrollView = body;
+      let sentinel = tree.getByTestId('loadMoreSentinel');
+      expect(observe).toHaveBeenLastCalledWith(sentinel);
 
       let rows = within(body).getAllByRole('row');
       expect(rows).toHaveLength(34); // each row is 41px tall. table is 1000px tall. 25 rows fit. + 1/3 overscan
@@ -4415,6 +4416,7 @@ export let tableTests = () => {
 
       scrollView.scrollTop = 2800;
       fireEvent.scroll(scrollView);
+      act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
       act(() => {jest.runAllTimers();});
 
       expect(onLoadMore).toHaveBeenCalledTimes(1);
@@ -4427,6 +4429,7 @@ export let tableTests = () => {
       let onLoadMore = jest.fn(() => {
         scrollHeightMock = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 2000);
       });
+      let observer = setupIntersectionObserverMock();
 
       let TableMock = (props) => (
         <TableView aria-label="Table">
@@ -4445,7 +4448,8 @@ export let tableTests = () => {
       );
 
       render(<TableMock items={items} />);
-      act(() => jest.runAllTimers());
+      act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
+      act(() => {jest.runAllTimers();});
       expect(onLoadMore).toHaveBeenCalledTimes(1);
       scrollHeightMock.mockReset();
     });
