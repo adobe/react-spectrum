@@ -9,6 +9,7 @@ import {Card, CardPreview, Content, Image, Text} from '@react-spectrum/s2';
 import docs from 'docs:react-aria-components';
 import {Button as VanillaButton} from '../../../../starters/docs/src/Button';
 import {Button as TailwindButton} from '../../../../starters/tailwind/src/Button';
+import {Button as MacroButton} from '../ButtonExample';
 import tailwindDocs from 'docs:../../../../starters/tailwind/src/Button';
 import '../../../../starters/tailwind/src/index.css';
 import '../../../../starters/docs/src/Button.css';
@@ -35,6 +36,13 @@ import {InlineLink} from '../src/types';
     props={['variant', 'isDisabled']}
     initialProps={{children: 'Tailwind'}}
     files={["starters/tailwind/src/Button.tsx", "starters/tailwind/src/index.css"]} />
+  <VisualExample
+    component={MacroButton}
+    docs={docs.exports.Button}
+    links={docs.links}
+    props={['isDisabled']}
+    initialProps={{children: 'Style Macro'}}
+    files={["packages/dev/s2-docs/ButtonExample.tsx"]} />
 </StylingExamples>
 
 ## Features

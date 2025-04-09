@@ -314,6 +314,9 @@ export function Control({name}) {
       if (control.value.name === 'Intl.NumberFormatOptions') {
         return <NumberFormatControl control={control} value={value} onChange={onChange} />;
       }
+      if (name === 'contextualHelp') {
+        return <ContextualHelpControl control={control} value={value} onChange={onChange} />;
+      }
       if (control.value.name === 'ReactNode') {
         return <ChildrenControl control={control} value={value} onChange={onChange} />;
       }
@@ -476,6 +479,14 @@ function ChildrenControl({control, value, onChange}) {
   return <StringControl control={control} value={value} onChange={onChange} />;
 }
 
+function ContextualHelpControl({control, value, onChange}) {
+  return (
+    <Wrapper control={control}>
+      <Switch isSelected={!!value} onChange={v => onChange(v ? <ContextualHelp><Heading>Heeading</Heading><Content>Content</Content></ContextualHelp> : null)} aria-label={control.name} />
+    </Wrapper>
+  );
+}
+
 const exampleStyle = style({
   backgroundColor: 'layer-1',
   marginTop: 20,
@@ -483,6 +494,12 @@ const exampleStyle = style({
   display: 'flex',
   flexDirection: 'column'
 });
+
+const childIndex = {
+  vanilla: 0,
+  tailwind: 1,
+  macro: 2
+}
 
 export function StylingExamples({children}) {
   let [selected, setSelected] = useState<Key>('vanilla');
@@ -492,8 +509,9 @@ export function StylingExamples({children}) {
       <SegmentedControl selectedKey={selected} onSelectionChange={setSelected} styles={style({marginTop: 20, marginStart: 20})}>
         <SegmentedControlItem id="vanilla">Vanilla CSS</SegmentedControlItem>
         <SegmentedControlItem id="tailwind">Tailwind</SegmentedControlItem>
+        {children.length >= 3 ? <SegmentedControlItem id="macro">Style Macro</SegmentedControlItem> : null}
       </SegmentedControl>
-      {children[selected === 'vanilla' ? 0 : 1]}
+      {children[childIndex[selected]]}
     </div>
   );
 }

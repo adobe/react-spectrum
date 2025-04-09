@@ -110,6 +110,22 @@ import UserSettings from '@react-spectrum/s2/icons/UserSettings';
 </Picker>
 ```
 
+### Links
+
+Use the `href` prop on a `<ListBoxItem>` to create a link. See the **client side routing guide** to learn how to integrate with your framework. Link items in a `Picker` are not selectable.
+
+```tsx render hideImports
+"use client";
+import {Picker, PickerItem} from '@react-spectrum/s2';
+
+<Picker label="Project">
+  <PickerItem href="https://example.com/" target="_blank">Create new…</PickerItem>
+  <PickerItem>Proposal</PickerItem>
+  <PickerItem>Budget</PickerItem>
+  <PickerItem>Onboarding</PickerItem>
+</Picker>
+```
+
 ## Selection
 
 Setting a selected option can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `id` prop of an item.
