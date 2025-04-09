@@ -2,7 +2,7 @@
   "actionbar.actions": "Handlinger",
   "actionbar.actionsAvailable": "Tilgængelige handlinger.",
   "actionbar.clearSelection": "Ryd markering",
-  "actionbar.selected": "{count, plural, =0 {ingen valgt} other {# valgt}}",
+  "actionbar.selected": "{count, plural, =0 {Ingen valgt} other {# valgt}}",
   "actionbar.selectedAll": "Alle valgt",
   "breadcrumbs.more": "Flere elementer",
   "button.pending": "afventende",

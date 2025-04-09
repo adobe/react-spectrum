@@ -2,7 +2,7 @@
   "actionbar.actions": "Действия",
   "actionbar.actionsAvailable": "Налични действия.",
   "actionbar.clearSelection": "Изчистване на избора",
-"actionbar.selected": "{count, plural, =0 {Няма избрани} one {# избран} other {# избрани}}",
+  "actionbar.selected": "{count, plural, =0 {Няма избрани} one {# избран} other {# избрани}}",
   "actionbar.selectedAll": "Всички избрани",
   "breadcrumbs.more": "Още елементи",
   "button.pending": "недовършено",
