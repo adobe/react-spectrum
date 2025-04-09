@@ -14,9 +14,10 @@ import {action} from '@storybook/addon-actions';
 import {Button, Checkbox, CheckboxProps, Collection, Key, ListLayout, Menu, MenuTrigger, Popover, Text, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeProps, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import {MyMenuItem} from './utils';
-import React, {ReactNode, useMemo, useState} from 'react';
+import React, {ReactNode} from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_TreeLoadingIndicator} from '../src/Tree';
+import {useTreeData} from '@react-stately/data';
 
 export default {
   title: 'React Aria Components'
@@ -272,8 +273,8 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
         </TreeItemContent>
         <Collection items={childItems}>
           {(item: any) => (
-            <DynamicTreeItem renderLoader={renderLoader} isLoading={props.isLoading} id={item.id} childItems={item.childItems} textValue={item.name} href={props.href}>
-              {item.name}
+            <DynamicTreeItem renderLoader={renderLoader} isLoading={props.isLoading} id={item.key} childItems={item.children} textValue={item.value.name} href={props.href}>
+              {item.value.name}
             </DynamicTreeItem>
           )}
         </Collection>
@@ -518,121 +519,44 @@ export const VirtualizedTree = {
   render: VirtualizedTreeRender
 };
 
-function flattenTree(items) {
-  let flattened = new Map();
-  function traverse(items) {
-    if (!items) {
-      return;
-    }
-    for (let item of items) {
-      flattened.set(item.id, item);
-      if (item.childItems) {
-        traverse(item.childItems);
-      }
-    }
-  }
-  traverse(items);
-  return flattened;
-}
-
-function findParentAndIndex(items, key) {
-  for (let i = 0; i < items.length; i++) {
-    if (items[i].id === key) {
-      return {parent: items, index: i};
-    }
-    
-    if (items[i].childItems) {
-      let result = findParentAndIndex(items[i].childItems, key);
-      if (result) {
-        return result;
-      }
-    }
-  }
-  return null;
-};
-
-function isParentOf(possibleParent, childKey) {
-  if (!possibleParent || !possibleParent.childItems) {
-    return false;
-  }
-  
-  for (let child of possibleParent.childItems) {
-    if (child.id === childKey || isParentOf(child, childKey)) {
-      return true;
-    }
-  }
-  
-  return false;
-}
-
 function TreeDragAndDropExample(args) {
-  let [items, setItems] = useState(rows);
-  let flattenedItems = useMemo(() => flattenTree(items), [items]);
+  let treeData = useTreeData<any>({
+    initialItems: rows,
+    getKey: item => item.id,
+    getChildren: item => item.childItems
+  });
 
   let getItems = (keys) => [...keys].map(key => {
-    let item = flattenedItems.get(key);
+    let item = treeData.getItem(key);
     return {
-      'text/plain': item?.name
+      'text/plain': item?.value.name
     };
   });
 
   let {dragAndDropHooks} = useDragAndDrop({
     getItems,
+    getAllowedDropOperations: () => ['move'],
     onReorder(e) {
-      let draggedKeys = [...e.keys];
-      let targetKey = e.target.key;
-      
-      setItems((prevItems) => {
-        let newItems = JSON.parse(JSON.stringify(prevItems));
-        let targetLocation = findParentAndIndex(newItems, targetKey);
-        if (!targetLocation) {
-          // Target not found
-          return prevItems;
+      console.log(`moving [${[...e.keys].join(',')}] ${e.target.dropPosition} ${e.target.key}`);
+      try {
+        if (e.target.dropPosition === 'before') {
+          treeData.moveBefore(e.target.key, e.keys);
+        } else if (e.target.dropPosition === 'after') {
+          treeData.moveAfter(e.target.key, e.keys);
+        } else {
+          treeData.append(e.target.key, ...[...e.keys].map(key => treeData.getItem(key)?.value));
         }
-        
-        let targetParent = targetLocation.parent;
-        let dropPosition = e.target.dropPosition;
-        let targetIndex = targetLocation.index;
-        
-        // Prevent dragging parent into its own children
-        for (let key of draggedKeys) {
-          if (isParentOf(flattenedItems.get(key), targetKey)) {
-            return prevItems;
-          }
-        }
-        
-        let draggedItems: any[] = [];
-        let adjustIndexOffset = 0;
-        
-        for (let key of draggedKeys) {
-          let location = findParentAndIndex(newItems, key);
-          if (location) {
-            // Adjust target index if we're removing from the same parent
-            // and the removed item is before the target
-            if (location.parent === targetParent && location.index < targetIndex) {
-              adjustIndexOffset++;
-            }
-            
-            let [item] = location.parent.splice(location.index, 1);
-            draggedItems.push(item);
-          }
-        }
-        
-        let insertIndex = dropPosition === 'before' 
-          ? targetIndex - adjustIndexOffset
-          : targetIndex - adjustIndexOffset + 1;
-        
-        targetParent.splice(insertIndex, 0, ...draggedItems);        
-        return newItems;
-      });
+      } catch (error) {
+        console.error(error);
+      }
     }
   });
 
   return (
-    <Tree dragAndDropHooks={dragAndDropHooks} {...args} className={styles.tree} aria-label="Tree with drag and drop" items={items}>
+    <Tree dragAndDropHooks={dragAndDropHooks} {...args} className={styles.tree} aria-label="Tree with drag and drop" items={treeData.items}>
       {(item: any) => (
-        <DynamicTreeItem id={item.id} childItems={item.childItems} textValue={item.name}>
-          {item.name}
+        <DynamicTreeItem id={item.key} childItems={item.children} textValue={item.value.name}>
+          {item.value.name}
         </DynamicTreeItem>
       )}
     </Tree>
