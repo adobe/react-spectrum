@@ -394,6 +394,9 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
   let dragHooksProvided = useRef(hasDragHooks);
   let dropHooksProvided = useRef(hasDropHooks);
   useEffect(() => {
+    if (process.env.NODE_ENV === 'production') {
+      return;
+    }
     if (dragHooksProvided.current !== hasDragHooks) {
       console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
     }
@@ -722,7 +725,7 @@ export const Column = /*#__PURE__*/ createLeafComponent('column', (props: Column
   let isResizing = false;
   if (layoutState) {
     isResizing = layoutState.resizingColumn === column.key;
-  } else {
+  } else if (process.env.NODE_ENV !== 'production') {
     for (let prop in ['width', 'defaultWidth', 'minWidth', 'maxWidth']) {
       if (prop in column.props) {
         console.warn(`The ${prop} prop on a <Column> only applies when a <Table> is wrapped in a <ResizableTableContainer>. If you aren't using column resizing, you can set the width of a column with CSS.`);
@@ -1088,7 +1091,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
 
     let dragButtonRef = useRef<HTMLButtonElement>(null);
     useEffect(() => {
-      if (dragState && !dragButtonRef.current) {
+      if (dragState && !dragButtonRef.current && process.env.NODE_ENV !== 'production') {
         console.warn('Draggable items in a Table must contain a <Button slot="drag"> element so that keyboard and screen reader users can drag them.');
       }
     // eslint-disable-next-line
@@ -1210,6 +1213,8 @@ export interface CellRenderProps {
 }
 
 export interface CellProps extends RenderProps<CellRenderProps> {
+  /** The unique id of the cell. */
+  id?: Key,
   /** A string representation of the cell's contents, used for features like typeahead. */
   textValue?: string,
   /** Indicates how many columns the data cell spans. */

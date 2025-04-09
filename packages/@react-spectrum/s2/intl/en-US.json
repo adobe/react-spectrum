@@ -18,6 +18,8 @@
   "label.(required)": "(required)",
   "label.(optional)": "(optional)",
   "menu.moreActions": "More actions",
+  "notificationbadge.plus": "{notifications}+",
+  "notificationbadge.indicatorOnly": "New activity",
   "picker.placeholder": "Select…",
   "slider.minimum": "Minimum",
   "slider.maximum": "Maximum",

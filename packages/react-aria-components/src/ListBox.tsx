@@ -159,6 +159,9 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
   let dragHooksProvided = useRef(isListDraggable);
   let dropHooksProvided = useRef(isListDroppable);
   useEffect(() => {
+    if (process.env.NODE_ENV === 'production') {
+      return;
+    }
     if (dragHooksProvided.current !== isListDraggable) {
       console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
     }
@@ -397,7 +400,7 @@ export const ListBoxItem = /*#__PURE__*/ createLeafComponent('item', function Li
   });
 
   useEffect(() => {
-    if (!item.textValue) {
+    if (!item.textValue && process.env.NODE_ENV !== 'production') {
       console.warn('A `textValue` prop is required for <ListBoxItem> elements with non-plain text children in order to support accessibility features such as type to select.');
     }
   }, [item.textValue]);

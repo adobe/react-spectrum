@@ -123,6 +123,9 @@ export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTrigge
     },
     onPress(e) {
       if (e.pointerType === 'touch' && !isDisabled) {
+        // Ensure trigger has focus before opening the menu so it can be restored by FocusScope on close.
+        focusWithoutScrolling(e.target as FocusableElement);
+
         state.toggle();
       }
     }

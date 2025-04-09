@@ -337,6 +337,28 @@ describe('Table', () => {
     }
   });
 
+  it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
+    let onSelectionChange = jest.fn();
+    let {getAllByRole} = renderTable({
+      tableProps: {selectionMode: 'multiple', escapeKeyBehavior: 'none', onSelectionChange}
+    });
+
+    let checkbox1 = getAllByRole('checkbox')[1];
+    await user.click(checkbox1);
+    expect(checkbox1).toBeChecked();
+    expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['1']));
+
+    let checkbox2 = getAllByRole('checkbox')[2];
+    await user.click(checkbox2);
+    expect(checkbox2).toBeChecked();
+    expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['1', '2']));
+
+    await user.keyboard('{Escape}');
+    expect(onSelectionChange).toHaveBeenCalledTimes(2);
+    expect(checkbox1).toBeChecked();
+    expect(checkbox2).toBeChecked();
+  });
+
   it('should not render checkboxes for selection with selectionBehavior=replace', async () => {
     let {getAllByRole} = renderTable({
       tableProps: {

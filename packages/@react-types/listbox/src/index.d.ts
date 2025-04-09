@@ -20,7 +20,17 @@ export interface ListBoxProps<T> extends CollectionBase<T>, MultipleSelection, F
   shouldFocusWrap?: boolean
 }
 
-interface AriaListBoxPropsBase<T> extends ListBoxProps<T>, DOMProps, AriaLabelingProps {}
+interface AriaListBoxPropsBase<T> extends ListBoxProps<T>, DOMProps, AriaLabelingProps {
+  /**
+   * Whether pressing the escape key should clear selection in the listbox or not.
+   *
+   * Most experiences should not modify this option as it eliminates a keyboard user's ability to
+   * easily clear selection. Only use if the escape key is being handled externally or should not
+   * trigger selection clearing contextually.
+   * @default 'clearSelection'
+   */
+  escapeKeyBehavior?: 'clearSelection' | 'none'
+}
 export interface AriaListBoxProps<T> extends AriaListBoxPropsBase<T> {
   /**
    * An optional visual label for the listbox.

@@ -36,7 +36,8 @@ ListBoxExample.story = {
   args: {
     selectionMode: 'none',
     selectionBehavior: 'toggle',
-    shouldFocusOnHover: false
+    shouldFocusOnHover: false,
+    escapeKeyBehavior: 'clearSelection'
   },
   argTypes: {
     selectionMode: {
@@ -46,6 +47,10 @@ ListBoxExample.story = {
     selectionBehavior: {
       control: 'radio',
       options: ['toggle', 'replace']
+    },
+    escapeKeyBehavior: {
+      control: 'radio',
+      options: ['clearSelection', 'none']
     }
   },
   parameters: {

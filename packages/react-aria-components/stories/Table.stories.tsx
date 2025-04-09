@@ -100,7 +100,7 @@ export const ReorderableTableExample = () => (
   </>
 );
 
-export const TableExample = () => {
+const TableExample = (args) => {
   let list = useListData({
     initialItems: [
       {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
@@ -111,10 +111,11 @@ export const TableExample = () => {
   });
 
   return (
-    <ResizableTableContainer style={{width: 300, overflow: 'auto'}}>
-      <Table aria-label="Example table">
+    <ResizableTableContainer style={{width: 400, overflow: 'auto'}}>
+      <Table aria-label="Example table" {...args}>
         <TableHeader>
-          <MyColumn isRowHeader defaultWidth="50%">Name</MyColumn>
+          <Column width={30} minWidth={0}><MyCheckbox slot="selection" /></Column>
+          <MyColumn isRowHeader defaultWidth="30%">Name</MyColumn>
           <MyColumn>Type</MyColumn>
           <MyColumn>Date Modified</MyColumn>
           <MyColumn>Actions</MyColumn>
@@ -122,6 +123,7 @@ export const TableExample = () => {
         <TableBody items={list.items}>
           {item => (
             <Row>
+              <Cell><MyCheckbox slot="selection" /></Cell>
               <Cell>{item.name}</Cell>
               <Cell>{item.type}</Cell>
               <Cell>{item.date}</Cell>
@@ -172,6 +174,29 @@ export const TableExample = () => {
       </Table>
     </ResizableTableContainer>
   );
+};
+
+export const TableExampleStory = {
+  render: TableExample,
+  args: {
+    selectionMode: 'none',
+    selectionBehavior: 'toggle',
+    escapeKeyBehavior: 'clearSelection'
+  },
+  argTypes: {
+    selectionMode: {
+      control: 'radio',
+      options: ['none', 'single', 'multiple']
+    },
+    selectionBehavior: {
+      control: 'radio',
+      options: ['toggle', 'replace']
+    },
+    escapeKeyBehavior: {
+      control: 'radio',
+      options: ['clearSelection', 'none']
+    }
+  }
 };
 
 let columns = [

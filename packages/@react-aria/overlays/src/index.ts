@@ -19,7 +19,7 @@ export {ariaHideOutside} from './ariaHideOutside';
 export {usePopover} from './usePopover';
 export {useModalOverlay} from './useModalOverlay';
 export {Overlay, useOverlayFocusContain} from './Overlay';
-export {UNSTABLE_PortalProvider, useUNSTABLE_PortalContext} from './PortalProvider';
+export {UNSAFE_PortalProvider, useUNSAFE_PortalContext} from './PortalProvider';
 
 export type {AriaPositionProps, PositionAria} from './useOverlayPosition';
 export type {AriaOverlayProps, OverlayAria} from './useOverlay';
@@ -30,3 +30,4 @@ export type {AriaPopoverProps, PopoverAria} from './usePopover';
 export type {AriaModalOverlayProps, ModalOverlayAria} from './useModalOverlay';
 export type {OverlayProps} from './Overlay';
 export type {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
+export type {PortalProviderProps, PortalProviderContextValue} from './PortalProvider';
