@@ -2,7 +2,7 @@
   "actionbar.actions": "Handlinger",
   "actionbar.actionsAvailable": "Tilgjengelige handlinger.",
   "actionbar.clearSelection": "Tøm utvalg",
-  "actionbar.selected": "å{count, plural, =0 {Ingen valgt} other {# valgt}}",
+  "actionbar.selected": "{count, plural, =0 {Ingen valgt} other {# valgt}}",
   "actionbar.selectedAll": "Alle er valgt",
   "breadcrumbs.more": "Flere elementer",
   "button.pending": "avventer",
