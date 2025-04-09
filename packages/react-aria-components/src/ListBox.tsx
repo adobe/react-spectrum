@@ -248,9 +248,8 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
   // dropdown opens but the current state gives the user more freedom as to whether they would like to pre-fetch or not
   useLoadMore(memoedLoadMoreProps, listBoxRef);
 
-  // TODO: add loading indicator to ListBox so user can render that when loading. Think about if completely empty state
-  // do we leave it up to the user to setup the two states for empty and empty + loading? Do we add a data attibute/prop/renderprop to ListBox
-  // for isLoading
+  // TODO: Think about if completely empty state. Do we leave it up to the user to setup the two states for empty and empty + loading?
+  // Do we add a data attibute/prop/renderprop to ListBox for isLoading
   return (
     <FocusScope>
       <div

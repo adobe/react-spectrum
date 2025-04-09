@@ -49,7 +49,6 @@ export interface ComboBoxRenderProps {
    */
   isRequired: boolean,
   // TODO: do we want loadingState for RAC Combobox or just S2
-  // TODO: move types somewhere common later
   /**
    * Whether the combobox is currently loading items.
    * @selector [data-loading]

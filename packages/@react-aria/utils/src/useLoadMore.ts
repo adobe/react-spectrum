@@ -51,7 +51,6 @@ export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | n
   let triggerLoadMore = useEffectEvent((entries: IntersectionObserverEntry[]) => {
     // Use "isIntersecting" over an equality check of 0 since it seems like there is cases where
     // a intersection ratio of 0 can be reported when isIntersecting is actually true
-    // TODO: firefox seems to gather multiple entries, will need to reproduce in a base repro
     for (let entry of entries) {
       if (entry.isIntersecting && !isLoading && !(collection && collectionAwaitingUpdate.current) && onLoadMore) {
         onLoadMore();

@@ -60,7 +60,6 @@ export interface SelectRenderProps {
    * @selector [data-required]
    */
   isRequired: boolean,
-  // TODO: move types somewhere common later
   /**
    * Whether the select is currently loading items.
    * @selector [data-loading]

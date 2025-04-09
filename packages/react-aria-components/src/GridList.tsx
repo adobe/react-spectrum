@@ -528,7 +528,6 @@ export const UNSTABLE_GridListLoadingIndicator = createLeafComponent('loader', f
   return (
     <div
       role="row"
-      // TODO: do we need any of the other row props from useGridListItem? Rather not grab too much if this is all we need
       aria-rowindex={isVirtualized ? item.index + 1 : undefined}
       ref={ref}
       {...mergeProps(filterDOMProps(props as any))}
