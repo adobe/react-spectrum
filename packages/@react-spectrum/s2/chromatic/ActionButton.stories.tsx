@@ -11,7 +11,7 @@
  */
 
 import {ActionButton, Text} from '../src';
-import {Fonts, UnsafeClassName, NotificationBadges} from '../stories/ActionButton.stories';
+import {Fonts, NotificationBadges, UnsafeClassName} from '../stories/ActionButton.stories';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import type {Meta} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
