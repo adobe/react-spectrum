@@ -81,7 +81,7 @@ export {TreeView, TreeViewItem, TreeViewItemContent} from './TreeView';
 
 export {pressScale} from './pressScale';
 
-export {Autocomplete, AutocompleteContext, AutocompleteStateContext} from 'react-aria-components';
+export {Autocomplete} from 'react-aria-components';
 export {Collection} from 'react-aria-components';
 export {FileTrigger} from 'react-aria-components';
 
