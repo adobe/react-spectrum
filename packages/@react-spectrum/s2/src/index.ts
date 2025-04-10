@@ -81,6 +81,7 @@ export {TreeView, TreeViewItem, TreeViewItemContent} from './TreeView';
 
 export {pressScale} from './pressScale';
 
+export {Autocomplete} from 'react-aria-components';
 export {Collection} from 'react-aria-components';
 export {FileTrigger} from 'react-aria-components';
 
@@ -148,4 +149,4 @@ export type {ToggleButtonProps} from './ToggleButton';
 export type {ToggleButtonGroupProps} from './ToggleButtonGroup';
 export type {TooltipProps} from './Tooltip';
 export type {TreeViewProps, TreeViewItemProps, TreeViewItemContentProps} from './TreeView';
-export type {FileTriggerProps, TooltipTriggerComponentProps as TooltipTriggerProps, SortDescriptor} from 'react-aria-components';
+export type {AutocompleteProps, FileTriggerProps, TooltipTriggerComponentProps as TooltipTriggerProps, SortDescriptor} from 'react-aria-components';

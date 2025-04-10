@@ -20,6 +20,7 @@ import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, Rea
 import {TextContext} from './Text';
 import {useIsSSR} from '@react-aria-nutrient/ssr';
 import {useObjectRef} from '@react-aria-nutrient/utils';
+import {useUNSAFE_PortalContext} from '@react-aria-nutrient/overlays';
 
 const ToastStateContext = createContext<ToastState<any> | null>(null);
 
@@ -42,12 +43,7 @@ export interface ToastRegionProps<T> extends AriaToastRegionProps, StyleRenderPr
   /** The queue of toasts to display. */
   queue: ToastQueue<T>,
   /** A function to render each toast. */
-  children: (renderProps: {toast: QueuedToast<T>}) => ReactElement,
-  /**
-   * The container element in which the toast region portal will be placed.
-   * @default document.body
-   */
-  portalContainer?: Element
+  children: (renderProps: {toast: QueuedToast<T>}) => ReactElement
 }
 
 /**
@@ -71,7 +67,14 @@ export const ToastRegion = /*#__PURE__*/ (forwardRef as forwardRefType)(function
     }
   });
 
-  let {portalContainer = isSSR ? null : document.body} = props;
+  let portalContainer;
+  let {getContainer} = useUNSAFE_PortalContext();
+  if (!isSSR) {
+    portalContainer = document.body;
+    if (getContainer) {
+      portalContainer = getContainer();
+    }
+  }
 
   let region = (
     <ToastStateContext.Provider value={state}>

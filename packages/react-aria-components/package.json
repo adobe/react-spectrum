@@ -45,6 +45,7 @@
     "@react-aria-nutrient/focus": "^3.20.1",
     "@react-aria-nutrient/interactions": "^3.24.1",
     "@react-aria-nutrient/live-announcer": "^3.4.1",
+    "@react-aria-nutrient/overlays": "^3.26.1",
     "@react-aria-nutrient/react-aria": "^3.38.1",
     "@react-aria-nutrient/ssr": "^3.9.7",
     "@react-aria-nutrient/toolbar": "3.0.0-beta.14",
