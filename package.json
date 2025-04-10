@@ -247,6 +247,7 @@
         "packages/@react-spectrum/tree/**",
         "packages/@react-spectrum/color/src/*.tsx",
         "packages/@react-spectrum/s2/**/*.{js,ts,tsx}",
+        "packages/@react-spectrum/s2/stories/**",
         ".storybook-s2/**"
       ]
     },
