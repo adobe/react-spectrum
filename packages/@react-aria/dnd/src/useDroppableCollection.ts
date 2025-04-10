@@ -258,18 +258,25 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
         // inserted item. If selection is disabled, then also show the focus ring so there
         // is some indication that items were added.
         if (state.selectionManager.focusedKey === prevFocusedKey) {
-          let first = newKeys.keys().next().value;
-          let item = state.collection.getItem(first);
+          let first: Key | null | undefined = newKeys.keys().next().value;
+          if (first != null) {
+            let item = state.collection.getItem(first);
 
-          // If this is a cell, focus the parent row.
-          if (item?.type === 'cell') {
-            first = item.parentKey;
-          }
+            // If this is a cell, focus the parent row.
+            // eslint-disable-next-line max-depth
+            if (item?.type === 'cell') {
+              first = item.parentKey;
+            }
 
-          state.selectionManager.setFocusedKey(first);
+            // eslint-disable-next-line max-depth
+            if (first != null) {
+              state.selectionManager.setFocusedKey(first);
+            }
 
-          if (state.selectionManager.selectionMode === 'none') {
-            setInteractionModality('keyboard');
+            // eslint-disable-next-line max-depth
+            if (state.selectionManager.selectionMode === 'none') {
+              setInteractionModality('keyboard');
+            }
           }
         }
       } else if (
@@ -335,7 +342,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
     }, 50);
   }, [localState, defaultOnDrop, ref, updateFocusAfterDrop]);
 
-   
+
   useEffect(() => {
     return () => {
       if (droppingState.current) {
