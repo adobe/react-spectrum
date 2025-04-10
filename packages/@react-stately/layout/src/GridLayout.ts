@@ -181,8 +181,8 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
     this.contentSize = new Size(this.virtualizer!.visibleRect.width, y);
   }
 
-  getLayoutInfo(key: Key): LayoutInfo {
-    return this.layoutInfos.get(key)!;
+  getLayoutInfo(key: Key): LayoutInfo | null {
+    return this.layoutInfos.get(key) || null;
   }
 
   getContentSize(): Size {
