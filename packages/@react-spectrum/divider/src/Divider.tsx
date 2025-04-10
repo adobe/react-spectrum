@@ -15,7 +15,7 @@ import {DOMRef} from '@react-types/shared';
 import React, {ElementType} from 'react';
 import {SpectrumDividerProps} from '@react-types/divider';
 import styles from '@adobe/spectrum-css-temp/components/rule/vars.css';
-import {useSeparator} from '@react-aria/separator';
+import {useSeparator} from '@react-aria-nutrient/separator';
 
 let sizeMap = {
   S: 'small',

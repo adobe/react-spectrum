@@ -14,9 +14,9 @@ import {AriaCheckboxGroupProps} from '@react-types/checkbox';
 import {checkboxGroupData} from './utils';
 import {CheckboxGroupState} from '@react-stately/checkbox';
 import {DOMAttributes, ValidationResult} from '@react-types/shared';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {useField} from '@react-aria/label';
-import {useFocusWithin} from '@react-aria/interactions';
+import {filterDOMProps, mergeProps} from '@react-aria-nutrient/utils';
+import {useField} from '@react-aria-nutrient/label';
+import {useFocusWithin} from '@react-aria-nutrient/interactions';
 
 export interface CheckboxGroupAria extends ValidationResult {
   /** Props for the checkbox group wrapper element. */

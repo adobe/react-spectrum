@@ -10,17 +10,17 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-aria/gridlist';
+import docs from 'docs:@react-aria-nutrient/gridlist';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import collectionsDocs from 'docs:@react-types/shared/src/collections.d.ts';
 import selectionDocs from 'docs:@react-stately/selection';
 import statelyDocs from 'docs:@react-stately/list';
-import focusDocs from 'docs:@react-aria/focus';
-import checkboxDocs from 'docs:@react-aria/checkbox';
-import utilsDocs from 'docs:@react-aria/utils';
+import focusDocs from 'docs:@react-aria-nutrient/focus';
+import checkboxDocs from 'docs:@react-aria-nutrient/checkbox';
+import utilsDocs from 'docs:@react-aria-nutrient/utils';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
-import packageData from '@react-aria/gridlist/package.json';
+import packageData from '@react-aria-nutrient/gridlist/package.json';
 import Anatomy from './anatomy.svg';
 
 ---
@@ -125,10 +125,10 @@ You may notice the extra `<div>` with `gridCellProps` in our example. This is ne
 
 ```tsx example export=true render=false
 import {useListState} from '@react-stately/list';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import {useRef} from 'react';
-import {useFocusRing} from '@react-aria/focus';
-import {useGridList, useGridListItem} from '@react-aria/gridlist';
+import {useFocusRing} from '@react-aria-nutrient/focus';
+import {useGridList, useGridListItem} from '@react-aria-nutrient/gridlist';
 
 function List(props) {
   let state = useListState(props);
@@ -274,7 +274,7 @@ checks or unchecks the checkbox, the row will be added or removed from the List'
 The `Checkbox` component used in this example is independent and can be used separately from `useGridList`. The code is available below.
 
 ```tsx example export=true render=false
-import {useGridListSelectionCheckbox} from '@react-aria/gridlist';
+import {useGridListSelectionCheckbox} from '@react-aria-nutrient/gridlist';
 
 // Reuse the Checkbox from your component library. See below for details.
 import {Checkbox} from 'your-component-library';
@@ -320,7 +320,7 @@ The `Checkbox` component is used in the above example for row selection. It is b
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import {useCheckbox} from '@react-aria/checkbox';
+import {useCheckbox} from '@react-aria-nutrient/checkbox';
 import {useToggleState} from '@react-stately/toggle';
 
 function Checkbox(props) {
@@ -344,7 +344,7 @@ The `Button` component is used in the above example to show how rows can contain
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import {useButton} from '@react-aria/button';
+import {useButton} from '@react-aria-nutrient/button';
 
 function Button(props) {
   let ref = React.useRef(null);

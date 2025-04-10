@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-jest.mock('@react-aria/live-announcer');
-import {announce} from '@react-aria/live-announcer';
+jest.mock('@react-aria-nutrient/live-announcer');
+import {announce} from '@react-aria-nutrient/live-announcer';
 import {Cell, Column, Row, TableBody, TableHeader, useTableState} from '@react-stately/table';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React, {useRef} from 'react';

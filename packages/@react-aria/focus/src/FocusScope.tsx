@@ -21,9 +21,9 @@ import {
   isTabbable,
   ShadowTreeWalker,
   useLayoutEffect
-} from '@react-aria/utils';
+} from '@react-aria-nutrient/utils';
 import {FocusableElement, RefObject} from '@react-types/shared';
-import {focusSafely, getInteractionModality} from '@react-aria/interactions';
+import {focusSafely, getInteractionModality} from '@react-aria-nutrient/interactions';
 import {isElementVisible} from './isElementVisible';
 import React, {ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 

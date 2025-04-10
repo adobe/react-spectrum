@@ -25,7 +25,7 @@ import {SkeletonContext} from './Skeleton';
 import {Text, TextContext} from './Content';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useFormProps} from './Form';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface ButtonStyleProps {

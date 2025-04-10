@@ -24,18 +24,18 @@ import {FocusableRef} from '@react-types/shared';
 import {Input} from './Input';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import {RangeCalendar} from '@react-spectrum/calendar';
 import React, {ReactElement, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TimeField} from './TimeField';
-import {useDateRangePicker} from '@react-aria/datepicker';
+import {useDateRangePicker} from '@react-aria-nutrient/datepicker';
 import {useDateRangePickerState} from '@react-stately/datepicker';
 import {useFocusManagerRef, useFormatHelpText, useFormattedDateWidth, useVisibleMonths} from './utils';
-import {useFocusRing} from '@react-aria/focus';
+import {useFocusRing} from '@react-aria-nutrient/focus';
 import {useFormProps} from '@react-spectrum/form';
-import {useHover} from '@react-aria/interactions';
-import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useHover} from '@react-aria-nutrient/interactions';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 /**

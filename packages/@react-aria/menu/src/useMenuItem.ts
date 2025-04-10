@@ -11,13 +11,13 @@
  */
 
 import {DOMAttributes, DOMProps, FocusableElement, FocusEvents, HoverEvents, Key, KeyboardEvents, PressEvent, PressEvents, RefObject, RouterOptions} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useLinkProps, useRouter, useSlotId} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useLinkProps, useRouter, useSlotId} from '@react-aria-nutrient/utils';
 import {getItemCount} from '@react-stately/collections';
-import {isFocusVisible, useFocus, useHover, useKeyboard, usePress} from '@react-aria/interactions';
+import {isFocusVisible, useFocus, useHover, useKeyboard, usePress} from '@react-aria-nutrient/interactions';
 import {menuData} from './utils';
 import {SelectionManager} from '@react-stately/selection';
 import {TreeState} from '@react-stately/tree';
-import {useSelectableItem} from '@react-aria/selection';
+import {useSelectableItem} from '@react-aria-nutrient/selection';
 
 export interface MenuItemAria {
   /** Props for the menu item element. */

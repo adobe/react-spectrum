@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, parseAbsolute, parseAbsoluteToLocal, parseDate, parseDateTime, parseZonedDateTime, today, toZoned} from '@internationalized/date';
-import {chain} from '@react-aria/utils';
+import {chain} from '@react-aria-nutrient/utils';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
@@ -26,7 +26,7 @@ import {Item, Picker, Section} from '@react-spectrum/picker';
 import {Key} from '@react-types/shared';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 
 export type DatePickerStory = ComponentStoryObj<typeof DatePicker>;
 const BlockDecorator = storyFn => <div>{storyFn()}</div>;

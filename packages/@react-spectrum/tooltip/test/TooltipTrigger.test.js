@@ -16,7 +16,7 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {Tooltip, TooltipTrigger} from '../';
-import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
+import {UNSTABLE_PortalProvider} from '@react-aria-nutrient/overlays';
 import userEvent from '@testing-library/user-event';
 
 // Sync with useTooltipTriggerState.ts

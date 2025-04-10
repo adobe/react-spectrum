@@ -11,14 +11,14 @@
  */
 
 import {AriaLabelingProps, CollectionBase, DOMAttributes, DOMProps, HelpTextProps, Key, KeyboardDelegate, LabelableProps, MultipleSelection, RefObject, SelectionBehavior} from '@react-types/shared';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {ListKeyboardDelegate} from '@react-aria/selection';
+import {filterDOMProps, mergeProps} from '@react-aria-nutrient/utils';
+import {ListKeyboardDelegate} from '@react-aria-nutrient/selection';
 import type {ListState} from '@react-stately/list';
 import {ReactNode, useEffect, useRef, useState} from 'react';
-import {useField} from '@react-aria/label';
-import {useFocusWithin} from '@react-aria/interactions';
-import {useGridList} from '@react-aria/gridlist';
-import {useLocale} from '@react-aria/i18n';
+import {useField} from '@react-aria-nutrient/label';
+import {useFocusWithin} from '@react-aria-nutrient/interactions';
+import {useGridList} from '@react-aria-nutrient/gridlist';
+import {useLocale} from '@react-aria-nutrient/i18n';
 
 export interface TagGroupAria {
   /** Props for the tag grouping element. */

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-jest.mock('@react-aria/utils/src/scrollIntoView');
+jest.mock('@react-aria-nutrient/utils/src/scrollIntoView');
 import {act, fireEvent, mockClickDefault, pointerMap, render, simulateDesktop, within} from '@react-spectrum/test-utils-internal';
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
@@ -23,11 +23,11 @@ import {Item, Picker, Section} from '../src';
 import Paste from '@spectrum-icons/workflow/Paste';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {scrollIntoView} from '@react-aria/utils';
+import {scrollIntoView} from '@react-aria-nutrient/utils';
 import {states} from './data';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
-import {User} from '@react-aria/test-utils';
+import {User} from '@react-aria-nutrient/test-utils';
 import userEvent from '@testing-library/user-event';
 
 describe('Picker', function () {

@@ -13,8 +13,8 @@
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
-import {FocusRing} from '@react-aria/focus';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
+import {FocusRing} from '@react-aria-nutrient/focus';
 import {Grid} from '@react-spectrum/layout';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 // @ts-ignore
@@ -22,7 +22,7 @@ import intlMessages from '../intl/*.json';
 import React, {ReactNode, useEffect, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/inlinealert/vars.css';
 import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 export interface SpectrumInlineAlertProps extends DOMProps, StyleProps {

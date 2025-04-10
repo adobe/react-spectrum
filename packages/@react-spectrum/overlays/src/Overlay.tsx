@@ -15,7 +15,7 @@ import {OpenTransition} from './OpenTransition';
 import {OverlayProps} from '@react-types/overlays';
 import {Provider} from '@react-spectrum/provider';
 import React, {useCallback, useState} from 'react';
-import {Overlay as ReactAriaOverlay} from '@react-aria/overlays';
+import {Overlay as ReactAriaOverlay} from '@react-aria-nutrient/overlays';
 
 export const Overlay = React.forwardRef(function Overlay(props: OverlayProps, ref: DOMRef<HTMLDivElement>) {
   let {

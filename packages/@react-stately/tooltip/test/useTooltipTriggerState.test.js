@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, render} from '@react-spectrum/test-utils-internal';
-import {mergeProps, useTooltip, useTooltipTrigger} from 'react-aria';
+import {mergeProps, useTooltip, useTooltipTrigger} from '@react-aria-nutrient/react-aria';
 import React from 'react';
 import {useTooltipTriggerState} from '../src';
 

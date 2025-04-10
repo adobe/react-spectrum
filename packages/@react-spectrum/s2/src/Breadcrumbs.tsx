@@ -23,7 +23,7 @@ import {
   Provider,
   Breadcrumbs as RACBreadcrumbs
 } from 'react-aria-components';
-import {AriaBreadcrumbItemProps, useLocale} from 'react-aria';
+import {AriaBreadcrumbItemProps, useLocale} from '@react-aria-nutrient/react-aria';
 import ChevronIcon from '../ui-icons/Chevron';
 import {Collection, DOMRef, DOMRefValue, LinkDOMProps, Node} from '@react-types/shared';
 import {createContext, forwardRef, Fragment, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
@@ -31,13 +31,13 @@ import {focusRing, size, style} from '../style' with { type: 'macro' };
 import FolderIcon from '../s2wf-icons/S2_Icon_FolderBreadcrumb_20_N.svg';
 import {forwardRefType} from './types';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {inertValue, useLayoutEffect} from '@react-aria/utils';
+import {inertValue, useLayoutEffect} from '@react-aria-nutrient/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Menu, MenuItem, MenuTrigger} from './Menu';
 import {Text} from './Content';
 import {useDOMRef, useResizeObserver} from '@react-spectrum/utils';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 const MIN_VISIBLE_ITEMS = 1;

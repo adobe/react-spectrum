@@ -11,14 +11,14 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
-import {FocusRing} from '@react-aria/focus';
+import {FocusRing} from '@react-aria-nutrient/focus';
 import React from 'react';
 import {SliderProps, SliderThumbProps} from '@react-types/slider';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import styles from './story-slider.css';
-import {useNumberFormatter} from '@react-aria/i18n';
-import {useSlider, useSliderThumb} from '@react-aria/slider';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
+import {useNumberFormatter} from '@react-aria-nutrient/i18n';
+import {useSlider, useSliderThumb} from '@react-aria-nutrient/slider';
+import {VisuallyHidden} from '@react-aria-nutrient/visually-hidden';
 
 
 interface StoryMultiSliderProps extends SliderProps {

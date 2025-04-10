@@ -11,14 +11,14 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {AriaListBoxOptions} from '@react-aria/listbox';
+import {AriaListBoxOptions} from '@react-aria-nutrient/listbox';
 import {AriaSearchAutocompleteProps} from '@react-types/autocomplete';
 import {ComboBoxState} from '@react-stately/combobox';
 import {DOMAttributes, KeyboardDelegate, LayoutDelegate, RefObject, ValidationResult} from '@react-types/shared';
 import {InputHTMLAttributes} from 'react';
-import {mergeProps} from '@react-aria/utils';
-import {useComboBox} from '@react-aria/combobox';
-import {useSearchField} from '@react-aria/searchfield';
+import {mergeProps} from '@react-aria-nutrient/utils';
+import {useComboBox} from '@react-aria-nutrient/combobox';
+import {useSearchField} from '@react-aria-nutrient/searchfield';
 
 export interface SearchAutocompleteAria<T> extends ValidationResult {
   /** Props for the label element. */

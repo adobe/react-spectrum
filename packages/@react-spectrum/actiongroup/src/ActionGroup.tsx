@@ -22,19 +22,19 @@ import {
   useSlotProps,
   useStyleProps
 } from '@react-spectrum/utils';
-import {filterDOMProps, mergeProps, useId, useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
-import {FocusScope} from '@react-aria/focus';
+import {filterDOMProps, mergeProps, useId, useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria-nutrient/utils';
+import {FocusScope} from '@react-aria-nutrient/focus';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {ListState, useListState} from '@react-stately/list';
 import More from '@spectrum-icons/workflow/More';
-import {PressResponder, useHover} from '@react-aria/interactions';
+import {PressResponder, useHover} from '@react-aria-nutrient/interactions';
 import {Provider, useProviderProps} from '@react-spectrum/provider';
 import React, {forwardRef, ReactElement, ReactNode, useCallback, useMemo, useRef, useState} from 'react';
 import {SpectrumActionGroupProps} from '@react-types/actiongroup';
 import styles from '@adobe/spectrum-css-temp/components/actiongroup/vars.css';
 import {Text} from '@react-spectrum/text';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
-import {useActionGroup, useActionGroupItem} from '@react-aria/actiongroup';
+import {useActionGroup, useActionGroupItem} from '@react-aria-nutrient/actiongroup';
 
 
 /**

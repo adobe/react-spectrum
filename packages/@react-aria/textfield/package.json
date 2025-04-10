@@ -1,5 +1,5 @@
 {
-  "name": "@react-aria/textfield",
+  "name": "@react-aria-nutrient/textfield",
   "version": "3.17.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
@@ -22,10 +22,10 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/form": "^3.0.14",
-    "@react-aria/interactions": "^3.24.1",
-    "@react-aria/label": "^3.7.16",
-    "@react-aria/utils": "^3.28.1",
+    "@react-aria-nutrient/form": "^3.0.14",
+    "@react-aria-nutrient/interactions": "^3.24.1",
+    "@react-aria-nutrient/label": "^3.7.16",
+    "@react-aria-nutrient/utils": "^3.28.1",
     "@react-stately/form": "^3.1.2",
     "@react-stately/utils": "^3.10.5",
     "@react-types/shared": "^3.28.0",

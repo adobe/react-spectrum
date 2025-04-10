@@ -20,7 +20,7 @@ import {getAllowedOverrides, staticColor, StyleProps} from './style-utils' with 
 import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface CloseButtonProps extends Pick<ButtonProps, 'isDisabled' | 'onPress'>, StyleProps {

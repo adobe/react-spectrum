@@ -15,10 +15,10 @@ import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectru
 import {DropZoneProps, HeadingContext, Provider, DropZone as RACDropZone} from 'react-aria-components';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useId} from '@react-aria/utils';
+import {mergeProps, useId} from '@react-aria-nutrient/utils';
 import React, {ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/dropzone/vars.css';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 
 export interface SpectrumDropZoneProps extends Omit<DropZoneProps, 'onHoverStart' | 'onHoverChange' | 'onHoverEnd' | 'isDisabled' | 'className' | 'style'>, DOMProps, StyleProps, AriaLabelingProps {
   /** The content to display in the drop zone. */

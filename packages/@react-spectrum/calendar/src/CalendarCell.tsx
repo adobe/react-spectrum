@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaCalendarCellProps, useCalendarCell} from '@react-aria/calendar';
+import {AriaCalendarCellProps, useCalendarCell} from '@react-aria-nutrient/calendar';
 import {CalendarDate, getDayOfWeek, isSameDay, isSameMonth, isToday} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {classNames} from '@react-spectrum/utils';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import React, {ReactNode, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
-import {useFocusRing} from '@react-aria/focus';
-import {useHover} from '@react-aria/interactions';
-import {useLocale} from '@react-aria/i18n';
+import {useFocusRing} from '@react-aria-nutrient/focus';
+import {useHover} from '@react-aria-nutrient/interactions';
+import {useLocale} from '@react-aria-nutrient/i18n';
 
 interface CalendarCellProps extends AriaCalendarCellProps {
   state: CalendarState | RangeCalendarState,

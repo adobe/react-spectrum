@@ -212,7 +212,7 @@ The following example shows what a ComboBox component might look like. It uses t
 
 ```jsx
 import {useAutocomplete} from '@react-state/autocomplete';
-import {useComboBox} from '@react-aria/combo-box';
+import {useComboBox} from '@react-aria-nutrient/combo-box';
 import {Textfield} from '@react-spectrum/textfield';
 import {Button} from '@react-spectrum/button';
 import {AutocompleteMenu} from '@react-spectrum/autocomplete';
@@ -248,7 +248,7 @@ In order for each of the three pieces of each component to be used independently
 There will be a separate RFC to propose the individual versioning of react-spectrum packages, and the naming of these package orgs is still up for debate, but the general structure should be:
 
   - `@react-state/combo-box` - state hook
-  - `@react-aria/combo-box` - behavior hook implementation for web
+  - `@react-aria-nutrient/combo-box` - behavior hook implementation for web
   - `@react-spectrum/combo-box` - themed spectrum component
 
 In terms of folder structure inside the react-spectrum repo, a two level folder tree could be used. This groups the three parts of each component together within a single folder, even though they are separate packages, which should make it slightly easier to find things in the repo. Again, see the monorepo RFC for more details on the motivation behind splitting everything into separate packages.

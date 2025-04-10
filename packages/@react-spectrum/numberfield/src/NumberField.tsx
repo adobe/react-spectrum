@@ -14,8 +14,8 @@ import {AriaButtonProps} from '@react-types/button';
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {Field} from '@react-spectrum/label';
 import {FocusableRef, RefObject} from '@react-types/shared';
-import {FocusRing} from '@react-aria/focus';
-import {mergeProps} from '@react-aria/utils';
+import {FocusRing} from '@react-aria-nutrient/focus';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import {NumberFieldState, useNumberFieldState} from '@react-stately/numberfield';
 import React, {HTMLAttributes, InputHTMLAttributes, Ref, useRef} from 'react';
 import {SpectrumNumberFieldProps} from '@react-types/numberfield';
@@ -23,9 +23,9 @@ import {StepButton} from './StepButton';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {useFormProps} from '@react-spectrum/form';
-import {useHover} from '@react-aria/interactions';
-import {useLocale} from '@react-aria/i18n';
-import {useNumberField} from '@react-aria/numberfield';
+import {useHover} from '@react-aria-nutrient/interactions';
+import {useLocale} from '@react-aria-nutrient/i18n';
+import {useNumberField} from '@react-aria-nutrient/numberfield';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 /**

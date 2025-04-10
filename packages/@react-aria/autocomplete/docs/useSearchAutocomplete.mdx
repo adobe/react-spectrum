@@ -10,12 +10,12 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-aria/autocomplete';
+import docs from 'docs:@react-aria-nutrient/autocomplete';
 import collectionsDocs from 'docs:@react-types/shared/src/collections.d.ts';
 import {FunctionAPI, HeaderInfo, InterfaceType, TypeContext, TypeLink, PageDescription} from '@react-spectrum/docs';
-import i18nDocs from 'docs:@react-aria/i18n';
-import overlaysDocs from 'docs:@react-aria/overlays';
-import packageData from '@react-aria/autocomplete/package.json';
+import i18nDocs from 'docs:@react-aria-nutrient/i18n';
+import overlaysDocs from 'docs:@react-aria-nutrient/overlays';
+import packageData from '@react-aria-nutrient/autocomplete/package.json';
 import selectionDocs from 'docs:@react-stately/selection';
 import statelyDocs from 'docs:@react-stately/combobox';
 import Anatomy from './anatomy.svg';
@@ -123,10 +123,10 @@ options.
 
 ```tsx example export=true
 import {Item} from '@react-stately/collections';
-import {useButton} from '@react-aria/button';
+import {useButton} from '@react-aria-nutrient/button';
 import {useComboBoxState} from '@react-stately/combobox'
-import {useSearchAutocomplete} from '@react-aria/autocomplete';
-import {useFilter} from '@react-aria/i18n';
+import {useSearchAutocomplete} from '@react-aria-nutrient/autocomplete';
+import {useFilter} from '@react-aria-nutrient/i18n';
 
 // Reuse the ListBox and Popover from your component library. See below for details.
 import {ListBox, Popover} from 'your-component-library';
@@ -204,9 +204,9 @@ See [usePopover](usePopover.html) for more examples of popovers.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import type {AriaPopoverProps} from 'react-aria';
+import type {AriaPopoverProps} from '@react-aria-nutrient/react-aria';
 import type {OverlayTriggerState} from 'react-stately';
-import {usePopover, Overlay, DismissButton} from '@react-aria/overlays';
+import {usePopover, Overlay, DismissButton} from '@react-aria-nutrient/overlays';
 
 interface PopoverProps extends AriaPopoverProps {
   children: React.ReactNode,
@@ -246,7 +246,7 @@ user types in the SearchAutocomplete. They can also be shared with other compone
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import {useListBox, useOption} from '@react-aria/listbox';
+import {useListBox, useOption} from '@react-aria-nutrient/listbox';
 
 function ListBox(props) {
   let ref = React.useRef(null);

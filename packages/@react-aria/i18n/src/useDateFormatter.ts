@@ -11,7 +11,7 @@
  */
 
 import {DateFormatter} from '@internationalized/date';
-import {useDeepMemo} from '@react-aria/utils';
+import {useDeepMemo} from '@react-aria-nutrient/utils';
 import {useLocale} from './context';
 import {useMemo} from 'react';
 

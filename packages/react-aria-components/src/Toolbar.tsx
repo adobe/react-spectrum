@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaToolbarProps, useToolbar} from '@react-aria/toolbar';
+import {AriaToolbarProps, useToolbar} from '@react-aria-nutrient/toolbar';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps} from '@react-aria-nutrient/utils';
 import {forwardRefType, Orientation} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 

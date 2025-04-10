@@ -9,12 +9,12 @@ governing permissions and limitations under the License. */}
 
 import {Layout, VersionBadge} from '@react-spectrum/docs';
 export default Layout;
-import testUtilDocs from 'docs:@react-aria/test-utils';
-import combobox from 'docs:@react-aria/test-utils/src/combobox.ts';
-import gridlist from 'docs:@react-aria/test-utils/src/gridlist.ts';
-import menu from 'docs:@react-aria/test-utils/src/menu.ts';
-import select from 'docs:@react-aria/test-utils/src/select.ts';
-import table from 'docs:@react-aria/test-utils/src/table.ts';
+import testUtilDocs from 'docs:@react-aria-nutrient/test-utils';
+import combobox from 'docs:@react-aria-nutrient/test-utils/src/combobox.ts';
+import gridlist from 'docs:@react-aria-nutrient/test-utils/src/gridlist.ts';
+import menu from 'docs:@react-aria-nutrient/test-utils/src/menu.ts';
+import select from 'docs:@react-aria-nutrient/test-utils/src/select.ts';
+import table from 'docs:@react-aria-nutrient/test-utils/src/table.ts';
 import {ClassAPI, FunctionAPI, InterfaceType, TypeContext, TypeLink} from '@react-spectrum/docs';
 
 ---
@@ -149,17 +149,17 @@ userEvent.click(document.activeElement);
 
 ## React Aria test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
-[@react-aria/test-utils](https://www.npmjs.com/package/@react-aria/test-utils) is a set of testing utilities that aims to make writing unit tests easier for consumers of React Aria
+[@react-aria-nutrient/test-utils](https://www.npmjs.com/package/@react-aria-nutrient/test-utils) is a set of testing utilities that aims to make writing unit tests easier for consumers of React Aria
 or for users who have built their own components following the respective ARIA pattern specification. By using the ARIA specification for any given component pattern as a source of truth,
 we can make assumptions about the existence of various aria attributes in a component. This allows us to navigate the component's DOM structure, simulate common interactions, and verify the
 the resulting state of the component.
 
 ### Installation
 
-`@react-aria/test-utils` can be installed using a package manager like [npm](https://docs.npmjs.com/cli/npm) or [yarn](https://classic.yarnpkg.com/lang/en/).
+`@react-aria-nutrient/test-utils` can be installed using a package manager like [npm](https://docs.npmjs.com/cli/npm) or [yarn](https://classic.yarnpkg.com/lang/en/).
 
 ```
-yarn add --dev @react-aria/test-utils
+yarn add --dev @react-aria-nutrient/test-utils
 ```
 
 Please note that this library uses [@testing-library/react@15](https://www.npmjs.com/package/@testing-library/react) and [@testing-library/user-event](https://www.npmjs.com/package/@testing-library/user-event/v/13.1.5). This means that you need
@@ -167,14 +167,14 @@ to be on React 18+ in order for these utilities to work.
 
 ### Setup
 
-Once installed, you can access the `User` that `@react-aria/test-utils` provides in your test file as shown below. This user only needs to be initialized once and then can be used to generate
+Once installed, you can access the `User` that `@react-aria-nutrient/test-utils` provides in your test file as shown below. This user only needs to be initialized once and then can be used to generate
 specific ARIA pattern tester in your test cases. This gives you access to that pattern's specific utilities that you can then call within your test to query for specific subcomponents or simulate common interactions.
 See [below](#patterns) for what patterns are currently supported.
 
 ```ts
 // YourTest.test.ts
 import {screen} from '@testing-library/react';
-import {User} from '@react-aria/test-utils';
+import {User} from '@react-aria-nutrient/test-utils';
 
 // Provide whatever method of advancing timers you use in your test, this example assumes Jest with fake timers.
 // 'interactionType' specifies what mode of interaction should be simulated by the tester

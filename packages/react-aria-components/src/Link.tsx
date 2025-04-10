@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLinkOptions, HoverEvents, mergeProps, useFocusRing, useHover, useLink} from 'react-aria';
+import {AriaLinkOptions, HoverEvents, mergeProps, useFocusRing, useHover, useLink} from '@react-aria-nutrient/react-aria';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {forwardRefType} from '@react-types/shared';
 import React, {createContext, ElementType, ForwardedRef, forwardRef} from 'react';

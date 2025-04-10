@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-jest.mock('@react-aria/live-announcer');
+jest.mock('@react-aria-nutrient/live-announcer');
 import {act, fireEvent, pointerMap, render, simulateDesktop, simulateMobile, waitFor, within} from '@react-spectrum/test-utils-internal';
-import {announce} from '@react-aria/live-announcer';
+import {announce} from '@react-aria-nutrient/live-announcer';
 import {Button} from '@react-spectrum/button';
 import Filter from '@spectrum-icons/workflow/Filter';
 import {Form} from '@react-spectrum/form';
@@ -3217,7 +3217,7 @@ describe('SearchAutocomplete', function () {
         let {getByRole} = render(<ExampleSearchAutocomplete />);
 
         // Use the real live announcer implementation just for this one test
-        let {announce: realAnnounce} = jest.requireActual('@react-aria/live-announcer');
+        let {announce: realAnnounce} = jest.requireActual('@react-aria-nutrient/live-announcer');
         announce.mockImplementationOnce(realAnnounce);
 
         let searchAutocomplete = getByRole('combobox');

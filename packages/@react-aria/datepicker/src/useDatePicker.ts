@@ -14,18 +14,18 @@ import {AriaButtonProps} from '@react-types/button';
 import {AriaDatePickerProps, DateValue} from '@react-types/datepicker';
 import {AriaDialogProps} from '@react-types/dialog';
 import {CalendarProps} from '@react-types/calendar';
-import {createFocusManager} from '@react-aria/focus';
+import {createFocusManager} from '@react-aria-nutrient/focus';
 import {DatePickerState} from '@react-stately/datepicker';
 import {DOMAttributes, GroupDOMAttributes, KeyboardEvent, RefObject, ValidationResult} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria-nutrient/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {privateValidationStateProp} from '@react-stately/form';
 import {roleSymbol} from './useDateField';
 import {useDatePickerGroup} from './useDatePickerGroup';
-import {useField} from '@react-aria/label';
-import {useFocusWithin} from '@react-aria/interactions';
-import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useField} from '@react-aria-nutrient/label';
+import {useFocusWithin} from '@react-aria-nutrient/interactions';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useMemo, useRef} from 'react';
 
 export interface DatePickerAria extends ValidationResult {
@@ -55,7 +55,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
   let buttonId = useId();
   let dialogId = useId();
   let fieldId = useId();
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/datepicker');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/datepicker');
 
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({

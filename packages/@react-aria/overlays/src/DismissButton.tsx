@@ -14,9 +14,9 @@ import {AriaLabelingProps, DOMProps} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import React, {ReactNode} from 'react';
-import {useLabels} from '@react-aria/utils';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
+import {useLabels} from '@react-aria-nutrient/utils';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
+import {VisuallyHidden} from '@react-aria-nutrient/visually-hidden';
 
 export interface DismissButtonProps extends AriaLabelingProps, DOMProps {
   /** Called when the dismiss button is activated. */
@@ -30,7 +30,7 @@ export interface DismissButtonProps extends AriaLabelingProps, DOMProps {
  */
 export function DismissButton(props: DismissButtonProps): ReactNode {
   let {onDismiss, ...otherProps} = props;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/overlays');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/overlays');
 
   let labels = useLabels(otherProps, stringFormatter.format('dismiss'));
 

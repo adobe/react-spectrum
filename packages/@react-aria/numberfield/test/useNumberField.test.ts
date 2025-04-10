@@ -1,7 +1,7 @@
 import {AriaNumberFieldProps} from '@react-types/numberfield';
 import React from 'react';
 import {renderHook} from '@react-spectrum/test-utils-internal';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 import {useNumberField} from '../';
 import {useNumberFieldState} from '@react-stately/numberfield';
 

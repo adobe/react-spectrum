@@ -12,7 +12,7 @@
 
 import {ClearSlots, useDOMRef, useSlotProps, useStyleProps, viewStyleProps} from '@react-spectrum/utils';
 import {ColorVersion, DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 import React, {forwardRef, ReactElement} from 'react';
 import {ViewProps} from '@react-types/view';
 

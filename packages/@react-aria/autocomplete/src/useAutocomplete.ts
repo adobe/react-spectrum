@@ -11,15 +11,15 @@
  */
 
 import {AriaLabelingProps, BaseEvent, DOMProps, RefObject} from '@react-types/shared';
-import {AriaTextFieldProps} from '@react-aria/textfield';
+import {AriaTextFieldProps} from '@react-aria-nutrient/textfield';
 import {AutocompleteProps, AutocompleteState} from '@react-stately/autocomplete';
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, getActiveElement, getOwnerDocument, isCtrlKeyPressed, mergeProps, mergeRefs, useEffectEvent, useId, useLabels, useObjectRef} from '@react-aria/utils';
-import {dispatchVirtualBlur, dispatchVirtualFocus, moveVirtualFocus} from '@react-aria/focus';
-import {getInteractionModality} from '@react-aria/interactions';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, getActiveElement, getOwnerDocument, isCtrlKeyPressed, mergeProps, mergeRefs, useEffectEvent, useId, useLabels, useObjectRef} from '@react-aria-nutrient/utils';
+import {dispatchVirtualBlur, dispatchVirtualFocus, moveVirtualFocus} from '@react-aria-nutrient/focus';
+import {getInteractionModality} from '@react-aria-nutrient/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {FocusEvent as ReactFocusEvent, KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef} from 'react';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 
 export interface CollectionOptions extends DOMProps, AriaLabelingProps {
   /** Whether the collection items should use virtual focus instead of being focused directly. */
@@ -293,7 +293,7 @@ export function useAutocomplete(props: AriaAutocompleteOptions, state: Autocompl
     };
   }, [onKeyUpCapture]);
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/autocomplete');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/autocomplete');
   let collectionProps = useLabels({
     id: collectionId,
     'aria-label': stringFormatter.format('collectionLabel')

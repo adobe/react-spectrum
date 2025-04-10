@@ -6,7 +6,7 @@ body,
   height: 100%;
 }
 
-@import "@react-aria/example-theme";
+@import "@react-aria-nutrient/example-theme";
 
 :global(.react-aria-ComboBox) {
   color: var(--text-color);

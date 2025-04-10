@@ -36,7 +36,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/searchfield": "^3.8.2",
+    "@react-aria-nutrient/searchfield": "^3.8.2",
     "@react-spectrum/button": "^3.16.12",
     "@react-spectrum/form": "^3.7.13",
     "@react-spectrum/textfield": "^3.13.1",

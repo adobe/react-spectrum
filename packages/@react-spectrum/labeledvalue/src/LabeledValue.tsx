@@ -14,10 +14,10 @@ import {CalendarDate, CalendarDateTime, getLocalTimeZone, Time, toCalendarDateTi
 import {classNames, useDOMRef} from '@react-spectrum/utils';
 import type {DOMProps, DOMRef, RangeValue, SpectrumLabelableProps, StyleProps} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import React, {ReactElement, ReactNode, useEffect} from 'react';
-import {useDateFormatter, useListFormatter, useNumberFormatter} from '@react-aria/i18n';
+import {useDateFormatter, useListFormatter, useNumberFormatter} from '@react-aria-nutrient/i18n';
 
 // NOTE: the types here need to be synchronized with the ones in docs/types.ts, which are simpler so the documentation generator can handle them.
 

@@ -33,7 +33,7 @@ export default function transformer(file: FileInfo, api: API, options: Options) 
     },
     'react-aria': {
       monopackage: 'react-aria',
-      individualPrefix: '@react-aria/'
+      individualPrefix: '@react-aria-nutrient/'
     },
     'react-stately': {
       monopackage: 'react-stately',

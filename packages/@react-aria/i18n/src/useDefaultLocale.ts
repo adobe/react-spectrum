@@ -13,7 +13,7 @@
 import {Direction} from '@react-types/shared';
 import {isRTL} from './utils';
 import {useEffect, useState} from 'react';
-import {useIsSSR} from '@react-aria/ssr';
+import {useIsSSR} from '@react-aria-nutrient/ssr';
 
 export interface Locale {
   /** The [BCP47](https://www.ietf.org/rfc/bcp/bcp47.txt) language code for the locale. */

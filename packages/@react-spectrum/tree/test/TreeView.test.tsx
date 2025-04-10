@@ -23,7 +23,7 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {TreeView, TreeViewItem, TreeViewItemContent} from '../';
-import {User} from '@react-aria/test-utils';
+import {User} from '@react-aria-nutrient/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let onSelectionChange = jest.fn();

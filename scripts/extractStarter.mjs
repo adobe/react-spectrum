@@ -268,7 +268,7 @@ function processCSS(css, usedClasses) {
   ast.walkAtRules('import', rule => {
     rule.params = rule.params
       .replace(/\.mdx(["'])/, '.css$1')
-      .replace('@react-aria/example-theme', './theme.css')
+      .replace('@react-aria-nutrient/example-theme', './theme.css')
       .replace(/\s*layer\(.*?\)/, '');
     if (rule.prev()?.type === 'atrule') {
       rule.raws.before = '\n';

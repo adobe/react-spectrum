@@ -2,7 +2,7 @@ import {action} from '@storybook/addon-actions';
 import {ActionMenu} from '@react-spectrum/menu';
 import Add from '@spectrum-icons/workflow/Add';
 import {Breadcrumbs} from '@react-spectrum/breadcrumbs';
-import {chain} from '@react-aria/utils';
+import {chain} from '@react-aria-nutrient/utils';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import Delete from '@spectrum-icons/workflow/Delete';
 import Folder from '@spectrum-icons/illustrations/Folder';

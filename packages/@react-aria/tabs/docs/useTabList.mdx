@@ -10,13 +10,13 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-aria/tabs';
-import utilsDocs from 'docs:@react-aria/utils';
+import docs from 'docs:@react-aria-nutrient/tabs';
+import utilsDocs from 'docs:@react-aria-nutrient/utils';
 import statelyDocs from 'docs:@react-stately/tabs';
 import collectionsDocs from 'docs:@react-stately/collections';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
-import packageData from '@react-aria/tabs/package.json';
+import packageData from '@react-aria-nutrient/tabs/package.json';
 import Anatomy from './anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -91,7 +91,7 @@ This example displays a basic list of tabs. The currently selected tab receives 
 
 ```tsx example export=true
 import {Item} from '@react-stately/collections';
-import {useTab, useTabList, useTabPanel} from '@react-aria/tabs';
+import {useTab, useTabList, useTabPanel} from '@react-aria-nutrient/tabs';
 import {useTabListState} from '@react-stately/tabs';
 
 function Tabs(props) {
@@ -391,7 +391,7 @@ This example uses [React Router](https://reactrouter.com/en/main) to setup route
 
 ```tsx
 import {useLocation, useNavigate, BrowserRouter, Routes, Route} from 'react-router-dom';
-import {RouterProvider} from 'react-aria';
+import {RouterProvider} from '@react-aria-nutrient/react-aria';
 
 function AppTabs() {
   let {pathname} = useLocation();

@@ -14,7 +14,7 @@ import {Button} from 'tailwind-starter/Button';
 import {ChevronDown, WifiIcon} from 'lucide-react';
 import {createPortal, flushSync} from 'react-dom';
 import {Finger} from './components';
-import {Key, useDateFormatter} from 'react-aria';
+import {Key, useDateFormatter} from '@react-aria-nutrient/react-aria';
 import {Label} from 'tailwind-starter/Field';
 import {ListBox, Select, SelectValue} from 'react-aria-components';
 import {Popover} from 'tailwind-starter/Popover';

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTabListProps, useTab, useTabList, useTabPanel} from '@react-aria/tabs';
+import {AriaTabListProps, useTab, useTabList, useTabPanel} from '@react-aria-nutrient/tabs';
 import React from 'react';
 import {useTabListState} from '@react-stately/tabs';
 

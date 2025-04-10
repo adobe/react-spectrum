@@ -10,11 +10,11 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-aria/calendar';
+import docs from 'docs:@react-aria-nutrient/calendar';
 import statelyDocs from 'docs:@react-stately/calendar';
 import i18nDocs from 'docs:@internationalized/date';
 import {FunctionAPI, HeaderInfo, InterfaceType, TypeContext, TypeLink, PageDescription} from '@react-spectrum/docs';
-import packageData from '@react-aria/calendar/package.json';
+import packageData from '@react-aria-nutrient/calendar/package.json';
 import Anatomy from './rangecalendar-anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Keyboard} from '@react-spectrum/text';
@@ -104,8 +104,8 @@ For simplicity, this example only displays a single month at a time. See the [st
 
 ```tsx example render=false export=true
 import {useRangeCalendarState} from '@react-stately/calendar';
-import {useRangeCalendar} from '@react-aria/calendar';
-import {useLocale} from '@react-aria/i18n';
+import {useRangeCalendar} from '@react-aria-nutrient/calendar';
+import {useLocale} from '@react-aria-nutrient/i18n';
 import {createCalendar} from '@internationalized/date';
 
 // Reuse the Button from your component library. See below for details.
@@ -144,7 +144,7 @@ The `state.getDatesInWeek` function returns the dates in each week of the month.
 **Note**: this component is the same as the `CalendarGrid` component shown in the [useCalendar](useCalendar.html) docs, and you can reuse it between both `Calendar` and `RangeCalendar`.
 
 ```tsx example render=false export=true
-import {useCalendarGrid} from '@react-aria/calendar';
+import {useCalendarGrid} from '@react-aria-nutrient/calendar';
 
 function CalendarGrid({state, ...props}) {
   let {gridProps, headerProps, weekDays, weeksInMonth} = useCalendarGrid(props, state);
@@ -184,7 +184,7 @@ Finally, the `CalendarCell` component renders an individual cell in a calendar. 
 **Note**: this component is the same as the `CalendarCell` component shown in the [useCalendar](useCalendar.html) docs, and you can reuse it between both `Calendar` and `RangeCalendar`.
 
 ```tsx example render=false export=true
-import {useCalendarCell} from '@react-aria/calendar';
+import {useCalendarCell} from '@react-aria-nutrient/calendar';
 
 function CalendarCell({state, date}) {
   let ref = React.useRef(null);
@@ -271,7 +271,7 @@ The `Button` component is used in the above example to navigate between months. 
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import {useButton} from '@react-aria/button';
+import {useButton} from '@react-aria-nutrient/button';
 
 function Button(props) {
   let ref = React.useRef(null);
@@ -334,7 +334,7 @@ function Example() {
 
 ```tsx example
 import {getLocalTimeZone} from '@internationalized/date';
-import {useDateFormatter} from '@react-aria/i18n';
+import {useDateFormatter} from '@react-aria-nutrient/i18n';
 
 function Example() {
   let [range, setRange] = React.useState({
@@ -367,7 +367,7 @@ Selected dates passed to `onChange` always use the same calendar system as the `
 The below example displays a `RangeCalendar` in the Hindi language, using the Indian calendar. Dates emitted from `onChange` are in the Gregorian calendar.
 
 ```tsx example
-import {I18nProvider} from '@react-aria/i18n';
+import {I18nProvider} from '@react-aria-nutrient/i18n';
 
 function Example() {
   let [range, setRange] = React.useState(null);
@@ -565,7 +565,7 @@ For example, if your application only supports Gregorian dates, you could implem
 
 ```jsx
 import {useRangeCalendarState} from '@react-stately/datepicker';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 import {GregorianCalendar} from '@internationalized/date';
 
 function createCalendar(identifier) {

@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTagProps, useTag} from '@react-aria/tag';
+import {AriaTagProps, useTag} from '@react-aria-nutrient/tag';
 import {classNames, ClearSlots, SlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import type {ListState} from '@react-stately/list';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import React, {ReactNode, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Text} from '@react-spectrum/text';
-import {useFocusRing} from '@react-aria/focus';
-import {useHover} from '@react-aria/interactions';
+import {useFocusRing} from '@react-aria-nutrient/focus';
+import {useHover} from '@react-aria-nutrient/interactions';
 
 export interface SpectrumTagProps<T> extends AriaTagProps<T> {
   state: ListState<T>

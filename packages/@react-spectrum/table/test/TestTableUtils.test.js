@@ -15,7 +15,7 @@ import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {User} from '@react-aria/test-utils';
+import {User} from '@react-aria-nutrient/test-utils';
 
 let manyItems = [];
 for (let i = 1; i <= 10; i++) {

@@ -44,7 +44,7 @@ import {FocusableRef, FocusableRefValue, SpectrumLabelableProps} from '@react-ty
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {IconContext} from './Icon';
-import {Placement} from 'react-aria';
+import {Placement} from '@react-aria-nutrient/react-aria';
 import {PopoverBase} from './Popover';
 import {pressScale} from './pressScale';
 import {raw} from '../style/style-macro' with {type: 'macro'};

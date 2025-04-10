@@ -11,7 +11,7 @@ import {Divider} from '@react-spectrum/divider';
 import Edit from '@spectrum-icons/workflow/Edit';
 import File from '@spectrum-icons/illustrations/File';
 import {Flex} from '@react-spectrum/layout';
-import {FocusScope} from '@react-aria/focus';
+import {FocusScope} from '@react-aria-nutrient/focus';
 import Folder from '@spectrum-icons/illustrations/Folder';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';

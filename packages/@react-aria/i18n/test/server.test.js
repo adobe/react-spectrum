@@ -14,14 +14,14 @@ import {getPackageLocalizationScript} from '../src/server';
 describe('i18n server', () => {
   it('should generate a script with localized strings', () => {
     let res = getPackageLocalizationScript('en-US', {
-      '@react-aria/button': {
+      '@react-aria-nutrient/button': {
         test: 'foo'
       },
-      '@react-aria/checkbox': {
+      '@react-aria-nutrient/checkbox': {
         test: 'foo'
       }
     });
 
-    expect(res).toBe("window[Symbol.for('react-aria.i18n.locale')]=\"en-US\";{let A=\"foo\";window[Symbol.for('react-aria.i18n.strings')]={'@react-aria/button':{test:A},'@react-aria/checkbox':{test:A}};}");
+    expect(res).toBe("window[Symbol.for('react-aria.i18n.locale')]=\"en-US\";{let A=\"foo\";window[Symbol.for('react-aria.i18n.strings')]={'@react-aria-nutrient/button':{test:A},'@react-aria-nutrient/checkbox':{test:A}};}");
   });
 });

@@ -22,7 +22,7 @@ import intlMessages from './intlMessages.json';
 import {Item, TagGroup} from '@react-spectrum/tag';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 
 export default {
   title: 'Languages/Dialog',

@@ -14,7 +14,7 @@ import {CalendarState, RangeCalendarState, useCalendarState} from '@react-statel
 import {createCalendar, DateDuration, startOfWeek} from '@internationalized/date';
 import React, {ReactElement, useMemo, useRef} from 'react';
 import {useCalendar, useCalendarCell, useCalendarGrid} from '../src';
-import {useDateFormatter, useLocale} from '@react-aria/i18n';
+import {useDateFormatter, useLocale} from '@react-aria-nutrient/i18n';
 
 
 export function Example(props) {

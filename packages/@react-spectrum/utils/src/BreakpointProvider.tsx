@@ -1,5 +1,5 @@
 import React, {ReactNode, useContext, useEffect, useState} from 'react';
-import {useIsSSR} from '@react-aria/ssr';
+import {useIsSSR} from '@react-aria-nutrient/ssr';
 
 interface Breakpoints {
   S?: number,

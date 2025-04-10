@@ -19,7 +19,7 @@ import {SliderBase, SliderBaseChildArguments, SliderBaseProps} from './SliderBas
 import {SliderThumb} from './SliderThumb';
 import {SpectrumRangeSliderProps} from '@react-types/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
-import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 
 /**
  * RangeSliders allow users to quickly select a subset range. They should be used when the upper and lower bounds to the range are invariable.

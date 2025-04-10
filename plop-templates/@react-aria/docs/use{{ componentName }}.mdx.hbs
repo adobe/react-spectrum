@@ -11,9 +11,9 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 *Additional types can be imported via a direct path to the *.d.ts file if need be. See the useComboBox.mdx for an example.*
-import docs from 'docs:@react-aria/{{packageName}}';
+import docs from 'docs:@react-aria-nutrient/{{packageName}}';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
-import packageData from '@react-aria/{{packageName}}/package.json';
+import packageData from '@react-aria-nutrient/{{packageName}}/package.json';
 import Anatomy from './{{packageName}}Anatomy.svg'
 
 *Include after_version if the docs shouldn't be published to the website until reaching a specific package version.*
@@ -72,7 +72,7 @@ after_version: 3.0.0-alpha.0
 *If you create an example component that will be reused else where in this doc, include export=true so that you can directly reuse the component and avoid copy pasting the same code.*
 *See useComboBox.mdx for an example.*
 ```tsx example export=true
-import {use{{componentName~}}} from '@react-aria/{{packageName}}';
+import {use{{componentName~}}} from '@react-aria-nutrient/{{packageName}}';
 
 function Example(props) {
   return (

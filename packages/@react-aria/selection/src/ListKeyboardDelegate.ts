@@ -12,7 +12,7 @@
 
 import {Collection, Direction, DisabledBehavior, Key, KeyboardDelegate, LayoutDelegate, Node, Orientation, Rect, RefObject} from '@react-types/shared';
 import {DOMLayoutDelegate} from './DOMLayoutDelegate';
-import {isScrollable} from '@react-aria/utils';
+import {isScrollable} from '@react-aria-nutrient/utils';
 
 interface ListKeyboardDelegateOptions<T> {
   collection: Collection<Node<T>>,

@@ -18,10 +18,10 @@ import {Label} from '@react-spectrum/label';
 import React, {useRef, useState} from 'react';
 import {SpectrumColorSliderProps} from '@react-types/color';
 import styles from '@adobe/spectrum-css-temp/components/colorslider/vars.css';
-import {useColorSlider} from '@react-aria/color';
+import {useColorSlider} from '@react-aria-nutrient/color';
 import {useColorSliderState} from '@react-stately/color';
-import {useFocus, useFocusVisible} from '@react-aria/interactions';
-import {useLocale} from '@react-aria/i18n';
+import {useFocus, useFocusVisible} from '@react-aria-nutrient/interactions';
+import {useLocale} from '@react-aria-nutrient/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 /**

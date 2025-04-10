@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, useObjectRef} from '@react-aria-nutrient/utils';
 import {Input} from './Input';
-import {PressResponder} from '@react-aria/interactions';
+import {PressResponder} from '@react-aria-nutrient/interactions';
 import React, {ForwardedRef, forwardRef, ReactNode} from 'react';
 
 export interface FileTriggerProps {

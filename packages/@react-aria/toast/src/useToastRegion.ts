@@ -11,14 +11,14 @@
  */
 
 import {AriaLabelingProps, DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
-import {focusWithoutScrolling, mergeProps, useEffectEvent, useLayoutEffect} from '@react-aria/utils';
-import {getInteractionModality, useFocusWithin, useHover} from '@react-aria/interactions';
+import {focusWithoutScrolling, mergeProps, useEffectEvent, useLayoutEffect} from '@react-aria-nutrient/utils';
+import {getInteractionModality, useFocusWithin, useHover} from '@react-aria-nutrient/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ToastState} from '@react-stately/toast';
 import {useEffect, useRef} from 'react';
-import {useLandmark} from '@react-aria/landmark';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLandmark} from '@react-aria-nutrient/landmark';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 
 export interface AriaToastRegionProps extends AriaLabelingProps {
   /**
@@ -38,7 +38,7 @@ export interface ToastRegionAria {
  * Toasts display brief, temporary notifications of actions, errors, or other events in an application.
  */
 export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState<T>, ref: RefObject<HTMLElement | null>): ToastRegionAria {
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/toast');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/toast');
   let {landmarkProps} = useLandmark({
     role: 'region',
     'aria-label': props['aria-label'] || stringFormatter.format('notifications', {count: state.visibleToasts.length})

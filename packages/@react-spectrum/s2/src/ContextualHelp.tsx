@@ -5,7 +5,7 @@ import {ContextValue, DEFAULT_SLOT, Provider, Dialog as RACDialog, TextContext} 
 import {createContext, forwardRef, ReactNode} from 'react';
 import {dialogInner} from './Dialog';
 import {DialogTrigger, DialogTriggerProps} from './DialogTrigger';
-import {filterDOMProps, mergeProps, useLabels} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useLabels} from '@react-aria-nutrient/utils';
 import HelpIcon from '../s2wf-icons/S2_Icon_HelpCircle_20_N.svg';
 import InfoIcon from '../s2wf-icons/S2_Icon_InfoCircle_20_N.svg';
 // @ts-ignore
@@ -14,7 +14,7 @@ import {mergeStyles} from '../style/runtime';
 import {PopoverBase, PopoverDialogProps} from './Popover';
 import {space, style} from '../style' with {type: 'macro'};
 import {StyleProps} from './style-utils' with { type: 'macro' };
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ContextualHelpStyleProps {

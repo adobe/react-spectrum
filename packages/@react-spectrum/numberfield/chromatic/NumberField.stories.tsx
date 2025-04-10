@@ -16,7 +16,7 @@ import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import {Meta, StoryFn} from '@storybook/react';
 import {NumberField} from '../src';
 import React from 'react';

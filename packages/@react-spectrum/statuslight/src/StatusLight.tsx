@@ -12,7 +12,7 @@
 
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 import React, {forwardRef} from 'react';
 import {SpectrumStatusLightProps} from '@react-types/statuslight';
 import styles from '@adobe/spectrum-css-temp/components/statuslight/vars.css';

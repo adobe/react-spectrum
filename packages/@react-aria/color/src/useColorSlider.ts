@@ -14,10 +14,10 @@ import {AriaColorSliderProps} from '@react-types/color';
 import {ColorSliderState} from '@react-stately/color';
 import {DOMAttributes, RefObject} from '@react-types/shared';
 import {InputHTMLAttributes} from 'react';
-import {mergeProps} from '@react-aria/utils';
-import {useLocale} from '@react-aria/i18n';
-import {useSlider, useSliderThumb} from '@react-aria/slider';
-import {useVisuallyHidden} from '@react-aria/visually-hidden';
+import {mergeProps} from '@react-aria-nutrient/utils';
+import {useLocale} from '@react-aria-nutrient/i18n';
+import {useSlider, useSliderThumb} from '@react-aria-nutrient/slider';
+import {useVisuallyHidden} from '@react-aria-nutrient/visually-hidden';
 
 export interface AriaColorSliderOptions extends AriaColorSliderProps {
   /** A ref for the track element. */

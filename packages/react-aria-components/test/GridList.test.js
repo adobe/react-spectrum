@@ -31,7 +31,7 @@ import {
   Virtualizer
 } from '../';
 import React from 'react';
-import {User} from '@react-aria/test-utils';
+import {User} from '@react-aria-nutrient/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestGridList = ({listBoxProps, itemProps}) => (

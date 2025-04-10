@@ -17,7 +17,7 @@ import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import React, {createContext, forwardRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/accordion/vars.css';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 export interface SpectrumAccordionProps extends Omit<DisclosureGroupProps, 'className' | 'style' | 'children'>, StyleProps, DOMProps {

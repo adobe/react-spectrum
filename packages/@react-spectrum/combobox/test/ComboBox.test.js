@@ -10,21 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-jest.mock('@react-aria/live-announcer');
+jest.mock('@react-aria-nutrient/live-announcer');
 import {act, fireEvent, pointerMap, render, simulateDesktop, simulateMobile, waitFor, within} from '@react-spectrum/test-utils-internal';
-import {announce} from '@react-aria/live-announcer';
+import {announce} from '@react-aria-nutrient/live-announcer';
 import {Button} from '@react-spectrum/button';
-import {chain} from '@react-aria/utils';
+import {chain} from '@react-aria-nutrient/utils';
 import {ComboBox, Item, Section} from '../';
 import {Form} from '@react-spectrum/form';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import {SSRProvider} from '@react-aria/ssr';
+import {SSRProvider} from '@react-aria-nutrient/ssr';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import {useAsyncList, useListData} from '@react-stately/data';
-import {useFilter} from '@react-aria/i18n';
-import {User} from '@react-aria/test-utils';
+import {useFilter} from '@react-aria-nutrient/i18n';
+import {User} from '@react-aria-nutrient/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let theme = {
@@ -5075,7 +5075,7 @@ describe('ComboBox', function () {
         let {getByRole} = render(<ExampleComboBox />);
 
         // Use the real live announcer implementation just for this one test
-        let {announce: realAnnounce} = jest.requireActual('@react-aria/live-announcer');
+        let {announce: realAnnounce} = jest.requireActual('@react-aria-nutrient/live-announcer');
         announce.mockImplementationOnce(realAnnounce);
 
         let combobox = getByRole('combobox');

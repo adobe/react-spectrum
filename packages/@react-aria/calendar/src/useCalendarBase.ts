@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {announce} from '@react-aria/live-announcer';
+import {announce} from '@react-aria-nutrient/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
 import {AriaLabelingProps, DOMAttributes, DOMProps} from '@react-types/shared';
 import {CalendarPropsBase} from '@react-types/calendar';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
-import {filterDOMProps, mergeProps, useLabels, useSlotId, useUpdateEffect} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useLabels, useSlotId, useUpdateEffect} from '@react-aria-nutrient/utils';
 import {hookData, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useState} from 'react';
 
 export interface CalendarAria {
@@ -36,7 +36,7 @@ export interface CalendarAria {
 }
 
 export function useCalendarBase(props: CalendarPropsBase & DOMProps & AriaLabelingProps, state: CalendarState | RangeCalendarState): CalendarAria {
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/calendar');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/calendar');
   let domProps = filterDOMProps(props);
 
   let title = useVisibleRangeDescription(state.visibleRange.start, state.visibleRange.end, state.timeZone, false);

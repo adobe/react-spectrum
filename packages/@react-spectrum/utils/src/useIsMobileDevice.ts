@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {useIsSSR} from '@react-aria/ssr';
+import {useIsSSR} from '@react-aria-nutrient/ssr';
 
 const MOBILE_SCREEN_WIDTH = 700;
 

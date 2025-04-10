@@ -12,8 +12,8 @@
 
 import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {ListState} from '@react-stately/list';
-import {mergeProps, useEffectEvent} from '@react-aria/utils';
-import {PressProps} from '@react-aria/interactions';
+import {mergeProps, useEffectEvent} from '@react-aria-nutrient/utils';
+import {PressProps} from '@react-aria-nutrient/interactions';
 import {useEffect} from 'react';
 
 export interface AriaActionGroupItemProps {

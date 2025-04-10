@@ -1,4 +1,4 @@
-import {getActiveElement, getOwnerDocument} from '@react-aria/utils';
+import {getActiveElement, getOwnerDocument} from '@react-aria-nutrient/utils';
 
 export function moveVirtualFocus(to: Element | null): void {
   let from = getVirtuallyFocusedElement(getOwnerDocument(to));

@@ -12,7 +12,7 @@
 
 import {DOMAttributes, FocusableDOMProps, FocusableElement, FocusableProps, RefObject} from '@react-types/shared';
 import {focusSafely} from './';
-import {getOwnerWindow, isFocusable, mergeProps, mergeRefs, useObjectRef, useSyncRef} from '@react-aria/utils';
+import {getOwnerWindow, isFocusable, mergeProps, mergeRefs, useObjectRef, useSyncRef} from '@react-aria-nutrient/utils';
 import React, {ForwardedRef, forwardRef, MutableRefObject, ReactElement, ReactNode, useContext, useEffect, useRef} from 'react';
 import {useFocus} from './useFocus';
 import {useKeyboard} from './useKeyboard';
@@ -31,7 +31,7 @@ interface FocusableContextValue extends FocusableProviderProps {
   ref?: MutableRefObject<FocusableElement | null>
 }
 
-// Exported for @react-aria/collections, which forwards this context.
+// Exported for @react-aria-nutrient/collections, which forwards this context.
 /** @private */
 export let FocusableContext = React.createContext<FocusableContextValue | null>(null);
 

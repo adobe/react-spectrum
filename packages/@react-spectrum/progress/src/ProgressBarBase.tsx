@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {clamp} from '@react-aria/utils';
+import {clamp} from '@react-aria-nutrient/utils';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {ProgressBarProps, SpectrumProgressBarBaseProps} from '@react-types/progress';

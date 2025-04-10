@@ -13,8 +13,8 @@
 import {ClearSlots, SlotProvider, useSlotProps} from '../';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React, {StrictMode, useRef} from 'react';
-import {useId, useSlotId} from '@react-aria/utils';
-import {usePress} from '@react-aria/interactions';
+import {useId, useSlotId} from '@react-aria-nutrient/utils';
+import {usePress} from '@react-aria-nutrient/interactions';
 import userEvent from '@testing-library/user-event';
 
 describe('Slots', function () {

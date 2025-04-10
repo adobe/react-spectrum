@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMAttributes, DOMProps, Orientation} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 
 export interface SeparatorProps extends DOMProps, AriaLabelingProps {
   /**

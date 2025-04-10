@@ -12,7 +12,7 @@
 
 import {act, fireEvent, mockClickDefault, mockImplementation, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button} from '@react-spectrum/button';
-import {chain} from '@react-aria/utils';
+import {chain} from '@react-aria-nutrient/utils';
 import {Item} from '@react-stately/collections';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';

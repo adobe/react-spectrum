@@ -36,8 +36,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/progress": "^3.4.21",
-    "@react-aria/utils": "^3.28.1",
+    "@react-aria-nutrient/progress": "^3.4.21",
+    "@react-aria-nutrient/utils": "^3.28.1",
     "@react-spectrum/utils": "^3.12.3",
     "@react-types/progress": "^3.5.10",
     "@react-types/shared": "^3.28.0",

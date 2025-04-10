@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain} from '@react-aria/utils';
+import {chain} from '@react-aria-nutrient/utils';
 import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
-import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
+import {SelectableItemStates, useSelectableItem} from '@react-aria-nutrient/selection';
 
 export interface GridRowProps<T> {
   /** An object representing the grid row. Contains all the relevant information that makes up the grid row. */

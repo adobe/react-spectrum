@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, installPointerEvent, render} from '@react-spectrum/test-utils-internal';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import React from 'react';
 import {useLongPress, usePress} from '../';
 

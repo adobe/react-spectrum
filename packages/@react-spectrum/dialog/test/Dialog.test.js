@@ -14,7 +14,7 @@ import {Dialog} from '../';
 import {DialogContext} from '../src/context';
 import {Header} from '@react-spectrum/view';
 import {Heading} from '@react-spectrum/text';
-import {ModalProvider} from '@react-aria/overlays';
+import {ModalProvider} from '@react-aria-nutrient/overlays';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 

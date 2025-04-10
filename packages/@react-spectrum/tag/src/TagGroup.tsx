@@ -11,22 +11,22 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {AriaTagGroupProps, useTagGroup} from '@react-aria/tag';
+import {AriaTagGroupProps, useTagGroup} from '@react-aria-nutrient/tag';
 import {classNames, useDOMRef} from '@react-spectrum/utils';
 import {Collection, DOMRef, Node, SpectrumLabelableProps, StyleProps, Validation} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
-import {FocusRing, FocusScope} from '@react-aria/focus';
+import {FocusRing, FocusScope} from '@react-aria-nutrient/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListCollection, useListState} from '@react-stately/list';
-import {ListKeyboardDelegate} from '@react-aria/selection';
+import {ListKeyboardDelegate} from '@react-aria-nutrient/selection';
 import {Provider, useProvider, useProviderProps} from '@react-spectrum/provider';
 import React, {JSX, ReactNode, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Tag} from './Tag';
 import {useFormProps} from '@react-spectrum/form';
-import {useId, useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
-import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useId, useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria-nutrient/utils';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 
 const TAG_STYLES = {
   medium: {

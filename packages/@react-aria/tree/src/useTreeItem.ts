@@ -11,13 +11,13 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {AriaGridListItemOptions, GridListItemAria, useGridListItem} from '@react-aria/gridlist';
+import {AriaGridListItemOptions, GridListItemAria, useGridListItem} from '@react-aria-nutrient/gridlist';
 import {DOMAttributes, FocusableElement, Node, RefObject} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isAndroid, useLabels} from '@react-aria/utils';
+import {isAndroid, useLabels} from '@react-aria-nutrient/utils';
 import {TreeState} from '@react-stately/tree';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 
 export interface AriaTreeItemOptions extends Omit<AriaGridListItemOptions, 'isVirtualized'> {
   /** An object representing the treegrid item. Contains all the relevant information that makes up the treegrid row. */
@@ -45,7 +45,7 @@ export function useTreeItem<T>(props: AriaTreeItemOptions, state: TreeState<T>, 
   let {node} = props;
   let gridListAria = useGridListItem(props, state, ref);
   let isExpanded = gridListAria.rowProps['aria-expanded'] === true;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/tree');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/tree');
   let labelProps = useLabels({
     'aria-label': isExpanded ? stringFormatter.format('collapse') : stringFormatter.format('expand'),
     'aria-labelledby': gridListAria.rowProps.id

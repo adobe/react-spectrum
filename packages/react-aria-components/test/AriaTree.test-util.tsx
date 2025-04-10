@@ -14,7 +14,7 @@ import {act, render, within} from '@testing-library/react';
 import {
   pointerMap
 } from '@react-spectrum/test-utils-internal';
-import {User} from '@react-aria/test-utils';
+import {User} from '@react-aria-nutrient/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let describeInteractions = ((name, tests) => describe.each`

@@ -11,11 +11,11 @@
  */
 
 import {AriaActionGroupProps} from '@react-types/actiongroup';
-import {createFocusManager} from '@react-aria/focus';
+import {createFocusManager} from '@react-aria-nutrient/focus';
 import {DOMAttributes, FocusableElement, Orientation, RefObject} from '@react-types/shared';
-import {filterDOMProps, useLayoutEffect} from '@react-aria/utils';
+import {filterDOMProps, useLayoutEffect} from '@react-aria-nutrient/utils';
 import {ListState} from '@react-stately/list';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 import {useState} from 'react';
 
 const BUTTON_GROUP_ROLES = {

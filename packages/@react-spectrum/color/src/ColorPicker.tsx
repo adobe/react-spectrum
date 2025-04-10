@@ -18,7 +18,7 @@ import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import React, {ReactNode, useRef} from 'react';
 import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
 import {unwrapDOMRef, useFocusableRef} from '@react-spectrum/utils';
-import {useId} from '@react-aria/utils';
+import {useId} from '@react-aria-nutrient/utils';
 
 export interface SpectrumColorPickerProps extends ValueBase<string | Color, Color>, AriaLabelingProps {
   /** A visual label for the color picker. */

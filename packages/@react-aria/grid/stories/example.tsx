@@ -11,9 +11,9 @@
  */
 
 import {GridCollection, useGridState} from '@react-stately/grid';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import React from 'react';
-import {useFocus} from '@react-aria/interactions';
+import {useFocus} from '@react-aria-nutrient/interactions';
 import {useGrid, useGridCell, useGridRow} from '../';
 import {useListState} from '@react-stately/list';
 

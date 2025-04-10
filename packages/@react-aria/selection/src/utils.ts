@@ -11,7 +11,7 @@
  */
 
 import {Collection, Key} from '@react-types/shared';
-import {isAppleDevice, useId} from '@react-aria/utils';
+import {isAppleDevice, useId} from '@react-aria-nutrient/utils';
 import {RefObject} from 'react';
 
 interface Event {

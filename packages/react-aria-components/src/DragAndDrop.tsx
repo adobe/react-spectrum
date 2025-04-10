@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import type {DropIndicatorProps as AriaDropIndicatorProps, ItemDropTarget, Key} from 'react-aria';
+import type {DropIndicatorProps as AriaDropIndicatorProps, ItemDropTarget, Key} from '@react-aria-nutrient/react-aria';
 import type {DragAndDropHooks} from './useDragAndDrop';
 import type {DraggableCollectionState, DroppableCollectionState, MultipleSelectionManager} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useCallback, useContext, useMemo} from 'react';

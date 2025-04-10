@@ -42,7 +42,7 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
     if (isPublishing(workspace)
       // should these be included in the requirement?
       && workspace.ident !== '@adobe/react-spectrum'
-      && workspace.ident !== 'react-aria'
+      && workspace.ident !== '@react-aria-nutrient/react-aria'
       && workspace.ident !== 'react-stately'
       && workspace.ident !== '@internationalized/string-compiler'
       && workspace.ident !== 'tailwindcss-react-aria-components'
@@ -123,7 +123,7 @@ function isOurPackage(dependency) {
     || name.includes('@spectrum-icons')
     || name.startsWith('react-aria-components')
     || name.startsWith('tailwindcss-react-aria-components')
-    || name.startsWith('react-aria')
+    || name.startsWith('@react-aria-nutrient/react-aria')
     || name.startsWith('react-stately');
 }
 
@@ -197,7 +197,7 @@ function isPublishing(workspace) {
   // should allowlist instead? workspace.manifest.private?
   return !name.includes('@react-types')
     && !name.includes('@spectrum-icons')
-    && !name.includes('@react-aria/example-theme')
+    && !name.includes('@react-aria-nutrient/example-theme')
     && !name.includes('@react-spectrum/style-macro-s1')
     && !name.includes('@react-spectrum/docs')
     && !name.includes('parcel')
@@ -278,11 +278,11 @@ function enforceExports({Yarn}) {
         workspace.set('types', 'dist/types.d.ts');
       }
 
-      if (name !== '@adobe/react-spectrum' && name !== 'react-aria' && name !== 'react-stately' && name !== '@internationalized/string-compiler' && name !== 'tailwindcss-react-aria-components') {
+      if (name !== '@adobe/react-spectrum' && name !== '@react-aria-nutrient/react-aria' && name !== 'react-stately' && name !== '@internationalized/string-compiler' && name !== 'tailwindcss-react-aria-components') {
         workspace.set('source', 'src/index.ts');
       }
 
-      if (name !== '@adobe/react-spectrum' && name !== 'react-aria' && name !== 'react-stately' && name !== '@internationalized/string-compiler' && name !== 'tailwindcss-react-aria-components') {
+      if (name !== '@adobe/react-spectrum' && name !== '@react-aria-nutrient/react-aria' && name !== 'react-stately' && name !== '@internationalized/string-compiler' && name !== 'tailwindcss-react-aria-components') {
         if (!workspace.manifest.files || (!workspace.manifest.files.includes('dist') && !workspace.manifest.files.includes('src'))) {
           workspace.set('files', [...workspace.manifest.files || [], 'dist', 'src']);
         } else if (!workspace.manifest.files.includes('dist')) {
@@ -294,7 +294,7 @@ function enforceExports({Yarn}) {
 
       // better to do in enforceCSS? it doesn't match the set of packages handled
       if (name !== 'react-aria-components') {
-        if (name.includes('@react-spectrum') || name.includes('@react-aria/visually-hidden')) {
+        if (name.includes('@react-spectrum') || name.includes('@react-aria-nutrient/visually-hidden')) {
           workspace.set('sideEffects', ['*.css']);
         } else {
           workspace.set('sideEffects', false);

@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, filterDOMProps, isMac, isWebKit, mergeProps, useLinkProps, useSlotId} from '@react-aria/utils';
+import {chain, filterDOMProps, isMac, isWebKit, mergeProps, useLinkProps, useSlotId} from '@react-aria-nutrient/utils';
 import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
 import {getItemCount} from '@react-stately/collections';
 import {getItemId, listData} from './utils';
-import {isFocusVisible, useHover} from '@react-aria/interactions';
+import {isFocusVisible, useHover} from '@react-aria-nutrient/interactions';
 import {ListState} from '@react-stately/list';
-import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
+import {SelectableItemStates, useSelectableItem} from '@react-aria-nutrient/selection';
 
 export interface OptionAria extends SelectableItemStates {
   /** Props for the option element. */

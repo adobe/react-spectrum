@@ -12,9 +12,9 @@
 
 import {AriaLinkProps} from '@react-types/link';
 import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
-import {filterDOMProps, mergeProps, shouldClientNavigate, useLinkProps, useRouter} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, shouldClientNavigate, useLinkProps, useRouter} from '@react-aria-nutrient/utils';
 import React from 'react';
-import {useFocusable, usePress} from '@react-aria/interactions';
+import {useFocusable, usePress} from '@react-aria-nutrient/interactions';
 
 export interface AriaLinkOptions extends AriaLinkProps {
   /** Whether the link is disabled. */

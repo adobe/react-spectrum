@@ -11,7 +11,7 @@
  */
 
 import {Accordion, ActionButton, Disclosure, DisclosureHeader, DisclosurePanel, DisclosureTitle, TextField} from '../src';
-import {Key} from 'react-aria';
+import {Key} from '@react-aria-nutrient/react-aria';
 import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import React from 'react';

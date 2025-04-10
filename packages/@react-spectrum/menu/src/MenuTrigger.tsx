@@ -15,11 +15,11 @@ import {DOMRef} from '@react-types/shared';
 import {MenuContext} from './context';
 import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
-import {PressResponder, useInteractOutside} from '@react-aria/interactions';
+import {PressResponder, useInteractOutside} from '@react-aria-nutrient/interactions';
 import React, {forwardRef, Fragment, useRef} from 'react';
 import {SpectrumMenuTriggerProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {useMenuTrigger} from '@react-aria/menu';
+import {useMenuTrigger} from '@react-aria-nutrient/menu';
 import {useMenuTriggerState} from '@react-stately/menu';
 
 /**

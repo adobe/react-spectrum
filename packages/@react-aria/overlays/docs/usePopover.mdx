@@ -10,14 +10,14 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-aria/overlays';
-import focusDocs from 'docs:@react-aria/focus';
-import dialogDocs from 'docs:@react-aria/dialog';
+import docs from 'docs:@react-aria-nutrient/overlays';
+import focusDocs from 'docs:@react-aria-nutrient/focus';
+import dialogDocs from 'docs:@react-aria-nutrient/dialog';
 import statelyDocs from 'docs:@react-stately/overlays';
 import typesDocs from 'docs:@react-types/overlays';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
-import packageData from '@react-aria/overlays/package.json';
+import packageData from '@react-aria-nutrient/overlays/package.json';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import Anatomy from './popover-anatomy.svg';
 
@@ -81,9 +81,9 @@ The `Popover` component uses an &lt;<TypeLink links={docs.links} type={docs.expo
 <TypeLink links={docs.links} type={docs.exports.usePopover} /> also hides content outside the popover from screen readers, which is important since the surrounding content won't be in context of the original trigger due to the portal. To allow screen reader users to dismiss the popover without a keyboard (e.g. on mobile), visually hidden &lt;<TypeLink links={docs.links} type={docs.exports.DismissButton} />&gt; elements are added at the start and end of the popover. An underlay is also used to prevent scrolling and interacting with elements outside the popover with a pointer, to avoid unintentially repositioning or closing it.
 
 ```tsx example export=true render=false
-import type {AriaPopoverProps} from 'react-aria';
+import type {AriaPopoverProps} from '@react-aria-nutrient/react-aria';
 import type {OverlayTriggerState} from 'react-stately';
-import {usePopover, Overlay, DismissButton} from '@react-aria/overlays';
+import {usePopover, Overlay, DismissButton} from '@react-aria-nutrient/overlays';
 
 interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef'> {
   children: React.ReactNode,
@@ -121,7 +121,7 @@ The above `Popover` component can be used as part of many different patterns, su
 
 ```tsx example export=true render=false
 import {useOverlayTriggerState} from '@react-stately/overlays';
-import {useOverlayTrigger} from '@react-aria/overlays';
+import {useOverlayTrigger} from '@react-aria-nutrient/overlays';
 
 // Reuse the Button from your component library. See below for details.
 import {Button} from 'your-component-library';
@@ -211,8 +211,8 @@ The `Dialog` component is rendered within the `Popover` component. It is built u
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import type {AriaDialogProps} from '@react-aria/dialog';
-import {useDialog} from '@react-aria/dialog';
+import type {AriaDialogProps} from '@react-aria-nutrient/dialog';
+import {useDialog} from '@react-aria-nutrient/dialog';
 
 interface DialogProps extends AriaDialogProps {
   title?: React.ReactNode,
@@ -246,7 +246,7 @@ The `Button` component is used in the above example to toggle the popover. It is
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import {useButton} from '@react-aria/button';
+import {useButton} from '@react-aria-nutrient/button';
 
 function Button(props) {
   let ref = props.buttonRef;

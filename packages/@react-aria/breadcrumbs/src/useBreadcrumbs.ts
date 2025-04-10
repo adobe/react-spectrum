@@ -12,10 +12,10 @@
 
 import {AriaBreadcrumbsProps} from '@react-types/breadcrumbs';
 import {DOMAttributes} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 
 export interface BreadcrumbsAria {
   /** Props for the breadcrumbs navigation element. */
@@ -32,7 +32,7 @@ export function useBreadcrumbs(props: AriaBreadcrumbsProps): BreadcrumbsAria {
     ...otherProps
   } = props;
 
-  let strings = useLocalizedStringFormatter(intlMessages, '@react-aria/breadcrumbs');
+  let strings = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/breadcrumbs');
   return {
     navProps: {
       ...filterDOMProps(otherProps, {labelable: true}),

@@ -1,5 +1,5 @@
 import {action} from '@storybook/addon-actions';
-import {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
+import {DIRECTORY_DRAG_TYPE} from '@react-aria-nutrient/dnd';
 import {Flex} from '@react-spectrum/layout';
 import Folder from '@spectrum-icons/illustrations/Folder';
 import {Item, ListView} from '../';

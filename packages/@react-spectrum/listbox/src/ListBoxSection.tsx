@@ -12,13 +12,13 @@
 
 import {classNames} from '@react-spectrum/utils';
 import {LayoutInfo} from '@react-stately/virtualizer';
-import {layoutInfoToStyle, useVirtualizerItem, VirtualizerItemOptions} from '@react-aria/virtualizer';
+import {layoutInfoToStyle, useVirtualizerItem, VirtualizerItemOptions} from '@react-aria-nutrient/virtualizer';
 import {ListBoxContext} from './ListBoxContext';
 import {Node} from '@react-types/shared';
 import React, {Fragment, ReactNode, useContext, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {useListBoxSection} from '@react-aria/listbox';
-import {useLocale} from '@react-aria/i18n';
+import {useListBoxSection} from '@react-aria-nutrient/listbox';
+import {useLocale} from '@react-aria-nutrient/i18n';
 
 interface ListBoxSectionProps<T> extends Omit<VirtualizerItemOptions, 'ref' | 'layoutInfo'> {
   layoutInfo: LayoutInfo,

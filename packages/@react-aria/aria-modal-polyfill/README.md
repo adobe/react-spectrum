@@ -1,4 +1,4 @@
-# @react-aria/aria-modal-polyfill
+# @react-aria-nutrient/aria-modal-polyfill
 
 This package is part of [react-spectrum](https://github.com/adobe/react-spectrum).
 Certain browser + screen reader combinations do not implement aria-modal correctly, allowing users to navigate outside of the modal.
@@ -7,7 +7,7 @@ This package watches a container for aria-modal nodes and hides the rest of the 
 ## How to use
 Include this once in your application at the top level before modals are rendered.
 ```
-import {watchModals} from '@react-aria/aria-modal-polyfill';
+import {watchModals} from '@react-aria-nutrient/aria-modal-polyfill';
 watchModals();
 ```
 

@@ -17,8 +17,8 @@ import {Node} from '@react-types/shared';
 import React, {Fragment, ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {TreeState} from '@react-stately/tree';
-import {useMenuSection} from '@react-aria/menu';
-import {useSeparator} from '@react-aria/separator';
+import {useMenuSection} from '@react-aria-nutrient/menu';
+import {useSeparator} from '@react-aria-nutrient/separator';
 
 interface MenuSectionProps<T> {
   item: Node<T>,

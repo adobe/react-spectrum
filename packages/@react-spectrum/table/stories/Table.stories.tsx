@@ -38,7 +38,7 @@ import {SearchField} from '@react-spectrum/searchfield';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
 import {useAsyncList, useListData} from '@react-stately/data';
-import {useFilter} from '@react-aria/i18n';
+import {useFilter} from '@react-aria-nutrient/i18n';
 
 export default {
   title: 'TableView',

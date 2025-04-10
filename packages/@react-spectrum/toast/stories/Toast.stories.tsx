@@ -21,8 +21,8 @@ import {Heading} from '@react-spectrum/text';
 import React, {SyntheticEvent, useEffect, useMemo, useRef, useState} from 'react';
 import {SpectrumToastOptions, ToastPlacement} from '../src/ToastContainer';
 import {ToastContainer, ToastQueue} from '../';
-import {UNSTABLE_createLandmarkController, useLandmark} from '@react-aria/landmark';
-import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
+import {UNSTABLE_createLandmarkController, useLandmark} from '@react-aria-nutrient/landmark';
+import {UNSTABLE_PortalProvider} from '@react-aria-nutrient/overlays';
 
 export default {
   title: 'Toast',

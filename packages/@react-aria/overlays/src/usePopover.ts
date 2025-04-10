@@ -13,7 +13,7 @@
 import {ariaHideOutside, keepVisible} from './ariaHideOutside';
 import {AriaPositionProps, useOverlayPosition} from './useOverlayPosition';
 import {DOMAttributes, RefObject} from '@react-types/shared';
-import {mergeProps, useLayoutEffect} from '@react-aria/utils';
+import {mergeProps, useLayoutEffect} from '@react-aria-nutrient/utils';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import {PlacementAxis} from '@react-types/overlays';
 import {useOverlay} from './useOverlay';

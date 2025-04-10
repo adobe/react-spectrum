@@ -12,7 +12,7 @@
 
 import React, {ReactNode, useRef} from 'react';
 import {useTableContext} from './TableViewBase';
-import {useVisuallyHidden} from '@react-aria/visually-hidden';
+import {useVisuallyHidden} from '@react-aria-nutrient/visually-hidden';
 
 export function RootDropIndicator(): ReactNode | null {
   let {dropState, dragAndDropHooks, state} = useTableContext();

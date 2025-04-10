@@ -24,13 +24,13 @@ import comboboxStyles from './combobox.css';
 import {DOMRefValue, FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
 import {FieldButton} from '@react-spectrum/button';
-import {FocusRing} from '@react-aria/focus';
+import {FocusRing} from '@react-aria-nutrient/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {MobileComboBox} from './MobileComboBox';
 import {Popover} from '@react-spectrum/overlays';
-import {PressResponder, useHover} from '@react-aria/interactions';
+import {PressResponder, useHover} from '@react-aria-nutrient/interactions';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {
   ForwardedRef,
@@ -46,11 +46,11 @@ import {SpectrumComboBoxProps} from '@react-types/combobox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
-import {useComboBox} from '@react-aria/combobox';
+import {useComboBox} from '@react-aria-nutrient/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
-import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useFilter, useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useFormProps} from '@react-spectrum/form';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useLayoutEffect} from '@react-aria-nutrient/utils';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 /**

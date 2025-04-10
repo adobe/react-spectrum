@@ -15,7 +15,7 @@ import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '@react-aria/checkbox/docs/checkbox-anatomy.svg';
+import Anatomy from '@react-aria-nutrient/checkbox/docs/checkbox-anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -58,7 +58,7 @@ import {Checkbox} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@import "@react-aria/example-theme";
+@import "@react-aria-nutrient/example-theme";
 
 .react-aria-Checkbox {
   --selected-color: var(--highlight-background);
@@ -372,7 +372,7 @@ This example shows a `CheckboxDescription` component that accepts a checkbox in 
 
 ```tsx example
 import {CheckboxContext} from 'react-aria-components';
-import {useId} from 'react-aria';
+import {useId} from '@react-aria-nutrient/react-aria';
 
 interface CheckboxDescriptionProps {
   children?: React.ReactNode,
@@ -406,7 +406,7 @@ If you need to customize things further, such as intercepting events or customiz
 import type {CheckboxProps} from 'react-aria-components';
 import {CheckboxContext, useContextProps} from 'react-aria-components';
 import {useToggleState} from 'react-stately';
-import {useCheckbox} from 'react-aria';
+import {useCheckbox} from '@react-aria-nutrient/react-aria';
 
 const MyCheckbox = React.forwardRef((props: CheckboxProps, ref: React.ForwardedRef<HTMLInputElement>) => {
   // Merge the local props and ref with the ones provided via context.

@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTagGroupProps, useFocusRing, useHover, useTag, useTagGroup} from 'react-aria';
+import {AriaTagGroupProps, useFocusRing, useHover, useTag, useTagGroup} from '@react-aria-nutrient/react-aria';
 import {ButtonContext} from './Button';
-import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
+import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria-nutrient/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, usePersistedKeys} from './Collection';
 import {ContextValue, DOMProps, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria-nutrient/utils';
 import {forwardRefType, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {ListState, Node, useListState} from 'react-stately';

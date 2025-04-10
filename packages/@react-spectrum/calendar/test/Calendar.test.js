@@ -12,13 +12,13 @@
 
 import {act} from '@testing-library/react';
 
-jest.mock('@react-aria/live-announcer');
-import {announce} from '@react-aria/live-announcer';
+jest.mock('@react-aria-nutrient/live-announcer');
+import {announce} from '@react-aria-nutrient/live-announcer';
 import {Calendar} from '../';
 import {CalendarDate, isWeekend} from '@internationalized/date';
 import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 import userEvent from '@testing-library/user-event';
 
 describe('Calendar', () => {

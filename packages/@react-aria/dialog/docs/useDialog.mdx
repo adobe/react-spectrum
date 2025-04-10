@@ -10,12 +10,12 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-aria/dialog';
-import overlaysDocs from 'docs:@react-aria/overlays';
-import focusDocs from 'docs:@react-aria/focus';
+import docs from 'docs:@react-aria-nutrient/dialog';
+import overlaysDocs from 'docs:@react-aria-nutrient/overlays';
+import focusDocs from 'docs:@react-aria-nutrient/focus';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
-import packageData from '@react-aria/dialog/package.json';
+import packageData from '@react-aria-nutrient/dialog/package.json';
 import Anatomy from './anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -75,8 +75,8 @@ prop must be passed instead to identify the element to assistive technology.
 This example shows how to build a typical modal dialog, by combining `useDialog` with [useModalOverlay](useModalOverlay.html). The code for the `Modal` component is available below. The `Dialog` component may also be used within a [popover](usePopover.html). See the docs for more details on overlay containers.
 
 ```tsx example
-import type {AriaDialogProps} from '@react-aria/dialog';
-import {useDialog} from '@react-aria/dialog';
+import type {AriaDialogProps} from '@react-aria-nutrient/dialog';
+import {useDialog} from '@react-aria-nutrient/dialog';
 
 // Reuse the Button and Modal from your component library. See below for details.
 import {Button, Modal, ModalTrigger} from 'your-component-library';
@@ -130,7 +130,7 @@ The `Modal` and `ModalTrigger` components render the dialog within a typical mod
 
 ```tsx example export=true render=false
 import {useOverlayTriggerState} from '@react-stately/overlays';
-import {Overlay, useModalOverlay, useOverlayTrigger} from '@react-aria/overlays';
+import {Overlay, useModalOverlay, useOverlayTrigger} from '@react-aria-nutrient/overlays';
 
 function Modal({state, children, ...props}) {
   let ref = React.useRef(null);
@@ -191,7 +191,7 @@ The `Button` component is used in the above example to open and close the dialog
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import {useButton} from '@react-aria/button';
+import {useButton} from '@react-aria-nutrient/button';
 
 function Button(props) {
   let ref = React.useRef(null);

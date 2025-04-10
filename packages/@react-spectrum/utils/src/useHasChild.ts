@@ -11,7 +11,7 @@
  */
 
 import {RefObject} from '@react-types/shared';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useLayoutEffect} from '@react-aria-nutrient/utils';
 import {useState} from 'react';
 
 export function useHasChild(query: string, ref: RefObject<HTMLElement | null>): boolean {

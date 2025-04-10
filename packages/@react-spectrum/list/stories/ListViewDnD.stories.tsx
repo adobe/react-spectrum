@@ -1,7 +1,7 @@
 import {action} from '@storybook/addon-actions';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {DragBetweenListsExample, DragBetweenListsRootOnlyExample, DragExample, DragIntoItemExample, ReorderExample} from './ListViewDnDExamples';
-import {Droppable} from '@react-aria/dnd/stories/dnd.stories';
+import {Droppable} from '@react-aria-nutrient/dnd/stories/dnd.stories';
 import {Flex} from '@react-spectrum/layout';
 import {ListView} from '../';
 import React from 'react';

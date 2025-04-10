@@ -11,7 +11,7 @@
  */
 
 import {useEffect, useState} from 'react';
-import {useIsSSR} from '@react-aria/ssr';
+import {useIsSSR} from '@react-aria-nutrient/ssr';
 
 export function useMediaQuery(query: string): boolean {
   let supportsMatchMedia = typeof window !== 'undefined' && typeof window.matchMedia === 'function';

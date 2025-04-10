@@ -13,15 +13,15 @@
 import {ChangeEvent, useCallback, useEffect, useRef} from 'react';
 import {ColumnSize} from '@react-types/table';
 import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
-import {focusSafely, useInteractionModality, useKeyboard, useMove, usePress} from '@react-aria/interactions';
+import {focusSafely, useInteractionModality, useKeyboard, useMove, usePress} from '@react-aria-nutrient/interactions';
 import {getColumnHeaderId} from './utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useDescription, useEffectEvent, useId} from '@react-aria/utils';
+import {mergeProps, useDescription, useEffectEvent, useId} from '@react-aria-nutrient/utils';
 import {TableColumnResizeState} from '@react-stately/table';
-import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useVisuallyHidden} from '@react-aria/visually-hidden';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
+import {useVisuallyHidden} from '@react-aria-nutrient/visually-hidden';
 
 export interface TableColumnResizeAria {
   /** Props for the visually hidden input element. */
@@ -61,7 +61,7 @@ export interface AriaTableColumnResizeProps<T> {
  */
 export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: TableColumnResizeState<T>, ref: RefObject<HTMLInputElement | null>): TableColumnResizeAria {
   let {column: item, triggerRef, isDisabled, onResizeStart, onResize, onResizeEnd, 'aria-label': ariaLabel} = props;
-  const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/table');
+  const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/table');
   let id = useId();
   let isResizing = state.resizingColumn === item.key;
   let isResizingRef = useRef(isResizing);

@@ -30,7 +30,7 @@ import {
   useEffectEvent,
   useGlobalListeners,
   useSyncRef
-} from '@react-aria/utils';
+} from '@react-aria-nutrient/utils';
 import {createSyntheticEvent, preventFocus, setEventTarget} from './utils';
 import {disableTextSelection, restoreTextSelection} from './textSelection';
 import {DOMAttributes, FocusableElement, PressEvent as IPressEvent, PointerType, PressEvents, RefObject} from '@react-types/shared';

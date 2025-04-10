@@ -11,10 +11,10 @@
  */
 
 import {AriaProgressBarProps} from '@react-types/progress';
-import {clamp, filterDOMProps, mergeProps} from '@react-aria/utils';
+import {clamp, filterDOMProps, mergeProps} from '@react-aria-nutrient/utils';
 import {DOMAttributes} from '@react-types/shared';
-import {useLabel} from '@react-aria/label';
-import {useNumberFormatter} from '@react-aria/i18n';
+import {useLabel} from '@react-aria-nutrient/label';
+import {useNumberFormatter} from '@react-aria-nutrient/i18n';
 
 export interface ProgressBarAria {
   /** Props for the progress bar container element. */

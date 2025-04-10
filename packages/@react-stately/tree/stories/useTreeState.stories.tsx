@@ -14,8 +14,8 @@ import {Collection, Key, Node} from '@react-types/shared';
 import {Item} from '@react-stately/collections';
 import React, {useMemo, useRef} from 'react';
 import {TreeCollection} from '../src/TreeCollection';
-import {usePress} from '@react-aria/interactions';
-import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
+import {usePress} from '@react-aria-nutrient/interactions';
+import {useSelectableCollection, useSelectableItem} from '@react-aria-nutrient/selection';
 import {useTreeState} from '../';
 
 export default {

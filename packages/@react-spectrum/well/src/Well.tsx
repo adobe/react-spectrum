@@ -12,7 +12,7 @@
 
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 import React, {forwardRef} from 'react';
 import {SpectrumWellProps} from '@react-types/well';
 import styles from '@adobe/spectrum-css-temp/components/well/vars.css';

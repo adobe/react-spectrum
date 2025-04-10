@@ -1,7 +1,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
-import {chain} from '@react-aria/utils';
+import {chain} from '@react-aria-nutrient/utils';
 import {Flex} from '@react-spectrum/layout';
 import {ItemDropTarget, Key} from '@react-types/shared';
 import React from 'react';

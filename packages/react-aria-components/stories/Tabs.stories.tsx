@@ -12,7 +12,7 @@
 
 import {Button, OverlayArrow, Tab, TabList, TabPanel, TabProps, Tabs, TabsProps, Tooltip, TooltipTrigger} from 'react-aria-components';
 import React, {useState} from 'react';
-import {RouterProvider} from '@react-aria/utils';
+import {RouterProvider} from '@react-aria-nutrient/utils';
 
 export default {
   title: 'React Aria Components'

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-jest.mock('@react-aria/live-announcer');
+jest.mock('@react-aria-nutrient/live-announcer');
 import {act, render as renderComponent, within} from '@testing-library/react';
 import {ActionButton} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
@@ -22,11 +22,11 @@ import {HidingColumns} from '../stories/HidingColumns';
 import {Key} from '@react-types/shared';
 import {Provider} from '@react-spectrum/provider';
 import React, {useRef} from 'react';
-import {resizingTests} from '@react-aria/table/test/tableResizingTests';
+import {resizingTests} from '@react-aria-nutrient/table/test/tableResizingTests';
 import {Scale} from '@react-types/provider';
-import {setInteractionModality} from '@react-aria/interactions';
+import {setInteractionModality} from '@react-aria-nutrient/interactions';
 import {theme} from '@react-spectrum/theme-default';
-import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
+import {UNSTABLE_PortalProvider} from '@react-aria-nutrient/overlays';
 import userEvent from '@testing-library/user-event';
 
 let columns = [

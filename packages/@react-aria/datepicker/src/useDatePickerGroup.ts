@@ -1,10 +1,10 @@
-import {createFocusManager, getFocusableTreeWalker} from '@react-aria/focus';
+import {createFocusManager, getFocusableTreeWalker} from '@react-aria-nutrient/focus';
 import {DateFieldState, DatePickerState, DateRangePickerState} from '@react-stately/datepicker';
 import {DOMAttributes, FocusableElement, KeyboardEvent, RefObject} from '@react-types/shared';
-import {mergeProps} from '@react-aria/utils';
-import {useLocale} from '@react-aria/i18n';
+import {mergeProps} from '@react-aria-nutrient/utils';
+import {useLocale} from '@react-aria-nutrient/i18n';
 import {useMemo} from 'react';
-import {usePress} from '@react-aria/interactions';
+import {usePress} from '@react-aria-nutrient/interactions';
 
 export function useDatePickerGroup(state: DatePickerState | DateRangePickerState | DateFieldState, ref: RefObject<Element | null>, disableArrowNavigation?: boolean): DOMAttributes<FocusableElement> {
   let {direction} = useLocale();

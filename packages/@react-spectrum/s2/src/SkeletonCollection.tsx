@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {createLeafComponent} from '@react-aria/collections';
+import {createLeafComponent} from '@react-aria-nutrient/collections';
 import {ReactNode} from 'react';
 import {Skeleton} from './Skeleton';
 

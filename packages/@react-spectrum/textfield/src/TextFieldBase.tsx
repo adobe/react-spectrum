@@ -14,13 +14,13 @@ import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, createFocusableRef} from '@react-spectrum/utils';
 import {Field} from '@react-spectrum/label';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import {PressEvents, RefObject, ValidationResult} from '@react-types/shared';
 import React, {cloneElement, forwardRef, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, ReactElement, Ref, TextareaHTMLAttributes, useImperativeHandle, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
-import {useFocusRing} from '@react-aria/focus';
-import {useHover} from '@react-aria/interactions';
+import {useFocusRing} from '@react-aria-nutrient/focus';
+import {useHover} from '@react-aria-nutrient/interactions';
 
 interface TextFieldBaseProps extends Omit<SpectrumTextFieldProps, 'onChange' | 'validate'>, PressEvents, Partial<ValidationResult> {
   wrapperChildren?: ReactElement | ReactElement[],

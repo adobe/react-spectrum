@@ -15,12 +15,12 @@ import {getColumnHeaderId} from './utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isAndroid, mergeProps, useDescription} from '@react-aria/utils';
+import {isAndroid, mergeProps, useDescription} from '@react-aria-nutrient/utils';
 import {TableState} from '@react-stately/table';
 import {useEffect} from 'react';
-import {useFocusable, usePress} from '@react-aria/interactions';
-import {useGridCell} from '@react-aria/grid';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useFocusable, usePress} from '@react-aria-nutrient/interactions';
+import {useGridCell} from '@react-aria-nutrient/grid';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 
 export interface AriaTableColumnHeaderProps<T> {
   /** An object representing the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader). Contains all the relevant information that makes up the column header. */
@@ -67,7 +67,7 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, st
     ariaSort = isSortedColumn ? sortDirection : 'none';
   }
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/table');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/table');
   let sortDescription;
   if (allowsSorting) {
     sortDescription = `${stringFormatter.format('sortable')}`;

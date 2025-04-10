@@ -14,7 +14,7 @@ import {AriaRangeCalendarProps, DateValue} from '@react-types/calendar';
 import {CalendarAria, useCalendarBase} from './useCalendarBase';
 import {FocusableElement, RefObject} from '@react-types/shared';
 import {RangeCalendarState} from '@react-stately/calendar';
-import {useEvent} from '@react-aria/utils';
+import {useEvent} from '@react-aria-nutrient/utils';
 import {useRef} from 'react';
 
 /**

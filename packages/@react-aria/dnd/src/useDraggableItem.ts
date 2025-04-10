@@ -17,9 +17,9 @@ import {HTMLAttributes} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
-import {useDescription} from '@react-aria/utils';
+import {useDescription} from '@react-aria-nutrient/utils';
 import {useDrag} from './useDrag';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 
 export interface DraggableItemProps {
   /** The key of the draggable item within the collection. */
@@ -64,7 +64,7 @@ const MESSAGES = {
  * Handles drag interactions for an item within a draggable collection.
  */
 export function useDraggableItem(props: DraggableItemProps, state: DraggableCollectionState): DraggableItemResult {
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/dnd');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/dnd');
   let isDisabled = state.isDisabled || state.selectionManager.isDisabled(props.key);
   let {dragProps, dragButtonProps} = useDrag({
     getItems() {

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTreeProps} from '@react-aria/tree';
+import {AriaTreeProps} from '@react-aria-nutrient/tree';
 import {
   ButtonContext,
   Tree,
@@ -28,11 +28,11 @@ import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {DOMRef, Expandable, Key, SelectionBehavior, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {focusRing, style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
-import {isAndroid} from '@react-aria/utils';
+import {isAndroid} from '@react-aria-nutrient/utils';
 import React, {createContext, JSX, JSXElementConstructor, ReactElement, ReactNode, useRef} from 'react';
 import {SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {useButton} from '@react-aria/button';
-import {useLocale} from '@react-aria/i18n';
+import {useButton} from '@react-aria-nutrient/button';
+import {useLocale} from '@react-aria-nutrient/i18n';
 
 export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeProps<T>, 'children'>, StyleProps, SpectrumSelectionProps, Expandable {
   /** Provides content to display when there are no items in the tree. */

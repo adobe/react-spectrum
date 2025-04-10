@@ -24,7 +24,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/test-utils": "1.0.0-alpha.5",
+    "@react-aria-nutrient/test-utils": "1.0.0-alpha.5",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

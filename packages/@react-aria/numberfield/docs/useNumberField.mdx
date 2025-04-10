@@ -10,10 +10,10 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-aria/numberfield';
+import docs from 'docs:@react-aria-nutrient/numberfield';
 import statelyDocs from 'docs:@react-stately/numberfield';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
-import packageData from '@react-aria/numberfield/package.json';
+import packageData from '@react-aria-nutrient/numberfield/package.json';
 import Anatomy from './anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
@@ -104,9 +104,9 @@ for an example of a button with a custom element type.
 In addition, see [useTextField](useTextField.html) for an example of the description and error message elements.
 
 ```tsx example export=true
-import {useNumberField} from '@react-aria/numberfield';
+import {useNumberField} from '@react-aria-nutrient/numberfield';
 import {useNumberFieldState} from '@react-stately/numberfield';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 
 // Reuse the Button from your component library. See below for details.
 import {Button} from 'your-component-library';
@@ -152,7 +152,7 @@ The `Button` component is used in the above example to increment and decrement t
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import {useButton} from '@react-aria/button';
+import {useButton} from '@react-aria-nutrient/button';
 
 function Button(props) {
   let ref = React.useRef(null);

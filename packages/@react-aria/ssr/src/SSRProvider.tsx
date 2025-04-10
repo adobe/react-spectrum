@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-// We must avoid a circular dependency with @react-aria/utils, and this useLayoutEffect is
+// We must avoid a circular dependency with @react-aria-nutrient/utils, and this useLayoutEffect is
 // guarded by a check that it only runs on the client side.
 // eslint-disable-next-line rulesdir/useLayoutEffectRule
 import React, {JSX, ReactNode, useContext, useLayoutEffect, useMemo, useRef, useState} from 'react';
@@ -152,14 +152,14 @@ function useLegacySSRSafeId(defaultId?: string): string {
   }
 
   let counter = useCounter(!!defaultId);
-  let prefix = ctx === defaultContext && process.env.NODE_ENV === 'test' ? 'react-aria' : `react-aria${ctx.prefix}`;
+  let prefix = ctx === defaultContext && process.env.NODE_ENV === 'test' ? '@react-aria-nutrient/react-aria' : `react-aria${ctx.prefix}`;
   return defaultId || `${prefix}-${counter}`;
 }
 
 function useModernSSRSafeId(defaultId?: string): string {
   let id = React.useId();
   let [didSSR] = useState(useIsSSR());
-  let prefix = didSSR || process.env.NODE_ENV === 'test' ? 'react-aria' : `react-aria${defaultContext.prefix}`;
+  let prefix = didSSR || process.env.NODE_ENV === 'test' ? '@react-aria-nutrient/react-aria' : `react-aria${defaultContext.prefix}`;
   return defaultId || `${prefix}-${id}`;
 }
 

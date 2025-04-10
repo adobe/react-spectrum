@@ -11,9 +11,9 @@
  */
 import {AriaButtonProps} from '@react-types/button';
 import {classNames} from '@react-spectrum/utils';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import React, {useRef, useState} from 'react';
-import {useButton} from '@react-aria/button';
+import {useButton} from '@react-aria-nutrient/button';
 import {useHover} from '../';
 
 export default {

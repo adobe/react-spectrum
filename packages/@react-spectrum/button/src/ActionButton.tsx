@@ -13,14 +13,14 @@
 import {classNames, ClearSlots, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import CornerTriangle from '@spectrum-icons/ui/CornerTriangle';
 import {FocusableRef} from '@react-types/shared';
-import {FocusRing} from '@react-aria/focus';
-import {mergeProps} from '@react-aria/utils';
+import {FocusRing} from '@react-aria-nutrient/focus';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import React from 'react';
 import {SpectrumActionButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {Text} from '@react-spectrum/text';
-import {useButton} from '@react-aria/button';
-import {useHover} from '@react-aria/interactions';
+import {useButton} from '@react-aria-nutrient/button';
+import {useHover} from '@react-aria-nutrient/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 
 /**

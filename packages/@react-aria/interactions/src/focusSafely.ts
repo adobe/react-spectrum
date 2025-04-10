@@ -16,7 +16,7 @@ import {
   getActiveElement,
   getOwnerDocument,
   runAfterTransition
-} from '@react-aria/utils';
+} from '@react-aria-nutrient/utils';
 import {getInteractionModality} from './useFocusVisible';
 
 /**

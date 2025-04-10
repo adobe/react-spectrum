@@ -10,10 +10,10 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-aria/dnd';
+import docs from 'docs:@react-aria-nutrient/dnd';
 import sharedDocs from 'docs:@react-types/shared/src/dnd.d.ts';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
-import packageData from '@react-aria/dnd/package.json';
+import packageData from '@react-aria-nutrient/dnd/package.json';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Keyboard} from '@react-spectrum/text';
 
@@ -46,8 +46,8 @@ The <TypeLink links={docs.links} type={docs.exports.useClipboard} /> hook provid
 This example shows a simple focusable element which supports copying a string when focused, and another element which supports pasting plain text.
 
 ```tsx example
-import type {TextDropItem} from '@react-aria/dnd';
-import {useClipboard} from '@react-aria/dnd';
+import type {TextDropItem} from '@react-aria-nutrient/dnd';
+import {useClipboard} from '@react-aria-nutrient/dnd';
 
 function Copyable() {
   let {clipboardProps} = useClipboard({
@@ -316,7 +316,7 @@ A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.F
 This example accepts JPEG and PNG image files, and renders them by creating a local [object URL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL).
 
 ```tsx example
-import type {FileDropItem} from '@react-aria/dnd';
+import type {FileDropItem} from '@react-aria-nutrient/dnd';
 
 function Pasteable() {
   let [file, setFile] = React.useState(null);
@@ -346,7 +346,7 @@ The `getEntries` method returns an [async iterable](https://developer.mozilla.or
 This example renders the file names within a dropped directory in a grid.
 
 ```tsx example
-import type {DirectoryDropItem} from '@react-aria/dnd';
+import type {DirectoryDropItem} from '@react-aria-nutrient/dnd';
 import File from '@spectrum-icons/workflow/FileTxt';
 import Folder from '@spectrum-icons/workflow/Folder';
 
@@ -437,8 +437,8 @@ function Pasteable() {
 If you need to temporarily disable copying and pasting, you can pass the `isDisabled` option to `useClipboard`. This will prevent copying and pasting on the element until it is re-enabled.
 
 ```tsx example
-import type {TextDropItem} from '@react-aria/dnd';
-import {useClipboard} from '@react-aria/dnd';
+import type {TextDropItem} from '@react-aria-nutrient/dnd';
+import {useClipboard} from '@react-aria-nutrient/dnd';
 
 function Copyable() {
   let {clipboardProps} = useClipboard({

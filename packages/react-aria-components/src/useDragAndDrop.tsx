@@ -30,7 +30,7 @@ import {
   useDropIndicator,
   useDroppableCollection,
   useDroppableItem
-} from 'react-aria';
+} from '@react-aria-nutrient/react-aria';
 import {DraggableCollectionProps, DroppableCollectionProps, Key, RefObject} from '@react-types/shared';
 import {
   DraggableCollectionState,
@@ -40,7 +40,7 @@ import {
   useDraggableCollectionState,
   useDroppableCollectionState
 } from 'react-stately';
-import {isVirtualDragging} from '@react-aria/dnd';
+import {isVirtualDragging} from '@react-aria-nutrient/dnd';
 import {JSX, useMemo} from 'react';
 
 interface DraggableCollectionStateOpts extends Omit<DraggableCollectionStateOptions, 'getItems'> {}

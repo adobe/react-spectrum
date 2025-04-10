@@ -37,19 +37,19 @@ install the hooks you use, or more granularly manage their versions. The individ
 under the [@react-aria](https://www.npmjs.com/org/react-aria) scope on npm. For example:
 
 ```
-yarn add @react-aria/button
+yarn add @react-aria-nutrient/button
 ```
 
 Once installed, hooks can be used from the monopackage or individual packages the same way.
 
 ```tsx
 // Monopackage
-import {useButton} from 'react-aria';
+import {useButton} from '@react-aria-nutrient/react-aria';
 ```
 
 ```tsx keepIndividualImports
 // Individual packages
-import {useButton} from '@react-aria/button';
+import {useButton} from '@react-aria-nutrient/button';
 ```
 
 ## Building a component
@@ -69,7 +69,7 @@ the element that you render.
 This example shows a very simple button component built with the [useButton](useButton.html) hook.
 
 ```tsx example export=true
-import {useButton} from '@react-aria/button';
+import {useButton} from '@react-aria-nutrient/button';
 
 function Button(props) {
   /*- begin highlight -*/
@@ -126,7 +126,7 @@ with the [useNumberFieldState](../react-stately/useNumberFieldState.html) hook f
 
 ```tsx example
 import {useNumberFieldState} from 'react-stately';
-import {useLocale, useNumberField} from 'react-aria';
+import {useLocale, useNumberField} from '@react-aria-nutrient/react-aria';
 
 function NumberField(props) {
   let {locale} = useLocale();

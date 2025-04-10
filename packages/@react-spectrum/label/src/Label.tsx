@@ -13,13 +13,13 @@
 import Asterisk from '@spectrum-icons/ui/Asterisk';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import React from 'react';
 import {SpectrumLabelProps} from '@react-types/label';
 import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 export const Label = React.forwardRef(function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {

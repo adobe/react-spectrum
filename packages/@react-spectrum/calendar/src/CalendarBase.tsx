@@ -25,8 +25,8 @@ import {HelpText} from '@react-spectrum/label';
 import intlMessages from '../intl/*.json';
 import React, {HTMLAttributes, JSX, ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
-import {useDateFormatter, useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
+import {useDateFormatter, useLocale, useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
+import {VisuallyHidden} from '@react-aria-nutrient/visually-hidden';
 
 interface CalendarBaseProps<T extends CalendarState | RangeCalendarState> extends CalendarPropsBase, DOMProps, StyleProps {
   state: T,

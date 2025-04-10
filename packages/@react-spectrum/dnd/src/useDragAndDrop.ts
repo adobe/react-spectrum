@@ -27,7 +27,7 @@ import {
   useDropIndicator,
   useDroppableCollection,
   useDroppableItem
-} from '@react-aria/dnd';
+} from '@react-aria-nutrient/dnd';
 import {DraggableCollectionProps, DragItem, DroppableCollectionProps, Key, RefObject} from '@react-types/shared';
 import {
   DraggableCollectionState,

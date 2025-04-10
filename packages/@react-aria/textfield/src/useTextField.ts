@@ -12,7 +12,7 @@
 
 import {AriaTextFieldProps} from '@react-types/textfield';
 import {DOMAttributes, ValidationResult} from '@react-types/shared';
-import {filterDOMProps, getOwnerWindow, mergeProps, useFormReset} from '@react-aria/utils';
+import {filterDOMProps, getOwnerWindow, mergeProps, useFormReset} from '@react-aria-nutrient/utils';
 import React, {
   ChangeEvent,
   HTMLAttributes,
@@ -22,9 +22,9 @@ import React, {
   useEffect
 } from 'react';
 import {useControlledState} from '@react-stately/utils';
-import {useField} from '@react-aria/label';
-import {useFocusable} from '@react-aria/interactions';
-import {useFormValidation} from '@react-aria/form';
+import {useField} from '@react-aria-nutrient/label';
+import {useFocusable} from '@react-aria-nutrient/interactions';
+import {useFormValidation} from '@react-aria-nutrient/form';
 import {useFormValidationState} from '@react-stately/form';
 
 /**

@@ -18,7 +18,7 @@ import type {Meta, StoryObj} from '@storybook/react';
 import NewIcon from '../s2wf-icons/S2_Icon_New_20_N.svg';
 import {style} from '../style' with { type: 'macro' };
 import './unsafe.css';
-import {useNumberFormatter} from 'react-aria';
+import {useNumberFormatter} from '@react-aria-nutrient/react-aria';
 
 const meta: Meta<typeof ActionButton> = {
   component: ActionButton,

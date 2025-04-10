@@ -10,10 +10,10 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-aria/dnd';
+import docs from 'docs:@react-aria-nutrient/dnd';
 import sharedDocs from 'docs:@react-types/shared/src/dnd.d.ts';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
-import packageData from '@react-aria/dnd/package.json';
+import packageData from '@react-aria-nutrient/dnd/package.json';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Keyboard} from '@react-spectrum/text';
 
@@ -48,7 +48,7 @@ See the [drag and drop introduction](dnd.html) to learn more.
 This example shows how to make a simple draggable element that provides data as plain text. In order to support keyboard and screen reader drag interactions, the element must be focusable and have an ARIA role (in this case, `button`). While it is being dragged, it is displayed with a dimmed appearance by applying an additional CSS class.
 
 ```tsx example
-import {useDrag} from '@react-aria/dnd';
+import {useDrag} from '@react-aria-nutrient/dnd';
 
 function Draggable() {
   let {dragProps, isDragging} = useDrag({
@@ -111,8 +111,8 @@ The `DropTarget` component used above is defined below. See [useDrop](useDrop.ht
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example render=false export=true
-import type {TextDropItem} from '@react-aria/dnd';
-import {useDrop} from '@react-aria/dnd';
+import type {TextDropItem} from '@react-aria-nutrient/dnd';
+import {useDrop} from '@react-aria-nutrient/dnd';
 
 function DropTarget() {
   let [dropped, setDropped] = React.useState(null);
@@ -214,7 +214,7 @@ This example renders a custom drag preview which shows the text of the first dra
 
 ```tsx example
 /*- begin highlight -*/
-import {DragPreview} from '@react-aria/dnd';
+import {DragPreview} from '@react-aria-nutrient/dnd';
 /*- end highlight -*/
 
 function Draggable() {
@@ -342,7 +342,7 @@ In cases where a draggable element has other interactions that conflict with acc
 When the `hasDragButton` option is enabled, the keyboard interactions are moved from the returned `dragProps` to the `dragButtonProps` so that they can be applied to a separate element, while the mouse and touch dragging interactions remain in `dragProps`.
 
 ```tsx example
-import {useButton} from '@react-aria/button';
+import {useButton} from '@react-aria-nutrient/button';
 
 function Draggable() {
   let {dragProps, dragButtonProps, isDragging} = useDrag({
@@ -381,7 +381,7 @@ function Draggable() {
 If you need to temporarily disable dragging, you can pass the `isDisabled` option to `useDrag`. This will prevent dragging an element until it is re-enabled.
 
 ```tsx example
-import {useDrag} from '@react-aria/dnd';
+import {useDrag} from '@react-aria-nutrient/dnd';
 
 function Draggable() {
   let {dragProps, isDragging} = useDrag({

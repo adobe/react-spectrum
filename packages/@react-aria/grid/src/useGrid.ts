@@ -11,17 +11,17 @@
  */
 
 import {AriaLabelingProps, DOMAttributes, DOMProps, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useId} from '@react-aria-nutrient/utils';
 import {GridCollection} from '@react-types/grid';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
 import {useCallback, useMemo} from 'react';
-import {useCollator, useLocale} from '@react-aria/i18n';
+import {useCollator, useLocale} from '@react-aria-nutrient/i18n';
 import {useGridSelectionAnnouncement} from './useGridSelectionAnnouncement';
-import {useHasTabbableChild} from '@react-aria/focus';
+import {useHasTabbableChild} from '@react-aria-nutrient/focus';
 import {useHighlightSelectionDescription} from './useHighlightSelectionDescription';
-import {useSelectableCollection} from '@react-aria/selection';
+import {useSelectableCollection} from '@react-aria-nutrient/selection';
 
 export interface GridProps extends DOMProps, AriaLabelingProps {
   /** Whether the grid uses virtual scrolling. */

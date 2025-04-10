@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaNumberFieldProps, useLocale, useNumberField} from 'react-aria';
+import {AriaNumberFieldProps, useLocale, useNumberField} from '@react-aria-nutrient/react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 import {FormContext} from './Form';
 import {forwardRefType, InputDOMProps} from '@react-types/shared';
 import {GroupContext} from './Group';

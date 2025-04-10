@@ -17,7 +17,7 @@
 
 import {DOMAttributes, FocusableElement, FocusEvents} from '@react-types/shared';
 import {FocusEvent, useCallback} from 'react';
-import {getActiveElement, getEventTarget, getOwnerDocument} from '@react-aria/utils';
+import {getActiveElement, getEventTarget, getOwnerDocument} from '@react-aria-nutrient/utils';
 import {useSyntheticBlurEvent} from './utils';
 
 export interface FocusProps<Target = FocusableElement> extends FocusEvents<Target> {

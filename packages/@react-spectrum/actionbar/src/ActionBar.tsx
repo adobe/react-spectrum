@@ -12,12 +12,12 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import {ActionGroup} from '@react-spectrum/actiongroup';
-import {announce} from '@react-aria/live-announcer';
+import {announce} from '@react-aria-nutrient/live-announcer';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
-import {FocusScope} from '@react-aria/focus';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
+import {FocusScope} from '@react-aria-nutrient/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {OpenTransition} from '@react-spectrum/overlays';
@@ -25,8 +25,8 @@ import React, {ReactElement, Ref, useEffect, useRef, useState} from 'react';
 import {SpectrumActionBarProps} from '@react-types/actionbar';
 import styles from './actionbar.css';
 import {Text} from '@react-spectrum/text';
-import {useKeyboard} from '@react-aria/interactions';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useKeyboard} from '@react-aria-nutrient/interactions';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 /**

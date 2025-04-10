@@ -12,7 +12,7 @@
 
 import {AriaBreadcrumbItemProps} from '@react-types/breadcrumbs';
 import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
-import {useLink} from '@react-aria/link';
+import {useLink} from '@react-aria-nutrient/link';
 
 export interface BreadcrumbItemAria {
   /** Props for the breadcrumb item link element. */

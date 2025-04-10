@@ -1,3 +1,3 @@
-# @react-aria/visually-hidden
+# @react-aria-nutrient/visually-hidden
 
 This package is part of [react-spectrum](https://github.com/adobe/react-spectrum). See the repo for more details.

@@ -37,7 +37,7 @@ let excludedPackages = new Set([
 
 let monopackages = new Set([
   '@adobe/react-spectrum',
-  'react-aria',
+  '@react-aria-nutrient/react-aria',
   'react-stately'
 ]);
 

@@ -1,8 +1,8 @@
 
 import {RefObject} from '@react-types/shared';
 import {useEffect, useRef, useState} from 'react';
-import {useEffectEvent, useResizeObserver} from '@react-aria/utils';
-import {useInteractionModality} from '@react-aria/interactions';
+import {useEffectEvent, useResizeObserver} from '@react-aria-nutrient/utils';
+import {useInteractionModality} from '@react-aria-nutrient/interactions';
 
 interface SafelyMouseToSubmenuOptions {
   /** Ref for the parent menu. */

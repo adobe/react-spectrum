@@ -10,15 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, isCtrlKeyPressed, mergeProps, scrollIntoView, scrollIntoViewport, useEffectEvent, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria/utils';
+import {CLEAR_FOCUS_EVENT, FOCUS_EVENT, focusWithoutScrolling, isCtrlKeyPressed, mergeProps, scrollIntoView, scrollIntoViewport, useEffectEvent, useEvent, useRouter, useUpdateLayoutEffect} from '@react-aria-nutrient/utils';
 import {DOMAttributes, FocusableElement, FocusStrategy, Key, KeyboardDelegate, RefObject} from '@react-types/shared';
 import {flushSync} from 'react-dom';
 import {FocusEvent, KeyboardEvent, useEffect, useRef} from 'react';
-import {focusSafely, getInteractionModality} from '@react-aria/interactions';
-import {getFocusableTreeWalker, moveVirtualFocus} from '@react-aria/focus';
+import {focusSafely, getInteractionModality} from '@react-aria-nutrient/interactions';
+import {getFocusableTreeWalker, moveVirtualFocus} from '@react-aria-nutrient/focus';
 import {getItemElement, isNonContiguousSelectionModifier, useCollectionId} from './utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 import {useTypeSelect} from './useTypeSelect';
 
 export interface AriaSelectableCollectionOptions {

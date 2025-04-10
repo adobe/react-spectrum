@@ -12,12 +12,12 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaLabelingProps, DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
-import {filterDOMProps, useId, useSlotId} from '@react-aria/utils';
+import {filterDOMProps, useId, useSlotId} from '@react-aria-nutrient/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {QueuedToast, ToastState} from '@react-stately/toast';
 import {useEffect, useState} from 'react';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 
 export interface AriaToastProps<T> extends AriaLabelingProps {
   /** The toast object. */
@@ -62,7 +62,7 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
 
   let titleId = useId();
   let descriptionId = useSlotId();
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/toast');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/toast');
 
   // This is required for NVDA announcements, without it NVDA will NOT announce the toast when it appears.
   // Originally was tied to animationStart/End via https://github.com/adobe/react-spectrum/pull/6223/commits/e22e319df64958e822ab7cd9685e96818cae9ba5

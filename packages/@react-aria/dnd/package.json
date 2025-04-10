@@ -1,5 +1,5 @@
 {
-  "name": "@react-aria/dnd",
+  "name": "@react-aria-nutrient/dnd",
   "version": "3.9.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
@@ -23,11 +23,11 @@
   },
   "dependencies": {
     "@internationalized/string": "^3.2.5",
-    "@react-aria/i18n": "^3.12.7",
-    "@react-aria/interactions": "^3.24.1",
-    "@react-aria/live-announcer": "^3.4.1",
-    "@react-aria/overlays": "^3.26.1",
-    "@react-aria/utils": "^3.28.1",
+    "@react-aria-nutrient/i18n": "^3.12.7",
+    "@react-aria-nutrient/interactions": "^3.24.1",
+    "@react-aria-nutrient/live-announcer": "^3.4.1",
+    "@react-aria-nutrient/overlays": "^3.26.1",
+    "@react-aria-nutrient/utils": "^3.28.1",
     "@react-stately/dnd": "^3.5.2",
     "@react-types/button": "^3.11.0",
     "@react-types/shared": "^3.28.0",

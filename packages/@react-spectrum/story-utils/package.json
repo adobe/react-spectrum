@@ -37,7 +37,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/utils": "^3.8.0",
+    "@react-aria-nutrient/utils": "^3.8.0",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

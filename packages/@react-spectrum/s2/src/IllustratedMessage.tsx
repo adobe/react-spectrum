@@ -15,7 +15,7 @@ import {ContentContext, HeadingContext} from './Content';
 import {ContextValue, Provider} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode} from 'react';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IllustrationContext} from './Icon';
 import {style} from '../style' with {type: 'macro'};

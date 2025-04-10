@@ -14,7 +14,7 @@ import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {CalendarDate} from '@internationalized/date';
 import {Custom454Calendar} from '@internationalized/date/tests/customCalendarImpl';
 import {Example, ExampleCustomFirstDay} from '../stories/Example';
-import {I18nProvider} from '@react-aria/i18n';
+import {I18nProvider} from '@react-aria-nutrient/i18n';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 

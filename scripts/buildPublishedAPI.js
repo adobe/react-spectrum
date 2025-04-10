@@ -175,7 +175,7 @@ async function build() {
   // Copy package.json for each package into docs dir so we can find the correct version numbers
   console.log('moving over from node_modules');
   for (let p of packages) {
-    if (p === 'react-stately' || p === 'react-aria' || p === 'react-aria-components' || p === 'tailwindcss-react-aria-components') {
+    if (p === 'react-stately' || p === '@react-aria-nutrient/react-aria' || p === 'react-aria-components' || p === 'tailwindcss-react-aria-components') {
       continue;
     }
     if (!p.includes('spectrum-css') && !p.includes('example-theme') && fs.existsSync(path.join(dir, 'node_modules', p))) {

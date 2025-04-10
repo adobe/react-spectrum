@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {announce} from '@react-aria/live-announcer';
+import {announce} from '@react-aria-nutrient/live-announcer';
 import {
   AriaButtonProps,
   HoverEvents,
@@ -19,7 +19,7 @@ import {
   useFocusRing,
   useHover,
   useId
-} from 'react-aria';
+} from '@react-aria-nutrient/react-aria';
 import {
   ContextValue,
   RenderProps,
@@ -27,8 +27,8 @@ import {
   useContextProps,
   useRenderProps
 } from './utils';
-import {createHideableComponent} from '@react-aria/collections';
-import {filterDOMProps} from '@react-aria/utils';
+import {createHideableComponent} from '@react-aria-nutrient/collections';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 import {ProgressBarContext} from './ProgressBar';
 import React, {createContext, ForwardedRef, useEffect, useRef} from 'react';
 

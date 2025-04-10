@@ -20,7 +20,7 @@ import {TextFieldBase} from '@react-spectrum/textfield';
 import {TextFieldRef} from '@react-types/textfield';
 import {useFormProps} from '@react-spectrum/form';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useSearchField} from '@react-aria/searchfield';
+import {useSearchField} from '@react-aria-nutrient/searchfield';
 import {useSearchFieldState} from '@react-stately/searchfield';
 
 /**

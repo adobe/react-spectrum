@@ -13,11 +13,11 @@
 import {DialogContext} from './context';
 import {Modal, Popover, Tray} from '@react-spectrum/overlays';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
-import {PressResponder} from '@react-aria/interactions';
+import {PressResponder} from '@react-aria-nutrient/interactions';
 import React, {Fragment, JSX, ReactElement, useEffect, useRef} from 'react';
 import {SpectrumDialogClose, SpectrumDialogProps, SpectrumDialogTriggerProps} from '@react-types/dialog';
 import {useIsMobileDevice} from '@react-spectrum/utils';
-import {useOverlayTrigger} from '@react-aria/overlays';
+import {useOverlayTrigger} from '@react-aria-nutrient/overlays';
 
 function DialogTrigger(props: SpectrumDialogTriggerProps) {
   let {

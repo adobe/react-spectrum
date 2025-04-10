@@ -15,7 +15,7 @@ import {Button, ClearButton} from '@react-spectrum/button';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import CrossMedium from '@spectrum-icons/ui/CrossMedium';
 import {DOMProps, DOMRef} from '@react-types/shared';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps} from '@react-aria-nutrient/utils';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -24,9 +24,9 @@ import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
 import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
 import toastContainerStyles from './toastContainer.css';
-import {useFocusRing} from '@react-aria/focus';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useToast} from '@react-aria/toast';
+import {useFocusRing} from '@react-aria-nutrient/focus';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
+import {useToast} from '@react-aria-nutrient/toast';
 
 export interface SpectrumToastValue extends DOMProps {
   children: string,

@@ -10,5 +10,5 @@
  * governing permissions and limitations under the License.
  */
 
-export type {AriaGridListProps, GridListProps} from '@react-aria/gridlist';
+export type {AriaGridListProps, GridListProps} from '@react-aria-nutrient/gridlist';
 export type {SpectrumListViewProps} from '@react-spectrum/list';

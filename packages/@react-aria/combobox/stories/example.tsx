@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {DismissButton, useOverlay} from '@react-aria/overlays';
-import {FocusScope} from '@react-aria/focus';
+import {DismissButton, useOverlay} from '@react-aria-nutrient/overlays';
+import {FocusScope} from '@react-aria-nutrient/focus';
 import React from 'react';
-import {useButton} from '@react-aria/button';
-import {useComboBox} from '@react-aria/combobox';
+import {useButton} from '@react-aria-nutrient/button';
+import {useComboBox} from '@react-aria-nutrient/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
-import {useFilter} from '@react-aria/i18n';
-import {useListBox, useOption} from '@react-aria/listbox';
+import {useFilter} from '@react-aria-nutrient/i18n';
+import {useListBox, useOption} from '@react-aria-nutrient/listbox';
 
 export function ComboBox(props) {
   // Setup filter function and state.

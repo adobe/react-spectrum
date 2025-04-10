@@ -6,7 +6,7 @@ import {mergeStyles} from '../style/runtime';
 import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
 import {UnsafeStyles} from './style-utils';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useLayoutEffect} from '@react-aria-nutrient/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ImageProps extends UnsafeStyles, SlotProps {

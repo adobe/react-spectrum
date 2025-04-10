@@ -26,12 +26,12 @@ import {DOMRef} from '@react-types/shared';
 import {Grid} from '@react-spectrum/layout';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import React, {useContext, useMemo, useRef} from 'react';
 import {SpectrumDialogProps} from '@react-types/dialog';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
-import {useDialog} from '@react-aria/dialog';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useDialog} from '@react-aria-nutrient/dialog';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 
 let sizeMap = {
   S: 'small',

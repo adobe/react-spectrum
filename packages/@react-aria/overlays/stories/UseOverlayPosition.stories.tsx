@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import {Placement} from '@react-types/overlays';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';

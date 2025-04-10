@@ -12,16 +12,16 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {DOMAttributes, FocusableElement, Node, RefObject} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useDescription, useId, useSyntheticLinkProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useDescription, useId, useSyntheticLinkProps} from '@react-aria-nutrient/utils';
 import {hookData} from './useTagGroup';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {KeyboardEvent} from 'react';
 import type {ListState} from '@react-stately/list';
-import {SelectableItemStates} from '@react-aria/selection';
-import {useFocusable, useInteractionModality} from '@react-aria/interactions';
-import {useGridListItem} from '@react-aria/gridlist';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {SelectableItemStates} from '@react-aria-nutrient/selection';
+import {useFocusable, useInteractionModality} from '@react-aria-nutrient/interactions';
+import {useGridListItem} from '@react-aria-nutrient/gridlist';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 
 
 export interface TagAria extends Omit<SelectableItemStates, 'hasAction'> {
@@ -48,7 +48,7 @@ export interface AriaTagProps<T> {
  */
 export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefObject<FocusableElement | null>): TagAria {
   let {item} = props;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/tag');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/tag');
   let buttonId = useId();
 
   let {onRemove} = hookData.get(state) || {};

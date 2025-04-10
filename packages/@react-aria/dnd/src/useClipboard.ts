@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, useEffectEvent} from '@react-aria/utils';
+import {chain, useEffectEvent} from '@react-aria-nutrient/utils';
 import {DOMAttributes, DragItem, DropItem} from '@react-types/shared';
 import {readFromDataTransfer, writeToDataTransfer} from './utils';
 import {useEffect, useRef} from 'react';
-import {useFocus} from '@react-aria/interactions';
+import {useFocus} from '@react-aria-nutrient/interactions';
 
 export interface ClipboardProps {
   /** A function that returns the items to copy. */

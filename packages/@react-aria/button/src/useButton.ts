@@ -20,8 +20,8 @@ import {
 } from 'react';
 import {AriaButtonProps} from '@react-types/button';
 import {DOMAttributes} from '@react-types/shared';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {useFocusable, usePress} from '@react-aria/interactions';
+import {filterDOMProps, mergeProps} from '@react-aria-nutrient/utils';
+import {useFocusable, usePress} from '@react-aria-nutrient/interactions';
 
 export interface AriaButtonOptions<E extends ElementType> extends Omit<AriaButtonProps<E>, 'children'> {}
 

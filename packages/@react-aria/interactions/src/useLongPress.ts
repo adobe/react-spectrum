@@ -11,7 +11,7 @@
  */
 
 import {DOMAttributes, FocusableElement, LongPressEvent} from '@react-types/shared';
-import {focusWithoutScrolling, getOwnerDocument, mergeProps, useDescription, useGlobalListeners} from '@react-aria/utils';
+import {focusWithoutScrolling, getOwnerDocument, mergeProps, useDescription, useGlobalListeners} from '@react-aria-nutrient/utils';
 import {usePress} from './usePress';
 import {useRef} from 'react';
 

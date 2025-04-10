@@ -3,20 +3,20 @@ import {classNames} from '@react-spectrum/utils';
 import {ColumnSize} from '@react-types/table';
 import eCursor from 'bundle-text:./cursors/Cur_MoveToRight_9_9.svg';
 import ewCursor from 'bundle-text:./cursors/Cur_MoveHorizontal_9_9.svg';
-import {FocusRing} from '@react-aria/focus';
+import {FocusRing} from '@react-aria-nutrient/focus';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isWebKit, mergeProps, useObjectRef} from '@react-aria/utils';
+import {isWebKit, mergeProps, useObjectRef} from '@react-aria-nutrient/utils';
 import {Key, RefObject} from '@react-types/shared';
 import React, {createContext, ForwardedRef, useContext, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {TableColumnResizeState} from '@react-stately/table';
-import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useTableColumnResize} from '@react-aria/table';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
+import {useTableColumnResize} from '@react-aria-nutrient/table';
 import {useTableContext, useVirtualizerContext} from './TableViewBase';
-import {useUNSTABLE_PortalContext} from '@react-aria/overlays';
+import {useUNSTABLE_PortalContext} from '@react-aria-nutrient/overlays';
 // @ts-ignore
 import wCursor from 'bundle-text:./cursors/Cur_MoveToLeft_9_9.svg';
 

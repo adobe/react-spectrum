@@ -15,7 +15,7 @@ import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import type {LocalizedStringFormatter} from '@internationalized/string';
-import {useDateFormatter, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useDateFormatter, useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useMemo} from 'react';
 
 interface HookData {
@@ -32,7 +32,7 @@ export function getEraFormat(date: CalendarDate | undefined): 'short' | undefine
 }
 
 export function useSelectedDateDescription(state: CalendarState | RangeCalendarState): string {
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/calendar');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/calendar');
 
   let start: CalendarDate | undefined, end: CalendarDate | undefined;
   if ('highlightedRange' in state) {
@@ -70,7 +70,7 @@ export function useSelectedDateDescription(state: CalendarState | RangeCalendarS
 }
 
 export function useVisibleRangeDescription(startDate: CalendarDate, endDate: CalendarDate, timeZone: string, isAria: boolean): string {
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/calendar');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/calendar');
   let era: any = getEraFormat(startDate) || getEraFormat(endDate);
   let monthFormatter = useDateFormatter({
     month: 'long',

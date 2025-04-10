@@ -9,7 +9,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/gridlist": "^3.11.1",
+    "@react-aria-nutrient/gridlist": "^3.11.1",
     "@react-spectrum/list": "^3.9.3"
   },
   "peerDependencies": {

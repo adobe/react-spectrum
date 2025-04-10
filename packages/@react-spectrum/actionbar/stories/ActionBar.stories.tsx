@@ -15,7 +15,7 @@ import {ActionBar} from '../src';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Example} from './Example';
 import React from 'react';
-import {useViewportSize} from '@react-aria/utils';
+import {useViewportSize} from '@react-aria-nutrient/utils';
 
 export default {
   title: 'ActionBar',

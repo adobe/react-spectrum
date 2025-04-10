@@ -1,12 +1,12 @@
 import {AriaSliderThumbProps} from '@react-types/slider';
-import {clamp, focusWithoutScrolling, mergeProps, useFormReset, useGlobalListeners} from '@react-aria/utils';
+import {clamp, focusWithoutScrolling, mergeProps, useFormReset, useGlobalListeners} from '@react-aria-nutrient/utils';
 import {DOMAttributes, RefObject} from '@react-types/shared';
 import {getSliderThumbId, sliderData} from './utils';
 import React, {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, useCallback, useEffect, useRef} from 'react';
 import {SliderState} from '@react-stately/slider';
-import {useFocusable, useKeyboard, useMove} from '@react-aria/interactions';
-import {useLabel} from '@react-aria/label';
-import {useLocale} from '@react-aria/i18n';
+import {useFocusable, useKeyboard, useMove} from '@react-aria-nutrient/interactions';
+import {useLabel} from '@react-aria-nutrient/label';
+import {useLocale} from '@react-aria-nutrient/i18n';
 
 export interface SliderThumbAria {
   /** Props for the root thumb element; handles the dragging motion. */

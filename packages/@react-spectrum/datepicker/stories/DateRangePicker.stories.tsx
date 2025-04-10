@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {CalendarDate, getLocalTimeZone, isWeekend, parseDate, today, toZoned} from '@internationalized/date';
-import {chain} from '@react-aria/utils';
+import {chain} from '@react-aria-nutrient/utils';
 import {Custom454Calendar} from '@internationalized/date/tests/customCalendarImpl';
 import {DateRange} from '@react-types/datepicker';
 import {DateRangePicker} from '../';
@@ -23,7 +23,7 @@ import {Item, Picker, Section} from '@react-spectrum/picker';
 import {Key} from '@react-types/shared';
 import {Provider} from '@adobe/react-spectrum';
 import React from 'react';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 
 const BlockDecorator = storyFn => <div>{storyFn()}</div>;
 

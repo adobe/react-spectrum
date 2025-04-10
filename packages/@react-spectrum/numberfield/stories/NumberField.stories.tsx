@@ -12,7 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
-import {chain} from '@react-aria/utils';
+import {chain} from '@react-aria-nutrient/utils';
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Flex} from '@react-spectrum/layout';

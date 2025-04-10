@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, RefObject,  DOMProps as SharedDOMProps} from '@react-types/shared';
-import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
+import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria-nutrient/utils';
 import React, {Context, CSSProperties, ForwardedRef, JSX, ReactNode, RefCallback, UIEvent, useCallback, useContext, useMemo, useRef, useState} from 'react';
 
 export const DEFAULT_SLOT = Symbol('default');

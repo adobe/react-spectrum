@@ -14,9 +14,9 @@ import {FocusableElement, RefObject} from '@react-types/shared';
 import React, {ReactNode, useRef} from 'react';
 import {selectData} from './useSelect';
 import {SelectState} from '@react-stately/select';
-import {useFormReset} from '@react-aria/utils';
-import {useFormValidation} from '@react-aria/form';
-import {useVisuallyHidden} from '@react-aria/visually-hidden';
+import {useFormReset} from '@react-aria-nutrient/utils';
+import {useFormValidation} from '@react-aria-nutrient/form';
+import {useVisuallyHidden} from '@react-aria-nutrient/visually-hidden';
 
 export interface AriaHiddenSelectProps {
   /**

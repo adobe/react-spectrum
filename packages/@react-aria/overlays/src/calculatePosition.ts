@@ -11,7 +11,7 @@
  */
 
 import {Axis, Placement, PlacementAxis, SizeAxis} from '@react-types/overlays';
-import {clamp, isWebKit} from '@react-aria/utils';
+import {clamp, isWebKit} from '@react-aria-nutrient/utils';
 
 interface Position {
   top?: number,

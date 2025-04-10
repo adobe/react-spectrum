@@ -1,5 +1,5 @@
 {
-  "name": "@react-aria/utils",
+  "name": "@react-aria-nutrient/utils",
   "version": "3.28.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
@@ -22,7 +22,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/ssr": "^3.9.7",
+    "@react-aria-nutrient/ssr": "^3.9.7",
     "@react-stately/flags": "^3.1.0",
     "@react-stately/utils": "^3.10.5",
     "@react-types/shared": "^3.28.0",

@@ -11,11 +11,11 @@
  */
 
 import {AriaLabelingProps, forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
-import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from 'react-aria';
-import {Collection, CollectionBuilder, createHideableComponent, createLeafComponent} from '@react-aria/collections';
+import {AriaTabListProps, AriaTabPanelProps, mergeProps, Orientation, useFocusRing, useHover, useTab, useTabList, useTabPanel} from '@react-aria-nutrient/react-aria';
+import {Collection, CollectionBuilder, createHideableComponent, createLeafComponent} from '@react-aria-nutrient/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, usePersistedKeys} from './Collection';
 import {ContextValue, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
-import {filterDOMProps, inertValue, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, inertValue, useObjectRef} from '@react-aria-nutrient/utils';
 import {Collection as ICollection, Node, TabListState, useTabListState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, JSX, useContext, useMemo} from 'react';
 

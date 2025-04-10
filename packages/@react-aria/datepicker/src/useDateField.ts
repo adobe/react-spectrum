@@ -11,18 +11,18 @@
  */
 
 import {AriaDateFieldProps as AriaDateFieldPropsBase, AriaTimeFieldProps, DateValue, TimeValue} from '@react-types/datepicker';
-import {createFocusManager, FocusManager} from '@react-aria/focus';
+import {createFocusManager, FocusManager} from '@react-aria-nutrient/focus';
 import {DateFieldState, TimeFieldState} from '@react-stately/datepicker';
 import {DOMAttributes, GroupDOMAttributes, KeyboardEvent, RefObject, ValidationResult} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useDescription, useFormReset} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useDescription, useFormReset} from '@react-aria-nutrient/utils';
 import {InputHTMLAttributes, useEffect, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useDatePickerGroup} from './useDatePickerGroup';
-import {useField} from '@react-aria/label';
-import {useFocusWithin} from '@react-aria/interactions';
-import {useFormValidation} from '@react-aria/form';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useField} from '@react-aria-nutrient/label';
+import {useFocusWithin} from '@react-aria-nutrient/interactions';
+import {useFormValidation} from '@react-aria-nutrient/form';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 
 // Allows this hook to also be used with TimeField
 export interface AriaDateFieldOptions<T extends DateValue> extends Omit<AriaDateFieldPropsBase<T>, 'value' | 'defaultValue' | 'onChange' | 'minValue' | 'maxValue' | 'placeholderValue' | 'validate'> {
@@ -89,7 +89,7 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
     onFocusWithinChange: props.onFocusChange
   });
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/datepicker');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/datepicker');
   let message = state.maxGranularity === 'hour' ? 'selectedTimeDescription' : 'selectedDateDescription';
   let field = state.maxGranularity === 'hour' ? 'time' : 'date';
   let description = state.value ? stringFormatter.format(message, {[field]: state.formatValue({month: 'long'})}) : '';

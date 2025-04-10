@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-jest.mock('@react-aria/live-announcer');
+jest.mock('@react-aria-nutrient/live-announcer');
 import {act, fireEvent, installPointerEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {announce} from '@react-aria/live-announcer';
+import {announce} from '@react-aria-nutrient/live-announcer';
 import {CalendarDate, isWeekend} from '@internationalized/date';
 import {RangeCalendar} from '../';
 import React from 'react';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 import userEvent from '@testing-library/user-event';
 
 let cellFormatter = new Intl.DateTimeFormat('en-US', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});

@@ -19,11 +19,11 @@ import React, {useCallback, useRef, useState} from 'react';
 import {SpectrumSearchWithinProps} from '@react-types/searchwithin';
 import styles from '@adobe/spectrum-css-temp/components/searchwithin/vars.css';
 import {useFormProps} from '@react-spectrum/form';
-import {useId, useLayoutEffect} from '@react-aria/utils';
-import {useLabel} from '@react-aria/label';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useId, useLayoutEffect} from '@react-aria-nutrient/utils';
+import {useLabel} from '@react-aria-nutrient/label';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
+import {VisuallyHidden} from '@react-aria-nutrient/visually-hidden';
 
 /**
  * A SearchWithin combines a SearchField and a Picker into a single group. This allows a user to constrain the scope of their search to a particular category, for example.

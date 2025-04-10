@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import React, {ReactNode, useRef, useState} from 'react';
-import {useCheckbox} from '@react-aria/checkbox';
-import {useFocusRing} from '@react-aria/focus';
+import {useCheckbox} from '@react-aria-nutrient/checkbox';
+import {useFocusRing} from '@react-aria-nutrient/focus';
 import {
   useTable,
   useTableCell,
@@ -25,7 +25,7 @@ import {
 } from '../src';
 import {useTableState} from '@react-stately/table';
 import {useToggleState} from '@react-stately/toggle';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
+import {VisuallyHidden} from '@react-aria-nutrient/visually-hidden';
 
 export function Table(props) {
   let {onAction} = props;

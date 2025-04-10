@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 import {createDOMRef} from '@react-spectrum/utils';
-import {createFocusManager} from '@react-aria/focus';
-import {DateFormatter, useDateFormatter, useLocale} from '@react-aria/i18n';
+import {createFocusManager} from '@react-aria-nutrient/focus';
+import {DateFormatter, useDateFormatter, useLocale} from '@react-aria-nutrient/i18n';
 import {FocusableRef} from '@react-types/shared';
 import {FormatterOptions} from '@react-stately/datepicker';
 import React, {ReactNode, useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {SpectrumDatePickerBase} from '@react-types/datepicker';
-import {useDisplayNames} from '@react-aria/datepicker';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useDisplayNames} from '@react-aria-nutrient/datepicker';
+import {useLayoutEffect} from '@react-aria-nutrient/utils';
 import {useProvider} from '@react-spectrum/provider';
 
 export function useFormatHelpText(props: Pick<SpectrumDatePickerBase<any>, 'description' | 'showFormatHelpText'>): ReactNode {

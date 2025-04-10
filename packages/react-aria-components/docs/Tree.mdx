@@ -24,7 +24,7 @@ import Collections from '@react-spectrum/docs/pages/assets/component-illustratio
 import Selection from '@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg';
 import Checkbox from '@react-spectrum/docs/pages/assets/component-illustrations/Checkbox.svg';
 import Button from '@react-spectrum/docs/pages/assets/component-illustrations/Button.svg';
-import treeUtils from 'docs:@react-aria/test-utils/src/tree.ts';
+import treeUtils from 'docs:@react-aria-nutrient/test-utils/src/tree.ts';
 import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 
 ---
@@ -101,7 +101,7 @@ import {
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css hidden
-@import "@react-aria/example-theme";
+@import "@react-aria-nutrient/example-theme";
 @import './Button.mdx' layer(button);
 @import './ToggleButton.mdx' layer(togglebutton);
 @import './Checkbox.mdx' layer(checkbox);
@@ -908,7 +908,7 @@ This example consumes from `CheckboxContext` in an existing styled checkbox comp
 import type {CheckboxProps, useContextProps} from 'react-aria-components';
 import {CheckboxContext} from 'react-aria-components';
 import {useToggleState} from 'react-stately';
-import {useCheckbox} from 'react-aria';
+import {useCheckbox} from '@react-aria-nutrient/react-aria';
 
 const MyCustomCheckbox = React.forwardRef((props: CheckboxProps, ref: React.ForwardedRef<HTMLInputElement>) => {
   // Merge the local props and ref with the ones provided via context.
@@ -945,13 +945,13 @@ If you need to customize things even further, such as accessing internal state o
 
 ### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
-`@react-aria/test-utils` offers common tree interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
+`@react-aria-nutrient/test-utils` offers common tree interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the tree tester and a sample of how you could use it in your test suite.
 
 ```ts
 // Tree.test.ts
 import {render, within} from '@testing-library/react';
-import {User} from '@react-aria/test-utils';
+import {User} from '@react-aria-nutrient/test-utils';
 
 let testUtilUser = new User({interactionType: 'mouse'});
 // ...

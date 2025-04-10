@@ -13,14 +13,14 @@
 import {AriaButtonProps} from '@react-types/button';
 import {AriaMenuOptions} from './useMenu';
 import {FocusableElement, RefObject} from '@react-types/shared';
-import {focusWithoutScrolling, useId} from '@react-aria/utils';
+import {focusWithoutScrolling, useId} from '@react-aria-nutrient/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {MenuTriggerState} from '@react-stately/menu';
 import {MenuTriggerType} from '@react-types/menu';
-import {PressProps, useLongPress} from '@react-aria/interactions';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useOverlayTrigger} from '@react-aria/overlays';
+import {PressProps, useLongPress} from '@react-aria-nutrient/interactions';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
+import {useOverlayTrigger} from '@react-aria-nutrient/overlays';
 
 export interface AriaMenuTriggerProps {
   /** The type of menu that the menu trigger opens. */
@@ -96,7 +96,7 @@ export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTrigge
     }
   };
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/menu');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/menu');
   let {longPressProps} = useLongPress({
     isDisabled: isDisabled || trigger !== 'longPress',
     accessibilityDescription: stringFormatter.format('longPressMessage'),

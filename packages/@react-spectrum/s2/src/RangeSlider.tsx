@@ -23,7 +23,7 @@ import {FormContext, useFormProps} from './Form';
 import intlMessages from '../intl/*.json';
 import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
-import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface RangeSliderProps extends Omit<SliderBaseProps<RangeValue<number>>, 'children'> {

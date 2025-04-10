@@ -18,8 +18,8 @@ import {HTMLAttributes} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useDroppableItem} from './useDroppableItem';
-import {useId} from '@react-aria/utils';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useId} from '@react-aria-nutrient/utils';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 
 export interface DropIndicatorProps {
   /** The drop target that the drop indicator represents. */
@@ -45,7 +45,7 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
   let {target} = props;
   let {collection} = state;
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/dnd');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/dnd');
   let dragSession = DragManager.useDragSession();
   let {dropProps} = useDroppableItem(props, state, ref);
   let id = useId();

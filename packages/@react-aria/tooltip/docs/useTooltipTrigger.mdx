@@ -10,10 +10,10 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-aria/tooltip';
+import docs from 'docs:@react-aria-nutrient/tooltip';
 import statelyDocs from 'docs:@react-stately/tooltip';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
-import packageData from '@react-aria/tooltip/package.json';
+import packageData from '@react-aria-nutrient/tooltip/package.json';
 import Anatomy from './anatomy.svg';
 
 ---
@@ -78,9 +78,9 @@ This example implements a Tooltip that renders in an absolute position next to i
 Two instances of the example are rendered to demonstrate the behavior of the delay on hover. If you hover over the first button, the tooltip will be shown after a delay. Hovering over the second button shows the tooltip immediately. If you wait for a delay before hovering another element, the delay restarts.
 
 ```tsx example export=true
-import {useTooltip, useTooltipTrigger} from '@react-aria/tooltip';
+import {useTooltip, useTooltipTrigger} from '@react-aria-nutrient/tooltip';
 import {useTooltipTriggerState} from '@react-stately/tooltip';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 
 function Tooltip({state, ...props}) {
   let {tooltipProps} = useTooltip(props, state);

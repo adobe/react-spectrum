@@ -10,16 +10,16 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-aria/table';
+import docs from 'docs:@react-aria-nutrient/table';
 import collectionsDocs from 'docs:@react-types/shared/src/collections.d.ts';
 import selectionDocs from 'docs:@react-stately/selection';
 import statelyDocs from 'docs:@react-stately/table';
-import focusDocs from 'docs:@react-aria/focus';
-import checkboxDocs from 'docs:@react-aria/checkbox';
-import utilsDocs from 'docs:@react-aria/utils';
+import focusDocs from 'docs:@react-aria-nutrient/focus';
+import checkboxDocs from 'docs:@react-aria-nutrient/checkbox';
+import utilsDocs from 'docs:@react-aria-nutrient/utils';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
-import packageData from '@react-aria/table/package.json';
+import packageData from '@react-aria-nutrient/table/package.json';
 import Anatomy from './TableAnatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -132,10 +132,10 @@ the rows and cells of the table and render the relevant components, which we'll 
 
 ```tsx example export=true render=false
 import {Cell, Column, Row, TableBody, TableHeader, useTableState} from '@react-stately/table';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import {useRef} from 'react';
-import {useFocusRing} from '@react-aria/focus';
-import {useTable} from '@react-aria/table';
+import {useFocusRing} from '@react-aria-nutrient/focus';
+import {useTable} from '@react-aria-nutrient/table';
 
 function Table(props) {
   let {selectionMode, selectionBehavior} = props;
@@ -184,7 +184,7 @@ we're using HTML table elements, so this will be either a `<thead>` or `<tbody>`
 above `Table` component via the `type` prop.
 
 ```tsx example export=true render=false
-import {useTableRowGroup} from '@react-aria/table';
+import {useTableRowGroup} from '@react-aria-nutrient/table';
 
 function TableRowGroup({type: Element, children}) {
   let {rowGroupProps} = useTableRowGroup();
@@ -203,7 +203,7 @@ but they don't support user interaction like selection. In this example, there's
 row, but there could be multiple in the case of nested columns. See the [example below](#nested-columns) for details.
 
 ```tsx example export=true render=false
-import {useTableHeaderRow} from '@react-aria/table';
+import {useTableHeaderRow} from '@react-aria-nutrient/table';
 
 function TableHeaderRow({item, state, children}) {
   let ref = useRef<HTMLTableRowElement | null>(null);
@@ -234,7 +234,7 @@ Finally, we use the <TypeLink links={focusDocs.links} type={focusDocs.exports.us
 the cell is navigated to with the keyboard.
 
 ```tsx example export=true render=false
-import {useTableColumnHeader} from '@react-aria/table';
+import {useTableColumnHeader} from '@react-aria-nutrient/table';
 
 function TableColumnHeader({column, state}) {
   let ref = useRef<HTMLTableCellElement | null>(null);
@@ -277,7 +277,7 @@ by the `state` to determine if a row is selected, and render a pink background i
 hook to render a focus ring when the user navigates to the row with the keyboard.
 
 ```tsx example export=true render=false
-import {useTableRow} from '@react-aria/table';
+import {useTableRow} from '@react-aria-nutrient/table';
 
 function TableRow({item, children, state}) {
   let ref = useRef<HTMLTableRowElement | null>(null);
@@ -317,7 +317,7 @@ hook. The cell's contents are available in the `rendered` property of the cell <
 object.
 
 ```tsx example export=true render=false
-import {useTableCell} from '@react-aria/table';
+import {useTableCell} from '@react-aria-nutrient/table';
 
 function TableCell({cell, state}) {
   let ref = useRef<HTMLTableCellElement | null>(null);
@@ -388,7 +388,7 @@ The `Checkbox` component used in this example is independent and can be used sep
 available below. See [useCheckbox](useCheckbox.html) for documentation.
 
 ```tsx example export=true render=false
-import {useTableSelectionCheckbox} from '@react-aria/table';
+import {useTableSelectionCheckbox} from '@react-aria-nutrient/table';
 
 // Reuse the Checkbox from your component library. See below for details.
 import {Checkbox} from 'your-component-library';
@@ -418,8 +418,8 @@ The user can check or uncheck the checkbox to select all or clear the selection,
 [VisuallyHidden](VisuallyHidden.html) component can be used to do this.
 
 ```tsx example export=true render=false
-import {useTableSelectAllCheckbox} from '@react-aria/table';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
+import {useTableSelectAllCheckbox} from '@react-aria-nutrient/table';
+import {VisuallyHidden} from '@react-aria-nutrient/visually-hidden';
 
 function TableSelectAllCell({column, state}) {
   let ref = useRef<HTMLTableCellElement | null>(null);
@@ -490,7 +490,7 @@ hook, and can be shared with many other components.
 
 ```tsx example export=true render=false
 import {useToggleState} from '@react-stately/toggle';
-import {useCheckbox} from '@react-aria/checkbox';
+import {useCheckbox} from '@react-aria-nutrient/checkbox';
 
 function Checkbox(props) {
   let ref = React.useRef<HTMLInputElement | null>(null);
@@ -1059,7 +1059,7 @@ The `Button` component is used in the above example to represent the table colum
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import {useButton} from '@react-aria/button';
+import {useButton} from '@react-aria-nutrient/button';
 
 function Button(props) {
   let ref = useRef<HTMLButtonElement | null>(null);
@@ -1080,7 +1080,7 @@ Once resizing is activated, they can use the arrow keys to trigger the same resi
 left or right to focus the column's resizer input and swipe up and down to resize the column.
 
 ```tsx example export=true render=false
-import {useTableColumnResize} from '@react-aria/table';
+import {useTableColumnResize} from '@react-aria-nutrient/table';
 
 function Resizer(props) {
   let {column, layoutState, onResizeStart, onResize, onResizeEnd} = props;

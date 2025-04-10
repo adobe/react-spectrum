@@ -10,12 +10,12 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-aria/disclosure';
-import utilsDocs from 'docs:@react-aria/utils';
+import docs from 'docs:@react-aria-nutrient/disclosure';
+import utilsDocs from 'docs:@react-aria-nutrient/utils';
 import statelyDocs from 'docs:@react-stately/disclosure';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
-import packageData from '@react-aria/disclosure/package.json';
+import packageData from '@react-aria-nutrient/disclosure/package.json';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import Anatomy from './anatomy.svg';
 
@@ -70,9 +70,9 @@ This example displays a basic disclosure with a button that toggles the visibili
 
 ```tsx example export=true
 import {useDisclosureState} from '@react-stately/disclosure';
-import {useDisclosure} from '@react-aria/disclosure';
-import {useButton} from '@react-aria/button';
-import {mergeProps, useFocusRing} from 'react-aria';
+import {useDisclosure} from '@react-aria-nutrient/disclosure';
+import {useButton} from '@react-aria-nutrient/button';
+import {mergeProps, useFocusRing} from '@react-aria-nutrient/react-aria';
 
 function Disclosure(props) {
   let state = useDisclosureState(props);
@@ -114,7 +114,7 @@ function Disclosure(props) {
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@import "@react-aria/example-theme";
+@import "@react-aria-nutrient/example-theme";
 
 .disclosure {
   .trigger {
@@ -201,7 +201,7 @@ A disclosure group (i.e. accordion) is a set of disclosures where only one discl
 
 ```tsx example export=true render=false
 import {useDisclosureGroupState} from '@react-stately/disclosure';
-import {useId} from '@react-aria/utils';
+import {useId} from '@react-aria-nutrient/utils';
 
 const DisclosureGroupStateContext = React.createContext(null);
 

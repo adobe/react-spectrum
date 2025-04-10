@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaStepListProps, useStepList} from '@react-aria/steplist';
+import {AriaStepListProps, useStepList} from '@react-aria-nutrient/steplist';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, Orientation, StyleProps} from '@react-types/shared';
 import React, {ReactElement} from 'react';

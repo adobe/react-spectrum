@@ -11,15 +11,15 @@
  */
 
 import {DOMAttributes, FocusableElement, Key, RefObject} from '@react-types/shared';
-import {focusSafely, isFocusVisible} from '@react-aria/interactions';
-import {getFocusableTreeWalker} from '@react-aria/focus';
-import {getScrollParent, mergeProps, scrollIntoViewport} from '@react-aria/utils';
+import {focusSafely, isFocusVisible} from '@react-aria-nutrient/interactions';
+import {getFocusableTreeWalker} from '@react-aria-nutrient/focus';
+import {getScrollParent, mergeProps, scrollIntoViewport} from '@react-aria-nutrient/utils';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
 import {KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
-import {useLocale} from '@react-aria/i18n';
-import {useSelectableItem} from '@react-aria/selection';
+import {useLocale} from '@react-aria-nutrient/i18n';
+import {useSelectableItem} from '@react-aria-nutrient/selection';
 
 export interface GridCellProps {
   /** An object representing the grid cell. Contains all the relevant information that makes up the grid cell. */

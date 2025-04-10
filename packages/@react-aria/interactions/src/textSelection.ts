@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {getOwnerDocument, isIOS, runAfterTransition} from '@react-aria/utils';
+import {getOwnerDocument, isIOS, runAfterTransition} from '@react-aria-nutrient/utils';
 
 // Safari on iOS starts selecting text on long press. The only way to avoid this, it seems,
 // is to add user-select: none to the entire page. Adding it to the pressable element prevents

@@ -48,7 +48,7 @@ Some mocks we use feel like they could be applied universally, such as the mock 
 
 In general, there are several internal test utils [here](https://github.com/adobe/react-spectrum/blob/07f673acb2d68144156df3aa0db6e91810b12c67/packages/dev/test-utils/src/events.ts) and in our tests that we should consider exposing that handle issuing/simulating the press/touch events that would happen in the browser. Ideally, using the `user-event` library would eliminate the need for most, if not all, of the interaction related util functions, but has proved insufficient in various cases (like for long press). We'll have to convert our own tests to use the `user-event` v14 and see if any other internal test utils can be replaced entirely.
 
-These util functions would live in one of two packages perhaps, `@react-aria/test-utils` and `@react-spectrum/test-utils`. The differentiating factor would be if the util is specific to our React Spectrum components (`simulateMobile`/`simulateDesktop`) or not (`triggerLongPress`).
+These util functions would live in one of two packages perhaps, `@react-aria-nutrient/test-utils` and `@react-spectrum/test-utils`. The differentiating factor would be if the util is specific to our React Spectrum components (`simulateMobile`/`simulateDesktop`) or not (`triggerLongPress`).
 
 Caveat: The high level test util classes that are discussed below may also minimize the need for some of these interaction utils, open for discussion.
 
@@ -78,7 +78,7 @@ expect(picker.trigger).toHaveTextContent('Three');
 
 Since these classes are specific to each ARIA pattern, they should work for React Aria Components (RAC) as well as React Spectrum (RSP) components and thus need to handle possible differences in what `element` is provided. For instance, the `data-testid` passed to a RSP Picker is attached to the trigger button element but the `data-testid` for a RAC Select could be the one attached to the wrapper element instead. Alternatively, we could just standardize what `element` is expected to be provided to each of the util classes (aka make the user pass in the Select's trigger button element).
 
-These util classes could live in the `@react-aria/test-util` package and re-exported from `react-aria-components`.
+These util classes could live in the `@react-aria-nutrient/test-util` package and re-exported from `react-aria-components`.
 
 ## Documentation
 

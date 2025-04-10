@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../';
-import {chain} from '@react-aria/utils';
+import {chain} from '@react-aria-nutrient/utils';
 import {ComponentMeta} from '@storybook/react';
 import defaultConfig, {columns, EmptyStateTable, TableStory} from './Table.stories';
 import {enableTableNestedRows} from '@react-stately/flags';

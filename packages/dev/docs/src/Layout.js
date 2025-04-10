@@ -44,7 +44,7 @@ const TLD = process.env.DOCS_ENV === 'production'
   : 'reactspectrum.blob.core.windows.net';
 const HERO = {
   'react-spectrum': heroImageSpectrum,
-  'react-aria': heroImageAria,
+  '@react-aria-nutrient/react-aria': heroImageAria,
   'react-stately': heroImageStately,
   'internationalized': heroImageInternationalized
 };
@@ -396,7 +396,7 @@ function Nav({currentPageName, pages}) {
   };
 
   let sections = [];
-  if (currentPageName.startsWith('react-aria') && ENABLE_PAGE_TYPES) {
+  if (currentPageName.startsWith('@react-aria-nutrient/react-aria') && ENABLE_PAGE_TYPES) {
     let {Introduction, Concepts, Guides, Interactions, Focus, Internationalization, 'Server Side Rendering': ssr, Utilities, ...hooks} = pagesByType.other;
     let interactions = {...pagesByType.interaction, Interactions, Focus};
     let utilities = {Internationalization, 'Server Side Rendering': ssr, Utilities};

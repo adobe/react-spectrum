@@ -1,6 +1,6 @@
 import {ListViewContext} from './ListView';
 import React, {ReactNode, useContext, useRef} from 'react';
-import {useVisuallyHidden} from '@react-aria/visually-hidden';
+import {useVisuallyHidden} from '@react-aria-nutrient/visually-hidden';
 
 export default function RootDropIndicator(): ReactNode | null {
   let {dropState, dragAndDropHooks} = useContext(ListViewContext)!;

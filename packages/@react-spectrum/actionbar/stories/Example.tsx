@@ -17,7 +17,7 @@ import DataAdd from '@spectrum-icons/workflow/DataAdd';
 import Delete from '@spectrum-icons/workflow/Delete';
 import Duplicate from '@spectrum-icons/workflow/Duplicate';
 import Edit from '@spectrum-icons/workflow/Edit';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import Move from '@spectrum-icons/workflow/Move';
 import React, {useRef, useState} from 'react';
 import {Selection} from '@react-types/shared';

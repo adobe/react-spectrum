@@ -11,24 +11,24 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {chain, mergeProps} from '@react-aria/utils';
+import {chain, mergeProps} from '@react-aria-nutrient/utils';
 import {classNames} from '@react-spectrum/utils';
 import dndStyles from './dnd.css';
 import dropIndicatorStyles from '@adobe/spectrum-css-temp/components/dropindicator/vars.css';
 import {DroppableCollectionDropEvent} from '@react-types/shared';
 import {DroppableCollectionState, useDroppableCollectionState} from '@react-stately/dnd';
-import {FocusRing} from '@react-aria/focus';
+import {FocusRing} from '@react-aria-nutrient/focus';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {Item} from '@react-stately/collections';
-import {ListKeyboardDelegate} from '@react-aria/selection';
+import {ListKeyboardDelegate} from '@react-aria-nutrient/selection';
 import {ListLayout} from '@react-stately/layout';
 import {ListState, useListState} from '@react-stately/list';
 import React, {useMemo} from 'react';
 import {useDropIndicator, useDroppableCollection, useDroppableItem} from '..';
-import {useListBox, useOption} from '@react-aria/listbox';
+import {useListBox, useOption} from '@react-aria-nutrient/listbox';
 import {useListData} from '@react-stately/data';
-import {useVisuallyHidden} from '@react-aria/visually-hidden';
-import {Virtualizer} from '@react-aria/virtualizer';
+import {useVisuallyHidden} from '@react-aria-nutrient/visually-hidden';
+import {Virtualizer} from '@react-aria-nutrient/virtualizer';
 
 interface ItemValue {
   id: string,

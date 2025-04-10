@@ -11,13 +11,13 @@
  */
 
 import {AriaLabelingProps, DOMProps, RefObject} from '@react-types/shared';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps} from '@react-aria-nutrient/utils';
 import {HTMLAttributes} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {StepListProps, StepListState} from '@react-stately/steplist';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useSelectableList} from '@react-aria/selection';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
+import {useSelectableList} from '@react-aria-nutrient/selection';
 
 export interface AriaStepListProps<T> extends StepListProps<T>, AriaLabelingProps, DOMProps {}
 
@@ -36,7 +36,7 @@ export function useStepList<T>(props: AriaStepListProps<T>, state: StepListState
     ref
   });
 
-  const strings = useLocalizedStringFormatter(intlMessages, '@react-aria/steplist');
+  const strings = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/steplist');
   const stepListProps: HTMLAttributes<HTMLElement> = {
     ...mergeProps(listProps, filterDOMProps(props, {labelable: true})),
     'aria-label': ariaLabel || strings.format('steplist')

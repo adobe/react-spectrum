@@ -10,13 +10,13 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-aria/combobox';
+import docs from 'docs:@react-aria-nutrient/combobox';
 import collectionsDocs from 'docs:@react-types/shared/src/collections.d.ts';
 import {FunctionAPI, HeaderInfo, InterfaceType, TypeContext, TypeLink, PageDescription} from '@react-spectrum/docs';
-import i18nDocs from 'docs:@react-aria/i18n';
-import listboxDocs from 'docs:@react-aria/listbox';
-import overlaysDocs from 'docs:@react-aria/overlays';
-import packageData from '@react-aria/combobox/package.json';
+import i18nDocs from 'docs:@react-aria-nutrient/i18n';
+import listboxDocs from 'docs:@react-aria-nutrient/listbox';
+import overlaysDocs from 'docs:@react-aria-nutrient/overlays';
+import packageData from '@react-aria-nutrient/combobox/package.json';
 import selectionDocs from 'docs:@react-stately/selection';
 import statelyDocs from 'docs:@react-stately/combobox';
 import Anatomy from './anatomy.svg';
@@ -141,10 +141,10 @@ options. For an example of the description and error message elements, see [useT
 
 ```tsx example export=true
 import {Item} from '@react-stately/collections';
-import {useButton} from '@react-aria/button';
+import {useButton} from '@react-aria-nutrient/button';
 import {useComboBoxState} from '@react-stately/combobox'
-import {useComboBox} from '@react-aria/combobox';
-import {useFilter} from '@react-aria/i18n';
+import {useComboBox} from '@react-aria-nutrient/combobox';
+import {useFilter} from '@react-aria-nutrient/i18n';
 
 // Reuse the ListBox, Popover, and Button from your component library. See below for details.
 import {ListBox, Popover, Button} from 'your-component-library';
@@ -231,9 +231,9 @@ See [usePopover](usePopover.html) for more examples of popovers.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import type {AriaPopoverProps} from 'react-aria';
+import type {AriaPopoverProps} from '@react-aria-nutrient/react-aria';
 import type {OverlayTriggerState} from 'react-stately';
-import {usePopover, Overlay, DismissButton} from '@react-aria/overlays';
+import {usePopover, Overlay, DismissButton} from '@react-aria-nutrient/overlays';
 
 interface PopoverProps extends AriaPopoverProps {
   children: React.ReactNode,
@@ -273,7 +273,7 @@ user types in the ComboBox. They can also be shared with other components like a
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import {useListBox, useOption} from '@react-aria/listbox';
+import {useListBox, useOption} from '@react-aria-nutrient/listbox';
 
 function ListBox(props) {
   let ref = React.useRef(null);
@@ -346,7 +346,7 @@ The `Button` component is used in the above example to toggle the listbox popup.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import {useButton} from '@react-aria/button';
+import {useButton} from '@react-aria-nutrient/button';
 
 function Button(props) {
   let ref = props.buttonRef;

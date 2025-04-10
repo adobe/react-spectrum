@@ -16,7 +16,7 @@ import statelyDocs from 'docs:@react-stately/datepicker';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '@react-aria/datepicker/docs/timefield-anatomy.svg';
+import Anatomy from '@react-aria-nutrient/datepicker/docs/timefield-anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -61,7 +61,7 @@ import {TimeField, Label, DateInput, DateSegment} from 'react-aria-components';
 ```
 
 ```css
-@import "@react-aria/example-theme";
+@import "@react-aria-nutrient/example-theme";
 
 .react-aria-TimeField {
   color: var(--text-color);
@@ -312,7 +312,7 @@ TimeField supports the `name` prop for integration with HTML forms. The value wi
 `TimeField` accepts an `onChange` prop which is triggered whenever the time is edited by the user. The example below uses `onChange` to update a separate element with a formatted version of the date in the user's locale and local time zone. This is done by converting the date to a native JavaScript `Date` object to pass to the formatter. `TimeField` allows editing the time components while keeping the date fixed.
 
 ```tsx example
-import {useDateFormatter} from '@react-aria/i18n';
+import {useDateFormatter} from '@react-aria-nutrient/i18n';
 
 function Example() {
   let [date, setDate] = React.useState(parseAbsoluteToLocal('2021-04-07T18:45:22Z'));
@@ -618,7 +618,7 @@ This example shows a `FieldGroup` component that renders a group of time fields 
 
 ```tsx example
 import {TimeFieldContext} from 'react-aria-components';
-import {useId} from 'react-aria';
+import {useId} from '@react-aria-nutrient/react-aria';
 
 interface FieldGroupProps {
   title?: string,
@@ -712,7 +712,7 @@ This example shows a `TimeZoneName` component that can be placed within a `TimeF
 
 ```tsx example
 import {TimeFieldStateContext} from 'react-aria-components';
-import {useDateFormatter} from 'react-aria';
+import {useDateFormatter} from '@react-aria-nutrient/react-aria';
 
 function TimeZoneName() {
   /*- begin highlight -*/

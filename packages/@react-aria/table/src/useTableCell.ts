@@ -14,7 +14,7 @@ import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
 import {getCellId} from './utils';
 import {GridNode} from '@react-types/grid';
 import {TableState} from '@react-stately/table';
-import {useGridCell} from '@react-aria/grid';
+import {useGridCell} from '@react-aria-nutrient/grid';
 
 export interface AriaTableCellProps {
   /** An object representing the table cell. Contains all the relevant information that makes up the row header. */

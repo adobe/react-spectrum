@@ -74,7 +74,7 @@ if (!fs.existsSync(dest)) {
 }
 let packs = new Map();
 for (let intlPkg of rspIntlPackages) {
-  if (intlPkg.includes('react-aria-components') || intlPkg.includes('react-stately') || intlPkg.includes('react-aria')) {
+  if (intlPkg.includes('react-aria-components') || intlPkg.includes('react-stately') || intlPkg.includes('@react-aria-nutrient/react-aria')) {
     continue;
   }
   let matches = intlPkg.match(/packages\/(.*)\/intl\/en-US.json/);

@@ -20,11 +20,11 @@ import {
   useCallback,
   useState
 } from 'react';
-import {mergeProps, useId} from '@react-aria/utils';
+import {mergeProps, useId} from '@react-aria-nutrient/utils';
 import {privateValidationStateProp} from '@react-stately/form';
-import {useFocusWithin, useScrollWheel} from '@react-aria/interactions';
-import {useFormattedTextField} from '@react-aria/textfield';
-import {useSpinButton} from '@react-aria/spinbutton';
+import {useFocusWithin, useScrollWheel} from '@react-aria-nutrient/interactions';
+import {useFormattedTextField} from '@react-aria-nutrient/textfield';
+import {useSpinButton} from '@react-aria-nutrient/spinbutton';
 
 export interface ColorFieldAria extends ValidationResult {
   /** Props for the label element. */

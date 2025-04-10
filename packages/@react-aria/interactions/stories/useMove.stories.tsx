@@ -13,7 +13,7 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 
 import {action} from '@storybook/addon-actions';
-import {clamp} from '@react-aria/utils';
+import {clamp} from '@react-aria-nutrient/utils';
 import {Flex} from '@react-spectrum/layout';
 import React, {useRef, useState} from 'react';
 import {useMove} from '../';

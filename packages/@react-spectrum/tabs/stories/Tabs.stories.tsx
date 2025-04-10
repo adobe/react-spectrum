@@ -21,7 +21,7 @@ import {Item, TabList, TabPanels, Tabs} from '..';
 import {Key} from '@react-types/shared';
 import {Picker} from '@react-spectrum/picker';
 import React, {ReactNode, useState} from 'react';
-import {RouterProvider} from '@react-aria/utils';
+import {RouterProvider} from '@react-aria-nutrient/utils';
 import {SpectrumTabsProps} from '@react-types/tabs';
 import {TextField} from '@react-spectrum/textfield';
 

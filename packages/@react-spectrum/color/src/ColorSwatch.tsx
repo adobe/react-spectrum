@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaColorSwatchProps, useColorSwatch} from '@react-aria/color';
+import {AriaColorSwatchProps, useColorSwatch} from '@react-aria-nutrient/color';
 import {Color} from '@react-types/color';
 import {ColorSwatchContext, useContextProps} from 'react-aria-components';
 import {DOMRef, StyleProps} from '@react-types/shared';

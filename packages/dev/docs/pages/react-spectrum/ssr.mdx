@@ -55,11 +55,11 @@ See below for framework-specific guideance.
 
 #### Next.js App Router
 
-First, install `@react-aria/optimize-locales-plugin` with your package manager. Then, add the following to your `next.config.js`:
+First, install `@react-aria-nutrient/optimize-locales-plugin` with your package manager. Then, add the following to your `next.config.js`:
 
 ```ts
 // next.config.js
-const localesPlugin = require('@react-aria/optimize-locales-plugin');
+const localesPlugin = require('@react-aria-nutrient/optimize-locales-plugin');
 
 module.exports = {
   // ...
@@ -102,11 +102,11 @@ export default function RootLayout(
 
 #### Next.js Pages Router
 
-First, install `@react-aria/optimize-locales-plugin` with your package manager. Then, add the following to your `next.config.js`:
+First, install `@react-aria-nutrient/optimize-locales-plugin` with your package manager. Then, add the following to your `next.config.js`:
 
 ```ts
 // next.config.js
-const localesPlugin = require('@react-aria/optimize-locales-plugin');
+const localesPlugin = require('@react-aria-nutrient/optimize-locales-plugin');
 
 module.exports = {
   // ...
@@ -153,14 +153,14 @@ export default function Document(props: DocumentProps) {
 
 #### Remix
 
-Remix is supported [when using Vite](https://remix.run/docs/en/main/future/vite) for builds. First, install `@react-aria/optimize-locales-plugin` with your package manager. Then, add the following to your `vite.config.ts`:
+Remix is supported [when using Vite](https://remix.run/docs/en/main/future/vite) for builds. First, install `@react-aria-nutrient/optimize-locales-plugin` with your package manager. Then, add the following to your `vite.config.ts`:
 
 ```ts
 // vite.config.ts
 import { unstable_vitePlugin as remix } from '@remix-run/dev';
 import { defineConfig } from 'vite';
 /*- begin highlight -*/
-import localesPlugin from '@react-aria/optimize-locales-plugin';
+import localesPlugin from '@react-aria-nutrient/optimize-locales-plugin';
 /*- end highlight -*/
 
 export default defineConfig({

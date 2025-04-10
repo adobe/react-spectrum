@@ -10,6 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-export * from 'react-aria';
+export * from '@react-aria-nutrient/react-aria';
 export * from 'react-stately';
 export * from '@adobe/react-spectrum';

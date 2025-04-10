@@ -36,10 +36,10 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/focus": "^3.20.1",
-    "@react-aria/interactions": "^3.24.1",
-    "@react-aria/textfield": "^3.17.1",
-    "@react-aria/utils": "^3.28.1",
+    "@react-aria-nutrient/focus": "^3.20.1",
+    "@react-aria-nutrient/interactions": "^3.24.1",
+    "@react-aria-nutrient/textfield": "^3.17.1",
+    "@react-aria-nutrient/utils": "^3.28.1",
     "@react-spectrum/form": "^3.7.13",
     "@react-spectrum/label": "^3.16.13",
     "@react-spectrum/utils": "^3.12.3",

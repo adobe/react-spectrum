@@ -15,19 +15,19 @@ import ChevronLeft from '@spectrum-icons/workflow/ChevronLeft';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {DOMAttributes, Node} from '@react-types/shared';
-import {FocusRing} from '@react-aria/focus';
+import {FocusRing} from '@react-aria-nutrient/focus';
 import {Grid} from '@react-spectrum/layout';
 import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeRefs, useObjectRef, useSlotId} from '@react-aria/utils';
+import {mergeRefs, useObjectRef, useSlotId} from '@react-aria-nutrient/utils';
 import React, {ReactNode, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/text';
 import {TreeState} from '@react-stately/tree';
-import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useMenuContext, useSubmenuTriggerContext} from './context';
-import {useMenuItem} from '@react-aria/menu';
+import {useMenuItem} from '@react-aria-nutrient/menu';
 
 interface MenuItemProps<T> {
   item: Node<T>,

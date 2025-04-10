@@ -11,9 +11,9 @@
  */
 
 import {DragPreview} from '../src';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import React, {useRef} from 'react';
-import {useButton} from '@react-aria/button';
+import {useButton} from '@react-aria-nutrient/button';
 import {useDrag, useDrop} from '../';
 
 export function Draggable(props) {

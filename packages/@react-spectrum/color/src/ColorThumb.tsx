@@ -17,7 +17,7 @@ import {Overlay} from '@react-spectrum/overlays';
 import React, {CSSProperties, ReactElement, ReactNode, useRef, useState} from 'react';
 import stylesHandle from '@adobe/spectrum-css-temp/components/colorhandle/vars.css';
 import stylesLoupe from '@adobe/spectrum-css-temp/components/colorloupe/vars.css';
-import {useId, useLayoutEffect} from '@react-aria/utils';
+import {useId, useLayoutEffect} from '@react-aria-nutrient/utils';
 import {useProvider} from '@react-spectrum/provider';
 
 interface ColorThumbProps extends DOMProps {

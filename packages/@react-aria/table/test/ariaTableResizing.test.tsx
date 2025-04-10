@@ -18,7 +18,7 @@ import React from 'react';
 import {render} from '@testing-library/react';
 import {Table as ResizingTable} from '../stories/example-resizing';
 import {resizingTests} from './tableResizingTests';
-import {setInteractionModality} from '@react-aria/interactions';
+import {setInteractionModality} from '@react-aria-nutrient/interactions';
 import * as stories from '../stories/useTable.stories';
 import {within} from '@testing-library/dom';
 

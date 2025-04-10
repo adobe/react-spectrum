@@ -1,5 +1,5 @@
 {
-  "name": "@react-aria/meter",
+  "name": "@react-aria-nutrient/meter",
   "version": "3.4.21",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
@@ -22,7 +22,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/progress": "^3.4.21",
+    "@react-aria-nutrient/progress": "^3.4.21",
     "@react-types/meter": "^3.4.7",
     "@react-types/shared": "^3.28.0",
     "@swc/helpers": "^0.5.0"

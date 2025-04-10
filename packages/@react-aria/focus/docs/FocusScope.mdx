@@ -10,10 +10,10 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-aria/focus';
+import docs from 'docs:@react-aria-nutrient/focus';
 import {HeaderInfo, PropTable, FunctionAPI, TypeLink, ClassAPI, PageDescription} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
-import packageData from '@react-aria/focus/package.json';
+import packageData from '@react-aria-nutrient/focus/package.json';
 
 ---
 category: Focus
@@ -64,7 +64,7 @@ button unmounts the focus scope, which restores focus back to the button.
 For a full example of building a modal dialog, see [useDialog](useDialog.html).
 
 ```tsx example
-import {FocusScope} from '@react-aria/focus';
+import {FocusScope} from '@react-aria-nutrient/focus';
 
 function Example() {
   let [isOpen, setOpen] = React.useState(false);
@@ -93,7 +93,7 @@ right arrow keys to move focus to the previous and next buttons. The `wrap` opti
 used to make focus wrap around when it reaches the first or last button.
 
 ```tsx example
-import {useFocusManager} from '@react-aria/focus';
+import {useFocusManager} from '@react-aria-nutrient/focus';
 
 function Toolbar(props) {
   return (

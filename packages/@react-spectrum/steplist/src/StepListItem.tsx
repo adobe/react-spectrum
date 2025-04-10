@@ -11,17 +11,17 @@
  */
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames} from '@react-spectrum/utils';
-import {FocusRing} from '@react-aria/focus';
+import {FocusRing} from '@react-aria-nutrient/focus';
 import intlMessages from '../intl';
-import {mergeProps, useId} from '@react-aria/utils';
+import {mergeProps, useId} from '@react-aria-nutrient/utils';
 import {Node} from '@react-types/shared';
 import React, {ReactNode, useContext, useRef} from 'react';
 import {StepListContext} from './StepListContext';
 import styles from '@adobe/spectrum-css-temp/components/steplist/vars.css';
-import {useHover} from '@react-aria/interactions';
-import {useLocale, useLocalizedStringFormatter, useNumberFormatter} from '@react-aria/i18n';
-import {useStepListItem} from '@react-aria/steplist';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
+import {useHover} from '@react-aria-nutrient/interactions';
+import {useLocale, useLocalizedStringFormatter, useNumberFormatter} from '@react-aria-nutrient/i18n';
+import {useStepListItem} from '@react-aria-nutrient/steplist';
+import {VisuallyHidden} from '@react-aria-nutrient/visually-hidden';
 
 interface SpectrumStepListItemProps<T> {
   item: Node<T>,

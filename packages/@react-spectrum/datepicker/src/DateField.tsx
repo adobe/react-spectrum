@@ -19,11 +19,11 @@ import {Field} from '@react-spectrum/label';
 import {FocusableRef} from '@react-types/shared';
 import {Input} from './Input';
 import React, {ReactElement, useRef} from 'react';
-import {useDateField} from '@react-aria/datepicker';
+import {useDateField} from '@react-aria-nutrient/datepicker';
 import {useDateFieldState} from '@react-stately/datepicker';
 import {useFocusManagerRef, useFormatHelpText, useFormattedDateWidth} from './utils';
 import {useFormProps} from '@react-spectrum/form';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 /**

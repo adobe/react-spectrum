@@ -18,7 +18,7 @@ import {classNames} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
 import React, {ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
-import {useCalendarGrid} from '@react-aria/calendar';
+import {useCalendarGrid} from '@react-aria-nutrient/calendar';
 
 interface CalendarMonthProps extends CalendarPropsBase, DOMProps, StyleProps {
   state: CalendarState | RangeCalendarState,

@@ -20,8 +20,8 @@ import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {parseColor} from '@react-stately/color';
 import React, {useState} from 'react';
-import {useId} from '@react-aria/utils';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
+import {useId} from '@react-aria-nutrient/utils';
+import {VisuallyHidden} from '@react-aria-nutrient/visually-hidden';
 
 export type ColorFieldStory = ComponentStoryObj<typeof ColorField>;
 

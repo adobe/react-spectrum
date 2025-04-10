@@ -12,5 +12,5 @@
 
 /// <reference types="css-module-types" />
 
-export * from '@react-aria/test-utils';
+export * from '@react-aria-nutrient/test-utils';
 export * from './testSetup';

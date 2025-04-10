@@ -10,17 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, getScrollParent, mergeProps, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria/utils';
+import {chain, getScrollParent, mergeProps, scrollIntoViewport, useSlotId, useSyntheticLinkProps} from '@react-aria-nutrient/utils';
 import {DOMAttributes, FocusableElement, Key, RefObject, Node as RSNode} from '@react-types/shared';
-import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
+import {focusSafely, getFocusableTreeWalker} from '@react-aria-nutrient/focus';
 import {getLastItem} from '@react-stately/collections';
 import {getRowId, listMap} from './utils';
 import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, useRef} from 'react';
-import {isFocusVisible} from '@react-aria/interactions';
+import {isFocusVisible} from '@react-aria-nutrient/interactions';
 import type {ListState} from '@react-stately/list';
-import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
+import {SelectableItemStates, useSelectableItem} from '@react-aria-nutrient/selection';
 import type {TreeState} from '@react-stately/tree';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 
 export interface AriaGridListItemOptions {
   /** An object representing the list item. Contains all the relevant information that makes up the list row. */
@@ -67,7 +67,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     shouldSelectOnPressUp
   } = props;
 
-  // let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/gridlist');
+  // let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/gridlist');
   let {direction} = useLocale();
   let {onAction, linkBehavior, keyboardNavigationBehavior} = listMap.get(state)!;
   let descriptionId = useSlotId();

@@ -12,8 +12,8 @@
 
 import {classNames, SlotProvider, unwrapDOMRef, useIsMobileDevice} from '@react-spectrum/utils';
 import {DOMRefValue, ItemProps, Key} from '@react-types/shared';
-import {FocusScope} from '@react-aria/focus';
-import {getInteractionModality} from '@react-aria/interactions';
+import {FocusScope} from '@react-aria-nutrient/focus';
+import {getInteractionModality} from '@react-aria-nutrient/interactions';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
 import {Popover} from '@react-spectrum/overlays';
 import React, {JSX, KeyboardEventHandler, ReactElement, useEffect, useRef, useState} from 'react';
@@ -21,7 +21,7 @@ import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {SubmenuTriggerContext, useMenuStateContext} from './context';
 import {TrayHeaderWrapper} from './Menu';
-import {useSubmenuTrigger} from '@react-aria/menu';
+import {useSubmenuTrigger} from '@react-aria-nutrient/menu';
 import {useSubmenuTriggerState} from '@react-stately/menu';
 
 interface MenuDialogTriggerProps {

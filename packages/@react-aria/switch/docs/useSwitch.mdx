@@ -10,13 +10,13 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-aria/switch';
-import hiddenDocs from 'docs:@react-aria/visually-hidden';
-import focusDocs from 'docs:@react-aria/focus';
+import docs from 'docs:@react-aria-nutrient/switch';
+import hiddenDocs from 'docs:@react-aria-nutrient/visually-hidden';
+import focusDocs from 'docs:@react-aria-nutrient/focus';
 import statelyDocs from 'docs:@react-stately/toggle';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
-import packageData from '@react-aria/switch/package.json';
+import packageData from '@react-aria-nutrient/switch/package.json';
 import Anatomy from './anatomy.svg';
 
 ---
@@ -77,21 +77,21 @@ technology.
 This example uses SVG to build the switch, with a visually hidden native input to represent
 the switch for accessibility. This is possible using
 the &lt;<TypeLink links={hiddenDocs.links} type={hiddenDocs.exports.VisuallyHidden} />&gt;
-utility component from `@react-aria/visually-hidden`. It is still in the DOM and accessible to assistive technology,
+utility component from `@react-aria-nutrient/visually-hidden`. It is still in the DOM and accessible to assistive technology,
 but invisible. The SVG element is the visual representation, and is hidden from screen readers
 with `aria-hidden`.
 
 For keyboard accessibility, a focus ring is important to indicate which element has keyboard focus.
 This is implemented with the <TypeLink links={focusDocs.links} type={focusDocs.exports.useFocusRing} />
-hook from `@react-aria/focus`. When `isFocusVisible` is true, an extra SVG element is rendered to
+hook from `@react-aria-nutrient/focus`. When `isFocusVisible` is true, an extra SVG element is rendered to
 indicate focus. The focus ring is only visible when the user is interacting with a keyboard,
 not with a mouse or touch.
 
 ```tsx example export=true
-import {useSwitch} from '@react-aria/switch';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
+import {useSwitch} from '@react-aria-nutrient/switch';
+import {VisuallyHidden} from '@react-aria-nutrient/visually-hidden';
 import {useToggleState} from '@react-stately/toggle';
-import {useFocusRing} from '@react-aria/focus';
+import {useFocusRing} from '@react-aria-nutrient/focus';
 
 function Switch(props) {
   let state = useToggleState(props);

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaToggleButtonProps, HoverEvents, mergeProps, useFocusRing, useHover, useToggleButton, useToggleButtonGroupItem} from 'react-aria';
+import {AriaToggleButtonProps, HoverEvents, mergeProps, useFocusRing, useHover, useToggleButton, useToggleButtonGroupItem} from '@react-aria-nutrient/react-aria';
 import {ButtonRenderProps} from './Button';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {forwardRefType, Key} from '@react-types/shared';
