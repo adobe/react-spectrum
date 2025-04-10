@@ -14,20 +14,20 @@ import {classNames} from '@react-spectrum/utils';
 import dndStyles from './dnd.css';
 import dropIndicatorStyles from '@adobe/spectrum-css-temp/components/dropindicator/vars.css';
 import {DroppableCollectionDropEvent} from '@react-types/shared';
-import {FocusRing} from '@react-aria/focus';
+import {FocusRing} from '@react-aria-nutrient/focus';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {Item} from '@react-stately/collections';
-import {ListDropTargetDelegate} from '@react-aria/dnd';
-import {ListKeyboardDelegate} from '@react-aria/selection';
-import {mergeProps} from '@react-aria/utils';
+import {ListDropTargetDelegate} from '@react-aria-nutrient/dnd';
+import {ListKeyboardDelegate} from '@react-aria-nutrient/selection';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import React from 'react';
 import {useClipboard, useDropIndicator, useDroppableCollection} from '..';
 import {useDroppableCollectionState} from '@react-stately/dnd';
-import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
+import {useGrid, useGridCell, useGridRow} from '@react-aria-nutrient/grid';
 import {useListData} from '@react-stately/data';
 import {useListState} from '@react-stately/list';
-import {useVisuallyHidden} from '@react-aria/visually-hidden';
+import {useVisuallyHidden} from '@react-aria-nutrient/visually-hidden';
 
 interface ListItem {
   id: string,

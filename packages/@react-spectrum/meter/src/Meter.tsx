@@ -16,7 +16,7 @@ import {ProgressBarBase} from '@react-spectrum/progress';
 import React from 'react';
 import {SpectrumMeterProps} from '@react-types/meter';
 import styles from '@adobe/spectrum-css-temp/components/barloader/vars.css';
-import {useMeter} from '@react-aria/meter';
+import {useMeter} from '@react-aria-nutrient/meter';
 
 /**
  * Meters are visual representations of a quantity or an achievement.

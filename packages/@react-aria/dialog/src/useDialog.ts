@@ -12,10 +12,10 @@
 
 import {AriaDialogProps} from '@react-types/dialog';
 import {DOMAttributes, FocusableElement, RefObject} from '@react-types/shared';
-import {filterDOMProps, useSlotId} from '@react-aria/utils';
-import {focusSafely} from '@react-aria/interactions';
+import {filterDOMProps, useSlotId} from '@react-aria-nutrient/utils';
+import {focusSafely} from '@react-aria-nutrient/interactions';
 import {useEffect, useRef} from 'react';
-import {useOverlayFocusContain} from '@react-aria/overlays';
+import {useOverlayFocusContain} from '@react-aria-nutrient/overlays';
 
 export interface DialogAria {
   /** Props for the dialog container element. */

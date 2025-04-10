@@ -12,7 +12,7 @@
 
 import {classNames, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 import React from 'react';
 import {SpectrumImageProps} from '@react-types/image';
 import styles from '@adobe/spectrum-css-temp/components/image/vars.css';

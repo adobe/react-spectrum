@@ -16,7 +16,7 @@ import statelyDocs from 'docs:@react-stately/calendar';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '@react-aria/calendar/docs/rangecalendar-anatomy.svg';
+import Anatomy from '@react-aria-nutrient/calendar/docs/rangecalendar-anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -63,7 +63,7 @@ import {RangeCalendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-
 ```
 
 ```css
-@import "@react-aria/example-theme";
+@import "@react-aria-nutrient/example-theme";
 
 .react-aria-RangeCalendar {
   width: fit-content;
@@ -299,7 +299,7 @@ The below example displays a `RangeCalendar` in the Hindi language, using the In
 
 ```tsx example
 import type {DateRange} from 'react-aria-components';
-import {I18nProvider} from '@react-aria/i18n';
+import {I18nProvider} from '@react-aria-nutrient/i18n';
 
 function Example() {
   let [range, setRange] = React.useState<DateRange | null>(null);
@@ -384,7 +384,7 @@ class Custom454 extends GregorianCalendar {
 
 ```tsx example
 import {getLocalTimeZone} from '@internationalized/date';
-import {useDateFormatter} from '@react-aria/i18n';
+import {useDateFormatter} from '@react-aria-nutrient/i18n';
 
 function Example() {
   let [range, setRange] = React.useState({
@@ -540,7 +540,7 @@ This example prevents selecting weekends, but allows selecting ranges that span 
 
 ```tsx example
 import {isWeekend} from '@internationalized/date';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 
 function Example() {
   let {locale} = useLocale();
@@ -889,7 +889,7 @@ Now you can combine a `RangeCalendar` and one or more `Preset` components in a `
 
 ```tsx example
 import {startOfWeek, endOfWeek, startOfMonth, endOfMonth} from '@internationalized/date';
-import {useLocale} from 'react-aria';
+import {useLocale} from '@react-aria-nutrient/react-aria';
 
 function Example() {
   let {locale} = useLocale();
@@ -962,7 +962,7 @@ This example shows a `RangeCalendarValue` component that can be placed within a 
 
 ```tsx example
 import {RangeCalendarStateContext} from 'react-aria-components';
-import {useDateFormatter} from 'react-aria';
+import {useDateFormatter} from '@react-aria-nutrient/react-aria';
 
 function RangeCalendarValue() {
   /*- begin highlight -*/

@@ -14,7 +14,7 @@ import {act} from '@testing-library/react';
 import {Button, ComboBox, ComboBoxContext, FieldError, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Popover, Text} from '../';
 import {fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import React from 'react';
-import {User} from '@react-aria/test-utils';
+import {User} from '@react-aria-nutrient/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestComboBox = (props) => (

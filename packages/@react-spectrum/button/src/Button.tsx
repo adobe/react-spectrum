@@ -19,18 +19,18 @@ import {
   useStyleProps
 } from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
-import {FocusRing} from '@react-aria/focus';
+import {FocusRing} from '@react-aria-nutrient/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isAppleDevice, isFirefox, mergeProps, useId} from '@react-aria/utils';
+import {isAppleDevice, isFirefox, mergeProps, useId} from '@react-aria-nutrient/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ElementType, ReactElement, useEffect, useState} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {Text} from '@react-spectrum/text';
-import {useButton} from '@react-aria/button';
-import {useFocus, useHover} from '@react-aria/interactions';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useButton} from '@react-aria-nutrient/button';
+import {useFocus, useHover} from '@react-aria-nutrient/interactions';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 function disablePendingProps(props) {

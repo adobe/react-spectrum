@@ -22,7 +22,7 @@ import {Key} from '@react-types/shared';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
 import {TimeField} from '@react-spectrum/datepicker';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 import {View} from '@react-spectrum/view';
 
 export type CalendarStory = ComponentStoryObj<typeof Calendar>;

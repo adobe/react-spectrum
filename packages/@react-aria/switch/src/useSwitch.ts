@@ -14,7 +14,7 @@ import {AriaSwitchProps} from '@react-types/switch';
 import {InputHTMLAttributes, LabelHTMLAttributes} from 'react';
 import {RefObject} from '@react-types/shared';
 import {ToggleState} from '@react-stately/toggle';
-import {useToggle} from '@react-aria/toggle';
+import {useToggle} from '@react-aria-nutrient/toggle';
 
 export interface SwitchAria {
   /** Props for the label wrapper element. */

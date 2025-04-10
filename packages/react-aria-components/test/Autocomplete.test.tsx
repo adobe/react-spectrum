@@ -15,7 +15,7 @@ import {AriaAutocompleteTests} from './AriaAutocomplete.test-util';
 import {Autocomplete, Button, Dialog, DialogTrigger, Header, Input, Label, ListBox, ListBoxItem, ListBoxSection, Menu, MenuItem, MenuSection, Popover, SearchField, Select, SelectValue, Separator, SubmenuTrigger, Text, TextField} from '..';
 import React, {ReactNode} from 'react';
 import {useAsyncList} from 'react-stately';
-import {useFilter} from '@react-aria/i18n';
+import {useFilter} from '@react-aria-nutrient/i18n';
 import userEvent from '@testing-library/user-event';
 
 interface AutocompleteItem {

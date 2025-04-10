@@ -18,8 +18,8 @@ import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, EFFECT_ALLOWED} from './c
 import {globalDropEffect, setGlobalAllowedDropOperations, setGlobalDropEffect, useDragModality, writeToDataTransfer} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isVirtualClick, isVirtualPointerEvent, useDescription, useGlobalListeners, useLayoutEffect} from '@react-aria/utils';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {isVirtualClick, isVirtualPointerEvent, useDescription, useGlobalListeners, useLayoutEffect} from '@react-aria-nutrient/utils';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 
 export interface DragOptions {
   /** Handler that is called when a drag operation is started. */
@@ -75,7 +75,7 @@ const MESSAGES = {
  */
 export function useDrag(options: DragOptions): DragResult {
   let {hasDragButton, isDisabled} = options;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/dnd');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/dnd');
   let state = useRef({
     options,
     x: 0,

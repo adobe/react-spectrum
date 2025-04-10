@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-jest.mock('@react-aria/live-announcer');
-jest.mock('@react-aria/utils/src/scrollIntoView');
+jest.mock('@react-aria-nutrient/live-announcer');
+jest.mock('@react-aria-nutrient/utils/src/scrollIntoView');
 import {
   act,
   fireEvent,
@@ -20,13 +20,13 @@ import {
   render as renderComponent,
   within
 } from '@react-spectrum/test-utils-internal';
-import {announce} from '@react-aria/live-announcer';
+import {announce} from '@react-aria-nutrient/live-announcer';
 import {composeStories} from '@storybook/react';
 import {enableTableNestedRows} from '@react-stately/flags';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {Scale} from '@react-types/provider';
-import {scrollIntoView} from '@react-aria/utils';
+import {scrollIntoView} from '@react-aria-nutrient/utils';
 import * as stories from '../stories/TreeGridTable.stories';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';

@@ -1,5 +1,5 @@
 {
-  "name": "@react-aria/visually-hidden",
+  "name": "@react-aria-nutrient/visually-hidden",
   "version": "3.8.21",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
@@ -24,8 +24,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/interactions": "^3.24.1",
-    "@react-aria/utils": "^3.28.1",
+    "@react-aria-nutrient/interactions": "^3.24.1",
+    "@react-aria-nutrient/utils": "^3.28.1",
     "@react-types/shared": "^3.28.0",
     "@swc/helpers": "^0.5.0"
   },

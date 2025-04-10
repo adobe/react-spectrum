@@ -21,7 +21,7 @@
     "build-icons": "yarn build-cjs && yarn build-esm && yarn generate-types"
   },
   "dependencies": {
-    "@react-aria/utils": "^3.28.1",
+    "@react-aria-nutrient/utils": "^3.28.1",
     "@react-spectrum/icon": "^3.8.3",
     "@swc/helpers": "^0.5.0"
   },

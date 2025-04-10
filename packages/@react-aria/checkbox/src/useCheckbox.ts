@@ -12,13 +12,13 @@
 
 import {AriaCheckboxProps} from '@react-types/checkbox';
 import {InputHTMLAttributes, LabelHTMLAttributes, useEffect} from 'react';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import {privateValidationStateProp, useFormValidationState} from '@react-stately/form';
 import {RefObject, ValidationResult} from '@react-types/shared';
 import {ToggleState} from '@react-stately/toggle';
-import {useFormValidation} from '@react-aria/form';
-import {usePress} from '@react-aria/interactions';
-import {useToggle} from '@react-aria/toggle';
+import {useFormValidation} from '@react-aria-nutrient/form';
+import {usePress} from '@react-aria-nutrient/interactions';
+import {useToggle} from '@react-aria-nutrient/toggle';
 
 export interface CheckboxAria extends ValidationResult {
   /** Props for the label wrapper element. */

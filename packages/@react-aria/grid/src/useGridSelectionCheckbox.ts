@@ -4,8 +4,8 @@ import {GridState} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
-import {useId} from '@react-aria/utils';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useId} from '@react-aria-nutrient/utils';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 
 export interface AriaGridSelectionCheckboxProps {
   /** A unique key for the checkbox. */
@@ -34,7 +34,7 @@ export function useGridSelectionCheckbox<T, C extends GridCollection<T>>(props: 
   // Checkbox should always toggle selection, regardless of selectionBehavior.
   let onChange = () => manager.toggleSelection(key);
 
-  const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/grid');
+  const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/grid');
 
   return {
     checkboxProps: {

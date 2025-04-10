@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, useLayoutEffect} from '@react-aria/utils';
+import {chain, useLayoutEffect} from '@react-aria-nutrient/utils';
 import React, {Ref, useCallback, useRef} from 'react';
 import {SpectrumTextAreaProps, SpectrumTextFieldBaseProps, TextFieldRef} from '@react-types/textfield';
 import {TextFieldBase} from './TextFieldBase';
 import {useControlledState} from '@react-stately/utils';
 import {useFormProps} from '@react-spectrum/form';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useTextField} from '@react-aria/textfield';
+import {useTextField} from '@react-aria-nutrient/textfield';
 
 /**
  * TextAreas are multiline text inputs, useful for cases where users have

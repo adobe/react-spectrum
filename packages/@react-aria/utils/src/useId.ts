@@ -12,7 +12,7 @@
 
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {useLayoutEffect} from './useLayoutEffect';
-import {useSSRSafeId} from '@react-aria/ssr';
+import {useSSRSafeId} from '@react-aria-nutrient/ssr';
 import {useValueEffect} from './';
 
 // copied from SSRProvider.tsx to reduce exports, if needed again, consider sharing

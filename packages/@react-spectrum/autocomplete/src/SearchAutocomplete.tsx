@@ -14,8 +14,8 @@ import {classNames, dimensionValue, useFocusableRef, useIsMobileDevice, useResiz
 import {ClearButton} from '@react-spectrum/button';
 import {DOMRefValue, FocusableRef} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
-import {filterDOMProps, useLayoutEffect} from '@react-aria/utils';
-import {FocusRing} from '@react-aria/focus';
+import {filterDOMProps, useLayoutEffect} from '@react-aria-nutrient/utils';
+import {FocusRing} from '@react-aria-nutrient/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
@@ -40,11 +40,11 @@ import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useComboBoxState} from '@react-stately/combobox';
-import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useFilter, useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useFormProps} from '@react-spectrum/form';
-import {useHover} from '@react-aria/interactions';
+import {useHover} from '@react-aria-nutrient/interactions';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
-import {useSearchAutocomplete} from '@react-aria/autocomplete';
+import {useSearchAutocomplete} from '@react-aria-nutrient/autocomplete';
 
 function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);

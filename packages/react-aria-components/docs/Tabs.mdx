@@ -15,7 +15,7 @@ import statelyDocs from 'docs:@react-stately/tabs';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI, VersionBadge} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '@react-aria/tabs/docs/anatomy.svg';
+import Anatomy from '@react-aria-nutrient/tabs/docs/anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {Keyboard} from '@react-spectrum/text';
@@ -24,7 +24,7 @@ import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
 import Collections from '@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg';
 import Selection from '@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg';
 import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
-import tabsUtils from 'docs:@react-aria/test-utils/src/tabs.ts';
+import tabsUtils from 'docs:@react-aria-nutrient/test-utils/src/tabs.ts';
 
 ---
 category: Navigation
@@ -74,7 +74,7 @@ import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
 ```
 
 ```css
-@import "@react-aria/example-theme";
+@import "@react-aria-nutrient/example-theme";
 
 .react-aria-Tabs {
   display: flex;
@@ -757,13 +757,13 @@ If you need to customize things even further, such as accessing internal state o
 
 ### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
-`@react-aria/test-utils` offers common tabs interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
+`@react-aria-nutrient/test-utils` offers common tabs interaction utilities which you may find helpful when writing tests. See [here](../react-aria/testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the tabs tester and a sample of how you could use it in your test suite.
 
 ```ts
 // Tabs.test.ts
 import {render} from '@testing-library/react';
-import {User} from '@react-aria/test-utils';
+import {User} from '@react-aria-nutrient/test-utils';
 
 let testUtilUser = new User({interactionType: 'mouse'});
 // ...

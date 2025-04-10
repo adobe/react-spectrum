@@ -13,7 +13,7 @@
 import {ClearSlots, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {ContentProps} from '@react-types/view';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 import React, {forwardRef} from 'react';
 
 /**

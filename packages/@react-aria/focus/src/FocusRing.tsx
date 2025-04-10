@@ -11,7 +11,7 @@
  */
 
 import clsx from 'clsx';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import React, {ReactElement, ReactNode} from 'react';
 import {useFocusRing} from './useFocusRing';
 

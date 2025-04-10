@@ -68,11 +68,11 @@ export {Content, Footer, Header, View} from '@react-spectrum/view';
 export {Well} from '@react-spectrum/well';
 export {Item, Section} from '@react-stately/collections';
 export {useAsyncList, useListData, useTreeData} from '@react-stately/data';
-export {VisuallyHidden} from '@react-aria/visually-hidden';
-export {useCollator, useDateFormatter, useFilter, useLocale, useLocalizedStringFormatter, useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
-export {SSRProvider} from '@react-aria/ssr';
+export {VisuallyHidden} from '@react-aria-nutrient/visually-hidden';
+export {useCollator, useDateFormatter, useFilter, useLocale, useLocalizedStringFormatter, useMessageFormatter, useNumberFormatter} from '@react-aria-nutrient/i18n';
+export {SSRProvider} from '@react-aria-nutrient/ssr';
 export {useDragAndDrop, DIRECTORY_DRAG_TYPE} from '@react-spectrum/dnd';
-export {Collection} from '@react-aria/collections';
+export {Collection} from '@react-aria-nutrient/collections';
 
 export type {SpectrumActionBarContainerProps, SpectrumActionBarProps} from '@react-spectrum/actionbar';
 export type {SpectrumActionGroupProps} from '@react-spectrum/actiongroup';
@@ -123,9 +123,9 @@ export type {SpectrumTreeViewProps, SpectrumTreeViewItemProps, SpectrumTreeViewI
 export type {ContentProps, FooterProps, HeaderProps, ViewProps} from '@react-spectrum/view';
 export type {SpectrumWellProps} from '@react-spectrum/well';
 export type {AsyncListData, AsyncListOptions, ListData, ListOptions, TreeData, TreeOptions} from '@react-stately/data';
-export type {VisuallyHiddenAria, VisuallyHiddenProps} from '@react-aria/visually-hidden';
-export type {DateFormatter, DateFormatterOptions, Filter, FormatMessage, Locale, LocalizedStrings} from '@react-aria/i18n';
-export type {SSRProviderProps} from '@react-aria/ssr';
+export type {VisuallyHiddenAria, VisuallyHiddenProps} from '@react-aria-nutrient/visually-hidden';
+export type {DateFormatter, DateFormatterOptions, Filter, FormatMessage, Locale, LocalizedStrings} from '@react-aria-nutrient/i18n';
+export type {SSRProviderProps} from '@react-aria-nutrient/ssr';
 export type {DirectoryDropItem, DragAndDropHooks, DragAndDropOptions, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-spectrum/dnd';
 export type {Key, Selection, ItemProps, SectionProps, RouterConfig} from '@react-types/shared';
 export type {SpectrumAccordionProps, SpectrumDisclosureProps, SpectrumDisclosurePanelProps, SpectrumDisclosureTitleProps} from '@react-spectrum/accordion';

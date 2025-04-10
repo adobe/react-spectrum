@@ -13,14 +13,14 @@
 import {AriaColorAreaProps, ColorChannel} from '@react-types/color';
 import {ColorAreaState} from '@react-stately/color';
 import {DOMAttributes, RefObject} from '@react-types/shared';
-import {focusWithoutScrolling, isAndroid, isIOS, mergeProps, useFormReset, useGlobalListeners, useLabels} from '@react-aria/utils';
+import {focusWithoutScrolling, isAndroid, isIOS, mergeProps, useFormReset, useGlobalListeners, useLabels} from '@react-aria-nutrient/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import React, {ChangeEvent, InputHTMLAttributes, useCallback, useRef, useState} from 'react';
 import {useColorAreaGradient} from './useColorAreaGradient';
-import {useFocus, useFocusWithin, useKeyboard, useMove} from '@react-aria/interactions';
-import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useVisuallyHidden} from '@react-aria/visually-hidden';
+import {useFocus, useFocusWithin, useKeyboard, useMove} from '@react-aria-nutrient/interactions';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
+import {useVisuallyHidden} from '@react-aria-nutrient/visually-hidden';
 
 export interface ColorAreaAria {
   /** Props for the color area container element. */
@@ -56,7 +56,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
     xName,
     yName
   } = props;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/color');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/color');
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 

@@ -12,11 +12,11 @@
 
 import ariaStyles from './docs-example.css';
 import {classNames} from '@react-spectrum/utils';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import React, {useCallback, useRef} from 'react';
-import {useButton} from 'react-aria';
-import {useFocusRing} from '@react-aria/focus';
-import {useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup} from '@react-aria/table';
+import {useButton} from '@react-aria-nutrient/react-aria';
+import {useFocusRing} from '@react-aria-nutrient/focus';
+import {useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup} from '@react-aria-nutrient/table';
 import {useTableColumnResizeState, useTableState} from '@react-stately/table';
 
 export function Table(props) {

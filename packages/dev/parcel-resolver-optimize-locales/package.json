@@ -1,5 +1,5 @@
 {
-  "name": "@react-aria/parcel-resolver-optimize-locales",
+  "name": "@react-aria-nutrient/parcel-resolver-optimize-locales",
   "version": "1.2.0",
   "main": "LocalesResolver.js",
   "engines": {

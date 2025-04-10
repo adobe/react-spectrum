@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 
 // Generate a powerset from a given array of states/options,
 export function generatePowerset(states: Array<object>, exclude?: (merged) => boolean): any[] {

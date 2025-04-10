@@ -12,7 +12,7 @@
 
 import {DOMAttributes} from '@react-types/shared';
 import {ReactNode} from 'react';
-import {useId} from '@react-aria/utils';
+import {useId} from '@react-aria-nutrient/utils';
 
 export interface AriaListBoxSectionProps {
   /** The heading for the section. */

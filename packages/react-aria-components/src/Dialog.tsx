@@ -9,15 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaDialogProps, useDialog, useId, useOverlayTrigger} from 'react-aria';
+import {AriaDialogProps, useDialog, useId, useOverlayTrigger} from '@react-aria-nutrient/react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, DEFAULT_SLOT, Provider, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 import {forwardRefType} from '@react-types/shared';
 import {HeadingContext} from './RSPContexts';
 import {OverlayTriggerProps, OverlayTriggerState, useMenuTriggerState} from 'react-stately';
 import {PopoverContext} from './Popover';
-import {PressResponder} from '@react-aria/interactions';
+import {PressResponder} from '@react-aria-nutrient/interactions';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {RootMenuTriggerStateContext} from './Menu';
 

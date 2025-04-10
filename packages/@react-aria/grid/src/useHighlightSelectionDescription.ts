@@ -14,9 +14,9 @@ import {AriaLabelingProps} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {MultipleSelectionManager} from '@react-stately/selection';
-import {useDescription} from '@react-aria/utils';
-import {useInteractionModality} from '@react-aria/interactions';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useDescription} from '@react-aria-nutrient/utils';
+import {useInteractionModality} from '@react-aria-nutrient/interactions';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useMemo} from 'react';
 
 export interface HighlightSelectionDescriptionProps {
@@ -29,7 +29,7 @@ export interface HighlightSelectionDescriptionProps {
  * @param props
  */
 export function useHighlightSelectionDescription(props: HighlightSelectionDescriptionProps): AriaLabelingProps {
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/grid');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/grid');
   let modality = useInteractionModality();
   // null is the default if the user hasn't interacted with the table at all yet or the rest of the page
   let shouldLongPress = (modality === 'pointer' || modality === 'virtual' || modality == null)

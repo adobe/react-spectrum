@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import sharedDocs from 'docs:@react-types/shared';
-import gridlistUtil from 'docs:@react-aria/test-utils/src/gridlist.ts';
+import gridlistUtil from 'docs:@react-aria-nutrient/test-utils/src/gridlist.ts';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable, ClassAPI, VersionBadge} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
@@ -85,7 +85,7 @@ import {MyCheckbox} from './Checkbox';
 ```
 
 ```css
-@import "@react-aria/example-theme";
+@import "@react-aria-nutrient/example-theme";
 
 .react-aria-GridList {
   display: flex;
@@ -1837,7 +1837,7 @@ This example consumes from `CheckboxContext` in an existing styled checkbox comp
 import type {CheckboxProps} from 'react-aria-components';
 import {CheckboxContext, useContextProps} from 'react-aria-components';
 import {useToggleState} from 'react-stately';
-import {useCheckbox} from 'react-aria';
+import {useCheckbox} from '@react-aria-nutrient/react-aria';
 
 const MyCustomCheckbox = React.forwardRef((props: CheckboxProps, ref: React.ForwardedRef<HTMLInputElement>) => {
   // Merge the local props and ref with the ones provided via context.
@@ -1872,13 +1872,13 @@ If you need to customize things even further, such as accessing internal state, 
 
 ### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
-`@react-aria/test-utils` offers common gridlist interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
+`@react-aria-nutrient/test-utils` offers common gridlist interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the gridlist tester and a sample of how you could use it in your test suite.
 
 ```ts
 // GridList.test.ts
 import {render, within} from '@testing-library/react';
-import {User} from '@react-aria/test-utils';
+import {User} from '@react-aria-nutrient/test-utils';
 
 let testUtilUser = new User({interactionType: 'mouse'});
 // ...

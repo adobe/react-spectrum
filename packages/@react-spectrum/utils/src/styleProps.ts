@@ -13,7 +13,7 @@
 import {BackgroundColorValue, BorderColorValue, BorderRadiusValue, BorderSizeValue, ColorValue, ColorVersion, DimensionValue, Direction, Responsive, ResponsiveProp, StyleProps, ViewStyleProps} from '@react-types/shared';
 import {CSSProperties, HTMLAttributes} from 'react';
 import {useBreakpoint} from './BreakpointProvider';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 
 type Breakpoint = 'base' | 'S' | 'M' | 'L' | string;
 type StyleName = string | string[] | ((dir: Direction) => string);

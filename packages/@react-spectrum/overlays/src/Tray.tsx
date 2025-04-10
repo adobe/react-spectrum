@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaModalOverlayProps, DismissButton, useModalOverlay} from '@react-aria/overlays';
+import {AriaModalOverlayProps, DismissButton, useModalOverlay} from '@react-aria-nutrient/overlays';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, RefObject, StyleProps} from '@react-types/shared';
 import {Overlay} from './Overlay';
@@ -20,7 +20,7 @@ import overrideStyles from './overlays.css';
 import React, {ForwardedRef, forwardRef, ReactNode, useRef} from 'react';
 import trayStyles from '@adobe/spectrum-css-temp/components/tray/vars.css';
 import {Underlay} from './Underlay';
-import {useObjectRef, useViewportSize} from '@react-aria/utils';
+import {useObjectRef, useViewportSize} from '@react-aria-nutrient/utils';
 
 interface TrayProps extends AriaModalOverlayProps, StyleProps, Omit<OverlayProps, 'nodeRef' | 'shouldContainFocus'> {
   children: ReactNode,

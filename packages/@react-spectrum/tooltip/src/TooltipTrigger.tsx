@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusableProvider} from '@react-aria/focus';
+import {FocusableProvider} from '@react-aria-nutrient/focus';
 import {Overlay} from '@react-spectrum/overlays';
 import React, {JSX, ReactElement, useRef, useState} from 'react';
 import {SpectrumTooltipTriggerProps} from '@react-types/tooltip';
 import {TooltipContext} from './context';
-import {useLayoutEffect} from '@react-aria/utils';
-import {useOverlayPosition} from '@react-aria/overlays';
-import {useTooltipTrigger} from '@react-aria/tooltip';
+import {useLayoutEffect} from '@react-aria-nutrient/utils';
+import {useOverlayPosition} from '@react-aria-nutrient/overlays';
+import {useTooltipTrigger} from '@react-aria-nutrient/tooltip';
 import {useTooltipTriggerState} from '@react-stately/tooltip';
 
 const DEFAULT_OFFSET = -1; // Offset needed to reach 4px/5px (med/large) distance between tooltip and trigger button

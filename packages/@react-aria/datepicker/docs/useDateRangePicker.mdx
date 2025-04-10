@@ -10,11 +10,11 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-aria/datepicker';
+import docs from 'docs:@react-aria-nutrient/datepicker';
 import statelyDocs from 'docs:@react-stately/datepicker';
 import i18nDocs from 'docs:@internationalized/date';
 import {FunctionAPI, HeaderInfo, InterfaceType, TypeContext, TypeLink, PageDescription} from '@react-spectrum/docs';
-import packageData from '@react-aria/datepicker/package.json';
+import packageData from '@react-aria-nutrient/datepicker/package.json';
 import Anatomy from './daterangepicker-anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -86,7 +86,7 @@ A `DateRangePicker` composes several other components to produce a composite ele
 
 ```tsx example export=true
 import {useDateRangePickerState} from '@react-stately/datepicker';
-import {useDateRangePicker} from '@react-aria/datepicker';
+import {useDateRangePicker} from '@react-aria-nutrient/datepicker';
 
 // Reuse the DateField, Popover, Dialog, RangeCalendar, and Button from your component library.
 import {DateField, Popover, Dialog, RangeCalendar, Button} from 'your-component-library';
@@ -132,7 +132,7 @@ The `Button` component is used in the above example to trigger the calendar popo
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import {useButton} from '@react-aria/button';
+import {useButton} from '@react-aria-nutrient/button';
 
 function Button(props) {
   let ref = React.useRef(null);
@@ -151,9 +151,9 @@ The `DateField` component implements the keyboard editable inputs used in a `Dat
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 import {useDateFieldState} from '@react-stately/datepicker';
-import {useDateField, useDateSegment} from '@react-aria/datepicker';
+import {useDateField, useDateSegment} from '@react-aria-nutrient/datepicker';
 
 function DateField(props) {
   let {locale} = useLocale();
@@ -256,9 +256,9 @@ See [usePopover](usePopover.html) for more examples of popovers.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import type {AriaPopoverProps} from 'react-aria';
+import type {AriaPopoverProps} from '@react-aria-nutrient/react-aria';
 import type {OverlayTriggerState} from 'react-stately';
-import {usePopover, Overlay, DismissButton} from '@react-aria/overlays';
+import {usePopover, Overlay, DismissButton} from '@react-aria-nutrient/overlays';
 
 interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef'> {
   children: React.ReactNode,
@@ -302,8 +302,8 @@ The `Dialog` component is rendered within the `Popover` component. It is built u
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import type {AriaDialogProps} from '@react-aria/dialog';
-import {useDialog} from '@react-aria/dialog';
+import type {AriaDialogProps} from '@react-aria-nutrient/dialog';
+import {useDialog} from '@react-aria-nutrient/dialog';
 
 interface DialogProps extends AriaDialogProps {
   title?: React.ReactNode,
@@ -338,7 +338,7 @@ The `RangeCalendar` component implements the month grid shown within the `DateRa
 
 ```tsx example export=true render=false
 import {useRangeCalendarState} from '@react-stately/calendar';
-import {useRangeCalendar, useCalendarGrid, useCalendarCell} from '@react-aria/calendar';
+import {useRangeCalendar, useCalendarGrid, useCalendarCell} from '@react-aria-nutrient/calendar';
 import {createCalendar, getWeeksInMonth} from '@internationalized/date';
 
 function RangeCalendar(props) {
@@ -531,7 +531,7 @@ function Example() {
 
 ```tsx example
 import {getLocalTimeZone} from '@internationalized/date';
-import {useDateFormatter} from '@react-aria/i18n';
+import {useDateFormatter} from '@react-aria-nutrient/i18n';
 
 function Example() {
   let [range, setRange] = React.useState({
@@ -638,7 +638,7 @@ Selected dates passed to `onChange` always use the same calendar system as the `
 The below example displays a `DateRangePicker` in the Hindi language, using the Indian calendar. Dates emitted from `onChange` are in the Gregorian calendar.
 
 ```tsx example
-import {I18nProvider} from '@react-aria/i18n';
+import {I18nProvider} from '@react-aria-nutrient/i18n';
 
 function Example() {
   let [range, setRange] = React.useState(null);

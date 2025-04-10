@@ -10,17 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaToastRegionProps, useToastRegion} from '@react-aria/toast';
+import {AriaToastRegionProps, useToastRegion} from '@react-aria-nutrient/toast';
 import {classNames} from '@react-spectrum/utils';
-import {FocusScope, useFocusRing} from '@react-aria/focus';
-import {mergeProps} from '@react-aria/utils';
+import {FocusScope, useFocusRing} from '@react-aria-nutrient/focus';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import {Provider} from '@react-spectrum/provider';
 import React, {createContext, ReactElement, ReactNode, useMemo, useRef} from 'react';
 import ReactDOM from 'react-dom';
 import toastContainerStyles from './toastContainer.css';
 import type {ToastPlacement} from './ToastContainer';
 import {ToastState} from '@react-stately/toast';
-import {useUNSTABLE_PortalContext} from '@react-aria/overlays';
+import {useUNSTABLE_PortalContext} from '@react-aria-nutrient/overlays';
 
 interface ToastContainerProps extends AriaToastRegionProps {
   children: ReactNode,

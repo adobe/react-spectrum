@@ -1,6 +1,6 @@
 import {action} from '@storybook/addon-actions';
 import {ActionMenu} from '@react-spectrum/menu';
-import {chain} from '@react-aria/utils';
+import {chain} from '@react-aria-nutrient/utils';
 import Delete from '@spectrum-icons/workflow/Delete';
 import Edit from '@spectrum-icons/workflow/Edit';
 import File from '@spectrum-icons/illustrations/File';

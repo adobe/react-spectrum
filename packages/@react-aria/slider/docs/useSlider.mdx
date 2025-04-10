@@ -10,11 +10,11 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-aria/slider';
+import docs from 'docs:@react-aria-nutrient/slider';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
-import packageData from '@react-aria/slider/package.json';
+import packageData from '@react-aria-nutrient/slider/package.json';
 import statelyDocs from 'docs:@react-stately/slider';
-import i18nDocs from 'docs:@react-aria/i18n';
+import i18nDocs from 'docs:@react-aria-nutrient/i18n';
 import Anatomy from './anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
@@ -110,12 +110,12 @@ using the [VisuallyHidden](VisuallyHidden.html) component. The thumb also uses t
 display using a different color when it is keyboard focused (try tabbing to it).
 
 ```tsx example export=true
-import {useSlider, useSliderThumb} from '@react-aria/slider';
+import {useSlider, useSliderThumb} from '@react-aria-nutrient/slider';
 import {useSliderState} from '@react-stately/slider';
-import {useFocusRing} from '@react-aria/focus';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
-import {mergeProps} from '@react-aria/utils';
-import {useNumberFormatter} from '@react-aria/i18n';
+import {useFocusRing} from '@react-aria-nutrient/focus';
+import {VisuallyHidden} from '@react-aria-nutrient/visually-hidden';
+import {mergeProps} from '@react-aria-nutrient/utils';
+import {useNumberFormatter} from '@react-aria-nutrient/i18n';
 
 function Slider(props) {
   let trackRef = React.useRef(null);

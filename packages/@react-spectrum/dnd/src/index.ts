@@ -14,7 +14,7 @@
 
 export type {DragAndDropOptions, DragAndDropHooks} from './useDragAndDrop';
 export {useDragAndDrop} from './useDragAndDrop';
-export {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
+export {DIRECTORY_DRAG_TYPE} from '@react-aria-nutrient/dnd';
 
 export type {
   DirectoryDropItem,

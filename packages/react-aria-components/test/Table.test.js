@@ -13,13 +13,13 @@
 import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render, triggerLongPress, within} from '@react-spectrum/test-utils-internal';
 import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, Tag, TagGroup, TagList, useDragAndDrop, useTableOptions, Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
-import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
+import {DataTransfer, DragEvent} from '@react-aria-nutrient/dnd/test/mocks';
 import React, {useMemo, useRef, useState} from 'react';
-import {resizingTests} from '@react-aria/table/test/tableResizingTests';
-import {setInteractionModality} from '@react-aria/interactions';
+import {resizingTests} from '@react-aria-nutrient/table/test/tableResizingTests';
+import {setInteractionModality} from '@react-aria-nutrient/interactions';
 import * as stories from '../stories/Table.stories';
-import {useLoadMore} from '@react-aria/utils';
-import {User} from '@react-aria/test-utils';
+import {useLoadMore} from '@react-aria-nutrient/utils';
+import {User} from '@react-aria-nutrient/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let {

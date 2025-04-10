@@ -19,10 +19,10 @@ import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.
 import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useLabels} from '@react-aria/utils';
+import {mergeProps, useLabels} from '@react-aria-nutrient/utils';
 import React from 'react';
 import {SpectrumContextualHelpProps} from '@react-types/contextualhelp';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 
 /**
  * Contextual help shows a user extra information about the state of an adjacent component, or a total view.

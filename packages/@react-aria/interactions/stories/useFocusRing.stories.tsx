@@ -14,11 +14,11 @@ import {addWindowFocusTracking} from '../src';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import Frame from 'react-frame-component';
 import {Key} from '@react-types/shared';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import React, {useEffect, useRef, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
-import {useButton} from '@react-aria/button';
-import {useFocusRing} from '@react-aria/focus';
+import {useButton} from '@react-aria-nutrient/button';
+import {useFocusRing} from '@react-aria-nutrient/focus';
 
 interface IColumn {
   name: string,

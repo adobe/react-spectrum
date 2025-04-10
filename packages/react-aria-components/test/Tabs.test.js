@@ -14,7 +14,7 @@ import {act, fireEvent, pointerMap, render, waitFor, within} from '@react-spectr
 import {Button, Collection, Tab, TabList, TabPanel, Tabs, Tooltip, TooltipTrigger} from '../';
 import React, {useState} from 'react';
 import {TabsExample} from '../stories/Tabs.stories';
-import {User} from '@react-aria/test-utils';
+import {User} from '@react-aria-nutrient/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let renderTabs = (tabsProps, tablistProps, tabProps, tabpanelProps) => render(

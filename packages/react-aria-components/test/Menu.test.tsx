@@ -15,8 +15,8 @@ import {AriaMenuTests} from './AriaMenu.test-util';
 import {Button, Collection, Header, Heading, Input, Keyboard, Label, Menu, MenuContext, MenuItem, MenuSection, MenuTrigger, Popover, Pressable, Separator, SubmenuTrigger, Text, TextField} from '..';
 import React, {useState} from 'react';
 import {Selection, SelectionMode} from '@react-types/shared';
-import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
-import {User} from '@react-aria/test-utils';
+import {UNSTABLE_PortalProvider} from '@react-aria-nutrient/overlays';
+import {User} from '@react-aria-nutrient/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestMenu = ({menuProps = {}, itemProps = {}, hasSubmenu, hasNestedSubmenu}: {menuProps?: any, itemProps?: any, hasSubmenu?: boolean, hasNestedSubmenu?: any}) => (

@@ -57,5 +57,5 @@ interface Radio extends FocusableProps, DOMProps, StyleProps {
 
 ## Packages
 - `@react-stately/radio`
-- `@react-aria/radio`
+- `@react-aria-nutrient/radio`
 - `@react-spectrum/radio`

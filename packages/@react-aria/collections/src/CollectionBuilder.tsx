@@ -14,12 +14,12 @@ import {BaseCollection} from './BaseCollection';
 import {BaseNode, Document, ElementNode} from './Document';
 import {CachedChildrenOptions, useCachedChildren} from './useCachedChildren';
 import {createPortal} from 'react-dom';
-import {FocusableContext} from '@react-aria/interactions';
+import {FocusableContext} from '@react-aria-nutrient/interactions';
 import {forwardRefType, Node} from '@react-types/shared';
 import {Hidden} from './Hidden';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
-import {useIsSSR} from '@react-aria/ssr';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useIsSSR} from '@react-aria-nutrient/ssr';
+import {useLayoutEffect} from '@react-aria-nutrient/utils';
 import {useSyncExternalStore as useSyncExternalStoreShim} from 'use-sync-external-store/shim/index.js';
 
 const ShallowRenderContext = createContext(false);

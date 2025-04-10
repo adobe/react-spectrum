@@ -15,11 +15,11 @@ governing permissions and limitations under the License. -->
 
 ## Summary
 
-This RFC proposes improvements to the @react-aria/focus and @react-aria/interactions libraries, particularly around support for iframes when used in combination with React.createPortal. The changes focus on using the correct document and window object. For example, if portalling a React node from the main window to an iframe or from an iframe to another iframe, we should be using the correct document and window object, i.e. that of the iframe, instead of the source frame. This is because the javascript context still runs on the source frame when using React.createPortal. This does not change existing behavior.
+This RFC proposes improvements to the @react-aria-nutrient/focus and @react-aria-nutrient/interactions libraries, particularly around support for iframes when used in combination with React.createPortal. The changes focus on using the correct document and window object. For example, if portalling a React node from the main window to an iframe or from an iframe to another iframe, we should be using the correct document and window object, i.e. that of the iframe, instead of the source frame. This is because the javascript context still runs on the source frame when using React.createPortal. This does not change existing behavior.
 
 ## Motivation
 
-Stripe is building embeddable UI components, which adopt the look and feel of the page that they are rendered in. We currently use iframes to prevent cross-origin communication from the page that the UI components are embedded on. Stripe's design system utilizes many of React Spectrum's packages, for instance @react-aria/focus and @react-aria/interactions. However, we have found issues with using these packages when integrating with iframes. There are several existing issues filed by other developers:
+Stripe is building embeddable UI components, which adopt the look and feel of the page that they are rendered in. We currently use iframes to prevent cross-origin communication from the page that the UI components are embedded on. Stripe's design system utilizes many of React Spectrum's packages, for instance @react-aria-nutrient/focus and @react-aria-nutrient/interactions. However, we have found issues with using these packages when integrating with iframes. There are several existing issues filed by other developers:
 - Use the correct ownerDocument: https://github.com/adobe/react-spectrum/issues/4634
 - FocusScope: https://github.com/adobe/react-spectrum/issues/3350
 - onPress: https://github.com/adobe/react-spectrum/discussions/2237
@@ -28,7 +28,7 @@ Stripe is building embeddable UI components, which adopt the look and feel of th
 
 A fix to these issues is to use the correct `document` and `window` object in `FocusScope`, `usePress`, and `useInteractOutside`. 
 
-We add a utility function in `@react-aria/utils` that accepts a HTMLElement argument and returns the corresponding `ownerDocument` and `ownerWindow`. 
+We add a utility function in `@react-aria-nutrient/utils` that accepts a HTMLElement argument and returns the corresponding `ownerDocument` and `ownerWindow`. 
 
 ## Documentation
 

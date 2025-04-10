@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {getOwnerWindow} from '@react-aria/utils';
+import {getOwnerWindow} from '@react-aria-nutrient/utils';
 
 function isStyleVisible(element: Element) {
   const windowObject = getOwnerWindow(element);

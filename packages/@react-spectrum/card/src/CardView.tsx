@@ -18,17 +18,17 @@ import {DOMRef, DOMRefValue, Node} from '@react-types/shared';
 import {GridCollection, useGridState} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, ReactNode, useCallback, useMemo, useRef} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
 import {SpectrumCardViewProps} from '@react-types/card';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
-import {useCollator, useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
+import {useCollator, useLocale, useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
+import {useGrid, useGridCell, useGridRow} from '@react-aria-nutrient/grid';
 import {useListState} from '@react-stately/list';
 import {useProvider} from '@react-spectrum/provider';
-import {Virtualizer, VirtualizerItem} from '@react-aria/virtualizer';
+import {Virtualizer, VirtualizerItem} from '@react-aria-nutrient/virtualizer';
 
 /**
  * TODO: Add description of component here.

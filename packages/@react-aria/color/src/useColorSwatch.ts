@@ -12,12 +12,12 @@
 
 import {AriaLabelingProps, DOMProps} from '@react-types/shared';
 import {Color} from '@react-types/color';
-import {filterDOMProps, useId} from '@react-aria/utils';
+import {filterDOMProps, useId} from '@react-aria-nutrient/utils';
 import {HTMLAttributes, useMemo} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {parseColor} from '@react-stately/color';
-import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 
 export interface AriaColorSwatchProps extends AriaLabelingProps, DOMProps {
   /** The color value to display in the swatch. */
@@ -48,7 +48,7 @@ export function useColorSwatch(props: AriaColorSwatchProps): ColorSwatchAria {
   let color = useMemo(() => typeof nonNullValue === 'string' ? parseColor(nonNullValue) : nonNullValue, [nonNullValue]);
   let {locale} = useLocale();
   let DOMProps = filterDOMProps(props, {labelable: true});
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/color');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/color');
   let id = useId(props.id);
 
   if (!colorName) {

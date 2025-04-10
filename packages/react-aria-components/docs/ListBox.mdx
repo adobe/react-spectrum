@@ -25,7 +25,7 @@ import Collections from '@react-spectrum/docs/pages/assets/component-illustratio
 import Selection from '@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg';
 import DragAndDrop from '@react-spectrum/docs/pages/assets/component-illustrations/DragAndDrop.svg';
 import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
-import listboxUtils from 'docs:@react-aria/test-utils/src/listbox.ts';
+import listboxUtils from 'docs:@react-aria-nutrient/test-utils/src/listbox.ts';
 
 ---
 category: Collections
@@ -66,7 +66,7 @@ import {ListBox, ListBoxItem} from 'react-aria-components';
 ```
 
 ```css
-@import "@react-aria/example-theme";
+@import "@react-aria-nutrient/example-theme";
 
 .react-aria-ListBox {
   display: flex;
@@ -2092,13 +2092,13 @@ If you need to customize things even further, such as accessing internal state o
 
 ### Test utils <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
-`@react-aria/test-utils` offers common listbox interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
+`@react-aria-nutrient/test-utils` offers common listbox interaction utilities which you may find helpful when writing tests. See [here](./testing.html#react-aria-test-utils) for more information on how to setup these utilities
 in your tests. Below is the full definition of the listbox tester and a sample of how you could use it in your test suite.
 
 ```ts
 // ListBox.test.ts
 import {render} from '@testing-library/react';
-import {User} from '@react-aria/test-utils';
+import {User} from '@react-aria-nutrient/test-utils';
 
 let testUtilUser = new User({interactionType: 'mouse'});
 // ...

@@ -1,7 +1,7 @@
 import {DropZone, Flex, Divider, IllustratedMessage, Heading} from '@adobe/react-spectrum';
 import React from 'react';
 import Upload from '@spectrum-icons/illustrations/Upload';
-import {useDrag} from '@react-aria/dnd';
+import {useDrag} from '@react-aria-nutrient/dnd';
 
 export default function DragAndDropExamples() {
   let [isFilled, setIsFilled] = React.useState(false);

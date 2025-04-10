@@ -12,16 +12,16 @@
 
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
-import {FocusRing} from '@react-aria/focus';
+import {FocusRing} from '@react-aria-nutrient/focus';
 import {Grid} from '@react-spectrum/layout';
-import {isFocusVisible, useHover} from '@react-aria/interactions';
+import {isFocusVisible, useHover} from '@react-aria-nutrient/interactions';
 import {ListBoxContext} from './ListBoxContext';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import {Node} from '@react-types/shared';
 import React, {ReactNode, useContext, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/text';
-import {useOption} from '@react-aria/listbox';
+import {useOption} from '@react-aria-nutrient/listbox';
 
 interface OptionProps<T> {
   item: Node<T>

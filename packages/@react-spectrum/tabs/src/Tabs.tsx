@@ -13,8 +13,8 @@
 import {AriaTabPanelProps, SpectrumTabListProps, SpectrumTabPanelsProps, SpectrumTabsProps} from '@react-types/tabs';
 import {classNames, SlotProvider, unwrapDOMRef, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, DOMRef, DOMRefValue, Key, Node, Orientation, RefObject, StyleProps} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
-import {FocusRing} from '@react-aria/focus';
+import {filterDOMProps, mergeProps, useId, useLayoutEffect, useResizeObserver} from '@react-aria-nutrient/utils';
+import {FocusRing} from '@react-aria-nutrient/focus';
 import {Item, Picker} from '@react-spectrum/picker';
 import {ListCollection} from '@react-stately/list';
 import React, {
@@ -33,10 +33,10 @@ import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
 import {TabListState, useTabListState} from '@react-stately/tabs';
 import {Text} from '@react-spectrum/text';
 import {useCollection} from '@react-stately/collections';
-import {useHover} from '@react-aria/interactions';
-import {useLocale} from '@react-aria/i18n';
+import {useHover} from '@react-aria-nutrient/interactions';
+import {useLocale} from '@react-aria-nutrient/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
-import {useTab, useTabList, useTabPanel} from '@react-aria/tabs';
+import {useTab, useTabList, useTabPanel} from '@react-aria-nutrient/tabs';
 
 interface TabsContext<T> {
   tabProps: SpectrumTabsProps<T>,

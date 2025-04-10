@@ -12,7 +12,7 @@
 
 import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button} from '@react-spectrum/button';
-import {chain} from '@react-aria/utils';
+import {chain} from '@react-aria-nutrient/utils';
 import {ColorField} from '../';
 import {Form} from '@react-spectrum/form';
 import {parseColor} from '@react-stately/color';

@@ -10,9 +10,9 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-aria/textfield';
+import docs from 'docs:@react-aria-nutrient/textfield';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, PageDescription} from '@react-spectrum/docs';
-import packageData from '@react-aria/textfield/package.json';
+import packageData from '@react-aria-nutrient/textfield/package.json';
 import Anatomy from './anatomy.svg';
 
 
@@ -75,8 +75,8 @@ to identify the element to screen readers.
 ## Example
 
 ```tsx example export=true
-import type {AriaTextFieldProps} from '@react-aria/textfield';
-import {useTextField} from '@react-aria/textfield';
+import type {AriaTextFieldProps} from '@react-aria-nutrient/textfield';
+import {useTextField} from '@react-aria-nutrient/textfield';
 
 function TextField(props: AriaTextFieldProps) {
   let {label} = props;
@@ -101,8 +101,8 @@ function TextField(props: AriaTextFieldProps) {
 `useTextField` also supports multi-line text entry with the `<textarea>` element via the `inputElementType` prop.
 
 ```tsx example
-import type {AriaTextFieldProps} from '@react-aria/textfield';
-import {useTextField} from '@react-aria/textfield';
+import type {AriaTextFieldProps} from '@react-aria-nutrient/textfield';
+import {useTextField} from '@react-aria-nutrient/textfield';
 
 function TextArea(props: AriaTextFieldProps<HTMLTextAreaElement>) {
   let {label} = props;

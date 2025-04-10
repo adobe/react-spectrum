@@ -15,7 +15,7 @@ import {DOMProps, RefObject} from '@react-types/shared';
 import {onCloseMap} from './useCloseOnScroll';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import {useEffect} from 'react';
-import {useId} from '@react-aria/utils';
+import {useId} from '@react-aria-nutrient/utils';
 
 export interface OverlayTriggerProps {
   /** Type of overlay that is opened by the trigger. */

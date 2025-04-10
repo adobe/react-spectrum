@@ -13,7 +13,7 @@
 import {CalendarDate, isWeekend} from '@internationalized/date';
 import {RangeCalendar} from '../';
 import React from 'react';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 
 export default {
   title: 'RangeCalendar',

@@ -9,13 +9,13 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaComboBoxProps, useComboBox, useFilter} from 'react-aria';
+import {AriaComboBoxProps, useComboBox, useFilter} from '@react-aria-nutrient/react-aria';
 import {ButtonContext} from './Button';
 import {Collection, ComboBoxState, Node, useComboBoxState} from 'react-stately';
-import {CollectionBuilder} from '@react-aria/collections';
+import {CollectionBuilder} from '@react-aria-nutrient/collections';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, useResizeObserver} from '@react-aria-nutrient/utils';
 import {FormContext} from './Form';
 import {forwardRefType, RefObject} from '@react-types/shared';
 import {GroupContext} from './Group';

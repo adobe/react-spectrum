@@ -26,19 +26,19 @@ import {ColumnSize, SpectrumColumnProps, TableCollection} from '@react-types/tab
 import {DOMRef, DropTarget, FocusableElement, FocusableRef, Key, RefObject} from '@react-types/shared';
 import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
-import type {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult} from '@react-aria/dnd';
-import {FocusRing, FocusScope, useFocusRing} from '@react-aria/focus';
-import {getInteractionModality, HoverProps, isFocusVisible, useHover, usePress} from '@react-aria/interactions';
+import type {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult} from '@react-aria-nutrient/dnd';
+import {FocusRing, FocusScope, useFocusRing} from '@react-aria-nutrient/focus';
+import {getInteractionModality, HoverProps, isFocusVisible, useHover, usePress} from '@react-aria-nutrient/interactions';
 import {GridNode} from '@react-types/grid';
 import {InsertionIndicator} from './InsertionIndicator';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isAndroid, mergeProps, scrollIntoView, scrollIntoViewport, useLoadMore} from '@react-aria/utils';
+import {isAndroid, mergeProps, scrollIntoView, scrollIntoViewport, useLoadMore} from '@react-aria-nutrient/utils';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {LayoutInfo, Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
-import {layoutInfoToStyle, ScrollView, setScrollLeft, VirtualizerItem} from '@react-aria/virtualizer';
+import {layoutInfoToStyle, ScrollView, setScrollLeft, VirtualizerItem} from '@react-aria-nutrient/virtualizer';
 import ListGripper from '@spectrum-icons/ui/ListGripper';
-import {ListKeyboardDelegate} from '@react-aria/selection';
+import {ListKeyboardDelegate} from '@react-aria-nutrient/selection';
 import {Nubbin} from './Nubbin';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {DOMAttributes, HTMLAttributes, ReactElement, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
@@ -51,8 +51,8 @@ import stylesOverrides from './table.css';
 import {TableState, TreeGridState, useTableColumnResizeState} from '@react-stately/table';
 import {TableViewLayout} from './TableViewLayout';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
-import {useButton} from '@react-aria/button';
-import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useButton} from '@react-aria-nutrient/button';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {
   useTable,
@@ -63,8 +63,8 @@ import {
   useTableRowGroup,
   useTableSelectAllCheckbox,
   useTableSelectionCheckbox
-} from '@react-aria/table';
-import {useVisuallyHidden, VisuallyHidden} from '@react-aria/visually-hidden';
+} from '@react-aria-nutrient/table';
+import {useVisuallyHidden, VisuallyHidden} from '@react-aria-nutrient/visually-hidden';
 
 const DEFAULT_HEADER_HEIGHT = {
   medium: 34,

@@ -19,14 +19,14 @@ export {useTableSelectionCheckbox, useTableSelectAllCheckbox} from './useTableSe
 export {useTableColumnResize} from './useTableColumnResize';
 
 // Workaround for a Parcel bug where re-exports don't work in the CommonJS output format...
-// export {useGridRowGroup as useTableRowGroup} from '@react-aria/grid';
-import {GridRowGroupAria, useGridRowGroup} from '@react-aria/grid';
+// export {useGridRowGroup as useTableRowGroup} from '@react-aria-nutrient/grid';
+import {GridRowGroupAria, useGridRowGroup} from '@react-aria-nutrient/grid';
 export function useTableRowGroup(): GridRowGroupAria {
   return useGridRowGroup();
 }
 
 export type {AriaTableProps} from './useTable';
-export type {GridAria, GridRowAria, GridRowProps} from '@react-aria/grid';
+export type {GridAria, GridRowAria, GridRowProps} from '@react-aria-nutrient/grid';
 export type {AriaTableColumnHeaderProps, TableColumnHeaderAria} from './useTableColumnHeader';
 export type {AriaTableCellProps, TableCellAria} from './useTableCell';
 export type {TableHeaderRowAria} from './useTableHeaderRow';

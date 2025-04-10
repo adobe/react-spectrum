@@ -10,16 +10,16 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-aria/toast';
+import docs from 'docs:@react-aria-nutrient/toast';
 import statelyDocs from 'docs:@react-stately/toast';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, PageDescription, TypeLink} from '@react-spectrum/docs';
-import packageData from '@react-aria/toast/package.json';
+import packageData from '@react-aria-nutrient/toast/package.json';
 import Anatomy from './toast-anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Keyboard} from '@react-spectrum/text';
 
 ```tsx import
-import {useToastRegion} from '@react-aria/toast';
+import {useToastRegion} from '@react-aria-nutrient/toast';
 ```
 
 ---
@@ -101,9 +101,9 @@ function ToastProvider({children}) {
 The `ToastRegion` component will be rendered when there are toasts to display. It uses the <TypeLink links={docs.links} type={docs.exports.useToastRegion} /> hook to create a landmark region, allowing keyboard and screen reader users to easily navigate to it.
 
 ```tsx example export=true render=false
-import type {AriaToastRegionProps} from '@react-aria/toast';
+import type {AriaToastRegionProps} from '@react-aria-nutrient/toast';
 import type {ToastState} from '@react-stately/toast';
-import {useToastRegion} from '@react-aria/toast';
+import {useToastRegion} from '@react-aria-nutrient/toast';
 
 interface ToastRegionProps<T> extends AriaToastRegionProps {
   state: ToastState<T>
@@ -126,8 +126,8 @@ function ToastRegion<T extends React.ReactNode>({state, ...props}: ToastRegionPr
 Finally, we need the `Toast` component to render an individual toast within a `ToastRegion`, built with <TypeLink links={docs.links} type={docs.exports.useToast} />.
 
 ```tsx example render=false export=true
-import type {AriaToastProps} from '@react-aria/toast';
-import {useToast} from '@react-aria/toast';
+import type {AriaToastProps} from '@react-aria-nutrient/toast';
+import {useToast} from '@react-aria-nutrient/toast';
 
 // Reuse the Button from your component library. See below for details.
 import {Button} from 'your-component-library';
@@ -215,7 +215,7 @@ The `Button` component is used in the above example to close a toast. It is buil
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import {useButton} from '@react-aria/button';
+import {useButton} from '@react-aria-nutrient/button';
 
 function Button(props) {
   let ref = React.useRef(null);

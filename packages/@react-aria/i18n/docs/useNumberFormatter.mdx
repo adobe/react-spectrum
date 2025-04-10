@@ -10,9 +10,9 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-aria/i18n';
+import docs from 'docs:@react-aria-nutrient/i18n';
 import {ClassAPI, HeaderInfo, TypeContext, FunctionAPI, TypeLink, PageDescription} from '@react-spectrum/docs';
-import packageData from '@react-aria/i18n/package.json';
+import packageData from '@react-aria-nutrient/i18n/package.json';
 
 ---
 category: Internationalization
@@ -45,7 +45,7 @@ This example displays a currency value for two locales: USA, and Germany. Two in
 using the [I18nProvider](I18nProvider.html) to specify the locale to display.
 
 ```tsx example
-import {I18nProvider, useNumberFormatter} from '@react-aria/i18n';
+import {I18nProvider, useNumberFormatter} from '@react-aria-nutrient/i18n';
 
 function Currency({value, currency}) {
   let formatter = useNumberFormatter({

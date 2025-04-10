@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.0.16",
-    "@react-aria/parcel-resolver-optimize-locales": "^1.0.0",
+    "@react-aria-nutrient/parcel-resolver-optimize-locales": "^1.0.0",
     "@tailwindcss/postcss": "^4.0.0",
     "framer-motion": "^10.12.16",
     "parcel": "^2.13.0",

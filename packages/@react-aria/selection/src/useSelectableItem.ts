@@ -11,10 +11,10 @@
  */
 
 import {DOMAttributes, DOMProps, FocusableElement, Key, LongPressEvent, PointerType, PressEvent, RefObject} from '@react-types/shared';
-import {focusSafely, PressProps, useLongPress, usePress} from '@react-aria/interactions';
+import {focusSafely, PressProps, useLongPress, usePress} from '@react-aria-nutrient/interactions';
 import {getCollectionId, isNonContiguousSelectionModifier} from './utils';
-import {isCtrlKeyPressed, mergeProps, openLink, useId, useRouter} from '@react-aria/utils';
-import {moveVirtualFocus} from '@react-aria/focus';
+import {isCtrlKeyPressed, mergeProps, openLink, useId, useRouter} from '@react-aria-nutrient/utils';
+import {moveVirtualFocus} from '@react-aria-nutrient/focus';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useEffect, useRef} from 'react';
 

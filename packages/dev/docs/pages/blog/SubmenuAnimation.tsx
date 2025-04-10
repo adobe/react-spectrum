@@ -11,7 +11,7 @@
  */
 import {animate} from '../react-aria/home/utils';
 import React, {useEffect, useRef, useState} from 'react';
-import {useResizeObserver} from '@react-aria/utils';
+import {useResizeObserver} from '@react-aria-nutrient/utils';
 
 export function SubmenuAnimation() {
   let ref = useRef<HTMLDivElement>(null);

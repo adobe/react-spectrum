@@ -3,7 +3,7 @@ import {ItemDropTarget} from '@react-types/shared';
 import listStyles from './styles.css';
 import {ListViewContext} from './ListView';
 import React, {ReactNode, useContext, useRef} from 'react';
-import {useVisuallyHidden} from '@react-aria/visually-hidden';
+import {useVisuallyHidden} from '@react-aria-nutrient/visually-hidden';
 
 interface InsertionIndicatorProps {
   target: ItemDropTarget,

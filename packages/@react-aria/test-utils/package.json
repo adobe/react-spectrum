@@ -1,5 +1,5 @@
 {
-  "name": "@react-aria/test-utils",
+  "name": "@react-aria-nutrient/test-utils",
   "version": "1.0.0-alpha.5",
   "description": "Testing utils for react-aria patterns",
   "license": "Apache-2.0",

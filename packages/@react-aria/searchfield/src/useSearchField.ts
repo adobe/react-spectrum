@@ -12,14 +12,14 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaSearchFieldProps} from '@react-types/searchfield';
-import {chain} from '@react-aria/utils';
+import {chain} from '@react-aria-nutrient/utils';
 import {DOMAttributes, RefObject, ValidationResult} from '@react-types/shared';
 import {InputHTMLAttributes, LabelHTMLAttributes} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {SearchFieldState} from '@react-stately/searchfield';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useTextField} from '@react-aria/textfield';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
+import {useTextField} from '@react-aria-nutrient/textfield';
 
 export interface SearchFieldAria extends ValidationResult {
   /** Props for the text field's visible label element (if any). */
@@ -45,7 +45,7 @@ export function useSearchField(
   state: SearchFieldState,
   inputRef: RefObject<HTMLInputElement | null>
 ): SearchFieldAria {
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/searchfield');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/searchfield');
   let {
     isDisabled,
     isReadOnly,

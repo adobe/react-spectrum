@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaGridSelectionCheckboxProps, GridSelectionCheckboxAria, useGridSelectionCheckbox} from '@react-aria/grid';
+import {AriaGridSelectionCheckboxProps, GridSelectionCheckboxAria, useGridSelectionCheckbox} from '@react-aria-nutrient/grid';
 import {getRowId} from './utils';
 import type {ListState} from '@react-stately/list';
 

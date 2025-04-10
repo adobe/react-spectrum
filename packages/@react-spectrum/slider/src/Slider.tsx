@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {clamp} from '@react-aria/utils';
+import {clamp} from '@react-aria-nutrient/utils';
 import {classNames} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import React, {ReactNode} from 'react';
@@ -18,7 +18,7 @@ import {SliderBase, SliderBaseChildArguments, SliderBaseProps} from './SliderBas
 import {SliderThumb} from './SliderThumb';
 import {SpectrumSliderProps} from '@react-types/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 
 /**
  * Sliders allow users to quickly select a value within a range. They should be used when the upper and lower bounds to the range are invariable.

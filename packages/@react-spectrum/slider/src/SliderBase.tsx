@@ -16,9 +16,9 @@ import React, {CSSProperties, ReactNode, useRef} from 'react';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import {SpectrumBarSliderBase} from '@react-types/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
-import {useNumberFormatter} from '@react-aria/i18n';
+import {useNumberFormatter} from '@react-aria-nutrient/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useSlider} from '@react-aria/slider';
+import {useSlider} from '@react-aria-nutrient/slider';
 
 export interface SliderBaseChildArguments {
   inputRef: RefObject<HTMLInputElement | null>,

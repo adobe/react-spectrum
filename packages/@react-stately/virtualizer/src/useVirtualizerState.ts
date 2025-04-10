@@ -17,7 +17,7 @@ import {Rect} from './Rect';
 import {ReusableView} from './ReusableView';
 import {Size} from './Size';
 import {useCallback, useMemo, useRef, useState} from 'react';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useLayoutEffect} from '@react-aria-nutrient/utils';
 import {Virtualizer} from './Virtualizer';
 
 interface VirtualizerProps<T extends object, V, O> {

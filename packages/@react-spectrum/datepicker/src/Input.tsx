@@ -14,10 +14,10 @@ import Alert from '@spectrum-icons/ui/AlertMedium';
 import Checkmark from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, useValueEffect} from '@react-spectrum/utils';
 import datepickerStyles from './styles.css';
-import {mergeProps, mergeRefs, useEvent, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {mergeProps, mergeRefs, useEvent, useLayoutEffect, useResizeObserver} from '@react-aria-nutrient/utils';
 import React, {ReactElement, useCallback, useRef} from 'react';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
-import {useFocusRing} from '@react-aria/focus';
+import {useFocusRing} from '@react-aria-nutrient/focus';
 
 export const Input = React.forwardRef(function Input(props: any, ref: any) {
   let inputRef = useRef<HTMLInputElement | null>(null);

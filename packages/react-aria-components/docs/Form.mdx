@@ -55,7 +55,7 @@ import {Form, TextField, Label, Input, FieldError, Button} from 'react-aria-comp
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css hidden
-@import "@react-aria/example-theme";
+@import "@react-aria-nutrient/example-theme";
 @import './TextField.mdx' layer(textfield);
 @import './Button.mdx' layer(button);
 ```
@@ -343,7 +343,7 @@ You can also consume `FormValidationContext` in your own custom form input compo
 ```tsx example
 import type {SelectHTMLAttributes} from 'react';
 import {useContext} from 'react';
-import {useId} from 'react-aria';
+import {useId} from '@react-aria-nutrient/react-aria';
 
 function NativeSelect(props: SelectHTMLAttributes<HTMLSelectElement> & {label: string}) {
   let errors = useContext(FormValidationContext);

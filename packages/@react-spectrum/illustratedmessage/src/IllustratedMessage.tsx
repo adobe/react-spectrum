@@ -12,7 +12,7 @@
 
 import {classNames, ClearSlots, SlotProvider, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 import {Flex} from '@react-spectrum/layout';
 import React, {forwardRef} from 'react';
 import {SpectrumIllustratedMessageProps} from '@react-types/illustratedmessage';

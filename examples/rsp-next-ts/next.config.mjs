@@ -1,4 +1,4 @@
-import localesPlugin from '@react-aria/optimize-locales-plugin';
+import localesPlugin from '@react-aria-nutrient/optimize-locales-plugin';
 import {glob} from 'glob';
 
 export default {

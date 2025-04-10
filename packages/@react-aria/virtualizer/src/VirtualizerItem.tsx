@@ -13,7 +13,7 @@
 import {Direction} from '@react-types/shared';
 import {LayoutInfo} from '@react-stately/virtualizer';
 import React, {CSSProperties, ReactNode, useRef} from 'react';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 import {useVirtualizerItem, VirtualizerItemOptions} from './useVirtualizerItem';
 
 interface VirtualizerItemProps extends Omit<VirtualizerItemOptions, 'ref'> {

@@ -11,9 +11,9 @@
  */
 
 import {DOMAttributes, RefObject} from '@react-types/shared';
-import {isElementInChildOfActiveScope} from '@react-aria/focus';
+import {isElementInChildOfActiveScope} from '@react-aria-nutrient/focus';
 import {useEffect} from 'react';
-import {useFocusWithin, useInteractOutside} from '@react-aria/interactions';
+import {useFocusWithin, useInteractOutside} from '@react-aria-nutrient/interactions';
 
 export interface AriaOverlayProps {
   /** Whether the overlay is currently open. */

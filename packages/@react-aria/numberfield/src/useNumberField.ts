@@ -12,7 +12,7 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
-import {chain, filterDOMProps, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId} from '@react-aria/utils';
+import {chain, filterDOMProps, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId} from '@react-aria-nutrient/utils';
 import {DOMAttributes, GroupDOMAttributes, TextInputDOMProps, ValidationResult} from '@react-types/shared';
 import {
   InputHTMLAttributes,
@@ -26,13 +26,13 @@ import {
 import intlMessages from '../intl/*.json';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {privateValidationStateProp} from '@react-stately/form';
-import {useFocus, useFocusWithin, useScrollWheel} from '@react-aria/interactions';
-import {useFormattedTextField} from '@react-aria/textfield';
+import {useFocus, useFocusWithin, useScrollWheel} from '@react-aria-nutrient/interactions';
+import {useFormattedTextField} from '@react-aria-nutrient/textfield';
 import {
   useLocalizedStringFormatter,
   useNumberFormatter
-} from '@react-aria/i18n';
-import {useSpinButton} from '@react-aria/spinbutton';
+} from '@react-aria-nutrient/i18n';
+import {useSpinButton} from '@react-aria-nutrient/spinbutton';
 
 export interface NumberFieldAria extends ValidationResult {
   /** Props for the label element. */
@@ -90,7 +90,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     commitValidation
   } = state;
 
-  const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/numberfield');
+  const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/numberfield');
 
   let inputId = useId(id);
   let {focusProps} = useFocus({

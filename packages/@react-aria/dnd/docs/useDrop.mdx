@@ -10,10 +10,10 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-aria/dnd';
+import docs from 'docs:@react-aria-nutrient/dnd';
 import sharedDocs from 'docs:@react-types/shared/src/dnd.d.ts';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
-import packageData from '@react-aria/dnd/package.json';
+import packageData from '@react-aria-nutrient/dnd/package.json';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Keyboard} from '@react-spectrum/text';
 
@@ -48,8 +48,8 @@ See the [drag and drop introduction](dnd.html) to learn more.
 This example shows how to make a simple drop target that accepts plain text data. In order to support keyboard and screen reader drag interactions, the element must be focusable and have an ARIA role (in this case, `button`). While a drag is hovered over it, a blue outline is rendered by applying an additional CSS class.
 
 ```tsx example
-import type {TextDropItem} from '@react-aria/dnd';
-import {useDrop} from '@react-aria/dnd';
+import type {TextDropItem} from '@react-aria-nutrient/dnd';
+import {useDrop} from '@react-aria-nutrient/dnd';
 
 function DropTarget() {
   let [dropped, setDropped] = React.useState(null);
@@ -119,7 +119,7 @@ The `Draggable` component used above is defined below. See [useDrag](useDrag.htm
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example render=false export=true
-import {useDrag} from '@react-aria/dnd';
+import {useDrag} from '@react-aria-nutrient/dnd';
 
 function Draggable() {
   let {dragProps, isDragging} = useDrag({
@@ -193,7 +193,7 @@ A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.F
 This example accepts JPEG and PNG image files, and renders them by creating a local [object URL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL).
 
 ```tsx example
-import type {FileDropItem} from '@react-aria/dnd';
+import type {FileDropItem} from '@react-aria-nutrient/dnd';
 
 function DropTarget() {
   let [file, setFile] = React.useState(null);
@@ -227,7 +227,7 @@ The `getEntries` method returns an [async iterable](https://developer.mozilla.or
 This example renders the file names within a dropped directory in a grid.
 
 ```tsx example
-import type {DirectoryDropItem} from '@react-aria/dnd';
+import type {DirectoryDropItem} from '@react-aria-nutrient/dnd';
 import File from '@spectrum-icons/workflow/FileTxt';
 import Folder from '@spectrum-icons/workflow/Folder';
 
@@ -443,8 +443,8 @@ function DropTarget() {
 If you need to temporarily disable dropping, you can pass the `isDisabled` option to `useDrop`. This will prevent the drop target from accepting any drops until it is re-enabled.
 
 ```tsx example
-import type {TextDropItem} from '@react-aria/dnd';
-import {useDrop} from '@react-aria/dnd';
+import type {TextDropItem} from '@react-aria-nutrient/dnd';
+import {useDrop} from '@react-aria-nutrient/dnd';
 
 function DropTarget() {
   let [dropped, setDropped] = React.useState(null);

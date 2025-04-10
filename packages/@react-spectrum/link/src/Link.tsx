@@ -11,13 +11,13 @@
  */
 
 import {classNames, getWrappedElement, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {FocusRing} from '@react-aria/focus';
-import {mergeProps, mergeRefs} from '@react-aria/utils';
+import {FocusRing} from '@react-aria-nutrient/focus';
+import {mergeProps, mergeRefs} from '@react-aria-nutrient/utils';
 import React, {ForwardedRef, JSX, MutableRefObject, ReactNode, useRef} from 'react';
 import {SpectrumLinkProps} from '@react-types/link';
 import styles from '@adobe/spectrum-css-temp/components/link/vars.css';
-import {useHover} from '@react-aria/interactions';
-import {useLink} from '@react-aria/link';
+import {useHover} from '@react-aria-nutrient/interactions';
+import {useLink} from '@react-aria-nutrient/link';
 import {useProviderProps} from '@react-spectrum/provider';
 
 let isOldReact = parseInt(React.version, 10) <= 18;

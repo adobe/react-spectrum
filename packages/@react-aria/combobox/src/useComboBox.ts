@@ -10,24 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {announce} from '@react-aria/live-announcer';
+import {announce} from '@react-aria-nutrient/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
 import {AriaComboBoxProps} from '@react-types/combobox';
-import {ariaHideOutside} from '@react-aria/overlays';
-import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
+import {ariaHideOutside} from '@react-aria-nutrient/overlays';
+import {AriaListBoxOptions, getItemId, listData} from '@react-aria-nutrient/listbox';
 import {BaseEvent, DOMAttributes, KeyboardDelegate, LayoutDelegate, PressEvent, RefObject, RouterOptions, ValidationResult} from '@react-types/shared';
-import {chain, getActiveElement, getOwnerDocument, isAppleDevice, mergeProps, useLabels, useRouter, useUpdateEffect} from '@react-aria/utils';
+import {chain, getActiveElement, getOwnerDocument, isAppleDevice, mergeProps, useLabels, useRouter, useUpdateEffect} from '@react-aria-nutrient/utils';
 import {ComboBoxState} from '@react-stately/combobox';
-import {dispatchVirtualFocus} from '@react-aria/focus';
+import {dispatchVirtualFocus} from '@react-aria-nutrient/focus';
 import {FocusEvent, InputHTMLAttributes, KeyboardEvent, TouchEvent, useEffect, useMemo, useRef} from 'react';
 import {getChildNodes, getItemCount} from '@react-stately/collections';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {ListKeyboardDelegate, useSelectableCollection} from '@react-aria/selection';
+import {ListKeyboardDelegate, useSelectableCollection} from '@react-aria-nutrient/selection';
 import {privateValidationStateProp} from '@react-stately/form';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useMenuTrigger} from '@react-aria/menu';
-import {useTextField} from '@react-aria/textfield';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
+import {useMenuTrigger} from '@react-aria-nutrient/menu';
+import {useTextField} from '@react-aria-nutrient/textfield';
 
 export interface AriaComboBoxOptions<T> extends Omit<AriaComboBoxProps<T>, 'children'> {
   /** The ref for the input element. */
@@ -85,7 +85,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
   let backupBtnRef = useRef(null);
   buttonRef = buttonRef ?? backupBtnRef;
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/combobox');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/combobox');
   let {menuTriggerProps, menuProps} = useMenuTrigger<T>(
     {
       type: 'listbox',

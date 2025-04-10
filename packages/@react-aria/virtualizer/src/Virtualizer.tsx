@@ -12,7 +12,7 @@
 
 import {Collection, Key, RefObject} from '@react-types/shared';
 import {Layout, Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
-import {mergeProps, useLoadMore, useObjectRef} from '@react-aria/utils';
+import {mergeProps, useLoadMore, useObjectRef} from '@react-aria-nutrient/utils';
 import React, {ForwardedRef, HTMLAttributes, ReactElement, ReactNode, useCallback} from 'react';
 import {ScrollView} from './ScrollView';
 import {VirtualizerItem} from './VirtualizerItem';

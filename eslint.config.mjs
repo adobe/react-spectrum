@@ -469,10 +469,10 @@ export default [{
     rules: {
         "no-restricted-globals": [ERROR, {
             name: "window",
-            message: "Use getOwnerWindow from @react-aria/utils instead.",
+            message: "Use getOwnerWindow from @react-aria-nutrient/utils instead.",
         }, {
             name: "document",
-            message: "Use getOwnerDocument from @react-aria/utils instead.",
+            message: "Use getOwnerDocument from @react-aria-nutrient/utils instead.",
         }],
     },
 }, {
@@ -484,10 +484,10 @@ export default [{
     rules: {
         "no-restricted-globals": [WARN, {
             name: "window",
-            message: "Use getOwnerWindow from @react-aria/utils instead.",
+            message: "Use getOwnerWindow from @react-aria-nutrient/utils instead.",
         }, {
             name: "document",
-            message: "Use getOwnerDocument from @react-aria/utils instead.",
+            message: "Use getOwnerDocument from @react-aria-nutrient/utils instead.",
         }],
     },
 }, {

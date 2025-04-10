@@ -16,8 +16,8 @@ import {getRowLabelledBy} from './utils';
 import intlMessages from '../intl/*.json';
 import {Key} from '@react-types/shared';
 import {TableState} from '@react-stately/table';
-import {useGridSelectionCheckbox} from '@react-aria/grid';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useGridSelectionCheckbox} from '@react-aria-nutrient/grid';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 
 export interface AriaTableSelectionCheckboxProps {
   /** A unique key for the checkbox. */
@@ -58,7 +58,7 @@ export function useTableSelectionCheckbox<T>(props: AriaTableSelectionCheckboxPr
  */
 export function useTableSelectAllCheckbox<T>(state: TableState<T>): TableSelectAllCheckboxAria {
   let {isEmpty, isSelectAll, selectionMode} = state.selectionManager;
-  const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/table');
+  const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/table');
 
   return {
     checkboxProps: {

@@ -10,13 +10,13 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-aria/overlays';
-import focusDocs from 'docs:@react-aria/focus';
-import dialogDocs from 'docs:@react-aria/dialog';
+import docs from 'docs:@react-aria-nutrient/overlays';
+import focusDocs from 'docs:@react-aria-nutrient/focus';
+import dialogDocs from 'docs:@react-aria-nutrient/dialog';
 import statelyDocs from 'docs:@react-stately/overlays';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
-import packageData from '@react-aria/overlays/package.json';
+import packageData from '@react-aria-nutrient/overlays/package.json';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import Anatomy from './modal-anatomy.svg';
 
@@ -74,7 +74,7 @@ This example shows how to build a typical modal dialog, by combining `useModalOv
 The `Modal` component uses an &lt;<TypeLink links={docs.links} type={docs.exports.Overlay} />&gt; to render its contents in a React [Portal](https://reactjs.org/docs/portals.html) at the end of the document body, which ensures it is not clipped by other elements. It also acts as a focus scope, containing focus within the modal and restoring it to the trigger when it unmounts. <TypeLink links={docs.links} type={docs.exports.useModalOverlay} /> handles preventing page scrolling while the modal is open, hiding content outside the modal from screen readers, and optionally closing it when the user interacts outside or presses the <Keyboard>Escape</Keyboard> key.
 
 ```tsx example export=true render=false
-import {Overlay, useModalOverlay} from '@react-aria/overlays';
+import {Overlay, useModalOverlay} from '@react-aria-nutrient/overlays';
 
 function Modal({state, children, ...props}) {
   let ref = React.useRef(null);
@@ -115,7 +115,7 @@ The below `ModalTrigger` component uses the <TypeLink links={docs.links} type={d
 
 ```tsx example export=true render=false
 import {useOverlayTriggerState} from '@react-stately/overlays';
-import {useOverlayTrigger} from '@react-aria/overlays';
+import {useOverlayTrigger} from '@react-aria-nutrient/overlays';
 
 // Reuse the Button from your component library. See below for details.
 import {Button} from 'your-component-library';
@@ -168,8 +168,8 @@ The `Dialog` component is rendered within the `ModalOverlay` component. It is bu
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import type {AriaDialogProps} from '@react-aria/dialog';
-import {useDialog} from '@react-aria/dialog';
+import type {AriaDialogProps} from '@react-aria-nutrient/dialog';
+import {useDialog} from '@react-aria-nutrient/dialog';
 
 interface DialogProps extends AriaDialogProps {
   title?: React.ReactNode,
@@ -203,7 +203,7 @@ The `Button` component is used in the above example to toggle the popover. It is
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import {useButton} from '@react-aria/button';
+import {useButton} from '@react-aria-nutrient/button';
 
 function Button(props) {
   let ref = props.buttonRef;

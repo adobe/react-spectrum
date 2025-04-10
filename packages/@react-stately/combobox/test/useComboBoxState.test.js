@@ -14,7 +14,7 @@ import {actHook as act, renderHook} from '@react-spectrum/test-utils-internal';
 import {Item} from '@react-stately/collections';
 import React from 'react';
 import {useComboBoxState} from '../';
-import {useFilter} from 'react-aria';
+import {useFilter} from '@react-aria-nutrient/react-aria';
 
 describe('useComboBoxState tests', function () {
   describe('open state', function () {

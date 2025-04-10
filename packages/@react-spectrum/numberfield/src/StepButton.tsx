@@ -16,13 +16,13 @@ import ChevronDownSmall from '@spectrum-icons/ui/ChevronDownSmall';
 import ChevronUpSmall from '@spectrum-icons/ui/ChevronUpSmall';
 import {classNames, useFocusableRef} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
-import {FocusRing} from '@react-aria/focus';
-import {mergeProps} from '@react-aria/utils';
+import {FocusRing} from '@react-aria-nutrient/focus';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import React, {ReactElement} from 'react';
 import Remove from '@spectrum-icons/workflow/Remove';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
-import {useButton} from '@react-aria/button';
-import {useHover} from '@react-aria/interactions';
+import {useButton} from '@react-aria-nutrient/button';
+import {useHover} from '@react-aria-nutrient/interactions';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 interface StepButtonProps extends AriaButtonProps {

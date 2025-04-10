@@ -237,7 +237,7 @@ You can access the state from a parent component via the same contexts in order 
 
 ```tsx
 import {CalendarStateContext} from 'react-aria-components';
-import {useDateFormatter} from 'react-aria';
+import {useDateFormatter} from '@react-aria-nutrient/react-aria';
 import {getLocalTimeZone} from '@internationalized/date';
 
 function CalendarValue() {
@@ -289,7 +289,7 @@ This example shows how a custom checkbox could be set up using `CheckboxContext`
 import type {CheckboxProps} from 'react-aria-components';
 import {CheckboxContext, useContextProps} from 'react-aria-components';
 import {useToggleState} from 'react-stately';
-import {useCheckbox} from 'react-aria';
+import {useCheckbox} from '@react-aria-nutrient/react-aria';
 
 const MyCheckbox = React.forwardRef((props: CheckboxProps, ref: React.ForwardedRef<HTMLInputElement>) => {
   // Merge the local props and ref with the ones provided via context.
@@ -327,7 +327,7 @@ This example shows how a custom number field could be set up. First, follow the 
 import type {NumberFieldProps} from 'react-aria-components';
 import {Provider, GroupContext, InputContext, LabelContext, ButtonContext} from 'react-aria-components';
 import {useNumberFieldState} from 'react-stately';
-import {useNumberField, useLocale} from 'react-aria';
+import {useNumberField, useLocale} from '@react-aria-nutrient/react-aria';
 
 function CustomNumberField(props: NumberFieldProps) {
   // Follow the hook docs...

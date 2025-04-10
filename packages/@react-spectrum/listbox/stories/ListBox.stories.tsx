@@ -20,7 +20,7 @@ import Book from '@spectrum-icons/workflow/Book';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import Delete from '@spectrum-icons/workflow/Delete';
-import {FocusScope} from '@react-aria/focus';
+import {FocusScope} from '@react-aria-nutrient/focus';
 import {Item, ListBox, Section} from '../';
 import {Key} from '@react-types/shared';
 import {Label} from '@react-spectrum/label';

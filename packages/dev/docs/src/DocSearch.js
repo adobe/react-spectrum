@@ -42,7 +42,7 @@ const searchOptions = {
 };
 
 const sectionTitles = {
-  'react-aria': 'React Aria',
+  '@react-aria-nutrient/react-aria': 'React Aria',
   'react-spectrum': 'React Spectrum',
   'react-stately': 'React Stately',
   'internationalized': 'Internationalized',

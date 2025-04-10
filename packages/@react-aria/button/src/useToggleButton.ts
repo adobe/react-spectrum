@@ -20,7 +20,7 @@ import {
 } from 'react';
 import {AriaToggleButtonProps} from '@react-types/button';
 import {ButtonAria, useButton} from './useButton';
-import {chain, mergeProps} from '@react-aria/utils';
+import {chain, mergeProps} from '@react-aria-nutrient/utils';
 import {DOMAttributes} from '@react-types/shared';
 import {ToggleState} from '@react-stately/toggle';
 

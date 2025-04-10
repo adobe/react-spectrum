@@ -11,23 +11,23 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {chain, mergeProps} from '@react-aria/utils';
+import {chain, mergeProps} from '@react-aria-nutrient/utils';
 import {classNames} from '@react-spectrum/utils';
 import dndStyles from './dnd.css';
 import dropIndicatorStyles from '@adobe/spectrum-css-temp/components/dropindicator/vars.css';
 import {DroppableCollectionDropEvent} from '@react-types/shared';
-import {FocusRing} from '@react-aria/focus';
+import {FocusRing} from '@react-aria-nutrient/focus';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {Item} from '@react-stately/collections';
-import {ListDropTargetDelegate} from '@react-aria/dnd';
-import {ListKeyboardDelegate} from '@react-aria/selection';
+import {ListDropTargetDelegate} from '@react-aria-nutrient/dnd';
+import {ListKeyboardDelegate} from '@react-aria-nutrient/selection';
 import React from 'react';
 import {useDropIndicator, useDroppableCollection, useDroppableItem} from '..';
 import {useDroppableCollectionState} from '@react-stately/dnd';
-import {useListBox, useOption} from '@react-aria/listbox';
+import {useListBox, useOption} from '@react-aria-nutrient/listbox';
 import {useListData} from '@react-stately/data';
 import {useListState} from '@react-stately/list';
-import {useVisuallyHidden} from '@react-aria/visually-hidden';
+import {useVisuallyHidden} from '@react-aria-nutrient/visually-hidden';
 
 interface ItemValue {
   id: string,

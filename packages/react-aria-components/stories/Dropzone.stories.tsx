@@ -13,7 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {Button, DropZone, FileTrigger, Link, Text} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
-import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
+import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from '@react-aria-nutrient/react-aria';
 import React, {useRef} from 'react';
 import styles from '../example/index.css';
 

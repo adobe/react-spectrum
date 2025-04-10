@@ -12,7 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {Button, ProgressBar, Text} from 'react-aria-components';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import React, {useEffect, useRef, useState} from 'react';
 import * as styles from './button-ripple.css';
 import * as styles2 from './button-pending.css';

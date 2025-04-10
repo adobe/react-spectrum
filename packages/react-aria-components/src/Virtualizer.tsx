@@ -14,7 +14,7 @@ import {CollectionBranchProps, CollectionRenderer, CollectionRendererContext, Co
 import {DropPosition, DropTarget, DropTargetDelegate, ItemDropTarget, Node} from '@react-types/shared';
 import {Layout, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
 import React, {createContext, ReactNode, useContext, useMemo} from 'react';
-import {useScrollView, VirtualizerItem} from '@react-aria/virtualizer';
+import {useScrollView, VirtualizerItem} from '@react-aria-nutrient/virtualizer';
 
 type View = ReusableView<Node<unknown>, ReactNode>;
 

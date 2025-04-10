@@ -20,7 +20,7 @@ import React, {useRef} from 'react';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
 import {useBreakpoint} from '@react-spectrum/utils';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useLayoutEffect} from '@react-aria-nutrient/utils';
 import userEvent from '@testing-library/user-event';
 
 let theme = {

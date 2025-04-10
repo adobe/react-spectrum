@@ -12,10 +12,10 @@
 import {act, fireEvent, pointerMap, render, renderHook, screen, waitFor} from '@react-spectrum/test-utils-internal';
 import {addWindowFocusTracking, useFocusVisible, useFocusVisibleListener} from '../';
 import {hasSetupGlobalListeners} from '../src/useFocusVisible';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import React from 'react';
-import {useButton} from '@react-aria/button';
-import {useFocusRing} from '@react-aria/focus';
+import {useButton} from '@react-aria-nutrient/button';
+import {useFocusRing} from '@react-aria-nutrient/focus';
 import userEvent from '@testing-library/user-event';
 
 function Example(props) {

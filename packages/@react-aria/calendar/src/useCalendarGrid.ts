@@ -15,8 +15,8 @@ import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {DOMAttributes} from '@react-types/shared';
 import {hookData, useVisibleRangeDescription} from './utils';
 import {KeyboardEvent, useMemo} from 'react';
-import {mergeProps, useLabels} from '@react-aria/utils';
-import {useDateFormatter, useLocale} from '@react-aria/i18n';
+import {mergeProps, useLabels} from '@react-aria-nutrient/utils';
+import {useDateFormatter, useLocale} from '@react-aria-nutrient/i18n';
 
 export interface AriaCalendarGridProps {
   /**

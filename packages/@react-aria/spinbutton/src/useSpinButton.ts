@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {announce, clearAnnouncer} from '@react-aria/live-announcer';
+import {announce, clearAnnouncer} from '@react-aria-nutrient/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
 import {DOMAttributes, InputBase, RangeInputBase, Validation, ValueBase} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useEffect, useRef} from 'react';
-import {useEffectEvent, useGlobalListeners} from '@react-aria/utils';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useEffectEvent, useGlobalListeners} from '@react-aria-nutrient/utils';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 
 
 export interface SpinButtonProps extends InputBase, Validation<number>, ValueBase<number>, RangeInputBase<number> {
@@ -55,7 +55,7 @@ export function useSpinButton(
     onDecrementToMin,
     onIncrementToMax
   } = props;
-  const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/spinbutton');
+  const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/spinbutton');
 
   const clearAsync = () => clearTimeout(_async.current);
 

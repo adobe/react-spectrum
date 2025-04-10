@@ -9,20 +9,20 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {chain, mergeProps, useId} from '@react-aria/utils';
+import {chain, mergeProps, useId} from '@react-aria-nutrient/utils';
 import {classNames} from '@react-spectrum/utils';
 import dndStyles from './dnd.css';
 import {DragPreview} from '../src';
-import {FocusRing} from '@react-aria/focus';
+import {FocusRing} from '@react-aria-nutrient/focus';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {Item} from '@react-stately/collections';
 import React, {useRef} from 'react';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
-import {useButton} from '@react-aria/button';
+import {useButton} from '@react-aria-nutrient/button';
 import {useDraggableCollection, useDraggableItem} from '..';
 import {useDraggableCollectionState} from '@react-stately/dnd';
-import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
+import {useGrid, useGridCell, useGridRow} from '@react-aria-nutrient/grid';
 import {useListData} from '@react-stately/data';
 import {useListState} from '@react-stately/list';
 

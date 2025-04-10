@@ -15,12 +15,12 @@ import {AriaCardProps, SpectrumCardProps} from '@react-types/card';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, SlotProvider, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, Node} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useLayoutEffect, useResizeObserver, useSlotId} from '@react-aria/utils';
-import {FocusRing, getFocusableTreeWalker} from '@react-aria/focus';
+import {filterDOMProps, mergeProps, useLayoutEffect, useResizeObserver, useSlotId} from '@react-aria-nutrient/utils';
+import {FocusRing, getFocusableTreeWalker} from '@react-aria-nutrient/focus';
 import React, {HTMLAttributes, useCallback, useMemo, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
 import {useCardViewContext} from './CardViewContext';
-import {useFocusWithin, useHover} from '@react-aria/interactions';
+import {useFocusWithin, useHover} from '@react-aria-nutrient/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 
 interface CardBaseProps<T> extends SpectrumCardProps {

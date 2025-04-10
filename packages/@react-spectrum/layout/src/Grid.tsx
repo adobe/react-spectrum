@@ -19,7 +19,7 @@ import {
   useStyleProps
 } from '@react-spectrum/utils';
 import {DimensionValue, DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 import {GridProps} from '@react-types/layout';
 import React, {forwardRef} from 'react';
 

@@ -12,7 +12,7 @@
 
 import {AriaMeterProps} from '@react-types/meter';
 import {DOMAttributes} from '@react-types/shared';
-import {useProgressBar} from '@react-aria/progress';
+import {useProgressBar} from '@react-aria-nutrient/progress';
 
 export interface MeterAria {
   /** Props for the meter container element. */

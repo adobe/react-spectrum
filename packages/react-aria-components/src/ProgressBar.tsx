@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaProgressBarProps, useProgressBar} from 'react-aria';
+import {AriaProgressBarProps, useProgressBar} from '@react-aria-nutrient/react-aria';
 import {clamp} from '@react-stately/utils';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {LabelContext} from './Label';

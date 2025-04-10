@@ -17,7 +17,7 @@ import {focusRing, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
 import {SkeletonContext, useSkeletonText} from './Skeleton';
 import {useFocusableRef} from '@react-spectrum/utils';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useLayoutEffect} from '@react-aria-nutrient/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 interface LinkStyleProps {

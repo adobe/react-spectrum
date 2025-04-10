@@ -36,8 +36,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/i18n": "^3.12.7",
-    "@react-aria/utils": "^3.28.1",
+    "@react-aria-nutrient/i18n": "^3.12.7",
+    "@react-aria-nutrient/utils": "^3.28.1",
     "@react-spectrum/form": "^3.7.13",
     "@react-spectrum/layout": "^3.6.13",
     "@react-spectrum/utils": "^3.12.3",

@@ -15,8 +15,8 @@ import {DOMAttributes, RefObject} from '@react-types/shared';
 import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {useCloseOnScroll} from './useCloseOnScroll';
-import {useLayoutEffect, useResizeObserver} from '@react-aria/utils';
-import {useLocale} from '@react-aria/i18n';
+import {useLayoutEffect, useResizeObserver} from '@react-aria-nutrient/utils';
+import {useLocale} from '@react-aria-nutrient/i18n';
 
 export interface AriaPositionProps extends PositionProps {
   /**

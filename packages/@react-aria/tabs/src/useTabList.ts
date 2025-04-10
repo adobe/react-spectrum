@@ -12,13 +12,13 @@
 
 import {AriaTabListProps} from '@react-types/tabs';
 import {DOMAttributes, RefObject} from '@react-types/shared';
-import {mergeProps, useId, useLabels} from '@react-aria/utils';
+import {mergeProps, useId, useLabels} from '@react-aria-nutrient/utils';
 import {TabListState} from '@react-stately/tabs';
 import {tabsIds} from './utils';
 import {TabsKeyboardDelegate} from './TabsKeyboardDelegate';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 import {useMemo} from 'react';
-import {useSelectableCollection} from '@react-aria/selection';
+import {useSelectableCollection} from '@react-aria-nutrient/selection';
 
 export interface AriaTabListOptions<T> extends Omit<AriaTabListProps<T>, 'children'> {}
 

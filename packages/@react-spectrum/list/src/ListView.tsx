@@ -10,18 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaGridListProps, useGridList} from '@react-aria/gridlist';
+import {AriaGridListProps, useGridList} from '@react-aria-nutrient/gridlist';
 import {AsyncLoadable, DOMRef, Key, LoadingState, Node, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
-import type {DroppableCollectionResult} from '@react-aria/dnd';
-import {filterDOMProps, mergeProps, useLayoutEffect} from '@react-aria/utils';
-import {FocusRing, FocusScope} from '@react-aria/focus';
+import type {DroppableCollectionResult} from '@react-aria-nutrient/dnd';
+import {filterDOMProps, mergeProps, useLayoutEffect} from '@react-aria-nutrient/utils';
+import {FocusRing, FocusScope} from '@react-aria-nutrient/focus';
 import InsertionIndicator from './InsertionIndicator';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {ListKeyboardDelegate} from '@react-aria/selection';
+import {ListKeyboardDelegate} from '@react-aria-nutrient/selection';
 import {ListState, useListState} from '@react-stately/list';
 import listStyles from './styles.css';
 import {ListViewItem} from './ListViewItem';
@@ -30,9 +30,9 @@ import {ProgressCircle} from '@react-spectrum/progress';
 import React, {JSX, ReactElement, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import RootDropIndicator from './RootDropIndicator';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useProvider} from '@react-spectrum/provider';
-import {Virtualizer} from '@react-aria/virtualizer';
+import {Virtualizer} from '@react-aria-nutrient/virtualizer';
 
 export interface SpectrumListViewProps<T> extends Omit<AriaGridListProps<T>, 'keyboardNavigationBehavior'>, StyleProps, SpectrumSelectionProps, Omit<AsyncLoadable, 'isLoading'> {
   /**

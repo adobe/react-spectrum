@@ -15,7 +15,7 @@ module.exports = {
     return {
       ImportDeclaration(node) {
         const source = node.source.value;
-        if (source === '@react-aria/utils' || source === './useLayoutEffect' || source === './') {
+        if (source === '@react-aria-nutrient/utils' || source === './useLayoutEffect' || source === './') {
           return;
         }
         const importSpecifiers = node.specifiers.filter(specifier => specifier.type === 'ImportSpecifier');
@@ -24,7 +24,7 @@ module.exports = {
           (item) => {
             let itemName = getName(item);
             if (itemName === 'useLayoutEffect') {
-              context.report(node, 'Please use useLayoutEffect from @react-aria/utils instead.');
+              context.report(node, 'Please use useLayoutEffect from @react-aria-nutrient/utils instead.');
             }
           }
         );

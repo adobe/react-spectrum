@@ -19,7 +19,7 @@ import {Flex} from '@react-spectrum/layout';
 import {RangeCalendar} from '../';
 import React, {useState} from 'react';
 import {TimeField} from '@react-spectrum/datepicker';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 import {View} from '@react-spectrum/view';
 
 export type RangeCalendarStory = ComponentStoryObj<typeof RangeCalendar>;

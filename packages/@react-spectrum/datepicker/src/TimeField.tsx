@@ -20,9 +20,9 @@ import React, {ReactElement, useRef} from 'react';
 import {SpectrumTimeFieldProps, TimeValue} from '@react-types/datepicker';
 import {useFocusManagerRef, useFormattedDateWidth} from './utils';
 import {useFormProps} from '@react-spectrum/form';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useTimeField} from '@react-aria/datepicker';
+import {useTimeField} from '@react-aria-nutrient/datepicker';
 import {useTimeFieldState} from '@react-stately/datepicker';
 
 /**

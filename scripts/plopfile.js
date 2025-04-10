@@ -76,8 +76,8 @@ module.exports = function (plop) {
         if (scopes.includes('@react-aria')) {
           actions.push({
             type: 'addMany',
-            templateFiles: '../plop-templates/@react-aria/**',
-            base: '../plop-templates/@react-aria/',
+            templateFiles: '../plop-templates/@react-aria-nutrient/**',
+            base: '../plop-templates/@react-aria-nutrient/',
             destination: `../packages/@react-aria/${packageName}`,
             data: {componentName, scopes}
           });

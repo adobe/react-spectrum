@@ -14,22 +14,22 @@ import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, ClearSlots, SlotProvider, useHasChild} from '@react-spectrum/utils';
 import {CSSTransition} from 'react-transition-group';
-import type {DraggableItemResult, DropIndicatorAria} from '@react-aria/dnd';
+import type {DraggableItemResult, DropIndicatorAria} from '@react-aria-nutrient/dnd';
 import {DropTarget, Node} from '@react-types/shared';
-import {FocusRing, useFocusRing} from '@react-aria/focus';
+import {FocusRing, useFocusRing} from '@react-aria-nutrient/focus';
 import {Grid} from '@react-spectrum/layout';
-import {isFocusVisible as isGlobalFocusVisible, useHover} from '@react-aria/interactions';
+import {isFocusVisible as isGlobalFocusVisible, useHover} from '@react-aria-nutrient/interactions';
 import ListGripper from '@spectrum-icons/ui/ListGripper';
 import listStyles from './styles.css';
 import {ListViewContext} from './ListView';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import {Provider} from '@react-spectrum/provider';
 import React, {ReactNode, useContext, useRef} from 'react';
 import {Text} from '@react-spectrum/text';
-import {useButton} from '@react-aria/button';
-import {useGridListItem, useGridListSelectionCheckbox} from '@react-aria/gridlist';
-import {useLocale} from '@react-aria/i18n';
-import {useVisuallyHidden} from '@react-aria/visually-hidden';
+import {useButton} from '@react-aria-nutrient/button';
+import {useGridListItem, useGridListSelectionCheckbox} from '@react-aria-nutrient/gridlist';
+import {useLocale} from '@react-aria-nutrient/i18n';
+import {useVisuallyHidden} from '@react-aria-nutrient/visually-hidden';
 
 interface ListViewItemProps<T> {
   item: Node<T>,

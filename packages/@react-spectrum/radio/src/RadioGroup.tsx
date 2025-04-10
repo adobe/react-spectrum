@@ -19,7 +19,7 @@ import {SpectrumRadioGroupProps} from '@react-types/radio';
 import styles from '@adobe/spectrum-css-temp/components/fieldgroup/vars.css';
 import {useFormProps} from '@react-spectrum/form';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useRadioGroup} from '@react-aria/radio';
+import {useRadioGroup} from '@react-aria-nutrient/radio';
 import {useRadioGroupState} from '@react-stately/radio';
 
 /**

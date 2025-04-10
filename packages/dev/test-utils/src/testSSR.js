@@ -20,7 +20,7 @@ import {evaluate} from './ssrUtils';
 import http from 'http';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {SSRProvider} from '@react-aria/ssr';
+import {SSRProvider} from '@react-aria-nutrient/ssr';
 import util from 'util';
 
 let ReactDOMClient;

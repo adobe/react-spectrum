@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {SeparatorProps as AriaSeparatorProps, useSeparator} from 'react-aria';
+import {SeparatorProps as AriaSeparatorProps, useSeparator} from '@react-aria-nutrient/react-aria';
 import {ContextValue, SlotProps, StyleProps, useContextProps} from './utils';
-import {createLeafComponent} from '@react-aria/collections';
-import {filterDOMProps} from '@react-aria/utils';
+import {createLeafComponent} from '@react-aria-nutrient/collections';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 import React, {createContext, ElementType, ForwardedRef} from 'react';
 
 export interface SeparatorProps extends AriaSeparatorProps, StyleProps, SlotProps {}

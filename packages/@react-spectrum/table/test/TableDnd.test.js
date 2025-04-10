@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-jest.mock('@react-aria/live-announcer');
+jest.mock('@react-aria-nutrient/live-announcer');
 import {
   act,
   fireEvent, installPointerEvent,
@@ -20,14 +20,14 @@ import {
   within
 } from '@react-spectrum/test-utils-internal';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
-import {CUSTOM_DRAG_TYPE} from '@react-aria/dnd/src/constants';
-import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, FileSystemFileEntry} from '@react-aria/dnd/test/mocks';
-import {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
+import {CUSTOM_DRAG_TYPE} from '@react-aria-nutrient/dnd/src/constants';
+import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, FileSystemFileEntry} from '@react-aria-nutrient/dnd/test/mocks';
+import {DIRECTORY_DRAG_TYPE} from '@react-aria-nutrient/dnd';
 import {DragBetweenTablesComplex} from '../stories/TableDnDUtilExamples';
 import {DragBetweenTablesExample, DragBetweenTablesRootOnlyExample, DragExample, DragOntoRowExample, DragWithoutRowHeaderExample, ReorderExample} from '../stories/TableDnDExamples';
-import {Droppable} from '@react-aria/dnd/test/examples';
+import {Droppable} from '@react-aria-nutrient/dnd/test/examples';
 import {Flex} from '@react-spectrum/layout';
-import {globalDndState} from '@react-aria/dnd/src/utils';
+import {globalDndState} from '@react-aria-nutrient/dnd/src/utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';

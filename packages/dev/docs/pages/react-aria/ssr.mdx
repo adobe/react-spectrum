@@ -59,11 +59,11 @@ See below for framework-specific guideance.
 
 #### Next.js App Router
 
-First, install `@react-aria/optimize-locales-plugin` with your package manager. Then, add the following to your `next.config.js`:
+First, install `@react-aria-nutrient/optimize-locales-plugin` with your package manager. Then, add the following to your `next.config.js`:
 
 ```ts
 // next.config.js
-const localesPlugin = require('@react-aria/optimize-locales-plugin');
+const localesPlugin = require('@react-aria-nutrient/optimize-locales-plugin');
 
 module.exports = {
   // ...
@@ -108,11 +108,11 @@ export default function RootLayout(
 
 #### Next.js Pages Router
 
-First, install `@react-aria/optimize-locales-plugin` with your package manager. Then, add the following to your `next.config.js`:
+First, install `@react-aria-nutrient/optimize-locales-plugin` with your package manager. Then, add the following to your `next.config.js`:
 
 ```ts
 // next.config.js
-const localesPlugin = require('@react-aria/optimize-locales-plugin');
+const localesPlugin = require('@react-aria-nutrient/optimize-locales-plugin');
 
 module.exports = {
   // ...
@@ -161,14 +161,14 @@ export default function Document(props: DocumentProps) {
 
 #### Remix
 
-Remix is supported [when using Vite](https://remix.run/docs/en/main/future/vite) for builds. First, install `@react-aria/optimize-locales-plugin` with your package manager. Then, add the following to your `vite.config.ts`:
+Remix is supported [when using Vite](https://remix.run/docs/en/main/future/vite) for builds. First, install `@react-aria-nutrient/optimize-locales-plugin` with your package manager. Then, add the following to your `vite.config.ts`:
 
 ```ts
 // vite.config.ts
 import { unstable_vitePlugin as remix } from '@remix-run/dev';
 import { defineConfig } from 'vite';
 /*- begin highlight -*/
-import localesPlugin from '@react-aria/optimize-locales-plugin';
+import localesPlugin from '@react-aria-nutrient/optimize-locales-plugin';
 /*- end highlight -*/
 
 export default defineConfig({
@@ -263,7 +263,7 @@ Start by creating a `LocalizedStringDictionary` containing only the strings for 
 ```tsx
 import {createLocalizedStringDictionary} from 'react-aria-components/i18n';
 
-const dictionary = createLocalizedStringDictionary(['@react-aria/datepicker']);
+const dictionary = createLocalizedStringDictionary(['@react-aria-nutrient/datepicker']);
 ```
 
 Then, pass this as an additional prop to `LocalizedStringProvider`:
@@ -283,7 +283,7 @@ getLocalizationScript(locale, dictionary)
 You can also use the [useIsSSR](useIsSSR.html) hook in your own components to determine whether they are running in an SSR context. This hook returns `true` both during server rendering and hydration, but updates immediately to `false` after hydration. You can use this to delay browser-specific code like media queries and feature detection until after the client has hydrated.
 
 ```tsx
-import {useIsSSR} from '@react-aria/ssr';
+import {useIsSSR} from '@react-aria-nutrient/ssr';
 
 function MyComponent() {
   let isSSR = useIsSSR();
@@ -303,7 +303,7 @@ In React 18, SSR works out of the box with no additional work. If you're using R
 
 ```tsx
 // Only needed if you are using React 16 or 17.
-import {SSRProvider} from '@react-aria/ssr';
+import {SSRProvider} from '@react-aria-nutrient/ssr';
 
 <SSRProvider>
   <App />

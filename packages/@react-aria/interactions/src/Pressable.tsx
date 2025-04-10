@@ -11,7 +11,7 @@
  */
 
 import {DOMAttributes, FocusableElement} from '@react-types/shared';
-import {getOwnerWindow, isFocusable, mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
+import {getOwnerWindow, isFocusable, mergeProps, mergeRefs, useObjectRef} from '@react-aria-nutrient/utils';
 import {PressProps, usePress} from './usePress';
 import React, {ForwardedRef, ReactElement, useEffect} from 'react';
 import {useFocusable} from './useFocusable';

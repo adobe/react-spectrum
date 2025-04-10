@@ -11,7 +11,7 @@
  */
 
 import {getChildNodes, getFirstItem} from '@react-stately/collections';
-import {GridKeyboardDelegate} from '@react-aria/grid';
+import {GridKeyboardDelegate} from '@react-aria-nutrient/grid';
 import {Key, Node} from '@react-types/shared';
 import {TableCollection} from '@react-types/table';
 

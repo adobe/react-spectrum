@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaToastRegionProps} from '@react-aria/toast';
+import {AriaToastRegionProps} from '@react-aria-nutrient/toast';
 import {classNames} from '@react-spectrum/utils';
 import {DOMProps} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 import {flushSync} from 'react-dom';
 import React, {ReactElement, useEffect, useMemo, useRef} from 'react';
 import {SpectrumToastValue, Toast} from './Toast';

@@ -15,7 +15,7 @@ import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '@react-aria/datepicker/docs/daterangepicker-anatomy.svg';
+import Anatomy from '@react-aria-nutrient/datepicker/docs/daterangepicker-anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -64,7 +64,7 @@ function Example() {
 ```
 
 ```css
-@import "@react-aria/example-theme";
+@import "@react-aria-nutrient/example-theme";
 
 .react-aria-DropZone {
   color: var(--text-color);
@@ -137,7 +137,7 @@ A drop zone can include a `FileTrigger` as a child, which may also be used stand
 `DropZone` supports user interactions via mouse, keyboard, and touch. You can handle all of these via the `onDrop` prop. In addition, the `onDropEnter`, `onDropMove`, and `onDropExit` events are fired as the user interacts with the dropzone.
 
 ```tsx example
-import type {TextDropItem} from '@react-aria/dnd';
+import type {TextDropItem} from '@react-aria-nutrient/dnd';
 
 function Example() {
   let [dropped, setDropped] = React.useState(null);
@@ -172,7 +172,7 @@ The `Draggable` component used above is defined below. See [useDrag](useDrag.htm
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example render=false export=true
-import {useDrag} from '@react-aria/dnd';
+import {useDrag} from '@react-aria-nutrient/dnd';
 
 function Draggable() {
   let {dragProps, isDragging} = useDrag({
@@ -240,7 +240,7 @@ To allow the selection of files from the user's device, pass `FileTrigger` as a 
 
 ```tsx example
 import {FileTrigger, Button} from 'react-aria-components';
-import type {FileDropItem} from 'react-aria'
+import type {FileDropItem} from '@react-aria-nutrient/react-aria'
 
 function Example() {
   let [files, setFiles] = React.useState(null);

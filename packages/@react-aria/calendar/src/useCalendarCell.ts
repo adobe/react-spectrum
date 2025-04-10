@@ -13,12 +13,12 @@
 import {CalendarDate, isEqualDay, isSameDay, isToday} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {DOMAttributes, RefObject} from '@react-types/shared';
-import {focusWithoutScrolling, getScrollParent, mergeProps, scrollIntoViewport, useDeepMemo, useDescription} from '@react-aria/utils';
+import {focusWithoutScrolling, getScrollParent, mergeProps, scrollIntoViewport, useDeepMemo, useDescription} from '@react-aria-nutrient/utils';
 import {getEraFormat, hookData} from './utils';
-import {getInteractionModality, usePress} from '@react-aria/interactions';
+import {getInteractionModality, usePress} from '@react-aria-nutrient/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {useDateFormatter, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useDateFormatter, useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useEffect, useMemo, useRef} from 'react';
 
 export interface AriaCalendarCellProps {
@@ -75,7 +75,7 @@ export interface CalendarCellAria {
 export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarState | RangeCalendarState, ref: RefObject<HTMLElement | null>): CalendarCellAria {
   let {date, isDisabled} = props;
   let {errorMessageId, selectedDateDescription} = hookData.get(state)!;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/calendar');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/calendar');
   let dateFormatter = useDateFormatter({
     weekday: 'long',
     day: 'numeric',

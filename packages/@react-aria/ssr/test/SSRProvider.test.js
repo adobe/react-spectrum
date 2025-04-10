@@ -13,7 +13,7 @@
 import React from 'react';
 import {render} from '@react-spectrum/test-utils-internal';
 import {SSRProvider} from '../';
-import {useId} from '@react-aria/utils';
+import {useId} from '@react-aria-nutrient/utils';
 
 function Test() {
   return <div data-testid="test" id={useId()} />;
@@ -30,7 +30,7 @@ describe('SSRProvider', function () {
 
     let divs = tree.getAllByTestId('test');
     if (React.useId) {
-      expect(divs[0].id.startsWith('react-aria')).toBe(true);
+      expect(divs[0].id.startsWith('@react-aria-nutrient/react-aria')).toBe(true);
       expect(divs[0].id).not.toBe(divs[1].id);
     } else {
       expect(divs[0].id).toBe('react-aria-1');
@@ -129,7 +129,7 @@ describe('SSRProvider', function () {
     let env = process.env.NODE_ENV;
     process.env.NODE_ENV = 'test';
     let tree = render(<Test />);
-    expect(/^react-aria-/.test(tree.getByTestId('test').id)).toBe(true);
+    expect(/^@react-aria-nutrient\/react-aria-/.test(tree.getByTestId('test').id)).toBe(true);
     process.env.NODE_ENV = env;
   });
 });

@@ -17,11 +17,11 @@ import {FocusableRef} from '@react-types/shared';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {SpectrumColorWheelProps} from '@react-types/color';
 import styles from '@adobe/spectrum-css-temp/components/colorwheel/vars.css';
-import {useColorWheel} from '@react-aria/color';
+import {useColorWheel} from '@react-aria-nutrient/color';
 import {useColorWheelState} from '@react-stately/color';
-import {useFocusRing} from '@react-aria/focus';
+import {useFocusRing} from '@react-aria-nutrient/focus';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useResizeObserver} from '@react-aria/utils';
+import {useResizeObserver} from '@react-aria-nutrient/utils';
 
 const WHEEL_THICKNESS = 24;
 

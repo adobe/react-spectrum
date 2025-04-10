@@ -15,7 +15,7 @@ import {categorizeArgTypes} from './utils';
 import Cloud from '../spectrum-illustrations/linear/Cloud';
 import CloudUpload from '../spectrum-illustrations/gradient/generic1/CloudUpload';
 import DropToUpload from '../spectrum-illustrations/linear/DropToUpload';
-import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
+import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from '@react-aria-nutrient/react-aria';
 import type {Meta} from '@storybook/react';
 import React, {useState} from 'react';
 import {style} from '../style' with { type: 'macro' };

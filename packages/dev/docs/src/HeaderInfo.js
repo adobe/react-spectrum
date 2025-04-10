@@ -29,7 +29,7 @@ const monopackages = {
     version: rspMonopackage.version
   },
   '@react-aria': {
-    importName: 'react-aria',
+    importName: '@react-aria-nutrient/react-aria',
     version: ariaMonopackage.version
   },
   '@react-stately': {

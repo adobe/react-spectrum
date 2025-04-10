@@ -10,15 +10,15 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-aria/select';
+import docs from 'docs:@react-aria-nutrient/select';
 import collectionsDocs from 'docs:@react-types/shared/src/collections.d.ts';
 import selectionDocs from 'docs:@react-stately/selection';
 import statelyDocs from 'docs:@react-stately/select';
-import overlaysDocs from 'docs:@react-aria/overlays';
-import focusDocs from 'docs:@react-aria/focus';
-import listboxDocs from 'docs:@react-aria/listbox';
+import overlaysDocs from 'docs:@react-aria-nutrient/overlays';
+import focusDocs from 'docs:@react-aria-nutrient/focus';
+import listboxDocs from 'docs:@react-aria-nutrient/listbox';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
-import packageData from '@react-aria/select/package.json';
+import packageData from '@react-aria-nutrient/select/package.json';
 import Anatomy from './anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -127,7 +127,7 @@ In addition, see [useListBox](useListBox.html) for examples of sections (option 
 options. For an example of the description and error message elements, see [useTextField](useTextField.html).
 
 ```tsx example export=true
-import {HiddenSelect, useSelect} from '@react-aria/select';
+import {HiddenSelect, useSelect} from '@react-aria-nutrient/select';
 import {Item} from '@react-stately/collections';
 import {useSelectState} from '@react-stately/select';
 
@@ -208,9 +208,9 @@ See [usePopover](usePopover.html) for more examples of popovers.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import type {AriaPopoverProps} from 'react-aria';
+import type {AriaPopoverProps} from '@react-aria-nutrient/react-aria';
 import type {OverlayTriggerState} from 'react-stately';
-import {usePopover, Overlay, DismissButton} from '@react-aria/overlays';
+import {usePopover, Overlay, DismissButton} from '@react-aria-nutrient/overlays';
 
 interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef'> {
   children: React.ReactNode,
@@ -256,7 +256,7 @@ They can also be shared with other components like a [ComboBox](useComboBox.html
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import {useListBox, useOption} from '@react-aria/listbox';
+import {useListBox, useOption} from '@react-aria-nutrient/listbox';
 
 function ListBox(props) {
   let ref = React.useRef(null);
@@ -321,7 +321,7 @@ The `Button` component is used in the above example to toggle the listbox popup.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import {useButton} from '@react-aria/button';
+import {useButton} from '@react-aria-nutrient/button';
 
 function Button(props) {
   let ref = props.buttonRef;

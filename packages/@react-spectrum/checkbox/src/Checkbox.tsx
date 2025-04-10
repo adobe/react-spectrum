@@ -16,13 +16,13 @@ import CheckmarkSmall from '@spectrum-icons/ui/CheckmarkSmall';
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import DashSmall from '@spectrum-icons/ui/DashSmall';
 import {FocusableRef} from '@react-types/shared';
-import {FocusRing} from '@react-aria/focus';
+import {FocusRing} from '@react-aria-nutrient/focus';
 import React, {forwardRef, useContext, useRef} from 'react';
 import {SpectrumCheckboxProps} from '@react-types/checkbox';
 import styles from '@adobe/spectrum-css-temp/components/checkbox/vars.css';
-import {useCheckbox, useCheckboxGroupItem} from '@react-aria/checkbox';
+import {useCheckbox, useCheckboxGroupItem} from '@react-aria-nutrient/checkbox';
 import {useFormProps} from '@react-spectrum/form';
-import {useHover} from '@react-aria/interactions';
+import {useHover} from '@react-aria-nutrient/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useToggleState} from '@react-stately/toggle';
 

@@ -16,16 +16,16 @@ import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, useFocusableRef} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import {ComboBoxState, useComboBoxState} from '@react-stately/combobox';
-import {DismissButton, useOverlayTrigger} from '@react-aria/overlays';
+import {DismissButton, useOverlayTrigger} from '@react-aria-nutrient/overlays';
 import {Field} from '@react-spectrum/label';
 import {FocusableRef, ValidationState} from '@react-types/shared';
-import {focusSafely, setInteractionModality, useHover} from '@react-aria/interactions';
-import {FocusScope, useFocusRing} from '@react-aria/focus';
+import {focusSafely, setInteractionModality, useHover} from '@react-aria-nutrient/interactions';
+import {FocusScope, useFocusRing} from '@react-aria-nutrient/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
-import {mergeProps, useFormReset, useId} from '@react-aria/utils';
+import {mergeProps, useFormReset, useId} from '@react-aria-nutrient/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {
   HTMLAttributes,
@@ -44,13 +44,13 @@ import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {Tray} from '@react-spectrum/overlays';
-import {useButton} from '@react-aria/button';
-import {useDialog} from '@react-aria/dialog';
-import {useField} from '@react-aria/label';
-import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useFormValidation} from '@react-aria/form';
+import {useButton} from '@react-aria-nutrient/button';
+import {useDialog} from '@react-aria-nutrient/dialog';
+import {useField} from '@react-aria-nutrient/label';
+import {useFilter, useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
+import {useFormValidation} from '@react-aria-nutrient/form';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useSearchAutocomplete} from '@react-aria/autocomplete';
+import {useSearchAutocomplete} from '@react-aria-nutrient/autocomplete';
 
 function ForwardMobileSearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);

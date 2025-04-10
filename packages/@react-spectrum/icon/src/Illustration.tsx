@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 import React, {ReactElement, ReactNode} from 'react';
 import {useSlotProps, useStyleProps} from '@react-spectrum/utils';
 

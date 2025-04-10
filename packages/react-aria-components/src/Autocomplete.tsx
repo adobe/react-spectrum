@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaAutocompleteProps, CollectionOptions, useAutocomplete} from '@react-aria/autocomplete';
+import {AriaAutocompleteProps, CollectionOptions, useAutocomplete} from '@react-aria-nutrient/autocomplete';
 import {AutocompleteState, useAutocompleteState} from '@react-stately/autocomplete';
 import {InputContext} from './Input';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import {Provider, removeDataAttributes, SlotProps, SlottedContextValue, useSlottedContext} from './utils';
 import React, {createContext, ReactNode, RefObject, useRef} from 'react';
 import {SearchFieldContext} from './SearchField';

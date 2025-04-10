@@ -99,7 +99,7 @@ for (let pkg of packagePaths) {
     continue;
   }
 
-  let aria = `@react-aria/${basename}`;
+  let aria = `@react-aria-nutrient/${basename}`;
   let stately = `@react-stately/${basename}`;
   let types = `@react-types/${basename}`;
 

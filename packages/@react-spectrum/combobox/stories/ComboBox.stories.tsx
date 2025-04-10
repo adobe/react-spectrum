@@ -17,7 +17,7 @@ import Alert from '@spectrum-icons/workflow/Alert';
 import {Avatar} from '@react-spectrum/avatar';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
-import {chain} from '@react-aria/utils';
+import {chain} from '@react-aria-nutrient/utils';
 import {ComboBox, Item, Section} from '../';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
@@ -31,7 +31,7 @@ import {Key} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
 import React, {useRef, useState} from 'react';
 import {useAsyncList, useListData, useTreeData} from '@react-stately/data';
-import {useFilter} from '@react-aria/i18n';
+import {useFilter} from '@react-aria-nutrient/i18n';
 
 let items = [
   {name: 'Aardvark', id: '1'},

@@ -11,7 +11,7 @@
  */
 
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 import {HeadingContext, useContextProps} from 'react-aria-components';
 import {HeadingProps} from '@react-types/text';
 import React, {ElementType, forwardRef} from 'react';

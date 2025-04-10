@@ -15,7 +15,7 @@ import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import {TextFieldBase} from './TextFieldBase';
 import {useFormProps} from '@react-spectrum/form';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useTextField} from '@react-aria/textfield';
+import {useTextField} from '@react-aria-nutrient/textfield';
 
 /**
  * TextFields are text inputs that allow users to input custom text entries

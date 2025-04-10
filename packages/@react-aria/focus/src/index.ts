@@ -16,10 +16,10 @@ export {useFocusRing} from './useFocusRing';
 export {useHasTabbableChild} from './useHasTabbableChild';
 export {moveVirtualFocus, dispatchVirtualBlur, dispatchVirtualFocus, getVirtuallyFocusedElement} from './virtualFocus';
 // For backward compatibility.
-export {isFocusable} from '@react-aria/utils';
-export {FocusableProvider, Focusable, useFocusable, focusSafely} from '@react-aria/interactions';
+export {isFocusable} from '@react-aria-nutrient/utils';
+export {FocusableProvider, Focusable, useFocusable, focusSafely} from '@react-aria-nutrient/interactions';
 
 export type {FocusScopeProps, FocusManager, FocusManagerOptions} from './FocusScope';
 export type {FocusRingProps} from './FocusRing';
-export type {FocusableAria, FocusableOptions, FocusableProviderProps} from '@react-aria/interactions';
+export type {FocusableAria, FocusableOptions, FocusableProviderProps} from '@react-aria-nutrient/interactions';
 export type {AriaFocusRingProps, FocusRingAria} from './useFocusRing';

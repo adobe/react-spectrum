@@ -22,7 +22,7 @@ import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import React, {Dispatch, SetStateAction, useState} from 'react';
 import {SpectrumCardProps} from '@react-types/card';
-import {usePress} from '@react-aria/interactions';
+import {usePress} from '@react-aria-nutrient/interactions';
 import {useProvider} from '@react-spectrum/provider';
 
 export default {

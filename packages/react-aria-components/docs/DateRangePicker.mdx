@@ -16,7 +16,7 @@ import statelyDocs from 'docs:@react-stately/datepicker';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '@react-aria/datepicker/docs/daterangepicker-anatomy.svg';
+import Anatomy from '@react-aria-nutrient/datepicker/docs/daterangepicker-anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
@@ -90,7 +90,7 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
 ```
 
 ```css
-@import "@react-aria/example-theme";
+@import "@react-aria-nutrient/example-theme";
 
 .react-aria-DateRangePicker {
   color: var(--text-color);
@@ -497,7 +497,7 @@ The below example displays a `DateRangePicker` in the Hindi language, using the 
 
 ```tsx example
 import type {DateRange} from 'react-aria-components';
-import {I18nProvider} from '@react-aria/i18n';
+import {I18nProvider} from '@react-aria-nutrient/i18n';
 
 function Example() {
   let [range, setRange] = React.useState<DateRange | null>(null);
@@ -527,7 +527,7 @@ DateRangePicker supports the `startName` and `endName` props for integration wit
 
 ```tsx example
 import {getLocalTimeZone} from '@internationalized/date';
-import {useDateFormatter} from '@react-aria/i18n';
+import {useDateFormatter} from '@react-aria-nutrient/i18n';
 
 function Example() {
   let [range, setRange] = React.useState({
@@ -701,7 +701,7 @@ This example prevents selecting weekends, but allows selecting ranges that span 
 
 ```tsx example
 import {isWeekend} from '@internationalized/date';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 
 function Example() {
   let {locale} = useLocale();
@@ -1119,7 +1119,7 @@ This example shows a `FieldGroup` component that renders a group of date pickers
 
 ```tsx example
 import {DateRangePickerContext} from 'react-aria-components';
-import {useId} from 'react-aria';
+import {useId} from '@react-aria-nutrient/react-aria';
 
 interface FieldGroupProps {
   title?: string,

@@ -1,4 +1,4 @@
-const localesPlugin = require('@react-aria/optimize-locales-plugin');
+const localesPlugin = require('@react-aria-nutrient/optimize-locales-plugin');
 const glob = require('glob');
 
 /** @type {import('next').NextConfig} */

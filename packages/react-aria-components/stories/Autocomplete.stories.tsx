@@ -16,7 +16,7 @@ import {MyListBoxItem, MyMenuItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
 import {useAsyncList, useListData, useTreeData} from 'react-stately';
-import {useFilter} from 'react-aria';
+import {useFilter} from '@react-aria-nutrient/react-aria';
 
 export default {
   title: 'React Aria Components',

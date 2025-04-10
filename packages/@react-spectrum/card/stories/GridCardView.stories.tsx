@@ -29,7 +29,7 @@ import {Size} from '@react-stately/virtualizer';
 import {SpectrumCardViewProps} from '@react-types/card';
 import {TextField} from '@react-spectrum/textfield';
 import {useAsyncList} from '@react-stately/data';
-import {useCollator} from '@react-aria/i18n';
+import {useCollator} from '@react-aria-nutrient/i18n';
 import {useProvider} from '@react-spectrum/provider';
 
 let items = [

@@ -30,6 +30,6 @@ export {
 export {useSlotProps, cssModuleToSlots, SlotProvider, ClearSlots} from './Slots';
 export {useHasChild} from './useHasChild';
 export {useIsMobileDevice} from './useIsMobileDevice';
-export {useValueEffect} from '@react-aria/utils';
+export {useValueEffect} from '@react-aria-nutrient/utils';
 export {BreakpointProvider, useMatchedBreakpoints, useBreakpoint} from './BreakpointProvider';
-export {useResizeObserver} from '@react-aria/utils';
+export {useResizeObserver} from '@react-aria-nutrient/utils';

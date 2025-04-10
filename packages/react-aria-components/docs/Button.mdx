@@ -15,7 +15,7 @@ import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '@react-aria/datepicker/docs/daterangepicker-anatomy.svg';
+import Anatomy from '@react-aria-nutrient/datepicker/docs/daterangepicker-anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
@@ -52,7 +52,7 @@ import {Button} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@import "@react-aria/example-theme";
+@import "@react-aria-nutrient/example-theme";
 
 .react-aria-Button {
   color: var(--text-color);
@@ -407,7 +407,7 @@ This example uses [Framer Motion](https://www.framer.com/motion/) to create an `
 ```tsx
 import type {ButtonProps} from 'react-aria-components';
 import {ButtonContext, useContextProps} from 'react-aria-components';
-import {useButton} from 'react-aria';
+import {useButton} from '@react-aria-nutrient/react-aria';
 import {motion} from 'framer-motion';
 
 const AnimatedButton = React.forwardRef((props: ButtonProps, ref: React.ForwardedRef<HTMLButtonElement>) => {

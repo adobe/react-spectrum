@@ -9,11 +9,11 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaBreadcrumbsProps, useBreadcrumbs} from 'react-aria';
-import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria/collections';
+import {AriaBreadcrumbsProps, useBreadcrumbs} from '@react-aria-nutrient/react-aria';
+import {Collection, CollectionBuilder, createLeafComponent} from '@react-aria-nutrient/collections';
 import {CollectionProps, CollectionRendererContext} from './Collection';
 import {ContextValue, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlottedContext} from './utils';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 import {forwardRefType, Key} from '@react-types/shared';
 import {LinkContext} from './Link';
 import {Node} from 'react-stately';

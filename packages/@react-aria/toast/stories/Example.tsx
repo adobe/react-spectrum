@@ -12,7 +12,7 @@
 
 import React, {createContext, useContext, useRef} from 'react';
 import {ToastState, useToastState} from '@react-stately/toast';
-import {useButton} from 'react-aria';
+import {useButton} from '@react-aria-nutrient/react-aria';
 import {useToast, useToastRegion} from '../src';
 
 const ToastContext = createContext<ToastState<string> | null>(null);

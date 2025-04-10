@@ -28,7 +28,7 @@ interface Link extends DOMProps, StyleProps, PressEvents {
 |                          |                         |                                         |
 
 ## Packages
-- `@react-aria/link`
+- `@react-aria-nutrient/link`
 - `@react-spectrum/link`
 
 ## Example

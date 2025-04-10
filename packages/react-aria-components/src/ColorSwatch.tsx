@@ -1,4 +1,4 @@
-import {AriaColorSwatchProps, useColorSwatch} from 'react-aria';
+import {AriaColorSwatchProps, useColorSwatch} from '@react-aria-nutrient/react-aria';
 import {Color} from 'react-stately';
 import {ContextValue, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';

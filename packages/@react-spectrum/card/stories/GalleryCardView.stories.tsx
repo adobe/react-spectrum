@@ -35,7 +35,7 @@ import {GalleryLayoutOptions} from '../src/GalleryLayout';
 import React, {useMemo} from 'react';
 import {Size} from '@react-stately/virtualizer';
 import {SpectrumCardViewProps} from '@react-types/card';
-import {useCollator} from '@react-aria/i18n';
+import {useCollator} from '@react-aria-nutrient/i18n';
 
 let itemsLowVariance = [
   {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', id: 1, title: 'Bob 1'},

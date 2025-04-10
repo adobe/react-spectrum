@@ -11,7 +11,7 @@
  */
 
 import {AriaTextFieldProps} from '@react-types/textfield';
-import {mergeProps, useEffectEvent} from '@react-aria/utils';
+import {mergeProps, useEffectEvent} from '@react-aria-nutrient/utils';
 import {RefObject} from '@react-types/shared';
 import {TextFieldAria, useTextField} from './useTextField';
 import {useEffect, useRef} from 'react';

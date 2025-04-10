@@ -13,11 +13,11 @@
 import {AriaColorWheelProps} from '@react-types/color';
 import {ColorWheelState} from '@react-stately/color';
 import {DOMAttributes, RefObject} from '@react-types/shared';
-import {focusWithoutScrolling, mergeProps, useFormReset, useGlobalListeners, useLabels} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, useFormReset, useGlobalListeners, useLabels} from '@react-aria-nutrient/utils';
 import React, {ChangeEvent, InputHTMLAttributes, useCallback, useRef} from 'react';
-import {useKeyboard, useMove} from '@react-aria/interactions';
-import {useLocale} from '@react-aria/i18n';
-import {useVisuallyHidden} from '@react-aria/visually-hidden';
+import {useKeyboard, useMove} from '@react-aria-nutrient/interactions';
+import {useLocale} from '@react-aria-nutrient/i18n';
+import {useVisuallyHidden} from '@react-aria-nutrient/visually-hidden';
 
 export interface AriaColorWheelOptions extends AriaColorWheelProps {
   /** The outer radius of the color wheel. */

@@ -14,7 +14,7 @@ import {Color, ColorPickerState, ColorPickerProps as StatelyColorPickerProps, us
 import {ColorAreaContext, ColorFieldContext, ColorSliderContext, ColorWheelContext} from './RSPContexts';
 import {ColorSwatchContext} from './ColorSwatch';
 import {ColorSwatchPickerContext} from './ColorSwatchPicker';
-import {mergeProps} from 'react-aria';
+import {mergeProps} from '@react-aria-nutrient/react-aria';
 import {Provider, RenderProps, SlotProps, SlottedContextValue, useRenderProps, useSlottedContext} from './utils';
 import React, {createContext, ReactNode} from 'react';
 

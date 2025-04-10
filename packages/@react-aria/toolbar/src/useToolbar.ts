@@ -11,10 +11,10 @@
  */
 
 import {AriaLabelingProps, Orientation, RefObject} from '@react-types/shared';
-import {createFocusManager} from '@react-aria/focus';
-import {filterDOMProps, useLayoutEffect} from '@react-aria/utils';
+import {createFocusManager} from '@react-aria-nutrient/focus';
+import {filterDOMProps, useLayoutEffect} from '@react-aria-nutrient/utils';
 import {HTMLAttributes, KeyboardEventHandler, useRef, useState} from 'react';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 
 export interface AriaToolbarProps extends AriaLabelingProps {
   /**

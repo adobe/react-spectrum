@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {DismissButton, useOverlay} from '@react-aria/overlays';
-import {FocusScope} from '@react-aria/focus';
-import {HiddenSelect, useSelect} from '@react-aria/select';
+import {DismissButton, useOverlay} from '@react-aria-nutrient/overlays';
+import {FocusScope} from '@react-aria-nutrient/focus';
+import {HiddenSelect, useSelect} from '@react-aria-nutrient/select';
 import React from 'react';
-import {useButton} from '@react-aria/button';
-import {useListBox, useOption} from '@react-aria/listbox';
+import {useButton} from '@react-aria-nutrient/button';
+import {useListBox, useOption} from '@react-aria-nutrient/listbox';
 import {useSelectState} from '@react-stately/select';
 
 export function Select(props) {

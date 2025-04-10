@@ -10,17 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {announce} from '@react-aria/live-announcer';
-import {GridAria, GridProps, useGrid} from '@react-aria/grid';
+import {announce} from '@react-aria-nutrient/live-announcer';
+import {GridAria, GridProps, useGrid} from '@react-aria-nutrient/grid';
 import {gridIds} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Key, LayoutDelegate, Rect, RefObject, Size} from '@react-types/shared';
-import {mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/utils';
+import {mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria-nutrient/utils';
 import {TableKeyboardDelegate} from './TableKeyboardDelegate';
 import {tableNestedRows} from '@react-stately/flags';
 import {TableState, TreeGridState} from '@react-stately/table';
-import {useCollator, useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useCollator, useLocale, useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useMemo} from 'react';
 
 export interface AriaTableProps extends GridProps {
@@ -94,7 +94,7 @@ export function useTable<T>(props: AriaTableProps, state: TableState<T> | TreeGr
   }
 
   let {column, direction: sortDirection} = state.sortDescriptor || {};
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/table');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/table');
   let sortDescription = useMemo(() => {
     let columnName = state.collection.columns.find(c => c.key === column)?.textValue ?? '';
     return sortDirection && column ? stringFormatter.format(`${sortDirection}Sort`, {columnName}) : undefined;

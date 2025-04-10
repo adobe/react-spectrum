@@ -55,7 +55,7 @@ export const Example = (args: any) => (
 
 let items = [
   {id: 'home', name: 'Home'},
-  {id: 'react-aria', name: 'React Aria'},
+  {id: '@react-aria-nutrient/react-aria', name: 'React Aria'},
   {id: 'breadcrumbs', name: 'Breadcrumbs'}
 ];
 export const WithActions = (args: any) => (

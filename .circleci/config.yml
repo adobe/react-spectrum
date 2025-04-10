@@ -179,36 +179,6 @@ jobs:
           paths:
             - '*/storybook-s2/'
 
-  docs:
-    executor: rsp
-    steps:
-      - restore_cache:
-          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run:
-          name: build docs
-          command: make website
-
-      - persist_to_workspace:
-          root: dist
-          paths:
-            - '*/docs/'
-
-  docs-production:
-    executor: rsp
-    steps:
-      - restore_cache:
-          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - run:
-          name: build docs
-          command: make website-production
-
-      - persist_to_workspace:
-          root: dist
-          paths:
-            - '*/docs/'
-
   verdaccio:
     executor: rsp
     steps:
@@ -230,28 +200,6 @@ jobs:
           root: /tmp/verdaccio-workspace
           paths:
             - storage
-
-  v-docs:
-    executor: rsp
-    steps:
-      - restore_cache:
-          key: react-spectrum-{{ .Environment.CACHE_VERSION }}-{{ .Environment.CIRCLE_SHA1 }}
-
-      - attach_workspace:
-          at: /tmp/verdaccio-workspace
-
-      - run:
-          name: build docs off verdaccio
-          command: |
-            ./scripts/verdaccio-ci.sh
-            ./scripts/verdaccio-build.sh
-          environment:
-            VERDACCIO_STORAGE_PATH: /tmp/verdaccio-workspace/storage
-
-      - persist_to_workspace:
-          root: verdaccio_dist
-          paths:
-            - '*/verdaccio/docs'
 
   v-rsp-cra-18:
     executor: rsp
@@ -522,18 +470,12 @@ workflows:
       - typecheck-docs:
           requires:
             - install
-      - docs:
-          requires:
-            - install
       - verdaccio:
           filters:
             branches:
               only: main
           requires:
             - install
-      - v-docs:
-          requires:
-            - verdaccio
       - v-rsp-cra-18:
           requires:
             - verdaccio
@@ -574,11 +516,9 @@ workflows:
             - lint
             - test
             - test-esm
-            - docs
       - comment:
           name: comment-verdaccio
           requires:
-            - v-docs
             - v-rsp-cra-18
             - v-webpack-4
             - v-nextjs

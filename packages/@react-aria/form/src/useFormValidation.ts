@@ -12,9 +12,9 @@
 
 import {FormValidationState} from '@react-stately/form';
 import {RefObject, Validation, ValidationResult} from '@react-types/shared';
-import {setInteractionModality} from '@react-aria/interactions';
+import {setInteractionModality} from '@react-aria-nutrient/interactions';
 import {useEffect} from 'react';
-import {useEffectEvent, useLayoutEffect} from '@react-aria/utils';
+import {useEffectEvent, useLayoutEffect} from '@react-aria-nutrient/utils';
 
 type ValidatableElement = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 

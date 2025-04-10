@@ -22,7 +22,7 @@ import {Item, Picker, Section} from '@react-spectrum/picker';
 import {Key} from '@react-types/shared';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 
 
 export type DateFieldStory = ComponentStoryObj<typeof DateField>;

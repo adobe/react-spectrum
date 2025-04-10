@@ -16,9 +16,9 @@ import {createDOMRef} from '@react-spectrum/utils';
 import {DateValue, SpectrumCalendarProps} from '@react-types/calendar';
 import {FocusableRef} from '@react-types/shared';
 import React, {ReactElement, useImperativeHandle, useMemo, useRef} from 'react';
-import {useCalendar} from '@react-aria/calendar';
+import {useCalendar} from '@react-aria-nutrient/calendar';
 import {useCalendarState} from '@react-stately/calendar';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 /**

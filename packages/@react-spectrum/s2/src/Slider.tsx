@@ -18,7 +18,7 @@ import {
   SliderThumb,
   SliderTrack
 } from 'react-aria-components';
-import {clamp} from '@react-aria/utils';
+import {clamp} from '@react-aria-nutrient/utils';
 import {createContext, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel} from './Field';
@@ -28,7 +28,7 @@ import {FormContext, useFormProps} from './Form';
 import {mergeStyles} from '../style/runtime';
 import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
-import {useLocale, useNumberFormatter} from '@react-aria/i18n';
+import {useLocale, useNumberFormatter} from '@react-aria-nutrient/i18n';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface SliderBaseProps<T> extends Omit<AriaSliderProps<T>, 'children' | 'style' | 'className' | 'orientation'>, Omit<SpectrumLabelableProps, 'necessityIndicator' | 'isRequired'>, StyleProps {

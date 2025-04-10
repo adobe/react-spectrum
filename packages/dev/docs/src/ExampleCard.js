@@ -4,7 +4,7 @@ import {Image} from './Image';
 import React from 'react';
 import styles from './ExampleCard.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
-import {useId} from 'react-aria';
+import {useId} from '@react-aria-nutrient/react-aria';
 
 export function ExampleCard(props) {
   let titleId = useId();

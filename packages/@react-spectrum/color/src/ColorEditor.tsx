@@ -10,7 +10,7 @@ import {Item, Picker} from '@react-spectrum/picker';
 import React, {CSSProperties, useState} from 'react';
 import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 
 export interface SpectrumColorEditorProps {
   /** Whether to hide the alpha channel color slider and color field. */

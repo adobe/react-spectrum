@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, DOMAttributes, DOMProps, LabelableProps} from '@react-types/shared';
 import {ElementType, LabelHTMLAttributes} from 'react';
-import {useId, useLabels} from '@react-aria/utils';
+import {useId, useLabels} from '@react-aria-nutrient/utils';
 
 export interface LabelAriaProps extends LabelableProps, DOMProps, AriaLabelingProps {
   /**

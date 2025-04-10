@@ -12,7 +12,7 @@
 
 import {cloneElement, createContext, CSSProperties, ReactElement, ReactNode, Ref, useCallback, useContext, useRef} from 'react';
 import {colorToken} from '../style/tokens' with {type: 'macro'};
-import {inertValue, mergeRefs} from '@react-aria/utils';
+import {inertValue, mergeRefs} from '@react-aria-nutrient/utils';
 import {mergeStyles} from '../style/runtime';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};

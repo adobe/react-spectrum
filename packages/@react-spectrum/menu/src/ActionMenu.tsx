@@ -11,7 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 import {FocusableRef} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -20,7 +20,7 @@ import {MenuTrigger} from './MenuTrigger';
 import More from '@spectrum-icons/workflow/More';
 import React, {forwardRef, ReactElement} from 'react';
 import {SpectrumActionMenuProps} from '@react-types/menu';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useSlotProps} from '@react-spectrum/utils';
 
 /**

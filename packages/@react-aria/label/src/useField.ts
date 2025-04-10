@@ -12,7 +12,7 @@
 
 import {DOMAttributes, HelpTextProps, Validation} from '@react-types/shared';
 import {LabelAria, LabelAriaProps, useLabel} from './useLabel';
-import {mergeProps, useSlotId} from '@react-aria/utils';
+import {mergeProps, useSlotId} from '@react-aria-nutrient/utils';
 
 export interface AriaFieldProps extends LabelAriaProps, HelpTextProps, Omit<Validation<any>, 'isRequired'> {}
 

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-jest.mock('@react-aria/utils/src/scrollIntoView');
+jest.mock('@react-aria-nutrient/utils/src/scrollIntoView');
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '../';
 import {composeStories} from '@storybook/react';
@@ -20,10 +20,10 @@ import {Image} from '@react-spectrum/image';
 import {Provider} from '@react-spectrum/provider';
 import React, {useMemo} from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import {scrollIntoView} from '@react-aria/utils';
+import {scrollIntoView} from '@react-aria-nutrient/utils';
 import * as stories from '../stories/GridCardView.stories';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
-import {useCollator} from '@react-aria/i18n';
+import {useCollator} from '@react-aria-nutrient/i18n';
 import userEvent from '@testing-library/user-event';
 
 let isOldReact = parseInt(React.version, 10) < 18;

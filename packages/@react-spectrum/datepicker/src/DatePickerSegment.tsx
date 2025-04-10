@@ -15,7 +15,7 @@ import {DateFieldState, DateSegment} from '@react-stately/datepicker';
 import {DatePickerBase, DateValue} from '@react-types/datepicker';
 import React, {ReactNode, useRef} from 'react';
 import styles from './styles.css';
-import {useDateSegment} from '@react-aria/datepicker';
+import {useDateSegment} from '@react-aria-nutrient/datepicker';
 
 interface DatePickerSegmentProps extends DatePickerBase<DateValue> {
   segment: DateSegment,

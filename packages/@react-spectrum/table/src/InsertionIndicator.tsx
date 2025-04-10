@@ -15,7 +15,7 @@ import {FocusableElement, ItemDropTarget} from '@react-types/shared';
 import React, {DOMAttributes, HTMLAttributes, ReactNode, useRef} from 'react';
 import styles from './table.css';
 import {useTableContext} from './TableViewBase';
-import {useVisuallyHidden} from '@react-aria/visually-hidden';
+import {useVisuallyHidden} from '@react-aria-nutrient/visually-hidden';
 
 interface InsertionIndicatorProps {
   target: ItemDropTarget,

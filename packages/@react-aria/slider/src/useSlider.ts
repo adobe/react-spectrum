@@ -11,14 +11,14 @@
  */
 
 import {AriaSliderProps} from '@react-types/slider';
-import {clamp, mergeProps, useGlobalListeners} from '@react-aria/utils';
+import {clamp, mergeProps, useGlobalListeners} from '@react-aria-nutrient/utils';
 import {DOMAttributes, RefObject} from '@react-types/shared';
 import {getSliderThumbId, sliderData} from './utils';
 import React, {LabelHTMLAttributes, OutputHTMLAttributes, useRef} from 'react';
-import {setInteractionModality, useMove} from '@react-aria/interactions';
+import {setInteractionModality, useMove} from '@react-aria-nutrient/interactions';
 import {SliderState} from '@react-stately/slider';
-import {useLabel} from '@react-aria/label';
-import {useLocale} from '@react-aria/i18n';
+import {useLabel} from '@react-aria-nutrient/label';
+import {useLocale} from '@react-aria-nutrient/i18n';
 
 export interface SliderAria {
   /** Props for the label element. */

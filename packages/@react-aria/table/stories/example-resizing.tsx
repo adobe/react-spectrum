@@ -22,16 +22,16 @@ import {
   useTableRowGroup,
   useTableSelectAllCheckbox,
   useTableSelectionCheckbox
-} from '@react-aria/table';
+} from '@react-aria-nutrient/table';
 import {classNames} from '@react-spectrum/utils';
-import {FocusRing, useFocusRing} from '@react-aria/focus';
-import {mergeProps, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
+import {FocusRing, useFocusRing} from '@react-aria-nutrient/focus';
+import {mergeProps, useLayoutEffect, useResizeObserver} from '@react-aria-nutrient/utils';
 import React, {useCallback, useMemo, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
-import {useCheckbox} from '@react-aria/checkbox';
+import {useCheckbox} from '@react-aria-nutrient/checkbox';
 import {useTableColumnResizeState, useTableState} from '@react-stately/table';
 import {useToggleState} from '@react-stately/toggle';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
+import {VisuallyHidden} from '@react-aria-nutrient/visually-hidden';
 
 export function Table(props) {
   let [showSelectionCheckboxes, setShowSelectionCheckboxes] = useState(props.selectionStyle !== 'highlight');

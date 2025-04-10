@@ -11,7 +11,7 @@
  */
 
 import {DOMProps, ValidationResult} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
 import {RenderProps, useRenderProps} from './utils';
 import {Text} from './Text';

@@ -12,8 +12,8 @@
 
 import {AriaLabelingProps, HoverEvents} from '@react-types/shared';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {DropOptions, mergeProps, useButton, useClipboard, useDrop, useFocusRing, useHover, useLocalizedStringFormatter, VisuallyHidden} from 'react-aria';
-import {filterDOMProps, isFocusable, useLabels, useObjectRef, useSlotId} from '@react-aria/utils';
+import {DropOptions, mergeProps, useButton, useClipboard, useDrop, useFocusRing, useHover, useLocalizedStringFormatter, VisuallyHidden} from '@react-aria-nutrient/react-aria';
+import {filterDOMProps, isFocusable, useLabels, useObjectRef, useSlotId} from '@react-aria-nutrient/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';

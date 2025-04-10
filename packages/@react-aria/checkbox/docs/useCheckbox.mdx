@@ -10,13 +10,13 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-aria/checkbox';
-import hiddenDocs from 'docs:@react-aria/visually-hidden';
-import focusDocs from 'docs:@react-aria/focus';
+import docs from 'docs:@react-aria-nutrient/checkbox';
+import hiddenDocs from 'docs:@react-aria-nutrient/visually-hidden';
+import focusDocs from 'docs:@react-aria-nutrient/focus';
 import statelyDocs from 'docs:@react-stately/toggle';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
-import packageData from '@react-aria/checkbox/package.json';
+import packageData from '@react-aria-nutrient/checkbox/package.json';
 import Anatomy from './checkbox-anatomy.svg';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import tailwindPreview from 'url:./tailwind-example.png';
@@ -78,7 +78,7 @@ technology.
 ## Example
 
 ```tsx example
-import {useCheckbox} from '@react-aria/checkbox';
+import {useCheckbox} from '@react-aria-nutrient/checkbox';
 import {useToggleState} from '@react-stately/toggle';
 
 function Checkbox(props) {
@@ -102,20 +102,20 @@ function Checkbox(props) {
 
 To build a custom styled checkbox, you can make the native input element visually hidden.
 This is possible using the &lt;<TypeLink links={hiddenDocs.links} type={hiddenDocs.exports.VisuallyHidden} />&gt;
-utility component from `@react-aria/visually-hidden`. It is still in the DOM and accessible to
+utility component from `@react-aria-nutrient/visually-hidden`. It is still in the DOM and accessible to
 assistive technology, but invisible. This example uses SVG to build the visual checkbox,
 which is hidden from screen readers with `aria-hidden`.
 
 For keyboard accessibility, a focus ring is important to indicate which element has keyboard focus.
 This is implemented with the <TypeLink links={focusDocs.links} type={focusDocs.exports.useFocusRing} />
-hook from `@react-aria/focus`. When `isFocusVisible` is true, an extra SVG element is
+hook from `@react-aria-nutrient/focus`. When `isFocusVisible` is true, an extra SVG element is
 rendered to indicate focus. The focus ring is only visible when the user is interacting
 with a keyboard, not with a mouse or touch.
 
 ```tsx example export=true
-import {VisuallyHidden} from '@react-aria/visually-hidden';
-import {useFocusRing} from '@react-aria/focus';
-import {mergeProps} from '@react-aria/utils';
+import {VisuallyHidden} from '@react-aria-nutrient/visually-hidden';
+import {useFocusRing} from '@react-aria-nutrient/focus';
+import {mergeProps} from '@react-aria-nutrient/utils';
 
 function Checkbox(props) {
   let state = useToggleState(props);

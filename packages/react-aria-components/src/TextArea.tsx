@@ -1,5 +1,5 @@
 import {ContextValue, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {HoverEvents, mergeProps, useFocusRing, useHover} from 'react-aria';
+import {HoverEvents, mergeProps, useFocusRing, useHover} from '@react-aria-nutrient/react-aria';
 import {InputRenderProps} from './Input';
 import React, {createContext, ForwardedRef, forwardRef, TextareaHTMLAttributes} from 'react';
 

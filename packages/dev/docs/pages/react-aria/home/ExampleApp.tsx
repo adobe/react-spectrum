@@ -32,7 +32,7 @@ import {Tag, TagGroup} from 'tailwind-starter/TagGroup';
 import {TextField} from 'tailwind-starter/TextField';
 import {Tooltip} from 'tailwind-starter/Tooltip';
 import {tv} from 'tailwind-variants';
-import {useCollator, useFilter, VisuallyHidden} from 'react-aria';
+import {useCollator, useFilter, VisuallyHidden} from '@react-aria-nutrient/react-aria';
 import {useMediaQuery} from '@react-spectrum/utils';
 
 type Plant = typeof plants[0] & {isFavorite: boolean};

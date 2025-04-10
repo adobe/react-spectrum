@@ -11,7 +11,7 @@
  */
 
 import {DOMAttributes, RefObject} from '@react-types/shared';
-import {GridRowProps} from '@react-aria/grid';
+import {GridRowProps} from '@react-aria-nutrient/grid';
 import {tableNestedRows} from '@react-stately/flags';
 import {TableState} from '@react-stately/table';
 

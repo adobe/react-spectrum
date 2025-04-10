@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {ClearPressResponder} from '@react-aria/interactions';
-import {FocusScope} from '@react-aria/focus';
+import {ClearPressResponder} from '@react-aria-nutrient/interactions';
+import {FocusScope} from '@react-aria-nutrient/focus';
 import React, {ReactNode, useContext, useMemo, useState} from 'react';
 import ReactDOM from 'react-dom';
-import {useIsSSR} from '@react-aria/ssr';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useIsSSR} from '@react-aria-nutrient/ssr';
+import {useLayoutEffect} from '@react-aria-nutrient/utils';
 import {useUNSTABLE_PortalContext} from './PortalProvider';
 
 export interface OverlayProps {

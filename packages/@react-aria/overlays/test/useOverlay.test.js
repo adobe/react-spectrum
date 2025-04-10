@@ -11,7 +11,7 @@
  */
 
 import {fireEvent, installMouseEvent, installPointerEvent, render} from '@react-spectrum/test-utils-internal';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import React, {useRef} from 'react';
 import {useOverlay} from '../';
 

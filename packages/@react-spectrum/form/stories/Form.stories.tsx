@@ -14,7 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {CalendarDate} from '@internationalized/date';
-import {chain} from '@react-aria/utils';
+import {chain} from '@react-aria-nutrient/utils';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
 import {ColorField} from '@react-spectrum/color';
 import {ComboBox} from '@react-spectrum/combobox';

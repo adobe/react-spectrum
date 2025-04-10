@@ -20,7 +20,7 @@ import {Provider} from '@react-spectrum/provider';
 import React, {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {Example as StorybookExample} from '../stories/FocusScope.stories';
-import {useEvent} from '@react-aria/utils';
+import {useEvent} from '@react-aria-nutrient/utils';
 import userEvent from '@testing-library/user-event';
 
 describe('FocusScope', function () {

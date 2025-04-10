@@ -18,7 +18,7 @@ The easiest way to start building a component library with React Aria is by foll
 Here is a very basic example of using React Aria.
 
 ```jsx
-import {useButton} from '@react-aria/button';
+import {useButton} from '@react-aria-nutrient/button';
 
 function Button(props) {
   let ref = React.useRef();

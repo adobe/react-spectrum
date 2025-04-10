@@ -2,12 +2,12 @@ import {AriaLabelingProps, HoverEvents, ValueBase} from '@react-types/shared';
 import {Color, parseColor, useColorPickerState} from 'react-stately';
 import {ColorSwatchContext} from './ColorSwatch';
 import {composeRenderProps, ContextValue, RenderProps, StyleRenderProps, useContextProps} from './utils';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListBox, ListBoxItem, ListBoxItemRenderProps, ListBoxRenderProps} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useEffect, useMemo} from 'react';
-import {useLocale, useLocalizedStringFormatter} from 'react-aria';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria-nutrient/react-aria';
 
 export interface ColorSwatchPickerRenderProps extends Omit<ListBoxRenderProps, 'isDropTarget'> {}
 export interface ColorSwatchPickerProps extends ValueBase<string | Color, Color>, AriaLabelingProps, StyleRenderProps<ColorSwatchPickerRenderProps> {

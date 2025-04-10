@@ -19,7 +19,7 @@ import {
   useStyleProps
 } from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps, useLayoutEffect, useValueEffect} from '@react-aria/utils';
+import {filterDOMProps, useLayoutEffect, useValueEffect} from '@react-aria-nutrient/utils';
 import {Provider, useProvider, useProviderProps} from '@react-spectrum/provider';
 import React, {useCallback, useRef} from 'react';
 import {SpectrumButtonGroupProps} from '@react-types/buttongroup';

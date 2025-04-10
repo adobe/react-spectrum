@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaGridListOptions, AriaGridListProps, GridListProps, useGridList} from '@react-aria/gridlist';
+import {AriaGridListOptions, AriaGridListProps, GridListProps, useGridList} from '@react-aria-nutrient/gridlist';
 import {
   DOMAttributes,
   KeyboardDelegate,

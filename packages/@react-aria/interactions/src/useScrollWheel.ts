@@ -12,7 +12,7 @@
 
 import {RefObject, ScrollEvents} from '@react-types/shared';
 import {useCallback} from 'react';
-import {useEvent} from '@react-aria/utils';
+import {useEvent} from '@react-aria-nutrient/utils';
 
 export interface ScrollWheelProps extends ScrollEvents {
   /** Whether the scroll listener should be disabled. */

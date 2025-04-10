@@ -18,7 +18,7 @@ import {Image} from '@react-spectrum/image';
 import {Meta} from '@storybook/react';
 import React, {useMemo} from 'react';
 import {SpectrumCardViewProps} from '@react-types/card';
-import {useCollator} from '@react-aria/i18n';
+import {useCollator} from '@react-aria-nutrient/i18n';
 
 const meta: Meta<SpectrumCardViewProps<object>> = {
   title: 'CardView'

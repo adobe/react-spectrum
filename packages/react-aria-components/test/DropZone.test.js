@@ -12,8 +12,8 @@
 
 import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button, DropZone, DropZoneContext, FileTrigger, Link, Text} from '../';
-import {ClipboardEvent, DataTransfer, DataTransferItem, DragEvent} from '@react-aria/dnd/test/mocks';
-import {Draggable} from '@react-aria/dnd/test/examples';
+import {ClipboardEvent, DataTransfer, DataTransferItem, DragEvent} from '@react-aria-nutrient/dnd/test/mocks';
+import {Draggable} from '@react-aria-nutrient/dnd/test/examples';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 

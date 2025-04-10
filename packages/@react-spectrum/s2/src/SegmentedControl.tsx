@@ -20,7 +20,7 @@ import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
 import {Text, TextContext} from './Content';
 import {useDOMRef, useFocusableRef, useMediaQuery} from '@react-spectrum/utils';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useLayoutEffect} from '@react-aria-nutrient/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface SegmentedControlProps extends AriaLabelingProps, StyleProps, SlotProps {

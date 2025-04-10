@@ -1,11 +1,11 @@
 import {AriaSliderProps} from '@react-types/slider';
-import {FocusRing} from '@react-aria/focus';
+import {FocusRing} from '@react-aria-nutrient/focus';
 import React from 'react';
 import styles from './story-slider.css';
-import {useNumberFormatter} from '@react-aria/i18n';
-import {useSlider, useSliderThumb} from '@react-aria/slider';
+import {useNumberFormatter} from '@react-aria-nutrient/i18n';
+import {useSlider, useSliderThumb} from '@react-aria-nutrient/slider';
 import {useSliderState} from '@react-stately/slider';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
+import {VisuallyHidden} from '@react-aria-nutrient/visually-hidden';
 
 
 interface StoryRangeSliderProps extends AriaSliderProps {

@@ -14,12 +14,12 @@
 import {act, createShadowRoot, render} from '@react-spectrum/test-utils-internal';
 import {focusSafely} from '../';
 import React from 'react';
-import * as ReactAriaUtils from '@react-aria/utils';
+import * as ReactAriaUtils from '@react-aria-nutrient/utils';
 import ReactDOM from 'react-dom';
-import {setInteractionModality} from '@react-aria/interactions';
+import {setInteractionModality} from '@react-aria-nutrient/interactions';
 
-jest.mock('@react-aria/utils', () => {
-  let original = jest.requireActual('@react-aria/utils');
+jest.mock('@react-aria-nutrient/utils', () => {
+  let original = jest.requireActual('@react-aria-nutrient/utils');
   return {
     ...original,
     focusWithoutScrolling: jest.fn()

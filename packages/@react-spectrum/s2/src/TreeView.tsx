@@ -33,12 +33,12 @@ import {colorMix, focusRing, fontRelative, lightDark, style} from '../style' wit
 import {DOMRef, Key} from '@react-types/shared';
 import {getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
-import {isAndroid} from '@react-aria/utils';
+import {isAndroid} from '@react-aria-nutrient/utils';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import React, {createContext, forwardRef, JSXElementConstructor, ReactElement, ReactNode, useContext, useRef} from 'react';
 import {TextContext} from './Content';
 import {useDOMRef} from '@react-spectrum/utils';
-import {useLocale} from 'react-aria';
+import {useLocale} from '@react-aria-nutrient/react-aria';
 import {useScale} from './utils';
 
 interface S2TreeProps {

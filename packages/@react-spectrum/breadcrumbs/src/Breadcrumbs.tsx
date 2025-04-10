@@ -18,8 +18,8 @@ import {Menu, MenuTrigger} from '@react-spectrum/menu';
 import React, {ReactElement, useCallback, useRef} from 'react';
 import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
-import {useBreadcrumbs} from '@react-aria/breadcrumbs';
-import {useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
+import {useBreadcrumbs} from '@react-aria-nutrient/breadcrumbs';
+import {useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria-nutrient/utils';
 import {useProviderProps} from '@react-spectrum/provider';
 
 const MIN_VISIBLE_ITEMS = 1;

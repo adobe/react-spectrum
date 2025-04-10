@@ -14,7 +14,7 @@ import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/sha
 import {CenterBaseline} from './CenterBaseline';
 import {ContextValue, SlotProps} from 'react-aria-components';
 import {createContext, forwardRef, ReactNode} from 'react';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {style} from '../style' with {type: 'macro'};
 import {Text} from './Content';

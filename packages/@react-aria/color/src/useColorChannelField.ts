@@ -12,8 +12,8 @@
 
 import {AriaLabelingProps, RefObject} from '@react-types/shared';
 import {ColorChannelFieldProps, ColorChannelFieldState} from '@react-stately/color';
-import {NumberFieldAria, useNumberField} from '@react-aria/numberfield';
-import {useLocale} from '@react-aria/i18n';
+import {NumberFieldAria, useNumberField} from '@react-aria-nutrient/numberfield';
+import {useLocale} from '@react-aria-nutrient/i18n';
 
 export interface AriaColorChannelFieldProps extends ColorChannelFieldProps, AriaLabelingProps {}
 export interface ColorChannelFieldAria extends NumberFieldAria {}

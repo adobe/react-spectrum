@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaToastProps, AriaToastRegionProps, mergeProps, useFocusRing, useToast, useToastRegion} from 'react-aria';
+import {AriaToastProps, AriaToastRegionProps, mergeProps, useFocusRing, useToast, useToastRegion} from '@react-aria-nutrient/react-aria';
 import {ButtonContext} from './Button';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {createPortal} from 'react-dom';
@@ -18,8 +18,8 @@ import {forwardRefType} from '@react-types/shared';
 import {QueuedToast, ToastQueue, ToastState, useToastQueue} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, useContext} from 'react';
 import {TextContext} from './Text';
-import {useIsSSR} from '@react-aria/ssr';
-import {useObjectRef} from '@react-aria/utils';
+import {useIsSSR} from '@react-aria-nutrient/ssr';
+import {useObjectRef} from '@react-aria-nutrient/utils';
 
 const ToastStateContext = createContext<ToastState<any> | null>(null);
 

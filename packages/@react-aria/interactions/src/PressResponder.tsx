@@ -11,7 +11,7 @@
  */
 
 import {FocusableElement} from '@react-types/shared';
-import {mergeProps, useObjectRef, useSyncRef} from '@react-aria/utils';
+import {mergeProps, useObjectRef, useSyncRef} from '@react-aria-nutrient/utils';
 import {PressProps} from './usePress';
 import {PressResponderContext} from './context';
 import React, {ForwardedRef, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';

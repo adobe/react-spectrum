@@ -1,7 +1,7 @@
-import {AriaColorAreaProps, useColorArea} from 'react-aria';
+import {AriaColorAreaProps, useColorArea} from '@react-aria-nutrient/react-aria';
 import {ColorAreaContext} from './RSPContexts';
 import {ColorAreaState, useColorAreaState} from 'react-stately';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 import {InternalColorThumbContext} from './ColorThumb';
 import {Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';

@@ -13,7 +13,7 @@
 import {Key, RefObject} from '@react-types/shared';
 import {LayoutInfo, Size} from '@react-stately/virtualizer';
 import {useCallback} from 'react';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useLayoutEffect} from '@react-aria-nutrient/utils';
 
 interface IVirtualizer {
   updateItemSize(key: Key, size: Size): void

@@ -13,9 +13,9 @@
 import {AriaTabPanelProps} from '@react-types/tabs';
 import {DOMAttributes, RefObject} from '@react-types/shared';
 import {generateId} from './utils';
-import {mergeProps, useLabels} from '@react-aria/utils';
+import {mergeProps, useLabels} from '@react-aria-nutrient/utils';
 import {TabListState} from '@react-stately/tabs';
-import {useHasTabbableChild} from '@react-aria/focus';
+import {useHasTabbableChild} from '@react-aria-nutrient/focus';
 
 export interface TabPanelAria {
   /** Props for the tab panel element. */

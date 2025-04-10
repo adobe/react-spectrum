@@ -10,12 +10,12 @@ governing permissions and limitations under the License. */}
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-aria/dnd';
+import docs from 'docs:@react-aria-nutrient/dnd';
 import statelyDocs from 'docs:@react-stately/dnd';
 import sharedDocs from 'docs:@react-types/shared';
-import selectionDocs from 'docs:@react-aria/selection';
+import selectionDocs from 'docs:@react-aria-nutrient/selection';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
-import packageData from '@react-aria/dnd/package.json';
+import packageData from '@react-aria-nutrient/dnd/package.json';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Keyboard} from '@react-spectrum/text';
 
@@ -56,13 +56,13 @@ The <TypeLink links={docs.links} type={docs.exports.useDraggableCollection} /> h
 This example renders a ListBox using the [useListBox](useListBox.html) hook, and adds support for dragging items. The highlighted code sections below show the main additions for drag and drop compared with a normal listbox.
 
 ```tsx example export=true
-import {useListBox, useOption} from '@react-aria/listbox';
+import {useListBox, useOption} from '@react-aria-nutrient/listbox';
 import {useListState} from '@react-stately/list';
 import {Item} from '@react-stately/collections';
-import {useFocusRing} from '@react-aria/focus';
-import {mergeProps} from '@react-aria/utils';
+import {useFocusRing} from '@react-aria-nutrient/focus';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import {useDraggableCollectionState} from '@react-stately/dnd';
-import {useDraggableCollection, useDraggableItem} from '@react-aria/dnd';
+import {useDraggableCollection, useDraggableItem} from '@react-aria-nutrient/dnd';
 
 function ListBox(props) {
   // Setup listbox as normal. See the useListBox docs for more details.
@@ -195,9 +195,9 @@ The `DropTarget` component used above is defined below. See [useDrop](useDrop.ht
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example render=false export=true
-import type {TextDropItem} from '@react-aria/dnd';
-import {useDrop} from '@react-aria/dnd';
-import {useButton} from '@react-aria/button';
+import type {TextDropItem} from '@react-aria-nutrient/dnd';
+import {useDrop} from '@react-aria-nutrient/dnd';
+import {useButton} from '@react-aria-nutrient/button';
 
 function DropTarget() {
   let [dropped, setDropped] = React.useState(null);
@@ -306,7 +306,7 @@ This example renders a custom drag preview which shows the number of items being
 
 ```tsx example
 ///- begin highlight -///
-import {DragPreview} from '@react-aria/dnd';
+import {DragPreview} from '@react-aria-nutrient/dnd';
 ///- end highlight -///
 
 function ListBox(props) {
@@ -469,8 +469,8 @@ Drag and drop can be combined in the same collection component to allow reorderi
 
 ```tsx example export=true render=false
 import {useDroppableCollectionState} from '@react-stately/dnd';
-import {useDroppableCollection, useDropIndicator, ListDropTargetDelegate} from '@react-aria/dnd';
-import {ListKeyboardDelegate} from '@react-aria/selection';
+import {useDroppableCollection, useDropIndicator, ListDropTargetDelegate} from '@react-aria-nutrient/dnd';
+import {ListKeyboardDelegate} from '@react-aria-nutrient/selection';
 
 function ReorderableListBox(props) {
   ///- begin collapse -///

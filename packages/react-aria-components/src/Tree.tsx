@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTreeItemOptions, AriaTreeProps, FocusScope, mergeProps, useFocusRing,  useGridListSelectionCheckbox, useHover, useTree, useTreeItem} from 'react-aria';
+import {AriaTreeItemOptions, AriaTreeProps, FocusScope, mergeProps, useFocusRing,  useGridListSelectionCheckbox, useHover, useTree, useTreeItem} from '@react-aria-nutrient/react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
-import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
+import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria-nutrient/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, usePersistedKeys} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, Expandable, forwardRefType, HoverEvents, Key, LinkDOMProps, MultipleSelection, RefObject} from '@react-types/shared';
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, useObjectRef} from '@react-aria-nutrient/utils';
 import {Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';

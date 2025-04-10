@@ -13,19 +13,19 @@
 import {AriaButtonProps} from '@react-types/button';
 import {AriaDatePickerProps, AriaDateRangePickerProps, DateValue} from '@react-types/datepicker';
 import {AriaDialogProps} from '@react-types/dialog';
-import {createFocusManager} from '@react-aria/focus';
+import {createFocusManager} from '@react-aria-nutrient/focus';
 import {DateRange, RangeCalendarProps} from '@react-types/calendar';
 import {DateRangePickerState} from '@react-stately/datepicker';
 import {DEFAULT_VALIDATION_RESULT, mergeValidation, privateValidationStateProp} from '@react-stately/form';
 import {DOMAttributes, GroupDOMAttributes, KeyboardEvent, RefObject, ValidationResult} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria-nutrient/utils';
 import {focusManagerSymbol, roleSymbol} from './useDateField';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useDatePickerGroup} from './useDatePickerGroup';
-import {useField} from '@react-aria/label';
-import {useFocusWithin} from '@react-aria/interactions';
-import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useField} from '@react-aria-nutrient/label';
+import {useFocusWithin} from '@react-aria-nutrient/interactions';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useMemo, useRef} from 'react';
 
 export interface DateRangePickerAria extends ValidationResult {
@@ -55,7 +55,7 @@ export interface DateRangePickerAria extends ValidationResult {
  * users to enter or select a date and time range.
  */
 export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePickerProps<T>, state: DateRangePickerState, ref: RefObject<Element | null>): DateRangePickerAria {
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/datepicker');
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria-nutrient/datepicker');
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,

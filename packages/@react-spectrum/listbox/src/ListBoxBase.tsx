@@ -11,9 +11,9 @@
  */
 
 import {AriaLabelingProps, DOMProps, FocusStrategy, Node, RefObject, StyleProps} from '@react-types/shared';
-import {AriaListBoxOptions, useListBox} from '@react-aria/listbox';
+import {AriaListBoxOptions, useListBox} from '@react-aria-nutrient/listbox';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
-import {FocusScope} from '@react-aria/focus';
+import {FocusScope} from '@react-aria-nutrient/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListBoxContext} from './ListBoxContext';
@@ -21,14 +21,14 @@ import {ListBoxLayout} from './ListBoxLayout';
 import {ListBoxOption} from './ListBoxOption';
 import {ListBoxSection} from './ListBoxSection';
 import {ListState} from '@react-stately/list';
-import {mergeProps, useObjectRef} from '@react-aria/utils';
+import {mergeProps, useObjectRef} from '@react-aria-nutrient/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ForwardedRef, HTMLAttributes, ReactElement, ReactNode, useCallback, useContext, useMemo} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria-nutrient/i18n';
 import {useProvider} from '@react-spectrum/provider';
-import {Virtualizer, VirtualizerItem} from '@react-aria/virtualizer';
+import {Virtualizer, VirtualizerItem} from '@react-aria-nutrient/virtualizer';
 
 interface ListBoxBaseProps<T> extends AriaListBoxOptions<T>, DOMProps, AriaLabelingProps, StyleProps {
   layout: ListBoxLayout<T>,

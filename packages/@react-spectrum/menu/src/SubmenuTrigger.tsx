@@ -13,13 +13,13 @@
 import {classNames, useIsMobileDevice} from '@react-spectrum/utils';
 import {Key} from '@react-types/shared';
 import {MenuContext, SubmenuTriggerContext, useMenuStateContext} from './context';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria-nutrient/utils';
 import {Popover} from '@react-spectrum/overlays';
 import React, {type JSX, ReactElement, useRef} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {useLocale} from '@react-aria/i18n';
-import {useSubmenuTrigger} from '@react-aria/menu';
+import {useLocale} from '@react-aria-nutrient/i18n';
+import {useSubmenuTrigger} from '@react-aria-nutrient/menu';
 import {useSubmenuTriggerState} from '@react-stately/menu';
 
 interface SubmenuTriggerProps {

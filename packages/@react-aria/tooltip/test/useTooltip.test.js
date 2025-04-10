@@ -12,7 +12,7 @@
 
 import {act, fireEvent, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
-import {useInteractionModality} from '@react-aria/interactions';
+import {useInteractionModality} from '@react-aria-nutrient/interactions';
 import {useTooltip, useTooltipTrigger} from '../';
 import {useTooltipTriggerState} from '@react-stately/tooltip';
 

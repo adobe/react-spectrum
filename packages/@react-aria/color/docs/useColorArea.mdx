@@ -11,10 +11,10 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
-import docs from 'docs:@react-aria/color';
+import docs from 'docs:@react-aria-nutrient/color';
 import statelyDocs from 'docs:@react-stately/color';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
-import packageData from '@react-aria/color/package.json';
+import packageData from '@react-aria-nutrient/color/package.json';
 import Anatomy from './ColorAreaAnatomy.svg';
 
 ---
@@ -93,9 +93,9 @@ from view. The thumb also uses the
 [useFocusRing](useFocusRing.html) hook to grow in size when it is keyboard focused (try tabbing to it).
 
 ```tsx example export=true
-import {useColorArea} from '@react-aria/color';
+import {useColorArea} from '@react-aria-nutrient/color';
 import {useColorAreaState} from '@react-stately/color';
-import {useFocusRing} from '@react-aria/focus';
+import {useFocusRing} from '@react-aria-nutrient/focus';
 
 const SIZE = 192;
 const FOCUSED_THUMB_SIZE = 28;
@@ -284,11 +284,11 @@ It is built using the [useColorSlider](useColorSlider.html) hook, and can be sha
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-  import {useColorSlider} from '@react-aria/color';
+  import {useColorSlider} from '@react-aria-nutrient/color';
   import {useColorSliderState} from '@react-stately/color';
-  import {VisuallyHidden} from '@react-aria/visually-hidden';
-  import {useLocale} from '@react-aria/i18n';
-  import {useFocusRing} from '@react-aria/focus';
+  import {VisuallyHidden} from '@react-aria-nutrient/visually-hidden';
+  import {useLocale} from '@react-aria-nutrient/i18n';
+  import {useFocusRing} from '@react-aria-nutrient/focus';
 
   function ColorSlider(props) {
     let {locale} = useLocale();
@@ -430,7 +430,7 @@ The `ColorSwatch` component used in the example above implements an image previe
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
-import {useColorSwatch} from '@react-aria/color';
+import {useColorSwatch} from '@react-aria-nutrient/color';
 
 function ColorSwatch(props) {
   let {colorSwatchProps, color} = useColorSwatch(props);

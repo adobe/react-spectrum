@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {getScrollParent, isIOS, isScrollable, isWebKit} from '@react-aria/utils';
+import {getScrollParent, isIOS, isScrollable, isWebKit} from '@react-aria-nutrient/utils';
 import {RefObject} from '@react-types/shared';
 import {useCallback, useEffect, useRef} from 'react';
 

@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaToggleButtonGroupProps, useToggleButtonGroup} from 'react-aria';
+import {AriaToggleButtonGroupProps, useToggleButtonGroup} from '@react-aria-nutrient/react-aria';
 import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {forwardRefType} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';

@@ -15,7 +15,7 @@ import {ActionButton, Button} from '@react-spectrum/button';
 import {AlertDialog, Dialog, DialogTrigger} from '../';
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
-import {chain} from '@react-aria/utils';
+import {chain} from '@react-aria-nutrient/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Content, Footer, Header, View} from '@react-spectrum/view';
 import {Divider} from '@react-spectrum/divider';

@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, DOMProps, IconColorValue, StyleProps} from '@react-types/shared';
 import {baseStyleProps, classNames, StyleHandlers, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria-nutrient/utils';
 import {ProviderContext, useProvider} from '@react-spectrum/provider';
 import React, {ReactElement, ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';

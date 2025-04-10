@@ -36,11 +36,11 @@ import {
 import * as DragManager from './DragManager';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {HTMLAttributes, useCallback, useEffect, useRef} from 'react';
-import {mergeProps, useId, useLayoutEffect} from '@react-aria/utils';
-import {setInteractionModality} from '@react-aria/interactions';
+import {mergeProps, useId, useLayoutEffect} from '@react-aria-nutrient/utils';
+import {setInteractionModality} from '@react-aria-nutrient/interactions';
 import {useAutoScroll} from './useAutoScroll';
 import {useDrop} from './useDrop';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale} from '@react-aria-nutrient/i18n';
 
 export interface DroppableCollectionOptions extends DroppableCollectionProps {
   /** A delegate object that implements behavior for keyboard focus movement. */

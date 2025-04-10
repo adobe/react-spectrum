@@ -1,4 +1,4 @@
-# @react-aria/parcel-resolver-optimize-locales
+# @react-aria-nutrient/parcel-resolver-optimize-locales
 
 A Parcel resolver plugin to optimize React Aria to only include translated strings for locales that your app supports.
 
@@ -9,7 +9,7 @@ Add the following to your `.parcelrc`:
 ```json
 {
   "extends": "@parcel/config-default",
-  "resolvers": ["@react-aria/parcel-resolver-optimize-locales", "..."]
+  "resolvers": ["@react-aria-nutrient/parcel-resolver-optimize-locales", "..."]
 }
 ```
 

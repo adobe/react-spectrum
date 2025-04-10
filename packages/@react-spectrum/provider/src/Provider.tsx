@@ -20,9 +20,9 @@ import {
 import clsx from 'clsx';
 import {Context} from './context';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps, RouterProvider} from '@react-aria/utils';
-import {I18nProvider, useLocale} from '@react-aria/i18n';
-import {ModalProvider, useModalProvider} from '@react-aria/overlays';
+import {filterDOMProps, RouterProvider} from '@react-aria-nutrient/utils';
+import {I18nProvider, useLocale} from '@react-aria-nutrient/i18n';
+import {ModalProvider, useModalProvider} from '@react-aria-nutrient/overlays';
 import {ProviderContext, ProviderProps} from '@react-types/provider';
 import React, {useContext, useEffect, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/page/vars.css';
