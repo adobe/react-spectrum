@@ -45,6 +45,8 @@ export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | n
   // want to trigger another loadMore until the collection has updated as a result of the load.
   // TODO: If the load doesn't end up updating the collection even after completion, this flag could get stuck as true. However, not tracking
   // this means we could end up calling onLoadMore multiple times if isLoading changes but the collection takes time to update
+  // However, this might be problematic if we hit a case where the next load doesn't return any items because there are no more items to load?
+  // Also can I remove this if useLoadMore is in the LoadingSentinel?
   let collectionAwaitingUpdate = useRef(collection && isLoading);
   let sentinelObserver = useRef<IntersectionObserver>(null);
 

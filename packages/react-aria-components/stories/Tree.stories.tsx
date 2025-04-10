@@ -16,7 +16,8 @@ import {classNames} from '@react-spectrum/utils';
 import {MyMenuItem} from './utils';
 import React, {ReactNode} from 'react';
 import styles from '../example/index.css';
-import {UNSTABLE_TreeLoadingIndicator} from '../src/Tree';
+import {UNSTABLE_TreeLoadingSentinel} from '../src/Tree';
+import { useAsyncList } from 'react-stately';
 
 export default {
   title: 'React Aria Components'
@@ -201,9 +202,9 @@ let rows = [
   ]}
 ];
 
-const MyTreeLoader = () => {
+const MyTreeLoader = (props) => {
   return (
-    <UNSTABLE_TreeLoadingIndicator>
+    <UNSTABLE_TreeLoadingSentinel {...props}>
       {({level}) => {
         let message = `Level ${level} loading spinner`;
         if (level === 1) {
@@ -215,7 +216,7 @@ const MyTreeLoader = () => {
           </span>
         );
       }}
-    </UNSTABLE_TreeLoadingIndicator>
+    </UNSTABLE_TreeLoadingSentinel>
   );
 };
 
@@ -278,11 +279,8 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
           )}
         </Collection>
       </TreeItem>
-      {/* TODO this would need to check if the parent was loading and then the user would insert this tree loader after last row of that section.
-        theoretically this would look like (loadingKeys.includes(parentKey) && props.id === last key of parent) &&....
-        both the parentKey of a given item as well as checking if the current tree item is the last item of said parent would need to be done by the user outside of this tree item?
-      */}
-      {props.isLoading && renderLoader?.(props.id) && <MyTreeLoader /> }
+      {/* TODO how would a dynamic tree handle rendering multiple loading sentinels that each have different onLoadMores?  */}
+      {renderLoader?.(props.id) && <MyTreeLoader isLoading={props.isLoading} /> }
     </>
   );
 };
@@ -373,7 +371,7 @@ function LoadingStoryDepOnCollection(args) {
           </DynamicTreeItem>
         )}
       </Collection>
-      {args.isLoading && <MyTreeLoader />}
+      <MyTreeLoader isLoading={args.isLoading} />
     </Tree>
   );
 }
@@ -477,6 +475,7 @@ const DynamicTreeItemWithButtonLoader = (props: DynamicTreeItemProps) => {
           )}
         </Collection>
       </TreeItem>
+      {renderLoader?.(props.id) && <UNSTABLE_TreeLoadingSentinel isLoading={isLoading} />}
     </>
   );
 };
@@ -517,3 +516,43 @@ export const VirtualizedTree = {
   ...TreeExampleDynamic,
   render: VirtualizedTreeRender
 };
+
+
+function AsyncTree(args) {
+  // This returns the initial tree, and handles loading more items at the root level
+  // let tree = useAsyncList({});
+
+  // then we have separate useAsyncList calls for each level that might have more items to load?
+  // it would need to be separate so we can have separate, individual loading states
+  // each useAsyncList would then need to update the original tree. I guess that would be in a useEffect or in the load itself
+
+  // The problem is how to pass the proper LoadingSentinel to its respective level with its unique isLoading and onLoadMore when using dynamic renderer?
+  // Perhaps just a wrapper function that takes the parent id of the loader and then returns the specific isLoading/onLoadMore from a map or something?
+  // However, what about the collection that we need to provide to useLoadMore? That collection would be equal to the entire collection but we need to watch for updates
+  // to just the subsection that is being loaded in case there are multiple loading calls happening at the same time... Maybe we don't need the collection reference anymore
+  // since useLoadMore is being called in the collection element rather than the top?
+
+  return (
+    // TODO do we still need dependencies array? dependencies={[args.isLoading]}
+    <Tree {...args} items={rows} className={styles.tree} aria-label="test async dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+      {(item) => (
+        <DynamicTreeItem renderLoader={(id) => (id === 'reports' || id === 'project-2C')} isLoading={args.isLoading} id={item.id} childItems={item.childItems} textValue={item.name}>
+          {item.name}
+        </DynamicTreeItem>
+      )}
+    </Tree>
+  );
+}
+
+// - first try top level loader and see if it even will call load properly with the loader being in a realatively hidden element
+// - then try wil mocked loading (use star wars api) and see if I can refactor useLoadMore some more and get rid of some stuff
+// (apply to other components if so)
+// - then try multi loading
+
+// TODO make an async Tree (dynamic, skip static because it feels unlikely that people would do async)
+// the tree should have a loading sentinel at the bottom, one in an arbitrary level, and one in a collapsed section
+// Each loading sentinel should have its own onLoadMore and isLoading, but they should all modify a single tree (will need the useTreeData changes in https://github.com/adobe/react-spectrum/pull/7854/files perhaps)
+// First just tie a storybook action, but then add mock dating loading
+
+// test virtualized as well
+// first test if the loader is the document

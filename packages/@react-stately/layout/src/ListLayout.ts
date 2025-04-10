@@ -29,7 +29,7 @@ export interface ListLayoutOptions {
   headingHeight?: number,
   /** The estimated height of a section header, when the height is variable. */
   estimatedHeadingHeight?: number,
-  /** 
+  /**
    * The fixed height of a loader element in px. This loader is specifically for
    * "load more" elements rendered when loading more rows at the root level or inside nested row/sections.
    * @default 48
@@ -183,6 +183,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     return false;
   }
 
+  // TODO: see if this makes the loading sentinel always in the list
   protected isVisible(node: LayoutNode, rect: Rect): boolean {
     return node.layoutInfo.rect.intersects(rect) || node.layoutInfo.isSticky || node.layoutInfo.type === 'header' || this.virtualizer!.isPersistedKey(node.layoutInfo.key);
   }

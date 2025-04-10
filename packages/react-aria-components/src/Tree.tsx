@@ -11,13 +11,13 @@
  */
 
 import {AriaTreeItemOptions, AriaTreeProps, FocusScope, mergeProps, useFocusRing,  useGridListSelectionCheckbox, useHover, useTree, useTreeItem} from 'react-aria';
+import {AsyncLoadable, DisabledBehavior, Expandable, forwardRefType, HoverEvents, Key, LinkDOMProps, MultipleSelection, RefObject} from '@react-types/shared';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, DefaultCollectionRenderer, ItemRenderProps, usePersistedKeys} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {DisabledBehavior, Expandable, forwardRefType, HoverEvents, Key, LinkDOMProps, MultipleSelection, RefObject} from '@react-types/shared';
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, getScrollParent, inertValue, useLayoutEffect, useLoadMore, useObjectRef} from '@react-aria/utils';
 import {Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
@@ -463,7 +463,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
   );
 });
 
-export interface UNSTABLE_TreeLoadingIndicatorRenderProps {
+export interface UNSTABLE_TreeLoadingSentinelRenderProps {
   /**
    * What level the tree item has within the tree.
    * @selector [data-level]
@@ -471,10 +471,31 @@ export interface UNSTABLE_TreeLoadingIndicatorRenderProps {
   level: number
 }
 
-export interface TreeLoaderProps extends RenderProps<UNSTABLE_TreeLoadingIndicatorRenderProps>, StyleRenderProps<UNSTABLE_TreeLoadingIndicatorRenderProps> {}
+export interface TreeLoaderProps extends AsyncLoadable, RenderProps<UNSTABLE_TreeLoadingSentinelRenderProps>, StyleRenderProps<UNSTABLE_TreeLoadingSentinelRenderProps> {}
 
-export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', function TreeLoader<T extends object>(props: TreeLoaderProps,  ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const UNSTABLE_TreeLoadingSentinel = createLeafComponent('loader', function TreeLoader<T extends object>(props: TreeLoaderProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+  let {isVirtualized} = useContext(CollectionRendererContext);
   let state = useContext(TreeStateContext);
+  let {isLoading, onLoadMore, ...otherProps} = props;
+
+  let scrollRef = useRef<HTMLElement>(null);
+  let sentinelRef = useRef<HTMLDivElement>(null);
+  let memoedLoadMoreProps = useMemo(() => ({
+    isLoading,
+    onLoadMore,
+    collection: state?.collection,
+    sentinelRef
+  }), [isLoading, onLoadMore, state?.collection]);
+  // TODO: ref should be the nearest scroll parent, see if this works
+  // not sure if the scrollRef will be defined
+  useLoadMore(memoedLoadMoreProps, scrollRef);
+
+  useLayoutEffect(() => {
+    if (sentinelRef.current) {
+      scrollRef.current = getScrollParent(sentinelRef.current, true) as HTMLElement;
+    }
+  }, []);
+
   // This loader row is is non-interactable, but we want the same aria props calculated as a typical row
   // @ts-ignore
   let {rowProps} = useTreeItem({node: item}, state, ref);
@@ -483,11 +504,12 @@ export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', funct
   let ariaProps = {
     'aria-level': rowProps['aria-level'],
     'aria-posinset': rowProps['aria-posinset'],
-    'aria-setsize': rowProps['aria-setsize']
+    'aria-setsize': rowProps['aria-setsize'],
+    'aria-rowindex': isVirtualized ? item.index + 1 : undefined
   };
 
   let renderProps = useRenderProps({
-    ...props,
+    ...otherProps,
     id: undefined,
     children: item.rendered,
     defaultClassName: 'react-aria-TreeLoader',
@@ -495,19 +517,31 @@ export const UNSTABLE_TreeLoadingIndicator = createLeafComponent('loader', funct
       level
     }
   });
-
+  console.log('here', scrollRef, sentinelRef)
   return (
     <>
-      <div
-        role="row"
-        ref={ref}
-        {...mergeProps(filterDOMProps(props as any), ariaProps)}
-        {...renderProps}
-        data-level={level}>
-        <div role="gridcell" aria-colindex={1}>
-          {renderProps.children}
-        </div>
+      {/* TODO: Alway render the sentinel. Might need to style it as visually hidden? */}
+      {/* @ts-ignore - compatibility with React < 19 */}
+      <div style={{position: 'relative', width: 0, height: 0}} inert={inertValue(true)} >
+        <div data-testid="loadMoreSentinel" ref={sentinelRef} style={{position: 'absolute', height: 1, width: 1}} />
       </div>
+      {/* Only render the spinner wrapper if the user provided something to render (aka they might make the expand button a spinner instead).
+        TODO: do we want to support this use case?
+      */}
+      {isLoading && renderProps.children && (
+        <div
+          role="row"
+          ref={ref}
+          {...mergeProps(filterDOMProps(props as any), ariaProps)}
+          {...renderProps}
+          data-level={level}>
+          <div
+            aria-colindex={isVirtualized ? 1 : undefined}
+            role="gridcell">
+            {renderProps.children}
+          </div>
+        </div>
+      )}
     </>
   );
 });
