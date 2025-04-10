@@ -31,5 +31,8 @@
   "tag.actions": "Radnje",
   "tag.hideButtonLabel": "Prikaži manje",
   "tag.noTags": "Nema",
-  "tag.showAllButtonLabel": "Prikaži sve ({tagCount, number})"
+  "tag.showAllButtonLabel": "Prikaži sve ({tagCount, number})",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

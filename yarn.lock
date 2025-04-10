@@ -7961,6 +7961,7 @@ __metadata:
     jest: "npm:^29.5.0"
     react-aria: "npm:^3.38.1"
     react-aria-components: "npm:^1.7.1"
+    react-stately: "npm:^3.36.1"
   peerDependencies:
     react: ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^18.0.0 || ^19.0.0-rc.1

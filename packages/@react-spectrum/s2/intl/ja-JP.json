@@ -31,5 +31,8 @@
   "tag.actions": "アクション",
   "tag.hideButtonLabel": "表示を減らす",
   "tag.noTags": "なし",
-  "tag.showAllButtonLabel": "すべての ({tagCount, number}) を表示"
+  "tag.showAllButtonLabel": "すべての ({tagCount, number}) を表示",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

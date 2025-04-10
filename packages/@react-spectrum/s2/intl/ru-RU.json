@@ -31,5 +31,8 @@
   "tag.actions": "Действия",
   "tag.hideButtonLabel": "Показать меньше",
   "tag.noTags": "Нет",
-  "tag.showAllButtonLabel": "Показать все ({tagCount, number})"
+  "tag.showAllButtonLabel": "Показать все ({tagCount, number})",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

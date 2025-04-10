@@ -31,5 +31,8 @@
   "tag.actions": "Acțiuni",
   "tag.hideButtonLabel": "Se afișează mai puțin",
   "tag.noTags": "Niciuna",
-  "tag.showAllButtonLabel": "Se afișează tot ({tagCount, number})"
+  "tag.showAllButtonLabel": "Se afișează tot ({tagCount, number})",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

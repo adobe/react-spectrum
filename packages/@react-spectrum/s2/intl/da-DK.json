@@ -31,5 +31,8 @@
   "tag.actions": "Handlinger",
   "tag.hideButtonLabel": "Vis mindre",
   "tag.noTags": "Ingen",
-  "tag.showAllButtonLabel": "Vis alle ({tagCount, number})"
+  "tag.showAllButtonLabel": "Vis alle ({tagCount, number})",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }
