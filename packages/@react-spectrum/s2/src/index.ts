@@ -27,7 +27,7 @@ export {CardView, CardViewContext} from './CardView';
 export {Checkbox, CheckboxContext} from './Checkbox';
 export {CheckboxGroup, CheckboxGroupContext} from './CheckboxGroup';
 export {CloseButton} from './CloseButton';
-export {CoachMark, CoachMarkTrigger, CoachIndicator, useTour} from './CoachMark';
+export {CoachMark as UNSTABLE_CoachMark, CoachMarkTrigger as UNSTABLE_CoachMarkTrigger} from './CoachMark';
 export {ColorArea, ColorAreaContext} from './ColorArea';
 export {ColorField, ColorFieldContext} from './ColorField';
 export {ColorSlider, ColorSliderContext} from './ColorSlider';

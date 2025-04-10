@@ -30,7 +30,7 @@ import {CheckboxContext} from './Checkbox';
 import {colorScheme, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
 import {ContentContext, FooterContext, KeyboardContext, TextContext} from './Content';
-import {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef, useState} from 'react';
+import {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useLayoutEffect, useRef, useState} from 'react';
 import {DividerContext} from './Divider';
 import {forwardRefType} from './types';
 import {ImageContext} from './Image';
@@ -44,7 +44,7 @@ import {useId, useOverlayTrigger} from 'react-aria';
 import {useMenuTriggerState} from '@react-stately/menu';
 import {useObjectRef} from '@react-aria/utils';
 
-export interface CoachMarkProps extends Omit<PopoverProps, 'children'>, StyleProps {
+export interface CoachMarkProps extends Omit<PopoverProps, 'children' | 'arrowBoundaryOffset' | 'isKeyboardDismissDisabled' | 'isNonModal'>, StyleProps {
   /** The children of the coach mark. */
   children: ReactNode,
 
@@ -315,13 +315,10 @@ const actionButtonSize = {
 
 export const CoachMarkContext = createContext<ContextValue<CoachMarkProps, HTMLElement>>({});
 
-// there is a focus trap outside of the Coachmark, can only forward tab to things in coachmark or after the trigger
 export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HTMLElement>) => {
   let colorScheme = useContext(ColorSchemeContext);
   [props, ref] = useContextProps(props, ref, CoachMarkContext);
-  // let {isOpen} = useContext(OverlayTriggerStateContext)!; // valid assumption?
   let {UNSAFE_style} = props;
-  // let {triggerRef} = useContext(PopoverContext);
   let {size = 'M'} = props;
   let popoverRef = useObjectRef(ref);
 
@@ -355,15 +352,6 @@ export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HT
     </Provider>
   );
 
-  // useLayoutEffect(() => { // do we want to hide everything so that it's easier for a AT user to get to the trigger for required actions?
-  //   if (isOpen) {
-  //     let cleanup = ariaHideOutside([triggerRef.current, popoverRef.current]);
-  //     return () => {
-  //       cleanup();
-  //     };
-  //   }
-  // }, [isOpen]);
-
   return (
     <AriaPopover
       {...props}
@@ -394,12 +382,12 @@ export interface CoachMarkTriggerProps extends AriaDialogTriggerProps {
  * positioning of the Dialog.
  */
 export function CoachMarkTrigger(props: CoachMarkTriggerProps): ReactNode {
-  let containerRef = useRef<HTMLDivElement>(null);
+  let triggerRef = useRef<HTMLDivElement>(null);
   // Use useMenuTriggerState instead of useOverlayTriggerState in case a menu is embedded in the dialog.
   // This is needed to handle submenus.
   let state = useMenuTriggerState(props);
 
-  let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, containerRef);
+  let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, triggerRef);
 
   // Label dialog by the trigger as a fallback if there is no title slot.
   // This is done in RAC instead of hooks because otherwise we cannot distinguish
@@ -415,12 +403,12 @@ export function CoachMarkTrigger(props: CoachMarkTriggerProps): ReactNode {
           [OverlayTriggerStateContext, state],
           [RootMenuTriggerStateContext, state],
           [DialogContext, overlayProps],
-          [PopoverContext, {trigger: 'DialogTrigger', triggerRef: containerRef, isNonModal: true}] // valid to pass triggerRef?
+          [PopoverContext, {trigger: 'DialogTrigger', triggerRef, isNonModal: true}] // valid to pass triggerRef?
       ]}>
       <PressResponder {...triggerProps} isPressed={state.isOpen}>
-        <CoachIndicator ref={containerRef} isActive={props.isOpen}>
+        <CoachMarkIndicator ref={triggerRef} isActive={state.isOpen}>
           {props.children}
-        </CoachIndicator>
+        </CoachMarkIndicator>
       </PressResponder>
     </Provider>
   );
@@ -481,16 +469,38 @@ const indicator = style({
 
 const pulse = raw(`&:before { content: ""; display: inline-block; position: absolute; top: var(--borderOffset); bottom:  var(--borderOffset); left: var(--borderOffset); right: var(--borderOffset); border-radius: var(--ringRadius); outline-style: solid; outline-color: var(--activeElement); outline-width: 4px; animation-duration: 2s; animation-iteration-count: infinite; animation-timing-function: ease-in-out; animation-fill-mode: forwards; animation-name: ${pulseAnimation}}`);
 
-interface CoachIndicatorProps {
+interface CoachMarkIndicatorProps {
   children: ReactNode,
   isActive?: boolean
 }
-export const CoachIndicator = /*#__PURE__*/ (forwardRef as forwardRefType)(function CoachIndicator(props: CoachIndicatorProps, ref: ForwardedRef<HTMLDivElement>) {
-// export const CoachIndicator = forwardRef((props, ref) => {
+export const CoachMarkIndicator = /*#__PURE__*/ (forwardRef as forwardRefType)(function CoachMarkIndicator(props: CoachMarkIndicatorProps, ref: ForwardedRef<HTMLDivElement>) {
   const {children, isActive} = props;
+  let objRef = useObjectRef(ref);
+
+    // This is very silly... better ways? can't use display: contents because it breaks positioning
+  // this will break if there is a resize or different styles
+  useLayoutEffect(() => {
+    if (objRef.current) {
+      let styles = getComputedStyle(objRef.current.children[0]);
+      let childDisplay = styles.getPropertyValue('display');
+      let childMaxWidth = styles.getPropertyValue('max-width');
+      let childMaxHeight = styles.getPropertyValue('max-height');
+      let childWidth = styles.getPropertyValue('width');
+      let childHeight = styles.getPropertyValue('height');
+      let childMinWidth = styles.getPropertyValue('min-width');
+      let childMinHeight = styles.getPropertyValue('min-height');
+      objRef.current.style.display = childDisplay;
+      objRef.current.style.maxWidth = childMaxWidth;
+      objRef.current.style.maxHeight = childMaxHeight;
+      objRef.current.style.width = childWidth;
+      objRef.current.style.height = childHeight;
+      objRef.current.style.minWidth = childMinWidth;
+      objRef.current.style.minHeight = childMinHeight;
+    }
+  }, [children]);
 
   return (
-    <div ref={ref} className={indicator({isActive}) + ' ' + (isActive ? pulse : '')}>
+    <div ref={objRef} className={indicator({isActive}) + ' ' + (isActive ? pulse : '')}>
       <Provider
         values={[
           [ButtonContext, {
@@ -511,62 +521,3 @@ export const CoachIndicator = /*#__PURE__*/ (forwardRef as forwardRefType)(funct
     </div>
   );
 });
-
-export interface TourProps {
-  defaultStep?: number,
-  defaultComplete?: boolean,
-  /**
-   * Used to pre-set the total number of steps when more coachmarks may arrive async.
-   */
-  totalSteps?: number
-}
-
-export interface TourReturnVal {
-  createCoachMarkTriggerProps: (step: number) => Omit<CoachMarkTriggerProps, 'children'>,
-  currentStep: number,
-  totalSteps: number,
-  advanceStep: () => void,
-  previousStep: () => void,
-  skipTour: () => void,
-  restartTour: () => void
-}
-
-// FUTURE: support multiple tours on a page?
-export function useTour(props: TourProps): TourReturnVal  {
-  let {defaultStep = 1, defaultComplete = false, totalSteps: controlledTotalSteps} = props;
-  const [isComplete, setIsComplete] = useState(defaultComplete);
-  const [currentStep, setCurrentStep] = useState(defaultStep);
-  const [totalSteps, setTotalSteps] = useState(controlledTotalSteps ?? 0);
-  const advanceStep = () => {
-    if (currentStep + 1 > totalSteps) {
-      setIsComplete(true);
-    }
-    setCurrentStep(currentStep < totalSteps ? currentStep + 1 : totalSteps);
-  };
-  const previousStep = () => setCurrentStep(currentStep > 0 ? currentStep - 1 : 0);
-  const skipTour = () => setIsComplete(true);
-  const restartTour = () => {
-    setIsComplete(false);
-    setCurrentStep(1);
-  };
-
-  const createCoachMarkTriggerProps = (step: number): Omit<CoachMarkTriggerProps, 'children'> => {
-    // TODO find a better way for this so it's not run on every rerender
-    if (step > totalSteps && controlledTotalSteps === undefined) {
-      setTotalSteps(step);
-    }
-    return {
-      isOpen: !isComplete && step === currentStep
-    };
-  };
-
-  return {
-    createCoachMarkTriggerProps,
-    currentStep,
-    totalSteps,
-    advanceStep,
-    previousStep,
-    skipTour,
-    restartTour
-  };
-}
