@@ -15,7 +15,8 @@ import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {SelectProps} from '@react-types/select';
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
-import {useState} from 'react';
+import {useCallback, useMemo, useRef, useState} from 'react';
+import {useLayoutEffect} from '@react-aria/utils';
 
 export interface SelectStateOptions<T> extends Omit<SelectProps<T>, 'children'>, CollectionStateBase<T> {}
 
@@ -44,26 +45,35 @@ export interface SelectState<T> extends SingleSelectListState<T>, OverlayTrigger
 export function useSelectState<T extends object>(props: SelectStateOptions<T>): SelectState<T>  {
   let triggerState = useOverlayTriggerState(props);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy | null>(null);
+
+  // This is necessary to circumvent a circular dependency below
+  let validationStateRef = useRef<FormValidationState>(null);
+
+  let onSelectionChange = props.onSelectionChange;
   let listState = useSingleSelectListState({
     ...props,
-    onSelectionChange: (key) => {
-      if (props.onSelectionChange != null) {
-        props.onSelectionChange(key);
+    onSelectionChange: useCallback(key => {
+      if (onSelectionChange != null) {
+        onSelectionChange(key);
       }
 
       triggerState.close();
-      validationState.commitValidation();
-    }
+      validationStateRef.current!.commitValidation();
+    }, [onSelectionChange, triggerState])
   });
 
   let validationState = useFormValidationState({
     ...props,
     value: listState.selectedKey
   });
+  useLayoutEffect(() => {
+    validationStateRef.current = validationState;
+  }, [validationState]);
+  
 
   let [isFocused, setFocused] = useState(false);
 
-  return {
+  return useMemo(() => ({
     ...validationState,
     ...listState,
     ...triggerState,
@@ -83,5 +93,5 @@ export function useSelectState<T extends object>(props: SelectStateOptions<T>): 
     },
     isFocused,
     setFocused
-  };
+  }), [validationState, listState, triggerState, focusStrategy, isFocused]);
 }

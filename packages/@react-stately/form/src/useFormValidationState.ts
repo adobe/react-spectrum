@@ -63,10 +63,20 @@ export interface FormValidationState {
 }
 
 export function useFormValidationState<T>(props: FormValidationProps<T>): FormValidationState {
-  // Private prop for parent components to pass state to children.
-  if (props[privateValidationStateProp]) {
-    let {realtimeValidation, displayValidation, updateValidation, resetValidation, commitValidation} = props[privateValidationStateProp] as FormValidationState;
+  const privateProp = props[privateValidationStateProp];
+
+  let privateState = useMemo(() => {
+    if (!privateProp) {
+      return null;
+    }
+
+    let {realtimeValidation, displayValidation, updateValidation, resetValidation, commitValidation} = privateProp as FormValidationState;
     return {realtimeValidation, displayValidation, updateValidation, resetValidation, commitValidation};
+  }, [privateProp]);
+
+  // Private prop for parent components to pass state to children.
+  if (privateState) {
+    return privateState;
   }
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -152,7 +162,7 @@ function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValid
     ? controlledError || serverError || currentValidity
     : controlledError || serverError || clientError || builtinValidation || currentValidity;
 
-  return {
+  return useMemo(() => ({
     realtimeValidation,
     displayValidation,
     updateValidation(value) {
@@ -188,7 +198,7 @@ function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValid
       }
       setServerErrorCleared(true);
     }
-  };
+  }), [realtimeValidation, displayValidation, validationBehavior, currentValidity]);
 }
 
 function asArray<T>(v: T | T[]): T[] {
