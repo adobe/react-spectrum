@@ -28,6 +28,7 @@
     "@react-aria-nutrient/ssr": "^3.9.7",
     "@react-aria-nutrient/utils": "^3.28.1",
     "@react-aria-nutrient/visually-hidden": "^3.8.21",
+    "@react-aria/ssr": "^3.9.7",
     "@react-stately/overlays": "^3.6.14",
     "@react-types/button": "^3.11.0",
     "@react-types/overlays": "^3.8.13",
