@@ -70,7 +70,7 @@ export {TagGroup, TagGroupContext, TagList, TagListContext, Tag} from './TagGrou
 export {Text, TextContext} from './Text';
 export {TextArea, TextAreaContext} from './TextArea';
 export {TextField, TextFieldContext} from './TextField';
-export {Toast as UNSTABLE_Toast, ToastRegion as UNSTABLE_ToastRegion, ToastContent as UNSTABLE_ToastContent} from './Toast';
+export {Toast as UNSTABLE_Toast, ToastList as UNSTABLE_ToastList, ToastRegion as UNSTABLE_ToastRegion, ToastContent as UNSTABLE_ToastContent, ToastStateContext as UNSTABLE_ToastStateContext} from './Toast';
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {ToggleButtonGroup, ToggleButtonGroupContext, ToggleGroupStateContext} from './ToggleButtonGroup';
 export {Toolbar, ToolbarContext} from './Toolbar';
@@ -133,7 +133,7 @@ export type {TagGroupProps, TagListProps, TagListRenderProps, TagProps, TagRende
 export type {TextAreaProps} from './TextArea';
 export type {TextFieldProps, TextFieldRenderProps} from './TextField';
 export type {TextProps} from './Text';
-export type {ToastRegionProps, ToastRegionRenderProps, ToastProps, ToastRenderProps} from './Toast';
+export type {ToastRegionProps, ToastListProps, ToastRegionRenderProps, ToastProps, ToastRenderProps} from './Toast';
 export type {ToggleButtonProps, ToggleButtonRenderProps} from './ToggleButton';
 export type {ToggleButtonGroupProps, ToggleButtonGroupRenderProps} from './ToggleButtonGroup';
 export type {ToolbarProps, ToolbarRenderProps} from './Toolbar';

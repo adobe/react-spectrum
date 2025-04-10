@@ -4735,7 +4735,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/plugin@npm:2.14.0, @parcel/plugin@npm:^2.10.2, @parcel/plugin@npm:^2.14.0":
+"@parcel/plugin@npm:2.14.0, @parcel/plugin@npm:^2.0.0, @parcel/plugin@npm:^2.10.2, @parcel/plugin@npm:^2.14.0":
   version: 2.14.0
   resolution: "@parcel/plugin@npm:2.14.0"
   dependencies:
@@ -6460,7 +6460,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-aria/parcel-resolver-optimize-locales@workspace:packages/dev/parcel-resolver-optimize-locales"
   dependencies:
-    "@parcel/plugin": "npm:^2.14.0"
+    "@parcel/plugin": "npm:^2.0.0"
   languageName: unknown
   linkType: soft
 
@@ -7817,7 +7817,7 @@ __metadata:
   resolution: "@react-spectrum/parcel-transformer-s2-icon@workspace:packages/dev/parcel-transformer-s2-icon"
   dependencies:
     "@adobe/spectrum-tokens": "npm:^13.0.0-beta.56"
-    "@parcel/plugin": "npm:^2.14.0"
+    "@parcel/plugin": "npm:^2.0.0"
     "@svgr/core": "npm:^8.1.0"
     "@svgr/plugin-jsx": "npm:^8.1.0"
     "@svgr/plugin-svgo": "npm:^8.1.0"
@@ -7961,6 +7961,7 @@ __metadata:
     jest: "npm:^29.5.0"
     react-aria: "npm:^3.38.1"
     react-aria-components: "npm:^1.7.1"
+    react-stately: "npm:^3.36.1"
   peerDependencies:
     react: ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^18.0.0 || ^19.0.0-rc.1
