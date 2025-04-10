@@ -11,7 +11,20 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
-import {ActionMenu, Button, CardPreview, Checkbox, CoachMark, CoachMarkTrigger, Content, Footer, Image, Keyboard, MenuItem, Text} from '../src';
+import {
+  ActionMenu,
+  Button,
+  CardPreview,
+  Checkbox,
+  UNSTABLE_CoachMark as CoachMark,
+  UNSTABLE_CoachMarkTrigger as CoachMarkTrigger,
+  Content,
+  Footer,
+  Image,
+  Keyboard,
+  MenuItem,
+  Text
+} from '../src';
 import React from 'react';
 import userEvent, {UserEvent} from '@testing-library/user-event';
 

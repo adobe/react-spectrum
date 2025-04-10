@@ -30,7 +30,14 @@ import {CheckboxContext} from './Checkbox';
 import {colorScheme, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
 import {ContentContext, FooterContext, KeyboardContext, TextContext} from './Content';
-import {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useLayoutEffect, useRef, useState} from 'react';
+import {
+  createContext,
+  ForwardedRef,
+  forwardRef,
+  ReactNode,
+  useContext,
+  useRef
+} from 'react';
 import {DividerContext} from './Divider';
 import {forwardRefType} from './types';
 import {ImageContext} from './Image';
@@ -40,9 +47,9 @@ import {mergeStyles} from '../style/runtime';
 import {PressResponder} from '@react-aria/interactions';
 import {SliderContext} from './Slider';
 import {space, style} from '../style' with {type: 'macro'};
-import {useId, useOverlayTrigger} from 'react-aria';
+import {useId, useObjectRef, useOverlayTrigger} from 'react-aria';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useMenuTriggerState} from '@react-stately/menu';
-import {useObjectRef} from '@react-aria/utils';
 
 export interface CoachMarkProps extends Omit<PopoverProps, 'children' | 'arrowBoundaryOffset' | 'isKeyboardDismissDisabled' | 'isNonModal'>, StyleProps {
   /** The children of the coach mark. */
