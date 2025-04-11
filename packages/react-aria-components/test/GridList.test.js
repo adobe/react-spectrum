@@ -30,6 +30,7 @@ import {
   useDragAndDrop,
   Virtualizer
 } from '../';
+import {getFocusableTreeWalker} from '@react-aria/focus';
 import React from 'react';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
@@ -516,9 +517,14 @@ describe('GridList', () => {
     await user.tab({shift: true});
     expect(document.activeElement).toBe(tags[1]);
 
-    // TODO: Fix, this is going to the previous tag's remove button instead of to the gridlist item
-    // await user.tab({shift: true});
-    // expect(document.activeElement).toBe(items[0]);
+    // For some reason "await user.tab({shift: true});"" doesn't seem to follow the correct behavior when coercing focus to the collection before
+    // letting the browser handle the tab event so we simulate this
+    fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
+    let walker = getFocusableTreeWalker(document.body, {tabbable: true});
+    walker.currentNode = document.activeElement;
+    act(() => {walker.previousNode().focus();});
+    fireEvent.keyUp(document.activeElement, {key: 'Tab', shiftKey: true});
+    expect(document.activeElement).toBe(items[0]);
   });
 
   it('should not propagate the checkbox context from selection into other cells', async () => {
