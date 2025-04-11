@@ -50,7 +50,12 @@ export interface TreeData<T extends object> {
    * @param key - The key of the item to retrieve.
    */
   getItem(key: Key): TreeNode<T> | undefined,
-
+  
+  /** 
+   * Replace the whole tree.
+   * @param newItems - The new items to replace the tree with.
+   */
+  setRootItems(newItems: T[]): void,
   /**
    * Inserts an item into a parent node as a child.
    * @param parentKey - The key of the parent item to insert into. `null` for the root.
@@ -240,6 +245,9 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     setSelectedKeys,
     getItem(key: Key) {
       return nodeMap.get(key);
+    },
+    setRootItems(newItems: T[]) {
+      setItems(buildTree(newItems, new Map()));
     },
     insert(parentKey: Key | null, index: number, ...values: T[]) {
       setItems(({items, nodeMap: originalMap}) => {
