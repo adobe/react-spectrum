@@ -248,6 +248,18 @@ describe('Calendar', () => {
     expect(cell).toHaveClass('disabled');
   });
 
+  it('should support read only state', () => {
+    let {getByRole} = renderCalendar({isReadOnly: true}, {}, {className: ({isReadOnly}) => isReadOnly ? 'readonly' : ''});
+    let grid = getByRole('grid');
+    let cell = within(grid).getAllByRole('gridcell')[7];
+    let button = within(cell).getByRole('button');
+    
+  
+    expect(cell).toHaveAttribute('aria-readonly', 'true');
+    expect(button).toHaveAttribute('data-readonly');
+    expect(button).toHaveClass('readonly');
+  });
+
   it('should support invalid state', () => {
     let {getByRole} = renderCalendar({isInvalid: true, value: startOfWeek(startOfMonth(today(getLocalTimeZone())), 'en-US').add({days: 7})}, {}, {className: ({isInvalid}) => isInvalid ? 'invalid' : ''});
     let grid = getByRole('grid');
