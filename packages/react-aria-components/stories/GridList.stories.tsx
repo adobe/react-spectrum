@@ -65,7 +65,8 @@ const MyGridListItem = (props: GridListItemProps) => {
 
 GridListExample.story = {
   args: {
-    layout: 'stack'
+    layout: 'stack',
+    escapeKeyBehavior: 'clearSelection'
   },
   argTypes: {
     layout: {
@@ -83,6 +84,10 @@ GridListExample.story = {
     selectionBehavior: {
       control: 'radio',
       options: ['toggle', 'replace']
+    },
+    escapeKeyBehavior: {
+      control: 'radio',
+      options: ['clearSelection', 'none']
     }
   }
 };
