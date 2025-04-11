@@ -11,7 +11,6 @@
  */
 
 import {actHook as act, renderHook} from '@react-spectrum/test-utils-internal';
-import React from 'react';
 import {useTreeData} from '../src/useTreeData';
 
 const initial = [
@@ -744,5 +743,61 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children[3].key).toEqual('Eli');
     expect(result.current.items[1].key).toEqual('Emily');
     expect(result.current.items.length).toEqual(2);
+  });
+
+  it('gets the descendants of a node', function () {
+    const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren, getKey})
+    );
+    let descendants;
+    const top = result.current.getItem('David');
+    descendants = result.current.getDescendantKeys(top);
+    expect(descendants).toEqual([
+      'John',
+      'Suzie',
+      'Sam',
+      'Stacy',
+      'Brad',
+      'Jane'
+    ]);
+  });
+
+  it('gets the descendants of a child node', function () {
+    const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren, getKey})
+    );
+    let descendants;
+    act(() => {
+      const top = result.current.getItem('Sam');
+      descendants = result.current.getDescendantKeys(top);
+    });
+    expect(descendants).toEqual(['Stacy', 'Brad']);
+  });
+
+  it('returns an empty array when getting the descendant keys for a leaf node', function () {
+    const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren, getKey})
+    );
+    let descendants;
+    act(() => {
+      const top = result.current.getItem('Eli');
+      descendants = result.current.getDescendantKeys(top);
+    });
+    expect(descendants).toEqual([]);
+  });
+
+  it('returns an empty array when an undefined key is supplied', function () {
+    const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren, getKey})
+    );
+    let descendants;
+    act(() => {
+      descendants = result.current.getDescendantKeys(undefined);
+    });
+    expect(descendants).toEqual([]);
   });
 });
