@@ -63,13 +63,12 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   // Copied from useGridCell + some modifications to make it not so grid specific
   let {
     node,
-    isVirtualized,
-    shouldSelectOnPressUp
+    isVirtualized
   } = props;
 
   // let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/gridlist');
   let {direction} = useLocale();
-  let {onAction, linkBehavior, keyboardNavigationBehavior} = listMap.get(state)!;
+  let {onAction, linkBehavior, keyboardNavigationBehavior, shouldSelectOnPressUp} = listMap.get(state)!;
   let descriptionId = useSlotId();
 
   // We need to track the key of the item at the time it was last focused so that we force
@@ -125,7 +124,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     key: node.key,
     ref,
     isVirtualized,
-    shouldSelectOnPressUp,
+    shouldSelectOnPressUp: props.shouldSelectOnPressUp || shouldSelectOnPressUp,
     onAction: onAction || node.props?.onAction ? chain(node.props?.onAction, onAction ? () => onAction(node.key) : undefined) : undefined,
     focus,
     linkBehavior

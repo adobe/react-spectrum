@@ -130,7 +130,8 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
     keyboardDelegate,
     // Only tab navigation is supported in grid layout.
     keyboardNavigationBehavior: layout === 'grid' ? 'tab' : keyboardNavigationBehavior,
-    isVirtualized
+    isVirtualized,
+    shouldSelectOnPressUp: props.shouldSelectOnPressUp
   }, state, ref);
 
   let selectionManager = state.selectionManager;
