@@ -31,5 +31,8 @@
   "tag.actions": "操作",
   "tag.hideButtonLabel": "显示更少",
   "tag.noTags": "无",
-  "tag.showAllButtonLabel": "全部显示 ({tagCount, number})"
+  "tag.showAllButtonLabel": "全部显示 ({tagCount, number})",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

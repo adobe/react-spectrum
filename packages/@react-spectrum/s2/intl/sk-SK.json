@@ -31,5 +31,8 @@
   "tag.actions": "Akcie",
   "tag.hideButtonLabel": "Zobraziť menej",
   "tag.noTags": "Žiadne",
-  "tag.showAllButtonLabel": "Zobraziť všetko ({tagCount, number})"
+  "tag.showAllButtonLabel": "Zobraziť všetko ({tagCount, number})",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }
