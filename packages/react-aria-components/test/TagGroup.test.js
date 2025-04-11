@@ -434,9 +434,11 @@ describe('TagGroup', () => {
         </Tag>
       );
     }
-    let {getByRole} = render(<MyTagGroup />);
+    let {getByRole, getAllByRole} = render(<MyTagGroup />);
     let grid = getByRole('grid');
+    let tags = getAllByRole('row');
     await user.tab();
+    expect(tags[2]).toHaveFocus();
     await user.keyboard('{Backspace}');
     expect(grid).toHaveFocus();
   });
@@ -469,6 +471,51 @@ describe('TagGroup', () => {
     await user.tab({shift: true});
 
     expect(document.activeElement).toBe(tree.getByRole('grid'));
+  });
+
+  it('should support tabbing to remove buttons', async () => {
+    let onRemove = jest.fn();
+    let {getAllByRole, getAllByText} = render(
+      <TagGroup data-testid="group" onRemove={onRemove}>
+        <Label>Test</Label>
+        <TagList>
+          <RemovableTag id="cat">Cat</RemovableTag>
+          <RemovableTag id="dog">Dog</RemovableTag>
+          <RemovableTag id="kangaroo">Kangaroo</RemovableTag>
+        </TagList>
+        <Text slot="description">Description</Text>
+        <Text slot="errorMessage">Error</Text>
+      </TagGroup>
+    );
+
+    let tags = getAllByRole('row');
+    let removeButtons = getAllByText('x');
+    expect(removeButtons).toHaveLength(3);
+
+    // Tab to focus the first tag
+    await user.tab();
+    act(() => jest.runAllTimers());
+    expect(document.activeElement).toBe(tags[0]);
+
+    // Tab to focus the first remove button
+    await user.tab();
+    expect(document.activeElement).toBe(removeButtons[0]);
+
+    // Test remove button functionality
+    await user.keyboard(' '); // Press space to activate button
+    expect(onRemove).toHaveBeenCalledTimes(1);
+    expect(onRemove).toHaveBeenLastCalledWith(new Set(['cat']));
+
+    await user.keyboard('{Delete}');
+    expect(onRemove).toHaveBeenCalledTimes(2);
+    expect(onRemove).toHaveBeenLastCalledWith(new Set(['cat']));
+
+    await user.keyboard('{ArrowRight}');
+    expect(tags[1]).toHaveFocus();
+
+    await user.keyboard('{Delete}');
+    expect(onRemove).toHaveBeenCalledTimes(3);
+    expect(onRemove).toHaveBeenLastCalledWith(new Set(['dog']));
   });
 
   describe('shouldSelectOnPressUp', () => {
