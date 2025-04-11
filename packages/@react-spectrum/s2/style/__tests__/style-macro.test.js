@@ -26,6 +26,30 @@ function testStyle(...args) {
 }
 
 describe('style-macro', () => {
+  it('should prefix rules with the hash of theme version', () => {
+    let {css, js} = testStyle({
+      alignItems: 'center',
+      color: 'red-400'
+    });
+    expect(css).toMatchInlineSnapshot(`
+      "@layer _.a, _.b;
+
+      @layer _.a {
+        .Achc_2c {
+          align-items: center;
+        }
+
+
+        .AchcaJ {
+          color: light-dark(rgb(255, 188, 180), rgb(115, 24, 11));
+        }
+      }
+
+      "
+    `);
+    expect(js).toMatchInlineSnapshot('" Achc_2c AchcaJ"');
+  });
+
   it('should handle nested css conditions', () => {
     let {css, js} = testStyle({
       marginTop: {
