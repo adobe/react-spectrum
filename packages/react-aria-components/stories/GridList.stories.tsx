@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from '@storybook/addon-actions';
 import {Button, Checkbox, CheckboxProps, DropIndicator, GridLayout, GridList, GridListItem, GridListItemProps, ListLayout, Size, Tag, TagGroup, TagList, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import React from 'react';
 import styles from '../example/index.css';
 import {useListData} from 'react-stately';
-
 export default {
   title: 'React Aria Components'
 };
@@ -187,11 +187,18 @@ export function TagGroupInsideGridList() {
       }}>
       <MyGridListItem textValue="Tags">
         1,1
-        <TagGroup aria-label="Tag group">
+        <TagGroup aria-label="Tag group 1" onRemove={action('onRemove')}>
           <TagList style={{display: 'flex', gap: 10}}>
-            <Tag key="1">Tag 1</Tag>
-            <Tag key="2">Tag 2</Tag>
-            <Tag key="3">Tag 3</Tag>
+            <Tag key="1">Tag 1<Button slot="remove">X</Button></Tag>
+            <Tag key="2">Tag 2<Button slot="remove">X</Button></Tag>
+            <Tag key="3">Tag 3<Button slot="remove">X</Button></Tag>
+          </TagList>
+        </TagGroup>
+        <TagGroup aria-label="Tag group 2" onRemove={action('onRemove')}>
+          <TagList style={{display: 'flex', gap: 10}}>
+            <Tag key="1">Tag 1<Button slot="remove">X</Button></Tag>
+            <Tag key="2">Tag 2<Button slot="remove">X</Button></Tag>
+            <Tag key="3">Tag 3<Button slot="remove">X</Button></Tag>
           </TagList>
         </TagGroup>
       </MyGridListItem>
