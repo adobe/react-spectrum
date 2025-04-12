@@ -65,7 +65,7 @@ export interface SelectRenderProps {
 export interface SelectProps<T extends object = {}> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior' | 'items'>, RACValidation, RenderProps<SelectRenderProps>, SlotProps {
   /**
    * Temporary text that occupies the select when it is empty.
-   * @default 'Select an item' in English
+   * @default 'Select an item' (localized)
    */
   placeholder?: string
 }
