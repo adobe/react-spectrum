@@ -130,7 +130,8 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
     keyboardDelegate,
     // Only tab navigation is supported in grid layout.
     keyboardNavigationBehavior: layout === 'grid' ? 'tab' : keyboardNavigationBehavior,
-    isVirtualized
+    isVirtualized,
+    shouldSelectOnPressUp: props.shouldSelectOnPressUp
   }, state, ref);
 
   let selectionManager = state.selectionManager;
@@ -139,6 +140,9 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   let dragHooksProvided = useRef(isListDraggable);
   let dropHooksProvided = useRef(isListDroppable);
   useEffect(() => {
+    if (process.env.NODE_ENV === 'production') {
+      return;
+    }
     if (dragHooksProvided.current !== isListDraggable) {
       console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
     }
@@ -344,7 +348,7 @@ export const GridListItem = /*#__PURE__*/ createLeafComponent('item', function G
   }, []);
 
   useEffect(() => {
-    if (!item.textValue) {
+    if (!item.textValue && process.env.NODE_ENV !== 'production') {
       console.warn('A `textValue` prop is required for <GridListItem> elements with non-plain text children in order to support accessibility features such as type to select.');
     }
   }, [item.textValue]);

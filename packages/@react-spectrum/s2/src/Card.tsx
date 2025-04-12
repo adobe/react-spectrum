@@ -501,7 +501,7 @@ export interface CardPreviewProps extends UnsafeStyles, DOMProps {
 
 export const CardPreview = forwardRef(function CardPreview(props: CardPreviewProps, ref: DOMRef<HTMLDivElement>) {
   let {size, isQuiet, isHovered, isFocusVisible, isSelected, isPressed, isCheckboxSelection} = useContext(InternalCardContext);
-  let {UNSAFE_className, UNSAFE_style} = props;
+  let {UNSAFE_className = '', UNSAFE_style} = props;
   let domRef = useDOMRef(ref);
   return (
     <div

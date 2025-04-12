@@ -266,7 +266,7 @@ export function useStyleProps<T extends StyleProps>(
   let style = {...UNSAFE_style, ...styles};
 
   // @ts-ignore
-  if (otherProps.className) {
+  if (otherProps.className && process.env.NODE_ENV !== 'production') {
     console.warn(
       'The className prop is unsafe and is unsupported in React Spectrum v3. ' +
       'Please use style props with Spectrum variables, or UNSAFE_className if you absolutely must do something custom. ' +
@@ -275,7 +275,7 @@ export function useStyleProps<T extends StyleProps>(
   }
 
   // @ts-ignore
-  if (otherProps.style) {
+  if (otherProps.style && process.env.NODE_ENV !== 'production') {
     console.warn(
       'The style prop is unsafe and is unsupported in React Spectrum v3. ' +
       'Please use style props with Spectrum variables, or UNSAFE_style if you absolutely must do something custom. ' +
