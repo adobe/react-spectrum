@@ -62,7 +62,9 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
    * trigger selection clearing contextually.
    * @default 'clearSelection'
    */
-  escapeKeyBehavior?: 'clearSelection' | 'none'
+  escapeKeyBehavior?: 'clearSelection' | 'none',
+  /** Whether selection should occur on press up instead of press down. */
+  shouldSelectOnPressUp?: boolean
 }
 
 export interface GridAria {
@@ -87,7 +89,8 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     getRowText,
     onRowAction,
     onCellAction,
-    escapeKeyBehavior = 'clearSelection'
+    escapeKeyBehavior = 'clearSelection',
+    shouldSelectOnPressUp
   } = props;
   let {selectionManager: manager} = state;
 
@@ -121,7 +124,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   });
 
   let id = useId(props.id);
-  gridMap.set(state, {keyboardDelegate: delegate, actions: {onRowAction, onCellAction}});
+  gridMap.set(state, {keyboardDelegate: delegate, actions: {onRowAction, onCellAction}, shouldSelectOnPressUp});
 
   let descriptionProps = useHighlightSelectionDescription({
     selectionManager: manager,
