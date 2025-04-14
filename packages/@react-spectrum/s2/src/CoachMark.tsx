@@ -13,22 +13,16 @@
 import {ActionMenuContext} from './ActionMenu';
 import {
   DialogTriggerProps as AriaDialogTriggerProps,
-  Popover as AriaPopover,
   ContextValue,
   DEFAULT_SLOT,
-  DialogContext,
   OverlayTriggerStateContext,
-  PopoverContext,
   PopoverProps,
   Provider,
-  RootMenuTriggerStateContext,
   useContextProps
 } from 'react-aria-components';
 import {ButtonContext} from './Button';
-import {card, Card} from './Card';
 import {CheckboxContext} from './Checkbox';
-import {colorScheme, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {ColorSchemeContext} from './Provider';
+import coachmarkCss from './CoachMark.module.css';
 import {ContentContext, FooterContext, KeyboardContext, TextContext} from './Content';
 import {
   createContext,
@@ -41,17 +35,15 @@ import {
 } from 'react';
 import {DividerContext} from './Divider';
 import {forwardRefType} from './types';
+import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {ImageContext} from './Image';
 import {ImageCoordinator} from './ImageCoordinator';
 import {keyframes, raw} from '../style/style-macro' with {type: 'macro'};
-import {mergeStyles} from '../style/runtime';
-import {PressResponder} from '@react-aria/interactions';
 import {SliderContext} from './Slider';
 import {space, style} from '../style' with {type: 'macro'};
 import {useId, useObjectRef, useOverlayPosition, useOverlayTrigger} from 'react-aria';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useMenuTriggerState} from '@react-stately/menu';
-import coachmarkCss from './CoachMark.module.css';
 
 export interface CoachMarkProps extends Omit<PopoverProps, 'children' | 'arrowBoundaryOffset' | 'isKeyboardDismissDisabled' | 'isNonModal'>, StyleProps {
   /** The children of the coach mark. */
@@ -245,6 +237,8 @@ export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HT
   let popoverRef = useObjectRef(ref);
   let state = useContext(OverlayTriggerStateContext);
   let {triggerRef} = useContext(InternalCoachMarkContext);
+  let fallbackTriggerRef = useObjectRef(useRef<HTMLElement>(null));
+  triggerRef = triggerRef ?? fallbackTriggerRef;
 
   let children = (
     <Provider
@@ -315,7 +309,7 @@ export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HT
 });
 
 
-const InternalCoachMarkContext = createContext<{triggerRef?: RefObject<HTMLDivElement | null>}>({});
+const InternalCoachMarkContext = createContext<{triggerRef?: RefObject<HTMLElement | null>}>({});
 
 export interface CoachMarkTriggerProps extends AriaDialogTriggerProps {
 }

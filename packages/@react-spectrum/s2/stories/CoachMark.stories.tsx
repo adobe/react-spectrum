@@ -26,11 +26,11 @@ import {
   Slider,
   Text
 } from '../src';
+import {card} from '../src/Card';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
 import {useState} from 'react';
-import { card } from '../src/Card';
 
 const meta: Meta<typeof CoachMark> = {
   component: CoachMark,
