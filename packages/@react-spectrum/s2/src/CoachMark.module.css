@@ -1,0 +1,45 @@
+/* spectrum theme doesn't support starting style yet, so use css modules. Also, support for transition behavior isn't implemented yet. */
+.coach-mark {
+  /* must have overlay transition to prevent layout shift when closing */
+  transition: display allow-discrete 200ms, overlay allow-discrete 200ms, opacity 200ms, transform 200ms;
+  will-change: opacity, transform;
+  opacity: 0;
+
+  &[data-placement="bottom"] {
+    transform: translateX(0px) translateY(-4px);
+  }
+  &[data-placement="top"] {
+    transform: translateX(0px) translateY(4px);
+  }
+  &[data-placement="left"] {
+    transform: translateX(-4px) translateY(0px);
+  }
+  &[data-placement="right"] {
+    transform: translateX(4px) translateY(0px);
+  }
+
+  &:popover-open {
+    transform: translateX(0px) translateY(0px);
+    opacity: 1;
+  }
+}
+
+@starting-style {
+  .coach-mark {
+    &:popover-open {
+      &[data-placement="bottom"] {
+        transform: translateX(0px) translateY(-4px);
+      }
+      &[data-placement="top"] {
+        transform: translateX(0px) translateY(4px);
+      }
+      &[data-placement="left"] {
+        transform: translateX(-4px) translateY(0px);
+      }
+      &[data-placement="right"] {
+        transform: translateX(4px) translateY(0px);
+      }
+      opacity: 0;
+    }
+  }
+}

@@ -13,6 +13,7 @@ import {
   ActionButton,
   ActionMenu,
   Button,
+  ButtonGroup,
   CardPreview,
   Checkbox,
   UNSTABLE_CoachMark as CoachMark,
@@ -29,6 +30,7 @@ import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};
 import {useState} from 'react';
+import { card } from '../src/Card';
 
 const meta: Meta<typeof CoachMark> = {
   component: CoachMark,
@@ -68,8 +70,10 @@ export const CoachMarkExample: Story = {
           </Content>
           <Footer>
             <Text slot="steps">1 of 10</Text>
-            <Button fillStyle="outline" variant="secondary">Previous</Button>
-            <Button variant="primary">Next</Button>
+            <ButtonGroup>
+              <Button fillStyle="outline" variant="secondary">Previous</Button>
+              <Button variant="primary">Next</Button>
+            </ButtonGroup>
           </Footer>
         </CoachMark>
       </CoachMarkTrigger>
@@ -92,23 +96,20 @@ function ControlledCoachMark(args) {
       <CoachMarkTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
         <Checkbox>Sync with CC</Checkbox>
         <CoachMark placement="right top" {...args}>
-          <CardPreview>
-            <Image src={new URL('assets/preview.png', import.meta.url).toString()} />
-          </CardPreview>
-          <Content>
-            <Text slot="title">Hello</Text>
-            <ActionMenu>
-              <MenuItem>Skip tour</MenuItem>
-              <MenuItem>Restart tour</MenuItem>
-            </ActionMenu>
-            <Keyboard>Command + B</Keyboard>
-            <Text slot="description">This is the description</Text>
-          </Content>
-          <Footer>
-            <Text slot="steps">1 of 10</Text>
-            <Button fillStyle="outline" variant="secondary">Previous</Button>
-            <Button variant="primary">Next</Button>
-          </Footer>
+          <div className={card({size: 'M', density: 'regular'})}>
+            <CardPreview>
+              <Image src={new URL('assets/preview.png', import.meta.url).toString()} />
+            </CardPreview>
+            <Content>
+              <Text slot="title">Hello</Text>
+              <ActionMenu>
+                <MenuItem>Skip tour</MenuItem>
+                <MenuItem>Restart tour</MenuItem>
+              </ActionMenu>
+              <Keyboard>Command + B</Keyboard>
+              <Text slot="description">This is the description</Text>
+            </Content>
+          </div>
         </CoachMark>
       </CoachMarkTrigger>
       <Button onPress={() => setIsOpen(false)}>Close</Button>
@@ -148,8 +149,10 @@ export const CoachMarkSlider: Story = {
           </Content>
           <Footer>
             <Text slot="steps">1 of 10</Text>
-            <Button fillStyle="outline" variant="secondary">Previous</Button>
-            <Button variant="primary">Next</Button>
+            <ButtonGroup>
+              <Button fillStyle="outline" variant="secondary">Previous</Button>
+              <Button variant="primary">Next</Button>
+            </ButtonGroup>
           </Footer>
         </CoachMark>
       </CoachMarkTrigger>
@@ -186,8 +189,10 @@ export const CoachMarkButton: Story = {
           </Content>
           <Footer>
             <Text slot="steps">1 of 10</Text>
-            <Button fillStyle="outline" variant="secondary">Previous</Button>
-            <Button variant="primary">Next</Button>
+            <ButtonGroup>
+              <Button fillStyle="outline" variant="secondary">Previous</Button>
+              <Button variant="primary">Next</Button>
+            </ButtonGroup>
           </Footer>
         </CoachMark>
       </CoachMarkTrigger>

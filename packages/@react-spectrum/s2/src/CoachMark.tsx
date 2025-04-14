@@ -25,7 +25,7 @@ import {
   useContextProps
 } from 'react-aria-components';
 import {ButtonContext} from './Button';
-import {Card} from './Card';
+import {card, Card} from './Card';
 import {CheckboxContext} from './Checkbox';
 import {colorScheme, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {ColorSchemeContext} from './Provider';
@@ -35,6 +35,7 @@ import {
   ForwardedRef,
   forwardRef,
   ReactNode,
+  RefObject,
   useContext,
   useRef
 } from 'react';
@@ -47,9 +48,10 @@ import {mergeStyles} from '../style/runtime';
 import {PressResponder} from '@react-aria/interactions';
 import {SliderContext} from './Slider';
 import {space, style} from '../style' with {type: 'macro'};
-import {useId, useObjectRef, useOverlayTrigger} from 'react-aria';
+import {useId, useObjectRef, useOverlayPosition, useOverlayTrigger} from 'react-aria';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useMenuTriggerState} from '@react-stately/menu';
+import coachmarkCss from './CoachMark.module.css';
 
 export interface CoachMarkProps extends Omit<PopoverProps, 'children' | 'arrowBoundaryOffset' | 'isKeyboardDismissDisabled' | 'isNonModal'>, StyleProps {
   /** The children of the coach mark. */
@@ -58,147 +60,61 @@ export interface CoachMarkProps extends Omit<PopoverProps, 'children' | 'arrowBo
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 
-const fadeKeyframes = keyframes(`
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-`);
-const slideUpKeyframes = keyframes(`
-  from {
-    transform: translateY(-4px);
-  }
-
-  to {
-    transform: translateY(0);
-  }
-`);
-const slideDownKeyframes = keyframes(`
-  from {
-    transform: translateY(4px);
-  }
-
-  to {
-    transform: translateY(0);
-  }
-`);
-const slideRightKeyframes = keyframes(`
-  from {
-    transform: translateX(4px);
-  }
-
-  to {
-    transform: translateX(0);
-  }
-`);
-const slideLeftKeyframes = keyframes(`
-  from {
-    transform: translateX(-4px);
-  }
-
-  to {
-    transform: translateX(0);
-  }
-`);
-
 let popover = style({
-  ...colorScheme(),
   '--s2-container-bg': {
     type: 'backgroundColor',
     value: 'layer-2'
   },
   backgroundColor: '--s2-container-bg',
   borderRadius: 'lg',
-  filter: {
-    isArrowShown: 'elevated'
-  },
   // Use box-shadow instead of filter when an arrow is not shown.
   // This fixes the shadow stacking problem with submenus.
-  boxShadow: {
-    default: 'elevated',
-    isArrowShown: 'none'
-  },
+  boxShadow: 'elevated',
   borderStyle: 'solid',
   borderWidth: 1,
+  height: 'fit',
+  padding: 0,
+  margin: 0,
   borderColor: {
     default: 'gray-200',
     forcedColors: 'ButtonBorder'
   },
-  width: {
-    size: {
-      // Copied from designs, not sure if correct.
-      S: 336,
-      M: 416,
-      L: 576
-    }
-  },
-  // Don't be larger than full screen minus 2 * containerPadding
-  maxWidth: '[calc(100vw - 24px)]',
+  width: 'fit',
   boxSizing: 'border-box',
-  translateY: {
-    placement: {
-      bottom: {
-        isArrowShown: 8 // TODO: not defined yet should this change with font size? need boolean support for 'hideArrow' prop
-      },
-      top: {
-        isArrowShown: -8
-      }
-    }
+  opacity: {
+    default: 0,
+    ':popover-open': 1
   },
-  translateX: {
-    placement: {
-      left: {
-        isArrowShown: -8
-      },
-      right: {
-        isArrowShown: 8
-      }
-    }
-  },
-  animation: {
+  transform: {
     placement: {
       top: {
-        isEntering: `${slideDownKeyframes}, ${fadeKeyframes}`,
-        isExiting: `${slideDownKeyframes}, ${fadeKeyframes}`
+        default: 'translateY(4px)',
+        ':popover-open': 'translateY(0)'
       },
       bottom: {
-        isEntering: `${slideUpKeyframes}, ${fadeKeyframes}`,
-        isExiting: `${slideUpKeyframes}, ${fadeKeyframes}`
+        default: 'translateY(-4px)',
+        ':popover-open': 'translateY(0)'
       },
       left: {
-        isEntering: `${slideRightKeyframes}, ${fadeKeyframes}`,
-        isExiting: `${slideRightKeyframes}, ${fadeKeyframes}`
+        default: 'translateX(4px)',
+        ':popover-open': 'translateX(0)'
       },
       right: {
-        isEntering: `${slideLeftKeyframes}, ${fadeKeyframes}`,
-        isExiting: `${slideLeftKeyframes}, ${fadeKeyframes}`
+        default: 'translateX(-4px)',
+        ':popover-open': 'translateX(0)'
       }
-    },
-    isSubmenu: {
-      isEntering: fadeKeyframes,
-      isExiting: fadeKeyframes
     }
   },
-  animationDuration: {
-    isEntering: 200,
-    isExiting: 200
-  },
+  animationDuration: 200,
   animationDirection: {
-    isEntering: 'normal',
-    isExiting: 'reverse'
+    default: 'normal',
+    ':popover-open': 'reverse'
   },
   animationTimingFunction: {
-    isExiting: 'in'
+    default: 'in'
   },
-  transition: '[opacity, transform]',
   willChange: '[opacity, transform]',
-  isolation: 'isolate',
-  pointerEvents: {
-    isExiting: 'none'
-  }
+  isolation: 'isolate'
 }, getAllowedOverrides());
 
 const image = style({
@@ -320,14 +236,15 @@ const actionButtonSize = {
   XL: 'L'
 } as const;
 
-export const CoachMarkContext = createContext<ContextValue<CoachMarkProps, HTMLElement>>({});
+export const CoachMarkContext = createContext<ContextValue<CoachMarkProps, HTMLDivElement>>({});
 
-export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HTMLElement>) => {
-  let colorScheme = useContext(ColorSchemeContext);
+export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HTMLDivElement>) => {
   [props, ref] = useContextProps(props, ref, CoachMarkContext);
   let {UNSAFE_style} = props;
   let {size = 'M'} = props;
   let popoverRef = useObjectRef(ref);
+  let state = useContext(OverlayTriggerStateContext);
+  let {triggerRef} = useContext(InternalCoachMarkContext);
 
   let children = (
     <Provider
@@ -359,26 +276,46 @@ export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HT
     </Provider>
   );
 
+  let {overlayProps, placement} = useOverlayPosition({
+    targetRef: triggerRef,
+    overlayRef: popoverRef,
+    placement: props.placement,
+    offset: 16,
+    crossOffset: -18 // made up
+  });
+
+  let prevOpen = useRef(state?.isOpen ?? false);
+  useLayoutEffect(() => {
+    if (state?.isOpen && !prevOpen.current) {
+      popoverRef.current?.showPopover();
+    } else if (!state?.isOpen && prevOpen.current) {
+      popoverRef.current?.hidePopover();
+    }
+    prevOpen.current = state?.isOpen ?? false;
+  }, [state?.isOpen]);
+
   return (
-    <AriaPopover
-      {...props}
+    <div
+      popover="manual"
       ref={popoverRef}
+      data-placement={placement}
       style={{
         ...UNSAFE_style,
+        ...overlayProps.style,
         // Override default z-index from useOverlayPosition. We use isolation: isolate instead.
         zIndex: undefined
       }}
-      className={(renderProps) =>  mergeStyles(popover({...renderProps, colorScheme}))}>
-      <Card>
-        {/* }// Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state. */}
-        <OverlayTriggerStateContext.Provider value={null}>
-          {children}
-        </OverlayTriggerStateContext.Provider>
-      </Card>
-    </AriaPopover>
+      className={coachmarkCss['coach-mark'] + popover({size, placement})}>
+      {/* }// Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state. */}
+      <OverlayTriggerStateContext.Provider value={null}>
+        {children}
+      </OverlayTriggerStateContext.Provider>
+    </div>
   );
 });
 
+
+const InternalCoachMarkContext = createContext<{triggerRef?: RefObject<HTMLDivElement | null>}>({});
 
 export interface CoachMarkTriggerProps extends AriaDialogTriggerProps {
 }
@@ -402,21 +339,17 @@ export function CoachMarkTrigger(props: CoachMarkTriggerProps): ReactNode {
   // but when sent by context we want the title to win.
   triggerProps.id = useId();
   overlayProps['aria-labelledby'] = triggerProps.id;
-
+  delete triggerProps.onPress;
 
   return (
     <Provider
       values={[
-          [OverlayTriggerStateContext, state],
-          [RootMenuTriggerStateContext, state],
-          [DialogContext, overlayProps],
-          [PopoverContext, {trigger: 'DialogTrigger', triggerRef, isNonModal: true}] // valid to pass triggerRef?
+        [OverlayTriggerStateContext, state],
+        [InternalCoachMarkContext, {triggerRef}] // valid to pass triggerRef?
       ]}>
-      <PressResponder {...triggerProps} isPressed={state.isOpen}>
-        <CoachMarkIndicator ref={triggerRef} isActive={state.isOpen}>
-          {props.children}
-        </CoachMarkIndicator>
-      </PressResponder>
+      <CoachMarkIndicator ref={triggerRef} isActive={state.isOpen}>
+        {props.children}
+      </CoachMarkIndicator>
     </Provider>
   );
 }
@@ -484,27 +417,27 @@ export const CoachMarkIndicator = /*#__PURE__*/ (forwardRef as forwardRefType)(f
   const {children, isActive} = props;
   let objRef = useObjectRef(ref);
 
-    // This is very silly... better ways? can't use display: contents because it breaks positioning
-  // this will break if there is a resize or different styles
-  useLayoutEffect(() => {
-    if (objRef.current) {
-      let styles = getComputedStyle(objRef.current.children[0]);
-      let childDisplay = styles.getPropertyValue('display');
-      let childMaxWidth = styles.getPropertyValue('max-width');
-      let childMaxHeight = styles.getPropertyValue('max-height');
-      let childWidth = styles.getPropertyValue('width');
-      let childHeight = styles.getPropertyValue('height');
-      let childMinWidth = styles.getPropertyValue('min-width');
-      let childMinHeight = styles.getPropertyValue('min-height');
-      objRef.current.style.display = childDisplay;
-      objRef.current.style.maxWidth = childMaxWidth;
-      objRef.current.style.maxHeight = childMaxHeight;
-      objRef.current.style.width = childWidth;
-      objRef.current.style.height = childHeight;
-      objRef.current.style.minWidth = childMinWidth;
-      objRef.current.style.minHeight = childMinHeight;
-    }
-  }, [children]);
+  //   // This is very silly... better ways? can't use display: contents because it breaks positioning
+  // // this will break if there is a resize or different styles
+  // useLayoutEffect(() => {
+  //   if (objRef.current) {
+  //     let styles = getComputedStyle(objRef.current.children[0]);
+  //     let childDisplay = styles.getPropertyValue('display');
+  //     let childMaxWidth = styles.getPropertyValue('max-width');
+  //     let childMaxHeight = styles.getPropertyValue('max-height');
+  //     let childWidth = styles.getPropertyValue('width');
+  //     let childHeight = styles.getPropertyValue('height');
+  //     let childMinWidth = styles.getPropertyValue('min-width');
+  //     let childMinHeight = styles.getPropertyValue('min-height');
+  //     objRef.current.style.display = childDisplay;
+  //     objRef.current.style.maxWidth = childMaxWidth;
+  //     objRef.current.style.maxHeight = childMaxHeight;
+  //     objRef.current.style.width = childWidth;
+  //     objRef.current.style.height = childHeight;
+  //     objRef.current.style.minWidth = childMinWidth;
+  //     objRef.current.style.minHeight = childMinHeight;
+  //   }
+  // }, [children]);
 
   return (
     <div ref={objRef} className={indicator({isActive}) + ' ' + (isActive ? pulse : '')}>
