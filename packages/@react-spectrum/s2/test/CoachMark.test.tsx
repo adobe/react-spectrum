@@ -25,7 +25,8 @@ import {
   MenuItem,
   Text
 } from '../src';
-import React from 'react';
+import {card} from '../src/Card';
+import React, {createRef, useState} from 'react';
 import userEvent, {UserEvent} from '@testing-library/user-event';
 
 const mockAnimations = () => {
@@ -45,35 +46,52 @@ describe('CoachMark', () => {
     act(() => {jest.runAllTimers();});
   });
 
-  it('renders a coachmark', async () => {
-    let onPress = jest.fn();
-    let {getAllByRole} = render(
-      <CoachMarkTrigger isOpen>
-        <Checkbox>Sync with CC</Checkbox>
-        <CoachMark placement="right top">
-          <CardPreview>
-            <Image src={new URL('assets/preview.png', import.meta.url).toString()} />
-          </CardPreview>
-          <Content>
-            <Text slot="title">Hello</Text>
-            <ActionMenu>
-              <MenuItem>Skip tour</MenuItem>
-              <MenuItem>Restart tour</MenuItem>
-            </ActionMenu>
-            <Keyboard>Command + B</Keyboard>
-            <Text slot="description">This is the description</Text>
-          </Content>
-          <Footer>
-            <Text slot="steps">1 of 10</Text>
-            <Button fillStyle="outline" variant="secondary">Previous</Button>
-            <Button variant="primary" onPress={onPress}>Next</Button>
-          </Footer>
-        </CoachMark>
-      </CoachMarkTrigger>
+  function CoachMarkTest(props) {
+    let [isOpen, setIsOpen] = useState(false);
+    return (
+      <div>
+        <Button onPress={() => setIsOpen(true)}>Show coachmark</Button>
+        <CoachMarkTrigger isOpen={isOpen}>
+          <Checkbox>Sync with CC</Checkbox>
+          <CoachMark placement="right top" ref={props.coachmarkRef}>
+            <div className={card({size: 'M', density: 'regular'})}>
+              <CardPreview>
+                <Image src={new URL('assets/preview.png', import.meta.url).toString()} />
+              </CardPreview>
+              <Content>
+                <Text slot="title">Hello</Text>
+                <ActionMenu>
+                  <MenuItem>Skip tour</MenuItem>
+                  <MenuItem>Restart tour</MenuItem>
+                </ActionMenu>
+                <Keyboard>Command + B</Keyboard>
+                <Text slot="description">This is the description</Text>
+              </Content>
+              <Footer>
+                <Text slot="steps">1 of 10</Text>
+                <Button fillStyle="outline" variant="secondary">Previous</Button>
+                <Button variant="primary" onPress={() => setIsOpen(false)}>Next</Button>
+              </Footer>
+            </div>
+          </CoachMark>
+        </CoachMarkTrigger>
+      </div>
     );
+  }
+
+  it('renders a coachmark', async () => {
+    let coachmarkRef = createRef<HTMLDivElement>();
+    let {getAllByRole} = render(
+      <CoachMarkTest coachmarkRef={coachmarkRef} />
+    );
+    coachmarkRef.current!.showPopover = jest.fn();
+    coachmarkRef.current!.hidePopover = jest.fn();
+    let startButton = getAllByRole('button')[0];
+    await user?.click(startButton);
     act(() => {jest.runAllTimers();});
-    expect(getAllByRole('button').length).toBe(4); // 2 Dismiss + 2 actions
-    await user?.click(getAllByRole('button')[2]);
-    expect(onPress).toHaveBeenCalled();
+    expect(coachmarkRef.current!.showPopover).toHaveBeenCalled();
+    expect(getAllByRole('button').length).toBe(4); // start, action menu, previous, next
+    await user?.click(getAllByRole('button')[3]);
+    expect(coachmarkRef.current!.hidePopover).toHaveBeenCalled();
   });
 });
