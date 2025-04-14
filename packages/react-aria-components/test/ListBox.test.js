@@ -338,6 +338,54 @@ describe('ListBox', () => {
     expect(getAllByRole('option').map(o => o.textContent)).toEqual(['Hi']);
   });
 
+  it('should update collection when moving item to a different section', () => {
+    let {getAllByRole, rerender} = render(
+      <ListBox aria-label="Test">
+        <ListBoxSection id="veggies">
+          <Header>Veggies</Header>
+          <ListBoxItem key="lettuce" id="lettuce">Lettuce</ListBoxItem>
+          <ListBoxItem key="tomato" id="tomato">Tomato</ListBoxItem>
+          <ListBoxItem key="onion" id="onion">Onion</ListBoxItem>
+        </ListBoxSection>
+        <ListBoxSection id="meats">
+          <Header>Meats</Header>
+          <ListBoxItem key="ham" id="ham">Ham</ListBoxItem>
+          <ListBoxItem key="tuna" id="tuna">Tuna</ListBoxItem>
+          <ListBoxItem key="tofu" id="tofu">Tofu</ListBoxItem>
+        </ListBoxSection>
+      </ListBox>
+    );
+
+    let sections = getAllByRole('group');
+    let items = within(sections[0]).getAllByRole('option');
+    expect(items).toHaveLength(3);
+    items = within(sections[1]).getAllByRole('option');
+    expect(items).toHaveLength(3);
+
+    rerender(
+      <ListBox aria-label="Test">
+        <ListBoxSection id="veggies">
+          <Header>Veggies</Header>
+          <ListBoxItem key="lettuce" id="lettuce">Lettuce</ListBoxItem>
+          <ListBoxItem key="tomato" id="tomato">Tomato</ListBoxItem>
+          <ListBoxItem key="onion" id="onion">Onion</ListBoxItem>
+          <ListBoxItem key="ham" id="ham">Ham</ListBoxItem>
+        </ListBoxSection>
+        <ListBoxSection id="meats">
+          <Header>Meats</Header>
+          <ListBoxItem key="tuna" id="tuna">Tuna</ListBoxItem>
+          <ListBoxItem key="tofu" id="tofu">Tofu</ListBoxItem>
+        </ListBoxSection>
+      </ListBox>
+    );
+
+    sections = getAllByRole('group');
+    items = within(sections[0]).getAllByRole('option');
+    expect(items).toHaveLength(4);
+    items = within(sections[1]).getAllByRole('option');
+    expect(items).toHaveLength(2);
+  });
+
   it('should support autoFocus', () => {
     let {getByRole} = renderListbox({autoFocus: true});
     let listbox = getByRole('listbox');
@@ -1003,6 +1051,21 @@ describe('ListBox', () => {
     expect(options.map(r => r.textContent)).toEqual(['Item 7', 'Item 8', 'Item 9', 'Item 10', 'Item 11', 'Item 12', 'Item 13', 'Item 14', 'Item 49']);
   });
 
+  it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
+    let {getByRole} = renderListbox({selectionMode: 'multiple', escapeKeyBehavior: 'none'});
+
+    let listboxTester = testUtilUser.createTester('ListBox', {root: getByRole('listbox')});
+    let option = listboxTester.options()[0];
+    expect(option).not.toHaveAttribute('aria-selected', 'true');
+    expect(option).not.toHaveClass('selected');
+
+    await listboxTester.toggleOptionSelection({option});
+    expect(option).toHaveAttribute('aria-selected', 'true');
+
+    await user.keyboard('{Escape}');
+    expect(option).toHaveAttribute('aria-selected', 'true');
+  });
+
   describe('drag and drop', () => {
     it('should support draggable items', () => {
       let {getAllByRole} = render(<DraggableListBox />);
@@ -1407,6 +1470,44 @@ describe('ListBox', () => {
         expect(items[0]).toHaveAttribute('aria-selected', 'false');
         expect(items[2]).toHaveAttribute('aria-selected', 'true');
       });
+    });
+  });
+
+  describe('shouldSelectOnPressUp', () => {
+    it('should select an item on pressing down when shouldSelectOnPressUp is not provided', async () => {
+      let onSelectionChange = jest.fn();
+      let {getAllByRole} = renderListbox({selectionMode: 'single', onSelectionChange});
+      let items = getAllByRole('option');
+
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      expect(onSelectionChange).toBeCalledTimes(1);
+  
+      await user.pointer({target: items[0], keys: '[/MouseLeft]'});
+      expect(onSelectionChange).toBeCalledTimes(1);
+    });
+
+    it('should select an item on pressing down when shouldSelectOnPressUp is false', async () => {
+      let onSelectionChange = jest.fn();
+      let {getAllByRole} = renderListbox({selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: false});
+      let items = getAllByRole('option');
+
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      expect(onSelectionChange).toBeCalledTimes(1);
+  
+      await user.pointer({target: items[0], keys: '[/MouseLeft]'});
+      expect(onSelectionChange).toBeCalledTimes(1);
+    });
+
+    it('should select an item on pressing up when shouldSelectOnPressUp is true', async () => {
+      let onSelectionChange = jest.fn();
+      let {getAllByRole} = renderListbox({selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: true});
+      let items = getAllByRole('option');
+
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      expect(onSelectionChange).toBeCalledTimes(0);
+  
+      await user.pointer({target: items[0], keys: '[/MouseLeft]'});
+      expect(onSelectionChange).toBeCalledTimes(1);
     });
   });
 });

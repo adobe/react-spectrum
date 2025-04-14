@@ -336,6 +336,28 @@ describe('Table', () => {
     }
   });
 
+  it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
+    let onSelectionChange = jest.fn();
+    let {getAllByRole} = renderTable({
+      tableProps: {selectionMode: 'multiple', escapeKeyBehavior: 'none', onSelectionChange}
+    });
+
+    let checkbox1 = getAllByRole('checkbox')[1];
+    await user.click(checkbox1);
+    expect(checkbox1).toBeChecked();
+    expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['1']));
+
+    let checkbox2 = getAllByRole('checkbox')[2];
+    await user.click(checkbox2);
+    expect(checkbox2).toBeChecked();
+    expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['1', '2']));
+
+    await user.keyboard('{Escape}');
+    expect(onSelectionChange).toHaveBeenCalledTimes(2);
+    expect(checkbox1).toBeChecked();
+    expect(checkbox2).toBeChecked();
+  });
+
   it('should not render checkboxes for selection with selectionBehavior=replace', async () => {
     let {getAllByRole} = renderTable({
       tableProps: {
@@ -2370,6 +2392,44 @@ describe('Table', () => {
           expect(tableTester.selectedRows[0]).toBe(row2);
         }
       });
+    });
+  });
+
+  describe('shouldSelectOnPressUp', () => {
+    it('should select an item on pressing down when shouldSelectOnPressUp is not provided', async () => {
+      let onSelectionChange = jest.fn();
+      let {getAllByRole} = renderTable({tableProps: {selectionMode: 'single', onSelectionChange}});
+      let items = getAllByRole('row');
+
+      await user.pointer({target: items[1], keys: '[MouseLeft>]'});
+      expect(onSelectionChange).toBeCalledTimes(1);
+
+      await user.pointer({target: items[1], keys: '[/MouseLeft]'});
+      expect(onSelectionChange).toBeCalledTimes(1);
+    });
+
+    it('should select an item on pressing down when shouldSelectOnPressUp is false', async () => {
+      let onSelectionChange = jest.fn();
+      let {getAllByRole} = renderTable({tableProps: {selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: false}});
+      let items = getAllByRole('row');
+
+      await user.pointer({target: items[1], keys: '[MouseLeft>]'});
+      expect(onSelectionChange).toBeCalledTimes(1);
+
+      await user.pointer({target: items[1], keys: '[/MouseLeft]'});
+      expect(onSelectionChange).toBeCalledTimes(1);
+    });
+
+    it('should select an item on pressing up when shouldSelectOnPressUp is true', async () => {
+      let onSelectionChange = jest.fn();
+      let {getAllByRole} = renderTable({tableProps: {selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: true}});
+      let items = getAllByRole('row');
+
+      await user.pointer({target: items[1], keys: '[MouseLeft>]'});
+      expect(onSelectionChange).toBeCalledTimes(0);
+
+      await user.pointer({target: items[1], keys: '[/MouseLeft]'});
+      expect(onSelectionChange).toBeCalledTimes(1);
     });
   });
 });

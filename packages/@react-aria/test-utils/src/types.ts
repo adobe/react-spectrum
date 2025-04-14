@@ -22,8 +22,8 @@ export interface UserOpts {
    * @default mouse
    */
   interactionType?: 'mouse' | 'touch' | 'keyboard',
-  // If using fake timers user should provide something like (time) => jest.advanceTimersByTime(time))}
-  // A real timer user would pass async () => await new Promise((resolve) => setTimeout(resolve, waitTime))
+  // If using fake timers user should provide something like (time) => jest.advanceTimersByTime(time))}.
+  // A real timer user would pass (waitTime) => new Promise((resolve) => setTimeout(resolve, waitTime))
   // Time is in ms.
   /**
    * A function used by the test utils to advance timers during interactions. Required for certain aria patterns (e.g. table). This can be overridden

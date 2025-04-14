@@ -28,10 +28,14 @@ let columns = [
   {name: 'Baz', key: 'baz'}
 ];
 
+// getComputedStyle is very slow in our version of jsdom.
+// These tests only care about direct inline styles. We can avoid parsing other stylesheets.
+window.getComputedStyle = (el) => (el as HTMLElement).style;
+
 describe('Table ', function () {
   let onSelectionChange = jest.fn();
   let onSortChange = jest.fn();
-  let testUtilRealTimer = new User({advanceTimer: async (waitTime) => await new Promise((resolve) => setTimeout(resolve, waitTime))});
+  let testUtilRealTimer = new User({advanceTimer: (waitTime) => new Promise((resolve) => setTimeout(resolve, waitTime))});
 
   let TableExample = (props) => {
     let [sort, setSort] = useState({});
@@ -277,6 +281,32 @@ describe('Table ', function () {
         expect(onSelectionChange).toHaveBeenCalledTimes(2);
         expect(new Set(onSelectionChange.mock.calls.at(-1)[0])).toEqual(new Set(['Foo 3', 'Foo 4']));
       }
+    });
+  });
+
+  describe('long press, fake timers', () => {
+    installPointerEvent();
+    let testUtilFakeTimer = new User({interactionType: 'touch', advanceTimer: jest.advanceTimersByTime});
+    beforeAll(function () {
+      jest.useFakeTimers();
+    });
+
+    afterEach(function () {
+      act(() => jest.runAllTimers());
+      jest.clearAllMocks();
+    });
+
+    it('highlight selection should switch to selection mode on long press', async function () {
+      render(<TableExample allowsResizing selectionStyle="highlight" />);
+      let tableTester = testUtilFakeTimer.createTester('Table', {root: screen.getByTestId('test')});
+
+      await tableTester.toggleRowSelection({row: 2, needsLongPress: true});
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Foo 3']));
+
+      await tableTester.toggleRowSelection({row: 'Foo 4'});
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
+      expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Foo 3', 'Foo 4']));
     });
   });
 
