@@ -455,9 +455,14 @@ export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRend
 export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) => {
   let state = useContext(TreeStateContext)!;
   ref = useObjectRef<HTMLDivElement>(ref);
+  let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
+
   // TODO: remove this when we support description in tree row
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {rowProps, gridCellProps, expandButtonProps, descriptionProps, ...states} = useTreeItem({node: item}, state, ref);
+  let {rowProps, gridCellProps, expandButtonProps, descriptionProps, ...states} = useTreeItem({
+    node: item,
+    shouldSelectOnPressUp: !!dragState
+  }, state, ref);
   let isExpanded = rowProps['aria-expanded'] === true;
   let hasChildItems = props.hasChildItems || [...state.collection.getChildren!(item.key)]?.length > 1;;
   let level = rowProps['aria-level'] || 1;
@@ -478,8 +483,6 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
     {key: item.key},
     state
   );
-
-  let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
 
   let draggableItem: DraggableItemResult | null = null;
   if (dragState && dragAndDropHooks) {
