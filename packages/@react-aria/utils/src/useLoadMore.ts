@@ -10,15 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Node} from '@react-types/shared';
-import {RefObject, useRef} from 'react';
-import {useEffectEvent} from './useEffectEvent';
+import {RefObject, useCallback, useRef} from 'react';
+import {useEvent} from './useEvent';
+
 import {useLayoutEffect} from './useLayoutEffect';
 
 export interface LoadMoreProps {
   /** Whether data is currently being loaded. */
   isLoading?: boolean,
-  /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom. */
+  /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom.  */
   onLoadMore?: () => void,
   /**
    * The amount of offset from the bottom of your scrollable region that should trigger load more.
@@ -28,62 +28,55 @@ export interface LoadMoreProps {
    * @default 1
    */
   scrollOffset?: number,
-  // TODO: this is a breaking change but this isn't documented and is in the react-aria/utils package so might be ok? Maybe can move this to a different package?
-  collection?: Collection<Node<unknown>>,
-  /**
-   * A ref to a sentinel element that is positioned at the end of the list's content. The visibility of this senetinel
-   * with respect to the scrollable region and its offset determines if we should load more.
-   */
-  sentinelRef: RefObject<HTMLElement | null>
+  /** The data currently loaded. */
+  items?: any
 }
 
 export function useLoadMore(props: LoadMoreProps, ref: RefObject<HTMLElement | null>): void {
-  let {isLoading, onLoadMore, scrollOffset = 1, collection, sentinelRef} = props;
-  let lastCollection = useRef(collection);
+  let {isLoading, onLoadMore, scrollOffset = 1, items} = props;
 
-  // If we are in a loading state when this hook is called and a collection is provided, we can assume that the collection will update in the future so we don't
-  // want to trigger another loadMore until the collection has updated as a result of the load.
-  // TODO: If the load doesn't end up updating the collection even after completion, this flag could get stuck as true. However, not tracking
-  // this means we could end up calling onLoadMore multiple times if isLoading changes but the collection takes time to update
-  let collectionAwaitingUpdate = useRef(collection && isLoading);
-  let sentinelObserver = useRef<IntersectionObserver>(null);
+  // Handle scrolling, and call onLoadMore when nearing the bottom.
+  let isLoadingRef = useRef(isLoading);
+  let prevProps = useRef(props);
+  let onScroll = useCallback(() => {
+    if (ref.current && !isLoadingRef.current && onLoadMore) {
+      let shouldLoadMore = ref.current.scrollHeight - ref.current.scrollTop - ref.current.clientHeight < ref.current.clientHeight * scrollOffset;
 
-  let triggerLoadMore = useEffectEvent((entries: IntersectionObserverEntry[]) => {
-    // Use "isIntersecting" over an equality check of 0 since it seems like there is cases where
-    // a intersection ratio of 0 can be reported when isIntersecting is actually true
-    for (let entry of entries) {
-      if (entry.isIntersecting && !isLoading && !(collection && collectionAwaitingUpdate.current) && onLoadMore) {
+      if (shouldLoadMore) {
+        isLoadingRef.current = true;
         onLoadMore();
-        if (collection !== null && lastCollection.current !== null) {
-          collectionAwaitingUpdate.current = true;
-        }
       }
     }
-  });
+  }, [onLoadMore, ref, scrollOffset]);
 
-  // TODO: maybe can optimize creating the intersection observer by adding it in a useLayoutEffect but would need said effect to run every render
-  // so that we can catch when ref.current exists or is modified (maybe return a callbackRef?) and then would need to check if scrollOffset changed.
+  let lastItems = useRef(items);
   useLayoutEffect(() => {
-    if (!ref.current) {
-      return;
+    // Only update isLoadingRef if props object actually changed,
+    // not if a local state change occurred.
+    if (props !== prevProps.current) {
+      isLoadingRef.current = isLoading;
+      prevProps.current = props;
     }
 
-    // Only update this flag if the collection changes when we aren't loading. Guards against cases like the addition of a loading spinner when a load starts or if the user
-    // temporarily wipes the collection during loading which isn't the collection update via fetch which we are waiting for.
-    // If collection isn't provided (aka for RSP components which won't provide a collection), flip flag to false so we still trigger onLoadMore
-    if (collection !== lastCollection.current && !isLoading) {
-      collectionAwaitingUpdate.current = false;
-    }
-    sentinelObserver.current = new IntersectionObserver(triggerLoadMore, {root: ref.current, rootMargin: `0px ${100 * scrollOffset}% ${100 * scrollOffset}% ${100 * scrollOffset}%`});
-    if (sentinelRef?.current) {
-      sentinelObserver.current.observe(sentinelRef.current);
+    // TODO: Eventually this hook will move back into RAC during which we will accept the collection as a option to this hook.
+    // We will only load more if the collection has changed after the last load to prevent multiple onLoadMore from being called
+    // while the data from the last onLoadMore is being processed by RAC collection.
+    let shouldLoadMore = ref?.current
+      && !isLoadingRef.current
+      && onLoadMore
+      && (!items || items !== lastItems.current)
+      && ref.current.clientHeight === ref.current.scrollHeight;
+
+    if (shouldLoadMore) {
+      isLoadingRef.current = true;
+      onLoadMore?.();
     }
 
-    lastCollection.current = collection;
-    return () => {
-      if (sentinelObserver.current) {
-        sentinelObserver.current.disconnect();
-      }
-    };
-  }, [isLoading, triggerLoadMore, ref, collection, scrollOffset, sentinelRef]);
+    lastItems.current = items;
+  }, [isLoading, onLoadMore, props, ref, items]);
+
+  // TODO: maybe this should still just return scroll props?
+  // Test against case where the ref isn't defined when this is called
+  // Think this was a problem when trying to attach to the scrollable body of the table in OnLoadMoreTableBodyScroll
+  useEvent(ref, 'scroll', onScroll);
 }

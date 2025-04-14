@@ -10,7 +10,7 @@ import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Mu
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
-import {filterDOMProps, inertValue, isScrollable, mergeRefs, useLayoutEffect, useLoadMore, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, inertValue, isScrollable, mergeRefs, useLayoutEffect, useLoadMoreSentinel, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -488,7 +488,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
     collection,
     sentinelRef
   }), [isLoading, onLoadMore, collection]);
-  useLoadMore(memoedLoadMoreProps, tableContainerContext?.scrollRef ?? ref);
+  useLoadMoreSentinel(memoedLoadMoreProps, tableContainerContext?.scrollRef ?? ref);
   // TODO: double check this, can't render the sentinel as a div for non-virtualized cases, theoretically
   // the inert should hide this from the accessbility tree anyways
   let TBody = useElementType('tbody');

@@ -18,7 +18,7 @@ import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, Slot
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
-import {filterDOMProps, inertValue, mergeRefs, useLoadMore, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, inertValue, mergeRefs, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
 import {HeaderContext} from './Header';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {SeparatorContext} from './Separator';
@@ -237,6 +237,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
 
   let sentinelRef = useRef(null);
   // TODO: Should scrollOffset for useLoadMore should be configurable by the user
+  // Yes, make this an option on the sentinel
   let memoedLoadMoreProps = useMemo(() => ({
     isLoading: props.isLoading,
     onLoadMore: props.onLoadMore,
@@ -246,7 +247,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
   // TODO: maybe this should be called at the ListBox level and the StandaloneListBox level. At its current place it is only called
   // when the Listbox in the dropdown is rendered. The benefit to this would be that useLoadMore would trigger a load for the user before the
   // dropdown opens but the current state gives the user more freedom as to whether they would like to pre-fetch or not
-  useLoadMore(memoedLoadMoreProps, listBoxRef);
+  useLoadMoreSentinel(memoedLoadMoreProps, listBoxRef);
 
   // TODO: Think about if completely empty state. Do we leave it up to the user to setup the two states for empty and empty + loading?
   // Do we add a data attibute/prop/renderprop to ListBox for isLoading

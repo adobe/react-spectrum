@@ -170,9 +170,6 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
   delete DOMProps.id;
 
   let scrollRef = useRef(null);
-  // TODO: in select we don't call useLoadMore because we need it to trigger when the listbox opens and has a scrollref
-  // Perhaps we should still call the first time to populate the list? This is automatically done by useAsyncList so maybe not?
-  // TODO: Include a slot in the input for a loading spinner?
 
   return (
     <Provider

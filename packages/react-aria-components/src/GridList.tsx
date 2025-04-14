@@ -19,7 +19,7 @@ import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, Slot
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, Collection as ICollection, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
-import {filterDOMProps, inertValue, useLoadMore, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, inertValue, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
@@ -233,7 +233,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
     collection,
     sentinelRef
   }), [isLoading, onLoadMore, collection]);
-  useLoadMore(memoedLoadMoreProps, ref);
+  useLoadMoreSentinel(memoedLoadMoreProps, ref);
 
   return (
     <FocusScope>
