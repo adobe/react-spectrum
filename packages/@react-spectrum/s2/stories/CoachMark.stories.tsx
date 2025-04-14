@@ -56,25 +56,27 @@ export const CoachMarkExample: Story = {
       <CoachMarkTrigger defaultOpen>
         <Checkbox>Sync with CC</Checkbox>
         <CoachMark placement="right top" {...args}>
-          <CardPreview>
-            <Image src={new URL('assets/preview.png', import.meta.url).toString()} />
-          </CardPreview>
-          <Content>
-            <Text slot="title">Hello</Text>
-            <ActionMenu>
-              <MenuItem>Skip tour</MenuItem>
-              <MenuItem>Restart tour</MenuItem>
-            </ActionMenu>
-            <Keyboard>Command + B</Keyboard>
-            <Text slot="description">This is the description</Text>
-          </Content>
-          <Footer>
-            <Text slot="steps">1 of 10</Text>
-            <ButtonGroup>
-              <Button fillStyle="outline" variant="secondary">Previous</Button>
-              <Button variant="primary">Next</Button>
-            </ButtonGroup>
-          </Footer>
+          <div className={card({size: 'M', density: 'regular'})}>
+            <CardPreview>
+              <Image src={new URL('assets/preview.png', import.meta.url).toString()} />
+            </CardPreview>
+            <Content>
+              <Text slot="title">Hello</Text>
+              <ActionMenu>
+                <MenuItem>Skip tour</MenuItem>
+                <MenuItem>Restart tour</MenuItem>
+              </ActionMenu>
+              <Keyboard>Command + B</Keyboard>
+              <Text slot="description">This is the description</Text>
+            </Content>
+            <Footer>
+              <Text slot="steps">1 of 10</Text>
+              <ButtonGroup>
+                <Button fillStyle="outline" variant="secondary">Previous</Button>
+                <Button variant="primary">Next</Button>
+              </ButtonGroup>
+            </Footer>
+          </div>
         </CoachMark>
       </CoachMarkTrigger>
       <Button>After</Button>
@@ -135,25 +137,27 @@ export const CoachMarkSlider: Story = {
       <CoachMarkTrigger defaultOpen>
         <Slider label="Horizontal position" labelPosition="top" />
         <CoachMark placement="right top" {...args}>
-          <CardPreview>
-            <Image src={new URL('assets/preview.png', import.meta.url).toString()} />
-          </CardPreview>
-          <Content>
-            <Text slot="title">Hello</Text>
-            <ActionMenu>
-              <MenuItem>Skip tour</MenuItem>
-              <MenuItem>Restart tour</MenuItem>
-            </ActionMenu>
-            <Keyboard>Command + B</Keyboard>
-            <Text slot="description">This is the description</Text>
-          </Content>
-          <Footer>
-            <Text slot="steps">1 of 10</Text>
-            <ButtonGroup>
-              <Button fillStyle="outline" variant="secondary">Previous</Button>
-              <Button variant="primary">Next</Button>
-            </ButtonGroup>
-          </Footer>
+          <div className={card({size: 'M', density: 'regular'})}>
+            <CardPreview>
+              <Image src={new URL('assets/preview.png', import.meta.url).toString()} />
+            </CardPreview>
+            <Content>
+              <Text slot="title">Hello</Text>
+              <ActionMenu>
+                <MenuItem>Skip tour</MenuItem>
+                <MenuItem>Restart tour</MenuItem>
+              </ActionMenu>
+              <Keyboard>Command + B</Keyboard>
+              <Text slot="description">This is the description</Text>
+            </Content>
+            <Footer>
+              <Text slot="steps">1 of 10</Text>
+              <ButtonGroup>
+                <Button fillStyle="outline" variant="secondary">Previous</Button>
+                <Button variant="primary">Next</Button>
+              </ButtonGroup>
+            </Footer>
+          </div>
         </CoachMark>
       </CoachMarkTrigger>
       <Button>After</Button>
@@ -175,25 +179,27 @@ export const CoachMarkButton: Story = {
           <Filter />
         </ActionButton>
         <CoachMark placement="right top" {...args}>
-          <CardPreview>
-            <Image src={new URL('assets/preview.png', import.meta.url).toString()} />
-          </CardPreview>
-          <Content>
-            <Text slot="title">Hello</Text>
-            <ActionMenu>
-              <MenuItem>Skip tour</MenuItem>
-              <MenuItem>Restart tour</MenuItem>
-            </ActionMenu>
-            <Keyboard>Command + B</Keyboard>
-            <Text slot="description">This is the description</Text>
-          </Content>
-          <Footer>
-            <Text slot="steps">1 of 10</Text>
-            <ButtonGroup>
-              <Button fillStyle="outline" variant="secondary">Previous</Button>
-              <Button variant="primary">Next</Button>
-            </ButtonGroup>
-          </Footer>
+          <div className={card({size: 'M', density: 'regular'})}>
+            <CardPreview>
+              <Image src={new URL('assets/preview.png', import.meta.url).toString()} />
+            </CardPreview>
+            <Content>
+              <Text slot="title">Hello</Text>
+              <ActionMenu>
+                <MenuItem>Skip tour</MenuItem>
+                <MenuItem>Restart tour</MenuItem>
+              </ActionMenu>
+              <Keyboard>Command + B</Keyboard>
+              <Text slot="description">This is the description</Text>
+            </Content>
+            <Footer>
+              <Text slot="steps">1 of 10</Text>
+              <ButtonGroup>
+                <Button fillStyle="outline" variant="secondary">Previous</Button>
+                <Button variant="primary">Next</Button>
+              </ButtonGroup>
+            </Footer>
+          </div>
         </CoachMark>
       </CoachMarkTrigger>
       <Button>After</Button>

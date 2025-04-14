@@ -284,7 +284,7 @@ export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HT
     crossOffset: -18 // made up
   });
 
-  let prevOpen = useRef(state?.isOpen ?? false);
+  let prevOpen = useRef(false);
   useLayoutEffect(() => {
     if (state?.isOpen && !prevOpen.current) {
       popoverRef.current?.showPopover();
@@ -419,25 +419,25 @@ export const CoachMarkIndicator = /*#__PURE__*/ (forwardRef as forwardRefType)(f
 
   //   // This is very silly... better ways? can't use display: contents because it breaks positioning
   // // this will break if there is a resize or different styles
-  // useLayoutEffect(() => {
-  //   if (objRef.current) {
-  //     let styles = getComputedStyle(objRef.current.children[0]);
-  //     let childDisplay = styles.getPropertyValue('display');
-  //     let childMaxWidth = styles.getPropertyValue('max-width');
-  //     let childMaxHeight = styles.getPropertyValue('max-height');
-  //     let childWidth = styles.getPropertyValue('width');
-  //     let childHeight = styles.getPropertyValue('height');
-  //     let childMinWidth = styles.getPropertyValue('min-width');
-  //     let childMinHeight = styles.getPropertyValue('min-height');
-  //     objRef.current.style.display = childDisplay;
-  //     objRef.current.style.maxWidth = childMaxWidth;
-  //     objRef.current.style.maxHeight = childMaxHeight;
-  //     objRef.current.style.width = childWidth;
-  //     objRef.current.style.height = childHeight;
-  //     objRef.current.style.minWidth = childMinWidth;
-  //     objRef.current.style.minHeight = childMinHeight;
-  //   }
-  // }, [children]);
+  useLayoutEffect(() => {
+    if (objRef.current) {
+      let styles = getComputedStyle(objRef.current.children[0]);
+      let childDisplay = styles.getPropertyValue('display');
+      let childMaxWidth = styles.getPropertyValue('max-width');
+      let childMaxHeight = styles.getPropertyValue('max-height');
+      let childWidth = styles.getPropertyValue('width');
+      let childHeight = styles.getPropertyValue('height');
+      let childMinWidth = styles.getPropertyValue('min-width');
+      let childMinHeight = styles.getPropertyValue('min-height');
+      objRef.current.style.display = childDisplay;
+      objRef.current.style.maxWidth = childMaxWidth;
+      objRef.current.style.maxHeight = childMaxHeight;
+      objRef.current.style.width = childWidth;
+      objRef.current.style.height = childHeight;
+      objRef.current.style.minWidth = childMinWidth;
+      objRef.current.style.minHeight = childMinHeight;
+    }
+  }, [children]);
 
   return (
     <div ref={objRef} className={indicator({isActive}) + ' ' + (isActive ? pulse : '')}>
