@@ -543,8 +543,17 @@ function TreeDragAndDropExample(args) {
           treeData.moveBefore(e.target.key, e.keys);
         } else if (e.target.dropPosition === 'after') {
           treeData.moveAfter(e.target.key, e.keys);
-        } else {
-          treeData.append(e.target.key, ...[...e.keys].map(key => treeData.getItem(key)?.value));
+        } else if (e.target.dropPosition === 'on') {
+          let targetNode = treeData.getItem(e.target.key);
+          if (targetNode) {
+            let targetIndex = targetNode.children ? targetNode.children.length : 0;
+            let keyArray = Array.from(e.keys);
+            for (let i = 0; i < keyArray.length; i++) {
+              treeData.move(keyArray[i], e.target.key, targetIndex + i);
+            }
+          } else {
+            console.error('Target node not found for drop on:', e.target.key);
+          }
         }
       } catch (error) {
         console.error(error);
