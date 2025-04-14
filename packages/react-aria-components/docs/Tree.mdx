@@ -252,7 +252,7 @@ import {
 
 A tree can be built using the [&lt;ul&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ul), [&lt;li&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/li),
  and [&lt;ol&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ol), but is very limited in functionality especially when it comes to user interactions.
-HTML lists are meant for static content, rather than heirarchies with rich interactions like focusable elements within cells, keyboard navigation, item selection, sorting, etc.
+HTML lists are meant for static content, rather than hierarchies with rich interactions like focusable elements within cells, keyboard navigation, item selection, sorting, etc.
 `Tree` helps achieve accessible and interactive tree components that can be styled as needed.
 
 * **Item selection** – Single or multiple selection, with optional checkboxes, disabled items, and both `toggle` and `replace` selection behaviors.
@@ -632,9 +632,9 @@ Items may also have an action specified by directly applying `onAction` on the `
       id="ivysaur"
       title="Ivysaur">
       <MyTreeItem
-        onAction={() => alert(`Opening Venisaur...`)}
-        id="venisaur"
-        title="Venisaur" />
+        onAction={() => alert(`Opening Venusaur...`)}
+        id="venusaur"
+        title="Venusaur" />
     </MyTreeItem>
   </MyTreeItem>
 </Tree>
@@ -660,8 +660,8 @@ Tree items may also be links to another page or website. This can be achieved by
       href="https://pokemondb.net/pokedex/ivysaur"
       target="_blank">
       <MyTreeItem
-        id="venisaur"
-        title="Venisaur"
+        id="venusaur"
+        title="Venusaur"
         href="https://pokemondb.net/pokedex/venusaur"
         target="_blank" />
     </MyTreeItem>
@@ -691,7 +691,7 @@ Note that you are responsible for the styling of disabled items, however, the se
     {/*- begin highlight -*/}
     <MyTreeItem id="ivysaur" title="Ivysaur" isDisabled>
     {/*- end highlight -*/}
-      <MyTreeItem id="venisaur" title="Venisaur" />
+      <MyTreeItem id="venusaur" title="Venusaur" />
     </MyTreeItem>
   </MyTreeItem>
 </Tree>
@@ -713,7 +713,7 @@ When `disabledBehavior` is set to `selection`, interactions such as focus, dragg
     {/*- begin highlight -*/}
     <MyTreeItem id="ivysaur" title="Ivysaur" isDisabled>
     {/*- end highlight -*/}
-      <MyTreeItem id="venisaur" title="Venisaur" />
+      <MyTreeItem id="venusaur" title="Venusaur" />
     </MyTreeItem>
   </MyTreeItem>
 </Tree>
