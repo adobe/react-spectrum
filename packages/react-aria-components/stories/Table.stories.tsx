@@ -16,7 +16,7 @@ import {isTextDropItem} from 'react-aria';
 import {LoadingSpinner, MyMenuItem} from './utils';
 import React, {Suspense, useState} from 'react';
 import styles from '../example/index.css';
-import {UNSTABLE_TableLoadingIndicator} from '../src/Table';
+import {UNSTABLE_TableLoadingSentinel} from '../src/Table';
 import {useAsyncList, useListData} from 'react-stately';
 
 export default {
@@ -532,25 +532,26 @@ const MyCheckbox = ({children, ...props}: CheckboxProps) => {
   );
 };
 
-const MyTableLoadingIndicator = ({tableWidth = 400}) => {
+const MyTableLoadingIndicator = (props) => {
+  let {tableWidth =  400, ...otherProps} = props;
   return (
     // These styles will make the load more spinner sticky. A user would know if their table is virtualized and thus could control this styling if they wanted to
     // TODO: this doesn't work because the virtualizer wrapper around the table body has overflow: hidden. Perhaps could change this by extending the table layout and
     // making the layoutInfo for the table body have allowOverflow
-    <UNSTABLE_TableLoadingIndicator style={{height: 30, position: 'sticky', top: 0, left: 0, width: tableWidth}}>
+    <UNSTABLE_TableLoadingSentinel style={{height: 30, position: 'sticky', top: 0, left: 0, width: tableWidth}} {...otherProps}>
       <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} />
-    </UNSTABLE_TableLoadingIndicator>
+    </UNSTABLE_TableLoadingSentinel>
   );
 };
 
 function MyTableBody(props) {
-  let {rows, children, isLoadingMore, tableWidth, ...otherProps} = props;
+  let {rows, children, isLoading, onLoadMore, tableWidth, ...otherProps} = props;
   return (
     <TableBody {...otherProps}>
       <Collection items={rows}>
         {children}
       </Collection>
-      {isLoadingMore && <MyTableLoadingIndicator tableWidth={tableWidth} />}
+      <MyTableLoadingIndicator tableWidth={tableWidth} isLoading={isLoading} onLoadMore={onLoadMore} />
     </TableBody>
   );
 }
@@ -563,7 +564,7 @@ const TableLoadingBodyWrapper = (args: {isLoadingMore: boolean}) => {
           <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
         )}
       </TableHeader>
-      <MyTableBody rows={rows} isLoadingMore={args.isLoadingMore}>
+      <MyTableBody rows={rows} isLoading={args.isLoadingMore}>
         {(item) => (
           <Row columns={columns}>
             {(column) => {
@@ -683,6 +684,7 @@ const OnLoadMoreTable = () => {
       await new Promise(resolve => setTimeout(resolve, 2000));
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
       let json = await res.json();
+
       return {
         items: json.results,
         cursor: json.next
@@ -691,9 +693,10 @@ const OnLoadMoreTable = () => {
   });
 
   let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
+
   return (
     <ResizableTableContainer style={{height: 150, width: 400, overflow: 'auto'}}>
-      <Table aria-label="Load more table" isLoading={isLoading} onLoadMore={list.loadMore}>
+      <Table aria-label="Load more table">
         <TableHeader>
           <Column id="name" isRowHeader style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Name</Column>
           <Column id="height" style={{position: 'sticky', top: 0, backgroundColor: 'lightgray'}}>Height</Column>
@@ -703,7 +706,8 @@ const OnLoadMoreTable = () => {
         <MyTableBody
           tableWidth={400}
           renderEmptyState={() => renderEmptyLoader({isLoading: list.loadingState === 'loading', tableWidth: 400})}
-          isLoadingMore={list.loadingState === 'loadingMore'}
+          isLoading={isLoading}
+          onLoadMore={list.loadMore}
           rows={list.items}>
           {(item) => (
             <Row id={item.name} style={{width: 'inherit', height: 'inherit'}}>
@@ -839,7 +843,10 @@ function VirtualizedTableWithEmptyState(args) {
             <MyColumn>Baz</MyColumn>
           </TableHeader>
           <MyTableBody
-            isLoadingMore={args.showRows && args.isLoading}
+            isLoading={args.isLoading}
+            // TODO: Note that this renderEmptyLoader call will never be called since the loading sentinel is always in the collection
+            // That means the user is expected to render the proper empty state via the sentinel I guess but currently I make it not render the children
+            // if loading is false
             renderEmptyState={() => renderEmptyLoader({isLoading: !args.showRows && args.isLoading})}
             rows={!args.showRows ? [] : rows}>
             {(item) => (
@@ -889,9 +896,10 @@ const OnLoadMoreTableVirtualized = () => {
       layout={TableLayout}
       layoutOptions={{
         rowHeight: 25,
-        headingHeight: 25
+        headingHeight: 25,
+        loaderHeight: list.isLoading ? 30 : 0
       }}>
-      <Table aria-label="Load more table virtualized" style={{height: 150, width: 400, overflow: 'auto'}} isLoading={isLoading} onLoadMore={list.loadMore}>
+      <Table aria-label="Load more table virtualized" style={{height: 150, width: 400, overflow: 'auto'}}>
         <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
           <Column id="name" isRowHeader>Name</Column>
           <Column id="height">Height</Column>
@@ -900,7 +908,8 @@ const OnLoadMoreTableVirtualized = () => {
         </TableHeader>
         <MyTableBody
           renderEmptyState={() => renderEmptyLoader({isLoading: list.loadingState === 'loading'})}
-          isLoadingMore={list.loadingState === 'loadingMore'}
+          isLoading={isLoading}
+          onLoadMore={list.loadMore}
           rows={list.items}>
           {(item) => (
             <Row id={item.name} style={{width: 'inherit', height: 'inherit'}}>
@@ -946,9 +955,10 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
         layout={TableLayout}
         layoutOptions={{
           rowHeight: 25,
-          headingHeight: 25
+          headingHeight: 25,
+          loaderHeight: list.isLoading ? 30 : 0
         }}>
-        <Table aria-label="Load more table virtualized" isLoading={isLoading} onLoadMore={list.loadMore}>
+        <Table aria-label="Load more table virtualized">
           <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
             <Column id="name" isRowHeader>Name</Column>
             <Column id="height">Height</Column>
@@ -957,7 +967,8 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
           </TableHeader>
           <MyTableBody
             renderEmptyState={() => renderEmptyLoader({isLoading: list.loadingState === 'loading'})}
-            isLoadingMore={list.loadingState === 'loadingMore'}
+            isLoading={isLoading}
+            onLoadMore={list.loadMore}
             rows={list.items}>
             {(item) => (
               <Row id={item.name} style={{width: 'inherit', height: 'inherit'}}>

@@ -38,7 +38,7 @@ import {
   TableBodyRenderProps,
   TableLayout,
   TableRenderProps,
-  UNSTABLE_TableLoadingIndicator,
+  UNSTABLE_TableLoadingSentinel,
   useSlottedContext,
   useTableOptions,
   Virtualizer
@@ -376,13 +376,13 @@ export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
   let renderer = children;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   let loadMoreSpinner = (
-    <UNSTABLE_TableLoadingIndicator className={style({height: 'full', width: 'full'})}>
+    <UNSTABLE_TableLoadingSentinel className={style({height: 'full', width: 'full'})}>
       <div className={centeredWrapper}>
         <ProgressCircle
           isIndeterminate
           aria-label={stringFormatter.format('table.loadingMore')} />
       </div>
-    </UNSTABLE_TableLoadingIndicator>
+    </UNSTABLE_TableLoadingSentinel>
   );
 
   // If the user is rendering their rows in dynamic fashion, wrap their render function in Collection so we can inject

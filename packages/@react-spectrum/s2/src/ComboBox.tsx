@@ -26,7 +26,7 @@ import {
   ListBoxProps,
   Provider,
   SectionProps,
-  UNSTABLE_ListBoxLoadingIndicator
+  UNSTABLE_ListBoxLoadingSentinel
 } from 'react-aria-components';
 import {baseColor, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
@@ -411,7 +411,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
 
   let renderer;
   let listBoxLoadingCircle = (
-    <UNSTABLE_ListBoxLoadingIndicator
+    <UNSTABLE_ListBoxLoadingSentinel
       className={loadingWrapperStyles}>
       <ProgressCircle
         isIndeterminate
@@ -419,7 +419,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
         styles={progressCircleStyles({size})}
         // Same loading string as table
         aria-label={stringFormatter.format('table.loadingMore')} />
-    </UNSTABLE_ListBoxLoadingIndicator>
+    </UNSTABLE_ListBoxLoadingSentinel>
   );
 
   if (typeof children === 'function' && items) {
@@ -538,6 +538,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
                 </span>
               )}
               items={items}
+              // TODO: will need to get rid of this and remder the spinner directly
               isLoading={loadingState === 'loading' || loadingState === 'loadingMore'}
               className={menu({size})}>
               {renderer}

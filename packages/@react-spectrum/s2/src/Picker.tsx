@@ -29,7 +29,7 @@ import {
   SelectRenderProps,
   SelectStateContext,
   SelectValue,
-  UNSTABLE_ListBoxLoadingIndicator
+  UNSTABLE_ListBoxLoadingSentinel
 } from 'react-aria-components';
 import {baseColor, edgeToText, focusRing, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
@@ -329,10 +329,10 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
   );
 
   let listBoxLoadingCircle = (
-    <UNSTABLE_ListBoxLoadingIndicator
+    <UNSTABLE_ListBoxLoadingSentinel
       className={loadingWrapperStyles}>
       {loadingCircle}
-    </UNSTABLE_ListBoxLoadingIndicator>
+    </UNSTABLE_ListBoxLoadingSentinel>
   );
 
   if (typeof children === 'function' && items) {

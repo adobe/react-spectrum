@@ -15,7 +15,7 @@ import {classNames} from '@react-spectrum/utils';
 import {LoadingSpinner} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
-import {UNSTABLE_GridListLoadingIndicator} from '../src/GridList';
+import {UNSTABLE_GridListLoadingSentinel} from '../src/GridList';
 import {useAsyncList, useListData} from 'react-stately';
 
 export default {
@@ -192,11 +192,19 @@ interface Character {
   birth_year: number
 }
 
-const MyGridListLoaderIndicator = () => {
+const MyGridListLoaderIndicator = (props) => {
   return (
-    <UNSTABLE_GridListLoadingIndicator style={{height: 30, width: '100%'}}>
-      <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} />
-    </UNSTABLE_GridListLoadingIndicator>
+    <UNSTABLE_GridListLoadingSentinel
+      style={{
+        height: 30,
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+      {...props}>
+      <LoadingSpinner style={{height: 20, width: 20, position: 'unset'}} />
+    </UNSTABLE_GridListLoadingSentinel>
   );
 };
 
@@ -222,12 +230,15 @@ export const AsyncGridList = () => {
     <GridList
       className={styles.menu}
       style={{height: 400}}
-      items={list.items}
       aria-label="async gridlist"
-      isLoading={list.isLoading}
-      onLoadMore={list.loadMore}
-      renderEmptyState={({isLoading}) => renderEmptyState({isLoading})}>
-      {item => <MyGridListItem id={item.name}>{item.name}</MyGridListItem>}
+      // TODO: same deal here, this won't actually render
+      renderEmptyState={() => renderEmptyState({isLoading: list.isLoading})}>
+      <Collection items={list.items}>
+        {(item: Character) => (
+          <MyGridListItem id={item.name}>{item.name}</MyGridListItem>
+        )}
+      </Collection>
+      <MyGridListLoaderIndicator isLoading={list.isLoading} onLoadMore={list.loadMore} />
     </GridList>
   );
 };
@@ -253,19 +264,18 @@ export const AsyncGridListVirtualized = () => {
     <Virtualizer
       layout={ListLayout}
       layoutOptions={{
-        rowHeight: 25
+        rowHeight: 25,
+        loaderHeight: list.isLoading ? 30 : 0
       }}>
       <GridList
         className={styles.menu}
         style={{height: 400}}
         aria-label="async virtualized gridlist"
-        isLoading={list.isLoading}
-        onLoadMore={list.loadMore}
-        renderEmptyState={({isLoading}) => renderEmptyState({isLoading})}>
+        renderEmptyState={() => renderEmptyState({isLoading: list.isLoading})}>
         <Collection items={list.items}>
           {item => <MyGridListItem id={item.name}>{item.name}</MyGridListItem>}
         </Collection>
-        {list.isLoading && list.items.length > 0 && <MyGridListLoaderIndicator />}
+        <MyGridListLoaderIndicator isLoading={list.isLoading} onLoadMore={list.loadMore} />
       </GridList>
     </Virtualizer>
   );

@@ -11,7 +11,6 @@
  */
 
 import {AriaSelectProps, HiddenSelect, useFocusRing, useLocalizedStringFormatter, useSelect} from 'react-aria';
-import {AsyncLoadable, forwardRefType} from '@react-types/shared';
 import {ButtonContext} from './Button';
 import {Collection, Node, SelectState, useSelectState} from 'react-stately';
 import {CollectionBuilder} from '@react-aria/collections';
@@ -19,6 +18,7 @@ import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {FormContext} from './Form';
+import {forwardRefType} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ItemRenderProps} from './Collection';
@@ -59,15 +59,10 @@ export interface SelectRenderProps {
    * Whether the select is required.
    * @selector [data-required]
    */
-  isRequired: boolean,
-  /**
-   * Whether the select is currently loading items.
-   * @selector [data-loading]
-   */
-  isLoading?: boolean
+  isRequired: boolean
 }
 
-export interface SelectProps<T extends object = {}> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior' | 'items'>, RACValidation, RenderProps<SelectRenderProps>, SlotProps, AsyncLoadable {}
+export interface SelectProps<T extends object = {}> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior' | 'items'>, RACValidation, RenderProps<SelectRenderProps>, SlotProps {}
 
 export const SelectContext = createContext<ContextValue<SelectProps<any>, HTMLDivElement>>(null);
 export const SelectStateContext = createContext<SelectState<unknown> | null>(null);
@@ -156,9 +151,8 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
     isFocusVisible,
     isDisabled: props.isDisabled || false,
     isInvalid: validation.isInvalid || false,
-    isRequired: props.isRequired || false,
-    isLoading: props.isLoading || false
-  }), [state.isOpen, state.isFocused, isFocusVisible, props.isDisabled, validation.isInvalid, props.isRequired, props.isLoading]);
+    isRequired: props.isRequired || false
+  }), [state.isOpen, state.isFocused, isFocusVisible, props.isDisabled, validation.isInvalid, props.isRequired]);
 
   let renderProps = useRenderProps({
     ...props,
@@ -188,7 +182,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
           style: {'--trigger-width': buttonWidth} as React.CSSProperties,
           'aria-labelledby': menuProps['aria-labelledby']
         }],
-        [ListBoxContext, {...menuProps, isLoading: props.isLoading, onLoadMore: props.onLoadMore, ref: scrollRef}],
+        [ListBoxContext, {...menuProps, ref: scrollRef}],
         [ListStateContext, state],
         [TextContext, {
           slots: {
@@ -209,8 +203,7 @@ function SelectInner<T extends object>({props, selectRef: ref, collection}: Sele
         data-open={state.isOpen || undefined}
         data-disabled={props.isDisabled || undefined}
         data-invalid={validation.isInvalid || undefined}
-        data-required={props.isRequired || undefined}
-        data-loading={props.isLoading || undefined} />
+        data-required={props.isRequired || undefined} />
       <HiddenSelect
         autoComplete={props.autoComplete}
         state={state}

@@ -11,14 +11,14 @@
  */
 
 import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
-import {AsyncLoadable, forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {Collection, CollectionBuilder, createBranchComponent, createLeafComponent} from '@react-aria/collections';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, SectionContext, SectionProps} from './Collection';
 import {ContextValue, DEFAULT_SLOT, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, UNSTABLE_useFilteredListState, useListState} from 'react-stately';
-import {filterDOMProps, inertValue, mergeRefs, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, inertValue, LoadMoreSentinelProps, mergeRefs, useLoadMoreSentinel, useObjectRef} from '@react-aria/utils';
+import {forwardRefType, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {HeaderContext} from './Header';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {SeparatorContext} from './Separator';
@@ -54,15 +54,10 @@ export interface ListBoxRenderProps {
   /**
    * State of the listbox.
    */
-  state: ListState<unknown>,
-  /**
-   * Whether the listbox is currently loading items.
-   * @selector [data-loading]
-   */
-  isLoading?: boolean
+  state: ListState<unknown>
 }
 
-export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children' | 'label'>, CollectionProps<T>, StyleRenderProps<ListBoxRenderProps>, SlotProps, ScrollableProps<HTMLDivElement>, AsyncLoadable {
+export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children' | 'label'>, CollectionProps<T>, StyleRenderProps<ListBoxRenderProps>, SlotProps, ScrollableProps<HTMLDivElement> {
   /** How multiple selection should behave in the collection. */
   selectionBehavior?: SelectionBehavior,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the ListBox. */
@@ -213,8 +208,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
     isFocused,
     isFocusVisible,
     layout: props.layout || 'stack',
-    state,
-    isLoading: props.isLoading || false
+    state
   };
   let renderProps = useRenderProps({
     className: props.className,
@@ -235,20 +229,6 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
     );
   }
 
-  let sentinelRef = useRef(null);
-  // TODO: Should scrollOffset for useLoadMore should be configurable by the user
-  // Yes, make this an option on the sentinel
-  let memoedLoadMoreProps = useMemo(() => ({
-    isLoading: props.isLoading,
-    onLoadMore: props.onLoadMore,
-    collection,
-    sentinelRef
-  }), [props.isLoading, props.onLoadMore, collection]);
-  // TODO: maybe this should be called at the ListBox level and the StandaloneListBox level. At its current place it is only called
-  // when the Listbox in the dropdown is rendered. The benefit to this would be that useLoadMore would trigger a load for the user before the
-  // dropdown opens but the current state gives the user more freedom as to whether they would like to pre-fetch or not
-  useLoadMoreSentinel(memoedLoadMoreProps, listBoxRef);
-
   // TODO: Think about if completely empty state. Do we leave it up to the user to setup the two states for empty and empty + loading?
   // Do we add a data attibute/prop/renderprop to ListBox for isLoading
   return (
@@ -265,8 +245,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-layout={props.layout || 'stack'}
-        data-orientation={props.orientation || 'vertical'}
-        data-loading={props.isLoading || undefined}>
+        data-orientation={props.orientation || 'vertical'}>
         <Provider
           values={[
             [ListBoxContext, props],
@@ -281,8 +260,6 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
             scrollRef={listBoxRef}
             persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)}
             renderDropIndicator={useRenderDropIndicator(dragAndDropHooks, dropState)} />
-          {/* @ts-ignore - compatibility with React < 19 */}
-          <div data-testid="loadMoreSentinel" ref={sentinelRef} style={{height: 1, width: 1}} inert={inertValue(true)} />
         </Provider>
         {emptyState}
         {dragPreview}
@@ -489,16 +466,26 @@ function ListBoxDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRe
 
 const ListBoxDropIndicatorForwardRef = forwardRef(ListBoxDropIndicator);
 
-export interface ListBoxLoadingIndicatorProps extends StyleProps {
+export interface ListBoxLoadingSentinelProps extends LoadMoreSentinelProps, StyleProps {
   children?: ReactNode
 }
 
-export const UNSTABLE_ListBoxLoadingIndicator = createLeafComponent('loader', function ListBoxLoadingIndicator<T extends object>(props: ListBoxLoadingIndicatorProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const UNSTABLE_ListBoxLoadingSentinel = createLeafComponent('loader', function ListBoxLoadingIndicator<T extends object>(props: ListBoxLoadingSentinelProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let state = useContext(ListStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
+  let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
 
+  let sentinelRef = useRef<HTMLDivElement>(null);
+  let memoedLoadMoreProps = useMemo(() => ({
+    isLoading,
+    onLoadMore,
+    collection: state?.collection,
+    sentinelRef,
+    scrollOffset
+  }), [isLoading, onLoadMore, scrollOffset, state?.collection]);
+  useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
   let renderProps = useRenderProps({
-    ...props,
+    ...otherProps,
     id: undefined,
     children: item.rendered,
     defaultClassName: 'react-aria-ListBoxLoadingIndicator',
@@ -516,14 +503,23 @@ export const UNSTABLE_ListBoxLoadingIndicator = createLeafComponent('loader', fu
   }
 
   return (
-    <div
-      // aria-selected isn't needed here since this option is not selectable.
-      // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
-      role="option"
-      ref={ref}
-      {...mergeProps(filterDOMProps(props as any), optionProps)}
-      {...renderProps}>
-      {renderProps.children}
-    </div>
+    <>
+      {/* TODO: Alway render the sentinel. Might need to style it as visually hidden? */}
+      {/* @ts-ignore - compatibility with React < 19 */}
+      <div style={{position: 'relative', width: 0, height: 0}} inert={inertValue(true)} >
+        <div data-testid="loadMoreSentinel" ref={sentinelRef} style={{position: 'absolute', height: 1, width: 1}} />
+      </div>
+      {isLoading && renderProps.children && (
+        <div
+          // aria-selected isn't needed here since this option is not selectable.
+          // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
+          role="option"
+          ref={ref}
+          {...mergeProps(filterDOMProps(props as any), optionProps)}
+          {...renderProps}>
+          {renderProps.children}
+        </div>
+      )}
+    </>
   );
 });

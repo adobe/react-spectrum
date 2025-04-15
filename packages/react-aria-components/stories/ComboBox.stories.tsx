@@ -14,7 +14,7 @@ import {Button, Collection, ComboBox, Input, Label, ListBox, ListLayout, Popover
 import {LoadingSpinner, MyListBoxItem} from './utils';
 import React, {useMemo, useState} from 'react';
 import styles from '../example/index.css';
-import {UNSTABLE_ListBoxLoadingIndicator} from '../src/ListBox';
+import {UNSTABLE_ListBoxLoadingSentinel} from '../src/ListBox';
 import {useAsyncList} from 'react-stately';
 
 export default {
@@ -238,10 +238,10 @@ export const VirtualizedComboBox = () => {
   );
 };
 
-let renderEmptyState = ({isLoading}) => {
+let renderEmptyState = () => {
   return  (
     <div style={{height: 30, width: '100%'}}>
-      {isLoading ? <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} /> : 'No results'}
+      No results
     </div>
   );
 };
@@ -272,7 +272,7 @@ export const AsyncVirtualizedDynamicCombobox = () => {
   });
 
   return (
-    <ComboBox items={list.items} inputValue={list.filterText} onInputChange={list.setFilterText} isLoading={list.isLoading} onLoadMore={list.loadMore} allowsEmptyCollection>
+    <ComboBox inputValue={list.filterText} onInputChange={list.setFilterText} allowsEmptyCollection>
       <Label style={{display: 'block'}}>Async Virtualized Dynamic ComboBox</Label>
       <div style={{display: 'flex', position: 'relative'}}>
         <Input />
@@ -282,64 +282,25 @@ export const AsyncVirtualizedDynamicCombobox = () => {
         </Button>
       </div>
       <Popover>
-        <Virtualizer layout={new ListLayout({rowHeight: 25})}>
-          <ListBox<Character> className={styles.menu} renderEmptyState={({isLoading}) => renderEmptyState({isLoading})}>
-            {item => <MyListBoxItem id={item.name}>{item.name}</MyListBoxItem>}
-          </ListBox>
-        </Virtualizer>
-      </Popover>
-    </ComboBox>
-  );
-};
-
-const MyListBoxLoaderIndicator = () => {
-  return (
-    <UNSTABLE_ListBoxLoadingIndicator style={{height: 30, width: '100%'}}>
-      <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} />
-    </UNSTABLE_ListBoxLoadingIndicator>
-  );
-};
-
-export const AsyncVirtualizedCollectionRenderCombobox = () => {
-  let list = useAsyncList<Character>({
-    async load({signal, cursor, filterText}) {
-      if (cursor) {
-        cursor = cursor.replace(/^http:\/\//i, 'https://');
-      }
-
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
-      let json = await res.json();
-
-      return {
-        items: json.results,
-        cursor: json.next
-      };
-    }
-  });
-
-  return (
-    <ComboBox inputValue={list.filterText} onInputChange={list.setFilterText} isLoading={list.isLoading} onLoadMore={list.loadMore}>
-      <Label style={{display: 'block'}}>Async Virtualized Collection render ComboBox</Label>
-      <div style={{display: 'flex', position: 'relative'}}>
-        <Input />
-        {list.isLoading && <LoadingSpinner style={{left: '130px', top: '0px', height: 20, width: 20}} />}
-        <Button>
-          <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
-        </Button>
-      </div>
-      <Popover>
-        <Virtualizer layout={new ListLayout({rowHeight: 25})}>
-          <ListBox<Character> className={styles.menu}>
+        {/* TODO: one problem with making the loading sentinel always rendered is that the virtualizer will then render it with a div wrapper with a height=row height even when loading is done. Ideally we'd only
+        render the bare minimum (aka 0 height/width) in this case but the user would need to specify this in their layout */}
+        <Virtualizer layout={new ListLayout({rowHeight: 25, loaderHeight: list.isLoading ? 25 : 0})}>
+          <ListBox<Character> className={styles.menu} renderEmptyState={renderEmptyState}>
             <Collection items={list.items}>
-              {item => (
-                <MyListBoxItem id={item.name}>{item.name}</MyListBoxItem>
-              )}
+              {item => <MyListBoxItem id={item.name}>{item.name}</MyListBoxItem>}
             </Collection>
-            {list.isLoading && <MyListBoxLoaderIndicator />}
+            <MyListBoxLoaderIndicator isLoading={list.isLoading} onLoadMore={list.loadMore} />
           </ListBox>
         </Virtualizer>
       </Popover>
     </ComboBox>
+  );
+};
+
+const MyListBoxLoaderIndicator = (props) => {
+  return (
+    <UNSTABLE_ListBoxLoadingSentinel style={{height: 30, width: '100%'}} {...props}>
+      <LoadingSpinner style={{height: 20, width: 20, position: 'unset'}} />
+    </UNSTABLE_ListBoxLoadingSentinel>
   );
 };

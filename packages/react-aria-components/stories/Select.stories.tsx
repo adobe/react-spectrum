@@ -14,7 +14,7 @@ import {Button, Collection, Label, ListBox, ListLayout, OverlayArrow, Popover, S
 import {LoadingSpinner, MyListBoxItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
-import {UNSTABLE_ListBoxLoadingIndicator} from '../src/ListBox';
+import {UNSTABLE_ListBoxLoadingSentinel} from '../src/ListBox';
 import {useAsyncList} from 'react-stately';
 
 export default {
@@ -111,54 +111,11 @@ interface Character {
   birth_year: number
 }
 
-// TODO: this might just be unrealistic since the user needs to render the loading spinner... Do we help them with that?
-// They could technically do something like we do in Table.stories with MyRow where they selectively render the loading spinner
-// dynamically but that feels odd
-export const AsyncVirtualizedDynamicSelect = () => {
-  let list = useAsyncList<Character>({
-    async load({signal, cursor}) {
-      if (cursor) {
-        cursor = cursor.replace(/^http:\/\//i, 'https://');
-      }
-
-      // Slow down load so progress circle can appear
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
-      let json = await res.json();
-      return {
-        items: json.results,
-        cursor: json.next
-      };
-    }
-  });
-
+const MyListBoxLoaderIndicator = (props) => {
   return (
-    <Select isLoading={list.isLoading} onLoadMore={list.loadMore}>
-      <Label style={{display: 'block'}}>Async Virtualized Dynamic Select</Label>
-      <Button style={{position: 'relative'}}>
-        <SelectValue />
-        {list.isLoading && <LoadingSpinner style={{right: '20px', left: 'unset', top: '0px', height: '100%', width: 20}} />}
-        <span aria-hidden="true" style={{paddingLeft: 25}}>▼</span>
-      </Button>
-      <Popover>
-        <OverlayArrow>
-          <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
-        </OverlayArrow>
-        <Virtualizer layout={new ListLayout({rowHeight: 25})}>
-          <ListBox items={list.items} className={styles.menu}>
-            {item => <MyListBoxItem id={item.name}>{item.name}</MyListBoxItem>}
-          </ListBox>
-        </Virtualizer>
-      </Popover>
-    </Select>
-  );
-};
-
-const MyListBoxLoaderIndicator = () => {
-  return (
-    <UNSTABLE_ListBoxLoadingIndicator style={{height: 30, width: '100%'}}>
+    <UNSTABLE_ListBoxLoadingSentinel style={{height: 30, width: '100%'}} {...props}>
       <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} />
-    </UNSTABLE_ListBoxLoadingIndicator>
+    </UNSTABLE_ListBoxLoadingSentinel>
   );
 };
 
@@ -181,7 +138,7 @@ export const AsyncVirtualizedCollectionRenderSelect = () => {
   });
 
   return (
-    <Select isLoading={list.isLoading} onLoadMore={list.loadMore}>
+    <Select>
       <Label style={{display: 'block'}}>Async Virtualized Collection render Select</Label>
       <Button style={{position: 'relative'}}>
         <SelectValue />
@@ -192,15 +149,14 @@ export const AsyncVirtualizedCollectionRenderSelect = () => {
         <OverlayArrow>
           <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
         </OverlayArrow>
-        <Virtualizer layout={new ListLayout({rowHeight: 25})}>
+        <Virtualizer layout={new ListLayout({rowHeight: 25, loaderHeight: list.isLoading ? 25 : 0})}>
           <ListBox className={styles.menu}>
             <Collection items={list.items}>
               {item => (
                 <MyListBoxItem id={item.name}>{item.name}</MyListBoxItem>
               )}
             </Collection>
-            {/* TODO: loading indicator and/or renderEmpty? */}
-            {list.isLoading && <MyListBoxLoaderIndicator />}
+            <MyListBoxLoaderIndicator isLoading={list.isLoading} onLoadMore={list.loadMore} />
           </ListBox>
         </Virtualizer>
       </Popover>

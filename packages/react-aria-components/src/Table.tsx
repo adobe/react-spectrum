@@ -1,4 +1,4 @@
-import {AriaLabelingProps, AsyncLoadable, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
+import {AriaLabelingProps, HoverEvents, Key, LinkDOMProps, RefObject} from '@react-types/shared';
 import {BaseCollection, Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
 import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
@@ -10,7 +10,7 @@ import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Mu
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
-import {filterDOMProps, inertValue, isScrollable, mergeRefs, useLayoutEffect, useLoadMoreSentinel, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, inertValue, isScrollable, LoadMoreSentinelProps, mergeRefs, useLayoutEffect, useLoadMoreSentinel, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -305,15 +305,10 @@ export interface TableRenderProps {
   /**
    * State of the table.
    */
-  state: TableState<unknown>,
-  /**
-   * Whether the table is currently loading items.
-   * @selector [data-loading]
-   */
-  isLoading?: boolean
+  state: TableState<unknown>
 }
 
-export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, StyleRenderProps<TableRenderProps>, SlotProps, AriaLabelingProps, ScrollableProps<HTMLTableElement>, AsyncLoadable {
+export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, StyleRenderProps<TableRenderProps>, SlotProps, AriaLabelingProps, ScrollableProps<HTMLTableElement> {
   /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
   children?: ReactNode,
   /**
@@ -382,7 +377,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
   });
 
   let {isVirtualized, layoutDelegate, dropTargetDelegate: ctxDropTargetDelegate, CollectionRoot} = useContext(CollectionRendererContext);
-  let {dragAndDropHooks, isLoading, onLoadMore} = props;
+  let {dragAndDropHooks} = props;
   let {gridProps} = useTable({
     ...props,
     layoutDelegate,
@@ -457,8 +452,7 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
       isDropTarget: isRootDropTarget,
       isFocused,
       isFocusVisible,
-      state,
-      isLoading: isLoading || false
+      state
     }
   });
 
@@ -481,18 +475,6 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
 
   let ElementType = useElementType('table');
 
-  let sentinelRef = useRef(null);
-  let memoedLoadMoreProps = useMemo(() => ({
-    isLoading,
-    onLoadMore,
-    collection,
-    sentinelRef
-  }), [isLoading, onLoadMore, collection]);
-  useLoadMoreSentinel(memoedLoadMoreProps, tableContainerContext?.scrollRef ?? ref);
-  // TODO: double check this, can't render the sentinel as a div for non-virtualized cases, theoretically
-  // the inert should hide this from the accessbility tree anyways
-  let TBody = useElementType('tbody');
-
   return (
     <Provider
       values={[
@@ -513,14 +495,11 @@ function TableInner({props, forwardedRef: ref, selectionState, collection}: Tabl
           data-allows-dragging={isListDraggable || undefined}
           data-drop-target={isRootDropTarget || undefined}
           data-focused={isFocused || undefined}
-          data-focus-visible={isFocusVisible || undefined}
-          data-loading={props.isLoading || undefined}>
+          data-focus-visible={isFocusVisible || undefined}>
           <CollectionRoot
             collection={collection}
             scrollRef={tableContainerContext?.scrollRef ?? ref}
             persistedKeys={useDndPersistedKeys(selectionManager, dragAndDropHooks, dropState)} />
-          {/* @ts-ignore - compatibility with React < 19 */}
-          <TBody data-testid="loadMoreSentinel" ref={sentinelRef} style={{height: 1, width: 1}} inert={inertValue(true)} />
         </ElementType>
       </FocusScope>
       {dragPreview}
@@ -1367,17 +1346,28 @@ function RootDropIndicator() {
   );
 }
 
-export interface TableLoadingIndicatorProps extends StyleProps {
+export interface TableLoadingIndicatorProps extends LoadMoreSentinelProps, StyleProps {
   children?: ReactNode
 }
 
-export const UNSTABLE_TableLoadingIndicator = createLeafComponent('loader', function TableLoadingIndicator<T extends object>(props: TableLoadingIndicatorProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
+export const UNSTABLE_TableLoadingSentinel = createLeafComponent('loader', function TableLoadingIndicator<T extends object>(props: TableLoadingIndicatorProps, ref: ForwardedRef<HTMLTableRowElement>, item: Node<T>) {
   let state = useContext(TableStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
+  let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
   let numColumns = state.collection.columns.length;
 
+  let sentinelRef = useRef(null);
+  let memoedLoadMoreProps = useMemo(() => ({
+    isLoading,
+    onLoadMore,
+    collection: state?.collection,
+    sentinelRef,
+    scrollOffset
+  }), [isLoading, onLoadMore, scrollOffset, state?.collection]);
+  useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
+
   let renderProps = useRenderProps({
-    ...props,
+    ...otherProps,
     id: undefined,
     children: item.rendered,
     defaultClassName: 'react-aria-TableLoadingIndicator',
@@ -1399,15 +1389,25 @@ export const UNSTABLE_TableLoadingIndicator = createLeafComponent('loader', func
 
   return (
     <>
-      <TR
-        role="row"
-        ref={ref}
-        {...mergeProps(filterDOMProps(props as any), rowProps)}
-        {...renderProps}>
-        <TD role="rowheader" {...rowHeaderProps} style={style}>
-          {renderProps.children}
-        </TD>
+      {/* TODO: Alway render the sentinel. Might need to style it as visually hidden? */}
+      {/* TODO weird structure? Renders a extra row but we hide via inert so maybe ok? */}
+      {/* @ts-ignore - compatibility with React < 19 */}
+      <TR style={{position: 'relative', width: 0, height: 0}} inert={inertValue(true)} >
+        <TD data-testid="loadMoreSentinel" ref={sentinelRef} style={{position: 'absolute', height: 1, width: 1}} />
       </TR>
+      {isLoading && renderProps.children && (
+        <TR
+          role="row"
+          ref={ref}
+          {...mergeProps(filterDOMProps(props as any), rowProps)}
+          {...renderProps}>
+          <TD role="rowheader" {...rowHeaderProps} style={style}>
+            {renderProps.children}
+          </TD>
+        </TR>
+      )}
+      {/* TODO should I also render the empty state render here or do I change all the isEmpty: collection.size === 0 checks
+      to specifically filter out the loading sentinels?*/}
     </>
   );
 });

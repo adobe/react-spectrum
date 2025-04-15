@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Node} from '@react-types/shared';
+import {getScrollParent} from './getScrollParent';
 import {RefObject, useRef} from 'react';
 import {useEffectEvent} from './useEffectEvent';
 import {useLayoutEffect} from './useLayoutEffect';
@@ -27,63 +27,35 @@ export interface LoadMoreSentinelProps {
    * or equal to the provided value. (e.g. 1 = 100% of the scroll region's height).
    * @default 1
    */
-  scrollOffset?: number,
-  // TODO: this is a breaking change but this isn't documented and is in the react-aria/utils package so might be ok? Maybe can move this to a different package?
-  collection?: Collection<Node<unknown>>,
-  /**
-   * A ref to a sentinel element that is positioned at the end of the list's content. The visibility of this senetinel
-   * with respect to the scrollable region and its offset determines if we should load more.
-   */
-  sentinelRef: RefObject<HTMLElement | null>
+  scrollOffset?: number
+  // TODO: Maybe include a scrollRef option so the user can provide the scrollParent to compare against instead of having us look it up
 }
 
 export function useLoadMoreSentinel(props: LoadMoreSentinelProps, ref: RefObject<HTMLElement | null>): void {
-  let {isLoading, onLoadMore, scrollOffset = 1, collection, sentinelRef} = props;
-  let lastCollection = useRef(collection);
+  let {isLoading, onLoadMore, scrollOffset = 1} = props;
 
-  // If we are in a loading state when this hook is called and a collection is provided, we can assume that the collection will update in the future so we don't
-  // want to trigger another loadMore until the collection has updated as a result of the load.
-  // TODO: If the load doesn't end up updating the collection even after completion, this flag could get stuck as true. However, not tracking
-  // this means we could end up calling onLoadMore multiple times if isLoading changes but the collection takes time to update
-  let collectionAwaitingUpdate = useRef(collection && isLoading);
   let sentinelObserver = useRef<IntersectionObserver>(null);
 
   let triggerLoadMore = useEffectEvent((entries: IntersectionObserverEntry[]) => {
     // Use "isIntersecting" over an equality check of 0 since it seems like there is cases where
     // a intersection ratio of 0 can be reported when isIntersecting is actually true
     for (let entry of entries) {
-      if (entry.isIntersecting && !isLoading && !(collection && collectionAwaitingUpdate.current) && onLoadMore) {
+      if (entry.isIntersecting && !isLoading && onLoadMore) {
         onLoadMore();
-        if (collection !== null && lastCollection.current !== null) {
-          collectionAwaitingUpdate.current = true;
-        }
       }
     }
   });
 
-  // TODO: maybe can optimize creating the intersection observer by adding it in a useLayoutEffect but would need said effect to run every render
-  // so that we can catch when ref.current exists or is modified (maybe return a callbackRef?) and then would need to check if scrollOffset changed.
   useLayoutEffect(() => {
-    if (!ref.current) {
-      return;
+    if (ref.current) {
+      sentinelObserver.current = new IntersectionObserver(triggerLoadMore, {root: getScrollParent(ref?.current) as HTMLElement, rootMargin: `0px ${100 * scrollOffset}% ${100 * scrollOffset}% ${100 * scrollOffset}%`});
+      sentinelObserver.current.observe(ref.current);
     }
 
-    // Only update this flag if the collection changes when we aren't loading. Guards against cases like the addition of a loading spinner when a load starts or if the user
-    // temporarily wipes the collection during loading which isn't the collection update via fetch which we are waiting for.
-    // If collection isn't provided (aka for RSP components which won't provide a collection), flip flag to false so we still trigger onLoadMore
-    if (collection !== lastCollection.current && !isLoading) {
-      collectionAwaitingUpdate.current = false;
-    }
-    sentinelObserver.current = new IntersectionObserver(triggerLoadMore, {root: ref.current, rootMargin: `0px ${100 * scrollOffset}% ${100 * scrollOffset}% ${100 * scrollOffset}%`});
-    if (sentinelRef?.current) {
-      sentinelObserver.current.observe(sentinelRef.current);
-    }
-
-    lastCollection.current = collection;
     return () => {
       if (sentinelObserver.current) {
         sentinelObserver.current.disconnect();
       }
     };
-  }, [isLoading, triggerLoadMore, ref, collection, scrollOffset, sentinelRef]);
+  }, [isLoading, triggerLoadMore, ref, scrollOffset]);
 }

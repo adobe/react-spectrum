@@ -17,7 +17,7 @@ import {Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {LoadingSpinner, MyListBoxItem} from './utils';
 import React, {useMemo} from 'react';
 import styles from '../example/index.css';
-import {UNSTABLE_ListBoxLoadingIndicator} from '../src/ListBox';
+import {UNSTABLE_ListBoxLoadingSentinel} from '../src/ListBox';
 
 export default {
   title: 'React Aria Components'
@@ -450,11 +450,21 @@ interface Character {
   birth_year: number
 }
 
-const MyListBoxLoaderIndicator = () => {
+const MyListBoxLoaderIndicator = (props) => {
+  let {orientation, ...otherProps} = props;
   return (
-    <UNSTABLE_ListBoxLoadingIndicator style={{height: 30, width: '100%'}}>
-      <LoadingSpinner style={{height: 20, width: 20, transform: 'translate(-50%, -50%)'}} />
-    </UNSTABLE_ListBoxLoadingIndicator>
+    <UNSTABLE_ListBoxLoadingSentinel
+      style={{
+        height: orientation === 'horizontal' ? 100 : 30,
+        width: orientation === 'horizontal' ? 30 : '100%',
+        flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+      {...otherProps}>
+      <LoadingSpinner style={{height: 20, width: 20, position: 'unset'}} />
+    </UNSTABLE_ListBoxLoadingSentinel>
   );
 };
 
@@ -470,7 +480,6 @@ export const AsyncListBox = (args) => {
       await new Promise(resolve => setTimeout(resolve, 2000));
       let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
-
       return {
         items: json.results,
         cursor: json.next
@@ -486,24 +495,24 @@ export const AsyncListBox = (args) => {
         width: args.orientation === 'horizontal' ? 400 : 200,
         overflow: 'auto'
       }}
-      items={list.items}
       aria-label="async listbox"
-      isLoading={list.isLoading}
-      onLoadMore={list.loadMore}
-      renderEmptyState={({isLoading}) => renderEmptyState({isLoading})}>
-      {(item: Character) => (
-        <MyListBoxItem
-          style={{
-            minHeight: args.orientation === 'horizontal' ? 100 : 50,
-            minWidth: args.orientation === 'horizontal' ? 50 : 200,
-            backgroundColor: 'lightgrey',
-            border: '1px solid black',
-            boxSizing: 'border-box'
-          }}
-          id={item.name}>
-          {item.name}
-        </MyListBoxItem>
-      )}
+      renderEmptyState={() => renderEmptyState({isLoading: list.isLoading})}>
+      <Collection items={list.items}>
+        {(item: Character) => (
+          <MyListBoxItem
+            style={{
+              minHeight: args.orientation === 'horizontal' ? 100 : 50,
+              minWidth: args.orientation === 'horizontal' ? 50 : 200,
+              backgroundColor: 'lightgrey',
+              border: '1px solid black',
+              boxSizing: 'border-box'
+            }}
+            id={item.name}>
+            {item.name}
+          </MyListBoxItem>
+        )}
+      </Collection>
+      <MyListBoxLoaderIndicator orientation={args.orientation} isLoading={list.isLoading} onLoadMore={list.loadMore} />
     </ListBox>
   );
 };
@@ -586,7 +595,6 @@ export const AsyncListBoxVirtualized = (args) => {
       await new Promise(resolve => setTimeout(resolve, 2000));
       let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
-
       return {
         items: json.results,
         cursor: json.next
@@ -595,8 +603,8 @@ export const AsyncListBoxVirtualized = (args) => {
   });
 
   let layout = useMemo(() => {
-    return args.orientation === 'horizontal' ? new HorizontalLayout({rowWidth: 100}) : new ListLayout({rowHeight: 50, padding: 4});
-  }, [args.orientation]);
+    return args.orientation === 'horizontal' ? new HorizontalLayout({rowWidth: 100}) : new ListLayout({rowHeight: 50, padding: 4, loaderHeight: list.isLoading ? 30 : 0});
+  }, [args.orientation, list.isLoading]);
   return (
     <Virtualizer
       layout={layout}>
@@ -612,9 +620,7 @@ export const AsyncListBoxVirtualized = (args) => {
           display: 'flex'
         }}
         aria-label="async virtualized listbox"
-        isLoading={list.isLoading}
-        onLoadMore={list.loadMore}
-        renderEmptyState={({isLoading}) => renderEmptyState({isLoading})}>
+        renderEmptyState={() => renderEmptyState({isLoading: list.isLoading})}>
         <Collection items={list.items}>
           {(item: Character) => (
             <MyListBoxItem
@@ -630,7 +636,8 @@ export const AsyncListBoxVirtualized = (args) => {
             </MyListBoxItem>
           )}
         </Collection>
-        {list.isLoading && list.items.length > 0 && <MyListBoxLoaderIndicator />}
+        {/* TODO: figure out why in horizontal oriention, adding this makes every items loaded have index 0, messing up layout */}
+        <MyListBoxLoaderIndicator orientation={args.orientation} isLoading={list.isLoading} onLoadMore={list.loadMore} />
       </ListBox>
     </Virtualizer>
   );
