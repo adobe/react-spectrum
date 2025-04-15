@@ -36,6 +36,10 @@ export interface ListLayoutOptions {
    */
   loaderHeight?: number,
   /**
+   * The fixed height of a separator element in px.
+   */
+  separatorHeight?: number,
+  /**
    * The thickness of the drop indicator.
    * @default 2
    */
@@ -74,6 +78,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
   protected headingHeight: number | null;
   protected estimatedHeadingHeight: number | null;
   protected loaderHeight: number | null;
+  protected separatorHeight: number | null;
   protected dropIndicatorThickness: number;
   protected gap: number;
   protected padding: number;
@@ -98,6 +103,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     this.headingHeight = options.headingHeight ?? null;
     this.estimatedHeadingHeight = options.estimatedHeadingHeight ?? null;
     this.loaderHeight = options.loaderHeight ?? null;
+    this.separatorHeight = options?.separatorHeight ?? null;
     this.dropIndicatorThickness = options.dropIndicatorThickness || 2;
     this.gap = options.gap || 0;
     this.padding = options.padding || 0;
@@ -196,6 +202,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
       || this.rowHeight !== (options?.rowHeight ?? this.rowHeight)
       || this.headingHeight !== (options?.headingHeight ?? this.headingHeight)
       || this.loaderHeight !== (options?.loaderHeight ?? this.loaderHeight)
+      || this.separatorHeight !== (options?.separatorHeight ?? this.separatorHeight)
       || this.gap !== (options?.gap ?? this.gap)
       || this.padding !== (options?.padding ?? this.padding);
   }
@@ -206,6 +213,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
       || newOptions.headingHeight !== oldOptions.headingHeight
       || newOptions.estimatedHeadingHeight !== oldOptions.estimatedHeadingHeight
       || newOptions.loaderHeight !== oldOptions.loaderHeight
+      || newOptions.separatorHeight !== oldOptions.separatorHeight
       || newOptions.dropIndicatorThickness !== oldOptions.dropIndicatorThickness
       || newOptions.gap !== oldOptions.gap
       || newOptions.padding !== oldOptions.padding;
@@ -228,6 +236,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     this.headingHeight = options?.headingHeight ?? this.headingHeight;
     this.estimatedHeadingHeight = options?.estimatedHeadingHeight ?? this.estimatedHeadingHeight;
     this.loaderHeight = options?.loaderHeight ?? this.loaderHeight;
+    this.separatorHeight = options?.separatorHeight ?? this.separatorHeight;
     this.dropIndicatorThickness = options?.dropIndicatorThickness ?? this.dropIndicatorThickness;
     this.gap = options?.gap ?? this.gap;
     this.padding = options?.padding ?? this.padding;
@@ -317,7 +326,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
       case 'loader':
         return this.buildLoader(node, x, y);
       case 'separator':
-        return this.buildLoader(node, x, y);
+        return this.buildSeparator(node, x, y);
       default:
         throw new Error('Unsupported node type: ' + node.type);
     }
@@ -332,6 +341,19 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     return {
       layoutInfo,
       validRect: rect.intersection(this.requestedRect)
+    };
+  }
+
+  protected buildSeparator(node: Node<T>, x: number, y: number): LayoutNode {
+    let rect = new Rect(x, y, this.padding, 0);
+    let layoutInfo = new LayoutInfo('separator', node.key, rect);
+    rect.width = this.virtualizer!.contentSize.width - this.padding - x;
+    rect.height = this.separatorHeight || this.rowHeight || this.estimatedRowHeight || DEFAULT_HEIGHT;
+
+    return {
+      layoutInfo,
+      validRect: rect.intersection(this.requestedRect),
+      node
     };
   }
 
@@ -441,6 +463,9 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     let rect = new Rect(x, y, width, rectHeight);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
     layoutInfo.estimatedSize = isEstimated;
+    if (node.type === 'separator') {
+      console.log(layoutInfo.rect);
+    }
     return {
       layoutInfo,
       children: [],
