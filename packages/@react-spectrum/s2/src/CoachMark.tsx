@@ -10,11 +10,10 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {ActionMenuContext} from './ActionMenu';
+
 import {
   DialogTriggerProps as AriaDialogTriggerProps,
   ContextValue,
-  DEFAULT_SLOT,
   OverlayTriggerStateContext,
   PopoverProps,
   Provider,
@@ -23,7 +22,6 @@ import {
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
 import coachmarkCss from './CoachMark.module.css';
-import {ContentContext, FooterContext, KeyboardContext, TextContext} from './Content';
 import {
   createContext,
   ForwardedRef,
@@ -33,14 +31,11 @@ import {
   useContext,
   useRef
 } from 'react';
-import {DividerContext} from './Divider';
 import {forwardRefType} from './types';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
-import {ImageContext} from './Image';
-import {ImageCoordinator} from './ImageCoordinator';
 import {keyframes, raw} from '../style/style-macro' with {type: 'macro'};
 import {SliderContext} from './Slider';
-import {space, style} from '../style' with {type: 'macro'};
+import {style} from '../style' with {type: 'macro'};
 import {useId, useObjectRef, useOverlayPosition, useOverlayTrigger} from 'react-aria';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useMenuTriggerState} from '@react-stately/menu';
@@ -109,125 +104,6 @@ let popover = style({
   isolation: 'isolate'
 }, getAllowedOverrides());
 
-const image = style({
-  width: 'full',
-  aspectRatio: '[3/2]',
-  objectFit: 'cover',
-  userSelect: 'none',
-  pointerEvents: 'none'
-});
-
-let title = style({
-  font: 'title',
-  fontSize: {
-    size: {
-      XS: 'title-xs',
-      S: 'title-xs',
-      M: 'title-sm',
-      L: 'title',
-      XL: 'title-lg'
-    }
-  },
-  lineClamp: 3,
-  gridArea: 'title'
-});
-
-let description = style({
-  font: 'body',
-  fontSize: {
-    size: {
-      XS: 'body-2xs',
-      S: 'body-2xs',
-      M: 'body-xs',
-      L: 'body-sm',
-      XL: 'body'
-    }
-  },
-  lineClamp: 3,
-  gridArea: 'description'
-});
-
-let keyboard = style({
-  gridArea: 'keyboard',
-  font: 'ui',
-  fontWeight: 'light',
-  color: 'gray-600',
-  background: 'gray-25',
-  unicodeBidi: 'plaintext'
-});
-
-let steps = style({
-  font: 'detail',
-  fontSize: 'detail-sm',
-  alignSelf: 'center'
-});
-
-let content = style({
-  display: 'grid',
-  // By default, all elements are displayed in a stack.
-  // If an action menu is present, place it next to the title.
-  gridTemplateColumns: {
-    default: ['1fr'],
-    ':has([data-slot=menu])': ['minmax(0, 1fr)', 'auto']
-  },
-  gridTemplateAreas: {
-    default: [
-      'title keyboard',
-      'description keyboard'
-    ],
-    ':has([data-slot=menu])': [
-      'title menu',
-      'keyboard keyboard',
-      'description description'
-    ]
-  },
-  columnGap: 4,
-  flexGrow: 1,
-  alignItems: 'baseline',
-  alignContent: 'space-between',
-  rowGap: {
-    size: {
-      XS: 4,
-      S: 4,
-      M: space(6),
-      L: space(6),
-      XL: 8
-    }
-  },
-  paddingTop: {
-    default: '--card-spacing',
-    ':first-child': 0
-  },
-  paddingBottom: {
-    default: '[calc(var(--card-spacing) * 1.5 / 2)]',
-    ':last-child': 0
-  }
-});
-
-let actionMenu = style({
-  gridArea: 'menu',
-  // Don't cause the row to expand, preserve gap between title and description text.
-  // Would use -100% here but it doesn't work in Firefox.
-  marginY: '[calc(-1 * self(height))]'
-});
-
-let footer = style({
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'end',
-  justifyContent: 'space-between',
-  gap: 8,
-  paddingTop: '[calc(var(--card-spacing) * 1.5 / 2)]'
-});
-
-const actionButtonSize = {
-  XS: 'XS',
-  S: 'XS',
-  M: 'S',
-  L: 'M',
-  XL: 'L'
-} as const;
-
 export const CoachMarkContext = createContext<ContextValue<CoachMarkProps, HTMLDivElement>>({});
 
 export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HTMLDivElement>) => {
@@ -239,36 +115,6 @@ export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HT
   let {triggerRef} = useContext(InternalCoachMarkContext);
   let fallbackTriggerRef = useObjectRef(useRef<HTMLElement>(null));
   triggerRef = triggerRef ?? fallbackTriggerRef;
-
-  let children = (
-    <Provider
-      values={[
-        [ImageContext, {alt: '', styles: image}],
-        [TextContext, {
-          slots: {
-            [DEFAULT_SLOT]: {},
-            title: {styles: title({size})},
-            description: {styles: description({size})},
-            steps: {styles: steps}
-          }
-        }],
-        [KeyboardContext, {styles: keyboard}],
-        [ContentContext, {styles: content({size})}],
-        [DividerContext, {size: 'S'}],
-        [FooterContext, {styles: footer}],
-        [ActionMenuContext, {
-          isQuiet: true,
-          size: actionButtonSize[size],
-          // @ts-ignore
-          'data-slot': 'menu',
-          styles: actionMenu
-        }]
-      ]}>
-      <ImageCoordinator>
-        {props.children}
-      </ImageCoordinator>
-    </Provider>
-  );
 
   let {overlayProps, placement} = useOverlayPosition({
     targetRef: triggerRef,
@@ -302,7 +148,7 @@ export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HT
       className={coachmarkCss['coach-mark'] + popover({size, placement})}>
       {/* }// Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state. */}
       <OverlayTriggerStateContext.Provider value={null}>
-        {children}
+        {props.children}
       </OverlayTriggerStateContext.Provider>
     </div>
   );

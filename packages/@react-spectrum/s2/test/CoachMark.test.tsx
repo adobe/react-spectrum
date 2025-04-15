@@ -12,20 +12,11 @@
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {
-  ActionMenu,
   Button,
-  CardPreview,
   Checkbox,
   UNSTABLE_CoachMark as CoachMark,
-  UNSTABLE_CoachMarkTrigger as CoachMarkTrigger,
-  Content,
-  Footer,
-  Image,
-  Keyboard,
-  MenuItem,
-  Text
+  UNSTABLE_CoachMarkTrigger as CoachMarkTrigger
 } from '../src';
-import {card} from '../src/Card';
 import React, {createRef, useState} from 'react';
 import userEvent, {UserEvent} from '@testing-library/user-event';
 
@@ -54,24 +45,9 @@ describe('CoachMark', () => {
         <CoachMarkTrigger isOpen={isOpen}>
           <Checkbox>Sync with CC</Checkbox>
           <CoachMark placement="right top" ref={props.coachmarkRef}>
-            <div className={card({size: 'M', density: 'regular'})}>
-              <CardPreview>
-                <Image src={new URL('assets/preview.png', import.meta.url).toString()} />
-              </CardPreview>
-              <Content>
-                <Text slot="title">Hello</Text>
-                <ActionMenu>
-                  <MenuItem>Skip tour</MenuItem>
-                  <MenuItem>Restart tour</MenuItem>
-                </ActionMenu>
-                <Keyboard>Command + B</Keyboard>
-                <Text slot="description">This is the description</Text>
-              </Content>
-              <Footer>
-                <Text slot="steps">1 of 10</Text>
-                <Button fillStyle="outline" variant="secondary">Previous</Button>
-                <Button variant="primary" onPress={() => setIsOpen(false)}>Next</Button>
-              </Footer>
+            <div>
+              <Button variant="secondary">Previous</Button>
+              <Button variant="primary" onPress={() => setIsOpen(false)}>Next</Button>
             </div>
           </CoachMark>
         </CoachMarkTrigger>
@@ -90,8 +66,8 @@ describe('CoachMark', () => {
     await user?.click(startButton);
     act(() => {jest.runAllTimers();});
     expect(coachmarkRef.current!.showPopover).toHaveBeenCalled();
-    expect(getAllByRole('button').length).toBe(4); // start, action menu, previous, next
-    await user?.click(getAllByRole('button')[3]);
+    expect(getAllByRole('button').length).toBe(3); // start, previous, next
+    await user?.click(getAllByRole('button')[2]);
     expect(coachmarkRef.current!.hidePopover).toHaveBeenCalled();
   });
 });
