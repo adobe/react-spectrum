@@ -28,7 +28,11 @@ interface StaticTreeItemProps extends TreeItemProps {
   children: ReactNode
 }
 
-function MyCheckbox({children, ...props}: CheckboxProps) {
+interface MyCheckboxProps extends CheckboxProps {
+  children?: ReactNode
+}
+
+function MyCheckbox({children, ...props}: MyCheckboxProps) {
   return (
     <Checkbox {...props}>
       {({isIndeterminate}) => (
@@ -300,7 +304,7 @@ const TreeExampleDynamicRender = (args: TreeProps<unknown>) => {
   return (
     <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" items={treeData.items} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
       {(item) => (
-        <DynamicTreeItem id={item.key} childItems={item.children} textValue={item.value.name}>
+        <DynamicTreeItem id={item.key} childItems={item.children ?? []} textValue={item.value.name}>
           {item.value.name}
         </DynamicTreeItem>
       )}
@@ -332,7 +336,7 @@ const WithLinksRender = (args: TreeProps<unknown>) => {
   return (
     <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} className={styles.tree} aria-label="test dynamic tree" items={treeData.items} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
       {(item) => (
-        <DynamicTreeItem href="https://adobe.com/" childItems={item.children} textValue={item.value.name}>
+        <DynamicTreeItem href="https://adobe.com/" childItems={item.children ?? []} textValue={item.value.name}>
           {item.value.name}
         </DynamicTreeItem>
     )}
@@ -390,7 +394,7 @@ function LoadingStoryDepOnCollection(args) {
     <Tree {...args} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
       <Collection items={treeData.items} dependencies={[args.isLoading]}>
         {(item) => (
-          <DynamicTreeItem renderLoader={(id) => id === 'project-2C'} isLoading={args.isLoading} id={item.key} childItems={item.children} textValue={item.value.name}>
+          <DynamicTreeItem renderLoader={(id) => id === 'project-2C'} isLoading={args.isLoading} id={item.key} childItems={item.children ?? []} textValue={item.value.name}>
             {item.value.name}
           </DynamicTreeItem>
         )}
@@ -423,7 +427,7 @@ function LoadingStoryDepOnTop(args: TreeProps<unknown> & {isLoading: boolean}) {
   return (
     <Tree {...args} dependencies={[args.isLoading]} items={treeData.items} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
       {(item) => (
-        <DynamicTreeItem renderLoader={(id) => (id === 'reports' || id === 'project-2C')} isLoading={args.isLoading} id={item.key} childItems={item.children} textValue={item.value.name}>
+        <DynamicTreeItem renderLoader={(id) => (id === 'reports' || id === 'project-2C')} isLoading={args.isLoading} id={item.key} childItems={item.children ?? []} textValue={item.value.name}>
           {item.value.name}
         </DynamicTreeItem>
       )}
@@ -518,7 +522,7 @@ function ButtonLoadingIndicator(args: TreeProps<unknown> & {isLoading: boolean})
   return (
     <Tree {...args} dependencies={[args.isLoading]} items={treeData.items} defaultExpandedKeys={defaultExpandedKeys} disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
       {(item) => (
-        <DynamicTreeItemWithButtonLoader renderLoader={(id) => (id === 'project-2' || id === 'project-5')} isLoading={args.isLoading} id={item.key} childItems={item.children} textValue={item.value.name}>
+        <DynamicTreeItemWithButtonLoader renderLoader={(id) => (id === 'project-2' || id === 'project-5')} isLoading={args.isLoading} id={item.key} childItems={item.children ?? []} textValue={item.value.name}>
           {item.value.name}
         </DynamicTreeItemWithButtonLoader>
       )}
@@ -596,7 +600,7 @@ function TreeDragAndDropExample(args) {
   return (
     <Tree dragAndDropHooks={dragAndDropHooks} {...args} className={styles.tree} aria-label="Tree with drag and drop" items={treeData.items}>
       {(item: any) => (
-        <DynamicTreeItem id={item.key} childItems={item.children} textValue={item.value.name}>
+        <DynamicTreeItem id={item.key} childItems={item.children ?? []} textValue={item.value.name}>
           {item.value.name}
         </DynamicTreeItem>
       )}
