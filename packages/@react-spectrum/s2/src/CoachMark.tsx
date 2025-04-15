@@ -39,7 +39,6 @@ import {style} from '../style' with {type: 'macro'};
 import {useId, useKeyboard, useObjectRef, useOverlayPosition, useOverlayTrigger} from 'react-aria';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useMenuTriggerState} from '@react-stately/menu';
-import { useHasTabbableChild } from '@react-aria/focus';
 
 const InternalCoachMarkContext = createContext<{triggerRef?: RefObject<HTMLElement | null>}>({});
 // TODO: decide on props
