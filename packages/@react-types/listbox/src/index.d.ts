@@ -38,6 +38,8 @@ export interface AriaListBoxProps<T> extends AriaListBoxPropsBase<T> {
   label?: ReactNode,
   /** How multiple selection should behave in the collection. */
   selectionBehavior?: SelectionBehavior,
+  /** Whether selection should occur on press up instead of press down. */
+  shouldSelectOnPressUp?: boolean,
   /**
    * Handler that is called when a user performs an action on an item. The exact user event depends on
    * the collection's `selectionBehavior` prop and the interaction modality.
