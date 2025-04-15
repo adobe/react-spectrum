@@ -36,6 +36,7 @@ import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro
 import {keyframes, raw} from '../style/style-macro' with {type: 'macro'};
 import {SliderContext} from './Slider';
 import {style} from '../style' with {type: 'macro'};
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import {useId, useKeyboard, useObjectRef, useOverlayPosition, useOverlayTrigger} from 'react-aria';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useMenuTriggerState} from '@react-stately/menu';
@@ -135,8 +136,10 @@ export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HT
   useLayoutEffect(() => {
     if (state?.isOpen && !prevOpen.current) {
       popoverRef.current?.showPopover();
+      internalContainer.current?.showPopover();
     } else if (!state?.isOpen && prevOpen.current) {
       popoverRef.current?.hidePopover();
+      internalContainer.current?.hidePopover();
     }
     prevOpen.current = state?.isOpen ?? false;
   }, [state?.isOpen]);
@@ -150,6 +153,10 @@ export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HT
       e.continuePropagation();
     }
   });
+  // Have to put the portal in a div with popover="manual" so it is also in the top layer and renders on top of the coachmark
+  // Note, this isn't great because I'm not honestly sure what would happen if the page scrolled or their is a parent which affects that placement, is
+  // top-layer unaffected by parent stacking context? scroll parent?
+  let internalContainer = useRef<HTMLDivElement>(null);
 
   return (
     <div
@@ -167,7 +174,24 @@ export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HT
       className={UNSAFE_className + ' ' + coachmarkCss['coach-mark'] + popover({placement})}>
       {/* }// Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state. */}
       <OverlayTriggerStateContext.Provider value={null}>
-        {props.children}
+        <UNSAFE_PortalProvider getContainer={() => internalContainer.current}>
+          {props.children}
+        </UNSAFE_PortalProvider>
+        <div
+          popover="manual"
+          ref={internalContainer}
+          className={style({
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: 'full',
+            height: 'full',
+            borderStyle: 'none',
+            backgroundColor: 'transparent',
+            pointerEvents: 'none',
+            padding: 0,
+            margin: 0
+          })} />
       </OverlayTriggerStateContext.Provider>
     </div>
   );
