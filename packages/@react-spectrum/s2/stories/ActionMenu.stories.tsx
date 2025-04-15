@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionMenu, MenuItem} from '../src';
+import {ActionButton, ActionMenu, Content, DialogTrigger, MenuItem, Picker, PickerItem, Popover} from '../src';
 
 import {categorizeArgTypes} from './utils';
 import type {Meta, StoryObj} from '@storybook/react';
+import {ReactFlow} from '@xyflow/react'
 
 const meta: Meta<typeof ActionMenu> = {
   component: ActionMenu,
@@ -82,3 +83,40 @@ let items = [
     }
   }
 };
+
+export const ReactFlowTesting = {
+  render: () => (
+    <>
+      <div style={{height: 600, width: 800, backgroundColor: '#dedede'}}>
+        <ReactFlow
+          elementsSelectable={false}
+          onNodeClick={() => {}}
+          nodeTypes={{node: Node}}
+          nodes={[{id: 'n1', type: 'node', position: {x: 100, y: 100}, data: {}}]} />
+      </div>
+      <ActionMenu onAction={console.log}>
+        <MenuItem>Add</MenuItem>
+      </ActionMenu>
+    </>
+  )
+};
+
+function Node(props) {
+  return (
+    <div style={{backgroundColor: 'gray', borderRadius: '8px', padding: '8px', display: 'flex', flexDirection: 'column', justifyContent: 'start', gap: 4, width: '150px'}}>
+      <ActionMenu onAction={console.log}>
+        <MenuItem>Add</MenuItem>
+      </ActionMenu>
+      <Picker>
+        <PickerItem>Option 1</PickerItem>
+      </Picker>
+      <DialogTrigger>
+        <ActionButton>Open popover</ActionButton>
+        <Popover>
+          <Content>Popover content</Content>
+        </Popover>
+      </DialogTrigger>
+      <ActionButton onPress={() => alert('hi')}>Alert</ActionButton>
+    </div>
+  );
+}
