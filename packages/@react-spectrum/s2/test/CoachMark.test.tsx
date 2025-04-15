@@ -60,8 +60,14 @@ describe('CoachMark', () => {
     let {getAllByRole} = render(
       <CoachMarkTest coachmarkRef={coachmarkRef} />
     );
-    coachmarkRef.current!.showPopover = jest.fn();
-    coachmarkRef.current!.hidePopover = jest.fn();
+    let popovers = document.querySelectorAll('[popover="manual"]');
+    for (let popover of popovers) {
+      // @ts-ignore
+      popover.showPopover = jest.fn();
+      // @ts-ignore
+      popover.hidePopover = jest.fn();
+    }
+
     let startButton = getAllByRole('button')[0];
     await user?.click(startButton);
     act(() => {jest.runAllTimers();});
