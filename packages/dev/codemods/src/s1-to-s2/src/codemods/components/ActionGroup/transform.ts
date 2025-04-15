@@ -15,7 +15,6 @@ let availableComponents = getComponents();
  * - Use ToggleButtonGroup if selection is used.
  * - Update root level onAction to onPress on each ActionButton.
  * - Apply isDisabled directly on each ActionButton/ToggleButton instead of disabledKeys.
- * - Update key to id (keep key for map).
  * - Convert dynamic collections render function to items.map.
  */
 export default function transformActionGroup(path: NodePath<t.JSXElement>) {
@@ -32,10 +31,12 @@ export default function transformActionGroup(path: NodePath<t.JSXElement>) {
   let selectionMode = t.isStringLiteral(selectionModePath?.node.value) ? selectionModePath.node.value.value : 'none';
   let newComponentName, childComponentName;
   if (selectionMode === 'none') {
+    // Use ActionButtonGroup if no selection
     newComponentName = 'ActionButtonGroup';
     childComponentName = 'ActionButton';
     selectionModePath?.remove();
   } else {
+    // Use ToggleButtonGroup if selection is used
     newComponentName = 'ToggleButtonGroup';
     childComponentName = 'ToggleButton';
   }
