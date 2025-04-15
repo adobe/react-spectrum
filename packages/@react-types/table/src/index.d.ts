@@ -38,7 +38,9 @@ export interface TableProps<T> extends MultipleSelection, Sortable {
    * trigger selection clearing contextually.
    * @default 'clearSelection'
    */
-  escapeKeyBehavior?: 'clearSelection' | 'none'
+  escapeKeyBehavior?: 'clearSelection' | 'none',
+  /** Whether selection should occur on press up instead of press down. */
+  shouldSelectOnPressUp?: boolean
 }
 
 /**
