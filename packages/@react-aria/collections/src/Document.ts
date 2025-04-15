@@ -460,9 +460,13 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   }
 
   updateCollection(): void {
-    // First, update the indices of dirty element children.
+    // First, remove disconnected nodes and update the indices of dirty element children.
     for (let element of this.dirtyNodes) {
-      element.updateChildIndices();
+      if (element instanceof ElementNode && (!element.isConnected || element.isHidden)) {
+        this.removeNode(element);
+      } else {
+        element.updateChildIndices();
+      }
     }
 
     // Next, update dirty collection nodes.
@@ -471,8 +475,6 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
         if (element.isConnected && !element.isHidden) {
           element.updateNode();
           this.addNode(element);
-        } else {
-          this.removeNode(element);
         }
 
         element.isMutated = false;

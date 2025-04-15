@@ -312,6 +312,7 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
             styles: style({marginStart: '--iconMargin', flexShrink: 0, order: 0})
           }],
           [NotificationBadgeContext, {
+            staticColor: staticColor,
             size: props.size === 'XS' ? undefined : props.size,
             isDisabled: props.isDisabled,
             styles: style({position: 'absolute', top: '--badgeTop', insetStart: '[var(--badgePosition)]', marginTop: '[calc((self(height) * -1)/2)]', marginStart: '[calc((self(height) * -1)/2)]'})
