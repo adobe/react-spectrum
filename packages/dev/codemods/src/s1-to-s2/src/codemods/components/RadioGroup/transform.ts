@@ -11,15 +11,15 @@ import * as t from '@babel/types';
 export default function transformRadioGroup(path: NodePath<t.JSXElement>) {
   // Change validationState="invalid" to isInvalid
   updatePropNameAndValue(path, {
-    oldProp: 'validationState',
-    oldValue: 'invalid',
-    newProp: 'isInvalid',
-    newValue: true
+    oldPropName: 'validationState',
+    oldPropValue: 'invalid',
+    newPropName: 'isInvalid',
+    newPropValue: true
   });
 
   // Remove validationState="valid"
-  removeProp(path, {propToRemove: 'validationState', propValue: 'valid'});
+  removeProp(path, {propName: 'validationState', propValue: 'valid'});
 
   // Remove showErrorIcon
-  removeProp(path, {propToRemove: 'showErrorIcon'});
+  removeProp(path, {propName: 'showErrorIcon'});
 } 

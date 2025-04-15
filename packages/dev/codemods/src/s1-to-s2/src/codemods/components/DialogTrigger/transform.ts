@@ -24,12 +24,12 @@ export function updateDialogChild(
 ) {
   let typePath = path.get('openingElement').get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === 'type') as NodePath<t.JSXAttribute> | undefined;
   let type = typePath?.node.value?.type === 'StringLiteral' ? typePath.node.value?.value : 'modal';
-  let newComponent = 'Dialog';
+  let newComponentName = 'Dialog';
   let props: t.JSXAttribute[] = [];
   if (type === 'popover') {
-    newComponent = 'Popover';
+    newComponentName = 'Popover';
   } else if (type === 'fullscreen' || type === 'fullscreenTakeover') {
-    newComponent = 'FullscreenDialog';
+    newComponentName = 'FullscreenDialog';
     if (type === 'fullscreenTakeover') {
       props.push(t.jsxAttribute(t.jsxIdentifier('variant'), t.stringLiteral(type)));
     }
@@ -45,10 +45,10 @@ export function updateDialogChild(
 
   typePath?.remove();
 
-  let localName = newComponent;
-  if (newComponent !== 'Dialog' && availableComponents.has(newComponent)) {
+  let localName = newComponentName;
+  if (newComponentName !== 'Dialog' && availableComponents.has(newComponentName)) {
     let program = path.findParent((p) => t.isProgram(p.node)) as NodePath<t.Program>;
-    localName = addComponentImport(program, newComponent);
+    localName = addComponentImport(program, newComponentName);
   }
 
   path.traverse({
@@ -76,19 +76,19 @@ export function updateDialogChild(
  */
 export default function transformDialogTrigger(path: NodePath<t.JSXElement>) {
   // Comment out type="tray"
-  commentOutProp(path, {propToComment: 'type', propValue: 'tray'});
+  commentOutProp(path, {propName: 'type', propValue: 'tray'});
 
   // Comment out mobileType
-  commentOutProp(path, {propToComment: 'mobileType'});
+  commentOutProp(path, {propName: 'mobileType'});
 
   // Remove targetRef
-  removeProp(path, {propToRemove: 'targetRef'});
+  removeProp(path, {propName: 'targetRef'});
 
   // Move render props to the child component
-  moveRenderPropsToChild(path, {newChildComponent: 'Dialog'});
+  moveRenderPropsToChild(path, {newChildComponentName: 'Dialog'});
 
   // Update isDismissable to isDismissible
-  updatePropName(path, {oldProp: 'isDismissable', newProp: 'isDismissible'});
+  updatePropName(path, {oldPropName: 'isDismissable', newPropName: 'isDismissible'});
 
   // Update DialogTrigger to the new API
   updateDialogChild(path);

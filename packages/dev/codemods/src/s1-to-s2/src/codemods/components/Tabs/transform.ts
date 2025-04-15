@@ -1,6 +1,6 @@
 import {getName, removeComponentImport} from '../../shared/utils';
 import {NodePath} from '@babel/traverse';
-import {removeProp, updateComponentWithinCollection, updateToNewComponent} from '../../shared/transforms';
+import {removeProp, updateComponentWithinCollection, updateToNewComponentName} from '../../shared/transforms';
 import * as t from '@babel/types';
 
 function transformTabList(tabListPath: NodePath<t.JSXElement>): t.JSXElement {
@@ -10,7 +10,7 @@ function transformTabList(tabListPath: NodePath<t.JSXElement>): t.JSXElement {
       t.isJSXIdentifier(itemPath.node.openingElement.name) &&
       getName(itemPath as NodePath<t.JSXElement>, itemPath.node.openingElement.name) === 'Item'
     ) {
-      updateComponentWithinCollection(itemPath as NodePath<t.JSXElement>, {parentComponent: 'TabList', newComponent: 'Tab'});
+      updateComponentWithinCollection(itemPath as NodePath<t.JSXElement>, {parentComponentName: 'TabList', newComponentName: 'Tab'});
     }
   });
   return tabListPath.node;
@@ -20,9 +20,9 @@ function transformTabPanels(tabPanelsPath: NodePath<t.JSXElement>, itemsProp: t.
   // Dynamic case
   let dynamicRender = tabPanelsPath.get('children').find(path => t.isJSXExpressionContainer(path.node));
   if (dynamicRender) {
-    updateToNewComponent(tabPanelsPath, {newComponent: 'Collection'});
+    updateToNewComponentName(tabPanelsPath, {newComponentName: 'Collection'});
     let itemPath = (dynamicRender.get('expression') as NodePath).get('body');
-    updateComponentWithinCollection(itemPath as NodePath<t.JSXElement>, {parentComponent: 'Collection', newComponent: 'TabPanel'});
+    updateComponentWithinCollection(itemPath as NodePath<t.JSXElement>, {parentComponentName: 'Collection', newComponentName: 'TabPanel'});
     if (itemsProp) {
       tabPanelsPath.node.openingElement.attributes.push(t.jsxAttribute(t.jsxIdentifier('items'), itemsProp.value));
     }
@@ -36,7 +36,7 @@ function transformTabPanels(tabPanelsPath: NodePath<t.JSXElement>, itemsProp: t.
       t.isJSXIdentifier(itemPath.node.openingElement.name) &&
       getName(itemPath as NodePath<t.JSXElement>, itemPath.node.openingElement.name) === 'Item'
     ) {
-      updateComponentWithinCollection(itemPath as NodePath<t.JSXElement>, {parentComponent: 'TabPanels', newComponent: 'TabPanel'});
+      updateComponentWithinCollection(itemPath as NodePath<t.JSXElement>, {parentComponentName: 'TabPanels', newComponentName: 'TabPanel'});
       return itemPath.node;
     }
     return null;
@@ -92,8 +92,8 @@ export default function transformTabs(path: NodePath<t.JSXElement>) {
   }
   
   // Remove isEmphasized
-  removeProp(path, {propToRemove: 'isEmphasized'});
+  removeProp(path, {propName: 'isEmphasized'});
 
   // Remove isQuiet
-  removeProp(path, {propToRemove: 'isQuiet'});
+  removeProp(path, {propName: 'isQuiet'});
 } 

@@ -11,15 +11,15 @@ import * as t from '@babel/types';
 export default function transformProgressBar(path: NodePath<t.JSXElement>) {
   // Change variant="overBackground" to staticColor="white"
   updatePropNameAndValue(path, {
-    oldProp: 'variant',
-    oldValue: 'overBackground',
-    newProp: 'staticColor',
-    newValue: 'white'
+    oldPropName: 'variant',
+    oldPropValue: 'overBackground',
+    newPropName: 'staticColor',
+    newPropValue: 'white'
   });
 
   // Comment out labelPosition
-  commentOutProp(path, {propToComment: 'labelPosition'});
+  commentOutProp(path, {propName: 'labelPosition'});
 
   // Comment out showValueLabel
-  removeProp(path, {propToRemove: 'showValueLabel'});
+  removeProp(path, {propName: 'showValueLabel'});
 } 

@@ -9,8 +9,8 @@ import * as t from '@babel/types';
  */
 export default function transformActionMenu(path: NodePath<t.JSXElement>) {
   // Comment out closeOnSelect
-  commentOutProp(path, {propToComment: 'closeOnSelect'});
+  commentOutProp(path, {propName: 'closeOnSelect'});
 
   // Comment out trigger
-  commentOutProp(path, {propToComment: 'trigger'});
+  commentOutProp(path, {propName: 'trigger'});
 } 

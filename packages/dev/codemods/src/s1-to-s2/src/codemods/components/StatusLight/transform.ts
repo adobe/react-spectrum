@@ -9,13 +9,13 @@ import * as t from '@babel/types';
  */
 export default function transformStatusLight(path: NodePath<t.JSXElement>) {
   // Remove isDisabled
-  removeProp(path, {propToRemove: 'isDisabled'});
+  removeProp(path, {propName: 'isDisabled'});
 
   // Change variant="info" to variant="informative"
   updatePropNameAndValue(path, {
-    oldProp: 'variant',
-    oldValue: 'info',
-    newProp: 'variant',
-    newValue: 'informative'
+    oldPropName: 'variant',
+    oldPropValue: 'info',
+    newPropName: 'variant',
+    newPropValue: 'informative'
   });
 } 

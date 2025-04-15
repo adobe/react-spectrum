@@ -4,7 +4,7 @@ import {
   updateComponentIfPropPresent,
   updatePropName,
   updatePropNameAndValue,
-  updatePropValueAndAddNewProp
+  updatePropValueAndAddNewPropName
 } from '../../shared/transforms';
 import {NodePath} from '@babel/traverse';
 import * as t from '@babel/types';
@@ -22,40 +22,40 @@ import * as t from '@babel/types';
 export default function transformButton(path: NodePath<t.JSXElement>) {
   // Change variant="cta" to variant="accent"
   updatePropNameAndValue(path, {
-    oldProp: 'variant',
-    oldValue: 'cta',
-    newProp: 'variant',
-    newValue: 'accent'
+    oldPropName: 'variant',
+    oldPropValue: 'cta',
+    newPropName: 'variant',
+    newPropValue: 'accent'
   });
 
   // Change variant="overBackground" to variant="primary" staticColor="white"
-  updatePropValueAndAddNewProp(path, {
-    oldProp: 'variant',
-    oldValue: 'overBackground',
-    newProp: 'variant',
-    newValue: 'primary',
-    additionalProp: 'staticColor',
-    additionalValue: 'white'
+  updatePropValueAndAddNewPropName(path, {
+    oldPropName: 'variant',
+    oldPropValue: 'overBackground',
+    newPropName: 'variant',
+    newPropValue: 'primary',
+    additionalPropName: 'staticColor',
+    additionalPropValue: 'white'
   });
 
   // Change style to fillStyle
   updatePropName(path, {
-    oldProp: 'style',
-    newProp: 'fillStyle'
+    oldPropName: 'style',
+    newPropName: 'fillStyle'
   });
 
   // Comment out isPending
-  commentOutProp(path, {propToComment: 'isPending'});
+  commentOutProp(path, {propName: 'isPending'});
 
   // Remove isQuiet
-  removeProp(path, {propToRemove: 'isQuiet'});
+  removeProp(path, {propName: 'isQuiet'});
 
   // If href is present, the Button should be converted to a LinkButton
   updateComponentIfPropPresent(path, {
-    propToCheck: 'href',
-    newComponent: 'LinkButton'
+    propName: 'href',
+    newComponentName: 'LinkButton'
   });
 
   // Remove elementType
-  removeProp(path, {propToRemove: 'elementType'});
+  removeProp(path, {propName: 'elementType'});
 }

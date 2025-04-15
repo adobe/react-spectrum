@@ -16,16 +16,16 @@ import * as t from '@babel/types';
  */
 export default function transformBreadcrumbs(path: NodePath<t.JSXElement>) {
   // Comment out showRoot
-  commentOutProp(path, {propToComment: 'showRoot'});
+  commentOutProp(path, {propName: 'showRoot'});
 
   // Comment out isMultiline
-  commentOutProp(path, {propToComment: 'isMultiline'});
+  commentOutProp(path, {propName: 'isMultiline'});
 
   // Comment out autoFocusCurrent
-  commentOutProp(path, {propToComment: 'autoFocusCurrent'});
+  commentOutProp(path, {propName: 'autoFocusCurrent'});
 
   // Remove size="S"
-  removeProp(path, {propToRemove: 'size', propValue: 'S'});
+  removeProp(path, {propName: 'size', propValue: 'S'});
 
   // Add comment to wrap in nav element if needed
   addCommentToElement(path, {

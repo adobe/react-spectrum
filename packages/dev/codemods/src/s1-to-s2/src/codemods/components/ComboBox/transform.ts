@@ -19,28 +19,28 @@ import * as t from '@babel/types';
  */
 export default function transformComboBox(path: NodePath<t.JSXElement>) {
   // Change menuWidth value from a DimensionValue to a pixel value
-  convertDimensionValueToPx(path, {propToConvertValue: 'menuWidth'});
+  convertDimensionValueToPx(path, {propName: 'menuWidth'});
 
   // Remove isQuiet
-  removeProp(path, {propToRemove: 'isQuiet'});
+  removeProp(path, {propName: 'isQuiet'});
 
   // Comment out loadingState
-  commentOutProp(path, {propToComment: 'loadingState'});
+  commentOutProp(path, {propName: 'loadingState'});
 
   // Remove placeholder
-  removeProp(path, {propToRemove: 'placeholder'});
+  removeProp(path, {propName: 'placeholder'});
 
   // Change validationState="invalid" to isInvalid
   updatePropNameAndValue(path, {
-    oldProp: 'validationState',
-    oldValue: 'invalid',
-    newProp: 'isInvalid',
-    newValue: true
+    oldPropName: 'validationState',
+    oldPropValue: 'invalid',
+    newPropName: 'isInvalid',
+    newPropValue: true
   });
 
   // Remove validationState="valid"
-  removeProp(path, {propToRemove: 'validationState', propValue: 'valid'});
+  removeProp(path, {propName: 'validationState', propValue: 'valid'});
 
   // Comment out onLoadMore
-  commentOutProp(path, {propToComment: 'onLoadMore'});
+  commentOutProp(path, {propName: 'onLoadMore'});
 } 

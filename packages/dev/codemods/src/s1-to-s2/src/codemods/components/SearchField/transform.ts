@@ -12,22 +12,22 @@ import * as t from '@babel/types';
  */
 export default function transformSearchField(path: NodePath<t.JSXElement>) {
   // Remove placeholder
-  removeProp(path, {propToRemove: 'placeholder'});
+  removeProp(path, {propName: 'placeholder'});
 
   // Comment out icon
-  commentOutProp(path, {propToComment: 'icon'});
+  commentOutProp(path, {propName: 'icon'});
 
   // Remove isQuiet
-  removeProp(path, {propToRemove: 'isQuiet'});
+  removeProp(path, {propName: 'isQuiet'});
 
   // Change validationState="invalid" to isInvalid
   updatePropNameAndValue(path, {
-    oldProp: 'validationState',
-    oldValue: 'invalid',
-    newProp: 'isInvalid',
-    newValue: true
+    oldPropName: 'validationState',
+    oldPropValue: 'invalid',
+    newPropName: 'isInvalid',
+    newPropValue: true
   });
 
   // Remove validationState="valid"
-  removeProp(path, {propToRemove: 'validationState', propValue: 'valid'});
+  removeProp(path, {propName: 'validationState', propValue: 'valid'});
 } 

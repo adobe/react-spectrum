@@ -11,14 +11,14 @@ import * as t from '@babel/types';
  */
 export default function transformForm(path: NodePath<t.JSXElement>) {
   // Remove isQuiet
-  removeProp(path, {propToRemove: 'isQuiet'});
+  removeProp(path, {propName: 'isQuiet'});
 
   // Remove isReadOnly
-  removeProp(path, {propToRemove: 'isReadOnly'});
+  removeProp(path, {propName: 'isReadOnly'});
 
   // Remove validationState
-  removeProp(path, {propToRemove: 'validationState'});
+  removeProp(path, {propName: 'validationState'});
 
   // Remove validationBehavior
-  removeProp(path, {propToRemove: 'validationBehavior'});
+  removeProp(path, {propName: 'validationBehavior'});
 } 

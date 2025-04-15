@@ -1,4 +1,4 @@
-import {commentIfParentCollectionNotDetected, movePropToNewChildComponent, updateComponentWithinCollection} from '../../shared/transforms';
+import {commentIfParentCollectionNotDetected, movePropToNewChildComponentName, updateComponentWithinCollection} from '../../shared/transforms';
 import {NodePath} from '@babel/traverse';
 import * as t from '@babel/types';
 
@@ -10,28 +10,28 @@ import * as t from '@babel/types';
  */
 export default function transformSection(path: NodePath<t.JSXElement>) {
   // Update Sections based on parent collection component
-  updateComponentWithinCollection(path, {parentComponent: 'Menu', newComponent: 'MenuSection'});
-  updateComponentWithinCollection(path, {parentComponent: 'Picker', newComponent: 'PickerSection'});
-  updateComponentWithinCollection(path, {parentComponent: 'ComboBox', newComponent: 'ComboBoxSection'});
+  updateComponentWithinCollection(path, {parentComponentName: 'Menu', newComponentName: 'MenuSection'});
+  updateComponentWithinCollection(path, {parentComponentName: 'Picker', newComponentName: 'PickerSection'});
+  updateComponentWithinCollection(path, {parentComponentName: 'ComboBox', newComponentName: 'ComboBoxSection'});
 
   // Move title prop to Header component
-  movePropToNewChildComponent(path, {
-    parentComponent: 'Menu',
-    childComponent: 'MenuSection',
-    propToMove: 'title',
-    newChildComponent: 'Header'
+  movePropToNewChildComponentName(path, {
+    parentComponentName: 'Menu',
+    childComponentName: 'MenuSection',
+    propName: 'title',
+    newChildComponentName: 'Header'
   });
-  movePropToNewChildComponent(path, {
-    parentComponent: 'Picker',
-    childComponent: 'PickerSection',
-    propToMove: 'title',
-    newChildComponent: 'Header'
+  movePropToNewChildComponentName(path, {
+    parentComponentName: 'Picker',
+    childComponentName: 'PickerSection',
+    propName: 'title',
+    newChildComponentName: 'Header'
   });
-  movePropToNewChildComponent(path, {
-    parentComponent: 'ComboBox',
-    childComponent: 'ComboBoxSection',
-    propToMove: 'title',
-    newChildComponent: 'Header'
+  movePropToNewChildComponentName(path, {
+    parentComponentName: 'ComboBox',
+    childComponentName: 'ComboBoxSection',
+    propName: 'title',
+    newChildComponentName: 'Header'
   });
 
   // Comment if parent collection not detected

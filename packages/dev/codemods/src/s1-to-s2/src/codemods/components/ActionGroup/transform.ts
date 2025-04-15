@@ -20,36 +20,36 @@ let availableComponents = getComponents();
  */
 export default function transformActionGroup(path: NodePath<t.JSXElement>) {
   // Comment out overflowMode
-  commentOutProp(path, {propToComment: 'overflowMode'});
+  commentOutProp(path, {propName: 'overflowMode'});
 
   // Comment out buttonLabelBehavior
-  commentOutProp(path, {propToComment: 'buttonLabelBehavior'});
+  commentOutProp(path, {propName: 'buttonLabelBehavior'});
 
   // Comment out summaryIcon
-  commentOutProp(path, {propToComment: 'summaryIcon'});
+  commentOutProp(path, {propName: 'summaryIcon'});
 
   let selectionModePath = path.get('openingElement').get('attributes').find((attr) => t.isJSXAttribute(attr.node) && attr.node.name.name === 'selectionMode') as NodePath<t.JSXAttribute> | undefined;
   let selectionMode = t.isStringLiteral(selectionModePath?.node.value) ? selectionModePath.node.value.value : 'none';
-  let newComponent, childComponent;
+  let newComponentName, childComponentName;
   if (selectionMode === 'none') {
-    newComponent = 'ActionButtonGroup';
-    childComponent = 'ActionButton';
+    newComponentName = 'ActionButtonGroup';
+    childComponentName = 'ActionButton';
     selectionModePath?.remove();
   } else {
-    newComponent = 'ToggleButtonGroup';
-    childComponent = 'ToggleButton';
+    newComponentName = 'ToggleButtonGroup';
+    childComponentName = 'ToggleButton';
   }
 
-  let localName = newComponent;
-  if (availableComponents.has(newComponent)) {
+  let localName = newComponentName;
+  if (availableComponents.has(newComponentName)) {
     let program = path.findParent((p) => t.isProgram(p.node)) as NodePath<t.Program>;
-    localName = addComponentImport(program, newComponent);
+    localName = addComponentImport(program, newComponentName);
   }
 
-  let localChildName = childComponent;
-  if (availableComponents.has(childComponent)) {
+  let localChildName = childComponentName;
+  if (availableComponents.has(childComponentName)) {
     let program = path.findParent((p) => t.isProgram(p.node)) as NodePath<t.Program>;
-    localChildName = addComponentImport(program, childComponent);
+    localChildName = addComponentImport(program, childComponentName);
   }
 
 
@@ -125,7 +125,7 @@ export default function transformActionGroup(path: NodePath<t.JSXElement>) {
         }
 
         // If this is a ToggleButtonGroup, add an id prop in addition to key when needed.
-        if (key && newComponent === 'ToggleButtonGroup') {
+        if (key && newComponentName === 'ToggleButtonGroup') {
           // If we are in an array.map we need both key and id. Otherwise, we only need id.
           if (itemArg) {
             childNode.openingElement.attributes.push(t.jsxAttribute(t.jsxIdentifier('id'), key.value));

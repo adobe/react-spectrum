@@ -11,22 +11,22 @@ import * as t from '@babel/types';
  */
 export default function transformTooltip(path: NodePath<t.JSXElement>) {
   // Remove variant
-  removeProp(path, {propToRemove: 'variant'});
+  removeProp(path, {propName: 'variant'});
 
   // Move placement prop to the parent TooltipTrigger
   movePropToParentComponent(path, {
-    parentComponent: 'TooltipTrigger',
-    childComponent: 'Tooltip',
-    propToMove: 'placement'
+    parentComponentName: 'TooltipTrigger',
+    childComponentName: 'Tooltip',
+    propName: 'placement'
   });
 
   // Remove showIcon
-  removeProp(path, {propToRemove: 'showIcon'});
+  removeProp(path, {propName: 'showIcon'});
 
   // Move isOpen prop to the parent TooltipTrigger
   movePropToParentComponent(path, {
-    parentComponent: 'TooltipTrigger',
-    childComponent: 'Tooltip',
-    propToMove: 'isOpen'
+    parentComponentName: 'TooltipTrigger',
+    childComponentName: 'Tooltip',
+    propName: 'isOpen'
   });
 } 

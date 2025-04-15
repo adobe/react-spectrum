@@ -10,11 +10,11 @@ import * as t from '@babel/types';
  */
 export default function transformRangeSlider(path: NodePath<t.JSXElement>) {
   // Remove showValueLabel
-  removeProp(path, {propToRemove: 'showValueLabel'});
+  removeProp(path, {propName: 'showValueLabel'});
 
   // Comment out getValueLabel
-  commentOutProp(path, {propToComment: 'getValueLabel'});
+  commentOutProp(path, {propName: 'getValueLabel'});
 
   // Comment out orientation
-  commentOutProp(path, {propToComment: 'orientation'});
+  commentOutProp(path, {propName: 'orientation'});
 } 

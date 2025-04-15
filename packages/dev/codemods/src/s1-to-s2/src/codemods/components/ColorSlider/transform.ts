@@ -8,5 +8,5 @@ import * as t from '@babel/types';
  */
 export default function transformColorSlider(path: NodePath<t.JSXElement>) {
   // Remove showValueLabel
-  removeProp(path, {propToRemove: 'showValueLabel'});
+  removeProp(path, {propName: 'showValueLabel'});
 } 

@@ -12,19 +12,19 @@ import * as t from '@babel/types';
  */
 export default function transformTagGroup(path: NodePath<t.JSXElement>) {
   // Rename actionLabel to groupActionLabel
-  updatePropName(path, {oldProp: 'actionLabel', newProp: 'groupActionLabel'});
+  updatePropName(path, {oldPropName: 'actionLabel', newPropName: 'groupActionLabel'});
 
   // Rename onAction to onGroupAction
-  updatePropName(path, {oldProp: 'onAction', newProp: 'onGroupAction'});
+  updatePropName(path, {oldPropName: 'onAction', newPropName: 'onGroupAction'});
 
   // Change validationState="invalid" to isInvalid
   updatePropNameAndValue(path, {
-    oldProp: 'validationState',
-    oldValue: 'invalid',
-    newProp: 'isInvalid',
-    newValue: true
+    oldPropName: 'validationState',
+    oldPropValue: 'invalid',
+    newPropName: 'isInvalid',
+    newPropValue: true
   });
 
   // Remove validationState="valid"
-  removeProp(path, {propToRemove: 'validationState', propValue: 'valid'});
+  removeProp(path, {propName: 'validationState', propValue: 'valid'});
 } 

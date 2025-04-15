@@ -9,9 +9,9 @@ import {updatePropNameAndValue} from '../../shared/transforms';
 export default function transformBadge(path: NodePath<t.JSXElement>) {
   // Change variant="info" to variant="informative"
   updatePropNameAndValue(path, {
-    oldProp: 'variant',
-    oldValue: 'info',
-    newProp: 'variant',
-    newValue: 'informative'
+    oldPropName: 'variant',
+    oldPropValue: 'info',
+    newPropName: 'variant',
+    newPropValue: 'informative'
   });
 } 

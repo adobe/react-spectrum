@@ -8,5 +8,5 @@ import * as t from '@babel/types';
  */
 export default function transformCheckboxGroup(path: NodePath<t.JSXElement>) {
   // Remove showErrorIcon
-  removeProp(path, {propToRemove: 'showErrorIcon'});
+  removeProp(path, {propName: 'showErrorIcon'});
 } 

@@ -42,7 +42,7 @@ function updateAvatarSize(
  */
 export default function transformAvatar(path: NodePath<t.JSXElement>) {
   // Comment out isDisabled
-  commentOutProp(path, {propToComment: 'isDisabled'});
+  commentOutProp(path, {propName: 'isDisabled'});
 
   // Update size to be a pixel value if it currently matches 'avatar-size-*'
   updateAvatarSize(path);

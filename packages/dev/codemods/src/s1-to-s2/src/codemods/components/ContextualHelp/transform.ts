@@ -9,8 +9,8 @@ import * as t from '@babel/types';
  */
 export default function transformContextualHelp(path: NodePath<t.JSXElement>) {
   // Comment out variant="info"
-  commentOutProp(path, {propToComment: 'variant', propValue: 'info'});
+  commentOutProp(path, {propName: 'variant', propValue: 'info'});
 
   // Update placement prop to have only one value
-  updatePlacementToSingleValue(path, {propToUpdate: 'placement'});
+  updatePlacementToSingleValue(path, {propToUpdateName: 'placement'});
 } 

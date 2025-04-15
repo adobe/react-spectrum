@@ -18,25 +18,25 @@ import * as t from '@babel/types';
  */
 export default function transformPicker(path: NodePath<t.JSXElement>) {
   // Change menuWidth value from a DimensionValue to a pixel value
-  convertDimensionValueToPx(path, {propToConvertValue: 'menuWidth'});
+  convertDimensionValueToPx(path, {propName: 'menuWidth'});
 
   // Remove isQuiet
-  removeProp(path, {propToRemove: 'isQuiet'});
+  removeProp(path, {propName: 'isQuiet'});
 
   // Change validationState="invalid" to isInvalid
   updatePropNameAndValue(path, {
-    oldProp: 'validationState',
-    oldValue: 'invalid',
-    newProp: 'isInvalid',
-    newValue: true
+    oldPropName: 'validationState',
+    oldPropValue: 'invalid',
+    newPropName: 'isInvalid',
+    newPropValue: true
   });
 
   // Remove validationState="valid"
-  removeProp(path, {propToRemove: 'validationState', propValue: 'valid'});
+  removeProp(path, {propName: 'validationState', propValue: 'valid'});
 
   // Comment out isLoading
-  commentOutProp(path, {propToComment: 'isLoading'});
+  commentOutProp(path, {propName: 'isLoading'});
 
   // Comment out onLoadMore
-  commentOutProp(path, {propToComment: 'onLoadMore'});
+  commentOutProp(path, {propName: 'onLoadMore'});
 } 

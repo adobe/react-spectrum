@@ -8,5 +8,5 @@ import * as t from '@babel/types';
  */
 export default function transformDivider(path: NodePath<t.JSXElement>) {
   // Remove Divider component if within a Dialog
-  removeComponentIfWithinParent(path, {parentComponent: 'Dialog'});
+  removeComponentIfWithinParent(path, {parentComponentName: 'Dialog'});
 } 

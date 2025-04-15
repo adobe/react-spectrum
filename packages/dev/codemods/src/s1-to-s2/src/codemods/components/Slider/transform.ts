@@ -12,17 +12,17 @@ import * as t from '@babel/types';
  */
 export default function transformSlider(path: NodePath<t.JSXElement>) {
   // Remove isFilled
-  removeProp(path, {propToRemove: 'isFilled'});
+  removeProp(path, {propName: 'isFilled'});
 
   // Remove trackGradient
-  removeProp(path, {propToRemove: 'trackGradient'});
+  removeProp(path, {propName: 'trackGradient'});
 
   // Remove showValueLabel
-  removeProp(path, {propToRemove: 'showValueLabel'});
+  removeProp(path, {propName: 'showValueLabel'});
 
   // Comment out getValueLabel
-  commentOutProp(path, {propToComment: 'getValueLabel'});
+  commentOutProp(path, {propName: 'getValueLabel'});
 
   // Comment out orientation
-  commentOutProp(path, {propToComment: 'orientation'});
+  commentOutProp(path, {propName: 'orientation'});
 } 

@@ -160,16 +160,16 @@ export default function transformTable(path: NodePath<t.JSXElement>) {
   commentIfNestedColumns(path);
 
   // Comment out dragAndDropHooks
-  commentOutProp(path, {propToComment: 'dragAndDropHooks'});
+  commentOutProp(path, {propName: 'dragAndDropHooks'});
 
   // Comment out selectionStyle="highlight"
-  commentOutProp(path, {propToComment: 'selectionStyle'});
+  commentOutProp(path, {propName: 'selectionStyle'});
 
   // Comment out unstable expandable rows props
-  commentOutProp(path, {propToComment: 'UNSTABLE_allowsExpandableRows'});
-  commentOutProp(path, {propToComment: 'UNSTABLE_onExpandedChange'});
-  commentOutProp(path, {propToComment: 'UNSTABLE_expandedKeys'});
-  commentOutProp(path, {propToComment: 'UNSTABLE_defaultExpandedKeys'});
+  commentOutProp(path, {propName: 'UNSTABLE_allowsExpandableRows'});
+  commentOutProp(path, {propName: 'UNSTABLE_onExpandedChange'});
+  commentOutProp(path, {propName: 'UNSTABLE_expandedKeys'});
+  commentOutProp(path, {propName: 'UNSTABLE_defaultExpandedKeys'});
 
   addRowHeader(path);
 } 

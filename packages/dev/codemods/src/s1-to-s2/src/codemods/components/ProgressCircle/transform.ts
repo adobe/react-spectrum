@@ -9,9 +9,9 @@ import {updatePropNameAndValue} from '../../shared/transforms';
 export default function transformProgressCircle(path: NodePath<t.JSXElement>) {
   // Change variant="overBackground" to staticColor="white"
   updatePropNameAndValue(path, {
-    oldProp: 'variant',
-    oldValue: 'overBackground',
-    newProp: 'staticColor',
-    newValue: 'white'
+    oldPropName: 'variant',
+    oldPropValue: 'overBackground',
+    newPropName: 'staticColor',
+    newPropValue: 'white'
   });
 } 

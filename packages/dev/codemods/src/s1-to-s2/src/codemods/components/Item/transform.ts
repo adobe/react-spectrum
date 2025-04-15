@@ -14,12 +14,12 @@ import * as t from '@babel/types';
  */
 export default function transformItem(path: NodePath<t.JSXElement>) {
   // Update Items based on parent collection component
-  updateComponentWithinCollection(path, {parentComponent: 'Menu', newComponent: 'MenuItem'});
-  updateComponentWithinCollection(path, {parentComponent: 'ActionMenu', newComponent: 'MenuItem'});
-  updateComponentWithinCollection(path, {parentComponent: 'TagGroup', newComponent: 'Tag'});
-  updateComponentWithinCollection(path, {parentComponent: 'Breadcrumbs', newComponent: 'Breadcrumb'});
-  updateComponentWithinCollection(path, {parentComponent: 'Picker', newComponent: 'PickerItem'});
-  updateComponentWithinCollection(path, {parentComponent: 'ComboBox', newComponent: 'ComboBoxItem'});
+  updateComponentWithinCollection(path, {parentComponentName: 'Menu', newComponentName: 'MenuItem'});
+  updateComponentWithinCollection(path, {parentComponentName: 'ActionMenu', newComponentName: 'MenuItem'});
+  updateComponentWithinCollection(path, {parentComponentName: 'TagGroup', newComponentName: 'Tag'});
+  updateComponentWithinCollection(path, {parentComponentName: 'Breadcrumbs', newComponentName: 'Breadcrumb'});
+  updateComponentWithinCollection(path, {parentComponentName: 'Picker', newComponentName: 'PickerItem'});
+  updateComponentWithinCollection(path, {parentComponentName: 'ComboBox', newComponentName: 'ComboBoxItem'});
 
   // Comment if parent collection not detected
   commentIfParentCollectionNotDetected(path);
