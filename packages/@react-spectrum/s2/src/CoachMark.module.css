@@ -4,6 +4,8 @@
   transition: display allow-discrete 200ms, overlay allow-discrete 200ms, opacity 200ms, transform 200ms;
   will-change: opacity, transform;
   opacity: 0;
+  animation-direction: normal;
+  animation-timing-function: in;
 
   &[data-placement="bottom"] {
     transform: translateX(0px) translateY(-4px);
@@ -21,6 +23,7 @@
   &:popover-open {
     transform: translateX(0px) translateY(0px);
     opacity: 1;
+    animation-direction: reverse;
   }
 }
 

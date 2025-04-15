@@ -35,13 +35,19 @@ import {
   TextContext
 } from '../src';
 import {card} from '../src/Card';
+import {CoachMarkProps, CoachMarkTriggerProps} from '../src/CoachMark';
 import {DEFAULT_SLOT, Provider} from 'react-aria-components';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
+import {ReactNode, useState} from 'react';
 import {space, style} from '../style' with {type: 'macro'};
-import {useState} from 'react';
 
-const meta: Meta<typeof CoachMark> = {
+interface CoachMarkStoryProps extends CoachMarkProps {
+  coachMarkTriggerProps: CoachMarkTriggerProps,
+  triggerChildren: ReactNode
+}
+
+const meta: Meta<CoachMarkStoryProps> = {
   component: CoachMark,
   parameters: {
     layout: 'centered'
@@ -50,21 +56,27 @@ const meta: Meta<typeof CoachMark> = {
     placement: {
       control: 'radio',
       options: ['top', 'left', 'left top', 'right', 'right top', 'bottom']
+    },
+    triggerChildren: {
+      table: {disable: true}
     }
   },
   title: 'CoachMark'
 };
 
 export default meta;
-type Story = StoryObj<typeof CoachMark>;
+type Story = StoryObj<CoachMarkStoryProps>;
 
-export const CoachMarkExample: Story = {
-  render: (args) => (
+function ControlledCoachMark(props: CoachMarkStoryProps) {
+  let {coachMarkTriggerProps, triggerChildren, ...coachMarkProps} = props;
+  let [isOpen, setIsOpen] = useState(false);
+
+  return (
     <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
-      <Button>Before</Button>
-      <CoachMarkTrigger defaultOpen>
-        <Checkbox>Sync with CC</Checkbox>
-        <CoachMark placement="right top" {...args}>
+      <Button onPress={() => setIsOpen(true)}>Open</Button>
+      <CoachMarkTrigger {...coachMarkTriggerProps} isOpen={isOpen} onOpenChange={setIsOpen}>
+        {triggerChildren}
+        <CoachMark placement="right top" {...coachMarkProps}>
           <CoachMarkCard>
             <CardPreview>
               <Image src={new URL('assets/preview.png', import.meta.url).toString()} />
@@ -79,47 +91,11 @@ export const CoachMarkExample: Story = {
               <Text slot="description">This is the description</Text>
             </Content>
             <Footer>
-              <Text slot="steps">1 of 10</Text>
               <ButtonGroup>
-                <Button fillStyle="outline" variant="secondary">Previous</Button>
+                <Button variant="secondary">Previous</Button>
                 <Button variant="primary">Next</Button>
               </ButtonGroup>
             </Footer>
-          </CoachMarkCard>
-        </CoachMark>
-      </CoachMarkTrigger>
-      <Button>After</Button>
-    </div>
-  ),
-  parameters: {
-    docs: {
-      disable: true
-    }
-  }
-};
-
-function ControlledCoachMark(args) {
-  let [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
-      <Button onPress={() => setIsOpen(true)}>Open</Button>
-      <CoachMarkTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
-        <Checkbox>Sync with CC</Checkbox>
-        <CoachMark placement="right top" {...args}>
-          <CoachMarkCard>
-            <CardPreview>
-              <Image src={new URL('assets/preview.png', import.meta.url).toString()} />
-            </CardPreview>
-            <Content>
-              <Text slot="title">Hello</Text>
-              <ActionMenu>
-                <MenuItem>Skip tour</MenuItem>
-                <MenuItem>Restart tour</MenuItem>
-              </ActionMenu>
-              <Keyboard>Command + B</Keyboard>
-              <Text slot="description">This is the description</Text>
-            </Content>
           </CoachMarkCard>
         </CoachMark>
       </CoachMarkTrigger>
@@ -128,10 +104,13 @@ function ControlledCoachMark(args) {
   );
 }
 
-export const CoachMarkRestartable: Story = {
+export const CoachMarkExample: Story = {
   render: (args) => (
     <ControlledCoachMark {...args} />
   ),
+  args: {
+    triggerChildren: <Checkbox>Sync with CC</Checkbox>
+  },
   parameters: {
     docs: {
       disable: true
@@ -141,37 +120,11 @@ export const CoachMarkRestartable: Story = {
 
 export const CoachMarkSlider: Story = {
   render: (args) => (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
-      <Button>Before</Button>
-      <CoachMarkTrigger defaultOpen>
-        <Slider label="Horizontal position" labelPosition="top" />
-        <CoachMark placement="right top" {...args}>
-          <CoachMarkCard>
-            <CardPreview>
-              <Image src={new URL('assets/preview.png', import.meta.url).toString()} />
-            </CardPreview>
-            <Content>
-              <Text slot="title">Hello</Text>
-              <ActionMenu>
-                <MenuItem>Skip tour</MenuItem>
-                <MenuItem>Restart tour</MenuItem>
-              </ActionMenu>
-              <Keyboard>Command + B</Keyboard>
-              <Text slot="description">This is the description</Text>
-            </Content>
-            <Footer>
-              <Text slot="steps">1 of 10</Text>
-              <ButtonGroup>
-                <Button fillStyle="outline" variant="secondary">Previous</Button>
-                <Button variant="primary">Next</Button>
-              </ButtonGroup>
-            </Footer>
-          </CoachMarkCard>
-        </CoachMark>
-      </CoachMarkTrigger>
-      <Button>After</Button>
-    </div>
+    <ControlledCoachMark {...args} />
   ),
+  args: {
+    triggerChildren: <Slider label="Horizontal position" labelPosition="top" />
+  },
   parameters: {
     docs: {
       disable: true
@@ -181,39 +134,15 @@ export const CoachMarkSlider: Story = {
 
 export const CoachMarkButton: Story = {
   render: (args) => (
-    <div className={style({display: 'flex', flexDirection: 'column', gap: 16})}>
-      <Button>Before</Button>
-      <CoachMarkTrigger defaultOpen>
-        <ActionButton>
-          <Filter />
-        </ActionButton>
-        <CoachMark placement="right top" {...args}>
-          <CoachMarkCard>
-            <CardPreview>
-              <Image src={new URL('assets/preview.png', import.meta.url).toString()} />
-            </CardPreview>
-            <Content>
-              <Text slot="title">Hello</Text>
-              <ActionMenu>
-                <MenuItem>Skip tour</MenuItem>
-                <MenuItem>Restart tour</MenuItem>
-              </ActionMenu>
-              <Keyboard>Command + B</Keyboard>
-              <Text slot="description">This is the description</Text>
-            </Content>
-            <Footer>
-              <Text slot="steps">1 of 10</Text>
-              <ButtonGroup>
-                <Button fillStyle="outline" variant="secondary">Previous</Button>
-                <Button variant="primary">Next</Button>
-              </ButtonGroup>
-            </Footer>
-          </CoachMarkCard>
-        </CoachMark>
-      </CoachMarkTrigger>
-      <Button>After</Button>
-    </div>
+    <ControlledCoachMark {...args} />
   ),
+  args: {
+    triggerChildren: (
+      <ActionButton>
+        <Filter />
+      </ActionButton>
+    )
+  },
   parameters: {
     docs: {
       disable: true

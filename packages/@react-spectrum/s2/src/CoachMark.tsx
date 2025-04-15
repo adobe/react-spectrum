@@ -36,128 +36,15 @@ import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro
 import {keyframes, raw} from '../style/style-macro' with {type: 'macro'};
 import {SliderContext} from './Slider';
 import {style} from '../style' with {type: 'macro'};
-import {useId, useObjectRef, useOverlayPosition, useOverlayTrigger} from 'react-aria';
+import {useId, useKeyboard, useObjectRef, useOverlayPosition, useOverlayTrigger} from 'react-aria';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useMenuTriggerState} from '@react-stately/menu';
-
-export interface CoachMarkProps extends Omit<PopoverProps, 'children' | 'arrowBoundaryOffset' | 'isKeyboardDismissDisabled' | 'isNonModal'>, StyleProps {
-  /** The children of the coach mark. */
-  children: ReactNode,
-
-  size?: 'S' | 'M' | 'L' | 'XL'
-}
-
-let popover = style({
-  '--s2-container-bg': {
-    type: 'backgroundColor',
-    value: 'layer-2'
-  },
-  backgroundColor: '--s2-container-bg',
-  borderRadius: 'lg',
-  // Use box-shadow instead of filter when an arrow is not shown.
-  // This fixes the shadow stacking problem with submenus.
-  boxShadow: 'elevated',
-  borderStyle: 'solid',
-  borderWidth: 1,
-  height: 'fit',
-  padding: 0,
-  margin: 0,
-  borderColor: {
-    default: 'gray-200',
-    forcedColors: 'ButtonBorder'
-  },
-  width: 'fit',
-  boxSizing: 'border-box',
-  opacity: {
-    default: 0,
-    ':popover-open': 1
-  },
-  transform: {
-    placement: {
-      top: {
-        default: 'translateY(4px)',
-        ':popover-open': 'translateY(0)'
-      },
-      bottom: {
-        default: 'translateY(-4px)',
-        ':popover-open': 'translateY(0)'
-      },
-      left: {
-        default: 'translateX(4px)',
-        ':popover-open': 'translateX(0)'
-      },
-      right: {
-        default: 'translateX(-4px)',
-        ':popover-open': 'translateX(0)'
-      }
-    }
-  },
-  animationDuration: 200,
-  animationDirection: {
-    default: 'normal',
-    ':popover-open': 'reverse'
-  },
-  animationTimingFunction: {
-    default: 'in'
-  },
-  willChange: '[opacity, transform]',
-  isolation: 'isolate'
-}, getAllowedOverrides());
-
-export const CoachMarkContext = createContext<ContextValue<CoachMarkProps, HTMLDivElement>>({});
-
-export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HTMLDivElement>) => {
-  [props, ref] = useContextProps(props, ref, CoachMarkContext);
-  let {UNSAFE_style} = props;
-  let {size = 'M'} = props;
-  let popoverRef = useObjectRef(ref);
-  let state = useContext(OverlayTriggerStateContext);
-  let {triggerRef} = useContext(InternalCoachMarkContext);
-  let fallbackTriggerRef = useObjectRef(useRef<HTMLElement>(null));
-  triggerRef = triggerRef ?? fallbackTriggerRef;
-
-  let {overlayProps, placement} = useOverlayPosition({
-    targetRef: triggerRef,
-    overlayRef: popoverRef,
-    placement: props.placement,
-    offset: 16,
-    crossOffset: -18 // made up
-  });
-
-  let prevOpen = useRef(false);
-  useLayoutEffect(() => {
-    if (state?.isOpen && !prevOpen.current) {
-      popoverRef.current?.showPopover();
-    } else if (!state?.isOpen && prevOpen.current) {
-      popoverRef.current?.hidePopover();
-    }
-    prevOpen.current = state?.isOpen ?? false;
-  }, [state?.isOpen]);
-
-  return (
-    <div
-      popover="manual"
-      ref={popoverRef}
-      data-placement={placement}
-      style={{
-        ...UNSAFE_style,
-        ...overlayProps.style,
-        // Override default z-index from useOverlayPosition. We use isolation: isolate instead.
-        zIndex: undefined
-      }}
-      className={coachmarkCss['coach-mark'] + popover({size, placement})}>
-      {/* }// Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state. */}
-      <OverlayTriggerStateContext.Provider value={null}>
-        {props.children}
-      </OverlayTriggerStateContext.Provider>
-    </div>
-  );
-});
-
+import { useHasTabbableChild } from '@react-aria/focus';
 
 const InternalCoachMarkContext = createContext<{triggerRef?: RefObject<HTMLElement | null>}>({});
-
-export interface CoachMarkTriggerProps extends AriaDialogTriggerProps {
+// TODO: decide on props
+// defaultOpen, I don't think we should use it because multiple coachmarks shouldn't be open at once and it'd be too easy.
+export interface CoachMarkTriggerProps extends Omit<AriaDialogTriggerProps, 'defaultOpen'> {
 }
 
 /**
@@ -194,6 +81,98 @@ export function CoachMarkTrigger(props: CoachMarkTriggerProps): ReactNode {
   );
 }
 
+export interface CoachMarkProps extends Omit<PopoverProps, 'children' | 'arrowBoundaryOffset' | 'isKeyboardDismissDisabled' | 'isNonModal' | 'isEntering' | 'isExiting' | 'scrollRef' | 'shouldCloseOnInteractOutside' | 'trigger' | 'triggerRef'>, StyleProps {
+  /** The children of the coach mark. */
+  children: ReactNode
+}
+
+let popover = style({
+  '--s2-container-bg': {
+    type: 'backgroundColor',
+    value: 'layer-2'
+  },
+  backgroundColor: '--s2-container-bg',
+  borderRadius: 'lg',
+  // Use box-shadow instead of filter when an arrow is not shown.
+  // This fixes the shadow stacking problem with submenus.
+  boxShadow: 'elevated',
+  borderStyle: 'solid',
+  borderWidth: 1,
+  height: 'fit',
+  width: 'fit',
+  // Should we overflow? or let users decide?
+  overflow: 'auto',
+  padding: 0,
+  margin: 0,
+  borderColor: {
+    default: 'gray-200',
+    forcedColors: 'ButtonBorder'
+  },
+  boxSizing: 'border-box',
+  willChange: '[opacity, transform]',
+  isolation: 'isolate'
+}, getAllowedOverrides());
+
+export const CoachMarkContext = createContext<ContextValue<CoachMarkProps, HTMLDivElement>>({});
+
+export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HTMLDivElement>) => {
+  [props, ref] = useContextProps(props, ref, CoachMarkContext);
+  let {UNSAFE_style, UNSAFE_className = ''} = props;
+  let popoverRef = useObjectRef(ref);
+  let state = useContext(OverlayTriggerStateContext);
+  let {triggerRef} = useContext(InternalCoachMarkContext);
+  let fallbackTriggerRef = useObjectRef(useRef<HTMLElement>(null));
+  triggerRef = triggerRef ?? fallbackTriggerRef;
+
+  let {overlayProps, placement} = useOverlayPosition({
+    targetRef: triggerRef,
+    overlayRef: popoverRef,
+    placement: props.placement,
+    offset: 16,
+    crossOffset: -18 // made up
+  });
+
+  let prevOpen = useRef(false);
+  useLayoutEffect(() => {
+    if (state?.isOpen && !prevOpen.current) {
+      popoverRef.current?.showPopover();
+    } else if (!state?.isOpen && prevOpen.current) {
+      popoverRef.current?.hidePopover();
+    }
+    prevOpen.current = state?.isOpen ?? false;
+  }, [state?.isOpen]);
+
+  let {keyboardProps} = useKeyboard({
+    onKeyDown: (e) => {
+      if (e.key === 'Escape') {
+        state?.close();
+        return;
+      }
+      e.continuePropagation();
+    }
+  });
+
+  return (
+    <div
+      popover="manual"
+      role="dialog"
+      ref={popoverRef}
+      data-placement={placement}
+      {...keyboardProps}
+      style={{
+        ...UNSAFE_style,
+        ...overlayProps.style,
+        // Override default z-index from useOverlayPosition. We use isolation: isolate instead.
+        zIndex: undefined
+      }}
+      className={UNSAFE_className + ' ' + coachmarkCss['coach-mark'] + popover({placement})}>
+      {/* }// Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state. */}
+      <OverlayTriggerStateContext.Provider value={null}>
+        {props.children}
+      </OverlayTriggerStateContext.Provider>
+    </div>
+  );
+});
 
 // TODO better way to calculate 4px transform? (not 4%?)
 const pulseAnimation = keyframes(`
@@ -257,8 +236,10 @@ export const CoachMarkIndicator = /*#__PURE__*/ (forwardRef as forwardRefType)(f
   const {children, isActive} = props;
   let objRef = useObjectRef(ref);
 
-  //   // This is very silly... better ways? can't use display: contents because it breaks positioning
-  // // this will break if there is a resize or different styles
+  // This is very silly... better ways? can't use display: contents because it breaks positioning
+  // this will break if there is a resize or different styles
+  // can't go searching for the first child because it's not always the first child, or in the case of slider, there are no border radius until the thumb and we
+  // definitely don't want that rounding. There may also be contextual help which would have a border radius
   useLayoutEffect(() => {
     if (objRef.current) {
       let styles = getComputedStyle(objRef.current.children[0]);
