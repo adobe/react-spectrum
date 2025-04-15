@@ -176,8 +176,7 @@ export function usePress(props: PressHookProps): PressResult {
     preventFocusOnPress,
     shouldCancelOnPointerExit,
     allowTextSelectionOnPress,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    ref: _, // Removing `ref` from `domProps` because TypeScript is dumb
+    ref: domRef,
     ...domProps
   } = usePressResponderContext(props);
 
@@ -814,13 +813,26 @@ export function usePress(props: PressHookProps): PressResult {
     triggerSyntheticClick
   ]);
 
-  // Remove user-select: none in case component unmounts immediately after pressStart
+  // Avoid onClick delay for double tap to zoom by default.
+  useEffect(() => {
+    let element = domRef?.current;
+    if (element && (element instanceof getOwnerWindow(element).Element)) {
+      // Only apply touch-action if not already set by another CSS rule.
+      let style = getOwnerWindow(element).getComputedStyle(element);
+      if (style.touchAction === 'auto') {
+        // touchAction: 'manipulation' is supposed to be equivalent, but in 
+        // Safari it causes onPointerCancel not to fire on scroll.
+        // https://bugs.webkit.org/show_bug.cgi?id=240917
+        (element as HTMLElement).style.touchAction = 'pan-x pan-y pinch-zoom';
+      }
+    }
+  }, [domRef]);
 
+  // Remove user-select: none in case component unmounts immediately after pressStart
   useEffect(() => {
     let state = ref.current;
     return () => {
       if (!allowTextSelectionOnPress) {
-         
         restoreTextSelection(state.target ?? undefined);
       }
       for (let dispose of state.disposables) {

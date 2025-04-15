@@ -30,6 +30,7 @@ import {
   useDragAndDrop,
   Virtualizer
 } from '../';
+import {getFocusableTreeWalker} from '@react-aria/focus';
 import React from 'react';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
@@ -248,6 +249,23 @@ describe('GridList', () => {
     expect(within(row).getByRole('checkbox')).not.toBeChecked();
   });
 
+  it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
+    let {getByRole} = renderGridList({selectionMode: 'multiple', escapeKeyBehavior: 'none'});
+    let gridListTester = testUtilUser.createTester('GridList', {root: getByRole('grid')});
+
+    let row = gridListTester.rows[0];
+    expect(within(row).getByRole('checkbox')).not.toBeChecked();
+
+    await gridListTester.toggleRowSelection({row: 0});
+    expect(gridListTester.selectedRows).toHaveLength(1);
+
+    await gridListTester.toggleRowSelection({row: 1});
+    expect(gridListTester.selectedRows).toHaveLength(2);
+
+    await user.keyboard('{Escape}');
+    expect(gridListTester.selectedRows).toHaveLength(2);
+  });
+
   it('should support disabled state', () => {
     let {getAllByRole} = renderGridList({selectionMode: 'multiple', disabledKeys: ['cat']}, {className: ({isDisabled}) => isDisabled ? 'disabled' : ''});
     let row = getAllByRole('row')[0];
@@ -439,9 +457,9 @@ describe('GridList', () => {
         <GridListItem data-test-id="grid-list" id="tags" textValue="tags">
           <TagGroup aria-label="Tag group">
             <TagList>
-              <Tag key="1">Tag 1</Tag>
-              <Tag key="2">Tag 2</Tag>
-              <Tag key="3">Tag 3</Tag>
+              <Tag id="1">Tag 1</Tag>
+              <Tag id="2">Tag 2</Tag>
+              <Tag id="3">Tag 3</Tag>
             </TagList>
           </TagGroup>
         </GridListItem>
@@ -470,6 +488,60 @@ describe('GridList', () => {
 
     await user.tab();
     expect(document.activeElement).toBe(document.body);
+  });
+
+  it('should support rendering a TagGroup with tabbing navigation inside a GridListItem', async () => {
+    let buttonRef = React.createRef();
+    let onRemove = jest.fn();
+    let {getAllByRole} = render(
+      <GridList aria-label="Test" keyboardNavigationBehavior="tab">
+        <GridListItem data-test-id="grid-list" id="tags" textValue="tags">
+          <TagGroup aria-label="Tag group" onRemove={onRemove}>
+            <TagList>
+              <Tag id="1" textValue="Tag 1">Tag 1<Button slot="remove">X</Button></Tag>
+              <Tag id="2" textValue="Tag 2">Tag 2<Button slot="remove">X</Button></Tag>
+              <Tag id="3" textValue="Tag 3">Tag 3<Button slot="remove">X</Button></Tag>
+            </TagList>
+          </TagGroup>
+        </GridListItem>
+        <GridListItem id="dog" textValue="Dog">Dog <Button aria-label="Info" ref={buttonRef}>ⓘ</Button></GridListItem>
+        <GridListItem id="kangaroo">Kangaroo</GridListItem>
+      </GridList>
+    );
+
+    let items = getAllByRole('grid')[0].children;
+    let tags = within(items[0]).getAllByRole('row');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(items[0]);
+
+    await user.tab();
+    expect(document.activeElement).toBe(tags[0]);
+
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(tags[1]);
+
+    await user.tab();
+    expect(document.activeElement).toBe(within(tags[1]).getByRole('button'));
+
+    await user.keyboard(' ');
+    expect(onRemove).toHaveBeenCalledTimes(1);
+    expect(onRemove).toHaveBeenLastCalledWith(new Set(['2']));
+
+    await user.tab({shift: true});
+    expect(document.activeElement).toBe(tags[1]);
+
+    // For some reason "await user.tab({shift: true});"" doesn't seem to follow the correct behavior when coercing focus to the collection before
+    // letting the browser handle the tab event so we simulate this
+    fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
+    let walker = getFocusableTreeWalker(document.body, {tabbable: true});
+    walker.currentNode = document.activeElement;
+    act(() => {walker.previousNode().focus();});
+    fireEvent.keyUp(document.activeElement, {key: 'Tab', shiftKey: true});
+    expect(document.activeElement).toBe(items[0]);
   });
 
   it('should not propagate the checkbox context from selection into other cells', async () => {
@@ -746,6 +818,44 @@ describe('GridList', () => {
         await trigger(items[0]);
         expect(navigate).toHaveBeenCalledWith('/foo', {foo: 'bar'});
       });
+    });
+  });
+
+  describe('shouldSelectOnPressUp', () => {
+    it('should select an item on pressing down when shouldSelectOnPressUp is not provided', async () => {
+      let onSelectionChange = jest.fn();
+      let {getAllByRole} = renderGridList({selectionMode: 'single', onSelectionChange});
+      let items = getAllByRole('row');
+
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      expect(onSelectionChange).toBeCalledTimes(1);
+  
+      await user.pointer({target: items[0], keys: '[/MouseLeft]'});
+      expect(onSelectionChange).toBeCalledTimes(1);
+    });
+
+    it('should select an item on pressing down when shouldSelectOnPressUp is false', async () => {
+      let onSelectionChange = jest.fn();
+      let {getAllByRole} = renderGridList({selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: false});
+      let items = getAllByRole('row');
+
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      expect(onSelectionChange).toBeCalledTimes(1);
+  
+      await user.pointer({target: items[0], keys: '[/MouseLeft]'});
+      expect(onSelectionChange).toBeCalledTimes(1);
+    });
+
+    it('should select an item on pressing up when shouldSelectOnPressUp is true', async () => {
+      let onSelectionChange = jest.fn();
+      let {getAllByRole} = renderGridList({selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: true});
+      let items = getAllByRole('row');
+
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      expect(onSelectionChange).toBeCalledTimes(0);
+  
+      await user.pointer({target: items[0], keys: '[/MouseLeft]'});
+      expect(onSelectionChange).toBeCalledTimes(1);
     });
   });
 });

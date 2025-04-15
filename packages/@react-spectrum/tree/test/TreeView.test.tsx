@@ -463,6 +463,27 @@ describe('Tree', () => {
     expect(treeTester.selectedRows[0]).toBe(row1);
   });
 
+  it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
+    let {getByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', escapeKeyBehavior: 'none'}} />);
+    let treeTester = testUtilUser.createTester('Tree', {user, root: getByRole('treegrid')});
+    let rows = treeTester.rows;
+    let row1 = rows[1];
+    await treeTester.toggleRowSelection({row: row1});
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Projects']));
+    expect(treeTester.selectedRows).toHaveLength(1);
+
+    let row2 = rows[2];
+    await treeTester.toggleRowSelection({row: row2});
+    expect(onSelectionChange).toHaveBeenCalledTimes(2);
+    expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Projects', 'Projects-1']));
+    expect(treeTester.selectedRows).toHaveLength(2);
+
+    await user.keyboard('{Escape}');
+    expect(onSelectionChange).toHaveBeenCalledTimes(2);
+    expect(treeTester.selectedRows).toHaveLength(2);
+  });
+
   it('should render a chevron for an expandable row marked with hasChildItems', () => {
     let {getAllByRole} = render(
       <TreeView aria-label="test tree">

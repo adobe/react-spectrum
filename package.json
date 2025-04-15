@@ -125,7 +125,7 @@
     "@tailwindcss/postcss": "^4.0.0",
     "@testing-library/dom": "^10.1.0",
     "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^15.0.7",
+    "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch",
     "@types/react": "npm:types-react@19.0.0-rc.0",
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.0",
@@ -246,7 +246,8 @@
         "packages/@react-spectrum/style-macro-s1/**",
         "packages/@react-spectrum/tree/**",
         "packages/@react-spectrum/color/src/*.tsx",
-        "packages/@react-spectrum/s2/**",
+        "packages/@react-spectrum/s2/**/*.{js,ts,tsx}",
+        "packages/@react-spectrum/s2/stories/**",
         ".storybook-s2/**"
       ]
     },
