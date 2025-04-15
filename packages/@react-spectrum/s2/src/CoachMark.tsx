@@ -171,7 +171,7 @@ export const CoachMark = forwardRef((props: CoachMarkProps, ref: ForwardedRef<HT
         // Override default z-index from useOverlayPosition. We use isolation: isolate instead.
         zIndex: undefined
       }}
-      className={UNSAFE_className + ' ' + coachmarkCss['coach-mark'] + popover({placement})}>
+      className={UNSAFE_className + ' ' + coachmarkCss['coach-mark'] + popover}>
       {/* }// Reset OverlayTriggerStateContext so the buttons inside the dialog don't retain their hover state. */}
       <OverlayTriggerStateContext.Provider value={null}>
         <UNSAFE_PortalProvider getContainer={() => internalContainer.current}>
