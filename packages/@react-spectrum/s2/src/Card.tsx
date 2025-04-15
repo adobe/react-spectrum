@@ -65,7 +65,7 @@ const borderRadius = {
   }
 } as const;
 
-let card = style({
+export const card = style({
   display: 'flex',
   flexDirection: 'column',
   position: 'relative',
