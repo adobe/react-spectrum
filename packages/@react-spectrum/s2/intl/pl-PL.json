@@ -2,8 +2,9 @@
   "actionbar.actions": "Działania",
   "actionbar.actionsAvailable": "Dostępne działania.",
   "actionbar.clearSelection": "Wyczyść zaznaczenie",
-  "actionbar.selected": "Zaznaczono: {count}",
+  "actionbar.selected": "{count, plural, =0 {nie wybrano} other {# wybrano}}",
   "actionbar.selectedAll": "Wszystkie zaznaczone",
+  "breadcrumbs.more": "Więcej elementów",
   "button.pending": "oczekujące",
   "contextualhelp.help": "Pomoc",
   "contextualhelp.info": "Informacja",
@@ -17,10 +18,12 @@
   "label.(optional)": "(opcjonalne)",
   "label.(required)": "(wymagane)",
   "menu.moreActions": "Więcej akcji",
+  "notificationbadge.indicatorOnly": "Nowa aktywność",
+  "notificationbadge.plus": "{notifications}+",
   "picker.placeholder": "Zaznacz…",
   "slider.maximum": "Maksimum",
   "slider.minimum": "Minimum",
-  "table.loading": "Ładowanie...",
+  "table.loading": "Wczytywanie...",
   "table.loadingMore": "Wczytywanie większej liczby...",
   "table.resizeColumn": "Zmień rozmiar kolumny",
   "table.sortAscending": "Sortuj rosnąco",
@@ -29,5 +32,7 @@
   "tag.hideButtonLabel": "Wyświetl mniej",
   "tag.noTags": "Brak",
   "tag.showAllButtonLabel": "Pokaż wszystko ({tagCount, number})",
-  "breadcrumbs.more": "Więcej elementów"
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

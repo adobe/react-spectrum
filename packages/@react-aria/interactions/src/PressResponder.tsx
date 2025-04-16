@@ -39,10 +39,12 @@ export const PressResponder = React.forwardRef(({children, ...props}: PressRespo
 
   useEffect(() => {
     if (!isRegistered.current) {
-      console.warn(
-        'A PressResponder was rendered without a pressable child. ' +
-        'Either call the usePress hook, or wrap your DOM node with <Pressable> component.'
-      );
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn(
+          'A PressResponder was rendered without a pressable child. ' +
+          'Either call the usePress hook, or wrap your DOM node with <Pressable> component.'
+        );
+      }
       isRegistered.current = true; // only warn once in strict mode.
     }
   }, []);
@@ -54,7 +56,7 @@ export const PressResponder = React.forwardRef(({children, ...props}: PressRespo
   );
 });
 
-export function ClearPressResponder({children}: {children: ReactNode}) {
+export function ClearPressResponder({children}: {children: ReactNode}): ReactNode {
   let context = useMemo(() => ({register: () => {}}), []);
   return (
     <PressResponderContext.Provider value={context}>

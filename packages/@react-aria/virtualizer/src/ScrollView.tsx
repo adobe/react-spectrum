@@ -54,7 +54,12 @@ function ScrollView(props: ScrollViewProps, ref: ForwardedRef<HTMLDivElement | n
 const ScrollViewForwardRef = React.forwardRef(ScrollView);
 export {ScrollViewForwardRef as ScrollView};
 
-export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement | null>) {
+interface ScrollViewAria {
+  scrollViewProps: HTMLAttributes<HTMLElement>,
+  contentProps: HTMLAttributes<HTMLElement>
+}
+
+export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement | null>): ScrollViewAria {
   let {
     contentSize,
     onVisibleRectChange,
@@ -135,7 +140,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
   // Attach event directly to ref so RAC Virtualizer doesn't need to send props upward.
   useEvent(ref, 'scroll', onScroll);
 
-   
+
   useEffect(() => {
     return () => {
       if (state.scrollTimeout != null) {

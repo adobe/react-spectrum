@@ -31,7 +31,7 @@ export function getEraFormat(date: CalendarDate | undefined): 'short' | undefine
   return date?.calendar.identifier === 'gregory' && date.era === 'BC' ? 'short' : undefined;
 }
 
-export function useSelectedDateDescription(state: CalendarState | RangeCalendarState) {
+export function useSelectedDateDescription(state: CalendarState | RangeCalendarState): string {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/calendar');
 
   let start: CalendarDate | undefined, end: CalendarDate | undefined;
@@ -69,7 +69,7 @@ export function useSelectedDateDescription(state: CalendarState | RangeCalendarS
   }, [start, end, anchorDate, state.timeZone, stringFormatter, dateFormatter]);
 }
 
-export function useVisibleRangeDescription(startDate: CalendarDate, endDate: CalendarDate, timeZone: string, isAria: boolean) {
+export function useVisibleRangeDescription(startDate: CalendarDate, endDate: CalendarDate, timeZone: string, isAria: boolean): string {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/calendar');
   let era: any = getEraFormat(startDate) || getEraFormat(endDate);
   let monthFormatter = useDateFormatter({
@@ -93,12 +93,21 @@ export function useVisibleRangeDescription(startDate: CalendarDate, endDate: Cal
     // Special case for month granularity. Format as a single month if only a
     // single month is visible, otherwise format as a range of months.
     if (isSameDay(startDate, startOfMonth(startDate))) {
+      let startMonth = startDate;
+      let endMonth = endDate;
+      if (startDate.calendar.getFormattableMonth) {
+        startMonth = startDate.calendar.getFormattableMonth(startDate);
+      }
+      if (endDate.calendar.getFormattableMonth) {
+        endMonth = endDate.calendar.getFormattableMonth(endDate);
+      }
+
       if (isSameDay(endDate, endOfMonth(startDate))) {
-        return monthFormatter.format(startDate.toDate(timeZone));
+        return monthFormatter.format(startMonth.toDate(timeZone));
       } else if (isSameDay(endDate, endOfMonth(endDate))) {
         return isAria
-          ? formatRange(monthFormatter, stringFormatter, startDate, endDate, timeZone)
-          : monthFormatter.formatRange(startDate.toDate(timeZone), endDate.toDate(timeZone));
+          ? formatRange(monthFormatter, stringFormatter, startMonth, endMonth, timeZone)
+          : monthFormatter.formatRange(startMonth.toDate(timeZone), endMonth.toDate(timeZone));
       }
     }
 

@@ -58,7 +58,7 @@ export class ListBoxTester {
   /**
    * Set the interaction type used by the listbox tester.
    */
-  setInteractionType(type: UserOpts['interactionType']) {
+  setInteractionType(type: UserOpts['interactionType']): void {
     this._interactionType = type;
   }
 
@@ -93,9 +93,11 @@ export class ListBoxTester {
       throw new Error('Option provided is not in the listbox');
     }
 
-    if (document.activeElement === this._listbox) {
-      await this.user.keyboard('[ArrowDown]');
+    if (document.activeElement !== this._listbox || !this._listbox.contains(document.activeElement)) {
+      act(() => this._listbox.focus());
     }
+
+    await this.user.keyboard('[ArrowDown]');
 
     // TODO: not sure about doing same while loop that exists in other implementations of keyboardNavigateToOption,
     // feels like it could break easily
@@ -119,7 +121,7 @@ export class ListBoxTester {
   /**
    * Toggles the selection for the specified listbox option. Defaults to using the interaction type set on the listbox tester.
    */
-  async toggleOptionSelection(opts: ListBoxToggleOptionOpts) {
+  async toggleOptionSelection(opts: ListBoxToggleOptionOpts): Promise<void> {
     let {option, needsLongPress, keyboardActivation = 'Enter', interactionType = this._interactionType} = opts;
 
     if (typeof option === 'string' || typeof option === 'number') {
@@ -133,10 +135,6 @@ export class ListBoxTester {
     if (interactionType === 'keyboard') {
       if (option?.getAttribute('aria-disabled') === 'true') {
         return;
-      }
-
-      if (document.activeElement !== this._listbox || !this._listbox.contains(document.activeElement)) {
-        act(() => this._listbox.focus());
       }
 
       await this.keyboardNavigateToOption({option});
@@ -157,7 +155,7 @@ export class ListBoxTester {
   /**
    * Triggers the action for the specified listbox option. Defaults to using the interaction type set on the listbox tester.
    */
-  async triggerOptionAction(opts: ListBoxOptionActionOpts) {
+  async triggerOptionAction(opts: ListBoxOptionActionOpts): Promise<void> {
     let {
       option,
       needsDoubleClick,
@@ -177,10 +175,6 @@ export class ListBoxTester {
     } else if (interactionType === 'keyboard') {
       if (option?.getAttribute('aria-disabled') === 'true') {
         return;
-      }
-
-      if (document.activeElement !== this._listbox || !this._listbox.contains(document.activeElement)) {
-        act(() => this._listbox.focus());
       }
 
       await this.keyboardNavigateToOption({option});

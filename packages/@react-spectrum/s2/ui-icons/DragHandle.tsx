@@ -14,9 +14,9 @@ import DragHandle_L from './S2_DragHandleSize200.svg';
 import DragHandle_M from './S2_DragHandleSize100.svg';
 import DragHandle_S from './S2_DragHandleSize75.svg';
 import DragHandle_XL from './S2_DragHandleSize300.svg';
-import {SVGProps} from 'react';
+import {ReactNode, SVGProps} from 'react';
 
-export default function DragHandle(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'S'}) {
+export default function DragHandle(props: SVGProps<SVGSVGElement> & {size?: 'M' | 'L' | 'XL' | 'S'}): ReactNode {
   let {size = 'M', ...otherProps} = props;
   switch (size) {
     case 'M':

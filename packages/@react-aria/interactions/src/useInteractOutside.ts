@@ -31,7 +31,7 @@ export interface InteractOutsideProps {
  * Example, used in components like Dialogs and Popovers so they can close
  * when a user clicks outside them.
  */
-export function useInteractOutside(props: InteractOutsideProps) {
+export function useInteractOutside(props: InteractOutsideProps): void {
   let {ref, onInteractOutside, isDisabled, onInteractOutsideStart} = props;
   let stateRef = useRef({
     isPointerDown: false,
@@ -79,7 +79,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
         documentObject.removeEventListener('pointerdown', onPointerDown, true);
         documentObject.removeEventListener('pointerup', onPointerUp, true);
       };
-    } else {
+    } else if (process.env.NODE_ENV === 'test') {
       let onMouseUp = (e) => {
         if (state.ignoreEmulatedMouseEvents) {
           state.ignoreEmulatedMouseEvents = false;

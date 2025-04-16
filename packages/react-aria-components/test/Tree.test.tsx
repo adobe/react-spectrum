@@ -629,6 +629,24 @@ describe('Tree', () => {
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
     });
 
+    it('should prevent Esc from clearing selection if escapeKeyBehavior is "none"', async () => {
+      let {getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', escapeKeyBehavior: 'none'}}  />);
+
+      let rows = getAllByRole('row');
+      await user.click(rows[0]);
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Photos']));
+
+      await user.click(rows[1]);
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
+      expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Photos', 'projects']));
+
+      await user.keyboard('{Escape}');
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
+      expect(rows[0]).toHaveAttribute('data-selected');
+      expect(rows[1]).toHaveAttribute('data-selected');
+    });
+
     it('should support onScroll', () => {
       let onScroll = jest.fn();
       let {getByRole} = render(<StaticTree treeProps={{onScroll}} />);
@@ -1178,6 +1196,44 @@ describe('Tree', () => {
       expect(rows).toHaveLength(1);
       expect(body).toHaveAttribute('data-empty', 'true');
       expect(rows[0]).toHaveTextContent('Nothing in tree');
+    });
+  });
+
+  describe('shouldSelectOnPressUp', () => {
+    it('should select an item on pressing down when shouldSelectOnPressUp is not provided', async () => {
+      let onSelectionChange = jest.fn();
+      let {getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'single', onSelectionChange}} />);
+      let items = getAllByRole('row');
+
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      expect(onSelectionChange).toBeCalledTimes(1);
+  
+      await user.pointer({target: items[0], keys: '[/MouseLeft]'});
+      expect(onSelectionChange).toBeCalledTimes(1);
+    });
+
+    it('should select an item on pressing down when shouldSelectOnPressUp is false', async () => {
+      let onSelectionChange = jest.fn();
+      let {getAllByRole} =  render(<StaticTree treeProps={{selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: false}} />);
+      let items = getAllByRole('row');
+
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      expect(onSelectionChange).toBeCalledTimes(1);
+  
+      await user.pointer({target: items[0], keys: '[/MouseLeft]'});
+      expect(onSelectionChange).toBeCalledTimes(1);
+    });
+
+    it('should select an item on pressing up when shouldSelectOnPressUp is true', async () => {
+      let onSelectionChange = jest.fn();
+      let {getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: true}} />);
+      let items = getAllByRole('row');
+
+      await user.pointer({target: items[0], keys: '[MouseLeft>]'});   
+      expect(onSelectionChange).toBeCalledTimes(0);
+  
+      await user.pointer({target: items[0], keys: '[/MouseLeft]'});
+      expect(onSelectionChange).toBeCalledTimes(1);
     });
   });
 });

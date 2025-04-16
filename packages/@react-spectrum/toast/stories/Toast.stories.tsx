@@ -15,14 +15,14 @@ import {ActionButton, Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Content} from '@react-spectrum/view';
-import {createLandmarkController, useLandmark} from '@react-aria/landmark';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import React, {SyntheticEvent, useEffect, useMemo, useRef, useState} from 'react';
 import {SpectrumToastOptions, ToastPlacement} from '../src/ToastContainer';
 import {ToastContainer, ToastQueue} from '../';
-import {UNSTABLE_PortalProvider} from '@react-aria/overlays';
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
+import {UNSTABLE_createLandmarkController, useLandmark} from '@react-aria/landmark';
 
 export default {
   title: 'Toast',
@@ -260,7 +260,7 @@ function MultipleInner() {
 }
 
 function IframeExample() {
-  let controller = useMemo(() => createLandmarkController(), []);
+  let controller = useMemo(() => UNSTABLE_createLandmarkController(), []);
   useEffect(() => () => controller.dispose(), [controller]);
   let onLoad = (e: SyntheticEvent) => {
     let iframe = e.target as HTMLIFrameElement;
@@ -384,11 +384,11 @@ function FullscreenApp(props) {
   }, []);
   return (
     <div ref={ref} style={{position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'white'}}>
-      <UNSTABLE_PortalProvider getContainer={() => ref.current}>
+      <UNSAFE_PortalProvider getContainer={() => ref.current}>
         <RenderProvider {...props} />
         <ActionButton onPress={fullscreenPress}>Enter fullscreen</ActionButton>
         {isFullscreen && <ToastContainer key="miniapp" placement={props.placement} />}
-      </UNSTABLE_PortalProvider>
+      </UNSAFE_PortalProvider>
       {!isFullscreen && <ToastContainer key="app" placement={props.placement} />}
     </div>
   );

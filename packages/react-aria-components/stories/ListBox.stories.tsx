@@ -35,7 +35,8 @@ ListBoxExample.story = {
   args: {
     selectionMode: 'none',
     selectionBehavior: 'toggle',
-    shouldFocusOnHover: false
+    shouldFocusOnHover: false,
+    escapeKeyBehavior: 'clearSelection'
   },
   argTypes: {
     selectionMode: {
@@ -45,6 +46,10 @@ ListBoxExample.story = {
     selectionBehavior: {
       control: 'radio',
       options: ['toggle', 'replace']
+    },
+    escapeKeyBehavior: {
+      control: 'radio',
+      options: ['clearSelection', 'none']
     }
   },
   parameters: {
@@ -317,7 +322,8 @@ export function VirtualizedListBoxDnd() {
       <Virtualizer
         layout={ListLayout}
         layoutOptions={{
-          rowHeight: 25
+          rowHeight: 25,
+          gap: 8
         }}>
         <ListBox
           className={styles.menu}
@@ -362,7 +368,7 @@ function VirtualizedListBoxGridExample({minSize = 80, maxSize = 100, preserveAsp
 
   return (
     <div style={{height: 400, width: 400, resize: 'both', padding: 40, overflow: 'hidden'}}>
-      <Virtualizer 
+      <Virtualizer
         layout={GridLayout}
         layoutOptions={{
           minItemSize: new Size(minSize, minSize),
@@ -408,7 +414,7 @@ export function VirtualizedListBoxWaterfall({minSize = 80, maxSize = 100}) {
 
   return (
     <div style={{height: 400, width: 400, resize: 'both', padding: 40, overflow: 'hidden'}}>
-      <Virtualizer 
+      <Virtualizer
         layout={WaterfallLayout}
         layoutOptions={{
           minItemSize: new Size(minSize, minSize),

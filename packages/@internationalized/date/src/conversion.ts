@@ -17,16 +17,16 @@ import {AnyCalendarDate, AnyDateTime, AnyTime, Calendar, DateFields, Disambiguat
 import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from './CalendarDate';
 import {constrain} from './manipulation';
 import {getExtendedYear, GregorianCalendar} from './calendars/GregorianCalendar';
-import {getLocalTimeZone} from './queries';
+import {getLocalTimeZone, isEqualCalendar} from './queries';
 import {Mutable} from './utils';
 
-export function epochFromDate(date: AnyDateTime) {
+export function epochFromDate(date: AnyDateTime): number {
   date = toCalendar(date, new GregorianCalendar());
   let year = getExtendedYear(date.era, date.year);
   return epochFromParts(year, date.month, date.day, date.hour, date.minute, date.second, date.millisecond);
 }
 
-function epochFromParts(year: number, month: number, day: number, hour: number, minute: number, second: number, millisecond: number) {
+function epochFromParts(year: number, month: number, day: number, hour: number, minute: number, second: number, millisecond: number): number {
   // Note: Date.UTC() interprets one and two-digit years as being in the
   // 20th century, so don't use it
   let date = new Date();
@@ -35,7 +35,7 @@ function epochFromParts(year: number, month: number, day: number, hour: number, 
   return date.getTime();
 }
 
-export function getTimeZoneOffset(ms: number, timeZone: string) {
+export function getTimeZoneOffset(ms: number, timeZone: string): number {
   // Fast path for UTC.
   if (timeZone === 'UTC') {
     return 0;
@@ -260,7 +260,7 @@ export function toTime(dateTime: CalendarDateTime | ZonedDateTime): Time {
 
 /** Converts a date from one calendar system to another. */
 export function toCalendar<T extends AnyCalendarDate>(date: T, calendar: Calendar): T {
-  if (date.calendar.identifier === calendar.identifier) {
+  if (isEqualCalendar(date.calendar, calendar)) {
     return date;
   }
 
@@ -292,7 +292,7 @@ export function toZoned(date: CalendarDate | CalendarDateTime | ZonedDateTime, t
   return fromAbsolute(ms, timeZone);
 }
 
-export function zonedToDate(date: ZonedDateTime) {
+export function zonedToDate(date: ZonedDateTime): Date {
   let ms = epochFromDate(date) - date.offset;
   return new Date(ms);
 }

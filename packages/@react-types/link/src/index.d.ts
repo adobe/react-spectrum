@@ -17,7 +17,7 @@ export interface LinkProps extends PressEvents, FocusableProps {}
 
 export interface AriaLinkProps extends LinkProps, LinkDOMProps, AriaLabelingProps { }
 
-export interface SpectrumLinkProps extends AriaLinkProps, StyleProps {
+export interface SpectrumLinkProps extends Omit<AriaLinkProps, 'onClick'>, StyleProps {
   /** The content to display in the link. */
   children: ReactNode,
   /**
