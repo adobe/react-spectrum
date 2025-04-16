@@ -31,7 +31,7 @@
     "access": "public"
   },
   "engines": {
-    "node": ">= 12"
+    "node": ">= 22"
   },
   "targets": {
     "main": {
