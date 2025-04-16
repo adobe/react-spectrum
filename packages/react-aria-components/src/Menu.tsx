@@ -34,7 +34,8 @@ import React, {
   useContext,
   useMemo,
   useRef,
-  useState
+  useState,
+  JSX
 } from 'react';
 import {SeparatorContext} from './Separator';
 import {TextContext} from './Text';
@@ -49,7 +50,7 @@ export interface MenuTriggerProps extends BaseMenuTriggerProps {
   children: ReactNode
 }
 
-export function MenuTrigger(props: MenuTriggerProps): ReactNode {
+export function MenuTrigger(props: MenuTriggerProps): JSX.Element {
   let state = useMenuTriggerState(props);
   let ref = useRef<HTMLButtonElement>(null);
   let {menuTriggerProps, menuProps} = useMenuTrigger({
