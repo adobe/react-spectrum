@@ -15,6 +15,7 @@ import {RefObject, useRef} from 'react';
 import {useEffectEvent} from './useEffectEvent';
 import {useLayoutEffect} from './useLayoutEffect';
 
+// TODO pull from AsyncLoadable?
 export interface LoadMoreSentinelProps {
   /** Whether data is currently being loaded. */
   isLoading?: boolean,

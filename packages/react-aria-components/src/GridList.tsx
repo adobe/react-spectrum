@@ -210,6 +210,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
 
   let emptyState: ReactNode = null;
   let emptyStatePropOverrides: HTMLAttributes<HTMLElement> | null = null;
+  // TODO: update this to account for if the load more sentinel is provided
   if (state.collection.size === 0 && props.renderEmptyState) {
     let content = props.renderEmptyState(renderValues);
     emptyState = (

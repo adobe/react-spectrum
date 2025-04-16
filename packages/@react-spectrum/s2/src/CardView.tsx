@@ -247,6 +247,7 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
             <AriaGridList
               ref={scrollRef}
               {...otherProps}
+              // TODO: remove these and move to sentinel
               isLoading={props.loadingState !== 'idle' && props.loadingState !== 'error'}
               onLoadMore={onLoadMore}
               layout="grid"
@@ -263,6 +264,7 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
                 scrollPaddingBottom: actionBarHeight + options.minSpace.height
               }}
               className={renderProps => (!props.renderActionBar ? UNSAFE_className : '') + cardViewStyles({...renderProps, isLoading: props.loadingState === 'loading'}, !props.renderActionBar ? styles : undefined)}>
+              {/* TODO does the sentinel render after the skeletons if provided after here? Will also have to do the same kind of renderer that Picker and Combobox do */}
               {children}
             </AriaGridList>
           </ImageCoordinator>

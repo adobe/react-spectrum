@@ -347,6 +347,7 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
             selectedKeys={selectedKeys}
             defaultSelectedKeys={undefined}
             onSelectionChange={onSelectionChange}
+            // TODO remove this in favor of the sentinel, will need to pass loadMore down to the table body
             isLoading={isLoading} />
         </InternalTableContext.Provider>
       </Virtualizer>

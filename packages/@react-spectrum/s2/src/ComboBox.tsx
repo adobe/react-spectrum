@@ -28,6 +28,7 @@ import {
   SectionProps,
   UNSTABLE_ListBoxLoadingSentinel
 } from 'react-aria-components';
+import {AsyncLoadable, HelpTextProps, LoadingState, SpectrumLabelableProps} from '@react-types/shared';
 import {baseColor, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
@@ -51,7 +52,6 @@ import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
-import {HelpTextProps, LoadingState, SpectrumLabelableProps} from '@react-types/shared';
 import {IconContext} from './Icon';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -80,7 +80,8 @@ export interface ComboBoxProps<T extends object> extends
   SpectrumLabelableProps,
   HelpTextProps,
   Pick<ListBoxProps<T>, 'items'>,
-  Pick<AriaPopoverProps, 'shouldFlip'> {
+  Pick<AriaPopoverProps, 'shouldFlip'>,
+  Pick<AsyncLoadable, 'onLoadMore'>  {
     /** The contents of the collection. */
     children: ReactNode | ((item: T) => ReactNode),
     /**
@@ -314,7 +315,8 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
     isOpen,
     isRequired,
     isInvalid,
-    menuTrigger
+    menuTrigger,
+    onLoadMore
   } = props;
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
@@ -366,7 +368,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
   let state = useContext(ComboBoxStateContext);
   let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   let [showLoading, setShowLoading] = useState(false);
-  let isLoading = loadingState === 'loading' || loadingState === 'filtering';
+  let isLoadingOrFiltering = loadingState === 'loading' || loadingState === 'filtering';
   {/* Logic copied from S1 */}
   let showFieldSpinner = useMemo(() => showLoading && (isOpen || menuTrigger === 'manual' || loadingState === 'loading'), [showLoading, isOpen, menuTrigger, loadingState]);
   let spinnerId = useSlotId([showFieldSpinner]);
@@ -374,7 +376,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
   let inputValue = state?.inputValue;
   let lastInputValue = useRef(inputValue);
   useEffect(() => {
-    if (isLoading && !showLoading) {
+    if (isLoadingOrFiltering && !showLoading) {
       if (timeout.current === null) {
         timeout.current = setTimeout(() => {
           setShowLoading(true);
@@ -388,7 +390,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
           setShowLoading(true);
         }, 500);
       }
-    } else if (!isLoading) {
+    } else if (!isLoadingOrFiltering) {
       // If loading is no longer happening, clear any timers and hide the loading circle
       setShowLoading(false);
       if (timeout.current) {
@@ -398,7 +400,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
     }
 
     lastInputValue.current = inputValue;
-  }, [isLoading, showLoading, inputValue]);
+  }, [isLoadingOrFiltering, showLoading, inputValue]);
 
   useEffect(() => {
     return () => {
@@ -412,13 +414,17 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
   let renderer;
   let listBoxLoadingCircle = (
     <UNSTABLE_ListBoxLoadingSentinel
+      isLoading={loadingState === 'loading' || loadingState === 'filtering' || loadingState === 'loadingMore'}
+      onLoadMore={onLoadMore}
       className={loadingWrapperStyles}>
-      <ProgressCircle
-        isIndeterminate
-        size="S"
-        styles={progressCircleStyles({size})}
-        // Same loading string as table
-        aria-label={stringFormatter.format('table.loadingMore')} />
+      {loadingState === 'loadingMore' && (
+        <ProgressCircle
+          isIndeterminate
+          size="S"
+          styles={progressCircleStyles({size})}
+          // Same loading string as table
+          aria-label={stringFormatter.format('table.loadingMore')} />
+      )}
     </UNSTABLE_ListBoxLoadingSentinel>
   );
 
@@ -428,14 +434,14 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
         <Collection items={items}>
           {children}
         </Collection>
-        {loadingState === 'loadingMore' && listBoxLoadingCircle}
+        {listBoxLoadingCircle}
       </>
     );
   } else {
     renderer = (
       <>
         {children}
-        {loadingState === 'loadingMore' && listBoxLoadingCircle}
+        {listBoxLoadingCircle}
       </>
     );
   }
@@ -532,14 +538,15 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
               }]
             ]}>
             <ListBox
-              renderEmptyState={() => loadingState != null && (
+              // TODO we don't have a way to actually render this if we always render the sentinel since the collection is never techincally empty
+              // Perhaps we expect the user to change what they render as the child of the loading sentinel? Change what we consider as empty state to
+              // collection size === 1 + the node is a loader node?
+              renderEmptyState={() => loadingState != null && loadingState !== 'loadingMore' && (
                 <span className={emptyStateText({size})}>
                   {loadingState === 'loading' ? stringFormatter.format('table.loading') : stringFormatter.format('combobox.noResults')}
                 </span>
               )}
               items={items}
-              // TODO: will need to get rid of this and remder the spinner directly
-              isLoading={loadingState === 'loading' || loadingState === 'loadingMore'}
               className={menu({size})}>
               {renderer}
             </ListBox>

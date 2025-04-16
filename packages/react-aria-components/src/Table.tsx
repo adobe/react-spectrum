@@ -947,6 +947,7 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
   let TR = useElementType('tr');
   let TD = useElementType('td');
   let numColumns = collection.columnCount;
+  // TODO: update this to account for if the load more sentinel is provided
   if (collection.size === 0 && props.renderEmptyState && state) {
     let rowProps = {};
     let rowHeaderProps = {};

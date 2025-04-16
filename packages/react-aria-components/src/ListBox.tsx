@@ -218,7 +218,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
   });
 
   let emptyState: JSX.Element | null = null;
-  if (state.collection.size === 0 && props.renderEmptyState) {
+  if ((state.collection.size === 0 || (state.collection.size === 1 && state.collection.getItem(state.collection.getFirstKey()!))) && props.renderEmptyState) {
     emptyState = (
       <div
         // eslint-disable-next-line

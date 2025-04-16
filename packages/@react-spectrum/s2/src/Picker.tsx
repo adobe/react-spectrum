@@ -53,7 +53,7 @@ import {
   FieldLabel,
   HelpText
 } from './Field';
-import {FocusableRef, FocusableRefValue, HelpTextProps, PressEvent, SpectrumLabelableProps} from '@react-types/shared';
+import {AsyncLoadable, FocusableRef, FocusableRefValue, HelpTextProps, PressEvent, SpectrumLabelableProps} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
@@ -93,7 +93,9 @@ export interface PickerProps<T extends object> extends
   SpectrumLabelableProps,
   HelpTextProps,
   Pick<ListBoxProps<T>, 'items'>,
-  Pick<AriaPopoverProps, 'shouldFlip'> {
+  Pick<AriaPopoverProps, 'shouldFlip'>,
+  AsyncLoadable
+   {
     /** The contents of the collection. */
     children: ReactNode | ((item: T) => ReactNode),
     /**
@@ -287,6 +289,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
     placeholder = stringFormatter.format('picker.placeholder'),
     isQuiet,
     isLoading,
+    onLoadMore,
     ...pickerProps
   } = props;
 
@@ -330,7 +333,9 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
 
   let listBoxLoadingCircle = (
     <UNSTABLE_ListBoxLoadingSentinel
-      className={loadingWrapperStyles}>
+      className={loadingWrapperStyles}
+      isLoading={isLoading}
+      onLoadMore={onLoadMore}>
       {loadingCircle}
     </UNSTABLE_ListBoxLoadingSentinel>
   );
@@ -341,14 +346,14 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
         <Collection items={items}>
           {children}
         </Collection>
-        {isLoading && listBoxLoadingCircle}
+        {listBoxLoadingCircle}
       </>
     );
   } else {
     renderer = (
       <>
         {children}
-        {isLoading && listBoxLoadingCircle}
+        {listBoxLoadingCircle}
       </>
     );
   }
@@ -451,7 +456,6 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                   }]
                 ]}>
                 <ListBox
-                  isLoading={isLoading}
                   items={items}
                   className={menu({size})}>
                   {renderer}
