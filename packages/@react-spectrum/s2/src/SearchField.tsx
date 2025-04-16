@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButton} from './ActionButton';
 import {
   SearchField as AriaSearchField,
   SearchFieldProps as AriaSearchFieldProps,
@@ -18,7 +19,7 @@ import {
 } from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {ClearButton} from './ClearButton';
-import {createContext, forwardRef, Ref, useContext, useImperativeHandle, useRef} from 'react';
+import {createContext, forwardRef, Ref, useContext, useEffect, useImperativeHandle, useRef} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldGroup, FieldLabel, HelpText, Input} from './Field';
@@ -29,6 +30,7 @@ import {IconContext} from './Icon';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import SearchIcon from '../s2wf-icons/S2_Icon_Search_20_N.svg';
 import {TextFieldRef} from '@react-types/textfield';
+import {useControlledState} from '@react-stately/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className' | 'style' | 'children'>, StyleProps, SpectrumLabelableProps, HelpTextProps {
@@ -37,7 +39,17 @@ export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className'
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL',
+  /** Whether the search field is minimized (controlled). */
+  isMinimized?: boolean,
+  /**
+   * Whether the search field is minimized by default (uncontrolled).
+   *
+   * @default false
+   */
+  defaultMinimized?: boolean,
+  /** Handler that is called when the minimized state changes. */
+  onMinimizeChange?: (isMinimized: boolean) => void
 }
 
 export const SearchFieldContext = createContext<ContextValue<Partial<SearchFieldProps>, TextFieldRef>>(null);
@@ -58,11 +70,24 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(props: 
     labelAlign = 'start',
     UNSAFE_className = '',
     UNSAFE_style,
+    styles,
+    isMinimized: isMinimizedProp,
+    defaultMinimized = false,
+    onMinimizeChange,
     ...searchFieldProps
   } = props;
 
+  let [isMinimized, setIsMinimized] = useControlledState(isMinimizedProp, defaultMinimized, onMinimizeChange);
+
   let domRef = useRef<HTMLDivElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
+
+  // Focus the input when the field is expanded.
+  useEffect(() => {
+    if (!isMinimized && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isMinimized]);
 
   // Expose imperative interface for ref
   useImperativeHandle(ref, () => ({
@@ -76,6 +101,22 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(props: 
       return inputRef.current;
     }
   }));
+
+  if (isMinimized) {
+    return (
+      <ActionButton
+        aria-label={typeof label === 'string' ? label : props['aria-label'] || 'Search'}
+        size={props.size}
+        isQuiet
+        isDisabled={props.isDisabled}
+        onPress={() => setIsMinimized(false)}
+        UNSAFE_className={UNSAFE_className}
+        UNSAFE_style={UNSAFE_style}
+        styles={styles}>
+        <SearchIcon />
+      </ActionButton>
+    );
+  }
 
   return (
     <AriaSearchField

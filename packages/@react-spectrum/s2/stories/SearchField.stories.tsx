@@ -78,3 +78,11 @@ export const ContextualHelpExample = (args: any) => (
 ContextualHelpExample.args = {
   label: 'Search'
 };
+
+export const Minimized = (args: any) => <SearchField {...args} />;
+
+Minimized.args = {
+  label: null,
+  ariaLabel: 'Search',
+  defaultMinimized: true
+};
