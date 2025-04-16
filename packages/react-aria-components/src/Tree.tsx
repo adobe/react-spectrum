@@ -307,6 +307,31 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
       ref
     );
 
+    // Prevent dropping items onto themselves or their descendants
+    let originalGetDropOperation = dropState.getDropOperation;
+    dropState.getDropOperation = (options) => {
+      let {target, isInternal} = options;
+      let currentDraggingKeys = dragState?.draggingKeys ?? new Set();
+
+      if (isInternal && target.type === 'item' && currentDraggingKeys.size > 0) {
+        if (currentDraggingKeys.has(target.key)) {
+          return 'cancel';
+        }
+
+        let currentKey: Key | null = target.key;
+        while (currentKey != null) {
+          let item = state.collection.getItem(currentKey);
+          let parentKey = item?.parentKey;
+          if (parentKey != null && currentDraggingKeys.has(parentKey)) {
+            return 'cancel';
+          }
+          currentKey = parentKey ?? null;
+        }
+      }
+
+      return originalGetDropOperation(options);
+    };
+
     isRootDropTarget = dropState.isDropTarget({type: 'root'});
   }
 
