@@ -27,6 +27,7 @@ import React, {
   createContext,
   ForwardedRef,
   forwardRef,
+  JSX,
   ReactElement,
   ReactNode,
   RefObject,
@@ -34,8 +35,7 @@ import React, {
   useContext,
   useMemo,
   useRef,
-  useState,
-  JSX
+  useState
 } from 'react';
 import {SeparatorContext} from './Separator';
 import {TextContext} from './Text';
