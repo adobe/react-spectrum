@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@spectrum-icons/build-tools": "3.0.0-alpha.1",
-    "fs-extra": "^10.0.0"
+    "fs-extra": "^11.0.0"
   },
   "peerDependencies": {
     "@react-spectrum/provider": "^3.0.0",
