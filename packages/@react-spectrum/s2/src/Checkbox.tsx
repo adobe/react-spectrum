@@ -45,6 +45,7 @@ export const CheckboxContext = createContext<ContextValue<Partial<CheckboxProps>
 
 const wrapper = style({
   display: 'flex',
+  position: 'relative',
   columnGap: 'text-to-control',
   alignItems: 'baseline',
   width: 'fit',
