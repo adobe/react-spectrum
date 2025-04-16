@@ -486,7 +486,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
 
   let draggableItem: DraggableItemResult | null = null;
   if (dragState && dragAndDropHooks) {
-    draggableItem = dragAndDropHooks.useDraggableItem!({key: item.key}, dragState);
+    draggableItem = dragAndDropHooks.useDraggableItem!({key: item.key, hasDragButton: true}, dragState);
   }
 
   let droppableItem: DroppableItemResult | null = null;
@@ -538,6 +538,14 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
   useEffect(() => {
     if (hasChildItems && !expandButtonRef.current && process.env.NODE_ENV !== 'production') {
       console.warn('Expandable tree items must contain a expand button so screen reader users can expand/collapse the item.');
+    }
+  // eslint-disable-next-line
+  }, []);
+
+  let dragButtonRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (dragState && !dragButtonRef.current && process.env.NODE_ENV !== 'production') {
+      console.warn('Draggable items in a Table must contain a <Button slot="drag"> element so that keyboard and screen reader users can drag them.');
     }
   // eslint-disable-next-line
   }, []);
@@ -604,6 +612,13 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
                   chevron: {
                     ...expandButtonProps,
                     ref: expandButtonRef
+                  },
+                  drag: {
+                    ...draggableItem?.dragButtonProps,
+                    ref: dragButtonRef,
+                    style: {
+                      pointerEvents: 'none'
+                    }
                   }
                 }
               }],

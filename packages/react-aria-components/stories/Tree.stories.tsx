@@ -228,11 +228,12 @@ interface DynamicTreeItemProps extends TreeItemProps<object> {
   children: ReactNode,
   childItems?: Iterable<object>,
   isLoading?: boolean,
-  renderLoader?: (id: Key | undefined) => boolean
+  renderLoader?: (id: Key | undefined) => boolean,
+  supportsDragging?: boolean
 }
 
 const DynamicTreeItem = (props: DynamicTreeItemProps) => {
-  let {childItems, renderLoader} = props;
+  let {childItems, renderLoader, supportsDragging} = props;
   return (
     <>
       <TreeItem
@@ -259,6 +260,7 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
                   </div>
                 </Button>
                 )}
+                {supportsDragging && <Button slot="drag">≡</Button>}
                 <Text>{props.children}</Text>
                 <Button className={styles.button} aria-label="Info" onPress={action('Info press')}>ⓘ</Button>
                 <MenuTrigger>
@@ -600,7 +602,7 @@ function TreeDragAndDropExample(args) {
   return (
     <Tree dragAndDropHooks={dragAndDropHooks} {...args} className={styles.tree} aria-label="Tree with drag and drop" items={treeData.items}>
       {(item: any) => (
-        <DynamicTreeItem id={item.key} childItems={item.children ?? []} textValue={item.value.name}>
+        <DynamicTreeItem id={item.key} childItems={item.children ?? []} textValue={item.value.name} supportsDragging>
           {item.value.name}
         </DynamicTreeItem>
       )}
