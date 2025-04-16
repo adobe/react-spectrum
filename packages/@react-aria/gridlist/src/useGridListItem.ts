@@ -63,14 +63,12 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   // Copied from useGridCell + some modifications to make it not so grid specific
   let {
     node,
-    isVirtualized,
-    shouldSelectOnPressUp
+    isVirtualized
   } = props;
 
   // let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/gridlist');
   let {direction} = useLocale();
-  let listMapData = listMap.get(state);
-  let {onAction, linkBehavior = 'action', keyboardNavigationBehavior = 'arrow'} = listMapData || {};
+  let {onAction, linkBehavior, keyboardNavigationBehavior, shouldSelectOnPressUp} = listMap.get(state)!;
   let descriptionId = useSlotId();
 
   // We need to track the key of the item at the time it was last focused so that we force
@@ -126,13 +124,13 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     key: node.key,
     ref,
     isVirtualized,
-    shouldSelectOnPressUp,
+    shouldSelectOnPressUp: props.shouldSelectOnPressUp || shouldSelectOnPressUp,
     onAction: onAction || node.props?.onAction ? chain(node.props?.onAction, onAction ? () => onAction(node.key) : undefined) : undefined,
     focus,
     linkBehavior
   });
 
-  let onKeyDown = (e: ReactKeyboardEvent) => {
+  let onKeyDownCapture = (e: ReactKeyboardEvent) => {
     if (!e.currentTarget.contains(e.target as Element) || !ref.current || !document.activeElement) {
       return;
     }
@@ -226,18 +224,6 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
           );
         }
         break;
-      case 'Tab': {
-        if (keyboardNavigationBehavior === 'tab') {
-          // If there is another focusable element within this item, stop propagation so the tab key
-          // is handled by the browser and not by useSelectableCollection (which would take us out of the list).
-          let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
-          walker.currentNode = document.activeElement;
-          let next = e.shiftKey ? walker.previousNode() : walker.nextNode();
-          if (next) {
-            e.stopPropagation();
-          }
-        }
-      }
     }
   };
 
@@ -257,6 +243,28 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     }
   };
 
+  let onKeyDown = (e) => {
+    if (!e.currentTarget.contains(e.target as Element) || !ref.current || !document.activeElement) {
+      return;
+    }
+
+    switch (e.key) {
+      case 'Tab': {
+        if (keyboardNavigationBehavior === 'tab') {
+          // If there is another focusable element within this item, stop propagation so the tab key
+          // is handled by the browser and not by useSelectableCollection (which would take us out of the list).
+          let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
+          walker.currentNode = document.activeElement;
+          let next = e.shiftKey ? walker.previousNode() : walker.nextNode();
+
+          if (next) {
+            e.stopPropagation();
+          }
+        }
+      }
+    }
+  };
+
   let syntheticLinkProps = useSyntheticLinkProps(node.props);
   let linkProps = itemStates.hasAction ? syntheticLinkProps : {};
   // TODO: re-add when we get translations and fix this for iOS VO
@@ -271,7 +279,8 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
   let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
-    onKeyDownCapture: onKeyDown,
+    onKeyDownCapture,
+    onKeyDown,
     onFocus,
     // 'aria-label': [(node.textValue || undefined), rowAnnouncement].filter(Boolean).join(', '),
     'aria-label': node.textValue || undefined,

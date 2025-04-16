@@ -2,7 +2,6 @@ import {AriaColorWheelOptions, useColorWheel} from 'react-aria';
 import {ColorWheelContext} from './RSPContexts';
 import {ColorWheelState, useColorWheelState} from 'react-stately';
 import {ContextValue, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {DOMProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {InternalColorThumbContext} from './ColorThumb';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, useContext, useRef} from 'react';
@@ -67,7 +66,7 @@ export const ColorWheel = forwardRef(function ColorWheel(props: ColorWheelProps,
 });
 
 export interface ColorWheelTrackRenderProps extends ColorWheelRenderProps {}
-export interface ColorWheelTrackProps extends StyleRenderProps<ColorWheelTrackRenderProps>, DOMProps {}
+export interface ColorWheelTrackProps extends StyleRenderProps<ColorWheelTrackRenderProps> {}
 interface ColorWheelTrackContextValue extends Omit<HTMLAttributes<HTMLElement>, 'children' | 'className' | 'style'>, ColorWheelTrackProps {}
 
 export const ColorWheelTrackContext = createContext<ContextValue<ColorWheelTrackContextValue, HTMLDivElement>>(null);
