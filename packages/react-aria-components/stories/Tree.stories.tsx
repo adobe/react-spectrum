@@ -279,7 +279,7 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
         </TreeItemContent>
         <Collection items={childItems}>
           {(item: any) => (
-            <DynamicTreeItem renderLoader={renderLoader} isLoading={props.isLoading} id={item.key} childItems={item.children} textValue={item.value.name} href={props.href}>
+            <DynamicTreeItem supportsDragging={supportsDragging} renderLoader={renderLoader} isLoading={props.isLoading} id={item.key} childItems={item.children} textValue={item.value.name} href={props.href}>
               {item.value.name}
             </DynamicTreeItem>
           )}
