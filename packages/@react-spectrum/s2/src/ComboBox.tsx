@@ -221,30 +221,21 @@ export let listboxHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
   boxSizing: 'border-box',
   minHeight: 'control',
   paddingY: centerPadding(),
-  display: 'grid',
-  gridTemplateAreas: [
-    '. checkmark icon label       value keyboard descriptor .',
-    '. .         .    description .     .        .          .'
-  ],
-  gridTemplateColumns: {
+  marginX: {
     size: {
-      S: [edgeToText(24), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(24)],
-      M: [edgeToText(32), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(32)],
-      L: [edgeToText(40), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(40)],
-      XL: [edgeToText(48), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(48)]
+      S: '[calc(24 * 3 / 8)]',
+      M: '[calc(32 * 3 / 8)]',
+      L: '[calc(40 * 3 / 8)]',
+      XL: '[calc(48 * 3 / 8)]'
     }
-  },
-  rowGap: {
-    ':has([slot=description])': space(1)
   }
 });
 
 export let listboxHeading = style({
-  font: 'ui',
+  fontSize: 'ui',
   fontWeight: 'bold',
-  margin: 0,
-  gridColumnStart: 2,
-  gridColumnEnd: -2
+  lineHeight: 'ui',
+  margin: 0
 });
 
 // not sure why edgeToText won't work...
@@ -446,7 +437,7 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
                   }}>
                   <ListBox
                     items={items}
-                    className={listbox}>
+                    className={listbox({size})}>
                     {children}
                   </ListBox>
                 </Virtualizer>
