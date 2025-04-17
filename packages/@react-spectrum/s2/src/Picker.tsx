@@ -506,7 +506,7 @@ export function PickerSection<T extends object>(props: PickerSectionProps<T>): R
         className={section({size})}>
         {props.children}
       </AriaListBoxSection>
-      <Divider />
+      <Divider size={size}/>
     </>
   );
 }
