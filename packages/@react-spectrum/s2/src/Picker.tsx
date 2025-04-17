@@ -37,7 +37,6 @@ import {
   icon,
   iconCenterWrapper,
   label,
-  section
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
@@ -429,7 +428,6 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                     {children}
                   </ListBox>
                 </Virtualizer>
-
               </Provider>
             </PopoverBase>
           </InternalPickerContext.Provider>
@@ -503,8 +501,7 @@ export function PickerSection<T extends object>(props: PickerSectionProps<T>): R
   return (
     <>
       <AriaListBoxSection
-        {...props}
-        className={section({size})}>
+        {...props}>
         {props.children}
       </AriaListBoxSection>
       <Divider size={size} />
