@@ -420,6 +420,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                   layout={ListLayout}
                   layoutOptions={{
                     estimatedRowHeight: 32,
+                    estimatedHeadingHeight: 50,
                     padding: 8
                   }}>
                   <ListBox
