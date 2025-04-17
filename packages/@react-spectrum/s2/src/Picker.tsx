@@ -36,7 +36,7 @@ import {
   description,
   icon,
   iconCenterWrapper,
-  label,
+  label
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
