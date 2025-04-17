@@ -567,6 +567,19 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children[2]).toBe(initialResult.items[0].children[2]);
   });
 
+  it('should move all children of the moved target into the new map', function () {
+    let {result} = renderHook(() =>
+      useTreeData({initialItems: initial, getChildren, getKey})
+    );
+    expect(result.current.getItem('Stacy')).toBe(result.current.items[0].children[1].children[0]);
+
+    act(() => {
+      result.current.move('Sam', null, 0);
+    });
+
+    expect(result.current.getItem('Stacy')).toBe(result.current.items[0].children[0]);
+  });
+
   it('should move an item to the root', function () {
     let {result} = renderHook(() =>
       useTreeData({initialItems: initial, getChildren, getKey})

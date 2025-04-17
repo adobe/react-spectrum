@@ -371,6 +371,8 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
 
         // If parentKey is null, insert into the root.
         if (toParentKey == null) {
+          // safe to reuse the original map since no node was actually removed, so we just need to update the one moved node
+          newMap = new Map(originalMap);
           newMap.set(movedNode.key, movedNode);
           return {items: [
             ...newItems.slice(0, index),
