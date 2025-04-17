@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, installPointerEvent, mockClickDefault, pointerMap, render, setupIntersectionObserverMock, triggerLongPress, within} from '@react-spectrum/test-utils-internal';
-import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, Tag, TagGroup, TagList, useDragAndDrop, useTableOptions, Virtualizer} from '../';
+import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Label, Modal, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, Tag, TagGroup, TagList, UNSTABLE_TableLoadingSentinel, useDragAndDrop, useTableOptions, Virtualizer} from '../';
 import {composeStories} from '@storybook/react';
 import {DataTransfer, DragEvent} from '@react-aria/dnd/test/mocks';
 import React, {useMemo, useState} from 'react';
@@ -228,11 +228,9 @@ describe('Table', () => {
     }
 
     let rowGroups = tableTester.rowGroups;
-    expect(rowGroups).toHaveLength(3);
+    expect(rowGroups).toHaveLength(2);
     expect(rowGroups[0]).toHaveAttribute('class', 'react-aria-TableHeader');
     expect(rowGroups[1]).toHaveAttribute('class', 'react-aria-TableBody');
-    // Sentinel element for loadmore
-    expect(rowGroups[2]).toHaveAttribute('inert');
 
     for (let cell of tableTester.columns) {
       expect(cell).toHaveAttribute('class', 'react-aria-Column');
@@ -264,10 +262,9 @@ describe('Table', () => {
     }
 
     let rowGroups = getAllByRole('rowgroup');
-    expect(rowGroups).toHaveLength(3);
+    expect(rowGroups).toHaveLength(2);
     expect(rowGroups[0]).toHaveAttribute('class', 'table-header');
     expect(rowGroups[1]).toHaveAttribute('class', 'table-body');
-    expect(rowGroups[2]).toHaveAttribute('inert');
 
     for (let cell of getAllByRole('columnheader')) {
       expect(cell).toHaveAttribute('class', 'column');
@@ -299,7 +296,7 @@ describe('Table', () => {
     }
 
     let rowGroups = getAllByRole('rowgroup');
-    expect(rowGroups).toHaveLength(3);
+    expect(rowGroups).toHaveLength(2);
     expect(rowGroups[0]).toHaveAttribute('data-testid', 'table-header');
     expect(rowGroups[1]).toHaveAttribute('data-testid', 'table-body');
 
@@ -1641,21 +1638,37 @@ describe('Table', () => {
       let {getAllByRole} = render(<LoadingMoreTable isLoadingMore />);
 
       let rows = getAllByRole('row');
-      expect(rows).toHaveLength(6);
-      let loader = rows[5];
+      expect(rows).toHaveLength(7);
+      let loader = rows[6];
 
       let cell = within(loader).getByRole('rowheader');
       expect(cell).toHaveAttribute('colspan', '3');
 
       let spinner = within(cell).getByRole('progressbar');
       expect(spinner).toHaveAttribute('aria-label', 'loading');
+
+      let sentinel = rows[5];
+      expect(sentinel).toHaveAttribute('inert', 'true');
+    });
+
+    it('should still render the sentinel, but not render the spinner if it isnt loading', () => {
+      let {getAllByRole, queryByRole} = render(<LoadingMoreTable />);
+
+      let rows = getAllByRole('row');
+      expect(rows).toHaveLength(6);
+
+      let sentinel = rows[5];
+      expect(sentinel).toHaveAttribute('inert', 'true');
+
+      let spinner = queryByRole('progressbar');
+      expect(spinner).toBeFalsy();
     });
 
     it('should not focus the load more row when using ArrowDown', async () => {
       let {getAllByRole} = render(<LoadingMoreTable isLoadingMore />);
 
       let rows = getAllByRole('row');
-      let loader = rows[5];
+      let loader = rows[6];
       let spinner = within(loader).getByRole('progressbar');
       expect(spinner).toHaveAttribute('aria-label', 'loading');
 
@@ -1678,7 +1691,7 @@ describe('Table', () => {
       let {getAllByRole} = render(<LoadingMoreTable isLoadingMore />);
 
       let rows = getAllByRole('row');
-      let loader = rows[5];
+      let loader = rows[6];
       let spinner = within(loader).getByRole('progressbar');
       expect(spinner).toHaveAttribute('aria-label', 'loading');
 
@@ -1696,7 +1709,7 @@ describe('Table', () => {
       let {getAllByRole} = render(<LoadingMoreTable isLoadingMore />);
 
       let rows = getAllByRole('row');
-      let loader = rows[5];
+      let loader = rows[6];
       let spinner = within(loader).getByRole('progressbar');
       expect(spinner).toHaveAttribute('aria-label', 'loading');
 
@@ -1753,8 +1766,8 @@ describe('Table', () => {
       let {getAllByRole} = render(<DndTable initialItems={initialItems} aria-label="selection table with loader test" isLoading onSelectionChange={onSelectionChange} />);
 
       let rows = getAllByRole('row');
-      expect(rows).toHaveLength(4);
-      let loader = rows[3];
+      expect(rows).toHaveLength(5);
+      let loader = rows[4];
       let spinner = within(loader).getByRole('progressbar');
       expect(spinner).toHaveAttribute('aria-label', 'loading');
 
@@ -1773,9 +1786,9 @@ describe('Table', () => {
       let {getAllByRole} = render(<DndTable initialItems={initialItems} aria-label="selection table with loader test" isLoading />);
 
       let rows = getAllByRole('row');
-      expect(rows).toHaveLength(4);
+      expect(rows).toHaveLength(5);
       expect(rows[1]).toHaveTextContent('Adobe Photoshop');
-      let loader = rows[3];
+      let loader = rows[4];
       let spinner = within(loader).getByRole('progressbar');
       expect(spinner).toHaveAttribute('aria-label', 'loading');
 
@@ -1825,18 +1838,23 @@ describe('Table', () => {
     function LoadMoreTable({onLoadMore, isLoading, items}) {
       return (
         <ResizableTableContainer data-testid="scrollRegion">
-          <Table aria-label="Load more table" onLoadMore={onLoadMore} isLoading={isLoading}>
+          <Table aria-label="Load more table">
             <TableHeader>
               <Column isRowHeader>Foo</Column>
               <Column>Bar</Column>
             </TableHeader>
-            <TableBody items={items}>
-              {(item) => (
-                <Row>
-                  <Cell>{item.foo}</Cell>
-                  <Cell>{item.bar}</Cell>
-                </Row>
-              )}
+            <TableBody>
+              <Collection items={items}>
+                {(item) => (
+                  <Row>
+                    <Cell>{item.foo}</Cell>
+                    <Cell>{item.bar}</Cell>
+                  </Row>
+                )}
+              </Collection>
+              <UNSTABLE_TableLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
+                <div>spinner</div>
+              </UNSTABLE_TableLoadingSentinel>
             </TableBody>
           </Table>
         </ResizableTableContainer>
@@ -1861,7 +1879,7 @@ describe('Table', () => {
       expect(onLoadMore).toHaveBeenCalledTimes(0);
       let sentinel = tree.getByTestId('loadMoreSentinel');
       expect(observe).toHaveBeenLastCalledWith(sentinel);
-      expect(sentinel.nodeName).toBe('TBODY');
+      expect(sentinel.nodeName).toBe('TD');
 
       scrollView.scrollTop = 50;
       fireEvent.scroll(scrollView);
@@ -1987,18 +2005,21 @@ describe('Table', () => {
       function VirtualizedTableLoad() {
         return (
           <Virtualizer layout={TableLayout} layoutOptions={{rowHeight: 25}}>
-            <Table aria-label="Load more table" onLoadMore={onLoadMore}>
+            <Table aria-label="Load more table">
               <TableHeader>
                 <Column isRowHeader>Foo</Column>
                 <Column>Bar</Column>
               </TableHeader>
-              <TableBody items={items}>
-                {item => (
-                  <Row>
-                    <Cell>{item.foo}</Cell>
-                    <Cell>{item.bar}</Cell>
-                  </Row>
-                )}
+              <TableBody>
+                <Collection items={items}>
+                  {item => (
+                    <Row>
+                      <Cell>{item.foo}</Cell>
+                      <Cell>{item.bar}</Cell>
+                    </Row>
+                  )}
+                </Collection>
+                <UNSTABLE_TableLoadingSentinel onLoadMore={onLoadMore} />
               </TableBody>
             </Table>
           </Virtualizer>

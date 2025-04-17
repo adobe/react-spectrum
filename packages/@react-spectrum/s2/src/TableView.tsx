@@ -381,6 +381,8 @@ export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
   let renderer = children;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
   // TODO: still is offset strangely if loadingMore when there aren't any items in the table, see http://localhost:6006/?path=/story/tableview--empty-state&args=loadingState:loadingMore
+  // This is because we don't distinguish between loadingMore and loading in the layout, resulting in a different rect being used to build the body. Perhaps can be considered as a user error
+  // if they pass loadingMore without having any other items in the table. Alternatively, could update the layout so it knows the current loading state.
   let loadMoreSpinner = (
     <UNSTABLE_TableLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore} className={style({height: 'full', width: 'full'})}>
       {loadingState === 'loadingMore' && (

@@ -464,7 +464,7 @@ export const DndTable = (props: DndTableProps) => {
             </Row>
           )}
         </Collection>
-        {props.isLoading && list.items.length > 0 && <MyTableLoadingIndicator />}
+        <MyTableLoadingIndicator isLoading={props.isLoading} />
       </TableBody>
     </Table>
   );
