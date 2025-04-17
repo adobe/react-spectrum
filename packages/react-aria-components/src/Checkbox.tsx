@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaCheckboxGroupProps, AriaCheckboxProps, HoverEvents, mergeProps, useCheckbox, useCheckboxGroup, useCheckboxGroupItem, useFocusRing, useHover, VisuallyHidden} from 'react-aria';
+import {AriaCheckboxGroupProps, AriaCheckboxProps, HoverEvents, mergeProps, useCheckbox, useCheckboxGroup, useCheckboxGroupItem, useFocusable, useFocusRing, useHover, VisuallyHidden} from 'react-aria';
 import {CheckboxContext} from './RSPContexts';
 import {CheckboxGroupState, useCheckboxGroupState, useToggleState} from 'react-stately';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
@@ -200,10 +200,13 @@ export const Checkbox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ch
     // eslint-disable-next-line react-hooks/rules-of-hooks
     : useCheckbox({
       ...removeDataAttributes(props),
+      onFocus: undefined,
+      onBlur: undefined,
       children: typeof props.children === 'function' ? true : props.children,
       validationBehavior
     // eslint-disable-next-line react-hooks/rules-of-hooks
     }, useToggleState(props), inputRef);
+  let {focusableProps} = useFocusable(props, ref);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let isInteractionDisabled = isDisabled || isReadOnly;
 
@@ -234,8 +237,21 @@ export const Checkbox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ch
 
   return (
     <label
-      {...mergeProps(DOMProps, labelProps, hoverProps, renderProps)}
+      {...mergeProps(DOMProps, labelProps, hoverProps, focusableProps, renderProps)}
       ref={ref}
+      onBlur={(e) => {
+        const nextFocusTarget = e.relatedTarget as Node | null;
+        if (!e.currentTarget.contains(nextFocusTarget)) {
+          props.onBlur?.(e);
+        } 
+      }}
+      onFocus={(e) => {
+        const prevFocusTarget = e.relatedTarget as Node | null;
+        if (!e.currentTarget.contains(prevFocusTarget)) {
+          props.onFocus?.(e);
+        }
+      }}
+      tabIndex={-1}
       slot={props.slot || undefined}
       data-selected={isSelected || undefined}
       data-indeterminate={props.isIndeterminate || undefined}

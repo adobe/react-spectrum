@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaRadioGroupProps, AriaRadioProps, HoverEvents, Orientation, useFocusRing, useHover, useRadio, useRadioGroup, VisuallyHidden} from 'react-aria';
+import {AriaRadioGroupProps, AriaRadioProps, HoverEvents, Orientation, useFocusable, useFocusRing, useHover, useRadio, useRadioGroup, VisuallyHidden} from 'react-aria';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
@@ -189,9 +189,12 @@ export const Radio = /*#__PURE__*/ (forwardRef as forwardRefType)(function Radio
   let inputRef = useObjectRef(mergeRefs(userProvidedInputRef, props.inputRef !== undefined ? props.inputRef : null));
   let {labelProps, inputProps, isSelected, isDisabled, isPressed} = useRadio({
     ...removeDataAttributes<RadioProps>(props),
+    onFocus: undefined,
+    onBlur: undefined,
     // ReactNode type doesn't allow function children.
     children: typeof props.children === 'function' ? true : props.children
   }, state, inputRef);
+  let {focusableProps} = useFocusable(props, ref);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let interactionDisabled = isDisabled || state.isReadOnly;
 
@@ -221,8 +224,21 @@ export const Radio = /*#__PURE__*/ (forwardRef as forwardRefType)(function Radio
 
   return (
     <label
-      {...mergeProps(DOMProps, labelProps, hoverProps, renderProps)}
+      {...mergeProps(DOMProps, labelProps, hoverProps, focusableProps, renderProps)}
       ref={ref}
+      onBlur={(e) => {
+        const nextFocusTarget = e.relatedTarget as Node | null;
+        if (!e.currentTarget.contains(nextFocusTarget)) {
+          props.onBlur?.(e);
+        } 
+      }}
+      onFocus={(e) => {
+        const prevFocusTarget = e.relatedTarget as Node | null;
+        if (!e.currentTarget.contains(prevFocusTarget)) {
+          props.onFocus?.(e);
+        }
+      }}
+      tabIndex={-1}
       data-selected={isSelected || undefined}
       data-pressed={isPressed || undefined}
       data-hovered={isHovered || undefined}
