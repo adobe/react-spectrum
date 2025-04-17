@@ -10,17 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import type {AsyncLoadable} from '@react-types/shared';
 import {getScrollParent} from './getScrollParent';
 import {RefObject, useRef} from 'react';
 import {useEffectEvent} from './useEffectEvent';
 import {useLayoutEffect} from './useLayoutEffect';
 
-// TODO pull from AsyncLoadable?
-export interface LoadMoreSentinelProps {
-  /** Whether data is currently being loaded. */
-  isLoading?: boolean,
-  /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom. */
-  onLoadMore?: () => void,
+export interface LoadMoreSentinelProps extends AsyncLoadable {
   /**
    * The amount of offset from the bottom of your scrollable region that should trigger load more.
    * Uses a percentage value relative to the scroll body's client height. Load more is then triggered

@@ -438,6 +438,8 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
       </>
     );
   } else {
+    // TODO: is there a case where the user might provide items to the Combobox but doesn't provide a function renderer?
+    // Same case for other components that have this logic (TableView/CardView/Picker)
     renderer = (
       <>
         {children}

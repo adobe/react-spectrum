@@ -31,6 +31,7 @@ import {
   SelectValue,
   UNSTABLE_ListBoxLoadingSentinel
 } from 'react-aria-components';
+import {AsyncLoadable, FocusableRef, FocusableRefValue, HelpTextProps, PressEvent, SpectrumLabelableProps} from '@react-types/shared';
 import {baseColor, edgeToText, focusRing, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
@@ -53,7 +54,6 @@ import {
   FieldLabel,
   HelpText
 } from './Field';
-import {AsyncLoadable, FocusableRef, FocusableRefValue, HelpTextProps, PressEvent, SpectrumLabelableProps} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';

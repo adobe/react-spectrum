@@ -193,9 +193,11 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   }
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
+  // TODO: What do we think about this check? Ideally we could just query the collection and see if ALL node are loaders and thus have it return that it is empty
+  let isEmpty = state.collection.size === 0 || (state.collection.size === 1 && state.collection.getItem(state.collection.getFirstKey()!)?.type === 'loader');
   let renderValues = {
     isDropTarget: isRootDropTarget,
-    isEmpty: state.collection.size === 0,
+    isEmpty,
     isFocused,
     isFocusVisible,
     layout,
@@ -210,8 +212,8 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
 
   let emptyState: ReactNode = null;
   let emptyStatePropOverrides: HTMLAttributes<HTMLElement> | null = null;
-  // TODO: update this to account for if the load more sentinel is provided
-  if (state.collection.size === 0 && props.renderEmptyState) {
+
+  if (isEmpty && props.renderEmptyState) {
     let content = props.renderEmptyState(renderValues);
     emptyState = (
       <div role="row" style={{display: 'contents'}}>
@@ -232,7 +234,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
         slot={props.slot || undefined}
         onScroll={props.onScroll}
         data-drop-target={isRootDropTarget || undefined}
-        data-empty={state.collection.size === 0 || undefined}
+        data-empty={isEmpty || undefined}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-layout={layout}>

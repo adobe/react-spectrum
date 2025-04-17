@@ -202,9 +202,10 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
   }
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
+  let isEmpty = state.collection.size === 0 || (state.collection.size === 1 && state.collection.getItem(state.collection.getFirstKey()!)?.type === 'loader');
   let renderValues = {
     isDropTarget: isRootDropTarget,
-    isEmpty: state.collection.size === 0,
+    isEmpty,
     isFocused,
     isFocusVisible,
     layout: props.layout || 'stack',
@@ -218,7 +219,8 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
   });
 
   let emptyState: JSX.Element | null = null;
-  if ((state.collection.size === 0 || (state.collection.size === 1 && state.collection.getItem(state.collection.getFirstKey()!))) && props.renderEmptyState) {
+
+  if (isEmpty && props.renderEmptyState) {
     emptyState = (
       <div
         // eslint-disable-next-line
@@ -241,7 +243,7 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
         slot={props.slot || undefined}
         onScroll={props.onScroll}
         data-drop-target={isRootDropTarget || undefined}
-        data-empty={state.collection.size === 0 || undefined}
+        data-empty={isEmpty || undefined}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-layout={props.layout || 'stack'}

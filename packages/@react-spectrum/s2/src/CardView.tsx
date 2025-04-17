@@ -12,11 +12,13 @@
 
 import {
   GridList as AriaGridList,
+  Collection,
   ContextValue,
   GridLayout,
   GridListItem,
   GridListProps,
   Size,
+  UNSTABLE_GridListLoadingSentinel,
   Virtualizer,
   WaterfallLayout
 } from 'react-aria-components';
@@ -200,6 +202,7 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
     UNSAFE_style,
     styles,
     onLoadMore,
+    items,
     ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let innerRef = useRef(null);
@@ -239,6 +242,31 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
 
   let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
 
+  let renderer;
+  let cardLoadingSentinel = (
+    <UNSTABLE_GridListLoadingSentinel
+      isLoading={props.loadingState === 'loading' || props.loadingState === 'filtering' || props.loadingState === 'loadingMore'}
+      onLoadMore={onLoadMore} />
+  );
+
+  if (typeof children === 'function' && items) {
+    renderer = (
+      <>
+        <Collection items={items}>
+          {children}
+        </Collection>
+        {cardLoadingSentinel}
+      </>
+    );
+  } else {
+    renderer = (
+      <>
+        {children}
+        {cardLoadingSentinel}
+      </>
+    );
+  }
+
   let cardView = (
     <Virtualizer layout={layout} layoutOptions={options}>
       <InternalCardViewContext.Provider value={GridListItem}>
@@ -247,9 +275,7 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
             <AriaGridList
               ref={scrollRef}
               {...otherProps}
-              // TODO: remove these and move to sentinel
-              isLoading={props.loadingState !== 'idle' && props.loadingState !== 'error'}
-              onLoadMore={onLoadMore}
+              items={items}
               layout="grid"
               selectionBehavior={selectionStyle === 'highlight' ? 'replace' : 'toggle'}
               selectedKeys={selectedKeys}
@@ -265,7 +291,7 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
               }}
               className={renderProps => (!props.renderActionBar ? UNSAFE_className : '') + cardViewStyles({...renderProps, isLoading: props.loadingState === 'loading'}, !props.renderActionBar ? styles : undefined)}>
               {/* TODO does the sentinel render after the skeletons if provided after here? Will also have to do the same kind of renderer that Picker and Combobox do */}
-              {children}
+              {renderer}
             </AriaGridList>
           </ImageCoordinator>
         </CardContext.Provider>

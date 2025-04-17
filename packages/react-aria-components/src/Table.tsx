@@ -931,9 +931,10 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
   let isDroppable = !!dragAndDropHooks?.useDroppableCollectionState && !dropState?.isDisabled;
   let isRootDropTarget = isDroppable && !!dropState && (dropState.isDropTarget({type: 'root'}) ?? false);
 
+  let isEmpty = collection.size === 0 || (collection.rows.length === 1 && collection.rows[0].type === 'loader');
   let renderValues = {
     isDropTarget: isRootDropTarget,
-    isEmpty: collection.size === 0
+    isEmpty
   };
   let renderProps = useRenderProps({
     ...props,
@@ -947,8 +948,8 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
   let TR = useElementType('tr');
   let TD = useElementType('td');
   let numColumns = collection.columnCount;
-  // TODO: update this to account for if the load more sentinel is provided
-  if (collection.size === 0 && props.renderEmptyState && state) {
+
+  if (isEmpty && props.renderEmptyState && state) {
     let rowProps = {};
     let rowHeaderProps = {};
     let style = {};
@@ -1407,8 +1408,6 @@ export const UNSTABLE_TableLoadingSentinel = createLeafComponent('loader', funct
           </TD>
         </TR>
       )}
-      {/* TODO should I also render the empty state render here or do I change all the isEmpty: collection.size === 0 checks
-      to specifically filter out the loading sentinels?*/}
     </>
   );
 });
