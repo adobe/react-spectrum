@@ -25,11 +25,12 @@ import {
   ListLayout,
   Provider,
   SectionProps,
-  Separator,
+  SeparatorContext,
   SeparatorProps,
+  useContextProps,
   Virtualizer
 } from 'react-aria-components';
-import {baseColor, edgeToText, focusRing, size, space, style} from '../style' with {type: 'macro'};
+import {baseColor, edgeToText, focusRing, space, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {
@@ -41,18 +42,19 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {createContext, CSSProperties, forwardRef, ReactNode, Ref, useCallback, useContext, useImperativeHandle, useRef, useState} from 'react';
+import {createContext, CSSProperties, ElementType, ForwardedRef, forwardRef, ReactNode, Ref, useCallback, useContext, useImperativeHandle, useRef, useState} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
+import {createLeafComponent} from '@react-aria/collections';
 import {divider} from './Divider';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
+import {filterDOMProps, mergeRefs, useResizeObserver} from '@react-aria/utils';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
 import {HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {IconContext} from './Icon';
-import {mergeRefs, useResizeObserver} from '@react-aria/utils';
 import {mergeStyles} from '../style/runtime';
-import {Placement} from 'react-aria';
+import {Placement, useSeparator} from 'react-aria';
 import {PopoverBase} from './Popover';
 import {pressScale} from './pressScale';
 import {TextFieldRef} from '@react-types/textfield';
@@ -246,10 +248,10 @@ export let listboxHeading = style({
 });
 
 // not sure why edgeToText won't work...
-const separator = style({
+const separatorWrapper = style({
   display: {
     ':is(:last-child > &)': 'none',
-    default: 'grid'
+    default: 'flex'
   },
   // marginX: {
   //   size: {
@@ -267,7 +269,8 @@ const separator = style({
       XL: '[calc(48 * 3 / 8)]'
     }
   },
-  marginY: size(5) // height of the menu separator is 12px, and the divider is 2px
+  height: 12
+  // marginY: size(5) // height of the menu separator is 12px, and the divider is 2px
 });
 
 let InternalComboboxContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({size: 'M'});
@@ -440,8 +443,7 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
                   layoutOptions={{
                     estimatedRowHeight: 32,
                     padding: 8,
-                    estimatedHeadingHeight: 50,
-                    separatorHeight: 12
+                    estimatedHeadingHeight: 50
                   }}>
                   <ListBox
                     items={items}
@@ -523,19 +525,43 @@ export function ComboBoxSection<T extends object>(props: ComboBoxSectionProps<T>
 }
 
 export function Divider(props: SeparatorProps & {size?: 'S' | 'M' | 'L' | 'XL' | undefined}): ReactNode {
-  let {
-    size,
-    ...otherProps
-  } = props;
-  
   return (
     <Separator
-      {...otherProps}
+      {...props}
       className={mergeStyles(
         divider({
           size: 'M',
           orientation: 'horizontal',
           isStaticColor: false
-        }), separator({size}))} />
+        }, style({alignSelf: 'center', width: 'full'})))} />
   );
 }
+
+const Separator = /*#__PURE__*/ createLeafComponent('separator', function Separator(props: SeparatorProps & {size?: 'S' | 'M' | 'L' | 'XL'}, ref: ForwardedRef<HTMLElement>) {
+  [props, ref] = useContextProps(props, ref, SeparatorContext);
+
+  let {elementType, orientation, size, style, className, slot, ...otherProps} = props;
+  let Element = (elementType as ElementType) || 'hr';
+  if (Element === 'hr' && orientation === 'vertical') {
+    Element = 'div';
+  }
+
+  let {separatorProps} = useSeparator({
+    ...otherProps,
+    elementType,
+    orientation
+  });
+
+  return (
+    <div className={separatorWrapper({size})}>
+      <Element
+        {...filterDOMProps(props)}
+        {...separatorProps}
+        style={style}
+        className={className ?? 'react-aria-Separator'}
+        ref={ref}
+        slot={slot || undefined} />
+    </div>
+  );
+});
+
