@@ -47,7 +47,7 @@ import {
   listboxHeader,
   listboxHeading,
   listboxItem
-} from './Combobox';
+} from './ComboBox';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {
   FieldErrorIcon,
@@ -506,7 +506,7 @@ export function PickerSection<T extends object>(props: PickerSectionProps<T>): R
         className={section({size})}>
         {props.children}
       </AriaListBoxSection>
-      <Divider size={size}/>
+      <Divider size={size} />
     </>
   );
 }

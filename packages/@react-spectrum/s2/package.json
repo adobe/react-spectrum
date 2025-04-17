@@ -146,6 +146,7 @@
     "@react-types/shared": "^3.29.0",
     "@react-types/table": "^3.12.0",
     "@react-types/textfield": "^3.12.1",
+    "@spectrum-icons/workflow": "^4.2.20",
     "csstype": "^3.0.2",
     "react-aria": "^3.39.0",
     "react-aria-components": "^1.8.0",

@@ -30,7 +30,7 @@ import {
   useContextProps,
   Virtualizer
 } from 'react-aria-components';
-import {baseColor, edgeToText, focusRing, space, style} from '../style' with {type: 'macro'};
+import {baseColor, edgeToText, focusRing, size, space, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {centerPadding, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {
@@ -509,13 +509,21 @@ export function ComboBoxItem(props: ComboBoxItemProps): ReactNode {
   );
 }
 
+let sectionStyles = style({
+  borderBottomWidth: 2,
+  paddingBottom: size(5),
+  height: 'full',
+  borderBottomStyle: 'solid',
+  borderColor: 'black'
+})
 export interface ComboBoxSectionProps<T extends object> extends SectionProps<T> {}
 export function ComboBoxSection<T extends object>(props: ComboBoxSectionProps<T>): ReactNode {
   let {size} = useContext(InternalComboboxContext);
   return (
     <>
       <AriaListBoxSection
-        {...props}>
+        {...props}
+        className={sectionStyles}>
         {props.children}
       </AriaListBoxSection>
       <Divider size={size} />

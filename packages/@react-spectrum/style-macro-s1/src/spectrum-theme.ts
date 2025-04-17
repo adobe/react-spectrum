@@ -587,6 +587,7 @@ export const style = createTheme({
     borderXWidth: createMappedProperty(value => ({borderInlineWidth: value}), borderWidth),
     borderYWidth: createMappedProperty(value => ({borderBlockWidth: value}), borderWidth),
     borderStyle: ['solid', 'dashed', 'dotted', 'double', 'hidden', 'none'] as const,
+    borderBottomStyle: ['solid', 'dashed', 'dotted', 'double', 'hidden', 'none'] as const,
     strokeWidth: {
       0: '0',
       1: '1',
