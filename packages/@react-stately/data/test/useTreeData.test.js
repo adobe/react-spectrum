@@ -490,7 +490,7 @@ describe('useTreeData', function () {
     expect(result.current.items).not.toBe(initialResult.items);
     expect(result.current.items).toHaveLength(1);
     expect(result.current.items[0].value).toEqual({expanded: true, name: 'Danny'});
-    expect(result.current.items[0].parentKey).toBeUndefined();
+    expect(result.current.items[0].parentKey).toBeNull();
   });
 
   it('should update an item', function () {
@@ -867,6 +867,165 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children[1].key).toEqual('Eli');
     expect(result.current.items[1].key).toEqual('Emily');
     expect(result.current.items.length).toEqual(2);
+  });
+
+  it('can move an item multiple times', function () {
+    const initialItems = [...initial, {name: 'Eli'}];
+
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren, getKey})
+    );
+    act(() => {
+      result.current.moveAfter('Eli', ['David']);
+    });
+    expect(result.current.items[0].key).toEqual('Eli');
+    expect(result.current.items[1].key).toEqual('David');
+    act(() => {
+      result.current.moveAfter('David', ['Eli']);
+    });
+    expect(result.current.items[0].key).toEqual('David');
+    expect(result.current.items[1].key).toEqual('Eli');
+    act(() => {
+      result.current.moveAfter('Eli', ['David']);
+    });
+    expect(result.current.items[0].key).toEqual('Eli');
+    expect(result.current.items[1].key).toEqual('David');
+    act(() => {
+      result.current.moveAfter('David', ['Eli']);
+    });
+    expect(result.current.items[0].key).toEqual('David');
+    expect(result.current.items[1].key).toEqual('Eli');
+
+    // do the same with moveBefore
+    act(() => {
+      result.current.moveBefore('David', ['Eli']);
+    });
+    expect(result.current.items[0].key).toEqual('Eli');
+    expect(result.current.items[1].key).toEqual('David');
+    act(() => {
+      result.current.moveBefore('Eli', ['David']);
+    });
+    expect(result.current.items[0].key).toEqual('David');
+    expect(result.current.items[1].key).toEqual('Eli');
+    act(() => {
+      result.current.moveBefore('David', ['Eli']);
+    });
+    expect(result.current.items[0].key).toEqual('Eli');
+    expect(result.current.items[1].key).toEqual('David');
+    act(() => {
+      result.current.moveBefore('Eli', ['David']);
+    });
+    expect(result.current.items[0].key).toEqual('David');
+    expect(result.current.items[1].key).toEqual('Eli');
+  });
+
+  it('can move an item within its same level', function () {
+    const initialItems = [
+      {id: 'projects', name: 'Projects', childItems: [
+        {id: 'project-1', name: 'Project 1'},
+        {id: 'project-2', name: 'Project 2', childItems: [
+          {id: 'project-2A', name: 'Project 2A'},
+          {id: 'project-2B', name: 'Project 2B'},
+          {id: 'project-2C', name: 'Project 2C'}
+        ]},
+        {id: 'project-3', name: 'Project 3'},
+        {id: 'project-4', name: 'Project 4'},
+        {id: 'project-5', name: 'Project 5', childItems: [
+          {id: 'project-5A', name: 'Project 5A'},
+          {id: 'project-5B', name: 'Project 5B'},
+          {id: 'project-5C', name: 'Project 5C'}
+        ]}
+      ]},
+      {id: 'reports', name: 'Reports', childItems: [
+        {id: 'reports-1', name: 'Reports 1', childItems: [
+          {id: 'reports-1A', name: 'Reports 1A', childItems: [
+            {id: 'reports-1AB', name: 'Reports 1AB', childItems: [
+              {id: 'reports-1ABC', name: 'Reports 1ABC'}
+            ]}
+          ]},
+          {id: 'reports-1B', name: 'Reports 1B'},
+          {id: 'reports-1C', name: 'Reports 1C'}
+        ]},
+        {id: 'reports-2', name: 'Reports 2'}
+      ]}
+    ];
+
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren: (item) => item.childItems, getKey: (item) => item.id})
+    );
+    act(() => {
+      result.current.moveAfter('project-3', ['project-2']);
+    });
+    expect(result.current.items[0].key).toEqual('projects');
+    expect(result.current.items[0].children[0].key).toEqual('project-1');
+    expect(result.current.items[0].children[1].key).toEqual('project-3');
+    expect(result.current.items[0].children[2].key).toEqual('project-2');
+
+    // move again to the same place
+    act(() => {
+      result.current.moveAfter('project-3', ['project-2']);
+    });
+    expect(result.current.items[0].key).toEqual('projects');
+    expect(result.current.items[0].children[0].key).toEqual('project-1');
+    expect(result.current.items[0].children[1].key).toEqual('project-3');
+    expect(result.current.items[0].children[2].key).toEqual('project-2');
+
+    // move to a different place
+    act(() => {
+      result.current.moveAfter('project-4', ['project-2']);
+    });
+    expect(result.current.items[0].key).toEqual('projects');
+    expect(result.current.items[0].children[0].key).toEqual('project-1');
+    expect(result.current.items[0].children[1].key).toEqual('project-3');
+    expect(result.current.items[0].children[2].key).toEqual('project-4');
+    expect(result.current.items[0].children[3].key).toEqual('project-2');
+  });
+
+
+  it('can move an item to a different level', function () {
+    const initialItems = [
+      {id: 'projects', name: 'Projects', childItems: [
+        {id: 'project-1', name: 'Project 1'},
+        {id: 'project-2', name: 'Project 2', childItems: [
+          {id: 'project-2A', name: 'Project 2A'},
+          {id: 'project-2B', name: 'Project 2B'},
+          {id: 'project-2C', name: 'Project 2C'}
+        ]},
+        {id: 'project-3', name: 'Project 3'},
+        {id: 'project-4', name: 'Project 4'},
+        {id: 'project-5', name: 'Project 5', childItems: [
+          {id: 'project-5A', name: 'Project 5A'},
+          {id: 'project-5B', name: 'Project 5B'},
+          {id: 'project-5C', name: 'Project 5C'}
+        ]}
+      ]},
+      {id: 'reports', name: 'Reports', childItems: [
+        {id: 'reports-1', name: 'Reports 1', childItems: [
+          {id: 'reports-1A', name: 'Reports 1A', childItems: [
+            {id: 'reports-1AB', name: 'Reports 1AB', childItems: [
+              {id: 'reports-1ABC', name: 'Reports 1ABC'}
+            ]}
+          ]},
+          {id: 'reports-1B', name: 'Reports 1B'},
+          {id: 'reports-1C', name: 'Reports 1C'}
+        ]},
+        {id: 'reports-2', name: 'Reports 2'}
+      ]}
+    ];
+
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren: (item) => item.childItems, getKey: (item) => item.id})
+    );
+    act(() => {
+      result.current.moveBefore('project-2B', ['project-3']);
+    });
+    expect(result.current.items[0].key).toEqual('projects');
+    expect(result.current.items[0].children[0].key).toEqual('project-1');
+    expect(result.current.items[0].children[1].key).toEqual('project-2');
+
+    expect(result.current.items[0].children[1].children[0].key).toEqual('project-2A');
+    expect(result.current.items[0].children[1].children[1].key).toEqual('project-3');
+    expect(result.current.items[0].children[1].children[2].key).toEqual('project-2B');
   });
 
   it('should move an item to a different level after the target', function () {

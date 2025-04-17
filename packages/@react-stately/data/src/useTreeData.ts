@@ -160,7 +160,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
       items: initialItems.map(item => {
         let node: TreeNode<T> = {
           key: getKey(item),
-          parentKey: parentKey,
+          parentKey: parentKey ?? null,
           value: item,
           children: null
         };
@@ -173,9 +173,9 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     };
   }
 
-  function updateTree(items: TreeNode<T>[], key: Key, update: (node: TreeNode<T>) => TreeNode<T> | null, originalMap: Map<Key, TreeNode<T>>) {
-    let node = originalMap.get(key);
-    if (!node) {
+  function updateTree(items: TreeNode<T>[], key: Key | null, update: (node: TreeNode<T>) => TreeNode<T> | null, originalMap: Map<Key, TreeNode<T>>) {
+    let node = key == null ? null : originalMap.get(key);
+    if (node == null) {
       return {items, nodeMap: originalMap};
     }
     let map = new Map<Key, TreeNode<T>>(originalMap);
@@ -442,7 +442,18 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
   };
 }
 
-function moveItems<T extends object>(state: TreeDataState<T>, keys: Iterable<Key>, toParent: TreeNode<T> | null, toIndex: number, updateTree: (items: TreeNode<T>[], key: Key, update: (node: TreeNode<T>) => TreeNode<T> | null, originalMap: Map<Key, TreeNode<T>>) => TreeDataState<T>): TreeDataState<T> {
+function moveItems<T extends object>(
+  state: TreeDataState<T>,
+  keys: Iterable<Key>,
+  toParent: TreeNode<T> | null,
+  toIndex: number,
+  updateTree: (
+    items: TreeNode<T>[],
+    key: Key,
+    update: (node: TreeNode<T>) => TreeNode<T> | null,
+    originalMap: Map<Key, TreeNode<T>>
+  ) => TreeDataState<T>
+): TreeDataState<T> {
   let {items, nodeMap} = state;
 
   let parent = toParent;
@@ -464,21 +475,29 @@ function moveItems<T extends object>(state: TreeDataState<T>, keys: Iterable<Key
   let newMap = nodeMap;
   let i = 0;
 
-  function traversal(node, preorder, postorder) {
+  function traversal(node, {inorder, preorder, postorder}) {
+    inorder?.(node);
     if (node != null) {
       for (let child of node.children ?? []) {
-        preorder(child);
-        traversal(child, preorder, postorder);
-        postorder(child);
+        // preorder(child);
+        traversal(child, {inorder, preorder, postorder});
+        postorder?.(child);
       }
     }
   }
 
-  function preorder(child) {
-    // pre-order so we add items as we encounter them in the tree, then we can insert them in expected order later
+  function inorder(child) {
+    // in-order so we add items as we encounter them in the tree, then we can insert them in expected order later
     if (keyArray.includes(child.key)) {
       inOrderKeys.set(child.key, i++);
     }
+  }
+
+  function preorder(child) {
+  //   // add items as we encounter them in the tree, then we can insert them in expected order later
+  //   if (keyArray.includes(child.key)) {
+  //     inOrderKeys.set(child.key, i++);
+  //   }
   }
 
   function postorder(child) {
@@ -491,17 +510,19 @@ function moveItems<T extends object>(state: TreeDataState<T>, keys: Iterable<Key
       newMap = nextMap;
     }
     // decrement the index if the child being removed is in the target parent and before the target index
-    if (child.parentKey === (toParent?.key ?? null)
+    if (child.parentKey === toParent?.key
+      && keyArray.includes(child.key)
       && (toParent?.children ? toParent.children.indexOf(child) : items.indexOf(child)) < originalToIndex) {
       toIndex--;
     }
   }
 
-  traversal({children: items}, preorder, postorder);
+  traversal({children: items}, {inorder, preorder, postorder});
 
   let inOrderItems = removedItems.sort((a, b) => inOrderKeys.get(a.key)! > inOrderKeys.get(b.key)! ? 1 : -1);
   // If parentKey is null, insert into the root.
   if (!toParent || toParent.key == null) {
+    newMap = new Map(nodeMap);
     inOrderItems.forEach(movedNode => newMap.set(movedNode.key, movedNode));
     return {items: [
       ...newItems.slice(0, toIndex),
@@ -510,6 +531,7 @@ function moveItems<T extends object>(state: TreeDataState<T>, keys: Iterable<Key
     ], nodeMap: newMap};
   }
 
+  console.log('newItems', newItems, toIndex, inOrderItems)
   // Otherwise, update the parent node and its ancestors.
   return updateTree(newItems, toParent.key, parentNode => ({
     key: parentNode.key,
