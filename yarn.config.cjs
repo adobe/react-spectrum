@@ -133,12 +133,46 @@ function enforceWorkspaceDependencies({Yarn}) {
     if (dependency.type === 'peerDependencies') {continue;}
 
     for (const otherDependency of Yarn.dependencies({ident: dependency.ident})) {
-      if (otherDependency.type === 'peerDependencies') {continue;}
+      if (otherDependency.type === 'peerDependencies') {
+        continue;
+      }
 
       if (isOurPackage(dependency)) {
         // change back to workspaces:^ when we're ready for yarn to handle versioning
         // don't check for consistency on our own packages because they can individually version and we don't bump EVERY package because of one change
         // dependency.update(otherDependency.range);
+      }
+    }
+  }
+
+  // This finds all the peer dependencies and checks that everything up the
+  // workspace tree has the same peer dependency.
+  let seen = new Map();
+  for (const dependency of Yarn.dependencies()) {
+    if (dependency.type === 'peerDependencies') {
+      for (const workspace of Yarn.workspaces()) {
+        if (
+          // must check in manifest because yarn is reporting all peer in workspace.pkg.dependencies
+          // and doesn't differentiate between peer and dependencies
+          workspace.manifest.dependencies?.[dependency.workspace?.ident]
+          && !workspace.manifest.peerDependencies?.[dependency.ident]
+          && !workspace.manifest.dependencies?.[dependency.ident]
+        ) {
+          // eslint-disable-next-line max-depth
+          if (seen.has(workspace.ident) && !seen.get(workspace.ident).includes(dependency.ident)) {
+            seen.get(workspace.ident).push(dependency.ident);
+            workspace.set('peerDependencies', {
+              ...workspace.manifest.peerDependencies,
+              [dependency.ident]: dependency.range
+            });
+          } else if (!seen.has(workspace.ident)) {
+            seen.set(workspace.ident, [dependency.ident]);
+            workspace.set('peerDependencies', {
+              ...workspace.manifest.peerDependencies,
+              [dependency.ident]: dependency.range
+            });
+          }
+        }
       }
     }
   }

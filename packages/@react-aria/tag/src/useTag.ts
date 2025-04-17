@@ -56,8 +56,6 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
     node: item
   }, state, ref);
 
-  // We want the group to handle keyboard navigation between tags.
-  delete rowProps.onKeyDownCapture;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {descriptionProps: _, ...stateWithoutDescription} = states;
 
@@ -103,8 +101,7 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
       'aria-labelledby': `${buttonId} ${rowProps.id}`,
       isDisabled,
       id: buttonId,
-      onPress: () => onRemove ? onRemove(new Set([item.key])) : null,
-      excludeFromTabOrder: true
+      onPress: () => onRemove ? onRemove(new Set([item.key])) : null
     },
     rowProps: mergeProps(focusableProps, rowProps, domProps, linkProps, {
       tabIndex,

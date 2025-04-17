@@ -17,6 +17,8 @@
   "label.(required)": "(required)",
   "label.(optional)": "(optional)",
   "menu.moreActions": "More actions",
+  "notificationbadge.plus": "{notifications}+",
+  "notificationbadge.indicatorOnly": "New activity",
   "picker.placeholder": "Select…",
   "slider.minimum": "Minimum",
   "slider.maximum": "Maximum",
@@ -25,9 +27,13 @@
   "table.sortAscending": "Sort Ascending",
   "table.sortDescending": "Sort Descending",
   "table.resizeColumn": "Resize column",
+  "table.standardColumnMenu": "Default column actions",
   "tag.showAllButtonLabel": "Show all ({tagCount, number})",
   "tag.hideButtonLabel": "Show less",
   "tag.actions": "Actions",
   "tag.noTags": "None",
-  "breadcrumbs.more": "More items"
+  "breadcrumbs.more": "More items",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

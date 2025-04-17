@@ -11,7 +11,7 @@
  */
 
 import {BuddhistCalendar} from './calendars/BuddhistCalendar';
-import {Calendar} from './types';
+import {Calendar, CalendarIdentifier} from './types';
 import {CopticCalendar, EthiopicAmeteAlemCalendar, EthiopicCalendar} from './calendars/EthiopicCalendar';
 import {GregorianCalendar} from './calendars/GregorianCalendar';
 import {HebrewCalendar} from './calendars/HebrewCalendar';
@@ -22,7 +22,7 @@ import {PersianCalendar} from './calendars/PersianCalendar';
 import {TaiwanCalendar} from './calendars/TaiwanCalendar';
 
 /** Creates a `Calendar` instance from a Unicode calendar identifier string. */
-export function createCalendar(name: string): Calendar {
+export function createCalendar(name: CalendarIdentifier): Calendar {
   switch (name) {
     case 'buddhist':
       return new BuddhistCalendar();
