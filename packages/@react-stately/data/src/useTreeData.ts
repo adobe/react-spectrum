@@ -475,12 +475,11 @@ function moveItems<T extends object>(
   let newMap = nodeMap;
   let i = 0;
 
-  function traversal(node, {inorder, preorder, postorder}) {
+  function traversal(node, {inorder, postorder}) {
     inorder?.(node);
     if (node != null) {
       for (let child of node.children ?? []) {
-        // preorder(child);
-        traversal(child, {inorder, preorder, postorder});
+        traversal(child, {inorder, postorder});
         postorder?.(child);
       }
     }
@@ -491,13 +490,6 @@ function moveItems<T extends object>(
     if (keyArray.includes(child.key)) {
       inOrderKeys.set(child.key, i++);
     }
-  }
-
-  function preorder(child) {
-  //   // add items as we encounter them in the tree, then we can insert them in expected order later
-  //   if (keyArray.includes(child.key)) {
-  //     inOrderKeys.set(child.key, i++);
-  //   }
   }
 
   function postorder(child) {
@@ -517,7 +509,7 @@ function moveItems<T extends object>(
     }
   }
 
-  traversal({children: items}, {inorder, preorder, postorder});
+  traversal({children: items}, {inorder, postorder});
 
   let inOrderItems = removedItems.sort((a, b) => inOrderKeys.get(a.key)! > inOrderKeys.get(b.key)! ? 1 : -1);
   // If parentKey is null, insert into the root.
@@ -531,7 +523,6 @@ function moveItems<T extends object>(
     ], nodeMap: newMap};
   }
 
-  console.log('newItems', newItems, toIndex, inOrderItems)
   // Otherwise, update the parent node and its ancestors.
   return updateTree(newItems, toParent.key, parentNode => ({
     key: parentNode.key,
