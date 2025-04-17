@@ -270,7 +270,6 @@ const separatorWrapper = style({
     }
   },
   height: 12
-  // marginY: size(5) // height of the menu separator is 12px, and the divider is 2px
 });
 
 let InternalComboboxContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({size: 'M'});
