@@ -31,5 +31,8 @@
   "tag.actions": "Дії",
   "tag.hideButtonLabel": "Показувати менше",
   "tag.noTags": "Немає",
-  "tag.showAllButtonLabel": "Показати всі ({tagCount, number})"
+  "tag.showAllButtonLabel": "Показати всі ({tagCount, number})",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

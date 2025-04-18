@@ -31,5 +31,8 @@
   "tag.actions": "Dejanja",
   "tag.hideButtonLabel": "Prikaži manj",
   "tag.noTags": "Nič",
-  "tag.showAllButtonLabel": "Prikaž vse ({tagCount, number})"
+  "tag.showAllButtonLabel": "Prikaž vse ({tagCount, number})",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

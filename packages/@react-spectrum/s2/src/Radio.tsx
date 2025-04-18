@@ -50,6 +50,7 @@ interface RenderProps extends RadioRenderProps, ContextProps {}
 
 const wrapper = style({
   display: 'flex',
+  position: 'relative',
   columnGap: 'text-to-control',
   alignItems: 'baseline',
   font: 'control',

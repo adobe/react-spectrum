@@ -50,6 +50,7 @@ export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(props: Co
     density = 'regular',
     size = 'M',
     rounding = 'none',
+    UNSAFE_className = '',
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
@@ -58,7 +59,7 @@ export const ColorSwatchPicker = forwardRef(function ColorSwatchPicker(props: Co
     <AriaColorSwatchPicker
       {...otherProps}
       ref={domRef}
-      className={props.UNSAFE_className + style({
+      className={UNSAFE_className + style({
         display: 'flex',
         flexWrap: 'wrap',
         gap: {

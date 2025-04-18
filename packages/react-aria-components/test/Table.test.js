@@ -2209,4 +2209,42 @@ describe('Table', () => {
       expect(rows[4]).toHaveTextContent('RatSat');
     });
   });
+
+  describe('shouldSelectOnPressUp', () => {
+    it('should select an item on pressing down when shouldSelectOnPressUp is not provided', async () => {
+      let onSelectionChange = jest.fn();
+      let {getAllByRole} = renderTable({tableProps: {selectionMode: 'single', onSelectionChange}});
+      let items = getAllByRole('row');
+
+      await user.pointer({target: items[1], keys: '[MouseLeft>]'});   
+      expect(onSelectionChange).toBeCalledTimes(1);
+  
+      await user.pointer({target: items[1], keys: '[/MouseLeft]'});
+      expect(onSelectionChange).toBeCalledTimes(1);
+    });
+
+    it('should select an item on pressing down when shouldSelectOnPressUp is false', async () => {
+      let onSelectionChange = jest.fn();
+      let {getAllByRole} = renderTable({tableProps: {selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: false}});
+      let items = getAllByRole('row');
+
+      await user.pointer({target: items[1], keys: '[MouseLeft>]'});   
+      expect(onSelectionChange).toBeCalledTimes(1);
+  
+      await user.pointer({target: items[1], keys: '[/MouseLeft]'});
+      expect(onSelectionChange).toBeCalledTimes(1);
+    });
+
+    it('should select an item on pressing up when shouldSelectOnPressUp is true', async () => {
+      let onSelectionChange = jest.fn();
+      let {getAllByRole} = renderTable({tableProps: {selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: true}});
+      let items = getAllByRole('row');
+
+      await user.pointer({target: items[1], keys: '[MouseLeft>]'});   
+      expect(onSelectionChange).toBeCalledTimes(0);
+  
+      await user.pointer({target: items[1], keys: '[/MouseLeft]'});
+      expect(onSelectionChange).toBeCalledTimes(1);
+    });
+  });
 });

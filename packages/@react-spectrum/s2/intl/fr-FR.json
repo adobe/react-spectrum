@@ -31,5 +31,8 @@
   "tag.actions": "Actions",
   "tag.hideButtonLabel": "Afficher moins",
   "tag.noTags": "Aucun",
-  "tag.showAllButtonLabel": "Tout afficher ({tagCount, number})"
+  "tag.showAllButtonLabel": "Tout afficher ({tagCount, number})",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

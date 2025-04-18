@@ -31,5 +31,8 @@
   "tag.actions": "Darbības",
   "tag.hideButtonLabel": "Rādīt mazāk",
   "tag.noTags": "Nav",
-  "tag.showAllButtonLabel": "Rādīt visu ({tagCount, number})"
+  "tag.showAllButtonLabel": "Rādīt visu ({tagCount, number})",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

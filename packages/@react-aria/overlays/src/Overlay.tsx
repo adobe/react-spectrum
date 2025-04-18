@@ -22,7 +22,6 @@ export interface OverlayProps {
   /**
    * The container element in which the overlay portal will be placed.
    * @default document.body
-   * @deprecated - Use a parent UNSAFE_PortalProvider to set your portal container instead.
    */
   portalContainer?: Element,
   /** The overlay to render in the portal. */

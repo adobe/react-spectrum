@@ -31,5 +31,8 @@
   "tag.actions": "액션",
   "tag.hideButtonLabel": "간단히 표시",
   "tag.noTags": "없음",
-  "tag.showAllButtonLabel": "모두 표시 ({tagCount, number})"
+  "tag.showAllButtonLabel": "모두 표시 ({tagCount, number})",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

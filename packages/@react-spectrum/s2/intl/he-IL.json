@@ -31,5 +31,8 @@
   "tag.actions": "פעולות",
   "tag.hideButtonLabel": "הצג פחות",
   "tag.noTags": "ללא",
-  "tag.showAllButtonLabel": "הצג הכל ({tagCount, number})"
+  "tag.showAllButtonLabel": "הצג הכל ({tagCount, number})",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }
