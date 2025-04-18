@@ -1648,7 +1648,7 @@ describe('Table', () => {
       expect(spinner).toHaveAttribute('aria-label', 'loading');
 
       let sentinel = rows[5];
-      expect(sentinel).toHaveAttribute('inert', 'true');
+      expect(sentinel).toHaveAttribute('inert');
     });
 
     it('should still render the sentinel, but not render the spinner if it isnt loading', () => {
@@ -1658,7 +1658,7 @@ describe('Table', () => {
       expect(rows).toHaveLength(6);
 
       let sentinel = rows[5];
-      expect(sentinel).toHaveAttribute('inert', 'true');
+      expect(sentinel).toHaveAttribute('inert');
 
       let spinner = queryByRole('progressbar');
       expect(spinner).toBeFalsy();
@@ -2216,9 +2216,9 @@ describe('Table', () => {
       let {getAllByRole} = renderTable({tableProps: {selectionMode: 'single', onSelectionChange}});
       let items = getAllByRole('row');
 
-      await user.pointer({target: items[1], keys: '[MouseLeft>]'});   
+      await user.pointer({target: items[1], keys: '[MouseLeft>]'});
       expect(onSelectionChange).toBeCalledTimes(1);
-  
+
       await user.pointer({target: items[1], keys: '[/MouseLeft]'});
       expect(onSelectionChange).toBeCalledTimes(1);
     });
@@ -2228,9 +2228,9 @@ describe('Table', () => {
       let {getAllByRole} = renderTable({tableProps: {selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: false}});
       let items = getAllByRole('row');
 
-      await user.pointer({target: items[1], keys: '[MouseLeft>]'});   
+      await user.pointer({target: items[1], keys: '[MouseLeft>]'});
       expect(onSelectionChange).toBeCalledTimes(1);
-  
+
       await user.pointer({target: items[1], keys: '[/MouseLeft]'});
       expect(onSelectionChange).toBeCalledTimes(1);
     });
@@ -2240,9 +2240,9 @@ describe('Table', () => {
       let {getAllByRole} = renderTable({tableProps: {selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: true}});
       let items = getAllByRole('row');
 
-      await user.pointer({target: items[1], keys: '[MouseLeft>]'});   
+      await user.pointer({target: items[1], keys: '[MouseLeft>]'});
       expect(onSelectionChange).toBeCalledTimes(0);
-  
+
       await user.pointer({target: items[1], keys: '[/MouseLeft]'});
       expect(onSelectionChange).toBeCalledTimes(1);
     });
