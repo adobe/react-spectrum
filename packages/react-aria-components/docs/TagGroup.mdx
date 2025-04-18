@@ -228,7 +228,7 @@ function MyTagGroup<T extends object>({label, description, errorMessage, items, 
   );
 }
 
-function MyTag({children, ...props}: TagProps) {
+function MyTag({children, ...props}: Omit<TagProps, 'children'> & {children?: React.ReactNode}) {
   let textValue = typeof children === 'string' ? children : undefined;
   return (
     <Tag textValue={textValue} {...props}>
