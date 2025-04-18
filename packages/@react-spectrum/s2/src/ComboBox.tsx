@@ -148,7 +148,7 @@ const iconStyles = style({
   }
 });
 
-export let listbox = style({
+export let listbox = style<{size: 'S' | 'M' | 'L' | 'XL'}>({
   width: 'full',
   boxSizing: 'border-box',
   maxHeight: '[inherit]',

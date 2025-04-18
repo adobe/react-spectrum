@@ -424,7 +424,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                   }}>
                   <ListBox
                     items={items}
-                    className={listbox}>
+                    className={listbox({size})}>
                     {children}
                   </ListBox>
                 </Virtualizer>
