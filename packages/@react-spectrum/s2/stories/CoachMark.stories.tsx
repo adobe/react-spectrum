@@ -15,8 +15,6 @@ import {
   Button,
   CardPreview,
   Checkbox,
-  UNSTABLE_CoachMark as CoachMark,
-  UNSTABLE_CoachMarkTrigger as CoachMarkTrigger,
   Content,
   Footer,
   Image,
@@ -25,6 +23,7 @@ import {
   Slider,
   Text
 } from '../src';
+import {CoachMark, CoachMarkTrigger} from '../src/CoachMark';
 import Filter from '../s2wf-icons/S2_Icon_Filter_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 import {style} from '../style' with {type: 'macro'};

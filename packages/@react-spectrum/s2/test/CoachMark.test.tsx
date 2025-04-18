@@ -16,8 +16,6 @@ import {
   Button,
   CardPreview,
   Checkbox,
-  UNSTABLE_CoachMark as CoachMark,
-  UNSTABLE_CoachMarkTrigger as CoachMarkTrigger,
   Content,
   Footer,
   Image,
@@ -25,6 +23,7 @@ import {
   MenuItem,
   Text
 } from '../src';
+import {CoachMark, CoachMarkTrigger} from '../src/CoachMark';
 import React from 'react';
 import userEvent, {UserEvent} from '@testing-library/user-event';
 
