@@ -745,4 +745,19 @@ describe('useTreeData', function () {
     expect(result.current.items[1].key).toEqual('Emily');
     expect(result.current.items.length).toEqual(2);
   });
+
+  it('Should replace the tree with new nodes', function () {
+    const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren, getKey})
+    );
+    act(() => {
+      result.current.replaceAll([{name: 'Robert', children: [{name: 'Linh'}]}, {name: 'Stanley'}]); 
+    });
+    expect(result.current.items[0].key).toEqual('Robert');
+
+    expect(result.current.items[0].children[0].key).toEqual('Linh');
+    expect(result.current.items[1].key).toEqual('Stanley');
+    expect(result.current.items.length).toEqual(2);
+  });
 });
