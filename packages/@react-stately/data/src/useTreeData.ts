@@ -252,7 +252,6 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
       }
     }
   }
-
   return {
     items,
     selectedKeys,
