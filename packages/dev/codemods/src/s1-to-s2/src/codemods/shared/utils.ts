@@ -73,15 +73,15 @@ export function addComment(node: any, comment: string) {
   });
 }
 
-export function addComponentImport(path: NodePath<t.Program>, newComponent: string) {
-  // If newComponent variable already exists in scope, alias new import to avoid conflict.
-  let existingBinding = path.scope.getBinding(newComponent);
-  let localName = newComponent;
+export function addComponentImport(path: NodePath<t.Program>, newComponentName: string) {
+  // If newComponentName variable already exists in scope, alias new import to avoid conflict.
+  let existingBinding = path.scope.getBinding(newComponentName);
+  let localName = newComponentName;
   if (existingBinding) {
-    let newName = newComponent;
+    let newName = newComponentName;
     let i = 1;
     while (path.scope.hasBinding(newName)) {
-      newName = newComponent + i;
+      newName = newComponentName + i;
       i++;
     }
     localName = newName;
@@ -93,7 +93,7 @@ export function addComponentImport(path: NodePath<t.Program>, newComponent: stri
       return (
         t.isImportSpecifier(specifier) &&
         specifier.imported.type === 'Identifier' &&
-        specifier.imported.name === newComponent
+        specifier.imported.name === newComponentName
       );
     });
     if (specifier) {
@@ -101,14 +101,14 @@ export function addComponentImport(path: NodePath<t.Program>, newComponent: stri
       return localName;
     }
     existingImport.specifiers.push(
-      t.importSpecifier(t.identifier(localName), t.identifier(newComponent))
+      t.importSpecifier(t.identifier(localName), t.identifier(newComponentName))
     );
   } else {
     let importDeclaration = t.importDeclaration(
       [
         t.importSpecifier(
           t.identifier(localName),
-          t.identifier(newComponent)
+          t.identifier(newComponentName)
         )
       ],
       t.stringLiteral('@react-spectrum/s2')
