@@ -126,7 +126,17 @@ export interface ToggleGridRowOpts extends BaseGridRowInteractionOpts {
    * Whether the checkbox should be used to select the row. If false, will attempt to select the row via press.
    * @default 'true'
    */
-  checkboxSelection?: boolean
+  checkboxSelection?: boolean,
+  // TODO: this api feels a bit confusing tbh...
+  /**
+   * Whether the grid has a selectionBehavior of "toggle" or "replace" (aka highlight selection). This affects the user operations
+   * required to toggle row selection by adding modifier keys during user actions, useful when performing multi-row selection in a "selectionBehavior: 'replace'" grid.
+   * If you would like to still simulate user actions (aka press) without these modifiers keys for a "selectionBehavior: replace" grid, simply omit this option.
+   * See the "Selection Behavior" section of the appropriate React Aria Component docs for more information (e.g. https://react-spectrum.adobe.com/react-aria/Tree.html#selection-behavior).
+   *
+   * @default 'toggle'
+   */
+  selectionBehavior?: 'toggle' | 'replace'
 }
 
 export interface GridRowActionOpts extends BaseGridRowInteractionOpts {
