@@ -1397,7 +1397,7 @@ export const UNSTABLE_TableLoadingSentinel = createLeafComponent('loader', funct
       <TR style={{position: 'relative', width: 0, height: 0}} inert={inertValue(true)} >
         <TD data-testid="loadMoreSentinel" ref={sentinelRef} style={{position: 'absolute', height: 1, width: 1}} />
       </TR>
-      {isLoading && renderProps.children && (
+      {isLoading && state.collection.size > 1 && renderProps.children && (
         <TR
           role="row"
           ref={ref}

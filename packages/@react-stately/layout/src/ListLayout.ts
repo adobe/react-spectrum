@@ -271,6 +271,16 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
 
       if (node.type === 'item' && y > this.requestedRect.maxY) {
         y += (collection.size - (nodes.length + skipped)) * rowHeight;
+
+        // Always add the loader sentinel if present. This assumes the loader is the last row in the body,
+        // will need to refactor when handling multi section loading
+        let lastNode = collection.getItem(collection.getLastKey()!);
+        console.log('last node', lastNode);
+
+        if (lastNode?.type === 'loader' && nodes.at(-1)?.layoutInfo.type !== 'loader') {
+          let loader = this.buildChild(lastNode, this.padding, y - (this.loaderHeight ?? 0), null);
+          nodes.push(loader);
+        }
         break;
       }
     }

@@ -511,7 +511,7 @@ export const UNSTABLE_ListBoxLoadingSentinel = createLeafComponent('loader', fun
       <div style={{position: 'relative', width: 0, height: 0}} inert={inertValue(true)} >
         <div data-testid="loadMoreSentinel" ref={sentinelRef} style={{position: 'absolute', height: 1, width: 1}} />
       </div>
-      {isLoading && renderProps.children && (
+      {isLoading && state.collection.size > 1 && renderProps.children && (
         <div
           // aria-selected isn't needed here since this option is not selectable.
           // eslint-disable-next-line jsx-a11y/role-has-required-aria-props

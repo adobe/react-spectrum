@@ -530,7 +530,7 @@ export const UNSTABLE_GridListLoadingSentinel = createLeafComponent('loader', fu
       <div style={{position: 'relative', width: 0, height: 0}} inert={inertValue(true)} >
         <div data-testid="loadMoreSentinel" ref={sentinelRef} style={{position: 'absolute', height: 1, width: 1}} />
       </div>
-      {isLoading && renderProps.children && (
+      {isLoading && state.collection.size > 1 && renderProps.children && (
         <div
           role="row"
           aria-rowindex={isVirtualized ? item.index + 1 : undefined}
