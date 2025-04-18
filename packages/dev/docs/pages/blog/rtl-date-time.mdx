@@ -34,7 +34,7 @@ Internationalization is a core feature of our Date and Time components. We suppo
 In a [previous blog post](https://react-spectrum.adobe.com/blog/date-and-time-pickers-for-all.html#date-fields), we discussed the reasoning behind the component structure of our date and time components. In short, we designed these components to render individually focusable segments for each date and time unit, eliminating the challenges of parsing various date formats — an issue commonly encountered with free-form text fields. Since the date and time format is automatically determined based on the user’s locale, the user only needs to fill in the values without worrying about the appropriate separators or the order. This made for a smoother, more intuitive experience for the user, removing the guesswork associated with formatting and parsing dates in various locales.
 
 
-<Video src={localeVideoURL} loop autoPlay muted />
+<Video src={localeVideoURL} muted />
 
 ## Unicode Bidirectional Algorithm
 
@@ -50,14 +50,14 @@ Below is an example of how the dates were being formatted based on user-entered 
 
 <RTLActualPlaceholder />
 
-<Video src={placeholderVideoURL} loop autoPlay muted />
+<Video src={placeholderVideoURL} muted />
 
 
 ## TimeFields
 
 We first addressed time fields since they were easier to fix. As mentioned earlier, the segments in time fields for RTL languages were flipped. We learned, however, that regardless of locale, all time fields should follow the `HH:MM` format. Knowing this, we could apply a direction of left-to-right (LTR) on the numeric values across all segments in a time field. 
 
-Instead of wrapping the the segments in a `<bdo>` tag with a `dir=“ltr”` which would impact the DOM structure and have potentially introduce side effects, we chose to use the [LRI (left-to-right isolate) Unicode character](https://www.w3.org/International/questions/qa-bidi-unicode-controls) to encapsulate the time segments and force an LTR direction. Adding this Unicode character is the equivalent of wrapping the time segments in a `<bdo>` tag but offers several advantages. Since the character is invisible, there are no visual changes, and by adding it as a siblings to the segments, we avoided major structural changes to the DOM. Additionally, by enforcing a LTR direction, we no longer had to worry about whether the time field consisted of placeholders or actual values. Lastly, it ensured that when a date field included a time, that the time field appeared in the correct order with respect to the date field (e.g. `8:45 1/31/2025` instead of `1/31/2025 8:45`).
+Instead of wrapping the the segments in a [`<bdo>` tag](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/bdo) with a `dir=“ltr”` which would impact the DOM structure and have potentially introduce side effects, we chose to use the [LRI (left-to-right isolate) Unicode character](https://www.w3.org/International/questions/qa-bidi-unicode-controls) to encapsulate the time segments and force an LTR direction. Adding this Unicode character is the equivalent of wrapping the time segments in a `<bdo>` tag but offers several advantages. Since the character is invisible, there are no visual changes, and by adding it as a siblings to the segments, we avoided major structural changes to the DOM. Additionally, by enforcing a LTR direction, we no longer had to worry about whether the time field consisted of placeholders or actual values. Lastly, it ensured that when a date field included a time, that the time field appeared in the correct order with respect to the date field (e.g. `8:45 1/31/2025` instead of `1/31/2025 8:45`).
 
 Below is a simplified code example of how we utilize Unicode characters to enforce an left-to-right direction on the segments:
 
@@ -129,7 +129,7 @@ After fixing the formatting, we also needed to update the keyboard navigation. P
 
 Below is an example of a date field in Hebrew with the correct date format but incorrect keyboard navigation. Pressing the left arrow key should navigate you to the segment to the immediate left, while the right arrow key should navigate you to the segment to the immediate right. 
 
-<Video src={keyboardVideoURL} loop autoPlay muted />
+<Video src={keyboardVideoURL} muted />
 
 As a result, we updated the keyboard navigation in right-to-left langauges to calculate the distance between the currently focused segment and other segments to identify the closest node based on whether the left or right arrow key was pressed, rather than reying on the DOM order.
 
@@ -137,4 +137,4 @@ As a result, we updated the keyboard navigation in right-to-left langauges to ca
 
 As you can see, formatting dates correctly is quite challenging, especially in right-to-left languages. Fortunately, tools like the Unicode Bidirectional Algorithm help with formatting so we don’t have to handle everything manually. However, as we discovered with this bug, it doesn’t always work as expected and unexpected factors can interfere with it.
 
-After extensive testing, we developed a solution that ensures proper formatting for users of React Spectrum, React Aria Components, and our hooks. If you haven’t tried our date and time components yet, we encourage you to check them out! And if you’re already using them, be sure to update to at least version ^3.40 to ensure correct formatting in right-to-left languages and to make the appropriate changes noted in the [release notes](https://react-spectrum.adobe.com/releases/2025-03-05.html#date-and-time-formatting-in-rtl-languages)!
+After extensive testing, we developed a solution that ensures proper formatting for users of React Spectrum, React Aria Components, and our hooks. If you haven’t tried our date and time components yet, we encourage you to check them out! And if you’re already using them, be sure to update to at least the March 2025 release to ensure correct formatting in right-to-left languages and to make the appropriate changes noted in the [release notes](https://react-spectrum.adobe.com/releases/2025-03-05.html#date-and-time-formatting-in-rtl-languages)!
