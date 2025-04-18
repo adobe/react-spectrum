@@ -99,6 +99,28 @@ export const Dynamic: Story = {
 };
 
 
+function VirtualizedCombobox(props) {
+  let items: IExampleItem[] = [];
+  for (let i = 0; i < 10000; i++) {
+    items.push({id: i.toString(), label: `Item ${i}`});
+  }
+
+  return (
+    <ComboBox {...props} items={items}>
+      {(item) => <ComboBoxItem id={(item as IExampleItem).id} textValue={(item as IExampleItem).label}>{(item as IExampleItem).label}</ComboBoxItem>}
+    </ComboBox>
+  );
+}
+
+export const ManyItems: Story = {
+  render: (args) => (
+    <VirtualizedCombobox {...args} />
+  ),
+  args: {
+    label: 'Many items'
+  }
+};
+
 export const WithIcons: Story = {
   render: (args) => (
     <ComboBox {...args}>
