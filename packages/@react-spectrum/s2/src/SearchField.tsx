@@ -27,10 +27,12 @@ import {fontRelative, style} from '../style' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
 import {HelpTextProps, SpectrumLabelableProps} from '@react-types/shared';
 import {IconContext} from './Icon';
+import {mergeProps} from 'react-aria';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import SearchIcon from '../s2wf-icons/S2_Icon_Search_20_N.svg';
 import {TextFieldRef} from '@react-types/textfield';
 import {useControlledState} from '@react-stately/utils';
+import {useFocus} from '@react-aria/interactions';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className' | 'style' | 'children'>, StyleProps, SpectrumLabelableProps, HelpTextProps {
@@ -89,6 +91,15 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(props: 
     }
   }, [isMinimized]);
 
+  let {focusProps} = useFocus({
+    onBlur: () => {
+      // Minimize the field when it loses focus and is empty (if minimization is enabled)
+      if ((isMinimizedProp !== undefined || defaultMinimized) && inputRef.current?.value === '') {
+        setIsMinimized(true);
+      }
+    }
+  });
+
   // Expose imperative interface for ref
   useImperativeHandle(ref, () => ({
     ...createFocusableRef(domRef, inputRef),
@@ -120,7 +131,7 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(props: 
 
   return (
     <AriaSearchField
-      {...searchFieldProps}
+      {...mergeProps(searchFieldProps, focusProps)}
       ref={domRef}
       style={UNSAFE_style}
       className={UNSAFE_className + style({
