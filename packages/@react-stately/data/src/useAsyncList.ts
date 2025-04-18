@@ -297,7 +297,8 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
         sortDescriptor: action.sortDescriptor ?? data.sortDescriptor,
         signal: abortController.signal,
         cursor: action.type === 'loadingMore' ? data.cursor : undefined,
-        filterText: previousFilterText
+        filterText: previousFilterText,
+        loadingState: data.state
       });
 
       let filterText = response.filterText ?? previousFilterText;
