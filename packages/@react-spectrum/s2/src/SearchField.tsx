@@ -141,58 +141,75 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(props: 
         labelPosition,
         isInForm: !!formContext
       }, props.styles)}>
-      {({isDisabled, isInvalid, isEmpty}) => (<>
-        {label && <FieldLabel
-          isDisabled={isDisabled}
-          isRequired={props.isRequired}
-          size={props.size}
-          labelPosition={labelPosition}
-          labelAlign={labelAlign}
-          necessityIndicator={necessityIndicator}
-          contextualHelp={props.contextualHelp}>
-          {label}
-        </FieldLabel>}
-        <FieldGroup
-          isDisabled={isDisabled}
-          size={props.size}
-          styles={style({
-            borderRadius: 'full',
-            paddingStart: 'pill',
-            paddingEnd: 0
-          })}>
-          <Provider
-            values={[
-              [IconContext, {
-                render: centerBaseline({
-                  slot: 'icon',
+      {({isDisabled, isInvalid, isEmpty}) => (
+        <>
+          {label && !isMinimized && (
+            <FieldLabel
+              isDisabled={isDisabled}
+              isRequired={props.isRequired}
+              size={props.size}
+              labelPosition={labelPosition}
+              labelAlign={labelAlign}
+              necessityIndicator={necessityIndicator}
+              contextualHelp={props.contextualHelp}>
+              {label}
+            </FieldLabel>
+          )}
+          <FieldGroup
+            isDisabled={isDisabled}
+            size={props.size}
+            styles={style({
+              borderRadius: 'full',
+              paddingStart: 'pill',
+              paddingEnd: 0
+            })}>
+            <Provider
+              values={[
+                [IconContext, {
+                  render: centerBaseline({
+                    slot: 'icon',
+                    styles: style({
+                      flexShrink: 0,
+                      marginEnd: 'text-to-visual',
+                      '--iconPrimary': {
+                        type: 'fill',
+                        value: 'currentColor'
+                      }
+                    })
+                  }),
                   styles: style({
-                    flexShrink: 0,
-                    marginEnd: 'text-to-visual',
-                    '--iconPrimary': {
-                      type: 'fill',
-                      value: 'currentColor'
-                    }
+                    size: fontRelative(20),
+                    marginStart: '--iconMargin'
                   })
-                }),
-                styles: style({
-                  size: fontRelative(20),
-                  marginStart: '--iconMargin'
-                })
-              }]
-            ]}>
-            <SearchIcon />
-          </Provider>
-          <Input ref={inputRef} UNSAFE_className={raw('&::-webkit-search-cancel-button { display: none }')} />
-          {!isEmpty && !searchFieldProps.isReadOnly && <ClearButton size={props.size} />}
-        </FieldGroup>
-        <HelpText
-          size={props.size}
-          isDisabled={isDisabled}
-          isInvalid={isInvalid}
-          description={description}>
-          {errorMessage}
-        </HelpText>
-      </>)}
+                }]
+              ]}>
+              {isMinimized ? (
+                <ActionButton
+                  aria-label={typeof label === 'string' ? label : props['aria-label'] || 'Search'}
+                  size={props.size}
+                  isQuiet
+                  isDisabled={props.isDisabled}
+                  onPress={() => setIsMinimized(false)}>
+                  <SearchIcon />
+                </ActionButton>
+              ) : (
+                <SearchIcon />
+              )}
+            </Provider>
+            {!isMinimized && (
+              <Input ref={inputRef} UNSAFE_className={raw('&::-webkit-search-cancel-button { display: none }')} />
+            )}
+            {!isEmpty && !isMinimized && !searchFieldProps.isReadOnly && <ClearButton size={props.size} />}
+          </FieldGroup>
+          <HelpText
+            size={props.size}
+            isDisabled={isDisabled}
+            isInvalid={isInvalid}
+            description={description}>
+            {errorMessage}
+          </HelpText>
+        </>
+      )}
     </AriaSearchField>
   );
 });
