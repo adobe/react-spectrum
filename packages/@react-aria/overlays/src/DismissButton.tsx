@@ -13,7 +13,7 @@
 import {AriaLabelingProps, DOMProps} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {ReactNode} from 'react';
+import React, {JSX} from 'react';
 import {useLabels} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
@@ -28,7 +28,7 @@ export interface DismissButtonProps extends AriaLabelingProps, DOMProps {
  * users to dismiss a modal or popup when there is no visual
  * affordance to do so.
  */
-export function DismissButton(props: DismissButtonProps): ReactNode {
+export function DismissButton(props: DismissButtonProps): JSX.Element {
   let {onDismiss, ...otherProps} = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/overlays');
 

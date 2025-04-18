@@ -23,7 +23,7 @@ import {DOMProps, RefObject, StyleProps} from '@react-types/shared';
 import {HelpText} from '@react-spectrum/label';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {HTMLAttributes, JSX, ReactNode} from 'react';
+import React, {HTMLAttributes, JSX} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useDateFormatter, useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
@@ -38,7 +38,7 @@ interface CalendarBaseProps<T extends CalendarState | RangeCalendarState> extend
   calendarRef: RefObject<HTMLDivElement | null>
 }
 
-export function CalendarBase<T extends CalendarState | RangeCalendarState>(props: CalendarBaseProps<T>): ReactNode {
+export function CalendarBase<T extends CalendarState | RangeCalendarState>(props: CalendarBaseProps<T>): JSX.Element {
   let {
     state,
     calendarProps,

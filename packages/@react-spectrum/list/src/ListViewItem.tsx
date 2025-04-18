@@ -24,7 +24,7 @@ import listStyles from './styles.css';
 import {ListViewContext} from './ListView';
 import {mergeProps} from '@react-aria/utils';
 import {Provider} from '@react-spectrum/provider';
-import React, {ReactNode, useContext, useRef} from 'react';
+import React, {JSX, useContext, useRef} from 'react';
 import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
 import {useGridListItem, useGridListSelectionCheckbox} from '@react-aria/gridlist';
@@ -37,7 +37,7 @@ interface ListViewItemProps<T> {
   hasActions: boolean
 }
 
-export function ListViewItem<T>(props: ListViewItemProps<T>): ReactNode {
+export function ListViewItem<T>(props: ListViewItemProps<T>): JSX.Element {
   let {
     item,
     isEmphasized

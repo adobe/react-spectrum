@@ -11,7 +11,7 @@
  */
 
 import {forwardRefType} from '@react-types/shared';
-import React, {createContext, forwardRef, ReactElement, ReactNode, useContext} from 'react';
+import React, {createContext, forwardRef, JSX, ReactElement, ReactNode, useContext} from 'react';
 
 // React doesn't understand the <template> element, which doesn't have children like a normal element.
 // It will throw an error during hydration when it expects the firstChild to contain content rendered
@@ -35,7 +35,7 @@ if (typeof HTMLTemplateElement !== 'undefined') {
 
 export const HiddenContext = createContext<boolean>(false);
 
-export function Hidden(props: {children: ReactNode}): ReactNode {
+export function Hidden(props: {children: ReactNode}): JSX.Element {
   let isHidden = useContext(HiddenContext);
   if (isHidden) {
     // Don't hide again if we are already hidden.
