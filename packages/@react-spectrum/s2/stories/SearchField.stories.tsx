@@ -79,10 +79,18 @@ ContextualHelpExample.args = {
   label: 'Search'
 };
 
-export const Minimized = (args: any) => <SearchField {...args} />;
-
-Minimized.args = {
-  label: null,
-  ariaLabel: 'Search',
-  defaultMinimized: true
+export const Minimized = {
+  render: (args: any) => <SearchField {...args} />,
+  args: {
+    label: null,
+    ariaLabel: 'Search',
+    defaultMinimized: true
+  },
+  decorators: [
+    (Story) => (
+      <div style={{width: '200px'}}>
+        <Story />
+      </div>
+    )
+  ]
 };
