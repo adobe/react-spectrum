@@ -59,7 +59,7 @@ describe('style-macro', () => {
   });
 
   it('should support self references', () => {
-    let {css} = testStyle({
+    let {css, js} = testStyle({
       borderWidth: 2,
       paddingX: 'edge-to-text',
       width: '[calc(200px - self(borderStartWidth) - self(paddingStart))]'
@@ -104,18 +104,22 @@ describe('style-macro', () => {
         }
 
 
-        .--_t-_ta {
+        .-_t_-_ta {
           --_t: 2px;
         }
 
 
-        .--o-ob {
+        .-o_-ob {
           --o: calc(var(--e, var(--s)) * 3 / 8);
         }
       }
 
       "
     `);
+
+    expect(js).toMatchInlineSnapshot(
+      '" _nb _ma _twdjPYd _sa oGQFGYc nb fNANddc -_t_-_ta -o_-ob"'
+    );
   });
 
   it('should support allowed overrides', () => {
@@ -169,6 +173,23 @@ describe('style-macro', () => {
     expect(js()).toMatchInlineSnapshot('"  rg vd of ng"');
     expect(overrides).toMatchInlineSnapshot('" rw vw oy ny"');
     expect(js({}, overrides)).toMatchInlineSnapshot('"  rw vw oy ny"');
+  });
+
+  it("should support allowed overrides for values that aren't defined", () => {
+    let {js} = testStyle(
+      {
+        backgroundColor: 'gray-300'
+      },
+      ['minWidth']
+    );
+
+    let {js: overrides} = testStyle({
+      minWidth: 32
+    });
+
+    expect(js()).toMatchInlineSnapshot('"  cz"');
+    expect(overrides).toMatchInlineSnapshot('" ue"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  ue cz"');
   });
 
   it('should support runtime conditions', () => {

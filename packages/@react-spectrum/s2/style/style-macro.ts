@@ -160,7 +160,7 @@ function shortCSSPropertyName(property: string) {
 function classNamePrefix(property: string, cssProperty: string) {
   let className = propertyInfo.properties[cssProperty];
   if (className && property === '--' + className) {
-    return property + '-';
+    return '-' + className + '_-';
   }
 
   if (className && !property.startsWith('--')) {
@@ -290,7 +290,6 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
         }
       }
 
-      js += `let matches = (overrides || '').matchAll(/(?:^|\\s)(${[...allowedOverridesSet].map(p => classNamePrefix(p, p)).join('|')})[^\\s]+/g);\n`;
       let loop = '';
       for (let property of rules.keys()) {
         let prop = properties.get(property);
@@ -305,11 +304,16 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
           }
         }
       }
+
+      let regex = `/(?:^|\\s)(${[...allowedOverridesSet].map(p => classNamePrefix(p, p)).join('|')})[^\\s]+/g`;
       if (loop) {
+        js += `let matches = (overrides || '').matchAll(${regex});\n`;
         js += 'for (let p of matches) {\n';
         js += loop;
         js += '  rules += p[0];\n';
         js += '}\n';
+      } else {
+        js += `rules += ((overrides || '').match(${regex}) || []).join('')\n`;
       }
     }
 
