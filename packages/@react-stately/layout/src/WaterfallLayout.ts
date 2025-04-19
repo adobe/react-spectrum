@@ -140,8 +140,9 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
       columnHeights[column] += layoutInfo.rect.height + minSpace.height;
     };
 
+    let collection = this.virtualizer!.collection;
     let skeletonCount = 0;
-    for (let node of this.virtualizer!.collection) {
+    for (let node of collection) {
       if (node.type === 'skeleton') {
         // Add skeleton cards until every column has at least one, and we fill the viewport.
         let startingHeights = [...columnHeights];
@@ -154,9 +155,18 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
           addNode(key, content);
         }
         break;
-      } else {
+      } else if (node.type !== 'loader') {
         addNode(node.key, node);
       }
+    }
+
+    // Always add the loader sentinel if present in the collection so we can make sure it is never virtualized out.
+    // Add it under the first column for simplicity
+    let lastNode = collection.getItem(collection.getLastKey()!);
+    if (lastNode?.type === 'loader') {
+      let rect = new Rect(horizontalSpacing, columnHeights[0], itemWidth, 0);
+      let layoutInfo = new LayoutInfo('loader', lastNode.key, rect);
+      newLayoutInfos.set(lastNode.key, layoutInfo);
     }
 
     // Reset all columns to the maximum for the next section
@@ -177,7 +187,7 @@ export class WaterfallLayout<T extends object, O extends WaterfallLayoutOptions 
   getVisibleLayoutInfos(rect: Rect): LayoutInfo[] {
     let layoutInfos: LayoutInfo[] = [];
     for (let layoutInfo of this.layoutInfos.values()) {
-      if (layoutInfo.rect.intersects(rect) || this.virtualizer!.isPersistedKey(layoutInfo.key)) {
+      if (layoutInfo.rect.intersects(rect) || this.virtualizer!.isPersistedKey(layoutInfo.key) || layoutInfo.type === 'loader') {
         layoutInfos.push(layoutInfo);
       }
     }
