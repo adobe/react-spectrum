@@ -29,7 +29,7 @@ export interface ListLayoutOptions {
   headingHeight?: number,
   /** The estimated height of a section header, when the height is variable. */
   estimatedHeadingHeight?: number,
-  /** 
+  /**
    * The fixed height of a loader element in px. This loader is specifically for
    * "load more" elements rendered when loading more rows at the root level or inside nested row/sections.
    * @default 48
@@ -184,7 +184,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
   }
 
   protected isVisible(node: LayoutNode, rect: Rect): boolean {
-    return node.layoutInfo.rect.intersects(rect) || node.layoutInfo.isSticky || node.layoutInfo.type === 'header' || this.virtualizer!.isPersistedKey(node.layoutInfo.key);
+    return node.layoutInfo.rect.intersects(rect) || node.layoutInfo.isSticky || node.layoutInfo.type === 'header' || node.layoutInfo.type === 'loader' || this.virtualizer!.isPersistedKey(node.layoutInfo.key);
   }
 
   protected shouldInvalidateEverything(invalidationContext: InvalidationContext<O>): boolean {
@@ -271,6 +271,14 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
 
       if (node.type === 'item' && y > this.requestedRect.maxY) {
         y += (collection.size - (nodes.length + skipped)) * rowHeight;
+
+        // Always add the loader sentinel if present. This assumes the loader is the last option/row
+        // will need to refactor when handling multi section loading
+        let lastNode = collection.getItem(collection.getLastKey()!);
+        if (lastNode?.type === 'loader' && nodes.at(-1)?.layoutInfo.type !== 'loader') {
+          let loader = this.buildChild(lastNode, this.padding, y - (this.loaderHeight ?? 0), null);
+          nodes.push(loader);
+        }
         break;
       }
     }
@@ -324,7 +332,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     let rect = new Rect(x, y, this.padding, 0);
     let layoutInfo = new LayoutInfo('loader', node.key, rect);
     rect.width = this.virtualizer!.contentSize.width - this.padding - x;
-    rect.height = this.loaderHeight || this.rowHeight || this.estimatedRowHeight || DEFAULT_HEIGHT;
+    rect.height = this.loaderHeight ?? this.rowHeight ?? this.estimatedRowHeight ?? DEFAULT_HEIGHT;
 
     return {
       layoutInfo,

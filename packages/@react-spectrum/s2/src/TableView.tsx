@@ -38,7 +38,7 @@ import {
   TableBodyRenderProps,
   TableLayout,
   TableRenderProps,
-  UNSTABLE_TableLoadingIndicator,
+  UNSTABLE_TableLoadingSentinel,
   useSlottedContext,
   useTableOptions,
   Virtualizer
@@ -64,7 +64,6 @@ import SortDownArrow from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import SortUpArrow from '../s2wf-icons/S2_Icon_SortUp_20_N.svg';
 import {useActionBarContainer} from './ActionBar';
 import {useDOMRef} from '@react-spectrum/utils';
-import {useLoadMore} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -110,7 +109,7 @@ interface S2TableProps {
 }
 
 // TODO: Note that loadMore and loadingState are now on the Table instead of on the TableBody
-export interface TableViewProps extends Omit<RACTableProps, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks'>, UnsafeStyles, S2TableProps {
+export interface TableViewProps extends Omit<RACTableProps, 'style' | 'disabledBehavior' | 'className' | 'onRowAction' | 'selectionBehavior' | 'onScroll' | 'onCellAction' | 'dragAndDropHooks' | 'isLoading' | 'onLoadMore'>, UnsafeStyles, S2TableProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight
 }
@@ -197,7 +196,9 @@ export class S2TableLayout<T> extends TableLayout<T> {
     let {children, layoutInfo} = body;
     // TableLayout's buildCollection always sets the body width to the max width between the header width, but
     // we want the body to be sticky and only as wide as the table so it is always in view if loading/empty
-    if (children?.length === 0) {
+    // TODO: we may want to adjust RAC layouts to do something simlar? Current users of RAC table will probably run into something similar
+    let isEmptyOrLoading = children?.length === 0 || (children?.length === 1 && children[0].layoutInfo.type === 'loader');
+    if (isEmptyOrLoading) {
       layoutInfo.rect.width = this.virtualizer!.visibleRect.width - 80;
     }
 
@@ -223,7 +224,8 @@ export class S2TableLayout<T> extends TableLayout<T> {
     // Needs overflow for sticky loader
     layoutInfo.allowOverflow = true;
     // If loading or empty, we'll want the body to be sticky and centered
-    if (children?.length === 0) {
+    let isEmptyOrLoading = children?.length === 0 || (children?.length === 1 && children[0].layoutInfo.type === 'loader');
+    if (isEmptyOrLoading) {
       layoutInfo.rect = new Rect(40, 40, this.virtualizer!.visibleRect.width - 80, this.virtualizer!.visibleRect.height - 80);
       layoutInfo.isSticky = true;
     }
@@ -268,11 +270,11 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     overflowMode = 'truncate',
     styles,
     loadingState,
-    onLoadMore,
     onResize: propsOnResize,
     onResizeStart: propsOnResizeStart,
     onResizeEnd: propsOnResizeEnd,
     onAction,
+    onLoadMore,
     ...otherProps
   } = props;
 
@@ -295,17 +297,12 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
     density,
     overflowMode,
     loadingState,
+    onLoadMore,
     isInResizeMode,
     setIsInResizeMode
-  }), [isQuiet, density, overflowMode, loadingState, isInResizeMode, setIsInResizeMode]);
+  }), [isQuiet, density, overflowMode, loadingState, onLoadMore, isInResizeMode, setIsInResizeMode]);
 
-  let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let scrollRef = useRef<HTMLElement | null>(null);
-  let memoedLoadMoreProps = useMemo(() => ({
-    isLoading: isLoading,
-    onLoadMore
-  }), [isLoading, onLoadMore]);
-  useLoadMore(memoedLoadMoreProps, scrollRef);
   let isCheckboxSelection = props.selectionMode === 'multiple' || props.selectionMode === 'single';
 
   let {selectedKeys, onSelectionChange, actionBar, actionBarHeight} = useActionBarContainer({...props, scrollRef});
@@ -330,7 +327,8 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
           : undefined,
           // No need for estimated headingHeight since the headers aren't affected by overflow mode: wrap
           headingHeight: DEFAULT_HEADER_HEIGHT[scale],
-          loaderHeight: 60
+          // If we are not in a loadingMore state, we need to set a height of 0 for the loading sentinel wrapping div so we don't offset the renderEmptyState spinner/empty state
+          loaderHeight: loadingState === 'loadingMore' ? 60 : 0
         }}>
         <InternalTableContext.Provider value={context}>
           <RACTable
@@ -377,18 +375,24 @@ export interface TableBodyProps<T> extends Omit<RACTableBodyProps<T>, 'style' | 
 export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function TableBody<T extends object>(props: TableBodyProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {items, renderEmptyState, children} = props;
   let domRef = useDOMRef(ref);
-  let {loadingState} = useContext(InternalTableContext);
+  let {loadingState, onLoadMore} = useContext(InternalTableContext);
+  let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let emptyRender;
   let renderer = children;
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/s2');
+  // TODO: still is offset strangely if loadingMore when there aren't any items in the table, see http://localhost:6006/?path=/story/tableview--empty-state&args=loadingState:loadingMore
+  // This is because we don't distinguish between loadingMore and loading in the layout, resulting in a different rect being used to build the body. Perhaps can be considered as a user error
+  // if they pass loadingMore without having any other items in the table. Alternatively, could update the layout so it knows the current loading state.
   let loadMoreSpinner = (
-    <UNSTABLE_TableLoadingIndicator className={style({height: 'full', width: 'full'})}>
-      <div className={centeredWrapper}>
-        <ProgressCircle
-          isIndeterminate
-          aria-label={stringFormatter.format('table.loadingMore')} />
-      </div>
-    </UNSTABLE_TableLoadingIndicator>
+    <UNSTABLE_TableLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore} className={style({height: 'full', width: 'full'})}>
+      {loadingState === 'loadingMore' && (
+        <div className={centeredWrapper}>
+          <ProgressCircle
+            isIndeterminate
+            aria-label={stringFormatter.format('table.loadingMore')} />
+        </div>
+      )}
+    </UNSTABLE_TableLoadingSentinel>
   );
 
   // If the user is rendering their rows in dynamic fashion, wrap their render function in Collection so we can inject
@@ -401,19 +405,19 @@ export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
         <Collection items={items}>
           {children}
         </Collection>
-        {loadingState === 'loadingMore' && loadMoreSpinner}
+        {loadMoreSpinner}
       </>
     );
   } else {
     renderer = (
       <>
         {children}
-        {loadingState === 'loadingMore' && loadMoreSpinner}
+        {loadMoreSpinner}
       </>
     );
   }
 
-  if (renderEmptyState != null && loadingState !== 'loading') {
+  if (renderEmptyState != null && !isLoading) {
     emptyRender = (props: TableBodyRenderProps) => (
       <div className={centeredWrapper}>
         {renderEmptyState(props)}

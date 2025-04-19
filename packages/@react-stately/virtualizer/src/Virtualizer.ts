@@ -311,7 +311,7 @@ export class Virtualizer<T extends object, V> {
         itemSizeChanged ||= opts.invalidationContext.itemSizeChanged || false;
         layoutOptionsChanged ||= opts.invalidationContext.layoutOptions != null
           && this._invalidationContext.layoutOptions != null
-          && opts.invalidationContext.layoutOptions !== this._invalidationContext.layoutOptions 
+          && opts.invalidationContext.layoutOptions !== this._invalidationContext.layoutOptions
           && this.layout.shouldInvalidateLayoutOptions(opts.invalidationContext.layoutOptions, this._invalidationContext.layoutOptions);
         needsLayout ||= itemSizeChanged || sizeChanged || offsetChanged || layoutOptionsChanged;
       }

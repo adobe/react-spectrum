@@ -474,3 +474,9 @@ input {
 [aria-autocomplete][data-focus-visible]{
   outline: 3px solid blue;
 }
+
+.spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}

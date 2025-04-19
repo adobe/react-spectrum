@@ -11,7 +11,7 @@
  */
 
 import {DropTarget, ItemDropTarget, Key} from '@react-types/shared';
-import {getChildNodes} from '@react-stately/collections';
+import {getChildNodes, getLastItem} from '@react-stately/collections';
 import {GridNode} from '@react-types/grid';
 import {InvalidationContext, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
 import {LayoutNode, ListLayout, ListLayoutOptions} from './ListLayout';
@@ -251,7 +251,8 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     let width = 0;
     let children: LayoutNode[] = [];
     let rowHeight = this.getEstimatedRowHeight() + this.gap;
-    for (let node of getChildNodes(collection.body, collection)) {
+    let childNodes = getChildNodes(collection.body, collection);
+    for (let node of childNodes) {
       // Skip rows before the valid rectangle unless they are already cached.
       if (y + rowHeight < this.requestedRect.y && !this.isValid(node, y)) {
         y += rowHeight;
@@ -269,6 +270,17 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
       if (y > this.requestedRect.maxY) {
         // Estimate the remaining height for rows that we don't need to layout right now.
         y += (collection.size - (skipped + children.length)) * rowHeight;
+
+        // Always add the loader sentinel if present. This assumes the loader is the last row in the body,
+        // will need to refactor when handling multi section loading
+        let lastNode = getLastItem(childNodes);
+        if (lastNode?.type === 'loader' && children.at(-1)?.layoutInfo.type !== 'loader') {
+          let loader = this.buildChild(lastNode, this.padding, y - (this.loaderHeight ?? 0), layoutInfo.key);
+          loader.layoutInfo.parentKey = layoutInfo.key;
+          loader.index = collection.size;
+          width = Math.max(width, loader.layoutInfo.rect.width);
+          children.push(loader);
+        }
         break;
       }
     }
@@ -441,6 +453,12 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
             res.push(node.children[idx].layoutInfo);
             this.addVisibleLayoutInfos(res, node.children[idx], rect);
           }
+        }
+
+        // Always include loading sentinel even when virtualized, we assume it is always the last child for now
+        let lastRow = node.children.at(-1);
+        if (lastRow?.layoutInfo.type === 'loader') {
+          res.push(lastRow.layoutInfo);
         }
         break;
       }
