@@ -17,7 +17,7 @@ import {CenterBaseline} from './CenterBaseline';
 import {centerPadding, getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with { type: 'macro' };
 import Chevron from '../ui-icons/Chevron';
 import {filterDOMProps} from '@react-aria/utils';
-import {focusRing, lightDark, style} from '../style' with { type: 'macro' };
+import {focusRing, lightDark, space, style} from '../style' with { type: 'macro' };
 import React, {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -307,9 +307,9 @@ const panelStyles = style({
     isExpanded: {
       size: {
         S: 8,
-        M: 9,
+        M: space(9),
         L: 12,
-        XL: 15
+        XL: space(15)
       }
     }
   }

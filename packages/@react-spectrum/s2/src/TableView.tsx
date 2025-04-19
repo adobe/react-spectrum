@@ -564,10 +564,7 @@ const sortIcon = style({
     default: 8,
     isButton: 'text-to-visual'
   },
-  verticalAlign: {
-    default: 'bottom',
-    isButton: 0
-  },
+  verticalAlign: 'bottom',
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
