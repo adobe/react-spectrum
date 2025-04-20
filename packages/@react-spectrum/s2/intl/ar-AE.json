@@ -26,10 +26,14 @@
   "table.loading": "جارٍ التحميل...",
   "table.loadingMore": "جارٍ تحميل المزيد...",
   "table.resizeColumn": "تغيير حجم العمود",
+  "table.standardColumnMenu": "Default column actions",
   "table.sortAscending": "فرز بترتيب تصاعدي",
   "table.sortDescending": "فرز بترتيب تنازلي",
   "tag.actions": "الإجراءات",
   "tag.hideButtonLabel": "إظهار أقل",
   "tag.noTags": "بدون",
-  "tag.showAllButtonLabel": "عرض الكل ({tagCount, number})"
+  "tag.showAllButtonLabel": "عرض الكل ({tagCount, number})",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

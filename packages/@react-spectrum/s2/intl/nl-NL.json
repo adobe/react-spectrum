@@ -31,5 +31,8 @@
   "tag.actions": "Acties",
   "tag.hideButtonLabel": "Minder weergeven",
   "tag.noTags": "Geen",
-  "tag.showAllButtonLabel": "Alles tonen ({tagCount, number})"
+  "tag.showAllButtonLabel": "Alles tonen ({tagCount, number})",
+  "toast.clearAll": "Clear all",
+  "toast.collapse": "Collapse",
+  "toast.showAll": "Show all"
 }

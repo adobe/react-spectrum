@@ -186,9 +186,10 @@ const heightProperties = [
 export type StylesProp = StyleString<(typeof allowedOverrides)[number] | (typeof widthProperties)[number]>;
 export type StylesPropWithHeight = StyleString<(typeof allowedOverrides)[number] | (typeof widthProperties)[number] | (typeof heightProperties)[number]>;
 export type StylesPropWithoutWidth = StyleString<(typeof allowedOverrides)[number]>;
+export type UnsafeClassName = string & {properties?: never};
 export interface UnsafeStyles {
   /** Sets the CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. Only use as a **last resort**. Use the `style` macro via the `styles` prop instead. */
-  UNSAFE_className?: string,
+  UNSAFE_className?: UnsafeClassName,
   /** Sets inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. Only use as a **last resort**. Use the `style` macro via the `styles` prop instead. */
   UNSAFE_style?: CSSProperties
 }
