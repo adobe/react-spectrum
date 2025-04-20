@@ -15076,6 +15076,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"colorjs.io@npm:^0.5.2":
+  version: 0.5.2
+  resolution: "colorjs.io@npm:0.5.2"
+  checksum: 10c0/2e6ea43629e325e721b92429239de3a6f42fb6d88ba6e4c2aeff0288c196d876f2f7ee82aea95bd40072d5cdc8cb87f042f4d94c134dcabf0e34a717e4caacb9
+  languageName: node
+  linkType: hard
+
 "colorspace@npm:1.1.x":
   version: 1.1.4
   resolution: "colorspace@npm:1.1.4"
@@ -29591,6 +29598,7 @@ __metadata:
     chromatic: "npm:^11.25.2"
     clsx: "npm:^2.0.0"
     color-space: "npm:^1.16.0"
+    colorjs.io: "npm:^0.5.2"
     concurrently: "npm:^6.0.2"
     core-js: "npm:^3.0.0"
     cross-env: "npm:^7.0.2"

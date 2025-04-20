@@ -143,6 +143,7 @@
     "chromatic": "^11.25.2",
     "clsx": "^2.0.0",
     "color-space": "^1.16.0",
+    "colorjs.io": "^0.5.2",
     "concurrently": "^6.0.2",
     "core-js": "^3.0.0",
     "cross-env": "^7.0.2",
