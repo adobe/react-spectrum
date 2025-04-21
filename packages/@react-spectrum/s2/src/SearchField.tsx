@@ -72,7 +72,6 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(props: 
     labelAlign = 'start',
     UNSAFE_className = '',
     UNSAFE_style,
-    styles,
     isMinimized: isMinimizedProp,
     defaultMinimized = false,
     onMinimizeChange,
