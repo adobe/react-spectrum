@@ -161,7 +161,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
       items: initialItems.map(item => {
         let node: TreeNode<T> = {
           key: getKey(item),
-          parentKey: parentKey,
+          parentKey: parentKey ?? null,
           value: item,
           children: null
         };
