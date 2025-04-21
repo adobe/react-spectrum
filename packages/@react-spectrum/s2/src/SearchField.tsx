@@ -116,14 +116,12 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(props: 
   if (isMinimized) {
     return (
       <ActionButton
+        styles={style({marginStart: '[10px]'})}
         aria-label={typeof label === 'string' ? label : props['aria-label'] || 'Search'}
         size={props.size}
         isQuiet
         isDisabled={props.isDisabled}
-        onPress={() => setIsMinimized(false)}
-        UNSAFE_className={UNSAFE_className}
-        UNSAFE_style={UNSAFE_style}
-        styles={styles}>
+        onPress={() => setIsMinimized(false)}>
         <SearchIcon />
       </ActionButton>
     );
@@ -154,7 +152,7 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(props: 
       }, props.styles)}>
       {({isDisabled, isInvalid, isEmpty}) => (
         <>
-          {label && !isMinimized && (
+          {label && (
             <FieldLabel
               isDisabled={isDisabled}
               isRequired={props.isRequired}
@@ -194,23 +192,10 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(props: 
                   })
                 }]
               ]}>
-              {isMinimized ? (
-                <ActionButton
-                  aria-label={typeof label === 'string' ? label : props['aria-label'] || 'Search'}
-                  size={props.size}
-                  isQuiet
-                  isDisabled={props.isDisabled}
-                  onPress={() => setIsMinimized(false)}>
-                  <SearchIcon />
-                </ActionButton>
-              ) : (
-                <SearchIcon />
-              )}
+              <SearchIcon />
             </Provider>
-            {!isMinimized && (
-              <Input ref={inputRef} UNSAFE_className={raw('&::-webkit-search-cancel-button { display: none }')} />
-            )}
-            {!isEmpty && !isMinimized && !searchFieldProps.isReadOnly && <ClearButton size={props.size} />}
+            <Input ref={inputRef} UNSAFE_className={raw('&::-webkit-search-cancel-button { display: none }')} />
+            {!isEmpty && !searchFieldProps.isReadOnly && <ClearButton size={props.size} />}
           </FieldGroup>
           <HelpText
             size={props.size}
