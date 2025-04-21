@@ -11,6 +11,7 @@
  */
 
 import {BuddhistCalendar, CalendarDate, CalendarDateTime, EthiopicAmeteAlemCalendar, EthiopicCalendar, GregorianCalendar, HebrewCalendar, IndianCalendar, IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar, JapaneseCalendar, PersianCalendar, TaiwanCalendar, Time, toCalendar, toCalendarDate, toCalendarDateTime, toTime, ZonedDateTime} from '..';
+import {Custom454Calendar} from './customCalendarImpl';
 import {fromAbsolute, possibleAbsolutes, toAbsolute, toDate} from '../src/conversion';
 
 describe('CalendarDate conversion', function () {
@@ -442,6 +443,28 @@ describe('CalendarDate conversion', function () {
       it('gregorian to ethioaa', function () {
         let date = new CalendarDate(4507, 9, 29);
         expect(toCalendar(date, new EthiopicAmeteAlemCalendar())).toEqual(new CalendarDate(new EthiopicAmeteAlemCalendar(), 9999, 13, 5));
+      });
+    });
+
+    describe('custom calendar', function () {
+      const customCal = new Custom454Calendar();
+
+      const dates = [
+        {customName: 'start of FY2024', custom: new CalendarDate(customCal, 2024, 1, 1), gregorian: new CalendarDate(2024, 2, 4)},
+        {customName: 'end of FY2024', custom: new CalendarDate(customCal, 2024, 12, 28), gregorian: new CalendarDate(2025, 2, 1)},
+        {customName: 'end of FY2023 (big year)', custom: new CalendarDate(customCal, 2023, 12, 35), gregorian: new CalendarDate(2024, 2, 3)}
+      ];
+
+      describe('to gregorian', function () {
+        it.each(dates)('should convert $customName to gregorian', function ({custom, gregorian}) {
+          expect(toCalendar(custom, new GregorianCalendar())).toEqual(gregorian);
+        });
+      });
+
+      describe('from gregorian', function () {
+        it.each(dates)('should convert gregorian to $customName', function ({custom, gregorian}) {
+          expect(toCalendar(gregorian, customCal)).toEqual(custom);
+        });
       });
     });
   });

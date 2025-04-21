@@ -28,7 +28,7 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Provider 
+        <Provider
           theme={defaultTheme}
           locale="en"
           router={{
@@ -38,6 +38,12 @@ export default function App() {
           <Outlet />
         </Provider>
         <ScrollRestoration />
+        {/* https://remix.run/docs/en/main/guides/envvars */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.process = {}; window.process.env = {};`,
+          }}
+        />
         <Scripts />
         <LiveReload />
       </body>

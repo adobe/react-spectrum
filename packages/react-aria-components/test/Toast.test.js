@@ -12,7 +12,8 @@
 
 import {act, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button, Text, UNSTABLE_Toast as Toast, UNSTABLE_ToastContent as ToastContent, UNSTABLE_ToastQueue as ToastQueue, UNSTABLE_ToastRegion as ToastRegion} from 'react-aria-components';
-import React from 'react';
+import React, {useRef} from 'react';
+import {UNSAFE_PortalProvider} from '@react-aria/overlays';
 import userEvent from '@testing-library/user-event';
 
 function Example(options) {
@@ -183,7 +184,7 @@ describe('Toast', () => {
     await user.click(closeButton);
 
     expect(document.activeElement).toBe(button);
-    
+
     toast = getAllByRole('alertdialog')[0];
     closeButton = within(toast).getByRole('button');
     await user.click(closeButton);
@@ -323,13 +324,13 @@ describe('Toast', () => {
     expect(region).toHaveAttribute('aria-label', 'Toasts');
   });
 
-  it('should render the toast region in the portal container', async () => {
+  it('should render the toast region in the portal container provided by PortalProvider', async () => {
     let queue = new ToastQueue();
 
-    function LocalToast(props) {
+    function LocalToast() {
       return (
         <>
-          <ToastRegion queue={queue} portalContainer={props.container}>
+          <ToastRegion queue={queue}>
             {({toast}) => (
               <Toast toast={toast}>
                 <ToastContent>
@@ -338,18 +339,20 @@ describe('Toast', () => {
                 <Button slot="close">x</Button>
               </Toast>
             )}
-          </ToastRegion> 
+          </ToastRegion>
 
           <Button onPress={() => queue.add('Toast')}>Add toast</Button>
         </>
       );
     }
     function App() {
-      let [container, setContainer] = React.useState();
+      let container = useRef(null);
       return (
         <>
-          <LocalToast container={container} />
-          <div ref={setContainer} data-testid="custom-container" />
+          <UNSAFE_PortalProvider getContainer={() => container.current}>
+            <LocalToast container={container} />
+          </UNSAFE_PortalProvider>
+          <div ref={container} data-testid="custom-container" />
         </>
       );
     }
