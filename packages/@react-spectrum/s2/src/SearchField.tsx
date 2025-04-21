@@ -150,62 +150,58 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(props: 
         labelPosition,
         isInForm: !!formContext
       }, props.styles)}>
-      {({isDisabled, isInvalid, isEmpty}) => (
-        <>
-          {label && (
-            <FieldLabel
-              isDisabled={isDisabled}
-              isRequired={props.isRequired}
-              size={props.size}
-              labelPosition={labelPosition}
-              labelAlign={labelAlign}
-              necessityIndicator={necessityIndicator}
-              contextualHelp={props.contextualHelp}>
-              {label}
-            </FieldLabel>
-          )}
-          <FieldGroup
-            isDisabled={isDisabled}
-            size={props.size}
-            styles={style({
-              borderRadius: 'full',
-              paddingStart: 'pill',
-              paddingEnd: 0
-            })}>
-            <Provider
-              values={[
-                [IconContext, {
-                  render: centerBaseline({
-                    slot: 'icon',
-                    styles: style({
-                      flexShrink: 0,
-                      marginEnd: 'text-to-visual',
-                      '--iconPrimary': {
-                        type: 'fill',
-                        value: 'currentColor'
-                      }
-                    })
-                  }),
+      {({isDisabled, isInvalid, isEmpty}) => (<>
+        {label && <FieldLabel
+          isDisabled={isDisabled}
+          isRequired={props.isRequired}
+          size={props.size}
+          labelPosition={labelPosition}
+          labelAlign={labelAlign}
+          necessityIndicator={necessityIndicator}
+          contextualHelp={props.contextualHelp}>
+          {label}
+        </FieldLabel>}
+        <FieldGroup
+          isDisabled={isDisabled}
+          size={props.size}
+          styles={style({
+            borderRadius: 'full',
+            paddingStart: 'pill',
+            paddingEnd: 0
+          })}>
+          <Provider
+            values={[
+              [IconContext, {
+                render: centerBaseline({
+                  slot: 'icon',
                   styles: style({
-                    size: fontRelative(20),
-                    marginStart: '--iconMargin'
+                    flexShrink: 0,
+                    marginEnd: 'text-to-visual',
+                    '--iconPrimary': {
+                      type: 'fill',
+                      value: 'currentColor'
+                    }
                   })
-                }]
-              ]}>
-              <SearchIcon />
-            </Provider>
-            <Input ref={inputRef} UNSAFE_className={raw('&::-webkit-search-cancel-button { display: none }')} />
-            {!isEmpty && !searchFieldProps.isReadOnly && <ClearButton size={props.size} />}
-          </FieldGroup>
-          <HelpText
-            size={props.size}
-            isDisabled={isDisabled}
-            isInvalid={isInvalid}
-            description={description}>
-            {errorMessage}
-          </HelpText>
-        </>
-      )}
+                }),
+                styles: style({
+                  size: fontRelative(20),
+                  marginStart: '--iconMargin'
+                })
+              }]
+            ]}>
+            <SearchIcon />
+          </Provider>
+          <Input ref={inputRef} UNSAFE_className={raw('&::-webkit-search-cancel-button { display: none }')} />
+          {!isEmpty && !searchFieldProps.isReadOnly && <ClearButton size={props.size} />}
+        </FieldGroup>
+        <HelpText
+          size={props.size}
+          isDisabled={isDisabled}
+          isInvalid={isInvalid}
+          description={description}>
+          {errorMessage}
+        </HelpText>
+      </>)}
     </AriaSearchField>
   );
 });
