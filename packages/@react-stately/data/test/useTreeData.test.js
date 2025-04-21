@@ -490,7 +490,7 @@ describe('useTreeData', function () {
     expect(result.current.items).not.toBe(initialResult.items);
     expect(result.current.items).toHaveLength(1);
     expect(result.current.items[0].value).toEqual({expanded: true, name: 'Danny'});
-    expect(result.current.items[0].parentKey).toBeNull();
+    expect(result.current.items[0].parentKey).toBeUndefined();
   });
 
   it('should update an item', function () {
@@ -753,8 +753,8 @@ describe('useTreeData', function () {
       result.current.moveBefore('David', ['John', 'Eli', 'Suzie']);
     });
     expect(result.current.items[0].key).toEqual('John');
-    expect(result.current.items[1].key).toEqual('Suzie');
-    expect(result.current.items[2].key).toEqual('Eli');
+    expect(result.current.items[1].key).toEqual('Eli');
+    expect(result.current.items[2].key).toEqual('Suzie');
     expect(result.current.items[3].key).toEqual('David');
     expect(result.current.items[4].key).toEqual('Emily');
     expect(result.current.items.length).toEqual(5);
@@ -856,8 +856,8 @@ describe('useTreeData', function () {
     });
     expect(result.current.items[0].key).toEqual('David');
     expect(result.current.items[1].key).toEqual('John');
-    expect(result.current.items[2].key).toEqual('Suzie');
-    expect(result.current.items[3].key).toEqual('Eli');
+    expect(result.current.items[2].key).toEqual('Eli');
+    expect(result.current.items[3].key).toEqual('Suzie');
     expect(result.current.items[4].key).toEqual('Emily');
     expect(result.current.items.length).toEqual(5);
     expect(result.current.items[0].children[0].key).toEqual('Sam');
