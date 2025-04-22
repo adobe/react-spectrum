@@ -70,7 +70,8 @@ export function useSelectState<T extends object>(props: SelectStateOptions<T>): 
     focusStrategy,
     open(focusStrategy: FocusStrategy | null = null) {
       // Don't open if the collection is empty.
-      if (listState.collection.size !== 0) {
+      let isEmpty = listState.collection.size === 0 || (listState.collection.size === 1 && listState.collection.getItem(listState.collection.getFirstKey()!)?.type === 'loader');
+      if (!isEmpty) {
         setFocusStrategy(focusStrategy);
         triggerState.open();
       }

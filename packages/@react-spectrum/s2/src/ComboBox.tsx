@@ -540,10 +540,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
               }]
             ]}>
             <ListBox
-              // TODO we don't have a way to actually render this if we always render the sentinel since the collection is never techincally empty
-              // Perhaps we expect the user to change what they render as the child of the loading sentinel? Change what we consider as empty state to
-              // collection size === 1 + the node is a loader node?
-              renderEmptyState={() => loadingState != null && loadingState !== 'loadingMore' && (
+              renderEmptyState={() => (
                 <span className={emptyStateText({size})}>
                   {loadingState === 'loading' ? stringFormatter.format('table.loading') : stringFormatter.format('combobox.noResults')}
                 </span>

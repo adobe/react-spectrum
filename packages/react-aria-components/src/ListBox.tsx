@@ -219,7 +219,6 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
   });
 
   let emptyState: JSX.Element | null = null;
-
   if (isEmpty && props.renderEmptyState) {
     emptyState = (
       <div
