@@ -14,3 +14,22 @@
   /* This one should work */
   background: hotpink;
 }
+
+.audience-card {
+  div:has(>[slot="selection"]) {
+    inset-inline-end: var(--card-spacing);
+    inset-inline-start: unset;
+  }
+
+  .tag-group {
+    [role="row"] {
+      background-color: #be9b68;
+      color: #f5f9ff
+    }
+  }
+
+  .favorite {
+    position: absolute;
+    inset-inline-end: calc(var(--card-spacing) + 12);
+  }
+}
