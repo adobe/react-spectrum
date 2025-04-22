@@ -268,18 +268,24 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
       children.push(layoutNode);
 
       if (y > this.requestedRect.maxY) {
+        let rowsAfterRect = collection.size - (children.length + skipped);
+        let lastNode = getLastItem(childNodes);
+        if (lastNode?.type === 'loader') {
+          rowsAfterRect--;
+        }
+
         // Estimate the remaining height for rows that we don't need to layout right now.
-        y += (collection.size - (skipped + children.length)) * rowHeight;
+        y += rowsAfterRect * rowHeight;
 
         // Always add the loader sentinel if present. This assumes the loader is the last row in the body,
         // will need to refactor when handling multi section loading
-        let lastNode = getLastItem(childNodes);
         if (lastNode?.type === 'loader' && children.at(-1)?.layoutInfo.type !== 'loader') {
-          let loader = this.buildChild(lastNode, this.padding, y - (this.loaderHeight ?? 0), layoutInfo.key);
+          let loader = this.buildChild(lastNode, this.padding, y, layoutInfo.key);
           loader.layoutInfo.parentKey = layoutInfo.key;
           loader.index = collection.size;
           width = Math.max(width, loader.layoutInfo.rect.width);
           children.push(loader);
+          y = loader.layoutInfo.rect.maxY;
         }
         break;
       }

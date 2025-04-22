@@ -284,7 +284,7 @@ export const AsyncVirtualizedDynamicCombobox = () => {
       <Popover>
         {/* TODO: one problem with making the loading sentinel always rendered is that the virtualizer will then render it with a div wrapper with a height=row height even when loading is done. Ideally we'd only
         render the bare minimum (aka 0 height/width) in this case but the user would need to specify this in their layout */}
-        <Virtualizer layout={new ListLayout({rowHeight: 25, loaderHeight: list.isLoading ? 25 : 0})}>
+        <Virtualizer layout={new ListLayout({rowHeight: 25, loaderHeight: list.isLoading ? 30 : 0})}>
           <ListBox<Character> className={styles.menu} renderEmptyState={renderEmptyState}>
             <Collection items={list.items}>
               {item => <MyListBoxItem id={item.name}>{item.name}</MyListBoxItem>}

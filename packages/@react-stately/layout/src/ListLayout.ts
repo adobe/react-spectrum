@@ -268,16 +268,26 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
       let layoutNode = this.buildChild(node, this.padding, y, null);
       y = layoutNode.layoutInfo.rect.maxY + this.gap;
       nodes.push(layoutNode);
-
       if (node.type === 'item' && y > this.requestedRect.maxY) {
-        y += (collection.size - (nodes.length + skipped)) * rowHeight;
+        let itemsAfterRect = collection.size - (nodes.length + skipped);
+        let lastNode = collection.getItem(collection.getLastKey()!);
+        if (lastNode?.type === 'loader') {
+          itemsAfterRect--;
+        }
+
+        y += itemsAfterRect * rowHeight;
 
         // Always add the loader sentinel if present. This assumes the loader is the last option/row
         // will need to refactor when handling multi section loading
-        let lastNode = collection.getItem(collection.getLastKey()!);
+        // TODO: One issue here is that after new items are loaded, the scroll position "resets" so the the bottom of the scroll body is flush with the bottom of the item that
+        // was just before the loader, presumabally because the loader collapses to 0 height? Bit annoying since
+        // prior to the changes in this commit it would replace the loader's node with the newly loaded item node, aka preserving the scroll position.
+        // However that had an issue with adding too much space at the bottom of the list when you exhausted your api's full set of items due to an errornous calculation being made
+        // Note that this only an issue with virtualized versions of ListBox and TableView
         if (lastNode?.type === 'loader' && nodes.at(-1)?.layoutInfo.type !== 'loader') {
-          let loader = this.buildChild(lastNode, this.padding, y - (this.loaderHeight ?? 0), null);
+          let loader = this.buildChild(lastNode, this.padding, y, null);
           nodes.push(loader);
+          y = loader.layoutInfo.rect.maxY;
         }
         break;
       }

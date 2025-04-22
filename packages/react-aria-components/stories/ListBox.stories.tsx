@@ -468,8 +468,6 @@ const MyListBoxLoaderIndicator = (props) => {
   );
 };
 
-// TODO: this doesn't have load more spinner since user basically needs to use <Collection> or wrap their ListboxItem renderer so it renders the
-// additional loading indicator based on list load state
 export const AsyncListBox = (args) => {
   let list = useAsyncList<Character>({
     async load({signal, cursor, filterText}) {
