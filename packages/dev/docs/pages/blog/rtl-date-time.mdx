@@ -32,7 +32,7 @@ Internationalization is a core feature of our Date and Time components. We suppo
 
 In a [previous blog post](https://react-spectrum.adobe.com/blog/date-and-time-pickers-for-all.html#date-fields), we discussed the reasoning behind the component structure of our date and time components. In short, we designed these components to render individually focusable segments for each date and time unit, eliminating the challenges of parsing various date formats — an issue commonly encountered with free-form text fields. Since the date and time format is automatically determined based on the user’s locale, the user only needs to fill in the values without worrying about the appropriate separators or the order. This made for a smoother, more intuitive experience for the user, removing the guesswork associated with formatting and parsing dates in various locales.
 
-<Video src={localeVideoURL} muted />
+<Video alt="Example of a React Spectrum DateField component in various locales" src={localeVideoURL} muted controls/>
 
 ## Unicode Bidirectional Algorithm
 
@@ -50,7 +50,7 @@ Below is an example of how the dates were being formatted based on user-entered 
 
 <RTLActualPlaceholder />
 
-<Video src={placeholderVideoURL} muted />
+<Video alt="Demo of the date segments shifting when backspacing" src={placeholderVideoURL} muted controls />
 
 
 ## TimeFields
@@ -130,7 +130,7 @@ After fixing the formatting, we also needed to update the keyboard navigation. P
 
 Below is an example of a date field in Hebrew with the correct date format but incorrect keyboard navigation. Pressing the left arrow key should navigate you to the segment to the immediate left, while the right arrow key should navigate you to the segment to the immediate right. 
 
-<Video src={keyboardVideoURL} muted />
+<Video alt="Demo of keyboard navigation prior to fixes" src={keyboardVideoURL} muted controls />
 
 As a result, we updated the keyboard navigation in right-to-left langauges to calculate the distance between the currently focused segment and other segments to identify the closest node based on whether the left or right arrow key was pressed, rather than reying on the DOM order.
 
