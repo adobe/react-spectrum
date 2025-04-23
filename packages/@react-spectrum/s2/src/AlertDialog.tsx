@@ -25,10 +25,10 @@ import intlMessages from '../intl/*.json';
 import NoticeSquare from '../s2wf-icons/S2_Icon_AlertDiamond_20_N.svg';
 import {Provider} from 'react-aria-components';
 import {style} from '../style' with {type: 'macro'};
-import {UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {StyleProps} from './style-utils' with { type: 'macro' };
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
-export interface AlertDialogProps extends DOMProps, UnsafeStyles {
+export interface AlertDialogProps extends DOMProps, StyleProps {
   /** The [visual style](https://spectrum.adobe.com/page/alert-dialog/#Options) of the AlertDialog.  */
   variant?: 'confirmation' | 'information' | 'destructive' | 'error' | 'warning',
   /** The title of the AlertDialog. */
@@ -107,7 +107,8 @@ export const AlertDialog = forwardRef(function AlertDialog(props: AlertDialogPro
       ref={ref}
       size={props.size}
       UNSAFE_style={props.UNSAFE_style}
-      UNSAFE_className={(props.UNSAFE_className || '')}>
+      UNSAFE_className={(props.UNSAFE_className || '')}
+      styles={props.styles}>
       {({close}) => (
         <>
           <Provider
