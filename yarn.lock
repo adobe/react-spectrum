@@ -7929,6 +7929,10 @@ __metadata:
     "@react-spectrum/parcel-transformer-s2-icon": "npm:^0.2.1"
     "@swc/helpers": "npm:^0.5.0"
     typescript: "npm:^5.5.0"
+  peerDependencies:
+    "@react-spectrum/s2": ">=0.8.0"
+    react: ^18.0.0 || ^19.0.0-rc.1
+    react-dom: ^18.0.0 || ^19.0.0-rc.1
   bin:
     transform-icons: index.js
   languageName: unknown
