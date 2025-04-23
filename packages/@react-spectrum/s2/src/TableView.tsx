@@ -327,8 +327,7 @@ export const TableView = forwardRef(function TableView(props: TableViewProps, re
           : undefined,
           // No need for estimated headingHeight since the headers aren't affected by overflow mode: wrap
           headingHeight: DEFAULT_HEADER_HEIGHT[scale],
-          // If we are not in a loadingMore state, we need to set a height of 0 for the loading sentinel wrapping div so we don't offset the renderEmptyState spinner/empty state
-          loaderHeight: loadingState === 'loadingMore' ? 60 : 0
+          loaderHeight: 60
         }}>
         <InternalTableContext.Provider value={context}>
           <RACTable
@@ -384,7 +383,12 @@ export const TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(function T
   // This is because we don't distinguish between loadingMore and loading in the layout, resulting in a different rect being used to build the body. Perhaps can be considered as a user error
   // if they pass loadingMore without having any other items in the table. Alternatively, could update the layout so it knows the current loading state.
   let loadMoreSpinner = (
-    <UNSTABLE_TableLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore} className={style({height: 'full', width: 'full'})}>
+    // TODO: the below is changed in order NOT to have the layout reserve room for the loading more spinner when loadingState === 'loading' since we have renderEmptyState handle that case
+    // However, this breaks loading more to fill 1.5X pages of content (aka scrolloffset in useLoadMoreSentinel). I don't think we could have
+    // the TableLoadingSentinel render both the loadingMore spinner case as well as the initial load spinner case since the latter wants to just be centered in the whole
+    // table
+    // <UNSTABLE_TableLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore} className={style({height: 'full', width: 'full'})}>
+    <UNSTABLE_TableLoadingSentinel isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore} className={style({height: 'full', width: 'full'})}>
       {loadingState === 'loadingMore' && (
         <div className={centeredWrapper}>
           <ProgressCircle

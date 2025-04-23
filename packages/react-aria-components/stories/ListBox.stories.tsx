@@ -12,12 +12,12 @@
 
 import {action} from '@storybook/addon-actions';
 import {Collection, DropIndicator, GridLayout, Header, ListBox, ListBoxItem, ListBoxProps, ListBoxSection, ListLayout, Separator, Text, useDragAndDrop, Virtualizer, WaterfallLayout} from 'react-aria-components';
-import {Key, useAsyncList, useListData} from 'react-stately';
-import {Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {LoadingSpinner, MyListBoxItem} from './utils';
-import React, {useMemo} from 'react';
+import React from 'react';
+import {Size} from '@react-stately/virtualizer';
 import styles from '../example/index.css';
 import {UNSTABLE_ListBoxLoadingSentinel} from '../src/ListBox';
+import {useAsyncList, useListData} from 'react-stately';
 
 export default {
   title: 'React Aria Components'
@@ -527,62 +527,6 @@ AsyncListBox.story = {
   }
 };
 
-class HorizontalLayout extends Layout {
-  protected rowWidth: number;
-
-  constructor(options) {
-    super();
-    this.rowWidth = options.rowWidth ?? 100;
-  }
-
-  // Determine which items are visible within the given rectangle.
-  getVisibleLayoutInfos(rect: Rect): LayoutInfo[] {
-    let virtualizer = this.virtualizer!;
-    let keys = Array.from(virtualizer.collection.getKeys());
-    let startIndex = Math.max(0, Math.floor(rect.x / 100));
-    let endIndex = Math.min(keys.length - 1, Math.ceil(rect.maxX / 100));
-    let layoutInfos = [] as LayoutInfo[];
-    for (let i = startIndex; i <= endIndex; i++) {
-      let layoutInfo = this.getLayoutInfo(keys[i]);
-      if (layoutInfo) {
-        layoutInfos.push(layoutInfo);
-      }
-    }
-
-    // Always add persisted keys (e.g. the focused item), even when out of view.
-    for (let key of virtualizer.persistedKeys) {
-      let item = virtualizer.collection.getItem(key);
-      let layoutInfo = this.getLayoutInfo(key);
-      if (item?.index && layoutInfo) {
-        if (item?.index < startIndex) {
-          layoutInfos.unshift(layoutInfo);
-        } else if (item?.index > endIndex) {
-          layoutInfos.push(layoutInfo);
-        }
-      }
-    }
-
-    return layoutInfos;
-  }
-
-  // Provide a LayoutInfo for a specific item.
-  getLayoutInfo(key: Key): LayoutInfo | null {
-    let node = this.virtualizer!.collection.getItem(key);
-    if (!node) {
-      return null;
-    }
-
-    let rect = new Rect(node.index * this.rowWidth, 0, this.rowWidth, 100);
-    return new LayoutInfo(node.type, node.key, rect);
-  }
-
-  // Provide the total size of all items.
-  getContentSize(): Size {
-    let numItems = this.virtualizer!.collection.size;
-    return new Size(numItems * this.rowWidth, 100);
-  }
-}
-
 export const AsyncListBoxVirtualized = (args) => {
   let list = useAsyncList<Character>({
     async load({signal, cursor, filterText}) {
@@ -600,17 +544,19 @@ export const AsyncListBoxVirtualized = (args) => {
     }
   });
 
-  let layout = useMemo(() => {
-    return args.orientation === 'horizontal' ? new HorizontalLayout({rowWidth: 100}) : new ListLayout({rowHeight: 50, padding: 4, loaderHeight: list.isLoading ? 30 : 0});
-  }, [args.orientation, list.isLoading]);
   return (
     <Virtualizer
-      layout={layout}>
+      layout={ListLayout}
+      layoutOptions={{
+        rowHeight: 50,
+        padding: 4,
+        loaderHeight: 30
+      }}>
       <ListBox
         {...args}
         style={{
-          height: args.orientation === 'horizontal' ? 'fit-content' : 400,
-          width: args.orientation === 'horizontal' ? 400 : 100,
+          height: 400,
+          width: 100,
           border: '1px solid gray',
           background: 'lightgray',
           overflow: 'auto',
@@ -634,21 +580,8 @@ export const AsyncListBoxVirtualized = (args) => {
             </MyListBoxItem>
           )}
         </Collection>
-        {/* TODO: figure out why in horizontal oriention, adding this makes every items loaded have index 0, messing up layout */}
-        <MyListBoxLoaderIndicator orientation={args.orientation} isLoading={list.isLoading} onLoadMore={list.loadMore} />
+        <MyListBoxLoaderIndicator isLoading={list.isLoading} onLoadMore={list.loadMore} />
       </ListBox>
     </Virtualizer>
   );
-};
-
-AsyncListBoxVirtualized.story = {
-  args: {
-    orientation: 'horizontal'
-  },
-  argTypes: {
-    orientation: {
-      control: 'radio',
-      options: ['horizontal', 'vertical']
-    }
-  }
 };

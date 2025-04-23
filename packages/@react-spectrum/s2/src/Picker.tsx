@@ -50,7 +50,8 @@ import {
   listbox,
   listboxHeader,
   listboxHeading,
-  listboxItem
+  listboxItem,
+  LOADER_ROW_HEIGHTS
 } from './ComboBox';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {
@@ -74,6 +75,7 @@ import React, {createContext, forwardRef, ReactNode, useContext, useRef, useStat
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useGlobalListeners, useSlotId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface PickerStyleProps {
@@ -361,6 +363,7 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
       </>
     );
   }
+  let scale = useScale();
 
   return (
     <AriaSelect
@@ -464,12 +467,13 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                   layoutOptions={{
                     estimatedRowHeight: 32,
                     estimatedHeadingHeight: 50,
-                    padding: 8
+                    padding: 8,
+                    loaderHeight: LOADER_ROW_HEIGHTS[size][scale]
                   }}>
                   <ListBox
                     items={items}
                     className={listbox({size})}>
-                    {children}
+                    {renderer}
                   </ListBox>
                 </Virtualizer>
               </Provider>

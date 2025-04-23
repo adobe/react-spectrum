@@ -345,7 +345,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     let rect = new Rect(x, y, this.padding, 0);
     let layoutInfo = new LayoutInfo('loader', node.key, rect);
     rect.width = this.virtualizer!.contentSize.width - this.padding - x;
-    rect.height = this.loaderHeight ?? this.rowHeight ?? this.estimatedRowHeight ?? DEFAULT_HEIGHT;
+    rect.height = node.props.isLoading ? this.loaderHeight ?? this.rowHeight ?? this.estimatedRowHeight ?? DEFAULT_HEIGHT : 0;
 
     return {
       layoutInfo,

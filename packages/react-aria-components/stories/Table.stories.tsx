@@ -897,7 +897,7 @@ const OnLoadMoreTableVirtualized = () => {
       layoutOptions={{
         rowHeight: 25,
         headingHeight: 25,
-        loaderHeight: list.isLoading ? 30 : 0
+        loaderHeight: 30
       }}>
       <Table aria-label="Load more table virtualized" style={{height: 150, width: 400, overflow: 'auto'}}>
         <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>
@@ -956,7 +956,7 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
         layoutOptions={{
           rowHeight: 25,
           headingHeight: 25,
-          loaderHeight: list.isLoading ? 30 : 0
+          loaderHeight: 30
         }}>
         <Table aria-label="Load more table virtualized">
           <TableHeader style={{background: 'var(--spectrum-gray-100)', width: '100%', height: '100%'}}>

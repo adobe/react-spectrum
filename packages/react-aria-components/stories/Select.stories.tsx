@@ -149,7 +149,12 @@ export const AsyncVirtualizedCollectionRenderSelect = () => {
         <OverlayArrow>
           <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
         </OverlayArrow>
-        <Virtualizer layout={new ListLayout({rowHeight: 25, loaderHeight: list.isLoading ? 25 : 0})}>
+        <Virtualizer
+          layout={ListLayout}
+          layoutOptions={{
+            rowHeight: 25,
+            loaderHeight: 30
+          }}>
           <ListBox className={styles.menu}>
             <Collection items={list.items}>
               {item => (

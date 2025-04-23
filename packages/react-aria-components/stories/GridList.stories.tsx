@@ -285,12 +285,15 @@ export const AsyncGridListVirtualized = () => {
     }
   });
 
+  // TODO: this story also exhibits how the layout is reserving height for the loadingMore spinner row when perform initial load
+  // even though we only want renderEmptyState to be rendering at that time. The story itself will look fine as is however due to how I've absolutedly
+  // positioned the renderEmptyState loading spinner...
   return (
     <Virtualizer
       layout={ListLayout}
       layoutOptions={{
         rowHeight: 25,
-        loaderHeight: list.isLoading ? 30 : 0
+        loaderHeight: 30
       }}>
       <GridList
         className={styles.menu}

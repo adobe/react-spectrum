@@ -65,6 +65,7 @@ import {pressScale} from './pressScale';
 import {ProgressCircle} from './ProgressCircle';
 import {TextFieldRef} from '@react-types/textfield';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useScale} from './utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
 export interface ComboboxStyleProps {
@@ -182,6 +183,14 @@ const progressCircleStyles = style({
 });
 
 const emptyStateText = style({
+  height: {
+    size: {
+      S: 24,
+      M: 32,
+      L: 40,
+      XL: 48
+    }
+  },
   font: {
     size: {
       S: 'ui-sm',
@@ -309,6 +318,26 @@ const separatorWrapper = style({
   },
   height: 12
 });
+
+// Not from any design, just following the sizing of the existing rows
+export const LOADER_ROW_HEIGHTS = {
+  S: {
+    medium: 24,
+    large: 30
+  },
+  M: {
+    medium: 32,
+    large: 40
+  },
+  L: {
+    medium: 40,
+    large: 50
+  },
+  XL: {
+    medium: 48,
+    large: 60
+  }
+};
 
 let InternalComboboxContext = createContext<{size: 'S' | 'M' | 'L' | 'XL'}>({size: 'M'});
 
@@ -530,7 +559,12 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
   let renderer;
   let listBoxLoadingCircle = (
     <UNSTABLE_ListBoxLoadingSentinel
-      isLoading={loadingState === 'loading' || loadingState === 'filtering' || loadingState === 'loadingMore'}
+      // TODO: we only want the listbox loading sentinel row to have a height when performing a loadingMore
+      // Unlike table, this works because the listbox's initial load isn't triggerd by the sentintel and thus the first
+      // observation occurs when we've already loaded our first set of items rather than starting from empty, therefor flipping
+      // isLoading here from true to false and triggering the creation of a new InterserctionObserver
+      // isLoading={loadingState === 'loading' || loadingState === 'filtering' || loadingState === 'loadingMore'}
+      isLoading={loadingState === 'loadingMore'}
       onLoadMore={onLoadMore}
       className={loadingWrapperStyles}>
       {loadingState === 'loadingMore' && (
@@ -563,6 +597,9 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
       </>
     );
   }
+
+  let isEmptyOrLoading = state?.collection?.size === 0 || (state?.collection.size === 1 && state.collection.getItem(state.collection.getFirstKey()!)!.type === 'loader');
+  let scale = useScale();
 
   return (
     <>
@@ -659,8 +696,12 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
               layout={ListLayout}
               layoutOptions={{
                 estimatedRowHeight: 32,
-                padding: 8,
-                estimatedHeadingHeight: 50
+                // TODO: can we get rid of this and instead handle padding else where other than the layout options? Kinda gross that we need to do this check.
+                // Perhaps can consider only applying padding if the collection actually has content since the renderEmptyState content is outside the virtualizer
+                // Otherwise could consider moving renderEmptyState into the collection...
+                padding: isEmptyOrLoading ? 0 : 8,
+                estimatedHeadingHeight: 50,
+                loaderHeight: LOADER_ROW_HEIGHTS[size][scale]
               }}>
               <ListBox
                 renderEmptyState={() => (
