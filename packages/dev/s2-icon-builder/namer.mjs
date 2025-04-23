@@ -5,8 +5,8 @@ export default new Namer({
   name({bundle}) {
     let mainAsset = bundle.getMainEntry();
     if (bundle.needsStableName && bundle.target.distEntry) {
-       console.log(bundle.target.distEntry);
-       return false;
+      console.log(bundle.target.distEntry);
+      return false;
     }
     let ext = '.' + bundle.type;
     if (bundle.type === 'js') {

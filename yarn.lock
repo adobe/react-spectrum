@@ -7922,6 +7922,7 @@ __metadata:
     "@parcel/core": "npm:^2.14.0"
     "@parcel/namer-default": "npm:^2.14.0"
     "@parcel/packager-raw": "npm:^2.14.0"
+    "@parcel/plugin": "npm:^2.14.0"
     "@parcel/reporter-cli": "npm:^2.14.0"
     "@parcel/resolver-default": "npm:^2.14.0"
     "@parcel/transformer-raw": "npm:^2.14.0"

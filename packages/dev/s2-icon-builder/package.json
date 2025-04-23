@@ -15,6 +15,7 @@
     "@parcel/core": "^2.14.0",
     "@parcel/namer-default": "^2.14.0",
     "@parcel/packager-raw": "^2.14.0",
+    "@parcel/plugin": "^2.14.0",
     "@parcel/reporter-cli": "^2.14.0",
     "@parcel/resolver-default": "^2.14.0",
     "@parcel/transformer-raw": "^2.14.0",
