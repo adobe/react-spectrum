@@ -112,95 +112,105 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(props: 
     }
   }));
 
-  if (isMinimized) {
-    return (
-      <ActionButton
-        styles={style({marginStart: '[10px]'})}
-        aria-label={typeof label === 'string' ? label : props['aria-label'] || 'Search'}
-        size={props.size}
-        isQuiet
-        isDisabled={props.isDisabled}
-        onPress={() => setIsMinimized(false)}>
-        <SearchIcon />
-      </ActionButton>
-    );
-  }
-
   return (
-    <AriaSearchField
-      {...mergeProps(searchFieldProps, focusProps)}
-      ref={domRef}
-      style={UNSAFE_style}
-      className={UNSAFE_className + style({
-        ...field(),
-        '--iconMargin': {
-          type: 'marginTop',
-          value: fontRelative(-2)
-        },
-        color: {
-          default: 'neutral',
-          isDisabled: {
-            default: 'disabled',
-            forcedColors: 'GrayText'
+    <>
+      {isMinimized && (
+        <ActionButton
+          styles={style({marginStart: '[10px]', position: 'absolute'})}
+          UNSAFE_style={{
+            top: 0,
+            left: 0
+          }}
+          aria-label={typeof label === 'string' ? label : props['aria-label'] || 'Search'}
+          size={props.size}
+          isQuiet
+          isDisabled={props.isDisabled}
+          onPress={() => setIsMinimized(false)}>
+          <SearchIcon />
+        </ActionButton>
+      )}
+      <AriaSearchField
+        {...mergeProps(searchFieldProps, focusProps)}
+        ref={domRef}
+        style={UNSAFE_style}
+        className={UNSAFE_className + style({
+          ...field(),
+          '--iconMargin': {
+            type: 'marginTop',
+            value: fontRelative(-2)
+          },
+          color: {
+            default: 'neutral',
+            isDisabled: {
+              default: 'disabled',
+              forcedColors: 'GrayText'
+            }
           }
-        }
-      }, getAllowedOverrides())({
-        size: props.size,
-        labelPosition,
-        isInForm: !!formContext
-      }, props.styles)}>
-      {({isDisabled, isInvalid, isEmpty}) => (<>
-        {label && <FieldLabel
-          isDisabled={isDisabled}
-          isRequired={props.isRequired}
-          size={props.size}
-          labelPosition={labelPosition}
-          labelAlign={labelAlign}
-          necessityIndicator={necessityIndicator}
-          contextualHelp={props.contextualHelp}>
-          {label}
-        </FieldLabel>}
-        <FieldGroup
-          isDisabled={isDisabled}
-          size={props.size}
-          styles={style({
-            borderRadius: 'full',
-            paddingStart: 'pill',
-            paddingEnd: 0
-          })}>
-          <Provider
-            values={[
-              [IconContext, {
-                render: centerBaseline({
-                  slot: 'icon',
+        }, getAllowedOverrides())({
+          size: props.size,
+          labelPosition,
+          isInForm: !!formContext
+        }, props.styles)}>
+        {({isDisabled, isInvalid, isEmpty}) => (<>
+          {label && <FieldLabel
+            isDisabled={isDisabled}
+            isRequired={props.isRequired}
+            size={props.size}
+            labelPosition={labelPosition}
+            labelAlign={labelAlign}
+            necessityIndicator={necessityIndicator}
+            contextualHelp={props.contextualHelp}>
+            {label}
+          </FieldLabel>}
+          <FieldGroup
+            isDisabled={isDisabled}
+            size={props.size}
+            UNSAFE_style={{
+              transition: 'width 200ms ease, opacity 200ms ease',
+              width: isMinimized ? 0 : '100%',
+              opacity: isMinimized ? 0 : 1,
+              visibility: isMinimized ? 'hidden' : 'visible'
+            }}
+            styles={style({
+              borderRadius: 'full',
+              paddingStart: 'pill',
+              paddingEnd: 0
+            })}>
+            <Provider
+              values={[
+                [IconContext, {
+                  render: centerBaseline({
+                    slot: 'icon',
+                    styles: style({
+                      flexShrink: 0,
+                      marginEnd: 'text-to-visual',
+                      '--iconPrimary': {
+                        type: 'fill',
+                        value: 'currentColor'
+                      }
+                    })
+                  }),
                   styles: style({
-                    flexShrink: 0,
-                    marginEnd: 'text-to-visual',
-                    '--iconPrimary': {
-                      type: 'fill',
-                      value: 'currentColor'
-                    }
+                    size: fontRelative(20),
+                    marginStart: '--iconMargin',
+                    opacity: 1
                   })
-                }),
-                styles: style({
-                  size: fontRelative(20),
-                  marginStart: '--iconMargin'
-                })
-              }]
-            ]}>
-            <SearchIcon />
-          </Provider>
-          <Input ref={inputRef} UNSAFE_className={raw('&::-webkit-search-cancel-button { display: none }')} />
-          {!isEmpty && !searchFieldProps.isReadOnly && <ClearButton size={props.size} />}
-        </FieldGroup>
-        <HelpText
-          size={props.size}
-          isDisabled={isDisabled}
-          isInvalid={isInvalid}
-          description={description}>
-          {errorMessage}
-        </HelpText>
-      </>)}
-    </AriaSearchField>
+                }]
+              ]}>
+              <SearchIcon />
+            </Provider>
+            <Input ref={inputRef} UNSAFE_className={raw('&::-webkit-search-cancel-button { display: none }')} />
+            {!isEmpty && !searchFieldProps.isReadOnly && <ClearButton size={props.size} />}
+          </FieldGroup>
+          <HelpText
+            size={props.size}
+            isDisabled={isDisabled}
+            isInvalid={isInvalid}
+            description={description}>
+            {errorMessage}
+          </HelpText>
+        </>)}
+      </AriaSearchField>
+    </>
   );
 });

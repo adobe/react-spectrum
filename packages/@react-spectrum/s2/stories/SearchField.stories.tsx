@@ -88,7 +88,7 @@ export const Minimized = {
   },
   decorators: [
     (Story) => (
-      <div style={{width: '200px'}}>
+      <div style={{width: '200px', position: 'relative'}}>
         <Story />
       </div>
     )

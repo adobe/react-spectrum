@@ -193,10 +193,11 @@ const fieldGroupStyles = style({
 });
 
 export const FieldGroup = forwardRef(function FieldGroup(props: FieldGroupProps, ref: ForwardedRef<HTMLDivElement>) {
+  let {UNSAFE_style, ...rest} = props;
   return (
     <Group
       ref={ref}
-      {...props}
+      {...rest}
       onPointerDown={(e) => {
         // Forward focus to input element when clicking on a non-interactive child (e.g. icon or padding)
         if (e.pointerType === 'mouse' && !(e.target as Element).closest('button,input,textarea')) {
@@ -210,7 +211,7 @@ export const FieldGroup = forwardRef(function FieldGroup(props: FieldGroupProps,
           e.currentTarget.querySelector('input')?.focus();
         }
       }}
-      style={props.UNSAFE_style}
+      style={UNSAFE_style}
       className={renderProps => (props.UNSAFE_className || '') + ' ' + centerBaselineBefore + mergeStyles(
         fieldGroupStyles({...renderProps, size: props.size || 'M'}),
         props.styles
