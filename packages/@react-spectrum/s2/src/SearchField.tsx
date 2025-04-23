@@ -51,7 +51,11 @@ export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className'
    */
   defaultMinimized?: boolean,
   /** Handler that is called when the minimized state changes. */
-  onMinimizeChange?: (isMinimized: boolean) => void
+  onMinimizeChange?: (isMinimized: boolean) => void,
+  /** The duration of the transition animation (for testing only). */
+  transitionDuration?: number,
+  /** The timing function of the transition animation (for testing only). */
+  transitionTimingFunction?: string
 }
 
 export const SearchFieldContext = createContext<ContextValue<Partial<SearchFieldProps>, TextFieldRef>>(null);
@@ -166,7 +170,7 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(props: 
             isDisabled={isDisabled}
             size={props.size}
             UNSAFE_style={{
-              transition: 'width 200ms ease, opacity 200ms ease',
+              transition: `width ${props.transitionDuration || 200}ms ${props.transitionTimingFunction || 'ease'}, opacity ${props.transitionDuration || 200}ms ${props.transitionTimingFunction || 'ease'}`,
               width: isMinimized ? 0 : '100%',
               opacity: isMinimized ? 0 : 1,
               visibility: isMinimized ? 'hidden' : 'visible'

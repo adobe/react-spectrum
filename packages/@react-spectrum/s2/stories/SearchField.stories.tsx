@@ -30,7 +30,15 @@ const meta: Meta<typeof SearchField> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    ...categorizeArgTypes('Events', ['onChange', 'onClear', 'onSubmit'])
+    ...categorizeArgTypes('Events', ['onChange', 'onClear', 'onSubmit']),
+    transitionDuration: {
+      control: 'number',
+      defaultValue: 200
+    },
+    transitionTimingFunction: {
+      control: 'select',
+      options: ['ease', 'ease-in', 'ease-out', 'ease-in-out', 'linear']
+    }
   },
   title: 'SearchField'
 };
