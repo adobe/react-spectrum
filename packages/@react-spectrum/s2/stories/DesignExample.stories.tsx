@@ -10,12 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButton, Button, ButtonGroup, Card, CardView, Collection, Content, DialogTrigger, Divider, Footer, FullscreenDialog, Heading, Link, Meter, NumberField, Picker, PickerItem, SearchField, StatusLight, Tab, TabList, TabPanel, Tabs, Tag, TagGroup, Text, ToggleButton} from '../src';
+import Add from '../s2wf-icons/S2_Icon_Add_20_N.svg';
+import AlertTriangle from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
 import Binoculars from '../s2wf-icons/S2_Icon_Binoculars_20_N.svg';
-import {Button, ButtonGroup, Card, CardView, Collection, Content, DialogTrigger, Divider, Footer, FullscreenDialog, Heading, NumberField, Picker, PickerItem, SearchField, Tag, TagGroup, Text, ToggleButton} from '../src';
+import ChevronDown from '../s2wf-icons/S2_Icon_ChevronDown_20_N.svg';
+import ChevronLeft from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
+import ChevronUp from '../s2wf-icons/S2_Icon_ChevronUp_20_N.svg';
+import Comment from '../s2wf-icons/S2_Icon_Comment_20_N.svg';
+import ConversionActualGraph from '../stories/assets/ConversionGraph.svg';
+import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
+import Legend from '../stories/assets/Legend.svg';
+import Lightbulb from '../s2wf-icons/S2_Icon_Lightbulb_20_N.svg';
+import {linearGradient} from '../style' with {type: 'macro'};
+import LinkIcon from '../s2wf-icons/S2_Icon_Link_20_N.svg';
+import More from '../s2wf-icons/S2_Icon_More_20_N.svg';
+import Play from '../s2wf-icons/S2_Icon_Play_20_N.svg';
 import Properties from '../s2wf-icons/S2_Icon_Properties_20_N.svg';
 import SortDown from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
+import Star from '../s2wf-icons/S2_Icon_Star_20_N.svg';
 import StarFilled from '../s2wf-icons/S2_Icon_StarFilled_20_N.svg';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import TargetAudience from '../stories/assets/TargetAudiences.svg';
 import {useNumberFormatter} from 'react-aria';
 import ViewGrid from '../s2wf-icons/S2_Icon_ViewGrid_20_N.svg';
 
@@ -203,5 +219,209 @@ export const ProjectVistaDialog = () => {
         )}
       </FullscreenDialog>
     </DialogTrigger>
+  );
+};
+
+const outerContainer = style({
+  backgroundImage: linearGradient('to bottom right', ['cyan-900', 0], ['seafoam-400', 5], ['gray-100', 10]),
+  width: '[1400px]',
+  height: '[1000px]'
+});
+
+const background = style({
+  backgroundColor: 'gray-25',
+  font: 'ui',
+  position: 'absolute',
+  width: '[1350px]',
+  height: '[1350px]',
+  borderRadius: 'lg',
+  marginTop: 32,
+  marginStart: 32,
+  paddingBottom: 32
+});
+
+const panel = style({
+  backgroundColor: 'gray-50',
+  borderRadius: 'lg',
+  marginTop: 32,
+  marginEnd: 32,
+  padding: 12,
+  display: 'flex',
+  gap: 12,
+  flexDirection: 'column'
+});
+
+function MeasureHeading() {
+  return (
+    <div className={style({display: 'flex', alignItems: 'center', justifyContent: 'space-between'})}>
+      <div className={style({font: 'title-lg'})}>Measurement-2024-03-01 13:06:23</div>
+      <Button variant="accent"><Binoculars /><Text>View full report</Text></Button>
+    </div>
+  );
+}
+
+function CampaignInfo() {
+  return (
+    <div className={style({display: 'flex', gap: 12})}>
+      <StatusLight variant="positive">Active</StatusLight>
+      <Divider orientation="vertical" size="S" />
+      <div className={style({display: 'flex', gap: 2})}>Campaign names:<div className={style({font: 'title-sm'})}>120507081 Acme summer '24, 130456012 Acme winter '23</div></div>
+      <Divider orientation="vertical" size="S" />
+      <div>Campaign date range: 01/15/2024 - 06/14/2024</div>
+    </div>
+  );
+}
+
+function CampaignPerformance() {
+  return (
+    <div>
+      <div className={style({display: 'flex', alignItems: 'center', gap: 8, paddingBottom: 12})}>
+        <Star />
+        <div className={style({font: 'title'})}>Campaign performance by AI assistant</div>
+        <Button size="S" staticColor="black"><Comment /><Text>Ask for a follow-up</Text></Button>
+      </div>
+      <div className={style({display: 'flex', gap: 4, flexDirection: 'column'})}>
+        <div className={style({display: 'flex', alignItems: 'center', gap: 8})}><AlertTriangle />Your ad completion rate is below the range of 75% to 95% <ActionButton size="S"><LinkIcon /><Text>View details</Text></ActionButton></div>
+        <div className={style({display: 'flex', alignItems: 'center', gap: 8})}><AlertTriangle />Your ad conversion rate is low and total conversion decreases 2.5% in last 7 days<ActionButton size="S"><LinkIcon /><Text>View details</Text></ActionButton></div>
+        <div className={style({display: 'flex', alignItems: 'center', gap: 8})}><AlertTriangle />Sports Fans audience reach increases 5.5% in last 7 days <ActionButton size="S"><LinkIcon /><Text>View details</Text></ActionButton></div>
+      </div>
+    </div>
+  );
+}
+
+function RecommendedActions() {
+  return (
+    <div className={style({backgroundColor: 'gray-25', padding: 12, borderRadius: 'lg'})}>
+      <div className={style({display: 'flex', alignItems: 'center', gap: 8, paddingBottom: 12})}><Lightbulb /><div className={style({font: 'title'})}>Recommended actions</div><Button size="S"><Comment /><Text>Review with AI Assistant</Text></Button></div>
+      <div className={style({display: 'flex', flexDirection: 'column', gap: 8})}>
+        <div><span className={style({font: 'title-sm'})}>Lengthy creative:</span> Viewers might find the ad too long to hold their attention. Recommend decreasing the length</div>
+        <div><span className={style({font: 'title-sm'})}>Target audience:</span> Utilize the <Link>"Olympic Viewers"</Link> audience of TVtube to increase conversions</div>
+      </div>
+    </div>
+  );
+}
+
+function ImpressionCard() {
+  return (
+    <div className={style({display: 'flex', justifyContent: 'space-around', backgroundColor: 'gray-25', borderWidth: 2, borderColor: 'gray-100', borderStyle: 'solid', borderRadius: 'lg', padding: 12})}>
+      <div>
+        <div className={style({paddingBottom: 8})}>Total impression</div>
+        <div className={style({font: 'title-2xl'})}>4.2M</div>
+        <div className={style({display: 'flex', alignItems: 'center'})}><ChevronUp />2.5%</div>
+      </div>
+      <div>
+        <div className={style({paddingBottom: 8})}>Ad completion rate</div>
+        <Meter variant="negative" value={45} label="45%" />
+      </div>
+    </div>
+  );
+}
+
+function ConversionCard() {
+  return (
+    <div className={style({display: 'flex', justifyContent: 'space-around', backgroundColor: 'gray-25', borderWidth: 2, borderColor: 'gray-100', borderStyle: 'solid', borderRadius: 'lg', paddingY: 12})}>
+      <div>
+        <div className={style({paddingBottom: 8})}>Total conversions</div>
+        <div className={style({font: 'title-2xl'})}>245K</div>
+        <div className={style({display: 'flex', alignItems: 'center'})}><ChevronDown />2.5%</div>
+      </div>
+      <div>
+        <div className={style({paddingBottom: 8})}>Conversion rate</div>
+        <Meter variant="negative" value={0.5} label="0.5%" />
+      </div>
+    </div>
+  );
+}
+
+function AudienceChart() {
+  return (
+    <div className={style({display: 'flex', flexDirection: 'column', backgroundColor: 'gray-25', borderWidth: 2, borderColor: 'gray-100', borderStyle: 'solid', borderRadius: 'lg', paddingY: 12, paddingX: 24, gap: 8})}>
+      <Legend />
+      <TargetAudience />
+    </div>
+  );
+}
+
+function ConversionGraph() {
+  return (
+    <div className={style({display: 'flex', flexDirection: 'column', backgroundColor: 'gray-25', borderWidth: 2, borderColor: 'gray-100', borderStyle: 'solid', borderRadius: 'lg', paddingY: 32, paddingX: 24, gap: 8})}>
+      <div className={style({font: 'title'})}>Conversion</div>
+      <ConversionActualGraph />
+    </div>
+  );
+}
+
+function AgoraDesign(props) {
+  return (
+    // @ts-ignore
+    <div className={outerContainer}>
+      <div {...props} className={background}>
+        <div className={style({marginTop: 32, marginStart: 32})}>
+          <div className={style({display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24})}>
+            <div className={style({display: 'flex', alignItems: 'center'})}>
+              <ActionButton size="M" aria-label="Go back"><ChevronLeft /></ActionButton>
+              <div className={style({font: 'heading-lg', paddingX: 12})}>May '24 Spring Sale</div>
+              <Button fillStyle="outline" variant="secondary" size="S" UNSAFE_style={{borderWidth: 0}}><Play /><Text>TVtube</Text></Button>
+            </div>
+            <div className={style({display: 'flex', alignItems: 'center', marginEnd: 12, gap: 8})}>
+              <Button fillStyle="outline" variant="secondary"><More /></Button>
+              <Button fillStyle="outline" variant="secondary"><Edit /></Button>
+              <Button ><Add /></Button>
+            </div>
+          </div>
+          <div>
+            <Tabs aria-label="Agora Workspace" density="compact" selectedKey={'measure'}>
+              <TabList>
+                <Tab id="project">Project overview</Tab>
+                <Tab id="discover">Discover</Tab>
+                <Tab id="share">Share</Tab>
+                <Tab id="measure">Measure</Tab>
+              </TabList>
+              <TabPanel id="project">
+                <div>Hi project</div>
+              </TabPanel>
+              <TabPanel id="discover">
+                <div>Hi project</div>
+              </TabPanel>
+              <TabPanel id="share">
+                <div>Hi project</div>
+              </TabPanel>
+              <TabPanel id="measure">
+                <div className={panel}>
+                  <div className={style({display: 'flex', flexDirection: 'column', gap: 12})}>
+                    <MeasureHeading />
+                    <div className={style({display: 'flex', flexDirection: 'column', gap: 12, marginStart: 8})}>
+                      <CampaignInfo />
+                      <Divider orientation="horizontal" />
+                      <div className={style({display: 'flex', borderWidth: 2, borderRadius: 'lg', borderStyle: 'solid', borderColor: 'gray-100', padding: 12, gap: 8, justifyContent: 'space-between'})}>
+                        <CampaignPerformance />
+                        <RecommendedActions />
+                      </div>
+                      <div className={style({font: 'title', marginStart: 8, marginTop: 12})}>Summary insights</div>
+                      <div className={style({display: 'flex', gap: 24})}>
+                        <div className={style({display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: 12})}>
+                          <ImpressionCard />
+                          <ConversionCard />
+                          <AudienceChart />
+                        </div>
+                        <div>
+                          <ConversionGraph />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </TabPanel>
+            </Tabs>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export const Measurements = () => {
+  return (
+    <AgoraDesign />
   );
 };
