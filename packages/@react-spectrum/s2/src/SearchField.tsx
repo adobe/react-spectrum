@@ -32,6 +32,7 @@ import {raw} from '../style/style-macro' with {type: 'macro'};
 import SearchIcon from '../s2wf-icons/S2_Icon_Search_20_N.svg';
 import {TextFieldRef} from '@react-types/textfield';
 import {useControlledState} from '@react-stately/utils';
+import {useEnterAnimation, useExitAnimation} from '@react-aria/utils';
 import {useFocus} from '@react-aria/interactions';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
@@ -80,20 +81,29 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(props: 
 
   let [isMinimized, setIsMinimized] = useControlledState(isMinimizedProp, defaultMinimized, onMinimizeChange);
 
-  let domRef = useRef<HTMLDivElement>(null);
+  let searchFieldRef = useRef<HTMLDivElement>(null);
+  let actionButtonRef = useRef<HTMLButtonElement>(null);
+  let containerRef = useRef<HTMLDivElement>(null);
+
+  let showSearchField = !isMinimized;
+  let showActionButton = isMinimized;
+  let isSearchFieldExiting = useExitAnimation(searchFieldRef, showSearchField);
+  let isActionButtonExiting = useExitAnimation(actionButtonRef, showActionButton);
+  let isSearchFieldEntering = useEnterAnimation(searchFieldRef, showSearchField);
+  let isActionButtonEntering = useEnterAnimation(actionButtonRef, showActionButton);
+
   let inputRef = useRef<HTMLInputElement>(null);
 
-  // Focus the input when the field is expanded.
   useEffect(() => {
-    if (!isMinimized && inputRef.current) {
+    if (showSearchField && !isSearchFieldEntering && !isSearchFieldExiting && inputRef.current) {
       inputRef.current.focus();
     }
-  }, [isMinimized]);
+  }, [showSearchField, isSearchFieldEntering, isSearchFieldExiting]);
 
   let {focusProps} = useFocus({
-    onBlur: () => {
+    onBlur: (e) => {
       // Minimize the field when it loses focus and is empty (if minimization is enabled)
-      if ((isMinimizedProp !== undefined || defaultMinimized) && inputRef.current?.value === '') {
+      if ((isMinimizedProp !== undefined || defaultMinimized) && inputRef.current?.value === '' && !containerRef.current?.contains(e.relatedTarget as Element)) {
         setIsMinimized(true);
       }
     }
@@ -101,7 +111,7 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(props: 
 
   // Expose imperative interface for ref
   useImperativeHandle(ref, () => ({
-    ...createFocusableRef(domRef, inputRef),
+    ...createFocusableRef(searchFieldRef, inputRef),
     select() {
       if (inputRef.current) {
         inputRef.current.select();
@@ -112,95 +122,161 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(props: 
     }
   }));
 
-  if (isMinimized) {
-    return (
-      <ActionButton
-        styles={style({marginStart: '[10px]'})}
-        aria-label={typeof label === 'string' ? label : props['aria-label'] || 'Search'}
-        size={props.size}
-        isQuiet
-        isDisabled={props.isDisabled}
-        onPress={() => setIsMinimized(false)}>
-        <SearchIcon />
-      </ActionButton>
-    );
-  }
+  const searchFieldStyles = style({
+    ...field(),
+    '--iconMargin': {
+      type: 'marginTop',
+      value: fontRelative(-2)
+    },
+    color: {
+      default: 'neutral',
+      isDisabled: {
+        default: 'disabled',
+        forcedColors: 'GrayText'
+      }
+    },
+    width: {
+      default: 200,
+      isEntering: 0,
+      isExiting: 0
+    },
+    minWidth: {
+      default: 200,
+      isEntering: 0,
+      isExiting: 0
+    },
+    opacity: {
+      default: 1,
+      isEntering: 0,
+      isExiting: 0
+    },
+    overflow: 'hidden',
+    transition: '[width, opacity, min-width]',
+    transitionDuration: 200,
+    transitionTimingFunction: 'in-out',
+    verticalAlign: 'middle'
+  }, getAllowedOverrides());
+
+  const actionButtonStyles = style({
+    position: {
+      isEntering: 'absolute',
+      isExitingSearchField: 'absolute',
+      default: 'relative'
+    },
+    top: {
+      isEntering: 0,
+      isExitingSearchField: 0
+    },
+    left: {
+      isEntering: 0,
+      isExitingSearchField: 0
+    },
+    marginStart: {
+      default: 12,
+      isEntering: 0,
+      isExitingSearchField: 0
+    },
+    opacity: {
+      default: 1,
+      isEntering: 0,
+      isExiting: 0
+    },
+    transition: '[opacity, scale]',
+    transitionDuration: 200,
+    transitionTimingFunction: 'in-out',
+    verticalAlign: 'middle'
+  }, getAllowedOverrides());
+
+  const isSearchFieldExitingForButton = !showSearchField && isSearchFieldExiting;
 
   return (
-    <AriaSearchField
-      {...mergeProps(searchFieldProps, focusProps)}
-      ref={domRef}
-      style={UNSAFE_style}
-      className={UNSAFE_className + style({
-        ...field(),
-        '--iconMargin': {
-          type: 'marginTop',
-          value: fontRelative(-2)
-        },
-        color: {
-          default: 'neutral',
-          isDisabled: {
-            default: 'disabled',
-            forcedColors: 'GrayText'
-          }
-        }
-      }, getAllowedOverrides())({
-        size: props.size,
-        labelPosition,
-        isInForm: !!formContext
-      }, props.styles)}>
-      {({isDisabled, isInvalid, isEmpty}) => (<>
-        {label && <FieldLabel
-          isDisabled={isDisabled}
-          isRequired={props.isRequired}
+    <div ref={containerRef} className={style({display: 'inline-flex', position: 'relative', verticalAlign: 'middle'})}>
+      {(showActionButton || isActionButtonExiting) && (
+        <ActionButton
+          ref={actionButtonRef as Ref<any>}
+          styles={actionButtonStyles({
+            isEntering: isActionButtonEntering,
+            isExiting: isActionButtonExiting,
+            isExitingSearchField: isSearchFieldExitingForButton
+          }) as any}
+          aria-label={typeof label === 'string' ? label : props['aria-label'] || 'Search'}
           size={props.size}
-          labelPosition={labelPosition}
-          labelAlign={labelAlign}
-          necessityIndicator={necessityIndicator}
-          contextualHelp={props.contextualHelp}>
-          {label}
-        </FieldLabel>}
-        <FieldGroup
-          isDisabled={isDisabled}
-          size={props.size}
-          styles={style({
-            borderRadius: 'full',
-            paddingStart: 'pill',
-            paddingEnd: 0
-          })}>
-          <Provider
-            values={[
-              [IconContext, {
-                render: centerBaseline({
-                  slot: 'icon',
-                  styles: style({
-                    flexShrink: 0,
-                    marginEnd: 'text-to-visual',
-                    '--iconPrimary': {
-                      type: 'fill',
-                      value: 'currentColor'
-                    }
-                  })
-                }),
-                styles: style({
-                  size: fontRelative(20),
-                  marginStart: '--iconMargin'
-                })
-              }]
-            ]}>
-            <SearchIcon />
-          </Provider>
-          <Input ref={inputRef} UNSAFE_className={raw('&::-webkit-search-cancel-button { display: none }')} />
-          {!isEmpty && !searchFieldProps.isReadOnly && <ClearButton size={props.size} />}
-        </FieldGroup>
-        <HelpText
-          size={props.size}
-          isDisabled={isDisabled}
-          isInvalid={isInvalid}
-          description={description}>
-          {errorMessage}
-        </HelpText>
-      </>)}
-    </AriaSearchField>
+          isQuiet
+          isDisabled={props.isDisabled}
+          onPress={() => setIsMinimized(false)}>
+          <SearchIcon />
+        </ActionButton>
+      )}
+
+      {(showSearchField || isSearchFieldExiting) && (
+        <AriaSearchField
+          {...mergeProps(searchFieldProps, focusProps)}
+          ref={searchFieldRef}
+          style={UNSAFE_style}
+          className={UNSAFE_className + searchFieldStyles({
+            size: props.size,
+            labelPosition,
+            isInForm: !!formContext,
+            isEntering: isSearchFieldEntering,
+            isExiting: isSearchFieldExiting
+          }, props.styles)}
+          isDisabled={props.isDisabled}>
+          {({isDisabled: racIsDisabled, isInvalid, isEmpty}) => (<>
+            {label && <FieldLabel
+              isDisabled={racIsDisabled}
+              isRequired={props.isRequired}
+              size={props.size}
+              labelPosition={labelPosition}
+              labelAlign={labelAlign}
+              necessityIndicator={necessityIndicator}
+              contextualHelp={props.contextualHelp}>
+              {label}
+            </FieldLabel>}
+            <FieldGroup
+              isDisabled={racIsDisabled}
+              size={props.size}
+              styles={style({
+                borderRadius: 'full',
+                paddingStart: 'pill',
+                paddingEnd: 0,
+                minWidth: 0,
+                margin: 4
+              })}>
+              <Provider
+                values={[
+                  [IconContext, {
+                    render: centerBaseline({
+                      slot: 'icon',
+                      styles: style({
+                        flexShrink: 0,
+                        marginEnd: 'text-to-visual',
+                        '--iconPrimary': {
+                          type: 'fill',
+                          value: 'currentColor'
+                        }
+                      })
+                    }),
+                    styles: style({
+                      size: fontRelative(20),
+                      marginStart: '--iconMargin'
+                    })
+                  }]
+                ]}>
+                <SearchIcon />
+              </Provider>
+              <Input ref={inputRef} UNSAFE_className={raw('&::-webkit-search-cancel-button { display: none }')} styles={style({width: 'full', minWidth: 0})} />
+              {!isEmpty && !searchFieldProps.isReadOnly && <ClearButton size={props.size} isDisabled={racIsDisabled} />}
+            </FieldGroup>
+            <HelpText
+              size={props.size}
+              isDisabled={racIsDisabled}
+              isInvalid={isInvalid}
+              description={description}>
+              {errorMessage}
+            </HelpText>
+          </>)}
+        </AriaSearchField>
+      )}
+    </div>
   );
 });

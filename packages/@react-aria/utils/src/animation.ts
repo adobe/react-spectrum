@@ -15,7 +15,12 @@ import {RefObject, useCallback, useState} from 'react';
 import {useLayoutEffect} from './useLayoutEffect';
 
 export function useEnterAnimation(ref: RefObject<HTMLElement | null>, isReady: boolean = true): boolean {
-  let [isEntering, setEntering] = useState(true);
+  let [isEntering, setEntering] = useState(isReady);
+  useLayoutEffect(() => {
+    if (isReady) {
+      setEntering(true);
+    }
+  }, [isReady]);
   let isAnimationReady = isEntering && isReady;
 
   // There are two cases for entry animations:
