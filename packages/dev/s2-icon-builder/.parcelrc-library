@@ -1,0 +1,21 @@
+{
+  "namers": ["@react-spectrum/parcel-namer-s2", "@parcel/namer-default"],
+  "bundler": "@parcel/bundler-library",
+  "transformers": {
+    "illustration:*.svg": ["@react-spectrum/parcel-transformer-s2-icon"],
+    "*.svg": ["@react-spectrum/parcel-transformer-s2-icon"],
+    "*.{js,mjs,jsm,jsx,es6,cjs,ts,tsx}": [
+      "@parcel/transformer-js",
+      "@parcel/transformer-react-refresh-wrap"
+    ],
+  },
+  "packagers": {
+    "*": "@parcel/packager-raw"
+  },
+  "reporters": ["@parcel/reporter-cli"],
+  "resolvers": ["@parcel/resolver-default"],
+  "optimizers": {},
+  "compressors": {
+    "*": ["@parcel/compressor-raw"]
+  }
+}
