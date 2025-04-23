@@ -7926,6 +7926,8 @@ __metadata:
     "@parcel/resolver-default": "npm:^2.14.0"
     "@parcel/transformer-raw": "npm:^2.14.0"
     "@react-spectrum/parcel-transformer-s2-icon": "npm:^0.2.1"
+    "@swc/helpers": "npm:^0.5.0"
+    typescript: "npm:^5.5.0"
   bin:
     transform-icons: index.js
   languageName: unknown
