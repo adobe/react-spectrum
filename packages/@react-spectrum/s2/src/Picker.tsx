@@ -24,12 +24,14 @@ import {
   ListBoxItem,
   ListBoxItemProps,
   ListBoxProps,
+  ListLayout,
   Provider,
   SectionProps,
   SelectRenderProps,
   SelectStateContext,
   SelectValue,
-  UNSTABLE_ListBoxLoadingSentinel
+  UNSTABLE_ListBoxLoadingSentinel,
+  Virtualizer
 } from 'react-aria-components';
 import {AsyncLoadable, FocusableRef, FocusableRefValue, HelpTextProps, PressEvent, SpectrumLabelableProps} from '@react-types/shared';
 import {baseColor, edgeToText, focusRing, style} from '../style' with {type: 'macro'};
@@ -37,17 +39,19 @@ import {centerBaseline} from './CenterBaseline';
 import {
   checkmark,
   description,
-  Divider,
   icon,
   iconCenterWrapper,
-  label,
-  menuitem,
-  section,
-  sectionHeader,
-  sectionHeading
+  label
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
+import {
+  Divider,
+  listbox,
+  listboxHeader,
+  listboxHeading,
+  listboxItem
+} from './ComboBox';
 import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {
   FieldErrorIcon,
@@ -447,19 +451,27 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
               })(props)}>
               <Provider
                 values={[
-                  [HeaderContext, {styles: sectionHeader({size})}],
-                  [HeadingContext, {styles: sectionHeading}],
+                  [HeaderContext, {styles: listboxHeader({size})}],
+                  [HeadingContext, {styles: listboxHeading}],
                   [TextContext, {
                     slots: {
                       description: {styles: description({size})}
                     }
                   }]
                 ]}>
-                <ListBox
-                  items={items}
-                  className={menu({size})}>
-                  {renderer}
-                </ListBox>
+                <Virtualizer
+                  layout={ListLayout}
+                  layoutOptions={{
+                    estimatedRowHeight: 32,
+                    estimatedHeadingHeight: 50,
+                    padding: 8
+                  }}>
+                  <ListBox
+                    items={items}
+                    className={listbox({size})}>
+                    {children}
+                  </ListBox>
+                </Virtualizer>
               </Provider>
             </PopoverBase>
           </InternalPickerContext.Provider>
@@ -490,7 +502,7 @@ export function PickerItem(props: PickerItemProps): ReactNode {
       ref={ref}
       textValue={props.textValue || (typeof props.children === 'string' ? props.children as string : undefined)}
       style={pressScale(ref, props.UNSAFE_style)}
-      className={renderProps => (props.UNSAFE_className || '') + menuitem({...renderProps, size, isLink}, props.styles)}>
+      className={renderProps => (props.UNSAFE_className || '') + listboxItem({...renderProps, size, isLink}, props.styles)}>
       {(renderProps) => {
         let {children} = props;
         return (
@@ -533,11 +545,10 @@ export function PickerSection<T extends object>(props: PickerSectionProps<T>): R
   return (
     <>
       <AriaListBoxSection
-        {...props}
-        className={section({size})}>
+        {...props}>
         {props.children}
       </AriaListBoxSection>
-      <Divider />
+      <Divider size={size} />
     </>
   );
 }

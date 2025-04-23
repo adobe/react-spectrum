@@ -319,6 +319,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     let layoutNode = this.buildNode(node, x, y);
 
     layoutNode.layoutInfo.parentKey = parentKey ?? null;
+    layoutNode.layoutInfo.allowOverflow = true;
     this.layoutNodes.set(node.key, layoutNode);
     return layoutNode;
   }
@@ -333,6 +334,8 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
         return this.buildSectionHeader(node, x, y);
       case 'loader':
         return this.buildLoader(node, x, y);
+      case 'separator':
+        return this.buildItem(node, x, y);
       default:
         throw new Error('Unsupported node type: ' + node.type);
     }
