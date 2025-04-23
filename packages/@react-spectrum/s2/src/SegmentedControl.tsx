@@ -170,7 +170,7 @@ export const SegmentedControl = /*#__PURE__*/ forwardRef(function SegmentedContr
     if (currentSelectedRef.current) {
       prevRef.current = currentSelectedRef?.current.getBoundingClientRect();
     }
-    
+
     if (onSelectionChange) {
       onSelectionChange(values.values().next().value);
     }
@@ -211,7 +211,7 @@ function DefaultSelectionTracker(props: DefaultSelectionTrackProps) {
     <Provider
       values={[
         [InternalSegmentedControlContext, {register: register, prevRef: props.prevRef, currentSelectedRef: props.currentSelectedRef, isJustified: props.isJustified}]
-      ]}> 
+      ]}>
       {props.children}
     </Provider>
   );
@@ -263,7 +263,7 @@ export const SegmentedControlItem = /*#__PURE__*/ forwardRef(function SegmentedC
       {({isSelected, isPressed, isDisabled}) => (
         <>
           {isSelected && <div className={slider({isDisabled})} ref={currentSelectedRef} />}
-          <Provider 
+          <Provider
             values={[
               [IconContext, {
                 render: centerBaseline({slot: 'icon', styles: style({order: 0, flexShrink: 0})})
