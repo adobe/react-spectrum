@@ -7,7 +7,6 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "bin": {
-    "prepare-icons": "prepare-icons.js",
     "transform-icons": "index.js"
   },
   "dependencies": {
@@ -32,6 +31,7 @@
   },
   "files": [
     "index.js",
+    "prepare-icons.js",
     "namer.mjs",
     ".parcelrc",
     ".parcelrc-library"
