@@ -303,6 +303,7 @@ const margin = {
 
 const inset = {
   ...baseSpacing,
+  ...negativeSpacing,
   auto: 'auto',
   full: '100%'
 };
