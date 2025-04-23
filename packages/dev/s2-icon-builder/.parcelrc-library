@@ -7,7 +7,7 @@
     "*.{js,mjs,jsm,jsx,es6,cjs,ts,tsx}": [
       "@parcel/transformer-js",
       "@parcel/transformer-react-refresh-wrap"
-    ],
+    ]
   },
   "packagers": {
     "*": "@parcel/packager-raw"
