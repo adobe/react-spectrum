@@ -342,10 +342,15 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
   }
 
   protected buildLoader(node: Node<T>, x: number, y: number): LayoutNode {
+    let collection = this.virtualizer!.collection;
+    let isEmptyOrLoading = collection?.size === 0 || (collection.size === 1 && collection.getItem(collection.getFirstKey()!)!.type === 'loader');
     let rect = new Rect(x, y, this.padding, 0);
     let layoutInfo = new LayoutInfo('loader', node.key, rect);
     rect.width = this.virtualizer!.contentSize.width - this.padding - x;
-    rect.height = node.props.isLoading ? this.loaderHeight ?? this.rowHeight ?? this.estimatedRowHeight ?? DEFAULT_HEIGHT : 0;
+    // TODO: Kinda gross but we also have to differentiate between isLoading and isLoadingMore so that we dont' reserve room
+    // for the loadMore loader row when we are performing initial load. Is this too opinionated? Note that users creating their own layouts
+    // may need to perform similar logic
+    rect.height = node.props.isLoading && !isEmptyOrLoading ? this.loaderHeight ?? this.rowHeight ?? this.estimatedRowHeight ?? DEFAULT_HEIGHT : 0;
 
     return {
       layoutInfo,

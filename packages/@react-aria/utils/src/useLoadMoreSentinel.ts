@@ -49,6 +49,8 @@ export function useLoadMoreSentinel(props: LoadMoreSentinelProps, ref: RefObject
       // we are getting space reserved for the loadMore spinner when doing initial loading and rendering empty state at the same time. We can somewhat fix this by providing isLoading={loadingState === 'loadingMore'}
       // which will mean the layout won't reserve space for the loader for initial loads, but that breaks the load more behavior (specifically, auto load more to fill scrollOffset. Scroll to load more seems broken to after initial load).
       // We need to tear down and set up a new IntersectionObserver to force a check if the sentinel is "in view", see  https://codesandbox.io/p/sandbox/magical-swanson-dhgp89?file=%2Fsrc%2FApp.js%3A21%2C21
+      // I've actually fixed this via a ListLayout change (TableLayout extends this) where I check "collection?.size === 0 || (collection.size === 1 && collection.getItem(collection.getFirstKey()!)!.type === 'loader')"
+      // as well as isLoading, but it feels pretty opinionated/implementation specifc
       sentinelObserver.current = new IntersectionObserver(triggerLoadMore, {root: getScrollParent(ref?.current) as HTMLElement, rootMargin: `0px ${100 * scrollOffset}% ${100 * scrollOffset}% ${100 * scrollOffset}%`});
       sentinelObserver.current.observe(ref.current);
     }
