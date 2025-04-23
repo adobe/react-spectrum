@@ -25,7 +25,7 @@ import intlMessages from '../intl/*.json';
 import NoticeSquare from '../s2wf-icons/S2_Icon_AlertDiamond_20_N.svg';
 import {Provider} from 'react-aria-components';
 import {style} from '../style' with {type: 'macro'};
-import {StyleProps} from './style-utils' with { type: 'macro' };
+import {StyleProps} from './style-utils' with {type: 'macro'};
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface AlertDialogProps extends DOMProps, StyleProps {
