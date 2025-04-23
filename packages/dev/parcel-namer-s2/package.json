@@ -1,5 +1,5 @@
 {
-  "name": "@react-spectrum/parcel-namer-s2",
+  "name": "parcel-namer-s2",
   "version": "1.0.0",
   "main": "S2Namer.js",
   "engines": {

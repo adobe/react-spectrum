@@ -10,7 +10,6 @@
     "transform-icons": "index.js"
   },
   "dependencies": {
-    "@react-spectrum/parcel-namer-s2": "^1.0.0",
     "@parcel/bundler-library": "^2.14.0",
     "@parcel/compressor-raw": "^2.14.0",
     "@parcel/core": "^2.14.0",
@@ -25,6 +24,7 @@
   },
   "files": [
     "index.js",
+    "namer.mjs",
     ".parcelrc"
   ],
   "engines": {
