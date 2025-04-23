@@ -68,9 +68,12 @@ export class TableLayout<T, O extends TableLayoutProps = TableLayoutProps> exten
     // If columnWidths were provided via layoutOptions, update those.
     // Otherwise, calculate column widths ourselves.
     if (invalidationContext.layoutOptions?.columnWidths) {
-      if (invalidationContext.layoutOptions.columnWidths !== this.columnWidths) {
-        this.columnWidths = invalidationContext.layoutOptions.columnWidths;
-        invalidationContext.sizeChanged = true;
+      for (const [key, val] of invalidationContext.layoutOptions.columnWidths) {
+        if (this.columnWidths.get(key) !== val) {
+          this.columnWidths = invalidationContext.layoutOptions.columnWidths;
+          invalidationContext.sizeChanged = true;
+          break;
+        }
       }
     } else if (invalidationContext.sizeChanged || this.columnsChanged(newCollection, this.lastCollection)) {
       let columnLayout = new TableColumnLayout({});
