@@ -7931,17 +7931,17 @@ __metadata:
     "@react-spectrum/parcel-transformer-s2-icon": "npm:^0.2.1"
     "@swc/helpers": "npm:^0.5.0"
     glob: "npm:^8.0.3"
-    typescript: "npm:^5.5.0"
   peerDependencies:
     "@react-spectrum/s2": ">=0.8.0"
     react: ^18.0.0 || ^19.0.0-rc.1
     react-dom: ^18.0.0 || ^19.0.0-rc.1
+    typescript: ^5.5.0
   bin:
     transform-icons: index.js
   languageName: unknown
   linkType: soft
 
-"@react-spectrum/s2@npm:0.8.0, @react-spectrum/s2@npm:^0.8.0, @react-spectrum/s2@workspace:packages/@react-spectrum/s2":
+"@react-spectrum/s2@npm:^0.8.0, @react-spectrum/s2@workspace:packages/@react-spectrum/s2":
   version: 0.0.0-use.local
   resolution: "@react-spectrum/s2@workspace:packages/@react-spectrum/s2"
   dependencies:
@@ -29560,7 +29560,7 @@ __metadata:
     "@parcel/transformer-inline-string": "npm:^2.14.0"
     "@parcel/transformer-svg-react": "npm:^2.14.0"
     "@parcel/transformer-typescript-types": "npm:^2.14.0"
-    "@react-spectrum/s2": "npm:0.8.0"
+    "@react-spectrum/s2": "npm:^0.8.0"
     "@react-spectrum/s2-icon-builder": "npm:^0.2.0"
     "@spectrum-css/component-builder": "npm:1.0.1"
     "@spectrum-css/vars": "npm:^2.3.0"
