@@ -23,7 +23,7 @@
     "@parcel/transformer-react-refresh-wrap": "^2.14.0",
     "@react-spectrum/parcel-transformer-s2-icon": "^0.2.1",
     "@swc/helpers": "^0.5.0",
-    "glob": "^10.0.0",
+    "glob": "^8.0.3",
     "typescript": "^5.5.0"
   },
   "peerDependencies": {
