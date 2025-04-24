@@ -789,7 +789,7 @@ export const style = createTheme({
         ':lang(ja, ko, zh, zh-Hant, zh-Hans)': getToken('code-cjk-line-height')
       }
     },
-    listStyleType: ['none', 'dist', 'decimal'] as const,
+    listStyleType: ['none', 'disc', 'decimal'] as const,
     listStylePosition: ['inside', 'outside'] as const,
     textTransform: ['uppercase', 'lowercase', 'capitalize', 'none'] as const,
     textAlign: ['start', 'center', 'end', 'justify'] as const,
