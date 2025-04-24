@@ -107,9 +107,7 @@ function CollectionRoot({collection, persistedKeys, scrollRef, renderDropIndicat
   }
 
   return (
-    // TODO: temporarily hack styling so the load more sentinel is properly positioned
-    // (aka we need the virtualizer content wrapper to take its full height/width if its is in a flex parent)
-    <div {...contentProps} style={{...contentProps.style, flex: 'none'}}>
+    <div {...contentProps}>
       <VirtualizerContext.Provider value={state}>
         {renderChildren(null, state.visibleViews, renderDropIndicator)}
       </VirtualizerContext.Provider>
