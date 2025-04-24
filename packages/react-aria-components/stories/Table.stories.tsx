@@ -844,9 +844,6 @@ function VirtualizedTableWithEmptyState(args) {
           </TableHeader>
           <MyTableBody
             isLoading={args.isLoading}
-            // TODO: Note that this renderEmptyLoader call will never be called since the loading sentinel is always in the collection
-            // That means the user is expected to render the proper empty state via the sentinel I guess but currently I make it not render the children
-            // if loading is false
             renderEmptyState={() => renderEmptyLoader({isLoading: !args.showRows && args.isLoading})}
             rows={!args.showRows ? [] : rows}>
             {(item) => (

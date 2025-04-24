@@ -10,7 +10,7 @@ import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Mu
 import {DragAndDropContext, DropIndicatorContext, DropIndicatorProps, useDndPersistedKeys, useRenderDropIndicator} from './DragAndDrop';
 import {DragAndDropHooks} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
-import {filterDOMProps, inertValue, isScrollable, LoadMoreSentinelProps, mergeRefs, useLayoutEffect, useLoadMoreSentinel, useObjectRef, useResizeObserver} from '@react-aria/utils';
+import {filterDOMProps, inertValue, isScrollable, LoadMoreSentinelProps, mergeRefs, UNSTABLE_useLoadMoreSentinel, useLayoutEffect, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -1366,7 +1366,7 @@ export const UNSTABLE_TableLoadingSentinel = createLeafComponent('loader', funct
     sentinelRef,
     scrollOffset
   }), [isLoading, onLoadMore, scrollOffset, state?.collection]);
-  useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
+  UNSTABLE_useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
 
   let renderProps = useRenderProps({
     ...otherProps,
@@ -1391,7 +1391,6 @@ export const UNSTABLE_TableLoadingSentinel = createLeafComponent('loader', funct
 
   return (
     <>
-      {/* TODO: Alway render the sentinel. Might need to style it as visually hidden? */}
       {/* TODO weird structure? Renders a extra row but we hide via inert so maybe ok? */}
       {/* @ts-ignore - compatibility with React < 19 */}
       <TR style={{position: 'relative', width: 0, height: 0}} inert={inertValue(true)} >

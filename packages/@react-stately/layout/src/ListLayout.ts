@@ -279,11 +279,6 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
 
         // Always add the loader sentinel if present. This assumes the loader is the last option/row
         // will need to refactor when handling multi section loading
-        // TODO: One issue here is that after new items are loaded, the scroll position "resets" so the the bottom of the scroll body is flush with the bottom of the item that
-        // was just before the loader, presumabally because the loader collapses to 0 height? Bit annoying since
-        // prior to the changes in this commit it would replace the loader's node with the newly loaded item node, aka preserving the scroll position.
-        // However that had an issue with adding too much space at the bottom of the list when you exhausted your api's full set of items due to an errornous calculation being made
-        // Note that this only an issue with virtualized versions of ListBox and TableView
         if (lastNode?.type === 'loader' && nodes.at(-1)?.layoutInfo.type !== 'loader') {
           let loader = this.buildChild(lastNode, this.padding, y, null);
           nodes.push(loader);
@@ -347,7 +342,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     let rect = new Rect(x, y, this.padding, 0);
     let layoutInfo = new LayoutInfo('loader', node.key, rect);
     rect.width = this.virtualizer!.contentSize.width - this.padding - x;
-    // TODO: Kinda gross but we also have to differentiate between isLoading and isLoadingMore so that we dont' reserve room
+    // TODO: Kinda gross but we also have to differentiate between isLoading and isLoadingMore so that we dont'reserve room
     // for the loadMore loader row when we are performing initial load. Is this too opinionated? Note that users creating their own layouts
     // may need to perform similar logic
     rect.height = node.props.isLoading && !isEmptyOrLoading ? this.loaderHeight ?? this.rowHeight ?? this.estimatedRowHeight ?? DEFAULT_HEIGHT : 0;

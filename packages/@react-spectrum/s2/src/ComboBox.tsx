@@ -440,7 +440,7 @@ export function ComboBoxSection<T extends object>(props: ComboBoxSectionProps<T>
 }
 
 // TODO: not quite sure why typescript is complaining when I types this as T extends object
-const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any> & {isOpen: boolean}, ref: ForwardedRef<TextFieldRef | null>) {
+const ComboboxInner = forwardRef(function ComboboxInner<T extends object>(props: ComboBoxProps<T> & {isOpen: boolean}, ref: ForwardedRef<TextFieldRef | null>) {
   let {
     direction = 'bottom',
     align = 'start',
@@ -563,7 +563,6 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
       // Unlike table, this works because the listbox's initial load isn't triggerd by the sentintel and thus the first
       // observation occurs when we've already loaded our first set of items rather than starting from empty, therefor flipping
       // isLoading here from true to false and triggering the creation of a new InterserctionObserver
-      // isLoading={loadingState === 'loading' || loadingState === 'filtering' || loadingState === 'loadingMore'}
       isLoading={loadingState === 'loadingMore'}
       onLoadMore={onLoadMore}
       className={loadingWrapperStyles}>

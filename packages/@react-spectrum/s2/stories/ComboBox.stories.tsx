@@ -253,7 +253,33 @@ export const AsyncComboBoxStory  = {
     ...Example.args,
     label: 'Star Wars Character Lookup'
   },
-  name: 'Async loading combobox'
+  name: 'Async loading combobox',
+  parameters: {
+    docs: {
+      source: {
+        transform: () => {
+          return `
+let list = useAsyncList({
+  async load({signal, cursor, filterText}) {
+    // API call here
+    ...
+  }
+});
+
+return (
+  <ComboBox
+    items={list.items}
+    inputValue={list.filterText}
+    onInputChange={list.setFilterText}
+    loadingState={list.loadingState}
+    onLoadMore={list.loadMore}>
+    {(item: Character) => <ComboBoxItem id={item.name} textValue={item.name}>{item.name}</ComboBoxItem>}
+  </ComboBox>
+);`;
+        }
+      }
+    }
+  }
 };
 
 export const EmptyCombobox = {

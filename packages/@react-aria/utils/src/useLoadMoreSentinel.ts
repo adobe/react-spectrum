@@ -28,7 +28,7 @@ export interface LoadMoreSentinelProps extends AsyncLoadable {
   // TODO: Maybe include a scrollRef option so the user can provide the scrollParent to compare against instead of having us look it up
 }
 
-export function useLoadMoreSentinel(props: LoadMoreSentinelProps, ref: RefObject<HTMLElement | null>): void {
+export function UNSTABLE_useLoadMoreSentinel(props: LoadMoreSentinelProps, ref: RefObject<HTMLElement | null>): void {
   let {isLoading, onLoadMore, scrollOffset = 1} = props;
 
   let sentinelObserver = useRef<IntersectionObserver>(null);

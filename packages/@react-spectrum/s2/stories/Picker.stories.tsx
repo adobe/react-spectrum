@@ -262,5 +262,29 @@ export const AsyncPickerStory  = {
   args: {
     ...Example.args
   },
-  name: 'Async loading picker'
+  name: 'Async loading picker',
+  parameters: {
+    docs: {
+      source: {
+        transform: () => {
+          return `
+let list = useAsyncList({
+  async load({signal, cursor}) {
+    // API call here
+    ...
+  }
+});
+
+return (
+  <Picker
+    isLoading={list.isLoading}
+    onLoadMore={list.loadMore}
+    items={list.items}>
+    {item => <PickerItem id={item.name} textValue={item.name}>{item.name}</PickerItem>}
+  </Picker>
+);`;
+        }
+      }
+    }
+  }
 };
