@@ -439,8 +439,7 @@ export function ComboBoxSection<T extends object>(props: ComboBoxSectionProps<T>
   );
 }
 
-// TODO: not quite sure why typescript is complaining when I types this as T extends object
-const ComboboxInner = forwardRef(function ComboboxInner<T extends object>(props: ComboBoxProps<T> & {isOpen: boolean}, ref: ForwardedRef<TextFieldRef | null>) {
+const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any> & {isOpen: boolean}, ref: ForwardedRef<TextFieldRef | null>) {
   let {
     direction = 'bottom',
     align = 'start',
