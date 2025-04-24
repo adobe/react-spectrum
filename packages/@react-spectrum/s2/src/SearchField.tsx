@@ -118,21 +118,21 @@ export const SearchField = /*#__PURE__*/ forwardRef(function SearchField(props: 
 
   return (
     <>
-      {isMinimized && (
-        <ActionButton
-          styles={style({marginStart: '[10px]', position: 'absolute'})}
-          UNSAFE_style={{
-            top: 0,
-            left: 0
-          }}
-          aria-label={typeof label === 'string' ? label : props['aria-label'] || 'Search'}
-          size={props.size}
-          isQuiet
-          isDisabled={props.isDisabled}
-          onPress={() => setIsMinimized(false)}>
-          <SearchIcon />
-        </ActionButton>
-      )}
+      <ActionButton
+        styles={style({marginStart: '[10px]', position: 'absolute'})}
+        UNSAFE_style={{
+          top: 0,
+          left: 0,
+          visibility: isMinimized ? 'visible' : 'hidden',
+          transition: `visibility ${props.transitionDuration || 200}ms ${props.transitionTimingFunction || 'ease'}`
+        }}
+        aria-label={typeof label === 'string' ? label : props['aria-label'] || 'Search'}
+        size={props.size}
+        isQuiet
+        isDisabled={props.isDisabled}
+        onPress={() => setIsMinimized(false)}>
+        <SearchIcon />
+      </ActionButton>
       <AriaSearchField
         {...mergeProps(searchFieldProps, focusProps)}
         ref={domRef}
