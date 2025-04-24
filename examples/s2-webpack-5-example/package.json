@@ -9,12 +9,12 @@
     "build": "webpack --mode production"
   },
   "dependencies": {
+    "@swc/helpers": "^0.5.0",
     "@react-spectrum/s2": "latest",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@swc/helpers": "^0.5.0",
     "css-loader": "^6.10.0",
     "css-minimizer-webpack-plugin": "^7.0.0",
     "html-webpack-plugin": "^5.6.0",
