@@ -169,27 +169,13 @@ const baseSpacing = generateSpacing([
   // From here onward the values are mostly spaced by 1rem (16px)
   64, // spacing-800
   80, // spacing-900
-  96, // spacing-1000
-  // TODO: should these only be available as sizes rather than spacing?
-  112,
-  128,
-  144,
-  160,
-  176,
-  192,
-  208,
-  224,
-  240,
-  256,
-  288,
-  320,
-  384
+  96 // spacing-1000
 ] as const);
 
 // This should match the above, but negative. There's no way to negate a number
 // type in typescript so this has to be done manually for now.
 const negativeSpacing = generateSpacing([
-  // -2, // spacing-50 !! TODO: should we support this?
+  -2, // spacing-50
   -4, // spacing-75
   -8, // spacing-100
   -12, // spacing-200
@@ -206,21 +192,7 @@ const negativeSpacing = generateSpacing([
   // From here onward the values are mostly spaced by 1rem (16px)
   -64, // spacing-800
   -80, // spacing-900
-  -96, // spacing-1000
-  // TODO: should these only be available as sizes rather than spacing?
-  -112,
-  -128,
-  -144,
-  -160,
-  -176,
-  -192,
-  -208,
-  -224,
-  -240,
-  -256,
-  -288,
-  -320,
-  -384
+  -96 // spacing-1000
 ] as const);
 
 export function fontRelative(this: MacroContext | void, base: number, baseFontSize = 14): string {
@@ -367,12 +339,10 @@ const timingFunction = {
   'in-out': 'cubic-bezier(0.45, 0, 0.4, 1)'
 };
 
-// TODO: do these need tokens or are arbitrary values ok?
 let durationValue = (value: number | string) => typeof value === 'number' ? value + 'ms' : value;
 
 const fontWeightBase = {
   light: '300',
-  // TODO: spectrum calls this "regular" but CSS calls it "normal". We also call other properties "default". What do we want to match?
   normal: '400',
   medium: '500',
   bold: '700',
@@ -655,11 +625,10 @@ export const style = createTheme({
 
     // dimensions
     borderSpacing: baseSpacing, // TODO: separate x and y
-    flexBasis: {
+    flexBasis: createSpectrumSizingProperty('flexBasis', {
       auto: 'auto',
-      full: '100%',
-      ...baseSpacing
-    },
+      full: '100%'
+    }),
     rowGap: spacing,
     columnGap: spacing,
     height: createSpectrumSizingProperty('height', height),
@@ -902,35 +871,6 @@ export const style = createTheme({
     tableLayout: ['auto', 'fixed'] as const,
     captionSide: ['top', 'bottom'] as const,
     borderCollapse: ['collapse', 'separate'] as const,
-    columns: {
-      auto: 'auto',
-      1: '1',
-      2: '2',
-      3: '3',
-      4: '4',
-      5: '5',
-      6: '6',
-      7: '7',
-      8: '8',
-      9: '9',
-      10: '10',
-      11: '11',
-      12: '12',
-      // TODO: what should these sizes be?
-      '3xs': '16rem',
-      '2xs': '18rem',
-      xs: '20rem',
-      sm: '24rem',
-      md: '28rem',
-      lg: '32rem',
-      xl: '36rem',
-      '2xl': '42rem',
-      '3xl': '48rem',
-      '4xl': '56rem',
-      '5xl': '64rem',
-      '6xl': '72rem',
-      '7xl': '80rem'
-    },
     breakBefore: ['auto', 'avoid', 'all', 'avoid-page', 'page', 'left', 'right', 'column'] as const,
     breakInside: ['auto', 'avoid', 'avoid-page', 'avoid-column'] as const,
     breakAfter: ['auto', 'avoid', 'all', 'avoid-page', 'page', 'left', 'right', 'column'] as const,
@@ -1039,7 +979,6 @@ export const style = createTheme({
     // Windows tablet matches the same as iPhone. No difference when a mouse is connected.
     // Windows touch laptop matches same as macOS: (any-pointer: fine), (pointer: fine), (any-hover: hover), (hover: hover).
     touch: '@media not ((hover: hover) and (pointer: fine))',
-    // TODO
     sm: '@media (min-width: 640px)',
     md: '@media (min-width: 768px)',
     lg: '@media (min-width: 1024px)',
