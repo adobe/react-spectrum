@@ -69,7 +69,7 @@ mkdir icon-library-test/src
 touch icon-library-test/yarn.lock
 cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_3D_20_N.svg src/S2_Icon_3D_20_N.svg
 cd icon-library-test
-yarn install
+yarn install --no-immutable
 yarn transform-icons -i './src/*.svg' -o ./dist --isLibrary
 ls ./dist
 
