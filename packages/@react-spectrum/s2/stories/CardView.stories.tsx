@@ -123,10 +123,10 @@ export const Example = (args: CardViewProps<any>, {viewMode}) => {
   return (
     <CardView
       aria-label="Nature photos"
-      {...args}
       loadingState={loadingState}
       onLoadMore={args.loadingState === 'idle' ? list.loadMore : undefined}
-      styles={cardViewStyles({viewMode})}>
+      styles={cardViewStyles({viewMode})}
+      {...args}>
       <Collection items={items} dependencies={[args.layout]}>
         {item => <PhotoCard item={item} layout={args.layout || 'grid'} />}
       </Collection>

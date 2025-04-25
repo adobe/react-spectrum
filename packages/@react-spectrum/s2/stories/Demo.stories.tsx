@@ -22,7 +22,7 @@ import ChevronDown from '../s2wf-icons/S2_Icon_ChevronDown_20_N.svg';
 import ChevronLeft from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
 import Cloud from '../spectrum-illustrations/linear/Cloud';
 import Community from '../s2wf-icons/S2_Icon_Community_20_N.svg';
-import {container, hstack, iconContainer, vstack} from './macros' with {type: 'macro'};
+import {container, gradientBorder, hstack, iconContainer, vstack} from './macros' with {type: 'macro'};
 import Data from '../s2wf-icons/S2_Icon_Data_20_N.svg';
 import {Disclosure, DisclosureGroup, DisclosurePanel, Button as RACButton, Meter as RACMeter} from 'react-aria-components';
 import {focusRing, linearGradient, style} from '../style' with {type: 'macro'};
@@ -31,6 +31,7 @@ import Grid from '../s2wf-icons/S2_Icon_ViewGrid_20_N.svg';
 import Layout from '../s2wf-icons/S2_Icon_Layout_20_N.svg';
 import Lightbulb from '../s2wf-icons/S2_Icon_Lightbulb_20_N.svg';
 import ListView from '../s2wf-icons/S2_Icon_ViewList_20_N.svg';
+import {mergeStyles} from '../style/runtime';
 import Pencil from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
 import Properties from '../s2wf-icons/S2_Icon_Properties_20_N.svg';
 import Prototyping from '../s2wf-icons/S2_Icon_Prototyping_20_N.svg';
@@ -55,9 +56,27 @@ const meta = {
 
 export default meta;
 
+function Page({children, styles = ''}) {
+  return (
+    <div className={mergeStyles(style({padding: 40, backgroundColor: 'layer-1'}), styles as any)}>
+      {children}
+    </div>
+  );
+}
+
+function AppFrame({children, styles = ''}) {
+  return (
+    <Page>
+      <div className={mergeStyles(style({...container({variant: 'emphasized'}), padding: 40, backgroundColor: 'base', borderRadius: 'xl', height: '[calc(100vh - 80px)]', overflow: 'auto'}), styles as any)}>
+        {children}
+      </div>
+    </Page>
+  );
+}
+
 export function Agora() {
   return (
-    <div className={style({margin: 40, ...container({variant: 'emphasized'}), padding: 40})}>
+    <AppFrame>
       <h1 className={style({font: 'heading-lg', margin: 0, marginBottom: 24})}>Welcome, Devon!</h1>
       <Tabs aria-label="tabs" density="compact">
         <TabList>
@@ -81,7 +100,7 @@ export function Agora() {
           </div>
         </TabPanel>
       </Tabs>
-    </div>
+    </AppFrame>
   );
 }
 
@@ -126,7 +145,7 @@ function ProjectCard() {
       <Image 
         slot="thumbnail"
         src={new URL('assets/placeholder.png', import.meta.url).toString()} />
-      <Content styles={style(vstack(0))}>
+      <Content styles={style(vstack(4))}>
         <Text slot="title">Project name</Text>
         <StatusLight size="S" variant="positive">Active</StatusLight>
         <Text slot="description">The project aims to Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do...</Text>
@@ -162,7 +181,7 @@ function ProjectCard() {
 
 export function Detail() {
   return (
-    <div className={style({margin: 40, ...container({variant: 'emphasized'}), padding: 40})}>
+    <AppFrame>
       <h1 className={style({font: 'heading-lg', margin: 0, marginBottom: 24})}>May ‘24 Spring Sale</h1>
       <Tabs aria-label="tabs" density="compact">
         <TabList>
@@ -291,7 +310,7 @@ export function Detail() {
           </div>
         </TabPanel>
       </Tabs>
-    </div>
+    </AppFrame>
   );
 }
 
@@ -368,14 +387,9 @@ function AudienceCard() {
 
 export function AIChat() {
   return (
-    <div
-      className={style({
-        margin: 40,
-        ...container({variant: 'emphasized'}),
-        borderRadius: 'xl',
+    <AppFrame
+      styles={style({
         padding: 32,
-        height: '[calc(100vh - 80px)]',
-        overflow: 'auto',
         backgroundImage: linearGradient('to bottom', ['transparent', 35.78], ['indigo-200', 89.83])
       }) as any}>
       <div className={style({...hstack(8), alignItems: 'center'})}>
@@ -549,7 +563,7 @@ export function AIChat() {
           </ChatBubble>
         </div>
       </div>
-    </div>
+    </AppFrame>
   );
 }
 
@@ -563,13 +577,9 @@ function GradientBorderButton({children}) {
         borderRadius: 'full',
         paddingX: 'pill',
         height: 40,
+        backgroundColor: 'gray-25',
         font: 'ui',
-        backgroundImage: 'linear-gradient(light-dark(white, black), light-dark(white, black)), linear-gradient(to right, #418285, #B272EB)',
-        backgroundClip: '[padding-box, border-box]',
-        backgroundOrigin: 'border-box',
-        borderWidth: 1,
-        borderStyle: 'solid',
-        borderColor: 'transparent',
+        ...gradientBorder('linear-gradient(to right, #418285, #B272EB)'),
         transition: 'default'
       })}>
       {children}
@@ -613,7 +623,7 @@ const SRC_URL_2 = 'https://i.imgur.com/xIe7Wlb.png';
 export function Canvas() {
   return (
     <div className={style({padding: 40, backgroundColor: 'layer-1', height: '[calc(100vh - 80px)]', ...hstack(16)})}>
-      <div className={style({...container({variant: 'emphasized'}), borderRadius: 'xl', ...vstack(24), padding: 24, flexGrow: 1})}>
+      <div className={style({...container({variant: 'emphasized'}), backgroundColor: 'base', borderRadius: 'xl', ...vstack(24), padding: 24, flexGrow: 1})}>
         <div className={style({...hstack(8), alignItems: 'center'})}>
           <ActionButton aria-label="back">
             <ChevronLeft />
@@ -883,7 +893,7 @@ function RecommendedAction() {
 function Panel({id, title, icon, iconColor, children}) {
   let ref = useRef(null);
   return (
-    <Disclosure id={id} className={style({...container({variant: 'emphasized'}), borderRadius: 'xl'})}>
+    <Disclosure id={id} className={style({...container({variant: 'emphasized'}), backgroundColor: 'base', borderRadius: 'xl'})}>
       {({isExpanded}) => (<>
         <RACButton
           ref={ref}
@@ -906,8 +916,22 @@ function Panel({id, title, icon, iconColor, children}) {
           {/* @ts-ignore */}
           <ChevronDown UNSAFE_className={style({rotate: {isExpanded: 180}, transition: 'default'})({isExpanded})} />
         </RACButton>
-        <DisclosurePanel>
-          <div className={style({...vstack(16), marginTop: 16})}>
+        <DisclosurePanel 
+          className={style({
+            height: {
+              default: 0,
+              isExpanded: 'auto'
+            },
+            transition: '[height,content-visibility]',
+            transitionDuration: 300,
+            overflow: 'clip'
+          })({isExpanded})}
+          style={{
+            // @ts-ignore
+            interpolateSize: 'allow-keywords',
+            transitionBehavior: 'allow-discrete'
+          }}>
+          <div className={style({...vstack(16), paddingTop: 16})}>
             {children}
           </div>
         </DisclosurePanel>

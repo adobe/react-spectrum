@@ -37,9 +37,17 @@ export const container = ({variant = 'default', padding = 16, borderRadius = 'de
     default: ({
       default: 'none',
       emphasized: 'emphasized',
-      border: '[0 0 0 1px #333]'
-    } as const)[variant],
-    forcedColors: '[0 0 0 1px ButtonBorder]'
+      border: 'none'
+    } as const)[variant]
+  },
+  borderStyle: 'solid',
+  borderColor: {
+    default: 'gray-100',
+    forcedColors: 'ButtonBorder'
+  },
+  borderWidth: {
+    default: variant === 'border' ? 1 as const : 0 as const,
+    forcedColors: 1
   },
   padding,
   boxSizing: 'border-box',
@@ -78,9 +86,44 @@ export const iconContainer = <C, I>({color, iconColor, size = 32, shape = 'squar
   size,
   backgroundColor: color,
   borderRadius: shape === 'square' ? 'default' : 'full',
-  color: iconColor || '[lch(from self(backgroundColor) calc((61 - l) * infinity) 0 0)]' as const,
   '--iconPrimary': {
     type: 'fill',
-    value: 'currentColor'
+    value: iconColor || '[lch(from self(backgroundColor) calc((61 - l) * infinity) 0 0)]' as const
   }
 } as const);
+
+export const gradientBorder = (border: string | [LinearGradient], width: 1 | 2 | 4 = 1) => {
+  let stopVars: {[K in `--${string}`]: {type: 'borderColor', value: string}} = {};
+  let grad = '';
+  if (typeof border === 'object') {
+    let i = 0;
+    for (let stop of border[0].stops) {
+      stopVars[`--bg${i++}`] = {
+        type: 'borderColor',
+        value: stop[0]
+      };
+    }
+    grad = `linear-gradient(${border[0].angle}, ${border[0].stops.map(([, stop], i) => `var(--bg${i}) ${stop}%`)})`;
+  } else {
+    grad = border;
+  }
+
+  return {
+    ...stopVars,
+    borderWidth: width,
+    borderStyle: 'solid',
+    borderColor: {
+      default: 'transparent',
+      forcedColors: 'ButtonBorder'
+    },
+    backgroundImage: `linear-gradient(self(backgroundColor), self(backgroundColor)), ${grad}`,
+    backgroundClip: '[padding-box, border-box]',
+    backgroundOrigin: 'border-box'
+  } as const;
+};
+
+interface LinearGradient {
+  type: 'linear-gradient',
+  angle: string,
+  stops: [string, number][]
+}
