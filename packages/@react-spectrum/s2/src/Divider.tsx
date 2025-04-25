@@ -61,6 +61,8 @@ export const divider = style<DividerSpectrumProps & {isStaticColor: boolean}>({
   borderStyle: 'none',
   borderRadius: 'full',
   margin: 0,
+  flexGrow: 0,
+  flexShrink: 0,
   height: {
     orientation: {
       horizontal: {

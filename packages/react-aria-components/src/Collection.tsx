@@ -102,7 +102,9 @@ export const SectionContext = createContext<SectionContextValue | null>(null);
 /** @deprecated */
 export const Section = /*#__PURE__*/ createBranchComponent('section', <T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>, section: Node<T>): JSX.Element => {
   let {name, render} = useContext(SectionContext)!;
-  console.warn(`<Section> is deprecated. Please use <${name}> instead.`);
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn(`<Section> is deprecated. Please use <${name}> instead.`);
+  }
   return render(props, ref, section, 'react-aria-Section');
 });
 

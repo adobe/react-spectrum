@@ -182,6 +182,71 @@ function Example() {
 }
 ```
 
+### Custom calendar systems
+
+`DateRangePicker` also supports custom calendar systems that implement custom business rules. An example would be a fiscal year calendar that follows a [4-5-4 format](https://nrf.com/resources/4-5-4-calendar), where month ranges don't follow the usual Gregorian calendar. This prop is used when displaying the range calendar popover component.
+
+The `createCalendar` prop accepts a function that returns an instance of the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.Calendar} /> interface. See the docs in [@internationalized/date](../internationalized/date/Calendar.html#custom-calendars) for an example implementation.
+
+```tsx import
+import type {AnyCalendarDate} from '@internationalized/date';
+import {CalendarDate, startOfWeek, toCalendar} from '@internationalized/date';
+```
+
+```tsx example
+import {GregorianCalendar} from '@internationalized/date';
+
+function Example() {
+  return <DateRangePicker createCalendar={() => new Custom454()} />;
+}
+
+class Custom454 extends GregorianCalendar {
+  // See @internationalized/date docs linked above...
+  ///- begin collapse -///
+  weekPattern = [4, 5, 4, 4, 5, 4, 4, 5, 4, 4, 5, 4];
+  getDaysInMonth(date) {
+    return this.weekPattern[date.month - 1] * 7;
+  }
+
+  fromJulianDay(jd: number): CalendarDate {
+    let gregorian = super.fromJulianDay(jd);
+
+    let monthStart = startOfWeek(new CalendarDate(gregorian.year, 1, 1), 'en');
+    for (let months = 0; months < this.weekPattern.length; months++) {
+      let weeksInMonth = this.weekPattern[months];
+      let monthEnd = monthStart.add({weeks: weeksInMonth});
+      if (monthEnd.compare(gregorian) > 0) {
+        let days = gregorian.compare(monthStart);
+        return new CalendarDate(this, monthStart.year, months + 1, days + 1);
+      }
+      monthStart = monthEnd;
+    }
+
+    throw Error('Date is not in any month somehow!');
+  }
+
+  toJulianDay(date: AnyCalendarDate): number {
+    let monthStart = startOfWeek(new CalendarDate(date.year, 1, 1), 'en');
+    for (let month = 1; month < date.month; month++) {
+      monthStart = monthStart.add({weeks: this.weekPattern[month - 1]});
+    }
+
+    let gregorian = monthStart.add({days: date.day - 1});
+    return super.toJulianDay(gregorian);
+  }
+
+  getFormattableMonth(date) {
+    let gregorian = toCalendar(date, new GregorianCalendar());
+    return gregorian.set({month: date.month, day: 1});
+  }
+
+  isEqual(other) {
+    return other instanceof Custom454;
+  }
+ ///- end collapse -///
+}
+```
+
 ### HTML forms
 
 DateRangePicker supports the `startName` and `endName` props for integration with HTML forms. The values will be submitted to the server as [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted strings according to the granularity of the value. For example, if the date range picker allows selecting only dates then strings such as `"2023-02-03"` will be submitted, and if it allows selecting times then strings such as `"2023-02-03T08:45:00"` will be submitted. See the [Value](#value) section above for more details about the supported value types.
