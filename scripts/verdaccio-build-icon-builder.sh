@@ -36,6 +36,7 @@ cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_3D_20_N.svg icon-test/S2
 npx @react-spectrum/s2-icon-builder -i ./icon-test/S2_Icon_3D_20_N.svg -o ./icon-dist
 
 mkdir icon-library-test
+touch icon-library-test/package.json
 cat > icon-library-test/package.json << EOF
 {
   "name": "icon-library-test",
