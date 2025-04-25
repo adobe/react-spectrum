@@ -967,7 +967,8 @@ export const style = createTheme({
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     disableTapHighlight: createArbitraryProperty((_value: true) => ({
       '-webkit-tap-highlight-color': 'rgba(0,0,0,0)'
-    }))
+    })),
+    unicodeBidi: ['normal', 'embed', 'bidi-override', 'isolate', 'isolate-override', 'plaintext'] as const
   },
   shorthands: {
     padding: ['paddingTop', 'paddingBottom', 'paddingStart', 'paddingEnd'] as const,
