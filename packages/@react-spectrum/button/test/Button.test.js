@@ -365,12 +365,12 @@ describe('Button', function () {
 
   it('associates button with form with form id', () => {
     let {getByRole} = render(
-      <>
+      <Provider theme={defaultTheme}>
         <Form id="testForm">
           <Checkbox>An Input</Checkbox>
         </Form>
         <Button form="testForm">Submit</Button>
-      </>
+      </Provider>
     );
 
     let button = getByRole('button');
