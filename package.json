@@ -113,6 +113,7 @@
     "@storybook/addon-themes": "^7.6.19",
     "@storybook/api": "^7.6.19",
     "@storybook/components": "^7.6.19",
+    "@storybook/jest": "^0.2.3",
     "@storybook/manager-api": "^7.6.19",
     "@storybook/preview": "^7.6.19",
     "@storybook/preview-api": "^7.6.19",
