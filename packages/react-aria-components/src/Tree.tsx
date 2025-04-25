@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTreeItemOptions, AriaTreeProps, DraggableItemResult, DropIndicatorProps, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing,  useGridListSelectionCheckbox, useHover, useLocale, useTree, useTreeItem} from 'react-aria';
+import {AriaTreeItemOptions, AriaTreeProps, DraggableItemResult, DropIndicatorAria, DropIndicatorProps, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing,  useGridListSelectionCheckbox, useHover, useLocale, useTree, useTreeItem, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
@@ -260,6 +260,10 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
       {
         keyboardDelegate,
         dropTargetDelegate,
+        shouldAcceptItemDrop: (target) => {
+          let item = state.collection.getItem(target.key);
+          return item?.hasChildNodes ?? false;
+        },
         onDropActivate: (e) => {
           // Expand collapsed item when dragging over
           if (e.target.type === 'item') {
@@ -514,13 +518,17 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
     draggableItem = dragAndDropHooks.useDraggableItem!({key: item.key, hasDragButton: true}, dragState);
   }
 
-  let droppableItem: DroppableItemResult | null = null;
+  let dropIndicator: DropIndicatorAria | undefined = undefined;
+  let dropIndicatorRef = useRef<HTMLDivElement>(null);
+  let {visuallyHiddenProps} = useVisuallyHidden();
   if (dropState && dragAndDropHooks) {
-    droppableItem = dragAndDropHooks.useDroppableItem!({target: {type: 'item', key: item.key, dropPosition: 'on'}}, dropState, ref);
+    dropIndicator = dragAndDropHooks.useDropIndicator!({
+      target: {type: 'item', key: item.key, dropPosition: 'on'}
+    }, dropState, dropIndicatorRef);
   }
 
+
   let isDragging = dragState && dragState.isDragging(item.key);
-  let isDropTarget = droppableItem?.isDropTarget;
 
   let selectionMode = state.selectionManager.selectionMode;
   let selectionBehavior = state.selectionManager.selectionBehavior;
@@ -538,8 +546,8 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
     id: item.key,
     allowsDragging: !!dragState,
     isDragging,
-    isDropTarget
-  }), [states, isHovered, isFocusVisible, state.selectionManager, isExpanded, hasChildItems, level, isFocusVisibleWithin, state, item.key, dragState, isDragging, isDropTarget, selectionBehavior, selectionMode]);
+    isDropTarget: dropIndicator?.isDropTarget
+  }), [states, isHovered, isFocusVisible, isExpanded, hasChildItems, level, selectionMode, selectionBehavior, isFocusVisibleWithin, state, item.key, dragState, isDragging, dropIndicator?.isDropTarget]);
 
   let renderProps = useRenderProps({
     ...props,
@@ -570,7 +578,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
   let dragButtonRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (dragState && !dragButtonRef.current && process.env.NODE_ENV !== 'production') {
-      console.warn('Draggable items in a Table must contain a <Button slot="drag"> element so that keyboard and screen reader users can drag them.');
+      console.warn('Draggable items in a Tree must contain a <Button slot="drag"> element so that keyboard and screen reader users can drag them.');
     }
   // eslint-disable-next-line
   }, []);
@@ -595,6 +603,13 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
 
   return (
     <>
+      {dropIndicator && !dropIndicator.isHidden && (
+        <div role="row" style={{height: 0}}>
+          <div role="gridcell" style={{padding: 0}}>
+            <div role="button" {...visuallyHiddenProps} {...dropIndicator.dropIndicatorProps} ref={dropIndicatorRef} />
+          </div>
+        </div>
+      )}
       <div
         {...mergeProps(
           filterDOMProps(props as any),
@@ -602,8 +617,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
           focusProps,
           hoverProps,
           focusWithinProps,
-          draggableItem?.dragProps,
-          droppableItem?.dropProps
+          draggableItem?.dragProps
         )}
         {...renderProps}
         ref={ref}
@@ -620,7 +634,7 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
         data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}
         data-allows-dragging={!!dragState || undefined}
         data-dragging={isDragging || undefined}
-        data-drop-target={isDropTarget || undefined}>
+        data-drop-target={dropIndicator?.isDropTarget || undefined}>
         <div {...gridCellProps} style={{display: 'contents'}}>
           <Provider
             values={[
