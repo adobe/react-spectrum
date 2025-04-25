@@ -34,6 +34,44 @@ cd examples/s2-webpack-5-example
 mkdir icon-test
 cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_3D_20_N.svg icon-test/S2_Icon_3D_20_N.svg
 npx @react-spectrum/s2-icon-builder -i ./icon-test/S2_Icon_3D_20_N.svg -o ./icon-dist
-npx @react-spectrum/s2-icon-builder -i ./icon-test/S2_Icon_3D_20_N.svg -o ./icon-dist-library --isLibrary
+
+mkdir icon-library-test
+cat > icon-library-test/package.json << EOF
+{
+  "name": "icon-library-test",
+  "version": "1.0.0",
+  "exports": {
+    "./dist/*": {
+      "types": "./dist/*.d.ts",
+      "module": "./dist/*.mjs",
+      "import": "./dist/*.mjs",
+      "require": "./dist/*.cjs"
+    }
+  },
+  "peerDependencies": {
+    "@react-spectrum/s2": "latest",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@react-spectrum/s2-icon-builder": "latest",
+    "@react-spectrum/s2": "latest",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "files": [
+    "src",
+    "dist"
+  ]
+}
+EOF
+mkdir icon-library-test/src
+cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_3D_20_N.svg src/S2_Icon_3D_20_N.svg
+cd icon-library-test
+yarn install
+yarn transform-icons -i './src/*.svg' -o ./dist --isLibrary
+ls ./dist
+
+cd ..
 
 netstat -tpln | awk -F'[[:space:]/:]+' '$5 == 4000 {print $(NF-2)}' | xargs kill

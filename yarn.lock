@@ -29559,7 +29559,6 @@ __metadata:
     "@parcel/transformer-inline-string": "npm:^2.14.0"
     "@parcel/transformer-svg-react": "npm:^2.14.0"
     "@parcel/transformer-typescript-types": "npm:^2.14.0"
-    "@react-spectrum/s2": "npm:^0.8.0"
     "@react-spectrum/s2-icon-builder": "npm:^0.2.0"
     "@spectrum-css/component-builder": "npm:1.0.1"
     "@spectrum-css/vars": "npm:^2.3.0"
