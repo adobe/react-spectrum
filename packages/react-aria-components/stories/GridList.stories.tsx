@@ -254,9 +254,8 @@ export const AsyncGridList = () => {
   return (
     <GridList
       className={styles.menu}
-      style={{height: 400}}
+      style={{height: 200}}
       aria-label="async gridlist"
-      // TODO: same deal here, this won't actually render
       renderEmptyState={() => renderEmptyState({isLoading: list.isLoading})}>
       <Collection items={list.items}>
         {(item: Character) => (
@@ -294,7 +293,7 @@ export const AsyncGridListVirtualized = () => {
       }}>
       <GridList
         className={styles.menu}
-        style={{height: 400}}
+        style={{height: 200}}
         aria-label="async virtualized gridlist"
         renderEmptyState={() => renderEmptyState({isLoading: list.isLoading})}>
         <Collection items={list.items}>
