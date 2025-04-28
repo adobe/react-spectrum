@@ -685,11 +685,11 @@ export const style = createTheme({
     translateX: new ExpandedProperty(['--translateX', 'translate'], value => ({
       '--translateX': String(value),
       translate: 'var(--translateX, 0) var(--translateY, 0)'
-    }), new PercentageProperty('translateX', translate)),
+    }), new PercentageProperty('--translateX', translate)),
     translateY: new ExpandedProperty(['--translateY', 'translate'], value => ({
       '--translateY': String(value),
       translate: 'var(--translateX, 0) var(--translateY, 0)'
-    }), new PercentageProperty('translateY', translate)),
+    }), new PercentageProperty('--translateY', translate)),
     rotate: new ArbitraryProperty('rotate', (value: number | `${number}deg` | `${number}rad` | `${number}grad` | `${number}turn`) => typeof value === 'number' ? `${value}deg` : value),
     scaleX: new ExpandedProperty<number | `${number}%`>(['--scaleX', 'scale'], value => ({
       '--scaleX': String(value),
