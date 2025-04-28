@@ -782,7 +782,7 @@ export const style = createTheme({
         ':lang(ja, ko, zh, zh-Hant, zh-Hans)': getToken('code-cjk-line-height')
       }
     },
-    listStyleType: ['none', 'dist', 'decimal'] as const,
+    listStyleType: ['none', 'disc', 'decimal'] as const,
     listStylePosition: ['inside', 'outside'] as const,
     textTransform: ['uppercase', 'lowercase', 'capitalize', 'none'] as const,
     textAlign: ['start', 'center', 'end', 'justify'] as const,
@@ -958,7 +958,8 @@ export const style = createTheme({
     willChange: ['auto', 'scroll-position', 'contents', 'transform'] as const,
     zIndex: new ArbitraryProperty<number>('zIndex'),
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    disableTapHighlight: new ArbitraryProperty('-webkit-tap-highlight-color', (_value: true) => 'rgba(0,0,0,0)')
+    disableTapHighlight: new ArbitraryProperty('-webkit-tap-highlight-color', (_value: true) => 'rgba(0,0,0,0)'),
+    unicodeBidi: ['normal', 'embed', 'bidi-override', 'isolate', 'isolate-override', 'plaintext'] as const
   },
   shorthands: {
     padding: ['paddingTop', 'paddingBottom', 'paddingStart', 'paddingEnd'] as const,
