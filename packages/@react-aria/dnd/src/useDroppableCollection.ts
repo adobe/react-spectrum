@@ -743,7 +743,6 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
             break;
           }
         }
-        localState.props.onKeyDown?.(e as any);
       }
     });
   }, [localState, ref, onDrop, direction]);
