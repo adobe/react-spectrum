@@ -542,7 +542,7 @@ export interface TableHeaderRenderProps {
   isHovered: boolean
 }
 
-export interface TableHeaderProps<T> extends StyleRenderProps<TableHeaderRenderProps>, HoverEvents {
+export interface TableHeaderProps<T> extends StyleRenderProps<TableHeaderRenderProps>, HoverEvents, Pick<React.HTMLAttributes<HTMLTableSectionElement>, 'onScroll'> {
   /** A list of table columns. */
   columns?: Iterable<T>,
   /** A list of `Column(s)` or a function. If the latter, a list of columns must be provided using the `columns` prop. */
@@ -906,7 +906,7 @@ export const ColumnResizer = forwardRef(function ColumnResizer(props: ColumnResi
 
 const tableBodyPropNames = new Set(['onScroll']);
 
-export interface TableBodyRenderProps {
+export interface TableBodyRenderProps extends Pick<React.HTMLAttributes<HTMLTableSectionElement>, 'onScroll'> {
   /**
    * Whether the table body has no rows and should display its empty state.
    * @selector [data-empty]
@@ -1004,7 +1004,7 @@ export interface RowRenderProps extends ItemRenderProps {
   id?: Key
 }
 
-export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMProps, HoverEvents {
+export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMProps, HoverEvents, Pick<React.HTMLAttributes<HTMLTableRowElement>, 'onContextMenu'> {
   /** A list of columns used when dynamically rendering cells. */
   columns?: Iterable<T>,
   /** The cells within the row. Supports static items or a function for dynamic rendering. */
