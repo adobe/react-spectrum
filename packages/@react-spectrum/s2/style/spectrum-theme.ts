@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ArbitraryProperty, Color, ColorProperty, createTheme, ExpandedProperty, MappedProperty, parseArbitraryValue, SizingProperty} from './style-macro';
+import {ArbitraryProperty, Color, ColorProperty, createTheme, ExpandedProperty, MappedProperty, parseArbitraryValue, PercentageProperty, SizingProperty} from './style-macro';
 import {ArbitraryValue, CSSProperties, CSSValue, PropertyValueMap} from './types';
 import {autoStaticColor, colorScale, colorToken, fontSizeToken, generateOverlayColorScale, getToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
 import type * as CSS from 'csstype';
@@ -667,14 +667,14 @@ export const style = createTheme({
       1: '1',
       2: '2'
     },
-    marginStart: new MappedProperty('marginInlineStart', margin),
-    marginEnd: new MappedProperty('marginInlineEnd', margin),
-    marginTop: margin,
-    marginBottom: margin,
-    paddingStart: new MappedProperty('paddingInlineStart', padding),
-    paddingEnd: new MappedProperty('paddingInlineEnd', padding),
-    paddingTop: padding,
-    paddingBottom: padding,
+    marginStart: new PercentageProperty('marginInlineStart', margin),
+    marginEnd: new PercentageProperty('marginInlineEnd', margin),
+    marginTop: new PercentageProperty('marginTop', margin),
+    marginBottom: new PercentageProperty('marginBottom', margin),
+    paddingStart: new PercentageProperty('paddingInlineStart', padding),
+    paddingEnd: new PercentageProperty('paddingInlineEnd', padding),
+    paddingTop: new PercentageProperty('paddingTop', padding),
+    paddingBottom: new PercentageProperty('paddingBottom', padding),
     scrollMarginStart: new MappedProperty('scrollMarginInlineStart', baseSpacing),
     scrollMarginEnd: new MappedProperty('scrollMarginInlineEnd', baseSpacing),
     scrollMarginTop: baseSpacing,
@@ -684,32 +684,32 @@ export const style = createTheme({
     scrollPaddingEnd: new MappedProperty('scrollPaddingInlineEnd', baseSpacing),
     scrollPaddingTop: baseSpacing,
     scrollPaddingBottom: baseSpacing,
-    textIndent: baseSpacing,
-    translateX: new ExpandedProperty<keyof typeof translate>(['--translateX', 'translate'], value => ({
+    textIndent: new PercentageProperty('textIndent', baseSpacing),
+    translateX: new ExpandedProperty(['--translateX', 'translate'], value => ({
       '--translateX': String(value),
       translate: 'var(--translateX, 0) var(--translateY, 0)'
-    }), translate),
-    translateY: new ExpandedProperty<keyof typeof translate>(['--translateY', 'translate'], value => ({
+    }), new PercentageProperty('translateX', translate)),
+    translateY: new ExpandedProperty(['--translateY', 'translate'], value => ({
       '--translateY': String(value),
       translate: 'var(--translateX, 0) var(--translateY, 0)'
-    }), translate),
+    }), new PercentageProperty('translateY', translate)),
     rotate: new ArbitraryProperty('rotate', (value: number | `${number}deg` | `${number}rad` | `${number}grad` | `${number}turn`) => typeof value === 'number' ? `${value}deg` : value),
-    scaleX: new ExpandedProperty<number>(['--scaleX', 'scale'], value => ({
+    scaleX: new ExpandedProperty<number | `${number}%`>(['--scaleX', 'scale'], value => ({
       '--scaleX': String(value),
       scale: 'var(--scaleX, 1) var(--scaleY, 1)'
     })),
-    scaleY: new ExpandedProperty<number>(['--scaleY', 'scale'], value => ({
+    scaleY: new ExpandedProperty<number | `${number}%`>(['--scaleY', 'scale'], value => ({
       '--scaleY': String(value),
       scale: 'var(--scaleX, 1) var(--scaleY, 1)'
     })),
     transform: new ArbitraryProperty<string>('transform'),
     position: ['absolute', 'fixed', 'relative', 'sticky', 'static'] as const,
-    insetStart: new MappedProperty('insetInlineStart', inset),
-    insetEnd: new MappedProperty('insetInlineEnd', inset),
-    top: inset,
-    left: inset,
-    bottom: inset,
-    right: inset,
+    insetStart: new PercentageProperty('insetInlineStart', inset),
+    insetEnd: new PercentageProperty('insetInlineEnd', inset),
+    top: new PercentageProperty('top', inset),
+    left: new PercentageProperty('left', inset),
+    bottom: new PercentageProperty('bottom', inset),
+    right: new PercentageProperty('right', inset),
     aspectRatio: {
       auto: 'auto',
       square: '1 / 1',

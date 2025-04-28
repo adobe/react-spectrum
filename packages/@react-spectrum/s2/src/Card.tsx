@@ -597,7 +597,7 @@ export const AssetCard = forwardRef(function AssetCard(props: AssetCardProps, re
                 height: 'auto',
                 maxSize: 160,
                 // TODO: this is made up.
-                width: '[50%]'
+                width: '50%'
               })
             }]
           ]}>

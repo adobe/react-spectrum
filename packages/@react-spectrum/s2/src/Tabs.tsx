@@ -180,7 +180,7 @@ const tablist = style({
     }
   },
   flexShrink: 0,
-  flexBasis: '[0%]'
+  flexBasis: '0%'
 });
 
 export function TabList<T extends object>(props: TabListProps<T>): ReactNode | null {
@@ -418,7 +418,7 @@ const tabPanel = style({
   marginTop: 4,
   color: 'gray-800',
   flexGrow: 1,
-  flexBasis: '[0%]',
+  flexBasis: '0%',
   minHeight: 0,
   minWidth: 0
 }, getAllowedOverrides({height: true}));

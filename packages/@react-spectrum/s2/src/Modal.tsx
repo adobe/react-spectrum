@@ -97,14 +97,14 @@ export const Modal = forwardRef(function Modal(props: ModalProps, ref: DOMRef<HT
             }
           },
           maxWidth: {
-            default: '[90vw]',
+            default: '90vw',
             size: {
               fullscreen: 'none',
               fullscreenTakeover: 'none'
             }
           },
           maxHeight: {
-            default: '[90vh]',
+            default: '90vh',
             size: {
               fullscreen: 'none',
               fullscreenTakeover: 'none'
