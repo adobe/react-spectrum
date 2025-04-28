@@ -62,7 +62,7 @@ describe('style-macro', () => {
     let {css, js} = testStyle({
       borderWidth: 2,
       paddingX: 'edge-to-text',
-      width: '[calc(200px - self(borderStartWidth) - self(paddingStart))]'
+      width: 'calc(200px - self(borderStartWidth) - self(paddingStart))'
     });
 
     expect(css).toMatchInlineSnapshot(`

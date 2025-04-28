@@ -493,10 +493,10 @@ let HiddenTabs = function (props: {
       inert={inertValue(true)}
       ref={listRef}
       className={style({
-        display: '[inherit]',
-        flexDirection: '[inherit]',
-        gap: '[inherit]',
-        flexWrap: '[inherit]',
+        display: 'inherit',
+        flexDirection: 'inherit',
+        gap: 'inherit',
+        flexWrap: 'inherit',
         position: 'absolute',
         inset: 0,
         visibility: 'hidden',

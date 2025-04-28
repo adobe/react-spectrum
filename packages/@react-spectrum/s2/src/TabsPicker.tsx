@@ -248,7 +248,7 @@ function Picker<T extends object>(props: PickerProps<T>, ref: FocusableRef<HTMLB
               styles={style({
                 marginStart: -12,
                 minWidth: 192,
-                width: '[calc(var(--trigger-width) + (-2 * self(marginStart)))]'
+                width: 'calc(var(--trigger-width) + (-2 * self(marginStart)))'
               })}>
               <Provider
                 values={[

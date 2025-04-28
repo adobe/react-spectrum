@@ -169,6 +169,13 @@ export function parseArbitraryValue(value: Value): string | undefined {
     return `var(${value})`;
   } else if (typeof value === 'string' && value[0] === '[' && value[value.length - 1] === ']') {
     return value.slice(1, -1);
+  } else if (
+    typeof value === 'string' && (
+      /^(var|calc|min|max|clamp|round|mod|rem|sin|cos|tan|asin|acos|atan|atan2|pow|sqrt|hypot|log|exp|abs|sign)\(.+\)$/.test(value) || 
+      /^(inherit|initial|unset)$/.test(value)
+    )
+  ) {
+    return value;
   }
 }
 

@@ -136,7 +136,7 @@ let popover = style({
     }
   },
   // Don't be larger than full screen minus 2 * containerPadding
-  maxWidth: '[calc(100vw - 24px)]',
+  maxWidth: 'calc(100vw - 24px)',
   boxSizing: 'border-box',
   translateY: {
     placement: {
@@ -291,7 +291,7 @@ let content = style({
     ':first-child': 0
   },
   paddingBottom: {
-    default: '[calc(var(--card-spacing) * 1.5 / 2)]',
+    default: 'calc(var(--card-spacing) * 1.5 / 2)',
     ':last-child': 0
   }
 });
@@ -300,7 +300,7 @@ let actionMenu = style({
   gridArea: 'menu',
   // Don't cause the row to expand, preserve gap between title and description text.
   // Would use -100% here but it doesn't work in Firefox.
-  marginY: '[calc(-1 * self(height))]'
+  marginY: 'calc(-1 * self(height))'
 });
 
 let footer = style({
@@ -309,7 +309,7 @@ let footer = style({
   alignItems: 'end',
   justifyContent: 'space-between',
   gap: 8,
-  paddingTop: '[calc(var(--card-spacing) * 1.5 / 2)]'
+  paddingTop: 'calc(var(--card-spacing) * 1.5 / 2)'
 });
 
 const actionButtonSize = {

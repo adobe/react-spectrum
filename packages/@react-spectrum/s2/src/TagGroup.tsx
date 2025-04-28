@@ -450,7 +450,7 @@ const tagStyles = style<TagRenderProps & {size?: 'S' | 'M' | 'L', isEmphasized?:
   height: 'control',
   transition: 'default',
   minWidth: 0,
-  // maxWidth: '[calc(self(height) * 7)]', // s2 designs show a max width on tags but we pushed back on this in v3
+  // maxWidth: 'calc(self(height) * 7)', // s2 designs show a max width on tags but we pushed back on this in v3
   backgroundColor: {
     default: 'gray-100',
     isHovered: {

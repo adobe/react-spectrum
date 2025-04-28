@@ -81,7 +81,7 @@ const circle = style<RenderProps>({
   boxSizing: 'border-box',
   borderWidth: {
     default: space(2),
-    isSelected: '[calc((self(height) - (4 / 16) * 1rem) / 2)]'
+    isSelected: 'calc((self(height) - (4 / 16) * 1rem) / 2)'
   },
   forcedColorAdjust: 'none',
   backgroundColor: 'gray-25',

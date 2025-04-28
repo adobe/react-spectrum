@@ -93,7 +93,7 @@ type SpectrumColor = Color<keyof typeof color> | ArbitraryValue;
 function parseColor(value: SpectrumColor) {
   let arbitrary = parseArbitraryValue(value);
   if (arbitrary) {
-    return arbitrary[0];
+    return arbitrary;
   }
   let [colorValue, opacity] = value.split('/');
   colorValue = color[colorValue];
@@ -480,10 +480,7 @@ export const style = createTheme({
         isFocusVisible: colorToken('negative-content-color-key-focus'),
         isPressed: colorToken('negative-content-color-down')
       },
-      disabled: {
-        default: colorToken('disabled-content-color')
-        // forcedColors: 'GrayText'
-      },
+      disabled: colorToken('disabled-content-color'),
       heading: colorToken('heading-color'),
       title: colorToken('title-color'),
       body: colorToken('body-color'),

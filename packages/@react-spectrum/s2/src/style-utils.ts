@@ -109,7 +109,7 @@ export const fieldInput = () => ({
     }
   },
   // contain-intrinsic-width only includes the width of children, not the padding or borders.
-  containIntrinsicWidth: '[calc(var(--defaultWidth) - self(paddingStart, 0px) - self(paddingEnd, 0px) - self(borderStartWidth, 0px) - self(borderEndWidth, 0px))]'
+  containIntrinsicWidth: 'calc(var(--defaultWidth) - self(paddingStart, 0px) - self(paddingEnd, 0px) - self(borderStartWidth, 0px) - self(borderEndWidth, 0px))'
 } as const);
 
 export const colorScheme = () => ({

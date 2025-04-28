@@ -228,10 +228,10 @@ let preview = style({
   position: 'relative',
   transition: 'default',
   overflow: 'clip',
-  marginX: '[calc(var(--card-padding-x) * -1)]',
-  marginTop: '[calc(var(--card-padding-y) * -1)]',
+  marginX: 'calc(var(--card-padding-x) * -1)',
+  marginTop: 'calc(var(--card-padding-y) * -1)',
   marginBottom: {
-    ':last-child': '[calc(var(--card-padding-y) * -1)]'
+    ':last-child': 'calc(var(--card-padding-y) * -1)'
   },
   borderRadius: {
     isQuiet: borderRadius
@@ -326,7 +326,7 @@ let content = style({
     ':first-child': 0
   },
   paddingBottom: {
-    default: '[calc(var(--card-spacing) * 1.5 / 2)]',
+    default: 'calc(var(--card-spacing) * 1.5 / 2)',
     ':last-child': 0
   }
 });
@@ -335,7 +335,7 @@ let actionMenu = style({
   gridArea: 'menu',
   // Don't cause the row to expand, preserve gap between title and description text.
   // Would use -100% here but it doesn't work in Firefox.
-  marginY: '[calc(-1 * self(height))]'
+  marginY: 'calc(-1 * self(height))'
 });
 
 let footer = style({
@@ -344,7 +344,7 @@ let footer = style({
   alignItems: 'end',
   justifyContent: 'space-between',
   gap: 8,
-  paddingTop: '[calc(var(--card-spacing) * 1.5 / 2)]'
+  paddingTop: 'calc(var(--card-spacing) * 1.5 / 2)'
 });
 
 export const InternalCardViewContext = createContext<'div' | typeof GridListItem>('div');
@@ -647,7 +647,7 @@ export const UserCard = forwardRef(function UserCard(props: CardProps, ref: DOMR
                 position: 'relative',
                 marginTop: {
                   default: 0,
-                  ':is([slot=preview] + *)': '[calc(var(--size) / -2)]'
+                  ':is([slot=preview] + *)': 'calc(var(--size) / -2)'
                 }
               }),
               isOverBackground: true
@@ -717,7 +717,7 @@ export const ProductCard = forwardRef(function ProductCard(props: ProductCardPro
                     objectFit: 'cover',
                     marginTop: {
                       default: 0,
-                      ':is([slot=preview] + *)': '[calc(self(height) / -2)]'
+                      ':is([slot=preview] + *)': 'calc(self(height) / -2)'
                     },
                     outlineStyle: 'solid',
                     outlineWidth: {

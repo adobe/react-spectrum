@@ -255,7 +255,7 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
                 // better way to do this one? it's not actually half, they are
                 // [9, 4], [12, 6], [15, 8], [18, 8]
                 // also noticed that our measurement is including the border, making the padding too much
-                paddingEnd: '[calc(self(height, self(minHeight)) * 3 / 16)]'
+                paddingEnd: 'calc(self(height, self(minHeight)) * 3 / 16)'
               })({size})}>
               <InputContext.Consumer>
                 {ctx => (
@@ -300,8 +300,8 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
                 '--trigger-width': `calc(${triggerWidth} - 2px)`
               } as CSSProperties}
               styles={style({
-                minWidth: '[var(--trigger-width)]',
-                width: '[var(--trigger-width)]'
+                minWidth: '--trigger-width',
+                width: '--trigger-width'
               })}>
               <Provider
                 values={[

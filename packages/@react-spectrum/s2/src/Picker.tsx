@@ -393,12 +393,12 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                   isQuiet: -12
                 },
                 minWidth: {
-                  default: '[var(--trigger-width)]',
+                  default: '--trigger-width',
                   isQuiet: 192
                 },
                 width: {
-                  default: '[var(--trigger-width)]',
-                  isQuiet: '[calc(var(--trigger-width) + (-2 * self(marginStart)))]'
+                  default: '--trigger-width',
+                  isQuiet: 'calc(var(--trigger-width) + (-2 * self(marginStart)))'
                 }
               })(props)}>
               <Provider

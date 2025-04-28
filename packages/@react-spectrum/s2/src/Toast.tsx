@@ -254,7 +254,7 @@ const toastStyle = style({
     type: 'maxWidth',
     value: 336
   },
-  maxWidth: '[min(var(--maxWidth), 90vw)]',
+  maxWidth: 'min(var(--maxWidth), 90vw)',
   boxSizing: 'border-box',
   flexShrink: 0,
   font: 'ui',

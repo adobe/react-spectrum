@@ -140,9 +140,9 @@ const buttonStyles = style({
   display: 'flex',
   flexGrow: 1,
   alignItems: 'baseline',
-  paddingX: '[calc(self(minHeight) * 3/8 - 1px)]',
+  paddingX: 'calc(self(minHeight) * 3/8 - 1px)',
   paddingY: centerPadding(),
-  gap: '[calc(self(minHeight) * 3/8 - 1px)]',
+  gap: 'calc(self(minHeight) * 3/8 - 1px)',
   minHeight: {
     // compact is equivalent to 'control', but other densities have more padding.
     size: {

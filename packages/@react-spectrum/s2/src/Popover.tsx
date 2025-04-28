@@ -77,7 +77,7 @@ let popover = style({
     }
   },
   // Don't be larger than full screen minus 2 * containerPadding
-  maxWidth: '[calc(100vw - 24px)]',
+  maxWidth: 'calc(100vw - 24px)',
   boxSizing: 'border-box',
   display: 'flex',
   opacity: {

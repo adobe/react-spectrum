@@ -222,7 +222,7 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
   '--badgeTop': {
     type: 'top',
     value: {
-      default: '[calc(self(height)/2 - var(--iconWidth)/2)]',
+      default: 'calc(self(height)/2 - var(--iconWidth)/2)',
       [textOnly]: 0
     }
   },
@@ -240,8 +240,8 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
   '--badgePosition': {
     type: 'width',
     value: {
-      default: '[calc(var(--buttonPaddingX) + var(--iconWidth))]',
-      [iconOnly]: '[calc(self(minWidth)/2 + var(--iconWidth)/2)]',
+      default: 'calc(var(--buttonPaddingX) + var(--iconWidth))',
+      [iconOnly]: 'calc(self(minWidth)/2 + var(--iconWidth)/2)',
       [textOnly]: 'full'
     }
   }
@@ -315,7 +315,7 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
             staticColor: staticColor,
             size: props.size === 'XS' ? undefined : props.size,
             isDisabled: props.isDisabled,
-            styles: style({position: 'absolute', top: '--badgeTop', insetStart: '[var(--badgePosition)]', marginTop: '[calc((self(height) * -1)/2)]', marginStart: '[calc((self(height) * -1)/2)]'})
+            styles: style({position: 'absolute', top: '--badgeTop', insetStart: '--badgePosition', marginTop: 'calc((self(height) * -1)/2)', marginStart: 'calc((self(height) * -1)/2)'})
           }]
         ]}>
         {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}

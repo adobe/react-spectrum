@@ -86,13 +86,13 @@ export const Modal = forwardRef(function Modal(props: ModalProps, ref: DOMRef<HT
               S: 336,
               M: 416,
               L: 576,
-              fullscreen: '[calc(100% - 40px)]',
+              fullscreen: 'calc(100% - 40px)',
               fullscreenTakeover: 'full'
             }
           },
           height: {
             size: {
-              fullscreen: '[calc(100% - 40px)]',
+              fullscreen: 'calc(100% - 40px)',
               fullscreenTakeover: 'full'
             }
           },

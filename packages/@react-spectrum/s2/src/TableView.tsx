@@ -961,7 +961,7 @@ const checkboxCellStyle = style({
   ...stickyCell,
   paddingStart: 16,
   alignContent: 'center',
-  height: '[calc(100% - 1px)]',
+  height: 'calc(100% - 1px)',
   borderBottomWidth: 0,
   backgroundColor: '--rowBackgroundColor'
 });
