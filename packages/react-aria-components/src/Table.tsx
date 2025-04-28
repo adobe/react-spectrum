@@ -532,6 +532,8 @@ export function useTableOptions(): TableOptionsContextValue {
   return useContext(TableOptionsContext)!;
 }
 
+const tableHeaderPropNames = new Set(['onScroll']);
+
 export interface TableHeaderRenderProps {
   /**
    * Whether the table header is currently hovered with a mouse.
@@ -587,7 +589,7 @@ export const TableHeader =  /*#__PURE__*/ createBranchComponent(
 
     return (
       <THead
-        {...mergeProps(filterDOMProps(props as any), rowGroupProps, hoverProps)}
+        {...mergeProps(filterDOMProps(props as any, { propNames: tableHeaderPropNames }), rowGroupProps, hoverProps)}
         {...renderProps}
         ref={ref}
         data-hovered={isHovered || undefined}>
@@ -902,6 +904,8 @@ export const ColumnResizer = forwardRef(function ColumnResizer(props: ColumnResi
   );
 });
 
+const tableBodyPropNames = new Set(['onScroll']);
+
 export interface TableBodyRenderProps {
   /**
    * Whether the table body has no rows and should display its empty state.
@@ -977,7 +981,7 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
   // call useLoadMore here and walk up the DOM to the nearest scrollable element to set scrollRef
   return (
     <TBody
-      {...mergeProps(filterDOMProps(props as any), rowGroupProps)}
+      {...mergeProps(filterDOMProps(props as any, { propNames: tableBodyPropNames }), rowGroupProps)}
       {...renderProps}
       ref={ref}
       data-empty={isEmpty || undefined}>
@@ -990,6 +994,8 @@ export const TableBody = /*#__PURE__*/ createBranchComponent('tablebody', <T ext
     </TBody>
   );
 });
+
+const rowPropNames = new Set(['onContextMenu']);
 
 export interface RowRenderProps extends ItemRenderProps {
   /** Whether the row's children have keyboard focus. */
@@ -1112,7 +1118,7 @@ export const Row = /*#__PURE__*/ createBranchComponent(
           </TR>
         )}
         <TR
-          {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps, draggableItem?.dragProps, focusWithinProps)}
+          {...mergeProps(filterDOMProps(props as any, { propNames: rowPropNames }), rowProps, focusProps, hoverProps, draggableItem?.dragProps, focusWithinProps)}
           {...renderProps}
           ref={ref}
           data-disabled={states.isDisabled || undefined}
