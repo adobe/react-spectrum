@@ -15,7 +15,7 @@ import {
   RadioProps as AriaRadioProps,
   RadioRenderProps
 } from 'react-aria-components';
-import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, space, style} from '../style' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
 import {FocusableRef} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
@@ -80,8 +80,8 @@ const circle = style<RenderProps>({
   borderStyle: 'solid',
   boxSizing: 'border-box',
   borderWidth: {
-    default: 2,
-    isSelected: '[calc((self(height) - 4px) / 2)]'
+    default: space(2),
+    isSelected: '[calc((self(height) - (4 / 16) * 1rem) / 2)]'
   },
   forcedColorAdjust: 'none',
   backgroundColor: 'gray-25',

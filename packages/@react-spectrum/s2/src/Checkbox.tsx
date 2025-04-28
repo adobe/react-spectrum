@@ -11,7 +11,7 @@
  */
 
 import {Checkbox as AriaCheckbox, CheckboxProps as AriaCheckboxProps, CheckboxGroupStateContext, CheckboxRenderProps, ContextValue, useSlottedContext} from 'react-aria-components';
-import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, space, style} from '../style' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
@@ -72,7 +72,7 @@ export const box = style<RenderProps>({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  borderWidth: 2,
+  borderWidth: space(2),
   boxSizing: 'border-box',
   borderStyle: 'solid',
   transition: 'default',
