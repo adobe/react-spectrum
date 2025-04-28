@@ -710,11 +710,17 @@ export const style = createTheme({
     left: new PercentageProperty('left', inset),
     bottom: new PercentageProperty('bottom', inset),
     right: new PercentageProperty('right', inset),
-    aspectRatio: {
-      auto: 'auto',
-      square: '1 / 1',
-      video: '16 / 9'
-    },
+    aspectRatio: new ArbitraryProperty<'auto' | 'square' | 'video' | `${number}/${number}`>('aspectRatio', value => {
+      if (value === 'square') {
+        return '1/1';
+      }
+
+      if (value === 'video') {
+        return '16/9';
+      }
+
+      return value;
+    }),
 
     // text
     fontFamily: {

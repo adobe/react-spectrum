@@ -203,7 +203,7 @@ let popover = style({
 
 const image = style({
   width: 'full',
-  aspectRatio: '[3/2]',
+  aspectRatio: '3/2',
   objectFit: 'cover',
   userSelect: 'none',
   pointerEvents: 'none'

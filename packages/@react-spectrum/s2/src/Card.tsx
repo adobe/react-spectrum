@@ -254,7 +254,7 @@ let preview = style({
 
 const image = style({
   width: 'full',
-  aspectRatio: '[3/2]',
+  aspectRatio: '3/2',
   objectFit: 'cover',
   userSelect: 'none',
   pointerEvents: 'none'
@@ -535,7 +535,7 @@ const collectionImage = style({
   width: 'full',
   aspectRatio: {
     default: 'square',
-    ':nth-last-child(4):first-child': '[3/2]'
+    ':nth-last-child(4):first-child': '3/2'
   },
   gridColumnEnd: {
     ':nth-last-child(4):first-child': 'span 3'
@@ -632,7 +632,7 @@ export const UserCard = forwardRef(function UserCard(props: CardProps, ref: DOMR
               alt: '',
               styles: style({
                 width: 'full',
-                aspectRatio: '[3/1]',
+                aspectRatio: '3/1',
                 objectFit: 'cover',
                 pointerEvents: 'none',
                 userSelect: 'none'
@@ -686,7 +686,7 @@ export const ProductCard = forwardRef(function ProductCard(props: ProductCardPro
                   alt: '',
                   styles: style({
                     width: 'full',
-                    aspectRatio: '[5/1]',
+                    aspectRatio: '5/1',
                     objectFit: 'cover',
                     pointerEvents: 'none',
                     userSelect: 'none'
