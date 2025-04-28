@@ -66,7 +66,7 @@ export function A11y() {
   let [fingerPos, setFingerPos] = useState<Point | null>(null);
   let [isOpen, setOpen] = useState(false);
   let [caption, setCaption] = useState('');
-  let [selectedKey, setSelectedKey] = useState<Key>('read');
+  let [selectedKey, setSelectedKey] = useState<Key | null>('read');
   useIntersectionObserver(ref, useCallback(() => {
     let button: HTMLButtonElement | null = null;
     let listbox: HTMLElement | null = null;

@@ -346,7 +346,7 @@ The following example includes a custom Column component with a sort indicator. 
 ```tsx example export=true render=false
 import type {ColumnProps} from 'react-aria-components';
 
-export function MyColumn(props: ColumnProps) {
+export function MyColumn(props: Omit<ColumnProps, 'children'> & {children?: React.ReactNode}) {
   return (
     <Column {...props}>
       {({allowsSorting, sortDirection}) => <>
