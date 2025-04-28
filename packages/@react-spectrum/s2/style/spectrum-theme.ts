@@ -142,15 +142,18 @@ export function linearGradient(this: MacroContext | void, angle: string, ...toke
   }];
 }
 
-function generateSpacing<K extends number[]>(px: K): {[P in K[number]]: string} {
-  let res: any = {};
+// Spacing uses rems, padding does not.
+function generateSpacing<K extends number[]>(px: K): {spacing: {[P in K[number]]: string}, padding: {[P in K[number]]: string}} {
+  let spacing: any = {};
+  let padding: any = {};
   for (let p of px) {
-    res[p] = pxToRem(p);
+    spacing[p] = pxToRem(p);
+    padding[p] = p + 'px';
   }
-  return res;
+  return {spacing, padding};
 }
 
-const baseSpacing = generateSpacing([
+const {spacing: baseSpacing, padding: basePadding} = generateSpacing([
   0,
   2, // spacing-50
   4, // spacing-75
@@ -174,7 +177,7 @@ const baseSpacing = generateSpacing([
 
 // This should match the above, but negative. There's no way to negate a number
 // type in typescript so this has to be done manually for now.
-const negativeSpacing = generateSpacing([
+const {spacing: negativeSpacing, padding: negativePadding} = generateSpacing([
   -2, // spacing-50
   -4, // spacing-75
   -8, // spacing-100
@@ -207,9 +210,7 @@ export function space(this: MacroContext | void, px: number): string {
   return pxToRem(px);
 }
 
-const spacing = {
-  ...baseSpacing,
-
+const relativeSpacing = {
   // font-size relative values
   'text-to-control': fontRelative(10),
   'text-to-visual': {
@@ -219,6 +220,16 @@ const spacing = {
   // height relative values
   'edge-to-text': 'calc(self(height, self(minHeight)) * 3 / 8)',
   'pill': 'calc(self(height, self(minHeight)) / 2)'
+} as const;
+
+const spacing = {
+  ...baseSpacing,
+  ...relativeSpacing
+};
+
+const padding = {
+  ...basePadding,
+  ...relativeSpacing
 };
 
 export function size(this: MacroContext | void, px: number): string {
@@ -274,14 +285,15 @@ const margin = {
 };
 
 const inset = {
-  ...baseSpacing,
+  ...basePadding,
+  ...negativePadding,
   auto: 'auto',
   full: '100%'
 };
 
 const translate = {
-  ...baseSpacing,
-  ...negativeSpacing,
+  ...basePadding,
+  ...negativePadding,
   full: '100%'
 } as const;
 
@@ -659,14 +671,15 @@ export const style = createTheme({
     marginEnd: new MappedProperty('marginInlineEnd', margin),
     marginTop: margin,
     marginBottom: margin,
-    paddingStart: new MappedProperty('paddingInlineStart', spacing),
-    paddingEnd: new MappedProperty('paddingInlineEnd', spacing),
-    paddingTop: spacing,
-    paddingBottom: spacing,
+    paddingStart: new MappedProperty('paddingInlineStart', padding),
+    paddingEnd: new MappedProperty('paddingInlineEnd', padding),
+    paddingTop: padding,
+    paddingBottom: padding,
     scrollMarginStart: new MappedProperty('scrollMarginInlineStart', baseSpacing),
     scrollMarginEnd: new MappedProperty('scrollMarginInlineEnd', baseSpacing),
     scrollMarginTop: baseSpacing,
     scrollMarginBottom: baseSpacing,
+    // Using rems instead of px here (unlike regular padding) because this often needs to match the height of something.
     scrollPaddingStart: new MappedProperty('scrollPaddingInlineStart', baseSpacing),
     scrollPaddingEnd: new MappedProperty('scrollPaddingInlineEnd', baseSpacing),
     scrollPaddingTop: baseSpacing,

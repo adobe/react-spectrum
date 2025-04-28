@@ -64,7 +64,7 @@ const content =  style({
   },
   font: 'body',
   // TODO: adjust margin on mobile?
-  marginX: {
+  paddingX: {
     default: 32
   }
 });
@@ -130,14 +130,14 @@ export const Dialog = forwardRef(function Dialog(props: DialogProps, ref: DOMRef
                 display: 'flex',
                 alignItems: 'start',
                 columnGap: 12,
-                marginStart: {
+                paddingStart: {
                   default: 32
                 },
-                marginEnd: {
+                paddingEnd: {
                   default: 32,
                   isDismissible: 12
                 },
-                marginTop: {
+                paddingTop: {
                   default: 12 // margin to dismiss button
                 }
               })({isDismissible: props.isDismissible})}>

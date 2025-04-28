@@ -104,7 +104,7 @@ export const ContextualHelp = forwardRef(function ContextualHelp(props: Contextu
         crossOffset={crossOffset}
         hideArrow
         styles={popover}>
-        <RACDialog className={mergeStyles(dialogInner, style({borderRadius: 'none', margin: -24, padding: 24}))}>
+        <RACDialog className={mergeStyles(dialogInner, style({borderRadius: 'none', margin: '[calc(self(paddingTop) * -1)]', padding: 24}))}>
           <Provider
             values={[
               [TextContext, {

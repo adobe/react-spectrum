@@ -144,7 +144,7 @@ const stepperContainerStyles = style({
       XL: 8
     }
   },
-  paddingEnd: {
+  marginEnd: {
     size: {
       S: 2,
       M: 4,

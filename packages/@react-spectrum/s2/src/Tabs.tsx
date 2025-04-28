@@ -169,12 +169,12 @@ const tablist = style({
       vertical: 'column'
     }
   },
-  paddingEnd: {
+  marginEnd: {
     orientation: {
       vertical: 20
     }
   },
-  paddingStart: {
+  marginStart: {
     orientation: {
       vertical: 12
     }

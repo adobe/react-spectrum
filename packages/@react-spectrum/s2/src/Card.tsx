@@ -139,7 +139,7 @@ let card = style({
       density: {
         compact: {
           size: {
-            XS: space(6),
+            XS: '[6px]',
             S: 8,
             M: 12,
             L: 16,
