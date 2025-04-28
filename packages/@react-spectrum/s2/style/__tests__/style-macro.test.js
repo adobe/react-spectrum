@@ -40,14 +40,14 @@ describe('style-macro', () => {
       "@layer _.a, _.b, _.c;
 
       @layer _.b {
-        .jnb:first-child {
+        ._bnb:first-child {
           margin-top: 0.25rem;
         }
       }
 
-      @layer _.c.YxLy {
-        @media (min-width: 1024px) {
-          .jnYxLyf:first-child {
+      @layer _.c.r {
+        @media (min-width: 64rem) {
+          ._bnre:first-child {
             margin-top: 0.5rem;
           }
         }
@@ -55,7 +55,7 @@ describe('style-macro', () => {
 
       "
     `);
-    expect(js).toMatchInlineSnapshot('" jnb jnYxLyf"');
+    expect(js).toMatchInlineSnapshot('" _bnb _bnre"');
   });
 
   it('should support self references', () => {
@@ -69,48 +69,48 @@ describe('style-macro', () => {
       "@layer _.a;
 
       @layer _.a {
-        ._nb {
+        .Rb {
           border-top-width: 2px;
         }
 
 
-        ._ma {
+        .Qc {
           border-bottom-width: 2px;
         }
 
 
-        ._twdjPYd {
-          border-inline-start-width: var(--_t);
+        .ZvFFGYc {
+          border-inline-start-width: var(--Z);
         }
 
 
-        ._sa {
+        .Xb {
           border-inline-end-width: 2px;
         }
 
 
-        .oGQFGYc {
-          padding-inline-start: var(--o);
+        .CgtFGYc {
+          padding-inline-start: var(--C);
         }
 
 
-        .nb {
-          padding-inline-end: calc(var(--e, var(--s)) * 3 / 8);
+        .Ab {
+          padding-inline-end: calc(var(--e, var(--l)) * 3 / 8);
         }
 
 
-        .fNANddc {
-          width: calc(200px - var(--_t) - var(--o));
+        .fWvRISb {
+          width: calc(200px - var(--Z) - var(--C));
         }
 
 
-        .-_t_-_ta {
-          --_t: 2px;
+        .-Z_-Za {
+          --Z: 2px;
         }
 
 
-        .-o_-ob {
-          --o: calc(var(--e, var(--s)) * 3 / 8);
+        .-C_-Cb {
+          --C: calc(var(--e, var(--l)) * 3 / 8);
         }
       }
 
@@ -118,7 +118,7 @@ describe('style-macro', () => {
     `);
 
     expect(js).toMatchInlineSnapshot(
-      '" _nb _ma _twdjPYd _sa oGQFGYc nb fNANddc -_t_-_ta -o_-ob"'
+      '" Rb Qc ZvFFGYc Xb CgtFGYc Ab fWvRISb -Z_-Za -C_-Cb"'
     );
   });
 
@@ -153,9 +153,9 @@ describe('style-macro', () => {
       translateX: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-zTRurc _Ia"');
-    expect(overrides).toMatchInlineSnapshot('" -_7PloMd-Kr5lvc _Ia"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_7PloMd-Kr5lvc _Ia"');
+    expect(js()).toMatchInlineSnapshot('"  -_7PloMd-6cJurc _ca"');
+    expect(overrides).toMatchInlineSnapshot('" -_7PloMd-BZRurc _ca"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  -_7PloMd-BZRurc _ca"');
   });
 
   it('should support allowed overrides for shorthands', () => {
@@ -170,9 +170,9 @@ describe('style-macro', () => {
       padding: 40
     });
 
-    expect(js()).toMatchInlineSnapshot('"  rg vd of ng"');
-    expect(overrides).toMatchInlineSnapshot('" rw vw oy ny"');
-    expect(js({}, overrides)).toMatchInlineSnapshot('"  rw vw oy ny"');
+    expect(js()).toMatchInlineSnapshot('"  Hg Wd Cf Ae"');
+    expect(overrides).toMatchInlineSnapshot('" Ho Wo Cq Aq"');
+    expect(js({}, overrides)).toMatchInlineSnapshot('"  Ho Wo Cq Aq"');
   });
 
   it("should support allowed overrides for values that aren't defined", () => {
@@ -350,28 +350,28 @@ describe('style-macro', () => {
       padding: 24
     });
 
-    expect(js).toMatchInlineSnapshot('" rc vc od nd"');
+    expect(js).toMatchInlineSnapshot('" Hb Wb Ce Ad"');
     expect(css).toMatchInlineSnapshot(`
       "@layer _.a;
 
       @layer _.a {
-        .rc {
-          padding-top: 1.5rem;
+        .Hb {
+          padding-top: 24px;
         }
 
 
-        .vc {
-          padding-bottom: 1.5rem;
+        .Wb {
+          padding-bottom: 24px;
         }
 
 
-        .od {
-          padding-inline-start: 1.5rem;
+        .Ce {
+          padding-inline-start: 24px;
         }
 
 
-        .nd {
-          padding-inline-end: 1.5rem;
+        .Ad {
+          padding-inline-end: 24px;
         }
       }
 
