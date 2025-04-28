@@ -103,13 +103,6 @@ const illustratedMessage = style<IllustratedMessageStyleProps & {isInDropZone?: 
 
 const illustration = style<IllustratedMessageStyleProps & {isInDropZone?: boolean, isDropTarget?: boolean}>({
   gridArea: 'illustration',
-  size: {
-    size: {
-      S: 96,
-      M: 96,
-      L: 160
-    }
-  },
   alignSelf: 'center',
   '--iconPrimary': {
     type: 'color',

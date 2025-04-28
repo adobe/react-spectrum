@@ -14,17 +14,57 @@ import {AriaLabelingProps, DOMProps} from '@react-types/shared';
 import {ComponentType, Context, createContext, FunctionComponent, ReactNode, SVGProps, useRef} from 'react';
 import {ContextValue, SlotProps} from 'react-aria-components';
 import {SkeletonWrapper, useSkeletonIcon} from './Skeleton';
+import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
 import {UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {useSpectrumContextProps} from './useSpectrumContextProps';
 
+// Custom list of overrides, excluding width/height/flexGrow/flexShrink/flexBasis
+const allowedOverrides = [
+  'margin',
+  'marginStart',
+  'marginEnd',
+  'marginTop',
+  'marginBottom',
+  'marginX',
+  'marginY',
+  'justifySelf',
+  'alignSelf',
+  'order',
+  'gridArea',
+  'gridRowStart',
+  'gridRowEnd',
+  'gridColumnStart',
+  'gridColumnEnd',
+  'position',
+  'zIndex',
+  'top',
+  'bottom',
+  'inset',
+  'insetX',
+  'insetY',
+  'insetStart',
+  'insetEnd',
+  'rotate',
+  'transition',
+  'transitionDuration'
+];
+
 export interface IconProps extends UnsafeStyles, SlotProps, AriaLabelingProps, DOMProps {
-  'aria-hidden'?: boolean | 'false' | 'true'
+  'aria-hidden'?: boolean | 'false' | 'true',
+  size?: 'XS' | 'S' | 'M' | 'L' |'XL',
+  styles?: StyleString<(typeof allowedOverrides)[number]>
 }
 
 export interface IconContextValue extends UnsafeStyles, SlotProps {
   styles?: StyleString,
   render?: (icon: ReactNode) => ReactNode
+}
+
+export interface IllustrationProps extends UnsafeStyles, SlotProps, AriaLabelingProps, DOMProps {
+  'aria-hidden'?: boolean | 'false' | 'true',
+  size?: 'S' | 'M' | 'L',
+  styles?: StyleString<(typeof allowedOverrides)[number]>
 }
 
 export interface IllustrationContextValue extends IconContextValue {
@@ -34,19 +74,34 @@ export interface IllustrationContextValue extends IconContextValue {
 export const IconContext = createContext<ContextValue<Partial<IconContextValue>, SVGElement>>({});
 export const IllustrationContext = createContext<ContextValue<Partial<IllustrationContextValue>, SVGElement>>({});
 
+const iconStyles = style({
+  size: {
+    size: {
+      XS: 14,
+      S: 16,
+      M: 20,
+      L: 22,
+      XL: 26
+    }
+  },
+  flexShrink: 0
+}, allowedOverrides);
+
 export function createIcon(Component: ComponentType<SVGProps<SVGSVGElement>>, context: Context<ContextValue<IconContextValue, SVGElement>> = IconContext): FunctionComponent<IconProps> {
   return (props: IconProps) => {
     let ref = useRef<SVGElement>(null);
     let ctx;
     // TODO: remove this default once we release RAC and use DEFAULT_SLOT.
     [ctx, ref] = useSpectrumContextProps({slot: props.slot || 'icon'} as IconContextValue, ref, context);
-    let {render, styles} = ctx;
+    let {render, styles: ctxStyles} = ctx;
     let {
       UNSAFE_className,
       UNSAFE_style,
       slot,
       'aria-label': ariaLabel,
       'aria-hidden': ariaHidden,
+      size = 'M',
+      styles,
       ...otherProps
     } = props;
 
@@ -63,9 +118,63 @@ export function createIcon(Component: ComponentType<SVGProps<SVGSVGElement>>, co
           aria-hidden={ariaLabel ? (ariaHidden || undefined) : true}
           role="img"
           data-slot={slot}
-          className={(UNSAFE_className ?? '') + ' ' + useSkeletonIcon(styles)}
+          className={(UNSAFE_className ?? '') + ' ' + useSkeletonIcon(ctxStyles) + iconStyles({size}, styles)}
           style={UNSAFE_style} />
       </SkeletonWrapper>
+    );
+
+    if (render) {
+      return render(svg);
+    }
+
+    return svg;
+  };
+}
+
+const illustrationStyles = style({
+  size: {
+    size: {
+      S: 48,
+      M: 96,
+      L: 160
+    }
+  },
+  flexShrink: 0
+}, allowedOverrides);
+
+export function createIllustration(Component: ComponentType<SVGProps<SVGSVGElement>>): FunctionComponent<IllustrationProps> {
+  return (props: IllustrationProps) => {
+    let ref = useRef<SVGElement>(null);
+    let ctx;
+    [ctx, ref] = useSpectrumContextProps({slot: props.slot || 'icon'} as IconContextValue, ref, IllustrationContext);
+    let {render, styles: ctxStyles} = ctx;
+    let {
+      UNSAFE_className,
+      UNSAFE_style,
+      slot,
+      'aria-label': ariaLabel,
+      'aria-hidden': ariaHidden,
+      size = ctx.size || 'M',
+      styles,
+      ...otherProps
+    } = props;
+
+    if (!ariaHidden) {
+      ariaHidden = undefined;
+    }
+
+    let svg = (
+      <Component
+        {...otherProps}
+        // @ts-ignore
+        size={size}
+        focusable={false}
+        aria-label={ariaLabel}
+        aria-hidden={ariaLabel ? (ariaHidden || undefined) : true}
+        role="img"
+        data-slot={slot}
+        className={(UNSAFE_className ?? '') + ' ' + illustrationStyles({size}, styles) + (ctxStyles || '')}
+        style={UNSAFE_style} />
     );
 
     if (render) {
