@@ -225,9 +225,9 @@ export let listboxHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
   marginX: {
     size: {
       S: `[${edgeToText(24)}]`,
-      M: `[${edgeToText(24)}]`,
-      L: `[${edgeToText(24)}]`,
-      XL: `[${edgeToText(24)}]`
+      M: `[${edgeToText(32)}]`,
+      L: `[${edgeToText(40)}]`,
+      XL: `[${edgeToText(48)}]`
     }
   }
 });
@@ -249,9 +249,9 @@ const separatorWrapper = style({
   marginX: {
     size: {
       S: `[${edgeToText(24)}]`,
-      M: `[${edgeToText(24)}]`,
-      L: `[${edgeToText(24)}]`,
-      XL: `[${edgeToText(24)}]`
+      M: `[${edgeToText(32)}]`,
+      L: `[${edgeToText(40)}]`,
+      XL: `[${edgeToText(48)}]`
     }
   },
   height: 12
