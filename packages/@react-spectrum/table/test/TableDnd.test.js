@@ -949,7 +949,7 @@ describe('TableView', function () {
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(1);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(1);
           expect(onItemDrop).toHaveBeenCalledWith({
             target: {
               key: '5',
@@ -1060,7 +1060,7 @@ describe('TableView', function () {
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(1);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
-          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(1);
           expect(onItemDrop).toHaveBeenCalledWith({
             target: {
               key: '4',
@@ -1664,7 +1664,7 @@ describe('TableView', function () {
             dropOperation: 'move',
             isInternal: false
           });
-          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(1);
           // Only has the file in onItemDrop, the folder item should have been filtered out
           expect(onItemDrop).toHaveBeenCalledWith({
             target: {
@@ -2120,7 +2120,7 @@ describe('TableView', function () {
             dropOperation: 'move',
             isInternal: false
           });
-          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(1);
           expect(onItemDrop).toHaveBeenCalledWith({
             target: {
               key: '7',
@@ -2172,7 +2172,7 @@ describe('TableView', function () {
           expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Documents');
           await user.keyboard('{Enter}');
 
-          expect(onReorder).toHaveBeenCalledTimes(0);
+          expect(onReorder).toHaveBeenCalledTimes(1);
           expect(onItemDrop).toHaveBeenCalledTimes(2);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
           expect(onDragEnd).toHaveBeenCalledTimes(2);
@@ -2184,7 +2184,7 @@ describe('TableView', function () {
             dropOperation: 'move',
             isInternal: true
           });
-          expect(onInsert).toHaveBeenCalledTimes(0);
+          expect(onInsert).toHaveBeenCalledTimes(1);
           expect(onItemDrop).toHaveBeenLastCalledWith({
             target: {
               key: '3',
