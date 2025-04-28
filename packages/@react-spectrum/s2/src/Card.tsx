@@ -641,7 +641,7 @@ export const UserCard = forwardRef(function UserCard(props: CardProps, ref: DOMR
             [AvatarContext, {
               size: avatarSize[size],
               UNSAFE_style: {
-                '--size': avatarSize[size] + 'px'
+                '--size': (avatarSize[size] / 16) + 'rem'
               } as CSSProperties,
               styles: style({
                 position: 'relative',

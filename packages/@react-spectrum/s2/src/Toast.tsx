@@ -494,7 +494,7 @@ export function SpectrumToast(props: SpectrumToastProps): ReactNode {
           [placement === 'top' ? 'bottom' : 'top']: 0,
           left: 0,
           width: '100%',
-          translate: `0 0 ${(-12 * index)}px`,
+          translate: `0 0 ${(-12 * index) / 16}rem`,
           // Only 3 toasts are visible in the stack at once, but all toasts are in the DOM.
           // This allows view transitions to smoothly animate them from where they would be 
           // in the collapsed stack to their final position in the expanded list.

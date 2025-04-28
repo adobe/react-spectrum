@@ -62,26 +62,7 @@ const inputButton = style<ButtonRenderProps & {size: 'S' | 'M' | 'L' | 'XL', typ
   outlineStyle: 'none',
   textAlign: 'center',
   borderStyle: 'none',
-  borderTopRadius: {
-    default: {
-      size: {
-        S: '[3px]',
-        M: '[4px]',
-        L: '[5px]',
-        XL: '[6px]'
-      }
-    }
-  },
-  borderBottomRadius: {
-    default: {
-      size: {
-        S: '[3px]',
-        M: '[4px]',
-        L: '[5px]',
-        XL: '[6px]'
-      }
-    }
-  },
+  borderRadius: 'control-sm',
   alignItems: 'center',
   justifyContent: 'center',
   width: {

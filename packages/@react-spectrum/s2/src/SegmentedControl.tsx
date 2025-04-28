@@ -58,10 +58,11 @@ const segmentedControl = style({
   display: 'flex',
   gap: 4,
   backgroundColor: 'gray-100',
-  borderRadius: 'default',
+  borderRadius: 'control',
   width: 'fit'
 }, getAllowedOverrides());
 
+const iconOnly = ':has([slot=icon]):not(:has([data-rsp-slot=text]))';
 const controlItem = style<ToggleButtonRenderProps & {isJustified?: boolean}>({
   ...focusRing(),
   position: 'relative',
@@ -82,7 +83,10 @@ const controlItem = style<ToggleButtonRenderProps & {isJustified?: boolean}>({
   // TODO: update this padding for icon-only items when we introduce the non-track style back
   paddingX: {
     default: 'edge-to-text',
-    ':has([slot=icon]):not(:has([data-rsp-slot=text]))': space(6)
+    [iconOnly]: 0
+  },
+  aspectRatio: {
+    [iconOnly]: 'square'
   },
   height: 32,
   alignItems: 'center',
