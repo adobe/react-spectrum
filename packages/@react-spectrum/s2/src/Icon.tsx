@@ -13,6 +13,7 @@
 import {AriaLabelingProps, DOMProps} from '@react-types/shared';
 import {ComponentType, Context, createContext, FunctionComponent, ReactNode, SVGProps, useRef} from 'react';
 import {ContextValue, SlotProps} from 'react-aria-components';
+import {mergeStyles} from '../style/runtime';
 import {SkeletonWrapper, useSkeletonIcon} from './Skeleton';
 import {style} from '../style' with {type: 'macro'};
 import {StyleString} from '../style/types';
@@ -46,14 +47,17 @@ const allowedOverrides = [
   'insetStart',
   'insetEnd',
   'rotate',
-  'transition',
-  'transitionDuration'
-];
+  '--iconPrimary',
+  'size'
+] as const;
+
+// Omit --iconPrimary and size from type (they are private).
+// Use the iconStyle() macro to apply them.
+type AllowedOverrides = Exclude<(typeof allowedOverrides)[number], '--iconPrimary' | 'size'>;
 
 export interface IconProps extends UnsafeStyles, SlotProps, AriaLabelingProps, DOMProps {
   'aria-hidden'?: boolean | 'false' | 'true',
-  size?: 'XS' | 'S' | 'M' | 'L' |'XL',
-  styles?: StyleString<(typeof allowedOverrides)[number]>
+  styles?: StyleString<AllowedOverrides>
 }
 
 export interface IconContextValue extends UnsafeStyles, SlotProps {
@@ -64,7 +68,7 @@ export interface IconContextValue extends UnsafeStyles, SlotProps {
 export interface IllustrationProps extends UnsafeStyles, SlotProps, AriaLabelingProps, DOMProps {
   'aria-hidden'?: boolean | 'false' | 'true',
   size?: 'S' | 'M' | 'L',
-  styles?: StyleString<(typeof allowedOverrides)[number]>
+  styles?: StyleString<AllowedOverrides>
 }
 
 export interface IllustrationContextValue extends IconContextValue {
@@ -75,15 +79,7 @@ export const IconContext = createContext<ContextValue<Partial<IconContextValue>,
 export const IllustrationContext = createContext<ContextValue<Partial<IllustrationContextValue>, SVGElement>>({});
 
 const iconStyles = style({
-  size: {
-    size: {
-      XS: 14,
-      S: 16,
-      M: 20,
-      L: 22,
-      XL: 26
-    }
-  },
+  size: 20,
   flexShrink: 0
 }, allowedOverrides);
 
@@ -100,7 +96,6 @@ export function createIcon(Component: ComponentType<SVGProps<SVGSVGElement>>, co
       slot,
       'aria-label': ariaLabel,
       'aria-hidden': ariaHidden,
-      size = 'M',
       styles,
       ...otherProps
     } = props;
@@ -118,7 +113,7 @@ export function createIcon(Component: ComponentType<SVGProps<SVGSVGElement>>, co
           aria-hidden={ariaLabel ? (ariaHidden || undefined) : true}
           role="img"
           data-slot={slot}
-          className={(UNSAFE_className ?? '') + ' ' + useSkeletonIcon(ctxStyles) + iconStyles({size}, styles)}
+          className={(UNSAFE_className ?? '') + ' ' + useSkeletonIcon(mergeStyles(iconStyles(null, styles), ctxStyles))}
           style={UNSAFE_style} />
       </SkeletonWrapper>
     );

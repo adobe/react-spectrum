@@ -306,6 +306,11 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
         let shorthand = theme.shorthands[property];
         let props = Array.isArray(shorthand) ? shorthand : [property];
         for (let property of props) {
+          if (property.startsWith('--')) {
+            allowedOverridesSet.add(property);
+            continue;
+          }
+          
           let prop = properties.get(property);
           if (!prop) {
             throw new Error(`Invalid property ${property} in allowedOverrides`);
@@ -328,6 +333,11 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
               loop += `  if (p[1] === ${JSON.stringify(selector)}) ${p} = true;\n`;
             }
           }
+        } else if (property.startsWith('--') && allowedOverridesSet.has(property)) {
+          let selector = classNamePrefix(property, property);
+          let p = property.replace('--', '__');
+          js += `let ${p} = false;\n`;
+          loop += `  if (p[1] === ${JSON.stringify(selector)}) ${p} = true;\n`;
         }
       }
 

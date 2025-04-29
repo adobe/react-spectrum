@@ -198,6 +198,10 @@ const {spacing: negativeSpacing, padding: negativePadding} = generateSpacing([
   -96 // spacing-1000
 ] as const);
 
+export type PositiveSpacing = keyof typeof baseSpacing;
+export type NegativeSpacing = keyof typeof negativeSpacing;
+export type Spacing = PositiveSpacing | NegativeSpacing;
+
 export function fontRelative(this: MacroContext | void, base: number, baseFontSize = 14): string {
   return (base / baseFontSize) + 'em';
 }
@@ -290,6 +294,8 @@ const inset = {
   auto: 'auto',
   full: '100%'
 };
+
+export type Inset = keyof typeof inset;
 
 const translate = {
   ...basePadding,
