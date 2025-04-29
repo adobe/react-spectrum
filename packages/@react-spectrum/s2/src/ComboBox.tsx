@@ -169,10 +169,8 @@ export let listboxItem = style({
   },
   paddingBottom: '--labelPadding',
   backgroundColor: { // TODO: revisit color when I have access to dev mode again
-    default: {
-      default: 'transparent',
-      isFocused: baseColor('gray-100').isFocusVisible
-    }
+    default: 'transparent',
+    isFocused: baseColor('gray-100').isFocusVisible
   },
   color: {
     default: 'neutral',
@@ -242,7 +240,7 @@ export let listboxHeading = style({
 // not sure why edgeToText won't work...
 const separatorWrapper = style({
   display: {
-    ':is(:last-child > &)': 'none',
+    ':is(:last-child > *)': 'none',
     default: 'flex'
   },
   // A workaround since edgeToText() returns undefined for some reason
