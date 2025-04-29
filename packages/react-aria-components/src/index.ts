@@ -113,7 +113,7 @@ export type {InputProps, InputRenderProps} from './Input';
 export type {SectionProps, CollectionRenderer} from './Collection';
 export type {LabelProps} from './Label';
 export type {LinkProps, LinkRenderProps} from './Link';
-export type {ListBoxProps, ListBoxRenderProps, ListBoxItemProps, ListBoxItemRenderProps, ListBoxSectionProps, ListBoxLoadingSentinelProps} from './ListBox';
+export type {ListBoxProps, ListBoxRenderProps, ListBoxItemProps, ListBoxItemRenderProps, ListBoxSectionProps} from './ListBox';
 export type {MenuProps, MenuItemProps, MenuItemRenderProps, MenuTriggerProps, SubmenuTriggerProps, MenuSectionProps} from './Menu';
 export type {MeterProps, MeterRenderProps} from './Meter';
 export type {ModalOverlayProps, ModalRenderProps} from './Modal';

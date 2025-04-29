@@ -920,7 +920,7 @@ describe('GridList', () => {
       expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
     });
 
-    it('should properly render the renderEmptyState if gridlist is empty, even when loading', async () => {
+    it('should properly render the renderEmptyState if gridlist is empty', async () => {
       let tree = render(<AsyncGridList items={[]} />);
 
       let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
@@ -930,15 +930,16 @@ describe('GridList', () => {
       expect(tree.queryByText('Loading...')).toBeFalsy();
       expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
 
+      // Even if the gridlist is empty, providing isLoading will render the loader
       tree.rerender(<AsyncGridList items={[]} isLoading />);
       rows = gridListTester.rows;
-      expect(rows).toHaveLength(1);
-      expect(rows[0]).toHaveTextContent('empty state');
-      expect(tree.queryByText('Loading...')).toBeFalsy();
+      expect(rows).toHaveLength(2);
+      expect(rows[1]).toHaveTextContent('empty state');
+      expect(tree.queryByText('Loading...')).toBeTruthy();
       expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
     });
 
-    it('should only fire loadMore when not loading and intersection is detected', async () => {
+    it('should only fire loadMore when intersection is detected regardless of loading state', async () => {
       let observer = setupIntersectionObserverMock({
         observe
       });
@@ -950,15 +951,15 @@ describe('GridList', () => {
       expect(onLoadMore).toHaveBeenCalledTimes(0);
 
       act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
-      expect(onLoadMore).toHaveBeenCalledTimes(0);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
 
       tree.rerender(<AsyncGridList items={items} onLoadMore={onLoadMore} />);
       expect(observe).toHaveBeenCalledTimes(3);
       expect(observe).toHaveBeenLastCalledWith(sentinel);
-      expect(onLoadMore).toHaveBeenCalledTimes(0);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
 
       act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
-      expect(onLoadMore).toHaveBeenCalledTimes(1);
+      expect(onLoadMore).toHaveBeenCalledTimes(2);
     });
 
     describe('virtualized', () => {
@@ -1023,7 +1024,7 @@ describe('GridList', () => {
         expect(sentinel.parentElement).toHaveAttribute('inert');
       });
 
-      it('should not reserve room for the loader if isLoading is false or if gridlist is empty', async () => {
+      it('should not reserve room for the loader if isLoading is false', async () => {
         let tree = render(<VirtualizedAsyncGridList items={items} />);
 
         let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
@@ -1049,18 +1050,20 @@ describe('GridList', () => {
         expect(sentinelParentStyles.top).toBe('0px');
         expect(sentinelParentStyles.height).toBe('0px');
 
-        // Same as above, setting isLoading when gridlist is empty shouldnt change the layout
+        // Setting isLoading will render the loader even if the list is empty.
         tree.rerender(<VirtualizedAsyncGridList items={[]} isLoading />);
         rows = gridListTester.rows;
-        expect(rows).toHaveLength(1);
-        emptyStateRow = rows[0];
+        expect(rows).toHaveLength(2);
+        emptyStateRow = rows[1];
         expect(emptyStateRow).toHaveTextContent('empty state');
-        expect(within(gridListTester.gridlist).queryByText('Loading...')).toBeFalsy();
+
+        let loadingRow = rows[0];
+        expect(loadingRow).toHaveTextContent('Loading...');
 
         sentinel = within(gridListTester.gridlist).getByTestId('loadMoreSentinel');
         sentinelParentStyles = sentinel.parentElement.parentElement.style;
         expect(sentinelParentStyles.top).toBe('0px');
-        expect(sentinelParentStyles.height).toBe('0px');
+        expect(sentinelParentStyles.height).toBe('30px');
       });
     });
   });

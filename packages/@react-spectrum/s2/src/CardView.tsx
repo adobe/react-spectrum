@@ -245,7 +245,6 @@ export const CardView = /*#__PURE__*/ (forwardRef as forwardRefType)(function Ca
   let renderer;
   let cardLoadingSentinel = (
     <UNSTABLE_GridListLoadingSentinel
-      isLoading={props.loadingState === 'loading' || props.loadingState === 'filtering' || props.loadingState === 'loadingMore'}
       onLoadMore={onLoadMore} />
   );
 

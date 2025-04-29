@@ -233,14 +233,14 @@ const MyGridListLoaderIndicator = (props) => {
   );
 };
 
-export const AsyncGridList = () => {
+export const AsyncGridList = (args) => {
   let list = useAsyncList<Character>({
     async load({signal, cursor, filterText}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, args.delay));
       let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
 
@@ -262,19 +262,25 @@ export const AsyncGridList = () => {
           <MyGridListItem id={item.name}>{item.name}</MyGridListItem>
         )}
       </Collection>
-      <MyGridListLoaderIndicator isLoading={list.isLoading} onLoadMore={list.loadMore} />
+      <MyGridListLoaderIndicator isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore} />
     </GridList>
   );
 };
 
-export const AsyncGridListVirtualized = () => {
+AsyncGridList.story = {
+  args: {
+    delay: 50
+  }
+};
+
+export const AsyncGridListVirtualized = (args) => {
   let list = useAsyncList<Character>({
     async load({signal, cursor, filterText}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, args.delay));
       let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
       return {
@@ -299,10 +305,16 @@ export const AsyncGridListVirtualized = () => {
         <Collection items={list.items}>
           {item => <MyGridListItem id={item.name}>{item.name}</MyGridListItem>}
         </Collection>
-        <MyGridListLoaderIndicator isLoading={list.isLoading} onLoadMore={list.loadMore} />
+        <MyGridListLoaderIndicator isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore} />
       </GridList>
     </Virtualizer>
   );
+};
+
+AsyncGridListVirtualized.story = {
+  args: {
+    delay: 50
+  }
 };
 
 export function TagGroupInsideGridList() {

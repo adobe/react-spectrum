@@ -253,14 +253,14 @@ interface Character {
   birth_year: number
 }
 
-export const AsyncVirtualizedDynamicCombobox = () => {
+export const AsyncVirtualizedDynamicCombobox = (args) => {
   let list = useAsyncList<Character>({
     async load({signal, cursor, filterText}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, args.delay));
       let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
 
@@ -295,6 +295,12 @@ export const AsyncVirtualizedDynamicCombobox = () => {
       </Popover>
     </ComboBox>
   );
+};
+
+AsyncVirtualizedDynamicCombobox.story = {
+  args: {
+    delay: 50
+  }
 };
 
 const MyListBoxLoaderIndicator = (props) => {

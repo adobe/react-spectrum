@@ -558,21 +558,16 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
   let renderer;
   let listBoxLoadingCircle = (
     <UNSTABLE_ListBoxLoadingSentinel
-      // TODO: we only want the listbox loading sentinel row to have a height when performing a loadingMore
-      // Unlike table, this works because the listbox's initial load isn't triggerd by the sentintel and thus the first
-      // observation occurs when we've already loaded our first set of items rather than starting from empty, therefor flipping
-      // isLoading here from true to false and triggering the creation of a new InterserctionObserver
+      // Only show the spinner in the list when loading more
       isLoading={loadingState === 'loadingMore'}
       onLoadMore={onLoadMore}
       className={loadingWrapperStyles}>
-      {loadingState === 'loadingMore' && (
-        <ProgressCircle
-          isIndeterminate
-          size="S"
-          styles={progressCircleStyles({size})}
-          // Same loading string as table
-          aria-label={stringFormatter.format('table.loadingMore')} />
-      )}
+      <ProgressCircle
+        isIndeterminate
+        size="S"
+        styles={progressCircleStyles({size})}
+        // Same loading string as table
+        aria-label={stringFormatter.format('table.loadingMore')} />
     </UNSTABLE_ListBoxLoadingSentinel>
   );
 

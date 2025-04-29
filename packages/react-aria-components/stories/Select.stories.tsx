@@ -119,7 +119,7 @@ const MyListBoxLoaderIndicator = (props) => {
   );
 };
 
-export const AsyncVirtualizedCollectionRenderSelect = () => {
+export const AsyncVirtualizedCollectionRenderSelect = (args) => {
   let list = useAsyncList<Character>({
     async load({signal, cursor}) {
       if (cursor) {
@@ -127,7 +127,7 @@ export const AsyncVirtualizedCollectionRenderSelect = () => {
       }
 
       // Slow down load so progress circle can appear
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, args.delay));
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
       let json = await res.json();
       return {
@@ -161,10 +161,16 @@ export const AsyncVirtualizedCollectionRenderSelect = () => {
                 <MyListBoxItem id={item.name}>{item.name}</MyListBoxItem>
               )}
             </Collection>
-            <MyListBoxLoaderIndicator isLoading={list.isLoading} onLoadMore={list.loadMore} />
+            <MyListBoxLoaderIndicator isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore} />
           </ListBox>
         </Virtualizer>
       </Popover>
     </Select>
   );
+};
+
+AsyncVirtualizedCollectionRenderSelect.story = {
+  args: {
+    delay: 50
+  }
 };

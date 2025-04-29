@@ -467,8 +467,15 @@ function ListBoxDropIndicator(props: ListBoxDropIndicatorProps, ref: ForwardedRe
 
 const ListBoxDropIndicatorForwardRef = forwardRef(ListBoxDropIndicator);
 
-export interface ListBoxLoadingSentinelProps extends LoadMoreSentinelProps, StyleProps {
-  children?: ReactNode
+export interface ListBoxLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps {
+  /**
+   * The load more spinner to render when loading additional items.
+   */
+  children?: ReactNode,
+  /**
+   * Whether or not the loading spinner should be rendered or not.
+   */
+  isLoading?: boolean
 }
 
 export const UNSTABLE_ListBoxLoadingSentinel = createLeafComponent('loader', function ListBoxLoadingIndicator<T extends object>(props: ListBoxLoadingSentinelProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
@@ -478,12 +485,11 @@ export const UNSTABLE_ListBoxLoadingSentinel = createLeafComponent('loader', fun
 
   let sentinelRef = useRef<HTMLDivElement>(null);
   let memoedLoadMoreProps = useMemo(() => ({
-    isLoading,
     onLoadMore,
     collection: state?.collection,
     sentinelRef,
     scrollOffset
-  }), [isLoading, onLoadMore, scrollOffset, state?.collection]);
+  }), [onLoadMore, scrollOffset, state?.collection]);
   UNSTABLE_useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
   let renderProps = useRenderProps({
     ...otherProps,
@@ -510,7 +516,7 @@ export const UNSTABLE_ListBoxLoadingSentinel = createLeafComponent('loader', fun
       <div style={{position: 'relative', width: 0, height: 0}} inert={inertValue(true)} >
         <div data-testid="loadMoreSentinel" ref={sentinelRef} style={{position: 'absolute', height: 1, width: 1}} />
       </div>
-      {isLoading && state.collection.size > 1 && renderProps.children && (
+      {isLoading && renderProps.children && (
         <div
           // aria-selected isn't needed here since this option is not selectable.
           // eslint-disable-next-line jsx-a11y/role-has-required-aria-props

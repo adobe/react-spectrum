@@ -49,8 +49,7 @@ describe('Combobox', () => {
     expect(within(comboboxTester.listbox!).getByTestId('loadMoreSentinel')).toBeInTheDocument();
   });
 
-  // TODO: will need to update these tests when I replace isLoading with colection in useLoadMoreSentinel
-  it('should only call loadMore if loading is false', async () => {
+  it('should only call loadMore whenever intersection is detected', async () => {
     let onLoadMore = jest.fn();
     let observe = jest.fn();
     let observer = setupIntersectionObserverMock({
@@ -92,6 +91,8 @@ describe('Combobox', () => {
 
     act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
     act(() => {jest.runAllTimers();});
-    expect(onLoadMore).toHaveBeenCalledTimes(1);
+    // Note that if this was using useAsyncList, we'd be shielded from extranous onLoadMore calls but
+    // we want to leave that to user discretion
+    expect(onLoadMore).toHaveBeenCalledTimes(2);
   });
 });

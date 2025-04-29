@@ -475,7 +475,7 @@ export const AsyncListBox = (args) => {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, args.delay));
       let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
       return {
@@ -510,14 +510,15 @@ export const AsyncListBox = (args) => {
           </MyListBoxItem>
         )}
       </Collection>
-      <MyListBoxLoaderIndicator orientation={args.orientation} isLoading={list.isLoading} onLoadMore={list.loadMore} />
+      <MyListBoxLoaderIndicator orientation={args.orientation} isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore} />
     </ListBox>
   );
 };
 
 AsyncListBox.story = {
   args: {
-    orientation: 'horizontal'
+    orientation: 'horizontal',
+    delay: 50
   },
   argTypes: {
     orientation: {
@@ -534,7 +535,7 @@ export const AsyncListBoxVirtualized = (args) => {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, args.delay));
       let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
       return {
@@ -580,8 +581,14 @@ export const AsyncListBoxVirtualized = (args) => {
             </MyListBoxItem>
           )}
         </Collection>
-        <MyListBoxLoaderIndicator isLoading={list.isLoading} onLoadMore={list.loadMore} />
+        <MyListBoxLoaderIndicator isLoading={list.loadingState === 'loadingMore'} onLoadMore={list.loadMore} />
       </ListBox>
     </Virtualizer>
   );
+};
+
+AsyncListBoxVirtualized.story = {
+  args: {
+    delay: 50
+  }
 };

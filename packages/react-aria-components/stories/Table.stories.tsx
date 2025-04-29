@@ -590,7 +590,7 @@ function MyRow(props) {
     <>
       {/* Note that all the props are propagated from MyRow to Row, ensuring the id propagates */}
       <Row {...props} />
-      {props.isLoadingMore && <MyTableLoadingIndicator />}
+      <MyTableLoadingIndicator isLoading={props.isLoadingMore} />
     </>
   );
 }
@@ -673,7 +673,7 @@ interface Character {
   birth_year: number
 }
 
-const OnLoadMoreTable = () => {
+const OnLoadMoreTable = (args) => {
   let list = useAsyncList<Character>({
     async load({signal, cursor}) {
       if (cursor) {
@@ -681,7 +681,7 @@ const OnLoadMoreTable = () => {
       }
 
       // Slow down load so progress circle can appear
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, args.delay));
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
       let json = await res.json();
 
@@ -691,8 +691,6 @@ const OnLoadMoreTable = () => {
       };
     }
   });
-
-  let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
 
   return (
     <ResizableTableContainer style={{height: 150, width: 400, overflow: 'auto'}}>
@@ -706,7 +704,7 @@ const OnLoadMoreTable = () => {
         <MyTableBody
           tableWidth={400}
           renderEmptyState={() => renderEmptyLoader({isLoading: list.loadingState === 'loading', tableWidth: 400})}
-          isLoading={isLoading}
+          isLoading={list.loadingState === 'loadingMore'}
           onLoadMore={list.loadMore}
           rows={list.items}>
           {(item) => (
@@ -725,7 +723,10 @@ const OnLoadMoreTable = () => {
 
 export const OnLoadMoreTableStory  = {
   render: OnLoadMoreTable,
-  name: 'onLoadMore table'
+  name: 'onLoadMore table',
+  args: {
+    delay: 50
+  }
 };
 
 export function VirtualizedTable() {
@@ -843,6 +844,7 @@ function VirtualizedTableWithEmptyState(args) {
             <MyColumn>Baz</MyColumn>
           </TableHeader>
           <MyTableBody
+            // TODO: adjust this as well
             isLoading={args.isLoading}
             renderEmptyState={() => renderEmptyLoader({isLoading: !args.showRows && args.isLoading})}
             rows={!args.showRows ? [] : rows}>
@@ -869,7 +871,7 @@ export const VirtualizedTableWithEmptyStateStory  = {
   name: 'Virtualized Table With Empty State'
 };
 
-const OnLoadMoreTableVirtualized = () => {
+const OnLoadMoreTableVirtualized = (args) => {
   let list = useAsyncList<Character>({
     async load({signal, cursor}) {
       if (cursor) {
@@ -877,7 +879,7 @@ const OnLoadMoreTableVirtualized = () => {
       }
 
       // Slow down load so progress circle can appear
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, args.delay));
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
       let json = await res.json();
       return {
@@ -887,7 +889,6 @@ const OnLoadMoreTableVirtualized = () => {
     }
   });
 
-  let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
   return (
     <Virtualizer
       layout={TableLayout}
@@ -905,7 +906,7 @@ const OnLoadMoreTableVirtualized = () => {
         </TableHeader>
         <MyTableBody
           renderEmptyState={() => renderEmptyLoader({isLoading: list.loadingState === 'loading'})}
-          isLoading={isLoading}
+          isLoading={list.loadingState === 'loadingMore'}
           onLoadMore={list.loadMore}
           rows={list.items}>
           {(item) => (
@@ -924,10 +925,13 @@ const OnLoadMoreTableVirtualized = () => {
 
 export const OnLoadMoreTableStoryVirtualized  = {
   render: OnLoadMoreTableVirtualized,
-  name: 'Virtualized Table with async loading'
+  name: 'Virtualized Table with async loading',
+  args: {
+    delay: 50
+  }
 };
 
-const OnLoadMoreTableVirtualizedResizeWrapper = () => {
+const OnLoadMoreTableVirtualizedResizeWrapper = (args) => {
   let list = useAsyncList<Character>({
     async load({signal, cursor}) {
       if (cursor) {
@@ -935,7 +939,7 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
       }
 
       // Slow down load so progress circle can appear
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, args.delay));
       let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
       let json = await res.json();
       return {
@@ -945,7 +949,6 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
     }
   });
 
-  let isLoading = list.loadingState === 'loading' || list.loadingState === 'loadingMore';
   return (
     <ResizableTableContainer style={{height: 150, width: 400, overflow: 'auto'}}>
       <Virtualizer
@@ -964,7 +967,7 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
           </TableHeader>
           <MyTableBody
             renderEmptyState={() => renderEmptyLoader({isLoading: list.loadingState === 'loading'})}
-            isLoading={isLoading}
+            isLoading={list.loadingState === 'loadingMore'}
             onLoadMore={list.loadMore}
             rows={list.items}>
             {(item) => (
@@ -985,6 +988,9 @@ const OnLoadMoreTableVirtualizedResizeWrapper = () => {
 export const OnLoadMoreTableVirtualizedResizeWrapperStory  = {
   render: OnLoadMoreTableVirtualizedResizeWrapper,
   name: 'Virtualized Table with async loading, with wrapper around Virtualizer',
+  args: {
+    delay: 50
+  },
   parameters: {
     description: {
       data: 'This table has a ResizableTableContainer wrapper around the Virtualizer. The table itself doesnt have any resizablity, this is simply to test that it still loads/scrolls in this configuration.'

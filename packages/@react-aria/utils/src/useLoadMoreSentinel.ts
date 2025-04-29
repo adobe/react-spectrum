@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import type {AsyncLoadable} from '@react-types/shared';
+import type {AsyncLoadable, Collection, Node} from '@react-types/shared';
 import {getScrollParent} from './getScrollParent';
 import {RefObject, useRef} from 'react';
 import {useEffectEvent} from './useEffectEvent';
 import {useLayoutEffect} from './useLayoutEffect';
 
-export interface LoadMoreSentinelProps extends AsyncLoadable {
+export interface LoadMoreSentinelProps extends Omit<AsyncLoadable, 'isLoading'> {
+  collection: Collection<Node<unknown>>,
   /**
    * The amount of offset from the bottom of your scrollable region that should trigger load more.
    * Uses a percentage value relative to the scroll body's client height. Load more is then triggered
@@ -29,7 +30,7 @@ export interface LoadMoreSentinelProps extends AsyncLoadable {
 }
 
 export function UNSTABLE_useLoadMoreSentinel(props: LoadMoreSentinelProps, ref: RefObject<HTMLElement | null>): void {
-  let {isLoading, onLoadMore, scrollOffset = 1} = props;
+  let {collection, onLoadMore, scrollOffset = 1} = props;
 
   let sentinelObserver = useRef<IntersectionObserver>(null);
 
@@ -37,7 +38,9 @@ export function UNSTABLE_useLoadMoreSentinel(props: LoadMoreSentinelProps, ref: 
     // Use "isIntersecting" over an equality check of 0 since it seems like there is cases where
     // a intersection ratio of 0 can be reported when isIntersecting is actually true
     for (let entry of entries) {
-      if (entry.isIntersecting && !isLoading && onLoadMore) {
+      // Note that this will be called if the collection changes, even if onLoadMore was already called and is being processed.
+      // Up to user discretion as to how to handle these multiple onLoadMore calls
+      if (entry.isIntersecting && onLoadMore) {
         onLoadMore();
       }
     }
@@ -45,12 +48,9 @@ export function UNSTABLE_useLoadMoreSentinel(props: LoadMoreSentinelProps, ref: 
 
   useLayoutEffect(() => {
     if (ref.current) {
-      // TODO: problem with S2's Table loading spinner. Now that we use the isLoading provided to the sentinel in the layout to adjust the height of the loader,
-      // we are getting space reserved for the loadMore spinner when doing initial loading and rendering empty state at the same time. We can somewhat fix this by providing isLoading={loadingState === 'loadingMore'}
-      // which will mean the layout won't reserve space for the loader for initial loads, but that breaks the load more behavior (specifically, auto load more to fill scrollOffset. Scroll to load more seems broken to after initial load).
-      // We need to tear down and set up a new IntersectionObserver to force a check if the sentinel is "in view", see  https://codesandbox.io/p/sandbox/magical-swanson-dhgp89?file=%2Fsrc%2FApp.js%3A21%2C21
-      // I've actually fixed this via a ListLayout change (TableLayout extends this) where I check "collection?.size === 0 || (collection.size === 1 && collection.getItem(collection.getFirstKey()!)!.type === 'loader')"
-      // as well as isLoading, but it feels pretty opinionated/implementation specifc
+      // Tear down and set up a new IntersectionObserver when the collection changes so that we can properly trigger additional loadMores if there is room for more items
+      // Need to do this tear down and set up since using a large rootMargin will mean the observer's callback isn't called even when scrolling the item into view beause its visibility hasn't actually changed
+      // https://codesandbox.io/p/sandbox/magical-swanson-dhgp89?file=%2Fsrc%2FApp.js%3A21%2C21
       sentinelObserver.current = new IntersectionObserver(triggerLoadMore, {root: getScrollParent(ref?.current) as HTMLElement, rootMargin: `0px ${100 * scrollOffset}% ${100 * scrollOffset}% ${100 * scrollOffset}%`});
       sentinelObserver.current.observe(ref.current);
     }
@@ -60,5 +60,5 @@ export function UNSTABLE_useLoadMoreSentinel(props: LoadMoreSentinelProps, ref: 
         sentinelObserver.current.disconnect();
       }
     };
-  }, [isLoading, triggerLoadMore, ref, scrollOffset]);
+  }, [collection, triggerLoadMore, ref, scrollOffset]);
 }

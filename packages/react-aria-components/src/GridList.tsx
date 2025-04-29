@@ -497,23 +497,29 @@ function RootDropIndicator() {
   );
 }
 
-export interface GridListLoadingIndicatorProps extends LoadMoreSentinelProps, StyleProps {
-  children?: ReactNode
+export interface GridListLoadingSentinelProps extends Omit<LoadMoreSentinelProps, 'collection'>, StyleProps {
+  /**
+   * The load more spinner to render when loading additional items.
+   */
+  children?: ReactNode,
+  /**
+   * Whether or not the loading spinner should be rendered or not.
+   */
+  isLoading?: boolean
 }
 
-export const UNSTABLE_GridListLoadingSentinel = createLeafComponent('loader', function GridListLoadingIndicator<T extends object>(props: GridListLoadingIndicatorProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
+export const UNSTABLE_GridListLoadingSentinel = createLeafComponent('loader', function GridListLoadingIndicator<T extends object>(props: GridListLoadingSentinelProps, ref: ForwardedRef<HTMLDivElement>, item: Node<T>) {
   let state = useContext(ListStateContext)!;
   let {isVirtualized} = useContext(CollectionRendererContext);
   let {isLoading, onLoadMore, scrollOffset, ...otherProps} = props;
 
   let sentinelRef = useRef(null);
   let memoedLoadMoreProps = useMemo(() => ({
-    isLoading,
     onLoadMore,
     collection: state?.collection,
     sentinelRef,
     scrollOffset
-  }), [isLoading, onLoadMore, scrollOffset, state?.collection]);
+  }), [onLoadMore, scrollOffset, state?.collection]);
   UNSTABLE_useLoadMoreSentinel(memoedLoadMoreProps, sentinelRef);
 
   let renderProps = useRenderProps({
@@ -531,7 +537,7 @@ export const UNSTABLE_GridListLoadingSentinel = createLeafComponent('loader', fu
       <div style={{position: 'relative', width: 0, height: 0}} inert={inertValue(true)} >
         <div data-testid="loadMoreSentinel" ref={sentinelRef} style={{position: 'absolute', height: 1, width: 1}} />
       </div>
-      {isLoading && state.collection.size > 1 && renderProps.children && (
+      {isLoading && renderProps.children && (
         <div
           role="row"
           aria-rowindex={isVirtualized ? item.index + 1 : undefined}

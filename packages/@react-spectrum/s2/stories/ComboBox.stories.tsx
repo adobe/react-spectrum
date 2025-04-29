@@ -223,7 +223,7 @@ const AsyncComboBox = (args: any) => {
       }
 
       // Slow down load so progress circle can appear
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, args.delay));
       let res = await fetch(cursor || `https://swapi.py4e.com/api/people/?search=${filterText}`, {signal});
       let json = await res.json();
 
@@ -251,7 +251,8 @@ export const AsyncComboBoxStory  = {
   render: AsyncComboBox,
   args: {
     ...Example.args,
-    label: 'Star Wars Character Lookup'
+    label: 'Star Wars Character Lookup',
+    delay: 50
   },
   name: 'Async loading combobox',
   parameters: {
