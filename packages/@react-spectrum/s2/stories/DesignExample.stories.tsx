@@ -10,29 +10,40 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Button, ButtonGroup, Card, CardView, Collection, Content, DialogTrigger, Divider, Footer, FullscreenDialog, Heading, Link, Meter, NumberField, Picker, PickerItem, SearchField, StatusLight, Tab, TabList, TabPanel, Tabs, Tag, TagGroup, Text, ToggleButton} from '../src';
+import {Accordion, ActionButton, Badge, Button, ButtonGroup, Card, CardView, Collection, Content, DialogTrigger, Disclosure, DisclosureHeader, DisclosurePanel, DisclosureTitle, Divider, Footer, FullscreenDialog, Heading, Link, Meter, NumberField, Picker, PickerItem, SearchField, StatusLight, Tab, TabList, TabPanel, Tabs, Tag, TagGroup, Text, ToggleButton} from '../src';
 import Add from '../s2wf-icons/S2_Icon_Add_20_N.svg';
 import AlertTriangle from '../s2wf-icons/S2_Icon_AlertTriangle_20_N.svg';
 import Binoculars from '../s2wf-icons/S2_Icon_Binoculars_20_N.svg';
+import Checkmark from '../s2wf-icons/S2_Icon_Checkmark_20_N.svg';
+import CheckmarkCircle from '../s2wf-icons/S2_Icon_CheckmarkCircle_20_N.svg';
 import ChevronDown from '../s2wf-icons/S2_Icon_ChevronDown_20_N.svg';
 import ChevronLeft from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
 import ChevronUp from '../s2wf-icons/S2_Icon_ChevronUp_20_N.svg';
+import Circle from '../s2wf-icons/S2_Icon_Circle_20_N.svg';
 import Comment from '../s2wf-icons/S2_Icon_Comment_20_N.svg';
 import ConversionActualGraph from '../stories/assets/ConversionGraph.svg';
+import Data from '../s2wf-icons/S2_Icon_Data_20_N.svg';
 import Edit from '../s2wf-icons/S2_Icon_Edit_20_N.svg';
+import FileText from '../s2wf-icons/S2_Icon_FileText_20_N.svg';
 import Legend from '../stories/assets/Legend.svg';
 import Lightbulb from '../s2wf-icons/S2_Icon_Lightbulb_20_N.svg';
 import {linearGradient} from '../style' with {type: 'macro'};
 import LinkIcon from '../s2wf-icons/S2_Icon_Link_20_N.svg';
+import Lock from '../s2wf-icons/S2_Icon_Lock_20_N.svg';
 import More from '../s2wf-icons/S2_Icon_More_20_N.svg';
+import PeopleGroup from '../s2wf-icons/S2_Icon_PeopleGroup_20_N.svg';
 import Play from '../s2wf-icons/S2_Icon_Play_20_N.svg';
 import Properties from '../s2wf-icons/S2_Icon_Properties_20_N.svg';
+import React from 'react';
+import ShoppingCart from '../s2wf-icons/S2_Icon_ShoppingCart_20_N.svg';
 import SortDown from '../s2wf-icons/S2_Icon_SortDown_20_N.svg';
 import Star from '../s2wf-icons/S2_Icon_Star_20_N.svg';
 import StarFilled from '../s2wf-icons/S2_Icon_StarFilled_20_N.svg';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import Target from '../s2wf-icons/S2_Icon_Target_20_N.svg';
 import TargetAudience from '../stories/assets/TargetAudiences.svg';
 import {useNumberFormatter} from 'react-aria';
+import User from '../s2wf-icons/S2_Icon_User_20_N.svg';
 import ViewGrid from '../s2wf-icons/S2_Icon_ViewGrid_20_N.svg';
 
 const meta = {
@@ -424,4 +435,435 @@ export const Measurements = () => {
   return (
     <AgoraDesign />
   );
+};
+
+const metricCardStyles = style({
+  backgroundColor: 'layer-1',
+  borderRadius: 'lg',
+  marginBottom: 12,
+  border: 'thin',
+  borderColor: 'gray-300',
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'start',
+  padding: 16,
+  gap: 16
+});
+
+const personaIconContainerStyles = {
+  borderRadius: 'full',
+  width: 56,
+  height: 56,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flexShrink: 0,
+  color: 'white'
+};
+
+const personaFlexContainerStyles = style({
+  display: 'flex',
+  flexDirection: 'row',
+  gap: 16,
+  alignItems: 'start'
+});
+
+const personaFlexColumnStyles = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 8,
+  flex: 1
+});
+
+const personaDetailsGridStyles = style({
+  display: 'grid',
+  gridTemplateColumns: 'repeat(3, 1fr)',
+  gap: 12,
+  marginTop: 16
+});
+
+const detailLabelStyles = style({
+  font: 'body-sm',
+  color: 'gray-700'
+});
+
+const detailValueStyles = style({
+  font: 'body-sm',
+  fontWeight: 'medium'
+});
+
+const detailFlexColumnStyles = style({
+  display: 'flex',
+  flexDirection: 'column'
+});
+
+const metricTextContainerStyles = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 4
+});
+
+const metricTitleStyles = style({
+  font: 'heading-sm',
+  fontWeight: 'bold'
+});
+
+const metricScoreStyles = style({
+  font: 'heading-lg',
+  fontWeight: 'bold'
+});
+
+const metricValueStyles = {
+  font: 'heading-sm',
+  fontWeight: 'medium',
+  borderStyle: 'solid',
+  borderWidth: '[6px]',
+  borderRadius: 'full',
+  width: 60,
+  height: 60,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  lineHeight: 1
+};
+
+const checkItemStatusStyles = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 8,
+  marginLeft: 'auto'
+});
+
+const meterStyles = style({
+  width: 160
+});
+
+const personaCardStyles = style({
+  borderRadius: 'lg',
+  marginBottom: 12,
+  border: 'thin',
+  borderColor: 'gray-300',
+  position: 'relative',
+  padding: 24,
+  gap: 16,
+  backgroundColor: 'green-100',
+  borderStyle: 'solid',
+  borderWidth: 1
+});
+
+function ValidateAudienceComponent() {
+  return (
+    <div
+      className={style({
+        borderRadius: 'xl',
+        padding: 24,
+        backgroundColor: 'layer-1'
+      })}>
+      {/* Header */}
+      <header className={style({display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24})}>
+        <h2 className={style({font: 'heading'})}>Validate audience</h2>
+        <ButtonGroup>
+          <Button variant="secondary" fillStyle="outline">Cancel</Button>
+          <Button variant="accent">
+            <CheckmarkCircle />
+            <Text>Activate</Text>
+          </Button>
+        </ButtonGroup>
+      </header>
+
+      {/* Metrics Section */}
+      <section className={style({display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 24})}>
+        <div className={metricCardStyles}>
+          <div className={style({...metricValueStyles, borderColor: 'green-700'})}>95</div>
+          <div className={metricTextContainerStyles}>
+            <span className={metricTitleStyles}>Audience quality</span>
+            <span className={metricScoreStyles}>95/100</span>
+          </div>
+        </div>
+        <div className={metricCardStyles}>
+          <div className={style({...metricValueStyles, borderColor: 'orange-900'})}>67</div>
+          <div className={metricTextContainerStyles}>
+            <span className={metricTitleStyles}>Data readiness</span>
+            <span className={metricScoreStyles}>67/100</span>
+          </div>
+        </div>
+        <div className={metricCardStyles}>
+          <div className={style({...metricValueStyles, borderColor: 'green-700'})}>83</div>
+          <div className={metricTextContainerStyles}>
+            <span className={metricTitleStyles}>Activation readiness</span>
+            <span className={metricScoreStyles}>83/100</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Main Content: Summary + Checks */}
+      <section className={style({display: 'grid', gridTemplateColumns: '[summary] 1fr [checks] 2fr', gap: 32, padding: 24, backgroundColor: 'layer-1', borderRadius: 'lg', boxShadow: 'elevated'})}>
+        {/* Summary */}
+        <article>
+          <h4 className={style({font: 'heading', marginTop: 0, marginBottom: 16})}>Summary</h4>
+          <p className={style({font: 'body'})}>
+            The audience validation shows that the audience size of 650K and propensity score of 85 meet the objectives, indicating strong targeting potential. However, the data contains malformed fields and 5% of rows are missing customer IDs, which could hinder matching and cause deduplication issues, affecting targeting accuracy.
+          </p>
+        </article>
+
+        {/* Checks */}
+        <aside>
+          <h4 className={style({font: 'heading', fontWeight: 'bold', marginTop: 0, marginBottom: 16})}>8 Checks</h4>
+          <Accordion isQuiet>
+            <Disclosure id="audience-size">
+              <DisclosureHeader>
+                <DisclosureTitle>
+                  <PeopleGroup /> <span>Audience size</span>
+                </DisclosureTitle>
+                <div className={checkItemStatusStyles}>
+                  <Badge variant="positive" fillStyle="subtle">
+                    <Checkmark aria-label="Passed" />
+                    <Text>Passed</Text>
+                  </Badge>
+                </div>
+              </DisclosureHeader>
+              <DisclosurePanel>
+                Audience size details...
+              </DisclosurePanel>
+            </Disclosure>
+
+            <Disclosure id="propensity-score">
+              <DisclosureHeader>
+                <DisclosureTitle>
+                  <ShoppingCart /> <span>Propensity score</span>
+                </DisclosureTitle>
+                <div className={checkItemStatusStyles}>
+                  <Badge variant="positive" fillStyle="subtle"><Checkmark aria-label="Passed" /> <Text>Passed</Text></Badge>
+                </div>
+              </DisclosureHeader>
+              <DisclosurePanel>
+                Propensity score details...
+              </DisclosurePanel>
+            </Disclosure>
+
+            <Disclosure id="objective-reached">
+              <DisclosureHeader>
+                <DisclosureTitle>
+                  <Target /> <span>Objective reached</span>
+                </DisclosureTitle>
+                <div className={checkItemStatusStyles}>
+                  <Badge variant="positive" fillStyle="subtle"><Checkmark aria-label="Passed" /> <Text>Passed</Text></Badge>
+                </div>
+              </DisclosureHeader>
+              <DisclosurePanel>
+                Objective reached details...
+              </DisclosurePanel>
+            </Disclosure>
+
+            <Disclosure id="audience-overlap">
+              <DisclosureHeader>
+                <DisclosureTitle>
+                  <Circle /> <Text>Audience overlap</Text>
+                </DisclosureTitle>
+                <div className={checkItemStatusStyles}>
+                  <Badge variant="positive" fillStyle="subtle"><Checkmark aria-label="Passed" /> <Text>Passed</Text></Badge>
+                </div>
+              </DisclosureHeader>
+              <DisclosurePanel>
+                Audience overlap details...
+              </DisclosurePanel>
+            </Disclosure>
+
+            <Disclosure id="regulatory-compliance">
+              <DisclosureHeader>
+                <DisclosureTitle>
+                  <FileText /> <span>Regulatory compliance</span>
+                </DisclosureTitle>
+                <div className={checkItemStatusStyles}>
+                  <Badge variant="positive" fillStyle="subtle"><Checkmark aria-label="Passed" /> <Text>Passed</Text></Badge>
+                </div>
+              </DisclosureHeader>
+              <DisclosurePanel>
+                Regulatory compliance details...
+              </DisclosurePanel>
+            </Disclosure>
+
+            <Disclosure id="data-freshness">
+              <DisclosureHeader>
+                <DisclosureTitle>
+                  <FileText /> <span>Data freshness</span>
+                </DisclosureTitle>
+                <div className={checkItemStatusStyles}>
+                  <Badge variant="positive" fillStyle="subtle"><Checkmark aria-label="Passed" /> <Text>Passed</Text></Badge>
+                </div>
+              </DisclosureHeader>
+              <DisclosurePanel>
+                Data freshness details...
+              </DisclosurePanel>
+            </Disclosure>
+
+            <Disclosure id="data-completeness">
+              <DisclosureHeader>
+                <DisclosureTitle>
+                  <Data /> <span>Data completeness & integrity</span>
+                </DisclosureTitle>
+                <div className={checkItemStatusStyles}>
+                  <Meter label=" " labelPosition="side" aria-label="Data completeness & integrity" value={67} variant="notice" styles={meterStyles} />
+                </div>
+              </DisclosureHeader>
+              <DisclosurePanel>
+                Data completeness & integrity details...
+              </DisclosurePanel>
+            </Disclosure>
+
+            <Disclosure id="destination-compatibility">
+              <DisclosureHeader>
+                <DisclosureTitle>
+                  <Circle /> <Text>Destination compatibility</Text>
+                </DisclosureTitle>
+                <div className={checkItemStatusStyles}>
+                  <Meter label=" " labelPosition="side" aria-label="Destination compatibility" value={83} variant="positive"  styles={meterStyles} />
+                </div>
+              </DisclosureHeader>
+              <DisclosurePanel>
+                Destination compatibility details...
+              </DisclosurePanel>
+            </Disclosure>
+          </Accordion>
+        </aside>
+      </section>
+    </div>
+  );
+}
+
+export const ValidateAudience = () => {
+  return <ValidateAudienceComponent />;
+};
+
+function TargetBuyingGroupComponent() {
+  return (
+    <section className={style({marginBottom: 24})}>
+      <h2 className={style({font: 'heading-lg', marginBottom: 8})}>Target buying group</h2>
+      <p className={style({font: 'body', marginBottom: 8})}>NVAIE AI-generated buying group persona will be used to create buying groups for each of the accounts in the target account audience above.</p>
+
+      <h4 className={style({font: 'heading', marginBottom: 8})}>Buying group roles</h4>
+
+      <div className={style({display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12})}>
+        {/* Decision Maker Card */}
+        <div className={personaCardStyles}>
+          <div className={personaFlexContainerStyles}>
+            <div className={style({...personaIconContainerStyles, backgroundColor: 'pink-600'})}>
+              <User />
+            </div>
+            <div className={personaFlexColumnStyles}>
+              <h5 className={style({font: 'title', margin: 0})}>Decision maker</h5>
+              <p className={style({font: 'body', margin: 0})}><strong className={style({fontWeight: 'bold'})}>Role description:</strong> A person who ultimately makes the final purchase decision.</p>
+              <p className={style({font: 'body', margin: 0})}><strong className={style({fontWeight: 'bold'})}>Role summary:</strong> an executive-level person for an organization who would like to consider purchasing Nvidia AI Enterprise solution. This person cares about the product features and ROI.</p>
+              <Divider size="S" />
+              <div className={personaDetailsGridStyles}>
+                <div className={detailFlexColumnStyles}>
+                  <span className={detailLabelStyles}>Job function</span>
+                  <span className={detailValueStyles}>Engineering</span>
+                </div>
+                <div className={detailFlexColumnStyles}>
+                  <span className={detailLabelStyles}>Job level</span>
+                  <span className={detailValueStyles}>C-level, VP</span>
+                </div>
+                <div className={detailFlexColumnStyles}>
+                  <span className={detailLabelStyles}>Content interests</span>
+                  <span className={detailValueStyles}>ROI, capabilities, competitor differentiators</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Practitioner Card */}
+        <div className={personaCardStyles}>
+          <div className={personaFlexContainerStyles}>
+            <div className={style({...personaIconContainerStyles, backgroundColor: 'seafoam-600'})}>
+              <User />
+            </div>
+            <div className={personaFlexColumnStyles}>
+              <h5 className={style({font: 'title', margin: 0})}>Practitioner</h5>
+              <p className={style({font: 'body', margin: 0})}><strong className={style({fontWeight: 'bold'})}>Role description:</strong> A person who is the end user of the product.</p>
+              <p className={style({font: 'body', margin: 0})}><strong className={style({fontWeight: 'bold'})}>Role summary:</strong> An AI/ML engineer or leader for an organization who would like to consider purchasing Nvidia AI Enterprise solution. This person cares about the product features capabilities.</p>
+              <Divider size="S" />
+              <div className={personaDetailsGridStyles}>
+                <div className={detailFlexColumnStyles}>
+                  <span className={detailLabelStyles}>Job function</span>
+                  <span className={detailValueStyles}>Engineering</span>
+                </div>
+                <div className={detailFlexColumnStyles}>
+                  <span className={detailLabelStyles}>Job level</span>
+                  <span className={detailValueStyles}>Director, manager, principal</span>
+                </div>
+                <div className={detailFlexColumnStyles}>
+                  <span className={detailLabelStyles}>Content interests</span>
+                  <span className={detailValueStyles}>Capabilities, features, ease-of-use</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Influencer Card */}
+        <div className={personaCardStyles}>
+          <div className={personaFlexContainerStyles}>
+            <div className={style({...personaIconContainerStyles, backgroundColor: 'yellow-600'})}>
+              <User />
+            </div>
+            <div className={personaFlexColumnStyles}>
+              <h5 className={style({font: 'title', margin: 0})}>Influencer</h5>
+              <p className={style({font: 'body', margin: 0})}><strong className={style({fontWeight: 'bold'})}>Role description:</strong> A person who is will be influencing the decision-making process.</p>
+              <p className={style({font: 'body', margin: 0})}><strong className={style({fontWeight: 'bold'})}>Role summary:</strong> This may be an executive or head of department for an organization who would like to consider purchasing Nvidia AI Enterprise solution. This person cares about case studies and roadmap.</p>
+              <Divider size="S" />
+              <div className={personaDetailsGridStyles}>
+                <div className={detailFlexColumnStyles}>
+                  <span className={detailLabelStyles}>Job function</span>
+                  <span className={detailValueStyles}>Engineering, R&D,</span>
+                </div>
+                <div className={detailFlexColumnStyles}>
+                  <span className={detailLabelStyles}>Job level</span>
+                  <span className={detailValueStyles}>C-level, Heads, Manager</span>
+                </div>
+                <div className={detailFlexColumnStyles}>
+                  <span className={detailLabelStyles}>Content interests</span>
+                  <span className={detailValueStyles}>Case studies, ROI, future roadmap</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* IT/Security Card */}
+        <div className={personaCardStyles}>
+          <div className={personaFlexContainerStyles}>
+            <div className={style({...personaIconContainerStyles, backgroundColor: 'purple-600'})}>
+              <Lock />
+            </div>
+            <div className={personaFlexColumnStyles}>
+              <h5 className={style({font: 'title', margin: 0})}>IT/Security</h5>
+              <p className={style({font: 'body', margin: 0})}><strong className={style({fontWeight: 'bold'})}>Role description:</strong> A person who is will be influencing the decision-making process.</p>
+              <p className={style({font: 'body', margin: 0})}><strong className={style({fontWeight: 'bold'})}>Role summary:</strong> This may be an executive or head of department for an organization who would like to consider purchasing Nvidia AI Enterprise solution. This person cares about case studies and roadmap.</p>
+              <Divider size="S" />
+              <div className={personaDetailsGridStyles}>
+                <div className={detailFlexColumnStyles}>
+                  <span className={detailLabelStyles}>Job function</span>
+                  <span className={detailValueStyles}>IT, Security, Engineering</span>
+                </div>
+                <div className={detailFlexColumnStyles}>
+                  <span className={detailLabelStyles}>Job level</span>
+                  <span className={detailValueStyles}>Director, C-level, Admin</span>
+                </div>
+                <div className={detailFlexColumnStyles}>
+                  <span className={detailLabelStyles}>Content interests</span>
+                  <span className={detailValueStyles}>Security features, compliance, case studies</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export const TargetBuyingGroup = () => {
+  return <TargetBuyingGroupComponent />;
 };
