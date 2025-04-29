@@ -151,7 +151,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: Po
     }
   }, [state.isOpen, arrowRef]);
 
-  let {popoverProps, underlayProps, arrowProps, placement} = usePopover({
+  let {popoverProps, underlayProps, arrowProps, placement, crossPlacement} = usePopover({
     ...props,
     offset: props.offset ?? 8,
     arrowSize: arrowWidth,
@@ -205,6 +205,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: Po
       dir={props.dir}
       data-trigger={props.trigger}
       data-placement={placement}
+      data-crossplacement={crossPlacement}
       data-entering={isEntering || undefined}
       data-exiting={isExiting || undefined}>
       {!props.isNonModal && <DismissButton onDismiss={state.close} />}
