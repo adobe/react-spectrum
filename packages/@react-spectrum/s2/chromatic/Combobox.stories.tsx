@@ -142,5 +142,9 @@ export const Filtering = {
     await waitFor(() => {
       expect(within(body).getByRole('progressbar', {hidden: true})).toBeInTheDocument();
     }, {timeout: 5000});
+
+    await waitFor(() => {
+      expect(within(listbox).queryByRole('progressbar', {hidden: true})).toBeFalsy();
+    }, {timeout: 5000});
   }
 };

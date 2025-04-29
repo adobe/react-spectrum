@@ -1025,6 +1025,9 @@ describe('Picker', function () {
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Empty');
 
+      // TODO: this test (along with others in this suite) fails because we seem to be detecting that the button is being focused after the
+      // dropdown is opened, resulting in the dropdown closing due to useOverlay interactOutside logic
+      // Seems to specifically happen if the Picker has a selected item and the user tries to open the Picker
       await selectTester.selectOption({option: 'Zero'});
       expect(onSelectionChange).toHaveBeenCalledTimes(2);
       expect(onSelectionChange).toHaveBeenLastCalledWith('0');
