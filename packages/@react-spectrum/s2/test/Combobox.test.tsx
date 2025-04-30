@@ -10,18 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render, setupIntersectionObserverMock, within} from '@react-spectrum/test-utils-internal';
+jest.mock('@react-aria/live-announcer');
+import {act, pointerMap, render, setupIntersectionObserverMock, within} from '@react-spectrum/test-utils-internal';
+import {announce} from '@react-aria/live-announcer';
 import {ComboBox, ComboBoxItem} from '../src';
 import React from 'react';
 import {User} from '@react-aria/test-utils';
+import userEvent from '@testing-library/user-event';
 
 describe('Combobox', () => {
+  let user;
   let testUtilUser = new User();
 
   beforeAll(function () {
     jest.useFakeTimers();
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
+    user = userEvent.setup({delay: null, pointerMap});
   });
 
   afterEach(() => {
@@ -94,5 +99,27 @@ describe('Combobox', () => {
     // Note that if this was using useAsyncList, we'd be shielded from extranous onLoadMore calls but
     // we want to leave that to user discretion
     expect(onLoadMore).toHaveBeenCalledTimes(2);
+  });
+
+  it('should omit the laoder from the count of items', async () => {
+    jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'MacIntel');
+    let tree = render(
+      <ComboBox label="test" loadingState="loadingMore">
+        <ComboBoxItem>Chocolate</ComboBoxItem>
+        <ComboBoxItem>Mint</ComboBoxItem>
+        <ComboBoxItem>Strawberry</ComboBoxItem>
+        <ComboBoxItem>Vanilla</ComboBoxItem>
+        <ComboBoxItem>Chocolate Chip Cookie Dough</ComboBoxItem>
+      </ComboBox>
+    );
+
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container, interactionType: 'mouse'});
+    await comboboxTester.open();
+
+    expect(announce).toHaveBeenLastCalledWith('5 options available.');
+    expect(within(comboboxTester.listbox!).getByRole('progressbar', {hidden: true})).toBeInTheDocument();
+
+    await user.keyboard('C');
+    expect(announce).toHaveBeenLastCalledWith('2 options available.');
   });
 });
