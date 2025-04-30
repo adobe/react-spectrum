@@ -626,10 +626,9 @@ function TreeDragAndDropFilesFoldersExample(args) {
       type: 'folder',
       childItems: [
         {
-          id: '1.1',
+          id: 'file-1.1',
           name: 'File 1.1',
-          type: 'file',
-          childItems: []
+          type: 'file'
         },
         {
           id: 'folder-1.1',
@@ -645,18 +644,16 @@ function TreeDragAndDropFilesFoldersExample(args) {
       type: 'folder',
       childItems: [
         {
-          id: '2.1',
+          id: 'file-2.1',
           name: 'File 2.1',
-          type: 'file',
-          childItems: []
+          type: 'file'
         }
       ]
     },
     {
       id: 'file-1',
       name: 'File 1',
-      type: 'file',
-      childItems: []
+      type: 'file'
     }
   ];
   let treeData = useTreeData<any>({
