@@ -45,6 +45,11 @@ describe('useTreeData', function () {
     expect(result.current.selectedKeys).toEqual(new Set(['John', 'Stacy']));
   });
 
+  it('should initialize with empty initialItems', function () {
+    let {result} = renderHook(() => useTreeData({initialItems: [], getChildren, getKey}));
+    expect(result.current.items).toEqual([]);
+  });
+
   it('should get a node by key', function () {
     let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey}));
     expect(result.current.getItem('Sam').value).toBe(initial[0].children[1]);
@@ -513,6 +518,16 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children[2]).toBe(initialResult.items[0].children[2]);
   });
 
+  it('should not change state when updating a non-existent key', function () {
+    let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey}));
+    let initialResult = result.current;
+    act(() => {
+      result.current.update('nonexistent', {name: 'New Name'});
+    });
+    expect(result.current.items).toBe(initialResult.items);
+    expect(result.current.getItem('David')).toBe(initialResult.getItem('David'));
+  });
+
   it('should move an item within the same parent', function () {
     let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey}));
     let initialResult = result.current;
@@ -806,6 +821,13 @@ describe('useTreeData', function () {
         expect(e.toString()).toContain('Cannot move an item to be a child of itself.');
       }
     });
+
+    it('should throw error when moving relative to self', function () {
+      const {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey}));
+      expect(() => {
+        act(() => result.current.moveBefore('David', ['David']));
+      }).toThrow('Cannot move an item before itself.');
+    });
   });
 
   it('should move an item within its same level after the target by key', function () {
@@ -1076,5 +1098,89 @@ describe('useTreeData', function () {
     expect(result.current.items[0].children[3].key).toEqual('Eli');
     expect(result.current.items[1].key).toEqual('Emily');
     expect(result.current.items.length).toEqual(2);
+  });
+
+  describe('getDescendantKeys', function () {
+    it('should return an empty array for a leaf node', function () {
+      let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey}));
+      let leafNode = result.current.getItem('Suzie');
+      expect(result.current.getDescendantKeys(leafNode)).toEqual([]);
+    });
+
+    it('should return all descendant keys for a root node', function () {
+      let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey}));
+      let rootNode = result.current.getItem('David');
+      expect(result.current.getDescendantKeys(rootNode)).toEqual(['John', 'Suzie', 'Sam', 'Stacy', 'Brad', 'Jane']);
+    });
+
+    it('should return correct descendant keys for a mid-level node', function () {
+      let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey}));
+      let midNode = result.current.getItem('Sam');
+      expect(result.current.getDescendantKeys(midNode)).toEqual(['Stacy', 'Brad']);
+    });
+
+    it('should return an empty array if node is undefined/null', function () {
+      let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey}));
+      expect(result.current.getDescendantKeys(undefined)).toEqual([]);
+      expect(result.current.getDescendantKeys(null)).toEqual([]);
+    });
+  });
+
+  describe('operations on non-existent keys', function () {
+    const consoleError = console.error;
+    const consoleWarn = console.warn;
+    beforeEach(() => {
+      console.error = jest.fn();
+      console.warn = jest.fn();
+    });
+    afterEach(() => {
+      console.error = consoleError;
+      console.warn = consoleWarn;
+    });
+
+    it('should not change state when removing a non-existent key', function () {
+      let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey, initialSelectedKeys: ['John']}));
+      let initialResult = result.current;
+      act(() => {
+        result.current.remove('nonexistent');
+      });
+      expect(result.current.items).toBe(initialResult.items);
+      expect(result.current.selectedKeys).toEqual(initialResult.selectedKeys);
+      expect(result.current.getItem('David')).toBe(initialResult.getItem('David'));
+      expect(console.error).not.toHaveBeenCalled();
+    });
+
+    it('should not change state when moving a non-existent key', function () {
+      let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey}));
+      let initialResult = result.current;
+      act(() => {
+        result.current.move('nonexistent', 'David', 0);
+      });
+      expect(result.current.items).toBe(initialResult.items);
+      expect(result.current.getItem('David')).toBe(initialResult.getItem('David'));
+      expect(console.error).not.toHaveBeenCalled();
+    });
+
+    it('should warn and not change state when moving after a non-existent target key', function () {
+      const {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey}));
+      let initialResult = result.current;
+      act(() => {
+        result.current.moveAfter('nonexistent', ['David']);
+      });
+      expect(console.warn).toHaveBeenCalledWith('moveAfter: Target node with key nonexistent not found.');
+      expect(result.current.items).toBe(initialResult.items);
+      expect(console.error).not.toHaveBeenCalled();
+    });
+
+    it('should warn and not change state when moving before a non-existent target key', function () {
+      const {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey}));
+      let initialResult = result.current;
+      act(() => {
+        result.current.moveBefore('nonexistent', ['David']);
+      });
+      expect(console.warn).toHaveBeenCalledWith('moveBefore: Target node with key nonexistent not found.');
+      expect(result.current.items).toBe(initialResult.items);
+      expect(console.error).not.toHaveBeenCalled();
+    });
   });
 });
