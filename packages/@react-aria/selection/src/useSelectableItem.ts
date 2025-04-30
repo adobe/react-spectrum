@@ -161,7 +161,12 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
           manager.toggleSelection(key);
         }
       } else {
-        manager.replaceSelection(key);
+        // if ctrl is pressed in replace mode, we want to toggle selection
+        if (isCtrlKeyPressed(e)) {
+          manager.toggleSelection(key);
+        } else {
+          manager.replaceSelection(key);
+        }
       }
     }
   };
