@@ -153,7 +153,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       } else if (e && (e.pointerType === 'touch' || e.pointerType === 'virtual')) {
         // if touch or virtual (VO) then we just want to toggle, otherwise it's impossible to multi select because they don't have modifier keys
         manager.toggleSelection(key);
-      } else if (manager.selectionBehavior === 'toggle' ) {
+      } else if (manager.selectionBehavior === 'toggle') {
         // if ctrl is pressed in toggle mode, we want to replace selection
         if (isCtrlKeyPressed(e)) {
           manager.replaceSelection(key);
