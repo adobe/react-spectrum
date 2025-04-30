@@ -174,9 +174,9 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     };
   }
 
-  function updateTree(items: TreeNode<T>[], key: Key, update: (node: TreeNode<T>) => TreeNode<T> | null, originalMap: Map<Key, TreeNode<T>>) {
-    let node = originalMap.get(key);
-    if (!node) {
+  function updateTree(items: TreeNode<T>[], key: Key | null, update: (node: TreeNode<T>) => TreeNode<T> | null, originalMap: Map<Key, TreeNode<T>>) {
+    let node = key == null ? null : originalMap.get(key);
+    if (node == null) {
       return {items, nodeMap: originalMap};
     }
     let map = new Map<Key, TreeNode<T>>(originalMap);
