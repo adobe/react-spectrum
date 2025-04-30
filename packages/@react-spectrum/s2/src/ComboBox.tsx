@@ -131,11 +131,9 @@ const inputButton = style<ButtonRenderProps & {isOpen: boolean, size: 'S' | 'M' 
     }
   },
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: 'disabled',
-    forcedColors: {
-      default: 'ButtonFace'
-    }
+    forcedColors: 'ButtonFace'
   }
 });
 

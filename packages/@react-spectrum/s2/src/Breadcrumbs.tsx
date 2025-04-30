@@ -25,10 +25,10 @@ import {
   Breadcrumbs as RACBreadcrumbs
 } from 'react-aria-components';
 import {AriaBreadcrumbItemProps, useLocale} from 'react-aria';
+import {baseColor, focusRing, size, style} from '../style' with { type: 'macro' };
 import ChevronIcon from '../ui-icons/Chevron';
 import {Collection, DOMRef, DOMRefValue, LinkDOMProps, Node} from '@react-types/shared';
 import {createContext, forwardRef, Fragment, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {focusRing, size, style} from '../style' with { type: 'macro' };
 import FolderIcon from '../s2wf-icons/S2_Icon_FolderBreadcrumb_20_N.svg';
 import {forwardRefType} from './types';
 import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
@@ -251,9 +251,9 @@ const linkStyles = style<LinkRenderProps & {size?: 'M' | 'L', isCurrent?: boolea
   borderRadius: 'sm',
   font: 'control',
   color: {
-    default: 'neutral-subdued',
+    default: baseColor('neutral-subdued'),
     isDisabled: 'disabled',
-    isCurrent: 'neutral',
+    isCurrent: baseColor('neutral'),
     forcedColors: {
       default: 'LinkText',
       isDisabled: 'GrayText',

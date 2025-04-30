@@ -52,7 +52,7 @@ const wrapper = style({
   font: 'control',
   transition: 'colors',
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: {
       default: 'disabled',
       forcedColors: 'GrayText'
@@ -81,7 +81,7 @@ export const box = style<RenderProps>({
     default: 'gray-25',
     forcedColors: 'Background',
     isSelected: {
-      default: 'neutral',
+      default: baseColor('neutral'),
       isEmphasized: baseColor('accent-900'),
       forcedColors: 'Highlight',
       isInvalid: {
@@ -98,7 +98,7 @@ export const box = style<RenderProps>({
     default: baseColor('gray-800'),
     forcedColors: 'ButtonBorder',
     isInvalid: {
-      default: 'negative',
+      default: baseColor('negative'),
       forcedColors: 'Mark'
     },
     isDisabled: {

@@ -142,10 +142,10 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
     fillStyle: {
       fill: {
         variant: {
-          primary: 'neutral',
+          primary: baseColor('neutral'),
           secondary: baseColor('gray-100'),
-          accent: 'accent',
-          negative: 'negative',
+          accent: baseColor('accent'),
+          negative: baseColor('negative'),
           premium: 'gray-100',
           genai: 'gray-100'
         },
@@ -215,7 +215,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
       fill: {
         variant: {
           primary: 'gray-25',
-          secondary: 'neutral',
+          secondary: baseColor('neutral'),
           accent: 'white',
           negative: 'white',
           premium: 'white',
@@ -224,7 +224,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
         isDisabled: 'disabled'
       },
       outline: {
-        default: 'neutral',
+        default: baseColor('neutral'),
         variant: {
           premium: 'white',
           genai: 'white'

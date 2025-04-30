@@ -164,7 +164,7 @@ export let menuitem = style<Omit<MenuItemRenderProps, 'hasSubmenu' | 'isOpen'> &
     }
   },
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: {
       default: 'disabled',
       forcedColors: 'GrayText'
@@ -205,7 +205,7 @@ export let checkmark = style({
     isSelected: 'visible'
   },
   gridArea: 'checkmark',
-  color: 'accent',
+  color: baseColor('accent'),
   '--iconPrimary': {
     type: 'fill',
     value: {
@@ -280,7 +280,7 @@ export let description = style({
     }
   },
   color: {
-    default: 'neutral-subdued',
+    default: baseColor('neutral-subdued'),
     // Ideally this would use the same token as hover, but we don't have access to that here.
     // TODO: should we always consider isHovered and isFocused to be the same thing?
     isFocused: 'gray-800',

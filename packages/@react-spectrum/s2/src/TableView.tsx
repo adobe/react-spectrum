@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {baseColor, colorMix, focusRing, fontRelative, lightDark, space, style} from '../style' with {type: 'macro'};
 import {
   Button,
   CellRenderProps,
@@ -46,7 +47,6 @@ import {
 import {centerPadding, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
-import {colorMix, focusRing, fontRelative, lightDark, space, style} from '../style' with {type: 'macro'};
 import {ColumnSize} from '@react-types/table';
 import {DOMRef, DOMRefValue, forwardRefType, LoadingState, Node} from '@react-types/shared';
 import {GridNode} from '@react-types/grid';
@@ -461,7 +461,7 @@ const columnStyles = style({
   height: '[inherit]',
   boxSizing: 'border-box',
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     forcedColors: 'ButtonText'
   },
   paddingX: {
@@ -923,7 +923,7 @@ const commonCellStyles = {
 
 const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean}>({
   ...commonCellStyles,
-  color: 'neutral',
+  color: baseColor('neutral'),
   paddingY: centerPadding(),
   minHeight: {
     default: 40,

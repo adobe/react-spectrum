@@ -170,7 +170,7 @@ const fieldGroupStyles = style({
   transition: 'default',
   borderColor: {
     default: baseColor('gray-300'),
-    isInvalid: 'negative',
+    isInvalid: baseColor('negative'),
     isFocusWithin: {
       default: 'gray-900',
       isInvalid: 'negative-1000',
@@ -183,7 +183,7 @@ const fieldGroupStyles = style({
   },
   backgroundColor: 'gray-25',
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: 'disabled'
   },
   cursor: {

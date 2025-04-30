@@ -14,14 +14,13 @@ import {ActionMenuContext} from './ActionMenu';
 import {AvatarContext} from './Avatar';
 import {ButtonContext, LinkButtonContext} from './Button';
 import {Checkbox} from './Checkbox';
-import {colorToken} from '../style/tokens' with {type: 'macro'};
+import {color, focusRing, lightDark, space, style} from '../style' with {type: 'macro'};
 import {composeRenderProps, ContextValue, DEFAULT_SLOT, type GridListItem, GridListItemProps, Provider} from 'react-aria-components';
 import {ContentContext, FooterContext, TextContext} from './Content';
 import {createContext, CSSProperties, forwardRef, ReactNode, useContext} from 'react';
 import {DividerContext} from './Divider';
 import {DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {filterDOMProps, inertValue} from '@react-aria/utils';
-import {focusRing, lightDark, space, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IllustrationContext} from './Icon';
 import {ImageContext} from './Image';
@@ -96,9 +95,9 @@ let card = style({
     variant: {
       tertiary: {
         // Render border with box-shadow to avoid affecting layout.
-        default: `[0 0 0 1px ${colorToken('gray-100')}]`,
-        isHovered: `[0 0 0 1px ${colorToken('gray-200')}]`,
-        isFocusVisible: `[0 0 0 1px ${colorToken('gray-200')}]`,
+        default: `[0 0 0 1px ${color('gray-100')}]`,
+        isHovered: `[0 0 0 1px ${color('gray-200')}]`,
+        isFocusVisible: `[0 0 0 1px ${color('gray-200')}]`,
         isSelected: 'none',
         forcedColors: '[0 0 0 1px ButtonBorder]'
       },

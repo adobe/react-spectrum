@@ -60,7 +60,7 @@ const styles = style<CloseButtonProps & {isHovered: boolean, isFocusVisible: boo
   '--iconPrimary': {
     type: 'color',
     value: {
-      default: 'neutral',
+      default: baseColor('neutral'),
       isDisabled: 'disabled',
       isStaticColor: {
         default: baseColor('transparent-overlay-800'),

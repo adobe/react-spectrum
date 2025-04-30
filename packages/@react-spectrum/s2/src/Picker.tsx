@@ -153,7 +153,7 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
     isQuiet: 'transparent'
   },
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: 'disabled'
   },
   maxWidth: {
@@ -206,7 +206,7 @@ const invalidBorder = style({
   borderRadius: 'control',
   borderStyle: 'solid',
   borderWidth: 2,
-  borderColor: 'negative',
+  borderColor: baseColor('negative'),
   transition: 'default'
 });
 
@@ -366,7 +366,6 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
                       className={iconStyles} />
                     {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
                     {isInvalid && !isDisabled && !isQuiet &&
-                      // @ts-ignore known limitation detecting functions from the theme
                       <div className={invalidBorder({...renderProps, size})} />
                     }
                   </>

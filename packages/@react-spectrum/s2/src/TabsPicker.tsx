@@ -23,6 +23,7 @@ import {
   Provider,
   SelectValue
 } from 'react-aria-components';
+import {baseColor, edgeToText, focusRing, size, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
   checkmark,
@@ -35,7 +36,6 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {edgeToText, focusRing, size, style} from '../style' with {type: 'macro'};
 import {fieldInput, StyleProps} from './style-utils' with {type: 'macro'};
 import {
   FieldLabel
@@ -107,7 +107,7 @@ const inputButton = style({
   paddingX: 0,
   backgroundColor: 'transparent',
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: 'disabled'
   },
   maxWidth: {

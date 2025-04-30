@@ -25,11 +25,11 @@ import {
   TabListStateContext,
   TabRenderProps
 } from 'react-aria-components';
+import {baseColor, focusRing, size, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {Collection, DOMRef, DOMRefValue, Key, Node, Orientation, RefObject} from '@react-types/shared';
 import {CollectionBuilder} from '@react-aria/collections';
 import {createContext, forwardRef, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {focusRing, size, style} from '../style' with {type: 'macro'};
 import {getAllowedOverrides, StyleProps, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {inertValue, useEffectEvent, useId, useLabels, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
@@ -325,9 +325,8 @@ const tab = style<TabRenderProps & {density?: 'compact' | 'regular', labelBehavi
   ...focusRing(),
   display: 'flex',
   color: {
-    default: 'neutral-subdued',
-    isSelected: 'neutral',
-    isHovered: 'neutral-subdued',
+    default: baseColor('neutral-subdued'),
+    isSelected: baseColor('neutral'),
     isDisabled: 'disabled',
     forcedColors: {
       isSelected: 'Highlight',

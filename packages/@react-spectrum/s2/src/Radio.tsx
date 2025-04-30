@@ -56,7 +56,7 @@ const wrapper = style({
   font: 'control',
   transition: 'colors',
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: {
       default: 'disabled',
       forcedColors: 'GrayText'
@@ -93,7 +93,7 @@ const circle = style<RenderProps>({
       forcedColors: 'Highlight'
     },
     isInvalid: {
-      default: 'negative',
+      default: baseColor('negative'),
       forcedColors: 'Mark'
     },
     isDisabled: {

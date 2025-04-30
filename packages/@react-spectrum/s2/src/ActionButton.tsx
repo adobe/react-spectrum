@@ -94,8 +94,8 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
       }
     },
     isSelected: {
-      default: 'neutral',
-      isEmphasized: 'accent',
+      default: baseColor('neutral'),
+      isEmphasized: baseColor('accent'),
       isDisabled: {
         default: 'gray-100',
         isQuiet: 'transparent'
@@ -124,7 +124,7 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
     }
   },
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isSelected: {
       default: 'gray-25',
       isEmphasized: 'white'

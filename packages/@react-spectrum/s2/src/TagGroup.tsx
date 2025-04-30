@@ -28,6 +28,7 @@ import {
   useSlottedContext
 } from 'react-aria-components';
 import {AvatarContext} from './Avatar';
+import {baseColor, focusRing, fontRelative, style} from '../style' with { type: 'macro' };
 import {CenterBaseline, centerBaseline} from './CenterBaseline';
 import {ClearButton} from './ClearButton';
 import {Collection, CollectionBuilder} from '@react-aria/collections';
@@ -36,7 +37,6 @@ import {DOMRef, DOMRefValue, HelpTextProps, Node, SpectrumLabelableProps} from '
 import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel} from './Field';
 import {flushSync} from 'react-dom';
-import {focusRing, fontRelative, style} from '../style' with { type: 'macro' };
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {IconContext} from './Icon';
@@ -460,9 +460,9 @@ const tagStyles = style<TagRenderProps & {size?: 'S' | 'M' | 'L', isEmphasized?:
       default: 'gray-200'
     },
     isSelected: {
-      default: 'neutral',
+      default: baseColor('neutral'),
       isEmphasized: {
-        default: 'accent'
+        default: baseColor('accent')
       }
     },
     isDisabled: 'disabled',
@@ -472,7 +472,7 @@ const tagStyles = style<TagRenderProps & {size?: 'S' | 'M' | 'L', isEmphasized?:
     }
   },
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isSelected: {
       default: 'gray-25',
       isEmphasized: 'white'

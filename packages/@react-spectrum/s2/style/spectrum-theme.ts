@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ArbitraryProperty, Color, ColorProperty, createTheme, ExpandedProperty, MappedProperty, parseArbitraryValue, PercentageProperty, SizingProperty} from './style-macro';
-import {ArbitraryValue, CSSProperties, CSSValue, PropertyValueMap} from './types';
-import {autoStaticColor, colorScale, colorToken, fontSizeToken, generateOverlayColorScale, getToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
+import {ArbitraryProperty, Color, createTheme, ExpandedProperty, MappedProperty, parseArbitraryValue, PercentageProperty, SizingProperty} from './style-macro';
+import {ArbitraryValue, CSSProperties, CSSValue, PropertyValueDefinition, PropertyValueMap, Value} from './types';
+import {autoStaticColor, ColorRef, colorScale, ColorToken, colorToken, fontSizeToken, generateOverlayColorScale, getToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
 import type * as CSS from 'csstype';
 
 interface MacroContext {
@@ -26,7 +26,7 @@ function pxToRem(px: string | number) {
   return px / 16 + 'rem';
 }
 
-const color = {
+const baseColors = {
   transparent: 'transparent',
   black: 'black',
   white: 'white',
@@ -74,41 +74,138 @@ const color = {
   LinkText: 'LinkText'
 };
 
-export function baseColor(base: keyof typeof color): {default: keyof typeof color, isHovered: keyof typeof color, isFocusVisible: keyof typeof color, isPressed: keyof typeof color} {
-  let keys = Object.keys(color) as (keyof typeof color)[];
-  let index = keys.indexOf(base);
-  if (index === -1) {
-    throw new Error('Invalid base color ' + base);
+// Resolves a color to its most basic form, following all aliases.
+function resolveColorToken(token: string | ColorToken | ColorRef): ColorToken {
+  if (typeof token === 'string') {
+    return {
+      type: 'color',
+      light: token,
+      dark: token
+    };
   }
 
+  if (token.type === 'color') {
+    return token;
+  }
+
+  let lightToken = baseColors[token.light];
+  if (!lightToken) {
+    throw new Error(`${token.light} is not a valid color reference`);
+  }
+  let darkToken = baseColors[token.dark];
+  if (!darkToken) {
+    throw new Error(`${token.dark} is not a valid color reference`);
+  }
+
+  let light = resolveColorToken(lightToken);
+  let dark = resolveColorToken(darkToken);
   return {
-    default: base,
-    isHovered: keys[index + 1],
-    isFocusVisible: keys[index + 1],
-    isPressed: keys[index + 1]
+    type: 'color',
+    light: light.light,
+    dark: dark.dark
   };
 }
 
-type SpectrumColor = Color<keyof typeof color> | ArbitraryValue;
-function parseColor(value: SpectrumColor) {
+function colorTokenToString(token: ColorToken, opacity?: string | number) {
+  if (token.light === token.dark) {
+    return token.light;
+  }
+  let result = `light-dark(${token.light}, ${token.dark})`;
+  if (opacity) {
+    result = `rgb(from ${result} r g b / ${opacity}%)`;
+  }
+  return result;
+}
+
+// Bumps up a color token by one stop, e.g. for hover/press states.
+let colorList = Object.keys(baseColors);
+function nextColorStop(name: string, token: string | ColorToken | ColorRef): ColorToken {
+  if (typeof token === 'object' && token.type === 'ref') {
+    let light = nextColorStop(token.light, baseColors[token.light]);
+    let dark = nextColorStop(token.dark, baseColors[token.dark]);
+
+    return {
+      type: 'color',
+      light: light.light,
+      dark: dark.dark,
+      forcedColors: token.forcedColors
+    };
+  }
+
+  let index = colorList.indexOf(name);
+  if (index === -1) {
+    throw new Error(`${name} does not support states`);
+  }
+
+  let key = colorList[index + 1];
+  if (key.split('-')[0] !== name.split('-')[0]) {
+    throw new Error(`${name} does not support states`);
+  }
+
+  return resolveColorToken(baseColors[key]);
+}
+
+class SpectrumColorProperty<C extends string> extends ArbitraryProperty<C> {
+  mapping: {[name in C]: string | ColorToken | ColorRef};
+
+  constructor(property: string, mapping: {[name in C]: string | ColorToken | ColorRef}) {
+    super(property);
+    this.mapping = mapping;
+  }
+
+  toCSSValue(value: Color<C>): PropertyValueDefinition<Value> {
+    let [colorWithOpacity, state] = value.split(':');
+    let [color, opacity] = colorWithOpacity.split('/');
+    let token: string | ColorToken | ColorRef = this.mapping[color];
+    if (!token) {
+      throw new Error('Invalid color ' + value);
+    }
+
+    if (state === 'hovered' || state === 'pressed' || state === 'focused') {
+      token = nextColorStop(color, token);
+    } else {
+      token = resolveColorToken(token);
+    }
+
+    let result = colorTokenToString(token, opacity);
+    if (token.forcedColors) {
+      return {
+        default: result,
+        forcedColors: token.forcedColors
+      };
+    }
+
+    return result;
+  }
+}
+
+type BaseColor = keyof typeof baseColors;
+
+export function baseColor<C extends string = BaseColor>(base: BaseColor | C): {default: C, isHovered: C, isFocusVisible: C, isPressed: C} {
+  return {
+    default: base as C,
+    isHovered: `${base}:hovered` as C,
+    isFocusVisible: `${base}:focused` as C,
+    isPressed: `${base}:pressed` as C
+  };
+}
+
+type SpectrumColor = Color<BaseColor> | ArbitraryValue;
+export function color(value: SpectrumColor): string {
   let arbitrary = parseArbitraryValue(value);
   if (arbitrary) {
     return arbitrary;
   }
   let [colorValue, opacity] = value.split('/');
-  colorValue = color[colorValue];
-  if (opacity) {
-    colorValue = `rgb(from ${colorValue} r g b / ${opacity}%)`;
-  }
-  return colorValue;
+  return colorTokenToString(resolveColorToken(baseColors[colorValue]), opacity);
 }
 
 export function lightDark(light: SpectrumColor, dark: SpectrumColor): `[${string}]` {
-  return `[light-dark(${parseColor(light)}, ${parseColor(dark)})]`;
+  return `[light-dark(${color(light)}, ${color(dark)})]`;
 }
 
 export function colorMix(a: SpectrumColor, b: SpectrumColor, percent: number): `[${string}]` {
-  return `[color-mix(in srgb, ${parseColor(a)}, ${parseColor(b)} ${percent}%)]`;
+  return `[color-mix(in srgb, ${color(a)}, ${color(b)} ${percent}%)]`;
 }
 
 interface LinearGradient {
@@ -457,35 +554,12 @@ const fontSize = {
 export const style = createTheme({
   properties: {
     // colors
-    color: new ColorProperty('color', {
-      ...color,
-      accent: {
-        default: colorToken('accent-content-color-default'),
-        isHovered: colorToken('accent-content-color-hover'),
-        isFocusVisible: colorToken('accent-content-color-key-focus'),
-        isPressed: colorToken('accent-content-color-down')
-        // isSelected: colorToken('accent-content-color-selected'), // same as pressed
-      },
-      neutral: {
-        default: colorToken('neutral-content-color-default'),
-        isHovered: colorToken('neutral-content-color-hover'),
-        isFocusVisible: colorToken('neutral-content-color-key-focus'),
-        isPressed: colorToken('neutral-content-color-down')
-        // isSelected: colorToken('neutral-subdued-content-color-selected'),
-      },
-      'neutral-subdued': {
-        default: colorToken('neutral-subdued-content-color-default'),
-        isHovered: colorToken('neutral-subdued-content-color-hover'),
-        isFocusVisible: colorToken('neutral-subdued-content-color-key-focus'),
-        isPressed: colorToken('neutral-subdued-content-color-down')
-        // isSelected: colorToken('neutral-subdued-content-color-selected'),
-      },
-      negative: {
-        default: colorToken('negative-content-color-default'),
-        isHovered: colorToken('negative-content-color-hover'),
-        isFocusVisible: colorToken('negative-content-color-key-focus'),
-        isPressed: colorToken('negative-content-color-down')
-      },
+    color: new SpectrumColorProperty('color', {
+      ...baseColors,
+      accent: colorToken('accent-content-color-default'),
+      neutral: colorToken('neutral-content-color-default'),
+      'neutral-subdued': colorToken('neutral-subdued-content-color-default'),
+      negative: colorToken('negative-content-color-default'),
       disabled: colorToken('disabled-content-color'),
       heading: colorToken('heading-color'),
       title: colorToken('title-color'),
@@ -494,48 +568,18 @@ export const style = createTheme({
       code: colorToken('code-color'),
       auto: autoStaticColor('self(backgroundColor, var(--s2-container-bg))')
     }),
-    backgroundColor: new ColorProperty('backgroundColor', {
-      ...color,
-      accent: {
-        default: weirdColorToken('accent-background-color-default'),
-        isHovered: weirdColorToken('accent-background-color-hover'),
-        isFocusVisible: weirdColorToken('accent-background-color-key-focus'),
-        isPressed: weirdColorToken('accent-background-color-down')
-      },
+    backgroundColor: new SpectrumColorProperty('backgroundColor', {
+      ...baseColors,
+      accent: weirdColorToken('accent-background-color-default'),
       'accent-subtle': weirdColorToken('accent-subtle-background-color-default'),
-      neutral: {
-        default: colorToken('neutral-background-color-default'),
-        isHovered: colorToken('neutral-background-color-hover'),
-        isFocusVisible: colorToken('neutral-background-color-key-focus'),
-        isPressed: colorToken('neutral-background-color-down')
-      },
-      'neutral-subdued': {
-        default: weirdColorToken('neutral-subdued-background-color-default'),
-        isHovered: weirdColorToken('neutral-subdued-background-color-hover'),
-        isFocusVisible: weirdColorToken('neutral-subdued-background-color-key-focus'),
-        isPressed: weirdColorToken('neutral-subdued-background-color-down')
-      },
+      neutral: colorToken('neutral-background-color-default'),
+      'neutral-subdued': weirdColorToken('neutral-subdued-background-color-default'),
       'neutral-subtle': weirdColorToken('neutral-subtle-background-color-default'),
-      negative: {
-        default: weirdColorToken('negative-background-color-default'),
-        isHovered: weirdColorToken('negative-background-color-hover'),
-        isFocusVisible: weirdColorToken('negative-background-color-key-focus'),
-        isPressed: weirdColorToken('negative-background-color-down')
-      },
+      negative: weirdColorToken('negative-background-color-default'),
       'negative-subtle': weirdColorToken('negative-subtle-background-color-default'),
-      informative: {
-        default: weirdColorToken('informative-background-color-default'),
-        isHovered: weirdColorToken('informative-background-color-hover'),
-        isFocusVisible: weirdColorToken('informative-background-color-key-focus'),
-        isPressed: weirdColorToken('informative-background-color-down')
-      },
+      informative: weirdColorToken('informative-background-color-default'),
       'informative-subtle': weirdColorToken('informative-subtle-background-color-default'),
-      positive: {
-        default: weirdColorToken('positive-background-color-default'),
-        isHovered: weirdColorToken('positive-background-color-hover'),
-        isFocusVisible: weirdColorToken('positive-background-color-key-focus'),
-        isPressed: weirdColorToken('positive-background-color-down')
-      },
+      positive: weirdColorToken('positive-background-color-default'),
       'positive-subtle': weirdColorToken('positive-subtle-background-color-default'),
       notice: weirdColorToken('notice-background-color-default'),
       'notice-subtle': weirdColorToken('notice-subtle-background-color-default'),
@@ -584,25 +628,19 @@ export const style = createTheme({
       pasteboard: weirdColorToken('background-pasteboard-color'),
       elevated: weirdColorToken('background-elevated-color')
     }),
-    borderColor: new ColorProperty('borderColor', {
-      ...color,
-      negative: {
-        default: colorToken('negative-border-color-default'),
-        isHovered: colorToken('negative-border-color-hover'),
-        isFocusVisible: colorToken('negative-border-color-key-focus'),
-        isPressed: colorToken('negative-border-color-down')
-      },
+    borderColor: new SpectrumColorProperty('borderColor', {
+      ...baseColors,
+      negative: colorToken('negative-border-color-default'),
       disabled: colorToken('disabled-border-color')
-        // forcedColors: 'GrayText'
     }),
-    outlineColor: new ColorProperty('outlineColor', {
-      ...color,
+    outlineColor: new SpectrumColorProperty('outlineColor', {
+      ...baseColors,
       'focus-ring': {
-        default: colorToken('focus-indicator-color'),
+        ...colorToken('focus-indicator-color'),
         forcedColors: 'Highlight'
       }
     }),
-    fill: new ColorProperty('fill', {
+    fill: new SpectrumColorProperty('fill', {
       none: 'none',
       currentColor: 'currentColor',
       accent: weirdColorToken('accent-visual-color'),
@@ -630,12 +668,12 @@ export const style = createTheme({
       cinnamon: weirdColorToken('cinnamon-visual-color'),
       brown: weirdColorToken('brown-visual-color'),
       silver: weirdColorToken('silver-visual-color'),
-      ...color
+      ...baseColors
     }),
-    stroke: new ColorProperty('stroke', {
+    stroke: new SpectrumColorProperty('stroke', {
       none: 'none',
       currentColor: 'currentColor',
-      ...color
+      ...baseColors
     }),
 
     // dimensions
@@ -825,9 +863,9 @@ export const style = createTheme({
         // Create a CSS var for each color stop so the gradient can be transitioned.
         // These are registered via @property in the `linearGradient` macro.
         let properties: string[] = [];
-        value[0].stops.forEach(([color], i) => {
+        value[0].stops.forEach(([colorValue], i) => {
           properties.push(`--g${i}`);
-          values[`--g${i}`] = parseColor(color);
+          values[`--g${i}`] = color(colorValue);
         });
 
         // This is used by transition-property so we automatically transition all of the color stops.

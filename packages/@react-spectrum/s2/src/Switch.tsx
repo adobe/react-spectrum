@@ -55,7 +55,7 @@ const wrapper = style({
   font: 'control',
   transition: 'colors',
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: {
       default: 'disabled',
       forcedColors: 'GrayText'
@@ -97,7 +97,7 @@ const track = style<RenderProps>({
   backgroundColor: {
     default: 'gray-25',
     isSelected: {
-      default: 'neutral',
+      default: baseColor('neutral'),
       isEmphasized: baseColor('accent-900'),
       forcedColors: 'Highlight',
       isDisabled: {
@@ -113,7 +113,7 @@ const handle = style<RenderProps>({
   aspectRatio: 'square',
   borderRadius: 'full',
   backgroundColor: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: {
       default: 'gray-400',
       forcedColors: 'GrayText'
