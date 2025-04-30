@@ -306,7 +306,12 @@ function ListBoxSectionInner<T extends object>(props: ListBoxSectionProps<T>, re
  */
 export const ListBoxSection = /*#__PURE__*/ createBranchComponent('section', ListBoxSectionInner);
 
-export interface ListBoxItemRenderProps extends ItemRenderProps {}
+export interface ListBoxItemRenderProps extends ItemRenderProps {
+  /** The selected keys in the collection. */
+  selectedKeys: Set<Key>,
+  /** A function to set the selected keys in the collection. */
+  setSelectedKeys: (keys: Set<Key>) => void,
+}
 
 export interface ListBoxItemProps<T = object> extends RenderProps<ListBoxItemRenderProps>, LinkDOMProps, HoverEvents {
   /** The unique id of the item. */
@@ -369,6 +374,8 @@ export const ListBoxItem = /*#__PURE__*/ createLeafComponent('item', function Li
       isHovered,
       selectionMode: state.selectionManager.selectionMode,
       selectionBehavior: state.selectionManager.selectionBehavior,
+      selectedKeys: state.selectionManager.selectedKeys,
+      setSelectedKeys: state.selectionManager.setSelectedKeys,
       allowsDragging: !!dragState,
       isDragging,
       isDropTarget: droppableItem?.isDropTarget
