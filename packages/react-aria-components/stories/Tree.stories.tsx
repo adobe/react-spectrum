@@ -280,6 +280,8 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
         <Collection items={childItems}>
           {(item: any) => (
             <DynamicTreeItem supportsDragging={supportsDragging} renderLoader={renderLoader} isLoading={props.isLoading} id={item.key} childItems={item.children} textValue={item.value.name} href={props.href}>
+              {item.value?.type === 'folder' && '📁'}
+              {item.value?.type === 'file' && '📄'}
               {item.value.name}
             </DynamicTreeItem>
           )}
@@ -614,4 +616,110 @@ function TreeDragAndDropExample(args) {
 export const TreeWithDragAndDrop = {
   ...TreeExampleDynamic,
   render: TreeDragAndDropExample
+};
+
+function TreeDragAndDropFilesFoldersExample(args) {
+  let rows = [
+    {
+      id: 'folder-1',
+      name: 'Folder 1',
+      type: 'folder',
+      childItems: [
+        {
+          id: '1.1',
+          name: 'File 1.1',
+          type: 'file',
+          childItems: []
+        },
+        {
+          id: 'folder-1.1',
+          name: 'Folder 1.1',
+          type: 'folder',
+          childItems: []
+        }
+      ]
+    },
+    {
+      id: 'folder-2',
+      name: 'Folder 2',
+      type: 'folder',
+      childItems: [
+        {
+          id: '2.1',
+          name: 'File 2.1',
+          type: 'file',
+          childItems: []
+        }
+      ]
+    },
+    {
+      id: 'file-1',
+      name: 'File 1',
+      type: 'file',
+      childItems: []
+    }
+  ];
+  let treeData = useTreeData<any>({
+    initialItems: rows,
+    getKey: item => item.id,
+    getChildren: item => item.childItems
+  });
+
+  let getItems = (keys) => [...keys].map(key => {
+    let item = treeData.getItem(key);
+    return {
+      'text/plain': item?.value.name
+    };
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems,
+    getAllowedDropOperations: () => ['move', 'cancel'],
+    shouldAcceptItemDrop: (target) => {
+      let item = treeData.getItem(target.key);
+      return item?.value?.type !== 'file';
+    },
+    onReorder(e) {
+      console.log(`moving [${[...e.keys].join(',')}] ${e.target.dropPosition} ${e.target.key}`);
+      try {
+        if (e.target.dropPosition === 'before') {
+          treeData.moveBefore(e.target.key, e.keys);
+        } else if (e.target.dropPosition === 'after') {
+          treeData.moveAfter(e.target.key, e.keys);
+        } else if (e.target.dropPosition === 'on') {
+          let targetNode = treeData.getItem(e.target.key);
+          if (targetNode) {
+            e.keys.forEach(key => {
+              treeData.move(key, e.target.key, targetNode.children ? targetNode.children.length : 0);
+            });
+          } else {
+            console.error('Target node not found for drop on:', e.target.key);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    onItemDrop() {
+      // TODO: Need to get this to work without needing to pass this
+    }
+  });
+
+  return (
+    <Tree dragAndDropHooks={dragAndDropHooks} {...args} className={styles.tree} aria-label="Tree with drag and drop" items={treeData.items}>
+      {(item: any) => (
+        <DynamicTreeItem id={item.key} childItems={item.children ?? []} textValue={item.value.name} supportsDragging>
+          {item.value?.type === 'folder' && '📁'}
+          {item.value?.type === 'file' && '📄'}
+          {item.value.name}
+        </DynamicTreeItem>
+      )}
+    </Tree>
+  );
+}
+
+export const TreeDragAndDropFilesFolders = {
+  ...TreeExampleDynamic,
+  render: TreeDragAndDropFilesFoldersExample,
+  name: 'Tree Drag and Drop (with files and folders)'
 };
