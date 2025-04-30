@@ -590,8 +590,6 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
       </>
     );
   }
-
-  let isEmptyOrLoading = state?.collection?.size === 0 || (state?.collection.size === 1 && state.collection.getItem(state.collection.getFirstKey()!)!.type === 'loader');
   let scale = useScale();
 
   return (
@@ -689,10 +687,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
               layout={ListLayout}
               layoutOptions={{
                 estimatedRowHeight: 32,
-                // TODO: can we get rid of this and instead handle padding else where other than the layout options? Kinda gross that we need to do this check.
-                // Perhaps can consider only applying padding if the collection actually has content since the renderEmptyState content is outside the virtualizer
-                // Otherwise could consider moving renderEmptyState into the collection...
-                padding: isEmptyOrLoading ? 0 : 8,
+                padding: 8,
                 estimatedHeadingHeight: 50,
                 loaderHeight: LOADER_ROW_HEIGHTS[size][scale]
               }}>

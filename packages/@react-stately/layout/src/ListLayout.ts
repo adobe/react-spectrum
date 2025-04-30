@@ -255,9 +255,13 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     let collection = this.virtualizer!.collection;
     let skipped = 0;
     let nodes: LayoutNode[] = [];
+    let isEmptyOrLoading = collection?.size === 0 || (collection.size === 1 && collection.getItem(collection.getFirstKey()!)!.type === 'loader');
+    if (isEmptyOrLoading) {
+      y = 0;
+    }
+
     for (let node of collection) {
       let rowHeight = (this.rowHeight ?? this.estimatedRowHeight ?? DEFAULT_HEIGHT) + this.gap;
-
       // Skip rows before the valid rectangle unless they are already cached.
       if (node.type === 'item' && y + rowHeight < this.requestedRect.y && !this.isValid(node, y)) {
         y += rowHeight;
@@ -289,7 +293,7 @@ export class ListLayout<T, O extends ListLayoutOptions = ListLayoutOptions> exte
     }
 
     y -= this.gap;
-    y += this.padding;
+    y += isEmptyOrLoading ? 0 : this.padding;
     this.contentSize = new Size(this.virtualizer!.visibleRect.width, y);
     return nodes;
   }
