@@ -1843,7 +1843,7 @@ describe('Table', () => {
               <Column isRowHeader>Foo</Column>
               <Column>Bar</Column>
             </TableHeader>
-            <TableBody>
+            <TableBody renderEmptyState={() => 'No results'}>
               <Collection items={items}>
                 {(item) => (
                   <Row>
@@ -1865,58 +1865,86 @@ describe('Table', () => {
       onLoadMore.mockRestore();
     });
 
-    it('should fire onLoadMore when scrolling near the bottom', function () {
+    it('should render the loading element when loading', async () => {
+      let tree = render(<LoadMoreTable isLoading items={items} />);
+      let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
+      let rows = tableTester.rows;
+      expect(rows).toHaveLength(12);
+      let loaderRow = rows[11];
+      expect(loaderRow).toHaveTextContent('spinner');
+
+      let sentinel = tree.getByTestId('loadMoreSentinel');
+      expect(sentinel.parentElement).toHaveAttribute('inert');
+    });
+
+    it('should render the sentinel but not the loading indicator when not loading', async () => {
+      let tree = render(<LoadMoreTable items={items} />);
+      let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
+      let rows = tableTester.rows;
+      expect(rows).toHaveLength(11);
+      expect(tree.queryByText('spinner')).toBeFalsy();
+      expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
+    });
+
+    it('should properly render the renderEmptyState if table is empty', async () => {
+      let tree = render(<LoadMoreTable items={[]} />);
+      let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
+      let rows = tableTester.rows;
+      expect(rows).toHaveLength(2);
+      expect(rows[1]).toHaveTextContent('No results');
+      expect(tree.queryByText('spinner')).toBeFalsy();
+      expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
+
+      // Even if the table is empty, providing isLoading will render the loader
+      tree.rerender(<LoadMoreTable items={[]} isLoading />);
+      rows = tableTester.rows;
+      expect(rows).toHaveLength(3);
+      expect(rows[2]).toHaveTextContent('No results');
+      expect(tree.queryByText('spinner')).toBeTruthy();
+      expect(tree.getByTestId('loadMoreSentinel')).toBeInTheDocument();
+    });
+
+    it('should fire onLoadMore when intersecting with the sentinel', function () {
       let observe = jest.fn();
       let observer = setupIntersectionObserverMock({
         observe
       });
-      jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 100);
-      jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 25);
 
       let tree = render(<LoadMoreTable onLoadMore={onLoadMore} />);
-
-      let scrollView = tree.getByTestId('scrollRegion');
       expect(onLoadMore).toHaveBeenCalledTimes(0);
       let sentinel = tree.getByTestId('loadMoreSentinel');
       expect(observe).toHaveBeenLastCalledWith(sentinel);
       expect(sentinel.nodeName).toBe('TD');
 
-      scrollView.scrollTop = 50;
-      fireEvent.scroll(scrollView);
-      act(() => {jest.runAllTimers();});
-
       expect(onLoadMore).toHaveBeenCalledTimes(0);
-
-      scrollView.scrollTop = 76;
-      fireEvent.scroll(scrollView);
       act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
       act(() => {jest.runAllTimers();});
 
       expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
 
-    it('doesn\'t call onLoadMore if it is already loading items', function () {
-      let observer = setupIntersectionObserverMock();
-      jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 100);
-      jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 25);
+    it('should only fire loadMore when intersection is detected regardless of loading state', function () {
+      let observe = jest.fn();
+      let observer = setupIntersectionObserverMock({
+        observe
+      });
 
-      let tree = render(<LoadMoreTable onLoadMore={onLoadMore} isLoading />);
-
-      let scrollView = tree.getByTestId('scrollRegion');
+      let tree = render(<LoadMoreTable items={items} onLoadMore={onLoadMore} isLoading />);
+      let sentinel = tree.getByTestId('loadMoreSentinel');
+      expect(observe).toHaveBeenCalledTimes(2);
+      expect(observe).toHaveBeenLastCalledWith(sentinel);
       expect(onLoadMore).toHaveBeenCalledTimes(0);
 
-      scrollView.scrollTop = 76;
-      fireEvent.scroll(scrollView);
-      act(() => {jest.runAllTimers();});
-
-      expect(onLoadMore).toHaveBeenCalledTimes(0);
-
-      tree.rerender(<LoadMoreTable onLoadMore={onLoadMore} />);
-
-      fireEvent.scroll(scrollView);
       act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
-      act(() => {jest.runAllTimers();});
       expect(onLoadMore).toHaveBeenCalledTimes(1);
+
+      tree.rerender(<LoadMoreTable items={items} onLoadMore={onLoadMore} />);
+      expect(observe).toHaveBeenCalledTimes(3);
+      expect(observe).toHaveBeenLastCalledWith(sentinel);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+
+      act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
+      expect(onLoadMore).toHaveBeenCalledTimes(2);
     });
 
     it('should automatically fire onLoadMore if there aren\'t enough items to fill the Table', function () {
@@ -1993,69 +2021,122 @@ describe('Table', () => {
       expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
 
-    it('works with virtualizer', function () {
-      let observe = jest.fn();
-      let observer = setupIntersectionObserverMock({
-        observe
-      });
+    describe('virtualized', () => {
       let items = [];
-      for (let i = 0; i < 6; i++) {
+      for (let i = 1; i <= 50; i++) {
         items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
       }
-      function VirtualizedTableLoad() {
+      let clientWidth, clientHeight;
+
+      beforeAll(() => {
+        clientWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
+        clientHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
+        // jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 150);
+        // jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
+        // jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementationOnce(() => 0).mockImplementation(function () {
+        //   if (this.getAttribute('role') === 'grid') {
+        //     return 50;
+        //   }
+
+        //   return 25;
+        // });
+      });
+
+      beforeEach(() => {
+        act(() => {jest.runAllTimers();});
+      });
+
+      afterAll(function () {
+        // TODO fix these
+        clientWidth.mockReset();
+        clientHeight.mockReset();
+      });
+
+      let VirtualizedTableLoad = (props) => {
+        let {items, isLoading, onLoadMore} = props;
+
         return (
-          <Virtualizer layout={TableLayout} layoutOptions={{rowHeight: 25}}>
+          <Virtualizer layout={TableLayout} layoutOptions={{rowHeight: 25, loaderHeight: 30}}>
             <Table aria-label="Load more table">
               <TableHeader>
                 <Column isRowHeader>Foo</Column>
                 <Column>Bar</Column>
               </TableHeader>
-              <TableBody>
+              <TableBody renderEmptyState={() => 'No results'}>
                 <Collection items={items}>
-                  {item => (
+                  {(item) => (
                     <Row>
                       <Cell>{item.foo}</Cell>
                       <Cell>{item.bar}</Cell>
                     </Row>
                   )}
                 </Collection>
-                <UNSTABLE_TableLoadingSentinel onLoadMore={onLoadMore} />
+                <UNSTABLE_TableLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
+                  <div>spinner</div>
+                </UNSTABLE_TableLoadingSentinel>
               </TableBody>
             </Table>
           </Virtualizer>
         );
-      }
+      };
 
-      jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 150);
-      jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
-      jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementationOnce(() => 0).mockImplementation(function () {
-        if (this.getAttribute('role') === 'grid') {
-          return 50;
-        }
+      it('should always render the sentinel even when virtualized', () => {
+        let tree = render(<VirtualizedTableLoad isLoading items={items} />);
+        let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
+        let rows = tableTester.rows;
+        expect(rows).toHaveLength(7);
+        let loaderRow = rows[6];
+        expect(loaderRow).toHaveTextContent('spinner');
+        expect(loaderRow).toHaveAttribute('aria-rowindex', '52');
+        let loaderParentStyles = loaderRow.parentElement.style;
 
-        return 25;
+        // 50 items * 25px = 1250
+        expect(loaderParentStyles.top).toBe('1250px');
+        expect(loaderParentStyles.height).toBe('30px');
+
+        let sentinel = within(loaderRow.parentElement).getByTestId('loadMoreSentinel');
+        expect(sentinel.parentElement).toHaveAttribute('inert');
       });
 
-      let {getByRole, getByTestId} = render(<VirtualizedTableLoad />);
+      it('should not reserve room for the loader if isLoading is false', () => {
+        let tree = render(<VirtualizedTableLoad items={items} />);
+        let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
+        let rows = tableTester.rows;
+        expect(rows).toHaveLength(6);
+        expect(within(tableTester.table).queryByText('spinner')).toBeFalsy();
 
-      let scrollView = getByRole('grid');
-      expect(onLoadMore).toHaveBeenCalledTimes(0);
-      let sentinel = getByTestId('loadMoreSentinel');
-      expect(observe).toHaveBeenLastCalledWith(sentinel);
-      expect(sentinel.nodeName).toBe('DIV');
+        let sentinel = within(tableTester.table).getByTestId('loadMoreSentinel');
+        let sentinelParentStyles = sentinel.parentElement.parentElement.style;
+        expect(sentinelParentStyles.top).toBe('1250px');
+        expect(sentinelParentStyles.height).toBe('0px');
+        expect(sentinel.parentElement).toHaveAttribute('inert');
 
-      scrollView.scrollTop = 50;
-      fireEvent.scroll(scrollView);
-      act(() => {jest.runAllTimers();});
+        tree.rerender(<VirtualizedTableLoad items={[]} />);
+        rows = tableTester.rows;
+        expect(rows).toHaveLength(1);
+        let emptyStateRow = rows[0];
+        expect(emptyStateRow).toHaveTextContent('No results');
+        expect(within(tableTester.table).queryByText('spinner')).toBeFalsy();
+        sentinel = within(tableTester.table).getByTestId('loadMoreSentinel', {hidden: true});
+        sentinelParentStyles = sentinel.parentElement.parentElement.style;
+        expect(sentinelParentStyles.top).toBe('0px');
+        expect(sentinelParentStyles.height).toBe('0px');
 
-      expect(onLoadMore).toHaveBeenCalledTimes(0);
+        // Setting isLoading will render the loader even if the table is empty.
+        tree.rerender(<VirtualizedTableLoad items={[]} isLoading />);
+        rows = tableTester.rows;
+        expect(rows).toHaveLength(2);
+        emptyStateRow = rows[1];
+        expect(emptyStateRow).toHaveTextContent('No results');
 
-      scrollView.scrollTop = 76;
-      fireEvent.scroll(scrollView);
-      act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
-      act(() => {jest.runAllTimers();});
+        let loadingRow = rows[0];
+        expect(loadingRow).toHaveTextContent('spinner');
 
-      expect(onLoadMore).toHaveBeenCalledTimes(1);
+        sentinel = within(tableTester.table).getByTestId('loadMoreSentinel', {hidden: true});
+        sentinelParentStyles = sentinel.parentElement.parentElement.style;
+        expect(sentinelParentStyles.top).toBe('0px');
+        expect(sentinelParentStyles.height).toBe('30px');
+      });
     });
   });
 
