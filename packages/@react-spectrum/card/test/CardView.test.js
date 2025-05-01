@@ -141,13 +141,12 @@ describe('CardView', function () {
     user = userEvent.setup({delay: null, pointerMap});
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => mockWidth);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => mockHeight);
-    // jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 50);
     jest.useFakeTimers();
   });
 
   beforeEach(() => {
     jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 50);
-  })
+  });
 
   afterEach(() => {
     jest.clearAllMocks();
