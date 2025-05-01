@@ -42,6 +42,11 @@ export function colorToken(name: keyof typeof tokens): ColorToken | ColorRef {
   };
 }
 
+export function rawColorToken(name: keyof typeof tokens): string {
+  let token = tokens[name] as typeof tokens['gray-25'];
+  return `light-dark(${token.sets.light.value}, ${token.sets.dark.value})`;
+}
+
 export interface ColorRef {
   type: 'ref',
   light: string,

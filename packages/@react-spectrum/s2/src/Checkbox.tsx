@@ -14,11 +14,11 @@ import {Checkbox as AriaCheckbox, CheckboxProps as AriaCheckboxProps, CheckboxGr
 import {baseColor, focusRing, space, style} from '../style' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../ui-icons/Checkmark';
+import {controlBorderRadius, controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import DashIcon from '../ui-icons/Dash';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
-import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {useSpectrumContextProps} from './useSpectrumContextProps';
@@ -49,7 +49,7 @@ const wrapper = style({
   columnGap: 'text-to-control',
   alignItems: 'baseline',
   width: 'fit',
-  font: 'control',
+  font: controlFont(),
   transition: 'colors',
   color: {
     default: baseColor('neutral'),
@@ -66,8 +66,8 @@ const wrapper = style({
 
 export const box = style<RenderProps>({
   ...focusRing(),
-  size: 'control-sm',
-  borderRadius: 'control-sm',
+  ...controlBorderRadius('sm'),
+  size: controlSize('sm'),
   flexShrink: 0,
   display: 'flex',
   alignItems: 'center',

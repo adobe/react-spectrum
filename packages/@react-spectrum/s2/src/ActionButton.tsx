@@ -15,9 +15,9 @@ import {AvatarContext} from './Avatar';
 import {baseColor, focusRing, fontRelative, style} from '../style' with { type: 'macro' };
 import {ButtonProps, ButtonRenderProps, ContextValue, OverlayTriggerStateContext, Provider, Button as RACButton, useSlottedContext} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
+import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with { type: 'macro' };
 import {createContext, forwardRef, ReactNode, useContext} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
-import {getAllowedOverrides, staticColor, StyleProps} from './style-utils' with { type: 'macro' };
 import {IconContext} from './Icon';
 import {NotificationBadgeContext} from './NotificationBadge';
 import {pressScale} from './pressScale';
@@ -61,13 +61,12 @@ export interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'styl
 // These styles handle both ActionButton and ToggleButton
 const iconOnly = ':has([slot=icon], [slot=avatar]):not(:has([data-rsp-slot=text]))';
 const textOnly = ':has([data-rsp-slot=text]):not(:has([slot=icon], [slot=avatar]))';
+const controlStyle = control({shape: 'default', icon: true});
 export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleButtonStyleProps & ActionGroupItemStyleProps & {isInGroup: boolean, isStaticColor: boolean}>({
   ...focusRing(),
   ...staticColor(),
-  display: 'flex',
-  alignItems: 'center',
+  ...controlStyle,
   justifyContent: 'center',
-  columnGap: 'text-to-visual',
   flexShrink: {
     default: 1,
     isInGroup: 0
@@ -78,11 +77,8 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
   flexBasis: {
     isJustified: 0
   },
-  font: 'control',
   fontWeight: 'medium',
   userSelect: 'none',
-  height: 'control',
-  minWidth: 'control',
   transition: 'default',
   forcedColorAdjust: 'none',
   backgroundColor: {
@@ -153,66 +149,54 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
     forcedColors: 'Highlight'
   },
   borderStyle: 'none',
-  paddingX: {
-    default: 'edge-to-text',
-    [iconOnly]: 0
-  },
-  paddingY: 0,
   borderTopStartRadius: {
-    default: 'control',
+    default: controlStyle.borderRadius,
     density: {
       compact: {
         default: 'none',
-        ':first-child': 'control'
+        ':first-child': controlStyle.borderRadius
       }
     }
   },
   borderTopEndRadius: {
-    default: 'control',
+    default: controlStyle.borderRadius,
     density: {
       compact: {
         default: 'none',
         orientation: {
           horizontal: {
-            ':last-child': 'control'
+            ':last-child': controlStyle.borderRadius
           },
           vertical: {
-            ':first-child': 'control'
+            ':first-child': controlStyle.borderRadius
           }
         }
       }
     }
   },
   borderBottomStartRadius: {
-    default: 'control',
+    default: controlStyle.borderRadius,
     density: {
       compact: {
         default: 'none',
         orientation: {
           horizontal: {
-            ':first-child': 'control'
+            ':first-child': controlStyle.borderRadius
           },
           vertical: {
-            ':last-child': 'control'
+            ':last-child': controlStyle.borderRadius
           }
         }
       }
     }
   },
   borderBottomEndRadius: {
-    default: 'control',
+    default: controlStyle.borderRadius,
     density: {
       compact: {
         default: 'none',
-        ':last-child': 'control'
+        ':last-child': controlStyle.borderRadius
       }
-    }
-  },
-  '--iconMargin': {
-    type: 'marginTop',
-    value: {
-      default: fontRelative(-2),
-      [iconOnly]: 0
     }
   },
   zIndex: {
@@ -226,13 +210,6 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
       [textOnly]: 0
     }
   },
-  '--buttonPaddingX': {
-    type: 'paddingStart',
-    value: {
-      default: 'edge-to-text',
-      [iconOnly]: 0
-    }
-  },
   '--iconWidth': {
     type: 'width',
     value: fontRelative(20)
@@ -240,7 +217,7 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
   '--badgePosition': {
     type: 'width',
     value: {
-      default: 'calc(var(--buttonPaddingX) + var(--iconWidth))',
+      default: 'calc(self(paddingStart) + var(--iconWidth))',
       [iconOnly]: 'calc(self(minWidth)/2 + var(--iconWidth)/2)',
       [textOnly]: 'full'
     }
@@ -302,7 +279,7 @@ export const ActionButton = forwardRef(function ActionButton(props: ActionButton
       <Provider
         values={[
           [SkeletonContext, null],
-          [TextContext, {styles: style({paddingY: '--labelPadding', order: 1, truncate: true})}],
+          [TextContext, {styles: style({order: 1, truncate: true})}],
           [IconContext, {
             render: centerBaseline({slot: 'icon', styles: style({order: 0})}),
             styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})

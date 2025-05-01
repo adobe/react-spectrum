@@ -14,8 +14,8 @@ import {AriaLabelingProps, DOMRef, DOMRefValue, FocusableRef, Key} from '@react-
 import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {ContextValue, DEFAULT_SLOT, Provider, TextContext as RACTextContext, SlotProps, ToggleButton, ToggleButtonGroup, ToggleButtonRenderProps, ToggleGroupStateContext} from 'react-aria-components';
+import {control, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, RefObject, useCallback, useContext, useRef} from 'react';
-import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {IconContext} from './Icon';
 import {pressScale} from './pressScale';
 import {Text, TextContext} from './Content';
@@ -58,17 +58,16 @@ const segmentedControl = style({
   display: 'flex',
   gap: 4,
   backgroundColor: 'gray-100',
-  borderRadius: 'control',
+  borderRadius: 'default',
   width: 'fit'
 }, getAllowedOverrides());
 
-const iconOnly = ':has([slot=icon]):not(:has([data-rsp-slot=text]))';
 const controlItem = style<ToggleButtonRenderProps & {isJustified?: boolean}>({
   ...focusRing(),
+  ...control({shape: 'default', icon: true}),
+  justifyContent: 'center',
   position: 'relative',
-  display: 'flex',
   forcedColorAdjust: 'none',
-  font: 'control',
   color: {
     default: baseColor('neutral-subdued'),
     isSelected: baseColor('neutral'),
@@ -79,16 +78,6 @@ const controlItem = style<ToggleButtonRenderProps & {isJustified?: boolean}>({
       isSelected: 'HighlightText'
     }
   },
-  // TODO: update this padding for icon-only items when we introduce the non-track style back
-  paddingX: {
-    default: 'edge-to-text',
-    [iconOnly]: 0
-  },
-  aspectRatio: {
-    [iconOnly]: 'square'
-  },
-  height: 32,
-  alignItems: 'center',
   flexGrow: {
     isJustified: 1
   },
@@ -96,17 +85,20 @@ const controlItem = style<ToggleButtonRenderProps & {isJustified?: boolean}>({
     isJustified: 0
   },
   flexShrink: 0,
-  minWidth: 0,
-  justifyContent: 'center',
   whiteSpace: 'nowrap',
   disableTapHighlight: true,
   userSelect: 'none',
   backgroundColor: 'transparent',
   borderStyle: 'none',
-  borderRadius: 'default',
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
+  },
+  // The selected item has lower z-index so that the sliding background
+  // animation does not cover other items.
+  zIndex: {
+    default: 1,
+    isSelected: 0
   }
 }, getAllowedOverrides());
 

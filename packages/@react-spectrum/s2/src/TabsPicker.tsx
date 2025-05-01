@@ -36,7 +36,7 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
-import {fieldInput, StyleProps} from './style-utils' with {type: 'macro'};
+import {controlFont, fieldInput, StyleProps} from './style-utils' with {type: 'macro'};
 import {
   FieldLabel
 } from './Field';
@@ -131,7 +131,7 @@ export let menu = style({
   overflow: 'auto',
   padding: 8,
   fontFamily: 'sans',
-  fontSize: 'control'
+  fontSize: controlFont()
 });
 const valueStyles = style({
   flexGrow: 0,

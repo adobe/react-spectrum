@@ -65,7 +65,7 @@ const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | 'light da
     forcedColors: 'transparent'
   },
   backgroundColor: 'neutral',
-  borderRadius: 'control',
+  borderRadius: 'default',
   paddingX: 'edge-to-text',
   paddingY: centerPadding(),
   margin: 8,

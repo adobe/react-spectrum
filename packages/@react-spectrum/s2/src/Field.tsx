@@ -17,7 +17,7 @@ import {baseColor, focusRing, fontRelative, style} from '../style' with {type: '
 import {CenterBaseline, centerBaseline, centerBaselineBefore} from './CenterBaseline';
 import {composeRenderProps, FieldError, FieldErrorProps, Group, GroupProps, Label, LabelProps, Provider, Input as RACInput, InputProps as RACInputProps, Text} from 'react-aria-components';
 import {ContextualHelpContext} from './ContextualHelp';
-import {fieldInput, fieldLabel, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {control, controlFont, fieldInput, fieldLabel, StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {ForwardedRef, forwardRef, ReactNode} from 'react';
 import {IconContext} from './Icon';
 // @ts-ignore
@@ -157,14 +157,8 @@ interface FieldGroupProps extends Omit<GroupProps, 'className' | 'style' | 'chil
 
 const fieldGroupStyles = style({
   ...focusRing(),
+  ...control({shape: 'default'}),
   ...fieldInput(),
-  display: 'flex',
-  alignItems: 'center',
-  height: 'control',
-  boxSizing: 'border-box',
-  paddingX: 'edge-to-text',
-  font: 'control',
-  borderRadius: 'control',
   borderWidth: 2,
   borderStyle: 'solid',
   transition: 'default',
@@ -253,12 +247,12 @@ interface HelpTextProps extends FieldErrorProps {
   showErrorIcon?: boolean
 }
 
-const helpTextStyles = style({
+export const helpTextStyles = style({
   gridArea: 'helptext',
   display: 'flex',
   alignItems: 'baseline',
   gap: 'text-to-visual',
-  font: 'control',
+  font: controlFont(),
   color: {
     default: 'neutral-subdued',
     isInvalid: 'negative',

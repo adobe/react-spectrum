@@ -31,7 +31,7 @@ import {
 import {baseColor, edgeToText, focusRing, fontRelative, size, space, style} from '../style' with {type: 'macro'};
 import {box, iconStyles} from './Checkbox';
 import {centerBaseline} from './CenterBaseline';
-import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {centerPadding, control, controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from '../ui-icons/Chevron';
 import {createContext, forwardRef, JSX, ReactNode, useContext, useRef, useState} from 'react';
@@ -116,7 +116,7 @@ export let menu = style({
     isPopover: 8
   },
   fontFamily: 'sans',
-  fontSize: 'control',
+  fontSize: controlFont(),
   gridAutoRows: 'min-content'
 }, getAllowedOverrides());
 
@@ -137,7 +137,7 @@ export let sectionHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
   gridColumnStart: 2,
   gridColumnEnd: -2,
   boxSizing: 'border-box',
-  minHeight: 'control',
+  minHeight: controlSize(),
   paddingY: centerPadding()
 });
 
@@ -149,13 +149,9 @@ export let sectionHeading = style({
 
 export let menuitem = style<Omit<MenuItemRenderProps, 'hasSubmenu' | 'isOpen'> & {isFocused: boolean, size: 'S' | 'M' | 'L' | 'XL', isLink?: boolean, hasSubmenu?: boolean, isOpen?: boolean}>({
   ...focusRing(),
-  boxSizing: 'border-box',
-  borderRadius: 'control',
-  font: 'control',
-  '--labelPadding': {
-    type: 'paddingTop',
-    value: centerPadding()
-  },
+  ...control({shape: 'default', wrap: true, icon: true}),
+  columnGap: 0,
+  paddingX: 0,
   paddingBottom: '--labelPadding',
   backgroundColor: { // TODO: revisit color when I have access to dev mode again
     default: {
@@ -188,8 +184,6 @@ export let menuitem = style<Omit<MenuItemRenderProps, 'hasSubmenu' | 'isOpen'> &
   rowGap: {
     ':has([slot=description])': space(1)
   },
-  alignItems: 'baseline',
-  minHeight: 'control',
   height: 'min',
   textDecoration: 'none',
   cursor: {
@@ -261,7 +255,7 @@ let image = style({
 
 export let label = style<{size: string}>({
   gridArea: 'label',
-  font: 'control',
+  font: controlFont(),
   color: '[inherit]',
   fontWeight: 'medium',
   // TODO: token values for padding not defined yet, revisit
@@ -306,7 +300,6 @@ let keyboard = style<{size: 'S' | 'M' | 'L' | 'XL', isDisabled: boolean}>({
       isDisabled: 'GrayText'
     }
   },
-  backgroundColor: 'gray-25',
   unicodeBidi: 'plaintext'
 });
 

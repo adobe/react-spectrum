@@ -188,8 +188,8 @@ const buttonStyles = style({
   borderRadius: {
     // Only rounded for keyboard focus and quiet.
     default: 'none',
-    isFocusVisible: 'control',
-    isQuiet: 'control'
+    isFocusVisible: 'default',
+    isQuiet: 'default'
   },
   textAlign: 'start',
   disableTapHighlight: true

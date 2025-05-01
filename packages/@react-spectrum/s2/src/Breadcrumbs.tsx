@@ -28,10 +28,10 @@ import {AriaBreadcrumbItemProps, useLocale} from 'react-aria';
 import {baseColor, focusRing, size, style} from '../style' with { type: 'macro' };
 import ChevronIcon from '../ui-icons/Chevron';
 import {Collection, DOMRef, DOMRefValue, LinkDOMProps, Node} from '@react-types/shared';
+import {controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, Fragment, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import FolderIcon from '../s2wf-icons/S2_Icon_FolderBreadcrumb_20_N.svg';
 import {forwardRefType} from './types';
-import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {inertValue, useLayoutEffect} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -205,7 +205,7 @@ const breadcrumbStyles = style<BreadcrumbsStyleProps & {isMenu?: boolean, isCurr
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'start',
-  height: 'control',
+  height: controlSize(),
   transition: 'default',
   position: 'relative',
   flexShrink: 0,
@@ -249,7 +249,7 @@ const chevronStyles = style({
 const linkStyles = style<LinkRenderProps & {size?: 'M' | 'L', isCurrent?: boolean}>({
   ...focusRing(),
   borderRadius: 'sm',
-  font: 'control',
+  font: controlFont(),
   color: {
     default: baseColor('neutral-subdued'),
     isDisabled: 'disabled',
@@ -279,7 +279,7 @@ const linkStyles = style<LinkRenderProps & {size?: 'M' | 'L', isCurrent?: boolea
 });
 
 const currentStyles = style<{size: string}>({
-  font: 'control',
+  font: controlFont(),
   fontWeight: 'bold'
 });
 

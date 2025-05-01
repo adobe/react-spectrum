@@ -12,7 +12,7 @@
 
 import {ArbitraryProperty, Color, createTheme, ExpandedProperty, MappedProperty, parseArbitraryValue, PercentageProperty, SizingProperty} from './style-macro';
 import {ArbitraryValue, CSSProperties, CSSValue, PropertyValueDefinition, PropertyValueMap, Value} from './types';
-import {autoStaticColor, ColorRef, colorScale, ColorToken, colorToken, fontSizeToken, generateOverlayColorScale, getToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
+import {autoStaticColor, ColorRef, colorScale, ColorToken, colorToken, fontSizeToken, generateOverlayColorScale, getToken, rawColorToken, simpleColorScale, weirdColorToken} from './tokens' with {type: 'macro'};
 import type * as CSS from 'csstype';
 
 interface MacroContext {
@@ -342,27 +342,7 @@ const sizing = {
   full: '100%',
   min: 'min-content',
   max: 'max-content',
-  fit: 'fit-content',
-
-  control: {
-    default: size(32),
-    size: {
-      XS: size(20),
-      S: size(24),
-      L: size(40),
-      XL: size(48)
-    }
-  },
-  // With browser support for round() we could do this:
-  // 'control-sm': `round(${16 / 14}em, 2px)`
-  'control-sm': {
-    default: size(16),
-    size: {
-      S: size(14),
-      L: size(18),
-      XL: size(20)
-    }
-  }
+  fit: 'fit-content'
 };
 
 const height = {
@@ -414,9 +394,7 @@ const radius = {
   lg: pxToRem(getToken('corner-radius-large-default')), // 10px
   xl: pxToRem(getToken('corner-radius-extra-large-default')), // 16px
   full: '9999px',
-  pill: 'calc(self(height, self(minHeight, 9999px)) / 2)',
-  control: fontRelative(8), // automatic based on font size (e.g. t-shirt size logarithmic scale)
-  'control-sm': fontRelative(4)
+  pill: 'calc(self(height, self(minHeight, 9999px)) / 2)'
 };
 
 type GridTrack = 'none' | 'subgrid' | (string & {}) | readonly GridTrackSize[];
@@ -501,16 +479,6 @@ const fontSize = {
   'ui-xl': fontSizeToken('font-size-300'),
   'ui-2xl': fontSizeToken('font-size-400'),
   'ui-3xl': fontSizeToken('font-size-500'),
-
-  control: {
-    default: fontSizeToken('font-size-100'),
-    size: {
-      XS: fontSizeToken('font-size-50'),
-      S: fontSizeToken('font-size-75'),
-      L: fontSizeToken('font-size-200'),
-      XL: fontSizeToken('font-size-300')
-    }
-  },
 
   'heading-2xs': fontSizeToken('heading-size-xxs'),
   'heading-xs': fontSizeToken('heading-size-xs'),
@@ -835,15 +803,15 @@ export const style = createTheme({
 
     // effects
     boxShadow: {
-      emphasized: `${getToken('drop-shadow-emphasized-default-x')} ${getToken('drop-shadow-emphasized-default-y')} ${getToken('drop-shadow-emphasized-default-blur')} ${colorToken('drop-shadow-emphasized-default-color')}`,
-      elevated: `${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${colorToken('drop-shadow-elevated-color')}`,
-      dragged: `${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${colorToken('drop-shadow-dragged-color')}`,
+      emphasized: `${getToken('drop-shadow-emphasized-default-x')} ${getToken('drop-shadow-emphasized-default-y')} ${getToken('drop-shadow-emphasized-default-blur')} ${rawColorToken('drop-shadow-emphasized-default-color')}`,
+      elevated: `${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${rawColorToken('drop-shadow-elevated-color')}`,
+      dragged: `${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${rawColorToken('drop-shadow-dragged-color')}`,
       none: 'none'
     },
     filter: {
-      emphasized: `drop-shadow(${getToken('drop-shadow-emphasized-default-x')} ${getToken('drop-shadow-emphasized-default-y')} ${getToken('drop-shadow-emphasized-default-blur')} ${colorToken('drop-shadow-emphasized-default-color')})`,
-      elevated: `drop-shadow(${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${colorToken('drop-shadow-elevated-color')})`,
-      dragged: `drop-shadow${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${colorToken('drop-shadow-dragged-color')}`,
+      emphasized: `drop-shadow(${getToken('drop-shadow-emphasized-default-x')} ${getToken('drop-shadow-emphasized-default-y')} ${getToken('drop-shadow-emphasized-default-blur')} ${rawColorToken('drop-shadow-emphasized-default-color')})`,
+      elevated: `drop-shadow(${getToken('drop-shadow-elevated-x')} ${getToken('drop-shadow-elevated-y')} ${getToken('drop-shadow-elevated-blur')} ${rawColorToken('drop-shadow-elevated-color')})`,
+      dragged: `drop-shadow${getToken('drop-shadow-dragged-x')} ${getToken('drop-shadow-dragged-y')} ${getToken('drop-shadow-dragged-blur')} ${rawColorToken('drop-shadow-dragged-color')}`,
       none: 'none'
     },
     borderTopStartRadius: new MappedProperty('borderStartStartRadius', radius),
@@ -1016,9 +984,6 @@ export const style = createTheme({
     }),
     font: (value: keyof typeof fontSize) => {
       let type = value.split('-')[0];
-      if (type === 'control') {
-        type = 'ui';
-      }
       return {
         fontFamily: type === 'code' ? 'code' : 'sans',
         fontSize: value,

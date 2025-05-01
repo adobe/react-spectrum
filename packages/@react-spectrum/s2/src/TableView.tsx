@@ -44,7 +44,7 @@ import {
   useTableOptions,
   Virtualizer
 } from 'react-aria-components';
-import {centerPadding, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {centerPadding, controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
 import {ColumnSize} from '@react-types/table';
@@ -477,7 +477,7 @@ const columnStyles = style({
   },
   outlineStyle: 'none',
   position: 'relative',
-  fontSize: 'control',
+  fontSize: controlFont(),
   fontFamily: 'sans',
   fontWeight: 'bold',
   display: 'flex',
@@ -616,7 +616,7 @@ const resizableMenuButtonWrapper = style({
   paddingX: 16,
   backgroundColor: 'transparent',
   borderStyle: 'none',
-  fontSize: 'control',
+  fontSize: controlFont(),
   fontFamily: 'sans',
   fontWeight: 'bold'
 });
@@ -935,7 +935,7 @@ const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean}>({
   boxSizing: 'border-box',
   height: 'full',
   width: 'full',
-  fontSize: 'control',
+  fontSize: controlFont(),
   alignItems: 'center',
   display: 'flex',
   borderStyle: {

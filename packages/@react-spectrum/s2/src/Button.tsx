@@ -13,7 +13,7 @@
 import {baseColor, focusRing, fontRelative, linearGradient, style} from '../style' with {type: 'macro'};
 import {ButtonRenderProps, ContextValue, Link, LinkProps, OverlayTriggerStateContext, Provider, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
-import {centerPadding, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
+import {control, getAllowedOverrides, staticColor, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, useContext, useEffect, useState} from 'react';
 import {FocusableRef, FocusableRefValue} from '@react-types/shared';
 import {IconContext} from './Icon';
@@ -64,38 +64,17 @@ export interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' |
 export const ButtonContext = createContext<ContextValue<Partial<ButtonProps>, FocusableRefValue<HTMLButtonElement>>>(null);
 export const LinkButtonContext = createContext<ContextValue<Partial<ButtonProps>, FocusableRefValue<HTMLAnchorElement>>>(null);
 
-const iconOnly = ':has([slot=icon]):not(:has([data-rsp-slot=text]))';
 const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: boolean}>({
   ...focusRing(),
   ...staticColor(),
+  ...control({shape: 'pill', wrap: true, icon: true}),
   position: 'relative',
-  display: 'flex',
-  alignItems: {
-    default: 'baseline',
-    [iconOnly]: 'center'
-  },
   justifyContent: 'center',
   textAlign: 'start',
-  columnGap: 'text-to-visual',
-  font: 'control',
   fontWeight: 'bold',
   userSelect: 'none',
-  minHeight: 'control',
-  minWidth: {
-    [iconOnly]: 'control'
-  },
-  borderRadius: 'pill',
-  boxSizing: 'border-box',
   width: 'fit',
   textDecoration: 'none', // for link buttons
-  paddingX: {
-    default: 'pill',
-    [iconOnly]: 0
-  },
-  paddingY: 0,
-  aspectRatio: {
-    [iconOnly]: 'square'
-  },
   transition: 'default',
   borderStyle: 'solid',
   borderWidth: {
@@ -106,17 +85,6 @@ const button = style<ButtonRenderProps & ButtonStyleProps & {isStaticColor: bool
     variant: {
       premium: 0,
       genai: 0
-    }
-  },
-  '--labelPadding': {
-    type: 'paddingTop',
-    value: centerPadding()
-  },
-  '--iconMargin': {
-    type: 'marginTop',
-    value: {
-      default: fontRelative(-2),
-      [iconOnly]: 0
     }
   },
   borderColor: {

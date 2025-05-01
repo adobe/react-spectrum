@@ -15,6 +15,7 @@ import {
   ButtonProps,
   ButtonRenderProps
 } from 'react-aria-components';
+import {controlSize} from './style-utils' with {type: 'macro'};
 import CrossIcon from '../ui-icons/Cross';
 import {FocusableRef} from '@react-types/shared';
 import {forwardRef} from 'react';
@@ -45,7 +46,7 @@ export const ClearButton = forwardRef(function ClearButton(props: ClearButtonPro
         alignItems: 'center',
         justifyContent: 'center',
         height: 'full',
-        width: 'control',
+        width: controlSize(),
         flexShrink: 0,
         borderStyle: 'none',
         outlineStyle: 'none',

@@ -20,8 +20,8 @@ import {
   SliderTrack
 } from 'react-aria-components';
 import {clamp} from '@react-aria/utils';
+import {controlFont, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
-import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel} from './Field';
 import {FocusableRef, FocusableRefValue, InputDOMProps, SpectrumLabelableProps} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
@@ -70,7 +70,7 @@ export interface SliderProps extends Omit<SliderBaseProps<number>, 'children'>, 
 export const SliderContext = createContext<ContextValue<Partial<SliderProps>, FocusableRefValue<HTMLDivElement>>>(null);
 
 const slider = style({
-  font: 'control',
+  font: controlFont(),
   alignItems: {
     labelPosition: {
       side: 'center'
