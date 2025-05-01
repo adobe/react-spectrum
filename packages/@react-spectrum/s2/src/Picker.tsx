@@ -53,7 +53,7 @@ import {
   FieldLabel,
   HelpText
 } from './Field';
-import {FocusableRef, FocusableRefValue, HelpTextProps, PressEvent, SpectrumLabelableProps} from '@react-types/shared';
+import {FocusableRef, FocusableRefValue, HelpTextProps, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
 import {HeaderContext, HeadingContext, Text, TextContext} from './Content';
@@ -278,21 +278,6 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
     menuOffset = 8;
   }
 
-  // For mouse interactions, pickers open on press start. When the popover underlay appears
-  // it covers the trigger button, causing onPressEnd to fire immediately and no press scaling
-  // to occur. We override this by listening for pointerup on the document ourselves.
-  let [isPressed, setPressed] = useState(false);
-  let {addGlobalListener} = useGlobalListeners();
-  let onPressStart = (e: PressEvent) => {
-    if (e.pointerType !== 'mouse') {
-      return;
-    }
-    setPressed(true);
-    addGlobalListener(document, 'pointerup', () => {
-      setPressed(false);
-    }, {once: true, capture: true});
-  };
-
   return (
     <AriaSelect
       {...pickerProps}
@@ -317,66 +302,14 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
               contextualHelp={props.contextualHelp}>
               {label}
             </FieldLabel>
-            <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
-              <Button
-                ref={domRef}
-                style={renderProps => pressScale(domRef)(renderProps)}
-                // Prevent press scale from sticking while Picker is open.
-                // @ts-ignore
-                isPressed={false}
-                className={renderProps => inputButton({
-                  ...renderProps,
-                  size: size,
-                  isOpen,
-                  isQuiet
-                })}>
-                {(renderProps) => (
-                  <>
-                    <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> * {display: none;}')}>
-                      {({defaultChildren}) => {
-                        return (
-                          <Provider
-                            values={[
-                              [IconContext, {
-                                slots: {
-                                  icon: {
-                                    render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
-                                    styles: icon
-                                  }
-                                }
-                              }],
-                              [TextContext, {
-                                slots: {
-                                  description: {},
-                                  label: {styles: style({
-                                    display: 'block',
-                                    flexGrow: 1,
-                                    truncate: true
-                                  })}
-                                }
-                              }],
-                              [InsideSelectValueContext, true]
-                            ]}>
-                            {defaultChildren}
-                          </Provider>
-                        );
-                      }}
-                    </SelectValue>
-                    {isInvalid && (
-                      <FieldErrorIcon isDisabled={isDisabled} />
-                    )}
-                    <ChevronIcon
-                      size={size}
-                      className={iconStyles} />
-                    {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
-                    {isInvalid && !isDisabled && !isQuiet &&
-                      // @ts-ignore known limitation detecting functions from the theme
-                      <div className={invalidBorder({...renderProps, size})} />
-                    }
-                  </>
-                )}
-              </Button>
-            </PressResponder>
+            <PickerButton
+              isOpen={isOpen}
+              isQuiet={isQuiet}
+              isFocusVisible={isFocusVisible}
+              size={size}
+              isInvalid={isInvalid}
+              isDisabled={isDisabled}
+              buttonRef={domRef} />
             <HelpText
               size={size}
               isDisabled={isDisabled}
@@ -436,6 +369,100 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
     </AriaSelect>
   );
 });
+
+interface PickerButtonInnerProps extends PickerStyleProps, Omit<AriaSelectRenderProps, 'isRequired' | 'isFocused'> {
+  buttonRef: RefObject<HTMLButtonElement | null>
+}
+
+function PickerButton(props: PickerButtonInnerProps) {
+  let {
+    isOpen,
+    isQuiet,
+    isFocusVisible,
+    size,
+    isInvalid,
+    isDisabled,
+    buttonRef
+  } = props;
+
+  // For mouse interactions, pickers open on press start. When the popover underlay appears
+  // it covers the trigger button, causing onPressEnd to fire immediately and no press scaling
+  // to occur. We override this by listening for pointerup on the document ourselves.
+  let [isPressed, setPressed] = useState(false);
+  let {addGlobalListener} = useGlobalListeners();
+  let onPressStart = (e: PressEvent) => {
+    if (e.pointerType !== 'mouse') {
+      return;
+    }
+    setPressed(true);
+    addGlobalListener(document, 'pointerup', () => {
+      setPressed(false);
+    }, {once: true, capture: true});
+  };
+
+  return (
+    <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
+      <Button
+        ref={buttonRef}
+        style={renderProps => pressScale(buttonRef)(renderProps)}
+        // Prevent press scale from sticking while Picker is open.
+        // @ts-ignore
+        isPressed={false}
+        className={renderProps => inputButton({
+          ...renderProps,
+          size: size,
+          isOpen,
+          isQuiet
+        })}>
+        {(renderProps) => (
+          <>
+            <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> * {display: none;}')}>
+              {({defaultChildren}) => {
+                return (
+                  <Provider
+                    values={[
+                      [IconContext, {
+                        slots: {
+                          icon: {
+                            render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
+                            styles: icon
+                          }
+                        }
+                      }],
+                      [TextContext, {
+                        slots: {
+                          description: {},
+                          label: {styles: style({
+                            display: 'block',
+                            flexGrow: 1,
+                            truncate: true
+                          })}
+                        }
+                      }],
+                      [InsideSelectValueContext, true]
+                    ]}>
+                    {defaultChildren}
+                  </Provider>
+                );
+              }}
+            </SelectValue>
+            {isInvalid && (
+              <FieldErrorIcon isDisabled={isDisabled} />
+            )}
+            <ChevronIcon
+              size={size}
+              className={iconStyles} />
+            {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
+            {isInvalid && !isDisabled && !isQuiet &&
+              // @ts-ignore known limitation detecting functions from the theme
+              <div className={invalidBorder({...renderProps, size})} />
+            }
+          </>
+        )}
+      </Button>
+    </PressResponder>
+  );
+}
 
 export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {
   children: ReactNode
