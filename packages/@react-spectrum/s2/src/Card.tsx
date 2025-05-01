@@ -511,7 +511,7 @@ export const CardPreview = forwardRef(function CardPreview(props: CardPreviewPro
       style={isQuiet ? pressScale(domRef)({isPressed}) : UNSAFE_style}>
       {isQuiet && <SelectionIndicator />}
       {isQuiet && isCheckboxSelection && <CardCheckbox />}
-      <div className={style({borderRadius: '[inherit]', overflow: 'clip'})}>
+      <div className={style({borderRadius: 'inherit', overflow: 'clip'})}>
         {props.children}
       </div>
     </div>

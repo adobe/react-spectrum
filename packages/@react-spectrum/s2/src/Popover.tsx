@@ -226,11 +226,11 @@ const dialogStyle = style({
   padding: 8,
   boxSizing: 'border-box',
   outlineStyle: 'none',
-  borderRadius: '[inherit]',
+  borderRadius: 'inherit',
   overflow: 'auto',
   position: 'relative',
   width: 'full',
-  maxSize: '[inherit]'
+  maxSize: 'inherit'
 }, getAllowedOverrides({height: true}));
 
 /**

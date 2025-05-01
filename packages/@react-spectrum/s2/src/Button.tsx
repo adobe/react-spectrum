@@ -254,7 +254,7 @@ const gradient = style({
   inset: 0,
   zIndex: -1,
   transition: 'default',
-  borderRadius: '[inherit]',
+  borderRadius: 'inherit',
   backgroundImage: {
     variant: {
       premium: {

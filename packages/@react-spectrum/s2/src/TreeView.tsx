@@ -380,7 +380,7 @@ interface ExpandableRowChevronProps {
 const expandButton = style<ExpandableRowChevronProps>({
   gridArea: 'expand-button',
   color: {
-    default: '[inherit]',
+    default: 'inherit',
     isDisabled: {
       default: 'disabled',
       forcedColors: 'GrayText'

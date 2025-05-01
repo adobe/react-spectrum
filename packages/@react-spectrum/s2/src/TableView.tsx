@@ -458,7 +458,7 @@ function CellFocusRing() {
 }
 
 const columnStyles = style({
-  height: '[inherit]',
+  height: 'inherit',
   boxSizing: 'border-box',
   color: {
     default: baseColor('neutral'),

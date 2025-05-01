@@ -180,7 +180,7 @@ export let menu = style({
     }
   },
   boxSizing: 'border-box',
-  maxHeight: '[inherit]',
+  maxHeight: 'inherit',
   overflow: 'auto',
   padding: 8,
   fontFamily: 'sans',

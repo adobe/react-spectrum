@@ -172,9 +172,9 @@ let HiddenBreadcrumbs = function (props: {listRef: RefObject<HTMLDivElement | nu
       inert={inertValue(true)}
       ref={listRef}
       className={style({
-        display: '[inherit]',
-        gap: '[inherit]',
-        flexWrap: '[inherit]',
+        display: 'inherit',
+        gap: 'inherit',
+        flexWrap: 'inherit',
         position: 'absolute',
         top: 0,
         bottom: 0,

@@ -104,7 +104,7 @@ export let menu = style({
   display: 'grid',
   gridTemplateColumns: menuItemGrid,
   boxSizing: 'border-box',
-  maxHeight: '[inherit]',
+  maxHeight: 'inherit',
   width: 'full',
   overflow: {
     isPopover: 'auto'
@@ -256,7 +256,7 @@ let image = style({
 export let label = style<{size: string}>({
   gridArea: 'label',
   font: controlFont(),
-  color: '[inherit]',
+  color: 'inherit',
   fontWeight: 'medium',
   // TODO: token values for padding not defined yet, revisit
   marginTop: '--labelPadding'

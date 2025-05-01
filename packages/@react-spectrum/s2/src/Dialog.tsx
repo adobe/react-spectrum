@@ -83,11 +83,11 @@ export const dialogInner = style({
   display: 'flex',
   flexDirection: 'column',
   flexGrow: 1,
-  maxHeight: '[inherit]',
+  maxHeight: 'inherit',
   boxSizing: 'border-box',
   outlineStyle: 'none',
   fontFamily: 'sans',
-  borderRadius: '[inherit]',
+  borderRadius: 'inherit',
   overflow: 'auto'
 });
 

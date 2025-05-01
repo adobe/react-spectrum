@@ -52,7 +52,7 @@ export const ClearButton = forwardRef(function ClearButton(props: ClearButtonPro
         outlineStyle: 'none',
         backgroundColor: 'transparent',
         padding: 0,
-        color: '[inherit]',
+        color: 'inherit',
         '--iconPrimary': {
           type: 'fill',
           value: 'currentColor'

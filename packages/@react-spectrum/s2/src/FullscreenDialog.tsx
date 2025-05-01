@@ -108,12 +108,12 @@ export const dialogInner = style({
     default: 16,
     sm: 24
   },
-  maxHeight: '[inherit]',
+  maxHeight: 'inherit',
   height: 'full',
   boxSizing: 'border-box',
   outlineStyle: 'none',
   fontFamily: 'sans',
-  borderRadius: '[inherit]',
+  borderRadius: 'inherit',
   overflow: 'auto'
 });
 
