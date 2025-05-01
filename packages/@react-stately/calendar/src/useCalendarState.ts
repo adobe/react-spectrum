@@ -10,7 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {alignCenter, alignEnd, alignStart, constrainStart, constrainValue, isInvalid, previousAvailableDate} from './utils';
+import {
+  alignCenter,
+  alignEnd,
+  alignStart, calculateStartDate,
+  constrainStart,
+  constrainValue,
+  isInvalid,
+  previousAvailableDate
+} from './utils';
 import {
   Calendar,
   CalendarDate,
@@ -32,7 +40,7 @@ import {
 import {CalendarProps, DateValue, MappedDateValue} from '@react-types/calendar';
 import {CalendarState} from './types';
 import {useControlledState} from '@react-stately/utils';
-import {useMemo, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
 export interface CalendarStateOptions<T extends DateValue = DateValue> extends CalendarProps<T> {
@@ -53,6 +61,7 @@ export interface CalendarStateOptions<T extends DateValue = DateValue> extends C
   /** Determines how to align the initial selection relative to the visible date range. */
   selectionAlignment?: 'start' | 'center' | 'end'
 }
+
 /**
  * Provides state management for a calendar component.
  * A calendar displays one or more date grids and allows users to select a single date.
@@ -91,17 +100,25 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
     )
   ), [props.defaultFocusedValue, calendarDateValue, timeZone, calendar, minValue, maxValue]);
   let [focusedDate, setFocusedDate] = useControlledState(focusedCalendarDate, defaultFocusedCalendarDate, props.onFocusChange);
-  let [startDate, setStartDate] = useState(() => {
-    switch (selectionAlignment) {
-      case 'start':
-        return alignStart(focusedDate, visibleDuration, locale, minValue, maxValue);
-      case 'end':
-        return alignEnd(focusedDate, visibleDuration, locale, minValue, maxValue);
-      case 'center':
-      default:
-        return alignCenter(focusedDate, visibleDuration, locale, minValue, maxValue);
+
+  let [startDate, setStartDate] = useState(() => calculateStartDate(selectionAlignment, focusedDate, visibleDuration, locale, minValue, maxValue));
+
+  let visibleDurationRef = useRef(visibleDuration);
+  let localeRef = useRef(locale);
+
+  useEffect(() => {
+    if (visibleDuration.years !== visibleDurationRef.current.years
+      || visibleDuration.months !== visibleDurationRef.current.months
+      || visibleDuration.weeks !== visibleDurationRef.current.weeks
+      || visibleDuration.days !== visibleDurationRef.current.days
+      || locale !== localeRef.current
+    ) {
+      visibleDurationRef.current = visibleDuration;
+      localeRef.current = locale;
+      setStartDate(calculateStartDate(selectionAlignment, focusedDate, visibleDuration, locale, minValue, maxValue));
     }
-  });
+  }, [visibleDuration, locale, selectionAlignment, focusedDate, minValue, maxValue]);
+
   let [isFocused, setFocused] = useState(props.autoFocus || false);
 
   let endDate = useMemo(() => {
@@ -333,7 +350,7 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
       let dates: (CalendarDate | null)[] = [];
 
       date = startOfWeek(date, locale, firstDayOfWeek);
-      
+
       // startOfWeek will clamp dates within the calendar system's valid range, which may
       // start in the middle of a week. In this case, add null placeholders.
       let dayOfWeek = getDayOfWeek(date, locale, firstDayOfWeek);
