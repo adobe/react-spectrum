@@ -93,9 +93,6 @@ describe('Picker', function () {
       expect(queryByRole('listbox')).toBeNull();
 
       let picker = selectTester.trigger;
-      // let picker = getByRole('button');
-      // await user.click(picker);
-      // act(() => jest.runAllTimers());
       await selectTester.open();
 
       let listbox = selectTester.listbox;

@@ -3668,7 +3668,6 @@ describe('ComboBox', function () {
   describe('mobile combobox', function () {
     beforeEach(() => {
       simulateMobile();
-      
     });
 
     afterEach(() => {
