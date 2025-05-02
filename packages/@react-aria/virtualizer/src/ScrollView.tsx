@@ -198,8 +198,8 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
 
   // Update visible rect when the content size changes, in case scrollbars need to appear or disappear.
   let lastContentSize = useRef<Size | null>(null);
-  let [, setUpdate] = useState({});
-  let queuedUpdateSize = useRef(false);
+  let [update, setUpdate] = useState({});
+
   useLayoutEffect(() => {
     if (!isUpdatingSize.current && (lastContentSize.current == null || !contentSize.equals(lastContentSize.current))) {
       // React doesn't allow flushSync inside effects, so queue a microtask.
@@ -212,22 +212,20 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
       if (typeof IS_REACT_ACT_ENVIRONMENT === 'boolean' ? IS_REACT_ACT_ENVIRONMENT : typeof jest !== 'undefined') {
         // Queue call of updateSize to happen in a separate render but within the same act so that RAC virtualized ComboBoxes and Selects
         // work properly
-        queuedUpdateSize.current = true;
         setUpdate({});
         lastContentSize.current = contentSize;
-        return;
+        return
       } else {
         queueMicrotask(() => updateSize(flushSync));
       }
     }
 
-    if (queuedUpdateSize.current) {
-      queuedUpdateSize.current = false;
-      updateSize(fn => fn());
-    }
-
     lastContentSize.current = contentSize;
   });
+
+  useLayoutEffect(() => {
+    updateSize(fn => fn());
+  }, [update])
 
   let onResize = useCallback(() => {
     updateSize(flushSync);
