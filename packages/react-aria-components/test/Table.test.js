@@ -2031,15 +2031,6 @@ describe('Table', () => {
       beforeAll(() => {
         clientWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
         clientHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
-        // jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 150);
-        // jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 100);
-        // jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementationOnce(() => 0).mockImplementation(function () {
-        //   if (this.getAttribute('role') === 'grid') {
-        //     return 50;
-        //   }
-
-        //   return 25;
-        // });
       });
 
       beforeEach(() => {
@@ -2047,7 +2038,6 @@ describe('Table', () => {
       });
 
       afterAll(function () {
-        // TODO fix these
         clientWidth.mockReset();
         clientHeight.mockReset();
       });
@@ -2136,6 +2126,11 @@ describe('Table', () => {
         sentinelParentStyles = sentinel.parentElement.parentElement.style;
         expect(sentinelParentStyles.top).toBe('0px');
         expect(sentinelParentStyles.height).toBe('30px');
+      });
+
+      it('should have the correct row indicies after loading more items', async () => {
+        // TODO: first render without items and is loading
+        // then render with items and double check
       });
     });
   });
