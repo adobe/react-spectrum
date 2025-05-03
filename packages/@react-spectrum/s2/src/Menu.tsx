@@ -306,7 +306,6 @@ let keyboard = style<{size: 'S' | 'M' | 'L' | 'XL', isDisabled: boolean}>({
       isDisabled: 'GrayText'
     }
   },
-  backgroundColor: 'gray-25',
   unicodeBidi: 'plaintext'
 });
 
