@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaRadioGroupProps, AriaRadioProps, HoverEvents, Orientation, useFocusable, useFocusRing, useHover, useRadio, useRadioGroup, VisuallyHidden} from 'react-aria';
+import {AriaRadioGroupProps, AriaRadioProps, HoverEvents, Orientation, useFocusRing, useFocusWithin, useHover, useRadio, useRadioGroup, VisuallyHidden} from 'react-aria';
 import {ContextValue, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
@@ -194,7 +194,7 @@ export const Radio = /*#__PURE__*/ (forwardRef as forwardRefType)(function Radio
     // ReactNode type doesn't allow function children.
     children: typeof props.children === 'function' ? true : props.children
   }, state, inputRef);
-  let {focusableProps} = useFocusable(props, ref);
+  let {focusWithinProps} = useFocusWithin(props);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let interactionDisabled = isDisabled || state.isReadOnly;
 
@@ -224,7 +224,7 @@ export const Radio = /*#__PURE__*/ (forwardRef as forwardRefType)(function Radio
 
   return (
     <label
-      {...mergeProps(DOMProps, labelProps, hoverProps, focusableProps, renderProps)}
+      {...mergeProps(DOMProps, labelProps, hoverProps, focusWithinProps, renderProps)}
       ref={ref}
       onBlur={(e) => {
         const nextFocusTarget = e.relatedTarget as Node | null;
