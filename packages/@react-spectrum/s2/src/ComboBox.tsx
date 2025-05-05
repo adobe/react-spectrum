@@ -153,7 +153,9 @@ export let listbox = style<{size: 'S' | 'M' | 'L' | 'XL'}>({
   width: 'full',
   boxSizing: 'border-box',
   maxHeight: '[inherit]',
-  overflow: 'auto',
+  // TODO: Might help with horizontal scrolling happening on Windows, will need to check somehow. Otherwise, revert back to overflow: auto
+  overflowY: 'auto',
+  overflowX: 'hidden',
   fontFamily: 'sans',
   fontSize: 'control'
 });
