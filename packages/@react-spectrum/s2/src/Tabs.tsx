@@ -22,7 +22,8 @@ import {
   Tab as RACTab,
   TabList as RACTabList,
   Tabs as RACTabs,
-  TabListStateContext
+  TabListStateContext,
+  TabRenderProps
 } from 'react-aria-components';
 import {centerBaseline} from './CenterBaseline';
 import {Collection, DOMRef, DOMRefValue, Key, Node, Orientation, RefObject} from '@react-types/shared';
@@ -233,7 +234,7 @@ interface TabLineProps {
   density?: 'compact' | 'regular'
 }
 
-const selectedIndicator = style({
+const selectedIndicator = style<{isDisabled: boolean, orientation?: Orientation}>({
   position: 'absolute',
   backgroundColor: {
     default: 'neutral',
@@ -320,7 +321,7 @@ function TabLine(props: TabLineProps) {
   );
 }
 
-const tab = style({
+const tab = style<TabRenderProps & {density?: 'compact' | 'regular', labelBehavior?: 'show' | 'hide'}>({
   ...focusRing(),
   display: 'flex',
   color: {
@@ -520,7 +521,12 @@ let HiddenTabs = function (props: {
 
 let TabsMenu = (props: {valueId: string, items: Array<Node<any>>, onSelectionChange: TabsProps['onSelectionChange']} & Omit<TabsProps, 'children'>) => {
   let {id, items, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, valueId} = props;
-  let {density, onSelectionChange, selectedKey, isDisabled, disabledKeys, labelBehavior} = useContext(InternalTabsContext);
+  let {density, onSelectionChange: _onSelectionChange, selectedKey, isDisabled, disabledKeys, labelBehavior} = useContext(InternalTabsContext);
+  let onSelectionChange = useCallback((key: Key | null) => {
+    if (key != null) {
+      _onSelectionChange?.(key);
+    }
+  }, [_onSelectionChange]);
   let state = useContext(TabListStateContext);
   let allKeysDisabled = useMemo(() => {
     return isAllTabsDisabled(state?.collection, disabledKeys ? new Set(disabledKeys) : new Set());

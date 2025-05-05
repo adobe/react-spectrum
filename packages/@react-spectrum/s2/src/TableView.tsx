@@ -564,10 +564,7 @@ const sortIcon = style({
     default: 8,
     isButton: 'text-to-visual'
   },
-  verticalAlign: {
-    default: 'bottom',
-    isButton: 0
-  },
+  verticalAlign: 'bottom',
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
@@ -645,14 +642,13 @@ const resizerHandleContainer = style({
   }
 });
 
-const resizerHandle = style({
+const resizerHandle = style<{isFocusVisible: boolean, isResizing: boolean}>({
   backgroundColor: {
     default: 'gray-300',
     isFocusVisible: lightDark('informative-900', 'informative-700'), // --spectrum-informative-background-color-default, can't use `informative` because that will use the focusVisible version
     isResizing: lightDark('informative-900', 'informative-700'),
     forcedColors: {
       default: 'Background',
-      isHovered: 'ButtonBorder',
       isFocusVisible: 'Highlight',
       isResizing: 'Highlight'
     }
@@ -802,7 +798,7 @@ function ColumnWithMenu(props: ColumnWithMenuProps) {
           <ColumnResizer data-react-aria-prevent-focus="true" className={({resizableDirection, isResizing}) => resizerHandleContainer({resizableDirection, isResizing, isInResizeMode})}>
             {({isFocusVisible, isResizing}) => (
               <>
-                <ResizerIndicator isInResizeMode={isInResizeMode} isFocusVisible={isFocusVisible} isResizing={isResizing} />
+                <ResizerIndicator isFocusVisible={isFocusVisible} isResizing={isResizing} />
                 {(isFocusVisible || isInResizeMode) && isResizing && <div className={nubbin}><Nubbin /></div>}
               </>
           )}
@@ -813,9 +809,9 @@ function ColumnWithMenu(props: ColumnWithMenuProps) {
   );
 }
 
-function ResizerIndicator({isFocusVisible, isResizing, isInResizeMode}) {
+function ResizerIndicator({isFocusVisible, isResizing}) {
   return (
-    <div className={resizerHandle({isFocusVisible, isInResizeMode, isResizing})} />
+    <div className={resizerHandle({isFocusVisible, isResizing})} />
   );
 }
 

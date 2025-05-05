@@ -281,7 +281,7 @@ let _Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(Picker);
 export {_Picker as Picker};
 
 
-const selectedIndicator = style({
+const selectedIndicator = style<{isDisabled?: boolean}>({
   backgroundColor: {
     default: 'neutral',
     isDisabled: 'disabled',
@@ -297,7 +297,7 @@ const selectedIndicator = style({
   transitionDuration: 130,
   transitionTimingFunction: 'in-out'
 });
-function TabLine(props) {
+function TabLine(props: {isDisabled?: boolean}) {
   return <div className={selectedIndicator(props)} />;
 }
 

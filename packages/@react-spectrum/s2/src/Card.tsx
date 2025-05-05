@@ -139,7 +139,7 @@ let card = style({
       density: {
         compact: {
           size: {
-            XS: 6,
+            XS: space(6),
             S: 8,
             M: 12,
             L: 16,
@@ -647,7 +647,7 @@ export const UserCard = forwardRef(function UserCard(props: CardProps, ref: DOMR
                 position: 'relative',
                 marginTop: {
                   default: 0,
-                  ':is([slot=preview] + &)': '[calc(var(--size) / -2)]'
+                  ':is([slot=preview] + *)': '[calc(var(--size) / -2)]'
                 }
               }),
               isOverBackground: true
@@ -717,7 +717,7 @@ export const ProductCard = forwardRef(function ProductCard(props: ProductCardPro
                     objectFit: 'cover',
                     marginTop: {
                       default: 0,
-                      ':is([slot=preview] + &)': '[calc(self(height) / -2)]'
+                      ':is([slot=preview] + *)': '[calc(self(height) / -2)]'
                     },
                     outlineStyle: 'solid',
                     outlineWidth: {
