@@ -14,7 +14,7 @@ import React, {createContext, ReactNode, useContext} from 'react';
 
 export interface PortalProviderProps {
   /** Should return the element where we should portal to. Can clear the context by passing null. */
-  getContainer?: (() => HTMLElement) | null,
+  getContainer?: (() => HTMLElement | null) | null,
   /** The content of the PortalProvider. Should contain all children that want to portal their overlays to the element returned by the provided `getContainer()`. */
   children: ReactNode
 }
