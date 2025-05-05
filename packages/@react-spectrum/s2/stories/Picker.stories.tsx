@@ -261,6 +261,7 @@ export const AsyncPickerStory  = {
   render: AsyncPicker,
   args: {
     ...Example.args,
+    label: 'Star Wars Character',
     delay: 50
   },
   name: 'Async loading picker',

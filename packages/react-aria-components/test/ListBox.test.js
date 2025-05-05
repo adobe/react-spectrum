@@ -1365,6 +1365,7 @@ describe('ListBox', () => {
     let onLoadMore = jest.fn();
     let observe = jest.fn();
     afterEach(() => {
+      jest.runAllTimers();
       jest.clearAllMocks();
     });
 
@@ -1444,16 +1445,16 @@ describe('ListBox', () => {
         clientHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 100);
       });
 
-      beforeEach(() => {
+      afterEach(() => {
         act(() => {jest.runAllTimers();});
       });
 
-      afterAll(function () {
+      afterAll(() => {
         clientWidth.mockReset();
         clientHeight.mockReset();
       });
 
-      let VirtualizedAsyncListbox = (props) => {
+      function VirtualizedAsyncListbox(props) {
         let {items, isLoading, onLoadMore, ...listBoxProps} = props;
         return (
           <Virtualizer
@@ -1499,6 +1500,8 @@ describe('ListBox', () => {
       });
 
       // TODO: for some reason this tree renders empty if ran with the above test...
+      // Even if the above test doesn't do anything within it, the below tree won't render with content until the above test
+      // is fully commented out (aka even the it(...))
       // It thinks that the contextSize is 0 and never updates
       it.skip('should not reserve room for the loader if isLoading is false', () => {
         let tree = render(<VirtualizedAsyncListbox items={items} />);

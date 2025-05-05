@@ -21,6 +21,19 @@ import userEvent from '@testing-library/user-event';
 describe('Combobox', () => {
   let user;
   let testUtilUser = new User();
+  function DynamicCombobox(props) {
+    let {items, loadingState, onLoadMore, ...otherProps} = props;
+    return (
+      <ComboBox
+        {...otherProps}
+        label="Test combobox"
+        items={items}
+        loadingState={loadingState}
+        onLoadMore={onLoadMore}>
+        {(item: any) => <ComboBoxItem id={item.name} textValue={item.name}>{item.name}</ComboBoxItem>}
+      </ComboBox>
+    );
+  }
 
   beforeAll(function () {
     jest.useFakeTimers();
@@ -101,7 +114,7 @@ describe('Combobox', () => {
     expect(onLoadMore).toHaveBeenCalledTimes(2);
   });
 
-  it('should omit the laoder from the count of items', async () => {
+  it('should omit the loader from the count of items', async () => {
     jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'MacIntel');
     let tree = render(
       <ComboBox label="test" loadingState="loadingMore">
@@ -121,5 +134,32 @@ describe('Combobox', () => {
 
     await user.keyboard('C');
     expect(announce).toHaveBeenLastCalledWith('2 options available.');
+  });
+
+  it('should properly calculate the expected row index values even when the content changes', async () => {
+    let items = [{name: 'Chocolate'}, {name: 'Mint'}, {name: 'Chocolate Chip'}];
+    let tree = render(<DynamicCombobox items={items} />);
+
+    let comboboxTester = testUtilUser.createTester('ComboBox', {root: tree.container, interactionType: 'mouse'});
+    await comboboxTester.open();
+    let options = comboboxTester.options();
+    for (let [index, option] of options.entries()) {
+      expect(option).toHaveAttribute('aria-posinset', `${index + 1}`);
+    }
+
+    tree.rerender(<DynamicCombobox items={items} loadingState="filtering" />);
+    options = comboboxTester.options();
+    for (let [index, option] of options.entries()) {
+      expect(option).toHaveAttribute('aria-posinset', `${index + 1}`);
+    }
+
+    // A bit contrived, but essentially testing a combinaiton of insertions/deletions along side some of the old entries remaining
+    let newItems = [{name: 'Chocolate Mint'}, {name: 'Chocolate'}, {name: 'Chocolate Chip'}, {name: 'Chocolate Chip Cookie Dough'}]
+    tree.rerender(<DynamicCombobox items={newItems} loadingState="idle" />);
+
+    options = comboboxTester.options();
+    for (let [index, option] of options.entries()) {
+      expect(option).toHaveAttribute('aria-posinset', `${index + 1}`);
+    }
   });
 });
