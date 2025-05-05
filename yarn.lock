@@ -6726,21 +6726,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@react-aria/test-utils@npm:1.0.0-alpha.3":
-  version: 1.0.0-alpha.3
-  resolution: "@react-aria/test-utils@npm:1.0.0-alpha.3"
-  dependencies:
-    "@swc/helpers": "npm:^0.5.0"
-  peerDependencies:
-    "@testing-library/react": ^15.0.7
-    "@testing-library/user-event": ^13.0.0 || ^14.0.0
-    jest: ^29.5.0
-    react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
-  checksum: 10c0/f750e02be86a37f4b26f7ec055be6ca105c11e4fcb24ec52ddd8d352395a532d7f466789de7bed9a44c58f23c5c518387181eda80c4979ee684d0ae358d4d090
-  languageName: node
-  linkType: hard
-
-"@react-aria/test-utils@npm:1.0.0-alpha.6, @react-aria/test-utils@workspace:packages/@react-aria/test-utils":
+"@react-aria/test-utils@npm:1.0.0-alpha.6, @react-aria/test-utils@npm:^1.0.0-alpha.6, @react-aria/test-utils@workspace:packages/@react-aria/test-utils":
   version: 0.0.0-use.local
   resolution: "@react-aria/test-utils@workspace:packages/@react-aria/test-utils"
   dependencies:
@@ -7961,7 +7947,7 @@ __metadata:
     "@react-aria/live-announcer": "npm:^3.4.2"
     "@react-aria/overlays": "npm:^3.27.0"
     "@react-aria/separator": "npm:^3.4.8"
-    "@react-aria/test-utils": "npm:1.0.0-alpha.3"
+    "@react-aria/test-utils": "npm:^1.0.0-alpha.6"
     "@react-aria/utils": "npm:^3.28.2"
     "@react-spectrum/utils": "npm:^3.12.4"
     "@react-stately/layout": "npm:^4.2.2"
