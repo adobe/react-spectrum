@@ -27,13 +27,12 @@ import {
   ListLayout,
   Provider,
   SectionProps,
-  SelectRenderProps,
   SelectStateContext,
   SelectValue,
   UNSTABLE_ListBoxLoadingSentinel,
   Virtualizer
 } from 'react-aria-components';
-import {AsyncLoadable, FocusableRef, FocusableRefValue, HelpTextProps, PressEvent, SpectrumLabelableProps} from '@react-types/shared';
+import {AsyncLoadable, FocusableRef, FocusableRefValue, HelpTextProps, PressEvent, RefObject, SpectrumLabelableProps} from '@react-types/shared';
 import {baseColor, edgeToText, focusRing, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 import {
@@ -311,38 +310,15 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
     menuOffset = 8;
   }
 
-  // For mouse interactions, pickers open on press start. When the popover underlay appears
-  // it covers the trigger button, causing onPressEnd to fire immediately and no press scaling
-  // to occur. We override this by listening for pointerup on the document ourselves.
-  let [isPressed, setPressed] = useState(false);
-  let {addGlobalListener} = useGlobalListeners();
-  let onPressStart = (e: PressEvent) => {
-    if (e.pointerType !== 'mouse') {
-      return;
-    }
-    setPressed(true);
-    addGlobalListener(document, 'pointerup', () => {
-      setPressed(false);
-    }, {once: true, capture: true});
-  };
-
   let renderer;
   let spinnerId = useSlotId([isLoading]);
-  let loadingCircle = (
-    <ProgressCircle
-      isIndeterminate
-      size="S"
-      styles={progressCircleStyles({size})}
-      // Same loading string as table
-      aria-label={stringFormatter.format('table.loadingMore')} />
-  );
 
   let listBoxLoadingCircle = (
     <UNSTABLE_ListBoxLoadingSentinel
       className={loadingWrapperStyles}
       isLoading={isLoading}
       onLoadMore={onLoadMore}>
-      {loadingCircle}
+      <PickerProgressCircle size={size} aria-label={stringFormatter.format('table.loadingMore')} />
     </UNSTABLE_ListBoxLoadingSentinel>
   );
 
@@ -390,40 +366,21 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
               contextualHelp={props.contextualHelp}>
               {label}
             </FieldLabel>
-            <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
-              <Button
-                ref={domRef}
-                style={renderProps => pressScale(domRef)(renderProps)}
-                // Prevent press scale from sticking while Picker is open.
-                // @ts-ignore
-                isPressed={false}
-                className={renderProps => inputButton({
-                  ...renderProps,
-                  size: size,
-                  isOpen,
-                  isQuiet
-                })}>
-                {(renderProps) => (
-                  <PickerButtonInner
-                    {...renderProps}
-                    isFocusVisible={isFocusVisible}
-                    size={size}
-                    isLoading={isLoading}
-                    isQuiet={isQuiet}
-                    isInvalid={isInvalid}
-                    isOpen={isOpen}
-                    loadingCircle={
-                      <ProgressCircle
-                        id={spinnerId}
-                        isIndeterminate
-                        size="S"
-                        styles={progressCircleStyles({size})}
-                        // Same loading string as table
-                        aria-label={stringFormatter.format('table.loading')} />
-                    } />
-                )}
-              </Button>
-            </PressResponder>
+            <PickerButton
+              isLoading={isLoading}
+              isOpen={isOpen}
+              isQuiet={isQuiet}
+              isFocusVisible={isFocusVisible}
+              size={size}
+              isInvalid={isInvalid}
+              isDisabled={isDisabled}
+              buttonRef={domRef}
+              loadingCircle={
+                <PickerProgressCircle
+                  id={spinnerId}
+                  size={size}
+                  aria-label={stringFormatter.format('table.loading')} />
+              } />
             <HelpText
               size={size}
               isDisabled={isDisabled}
@@ -484,6 +441,121 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
     </AriaSelect>
   );
 });
+
+function PickerProgressCircle(props) {
+  let {
+    id,
+    size,
+    'aria-label': ariaLabel
+  } = props;
+  return (
+    <ProgressCircle
+      id={id}
+      isIndeterminate
+      size="S"
+      aria-label={ariaLabel}
+      styles={progressCircleStyles({size})} />
+  );
+}
+
+interface PickerButtonInnerProps<T extends object> extends PickerStyleProps, Omit<AriaSelectRenderProps, 'isRequired' | 'isFocused'>, Pick<PickerProps<T>, 'isLoading'> {
+  loadingCircle: ReactNode,
+  buttonRef: RefObject<HTMLButtonElement | null>
+}
+
+function PickerButton<T extends object>(props: PickerButtonInnerProps<T>) {
+  let {
+    isOpen,
+    isQuiet,
+    isFocusVisible,
+    size,
+    isInvalid,
+    isDisabled,
+    isLoading,
+    loadingCircle,
+    buttonRef
+  } = props;
+  let state = useContext(SelectStateContext);
+  // If it is the initial load, the collection either hasn't been formed or only has the loader so apply the disabled style
+  let isInitialLoad = (state?.collection.size == null || state?.collection.size <= 1) && isLoading;
+
+  // For mouse interactions, pickers open on press start. When the popover underlay appears
+  // it covers the trigger button, causing onPressEnd to fire immediately and no press scaling
+  // to occur. We override this by listening for pointerup on the document ourselves.
+  let [isPressed, setPressed] = useState(false);
+  let {addGlobalListener} = useGlobalListeners();
+  let onPressStart = (e: PressEvent) => {
+    if (e.pointerType !== 'mouse') {
+      return;
+    }
+    setPressed(true);
+    addGlobalListener(document, 'pointerup', () => {
+      setPressed(false);
+    }, {once: true, capture: true});
+  };
+
+  return (
+    <PressResponder onPressStart={onPressStart} isPressed={isPressed}>
+      <Button
+        ref={buttonRef}
+        style={renderProps => pressScale(buttonRef)(renderProps)}
+        // Prevent press scale from sticking while Picker is open.
+        // @ts-ignore
+        isPressed={false}
+        className={renderProps => inputButton({
+          ...renderProps,
+          size: size,
+          isOpen,
+          isQuiet
+        })}>
+        {(renderProps) => (
+          <>
+            <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> * {display: none;}')}>
+              {({defaultChildren}) => {
+                return (
+                  <Provider
+                    values={[
+                      [IconContext, {
+                        slots: {
+                          icon: {
+                            render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
+                            styles: icon
+                          }
+                        }
+                      }],
+                      [TextContext, {
+                        slots: {
+                          description: {},
+                          label: {styles: style({
+                            display: 'block',
+                            flexGrow: 1,
+                            truncate: true
+                          })}
+                        }
+                      }],
+                      [InsideSelectValueContext, true]
+                    ]}>
+                    {defaultChildren}
+                  </Provider>
+                );
+              }}
+            </SelectValue>
+            {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
+            {isInitialLoad && !isOpen && loadingCircle}
+            <ChevronIcon
+              size={size}
+              className={iconStyles({isInitialLoad})} />
+            {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
+            {isInvalid && !isDisabled && !isQuiet &&
+              // @ts-ignore known limitation detecting functions from the theme
+              <div className={invalidBorder({...renderProps, size})} />
+            }
+          </>
+        )}
+      </Button>
+    </PressResponder>
+  );
+}
 
 export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {
   children: ReactNode
@@ -553,62 +625,6 @@ export function PickerSection<T extends object>(props: PickerSectionProps<T>): R
         {props.children}
       </AriaListBoxSection>
       <Divider size={size} />
-    </>
-  );
-}
-
-interface PickerButtonInnerProps<T extends object> extends Pick<PickerProps<T>, 'size' | 'isLoading' | 'isQuiet'>, Pick<SelectRenderProps, 'isOpen' | 'isInvalid'>, ButtonRenderProps {
-  loadingCircle: ReactNode
-}
-
-function PickerButtonInner<T extends object>(props: PickerButtonInnerProps<T>) {
-  let {size, isLoading, isQuiet, isInvalid, isDisabled, isFocusVisible, isOpen, loadingCircle} = props;
-  let state = useContext(SelectStateContext);
-  // If it is the initial load, the collection either hasn't been formed or only has the loader so apply the disabled style
-  let isInitialLoad = (state?.collection.size == null || state?.collection.size <= 1) && isLoading;
-
-  return (
-    <>
-      <SelectValue className={valueStyles({isQuiet}) + ' ' + raw('&> * {display: none;}')}>
-        {({defaultChildren}) => {
-          return (
-            <Provider
-              values={[
-                [IconContext, {
-                  slots: {
-                    icon: {
-                      render: centerBaseline({slot: 'icon', styles: iconCenterWrapper}),
-                      styles: icon
-                    }
-                  }
-                }],
-                [TextContext, {
-                  slots: {
-                    description: {},
-                    label: {styles: style({
-                      display: 'block',
-                      flexGrow: 1,
-                      truncate: true
-                    })}
-                  }
-                }],
-                [InsideSelectValueContext, true]
-              ]}>
-              {defaultChildren}
-            </Provider>
-          );
-        }}
-      </SelectValue>
-      {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
-      {isInitialLoad && !isOpen && loadingCircle}
-      <ChevronIcon
-        size={size}
-        className={iconStyles({isInitialLoad})} />
-      {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
-      {isInvalid && !isDisabled && !isQuiet &&
-        // @ts-ignore known limitation detecting functions from the theme
-        <div className={invalidBorder({...props, size})} />
-      }
     </>
   );
 }

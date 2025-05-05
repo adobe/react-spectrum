@@ -207,7 +207,7 @@
     "tailwindcss": "^4.0.0",
     "tailwindcss-animate": "^1.0.7",
     "tempy": "^0.5.0",
-    "typescript": "^5.5.0",
+    "typescript": "^5.8.2",
     "typescript-eslint": "^8.9.0",
     "verdaccio": "^6.0.0",
     "walk-object": "^4.0.0",
@@ -235,7 +235,10 @@
     "recast": "0.23.6",
     "ast-types": "0.16.1",
     "svgo": "^3",
-    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch"
+    "@testing-library/user-event": "patch:@testing-library/user-event@npm%3A14.6.1#~/.yarn/patches/@testing-library-user-event-npm-14.6.1-5da7e1d4e2.patch",
+    "@types/node@npm:*": "patch:@types/node@npm%3A20.14.13#~/.yarn/patches/@types-node-npm-20.14.13-41f92d384c.patch",
+    "@types/node@npm:^18.0.0": "patch:@types/node@npm%3A20.14.13#~/.yarn/patches/@types-node-npm-20.14.13-41f92d384c.patch",
+    "@types/node@npm:>= 8": "patch:@types/node@npm%3A20.14.13#~/.yarn/patches/@types-node-npm-20.14.13-41f92d384c.patch"
   },
   "@parcel/transformer-css": {
     "cssModules": {

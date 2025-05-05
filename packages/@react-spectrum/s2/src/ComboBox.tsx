@@ -16,6 +16,7 @@ import {
   ListBoxSection as AriaListBoxSection,
   PopoverProps as AriaPopoverProps,
   Button,
+  ButtonRenderProps,
   Collection,
   ComboBoxStateContext,
   ContextValue,
@@ -107,7 +108,7 @@ export interface ComboBoxProps<T extends object> extends
 
 export const ComboBoxContext = createContext<ContextValue<Partial<ComboBoxProps<any>>, TextFieldRef>>(null);
 
-const inputButton = style({
+const inputButton = style<ButtonRenderProps & {isOpen: boolean, size: 'S' | 'M' | 'L' | 'XL'}>({
   display: 'flex',
   outlineStyle: 'none',
   textAlign: 'center',
@@ -224,10 +225,8 @@ export let listboxItem = style({
   },
   paddingBottom: '--labelPadding',
   backgroundColor: { // TODO: revisit color when I have access to dev mode again
-    default: {
-      default: 'transparent',
-      isFocused: baseColor('gray-100').isFocusVisible
-    }
+    default: 'transparent',
+    isFocused: baseColor('gray-100').isFocusVisible
   },
   color: {
     default: 'neutral',
@@ -242,15 +241,15 @@ export let listboxItem = style({
   gridColumnEnd: -1,
   display: 'grid',
   gridTemplateAreas: [
-    '. checkmark icon label       value keyboard descriptor .',
-    '. .         .    description .     .        .          .'
+    '. checkmark icon label  .',
+    '.      .      .  description .'
   ],
   gridTemplateColumns: {
     size: {
-      S: [edgeToText(24), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(24)],
-      M: [edgeToText(32), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(32)],
-      L: [edgeToText(40), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(40)],
-      XL: [edgeToText(48), 'auto', 'auto', 'minmax(0, 1fr)', 'auto', 'auto', 'auto', edgeToText(48)]
+      S: [edgeToText(24), 'auto', 'auto', 'minmax(0, 1fr)', edgeToText(24)],
+      M: [edgeToText(32), 'auto', 'auto', 'minmax(0, 1fr)', edgeToText(32)],
+      L: [edgeToText(40), 'auto', 'auto', 'minmax(0, 1fr)', edgeToText(40)],
+      XL: [edgeToText(48), 'auto', 'auto', 'minmax(0, 1fr)', edgeToText(48)]
     }
   },
   gridTemplateRows: {
@@ -279,10 +278,10 @@ export let listboxHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
   paddingY: centerPadding(),
   marginX: {
     size: {
-      S: '[calc(24 * 3 / 8)]',
-      M: '[calc(32 * 3 / 8)]',
-      L: '[calc(40 * 3 / 8)]',
-      XL: '[calc(48 * 3 / 8)]'
+      S: `[${edgeToText(24)}]`,
+      M: `[${edgeToText(32)}]`,
+      L: `[${edgeToText(40)}]`,
+      XL: `[${edgeToText(48)}]`
     }
   }
 });
@@ -297,23 +296,16 @@ export let listboxHeading = style({
 // not sure why edgeToText won't work...
 const separatorWrapper = style({
   display: {
-    ':is(:last-child > &)': 'none',
+    ':is(:last-child > *)': 'none',
     default: 'flex'
   },
-  // marginX: {
-  //   size: {
-  //     S: edgeToText(24),
-  //     M: edgeToText(32),
-  //     L: edgeToText(40),
-  //     XL: edgeToText(48)
-  //   }
-  // },
+  // A workaround since edgeToText() returns undefined for some reason
   marginX: {
     size: {
-      S: '[calc(24 * 3 / 8)]',
-      M: '[calc(32 * 3 / 8)]',
-      L: '[calc(40 * 3 / 8)]',
-      XL: '[calc(48 * 3 / 8)]'
+      S: `[${edgeToText(24)}]`,
+      M: `[${edgeToText(32)}]`,
+      L: `[${edgeToText(40)}]`,
+      XL: `[${edgeToText(48)}]`
     }
   },
   height: 12
