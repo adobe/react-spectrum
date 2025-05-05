@@ -227,7 +227,7 @@ export class GridLayout<T, O extends GridLayoutOptions = GridLayoutOptions> exte
     // Find the closest item within on either side of the point using the gap width.
     let key: Key | null = null;
     if (this.numColumns === 1) {
-      let searchRect = new Rect(x, Math.max(0, y - this.gap.height), 1, this.gap.height * 2);
+      let searchRect = new Rect(x, Math.max(0, y - this.gap.height), 1, Math.max(1, this.gap.height * 2));
       let candidates = this.getVisibleLayoutInfos(searchRect);
       let minDistance = Infinity;
       for (let candidate of candidates) {
