@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Avatar, Button, Card, CardPreview, Content, DialogTrigger, Divider, Form, Image, Menu, MenuItem, MenuSection, Popover, SearchField, SubmenuTrigger, Switch, Tab, TabList, TabPanel, Tabs, Text, TextField} from '../src';
+import {ActionButton, Avatar, Button, Card, CardPreview, Content, DialogTrigger, Divider, Form, Image, Link, Menu, MenuItem, MenuSection, Popover, SearchField, SubmenuTrigger, Switch, Tab, TabList, TabPanel, Tabs, Text, TextField} from '../src';
 import Cloud from '../s2wf-icons/S2_Icon_Cloud_20_N.svg';
 import Education from '../s2wf-icons/S2_Icon_Education_20_N.svg';
 import File from '../s2wf-icons/S2_Icon_File_20_N.svg';
@@ -22,6 +22,7 @@ import {Autocomplete as RACAutocomplete, useFilter} from 'react-aria-components'
 import Settings from '../s2wf-icons/S2_Icon_Settings_20_N.svg';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import User from '../s2wf-icons/S2_Icon_User_20_N.svg';
+import {useRef} from 'react';
 import Users from '../s2wf-icons/S2_Icon_UserGroup_20_N.svg';
 
 const meta: Meta<typeof Popover> = {
@@ -175,6 +176,40 @@ function Autocomplete(props) {
   );
 }
 
+export const PopoverWithTriggerOnLink = (args: any) => {
+  const linkRef = useRef<any>(null);
+  return (
+    <div>
+      <Link ref={linkRef}>Popover Link Trigger</Link>
+      <Popover {...args} triggerRef={linkRef} placement="top right">
+        <Autocomplete>
+          <SearchField autoFocus label="Search" styles={style({marginTop: 12, marginX: 12})} />
+          <Menu aria-label="test menu" styles={style({marginTop: 12})}>
+            <MenuItem>Foo</MenuItem>
+            <MenuItem>Bar</MenuItem>
+            <MenuItem>Baz</MenuItem>
+          </Menu>
+        </Autocomplete>
+      </Popover>
+    </div>
+  );
+};
+
+export const PopoverWithTriggerOnButton = (args: any) => {
+  const buttonRef = useRef<any>(null);
+  return (
+    <div>
+      <Button ref={buttonRef}>Open Popover</Button>
+      <Popover {...args} triggerRef={buttonRef} >
+        <Autocomplete>
+          <SearchField autoFocus label="Search" styles={style({marginTop: 12, marginX: 12})} />
+        </Autocomplete>
+      </Popover>
+    </div>
+  );
+};
+
+
 export const AutocompletePopover = (args: any) => (
   <>
     <DialogTrigger {...args}>
@@ -194,3 +229,4 @@ export const AutocompletePopover = (args: any) => (
     </DialogTrigger>
   </>
 );
+
