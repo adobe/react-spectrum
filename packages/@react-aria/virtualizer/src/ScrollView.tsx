@@ -213,7 +213,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
         // due to strict mode.
         setUpdate({});
         lastContentSize.current = contentSize;
-        return
+        return;
       } else {
         queueMicrotask(() => updateSize(flushSync));
       }
@@ -225,7 +225,7 @@ export function useScrollView(props: ScrollViewProps, ref: RefObject<HTMLElement
   // Will only run in tests, needs to be in separate effect so it is properly run in the next render in strict mode.
   useLayoutEffect(() => {
     updateSize(fn => fn());
-  }, [update])
+  }, [update]);
 
   let onResize = useCallback(() => {
     updateSize(flushSync);

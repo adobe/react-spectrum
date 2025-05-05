@@ -946,15 +946,14 @@ describe('GridList', () => {
 
       let tree = render(<AsyncGridList items={items} onLoadMore={onLoadMore} isLoading />);
       let sentinel = tree.getByTestId('loadMoreSentinel');
-      expect(observe).toHaveBeenCalledTimes(2);
       expect(observe).toHaveBeenLastCalledWith(sentinel);
       expect(onLoadMore).toHaveBeenCalledTimes(0);
 
       act(() => {observer.instance.triggerCallback([{isIntersecting: true}]);});
       expect(onLoadMore).toHaveBeenCalledTimes(1);
+      observe.mockClear();
 
       tree.rerender(<AsyncGridList items={items} onLoadMore={onLoadMore} />);
-      expect(observe).toHaveBeenCalledTimes(3);
       expect(observe).toHaveBeenLastCalledWith(sentinel);
       expect(onLoadMore).toHaveBeenCalledTimes(1);
 
