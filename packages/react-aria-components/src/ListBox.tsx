@@ -230,8 +230,6 @@ function ListBoxInner<T extends object>({state: inputState, props, listBoxRef}: 
     );
   }
 
-  // TODO: Think about if completely empty state. Do we leave it up to the user to setup the two states for empty and empty + loading?
-  // Do we add a data attibute/prop/renderprop to ListBox for isLoading
   return (
     <FocusScope>
       <div
@@ -511,7 +509,7 @@ export const UNSTABLE_ListBoxLoadingSentinel = createLeafComponent('loader', fun
 
   return (
     <>
-      {/* TODO: Alway render the sentinel. Might need to style it as visually hidden? */}
+      {/* TODO: Alway render the sentinel. Will need to figure out how best to position this in cases where the user is using flex + gap (this would introduce a gap even though it doesn't take room) */}
       {/* @ts-ignore - compatibility with React < 19 */}
       <div style={{position: 'relative', width: 0, height: 0}} inert={inertValue(true)} >
         <div data-testid="loadMoreSentinel" ref={sentinelRef} style={{position: 'absolute', height: 1, width: 1}} />

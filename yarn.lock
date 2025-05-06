@@ -7946,7 +7946,6 @@ __metadata:
     "@react-aria/interactions": "npm:^3.25.0"
     "@react-aria/live-announcer": "npm:^3.4.2"
     "@react-aria/overlays": "npm:^3.27.0"
-    "@react-aria/separator": "npm:^3.4.8"
     "@react-aria/test-utils": "npm:^1.0.0-alpha.6"
     "@react-aria/utils": "npm:^3.28.2"
     "@react-spectrum/utils": "npm:^3.12.4"

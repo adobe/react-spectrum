@@ -867,9 +867,9 @@ describe('GridList', () => {
       {name: 'Bar'},
       {name: 'Baz'}
     ];
-    let renderEmptyState = () => {
+    let renderEmptyState = (loadingState) => {
       return (
-        <div>empty state</div>
+        loadingState === 'loading' ? <div>loading</div> : <div>empty state</div>
       );
     };
     let AsyncGridList = (props) => {
@@ -979,7 +979,7 @@ describe('GridList', () => {
       });
 
       let VirtualizedAsyncGridList = (props) => {
-        let {items, isLoading, onLoadMore, ...listBoxProps} = props;
+        let {items, loadingState, onLoadMore, ...listBoxProps} = props;
         return (
           <Virtualizer
             layout={ListLayout}
@@ -990,13 +990,13 @@ describe('GridList', () => {
             <GridList
               {...listBoxProps}
               aria-label="async virtualized gridlist"
-              renderEmptyState={() => renderEmptyState()}>
+              renderEmptyState={() => renderEmptyState(loadingState)}>
               <Collection items={items}>
                 {(item) => (
                   <GridListItem id={item.name}>{item.name}</GridListItem>
                 )}
               </Collection>
-              <UNSTABLE_GridListLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
+              <UNSTABLE_GridListLoadingSentinel isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore}>
                 Loading...
               </UNSTABLE_GridListLoadingSentinel>
             </GridList>
@@ -1005,7 +1005,7 @@ describe('GridList', () => {
       };
 
       it('should always render the sentinel even when virtualized', async () => {
-        let tree = render(<VirtualizedAsyncGridList isLoading items={items} />);
+        let tree = render(<VirtualizedAsyncGridList loadingState="loadingMore" items={items} />);
 
         let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
         let rows = gridListTester.rows;
@@ -1049,20 +1049,52 @@ describe('GridList', () => {
         expect(sentinelParentStyles.top).toBe('0px');
         expect(sentinelParentStyles.height).toBe('0px');
 
-        // Setting isLoading will render the loader even if the list is empty.
-        tree.rerender(<VirtualizedAsyncGridList items={[]} isLoading />);
+        tree.rerender(<VirtualizedAsyncGridList items={[]} loadingState="loading" />);
         rows = gridListTester.rows;
-        expect(rows).toHaveLength(2);
-        emptyStateRow = rows[1];
-        expect(emptyStateRow).toHaveTextContent('empty state');
-
-        let loadingRow = rows[0];
-        expect(loadingRow).toHaveTextContent('Loading...');
+        expect(rows).toHaveLength(1);
+        emptyStateRow = rows[0];
+        expect(emptyStateRow).toHaveTextContent('loading');
 
         sentinel = within(gridListTester.gridlist).getByTestId('loadMoreSentinel');
         sentinelParentStyles = sentinel.parentElement.parentElement.style;
         expect(sentinelParentStyles.top).toBe('0px');
-        expect(sentinelParentStyles.height).toBe('30px');
+        expect(sentinelParentStyles.height).toBe('0px');
+      });
+
+      it('should have the correct row indicies after loading more items', async () => {
+        let tree = render(<VirtualizedAsyncGridList items={[]} loadingState="loading" />);
+
+        let gridListTester = testUtilUser.createTester('GridList', {root: tree.getByRole('grid')});
+        let rows = gridListTester.rows;
+        expect(rows).toHaveLength(1);
+
+        let loaderRow = rows[0];
+        expect(loaderRow).toHaveAttribute('aria-rowindex', '1');
+        expect(loaderRow).toHaveTextContent('loading');
+        for (let [index, row] of rows.entries()) {
+          expect(row).toHaveAttribute('aria-rowindex', `${index + 1}`);
+        }
+
+        tree.rerender(<VirtualizedAsyncGridList items={items} />);
+        rows = gridListTester.rows;
+        expect(rows).toHaveLength(7);
+        expect(within(gridListTester.gridlist).queryByText('loading')).toBeFalsy();
+        for (let [index, row] of rows.entries()) {
+          expect(row).toHaveAttribute('aria-rowindex', `${index + 1}`);
+        }
+
+        tree.rerender(<VirtualizedAsyncGridList items={items} loadingState="loadingMore" />);
+        rows = gridListTester.rows;
+        expect(rows).toHaveLength(8);
+        loaderRow = rows[7];
+        expect(loaderRow).toHaveAttribute('aria-rowindex', '51');
+        for (let [index, row] of rows.entries()) {
+          if (index === 7) {
+            continue;
+          } else {
+            expect(row).toHaveAttribute('aria-rowindex', `${index + 1}`);
+          }
+        }
       });
     });
   });

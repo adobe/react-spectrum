@@ -1398,6 +1398,7 @@ export const UNSTABLE_TableLoadingSentinel = createLeafComponent('loader', funct
   return (
     <>
       {/* TODO weird structure? Renders a extra row but we hide via inert so maybe ok? */}
+      {/* TODO: Will need to figure out how best to position this in cases where the user is using flex + gap (this would introduce a gap even though it doesn't take room) */}
       {/* @ts-ignore - compatibility with React < 19 */}
       <TR style={{position: 'relative', width: 0, height: 0}} inert={inertValue(true)} >
         <TD data-testid="loadMoreSentinel" ref={sentinelRef} style={{position: 'absolute', height: 1, width: 1}} />

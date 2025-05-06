@@ -19,7 +19,8 @@ import {userEvent, waitFor, within} from '@storybook/testing-library';
 const meta: Meta<typeof Picker<any>> = {
   component: Picker,
   parameters: {
-    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true}
+    chromaticProvider: {colorSchemes: ['light'], backgrounds: ['base'], locales: ['en-US'], disableAnimations: true},
+    chromatic: {ignoreSelectors: ['[role="progressbar"]']}
   },
   tags: ['autodocs'],
   title: 'S2 Chromatic/Picker'
@@ -71,7 +72,7 @@ export const ContextualHelp = {
 
 export const EmptyAndLoading = {
   render: () => (
-    <Picker isLoading>
+    <Picker label="loading" isLoading>
       {[]}
     </Picker>
   ),
@@ -88,6 +89,10 @@ export const EmptyAndLoading = {
 
 export const AsyncResults = {
   ...AsyncPickerStory,
+  args: {
+    ...AsyncPickerStory.args,
+    delay: 2000
+  },
   play: async ({canvasElement}) => {
     let body = canvasElement.ownerDocument.body;
     await waitFor(() => {

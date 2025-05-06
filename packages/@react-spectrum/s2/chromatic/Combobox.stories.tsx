@@ -87,7 +87,8 @@ export const WithEmptyState = {
 export const WithInitialLoading = {
   ...EmptyCombobox,
   args: {
-    loadingState: 'loading'
+    loadingState: 'loading',
+    label: 'Initial loading'
   },
   play: async ({canvasElement}) => {
     await userEvent.tab();
@@ -101,7 +102,8 @@ export const WithInitialLoading = {
 export const WithLoadMore = {
   ...Example,
   args: {
-    loadingState: 'loadingMore'
+    loadingState: 'loadingMore',
+    label: 'Loading more'
   },
   play: async ({canvasElement}) => {
     await userEvent.tab();
@@ -114,6 +116,10 @@ export const WithLoadMore = {
 
 export const AsyncResults = {
   ...AsyncComboBoxStory,
+  args: {
+    ...AsyncComboBoxStory.args,
+    delay: 2000
+  },
   play: async ({canvasElement}) => {
     await userEvent.tab();
     await userEvent.keyboard('{ArrowDown}');
@@ -127,6 +133,10 @@ export const AsyncResults = {
 
 export const Filtering = {
   ...AsyncComboBoxStory,
+  args: {
+    ...AsyncComboBoxStory.args,
+    delay: 2000
+  },
   play: async ({canvasElement}) => {
     await userEvent.tab();
     await userEvent.keyboard('{ArrowDown}');

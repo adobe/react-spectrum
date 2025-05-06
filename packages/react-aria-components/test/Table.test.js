@@ -2042,7 +2042,7 @@ describe('Table', () => {
       });
 
       let VirtualizedTableLoad = (props) => {
-        let {items, isLoading, onLoadMore} = props;
+        let {items, loadingState, onLoadMore} = props;
 
         return (
           <Virtualizer layout={TableLayout} layoutOptions={{rowHeight: 25, loaderHeight: 30}}>
@@ -2051,7 +2051,7 @@ describe('Table', () => {
                 <Column isRowHeader>Foo</Column>
                 <Column>Bar</Column>
               </TableHeader>
-              <TableBody renderEmptyState={() => 'No results'}>
+              <TableBody renderEmptyState={() => loadingState === 'loading' ? 'loading' : 'No results'}>
                 <Collection items={items}>
                   {(item) => (
                     <Row>
@@ -2060,7 +2060,7 @@ describe('Table', () => {
                     </Row>
                   )}
                 </Collection>
-                <UNSTABLE_TableLoadingSentinel isLoading={isLoading} onLoadMore={onLoadMore}>
+                <UNSTABLE_TableLoadingSentinel isLoading={loadingState === 'loadingMore'} onLoadMore={onLoadMore}>
                   <div>spinner</div>
                 </UNSTABLE_TableLoadingSentinel>
               </TableBody>
@@ -2070,7 +2070,7 @@ describe('Table', () => {
       };
 
       it('should always render the sentinel even when virtualized', () => {
-        let tree = render(<VirtualizedTableLoad isLoading items={items} />);
+        let tree = render(<VirtualizedTableLoad loadingState="loadingMore" items={items} />);
         let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
         let rows = tableTester.rows;
         expect(rows).toHaveLength(7);
@@ -2111,25 +2111,52 @@ describe('Table', () => {
         expect(sentinelParentStyles.top).toBe('0px');
         expect(sentinelParentStyles.height).toBe('0px');
 
-        // Setting isLoading will render the loader even if the table is empty.
-        tree.rerender(<VirtualizedTableLoad items={[]} isLoading />);
+        tree.rerender(<VirtualizedTableLoad items={[]} loadingState="loading" />);
         rows = tableTester.rows;
-        expect(rows).toHaveLength(2);
-        emptyStateRow = rows[1];
-        expect(emptyStateRow).toHaveTextContent('No results');
-
-        let loadingRow = rows[0];
-        expect(loadingRow).toHaveTextContent('spinner');
+        expect(rows).toHaveLength(1);
+        emptyStateRow = rows[0];
+        expect(emptyStateRow).toHaveTextContent('loading');
 
         sentinel = within(tableTester.table).getByTestId('loadMoreSentinel', {hidden: true});
         sentinelParentStyles = sentinel.parentElement.parentElement.style;
         expect(sentinelParentStyles.top).toBe('0px');
-        expect(sentinelParentStyles.height).toBe('30px');
+        expect(sentinelParentStyles.height).toBe('0px');
       });
 
       it('should have the correct row indicies after loading more items', async () => {
-        // TODO: first render without items and is loading
-        // then render with items and double check
+        let tree = render(<VirtualizedTableLoad items={[]} loadingState="loading" />);
+        let tableTester = testUtilUser.createTester('Table', {root: tree.getByRole('grid')});
+        let rows = tableTester.rows;
+        expect(rows).toHaveLength(1);
+
+        let loaderRow = rows[0];
+        expect(loaderRow).toHaveAttribute('aria-rowindex', '2');
+        expect(loaderRow).toHaveTextContent('loading');
+        for (let [index, row] of rows.entries()) {
+          // the header row is the first row but isn't included in "rows" so add +2
+          expect(row).toHaveAttribute('aria-rowindex', `${index + 2}`);
+        }
+
+        tree.rerender(<VirtualizedTableLoad items={items} />);
+        rows = tableTester.rows;
+        expect(rows).toHaveLength(6);
+        expect(within(tableTester.table).queryByText('spinner')).toBeFalsy();
+        for (let [index, row] of rows.entries()) {
+          expect(row).toHaveAttribute('aria-rowindex', `${index + 2}`);
+        }
+
+        tree.rerender(<VirtualizedTableLoad items={items} loadingState="loadingMore" />);
+        rows = tableTester.rows;
+        expect(rows).toHaveLength(7);
+        loaderRow = rows[6];
+        expect(loaderRow).toHaveAttribute('aria-rowindex', '52');
+        for (let [index, row] of rows.entries()) {
+          if (index === 6) {
+            continue;
+          } else {
+            expect(row).toHaveAttribute('aria-rowindex', `${index + 2}`);
+          }
+        }
       });
     });
   });

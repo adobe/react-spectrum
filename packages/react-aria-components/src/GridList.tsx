@@ -217,7 +217,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   if (isEmpty && props.renderEmptyState) {
     let content = props.renderEmptyState(renderValues);
     emptyState = (
-      <div role="row" style={{display: 'contents'}}>
+      <div role="row" aria-rowindex={1} style={{display: 'contents'}}>
         <div role="gridcell" style={{display: 'contents'}}>
           {content}
         </div>
@@ -532,7 +532,7 @@ export const UNSTABLE_GridListLoadingSentinel = createLeafComponent('loader', fu
 
   return (
     <>
-      {/* TODO: Alway render the sentinel. Might need to style it as visually hidden? */}
+      {/* TODO: Alway render the sentinel. Will need to figure out how best to position this in cases where the user is using flex + gap (this would introduce a gap even though it doesn't take room) */}
       {/* @ts-ignore - compatibility with React < 19 */}
       <div style={{position: 'relative', width: 0, height: 0}} inert={inertValue(true)} >
         <div data-testid="loadMoreSentinel" ref={sentinelRef} style={{position: 'absolute', height: 1, width: 1}} />
