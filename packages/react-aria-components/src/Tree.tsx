@@ -288,11 +288,12 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
           }
         },
         onDropActivate: (e) => {
-          // Expand collapsed item when dragging over
+          // Expand collapsed item when dragging over. For keyboard, allow collapsing.
           if (e.target.type === 'item') {
             let key = e.target.key;
             let item = state.collection.getItem(key);
-            if (item && item.hasChildNodes && expandedKeys !== 'all' && !expandedKeys.has(key)) {
+            let isExpanded = expandedKeys !== 'all' && expandedKeys.has(key);
+            if (item && item.hasChildNodes && (!isExpanded || dragAndDropHooks?.isVirtualDragging?.())) {
               state.toggleKey(key);
             }
           }
@@ -522,11 +523,13 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
   }
 
   let dropIndicator: DropIndicatorAria | null = null;
+  let expandButtonRef = useRef<HTMLButtonElement>(null);
   let dropIndicatorRef = useRef<HTMLDivElement>(null);
   let {visuallyHiddenProps} = useVisuallyHidden();
   if (dropState && dragAndDropHooks) {
     dropIndicator = dragAndDropHooks.useDropIndicator!({
-      target: {type: 'item', key: item.key, dropPosition: 'on'}
+      target: {type: 'item', key: item.key, dropPosition: 'on'},
+      activateButtonRef: expandButtonRef
     }, dropState, dropIndicatorRef);
   }
 
@@ -570,7 +573,6 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
     }
   }, [item.textValue]);
 
-  let expandButtonRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (hasChildItems && !expandButtonRef.current && process.env.NODE_ENV !== 'production') {
       console.warn('Expandable tree items must contain a expand button so screen reader users can expand/collapse the item.');
