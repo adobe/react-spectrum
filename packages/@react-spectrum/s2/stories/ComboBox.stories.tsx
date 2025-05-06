@@ -237,6 +237,7 @@ const AsyncComboBox = (args: any) => {
   return (
     <ComboBox
       {...args}
+      styles={style({marginBottom: 40})}
       items={list.items}
       inputValue={list.filterText}
       onInputChange={list.setFilterText}

@@ -72,6 +72,9 @@ html {
 
 .item {
   padding: 2px 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   outline: none;
   cursor: default;
   color: black;
