@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+let path = require('path');
 let {Parcel} = require('@parcel/core');
 let {parseArgs} = require('util');
 let globSync = require('glob').sync;
@@ -88,12 +89,15 @@ async function run() {
 run();
 
 
-// Generate types for each icon/illustration so TypeScript's import autocomplete works.
-for (let file of globSync(`${args.values.output}/*.mjs`)) {
-  fs.writeFileSync(file.replace('.mjs', '.d.ts'), `import type {IconProps} from '@react-spectrum/s2';
+if (args.values.isLibrary) {
+  // Generate types for each icon/illustration so TypeScript's import autocomplete works.
+  console.log(`${path.join(args.values.output, '.')}/*.mjs`);
+  for (let file of globSync(`${path.join(args.values.output, '.')}/*.mjs`)) {
+    fs.writeFileSync(file.replace('.mjs', '.d.ts'), `import type {IconProps} from '@react-spectrum/s2';
 import type {ReactNode} from 'react';
 
 declare function Icon(props: IconProps): ReactNode;
 export default Icon;
-`);
+  `);
+  }
 }

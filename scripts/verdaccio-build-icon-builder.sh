@@ -41,12 +41,38 @@ cat > icon-library-test/package.json << EOF
 {
   "name": "icon-library-test",
   "version": "1.0.0",
+  "dependencies": {
+    "@swc/helpers": "^0.5.0"
+  },
+  "peerDependencies": {
+    "@react-spectrum/s2": "latest",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@react-spectrum/s2-icon-builder": "latest",
+    "@react-spectrum/s2": "latest",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}
+EOF
+mkdir icon-library-test/src
+touch icon-library-test/yarn.lock
+cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_3D_20_N.svg icon-library-test/src/S2_Icon_3D_20_N.svg
+cd icon-library-test
+yarn install --no-immutable
+yarn transform-icons -i './src/*.svg' -o ./ --isLibrary
+cat > ./package.json << EOF
+{
+  "name": "icon-library-test",
+  "version": "1.0.0",
   "exports": {
-    "./dist/*": {
-      "types": "./dist/*.d.ts",
-      "module": "./dist/*.mjs",
-      "import": "./dist/*.mjs",
-      "require": "./dist/*.cjs"
+    "./*": {
+      "types": "./*.d.ts",
+      "module": "./*.mjs",
+      "import": "./*.mjs",
+      "require": "./*.cjs"
     }
   },
   "dependencies": {
@@ -62,19 +88,9 @@ cat > icon-library-test/package.json << EOF
     "@react-spectrum/s2": "latest",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
-  },
-  "files": [
-    "src",
-    "dist"
-  ]
+  }
 }
 EOF
-mkdir icon-library-test/src
-touch icon-library-test/yarn.lock
-cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_3D_20_N.svg icon-library-test/src/S2_Icon_3D_20_N.svg
-cd icon-library-test
-yarn install --no-immutable
-yarn transform-icons -i './src/*.svg' -o ./dist --isLibrary
 ls ./dist
 
 cd ..
