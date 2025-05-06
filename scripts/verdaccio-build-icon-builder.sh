@@ -49,6 +49,9 @@ cat > icon-library-test/package.json << EOF
       "require": "./dist/*.cjs"
     }
   },
+  "dependencies": {
+    "@swc/helpers": "^0.5.0"
+  },
   "peerDependencies": {
     "@react-spectrum/s2": "latest",
     "react": "^19.0.0",
@@ -57,7 +60,6 @@ cat > icon-library-test/package.json << EOF
   "devDependencies": {
     "@react-spectrum/s2-icon-builder": "latest",
     "@react-spectrum/s2": "latest",
-    "@swc/helpers": "^0.5.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
