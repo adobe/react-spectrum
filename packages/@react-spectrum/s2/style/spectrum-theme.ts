@@ -107,10 +107,7 @@ function resolveColorToken(token: string | ColorToken | ColorRef): ColorToken {
 }
 
 function colorTokenToString(token: ColorToken, opacity?: string | number) {
-  if (token.light === token.dark) {
-    return token.light;
-  }
-  let result = `light-dark(${token.light}, ${token.dark})`;
+  let result = token.light === token.dark ? token.light : `light-dark(${token.light}, ${token.dark})`;
   if (opacity) {
     result = `rgb(from ${result} r g b / ${opacity}%)`;
   }
