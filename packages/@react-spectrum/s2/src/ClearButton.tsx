@@ -17,47 +17,83 @@ import {
 } from 'react-aria-components';
 import CrossIcon from '../ui-icons/Cross';
 import {FocusableRef} from '@react-types/shared';
+import {focusRing, style} from '../style' with {type: 'macro'};
 import {forwardRef} from 'react';
-import {style} from '../style' with {type: 'macro'};
+import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
-
 interface ClearButtonStyleProps {
   /**
    * The size of the ClearButton.
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL',
+  /** Whether to show a focus ring. */
+  showFocusRing?: boolean
 }
 
 interface ClearButtonRenderProps extends ButtonRenderProps, ClearButtonStyleProps {}
 interface ClearButtonProps extends ButtonProps, ClearButtonStyleProps {}
 
+const visibleClearButton = style<ClearButtonRenderProps>({
+  ...focusRing(),
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: 'full',
+  width: 'control',
+  flexShrink: 0,
+  borderRadius: 'full',
+  borderStyle: 'none',
+  backgroundColor: 'transparent',
+  boxSizing: 'border-box',
+  padding: 0,
+  outlineOffset: -4,
+  color: '[inherit]',
+  '--iconPrimary': {
+    type: 'fill',
+    value: 'currentColor'
+  }
+});
+
 export const ClearButton = forwardRef(function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+  let {showFocusRing = false, size = 'M', ...rest} = props;
   let domRef = useFocusableRef(ref);
 
-  return (
-    <Button
-      {...props}
-      ref={domRef}
-      className={renderProps => style<ClearButtonRenderProps>({
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: 'full',
-        width: 'control',
-        flexShrink: 0,
-        borderStyle: 'none',
-        outlineStyle: 'none',
-        backgroundColor: 'transparent',
-        padding: 0,
-        color: '[inherit]',
-        '--iconPrimary': {
-          type: 'fill',
-          value: 'currentColor'
-        }
-      })({...renderProps, size: props.size || 'M'})}>
-      <CrossIcon size={props.size || 'M'} />
-    </Button>
-  );
+  if (showFocusRing) {
+    return (
+      <Button
+        {...rest}
+        ref={domRef}
+        style={pressScale(domRef)}
+        className={renderProps => visibleClearButton({...renderProps, size})}>
+        <CrossIcon size={props.size} />
+      </Button>
+    );
+  } else {
+    return (
+      <Button
+        {...rest}
+        ref={domRef}
+        className={renderProps => style<ClearButtonRenderProps>({
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: 'full',
+          width: 'control',
+          flexShrink: 0,
+          borderStyle: 'none',
+          outlineStyle: 'none',
+          backgroundColor: 'transparent',
+          padding: 0,
+          color: '[inherit]',
+          '--iconPrimary': {
+            type: 'fill',
+            value: 'currentColor'
+          }
+        })({...renderProps, size})}>
+        <CrossIcon size={props.size} />
+      </Button>
+    );
+  }
 });

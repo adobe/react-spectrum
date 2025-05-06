@@ -372,6 +372,17 @@ a.spectrum-ActionButton {
     margin-block: 0;
     margin-inline: auto;
   }
+
+  &.spectrum-ClearButton--inset {
+    &:focus-visible {
+      &:after {
+        left: 4px;
+        right: 4px;
+        bottom: 4px;
+        top: 4px;
+      }
+    }
+  }
 }
 
 @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
