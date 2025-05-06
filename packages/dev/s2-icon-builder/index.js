@@ -51,9 +51,6 @@ if (args.values.isLibrary) {
     entries: args.values.input,
     config: require.resolve('@react-spectrum/s2-icon-builder/.parcelrc-library'),
     shouldDisableCache: true,
-    defaultTargetOptions: {
-      distDir: args.values.output
-    },
     targets: {
       [`${args.values.type}-module`]: {
         distDir: args.values.output,
