@@ -154,7 +154,7 @@ describe('Combobox', () => {
     }
 
     // A bit contrived, but essentially testing a combinaiton of insertions/deletions along side some of the old entries remaining
-    let newItems = [{name: 'Chocolate Mint'}, {name: 'Chocolate'}, {name: 'Chocolate Chip'}, {name: 'Chocolate Chip Cookie Dough'}]
+    let newItems = [{name: 'Chocolate Mint'}, {name: 'Chocolate'}, {name: 'Chocolate Chip'}, {name: 'Chocolate Chip Cookie Dough'}];
     tree.rerender(<DynamicCombobox items={newItems} loadingState="idle" />);
 
     options = comboboxTester.options();

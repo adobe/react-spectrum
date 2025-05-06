@@ -44,6 +44,7 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
+import {createHideableComponent} from '@react-aria/collections';
 import {
   Divider,
   listbox,
@@ -463,7 +464,8 @@ interface PickerButtonInnerProps<T extends object> extends PickerStyleProps, Omi
   buttonRef: RefObject<HTMLButtonElement | null>
 }
 
-function PickerButton<T extends object>(props: PickerButtonInnerProps<T>) {
+// Needs to be hidable component or otherwise the PressResponder throws a warning when rendered in the fake DOM and tries to register
+const PickerButton = createHideableComponent(function PickerButton<T extends object>(props: PickerButtonInnerProps<T>) {
   let {
     isOpen,
     isQuiet,
@@ -555,7 +557,7 @@ function PickerButton<T extends object>(props: PickerButtonInnerProps<T>) {
       </Button>
     </PressResponder>
   );
-}
+});
 
 export interface PickerItemProps extends Omit<ListBoxItemProps, 'children' | 'style' | 'className'>, StyleProps {
   children: ReactNode

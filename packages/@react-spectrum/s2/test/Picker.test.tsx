@@ -25,7 +25,7 @@ describe('Picker', () => {
         label="Test picker"
         items={items}
         isLoading={isLoading}
-         onLoadMore={onLoadMore}>
+        onLoadMore={onLoadMore}>
         {(item: any) => <PickerItem id={item.name} textValue={item.name}>{item.name}</PickerItem>}
       </Picker>
     );
@@ -46,7 +46,7 @@ describe('Picker', () => {
     jest.restoreAllMocks();
   });
 
-  it.skip('should only call loadMore whenever intersection is detected', async () => {
+  it('should only call loadMore whenever intersection is detected', async () => {
     let onLoadMore = jest.fn();
     let observe = jest.fn();
     let observer = setupIntersectionObserverMock({
@@ -92,7 +92,7 @@ describe('Picker', () => {
     expect(onLoadMore).toHaveBeenCalledTimes(2);
   });
 
-  it.skip('should properly calculate the expected row index values', async () => {
+  it('should properly calculate the expected row index values', async () => {
     let items = [{name: 'Chocolate'}, {name: 'Mint'}, {name: 'Chocolate Chip'}];
     let tree = render(<DynamicPicker items={items} />);
 
@@ -109,7 +109,7 @@ describe('Picker', () => {
       expect(option).toHaveAttribute('aria-posinset', `${index + 1}`);
     }
 
-    let newItems = [...items, {name: 'Chocolate Mint'}, {name: 'Chocolate Chip Cookie Dough'}]
+    let newItems = [...items, {name: 'Chocolate Mint'}, {name: 'Chocolate Chip Cookie Dough'}];
     tree.rerender(<DynamicPicker items={newItems} />);
 
     options = selectTester.options();
