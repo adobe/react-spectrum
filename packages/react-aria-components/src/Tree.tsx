@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTreeItemOptions, AriaTreeProps, DraggableItemResult, DropIndicatorAria, DropIndicatorProps, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing,  useGridListSelectionCheckbox, useHover, useLocale, useTree, useTreeItem, useVisuallyHidden} from 'react-aria';
+import {AriaTreeItemOptions, AriaTreeProps, DraggableItemResult, DropIndicatorAria, DropIndicatorProps, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useDrag, useFocusRing,  useGridListSelectionCheckbox, useHover, useLocale, useTree, useTreeItem, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './RSPContexts';
 import {Collection, CollectionBuilder, CollectionNode, createBranchComponent, createLeafComponent, useCachedChildren} from '@react-aria/collections';
@@ -23,6 +23,7 @@ import {DraggableCollectionState, DroppableCollectionState, Collection as IColle
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
+import {useDragModality} from '@react-aria/dnd/src/utils';
 
 class TreeCollection<T> implements ICollection<Node<T>> {
   private flattenedRows: Node<T>[];
@@ -226,6 +227,8 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   let dragPreview: JSX.Element | null = null;
   let preview = useRef<DragPreviewRenderer>(null);
 
+  let modality = useDragModality();
+
   if (hasDragHooks && dragAndDropHooks) {
     dragState = dragAndDropHooks.useDraggableCollectionState!({
       collection: state.collection,
@@ -265,11 +268,12 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
           return item?.hasChildNodes ?? false;
         },
         onDropActivate: (e) => {
-          // Expand collapsed item when dragging over
+          // Expand collapsed item when dragging over. For keyboard, allow collapsing.
           if (e.target.type === 'item') {
             let key = e.target.key;
             let item = state.collection.getItem(key);
-            if (item && item.hasChildNodes && expandedKeys !== 'all' && !expandedKeys.has(key)) {
+            let isExpanded = expandedKeys !== 'all' && expandedKeys.has(key);
+            if (item && item.hasChildNodes && (!isExpanded || modality === 'keyboard')) {
               state.toggleKey(key);
             }
           }
@@ -279,7 +283,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
             // Toggle expansion when drop target is after expandable item
             let target = dropState?.target;
             if (target && target.type === 'item') {
-              let keyToToggle = target.dropPosition === 'after' ? target.key : state.collection.getKeyBefore(target.key);
+              let keyToToggle = target.dropPosition === 'after' || target.dropPosition === 'on' ? target.key : state.collection.getKeyBefore(target.key);
               if (keyToToggle) {
                 let item = state.collection.getItem(keyToToggle);
                 let isExpanded = state.expandedKeys.has(keyToToggle);
@@ -518,12 +522,14 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
     draggableItem = dragAndDropHooks.useDraggableItem!({key: item.key, hasDragButton: true}, dragState);
   }
 
+  let expandButtonRef = useRef<HTMLButtonElement>(null);
   let dropIndicator: DropIndicatorAria | undefined = undefined;
   let dropIndicatorRef = useRef<HTMLDivElement>(null);
   let {visuallyHiddenProps} = useVisuallyHidden();
   if (dropState && dragAndDropHooks) {
     dropIndicator = dragAndDropHooks.useDropIndicator!({
-      target: {type: 'item', key: item.key, dropPosition: 'on'}
+      target: {type: 'item', key: item.key, dropPosition: 'on'},
+      activateButtonRef: expandButtonRef
     }, dropState, dropIndicatorRef);
   }
 
@@ -567,7 +573,6 @@ export const TreeItem = /*#__PURE__*/ createBranchComponent('item', <T extends o
     }
   }, [item.textValue]);
 
-  let expandButtonRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (hasChildItems && !expandButtonRef.current && process.env.NODE_ENV !== 'production') {
       console.warn('Expandable tree items must contain a expand button so screen reader users can expand/collapse the item.');

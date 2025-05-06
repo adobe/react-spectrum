@@ -596,9 +596,6 @@ function TreeDragAndDropExample(args) {
       } catch (error) {
         console.error(error);
       }
-    },
-    onItemDrop() {
-      // TODO: Need to get this to work without needing to pass this
     }
   });
 
@@ -663,9 +660,8 @@ function TreeDragAndDropFilesFoldersExample(args) {
   });
 
   let getItems = (keys) => [...keys].map(key => {
-    let item = treeData.getItem(key);
     return {
-      'text/plain': item?.value.name
+      'text/plain': key.toString()
     };
   });
 
@@ -683,22 +679,24 @@ function TreeDragAndDropFilesFoldersExample(args) {
           treeData.moveBefore(e.target.key, e.keys);
         } else if (e.target.dropPosition === 'after') {
           treeData.moveAfter(e.target.key, e.keys);
-        } else if (e.target.dropPosition === 'on') {
-          let targetNode = treeData.getItem(e.target.key);
-          if (targetNode) {
-            e.keys.forEach(key => {
-              treeData.move(key, e.target.key, targetNode.children ? targetNode.children.length : 0);
-            });
-          } else {
-            console.error('Target node not found for drop on:', e.target.key);
-          }
         }
       } catch (error) {
         console.error(error);
       }
     },
-    onItemDrop() {
-      // TODO: Need to get this to work without needing to pass this
+    onItemDrop(e) {
+      let targetNode = treeData.getItem(e.target.key);
+      if (targetNode && e.isInternal) {
+        e.items.forEach(item => {
+          if (item.kind === 'text') {
+            item.getText('text/plain').then(key => {
+              treeData.move(key, e.target.key, targetNode.children ? targetNode.children.length : 0);
+            });
+          }
+        });
+      } else {
+        console.error('Target node not found for drop on:', e.target.key);
+      }
     }
   });
 

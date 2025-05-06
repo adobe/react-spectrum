@@ -139,7 +139,7 @@ export function useDroppableCollection(props: DroppableCollectionOptions, state:
           await onItemDrop({items: filteredItems, dropOperation, isInternal, target});
         }
 
-        if (target.dropPosition !== 'on' || localState.state.collection.getItem(target.key)?.hasChildNodes) {
+        if (target.dropPosition !== 'on') {
           if (!isInternal && onInsert) {
             await onInsert({items: filteredItems, dropOperation, target});
           }
