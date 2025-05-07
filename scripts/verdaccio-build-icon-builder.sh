@@ -69,6 +69,7 @@ EOF
 mkdir icon-library-test/src
 touch icon-library-test/yarn.lock
 cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_3D_20_N.svg icon-library-test/src/S2_Icon_3D_20_N.svg
+cp ../../packages/@react-spectrum/s2/s2wf-icons/S2_Icon_AlignRight_20_N.svg icon-library-test/src/S2_Icon_AlignRight_20_N.svg
 cd icon-library-test
 ls src
 yarn install --no-immutable
