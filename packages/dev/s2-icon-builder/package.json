@@ -12,6 +12,7 @@
   "dependencies": {
     "@parcel/bundler-library": "^2.14.0",
     "@parcel/compressor-raw": "^2.14.0",
+    "@parcel/config-default": "^2.14.0",
     "@parcel/core": "^2.14.0",
     "@parcel/namer-default": "^2.14.0",
     "@parcel/packager-raw": "^2.14.0",

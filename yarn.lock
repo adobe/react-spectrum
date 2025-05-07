@@ -7943,6 +7943,7 @@ __metadata:
   dependencies:
     "@parcel/bundler-library": "npm:^2.14.0"
     "@parcel/compressor-raw": "npm:^2.14.0"
+    "@parcel/config-default": "npm:^2.14.0"
     "@parcel/core": "npm:^2.14.0"
     "@parcel/namer-default": "npm:^2.14.0"
     "@parcel/packager-raw": "npm:^2.14.0"
