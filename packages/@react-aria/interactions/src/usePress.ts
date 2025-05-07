@@ -824,6 +824,9 @@ export function usePress(props: PressHookProps): PressResult {
     if (ownerDocument && ownerDocument.head && !ownerDocument.getElementById(styleId)) {
       const style = ownerDocument.createElement('style');
       style.id = styleId;
+      // touchAction: 'manipulation' is supposed to be equivalent, but in 
+      // Safari it causes onPointerCancel not to fire on scroll.
+      // https://bugs.webkit.org/show_bug.cgi?id=240917
       style.textContent = `
 @layer {
   [data-react-aria-pressable] {
