@@ -83,18 +83,17 @@ async function run() {
   }
 }
 
-run();
-
-
-if (args.values.isLibrary) {
-  console.log(`${path.join(args.values.output, '.')}/*.mjs`);
-  for (let file of globSync(`${path.join(args.values.output, '.')}/*.mjs`)) {
-    console.log(file);
-    fs.writeFileSync(file.replace('.mjs', '.d.ts'), `import type {IconProps} from '@react-spectrum/s2';
+run().then(() => {
+  if (args.values.isLibrary) {
+    console.log(`${path.join(args.values.output, '.')}/*.mjs`);
+    for (let file of globSync(`${path.join(args.values.output, '.')}/*.mjs`)) {
+      console.log(file);
+      fs.writeFileSync(file.replace('.mjs', '.d.ts'), `import type {IconProps} from '@react-spectrum/s2';
 import type {ReactNode} from 'react';
 
 declare function Icon(props: IconProps): ReactNode;
 export default Icon;
-  `);
+    `);
+    }
   }
-}
+});
