@@ -56,13 +56,13 @@ export const container = ({variant = 'default', padding = 16, borderRadius = 'de
 } as const);
 
 
-export const hstack = (gap: 0 | 2 | 4 | 8 | 12 | 16 | 20 | 24 | 28 | 32 | 36 | 40 | 44 | 48 | 56 | 64 | 80 | 96) => ({
+export const hstack = <C>(gap: C) => ({
   display: 'flex',
   flexDirection: 'row',
   columnGap: gap
 } as const);
 
-export const vstack = (gap: 0 | 2 | 4 | 8 | 12 | 16 | 20 | 24 | 28 | 32 | 36 | 40 | 44 | 48 | 56 | 64 | 80 | 96) => ({
+export const vstack = <C>(gap: C) => ({
   display: 'flex',
   flexDirection: 'column',
   rowGap: gap
@@ -84,6 +84,7 @@ interface IconContainerOptions<C, I> {
 export const iconContainer = <C, I>({color, iconColor, size = 32, shape = 'square'}: IconContainerOptions<C, I>) => ({
   ...centerChildren(),
   size,
+  flexShrink: 0,
   backgroundColor: color,
   borderRadius: shape === 'square' ? 'default' : 'full',
   '--iconPrimary': {

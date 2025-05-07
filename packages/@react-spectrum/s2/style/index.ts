@@ -20,11 +20,11 @@ export type {StyleString} from './types';
 
 // Wrap these functions in arbitrary value syntax when called from the outside.
 export function size(px: number): `[${string}]` {
-  return `[${internalSize(px)}]`;
+  return internalSize(px) as any;
 }
 
-export function space(px: number): `[${string}]` {
-  return `[${internalSpace(px)}]`;
+export function space(px: number): `calc(${string})` {
+  return `calc(${internalSpace(px)})`;
 }
 
 export function fontRelative(base: number, baseFontSize?: number): `[${string}]` {

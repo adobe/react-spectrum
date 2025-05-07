@@ -20,12 +20,13 @@ import {CenterBaseline} from '../src/CenterBaseline';
 import CheckCircle from '../s2wf-icons/S2_Icon_CheckmarkCircle_20_N.svg';
 import ChevronDown from '../s2wf-icons/S2_Icon_ChevronDown_20_N.svg';
 import ChevronLeft from '../s2wf-icons/S2_Icon_ChevronLeft_20_N.svg';
+import {cloneElement, useRef} from 'react';
 import Cloud from '../spectrum-illustrations/linear/Cloud';
 import Community from '../s2wf-icons/S2_Icon_Community_20_N.svg';
 import {container, gradientBorder, hstack, iconContainer, vstack} from './macros' with {type: 'macro'};
 import Data from '../s2wf-icons/S2_Icon_Data_20_N.svg';
 import {Disclosure, DisclosureGroup, DisclosurePanel, Button as RACButton, Meter as RACMeter} from 'react-aria-components';
-import {focusRing, linearGradient, style} from '../style' with {type: 'macro'};
+import {focusRing, iconStyle, linearGradient, size, style} from '../style' with {type: 'macro'};
 import Globe from '../s2wf-icons/S2_Icon_GlobeGrid_20_N.svg';
 import Grid from '../s2wf-icons/S2_Icon_ViewGrid_20_N.svg';
 import Layout from '../s2wf-icons/S2_Icon_Layout_20_N.svg';
@@ -43,7 +44,6 @@ import Shapes from '../s2wf-icons/S2_Icon_Shapes_20_N.svg';
 import TagIcon from '../s2wf-icons/S2_Icon_Tag_20_N.svg';
 import Tools from '../s2wf-icons/S2_Icon_Tools_20_N.svg';
 import UserAvatar from '../s2wf-icons/S2_Icon_UserAvatar_20_N.svg';
-import {useRef} from 'react';
 import ZoomIn from '../s2wf-icons/S2_Icon_ZoomIn_20_N.svg';
 import ZoomOut from '../s2wf-icons/S2_Icon_ZoomOut_20_N.svg';
 
@@ -67,7 +67,7 @@ function Page({children, styles = ''}) {
 function AppFrame({children, styles = ''}) {
   return (
     <Page>
-      <div className={mergeStyles(style({...container({variant: 'emphasized'}), padding: 40, backgroundColor: 'base', borderRadius: 'xl', height: '[calc(100vh - 80px)]', overflow: 'auto'}), styles as any)}>
+      <div className={mergeStyles(style({...container({variant: 'emphasized'}), padding: 40, backgroundColor: 'base', borderRadius: 'xl', height: `calc(100vh - ${size(80)})`, overflow: 'auto'}), styles as any)}>
         {children}
       </div>
     </Page>
@@ -140,7 +140,7 @@ function ProjectCard() {
         <Image
           slot="preview"
           src={new URL('assets/preview.png', import.meta.url).toString()}
-          styles={style({aspectRatio: '[8/4]'})} />
+          styles={style({aspectRatio: '8/4'})} />
       </CardPreview>
       <Image 
         slot="thumbnail"
@@ -151,13 +151,13 @@ function ProjectCard() {
         <Text slot="description">The project aims to Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do...</Text>
         <div className={style(hstack(8))}>
           {/* @ts-ignore */}
-          <UserAvatar UNSAFE_style={{width: 18, height: 18}} />
+          <UserAvatar styles={iconStyle({size: 'S'})} />
           <span className={style({font: 'detail'})}>TVtube</span>
         </div>
         <div className={style({...hstack(8), alignItems: 'baseline'})}>
           <CenterBaseline>
             {/* @ts-ignore */}
-            <TagIcon UNSAFE_style={{width: 18, height: 18, flexShrink: 0}} />
+            <TagIcon styles={iconStyle({size: 'S'})} />
           </CenterBaseline>
           <TagGroup aria-label="Tags" size="S" maxRows={2}>
             <Tag>Objective tag</Tag>
@@ -200,7 +200,8 @@ export function Detail() {
             <Image
               src={new URL('assets/demo.jpg', import.meta.url).toString()}
               styles={style({
-                size: 320,
+                // Avoid taking up more space when font size grows.
+                size: '[320px]',
                 objectFit: 'cover',
                 borderRadius: 'xl',
                 flexShrink: 0
@@ -214,7 +215,7 @@ export function Detail() {
               </TagGroup>
               <div className={style(hstack(8))}>
                 {/* @ts-ignore */}
-                <Buildings UNSAFE_style={{width: 18, height: 18}} />
+                <Buildings styles={iconStyle({size: 'S'})} />
                 <span className={style({font: 'detail'})}>Connection</span>
               </div>
               <p className={style({font: 'body'})}>The project aims to Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
@@ -390,7 +391,7 @@ export function AIChat() {
     <AppFrame
       styles={style({
         padding: 32,
-        backgroundImage: linearGradient('to bottom', ['transparent', 35.78], ['indigo-200', 89.83])
+        backgroundImage: linearGradient('to bottom', ['transparent', 35.78], ['indigo-800/15', 89.83])
       }) as any}>
       <div className={style({...hstack(8), alignItems: 'center'})}>
         <ActionButton aria-label="back">
@@ -472,7 +473,7 @@ export function AIChat() {
               <div className={style({font: 'title-lg'})}>Business travelers</div>
               <div className={style(hstack(20))}>
                 <div className={style({...container(), padding: 24})}>
-                  <svg width="78" height="78" viewBox="0 0 78 78" fill="none" xmlns="http://www.w3.org/2000/svg" style={{display: 'block'}}>
+                  <svg className={style({size: 78})} viewBox="0 0 78 78" fill="none" xmlns="http://www.w3.org/2000/svg" style={{display: 'block'}}>
                     <path d="M35.224 27.312C34.28 27.312 33.784 27.92 33.784 28.672C33.784 29.136 33.944 29.488 34.232 29.792C34.328 29.888 34.424 29.92 34.6 29.92H35.896C36.056 29.92 36.136 29.888 36.248 29.76C36.488 29.52 36.648 29.184 36.648 28.72C36.648 27.872 36.12 27.312 35.224 27.312ZM35.24 34.528C36.376 34.528 36.904 33.84 36.904 33.008C36.92 32.384 36.632 31.936 36.296 31.68C36.168 31.6 36.088 31.568 35.928 31.568H34.536C34.392 31.568 34.344 31.568 34.216 31.664C33.816 31.92 33.544 32.368 33.544 32.976C33.544 33.904 34.232 34.528 35.24 34.528ZM35.256 25.712C37.448 25.712 38.472 27.168 38.472 28.528C38.472 29.584 37.848 30.304 37.384 30.672C38.088 31.104 38.84 31.872 38.84 33.136C38.84 34.944 37.304 36.16 35.144 36.16C32.872 36.16 31.608 34.784 31.608 33.152C31.608 32.064 32.2 31.28 33.032 30.768C32.456 30.304 31.944 29.584 31.944 28.528C31.944 27.056 33.096 25.712 35.256 25.712ZM40.9936 36.048L40.9776 34.592C40.9776 34.512 40.9936 34.512 41.0896 34.48C42.9936 34.112 44.3056 33.168 44.8976 32.064C44.3376 32.32 43.7616 32.416 43.2176 32.416C41.3936 32.416 39.8576 31.232 39.8576 29.2C39.8576 27.312 41.2976 25.712 43.5696 25.712C45.6976 25.712 47.2496 27.312 47.2496 29.904C47.2496 33.424 44.5136 35.76 41.1216 36.16C41.0256 36.176 40.9936 36.128 40.9936 36.048ZM43.7456 30.864C44.3856 30.864 44.8656 30.736 45.2816 30.48C45.2816 30.368 45.3136 30.096 45.3136 29.904C45.3136 28.336 44.6416 27.344 43.4736 27.344C42.4336 27.344 41.8256 28.144 41.8256 29.12C41.8256 30.336 42.6416 30.864 43.7456 30.864Z" fill="#222222" />
                     <path d="M16.38 52.934V45.817C16.38 45.773 16.391 45.74 16.435 45.74C16.787 45.729 17.513 45.707 18.25 45.707C20.197 45.707 21.055 46.807 21.055 48.039C21.055 49.711 19.735 50.492 18.14 50.492C17.678 50.492 17.535 50.481 17.293 50.481V52.923C17.293 52.978 17.282 53 17.227 53H16.446C16.402 53 16.38 52.978 16.38 52.934ZM17.293 46.543V49.656C17.48 49.667 17.667 49.667 18.129 49.667C19.207 49.667 20.142 49.26 20.142 48.061C20.142 47.06 19.372 46.521 18.261 46.521C17.81 46.521 17.469 46.532 17.293 46.543ZM22.103 47.654H22.807C22.873 47.654 22.884 47.676 22.906 47.731C22.95 47.863 22.983 48.248 22.994 48.49C23.379 47.962 24.061 47.544 24.765 47.544C24.82 47.544 24.842 47.555 24.842 47.621V48.413C24.842 48.468 24.831 48.479 24.765 48.479C24.006 48.468 23.313 48.842 23.038 49.282L23.027 52.934C23.027 52.989 23.005 53 22.961 53H22.18C22.125 53 22.103 52.978 22.103 52.923V49.128C22.103 48.666 22.081 48.028 22.048 47.72C22.048 47.676 22.059 47.654 22.103 47.654ZM27.8359 47.544C29.3869 47.544 30.3439 48.732 30.3439 50.316C30.3439 51.988 29.3099 53.11 27.8359 53.11C26.0649 53.11 25.3059 51.68 25.3059 50.327C25.3059 48.776 26.2959 47.544 27.8359 47.544ZM27.7919 48.336C26.8679 48.336 26.2299 49.128 26.2299 50.305C26.2299 51.427 26.8129 52.318 27.8579 52.318C28.6389 52.318 29.4089 51.702 29.4089 50.338C29.4089 49.315 28.9359 48.336 27.7919 48.336ZM33.5377 47.544C35.1657 47.544 36.1117 48.666 36.1117 50.14C36.1117 52.142 34.5277 53.11 32.9657 53.11C32.7127 53.11 32.5587 53.088 32.4047 53.066V55.266C32.4047 55.31 32.4047 55.332 32.3497 55.343C32.0967 55.365 31.5907 55.42 31.5467 55.431C31.5027 55.431 31.4917 55.42 31.4917 55.365V48.512C31.4917 48.413 31.4807 48.171 31.4697 48.028C31.4697 48.017 31.4697 47.995 31.4917 47.984C31.8767 47.841 32.6027 47.544 33.5377 47.544ZM33.4277 48.347C33.0427 48.347 32.7127 48.413 32.4047 48.523V52.252C32.5917 52.307 32.8227 52.318 33.0317 52.318C34.0987 52.318 35.1767 51.658 35.1767 50.195C35.1767 49.073 34.5387 48.347 33.4277 48.347ZM40.2939 50.437H37.8959C37.8849 51.482 38.4899 52.307 39.7329 52.307C40.2169 52.307 40.6789 52.219 41.1079 52.01C41.1409 51.988 41.1629 52.01 41.1629 52.054V52.681C41.1629 52.747 41.1409 52.769 41.1079 52.791C40.7339 52.978 40.2499 53.11 39.5569 53.11C37.6539 53.11 36.9719 51.713 36.9719 50.371C36.9719 48.831 37.8739 47.544 39.4029 47.544C40.9759 47.544 41.5479 48.82 41.5479 49.755C41.5479 50.03 41.5259 50.228 41.5039 50.327C41.5039 50.36 41.4709 50.393 41.4269 50.393C41.2619 50.426 40.7779 50.437 40.2939 50.437ZM37.9069 49.755H39.9529C40.4919 49.755 40.6239 49.744 40.6569 49.733C40.6679 49.7 40.6679 49.645 40.6679 49.612C40.6679 49.216 40.4039 48.303 39.3699 48.303C38.4569 48.303 38.0059 49.018 37.9069 49.755ZM42.6636 52.923V48.897C42.6636 48.523 42.6416 47.907 42.6196 47.72C42.6196 47.676 42.6306 47.654 42.6856 47.654H43.3676C43.4226 47.654 43.4446 47.676 43.4666 47.72C43.4996 47.819 43.5106 48.028 43.5326 48.27C44.0166 47.786 44.5776 47.544 45.2156 47.544C45.9966 47.544 47.0086 47.929 47.0086 49.667V52.923C47.0086 52.978 46.9866 53 46.9316 53H46.1616C46.1066 53 46.0846 52.978 46.0846 52.912V49.755C46.0846 48.919 45.7216 48.358 44.9516 48.358C44.3906 48.358 43.9286 48.611 43.5766 49.029V52.923C43.5766 52.978 43.5656 53 43.5106 53H42.7296C42.6856 53 42.6636 52.978 42.6636 52.923ZM51.321 48.622C51.013 48.435 50.507 48.303 50.045 48.303C49.319 48.303 49.077 48.655 49.077 48.985C49.077 49.315 49.275 49.546 50.1 49.876C51.211 50.305 51.662 50.756 51.662 51.537C51.662 52.549 50.837 53.11 49.693 53.11C49.088 53.11 48.538 52.978 48.219 52.791C48.186 52.769 48.164 52.747 48.164 52.692V51.955C48.164 51.9 48.197 51.878 48.23 51.9C48.67 52.208 49.231 52.34 49.715 52.34C50.419 52.34 50.76 52.032 50.76 51.625C50.76 51.218 50.518 50.976 49.759 50.679C48.659 50.261 48.197 49.81 48.197 49.029C48.197 48.237 48.868 47.544 50.067 47.544C50.672 47.544 51.123 47.654 51.354 47.786C51.409 47.808 51.409 47.852 51.409 47.896V48.567C51.409 48.622 51.376 48.655 51.321 48.622ZM52.7612 52.912V47.731C52.7612 47.676 52.7832 47.654 52.8382 47.654H53.6192C53.6632 47.654 53.6852 47.665 53.6852 47.72V52.923C53.6852 52.978 53.6742 53 53.6082 53H52.8492C52.7942 53 52.7612 52.978 52.7612 52.912ZM53.2232 46.598C52.8822 46.598 52.6732 46.367 52.6732 46.037C52.6732 45.707 52.9042 45.476 53.2342 45.476C53.5862 45.476 53.7842 45.718 53.7842 46.037C53.7842 46.367 53.5642 46.598 53.2232 46.598ZM57.6169 52.285V52.846C57.6169 52.89 57.6059 52.934 57.5509 52.956C57.2979 53.066 57.0229 53.11 56.7259 53.11C55.9229 53.11 55.4389 52.725 55.4389 51.669V48.446H54.6909C54.6249 48.435 54.6139 48.413 54.6139 48.358V47.731C54.6139 47.676 54.6359 47.654 54.6909 47.654H55.4389C55.4499 47.247 55.4939 46.488 55.5379 46.246C55.5489 46.202 55.5709 46.18 55.6149 46.169L56.3629 46.048C56.4069 46.037 56.4289 46.048 56.4289 46.092C56.3959 46.477 56.3629 47.115 56.3629 47.654H57.5289C57.5729 47.654 57.5949 47.676 57.5949 47.731V48.38C57.5949 48.424 57.5729 48.446 57.5289 48.446H56.3629V51.537C56.3629 52.043 56.5499 52.329 57.0339 52.329C57.1989 52.329 57.3639 52.307 57.5509 52.241C57.5839 52.23 57.6169 52.23 57.6169 52.285ZM58.1493 47.654H59.0183C59.0623 47.654 59.0843 47.676 59.0953 47.709C60.0083 50.129 60.4593 51.383 60.6133 51.878C60.9653 50.866 61.4273 49.601 62.0983 47.709C62.1203 47.676 62.1423 47.654 62.1863 47.654H62.9673C63.0223 47.654 63.0333 47.687 63.0113 47.731C62.1973 50.118 61.0643 52.934 60.0193 55.288C59.9973 55.332 59.9643 55.354 59.8983 55.365L59.0733 55.431C59.0183 55.431 59.0183 55.398 59.0403 55.343C59.3593 54.672 59.7663 53.781 60.1293 52.912C60.1513 52.868 60.1513 52.835 60.1293 52.769C59.8653 52.109 58.7653 49.436 58.0943 47.72C58.0723 47.676 58.1053 47.654 58.1493 47.654Z" fill="#222222" />
                     <path d="M39.5672 0.504178C46.6022 0.607828 53.4743 2.63729 59.437 6.37209C65.3996 10.1069 70.2249 15.4042 73.3885 21.6886C76.5521 27.973 77.9331 35.0042 77.3815 42.0183C76.8299 49.0325 74.3668 55.7613 70.2597 61.474C66.1527 67.1866 60.5587 71.6646 54.0855 74.4214C47.6123 77.1782 40.5075 78.1086 33.5427 77.1112C26.578 76.1139 20.0197 73.2272 14.5803 68.7645C9.14091 64.3019 5.0284 58.434 2.68952 51.7984L8.13609 49.8786C10.1241 55.5189 13.6198 60.5066 18.2433 64.2999C22.8668 68.0931 28.4413 70.5469 34.3613 71.3946C40.2814 72.2423 46.3205 71.4515 51.8227 69.1082C57.3249 66.7649 62.0798 62.9586 65.5708 58.1029C69.0618 53.2471 71.1554 47.5276 71.6243 41.5656C72.0931 35.6036 70.9193 29.6271 68.2302 24.2853C65.5411 18.9436 61.4397 14.4409 56.3714 11.2663C51.3032 8.09169 45.4619 6.36665 39.4821 6.27855L39.5672 0.504178Z" fill="#0DB595" />
@@ -622,7 +623,7 @@ const SRC_URL_2 = 'https://i.imgur.com/xIe7Wlb.png';
 
 export function Canvas() {
   return (
-    <div className={style({padding: 40, backgroundColor: 'layer-1', height: '[calc(100vh - 80px)]', ...hstack(16)})}>
+    <div className={style({padding: 40, backgroundColor: 'layer-1', height: `calc(100vh - ${size(80)})`, ...hstack(16)})}>
       <div className={style({...container({variant: 'emphasized'}), backgroundColor: 'base', borderRadius: 'xl', ...vstack(24), padding: 24, flexGrow: 1})}>
         <div className={style({...hstack(8), alignItems: 'center'})}>
           <ActionButton aria-label="back">
@@ -680,7 +681,7 @@ export function Canvas() {
               overflow: 'hidden',
               padding: 0,
               position: 'absolute',
-              top: '[30%]',
+              top: '30%',
               insetStart: 80,
               width: 340
             })}>
@@ -691,8 +692,9 @@ export function Canvas() {
                 ...hstack(8),
                 alignItems: 'center'
               })}>
-              <div className={style(iconContainer({color: 'brown-800', shape: 'circle'}))}>
-                <RemoveCircle />
+              <div className={style(iconContainer({color: 'brown-800', size: 24, shape: 'circle'}))}>
+                {/* @ts-ignore */}
+                <RemoveCircle styles={iconStyle({size: 'S'})} />
               </div>
               <span className={style({font: 'title'})}>Exclude</span>
             </div>
@@ -720,7 +722,7 @@ export function Canvas() {
               overflow: 'hidden',
               padding: 0,
               position: 'absolute',
-              top: '[25%]',
+              top: '25%',
               insetEnd: 80,
               width: 300
             })}>
@@ -731,8 +733,9 @@ export function Canvas() {
                 ...hstack(8),
                 alignItems: 'center'
               })}>
-              <div className={style(iconContainer({color: 'blue-800', shape: 'circle'}))}>
-                <Community />
+              <div className={style(iconContainer({color: 'blue-800', size: 24, shape: 'circle'}))}>
+                {/* @ts-ignore */}
+                <Community  styles={iconStyle({size: 'S'})} />
               </div>
               <span className={style({font: 'title'})}>Premium travelers</span>
             </div>
@@ -911,10 +914,12 @@ function Panel({id, title, icon, iconColor, children}) {
             width: 'full',
             transition: 'default'
           })}>
-          <span className={style(iconContainer({color: {iconColor: {brown: 'brown-800', silver: 'silver-1400', blue: 'blue-800', pink: 'fuchsia-700'}}, shape: 'circle'}))({iconColor})}>{icon}</span>
+          <span className={style(iconContainer({color: {iconColor: {brown: 'brown-800', silver: 'silver-1400', blue: 'blue-800', pink: 'fuchsia-700'}}, shape: 'circle', size: 24}))({iconColor})}>
+            {cloneElement(icon, {styles: iconStyle({size: 'S'})})}
+          </span>
           <span className={style({font: 'title-lg', flexGrow: 1})}>{title}</span>
           {/* @ts-ignore */}
-          <ChevronDown UNSAFE_className={style({rotate: {isExpanded: 180}, transition: 'default'})({isExpanded})} />
+          <ChevronDown styles={style({rotate: {isExpanded: 180}, transition: 'default'})({isExpanded})} />
         </RACButton>
         <DisclosurePanel 
           className={style({

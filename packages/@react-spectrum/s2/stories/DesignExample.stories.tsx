@@ -459,7 +459,7 @@ const personaIconContainerStyles = {
   justifyContent: 'center',
   flexShrink: 0,
   color: 'white'
-};
+} as const;
 
 const personaFlexContainerStyles = style({
   display: 'flex',
@@ -524,8 +524,8 @@ const metricValueStyles = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  lineHeight: 1
-};
+  lineHeight: '[1]'
+} as const;
 
 const checkItemStatusStyles = style({
   display: 'flex',

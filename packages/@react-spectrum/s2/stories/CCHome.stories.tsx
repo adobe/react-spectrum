@@ -15,7 +15,7 @@ import Add from '../s2wf-icons/S2_Icon_Add_20_N.svg';
 import Asset from '../s2wf-icons/S2_Icon_Asset_20_N.svg';
 import {Example as CardViewExample} from './CardView.stories';
 import {container, gradientBorder, hstack, vstack} from './macros' with { type: 'macro' };
-import {focusRing, linearGradient, style} from '../style' with { type: 'macro' };
+import {focusRing, linearGradient, size, space, style} from '../style' with { type: 'macro' };
 import Folder from '../s2wf-icons/S2_Icon_Folder_20_N.svg';
 import {Input} from 'react-aria-components';
 import List from '../s2wf-icons/S2_Icon_ViewList_20_N.svg';
@@ -38,14 +38,16 @@ export function CCHome() {
         display: 'flex',
         gap: {default: 0, lg: 16},
         flexDirection: {default: 'column', lg: 'row'},
-        height: '[calc(100vh - 80px)]'
+        height: `calc(100vh - ${size(80)})`
       })}>
       <div 
         className={style({
           ...container({variant: 'emphasized'}),
+          ...vstack({default: 16, lg: 32}),
           backgroundColor: 'base',
           borderRadius: {default: 'none', lg: 'xl'},
           padding: 0,
+          paddingBottom: 32,
           overflow: {
             default: 'visible',
             lg: 'auto'
@@ -56,8 +58,6 @@ export function CCHome() {
           className={style({
             ...vstack(24),
             alignItems: 'center',
-            paddingTop: 64,
-            paddingBottom: 64,
             paddingX: 20,
             colorScheme: 'light',
             position: 'relative'
@@ -65,25 +65,30 @@ export function CCHome() {
           <img
             src={new URL('assets/bg.jpg', import.meta.url).toString()}
             alt=""
-            style={{
+            className={style({
               position: 'absolute',
               inset: 0,
               height: 360,
-              width: '100%',
+              width: 'full',
+              objectFit: 'cover'
+            })}
+            style={{
               maskImage: 'linear-gradient(to bottom, white 60%, transparent)',
-              objectFit: 'cover',
               // @ts-ignore
               WebkitUserDrag: 'none'
             }} />
-          <h1 className={style({font: {default: 'heading', lg: 'heading-xl'}, zIndex: 1})}>Create something new</h1>
+          <h1 className={style({font: {default: 'heading', lg: 'heading-xl'}, zIndex: 1, marginTop: 64})}>Create something new</h1>
           <PromptBar />
         </div>
         <div
           className={style({
             ...hstack(16),
-            padding: {default: 16, lg: 32},
-            paddingTop: 80,
-            overflowX: 'auto'
+            paddingX: {default: 16, lg: 32},
+            marginTop: space(128),
+            overflowX: 'auto',
+            position: 'relative',
+            zIndex: 1,
+            flexShrink: 0
           })}>
           <BuyCard />
           <BuyCard2 />
@@ -96,10 +101,11 @@ export function CCHome() {
               default: 'flex',
               lg: 'grid'
             },
-            gridTemplateColumns: 'repeat(auto-fit, 240px)',
+            gridTemplateColumns: `repeat(auto-fit, ${size(240)})`,
             overflowX: 'auto',
             gap: 24,
-            padding: {default: 16, lg: 32}
+            paddingX: {default: 16, lg: 32},
+            flexShrink: 0
           })}>
           <HomeCard />
           <HomeCard />
@@ -136,7 +142,7 @@ export function CCHome() {
           </ActionButtonGroup>
         </div>
         {/* @ts-ignore */}
-        <CardViewExample size="S" variant="quiet" selectionMode="multiple" selectionStyle="highlight" styles={style({width: 'full', height: {default: 400, xl: 'full'}})} />
+        <CardViewExample size="S" variant="quiet" selectionMode="multiple" selectionStyle="highlight" styles={style({width: 'full', height: {default: 400, lg: 'full'}})} />
       </div>
     </div>
   );
