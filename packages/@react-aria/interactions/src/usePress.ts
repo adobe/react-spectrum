@@ -815,16 +815,23 @@ export function usePress(props: PressHookProps): PressResult {
 
   // Avoid onClick delay for double tap to zoom by default.
   useEffect(() => {
-    let element = domRef?.current;
-    if (element && (element instanceof getOwnerWindow(element).Element)) {
-      // Only apply touch-action if not already set by another CSS rule.
-      let style = getOwnerWindow(element).getComputedStyle(element);
-      if (style.touchAction === 'auto') {
-        // touchAction: 'manipulation' is supposed to be equivalent, but in 
-        // Safari it causes onPointerCancel not to fire on scroll.
-        // https://bugs.webkit.org/show_bug.cgi?id=240917
-        (element as HTMLElement).style.touchAction = 'pan-x pan-y pinch-zoom';
-      }
+    if (process.env.NODE_ENV === 'test') {
+      return;
+    }
+
+    const ownerDocument = getOwnerDocument(domRef?.current);
+    const styleId = 'react-aria-pressable-style';
+    if (ownerDocument && ownerDocument.head && !ownerDocument.getElementById(styleId)) {
+      const style = ownerDocument.createElement('style');
+      style.id = styleId;
+      style.textContent = `
+@layer {
+  :where([data-react-aria-pressable]) {
+    touch-action: pan-x pan-y pinch-zoom;
+  }
+}
+      `.trim();
+      ownerDocument.head.prepend(style);
     }
   }, [domRef]);
 
@@ -844,7 +851,7 @@ export function usePress(props: PressHookProps): PressResult {
 
   return {
     isPressed: isPressedProp || isPressed,
-    pressProps: mergeProps(domProps, pressProps)
+    pressProps: mergeProps(domProps, pressProps, {'data-react-aria-pressable': true})
   };
 }
 
