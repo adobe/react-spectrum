@@ -1,5 +1,5 @@
 {
-  "namers": ["@parcel/namer-default"],
+  "namers": ["@react-spectrum/parcel-namer-s2", "@parcel/namer-default"],
   "bundler": "@parcel/bundler-library",
   "transformers": {
     "illustration:*.svg": ["@react-spectrum/parcel-transformer-s2-icon"],
