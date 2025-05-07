@@ -826,7 +826,7 @@ export function usePress(props: PressHookProps): PressResult {
       style.id = styleId;
       style.textContent = `
 @layer {
-  :where([data-react-aria-pressable]) {
+  [data-react-aria-pressable] {
     touch-action: pan-x pan-y pinch-zoom;
   }
 }
