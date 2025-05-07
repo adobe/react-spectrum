@@ -12,7 +12,7 @@
 
 import {DOMAttributes} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
-import React, {CSSProperties, JSXElementConstructor, ReactNode, useMemo, useState} from 'react';
+import React, {CSSProperties, JSX, JSXElementConstructor, ReactNode, useMemo, useState} from 'react';
 import {useFocusWithin} from '@react-aria/interactions';
 
 export interface VisuallyHiddenProps extends DOMAttributes {
@@ -86,7 +86,7 @@ export function useVisuallyHidden(props: VisuallyHiddenProps = {}): VisuallyHidd
  * VisuallyHidden hides its children visually, while keeping content visible
  * to screen readers.
  */
-export function VisuallyHidden(props: VisuallyHiddenProps): ReactNode {
+export function VisuallyHidden(props: VisuallyHiddenProps): JSX.Element {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {children, elementType: Element = 'div', isFocusable, style, ...otherProps} = props;
   let {visuallyHiddenProps} = useVisuallyHidden(props);
