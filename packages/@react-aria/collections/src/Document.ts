@@ -104,6 +104,7 @@ export class BaseNode<T> {
 
   private invalidateChildIndices(child: ElementNode<T>): void {
     if (this._minInvalidChildIndex == null || child.index < this._minInvalidChildIndex.index) {
+      console.log('update minInvalidChildIndex', child.index);
       this._minInvalidChildIndex = child;
     }
   }
@@ -173,7 +174,12 @@ export class BaseNode<T> {
     if (child.parentNode !== this || !this.ownerDocument.isMounted) {
       return;
     }
-    
+
+    if (this._minInvalidChildIndex === child && child.previousSibling) {
+      console.log(this._minInvalidChildIndex?.index, child.index, child.previousSibling?.index);
+      this.invalidateChildIndices(child.previousSibling);
+    }
+
     if (child.nextSibling) {
       this.invalidateChildIndices(child.nextSibling);
       child.nextSibling.previousSibling = child.previousSibling;
@@ -279,7 +285,7 @@ export class ElementNode<T> extends BaseNode<T> {
       this.node = this.node.clone();
       this.isMutated = true;
     }
-    
+
     this.ownerDocument.markDirty(this);
     return this.node;
   }
@@ -465,11 +471,13 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
       if (element instanceof ElementNode && (!element.isConnected || element.isHidden)) {
         this.removeNode(element);
       } else {
+        console.log('updateChildIndices', element.node?.type, element.node?.key);
         element.updateChildIndices();
       }
     }
 
     // Next, update dirty collection nodes.
+    // this.updateChildIndices();
     for (let element of this.dirtyNodes) {
       if (element instanceof ElementNode) {
         if (element.isConnected && !element.isHidden) {
@@ -497,7 +505,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     if (this.dirtyNodes.size === 0 || this.queuedRender) {
       return;
     }
-    
+
     // Only trigger subscriptions once during an update, when the first item changes.
     // React's useSyncExternalStore will call getCollection immediately, to check whether the snapshot changed.
     // If so, React will queue a render to happen after the current commit to our fake DOM finishes.

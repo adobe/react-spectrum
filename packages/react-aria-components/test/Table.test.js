@@ -2175,9 +2175,9 @@ describe('Table', () => {
       let {getAllByRole} = renderTable({tableProps: {selectionMode: 'single', onSelectionChange}});
       let items = getAllByRole('row');
 
-      await user.pointer({target: items[1], keys: '[MouseLeft>]'});   
+      await user.pointer({target: items[1], keys: '[MouseLeft>]'});
       expect(onSelectionChange).toBeCalledTimes(1);
-  
+
       await user.pointer({target: items[1], keys: '[/MouseLeft]'});
       expect(onSelectionChange).toBeCalledTimes(1);
     });
@@ -2187,9 +2187,9 @@ describe('Table', () => {
       let {getAllByRole} = renderTable({tableProps: {selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: false}});
       let items = getAllByRole('row');
 
-      await user.pointer({target: items[1], keys: '[MouseLeft>]'});   
+      await user.pointer({target: items[1], keys: '[MouseLeft>]'});
       expect(onSelectionChange).toBeCalledTimes(1);
-  
+
       await user.pointer({target: items[1], keys: '[/MouseLeft]'});
       expect(onSelectionChange).toBeCalledTimes(1);
     });
@@ -2199,11 +2199,105 @@ describe('Table', () => {
       let {getAllByRole} = renderTable({tableProps: {selectionMode: 'single', onSelectionChange, shouldSelectOnPressUp: true}});
       let items = getAllByRole('row');
 
-      await user.pointer({target: items[1], keys: '[MouseLeft>]'});   
+      await user.pointer({target: items[1], keys: '[MouseLeft>]'});
       expect(onSelectionChange).toBeCalledTimes(0);
-  
+
       await user.pointer({target: items[1], keys: '[/MouseLeft]'});
       expect(onSelectionChange).toBeCalledTimes(1);
     });
   });
+
+  it.only('supports removing a column and adding it back', async () => {
+    let {getByRole} = render(<App />);
+    let button = getByRole('button');
+    expect(button).toHaveTextContent('Hide Columns');
+
+    await user.click(button);
+    expect(button).toHaveTextContent('Show Columns');
+
+    // await user.click(button);
+    // expect(button).toHaveTextContent('Hide Columns');
+  });
 });
+
+function App() {
+  const [hideColumns, setHideColumns] = React.useState(false);
+
+  const label = hideColumns ? 'Show Columns' : 'Hide Columns';
+
+  return (
+    <>
+      <StockTableExample hideColumns={hideColumns} />
+      <button onClick={() => setHideColumns((prev) => !prev)}>{label}</button>
+    </>
+  );
+}
+
+function StockTableExample({hideColumns}) {
+  return (
+    <div>
+      <ResizableTableContainer>
+        <Table
+          aria-label="Stocks"
+          selectionMode="multiple"
+          selectionBehavior="replace">
+          <TableHeader>
+            <Column id="symbol">
+              Symbol
+            </Column>
+            <Column id="name" isRowHeader>
+              Name
+            </Column>
+            {!hideColumns && (
+              <Column id="marketCap">
+                Market Cap
+              </Column>
+            )}
+            {!hideColumns && (
+              <Column id="sector">
+                Sector
+              </Column>
+            )}
+            <Column id="industry">
+              Industry
+            </Column>
+          </TableHeader>
+          <TableBody items={stocks}>
+            {(item) => (
+              <Row id={item.symbol}>
+                <Cell>
+                  <span>
+                    ${item.symbol}
+                  </span>
+                </Cell>
+                <Cell>{item.name}</Cell>
+                {!hideColumns && <Cell>{item.marketCap}</Cell>}
+                {!hideColumns && <Cell>{item.sector}</Cell>}
+                <Cell>{item.industry}</Cell>
+              </Row>
+            )}
+          </TableBody>
+        </Table>
+      </ResizableTableContainer>
+    </div>
+  );
+}
+
+const stocks = [
+  {
+    id: 1,
+    symbol: 'PAACR',
+    name: 'Pacific Special Acquisition Corp.',
+    sector: 'Finance',
+    marketCap: 'n/a',
+    industry: 'Business Services',
+  },
+  {
+    id: 2,
+    symbol: 'PAACR-DEDUPE',
+    name: 'Pacific Special Acquisition Corp.',
+    sector: 'Finance',
+    marketCap: 'n/a',
+    industry: 'Business Services',
+  }
+];

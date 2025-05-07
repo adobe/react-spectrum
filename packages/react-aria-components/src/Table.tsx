@@ -48,6 +48,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
       if (lastChildKey != null) {
         let lastCell = this.getItem(lastChildKey) as GridNode<T>;
         let numberOfCellsInRow = (lastCell.colIndex ?? lastCell.index) + (lastCell.colSpan ?? 1);
+        console.log(lastCell.colIndex, lastCell.index, lastCell.colSpan);
         if (numberOfCellsInRow !== this.columns.length && !isSSR) {
           throw new Error(`Cell count must match column count. Found ${numberOfCellsInRow} cells and ${this.columns.length} columns.`);
         }
