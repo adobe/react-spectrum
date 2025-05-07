@@ -15,12 +15,12 @@ import {
   RadioProps as AriaRadioProps,
   RadioRenderProps
 } from 'react-aria-components';
-import {baseColor, focusRing, style} from '../style' with {type: 'macro'};
+import {baseColor, focusRing, space, style} from '../style' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
+import {controlFont, controlSize, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FocusableRef} from '@react-types/shared';
 import {FormContext, useFormProps} from './Form';
 import {forwardRef, ReactNode, useContext, useRef} from 'react';
-import {getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
 
@@ -53,10 +53,10 @@ const wrapper = style({
   position: 'relative',
   columnGap: 'text-to-control',
   alignItems: 'baseline',
-  font: 'control',
+  font: controlFont(),
   transition: 'colors',
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: {
       default: 'disabled',
       forcedColors: 'GrayText'
@@ -70,7 +70,7 @@ const wrapper = style({
 
 const circle = style<RenderProps>({
   ...focusRing(),
-  size: 'control-sm',
+  size: controlSize('sm'),
   flexShrink: 0,
   display: 'flex',
   alignItems: 'center',
@@ -80,8 +80,8 @@ const circle = style<RenderProps>({
   borderStyle: 'solid',
   boxSizing: 'border-box',
   borderWidth: {
-    default: 2,
-    isSelected: '[calc((self(height) - 4px) / 2)]'
+    default: space(2),
+    isSelected: 'calc((self(height) - (4 / 16) * 1rem) / 2)'
   },
   forcedColorAdjust: 'none',
   backgroundColor: 'gray-25',
@@ -93,7 +93,7 @@ const circle = style<RenderProps>({
       forcedColors: 'Highlight'
     },
     isInvalid: {
-      default: 'negative',
+      default: baseColor('negative'),
       forcedColors: 'Mark'
     },
     isDisabled: {

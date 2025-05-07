@@ -20,7 +20,7 @@ export interface SingleSelection {
   /** The initial selected key in the collection (uncontrolled). */
   defaultSelectedKey?: Key,
   /** Handler that is called when the selection changes. */
-  onSelectionChange?: (key: Key) => void
+  onSelectionChange?: (key: Key | null) => void
 }
 
 export type SelectionMode = 'none' | 'single' | 'multiple';
