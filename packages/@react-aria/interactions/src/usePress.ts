@@ -157,6 +157,7 @@ class PressEvent implements IPressEvent {
 }
 
 const LINK_CLICKED = Symbol('linkClicked');
+const styleId = 'react-aria-pressable-style';
 
 /**
  * Handles press interactions across mouse, touch, keyboard, and screen readers.
@@ -824,7 +825,6 @@ export function usePress(props: PressHookProps): PressResult {
       return;
     }
 
-    const styleId = 'react-aria-pressable-style';
     if (ownerDocument.getElementById(styleId)) {
       return;
     }
