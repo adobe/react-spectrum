@@ -86,7 +86,7 @@ const banner = style({
   borderRadius: 'default',
   color: 'white',
   fontWeight: 'bold',
-  padding: '[calc((self(minHeight))/1.5)]'
+  padding: 'calc((self(minHeight))/1.5)'
 });
 
 /**

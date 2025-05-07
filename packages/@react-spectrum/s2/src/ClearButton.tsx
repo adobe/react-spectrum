@@ -15,6 +15,7 @@ import {
   ButtonProps,
   ButtonRenderProps
 } from 'react-aria-components';
+import {controlSize} from './style-utils' with {type: 'macro'};
 import CrossIcon from '../ui-icons/Cross';
 import {FocusableRef} from '@react-types/shared';
 import {focusRing, style} from '../style' with {type: 'macro'};
@@ -47,7 +48,7 @@ const visibleClearButton = style<ClearButtonRenderProps>({
   boxSizing: 'border-box',
   padding: 0,
   outlineOffset: -4,
-  color: '[inherit]',
+  color: 'inherit',
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'

@@ -42,9 +42,9 @@ import {
 } from './Menu';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronIcon from '../ui-icons/Chevron';
+import {controlBorderRadius, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {createContext, CSSProperties, forwardRef, ReactNode, Ref, useCallback, useContext, useImperativeHandle, useRef, useState} from 'react';
 import {createFocusableRef} from '@react-spectrum/utils';
-import {field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {forwardRefType} from './types';
@@ -97,11 +97,11 @@ export interface ComboBoxProps<T extends object> extends
 export const ComboBoxContext = createContext<ContextValue<Partial<ComboBoxProps<any>>, TextFieldRef>>(null);
 
 const inputButton = style<ButtonRenderProps & {isOpen: boolean, size: 'S' | 'M' | 'L' | 'XL'}>({
+  ...controlBorderRadius('sm'),
   display: 'flex',
   outlineStyle: 'none',
   textAlign: 'center',
   borderStyle: 'none',
-  borderRadius: 'control-sm',
   alignItems: 'center',
   justifyContent: 'center',
   size: {
@@ -131,11 +131,9 @@ const inputButton = style<ButtonRenderProps & {isOpen: boolean, size: 'S' | 'M' 
     }
   },
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: 'disabled',
-    forcedColors: {
-      default: 'ButtonFace'
-    }
+    forcedColors: 'ButtonFace'
   }
 });
 
@@ -255,7 +253,7 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
                 // better way to do this one? it's not actually half, they are
                 // [9, 4], [12, 6], [15, 8], [18, 8]
                 // also noticed that our measurement is including the border, making the padding too much
-                paddingEnd: '[calc(self(height, self(minHeight)) * 3 / 16)]'
+                paddingEnd: 'calc(self(height, self(minHeight)) * 3 / 16)'
               })({size})}>
               <InputContext.Consumer>
                 {ctx => (
@@ -300,8 +298,8 @@ export const ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(function Co
                 '--trigger-width': `calc(${triggerWidth} - 2px)`
               } as CSSProperties}
               styles={style({
-                minWidth: '[var(--trigger-width)]',
-                width: '[var(--trigger-width)]'
+                minWidth: '--trigger-width',
+                width: '--trigger-width'
               })}>
               <Provider
                 values={[

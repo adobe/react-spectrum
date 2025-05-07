@@ -12,6 +12,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const {JSDOM} = require('jsdom');
 
 // This script generates the "index" wrapper components for UI icons and illustrations that have multiple sizes.
 generate('packages/@react-spectrum/s2/ui-icons');
@@ -52,12 +53,20 @@ function generate(dir) {
       if (!icons.has(name)) {
         icons.set(name, {});
       }
-      icons.get(name)[sizes[size]] = fileName;
+      let width = '0', height = '0';
+      if (!dir.includes('spectrum-illustrations')) {
+        let contents = fs.readFileSync(file, 'utf8');
+        let dom = new JSDOM(contents);
+        let svg = dom.window.document.querySelector('svg');
+        width = svg.getAttribute('width');
+        height = svg.getAttribute('height');
+      }
+      icons.get(name)[sizes[size]] = {fileName, width, height};
     }
   }
 
   let relative = path.relative(dir, 'packages/@react-spectrum/s2/src/Icon');
-  let typeImport = dir.includes('ui-icons') ? "import {SVGProps} from 'react';" : `import {IconProps, IllustrationContext} from '${relative}';`;
+  let typeImport = dir.includes('ui-icons') ? "import {ReactNode, SVGProps} from 'react';" : `import {IconProps, IllustrationContext} from '${relative}';`;
   let ctx = dir.includes('spectrum-illustrations') ? '[props] = useContextProps(props, null, IllustrationContext);\n  ' : '';
   let type = dir.includes('ui-icons') ? 'SVGProps<SVGSVGElement>' : 'IconProps';
   let isIllustration =  dir.includes('spectrum-illustrations');
@@ -83,10 +92,13 @@ function generate(dir) {
 
     let imports = [typeImport];
     for (let size in sizes) {
-      imports.push(`import ${importName}_${size} from '${isIllustration ? 'illustration:' : ''}./${sizes[size]}';`);
+      imports.push(`import ${importName}_${size} from '${isIllustration ? 'illustration:' : ''}./${sizes[size].fileName}';`);
     }
     if (ctx) {
       imports.push("import {useContextProps} from 'react-aria-components';");
+    }
+    if (!isIllustration) {
+      imports.push("import {style} from '../style' with {type: 'macro'};");
     }
     src += imports.sort((a, b) => {
       let a1 = a[7] === '{' ? a.slice(8).toLowerCase() : a.slice(7).toLowerCase();
@@ -94,12 +106,29 @@ function generate(dir) {
       return a1 < b1 ? -1 : 1;
     }).join('\n') + '\n';
 
+    if (!isIllustration) {
+      src += `
+let styles = style({
+  width: {
+    size: {
+      ${Object.keys(sizes).map(s => `${s}: ${sizes[s].width}`).join(',\n      ')}
+    }
+  },
+  height: {
+    size: {
+      ${Object.keys(sizes).map(s => `${s}: ${sizes[s].height}`).join(',\n      ')}
+    }
+  }
+});
+`;
+    }
+
     src += `
-export default function ${importName}(props: ${type} & {size?: ${Object.keys(sizes).map(s => `'${s}'`).join(' | ')}}) {
+export default function ${importName}(props: ${type} & {size?: ${Object.keys(sizes).map(s => `'${s}'`).join(' | ')}})${isIllustration ? '' : ': ReactNode'} {
   ${ctx}let {size = 'M', ...otherProps} = props;
   switch (size) {${Object.keys(sizes).map(size => `
     case '${size}':
-      return <${importName}_${size} {...otherProps} />;`
+      return <${importName}_${size} {...otherProps}${isIllustration ? '' : " className={(otherProps.className || '') + styles({size})}"} />;`
     ).join('')}
   }
 }
