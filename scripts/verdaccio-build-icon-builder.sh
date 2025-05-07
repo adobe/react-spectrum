@@ -74,7 +74,7 @@ ls src
 yarn install --no-immutable
 yarn transform-icons -i './src/*.svg' -o ./ --isLibrary
 
-ls ./dist
+ls .
 
 cd ..
 

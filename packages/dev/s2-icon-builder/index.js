@@ -87,9 +87,9 @@ run();
 
 
 if (args.values.isLibrary) {
-  // Generate types for each icon/illustration so TypeScript's import autocomplete works.
   console.log(`${path.join(args.values.output, '.')}/*.mjs`);
   for (let file of globSync(`${path.join(args.values.output, '.')}/*.mjs`)) {
+    console.log(file);
     fs.writeFileSync(file.replace('.mjs', '.d.ts'), `import type {IconProps} from '@react-spectrum/s2';
 import type {ReactNode} from 'react';
 
