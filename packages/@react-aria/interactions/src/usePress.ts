@@ -157,7 +157,8 @@ class PressEvent implements IPressEvent {
 }
 
 const LINK_CLICKED = Symbol('linkClicked');
-const styleId = 'react-aria-pressable-style';
+const STYLE_ID = 'react-aria-pressable-style';
+const PRESSABLE_ATTRIBUTE = 'data-react-aria-pressable';
 
 /**
  * Handles press interactions across mouse, touch, keyboard, and screen readers.
@@ -825,7 +826,7 @@ export function usePress(props: PressHookProps): PressResult {
       return;
     }
 
-    if (ownerDocument.getElementById(styleId)) {
+    if (ownerDocument.getElementById(STYLE_ID)) {
       return;
     }
 
@@ -839,13 +840,13 @@ export function usePress(props: PressHookProps): PressResult {
     }
 
     const style = ownerDocument.createElement('style');
-    style.id = styleId;
+    style.id = STYLE_ID;
     // touchAction: 'manipulation' is supposed to be equivalent, but in
     // Safari it causes onPointerCancel not to fire on scroll.
     // https://bugs.webkit.org/show_bug.cgi?id=240917
     style.textContent = `
 @layer {
-  [data-react-aria-pressable] {
+  [${PRESSABLE_ATTRIBUTE}] {
     touch-action: pan-x pan-y pinch-zoom;
   }
 }
@@ -869,7 +870,7 @@ export function usePress(props: PressHookProps): PressResult {
 
   return {
     isPressed: isPressedProp || isPressed,
-    pressProps: mergeProps(domProps, pressProps, {'data-react-aria-pressable': true})
+    pressProps: mergeProps(domProps, pressProps, {[PRESSABLE_ATTRIBUTE]: true})
   };
 }
 
