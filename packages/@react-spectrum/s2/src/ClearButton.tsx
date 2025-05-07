@@ -40,7 +40,7 @@ const visibleClearButton = style<ClearButtonRenderProps>({
   alignItems: 'center',
   justifyContent: 'center',
   height: 'full',
-  width: 'control',
+  width: controlSize(),
   flexShrink: 0,
   borderRadius: 'full',
   borderStyle: 'none',
