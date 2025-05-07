@@ -45,7 +45,7 @@ export {DialogContainer, useDialogContainer} from './DialogContainer';
 export {Divider, DividerContext} from './Divider';
 export {DropZone, DropZoneContext} from './DropZone';
 export {Form} from './Form';
-export {createIcon, IconContext, IllustrationContext} from './Icon';
+export {createIcon, createIllustration, IconContext, IllustrationContext} from './Icon';
 export {IllustratedMessage, IllustratedMessageContext} from './IllustratedMessage';
 export {Image, ImageContext} from './Image';
 export {ImageCoordinator} from './ImageCoordinator';

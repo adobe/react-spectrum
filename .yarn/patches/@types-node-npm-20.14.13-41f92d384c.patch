@@ -1,0 +1,13 @@
+diff --git a/buffer.d.ts b/buffer.d.ts
+index 5d6c97d6b5d47fd189f795498aefd6b8d7713b7d..b9a22c4634fa6308006ae17d3527ff3c518a789d 100644
+--- a/buffer.d.ts
++++ b/buffer.d.ts
+@@ -629,7 +629,7 @@ declare module "buffer" {
+              */
+             poolSize: number;
+         }
+-        interface Buffer extends Uint8Array {
++        interface Buffer extends Uint8Array<ArrayBuffer> {
+             /**
+              * Writes `string` to `buf` at `offset` according to the character encoding in`encoding`. The `length` parameter is the number of bytes to write. If `buf` did
+              * not contain enough space to fit the entire string, only part of `string` will be

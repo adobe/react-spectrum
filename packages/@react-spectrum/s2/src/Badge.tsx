@@ -12,8 +12,8 @@
 
 import {AriaLabelingProps, DOMProps, DOMRef, DOMRefValue} from '@react-types/shared';
 import {centerBaseline} from './CenterBaseline';
-import {centerPadding, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {ContextValue, Provider, TextContext as RACTextContext, SlotProps} from 'react-aria-components';
+import {control, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {filterDOMProps} from '@react-aria/utils';
 import {fontRelative, lightDark, style} from '../style' with {type: 'macro'};
 import {IconContext} from './Icon';
@@ -58,34 +58,8 @@ export interface BadgeProps extends DOMProps, AriaLabelingProps, StyleProps, Bad
 export const BadgeContext = createContext<ContextValue<Partial<BadgeProps>, DOMRefValue<HTMLDivElement>>>(null);
 
 const badge = style<BadgeStyleProps>({
-  display: 'flex',
-  font: 'control',
+  ...control({shape: 'default', wrap: true, icon: true}),
   justifyContent: 'center',
-  alignItems: {
-    default: 'baseline',
-    ':has([slot=icon]:only-child)': 'center'
-  },
-  borderRadius: 'control',
-  minHeight: 'control',
-  paddingX: {
-    default: 'edge-to-text',
-    ':has([slot=icon]:only-child)': 0
-  },
-  '--labelPadding': {
-    type: 'paddingTop',
-    value: centerPadding()
-  },
-  aspectRatio: {
-    ':has([slot=icon]:only-child)': 'square'
-  },
-  '--iconMargin': {
-    type: 'marginTop',
-    value: {
-      default: fontRelative(-2),
-      ':has([slot=icon]:only-child)': 0
-    }
-  },
-  columnGap: 'text-to-visual',
   color: {
     fillStyle: {
       bold: {
@@ -166,7 +140,6 @@ const badge = style<BadgeStyleProps>({
     }
   },
   borderStyle: 'solid',
-  boxSizing: 'border-box',
   borderWidth: 2,
   borderColor: {
     default: 'transparent',

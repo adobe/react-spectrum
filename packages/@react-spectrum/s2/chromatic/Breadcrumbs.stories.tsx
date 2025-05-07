@@ -50,7 +50,7 @@ let combinations = generatePowerset(states);
 
 const Template = () => {
   return (
-    <div className={style({display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '[100vw]'})}>
+    <div className={style({display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 250px))', gridAutoFlow: 'row', alignItems: 'center', justifyItems: 'start', gap: 24, width: '100vw'})}>
       {combinations.map(c => {
         let fullComboName = Object.keys(c).map(k => `${k}: ${c[k]}`).join(' ');
         let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');

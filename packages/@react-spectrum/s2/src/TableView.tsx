@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {baseColor, colorMix, focusRing, fontRelative, lightDark, space, style} from '../style' with {type: 'macro'};
 import {
   Button,
   CellRenderProps,
@@ -43,10 +44,9 @@ import {
   useTableOptions,
   Virtualizer
 } from 'react-aria-components';
-import {centerPadding, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {centerPadding, controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
-import {colorMix, focusRing, fontRelative, lightDark, space, style} from '../style' with {type: 'macro'};
 import {ColumnSize} from '@react-types/table';
 import {DOMRef, DOMRefValue, forwardRefType, LoadingState, Node} from '@react-types/shared';
 import {GridNode} from '@react-types/grid';
@@ -458,10 +458,10 @@ function CellFocusRing() {
 }
 
 const columnStyles = style({
-  height: '[inherit]',
+  height: 'inherit',
   boxSizing: 'border-box',
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     forcedColors: 'ButtonText'
   },
   paddingX: {
@@ -477,7 +477,7 @@ const columnStyles = style({
   },
   outlineStyle: 'none',
   position: 'relative',
-  fontSize: 'control',
+  fontSize: controlFont(),
   fontFamily: 'sans',
   fontWeight: 'bold',
   display: 'flex',
@@ -564,10 +564,7 @@ const sortIcon = style({
     default: 8,
     isButton: 'text-to-visual'
   },
-  verticalAlign: {
-    default: 'bottom',
-    isButton: 0
-  },
+  verticalAlign: 'bottom',
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
@@ -619,7 +616,7 @@ const resizableMenuButtonWrapper = style({
   paddingX: 16,
   backgroundColor: 'transparent',
   borderStyle: 'none',
-  fontSize: 'control',
+  fontSize: controlFont(),
   fontFamily: 'sans',
   fontWeight: 'bold'
 });
@@ -645,14 +642,13 @@ const resizerHandleContainer = style({
   }
 });
 
-const resizerHandle = style({
+const resizerHandle = style<{isFocusVisible: boolean, isResizing: boolean}>({
   backgroundColor: {
     default: 'gray-300',
     isFocusVisible: lightDark('informative-900', 'informative-700'), // --spectrum-informative-background-color-default, can't use `informative` because that will use the focusVisible version
     isResizing: lightDark('informative-900', 'informative-700'),
     forcedColors: {
       default: 'Background',
-      isHovered: 'ButtonBorder',
       isFocusVisible: 'Highlight',
       isResizing: 'Highlight'
     }
@@ -802,7 +798,7 @@ function ColumnWithMenu(props: ColumnWithMenuProps) {
           <ColumnResizer data-react-aria-prevent-focus="true" className={({resizableDirection, isResizing}) => resizerHandleContainer({resizableDirection, isResizing, isInResizeMode})}>
             {({isFocusVisible, isResizing}) => (
               <>
-                <ResizerIndicator isInResizeMode={isInResizeMode} isFocusVisible={isFocusVisible} isResizing={isResizing} />
+                <ResizerIndicator isFocusVisible={isFocusVisible} isResizing={isResizing} />
                 {(isFocusVisible || isInResizeMode) && isResizing && <div className={nubbin}><Nubbin /></div>}
               </>
           )}
@@ -813,9 +809,9 @@ function ColumnWithMenu(props: ColumnWithMenuProps) {
   );
 }
 
-function ResizerIndicator({isFocusVisible, isResizing, isInResizeMode}) {
+function ResizerIndicator({isFocusVisible, isResizing}) {
   return (
-    <div className={resizerHandle({isFocusVisible, isInResizeMode, isResizing})} />
+    <div className={resizerHandle({isFocusVisible, isResizing})} />
   );
 }
 
@@ -927,7 +923,7 @@ const commonCellStyles = {
 
 const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean}>({
   ...commonCellStyles,
-  color: 'neutral',
+  color: baseColor('neutral'),
   paddingY: centerPadding(),
   minHeight: {
     default: 40,
@@ -939,7 +935,7 @@ const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean}>({
   boxSizing: 'border-box',
   height: 'full',
   width: 'full',
-  fontSize: 'control',
+  fontSize: controlFont(),
   alignItems: 'center',
   display: 'flex',
   borderStyle: {
@@ -965,7 +961,7 @@ const checkboxCellStyle = style({
   ...stickyCell,
   paddingStart: 16,
   alignContent: 'center',
-  height: '[calc(100% - 1px)]',
+  height: 'calc(100% - 1px)',
   borderBottomWidth: 0,
   backgroundColor: '--rowBackgroundColor'
 });
