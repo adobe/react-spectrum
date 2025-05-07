@@ -27,9 +27,7 @@ interface ClearButtonStyleProps {
    *
    * @default 'M'
    */
-  size?: 'S' | 'M' | 'L' | 'XL',
-  /** Whether to show a focus ring. */
-  showFocusRing?: boolean
+  size?: 'S' | 'M' | 'L' | 'XL'
 }
 
 interface ClearButtonRenderProps extends ButtonRenderProps, ClearButtonStyleProps {}
@@ -57,43 +55,15 @@ const visibleClearButton = style<ClearButtonRenderProps>({
 });
 
 export const ClearButton = forwardRef(function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElement>) {
-  let {showFocusRing = false, size = 'M', ...rest} = props;
+  let {size = 'M', ...rest} = props;
   let domRef = useFocusableRef(ref);
-
-  if (showFocusRing) {
-    return (
-      <Button
-        {...rest}
-        ref={domRef}
-        style={pressScale(domRef)}
-        className={renderProps => visibleClearButton({...renderProps, size})}>
-        <CrossIcon size={props.size} />
-      </Button>
-    );
-  } else {
-    return (
-      <Button
-        {...rest}
-        ref={domRef}
-        className={renderProps => style<ClearButtonRenderProps>({
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: 'full',
-          width: 'control',
-          flexShrink: 0,
-          borderStyle: 'none',
-          outlineStyle: 'none',
-          backgroundColor: 'transparent',
-          padding: 0,
-          color: '[inherit]',
-          '--iconPrimary': {
-            type: 'fill',
-            value: 'currentColor'
-          }
-        })({...renderProps, size})}>
-        <CrossIcon size={props.size} />
-      </Button>
-    );
-  }
+  return (
+    <Button
+      {...rest}
+      ref={domRef}
+      style={pressScale(domRef)}
+      className={renderProps => visibleClearButton({...renderProps, size})}>
+      <CrossIcon size={props.size} />
+    </Button>
+  );
 });

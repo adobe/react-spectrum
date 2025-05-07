@@ -585,7 +585,6 @@ function TagWrapper({children, isDisabled, allowsRemoving, isInRealDOM}) {
       {!isInRealDOM && children}
       {allowsRemoving && isInRealDOM && (
         <ClearButton
-          showFocusRing
           slot="remove"
           size={size}
           isDisabled={isDisabled} />
