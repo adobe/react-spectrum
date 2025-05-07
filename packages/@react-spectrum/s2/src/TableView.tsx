@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {baseColor, colorMix, focusRing, fontRelative, lightDark, space, style} from '../style' with {type: 'macro'};
 import {
   Button,
   CellRenderProps,
@@ -43,10 +44,9 @@ import {
   useTableOptions,
   Virtualizer
 } from 'react-aria-components';
-import {centerPadding, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {centerPadding, controlFont, getAllowedOverrides, StylesPropWithHeight, UnsafeStyles} from './style-utils' with {type: 'macro'};
 import {Checkbox} from './Checkbox';
 import Chevron from '../ui-icons/Chevron';
-import {colorMix, focusRing, fontRelative, lightDark, space, style} from '../style' with {type: 'macro'};
 import {ColumnSize} from '@react-types/table';
 import {DOMRef, DOMRefValue, forwardRefType, LoadingState, Node} from '@react-types/shared';
 import {GridNode} from '@react-types/grid';
@@ -459,10 +459,10 @@ function CellFocusRing() {
 }
 
 const columnStyles = style({
-  height: '[inherit]',
+  height: 'inherit',
   boxSizing: 'border-box',
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     forcedColors: 'ButtonText'
   },
   paddingX: {
@@ -478,7 +478,7 @@ const columnStyles = style({
   },
   outlineStyle: 'none',
   position: 'relative',
-  fontSize: 'control',
+  fontSize: controlFont(),
   fontFamily: 'sans',
   fontWeight: 'bold',
   display: 'flex',
@@ -617,7 +617,7 @@ const resizableMenuButtonWrapper = style({
   paddingX: 16,
   backgroundColor: 'transparent',
   borderStyle: 'none',
-  fontSize: 'control',
+  fontSize: controlFont(),
   fontFamily: 'sans',
   fontWeight: 'bold'
 });
@@ -924,7 +924,7 @@ const commonCellStyles = {
 
 const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean}>({
   ...commonCellStyles,
-  color: 'neutral',
+  color: baseColor('neutral'),
   paddingY: centerPadding(),
   minHeight: {
     default: 40,
@@ -936,7 +936,7 @@ const cell = style<CellRenderProps & S2TableProps & {isDivider: boolean}>({
   boxSizing: 'border-box',
   height: 'full',
   width: 'full',
-  fontSize: 'control',
+  fontSize: controlFont(),
   alignItems: 'center',
   display: 'flex',
   borderStyle: {
@@ -962,7 +962,7 @@ const checkboxCellStyle = style({
   ...stickyCell,
   paddingStart: 16,
   alignContent: 'center',
-  height: '[calc(100% - 1px)]',
+  height: 'calc(100% - 1px)',
   borderBottomWidth: 0,
   backgroundColor: '--rowBackgroundColor'
 });

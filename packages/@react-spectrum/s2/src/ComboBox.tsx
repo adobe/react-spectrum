@@ -37,7 +37,7 @@ import {
 import {AsyncLoadable, HelpTextProps, LoadingState, SpectrumLabelableProps} from '@react-types/shared';
 import {baseColor, edgeToText, focusRing, space, style} from '../style' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
-import {centerPadding, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
+import {centerPadding, controlBorderRadius, controlFont, controlSize, field, fieldInput, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {
   checkmark,
   description,
@@ -109,11 +109,11 @@ export interface ComboBoxProps<T extends object> extends
 export const ComboBoxContext = createContext<ContextValue<Partial<ComboBoxProps<any>>, TextFieldRef>>(null);
 
 const inputButton = style<ButtonRenderProps & {isOpen: boolean, size: 'S' | 'M' | 'L' | 'XL'}>({
+  ...controlBorderRadius('sm'),
   display: 'flex',
   outlineStyle: 'none',
   textAlign: 'center',
   borderStyle: 'none',
-  borderRadius: 'control-sm',
   alignItems: 'center',
   justifyContent: 'center',
   size: {
@@ -143,11 +143,9 @@ const inputButton = style<ButtonRenderProps & {isOpen: boolean, size: 'S' | 'M' 
     }
   },
   color: {
-    default: 'neutral',
+    default: baseColor('neutral'),
     isDisabled: 'disabled',
-    forcedColors: {
-      default: 'ButtonFace'
-    }
+    forcedColors: 'ButtonFace'
   }
 });
 
@@ -210,15 +208,14 @@ export let listbox = style<{size: 'S' | 'M' | 'L' | 'XL'}>({
   boxSizing: 'border-box',
   maxHeight: '[inherit]',
   overflow: 'auto',
-  fontFamily: 'sans',
-  fontSize: 'control'
+  font: controlFont()
 });
 
 export let listboxItem = style({
   ...focusRing(),
+  ...controlBorderRadius(),
   boxSizing: 'border-box',
-  borderRadius: 'control',
-  font: 'control',
+  font: controlFont(),
   '--labelPadding': {
     type: 'paddingTop',
     value: centerPadding()
@@ -261,7 +258,7 @@ export let listboxItem = style({
     ':has([slot=description])': space(1)
   },
   alignItems: 'baseline',
-  minHeight: 'control',
+  minHeight: controlSize(),
   height: 'min',
   textDecoration: 'none',
   cursor: {
@@ -274,7 +271,7 @@ export let listboxItem = style({
 export let listboxHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
   color: 'neutral',
   boxSizing: 'border-box',
-  minHeight: 'control',
+  minHeight: controlSize(),
   paddingY: centerPadding(),
   marginX: {
     size: {
@@ -609,7 +606,7 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
             // better way to do this one? it's not actually half, they are
             // [9, 4], [12, 6], [15, 8], [18, 8]
             // also noticed that our measurement is including the border, making the padding too much
-            paddingEnd: '[calc(self(height, self(minHeight)) * 3 / 16)]'
+            paddingEnd: 'calc(self(height, self(minHeight)) * 3 / 16)'
           })({size})}>
           <InputContext.Consumer>
             {ctx => (
@@ -662,8 +659,8 @@ const ComboboxInner = forwardRef(function ComboboxInner(props: ComboBoxProps<any
             '--trigger-width': `calc(${triggerWidth} - 2px)`
           } as CSSProperties}
           styles={style({
-            minWidth: '[var(--trigger-width)]',
-            width: '[var(--trigger-width)]'
+            minWidth: '--trigger-width',
+            width: '--trigger-width'
           })}>
           <Provider
             values={[
