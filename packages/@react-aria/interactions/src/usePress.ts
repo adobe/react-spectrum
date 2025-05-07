@@ -815,27 +815,42 @@ export function usePress(props: PressHookProps): PressResult {
 
   // Avoid onClick delay for double tap to zoom by default.
   useEffect(() => {
-    if (process.env.NODE_ENV === 'test') {
+    if (!domRef || process.env.NODE_ENV === 'test') {
       return;
     }
 
-    const ownerDocument = getOwnerDocument(domRef?.current);
+    const ownerDocument = getOwnerDocument(domRef.current);
+    if (!ownerDocument || !ownerDocument.head) {
+      return;
+    }
+
     const styleId = 'react-aria-pressable-style';
-    if (ownerDocument && ownerDocument.head && !ownerDocument.getElementById(styleId)) {
-      const style = ownerDocument.createElement('style');
-      style.id = styleId;
-      // touchAction: 'manipulation' is supposed to be equivalent, but in 
-      // Safari it causes onPointerCancel not to fire on scroll.
-      // https://bugs.webkit.org/show_bug.cgi?id=240917
-      style.textContent = `
+    if (ownerDocument.getElementById(styleId)) {
+      return;
+    }
+
+    // Skip adding if meta viewport tag has width=device-width
+    const viewportMeta = ownerDocument.querySelector('meta[name="viewport"]');
+    if (viewportMeta) {
+      const content = viewportMeta.getAttribute('content');
+      if (content && content.includes('width=device-width')) {
+        return;
+      }
+    }
+
+    const style = ownerDocument.createElement('style');
+    style.id = styleId;
+    // touchAction: 'manipulation' is supposed to be equivalent, but in
+    // Safari it causes onPointerCancel not to fire on scroll.
+    // https://bugs.webkit.org/show_bug.cgi?id=240917
+    style.textContent = `
 @layer {
   [data-react-aria-pressable] {
     touch-action: pan-x pan-y pinch-zoom;
   }
 }
-      `.trim();
-      ownerDocument.head.prepend(style);
-    }
+    `.trim();
+    ownerDocument.head.prepend(style);
   }, [domRef]);
 
   // Remove user-select: none in case component unmounts immediately after pressStart
