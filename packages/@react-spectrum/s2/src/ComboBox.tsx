@@ -182,13 +182,12 @@ export let listboxItem = style({
     }
   },
   position: 'relative',
-  // each menu item should take up the entire width, the subgrid will handle within the item
   gridColumnStart: 1,
   gridColumnEnd: -1,
   display: 'grid',
   gridTemplateAreas: [
-    '. checkmark icon label  .',
-    '.      .      .  description .'
+    '. checkmark icon label       .',
+    '. .         .    description .'
   ],
   gridTemplateColumns: {
     size: {
@@ -239,13 +238,11 @@ export let listboxHeading = style({
   margin: 0
 });
 
-// not sure why edgeToText won't work...
 const separatorWrapper = style({
   display: {
     ':is(:last-child > *)': 'none',
     default: 'flex'
   },
-  // A workaround since edgeToText() returns undefined for some reason
   marginX: {
     size: {
       S: `[${edgeToText(24)}]`,

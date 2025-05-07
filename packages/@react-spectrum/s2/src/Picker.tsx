@@ -278,8 +278,6 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
     menuOffset = 8;
   }
 
-  let layout = new ListLayout({estimatedRowHeight: 32, estimatedHeadingHeight: 50, padding: 8});
-
   return (
     <AriaSelect
       {...pickerProps}
@@ -319,47 +317,51 @@ export const Picker = /*#__PURE__*/ (forwardRef as forwardRefType)(function Pick
               description={descriptionMessage}>
               {errorMessage}
             </HelpText>
-            <PopoverBase
-              hideArrow
-              offset={menuOffset}
-              placement={`${direction} ${align}` as Placement}
-              shouldFlip={shouldFlip}
-              UNSAFE_style={{
-                width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined
-              }}
-              styles={style({
-                marginStart: {
-                  isQuiet: -12
-                },
-                minWidth: {
-                  default: '[var(--trigger-width)]',
-                  isQuiet: 192
-                },
-                width: {
-                  default: '[var(--trigger-width)]',
-                  isQuiet: '[calc(var(--trigger-width) + (-2 * self(marginStart)))]'
-                }
-              })(props)}>
-              <Provider
-                values={[
-                  [HeaderContext, {styles: listboxHeader({size})}],
-                  [HeadingContext, {styles: listboxHeading}],
-                  [TextContext, {
-                    slots: {
-                      description: {styles: description({size})}
-                    }
-                  }]
-                ]}>
-                <Virtualizer
-                  layout={layout}>
-                  <ListBox
-                    items={items}
-                    className={listbox({size})}>
-                    {children}
-                  </ListBox>
-                </Virtualizer>
-              </Provider>
-            </PopoverBase>
+            <Virtualizer
+              layout={ListLayout}
+              layoutOptions={{
+                estimatedRowHeight: 32, 
+                estimatedHeadingHeight: 50, 
+                padding: 8}}>
+              <PopoverBase
+                hideArrow
+                offset={menuOffset}
+                placement={`${direction} ${align}` as Placement}
+                shouldFlip={shouldFlip}
+                UNSAFE_style={{
+                  width: menuWidth && !isQuiet ? `${menuWidth}px` : undefined
+                }}
+                styles={style({
+                  marginStart: {
+                    isQuiet: -12
+                  },
+                  minWidth: {
+                    default: '[var(--trigger-width)]',
+                    isQuiet: 192
+                  },
+                  width: {
+                    default: '[var(--trigger-width)]',
+                    isQuiet: '[calc(var(--trigger-width) + (-2 * self(marginStart)))]'
+                  }
+                })(props)}>
+                <Provider
+                  values={[
+                    [HeaderContext, {styles: listboxHeader({size})}],
+                    [HeadingContext, {styles: listboxHeading}],
+                    [TextContext, {
+                      slots: {
+                        description: {styles: description({size})}
+                      }
+                    }]
+                  ]}>
+                    <ListBox
+                      items={items}
+                      className={listbox({size})}>
+                      {children}
+                    </ListBox>
+                </Provider>
+              </PopoverBase>
+            </Virtualizer>
           </InternalPickerContext.Provider>
         </>
       )}
