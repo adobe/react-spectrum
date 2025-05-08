@@ -17,7 +17,6 @@ module.exports = new Namer({
   name({bundle}) {
     let mainAsset = bundle.getMainEntry();
 
-    console.log(mainAsset?.filePath);
     if (!mainAsset?.filePath.includes('react-spectrum/packages')) {
       if (bundle.needsStableName && bundle.target.distEntry) {
         return bundle.target.distEntry;

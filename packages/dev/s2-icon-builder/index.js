@@ -85,9 +85,7 @@ async function run() {
 
 run().then(() => {
   if (args.values.isLibrary) {
-    console.log(`${path.join(args.values.output, '.')}/*.mjs`);
     for (let file of globSync(`${path.join(args.values.output, '.')}/*.mjs`)) {
-      console.log(file);
       fs.writeFileSync(file.replace('.mjs', '.d.ts'), `import type {IconProps} from '@react-spectrum/s2';
 import type {ReactNode} from 'react';
 

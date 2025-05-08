@@ -34,7 +34,6 @@
   },
   "files": [
     "index.js",
-    "prepare-icons.js",
     ".parcelrc",
     ".parcelrc-library"
   ],
