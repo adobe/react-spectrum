@@ -219,8 +219,8 @@ export const ControlledStory: StepListStory = {
 };
 
 function Controlled(args) {
-  const [lastCompletedStep, setLastCompletedStep] = useState<Key>(args.lastCompletedStep);
-  const [selectedKey, setSelectedKey] = useState<Key>(args.selectedKey);
+  const [lastCompletedStep, setLastCompletedStep] = useState<Key | null>(args.lastCompletedStep);
+  const [selectedKey, setSelectedKey] = useState<Key | null>(args.selectedKey);
 
   return (
     <View>

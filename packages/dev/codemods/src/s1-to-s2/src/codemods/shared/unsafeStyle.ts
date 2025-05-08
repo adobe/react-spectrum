@@ -4,7 +4,7 @@ import {convertUnsafeDimension} from './dimensions';
 import {convertUnsafeStyleColor} from './colors';
 import * as t from '@babel/types';
 
-export function transformUnsafeStyle(
+export default function transformUnsafeStyle(
   value: t.ObjectExpression,
   element: string
 ): StylePropValue | null {

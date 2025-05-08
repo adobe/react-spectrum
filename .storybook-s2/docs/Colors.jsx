@@ -9,7 +9,7 @@ export function Colors() {
       <Disclosure isQuiet>
         <DisclosureTitle>Background colors</DisclosureTitle>
         <DisclosurePanel>
-          <P>The <Code>backgroundColor</Code> property supports the following values, in addition to the semantic and global colors shown below. These colors are specifically chosen to be used as backgrounds, so prefer them over global colors where possible. Some background colors also automatically update according to states such as <Code>isHovered</Code> (see <Link href="#runtime-conditions" target="_self">runtime conditions</Link> below).</P>
+          <P>The <Code>backgroundColor</Code> property supports the following values, in addition to the semantic and global colors shown below. These colors are specifically chosen to be used as backgrounds, so prefer them over global colors where possible.</P>
           <div className="sb-unstyled" style={{columnWidth: 120}}>
             <Color name="base" className={colorSwatch('base')} />
             <Color name="layer-1" className={colorSwatch('layer-1')} />
@@ -74,7 +74,7 @@ export function Colors() {
       <Disclosure isQuiet>
         <DisclosureTitle>Text colors</DisclosureTitle>
         <DisclosurePanel>
-          <P>The <Code>color</Code> property supports the following values, in addition to the semantic and global colors shown below. These colors are specifically chosen to be used as text colors, so prefer them over global colors where possible. Some text colors also automatically update according to states such as <Code>isHovered</Code> (see <Link href="#runtime-conditions" target="_self">runtime conditions</Link> below).</P>
+          <P>The <Code>color</Code> property supports the following values, in addition to the semantic and global colors shown below. These colors are specifically chosen to be used as text colors, so prefer them over global colors where possible.</P>
           <div className="sb-unstyled" style={{columnWidth: 120}}>
             <Color name="accent" className={colorSwatch('accent', 'color')} />
             <Color name="neutral" className={colorSwatch('neutral', 'color')} />

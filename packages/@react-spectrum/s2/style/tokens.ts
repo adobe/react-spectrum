@@ -18,14 +18,49 @@ export function getToken(name: keyof typeof tokens): string {
   return (tokens[name] as any).value;
 }
 
-export function colorToken(name: keyof typeof tokens): string {
+export interface ColorToken {
+  type: 'color',
+  light: string,
+  dark: string,
+  forcedColors?: string
+}
+
+export function colorToken(name: keyof typeof tokens): ColorToken | ColorRef {
+  let token = tokens[name] as typeof tokens['gray-25'] | typeof tokens['neutral-content-color-default'];
+  if ('ref' in token) {
+    return {
+      type: 'ref',
+      light: token.ref.slice(1, -1).replace('-color', ''),
+      dark: token.ref.slice(1, -1).replace('-color', '')
+    };
+  }
+
+  return {
+    type: 'color',
+    light: token.sets.light.value,
+    dark: token.sets.dark.value
+  };
+}
+
+export function rawColorToken(name: keyof typeof tokens): string {
   let token = tokens[name] as typeof tokens['gray-25'];
   return `light-dark(${token.sets.light.value}, ${token.sets.dark.value})`;
 }
 
-export function weirdColorToken(name: keyof typeof tokens): string {
+export interface ColorRef {
+  type: 'ref',
+  light: string,
+  dark: string,
+  forcedColors?: string
+}
+
+export function weirdColorToken(name: keyof typeof tokens): ColorRef {
   let token = tokens[name] as typeof tokens['accent-background-color-default'];
-  return `light-dark(${token.sets.light.sets.light.value}, ${token.sets.dark.sets.dark.value})`;
+  return {
+    type: 'ref',
+    light: token.sets.light.ref.slice(1, -1).replace('-color', ''),
+    dark: token.sets.dark.ref.slice(1, -1).replace('-color', '')
+  };
 }
 
 type ReplaceColor<S extends string> = S extends `${infer S}-color-${infer N}` ? `${S}-${N}` : S;
