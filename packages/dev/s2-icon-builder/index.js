@@ -61,17 +61,20 @@ if (args.values.isLibrary) {
         distDir: args.values.output,
         isLibrary: true,
         includeNodeModules: false,
-        outputFormat: 'esmodule'
+        outputFormat: 'esmodule',
+        engines: {
+          browsers: ['last 2 Chrome versions, last 2 Safari versions, last 2 Firefox versions, last 2 Edge versions']
+        }
       },
       [`${args.values.type}-main`]: {
         distDir: args.values.output,
         isLibrary: true,
         includeNodeModules: false,
-        outputFormat: 'commonjs'
+        outputFormat: 'commonjs',
+        engines: {
+          browsers: ['last 2 Chrome versions, last 2 Safari versions, last 2 Firefox versions, last 2 Edge versions']
+        }
       }
-    },
-    engines: {
-      browsers: ['last 1 Chrome version']
     }
   };
 }
