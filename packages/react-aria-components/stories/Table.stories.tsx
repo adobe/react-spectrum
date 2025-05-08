@@ -11,10 +11,10 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Cell, Checkbox, CheckboxProps, Collection, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Group, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, useDragAndDrop, Virtualizer} from 'react-aria-components';
+import {Button, Cell, Checkbox, CheckboxProps, Collection, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, DropIndicator, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, TableLayout, useDragAndDrop, Virtualizer} from 'react-aria-components';
 import {isTextDropItem} from 'react-aria';
 import {MyMenuItem} from './utils';
-import React, {memo, startTransition, Suspense, useEffect, useRef, useState} from 'react';
+import React, {startTransition, Suspense, useMemo, useRef, useState} from 'react';
 import styles from '../example/index.css';
 import {UNSTABLE_TableLoadingIndicator} from '../src/Table';
 import {useAsyncList, useListData} from 'react-stately';
@@ -1229,7 +1229,7 @@ let rows1 = [
     name: 'Templates',
     date: '2/10/2025',
     type: 'File folder'
-  },
+  }
 ];
 
 let rows2 = [
@@ -1472,7 +1472,7 @@ let rows2 = [
     name: 'Recycle Bin',
     date: '1/1/2000',
     type: 'System folder'
-  },
+  }
 ];
 
 const columns1 = [
@@ -1491,41 +1491,28 @@ const columns1 = [
     id: 'date',
     name: 'Date Modified',
     allowsSorting: true
-  },
+  }
 ];
 
-export function TableTransitionSuspenceBug() {
+export function TableWithReactTransition() {
   const [show, setShow] = useState(true);
   const items = show ? rows2 : rows1;
 
   return (
-    <>
+    <div>
       <Button
         onPress={() =>
           startTransition(() => {
             setShow((s) => !s);
           })
         }>
-        Toggle data using useState - Expected behaviour
+        Toggle data using useState + startTransition
       </Button>
-      <MemoTable data={items} />
-    </>
-  );
-}
-
-const MemoTable = memo(({data}: { data: any }) => {
-  const ref = useRef(0);
-  useEffect(() => {
-    console.log('render count', ref.current++);
-  });
-
-  return (
-    <div>
       <Table aria-label="test">
         <TableHeader columns={columns1}>
           {(column) => <Column {...column}>{column.name}</Column>}
         </TableHeader>
-        <TableBody items={data}>
+        <TableBody items={items}>
           {(row: any) => (
             <Row id={row.id} columns={columns1}>
               {/* @ts-ignore */}
@@ -1536,4 +1523,4 @@ const MemoTable = memo(({data}: { data: any }) => {
       </Table>
     </div>
   );
-});
+}
