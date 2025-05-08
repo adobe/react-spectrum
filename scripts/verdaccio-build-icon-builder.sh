@@ -46,6 +46,11 @@ cat > icon-library-test/package.json << EOF
 {
   "name": "@react-spectrum/icon-library-test",
   "version": "1.0.0",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
   "exports": {
     "module": {},
     "main": {},
@@ -57,6 +62,7 @@ cat > icon-library-test/package.json << EOF
       "require": "./*.cjs"
     }
   },
+  "browserslist": "last 2 Chrome versions, last 2 Safari versions, last 2 Firefox versions, last 2 Edge versions",
   "dependencies": {
     "@swc/helpers": "^0.5.0"
   },
@@ -78,6 +84,9 @@ cat > icon-library-test/package.json << EOF
     "babel-plugin-transform-glob-import": "^1.0.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
 EOF
